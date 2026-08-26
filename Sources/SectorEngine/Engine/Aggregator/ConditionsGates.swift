@@ -69,6 +69,20 @@ public enum ConditionsGates {
             hits.append(GateHit(reason: "Rain falling now — \(String(format: "%.2f", input.precipitationInchNow))\"",
                                 cap: Int(g.rainNowCap)))
         }
+        // Fog on the water — the "you can't fish this" signal that isn't weather-violent.
+        // Fog is already a low-weight factor (HumidityFactor, 0.03), but it ENDS the night
+        // (no sightlines, can't run the boat), so it also gates. Uses the forecast
+        // air–dewpoint spread (the fog predictor); graduated so a tight spread caps hard
+        // and a moderate spread soft-caps. Only fires when a dewpoint series exists.
+        if let spread = input.fogSpreadF {
+            if spread < g.fogLikelySpreadF {
+                hits.append(GateHit(reason: "Fog likely — forms on the water, can't shoot or run the boat",
+                                    cap: Int(g.fogLikelyCap)))
+            } else if spread < g.fogPatchySpreadF {
+                hits.append(GateHit(reason: "Patchy fog possible late — can't read Prime",
+                                    cap: Int(g.fogPatchyCap)))
+            }
+        }
         return hits
     }
 }

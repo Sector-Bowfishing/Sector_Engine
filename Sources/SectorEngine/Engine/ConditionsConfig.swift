@@ -323,6 +323,18 @@ public struct ConditionsConfig {
         /// passing drizzle doesn't tank an otherwise-good night.
         public var rainNowInch: Double = 0.10
         public var rainNowCap: Double = 40
+        /// Fog on the water ends a bowfishing night — you can't shoot what you can't
+        /// see, and you can't run a boat blind. Fog is already scored as a low-weight
+        /// factor (HumidityFactor, 0.03), but a thing that ENDS the night is a hard
+        /// limiter, not a tie-breaker, so it also gates. Driven by the forecast
+        /// air–dewpoint spread (small spread → fog forms). Graduated: a tight spread
+        /// caps hard (fog likely); a moderate spread soft-caps (patchy — never Prime).
+        /// Fires only when a dewpoint series exists (`fogSpreadF != nil`); raw RH alone
+        /// is too noisy to gate on and stays a factor-only nudge.
+        public var fogLikelySpreadF: Double = 2.0
+        public var fogLikelyCap: Double = 35
+        public var fogPatchySpreadF: Double = 4.0
+        public var fogPatchyCap: Double = 62
     }
 
     // MARK: - Spawn boost (§7.3)

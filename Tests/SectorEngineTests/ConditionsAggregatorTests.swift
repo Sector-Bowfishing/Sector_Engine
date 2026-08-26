@@ -86,6 +86,36 @@ final class ConditionsAggregatorTests: XCTestCase {
         XCTAssertTrue(warned.primaryGate?.reason.contains("Severe Thunderstorm Warning") ?? false)
     }
 
+    // Fog gate: a Prime-looking night that fogs in (tight air–dewpoint spread) caps
+    // hard; a moderate spread soft-caps below Prime; a wide spread doesn't gate. This
+    // is the fix for a foggy night still reading 81/GOOD.
+    func testFogGate() {
+        // Dark, calm, clear, warm water — would otherwise score Good/Prime.
+        let base = { (spread: Double?) in
+            CE.input(wind: 2, waterTemp: 78, moonIllum: 0, cloud: 15, fogSpread: spread)
+        }
+        let clear = eval(base(8))                          // wide margin — no fog
+        XCTAssertGreaterThanOrEqual(clear.score, 65)       // still Good/Prime
+        XCTAssertFalse(clear.primaryGate?.reason.contains("Fog") ?? false)
+
+        let foggy = eval(base(1.5))                        // fog likely
+        XCTAssertLessThanOrEqual(foggy.score, 35)
+        XCTAssertTrue(foggy.isCapped)
+        XCTAssertTrue(foggy.primaryGate?.reason.contains("Fog likely") ?? false)
+        XCTAssertLessThan(foggy.score, clear.score)
+
+        let patchy = eval(base(3))                         // patchy fog late
+        XCTAssertLessThanOrEqual(patchy.score, 62)         // never Prime
+        XCTAssertGreaterThan(patchy.score, foggy.score)    // softer than fog-likely
+    }
+
+    // The fog gate only fires with a dewpoint series — a nil spread never gates on fog
+    // (raw RH alone is too noisy; it stays a factor-only nudge).
+    func testFogGateNeedsDewpointSeries() {
+        let noSeries = eval(CE.input(wind: 2, waterTemp: 78, moonIllum: 0, cloud: 15, fogSpread: nil))
+        XCTAssertFalse(noSeries.primaryGate?.reason.contains("Fog") ?? false)
+    }
+
     // 6c. Code-independent rain gate: rain measurably falling NOW caps the night
     // even when the categorical weather code isn't a storm code (Open-Meteo's code
     // routinely mislabels or lags active rain).
