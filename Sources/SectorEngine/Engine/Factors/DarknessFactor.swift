@@ -40,22 +40,26 @@ public enum DarknessFactor {
         // controlled testing, and irrelevant when you're shooting fish you can
         // see (§3, §14). The ±2 tiebreaker stays in config for future calibration.
 
-        // The score is altitude/cloud-aware, so a bright-ish moon can still score
-        // 100 — say WHY in the label, or the full bar looks inflated next to
-        // "36% lit". Qualifier only when the moon is effectively out of play.
-        let qualifier: String
-        if presence < 0.15 {
-            qualifier = " · moon down"
-        } else if cloudCancel > 0.5 {
-            qualifier = " · cloud-covered"
-        } else if presence < 0.5 {
-            qualifier = " · low moon"
+        // Lead the label with the EFFECTIVE darkness (how much moonlight actually
+        // reaches the water this window), not the raw phase. A 99%-phase moon that's
+        // down or clouded is a DARK night, but labelling it "99% lit" read as a
+        // full-moon-is-good bug — "lit" implied the whole sky was lit tonight. So:
+        // "% moon" = the phase (context), and the second word = what actually
+        // competes with the boat lights. The score is altitude/cloud-aware, so this
+        // keeps the number and its label telling the same story.
+        let effective: String
+        if ambientMoon < 0.15 {
+            effective = presence < 0.15 ? "moon down" : "dark water"
+        } else if ambientMoon < 0.35 {
+            effective = "mostly dark"
+        } else if ambientMoon < 0.60 {
+            effective = "some glow"
         } else {
-            qualifier = ""
+            effective = "bright — moon up"
         }
 
         return FactorScore(score: score.clampedToScore,
-                           label: "\(Int((illum * 100).rounded()))% lit\(qualifier)",
+                           label: "\(Int((illum * 100).rounded()))% moon · \(effective)",
                            why: why(ambientMoon: ambientMoon, illum: illum, presence: presence,
                                     cloudCancel: cloudCancel))
     }
