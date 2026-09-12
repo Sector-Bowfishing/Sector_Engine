@@ -166,6 +166,23 @@ final class WeatherService {
     static let shared = WeatherService()
     private init() {}
 
+    /// Dedicated session with a HARD resource timeout. On Linux swift-corelibs-
+    /// foundation a TLS handshake that stalls mid-negotiation ignores
+    /// URLRequest.timeoutInterval (an idle/request timer that a stuck handshake
+    /// slips past), so a doomed request could hold its socket for the OS TCP
+    /// timeout (minutes). `timeoutIntervalForResource` is a wall-clock cap on the
+    /// whole load, enforced by a timer regardless of connection state — so once
+    /// `withDeadline` abandons a stuck weather fetch, this guarantees the socket
+    /// is actually reclaimed a couple seconds later instead of leaking.
+    static let session: URLSession = {
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.timeoutIntervalForRequest = 8
+        cfg.timeoutIntervalForResource = 10
+        cfg.waitsForConnectivity = false
+        cfg.httpMaximumConnectionsPerHost = 4
+        return URLSession(configuration: cfg)
+    }()
+
     /// Open-Meteo forecast hosts, tried in order. The primary is occasionally
     /// unreachable from some US carrier networks (AT&T ↔ Hetzner peering /
     /// edge filtering — TCP connects but TLS never completes). The
@@ -225,7 +242,7 @@ final class WeatherService {
         // sibling anyway — no reason to hold the connection open longer.
         request.timeoutInterval = 8
 
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
+        guard let (data, response) = try? await Self.session.data(for: request),
               let http = response as? HTTPURLResponse,
               (200..<300).contains(http.statusCode) else {
             return nil
