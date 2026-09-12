@@ -101,15 +101,40 @@ actor ConditionsSnapshotProvider {
         }
 
         let task = Task<ConditionsSnapshot, Never> {
-            async let weather = try? WeatherService.shared.conditions(near: coordinate)
-            async let water = try? WaterLevelService.shared.latestReading(near: coordinate)
-            async let discharge = try? WaterLevelService.shared.nearestDischarge(near: coordinate)
-            async let temp = try? WaterLevelService.shared.nearestWaterTemp(near: coordinate)
-            async let tempModel = WaterTemperatureService.model(near: coordinate)
-            async let turbidity = try? WaterLevelService.shared.nearestTurbidity(near: coordinate)
-            async let generation = GenerationService.shared.generation(near: coordinate)
-            async let alerts = WeatherAlertsService.shared.activeAlerts(near: coordinate)
-            async let mrms = MrmsPrecipService.shared.recent(near: coordinate)
+            // Every input is bounded independently (see Deadline.swift): a single
+            // stalled upstream drops to nil — a dormant factor — instead of
+            // holding the whole snapshot (and the HTTP response behind it) open
+            // until Cloud Run's 60s guillotine. A partial score beats no score.
+            // Budgets: the weather family is 9s (each host already fails fast at
+            // 8s and the two race), generation is 12s because it federates across
+            // operator feeds + a CWMS enrich hop.
+            async let weather = withDeadline(9, "weather") {
+                try? await WeatherService.shared.conditions(near: coordinate)
+            }
+            async let water = withDeadline(9, "water") {
+                try? await WaterLevelService.shared.latestReading(near: coordinate)
+            }
+            async let discharge = withDeadline(9, "discharge") {
+                try? await WaterLevelService.shared.nearestDischarge(near: coordinate)
+            }
+            async let temp = withDeadline(9, "waterTemp") {
+                try? await WaterLevelService.shared.nearestWaterTemp(near: coordinate)
+            }
+            async let tempModel = withDeadline(9, "waterTempModel") {
+                await WaterTemperatureService.model(near: coordinate)
+            }
+            async let turbidity = withDeadline(9, "turbidity") {
+                try? await WaterLevelService.shared.nearestTurbidity(near: coordinate)
+            }
+            async let generation = withDeadline(12, "generation") {
+                await GenerationService.shared.generation(near: coordinate)
+            }
+            async let alerts = withDeadline(8, "alerts") { () -> [WeatherAlert]? in
+                await WeatherAlertsService.shared.activeAlerts(near: coordinate)
+            }
+            async let mrms = withDeadline(8, "mrms") {
+                await MrmsPrecipService.shared.recent(near: coordinate)
+            }
             return ConditionsSnapshot(weather: await weather,
                                       water: await water,
                                       discharge: await discharge,
@@ -117,7 +142,7 @@ actor ConditionsSnapshotProvider {
                                       waterTempModel: await tempModel,
                                       turbidity: await turbidity,
                                       generation: await generation,
-                                      alerts: await alerts,
+                                      alerts: await alerts ?? [],
                                       mrms: await mrms,
                                       fetchedAt: Date())
         }

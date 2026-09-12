@@ -307,7 +307,12 @@ public enum SectorEngineAPI {
         // independent, and the forecast's own snapshot fetch coalesces onto this
         // one inside the provider, so nothing is fetched twice.
         async let snapTask = ConditionsSnapshotProvider.shared.snapshot(for: coord)
-        async let forecastTask = ConditionsForecastService.forecast(for: coord, now: date)
+        // Bounded like the snapshot: the 7-night fetch makes its own Open-Meteo
+        // call (fetchForecastResponse), so it needs the same deadline or a stuck
+        // weather host would hang the whole response through this path.
+        async let forecastTask = withDeadline(13, "forecast") {
+            await ConditionsForecastService.forecast(for: coord, now: date)
+        }
 
         let snap = await snapTask
         guard snap.hasAnyLiveInput else { return nil }

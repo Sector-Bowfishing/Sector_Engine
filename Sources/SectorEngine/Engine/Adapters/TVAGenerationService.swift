@@ -207,7 +207,7 @@ final class TVAGenerationService: GenerationProvider {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 15
 
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
+        guard let (data, response) = try? await Net.session.data(for: request),
               let http = response as? HTTPURLResponse,
               (200..<300).contains(http.statusCode) else { return nil }
         return try? JSONDecoder().decode(T.self, from: data)

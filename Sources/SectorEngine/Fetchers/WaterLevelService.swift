@@ -113,7 +113,7 @@ final class WaterLevelService {
         let request = URLRequest(url: url, timeoutInterval: 12)
         let (data, response): (Data, URLResponse)
         do {
-            (data, response) = try await URLSession.shared.data(for: request)
+            (data, response) = try await Net.session.data(for: request)
         } catch {
             throw WaterLevelError.requestFailed
         }
@@ -419,7 +419,7 @@ final class NoaaTideService {
         if let cachedStations { return cachedStations }
         guard let url = URL(string: stationsURL) else { return nil }
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await Net.session.data(from: url)
             let code = (response as? HTTPURLResponse)?.statusCode ?? -1
             guard (200..<300).contains(code) else { return nil }
             let decoded = try JSONDecoder().decode(StationsResponse.self, from: data)
@@ -520,7 +520,7 @@ final class NoaaTideService {
         ]
         guard let url = comps?.url else { return nil }
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await Net.session.data(from: url)
             let code = (response as? HTTPURLResponse)?.statusCode ?? -1
             guard (200..<300).contains(code) else { return nil }
             return try JSONDecoder().decode(PredictionsResponse.self, from: data).predictions
@@ -602,7 +602,7 @@ extension WaterLevelService {
     func reservoirReading(for coordinate: CLLocationCoordinate2D) async -> WaterLevelReading? {
         guard let lake = Self.reservoirs.first(where: { $0.contains(coordinate) }),
               let url = URL(string: "https://api.water.noaa.gov/nwps/v1/gauges/\(lake.lid)/stageflow"),
-              let (data, resp) = try? await URLSession.shared.data(from: url),
+              let (data, resp) = try? await Net.session.data(from: url),
               let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode),
               let decoded = try? JSONDecoder().decode(NWPSStageFlow.self, from: data)
         else { return nil }

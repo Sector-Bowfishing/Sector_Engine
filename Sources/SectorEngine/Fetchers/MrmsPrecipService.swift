@@ -100,7 +100,7 @@ final class MrmsPrecipService {
         guard let url = comp?.url else { return nil }
         var req = URLRequest(url: url)
         req.timeoutInterval = 12
-        guard let (data, resp) = try? await URLSession.shared.data(for: req),
+        guard let (data, resp) = try? await Net.session.data(for: req),
               let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return nil }
         struct Resp: Decodable { let hourly: Hourly?; struct Hourly: Decodable { let time: [Int]; let precipitation: [Double?] } }
         guard let decoded = try? JSONDecoder().decode(Resp.self, from: data), let h = decoded.hourly else { return nil }
@@ -135,7 +135,7 @@ final class MrmsPrecipService {
         var req = URLRequest(url: url)
         req.timeoutInterval = 12
         req.setValue("application/json", forHTTPHeaderField: "Accept")
-        guard let (data, resp) = try? await URLSession.shared.data(for: req),
+        guard let (data, resp) = try? await Net.session.data(for: req),
               let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode),
               let decoded = try? JSONDecoder().decode(IEMREResponse.self, from: data) else { return nil }
         return decoded.data.compactMap { day -> MrmsPrecip.DailyRain? in

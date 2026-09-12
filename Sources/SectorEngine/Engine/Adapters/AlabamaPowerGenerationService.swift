@@ -101,7 +101,7 @@ final class AlabamaPowerGenerationService: GenerationProvider {
         req.timeoutInterval = 12
         req.setValue("Mozilla/5.0", forHTTPHeaderField: "User-Agent")
         req.setValue("application/json", forHTTPHeaderField: "Accept")
-        guard let (data, resp) = try? await URLSession.shared.data(for: req),
+        guard let (data, resp) = try? await Net.session.data(for: req),
               let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode),
               let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let acf = obj["acf"] as? [String: Any] else { return nil }
