@@ -69,7 +69,22 @@ public struct ConditionsResponse: Codable, Equatable {
     /// them. `driving` marks the gauge that actually informs the estimate.
     public let clarityGauges: [GaugeDTO]
 
+    /// The canonical directory lake this coordinate scores as, when one is within
+    /// range — the single source of lake identity + naming for every surface and
+    /// both apps. Lets clients dedupe "the same water, two names" (a saved lake vs
+    /// a free-text trip spot) by `id`, and show one canonical name. nil offshore or
+    /// away from any known lake. Optional so pre-update clients still decode.
+    public let resolvedLake: ResolvedLakeDTO?
+
     public let generatedAt: Date
+}
+
+/// Canonical lake identity from the engine's directory — the authority the two
+/// client-side directory copies should defer to.
+public struct ResolvedLakeDTO: Codable, Equatable {
+    public let id: String       // "Name|ST" — stable identity for cross-surface dedup
+    public let name: String     // canonical display name (e.g. "Nickajack Lake")
+    public let state: String    // primary state code
 }
 
 /// A USGS gauge surfaced to the app so the user can check the source behind the
@@ -374,6 +389,12 @@ public enum SectorEngineAPI {
                     driving: ($0.distanceMiles ?? .infinity) <= ConditionsInputBuilder.maxTurbidityDistanceMiles) },
                 snap.discharge.map { Self.gaugeDTO($0, role: "discharge", driving: true) },
             ].compactMap { $0 },
+            // Nearest known lake to the scored point — the canonical identity clients
+            // dedupe + name by. 25 mi so a point anywhere on a long reservoir still
+            // resolves to that reservoir, not a nearer neighbour off-water.
+            resolvedLake: LakeDirectory.nearest(to: coord, withinMiles: 25).map {
+                ResolvedLakeDTO(id: $0.id, name: $0.name, state: $0.state)
+            },
             generatedAt: Date())
     }
 
