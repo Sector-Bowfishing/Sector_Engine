@@ -178,7 +178,6 @@ final class WeatherService {
         let cfg = URLSessionConfiguration.ephemeral
         cfg.timeoutIntervalForRequest = 8
         cfg.timeoutIntervalForResource = 10
-        cfg.waitsForConnectivity = false
         cfg.httpMaximumConnectionsPerHost = 4
         return URLSession(configuration: cfg)
     }()
