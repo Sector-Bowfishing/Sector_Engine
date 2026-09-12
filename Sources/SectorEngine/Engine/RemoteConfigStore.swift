@@ -30,22 +30,45 @@ actor RemoteConfigStore {
     /// Firebase project id (same as the GCP project). Overridable via env for staging.
     private let projectId = ProcessInfo.processInfo.environment["GCP_PROJECT"] ?? "sector-9393c"
 
-    /// The current tuned config. Served from cache within the TTL; refreshed on a
-    /// stale read (concurrent stale reads coalesce onto one fetch). Never throws.
+    /// The current tuned config. Never blocks the conditions request on Firebase
+    /// once we've fetched at least once.
+    ///
+    /// Within the TTL: served straight from cache. Stale, but we have a prior
+    /// value: that value is returned NOW and a refresh runs in the background —
+    /// Remote Config must not sit on the request's latency path, because a slow
+    /// metadata/Firebase round trip (token 5s + config 10s) would delay a score
+    /// we can already compute from the last good tuning. First read of the
+    /// process (only the compiled default in hand): we wait for the initial
+    /// fetch, but BOUNDED — if Firebase is slow we serve the default and let the
+    /// refresh finish in the background rather than block the first user after a
+    /// cold start. Never throws.
     func current() async -> ConditionsConfig {
         if let at = fetchedAt, Date().timeIntervalSince(at) < ttl { return cached }
-        if let task = inFlight { return await task.value }
-        let task = Task { await fetchAndApply() }
-        inFlight = task
-        let result = await task.value
-        inFlight = nil
-        return result
+
+        // Launch, or join, the single in-flight refresh.
+        let task = inFlight ?? {
+            let t = Task { await fetchAndApply() }
+            inFlight = t
+            return t
+        }()
+
+        // Already have a last-good config: serve it, let the refresh update the
+        // cache for next time.
+        if fetchedAt != nil { return cached }
+
+        // First-ever read: wait for the initial fetch, capped so a slow Firebase
+        // can't hang the cold-start request — fall back to the compiled default.
+        let fetched = await withDeadline(3, "remoteConfig", slowThreshold: 2) {
+            () -> ConditionsConfig? in await task.value
+        }
+        return fetched ?? cached
     }
 
     private func fetchAndApply() async -> ConditionsConfig {
         // Mark the attempt time either way so a persistent failure backs off to the
-        // TTL instead of hammering the metadata server on every request.
-        defer { fetchedAt = Date() }
+        // TTL instead of hammering the metadata server on every request, and clear
+        // the in-flight slot so the NEXT stale read starts a fresh refresh.
+        defer { fetchedAt = Date(); inFlight = nil }
         guard let overrides = await fetchOverrides() else { return cached }
         cached = overrides.apply(to: .default)
         return cached

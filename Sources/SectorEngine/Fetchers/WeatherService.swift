@@ -180,30 +180,57 @@ final class WeatherService {
     // Pressure swings smaller than this (hPa) over the window read as "steady".
     static let steadyThresholdHPa = 1.5
 
-    /// Fetches `queryItems` from the first forecast endpoint that answers.
-    /// Each host gets a 15s fail-fast window so the fallback gets its turn
-    /// quickly instead of hiding behind the 60s default timeout.
+    /// Fetches `queryItems` from whichever forecast endpoint answers FIRST.
+    ///
+    /// This used to try the hosts in sequence: primary, and only after its 15s
+    /// window elapsed, the sibling. The failure mode that caused it was a primary
+    /// that ACCEPTS the TCP connection but never completes the TLS handshake
+    /// (a peering/edge-filter issue that's intermittent from Cloud Run's egress),
+    /// so it didn't refuse fast — it hung the full 15s on every single weather
+    /// fetch, and a conditions request makes several. That stacked into the 30s+
+    /// floor we measured, and past the 60s Cloud Run limit it became a 504.
+    ///
+    /// Racing both hosts concurrently fixes it at the root: the healthy host
+    /// (~0.5s) wins immediately and the stalled one is cancelled, so a dead
+    /// primary costs nothing instead of 15s. Each host still gets its own
+    /// fail-fast timeout as a backstop.
     static func fetchForecastData(queryItems: [URLQueryItem]) async throws -> Data {
-        var lastError: Error = WeatherError.requestFailed
-        for endpoint in forecastEndpoints {
-            var components = URLComponents(string: endpoint)
-            components?.queryItems = queryItems
-            guard let url = components?.url else { throw WeatherError.invalidURL }
-
-            var request = URLRequest(url: url)
-            request.timeoutInterval = 15
-
-            do {
-                let (data, response) = try await URLSession.shared.data(for: request)
-                guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-                    throw WeatherError.requestFailed
-                }
-                return data
-            } catch {
-                lastError = error   // try the next host
+        let data: Data? = await withTaskGroup(of: Data?.self) { group in
+            for endpoint in forecastEndpoints {
+                group.addTask { await fetchOne(endpoint: endpoint, queryItems: queryItems) }
             }
+            // Take the first host that returns a 2xx body; a fast failure from one
+            // host doesn't end the race, it just yields nil and we keep reading.
+            for await result in group {
+                if let result {
+                    group.cancelAll()
+                    return result
+                }
+            }
+            return nil
         }
-        throw lastError
+        guard let data else { throw WeatherError.requestFailed }
+        return data
+    }
+
+    /// One endpoint attempt. Returns the body on a 2xx, nil on any failure
+    /// (timeout, cancellation, non-2xx) so the caller's race can move on.
+    private static func fetchOne(endpoint: String, queryItems: [URLQueryItem]) async -> Data? {
+        var components = URLComponents(string: endpoint)
+        components?.queryItems = queryItems
+        guard let url = components?.url else { return nil }
+
+        var request = URLRequest(url: url)
+        // 8s, not 15: a host that hasn't answered in 8s has lost the race to its
+        // sibling anyway — no reason to hold the connection open longer.
+        request.timeoutInterval = 8
+
+        guard let (data, response) = try? await URLSession.shared.data(for: request),
+              let http = response as? HTTPURLResponse,
+              (200..<300).contains(http.statusCode) else {
+            return nil
+        }
+        return data
     }
 
     /// Current conditions at the coordinate, with a pressure trend computed
