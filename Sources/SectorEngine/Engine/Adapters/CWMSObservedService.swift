@@ -426,7 +426,7 @@ final class CWMSObservedService {
         var request = URLRequest(url: url)
         request.setValue("application/json;version=2", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 12
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
+        guard let (data, response) = try? await Net.session.data(for: request),
               let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode)
         else { return nil }
         return data

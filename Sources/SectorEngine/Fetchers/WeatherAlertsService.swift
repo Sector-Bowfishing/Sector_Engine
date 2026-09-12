@@ -108,7 +108,7 @@ actor WeatherAlertsService {
         request.setValue("application/geo+json", forHTTPHeaderField: "Accept")
 
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await Net.session.data(for: request)
             guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return [] }
             let decoded = try JSONDecoder().decode(NWSAlertsResponse.self, from: data)
             let alerts = decoded.features.compactMap { $0.properties.toAlert() }

@@ -81,7 +81,7 @@ actor RemoteConfigStore {
         var req = URLRequest(url: url, timeoutInterval: 10)
         req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         do {
-            let (data, resp) = try await URLSession.shared.data(for: req)
+            let (data, resp) = try await Net.session.data(for: req)
             guard let http = resp as? HTTPURLResponse, http.statusCode == 200 else { return nil }
             // template → parameters → conditions_config → defaultValue → value (a JSON string)
             guard let root = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -104,7 +104,7 @@ actor RemoteConfigStore {
         var req = URLRequest(url: url, timeoutInterval: 5)
         req.setValue("Google", forHTTPHeaderField: "Metadata-Flavor")
         do {
-            let (data, resp) = try await URLSession.shared.data(for: req)
+            let (data, resp) = try await Net.session.data(for: req)
             guard let http = resp as? HTTPURLResponse, http.statusCode == 200,
                   let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                   let token = obj["access_token"] as? String else { return nil }

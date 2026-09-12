@@ -159,7 +159,7 @@ final class SWPAGenerationService: GenerationProvider {
         // avoids the bot-challenge variant.
         request.setValue("Mozilla/5.0 (compatible; Sector/1.0)", forHTTPHeaderField: "User-Agent")
 
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
+        guard let (data, response) = try? await Net.session.data(for: request),
               let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
               let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1)
         else { return nil }
