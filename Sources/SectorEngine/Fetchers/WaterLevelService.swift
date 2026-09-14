@@ -103,12 +103,12 @@ final class WaterLevelService: Sendable {
 
         guard let url = components?.url else { throw WaterLevelError.invalidURL }
 
-        // Bounded by HTTP.get's cap — one slow gage must not tentpole the whole
-        // parallel snapshot. A dropped reading just degrades the score slightly;
-        // a long hang would block the response.
+        // Bounded — one slow gage query must not tentpole the whole parallel
+        // snapshot. A dropped reading degrades the render (and is reported as
+        // such); a long hang would block the response.
         let result: HTTPResult
         do {
-            result = try await HTTP.get(url)
+            result = try await HTTP.get(url, timeout: Self.usgsTimeoutSeconds)
         } catch {
             throw WaterLevelError.requestFailed
         }
@@ -181,17 +181,18 @@ final class WaterLevelService: Sendable {
     /// rather show nothing than a river 50+ miles away (the reservoir bug).
     static let maxUsefulMiles = 40.0
 
-    /// First, small search box (half-width). Most lakes with a gage have one this
-    /// close, so one cheap query usually settles it.
-    private static let nearMiles = 17.0
+    /// USGS waterservices is slow in a way that doesn't depend on the query: a
+    /// request that finds ZERO gages still takes ~4–5s, and a 40-mile box ~5–8s
+    /// (measured 2026-09-14). So one query per input, with room to finish.
+    static let usgsTimeoutSeconds: TimeInterval = 11
 
-    /// - Parameter maxMiles: the farthest gage this input will actually USE. The
-    ///   search never looks past it. It used to widen to 1.0° and then 2.5° boxes
-    ///   (~340×280 mi) for every input, even temp and turbidity, whose readings
-    ///   the builder then discards beyond 15 and 10 miles. On the many lakes with
-    ///   no such gage nearby, those always-wasted giant queries dominated render
-    ///   latency and routinely blew the 9s budget, dropping level and discharge
-    ///   with them.
+    /// - Parameter maxMiles: the farthest gage this input will actually USE — the
+    ///   search box is exactly that big, in ONE query. It used to try progressively
+    ///   larger boxes (0.25°, 1.0°, then 2.5° ≈ 340×280 mi) for every input, even
+    ///   temp and turbidity whose readings the builder discards beyond 15 and
+    ///   10 miles. Because every USGS call carries a fixed multi-second cost, those
+    ///   sequential queries added up and routinely blew the budget, dropping
+    ///   level and discharge from the render.
     func latestReading(near coordinate: CLLocationCoordinate2D,
                        maxMiles: Double = maxUsefulMiles,
                        parameterCd: String? = nil,
@@ -208,33 +209,20 @@ final class WaterLevelService: Sendable {
             return pool
         }
 
-        // Small box, then one box sized to `maxMiles` — only when it's wider.
-        let first = Swift.min(Self.nearMiles, maxMiles)
-        let boxes = first < maxMiles ? [first, maxMiles] : [first]
-        for (index, halfWidth) in boxes.enumerated() {
-            let isLast = index == boxes.count - 1
-            let readings = try await nearbyReadings(near: coordinate, halfWidthMiles: halfWidth,
-                                                    parameterCd: parameterCd,
-                                                    absThreshold: absThreshold, pctThreshold: pctThreshold)
-            guard let nearest = readings.min(by: {
-                origin.distance(from: CLLocation(latitude: $0.latitude, longitude: $0.longitude))
-                    < origin.distance(from: CLLocation(latitude: $1.latitude, longitude: $1.longitude))
-            }) else { continue }
-
-            var result = nearest
-            let gage = CLLocation(latitude: nearest.latitude, longitude: nearest.longitude)
-            let miles = origin.distance(from: gage) / 1609.34
-            result.distanceMiles = miles
-            // Beyond what this input uses, it isn't your water — don't present it.
-            if miles > maxMiles {
-                if isLast { return nil } else { continue }
+        // One box exactly `maxMiles` each way; the nearest gage inside the radius wins.
+        let readings = try await nearbyReadings(near: coordinate, halfWidthMiles: maxMiles,
+                                                parameterCd: parameterCd,
+                                                absThreshold: absThreshold, pctThreshold: pctThreshold)
+        let ranked = readings
+            .map { r -> (WaterLevelReading, Double) in
+                (r, origin.distance(from: CLLocation(latitude: r.latitude, longitude: r.longitude)) / 1609.34)
             }
-            // A square box only guarantees "nearest" within its half-width: a gage
-            // in a corner can be beaten by one just outside the box. Widen once.
-            if miles > halfWidth, !isLast { continue }
-            return result
-        }
-        return nil
+            // The box's corners reach past maxMiles; beyond it isn't your water.
+            .filter { $0.1 <= maxMiles }
+        guard let nearest = ranked.min(by: { $0.1 < $1.1 }) else { return nil }
+        var result = nearest.0
+        result.distanceMiles = nearest.1
+        return result
     }
 
     /// Nearest USGS **discharge** (streamflow) gage — cfs released/flowing, the

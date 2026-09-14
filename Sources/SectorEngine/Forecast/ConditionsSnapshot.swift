@@ -142,19 +142,22 @@ actor ConditionsSnapshotProvider {
             async let weather = withDeadlineOutcome(9, "weather") {
                 try? await WeatherService.shared.conditions(near: coordinate)
             }
-            async let water = withDeadlineOutcome(9, "water") {
+            // USGS inputs get 12s — the same budget generation already has, so the
+            // snapshot's worst case doesn't grow — because USGS waterservices takes
+            // ~4–8s per query regardless of what it finds (see WaterLevelService).
+            async let water = withDeadlineOutcome(12, "water") {
                 try? await WaterLevelService.shared.latestReading(near: coordinate)
             }
-            async let discharge = withDeadlineOutcome(9, "discharge") {
+            async let discharge = withDeadlineOutcome(12, "discharge") {
                 try? await WaterLevelService.shared.nearestDischarge(near: coordinate)
             }
-            async let temp = withDeadlineOutcome(9, "waterTemp") {
+            async let temp = withDeadlineOutcome(12, "waterTemp") {
                 try? await WaterLevelService.shared.nearestWaterTemp(near: coordinate)
             }
             async let tempModel = withDeadlineOutcome(9, "waterTempModel") {
                 await WaterTemperatureService.model(near: coordinate)
             }
-            async let turbidity = withDeadlineOutcome(9, "turbidity") {
+            async let turbidity = withDeadlineOutcome(12, "turbidity") {
                 try? await WaterLevelService.shared.nearestTurbidity(near: coordinate)
             }
             async let generation = withDeadlineOutcome(12, "generation") {
