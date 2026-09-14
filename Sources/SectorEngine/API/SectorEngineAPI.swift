@@ -76,6 +76,13 @@ public struct ConditionsResponse: Codable, Equatable, Sendable {
     /// away from any known lake. Optional so pre-update clients still decode.
     public let resolvedLake: ResolvedLakeDTO?
 
+    /// Inputs that are missing or unreliable in THIS render: an upstream that
+    /// timed out ("generation", "turbidity"…), "alerts" when NWS couldn't be
+    /// reached (so "no alerts" isn't a promise), "forecast" when the 7-night
+    /// didn't finish. Empty means complete. Additive — older clients ignore it —
+    /// and a degraded render is only cached briefly on the server.
+    public let degradedInputs: [String]
+
     public let generatedAt: Date
 }
 
@@ -312,25 +319,41 @@ public struct BatchScore: Codable, Equatable, Sendable {
 
 public enum SectorEngineAPI: Sendable {
 
+    /// Budget for the 7-night forecast. It awaits the same snapshot the gauge does
+    /// (generation alone may take 12s) PLUS its own Open-Meteo fetch and a full
+    /// re-score, so the old 13s left ~1s of headroom: a slow generation fetch
+    /// silently dropped Tonight and the whole outlook from an otherwise good
+    /// render. 18s still returns well inside the clients' 45s and Cloud Run's 60s.
+    static let forecastBudgetSeconds: Double = 18
+
     /// Score a coordinate for `date`: the gauge score + full breakdown + 7-night
     /// outlook + tonight's window + the live readings for the tiles. Returns nil
-    /// when there's no live data to score (no weather + no gage).
-    public static func conditions(lat: Double, lon: Double, date: Date = Date()) async -> ConditionsResponse? {
+    /// when the point can't be scored honestly — no weather (see
+    /// `ConditionsSnapshot.canScore`). The server answers that with a 503.
+    /// - Parameter fresh: pull-to-refresh — refetch the snapshot and forecast
+    ///   instead of reusing cached ones.
+    public static func conditions(lat: Double, lon: Double, date: Date = Date(),
+                                  fresh: Bool = false) async -> ConditionsResponse? {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
 
-        // Fire the gauge snapshot and the 7-night forecast concurrently — they're
-        // independent, and the forecast's own snapshot fetch coalesces onto this
-        // one inside the provider, so nothing is fetched twice.
-        async let snapTask = ConditionsSnapshotProvider.shared.snapshot(for: coord)
-        // Bounded like the snapshot: the 7-night fetch makes its own Open-Meteo
-        // call (fetchForecastResponse), so it needs the same deadline or a stuck
-        // weather host would hang the whole response through this path.
-        async let forecastTask = withDeadline(13, "forecast") {
-            await ConditionsForecastService.forecast(for: coord, now: date)
+        // Start the 7-night forecast alongside the snapshot — its own snapshot
+        // read coalesces onto this one inside the provider, so nothing is fetched
+        // twice. It's an unstructured Task (not `async let`) so the no-weather
+        // path below can return a 503 immediately instead of waiting out the
+        // forecast's budget; the forecast still finishes and warms its cache.
+        let forecastTask = Task {
+            await withDeadline(forecastBudgetSeconds, "forecast") {
+                await ConditionsForecastService.forecast(for: coord, now: date, force: fresh)
+            }
         }
 
-        let snap = await snapTask
-        guard snap.hasAnyLiveInput else { return nil }
+        let snap = await ConditionsSnapshotProvider.shared.snapshot(for: coord, force: fresh)
+        guard snap.canScore else {
+            Log.warning("render unavailable: no weather",
+                        ["lat": .double(lat), "lon": .double(lon),
+                         "degraded": .strings(snap.degradedInputs)])
+            return nil
+        }
 
         let input = ConditionsInputBuilder.build(
             coordinate: coord, date: date,
@@ -345,7 +368,13 @@ public enum SectorEngineAPI: Sendable {
         let config = await RemoteConfigStore.shared.current()
         let result = ConditionsAggregator.evaluate(input, config: config)
 
-        let forecast = await forecastTask
+        let forecast = await forecastTask.value
+        var degraded = snap.degradedInputs
+        if forecast == nil { degraded.append("forecast") }
+        if !degraded.isEmpty {
+            Log.notice("render degraded",
+                       ["lat": .double(lat), "lon": .double(lon), "degraded": .strings(degraded.sorted())])
+        }
 
         return ConditionsResponse(
             score: result.score,
@@ -395,6 +424,7 @@ public enum SectorEngineAPI: Sendable {
             resolvedLake: LakeDirectory.nearest(to: coord, withinMiles: 25).map {
                 ResolvedLakeDTO(id: $0.id, name: $0.name, state: $0.state)
             },
+            degradedInputs: degraded.sorted(),
             generatedAt: Date())
     }
 
@@ -404,7 +434,7 @@ public enum SectorEngineAPI: Sendable {
     public static func score(lat: Double, lon: Double, date: Date = Date()) async -> (score: Int, band: String)? {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         let snap = await ConditionsSnapshotProvider.shared.snapshot(for: coord)
-        guard snap.hasAnyLiveInput else { return nil }
+        guard snap.canScore else { return nil }
         let input = ConditionsInputBuilder.build(
             coordinate: coord, date: date,
             weather: snap.weather, water: snap.water, discharge: snap.discharge,
@@ -417,10 +447,17 @@ public enum SectorEngineAPI: Sendable {
         return (result.score, result.band.rawValue)
     }
 
+    /// Most points one batch request scores. With `maxConcurrent` 6 and each point
+    /// bounded by `batchPointBudgetSeconds`, 12 points finish inside ~24s — a
+    /// 50-point request could otherwise hold an instance for minutes.
+    public static let batchMaxPoints = 12
+    static let batchPointBudgetSeconds: Double = 12
+
     /// Score many coordinates in one request (My Lakes list). Bounded concurrency so
     /// a long list can't fan out into a burst of upstream fetches; identical/nearby
     /// coordinates coalesce + cache in the snapshot provider. Order is not preserved
-    /// — each result carries its own lat/lon so the client can match them up.
+    /// — each result carries its own lat/lon so the client can match them up. A
+    /// point that can't be scored in its budget comes back with a nil score.
     public static func batch(points: [(lat: Double, lon: Double)],
                              date: Date = Date(), maxConcurrent: Int = 6) async -> [BatchScore] {
         var results: [BatchScore] = []
@@ -430,8 +467,10 @@ public enum SectorEngineAPI: Sendable {
                 guard next < points.count else { return }
                 let p = points[next]; next += 1
                 group.addTask {
-                    let s = await score(lat: p.lat, lon: p.lon, date: date)
-                    return BatchScore(lat: p.lat, lon: p.lon, score: s?.score, band: s?.band)
+                    let s = await withDeadline(batchPointBudgetSeconds, "batch.score") {
+                        await score(lat: p.lat, lon: p.lon, date: date).map { BatchScore(lat: p.lat, lon: p.lon, score: $0.score, band: $0.band) }
+                    }
+                    return s ?? BatchScore(lat: p.lat, lon: p.lon, score: nil, band: nil)
                 }
             }
             for _ in 0..<min(maxConcurrent, points.count) { addTask() }

@@ -140,24 +140,49 @@ actor ForecastCache {
     static let shared = ForecastCache()
 
     private var entries: [String: (forecast: ConditionsForecast, at: Date)] = [:]
-    private var inFlight: [String: Task<ConditionsForecast?, Never>] = [:]
+    private var inFlight: [String: Task<ConditionsForecastService.Computed?, Never>] = [:]
     private let maxAge: TimeInterval = 30 * 60
+    private let maxEntries = 2_000
 
+    /// ~100 m — the SAME key as the snapshot and response caches. It was ~1 km
+    /// (%.2f), so two pins 600 m apart shared one 7-night outlook computed from
+    /// the first pin's gage and dam, and a lake's Tonight could disagree with its
+    /// own gauge score in the same response.
     private func key(_ c: CLLocationCoordinate2D) -> String {
-        String(format: "%.2f,%.2f", c.latitude, c.longitude)
+        String(format: "%.3f,%.3f", c.latitude, c.longitude)
     }
 
-    func forecast(for coordinate: CLLocationCoordinate2D, now: Date) async -> ConditionsForecast? {
+    /// - Parameter force: pull-to-refresh — skip the cache read (still joins an
+    ///   in-flight computation rather than starting a duplicate).
+    func forecast(for coordinate: CLLocationCoordinate2D, now: Date, force: Bool = false) async -> ConditionsForecast? {
         let k = key(coordinate)
-        if let hit = entries[k], now.timeIntervalSince(hit.at) < maxAge { return hit.forecast }
-        if let running = inFlight[k] { return await running.value }
+        if !force, let hit = entries[k], now.timeIntervalSince(hit.at) < maxAge { return hit.forecast }
+        if let running = inFlight[k] { return await running.value?.forecast }
 
-        let task = Task { try? await ConditionsForecastService.fetchAndCompute(coordinate: coordinate, now: now) }
+        let task = Task {
+            try? await ConditionsForecastService.fetchAndCompute(coordinate: coordinate, now: now, force: force)
+        }
         inFlight[k] = task
         let result = await task.value
         inFlight[k] = nil
-        if let result { entries[k] = (result, now) }
-        return result
+        // Only a forecast built from a COMPLETE snapshot is kept for 30 minutes.
+        // One built while an input had timed out (no dam schedule, alerts unknown)
+        // is served to this request but recomputed next time, so a transient
+        // stall can't pin a lake's Tonight and 7-night outlook for half an hour.
+        if let result, result.snapshotComplete {
+            entries[k] = (result.forecast, now)
+            if entries.count > maxEntries { prune(now: now) }
+        }
+        return result?.forecast
+    }
+
+    private func prune(now: Date) {
+        entries = entries.filter { now.timeIntervalSince($0.value.at) < maxAge }
+        guard entries.count > maxEntries else { return }
+        let overflow = entries.count - maxEntries
+        for key in entries.sorted(by: { $0.value.at < $1.value.at }).prefix(overflow).map(\.key) {
+            entries.removeValue(forKey: key)
+        }
     }
 }
 
@@ -181,22 +206,36 @@ enum ConditionsForecastService {
     /// (see `ForecastCache`) so a warm server doesn't recompute the 7-night outlook
     /// for repeat or concurrent callers. Used by the API and the Lake Alerts weekly
     /// digest. Returns nil on any fetch failure.
-    static func forecast(for coordinate: CLLocationCoordinate2D, now: Date = Date()) async -> ConditionsForecast? {
-        await ForecastCache.shared.forecast(for: coordinate, now: now)
+    static func forecast(for coordinate: CLLocationCoordinate2D, now: Date = Date(),
+                         force: Bool = false) async -> ConditionsForecast? {
+        await ForecastCache.shared.forecast(for: coordinate, now: now, force: force)
     }
 
+    /// A computed forecast plus whether the snapshot behind it was complete —
+    /// ForecastCache only keeps forecasts built from complete inputs.
+    struct Computed: Sendable {
+        let forecast: ConditionsForecast
+        let snapshotComplete: Bool
+    }
+
+    /// The snapshot had no weather, so there's nothing honest to build a night on.
+    struct ForecastUnavailable: Error {}
+
     static func fetchAndCompute(coordinate: CLLocationCoordinate2D,
-                                now: Date) async throws -> ConditionsForecast {
+                                now: Date, force: Bool = false) async throws -> Computed {
         // Open-Meteo hourly/daily + the same water readings the gauge uses, all
         // concurrently, so the forecast shares the gauge's exact inputs.
         // The hourly forecast is ours alone; the five live readings come from
         // the SHARED snapshot the dashboard gauge also uses — same data, one
-        // fetch, and the two cards can no longer disagree.
+        // fetch, and the two cards can no longer disagree. `force` is passed
+        // through so a pull-to-refresh render and its forecast join the SAME
+        // fresh snapshot instead of one of them reading the old cached one.
         async let respTask = fetchForecastResponse(coordinate)
-        async let snapshotTask = ConditionsSnapshotProvider.shared.snapshot(for: coordinate)
+        async let snapshotTask = ConditionsSnapshotProvider.shared.snapshot(for: coordinate, force: force)
 
         let r = try await respTask
         let snap = await snapshotTask
+        guard snap.canScore else { throw ForecastUnavailable() }
         let base = ConditionsInputBuilder.build(
             coordinate: coordinate, date: now,
             weather: snap.weather, water: snap.water,
@@ -211,12 +250,18 @@ enum ConditionsForecastService {
             // equals the gauge. Future nights are built from the hourly forecast and
             // correctly ignore a warning that's only in effect right now.
             alertWindFloorMph: snap.alertWindFloorMph,
+            // …and the active storm WARNING that caps the gauge. It was never
+            // passed here, so under a Tornado Warning the gauge read 25 while the
+            // Tonight chart and nights[0] in the same response showed a green
+            // Prime window.
+            severeWarningLabel: snap.severeWarningLabel,
             rainWatershed72hIn: snap.mrms?.watershed72hIn)
 
         // Same Remote Config tuning the gauge uses, so the 7-night stays in lockstep.
         let config = await RemoteConfigStore.shared.current()
-        return compute(r: r, base: base, coordinate: coordinate, now: now,
-                       generation: snap.generation, waterTempModel: snap.waterTempModel, config: config)
+        let forecast = compute(r: r, base: base, coordinate: coordinate, now: now,
+                               generation: snap.generation, waterTempModel: snap.waterTempModel, config: config)
+        return Computed(forecast: forecast, snapshotComplete: snap.isComplete)
     }
 
     private static func fetchForecastResponse(_ coordinate: CLLocationCoordinate2D) async throws -> ForecastResponse {

@@ -88,16 +88,19 @@ actor WeatherAlertsService {
     static let shared = WeatherAlertsService()
     private init() {}
 
-    /// Active alerts for the point, most-severe first. Returns `[]` on any error or
-    /// for locations NWS doesn't cover (outside the US) — never throws to the caller.
-    func activeAlerts(near coordinate: CLLocationCoordinate2D) async -> [WeatherAlert] {
+    /// Active alerts for the point, most-severe first. `[]` means NWS answered and
+    /// nothing is active; **nil means we don't know** (request failed, non-200,
+    /// undecodable). The two used to be the same `[]`, so an NWS outage during
+    /// severe weather silently removed the storm-warning safety cap from the
+    /// score. Callers must treat nil as a degraded input, never as "all clear".
+    func activeAlerts(near coordinate: CLLocationCoordinate2D) async -> [WeatherAlert]? {
         var components = URLComponents(string: "https://api.weather.gov/alerts/active")
         components?.queryItems = [
             URLQueryItem(name: "point", value: String(format: "%.4f,%.4f",
                                                       coordinate.latitude, coordinate.longitude)),
             URLQueryItem(name: "status", value: "actual"),
         ]
-        guard let url = components?.url else { return [] }
+        guard let url = components?.url else { return nil }
 
         do {
             // NWS requires a self-identifying User-Agent or it returns 403.
@@ -105,7 +108,7 @@ actor WeatherAlertsService {
                 "User-Agent": "Sector/1.0 (io.sector.co)",
                 "Accept": "application/geo+json",
             ])
-            guard result.status == 200 else { return [] }
+            guard result.status == 200 else { return nil }
             let decoded = try JSONDecoder().decode(NWSAlertsResponse.self, from: result.body)
             let alerts = decoded.features.compactMap { $0.properties.toAlert() }
             // NWS routinely issues OVERLAPPING records for the same event — e.g.
@@ -121,7 +124,7 @@ actor WeatherAlertsService {
             var seenEvents = Set<String>()
             return sorted.filter { seenEvents.insert($0.event).inserted }
         } catch {
-            return []
+            return nil
         }
     }
 }

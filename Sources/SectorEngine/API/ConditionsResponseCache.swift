@@ -32,17 +32,31 @@ public actor ConditionsResponseCache {
     public static let shared = ConditionsResponseCache()
     public init() {}
 
-    /// How long a rendered response stays good. Matches the snapshot TTL — the
-    /// inputs move on the order of an hour, and a "tonight" score barely shifts
-    /// in five minutes — so a hit never shows meaningfully staler data than a
-    /// cold render would, while collapsing the preload storm.
+    /// How long a COMPLETE rendered response stays good. Matches the snapshot
+    /// TTL — the inputs move on the order of an hour, and a "tonight" score
+    /// barely shifts in five minutes — so a hit never shows meaningfully staler
+    /// data than a cold render would, while collapsing the preload storm.
     public static let defaultTTL: TimeInterval = 5 * 60
+
+    /// A render with `degradedInputs` (something timed out, alerts unknown, no
+    /// forecast) is reused only this long, so one transient stall isn't served
+    /// to every user of that lake for five minutes.
+    public static let degradedTTL: TimeInterval = 45
+
+    /// "Can't score" (no weather) is remembered this long: during an Open-Meteo
+    /// outage every app launch would otherwise re-fan-out the whole render per
+    /// lake against an upstream that's already down.
+    public static let unavailableTTL: TimeInterval = 30
 
     /// Safety cap so a pathological spread of coordinates can't grow the cache
     /// without bound. Far above the count of real lakes anyone lists.
     private static let maxEntries = 500
 
-    private struct Entry { let response: ConditionsResponse; let at: Date }
+    private struct Entry {
+        let response: ConditionsResponse?
+        let at: Date
+        let ttl: TimeInterval
+    }
     private var cache: [String: Entry] = [:]
     /// In-flight renders by key — the single-flight that makes a burst of
     /// identical requests share one fan-out instead of racing.
@@ -66,8 +80,8 @@ public actor ConditionsResponseCache {
     ) async -> ConditionsResponse? {
         let k = key(lat, lon)
 
-        // Fast path: a fresh render already sitting in the cache.
-        if !fresh, let hit = cache[k], Date().timeIntervalSince(hit.at) < ttl {
+        // Fast path: a render (or a recent "can't score") still inside its TTL.
+        if !fresh, let hit = cache[k], Date().timeIntervalSince(hit.at) < min(hit.ttl, ttl) {
             return hit.response
         }
         // A render for this exact key is already running — ride it instead of
@@ -82,10 +96,14 @@ public actor ConditionsResponseCache {
         let result = await task.value
         inFlight[k] = nil
 
+        let entryTTL: TimeInterval
         if let result {
-            cache[k] = Entry(response: result, at: Date())
-            pruneIfNeeded()
+            entryTTL = result.degradedInputs.isEmpty ? ttl : Self.degradedTTL
+        } else {
+            entryTTL = Self.unavailableTTL
         }
+        cache[k] = Entry(response: result, at: Date(), ttl: entryTTL)
+        pruneIfNeeded()
         return result
     }
 
@@ -94,7 +112,7 @@ public actor ConditionsResponseCache {
     private func pruneIfNeeded() {
         guard cache.count > Self.maxEntries else { return }
         let now = Date()
-        cache = cache.filter { now.timeIntervalSince($0.value.at) < Self.defaultTTL }
+        cache = cache.filter { now.timeIntervalSince($0.value.at) < $0.value.ttl }
         if cache.count > Self.maxEntries {
             let overflow = cache.count - Self.maxEntries
             for k in cache.sorted(by: { $0.value.at < $1.value.at }).prefix(overflow).map(\.key) {

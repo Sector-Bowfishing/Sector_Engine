@@ -38,37 +38,56 @@
 
 import Foundation
 
+/// What a deadline-bounded fetch produced, and whether its budget ran out.
+/// `timedOut` separates "this upstream stalled" (transient — a degraded render
+/// that mustn't be cached long) from "there's nothing here" (e.g. no gage
+/// nearby — a legitimate nil that's fine to cache).
+struct DeadlineOutcome<T: Sendable>: Sendable {
+    let value: T?
+    let timedOut: Bool
+}
+
 func withDeadline<T: Sendable>(
     _ seconds: Double,
     _ name: String,
     slowThreshold: Double = 3,
     _ operation: @escaping @Sendable () async -> T?
 ) async -> T? {
+    await withDeadlineOutcome(seconds, name, slowThreshold: slowThreshold, operation).value
+}
+
+func withDeadlineOutcome<T: Sendable>(
+    _ seconds: Double,
+    _ name: String,
+    slowThreshold: Double = 3,
+    _ operation: @escaping @Sendable () async -> T?
+) async -> DeadlineOutcome<T> {
     let start = Date()
     let gate = DeadlineGate<T>()
 
     let work = Task {
         let v = await operation()
-        await gate.offer(v)
+        await gate.offer(DeadlineOutcome(value: v, timedOut: false))
     }
     let timer = Task {
         try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-        await gate.offer(nil)
+        await gate.offer(DeadlineOutcome(value: nil, timedOut: true))
     }
 
-    let value = await gate.result()
+    let outcome = await gate.result()
     // Cancel the loser. HTTP.get tears its request down on cancellation, and
-    // is capped at 8s regardless — we do not wait for it either way.
+    // carries its own budget regardless — we do not wait for it either way.
     work.cancel()
     timer.cancel()
 
     let elapsed = Date().timeIntervalSince(start)
-    if value == nil && elapsed >= seconds - 0.25 {
-        print("[engine] fetch '\(name)' exceeded \(String(format: "%.0f", seconds))s budget — dropped to dormant")
+    if outcome.timedOut {
+        Log.warning("fetch exceeded budget; dropped to dormant",
+                    ["fetch": .string(name), "budgetSec": .double(seconds)])
     } else if elapsed >= slowThreshold {
-        print("[engine] fetch '\(name)' slow: \(String(format: "%.1f", elapsed))s")
+        Log.notice("fetch slow", ["fetch": .string(name), "elapsedSec": .double(elapsed)])
     }
-    return value
+    return outcome
 }
 
 /// One-shot rendezvous between the work task and the timer task: the first
@@ -77,21 +96,21 @@ func withDeadline<T: Sendable>(
 /// once even when both tasks fire at nearly the same instant.
 private actor DeadlineGate<T: Sendable> {
     private var delivered = false
-    private var stored: T?
-    private var waiter: CheckedContinuation<T?, Never>?
+    private var stored = DeadlineOutcome<T>(value: nil, timedOut: true)
+    private var waiter: CheckedContinuation<DeadlineOutcome<T>, Never>?
 
-    func offer(_ value: T?) {
+    func offer(_ outcome: DeadlineOutcome<T>) {
         guard !delivered else { return }
         delivered = true
         if let waiter {
             self.waiter = nil
-            waiter.resume(returning: value)
+            waiter.resume(returning: outcome)
         } else {
-            stored = value
+            stored = outcome
         }
     }
 
-    func result() async -> T? {
+    func result() async -> DeadlineOutcome<T> {
         if delivered { return stored }
         return await withCheckedContinuation { waiter = $0 }
     }
