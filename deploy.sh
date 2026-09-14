@@ -22,13 +22,16 @@ SERVICE="${SERVICE:-sector-engine}"
 
 echo "▶ Deploying '$SERVICE' to Cloud Run  (project=$PROJECT_ID  region=$REGION)"
 
-# Scaling config — do NOT lower these without understanding the 2026-09-14 outage.
-# The conditions fan-out (My Lakes preload hits /conditions per lake every launch)
-# launches ~9 blocking Linux URLSession fetches per request. Swift's cooperative
-# thread pool is sized to CPU count, so under a burst the pool starves, the
-# withDeadline timers can't fire, and every request rides to the 60s timeout (504,
-# even /health). cpu=4 (more pool threads), concurrency=8 (fewer simultaneous
-# blockers/instance), max=15 (throughput), min=1 (warm, no cold-start pileup).
+# Scaling config — do NOT raise concurrency without understanding the 2026-09-14 outage.
+# A /conditions render fans out ~9 Linux URLSession fetches. ONE render per instance
+# is reliable (~7-8s). TWO OR MORE concurrent cold renders on one instance starve
+# Swift's cooperative thread pool: the withDeadline timers can't fire, requests ride
+# to the 60s timeout (504), and the instance stays wedged — even /health — until it's
+# replaced. Verified 2026-09-14: concurrency=8 wedged, concurrency=2 hung 1 of 3,
+# concurrency=1 served 3 concurrent cold renders at ~7.5s with /health instant.
+# So: concurrency=1 (one render per instance), scale out horizontally (max=30),
+# min=1 warm. Raise concurrency only after the fan-out stops blocking the pool
+# (AsyncHTTPClient, or an in-app render semaphore).
 gcloud run deploy "$SERVICE" \
   --source . \
   --project "$PROJECT_ID" \
@@ -37,10 +40,10 @@ gcloud run deploy "$SERVICE" \
   --allow-unauthenticated \
   --memory 2Gi \
   --cpu 4 \
-  --concurrency 8 \
+  --concurrency 1 \
   --timeout 60 \
   --min-instances 1 \
-  --max-instances 15
+  --max-instances 30
 
 echo
 echo "✅ Deployed. Service URL:"
