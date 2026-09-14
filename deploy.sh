@@ -22,18 +22,25 @@ SERVICE="${SERVICE:-sector-engine}"
 
 echo "▶ Deploying '$SERVICE' to Cloud Run  (project=$PROJECT_ID  region=$REGION)"
 
+# Scaling config — do NOT lower these without understanding the 2026-09-14 outage.
+# The conditions fan-out (My Lakes preload hits /conditions per lake every launch)
+# launches ~9 blocking Linux URLSession fetches per request. Swift's cooperative
+# thread pool is sized to CPU count, so under a burst the pool starves, the
+# withDeadline timers can't fire, and every request rides to the 60s timeout (504,
+# even /health). cpu=4 (more pool threads), concurrency=8 (fewer simultaneous
+# blockers/instance), max=15 (throughput), min=1 (warm, no cold-start pileup).
 gcloud run deploy "$SERVICE" \
   --source . \
   --project "$PROJECT_ID" \
   --region "$REGION" \
   --platform managed \
   --allow-unauthenticated \
-  --memory 1Gi \
-  --cpu 2 \
-  --concurrency 40 \
+  --memory 2Gi \
+  --cpu 4 \
+  --concurrency 8 \
   --timeout 60 \
-  --min-instances 0 \
-  --max-instances 4
+  --min-instances 1 \
+  --max-instances 15
 
 echo
 echo "✅ Deployed. Service URL:"

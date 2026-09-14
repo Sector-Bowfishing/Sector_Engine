@@ -24,13 +24,21 @@ func jsonResponse<T: Encodable>(_ value: T) -> Response {
     return Response(status: .ok, headers: [.contentType: "application/json"], body: .init(byteBuffer: buffer))
 }
 
-// Full render payload for one coordinate.
+// Full render payload for one coordinate. Fronted by a short-TTL, single-flight
+// response cache (see ConditionsResponseCache): the My Lakes preload hits this
+// once per saved lake every launch, so without it a broad burst starves the
+// engine's cooperative thread pool (2026-09-14 outage). `?fresh=1` bypasses the
+// cache read for pull-to-refresh.
 router.get("conditions") { request, _ -> Response in
     guard let lat = request.uri.queryParameters.get("lat").flatMap({ Double(String($0)) }),
           let lon = request.uri.queryParameters.get("lon").flatMap({ Double(String($0)) }) else {
         return Response(status: .badRequest)
     }
-    guard let payload = await SectorEngineAPI.conditions(lat: lat, lon: lon) else {
+    let fresh = request.uri.queryParameters.get("fresh").map { $0 == "1" || $0 == "true" } ?? false
+    guard let payload = await ConditionsResponseCache.shared.conditions(
+        lat: lat, lon: lon, fresh: fresh,
+        compute: { await SectorEngineAPI.conditions(lat: lat, lon: lon) }
+    ) else {
         return Response(status: .serviceUnavailable)   // no live data to score
     }
     return jsonResponse(payload)
