@@ -54,8 +54,12 @@ actor SingleFlightCache<Key: Hashable & Sendable, Value: Sendable> {
 
     /// The cached value for `key` if still fresh; otherwise joins an in-flight
     /// computation for the same key, or starts one.
-    func value(for key: Key, compute: @escaping @Sendable () async -> Value?) async -> Value? {
-        if let entry = entries[key] {
+    /// - Parameter force: skip the cache read (pull-to-refresh). Still joins an
+    ///   in-flight computation rather than starting a duplicate, and still stores
+    ///   the result for the next caller.
+    func value(for key: Key, force: Bool = false,
+               compute: @escaping @Sendable () async -> Value?) async -> Value? {
+        if !force, let entry = entries[key] {
             let age = Date().timeIntervalSince(entry.at)
             if entry.value != nil, age < ttl { return entry.value }
             if entry.value == nil, age < failureTTL { return nil }

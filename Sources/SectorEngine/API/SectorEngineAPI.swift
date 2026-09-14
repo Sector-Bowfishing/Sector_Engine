@@ -319,12 +319,13 @@ public struct BatchScore: Codable, Equatable, Sendable {
 
 public enum SectorEngineAPI: Sendable {
 
-    /// Budget for the 7-night forecast. It awaits the same snapshot the gauge does
-    /// (generation alone may take 12s) PLUS its own Open-Meteo fetch and a full
-    /// re-score, so the old 13s left ~1s of headroom: a slow generation fetch
-    /// silently dropped Tonight and the whole outlook from an otherwise good
-    /// render. 18s still returns well inside the clients' 45s and Cloud Run's 60s.
-    static let forecastBudgetSeconds: Double = 18
+    /// Budget for the Open-Meteo 7-night download. It only covers the network
+    /// fetch now (the forecast is computed afterwards from the render's own
+    /// inputs), so it needs room for one hedged Open-Meteo request: 1.5s hedge +
+    /// an 8s attempt. The old 13s forecast budget ALSO had to wait on the snapshot
+    /// (generation alone may take 12s), which silently dropped Tonight from good
+    /// renders.
+    static let forecastBudgetSeconds: Double = 11
 
     /// Score a coordinate for `date`: the gauge score + full breakdown + 7-night
     /// outlook + tonight's window + the live readings for the tiles. Returns nil
@@ -336,14 +337,13 @@ public enum SectorEngineAPI: Sendable {
                                   fresh: Bool = false) async -> ConditionsResponse? {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
 
-        // Start the 7-night forecast alongside the snapshot — its own snapshot
-        // read coalesces onto this one inside the provider, so nothing is fetched
-        // twice. It's an unstructured Task (not `async let`) so the no-weather
-        // path below can return a 503 immediately instead of waiting out the
-        // forecast's budget; the forecast still finishes and warms its cache.
-        let forecastTask = Task {
+        // Download the 7-night Open-Meteo data alongside the snapshot. It's an
+        // unstructured Task (not `async let`) so the no-weather path below can
+        // return a 503 immediately instead of waiting on it; the download still
+        // finishes and warms its cache for the next render.
+        let forecastResponseTask = Task {
             await withDeadline(forecastBudgetSeconds, "forecast") {
-                await ConditionsForecastService.forecast(for: coord, now: date, force: fresh)
+                await ForecastResponseCache.response(for: coord, force: fresh)
             }
         }
 
@@ -368,7 +368,16 @@ public enum SectorEngineAPI: Sendable {
         let config = await RemoteConfigStore.shared.current()
         let result = ConditionsAggregator.evaluate(input, config: config)
 
-        let forecast = await forecastTask.value
+        // Tonight and the 7 nights are computed from THIS render's own base
+        // input, config and clock — the exact input the gauge was just scored on
+        // — so nights[0] and the Tonight curve can't disagree with the gauge.
+        // (They used to come from a forecast computed up to 30 minutes earlier on
+        // a different snapshot.)
+        let forecast: ConditionsForecast? = await forecastResponseTask.value.map { response in
+            ConditionsForecastService.compute(r: response, base: input, coordinate: coord, now: date,
+                                              generation: snap.generation,
+                                              waterTempModel: snap.waterTempModel, config: config)
+        }
         var degraded = snap.degradedInputs
         if forecast == nil { degraded.append("forecast") }
         if !degraded.isEmpty {
