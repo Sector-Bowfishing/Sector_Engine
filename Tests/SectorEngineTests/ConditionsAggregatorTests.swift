@@ -229,9 +229,14 @@ final class ConditionsAggregatorTests: XCTestCase {
     /// `rain` maps a day offset relative to `now` (matching the -1...6 fixture
     /// range) to that day's precipitation_sum in inches.
     private static func makeForecast(around now: Date, rain: [Int: Double] = [:]) -> ForecastResponse {
-        let cal = Calendar.current
-        let hf = DateFormatter(); hf.locale = Locale(identifier: "en_US_POSIX"); hf.dateFormat = "yyyy-MM-dd'T'HH:mm"; hf.timeZone = .current
-        let df = DateFormatter(); df.locale = Locale(identifier: "en_US_POSIX"); df.dateFormat = "yyyy-MM-dd"; df.timeZone = .current
+        // Written in the LAKE's zone (the fixtures sit at 34°N, 86°W — Central),
+        // exactly as Open-Meteo answers timezone=auto. It used TimeZone.current,
+        // which described an Alabama lake on the test machine's clock: on a
+        // non-US host the "night" landed in Alabama daylight.
+        let lakeTZ = TimeZone(identifier: "America/Chicago")!
+        var cal = Calendar(identifier: .gregorian); cal.timeZone = lakeTZ
+        let hf = DateFormatter(); hf.locale = Locale(identifier: "en_US_POSIX"); hf.dateFormat = "yyyy-MM-dd'T'HH:mm"; hf.timeZone = lakeTZ
+        let df = DateFormatter(); df.locale = Locale(identifier: "en_US_POSIX"); df.dateFormat = "yyyy-MM-dd"; df.timeZone = lakeTZ
 
         var times: [String] = [], winds: [Double?] = [], clouds: [Double?] = [], precs: [Double?] = [], codes: [Int?] = []
         for h in -6...30 {
@@ -254,7 +259,8 @@ final class ConditionsAggregatorTests: XCTestCase {
                                            weather_code: Array(repeating: 0, count: n),
                                            precipitation_sum: dayRain,
                                            cloud_cover_mean: Array(repeating: 0, count: n))
-        return ForecastResponse(hourly: hourly, daily: daily)
+        return ForecastResponse(hourly: hourly, daily: daily,
+                                utc_offset_seconds: lakeTZ.secondsFromGMT(for: now))
     }
 
     // Regression: forecast rain must muddy that night's clarity. buildNights used

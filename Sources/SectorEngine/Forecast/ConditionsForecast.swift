@@ -291,12 +291,17 @@ enum ConditionsForecastService {
                         generation: DamGeneration? = nil,
                         waterTempModel: WaterTempModel? = nil,
                         config: ConditionsConfig = .default) -> ConditionsForecast {
-        let cal = Calendar.current
+        // All local-clock reasoning ("6 PM tonight", "today") happens in the LAKE's
+        // zone, and every hourly sample is a real instant — see OpenMeteoTime.
+        // This used Calendar.current + a TimeZone.current parse: UTC on Cloud Run,
+        // which put the Tonight window at 1 PM–1 AM CDT.
+        let offset = r.utc_offset_seconds ?? 0
+        let cal = OpenMeteoTime.calendar(utcOffsetSeconds: offset)
 
         // Index hourly samples; sanitize each weather code against its own precip+cloud.
         var hourly: [HourSample] = []
         for (i, t) in r.hourly.time.enumerated() {
-            guard let d = WeatherService.parseLocalTime(t) else { continue }
+            guard let d = OpenMeteoTime.instant(t, utcOffsetSeconds: offset) else { continue }
             let wind = (r.hourly.wind_speed_10m[safe: i] ?? nil) ?? 0
             let cloud = (r.hourly.cloud_cover[safe: i] ?? nil) ?? 0
             let precip = (r.hourly.precipitation[safe: i] ?? nil) ?? 0
@@ -336,11 +341,17 @@ enum ConditionsForecastService {
         // start of the display range and the sunrise near its end (tomorrow
         // morning). Using base.sunrise would give THIS morning's sunrise, which
         // sits before every night hour and would zero out the darkness ramp.
+        //
+        // Astronomy picks the day by its UTC date, so it's asked about LOCAL NOON
+        // of each day: noon falls on the same UTC date as the local date for every
+        // US zone, whereas 6 PM Pacific is already tomorrow in UTC and would
+        // return tomorrow's sunset.
         let lat = coordinate.latitude, lon = coordinate.longitude
-        let sunEventsStart = Astronomy.sunEvents(on: displayStart, lat: lat, lon: lon)
+        let sunEventsStart = Astronomy.sunEvents(on: Self.localNoon(of: displayStart, cal: cal), lat: lat, lon: lon)
         let sunset = sunEventsStart.sunset ?? base.sunset
         let fullDark = sunEventsStart.astronomicalDusk    // true dark; ramp anchor
-        let sunrise = Astronomy.sunEvents(on: displayEnd, lat: lat, lon: lon).sunrise ?? base.sunrise
+        let sunrise = Astronomy.sunEvents(on: Self.localNoon(of: displayEnd, cal: cal), lat: lat, lon: lon).sunrise
+            ?? base.sunrise
 
         // The night's real score sets the ceiling/magnitude for the whole curve.
         let nightScore = Double(ConditionsAggregator.evaluate(base, config: config).score)
@@ -375,9 +386,13 @@ enum ConditionsForecastService {
                              displayStart: displayStart, displayEnd: displayEnd)
     }
 
-    private static let hm: DateFormatter = {
-        let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX"); f.dateFormat = "h:mm a"; return f
-    }()
+    /// Noon on the local day containing `date` — a date whose UTC day matches the
+    /// lake's local day, which is what `Astronomy` keys its day on.
+    static func localNoon(of date: Date, cal: Calendar) -> Date {
+        var comps = cal.dateComponents([.year, .month, .day], from: date)
+        comps.hour = 12
+        return cal.date(from: comps) ?? date
+    }
 
     private static func headlineFor(bestRemaining: HourScore?, nightPeak: HourScore?,
                                     nowHour: Date, cal: Calendar) -> String {
@@ -386,7 +401,13 @@ enum ConditionsForecastService {
         // of how high the night tops out. A modest night still has a best time; it
         // is NOT "winding down" before the good hours have even started.
         if !cal.isDate(best.date, equalTo: nowHour, toGranularity: .hour) {
-            return "Peak \(hm.string(from: best.date))"
+            // Formatted in the LAKE's zone. A shared formatter defaulted to the
+            // server's zone (UTC), so a 9 PM peak read "Peak 2:00 AM".
+            let f = DateFormatter()
+            f.locale = Locale(identifier: "en_US_POSIX")
+            f.dateFormat = "h:mm a"
+            f.timeZone = cal.timeZone
+            return "Peak \(f.string(from: best.date))"
         }
         // The current hour is the best that's left. Only call it "winding down" once
         // the night's real peak is already behind us and what remains is lower.
@@ -493,9 +514,12 @@ enum ConditionsForecastService {
         let endIdx = Swift.min(startIdx + 7, r.daily.time.count)
         guard startIdx < endIdx else { return [] }
 
+        let offset = r.utc_offset_seconds ?? 0
         for i in startIdx..<endIdx {
-            guard let evening = WeatherService.parseLocalTime(r.daily.time[i] + "T21:00")
-                    ?? isoDay(r.daily.time[i]) else { continue }
+            // 9 PM at the lake, as a real instant — same frame as the hourly samples.
+            guard let evening = OpenMeteoTime.instant(r.daily.time[i] + "T21:00", utcOffsetSeconds: offset),
+                  let dayNoon = OpenMeteoTime.instant(r.daily.time[i] + "T12:00", utcOffsetSeconds: offset)
+            else { continue }
 
             // Daily % chance of rain (nil when the host omits it or has no POP).
             let pop = r.daily.precipitation_probability_max?[safe: i] ?? nil
@@ -514,7 +538,7 @@ enum ConditionsForecastService {
                     ScoreFactor(key: $0.key.rawValue, detail: $0.label, sub: $0.score, weight: $0.weightPct)
                 }
                 let ribbon = buildRibbon(evening: evening, ni: base, hourly: hourly,
-                                         coordinate: coordinate, utcOffset: r.utc_offset_seconds ?? 0, config: config)
+                                         coordinate: coordinate, config: config)
                 nights.append(NightScore(date: evening, score: res.score,
                                          moonIllumination: base.moonIllumPct / 100,
                                          windMax: base.windMph, weatherCode: base.weatherCode,
@@ -550,8 +574,9 @@ enum ConditionsForecastService {
             }
             let recentRain = (i == startIdx) ? Swift.max(base.rainLast48hIn, rainWindow) : rainWindow
 
-            // Astronomy for this specific evening.
-            let sun = Astronomy.sunEvents(on: evening, lat: lat, lon: lon)
+            // Astronomy for this specific evening — keyed on local noon of that day
+            // (Astronomy picks the day by UTC date; see localNoon).
+            let sun = Astronomy.sunEvents(on: dayNoon, lat: lat, lon: lon)
             let illum = Astronomy.moonIllumination(on: evening)
             let winStart = sun.astronomicalDusk ?? sun.sunset?.addingTimeInterval(80 * 60)
             // `sun.sunrise` is THIS evening's morning sunrise, which falls BEFORE
@@ -591,8 +616,10 @@ enum ConditionsForecastService {
             // sky-comfort term). Without this every night reused tonight's temp.
             // Tonight (index 0) keeps base, which may be a live gage. Nights
             // beyond the model's ~4-day reach fall back to tonight's values.
+            // Model series dates are the location's local date labels stored at UTC
+            // midnight, so match on that label, not on an instant comparison.
             if ni.forecastDayIndex > 0, let model = waterTempModel,
-               let day = model.series.first(where: { cal.isDate($0.date, inSameDayAs: evening) }) {
+               let day = model.series.first(where: { Self.utcDayLabel($0.date) == r.daily.time[i] }) {
                 ni.waterTempF = day.waterF
                 ni.airTempF = day.airF
                 ni.waterTempEstimated = true
@@ -611,7 +638,7 @@ enum ConditionsForecastService {
                 ScoreFactor(key: $0.key.rawValue, detail: $0.label, sub: $0.score, weight: $0.weightPct)
             }
             let ribbon = buildRibbon(evening: evening, ni: ni, hourly: hourly,
-                                     coordinate: coordinate, utcOffset: r.utc_offset_seconds ?? 0, config: config)
+                                     coordinate: coordinate, config: config)
             nights.append(NightScore(date: evening, score: res.score, moonIllumination: illum,
                                      windMax: wind, weatherCode: code, precip: precip,
                                      precipProbability: pop,
@@ -629,18 +656,14 @@ enum ConditionsForecastService {
     /// jumps when the moon sets — plus the exact moonset inside the window.
     /// `ni` carries the night's slow-moving inputs (clarity, temp, level, regime).
     private static func buildRibbon(evening: Date, ni: ConditionsInput, hourly: [HourSample],
-                                    coordinate: CLLocationCoordinate2D, utcOffset: Int,
+                                    coordinate: CLLocationCoordinate2D,
                                     config: ConditionsConfig) -> (points: [HourPoint], moonset: Date?) {
         let lat = coordinate.latitude, lon = coordinate.longitude
-        // Two clocks. `evening` and the HourSamples are local wall-clock parsed as
-        // naive-UTC (the server runs in UTC), so 8 PM wall-clock is `evening - 1h`
-        // in that NAIVE frame — used only to match the weather samples. Astronomy
-        // (moon altitude / moonset) and the emitted instants need the TRUE moment,
-        // which is the wall-clock shifted by the lake's UTC offset. Without this
-        // the ribbon labels 3 PM–12 AM and the moon never sets mid-window.
-        let naiveStart = evening.addingTimeInterval(-3600)                 // 8 PM wall-clock, naive
-        let toTrue = -Double(utcOffset)                                    // naive → true instant
-        let trueStart = naiveStart.addingTimeInterval(toTrue)             // 8 PM local, real moment
+        // `evening` and the HourSamples are both real instants now (OpenMeteoTime),
+        // so one clock serves weather matching, astronomy and the emitted times.
+        // (This used to juggle a "naive" wall-clock frame for the samples and a
+        // "true" frame for the moon, because the parse was in the server's zone.)
+        let trueStart = evening.addingTimeInterval(-3600)                  // 8 PM local
 
         func sample(near t: Date) -> HourSample? {
             guard let nearest = hourly.min(by: {
@@ -651,10 +674,9 @@ enum ConditionsForecastService {
 
         var points: [HourPoint] = []
         for h in 0..<10 {
-            let naiveMid = naiveStart.addingTimeInterval(Double(h) * 3600 + 1800)
             let trueHourStart = trueStart.addingTimeInterval(Double(h) * 3600)
             let trueMid = trueHourStart.addingTimeInterval(1800)
-            let s = sample(near: naiveMid)
+            let s = sample(near: trueMid)
             let wind = s?.wind ?? ni.windMph
             let cloud = s?.cloud ?? ni.cloudPct
             let precip = s?.precip ?? 0
@@ -718,12 +740,12 @@ enum ConditionsForecastService {
         Astronomy.moonIllumination(on: date)
     }
 
-    private static func isoDay(_ s: String) -> Date? {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd"
-        f.timeZone = .current
-        return f.date(from: s)
+    /// "yyyy-MM-dd" for a date stored at UTC midnight of a local date label.
+    private static func utcDayLabel(_ date: Date) -> String {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(secondsFromGMT: 0)!
+        let c = cal.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", c.year ?? 0, c.month ?? 0, c.day ?? 0)
     }
 
     /// Piecewise-linear lookup over ascending (x, factor) breakpoints; clamps ends.
@@ -767,9 +789,10 @@ private extension Int {
 struct ForecastResponse: Decodable {
     let hourly: Hourly
     let daily: Daily
-    // Lake's offset from UTC (timezone=auto). The hourly/daily strings are local
-    // wall-clock parsed as naive-UTC, so this converts a wall-clock hour to its
-    // true instant for astronomy (moon altitude / moonset in the ribbon).
+    // Lake's offset from UTC (timezone=auto). The hourly/daily strings are the
+    // lake's local wall clock; `OpenMeteoTime.instant` uses this to turn each one
+    // into a real instant, and `OpenMeteoTime.calendar` to do "6 PM tonight" math
+    // in the lake's zone.
     // NOTE: `var`, not `let` — a `let` with a default is dropped from synthesized
     // Decodable (immutable + pre-initialized), so it would never read the JSON.
     var utc_offset_seconds: Int? = nil

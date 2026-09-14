@@ -303,10 +303,11 @@ final class WeatherService: Sendable {
         catch { throw WeatherError.decodingFailed }
 
         let h = decoded.hourly
+        let offset = decoded.utc_offset_seconds ?? 0
         var winds: [Double] = [], temps: [Double] = [], codes: [Int] = []
         var samples: [WindowHourly] = []
         for i in h.time.indices {
-            guard let t = parseLocalTime(h.time[i]), t >= from, t <= to else { continue }
+            guard let t = OpenMeteoTime.instant(h.time[i], utcOffsetSeconds: offset), t >= from, t <= to else { continue }
             let w = i < h.wind_speed_10m.count ? h.wind_speed_10m[i] : nil
             let tp = i < h.temperature_2m.count ? h.temperature_2m[i] : nil
             let pr = (i < (h.pressure_msl?.count ?? 0) ? h.pressure_msl?[i] : nil)
@@ -345,14 +346,18 @@ final class WeatherService: Sendable {
         }
 
         let current = decoded.current
-        let now = parseLocalTime(current.time) ?? Date()
+        // Every time in this response is the location's local wall clock; this
+        // offset (from the same response) turns them into real instants.
+        let offset = decoded.utc_offset_seconds ?? 0
+        let now = OpenMeteoTime.instant(current.time, utcOffsetSeconds: offset) ?? Date()
 
         let (trend, change) = pressureTrend(
             currentPressure: current.pressure_msl,
             hourlyTimes: decoded.hourly.time,
             hourlyPressures: decoded.hourly.pressure_msl,
             now: now,
-            lookbackHours: lookbackHours
+            lookbackHours: lookbackHours,
+            utcOffsetSeconds: offset
         )
 
         // Windowed hourly series (past 24h → next 12h) for the pressure detail chart.
@@ -362,7 +367,8 @@ final class WeatherService: Sendable {
         let history = pressureSamples(
             hourlyTimes: decoded.hourly.time,
             hourlyPressures: decoded.hourly.pressure_msl,
-            now: now, pastHours: 48, futureHours: 48
+            now: now, pastHours: 48, futureHours: 48,
+            utcOffsetSeconds: offset
         )
 
         let hourlyConditions = conditionSamples(
@@ -377,7 +383,8 @@ final class WeatherService: Sendable {
             precip: decoded.hourly.precipitation,
             // 48/24, matching the pressure history window, so the Sky and
             // Clarity charts have the same 6/12/24H range options as the rest.
-            now: now, pastHours: 48, futureHours: 24
+            now: now, pastHours: 48, futureHours: 24,
+            utcOffsetSeconds: offset
         )
 
         // Open-Meteo's categorical `weather_code` is model-derived and sometimes
@@ -402,18 +409,15 @@ final class WeatherService: Sendable {
         // See docs/audits/2026-08-06 conditions clarity audit.
         let recentRain: Double = {
             guard let daily = decoded.daily else { return 0 }
-            let cal = Calendar.current
-            let today = cal.startOfDay(for: now)
-            let df = DateFormatter()
-            df.locale = Locale(identifier: "en_US_POSIX")
-            df.dateFormat = "yyyy-MM-dd"
-            df.timeZone = .current
+            // `daily.time` holds the LOCATION's local dates, so "today" and
+            // "yesterday" must be the location's too. Comparing against the
+            // server's UTC day counted tomorrow's forecast rain as today's every
+            // US evening, once UTC had rolled past midnight.
+            let today = OpenMeteoTime.localDay(now, utcOffsetSeconds: offset)
+            let yesterday = OpenMeteoTime.localDay(now.addingTimeInterval(-86_400), utcOffsetSeconds: offset)
             var sum = 0.0
             for (i, t) in daily.time.enumerated() where i < daily.precipitation_sum.count {
-                guard let d = df.date(from: t) else { continue }
-                let daysAgo = cal.dateComponents([.day], from: cal.startOfDay(for: d), to: today).day ?? -1
-                // 0 = today, 1 = yesterday. Skip future (< 0) and older (> 1).
-                if daysAgo >= 0, daysAgo <= 1 { sum += daily.precipitation_sum[i] ?? 0 }
+                if t == today || t == yesterday { sum += daily.precipitation_sum[i] ?? 0 }
             }
             return sum
         }()
@@ -453,7 +457,8 @@ final class WeatherService: Sendable {
                                  precip: [Double?]? = nil,
                                  now: Date,
                                  pastHours: Int,
-                                 futureHours: Int) -> [ConditionsHourly] {
+                                 futureHours: Int,
+                                 utcOffsetSeconds: Int) -> [ConditionsHourly] {
         let lower = now.addingTimeInterval(TimeInterval(-pastHours * 3600))
         let upper = now.addingTimeInterval(TimeInterval(futureHours * 3600))
         func at(_ a: [Double?]?, _ i: Int) -> Double? {
@@ -462,7 +467,8 @@ final class WeatherService: Sendable {
         }
         var samples: [ConditionsHourly] = []
         for (i, timeString) in hourlyTimes.enumerated() {
-            guard let date = parseLocalTime(timeString), date >= lower, date <= upper else { continue }
+            guard let date = OpenMeteoTime.instant(timeString, utcOffsetSeconds: utcOffsetSeconds),
+                  date >= lower, date <= upper else { continue }
             let s = ConditionsHourly(date: date,
                                      tempF: at(temps, i),
                                      humidity: at(humidity, i),
@@ -485,14 +491,15 @@ final class WeatherService: Sendable {
                                 hourlyPressures: [Double?],
                                 now: Date,
                                 pastHours: Int,
-                                futureHours: Int) -> [PressureSample] {
+                                futureHours: Int,
+                                utcOffsetSeconds: Int) -> [PressureSample] {
         let lower = now.addingTimeInterval(TimeInterval(-pastHours * 3600))
         let upper = now.addingTimeInterval(TimeInterval(futureHours * 3600))
         var samples: [PressureSample] = []
         for (index, timeString) in hourlyTimes.enumerated() {
             guard index < hourlyPressures.count,
                   let hPa = hourlyPressures[index],
-                  let date = parseLocalTime(timeString),
+                  let date = OpenMeteoTime.instant(timeString, utcOffsetSeconds: utcOffsetSeconds),
                   date >= lower, date <= upper else { continue }
             samples.append(PressureSample(date: date, hPa: hPa))
         }
@@ -505,7 +512,8 @@ final class WeatherService: Sendable {
                               hourlyTimes: [String],
                               hourlyPressures: [Double?],
                               now: Date,
-                              lookbackHours: Int = 12) -> (PressureTrend, Double) {
+                              lookbackHours: Int = 12,
+                              utcOffsetSeconds: Int) -> (PressureTrend, Double) {
         let target = now.addingTimeInterval(TimeInterval(-lookbackHours * 3600))
 
         // Find the hourly sample closest to the target time that has a value.
@@ -513,7 +521,7 @@ final class WeatherService: Sendable {
         for (index, timeString) in hourlyTimes.enumerated() {
             guard index < hourlyPressures.count,
                   let pressure = hourlyPressures[index],
-                  let date = parseLocalTime(timeString) else { continue }
+                  let date = OpenMeteoTime.instant(timeString, utcOffsetSeconds: utcOffsetSeconds) else { continue }
             let distance = abs(date.timeIntervalSince(target))
             if best == nil || distance < best!.distance {
                 best = (pressure, distance)
@@ -569,24 +577,14 @@ final class WeatherService: Sendable {
         return points[index]
     }
 
-    // Open-Meteo (with timezone=auto) returns local times like "2026-05-30T13:00".
-    private static let timeFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd'T'HH:mm"
-        f.timeZone = TimeZone.current
-        return f
-    }()
-
-    static func parseLocalTime(_ string: String) -> Date? {
-        timeFormatter.date(from: string)
-    }
 }
 
 // MARK: - Open-Meteo JSON
 
 /// Hourly response for a windowed (start_date/end_date) query.
 private struct WindowResponse: Decodable {
+    /// The location's offset from UTC; all `hourly.time` strings are local.
+    let utc_offset_seconds: Int?
     let hourly: Hourly
     struct Hourly: Decodable {
         let time: [String]
@@ -598,6 +596,8 @@ private struct WindowResponse: Decodable {
 }
 
 private struct OpenMeteoResponse: Decodable {
+    /// The location's offset from UTC; every time string below is local.
+    let utc_offset_seconds: Int?
     let current: Current
     let hourly: Hourly
     let daily: Daily?

@@ -97,25 +97,27 @@ enum WaterTemperatureService {
             series.append(WaterTempDay(date: day.date, waterF: tw, airF: day.airF))
         }
 
-        // "Now" = the modeled value for today (the last past day / first day that
-        // isn't in the future). Fall back to the last point.
-        let today = Calendar.current.startOfDay(for: Date())
-        let current = series.last(where: { Calendar.current.startOfDay(for: $0.date) <= today })
-            ?? series.last
+        // "Now" = the modeled value for the LOCATION's today (the last day that
+        // isn't in the future). Series dates are local date labels at UTC
+        // midnight, so compare against the location's today as the same kind of
+        // label. `Calendar.current` is UTC on Cloud Run, which every US evening
+        // already counted tomorrow's forecast day as "today". Fall back to the
+        // last point.
+        let todayLabel = OpenMeteoTime.localDay(Date(), utcOffsetSeconds: decoded.utc_offset_seconds)
+        let todayMidnight = parseDay(todayLabel) ?? Date()
+        let current = series.last(where: { $0.date <= todayMidnight }) ?? series.last
         guard let current else { return nil }
         return WaterTempModel(currentF: current.waterF, series: series)
     }
 
-    private static let dayFmt: DateFormatter = {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd"
-        f.timeZone = .current
-        return f
-    }()
-    private static func parseDay(_ s: String) -> Date? { dayFmt.date(from: s) }
+    /// A local date label ("yyyy-MM-dd") pinned to UTC midnight, on every host.
+    /// It was `TimeZone.current`, so the same label meant a different instant on
+    /// a laptop than on Cloud Run, and day matching drifted between them.
+    private static func parseDay(_ s: String) -> Date? { OpenMeteoTime.instant(s, utcOffsetSeconds: 0) }
 
     private struct DailyMeanResponse: Decodable {
+        /// The location's offset from UTC; `daily.time` holds its local dates.
+        let utc_offset_seconds: Int?
         let daily: Daily
         struct Daily: Decodable {
             let time: [String]
