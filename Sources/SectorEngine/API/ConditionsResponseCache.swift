@@ -10,10 +10,9 @@
 //  forecast fetch, the aggregator evaluate, and the DTO mapping — and the My
 //  Lakes preload hits /conditions once per saved lake on every app launch. A
 //  burst across many distinct lakes cold-misses the snapshot cache all at once,
-//  and each request then launches ~9 blocking Linux URLSession fetches; with only
-//  CPU-count cooperative threads the pool starves, the withDeadline timers can't
-//  fire, and every request rides to Cloud Run's 60s guillotine (→ 504, even for
-//  /health). See the 2026-09-14 outage.
+//  and each request then launches ~9 upstream fetches. (Under Foundation's
+//  URLSession that burst froze the instance — the 2026-09-14 outage; fetches now
+//  go through HTTP.swift. This cache still cuts the upstream load either way.)
 //
 //  This cache flattens that load two ways:
 //   1. Single-flight — concurrent identical requests share ONE computation

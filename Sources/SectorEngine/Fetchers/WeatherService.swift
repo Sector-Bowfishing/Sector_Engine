@@ -12,9 +12,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif
@@ -221,17 +218,12 @@ final class WeatherService {
         components?.queryItems = queryItems
         guard let url = components?.url else { return nil }
 
-        var request = URLRequest(url: url)
         // 8s, not 15: a host that hasn't answered in 8s has lost the race to its
         // sibling anyway — no reason to hold the connection open longer.
-        request.timeoutInterval = 8
-
-        guard let (data, response) = try? await Net.session.data(for: request),
-              let http = response as? HTTPURLResponse,
-              (200..<300).contains(http.statusCode) else {
+        guard let result = try? await HTTP.get(url, timeout: 8), result.isSuccess else {
             return nil
         }
-        return data
+        return result.body
     }
 
     /// Current conditions at the coordinate, with a pressure trend computed

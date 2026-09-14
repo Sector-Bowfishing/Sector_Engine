@@ -16,9 +16,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif
@@ -97,13 +94,10 @@ final class AlabamaPowerGenerationService: GenerationProvider {
     private func fetchACF(wpId: Int) async -> [String: Any]? {
         let path = "https://apcshorelines.com/wp-json/wp/v2/our-lakes/\(wpId)?_fields=acf.lakes_api_flow,acf.lakes_api_level,acf.lakes_api_units,acf.lakes_api_schedule"
         guard let url = URL(string: path) else { return nil }
-        var req = URLRequest(url: url)
-        req.timeoutInterval = 12
-        req.setValue("Mozilla/5.0", forHTTPHeaderField: "User-Agent")
-        req.setValue("application/json", forHTTPHeaderField: "Accept")
-        guard let (data, resp) = try? await Net.session.data(for: req),
-              let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+        guard let result = try? await HTTP.get(url, headers: ["User-Agent": "Mozilla/5.0",
+                                                              "Accept": "application/json"]),
+              result.isSuccess,
+              let obj = try? JSONSerialization.jsonObject(with: result.body) as? [String: Any],
               let acf = obj["acf"] as? [String: Any] else { return nil }
         return acf
     }

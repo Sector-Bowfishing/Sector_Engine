@@ -33,9 +33,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif
@@ -423,12 +420,9 @@ final class CWMSObservedService {
     /// this returns Data and callers decode leniently via `parseJSON`.
     private func get(_ urlString: String) async -> Data? {
         guard let url = URL(string: urlString) else { return nil }
-        var request = URLRequest(url: url)
-        request.setValue("application/json;version=2", forHTTPHeaderField: "Accept")
-        request.timeoutInterval = 12
-        guard let (data, response) = try? await Net.session.data(for: request),
-              let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode)
+        guard let result = try? await HTTP.get(url, headers: ["Accept": "application/json;version=2"]),
+              result.isSuccess
         else { return nil }
-        return data
+        return result.body
     }
 }

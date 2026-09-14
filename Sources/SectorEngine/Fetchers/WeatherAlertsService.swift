@@ -17,9 +17,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif
@@ -102,15 +99,14 @@ actor WeatherAlertsService {
         ]
         guard let url = components?.url else { return [] }
 
-        var request = URLRequest(url: url, timeoutInterval: 12)
-        // NWS requires a self-identifying User-Agent or it returns 403.
-        request.setValue("Sector/1.0 (io.sector.co)", forHTTPHeaderField: "User-Agent")
-        request.setValue("application/geo+json", forHTTPHeaderField: "Accept")
-
         do {
-            let (data, response) = try await Net.session.data(for: request)
-            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return [] }
-            let decoded = try JSONDecoder().decode(NWSAlertsResponse.self, from: data)
+            // NWS requires a self-identifying User-Agent or it returns 403.
+            let result = try await HTTP.get(url, headers: [
+                "User-Agent": "Sector/1.0 (io.sector.co)",
+                "Accept": "application/geo+json",
+            ])
+            guard result.status == 200 else { return [] }
+            let decoded = try JSONDecoder().decode(NWSAlertsResponse.self, from: result.body)
             let alerts = decoded.features.compactMap { $0.properties.toAlert() }
             // NWS routinely issues OVERLAPPING records for the same event — e.g.
             // a Heat Advisory ending tonight plus a follow-on for the next two

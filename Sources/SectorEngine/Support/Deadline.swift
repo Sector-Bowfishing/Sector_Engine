@@ -24,10 +24,16 @@
 //  call would block the group and defeat the whole point (this was a real bug:
 //  the deadline "fired" but the response still hung to 60s). Instead the work
 //  runs in a detached task that reports through a one-shot actor; the moment the
-//  work OR the timer wins, we return. A doomed task is left to unwind on its own
-//  — its URLSession carries a hard resource timeout (see WeatherService) so the
-//  socket is reclaimed rather than leaked. The HTTP response is ALWAYS freed at
-//  the budget, no matter how the upstream misbehaves.
+//  work OR the timer wins, we return. The loser is cancelled: an in-flight
+//  HTTP.get honours that by tearing its request down (AsyncHTTPClient), and it
+//  carries its own 8s cap regardless (see HTTP.swift), so no socket is leaked.
+//  The HTTP response is ALWAYS freed at the budget, no matter how the upstream
+//  misbehaves.
+//
+//  The timer only works if a cooperative thread is free to run it. Under
+//  Foundation's URLSession on Linux it wasn't: two or more concurrent renders
+//  tied the pool up, the timers never fired, and the instance froze (2026-09-14).
+//  That's why every fetch now goes through HTTP.swift instead.
 //
 
 import Foundation
@@ -51,8 +57,8 @@ func withDeadline<T: Sendable>(
     }
 
     let value = await gate.result()
-    // Best-effort: ask the loser to stop. If it can't (stuck TLS), it unwinds
-    // when its URLSession resource timeout fires — we do not wait for it.
+    // Cancel the loser. HTTP.get tears its request down on cancellation, and
+    // is capped at 8s regardless — we do not wait for it either way.
     work.cancel()
     timer.cancel()
 

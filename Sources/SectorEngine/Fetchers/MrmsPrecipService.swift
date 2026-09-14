@@ -17,9 +17,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif   // Linux falls back to the engine's CoreLocationShim (CLLocationCoordinate2D).
@@ -98,12 +95,9 @@ final class MrmsPrecipService {
             URLQueryItem(name: "timezone", value: "GMT"),
         ]
         guard let url = comp?.url else { return nil }
-        var req = URLRequest(url: url)
-        req.timeoutInterval = 12
-        guard let (data, resp) = try? await Net.session.data(for: req),
-              let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return nil }
+        guard let result = try? await HTTP.get(url), result.isSuccess else { return nil }
         struct Resp: Decodable { let hourly: Hourly?; struct Hourly: Decodable { let time: [Int]; let precipitation: [Double?] } }
-        guard let decoded = try? JSONDecoder().decode(Resp.self, from: data), let h = decoded.hourly else { return nil }
+        guard let decoded = try? JSONDecoder().decode(Resp.self, from: result.body), let h = decoded.hourly else { return nil }
         let startOfDay = Calendar(identifier: .gregorian).startOfDay(for: now).timeIntervalSince1970
         let nowTs = now.timeIntervalSince1970
         var sum = 0.0
@@ -132,12 +126,9 @@ final class MrmsPrecipService {
         let s = fmt.string(from: start), e = fmt.string(from: now)
         let path = "https://mesonet.agron.iastate.edu/iemre/multiday/\(s)/\(e)/\(String(format: "%.4f", lat))/\(String(format: "%.4f", lon))/json"
         guard let url = URL(string: path) else { return nil }
-        var req = URLRequest(url: url)
-        req.timeoutInterval = 12
-        req.setValue("application/json", forHTTPHeaderField: "Accept")
-        guard let (data, resp) = try? await Net.session.data(for: req),
-              let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-              let decoded = try? JSONDecoder().decode(IEMREResponse.self, from: data) else { return nil }
+        guard let result = try? await HTTP.get(url, headers: ["Accept": "application/json"]),
+              result.isSuccess,
+              let decoded = try? JSONDecoder().decode(IEMREResponse.self, from: result.body) else { return nil }
         return decoded.data.compactMap { day -> MrmsPrecip.DailyRain? in
             guard let inches = day.mrms_precip_in, let dt = fmt.date(from: day.date) else { return nil }
             return MrmsPrecip.DailyRain(date: dt, inches: Swift.max(0, inches))

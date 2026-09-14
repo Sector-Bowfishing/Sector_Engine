@@ -28,9 +28,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif
@@ -153,15 +150,11 @@ final class SWPAGenerationService: GenerationProvider {
             return cached.value
         }
         guard let url = URL(string: "https://www.energy.gov/swpa/\(day).htm") else { return nil }
-        var request = URLRequest(url: url)
-        request.timeoutInterval = 12
         // energy.gov serves the schedule inside a normal page; a browsery UA
         // avoids the bot-challenge variant.
-        request.setValue("Mozilla/5.0 (compatible; Sector/1.0)", forHTTPHeaderField: "User-Agent")
-
-        guard let (data, response) = try? await Net.session.data(for: request),
-              let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-              let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1)
+        guard let result = try? await HTTP.get(url, headers: ["User-Agent": "Mozilla/5.0 (compatible; Sector/1.0)"]),
+              result.isSuccess,
+              let html = String(data: result.body, encoding: .utf8) ?? String(data: result.body, encoding: .isoLatin1)
         else { return nil }
 
         guard let grid = Self.parseGrid(html: html) else { return nil }

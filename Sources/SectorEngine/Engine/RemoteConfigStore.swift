@@ -15,9 +15,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 
 actor RemoteConfigStore {
     static let shared = RemoteConfigStore()
@@ -78,13 +75,11 @@ actor RemoteConfigStore {
         guard let token = await accessToken(),
               let url = URL(string: "https://firebaseremoteconfig.googleapis.com/v1/projects/\(projectId)/remoteConfig")
         else { return nil }
-        var req = URLRequest(url: url, timeoutInterval: 10)
-        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         do {
-            let (data, resp) = try await Net.session.data(for: req)
-            guard let http = resp as? HTTPURLResponse, http.statusCode == 200 else { return nil }
+            let result = try await HTTP.get(url, headers: ["Authorization": "Bearer \(token)"])
+            guard result.status == 200 else { return nil }
             // template → parameters → conditions_config → defaultValue → value (a JSON string)
-            guard let root = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+            guard let root = try JSONSerialization.jsonObject(with: result.body) as? [String: Any],
                   let params = root["parameters"] as? [String: Any],
                   let param = params["conditions_config"] as? [String: Any],
                   let defaultValue = param["defaultValue"] as? [String: Any],
@@ -101,12 +96,10 @@ actor RemoteConfigStore {
     private func accessToken() async -> String? {
         guard let url = URL(string: "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token")
         else { return nil }
-        var req = URLRequest(url: url, timeoutInterval: 5)
-        req.setValue("Google", forHTTPHeaderField: "Metadata-Flavor")
         do {
-            let (data, resp) = try await Net.session.data(for: req)
-            guard let http = resp as? HTTPURLResponse, http.statusCode == 200,
-                  let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let result = try await HTTP.get(url, headers: ["Metadata-Flavor": "Google"], timeout: 5)
+            guard result.status == 200,
+                  let obj = try JSONSerialization.jsonObject(with: result.body) as? [String: Any],
                   let token = obj["access_token"] as? String else { return nil }
             return token
         } catch {

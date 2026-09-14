@@ -29,9 +29,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif
@@ -202,15 +199,11 @@ final class TVAGenerationService: GenerationProvider {
     /// never a hard dependency.
     private func get<T: Decodable>(_ urlString: String) async -> T? {
         guard let url = URL(string: urlString) else { return nil }
-        var request = URLRequest(url: url)
-        // Load-bearing: without it TVA serves an HTML explorer page, status 200.
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.timeoutInterval = 15
-
-        guard let (data, response) = try? await Net.session.data(for: request),
-              let http = response as? HTTPURLResponse,
-              (200..<300).contains(http.statusCode) else { return nil }
-        return try? JSONDecoder().decode(T.self, from: data)
+        // The Accept header is load-bearing: without it TVA serves an HTML
+        // explorer page, status 200.
+        guard let result = try? await HTTP.get(url, headers: ["Accept": "application/json"]),
+              result.isSuccess else { return nil }
+        return try? JSONDecoder().decode(T.self, from: result.body)
     }
 }
 

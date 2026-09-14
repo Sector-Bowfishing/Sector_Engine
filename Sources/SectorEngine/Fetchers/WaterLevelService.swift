@@ -8,9 +8,6 @@
 //
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 #if canImport(CoreLocation)
 import CoreLocation
 #endif
@@ -107,20 +104,20 @@ final class WaterLevelService {
 
         guard let url = components?.url else { throw WaterLevelError.invalidURL }
 
-        // Bound the USGS fetch — the default request timeout is 60s, long enough for
-        // one slow gage to tentpole the whole parallel snapshot. A dropped reading
-        // just degrades the score slightly; a 60s hang blocks the response.
-        let request = URLRequest(url: url, timeoutInterval: 12)
-        let (data, response): (Data, URLResponse)
+        // Bounded by HTTP.get's cap — one slow gage must not tentpole the whole
+        // parallel snapshot. A dropped reading just degrades the score slightly;
+        // a long hang would block the response.
+        let result: HTTPResult
         do {
-            (data, response) = try await Net.session.data(for: request)
+            result = try await HTTP.get(url)
         } catch {
             throw WaterLevelError.requestFailed
         }
 
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+        guard result.isSuccess else {
             throw WaterLevelError.requestFailed
         }
+        let data = result.body
 
         let decoded: USGSResponse
         do {
@@ -419,10 +416,9 @@ final class NoaaTideService {
         if let cachedStations { return cachedStations }
         guard let url = URL(string: stationsURL) else { return nil }
         do {
-            let (data, response) = try await Net.session.data(from: url)
-            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
-            guard (200..<300).contains(code) else { return nil }
-            let decoded = try JSONDecoder().decode(StationsResponse.self, from: data)
+            let result = try await HTTP.get(url)
+            guard result.isSuccess else { return nil }
+            let decoded = try JSONDecoder().decode(StationsResponse.self, from: result.body)
             // Skip any station missing coordinates rather than failing the whole list.
             let stations = decoded.stations.compactMap { s -> TideStation? in
                 guard let id = s.id, let lat = s.lat, let lng = s.lng else { return nil }
@@ -520,10 +516,9 @@ final class NoaaTideService {
         ]
         guard let url = comps?.url else { return nil }
         do {
-            let (data, response) = try await Net.session.data(from: url)
-            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
-            guard (200..<300).contains(code) else { return nil }
-            return try JSONDecoder().decode(PredictionsResponse.self, from: data).predictions
+            let result = try await HTTP.get(url)
+            guard result.isSuccess else { return nil }
+            return try JSONDecoder().decode(PredictionsResponse.self, from: result.body).predictions
         } catch {
             return nil
         }
@@ -602,9 +597,8 @@ extension WaterLevelService {
     func reservoirReading(for coordinate: CLLocationCoordinate2D) async -> WaterLevelReading? {
         guard let lake = Self.reservoirs.first(where: { $0.contains(coordinate) }),
               let url = URL(string: "https://api.water.noaa.gov/nwps/v1/gauges/\(lake.lid)/stageflow"),
-              let (data, resp) = try? await Net.session.data(from: url),
-              let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-              let decoded = try? JSONDecoder().decode(NWPSStageFlow.self, from: data)
+              let result = try? await HTTP.get(url), result.isSuccess,
+              let decoded = try? JSONDecoder().decode(NWPSStageFlow.self, from: result.body)
         else { return nil }
 
         // Ordered pool values (observed then forecast), dropping NWPS's -9999
