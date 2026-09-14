@@ -32,7 +32,7 @@ import Foundation
 import CoreLocation
 #endif
 
-final class SWPAGenerationService: GenerationProvider {
+final class SWPAGenerationService: GenerationProvider, Sendable {
     static let shared = SWPAGenerationService()
     private init() {}
 
@@ -41,8 +41,13 @@ final class SWPAGenerationService: GenerationProvider {
     /// Schedules are revised through the day; re-read hourly.
     private static let ttl: TimeInterval = 60 * 60
 
-    private var cached: (day: String, value: [String: [Int]], at: Date)?
-    private var cachedGeneration: [String: (value: DamGeneration, at: Date)] = [:]
+    /// Today's schedule grid, keyed by the weekday page it came from — a new day
+    /// is a new key, so yesterday's grid can't be served after rollover. One
+    /// energy.gov fetch per hour however many renders ask at once.
+    private let scheduleCache = SingleFlightCache<String, [String: [Int]]>(
+        ttl: SWPAGenerationService.ttl, failureTTL: 60, maxEntries: 7)
+    private let generationCache = SingleFlightCache<String, DamGeneration>(
+        ttl: SWPAGenerationService.ttl, failureTTL: 60, maxEntries: 100)
 
     // MARK: Roster
 
@@ -117,10 +122,13 @@ final class SWPAGenerationService: GenerationProvider {
 
     func generation(for dam: GenerationDam, distanceMiles: Double) async -> DamGeneration? {
         guard let project = Self.projects.first(where: { "SWPA-\($0.abbr)" == dam.id }) else { return nil }
-
-        if let hit = cachedGeneration[dam.id], Date().timeIntervalSince(hit.at) < Self.ttl {
-            return hit.value
+        let reading = await generationCache.value(for: dam.id) { [self] in
+            await self.fetchGeneration(for: dam, project: project)
         }
+        return reading?.withDistance(distanceMiles)
+    }
+
+    private func fetchGeneration(for dam: GenerationDam, project: Project) async -> DamGeneration? {
         guard let grid = await schedule(), let mw = grid[project.abbr] else { return nil }
 
         let windows = Self.windows(fromHourlyMW: mw, project: project)
@@ -133,12 +141,11 @@ final class SWPAGenerationService: GenerationProvider {
         let nowMW = Self.megawatts(at: now, hourly: mw, zone: project.timeZone)
         let cfs = nowMW.map { $0 / project.plantMW * project.fullPowerCfs }
 
-        let result = DamGeneration(dam: dam, distanceMiles: distanceMiles, windows: windows,
-                                   dischargeCfs: cfs, dischargeTrend12hCfs: nil,
-                                   reservoirElevationFt: nil, tailwaterElevationFt: nil,
-                                   observedAt: nil, history: [])
-        cachedGeneration[dam.id] = (result, Date())
-        return result
+        return DamGeneration(dam: dam, distanceMiles: 0,   // per-caller; see withDistance
+                             windows: windows,
+                             dischargeCfs: cfs, dischargeTrend12hCfs: nil,
+                             reservoirElevationFt: nil, tailwaterElevationFt: nil,
+                             observedAt: nil, history: [])
     }
 
     // MARK: Fetch + parse
@@ -146,9 +153,10 @@ final class SWPAGenerationService: GenerationProvider {
     /// Today's grid, keyed by project abbreviation → 24 hourly megawatt values.
     private func schedule() async -> [String: [Int]]? {
         let day = Self.pageName(for: Date())
-        if let cached, cached.day == day, Date().timeIntervalSince(cached.at) < Self.ttl {
-            return cached.value
-        }
+        return await scheduleCache.value(for: day) { [self] in await self.fetchSchedule(day: day) }
+    }
+
+    private func fetchSchedule(day: String) async -> [String: [Int]]? {
         guard let url = URL(string: "https://www.energy.gov/swpa/\(day).htm") else { return nil }
         // energy.gov serves the schedule inside a normal page; a browsery UA
         // avoids the bot-challenge variant.
@@ -157,9 +165,7 @@ final class SWPAGenerationService: GenerationProvider {
               let html = String(data: result.body, encoding: .utf8) ?? String(data: result.body, encoding: .isoLatin1)
         else { return nil }
 
-        guard let grid = Self.parseGrid(html: html) else { return nil }
-        cached = (day, grid, Date())
-        return grid
+        return Self.parseGrid(html: html)
     }
 
     /// "mon" … "sun" — SWPA keys pages by weekday, not date.

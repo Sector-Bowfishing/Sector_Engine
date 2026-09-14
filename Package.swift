@@ -1,8 +1,12 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
     name: "SectorEngine",
+    // Swift 6 language mode: data races between concurrent renders are COMPILE
+    // ERRORS, not latent crashes. The 2026-09-14 audit found unsynchronized
+    // adapter caches that Swift 5 mode silently allowed (prod logged SIGSEGVs).
+    // Don't drop this to .v5 to get a build through — fix the isolation.
     platforms: [.macOS(.v14)],
     products: [
         .library(name: "SectorEngine", targets: ["SectorEngine"]),
@@ -32,6 +36,14 @@ let package = Package(
                 .product(name: "Hummingbird", package: "hummingbird"),
             ],
             path: "Sources/SectorEngineServer"),
-        .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine"], path: "Tests/SectorEngineTests"),
+        .testTarget(
+            name: "SectorEngineTests",
+            dependencies: [
+                "SectorEngine",
+                // A tiny local socket server for HTTPTests (a stalled response body).
+                .product(name: "NIOCore", package: "swift-nio"),
+                .product(name: "NIOPosix", package: "swift-nio"),
+            ],
+            path: "Tests/SectorEngineTests"),
     ]
 )

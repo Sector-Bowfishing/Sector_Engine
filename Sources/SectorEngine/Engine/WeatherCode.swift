@@ -14,7 +14,7 @@
 
 import Foundation
 
-public enum WeatherCode {
+public enum WeatherCode: Sendable {
 
     /// Cloud ceiling below which a "precip" code with zero precip is treated as a
     /// false positive. A genuine storm brings heavy overcast, so at/above this we

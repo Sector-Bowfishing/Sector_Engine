@@ -29,7 +29,7 @@ import CoreLocation
 // MARK: - Response
 
 /// The render-ready payload every client (iOS, Android, web) receives.
-public struct ConditionsResponse: Codable, Equatable {
+public struct ConditionsResponse: Codable, Equatable, Sendable {
     // Headline + breakdown (from ConditionsResult)
     public let score: Int
     public let band: String            // Poor | Fair | Good | Prime
@@ -81,7 +81,7 @@ public struct ConditionsResponse: Codable, Equatable {
 
 /// Canonical lake identity from the engine's directory — the authority the two
 /// client-side directory copies should defer to.
-public struct ResolvedLakeDTO: Codable, Equatable {
+public struct ResolvedLakeDTO: Codable, Equatable, Sendable {
     public let id: String       // "Name|ST" — stable identity for cross-surface dedup
     public let name: String     // canonical display name (e.g. "Nickajack Lake")
     public let state: String    // primary state code
@@ -89,7 +89,7 @@ public struct ResolvedLakeDTO: Codable, Equatable {
 
 /// A USGS gauge surfaced to the app so the user can check the source behind the
 /// clarity estimate. Maps to an NWIS site page via `siteCode`.
-public struct GaugeDTO: Codable, Equatable {
+public struct GaugeDTO: Codable, Equatable, Sendable {
     public let siteCode: String          // USGS site number
     public let siteName: String
     public let parameterCode: String     // 63680 turbidity | 00060 discharge
@@ -106,21 +106,21 @@ public struct GaugeDTO: Codable, Equatable {
 }
 
 /// Recent rainfall driving the clarity estimate, from NOAA MRMS via IEM.
-public struct ClarityRainDTO: Codable, Equatable {
+public struct ClarityRainDTO: Codable, Equatable, Sendable {
     public let watershed72hIn: Double     // aggregated across the surrounding watershed
     public let point72hIn: Double         // at the coordinate itself
     public let source: String             // "mrms"
     public let daily: [RainDayDTO]        // point, oldest → newest (~14 days)
 }
 
-public struct RainDayDTO: Codable, Equatable {
+public struct RainDayDTO: Codable, Equatable, Sendable {
     public let date: Date
     public let inches: Double
 }
 
 // MARK: - Breakdown DTOs
 
-public struct FactorDTO: Codable, Equatable {
+public struct FactorDTO: Codable, Equatable, Sendable {
     public let key: String        // FactorKey rawValue: clarity|spawn|darkness|wind|waterTemp|level|current|pressure|sky|humidity
     public let score: Int         // 0…100 sub-score
     public let weightPct: Int     // active (renormalized) weight, %
@@ -130,18 +130,18 @@ public struct FactorDTO: Codable, Equatable {
 }
 
 /// A factor not in play tonight (spawn out of season), for the "not in play" group.
-public struct DormantFactorDTO: Codable, Equatable {
+public struct DormantFactorDTO: Codable, Equatable, Sendable {
     public let key: String
     public let label: String
     public let reason: String
 }
 
-public struct GateDTO: Codable, Equatable {
+public struct GateDTO: Codable, Equatable, Sendable {
     public let reason: String
     public let cap: Int
 }
 
-public struct WhereToLookDTO: Codable, Equatable {
+public struct WhereToLookDTO: Codable, Equatable, Sendable {
     public let kind: String       // spawn|current|wind|level|clarity|darkness|temp
     public let title: String
     public let body: String
@@ -149,7 +149,7 @@ public struct WhereToLookDTO: Codable, Equatable {
 
 // MARK: - Live reading DTOs
 
-public struct WeatherDTO: Codable, Equatable {
+public struct WeatherDTO: Codable, Equatable, Sendable {
     public let temperature: Double        // °F
     public let conditionDescription: String
     public let conditionSymbol: String    // SF Symbol name (iOS renders; Android maps)
@@ -173,14 +173,14 @@ public struct WeatherDTO: Codable, Equatable {
 }
 
 /// One hourly barometric reading. `hPa` is millibars; clients convert to inHg.
-public struct PressureSampleDTO: Codable, Equatable {
+public struct PressureSampleDTO: Codable, Equatable, Sendable {
     public let time: Date
     public let hPa: Double
 }
 
 /// One hourly weather sample — feeds the wind / temperature / humidity / sky / rain
 /// trend charts. Every metric is nullable (a gap in the upstream data).
-public struct ConditionsHourlyDTO: Codable, Equatable {
+public struct ConditionsHourlyDTO: Codable, Equatable, Sendable {
     public let time: Date
     public let tempF: Double?
     public let humidity: Double?
@@ -192,7 +192,7 @@ public struct ConditionsHourlyDTO: Codable, Equatable {
     public let precipIn: Double?
 }
 
-public struct WaterDTO: Codable, Equatable {
+public struct WaterDTO: Codable, Equatable, Sendable {
     public let value: Double
     public let unit: String
     public let trend: String              // rising | falling | steady
@@ -200,7 +200,7 @@ public struct WaterDTO: Codable, Equatable {
     public let history: [Double]          // oldest → newest, for a sparkline
 }
 
-public struct GenerationDTO: Codable, Equatable {
+public struct GenerationDTO: Codable, Equatable, Sendable {
     public let damName: String
     public let river: String
     public let operatorId: String       // TVA | SWPA | USACE — clients render the authority label
@@ -214,7 +214,7 @@ public struct GenerationDTO: Codable, Equatable {
     public let observedAt: Date?
     public let windows: [GenerationWindowDTO]
 
-    public struct GenerationWindowDTO: Codable, Equatable {
+    public struct GenerationWindowDTO: Codable, Equatable, Sendable {
         public let start: Date
         public let end: Date
         public let generators: Int
@@ -226,18 +226,18 @@ public struct GenerationDTO: Codable, Equatable {
 
 /// Modeled surface water temp — the current estimate plus the daily series that
 /// drives the water-temp detail chart (most waters have no live temp gage).
-public struct WaterTempModelDTO: Codable, Equatable {
+public struct WaterTempModelDTO: Codable, Equatable, Sendable {
     public let currentF: Double
     public let series: [Day]
 
-    public struct Day: Codable, Equatable {
+    public struct Day: Codable, Equatable, Sendable {
         public let date: Date
         public let waterF: Double
         public let airF: Double
     }
 }
 
-public struct AlertDTO: Codable, Equatable {
+public struct AlertDTO: Codable, Equatable, Sendable {
     public let id: String
     public let event: String
     public let severity: String           // extreme | severe | moderate | minor | unknown
@@ -248,7 +248,7 @@ public struct AlertDTO: Codable, Equatable {
 
 // MARK: - Forecast DTOs
 
-public struct TonightDTO: Codable, Equatable {
+public struct TonightDTO: Codable, Equatable, Sendable {
     public let headline: String           // kept for back-compat; new clients derive from timestamps in device tz
     public let windowStart: Date?
     public let windowEnd: Date?
@@ -259,13 +259,13 @@ public struct TonightDTO: Codable, Equatable {
     public let displayEnd: Date?
     public let hours: [HourDTO]            // the chart curve, 6 PM → 6 AM
 
-    public struct HourDTO: Codable, Equatable {
+    public struct HourDTO: Codable, Equatable, Sendable {
         public let date: Date
         public let score: Int
     }
 }
 
-public struct NightDTO: Codable, Equatable {
+public struct NightDTO: Codable, Equatable, Sendable {
     public let date: Date
     public let score: Int
     public let rating: String             // Poor | Fair | Good | Prime
@@ -283,14 +283,14 @@ public struct NightDTO: Codable, Equatable {
     public let hourly: [HourPointDTO]?
     public let moonset: Date?
 
-    public struct NightFactorDTO: Codable, Equatable {
+    public struct NightFactorDTO: Codable, Equatable, Sendable {
         public let key: String            // FactorKey rawValue (forecast vocabulary)
         public let detail: String         // human value, e.g. "74% lit"
         public let sub: Int               // 0…100
         public let weight: Int            // active regime weight, %
     }
 
-    public struct HourPointDTO: Codable, Equatable {
+    public struct HourPointDTO: Codable, Equatable, Sendable {
         public let hour: Date
         public let score: Int
         public let windMph: Double
@@ -301,7 +301,7 @@ public struct NightDTO: Codable, Equatable {
 
 /// One slim per-coordinate result from the batch endpoint. `score`/`band` are nil
 /// when that coordinate had no live data to score.
-public struct BatchScore: Codable, Equatable {
+public struct BatchScore: Codable, Equatable, Sendable {
     public let lat: Double
     public let lon: Double
     public let score: Int?
@@ -310,7 +310,7 @@ public struct BatchScore: Codable, Equatable {
 
 // MARK: - Entry point
 
-public enum SectorEngineAPI {
+public enum SectorEngineAPI: Sendable {
 
     /// Score a coordinate for `date`: the gauge score + full breakdown + 7-night
     /// outlook + tonight's window + the live readings for the tiles. Returns nil

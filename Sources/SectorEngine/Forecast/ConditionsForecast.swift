@@ -163,84 +163,17 @@ actor ForecastCache {
 
 // MARK: - Service
 
-@MainActor
-final class ConditionsForecastService: ObservableObject {
-    static let shared = ConditionsForecastService()
-    private init() {}
-
-    enum LoadState: Equatable { case idle, loading, loaded, failed }
-
-    // Cached PER COORDINATE. A single shared `forecast` let the home dashboard
-    // and every lake overwrite each other: opening a lake refreshed the one slot
-    // to the lake, so returning home showed the lake's window until it reloaded.
-    // Keying by coordinate makes a stale-location read impossible.
-    @Published private(set) var forecasts: [String: ConditionsForecast] = [:]
-    @Published private(set) var loadStates: [String: LoadState] = [:]
-    /// When each coordinate's forecast was computed — drives staleness. Without
-    /// this, `loadIfNeeded` returned a cached forecast FOREVER: a coordinate the
-    /// dashboard scored hours (or a day) ago kept showing that old outlook — wrong
-    /// "Tonight", stale precip — while a freshly-opened lake showed the current
-    /// one, so the same lake disagreed with itself across surfaces.
-    private var fetchedAt: [String: Date] = [:]
-
-    /// How long a computed 7-night forecast stays fresh. The fetch is heavier than
-    /// the live snapshot, but the outlook must track precip/wind updates and its
-    /// "Tonight" must be the real tonight — so refetch after this, and always once
-    /// the calendar day has rolled.
+/// The 7-night forecast computation. A plain namespace with no isolation.
+///
+/// This used to be the iOS app's `@MainActor` ObservableObject, carried over
+/// with its UI state (`@Published` forecasts, load states, loadIfNeeded /
+/// refresh). The server never used any of that — only these static functions —
+/// but the class-level `@MainActor` made every render's forecast decode and
+/// re-score hop to the one main thread, so concurrent renders computed their
+/// 7-night outlooks single-file. As a nonisolated enum they run in parallel.
+enum ConditionsForecastService {
+    /// How long a computed 7-night forecast stays fresh.
     static let maxAge: TimeInterval = 30 * 60
-
-    private func key(_ c: CLLocationCoordinate2D) -> String {
-        String(format: "%.2f,%.2f", c.latitude, c.longitude)
-    }
-
-    /// A cached forecast is stale once it's older than `maxAge`, or was computed on
-    /// an earlier calendar day (its "Tonight" is a past night).
-    private func isStale(_ k: String, now: Date = Date()) -> Bool {
-        guard let at = fetchedAt[k] else { return true }
-        if now.timeIntervalSince(at) >= Self.maxAge { return true }
-        return !Calendar.current.isDate(at, inSameDayAs: now)
-    }
-
-    /// This coordinate's forecast, or nil if not loaded yet.
-    func forecast(for coordinate: CLLocationCoordinate2D?) -> ConditionsForecast? {
-        guard let coordinate else { return nil }
-        return forecasts[key(coordinate)]
-    }
-
-    /// This coordinate's load state (idle until a load starts).
-    func loadState(for coordinate: CLLocationCoordinate2D?) -> LoadState {
-        guard let coordinate else { return .idle }
-        return loadStates[key(coordinate)] ?? .idle
-    }
-
-    func loadIfNeeded(coordinate: CLLocationCoordinate2D?) async {
-        guard let coordinate else { return }
-        let k = key(coordinate)
-        // Reuse only a FRESH cached forecast; a stale one gets recomputed so every
-        // surface shows the same current outlook for this coordinate.
-        if forecasts[k] != nil, !isStale(k) { return }
-        await refresh(coordinate: coordinate)
-    }
-
-    func refresh(coordinate: CLLocationCoordinate2D?) async {
-        guard let coordinate else { return }
-        let k = key(coordinate)
-        loadStates[k] = .loading
-        // One retry after a brief backoff — a transient forecast-API blip
-        // shouldn't leave the card stuck on "Calculating…" forever.
-        for attempt in 0..<2 {
-            do {
-                let result = try await Self.fetchAndCompute(coordinate: coordinate, now: Date())
-                forecasts[k] = result
-                fetchedAt[k] = Date()
-                loadStates[k] = .loaded
-                return
-            } catch {
-                if attempt == 0 { try? await Task.sleep(nanoseconds: 1_500_000_000) }
-            }
-        }
-        loadStates[k] = .failed
-    }
 
     // MARK: Fetch
 

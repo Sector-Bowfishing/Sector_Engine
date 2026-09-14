@@ -49,7 +49,7 @@ struct CWMSObserved: Equatable {
     let history: [GenerationObservation]
 }
 
-final class CWMSObservedService {
+final class CWMSObservedService: Sendable {
     static let shared = CWMSObservedService()
     private init() {}
 
@@ -59,16 +59,37 @@ final class CWMSObservedService {
     static let maxProjectMiles: Double = 8
     private static let ttl: TimeInterval = 30 * 60
 
-    private var officeLocations: [String: [(name: String, lat: Double, lon: Double)]] = [:]
-    private var resolvedSeries: [String: Series] = [:]      // key: office|base
-    private var cached: [String: (value: CWMSObserved, at: Date)] = [:]
+    /// The district-wide catalog downloads (every location in an office, every
+    /// series of a project) are large — SWT alone lists ~3,300 locations — and
+    /// can take longer than the default 8s fetch cap, which left whole districts
+    /// permanently dark. They're fetched once per key and cached, so a longer
+    /// budget costs one slow request, not one per render.
+    private static let catalogTimeout: TimeInterval = 25
+
+    /// Every location in a district. Effectively static — one fetch per office
+    /// per day, remembered for 2 minutes on failure so a slow CWMS isn't
+    /// re-downloaded by every render.
+    private let locationsCache = SingleFlightCache<String, [CWMSLocation]>(
+        ttl: 24 * 3600, failureTTL: 120, maxEntries: 60)
+    /// Discovered series per project (key: office|base).
+    private let seriesCache = SingleFlightCache<String, Series>(
+        ttl: 24 * 3600, failureTTL: 120, maxEntries: 2_000)
+    /// Measured readings per project (key: office|base).
+    private let observedCache = SingleFlightCache<String, CWMSObserved>(
+        ttl: CWMSObservedService.ttl, failureTTL: 120, maxEntries: 2_000)
+
+    private struct CWMSLocation: Sendable {
+        let name: String
+        let lat: Double
+        let lon: Double
+    }
 
     /// Ranked candidates per metric, best first. A district can publish the same
     /// reading under several versions (USGS vs LRGS, revised vs raw) and the
     /// top-ranked one is sometimes stale while a sibling is live — so this keeps
     /// the whole ordered list and the value fetch walks it until one returns a
     /// fresh reading. Single strings couldn't express that fallback.
-    private struct Series {
+    private struct Series: Sendable {
         var reservoir: [String] = []
         var tailwater: [String] = []
         var temp: [String] = []
@@ -97,45 +118,46 @@ final class CWMSObservedService {
         // a long reservoir's nearest CWMS location can be a river gage or a met
         // station that lists no live water reading — so if it comes back empty
         // we fall through to the next-best project rather than reporting nothing.
-        for base in bases.prefix(Self.maxProjects) {
-            let key = "\(office)|\(base)"
-            if let hit = cached[key], Date().timeIntervalSince(hit.at) < Self.ttl { return hit.value }
-
-            let series: Series
-            if let known = resolvedSeries[key] {
-                series = known
-            } else {
-                guard let discovered = await discover(office: office, base: base), !discovered.isEmpty else {
-                    continue
-                }
-                resolvedSeries[key] = discovered
-                series = discovered
+        for project in bases.prefix(Self.maxProjects) {
+            let key = "\(office)|\(project)"
+            let reading = await observedCache.value(for: key) { [self] in
+                await self.fetchObserved(office: office, project: project, key: key)
             }
-
-            async let resTask  = latest(series.reservoir, office: office)
-            async let tailTask = latest(series.tailwater, office: office)
-            async let tempTask = latest(series.temp, office: office)
-            async let flowTask = history(series.outflow, office: office)
-
-            let res = await resTask, tail = await tailTask, temp = await tempTask
-            let flow = await flowTask
-
-            let result = CWMSObserved(
-                reservoirFt: res?.value,
-                tailwaterFt: tail?.value,
-                tailwaterTempF: temp?.value,
-                dischargeCfs: flow?.points.last?.dischargeCfs,
-                dischargeTrend12hCfs: flow?.trend12h,
-                observedAt: [res?.at, tail?.at, flow?.points.last?.at].compactMap { $0 }.max(),
-                history: flow?.points ?? [])
-
+            if let reading { return reading }
             // Nothing measured at this project — try the next candidate.
-            guard result.reservoirFt != nil || result.tailwaterFt != nil
-                    || result.dischargeCfs != nil || result.tailwaterTempF != nil else { continue }
-            cached[key] = (result, Date())
-            return result
         }
         return nil
+    }
+
+    /// One project's measured readings, or nil when it carries nothing live.
+    private func fetchObserved(office: String, project: String, key: String) async -> CWMSObserved? {
+        let series = await seriesCache.value(for: key) { [self] in
+            guard let discovered = await self.discover(office: office, base: project),
+                  !discovered.isEmpty else { return nil }
+            return discovered
+        }
+        guard let series else { return nil }
+
+        async let resTask  = latest(series.reservoir, office: office)
+        async let tailTask = latest(series.tailwater, office: office)
+        async let tempTask = latest(series.temp, office: office)
+        async let flowTask = history(series.outflow, office: office)
+
+        let res = await resTask, tail = await tailTask, temp = await tempTask
+        let flow = await flowTask
+
+        let result = CWMSObserved(
+            reservoirFt: res?.value,
+            tailwaterFt: tail?.value,
+            tailwaterTempF: temp?.value,
+            dischargeCfs: flow?.points.last?.dischargeCfs,
+            dischargeTrend12hCfs: flow?.trend12h,
+            observedAt: [res?.at, tail?.at, flow?.points.last?.at].compactMap { $0 }.max(),
+            history: flow?.points ?? [])
+
+        guard result.reservoirFt != nil || result.tailwaterFt != nil
+                || result.dischargeCfs != nil || result.tailwaterTempF != nil else { return nil }
+        return result
     }
 
     // MARK: Resolve the project by coordinate
@@ -164,14 +186,10 @@ final class CWMSObservedService {
     /// actually returns a live reading.
     private func projectBases(office: String, coordinate: CLLocationCoordinate2D,
                               withinMiles: Double, nameHint: String?) async -> [String] {
-        let locs: [(name: String, lat: Double, lon: Double)]
-        if let known = officeLocations[office] {
-            locs = known
-        } else {
-            guard let fetched = await fetchLocations(office: office) else { return [] }
-            officeLocations[office] = fetched
-            locs = fetched
+        let fetched = await locationsCache.value(for: office) { [self] in
+            await self.fetchLocations(office: office)
         }
+        guard let locs = fetched else { return [] }
         let origin = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         let ranked = locs
             .map { ($0, origin.distance(from: CLLocation(latitude: $0.lat, longitude: $0.lon)) / 1609.34) }
@@ -229,19 +247,21 @@ final class CWMSObservedService {
         return s.filter { $0.isLetter || $0.isNumber }
     }
 
-    private func fetchLocations(office: String) async -> [(name: String, lat: Double, lon: Double)]? {
-        guard let data = await get("\(base)/locations?office=\(office)&page-size=6000") else { return nil }
+    private func fetchLocations(office: String) async -> [CWMSLocation]? {
+        guard let data = await get("\(base)/locations?office=\(office)&page-size=6000",
+                                   timeout: Self.catalogTimeout) else { return nil }
         guard let raw = Self.parseJSON(data) else { return nil }
         let list: [[String: Any]]
         if let arr = raw as? [[String: Any]] { list = arr }
         else if let dict = raw as? [String: Any], let arr = dict["locations"] as? [[String: Any]] { list = arr }
         else { return nil }
-        return list.compactMap {
+        let locations: [CWMSLocation] = list.compactMap {
             guard let n = $0["name"] as? String,
                   let la = $0["latitude"] as? Double,
                   let lo = $0["longitude"] as? Double else { return nil }
-            return (n, la, lo)
+            return CWMSLocation(name: n, lat: la, lon: lo)
         }
+        return locations.isEmpty ? nil : locations
     }
 
     // MARK: Discover the series
@@ -268,7 +288,8 @@ final class CWMSObservedService {
     /// occasionally stale and the fetch falls through to the next.
     private func discover(office: String, base projectBase: String) async -> Series? {
         let like = ".*\(projectBase).*".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        guard let data = await get("\(base)/catalog/TIMESERIES?office=\(office)&like=\(like)&page-size=1500"),
+        guard let data = await get("\(base)/catalog/TIMESERIES?office=\(office)&like=\(like)&page-size=1500",
+                                   timeout: Self.catalogTimeout),
               let raw = Self.parseJSON(data) as? [String: Any],
               let entries = raw["entries"] as? [[String: Any]] else { return nil }
         let names = entries.compactMap { $0["name"] as? String }
@@ -418,9 +439,10 @@ final class CWMSObservedService {
 
     /// CWMS occasionally emits stray non-UTF8 bytes in the locations payload, so
     /// this returns Data and callers decode leniently via `parseJSON`.
-    private func get(_ urlString: String) async -> Data? {
+    private func get(_ urlString: String, timeout: TimeInterval = HTTP.defaultTimeout) async -> Data? {
         guard let url = URL(string: urlString) else { return nil }
-        guard let result = try? await HTTP.get(url, headers: ["Accept": "application/json;version=2"]),
+        guard let result = try? await HTTP.get(url, headers: ["Accept": "application/json;version=2"],
+                                               timeout: timeout),
               result.isSuccess
         else { return nil }
         return result.body

@@ -156,16 +156,9 @@ private struct NWSAlertsResponse: Decodable {
                 ends: end)
         }
 
-        private static let isoFractional: ISO8601DateFormatter = {
-            let f = ISO8601DateFormatter()
-            f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            return f
-        }()
-        private static let iso: ISO8601DateFormatter = ISO8601DateFormatter()
-
         static func parse(_ s: String?) -> Date? {
             guard let s, !s.isEmpty else { return nil }
-            return isoFractional.date(from: s) ?? iso.date(from: s)
+            return ISODate.parse(s)
         }
     }
 }

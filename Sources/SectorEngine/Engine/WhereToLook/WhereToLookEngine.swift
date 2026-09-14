@@ -11,7 +11,7 @@
 
 import Foundation
 
-public enum WhereToLookEngine {
+public enum WhereToLookEngine: Sendable {
 
     public static let closingLine =
         "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life."

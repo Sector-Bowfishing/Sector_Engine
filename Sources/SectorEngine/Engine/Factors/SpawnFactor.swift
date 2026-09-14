@@ -20,7 +20,7 @@
 
 import Foundation
 
-public struct SpawnResult: Equatable {
+public struct SpawnResult: Equatable, Sendable {
     public let factor: FactorScore
     /// The argmax legal contributor — drives the spawn card copy + targeting.
     public let species: SpawnSpecies?
@@ -31,7 +31,7 @@ public struct SpawnResult: Equatable {
     public var intensity: Double { factor.score }
 }
 
-public enum SpawnFactor {
+public enum SpawnFactor: Sendable {
 
     /// True when at least one legal, sight-shootable species is within (or tapering
     /// into) its spawn window for this region/date — regardless of water temp. When

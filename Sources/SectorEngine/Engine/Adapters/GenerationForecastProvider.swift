@@ -13,7 +13,7 @@
 import Foundation
 
 /// One forecast point: expected discharge (cfs) at a local hour tonight.
-public struct GenerationSample: Equatable {
+public struct GenerationSample: Equatable, Sendable {
     public let hourLocal: Date
     public let cfs: Double
     public init(hourLocal: Date, cfs: Double) {
@@ -27,7 +27,7 @@ public protocol GenerationForecastProvider {
 }
 
 /// The shipped v2 provider: no live feed yet — always nil.
-public struct NullGenerationForecastProvider: GenerationForecastProvider {
+public struct NullGenerationForecastProvider: GenerationForecastProvider, Sendable {
     public init() {}
     public func generationForecast(latitude: Double, longitude: Double, date: Date) async -> [GenerationSample]? {
         nil

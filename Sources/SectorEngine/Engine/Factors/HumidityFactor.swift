@@ -17,7 +17,7 @@
 
 import Foundation
 
-public enum HumidityFactor {
+public enum HumidityFactor: Sendable {
 
     public static func score(_ input: ConditionsInput,
                              config: ConditionsConfig = .default) -> FactorScore {

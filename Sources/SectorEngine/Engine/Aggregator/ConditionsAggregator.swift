@@ -11,7 +11,7 @@
 
 import Foundation
 
-public enum ConditionsAggregator {
+public enum ConditionsAggregator: Sendable {
 
     public static func evaluate(_ rawInput: ConditionsInput,
                                 config: ConditionsConfig = .default) -> ConditionsResult {

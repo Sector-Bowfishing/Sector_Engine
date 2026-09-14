@@ -12,7 +12,7 @@ import Foundation
 
 /// The nine weighted factors. Also the stable key used for breakdown rows and
 /// weight renormalization when a factor is missing.
-public enum FactorKey: String, CaseIterable, Equatable {
+public enum FactorKey: String, CaseIterable, Equatable, Sendable {
     case clarity
     case spawn
     case darkness
@@ -45,7 +45,7 @@ public enum FactorKey: String, CaseIterable, Equatable {
 
 /// A complete regime weight set. Must sum to 1.0 across all nine factors
 /// (asserted in tests); renormalized at runtime when a factor is absent. §7.2.
-public struct WeightSet: Equatable {
+public struct WeightSet: Equatable, Sendable {
     public var clarity: Double
     public var spawn: Double
     public var darkness: Double
@@ -82,12 +82,12 @@ public struct WeightSet: Equatable {
     }
 }
 
-public struct ConditionsConfig {
+public struct ConditionsConfig: Sendable {
 
     public static let `default` = ConditionsConfig()
 
     // MARK: - Clarity (§5.1)
-    public struct Clarity {
+    public struct Clarity: Sendable {
         /// USGS default Secchi regression: secchi_ft = a * FNU^b.
         public var secchiCoefA: Double = 11.123
         public var secchiExpB: Double = -0.637
@@ -129,7 +129,7 @@ public struct ConditionsConfig {
     // whole score, they don't just vote. Without this a weighted average lets a
     // pile of "good" factors paper over water you literally can't shoot. The
     // ceiling = 100 · clarityComponent · windComponent.
-    public struct Seeability {
+    public struct Seeability: Sendable {
         public var enabled: Bool = true
         /// (visibility_ft, 0…1) breakpoints — how well you can see down.
         public var clarityCurve: [(ft: Double, factor: Double)] = [
@@ -160,7 +160,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Spawn (§5.2)
-    public struct Spawn {
+    public struct Spawn: Sendable {
         /// Spawn score at/above this triggers SPAWN regime (also the boost floor).
         public var regimeThreshold: Double = 60
         /// Spawn detection genuinely needs water temperature. When it's only an
@@ -179,7 +179,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Darkness / moon (§5.3)
-    public struct Darkness {
+    public struct Darkness: Sendable {
         public var astroDarkBonus: Double = 5        // window starts after true dark
         public var solunarTiebreaker: Double = 2     // ±2 pt max, near-zero weight
         /// cloudCancel = clamp((cloud-knee)/span,0,1) * cityGlow term.
@@ -188,7 +188,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Wind (§5.4) — calm is best for sight-shooting
-    public struct Wind {
+    public struct Wind: Sendable {
         /// (maxMph, score) bands, ascending. Score applies up to maxMph.
         /// Bowfishing is a SIGHT sport — you shoot through the surface, so chop is
         /// the enemy. Under ~4 mph is genuinely prime; by 7 mph a working chop is
@@ -204,7 +204,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Water temp (§5.5)
-    public struct WaterTemp {
+    public struct WaterTemp: Sendable {
         /// (maxF, score) bands, ascending.
         public var bands: [(maxF: Double, score: Double)] = [
             (50, 10), (60, 35), (68, 70), (82, 100), (88, 80),
@@ -213,7 +213,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Water level / stage trend (§5.6)
-    public struct Level {
+    public struct Level: Sendable {
         public var stableBandFt: Double = 0.2        // |Δ12h| ≤ this = stable
         public var gentleRiseMaxFt: Double = 1.0     // rise ≤ this = gently rising
         public var fastFallFt: Double = -1.0         // ≤ this = falling fast
@@ -229,7 +229,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Current / generation (§5.7)
-    public struct Current {
+    public struct Current: Sendable {
         public var nonTailwaterScore: Double = 90
         // A CURVE, not a slope. Generation isn't purely a penalty below a dam:
         // moderate flow stacks fish on points and seams and is the best of it.
@@ -246,7 +246,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Pressure (§5.8) — inHg
-    public struct Pressure {
+    public struct Pressure: Sendable {
         public var steadyLowInHg: Double = 29.9
         public var steadyHighInHg: Double = 30.4
         public var veryHighInHg: Double = 30.5
@@ -270,7 +270,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Sky & temp (§5.9)
-    public struct Sky {
+    public struct Sky: Sendable {
         public var comfortLowF: Double = 45
         public var comfortHighF: Double = 90
         public var clearBonus: Double = 8
@@ -287,7 +287,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Gates / vetoes (§6)
-    public struct Gates {
+    public struct Gates: Sendable {
         public var blownOutVisibilityFt: Double = 1.0
         public var blownOutCap: Double = 25
         public var highWindMph: Double = 20
@@ -338,13 +338,13 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Spawn boost (§7.3)
-    public struct SpawnBoost {
+    public struct SpawnBoost: Sendable {
         public var perPointAboveThreshold: Double = 0.3
         public var maxBoost: Double = 12
     }
 
     // MARK: - Confidence (§8)
-    public struct Confidence {
+    public struct Confidence: Sendable {
         public var base: Double = 100
         public var noTurbidityGage: Double = 20
         public var estimatedWaterTemp: Double = 15
@@ -359,7 +359,7 @@ public struct ConditionsConfig {
     }
 
     // MARK: - Regime weight sets (§7.2)
-    public struct Weights {
+    public struct Weights: Sendable {
         public var normal = WeightSet(clarity: 0.26, spawn: 0.04, darkness: 0.18, wind: 0.18,
                                       waterTemp: 0.12, level: 0.08, current: 0.04, pressure: 0.06, sky: 0.04)
         public var spawn = WeightSet(clarity: 0.20, spawn: 0.34, darkness: 0.08, wind: 0.12,

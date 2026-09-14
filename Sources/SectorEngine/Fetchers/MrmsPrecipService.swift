@@ -30,7 +30,7 @@ struct MrmsPrecip {
     struct DailyRain { let date: Date; let inches: Double }
 }
 
-final class MrmsPrecipService {
+final class MrmsPrecipService: Sendable {
     static let shared = MrmsPrecipService()
     private init() {}
 

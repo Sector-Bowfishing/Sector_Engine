@@ -12,7 +12,7 @@
 
 import Foundation
 
-public enum ClarityFactor {
+public enum ClarityFactor: Sendable {
 
     /// Estimated vertical visibility in feet — the shared basis for the score
     /// and the blown-out gate. Prefers a live turbidity gage; otherwise decays

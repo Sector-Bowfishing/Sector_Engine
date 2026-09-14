@@ -13,7 +13,7 @@
 
 import Foundation
 
-public enum DarknessFactor {
+public enum DarknessFactor: Sendable {
 
     public static func score(_ input: ConditionsInput,
                              config: ConditionsConfig = .default) -> FactorScore {

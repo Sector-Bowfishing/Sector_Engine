@@ -10,7 +10,7 @@
 import Foundation
 
 /// One factor's contribution. `score` is 0–100, higher = better for bowfishing.
-public struct FactorScore: Equatable {
+public struct FactorScore: Equatable, Sendable {
     /// 0…100, higher is better for sight-shooting.
     public let score: Double
     /// Short human value, e.g. "0.6 ft viz" or "74% lit".

@@ -10,7 +10,7 @@
 
 import Foundation
 
-public enum SkyFactor {
+public enum SkyFactor: Sendable {
 
     public static func score(_ input: ConditionsInput,
                              config: ConditionsConfig = .default) -> FactorScore {

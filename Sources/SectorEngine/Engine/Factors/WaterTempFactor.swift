@@ -12,7 +12,7 @@
 
 import Foundation
 
-public enum WaterTempFactor {
+public enum WaterTempFactor: Sendable {
 
     public static func score(_ input: ConditionsInput,
                              config: ConditionsConfig = .default) -> FactorScore? {

@@ -35,7 +35,7 @@ import CoreLocation
 
 // MARK: - Service
 
-final class TVAGenerationService: GenerationProvider {
+final class TVAGenerationService: GenerationProvider, Sendable {
     let operatorID: GenerationOperator = .tva
 
     static let shared = TVAGenerationService()
@@ -45,15 +45,20 @@ final class TVAGenerationService: GenerationProvider {
 
     /// Beyond this the dam's release isn't your water. Matches the tailwater
     /// radius the registry uses so the two can't disagree about "below a dam".
-    static var maxDamDistanceMiles: Double = TailwaterRegistry.tailwaterRadiusMiles
+    static let maxDamDistanceMiles: Double = TailwaterRegistry.tailwaterRadiusMiles
 
     /// Schedules get revised through the day (and next-day posts land ~6 PM
     /// local), so this can't be a session cache — but it also can't be per-call.
     private static let generationTTL: TimeInterval = 15 * 60
 
-    /// The dam roster is effectively static; hold it for the session.
-    private var cachedDams: [GenerationDam]?
-    private var cachedGeneration: [String: (value: DamGeneration, at: Date)] = [:]
+    /// The dam roster is effectively static — held a day. A failed roster fetch
+    /// is remembered for a minute so a TVA outage costs one timeout per minute,
+    /// not one per render.
+    private let rosterCache = SingleFlightCache<String, [GenerationDam]>(
+        ttl: 24 * 3600, failureTTL: 60, maxEntries: 1)
+    /// Per-dam generation, keyed by dam id and shared by concurrent renders.
+    private let generationCache = SingleFlightCache<String, DamGeneration>(
+        ttl: TVAGenerationService.generationTTL, failureTTL: 60, maxEntries: 200)
 
     // MARK: Public
 
@@ -77,31 +82,31 @@ final class TVAGenerationService: GenerationProvider {
 
     /// Generation for a SPECIFIC dam, chosen rather than resolved by proximity.
     func generation(for dam: GenerationDam, distanceMiles: Double) async -> DamGeneration? {
-        if let hit = cachedGeneration[dam.id],
-           Date().timeIntervalSince(hit.at) < Self.generationTTL {
-            return hit.value
+        let reading = await generationCache.value(for: dam.id) { [self] in
+            await self.fetchGeneration(for: dam)
         }
+        return reading?.withDistance(distanceMiles)
+    }
 
+    private func fetchGeneration(for dam: GenerationDam) async -> DamGeneration? {
         async let windowsTask = fetchWindows(damID: dam.id)
         async let observedTask = fetchObserved(damID: dam.id)
         let windows = await windowsTask
         let observed = await observedTask
 
-        // Nothing usable came back — let the caller fall back to USGS rather
-        // than caching an empty result for the whole TTL.
+        // Nothing usable came back — the caller falls back to USGS. Remembered
+        // only for the cache's short failure window, not the full TTL.
         guard windows?.isEmpty == false || observed != nil else { return nil }
 
-        let result = DamGeneration(dam: dam,
-                                   distanceMiles: distanceMiles,
-                                   windows: windows ?? [],
-                                   dischargeCfs: observed?.dischargeCfs,
-                                   dischargeTrend12hCfs: observed?.trend12hCfs,
-                                   reservoirElevationFt: observed?.reservoirFt,
-                                   tailwaterElevationFt: observed?.tailwaterFt,
-                                   observedAt: observed?.at,
-                                   history: observed?.series ?? [])
-        cachedGeneration[dam.id] = (result, Date())
-        return result
+        return DamGeneration(dam: dam,
+                             distanceMiles: 0,   // per-caller; see withDistance
+                             windows: windows ?? [],
+                             dischargeCfs: observed?.dischargeCfs,
+                             dischargeTrend12hCfs: observed?.trend12hCfs,
+                             reservoirElevationFt: observed?.reservoirFt,
+                             tailwaterElevationFt: observed?.tailwaterFt,
+                             observedAt: observed?.at,
+                             history: observed?.series ?? [])
     }
 
     /// Nearest generating dam REGARDLESS of range, with its distance. Lets the
@@ -119,7 +124,10 @@ final class TVAGenerationService: GenerationProvider {
     // MARK: Fetch
 
     private func hydroDams() async -> [GenerationDam]? {
-        if let cachedDams { return cachedDams }
+        await rosterCache.value(for: "roster") { [self] in await self.fetchHydroDams() }
+    }
+
+    private func fetchHydroDams() async -> [GenerationDam]? {
         guard let dtos: [LocationDTO] = await get("\(base)/locations") else { return nil }
         // ⚠️ `DamType` is NOT a reliable "does it generate" flag. TVA means it as
         // "is this a TVA hydropower project", so all 8 USACE Cumberland dams —
@@ -142,7 +150,6 @@ final class TVAGenerationService: GenerationProvider {
                                  latitude: $0.latitude, longitude: $0.longitude,
                                  river: ($0.river == "None" ? "" : $0.river) ?? "") }
         guard !dams.isEmpty else { return nil }
-        cachedDams = dams
         return dams
     }
 

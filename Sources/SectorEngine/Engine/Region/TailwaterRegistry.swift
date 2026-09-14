@@ -26,7 +26,7 @@
 
 import Foundation
 
-public struct Dam: Equatable {
+public struct Dam: Equatable, Sendable {
     public let name: String
     public let latitude: Double
     public let longitude: Double
@@ -39,15 +39,15 @@ public struct Dam: Equatable {
     }
 }
 
-public enum TailwaterRegistry {
+public enum TailwaterRegistry: Sendable {
 
     /// Radius (miles) below a dam still treated as tailwater.
-    public static var tailwaterRadiusMiles: Double = 12
+    public static let tailwaterRadiusMiles: Double = 12
     /// Half-angle (°) of the downstream cone. Wide, because tailwater reaches bend.
-    public static var coneHalfAngleDeg: Double = 75
+    public static let coneHalfAngleDeg: Double = 75
     /// Inside this range the flag is granted regardless of bearing — generation
     /// dominates both faces of the dam, and seed coordinates are approximate.
-    public static var nearDamAlwaysMiles: Double = 1.0
+    public static let nearDamAlwaysMiles: Double = 1.0
 
     /// Roster of TVA / USACE generating dams (dam coordinates + the approximate
     /// bearing of the river immediately downstream). Covers all 29 TVA

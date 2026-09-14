@@ -11,7 +11,7 @@
 
 import Foundation
 
-public enum SpeciesLegality {
+public enum SpeciesLegality: Sendable {
 
     /// May this species be surfaced as a recommended target at all?
     /// `.no` (protected by default) → never.

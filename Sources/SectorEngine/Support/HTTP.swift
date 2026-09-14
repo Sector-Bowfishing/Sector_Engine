@@ -19,9 +19,11 @@
 //  withDeadline gives up on is actually torn down instead of lingering.
 //
 //  Behaviour is kept at parity with the old session:
-//   - 8s wall-clock cap per fetch (the old timeoutIntervalForResource), just
-//     under the smallest withDeadline budget (9s). Longer per-call timeouts were
-//     never in effect and are clamped.
+//   - 8s wall-clock budget per fetch by default (the old
+//     timeoutIntervalForResource), just under the smallest withDeadline budget
+//     (9s). It covers the WHOLE response — headers AND body — so an upstream
+//     that answers promptly and then trickles its body can't hold a fetch
+//     open. Cached, once-a-day catalog downloads may pass a longer budget.
 //   - Redirects followed (max 5).
 //   - gzip/deflate advertised and decoded — libcurl did both implicitly.
 //   - A self-identifying User-Agent on every request — libcurl sent one
@@ -41,9 +43,12 @@ struct HTTPResult: Sendable {
     var isSuccess: Bool { (200..<300).contains(status) }
 }
 
+/// Thrown when a response doesn't finish (headers + body) inside its budget.
+struct HTTPDeadlineExceeded: Error {}
+
 enum HTTP {
-    /// Upper bound on one fetch, request start to last body byte.
-    static let maxTimeout: TimeInterval = 8
+    /// Default budget for one fetch, request start to last body byte.
+    static let defaultTimeout: TimeInterval = 8
 
     /// Largest body buffered. Far above any real payload (the NOAA tide-station
     /// list is ~1–2 MB); a runaway response fails that fetch, not the process.
@@ -58,18 +63,20 @@ enum HTTP {
         config.timeout = HTTPClient.Configuration.Timeout(connect: .seconds(5), read: .seconds(8))
         config.redirectConfiguration = .follow(max: 5, allowCycles: false)
         config.decompression = .enabled(limit: .size(64 * 1024 * 1024))
-        // Several renders at once each race two Open-Meteo hosts; don't make
-        // them queue behind the default soft limit of 8 connections per host.
+        // Several renders run at once on one instance, each fanning out to the
+        // same few hosts (Open-Meteo, USGS, CWMS). With a small pool, fetches
+        // queued for a connection and failed at the 5s connect timeout, turning
+        // healthy factors dormant. HTTP/2 hosts multiplex regardless.
         config.connectionPool = HTTPClient.Configuration.ConnectionPool(
-            idleTimeout: .seconds(60), concurrentHTTP1ConnectionsPerHostSoftLimit: 16)
+            idleTimeout: .seconds(60), concurrentHTTP1ConnectionsPerHostSoftLimit: 64)
         return HTTPClient(eventLoopGroupProvider: .singleton, configuration: config)
     }()
 
-    /// GET `url`. Throws on transport failure, timeout, cancellation, or an
-    /// oversized body. Any HTTP status is returned — callers check `isSuccess`.
+    /// GET `url`. Throws on transport failure, a blown budget, cancellation, or
+    /// an oversized body. Any HTTP status is returned — callers check `isSuccess`.
     static func get(_ url: URL,
                     headers: [String: String] = [:],
-                    timeout: TimeInterval = maxTimeout) async throws -> HTTPResult {
+                    timeout: TimeInterval = defaultTimeout) async throws -> HTTPResult {
         var request = HTTPClientRequest(url: url.absoluteString)
         request.method = .GET
         request.headers.add(name: "User-Agent", value: defaultUserAgent)
@@ -78,9 +85,26 @@ enum HTTP {
             request.headers.replaceOrAdd(name: name, value: value)
         }
 
-        let ms = Int64(min(timeout, maxTimeout) * 1000)
-        let response = try await client.execute(request, timeout: .milliseconds(ms))
-        let buffer = try await response.body.collect(upTo: maxBodyBytes)
-        return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+        let prepared = request   // immutable copy for the concurrent child task
+        let budget = TimeAmount.milliseconds(Int64(max(timeout, 0.1) * 1000))
+        let deadline = NIODeadline.now() + budget
+
+        // `execute`'s deadline only covers the response head. Race the body
+        // against the same deadline; whichever loses is cancelled, and cancelling
+        // the body stream tears the request down.
+        return try await withThrowingTaskGroup(of: HTTPResult.self) { group in
+            group.addTask {
+                let response = try await client.execute(prepared, deadline: deadline)
+                let buffer = try await response.body.collect(upTo: maxBodyBytes)
+                return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+            }
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(budget.nanoseconds))
+                throw HTTPDeadlineExceeded()
+            }
+            defer { group.cancelAll() }
+            guard let first = try await group.next() else { throw HTTPDeadlineExceeded() }
+            return first
+        }
     }
 }

@@ -10,7 +10,7 @@
 
 import Foundation
 
-public enum RegionResolver {
+public enum RegionResolver: Sendable {
 
     public static func region(latitude: Double, longitude: Double) -> Region {
         // Interior / mountain West runs on its own clock — split it off first.

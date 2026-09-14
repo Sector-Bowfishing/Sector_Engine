@@ -14,7 +14,7 @@
 
 import Foundation
 
-public enum FloodDependence: Equatable {
+public enum FloodDependence: Equatable, Sendable {
     case none
     case partial
     case full      // bigmouth buffalo, alligator gar — strong year-classes only in flood years
@@ -23,7 +23,7 @@ public enum FloodDependence: Equatable {
 
 /// Default bowfishing legality before any state lookup. Per the project decision,
 /// legality is a global denylist + disclaimer (no per-state table). §9.
-public enum LegalDefault: Equatable {
+public enum LegalDefault: Equatable, Sendable {
     case yes        // freely bowfished in most states
     case check      // seasonal/state closures exist — show a "verify local regs" disclaimer
     case no         // protected/closed by default — NEVER auto-recommend
@@ -31,7 +31,7 @@ public enum LegalDefault: Equatable {
 
 /// Inclusive month range [start, end], 1 = Jan … 12 = Dec. Supports year-wrap
 /// (e.g. Oct–Feb). Day granularity is approximated from month boundaries.
-public struct MonthRange: Equatable {
+public struct MonthRange: Equatable, Sendable {
     public let start: Int
     public let end: Int
     public init(_ start: Int, _ end: Int) { self.start = start; self.end = end }
@@ -66,7 +66,7 @@ public struct MonthRange: Equatable {
     }
 }
 
-public struct SpawnSpecies: Equatable {
+public struct SpawnSpecies: Equatable, Sendable {
     public let name: String
     public let spawnMinF: Double
     public let spawnPeakF: Double
@@ -147,7 +147,7 @@ public struct SpawnSpecies: Equatable {
     }
 }
 
-public enum SpeciesDatabase {
+public enum SpeciesDatabase: Sendable {
 
     /// All species in `region`. (Region currently selects only the calendar; the
     /// full roster is the same nationwide — temperature gates do the rest.)

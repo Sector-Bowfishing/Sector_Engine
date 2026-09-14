@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum CurrentFactor {
+public enum CurrentFactor: Sendable {
 
     public static func score(_ input: ConditionsInput,
                              config: ConditionsConfig = .default) -> FactorScore? {

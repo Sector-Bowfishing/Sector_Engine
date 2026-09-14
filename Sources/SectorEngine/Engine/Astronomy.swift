@@ -17,11 +17,11 @@
 
 import Foundation
 
-public enum Astronomy {
+public enum Astronomy: Sendable {
 
     // MARK: - Public API
 
-    public struct SunEvents: Equatable {
+    public struct SunEvents: Equatable, Sendable {
         public let sunrise: Date?
         public let sunset: Date?
         public let civilDawn: Date?

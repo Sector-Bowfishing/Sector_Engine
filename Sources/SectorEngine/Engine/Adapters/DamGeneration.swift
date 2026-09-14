@@ -214,6 +214,17 @@ struct DamGeneration: Equatable, Identifiable {
                                       trendCfs: dischargeTrend12hCfs,
                                       cfg: config.current)
     }
+
+    /// The same reading as seen from a different point. Adapters cache one
+    /// reading per dam and hand each caller its own distance — a cached value
+    /// must never carry the first caller's distance to everyone else.
+    func withDistance(_ miles: Double) -> DamGeneration {
+        DamGeneration(dam: dam, distanceMiles: miles, windows: windows,
+                      dischargeCfs: dischargeCfs, dischargeTrend12hCfs: dischargeTrend12hCfs,
+                      reservoirElevationFt: reservoirElevationFt,
+                      tailwaterElevationFt: tailwaterElevationFt,
+                      observedAt: observedAt, history: history)
+    }
 }
 
 // MARK: - Provider seam
@@ -224,7 +235,10 @@ struct DamGeneration: Equatable, Identifiable {
 /// SWPA both publish a forward schedule, so the hero can say "next release at
 /// 5 PM". Operators that only publish observed release would return windows
 /// empty, and the sheet falls back to history alone.
-protocol GenerationProvider {
+/// `Sendable` because every render reaches providers from its own concurrent
+/// tasks: an implementation must keep no unsynchronized mutable state (cache
+/// through `SingleFlightCache`).
+protocol GenerationProvider: Sendable {
     var operatorID: GenerationOperator { get }
     /// Every dam this operator publishes. Cached by the implementation.
     func dams() async -> [GenerationDam]
@@ -237,7 +251,7 @@ protocol GenerationProvider {
 /// Deliberately picks the NEAREST dam across all operators rather than
 /// preferring one — a spot in north Arkansas is closer to Bull Shoals (SWPA)
 /// than to anything TVA runs, and the reverse holds in Tennessee.
-final class GenerationService {
+final class GenerationService: Sendable {
     static let shared = GenerationService()
     private init() {}
 
@@ -258,7 +272,7 @@ final class GenerationService {
     /// whether generation affects the score, with its own 12-mile radius and
     /// direction cone. This only governs which dam we can REPORT on, and pool
     /// elevation is a lake-wide fact.
-    static var maxDamDistanceMiles: Double = 35
+    static let maxDamDistanceMiles: Double = 35
 
     /// Every dam from every operator, for the picker.
     func allDams() async -> [GenerationDam] {

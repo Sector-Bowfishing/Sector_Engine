@@ -15,7 +15,7 @@
 import Foundation
 
 /// A partial weight set — any factor omitted keeps the base weight.
-public struct WeightSetOverride: Codable, Equatable {
+public struct WeightSetOverride: Codable, Equatable, Sendable {
     public var clarity: Double?
     public var spawn: Double?
     public var darkness: Double?
@@ -44,7 +44,7 @@ public struct WeightSetOverride: Codable, Equatable {
 }
 
 /// The Remote Config payload. Everything optional — omit to keep the compiled default.
-public struct ConditionsConfigOverrides: Codable, Equatable {
+public struct ConditionsConfigOverrides: Codable, Equatable, Sendable {
     // The biggest lever: per-regime factor weights.
     public var weightsNormal: WeightSetOverride?
     public var weightsSpawn: WeightSetOverride?

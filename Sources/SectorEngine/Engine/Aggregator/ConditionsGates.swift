@@ -10,7 +10,7 @@
 
 import Foundation
 
-public enum ConditionsGates {
+public enum ConditionsGates: Sendable {
 
     public static func evaluate(_ input: ConditionsInput,
                                 config: ConditionsConfig = .default,

@@ -159,7 +159,7 @@ enum WeatherError: Error {
     case decodingFailed
 }
 
-final class WeatherService {
+final class WeatherService: Sendable {
     static let shared = WeatherService()
     private init() {}
 

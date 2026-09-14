@@ -20,11 +20,17 @@ import Foundation
 import CoreLocation
 #endif
 
-final class AlabamaPowerGenerationService: GenerationProvider {
+final class AlabamaPowerGenerationService: GenerationProvider, Sendable {
     static let shared = AlabamaPowerGenerationService()
     private init() {}
 
     let operatorID: GenerationOperator = .apc
+
+    /// Per-dam reading. APC was fetched on EVERY render with no cache at all; the
+    /// schedule is posted a few times a day, so 15 minutes loses nothing and
+    /// concurrent renders for the same dam share one request.
+    private let generationCache = SingleFlightCache<String, DamGeneration>(
+        ttl: 15 * 60, failureTTL: 60, maxEntries: 50)
 
     /// A static registry — these are fixed infrastructure. `wpId` is the
     /// WordPress post id used to fetch live data; `coord` is a reference point on
@@ -68,7 +74,14 @@ final class AlabamaPowerGenerationService: GenerationProvider {
 
     func generation(for dam: GenerationDam, distanceMiles: Double) async -> DamGeneration? {
         guard let entry = Self.registry.first(where: { $0.id == dam.id }) else { return nil }
-        guard let acf = await fetchACF(wpId: entry.wpId) else { return nil }
+        let reading = await generationCache.value(for: dam.id) { [self] in
+            await self.fetchGeneration(for: dam, wpId: entry.wpId)
+        }
+        return reading?.withDistance(distanceMiles)
+    }
+
+    private func fetchGeneration(for dam: GenerationDam, wpId: Int) async -> DamGeneration? {
+        guard let acf = await fetchACF(wpId: wpId) else { return nil }
 
         let windows = Self.parseSchedule(acf["lakes_api_schedule"])
         let flow = Self.double(acf["lakes_api_flow"])
@@ -79,7 +92,7 @@ final class AlabamaPowerGenerationService: GenerationProvider {
 
         return DamGeneration(
             dam: dam,
-            distanceMiles: distanceMiles,
+            distanceMiles: 0,   // per-caller; see withDistance
             windows: windows,
             dischargeCfs: flow,
             dischargeTrend12hCfs: nil,        // APC publishes a spot flow, no trend

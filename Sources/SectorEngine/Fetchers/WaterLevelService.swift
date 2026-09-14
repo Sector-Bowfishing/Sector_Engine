@@ -61,7 +61,7 @@ enum WaterLevelError: Error {
     case decodingFailed
 }
 
-final class WaterLevelService {
+final class WaterLevelService: Sendable {
     static let shared = WaterLevelService()
     private init() {}
 
@@ -74,12 +74,6 @@ final class WaterLevelService {
     private let lookbackPeriod = "PT12H"
     // Changes smaller than this (in the reading's native unit, ft) read as "steady".
     private let steadyThreshold = 0.1
-
-    private static let isoFormatter: ISO8601DateFormatter = {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return f
-    }()
 
     /// All active gage-height / reservoir-elevation readings within a small box
     /// around the coordinate, each with its most recent value.
@@ -139,7 +133,9 @@ final class WaterLevelService {
             else { return nil }
 
             let measurement = latest.0
-            let date = Self.isoFormatter.date(from: latest.1) ?? Date()
+            // An unparseable timestamp drops the reading. It used to fall back to
+            // `Date()`, which let a gage of unknown age pass every freshness check.
+            guard let date = ISODate.parse(latest.1) else { return nil }
 
             // Compare the latest value to the oldest in the lookback window.
             // Threshold is the larger of an absolute floor and a percentage of
@@ -354,7 +350,7 @@ struct TideStation {
     let longitude: Double
 }
 
-final class NoaaTideService {
+final class NoaaTideService: Sendable {
     static let shared = NoaaTideService()
     private init() {}
 
@@ -366,8 +362,10 @@ final class NoaaTideService {
     private let stationsURL = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions"
     private let dataGetter = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
 
-    // The station list is effectively static, so cache it for the session.
-    private var cachedStations: [TideStation]?
+    // The station list is effectively static — one fetch a day, shared by
+    // concurrent callers.
+    private let stationsCache = SingleFlightCache<String, [TideStation]>(
+        ttl: 24 * 3600, failureTTL: 120, maxEntries: 1)
 
     /// The nearest tidal station's upcoming highs/lows — or nil when the point
     /// isn't coastal (no station within `maxStationMiles`) or the fetch fails.
@@ -413,7 +411,10 @@ final class NoaaTideService {
     // MARK: Station list
 
     private func loadStations() async -> [TideStation]? {
-        if let cachedStations { return cachedStations }
+        await stationsCache.value(for: "stations") { [self] in await self.fetchStations() }
+    }
+
+    private func fetchStations() async -> [TideStation]? {
         guard let url = URL(string: stationsURL) else { return nil }
         do {
             let result = try await HTTP.get(url)
@@ -424,8 +425,7 @@ final class NoaaTideService {
                 guard let id = s.id, let lat = s.lat, let lng = s.lng else { return nil }
                 return TideStation(id: id, name: s.name ?? "Tide station", latitude: lat, longitude: lng)
             }
-            cachedStations = stations
-            return stations
+            return stations.isEmpty ? nil : stations
         } catch {
             return nil
         }
@@ -608,8 +608,8 @@ extension WaterLevelService {
             // Pool elevations are large positives (hundreds of ft msl); drop the
             // -9999 sentinel AND any 0/missing point so they don't tank the chart.
             return s.data.compactMap { p in
-                guard let v = p.primary, v > 1 else { return nil }
-                return (value: v, at: NWPSStageFlow.parseTime(p.validTime))
+                guard let v = p.primary, v > 1, let at = ISODate.parse(p.validTime) else { return nil }
+                return (value: v, at: at)
             }
         }
         let observed = valid(decoded.observed)
@@ -654,11 +654,5 @@ private struct NWPSStageFlow: Decodable {
     struct Point: Decodable {
         let validTime: String
         let primary: Double?
-    }
-
-    static func parseTime(_ s: String) -> Date {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime]
-        return f.date(from: s) ?? Date()
     }
 }

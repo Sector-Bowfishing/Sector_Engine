@@ -12,7 +12,7 @@ import Foundation
 
 /// Coarse latitude band that selects each species' spawn-calendar window.
 /// Temperature gates stay the same nationwide; only the calendar shifts. §9.
-public enum Region: String, Equatable, CaseIterable {
+public enum Region: String, Equatable, CaseIterable, Sendable {
     case south      // < 34°N
     case lowerMid   // 34–39°N
     case north      // > 39°N
@@ -20,7 +20,7 @@ public enum Region: String, Equatable, CaseIterable {
 }
 
 /// Which weight set the aggregator blends with. §7.1.
-public enum ConditionsRegime: String, Equatable {
+public enum ConditionsRegime: String, Equatable, Sendable {
     case normal
     case spawn
     case tailwater
@@ -35,7 +35,7 @@ public enum ConditionsRegime: String, Equatable {
 }
 
 /// Final banding of a 0–100 score. Thresholds match the legacy engine. §7.3.
-public enum ConditionsBand: String, Equatable {
+public enum ConditionsBand: String, Equatable, Sendable {
     case poor  = "Poor"
     case fair  = "Fair"
     case good  = "Good"
@@ -54,21 +54,21 @@ public enum ConditionsBand: String, Equatable {
 /// Sediment (brown mud) vs algal (green bloom) turbidity. Algal kills the
 /// sightline ~2× sooner than the same FNU of sediment. §5.1. When the data
 /// source can't tell, `.unknown` uses the sediment curve + a confidence hit.
-public enum TurbidityType: String, Equatable {
+public enum TurbidityType: String, Equatable, Sendable {
     case sediment
     case algal
     case unknown
 }
 
 /// Spawn-targeting tier. Tier-3 never contributes to the spawn score. §5.2 / §9.
-public enum SpeciesTier: Int, Equatable {
+public enum SpeciesTier: Int, Equatable, Sendable {
     case tier1 = 1   // classic shallow spawn-run targets — reward strongly
     case tier2 = 2   // river/flood spawners — score staging, not the spawn act
     case tier3 = 3   // never a warm-water spawn run
 }
 
 /// Confidence banding for the displayed Low/Med/High chip. §8.
-public enum ConfidenceBand: String, Equatable {
+public enum ConfidenceBand: String, Equatable, Sendable {
     case low    = "Low"
     case medium = "Med"
     case high   = "High"
@@ -83,14 +83,14 @@ public enum ConfidenceBand: String, Equatable {
 }
 
 /// Tailwater dam-generation intensity during the fishing window. §5.7.
-public enum GenerationLevel: String, Equatable {
+public enum GenerationLevel: String, Equatable, Sendable {
     case low        // low/steady — settled, clear, fish roam shallow
     case moderate   // fish pin to seams/breaks
     case high       // muddy, fast — gate candidate
 }
 
 /// Direction of a 12-hour barometric move. §5.8.
-public enum PressureMovement: String, Equatable {
+public enum PressureMovement: String, Equatable, Sendable {
     case rising
     case steady
     case falling

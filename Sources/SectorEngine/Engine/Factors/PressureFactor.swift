@@ -11,7 +11,7 @@
 
 import Foundation
 
-public enum PressureFactor {
+public enum PressureFactor: Sendable {
 
     public static func score(_ input: ConditionsInput,
                              config: ConditionsConfig = .default) -> FactorScore {

@@ -11,7 +11,7 @@
 import Foundation
 
 /// One row in the breakdown sheet.
-public struct FactorBreakdown: Equatable {
+public struct FactorBreakdown: Equatable, Sendable {
     public let key: FactorKey
     public let score: Int          // 0…100 sub-score
     public let weightPct: Int      // active (renormalized) weight, %
@@ -25,28 +25,28 @@ public struct FactorBreakdown: Equatable {
 
 /// A factor that isn't in play tonight (e.g. spawn out of season) — excluded from
 /// scoring and renormalization, but surfaced so the UI can explain the dormancy.
-public struct DormantFactor: Equatable {
+public struct DormantFactor: Equatable, Sendable {
     public let key: FactorKey
     public let label: String       // e.g. "Out of season"
     public let reason: String      // e.g. "No run — carp spawn Apr–Jun"
 }
 
 /// An active veto/cap and why it fired.
-public struct GateHit: Equatable {
+public struct GateHit: Equatable, Sendable {
     public let reason: String
     public let cap: Int
 }
 
 /// A "where to look" card. `kind` lets the UI pick an icon/tint; the engine
 /// stays framework-free.
-public struct WhereToLookCard: Equatable {
-    public enum Kind: String, Equatable { case spawn, current, wind, level, clarity, darkness, temp }
+public struct WhereToLookCard: Equatable, Sendable {
+    public enum Kind: String, Equatable, Sendable { case spawn, current, wind, level, clarity, darkness, temp }
     public let kind: Kind
     public let title: String
     public let body: String
 }
 
-public struct ConditionsResult: Equatable {
+public struct ConditionsResult: Equatable, Sendable {
     public let score: Int
     public let band: ConditionsBand
     public let regime: ConditionsRegime

@@ -18,21 +18,21 @@ import Foundation
 import CoreLocation
 #endif
 
-public enum ConditionsInputBuilder {
+public enum ConditionsInputBuilder: Sendable {
 
     private static let hPaToInHg = 0.0295299830714
 
     /// Default light-pollution assumption (0 = pristine dark … 1 = heavy skyglow)
     /// until a real light-pollution layer exists. Mid-low: most bowfishing waters
     /// are rural-ish. Drives whether cloud cancels the moon. §5.3.
-    public static var defaultCityGlow: Double = 0.3
+    public static let defaultCityGlow: Double = 0.3
 
     /// USGS gages go offline; a reading hours old must not be trusted as "now".
     /// Beyond these ages a reading is dropped (the dependent factor drops + the
     /// missing-data confidence penalty applies). Stage/discharge move fast; temp
     /// and turbidity move slowly, so they get a longer leash.
-    public static var stageDischargeMaxAgeHours: Double = 3
-    public static var tempTurbidityMaxAgeHours: Double = 6
+    public static let stageDischargeMaxAgeHours: Double = 3
+    public static let tempTurbidityMaxAgeHours: Double = 6
 
     /// Turbidity is hyper-local — it describes THIS water body, not the region.
     /// USGS turbidity coverage is sparse, so `nearestTurbidity` will happily
@@ -41,13 +41,13 @@ public enum ConditionsInputBuilder {
     /// Beyond this distance we drop the gage and let the rain-decay fallback
     /// drive clarity (and confidence drops for the missing gage). Proxy for
     /// same-waterbody matching until a real hydro-network layer exists. §5.1.
-    public static var maxTurbidityDistanceMiles: Double = 10
+    public static let maxTurbidityDistanceMiles: Double = 10
 
     /// Water temperature is hyper-local too. A live 00010 gage tens of miles off
     /// on a different river isn't "this water's temp"; beyond this we drop it and
     /// fall to the modeled estimate, which at least tracks THIS location's air.
     /// Matches turbidity's same-waterbody proxy.
-    public static var maxWaterTempDistanceMiles: Double = 15
+    public static let maxWaterTempDistanceMiles: Double = 15
 
     /// Build a normalized input for one night at `coordinate`.
     /// - waterTemp: a USGS 00010 reading in **°C** (converted here), or nil.

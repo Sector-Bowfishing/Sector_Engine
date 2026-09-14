@@ -11,7 +11,7 @@
 
 import Foundation
 
-public enum WindFactor {
+public enum WindFactor: Sendable {
 
     public static func score(_ input: ConditionsInput,
                              config: ConditionsConfig = .default) -> FactorScore {
