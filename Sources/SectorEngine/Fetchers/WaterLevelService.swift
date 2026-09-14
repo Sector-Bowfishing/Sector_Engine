@@ -75,17 +75,22 @@ final class WaterLevelService: Sendable {
     // Changes smaller than this (in the reading's native unit, ft) read as "steady".
     private let steadyThreshold = 0.1
 
-    /// All active gage-height / reservoir-elevation readings within a small box
-    /// around the coordinate, each with its most recent value.
+    /// All active readings inside a box `halfWidthMiles` each way from the
+    /// coordinate, each with its most recent value.
     func nearbyReadings(near coordinate: CLLocationCoordinate2D,
-                        radiusDegrees: Double = 0.25,
+                        halfWidthMiles: Double,
                         parameterCd: String? = nil,
                         absThreshold: Double = 0.1,
                         pctThreshold: Double = 0) async throws -> [WaterLevelReading] {
-        let west = coordinate.longitude - radiusDegrees
-        let east = coordinate.longitude + radiusDegrees
-        let south = coordinate.latitude - radiusDegrees
-        let north = coordinate.latitude + radiusDegrees
+        // Miles → degrees. A degree of longitude shrinks with latitude, so the box
+        // is square on the ground, not on the map (floored so it can't blow up
+        // near the poles).
+        let latHalf = halfWidthMiles / 69.0
+        let lonHalf = halfWidthMiles / (69.0 * Swift.max(cos(coordinate.latitude * .pi / 180), 0.2))
+        let west = coordinate.longitude - lonHalf
+        let east = coordinate.longitude + lonHalf
+        let south = coordinate.latitude - latHalf
+        let north = coordinate.latitude + latHalf
 
         var components = URLComponents(string: endpoint)
         components?.queryItems = [
@@ -174,10 +179,21 @@ final class WaterLevelService: Sendable {
     /// and stamps how far that gage is — in miles — from the requested point.
     /// Beyond this, a "nearest gage" is a different water body, not yours — we'd
     /// rather show nothing than a river 50+ miles away (the reservoir bug).
-    private static let maxUsefulMiles = 40.0
+    static let maxUsefulMiles = 40.0
 
+    /// First, small search box (half-width). Most lakes with a gage have one this
+    /// close, so one cheap query usually settles it.
+    private static let nearMiles = 17.0
+
+    /// - Parameter maxMiles: the farthest gage this input will actually USE. The
+    ///   search never looks past it. It used to widen to 1.0° and then 2.5° boxes
+    ///   (~340×280 mi) for every input, even temp and turbidity, whose readings
+    ///   the builder then discards beyond 15 and 10 miles. On the many lakes with
+    ///   no such gage nearby, those always-wasted giant queries dominated render
+    ///   latency and routinely blew the 9s budget, dropping level and discharge
+    ///   with them.
     func latestReading(near coordinate: CLLocationCoordinate2D,
-                       radiusDegrees: Double = 0.25,
+                       maxMiles: Double = maxUsefulMiles,
                        parameterCd: String? = nil,
                        absThreshold: Double = 0.1,
                        pctThreshold: Double = 0) async throws -> WaterLevelReading? {
@@ -192,12 +208,12 @@ final class WaterLevelService: Sendable {
             return pool
         }
 
-        // Progressively larger boxes. USGS caps a bBox at 25 sq° (lat × lng),
-        // so 2.5° (6.25 sq°) is well within bounds. The first (small) box hits
-        // for most lakes; the wider ones only run when nothing closer exists.
-        let radii = [radiusDegrees, 1.0, 2.5]
-        for radius in radii {
-            let readings = try await nearbyReadings(near: coordinate, radiusDegrees: radius,
+        // Small box, then one box sized to `maxMiles` — only when it's wider.
+        let first = Swift.min(Self.nearMiles, maxMiles)
+        let boxes = first < maxMiles ? [first, maxMiles] : [first]
+        for (index, halfWidth) in boxes.enumerated() {
+            let isLast = index == boxes.count - 1
+            let readings = try await nearbyReadings(near: coordinate, halfWidthMiles: halfWidth,
                                                     parameterCd: parameterCd,
                                                     absThreshold: absThreshold, pctThreshold: pctThreshold)
             guard let nearest = readings.min(by: {
@@ -207,9 +223,15 @@ final class WaterLevelService: Sendable {
 
             var result = nearest
             let gage = CLLocation(latitude: nearest.latitude, longitude: nearest.longitude)
-            result.distanceMiles = origin.distance(from: gage) / 1609.34
-            // A gage farther than this isn't your water — don't present it as fact.
-            if let d = result.distanceMiles, d > Self.maxUsefulMiles { return nil }
+            let miles = origin.distance(from: gage) / 1609.34
+            result.distanceMiles = miles
+            // Beyond what this input uses, it isn't your water — don't present it.
+            if miles > maxMiles {
+                if isLast { return nil } else { continue }
+            }
+            // A square box only guarantees "nearest" within its half-width: a gage
+            // in a corner can be beaten by one just outside the box. Widen once.
+            if miles > halfWidth, !isLast { continue }
             return result
         }
         return nil
@@ -230,6 +252,8 @@ final class WaterLevelService: Sendable {
     /// coverage; returns nil where no temp gage is near.
     func nearestWaterTemp(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
         try await latestReading(near: coordinate,
+                                // No farther than the builder will use a temp gage.
+                                maxMiles: ConditionsInputBuilder.maxWaterTempDistanceMiles,
                                 parameterCd: "00010",
                                 absThreshold: 0.5,     // °C; temp moves slowly
                                 pctThreshold: 0)
@@ -243,6 +267,8 @@ final class WaterLevelService: Sendable {
     /// sediment, so callers treat the type as `.unknown`.
     func nearestTurbidity(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
         try await latestReading(near: coordinate,
+                                // No farther than the builder will use a turbidity gage.
+                                maxMiles: ConditionsInputBuilder.maxTurbidityDistanceMiles,
                                 parameterCd: "63680",
                                 absThreshold: 1.0,     // FNU; ignore sub-1 noise
                                 pctThreshold: 0.10)    // …or <10% of the reading
