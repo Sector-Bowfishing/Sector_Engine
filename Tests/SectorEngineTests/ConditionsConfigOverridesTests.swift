@@ -38,6 +38,29 @@ final class ConditionsConfigOverridesTests: XCTestCase {
         XCTAssertEqual(c.weights.spawn.spawn, ConditionsConfig.default.weights.spawn.spawn)
     }
 
+    func testDefaultsAndTheExistingTuningAreValid() throws {
+        XCTAssertEqual(ConditionsConfigOverrides().problems(), [], "compiled defaults must pass")
+        let json = #"{"weightsNormal":{"wind":0.30,"clarity":0.10},"spawnRegimeThreshold":55}"#
+        let ov = try JSONDecoder().decode(ConditionsConfigOverrides.self, from: Data(json.utf8))
+        XCTAssertEqual(ov.problems(), [], "a realistic console edit must pass")
+    }
+
+    func testRejectsConsoleTypos() throws {
+        // Zeroed-out regime: every tailwater lake would score 0 "Poor".
+        let zeroed = #"{"weightsTailwater":{"clarity":0,"spawn":0,"darkness":0,"wind":0,"waterTemp":0,"level":0,"current":0,"pressure":0,"sky":0,"humidity":0}}"#
+        XCTAssertFalse(try decode(zeroed).problems().isEmpty)
+        // Negative and out-of-range weights.
+        XCTAssertFalse(try decode(#"{"weightsNormal":{"wind":-0.2}}"#).problems().isEmpty)
+        XCTAssertFalse(try decode(#"{"weightsNormal":{"clarity":30}}"#).problems().isEmpty)
+        // Thresholds outside their scale.
+        XCTAssertFalse(try decode(#"{"spawnRegimeThreshold":600}"#).problems().isEmpty)
+        XCTAssertFalse(try decode(#"{"clarityEstimatedScoreCap":-1}"#).problems().isEmpty)
+    }
+
+    private func decode(_ json: String) throws -> ConditionsConfigOverrides {
+        try JSONDecoder().decode(ConditionsConfigOverrides.self, from: Data(json.utf8))
+    }
+
     func testEmptyOverridesAreIdentity() throws {
         let ov = try JSONDecoder().decode(ConditionsConfigOverrides.self, from: Data("{}".utf8))
         let c = ov.apply(to: .default)

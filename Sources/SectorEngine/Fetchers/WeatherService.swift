@@ -178,36 +178,60 @@ final class WeatherService: Sendable {
     // Pressure swings smaller than this (hPa) over the window read as "steady".
     static let steadyThresholdHPa = 1.5
 
-    /// Fetches `queryItems` from whichever forecast endpoint answers FIRST.
+    /// How long the primary gets before the fallback host is also asked.
+    /// Open-Meteo normally answers in ~0.3–0.8s from Cloud Run.
+    static let hedgeDelaySeconds: Double = 1.5
+
+    private enum Attempt: Sendable {
+        case primary(Data?)
+        case fallback(Data?)
+        case hedgeTimer
+    }
+
+    /// Fetches `queryItems` from the primary forecast host, HEDGED onto the
+    /// fallback host.
     ///
-    /// This used to try the hosts in sequence: primary, and only after its 15s
-    /// window elapsed, the sibling. The failure mode that caused it was a primary
-    /// that ACCEPTS the TCP connection but never completes the TLS handshake
-    /// (a peering/edge-filter issue that's intermittent from Cloud Run's egress),
-    /// so it didn't refuse fast — it hung the full 15s on every single weather
-    /// fetch, and a conditions request makes several. That stacked into the 30s+
-    /// floor we measured, and past the 60s Cloud Run limit it became a 504.
+    /// History: hosts were first tried in sequence, so a primary that accepted TCP
+    /// but never finished TLS (an intermittent peering issue from Cloud Run's
+    /// egress) cost 15s per weather fetch and stacked into 504s. That was fixed by
+    /// racing BOTH hosts on every call — which also doubled every render's
+    /// Open-Meteo usage against a free-tier daily/minute quota.
     ///
-    /// Racing both hosts concurrently fixes it at the root: the healthy host
-    /// (~0.5s) wins immediately and the stalled one is cancelled, so a dead
-    /// primary costs nothing instead of 15s. Each host still gets its own
-    /// fail-fast timeout as a backstop.
+    /// A hedge keeps the resilience at roughly half the calls: the fallback starts
+    /// only if the primary FAILS or hasn't answered within `hedgeDelaySeconds`,
+    /// and the first 2xx wins. A stalled primary now costs 1.5s, not 15s.
     static func fetchForecastData(queryItems: [URLQueryItem]) async throws -> Data {
-        let data: Data? = await withTaskGroup(of: Data?.self) { group in
-            for endpoint in forecastEndpoints {
-                group.addTask { await fetchOne(endpoint: endpoint, queryItems: queryItems) }
+        let primary = forecastEndpoints[0], fallback = forecastEndpoints[1]
+        let data: Data? = await withTaskGroup(of: Attempt.self) { group in
+            group.addTask { .primary(await fetchOne(endpoint: primary, queryItems: queryItems)) }
+            group.addTask {
+                try? await Task.sleep(nanoseconds: UInt64(hedgeDelaySeconds * 1_000_000_000))
+                return .hedgeTimer
             }
-            // Take the first host that returns a 2xx body; a fast failure from one
-            // host doesn't end the race, it just yields nil and we keep reading.
-            for await result in group {
-                if let result {
-                    group.cancelAll()
-                    return result
+            var fallbackStarted = false
+            func startFallback() {
+                guard !fallbackStarted else { return }
+                fallbackStarted = true
+                group.addTask { .fallback(await fetchOne(endpoint: fallback, queryItems: queryItems)) }
+            }
+            for await attempt in group {
+                switch attempt {
+                case let .primary(body), let .fallback(body):
+                    if let body {
+                        group.cancelAll()
+                        return body
+                    }
+                    startFallback()      // a fast primary failure hedges immediately
+                case .hedgeTimer:
+                    startFallback()      // a slow primary gets company
                 }
             }
             return nil
         }
-        guard let data else { throw WeatherError.requestFailed }
+        guard let data else {
+            Log.warning("open-meteo: every host failed", ["hosts": .strings(forecastEndpoints)])
+            throw WeatherError.requestFailed
+        }
         return data
     }
 

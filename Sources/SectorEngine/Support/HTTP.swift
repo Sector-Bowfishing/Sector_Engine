@@ -88,23 +88,45 @@ enum HTTP {
         let prepared = request   // immutable copy for the concurrent child task
         let budget = TimeAmount.milliseconds(Int64(max(timeout, 0.1) * 1000))
         let deadline = NIODeadline.now() + budget
+        let started = Date()
 
-        // `execute`'s deadline only covers the response head. Race the body
-        // against the same deadline; whichever loses is cancelled, and cancelling
-        // the body stream tears the request down.
-        return try await withThrowingTaskGroup(of: HTTPResult.self) { group in
-            group.addTask {
-                let response = try await client.execute(prepared, deadline: deadline)
-                let buffer = try await response.body.collect(upTo: maxBodyBytes)
-                return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+        do {
+            // `execute`'s deadline only covers the response head. Race the body
+            // against the same deadline; whichever loses is cancelled, and
+            // cancelling the body stream tears the request down.
+            let result = try await withThrowingTaskGroup(of: HTTPResult.self) { group in
+                group.addTask {
+                    let response = try await client.execute(prepared, deadline: deadline)
+                    let buffer = try await response.body.collect(upTo: maxBodyBytes)
+                    return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+                }
+                group.addTask {
+                    try await Task.sleep(nanoseconds: UInt64(budget.nanoseconds))
+                    throw HTTPDeadlineExceeded()
+                }
+                defer { group.cancelAll() }
+                guard let first = try await group.next() else { throw HTTPDeadlineExceeded() }
+                return first
             }
-            group.addTask {
-                try await Task.sleep(nanoseconds: UInt64(budget.nanoseconds))
-                throw HTTPDeadlineExceeded()
+            // Statuses that mean the upstream is refusing or failing us. Plain 4xx
+            // stay quiet: USGS answers "no gages in this box" with a 404, and that's
+            // an everyday, correct answer.
+            if result.status >= 500 || result.status == 429 || result.status == 403 {
+                Log.warning("upstream error status",
+                            ["host": .string(url.host ?? "?"), "status": .int(result.status),
+                             "ms": .int(Int(Date().timeIntervalSince(started) * 1000))])
             }
-            defer { group.cancelAll() }
-            guard let first = try await group.next() else { throw HTTPDeadlineExceeded() }
-            return first
+            return result
+        } catch {
+            // A fetch the engine deliberately abandoned (withDeadline, a won hedge)
+            // is cancelled on purpose — not an upstream problem.
+            if !Task.isCancelled, !(error is CancellationError) {
+                Log.warning("upstream request failed",
+                            ["host": .string(url.host ?? "?"),
+                             "error": .string(error is HTTPDeadlineExceeded ? "deadline" : String(describing: error)),
+                             "ms": .int(Int(Date().timeIntervalSince(started) * 1000))])
+            }
+            throw error
         }
     }
 }

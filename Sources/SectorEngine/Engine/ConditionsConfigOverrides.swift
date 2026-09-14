@@ -56,6 +56,54 @@ public struct ConditionsConfigOverrides: Codable, Equatable, Sendable {
     public var darknessAstroDarkBonus: Double?
     public var seeabilityEnabled: Bool?
 
+    /// Problems that make this payload unsafe to apply; empty means valid.
+    ///
+    /// Remote Config is edited by hand in the Firebase console, and a typo used
+    /// to go live on every instance within ten minutes — zeroed or negative
+    /// weights made every lake in that regime score 0 "Poor", with no error
+    /// anywhere. A payload with any problem is rejected whole and the last good
+    /// config stays in force.
+    public func problems(against base: ConditionsConfig = .default) -> [String] {
+        var out: [String] = []
+        func checkWeights(_ name: String, _ w: WeightSetOverride?) {
+            guard let w else { return }
+            let provided: [(String, Double?)] = [
+                ("clarity", w.clarity), ("spawn", w.spawn), ("darkness", w.darkness), ("wind", w.wind),
+                ("waterTemp", w.waterTemp), ("level", w.level), ("current", w.current),
+                ("pressure", w.pressure), ("sky", w.sky), ("humidity", w.humidity),
+            ]
+            for (key, value) in provided {
+                guard let value else { continue }
+                if !value.isFinite || value < 0 || value > 1 {
+                    out.append("\(name).\(key)=\(value) must be within 0...1")
+                }
+            }
+        }
+        checkWeights("weightsNormal", weightsNormal)
+        checkWeights("weightsSpawn", weightsSpawn)
+        checkWeights("weightsTailwater", weightsTailwater)
+
+        // The merged weights for each regime must still add up to a sane total.
+        let merged = apply(to: base).weights
+        for (name, set) in [("normal", merged.normal), ("spawn", merged.spawn), ("tailwater", merged.tailwater)] {
+            let total = FactorKey.allCases.reduce(0.0) { $0 + set.weight(for: $1) }
+            if !total.isFinite || total < 0.5 || total > 1.5 {
+                out.append("weights.\(name) sum \(total) must be within 0.5...1.5")
+            }
+        }
+
+        if let v = spawnRegimeThreshold, !(v.isFinite && (0...100).contains(v)) {
+            out.append("spawnRegimeThreshold=\(v) must be within 0...100")
+        }
+        if let v = clarityEstimatedScoreCap, !(v.isFinite && (0...100).contains(v)) {
+            out.append("clarityEstimatedScoreCap=\(v) must be within 0...100")
+        }
+        if let v = darknessAstroDarkBonus, !(v.isFinite && (-50...50).contains(v)) {
+            out.append("darknessAstroDarkBonus=\(v) must be within -50...50")
+        }
+        return out
+    }
+
     /// Merge onto a base config (normally `ConditionsConfig.default`).
     public func apply(to base: ConditionsConfig) -> ConditionsConfig {
         var c = base

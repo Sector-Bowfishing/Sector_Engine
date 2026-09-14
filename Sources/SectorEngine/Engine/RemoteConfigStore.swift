@@ -67,6 +67,12 @@ actor RemoteConfigStore {
         // the in-flight slot so the NEXT stale read starts a fresh refresh.
         defer { fetchedAt = Date(); inFlight = nil }
         guard let overrides = await fetchOverrides() else { return cached }
+        let problems = overrides.problems()
+        guard problems.isEmpty else {
+            // A console typo must never reach scoring: keep the last good config.
+            Log.error("remote config rejected; keeping last good config", ["problems": .strings(problems)])
+            return cached
+        }
         cached = overrides.apply(to: .default)
         return cached
     }
