@@ -81,7 +81,10 @@ struct HourPoint: Equatable {
 }
 
 struct NightScore: Identifiable, Equatable {
-    let date: Date            // the evening's date
+    /// Local NOON of the night's date at the lake. Apps label nights by the
+    /// device's calendar day; noon stays on that day in every US zone, whereas a
+    /// 9 PM Pacific instant is already tomorrow on an Eastern phone.
+    let date: Date
     let score: Int            // 0...100 (same engine as the gauge)
     let moonIllumination: Double  // 0...1
     let windMax: Double       // mph (night average)
@@ -185,7 +188,7 @@ enum ConditionsForecastService {
         let data = try await WeatherService.fetchForecastData(queryItems: [
             URLQueryItem(name: "latitude", value: String(format: "%.4f", coordinate.latitude)),
             URLQueryItem(name: "longitude", value: String(format: "%.4f", coordinate.longitude)),
-            URLQueryItem(name: "hourly", value: "wind_speed_10m,cloud_cover,precipitation,weather_code,relative_humidity_2m"),
+            URLQueryItem(name: "hourly", value: "wind_speed_10m,cloud_cover,precipitation,weather_code,relative_humidity_2m,wind_gusts_10m"),
             URLQueryItem(name: "daily", value: "sunrise,sunset,wind_speed_10m_max,weather_code,precipitation_sum,precipitation_probability_max,cloud_cover_mean"),
             URLQueryItem(name: "past_days", value: "1"),
             URLQueryItem(name: "forecast_days", value: "8"),
@@ -198,7 +201,7 @@ enum ConditionsForecastService {
 
     // MARK: Compute
 
-    struct HourSample { let date: Date; let wind: Double; let cloud: Double; let precip: Double; let code: Int; let humidity: Double }
+    struct HourSample { let date: Date; let wind: Double; let cloud: Double; let precip: Double; let code: Int; let humidity: Double; var gust: Double? = nil }
 
     static func compute(r: ForecastResponse, base: ConditionsInput,
                         coordinate: CLLocationCoordinate2D, now: Date = Date(),
@@ -222,7 +225,9 @@ enum ConditionsForecastService {
             let rawCode = (r.hourly.weather_code[safe: i] ?? nil) ?? 0
             let code = WeatherService.sanitizedWeatherCode(rawCode, precipitation: precip, cloudCover: cloud)
             let humidity = (r.hourly.relative_humidity_2m?[safe: i] ?? nil) ?? 0
-            hourly.append(HourSample(date: d, wind: wind, cloud: cloud, precip: precip, code: code, humidity: humidity))
+            let gust = r.hourly.wind_gusts_10m?[safe: i] ?? nil
+            hourly.append(HourSample(date: d, wind: wind, cloud: cloud, precip: precip, code: code,
+                                     humidity: humidity, gust: gust))
         }
 
         let tonight = buildTonight(base: base, hourly: hourly, coordinate: coordinate,
@@ -412,19 +417,14 @@ enum ConditionsForecastService {
         var nights: [NightScore] = []
         let lat = coordinate.latitude, lon = coordinate.longitude
 
-        // `past_days=1` puts yesterday at index 0 — start at the LOCATION's local
-        // today. Open-Meteo's `daily.time` is in the location's local dates, but
-        // `.current` is UTC on Cloud Run — so in a US evening (UTC already rolled
-        // to tomorrow) this picked tomorrow's date and the outlook skipped tonight,
-        // starting a day ahead. Render `now` in the location's own timezone
-        // (Open-Meteo's utc_offset) so the comparison is local-vs-local.
-        let locationTZ = TimeZone(secondsFromGMT: r.utc_offset_seconds ?? 0) ?? .current
-        let todayStr: String = {
-            let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX")
-            f.dateFormat = "yyyy-MM-dd"; f.timeZone = locationTZ
-            return f.string(from: now)
-        }()
-        let startIdx = r.daily.time.firstIndex(where: { $0 >= todayStr }) ?? 0
+        // `past_days=1` puts yesterday at index 0 — start at the fishing night in
+        // progress at the LAKE: today's evening from 6 AM on, last night's between
+        // midnight and 6 AM. That's the night the live gauge (`base`) and the
+        // Tonight window score, so nights[0] is the same night. Local-vs-local:
+        // `daily.time` holds the lake's dates, and a UTC `now` in a US evening had
+        // already rolled to tomorrow and skipped tonight.
+        let tonightStr = OpenMeteoTime.fishingNightDay(now, utcOffsetSeconds: r.utc_offset_seconds)
+        let startIdx = r.daily.time.firstIndex(where: { $0 >= tonightStr }) ?? 0
         let endIdx = Swift.min(startIdx + 7, r.daily.time.count)
         guard startIdx < endIdx else { return [] }
 
@@ -453,7 +453,7 @@ enum ConditionsForecastService {
                 }
                 let ribbon = buildRibbon(evening: evening, ni: base, hourly: hourly,
                                          coordinate: coordinate, config: config)
-                nights.append(NightScore(date: evening, score: res.score,
+                nights.append(NightScore(date: dayNoon, score: res.score,
                                          moonIllumination: base.moonIllumPct / 100,
                                          windMax: base.windMph, weatherCode: base.weatherCode,
                                          precip: base.precipitationInchNow, precipProbability: pop,
@@ -472,6 +472,7 @@ enum ConditionsForecastService {
             let eveningEnd = cal.date(byAdding: .hour, value: 9, to: evening) ?? evening     // ~06:00 next
             let nightHours = hourly.filter { $0.date >= eveningStart && $0.date <= eveningEnd }
             let wind = nightHours.isEmpty ? dailyMax : nightHours.map(\.wind).reduce(0, +) / Double(nightHours.count)
+            let gust = nightHours.compactMap(\.gust).max()
             let cloud = nightHours.isEmpty
                 ? (dailyCloud ?? 0)
                 : nightHours.map(\.cloud).reduce(0, +) / Double(nightHours.count)
@@ -512,6 +513,11 @@ enum ConditionsForecastService {
             var ni = base
             ni.date = evening
             ni.windMph = wind
+            // This night's own forecast gusts. `base` carries tonight's gusts and
+            // any live NWS warning floor — a warning in effect NOW says nothing
+            // about Thursday, so neither may cap a future night.
+            ni.windGustMph = gust
+            ni.severeWarningLabel = nil
             ni.cloudPct = cloud
             ni.weatherCode = code
             ni.precipitationInchNow = precip
@@ -553,7 +559,7 @@ enum ConditionsForecastService {
             }
             let ribbon = buildRibbon(evening: evening, ni: ni, hourly: hourly,
                                      coordinate: coordinate, config: config)
-            nights.append(NightScore(date: evening, score: res.score, moonIllumination: illum,
+            nights.append(NightScore(date: dayNoon, score: res.score, moonIllumination: illum,
                                      windMax: wind, weatherCode: code, precip: precip,
                                      precipProbability: pop,
                                      factors: factors, confidence: res.confidence, regime: res.regime,
@@ -720,6 +726,8 @@ struct ForecastResponse: Decodable {
         // `var` (not `let`) so the default doesn't drop it from synthesized
         // Decodable; drives the ribbon's fog-risk proxy.
         var relative_humidity_2m: [Double?]? = nil
+        // Per-night gust max for FUTURE nights (tonight's comes from the live read).
+        var wind_gusts_10m: [Double?]? = nil
     }
     struct Daily: Decodable {
         let time: [String]

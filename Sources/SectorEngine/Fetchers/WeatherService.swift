@@ -80,6 +80,10 @@ struct WeatherReading: Equatable {
     let weatherCode: Int            // WMO code — feeds the conditions sky factor
     let time: Date
 
+    /// The location's offset from UTC as Open-Meteo reported it — the lake's
+    /// clock for "tonight" math on a UTC server.
+    var utcOffsetSeconds: Int? = nil
+
     /// Hourly barometric series around `time` — roughly the past 24h plus the next
     /// 12h of forecast — so the pressure detail can chart where it's been and where
     /// it's headed. Chronological; empty if the hourly data was unavailable.
@@ -503,6 +507,7 @@ final class WeatherService: Sendable {
             cloudCover: current.cloud_cover ?? 0,
             weatherCode: effectiveCode,
             time: now,
+            utcOffsetSeconds: decoded.utc_offset_seconds,
             pressureHistory: history,
             hourlyConditions: hourlyConditions
         )

@@ -53,6 +53,33 @@ enum OpenMeteoTime {
         return String(format: "%04d-%02d-%02d", c.year ?? 0, c.month ?? 0, c.day ?? 0)
     }
 
+    /// Hours after local midnight that still belong to the previous evening's
+    /// night. Matches the Tonight window (6 PM → 6 AM).
+    static let nightRolloverHour = 6
+
+    /// The local date of the fishing night in progress (or coming up) at `date`:
+    /// from 6 AM onward that's today's evening; between midnight and 6 AM it's
+    /// still last night.
+    static func fishingNightDay(_ date: Date, utcOffsetSeconds: Int?) -> String {
+        localDay(date.addingTimeInterval(-Double(nightRolloverHour) * 3600), utcOffsetSeconds: utcOffsetSeconds)
+    }
+
+    /// Local noon of the fishing night's date. `Astronomy` picks its day by UTC
+    /// date, and local noon falls on the local date for every US zone — whereas
+    /// "now" at 7 PM Central is already tomorrow in UTC and returns tomorrow's
+    /// sunset, moonrise and window.
+    static func fishingNightNoon(_ date: Date, utcOffsetSeconds: Int?) -> Date {
+        instant(fishingNightDay(date, utcOffsetSeconds: utcOffsetSeconds) + "T12:00",
+                utcOffsetSeconds: utcOffsetSeconds ?? 0) ?? date
+    }
+
+    /// Best guess at a location's offset when no Open-Meteo response is at hand:
+    /// solar time from longitude, whole hours. Close enough to pick the right day
+    /// with a noon anchor; never used for clock times.
+    static func solarOffsetSeconds(longitude: Double) -> Int {
+        Int((longitude / 15).rounded()) * 3600
+    }
+
     private static func components(_ s: String) -> DateComponents? {
         let parts = s.split(separator: "T", maxSplits: 1)
         let ymd = parts.first?.split(separator: "-").compactMap { Int($0) } ?? []

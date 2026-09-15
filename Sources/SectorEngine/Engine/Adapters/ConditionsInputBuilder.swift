@@ -91,10 +91,15 @@ public enum ConditionsInputBuilder: Sendable {
                 return r
             }
 
-        // Astronomy (local, no network).
-        let sun = Astronomy.sunEvents(on: date, lat: lat, lon: lon)
-        let moonIllum = Astronomy.moonIllumination(on: date) * 100
-        let moonRS = Astronomy.moonRiseSet(on: date, lat: lat, lon: lon)
+        // Astronomy (local, no network), for the fishing night in progress at the
+        // lake — not the UTC day of `date`. On a UTC server "now" at 7 PM Central
+        // is already tomorrow, so keying on it scored TOMORROW night's dusk, moon
+        // and window for every evening user; after midnight the night that's
+        // actually underway is last night's.
+        let offset = weather?.utcOffsetSeconds ?? OpenMeteoTime.solarOffsetSeconds(longitude: lon)
+        let nightNoon = OpenMeteoTime.fishingNightNoon(date, utcOffsetSeconds: offset)
+        let sun = Astronomy.sunEvents(on: nightNoon, lat: lat, lon: lon)
+        let moonRS = Astronomy.moonRiseSet(on: nightNoon, lat: lat, lon: lon)
 
         // Fishing window: from true dark (or sunset + ~80 min) to sunrise.
         //
@@ -114,6 +119,9 @@ public enum ConditionsInputBuilder: Sendable {
             guard let start = windowStart, let end = rawWindowEnd else { return rawWindowEnd }
             return end > start ? end : end.addingTimeInterval(24 * 3600)
         }()
+        // Illumination at the start of the window, the same moment the 7-night
+        // outlook uses (its 9 PM evening), so tonight's moon reads alike on both.
+        let moonIllum = Astronomy.moonIllumination(on: windowStart ?? nightNoon) * 100
         let moonAltFrac: Double
         if let s = windowStart, let e = windowEnd {
             moonAltFrac = Astronomy.moonAltitudeFraction(from: s, to: e, lat: lat, lon: lon)

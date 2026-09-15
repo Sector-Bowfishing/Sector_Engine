@@ -55,7 +55,8 @@ final class MrmsPrecipService: Sendable {
         async let today = todayPrecipIn(lat: lat, lon: lon, now: now)
 
         guard let ptDaily = await pt, !ptDaily.isEmpty else { return nil }
-        let todayIn = await today ?? 0
+        let todayRain = await today
+        let todayIn = todayRain?.inches ?? 0
         // A true 72h ending now: today (so far) + the two completed days behind it.
         let completedPoint = ptDaily.suffix(2).reduce(0) { $0 + $1.inches }
         let point72 = todayIn + completedPoint
@@ -66,8 +67,12 @@ final class MrmsPrecipService: Sendable {
         let watershed = todayIn + Swift.max(completedPoint, 0.7 * ringMax, ringMean)
 
         // Append today to the daily series so the sightline chart reaches "now".
+        // Dated like the IEMRE days (midnight Central of the label), with the label
+        // taken from the lake's own calendar.
         var series = ptDaily
-        let startOfToday = Calendar(identifier: .gregorian).startOfDay(for: now)
+        let todayLabel = OpenMeteoTime.localDay(now, utcOffsetSeconds: todayRain?.utcOffsetSeconds
+                                                ?? OpenMeteoTime.solarOffsetSeconds(longitude: lon))
+        let startOfToday = Self.iemreDayFormatter().date(from: todayLabel) ?? now
         if series.last?.date != startOfToday {
             series.append(MrmsPrecip.DailyRain(date: startOfToday, inches: todayIn))
         }
@@ -81,8 +86,10 @@ final class MrmsPrecipService: Sendable {
     }
 
     /// Today's rainfall so far (inches) from Open-Meteo — the current-day layer
-    /// IEMRE can't provide yet. Uses observed hourly precip up to `now`.
-    private func todayPrecipIn(lat: Double, lon: Double, now: Date) async -> Double? {
+    /// IEMRE can't provide yet. Uses observed hourly precip from the LAKE's local
+    /// midnight up to `now`. (It used the server's midnight: on Cloud Run that's
+    /// 7 PM Central, so every US evening "today's rain" restarted at zero.)
+    private func todayPrecipIn(lat: Double, lon: Double, now: Date) async -> (inches: Double, utcOffsetSeconds: Int?)? {
         var comp = URLComponents(string: "https://api.open-meteo.com/v1/forecast")
         comp?.queryItems = [
             URLQueryItem(name: "latitude", value: String(format: "%.4f", lat)),
@@ -92,20 +99,35 @@ final class MrmsPrecipService: Sendable {
             URLQueryItem(name: "forecast_days", value: "1"),
             URLQueryItem(name: "precipitation_unit", value: "inch"),
             URLQueryItem(name: "timeformat", value: "unixtime"),
-            URLQueryItem(name: "timezone", value: "GMT"),
+            // unixtime stamps are UTC regardless; `auto` just adds the lake's offset.
+            URLQueryItem(name: "timezone", value: "auto"),
         ]
         guard let url = comp?.url else { return nil }
         guard let result = try? await HTTP.get(url), result.isSuccess else { return nil }
-        struct Resp: Decodable { let hourly: Hourly?; struct Hourly: Decodable { let time: [Int]; let precipitation: [Double?] } }
+        struct Resp: Decodable {
+            let hourly: Hourly?
+            let utc_offset_seconds: Int?
+            struct Hourly: Decodable { let time: [Int]; let precipitation: [Double?] }
+        }
         guard let decoded = try? JSONDecoder().decode(Resp.self, from: result.body), let h = decoded.hourly else { return nil }
-        let startOfDay = Calendar(identifier: .gregorian).startOfDay(for: now).timeIntervalSince1970
+        let offset = decoded.utc_offset_seconds ?? OpenMeteoTime.solarOffsetSeconds(longitude: lon)
+        let startOfDay = OpenMeteoTime.calendar(utcOffsetSeconds: offset).startOfDay(for: now).timeIntervalSince1970
         let nowTs = now.timeIntervalSince1970
         var sum = 0.0
         for (i, t) in h.time.enumerated() where i < h.precipitation.count {
             let ts = Double(t)
             if ts >= startOfDay && ts <= nowTs { sum += h.precipitation[i] ?? 0 }
         }
-        return Swift.max(0, sum)
+        return (Swift.max(0, sum), decoded.utc_offset_seconds)
+    }
+
+    /// "yyyy-MM-dd" in Central — the frame the IEMRE day dates are stored in.
+    private static func iemreDayFormatter() -> DateFormatter {
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "en_US_POSIX")
+        fmt.timeZone = TimeZone(identifier: "America/Chicago") ?? TimeZone(secondsFromGMT: -6 * 3600)!
+        fmt.dateFormat = "yyyy-MM-dd"
+        return fmt
     }
 
     private struct IEMREResponse: Decodable {
