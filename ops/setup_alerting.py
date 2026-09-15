@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Idempotent Cloud Monitoring setup for sector-engine: channel, uptime checks,
-log-based metrics, alert policies. Re-running updates nothing that already exists
-(matched by display name / metric name) and creates what's missing."""
+log-based metrics, alert policies. Re-running creates what's missing and brings
+existing log metrics and alert policies (matched by name / display name) in line
+with the definitions below. Uptime checks are create-only."""
 import json, subprocess, sys, urllib.request, urllib.error
 
 PROJECT = "sector-9393c"
@@ -75,11 +76,14 @@ up_deep = uptime("sector-engine /conditions (Guntersville)", "/conditions?lat=34
 metrics = {m["name"]: m for m in list_all(f"{LOG}/metrics", "metrics")}
 BASE = f'resource.type="cloud_run_revision" AND resource.labels.service_name="{SERVICE}"'
 def log_metric(name, desc, filt):
+    body = {"name": name, "description": desc, "filter": f"{BASE} AND ({filt})",
+            "metricDescriptor": {"metricKind": "DELTA", "valueType": "INT64", "unit": "1"}}
     if name in metrics:
-        print("metric exists", name); return
-    call("POST", f"{LOG}/metrics", {
-        "name": name, "description": desc, "filter": f"{BASE} AND ({filt})",
-        "metricDescriptor": {"metricKind": "DELTA", "valueType": "INT64", "unit": "1"}})
+        if metrics[name].get("filter") == body["filter"] and metrics[name].get("description") == desc:
+            print("metric up to date", name); return
+        call("PUT", f"{LOG}/metrics/{name}", body)
+        print("updated metric", name); return
+    call("POST", f"{LOG}/metrics", body)
     print("created metric", name)
 log_metric("engine_container_crash", "Engine process crashed (signal) or container terminated",
            'textPayload:"Uncaught signal" OR textPayload:"Container terminated on signal"')
@@ -87,20 +91,29 @@ log_metric("engine_render_unavailable", "Render refused: no weather to score hon
            'jsonPayload.message="render unavailable: no weather"')
 log_metric("engine_upstream_failure", "An upstream fetch failed (transport, deadline, 403/429/5xx)",
            'jsonPayload.message="upstream request failed" OR jsonPayload.message="upstream error status"')
+log_metric("engine_render_degraded", "Render served with one or more inputs missing (degradedInputs non-empty)",
+           'jsonPayload.message="render degraded"')
+log_metric("engine_openmeteo_rate_limited", "Open-Meteo answered 429; weather fetches paused",
+           'jsonPayload.message="open-meteo rate limited; pausing weather fetches"')
 log_metric("engine_remote_config_rejected", "Remote Config payload rejected by validation",
            'jsonPayload.message="remote config rejected; keeping last good config"')
 
 # ── Alert policies ───────────────────────────────────────────────────────────
 policies = {p["displayName"]: p for p in list_all(f"{MON}/alertPolicies", "alertPolicies")}
 def policy(name, doc, condition):
+    body = {"displayName": name, "combiner": "OR", "enabled": True,
+            "notificationChannels": [CH],
+            "documentation": {"content": doc, "mimeType": "text/markdown"},
+            "alertStrategy": {"autoClose": "1800s"},
+            "conditions": [condition]}
     if name in policies:
-        print("policy exists", name); return
-    call("POST", f"{MON}/alertPolicies", {
-        "displayName": name, "combiner": "OR", "enabled": True,
-        "notificationChannels": [CH],
-        "documentation": {"content": doc, "mimeType": "text/markdown"},
-        "alertStrategy": {"autoClose": "1800s"},
-        "conditions": [condition]})
+        # PATCH the whole definition so a changed threshold or aggregation here
+        # actually reaches the live policy (create-only left a wrong p95 reducer
+        # in place).
+        mask = "combiner,enabled,notificationChannels,documentation,alertStrategy,conditions"
+        call("PATCH", f"https://monitoring.googleapis.com/v3/{policies[name]['name']}?updateMask={mask}", body)
+        print("updated policy", name); return
+    call("POST", f"{MON}/alertPolicies", body)
     print("created policy", name)
 
 def uptime_condition(check, label):
@@ -141,8 +154,11 @@ policy("Sector engine slow (p95 > 20s)",
        "95th-percentile request latency above 20 seconds for 10 minutes.\n\n" + RUNBOOK,
        {"displayName": "p95 latency > 20s", "conditionThreshold": {
            "filter": f'metric.type="run.googleapis.com/request_latencies" AND resource.type="cloud_run_revision" AND resource.label.service_name="{SERVICE}"',
-           "aggregations": [{"alignmentPeriod": "300s", "perSeriesAligner": "ALIGN_PERCENTILE_95",
-                             "crossSeriesReducer": "REDUCE_MAX"}],
+           # Merge every revision/status series into ONE distribution, then take
+           # its p95. (Per-series p95 + REDUCE_MAX fired on the slowest sliver —
+           # e.g. a handful of 4xx — not on what users actually experience.)
+           "aggregations": [{"alignmentPeriod": "300s", "perSeriesAligner": "ALIGN_DELTA",
+                             "crossSeriesReducer": "REDUCE_PERCENTILE_95"}],
            "comparison": "COMPARISON_GT", "thresholdValue": 20000, "duration": "600s", "trigger": {"count": 1}}})
 policy("Sector engine crashed",
        "An engine container crashed (signal) or was terminated.\n\n" + RUNBOOK,
@@ -150,6 +166,17 @@ policy("Sector engine crashed",
 policy("Sector engine can't score (weather outage)",
        "More than 20 renders refused for missing weather in 10 minutes — Open-Meteo is failing or rate-limiting.\n\n" + RUNBOOK,
        log_count_condition("engine_render_unavailable", "no-weather renders > 20 / 10 min", 20, "600s"))
+# Thresholds below are first guesses (these log lines only exist from the
+# hardening release on); tune them against a week of real traffic.
+policy("Sector engine upstream failures elevated",
+       "More than 150 upstream fetch failures in each of two consecutive 15-minute windows — a data source (USGS, TVA, CWMS, NWS, Open-Meteo) is down or blocking us. Renders still serve, marked degraded. Check which `host` the `upstream request failed` logs name.\n\n" + RUNBOOK,
+       log_count_condition("engine_upstream_failure", "upstream failures > 150 / 15 min, sustained", 150, "900s", "900s"))
+policy("Sector engine renders degraded",
+       "More than 60 renders in 30 minutes were served with inputs missing — users see gaps (water, generation, alerts or forecast). Check the `render degraded` logs for which inputs.\n\n" + RUNBOOK,
+       log_count_condition("engine_render_degraded", "degraded renders > 60 / 30 min", 60, "1800s"))
+policy("Sector engine rate-limited by Open-Meteo",
+       "Open-Meteo returned 429 and weather fetches are paused. Sustained, this becomes a weather outage for the app. The commercial API key is the fix.\n\n" + RUNBOOK,
+       log_count_condition("engine_openmeteo_rate_limited", "open-meteo 429", 0, "300s"))
 policy("Sector engine Remote Config rejected",
        "A conditions_config edit in the Firebase console failed validation and was NOT applied. Fix the value in the console.\n\n" + RUNBOOK,
        log_count_condition("engine_remote_config_rejected", "remote config rejected", 0, "300s"))

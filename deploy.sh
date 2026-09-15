@@ -11,6 +11,11 @@
 #      bad coordinate.
 #   4. Only then move 100% of traffic to it. If any step fails, prod stays on
 #      the revision it was already serving.
+#   5. Re-run the smoke test against the PROD URL. If prod fails it, traffic
+#      goes straight back to the previous revision.
+#
+# The "candidate" tag is removed however the script exits, so a failed deploy
+# doesn't leave a stray addressable revision behind.
 #
 # Why gated: until 2026-09-14 this script deployed straight to 100% with no
 # check, and a later traffic pin meant a plain deploy silently created a
@@ -56,79 +61,37 @@ LIVENESS_PROBE="httpGet.path=/health,httpGet.port=8080,periodSeconds=15,timeoutS
 SMOKE_LAT="${SMOKE_LAT:-34.35}"
 SMOKE_LON="${SMOKE_LON:--86.30}"
 
-serving_revision() {
-  gcloud run services describe "$SERVICE" "${GC[@]}" --format=json | python3 -c '
-import json, sys
-t = json.load(sys.stdin)["status"]["traffic"]
-print(max(t, key=lambda e: e.get("percent", 0)).get("revisionName", ""))'
-}
-
-# ── Rollback ───────────────────────────────────────────────────────────────────
-if [[ "${1:-}" == "--rollback" ]]; then
-  [[ -n "${2:-}" ]] || { echo "usage: ./deploy.sh --rollback REVISION"; exit 2; }
-  echo "▶ Rolling '$SERVICE' back to $2"
-  gcloud run services update-traffic "$SERVICE" "${GC[@]}" --to-revisions "$2=100"
-  echo "✅ 100% of traffic on $2"
-  exit 0
-fi
-
-# ── 1. Traceability ────────────────────────────────────────────────────────────
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "✗ Uncommitted changes. Commit first so this revision maps to a commit."
-  exit 1
-fi
-SHA="$(git rev-parse --short=12 HEAD)"
-PREVIOUS="$(serving_revision)"
-echo "▶ Deploying '$SERVICE' @ $SHA  (project=$PROJECT_ID region=$REGION concurrency=$CONCURRENCY)"
-echo "  currently serving: ${PREVIOUS:-none}"
-
-# ── 2. Candidate: build + deploy with NO traffic ───────────────────────────────
-gcloud run deploy "$SERVICE" \
-  --source . \
-  "${GC[@]}" \
-  --platform managed \
-  --allow-unauthenticated \
-  --no-traffic \
-  --tag candidate \
-  --labels "commit=$SHA" \
-  --memory 2Gi \
-  --cpu 4 \
-  --concurrency "$CONCURRENCY" \
-  --timeout 60 \
-  --min-instances 1 \
-  --max-instances "$MAX_INSTANCES" \
-  --startup-probe "$STARTUP_PROBE" \
-  --liveness-probe "$LIVENESS_PROBE" \
-  --quiet
-
-read -r CANDIDATE CANDIDATE_URL < <(gcloud run services describe "$SERVICE" "${GC[@]}" --format=json | python3 -c '
-import json, sys
-for e in json.load(sys.stdin)["status"]["traffic"]:
-    if e.get("tag") == "candidate":
-        print(e["revisionName"], e["url"]); break')
-[[ -n "${CANDIDATE:-}" && -n "${CANDIDATE_URL:-}" ]] || { echo "✗ Couldn't find the candidate revision."; exit 1; }
-echo "  candidate: $CANDIDATE  $CANDIDATE_URL"
-
-# ── 3. Smoke test the candidate ────────────────────────────────────────────────
-echo "▶ Smoke-testing the candidate"
-if ! CANDIDATE_URL="$CANDIDATE_URL" SMOKE_LAT="$SMOKE_LAT" SMOKE_LON="$SMOKE_LON" python3 - <<'PY'
+smoke_test() {   # smoke_test URL LABEL
+  local url="$1" label="$2"
+  echo "▶ Smoke-testing $label"
+  TARGET_URL="$url" SMOKE_LAT="$SMOKE_LAT" SMOKE_LON="$SMOKE_LON" python3 - <<'PY'
 import json, os, sys, time, urllib.request, urllib.error
 
-base = os.environ["CANDIDATE_URL"]
+base = os.environ["TARGET_URL"]
 def get(path, timeout):
     try:
         with urllib.request.urlopen(base + path, timeout=timeout) as r:
             return r.status, r.read()
     except urllib.error.HTTPError as e:
         return e.code, e.read()
+    except Exception as e:                      # timeout, reset, DNS
+        return 0, str(e).encode()
 
 failures = []
 
 status, _ = get("/health", 20)
 if status != 200: failures.append(f"/health -> {status}")
 
+render = f"/conditions?lat={os.environ['SMOKE_LAT']}&lon={os.environ['SMOKE_LON']}"
 started = time.time()
-status, body = get(f"/conditions?lat={os.environ['SMOKE_LAT']}&lon={os.environ['SMOKE_LON']}", 60)
+status, body = get(render, 60)
+if status != 200:
+    # One retry: a brand-new instance's first render fans out to every upstream
+    # cold, and a single upstream blip shouldn't block a good build.
+    print(f"  render -> {status}, retrying once in 10s")
+    time.sleep(10)
+    started = time.time()
+    status, body = get(render, 60)
 elapsed = time.time() - started
 if status != 200:
     failures.append(f"/conditions -> {status} {body[:120]!r}")
@@ -149,19 +112,105 @@ if failures:
     sys.exit(1)
 print("  ✓ health, render, validation")
 PY
-then
+}
+
+remove_candidate_tag() {
+  # Only if the tag is actually there; never fails the script.
+  if gcloud run services describe "$SERVICE" "${GC[@]}" --format=json 2>/dev/null \
+       | python3 -c 'import json,sys; sys.exit(0 if any(e.get("tag")=="candidate" for e in json.load(sys.stdin)["status"].get("traffic",[])) else 1)'; then
+    gcloud run services update-traffic "$SERVICE" "${GC[@]}" --remove-tags candidate --quiet >/dev/null 2>&1 || true
+  fi
+}
+
+serving_revision() {
+  gcloud run services describe "$SERVICE" "${GC[@]}" --format=json | python3 -c '
+import json, sys
+t = json.load(sys.stdin)["status"]["traffic"]
+print(max(t, key=lambda e: e.get("percent", 0)).get("revisionName", ""))'
+}
+
+# ── Rollback ───────────────────────────────────────────────────────────────────
+if [[ "${1:-}" == "--rollback" ]]; then
+  [[ -n "${2:-}" ]] || { echo "usage: ./deploy.sh --rollback REVISION"; exit 2; }
+  echo "▶ Rolling '$SERVICE' back to $2"
+  gcloud run services update-traffic "$SERVICE" "${GC[@]}" --to-revisions "$2=100"
+  remove_candidate_tag
+  echo "✅ 100% of traffic on $2"
+  exit 0
+fi
+
+# ── 1. Traceability ────────────────────────────────────────────────────────────
+# `--source .` uploads the working directory, untracked files included, so
+# those count as uncommitted too.
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "✗ Uncommitted or untracked changes. Commit first so this revision maps to a commit."
+  git status --short
+  exit 1
+fi
+SHA="$(git rev-parse --short=12 HEAD)"
+PREVIOUS="$(serving_revision)"
+echo "▶ Deploying '$SERVICE' @ $SHA  (project=$PROJECT_ID region=$REGION concurrency=$CONCURRENCY)"
+echo "  currently serving: ${PREVIOUS:-none}"
+trap remove_candidate_tag EXIT
+
+# ── 2. Candidate: build + deploy with NO traffic ───────────────────────────────
+gcloud run deploy "$SERVICE" \
+  --source . \
+  "${GC[@]}" \
+  --platform managed \
+  --allow-unauthenticated \
+  --no-traffic \
+  --tag candidate \
+  --labels "commit=$SHA" \
+  --memory 2Gi \
+  --cpu 4 \
+  --concurrency "$CONCURRENCY" \
+  --timeout 60 \
+  --min-instances 1 \
+  --max-instances "$MAX_INSTANCES" \
+  --startup-probe "$STARTUP_PROBE" \
+  --liveness-probe "$LIVENESS_PROBE" \
+  --quiet
+
+# The revision this deploy just created, and the tag URL pointing at it. Both
+# must agree — a leftover "candidate" tag on an older revision must never be
+# what gets tested or promoted.
+read -r CANDIDATE CANDIDATE_URL < <(gcloud run services describe "$SERVICE" "${GC[@]}" --format=json | python3 -c '
+import json, os, sys
+svc = json.load(sys.stdin)
+latest = svc["status"].get("latestCreatedRevisionName", "")
+url = next((e["url"] for e in svc["status"].get("traffic", [])
+            if e.get("tag") == "candidate" and e.get("revisionName") == latest), "")
+print(latest, url)')
+[[ -n "${CANDIDATE:-}" && -n "${CANDIDATE_URL:-}" ]] || { echo "✗ Couldn't find the new revision behind the candidate tag."; exit 1; }
+LABEL="$(gcloud run revisions describe "$CANDIDATE" "${GC[@]}" --format 'value(metadata.labels.commit)')"
+[[ "$LABEL" == "$SHA" ]] || { echo "✗ Revision $CANDIDATE is labeled commit=$LABEL, expected $SHA."; exit 1; }
+echo "  candidate: $CANDIDATE  $CANDIDATE_URL"
+
+# ── 3. Smoke test the candidate ────────────────────────────────────────────────
+if ! smoke_test "$CANDIDATE_URL" "the candidate"; then
   echo "✗ Candidate $CANDIDATE did NOT pass. Prod is still on ${PREVIOUS:-its previous revision}."
-  echo "  Inspect: $CANDIDATE_URL   (tag 'candidate', 0% traffic)"
   exit 1
 fi
 
 # ── 4. Promote ─────────────────────────────────────────────────────────────────
 echo "▶ Promoting $CANDIDATE to 100% of traffic"
 gcloud run services update-traffic "$SERVICE" "${GC[@]}" --to-revisions "$CANDIDATE=100" --quiet
-gcloud run services update-traffic "$SERVICE" "${GC[@]}" --remove-tags candidate --quiet >/dev/null
+remove_candidate_tag
 
+# ── 5. Verify prod, roll back automatically if it fails ────────────────────────
 URL="$(gcloud run services describe "$SERVICE" "${GC[@]}" --format 'value(status.url)')"
-code="$(curl -s -m 20 -o /dev/null -w '%{http_code}' "$URL/health" || true)"
+if ! smoke_test "$URL" "prod"; then
+  if [[ -n "$PREVIOUS" ]]; then
+    echo "✗ Prod failed after promotion — rolling back to $PREVIOUS"
+    gcloud run services update-traffic "$SERVICE" "${GC[@]}" --to-revisions "$PREVIOUS=100" --quiet
+    echo "  100% of traffic back on $PREVIOUS. $CANDIDATE kept for inspection (0% traffic)."
+  else
+    echo "✗ Prod failed after promotion and there is no previous revision to roll back to."
+  fi
+  exit 1
+fi
+
 echo
-echo "✅ $CANDIDATE serving 100% (commit $SHA). Prod /health -> $code"
+echo "✅ $CANDIDATE serving 100% (commit $SHA), verified on prod."
 echo "   Rollback: ./deploy.sh --rollback ${PREVIOUS:-<previous-revision>}"
