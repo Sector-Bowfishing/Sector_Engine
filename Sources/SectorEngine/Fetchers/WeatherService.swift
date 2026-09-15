@@ -421,15 +421,6 @@ final class WeatherService: Sendable {
         let offset = decoded.utc_offset_seconds ?? 0
         let now = OpenMeteoTime.instant(current.time, utcOffsetSeconds: offset) ?? Date()
 
-        let (trend, change) = pressureTrend(
-            currentPressure: current.pressure_msl,
-            hourlyTimes: decoded.hourly.time,
-            hourlyPressures: decoded.hourly.pressure_msl,
-            now: now,
-            lookbackHours: lookbackHours,
-            utcOffsetSeconds: offset
-        )
-
         // Windowed hourly series (past 24h → next 12h) for the pressure detail chart.
         // 48 each way so the pressure sheet's 48H range has real data behind it.
         // Only what the selected range asks for is ever plotted, so the wider
@@ -438,6 +429,28 @@ final class WeatherService: Sendable {
             hourlyTimes: decoded.hourly.time,
             hourlyPressures: decoded.hourly.pressure_msl,
             now: now, pastHours: 48, futureHours: 48,
+            utcOffsetSeconds: offset
+        )
+
+        // Anchor the reported "current" pressure to the hourly series at `now`, so
+        // the number, the trend, the detail chart, and the score all come from ONE
+        // series and can't contradict each other. Open-Meteo's `current` block is a
+        // sub-hour nowcast that can sit a couple hPa off its own hourly series
+        // during a front; when it did, the 3-hour tendency (computed downstream as
+        // current − the hourly reading 3h ago) read "Falling" on a chart that was
+        // plainly rising. Fall back to the nowcast only when no hourly sample sits
+        // near now.
+        let currentPressure: Double = history
+            .min(by: { abs($0.date.timeIntervalSince(now)) < abs($1.date.timeIntervalSince(now)) })
+            .flatMap { abs($0.date.timeIntervalSince(now)) <= 90 * 60 ? $0.hPa : nil }
+            ?? current.pressure_msl
+
+        let (trend, change) = pressureTrend(
+            currentPressure: currentPressure,
+            hourlyTimes: decoded.hourly.time,
+            hourlyPressures: decoded.hourly.pressure_msl,
+            now: now,
+            lookbackHours: lookbackHours,
             utcOffsetSeconds: offset
         )
 
@@ -501,7 +514,7 @@ final class WeatherService: Sendable {
             precipitation: current.precipitation,
             recentRainfall: recentRain,
             humidity: Int(current.relative_humidity_2m.rounded()),
-            pressure: current.pressure_msl,
+            pressure: currentPressure,
             pressureTrend: trend,
             pressureChange: change,
             cloudCover: current.cloud_cover ?? 0,
