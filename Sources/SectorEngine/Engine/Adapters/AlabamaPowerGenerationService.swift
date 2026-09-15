@@ -30,7 +30,7 @@ final class AlabamaPowerGenerationService: GenerationProvider, Sendable {
     /// schedule is posted a few times a day, so 15 minutes loses nothing and
     /// concurrent renders for the same dam share one request.
     private let generationCache = SingleFlightCache<String, DamGeneration>(
-        ttl: 15 * 60, failureTTL: 60, maxEntries: 50)
+        ttl: 15 * 60, failureTTL: 60, staleOnErrorTTL: 2 * 3600, maxEntries: 50)
 
     /// A static registry — these are fixed infrastructure. `wpId` is the
     /// WordPress post id used to fetch live data; `coord` is a reference point on

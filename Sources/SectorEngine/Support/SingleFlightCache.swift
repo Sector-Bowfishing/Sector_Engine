@@ -30,8 +30,12 @@ import Foundation
 
 actor SingleFlightCache<Key: Hashable & Sendable, Value: Sendable> {
     private struct Entry {
+        /// The last good value, if any.
         let value: Value?
+        /// When `value` was obtained (or when the failure was recorded, if none).
         let at: Date
+        /// When the most recent refetch failed, if it did.
+        let failedAt: Date?
     }
 
     private var entries: [Key: Entry] = [:]
@@ -39,16 +43,22 @@ actor SingleFlightCache<Key: Hashable & Sendable, Value: Sendable> {
 
     private let ttl: TimeInterval
     private let failureTTL: TimeInterval
+    private let staleOnErrorTTL: TimeInterval
     private let maxEntries: Int
 
     /// - Parameters:
     ///   - ttl: how long a non-nil value is served before refetching.
     ///   - failureTTL: how long a nil result is remembered; 0 = never cache nil.
+    ///   - staleOnErrorTTL: when a refetch fails, keep serving the last good value
+    ///     while it is younger than this, instead of dropping to nil. An upstream
+    ///     outage then costs freshness, not data. 0 = no stale serving beyond ttl.
     ///   - maxEntries: bound on stored keys. Expired entries are dropped first,
     ///     then the oldest, so a public endpoint can't grow the cache forever.
-    init(ttl: TimeInterval, failureTTL: TimeInterval = 0, maxEntries: Int = 1_000) {
+    init(ttl: TimeInterval, failureTTL: TimeInterval = 0, staleOnErrorTTL: TimeInterval = 0,
+         maxEntries: Int = 1_000) {
         self.ttl = ttl
         self.failureTTL = failureTTL
+        self.staleOnErrorTTL = staleOnErrorTTL
         self.maxEntries = maxEntries
     }
 
@@ -60,9 +70,17 @@ actor SingleFlightCache<Key: Hashable & Sendable, Value: Sendable> {
     func value(for key: Key, force: Bool = false,
                compute: @escaping @Sendable () async -> Value?) async -> Value? {
         if !force, let entry = entries[key] {
-            let age = Date().timeIntervalSince(entry.at)
-            if entry.value != nil, age < ttl { return entry.value }
-            if entry.value == nil, age < failureTTL { return nil }
+            let now = Date()
+            let recentlyFailed = entry.failedAt.map { now.timeIntervalSince($0) < failureTTL } ?? false
+            if let value = entry.value {
+                let age = now.timeIntervalSince(entry.at)
+                if age < ttl { return value }
+                // Past ttl, but the last refetch failed moments ago: serve the stale
+                // value instead of hitting a failing upstream again on every call.
+                if recentlyFailed, age < staleOnErrorTTL { return value }
+            } else if recentlyFailed {
+                return nil
+            }
         }
         if let running = inFlight[key] { return await running.value }
 
@@ -71,18 +89,33 @@ actor SingleFlightCache<Key: Hashable & Sendable, Value: Sendable> {
         let result = await task.value
         inFlight[key] = nil
 
-        if result != nil || failureTTL > 0 {
-            entries[key] = Entry(value: result, at: Date())
-            if entries.count > maxEntries { prune() }
+        let now = Date()
+        if let result {
+            entries[key] = Entry(value: result, at: now, failedAt: nil)
+        } else if let old = entries[key], let oldValue = old.value,
+                  now.timeIntervalSince(old.at) < max(ttl, staleOnErrorTTL) {
+            // A failed refetch never replaces a good value that is still usable —
+            // within its ttl (a forced refresh that hit a blip) or within
+            // staleOnErrorTTL (an upstream outage). Remember the failure so the
+            // next callers back off. (Re-read after the await: the actor was
+            // re-entered while the computation ran.)
+            entries[key] = Entry(value: oldValue, at: old.at, failedAt: now)
+            return oldValue
+        } else if failureTTL > 0 {
+            entries[key] = Entry(value: nil, at: now, failedAt: now)
         }
+        if entries.count > maxEntries { prune() }
         return result
     }
 
     /// Drop expired entries; if still over the bound, drop the oldest.
     private func prune() {
         let now = Date()
-        let keep = max(ttl, failureTTL)
-        entries = entries.filter { now.timeIntervalSince($0.value.at) < keep }
+        entries = entries.filter { _, e in
+            if e.value != nil, now.timeIntervalSince(e.at) < max(ttl, staleOnErrorTTL) { return true }
+            if let f = e.failedAt, now.timeIntervalSince(f) < failureTTL { return true }
+            return false
+        }
         guard entries.count > maxEntries else { return }
         let overflow = entries.count - maxEntries
         for key in entries.sorted(by: { $0.value.at < $1.value.at }).prefix(overflow).map(\.key) {

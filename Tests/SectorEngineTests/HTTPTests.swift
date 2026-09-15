@@ -41,7 +41,37 @@ private final class CompleteBodyHandler: ChannelInboundHandler, Sendable {
     }
 }
 
+/// Sends a complete response, but only after `delay` seconds.
+private final class SlowHeadHandler: ChannelInboundHandler, Sendable {
+    typealias InboundIn = ByteBuffer
+    typealias OutboundOut = ByteBuffer
+    let delay: Int64
+    init(delay: Int64) { self.delay = delay }
+
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        let channel = context.channel
+        let body = "{\"slow\":true}"
+        let response = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: \(body.utf8.count)\r\nConnection: close\r\n\r\n\(body)"
+        channel.eventLoop.scheduleTask(in: .seconds(delay)) {
+            channel.writeAndFlush(channel.allocator.buffer(string: response)).whenComplete { _ in
+                channel.close(promise: nil)
+            }
+        }
+    }
+}
+
 final class HTTPTests: XCTestCase {
+
+    func testSlowHeadersWithinTheBudgetSucceed() async throws {
+        // Regression: a client-wide 8s READ timeout used to cut off every longer
+        // per-call budget (USGS 11s, CWMS 25s). Headers at 9s inside a 12s budget
+        // must succeed.
+        let (server, port) = try await startServer { SlowHeadHandler(delay: 9) }
+        defer { _ = server.close() }
+        let url = try XCTUnwrap(URL(string: "http://127.0.0.1:\(port)/slow"))
+        let result = try await HTTP.get(url, timeout: 12)
+        XCTAssertEqual(result.status, 200)
+    }
 
     private func startServer(_ makeHandler: @escaping @Sendable () -> ChannelHandler) async throws -> (Channel, Int) {
         let channel = try await ServerBootstrap(group: MultiThreadedEventLoopGroup.singleton)

@@ -319,12 +319,20 @@ final class GenerationService: Sendable {
     /// Generation for the dam governing `coordinate`, or nil when none is close
     /// enough or every feed is down.
     func generation(near coordinate: CLLocationCoordinate2D) async -> DamGeneration? {
-        if let near = await nearestDam(near: coordinate),
-           near.miles <= Self.maxDamDistanceMiles,
-           let g = await generation(for: near.dam, distanceMiles: near.miles) {
-            return g
+        await lookup(near: coordinate).generation
+    }
+
+    /// Generation plus whether some was EXPECTED: an operator dam (TVA, SWPA, APC)
+    /// is in range. Expected-but-missing means that operator's feed failed — a
+    /// degraded input — while no dam in range is a legitimate nil. (CWMS-only lakes
+    /// don't count as expected: many listed projects simply publish no live data.)
+    func lookup(near coordinate: CLLocationCoordinate2D) async -> (generation: DamGeneration?, expected: Bool) {
+        let near = await nearestDam(near: coordinate)
+        let damInRange = near.map { $0.miles <= Self.maxDamDistanceMiles } ?? false
+        if damInRange, let near, let g = await generation(for: near.dam, distanceMiles: near.miles) {
+            return (g, true)
         }
-        return await observedOnly(near: coordinate)
+        return (await observedOnly(near: coordinate), damInRange)
     }
 
     /// TVA and SWPA together publish 55 dams. The directory has 400 lakes with a

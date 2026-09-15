@@ -96,6 +96,16 @@ public actor ConditionsResponseCache {
         let result = await task.value
         inFlight[k] = nil
 
+        // A forced refresh (fresh=1) that came back worse — unscorable or degraded —
+        // never replaces a still-good cached render: one pull-to-refresh during a
+        // blip mustn't hand every other user of that lake a 503 or a gap. The
+        // refresher gets the good render too. (Re-read after the await.)
+        if fresh, result == nil || result?.degradedInputs.isEmpty == false,
+           let old = cache[k], let oldResponse = old.response, oldResponse.degradedInputs.isEmpty,
+           Date().timeIntervalSince(old.at) < old.ttl {
+            return oldResponse
+        }
+
         let entryTTL: TimeInterval
         if let result {
             entryTTL = result.degradedInputs.isEmpty ? ttl : Self.degradedTTL

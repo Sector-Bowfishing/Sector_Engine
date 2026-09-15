@@ -55,10 +55,10 @@ final class TVAGenerationService: GenerationProvider, Sendable {
     /// is remembered for a minute so a TVA outage costs one timeout per minute,
     /// not one per render.
     private let rosterCache = SingleFlightCache<String, [GenerationDam]>(
-        ttl: 24 * 3600, failureTTL: 60, maxEntries: 1)
+        ttl: 24 * 3600, failureTTL: 60, staleOnErrorTTL: 7 * 24 * 3600, maxEntries: 1)
     /// Per-dam generation, keyed by dam id and shared by concurrent renders.
     private let generationCache = SingleFlightCache<String, DamGeneration>(
-        ttl: TVAGenerationService.generationTTL, failureTTL: 60, maxEntries: 200)
+        ttl: TVAGenerationService.generationTTL, failureTTL: 60, staleOnErrorTTL: 2 * 3600, maxEntries: 200)
 
     // MARK: Public
 

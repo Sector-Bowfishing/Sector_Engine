@@ -70,13 +70,13 @@ final class CWMSObservedService: Sendable {
     /// per day, remembered for 2 minutes on failure so a slow CWMS isn't
     /// re-downloaded by every render.
     private let locationsCache = SingleFlightCache<String, [CWMSLocation]>(
-        ttl: 24 * 3600, failureTTL: 120, maxEntries: 60)
+        ttl: 24 * 3600, failureTTL: 120, staleOnErrorTTL: 7 * 24 * 3600, maxEntries: 60)
     /// Discovered series per project (key: office|base).
     private let seriesCache = SingleFlightCache<String, Series>(
-        ttl: 24 * 3600, failureTTL: 120, maxEntries: 2_000)
+        ttl: 24 * 3600, failureTTL: 120, staleOnErrorTTL: 7 * 24 * 3600, maxEntries: 2_000)
     /// Measured readings per project (key: office|base).
     private let observedCache = SingleFlightCache<String, CWMSObserved>(
-        ttl: CWMSObservedService.ttl, failureTTL: 120, maxEntries: 2_000)
+        ttl: CWMSObservedService.ttl, failureTTL: 120, staleOnErrorTTL: 3600, maxEntries: 2_000)
 
     private struct CWMSLocation: Sendable {
         let name: String

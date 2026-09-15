@@ -140,15 +140,22 @@ struct ConditionsForecast: Equatable {
 /// that had already ended. Now only the network download is cached; every render
 /// recomputes Tonight and the nights from ITS OWN inputs and clock (see
 /// `SectorEngineAPI.conditions`), which is cheap now that it runs off the main
-/// actor. Keyed at ~100 m like the snapshot and response caches, bounded, and a
-/// failed download is remembered for a minute.
+/// actor.
+///
+/// Keyed at ~1 km: the download is model-grid weather, identical for nearby
+/// points, and every per-point input is applied afterwards — so a finer key only
+/// multiplied identical Open-Meteo downloads against the quota. When a refresh
+/// fails, the last good download (up to 6 h old) keeps serving — the forecast is
+/// recomputed against the current clock, so a slightly old download still
+/// yields a correct Tonight — instead of every render dropping Tonight and the
+/// 7 nights for a minute.
 enum ForecastResponseCache {
     private static let cache = SingleFlightCache<String, ForecastResponse>(
-        ttl: 30 * 60, failureTTL: 60, maxEntries: 2_000)
+        ttl: 30 * 60, failureTTL: 60, staleOnErrorTTL: 6 * 3600, maxEntries: 2_000)
 
     /// - Parameter force: pull-to-refresh — skip the cache read.
     static func response(for coordinate: CLLocationCoordinate2D, force: Bool = false) async -> ForecastResponse? {
-        let key = String(format: "%.3f,%.3f", coordinate.latitude, coordinate.longitude)
+        let key = String(format: "%.2f,%.2f", coordinate.latitude, coordinate.longitude)
         return await cache.value(for: key, force: force) {
             try? await ConditionsForecastService.fetchForecastResponse(coordinate)
         }

@@ -108,6 +108,10 @@ actor WeatherAlertsService {
                 "User-Agent": "Sector/1.0 (io.sector.co)",
                 "Accept": "application/geo+json",
             ])
+            // 400/404: NWS doesn't cover this point (Canada, Mexico, the far side
+            // of a border lake). That's a known answer — no US alerts — not an
+            // outage, so it mustn't mark every render there as degraded.
+            if result.status == 400 || result.status == 404 { return [] }
             guard result.status == 200 else { return nil }
             let decoded = try JSONDecoder().decode(NWSAlertsResponse.self, from: result.body)
             let alerts = decoded.features.compactMap { $0.properties.toAlert() }

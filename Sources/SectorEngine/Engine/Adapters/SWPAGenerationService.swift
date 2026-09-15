@@ -45,9 +45,9 @@ final class SWPAGenerationService: GenerationProvider, Sendable {
     /// is a new key, so yesterday's grid can't be served after rollover. One
     /// energy.gov fetch per hour however many renders ask at once.
     private let scheduleCache = SingleFlightCache<String, [String: [Int]]>(
-        ttl: SWPAGenerationService.ttl, failureTTL: 60, maxEntries: 7)
+        ttl: SWPAGenerationService.ttl, failureTTL: 60, staleOnErrorTTL: 2 * 3600, maxEntries: 7)
     private let generationCache = SingleFlightCache<String, DamGeneration>(
-        ttl: SWPAGenerationService.ttl, failureTTL: 60, maxEntries: 100)
+        ttl: SWPAGenerationService.ttl, failureTTL: 60, staleOnErrorTTL: 2 * 3600, maxEntries: 100)
 
     // MARK: Roster
 

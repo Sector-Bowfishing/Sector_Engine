@@ -108,7 +108,9 @@ final class WaterLevelService: Sendable {
         // such); a long hang would block the response.
         let result: HTTPResult
         do {
-            result = try await HTTP.get(url, timeout: Self.usgsTimeoutSeconds)
+            result = try await withLimit(Self.usgsLimiter) {
+                try await HTTP.get(url, timeout: Self.usgsTimeoutSeconds)
+            }
         } catch {
             throw WaterLevelError.requestFailed
         }
@@ -185,6 +187,12 @@ final class WaterLevelService: Sendable {
     /// request that finds ZERO gages still takes ~4–5s, and a 40-mile box ~5–8s
     /// (measured 2026-09-14). So one query per input, with room to finish.
     static let usgsTimeoutSeconds: TimeInterval = 11
+
+    /// At most this many USGS queries in flight per instance (see AsyncLimiter).
+    /// Well under the HTTP client's 64-per-host pool, so queued requests wait
+    /// here — against their own budget — instead of failing at the pool's 5s
+    /// deadline; and it keeps a burst of cold renders from hammering USGS.
+    static let usgsLimiter = AsyncLimiter(limit: 24)
 
     /// - Parameter maxMiles: the farthest gage this input will actually USE — the
     ///   search box is exactly that big, in ONE query. It used to try progressively
@@ -379,7 +387,7 @@ final class NoaaTideService: Sendable {
     // The station list is effectively static — one fetch a day, shared by
     // concurrent callers.
     private let stationsCache = SingleFlightCache<String, [TideStation]>(
-        ttl: 24 * 3600, failureTTL: 120, maxEntries: 1)
+        ttl: 24 * 3600, failureTTL: 120, staleOnErrorTTL: 7 * 24 * 3600, maxEntries: 1)
 
     /// The nearest tidal station's upcoming highs/lows — or nil when the point
     /// isn't coastal (no station within `maxStationMiles`) or the fetch fails.

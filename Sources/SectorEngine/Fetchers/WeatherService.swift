@@ -183,9 +183,42 @@ final class WeatherService: Sendable {
     static let hedgeDelaySeconds: Double = 1.5
 
     private enum Attempt: Sendable {
-        case primary(Data?)
-        case fallback(Data?)
+        case primary(HostResult)
+        case fallback(HostResult)
         case hedgeTimer
+    }
+
+    /// One host's answer.
+    enum HostResult: Sendable {
+        case body(Data)
+        /// 429: over quota. Both hosts belong to Open-Meteo and share it.
+        case rateLimited(retryAfter: Double?)
+        case failed
+    }
+
+    /// Process-wide pause after Open-Meteo says we're over quota. Hitting it again
+    /// — or its sibling host, which shares the quota — only extends the lockout
+    /// and burns the daily allowance, so every weather fetch fails fast (the
+    /// render degrades or 503s honestly) until Retry-After passes.
+    actor RateLimitGate {
+        static let shared = RateLimitGate()
+        private var blockedUntil: Date?
+
+        var isBlocked: Bool {
+            guard let until = blockedUntil else { return false }
+            if Date() < until { return true }
+            blockedUntil = nil
+            return false
+        }
+
+        func block(for seconds: Double?) {
+            let pause = min(max(seconds ?? 60, 5), 3600)
+            let until = Date().addingTimeInterval(pause)
+            if blockedUntil.map({ until > $0 }) ?? true {
+                blockedUntil = until
+                Log.error("open-meteo rate limited; pausing weather fetches", ["pauseSec": .double(pause)])
+            }
+        }
     }
 
     /// Fetches `queryItems` from the primary forecast host, HEDGED onto the
@@ -201,6 +234,8 @@ final class WeatherService: Sendable {
     /// only if the primary FAILS or hasn't answered within `hedgeDelaySeconds`,
     /// and the first 2xx wins. A stalled primary now costs 1.5s, not 15s.
     static func fetchForecastData(queryItems: [URLQueryItem]) async throws -> Data {
+        if await RateLimitGate.shared.isBlocked { throw WeatherError.requestFailed }
+
         let primary = forecastEndpoints[0], fallback = forecastEndpoints[1]
         let data: Data? = await withTaskGroup(of: Attempt.self) { group in
             group.addTask { .primary(await fetchOne(endpoint: primary, queryItems: queryItems)) }
@@ -209,45 +244,52 @@ final class WeatherService: Sendable {
                 return .hedgeTimer
             }
             var fallbackStarted = false
+            var rateLimited = false
             func startFallback() {
-                guard !fallbackStarted else { return }
+                guard !fallbackStarted, !rateLimited else { return }
                 fallbackStarted = true
                 group.addTask { .fallback(await fetchOne(endpoint: fallback, queryItems: queryItems)) }
             }
             for await attempt in group {
                 switch attempt {
-                case let .primary(body), let .fallback(body):
-                    if let body {
+                case let .primary(result), let .fallback(result):
+                    switch result {
+                    case let .body(body):
                         group.cancelAll()
                         return body
+                    case let .rateLimited(retryAfter):
+                        // Over quota: the sibling host shares it, so don't hedge.
+                        rateLimited = true
+                        await RateLimitGate.shared.block(for: retryAfter)
+                        group.cancelAll()
+                        return nil
+                    case .failed:
+                        startFallback()      // a fast primary failure hedges immediately
                     }
-                    startFallback()      // a fast primary failure hedges immediately
                 case .hedgeTimer:
-                    startFallback()      // a slow primary gets company
+                    startFallback()          // a slow primary gets company
                 }
             }
             return nil
         }
         guard let data else {
-            Log.warning("open-meteo: every host failed", ["hosts": .strings(forecastEndpoints)])
+            Log.warning("open-meteo: weather fetch failed", ["hosts": .strings(forecastEndpoints)])
             throw WeatherError.requestFailed
         }
         return data
     }
 
-    /// One endpoint attempt. Returns the body on a 2xx, nil on any failure
-    /// (timeout, cancellation, non-2xx) so the caller's race can move on.
-    private static func fetchOne(endpoint: String, queryItems: [URLQueryItem]) async -> Data? {
+    /// One endpoint attempt.
+    private static func fetchOne(endpoint: String, queryItems: [URLQueryItem]) async -> HostResult {
         var components = URLComponents(string: endpoint)
         components?.queryItems = queryItems
-        guard let url = components?.url else { return nil }
+        guard let url = components?.url else { return .failed }
 
-        // 8s, not 15: a host that hasn't answered in 8s has lost the race to its
-        // sibling anyway — no reason to hold the connection open longer.
-        guard let result = try? await HTTP.get(url, timeout: 8), result.isSuccess else {
-            return nil
-        }
-        return result.body
+        // 8s per host: with the 1.5s hedge, a success lands inside the snapshot's
+        // 11s weather budget even when the primary stalls.
+        guard let result = try? await HTTP.get(url, timeout: 8) else { return .failed }
+        if result.status == 429 { return .rateLimited(retryAfter: result.retryAfterSeconds) }
+        return result.isSuccess ? .body(result.body) : .failed
     }
 
     /// Current conditions at the coordinate, with a pressure trend computed

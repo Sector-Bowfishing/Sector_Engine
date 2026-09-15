@@ -91,6 +91,32 @@ final class SingleFlightCacheTests: XCTestCase {
         XCTAssertEqual(b, "B")
     }
 
+    func testFailedRefetchServesLastGoodValueAndBacksOff() async throws {
+        // ttl 0.2s, failures remembered 5s, stale values served up to 60s.
+        let cache = SingleFlightCache<String, Int>(ttl: 0.2, failureTTL: 5, staleOnErrorTTL: 60)
+        let calls = Counter()
+        let good = await cache.value(for: "k") { await calls.bump(); return 7 }
+        XCTAssertEqual(good, 7)
+
+        try await Task.sleep(nanoseconds: 300_000_000)                 // past ttl
+        let afterOutage = await cache.value(for: "k") { await calls.bump(); return nil }
+        XCTAssertEqual(afterOutage, 7, "an upstream outage costs freshness, not data")
+
+        let again = await cache.value(for: "k") { await calls.bump(); return nil }
+        XCTAssertEqual(again, 7)
+        let n = await calls.count
+        XCTAssertEqual(n, 2, "within failureTTL the stale value is served without re-hitting the failing upstream")
+    }
+
+    func testForcedRefreshThatFailsKeepsTheGoodValue() async {
+        let cache = SingleFlightCache<String, Int>(ttl: 60, failureTTL: 5)
+        _ = await cache.value(for: "k") { 9 }
+        let forced = await cache.value(for: "k", force: true) { nil }
+        XCTAssertEqual(forced, 9, "a pull-to-refresh during a blip doesn't evict a good entry")
+        let later = await cache.value(for: "k") { 1 }
+        XCTAssertEqual(later, 9, "…for anyone else either")
+    }
+
     func testEntriesAreBounded() async {
         let cache = SingleFlightCache<Int, Int>(ttl: 60, maxEntries: 10)
         let calls = Counter()

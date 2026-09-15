@@ -40,6 +40,8 @@ import NIOHTTP1
 struct HTTPResult: Sendable {
     let status: Int
     let body: Data
+    /// The server's Retry-After, in seconds, when it sent one (429 / 503).
+    var retryAfterSeconds: Double? = nil
     var isSuccess: Bool { (200..<300).contains(status) }
 }
 
@@ -60,7 +62,14 @@ enum HTTP {
     /// down — it lives exactly as long as the server process.
     static let client: HTTPClient = {
         var config = HTTPClient.Configuration()
-        config.timeout = HTTPClient.Configuration.Timeout(connect: .seconds(5), read: .seconds(8))
+        // No client-wide READ timeout. AHC starts that idle timer when the request
+        // is sent, so a fixed 8s value silently capped every longer per-call budget
+        // (USGS 11s, CWMS catalogs 25s): a server that took 9s to send its headers
+        // failed at 8s whatever `timeout:` was passed. Each call's whole-response
+        // deadline (below) is what bounds a fetch. Connect stays 5s — AHC also uses
+        // it as the wait for a pooled connection, which the per-host limiters keep
+        // short.
+        config.timeout = HTTPClient.Configuration.Timeout(connect: .seconds(5), read: nil)
         config.redirectConfiguration = .follow(max: 5, allowCycles: false)
         config.decompression = .enabled(limit: .size(64 * 1024 * 1024))
         // Several renders run at once on one instance, each fanning out to the
@@ -98,7 +107,8 @@ enum HTTP {
                 group.addTask {
                     let response = try await client.execute(prepared, deadline: deadline)
                     let buffer = try await response.body.collect(upTo: maxBodyBytes)
-                    return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+                    return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView),
+                                      retryAfterSeconds: response.headers.first(name: "Retry-After").flatMap(Double.init))
                 }
                 group.addTask {
                     try await Task.sleep(nanoseconds: UInt64(budget.nanoseconds))

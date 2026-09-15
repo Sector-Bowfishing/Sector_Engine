@@ -457,10 +457,12 @@ public enum SectorEngineAPI: Sendable {
     }
 
     /// Most points one batch request scores. With `maxConcurrent` 6 and each point
-    /// bounded by `batchPointBudgetSeconds`, 12 points finish inside ~24s — a
+    /// bounded by `batchPointBudgetSeconds`, 12 points finish inside ~30s — a
     /// 50-point request could otherwise hold an instance for minutes.
     public static let batchMaxPoints = 12
-    static let batchPointBudgetSeconds: Double = 12
+    /// Above the snapshot's longest input budget (12s), so a point whose slowest
+    /// input just makes it still scores instead of coming back null.
+    static let batchPointBudgetSeconds: Double = 15
 
     /// Score many coordinates in one request (My Lakes list). Bounded concurrency so
     /// a long list can't fan out into a burst of upstream fetches; identical/nearby
