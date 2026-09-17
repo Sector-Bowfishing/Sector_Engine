@@ -69,8 +69,8 @@ public enum WhereToLookEngine {
                     body: "Push into newly flooded grass and timber edges — fish move up fast onto fresh forage."))
             } else if delta < -input.windowQuietBand {
                 cards.append(WhereToLookCard(
-                    kind: .level, title: "Falling water — work the outer edge",
-                    body: "The lake is draining and fish are sliding off the shallow flats out of range. Work the OUTER edge of the grass and the first drop, not the very back of the flat — the skinny water's emptying out."))
+                    kind: .level, title: "Flats thinning — work the outer edge",
+                    body: "Fish are sliding off the shallow flats and out of range. Work the OUTER edge of the grass and the first drop, not the very back of the flat — that's the first water they leave."))
             }
         }
 
