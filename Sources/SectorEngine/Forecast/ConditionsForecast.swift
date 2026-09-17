@@ -293,7 +293,7 @@ final class ConditionsForecastService: ObservableObject {
         let data = try await WeatherService.fetchForecastData(queryItems: [
             URLQueryItem(name: "latitude", value: String(format: "%.4f", coordinate.latitude)),
             URLQueryItem(name: "longitude", value: String(format: "%.4f", coordinate.longitude)),
-            URLQueryItem(name: "hourly", value: "wind_speed_10m,cloud_cover,precipitation,weather_code,relative_humidity_2m"),
+            URLQueryItem(name: "hourly", value: "wind_speed_10m,cloud_cover,precipitation,precipitation_probability,weather_code,relative_humidity_2m"),
             URLQueryItem(name: "daily", value: "sunrise,sunset,wind_speed_10m_max,weather_code,precipitation_sum,precipitation_probability_max,cloud_cover_mean"),
             URLQueryItem(name: "past_days", value: "1"),
             URLQueryItem(name: "forecast_days", value: "8"),
@@ -306,7 +306,7 @@ final class ConditionsForecastService: ObservableObject {
 
     // MARK: Compute
 
-    struct HourSample { let date: Date; let wind: Double; let cloud: Double; let precip: Double; let code: Int; let humidity: Double }
+    struct HourSample { let date: Date; let wind: Double; let cloud: Double; let precip: Double; let pop: Int?; let code: Int; let humidity: Double }
 
     static func compute(r: ForecastResponse, base: ConditionsInput,
                         coordinate: CLLocationCoordinate2D, now: Date = Date(),
@@ -325,7 +325,8 @@ final class ConditionsForecastService: ObservableObject {
             let rawCode = (r.hourly.weather_code[safe: i] ?? nil) ?? 0
             let code = WeatherService.sanitizedWeatherCode(rawCode, precipitation: precip, cloudCover: cloud)
             let humidity = (r.hourly.relative_humidity_2m?[safe: i] ?? nil) ?? 0
-            hourly.append(HourSample(date: d, wind: wind, cloud: cloud, precip: precip, code: code, humidity: humidity))
+            let pop = r.hourly.precipitation_probability?[safe: i] ?? nil
+            hourly.append(HourSample(date: d, wind: wind, cloud: cloud, precip: precip, pop: pop, code: code, humidity: humidity))
         }
 
         let tonight = buildTonight(base: base, hourly: hourly, coordinate: coordinate,
@@ -560,8 +561,21 @@ final class ConditionsForecastService: ObservableObject {
                 ? (dailyCloud ?? 0)
                 : nightHours.map(\.cloud).reduce(0, +) / Double(nightHours.count)
 
-            let rawCode = (r.daily.weather_code[safe: i] ?? nil) ?? 0
-            let code = WeatherService.sanitizedWeatherCode(rawCode, precipitation: precip, cloudCover: cloud)
+            // Rain INSIDE the fishing window, and the chance of it — not the calendar
+            // day's total, which counts a 2 PM shower that's dry long before dark. The
+            // day total stays the clarity/runoff signal (`rainWindow` below); this is
+            // what decides whether the night itself is rained out.
+            let windowRain = nightHours.reduce(0.0) { $0 + $1.precip }
+            let windowPop = nightHours.compactMap(\.pop).max()
+                ?? (r.daily.precipitation_probability_max?[safe: i] ?? nil)
+
+            // The night's weather code from the night's OWN hours (worst one in the
+            // window). The daily code is the whole day's worst, so an afternoon
+            // thunderstorm that clears by sunset used to storm-gate a clear night.
+            let dailyRawCode = (r.daily.weather_code[safe: i] ?? nil) ?? 0
+            let nightRawCode = nightHours.max { codeSeverity($0.code) < codeSeverity($1.code) }?.code
+            let rawCode = nightRawCode ?? dailyRawCode
+            let code = WeatherService.sanitizedWeatherCode(rawCode, precipitation: windowRain, cloudCover: cloud)
 
             // Recent-rain window for THIS night — the same multi-day sum the gauge
             // uses, rebuilt from the daily feed (that day + the prior 2) so future
@@ -597,7 +611,10 @@ final class ConditionsForecastService: ObservableObject {
             ni.windMph = wind
             ni.cloudPct = cloud
             ni.weatherCode = code
-            ni.precipitationInchNow = precip
+            ni.isForecast = true
+            ni.precipitationInchNow = windowRain
+            ni.forecastWindowRainIn = windowRain
+            ni.forecastRainChancePct = windowPop
             ni.rainLast48hIn = recentRain
             ni.sunset = sun.sunset; ni.sunrise = sun.sunrise
             ni.civilDusk = sun.civilDusk; ni.astronomicalDusk = sun.astronomicalDusk
@@ -644,6 +661,21 @@ final class ConditionsForecastService: ObservableObject {
         return nights
     }
 
+    /// Rough "how bad is this sky" order for WMO codes, so picking a night's code from
+    /// its hours takes the worst one. Numeric order won't do it: snow (71–77) sorts
+    /// above rain showers (80–82) but storms (95–99) are what matter most.
+    private static func codeSeverity(_ code: Int) -> Int {
+        switch code {
+        case 95...99: return 6      // thunderstorms
+        case 80...82: return 5      // rain showers
+        case 61...67: return 4      // rain / freezing rain
+        case 71...77: return 3      // snow
+        case 51...57: return 2      // drizzle
+        case 45, 48:  return 1      // fog
+        default:      return 0      // clear / cloud
+        }
+    }
+
     // MARK: Night ribbon (hour-by-hour)
 
     /// The night-detail ribbon: 10 hours 8 PM → 5 AM, each scored by the engine at
@@ -688,6 +720,9 @@ final class ConditionsForecastService: ObservableObject {
             let moonUp = altDeg > 0
 
             var hi = ni
+            hi.isForecast = true
+            hi.forecastWindowRainIn = precip
+            hi.forecastRainChancePct = s?.pop ?? ni.forecastRainChancePct
             hi.date = trueMid
             hi.windMph = wind
             hi.cloudPct = cloud
@@ -801,6 +836,9 @@ struct ForecastResponse: Decodable {
         let wind_speed_10m: [Double?]
         let cloud_cover: [Double?]
         let precipitation: [Double?]
+        // % chance of rain that hour. `var` (not `let`) so the default doesn't drop it
+        // from synthesized Decodable; drives the per-night rain gate.
+        var precipitation_probability: [Int?]? = nil
         let weather_code: [Int?]
         // `var` (not `let`) so the default doesn't drop it from synthesized
         // Decodable; drives the ribbon's fog-risk proxy.

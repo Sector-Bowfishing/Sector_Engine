@@ -100,7 +100,14 @@ public enum ConditionsAggregator {
         // is the master constraint, so clarity + surface calm CAP the score rather
         // than just voting in the blend.
         let gates = ConditionsGates.evaluate(input, config: config, generationLevel: generationLevel)
-        let gateCapped = gates.reduce(raw) { Swift.min($0, Double($1.cap)) }
+        // A hard gate (softness 0) is a flat ceiling. A soft gate pulls the score most
+        // of the way down but keeps a slice of what the night earned, so two capped
+        // nights don't land on the identical number and lose their order.
+        let gateCapped = gates.reduce(raw) { acc, hit in
+            let cap = Double(hit.cap)
+            guard acc > cap else { return acc }
+            return Swift.min(acc, cap + (acc - cap) * hit.softness)
+        }
         let ceiling = seeabilityCeiling(input, config: config)
         let capped = Swift.min(gateCapped, ceiling)
         let finalScore = Int(capped.clampedToScore.rounded())
@@ -269,7 +276,9 @@ public enum ConditionsAggregator {
 
         // Binding gate first.
         if let gate = gates.min(by: { $0.cap < $1.cap }) {
-            out.append("Capped: " + gate.reason)
+            // "Capped" is a promise about the number on screen — only true of a hard
+            // gate. A soft gate holds the night back without pinning it to the cap.
+            out.append((gate.softness > 0 ? "Held back: " : "Capped: ") + gate.reason)
         }
         // Spawn headline next when in spawn regime.
         if regime == .spawn, let s = spawn, s.intensity > 0 {

@@ -33,6 +33,15 @@ public struct ConditionsInput: Equatable {
     public var pressureChange12hInHg: Double // signed
     public var weatherCode: Int             // WMO code (sky factor) — already sanitized
     public var precipitationInchNow: Double // measured precip right now (storm-gate corroboration)
+    /// True when this input is a FORECAST night/hour rather than a live reading. The
+    /// "rain falling now" gate is a measurement, so it must not fire on a model number
+    /// for a night that hasn't happened; forecast rain gets its own, chance-aware gate.
+    public var isForecast: Bool
+    /// Rain the model puts inside THIS night's fishing window (inches) — not the
+    /// calendar day's total, which counts a 2 PM shower that's long gone by dark.
+    public var forecastWindowRainIn: Double?
+    /// Chance of that rain (0–100). nil when the host gives no probability.
+    public var forecastRainChancePct: Int?
     /// Active NWS safety WARNING covering the point (tornado / severe thunderstorm /
     /// flash flood / marine) — the event name, for the gate reason; nil when none.
     /// Authoritative real-time signal that hard-caps the score even when the
@@ -110,6 +119,9 @@ public struct ConditionsInput: Equatable {
                 pressureChange12hInHg: Double,
                 weatherCode: Int,
                 precipitationInchNow: Double = 0,
+                isForecast: Bool = false,
+                forecastWindowRainIn: Double? = nil,
+                forecastRainChancePct: Int? = nil,
                 severeWarningLabel: String? = nil,
                 cityGlowFactor: Double,
                 waterTempF: Double? = nil,
@@ -156,6 +168,9 @@ public struct ConditionsInput: Equatable {
         self.pressureChange12hInHg = pressureChange12hInHg
         self.weatherCode = weatherCode
         self.precipitationInchNow = precipitationInchNow
+        self.isForecast = isForecast
+        self.forecastWindowRainIn = forecastWindowRainIn
+        self.forecastRainChancePct = forecastRainChancePct
         self.severeWarningLabel = severeWarningLabel
         self.cityGlowFactor = cityGlowFactor
         self.waterTempF = waterTempF
