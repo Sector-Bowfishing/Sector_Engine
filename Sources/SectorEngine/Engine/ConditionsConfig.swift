@@ -323,6 +323,19 @@ public struct ConditionsConfig {
         /// passing drizzle doesn't tank an otherwise-good night.
         public var rainNowInch: Double = 0.10
         public var rainNowCap: Double = 40
+        /// FORECAST rain, for a night that hasn't happened. Separate from the gate
+        /// above on purpose: that one is a measurement ("it is raining"), this one is
+        /// a model's opinion, and it was reading the whole CALENDAR DAY's total — so a
+        /// daytime shower with an 8% chance capped four nights of a week at exactly 40.
+        /// Now it only counts rain inside the fishing window, weighs the chance, and
+        /// caps SOFTLY so capped nights keep their order.
+        public var forecastRainInch: Double = 0.10        // meaningful rain in the window
+        public var forecastRainLikelyPct: Int = 50        // "likely" — the real cap
+        public var forecastRainCap: Double = 40
+        public var forecastRainSoftness: Double = 0.25
+        public var forecastRainMaybePct: Int = 30         // 30–49%: shave, don't cap
+        public var forecastRainMaybeCap: Double = 62
+        public var forecastRainMaybeSoftness: Double = 0.5
         /// Fog on the water ends a bowfishing night — you can't shoot what you can't
         /// see, and you can't run a boat blind. Fog is already scored as a low-weight
         /// factor (HumidityFactor, 0.03), but a thing that ENDS the night is a hard

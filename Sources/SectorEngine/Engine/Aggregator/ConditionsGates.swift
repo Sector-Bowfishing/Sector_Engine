@@ -65,9 +65,25 @@ public enum ConditionsGates {
         // Rain measurably falling NOW, independent of the categorical code — the
         // code often mislabels active rain (or lags it), so cap on the measured
         // current precip too, not just a 95/96/99 storm code.
-        if input.precipitationInchNow >= g.rainNowInch {
+        if !input.isForecast, input.precipitationInchNow >= g.rainNowInch {
             hits.append(GateHit(reason: "Rain falling now — \(String(format: "%.2f", input.precipitationInchNow))\"",
                                 cap: Int(g.rainNowCap)))
+        }
+        // Rain FORECAST inside this night's window. A model number for a night that
+        // hasn't happened isn't a measurement, so it's weighed by its chance and capped
+        // softly. Below `forecastRainMaybePct` the night is left alone — the rain
+        // already costs it through clarity (runoff) and the sky factor.
+        if input.isForecast, let rain = input.forecastWindowRainIn, rain >= g.forecastRainInch {
+            let chance = input.forecastRainChancePct
+            let odds = chance.map { " · \($0)% chance" } ?? ""
+            let amount = String(format: "%.2f", rain)
+            if chance == nil || chance! >= g.forecastRainLikelyPct {
+                hits.append(GateHit(reason: "Rain likely in the window — \(amount)\"\(odds)",
+                                    cap: Int(g.forecastRainCap), softness: g.forecastRainSoftness))
+            } else if chance! >= g.forecastRainMaybePct {
+                hits.append(GateHit(reason: "Rain possible in the window — \(amount)\"\(odds)",
+                                    cap: Int(g.forecastRainMaybeCap), softness: g.forecastRainMaybeSoftness))
+            }
         }
         // Fog on the water — the "you can't fish this" signal that isn't weather-violent.
         // Fog is already a low-weight factor (HumidityFactor, 0.03), but it ENDS the night

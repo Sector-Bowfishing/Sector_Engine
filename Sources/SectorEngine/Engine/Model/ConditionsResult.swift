@@ -35,6 +35,19 @@ public struct DormantFactor: Equatable {
 public struct GateHit: Equatable {
     public let reason: String
     public let cap: Int
+    /// 0 = a hard cap (safety: storms, warnings, high wind, fog, blown-out water).
+    /// >0 = a SOFT cap for a forecast-only risk: the score is pulled most of the way
+    /// down to `cap` but keeps some of what it earned, so several capped nights don't
+    /// all flatten onto the same number and lose their order (a calm, dark, warm night
+    /// with rain in the window still ranks above a windy, bright one with the same rain).
+    /// Applied as `cap + (score − cap) × softness`.
+    public let softness: Double
+
+    public init(reason: String, cap: Int, softness: Double = 0) {
+        self.reason = reason
+        self.cap = cap
+        self.softness = softness
+    }
 }
 
 /// A "where to look" card. `kind` lets the UI pick an icon/tint; the engine
