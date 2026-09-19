@@ -581,8 +581,18 @@ extension WaterLevelService {
                        minLat: 36.20, maxLat: 37.10, minLon: -88.25, maxLon: -87.55),
         ReservoirGauge(name: "Kentucky Lake",  lid: "KYDK2", fullPoolFt: 359.0,
                        minLat: 35.40, maxLat: 37.10, minLon: -88.60, maxLon: -88.15),
+        // Nickajack's box started at 34.90, which reaches ~7 miles BELOW
+        // Nickajack Dam (35.00, -85.60) into Guntersville's pool. Raised to the
+        // dam so the two reservoirs stop overlapping; Nickajack is listed first
+        // so the seam itself resolves upstream.
         ReservoirGauge(name: "Nickajack Lake", lid: "NKJT1", fullPoolFt: 634.5,
-                       minLat: 34.90, maxLat: 35.12, minLon: -85.65, maxLon: -85.18),
+                       minLat: 35.00, maxLat: 35.12, minLon: -85.65, maxLon: -85.18),
+        // Box from the NHD high-resolution waterbody polygon (permanent id
+        // 139326855), not estimated. Summer full pool 595.44 ft; TVA draws down
+        // to roughly 593 in winter, so "below full pool" reads low all winter by
+        // design — a seasonal guide curve, not a single number, is the real fix.
+        ReservoirGauge(name: "Lake Guntersville", lid: "GVHA1", fullPoolFt: 595.44,
+                       minLat: 34.28, maxLat: 35.04, minLon: -86.42, maxLon: -85.60),
         ReservoirGauge(name: "Chickamauga Lake", lid: "CKDT1", fullPoolFt: 682.5,
                        minLat: 35.10, maxLat: 35.58, minLon: -85.30, maxLon: -84.75),
         ReservoirGauge(name: "Watts Bar Lake", lid: "WBOT1", fullPoolFt: 741.0,

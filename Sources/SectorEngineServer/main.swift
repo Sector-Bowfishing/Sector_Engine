@@ -44,6 +44,33 @@ router.get("conditions") { request, _ -> Response in
     return jsonResponse(payload)
 }
 
+// The lake's environmental STATE — no score. One acquisition per lake per TTL,
+// which is what lets the spatial engine derive thousands of shoreline segments
+// without a provider fan-out per segment. `samples` takes extra "lat,lon"
+// points for a reservoir long enough that one sample misrepresents the far end.
+router.get("lake/environment") { request, _ -> Response in
+    guard let lat = request.uri.queryParameters.get("lat").flatMap({ Double(String($0)) }),
+          let lon = request.uri.queryParameters.get("lon").flatMap({ Double(String($0)) }) else {
+        return Response(status: .badRequest)
+    }
+    let extra: [(latitude: Double, longitude: Double)] =
+        (request.uri.queryParameters.get("samples").map { String($0) } ?? "")
+        .split(separator: ";")
+        .compactMap { pair in
+            let parts = pair.split(separator: ",")
+            guard parts.count == 2, let a = Double(parts[0]), let b = Double(parts[1])
+            else { return nil }
+            return (latitude: a, longitude: b)
+        }
+    let fresh = request.uri.queryParameters.get("fresh").map { $0 == "1" || $0 == "true" } ?? false
+    let lakeId = request.uri.queryParameters.get("lakeId").map { String($0) }
+    guard let payload = await SectorEngineAPI.environment(
+        lat: lat, lon: lon, lakeId: lakeId,
+        samplePoints: Array(extra.prefix(8)), force: fresh)
+    else { return Response(status: .serviceUnavailable) }
+    return jsonResponse(payload)
+}
+
 // Slim score+band for many coordinates in one request — My Lakes list rings.
 // Body: {"points":[{"lat":..,"lon":..}, …]}  →  {"results":[{lat,lon,score,band}, …]}
 struct BatchRequest: Decodable { struct Point: Decodable { let lat: Double; let lon: Double }; let points: [Point] }

@@ -13,7 +13,7 @@
 
 import Foundation
 
-public struct ConditionsInput: Equatable {
+public struct ConditionsInput: Codable, Equatable, Sendable {
 
     // MARK: Identity / place
     public var date: Date

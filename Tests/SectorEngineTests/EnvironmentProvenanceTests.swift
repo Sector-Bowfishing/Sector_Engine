@@ -144,3 +144,98 @@ final class EnvironmentProvenanceTests: XCTestCase {
         XCTAssertEqual(WaterTemperatureService.defaultK, 0.20, accuracy: 1e-12)
     }
 }
+
+/// One set of band cut-points, not two. These were defined independently in
+/// `ConditionsBand` and `NightScore.rating` and kept in step by hand.
+final class BandConsolidationTests: XCTestCase {
+    func testBandAndRatingAgreeAtEveryScore() {
+        for score in 0...100 {
+            let band = ConditionsBand(score: score)
+            XCTAssertEqual(band.rawValue, band.rating.rawValue,
+                           "band and rating disagree at \(score)")
+        }
+    }
+
+    func testCutPointsAreWhereTheSpecSaysTheyAre() {
+        XCTAssertEqual(ConditionsBand(score: 80), .prime)
+        XCTAssertEqual(ConditionsBand(score: 79), .good)
+        XCTAssertEqual(ConditionsBand(score: 65), .good)
+        XCTAssertEqual(ConditionsBand(score: 64), .fair)
+        XCTAssertEqual(ConditionsBand(score: 50), .fair)
+        XCTAssertEqual(ConditionsBand(score: 49), .poor)
+    }
+}
+
+/// The lake-scoped snapshot's keying — the thing that turns ~53,000 upstream
+/// reads into 9.
+final class LakeEnvironmentKeyingTests: XCTestCase {
+
+    private func lake(_ id: String) -> DirectoryLake? {
+        LakeDirectory.all.first { $0.id == id }
+    }
+
+    func testEveryPointOnALakeSharesOneKey() {
+        guard let g = lake("Guntersville|AL") else { return XCTFail("directory lacks Guntersville") }
+        // Real segment anchors: the dam, mid-lake, and the upper end.
+        let anchors = [(34.4234, -86.3923), (34.4391, -86.2185),
+                       (34.6459, -85.9575), (34.8912, -85.6833)]
+        let keys = Set(anchors.map {
+            LakeEnvironmentProvider.cacheKey(lake: g, latitude: $0.0, longitude: $0.1)
+        })
+        XCTAssertEqual(keys.count, 1, "one lake must mean one acquisition, got \(keys)")
+        XCTAssertEqual(keys.first, "lake:Guntersville|AL")
+    }
+
+    func testOffLakeFallsBackToACoordinateKey() {
+        let a = LakeEnvironmentProvider.cacheKey(lake: nil, latitude: 34.73, longitude: -85.98)
+        let b = LakeEnvironmentProvider.cacheKey(lake: nil, latitude: 34.74, longitude: -85.98)
+        XCTAssertTrue(a.hasPrefix("pt:"))
+        XCTAssertNotEqual(a, b, "distinct river spots must not collide")
+    }
+
+    func testSamplePointsInTheSameCellCollapse() {
+        // Two points 200 m apart return the same model grid values; fetching
+        // both proves nothing and costs a round trip.
+        let deduped = LakeEnvironmentProvider.dedupe([
+            (latitude: 34.4200, longitude: -86.2900),
+            (latitude: 34.4218, longitude: -86.2900),   // ~200 m north
+            (latitude: 34.6459, longitude: -85.9575),   // genuinely elsewhere
+        ])
+        XCTAssertEqual(deduped.count, 2)
+    }
+
+    func testNearestSampleWins() {
+        let input = ConditionsInput(
+            date: Date(), latitude: 0, longitude: 0, region: .south,
+            windMph: 0, windDirDeg: 0, airTempF: 60, cloudPct: 0, humidityPct: 50,
+            pressureInHg: 30, pressureTrend: .steady, pressureChange12hInHg: 0,
+            weatherCode: 0, cityGlowFactor: 0.3)
+        let snap = LakeEnvironmentSnapshot(
+            lakeId: "Guntersville|AL", lakeName: "Guntersville", cacheKey: "lake:Guntersville|AL",
+            samples: [
+                .init(latitude: 34.42, longitude: -86.39, input: input, provenance: .init()),
+                .init(latitude: 34.89, longitude: -85.68, input: input, provenance: .init()),
+            ],
+            fetchedAt: Date(), ttl: 300)
+
+        let lower = snap.sample(nearLatitude: 34.44, longitude: -86.35)
+        XCTAssertEqual(lower?.latitude ?? 0, 34.42, accuracy: 0.001)
+        let upper = snap.sample(nearLatitude: 34.86, longitude: -85.70)
+        XCTAssertEqual(upper?.latitude ?? 0, 34.89, accuracy: 0.001)
+    }
+
+    func testFreshnessRespectsTTL() {
+        let now = Date()
+        let input = ConditionsInput(
+            date: now, latitude: 0, longitude: 0, region: .south,
+            windMph: 0, windDirDeg: 0, airTempF: 60, cloudPct: 0, humidityPct: 50,
+            pressureInHg: 30, pressureTrend: .steady, pressureChange12hInHg: 0,
+            weatherCode: 0, cityGlowFactor: 0.3)
+        let snap = LakeEnvironmentSnapshot(
+            lakeId: nil, lakeName: nil, cacheKey: "k",
+            samples: [.init(latitude: 0, longitude: 0, input: input, provenance: .init())],
+            fetchedAt: now, ttl: 300)
+        XCTAssertTrue(snap.isFresh(at: now.addingTimeInterval(299)))
+        XCTAssertFalse(snap.isFresh(at: now.addingTimeInterval(301)))
+    }
+}

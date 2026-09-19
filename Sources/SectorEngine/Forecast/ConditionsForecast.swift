@@ -111,14 +111,14 @@ struct NightScore: Identifiable, Equatable {
         self.hourly = hourly; self.moonset = moonset
     }
 
-    /// Banding aligned with the gauge (ConditionsBand: Prime 80 / Good 65 / Fair 50).
+    /// Banding, derived from the ONE set of cut-points in `ConditionsBand`.
+    ///
+    /// This used to restate 80 / 65 / 50 here, with a comment promising it
+    /// matched the gauge — two copies kept in step by hand. Fish Intelligence
+    /// adds attraction and huntability as further consumers, so the copies had
+    /// to collapse before they multiplied.
     var rating: BowfishingConditionsResult.Rating {
-        switch score {
-        case 80...:   return .prime
-        case 65..<80: return .good
-        case 50..<65: return .fair
-        default:      return .poor
-        }
+        ConditionsBand(score: score).rating
     }
     var confidenceBand: ConfidenceBand { ConfidenceBand(score: confidence) }
 }

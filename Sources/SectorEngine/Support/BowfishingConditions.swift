@@ -26,6 +26,19 @@ struct BowfishingConditionsResult {
     }
 }
 
+extension ConditionsBand {
+    /// The legacy presentation enum. Same four words, same order — this exists
+    /// only so the cut-points live in exactly one place (`ConditionsBand`).
+    var rating: BowfishingConditionsResult.Rating {
+        switch self {
+        case .prime: return .prime
+        case .good:  return .good
+        case .fair:  return .fair
+        case .poor:  return .poor
+        }
+    }
+}
+
 enum BowfishingConditions {
 
     /// Bridges the v2 engine's `ConditionsResult` into the legacy result shape the
