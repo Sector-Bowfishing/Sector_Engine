@@ -58,14 +58,25 @@ struct WaterTempModel: Equatable {
 
 enum WaterTemperatureService {
 
-    /// Thermal-lag constant (per day). τ = 1/k ≈ 5 days — shallow near-shore water.
-    private static let k = 0.20
+    /// Default thermal-lag constant (per day). τ = 1/k ≈ 5 days — shallow
+    /// near-shore water, and the value every Conditions surface has always used.
+    ///
+    /// It is a PARAMETER rather than a constant because the same recurrence
+    /// describes a tributary arm and the main channel; only the time constant
+    /// differs. A shallow backwater tracks the air closely (larger k), the main
+    /// channel lags it (smaller k). That is also why the per-arm extension must
+    /// vary k and not add an offset: in spring the backwater is warmer, in autumn
+    /// COLDER, and an offset gets the autumn sign backwards.
+    ///
+    /// Callers that omit it get 0.20 and byte-identical output.
+    public static let defaultK = 0.20
     /// Days of trailing air-temp mean used to seed the model.
     private static let seedDays = 7
 
     /// Modeled water temperature at `coordinate`, or nil if the daily air-temp
     /// history can't be fetched.
-    static func model(near coordinate: CLLocationCoordinate2D) async -> WaterTempModel? {
+    static func model(near coordinate: CLLocationCoordinate2D,
+                      k: Double = defaultK) async -> WaterTempModel? {
         let items = [
             URLQueryItem(name: "latitude", value: String(format: "%.4f", coordinate.latitude)),
             URLQueryItem(name: "longitude", value: String(format: "%.4f", coordinate.longitude)),

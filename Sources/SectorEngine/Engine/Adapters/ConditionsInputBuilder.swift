@@ -49,9 +49,16 @@ public enum ConditionsInputBuilder {
     /// Matches turbidity's same-waterbody proxy.
     public static var maxWaterTempDistanceMiles: Double = 15
 
-    /// Build a normalized input for one night at `coordinate`.
+    /// Build a normalized input for one night at `coordinate`, plus a record of
+    /// where each value came from.
+    ///
+    /// The provenance is assembled from decisions this function ALREADY makes —
+    /// which readings were dropped as stale, which as too distant, whether the
+    /// water temperature came from a gage or the model — and previously threw
+    /// away. Nothing in the scoring path reads it, so it cannot move a score.
+    ///
     /// - waterTemp: a USGS 00010 reading in **°C** (converted here), or nil.
-    static func build(coordinate: CLLocationCoordinate2D,
+    static func buildDetailed(coordinate: CLLocationCoordinate2D,
                       date: Date = Date(),
                       weather: WeatherReading?,
                       water: WaterLevelReading?,
@@ -64,32 +71,68 @@ public enum ConditionsInputBuilder {
                       severeWarningLabel: String? = nil,
                       forecastDayIndex: Int = 0,
                       cityGlow: Double? = nil,
-                      rainWatershed72hIn: Double? = nil) -> ConditionsInput {
+                      rainWatershed72hIn: Double? = nil)
+                      -> (input: ConditionsInput, provenance: EnvironmentProvenance) {
 
         let lat = coordinate.latitude, lon = coordinate.longitude
         let region = RegionResolver.region(latitude: lat, longitude: lon)
 
-        // Drop stale gage readings so an offline/old gage can't drive the score.
-        func fresh(_ r: WaterLevelReading?, maxAgeHours: Double) -> WaterLevelReading? {
-            guard let r else { return nil }
-            return date.timeIntervalSince(r.dateTime) <= maxAgeHours * 3600 ? r : nil
+        var prov: [String: EnvironmentProvenance.Entry] = [:]
+        func record(_ variable: String, _ origin: EnvironmentProvenance.Origin,
+                    observedAt: Date? = nil,
+                    coverage: EnvironmentProvenance.Coverage = .unknown,
+                    quality: Double) {
+            prov[variable] = .init(variable: variable, origin: origin,
+                                   observedAt: observedAt, ingestedAt: date,
+                                   coverage: coverage, quality: quality)
         }
-        let water = fresh(water, maxAgeHours: stageDischargeMaxAgeHours)
-        let discharge = fresh(discharge, maxAgeHours: stageDischargeMaxAgeHours)
+
+        /// A gage reading, kept only if fresh and near enough — and recorded
+        /// either way, because "there was a reading but it was 6 hours old" is a
+        /// different fact from "there is no gage here".
+        func usable(_ r: WaterLevelReading?, as variable: String,
+                    maxAgeHours: Double, maxMiles: Double? = nil) -> WaterLevelReading? {
+            guard let r else {
+                record(variable, .unavailable(.noSourceExists), quality: 0)
+                return nil
+            }
+            let ageHours = date.timeIntervalSince(r.dateTime) / 3600
+            if ageHours > maxAgeHours {
+                record(variable, .unavailable(.tooOld(hours: ageHours)),
+                       observedAt: r.dateTime, quality: 0)
+                return nil
+            }
+            if let cap = maxMiles, let miles = r.distanceMiles, miles > cap {
+                record(variable, .unavailable(.tooFar(miles: miles)),
+                       observedAt: r.dateTime, quality: 0)
+                return nil
+            }
+            // Freshness and proximity both erode usefulness; neither is binary
+            // once inside the cap.
+            let freshness = 1 - min(1, ageHours / maxAgeHours)
+            let nearness = maxMiles.flatMap { cap in
+                r.distanceMiles.map { 1 - min(1, $0 / cap) }
+            } ?? 1
+            record(variable, .measured(siteCode: r.siteCode), observedAt: r.dateTime,
+                   coverage: .point(latitude: r.latitude, longitude: r.longitude,
+                                    radiusMiles: r.distanceMiles),
+                   quality: max(0.1, 0.5 + 0.3 * freshness + 0.2 * nearness))
+            return r
+        }
+
+        let water = usable(water, as: "stageFt", maxAgeHours: stageDischargeMaxAgeHours)
+        let discharge = usable(discharge, as: "dischargeCfs",
+                               maxAgeHours: stageDischargeMaxAgeHours)
         // Fresh AND nearby, same as turbidity — a temp gage on another watershed
         // is not this water. Beyond the cap we use the modeled estimate.
-        let waterTempC = fresh(waterTempC, maxAgeHours: tempTurbidityMaxAgeHours)
-            .flatMap { r -> WaterLevelReading? in
-                if let miles = r.distanceMiles, miles > maxWaterTempDistanceMiles { return nil }
-                return r
-            }
+        let waterTempC = usable(waterTempC, as: "waterTempF",
+                                maxAgeHours: tempTurbidityMaxAgeHours,
+                                maxMiles: maxWaterTempDistanceMiles)
         // Turbidity also has to be *nearby* — a fresh reading from another
         // watershed is worse than useless because it overrides the rain signal.
-        let turbidity = fresh(turbidity, maxAgeHours: tempTurbidityMaxAgeHours)
-            .flatMap { r -> WaterLevelReading? in
-                if let miles = r.distanceMiles, miles > maxTurbidityDistanceMiles { return nil }
-                return r
-            }
+        let turbidity = usable(turbidity, as: "turbidityFNU",
+                               maxAgeHours: tempTurbidityMaxAgeHours,
+                               maxMiles: maxTurbidityDistanceMiles)
 
         // Astronomy (local, no network).
         let sun = Astronomy.sunEvents(on: date, lat: lat, lon: lon)
@@ -146,6 +189,17 @@ public enum ConditionsInputBuilder {
         let airF = weather?.temperature
         let waterTempF = liveWaterTempF ?? modeledWaterTempF ?? airF
         let waterTempEstimated = liveWaterTempF == nil && waterTempF != nil
+        // Overwrite the gage entry only when the gage did NOT win, so the record
+        // names the layer that actually produced the number.
+        if liveWaterTempF == nil {
+            if modeledWaterTempF != nil {
+                record("waterTempF", .modelled("thermalLagEWMA k=\(WaterTemperatureService.defaultK)"),
+                       coverage: .lakeWide, quality: 0.55)
+            } else if airF != nil {
+                record("waterTempF", .derived("airTemperatureFallback"),
+                       coverage: .lakeWide, quality: 0.2)
+            }
+        }
 
         let isTailwater = TailwaterRegistry.isTailwater(latitude: lat, longitude: lon)
 
@@ -207,7 +261,35 @@ public enum ConditionsInputBuilder {
         let windMph = Swift.max(weather?.windSpeed ?? 0, alertWindFloorMph ?? 0)
         let effectiveGust = alertWindFloorMph.map { Swift.max(windGustMph ?? 0, $0) } ?? windGustMph
 
-        return ConditionsInput(
+        // Weather is one model grid cell. Measured at Guntersville: identical
+        // wind and cloud at 0 m, 200 m and 1 km, changing only at ~5 km — so
+        // `lakeWide` is a finding, not a shortcut.
+        if let w = weather {
+            record("weather", .modelled("openMeteo"), observedAt: w.time,
+                   coverage: .grid(approxKm: 3), quality: 0.8)
+        } else {
+            record("weather", .unavailable(.fetchFailed), quality: 0)
+        }
+        if let rain = rainWatershed72hIn {
+            record("rainWatershed72hIn", .measured(siteCode: "MRMS"),
+                   coverage: .watershed(approxMiles: 24),
+                   quality: rain >= 0 ? 0.7 : 0.7)
+        } else {
+            record("rainWatershed72hIn", .unavailable(.fetchFailed), quality: 0)
+        }
+        if let g = generation {
+            record("generationLevel", .measured(siteCode: g.dam.id),
+                   observedAt: g.history.last?.at, coverage: .lakeWide,
+                   quality: g.hasSchedule ? 0.9 : 0.6)
+        } else {
+            record("generationLevel", .unavailable(.notApplicableHere), quality: 0)
+        }
+        if severeWarningLabel != nil {
+            record("severeWarningLabel", .measured(siteCode: "NWS"),
+                   coverage: .lakeWide, quality: 1.0)
+        }
+
+        let input = ConditionsInput(
             date: date, latitude: lat, longitude: lon, region: region,
             windMph: windMph,
             windGustMph: effectiveGust,
@@ -250,6 +332,32 @@ public enum ConditionsInputBuilder {
             windowStart: windowStart, windowEnd: windowEnd,
             hasTurbidityGage: turbidity != nil,
             forecastDayIndex: forecastDayIndex)
+
+        return (input, EnvironmentProvenance(entries: prov))
+    }
+
+    /// The scoring path's entry point — unchanged behaviour, provenance discarded.
+    static func build(coordinate: CLLocationCoordinate2D,
+                      date: Date = Date(),
+                      weather: WeatherReading?,
+                      water: WaterLevelReading?,
+                      discharge: WaterLevelReading?,
+                      waterTempC: WaterLevelReading?,
+                      modeledWaterTempF: Double? = nil,
+                      turbidity: WaterLevelReading?,
+                      generation: DamGeneration? = nil,
+                      alertWindFloorMph: Double? = nil,
+                      severeWarningLabel: String? = nil,
+                      forecastDayIndex: Int = 0,
+                      cityGlow: Double? = nil,
+                      rainWatershed72hIn: Double? = nil) -> ConditionsInput {
+        buildDetailed(coordinate: coordinate, date: date, weather: weather,
+                      water: water, discharge: discharge, waterTempC: waterTempC,
+                      modeledWaterTempF: modeledWaterTempF, turbidity: turbidity,
+                      generation: generation, alertWindFloorMph: alertWindFloorMph,
+                      severeWarningLabel: severeWarningLabel,
+                      forecastDayIndex: forecastDayIndex, cityGlow: cityGlow,
+                      rainWatershed72hIn: rainWatershed72hIn).input
     }
 
     /// The generation level that best represents the REMAINING fishing window.
