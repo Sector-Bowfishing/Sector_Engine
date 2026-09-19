@@ -239,3 +239,68 @@ final class LakeEnvironmentKeyingTests: XCTestCase {
         XCTAssertFalse(snap.isFresh(at: now.addingTimeInterval(301)))
     }
 }
+
+/// A gage has to be describing the water you are standing in.
+///
+/// Guntersville's nearest discharge sensor is Paint Rock River, 14 miles off on
+/// another watershed, reading about 9 cfs. Without a cap the engine presented
+/// that as the flow of a 67,900-acre reservoir and the Current factor scored it.
+final class DischargeProximityTests: XCTestCase {
+
+    private let coord = CLLocationCoordinate2D(latitude: 34.42, longitude: -86.29)
+    private let now = Date(timeIntervalSince1970: 1_790_000_000)
+
+    private func reading(miles: Double) -> WaterLevelReading {
+        WaterLevelReading(siteCode: "03574500", siteName: "PAINT ROCK RIVER",
+                          parameterCode: "00060", parameterName: "Discharge",
+                          value: 9.33, unit: "ft^3/s",
+                          dateTime: now.addingTimeInterval(-600),
+                          latitude: 34.62, longitude: -86.31,
+                          trend: .steady, change: 0, history: [], distanceMiles: miles)
+    }
+
+    private func build(_ r: WaterLevelReading?) -> (ConditionsInput, EnvironmentProvenance) {
+        let out = ConditionsInputBuilder.buildDetailed(
+            coordinate: coord, date: now,
+            weather: WeatherReading(temperature: 74, conditionDescription: "Clear",
+                conditionSymbol: "moon", windSpeed: 6, windDirection: 180,
+                precipitation: 0, recentRainfall: 0, humidity: 70, pressure: 1016,
+                pressureTrend: .steady, pressureChange: 0, cloudCover: 30,
+                weatherCode: 1, time: now),
+            water: nil, discharge: r, waterTempC: nil, modeledWaterTempF: 76,
+            turbidity: nil)
+        return (out.input, out.provenance)
+    }
+
+    func testAnOffWatershedGageIsDroppedAndSaysWhy() {
+        let (input, prov) = build(reading(miles: 14.1))
+        XCTAssertNil(input.dischargeCfs, "a creek 14 miles away is not the lake's flow")
+        guard case .unavailable(.tooFar(let miles))? = prov["dischargeCfs"]?.origin else {
+            return XCTFail("expected tooFar, got \(String(describing: prov["dischargeCfs"]?.origin))")
+        }
+        XCTAssertEqual(miles, 14.1, accuracy: 0.001)
+    }
+
+    func testANearbyGageStillCounts() {
+        let (input, prov) = build(reading(miles: 3.0))
+        XCTAssertEqual(input.dischargeCfs ?? 0, 9.33, accuracy: 0.001)
+        XCTAssertTrue(prov["dischargeCfs"]?.isMeasured ?? false)
+    }
+
+    /// The cap sits between turbidity's and water temperature's, because all
+    /// three answer the same question.
+    func testTheCapIsInTheSameFamilyAsTheOthers() {
+        XCTAssertGreaterThan(ConditionsInputBuilder.maxDischargeDistanceMiles,
+                             ConditionsInputBuilder.maxTurbidityDistanceMiles)
+        XCTAssertLessThan(ConditionsInputBuilder.maxDischargeDistanceMiles,
+                          ConditionsInputBuilder.maxWaterTempDistanceMiles)
+    }
+
+    /// Dropping the reading must leave the factor dormant, not zeroed — a zero
+    /// would read as slack water, which is a claim.
+    func testDroppedDischargeIsAbsentNotZero() {
+        let (input, _) = build(reading(miles: 40))
+        XCTAssertNil(input.dischargeCfs)
+        XCTAssertNil(input.dischargeTrend12hCfs)
+    }
+}

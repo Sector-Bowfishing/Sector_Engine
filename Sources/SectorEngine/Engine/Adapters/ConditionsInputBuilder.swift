@@ -43,6 +43,25 @@ public enum ConditionsInputBuilder {
     /// same-waterbody matching until a real hydro-network layer exists. §5.1.
     public static var maxTurbidityDistanceMiles: Double = 10
 
+    /// Discharge is hyper-local in exactly the way turbidity and temperature
+    /// are, and until now it had no distance cap at all — only the 40-mile
+    /// nearest-gage backstop.
+    ///
+    /// On Lake Guntersville that resolved to Paint Rock River at 14 miles,
+    /// reading 9.33 cfs, and the engine presented it as the flow of a
+    /// 67,900-acre reservoir. It is not this water: it is a creek on another
+    /// watershed that happens to be the closest thing with a 00060 sensor. The
+    /// Current factor was scoring it.
+    ///
+    /// 12 miles sits between the turbidity cap (10) and the water-temperature
+    /// cap (15), which is the right company — all three answer "is this gage
+    /// describing the water I am standing in". Beyond it the reading is dropped
+    /// and recorded as `.tooFar`, so the factor goes dormant and confidence
+    /// falls, rather than a number appearing that nobody should trust. On a
+    /// reservoir the dam's own release is the signal that matters, and it is
+    /// fetched separately.
+    public static var maxDischargeDistanceMiles: Double = 12
+
     /// Water temperature is hyper-local too. A live 00010 gage tens of miles off
     /// on a different river isn't "this water's temp"; beyond this we drop it and
     /// fall to the modeled estimate, which at least tracks THIS location's air.
@@ -122,7 +141,8 @@ public enum ConditionsInputBuilder {
 
         let water = usable(water, as: "stageFt", maxAgeHours: stageDischargeMaxAgeHours)
         let discharge = usable(discharge, as: "dischargeCfs",
-                               maxAgeHours: stageDischargeMaxAgeHours)
+                               maxAgeHours: stageDischargeMaxAgeHours,
+                               maxMiles: maxDischargeDistanceMiles)
         // Fresh AND nearby, same as turbidity — a temp gage on another watershed
         // is not this water. Beyond the cap we use the modeled estimate.
         let waterTempC = usable(waterTempC, as: "waterTempF",

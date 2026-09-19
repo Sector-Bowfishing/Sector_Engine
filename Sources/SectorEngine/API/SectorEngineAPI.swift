@@ -340,6 +340,20 @@ public enum SectorEngineAPI {
             alertWindFloorMph: snap.alertWindFloorMph,
             severeWarningLabel: snap.severeWarningLabel,
             rainWatershed72hIn: snap.mrms?.watershed72hIn)
+
+        // The SAME proximity rule the scorer applies, applied to what we render.
+        //
+        // The builder drops a discharge gage that is too far to be this water,
+        // but the payload used to carry the raw reading anyway — so Guntersville
+        // stopped SCORING Paint Rock River's 9.33 cfs while still SHOWING it as
+        // the lake's flow. A number on screen that the engine has already
+        // refused to trust is the worst of both.
+        let shownDischarge = snap.discharge.flatMap { r -> WaterLevelReading? in
+            guard let miles = r.distanceMiles,
+                  miles > ConditionsInputBuilder.maxDischargeDistanceMiles else { return r }
+            return nil
+        }
+
         // Tuning comes from Firebase Remote Config (cached; falls back to the
         // compiled defaults). Change a weight in the console → both phones see it.
         let config = await RemoteConfigStore.shared.current()
@@ -372,7 +386,7 @@ public enum SectorEngineAPI {
             },
             weather: snap.weather.map(Self.weatherDTO),
             water: snap.water.map(Self.waterDTO),
-            discharge: snap.discharge.map(Self.waterDTO),
+            discharge: shownDischarge.map(Self.waterDTO),
             generation: snap.generation.map(Self.generationDTO),
             waterTempModel: snap.waterTempModel.map(Self.waterTempModelDTO),
             moonIllumination: Astronomy.moonIllumination(on: date),
@@ -387,7 +401,13 @@ public enum SectorEngineAPI {
             clarityGauges: [
                 snap.turbidity.map { Self.gaugeDTO($0, role: "turbidity",
                     driving: ($0.distanceMiles ?? .infinity) <= ConditionsInputBuilder.maxTurbidityDistanceMiles) },
-                snap.discharge.map { Self.gaugeDTO($0, role: "discharge", driving: true) },
+                // `driving` means "this informs the estimate" — false once the
+                // gage is beyond the proximity cap, even though it is still
+                // listed so a user can see what was considered and rejected.
+                snap.discharge.map {
+                    Self.gaugeDTO($0, role: "discharge",
+                                  driving: ($0.distanceMiles ?? .infinity)
+                                      <= ConditionsInputBuilder.maxDischargeDistanceMiles) },
             ].compactMap { $0 },
             // Nearest known lake to the scored point — the canonical identity clients
             // dedupe + name by. 25 mi so a point anywhere on a long reservoir still
