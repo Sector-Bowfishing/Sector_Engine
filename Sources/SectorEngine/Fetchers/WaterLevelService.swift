@@ -3,8 +3,9 @@
 //  Sector
 //
 //  Fetches current water levels (gage height / reservoir elevation) from the
-//  USGS Instantaneous Values web service. Free, no API key.
-//  https://waterservices.usgs.gov/
+//  USGS Water Data OGC API (see USGSWaterData.swift), plus reservoir pool
+//  elevation from NOAA NWPS for lakes USGS does not gauge. Free, no API key.
+//  https://api.waterdata.usgs.gov/ogcapi/v0/
 //
 
 import Foundation
@@ -21,7 +22,7 @@ enum WaterTrend: Equatable {
 struct WaterLevelReading: Identifiable, Equatable {
     var id: String { siteCode + "-" + parameterCode }
     let siteCode: String
-    let siteName: String
+    var siteName: String
     let parameterCode: String      // e.g. "00065"
     let parameterName: String      // e.g. "Gage height, ft"
     let value: Double
@@ -29,8 +30,8 @@ struct WaterLevelReading: Identifiable, Equatable {
     let dateTime: Date
     let latitude: Double
     let longitude: Double
-    let trend: WaterTrend
-    let change: Double             // signed change over the lookback window, in `unit`
+    var trend: WaterTrend
+    var change: Double             // signed change over the lookback window, in `unit`
     /// The lookback-window values (oldest → newest) for a sparkline. May be empty.
     var history: [Double] = []
     /// Straight-line distance (miles) from the requested coordinate to this gage.
@@ -65,121 +66,90 @@ final class WaterLevelService {
     static let shared = WaterLevelService()
     private init() {}
 
-    private let endpoint = "https://waterservices.usgs.gov/nwis/iv/"
     // 00065 = gage height (ft); 62614 = reservoir/lake water-surface elevation (ft).
     private let parameterCodes = "00065,62614"
-    // USGS reports missing data with this sentinel.
-    private let noDataValue = -999_999.0
     // How far back to look when deciding whether the level is rising/falling.
-    private let lookbackPeriod = "PT12H"
-    // Changes smaller than this (in the reading's native unit, ft) read as "steady".
-    private let steadyThreshold = 0.1
+    private let lookbackHours: Double = 12
 
-    private static let isoFormatter: ISO8601DateFormatter = {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return f
-    }()
-
-    /// All active gage-height / reservoir-elevation readings within a small box
-    /// around the coordinate, each with its most recent value.
+    /// Candidate gages within a box around the coordinate, each with its most
+    /// recent value — no history.
+    ///
+    /// History used to come back for every gage in the box, because the legacy
+    /// endpoint had no way to ask for "newest value only". The caller then threw
+    /// all but one away. Now only the gage that wins pays for its series.
     func nearbyReadings(near coordinate: CLLocationCoordinate2D,
                         radiusDegrees: Double = 0.25,
                         parameterCd: String? = nil,
                         absThreshold: Double = 0.1,
                         pctThreshold: Double = 0) async throws -> [WaterLevelReading] {
-        let west = coordinate.longitude - radiusDegrees
-        let east = coordinate.longitude + radiusDegrees
-        let south = coordinate.latitude - radiusDegrees
-        let north = coordinate.latitude + radiusDegrees
+        let codes = (parameterCd ?? parameterCodes).split(separator: ",").map(String.init)
+        let box = (west: coordinate.longitude - radiusDegrees,
+                   south: coordinate.latitude - radiusDegrees,
+                   east: coordinate.longitude + radiusDegrees,
+                   north: coordinate.latitude + radiusDegrees)
 
-        var components = URLComponents(string: endpoint)
-        components?.queryItems = [
-            URLQueryItem(name: "format", value: "json"),
-            URLQueryItem(name: "bBox", value: String(format: "%.5f,%.5f,%.5f,%.5f", west, south, east, north)),
-            URLQueryItem(name: "parameterCd", value: parameterCd ?? parameterCodes),
-            URLQueryItem(name: "siteStatus", value: "active"),
-            URLQueryItem(name: "period", value: lookbackPeriod),
-        ]
+        let latest = try await USGSWaterData.latest(bbox: box, parameterCodes: codes)
+        guard !latest.isEmpty else { return [] }
 
-        guard let url = components?.url else { throw WaterLevelError.invalidURL }
-
-        // Bounded by HTTP.get's cap — one slow gage must not tentpole the whole
-        // parallel snapshot. A dropped reading just degrades the score slightly;
-        // a long hang would block the response.
-        let result: HTTPResult
-        do {
-            result = try await HTTP.get(url)
-        } catch {
-            throw WaterLevelError.requestFailed
-        }
-
-        guard result.isSuccess else {
-            throw WaterLevelError.requestFailed
-        }
-        let data = result.body
-
-        let decoded: USGSResponse
-        do {
-            decoded = try JSONDecoder().decode(USGSResponse.self, from: data)
-        } catch {
-            throw WaterLevelError.decodingFailed
-        }
-
-        return decoded.value.timeSeries.compactMap { series -> WaterLevelReading? in
-            let datapoints = series.values.first?.value ?? []
-            // Keep only real measurements, in chronological order (USGS returns oldest-first).
-            let valid = datapoints.compactMap { point -> (Double, String)? in
-                guard let v = Double(point.value), v != noDataValue else { return nil }
-                return (v, point.dateTime)
-            }
-            guard let latest = valid.last,
-                  let siteCode = series.sourceInfo.siteCode.first?.value,
-                  let parameterCode = series.variable.variableCode.first?.value
-            else { return nil }
-
-            let measurement = latest.0
-            let date = Self.isoFormatter.date(from: latest.1) ?? Date()
-
-            // Compare the latest value to the oldest in the lookback window.
-            // Threshold is the larger of an absolute floor and a percentage of
-            // the value, so it works for both gage height (ft) and discharge
-            // (cfs, which ranges from ~10 to 10,000+).
-            let change = measurement - (valid.first?.0 ?? measurement)
-            let thr = Swift.max(absThreshold, pctThreshold * abs(measurement))
-            let trend: WaterTrend
-            if change > thr {
-                trend = .rising
-            } else if change < -thr {
-                trend = .falling
-            } else {
-                trend = .steady
-            }
-
-            return WaterLevelReading(
-                siteCode: siteCode,
-                siteName: series.sourceInfo.siteName,
-                parameterCode: parameterCode,
-                parameterName: series.variable.variableName,
-                value: measurement,
-                unit: series.variable.unit.unitCode,
-                dateTime: date,
-                latitude: series.sourceInfo.geoLocation.geogLocation.latitude,
-                longitude: series.sourceInfo.geoLocation.geogLocation.longitude,
-                trend: trend,
-                change: change,
-                history: valid.map { $0.0 }
-            )
+        return latest.map { l in
+            WaterLevelReading(
+                siteCode: l.siteId,
+                siteName: "",                       // filled in by `latestReading`
+                parameterCode: l.parameterCode,
+                parameterName: USGSWaterData.parameterName(l.parameterCode, unit: l.unit),
+                value: l.value,
+                unit: l.unit,
+                dateTime: l.time,
+                latitude: l.latitude,
+                longitude: l.longitude,
+                trend: .steady,                     // resolved with the history
+                change: 0,
+                history: [])
         }
     }
 
-    /// The closest monitoring site to the coordinate. Expands the search box
-    /// outward until it finds the nearest gage (so we almost always return one),
-    /// and stamps how far that gage is — in miles — from the requested point.
+    /// Fill in the trend, change, history and name for the gage that was chosen.
+    /// Two small requests for one gage, in parallel, instead of a full series for
+    /// every gage in the box.
+    private func enrich(_ reading: WaterLevelReading,
+                        near coordinate: CLLocationCoordinate2D,
+                        radiusDegrees: Double,
+                        absThreshold: Double,
+                        pctThreshold: Double) async -> WaterLevelReading {
+        var out = reading
+        let box = (west: coordinate.longitude - radiusDegrees,
+                   south: coordinate.latitude - radiusDegrees,
+                   east: coordinate.longitude + radiusDegrees,
+                   north: coordinate.latitude + radiusDegrees)
+
+        async let historyTask = try? await USGSWaterData.history(
+            siteId: reading.siteCode, parameterCode: reading.parameterCode,
+            since: Date().addingTimeInterval(-lookbackHours * 3600))
+        async let namesTask = USGSWaterData.siteNames(bbox: box)
+
+        let history = (await historyTask) ?? []
+        out.history = history
+        out.siteName = (await namesTask)[reading.siteCode] ?? reading.siteCode
+
+        // Same rule as before: the latest value against the oldest in the
+        // window, with a threshold that is the larger of an absolute floor and a
+        // fraction of the reading — gage height moves in tenths of a foot,
+        // discharge in thousands of cfs.
+        if let oldest = history.first {
+            let change = reading.value - oldest
+            let thr = Swift.max(absThreshold, pctThreshold * abs(reading.value))
+            out.change = change
+            out.trend = change > thr ? .rising : (change < -thr ? .falling : .steady)
+        }
+        return out
+    }
+
     /// Beyond this, a "nearest gage" is a different water body, not yours — we'd
     /// rather show nothing than a river 50+ miles away (the reservoir bug).
     private static let maxUsefulMiles = 40.0
 
+    /// The closest monitoring site to the coordinate. Expands the search box
+    /// outward until it finds one, and stamps how far it is in miles.
     func latestReading(near coordinate: CLLocationCoordinate2D,
                        radiusDegrees: Double = 0.25,
                        parameterCd: String? = nil,
@@ -187,23 +157,22 @@ final class WaterLevelService {
                        pctThreshold: Double = 0) async throws -> WaterLevelReading? {
         let origin = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
 
-        // Managed reservoirs (Kentucky Lake, Lake Barkley, …) have NO nearby USGS
-        // pool gauge, so the fallback below grabs an unrelated river's gage height
-        // and shows it as "the water level." For those lakes, read the real pool
-        // elevation + forecast from NWPS instead. Only for the main water-level
-        // lookup — never for discharge/temp/turbidity (those pass a parameterCd).
+        // Managed reservoirs have NO nearby USGS pool gauge, so the fallback
+        // below grabs an unrelated river's gage height and shows it as "the
+        // water level." For those lakes read the real pool elevation + forecast
+        // from NWPS instead. Only for the main water-level lookup — never for
+        // discharge/temp/turbidity (those pass a parameterCd).
         if parameterCd == nil, let pool = await reservoirReading(for: coordinate) {
             return pool
         }
 
-        // Progressively larger boxes. USGS caps a bBox at 25 sq° (lat × lng),
-        // so 2.5° (6.25 sq°) is well within bounds. The first (small) box hits
-        // for most lakes; the wider ones only run when nothing closer exists.
-        let radii = [radiusDegrees, 1.0, 2.5]
-        for radius in radii {
+        // Progressively larger boxes. The first (small) box hits for most lakes;
+        // the wider ones only run when nothing closer exists.
+        for radius in [radiusDegrees, 1.0, 2.5] {
             let readings = try await nearbyReadings(near: coordinate, radiusDegrees: radius,
                                                     parameterCd: parameterCd,
-                                                    absThreshold: absThreshold, pctThreshold: pctThreshold)
+                                                    absThreshold: absThreshold,
+                                                    pctThreshold: pctThreshold)
             guard let nearest = readings.min(by: {
                 origin.distance(from: CLLocation(latitude: $0.latitude, longitude: $0.longitude))
                     < origin.distance(from: CLLocation(latitude: $1.latitude, longitude: $1.longitude))
@@ -214,7 +183,10 @@ final class WaterLevelService {
             result.distanceMiles = origin.distance(from: gage) / 1609.34
             // A gage farther than this isn't your water — don't present it as fact.
             if let d = result.distanceMiles, d > Self.maxUsefulMiles { return nil }
-            return result
+            var enriched = await enrich(result, near: coordinate, radiusDegrees: radius,
+                                        absThreshold: absThreshold, pctThreshold: pctThreshold)
+            enriched.distanceMiles = result.distanceMiles
+            return enriched
         }
         return nil
     }
@@ -251,57 +223,6 @@ final class WaterLevelService {
                                 absThreshold: 1.0,     // FNU; ignore sub-1 noise
                                 pctThreshold: 0.10)    // …or <10% of the reading
     }
-}
-
-// MARK: - USGS JSON (WaterML in JSON)
-
-private struct USGSResponse: Decodable {
-    let value: Value
-    struct Value: Decodable {
-        let timeSeries: [TimeSeries]
-    }
-}
-
-private struct TimeSeries: Decodable {
-    let sourceInfo: SourceInfo
-    let variable: Variable
-    let values: [ValueBlock]
-}
-
-private struct SourceInfo: Decodable {
-    let siteName: String
-    let siteCode: [CodeValue]
-    let geoLocation: GeoLocation
-}
-
-private struct GeoLocation: Decodable {
-    let geogLocation: GeogLocation
-    struct GeogLocation: Decodable {
-        let latitude: Double
-        let longitude: Double
-    }
-}
-
-private struct Variable: Decodable {
-    let variableName: String
-    let variableCode: [CodeValue]
-    let unit: Unit
-    struct Unit: Decodable {
-        let unitCode: String
-    }
-}
-
-private struct CodeValue: Decodable {
-    let value: String
-}
-
-private struct ValueBlock: Decodable {
-    let value: [Datapoint]
-}
-
-private struct Datapoint: Decodable {
-    let value: String
-    let dateTime: String
 }
 
 // MARK: - NOAA Tides (CO-OPS)
