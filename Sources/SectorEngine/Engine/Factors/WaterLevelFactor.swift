@@ -31,9 +31,10 @@ public enum WaterLevelFactor {
         // level-stable; the tile shouldn't read "no data" when we know the pool.
         guard let delta = trend else {
             if let pool = input.reservoirElevationFt {
+                let full = input.fullPoolFt.map { ", " + poolRelation(pool: pool, full: $0) } ?? ""
                 return FactorScore(score: cfg.stableScore,
                                    label: String(format: "%.2f ft", pool),
-                                   why: "Reservoir pool holding around \(String(format: "%.1f", pool)) ft — no fast level change to move fish off the flats.")
+                                   why: "Reservoir pool holding around \(String(format: "%.1f", pool)) ft\(full) — no fast level change to move fish off the flats.")
             }
             return nil
         }
@@ -69,12 +70,24 @@ public enum WaterLevelFactor {
             // readout exactly. At one decimal the tile rounded 413.99 up to
             // "414.0" while the sheet said "413.99" — same number, two faces.
             // Michael: "we cant have that." One formatter, one value.
+            let full = input.fullPoolFt.map { " · " + poolRelation(pool: pool, full: $0) } ?? ""
             return FactorScore(score: score.clampedToScore,
                                label: String(format: "%.2f ft", pool),
-                               why: why + String(format: " · %+.1f ft/12h", delta))
+                               why: why + String(format: " · %+.1f ft/12h", delta) + full)
         }
         return FactorScore(score: score.clampedToScore,
                            label: String(format: "%+.1f ft/12h", delta),
                            why: why)
+    }
+
+    /// "2.1 ft above full pool" (water in the flood pool — the shoreline brush
+    /// is wet) / "0.8 ft below full pool" (a drawdown) / "at full pool".
+    /// Within half a foot counts as full: operators hold a band, and their
+    /// conventions differ by about that much (TVA posts the top of its summer
+    /// zone, the Corps usually the middle of its).
+    static func poolRelation(pool: Double, full: Double) -> String {
+        let d = pool - full
+        if abs(d) < 0.5 { return "at full pool" }
+        return String(format: "%.1f ft %@ full pool", abs(d), d > 0 ? "above" : "below")
     }
 }

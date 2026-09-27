@@ -65,6 +65,9 @@ public struct ConditionsInput: Equatable {
     /// water. On a reservoir this is the level that actually describes where
     /// you're shooting — a USGS river stage gage does not.
     public var reservoirElevationFt: Double?
+    /// Normal full pool of that reservoir (ft), when the lake directory has one.
+    /// The pool above it is water in the flood pool; below it, a drawdown.
+    public var fullPoolFt: Double?
     /// Signed 12 h change in the reservoir POOL (ft), from the dam's own history.
     /// On a reservoir this is the real level trend of the water you're standing
     /// on — preferred over a distant USGS river-stage gage. §5.6.
@@ -125,6 +128,7 @@ public struct ConditionsInput: Equatable {
                 rainDataAvailable: Bool = true,
                 isTailwater: Bool = false,
                 reservoirElevationFt: Double? = nil,
+                fullPoolFt: Double? = nil,
                 reservoirTrend12hFt: Double? = nil,
                 fogSpreadF: Double? = nil,
                 generationLevel: GenerationLevel? = nil,
@@ -171,6 +175,7 @@ public struct ConditionsInput: Equatable {
         self.rainDataAvailable = rainDataAvailable
         self.isTailwater = isTailwater
         self.reservoirElevationFt = reservoirElevationFt
+        self.fullPoolFt = fullPoolFt
         self.reservoirTrend12hFt = reservoirTrend12hFt
         self.fogSpreadF = fogSpreadF
         self.generationLevel = generationLevel

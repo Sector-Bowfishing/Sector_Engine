@@ -77,6 +77,33 @@ struct GenerationDam: Equatable, Identifiable {
     ]
 }
 
+extension LakeDirectory {
+    /// The directory lake a dam holds back: the one whose name — or one of its
+    /// alternate names, "Smith (Lewis Smith)", "Eufaula / W.F. George" — is the
+    /// dam's lake name, within 40 mi of the dam. By NAME, not nearness: a dam
+    /// sits at one end of its lake, and the next lake's point can be closer.
+    static func impounded(by dam: GenerationDam) -> DirectoryLake? {
+        let want = normalize(dam.lakeName)
+        guard !want.isEmpty else { return nil }
+        return alternateNames
+            .filter { $0.names.contains(want) }
+            .map { ($0.lake, miles(dam.coordinate, $0.lake.coordinate)) }
+            .filter { $0.1 <= 40 }
+            .min { $0.1 < $1.1 }?.0
+    }
+
+    /// Every lake with the names it goes by: "Smith (Lewis Smith)" is
+    /// "smith lewis smith", "smith" and "lewis smith".
+    private static let alternateNames: [(lake: DirectoryLake, names: Set<String>)] = all.map { lake in
+        var names: Set<String> = [normalize(lake.name)]
+        for part in lake.name.split(whereSeparator: { "/()".contains($0) }) {
+            let n = normalize(String(part))
+            if !n.isEmpty { names.insert(n) }
+        }
+        return (lake, names)
+    }
+}
+
 /// One scheduled block: "5 PM – 6 PM EDT → 1 unit".
 struct GenerationWindow: Equatable {
     let start: Date
@@ -136,6 +163,23 @@ struct DamGeneration: Equatable, Identifiable {
     let history: [GenerationObservation]
 
     var hasSchedule: Bool { !windows.isEmpty }
+
+    /// Normal full pool of the lake behind this dam, when the directory has one
+    /// for a MANAGED reservoir and this feed reports the pool. Where TVA or CWMS
+    /// publishes both, they are the same system and datum (docs/data/full_pool.csv).
+    /// Only a SOURCED full pool (high or med) may call a lake flooded or drawn
+    /// down; an unverified one stays a reference. A pool 200+ ft off full is
+    /// the wrong lake or the wrong unit, not a drawdown — the deepest real
+    /// ones (Mead, Powell) have no pool feed here.
+    var fullPoolFt: Double? {
+        guard let pool = reservoirElevationFt,
+              let lake = LakeDirectory.impounded(by: dam),
+              lake.poolBasis == .fullPool,
+              lake.poolConfidence != .low,
+              let full = lake.fullPoolFt,
+              abs(pool - full) < 200 else { return nil }
+        return full
+    }
 
     /// Units running at `date`, or nil when the schedule doesn't cover it.
     func generators(at date: Date) -> Int? {
