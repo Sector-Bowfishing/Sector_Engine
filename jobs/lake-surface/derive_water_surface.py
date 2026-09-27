@@ -973,10 +973,15 @@ def build_clarity(frame, masks, bbox, until, out, after=None, floor=0.0):
         cov = (read & water).sum() / max(1, water.sum())
         print(f"    reads {100 * cov:.1f}% of the non-grass water 40 m in from the bank, "
               f"{pct(read, masks['lake'])}% of the whole lake")
-        tried.append((cov, (date, platform, items, v, grass, aux)))
         if cov >= 0.5:
             base = (date, platform, items, v, grass, aux)
             break
+        # Only a pass that could still be the fallback is kept (a pass's
+        # arrays run to hundreds of MB on a big lake): one no better than a
+        # newer kept pass never wins, and a kept one drops out once the best
+        # reads more than 1.25x it.
+        if not tried or cov > tried[-1][0]:
+            tried = [t for t in tried if t[0] >= 0.8 * cov] + [(cov, (date, platform, items, v, grass, aux))]
     # A lake that never reads half its open water (narrow, steep, dendritic
     # reservoirs: Beaver's clearest passes read 45-49%) takes its newest pass
     # within 80% of its best, provided that reads at least a quarter.
@@ -1034,7 +1039,11 @@ def build_clarity(frame, masks, bbox, until, out, after=None, floor=0.0):
         if not (hidden_here & ~borrowed).any():
             break
         print(f"    grass under cloud: reading {d_} {p_}", flush=True)
-        _, g2, aux2 = s2_pass(it_, frame, lake, masks["clarity"])
+        try:
+            _, g2, aux2 = s2_pass(it_, frame, lake, masks["clarity"])
+        except PassRejected as e:
+            print(f"      skipped: {e}")
+            continue
         seen2 = np.nan_to_num(aux2["hidden"], nan=1.0) < 0.5
         got = hidden_here & seen2 & g2
         borrowed |= got

@@ -41,15 +41,16 @@ fi
 gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" \
   --member "serviceAccount:$SA" --role roles/storage.objectAdmin >/dev/null
 
-# Memory: a build peaks at ~1.5 GB + 0.45 GB per million frame cells; 8 GiB
-# with a 6.5 GB budget runs three small lakes at once, a big one alone.
+# Memory: a build's peak is mostly one Sentinel-2 tile window at 10 m (see
+# daily.py); 16 GiB with a 14 GB budget runs six small lakes at once, and the
+# biggest reservoirs (a full tile each) alone.
 echo "▶ job $JOB"
 gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" \
   --service-account "$SA" \
   --tasks "$TASKS" --parallelism "$TASKS" --max-retries 1 \
-  --cpu 2 --memory 8Gi --task-timeout 3h \
-  --set-env-vars "BUCKET=$BUCKET,LAKE_WORKERS=3,MEM_BUDGET_GB=6.5"
+  --cpu 4 --memory 16Gi --task-timeout 3h \
+  --set-env-vars "BUCKET=$BUCKET,LAKE_WORKERS=6,MEM_BUDGET_GB=14"
 
 gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" \
   --member "serviceAccount:$SA" --role roles/run.invoker >/dev/null

@@ -18,7 +18,7 @@ Sentinel-2 reads).
 
 usage: python daily.py [--lakes id1,id2] [--until YYYY-MM-DD] [--force]
 env:   OUT_DIR or BUCKET; POLYGONS (default polygons.geojson.gz); LAKES_URL;
-       LAKE_WORKERS (default 4); MEM_BUDGET_GB (default 6.5)
+       LAKE_WORKERS (default 4); MEM_BUDGET_GB (default 14)
 """
 import os, sys, io, gzip, json, time, re, argparse, datetime as dt, traceback, tempfile, threading
 import concurrent.futures as cf
@@ -33,12 +33,18 @@ POLYGONS = os.environ.get("POLYGONS", os.path.join(os.path.dirname(os.path.abspa
 LOOKBACK_DAYS = 14          # passes older than this are not "fresh"
 GRID_FACTOR = 6             # the engine's point-lookup grid: 6 x 36 m cells (~216 m mercator)
 _build_lock = threading.Lock()   # build_clarity sets dws.UTM, a module global
-# Memory: a build's peak is roughly MEM_BASE_GB + MEM_PER_MCELL_GB per million
-# frame cells (measured on Guntersville and Kentucky Lake). Lakes share a
-# task's MEM_BUDGET_GB; one bigger than the budget gets a coarser frame.
-MEM_BASE_GB = 1.5
-MEM_PER_MCELL_GB = 0.45
-MEM_BUDGET_GB = float(os.environ.get("MEM_BUDGET_GB", "6.5"))
+# Memory. Most of a build's peak is reading one Sentinel-2 tile's window at
+# 10 m (~100 bytes a pixel), which grows with the lake's ground area up to a
+# whole tile (110 km square) and does not shrink with a coarser frame; the
+# frame's own arrays add a little per million cells. Measured: Guntersville
+# (6,000 km2 frame) 4.6 GB, Kentucky Lake (10,000 km2) 6.5 GB. Lakes share a
+# task's MEM_BUDGET_GB; a frame too big for it is coarsened, and a lake still
+# over it builds alone.
+MEM_BASE_GB = 1.0
+MEM_PER_1000KM2_GB = 0.55
+MEM_TILE_KM2 = 12_100
+MEM_PER_MCELL_GB = 0.2
+MEM_BUDGET_GB = float(os.environ.get("MEM_BUDGET_GB", "14"))
 REPLACE_WITHIN = 0.8        # a sparser new pass must read this share of what the published one read
 REPLACE_DAYS = 10           # ...unless the published pass is older than this
 
@@ -69,7 +75,10 @@ def frame_for(lake):
     cell = dws.CLARITY_CELL
     while True:
         frame = dws.Frame(lake, cell=cell)
-        gb = MEM_BASE_GB + MEM_PER_MCELL_GB * frame.width * frame.height / 1e6
+        cells = frame.width * frame.height
+        km2 = cells * frame.cell_ground_m() ** 2 / 1e6
+        gb = (MEM_BASE_GB + MEM_PER_1000KM2_GB * min(km2, MEM_TILE_KM2) / 1000
+              + MEM_PER_MCELL_GB * cells / 1e6)
         if gb <= MEM_BUDGET_GB or cell >= 8 * dws.CLARITY_CELL:
             return frame, min(gb, MEM_BUDGET_GB)
         cell *= 2
