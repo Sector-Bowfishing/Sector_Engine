@@ -239,6 +239,7 @@ public enum ConditionsInputBuilder {
             rainDataAvailable: rainWatershed72hIn != nil || weather != nil,
             isTailwater: isTailwater,
             reservoirElevationFt: generation?.reservoirElevationFt,
+            fullPoolFt: generation?.fullPoolFt,
             reservoirTrend12hFt: reservoirTrend12hFt,
             fogSpreadF: fogSpreadF,
             generationLevel: windowGenLevel,

@@ -210,6 +210,10 @@ public struct GenerationDTO: Codable, Equatable {
     public let dischargeCfs: Double?
     public let dischargeTrend12hCfs: Double?
     public let reservoirElevationFt: Double?
+    /// Normal full pool of the lake behind the dam — `reservoirElevationFt`
+    /// above it is water into the flood pool, below it a drawdown. nil when
+    /// the lake has no managed pool on file or there's no pool reading.
+    public let fullPoolFt: Double?
     public let tailwaterElevationFt: Double?
     public let observedAt: Date?
     public let windows: [GenerationWindowDTO]
@@ -479,7 +483,8 @@ public enum SectorEngineAPI {
             latitude: g.dam.latitude, longitude: g.dam.longitude,
             distanceMiles: g.distanceMiles,
             dischargeCfs: g.dischargeCfs, dischargeTrend12hCfs: g.dischargeTrend12hCfs,
-            reservoirElevationFt: g.reservoirElevationFt, tailwaterElevationFt: g.tailwaterElevationFt,
+            reservoirElevationFt: g.reservoirElevationFt, fullPoolFt: g.fullPoolFt,
+            tailwaterElevationFt: g.tailwaterElevationFt,
             observedAt: g.observedAt,
             windows: g.windows.map {
                 GenerationDTO.GenerationWindowDTO(

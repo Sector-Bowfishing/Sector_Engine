@@ -21,6 +21,14 @@ on-device scoring engine. Tuning is driven live from Firebase Remote Config.
 | `GET`  | `/health` | `ok` |
 | `GET`  | `/conditions?lat=&lon=` | the full render payload for one coordinate |
 | `POST` | `/conditions/batch` | `{points:[{lat,lon}]}` → slim `{score,band}` per point (My Lakes rings) |
+| `GET`  | `/lakes` | the lake directory `{version, count, lakes}` both apps search; ETagged, so `If-None-Match` gets a 304 |
+
+The lake directory is generated from `docs/data/Sector_Lakes_APIs_2.xlsx` by
+`scripts/generate-lake-directory.py`; the apps ship a snapshot of `/lakes` for a first
+launch offline (the script's header says how to refresh it). Each lake carries its
+normal **full pool** from `docs/data/full_pool.csv` (see `docs/data/FULL_POOL.md`), and
+`/conditions` reports it beside the reservoir pool (`generation.fullPoolFt`) so a lake
+reads as flooded or drawn down.
 
 `/conditions` returns the **complete** payload every client needs to render without a
 local engine: score / band / regime / confidence, the per-factor breakdown, gates,
