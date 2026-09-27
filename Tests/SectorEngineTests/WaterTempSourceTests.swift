@@ -22,6 +22,8 @@ final class WaterTempSourceTests: XCTestCase {
         XCTAssertFalse(WaterLevelService.isSurfaceSeries("20 m depth"))
         XCTAssertFalse(WaterLevelService.isSurfaceSeries("Temperature at 6 ft"))
         XCTAssertFalse(WaterLevelService.isSurfaceSeries("Bottom"))
+        // An elevation is not a depth (Lake Champlain's surface sensor).
+        XCTAssertTrue(WaterLevelService.isSurfaceSeries("[at 93.0 ft above NGVD of 1929]"))
     }
 
     /// The field every surface shows is the gauge when there is one, in °F,

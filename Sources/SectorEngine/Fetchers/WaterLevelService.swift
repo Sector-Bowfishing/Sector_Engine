@@ -87,6 +87,7 @@ final class WaterLevelService {
                         radiusDegrees: Double = 0.25,
                         parameterCd: String? = nil,
                         siteType: String? = nil,
+                        sites: String? = nil,
                         absThreshold: Double = 0.1,
                         pctThreshold: Double = 0) async throws -> [WaterLevelReading] {
         let west = coordinate.longitude - radiusDegrees
@@ -103,6 +104,12 @@ final class WaterLevelService {
             URLQueryItem(name: "period", value: lookbackPeriod),
         ]
         if let siteType { components?.queryItems?.append(URLQueryItem(name: "siteType", value: siteType)) }
+        if let sites {
+            components?.queryItems?.removeAll { $0.name == "bBox" }
+            components?.queryItems?.append(URLQueryItem(name: "sites", value: sites))
+            components?.queryItems?.removeAll { $0.name == "period" }
+            components?.queryItems?.append(URLQueryItem(name: "period", value: "P2D"))
+        }
 
         guard let url = components?.url else { throw WaterLevelError.invalidURL }
 
@@ -266,6 +273,11 @@ final class WaterLevelService {
     static func isSurfaceSeries(_ method: String?) -> Bool {
         guard let m = method?.lowercased(), !m.isEmpty else { return true }
         if m.contains("bottom") || m.contains("hypolimnion") { return false }
+        // "[at 93.0 ft above NGVD of 1929]" is an ELEVATION (Lake Champlain's
+        // sensor, ~3 ft down at a 96 ft lake), not a depth; alone it says
+        // nothing about depth, so it is not grounds to reject.
+        if m.contains("above ngvd") || m.contains("above navd") || m.contains("elevation")
+            || m.contains("above sea level") || m.contains(" msl") { return true }
         let pattern = #"(\d+(?:\.\d+)?)\s*(m|meters?|metres?|ft|feet|foot)\b"#
         guard let re = try? NSRegularExpression(pattern: pattern),
               let hit = re.firstMatch(in: m, range: NSRange(m.startIndex..., in: m)),
