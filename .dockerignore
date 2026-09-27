@@ -10,3 +10,4 @@ docs/
 README.md
 deploy.sh
 cloudbuild.yaml
+jobs/
