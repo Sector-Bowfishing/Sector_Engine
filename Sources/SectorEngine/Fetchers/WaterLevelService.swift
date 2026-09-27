@@ -86,6 +86,7 @@ final class WaterLevelService {
     func nearbyReadings(near coordinate: CLLocationCoordinate2D,
                         radiusDegrees: Double = 0.25,
                         parameterCd: String? = nil,
+                        siteType: String? = nil,
                         absThreshold: Double = 0.1,
                         pctThreshold: Double = 0) async throws -> [WaterLevelReading] {
         let west = coordinate.longitude - radiusDegrees
@@ -101,6 +102,7 @@ final class WaterLevelService {
             URLQueryItem(name: "siteStatus", value: "active"),
             URLQueryItem(name: "period", value: lookbackPeriod),
         ]
+        if let siteType { components?.queryItems?.append(URLQueryItem(name: "siteType", value: siteType)) }
 
         guard let url = components?.url else { throw WaterLevelError.invalidURL }
 
@@ -127,6 +129,11 @@ final class WaterLevelService {
         }
 
         return decoded.value.timeSeries.compactMap { series -> WaterLevelReading? in
+            // A lake buoy carries a temperature profile; only the surface sensor
+            // is the water people fish. Skip bottom and deep series.
+            if parameterCd == "00010", !Self.isSurfaceSeries(series.values.first?.method?.first?.methodDescription) {
+                return nil
+            }
             let datapoints = series.values.first?.value ?? []
             // Keep only real measurements, in chronological order (USGS returns oldest-first).
             let valid = datapoints.compactMap { point -> (Double, String)? in
@@ -183,6 +190,9 @@ final class WaterLevelService {
     func latestReading(near coordinate: CLLocationCoordinate2D,
                        radiusDegrees: Double = 0.25,
                        parameterCd: String? = nil,
+                       siteType: String? = nil,
+                       radii customRadii: [Double]? = nil,
+                       maxMiles: Double? = nil,
                        absThreshold: Double = 0.1,
                        pctThreshold: Double = 0) async throws -> WaterLevelReading? {
         let origin = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -199,10 +209,10 @@ final class WaterLevelService {
         // Progressively larger boxes. USGS caps a bBox at 25 sq° (lat × lng),
         // so 2.5° (6.25 sq°) is well within bounds. The first (small) box hits
         // for most lakes; the wider ones only run when nothing closer exists.
-        let radii = [radiusDegrees, 1.0, 2.5]
+        let radii = customRadii ?? [radiusDegrees, 1.0, 2.5]
         for radius in radii {
             let readings = try await nearbyReadings(near: coordinate, radiusDegrees: radius,
-                                                    parameterCd: parameterCd,
+                                                    parameterCd: parameterCd, siteType: siteType,
                                                     absThreshold: absThreshold, pctThreshold: pctThreshold)
             guard let nearest = readings.min(by: {
                 origin.distance(from: CLLocation(latitude: $0.latitude, longitude: $0.longitude))
@@ -213,7 +223,7 @@ final class WaterLevelService {
             let gage = CLLocation(latitude: nearest.latitude, longitude: nearest.longitude)
             result.distanceMiles = origin.distance(from: gage) / 1609.34
             // A gage farther than this isn't your water — don't present it as fact.
-            if let d = result.distanceMiles, d > Self.maxUsefulMiles { return nil }
+            if let d = result.distanceMiles, d > (maxMiles ?? Self.maxUsefulMiles) { return nil }
             return result
         }
         return nil
@@ -229,14 +239,40 @@ final class WaterLevelService {
                                 pctThreshold: 0.08)    // …or <8% of the flow
     }
 
-    /// Nearest USGS **water temperature** gage (param 00010, °C). Drives fish
-    /// activity — rough fish hold shallow & feed hard in warm water. Sparse
-    /// coverage; returns nil where no temp gage is near.
+    /// The **lake's own** water temperature gauge (USGS param 00010, °C), when
+    /// one sits on this water. LAKE sites only (site type LK), within
+    /// `maxLakeTempGaugeMiles`, surface sensor only. It used to take the nearest
+    /// temperature gauge of any kind within 40 miles, and the score ran on a
+    /// river's temperature: Beaver Lake read 50 °F — the cold White River below
+    /// the dam — with the lake near 80 (2026-09-27). nil means "no lake gauge",
+    /// and the model stands.
     func nearestWaterTemp(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
         try await latestReading(near: coordinate,
                                 parameterCd: "00010",
+                                siteType: "LK",
+                                radii: [Self.maxLakeTempGaugeMiles / 69.0],
+                                maxMiles: Self.maxLakeTempGaugeMiles,
                                 absThreshold: 0.5,     // °C; temp moves slowly
                                 pctThreshold: 0)
+    }
+
+    /// A lake gauge farther than this is on another water, or another arm too
+    /// far off to stand for the spot.
+    static let maxLakeTempGaugeMiles = 10.0
+
+    /// A USGS temperature series is the surface one unless its method says it
+    /// sits at the bottom or deeper than 1.5 m (the descriptions read "at 1.0
+    /// ft", "0.5 m below surface", "20 m depth", "Bottom").
+    static func isSurfaceSeries(_ method: String?) -> Bool {
+        guard let m = method?.lowercased(), !m.isEmpty else { return true }
+        if m.contains("bottom") || m.contains("hypolimnion") { return false }
+        let pattern = #"(\d+(?:\.\d+)?)\s*(m|meters?|metres?|ft|feet|foot)\b"#
+        guard let re = try? NSRegularExpression(pattern: pattern),
+              let hit = re.firstMatch(in: m, range: NSRange(m.startIndex..., in: m)),
+              let numR = Range(hit.range(at: 1), in: m), let unitR = Range(hit.range(at: 2), in: m),
+              let value = Double(m[numR]) else { return true }
+        let metres = m[unitR].hasPrefix("f") ? value * 0.3048 : value
+        return metres <= 1.5
     }
 
     /// Nearest USGS **turbidity** gage (param 63680, FNU). The master clarity
@@ -297,6 +333,8 @@ private struct CodeValue: Decodable {
 
 private struct ValueBlock: Decodable {
     let value: [Datapoint]
+    let method: [Method]?
+    struct Method: Decodable { let methodDescription: String? }
 }
 
 private struct Datapoint: Decodable {

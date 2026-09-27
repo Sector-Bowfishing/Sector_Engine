@@ -52,6 +52,10 @@ public struct ConditionsResponse: Codable, Equatable {
     public let discharge: WaterDTO?     // cfs
     public let generation: GenerationDTO?
     public let waterTempModel: WaterTempModelDTO?
+    /// THE water temperature — the one the score used and every surface should
+    /// show: the lake's own gauge when it has one, else the model. nil when
+    /// neither is available.
+    public let waterTemp: WaterTempDTO?
     public let moonIllumination: Double // 0…1, for "now"
     public let alerts: [AlertDTO]
 
@@ -228,6 +232,15 @@ public struct GenerationDTO: Codable, Equatable {
     }
 }
 
+/// The water temperature the score ran on, and where it came from.
+public struct WaterTempDTO: Codable, Equatable {
+    public let valueF: Double
+    public let source: String            // gauge | model
+    public let siteName: String?         // the lake gauge, when measured
+    public let observedAt: Date?
+    public let distanceMiles: Double?
+}
+
 /// Modeled surface water temp — the current estimate plus the daily series that
 /// drives the water-temp detail chart (most waters have no live temp gage).
 public struct WaterTempModelDTO: Codable, Equatable {
@@ -379,6 +392,7 @@ public enum SectorEngineAPI {
             discharge: snap.discharge.map(Self.waterDTO),
             generation: snap.generation.map(Self.generationDTO),
             waterTempModel: snap.waterTempModel.map(Self.waterTempModelDTO),
+            waterTemp: Self.waterTempDTO(gauge: snap.waterTemp, model: snap.waterTempModel),
             moonIllumination: Astronomy.moonIllumination(on: date),
             alerts: snap.alerts.map(Self.alertDTO),
             tonight: forecast?.tonight.map(Self.tonightDTO),
@@ -492,6 +506,20 @@ public enum SectorEngineAPI {
                     isMinimum: $0.isMinimum, unitsAreDerived: $0.unitsAreDerived,
                     timeZoneIdentifier: $0.timeZone.identifier)
             })
+    }
+
+    /// Mirrors ConditionsInputBuilder's choice — gauge first, then the model —
+    /// so the number shown is the number scored.
+    static func waterTempDTO(gauge: WaterLevelReading?, model: WaterTempModel?) -> WaterTempDTO? {
+        if let g = gauge {
+            return WaterTempDTO(valueF: g.value * 9 / 5 + 32, source: "gauge", siteName: g.siteName,
+                                observedAt: g.dateTime, distanceMiles: g.distanceMiles)
+        }
+        if let m = model {
+            return WaterTempDTO(valueF: m.currentF, source: "model", siteName: nil,
+                                observedAt: nil, distanceMiles: nil)
+        }
+        return nil
     }
 
     private static func waterTempModelDTO(_ m: WaterTempModel) -> WaterTempModelDTO {
