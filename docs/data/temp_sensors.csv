@@ -1,0 +1,30 @@
+id,sensor,name,depthM,since,note
+Assawompset Pond|MA,usgs:415026070563603,"PUMPHOUSE ON ASSAWOMPSET POND NEAR LAKEVILLE, MA",,2024-06-29,sensor depth not documented
+Calcasieu Lake|LA,usgs:08017095,"North Calcasieu Lake near Hackberry, LA",,2019-01-01,saline or estuarine water body; sensor depth not documented
+Cheney Reservoir|KS,usgs:07144790,"CHENEY RE NR CHENEY, KS",,2019-01-01,sensor depth not documented
+Clarks Hill / J.S. Thurmond|GA,usgs:02193900,"THURMOND LAKE NEAR PLUM BRANCH, SC",,2019-02-15,sensor depth not documented
+Deep Creek Lake|MD,usgs:03075871,"DEEP CREEK LAKE NEAR THAYERVILLE, MD",1.06,2020-08-08,
+Detroit Lake|OR,usgs:444306122144600,"DETROIT LAKE AT LOG BOOM BEHIND DETROIT DAM, OR",1.00,2022-06-15,
+Dworshak Reservoir|ID,"cwms:NWDP:DWR_S1-D0,5m.Temp-Water.Inst.1Hour.0.Best","Dworshak Reservoir forebay, ID (thermistor string S1)",0.50,2025-04-12,
+Falls Lake|NC,usgs:02087182,"FALLS LAKE ABOVE DAM NR FALLS, NC",,2019-01-01,sensor depth not documented
+Great Salt Lake|UT,usgs:405356112205601,"GSL 3510, 6 MI WEST OF ANTELOPE ISLAND",0.00,2025-05-24,saline or estuarine water body
+Hoover Reservoir|OH,usgs:03228400,Hoover Reservoir at Central College OH,0.61,2024-09-19,
+Indian Lake|OH,usgs:03260500,Indian Lake at Russells Point OH,,2026-05-30,sensor depth not documented
+Lake Champlain|VT,usgs:04294413,LAKE CHAMPLAIN AT PORT HENRY NY,0.88,2019-03-13,2 spike day(s) removed
+Lake Darling|ND,usgs:05115500,"LAKE DARLING NEAR FOXHOLM, ND",,2022-07-13,sensor depth not documented
+Lake Gogebic|MI,usgs:04035995,"LAKE GOGEBIC NEAR BERGLAND, MI",,2026-05-30,sensor depth not documented
+Lake Mattamuskeet|NC,usgs:0208458893,"LAKE MATTAMUSKEET E OF NC HWY 94 NR FAIRFIELD, NC",,2019-01-01,sensor depth not documented
+Lake Monona|WI,usgs:05429000,"LAKE MONONA AT MADISON, WI",,2023-09-28,sensor depth not documented
+Lake Pend Oreille|ID,cwms:NWDP:BYVI.Temp-Water.Inst.1Hour.0.NWSRADIO-REV,"Lake Pend Oreille at Bayview, ID",,2019-01-01,sensor depth not documented; 3 spike day(s) removed
+Lake Russell (R.B. Russell)|GA,usgs:02188100,"RUSSELL LAKE ABOVE CALHOUN FALLS, SC",,2019-01-01,sensor depth not documented
+Lake Strom Thurmond (Clarks Hill)|SC,usgs:02193900,"THURMOND LAKE NEAR PLUM BRANCH, SC",,2019-02-15,sensor depth not documented
+Lake Union|WA,"cwms:NWDP:GWLW_S1-D3,0ft.Temp-Water.Inst.1Hour.0.NWSRADIO-REV","Lake Union at Gas Works Park, Seattle, WA (thermistor string)",0.91,2019-04-19,
+Malheur Lake|OR,usgs:432004118453400,MALHEUR LAKE - MAL-NE,,2019-04-24,sensor depth not documented
+Milford Lake|KS,usgs:391259097001800,"MILFORD LAKE NEAR WAKEFIELD, KS",,2019-05-13,sensor depth not documented (labelled near-surface)
+Okatibbee Lake|MS,cwms:SAM:Okatibbee.Temp-Water.Inst.15Minutes.0.Raw-LRIT,"Okatibbee Lake, MS",,2019-01-01,sensor depth not documented; 8 spike day(s) removed
+Rend Lake|IL,cwms:MVS:Sesser-Jackie Branch.Temp-Water.Inst.30Minutes.0.lrgsShef-raw-D1,"Rend Lake, Jackie Branch arm near Sesser, IL (water-quality profiler)",,2024-03-27,
+Storm Lake|IA,usgs:05482140,"Storm Lake at Storm Lake, IA",,2024-09-18,sensor depth not documented
+Upper Klamath Lake|OR,usgs:422719121571400,WILLIAMSON RIVER OUTLET - WMR,,2019-05-16,sensor depth not documented
+Walker Lake|NV,usgs:384506118433001,WALKER LAKE 4 NORTH NDOW,0.53,2021-05-28,
+Wappapello Lake|MO,cwms:MVS:Wappapello Lk-St Francis.Temp-Water.Inst.30Minutes.0.lrgsShef-raw-D1,"Wappapello Lake pool, MO (water-quality profiler)",,2019-03-22,6 spike day(s) removed
+West Grand Lake|ME,usgs:01018900,"West Grand Lake at Grand Lake Stream, Maine",,2019-01-01,sensor depth not documented

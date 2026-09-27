@@ -515,6 +515,16 @@ final class ConditionsForecastService: ObservableObject {
         let endIdx = Swift.min(startIdx + 7, r.daily.time.count)
         guard startIdx < endIdx else { return [] }
 
+        // When a lake gauge measured tonight's water, the model's later days
+        // are shifted by the gauge's difference from the model today, so the
+        // outlook runs on from the measured value instead of stepping back to
+        // the model on night +1.
+        let gaugeAnchorF: Double = {
+            guard !base.waterTempEstimated, let measured = base.waterTempF,
+                  let modeled = waterTempModel?.currentF else { return 0 }
+            return measured - modeled
+        }()
+
         for i in startIdx..<endIdx {
             guard let evening = WeatherService.parseLocalTime(r.daily.time[i] + "T21:00")
                     ?? isoDay(r.daily.time[i]) else { continue }
@@ -615,7 +625,7 @@ final class ConditionsForecastService: ObservableObject {
             // beyond the model's ~4-day reach fall back to tonight's values.
             if ni.forecastDayIndex > 0, let model = waterTempModel,
                let day = model.series.first(where: { cal.isDate($0.date, inSameDayAs: evening) }) {
-                ni.waterTempF = day.waterF
+                ni.waterTempF = day.waterF + gaugeAnchorF
                 ni.airTempF = day.airF
                 ni.waterTempEstimated = true
             }

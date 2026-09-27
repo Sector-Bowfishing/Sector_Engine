@@ -227,6 +227,7 @@ def parse_office(op):
 # with. A lake missing from the CSV falls back to the sheet's column, as low;
 # a CSV row with no number means the research found none, and nothing is kept.
 FULL_POOL_CSV = ROOT / "docs/data/full_pool.csv"
+TEMP_SENSORS_CSV = ROOT / "docs/data/temp_sensors.csv"
 POOL_BASES = {"fullPool", "naturalSurface"}
 POOL_CONFS = {"high", "med", "low"}
 
@@ -244,6 +245,17 @@ def read_full_pools():
                 sys.exit(f"full_pool.csv: bad basis/conf for {row['id']}: {basis!r} {conf!r}")
             out[row["id"].strip()] = (float(row["fullPoolFt"]), basis, conf)
     return out
+
+
+def read_temp_sensors():
+    """Lake id -> its own surface temperature sensor ("usgs:<site>" or
+    "cwms:<office>:<time-series id>"): a sensor inside the lake's outline,
+    reporting within the last 30 days when the table was built."""
+    import csv
+    if not TEMP_SENSORS_CSV.exists():
+        return {}
+    with open(TEMP_SENSORS_CSV, newline="") as f:
+        return {r["id"].strip(): r["sensor"].strip() for r in csv.DictReader(f) if r["sensor"].strip()}
 
 
 def sheet_pool(c):
@@ -354,6 +366,12 @@ def main():
     unused = set(full_pools) - {f'{e["name"]}|{e["state"]}' for e in entries}
     if unused:
         sys.exit(f"full_pool.csv lists lakes the directory doesn't have: {sorted(unused)}")
+    sensors = read_temp_sensors()
+    unused = set(sensors) - {f'{e["name"]}|{e["state"]}' for e in entries}
+    if unused:
+        sys.exit(f"temp_sensors.csv lists lakes the directory doesn't have: {sorted(unused)}")
+    for e in entries:
+        e["tempSensor"] = sensors.get(f'{e["name"]}|{e["state"]}')
 
     entries.sort(key=lambda e: (e["states"][0], e["name"]))
 
@@ -436,6 +454,10 @@ def main():
         "    let fullPoolFt: Double?",
         "    let poolBasis: LakePoolBasis?",
         "    let poolConfidence: LakePoolConfidence?",
+        "    /// The lake's own surface temperature sensor, read live when the spot is on",
+        "    /// this lake: \"usgs:<site>\" or \"cwms:<office>:<time-series id>\". nil = none;",
+        "    /// the model stands. Source: docs/data/temp_sensors.csv.",
+        "    let tempSensor: String?",
         "    var id: String { \"\\(name)|\\(state)\" }",
         "    var coordinate: CLLocationCoordinate2D { .init(latitude: lat, longitude: lon) }",
         "}",
@@ -466,6 +488,7 @@ def main():
             "fullPoolFt": pool[0] if pool else None,
             "poolBasis": pool[1] if pool else None,
             "poolConfidence": pool[2] if pool else None,
+            "tempSensor": e.get("tempSensor"),
         })
     # One lake per line keeps the diff of a single edit to a single line.
     body = ",\n".join(json.dumps(r, ensure_ascii=False, separators=(",", ":")) for r in rows_out)

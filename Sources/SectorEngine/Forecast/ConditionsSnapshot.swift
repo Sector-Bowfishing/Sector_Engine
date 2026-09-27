@@ -117,8 +117,15 @@ actor ConditionsSnapshotProvider {
             async let discharge = withDeadline(9, "discharge") {
                 try? await WaterLevelService.shared.nearestDischarge(near: coordinate)
             }
-            async let temp = withDeadline(9, "waterTemp") {
-                try? await WaterLevelService.shared.nearestWaterTemp(near: coordinate)
+            async let temp = withDeadline(9, "waterTemp") { () -> WaterLevelReading? in
+                // The lake's own sensor when the spot is on a lake that has one;
+                // otherwise a USGS lake gauge close by; otherwise nil (the model).
+                if let lake = LakeDirectory.nearest(to: coordinate, withinMiles: 10),
+                   lake.tempSensor != nil,
+                   let reading = await LakeTempSensorService.latest(for: lake) {
+                    return reading
+                }
+                return try? await WaterLevelService.shared.nearestWaterTemp(near: coordinate)
             }
             async let tempModel = withDeadline(9, "waterTempModel") {
                 await WaterTemperatureService.model(near: coordinate)
