@@ -59,6 +59,22 @@ router.post("conditions/batch") { request, _ -> Response in
     return jsonResponse(BatchResult(results: scores))
 }
 
+// The lake directory — the one list every app's lake search, My Lakes picker
+// and dam routing read (see LakeDirectoryAPI). ETagged: an app that already
+// holds this version gets a 304 and keeps its cached copy.
+router.get("lakes") { request, _ -> Response in
+    let directory = SectorEngineAPI.lakeDirectory
+    let etag = "\"\(directory.response.version)\""
+    var headers: HTTPFields = [.eTag: etag, .cacheControl: "public, max-age=3600"]
+    if request.headers[.ifNoneMatch] == etag {
+        return Response(status: .notModified, headers: headers)
+    }
+    headers[.contentType] = "application/json"
+    var buffer = ByteBuffer()
+    buffer.writeBytes(directory.body)
+    return Response(status: .ok, headers: headers, body: .init(byteBuffer: buffer))
+}
+
 // Cloud Run injects PORT and expects the server to bind 0.0.0.0 (all interfaces).
 // Locally, without PORT set, that's still reachable as localhost:8080 for the A/B.
 let port = ProcessInfo.processInfo.environment["PORT"].flatMap(Int.init) ?? 8080
