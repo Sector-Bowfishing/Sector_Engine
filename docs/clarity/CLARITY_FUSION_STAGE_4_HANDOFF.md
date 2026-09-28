@@ -315,7 +315,7 @@ The hourly job keeps recording each arm's NWM and USGS flow, and Stage 3B's repl
 - the legacy clarity paths are exactly the known ones;
 - plus the A/B evaluation, which writes `huntability_ab.json`.
 
-**Also:** the Linux smoke test passes, including the four new routes. Full iOS suite: still running when this was written, with 556 passed and 0 failed so far. All 14 new tests passed, and the repinned Huntability fingerprint passed. The earlier run's two failures (a presence threshold in my own test, and the fingerprint pin) were fixed before this run.
+**Also:** the Linux smoke test passes, including the four new routes. Full iOS suite: **736 run, 735 passed, 1 skipped (the pre-existing unnamed-stretch test), 0 failed**. That includes the 14 new tests and the repinned Huntability fingerprint. An earlier run's two failures (a presence threshold in my own test, and the fingerprint pin) were fixed before this run.
 
 ## 19. Screenshots (`docs/clarity/stage4_screens/`)
 
