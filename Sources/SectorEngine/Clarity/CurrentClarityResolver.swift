@@ -47,12 +47,24 @@ public enum CurrentClarityResolver {
             switch c.kind {
             case .none: return .none
             case .direct: return c.fnu == nil ? .none : .high
-            case .filled, .grassBed:
+            // The satellite sees the plants in a bed, never the water, and the
+            // values carried into beds erred 0.39 log10 (5 ft) on 2020–24 but
+            // 0.12 on 2025–26 (Stage 4 replay): no supported magnitude (Stage 5).
+            case .grassBed: return .none
+            case .filled:
                 guard c.fnu != nil, let d = c.distanceToObservedM, d.isFinite, d <= filledMaxM else { return .none }
-                let byDistance: AuthorityLevel = d <= filledModerateMaxM ? .moderate : .low
-                // The satellite sees the plants in a bed, never the water.
-                return c.kind == .grassBed ? min(byDistance, .low) : byDistance
+                return d <= filledModerateMaxM ? .moderate : .low
             }
+        }
+
+        /// High means read, current and checkable (Stage 5): a directly read
+        /// cell of a scene no older than `currentSceneMaxAgeHours`, under a
+        /// stable, fully recorded drainage. Anything else caps at moderate.
+        /// Preregistered in docs/clarity/stage5/CONFIDENCE_TIERS_PREREGISTRATION.md.
+        public static func confidence(authority: AuthorityLevel, record: ClarityConfidence,
+                                      level: ClarityEvidenceLevel) -> ClarityConfidence {
+            let c = min(ClarityConfidence(authority), record)
+            return c == .high && level != .directSatellite ? .moderate : c
         }
 
         /// What the drainage record lets Sector check.
@@ -140,7 +152,8 @@ public enum CurrentClarityResolver {
                 switch cell.kind {
                 case .none: return "The scene gives this cell no value."
                 case .direct: return "The scene's reading here has no value."
-                case .filled, .grassBed:
+                case .grassBed: return "Grass bed: the satellite reads the plants, not the water, so no visibility is supported here."
+                case .filled:
                     guard let d = cell.distanceToObservedM, d.isFinite else { return "No satellite reading connects to this water." }
                     return "The nearest satellite reading is \(km(d)) away through the water: too far to carry a number."
                 }
@@ -159,7 +172,8 @@ public enum CurrentClarityResolver {
                 display: ClarityDisplay(title: "Water Clarity", valueText: "No supported estimate", rangeText: nil,
                                         confidenceText: ClarityConfidence.none.label,
                                         sourceText: "Sentinel-2 · \(shortDate(scene.time))",
-                                        evidenceText: "Satellite estimate unavailable here", notes: [why]),
+                                        evidenceText: cell.kind == .grassBed ? "Grass bed" : "Satellite estimate unavailable here",
+                                        notes: [why]),
                 limitations: limitations + [why], generatedAt: now)
         }
 
@@ -188,7 +202,7 @@ public enum CurrentClarityResolver {
 
         // B, C, D — the scene still speaks for this water.
         let lvl = level(for: cell, ageH: ageH)
-        let conf = min(ClarityConfidence(authority), recordCap)
+        let conf = Rules.confidence(authority: authority, record: recordCap, level: lvl)
         composition.append(item("answer", lvl, satSource, .satelliteDerivedSecchi,
                                 "Sentinel-2 \(scene.date): \(evidenceWords(cell))", s, scene.time))
         var notes: [String] = []

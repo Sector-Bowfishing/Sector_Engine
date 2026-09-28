@@ -57,10 +57,32 @@ final class CurrentClarityTests: XCTestCase {
         XCTAssertFalse(noPath.magnitudeSupported)
     }
 
-    func testAGrassBedIsNeverMoreThanLowConfidence() {
+    func testAGrassBedGetsNoSupportedMagnitude() {
+        // Stage 5: values carried into beds erred 5 ft on 2020–24, so a bed is never given feet.
         let g = estimate(region(), ClarityCellEvidence(kind: .grassBed, fnu: 3, distanceToObservedM: 60))
-        XCTAssertEqual(g.confidence, .low)
-        XCTAssertEqual(g.primarySource, .satelliteGrassBed)
+        XCTAssertFalse(g.magnitudeSupported)
+        XCTAssertNil(g.centralFt); XCTAssertNil(g.lowFt); XCTAssertNil(g.highFt); XCTAssertNil(g.category)
+        XCTAssertNil(g.lastSupported, "carried-in feet are not shown as current, nor as last supported")
+        XCTAssertEqual(g.evidenceLevel, .none)
+        XCTAssertEqual(g.confidence, .none)
+        XCTAssertEqual(g.observation?.cellEvidence, .grassBed)
+        XCTAssertEqual(g.display.evidenceText, "Grass bed")
+        XCTAssertEqual(g.composition.map(\.role), ["rejected"])
+        let far = estimate(region(), ClarityCellEvidence(kind: .grassBed, fnu: 3, distanceToObservedM: 8_000))
+        XCTAssertFalse(far.magnitudeSupported)
+    }
+
+    func testHighNeedsACurrentDirectReadOfAStableFullyRecordedDrainage() {
+        // Stage 5, preregistered: High = direct cell, scene ≤ 72 h, stable, complete record.
+        XCTAssertEqual(estimate(region(.stable, sceneHoursAgo: 30), direct).confidence, .high)
+        XCTAssertEqual(estimate(region(.stable, sceneHoursAgo: 71), direct).confidence, .high)
+        XCTAssertEqual(estimate(region(.stable, sceneHoursAgo: 73), direct).confidence, .moderate)
+        XCTAssertEqual(estimate(region(.stable, sceneHoursAgo: 30), filled(300)).confidence, .moderate)
+        XCTAssertEqual(estimate(region(.minorChange, sceneHoursAgo: 30), direct).confidence, .moderate)
+        XCTAssertEqual(estimate(region(.stable, sceneHoursAgo: 30, completeness: .partial), direct).confidence, .moderate)
+        XCTAssertEqual(estimate(region(.stable, sceneHoursAgo: 30, flow: "unavailable"), direct).confidence, .moderate)
+        // authority is the evidence's and the drainage's; age takes confidence only
+        XCTAssertEqual(estimate(region(.stable, sceneHoursAgo: 8 * 24), direct).authority, .high)
     }
 
     func testAnInSituSensorInTheSameZoneAnswersAndTheSatelliteBecomesContext() {
@@ -104,7 +126,7 @@ final class CurrentClarityTests: XCTestCase {
         let e = estimate(region(.stable, sceneHoursAgo: 8 * 24), direct)
         XCTAssertEqual(e.evidenceLevel, .stableHistorical)
         XCTAssertTrue(e.magnitudeSupported)
-        XCTAssertEqual(e.confidence, .high, "authority is lost to evidence, not to age")
+        XCTAssertEqual(e.confidence, .moderate, "an older read keeps its number but is not High (Stage 5)")
         XCTAssertTrue(e.display.notes.first!.contains("the drainage has stayed as it was"))
     }
 
