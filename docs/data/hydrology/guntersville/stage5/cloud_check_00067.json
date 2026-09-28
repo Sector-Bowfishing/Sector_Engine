@@ -1,0 +1,2116 @@
+{
+ "base": "https://clarity---sector-engine-e43utajroa-uc.a.run.app",
+ "lake": "Guntersville|AL",
+ "checkedAt": "2026-09-28T22:11:46Z",
+ "checks": [
+  {
+   "check": "health",
+   "pass": true,
+   "seconds": 0.165
+  },
+  {
+   "check": "lake summary",
+   "pass": true,
+   "seconds": 0.408
+  },
+  {
+   "check": "prepared world, current",
+   "pass": true,
+   "freshness": "current",
+   "preparedAt": "2026-09-28T22:10:42Z"
+  },
+  {
+   "check": "two user-facing tiers",
+   "pass": true
+  },
+  {
+   "check": "overview present",
+   "pass": true,
+   "headline": "49% of the water has a current estimate \u00b7 3.7\u20135.6 ft where known \u00b7 20% has changed since its last clear view",
+   "supported": 0.485,
+   "changed": 0.197,
+   "unsupported": 0.318,
+   "grass": 0.294
+  },
+  {
+   "check": "composite as gzip",
+   "pass": true,
+   "bytes": 265410,
+   "etag": "\"224d5f70-gz\"",
+   "seconds": 0.295
+  },
+  {
+   "check": "revalidation 304",
+   "pass": true,
+   "seconds": 0.074
+  },
+  {
+   "check": "identity form still served",
+   "pass": true,
+   "bytes": 2928487,
+   "seconds": 0.367
+  },
+  {
+   "check": "composite matches the index",
+   "pass": true,
+   "cells": 415214
+  },
+  {
+   "check": "E hides the number: direct \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~4.6 ft"
+  },
+  {
+   "check": "E hides the number: direct \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~4.5 ft"
+  },
+  {
+   "check": "E hides the number: direct \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~3.9 ft"
+  },
+  {
+   "check": "E hides the number: direct \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~5.2 ft"
+  },
+  {
+   "check": "E hides the number: direct \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~6.1 ft"
+  },
+  {
+   "check": "E hides the number: direct \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~5.1 ft"
+  },
+  {
+   "check": "E hides the number: filled<=500 \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~5.3 ft"
+  },
+  {
+   "check": "E hides the number: filled<=500 \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~4.1 ft"
+  },
+  {
+   "check": "E hides the number: filled<=500 \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~4.5 ft"
+  },
+  {
+   "check": "E hides the number: filled<=500 \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~5.3 ft"
+  },
+  {
+   "check": "E hides the number: filled<=500 \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~5.2 ft"
+  },
+  {
+   "check": "E hides the number: filled<=500 \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~5.1 ft"
+  },
+  {
+   "check": "E hides the number: filled<=5000 \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~2.9 ft"
+  },
+  {
+   "check": "E hides the number: filled<=5000 \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~4.8 ft"
+  },
+  {
+   "check": "E hides the number: filled<=5000 \u2192 changedHistorical/low",
+   "pass": true,
+   "value": "Last supported estimate ~3.7 ft"
+  },
+  {
+   "check": "E hides the number: filled<=5000 \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~4.5 ft"
+  },
+  {
+   "check": "E hides the number: filled<=5000 \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~4.9 ft"
+  },
+  {
+   "check": "E hides the number: filled<=5000 \u2192 changedHistorical/none",
+   "pass": true,
+   "value": "Last supported estimate ~4.9 ft"
+  },
+  {
+   "check": "grass bed has no number: grass<=5000 \u2192 none/none",
+   "pass": true,
+   "value": "No supported estimate"
+  },
+  {
+   "check": "grass bed has no number: grass<=5000 \u2192 none/none",
+   "pass": true,
+   "value": "No supported estimate"
+  },
+  {
+   "check": "grass bed has no number: grass<=5000 \u2192 none/none",
+   "pass": true,
+   "value": "No supported estimate"
+  },
+  {
+   "check": "grass bed has no number: grass>5000 \u2192 none/none",
+   "pass": true,
+   "value": "No supported estimate"
+  },
+  {
+   "check": "grass bed has no number: grass>5000 \u2192 none/none",
+   "pass": true,
+   "value": "No supported estimate"
+  },
+  {
+   "check": "grass bed has no number: grass>5000 \u2192 none/none",
+   "pass": true,
+   "value": "No supported estimate"
+  },
+  {
+   "check": "E hides the number: Town Creek (filled<=5000)",
+   "pass": true,
+   "value": "Last supported estimate ~4.9 ft"
+  },
+  {
+   "check": "grass bed has no number: South Sauty (grass<=5000)",
+   "pass": true,
+   "value": "No supported estimate"
+  },
+  {
+   "check": "E hides the number: Browns Creek (direct)",
+   "pass": true,
+   "value": "Last supported estimate ~4.1 ft"
+  },
+  {
+   "check": "map and tap agree on every sampled cell",
+   "pass": true,
+   "agreed": 48,
+   "of": 48
+  },
+  {
+   "check": "no number on land (Guntersville town)",
+   "pass": true
+  },
+  {
+   "check": "no number on outside the lake (Huntsville)",
+   "pass": true
+  },
+  {
+   "check": "change since a report (prepared)",
+   "pass": true,
+   "state": "stable",
+   "seconds": 0.235
+  }
+ ],
+ "timings": {
+  "lakeWarm": {
+   "p50": 0.245,
+   "max": 0.441
+  },
+  "cellsGzipWarm": {
+   "p50": 0.162,
+   "max": 0.277
+  },
+  "cells304Warm": {
+   "p50": 0.08,
+   "max": 0.152
+  },
+  "pointWarm": {
+   "p50": 0.079,
+   "max": 0.279,
+   "n": 48
+  },
+  "cellsGzip10Mbps": {
+   "connect": 0.015677,
+   "firstByte": 0.085823,
+   "total": 0.167033,
+   "bytes": 265410
+  },
+  "cellsIdentity10Mbps": {
+   "connect": 0.014248,
+   "firstByte": 0.096383,
+   "total": 2.209381,
+   "bytes": 2928487
+  }
+ },
+ "overview": {
+  "byConfidence": {
+   "Low": 0.109,
+   "Moderate": 0.376
+  },
+  "changedPct": 0.197,
+  "grassPct": 0.294,
+  "headline": "49% of the water has a current estimate \u00b7 3.7\u20135.6 ft where known \u00b7 20% has changed since its last clear view",
+  "newestObservation": "2026-09-20T16:34:09Z",
+  "oldestObservation": "2026-08-21T16:34:06Z",
+  "supportedFtP10": 3.7,
+  "supportedFtP50": 4.4,
+  "supportedFtP90": 5.6,
+  "supportedPct": 0.485,
+  "unsupportedPct": 0.318,
+  "waterCells": 415214
+ },
+ "scenes": [
+  {
+   "date": "2026-08-21",
+   "platform": "sentinel-2b",
+   "source": "lakes/Guntersville_AL/clarity/2026-08-21.cells.bin",
+   "time": "2026-08-21T16:34:06Z"
+  },
+  {
+   "date": "2026-08-31",
+   "platform": "sentinel-2b",
+   "source": "lakes/Guntersville_AL/clarity/2026-08-31.cells.bin",
+   "time": "2026-08-31T16:34:07Z"
+  },
+  {
+   "date": "2026-09-05",
+   "platform": "sentinel-2c",
+   "source": "lakes/Guntersville_AL/clarity/2026-09-05.cells.bin",
+   "time": "2026-09-05T16:34:07Z"
+  },
+  {
+   "date": "2026-09-13",
+   "platform": "sentinel-2b",
+   "source": "lakes/Guntersville_AL/clarity/2026-09-13.cells.bin",
+   "time": "2026-09-13T16:44:03Z"
+  },
+  {
+   "date": "2026-09-18",
+   "platform": "sentinel-2c",
+   "source": "lakes/Guntersville_AL/clarity/2026-09-18.cells.bin",
+   "time": "2026-09-18T16:44:05Z"
+  },
+  {
+   "date": "2026-09-20",
+   "platform": "sentinel-2b",
+   "source": "lakes/Guntersville_AL/clarity/2026-09-20.cells.bin",
+   "time": "2026-09-20T16:34:09Z"
+  }
+ ],
+ "regions": [
+  {
+   "id": "_mainStem",
+   "name": "Tennessee River main stem",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "measuredTVARelease",
+   "summary": "Tennessee River main stem: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "archie-creek",
+   "name": "Archie Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Archie Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "aspel-branch",
+   "name": "Aspel Branch",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Aspel Branch: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "baker-spring-branch",
+   "name": "Baker Spring Branch",
+   "sceneIndex": 4,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "unavailable",
+   "flowProvenance": "unavailable",
+   "summary": "Baker Spring Branch: Sentinel-2 Sep 18 \u00b7 change since unknown"
+  },
+  {
+   "id": "battle-creek",
+   "name": "Battle Creek",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Battle Creek: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "beech-creek",
+   "name": "Beech Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Beech Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "bengis-creek",
+   "name": "Bengis Creek",
+   "sceneIndex": 0,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Bengis Creek: Sentinel-2 Aug 21 \u00b7 runoff since"
+  },
+  {
+   "id": "berry-branch",
+   "name": "Berry Branch",
+   "sceneIndex": 4,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Berry Branch: Sentinel-2 Sep 18 \u00b7 runoff since"
+  },
+  {
+   "id": "big-culvert-creek",
+   "name": "Big Culvert Creek",
+   "sceneIndex": 1,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Big Culvert Creek: Sentinel-2 Aug 31 \u00b7 runoff since"
+  },
+  {
+   "id": "big-spring-creek",
+   "name": "Big Spring Creek",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Big Spring Creek: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "black-oak-creek",
+   "name": "Black Oak Creek",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Black Oak Creek: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "blue-spring-brook",
+   "name": "Blue Spring Brook",
+   "sceneIndex": 5,
+   "runoffState": "recovering",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "unavailable",
+   "summary": "Blue Spring Brook: Sentinel-2 Sep 20 \u00b7 runoff since, now receding"
+  },
+  {
+   "id": "blue-spring-creek",
+   "name": "Blue Spring Creek",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Blue Spring Creek: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "boshart-creek",
+   "name": "Boshart Creek",
+   "sceneIndex": 4,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "unavailable",
+   "summary": "Boshart Creek: Sentinel-2 Sep 18 \u00b7 minor change since"
+  },
+  {
+   "id": "brogue-branch",
+   "name": "Brogue Branch",
+   "sceneIndex": 4,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Brogue Branch: Sentinel-2 Sep 18 \u00b7 runoff since"
+  },
+  {
+   "id": "browns-creek",
+   "name": "Browns Creek",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Browns Creek: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "chandler-branch",
+   "name": "Chandler Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "unavailable",
+   "summary": "Chandler Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "cooks-branch",
+   "name": "Cooks Branch",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "unavailable",
+   "summary": "Cooks Branch: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "coon-creek",
+   "name": "Coon Creek",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Coon Creek: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "crooked-branch",
+   "name": "Crooked Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Crooked Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "crow-creek",
+   "name": "Crow Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Crow Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "deal-creek",
+   "name": "Deal Creek",
+   "sceneIndex": 5,
+   "runoffState": "stable",
+   "hydrologicCap": "high",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Deal Creek: Sentinel-2 Sep 20 \u00b7 drainage stable since"
+  },
+  {
+   "id": "dripping-spring-branch",
+   "name": "Dripping Spring Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Dripping Spring Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "dry-creek-jackson-into-coon-creek",
+   "name": "Dry Creek",
+   "sceneIndex": 5,
+   "runoffState": "stable",
+   "hydrologicCap": "high",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Dry Creek: Sentinel-2 Sep 20 \u00b7 drainage stable since"
+  },
+  {
+   "id": "dry-creek-jackson-into-roseberry-creek",
+   "name": "Dry Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Dry Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "dry-creek-jackson-into-south-sauty-creek",
+   "name": "Dry Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Dry Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "dry-creek-marshall",
+   "name": "Dry Creek",
+   "sceneIndex": 5,
+   "runoffState": "majorRunoff",
+   "hydrologicCap": "none",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Dry Creek: Sentinel-2 Sep 20 \u00b7 major runoff since"
+  },
+  {
+   "id": "duvall-branch",
+   "name": "Duvall Branch",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Duvall Branch: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "glover-branch",
+   "name": "Glover Branch",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Glover Branch: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "glover-creek",
+   "name": "Glover Creek",
+   "sceneIndex": 1,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Glover Creek: Sentinel-2 Aug 31 \u00b7 runoff since"
+  },
+  {
+   "id": "graham-branch",
+   "name": "Graham Branch",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Graham Branch: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "gross-branch",
+   "name": "Gross Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Gross Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "hayes-branch",
+   "name": "Hayes Branch",
+   "sceneIndex": 4,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "unavailable",
+   "flowProvenance": "unavailable",
+   "summary": "Hayes Branch: Sentinel-2 Sep 18 \u00b7 change since unknown"
+  },
+  {
+   "id": "honeycomb-creek",
+   "name": "Honeycomb Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Honeycomb Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "horn-branch",
+   "name": "Horn Branch",
+   "sceneIndex": 5,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "unavailable",
+   "flowProvenance": "unavailable",
+   "summary": "Horn Branch: Sentinel-2 Sep 20 \u00b7 change since unknown"
+  },
+  {
+   "id": "hurricane-branch",
+   "name": "Hurricane Branch",
+   "sceneIndex": 5,
+   "runoffState": "majorRunoff",
+   "hydrologicCap": "none",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Hurricane Branch: Sentinel-2 Sep 20 \u00b7 major runoff since"
+  },
+  {
+   "id": "jagger-branch",
+   "name": "Jagger Branch",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Jagger Branch: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "jones-creek-jackson-jones-creek-tennessee-river",
+   "name": "Jones Creek",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Jones Creek: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "jones-creek-jackson-rorex-creek-jones-creek",
+   "name": "Jones Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Jones Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "kizzort-branch",
+   "name": "Kizzort Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Kizzort Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "long-hollow-branch",
+   "name": "Long Hollow Branch",
+   "sceneIndex": 2,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Long Hollow Branch: Sentinel-2 Sep 5 \u00b7 runoff since"
+  },
+  {
+   "id": "long-island-creek",
+   "name": "Long Island Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Long Island Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "marshall-branch",
+   "name": "Marshall Branch",
+   "sceneIndex": 5,
+   "runoffState": "stable",
+   "hydrologicCap": "high",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Marshall Branch: Sentinel-2 Sep 20 \u00b7 drainage stable since"
+  },
+  {
+   "id": "mccorkle-branch",
+   "name": "McCorkle Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "unavailable",
+   "summary": "McCorkle Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "mink-creek-jackson",
+   "name": "Mink Creek",
+   "sceneIndex": 4,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Mink Creek: Sentinel-2 Sep 18 \u00b7 runoff since"
+  },
+  {
+   "id": "mink-creek-marshall",
+   "name": "Mink Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Mink Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "minky-creek",
+   "name": "Minky Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Minky Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "mormon-hole-branch",
+   "name": "Mormon Hole Branch",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Mormon Hole Branch: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "mud-creek",
+   "name": "Mud Creek",
+   "sceneIndex": 3,
+   "runoffState": "majorRunoff",
+   "hydrologicCap": "none",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Mud Creek: Sentinel-2 Sep 13 \u00b7 major runoff since"
+  },
+  {
+   "id": "nichols-branch",
+   "name": "Nichols Branch",
+   "sceneIndex": 3,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Nichols Branch: Sentinel-2 Sep 13 \u00b7 minor change since"
+  },
+  {
+   "id": "north-sauty-creek",
+   "name": "North Sauty Creek",
+   "sceneIndex": 4,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "North Sauty Creek: Sentinel-2 Sep 18 \u00b7 runoff since"
+  },
+  {
+   "id": "owen-branch",
+   "name": "Owen Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "unavailable",
+   "summary": "Owen Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "parton-branch",
+   "name": "Parton Branch",
+   "sceneIndex": 5,
+   "runoffState": "stable",
+   "hydrologicCap": "high",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Parton Branch: Sentinel-2 Sep 20 \u00b7 drainage stable since"
+  },
+  {
+   "id": "polecat-branch",
+   "name": "Polecat Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Polecat Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "poplar-spring-branch",
+   "name": "Poplar Spring Branch",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Poplar Spring Branch: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "pump-spring-branch",
+   "name": "Pump Spring Branch",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Pump Spring Branch: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "rocky-branch-jackson",
+   "name": "Rocky Branch",
+   "sceneIndex": 5,
+   "runoffState": "stable",
+   "hydrologicCap": "high",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Rocky Branch: Sentinel-2 Sep 20 \u00b7 drainage stable since"
+  },
+  {
+   "id": "rocky-branch-marshall",
+   "name": "Rocky Branch",
+   "sceneIndex": 5,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Rocky Branch: Sentinel-2 Sep 20 \u00b7 runoff since"
+  },
+  {
+   "id": "roseberry-creek",
+   "name": "Roseberry Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Roseberry Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "seibold-branch",
+   "name": "Seibold Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Seibold Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "sequatchie-river",
+   "name": "Sequatchie River",
+   "sceneIndex": null,
+   "runoffState": "unknown",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "unavailable",
+   "flowProvenance": "unavailable",
+   "summary": "Sequatchie River: no scene \u00b7 change since unknown"
+  },
+  {
+   "id": "short-creek",
+   "name": "Short Creek",
+   "sceneIndex": 5,
+   "runoffState": "recovering",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "unavailable",
+   "summary": "Short Creek: Sentinel-2 Sep 20 \u00b7 runoff since, now receding"
+  },
+  {
+   "id": "slaton-branch",
+   "name": "Slaton Branch",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Slaton Branch: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "south-sauty-creek",
+   "name": "South Sauty Creek",
+   "sceneIndex": 4,
+   "runoffState": "moderateRunoff",
+   "hydrologicCap": "low",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "measuredUSGS",
+   "summary": "South Sauty Creek: Sentinel-2 Sep 18 \u00b7 runoff since"
+  },
+  {
+   "id": "sterne-branch",
+   "name": "Sterne Branch",
+   "sceneIndex": 5,
+   "runoffState": "stable",
+   "hydrologicCap": "high",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Sterne Branch: Sentinel-2 Sep 20 \u00b7 drainage stable since"
+  },
+  {
+   "id": "town-creek-jackson",
+   "name": "Town Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "partial",
+   "flowProvenance": "modeledNWM",
+   "summary": "Town Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "town-creek-marshall",
+   "name": "Town Creek",
+   "sceneIndex": 5,
+   "runoffState": "majorRunoff",
+   "hydrologicCap": "none",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "measuredUSGS",
+   "summary": "Town Creek: Sentinel-2 Sep 20 \u00b7 major runoff since"
+  },
+  {
+   "id": "widows-creek",
+   "name": "Widows Creek",
+   "sceneIndex": 5,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Widows Creek: Sentinel-2 Sep 20 \u00b7 minor change since"
+  },
+  {
+   "id": "yellow-creek",
+   "name": "Yellow Creek",
+   "sceneIndex": 4,
+   "runoffState": "minorChange",
+   "hydrologicCap": "moderate",
+   "catchmentCompleteness": "complete",
+   "flowProvenance": "modeledNWM",
+   "summary": "Yellow Creek: Sentinel-2 Sep 18 \u00b7 minor change since"
+  }
+ ],
+ "cellKinds": {
+  "none|none|none|False": 1870,
+  "filled<=500|stableHistorical|moderate|True": 75547,
+  "direct|stableHistorical|moderate|True": 80681,
+  "grass<=5000|none|none|False": 118528,
+  "filled<=500|changedHistorical|low|False": 22499,
+  "direct|changedHistorical|low|False": 42300,
+  "filled<=5000|stableHistorical|low|True": 43102,
+  "filled>5000|none|none|False": 7858,
+  "grass>5000|none|none|False": 3657,
+  "filled<=5000|changedHistorical|low|False": 3657,
+  "filled<=5000|changedHistorical|none|False": 3089,
+  "filled<=500|changedHistorical|none|False": 4397,
+  "direct|changedHistorical|none|False": 5994,
+  "filled<=500|stableHistorical|low|True": 1026,
+  "direct|stableHistorical|low|True": 1009
+ },
+ "points": [
+  {
+   "name": "direct \u2192 changedHistorical/low",
+   "cell": 370046,
+   "lat": 34.366865,
+   "lon": -86.317445,
+   "table": [
+    "direct",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.6 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.085
+  },
+  {
+   "name": "direct \u2192 changedHistorical/low",
+   "cell": 209131,
+   "lat": 34.528475,
+   "lon": -86.122762,
+   "table": [
+    "direct",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.5 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.078
+  },
+  {
+   "name": "direct \u2192 changedHistorical/low",
+   "cell": 379032,
+   "lat": 34.356987,
+   "lon": -86.335878,
+   "table": [
+    "direct",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~3.9 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.079
+  },
+  {
+   "name": "direct \u2192 changedHistorical/none",
+   "cell": 326458,
+   "lat": 34.40236,
+   "lon": -86.212989,
+   "table": [
+    "direct",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~5.2 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.082
+  },
+  {
+   "name": "direct \u2192 changedHistorical/none",
+   "cell": 81085,
+   "lat": 34.745329,
+   "lon": -85.891536,
+   "table": [
+    "direct",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~6.1 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.078
+  },
+  {
+   "name": "direct \u2192 changedHistorical/none",
+   "cell": 84923,
+   "lat": 34.740811,
+   "lon": -85.885391,
+   "table": [
+    "direct",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~5.1 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.078
+  },
+  {
+   "name": "direct \u2192 stableHistorical/low",
+   "cell": 237834,
+   "lat": 34.495965,
+   "lon": -86.170301,
+   "table": [
+    "direct",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.4 ft",
+   "rangeText": "Likely 1.9\u201314.5 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.083
+  },
+  {
+   "name": "direct \u2192 stableHistorical/low",
+   "cell": 233306,
+   "lat": 34.501828,
+   "lon": -86.183236,
+   "table": [
+    "direct",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.3 ft",
+   "rangeText": "Likely 1.9\u201314.1 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.079
+  },
+  {
+   "name": "direct \u2192 stableHistorical/low",
+   "cell": 229280,
+   "lat": 34.506625,
+   "lon": -86.179679,
+   "table": [
+    "direct",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.3 ft",
+   "rangeText": "Likely 1.9\u201314.3 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.073
+  },
+  {
+   "name": "direct \u2192 stableHistorical/moderate",
+   "cell": 296951,
+   "lat": 34.42237,
+   "lon": -86.363367,
+   "table": [
+    "direct",
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "valueText": "~4.9 ft",
+   "rangeText": "Likely 2.1\u201316.1 ft",
+   "confidenceText": "Moderate",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.08
+  },
+  {
+   "name": "direct \u2192 stableHistorical/moderate",
+   "cell": 364928,
+   "lat": 34.370869,
+   "lon": -86.283488,
+   "table": [
+    "direct",
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "valueText": "~4.7 ft",
+   "rangeText": "Likely 2.1\u201315.7 ft",
+   "confidenceText": "Moderate",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.092
+  },
+  {
+   "name": "direct \u2192 stableHistorical/moderate",
+   "cell": 41728,
+   "lat": 34.83377,
+   "lon": -85.800015,
+   "table": [
+    "direct",
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "valueText": "~5.0 ft",
+   "rangeText": "Likely 2.2\u201316.6 ft",
+   "confidenceText": "Moderate",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.142
+  },
+  {
+   "name": "filled<=500 \u2192 changedHistorical/low",
+   "cell": 388606,
+   "lat": 34.344705,
+   "lon": -86.284782,
+   "table": [
+    "filled<=500",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~5.3 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.078
+  },
+  {
+   "name": "filled<=500 \u2192 changedHistorical/low",
+   "cell": 216500,
+   "lat": 34.521281,
+   "lon": -86.098831,
+   "table": [
+    "filled<=500",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.1 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings under 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.073
+  },
+  {
+   "name": "filled<=500 \u2192 changedHistorical/low",
+   "cell": 151462,
+   "lat": 34.60517,
+   "lon": -86.099478,
+   "table": [
+    "filled<=500",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.5 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.077
+  },
+  {
+   "name": "filled<=500 \u2192 changedHistorical/none",
+   "cell": 280133,
+   "lat": 34.436241,
+   "lon": -86.151867,
+   "table": [
+    "filled<=500",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~5.3 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Estimated from satellite readings 200 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.079
+  },
+  {
+   "name": "filled<=500 \u2192 changedHistorical/none",
+   "cell": 323820,
+   "lat": 34.405029,
+   "lon": -86.178709,
+   "table": [
+    "filled<=500",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~5.2 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Estimated from satellite readings 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.075
+  },
+  {
+   "name": "filled<=500 \u2192 changedHistorical/none",
+   "cell": 322780,
+   "lat": 34.405829,
+   "lon": -86.190028,
+   "table": [
+    "filled<=500",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~5.1 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Estimated from satellite readings 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.279
+  },
+  {
+   "name": "filled<=500 \u2192 stableHistorical/low",
+   "cell": 226068,
+   "lat": 34.510356,
+   "lon": -86.180973,
+   "table": [
+    "filled<=500",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.1 ft",
+   "rangeText": "Likely 1.8\u201313.7 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 300 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.079
+  },
+  {
+   "name": "filled<=500 \u2192 stableHistorical/low",
+   "cell": 228369,
+   "lat": 34.507691,
+   "lon": -86.176769,
+   "table": [
+    "filled<=500",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.2 ft",
+   "rangeText": "Likely 1.8\u201313.9 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings under 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.079
+  },
+  {
+   "name": "filled<=500 \u2192 stableHistorical/low",
+   "cell": 226306,
+   "lat": 34.51009,
+   "lon": -86.173858,
+   "table": [
+    "filled<=500",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~3.9 ft",
+   "rangeText": "Likely 1.7\u201313.1 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.132
+  },
+  {
+   "name": "filled<=500 \u2192 stableHistorical/moderate",
+   "cell": 365392,
+   "lat": 34.370602,
+   "lon": -86.252119,
+   "table": [
+    "filled<=500",
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "valueText": "~4.9 ft",
+   "rangeText": "Likely 2.1\u201316.2 ft",
+   "confidenceText": "Moderate",
+   "evidenceText": "Estimated from satellite readings 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.08
+  },
+  {
+   "name": "filled<=500 \u2192 stableHistorical/moderate",
+   "cell": 281748,
+   "lat": 34.434374,
+   "lon": -86.372745,
+   "table": [
+    "filled<=500",
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "valueText": "~5.0 ft",
+   "rangeText": "Likely 2.2\u201316.7 ft",
+   "confidenceText": "Moderate",
+   "evidenceText": "Estimated from satellite readings 500 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.082
+  },
+  {
+   "name": "filled<=500 \u2192 stableHistorical/moderate",
+   "cell": 10991,
+   "lat": 34.975661,
+   "lon": -85.695559,
+   "table": [
+    "filled<=500",
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "moderate",
+    true
+   ],
+   "valueText": "~5.4 ft",
+   "rangeText": "Likely 2.4\u201318.0 ft",
+   "confidenceText": "Moderate",
+   "evidenceText": "Estimated from satellite readings 100 m away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.275
+  },
+  {
+   "name": "filled<=5000 \u2192 changedHistorical/low",
+   "cell": 412795,
+   "lat": 34.2985,
+   "lon": -86.338789,
+   "table": [
+    "filled<=5000",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~2.9 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 1.2 km away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.078
+  },
+  {
+   "name": "filled<=5000 \u2192 changedHistorical/low",
+   "cell": 245080,
+   "lat": 34.484237,
+   "lon": -86.304509,
+   "table": [
+    "filled<=5000",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.8 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 1.8 km away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.075
+  },
+  {
+   "name": "filled<=5000 \u2192 changedHistorical/low",
+   "cell": 48422,
+   "lat": 34.8043,
+   "lon": -85.843673,
+   "table": [
+    "filled<=5000",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~3.7 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 1.0 km away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.082
+  },
+  {
+   "name": "filled<=5000 \u2192 changedHistorical/none",
+   "cell": 75293,
+   "lat": 34.752503,
+   "lon": -85.862754,
+   "table": [
+    "filled<=5000",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.5 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Estimated from satellite readings 3.4 km away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.13
+  },
+  {
+   "name": "filled<=5000 \u2192 changedHistorical/none",
+   "cell": 293160,
+   "lat": 34.425038,
+   "lon": -86.110473,
+   "table": [
+    "filled<=5000",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.9 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Estimated from satellite readings 3.9 km away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.081
+  },
+  {
+   "name": "filled<=5000 \u2192 changedHistorical/none",
+   "cell": 292389,
+   "lat": 34.425571,
+   "lon": -86.108209,
+   "table": [
+    "filled<=5000",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.9 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Estimated from satellite readings 3.7 km away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.08
+  },
+  {
+   "name": "filled<=5000 \u2192 stableHistorical/low",
+   "cell": 265178,
+   "lat": 34.455976,
+   "lon": -86.305156,
+   "table": [
+    "filled<=5000",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.8 ft",
+   "rangeText": "Likely 2.1\u201316.0 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 800 m away through the water (cloud hid this water)",
+   "agree": true,
+   "seconds": 0.277
+  },
+  {
+   "name": "filled<=5000 \u2192 stableHistorical/low",
+   "cell": 50239,
+   "lat": 34.797927,
+   "lon": -85.830091,
+   "table": [
+    "filled<=5000",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.3 ft",
+   "rangeText": "Likely 1.8\u201314.3 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 4.2 km away through the water (cloud hid this water)",
+   "agree": true,
+   "seconds": 0.228
+  },
+  {
+   "name": "filled<=5000 \u2192 stableHistorical/low",
+   "cell": 261787,
+   "lat": 34.459709,
+   "lon": -86.279284,
+   "table": [
+    "filled<=5000",
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "api": [
+    "stableHistorical",
+    "low",
+    true
+   ],
+   "valueText": "~4.6 ft",
+   "rangeText": "Likely 2.0\u201315.3 ft",
+   "confidenceText": "Low",
+   "evidenceText": "Estimated from satellite readings 1.4 km away through the water (cloud hid this water)",
+   "agree": true,
+   "seconds": 0.076
+  },
+  {
+   "name": "filled>5000 \u2192 none/none",
+   "cell": 131241,
+   "lat": 34.628059,
+   "lon": -86.12826,
+   "table": [
+    "filled>5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Satellite estimate unavailable here",
+   "agree": true,
+   "seconds": 0.079
+  },
+  {
+   "name": "filled>5000 \u2192 none/none",
+   "cell": 58955,
+   "lat": 34.778804,
+   "lon": -85.943602,
+   "table": [
+    "filled>5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Satellite estimate unavailable here",
+   "agree": true,
+   "seconds": 0.076
+  },
+  {
+   "name": "filled>5000 \u2192 none/none",
+   "cell": 29654,
+   "lat": 34.864025,
+   "lon": -85.86437,
+   "table": [
+    "filled>5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Satellite estimate unavailable here",
+   "agree": true,
+   "seconds": 0.082
+  },
+  {
+   "name": "grass<=5000 \u2192 none/none",
+   "cell": 82646,
+   "lat": 34.744,
+   "lon": -85.843997,
+   "table": [
+    "grass<=5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Grass bed",
+   "agree": true,
+   "seconds": 0.081
+  },
+  {
+   "name": "grass<=5000 \u2192 none/none",
+   "cell": 37264,
+   "lat": 34.845449,
+   "lon": -85.84529,
+   "table": [
+    "grass<=5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Grass bed",
+   "agree": true,
+   "seconds": 0.08
+  },
+  {
+   "name": "grass<=5000 \u2192 none/none",
+   "cell": 175483,
+   "lat": 34.572956,
+   "lon": -86.044824,
+   "table": [
+    "grass<=5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Grass bed",
+   "agree": true,
+   "seconds": 0.075
+  },
+  {
+   "name": "grass>5000 \u2192 none/none",
+   "cell": 186173,
+   "lat": 34.562571,
+   "lon": -86.1302,
+   "table": [
+    "grass>5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Grass bed",
+   "agree": true,
+   "seconds": 0.075
+  },
+  {
+   "name": "grass>5000 \u2192 none/none",
+   "cell": 53166,
+   "lat": 34.789428,
+   "lon": -85.938751,
+   "table": [
+    "grass>5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Grass bed",
+   "agree": true,
+   "seconds": 0.087
+  },
+  {
+   "name": "grass>5000 \u2192 none/none",
+   "cell": 60603,
+   "lat": 34.776148,
+   "lon": -85.938104,
+   "table": [
+    "grass>5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Grass bed",
+   "agree": true,
+   "seconds": 0.078
+  },
+  {
+   "name": "none \u2192 none/none",
+   "cell": 147830,
+   "lat": 34.608631,
+   "lon": -86.082661,
+   "table": [
+    "none",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Satellite estimate unavailable here",
+   "agree": true,
+   "seconds": 0.078
+  },
+  {
+   "name": "none \u2192 none/none",
+   "cell": 40746,
+   "lat": 34.837486,
+   "lon": -85.865341,
+   "table": [
+    "none",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Satellite estimate unavailable here",
+   "agree": true,
+   "seconds": 0.107
+  },
+  {
+   "name": "none \u2192 none/none",
+   "cell": 215865,
+   "lat": 34.521814,
+   "lon": -86.121145,
+   "table": [
+    "none",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Satellite estimate unavailable here",
+   "agree": true,
+   "seconds": 0.073
+  },
+  {
+   "name": "Town Creek (filled<=5000)",
+   "cell": 286694,
+   "lat": 34.429839,
+   "lon": -86.123409,
+   "table": [
+    "filled<=5000",
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "none",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.9 ft",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Estimated from satellite readings 1.7 km away through the water (the satellite cannot read this water)",
+   "agree": true,
+   "seconds": 0.073
+  },
+  {
+   "name": "South Sauty (grass<=5000)",
+   "cell": 219381,
+   "lat": 34.51835,
+   "lon": -86.084601,
+   "table": [
+    "grass<=5000",
+    "none",
+    "none",
+    false
+   ],
+   "api": [
+    "none",
+    "none",
+    false
+   ],
+   "valueText": "No supported estimate",
+   "rangeText": null,
+   "confidenceText": "None",
+   "evidenceText": "Grass bed",
+   "agree": true,
+   "seconds": 0.138
+  },
+  {
+   "name": "Browns Creek (direct)",
+   "cell": 400138,
+   "lat": 34.325745,
+   "lon": -86.360456,
+   "table": [
+    "direct",
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "api": [
+    "changedHistorical",
+    "low",
+    false
+   ],
+   "valueText": "Last supported estimate ~4.1 ft",
+   "rangeText": null,
+   "confidenceText": "Low",
+   "evidenceText": "Direct satellite observation",
+   "agree": true,
+   "seconds": 0.075
+  }
+ ],
+ "passed": true
+}

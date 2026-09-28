@@ -1,0 +1,577 @@
+{
+  "allAreasOff" : [
+    {
+      "clarityUnknownShare" : 0.13300000000000001,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-2",
+      "miles" : 5.5999999999999996,
+      "name" : "Main channel",
+      "rank" : 1,
+      "region" : "mainstem",
+      "segments" : 45
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-13",
+      "miles" : 0.69999999999999996,
+      "name" : "Main channel",
+      "rank" : 2,
+      "region" : "mainstem",
+      "segments" : 6
+    },
+    {
+      "clarityUnknownShare" : 0.59999999999999998,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-8",
+      "miles" : 2.5,
+      "name" : "Main channel",
+      "rank" : 3,
+      "region" : "mainstem",
+      "segments" : 20
+    },
+    {
+      "clarityUnknownShare" : 0.76100000000000001,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-7",
+      "miles" : 5.7000000000000002,
+      "name" : "Main channel",
+      "rank" : 4,
+      "region" : "mainstem",
+      "segments" : 46
+    },
+    {
+      "clarityUnknownShare" : 0.076999999999999999,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-3",
+      "miles" : 1.6000000000000001,
+      "name" : "Main channel",
+      "rank" : 5,
+      "region" : "mainstem",
+      "segments" : 13
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-10",
+      "miles" : 0.5,
+      "name" : "Main channel",
+      "rank" : 6,
+      "region" : "mainstem",
+      "segments" : 4
+    },
+    {
+      "clarityUnknownShare" : 0.32400000000000001,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-1",
+      "miles" : 8.4000000000000004,
+      "name" : "Main channel",
+      "rank" : 7,
+      "region" : "mainstem",
+      "segments" : 68
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-15",
+      "miles" : 3.7000000000000002,
+      "name" : "Main channel",
+      "rank" : 8,
+      "region" : "mainstem",
+      "segments" : 30
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-14",
+      "miles" : 4.0999999999999996,
+      "name" : "Main channel",
+      "rank" : 9,
+      "region" : "mainstem",
+      "segments" : 33
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-south-sauty-creek-0",
+      "miles" : 0.90000000000000002,
+      "name" : "South Sauty Creek",
+      "rank" : 10,
+      "region" : "South Sauty Creek",
+      "segments" : 7
+    },
+    {
+      "clarityUnknownShare" : 0.26700000000000002,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-0",
+      "miles" : 1.8999999999999999,
+      "name" : "Main channel",
+      "rank" : 11,
+      "region" : "mainstem",
+      "segments" : 15
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-north-sauty-creek-1",
+      "miles" : 1.3999999999999999,
+      "name" : "North Sauty Creek",
+      "rank" : 12,
+      "region" : "North Sauty Creek",
+      "segments" : 11
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-nichols-branch-0",
+      "miles" : 0.5,
+      "name" : "Nichols Branch",
+      "rank" : 13,
+      "region" : "Nichols Branch",
+      "segments" : 4
+    },
+    {
+      "clarityUnknownShare" : 0.36399999999999999,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-9",
+      "miles" : 5.5,
+      "name" : "Main channel",
+      "rank" : 14,
+      "region" : "mainstem",
+      "segments" : 44
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-16",
+      "miles" : 5,
+      "name" : "Main channel",
+      "rank" : 15,
+      "region" : "mainstem",
+      "segments" : 40
+    },
+    {
+      "clarityUnknownShare" : 0.032000000000000001,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-12",
+      "miles" : 3.8999999999999999,
+      "name" : "Main channel",
+      "rank" : 16,
+      "region" : "mainstem",
+      "segments" : 31
+    },
+    {
+      "clarityUnknownShare" : 0.41399999999999998,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-6",
+      "miles" : 3.6000000000000001,
+      "name" : "Main channel",
+      "rank" : 17,
+      "region" : "mainstem",
+      "segments" : 29
+    },
+    {
+      "clarityUnknownShare" : 0.86399999999999999,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-5",
+      "miles" : 2.7000000000000002,
+      "name" : "Main channel",
+      "rank" : 18,
+      "region" : "mainstem",
+      "segments" : 22
+    },
+    {
+      "clarityUnknownShare" : 0.59299999999999997,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-town-creek-(marshall-co.)-0",
+      "miles" : 3.3999999999999999,
+      "name" : "Town Creek (Marshall Co.)",
+      "rank" : 19,
+      "region" : "Town Creek (Marshall Co.)",
+      "segments" : 27
+    },
+    {
+      "clarityUnknownShare" : 0.44400000000000001,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-seibold-branch-0",
+      "miles" : 1.1000000000000001,
+      "name" : "Seibold Branch",
+      "rank" : 20,
+      "region" : "Seibold Branch",
+      "segments" : 9
+    },
+    {
+      "clarityUnknownShare" : 0.70999999999999996,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-north-sauty-creek-0",
+      "miles" : 3.8999999999999999,
+      "name" : "North Sauty Creek",
+      "rank" : 21,
+      "region" : "North Sauty Creek",
+      "segments" : 31
+    },
+    {
+      "clarityUnknownShare" : 0.64700000000000002,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-4",
+      "miles" : 2.1000000000000001,
+      "name" : "Main channel",
+      "rank" : 22,
+      "region" : "mainstem",
+      "segments" : 17
+    }
+  ],
+  "allAreasOn" : [
+    {
+      "clarityUnknownShare" : 0.13300000000000001,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-2",
+      "miles" : 5.5999999999999996,
+      "name" : "Main channel",
+      "rank" : 1,
+      "region" : "mainstem",
+      "segments" : 45
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-13",
+      "miles" : 0.69999999999999996,
+      "name" : "Main channel",
+      "rank" : 2,
+      "region" : "mainstem",
+      "segments" : 6
+    },
+    {
+      "clarityUnknownShare" : 0.76100000000000001,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-7",
+      "miles" : 5.7000000000000002,
+      "name" : "Main channel",
+      "rank" : 3,
+      "region" : "mainstem",
+      "segments" : 46
+    },
+    {
+      "clarityUnknownShare" : 0.59999999999999998,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-8",
+      "miles" : 2.5,
+      "name" : "Main channel",
+      "rank" : 4,
+      "region" : "mainstem",
+      "segments" : 20
+    },
+    {
+      "clarityUnknownShare" : 0.076999999999999999,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-3",
+      "miles" : 1.6000000000000001,
+      "name" : "Main channel",
+      "rank" : 5,
+      "region" : "mainstem",
+      "segments" : 13
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-10",
+      "miles" : 0.5,
+      "name" : "Main channel",
+      "rank" : 6,
+      "region" : "mainstem",
+      "segments" : 4
+    },
+    {
+      "clarityUnknownShare" : 0.32400000000000001,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-1",
+      "miles" : 8.4000000000000004,
+      "name" : "Main channel",
+      "rank" : 7,
+      "region" : "mainstem",
+      "segments" : 68
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-15",
+      "miles" : 3.7000000000000002,
+      "name" : "Main channel",
+      "rank" : 8,
+      "region" : "mainstem",
+      "segments" : 30
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-14",
+      "miles" : 4.0999999999999996,
+      "name" : "Main channel",
+      "rank" : 9,
+      "region" : "mainstem",
+      "segments" : 33
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-south-sauty-creek-0",
+      "miles" : 0.90000000000000002,
+      "name" : "South Sauty Creek",
+      "rank" : 10,
+      "region" : "South Sauty Creek",
+      "segments" : 7
+    },
+    {
+      "clarityUnknownShare" : 0.26700000000000002,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-0",
+      "miles" : 1.8999999999999999,
+      "name" : "Main channel",
+      "rank" : 11,
+      "region" : "mainstem",
+      "segments" : 15
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-north-sauty-creek-1",
+      "miles" : 1.3999999999999999,
+      "name" : "North Sauty Creek",
+      "rank" : 12,
+      "region" : "North Sauty Creek",
+      "segments" : 11
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-nichols-branch-0",
+      "miles" : 0.5,
+      "name" : "Nichols Branch",
+      "rank" : 13,
+      "region" : "Nichols Branch",
+      "segments" : 4
+    },
+    {
+      "clarityUnknownShare" : 0.36399999999999999,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-9",
+      "miles" : 5.5,
+      "name" : "Main channel",
+      "rank" : 14,
+      "region" : "mainstem",
+      "segments" : 44
+    },
+    {
+      "clarityUnknownShare" : 0,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-16",
+      "miles" : 5,
+      "name" : "Main channel",
+      "rank" : 15,
+      "region" : "mainstem",
+      "segments" : 40
+    },
+    {
+      "clarityUnknownShare" : 0.032000000000000001,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-12",
+      "miles" : 3.8999999999999999,
+      "name" : "Main channel",
+      "rank" : 16,
+      "region" : "mainstem",
+      "segments" : 31
+    },
+    {
+      "clarityUnknownShare" : 0.41399999999999998,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-6",
+      "miles" : 3.6000000000000001,
+      "name" : "Main channel",
+      "rank" : 17,
+      "region" : "mainstem",
+      "segments" : 29
+    },
+    {
+      "clarityUnknownShare" : 0.86399999999999999,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-5",
+      "miles" : 2.7000000000000002,
+      "name" : "Main channel",
+      "rank" : 18,
+      "region" : "mainstem",
+      "segments" : 22
+    },
+    {
+      "clarityUnknownShare" : 0.59299999999999997,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-town-creek-(marshall-co.)-0",
+      "miles" : 3.3999999999999999,
+      "name" : "Town Creek (Marshall Co.)",
+      "rank" : 19,
+      "region" : "Town Creek (Marshall Co.)",
+      "segments" : 27
+    },
+    {
+      "clarityUnknownShare" : 0.44400000000000001,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-seibold-branch-0",
+      "miles" : 1.1000000000000001,
+      "name" : "Seibold Branch",
+      "rank" : 20,
+      "region" : "Seibold Branch",
+      "segments" : 9
+    },
+    {
+      "clarityUnknownShare" : 0.70999999999999996,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-north-sauty-creek-0",
+      "miles" : 3.8999999999999999,
+      "name" : "North Sauty Creek",
+      "rank" : 21,
+      "region" : "North Sauty Creek",
+      "segments" : 31
+    },
+    {
+      "clarityUnknownShare" : 0.64700000000000002,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-mainstem-4",
+      "miles" : 2.1000000000000001,
+      "name" : "Main channel",
+      "rank" : 22,
+      "region" : "mainstem",
+      "segments" : 17
+    }
+  ],
+  "displayedOff" : [
+    {
+      "clarityUnknownShare" : 0.13300000000000001,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-2",
+      "miles" : 5.5999999999999996,
+      "name" : "Main channel",
+      "rank" : 1,
+      "region" : "mainstem",
+      "segments" : 45
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-south-sauty-creek-0",
+      "miles" : 0.90000000000000002,
+      "name" : "South Sauty Creek",
+      "rank" : 2,
+      "region" : "South Sauty Creek",
+      "segments" : 7
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-north-sauty-creek-1",
+      "miles" : 1.3999999999999999,
+      "name" : "North Sauty Creek",
+      "rank" : 3,
+      "region" : "North Sauty Creek",
+      "segments" : 11
+    }
+  ],
+  "displayedOn" : [
+    {
+      "clarityUnknownShare" : 0.13300000000000001,
+      "class" : "topArea",
+      "id" : "area-topArea-mainstem-2",
+      "miles" : 5.5999999999999996,
+      "name" : "Main channel",
+      "rank" : 1,
+      "region" : "mainstem",
+      "segments" : 45
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-south-sauty-creek-0",
+      "miles" : 0.90000000000000002,
+      "name" : "South Sauty Creek",
+      "rank" : 2,
+      "region" : "South Sauty Creek",
+      "segments" : 7
+    },
+    {
+      "clarityUnknownShare" : 1,
+      "class" : "strongAlternative",
+      "id" : "area-topArea-north-sauty-creek-1",
+      "miles" : 1.3999999999999999,
+      "name" : "North Sauty Creek",
+      "rank" : 3,
+      "region" : "North Sauty Creek",
+      "segments" : 11
+    }
+  ],
+  "summary" : {
+    "bankRuns" : {
+      "off" : 51,
+      "on" : 51
+    },
+    "banks" : 6504,
+    "clientTimings" : {
+      "allBankLookupsSeconds" : 0.0053889751434326172,
+      "banks" : 6504,
+      "compositeBytes" : 2928487,
+      "summaryAndCompositeDecodeSeconds" : 0.14818096160888672
+    },
+    "huntabilityBandsOff" : {
+      "Good" : 323,
+      "Poor" : 1637,
+      "Prime" : 4544
+    },
+    "huntabilityBandsOn" : {
+      "Fair" : 1,
+      "Good" : 1175,
+      "Poor" : 1637,
+      "Prime" : 3691
+    },
+    "note" : "off = production (one lake-wide clarity); on = each bank's canonical clarity, unsupported = unknown; tonight's conditions (1 mph, 94% moon, 80°F), no other input changed",
+    "priorityAreas" : {
+      "off" : 22,
+      "on" : 22
+    },
+    "recommendationClassChanges" : {
+
+    },
+    "recommendationClassesOff" : {
+      "easyWaterWeakReason" : 1935,
+      "fishLikelyConditionsPoor" : 817,
+      "habitatUnknown" : 29,
+      "lowPriority" : 820,
+      "secondaryOption" : 1451,
+      "startHere" : 1452
+    },
+    "recommendationClassesOn" : {
+      "easyWaterWeakReason" : 1935,
+      "fishLikelyConditionsPoor" : 817,
+      "habitatUnknown" : 29,
+      "lowPriority" : 820,
+      "secondaryOption" : 1451,
+      "startHere" : 1452
+    },
+    "recommendations" : {
+      "off" : 6504,
+      "on" : 6504
+    },
+    "shippedLakeWideFt" : 4,
+    "topAreasTonight" : {
+      "off" : [
+        "Main channel",
+        "South Sauty Creek",
+        "North Sauty Creek"
+      ],
+      "on" : [
+        "Main channel",
+        "South Sauty Creek",
+        "North Sauty Creek"
+      ],
+      "sameNames" : true,
+      "sameNamesSameOrder" : true
+    }
+  }
+}

@@ -1,0 +1,4 @@
+prepared run1: container→health 2.08 s · first lake request 200 0.749771 s · then a tap 0.002491 s · warm lake 0.049374 s
+prepared run2: container→health 0.13 s · first lake request 200 0.325143 s · then a tap 0.002396 s · warm lake 0.048024 s
+live run1: first lake request 200 13.013740 s (freshness live)
+live run2: first lake request 200 8.400032 s (freshness live)
