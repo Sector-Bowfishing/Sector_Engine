@@ -65,3 +65,20 @@ pass files (about 21 MB, not committed). Rebuilding them takes about 2 h with
 
 Wind (`wind_asos_4A6_GAD_HSV.csv.gz`, IEM ASOS: Scottsboro, Gadsden, Huntsville,
 hourly) is kept for Stage 4. Stage 3A does not use it.
+
+## Stage 4 — the Current Clarity Engine
+
+The hand-off is at `docs/clarity/CLARITY_FUSION_STAGE_4_HANDOFF.md`. Outputs
+are in `docs/data/hydrology/guntersville/stage4/`. The engine reads each
+scene's cells file over one fixed index of the lake's water cells, which is
+embedded in `Sources/SectorEngine/Clarity/CurrentClarityRegionsData.swift`.
+
+| Step | Script | What it does |
+|---|---|---|
+| 1 | `current_cells.py regions docs/data/hydrology/guntersville/guntersville.current_regions` | Builds the fixed index: the cells the layer colours, each with its region and Stage 3A zone. Rerun only if the lake mask or the zones change. |
+| 2 | `current_cells.py swift docs/data/hydrology/guntersville/guntersville.current_regions Sources/SectorEngine/Clarity/CurrentClarityRegionsData.swift` | Embeds the index in the engine. |
+| 3 | `current_cells.py scene PRODUCT_DIR DATE REGIONS_PREFIX OUT.cells.bin` | Converts one published product to the engine's cells file. The daily job does this itself for lakes with an index (`daily.py current_cells_files`). |
+| 4 | `current_cells.py product CELLS/<key>.npz PASS_TIME OUT_DIR KEY` | Rebuilds a product from a pass's observed cells with the production fill. Development and the replay only. |
+| 5 | `swift run -c release ClarityReplay … --current REPLAY_DIR --current-out OUT.json --from --to --stride 5` | Replays the Current Clarity resolver cell by cell against every later pass. `REPLAY_DIR` holds `passes.json`, `cells/` and `anchors/`. |
+| 6 | `current_replay_summary.py OUT.json set=replay.json …` | Reports error by confidence, level, kind, class and season, with pass-clustered bootstrap intervals. |
+| 7 | `relaxed_challenger.py OUT_DIR DATE:PLATFORM …` | Builds the winter relaxed shore-rule challenger dataset and its adjacency bias. It never reaches a product. |

@@ -25,6 +25,14 @@ CRON="${CRON:-0 3 * * *}"
 SCHEDULE_TZ="${SCHEDULE_TZ:-America/Chicago}"
 cd "$(dirname "$0")"
 
+# Current Clarity (Stage 4): the lakes with a regions index also publish each
+# scene's cells file and per-arm anchors. Copied in; see .gitignore.
+cp ../../scripts/hydrology/current_cells.py ../../scripts/hydrology/arm_anchor.py .
+mkdir -p regions
+cp ../../docs/data/hydrology/guntersville/guntersville.current_regions.bin regions/Guntersville_AL.current_regions.bin
+cp ../../docs/data/hydrology/guntersville/guntersville.current_regions.json regions/Guntersville_AL.current_regions.json
+cp ../../docs/data/hydrology/guntersville/guntersville.arm_cells.json regions/Guntersville_AL.arm_cells.json
+
 echo "▶ bucket gs://$BUCKET"
 if ! gcloud storage buckets describe "gs://$BUCKET" --project "$PROJECT_ID" >/dev/null 2>&1; then
   gcloud storage buckets create "gs://$BUCKET" --project "$PROJECT_ID" \

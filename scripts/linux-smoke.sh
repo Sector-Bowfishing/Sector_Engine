@@ -34,7 +34,7 @@ echo "▶ building the Cloud Run image on Linux ($IMAGE)"
 if ! docker build -q -t "$IMAGE" . >/dev/null; then
   echo "✗ docker build failed" >&2; exit 1
 fi
-docker run -d --name "$NAME" -p "$PORT:8080" -e SECTOR_STAGE2_ROUTES=1 "$IMAGE" >/dev/null
+docker run -d --name "$NAME" -p "$PORT:8080" -e SECTOR_STAGE2_ROUTES=1 -e SECTOR_CURRENT_CLARITY_ROUTES=1 "$IMAGE" >/dev/null
 trap 'docker rm -f "$NAME" >/dev/null 2>&1' EXIT
 
 for _ in $(seq 1 30); do
@@ -50,6 +50,9 @@ check() {
   code=$(curl -s -o "$out" -w "%{http_code}" --max-time 90 "$@")
   if [[ " $ok " != *" $code "* ]]; then
     echo "✗ $label → HTTP $code"; FAIL=1
+  elif [[ "$code" == 200 && "$label" == *cells* ]]; then
+    # the map's composite is a binary file: its magic, not JSON
+    if [[ "$(head -c 4 "$out")" == SCCC ]]; then echo "✓ $label → $code"; else echo "✗ $label → 200 but not a composite"; FAIL=1; fi
   elif [[ "$code" == 200 ]] && ! python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$out" 2>/dev/null \
        && [[ "$label" != health ]]; then
     echo "✗ $label → 200 but not JSON"; FAIL=1
@@ -80,6 +83,11 @@ check "clarity/state, an arm"             "200"     "$B/clarity/state?lake=$LAKE
 check "clarity/state, the main stem"      "200"     "$B/clarity/state?lake=$LAKE&lat=34.38555&lon=-86.32488"
 check "clarity/state, land"               "200"     "$B/clarity/state?lake=$LAKE&lat=34.30&lon=-86.25"
 check "clarity/states"                    "200"     "$B/clarity/states?lake=$LAKE"
+check "clarity/current/lake"              "200"     "$B/clarity/current/lake?lake=$LAKE"
+check "clarity/current/cells"             "200"     "$B/clarity/current/cells?lake=$LAKE"
+check "clarity/current, an arm"           "200"     "$B/clarity/current?lake=$LAKE&lat=34.40823&lon=-86.21072"
+check "clarity/current, land"             "200"     "$B/clarity/current?lake=$LAKE&lat=34.3585&lon=-86.2945"
+check "clarity/current/change"            "200"     "$B/clarity/current/change?lake=$LAKE&region=town-creek-marshall&since=2026-09-27T00:00:00Z"
 
 if docker logs "$NAME" 2>&1 | grep -E "freed pointer|Fatal error|Uncaught signal|Illegal instruction" >/dev/null; then
   echo "✗ runtime abort in the container log:"; docker logs "$NAME" 2>&1 | grep -E "freed pointer|Fatal error|Uncaught signal" | head -3

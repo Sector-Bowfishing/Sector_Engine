@@ -115,6 +115,55 @@ if ProcessInfo.processInfo.environment["SECTOR_STAGE2_ROUTES"] == "1" {
     }
 }
 
+// The Current Clarity Engine (CurrentClarityAPI, Clarity Fusion Stage 4): one
+// estimate per coordinate, the map's composite and summary, and a region's
+// change since a moment. A review build, routed only where
+// SECTOR_CURRENT_CLARITY_ROUTES=1; nothing scores from it.
+if ProcessInfo.processInfo.environment["SECTOR_CURRENT_CLARITY_ROUTES"] == "1" {
+    router.get("clarity/current") { request, _ -> Response in
+        let q = request.uri.queryParameters
+        guard let lake = q.get("lake").map({ String($0) }),
+              let lat = q.get("lat").flatMap({ Double(String($0)) }),
+              let lon = q.get("lon").flatMap({ Double(String($0)) }),
+              let e = await SectorEngineAPI.currentClarity(lakeId: lake, lat: lat, lon: lon,
+                                                           withLegacy: q.get("legacy") == "1") else {
+            return Response(status: .notFound)
+        }
+        return jsonResponse(e)
+    }
+    router.get("clarity/current/lake") { request, _ -> Response in
+        guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }),
+              let w = await SectorEngineAPI.currentClarityWorld(lakeId: lake) else {
+            return Response(status: .notFound)
+        }
+        let path = "/clarity/current/cells?lake=\(lake.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? lake)"
+        return jsonResponse(w.lakeSummary(path: path))
+    }
+    router.get("clarity/current/cells") { request, _ -> Response in
+        guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }),
+              let w = await SectorEngineAPI.currentClarityWorld(lakeId: lake) else {
+            return Response(status: .notFound)
+        }
+        let etag = "\"\(w.etag)\""
+        var headers: HTTPFields = [.eTag: etag, .cacheControl: "public, max-age=600"]
+        if request.headers[.ifNoneMatch] == etag { return Response(status: .notModified, headers: headers) }
+        headers[.contentType] = "application/octet-stream"
+        var buffer = ByteBuffer()
+        buffer.writeBytes(w.composite.encoded())
+        return Response(status: .ok, headers: headers, body: .init(byteBuffer: buffer))
+    }
+    router.get("clarity/current/change") { request, _ -> Response in
+        let q = request.uri.queryParameters
+        let iso = ISO8601DateFormatter()
+        guard let lake = q.get("lake").map({ String($0) }), let region = q.get("region").map({ String($0) }),
+              let since = q.get("since").flatMap({ iso.date(from: String($0)) }),
+              let c = await SectorEngineAPI.clarityChange(lakeId: lake, region: region, since: since) else {
+            return Response(status: .notFound)
+        }
+        return jsonResponse(c)
+    }
+}
+
 // Cloud Run injects PORT and expects the server to bind 0.0.0.0 (all interfaces).
 // Locally, without PORT set, that's still reachable as localhost:8080 for the A/B.
 let port = ProcessInfo.processInfo.environment["PORT"].flatMap(Int.init) ?? 8080

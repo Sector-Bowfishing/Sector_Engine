@@ -113,6 +113,10 @@ public struct LakeClarityInputs {
     public let arms: [ArmClarityInputs]
     public let mainStem: MainStemClarityInputs
     public let notes: [String]
+    /// Each arm's entry in the newest scene, whatever it read: where no scene
+    /// anchors an arm, the Current Clarity Engine still reads that scene's
+    /// fill there, and measures the drainage's change from it (Stage 4).
+    public var newest: [String: SatelliteAnchor] = [:]
 }
 
 public enum ClarityStateLoader {
@@ -227,10 +231,15 @@ public enum ClarityStateLoader {
             inflow: release(graph.mainStem.upstreamDam, ms.inflow), outflow: release(graph.mainStem.downstreamDam, ms.outflow),
             inflowDamName: graph.mainStem.upstreamDam.name, outflowDamName: graph.mainStem.downstreamDam.name,
             baseline: baseline)
-        return LakeClarityInputs(arms: armInputs, mainStem: main, notes: notes)
+        var out = LakeClarityInputs(arms: armInputs, mainStem: main, notes: notes)
+        if let last = scenes.last(where: { ClarityTime.parse($0.sceneTime).map { $0 < now } ?? false }) {
+            for arm in graph.arms { if let a = last.anchor(last.arms[arm.id]) { out.newest[arm.id] = a } }
+            if let a = last.anchor(last.mainStem) { out.newest[Self.mainStemKey] = a }
+        }
+        return out
     }
 
-    static let mainStemKey = "_mainStem"
+    public static let mainStemKey = "_mainStem"
     /// How far back a scene may still anchor (the replay's baseline window).
     static let anchorLookbackDays = 45.0
 

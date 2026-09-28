@@ -8,6 +8,9 @@ and publish it:
   lakes/<slug>/clarity/<date>.png | .measured.png | .distance.png | .json
   lakes/<slug>/clarity/latest.json   the newest pass: date, files, summary
   lakes/<slug>/clarity/history.json  one summary per published pass
+  lakes/<slug>/clarity/<date>.cells.bin, arms/<date>.json
+                                     lakes with a Current Clarity regions index
+                                     only (Stage 4): the engine's per-cell input
   index.json                         every lake's latest pass date + summary
 
 A lake with no new usable pass is left as it is. Storage is a local folder
@@ -164,6 +167,27 @@ def point_grid(out, meta):
             "values": base64.b64encode(val.tobytes()).decode(), "measured": base64.b64encode(code.tobytes()).decode()}
 
 
+REGIONS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "regions")
+
+
+def current_cells_files(out, date, lake_id, store, key):
+    """Clarity Fusion Stage 4: for a lake with a Current Clarity regions index
+    (regions/<slug>.current_regions.bin and .arm_cells.json, copied in by
+    deploy-job.sh), the scene's cells file and its per-arm anchors — what the
+    engine's Current Clarity reads. Nothing for any other lake."""
+    prefix = os.path.join(REGIONS_DIR, slug(lake_id))
+    if not os.path.exists(prefix + ".current_regions.bin"):
+        return {}
+    import current_cells, arm_anchor
+    d, name = os.path.dirname(out), os.path.basename(out)
+    current_cells.scene(d, name, prefix + ".current_regions", out + ".cells.bin")
+    store.write(f"{key}/{date}.cells.bin", open(out + ".cells.bin", "rb").read(), "application/octet-stream",
+                cache="public, max-age=31536000")
+    arms = arm_anchor.anchors(d, name, prefix + ".arm_cells.json")
+    store.write_json(f"{key}/arms/{date}.json", arms, cache="public, max-age=31536000")
+    return {"cells": f"{key}/{date}.cells.bin", "arms": f"{key}/arms/{date}.json"}
+
+
 def summary(meta):
     s = meta.get("measuredStatsFNU") or {}
     return {"date": meta["pass"]["date"], "platform": meta["pass"]["platform"],
@@ -219,6 +243,7 @@ def process(lake_id, geom_json, store, until, force):
         files["meta"] = f"{key}/{date}.json"
         store.write_json(f"{key}/{date}.grid.json", point_grid(out, meta), cache="public, max-age=31536000")
         files["grid"] = f"{key}/{date}.grid.json"
+        files.update(current_cells_files(out, date, lake_id, store, key))
         s = summary(meta)
         store.write_json(f"{key}/latest.json", {"lakeId": lake_id, "summary": s, "files": files,
                                                 "publishedAt": dt.datetime.utcnow().isoformat() + "Z"})

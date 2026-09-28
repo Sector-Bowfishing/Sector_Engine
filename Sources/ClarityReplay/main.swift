@@ -20,6 +20,18 @@
 //  --anchors  Stage 3A: anchors from zone_history.py (ArmAnchorFile JSON, with
 //             through-water fill distances), so a weak scene is judged weak
 //             the way the live product judges it.
+//  --current DIR  Stage 4: replay the Current Clarity Engine cell by cell.
+//             DIR holds passes.json (every read pass: time, openWaterReadPct,
+//             published = meets the daily job's floor), cells/<key>.cells.bin
+//             and anchors/<key>.json (current_cells.py, arm_anchor.py). Only
+//             published passes are evidence; every read pass is a target. As
+//             of one minute before each target, each region picks its scene
+//             among the published ones of the previous 45 days
+//             (ClarityHistory.selectAnchor, as the live loader does), the
+//             regions are built by CurrentClarityRegions.build (the live
+//             code), and every --stride-th observed cell of the target is
+//             resolved by CurrentClarityResolver and scored against what the
+//             target read. Writes --current-out.
 //
 
 import Foundation
@@ -31,7 +43,15 @@ func flag(_ name: String) -> String? {
     let v = argv[i + 1]; argv.removeSubrange(i...(i + 1)); return v
 }
 let hourlyPath = flag("--hourly")
-let anchorsDir = flag("--anchors")
+let currentDir = flag("--current")
+let currentOut = flag("--current-out")
+let fromKey = flag("--from") ?? "0000"
+let toKey = flag("--to") ?? "9999"
+let stride = flag("--stride").flatMap(Int.init) ?? 5
+let anchorsDir = flag("--anchors") ?? currentDir.map { $0 + "/anchors" }
+let currentPasses: [String: [String: Any]] = currentDir.map {
+    (try! JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: $0 + "/passes.json")))) as! [String: [String: Any]]
+} ?? [:]
 let args = argv
 guard args.count >= 7 else {
     FileHandle.standardError.write("usage: ClarityReplay <passes dir> <rain_daily.json> <usgs_iv.json> <nwm_daily.json> <mrms_weights.json> <out.json> [arm ...]\n".data(using: .utf8)!)
@@ -59,6 +79,8 @@ let weights = (json(weightsPath) as! [String: Any])["arms"] as! [String: [String
 var anchors: [String: [SatelliteAnchor]] = [:]
 if let dir = anchorsDir {
     for f in try! FileManager.default.contentsOfDirectory(atPath: dir) where f.hasSuffix(".json") {
+        // Stage 4: only what the daily job would have published is evidence.
+        if currentDir != nil, (currentPasses[String(f.dropLast(5))]?["published"] as? Bool) != true { continue }
         let file = try! JSONDecoder().decode(ArmAnchorFileReplay.self, from: Data(contentsOf: URL(fileURLWithPath: dir + "/" + f)))
         guard let t = iso(file.sceneTime) else { continue }
         for (arm, e) in file.arms.map({ ($0.key, $0.value) }) + (file.mainStem.map { [("mainstem", $0)] } ?? []) {
@@ -207,6 +229,125 @@ let out: [String: Any] = ["noiseFloorDlog10": ["p10": noiseLo, "p90": noiseHi], 
                                     "anchor": "ClarityHistory.selectAnchor", "usablePass": ">= 30% of the arm's lake cells and >= 30 cells observed"]]
 try! JSONSerialization.data(withJSONObject: out, options: [.prettyPrinted, .sortedKeys]).write(to: URL(fileURLWithPath: outPath))
 print("pairs", pairs.count, "trajectories", trajectories.mapValues(\.count))
+
+// MARK: Stage 4 — the Current Clarity Engine, cell by cell
+
+if let dir = currentDir, let outFile = currentOut {
+    let index = ClarityRegionsIndex.guntersville
+    let lookback = 45.0 * 86_400
+    var zonesOf: [String: Int] = [:]
+    for z in index.zones.values { zonesOf[z.arm] = z.of }
+    func regionClass(_ id: String) -> String {
+        id == "_mainStem" ? "mainStem" : (zonesOf[id] ?? 1) >= 5 ? "large" : (zonesOf[id] ?? 1) >= 2 ? "medium" : "small"
+    }
+    let published: [(key: String, t: Date)] = currentPasses.compactMap { k, v in
+        guard (v["published"] as? Bool) == true, let t = (v["time"] as? String).flatMap(iso) else { return nil }
+        return (k, t)
+    }.sorted { $0.t < $1.t }
+    let targetsList: [(key: String, t: Date)] = currentPasses.compactMap { k, v in
+        guard k.prefix(10) >= fromKey, k.prefix(10) <= toKey, let t = (v["time"] as? String).flatMap(iso) else { return nil }
+        return (k, t)
+    }.sorted { $0.t < $1.t }
+    var cache: [String: ClaritySceneCells] = [:], order: [String] = []
+    func cells(_ key: String, _ t: Date) -> ClaritySceneCells? {
+        if let c = cache[key] { return c }
+        guard let d = try? Data(contentsOf: URL(fileURLWithPath: "\(dir)/cells/\(key).cells.bin")),
+              let c = try? ClaritySceneCells(ref: ClaritySceneRef(date: key, time: t, platform: nil, source: "replay"),
+                                             data: [UInt8](d), index: index) else { return nil }
+        cache[key] = c; order.append(key)
+        if order.count > 30 { cache[order.removeFirst()] = nil }
+        return c
+    }
+    func stub(_ key: String, _ t: Date) -> SatelliteAnchor {
+        SatelliteAnchor(sceneDate: key, sceneTime: t, platform: nil, waterCells: 1, observedCells: 0, filledCells: 1,
+                        filledWithin500mCells: 0, medianFillDistanceM: nil, observedFNU: nil, allFNU: nil, source: "replay")
+    }
+    struct Acc { var n = 0; var absLog = 0.0; var sqLog = 0.0; var absFt = 0.0; var ranged = 0; var inRange = 0; var hist = [Int](repeating: 0, count: 101) }
+    var groups: [String: Acc] = [:]
+    var clusters: [String: [String: [Double]]] = [:]     // group -> target -> [n, absLog, absFt]
+    var refused: [String: Int] = [:]
+    var targetsDone = 0
+    for (tk, tt) in targetsList {
+        let t = tt.addingTimeInterval(-60)
+        guard let truth = cells(tk, tt) else { continue }
+        let recent = published.filter { $0.t < t && t.timeIntervalSince($0.t) <= lookback }
+        guard let newestPub = recent.last else { continue }
+        var armInputs: [ArmClarityInputs] = []
+        var newest: [String: SatelliteAnchor] = [:]
+        for arm in graph.arms {
+            guard let x = history.inputs(arm: arm.id, asOf: t) else { continue }
+            let pool = (records[arm.id]?.anchors ?? []).filter { $0.sceneTime < t && t.timeIntervalSince($0.sceneTime) <= lookback }
+            let pick = ClarityHistory.selectAnchor(pool, asOf: t)
+            armInputs.append(ArmClarityInputs(lakeId: x.lakeId, armId: x.armId, armName: x.armName, anchor: pick,
+                                              rain: x.rain, flow: x.flow, baseline: nil, parentArmName: x.parentArmName))
+            if pick == nil { newest[arm.id] = stub(newestPub.key, newestPub.t) }
+        }
+        guard let m = history.mainStemInputs(asOf: t) else { continue }
+        let msPool = (history.mainStem?.anchors ?? []).filter { $0.sceneTime < t && t.timeIntervalSince($0.sceneTime) <= lookback }
+        let msPick = ClarityHistory.selectAnchor(msPool, asOf: t)
+        let ms = MainStemClarityInputs(lakeId: m.lakeId, river: m.river, anchor: msPick, directRain: m.directRain,
+                                       inflow: m.inflow, outflow: m.outflow, inflowDamName: m.inflowDamName,
+                                       outflowDamName: m.outflowDamName, baseline: nil)
+        if msPick == nil { newest["_mainStem"] = stub(newestPub.key, newestPub.t) }
+        let (contexts, scenes) = CurrentClarityRegions.build(arms: armInputs, mainStem: ms, newest: newest, now: t)
+        var loaded: [ClaritySceneCells] = [], pos: [String: Int] = [:]
+        var sceneFor: [Int?] = [], regions: [ClarityRegionContext?] = []
+        for id in index.regionIds {
+            var p: Int?
+            if let a = scenes[id] {
+                if pos[a.sceneDate] == nil, let c = cells(a.sceneDate, a.sceneTime) { pos[a.sceneDate] = loaded.count; loaded.append(c) }
+                p = pos[a.sceneDate]
+            }
+            sceneFor.append(p)
+            regions.append(p == nil ? nil : contexts[id])
+        }
+        let world = CurrentClarityWorld(lakeId: graph.lakeId, now: t, index: index,
+                                        composite: ClarityComposite(index: index, scenes: loaded, sceneForRegion: sceneFor),
+                                        regions: regions, notes: [])
+        let year = Int(tk.prefix(4))!, month = Int(tk.dropFirst(5).prefix(2))!
+        let set = year <= 2024 ? "validation" : "discovery"
+        let season = [11, 12, 1, 2, 3].contains(month) ? "cold" : "warm"
+        var k = 0
+        for i in 0..<index.count where truth.code[i] == 255 {
+            k += 1
+            guard k % stride == 0, let obs = ClarityCellCode.fnu(truth.value[i]) else { continue }
+            let e = world.estimate(cell: i, lat: 0, lon: 0)
+            guard let r = e.region else { continue }
+            let rc = regionClass(r.id)
+            let ev: ClarityCellEvidence = world.composite.evidence(atCell: i)
+            let key = world.composite.scene(atCell: i).map { s in
+                CurrentClarityLake.keys[CurrentClarityLake.evidenceKey(code: loaded[s].code[i], dist: loaded[s].dist[i])] } ?? "none"
+            let g = "\(set)|\(e.evidenceLevel.rawValue)|\(e.confidence.rawValue)|\(key)|\(rc)|\(season)"
+            guard let pf = ev.fnu else { refused[g, default: 0] += 1; continue }
+            let dl = abs(log10(pf) - log10(obs))
+            let obsFt = VisibilityModel.centralFt(fnu: obs), predFt = VisibilityModel.centralFt(fnu: pf)
+            var a = groups[g] ?? Acc()
+            a.n += 1; a.absLog += dl; a.sqLog += dl * dl; a.absFt += abs(predFt - obsFt)
+            a.hist[min(100, Int(dl / 0.01))] += 1
+            let lo = e.lowFt ?? e.lastSupported?.lowFt, hi = e.highFt ?? e.lastSupported?.highFt
+            if let lo, let hi { a.ranged += 1; if obsFt >= lo && obsFt <= hi { a.inRange += 1 } }
+            groups[g] = a
+            var c = clusters[g]?[tk] ?? [0, 0, 0]
+            c[0] += 1; c[1] += dl; c[2] += abs(predFt - obsFt)
+            clusters[g, default: [:]][tk] = c
+        }
+        targetsDone += 1
+        if targetsDone % 25 == 0 { print("current replay:", targetsDone, "of", targetsList.count, tk) }
+    }
+    let out: [String: Any] = [
+        "rules": ["targets": "every read pass \(fromKey)...\(toKey); truth = its observed cells, every \(stride)th",
+                  "evidence": "published passes only (openWaterReadPct >= 25), in the 45 days before the target",
+                  "asOf": "one minute before the target pass; rain and flow as ClarityHistory allows (no look-ahead)",
+                  "error": "|log10 predicted FNU - log10 observed FNU|, and feet by secchi-power-v1; E and F score the value they did NOT show (last supported / rejected fill)",
+                  "range": "share of targets inside the estimate's 80% range (satellite-to-satellite: the range is the conversion's error against in-situ Secchi, so this is not its calibration)"],
+        "targets": targetsDone,
+        "groups": groups.mapValues { ["n": $0.n, "absLog": $0.absLog, "sqLog": $0.sqLog, "absFt": $0.absFt,
+                                      "ranged": $0.ranged, "inRange": $0.inRange, "hist": $0.hist] },
+        "clusters": clusters, "refusedWithoutValue": refused]
+    try! JSONSerialization.data(withJSONObject: out, options: [.sortedKeys]).write(to: URL(fileURLWithPath: outFile))
+    print("current replay:", targetsDone, "targets,", groups.values.map(\.n).reduce(0, +), "cells scored")
+    exit(0)
+}
 
 /// zone_history.py's anchor files (the engine's ArmAnchorFile is internal).
 struct ArmAnchorFileReplay: Decodable {
