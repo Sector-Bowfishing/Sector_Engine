@@ -1,0 +1,166 @@
+{
+ "inSitu": {
+  "national": {
+   "engine": {
+    "n": 81661,
+    "medianAbsErrFt": 1.22,
+    "within30pct": 0.42,
+    "log10Rmse": 0.272,
+    "medianBiasLog10": 0.109,
+    "residualP10P90Log10": [
+     -0.142,
+     0.381
+    ]
+   },
+   "adem": {
+    "n": 81661,
+    "medianAbsErrFt": 2.34,
+    "within30pct": 0.217,
+    "log10Rmse": 0.351,
+    "medianBiasLog10": 0.239,
+    "residualP10P90Log10": [
+     -0.011,
+     0.517
+    ]
+   },
+   "fitted(cv)": {
+    "n": 81661,
+    "medianAbsErrFt": 0.88,
+    "within30pct": 0.497,
+    "log10Rmse": 0.241,
+    "medianBiasLog10": 0.004,
+    "residualP10P90Log10": [
+     -0.269,
+     0.268
+    ]
+   }
+  },
+  "alabama": {
+   "engine": {
+    "n": 3311,
+    "medianAbsErrFt": 0.81,
+    "within30pct": 0.599,
+    "log10Rmse": 0.24,
+    "medianBiasLog10": -0.079,
+    "residualP10P90Log10": [
+     -0.301,
+     0.122
+    ]
+   },
+   "adem": {
+    "n": 3311,
+    "medianAbsErrFt": 0.91,
+    "within30pct": 0.568,
+    "log10Rmse": 0.235,
+    "medianBiasLog10": 0.043,
+    "residualP10P90Log10": [
+     -0.193,
+     0.253
+    ]
+   },
+   "fitted(cv)": {
+    "n": 3311,
+    "medianAbsErrFt": 0.81,
+    "within30pct": 0.562,
+    "log10Rmse": 0.183,
+    "medianBiasLog10": 0.021,
+    "residualP10P90Log10": [
+     -0.234,
+     0.206
+    ]
+   }
+  },
+  "tennesseeRiverReservoirs": {
+   "engine": {
+    "n": 130,
+    "medianAbsErrFt": 0.94,
+    "within30pct": 0.638,
+    "log10Rmse": 0.151,
+    "medianBiasLog10": 0.035,
+    "residualP10P90Log10": [
+     -0.145,
+     0.267
+    ]
+   },
+   "adem": {
+    "n": 130,
+    "medianAbsErrFt": 2.51,
+    "within30pct": 0.269,
+    "log10Rmse": 0.234,
+    "medianBiasLog10": 0.169,
+    "residualP10P90Log10": [
+     -0.017,
+     0.412
+    ]
+   },
+   "fitted(cv)": {
+    "n": 130,
+    "medianAbsErrFt": 1.17,
+    "within30pct": 0.631,
+    "log10Rmse": 0.141,
+    "medianBiasLog10": 0.046,
+    "residualP10P90Log10": [
+     -0.139,
+     0.21
+    ]
+   }
+  }
+ },
+ "satellite": {
+  "national": {
+   "engine": {
+    "n": 905,
+    "medianAbsErrFt": 2.18,
+    "within30pct": 0.312,
+    "log10Rmse": 0.353,
+    "medianBiasLog10": -0.072,
+    "residualP10P90Log10": [
+     -0.52,
+     0.356
+    ]
+   },
+   "adem": {
+    "n": 905,
+    "medianAbsErrFt": 2.91,
+    "within30pct": 0.296,
+    "log10Rmse": 0.35,
+    "medianBiasLog10": 0.063,
+    "residualP10P90Log10": [
+     -0.384,
+     0.487
+    ]
+   },
+   "fitted(cv)": {
+    "n": 905,
+    "medianAbsErrFt": 2.45,
+    "within30pct": 0.295,
+    "log10Rmse": 0.346,
+    "medianBiasLog10": 0.006,
+    "residualP10P90Log10": [
+     -0.441,
+     0.435
+    ]
+   }
+  }
+ },
+ "fittedNational": {
+  "a": 0.8617,
+  "b": -0.5246,
+  "formula": "Secchi_ft = 7.272 * T^-0.525",
+  "residualP10P50P90Log10": [
+   -0.268,
+   -0.004,
+   0.267
+  ],
+  "residualP25P75Log10": [
+   -0.134,
+   0.132
+  ]
+ },
+ "byUnit": {
+  "NTU": 75857,
+  "FNU": 4312,
+  "FTU": 91,
+  "NTRU": 1401
+ }
+}

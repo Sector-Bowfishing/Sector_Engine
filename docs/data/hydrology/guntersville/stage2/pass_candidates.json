@@ -1,0 +1,986 @@
+[
+{
+"date": "2025-03-02",
+"platform": "sentinel-2b",
+"minCloud": 0.298153,
+"tiles": 5
+},
+{
+"date": "2025-03-04",
+"platform": "sentinel-2c",
+"minCloud": 37.121069,
+"tiles": 4
+},
+{
+"date": "2025-03-07",
+"platform": "sentinel-2c",
+"minCloud": 38.678518,
+"tiles": 3
+},
+{
+"date": "2025-03-12",
+"platform": "sentinel-2b",
+"minCloud": 0.025275,
+"tiles": 3
+},
+{
+"date": "2025-03-17",
+"platform": "sentinel-2c",
+"minCloud": 0.069682,
+"tiles": 3
+},
+{
+"date": "2025-03-22",
+"platform": "sentinel-2b",
+"minCloud": 0.001302,
+"tiles": 3
+},
+{
+"date": "2025-03-26",
+"platform": "sentinel-2a",
+"minCloud": 21.060039,
+"tiles": 4
+},
+{
+"date": "2025-03-27",
+"platform": "sentinel-2c",
+"minCloud": 0.002806,
+"tiles": 3
+},
+{
+"date": "2025-04-08",
+"platform": "sentinel-2a",
+"minCloud": 0.133511,
+"tiles": 3
+},
+{
+"date": "2025-04-08",
+"platform": "sentinel-2b",
+"minCloud": 5.075677,
+"tiles": 4
+},
+{
+"date": "2025-04-13",
+"platform": "sentinel-2c",
+"minCloud": 0.000697,
+"tiles": 4
+},
+{
+"date": "2025-04-15",
+"platform": "sentinel-2a",
+"minCloud": 2.505944,
+"tiles": 4
+},
+{
+"date": "2025-04-16",
+"platform": "sentinel-2c",
+"minCloud": 0.008918,
+"tiles": 3
+},
+{
+"date": "2025-04-18",
+"platform": "sentinel-2b",
+"minCloud": 4.353791,
+"tiles": 4
+},
+{
+"date": "2025-04-28",
+"platform": "sentinel-2a",
+"minCloud": 0.821497,
+"tiles": 3
+},
+{
+"date": "2025-04-28",
+"platform": "sentinel-2b",
+"minCloud": 0.447752,
+"tiles": 4
+},
+{
+"date": "2025-05-06",
+"platform": "sentinel-2c",
+"minCloud": 9.169206,
+"tiles": 3
+},
+{
+"date": "2025-05-08",
+"platform": "sentinel-2b",
+"minCloud": 21.873574,
+"tiles": 4
+},
+{
+"date": "2025-05-18",
+"platform": "sentinel-2b",
+"minCloud": 39.328179,
+"tiles": 4
+},
+{
+"date": "2025-05-21",
+"platform": "sentinel-2b",
+"minCloud": 0.064315,
+"tiles": 3
+},
+{
+"date": "2025-05-23",
+"platform": "sentinel-2c",
+"minCloud": 36.462235,
+"tiles": 4
+},
+{
+"date": "2025-05-31",
+"platform": "sentinel-2b",
+"minCloud": 22.662868,
+"tiles": 3
+},
+{
+"date": "2025-06-02",
+"platform": "sentinel-2c",
+"minCloud": 7.546484,
+"tiles": 4
+},
+{
+"date": "2025-06-20",
+"platform": "sentinel-2b",
+"minCloud": 28.584597,
+"tiles": 3
+},
+{
+"date": "2025-06-22",
+"platform": "sentinel-2c",
+"minCloud": 5.073491,
+"tiles": 4
+},
+{
+"date": "2025-06-27",
+"platform": "sentinel-2a",
+"minCloud": 23.179543,
+"tiles": 3
+},
+{
+"date": "2025-06-27",
+"platform": "sentinel-2b",
+"minCloud": 25.737461,
+"tiles": 4
+},
+{
+"date": "2025-07-02",
+"platform": "sentinel-2c",
+"minCloud": 12.681633,
+"tiles": 4
+},
+{
+"date": "2025-07-04",
+"platform": "sentinel-2a",
+"minCloud": 2.246452,
+"tiles": 4
+},
+{
+"date": "2025-07-05",
+"platform": "sentinel-2c",
+"minCloud": 1.195776,
+"tiles": 3
+},
+{
+"date": "2025-07-07",
+"platform": "sentinel-2b",
+"minCloud": 12.965648,
+"tiles": 4
+},
+{
+"date": "2025-07-12",
+"platform": "sentinel-2c",
+"minCloud": 7.924048,
+"tiles": 4
+},
+{
+"date": "2025-07-15",
+"platform": "sentinel-2c",
+"minCloud": 15.945417,
+"tiles": 3
+},
+{
+"date": "2025-07-17",
+"platform": "sentinel-2a",
+"minCloud": 30.991176,
+"tiles": 3
+},
+{
+"date": "2025-07-17",
+"platform": "sentinel-2b",
+"minCloud": 38.369343,
+"tiles": 4
+},
+{
+"date": "2025-07-22",
+"platform": "sentinel-2c",
+"minCloud": 23.981526,
+"tiles": 4
+},
+{
+"date": "2025-07-24",
+"platform": "sentinel-2a",
+"minCloud": 16.278729,
+"tiles": 4
+},
+{
+"date": "2025-07-27",
+"platform": "sentinel-2b",
+"minCloud": 33.515674,
+"tiles": 4
+},
+{
+"date": "2025-07-30",
+"platform": "sentinel-2b",
+"minCloud": 37.923577,
+"tiles": 3
+},
+{
+"date": "2025-08-01",
+"platform": "sentinel-2c",
+"minCloud": 31.99777,
+"tiles": 4
+},
+{
+"date": "2025-08-09",
+"platform": "sentinel-2b",
+"minCloud": 35.845277,
+"tiles": 3
+},
+{
+"date": "2025-08-14",
+"platform": "sentinel-2c",
+"minCloud": 32.597291,
+"tiles": 3
+},
+{
+"date": "2025-08-16",
+"platform": "sentinel-2b",
+"minCloud": 5.450498,
+"tiles": 4
+},
+{
+"date": "2025-08-19",
+"platform": "sentinel-2b",
+"minCloud": 11.535764,
+"tiles": 3
+},
+{
+"date": "2025-08-21",
+"platform": "sentinel-2c",
+"minCloud": 32.67996,
+"tiles": 4
+},
+{
+"date": "2025-08-24",
+"platform": "sentinel-2c",
+"minCloud": 26.849169,
+"tiles": 3
+},
+{
+"date": "2025-08-26",
+"platform": "sentinel-2a",
+"minCloud": 12.616874,
+"tiles": 3
+},
+{
+"date": "2025-08-29",
+"platform": "sentinel-2b",
+"minCloud": 0.001518,
+"tiles": 3
+},
+{
+"date": "2025-08-31",
+"platform": "sentinel-2c",
+"minCloud": 7.139366,
+"tiles": 4
+},
+{
+"date": "2025-09-03",
+"platform": "sentinel-2c",
+"minCloud": 30.851543,
+"tiles": 3
+},
+{
+"date": "2025-09-05",
+"platform": "sentinel-2b",
+"minCloud": 27.124098,
+"tiles": 4
+},
+{
+"date": "2025-09-08",
+"platform": "sentinel-2b",
+"minCloud": 11.811795,
+"tiles": 3
+},
+{
+"date": "2025-09-10",
+"platform": "sentinel-2c",
+"minCloud": 0.790017,
+"tiles": 4
+},
+{
+"date": "2025-09-13",
+"platform": "sentinel-2c",
+"minCloud": 1.364044,
+"tiles": 3
+},
+{
+"date": "2025-09-15",
+"platform": "sentinel-2a",
+"minCloud": 0.389781,
+"tiles": 3
+},
+{
+"date": "2025-09-15",
+"platform": "sentinel-2b",
+"minCloud": 0.704752,
+"tiles": 4
+},
+{
+"date": "2025-09-18",
+"platform": "sentinel-2b",
+"minCloud": 2.279508,
+"tiles": 3
+},
+{
+"date": "2025-09-20",
+"platform": "sentinel-2c",
+"minCloud": 3.581418,
+"tiles": 4
+},
+{
+"date": "2025-09-28",
+"platform": "sentinel-2b",
+"minCloud": 6.737991,
+"tiles": 3
+},
+{
+"date": "2025-09-30",
+"platform": "sentinel-2c",
+"minCloud": 37.401211,
+"tiles": 4
+},
+{
+"date": "2025-10-03",
+"platform": "sentinel-2c",
+"minCloud": 2.130342,
+"tiles": 3
+},
+{
+"date": "2025-10-10",
+"platform": "sentinel-2c",
+"minCloud": 4.804299,
+"tiles": 6
+},
+{
+"date": "2025-10-12",
+"platform": "sentinel-2a",
+"minCloud": 0.066672,
+"tiles": 4
+},
+{
+"date": "2025-10-13",
+"platform": "sentinel-2c",
+"minCloud": 0.001396,
+"tiles": 3
+},
+{
+"date": "2025-10-15",
+"platform": "sentinel-2a",
+"minCloud": 0.000254,
+"tiles": 3
+},
+{
+"date": "2025-10-15",
+"platform": "sentinel-2b",
+"minCloud": 0.000378,
+"tiles": 4
+},
+{
+"date": "2025-10-20",
+"platform": "sentinel-2c",
+"minCloud": 0.000939,
+"tiles": 4
+},
+{
+"date": "2025-10-23",
+"platform": "sentinel-2c",
+"minCloud": 0.061604,
+"tiles": 3
+},
+{
+"date": "2025-10-25",
+"platform": "sentinel-2b",
+"minCloud": 3.432225,
+"tiles": 4
+},
+{
+"date": "2025-11-01",
+"platform": "sentinel-2a",
+"minCloud": 2.802874,
+"tiles": 4
+},
+{
+"date": "2025-11-04",
+"platform": "sentinel-2a",
+"minCloud": 0.000569,
+"tiles": 3
+},
+{
+"date": "2025-11-04",
+"platform": "sentinel-2b",
+"minCloud": 0.000435,
+"tiles": 4
+},
+{
+"date": "2025-11-09",
+"platform": "sentinel-2c",
+"minCloud": 3.295758,
+"tiles": 4
+},
+{
+"date": "2025-11-12",
+"platform": "sentinel-2c",
+"minCloud": 5.8e-05,
+"tiles": 3
+},
+{
+"date": "2025-11-14",
+"platform": "sentinel-2b",
+"minCloud": 0.000365,
+"tiles": 4
+},
+{
+"date": "2025-11-17",
+"platform": "sentinel-2b",
+"minCloud": 13.049527,
+"tiles": 3
+},
+{
+"date": "2025-11-22",
+"platform": "sentinel-2c",
+"minCloud": 25.415784,
+"tiles": 3
+},
+{
+"date": "2025-11-24",
+"platform": "sentinel-2a",
+"minCloud": 0.298681,
+"tiles": 3
+},
+{
+"date": "2025-11-24",
+"platform": "sentinel-2b",
+"minCloud": 3.464758,
+"tiles": 4
+},
+{
+"date": "2025-11-27",
+"platform": "sentinel-2b",
+"minCloud": 0.000894,
+"tiles": 3
+},
+{
+"date": "2025-12-07",
+"platform": "sentinel-2b",
+"minCloud": 27.410564,
+"tiles": 3
+},
+{
+"date": "2025-12-09",
+"platform": "sentinel-2c",
+"minCloud": 24.301453,
+"tiles": 4
+},
+{
+"date": "2025-12-11",
+"platform": "sentinel-2a",
+"minCloud": 23.107378,
+"tiles": 4
+},
+{
+"date": "2025-12-12",
+"platform": "sentinel-2c",
+"minCloud": 6.2e-05,
+"tiles": 3
+},
+{
+"date": "2025-12-14",
+"platform": "sentinel-2a",
+"minCloud": 2.326549,
+"tiles": 5
+},
+{
+"date": "2025-12-14",
+"platform": "sentinel-2b",
+"minCloud": 3.68675,
+"tiles": 4
+},
+{
+"date": "2025-12-19",
+"platform": "sentinel-2c",
+"minCloud": 0.008925,
+"tiles": 4
+},
+{
+"date": "2025-12-24",
+"platform": "sentinel-2b",
+"minCloud": 12.207408,
+"tiles": 4
+},
+{
+"date": "2025-12-29",
+"platform": "sentinel-2c",
+"minCloud": 5.173814,
+"tiles": 4
+},
+{
+"date": "2025-12-31",
+"platform": "sentinel-2a",
+"minCloud": 0.001115,
+"tiles": 4
+},
+{
+"date": "2026-01-01",
+"platform": "sentinel-2c",
+"minCloud": 0.001104,
+"tiles": 3
+},
+{
+"date": "2026-01-03",
+"platform": "sentinel-2a",
+"minCloud": 35.275152,
+"tiles": 3
+},
+{
+"date": "2026-01-03",
+"platform": "sentinel-2b",
+"minCloud": 29.926202,
+"tiles": 4
+},
+{
+"date": "2026-01-11",
+"platform": "sentinel-2c",
+"minCloud": 2.47029,
+"tiles": 3
+},
+{
+"date": "2026-01-13",
+"platform": "sentinel-2b",
+"minCloud": 0.001191,
+"tiles": 4
+},
+{
+"date": "2026-01-16",
+"platform": "sentinel-2b",
+"minCloud": 0.000151,
+"tiles": 3
+},
+{
+"date": "2026-01-18",
+"platform": "sentinel-2c",
+"minCloud": 0.295042,
+"tiles": 4
+},
+{
+"date": "2026-01-21",
+"platform": "sentinel-2c",
+"minCloud": 8.178559,
+"tiles": 3
+},
+{
+"date": "2026-01-26",
+"platform": "sentinel-2b",
+"minCloud": 23.012033,
+"tiles": 3
+},
+{
+"date": "2026-01-28",
+"platform": "sentinel-2c",
+"minCloud": 0.006979,
+"tiles": 4
+},
+{
+"date": "2026-02-02",
+"platform": "sentinel-2b",
+"minCloud": 0.001144,
+"tiles": 4
+},
+{
+"date": "2026-02-05",
+"platform": "sentinel-2b",
+"minCloud": 1.967406,
+"tiles": 3
+},
+{
+"date": "2026-02-07",
+"platform": "sentinel-2c",
+"minCloud": 0.006813,
+"tiles": 4
+},
+{
+"date": "2026-02-12",
+"platform": "sentinel-2b",
+"minCloud": 0.001988,
+"tiles": 6
+},
+{
+"date": "2026-02-17",
+"platform": "sentinel-2c",
+"minCloud": 20.723192,
+"tiles": 4
+},
+{
+"date": "2026-02-20",
+"platform": "sentinel-2c",
+"minCloud": 9.526,
+"tiles": 3
+},
+{
+"date": "2026-02-22",
+"platform": "sentinel-2b",
+"minCloud": 1.354405,
+"tiles": 4
+},
+{
+"date": "2026-02-27",
+"platform": "sentinel-2c",
+"minCloud": 1.399456,
+"tiles": 4
+},
+{
+"date": "2026-03-12",
+"platform": "sentinel-2c",
+"minCloud": 0.203815,
+"tiles": 3
+},
+{
+"date": "2026-03-14",
+"platform": "sentinel-2a",
+"minCloud": 19.842394,
+"tiles": 3
+},
+{
+"date": "2026-03-14",
+"platform": "sentinel-2b",
+"minCloud": 29.192749,
+"tiles": 4
+},
+{
+"date": "2026-03-17",
+"platform": "sentinel-2b",
+"minCloud": 0.652864,
+"tiles": 3
+},
+{
+"date": "2026-03-19",
+"platform": "sentinel-2c",
+"minCloud": 0.000415,
+"tiles": 4
+},
+{
+"date": "2026-03-22",
+"platform": "sentinel-2c",
+"minCloud": 0.119016,
+"tiles": 3
+},
+{
+"date": "2026-03-24",
+"platform": "sentinel-2b",
+"minCloud": 0.042508,
+"tiles": 4
+},
+{
+"date": "2026-03-27",
+"platform": "sentinel-2b",
+"minCloud": 21.631923,
+"tiles": 3
+},
+{
+"date": "2026-03-29",
+"platform": "sentinel-2c",
+"minCloud": 7.316734,
+"tiles": 4
+},
+{
+"date": "2026-04-11",
+"platform": "sentinel-2c",
+"minCloud": 3.625657,
+"tiles": 3
+},
+{
+"date": "2026-04-13",
+"platform": "sentinel-2b",
+"minCloud": 31.05472,
+"tiles": 4
+},
+{
+"date": "2026-04-16",
+"platform": "sentinel-2b",
+"minCloud": 2.937787,
+"tiles": 3
+},
+{
+"date": "2026-04-20",
+"platform": "sentinel-2a",
+"minCloud": 0.000806,
+"tiles": 4
+},
+{
+"date": "2026-04-23",
+"platform": "sentinel-2a",
+"minCloud": 4.506869,
+"tiles": 3
+},
+{
+"date": "2026-04-23",
+"platform": "sentinel-2b",
+"minCloud": 4.088958,
+"tiles": 4
+},
+{
+"date": "2026-04-26",
+"platform": "sentinel-2b",
+"minCloud": 8.036054,
+"tiles": 3
+},
+{
+"date": "2026-05-03",
+"platform": "sentinel-2b",
+"minCloud": 0.033135,
+"tiles": 4
+},
+{
+"date": "2026-05-10",
+"platform": "sentinel-2a",
+"minCloud": 13.682838,
+"tiles": 4
+},
+{
+"date": "2026-05-13",
+"platform": "sentinel-2a",
+"minCloud": 6.30603,
+"tiles": 3
+},
+{
+"date": "2026-05-13",
+"platform": "sentinel-2b",
+"minCloud": 6.640337,
+"tiles": 4
+},
+{
+"date": "2026-05-18",
+"platform": "sentinel-2c",
+"minCloud": 8.86384,
+"tiles": 4
+},
+{
+"date": "2026-06-05",
+"platform": "sentinel-2b",
+"minCloud": 34.726009,
+"tiles": 3
+},
+{
+"date": "2026-06-10",
+"platform": "sentinel-2c",
+"minCloud": 38.153669,
+"tiles": 3
+},
+{
+"date": "2026-06-15",
+"platform": "sentinel-2b",
+"minCloud": 27.330089,
+"tiles": 3
+},
+{
+"date": "2026-06-25",
+"platform": "sentinel-2b",
+"minCloud": 21.605371,
+"tiles": 3
+},
+{
+"date": "2026-06-30",
+"platform": "sentinel-2c",
+"minCloud": 25.730196,
+"tiles": 3
+},
+{
+"date": "2026-07-02",
+"platform": "sentinel-2b",
+"minCloud": 9.584752,
+"tiles": 4
+},
+{
+"date": "2026-07-07",
+"platform": "sentinel-2c",
+"minCloud": 31.140256,
+"tiles": 4
+},
+{
+"date": "2026-07-09",
+"platform": "sentinel-2a",
+"minCloud": 34.573749,
+"tiles": 4
+},
+{
+"date": "2026-07-17",
+"platform": "sentinel-2c",
+"minCloud": 34.897307,
+"tiles": 4
+},
+{
+"date": "2026-07-19",
+"platform": "sentinel-2a",
+"minCloud": 38.777813,
+"tiles": 4
+},
+{
+"date": "2026-07-20",
+"platform": "sentinel-2c",
+"minCloud": 19.552761,
+"tiles": 3
+},
+{
+"date": "2026-07-27",
+"platform": "sentinel-2c",
+"minCloud": 27.1709,
+"tiles": 4
+},
+{
+"date": "2026-07-30",
+"platform": "sentinel-2c",
+"minCloud": 0.474523,
+"tiles": 3
+},
+{
+"date": "2026-08-08",
+"platform": "sentinel-2a",
+"minCloud": 10.519157,
+"tiles": 4
+},
+{
+"date": "2026-08-09",
+"platform": "sentinel-2c",
+"minCloud": 10.33901,
+"tiles": 3
+},
+{
+"date": "2026-08-11",
+"platform": "sentinel-2b",
+"minCloud": 9.002656,
+"tiles": 4
+},
+{
+"date": "2026-08-14",
+"platform": "sentinel-2b",
+"minCloud": 19.899452,
+"tiles": 3
+},
+{
+"date": "2026-08-19",
+"platform": "sentinel-2c",
+"minCloud": 28.504729,
+"tiles": 3
+},
+{
+"date": "2026-08-21",
+"platform": "sentinel-2a",
+"minCloud": 15.558547,
+"tiles": 3
+},
+{
+"date": "2026-08-21",
+"platform": "sentinel-2b",
+"minCloud": 17.311086,
+"tiles": 4
+},
+{
+"date": "2026-08-24",
+"platform": "sentinel-2b",
+"minCloud": 22.877792,
+"tiles": 3
+},
+{
+"date": "2026-08-26",
+"platform": "sentinel-2c",
+"minCloud": 17.493635,
+"tiles": 4
+},
+{
+"date": "2026-08-28",
+"platform": "sentinel-2a",
+"minCloud": 21.133497,
+"tiles": 4
+},
+{
+"date": "2026-08-29",
+"platform": "sentinel-2c",
+"minCloud": 6.43493,
+"tiles": 3
+},
+{
+"date": "2026-08-31",
+"platform": "sentinel-2b",
+"minCloud": 28.371781,
+"tiles": 4
+},
+{
+"date": "2026-09-03",
+"platform": "sentinel-2b",
+"minCloud": 8.215883,
+"tiles": 3
+},
+{
+"date": "2026-09-05",
+"platform": "sentinel-2c",
+"minCloud": 1.961533,
+"tiles": 4
+},
+{
+"date": "2026-09-08",
+"platform": "sentinel-2c",
+"minCloud": 9.557529,
+"tiles": 3
+},
+{
+"date": "2026-09-10",
+"platform": "sentinel-2a",
+"minCloud": 8.046349,
+"tiles": 3
+},
+{
+"date": "2026-09-10",
+"platform": "sentinel-2b",
+"minCloud": 10.33268,
+"tiles": 4
+},
+{
+"date": "2026-09-13",
+"platform": "sentinel-2b",
+"minCloud": 22.563304,
+"tiles": 3
+},
+{
+"date": "2026-09-15",
+"platform": "sentinel-2c",
+"minCloud": 3.425019,
+"tiles": 4
+},
+{
+"date": "2026-09-17",
+"platform": "sentinel-2a",
+"minCloud": 1.40932,
+"tiles": 4
+},
+{
+"date": "2026-09-18",
+"platform": "sentinel-2c",
+"minCloud": 0.135448,
+"tiles": 3
+},
+{
+"date": "2026-09-20",
+"platform": "sentinel-2b",
+"minCloud": 0.019485,
+"tiles": 4
+}
+]

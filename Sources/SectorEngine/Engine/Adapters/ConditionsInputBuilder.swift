@@ -64,7 +64,8 @@ public enum ConditionsInputBuilder {
                       severeWarningLabel: String? = nil,
                       forecastDayIndex: Int = 0,
                       cityGlow: Double? = nil,
-                      rainWatershed72hIn: Double? = nil) -> ConditionsInput {
+                      rainWatershed72hIn: Double? = nil,
+                      clarityDischarge: WaterLevelReading? = nil) -> ConditionsInput {
 
         let lat = coordinate.latitude, lon = coordinate.longitude
         let region = RegionResolver.region(latitude: lat, longitude: lon)
@@ -148,6 +149,7 @@ public enum ConditionsInputBuilder {
         let waterTempEstimated = liveWaterTempF == nil && waterTempF != nil
 
         let isTailwater = TailwaterRegistry.isTailwater(latitude: lat, longitude: lon)
+        let clarityDischarge = fresh(clarityDischarge, maxAgeHours: stageDischargeMaxAgeHours)
 
         // Generation is kept whenever we have it for today, tailwater or not.
         //
@@ -250,7 +252,9 @@ public enum ConditionsInputBuilder {
             moonAltitudeAtWindow: moonAltFrac,
             windowStart: windowStart, windowEnd: windowEnd,
             hasTurbidityGage: turbidity != nil,
-            forecastDayIndex: forecastDayIndex)
+            forecastDayIndex: forecastDayIndex,
+            clarityDischargeCfs: clarityDischarge?.value,
+            clarityDischargeTrend12hCfs: clarityDischarge?.change)
     }
 
     /// The generation level that best represents the REMAINING fishing window.

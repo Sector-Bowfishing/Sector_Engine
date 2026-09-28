@@ -75,6 +75,46 @@ router.get("lakes") { request, _ -> Response in
     return Response(status: .ok, headers: headers, body: .init(byteBuffer: buffer))
 }
 
+// A lake's hydrologic arm graph and its live inputs, with provenance
+// (HydrologyAPI). Exposure only: nothing scores from these yet.
+router.get("hydrology/graph") { request, _ -> Response in
+    guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }),
+          let graph = SectorEngineAPI.hydrologyGraph(lakeId: lake) else {
+        return Response(status: .notFound)
+    }
+    return jsonResponse(graph)
+}
+router.get("hydrology") { request, _ -> Response in
+    guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }),
+          let inputs = await SectorEngineAPI.hydrology(lakeId: lake) else {
+        return Response(status: .notFound)
+    }
+    return jsonResponse(inputs)
+}
+
+// Each arm's current clarity state (ClarityStateAPI, Clarity Fusion Stage 2).
+// A review build: routed only where SECTOR_STAGE2_ROUTES=1, so a deploy of
+// this branch does not publish it before it is reviewed.
+if ProcessInfo.processInfo.environment["SECTOR_STAGE2_ROUTES"] == "1" {
+    router.get("clarity/state") { request, _ -> Response in
+        let q = request.uri.queryParameters
+        guard let lake = q.get("lake").map({ String($0) }),
+              let lat = q.get("lat").flatMap({ Double(String($0)) }),
+              let lon = q.get("lon").flatMap({ Double(String($0)) }),
+              let state = await SectorEngineAPI.currentClarityState(lakeId: lake, lat: lat, lon: lon) else {
+            return Response(status: .notFound)
+        }
+        return jsonResponse(state)
+    }
+    router.get("clarity/states") { request, _ -> Response in
+        guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }),
+              let states = await SectorEngineAPI.clarityStates(lakeId: lake) else {
+            return Response(status: .notFound)
+        }
+        return jsonResponse(states)
+    }
+}
+
 // Cloud Run injects PORT and expects the server to bind 0.0.0.0 (all interfaces).
 // Locally, without PORT set, that's still reachable as localhost:8080 for the A/B.
 let port = ProcessInfo.processInfo.environment["PORT"].flatMap(Int.init) ?? 8080

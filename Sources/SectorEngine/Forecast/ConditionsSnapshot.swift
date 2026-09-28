@@ -46,6 +46,9 @@ struct ConditionsSnapshot {
     /// clarity model — catches localized/upstream rain Open-Meteo's point model
     /// misses. nil when IEM is unreachable (clarity falls back to Open-Meteo).
     let mrms: MrmsPrecip?
+    /// Clarity's own inflow gauge: this arm's USGS discharge site, or nil (see
+    /// ClarityGauge). Not the nearest gauge — that is `discharge`.
+    var clarityDischarge: WaterLevelReading? = nil
     let fetchedAt: Date
 
     /// With no weather AND no gage there's nothing real to score — callers use
@@ -142,7 +145,7 @@ actor ConditionsSnapshotProvider {
             async let mrms = withDeadline(8, "mrms") {
                 await MrmsPrecipService.shared.recent(near: coordinate)
             }
-            return ConditionsSnapshot(weather: await weather,
+            var snap = ConditionsSnapshot(weather: await weather,
                                       water: await water,
                                       discharge: await discharge,
                                       waterTemp: await temp,
@@ -152,6 +155,15 @@ actor ConditionsSnapshotProvider {
                                       alerts: await alerts ?? [],
                                       mrms: await mrms,
                                       fetchedAt: Date())
+            // Clarity's own gauge (ClarityGauge), read after everything above:
+            // only gauged arms pay for it (one USGS call). Kept out of the
+            // `async let` group — nesting it with the nearest-discharge lookup
+            // in one child task aborted the Linux runtime ("freed pointer was
+            // not the last allocation", revs 00041-00042).
+            snap.clarityDischarge = await withDeadline(3, "clarityDischarge") {
+                await ClarityGauge.reading(near: coordinate)
+            }
+            return snap
         }
         inFlight[k] = task
         let result = await task.value

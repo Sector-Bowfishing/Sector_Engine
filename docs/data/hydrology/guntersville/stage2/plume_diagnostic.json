@@ -1,0 +1,239 @@
+{
+ "2026-01-01:sentinel-2c": {
+  "mainstem": {
+   "cells": 130686,
+   "sclWaterPct": 98.6,
+   "sclLandPct": 1.3,
+   "sclCloudPct": 0.1,
+   "rawFNUWater": 2.71,
+   "rawFNUWaterP90": 3.44,
+   "rawFNULand": 6.46,
+   "rawFNULandP90": 21.51,
+   "landCellsWithRaw": 2265
+  },
+  "browns-creek": {
+   "cells": 20274,
+   "sclWaterPct": 98.6,
+   "sclLandPct": 1.4,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 3.12,
+   "rawFNUWaterP90": 5.96,
+   "rawFNULand": 14.74,
+   "rawFNULandP90": 136.51,
+   "landCellsWithRaw": 378
+  },
+  "mud-creek": {
+   "cells": 5302,
+   "sclWaterPct": 87.7,
+   "sclLandPct": 12.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 2.75,
+   "rawFNUWaterP90": 5.86,
+   "rawFNULand": 6.37,
+   "rawFNULandP90": 13.42,
+   "landCellsWithRaw": 989
+  },
+  "north-sauty-creek": {
+   "cells": 11660,
+   "sclWaterPct": 96.5,
+   "sclLandPct": 3.5,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 3.08,
+   "rawFNUWaterP90": 4.82,
+   "rawFNULand": 21.18,
+   "rawFNULandP90": 75.81,
+   "landCellsWithRaw": 569
+  },
+  "short-creek": {
+   "cells": 1774,
+   "sclWaterPct": 98.7,
+   "sclLandPct": 1.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 2.87,
+   "rawFNUWaterP90": 4.9,
+   "rawFNULand": 25.19,
+   "rawFNULandP90": 44.62,
+   "landCellsWithRaw": 32
+  },
+  "south-sauty-creek": {
+   "cells": 11718,
+   "sclWaterPct": 99.6,
+   "sclLandPct": 0.4,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 2.68,
+   "rawFNUWaterP90": 3.73,
+   "rawFNULand": 12.47,
+   "rawFNULandP90": 56.47,
+   "landCellsWithRaw": 82
+  },
+  "town-creek-marshall": {
+   "cells": 5707,
+   "sclWaterPct": 99.7,
+   "sclLandPct": 0.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 2.71,
+   "rawFNUWaterP90": 3.2,
+   "rawFNULand": 16.16,
+   "rawFNULandP90": 19.59,
+   "landCellsWithRaw": 35
+  }
+ },
+ "2026-01-11:sentinel-2c": {
+  "mainstem": {
+   "cells": 130686,
+   "sclWaterPct": 98.7,
+   "sclLandPct": 1.0,
+   "sclCloudPct": 0.3,
+   "rawFNUWater": 4.03,
+   "rawFNUWaterP90": 6.87,
+   "rawFNULand": 6.43,
+   "rawFNULandP90": 20.68,
+   "landCellsWithRaw": 1919
+  },
+  "browns-creek": {
+   "cells": 20274,
+   "sclWaterPct": 98.7,
+   "sclLandPct": 1.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 5.01,
+   "rawFNUWaterP90": 12.0,
+   "rawFNULand": 17.04,
+   "rawFNULandP90": 34.51,
+   "landCellsWithRaw": 321
+  },
+  "mud-creek": {
+   "cells": 5302,
+   "sclWaterPct": 99.0,
+   "sclLandPct": 1.0,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 6.45,
+   "rawFNUWaterP90": 11.71,
+   "rawFNULand": 8.01,
+   "rawFNULandP90": 15.45,
+   "landCellsWithRaw": 123
+  },
+  "north-sauty-creek": {
+   "cells": 11660,
+   "sclWaterPct": 97.3,
+   "sclLandPct": 2.3,
+   "sclCloudPct": 0.3,
+   "rawFNUWater": 5.95,
+   "rawFNUWaterP90": 16.3,
+   "rawFNULand": 15.22,
+   "rawFNULandP90": 23.61,
+   "landCellsWithRaw": 418
+  },
+  "short-creek": {
+   "cells": 1774,
+   "sclWaterPct": 98.7,
+   "sclLandPct": 1.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 36.16,
+   "rawFNUWaterP90": 200.0,
+   "rawFNULand": 27.71,
+   "rawFNULandP90": 37.04,
+   "landCellsWithRaw": 32
+  },
+  "south-sauty-creek": {
+   "cells": 11718,
+   "sclWaterPct": 94.0,
+   "sclLandPct": 0.4,
+   "sclCloudPct": 5.6,
+   "rawFNUWater": 4.0,
+   "rawFNUWaterP90": 7.08,
+   "rawFNULand": 10.41,
+   "rawFNULandP90": 29.01,
+   "landCellsWithRaw": 81
+  },
+  "town-creek-marshall": {
+   "cells": 5707,
+   "sclWaterPct": 99.8,
+   "sclLandPct": 0.2,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 3.6,
+   "rawFNUWaterP90": 6.03,
+   "rawFNULand": 16.04,
+   "rawFNULandP90": 19.74,
+   "landCellsWithRaw": 33
+  }
+ },
+ "2026-01-16:sentinel-2b": {
+  "mainstem": {
+   "cells": 130686,
+   "sclWaterPct": 98.9,
+   "sclLandPct": 1.1,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 4.52,
+   "rawFNUWaterP90": 5.59,
+   "rawFNULand": 7.13,
+   "rawFNULandP90": 24.98,
+   "landCellsWithRaw": 1983
+  },
+  "browns-creek": {
+   "cells": 20274,
+   "sclWaterPct": 98.7,
+   "sclLandPct": 1.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 4.29,
+   "rawFNUWaterP90": 8.11,
+   "rawFNULand": 18.71,
+   "rawFNULandP90": 200.0,
+   "landCellsWithRaw": 325
+  },
+  "mud-creek": {
+   "cells": 5302,
+   "sclWaterPct": 97.7,
+   "sclLandPct": 2.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 7.18,
+   "rawFNUWaterP90": 11.52,
+   "rawFNULand": 8.1,
+   "rawFNULandP90": 21.24,
+   "landCellsWithRaw": 213
+  },
+  "north-sauty-creek": {
+   "cells": 11660,
+   "sclWaterPct": 97.5,
+   "sclLandPct": 2.5,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 4.33,
+   "rawFNUWaterP90": 8.77,
+   "rawFNULand": 16.96,
+   "rawFNULandP90": 28.68,
+   "landCellsWithRaw": 438
+  },
+  "short-creek": {
+   "cells": 1774,
+   "sclWaterPct": 98.7,
+   "sclLandPct": 1.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 5.38,
+   "rawFNUWaterP90": 6.74,
+   "rawFNULand": 22.55,
+   "rawFNULandP90": 30.7,
+   "landCellsWithRaw": 32
+  },
+  "south-sauty-creek": {
+   "cells": 11718,
+   "sclWaterPct": 99.6,
+   "sclLandPct": 0.4,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 3.22,
+   "rawFNUWaterP90": 4.96,
+   "rawFNULand": 13.61,
+   "rawFNULandP90": 32.93,
+   "landCellsWithRaw": 79
+  },
+  "town-creek-marshall": {
+   "cells": 5707,
+   "sclWaterPct": 99.7,
+   "sclLandPct": 0.3,
+   "sclCloudPct": 0.0,
+   "rawFNUWater": 3.35,
+   "rawFNUWaterP90": 5.06,
+   "rawFNULand": 15.53,
+   "rawFNULandP90": 19.02,
+   "landCellsWithRaw": 34
+  }
+ }
+}

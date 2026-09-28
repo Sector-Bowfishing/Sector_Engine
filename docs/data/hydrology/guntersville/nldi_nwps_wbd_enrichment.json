@@ -1,0 +1,2689 @@
+{
+ "10": {
+  "name": "Dry Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010602",
+  "huc12Name": "Riley Cove-Dry Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645536,
+    "nwmName": "Dry Creek",
+    "basinKm2": 52.1
+   }
+  ],
+  "headComid": 19645536,
+  "headBasinKm2": 52.1,
+  "upstreamMainstemKm": 13.47,
+  "upstreamSites": [
+   {
+    "site": "03572522",
+    "name": "DRY CREEK NR SCOTTSBORO, ALA",
+    "comid": 19645536,
+    "lon": -85.977756,
+    "lat": 34.67313977
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19645536",
+   "name": "Dry Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Dry Creek",
+  "mouthComid": 19647486,
+  "mouthBasinKm2": 70.23
+ },
+ "11": {
+  "name": "Town Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010705",
+  "huc12Name": "Minky Creek-Town Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649040,
+    "nwmName": "Town Creek",
+    "basinKm2": 407.3
+   }
+  ],
+  "headComid": 19649040,
+  "headBasinKm2": 407.32,
+  "upstreamMainstemKm": 86.98,
+  "upstreamSites": [
+   {
+    "site": "03572804",
+    "name": "TOWN CREEK NEAR IDER AL",
+    "comid": 19645452,
+    "lon": -85.6177451,
+    "lat": 34.69674808
+   },
+   {
+    "site": "03572870",
+    "name": "TOWN CREEK AT GUEST BRIDGE AL",
+    "comid": 19648002,
+    "lon": -85.8758051,
+    "lat": 34.427311
+   },
+   {
+    "site": "03572900",
+    "name": "TOWN CREEK NEAR GERALDINE AL",
+    "comid": 19648068,
+    "lon": -85.9902524,
+    "lat": 34.3784235
+   },
+   {
+    "site": "03572905",
+    "name": "TOWN CREEK AT ELROD BRIDGE AL",
+    "comid": 19649064,
+    "lon": -86.0199755,
+    "lat": 34.39008994
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19649040",
+   "name": "Town Creek",
+   "series": [
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19650328,
+  "mouthBasinKm2": 559.64
+ },
+ "16": {
+  "name": "Blue Spring Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010604",
+  "huc12Name": "Upper North Sauty Creek",
+  "probeAttempts": [
+   {
+    "comid": 19647234,
+    "nwmName": "Blue Spring Creek",
+    "basinKm2": 19.8
+   }
+  ],
+  "headComid": 19647234,
+  "headBasinKm2": 19.81,
+  "upstreamMainstemKm": 9.32,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19647234",
+   "name": "Blue Spring Creek",
+   "series": [
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation"
+   ]
+  },
+  "mouthNwmName": "Blue Spring Creek",
+  "mouthComid": 19647234,
+  "mouthBasinKm2": 19.81
+ },
+ "18": {
+  "name": "Big Spring Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010903",
+  "huc12Name": "Big Spring Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649546,
+    "nwmName": "Big Spring Creek",
+    "basinKm2": 121.3
+   }
+  ],
+  "headComid": 19649546,
+  "headBasinKm2": 121.35,
+  "upstreamMainstemKm": 30.31,
+  "upstreamSites": [
+   {
+    "site": "03573430",
+    "name": "BIG SPRING CREEK NEAR BROOKSVILLE, AL.",
+    "comid": 19649880,
+    "lon": -86.4233189,
+    "lat": 34.20426205
+   },
+   {
+    "site": "03573450",
+    "name": "BIG SPRING CREEK NEAR GUNTERSVILLE AL",
+    "comid": 19649546,
+    "lon": -86.363039,
+    "lat": 34.2770385
+   },
+   {
+    "site": "03573460",
+    "name": "BIG SPRING CREEK NEAR SIDNEY AL",
+    "comid": 19649546,
+    "lon": -86.358039,
+    "lat": 34.29203816
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19649546",
+   "name": "Big Spring Creek",
+   "series": [
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend"
+   ]
+  },
+  "mouthNwmName": "Big Spring Creek",
+  "mouthComid": 19650356,
+  "mouthBasinKm2": 62426.0
+ },
+ "19": {
+  "name": "Tennessee River",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060200011204",
+  "huc12Name": "Lower Nickajack Lake-Tennessee River",
+  "probeAttempts": [],
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19650268,
+  "mouthBasinKm2": 7.52
+ },
+ "26": {
+  "name": "North Sauty Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010604",
+  "huc12Name": "Upper North Sauty Creek",
+  "probeAttempts": [
+   {
+    "comid": 19647238,
+    "nwmName": "North Sauty Creek",
+    "basinKm2": 85.4
+   }
+  ],
+  "headComid": 19647238,
+  "headBasinKm2": 85.43,
+  "upstreamMainstemKm": 14.66,
+  "upstreamSites": [
+   {
+    "site": "03572540",
+    "name": "NORTH SAUTY CREEK NR LIM ROCK, ALA",
+    "comid": 19647164,
+    "lon": -86.1838715,
+    "lat": 34.67147527
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19647238",
+   "name": "North Sauty Creek",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19647518,
+  "mouthBasinKm2": 188.1
+ },
+ "30": {
+  "name": "Yellow Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010505",
+  "huc12Name": "Lower South Sauty Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648832,
+    "nwmName": "Yellow Creek",
+    "basinKm2": 12.4
+   }
+  ],
+  "headComid": 19648832,
+  "headBasinKm2": 12.39,
+  "upstreamMainstemKm": 5.71,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648832",
+   "name": "Yellow Creek",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "Yellow Creek",
+  "mouthComid": 19650120,
+  "mouthBasinKm2": 17.02
+ },
+ "43": {
+  "name": "Browns Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010904",
+  "huc12Name": "Browns Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649500,
+    "nwmName": "Browns Creek",
+    "basinKm2": 54.0
+   }
+  ],
+  "headComid": 19649500,
+  "headBasinKm2": 54.05,
+  "upstreamMainstemKm": 18.95,
+  "upstreamSites": [
+   {
+    "site": "03573610",
+    "name": "BROWNS CREEK NEAR DIAMOND AL",
+    "comid": 19649560,
+    "lon": -86.38804,
+    "lat": 34.28398294
+   },
+   {
+    "site": "03573600",
+    "name": "BROWNS CREEK NEAR RED HILL AL",
+    "comid": 19649682,
+    "lon": -86.4038739,
+    "lat": 34.26592784
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19649500",
+   "name": "Browns Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Browns Creek",
+  "mouthComid": 19650358,
+  "mouthBasinKm2": 62611.72
+ },
+ "47": {
+  "name": "Dry Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010504",
+  "huc12Name": "Mink Branch-Dry Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648782,
+    "nwmName": "Dry Creek",
+    "basinKm2": 39.7
+   }
+  ],
+  "headComid": 19648782,
+  "headBasinKm2": 39.65,
+  "upstreamMainstemKm": 14.17,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648782",
+   "name": "Dry Creek",
+   "series": [
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation"
+   ]
+  },
+  "mouthNwmName": "South Sauty Creek",
+  "mouthComid": 19654796,
+  "mouthBasinKm2": 42.96
+ },
+ "53": {
+  "name": "Rocky Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010403",
+  "huc12Name": "Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645360,
+    "nwmName": "Rocky Branch",
+    "basinKm2": 10.6
+   }
+  ],
+  "headComid": 19645360,
+  "headBasinKm2": 10.6,
+  "upstreamMainstemKm": 4.69,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645360",
+   "name": "Rocky Branch",
+   "series": [
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19646564,
+  "mouthBasinKm2": 10.73
+ },
+ "56": {
+  "name": "South Sauty Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010505",
+  "huc12Name": "Lower South Sauty Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648816,
+    "nwmName": "South Sauty Creek",
+    "basinKm2": 324.3
+   }
+  ],
+  "headComid": 19648816,
+  "headBasinKm2": 324.32,
+  "upstreamMainstemKm": 51.46,
+  "upstreamSites": [
+   {
+    "site": "03572700",
+    "name": "SOUTH SAUTY CREEK NEAR MACEDONIA AL",
+    "comid": 19648270,
+    "lon": -85.96442,
+    "lat": 34.4995315
+   },
+   {
+    "site": "03572690",
+    "name": "SOUTH SAUTY CREEK NEAR RAINSVILLE, ALA",
+    "comid": 19647854,
+    "lon": -85.9296966,
+    "lat": 34.4986981
+   },
+   {
+    "site": "03572715",
+    "name": "SOUTH SAUTY CREEK AT BUCK'S POCKET AL",
+    "comid": 19648808,
+    "lon": -86.0502553,
+    "lat": 34.4750878
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19648816",
+   "name": "South Sauty Creek",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "South Sauty Creek",
+  "mouthComid": 19647534,
+  "mouthBasinKm2": 60700.18
+ },
+ "58": {
+  "name": "Widows Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010204",
+  "huc12Name": "Widows Creek",
+  "probeAttempts": [
+   {
+    "comid": 19644694,
+    "nwmName": "Widows Creek",
+    "basinKm2": 100.9
+   }
+  ],
+  "headComid": 19644694,
+  "headBasinKm2": 100.89,
+  "upstreamMainstemKm": 11.58,
+  "upstreamSites": [
+   {
+    "site": "03571990",
+    "name": "WIDOWS CREEK NEAR BRIDGEPORT",
+    "comid": 19644650,
+    "lon": -85.76830649,
+    "lat": 34.91647045
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19644694",
+   "name": "Widows Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Widows Creek",
+  "mouthComid": 19646328,
+  "mouthBasinKm2": 2.47
+ },
+ "62": {
+  "name": "Roseberry Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010603",
+  "huc12Name": "Roseberry Creek",
+  "probeAttempts": [
+   {
+    "comid": 19647204,
+    "nwmName": "Roseberry Creek",
+    "basinKm2": 41.1
+   }
+  ],
+  "headComid": 19647204,
+  "headBasinKm2": 41.06,
+  "upstreamMainstemKm": 8.07,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19647204",
+   "name": "Roseberry Creek",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "Roseberry Creek",
+  "mouthComid": 19647498,
+  "mouthBasinKm2": 146.55
+ },
+ "67": {
+  "name": "Minky Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010705",
+  "huc12Name": "Minky Creek-Town Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648888,
+    "nwmName": "Minky Creek",
+    "basinKm2": 8.7
+   }
+  ],
+  "headComid": 19648888,
+  "headBasinKm2": 8.68,
+  "upstreamMainstemKm": 4.75,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648888",
+   "name": "Minky Creek",
+   "series": [
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation"
+   ]
+  },
+  "mouthNwmName": "Town Creek",
+  "mouthComid": 19650232,
+  "mouthBasinKm2": 15.57
+ },
+ "68": {
+  "name": "Town Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010408",
+  "huc12Name": "Town Creek-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19645450,
+    "nwmName": "Town Creek",
+    "basinKm2": 7.0
+   }
+  ],
+  "headComid": 19645450,
+  "headBasinKm2": 7.04,
+  "upstreamMainstemKm": 3.81,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645450",
+   "name": "Town Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Town Creek",
+  "mouthComid": 19646590,
+  "mouthBasinKm2": 246.49
+ },
+ "69": {
+  "name": "Parton Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010403",
+  "huc12Name": "Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645396,
+    "nwmName": "Parton Branch",
+    "basinKm2": 3.7
+   }
+  ],
+  "headComid": 19645396,
+  "headBasinKm2": 3.68,
+  "upstreamMainstemKm": 3.98,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645396",
+   "name": "Parton Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Parton Branch",
+  "mouthComid": 19646558,
+  "mouthBasinKm2": 4.37
+ },
+ "70": {
+  "name": "Crow Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010307",
+  "huc12Name": "Lower Big Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19644956,
+    "nwmName": "Coon Creek",
+    "basinKm2": 224.3
+   },
+   {
+    "comid": 19644936,
+    "nwmName": "Coon Creek",
+    "basinKm2": 338.4
+   },
+   {
+    "comid": 19644896,
+    "nwmName": "Crow Creek",
+    "basinKm2": 335.4
+   }
+  ],
+  "headComid": 19644896,
+  "headBasinKm2": 335.38,
+  "upstreamMainstemKm": 49.75,
+  "upstreamSites": [
+   {
+    "site": "03572116",
+    "name": "CROW CREEK NR STEVENSON, ALA",
+    "comid": 19644896,
+    "lon": -85.86247629,
+    "lat": 34.8753602
+   },
+   {
+    "site": "03572030",
+    "name": "DEPOT BRANCH AT SEWANEE, TN",
+    "comid": 19642940,
+    "lon": -85.9180342,
+    "lat": 35.1861929
+   },
+   {
+    "site": "03572110",
+    "name": "CROW CREEK AT BASS, AL",
+    "comid": 19644594,
+    "lon": -85.9174783,
+    "lat": 34.93424968
+   },
+   {
+    "site": "03572100",
+    "name": "LITTLE CROW CREEK NEAR BASS AL",
+    "comid": 19644490,
+    "lon": -85.9299789,
+    "lat": 34.96313876
+   },
+   {
+    "site": "03572090",
+    "name": "CROW CREEK AT ANDERSON, TN",
+    "comid": 19644378,
+    "lon": -85.902478,
+    "lat": 34.99424964
+   },
+   {
+    "site": "03572092",
+    "name": "CROW CREEK NEAR ANDERSON, TN",
+    "comid": 19644378,
+    "lon": -85.9019224,
+    "lat": 34.99119407
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19644896",
+   "name": "Crow Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Crow Creek",
+  "mouthComid": 19646446,
+  "mouthBasinKm2": 635.85
+ },
+ "71": {
+  "name": "Nichols Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010408",
+  "huc12Name": "Town Creek-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19645222,
+    "nwmName": "Nichols Branch",
+    "basinKm2": 4.0
+   }
+  ],
+  "headComid": 19645222,
+  "headBasinKm2": 3.96,
+  "upstreamMainstemKm": 2.47,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645222",
+   "name": "Nichols Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Nichols Branch",
+  "mouthComid": 19646522,
+  "mouthBasinKm2": 9.01
+ },
+ "80": {
+  "name": "Mud Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010405",
+  "huc12Name": "Lower Mud Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645244,
+    "nwmName": "Mud Creek",
+    "basinKm2": 136.2
+   }
+  ],
+  "headComid": 19645244,
+  "headBasinKm2": 136.19,
+  "upstreamMainstemKm": 29.11,
+  "upstreamSites": [
+   {
+    "site": "03572300",
+    "name": "MUD CREEK NEAR SCOTTSBORO AL",
+    "comid": 19645234,
+    "lon": -85.9769239,
+    "lat": 34.7881386
+   },
+   {
+    "site": "03572270",
+    "name": "MUD CREEK NEAR SKYLINE, AL.",
+    "comid": 19647028,
+    "lon": -86.08276,
+    "lat": 34.86452916
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19645244",
+   "name": "Mud Creek",
+   "series": [
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range"
+   ]
+  },
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19646588,
+  "mouthBasinKm2": 59799.6
+ },
+ "81": {
+  "name": "Short Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010807",
+  "huc12Name": "Lower Short Creek",
+  "probeAttempts": [
+   {
+    "comid": 19650372,
+    "nwmName": "Short Creek",
+    "basinKm2": 541.0
+   }
+  ],
+  "headComid": 19650372,
+  "headBasinKm2": 540.95,
+  "upstreamMainstemKm": 41.75,
+  "upstreamSites": [
+   {
+    "site": "03573010",
+    "name": "SHORT CREEK NR HUSTLEVILLE, ALA",
+    "comid": 19649294,
+    "lon": -86.2044232,
+    "lat": 34.32036998
+   },
+   {
+    "site": "03573000",
+    "name": "SHORT CREEK NEAR ALBERTVILLE AL",
+    "comid": 19650054,
+    "lon": -86.1813668,
+    "lat": 34.30148154
+   },
+   {
+    "site": "03573122",
+    "name": "SCARHAM CREEK AB SOUTH FORK NR CROSSVILLE, AL.",
+    "comid": 19648118,
+    "lon": -85.99219579,
+    "lat": 34.30592535
+   },
+   {
+    "site": "03573180",
+    "name": "SCARHAM CREEK AT FORMER TVA GAGE (RM 7.7), AL",
+    "comid": 19649422,
+    "lon": -86.0963647,
+    "lat": 34.2948148
+   },
+   {
+    "site": "03573115",
+    "name": "SCARHAM CREEK NEAR SKIRUM, ALABAMA",
+    "comid": 19648098,
+    "lon": -85.9638621,
+    "lat": 34.33731344
+   },
+   {
+    "site": "03573182",
+    "name": "SCARHAM CREEK NEAR MCVILLE, AL",
+    "comid": 19649392,
+    "lon": -86.116643,
+    "lat": 34.29842588
+   },
+   {
+    "site": "03573004",
+    "name": "DRUM CREEK AT ALA HWY 205 NR ALBERTVILLE, ALA",
+    "comid": 19649540,
+    "lon": -86.2438678,
+    "lat": 34.27592687
+   },
+   {
+    "site": "03573008",
+    "name": "DRUM C AT RICE MILL BRIDGE NR ALBERTVILLE, ALA",
+    "comid": 19649356,
+    "lon": -86.2116454,
+    "lat": 34.31120358
+   },
+   {
+    "site": "03572990",
+    "name": "SHORT CREEK NEAR MYRTLETREE CHURCH AL",
+    "comid": 19649694,
+    "lon": -86.12469809,
+    "lat": 34.25731587
+   },
+   {
+    "site": "03573183",
+    "name": "SCARHAM CREEK NR ALBERTVILLE, ALA",
+    "comid": 19649342,
+    "lon": -86.1310879,
+    "lat": 34.30648126
+   },
+   {
+    "site": "03573128",
+    "name": "SOUTH FORK AT MOUTH NEAR CROSSVILLE, ALABAMA",
+    "comid": 19648124,
+    "lon": -85.9916402,
+    "lat": 34.3053698
+   },
+   {
+    "site": "03573140",
+    "name": "SCARHAM CREEK AT CO ROAD 24 NR LATHAMVILLE, ALA.",
+    "comid": 19649464,
+    "lon": -86.0383078,
+    "lat": 34.29453686
+   },
+   {
+    "site": "03573160",
+    "name": "SCARHAM CREEK AT CO RD 3 NEAR KILPATRICK, ALA.",
+    "comid": 19649400,
+    "lon": -86.0771977,
+    "lat": 34.29842576
+   },
+   {
+    "site": "03573133",
+    "name": "MACEDONIA BRANCH AT CO ROAD 34 NR CROSSVILLE, AL.",
+    "comid": 19649336,
+    "lon": -86.011363,
+    "lat": 34.3123141
+   },
+   {
+    "site": "03572998",
+    "name": "SHORTH CREEK AT ALA HWY 75 NR ALBERTVILLE, ALA",
+    "comid": 19649444,
+    "lon": -86.1633107,
+    "lat": 34.29342615
+   },
+   {
+    "site": "03572999",
+    "name": "TURKEY CREEK NEAR ALBERTVILLE, AL.",
+    "comid": 19649630,
+    "lon": -86.190533,
+    "lat": 34.2664825
+   },
+   {
+    "site": "03573190",
+    "name": "WHIPPORWILL CREEK NEAR HUSTLEVILLE, AL.",
+    "comid": 19649288,
+    "lon": -86.1488664,
+    "lat": 34.32592524
+   },
+   {
+    "site": "03573195",
+    "name": "SHOAL CREEK AT DOUBLE BRIDGES, ALA",
+    "comid": 19649254,
+    "lon": -86.1622,
+    "lat": 34.32675859
+   },
+   {
+    "site": "03573150",
+    "name": "LITTLE SCARHAM CREEK AT CO RD 24 NEAR PAINTER, AL.",
+    "comid": 19649402,
+    "lon": -86.0649753,
+    "lat": 34.3062033
+   },
+   {
+    "site": "03572995",
+    "name": "SHORT CREEK ABOVE WOLF CREEK NR ALBERTVILLE, ALA",
+    "comid": 19649472,
+    "lon": -86.1544215,
+    "lat": 34.29092619
+   },
+   {
+    "site": "03573145",
+    "name": "LITTLE SCARHAM CREEK AT CO RD NR GERALDINE,ALA",
+    "comid": 19649224,
+    "lon": -86.0221969,
+    "lat": 34.3325914
+   },
+   {
+    "site": "03573001",
+    "name": "DRUM CREEK NEAR ALBERTVILLE, AL.",
+    "comid": 19649590,
+    "lon": -86.2438678,
+    "lat": 34.274538
+   },
+   {
+    "site": "03573185",
+    "name": "SCARHAM C AT DOUBLE BRIDGES, ALA",
+    "comid": 19649308,
+    "lon": -86.1622,
+    "lat": 34.3264808
+   },
+   {
+    "site": "03572989",
+    "name": "SHORT CREEK AT CROSS CREEK, ALA",
+    "comid": 19649760,
+    "lon": -86.1205312,
+    "lat": 34.23592736
+   },
+   {
+    "site": "03573006",
+    "name": "DRUM C NR PILGRIM REST CHURCH NR ALBERTVILLE, AL",
+    "comid": 19649390,
+    "lon": -86.2280345,
+    "lat": 34.2984262
+   },
+   {
+    "site": "03573110",
+    "name": "LAUREL CREEK AT CO RD 43 NR GILBERT CROSSROADS, AL",
+    "comid": 19648094,
+    "lon": -85.92886129,
+    "lat": 34.34953534
+   },
+   {
+    "site": "03573135",
+    "name": "SCARHAM CREEK AT CO ROAD 28 NEAR OAK HILL, ALA.",
+    "comid": 19649348,
+    "lon": -86.0205298,
+    "lat": 34.3028699
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19650372",
+   "name": "Short Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Short Creek",
+  "mouthComid": 19650346,
+  "mouthBasinKm2": 61832.64
+ },
+ "85": {
+  "name": "Battle Creek",
+  "mouthCounty": "Marion County",
+  "mouthState": "TN",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19643648,
+    "nwmName": "Tennessee River",
+    "basinKm2": 438.0
+   },
+   {
+    "comid": 19643332,
+    "nwmName": "Battle Creek",
+    "basinKm2": 437.5
+   }
+  ],
+  "headComid": 19643332,
+  "headBasinKm2": 437.46,
+  "upstreamMainstemKm": 40.11,
+  "upstreamSites": [
+   {
+    "site": "03571840",
+    "name": "BATTLE CREEK AT HWY64 NEAR SOUTH PITTSBURG, TN",
+    "comid": 19643262,
+    "lon": -85.7296938,
+    "lat": 35.05535824
+   },
+   {
+    "site": "03571845",
+    "name": "BATTLE CREEK NEAR SOUTH PITTSBURG, TN",
+    "comid": 19643316,
+    "lon": -85.6924701,
+    "lat": 35.03674649
+   },
+   {
+    "site": "03571821",
+    "name": "BIG FIERY GIZZARD    CREEK TRIB NEAR COMFORT, TN",
+    "comid": 19642990,
+    "lon": -85.6688587,
+    "lat": 35.154245
+   },
+   {
+    "site": "03571800",
+    "name": "BATTLE CREEK NEAR MONTEAGLE, TN",
+    "comid": 19643014,
+    "lon": -85.7708065,
+    "lat": 35.1342473
+   },
+   {
+    "site": "03571830",
+    "name": "BATTLE CREEK AT         SMITHTOWN, TN.",
+    "comid": 19643220,
+    "lon": -85.7435832,
+    "lat": 35.07146954
+   },
+   {
+    "site": "03571775",
+    "name": "BATTLE CREEK ABOVE CAVE COVE, TN",
+    "comid": 19642912,
+    "lon": -85.819975,
+    "lat": 35.18202528
+   },
+   {
+    "site": "03571835",
+    "name": "SWEDEN CREEK NEAR SOUTH PITTSBURG, TN",
+    "comid": 19643254,
+    "lon": -85.7652507,
+    "lat": 35.06452544
+   },
+   {
+    "site": "03571820",
+    "name": "LITTLE FIERY GIZZARD CREEK NEAR TRACY CITY, TN",
+    "comid": 19643598,
+    "lon": -85.7433056,
+    "lat": 35.25257947
+   },
+   {
+    "site": "03571827",
+    "name": "KELLY COVE CREEK AT SMITHTOWN, TN",
+    "comid": 19643192,
+    "lon": -85.7363608,
+    "lat": 35.08008044
+   },
+   {
+    "site": "03571823",
+    "name": "BIG FIERY GIZZARD CREEK NR SOUTH PITTSBURG, TN",
+    "comid": 19643114,
+    "lon": -85.7435833,
+    "lat": 35.11174707
+   },
+   {
+    "site": "03571825",
+    "name": "BATTLE CREEK NEAR SMITHTOWN, TN",
+    "comid": 19643194,
+    "lon": -85.7419165,
+    "lat": 35.0842472
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19643332",
+   "name": "Battle Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19643648,
+  "mouthBasinKm2": 437.97
+ },
+ "91": {
+  "name": "Long Island Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010203",
+  "huc12Name": "Guest Creek-Long Island Creek",
+  "probeAttempts": [
+   {
+    "comid": 19644788,
+    "nwmName": "Long Island Creek",
+    "basinKm2": 201.9
+   }
+  ],
+  "headComid": 19644788,
+  "headBasinKm2": 201.94,
+  "upstreamMainstemKm": 17.43,
+  "upstreamSites": [
+   {
+    "site": "03571941",
+    "name": "HIGDON CREEK AT SR 136 NEAR TRENTON, GA.",
+    "comid": 19644920,
+    "lon": -85.57468819,
+    "lat": 34.8653566
+   },
+   {
+    "site": "03571943",
+    "name": "LONG ISLAND CREEK NR MOORE CHAPEL, ALA",
+    "comid": 19644808,
+    "lon": -85.6805255,
+    "lat": 34.88146927
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19644788",
+   "name": "Long Island Creek",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19646304,
+  "mouthBasinKm2": 221.95
+ },
+ "98": {
+  "name": "Polecat Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010903",
+  "huc12Name": "Big Spring Creek",
+  "probeAttempts": [
+   {
+    "comid": 19650048,
+    "nwmName": "Polecat Branch",
+    "basinKm2": 12.5
+   }
+  ],
+  "headComid": 19650048,
+  "headBasinKm2": 12.47,
+  "upstreamMainstemKm": 5.6,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19650048",
+   "name": "Polecat Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Polecat Branch",
+  "mouthComid": 19650386,
+  "mouthBasinKm2": 18.49
+ },
+ "105": {
+  "name": "Black Oak Creek",
+  "mouthCounty": "DeKalb County",
+  "mouthState": "AL",
+  "huc12": "060300010705",
+  "huc12Name": "Minky Creek-Town Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648940,
+    "nwmName": "Black Oak Creek",
+    "basinKm2": 70.8
+   }
+  ],
+  "headComid": 19648940,
+  "headBasinKm2": 70.81,
+  "upstreamMainstemKm": 29.97,
+  "upstreamSites": [
+   {
+    "site": "03572940",
+    "name": "BLACKOAK CREEK NEAR GROVE OAK AL",
+    "comid": 19648976,
+    "lon": -86.0408098,
+    "lat": 34.41703374
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19648940",
+   "name": "Black Oak Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Town Creek",
+  "mouthComid": 19648908,
+  "mouthBasinKm2": 494.81
+ },
+ "121": {
+  "name": "Chandler Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010901",
+  "huc12Name": "Chandler Branch-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19648778,
+    "nwmName": "",
+    "basinKm2": 10.4
+   },
+   {
+    "comid": 19648778,
+    "nwmName": "",
+    "basinKm2": 10.4
+   },
+   {
+    "comid": 19647330,
+    "nwmName": "",
+    "basinKm2": 7.5
+   },
+   {
+    "comid": 19647330,
+    "nwmName": "",
+    "basinKm2": 7.5
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "",
+  "mouthComid": 19650186,
+  "mouthBasinKm2": 24.96
+ },
+ "126": {
+  "name": "Boshart Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010901",
+  "huc12Name": "Chandler Branch-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19647544,
+    "nwmName": "Boshart Creek",
+    "basinKm2": 28.1
+   }
+  ],
+  "headComid": 19647544,
+  "headBasinKm2": 28.05,
+  "upstreamMainstemKm": 4.81,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19647544",
+   "name": "Boshart Creek",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "Boshart Creek",
+  "mouthComid": 19647544,
+  "mouthBasinKm2": 28.05
+ },
+ "129": {
+  "name": "Archie Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010605",
+  "huc12Name": "Lower North Sauty Creek",
+  "probeAttempts": [
+   {
+    "comid": 19647268,
+    "nwmName": "Archie Creek",
+    "basinKm2": 17.7
+   }
+  ],
+  "headComid": 19647268,
+  "headBasinKm2": 17.72,
+  "upstreamMainstemKm": 6.47,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19647268",
+   "name": "Archie Creek",
+   "series": [
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 167182194,
+  "mouthBasinKm2": 142.84
+ },
+ "137": {
+  "name": "Long Hollow Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19644418,
+    "nwmName": "Long Hollow Branch",
+    "basinKm2": 4.1
+   }
+  ],
+  "headComid": 19644418,
+  "headBasinKm2": 4.12,
+  "upstreamMainstemKm": 1.36,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19644418",
+   "name": "Long Hollow Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Long Hollow Branch",
+  "mouthComid": 19644418,
+  "mouthBasinKm2": 4.12
+ },
+ "138": {
+  "name": "Big Culvert Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19644460,
+    "nwmName": "Big Culvert Creek",
+    "basinKm2": 7.7
+   }
+  ],
+  "headComid": 19644460,
+  "headBasinKm2": 7.72,
+  "upstreamMainstemKm": 4.92,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19644460",
+   "name": "Big Culvert Creek",
+   "series": [
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend"
+   ]
+  },
+  "mouthNwmName": "Big Culvert Creek",
+  "mouthComid": 19644464,
+  "mouthBasinKm2": 8.37
+ },
+ "147": {
+  "name": "Slaton Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010307",
+  "huc12Name": "Lower Big Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645066,
+    "nwmName": "Slaton Branch",
+    "basinKm2": 5.8
+   }
+  ],
+  "headComid": 19645066,
+  "headBasinKm2": 5.85,
+  "upstreamMainstemKm": 3.59,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645066",
+   "name": "Slaton Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Crow Creek",
+  "mouthComid": 19646390,
+  "mouthBasinKm2": 622.98
+ },
+ "154": {
+  "name": "Jagger Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010905",
+  "huc12Name": "Honeycomb Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648786,
+    "nwmName": "Jagger Branch",
+    "basinKm2": 6.8
+   }
+  ],
+  "headComid": 19648786,
+  "headBasinKm2": 6.75,
+  "upstreamMainstemKm": 3.66,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648786",
+   "name": "Jagger Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Jagger Branch",
+  "mouthComid": 19650166,
+  "mouthBasinKm2": 18.3
+ },
+ "156": {
+  "name": "Poplar Spring Branch",
+  "mouthCounty": "Marion County",
+  "mouthState": "TN",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19644368,
+    "nwmName": "Poplar Spring Branch",
+    "basinKm2": 17.3
+   }
+  ],
+  "headComid": 19644368,
+  "headBasinKm2": 17.31,
+  "upstreamMainstemKm": 9.28,
+  "upstreamSites": [
+   {
+    "site": "03571855",
+    "name": "POPLAR SPRING BRANCH AT RICHARD CITY, TN",
+    "comid": 19644370,
+    "lon": -85.7210823,
+    "lat": 34.9923029
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19644368",
+   "name": "Poplar Spring Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Poplar Spring Branch",
+  "mouthComid": 19646246,
+  "mouthBasinKm2": 17.37
+ },
+ "165": {
+  "name": "Jones Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010407",
+  "huc12Name": "Rorex Creek-Jones Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645550,
+    "nwmName": "Jones Creek",
+    "basinKm2": 185.7
+   }
+  ],
+  "headComid": 19645550,
+  "headBasinKm2": 185.73,
+  "upstreamMainstemKm": 30.32,
+  "upstreamSites": [
+   {
+    "site": "03572400",
+    "name": "BRYANT CREEK NEAR PISGAH AL",
+    "comid": 19645580,
+    "lon": -85.8427516,
+    "lat": 34.64675075
+   },
+   {
+    "site": "03572405",
+    "name": "BRYANT CREEK AT PISGAH AL",
+    "comid": 19645556,
+    "lon": -85.85803,
+    "lat": 34.6581395
+   },
+   {
+    "site": "03572415",
+    "name": "LITTLE BRYANT CREEK AT PISGAH AL",
+    "comid": 19645494,
+    "lon": -85.8499745,
+    "lat": 34.6750836
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19645550",
+   "name": "Jones Creek",
+   "series": [
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend"
+   ]
+  },
+  "mouthNwmName": "Jones Creek",
+  "mouthComid": 19646612,
+  "mouthBasinKm2": 208.34
+ },
+ "166": {
+  "name": "Deal Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010403",
+  "huc12Name": "Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645316,
+    "nwmName": "Deal Creek",
+    "basinKm2": 4.7
+   }
+  ],
+  "headComid": 19645316,
+  "headBasinKm2": 4.66,
+  "upstreamMainstemKm": 3.75,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645316",
+   "name": "Deal Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Deal Creek",
+  "mouthComid": 19646544,
+  "mouthBasinKm2": 6.76
+ },
+ "172": {
+  "name": "Hayes Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010906",
+  "huc12Name": "Dripping Spring Branch-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19650322,
+    "nwmName": "Dripping Spring Branch",
+    "basinKm2": 5.9
+   },
+   {
+    "comid": 19650322,
+    "nwmName": "Dripping Spring Branch",
+    "basinKm2": 5.9
+   },
+   {
+    "comid": 19650322,
+    "nwmName": "Dripping Spring Branch",
+    "basinKm2": 5.9
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "Dripping Spring Branch",
+  "mouthComid": 19650322,
+  "mouthBasinKm2": 5.91
+ },
+ "178": {
+  "name": "Pump Spring Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010205",
+  "huc12Name": "Marshall Branch-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19646396,
+    "nwmName": "Pump Spring Branch",
+    "basinKm2": 1.9
+   }
+  ],
+  "headComid": 19646396,
+  "headBasinKm2": 1.87,
+  "upstreamMainstemKm": 2.81,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19646396",
+   "name": "Pump Spring Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Pump Spring Branch",
+  "mouthComid": 19646400,
+  "mouthBasinKm2": 2.15
+ },
+ "179": {
+  "name": "Cooks Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010504",
+  "huc12Name": "Mink Branch-Dry Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648776,
+    "nwmName": "",
+    "basinKm2": 1.9
+   },
+   {
+    "comid": 19648776,
+    "nwmName": "",
+    "basinKm2": 1.9
+   },
+   {
+    "comid": 19648776,
+    "nwmName": "",
+    "basinKm2": 1.9
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "",
+  "mouthComid": 19650482,
+  "mouthBasinKm2": 2.99
+ },
+ "180": {
+  "name": "Coon Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010403",
+  "huc12Name": "Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645350,
+    "nwmName": "Coon Creek",
+    "basinKm2": 159.1
+   }
+  ],
+  "headComid": 19645350,
+  "headBasinKm2": 159.12,
+  "upstreamMainstemKm": 26.66,
+  "upstreamSites": [
+   {
+    "site": "03572210",
+    "name": "FLAT ROCK CREEK AT FLAT ROCK AL",
+    "comid": 19645286,
+    "lon": -85.7083047,
+    "lat": 34.76535898
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19645350",
+   "name": "Coon Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Coon Creek",
+  "mouthComid": 19646562,
+  "mouthBasinKm2": 232.52
+ },
+ "182": {
+  "name": "Kizzort Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010403",
+  "huc12Name": "Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645402,
+    "nwmName": "Kizzort Branch",
+    "basinKm2": 3.5
+   }
+  ],
+  "headComid": 19645402,
+  "headBasinKm2": 3.53,
+  "upstreamMainstemKm": 3.93,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645402",
+   "name": "Kizzort Branch",
+   "series": [
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range"
+   ]
+  },
+  "mouthNwmName": "Coon Creek",
+  "mouthComid": 19646568,
+  "mouthBasinKm2": 4.42
+ },
+ "186": {
+  "name": "Dry Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010403",
+  "huc12Name": "Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19646192,
+    "nwmName": "Dry Creek",
+    "basinKm2": 37.3
+   }
+  ],
+  "headComid": 19646192,
+  "headBasinKm2": 37.31,
+  "upstreamMainstemKm": 6.48,
+  "upstreamSites": [
+   {
+    "site": "03572230",
+    "name": "DRY CREEK NEAR FABIUS AL",
+    "comid": 19645252,
+    "lon": -85.7833071,
+    "lat": 34.7834152
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19646192",
+   "name": "Dry Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19646534,
+  "mouthBasinKm2": 37.32
+ },
+ "193": {
+  "name": "Mink Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010904",
+  "huc12Name": "Browns Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649406,
+    "nwmName": "Mink Creek",
+    "basinKm2": 24.8
+   }
+  ],
+  "headComid": 19649406,
+  "headBasinKm2": 24.84,
+  "upstreamMainstemKm": 9.29,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19649406",
+   "name": "Mink Creek",
+   "series": [
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19650444,
+  "mouthBasinKm2": 26.66
+ },
+ "194": {
+  "name": "Glover Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19644542,
+    "nwmName": "Glover Creek",
+    "basinKm2": 9.7
+   }
+  ],
+  "headComid": 19644542,
+  "headBasinKm2": 9.71,
+  "upstreamMainstemKm": 5.76,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19644542",
+   "name": "Glover Creek",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "Glover Creek",
+  "mouthComid": 19644542,
+  "mouthBasinKm2": 9.71
+ },
+ "198": {
+  "name": "Graham Branch",
+  "mouthCounty": "Marion County",
+  "mouthState": "TN",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19696133,
+    "nwmName": "Graham Branch",
+    "basinKm2": 7.8
+   }
+  ],
+  "headComid": 19696133,
+  "headBasinKm2": 7.84,
+  "upstreamMainstemKm": 5.08,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19696133",
+   "name": "Graham Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Graham Branch",
+  "mouthComid": 19696133,
+  "mouthBasinKm2": 7.84
+ },
+ "200": {
+  "name": "Jones Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19644436,
+    "nwmName": "Jones Creek",
+    "basinKm2": 42.3
+   }
+  ],
+  "headComid": 19644436,
+  "headBasinKm2": 42.27,
+  "upstreamMainstemKm": 11.88,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19644436",
+   "name": "Jones Creek",
+   "series": [
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range"
+   ]
+  },
+  "mouthNwmName": "Jones Creek",
+  "mouthComid": 19646250,
+  "mouthBasinKm2": 42.32
+ },
+ "202": {
+  "name": "Dripping Spring Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010906",
+  "huc12Name": "Dripping Spring Branch-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19649042,
+    "nwmName": "Dripping Spring Branch",
+    "basinKm2": 2.4
+   }
+  ],
+  "headComid": 19649042,
+  "headBasinKm2": 2.36,
+  "upstreamMainstemKm": 2.11,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19649042",
+   "name": "Dripping Spring Branch",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "Dripping Spring Branch",
+  "mouthComid": 19650322,
+  "mouthBasinKm2": 5.91
+ },
+ "214": {
+  "name": "Crooked Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010205",
+  "huc12Name": "Marshall Branch-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19644814,
+    "nwmName": "Crooked Branch",
+    "basinKm2": 3.9
+   }
+  ],
+  "headComid": 19644814,
+  "headBasinKm2": 3.94,
+  "upstreamMainstemKm": 3.22,
+  "upstreamSites": [
+   {
+    "site": "03572002",
+    "name": "TENNESSEE RIVER AT WIDOWS CR STEAMPLANT (RELEASE)",
+    "comid": 19644814,
+    "lon": -85.7471947,
+    "lat": 34.88341475
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19644814",
+   "name": "Crooked Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19646346,
+  "mouthBasinKm2": 4.04
+ },
+ "217": {
+  "name": "Berry Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010505",
+  "huc12Name": "Lower South Sauty Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648840,
+    "nwmName": "Berry Branch",
+    "basinKm2": 13.1
+   }
+  ],
+  "headComid": 19648840,
+  "headBasinKm2": 13.06,
+  "upstreamMainstemKm": 3.51,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648840",
+   "name": "Berry Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "South Sauty Creek",
+  "mouthComid": 19650144,
+  "mouthBasinKm2": 13.4
+ },
+ "218": {
+  "name": "Glover Branch",
+  "mouthCounty": "Marion County",
+  "mouthState": "TN",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19643308,
+    "nwmName": "Glover Branch",
+    "basinKm2": 9.5
+   }
+  ],
+  "headComid": 19643308,
+  "headBasinKm2": 9.53,
+  "upstreamMainstemKm": 5.34,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19643308",
+   "name": "Glover Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19643640,
+  "mouthBasinKm2": 9.59
+ },
+ "224": {
+  "name": "Dry Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010807",
+  "huc12Name": "Lower Short Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649146,
+    "nwmName": "",
+    "basinKm2": 24.5
+   },
+   {
+    "comid": 19649142,
+    "nwmName": "Dry Creek",
+    "basinKm2": 23.5
+   }
+  ],
+  "headComid": 19649142,
+  "headBasinKm2": 23.46,
+  "upstreamMainstemKm": 11.39,
+  "upstreamSites": [
+   {
+    "site": "03573200",
+    "name": "DRY CREEK AT MARTLING, ALA",
+    "comid": 19649124,
+    "lon": -86.1677564,
+    "lat": 34.3639798
+   }
+  ],
+  "nwpsReach": {
+   "reachId": "19649142",
+   "name": "Dry Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19650362,
+  "mouthBasinKm2": 24.56
+ },
+ "225": {
+  "name": "Honeycomb Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010905",
+  "huc12Name": "Honeycomb Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648852,
+    "nwmName": "Honeycomb Creek",
+    "basinKm2": 0.8
+   }
+  ],
+  "headComid": 19648852,
+  "headBasinKm2": 0.75,
+  "upstreamMainstemKm": 1.54,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648852",
+   "name": "Honeycomb Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Honeycomb Creek",
+  "mouthComid": 19650230,
+  "mouthBasinKm2": 64.57
+ },
+ "227": {
+  "name": "McCorkle Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010901",
+  "huc12Name": "Chandler Branch-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19648890,
+    "nwmName": "",
+    "basinKm2": 4.3
+   },
+   {
+    "comid": 19648878,
+    "nwmName": "",
+    "basinKm2": 1.7
+   },
+   {
+    "comid": 19648878,
+    "nwmName": "",
+    "basinKm2": 1.7
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "McCorkle Branch",
+  "mouthComid": 19650202,
+  "mouthBasinKm2": 5.74
+ },
+ "232": {
+  "name": "Marshall Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010205",
+  "huc12Name": "Marshall Branch-Tennessee River",
+  "probeAttempts": [
+   {
+    "comid": 19645118,
+    "nwmName": "Marshall Branch",
+    "basinKm2": 10.7
+   }
+  ],
+  "headComid": 19645118,
+  "headBasinKm2": 10.67,
+  "upstreamMainstemKm": 5.08,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645118",
+   "name": "Marshall Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Marshall Branch",
+  "mouthComid": 19646458,
+  "mouthBasinKm2": 58889.53
+ },
+ "234": {
+  "name": "Beech Creek",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010904",
+  "huc12Name": "Browns Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649252,
+    "nwmName": "Beech Creek",
+    "basinKm2": 20.8
+   }
+  ],
+  "headComid": 19649252,
+  "headBasinKm2": 20.84,
+  "upstreamMainstemKm": 6.15,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19649252",
+   "name": "Beech Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Beech Creek",
+  "mouthComid": 19650430,
+  "mouthBasinKm2": 27.22
+ },
+ "235": {
+  "name": "Brogue Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010408",
+  "huc12Name": "Town Creek-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19645156,
+    "nwmName": "Brogue Branch",
+    "basinKm2": 2.6
+   }
+  ],
+  "headComid": 19645156,
+  "headBasinKm2": 2.59,
+  "upstreamMainstemKm": 1.67,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645156",
+   "name": "Brogue Branch",
+   "series": [
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19645182,
+  "mouthBasinKm2": 5.87
+ },
+ "244": {
+  "name": "Owen Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010405",
+  "huc12Name": "Lower Mud Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645192,
+    "nwmName": "",
+    "basinKm2": 6.6
+   },
+   {
+    "comid": 19645192,
+    "nwmName": "",
+    "basinKm2": 6.6
+   },
+   {
+    "comid": 19645192,
+    "nwmName": "",
+    "basinKm2": 6.6
+   },
+   {
+    "comid": 19645192,
+    "nwmName": "",
+    "basinKm2": 6.6
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "Owen Branch",
+  "mouthComid": 19646512,
+  "mouthBasinKm2": 16.94
+ },
+ "257": {
+  "name": "Mormon Hole Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010705",
+  "huc12Name": "Minky Creek-Town Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648876,
+    "nwmName": "Mormon Hole Branch",
+    "basinKm2": 7.0
+   }
+  ],
+  "headComid": 19648876,
+  "headBasinKm2": 7.03,
+  "upstreamMainstemKm": 3.78,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648876",
+   "name": "Mormon Hole Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Town Creek",
+  "mouthComid": 19650184,
+  "mouthBasinKm2": 7.33
+ },
+ "264": {
+  "name": "Bengis Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010307",
+  "huc12Name": "Lower Big Coon Creek",
+  "probeAttempts": [
+   {
+    "comid": 19644928,
+    "nwmName": "Bengis Creek",
+    "basinKm2": 38.1
+   }
+  ],
+  "headComid": 19644928,
+  "headBasinKm2": 38.14,
+  "upstreamMainstemKm": 9.03,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19644928",
+   "name": "Bengis Creek",
+   "series": [
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range"
+   ]
+  },
+  "mouthNwmName": "Bengis Creek",
+  "mouthComid": 25311907,
+  "mouthBasinKm2": 39.17
+ },
+ "266": {
+  "name": "Rocky Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010903",
+  "huc12Name": "Big Spring Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649324,
+    "nwmName": "Rocky Branch",
+    "basinKm2": 3.9
+   }
+  ],
+  "headComid": 19649324,
+  "headBasinKm2": 3.86,
+  "upstreamMainstemKm": 3.54,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19649324",
+   "name": "Rocky Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Rocky Branch",
+  "mouthComid": 19650432,
+  "mouthBasinKm2": 4.1
+ },
+ "274": {
+  "name": "Seibold Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010901",
+  "huc12Name": "Chandler Branch-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19648894,
+    "nwmName": "Seibold Branch",
+    "basinKm2": 4.0
+   }
+  ],
+  "headComid": 19648894,
+  "headBasinKm2": 4.02,
+  "upstreamMainstemKm": 3.03,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648894",
+   "name": "Seibold Branch",
+   "series": [
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range"
+   ]
+  },
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19650210,
+  "mouthBasinKm2": 30.48
+ },
+ "276": {
+  "name": "Baker Spring Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010901",
+  "huc12Name": "Chandler Branch-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19650136,
+    "nwmName": "",
+    "basinKm2": 61189.9
+   },
+   {
+    "comid": 19650136,
+    "nwmName": "",
+    "basinKm2": 61189.9
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "",
+  "mouthComid": 19650136,
+  "mouthBasinKm2": 61189.95
+ },
+ "280": {
+  "name": "Hurricane Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010705",
+  "huc12Name": "Minky Creek-Town Creek",
+  "probeAttempts": [
+   {
+    "comid": 19649058,
+    "nwmName": "",
+    "basinKm2": 4.1
+   },
+   {
+    "comid": 19649080,
+    "nwmName": "Hurricane Branch",
+    "basinKm2": 2.9
+   }
+  ],
+  "headComid": 19649080,
+  "headBasinKm2": 2.9,
+  "upstreamMainstemKm": 1.9,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19649080",
+   "name": "Hurricane Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Hurricane Branch",
+  "mouthComid": 19650306,
+  "mouthBasinKm2": 7.03
+ },
+ "297": {
+  "name": "Duvall Branch",
+  "mouthCounty": "Marshall County",
+  "mouthState": "AL",
+  "huc12": "060300010705",
+  "huc12Name": "Minky Creek-Town Creek",
+  "probeAttempts": [
+   {
+    "comid": 19648866,
+    "nwmName": "Duvall Branch",
+    "basinKm2": 3.5
+   }
+  ],
+  "headComid": 19648866,
+  "headBasinKm2": 3.5,
+  "upstreamMainstemKm": 3.26,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19648866",
+   "name": "Duvall Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Duvall Branch",
+  "mouthComid": 19648866,
+  "mouthBasinKm2": 3.5
+ },
+ "304": {
+  "name": "Horn Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010204",
+  "huc12Name": "Widows Creek",
+  "probeAttempts": [
+   {
+    "comid": 19644698,
+    "nwmName": "Widows Creek",
+    "basinKm2": 5.9
+   },
+   {
+    "comid": 19644698,
+    "nwmName": "Widows Creek",
+    "basinKm2": 5.9
+   },
+   {
+    "comid": 19644698,
+    "nwmName": "Widows Creek",
+    "basinKm2": 5.9
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "Widows Creek",
+  "mouthComid": 19644698,
+  "mouthBasinKm2": 5.88
+ },
+ "306": {
+  "name": "Mink Creek",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010606",
+  "huc12Name": "Mink Creek-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19647294,
+    "nwmName": "Mink Creek",
+    "basinKm2": 10.3
+   }
+  ],
+  "headComid": 19647294,
+  "headBasinKm2": 10.32,
+  "upstreamMainstemKm": 3.12,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19647294",
+   "name": "Mink Creek",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "Mink Creek",
+  "mouthComid": 19647520,
+  "mouthBasinKm2": 21.54
+ },
+ "311": {
+  "name": "Sterne Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010408",
+  "huc12Name": "Town Creek-Guntersville Lake",
+  "probeAttempts": [
+   {
+    "comid": 19645162,
+    "nwmName": "Sterne Branch",
+    "basinKm2": 4.6
+   }
+  ],
+  "headComid": 19645162,
+  "headBasinKm2": 4.59,
+  "upstreamMainstemKm": 1.61,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19645162",
+   "name": "Sterne Branch",
+   "series": [
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range",
+    "analysis_assimilation"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19645150,
+  "mouthBasinKm2": 4.92
+ },
+ "312": {
+  "name": "Blue Spring Brook",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010405",
+  "huc12Name": "Lower Mud Creek",
+  "probeAttempts": [
+   {
+    "comid": 19645240,
+    "nwmName": "",
+    "basinKm2": 1.7
+   },
+   {
+    "comid": 19645240,
+    "nwmName": "",
+    "basinKm2": 1.7
+   },
+   {
+    "comid": 19645240,
+    "nwmName": "",
+    "basinKm2": 1.7
+   }
+  ],
+  "headComid": null,
+  "mouthNwmName": "Blue Spring Brook",
+  "mouthComid": 19646510,
+  "mouthBasinKm2": 4.8
+ },
+ "325": {
+  "name": "Aspel Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010605",
+  "huc12Name": "Lower North Sauty Creek",
+  "probeAttempts": [
+   {
+    "comid": 19647274,
+    "nwmName": "Aspel Branch",
+    "basinKm2": 6.3
+   }
+  ],
+  "headComid": 19647274,
+  "headBasinKm2": 6.25,
+  "upstreamMainstemKm": 4.28,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19647274",
+   "name": "Aspel Branch",
+   "series": [
+    "medium_range",
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend"
+   ]
+  },
+  "mouthNwmName": "North Sauty Creek",
+  "mouthComid": 167182198,
+  "mouthBasinKm2": 123.72
+ },
+ "337": {
+  "name": "Gross Branch",
+  "mouthCounty": "Jackson County",
+  "mouthState": "AL",
+  "huc12": "060300010203",
+  "huc12Name": "Guest Creek-Long Island Creek",
+  "probeAttempts": [
+   {
+    "comid": 19644876,
+    "nwmName": "Gross Branch",
+    "basinKm2": 4.9
+   }
+  ],
+  "headComid": 19644876,
+  "headBasinKm2": 4.86,
+  "upstreamMainstemKm": 4.95,
+  "upstreamSites": [],
+  "nwpsReach": {
+   "reachId": "19644876",
+   "name": "Gross Branch",
+   "series": [
+    "analysis_assimilation",
+    "short_range",
+    "long_range",
+    "medium_range_blend",
+    "medium_range"
+   ]
+  },
+  "mouthNwmName": "",
+  "mouthComid": 19654804,
+  "mouthBasinKm2": 4.96
+ },
+ "354": {
+  "name": "Sequatchie River",
+  "mouthCounty": "Marion County",
+  "mouthState": "TN",
+  "huc12": "060300010201",
+  "huc12Name": "Jones Creek-Tennessee River",
+  "probeAttempts": [],
+  "mouthNwmName": "Tennessee River",
+  "mouthComid": 19663651,
+  "mouthBasinKm2": 1558.5
+ }
+}

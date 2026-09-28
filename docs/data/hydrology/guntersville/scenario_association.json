@@ -1,0 +1,2272 @@
+{
+ "storms": [
+  {
+   "storm": "S1 Town Creek watershed",
+   "armsReceivingRain": [
+    [
+     "short-creek",
+     0.83
+    ],
+    [
+     "town-creek-marshall",
+     0.36
+    ],
+    [
+     "black-oak-creek",
+     0.26
+    ]
+   ],
+   "gaugesThatWouldAnswer": [
+    [
+     "town-creek-marshall",
+     "03572900",
+     0.36
+    ]
+   ],
+   "spots": [
+    {
+     "spot": "Town Creek back",
+     "oldEngineGauge": "03572690",
+     "arm": "town-creek-jackson",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "'Town Cr' tag, far cluster",
+     "oldEngineGauge": "03572900",
+     "arm": "town-creek-marshall",
+     "ownBasinIn": 0.36,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572900",
+     "byT": {
+      "T+0h": {
+       "6h": 0.36,
+       "12h": 0.36,
+       "24h": 0.36,
+       "48h": 0.36,
+       "72h": 0.36
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.36,
+       "24h": 0.36,
+       "48h": 0.36,
+       "72h": 0.36
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.36,
+       "48h": 0.36,
+       "72h": 0.36
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.36,
+       "72h": 0.36
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.36
+      }
+     }
+    },
+    {
+     "spot": "Town Creek mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Browns Creek back",
+     "oldEngineGauge": "03572900",
+     "arm": "browns-creek",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Browns Creek mouth",
+     "oldEngineGauge": "03574500",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "South Sauty back",
+     "oldEngineGauge": "03572900",
+     "arm": "south-sauty-creek",
+     "ownBasinIn": 0.0,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572690",
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "South Sauty mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Slough (Jagger Branc)",
+     "oldEngineGauge": "03574500",
+     "arm": "jagger-branch",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Main channel",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    }
+   ]
+  },
+  {
+   "storm": "S2 South Sauty watershed",
+   "armsReceivingRain": [
+    [
+     "black-oak-creek",
+     0.78
+    ],
+    [
+     "south-sauty-creek",
+     0.77
+    ],
+    [
+     "town-creek-marshall",
+     0.59
+    ]
+   ],
+   "gaugesThatWouldAnswer": [
+    [
+     "south-sauty-creek",
+     "03572690",
+     0.77
+    ],
+    [
+     "town-creek-marshall",
+     "03572900",
+     0.59
+    ]
+   ],
+   "spots": [
+    {
+     "spot": "Town Creek back",
+     "oldEngineGauge": "03572690",
+     "arm": "town-creek-jackson",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "'Town Cr' tag, far cluster",
+     "oldEngineGauge": "03572900",
+     "arm": "town-creek-marshall",
+     "ownBasinIn": 0.59,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572900",
+     "byT": {
+      "T+0h": {
+       "6h": 0.59,
+       "12h": 0.59,
+       "24h": 0.59,
+       "48h": 0.59,
+       "72h": 0.59
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.59,
+       "24h": 0.59,
+       "48h": 0.59,
+       "72h": 0.59
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.59,
+       "48h": 0.59,
+       "72h": 0.59
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.59,
+       "72h": 0.59
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.59
+      }
+     }
+    },
+    {
+     "spot": "Town Creek mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Browns Creek back",
+     "oldEngineGauge": "03572900",
+     "arm": "browns-creek",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Browns Creek mouth",
+     "oldEngineGauge": "03574500",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "South Sauty back",
+     "oldEngineGauge": "03572900",
+     "arm": "south-sauty-creek",
+     "ownBasinIn": 0.77,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572690",
+     "byT": {
+      "T+0h": {
+       "6h": 0.77,
+       "12h": 0.77,
+       "24h": 0.77,
+       "48h": 0.77,
+       "72h": 0.77
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.77,
+       "24h": 0.77,
+       "48h": 0.77,
+       "72h": 0.77
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.77,
+       "48h": 0.77,
+       "72h": 0.77
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.77,
+       "72h": 0.77
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.77
+      }
+     }
+    },
+    {
+     "spot": "South Sauty mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Slough (Jagger Branc)",
+     "oldEngineGauge": "03574500",
+     "arm": "jagger-branch",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Main channel",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    }
+   ]
+  },
+  {
+   "storm": "S3 Browns Creek watershed (ungauged)",
+   "armsReceivingRain": [
+    [
+     "mink-creek-marshall",
+     2.0
+    ],
+    [
+     "beech-creek",
+     1.93
+    ],
+    [
+     "browns-creek",
+     1.56
+    ],
+    [
+     "rocky-branch-marshall",
+     1.56
+    ],
+    [
+     "big-spring-creek",
+     1.29
+    ]
+   ],
+   "gaugesThatWouldAnswer": [],
+   "spots": [
+    {
+     "spot": "Town Creek back",
+     "oldEngineGauge": "03572690",
+     "arm": "town-creek-jackson",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "'Town Cr' tag, far cluster",
+     "oldEngineGauge": "03572900",
+     "arm": "town-creek-marshall",
+     "ownBasinIn": 0.0,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572900",
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Town Creek mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Browns Creek back",
+     "oldEngineGauge": "03572900",
+     "arm": "browns-creek",
+     "ownBasinIn": 1.56,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 1.56,
+       "12h": 1.56,
+       "24h": 1.56,
+       "48h": 1.56,
+       "72h": 1.56
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 1.56,
+       "24h": 1.56,
+       "48h": 1.56,
+       "72h": 1.56
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 1.56,
+       "48h": 1.56,
+       "72h": 1.56
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 1.56,
+       "72h": 1.56
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 1.56
+      }
+     }
+    },
+    {
+     "spot": "Browns Creek mouth",
+     "oldEngineGauge": "03574500",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "South Sauty back",
+     "oldEngineGauge": "03572900",
+     "arm": "south-sauty-creek",
+     "ownBasinIn": 0.0,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572690",
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "South Sauty mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Slough (Jagger Branc)",
+     "oldEngineGauge": "03574500",
+     "arm": "jagger-branch",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Main channel",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    }
+   ]
+  },
+  {
+   "storm": "S4 Lake-wide 1.5 in",
+   "armsReceivingRain": [
+    [
+     "roseberry-creek",
+     1.5
+    ],
+    [
+     "jones-creek-jackson-rorex-creek-jones-creek",
+     1.5
+    ],
+    [
+     "black-oak-creek",
+     1.5
+    ],
+    [
+     "bengis-creek",
+     1.5
+    ],
+    [
+     "jones-creek-jackson-jones-creek-tennessee-river",
+     1.5
+    ],
+    [
+     "big-spring-creek",
+     1.5
+    ],
+    [
+     "mink-creek-jackson",
+     1.5
+    ],
+    [
+     "deal-creek",
+     1.5
+    ],
+    [
+     "dry-creek-jackson-into-south-sauty-creek",
+     1.5
+    ],
+    [
+     "jagger-branch",
+     1.5
+    ],
+    [
+     "mormon-hole-branch",
+     1.5
+    ],
+    [
+     "polecat-branch",
+     1.5
+    ],
+    [
+     "mink-creek-marshall",
+     1.5
+    ],
+    [
+     "blue-spring-creek",
+     1.5
+    ],
+    [
+     "big-culvert-creek",
+     1.5
+    ],
+    [
+     "crooked-branch",
+     1.5
+    ],
+    [
+     "kizzort-branch",
+     1.5
+    ],
+    [
+     "archie-creek",
+     1.5
+    ],
+    [
+     "pump-spring-branch",
+     1.5
+    ],
+    [
+     "berry-branch",
+     1.5
+    ],
+    [
+     "widows-creek",
+     1.5
+    ],
+    [
+     "brogue-branch",
+     1.5
+    ],
+    [
+     "gross-branch",
+     1.5
+    ],
+    [
+     "parton-branch",
+     1.5
+    ],
+    [
+     "aspel-branch",
+     1.5
+    ],
+    [
+     "blue-spring-brook",
+     1.5
+    ],
+    [
+     "duvall-branch",
+     1.5
+    ],
+    [
+     "hurricane-branch",
+     1.5
+    ],
+    [
+     "long-hollow-branch",
+     1.5
+    ],
+    [
+     "rocky-branch-marshall",
+     1.5
+    ],
+    [
+     "seibold-branch",
+     1.5
+    ],
+    [
+     "sterne-branch",
+     1.5
+    ],
+    [
+     "yellow-creek",
+     1.5
+    ],
+    [
+     "cooks-branch",
+     1.5
+    ],
+    [
+     "glover-creek",
+     1.5
+    ],
+    [
+     "marshall-branch",
+     1.5
+    ],
+    [
+     "mccorkle-branch",
+     1.5
+    ],
+    [
+     "minky-creek",
+     1.5
+    ],
+    [
+     "honeycomb-creek",
+     1.5
+    ],
+    [
+     "chandler-branch",
+     1.5
+    ],
+    [
+     "dripping-spring-branch",
+     1.5
+    ],
+    [
+     "nichols-branch",
+     1.5
+    ],
+    [
+     "poplar-spring-branch",
+     1.5
+    ],
+    [
+     "rocky-branch-jackson",
+     1.5
+    ],
+    [
+     "slaton-branch",
+     1.5
+    ],
+    [
+     "boshart-creek",
+     1.5
+    ],
+    [
+     "graham-branch",
+     1.5
+    ],
+    [
+     "glover-branch",
+     1.5
+    ],
+    [
+     "town-creek-jackson",
+     1.5
+    ],
+    [
+     "owen-branch",
+     1.5
+    ],
+    [
+     "dry-creek-jackson-into-coon-creek",
+     1.5
+    ],
+    [
+     "beech-creek",
+     1.5
+    ],
+    [
+     "dry-creek-marshall",
+     1.5
+    ],
+    [
+     "browns-creek",
+     1.5
+    ],
+    [
+     "dry-creek-jackson-into-roseberry-creek",
+     1.5
+    ],
+    [
+     "north-sauty-creek",
+     1.5
+    ],
+    [
+     "long-island-creek",
+     1.5
+    ],
+    [
+     "mud-creek",
+     1.5
+    ],
+    [
+     "short-creek",
+     1.5
+    ],
+    [
+     "coon-creek",
+     1.5
+    ],
+    [
+     "south-sauty-creek",
+     1.5
+    ],
+    [
+     "town-creek-marshall",
+     1.5
+    ],
+    [
+     "crow-creek",
+     1.5
+    ],
+    [
+     "battle-creek",
+     1.42
+    ]
+   ],
+   "gaugesThatWouldAnswer": [
+    [
+     "south-sauty-creek",
+     "03572690",
+     1.5
+    ],
+    [
+     "town-creek-marshall",
+     "03572900",
+     1.5
+    ]
+   ],
+   "spots": [
+    {
+     "spot": "Town Creek back",
+     "oldEngineGauge": "03572690",
+     "arm": "town-creek-jackson",
+     "ownBasinIn": 1.5,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 1.5,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 1.5
+      }
+     }
+    },
+    {
+     "spot": "'Town Cr' tag, far cluster",
+     "oldEngineGauge": "03572900",
+     "arm": "town-creek-marshall",
+     "ownBasinIn": 1.5,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572900",
+     "byT": {
+      "T+0h": {
+       "6h": 1.5,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 1.5
+      }
+     }
+    },
+    {
+     "spot": "Town Creek mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Browns Creek back",
+     "oldEngineGauge": "03572900",
+     "arm": "browns-creek",
+     "ownBasinIn": 1.5,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 1.5,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 1.5
+      }
+     }
+    },
+    {
+     "spot": "Browns Creek mouth",
+     "oldEngineGauge": "03574500",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "South Sauty back",
+     "oldEngineGauge": "03572900",
+     "arm": "south-sauty-creek",
+     "ownBasinIn": 1.5,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572690",
+     "byT": {
+      "T+0h": {
+       "6h": 1.5,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 1.5
+      }
+     }
+    },
+    {
+     "spot": "South Sauty mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Slough (Jagger Branc)",
+     "oldEngineGauge": "03574500",
+     "arm": "jagger-branch",
+     "ownBasinIn": 1.5,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 1.5,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 1.5,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 1.5,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 1.5,
+       "72h": 1.5
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 1.5
+      }
+     }
+    },
+    {
+     "spot": "Main channel",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    }
+   ]
+  },
+  {
+   "storm": "S1c 2.0 in on exactly the Town Creek (Marshall) basin",
+   "armsReceivingRain": [
+    [
+     "black-oak-creek",
+     2.0
+    ],
+    [
+     "mormon-hole-branch",
+     2.0
+    ],
+    [
+     "duvall-branch",
+     2.0
+    ],
+    [
+     "hurricane-branch",
+     2.0
+    ],
+    [
+     "minky-creek",
+     2.0
+    ],
+    [
+     "town-creek-marshall",
+     2.0
+    ],
+    [
+     "berry-branch",
+     1.14
+    ],
+    [
+     "yellow-creek",
+     0.67
+    ],
+    [
+     "dry-creek-marshall",
+     0.5
+    ],
+    [
+     "south-sauty-creek",
+     0.17
+    ],
+    [
+     "coon-creek",
+     0.05
+    ]
+   ],
+   "gaugesThatWouldAnswer": [
+    [
+     "town-creek-marshall",
+     "03572900",
+     2.0
+    ],
+    [
+     "south-sauty-creek",
+     "03572690",
+     0.17
+    ]
+   ],
+   "spots": [
+    {
+     "spot": "Town Creek back",
+     "oldEngineGauge": "03572690",
+     "arm": "town-creek-jackson",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "'Town Cr' tag, far cluster",
+     "oldEngineGauge": "03572900",
+     "arm": "town-creek-marshall",
+     "ownBasinIn": 2.0,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572900",
+     "byT": {
+      "T+0h": {
+       "6h": 2.0,
+       "12h": 2.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 2.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 2.0
+      }
+     }
+    },
+    {
+     "spot": "Town Creek mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Browns Creek back",
+     "oldEngineGauge": "03572900",
+     "arm": "browns-creek",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Browns Creek mouth",
+     "oldEngineGauge": "03574500",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "South Sauty back",
+     "oldEngineGauge": "03572900",
+     "arm": "south-sauty-creek",
+     "ownBasinIn": 0.17,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572690",
+     "byT": {
+      "T+0h": {
+       "6h": 0.17,
+       "12h": 0.17,
+       "24h": 0.17,
+       "48h": 0.17,
+       "72h": 0.17
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.17,
+       "24h": 0.17,
+       "48h": 0.17,
+       "72h": 0.17
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.17,
+       "48h": 0.17,
+       "72h": 0.17
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.17,
+       "72h": 0.17
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.17
+      }
+     }
+    },
+    {
+     "spot": "South Sauty mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Slough (Jagger Branc)",
+     "oldEngineGauge": "03574500",
+     "arm": "jagger-branch",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Main channel",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    }
+   ]
+  },
+  {
+   "storm": "S2c 2.0 in on exactly the South Sauty basin",
+   "armsReceivingRain": [
+    [
+     "south-sauty-creek",
+     2.0
+    ],
+    [
+     "dry-creek-jackson-into-south-sauty-creek",
+     0.49
+    ],
+    [
+     "berry-branch",
+     0.31
+    ],
+    [
+     "black-oak-creek",
+     0.26
+    ],
+    [
+     "jones-creek-jackson-rorex-creek-jones-creek",
+     0.16
+    ],
+    [
+     "town-creek-marshall",
+     0.09
+    ]
+   ],
+   "gaugesThatWouldAnswer": [
+    [
+     "south-sauty-creek",
+     "03572690",
+     2.0
+    ],
+    [
+     "town-creek-marshall",
+     "03572900",
+     0.09
+    ]
+   ],
+   "spots": [
+    {
+     "spot": "Town Creek back",
+     "oldEngineGauge": "03572690",
+     "arm": "town-creek-jackson",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "'Town Cr' tag, far cluster",
+     "oldEngineGauge": "03572900",
+     "arm": "town-creek-marshall",
+     "ownBasinIn": 0.09,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572900",
+     "byT": {
+      "T+0h": {
+       "6h": 0.09,
+       "12h": 0.09,
+       "24h": 0.09,
+       "48h": 0.09,
+       "72h": 0.09
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.09,
+       "24h": 0.09,
+       "48h": 0.09,
+       "72h": 0.09
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.09,
+       "48h": 0.09,
+       "72h": 0.09
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.09,
+       "72h": 0.09
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.09
+      }
+     }
+    },
+    {
+     "spot": "Town Creek mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Browns Creek back",
+     "oldEngineGauge": "03572900",
+     "arm": "browns-creek",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Browns Creek mouth",
+     "oldEngineGauge": "03574500",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "South Sauty back",
+     "oldEngineGauge": "03572900",
+     "arm": "south-sauty-creek",
+     "ownBasinIn": 2.0,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572690",
+     "byT": {
+      "T+0h": {
+       "6h": 2.0,
+       "12h": 2.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 2.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 2.0
+      }
+     }
+    },
+    {
+     "spot": "South Sauty mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Slough (Jagger Branc)",
+     "oldEngineGauge": "03574500",
+     "arm": "jagger-branch",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Main channel",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    }
+   ]
+  },
+  {
+   "storm": "S3c 2.0 in on exactly the Browns Creek basin",
+   "armsReceivingRain": [
+    [
+     "browns-creek",
+     2.0
+    ],
+    [
+     "mink-creek-marshall",
+     0.26
+    ],
+    [
+     "big-spring-creek",
+     0.15
+    ]
+   ],
+   "gaugesThatWouldAnswer": [],
+   "spots": [
+    {
+     "spot": "Town Creek back",
+     "oldEngineGauge": "03572690",
+     "arm": "town-creek-jackson",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "'Town Cr' tag, far cluster",
+     "oldEngineGauge": "03572900",
+     "arm": "town-creek-marshall",
+     "ownBasinIn": 0.0,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572900",
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Town Creek mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Browns Creek back",
+     "oldEngineGauge": "03572900",
+     "arm": "browns-creek",
+     "ownBasinIn": 2.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 2.0,
+       "12h": 2.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 2.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 2.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 2.0,
+       "72h": 2.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 2.0
+      }
+     }
+    },
+    {
+     "spot": "Browns Creek mouth",
+     "oldEngineGauge": "03574500",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "South Sauty back",
+     "oldEngineGauge": "03572900",
+     "arm": "south-sauty-creek",
+     "ownBasinIn": 0.0,
+     "flowSource": "measuredUSGS",
+     "gauge": "03572690",
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "South Sauty mouth",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    },
+    {
+     "spot": "Slough (Jagger Branc)",
+     "oldEngineGauge": "03574500",
+     "arm": "jagger-branch",
+     "ownBasinIn": 0.0,
+     "flowSource": "modeledNWM",
+     "gauge": null,
+     "byT": {
+      "T+0h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+6h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+12h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+24h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      },
+      "T+48h": {
+       "6h": 0.0,
+       "12h": 0.0,
+       "24h": 0.0,
+       "48h": 0.0,
+       "72h": 0.0
+      }
+     }
+    },
+    {
+     "spot": "Main channel",
+     "oldEngineGauge": "03572690",
+     "arm": "mainstem",
+     "ownBasinIn": null,
+     "note": "main-stem water: forcing is the dams' release and the arms upstream of this region (no timing)"
+    }
+   ]
+  }
+ ],
+ "spotMembership": {
+  "Town Creek back": "town-creek-jackson",
+  "'Town Cr' tag, far cluster": "town-creek-marshall",
+  "Town Creek mouth": "mainstem",
+  "Browns Creek back": "browns-creek",
+  "Browns Creek mouth": "mainstem",
+  "South Sauty back": "south-sauty-creek",
+  "South Sauty mouth": "mainstem",
+  "Slough (Jagger Branc)": "jagger-branch",
+  "Main channel": "mainstem"
+ }
+}

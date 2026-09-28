@@ -278,12 +278,14 @@ final class ConditionsForecastService: ObservableObject {
             // equals the gauge. Future nights are built from the hourly forecast and
             // correctly ignore a warning that's only in effect right now.
             alertWindFloorMph: snap.alertWindFloorMph,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn)
+            rainWatershed72hIn: snap.mrms?.watershed72hIn,
+            clarityDischarge: snap.clarityDischarge)
 
         // Same Remote Config tuning the gauge uses, so the 7-night stays in lockstep.
         let config = await RemoteConfigStore.shared.current()
         return compute(r: r, base: base, coordinate: coordinate, now: now,
-                       generation: snap.generation, waterTempModel: snap.waterTempModel, config: config)
+                       generation: snap.generation, waterTempModel: snap.waterTempModel,
+                       mrms: snap.mrms, config: config)
     }
 
     private static func fetchForecastResponse(_ coordinate: CLLocationCoordinate2D) async throws -> ForecastResponse {
@@ -312,6 +314,7 @@ final class ConditionsForecastService: ObservableObject {
                         coordinate: CLLocationCoordinate2D, now: Date = Date(),
                         generation: DamGeneration? = nil,
                         waterTempModel: WaterTempModel? = nil,
+                        mrms: MrmsPrecip? = nil,
                         config: ConditionsConfig = .default) -> ConditionsForecast {
         let cal = Calendar.current
 
@@ -331,7 +334,7 @@ final class ConditionsForecastService: ObservableObject {
         let tonight = buildTonight(base: base, hourly: hourly, coordinate: coordinate,
                                    now: now, cal: cal, generation: generation, config: config)
         let nights = buildNights(r: r, base: base, hourly: hourly, coordinate: coordinate,
-                                 now: now, cal: cal, waterTempModel: waterTempModel, config: config)
+                                 now: now, cal: cal, waterTempModel: waterTempModel, mrms: mrms, config: config)
         return ConditionsForecast(tonight: tonight, nights: nights)
     }
 
@@ -495,6 +498,7 @@ final class ConditionsForecastService: ObservableObject {
                                     coordinate: CLLocationCoordinate2D,
                                     now: Date, cal: Calendar,
                                     waterTempModel: WaterTempModel? = nil,
+                                    mrms: MrmsPrecip? = nil,
                                     config: ConditionsConfig) -> [NightScore] {
         var nights: [NightScore] = []
         let lat = coordinate.latitude, lon = coordinate.longitude
@@ -609,6 +613,23 @@ final class ConditionsForecastService: ObservableObject {
             ni.weatherCode = code
             ni.precipitationInchNow = precip
             ni.rainLast48hIn = recentRain
+            // The watershed rain a FUTURE night's clarity runs on is that
+            // night's own 72 h window: the observed MRMS watershed rain for the
+            // days already past that are still inside it, today's (observed so
+            // far, or the forecast day if larger), then the forecast days.
+            // It used to keep TONIGHT's MRMS total, which ClarityFactor reads
+            // before the forecast window, so 2" forecast for night +2 read as
+            // a dry night whenever MRMS had answered. Tonight keeps its value.
+            if i > startIdx, base.rainWatershed72hIn != nil, let m = mrms {
+                ni.rainWatershed72hIn = (Swift.max(0, i - 2)...i).reduce(0.0) { sum, j in
+                    let forecastDay = (r.daily.precipitation_sum[safe: j] ?? nil) ?? 0
+                    if j < startIdx {
+                        return sum + (m.watershedByDay[r.daily.time[j]] ?? forecastDay)
+                    }
+                    if j == startIdx { return sum + Swift.max(m.todayIn, forecastDay) }
+                    return sum + forecastDay
+                }
+            }
             ni.sunset = sun.sunset; ni.sunrise = sun.sunrise
             ni.civilDusk = sun.civilDusk; ni.astronomicalDusk = sun.astronomicalDusk
             ni.moonIllumPct = illum * 100

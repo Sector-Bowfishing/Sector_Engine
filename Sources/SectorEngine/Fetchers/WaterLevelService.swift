@@ -88,6 +88,7 @@ final class WaterLevelService {
                         parameterCd: String? = nil,
                         siteType: String? = nil,
                         sites: String? = nil,
+                        sitesPeriod: String = "P2D",
                         absThreshold: Double = 0.1,
                         pctThreshold: Double = 0) async throws -> [WaterLevelReading] {
         let west = coordinate.longitude - radiusDegrees
@@ -108,7 +109,7 @@ final class WaterLevelService {
             components?.queryItems?.removeAll { $0.name == "bBox" }
             components?.queryItems?.append(URLQueryItem(name: "sites", value: sites))
             components?.queryItems?.removeAll { $0.name == "period" }
-            components?.queryItems?.append(URLQueryItem(name: "period", value: "P2D"))
+            components?.queryItems?.append(URLQueryItem(name: "period", value: sitesPeriod))
         }
 
         guard let url = components?.url else { throw WaterLevelError.invalidURL }

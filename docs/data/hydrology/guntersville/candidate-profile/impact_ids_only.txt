@@ -1,0 +1,72 @@
+HUNT|Jan|scoreChanged=0/6504
+HUNT|Feb|scoreChanged=0/6504
+HUNT|Mar|scoreChanged=0/6504
+HUNT|Apr|scoreChanged=0/6504
+HUNT|May|scoreChanged=0/6504
+HUNT|Jun|scoreChanged=0/6504
+HUNT|Jul|scoreChanged=0/6504
+HUNT|Aug|scoreChanged=0/6504
+HUNT|Sep|scoreChanged=0/6504
+HUNT|Oct|scoreChanged=0/6504
+HUNT|Nov|scoreChanged=0/6504
+HUNT|Dec|scoreChanged=0/6504
+RANK|smallmouth_buffalo|Jan|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Feb|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Mar|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Apr|state=spawn|ranked=4017->4017|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;South Sauty Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);South Sauty Creek;Big Spring Creek
+RANK|smallmouth_buffalo|May|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Jun|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Jul|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Aug|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Sep|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Oct|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Nov|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|smallmouth_buffalo|Dec|state=indeterminate|ranked=6504->6504|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel|zonesNew=Main channel;Jones Creek (Jackson Co.)
+RANK|common_carp|Jan|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Feb|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Mar|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Apr|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|May|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Jun|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Jul|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Aug|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Sep|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Oct|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Nov|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|common_carp|Dec|state=indeterminate|ranked=6414->6414|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Town Creek;Mud Creek;Big Spring Creek|zonesNew=Town Creek (Marshall Co.);Mud Creek;Big Spring Creek
+RANK|grass_carp|Jan|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Feb|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Mar|state=lateWinterTransition|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Apr|state=earlySummer|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|May|state=summerFeeding|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Jun|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Jul|state=summerFeeding|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Aug|state=summerFeeding|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Sep|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Oct|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Nov|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|grass_carp|Dec|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Seibold Branch;Crow Creek|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Jan|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Feb|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Mar|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Apr|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|May|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Jun|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Jul|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Aug|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Sep|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Oct|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Nov|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|spotted_gar|Dec|state=indeterminate|ranked=4282->4282|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=North Sauty Creek;Crow Creek;Nichols Branch|zonesNew=Main channel;Crow Creek;Nichols Branch
+RANK|longnose_gar|Jan|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Feb|state=preSpawn|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Mar|state=preSpawn|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Apr|state=spawn|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|May|state=postSpawn|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Jun|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Jul|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Aug|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Sep|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Oct|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Nov|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel
+RANK|longnose_gar|Dec|state=indeterminate|ranked=6475->6475|bandChanged=0/6504|percentileMoved>0.10=0|top10pctOverlap=1.00|zonesOld=Main channel;Honeycomb Creek;Roseberry Creek|zonesNew=Main channel

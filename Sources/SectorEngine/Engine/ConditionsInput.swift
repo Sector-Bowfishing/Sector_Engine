@@ -49,6 +49,11 @@ public struct ConditionsInput: Equatable {
     public var stageTrend12hFt: Double?      // signed feet over 12 h
     public var dischargeCfs: Double?
     public var dischargeTrend12hCfs: Double? // signed cfs over 12 h
+    /// Clarity's OWN inflow gauge: the USGS discharge site on this arm's creek
+    /// (HydrologyGraph), or nil. Never the nearest gauge of another creek —
+    /// that is `dischargeCfs`, which the current factor still reads.
+    public var clarityDischargeCfs: Double? = nil
+    public var clarityDischargeTrend12hCfs: Double? = nil
     public var turbidityFNU: Double?
     public var turbidityType: TurbidityType
     public var rainLast48hIn: Double         // Open-Meteo point 48 h — fallback only
@@ -144,7 +149,9 @@ public struct ConditionsInput: Equatable {
                 windowStart: Date? = nil,
                 windowEnd: Date? = nil,
                 hasTurbidityGage: Bool = false,
-                forecastDayIndex: Int = 0) {
+                forecastDayIndex: Int = 0,
+                clarityDischargeCfs: Double? = nil,
+                clarityDischargeTrend12hCfs: Double? = nil) {
         self.date = date
         self.latitude = latitude
         self.longitude = longitude
@@ -192,5 +199,7 @@ public struct ConditionsInput: Equatable {
         self.windowEnd = windowEnd
         self.hasTurbidityGage = hasTurbidityGage
         self.forecastDayIndex = forecastDayIndex
+        self.clarityDischargeCfs = clarityDischargeCfs
+        self.clarityDischargeTrend12hCfs = clarityDischargeTrend12hCfs
     }
 }
