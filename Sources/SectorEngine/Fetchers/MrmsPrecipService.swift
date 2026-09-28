@@ -27,7 +27,22 @@ struct MrmsPrecip {
     let watershed72hIn: Double
     let point72hIn: Double
     let daily: [DailyRain]              // point, last ~14 days (oldest → newest)
+    /// Today's rain so far at the point (the current-day layer of the 72 h).
+    var todayIn: Double = 0
+    /// The watershed rule applied to each completed day on its own, keyed by
+    /// IEMRE's date ("yyyy-MM-dd"). A forecast night's 72 h window keeps the
+    /// observed days still inside it; the 72 h total above is not rebuilt
+    /// from these (a max of sums is not a sum of maxes) and stays as it was.
+    var watershedByDay: [String: Double] = [:]
     struct DailyRain { let date: Date; let inches: Double }
+
+    static func dayKey(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "America/Chicago") ?? .current
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: date)
+    }
 }
 
 final class MrmsPrecipService {
@@ -59,7 +74,8 @@ final class MrmsPrecipService {
         // A true 72h ending now: today (so far) + the two completed days behind it.
         let completedPoint = ptDaily.suffix(2).reduce(0) { $0 + $1.inches }
         let point72 = todayIn + completedPoint
-        let ring = [await n, await s, await e, await w].compactMap { $0 }
+        let ringDays = [await n, await s, await e, await w].compactMap { $0 }
+        let ring = ringDays.map { $0.reduce(0) { $0 + $1.inches } }
         let ringMax = ring.max() ?? 0
         let ringMean = ring.isEmpty ? 0 : ring.reduce(0, +) / Double(ring.count)
         // Surrounding rain that reaches the lake counts even if the ramp was dry.
@@ -71,13 +87,22 @@ final class MrmsPrecipService {
         if series.last?.date != startOfToday {
             series.append(MrmsPrecip.DailyRain(date: startOfToday, inches: todayIn))
         }
-        return MrmsPrecip(watershed72hIn: watershed, point72hIn: point72, daily: series)
+        // The same rule, day by day, for the completed days of the window.
+        var byDay: [String: Double] = [:]
+        for d in ptDaily.suffix(2) {
+            let k = MrmsPrecip.dayKey(d.date)
+            let r = ringDays.map { days in days.first { MrmsPrecip.dayKey($0.date) == k }?.inches ?? 0 }
+            let rMean = r.isEmpty ? 0 : r.reduce(0, +) / Double(r.count)
+            byDay[k] = Swift.max(d.inches, 0.7 * (r.max() ?? 0), rMean)
+        }
+        return MrmsPrecip(watershed72hIn: watershed, point72hIn: point72, daily: series,
+                          todayIn: todayIn, watershedByDay: byDay)
     }
 
     /// The two completed days behind today (the completed part of a 72h window).
-    private func completed48(lat: Double, lon: Double, now: Date) async -> Double? {
+    private func completed48(lat: Double, lon: Double, now: Date) async -> [MrmsPrecip.DailyRain]? {
         guard let d = await daily(lat: lat, lon: lon, days: 4, now: now) else { return nil }
-        return d.suffix(2).reduce(0) { $0 + $1.inches }
+        return Array(d.suffix(2))
     }
 
     /// Today's rainfall so far (inches) from Open-Meteo — the current-day layer

@@ -21,8 +21,9 @@ public enum ClarityFactor {
                                     config: ConditionsConfig = .default) -> Double {
         let cfg = config.clarity
         if let fnu = input.turbidityFNU {
-            let f = Swift.max(fnu, 0.1)                      // avoid pow(0, negative)
-            var secchi = cfg.secchiCoefA * pow(f, cfg.secchiExpB)
+            // The canonical conversion (VisibilityModel secchi-power-v1): the
+            // same numbers this line always produced, now with a stated range.
+            var secchi = VisibilityModel.centralFt(fnu: fnu, config: config)
             if input.turbidityType == .algal { secchi *= cfg.algalSecchiMultiplier }
             return Swift.max(0, secchi)
         }
@@ -45,7 +46,10 @@ public enum ClarityFactor {
         // Rising upstream inflow is runoff on its way in — it muddies the arms
         // before the rain total catches up. A strong 12 h discharge rise shaves a
         // little sightline, bounded so it never dominates the rain signal.
-        if let trend = input.dischargeTrend12hCfs, trend > 0, let cfs = input.dischargeCfs, cfs > 0 {
+        // Only THIS arm's own gauge counts (Clarity Fusion Stage 1): it used to be
+        // the nearest USGS discharge gauge of any creek, so Browns Creek ran on
+        // Town Creek's gauge 38 km away in another arm. No gauge of its own: no shave.
+        if let trend = input.clarityDischargeTrend12hCfs, trend > 0, let cfs = input.clarityDischargeCfs, cfs > 0 {
             let riseFrac = Swift.min(trend / cfs, 1.0)           // 0…1 of current flow
             vis *= (1.0 - 0.25 * riseFrac)
         }

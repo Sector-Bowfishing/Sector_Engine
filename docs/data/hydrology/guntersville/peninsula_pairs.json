@@ -1,0 +1,62 @@
+[
+ {
+  "a": "north-sauty-creek",
+  "b": "roseberry-creek",
+  "aLat": 34.59505,
+  "aLon": -86.06196,
+  "bLat": 34.59825,
+  "bLon": -86.06035,
+  "straightM": 385,
+  "throughWaterM": 14980
+ },
+ {
+  "a": "nichols-branch",
+  "b": "brogue-branch",
+  "aLat": 34.79607,
+  "aLon": -85.83462,
+  "bLat": 34.79979,
+  "bLon": -85.84109,
+  "straightM": 715,
+  "throughWaterM": 9730
+ },
+ {
+  "a": "roseberry-creek",
+  "b": "north-sauty-creek",
+  "aLat": 34.59745,
+  "aLon": -86.05938,
+  "bLat": 34.59532,
+  "bLon": -86.06423,
+  "straightM": 502,
+  "throughWaterM": 14871
+ },
+ {
+  "a": "marshall-branch",
+  "b": "nichols-branch",
+  "aLat": 34.80908,
+  "aLon": -85.82395,
+  "bLat": 34.8043,
+  "bLon": -85.82007,
+  "straightM": 666,
+  "throughWaterM": 12990
+ },
+ {
+  "a": "north-sauty-creek",
+  "b": "roseberry-creek",
+  "aLat": 34.59692,
+  "aLon": -86.06584,
+  "bLat": 34.59958,
+  "bLon": -86.05873,
+  "straightM": 735,
+  "throughWaterM": 14775
+ },
+ {
+  "a": "north-sauty-creek",
+  "b": "roseberry-creek",
+  "aLat": 34.59505,
+  "aLon": -86.06455,
+  "bLat": 34.59852,
+  "bLon": -86.05905,
+  "straightM": 646,
+  "throughWaterM": 14699
+ }
+]

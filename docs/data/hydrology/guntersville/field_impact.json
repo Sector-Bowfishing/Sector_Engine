@@ -1,0 +1,20 @@
+{
+ "segments": 6504,
+ "tributaryIdChanges": 2430,
+ "lakeRegionChanges": 1764,
+ "basinClassChanges": 2392,
+ "basinTransitions": {
+  "minorTributary->mainstem": 863,
+  "largeTributaryArm->mainstem": 482,
+  "largeTributaryArm->minorTributary": 322,
+  "minorTributary->largeTributaryArm": 510,
+  "unknown->mainstem": 5,
+  "mainstem->largeTributaryArm": 46,
+  "unknown->largeTributaryArm": 85,
+  "mainstem->minorTributary": 78,
+  "minorTributary->unknown": 1
+ },
+ "distanceToTributaryChangesOver250m": 3942,
+ "distanceToChannelChangesOver250m": 3703,
+ "distanceToChannelChangesOver1km": 2218
+}

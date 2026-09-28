@@ -1,0 +1,1175 @@
+{
+ "lakeId": "Guntersville|AL",
+ "sceneDate": "2026-09-20",
+ "sceneTime": "2026-09-20T16:34:09.006000Z",
+ "platform": "sentinel-2b",
+ "source": "https://storage.googleapis.com/sector-lake-surface/lakes/Guntersville_AL/clarity/2026-09-20 (Water Clarity product)",
+ "rule": "observed = measured code 255; filled = codes 1, 2; grass (3) excluded from water",
+ "arms": {
+  "archie-creek": {
+   "waterCells": 545,
+   "observedCells": 0,
+   "filledCells": 545,
+   "filledCloudCells": 504,
+   "filledUnreadableCells": 41,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 10700.0,
+   "grassCells": 298,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 545,
+    "p25": 4.115,
+    "p50": 4.115,
+    "p75": 4.115
+   }
+  },
+  "aspel-branch": {
+   "waterCells": 643,
+   "observedCells": 0,
+   "filledCells": 643,
+   "filledCloudCells": 608,
+   "filledUnreadableCells": 35,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 11900.0,
+   "grassCells": 186,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 643,
+    "p25": 4.115,
+    "p50": 4.115,
+    "p75": 4.115
+   }
+  },
+  "baker-spring-branch": {
+   "waterCells": 1532,
+   "observedCells": 0,
+   "filledCells": 1532,
+   "filledCloudCells": 1510,
+   "filledUnreadableCells": 22,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 1900.0,
+   "grassCells": 168,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 1532,
+    "p25": 5.732,
+    "p50": 5.732,
+    "p75": 5.732
+   }
+  },
+  "beech-creek": {
+   "waterCells": 1021,
+   "observedCells": 800,
+   "filledCells": 221,
+   "filledCloudCells": 11,
+   "filledUnreadableCells": 210,
+   "filledWithin500mCells": 212,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 389,
+   "observedFNU": {
+    "n": 800,
+    "p25": 5.214,
+    "p50": 5.598,
+    "p75": 6.01
+   },
+   "allFNU": {
+    "n": 1021,
+    "p25": 5.339,
+    "p50": 5.732,
+    "p75": 6.01
+   }
+  },
+  "bengis-creek": {
+   "waterCells": 45,
+   "observedCells": 0,
+   "filledCells": 45,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 45,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 3200.0,
+   "grassCells": 241,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 45,
+    "p25": 4.115,
+    "p50": 4.115,
+    "p75": 4.115
+   }
+  },
+  "berry-branch": {
+   "waterCells": 44,
+   "observedCells": 2,
+   "filledCells": 42,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 42,
+   "filledWithin500mCells": 42,
+   "medianFillDistanceM": 200.0,
+   "grassCells": 9,
+   "observedFNU": {
+    "n": 2,
+    "p25": 3.027,
+    "p50": 3.1,
+    "p75": 3.174
+   },
+   "allFNU": {
+    "n": 44,
+    "p25": 3.247,
+    "p50": 3.247,
+    "p75": 3.247
+   }
+  },
+  "big-culvert-creek": {
+   "waterCells": 31,
+   "observedCells": 0,
+   "filledCells": 31,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 31,
+   "filledWithin500mCells": 31,
+   "medianFillDistanceM": 400.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 31,
+    "p25": 3.486,
+    "p50": 3.486,
+    "p75": 3.486
+   }
+  },
+  "big-spring-creek": {
+   "waterCells": 8317,
+   "observedCells": 5174,
+   "filledCells": 3143,
+   "filledCloudCells": 81,
+   "filledUnreadableCells": 3062,
+   "filledWithin500mCells": 3004,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 576,
+   "observedFNU": {
+    "n": 5174,
+    "p25": 2.751,
+    "p50": 3.097,
+    "p75": 3.57
+   },
+   "allFNU": {
+    "n": 8317,
+    "p25": 2.884,
+    "p50": 3.247,
+    "p75": 3.832
+   }
+  },
+  "black-oak-creek": {
+   "waterCells": 1,
+   "observedCells": 0,
+   "filledCells": 1,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 1,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 3400.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 1,
+    "p25": 3.655,
+    "p50": 3.655,
+    "p75": 3.655
+   }
+  },
+  "blue-spring-brook": {
+   "waterCells": 85,
+   "observedCells": 0,
+   "filledCells": 85,
+   "filledCloudCells": 1,
+   "filledUnreadableCells": 84,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 3700.0,
+   "grassCells": 719,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 85,
+    "p25": 4.018,
+    "p50": 4.018,
+    "p75": 4.018
+   }
+  },
+  "boshart-creek": {
+   "waterCells": 2039,
+   "observedCells": 0,
+   "filledCells": 2039,
+   "filledCloudCells": 2014,
+   "filledUnreadableCells": 25,
+   "filledWithin500mCells": 11,
+   "medianFillDistanceM": 2200.0,
+   "grassCells": 876,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 2039,
+    "p25": 5.598,
+    "p50": 5.598,
+    "p75": 5.732
+   }
+  },
+  "brogue-branch": {
+   "waterCells": 167,
+   "observedCells": 0,
+   "filledCells": 167,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 167,
+   "filledWithin500mCells": 28,
+   "medianFillDistanceM": 1200.0,
+   "grassCells": 347,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 167,
+    "p25": 3.171,
+    "p50": 3.171,
+    "p75": 3.486
+   }
+  },
+  "browns-creek": {
+   "waterCells": 20212,
+   "observedCells": 17325,
+   "filledCells": 2887,
+   "filledCloudCells": 247,
+   "filledUnreadableCells": 2640,
+   "filledWithin500mCells": 2856,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 2337,
+   "observedFNU": {
+    "n": 17325,
+    "p25": 4.523,
+    "p50": 4.743,
+    "p75": 5.092
+   },
+   "allFNU": {
+    "n": 20212,
+    "p25": 4.523,
+    "p50": 4.743,
+    "p75": 5.092
+   }
+  },
+  "chandler-branch": {
+   "waterCells": 2229,
+   "observedCells": 52,
+   "filledCells": 2177,
+   "filledCloudCells": 1662,
+   "filledUnreadableCells": 515,
+   "filledWithin500mCells": 1375,
+   "medianFillDistanceM": 400.0,
+   "grassCells": 510,
+   "observedFNU": {
+    "n": 52,
+    "p25": 5.732,
+    "p50": 6.01,
+    "p75": 6.154
+   },
+   "allFNU": {
+    "n": 2229,
+    "p25": 6.154,
+    "p50": 6.154,
+    "p75": 6.154
+   }
+  },
+  "coon-creek": {
+   "waterCells": 591,
+   "observedCells": 295,
+   "filledCells": 296,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 296,
+   "filledWithin500mCells": 193,
+   "medianFillDistanceM": 300.0,
+   "grassCells": 2667,
+   "observedFNU": {
+    "n": 295,
+    "p25": 2.223,
+    "p50": 2.444,
+    "p75": 2.817
+   },
+   "allFNU": {
+    "n": 591,
+    "p25": 2.331,
+    "p50": 2.502,
+    "p75": 2.884
+   }
+  },
+  "crooked-branch": {
+   "waterCells": 8,
+   "observedCells": 0,
+   "filledCells": 8,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 8,
+   "filledWithin500mCells": 3,
+   "medianFillDistanceM": 600.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 8,
+    "p25": 2.817,
+    "p50": 2.817,
+    "p75": 2.817
+   }
+  },
+  "crow-creek": {
+   "waterCells": 695,
+   "observedCells": 78,
+   "filledCells": 617,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 617,
+   "filledWithin500mCells": 123,
+   "medianFillDistanceM": 3900.0,
+   "grassCells": 3779,
+   "observedFNU": {
+    "n": 78,
+    "p25": 2.751,
+    "p50": 3.024,
+    "p75": 3.404
+   },
+   "allFNU": {
+    "n": 695,
+    "p25": 3.924,
+    "p50": 4.115,
+    "p75": 4.115
+   }
+  },
+  "deal-creek": {
+   "waterCells": 205,
+   "observedCells": 116,
+   "filledCells": 89,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 89,
+   "filledWithin500mCells": 82,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 606,
+   "observedFNU": {
+    "n": 116,
+    "p25": 2.331,
+    "p50": 2.444,
+    "p75": 2.624
+   },
+   "allFNU": {
+    "n": 205,
+    "p25": 2.331,
+    "p50": 2.444,
+    "p75": 2.562
+   }
+  },
+  "dripping-spring-branch": {
+   "waterCells": 425,
+   "observedCells": 179,
+   "filledCells": 246,
+   "filledCloudCells": 18,
+   "filledUnreadableCells": 228,
+   "filledWithin500mCells": 199,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 194,
+   "observedFNU": {
+    "n": 179,
+    "p25": 4.314,
+    "p50": 4.632,
+    "p75": 5.153
+   },
+   "allFNU": {
+    "n": 425,
+    "p25": 4.523,
+    "p50": 4.632,
+    "p75": 4.856
+   }
+  },
+  "dry-creek-jackson-into-coon-creek": {
+   "waterCells": 5,
+   "observedCells": 0,
+   "filledCells": 5,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 5,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 1200.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 5,
+    "p25": 2.884,
+    "p50": 2.884,
+    "p75": 2.884
+   }
+  },
+  "dry-creek-jackson-into-roseberry-creek": {
+   "waterCells": 1624,
+   "observedCells": 786,
+   "filledCells": 838,
+   "filledCloudCells": 567,
+   "filledUnreadableCells": 271,
+   "filledWithin500mCells": 642,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 2186,
+   "observedFNU": {
+    "n": 786,
+    "p25": 4.743,
+    "p50": 4.856,
+    "p75": 4.973
+   },
+   "allFNU": {
+    "n": 1624,
+    "p25": 4.743,
+    "p50": 4.856,
+    "p75": 5.092
+   }
+  },
+  "dry-creek-jackson-into-south-sauty-creek": {
+   "waterCells": 62,
+   "observedCells": 49,
+   "filledCells": 13,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 13,
+   "filledWithin500mCells": 13,
+   "medianFillDistanceM": 200.0,
+   "grassCells": 67,
+   "observedFNU": {
+    "n": 49,
+    "p25": 4.115,
+    "p50": 4.314,
+    "p75": 4.417
+   },
+   "allFNU": {
+    "n": 62,
+    "p25": 4.018,
+    "p50": 4.213,
+    "p75": 4.417
+   }
+  },
+  "dry-creek-marshall": {
+   "waterCells": 9,
+   "observedCells": 7,
+   "filledCells": 2,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 2,
+   "filledWithin500mCells": 2,
+   "medianFillDistanceM": 0.0,
+   "grassCells": 15,
+   "observedFNU": {
+    "n": 7,
+    "p25": 3.971,
+    "p50": 4.018,
+    "p75": 4.314
+   },
+   "allFNU": {
+    "n": 9,
+    "p25": 3.924,
+    "p50": 4.018,
+    "p75": 4.314
+   }
+  },
+  "duvall-branch": {
+   "waterCells": 1,
+   "observedCells": 0,
+   "filledCells": 1,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 1,
+   "filledWithin500mCells": 1,
+   "medianFillDistanceM": 200.0,
+   "grassCells": 7,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 1,
+    "p25": 3.57,
+    "p50": 3.57,
+    "p75": 3.57
+   }
+  },
+  "glover-creek": {
+   "waterCells": 23,
+   "observedCells": 0,
+   "filledCells": 23,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 23,
+   "filledWithin500mCells": 15,
+   "medianFillDistanceM": 500.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 23,
+    "p25": 3.024,
+    "p50": 3.024,
+    "p75": 3.024
+   }
+  },
+  "gross-branch": {
+   "waterCells": 47,
+   "observedCells": 0,
+   "filledCells": 47,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 47,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 4100.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 47,
+    "p25": 3.924,
+    "p50": 3.924,
+    "p75": 3.924
+   }
+  },
+  "hayes-branch": {
+   "waterCells": 42,
+   "observedCells": 0,
+   "filledCells": 42,
+   "filledCloudCells": 7,
+   "filledUnreadableCells": 35,
+   "filledWithin500mCells": 37,
+   "medianFillDistanceM": 300.0,
+   "grassCells": 41,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 42,
+    "p25": 4.632,
+    "p50": 4.632,
+    "p75": 4.632
+   }
+  },
+  "honeycomb-creek": {
+   "waterCells": 4929,
+   "observedCells": 2628,
+   "filledCells": 2301,
+   "filledCloudCells": 1307,
+   "filledUnreadableCells": 994,
+   "filledWithin500mCells": 1809,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 1294,
+   "observedFNU": {
+    "n": 2628,
+    "p25": 3.743,
+    "p50": 4.018,
+    "p75": 4.314
+   },
+   "allFNU": {
+    "n": 4929,
+    "p25": 3.743,
+    "p50": 3.924,
+    "p75": 4.314
+   }
+  },
+  "horn-branch": {
+   "waterCells": 0,
+   "observedCells": 0,
+   "filledCells": 0,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 0,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": null,
+   "grassCells": 17,
+   "observedFNU": null,
+   "allFNU": null
+  },
+  "hurricane-branch": {
+   "waterCells": 159,
+   "observedCells": 24,
+   "filledCells": 135,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 135,
+   "filledWithin500mCells": 100,
+   "medianFillDistanceM": 200.0,
+   "grassCells": 0,
+   "observedFNU": {
+    "n": 24,
+    "p25": 2.936,
+    "p50": 3.024,
+    "p75": 3.247
+   },
+   "allFNU": {
+    "n": 159,
+    "p25": 2.953,
+    "p50": 2.953,
+    "p75": 2.953
+   }
+  },
+  "jagger-branch": {
+   "waterCells": 573,
+   "observedCells": 73,
+   "filledCells": 500,
+   "filledCloudCells": 424,
+   "filledUnreadableCells": 76,
+   "filledWithin500mCells": 427,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 405,
+   "observedFNU": {
+    "n": 73,
+    "p25": 3.486,
+    "p50": 3.743,
+    "p75": 4.018
+   },
+   "allFNU": {
+    "n": 573,
+    "p25": 3.57,
+    "p50": 3.743,
+    "p75": 3.743
+   }
+  },
+  "jones-creek-jackson-rorex-creek-jones-creek": {
+   "waterCells": 2062,
+   "observedCells": 1636,
+   "filledCells": 426,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 426,
+   "filledWithin500mCells": 385,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 1202,
+   "observedFNU": {
+    "n": 1636,
+    "p25": 2.953,
+    "p50": 3.097,
+    "p75": 3.404
+   },
+   "allFNU": {
+    "n": 2062,
+    "p25": 2.953,
+    "p50": 3.097,
+    "p75": 3.404
+   }
+  },
+  "kizzort-branch": {
+   "waterCells": 44,
+   "observedCells": 40,
+   "filledCells": 4,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 4,
+   "filledWithin500mCells": 4,
+   "medianFillDistanceM": 0.0,
+   "grassCells": 294,
+   "observedFNU": {
+    "n": 40,
+    "p25": 1.975,
+    "p50": 2.07,
+    "p75": 2.184
+   },
+   "allFNU": {
+    "n": 44,
+    "p25": 1.975,
+    "p50": 2.07,
+    "p75": 2.236
+   }
+  },
+  "long-hollow-branch": {
+   "waterCells": 11,
+   "observedCells": 0,
+   "filledCells": 11,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 11,
+   "filledWithin500mCells": 11,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 11,
+    "p25": 3.171,
+    "p50": 3.171,
+    "p75": 3.209
+   }
+  },
+  "long-island-creek": {
+   "waterCells": 267,
+   "observedCells": 0,
+   "filledCells": 267,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 267,
+   "filledWithin500mCells": 27,
+   "medianFillDistanceM": 3100.0,
+   "grassCells": 739,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 267,
+    "p25": 3.832,
+    "p50": 3.924,
+    "p75": 3.924
+   }
+  },
+  "marshall-branch": {
+   "waterCells": 437,
+   "observedCells": 199,
+   "filledCells": 238,
+   "filledCloudCells": 1,
+   "filledUnreadableCells": 237,
+   "filledWithin500mCells": 238,
+   "medianFillDistanceM": 0.0,
+   "grassCells": 0,
+   "observedFNU": {
+    "n": 199,
+    "p25": 3.655,
+    "p50": 4.115,
+    "p75": 4.632
+   },
+   "allFNU": {
+    "n": 437,
+    "p25": 3.57,
+    "p50": 4.018,
+    "p75": 4.523
+   }
+  },
+  "mccorkle-branch": {
+   "waterCells": 21,
+   "observedCells": 0,
+   "filledCells": 21,
+   "filledCloudCells": 4,
+   "filledUnreadableCells": 17,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 1400.0,
+   "grassCells": 105,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 21,
+    "p25": 5.732,
+    "p50": 5.732,
+    "p75": 5.732
+   }
+  },
+  "mink-creek-jackson": {
+   "waterCells": 2966,
+   "observedCells": 0,
+   "filledCells": 2966,
+   "filledCloudCells": 2927,
+   "filledUnreadableCells": 39,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 5100.0,
+   "grassCells": 1020,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 2966,
+    "p25": 4.856,
+    "p50": 4.856,
+    "p75": 4.856
+   }
+  },
+  "mink-creek-marshall": {
+   "waterCells": 53,
+   "observedCells": 0,
+   "filledCells": 53,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 53,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 1700.0,
+   "grassCells": 547,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 53,
+    "p25": 4.314,
+    "p50": 4.314,
+    "p75": 4.314
+   }
+  },
+  "minky-creek": {
+   "waterCells": 1234,
+   "observedCells": 1055,
+   "filledCells": 179,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 179,
+   "filledWithin500mCells": 179,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 497,
+   "observedFNU": {
+    "n": 1055,
+    "p25": 2.817,
+    "p50": 2.953,
+    "p75": 3.097
+   },
+   "allFNU": {
+    "n": 1234,
+    "p25": 2.817,
+    "p50": 2.884,
+    "p75": 3.097
+   }
+  },
+  "mormon-hole-branch": {
+   "waterCells": 36,
+   "observedCells": 0,
+   "filledCells": 36,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 36,
+   "filledWithin500mCells": 2,
+   "medianFillDistanceM": 800.0,
+   "grassCells": 0,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 36,
+    "p25": 3.486,
+    "p50": 3.486,
+    "p75": 3.486
+   }
+  },
+  "mud-creek": {
+   "waterCells": 1965,
+   "observedCells": 568,
+   "filledCells": 1397,
+   "filledCloudCells": 5,
+   "filledUnreadableCells": 1392,
+   "filledWithin500mCells": 364,
+   "medianFillDistanceM": 5400.0,
+   "grassCells": 7851,
+   "observedFNU": {
+    "n": 568,
+    "p25": 2.751,
+    "p50": 2.884,
+    "p75": 2.953
+   },
+   "allFNU": {
+    "n": 1965,
+    "p25": 2.884,
+    "p50": 3.247,
+    "p75": 4.115
+   }
+  },
+  "nichols-branch": {
+   "waterCells": 213,
+   "observedCells": 0,
+   "filledCells": 213,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 213,
+   "filledWithin500mCells": 6,
+   "medianFillDistanceM": 2100.0,
+   "grassCells": 1067,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 213,
+    "p25": 3.325,
+    "p50": 3.655,
+    "p75": 3.924
+   }
+  },
+  "north-sauty-creek": {
+   "waterCells": 10631,
+   "observedCells": 0,
+   "filledCells": 10631,
+   "filledCloudCells": 10185,
+   "filledUnreadableCells": 446,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 5000.0,
+   "grassCells": 4850,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 10631,
+    "p25": 4.417,
+    "p50": 4.523,
+    "p75": 4.632
+   }
+  },
+  "owen-branch": {
+   "waterCells": 113,
+   "observedCells": 0,
+   "filledCells": 113,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 113,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 4600.0,
+   "grassCells": 687,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 113,
+    "p25": 4.018,
+    "p50": 4.018,
+    "p75": 4.018
+   }
+  },
+  "parton-branch": {
+   "waterCells": 42,
+   "observedCells": 40,
+   "filledCells": 2,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 2,
+   "filledWithin500mCells": 2,
+   "medianFillDistanceM": 0.0,
+   "grassCells": 141,
+   "observedFNU": {
+    "n": 40,
+    "p25": 2.12,
+    "p50": 2.171,
+    "p75": 2.276
+   },
+   "allFNU": {
+    "n": 42,
+    "p25": 2.133,
+    "p50": 2.171,
+    "p75": 2.276
+   }
+  },
+  "polecat-branch": {
+   "waterCells": 1389,
+   "observedCells": 521,
+   "filledCells": 868,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 868,
+   "filledWithin500mCells": 736,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 27,
+   "observedFNU": {
+    "n": 521,
+    "p25": 2.331,
+    "p50": 2.502,
+    "p75": 2.953
+   },
+   "allFNU": {
+    "n": 1389,
+    "p25": 2.624,
+    "p50": 3.404,
+    "p75": 3.832
+   }
+  },
+  "rocky-branch-jackson": {
+   "waterCells": 0,
+   "observedCells": 0,
+   "filledCells": 0,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 0,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": null,
+   "grassCells": 26,
+   "observedFNU": null,
+   "allFNU": null
+  },
+  "rocky-branch-marshall": {
+   "waterCells": 89,
+   "observedCells": 36,
+   "filledCells": 53,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 53,
+   "filledWithin500mCells": 53,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 66,
+   "observedFNU": {
+    "n": 36,
+    "p25": 4.213,
+    "p50": 4.314,
+    "p75": 4.417
+   },
+   "allFNU": {
+    "n": 89,
+    "p25": 4.314,
+    "p50": 4.314,
+    "p75": 4.632
+   }
+  },
+  "roseberry-creek": {
+   "waterCells": 6246,
+   "observedCells": 1719,
+   "filledCells": 4527,
+   "filledCloudCells": 4145,
+   "filledUnreadableCells": 382,
+   "filledWithin500mCells": 3530,
+   "medianFillDistanceM": 300.0,
+   "grassCells": 2102,
+   "observedFNU": {
+    "n": 1719,
+    "p25": 4.973,
+    "p50": 5.214,
+    "p75": 5.467
+   },
+   "allFNU": {
+    "n": 6246,
+    "p25": 4.743,
+    "p50": 5.092,
+    "p75": 5.339
+   }
+  },
+  "seibold-branch": {
+   "waterCells": 2501,
+   "observedCells": 1371,
+   "filledCells": 1130,
+   "filledCloudCells": 273,
+   "filledUnreadableCells": 857,
+   "filledWithin500mCells": 1063,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 1316,
+   "observedFNU": {
+    "n": 1371,
+    "p25": 4.417,
+    "p50": 5.339,
+    "p75": 5.869
+   },
+   "allFNU": {
+    "n": 2501,
+    "p25": 4.973,
+    "p50": 5.598,
+    "p75": 5.869
+   }
+  },
+  "short-creek": {
+   "waterCells": 2477,
+   "observedCells": 1670,
+   "filledCells": 807,
+   "filledCloudCells": 10,
+   "filledUnreadableCells": 797,
+   "filledWithin500mCells": 785,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 72,
+   "observedFNU": {
+    "n": 1670,
+    "p25": 3.247,
+    "p50": 3.57,
+    "p75": 4.213
+   },
+   "allFNU": {
+    "n": 2477,
+    "p25": 3.325,
+    "p50": 3.743,
+    "p75": 4.314
+   }
+  },
+  "slaton-branch": {
+   "waterCells": 129,
+   "observedCells": 0,
+   "filledCells": 129,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 129,
+   "filledWithin500mCells": 0,
+   "medianFillDistanceM": 3400.0,
+   "grassCells": 1659,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 129,
+    "p25": 4.115,
+    "p50": 4.115,
+    "p75": 4.115
+   }
+  },
+  "south-sauty-creek": {
+   "waterCells": 12765,
+   "observedCells": 777,
+   "filledCells": 11988,
+   "filledCloudCells": 11287,
+   "filledUnreadableCells": 701,
+   "filledWithin500mCells": 3144,
+   "medianFillDistanceM": 1000.0,
+   "grassCells": 1205,
+   "observedFNU": {
+    "n": 777,
+    "p25": 4.115,
+    "p50": 4.856,
+    "p75": 5.214
+   },
+   "allFNU": {
+    "n": 12765,
+    "p25": 4.417,
+    "p50": 5.339,
+    "p75": 5.598
+   }
+  },
+  "sterne-branch": {
+   "waterCells": 132,
+   "observedCells": 11,
+   "filledCells": 121,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 121,
+   "filledWithin500mCells": 64,
+   "medianFillDistanceM": 500.0,
+   "grassCells": 0,
+   "observedFNU": {
+    "n": 11,
+    "p25": 3.365,
+    "p50": 3.404,
+    "p75": 3.528
+   },
+   "allFNU": {
+    "n": 132,
+    "p25": 3.634,
+    "p50": 3.655,
+    "p75": 3.655
+   }
+  },
+  "town-creek-jackson": {
+   "waterCells": 1686,
+   "observedCells": 745,
+   "filledCells": 941,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 941,
+   "filledWithin500mCells": 725,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 3292,
+   "observedFNU": {
+    "n": 745,
+    "p25": 2.817,
+    "p50": 3.024,
+    "p75": 3.171
+   },
+   "allFNU": {
+    "n": 1686,
+    "p25": 2.884,
+    "p50": 3.097,
+    "p75": 3.325
+   }
+  },
+  "town-creek-marshall": {
+   "waterCells": 7397,
+   "observedCells": 5339,
+   "filledCells": 2058,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 2058,
+   "filledWithin500mCells": 1443,
+   "medianFillDistanceM": 100.0,
+   "grassCells": 369,
+   "observedFNU": {
+    "n": 5339,
+    "p25": 3.171,
+    "p50": 3.404,
+    "p75": 3.655
+   },
+   "allFNU": {
+    "n": 7397,
+    "p25": 3.171,
+    "p50": 3.404,
+    "p75": 3.655
+   }
+  },
+  "widows-creek": {
+   "waterCells": 279,
+   "observedCells": 0,
+   "filledCells": 279,
+   "filledCloudCells": 0,
+   "filledUnreadableCells": 279,
+   "filledWithin500mCells": 16,
+   "medianFillDistanceM": 2900.0,
+   "grassCells": 160,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 279,
+    "p25": 2.953,
+    "p50": 3.247,
+    "p75": 3.325
+   }
+  },
+  "yellow-creek": {
+   "waterCells": 747,
+   "observedCells": 0,
+   "filledCells": 747,
+   "filledCloudCells": 735,
+   "filledUnreadableCells": 12,
+   "filledWithin500mCells": 259,
+   "medianFillDistanceM": 700.0,
+   "grassCells": 384,
+   "observedFNU": null,
+   "allFNU": {
+    "n": 747,
+    "p25": 4.973,
+    "p50": 4.973,
+    "p75": 4.973
+   }
+  }
+ },
+ "mainStem": {
+  "waterCells": 194836,
+  "observedCells": 66877,
+  "filledCells": 127959,
+  "filledCloudCells": 39951,
+  "filledUnreadableCells": 88008,
+  "filledWithin500mCells": 72587,
+  "medianFillDistanceM": 300.0,
+  "grassCells": 69452,
+  "observedFNU": {
+   "n": 66877,
+   "p25": 3.486,
+   "p50": 4.213,
+   "p75": 4.973
+  },
+  "allFNU": {
+   "n": 194836,
+   "p25": 3.404,
+   "p50": 4.213,
+   "p75": 5.092
+  }
+ }
+}

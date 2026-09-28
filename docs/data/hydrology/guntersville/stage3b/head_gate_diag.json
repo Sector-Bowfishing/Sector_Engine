@@ -1,0 +1,922 @@
+{
+ "2025-11-04:sentinel-2b": {
+  "big-spring-creek": {
+   "cells": 1674,
+   "survivingShare": {
+    "sclWater": 0.688,
+    "bank": 0.593,
+    "structure": 0.464,
+    "cloudHaze": 0.26,
+    "reflectance": 0.254
+   },
+   "readProduction": 470,
+   "readRelaxed": 544,
+   "newOnlyRelaxed": 74,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.074
+  },
+  "browns-creek": {
+   "cells": 4436,
+   "survivingShare": {
+    "sclWater": 0.776,
+    "bank": 0.742,
+    "structure": 0.704,
+    "cloudHaze": 0.646,
+    "reflectance": 0.628
+   },
+   "readProduction": 2850,
+   "readRelaxed": 2926,
+   "newOnlyRelaxed": 76,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.018
+  },
+  "coon-creek": {
+   "cells": 649,
+   "survivingShare": {
+    "sclWater": 0.656,
+    "bank": 0.554,
+    "structure": 0.534,
+    "cloudHaze": 0.204,
+    "reflectance": 0.04
+   },
+   "readProduction": 37,
+   "readRelaxed": 77,
+   "newOnlyRelaxed": 40,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.298
+  },
+  "crow-creek": {
+   "cells": 886,
+   "survivingShare": {
+    "sclWater": 0.08,
+    "bank": 0.028,
+    "structure": 0.012,
+    "cloudHaze": 0.002,
+    "reflectance": 0.001
+   },
+   "readProduction": 2,
+   "readRelaxed": 45,
+   "newOnlyRelaxed": 43,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "dry-creek-jackson-into-roseberry-creek": {
+   "cells": 754,
+   "survivingShare": {
+    "sclWater": 0.162,
+    "bank": 0.072,
+    "structure": 0.059,
+    "cloudHaze": 0.009,
+    "reflectance": 0.007
+   },
+   "readProduction": 6,
+   "readRelaxed": 8,
+   "newOnlyRelaxed": 2,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "honeycomb-creek": {
+   "cells": 1236,
+   "survivingShare": {
+    "sclWater": 0.674,
+    "bank": 0.612,
+    "structure": 0.455,
+    "cloudHaze": 0.234,
+    "reflectance": 0.216
+   },
+   "readProduction": 297,
+   "readRelaxed": 343,
+   "newOnlyRelaxed": 46,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.014
+  },
+  "mud-creek": {
+   "cells": 1856,
+   "survivingShare": {
+    "sclWater": 0.195,
+    "bank": 0.122,
+    "structure": 0.116,
+    "cloudHaze": 0.044,
+    "reflectance": 0.0
+   },
+   "readProduction": 0,
+   "readRelaxed": 21,
+   "newOnlyRelaxed": 21,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "north-sauty-creek": {
+   "cells": 2416,
+   "survivingShare": {
+    "sclWater": 0.78,
+    "bank": 0.732,
+    "structure": 0.668,
+    "cloudHaze": 0.41,
+    "reflectance": 0.34
+   },
+   "readProduction": 932,
+   "readRelaxed": 1074,
+   "newOnlyRelaxed": 142,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.014
+  },
+  "roseberry-creek": {
+   "cells": 1576,
+   "survivingShare": {
+    "sclWater": 0.669,
+    "bank": 0.607,
+    "structure": 0.527,
+    "cloudHaze": 0.35,
+    "reflectance": 0.324
+   },
+   "readProduction": 548,
+   "readRelaxed": 629,
+   "newOnlyRelaxed": 81,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.035
+  },
+  "short-creek": {
+   "cells": 510,
+   "survivingShare": {
+    "sclWater": 0.794,
+    "bank": 0.684,
+    "structure": 0.551,
+    "cloudHaze": 0.166,
+    "reflectance": 0.163
+   },
+   "readProduction": 98,
+   "readRelaxed": 153,
+   "newOnlyRelaxed": 55,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.131
+  },
+  "south-sauty-creek": {
+   "cells": 2667,
+   "survivingShare": {
+    "sclWater": 0.908,
+    "bank": 0.853,
+    "structure": 0.844,
+    "cloudHaze": 0.693,
+    "reflectance": 0.687
+   },
+   "readProduction": 1895,
+   "readRelaxed": 1991,
+   "newOnlyRelaxed": 96,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.011
+  },
+  "town-creek-jackson": {
+   "cells": 966,
+   "survivingShare": {
+    "sclWater": 0.535,
+    "bank": 0.442,
+    "structure": 0.383,
+    "cloudHaze": 0.175,
+    "reflectance": 0.04
+   },
+   "readProduction": 48,
+   "readRelaxed": 94,
+   "newOnlyRelaxed": 46,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.7
+  },
+  "town-creek-marshall": {
+   "cells": 1502,
+   "survivingShare": {
+    "sclWater": 0.597,
+    "bank": 0.467,
+    "structure": 0.431,
+    "cloudHaze": 0.152,
+    "reflectance": 0.146
+   },
+   "readProduction": 270,
+   "readRelaxed": 451,
+   "newOnlyRelaxed": 181,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.111
+  }
+ },
+ "2026-01-13:sentinel-2b": {
+  "big-spring-creek": {
+   "cells": 1674,
+   "survivingShare": {
+    "sclWater": 0.827,
+    "bank": 0.77,
+    "structure": 0.448,
+    "cloudHaze": 0.239,
+    "reflectance": 0.227
+   },
+   "readProduction": 420,
+   "readRelaxed": 529,
+   "newOnlyRelaxed": 109,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.256
+  },
+  "browns-creek": {
+   "cells": 4436,
+   "survivingShare": {
+    "sclWater": 0.889,
+    "bank": 0.864,
+    "structure": 0.762,
+    "cloudHaze": 0.62,
+    "reflectance": 0.618
+   },
+   "readProduction": 2808,
+   "readRelaxed": 2891,
+   "newOnlyRelaxed": 83,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.031
+  },
+  "coon-creek": {
+   "cells": 649,
+   "survivingShare": {
+    "sclWater": 0.734,
+    "bank": 0.64,
+    "structure": 0.326,
+    "cloudHaze": 0.144,
+    "reflectance": 0.14
+   },
+   "readProduction": 99,
+   "readRelaxed": 178,
+   "newOnlyRelaxed": 79,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.162
+  },
+  "crow-creek": {
+   "cells": 886,
+   "survivingShare": {
+    "sclWater": 0.308,
+    "bank": 0.177,
+    "structure": 0.001,
+    "cloudHaze": 0.0,
+    "reflectance": 0.0
+   },
+   "readProduction": 0,
+   "readRelaxed": 6,
+   "newOnlyRelaxed": 6,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "dry-creek-jackson-into-roseberry-creek": {
+   "cells": 754,
+   "survivingShare": {
+    "sclWater": 0.578,
+    "bank": 0.499,
+    "structure": 0.253,
+    "cloudHaze": 0.115,
+    "reflectance": 0.115
+   },
+   "readProduction": 100,
+   "readRelaxed": 119,
+   "newOnlyRelaxed": 19,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.048
+  },
+  "honeycomb-creek": {
+   "cells": 1236,
+   "survivingShare": {
+    "sclWater": 0.753,
+    "bank": 0.692,
+    "structure": 0.397,
+    "cloudHaze": 0.152,
+    "reflectance": 0.152
+   },
+   "readProduction": 212,
+   "readRelaxed": 266,
+   "newOnlyRelaxed": 54,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.007
+  },
+  "mud-creek": {
+   "cells": 1856,
+   "survivingShare": {
+    "sclWater": 0.695,
+    "bank": 0.599,
+    "structure": 0.364,
+    "cloudHaze": 0.121,
+    "reflectance": 0.099
+   },
+   "readProduction": 220,
+   "readRelaxed": 341,
+   "newOnlyRelaxed": 121,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.001
+  },
+  "north-sauty-creek": {
+   "cells": 2416,
+   "survivingShare": {
+    "sclWater": 0.922,
+    "bank": 0.882,
+    "structure": 0.633,
+    "cloudHaze": 0.573,
+    "reflectance": 0.573
+   },
+   "readProduction": 1434,
+   "readRelaxed": 1743,
+   "newOnlyRelaxed": 309,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.226
+  },
+  "roseberry-creek": {
+   "cells": 1576,
+   "survivingShare": {
+    "sclWater": 0.771,
+    "bank": 0.727,
+    "structure": 0.479,
+    "cloudHaze": 0.334,
+    "reflectance": 0.333
+   },
+   "readProduction": 565,
+   "readRelaxed": 640,
+   "newOnlyRelaxed": 75,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.101
+  },
+  "short-creek": {
+   "cells": 510,
+   "survivingShare": {
+    "sclWater": 0.829,
+    "bank": 0.721,
+    "structure": 0.29,
+    "cloudHaze": 0.067,
+    "reflectance": 0.067
+   },
+   "readProduction": 41,
+   "readRelaxed": 77,
+   "newOnlyRelaxed": 36,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.032
+  },
+  "south-sauty-creek": {
+   "cells": 2667,
+   "survivingShare": {
+    "sclWater": 0.931,
+    "bank": 0.881,
+    "structure": 0.712,
+    "cloudHaze": 0.592,
+    "reflectance": 0.591
+   },
+   "readProduction": 1625,
+   "readRelaxed": 1846,
+   "newOnlyRelaxed": 221,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.3
+  },
+  "town-creek-jackson": {
+   "cells": 966,
+   "survivingShare": {
+    "sclWater": 0.646,
+    "bank": 0.572,
+    "structure": 0.35,
+    "cloudHaze": 0.129,
+    "reflectance": 0.127
+   },
+   "readProduction": 137,
+   "readRelaxed": 204,
+   "newOnlyRelaxed": 67,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.148
+  },
+  "town-creek-marshall": {
+   "cells": 1502,
+   "survivingShare": {
+    "sclWater": 0.659,
+    "bank": 0.542,
+    "structure": 0.084,
+    "cloudHaze": 0.011,
+    "reflectance": 0.011
+   },
+   "readProduction": 24,
+   "readRelaxed": 283,
+   "newOnlyRelaxed": 259,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.035
+  }
+ },
+ "2026-02-02:sentinel-2b": {
+  "big-spring-creek": {
+   "cells": 1674,
+   "survivingShare": {
+    "sclWater": 0.82,
+    "bank": 0.763,
+    "structure": 0.41,
+    "cloudHaze": 0.229,
+    "reflectance": 0.216
+   },
+   "readProduction": 398,
+   "readRelaxed": 483,
+   "newOnlyRelaxed": 85,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.013
+  },
+  "browns-creek": {
+   "cells": 4436,
+   "survivingShare": {
+    "sclWater": 0.888,
+    "bank": 0.862,
+    "structure": 0.733,
+    "cloudHaze": 0.611,
+    "reflectance": 0.6
+   },
+   "readProduction": 2727,
+   "readRelaxed": 2810,
+   "newOnlyRelaxed": 83,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.126
+  },
+  "coon-creek": {
+   "cells": 649,
+   "survivingShare": {
+    "sclWater": 0.738,
+    "bank": 0.636,
+    "structure": 0.294,
+    "cloudHaze": 0.134,
+    "reflectance": 0.132
+   },
+   "readProduction": 91,
+   "readRelaxed": 189,
+   "newOnlyRelaxed": 98,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.091
+  },
+  "crow-creek": {
+   "cells": 886,
+   "survivingShare": {
+    "sclWater": 0.291,
+    "bank": 0.153,
+    "structure": 0.001,
+    "cloudHaze": 0.0,
+    "reflectance": 0.0
+   },
+   "readProduction": 0,
+   "readRelaxed": 105,
+   "newOnlyRelaxed": 105,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "dry-creek-jackson-into-roseberry-creek": {
+   "cells": 754,
+   "survivingShare": {
+    "sclWater": 0.552,
+    "bank": 0.489,
+    "structure": 0.225,
+    "cloudHaze": 0.114,
+    "reflectance": 0.113
+   },
+   "readProduction": 98,
+   "readRelaxed": 107,
+   "newOnlyRelaxed": 9,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "honeycomb-creek": {
+   "cells": 1236,
+   "survivingShare": {
+    "sclWater": 0.74,
+    "bank": 0.686,
+    "structure": 0.365,
+    "cloudHaze": 0.149,
+    "reflectance": 0.149
+   },
+   "readProduction": 204,
+   "readRelaxed": 259,
+   "newOnlyRelaxed": 55,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.028
+  },
+  "mud-creek": {
+   "cells": 1856,
+   "survivingShare": {
+    "sclWater": 0.606,
+    "bank": 0.535,
+    "structure": 0.371,
+    "cloudHaze": 0.122,
+    "reflectance": 0.069
+   },
+   "readProduction": 164,
+   "readRelaxed": 234,
+   "newOnlyRelaxed": 70,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.12
+  },
+  "north-sauty-creek": {
+   "cells": 2416,
+   "survivingShare": {
+    "sclWater": 0.914,
+    "bank": 0.876,
+    "structure": 0.616,
+    "cloudHaze": 0.559,
+    "reflectance": 0.559
+   },
+   "readProduction": 1404,
+   "readRelaxed": 1700,
+   "newOnlyRelaxed": 296,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.019
+  },
+  "roseberry-creek": {
+   "cells": 1576,
+   "survivingShare": {
+    "sclWater": 0.765,
+    "bank": 0.725,
+    "structure": 0.461,
+    "cloudHaze": 0.334,
+    "reflectance": 0.331
+   },
+   "readProduction": 560,
+   "readRelaxed": 667,
+   "newOnlyRelaxed": 107,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.001
+  },
+  "short-creek": {
+   "cells": 510,
+   "survivingShare": {
+    "sclWater": 0.818,
+    "bank": 0.714,
+    "structure": 0.182,
+    "cloudHaze": 0.062,
+    "reflectance": 0.062
+   },
+   "readProduction": 39,
+   "readRelaxed": 75,
+   "newOnlyRelaxed": 36,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.213
+  },
+  "south-sauty-creek": {
+   "cells": 2667,
+   "survivingShare": {
+    "sclWater": 0.928,
+    "bank": 0.878,
+    "structure": 0.678,
+    "cloudHaze": 0.572,
+    "reflectance": 0.571
+   },
+   "readProduction": 1568,
+   "readRelaxed": 1806,
+   "newOnlyRelaxed": 238,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.091
+  },
+  "town-creek-jackson": {
+   "cells": 966,
+   "survivingShare": {
+    "sclWater": 0.632,
+    "bank": 0.566,
+    "structure": 0.321,
+    "cloudHaze": 0.127,
+    "reflectance": 0.124
+   },
+   "readProduction": 135,
+   "readRelaxed": 192,
+   "newOnlyRelaxed": 57,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.138
+  },
+  "town-creek-marshall": {
+   "cells": 1502,
+   "survivingShare": {
+    "sclWater": 0.652,
+    "bank": 0.533,
+    "structure": 0.091,
+    "cloudHaze": 0.015,
+    "reflectance": 0.015
+   },
+   "readProduction": 30,
+   "readRelaxed": 339,
+   "newOnlyRelaxed": 309,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.024
+  }
+ },
+ "2026-05-03:sentinel-2b": {
+  "big-spring-creek": {
+   "cells": 1674,
+   "survivingShare": {
+    "sclWater": 0.736,
+    "bank": 0.654,
+    "structure": 0.514,
+    "cloudHaze": 0.336,
+    "reflectance": 0.29
+   },
+   "readProduction": 535,
+   "readRelaxed": 644,
+   "newOnlyRelaxed": 109,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.009
+  },
+  "browns-creek": {
+   "cells": 4436,
+   "survivingShare": {
+    "sclWater": 0.79,
+    "bank": 0.751,
+    "structure": 0.718,
+    "cloudHaze": 0.677,
+    "reflectance": 0.648
+   },
+   "readProduction": 2931,
+   "readRelaxed": 3010,
+   "newOnlyRelaxed": 79,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.138
+  },
+  "coon-creek": {
+   "cells": 649,
+   "survivingShare": {
+    "sclWater": 0.42,
+    "bank": 0.28,
+    "structure": 0.28,
+    "cloudHaze": 0.254,
+    "reflectance": 0.157
+   },
+   "readProduction": 141,
+   "readRelaxed": 196,
+   "newOnlyRelaxed": 55,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.009
+  },
+  "crow-creek": {
+   "cells": 886,
+   "survivingShare": {
+    "sclWater": 0.055,
+    "bank": 0.019,
+    "structure": 0.01,
+    "cloudHaze": 0.003,
+    "reflectance": 0.002
+   },
+   "readProduction": 3,
+   "readRelaxed": 57,
+   "newOnlyRelaxed": 54,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "dry-creek-jackson-into-roseberry-creek": {
+   "cells": 754,
+   "survivingShare": {
+    "sclWater": 0.286,
+    "bank": 0.186,
+    "structure": 0.16,
+    "cloudHaze": 0.152,
+    "reflectance": 0.021
+   },
+   "readProduction": 23,
+   "readRelaxed": 36,
+   "newOnlyRelaxed": 13,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.012
+  },
+  "honeycomb-creek": {
+   "cells": 1236,
+   "survivingShare": {
+    "sclWater": 0.625,
+    "bank": 0.552,
+    "structure": 0.394,
+    "cloudHaze": 0.319,
+    "reflectance": 0.303
+   },
+   "readProduction": 409,
+   "readRelaxed": 458,
+   "newOnlyRelaxed": 49,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.136
+  },
+  "mud-creek": {
+   "cells": 1856,
+   "survivingShare": {
+    "sclWater": 0.465,
+    "bank": 0.371,
+    "structure": 0.358,
+    "cloudHaze": 0.319,
+    "reflectance": 0.125
+   },
+   "readProduction": 293,
+   "readRelaxed": 438,
+   "newOnlyRelaxed": 145,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.001
+  },
+  "north-sauty-creek": {
+   "cells": 2416,
+   "survivingShare": {
+    "sclWater": 0.814,
+    "bank": 0.754,
+    "structure": 0.694,
+    "cloudHaze": 0.637,
+    "reflectance": 0.566
+   },
+   "readProduction": 1483,
+   "readRelaxed": 1675,
+   "newOnlyRelaxed": 192,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.038
+  },
+  "roseberry-creek": {
+   "cells": 1576,
+   "survivingShare": {
+    "sclWater": 0.672,
+    "bank": 0.607,
+    "structure": 0.532,
+    "cloudHaze": 0.404,
+    "reflectance": 0.388
+   },
+   "readProduction": 645,
+   "readRelaxed": 744,
+   "newOnlyRelaxed": 99,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.047
+  },
+  "short-creek": {
+   "cells": 510,
+   "survivingShare": {
+    "sclWater": 0.738,
+    "bank": 0.625,
+    "structure": 0.625,
+    "cloudHaze": 0.463,
+    "reflectance": 0.441
+   },
+   "readProduction": 264,
+   "readRelaxed": 324,
+   "newOnlyRelaxed": 60,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.05
+  },
+  "south-sauty-creek": {
+   "cells": 2667,
+   "survivingShare": {
+    "sclWater": 0.888,
+    "bank": 0.828,
+    "structure": 0.821,
+    "cloudHaze": 0.743,
+    "reflectance": 0.733
+   },
+   "readProduction": 2055,
+   "readRelaxed": 2222,
+   "newOnlyRelaxed": 167,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.103
+  },
+  "town-creek-jackson": {
+   "cells": 966,
+   "survivingShare": {
+    "sclWater": 0.461,
+    "bank": 0.367,
+    "structure": 0.328,
+    "cloudHaze": 0.281,
+    "reflectance": 0.053
+   },
+   "readProduction": 74,
+   "readRelaxed": 122,
+   "newOnlyRelaxed": 48,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.056
+  },
+  "town-creek-marshall": {
+   "cells": 1502,
+   "survivingShare": {
+    "sclWater": 0.393,
+    "bank": 0.295,
+    "structure": 0.295,
+    "cloudHaze": 0.264,
+    "reflectance": 0.242
+   },
+   "readProduction": 442,
+   "readRelaxed": 630,
+   "newOnlyRelaxed": 188,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.038
+  }
+ },
+ "2026-04-20:sentinel-2a": {
+  "big-spring-creek": {
+   "cells": 1674,
+   "survivingShare": {
+    "sclWater": 0.693,
+    "bank": 0.606,
+    "structure": 0.475,
+    "cloudHaze": 0.292,
+    "reflectance": 0.281
+   },
+   "readProduction": 505,
+   "readRelaxed": 590,
+   "newOnlyRelaxed": 85,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.008
+  },
+  "browns-creek": {
+   "cells": 4436,
+   "survivingShare": {
+    "sclWater": 0.804,
+    "bank": 0.767,
+    "structure": 0.736,
+    "cloudHaze": 0.653,
+    "reflectance": 0.635
+   },
+   "readProduction": 2888,
+   "readRelaxed": 2957,
+   "newOnlyRelaxed": 69,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.054
+  },
+  "coon-creek": {
+   "cells": 649,
+   "survivingShare": {
+    "sclWater": 0.471,
+    "bank": 0.335,
+    "structure": 0.335,
+    "cloudHaze": 0.246,
+    "reflectance": 0.095
+   },
+   "readProduction": 83,
+   "readRelaxed": 121,
+   "newOnlyRelaxed": 38,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.027
+  },
+  "crow-creek": {
+   "cells": 886,
+   "survivingShare": {
+    "sclWater": 0.088,
+    "bank": 0.042,
+    "structure": 0.019,
+    "cloudHaze": 0.002,
+    "reflectance": 0.002
+   },
+   "readProduction": 3,
+   "readRelaxed": 81,
+   "newOnlyRelaxed": 78,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "dry-creek-jackson-into-roseberry-creek": {
+   "cells": 754,
+   "survivingShare": {
+    "sclWater": 0.277,
+    "bank": 0.211,
+    "structure": 0.197,
+    "cloudHaze": 0.096,
+    "reflectance": 0.002
+   },
+   "readProduction": 2,
+   "readRelaxed": 7,
+   "newOnlyRelaxed": 5,
+   "adjacencyBiasLog10(relaxedOnly - production)": null
+  },
+  "honeycomb-creek": {
+   "cells": 1236,
+   "survivingShare": {
+    "sclWater": 0.631,
+    "bank": 0.562,
+    "structure": 0.438,
+    "cloudHaze": 0.313,
+    "reflectance": 0.245
+   },
+   "readProduction": 348,
+   "readRelaxed": 417,
+   "newOnlyRelaxed": 69,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.011
+  },
+  "mud-creek": {
+   "cells": 1856,
+   "survivingShare": {
+    "sclWater": 0.376,
+    "bank": 0.293,
+    "structure": 0.283,
+    "cloudHaze": 0.166,
+    "reflectance": 0.044
+   },
+   "readProduction": 104,
+   "readRelaxed": 125,
+   "newOnlyRelaxed": 21,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.06
+  },
+  "north-sauty-creek": {
+   "cells": 2416,
+   "survivingShare": {
+    "sclWater": 0.871,
+    "bank": 0.819,
+    "structure": 0.75,
+    "cloudHaze": 0.461,
+    "reflectance": 0.45
+   },
+   "readProduction": 1212,
+   "readRelaxed": 1451,
+   "newOnlyRelaxed": 239,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.019
+  },
+  "roseberry-creek": {
+   "cells": 1576,
+   "survivingShare": {
+    "sclWater": 0.702,
+    "bank": 0.638,
+    "structure": 0.557,
+    "cloudHaze": 0.384,
+    "reflectance": 0.361
+   },
+   "readProduction": 604,
+   "readRelaxed": 684,
+   "newOnlyRelaxed": 80,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.083
+  },
+  "short-creek": {
+   "cells": 510,
+   "survivingShare": {
+    "sclWater": 0.699,
+    "bank": 0.594,
+    "structure": 0.582,
+    "cloudHaze": 0.428,
+    "reflectance": 0.314
+   },
+   "readProduction": 204,
+   "readRelaxed": 246,
+   "newOnlyRelaxed": 42,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.027
+  },
+  "south-sauty-creek": {
+   "cells": 2667,
+   "survivingShare": {
+    "sclWater": 0.876,
+    "bank": 0.82,
+    "structure": 0.81,
+    "cloudHaze": 0.748,
+    "reflectance": 0.707
+   },
+   "readProduction": 1980,
+   "readRelaxed": 2124,
+   "newOnlyRelaxed": 144,
+   "adjacencyBiasLog10(relaxedOnly - production)": -0.052
+  },
+  "town-creek-jackson": {
+   "cells": 966,
+   "survivingShare": {
+    "sclWater": 0.517,
+    "bank": 0.431,
+    "structure": 0.405,
+    "cloudHaze": 0.244,
+    "reflectance": 0.045
+   },
+   "readProduction": 66,
+   "readRelaxed": 106,
+   "newOnlyRelaxed": 40,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.129
+  },
+  "town-creek-marshall": {
+   "cells": 1502,
+   "survivingShare": {
+    "sclWater": 0.399,
+    "bank": 0.305,
+    "structure": 0.305,
+    "cloudHaze": 0.266,
+    "reflectance": 0.147
+   },
+   "readProduction": 274,
+   "readRelaxed": 404,
+   "newOnlyRelaxed": 130,
+   "adjacencyBiasLog10(relaxedOnly - production)": 0.011
+  }
+ }
+}

@@ -1,0 +1,912 @@
+{
+ "archie-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 415,
+  "medianCellToShoreM": 107,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 136
+ },
+ "aspel-branch head": {
+  "of": 2,
+  "midChannelWidthM": 265,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 24,
+  "p3mPixelsAcrossAfterBanks": 86
+ },
+ "aspel-branch mouth": {
+  "of": 2,
+  "midChannelWidthM": 296,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 27,
+  "p3mPixelsAcrossAfterBanks": 96
+ },
+ "baker-spring-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 955,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 93,
+  "p3mPixelsAcrossAfterBanks": 316
+ },
+ "beech-creek head": {
+  "of": 2,
+  "midChannelWidthM": 477,
+  "medianCellToShoreM": 89,
+  "s2PixelsAcrossAfterBanks": 45,
+  "p3mPixelsAcrossAfterBanks": 157
+ },
+ "beech-creek mouth": {
+  "of": 2,
+  "midChannelWidthM": 1034,
+  "medianCellToShoreM": 273,
+  "s2PixelsAcrossAfterBanks": 101,
+  "p3mPixelsAcrossAfterBanks": 342
+ },
+ "bengis-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 302,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 28,
+  "p3mPixelsAcrossAfterBanks": 98
+ },
+ "berry-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 237,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 21,
+  "p3mPixelsAcrossAfterBanks": 76
+ },
+ "big-culvert-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 81,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 6,
+  "p3mPixelsAcrossAfterBanks": 25
+ },
+ "big-spring-creek head": {
+  "of": 5,
+  "midChannelWidthM": 419,
+  "medianCellToShoreM": 89,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 137
+ },
+ "big-spring-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 595,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 57,
+  "p3mPixelsAcrossAfterBanks": 196
+ },
+ "big-spring-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 670,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 64,
+  "p3mPixelsAcrossAfterBanks": 221
+ },
+ "big-spring-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 618,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 59,
+  "p3mPixelsAcrossAfterBanks": 204
+ },
+ "big-spring-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 1059,
+  "medianCellToShoreM": 315,
+  "s2PixelsAcrossAfterBanks": 103,
+  "p3mPixelsAcrossAfterBanks": 351
+ },
+ "black-oak-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 59,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 3,
+  "p3mPixelsAcrossAfterBanks": 17
+ },
+ "blue-spring-brook whole": {
+  "of": 1,
+  "midChannelWidthM": 379,
+  "medianCellToShoreM": 94,
+  "s2PixelsAcrossAfterBanks": 35,
+  "p3mPixelsAcrossAfterBanks": 124
+ },
+ "boshart-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 960,
+  "medianCellToShoreM": 118,
+  "s2PixelsAcrossAfterBanks": 93,
+  "p3mPixelsAcrossAfterBanks": 317
+ },
+ "brogue-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 132,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 11,
+  "p3mPixelsAcrossAfterBanks": 42
+ },
+ "browns-creek head": {
+  "of": 5,
+  "midChannelWidthM": 1007,
+  "medianCellToShoreM": 209,
+  "s2PixelsAcrossAfterBanks": 98,
+  "p3mPixelsAcrossAfterBanks": 333
+ },
+ "browns-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 1124,
+  "medianCellToShoreM": 279,
+  "s2PixelsAcrossAfterBanks": 110,
+  "p3mPixelsAcrossAfterBanks": 372
+ },
+ "browns-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 1940,
+  "medianCellToShoreM": 488,
+  "s2PixelsAcrossAfterBanks": 191,
+  "p3mPixelsAcrossAfterBanks": 644
+ },
+ "browns-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 1537,
+  "medianCellToShoreM": 309,
+  "s2PixelsAcrossAfterBanks": 151,
+  "p3mPixelsAcrossAfterBanks": 510
+ },
+ "browns-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 2146,
+  "medianCellToShoreM": 569,
+  "s2PixelsAcrossAfterBanks": 212,
+  "p3mPixelsAcrossAfterBanks": 713
+ },
+ "chandler-branch head": {
+  "of": 2,
+  "midChannelWidthM": 749,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 72,
+  "p3mPixelsAcrossAfterBanks": 247
+ },
+ "chandler-branch mouth": {
+  "of": 2,
+  "midChannelWidthM": 1139,
+  "medianCellToShoreM": 216,
+  "s2PixelsAcrossAfterBanks": 111,
+  "p3mPixelsAcrossAfterBanks": 377
+ },
+ "coon-creek head": {
+  "of": 5,
+  "midChannelWidthM": 296,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 27,
+  "p3mPixelsAcrossAfterBanks": 96
+ },
+ "coon-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 733,
+  "medianCellToShoreM": 237,
+  "s2PixelsAcrossAfterBanks": 71,
+  "p3mPixelsAcrossAfterBanks": 242
+ },
+ "coon-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 1081,
+  "medianCellToShoreM": 385,
+  "s2PixelsAcrossAfterBanks": 106,
+  "p3mPixelsAcrossAfterBanks": 358
+ },
+ "coon-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 546,
+  "medianCellToShoreM": 132,
+  "s2PixelsAcrossAfterBanks": 52,
+  "p3mPixelsAcrossAfterBanks": 179
+ },
+ "coon-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 296,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 27,
+  "p3mPixelsAcrossAfterBanks": 96
+ },
+ "crooked-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 59,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 3,
+  "p3mPixelsAcrossAfterBanks": 17
+ },
+ "crow-creek head": {
+  "of": 5,
+  "midChannelWidthM": 132,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 11,
+  "p3mPixelsAcrossAfterBanks": 42
+ },
+ "crow-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 559,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 53,
+  "p3mPixelsAcrossAfterBanks": 184
+ },
+ "crow-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 451,
+  "medianCellToShoreM": 94,
+  "s2PixelsAcrossAfterBanks": 43,
+  "p3mPixelsAcrossAfterBanks": 148
+ },
+ "crow-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 477,
+  "medianCellToShoreM": 126,
+  "s2PixelsAcrossAfterBanks": 45,
+  "p3mPixelsAcrossAfterBanks": 157
+ },
+ "crow-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 319,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 29,
+  "p3mPixelsAcrossAfterBanks": 104
+ },
+ "deal-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 848,
+  "medianCellToShoreM": 159,
+  "s2PixelsAcrossAfterBanks": 82,
+  "p3mPixelsAcrossAfterBanks": 280
+ },
+ "dripping-spring-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 345,
+  "medianCellToShoreM": 89,
+  "s2PixelsAcrossAfterBanks": 32,
+  "p3mPixelsAcrossAfterBanks": 113
+ },
+ "dry-creek-jackson-into-coon-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 59,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 3,
+  "p3mPixelsAcrossAfterBanks": 17
+ },
+ "dry-creek-jackson-into-roseberry-creek head": {
+  "of": 5,
+  "midChannelWidthM": 296,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 27,
+  "p3mPixelsAcrossAfterBanks": 96
+ },
+ "dry-creek-jackson-into-roseberry-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 372,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 35,
+  "p3mPixelsAcrossAfterBanks": 121
+ },
+ "dry-creek-jackson-into-roseberry-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 535,
+  "medianCellToShoreM": 107,
+  "s2PixelsAcrossAfterBanks": 51,
+  "p3mPixelsAcrossAfterBanks": 176
+ },
+ "dry-creek-jackson-into-roseberry-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 583,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 56,
+  "p3mPixelsAcrossAfterBanks": 192
+ },
+ "dry-creek-jackson-into-roseberry-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 561,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 54,
+  "p3mPixelsAcrossAfterBanks": 185
+ },
+ "dry-creek-jackson-into-south-sauty-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 271,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 25,
+  "p3mPixelsAcrossAfterBanks": 88
+ },
+ "dry-creek-marshall whole": {
+  "of": 1,
+  "midChannelWidthM": 178,
+  "medianCellToShoreM": 42,
+  "s2PixelsAcrossAfterBanks": 15,
+  "p3mPixelsAcrossAfterBanks": 57
+ },
+ "duvall-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 98,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 7,
+  "p3mPixelsAcrossAfterBanks": 30
+ },
+ "glover-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 112,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 9,
+  "p3mPixelsAcrossAfterBanks": 35
+ },
+ "gross-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 84,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 6,
+  "p3mPixelsAcrossAfterBanks": 25
+ },
+ "hayes-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 244,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 22,
+  "p3mPixelsAcrossAfterBanks": 79
+ },
+ "honeycomb-creek head": {
+  "of": 5,
+  "midChannelWidthM": 319,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 29,
+  "p3mPixelsAcrossAfterBanks": 104
+ },
+ "honeycomb-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 590,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 56,
+  "p3mPixelsAcrossAfterBanks": 194
+ },
+ "honeycomb-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 559,
+  "medianCellToShoreM": 150,
+  "s2PixelsAcrossAfterBanks": 53,
+  "p3mPixelsAcrossAfterBanks": 184
+ },
+ "honeycomb-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 546,
+  "medianCellToShoreM": 151,
+  "s2PixelsAcrossAfterBanks": 52,
+  "p3mPixelsAcrossAfterBanks": 179
+ },
+ "honeycomb-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 488,
+  "medianCellToShoreM": 118,
+  "s2PixelsAcrossAfterBanks": 46,
+  "p3mPixelsAcrossAfterBanks": 160
+ },
+ "horn-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 172,
+  "medianCellToShoreM": 42,
+  "s2PixelsAcrossAfterBanks": 15,
+  "p3mPixelsAcrossAfterBanks": 55
+ },
+ "hurricane-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 169,
+  "medianCellToShoreM": 42,
+  "s2PixelsAcrossAfterBanks": 14,
+  "p3mPixelsAcrossAfterBanks": 54
+ },
+ "jagger-branch head": {
+  "of": 2,
+  "midChannelWidthM": 237,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 21,
+  "p3mPixelsAcrossAfterBanks": 76
+ },
+ "jagger-branch mouth": {
+  "of": 2,
+  "midChannelWidthM": 360,
+  "medianCellToShoreM": 94,
+  "s2PixelsAcrossAfterBanks": 34,
+  "p3mPixelsAcrossAfterBanks": 118
+ },
+ "jones-creek-jackson-rorex-creek-jones-creek head": {
+  "of": 3,
+  "midChannelWidthM": 546,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 52,
+  "p3mPixelsAcrossAfterBanks": 179
+ },
+ "jones-creek-jackson-rorex-creek-jones-creek middle": {
+  "of": 3,
+  "midChannelWidthM": 925,
+  "medianCellToShoreM": 251,
+  "s2PixelsAcrossAfterBanks": 90,
+  "p3mPixelsAcrossAfterBanks": 306
+ },
+ "jones-creek-jackson-rorex-creek-jones-creek mouth": {
+  "of": 3,
+  "midChannelWidthM": 618,
+  "medianCellToShoreM": 132,
+  "s2PixelsAcrossAfterBanks": 59,
+  "p3mPixelsAcrossAfterBanks": 204
+ },
+ "kizzort-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 733,
+  "medianCellToShoreM": 173,
+  "s2PixelsAcrossAfterBanks": 71,
+  "p3mPixelsAcrossAfterBanks": 242
+ },
+ "long-hollow-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 118,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 9,
+  "p3mPixelsAcrossAfterBanks": 37
+ },
+ "long-island-creek head": {
+  "of": 2,
+  "midChannelWidthM": 214,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 19,
+  "p3mPixelsAcrossAfterBanks": 69
+ },
+ "long-island-creek mouth": {
+  "of": 2,
+  "midChannelWidthM": 187,
+  "medianCellToShoreM": 42,
+  "s2PixelsAcrossAfterBanks": 16,
+  "p3mPixelsAcrossAfterBanks": 60
+ },
+ "marshall-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 251,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 23,
+  "p3mPixelsAcrossAfterBanks": 81
+ },
+ "mccorkle-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 167,
+  "medianCellToShoreM": 42,
+  "s2PixelsAcrossAfterBanks": 14,
+  "p3mPixelsAcrossAfterBanks": 53
+ },
+ "mink-creek-jackson head": {
+  "of": 3,
+  "midChannelWidthM": 488,
+  "medianCellToShoreM": 94,
+  "s2PixelsAcrossAfterBanks": 46,
+  "p3mPixelsAcrossAfterBanks": 160
+ },
+ "mink-creek-jackson middle": {
+  "of": 3,
+  "midChannelWidthM": 641,
+  "medianCellToShoreM": 132,
+  "s2PixelsAcrossAfterBanks": 62,
+  "p3mPixelsAcrossAfterBanks": 211
+ },
+ "mink-creek-jackson mouth": {
+  "of": 3,
+  "midChannelWidthM": 1019,
+  "medianCellToShoreM": 302,
+  "s2PixelsAcrossAfterBanks": 99,
+  "p3mPixelsAcrossAfterBanks": 337
+ },
+ "mink-creek-marshall whole": {
+  "of": 1,
+  "midChannelWidthM": 319,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 29,
+  "p3mPixelsAcrossAfterBanks": 104
+ },
+ "minky-creek head": {
+  "of": 3,
+  "midChannelWidthM": 355,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 33,
+  "p3mPixelsAcrossAfterBanks": 116
+ },
+ "minky-creek middle": {
+  "of": 3,
+  "midChannelWidthM": 610,
+  "medianCellToShoreM": 173,
+  "s2PixelsAcrossAfterBanks": 58,
+  "p3mPixelsAcrossAfterBanks": 201
+ },
+ "minky-creek mouth": {
+  "of": 3,
+  "midChannelWidthM": 1056,
+  "medianCellToShoreM": 319,
+  "s2PixelsAcrossAfterBanks": 103,
+  "p3mPixelsAcrossAfterBanks": 350
+ },
+ "mormon-hole-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 79,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 5,
+  "p3mPixelsAcrossAfterBanks": 24
+ },
+ "mud-creek head": {
+  "of": 5,
+  "midChannelWidthM": 265,
+  "medianCellToShoreM": 42,
+  "s2PixelsAcrossAfterBanks": 24,
+  "p3mPixelsAcrossAfterBanks": 86
+ },
+ "mud-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 495,
+  "medianCellToShoreM": 89,
+  "s2PixelsAcrossAfterBanks": 47,
+  "p3mPixelsAcrossAfterBanks": 163
+ },
+ "mud-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 451,
+  "medianCellToShoreM": 89,
+  "s2PixelsAcrossAfterBanks": 43,
+  "p3mPixelsAcrossAfterBanks": 148
+ },
+ "mud-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 552,
+  "medianCellToShoreM": 107,
+  "s2PixelsAcrossAfterBanks": 53,
+  "p3mPixelsAcrossAfterBanks": 182
+ },
+ "mud-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 319,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 29,
+  "p3mPixelsAcrossAfterBanks": 104
+ },
+ "nichols-branch head": {
+  "of": 3,
+  "midChannelWidthM": 214,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 19,
+  "p3mPixelsAcrossAfterBanks": 69
+ },
+ "nichols-branch middle": {
+  "of": 3,
+  "midChannelWidthM": 118,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 9,
+  "p3mPixelsAcrossAfterBanks": 37
+ },
+ "nichols-branch mouth": {
+  "of": 3,
+  "midChannelWidthM": 237,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 21,
+  "p3mPixelsAcrossAfterBanks": 76
+ },
+ "north-sauty-creek head": {
+  "of": 5,
+  "midChannelWidthM": 607,
+  "medianCellToShoreM": 132,
+  "s2PixelsAcrossAfterBanks": 58,
+  "p3mPixelsAcrossAfterBanks": 200
+ },
+ "north-sauty-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 971,
+  "medianCellToShoreM": 239,
+  "s2PixelsAcrossAfterBanks": 95,
+  "p3mPixelsAcrossAfterBanks": 321
+ },
+ "north-sauty-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 604,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 58,
+  "p3mPixelsAcrossAfterBanks": 199
+ },
+ "north-sauty-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 880,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 86,
+  "p3mPixelsAcrossAfterBanks": 291
+ },
+ "north-sauty-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 1117,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 109,
+  "p3mPixelsAcrossAfterBanks": 370
+ },
+ "owen-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 251,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 23,
+  "p3mPixelsAcrossAfterBanks": 81
+ },
+ "parton-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 556,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 53,
+  "p3mPixelsAcrossAfterBanks": 183
+ },
+ "polecat-branch head": {
+  "of": 3,
+  "midChannelWidthM": 214,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 19,
+  "p3mPixelsAcrossAfterBanks": 69
+ },
+ "polecat-branch middle": {
+  "of": 3,
+  "midChannelWidthM": 536,
+  "medianCellToShoreM": 126,
+  "s2PixelsAcrossAfterBanks": 51,
+  "p3mPixelsAcrossAfterBanks": 176
+ },
+ "polecat-branch mouth": {
+  "of": 3,
+  "midChannelWidthM": 1007,
+  "medianCellToShoreM": 273,
+  "s2PixelsAcrossAfterBanks": 98,
+  "p3mPixelsAcrossAfterBanks": 333
+ },
+ "rocky-branch-jackson whole": {
+  "of": 1,
+  "midChannelWidthM": 214,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 19,
+  "p3mPixelsAcrossAfterBanks": 69
+ },
+ "rocky-branch-marshall whole": {
+  "of": 1,
+  "midChannelWidthM": 415,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 136
+ },
+ "roseberry-creek head": {
+  "of": 5,
+  "midChannelWidthM": 477,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 45,
+  "p3mPixelsAcrossAfterBanks": 157
+ },
+ "roseberry-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 641,
+  "medianCellToShoreM": 167,
+  "s2PixelsAcrossAfterBanks": 62,
+  "p3mPixelsAcrossAfterBanks": 211
+ },
+ "roseberry-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 592,
+  "medianCellToShoreM": 148,
+  "s2PixelsAcrossAfterBanks": 57,
+  "p3mPixelsAcrossAfterBanks": 195
+ },
+ "roseberry-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 419,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 137
+ },
+ "roseberry-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 749,
+  "medianCellToShoreM": 173,
+  "s2PixelsAcrossAfterBanks": 72,
+  "p3mPixelsAcrossAfterBanks": 247
+ },
+ "seibold-branch head": {
+  "of": 2,
+  "midChannelWidthM": 592,
+  "medianCellToShoreM": 132,
+  "s2PixelsAcrossAfterBanks": 57,
+  "p3mPixelsAcrossAfterBanks": 195
+ },
+ "seibold-branch mouth": {
+  "of": 2,
+  "midChannelWidthM": 747,
+  "medianCellToShoreM": 190,
+  "s2PixelsAcrossAfterBanks": 72,
+  "p3mPixelsAcrossAfterBanks": 246
+ },
+ "short-creek head": {
+  "of": 5,
+  "midChannelWidthM": 237,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 21,
+  "p3mPixelsAcrossAfterBanks": 76
+ },
+ "short-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 265,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 24,
+  "p3mPixelsAcrossAfterBanks": 86
+ },
+ "short-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 419,
+  "medianCellToShoreM": 107,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 137
+ },
+ "short-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 586,
+  "medianCellToShoreM": 173,
+  "s2PixelsAcrossAfterBanks": 56,
+  "p3mPixelsAcrossAfterBanks": 193
+ },
+ "short-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 848,
+  "medianCellToShoreM": 265,
+  "s2PixelsAcrossAfterBanks": 82,
+  "p3mPixelsAcrossAfterBanks": 280
+ },
+ "slaton-branch head": {
+  "of": 3,
+  "midChannelWidthM": 293,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 27,
+  "p3mPixelsAcrossAfterBanks": 95
+ },
+ "slaton-branch middle": {
+  "of": 3,
+  "midChannelWidthM": 317,
+  "medianCellToShoreM": 84,
+  "s2PixelsAcrossAfterBanks": 29,
+  "p3mPixelsAcrossAfterBanks": 103
+ },
+ "slaton-branch mouth": {
+  "of": 3,
+  "midChannelWidthM": 419,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 137
+ },
+ "south-sauty-creek head": {
+  "of": 5,
+  "midChannelWidthM": 1066,
+  "medianCellToShoreM": 132,
+  "s2PixelsAcrossAfterBanks": 104,
+  "p3mPixelsAcrossAfterBanks": 353
+ },
+ "south-sauty-creek upper": {
+  "of": 5,
+  "midChannelWidthM": 1375,
+  "medianCellToShoreM": 385,
+  "s2PixelsAcrossAfterBanks": 135,
+  "p3mPixelsAcrossAfterBanks": 456
+ },
+ "south-sauty-creek middle": {
+  "of": 5,
+  "midChannelWidthM": 880,
+  "medianCellToShoreM": 159,
+  "s2PixelsAcrossAfterBanks": 86,
+  "p3mPixelsAcrossAfterBanks": 291
+ },
+ "south-sauty-creek lower": {
+  "of": 5,
+  "midChannelWidthM": 1281,
+  "medianCellToShoreM": 296,
+  "s2PixelsAcrossAfterBanks": 126,
+  "p3mPixelsAcrossAfterBanks": 425
+ },
+ "south-sauty-creek mouth": {
+  "of": 5,
+  "midChannelWidthM": 1087,
+  "medianCellToShoreM": 226,
+  "s2PixelsAcrossAfterBanks": 106,
+  "p3mPixelsAcrossAfterBanks": 360
+ },
+ "sterne-branch whole": {
+  "of": 1,
+  "midChannelWidthM": 101,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 8,
+  "p3mPixelsAcrossAfterBanks": 31
+ },
+ "town-creek-jackson head": {
+  "of": 5,
+  "midChannelWidthM": 265,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 24,
+  "p3mPixelsAcrossAfterBanks": 86
+ },
+ "town-creek-jackson upper": {
+  "of": 5,
+  "midChannelWidthM": 419,
+  "medianCellToShoreM": 89,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 137
+ },
+ "town-creek-jackson middle": {
+  "of": 5,
+  "midChannelWidthM": 463,
+  "medianCellToShoreM": 94,
+  "s2PixelsAcrossAfterBanks": 44,
+  "p3mPixelsAcrossAfterBanks": 152
+ },
+ "town-creek-jackson lower": {
+  "of": 5,
+  "midChannelWidthM": 244,
+  "medianCellToShoreM": 59,
+  "s2PixelsAcrossAfterBanks": 22,
+  "p3mPixelsAcrossAfterBanks": 79
+ },
+ "town-creek-jackson mouth": {
+  "of": 5,
+  "midChannelWidthM": 244,
+  "medianCellToShoreM": 66,
+  "s2PixelsAcrossAfterBanks": 22,
+  "p3mPixelsAcrossAfterBanks": 79
+ },
+ "town-creek-marshall head": {
+  "of": 5,
+  "midChannelWidthM": 178,
+  "medianCellToShoreM": 42,
+  "s2PixelsAcrossAfterBanks": 15,
+  "p3mPixelsAcrossAfterBanks": 57
+ },
+ "town-creek-marshall upper": {
+  "of": 5,
+  "midChannelWidthM": 711,
+  "medianCellToShoreM": 122,
+  "s2PixelsAcrossAfterBanks": 69,
+  "p3mPixelsAcrossAfterBanks": 234
+ },
+ "town-creek-marshall middle": {
+  "of": 5,
+  "midChannelWidthM": 1311,
+  "medianCellToShoreM": 419,
+  "s2PixelsAcrossAfterBanks": 129,
+  "p3mPixelsAcrossAfterBanks": 434
+ },
+ "town-creek-marshall lower": {
+  "of": 5,
+  "midChannelWidthM": 1256,
+  "medianCellToShoreM": 315,
+  "s2PixelsAcrossAfterBanks": 123,
+  "p3mPixelsAcrossAfterBanks": 416
+ },
+ "town-creek-marshall mouth": {
+  "of": 5,
+  "midChannelWidthM": 1353,
+  "medianCellToShoreM": 347,
+  "s2PixelsAcrossAfterBanks": 133,
+  "p3mPixelsAcrossAfterBanks": 449
+ },
+ "widows-creek whole": {
+  "of": 1,
+  "midChannelWidthM": 84,
+  "medianCellToShoreM": 30,
+  "s2PixelsAcrossAfterBanks": 6,
+  "p3mPixelsAcrossAfterBanks": 25
+ },
+ "yellow-creek head": {
+  "of": 2,
+  "midChannelWidthM": 419,
+  "medianCellToShoreM": 94,
+  "s2PixelsAcrossAfterBanks": 39,
+  "p3mPixelsAcrossAfterBanks": 137
+ },
+ "yellow-creek mouth": {
+  "of": 2,
+  "midChannelWidthM": 993,
+  "medianCellToShoreM": 266,
+  "s2PixelsAcrossAfterBanks": 97,
+  "p3mPixelsAcrossAfterBanks": 328
+ }
+}

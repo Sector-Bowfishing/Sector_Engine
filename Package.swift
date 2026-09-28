@@ -7,6 +7,7 @@ let package = Package(
     products: [
         .library(name: "SectorEngine", targets: ["SectorEngine"]),
         .executable(name: "SectorEngineServer", targets: ["SectorEngineServer"]),
+        .executable(name: "ClarityReplay", targets: ["ClarityReplay"]),
     ],
     dependencies: [
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
@@ -32,6 +33,8 @@ let package = Package(
                 .product(name: "Hummingbird", package: "hummingbird"),
             ],
             path: "Sources/SectorEngineServer"),
+        // Clarity Fusion Stage 2's historical replay; not built into the image.
+        .executableTarget(name: "ClarityReplay", dependencies: ["SectorEngine"], path: "Sources/ClarityReplay"),
         .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine"], path: "Tests/SectorEngineTests"),
     ]
 )

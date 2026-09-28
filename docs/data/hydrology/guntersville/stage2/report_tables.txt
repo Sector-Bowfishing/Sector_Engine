@@ -1,0 +1,147 @@
+PASSES read 147 consecutive pairs 1366 with rain 1290 events 1024
+pair noise {'n': 144, 'p10': -0.185, 'p25': -0.104, 'p50': -0.029, 'p75': 0.054, 'p90': 0.141}
+event noise {'n': 366, 'p10': -0.173, 'p25': -0.104, 'p50': -0.031, 'p75': 0.043, 'p90': 0.144}
+
+### tributaryArms by rain in the 48 h before the pass
+| bin | n | median | p75 | murkier beyond noise | clearer beyond noise | evidence |
+| 0-0.1 | 726 | ×0.93 | ×1.13 | 12% | 11% | yes |
+| 0.1-0.5 | 134 | ×0.98 | ×1.10 | 11% | 8% | yes |
+| 0.5-1.0 | 52 | ×0.84 | ×1.20 | 19% | 21% | yes |
+| 1.0-+ | 55 | ×0.86 | ×1.07 | 14% | 18% | yes |
+
+### small arms (< 3000 cells, ~2.6 km2)
+| bin | n | median | p75 | murkier beyond noise | clearer beyond noise | evidence |
+| 0-0.1 | 354 | ×0.92 | ×1.15 | 14% | 14% | yes |
+| 0.1-0.5 | 67 | ×0.99 | ×1.16 | 15% | 10% | yes |
+| 0.5-1.0 | 21 | ×0.83 | ×1.27 | 19% | 29% | yes |
+| 1.0-+ | 29 | ×0.84 | ×1.04 | 14% | 28% | yes |
+
+### large arms (>= 3000 cells)
+| bin | n | median | p75 | murkier beyond noise | clearer beyond noise | evidence |
+| 0-0.1 | 372 | ×0.93 | ×1.11 | 12% | 7% | yes |
+| 0.1-0.5 | 67 | ×0.98 | ×1.09 | 8% | 4% | yes |
+| 0.5-1.0 | 31 | ×0.84 | ×1.19 | 19% | 16% | yes |
+| 1.0-+ | 26 | ×0.87 | ×1.23 | 15% | 8% | yes |
+
+### recovery: days since a >= 1 in day (tributaries)
+| bin | n | median | p75 | murkier beyond noise | clearer beyond noise | evidence |
+| 0-1 | 44 | ×0.88 | ×1.20 | 18% | 14% | yes |
+| 2-3 | 65 | ×1.00 | ×1.66 | 34% | 5% | yes |
+| 4-6 | 76 | ×0.99 | ×1.17 | 16% | 0% | yes |
+| 7-10 | 122 | ×0.96 | ×1.15 | 19% | 12% | yes |
+
+### mainStem by lake-surface rain in the 48 h before the pass
+| bin | n | median | p75 | murkier beyond noise | clearer beyond noise | evidence |
+| 0-0.1 | 43 | ×1.01 | ×1.10 | 7% | 5% | yes |
+| 0.1-0.5 | 8 | ×0.99 | ×1.13 | 12% | 0% | yes |
+| 0.5-1.0 | 3 | ×1.31 | ×1.81 | 33% | 33% | insufficient (n<8) |
+| 1.0-+ | 3 | ×0.97 | ×1.12 | 0% | 33% | insufficient (n<8) |
+
+### town-creek-marshall events by rain 48h
+| 0-0.1 | 45 | ×0.98 | ×1.16 | 13% | 7% | yes |
+| 0.1-0.5 | 10 | ×0.98 | ×1.07 | 0% | 10% | yes |
+| 0.5-1.0 | 3 | ×0.84 | ×1.41 | 33% | 33% | insufficient (n<8) |
+| 1.0-+ | 3 | ×0.83 | ×1.03 | 0% | 0% | insufficient (n<8) |
+### town-creek-marshall events by measured flow / baseline-pass flow
+| 0-1.5 | 29 | ×0.92 | ×1.10 | 17% | 3% | yes |
+| 1.5-3 | 16 | ×0.99 | ×1.13 | 6% | 6% | yes |
+| 3-+ | 16 | ×0.98 | ×1.04 | 6% | 19% | yes |
+### town-creek-marshall consecutive pairs by measured peak ratio between passes
+| 0-0.7 | 0 | – | – | – | – | insufficient evidence (n = 0 < 8) |
+| 0.7-1.5 | 39 | ×1.01 | ×1.32 | 15% | 5% | yes |
+| 1.5-3 | 5 | ×0.77 | ×1.31 | 20% | 20% | insufficient (n<8) |
+| 3-+ | 16 | ×0.96 | ×1.08 | 0% | 12% | yes |
+
+### south-sauty-creek events by rain 48h
+| 0-0.1 | 37 | ×0.99 | ×1.13 | 8% | 14% | yes |
+| 0.1-0.5 | 6 | ×0.88 | ×1.05 | 0% | 0% | insufficient (n<8) |
+| 0.5-1.0 | 3 | ×0.68 | ×1.61 | 33% | 33% | insufficient (n<8) |
+| 1.0-+ | 3 | ×1.00 | ×1.24 | 0% | 0% | insufficient (n<8) |
+### south-sauty-creek events by measured flow / baseline-pass flow
+| 0-1.5 | 13 | ×1.03 | ×1.12 | 15% | 0% | yes |
+| 1.5-3 | 19 | ×0.84 | ×1.05 | 0% | 16% | yes |
+| 3-+ | 17 | ×0.99 | ×1.24 | 12% | 18% | yes |
+### south-sauty-creek consecutive pairs by measured peak ratio between passes
+| 0-0.7 | 0 | – | – | – | – | insufficient evidence (n = 0 < 8) |
+| 0.7-1.5 | 35 | ×1.02 | ×1.24 | 17% | 9% | yes |
+| 1.5-3 | 7 | ×0.96 | ×0.99 | 0% | 0% | insufficient (n<8) |
+| 3-+ | 19 | ×0.90 | ×1.10 | 5% | 10% | yes |
+
+### modeled (NWM-only) arms, consecutive pairs by modeled peak ratio
+| 0-0.7 | 0 | – | – | – | – | insufficient evidence (n = 0 < 8) |
+| 0.7-1.5 | 587 | ×0.95 | ×1.20 | 12% | 14% | yes |
+| 1.5-3 | 41 | ×0.87 | ×1.21 | 15% | 15% | yes |
+| 3-+ | 82 | ×1.07 | ×1.39 | 26% | 10% | yes |
+
+### consecutive pairs, tributaries, by rain between
+| 0-0.1 | 600 | ×0.98 | ×1.23 | 12% | 10% | yes |
+| 0.1-0.25 | 114 | ×1.03 | ×1.27 | 15% | 13% | yes |
+| 0.25-0.5 | 94 | ×0.92 | ×1.15 | 11% | 16% | yes |
+| 0.5-1.0 | 152 | ×0.89 | ×1.06 | 7% | 18% | yes |
+| 1.0-+ | 261 | ×0.96 | ×1.19 | 15% | 12% | yes |
+
+### antecedent split (consecutive pairs)
+dry (7d < 0.5 in)
+| 0-0.1 | 259 | ×0.97 | ×1.23 | 12% | 8% | yes |
+| 0.1-0.25 | 30 | ×0.91 | ×1.09 | 10% | 20% | yes |
+| 0.25-0.5 | 47 | ×1.01 | ×1.18 | 13% | 11% | yes |
+| 0.5-1.0 | 124 | ×0.91 | ×1.07 | 8% | 18% | yes |
+| 1.0-+ | 146 | ×1.03 | ×1.29 | 19% | 7% | yes |
+wet (7d >= 0.5 in)
+| 0-0.1 | 341 | ×0.98 | ×1.23 | 13% | 10% | yes |
+| 0.1-0.25 | 84 | ×1.09 | ×1.28 | 17% | 11% | yes |
+| 0.25-0.5 | 47 | ×0.92 | ×1.05 | 8% | 21% | yes |
+| 0.5-1.0 | 28 | ×0.77 | ×0.98 | 0% | 14% | yes |
+| 1.0-+ | 115 | ×0.89 | ×1.07 | 9% | 18% | yes |
+
+### year split: tributary events by days since a >=1 in day
+| 2025 | 0–1 d | 22 | ×0.74 | 5% | p=0.896 |
+| 2025 | 2–3 d | 23 | ×0.94 | 13% | p=0.395 |
+| 2025 | 4–6 d | 43 | ×0.95 | 16% | p=0.123 |
+| 2025 | 7–10 d | 89 | ×0.87 | 6% | p=0.944 |
+| 2026 | 0–1 d | 22 | ×1.16 | 14% | p=0.362 |
+| 2026 | 2–3 d | 42 | ×1.28 | 26% | p=0.002 |
+| 2026 | 4–6 d | 33 | ×1.08 | 12% | p=0.401 |
+| 2026 | 7–10 d | 33 | ×1.71 | 45% | p=0.000 |
+
+#### replay all: 1316 pairs
+| expected | n | next pass murkier | same | clearer |
+| murkierThanPass | 392 | 57 (15%) | 267 (68%) | 68 (17%) |
+| sameAsPass | 786 | 88 (11%) | 611 (78%) | 87 (11%) |
+| clearerThanPass | 53 | 4 (8%) | 34 (64%) | 15 (28%) |
+| unknown | 85 | 5 (6%) | 69 (81%) | 11 (13%) |
+
+#### replay town-creek-marshall: 61 pairs
+| expected | n | next pass murkier | same | clearer |
+| murkierThanPass | 19 | 1 (5%) | 15 (79%) | 3 (16%) |
+| sameAsPass | 38 | 7 (18%) | 29 (76%) | 2 (5%) |
+| clearerThanPass | 4 | 0 (0%) | 3 (75%) | 1 (25%) |
+
+#### replay south-sauty-creek: 65 pairs
+| expected | n | next pass murkier | same | clearer |
+| murkierThanPass | 22 | 1 (5%) | 18 (82%) | 3 (14%) |
+| sameAsPass | 39 | 6 (15%) | 30 (77%) | 3 (8%) |
+| clearerThanPass | 4 | 0 (0%) | 3 (75%) | 1 (25%) |
+
+#### replay browns-creek: 76 pairs
+| expected | n | next pass murkier | same | clearer |
+| murkierThanPass | 24 | 3 (12%) | 19 (79%) | 2 (8%) |
+| sameAsPass | 51 | 10 (20%) | 38 (75%) | 3 (6%) |
+| clearerThanPass | 1 | 0 (0%) | 0 (0%) | 1 (100%) |
+
+#### replay boshart-creek: 53 pairs
+| expected | n | next pass murkier | same | clearer |
+| murkierThanPass | 20 | 1 (5%) | 14 (70%) | 5 (25%) |
+| sameAsPass | 33 | 3 (9%) | 25 (76%) | 5 (15%) |
+
+#### replay mainstem: 69 pairs
+| expected | n | next pass murkier | same | clearer |
+| murkierThanPass | 20 | 3 (15%) | 15 (75%) | 2 (10%) |
+| sameAsPass | 49 | 5 (10%) | 38 (78%) | 6 (12%) |
+
+#### replay by authority
+| high | 544 | same 79% | murkier 12% | clearer 9% | median |dlog| 0.069 |
+| moderate | 199 | same 74% | murkier 13% | clearer 14% | median |dlog| 0.084 |
+| low | 384 | same 73% | murkier 7% | clearer 20% | median |dlog| 0.095 |
+| none | 189 | same 65% | murkier 20% | clearer 15% | median |dlog| 0.096 |
+runoff counts Counter({'stable': 626, 'majorRunoff': 189, 'minorChange': 160, 'recovering': 142, 'moderateRunoff': 114, 'unknown': 85})

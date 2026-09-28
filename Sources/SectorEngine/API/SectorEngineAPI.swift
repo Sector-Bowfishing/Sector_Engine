@@ -73,6 +73,12 @@ public struct ConditionsResponse: Codable, Equatable {
     /// them. `driving` marks the gauge that actually informs the estimate.
     public let clarityGauges: [GaugeDTO]
 
+    /// The clarity estimate as the canonical visibility interface states it
+    /// (VisibilityModel secchi-power-v1): the central value the score uses, its
+    /// 80% range where one is known, confidence, and where the number came from.
+    /// Optional so pre-update clients still decode; appended so none of them breaks.
+    public var clarityVisibility: ClarityVisibilityDTO? = nil
+
     /// The canonical directory lake this coordinate scores as, when one is within
     /// range — the single source of lake identity + naming for every surface and
     /// both apps. Lets clients dedupe "the same water, two names" (a saved lake vs
@@ -107,6 +113,19 @@ public struct GaugeDTO: Codable, Equatable {
     public let latitude: Double
     public let longitude: Double
     public let driving: Bool             // actually informs the clarity estimate
+}
+
+/// The clarity estimate with its uncertainty and provenance.
+public struct ClarityVisibilityDTO: Codable, Equatable {
+    public let centralFt: Double
+    /// The 80% range; nil where no validated range exists (the rain-decay estimate).
+    public let lowFt: Double?
+    public let highFt: Double?
+    public let confidence: String      // medium | low
+    public let model: String           // secchi-power-v1 | rain-decay-v0
+    public let source: String          // inSituGauge | rainDecayModel | noRainData
+    public let provenance: String
+    public let limitations: [String]
 }
 
 /// Recent rainfall driving the clarity estimate, from NOAA MRMS via IEM.
@@ -356,7 +375,8 @@ public enum SectorEngineAPI {
             turbidity: snap.turbidity, generation: snap.generation,
             alertWindFloorMph: snap.alertWindFloorMph,
             severeWarningLabel: snap.severeWarningLabel,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn)
+            rainWatershed72hIn: snap.mrms?.watershed72hIn,
+            clarityDischarge: snap.clarityDischarge)
         // Tuning comes from Firebase Remote Config (cached; falls back to the
         // compiled defaults). Change a weight in the console → both phones see it.
         let config = await RemoteConfigStore.shared.current()
@@ -364,7 +384,7 @@ public enum SectorEngineAPI {
 
         let forecast = await forecastTask
 
-        return ConditionsResponse(
+        var response = ConditionsResponse(
             score: result.score,
             band: result.band.rawValue,
             regime: result.regime.rawValue,
@@ -405,7 +425,12 @@ public enum SectorEngineAPI {
             clarityGauges: [
                 snap.turbidity.map { Self.gaugeDTO($0, role: "turbidity",
                     driving: ($0.distanceMiles ?? .infinity) <= ConditionsInputBuilder.maxTurbidityDistanceMiles) },
-                snap.discharge.map { Self.gaugeDTO($0, role: "discharge", driving: true) },
+                // The nearest discharge gauge still feeds the current factor; it
+                // drives clarity only when it IS this arm's own gauge.
+                snap.discharge.map { d in
+                    Self.gaugeDTO(d, role: "discharge", driving: d.siteCode == snap.clarityDischarge?.siteCode) },
+                snap.clarityDischarge.flatMap { c in
+                    c.siteCode == snap.discharge?.siteCode ? nil : Self.gaugeDTO(c, role: "discharge", driving: true) },
             ].compactMap { $0 },
             // Nearest known lake to the scored point — the canonical identity clients
             // dedupe + name by. 25 mi so a point anywhere on a long reservoir still
@@ -414,6 +439,40 @@ public enum SectorEngineAPI {
                 ResolvedLakeDTO(id: $0.id, name: $0.name, state: $0.state)
             },
             generatedAt: Date())
+        response.clarityVisibility = Self.clarityVisibilityDTO(input, turbidity: snap.turbidity,
+                                                               mrms: snap.mrms, config: config)
+        return response
+    }
+
+    /// The canonical statement of the clarity number the score used.
+    static func clarityVisibilityDTO(_ input: ConditionsInput, turbidity: WaterLevelReading?,
+                                     mrms: MrmsPrecip?, config: ConditionsConfig) -> ClarityVisibilityDTO {
+        let central = ClarityFactor.visibilityFt(input, config: config)
+        if let fnu = input.turbidityFNU, input.hasTurbidityGage {
+            let e = VisibilityModel.estimate(fnu: fnu, source: .inSituGauge, config: config)
+            let algal = input.turbidityType == .algal
+            let site = turbidity.map { "USGS \($0.siteCode) \($0.siteName)" } ?? "a USGS turbidity gauge"
+            return ClarityVisibilityDTO(
+                centralFt: central, lowFt: algal ? nil : e.lowFt, highFt: algal ? nil : e.highFt,
+                confidence: e.confidence, model: VisibilityModel.modelId, source: "inSituGauge",
+                provenance: String(format: "%@ measuring %.1f FNU", site, fnu),
+                limitations: ["Visibility converted from turbidity (validated on 81,661 WQP pairs: median error 1.2 ft); the range is the conversion's 80% spread, not the gauge's."]
+                    + (algal ? ["Algal turbidity halves the sightline; no validated range for it."] : []))
+        }
+        if !input.rainDataAvailable && input.rainWatershed72hIn == nil {
+            return ClarityVisibilityDTO(centralFt: central, lowFt: nil, highFt: nil, confidence: "low",
+                                        model: "rain-decay-v0", source: "noRainData",
+                                        provenance: "No turbidity gauge and no rain data: a neutral workable estimate.",
+                                        limitations: ["No measurement of any kind behind this number."])
+        }
+        let rain = input.rainWatershed72hIn.map { String(format: "MRMS rain over the surrounding area, %.2f in in 72 h", $0) }
+            ?? String(format: "Open-Meteo rain at the point, %.2f in in 48 h", input.rainLast48hIn)
+        let shave = input.clarityDischargeTrend12hCfs.map { $0 > 0 } == true ? "; this arm's own gauge is rising" : ""
+        return ClarityVisibilityDTO(
+            centralFt: central, lowFt: nil, highFt: nil, confidence: "low", model: "rain-decay-v0",
+            source: "rainDecayModel", provenance: "Rain-decay estimate from \(rain)\(shave).",
+            limitations: ["Not calibrated: the rain-decay curve is heuristic, so no range is stated.",
+                          "One value for the spot: creek backs and open water are not told apart."])
     }
 
     /// Just the gauge score + band for a coordinate — snapshot + evaluate, NO
@@ -430,7 +489,8 @@ public enum SectorEngineAPI {
             turbidity: snap.turbidity, generation: snap.generation,
             alertWindFloorMph: snap.alertWindFloorMph,
             severeWarningLabel: snap.severeWarningLabel,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn)
+            rainWatershed72hIn: snap.mrms?.watershed72hIn,
+            clarityDischarge: snap.clarityDischarge)
         let result = ConditionsAggregator.evaluate(input, config: await RemoteConfigStore.shared.current())
         return (result.score, result.band.rawValue)
     }

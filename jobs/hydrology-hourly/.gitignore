@@ -1,0 +1,5 @@
+__pycache__/
+# copied in by deploy-job.sh
+catchment_rain.py
+mrms_weights.json
+hydrology.json

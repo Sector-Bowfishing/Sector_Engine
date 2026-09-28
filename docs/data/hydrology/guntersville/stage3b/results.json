@@ -1,0 +1,2471 @@
+{
+ "constants": {
+  "discoveryYears": [
+   2025,
+   2026
+  ],
+  "rules": {
+   "coldMonths": [
+    1,
+    2,
+    3,
+    11,
+    12
+   ],
+   "stormIn": 1.0,
+   "dryWeekIn": 0.25,
+   "stormWindowDays": [
+    0,
+    3
+   ],
+   "lookbackDays": 45,
+   "minBaselinePasses": 2,
+   "episodeGapDays": 3,
+   "flowHigh": 3.0,
+   "flowLow": 1.5,
+   "minDeltaUnits": 8
+  },
+  "noise": {
+   "head": [
+    -0.1645,
+    0.0823,
+    185
+   ],
+   "upper": [
+    -0.1645,
+    0.1131,
+    138
+   ],
+   "middle": [
+    -0.1749,
+    0.1543,
+    252
+   ],
+   "lower": [
+    -0.1749,
+    0.1234,
+    194
+   ],
+   "mouth": [
+    -0.1646,
+    0.1492,
+    319
+   ],
+   "whole": [
+    -0.2777,
+    0.18,
+    80
+   ],
+   "mainstem": [
+    -0.1749,
+    0.1337,
+    1168
+   ],
+   "mainstem_fromPooled": true
+  },
+  "dryShare": {
+   "head": 0.1027,
+   "upper": 0.1159,
+   "middle": 0.1032,
+   "lower": 0.1082,
+   "mouth": 0.1003,
+   "whole": 0.1125,
+   "mainstem": 0.1019
+  },
+  "delta": {
+   "large": {
+    "season": 0.1183,
+    "flow": 0.072,
+    "combined": 0.0926,
+    "n": {
+     "season": 131,
+     "flow": 139,
+     "combined": 50
+    }
+   },
+   "medium": {
+    "season": 0.0412,
+    "flow": 0.1311,
+    "combined": 0.1337,
+    "n": {
+     "season": 59,
+     "flow": 44,
+     "combined": 12
+    }
+   },
+   "small": {
+    "season": 0.4319,
+    "flow": 0.0,
+    "combined": 0.216,
+    "n": {
+     "season": 21,
+     "flow": 1,
+     "combined": 1
+    }
+   },
+   "mainStem": {
+    "season": 0.0,
+    "flow": 0.0,
+    "combined": 0.0,
+    "n": {
+     "season": 4,
+     "flow": 0,
+     "combined": 0
+    }
+   }
+  }
+ },
+ "counts": {
+  "validation": {
+   "stormDays": 144,
+   "independentStorms": 88,
+   "stormsByYear": {
+    "2021": 28,
+    "2023": 28,
+    "2024": 32
+   },
+   "stormsBySeason": {
+    "cold": 39,
+    "warm": 49
+   },
+   "passes": 110,
+   "units": 3542,
+   "measurableStormWindowUnitsByClass": {
+    "large": 174,
+    "medium": 94,
+    "small": 12,
+    "mainStem": 5
+   },
+   "measurableColdStormWindowUnitsByClass": {
+    "large": 174,
+    "medium": 91,
+    "small": 11,
+    "mainStem": 5
+   },
+   "independentStormsWithMeasurableUnitsByClass": {
+    "large": 13,
+    "medium": 13,
+    "small": 8,
+    "mainStem": 5
+   }
+  },
+  "separate": {
+   "stormDays": 57,
+   "independentStorms": 32,
+   "stormsByYear": {
+    "2020": 5,
+    "2022": 27
+   },
+   "stormsBySeason": {
+    "warm": 15,
+    "cold": 17
+   },
+   "passes": 9,
+   "units": 470,
+   "measurableStormWindowUnitsByClass": {
+    "large": 33,
+    "small": 1,
+    "medium": 5,
+    "mainStem": 1
+   },
+   "measurableColdStormWindowUnitsByClass": {
+    "large": 33,
+    "small": 1,
+    "medium": 5,
+    "mainStem": 1
+   },
+   "independentStormsWithMeasurableUnitsByClass": {
+    "large": 1,
+    "medium": 1,
+    "small": 1,
+    "mainStem": 1
+   }
+  }
+ },
+ "hypotheses": {
+  "H1 season large": {
+   "pooled": {
+    "conditionUnits": 174,
+    "controlUnits": 445,
+    "conditionShare": 0.3448,
+    "controlShare": 0.1303,
+    "diff": 0.2145,
+    "independentStorms": 13,
+    "diffCI": [
+     0.0188,
+     0.46
+    ],
+    "qualifyingYears": 3,
+    "yearsPositive": 3,
+    "pass": true
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 26,
+     "controlUnits": 117,
+     "independentStorms": 4,
+     "conditionShare": 0.8462,
+     "controlShare": 0.2137,
+     "diff": 0.6325,
+     "qualifies": true
+    },
+    "2023": {
+     "conditionUnits": 116,
+     "controlUnits": 198,
+     "independentStorms": 5,
+     "conditionShare": 0.2241,
+     "controlShare": 0.0606,
+     "diff": 0.1635,
+     "qualifies": true
+    },
+    "2024": {
+     "conditionUnits": 32,
+     "controlUnits": 130,
+     "independentStorms": 4,
+     "conditionShare": 0.375,
+     "controlShare": 0.1615,
+     "diff": 0.2135,
+     "qualifies": true
+    }
+   }
+  },
+  "H1 warm contrast large": {
+   "pooled": {
+    "conditionUnits": 0,
+    "controlUnits": 632,
+    "conditionShare": null,
+    "controlShare": 0.1108,
+    "diff": null,
+    "independentStorms": 0,
+    "qualifyingYears": 0,
+    "yearsPositive": 0,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 0,
+     "controlUnits": 24,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.3333,
+     "diff": null,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 0,
+     "controlUnits": 187,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.0588,
+     "diff": null,
+     "qualifies": false
+    },
+    "2024": {
+     "conditionUnits": 0,
+     "controlUnits": 421,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.1211,
+     "diff": null,
+     "qualifies": false
+    }
+   }
+  },
+  "H2 flow large": {
+   "pooled": {
+    "conditionUnits": 162,
+    "controlUnits": 1052,
+    "conditionShare": 0.4815,
+    "controlShare": 0.153,
+    "diff": 0.3284,
+    "independentStorms": 12,
+    "diffCI": [
+     0.1757,
+     0.4705
+    ],
+    "qualifyingYears": 3,
+    "yearsPositive": 3,
+    "pass": true
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 44,
+     "controlUnits": 242,
+     "independentStorms": 3,
+     "conditionShare": 0.75,
+     "controlShare": 0.2769,
+     "diff": 0.4731,
+     "qualifies": true
+    },
+    "2023": {
+     "conditionUnits": 89,
+     "controlUnits": 332,
+     "independentStorms": 4,
+     "conditionShare": 0.3483,
+     "controlShare": 0.1114,
+     "diff": 0.2369,
+     "qualifies": true
+    },
+    "2024": {
+     "conditionUnits": 29,
+     "controlUnits": 478,
+     "independentStorms": 5,
+     "conditionShare": 0.4828,
+     "controlShare": 0.1192,
+     "diff": 0.3635,
+     "qualifies": true
+    }
+   }
+  },
+  "H1 season medium": {
+   "pooled": {
+    "conditionUnits": 91,
+    "controlUnits": 241,
+    "conditionShare": 0.2198,
+    "controlShare": 0.1079,
+    "diff": 0.1119,
+    "independentStorms": 12,
+    "diffCI": [
+     -0.0865,
+     0.3431
+    ],
+    "qualifyingYears": 2,
+    "yearsPositive": 1,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 3,
+     "controlUnits": 83,
+     "independentStorms": 2,
+     "conditionShare": 1.0,
+     "controlShare": 0.0843,
+     "diff": 0.9157,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 69,
+     "controlUnits": 98,
+     "independentStorms": 5,
+     "conditionShare": 0.2029,
+     "controlShare": 0.0918,
+     "diff": 0.1111,
+     "qualifies": true
+    },
+    "2024": {
+     "conditionUnits": 19,
+     "controlUnits": 60,
+     "independentStorms": 5,
+     "conditionShare": 0.1579,
+     "controlShare": 0.1667,
+     "diff": -0.0088,
+     "qualifies": true
+    }
+   }
+  },
+  "H1 warm contrast medium": {
+   "pooled": {
+    "conditionUnits": 3,
+    "controlUnits": 224,
+    "conditionShare": 0.0,
+    "controlShare": 0.125,
+    "diff": -0.125,
+    "independentStorms": 1,
+    "diffCI": [
+     -0.1889,
+     -0.0798
+    ],
+    "qualifyingYears": 0,
+    "yearsPositive": 0,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 0,
+     "controlUnits": 3,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.0,
+     "diff": null,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 0,
+     "controlUnits": 63,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.127,
+     "diff": null,
+     "qualifies": false
+    },
+    "2024": {
+     "conditionUnits": 3,
+     "controlUnits": 158,
+     "independentStorms": 1,
+     "conditionShare": 0.0,
+     "controlShare": 0.1266,
+     "diff": -0.1266,
+     "qualifies": false
+    }
+   }
+  },
+  "H2 flow medium": {
+   "pooled": {
+    "conditionUnits": 68,
+    "controlUnits": 494,
+    "conditionShare": 0.5,
+    "controlShare": 0.1053,
+    "diff": 0.3947,
+    "independentStorms": 9,
+    "diffCI": [
+     0.192,
+     0.5344
+    ],
+    "qualifyingYears": 3,
+    "yearsPositive": 3,
+    "pass": true
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 11,
+     "controlUnits": 156,
+     "independentStorms": 3,
+     "conditionShare": 0.7273,
+     "controlShare": 0.1026,
+     "diff": 0.6247,
+     "qualifies": true
+    },
+    "2023": {
+     "conditionUnits": 46,
+     "controlUnits": 161,
+     "independentStorms": 3,
+     "conditionShare": 0.4565,
+     "controlShare": 0.1366,
+     "diff": 0.3199,
+     "qualifies": true
+    },
+    "2024": {
+     "conditionUnits": 11,
+     "controlUnits": 177,
+     "independentStorms": 3,
+     "conditionShare": 0.4545,
+     "controlShare": 0.0791,
+     "diff": 0.3754,
+     "qualifies": true
+    }
+   }
+  },
+  "H1 season small": {
+   "pooled": {
+    "conditionUnits": 11,
+    "controlUnits": 36,
+    "conditionShare": 0.0909,
+    "controlShare": 0.1389,
+    "diff": -0.048,
+    "independentStorms": 7,
+    "diffCI": [
+     -0.2195,
+     0.2212
+    ],
+    "qualifyingYears": 1,
+    "yearsPositive": 0,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 0,
+     "controlUnits": 13,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.2308,
+     "diff": null,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 8,
+     "controlUnits": 15,
+     "independentStorms": 5,
+     "conditionShare": 0.0,
+     "controlShare": 0.0667,
+     "diff": -0.0667,
+     "qualifies": true
+    },
+    "2024": {
+     "conditionUnits": 3,
+     "controlUnits": 8,
+     "independentStorms": 2,
+     "conditionShare": 0.3333,
+     "controlShare": 0.125,
+     "diff": 0.2083,
+     "qualifies": false
+    }
+   }
+  },
+  "H1 warm contrast small": {
+   "pooled": {
+    "conditionUnits": 1,
+    "controlUnits": 66,
+    "conditionShare": 1.0,
+    "controlShare": 0.0909,
+    "diff": 0.9091,
+    "independentStorms": 1,
+    "diffCI": [
+     0.8103,
+     0.9846
+    ],
+    "qualifyingYears": 0,
+    "yearsPositive": 0,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 1,
+     "controlUnits": 2,
+     "independentStorms": 1,
+     "conditionShare": 1.0,
+     "controlShare": 0.0,
+     "diff": 1.0,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 0,
+     "controlUnits": 12,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.0,
+     "diff": null,
+     "qualifies": false
+    },
+    "2024": {
+     "conditionUnits": 0,
+     "controlUnits": 52,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.1154,
+     "diff": null,
+     "qualifies": false
+    }
+   }
+  },
+  "H2 flow small": {
+   "pooled": {
+    "conditionUnits": 4,
+    "controlUnits": 72,
+    "conditionShare": 0.75,
+    "controlShare": 0.1806,
+    "diff": 0.5694,
+    "independentStorms": 2,
+    "diffCI": [
+     -0.2353,
+     0.8784
+    ],
+    "qualifyingYears": 0,
+    "yearsPositive": 0,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 4,
+     "controlUnits": 26,
+     "independentStorms": 2,
+     "conditionShare": 0.75,
+     "controlShare": 0.1923,
+     "diff": 0.5577,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 0,
+     "controlUnits": 17,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.0588,
+     "diff": null,
+     "qualifies": false
+    },
+    "2024": {
+     "conditionUnits": 0,
+     "controlUnits": 29,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.2414,
+     "diff": null,
+     "qualifies": false
+    }
+   }
+  },
+  "H1 season mainStem": {
+   "pooled": {
+    "conditionUnits": 5,
+    "controlUnits": 13,
+    "conditionShare": 0.2,
+    "controlShare": 0.0,
+    "diff": 0.2,
+    "independentStorms": 5,
+    "diffCI": [
+     0.0,
+     0.6
+    ],
+    "qualifyingYears": 0,
+    "yearsPositive": 0,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 1,
+     "controlUnits": 4,
+     "independentStorms": 1,
+     "conditionShare": 1.0,
+     "controlShare": 0.0,
+     "diff": 1.0,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 3,
+     "controlUnits": 6,
+     "independentStorms": 3,
+     "conditionShare": 0.0,
+     "controlShare": 0.0,
+     "diff": 0.0,
+     "qualifies": false
+    },
+    "2024": {
+     "conditionUnits": 1,
+     "controlUnits": 3,
+     "independentStorms": 1,
+     "conditionShare": 0.0,
+     "controlShare": 0.0,
+     "diff": 0.0,
+     "qualifies": false
+    }
+   }
+  },
+  "H1 warm contrast mainStem": {
+   "pooled": {
+    "conditionUnits": 0,
+    "controlUnits": 13,
+    "conditionShare": null,
+    "controlShare": 0.1538,
+    "diff": null,
+    "independentStorms": 0,
+    "qualifyingYears": 0,
+    "yearsPositive": 0,
+    "pass": false
+   },
+   "byYear": {
+    "2021": {
+     "conditionUnits": 0,
+     "controlUnits": 0,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": null,
+     "diff": null,
+     "qualifies": false
+    },
+    "2023": {
+     "conditionUnits": 0,
+     "controlUnits": 4,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.0,
+     "diff": null,
+     "qualifies": false
+    },
+    "2024": {
+     "conditionUnits": 0,
+     "controlUnits": 9,
+     "independentStorms": 0,
+     "conditionShare": null,
+     "controlShare": 0.2222,
+     "diff": null,
+     "qualifies": false
+    }
+   }
+  }
+ },
+ "challengers": {
+  "season large": {
+   "condition": {
+    "persistence": {
+     "n": 174,
+     "mae": 0.2413,
+     "dirAcc": 0.4828,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 174,
+     "mae": 0.2471,
+     "dirAcc": 0.523,
+     "pss": 0.1902
+    },
+    "season": {
+     "n": 174,
+     "mae": 0.2661,
+     "dirAcc": 0.4655,
+     "pss": 0.0923
+    },
+    "maeDiffVsPersistenceCI": [
+     -0.042,
+     0.0716
+    ],
+    "pssCI": [
+     -0.1104,
+     0.307
+    ],
+    "medianAnomaly": 0.0027,
+    "medianAnomalyCI": [
+     -0.1285,
+     0.1902
+    ],
+    "independentStorms": 13,
+    "largestStormShare": 0.2586,
+    "maeDiffWithoutLargestStorm": -0.0039
+   },
+   "all": {
+    "persistence": {
+     "n": 2337,
+     "mae": 0.1508,
+     "dirAcc": 0.6333,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 2337,
+     "mae": 0.1457,
+     "dirAcc": 0.629,
+     "pss": 0.3174
+    },
+    "season": {
+     "n": 2337,
+     "mae": 0.1527,
+     "dirAcc": 0.632,
+     "pss": 0.0377
+    }
+   },
+   "byYear": {
+    "2021": {
+     "persistence": {
+      "n": 26,
+      "mae": 0.4648,
+      "dirAcc": 0.1923,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 26,
+      "mae": 0.4498,
+      "dirAcc": 0.3462,
+      "pss": 0
+     },
+     "season": {
+      "n": 26,
+      "mae": 0.3599,
+      "dirAcc": 0.5385,
+      "pss": 0.3125
+     },
+     "independentStorms": 4,
+     "qualifies": true,
+     "maeDiffVsPersistence": -0.1049
+    },
+    "2023": {
+     "persistence": {
+      "n": 116,
+      "mae": 0.1779,
+      "dirAcc": 0.5776,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 116,
+      "mae": 0.1978,
+      "dirAcc": 0.569,
+      "pss": 0.2651
+     },
+     "season": {
+      "n": 116,
+      "mae": 0.248,
+      "dirAcc": 0.431,
+      "pss": 0.0914
+     },
+     "independentStorms": 5,
+     "qualifies": true,
+     "maeDiffVsPersistence": 0.0701
+    },
+    "2024": {
+     "persistence": {
+      "n": 32,
+      "mae": 0.2896,
+      "dirAcc": 0.375,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 32,
+      "mae": 0.2614,
+      "dirAcc": 0.5,
+      "pss": 0.0333
+     },
+     "season": {
+      "n": 32,
+      "mae": 0.2553,
+      "dirAcc": 0.5312,
+      "pss": -0.0167
+     },
+     "independentStorms": 4,
+     "qualifies": true,
+     "maeDiffVsPersistence": -0.0343
+    }
+   },
+   "bySeason": {
+    "cold": {
+     "n": 174,
+     "mae": 0.2661,
+     "dirAcc": 0.4655,
+     "pss": 0.0923
+    },
+    "warm": null
+   },
+   "_ch": "season"
+  },
+  "flow large": {
+   "condition": {
+    "persistence": {
+     "n": 162,
+     "mae": 0.2616,
+     "dirAcc": 0.4938,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 162,
+     "mae": 0.2664,
+     "dirAcc": 0.4877,
+     "pss": 0.1714
+    },
+    "flow": {
+     "n": 162,
+     "mae": 0.2437,
+     "dirAcc": 0.5,
+     "pss": 0.1707
+    },
+    "maeDiffVsPersistenceCI": [
+     -0.0717,
+     0.0376
+    ],
+    "pssCI": [
+     -0.0122,
+     0.3614
+    ],
+    "medianAnomaly": 0.1235,
+    "medianAnomalyCI": [
+     -0.036,
+     0.1851
+    ],
+    "independentStorms": 12,
+    "largestStormShare": 0.179,
+    "maeDiffWithoutLargestStorm": -0.0146
+   },
+   "all": {
+    "persistence": {
+     "n": 2337,
+     "mae": 0.1508,
+     "dirAcc": 0.6333,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 2337,
+     "mae": 0.1457,
+     "dirAcc": 0.629,
+     "pss": 0.3174
+    },
+    "flow": {
+     "n": 2337,
+     "mae": 0.1496,
+     "dirAcc": 0.6337,
+     "pss": 0.0215
+    }
+   },
+   "byYear": {
+    "2021": {
+     "persistence": {
+      "n": 44,
+      "mae": 0.3791,
+      "dirAcc": 0.3864,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 44,
+      "mae": 0.3603,
+      "dirAcc": 0.5,
+      "pss": 0.2
+     },
+     "flow": {
+      "n": 44,
+      "mae": 0.2949,
+      "dirAcc": 0.5682,
+      "pss": 0.2667
+     },
+     "independentStorms": 3,
+     "qualifies": true,
+     "maeDiffVsPersistence": -0.0842
+    },
+    "2023": {
+     "persistence": {
+      "n": 89,
+      "mae": 0.1621,
+      "dirAcc": 0.5955,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 89,
+      "mae": 0.1869,
+      "dirAcc": 0.4944,
+      "pss": 0.1677
+     },
+     "flow": {
+      "n": 89,
+      "mae": 0.1802,
+      "dirAcc": 0.4944,
+      "pss": 0.1346
+     },
+     "independentStorms": 4,
+     "qualifies": true,
+     "maeDiffVsPersistence": 0.0181
+    },
+    "2024": {
+     "persistence": {
+      "n": 29,
+      "mae": 0.3883,
+      "dirAcc": 0.3448,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 29,
+      "mae": 0.3679,
+      "dirAcc": 0.4483,
+      "pss": 0.0524
+     },
+     "flow": {
+      "n": 29,
+      "mae": 0.3608,
+      "dirAcc": 0.4138,
+      "pss": 0.0476
+     },
+     "independentStorms": 5,
+     "qualifies": true,
+     "maeDiffVsPersistence": -0.0275
+    }
+   },
+   "bySeason": {
+    "cold": {
+     "n": 162,
+     "mae": 0.2437,
+     "dirAcc": 0.5,
+     "pss": 0.1707
+    },
+    "warm": null
+   },
+   "_ch": "flow"
+  },
+  "season medium": {
+   "condition": {
+    "persistence": {
+     "n": 91,
+     "mae": 0.1573,
+     "dirAcc": 0.6154,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 91,
+     "mae": 0.1578,
+     "dirAcc": 0.6264,
+     "pss": 0.2769
+    },
+    "season": {
+     "n": 91,
+     "mae": 0.1709,
+     "dirAcc": 0.5824,
+     "pss": 0.2231
+    },
+    "maeDiffVsPersistenceCI": [
+     -0.0362,
+     0.0396
+    ],
+    "pssCI": [
+     -0.0427,
+     0.5378
+    ],
+    "medianAnomaly": -0.0514,
+    "medianAnomalyCI": [
+     -0.1054,
+     0.0437
+    ],
+    "independentStorms": 12,
+    "largestStormShare": 0.2198,
+    "maeDiffWithoutLargestStorm": 0.0064
+   },
+   "all": {
+    "persistence": {
+     "n": 957,
+     "mae": 0.1312,
+     "dirAcc": 0.6667,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 957,
+     "mae": 0.127,
+     "dirAcc": 0.652,
+     "pss": 0.2739
+    },
+    "season": {
+     "n": 957,
+     "mae": 0.1325,
+     "dirAcc": 0.6635,
+     "pss": 0.0426
+    }
+   },
+   "byYear": {
+    "2021": {
+     "persistence": {
+      "n": 3,
+      "mae": 0.5657,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "reversion": {
+      "n": 3,
+      "mae": 0.5588,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "season": {
+      "n": 3,
+      "mae": 0.5176,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "independentStorms": 2,
+     "qualifies": false,
+     "maeDiffVsPersistence": -0.0481
+    },
+    "2023": {
+     "persistence": {
+      "n": 69,
+      "mae": 0.1279,
+      "dirAcc": 0.6812,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 69,
+      "mae": 0.1521,
+      "dirAcc": 0.6232,
+      "pss": 0.1948
+     },
+     "season": {
+      "n": 69,
+      "mae": 0.1689,
+      "dirAcc": 0.5797,
+      "pss": 0.1571
+     },
+     "independentStorms": 5,
+     "qualifies": true,
+     "maeDiffVsPersistence": 0.041
+    },
+    "2024": {
+     "persistence": {
+      "n": 19,
+      "mae": 0.1995,
+      "dirAcc": 0.4737,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 19,
+      "mae": 0.1149,
+      "dirAcc": 0.7368,
+      "pss": 0.4667
+     },
+     "season": {
+      "n": 19,
+      "mae": 0.1236,
+      "dirAcc": 0.6842,
+      "pss": 0.4667
+     },
+     "independentStorms": 5,
+     "qualifies": true,
+     "maeDiffVsPersistence": -0.0759
+    }
+   },
+   "bySeason": {
+    "cold": {
+     "n": 91,
+     "mae": 0.1709,
+     "dirAcc": 0.5824,
+     "pss": 0.2231
+    },
+    "warm": null
+   },
+   "_ch": "season"
+  },
+  "flow medium": {
+   "condition": {
+    "persistence": {
+     "n": 68,
+     "mae": 0.1677,
+     "dirAcc": 0.5735,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 68,
+     "mae": 0.1909,
+     "dirAcc": 0.4559,
+     "pss": 0.086
+    },
+    "flow": {
+     "n": 68,
+     "mae": 0.1459,
+     "dirAcc": 0.6765,
+     "pss": 0.2986
+    },
+    "maeDiffVsPersistenceCI": [
+     -0.0844,
+     0.0161
+    ],
+    "pssCI": [
+     0.0766,
+     0.5238
+    ],
+    "medianAnomaly": 0.1208,
+    "medianAnomalyCI": [
+     0.036,
+     0.2057
+    ],
+    "independentStorms": 9,
+    "largestStormShare": 0.3382,
+    "maeDiffWithoutLargestStorm": -0.0342
+   },
+   "all": {
+    "persistence": {
+     "n": 957,
+     "mae": 0.1312,
+     "dirAcc": 0.6667,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 957,
+     "mae": 0.127,
+     "dirAcc": 0.652,
+     "pss": 0.2739
+    },
+    "flow": {
+     "n": 957,
+     "mae": 0.1296,
+     "dirAcc": 0.674,
+     "pss": 0.0547
+    }
+   },
+   "byYear": {
+    "2021": {
+     "persistence": {
+      "n": 11,
+      "mae": 0.2833,
+      "dirAcc": 0.2727,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 11,
+      "mae": 0.2534,
+      "dirAcc": 0.5455,
+      "pss": 0
+     },
+     "flow": {
+      "n": 11,
+      "mae": 0.1274,
+      "dirAcc": 0.7273,
+      "pss": 0.25
+     },
+     "independentStorms": 3,
+     "qualifies": true,
+     "maeDiffVsPersistence": -0.1559
+    },
+    "2023": {
+     "persistence": {
+      "n": 46,
+      "mae": 0.1318,
+      "dirAcc": 0.6739,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 46,
+      "mae": 0.1748,
+      "dirAcc": 0.4565,
+      "pss": 0.2005
+     },
+     "flow": {
+      "n": 46,
+      "mae": 0.1451,
+      "dirAcc": 0.6739,
+      "pss": 0.3124
+     },
+     "independentStorms": 3,
+     "qualifies": true,
+     "maeDiffVsPersistence": 0.0133
+    },
+    "2024": {
+     "persistence": {
+      "n": 11,
+      "mae": 0.202,
+      "dirAcc": 0.4545,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 11,
+      "mae": 0.1954,
+      "dirAcc": 0.3636,
+      "pss": -0.2
+     },
+     "flow": {
+      "n": 11,
+      "mae": 0.1676,
+      "dirAcc": 0.6364,
+      "pss": 0.2667
+     },
+     "independentStorms": 3,
+     "qualifies": true,
+     "maeDiffVsPersistence": -0.0344
+    }
+   },
+   "bySeason": {
+    "cold": {
+     "n": 68,
+     "mae": 0.1459,
+     "dirAcc": 0.6765,
+     "pss": 0.2986
+    },
+    "warm": null
+   },
+   "_ch": "flow"
+  },
+  "season small": {
+   "condition": {
+    "persistence": {
+     "n": 11,
+     "mae": 0.1734,
+     "dirAcc": 0.7273,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 11,
+     "mae": 0.1421,
+     "dirAcc": 0.8182,
+     "pss": 0.5
+    },
+    "season": {
+     "n": 11,
+     "mae": 0.4945,
+     "dirAcc": 0.1818,
+     "pss": 0
+    },
+    "maeDiffVsPersistenceCI": [
+     0.0963,
+     0.4594
+    ],
+    "pssCI": [
+     NaN,
+     NaN
+    ],
+    "medianAnomaly": -0.072,
+    "medianAnomalyCI": [
+     -0.1903,
+     0.0
+    ],
+    "independentStorms": 7,
+    "largestStormShare": 0.1818,
+    "maeDiffWithoutLargestStorm": 0.2822
+   },
+   "all": {
+    "persistence": {
+     "n": 196,
+     "mae": 0.1339,
+     "dirAcc": 0.8265,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 196,
+     "mae": 0.1439,
+     "dirAcc": 0.7908,
+     "pss": 0.3219
+    },
+    "season": {
+     "n": 196,
+     "mae": 0.1519,
+     "dirAcc": 0.7959,
+     "pss": 0.0349
+    }
+   },
+   "byYear": {
+    "2021": {
+     "persistence": null,
+     "reversion": null,
+     "season": null,
+     "independentStorms": 0,
+     "qualifies": false,
+     "maeDiffVsPersistence": null
+    },
+    "2023": {
+     "persistence": {
+      "n": 8,
+      "mae": 0.1279,
+      "dirAcc": 0.875,
+      "pss": null
+     },
+     "reversion": {
+      "n": 8,
+      "mae": 0.1343,
+      "dirAcc": 0.875,
+      "pss": null
+     },
+     "season": {
+      "n": 8,
+      "mae": 0.5662,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "independentStorms": 5,
+     "qualifies": true,
+     "maeDiffVsPersistence": 0.4383
+    },
+    "2024": {
+     "persistence": {
+      "n": 3,
+      "mae": 0.2948,
+      "dirAcc": 0.3333,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 3,
+      "mae": 0.1628,
+      "dirAcc": 0.6667,
+      "pss": 0.5
+     },
+     "season": {
+      "n": 3,
+      "mae": 0.3034,
+      "dirAcc": 0.6667,
+      "pss": 0
+     },
+     "independentStorms": 2,
+     "qualifies": false,
+     "maeDiffVsPersistence": 0.0086
+    }
+   },
+   "bySeason": {
+    "cold": {
+     "n": 11,
+     "mae": 0.4945,
+     "dirAcc": 0.1818,
+     "pss": 0
+    },
+    "warm": null
+   },
+   "_ch": "season"
+  },
+  "flow small": {
+   "condition": {
+    "persistence": {
+     "n": 4,
+     "mae": 0.1324,
+     "dirAcc": 0.75,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 4,
+     "mae": 0.2636,
+     "dirAcc": 0.25,
+     "pss": 0
+    },
+    "flow": {
+     "n": 4,
+     "mae": 0.2636,
+     "dirAcc": 0.25,
+     "pss": 0
+    },
+    "maeDiffVsPersistenceCI": [
+     -0.0103,
+     0.1783
+    ],
+    "pssCI": [
+     NaN,
+     NaN
+    ],
+    "medianAnomaly": 0.3137,
+    "medianAnomalyCI": [
+     0.0155,
+     0.3291
+    ],
+    "independentStorms": 2,
+    "largestStormShare": 0.75,
+    "maeDiffWithoutLargestStorm": -0.0103
+   },
+   "all": {
+    "persistence": {
+     "n": 196,
+     "mae": 0.1339,
+     "dirAcc": 0.8265,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 196,
+     "mae": 0.1439,
+     "dirAcc": 0.7908,
+     "pss": 0.3219
+    },
+    "flow": {
+     "n": 196,
+     "mae": 0.1366,
+     "dirAcc": 0.8163,
+     "pss": 0
+    }
+   },
+   "byYear": {
+    "2021": {
+     "persistence": {
+      "n": 4,
+      "mae": 0.1324,
+      "dirAcc": 0.75,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 4,
+      "mae": 0.2636,
+      "dirAcc": 0.25,
+      "pss": 0
+     },
+     "flow": {
+      "n": 4,
+      "mae": 0.2636,
+      "dirAcc": 0.25,
+      "pss": 0
+     },
+     "independentStorms": 2,
+     "qualifies": false,
+     "maeDiffVsPersistence": 0.1312
+    },
+    "2023": {
+     "persistence": null,
+     "reversion": null,
+     "flow": null,
+     "independentStorms": 0,
+     "qualifies": false,
+     "maeDiffVsPersistence": null
+    },
+    "2024": {
+     "persistence": null,
+     "reversion": null,
+     "flow": null,
+     "independentStorms": 0,
+     "qualifies": false,
+     "maeDiffVsPersistence": null
+    }
+   },
+   "bySeason": {
+    "cold": {
+     "n": 2,
+     "mae": 0.2134,
+     "dirAcc": 0.5,
+     "pss": 0
+    },
+    "warm": {
+     "n": 2,
+     "mae": 0.3137,
+     "dirAcc": 0,
+     "pss": null
+    }
+   },
+   "_ch": "flow"
+  },
+  "season mainStem": {
+   "condition": {
+    "persistence": {
+     "n": 5,
+     "mae": 0.1481,
+     "dirAcc": 0.8,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 5,
+     "mae": 0.1954,
+     "dirAcc": 0.6,
+     "pss": -0.25
+    },
+    "season": {
+     "n": 5,
+     "mae": 0.1954,
+     "dirAcc": 0.6,
+     "pss": -0.25
+    },
+    "maeDiffVsPersistenceCI": [
+     0.0041,
+     0.0782
+    ],
+    "pssCI": [
+     -1,
+     -0.25
+    ],
+    "medianAnomaly": -0.072,
+    "medianAnomalyCI": [
+     -0.1337,
+     0.5348
+    ],
+    "independentStorms": 5,
+    "largestStormShare": 0.2,
+    "maeDiffWithoutLargestStorm": 0.0694
+   },
+   "all": {
+    "persistence": {
+     "n": 52,
+     "mae": 0.1204,
+     "dirAcc": 0.7885,
+     "pss": 0
+    },
+    "reversion": {
+     "n": 52,
+     "mae": 0.1297,
+     "dirAcc": 0.7308,
+     "pss": 0.3397
+    },
+    "season": {
+     "n": 52,
+     "mae": 0.125,
+     "dirAcc": 0.7692,
+     "pss": -0.0222
+    }
+   },
+   "byYear": {
+    "2021": {
+     "persistence": {
+      "n": 1,
+      "mae": 0.5759,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "reversion": {
+      "n": 1,
+      "mae": 0.5348,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "season": {
+      "n": 1,
+      "mae": 0.5348,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "independentStorms": 1,
+     "qualifies": false,
+     "maeDiffVsPersistence": -0.0411
+    },
+    "2023": {
+     "persistence": {
+      "n": 3,
+      "mae": 0.048,
+      "dirAcc": 1,
+      "pss": null
+     },
+     "reversion": {
+      "n": 3,
+      "mae": 0.1097,
+      "dirAcc": 1,
+      "pss": null
+     },
+     "season": {
+      "n": 3,
+      "mae": 0.1097,
+      "dirAcc": 1,
+      "pss": null
+     },
+     "independentStorms": 3,
+     "qualifies": false,
+     "maeDiffVsPersistence": 0.0617
+    },
+    "2024": {
+     "persistence": {
+      "n": 1,
+      "mae": 0.0206,
+      "dirAcc": 1,
+      "pss": null
+     },
+     "reversion": {
+      "n": 1,
+      "mae": 0.1131,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "season": {
+      "n": 1,
+      "mae": 0.1131,
+      "dirAcc": 0,
+      "pss": null
+     },
+     "independentStorms": 1,
+     "qualifies": false,
+     "maeDiffVsPersistence": 0.0925
+    }
+   },
+   "bySeason": {
+    "cold": {
+     "n": 5,
+     "mae": 0.1954,
+     "dirAcc": 0.6,
+     "pss": -0.25
+    },
+    "warm": null
+   },
+   "_ch": "season"
+  }
+ },
+ "gate": {
+  "season large": {
+   "G1 independence": false,
+   "G2 hypothesis": true,
+   "G3 effect > noise": false,
+   "G4 beats persistence": false,
+   "G5 direction skill": false,
+   "G6 beats reversion": false,
+   "G7 quality": true,
+   "G8 no harm overall": true,
+   "decision": "insufficient evidence",
+   "n": 174
+  },
+  "flow large": {
+   "G1 independence": false,
+   "G2 hypothesis": true,
+   "G3 effect > noise": false,
+   "G4 beats persistence": false,
+   "G5 direction skill": false,
+   "G6 beats reversion": true,
+   "G7 quality": true,
+   "G8 no harm overall": true,
+   "decision": "insufficient evidence",
+   "n": 162
+  },
+  "season medium": {
+   "G1 independence": false,
+   "G2 hypothesis": false,
+   "G3 effect > noise": false,
+   "G4 beats persistence": false,
+   "G5 direction skill": false,
+   "G6 beats reversion": false,
+   "G7 quality": true,
+   "G8 no harm overall": true,
+   "decision": "insufficient evidence",
+   "n": 91
+  },
+  "flow medium": {
+   "G1 independence": false,
+   "G2 hypothesis": true,
+   "G3 effect > noise": true,
+   "G4 beats persistence": false,
+   "G5 direction skill": true,
+   "G6 beats reversion": true,
+   "G7 quality": true,
+   "G8 no harm overall": true,
+   "decision": "insufficient evidence",
+   "n": 68
+  },
+  "season small": {
+   "G1 independence": false,
+   "G2 hypothesis": false,
+   "G3 effect > noise": false,
+   "G4 beats persistence": false,
+   "G5 direction skill": false,
+   "G6 beats reversion": false,
+   "G7 quality": true,
+   "G8 no harm overall": false,
+   "decision": "insufficient evidence",
+   "n": 11
+  },
+  "flow small": {
+   "G1 independence": false,
+   "G2 hypothesis": false,
+   "G3 effect > noise": true,
+   "G4 beats persistence": false,
+   "G5 direction skill": false,
+   "G6 beats reversion": true,
+   "G7 quality": true,
+   "G8 no harm overall": true,
+   "decision": "insufficient evidence",
+   "n": 4
+  },
+  "season mainStem": {
+   "G1 independence": false,
+   "G2 hypothesis": false,
+   "G3 effect > noise": false,
+   "G4 beats persistence": false,
+   "G5 direction skill": false,
+   "G6 beats reversion": true,
+   "G7 quality": true,
+   "G8 no harm overall": true,
+   "decision": "insufficient evidence",
+   "n": 5
+  }
+ },
+ "secondary": {
+  "H3 progression": {
+   "events": 47,
+   "eventsWithHeadMeasured": 27,
+   "headStrongerShare": 0.532,
+   "signTestP": 0.1802,
+   "byYear": {
+    "2021": {
+     "events": 5,
+     "headStrongerShare": 1.0,
+     "qualifies": true
+    },
+    "2023": {
+     "events": 33,
+     "headStrongerShare": 0.545,
+     "qualifies": true
+    },
+    "2024": {
+     "events": 9,
+     "headStrongerShare": 0.222,
+     "qualifies": true
+    }
+   },
+   "pass": false
+  },
+  "heads": {
+   "coldStormEventsWithAnyMeasurableZone": 106,
+   "ofWhichHeadMeasurable": 46,
+   "ofWhichHeadAndMouthMeasurable": 44,
+   "headZones": {
+    "aspel-branch": {
+     "passes": 214,
+     "measurableShare": 0.047,
+     "meanUnreadable": 0.434,
+     "meanGrass": 0.199,
+     "meanCloud": 0.319
+    },
+    "beech-creek": {
+     "passes": 214,
+     "measurableShare": 0.453,
+     "meanUnreadable": 0.286,
+     "meanGrass": 0.145,
+     "meanCloud": 0.403
+    },
+    "big-spring-creek": {
+     "passes": 214,
+     "measurableShare": 0.285,
+     "meanUnreadable": 0.32,
+     "meanGrass": 0.104,
+     "meanCloud": 0.427
+    },
+    "browns-creek": {
+     "passes": 214,
+     "measurableShare": 0.579,
+     "meanUnreadable": 0.147,
+     "meanGrass": 0.114,
+     "meanCloud": 0.399
+    },
+    "chandler-branch": {
+     "passes": 214,
+     "measurableShare": 0.458,
+     "meanUnreadable": 0.249,
+     "meanGrass": 0.024,
+     "meanCloud": 0.491
+    },
+    "coon-creek": {
+     "passes": 214,
+     "measurableShare": 0.033,
+     "meanUnreadable": 0.639,
+     "meanGrass": 0.059,
+     "meanCloud": 0.247
+    },
+    "crow-creek": {
+     "passes": 214,
+     "measurableShare": 0.0,
+     "meanUnreadable": 0.646,
+     "meanGrass": 0.057,
+     "meanCloud": 0.294
+    },
+    "dry-creek-jackson-into-roseberry-creek": {
+     "passes": 214,
+     "measurableShare": 0.0,
+     "meanUnreadable": 0.407,
+     "meanGrass": 0.293,
+     "meanCloud": 0.277
+    },
+    "honeycomb-creek": {
+     "passes": 214,
+     "measurableShare": 0.112,
+     "meanUnreadable": 0.34,
+     "meanGrass": 0.109,
+     "meanCloud": 0.455
+    },
+    "jagger-branch": {
+     "passes": 214,
+     "measurableShare": 0.0,
+     "meanUnreadable": 0.439,
+     "meanGrass": 0.142,
+     "meanCloud": 0.416
+    },
+    "jones-creek-jackson-rorex-creek-jones-creek": {
+     "passes": 214,
+     "measurableShare": 0.472,
+     "meanUnreadable": 0.237,
+     "meanGrass": 0.11,
+     "meanCloud": 0.426
+    },
+    "long-island-creek": {
+     "passes": 214,
+     "measurableShare": 0.0,
+     "meanUnreadable": 0.738,
+     "meanGrass": 0.065,
+     "meanCloud": 0.19
+    },
+    "mink-creek-jackson": {
+     "passes": 214,
+     "measurableShare": 0.463,
+     "meanUnreadable": 0.293,
+     "meanGrass": 0.114,
+     "meanCloud": 0.412
+    },
+    "minky-creek": {
+     "passes": 214,
+     "measurableShare": 0.449,
+     "meanUnreadable": 0.303,
+     "meanGrass": 0.094,
+     "meanCloud": 0.412
+    },
+    "mud-creek": {
+     "passes": 214,
+     "measurableShare": 0.005,
+     "meanUnreadable": 0.467,
+     "meanGrass": 0.175,
+     "meanCloud": 0.323
+    },
+    "nichols-branch": {
+     "passes": 214,
+     "measurableShare": 0.0,
+     "meanUnreadable": 0.51,
+     "meanGrass": 0.23,
+     "meanCloud": 0.259
+    },
+    "north-sauty-creek": {
+     "passes": 214,
+     "measurableShare": 0.472,
+     "meanUnreadable": 0.236,
+     "meanGrass": 0.139,
+     "meanCloud": 0.39
+    },
+    "polecat-branch": {
+     "passes": 214,
+     "measurableShare": 0.0,
+     "meanUnreadable": 0.518,
+     "meanGrass": 0.003,
+     "meanCloud": 0.452
+    },
+    "roseberry-creek": {
+     "passes": 214,
+     "measurableShare": 0.444,
+     "meanUnreadable": 0.264,
+     "meanGrass": 0.201,
+     "meanCloud": 0.374
+    },
+    "seibold-branch": {
+     "passes": 214,
+     "measurableShare": 0.509,
+     "meanUnreadable": 0.236,
+     "meanGrass": 0.068,
+     "meanCloud": 0.425
+    },
+    "short-creek": {
+     "passes": 214,
+     "measurableShare": 0.154,
+     "meanUnreadable": 0.399,
+     "meanGrass": 0.04,
+     "meanCloud": 0.454
+    },
+    "slaton-branch": {
+     "passes": 214,
+     "measurableShare": 0.028,
+     "meanUnreadable": 0.448,
+     "meanGrass": 0.188,
+     "meanCloud": 0.314
+    },
+    "south-sauty-creek": {
+     "passes": 214,
+     "measurableShare": 0.519,
+     "meanUnreadable": 0.183,
+     "meanGrass": 0.016,
+     "meanCloud": 0.475
+    },
+    "town-creek-jackson": {
+     "passes": 214,
+     "measurableShare": 0.009,
+     "meanUnreadable": 0.444,
+     "meanGrass": 0.111,
+     "meanCloud": 0.378
+    },
+    "town-creek-marshall": {
+     "passes": 214,
+     "measurableShare": 0.019,
+     "meanUnreadable": 0.513,
+     "meanGrass": 0.02,
+     "meanCloud": 0.41
+    },
+    "yellow-creek": {
+     "passes": 214,
+     "measurableShare": 0.5,
+     "meanUnreadable": 0.266,
+     "meanGrass": 0.15,
+     "meanCloud": 0.385
+    }
+   },
+   "headsNeverMeasurable": [
+    "crow-creek",
+    "dry-creek-jackson-into-roseberry-creek",
+    "jagger-branch",
+    "long-island-creek",
+    "nichols-branch",
+    "polecat-branch"
+   ]
+  },
+  "byLag": {
+   "large": {
+    "0-1": {
+     "n": 50,
+     "mae": 0.3111,
+     "dirAcc": 0.32,
+     "pss": -0.0227
+    },
+    "2-3": {
+     "n": 124,
+     "mae": 0.248,
+     "dirAcc": 0.5242,
+     "pss": 0.1613
+    },
+    "4-6": {
+     "n": 170,
+     "mae": 0.2653,
+     "dirAcc": 0.2706,
+     "pss": 0
+    },
+    "7-10": {
+     "n": 296,
+     "mae": 0.1791,
+     "dirAcc": 0.5236,
+     "pss": 0
+    }
+   },
+   "medium": {
+    "0-1": {
+     "n": 24,
+     "mae": 0.1889,
+     "dirAcc": 0.5833,
+     "pss": 0.2
+    },
+    "2-3": {
+     "n": 70,
+     "mae": 0.1673,
+     "dirAcc": 0.5857,
+     "pss": 0.2045
+    },
+    "4-6": {
+     "n": 60,
+     "mae": 0.1978,
+     "dirAcc": 0.3667,
+     "pss": 0
+    },
+    "7-10": {
+     "n": 124,
+     "mae": 0.1415,
+     "dirAcc": 0.5806,
+     "pss": 0
+    }
+   },
+   "small": {
+    "0-1": {
+     "n": 2,
+     "mae": 0.6518,
+     "dirAcc": 0,
+     "pss": null
+    },
+    "2-3": {
+     "n": 10,
+     "mae": 0.4219,
+     "dirAcc": 0.3,
+     "pss": 0.125
+    },
+    "4-6": {
+     "n": 14,
+     "mae": 0.2549,
+     "dirAcc": 0.5714,
+     "pss": 0
+    },
+    "7-10": {
+     "n": 31,
+     "mae": 0.1674,
+     "dirAcc": 0.7419,
+     "pss": 0
+    }
+   },
+   "mainStem": {
+    "0-1": {
+     "n": 1,
+     "mae": 0.1337,
+     "dirAcc": 1,
+     "pss": null
+    },
+    "2-3": {
+     "n": 4,
+     "mae": 0.2108,
+     "dirAcc": 0.5,
+     "pss": -0.3333
+    },
+    "4-6": {
+     "n": 4,
+     "mae": 0.1131,
+     "dirAcc": 0.75,
+     "pss": 0
+    },
+    "7-10": {
+     "n": 7,
+     "mae": 0.2175,
+     "dirAcc": 0.5714,
+     "pss": 0
+    }
+   }
+  },
+  "byCoverage": {
+   "large": {
+    "prev cov 30-50%": {
+     "persistence": {
+      "n": 580,
+      "mae": 0.1824,
+      "dirAcc": 0.5983,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 580,
+      "mae": 0.1719,
+      "dirAcc": 0.6086,
+      "pss": 0.2962
+     }
+    },
+    "50-75%": {
+     "persistence": {
+      "n": 1072,
+      "mae": 0.1446,
+      "dirAcc": 0.6315,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 1072,
+      "mae": 0.1373,
+      "dirAcc": 0.6418,
+      "pss": 0.3149
+     }
+    },
+    ">=75%": {
+     "persistence": {
+      "n": 685,
+      "mae": 0.1339,
+      "dirAcc": 0.6657,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 685,
+      "mae": 0.1367,
+      "dirAcc": 0.6263,
+      "pss": 0.3353
+     }
+    }
+   },
+   "medium": {
+    "prev cov 30-50%": {
+     "persistence": {
+      "n": 279,
+      "mae": 0.1364,
+      "dirAcc": 0.6129,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 279,
+      "mae": 0.1307,
+      "dirAcc": 0.6129,
+      "pss": 0.2378
+     }
+    },
+    "50-75%": {
+     "persistence": {
+      "n": 369,
+      "mae": 0.1313,
+      "dirAcc": 0.664,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 369,
+      "mae": 0.1224,
+      "dirAcc": 0.6585,
+      "pss": 0.3271
+     }
+    },
+    ">=75%": {
+     "persistence": {
+      "n": 309,
+      "mae": 0.1263,
+      "dirAcc": 0.7184,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 309,
+      "mae": 0.129,
+      "dirAcc": 0.6796,
+      "pss": 0.2367
+     }
+    }
+   },
+   "small": {
+    "prev cov 30-50%": {
+     "persistence": {
+      "n": 75,
+      "mae": 0.1228,
+      "dirAcc": 0.8533,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 75,
+      "mae": 0.1456,
+      "dirAcc": 0.7733,
+      "pss": 0.2727
+     }
+    },
+    "50-75%": {
+     "persistence": {
+      "n": 99,
+      "mae": 0.1365,
+      "dirAcc": 0.8283,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 99,
+      "mae": 0.1349,
+      "dirAcc": 0.8283,
+      "pss": 0.4659
+     }
+    },
+    ">=75%": {
+     "persistence": {
+      "n": 22,
+      "mae": 0.1601,
+      "dirAcc": 0.7273,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 22,
+      "mae": 0.1788,
+      "dirAcc": 0.6818,
+      "pss": -0.0526
+     }
+    }
+   },
+   "mainStem": {
+    "prev cov 30-50%": {
+     "persistence": {
+      "n": 11,
+      "mae": 0.1402,
+      "dirAcc": 0.7273,
+      "pss": null
+     },
+     "reversion": {
+      "n": 11,
+      "mae": 0.1674,
+      "dirAcc": 0.6364,
+      "pss": null
+     }
+    },
+    "50-75%": {
+     "persistence": {
+      "n": 37,
+      "mae": 0.1137,
+      "dirAcc": 0.8108,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 37,
+      "mae": 0.1215,
+      "dirAcc": 0.7297,
+      "pss": 0.2366
+     }
+    },
+    ">=75%": {
+     "persistence": {
+      "n": 4,
+      "mae": 0.1286,
+      "dirAcc": 0.75,
+      "pss": 0
+     },
+     "reversion": {
+      "n": 4,
+      "mae": 0.1028,
+      "dirAcc": 1,
+      "pss": 1
+     }
+    }
+   }
+  }
+ },
+ "spatial": {
+  "H3pass": false
+ },
+ "recommendation": "DO NOT PROCEED",
+ "separateYears": {
+  "season large": {
+   "persistence": {
+    "n": 33,
+    "mae": 0.2475,
+    "dirAcc": 0.6364,
+    "pss": 0
+   },
+   "reversion": {
+    "n": 33,
+    "mae": 0.3567,
+    "dirAcc": 0.4242,
+    "pss": -0.087
+   },
+   "season": {
+    "n": 33,
+    "mae": 0.3316,
+    "dirAcc": 0.4545,
+    "pss": -0.0174
+   },
+   "maeDiffVsPersistenceCI": [
+    0.0842,
+    0.0842
+   ],
+   "pssCI": [
+    -0.0174,
+    -0.0174
+   ],
+   "medianAnomaly": 0.1851,
+   "medianAnomalyCI": [
+    0.1851,
+    0.1851
+   ],
+   "independentStorms": 1,
+   "largestStormShare": 1.0,
+   "maeDiffWithoutLargestStorm": null
+  },
+  "flow large": {
+   "persistence": {
+    "n": 76,
+    "mae": 0.1984,
+    "dirAcc": 0.6316,
+    "pss": 0
+   },
+   "reversion": {
+    "n": 76,
+    "mae": 0.2428,
+    "dirAcc": 0.5263,
+    "pss": 0.0853
+   },
+   "flow": {
+    "n": 76,
+    "mae": 0.2388,
+    "dirAcc": 0.4474,
+    "pss": 0.0763
+   },
+   "maeDiffVsPersistenceCI": [
+    -0.0186,
+    0.0982
+   ],
+   "pssCI": [
+    -0.1944,
+    0.3727
+   ],
+   "medianAnomaly": 0.0463,
+   "medianAnomalyCI": [
+    -0.072,
+    0.216
+   ],
+   "independentStorms": 2,
+   "largestStormShare": 0.2895,
+   "maeDiffWithoutLargestStorm": 0.0081
+  },
+  "season medium": {
+   "persistence": {
+    "n": 5,
+    "mae": 0.1748,
+    "dirAcc": 0.6,
+    "pss": 0
+   },
+   "reversion": {
+    "n": 5,
+    "mae": 0.2931,
+    "dirAcc": 0.4,
+    "pss": 0
+   },
+   "season": {
+    "n": 5,
+    "mae": 0.2808,
+    "dirAcc": 0.4,
+    "pss": 0
+   },
+   "maeDiffVsPersistenceCI": [
+    0.1059,
+    0.1059
+   ],
+   "pssCI": [
+    NaN,
+    NaN
+   ],
+   "medianAnomaly": 0.4114,
+   "medianAnomalyCI": [
+    0.4114,
+    0.4114
+   ],
+   "independentStorms": 1,
+   "largestStormShare": 1.0,
+   "maeDiffWithoutLargestStorm": null
+  },
+  "flow medium": {
+   "persistence": {
+    "n": 23,
+    "mae": 0.2406,
+    "dirAcc": 0.2609,
+    "pss": 0
+   },
+   "reversion": {
+    "n": 23,
+    "mae": 0.2005,
+    "dirAcc": 0.3913,
+    "pss": 0.25
+   },
+   "flow": {
+    "n": 23,
+    "mae": 0.151,
+    "dirAcc": 0.7391,
+    "pss": 0.6696
+   },
+   "maeDiffVsPersistenceCI": [
+    -0.1644,
+    0.0823
+   ],
+   "pssCI": [
+    -0.2727,
+    0.9286
+   ],
+   "medianAnomaly": 0.1337,
+   "medianAnomalyCI": [
+    -0.0617,
+    0.4114
+   ],
+   "independentStorms": 2,
+   "largestStormShare": 0.6522,
+   "maeDiffWithoutLargestStorm": 0.0694
+  },
+  "season small": {
+   "persistence": {
+    "n": 1,
+    "mae": 0.4319,
+    "dirAcc": 0,
+    "pss": null
+   },
+   "reversion": {
+    "n": 1,
+    "mae": 0.4268,
+    "dirAcc": 0,
+    "pss": null
+   },
+   "season": {
+    "n": 1,
+    "mae": 0.0051,
+    "dirAcc": 1,
+    "pss": null
+   },
+   "maeDiffVsPersistenceCI": [
+    -0.4268,
+    -0.4268
+   ],
+   "pssCI": [
+    NaN,
+    NaN
+   ],
+   "medianAnomaly": 0.4268,
+   "medianAnomalyCI": [
+    0.4268,
+    0.4268
+   ],
+   "independentStorms": 1,
+   "largestStormShare": 1.0,
+   "maeDiffWithoutLargestStorm": null
+  },
+  "flow small": {
+   "persistence": {
+    "n": 3,
+    "mae": 0.2091,
+    "dirAcc": 0.6667,
+    "pss": 0
+   },
+   "reversion": {
+    "n": 3,
+    "mae": 0.1903,
+    "dirAcc": 0.6667,
+    "pss": 0
+   },
+   "flow": {
+    "n": 3,
+    "mae": 0.1903,
+    "dirAcc": 0.6667,
+    "pss": 0
+   },
+   "maeDiffVsPersistenceCI": [
+    -0.0823,
+    0.0309
+   ],
+   "pssCI": [
+    NaN,
+    NaN
+   ],
+   "medianAnomaly": -0.0103,
+   "medianAnomalyCI": [
+    -0.1337,
+    0.4268
+   ],
+   "independentStorms": 2,
+   "largestStormShare": 0.3333,
+   "maeDiffWithoutLargestStorm": -0.0257
+  },
+  "season mainStem": {
+   "persistence": {
+    "n": 1,
+    "mae": 0.0617,
+    "dirAcc": 1,
+    "pss": null
+   },
+   "reversion": {
+    "n": 1,
+    "mae": 0.0669,
+    "dirAcc": 1,
+    "pss": null
+   },
+   "season": {
+    "n": 1,
+    "mae": 0.0669,
+    "dirAcc": 1,
+    "pss": null
+   },
+   "maeDiffVsPersistenceCI": [
+    0.0052,
+    0.0052
+   ],
+   "pssCI": [
+    NaN,
+    NaN
+   ],
+   "medianAnomaly": 0.0669,
+   "medianAnomalyCI": [
+    0.0669,
+    0.0669
+   ],
+   "independentStorms": 1,
+   "largestStormShare": 1.0,
+   "maeDiffWithoutLargestStorm": null
+  }
+ }
+}

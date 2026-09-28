@@ -1,0 +1,140 @@
+{
+ "differ": 32,
+ "sameCreekOtherReach": [
+  [
+   "south-sauty-creek",
+   "South Sauty Creek"
+  ],
+  [
+   "black-oak-creek",
+   "Black Oak Creek"
+  ],
+  [
+   "mud-creek",
+   "Mud Creek"
+  ],
+  [
+   "browns-creek",
+   "Browns Creek"
+  ],
+  [
+   "jones-creek",
+   "Jones Creek"
+  ],
+  [
+   "north-sauty-creek",
+   "North Sauty Creek"
+  ],
+  [
+   "graham-branch",
+   "Graham Branch"
+  ],
+  [
+   "roseberry-creek",
+   "Roseberry Creek"
+  ],
+  [
+   "beech-creek",
+   "Beech Creek"
+  ],
+  [
+   "poplar-spring-branch",
+   "Poplar Spring Branch"
+  ],
+  [
+   "widows-creek",
+   "Widows Creek"
+  ],
+  [
+   "marshall-branch",
+   "Marshall Branch"
+  ],
+  [
+   "honeycomb-creek",
+   "Honeycomb Creek"
+  ],
+  [
+   "archie-creek",
+   "Archie Creek"
+  ],
+  [
+   "yellow-creek",
+   "Yellow Creek"
+  ],
+  [
+   "polecat-branch",
+   "Polecat Branch"
+  ],
+  [
+   "blue-spring-creek",
+   "Blue Spring Creek"
+  ],
+  [
+   "long-island-creek",
+   "Long Island Creek"
+  ],
+  [
+   "crooked-branch",
+   "Crooked Branch"
+  ],
+  [
+   "minky-creek",
+   "Minky Creek"
+  ],
+  [
+   "chandler-branch",
+   "Chandler Branch"
+  ],
+  [
+   "battle-creek",
+   "Battle Creek"
+  ],
+  [
+   "seibold-branch",
+   "Seibold Branch"
+  ],
+  [
+   "nichols-branch",
+   "Nichols Branch"
+  ],
+  [
+   "pump-spring-branch",
+   "Pump Spring Branch"
+  ],
+  [
+   "blue-spring-brook",
+   "Blue Spring Brook"
+  ],
+  [
+   "mccorkle-branch",
+   "McCorkle Branch"
+  ]
+ ],
+ "differentStream": [
+  [
+   "short-creek",
+   "19649864",
+   "Flat Branch"
+  ],
+  [
+   "crow-creek",
+   "19645568",
+   "Town Creek"
+  ],
+  [
+   "horn-branch",
+   "19644698",
+   "Widows Creek"
+  ],
+  [
+   "hayes-branch",
+   "19650322",
+   "Dripping Spring Branch"
+  ],
+  [
+   "baker-spring-branch",
+   "19650136",
+   ""
+  ]
+ ]
+}
