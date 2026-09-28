@@ -1,0 +1,1241 @@
+{
+ "passes": {
+  "2025-03-26:sentinel-2a": {
+   "productionCells": 161477,
+   "challengerCells": 10547,
+   "challengerShareOfLake": 0.0349,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 484,
+     "challengerMedian": 0.019,
+     "challengerP90": 0.115,
+     "challengerShareAbove0p1": 0.124,
+     "baselineCells": 116,
+     "baselineMedian": 0.048,
+     "baselineP90": 0.159,
+     "baselineShareAbove0p1": 0.302
+    },
+    "30-60m": {
+     "challengerCells": 1747,
+     "challengerMedian": 0.011,
+     "challengerP90": 0.094,
+     "challengerShareAbove0p1": 0.09,
+     "baselineCells": 236,
+     "baselineMedian": 0.014,
+     "baselineP90": 0.103,
+     "baselineShareAbove0p1": 0.106
+    },
+    "60-100m": {
+     "challengerCells": 3530,
+     "challengerMedian": 0.006,
+     "challengerP90": 0.079,
+     "challengerShareAbove0p1": 0.073,
+     "baselineCells": 1188,
+     "baselineMedian": 0.002,
+     "baselineP90": 0.057,
+     "baselineShareAbove0p1": 0.027
+    },
+    ">=100m": {
+     "challengerCells": 3767,
+     "challengerMedian": 0.004,
+     "challengerP90": 0.061,
+     "challengerShareAbove0p1": 0.051,
+     "baselineCells": 159863,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.027,
+     "baselineShareAbove0p1": 0.011
+    }
+   }
+  },
+  "2025-11-14:sentinel-2b": {
+   "productionCells": 184181,
+   "challengerCells": 12594,
+   "challengerShareOfLake": 0.0416,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1696,
+     "challengerMedian": 0.009,
+     "challengerP90": 0.126,
+     "challengerShareAbove0p1": 0.139,
+     "baselineCells": 504,
+     "baselineMedian": 0.001,
+     "baselineP90": 0.12,
+     "baselineShareAbove0p1": 0.129
+    },
+    "30-60m": {
+     "challengerCells": 2383,
+     "challengerMedian": 0.015,
+     "challengerP90": 0.118,
+     "challengerShareAbove0p1": 0.13,
+     "baselineCells": 1692,
+     "baselineMedian": -0.003,
+     "baselineP90": 0.084,
+     "baselineShareAbove0p1": 0.069
+    },
+    "60-100m": {
+     "challengerCells": 3589,
+     "challengerMedian": 0.008,
+     "challengerP90": 0.095,
+     "challengerShareAbove0p1": 0.095,
+     "baselineCells": 5308,
+     "baselineMedian": -0.006,
+     "baselineP90": 0.06,
+     "baselineShareAbove0p1": 0.035
+    },
+    ">=100m": {
+     "challengerCells": 3790,
+     "challengerMedian": 0.005,
+     "challengerP90": 0.126,
+     "challengerShareAbove0p1": 0.133,
+     "baselineCells": 176538,
+     "baselineMedian": 0.001,
+     "baselineP90": 0.042,
+     "baselineShareAbove0p1": 0.015
+    }
+   }
+  },
+  "2025-12-12:sentinel-2c": {
+   "productionCells": 174612,
+   "challengerCells": 11948,
+   "challengerShareOfLake": 0.0395,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1101,
+     "challengerMedian": 0.013,
+     "challengerP90": 0.163,
+     "challengerShareAbove0p1": 0.189,
+     "baselineCells": 222,
+     "baselineMedian": 0.007,
+     "baselineP90": 0.238,
+     "baselineShareAbove0p1": 0.176
+    },
+    "30-60m": {
+     "challengerCells": 2323,
+     "challengerMedian": 0.016,
+     "challengerP90": 0.169,
+     "challengerShareAbove0p1": 0.166,
+     "baselineCells": 721,
+     "baselineMedian": -0.01,
+     "baselineP90": 0.078,
+     "baselineShareAbove0p1": 0.076
+    },
+    "60-100m": {
+     "challengerCells": 4020,
+     "challengerMedian": 0.013,
+     "challengerP90": 0.172,
+     "challengerShareAbove0p1": 0.157,
+     "baselineCells": 2988,
+     "baselineMedian": -0.01,
+     "baselineP90": 0.043,
+     "baselineShareAbove0p1": 0.034
+    },
+    ">=100m": {
+     "challengerCells": 3525,
+     "challengerMedian": 0.004,
+     "challengerP90": 0.16,
+     "challengerShareAbove0p1": 0.149,
+     "baselineCells": 170607,
+     "baselineMedian": -0.0,
+     "baselineP90": 0.037,
+     "baselineShareAbove0p1": 0.017
+    }
+   }
+  },
+  "2026-01-01:sentinel-2c": {
+   "productionCells": 175806,
+   "challengerCells": 12246,
+   "challengerShareOfLake": 0.0405,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1207,
+     "challengerMedian": 0.017,
+     "challengerP90": 0.197,
+     "challengerShareAbove0p1": 0.254,
+     "baselineCells": 250,
+     "baselineMedian": 0.02,
+     "baselineP90": 0.283,
+     "baselineShareAbove0p1": 0.3
+    },
+    "30-60m": {
+     "challengerCells": 2417,
+     "challengerMedian": 0.021,
+     "challengerP90": 0.191,
+     "challengerShareAbove0p1": 0.236,
+     "baselineCells": 793,
+     "baselineMedian": -0.007,
+     "baselineP90": 0.114,
+     "baselineShareAbove0p1": 0.117
+    },
+    "60-100m": {
+     "challengerCells": 4201,
+     "challengerMedian": 0.01,
+     "challengerP90": 0.17,
+     "challengerShareAbove0p1": 0.177,
+     "baselineCells": 3192,
+     "baselineMedian": -0.009,
+     "baselineP90": 0.075,
+     "baselineShareAbove0p1": 0.071
+    },
+    ">=100m": {
+     "challengerCells": 3503,
+     "challengerMedian": 0.01,
+     "challengerP90": 0.196,
+     "challengerShareAbove0p1": 0.193,
+     "baselineCells": 171515,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.047,
+     "baselineShareAbove0p1": 0.028
+    }
+   }
+  },
+  "2026-01-16:sentinel-2b": {
+   "productionCells": 182260,
+   "challengerCells": 15243,
+   "challengerShareOfLake": 0.0504,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1390,
+     "challengerMedian": 0.011,
+     "challengerP90": 0.166,
+     "challengerShareAbove0p1": 0.218,
+     "baselineCells": 264,
+     "baselineMedian": 0.016,
+     "baselineP90": 0.271,
+     "baselineShareAbove0p1": 0.28
+    },
+    "30-60m": {
+     "challengerCells": 3001,
+     "challengerMedian": 0.018,
+     "challengerP90": 0.157,
+     "challengerShareAbove0p1": 0.176,
+     "baselineCells": 744,
+     "baselineMedian": -0.008,
+     "baselineP90": 0.137,
+     "baselineShareAbove0p1": 0.147
+    },
+    "60-100m": {
+     "challengerCells": 5404,
+     "challengerMedian": 0.006,
+     "challengerP90": 0.133,
+     "challengerShareAbove0p1": 0.133,
+     "baselineCells": 3214,
+     "baselineMedian": -0.011,
+     "baselineP90": 0.061,
+     "baselineShareAbove0p1": 0.058
+    },
+    ">=100m": {
+     "challengerCells": 4108,
+     "challengerMedian": 0.004,
+     "challengerP90": 0.147,
+     "challengerShareAbove0p1": 0.141,
+     "baselineCells": 177991,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.042,
+     "baselineShareAbove0p1": 0.021
+    }
+   }
+  },
+  "2026-01-28:sentinel-2c": {
+   "productionCells": 189064,
+   "challengerCells": 19054,
+   "challengerShareOfLake": 0.063,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1224,
+     "challengerMedian": 0.005,
+     "challengerP90": 0.172,
+     "challengerShareAbove0p1": 0.225,
+     "baselineCells": 194,
+     "baselineMedian": 0.016,
+     "baselineP90": 0.164,
+     "baselineShareAbove0p1": 0.211
+    },
+    "30-60m": {
+     "challengerCells": 3424,
+     "challengerMedian": 0.014,
+     "challengerP90": 0.283,
+     "challengerShareAbove0p1": 0.263,
+     "baselineCells": 497,
+     "baselineMedian": -0.005,
+     "baselineP90": 0.097,
+     "baselineShareAbove0p1": 0.093
+    },
+    "60-100m": {
+     "challengerCells": 6777,
+     "challengerMedian": 0.004,
+     "challengerP90": 0.234,
+     "challengerShareAbove0p1": 0.222,
+     "baselineCells": 2479,
+     "baselineMedian": -0.018,
+     "baselineP90": 0.06,
+     "baselineShareAbove0p1": 0.056
+    },
+    ">=100m": {
+     "challengerCells": 5447,
+     "challengerMedian": 0.006,
+     "challengerP90": 0.177,
+     "challengerShareAbove0p1": 0.218,
+     "baselineCells": 185815,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.063,
+     "baselineShareAbove0p1": 0.051
+    }
+   }
+  },
+  "2026-02-12:sentinel-2b": {
+   "productionCells": 182575,
+   "challengerCells": 19507,
+   "challengerShareOfLake": 0.0645,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1230,
+     "challengerMedian": 0.049,
+     "challengerP90": 0.229,
+     "challengerShareAbove0p1": 0.332,
+     "baselineCells": 149,
+     "baselineMedian": 0.111,
+     "baselineP90": 0.338,
+     "baselineShareAbove0p1": 0.523
+    },
+    "30-60m": {
+     "challengerCells": 3303,
+     "challengerMedian": 0.049,
+     "challengerP90": 0.267,
+     "challengerShareAbove0p1": 0.323,
+     "baselineCells": 439,
+     "baselineMedian": 0.027,
+     "baselineP90": 0.194,
+     "baselineShareAbove0p1": 0.226
+    },
+    "60-100m": {
+     "challengerCells": 6440,
+     "challengerMedian": 0.026,
+     "challengerP90": 0.2,
+     "challengerShareAbove0p1": 0.246,
+     "baselineCells": 1869,
+     "baselineMedian": 0.001,
+     "baselineP90": 0.119,
+     "baselineShareAbove0p1": 0.118
+    },
+    ">=100m": {
+     "challengerCells": 6799,
+     "challengerMedian": 0.015,
+     "challengerP90": 0.141,
+     "challengerShareAbove0p1": 0.169,
+     "baselineCells": 180031,
+     "baselineMedian": -0.003,
+     "baselineP90": 0.046,
+     "baselineShareAbove0p1": 0.039
+    }
+   }
+  },
+  "2026-03-19:sentinel-2c": {
+   "productionCells": 164192,
+   "challengerCells": 15130,
+   "challengerShareOfLake": 0.05,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 595,
+     "challengerMedian": 0.016,
+     "challengerP90": 0.093,
+     "challengerShareAbove0p1": 0.086,
+     "baselineCells": 101,
+     "baselineMedian": 0.075,
+     "baselineP90": 0.211,
+     "baselineShareAbove0p1": 0.376
+    },
+    "30-60m": {
+     "challengerCells": 1945,
+     "challengerMedian": 0.012,
+     "challengerP90": 0.078,
+     "challengerShareAbove0p1": 0.065,
+     "baselineCells": 247,
+     "baselineMedian": -0.003,
+     "baselineP90": 0.099,
+     "baselineShareAbove0p1": 0.101
+    },
+    "60-100m": {
+     "challengerCells": 3880,
+     "challengerMedian": 0.0,
+     "challengerP90": 0.063,
+     "challengerShareAbove0p1": 0.048,
+     "baselineCells": 1243,
+     "baselineMedian": -0.009,
+     "baselineP90": 0.046,
+     "baselineShareAbove0p1": 0.035
+    },
+    ">=100m": {
+     "challengerCells": 5791,
+     "challengerMedian": -0.002,
+     "challengerP90": 0.05,
+     "challengerShareAbove0p1": 0.043,
+     "baselineCells": 162172,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.025,
+     "baselineShareAbove0p1": 0.008
+    }
+   }
+  },
+  "2025-03-12:sentinel-2b": {
+   "productionCells": 168206,
+   "challengerCells": 12803,
+   "challengerShareOfLake": 0.0423,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 517,
+     "challengerMedian": 0.034,
+     "challengerP90": 0.146,
+     "challengerShareAbove0p1": 0.205,
+     "baselineCells": 119,
+     "baselineMedian": 0.049,
+     "baselineP90": 0.202,
+     "baselineShareAbove0p1": 0.277
+    },
+    "30-60m": {
+     "challengerCells": 1879,
+     "challengerMedian": 0.031,
+     "challengerP90": 0.141,
+     "challengerShareAbove0p1": 0.186,
+     "baselineCells": 270,
+     "baselineMedian": 0.005,
+     "baselineP90": 0.116,
+     "baselineShareAbove0p1": 0.137
+    },
+    "60-100m": {
+     "challengerCells": 4172,
+     "challengerMedian": 0.017,
+     "challengerP90": 0.114,
+     "challengerShareAbove0p1": 0.123,
+     "baselineCells": 1374,
+     "baselineMedian": -0.003,
+     "baselineP90": 0.067,
+     "baselineShareAbove0p1": 0.053
+    },
+    ">=100m": {
+     "challengerCells": 5018,
+     "challengerMedian": 0.011,
+     "challengerP90": 0.091,
+     "challengerShareAbove0p1": 0.084,
+     "baselineCells": 166344,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.032,
+     "baselineShareAbove0p1": 0.014
+    }
+   }
+  },
+  "2025-11-04:sentinel-2b": {
+   "productionCells": 193878,
+   "challengerCells": 10670,
+   "challengerShareOfLake": 0.0353,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 2286,
+     "challengerMedian": -0.005,
+     "challengerP90": 0.12,
+     "challengerShareAbove0p1": 0.119,
+     "baselineCells": 1649,
+     "baselineMedian": -0.0,
+     "baselineP90": 0.115,
+     "baselineShareAbove0p1": 0.141
+    },
+    "30-60m": {
+     "challengerCells": 2143,
+     "challengerMedian": -0.001,
+     "challengerP90": 0.143,
+     "challengerShareAbove0p1": 0.142,
+     "baselineCells": 4495,
+     "baselineMedian": -0.008,
+     "baselineP90": 0.088,
+     "baselineShareAbove0p1": 0.08
+    },
+    "60-100m": {
+     "challengerCells": 2513,
+     "challengerMedian": -0.001,
+     "challengerP90": 0.11,
+     "challengerShareAbove0p1": 0.113,
+     "baselineCells": 10432,
+     "baselineMedian": -0.009,
+     "baselineP90": 0.07,
+     "baselineShareAbove0p1": 0.062
+    },
+    ">=100m": {
+     "challengerCells": 3147,
+     "challengerMedian": -0.005,
+     "challengerP90": 0.149,
+     "challengerShareAbove0p1": 0.163,
+     "baselineCells": 177162,
+     "baselineMedian": 0.003,
+     "baselineP90": 0.06,
+     "baselineShareAbove0p1": 0.041
+    }
+   }
+  },
+  "2025-11-24:sentinel-2a": {
+   "productionCells": 149112,
+   "challengerCells": 7931,
+   "challengerShareOfLake": 0.0262,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 793,
+     "challengerMedian": 0.01,
+     "challengerP90": 0.122,
+     "challengerShareAbove0p1": 0.149,
+     "baselineCells": 206,
+     "baselineMedian": 0.002,
+     "baselineP90": 0.121,
+     "baselineShareAbove0p1": 0.15
+    },
+    "30-60m": {
+     "challengerCells": 1462,
+     "challengerMedian": 0.019,
+     "challengerP90": 0.117,
+     "challengerShareAbove0p1": 0.131,
+     "baselineCells": 689,
+     "baselineMedian": 0.001,
+     "baselineP90": 0.077,
+     "baselineShareAbove0p1": 0.062
+    },
+    "60-100m": {
+     "challengerCells": 2383,
+     "challengerMedian": 0.009,
+     "challengerP90": 0.085,
+     "challengerShareAbove0p1": 0.076,
+     "baselineCells": 2479,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.059,
+     "baselineShareAbove0p1": 0.031
+    },
+    ">=100m": {
+     "challengerCells": 2726,
+     "challengerMedian": 0.008,
+     "challengerP90": 0.092,
+     "challengerShareAbove0p1": 0.087,
+     "baselineCells": 145664,
+     "baselineMedian": 0.001,
+     "baselineP90": 0.041,
+     "baselineShareAbove0p1": 0.011
+    }
+   }
+  },
+  "2025-12-19:sentinel-2c": {
+   "productionCells": 188973,
+   "challengerCells": 15757,
+   "challengerShareOfLake": 0.0521,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1562,
+     "challengerMedian": 0.075,
+     "challengerP90": 0.274,
+     "challengerShareAbove0p1": 0.424,
+     "baselineCells": 245,
+     "baselineMedian": 0.061,
+     "baselineP90": 0.312,
+     "baselineShareAbove0p1": 0.339
+    },
+    "30-60m": {
+     "challengerCells": 3079,
+     "challengerMedian": 0.058,
+     "challengerP90": 0.268,
+     "challengerShareAbove0p1": 0.344,
+     "baselineCells": 811,
+     "baselineMedian": 0.01,
+     "baselineP90": 0.189,
+     "baselineShareAbove0p1": 0.202
+    },
+    "60-100m": {
+     "challengerCells": 5309,
+     "challengerMedian": 0.027,
+     "challengerP90": 0.218,
+     "challengerShareAbove0p1": 0.218,
+     "baselineCells": 3575,
+     "baselineMedian": 0.002,
+     "baselineP90": 0.101,
+     "baselineShareAbove0p1": 0.102
+    },
+    ">=100m": {
+     "challengerCells": 4221,
+     "challengerMedian": 0.018,
+     "challengerP90": 0.205,
+     "challengerShareAbove0p1": 0.213,
+     "baselineCells": 184236,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.057,
+     "baselineShareAbove0p1": 0.043
+    }
+   }
+  },
+  "2026-01-11:sentinel-2c": {
+   "productionCells": 153002,
+   "challengerCells": 13983,
+   "challengerShareOfLake": 0.0462,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1300,
+     "challengerMedian": -0.033,
+     "challengerP90": 0.234,
+     "challengerShareAbove0p1": 0.236,
+     "baselineCells": 236,
+     "baselineMedian": 0.026,
+     "baselineP90": 0.26,
+     "baselineShareAbove0p1": 0.322
+    },
+    "30-60m": {
+     "challengerCells": 2512,
+     "challengerMedian": -0.01,
+     "challengerP90": 0.253,
+     "challengerShareAbove0p1": 0.257,
+     "baselineCells": 773,
+     "baselineMedian": -0.019,
+     "baselineP90": 0.175,
+     "baselineShareAbove0p1": 0.181
+    },
+    "60-100m": {
+     "challengerCells": 4322,
+     "challengerMedian": -0.005,
+     "challengerP90": 0.249,
+     "challengerShareAbove0p1": 0.235,
+     "baselineCells": 2930,
+     "baselineMedian": -0.014,
+     "baselineP90": 0.117,
+     "baselineShareAbove0p1": 0.122
+    },
+    ">=100m": {
+     "challengerCells": 4850,
+     "challengerMedian": 0.028,
+     "challengerP90": 0.203,
+     "challengerShareAbove0p1": 0.264,
+     "baselineCells": 149010,
+     "baselineMedian": -0.004,
+     "baselineP90": 0.096,
+     "baselineShareAbove0p1": 0.093
+    }
+   }
+  },
+  "2026-01-18:sentinel-2c": {
+   "productionCells": 138392,
+   "challengerCells": 11617,
+   "challengerShareOfLake": 0.0384,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 842,
+     "challengerMedian": 0.022,
+     "challengerP90": 0.147,
+     "challengerShareAbove0p1": 0.196,
+     "baselineCells": 144,
+     "baselineMedian": 0.007,
+     "baselineP90": 0.234,
+     "baselineShareAbove0p1": 0.222
+    },
+    "30-60m": {
+     "challengerCells": 1843,
+     "challengerMedian": 0.025,
+     "challengerP90": 0.132,
+     "challengerShareAbove0p1": 0.167,
+     "baselineCells": 413,
+     "baselineMedian": -0.005,
+     "baselineP90": 0.116,
+     "baselineShareAbove0p1": 0.109
+    },
+    "60-100m": {
+     "challengerCells": 4212,
+     "challengerMedian": 0.013,
+     "challengerP90": 0.091,
+     "challengerShareAbove0p1": 0.089,
+     "baselineCells": 2100,
+     "baselineMedian": -0.008,
+     "baselineP90": 0.061,
+     "baselineShareAbove0p1": 0.055
+    },
+    ">=100m": {
+     "challengerCells": 3908,
+     "challengerMedian": 0.006,
+     "challengerP90": 0.103,
+     "challengerShareAbove0p1": 0.105,
+     "baselineCells": 135670,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.041,
+     "baselineShareAbove0p1": 0.019
+    }
+   }
+  },
+  "2026-02-02:sentinel-2b": {
+   "productionCells": 189577,
+   "challengerCells": 18545,
+   "challengerShareOfLake": 0.0613,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1453,
+     "challengerMedian": 0.045,
+     "challengerP90": 0.185,
+     "challengerShareAbove0p1": 0.277,
+     "baselineCells": 176,
+     "baselineMedian": 0.027,
+     "baselineP90": 0.236,
+     "baselineShareAbove0p1": 0.244
+    },
+    "30-60m": {
+     "challengerCells": 3643,
+     "challengerMedian": 0.044,
+     "challengerP90": 0.156,
+     "challengerShareAbove0p1": 0.216,
+     "baselineCells": 435,
+     "baselineMedian": 0.006,
+     "baselineP90": 0.15,
+     "baselineShareAbove0p1": 0.17
+    },
+    "60-100m": {
+     "challengerCells": 6716,
+     "challengerMedian": 0.022,
+     "challengerP90": 0.117,
+     "challengerShareAbove0p1": 0.128,
+     "baselineCells": 2455,
+     "baselineMedian": 0.003,
+     "baselineP90": 0.085,
+     "baselineShareAbove0p1": 0.074
+    },
+    ">=100m": {
+     "challengerCells": 4814,
+     "challengerMedian": 0.014,
+     "challengerP90": 0.109,
+     "challengerShareAbove0p1": 0.11,
+     "baselineCells": 186439,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.038,
+     "baselineShareAbove0p1": 0.022
+    }
+   }
+  },
+  "2026-02-20:sentinel-2c": {
+   "productionCells": 136727,
+   "challengerCells": 15030,
+   "challengerShareOfLake": 0.0497,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1140,
+     "challengerMedian": 0.03,
+     "challengerP90": 0.149,
+     "challengerShareAbove0p1": 0.204,
+     "baselineCells": 173,
+     "baselineMedian": 0.034,
+     "baselineP90": 0.177,
+     "baselineShareAbove0p1": 0.266
+    },
+    "30-60m": {
+     "challengerCells": 2497,
+     "challengerMedian": 0.021,
+     "challengerP90": 0.138,
+     "challengerShareAbove0p1": 0.153,
+     "baselineCells": 533,
+     "baselineMedian": 0.005,
+     "baselineP90": 0.091,
+     "baselineShareAbove0p1": 0.096
+    },
+    "60-100m": {
+     "challengerCells": 4352,
+     "challengerMedian": 0.008,
+     "challengerP90": 0.114,
+     "challengerShareAbove0p1": 0.117,
+     "baselineCells": 2116,
+     "baselineMedian": -0.005,
+     "baselineP90": 0.057,
+     "baselineShareAbove0p1": 0.043
+    },
+    ">=100m": {
+     "challengerCells": 5442,
+     "challengerMedian": 0.006,
+     "challengerP90": 0.096,
+     "challengerShareAbove0p1": 0.094,
+     "baselineCells": 133737,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.032,
+     "baselineShareAbove0p1": 0.015
+    }
+   }
+  },
+  "2026-03-24:sentinel-2b": {
+   "productionCells": 184248,
+   "challengerCells": 13728,
+   "challengerShareOfLake": 0.0454,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 829,
+     "challengerMedian": 0.047,
+     "challengerP90": 0.178,
+     "challengerShareAbove0p1": 0.232,
+     "baselineCells": 143,
+     "baselineMedian": 0.072,
+     "baselineP90": 0.284,
+     "baselineShareAbove0p1": 0.434
+    },
+    "30-60m": {
+     "challengerCells": 2408,
+     "challengerMedian": 0.034,
+     "challengerP90": 0.151,
+     "challengerShareAbove0p1": 0.159,
+     "baselineCells": 399,
+     "baselineMedian": 0.017,
+     "baselineP90": 0.166,
+     "baselineShareAbove0p1": 0.173
+    },
+    "60-100m": {
+     "challengerCells": 4643,
+     "challengerMedian": 0.017,
+     "challengerP90": 0.103,
+     "challengerShareAbove0p1": 0.103,
+     "baselineCells": 1947,
+     "baselineMedian": 0.002,
+     "baselineP90": 0.086,
+     "baselineShareAbove0p1": 0.079
+    },
+    ">=100m": {
+     "challengerCells": 4628,
+     "challengerMedian": 0.007,
+     "challengerP90": 0.101,
+     "challengerShareAbove0p1": 0.101,
+     "baselineCells": 181650,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.033,
+     "baselineShareAbove0p1": 0.019
+    }
+   }
+  },
+  "2025-03-22:sentinel-2b": {
+   "productionCells": 147381,
+   "challengerCells": 14829,
+   "challengerShareOfLake": 0.049,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 679,
+     "challengerMedian": 0.028,
+     "challengerP90": 0.131,
+     "challengerShareAbove0p1": 0.161,
+     "baselineCells": 138,
+     "baselineMedian": 0.013,
+     "baselineP90": 0.118,
+     "baselineShareAbove0p1": 0.159
+    },
+    "30-60m": {
+     "challengerCells": 2167,
+     "challengerMedian": 0.02,
+     "challengerP90": 0.132,
+     "challengerShareAbove0p1": 0.156,
+     "baselineCells": 334,
+     "baselineMedian": -0.006,
+     "baselineP90": 0.078,
+     "baselineShareAbove0p1": 0.069
+    },
+    "60-100m": {
+     "challengerCells": 4363,
+     "challengerMedian": 0.011,
+     "challengerP90": 0.122,
+     "challengerShareAbove0p1": 0.138,
+     "baselineCells": 1526,
+     "baselineMedian": -0.006,
+     "baselineP90": 0.054,
+     "baselineShareAbove0p1": 0.036
+    },
+    ">=100m": {
+     "challengerCells": 6041,
+     "challengerMedian": 0.012,
+     "challengerP90": 0.105,
+     "challengerShareAbove0p1": 0.11,
+     "baselineCells": 145255,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.041,
+     "baselineShareAbove0p1": 0.017
+    }
+   }
+  },
+  "2025-11-12:sentinel-2c": {
+   "productionCells": 174755,
+   "challengerCells": 9551,
+   "challengerShareOfLake": 0.0316,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1206,
+     "challengerMedian": -0.024,
+     "challengerP90": 0.106,
+     "challengerShareAbove0p1": 0.111,
+     "baselineCells": 601,
+     "baselineMedian": -0.024,
+     "baselineP90": 0.065,
+     "baselineShareAbove0p1": 0.057
+    },
+    "30-60m": {
+     "challengerCells": 1691,
+     "challengerMedian": -0.006,
+     "challengerP90": 0.119,
+     "challengerShareAbove0p1": 0.124,
+     "baselineCells": 1847,
+     "baselineMedian": -0.015,
+     "baselineP90": 0.056,
+     "baselineShareAbove0p1": 0.041
+    },
+    "60-100m": {
+     "challengerCells": 2633,
+     "challengerMedian": -0.002,
+     "challengerP90": 0.115,
+     "challengerShareAbove0p1": 0.109,
+     "baselineCells": 5278,
+     "baselineMedian": -0.014,
+     "baselineP90": 0.039,
+     "baselineShareAbove0p1": 0.025
+    },
+    ">=100m": {
+     "challengerCells": 3287,
+     "challengerMedian": -0.003,
+     "challengerP90": 0.113,
+     "challengerShareAbove0p1": 0.118,
+     "baselineCells": 166881,
+     "baselineMedian": 0.001,
+     "baselineP90": 0.036,
+     "baselineShareAbove0p1": 0.007
+    }
+   }
+  },
+  "2025-11-27:sentinel-2b": {
+   "productionCells": 182315,
+   "challengerCells": 13599,
+   "challengerShareOfLake": 0.0449,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1809,
+     "challengerMedian": -0.026,
+     "challengerP90": 0.122,
+     "challengerShareAbove0p1": 0.138,
+     "baselineCells": 437,
+     "baselineMedian": -0.033,
+     "baselineP90": 0.097,
+     "baselineShareAbove0p1": 0.098
+    },
+    "30-60m": {
+     "challengerCells": 2749,
+     "challengerMedian": -0.008,
+     "challengerP90": 0.144,
+     "challengerShareAbove0p1": 0.164,
+     "baselineCells": 1308,
+     "baselineMedian": -0.041,
+     "baselineP90": 0.082,
+     "baselineShareAbove0p1": 0.08
+    },
+    "60-100m": {
+     "challengerCells": 4097,
+     "challengerMedian": -0.002,
+     "challengerP90": 0.147,
+     "challengerShareAbove0p1": 0.168,
+     "baselineCells": 4412,
+     "baselineMedian": -0.022,
+     "baselineP90": 0.083,
+     "baselineShareAbove0p1": 0.073
+    },
+    ">=100m": {
+     "challengerCells": 3604,
+     "challengerMedian": -0.004,
+     "challengerP90": 0.143,
+     "challengerShareAbove0p1": 0.161,
+     "baselineCells": 176058,
+     "baselineMedian": 0.002,
+     "baselineP90": 0.064,
+     "baselineShareAbove0p1": 0.04
+    }
+   }
+  },
+  "2025-12-31:sentinel-2a": {
+   "productionCells": 187239,
+   "challengerCells": 16049,
+   "challengerShareOfLake": 0.053,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1466,
+     "challengerMedian": 0.017,
+     "challengerP90": 0.135,
+     "challengerShareAbove0p1": 0.156,
+     "baselineCells": 190,
+     "baselineMedian": 0.029,
+     "baselineP90": 0.34,
+     "baselineShareAbove0p1": 0.353
+    },
+    "30-60m": {
+     "challengerCells": 3256,
+     "challengerMedian": 0.024,
+     "challengerP90": 0.141,
+     "challengerShareAbove0p1": 0.168,
+     "baselineCells": 609,
+     "baselineMedian": -0.004,
+     "baselineP90": 0.155,
+     "baselineShareAbove0p1": 0.156
+    },
+    "60-100m": {
+     "challengerCells": 5699,
+     "challengerMedian": 0.018,
+     "challengerP90": 0.141,
+     "challengerShareAbove0p1": 0.148,
+     "baselineCells": 2643,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.082,
+     "baselineShareAbove0p1": 0.076
+    },
+    ">=100m": {
+     "challengerCells": 4322,
+     "challengerMedian": 0.009,
+     "challengerP90": 0.162,
+     "challengerShareAbove0p1": 0.164,
+     "baselineCells": 183716,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.047,
+     "baselineShareAbove0p1": 0.027
+    }
+   }
+  },
+  "2026-01-13:sentinel-2b": {
+   "productionCells": 191114,
+   "challengerCells": 17824,
+   "challengerShareOfLake": 0.0589,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1739,
+     "challengerMedian": 0.016,
+     "challengerP90": 0.193,
+     "challengerShareAbove0p1": 0.246,
+     "baselineCells": 253,
+     "baselineMedian": 0.021,
+     "baselineP90": 0.245,
+     "baselineShareAbove0p1": 0.289
+    },
+    "30-60m": {
+     "challengerCells": 3599,
+     "challengerMedian": 0.026,
+     "challengerP90": 0.192,
+     "challengerShareAbove0p1": 0.273,
+     "baselineCells": 762,
+     "baselineMedian": -0.012,
+     "baselineP90": 0.127,
+     "baselineShareAbove0p1": 0.127
+    },
+    "60-100m": {
+     "challengerCells": 6134,
+     "challengerMedian": 0.012,
+     "challengerP90": 0.177,
+     "challengerShareAbove0p1": 0.237,
+     "baselineCells": 3439,
+     "baselineMedian": -0.019,
+     "baselineP90": 0.069,
+     "baselineShareAbove0p1": 0.06
+    },
+    ">=100m": {
+     "challengerCells": 4435,
+     "challengerMedian": 0.008,
+     "challengerP90": 0.15,
+     "challengerShareAbove0p1": 0.194,
+     "baselineCells": 186572,
+     "baselineMedian": -0.0,
+     "baselineP90": 0.062,
+     "baselineShareAbove0p1": 0.04
+    }
+   }
+  },
+  "2026-01-21:sentinel-2c": {
+   "productionCells": 152494,
+   "challengerCells": 14557,
+   "challengerShareOfLake": 0.0481,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1042,
+     "challengerMedian": 0.025,
+     "challengerP90": 0.153,
+     "challengerShareAbove0p1": 0.213,
+     "baselineCells": 140,
+     "baselineMedian": 0.033,
+     "baselineP90": 0.215,
+     "baselineShareAbove0p1": 0.321
+    },
+    "30-60m": {
+     "challengerCells": 2518,
+     "challengerMedian": 0.011,
+     "challengerP90": 0.126,
+     "challengerShareAbove0p1": 0.147,
+     "baselineCells": 418,
+     "baselineMedian": 0.002,
+     "baselineP90": 0.122,
+     "baselineShareAbove0p1": 0.127
+    },
+    "60-100m": {
+     "challengerCells": 4649,
+     "challengerMedian": 0.003,
+     "challengerP90": 0.103,
+     "challengerShareAbove0p1": 0.103,
+     "baselineCells": 2123,
+     "baselineMedian": -0.009,
+     "baselineP90": 0.042,
+     "baselineShareAbove0p1": 0.032
+    },
+    ">=100m": {
+     "challengerCells": 4727,
+     "challengerMedian": 0.003,
+     "challengerP90": 0.096,
+     "challengerShareAbove0p1": 0.094,
+     "baselineCells": 149681,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.027,
+     "baselineShareAbove0p1": 0.01
+    }
+   }
+  },
+  "2026-02-07:sentinel-2c": {
+   "productionCells": 168376,
+   "challengerCells": 13663,
+   "challengerShareOfLake": 0.0451,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1024,
+     "challengerMedian": 0.056,
+     "challengerP90": 0.2,
+     "challengerShareAbove0p1": 0.333,
+     "baselineCells": 164,
+     "baselineMedian": 0.077,
+     "baselineP90": 0.29,
+     "baselineShareAbove0p1": 0.433
+    },
+    "30-60m": {
+     "challengerCells": 2616,
+     "challengerMedian": 0.042,
+     "challengerP90": 0.174,
+     "challengerShareAbove0p1": 0.245,
+     "baselineCells": 418,
+     "baselineMedian": 0.021,
+     "baselineP90": 0.171,
+     "baselineShareAbove0p1": 0.191
+    },
+    "60-100m": {
+     "challengerCells": 4750,
+     "challengerMedian": 0.019,
+     "challengerP90": 0.13,
+     "challengerShareAbove0p1": 0.144,
+     "baselineCells": 1972,
+     "baselineMedian": 0.004,
+     "baselineP90": 0.094,
+     "baselineShareAbove0p1": 0.096
+    },
+    ">=100m": {
+     "challengerCells": 4101,
+     "challengerMedian": 0.011,
+     "challengerP90": 0.118,
+     "challengerShareAbove0p1": 0.129,
+     "baselineCells": 165728,
+     "baselineMedian": -0.002,
+     "baselineP90": 0.04,
+     "baselineShareAbove0p1": 0.027
+    }
+   }
+  },
+  "2026-02-27:sentinel-2c": {
+   "productionCells": 180260,
+   "challengerCells": 17416,
+   "challengerShareOfLake": 0.0575,
+   "byDistanceToEdge": {
+    "0-30m": {
+     "challengerCells": 1490,
+     "challengerMedian": 0.064,
+     "challengerP90": 0.187,
+     "challengerShareAbove0p1": 0.338,
+     "baselineCells": 196,
+     "baselineMedian": 0.067,
+     "baselineP90": 0.26,
+     "baselineShareAbove0p1": 0.388
+    },
+    "30-60m": {
+     "challengerCells": 3449,
+     "challengerMedian": 0.044,
+     "challengerP90": 0.178,
+     "challengerShareAbove0p1": 0.274,
+     "baselineCells": 510,
+     "baselineMedian": 0.016,
+     "baselineP90": 0.169,
+     "baselineShareAbove0p1": 0.18
+    },
+    "60-100m": {
+     "challengerCells": 6123,
+     "challengerMedian": 0.018,
+     "challengerP90": 0.143,
+     "challengerShareAbove0p1": 0.159,
+     "baselineCells": 2495,
+     "baselineMedian": -0.001,
+     "baselineP90": 0.085,
+     "baselineShareAbove0p1": 0.08
+    },
+    ">=100m": {
+     "challengerCells": 4582,
+     "challengerMedian": 0.011,
+     "challengerP90": 0.139,
+     "challengerShareAbove0p1": 0.146,
+     "baselineCells": 176989,
+     "baselineMedian": -0.004,
+     "baselineP90": 0.04,
+     "baselineShareAbove0p1": 0.035
+    }
+   }
+  }
+ },
+ "byDistance": {
+  "0-30m": {
+   "cells": 30104,
+   "median": 0.02,
+   "p10": -0.141,
+   "p90": 0.169,
+   "shareAbove0p1": 0.217,
+   "perPassMedianRange": [
+    -0.033,
+    0.075
+   ],
+   "baselineMedian": 0.026,
+   "baselineP90": 0.234,
+   "baselineShareAbove0p1": 0.28
+  },
+  "30-60m": {
+   "cells": 64054,
+   "median": 0.023,
+   "p10": -0.103,
+   "p90": 0.171,
+   "shareAbove0p1": 0.202,
+   "perPassMedianRange": [
+    -0.01,
+    0.058
+   ],
+   "baselineMedian": -0.003,
+   "baselineP90": 0.116,
+   "baselineShareAbove0p1": 0.117
+  },
+  "60-100m": {
+   "cells": 114911,
+   "median": 0.012,
+   "p10": -0.09,
+   "p90": 0.146,
+   "shareAbove0p1": 0.151,
+   "perPassMedianRange": [
+    -0.005,
+    0.027
+   ],
+   "baselineMedian": -0.006,
+   "baselineP90": 0.067,
+   "baselineShareAbove0p1": 0.058
+  },
+  ">=100m": {
+   "cells": 110583,
+   "median": 0.007,
+   "p10": -0.085,
+   "p90": 0.13,
+   "shareAbove0p1": 0.137,
+   "perPassMedianRange": [
+    -0.005,
+    0.028
+   ],
+   "baselineMedian": -0.001,
+   "baselineP90": 0.041,
+   "baselineShareAbove0p1": 0.021
+  }
+ },
+ "totals": {
+  "production": 4300216,
+  "challenger": 353821
+ }
+}
