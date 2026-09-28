@@ -20,6 +20,13 @@ PROJECT_ID="${PROJECT_ID:-sector-9393c}"
 REGION="${REGION:-us-central1}"
 SERVICE="${SERVICE:-sector-engine}"
 
+# The Linux image has to answer every route before it ships: three revisions
+# that built and tested clean on macOS aborted the Linux Swift runtime on
+# their first request (2026-09-27, 00041-00043). See scripts/linux-smoke.sh.
+if [[ "${SKIP_LINUX_SMOKE:-0}" != "1" ]]; then
+  "$(dirname "$0")/scripts/linux-smoke.sh" || { echo "✗ not deploying: the Linux smoke test failed"; exit 1; }
+fi
+
 echo "▶ Deploying '$SERVICE' to Cloud Run  (project=$PROJECT_ID  region=$REGION)"
 
 # Scaling config — do NOT raise concurrency without understanding the 2026-09-14 outage.

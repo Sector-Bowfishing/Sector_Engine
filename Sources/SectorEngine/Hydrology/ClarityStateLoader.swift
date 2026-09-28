@@ -4,8 +4,17 @@
 //
 //  Everything comes from files the jobs publish, plus live flow:
 //
-//    lakes/<slug>/clarity/arms/latest.json   per-arm satellite anchors
-//                                            (scripts/hydrology/arm_anchor.py)
+//    lakes/<slug>/clarity/history.json       the daily job's passes, newest last
+//    lakes/<slug>/clarity/arms/<date>.json   per-arm satellite anchors for each
+//                                            (scripts/hydrology/arm_anchor.py);
+//                                            arms/latest.json when there is no
+//                                            history
+//
+//  THE SCENE THAT ANCHORS AN ARM IS CHOSEN THE WAY THE REPLAY CHOOSES IT
+//  (ClarityHistory.selectAnchor): the newest scene that anchors that arm at
+//  least moderately, else the newest that anchors it at all. A cloudy newest
+//  pass does not displace a clear one before it; everything since — rain,
+//  flow, the at-pass reading — is measured from the scene actually used.
 //    hydrology/<slug>/hourly/<date>.json     the hourly record: rain over each
 //                                            drainage, each arm's gauge and
 //                                            model reach, TVA at both dams
@@ -115,17 +124,14 @@ public enum ClarityStateLoader {
         let slug = LakeSurfaceBucket.slug(graph.lakeId)
         var notes: [String] = []
 
-        // 1. anchors
-        var anchors: ArmAnchorFile?
-        if let u = LakeSurfaceBucket.url("lakes/\(slug)/clarity/arms/latest.json"),
-           let r = try? await HTTP.get(u), r.isSuccess {
-            anchors = try? JSONDecoder().decode(ArmAnchorFile.self, from: r.body)
-        }
-        if anchors == nil { notes.append("no per-arm anchor file (lakes/\(slug)/clarity/arms/latest.json)") }
-        let pass = anchors.flatMap { ClarityTime.parse($0.sceneTime) }
+        // 1. anchors: every recent scene, then each arm's choice among them
+        let scenes = await Self.anchorFiles(slug: slug, now: now)
+        if scenes.isEmpty { notes.append("no per-arm anchor files (lakes/\(slug)/clarity/arms/)") }
+        let chosen = Self.selectAnchors(scenes, arms: graph.arms.map(\.id), now: now)
+        let passes = chosen.values.compactMap { $0.anchor?.sceneTime }
 
-        // 2. the hourly record, from 7 days before the pass (or 10 days back) to now
-        let from = min(pass ?? now, now.addingTimeInterval(-3 * 86_400)).addingTimeInterval(-7 * 86_400)
+        // 2. the hourly record, from 7 days before the oldest scene used (or 10 days back) to now
+        let from = min(passes.min() ?? now, now.addingTimeInterval(-3 * 86_400)).addingTimeInterval(-7 * 86_400)
         var days: [Date] = []
         var d = from
         while d <= now.addingTimeInterval(3600), days.count < 45 { days.append(d); d = d.addingTimeInterval(86_400) }
@@ -171,7 +177,8 @@ public enum ClarityStateLoader {
                 g.addTask {
                     var m: FlowSeries?, n: FlowSeries?
                     if let site = arm.usgsDischargeSite {
-                        m = await Self.usgsSeries(site: site, name: arm.usgsDischargeSiteName, pass: pass, now: now)
+                        m = await Self.usgsSeries(site: site, name: arm.usgsDischargeSiteName,
+                                                  pass: chosen[arm.id]?.anchor?.sceneTime, now: now)
                     }
                     if let reach = arm.nwmFeatureId { n = await Self.nwmSeries(reach: reach) }
                     return (arm.id, m, n)
@@ -201,7 +208,7 @@ public enum ClarityStateLoader {
                 : merge(nwmPts[arm.id], liveN, .modeledNWM, arm.nwmFeatureId.map { "NWM reach \($0), analysis" })
             let parent = arm.parent == graph.mainStem.id ? nil : byId[arm.parent]?.name
             armInputs.append(ArmClarityInputs(lakeId: graph.lakeId, armId: arm.id, armName: arm.name,
-                                              anchor: anchors?.anchor(anchors?.arms[arm.id]), rain: record,
+                                              anchor: chosen[arm.id]?.anchor, anchorNote: chosen[arm.id]?.note, rain: record,
                                               flow: FlowRecord(measured: measured, modeled: modeled),
                                               baseline: baseline, parentArmName: parent))
         }
@@ -214,13 +221,63 @@ public enum ClarityStateLoader {
         }
         let lakeW = weights[lakeSurfaceKey]
         let main = MainStemClarityInputs(
-            lakeId: graph.lakeId, river: graph.mainStem.name, anchor: anchors?.anchor(anchors?.mainStem),
+            lakeId: graph.lakeId, river: graph.mainStem.name, anchor: chosen[Self.mainStemKey]?.anchor,
             directRain: RainRecord(basis: lakeW?.basis ?? "unavailable", drainageKm2: lakeW?.drainageKm2,
                                    source: "MRMS Pass 2 over the reservoir surface, hourly", steps: rain[lakeSurfaceKey] ?? []),
             inflow: release(graph.mainStem.upstreamDam, ms.inflow), outflow: release(graph.mainStem.downstreamDam, ms.outflow),
             inflowDamName: graph.mainStem.upstreamDam.name, outflowDamName: graph.mainStem.downstreamDam.name,
             baseline: baseline)
         return LakeClarityInputs(arms: armInputs, mainStem: main, notes: notes)
+    }
+
+    static let mainStemKey = "_mainStem"
+    /// How far back a scene may still anchor (the replay's baseline window).
+    static let anchorLookbackDays = 45.0
+
+    /// The daily job's recent passes' anchor files, oldest first; `arms/latest.json` alone when there is no history.
+    static func anchorFiles(slug: String, now: Date) async -> [ArmAnchorFile] {
+        struct History: Decodable { struct Pass: Decodable { let date: String }; let passes: [Pass] }
+        var dates: [String] = []
+        if let u = LakeSurfaceBucket.url("lakes/\(slug)/clarity/history.json"),
+           let r = try? await HTTP.get(u), r.isSuccess,
+           let h = try? JSONDecoder().decode(History.self, from: r.body) {
+            let cutoff = ClarityTime.dayKey.string(from: now.addingTimeInterval(-anchorLookbackDays * 86_400))
+            dates = h.passes.map(\.date).filter { $0 >= cutoff }.sorted().suffix(12).map { $0 }
+        }
+        var paths = dates.map { "lakes/\(slug)/clarity/arms/\($0).json" }
+        if paths.isEmpty { paths = ["lakes/\(slug)/clarity/arms/latest.json"] }
+        let files: [ArmAnchorFile] = await withTaskGroup(of: ArmAnchorFile?.self) { g in
+            for p in paths {
+                g.addTask {
+                    guard let u = LakeSurfaceBucket.url(p), let r = try? await HTTP.get(u), r.isSuccess else { return nil }
+                    return try? JSONDecoder().decode(ArmAnchorFile.self, from: r.body)
+                }
+            }
+            var out: [ArmAnchorFile] = []
+            for await f in g { if let f { out.append(f) } }
+            return out
+        }
+        return files.sorted { $0.sceneTime < $1.sceneTime }
+    }
+
+    /// Each arm's anchor among the recent scenes (ClarityHistory.selectAnchor),
+    /// with a note when the newest scene of that water was passed over.
+    static func selectAnchors(_ files: [ArmAnchorFile], arms: [String], now: Date)
+        -> [String: (anchor: SatelliteAnchor?, note: String?)] {
+        var out: [String: (anchor: SatelliteAnchor?, note: String?)] = [:]
+        for id in arms + [mainStemKey] {
+            let all = files.compactMap { f in f.anchor(id == mainStemKey ? f.mainStem : f.arms[id]) }
+            let before = all.filter { $0.sceneTime < now }
+            let pick = ClarityHistory.selectAnchor(before, asOf: now)
+            var note: String?
+            if let pick, let newest = before.last, newest.sceneTime > pick.sceneTime {
+                let (st, why) = newest.strength
+                note = "The newest scene (\(newest.sceneDate)) anchors this water only \(st.rawValue)ly (\(why)); "
+                    + "the state stands on \(pick.sceneDate) and measures every change since then."
+            }
+            out[id] = (pick, note)
+        }
+        return out
     }
 
     /// Each arm's catchment basis, from the rain feed the hourly job publishes.
