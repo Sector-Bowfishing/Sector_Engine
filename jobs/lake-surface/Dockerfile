@@ -11,4 +11,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY *.py polygons.geojson.gz ./
+COPY regions/ ./regions/
 ENTRYPOINT ["python", "daily.py"]
