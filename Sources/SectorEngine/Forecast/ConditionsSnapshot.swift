@@ -63,6 +63,25 @@ struct ConditionsSnapshot {
     /// storm entirely. `alerts` is sorted most-severe-first, so the first match is
     /// the one to surface as the binding "why".
     var severeWarningLabel: String? { alerts.first(where: { $0.impliesUnsafeToFish })?.event }
+
+    /// The engine input for `date` at `coordinate` — the ONE snapshot → input
+    /// mapping. The gauge, the score-only path and the 7-night forecast base all
+    /// build here. They used to each spell out this argument list, and the
+    /// forecast's copy dropped `severeWarningLabel`: during an active warning the
+    /// gauge capped at 25 while tonight's night and the Tonight curve did not.
+    func engineInput(coordinate: CLLocationCoordinate2D, date: Date) -> ConditionsInput {
+        ConditionsInputBuilder.build(
+            coordinate: coordinate, date: date,
+            weather: weather, water: water, discharge: discharge,
+            waterTempC: waterTemp,
+            // The modeled water temp, so a lake with no temp gage scores off the
+            // model rather than falling through to raw AIR temp.
+            modeledWaterTempF: waterTempModel?.currentF,
+            turbidity: turbidity, generation: generation,
+            alertWindFloorMph: alertWindFloorMph,
+            severeWarningLabel: severeWarningLabel,
+            rainWatershed72hIn: mrms?.watershed72hIn)
+    }
 }
 
 /// Serialises and caches the shared fetch. An actor so concurrent callers

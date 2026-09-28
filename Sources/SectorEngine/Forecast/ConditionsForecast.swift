@@ -264,24 +264,21 @@ final class ConditionsForecastService: ObservableObject {
 
         let r = try await respTask
         let snap = await snapshotTask
-        let base = ConditionsInputBuilder.build(
-            coordinate: coordinate, date: now,
-            weather: snap.weather, water: snap.water,
-            discharge: snap.discharge, waterTempC: snap.waterTemp,
-            // Same modeled water temp the dashboard gauge scores off — without
-            // this the forecast fell through to raw AIR temp and disagreed with
-            // the hero gauge on the ~90% of waters with no temp gage.
-            modeledWaterTempF: snap.waterTempModel?.currentF,
-            turbidity: snap.turbidity,
-            generation: snap.generation,
-            // Tonight (nights[0]) inherits any live severe-wind Warning floor so it
-            // equals the gauge. Future nights are built from the hourly forecast and
-            // correctly ignore a warning that's only in effect right now.
-            alertWindFloorMph: snap.alertWindFloorMph,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn)
 
         // Same Remote Config tuning the gauge uses, so the 7-night stays in lockstep.
         let config = await RemoteConfigStore.shared.current()
+        return compute(r: r, snapshot: snap, coordinate: coordinate, now: now, config: config)
+    }
+
+    /// The forecast for a fetched snapshot. The base is the gauge's own input
+    /// (`ConditionsSnapshot.engineInput`), so tonight inherits every live signal
+    /// the gauge scores — including an active warning's wind floor and its
+    /// severe-weather cap. `buildNights` swaps in forecast weather for later
+    /// nights and clears the warning there.
+    static func compute(r: ForecastResponse, snapshot snap: ConditionsSnapshot,
+                        coordinate: CLLocationCoordinate2D, now: Date,
+                        config: ConditionsConfig = .default) -> ConditionsForecast {
+        let base = snap.engineInput(coordinate: coordinate, date: now)
         return compute(r: r, base: base, coordinate: coordinate, now: now,
                        generation: snap.generation, waterTempModel: snap.waterTempModel, config: config)
     }
@@ -626,6 +623,9 @@ final class ConditionsForecastService: ObservableObject {
             if ni.forecastDayIndex > 0 {
                 ni.generationLevel = nil
                 ni.hasGenerationForecast = false
+                // An NWS warning is in effect NOW (and expires within hours) —
+                // it caps tonight, not nights we can only forecast.
+                ni.severeWarningLabel = nil
             }
 
             let res = ConditionsAggregator.evaluate(ni, config: config)

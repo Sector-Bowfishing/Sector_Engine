@@ -332,14 +332,7 @@ public enum SectorEngineAPI {
         let snap = await snapTask
         guard snap.hasAnyLiveInput else { return nil }
 
-        let input = ConditionsInputBuilder.build(
-            coordinate: coord, date: date,
-            weather: snap.weather, water: snap.water, discharge: snap.discharge,
-            waterTempC: snap.waterTemp, modeledWaterTempF: snap.waterTempModel?.currentF,
-            turbidity: snap.turbidity, generation: snap.generation,
-            alertWindFloorMph: snap.alertWindFloorMph,
-            severeWarningLabel: snap.severeWarningLabel,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn)
+        let input = snap.engineInput(coordinate: coord, date: date)
         // Tuning comes from Firebase Remote Config (cached; falls back to the
         // compiled defaults). Change a weight in the console → both phones see it.
         let config = await RemoteConfigStore.shared.current()
@@ -405,14 +398,7 @@ public enum SectorEngineAPI {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         let snap = await ConditionsSnapshotProvider.shared.snapshot(for: coord)
         guard snap.hasAnyLiveInput else { return nil }
-        let input = ConditionsInputBuilder.build(
-            coordinate: coord, date: date,
-            weather: snap.weather, water: snap.water, discharge: snap.discharge,
-            waterTempC: snap.waterTemp, modeledWaterTempF: snap.waterTempModel?.currentF,
-            turbidity: snap.turbidity, generation: snap.generation,
-            alertWindFloorMph: snap.alertWindFloorMph,
-            severeWarningLabel: snap.severeWarningLabel,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn)
+        let input = snap.engineInput(coordinate: coord, date: date)
         let result = ConditionsAggregator.evaluate(input, config: await RemoteConfigStore.shared.current())
         return (result.score, result.band.rawValue)
     }
