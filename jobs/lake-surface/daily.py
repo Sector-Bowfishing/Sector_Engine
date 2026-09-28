@@ -187,6 +187,8 @@ def current_cells_files(out, date, lake_id, store, key):
     store.write(f"{key}/{date}.cells.bin", open(out + ".cells.bin", "rb").read(), "application/octet-stream",
                 cache="public, max-age=31536000")
     arms = arm_anchor.anchors(d, name, prefix + ".arm_cells.json")
+    # the product's place in the bucket, not the task's temporary folder
+    arms.update({"lakeId": lake_id, "source": f"{key}/{date} (Water Clarity product)"})
     store.write_json(f"{key}/arms/{date}.json", arms, cache="public, max-age=31536000")
     return {"cells": f"{key}/{date}.cells.bin", "arms": f"{key}/arms/{date}.json"}
 
