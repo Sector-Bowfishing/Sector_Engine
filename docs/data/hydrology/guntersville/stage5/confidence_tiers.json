@@ -1,0 +1,70 @@
+{
+ "decision": "collapse to Moderate / Low (user-facing)",
+ "checks": {
+  "1_sample": {
+   "pass": true,
+   "highTargets": 25,
+   "highCells": 40907
+  },
+  "2_separation": {
+   "pass": false,
+   "moderateMinusHighCI95": [
+    -0.0007442398129559047,
+    0.04487156280582519
+   ],
+   "point": 0.023255052027029793
+  },
+  "3_size": {
+   "pass": false,
+   "ratioHighToModerate": 0.8171276941746347
+  },
+  "4_feet": {
+   "pass": true,
+   "highFt": 0.74645374241999,
+   "moderateFt": 0.8007712329209915
+  },
+  "5_replicates": {
+   "pass": true,
+   "discoveryHigh": 0.08879237962455354,
+   "discoveryModerate": 0.10269673623284496
+  }
+ },
+ "validation": {
+  "high": {
+   "cells": 40907,
+   "meanAbsLog10": 0.10391046886511288,
+   "meanAbsFt": 0.74645374241999
+  },
+  "moderate": {
+   "cells": 1900515,
+   "meanAbsLog10": 0.12716552089214267,
+   "meanAbsFt": 0.8007712329209915
+  },
+  "low": {
+   "cells": 130417,
+   "meanAbsLog10": 0.1507311547257516,
+   "meanAbsFt": 0.9038765131085521
+  }
+ },
+ "discovery": {
+  "high": {
+   "cells": 75108,
+   "meanAbsLog10": 0.08879237962455354,
+   "meanAbsFt": 0.6163629852538401
+  },
+  "moderate": {
+   "cells": 1571190,
+   "meanAbsLog10": 0.10269673623284496,
+   "meanAbsFt": 0.6461074852708578
+  },
+  "low": {
+   "cells": 89231,
+   "meanAbsLog10": 0.12705687410344213,
+   "meanAbsFt": 0.7649376380868687
+  }
+ },
+ "targets": {
+  "validation": 225,
+  "discovery": 141
+ }
+}

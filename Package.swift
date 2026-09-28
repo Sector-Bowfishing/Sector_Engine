@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "SectorEngine", targets: ["SectorEngine"]),
         .executable(name: "SectorEngineServer", targets: ["SectorEngineServer"]),
         .executable(name: "ClarityReplay", targets: ["ClarityReplay"]),
+        .executable(name: "ClarityPrecompute", targets: ["ClarityPrecompute"]),
     ],
     dependencies: [
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
@@ -35,6 +36,15 @@ let package = Package(
             path: "Sources/SectorEngineServer"),
         // Clarity Fusion Stage 2's historical replay; not built into the image.
         .executableTarget(name: "ClarityReplay", dependencies: ["SectorEngine"], path: "Sources/ClarityReplay"),
+        // Clarity Fusion Stage 5: the hourly job that prepares each Current Clarity world.
+        .executableTarget(
+            name: "ClarityPrecompute",
+            dependencies: [
+                "SectorEngine",
+                .product(name: "AsyncHTTPClient", package: "async-http-client"),
+                .product(name: "NIOCore", package: "swift-nio"),
+            ],
+            path: "Sources/ClarityPrecompute"),
         .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine"], path: "Tests/SectorEngineTests"),
     ]
 )

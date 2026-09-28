@@ -1,0 +1,954 @@
+{
+ "validation": {
+  "targets": 225,
+  "byConfidence": {
+   "high": {
+    "cells": 40907,
+    "targets": 25,
+    "meanAbsLog10": 0.1039,
+    "ci95": [
+     0.0869,
+     0.1262
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.571,
+    "meanAbsFt": 0.746,
+    "inRange80": 1.0
+   },
+   "low": {
+    "cells": 130417,
+    "targets": 188,
+    "meanAbsLog10": 0.1507,
+    "ci95": [
+     0.13,
+     0.1739
+    ],
+    "medianAbsLog10": 0.125,
+    "within0p1Log10": 0.403,
+    "meanAbsFt": 0.904,
+    "inRange80": 0.99
+   },
+   "moderate": {
+    "cells": 1900515,
+    "targets": 134,
+    "meanAbsLog10": 0.1272,
+    "ci95": [
+     0.1129,
+     0.1438
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.499,
+    "meanAbsFt": 0.801,
+    "inRange80": 0.993
+   }
+  },
+  "byLevel": {
+   "changedHistorical": {
+    "cells": 2514016,
+    "targets": 188,
+    "meanAbsLog10": 0.1745,
+    "ci95": [
+     0.1534,
+     0.1973
+    ],
+    "medianAbsLog10": 0.125,
+    "within0p1Log10": 0.403,
+    "meanAbsFt": 0.934,
+    "inRange80": 0.975
+   },
+   "directSatellite": {
+    "cells": 476704,
+    "targets": 32,
+    "meanAbsLog10": 0.1051,
+    "ci95": [
+     0.0919,
+     0.1237
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.564,
+    "meanAbsFt": 0.648,
+    "inRange80": 1.0
+   },
+   "nearbySatellite": {
+    "cells": 97685,
+    "targets": 31,
+    "meanAbsLog10": 0.124,
+    "ci95": [
+     0.1026,
+     0.1546
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.462,
+    "meanAbsFt": 0.68,
+    "inRange80": 1.0
+   },
+   "none": {
+    "cells": 95794,
+    "targets": 191,
+    "meanAbsLog10": 0.1769,
+    "ci95": [
+     0.1274,
+     0.244
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.463,
+    "meanAbsFt": 1.313,
+    "inRange80": null
+   },
+   "stableHistorical": {
+    "cells": 1497450,
+    "targets": 188,
+    "meanAbsLog10": 0.1358,
+    "ci95": [
+     0.1178,
+     0.1568
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.474,
+    "meanAbsFt": 0.865,
+    "inRange80": 0.991
+   }
+  },
+  "byConfidenceAndKind": {
+   "high|direct": {
+    "cells": 40907,
+    "targets": 25,
+    "meanAbsLog10": 0.1039,
+    "ci95": [
+     0.0869,
+     0.1262
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.571,
+    "meanAbsFt": 0.746,
+    "inRange80": 1.0
+   },
+   "low|direct": {
+    "cells": 19440,
+    "targets": 165,
+    "meanAbsLog10": 0.1472,
+    "ci95": [
+     0.1269,
+     0.1697
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.444,
+    "meanAbsFt": 0.808,
+    "inRange80": 0.99
+   },
+   "moderate|direct": {
+    "cells": 1652952,
+    "targets": 134,
+    "meanAbsLog10": 0.1232,
+    "ci95": [
+     0.1106,
+     0.1371
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.509,
+    "meanAbsFt": 0.77,
+    "inRange80": 0.995
+   },
+   "low|filled<=500": {
+    "cells": 3742,
+    "targets": 118,
+    "meanAbsLog10": 0.1527,
+    "ci95": [
+     0.1181,
+     0.1911
+    ],
+    "medianAbsLog10": 0.125,
+    "within0p1Log10": 0.404,
+    "meanAbsFt": 0.71,
+    "inRange80": 0.995
+   },
+   "low|filled<=5000": {
+    "cells": 107235,
+    "targets": 107,
+    "meanAbsLog10": 0.1513,
+    "ci95": [
+     0.1257,
+     0.1787
+    ],
+    "medianAbsLog10": 0.125,
+    "within0p1Log10": 0.396,
+    "meanAbsFt": 0.928,
+    "inRange80": 0.99
+   },
+   "moderate|filled<=500": {
+    "cells": 247563,
+    "targets": 130,
+    "meanAbsLog10": 0.1538,
+    "ci95": [
+     0.1215,
+     0.1983
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.433,
+    "meanAbsFt": 1.005,
+    "inRange80": 0.982
+   }
+  },
+  "byLevelAndSeason": {
+   "changedHistorical|cold": {
+    "cells": 1598169,
+    "targets": 93,
+    "meanAbsLog10": 0.1752,
+    "ci95": [
+     0.1491,
+     0.2036
+    ],
+    "medianAbsLog10": 0.125,
+    "within0p1Log10": 0.424,
+    "meanAbsFt": 0.947,
+    "inRange80": 0.962
+   },
+   "changedHistorical|warm": {
+    "cells": 915847,
+    "targets": 95,
+    "meanAbsLog10": 0.1734,
+    "ci95": [
+     0.1444,
+     0.2105
+    ],
+    "medianAbsLog10": 0.145,
+    "within0p1Log10": 0.365,
+    "meanAbsFt": 0.911,
+    "inRange80": 0.997
+   },
+   "directSatellite|cold": {
+    "cells": 303692,
+    "targets": 17,
+    "meanAbsLog10": 0.1014,
+    "ci95": [
+     0.0869,
+     0.1194
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.572,
+    "meanAbsFt": 0.638,
+    "inRange80": 1.0
+   },
+   "directSatellite|warm": {
+    "cells": 173012,
+    "targets": 15,
+    "meanAbsLog10": 0.1115,
+    "ci95": [
+     0.0853,
+     0.1576
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.549,
+    "meanAbsFt": 0.665,
+    "inRange80": 1.0
+   },
+   "nearbySatellite|cold": {
+    "cells": 47172,
+    "targets": 16,
+    "meanAbsLog10": 0.1309,
+    "ci95": [
+     0.092,
+     0.1844
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.475,
+    "meanAbsFt": 0.723,
+    "inRange80": 1.0
+   },
+   "nearbySatellite|warm": {
+    "cells": 50513,
+    "targets": 15,
+    "meanAbsLog10": 0.1176,
+    "ci95": [
+     0.0998,
+     0.1506
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.45,
+    "meanAbsFt": 0.639,
+    "inRange80": 1.0
+   },
+   "none|cold": {
+    "cells": 49106,
+    "targets": 91,
+    "meanAbsLog10": 0.1449,
+    "ci95": [
+     0.1064,
+     0.1954
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.521,
+    "meanAbsFt": 0.922,
+    "inRange80": null
+   },
+   "none|warm": {
+    "cells": 46688,
+    "targets": 100,
+    "meanAbsLog10": 0.2106,
+    "ci95": [
+     0.1234,
+     0.311
+    ],
+    "medianAbsLog10": 0.135,
+    "within0p1Log10": 0.402,
+    "meanAbsFt": 1.724,
+    "inRange80": null
+   },
+   "stableHistorical|cold": {
+    "cells": 797344,
+    "targets": 90,
+    "meanAbsLog10": 0.1187,
+    "ci95": [
+     0.1013,
+     0.1387
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.519,
+    "meanAbsFt": 0.753,
+    "inRange80": 0.997
+   },
+   "stableHistorical|warm": {
+    "cells": 700106,
+    "targets": 98,
+    "meanAbsLog10": 0.1553,
+    "ci95": [
+     0.1236,
+     0.1954
+    ],
+    "medianAbsLog10": 0.125,
+    "within0p1Log10": 0.424,
+    "meanAbsFt": 0.992,
+    "inRange80": 0.983
+   }
+  },
+  "byConfidenceAndClass": {
+   "high|large": {
+    "cells": 26704,
+    "targets": 23,
+    "meanAbsLog10": 0.1066,
+    "ci95": [
+     0.0893,
+     0.1285
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.555,
+    "meanAbsFt": 0.761,
+    "inRange80": 1.0
+   },
+   "high|medium": {
+    "cells": 12757,
+    "targets": 24,
+    "meanAbsLog10": 0.0978,
+    "ci95": [
+     0.0805,
+     0.1205
+    ],
+    "medianAbsLog10": 0.075,
+    "within0p1Log10": 0.606,
+    "meanAbsFt": 0.716,
+    "inRange80": 1.0
+   },
+   "high|small": {
+    "cells": 1446,
+    "targets": 19,
+    "meanAbsLog10": 0.1077,
+    "ci95": [
+     0.0832,
+     0.1359
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.563,
+    "meanAbsFt": 0.758,
+    "inRange80": 1.0
+   },
+   "low|small": {
+    "cells": 23989,
+    "targets": 171,
+    "meanAbsLog10": 0.1512,
+    "ci95": [
+     0.1321,
+     0.1718
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.432,
+    "meanAbsFt": 0.818,
+    "inRange80": 0.99
+   },
+   "moderate|large": {
+    "cells": 563566,
+    "targets": 131,
+    "meanAbsLog10": 0.1319,
+    "ci95": [
+     0.1154,
+     0.1519
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.5,
+    "meanAbsFt": 0.944,
+    "inRange80": 0.986
+   },
+   "moderate|mainStem": {
+    "cells": 1199022,
+    "targets": 106,
+    "meanAbsLog10": 0.1241,
+    "ci95": [
+     0.1109,
+     0.1402
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.5,
+    "meanAbsFt": 0.72,
+    "inRange80": 0.997
+   },
+   "moderate|medium": {
+    "cells": 109453,
+    "targets": 122,
+    "meanAbsLog10": 0.1314,
+    "ci95": [
+     0.114,
+     0.1536
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.5,
+    "meanAbsFt": 0.913,
+    "inRange80": 0.985
+   },
+   "moderate|small": {
+    "cells": 28474,
+    "targets": 109,
+    "meanAbsLog10": 0.1467,
+    "ci95": [
+     0.1298,
+     0.1673
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.447,
+    "meanAbsFt": 0.958,
+    "inRange80": 0.995
+   },
+   "low|large": {
+    "cells": 22383,
+    "targets": 80,
+    "meanAbsLog10": 0.1475,
+    "ci95": [
+     0.111,
+     0.196
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.456,
+    "meanAbsFt": 1.074,
+    "inRange80": 0.97
+   },
+   "low|mainStem": {
+    "cells": 81074,
+    "targets": 78,
+    "meanAbsLog10": 0.1526,
+    "ci95": [
+     0.1258,
+     0.182
+    ],
+    "medianAbsLog10": 0.135,
+    "within0p1Log10": 0.377,
+    "meanAbsFt": 0.889,
+    "inRange80": 0.996
+   },
+   "low|medium": {
+    "cells": 2971,
+    "targets": 54,
+    "meanAbsLog10": 0.12,
+    "ci95": [
+     0.0974,
+     0.1454
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.508,
+    "meanAbsFt": 0.724,
+    "inRange80": 0.996
+   }
+  },
+  "refusedWithoutValue": 0,
+  "rules": {
+   "asOf": "one minute before the target pass; rain and flow as ClarityHistory allows (no look-ahead)",
+   "error": "|log10 predicted FNU - log10 observed FNU|, and feet by secchi-power-v1; E and F score the value they did NOT show (last supported / rejected fill)",
+   "evidence": "published passes only (openWaterReadPct >= 25), in the 45 days before the target",
+   "range": "share of targets inside the estimate's 80% range (satellite-to-satellite: the range is the conversion's error against in-situ Secchi, so this is not its calibration)",
+   "targets": "every read pass 2020-10-01...2024-12-31; truth = its observed cells, every 5th"
+  }
+ },
+ "discovery": {
+  "targets": 141,
+  "byConfidence": {
+   "high": {
+    "cells": 75108,
+    "targets": 45,
+    "meanAbsLog10": 0.0888,
+    "ci95": [
+     0.0722,
+     0.1085
+    ],
+    "medianAbsLog10": 0.065,
+    "within0p1Log10": 0.65,
+    "meanAbsFt": 0.616,
+    "inRange80": 1.0
+   },
+   "low": {
+    "cells": 89231,
+    "targets": 117,
+    "meanAbsLog10": 0.1271,
+    "ci95": [
+     0.1075,
+     0.1506
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.481,
+    "meanAbsFt": 0.765,
+    "inRange80": 0.998
+   },
+   "moderate": {
+    "cells": 1571190,
+    "targets": 95,
+    "meanAbsLog10": 0.1027,
+    "ci95": [
+     0.0911,
+     0.1146
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.574,
+    "meanAbsFt": 0.646,
+    "inRange80": 0.999
+   }
+  },
+  "byLevel": {
+   "changedHistorical": {
+    "cells": 1102614,
+    "targets": 126,
+    "meanAbsLog10": 0.1399,
+    "ci95": [
+     0.12,
+     0.1628
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.477,
+    "meanAbsFt": 0.823,
+    "inRange80": 0.991
+   },
+   "directSatellite": {
+    "cells": 899928,
+    "targets": 54,
+    "meanAbsLog10": 0.0885,
+    "ci95": [
+     0.074,
+     0.1041
+    ],
+    "medianAbsLog10": 0.065,
+    "within0p1Log10": 0.64,
+    "meanAbsFt": 0.575,
+    "inRange80": 1.0
+   },
+   "nearbySatellite": {
+    "cells": 170101,
+    "targets": 54,
+    "meanAbsLog10": 0.1265,
+    "ci95": [
+     0.1008,
+     0.1534
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.483,
+    "meanAbsFt": 0.772,
+    "inRange80": 1.0
+   },
+   "none": {
+    "cells": 47680,
+    "targets": 127,
+    "meanAbsLog10": 0.179,
+    "ci95": [
+     0.1545,
+     0.2035
+    ],
+    "medianAbsLog10": 0.17500000000000002,
+    "within0p1Log10": 0.268,
+    "meanAbsFt": 1.295,
+    "inRange80": null
+   },
+   "stableHistorical": {
+    "cells": 665500,
+    "targets": 97,
+    "meanAbsLog10": 0.1176,
+    "ci95": [
+     0.103,
+     0.1332
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.504,
+    "meanAbsFt": 0.723,
+    "inRange80": 0.998
+   }
+  },
+  "byConfidenceAndKind": {
+   "high|direct": {
+    "cells": 75108,
+    "targets": 45,
+    "meanAbsLog10": 0.0888,
+    "ci95": [
+     0.0722,
+     0.1085
+    ],
+    "medianAbsLog10": 0.065,
+    "within0p1Log10": 0.65,
+    "meanAbsFt": 0.616,
+    "inRange80": 1.0
+   },
+   "low|direct": {
+    "cells": 12658,
+    "targets": 100,
+    "meanAbsLog10": 0.1043,
+    "ci95": [
+     0.0841,
+     0.1264
+    ],
+    "medianAbsLog10": 0.075,
+    "within0p1Log10": 0.62,
+    "meanAbsFt": 0.593,
+    "inRange80": 0.991
+   },
+   "moderate|direct": {
+    "cells": 1369194,
+    "targets": 95,
+    "meanAbsLog10": 0.1005,
+    "ci95": [
+     0.0881,
+     0.1122
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.583,
+    "meanAbsFt": 0.638,
+    "inRange80": 0.999
+   },
+   "low|filled<=500": {
+    "cells": 2572,
+    "targets": 82,
+    "meanAbsLog10": 0.1398,
+    "ci95": [
+     0.0976,
+     0.1845
+    ],
+    "medianAbsLog10": 0.125,
+    "within0p1Log10": 0.432,
+    "meanAbsFt": 0.74,
+    "inRange80": 1.0
+   },
+   "low|filled<=5000": {
+    "cells": 74001,
+    "targets": 83,
+    "meanAbsLog10": 0.1305,
+    "ci95": [
+     0.1071,
+     0.1575
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.459,
+    "meanAbsFt": 0.795,
+    "inRange80": 0.999
+   },
+   "moderate|filled<=500": {
+    "cells": 201996,
+    "targets": 95,
+    "meanAbsLog10": 0.1178,
+    "ci95": [
+     0.1016,
+     0.1366
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.516,
+    "meanAbsFt": 0.699,
+    "inRange80": 0.999
+   }
+  },
+  "byLevelAndSeason": {
+   "changedHistorical|cold": {
+    "cells": 466200,
+    "targets": 44,
+    "meanAbsLog10": 0.1737,
+    "ci95": [
+     0.1422,
+     0.2041
+    ],
+    "medianAbsLog10": 0.135,
+    "within0p1Log10": 0.381,
+    "meanAbsFt": 1.061,
+    "inRange80": 0.981
+   },
+   "changedHistorical|warm": {
+    "cells": 636414,
+    "targets": 82,
+    "meanAbsLog10": 0.1151,
+    "ci95": [
+     0.0939,
+     0.1455
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.547,
+    "meanAbsFt": 0.648,
+    "inRange80": 0.999
+   },
+   "directSatellite|cold": {
+    "cells": 239001,
+    "targets": 16,
+    "meanAbsLog10": 0.0947,
+    "ci95": [
+     0.0641,
+     0.1261
+    ],
+    "medianAbsLog10": 0.075,
+    "within0p1Log10": 0.616,
+    "meanAbsFt": 0.652,
+    "inRange80": 0.999
+   },
+   "directSatellite|warm": {
+    "cells": 660927,
+    "targets": 38,
+    "meanAbsLog10": 0.0862,
+    "ci95": [
+     0.07,
+     0.1056
+    ],
+    "medianAbsLog10": 0.065,
+    "within0p1Log10": 0.649,
+    "meanAbsFt": 0.547,
+    "inRange80": 1.0
+   },
+   "nearbySatellite|cold": {
+    "cells": 42832,
+    "targets": 16,
+    "meanAbsLog10": 0.1389,
+    "ci95": [
+     0.0846,
+     0.1963
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.445,
+    "meanAbsFt": 0.854,
+    "inRange80": 0.998
+   },
+   "nearbySatellite|warm": {
+    "cells": 127269,
+    "targets": 38,
+    "meanAbsLog10": 0.1223,
+    "ci95": [
+     0.0952,
+     0.1543
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.496,
+    "meanAbsFt": 0.745,
+    "inRange80": 1.0
+   },
+   "none|cold": {
+    "cells": 15633,
+    "targets": 44,
+    "meanAbsLog10": 0.227,
+    "ci95": [
+     0.1904,
+     0.2609
+    ],
+    "medianAbsLog10": 0.225,
+    "within0p1Log10": 0.139,
+    "meanAbsFt": 1.746,
+    "inRange80": null
+   },
+   "none|warm": {
+    "cells": 32047,
+    "targets": 83,
+    "meanAbsLog10": 0.1556,
+    "ci95": [
+     0.1246,
+     0.187
+    ],
+    "medianAbsLog10": 0.145,
+    "within0p1Log10": 0.33,
+    "meanAbsFt": 1.075,
+    "inRange80": null
+   },
+   "stableHistorical|cold": {
+    "cells": 361003,
+    "targets": 37,
+    "meanAbsLog10": 0.136,
+    "ci95": [
+     0.1189,
+     0.1545
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.422,
+    "meanAbsFt": 0.866,
+    "inRange80": 0.998
+   },
+   "stableHistorical|warm": {
+    "cells": 304497,
+    "targets": 60,
+    "meanAbsLog10": 0.0957,
+    "ci95": [
+     0.0796,
+     0.1155
+    ],
+    "medianAbsLog10": 0.075,
+    "within0p1Log10": 0.603,
+    "meanAbsFt": 0.554,
+    "inRange80": 0.999
+   }
+  },
+  "byConfidenceAndClass": {
+   "high|large": {
+    "cells": 46384,
+    "targets": 42,
+    "meanAbsLog10": 0.0892,
+    "ci95": [
+     0.0711,
+     0.1103
+    ],
+    "medianAbsLog10": 0.065,
+    "within0p1Log10": 0.653,
+    "meanAbsFt": 0.618,
+    "inRange80": 1.0
+   },
+   "high|medium": {
+    "cells": 26225,
+    "targets": 43,
+    "meanAbsLog10": 0.0874,
+    "ci95": [
+     0.0711,
+     0.1056
+    ],
+    "medianAbsLog10": 0.065,
+    "within0p1Log10": 0.651,
+    "meanAbsFt": 0.599,
+    "inRange80": 1.0
+   },
+   "high|small": {
+    "cells": 2499,
+    "targets": 34,
+    "meanAbsLog10": 0.0949,
+    "ci95": [
+     0.077,
+     0.1138
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.589,
+    "meanAbsFt": 0.776,
+    "inRange80": 1.0
+   },
+   "low|small": {
+    "cells": 15834,
+    "targets": 106,
+    "meanAbsLog10": 0.1113,
+    "ci95": [
+     0.091,
+     0.1344
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.58,
+    "meanAbsFt": 0.626,
+    "inRange80": 0.993
+   },
+   "moderate|large": {
+    "cells": 440051,
+    "targets": 92,
+    "meanAbsLog10": 0.1052,
+    "ci95": [
+     0.0928,
+     0.1183
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.563,
+    "meanAbsFt": 0.693,
+    "inRange80": 0.999
+   },
+   "moderate|mainStem": {
+    "cells": 1032007,
+    "targets": 84,
+    "meanAbsLog10": 0.101,
+    "ci95": [
+     0.0888,
+     0.1142
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.58,
+    "meanAbsFt": 0.619,
+    "inRange80": 0.999
+   },
+   "moderate|medium": {
+    "cells": 76859,
+    "targets": 90,
+    "meanAbsLog10": 0.1055,
+    "ci95": [
+     0.0921,
+     0.1191
+    ],
+    "medianAbsLog10": 0.085,
+    "within0p1Log10": 0.567,
+    "meanAbsFt": 0.672,
+    "inRange80": 0.999
+   },
+   "moderate|small": {
+    "cells": 22273,
+    "targets": 88,
+    "meanAbsLog10": 0.1243,
+    "ci95": [
+     0.1046,
+     0.1461
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.532,
+    "meanAbsFt": 0.886,
+    "inRange80": 0.994
+   },
+   "low|large": {
+    "cells": 15630,
+    "targets": 72,
+    "meanAbsLog10": 0.148,
+    "ci95": [
+     0.1118,
+     0.1951
+    ],
+    "medianAbsLog10": 0.115,
+    "within0p1Log10": 0.401,
+    "meanAbsFt": 0.945,
+    "inRange80": 0.998
+   },
+   "low|mainStem": {
+    "cells": 56095,
+    "targets": 62,
+    "meanAbsLog10": 0.1258,
+    "ci95": [
+     0.1031,
+     0.1521
+    ],
+    "medianAbsLog10": 0.105,
+    "within0p1Log10": 0.474,
+    "meanAbsFt": 0.754,
+    "inRange80": 1.0
+   },
+   "low|medium": {
+    "cells": 1672,
+    "targets": 43,
+    "meanAbsLog10": 0.1226,
+    "ci95": [
+     0.0874,
+     0.1703
+    ],
+    "medianAbsLog10": 0.095,
+    "within0p1Log10": 0.529,
+    "meanAbsFt": 0.758,
+    "inRange80": 0.999
+   }
+  },
+  "refusedWithoutValue": 0,
+  "rules": {
+   "asOf": "one minute before the target pass; rain and flow as ClarityHistory allows (no look-ahead)",
+   "error": "|log10 predicted FNU - log10 observed FNU|, and feet by secchi-power-v1; E and F score the value they did NOT show (last supported / rejected fill)",
+   "evidence": "published passes only (openWaterReadPct >= 25), in the 45 days before the target",
+   "range": "share of targets inside the estimate's 80% range (satellite-to-satellite: the range is the conversion's error against in-situ Secchi, so this is not its calibration)",
+   "targets": "every read pass 2025-03-01...2026-09-30; truth = its observed cells, every 5th"
+  }
+ }
+}

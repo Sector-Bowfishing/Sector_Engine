@@ -5,7 +5,8 @@
 #
 # Builds the SAME Dockerfile Cloud Build uses, runs it with the Stage 2
 # routes switched on, calls every route, and fails if any call gets no answer
-# or the container dies. On 2026-09-27 three revisions (00041-00043) passed
+# or the container dies. Then runs the hourly Clarity job from the same image
+# and a second server on what it wrote (Stage 5). On 2026-09-27 three revisions (00041-00043) passed
 # `swift build` and `swift test` on macOS, and then aborted the Linux Swift
 # runtime on their first request ("freed pointer was not the last
 # allocation", signal 6). Only running the Linux image catches that.
@@ -88,6 +89,38 @@ check "clarity/current/cells"             "200"     "$B/clarity/current/cells?la
 check "clarity/current, an arm"           "200"     "$B/clarity/current?lake=$LAKE&lat=34.40823&lon=-86.21072"
 check "clarity/current, land"             "200"     "$B/clarity/current?lake=$LAKE&lat=34.3585&lon=-86.2945"
 check "clarity/current/change"            "200"     "$B/clarity/current/change?lake=$LAKE&region=town-creek-marshall&since=2026-09-27T00:00:00Z"
+
+# Stage 5: the hourly job, on Linux, from the same image; then a second server
+# that reads what it wrote (the prepared path the public routes use).
+PREP="$(mktemp -d)"
+echo "▶ ClarityPrecompute --out (the hourly job, Linux)"
+if docker run --rm -v "$PREP:/out" --entrypoint /app/ClarityPrecompute "$IMAGE" --out /out > "$PREP/job.log" 2>&1 \
+   && [[ -s "$PREP/clarity/current/Guntersville_AL/world.json" ]]; then
+  echo "✓ precompute → $(grep '^✓' "$PREP/job.log" | head -1 | cut -c1-120)"
+else
+  echo "✗ precompute failed:"; tail -5 "$PREP/job.log"; FAIL=1
+fi
+if grep -E "freed pointer|Fatal error|Uncaught signal|Illegal instruction" "$PREP/job.log" >/dev/null; then
+  echo "✗ runtime abort in the job"; FAIL=1
+fi
+PPORT=$((PORT + 1)); SPORT=$((PORT + 2))
+python3 -m http.server "$SPORT" --bind 0.0.0.0 --directory "$PREP" >/dev/null 2>&1 &
+HTTPD=$!
+docker run -d --name "$NAME-p" -p "$PPORT:8080" -e SECTOR_CURRENT_CLARITY_ROUTES=1 \
+  -e SECTOR_PREPARED_CLARITY_BASE="http://host.docker.internal:$SPORT" --add-host host.docker.internal:host-gateway \
+  "$IMAGE" >/dev/null
+trap 'docker rm -f "$NAME" "$NAME-p" >/dev/null 2>&1; kill $HTTPD 2>/dev/null; rm -rf "$PREP"' EXIT
+for _ in $(seq 1 30); do curl -sf "http://localhost:$PPORT/health" >/dev/null && break; sleep 1; done
+P="http://localhost:$PPORT"
+f=$(curl -s --max-time 30 "$P/clarity/current/lake?lake=$LAKE" | python3 -c "import json,sys; print(json.load(sys.stdin).get('freshness'))" 2>/dev/null)
+if [[ "$f" == current ]]; then echo "✓ prepared world served (freshness current)"; else echo "✗ prepared world not served (freshness $f)"; FAIL=1; fi
+enc=$(curl -s -o /dev/null -D - -H "Accept-Encoding: gzip" --max-time 30 "$P/clarity/current/cells?lake=$LAKE" | tr -d '\r' | awk -F': ' 'tolower($1)=="content-encoding"{print $2}')
+if [[ "$enc" == gzip ]]; then echo "✓ prepared composite served as gzip"; else echo "✗ composite not gzip (content-encoding '$enc')"; FAIL=1; fi
+check "clarity/current, prepared"         "200"     "$P/clarity/current?lake=$LAKE&lat=34.40823&lon=-86.21072"
+check "clarity/current/change, prepared"  "200"     "$P/clarity/current/change?lake=$LAKE&region=town-creek-marshall&since=$(date -u -v-3H +%Y-%m-%dT%H:00:00Z 2>/dev/null || date -u -d '3 hours ago' +%Y-%m-%dT%H:00:00Z)"
+if docker logs "$NAME-p" 2>&1 | grep -E "freed pointer|Fatal error|Uncaught signal|Illegal instruction" >/dev/null; then
+  echo "✗ runtime abort in the prepared-world server"; FAIL=1
+fi
 
 if docker logs "$NAME" 2>&1 | grep -E "freed pointer|Fatal error|Uncaught signal|Illegal instruction" >/dev/null; then
   echo "✗ runtime abort in the container log:"; docker logs "$NAME" 2>&1 | grep -E "freed pointer|Fatal error|Uncaught signal" | head -3

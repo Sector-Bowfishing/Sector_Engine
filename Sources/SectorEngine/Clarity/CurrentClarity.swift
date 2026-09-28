@@ -60,6 +60,10 @@ public enum ClarityConfidence: String, Codable, Equatable, Comparable {
         self = [.none: .none, .low: .low, .moderate: .moderate, .high: .high][a]!
     }
     public var label: String { ["none": "None", "low": "Low", "moderate": "Moderate", "high": "High"][rawValue]! }
+    /// The words a person sees. Stage 5's preregistered replay did not
+    /// separate High from Moderate, so both read "Moderate"; `high` stays
+    /// internal (docs/clarity/stage5/CONFIDENCE_TIERS_PREREGISTRATION.md).
+    public var presentedLabel: String { self == .high ? ClarityConfidence.moderate.label : label }
 }
 
 extension AuthorityLevel {

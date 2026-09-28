@@ -140,7 +140,7 @@ public enum CurrentClarityResolver {
                 legacyEnvironmentalEstimate: legacy,
                 display: ClarityDisplay(title: "Water Clarity", valueText: "~\(fmt1(v.centralFt)) ft",
                                         rangeText: "Likely \(fmt1(v.lowFt))–\(fmt1(v.highFt)) ft",
-                                        confidenceText: conf.label,
+                                        confidenceText: conf.presentedLabel,
                                         sourceText: "\(g.name ?? "USGS \(g.site)") · \(ago(now.timeIntervalSince(g.at)))",
                                         evidenceText: "Turbidity sensor in this water", notes: []),
                 limitations: limitations, generatedAt: now)
@@ -170,7 +170,7 @@ public enum CurrentClarityResolver {
                 catchmentCompleteness: region.catchmentCompleteness, flowProvenance: region.flowProvenance,
                 legacyEnvironmentalEstimate: legacy,
                 display: ClarityDisplay(title: "Water Clarity", valueText: "No supported estimate", rangeText: nil,
-                                        confidenceText: ClarityConfidence.none.label,
+                                        confidenceText: ClarityConfidence.none.presentedLabel,
                                         sourceText: "Sentinel-2 · \(shortDate(scene.time))",
                                         evidenceText: cell.kind == .grassBed ? "Grass bed" : "Satellite estimate unavailable here",
                                         notes: [why]),
@@ -194,7 +194,7 @@ public enum CurrentClarityResolver {
                 hydrologicChange: change, catchmentCompleteness: region.catchmentCompleteness,
                 flowProvenance: region.flowProvenance, legacyEnvironmentalEstimate: legacy,
                 display: ClarityDisplay(title: "Water Clarity", valueText: "Last supported estimate ~\(fmt1(s.centralFt)) ft",
-                                        rangeText: nil, confidenceText: conf.label,
+                                        rangeText: nil, confidenceText: conf.presentedLabel,
                                         sourceText: "Sentinel-2 · \(shortDate(scene.time))",
                                         evidenceText: evidenceWords(cell), notes: notes),
                 limitations: limitations, generatedAt: now)
@@ -227,7 +227,7 @@ public enum CurrentClarityResolver {
             flowProvenance: region.flowProvenance, legacyEnvironmentalEstimate: legacy,
             display: ClarityDisplay(title: "Water Clarity", valueText: "~\(fmt1(s.centralFt)) ft",
                                     rangeText: "Likely \(fmt1(s.lowFt))–\(fmt1(s.highFt)) ft",
-                                    confidenceText: conf.label, sourceText: "Sentinel-2 · \(shortDate(scene.time))",
+                                    confidenceText: conf.presentedLabel, sourceText: "Sentinel-2 · \(shortDate(scene.time))",
                                     evidenceText: evidenceWords(cell), notes: notes),
             limitations: limitations, generatedAt: now)
     }
@@ -267,7 +267,7 @@ public enum CurrentClarityResolver {
             catchmentCompleteness: region?.catchmentCompleteness, flowProvenance: region?.flowProvenance ?? "unavailable",
             legacyEnvironmentalEstimate: legacy,
             display: ClarityDisplay(title: "Water Clarity", valueText: "No supported estimate", rangeText: nil,
-                                    confidenceText: ClarityConfidence.none.label, sourceText: nil,
+                                    confidenceText: ClarityConfidence.none.presentedLabel, sourceText: nil,
                                     evidenceText: "No satellite evidence", notes: [why]),
             limitations: (region?.limitations ?? []) + [why], generatedAt: now)
     }
@@ -340,4 +340,10 @@ public enum CurrentClarityResolver {
         return f
     }()
     static func shortDate(_ d: Date) -> String { dayFormat.string(from: d) }
+    static let dayTimeFormat: DateFormatter = {
+        let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "America/Chicago"); f.dateFormat = "MMM d, h a"
+        return f
+    }()
+    static func shortDateTime(_ d: Date) -> String { dayTimeFormat.string(from: d) }
 }

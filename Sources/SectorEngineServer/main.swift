@@ -144,12 +144,18 @@ if ProcessInfo.processInfo.environment["SECTOR_CURRENT_CLARITY_ROUTES"] == "1" {
               let w = await SectorEngineAPI.currentClarityWorld(lakeId: lake) else {
             return Response(status: .notFound)
         }
-        let etag = "\"\(w.etag)\""
-        var headers: HTTPFields = [.eTag: etag, .cacheControl: "public, max-age=600"]
+        // The job's own gzip where the client takes it (2.9 MB → ~0.26 MB,
+        // Stage 5); each form has its own ETag, as HTTP requires.
+        let gzip = w.compositeGzip.flatMap { gz in
+            (request.headers[.acceptEncoding] ?? "").lowercased().contains("gzip") ? gz : nil
+        }
+        let etag = gzip == nil ? "\"\(w.etag)\"" : "\"\(w.etag)-gz\""
+        var headers: HTTPFields = [.eTag: etag, .cacheControl: "public, max-age=600", .vary: "Accept-Encoding"]
         if request.headers[.ifNoneMatch] == etag { return Response(status: .notModified, headers: headers) }
         headers[.contentType] = "application/octet-stream"
+        if gzip != nil { headers[.contentEncoding] = "gzip" }
         var buffer = ByteBuffer()
-        buffer.writeBytes(w.composite.encoded())
+        buffer.writeBytes(gzip ?? w.compositeBytes ?? w.composite.encoded())
         return Response(status: .ok, headers: headers, body: .init(byteBuffer: buffer))
     }
     router.get("clarity/current/change") { request, _ -> Response in

@@ -80,6 +80,9 @@ public struct ClarityRegionsIndex {
         id == Hydrology.guntersville.lakeId ? guntersville : nil
     }
 
+    /// Every lake with a regions index.
+    public static var lakeIds: [String] { [Hydrology.guntersville.lakeId] }
+
     init?(blob b: [UInt8], tables t: Tables) {
         var r = ByteReader(b)
         guard r.bytes(4) == Array("SCR1".utf8), let w = r.u32(), let h = r.u32(), let n = r.u32(), let hsh = r.u32(),
@@ -186,12 +189,48 @@ public struct ClaritySceneCells: Equatable {
 /// Each region on its own chosen scene.
 public struct ClarityComposite {
     public let index: ClarityRegionsIndex
-    public let scenes: [ClaritySceneCells]
-    /// Region index → position in `scenes` (nil = no scene).
+    /// The scenes the regions stand on; `sceneForRegion` points into it.
+    public let refs: [ClaritySceneRef]
+    /// Region index → position in `refs` (nil = no scene).
     public let sceneForRegion: [Int?]
+    /// Each cell's value, code and distance, from its region's scene (0 where none).
+    public let value: [UInt8]
+    public let code: [UInt8]
+    public let dist: [UInt8]
+
+    public enum DecodeError: Error, Equatable { case notAComposite, wrongIndex, truncated, sceneMismatch }
 
     public init(index: ClarityRegionsIndex, scenes: [ClaritySceneCells], sceneForRegion: [Int?]) {
-        self.index = index; self.scenes = scenes; self.sceneForRegion = sceneForRegion
+        self.index = index; refs = scenes.map(\.ref); self.sceneForRegion = sceneForRegion
+        let n = index.count
+        var v = [UInt8](repeating: 0, count: n), c = v, d = v
+        for i in 0..<n {
+            let r = Int(index.region[i])
+            guard r < sceneForRegion.count, let s = sceneForRegion[r] else { continue }
+            v[i] = scenes[s].value[i]; c[i] = scenes[s].code[i]; d[i] = scenes[s].dist[i]
+        }
+        value = v; code = c; dist = d
+    }
+
+    /// A prepared composite (`encoded()`) read back. The scene of every cell
+    /// must be the one `sceneForRegion` gives its region, so a composite and a
+    /// world written at different hours cannot be paired.
+    public init(index: ClarityRegionsIndex, refs: [ClaritySceneRef], sceneForRegion: [Int?], encoded b: [UInt8]) throws {
+        var r = ByteReader(b)
+        guard r.bytes(4) == Array("SCCC".utf8), r.u32() == 1 else { throw DecodeError.notAComposite }
+        guard let w = r.u32(), let h = r.u32(), let n = r.u32(), let hsh = r.u32(),
+              Int(w) == index.width, Int(h) == index.height, Int(n) == index.count, hsh == index.hash,
+              let ml = r.u32(), r.bytes(Int(ml)) != nil else { throw DecodeError.wrongIndex }
+        let count = Int(n)
+        guard let v = r.bytes(count), let c = r.bytes(count), let d = r.bytes(count),
+              r.bytes(count) != nil, r.bytes(2 * count) != nil, let sc = r.bytes(count) else { throw DecodeError.truncated }
+        for i in 0..<count {
+            let g = Int(index.region[i])
+            let want = g < sceneForRegion.count ? sceneForRegion[g] : nil
+            guard sc[i] == (want.map { UInt8($0) } ?? 255), want.map({ $0 < refs.count }) ?? true else { throw DecodeError.sceneMismatch }
+        }
+        self.index = index; self.refs = refs; self.sceneForRegion = sceneForRegion
+        value = v; code = c; dist = d
     }
 
     public func scene(atCell i: Int) -> Int? {
@@ -200,9 +239,8 @@ public struct ClarityComposite {
     }
 
     public func evidence(atCell i: Int) -> ClarityCellEvidence {
-        guard let s = scene(atCell: i) else { return ClarityCellEvidence(kind: .none, fnu: nil, distanceToObservedM: nil) }
-        let sc = scenes[s]
-        return ClarityCellCode.evidence(value: sc.value[i], code: sc.code[i], dist: sc.dist[i])
+        guard scene(atCell: i) != nil else { return ClarityCellEvidence(kind: .none, fnu: nil, distanceToObservedM: nil) }
+        return ClarityCellCode.evidence(value: value[i], code: code[i], dist: dist[i])
     }
 
     /// The composite as one file for the map (GET /clarity/current/cells):
@@ -215,12 +253,9 @@ public struct ClarityComposite {
         u32(1); u32(index.width); u32(index.height); u32(index.count); u32(Int(index.hash))
         u32(index.maskRLE.count); out.append(contentsOf: index.maskRLE)
         let n = index.count
-        var v = [UInt8](repeating: 0, count: n), c = v, d = v, sc = [UInt8](repeating: 255, count: n)
-        for i in 0..<n {
-            guard let s = scene(atCell: i) else { continue }
-            v[i] = scenes[s].value[i]; c[i] = scenes[s].code[i]; d[i] = scenes[s].dist[i]; sc[i] = UInt8(s)
-        }
-        out += v; out += c; out += d; out += index.region
+        var sc = [UInt8](repeating: 255, count: n)
+        for i in 0..<n { if let s = scene(atCell: i) { sc[i] = UInt8(s) } }
+        out += value; out += code; out += dist; out += index.region
         out.reserveCapacity(out.count + 3 * n)
         for z in index.zone { let x = UInt16(bitPattern: z).littleEndian; out.append(UInt8(x & 0xFF)); out.append(UInt8(x >> 8)) }
         out += sc

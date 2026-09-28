@@ -65,6 +65,37 @@ public struct CurrentClarityLake: Codable, Equatable {
     public let outcomes: [[CurrentClarityResolver.Outcome]]
     public let cells: Cells
     public let notes: [String]
+    /// Stage 5. current | stale | live (see PreparedClarityWorld); nil before Stage 5.
+    public let freshness: PreparedClarityWorld.Freshness?
+    /// When the job prepared this world (nil for a live build).
+    public let preparedAt: Date?
+    /// The words for each internal confidence (two user-facing tiers, Stage 5).
+    public let confidenceLabels: [String: String]?
+    /// The whole lake in a few numbers, for a summary that no single point can give.
+    public let overview: Overview?
+
+    /// Share of the lake's water by what Sector can say about it now.
+    public struct Overview: Codable, Equatable {
+        public let waterCells: Int
+        /// A current number (levels A–D).
+        public let supportedPct: Double
+        /// The drainage changed since the scene: only a last supported number (E).
+        public let changedPct: Double
+        /// No supported number: too far from a reading, no scene, or a grass bed (F).
+        public let unsupportedPct: Double
+        /// Grass beds, part of `unsupportedPct`.
+        public let grassPct: Double
+        /// Share of water by user-facing confidence among the supported.
+        public let byConfidence: [String: Double]
+        /// Central feet over supported water: 10th, 50th and 90th percentiles.
+        public let supportedFtP10: Double?
+        public let supportedFtP50: Double?
+        public let supportedFtP90: Double?
+        /// The scenes the regions stand on.
+        public let newestObservation: Date?
+        public let oldestObservation: Date?
+        public let headline: String
+    }
 
     public static let keys = ["direct", "filled<=500", "filled<=5000", "filled>5000", "grass<=5000", "grass>5000", "none"]
 
@@ -103,11 +134,26 @@ public struct CurrentClarityWorld {
     /// Region index → its context (nil where the region has no water on the index).
     public let regions: [ClarityRegionContext?]
     public let notes: [String]
+    /// Stage 5: whether the job prepared this world, and how fresh it is.
+    public let freshness: PreparedClarityWorld.Freshness
+    public let preparedAt: Date?
+    /// The job's own composite files, served as they are (nil for a live build).
+    public let compositeBytes: [UInt8]?
+    public let compositeGzip: [UInt8]?
 
     public init(lakeId: String, now: Date, index: ClarityRegionsIndex, composite: ClarityComposite,
-                regions: [ClarityRegionContext?], notes: [String]) {
+                regions: [ClarityRegionContext?], notes: [String], freshness: PreparedClarityWorld.Freshness = .live,
+                preparedAt: Date? = nil, compositeBytes: [UInt8]? = nil, compositeGzip: [UInt8]? = nil) {
         self.lakeId = lakeId; self.now = now; self.index = index; self.composite = composite
-        self.regions = regions; self.notes = notes
+        self.regions = regions; self.notes = notes; self.freshness = freshness; self.preparedAt = preparedAt
+        self.compositeBytes = compositeBytes; self.compositeGzip = compositeGzip
+    }
+
+    /// The same world as a request at `now` sees it.
+    public func at(_ now: Date) -> CurrentClarityWorld {
+        CurrentClarityWorld(lakeId: lakeId, now: now, index: index, composite: composite, regions: regions, notes: notes,
+                            freshness: freshness, preparedAt: preparedAt, compositeBytes: compositeBytes,
+                            compositeGzip: compositeGzip)
     }
 
     public func estimate(lat: Double, lon: Double, legacy: LegacyClarityEstimate? = nil,
@@ -132,7 +178,7 @@ public struct CurrentClarityWorld {
 
     public var etag: String {
         var h: UInt32 = 0x811C9DC5
-        let key = "\(index.hash)|" + composite.sceneForRegion.map { $0.map { composite.scenes[$0].ref.date } ?? "-" }.joined(separator: ",")
+        let key = "\(index.hash)|" + composite.sceneForRegion.map { $0.map { composite.refs[$0].date } ?? "-" }.joined(separator: ",")
         for b in key.utf8 { h ^= UInt32(b); h = h &* 0x01000193 }
         return String(format: "%08x", h)
     }
@@ -159,23 +205,79 @@ public struct CurrentClarityWorld {
                          catchmentCompleteness: c.catchmentCompleteness, flowProvenance: c.flowProvenance,
                          summary: "\(c.name): \(when) · \(state)")
         }
+        let table = outcomeTable()
+        return CurrentClarityLake(
+            schema: CurrentClarityLake.schemaId, lakeId: lakeId, generatedAt: now,
+            legend: .init(title: "Water Clarity", clearLabel: "Clear", muddyLabel: "Muddy",
+                          sourceLine: "Sentinel-2 · latest usable observations"),
+            scenes: composite.refs, regions: summaries, evidenceKeys: CurrentClarityLake.keys,
+            outcomes: table,
+            cells: .init(path: path, etag: etag, count: index.count, width: index.width, height: index.height,
+                         cornersLonLat: index.cornersLonLat,
+                         encoding: "SCCC v1: value log10 FNU 1..254 over log10(0.5)..log10(200); code 255 read, 1 unreadable, 2 cloud, 3 grass, 0 none; dist 1 + m/100, 254 no path"),
+            notes: notes, freshness: freshness, preparedAt: preparedAt,
+            confidenceLabels: Dictionary(uniqueKeysWithValues: [ClarityConfidence.none, .low, .moderate, .high].map { ($0.rawValue, $0.presentedLabel) }),
+            overview: overview(table: table))
+    }
+
+    /// The resolver's decision for every region × kind of cell, at `now`.
+    public func outcomeTable() -> [[CurrentClarityResolver.Outcome]] {
         let none = CurrentClarityResolver.Outcome(level: .none, confidence: .none, authority: .none, magnitudeSupported: false)
-        let table: [[CurrentClarityResolver.Outcome]] = regions.map { c in
+        return regions.map { c in
             guard let c else { return Array(repeating: none, count: CurrentClarityLake.keys.count) }
             return CurrentClarityLake.keys.indices.map {
                 CurrentClarityResolver.outcome(region: c, cell: CurrentClarityLake.representative($0), now: now)
             }
         }
-        return CurrentClarityLake(
-            schema: CurrentClarityLake.schemaId, lakeId: lakeId, generatedAt: now,
-            legend: .init(title: "Water Clarity", clearLabel: "Clear", muddyLabel: "Muddy",
-                          sourceLine: "Sentinel-2 · latest usable observations"),
-            scenes: composite.scenes.map(\.ref), regions: summaries, evidenceKeys: CurrentClarityLake.keys,
-            outcomes: table,
-            cells: .init(path: path, etag: etag, count: index.count, width: index.width, height: index.height,
-                         cornersLonLat: index.cornersLonLat,
-                         encoding: "SCCC v1: value log10 FNU 1..254 over log10(0.5)..log10(200); code 255 read, 1 unreadable, 2 cloud, 3 grass, 0 none; dist 1 + m/100, 254 no path"),
-            notes: notes)
+    }
+
+    /// The whole lake, cell by cell through the table: what share of the
+    /// water has a current number, and what those numbers are. A lake is not
+    /// one point, so the dashboard reads this instead of a coordinate.
+    public func overview(table: [[CurrentClarityResolver.Outcome]]) -> CurrentClarityLake.Overview {
+        let n = index.count
+        var supported = 0, changed = 0, grass = 0
+        var byConf: [String: Int] = [:]
+        var ftBins = [Int](repeating: 0, count: 301)       // 0.1 ft, 0..30 ft
+        for i in 0..<n {
+            let r = Int(index.region[i])
+            let key = composite.scene(atCell: i) == nil ? CurrentClarityLake.keys.count - 1
+                : CurrentClarityLake.evidenceKey(code: composite.code[i], dist: composite.dist[i])
+            if key == 4 || key == 5 { grass += 1 }
+            guard r < table.count else { continue }
+            let o = table[r][key]
+            if o.magnitudeSupported {
+                supported += 1
+                byConf[o.confidence.presentedLabel, default: 0] += 1
+                if let fnu = ClarityCellCode.fnu(composite.value[i]) {
+                    ftBins[min(300, Int((VisibilityModel.centralFt(fnu: fnu) * 10).rounded()))] += 1
+                }
+            } else if o.level == .changedHistorical {
+                changed += 1
+            }
+        }
+        func pct(_ k: Int) -> Double { n > 0 ? (Double(k) / Double(n) * 1000).rounded() / 1000 : 0 }
+        func quantile(_ q: Double) -> Double? {
+            let total = ftBins.reduce(0, +)
+            guard total > 0 else { return nil }
+            var c = 0
+            for (b, k) in ftBins.enumerated() { c += k; if Double(c) >= q * Double(total) { return Double(b) / 10 } }
+            return nil
+        }
+        let times = composite.refs.map(\.time)
+        let sp = pct(supported), cp = pct(changed)
+        let p10 = quantile(0.1), p50 = quantile(0.5), p90 = quantile(0.9)
+        func words(_ p: Double) -> String { p > 0 && p < 0.005 ? "under 1%" : "\(Int((p * 100).rounded()))%" }
+        var parts = [sp >= 0.995 ? "A current estimate for all of the water" : "\(words(sp)) of the water has a current estimate"]
+        if let a = p10, let b = p90 {
+            parts.append(String(format: a == b ? "about %.1f ft where known" : "%.1f–%.1f ft where known", a, b))
+        }
+        if cp >= 0.05 { parts.append("\(words(cp)) has changed since its last clear view") }
+        return CurrentClarityLake.Overview(
+            waterCells: n, supportedPct: sp, changedPct: cp, unsupportedPct: max(0, (1000 - (sp * 1000).rounded() - (cp * 1000).rounded()) / 1000),
+            grassPct: pct(grass), byConfidence: byConf.mapValues(pct),
+            supportedFtP10: p10, supportedFtP50: p50, supportedFtP90: p90,
+            newestObservation: times.max(), oldestObservation: times.min(), headline: parts.joined(separator: " · "))
     }
 }
 
@@ -241,12 +343,16 @@ public enum CurrentClarityRegions {
 
 extension SectorEngineAPI {
 
-    /// The lake's current world: every arm's state, its chosen scene's cells.
+    /// The lake's current world: the hourly job's prepared one while it is
+    /// fresh enough (Stage 5), otherwise a live build of every arm's state and
+    /// its chosen scene's cells. Either is resolved at the request's own time.
     public static func currentClarityWorld(lakeId: String, now: Date = Date()) async -> CurrentClarityWorld? {
-        await CurrentClarityCache.shared.world(lakeId) { await buildCurrentClarityWorld(lakeId: lakeId, now: now) }
+        if PreparedClarityStore.enabled, let w = await PreparedClarityStore.shared.world(lakeId, now: now) { return w }
+        return await CurrentClarityCache.shared.world(lakeId) { await buildCurrentClarityWorld(lakeId: lakeId, now: now) }?.at(now)
     }
 
-    static func buildCurrentClarityWorld(lakeId: String, now: Date) async -> CurrentClarityWorld? {
+    /// The live build: what the job runs, and what a route falls back to.
+    public static func buildCurrentClarityWorld(lakeId: String, now: Date) async -> CurrentClarityWorld? {
         guard let graph = Hydrology.graph(forLake: lakeId), let index = ClarityRegionsIndex.forLake(lakeId) else { return nil }
         let slug = LakeSurfaceBucket.slug(lakeId)
         let inputs = await ClarityInputsCache.shared.inputs(lakeId) {
@@ -339,9 +445,13 @@ extension SectorEngineAPI {
     }
 
     /// A region's change since `since` (a report's time): the same runoff
-    /// rules, measured from that moment instead of a scene.
+    /// rules, measured from that moment instead of a scene. The job's prepared
+    /// marks answer while they are current; otherwise a live read.
     public static func clarityChange(lakeId: String, region id: String, since: Date,
                                      now: Date = Date()) async -> HydrologicChange? {
+        if PreparedClarityStore.enabled, let c = await PreparedClarityStore.shared.change(lakeId, region: id, since: since, now: now) {
+            return c
+        }
         guard let graph = Hydrology.graph(forLake: lakeId) else { return nil }
         // The same 10-minute inputs as the lake's arm states: a report's
         // freshness should not wait on a fresh pull of every gauge.
@@ -349,6 +459,11 @@ extension SectorEngineAPI {
             await ClarityStateLoader.load(graph: graph, now: now, baseline: nil)
         }
         guard let x = inputs.arms.first(where: { $0.armId == id }) else { return nil }
+        return change(x, since: since, now: now)
+    }
+
+    /// An arm's change since a moment, from its inputs.
+    public static func change(_ x: ArmClarityInputs, since: Date, now: Date) -> HydrologicChange {
         let marker = SatelliteAnchor(sceneDate: ClarityTime.dayKey.string(from: since), sceneTime: since, platform: nil,
                                      waterCells: 1, observedCells: 1, filledCells: 0, filledWithin500mCells: 0,
                                      medianFillDistanceM: nil, observedFNU: nil, allFNU: nil, source: "report")
@@ -359,5 +474,110 @@ extension SectorEngineAPI {
                                 flowChangeRatio: d.dischargePeakRatioToPass, flowProvenance: d.dischargeProvenance.rawValue,
                                 flowSource: d.dischargeSource,
                                 authorityCap: CurrentClarityResolver.Rules.hydrologicCap(r.state), evidence: r.evidence)
+    }
+
+    /// The job's side: the lake's world and each arm's recent change marks,
+    /// from one read of the inputs.
+    public static func prepareCurrentClarity(lakeId: String, now: Date)
+        async -> (world: CurrentClarityWorld, changes: PreparedClarityChanges)? {
+        guard let graph = Hydrology.graph(forLake: lakeId),
+              let world = await buildCurrentClarityWorld(lakeId: lakeId, now: now) else { return nil }
+        let inputs = await ClarityInputsCache.shared.inputs(lakeId) {
+            await ClarityStateLoader.load(graph: graph, now: now, baseline: nil)
+        }
+        let top = Date(timeIntervalSince1970: (now.timeIntervalSince1970 / 3600).rounded(.down) * 3600)
+        var marks: [String: [PreparedClarityChanges.Mark]] = [:]
+        for x in inputs.arms {
+            marks[x.armId] = (0..<PreparedClarityChanges.hours).reversed().map { h in
+                let since = top.addingTimeInterval(-Double(h) * 3600)
+                return .init(since: since, change: change(x, since: since, now: now))
+            }
+        }
+        return (world, PreparedClarityChanges(schema: PreparedClarityChanges.schemaId, lakeId: lakeId, builtAt: now, regions: marks))
+    }
+}
+
+/// The hourly job's prepared worlds, read from the bucket (Stage 5).
+/// SECTOR_PREPARED_CLARITY=0 turns it off (every request then builds live).
+actor PreparedClarityStore {
+    static let shared = PreparedClarityStore()
+    static var enabled: Bool { ProcessInfo.processInfo.environment["SECTOR_PREPARED_CLARITY"] != "0" }
+    /// How often world.json is re-read.
+    static let recheck: TimeInterval = 60
+
+    static let decoder: JSONDecoder = { let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601; return d }()
+    /// Where the prepared files are read from: the bucket, unless
+    /// SECTOR_PREPARED_CLARITY_BASE points elsewhere (the Linux smoke test).
+    static func url(_ slug: String, _ name: String) -> URL? {
+        let base = ProcessInfo.processInfo.environment["SECTOR_PREPARED_CLARITY_BASE"] ?? LakeSurfaceBucket.base
+        return URL(string: "\(base)/clarity/current/\(slug)/\(name)")
+    }
+
+    struct Entry {
+        var checkedAt: Date
+        var prepared: PreparedClarityWorld
+        let composite: ClarityComposite
+        let bytes: [UInt8]
+        let gzip: [UInt8]
+    }
+    private var entries: [String: Entry] = [:]
+    private var missingSince: [String: Date] = [:]
+    private var changes: [String: (checkedAt: Date, value: PreparedClarityChanges?)] = [:]
+
+    func world(_ lakeId: String, now: Date) async -> CurrentClarityWorld? {
+        guard let index = ClarityRegionsIndex.forLake(lakeId) else { return nil }
+        let due = entries[lakeId].map { now.timeIntervalSince($0.checkedAt) >= Self.recheck }
+            ?? missingSince[lakeId].map { now.timeIntervalSince($0) >= Self.recheck } ?? true
+        if due { await refresh(lakeId, index: index, now: now) }
+        guard let e = entries[lakeId] else { return nil }
+        let f = e.prepared.freshness(at: now)
+        guard f != .expired else { return nil }
+        var notes = e.prepared.notes
+        if f == .stale {
+            notes.append("The prepared world is \(Int(now.timeIntervalSince(e.prepared.builtAt) / 3600)) h old; drainage not re-checked since.")
+        }
+        return CurrentClarityWorld(lakeId: lakeId, now: now, index: index, composite: e.composite,
+                                   regions: e.prepared.regions(at: now), notes: notes, freshness: f,
+                                   preparedAt: e.prepared.builtAt, compositeBytes: e.bytes, compositeGzip: e.gzip)
+    }
+
+    func change(_ lakeId: String, region: String, since: Date, now: Date) async -> HydrologicChange? {
+        guard let e = entries[lakeId], e.prepared.freshness(at: now) == .current, let path = e.prepared.files.changes else { return nil }
+        if changes[lakeId].map({ now.timeIntervalSince($0.checkedAt) >= Self.recheck || $0.value?.builtAt != e.prepared.builtAt }) ?? true {
+            let slug = LakeSurfaceBucket.slug(lakeId)
+            var got: PreparedClarityChanges?
+            if let u = Self.url(slug, path), let r = try? await HTTP.get(u), r.isSuccess {
+                got = try? Self.decoder.decode(PreparedClarityChanges.self, from: r.body)
+            }
+            changes[lakeId] = (now, got?.schema == PreparedClarityChanges.schemaId && got?.lakeId == lakeId ? got : nil)
+        }
+        return changes[lakeId]?.value?.change(region: region, since: since)
+    }
+
+    private func refresh(_ lakeId: String, index: ClarityRegionsIndex, now: Date) async {
+        let slug = LakeSurfaceBucket.slug(lakeId)
+        func fetch(_ name: String) async -> Data? {
+            guard let u = Self.url(slug, name), let r = try? await HTTP.get(u), r.isSuccess else { return nil }
+            return r.body
+        }
+        guard let body = await fetch("world.json"),
+              let p = try? Self.decoder.decode(PreparedClarityWorld.self, from: body),
+              p.schema == PreparedClarityWorld.schemaId, p.lakeId == lakeId, p.indexHash == index.hash else {
+            // Keep serving what was read before; look again after `recheck`.
+            if entries[lakeId] != nil { entries[lakeId]!.checkedAt = now } else { missingSince[lakeId] = now }
+            return
+        }
+        if var e = entries[lakeId], e.prepared.etag == p.etag {
+            e.prepared = p; e.checkedAt = now; entries[lakeId] = e
+            return
+        }
+        guard let bin = await fetch(p.files.composite), let gz = await fetch(p.files.compositeGzip),
+              let composite = try? ClarityComposite(index: index, refs: p.scenes, sceneForRegion: p.sceneForRegion,
+                                                    encoded: [UInt8](bin)) else {
+            if entries[lakeId] != nil { entries[lakeId]!.checkedAt = now } else { missingSince[lakeId] = now }
+            return
+        }
+        entries[lakeId] = Entry(checkedAt: now, prepared: p, composite: composite, bytes: [UInt8](bin), gzip: [UInt8](gz))
+        missingSince[lakeId] = nil
     }
 }

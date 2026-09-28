@@ -52,3 +52,29 @@ If any fails, collapse the **user-facing** presentation to two supported levels:
 | none | not supported (no number) |
 
 The API keeps `confidence` (high / moderate / low / none), `authority` and the evidence level exactly as they are. Only the words and the map's certainty cue collapse. A merged top tier is called Moderate, not High, because its error (about 0.12 log10, about 0.8 ft) is not what "high" suggests.
+
+---
+
+## Result (added after the replay; nothing above was changed)
+
+The replay ran at commit `c5a8604` with the same 225 validation and 141 discovery targets as Stage 4. `scripts/hydrology/confidence_tiers.py` applied the rule; the output is in `docs/data/hydrology/guntersville/stage5/confidence_tiers.json`.
+
+| Check | Result | Value |
+|---|---|---|
+| 1. Sample | pass | 25 target passes, 40,907 cells |
+| 2. Separation | **fail** | Moderate − High = 0.023; 95% interval −0.001 to 0.045 |
+| 3. Size | **fail** | High is 0.817 × Moderate (needed ≤ 0.80) |
+| 4. Feet agree | pass | High 0.75 ft, Moderate 0.80 ft |
+| 5. Replicates | pass | discovery: High 0.089, Moderate 0.103 |
+
+Mean error |log10 FNU|:
+
+| Tier | Validation | Discovery |
+|---|---|---|
+| High (stricter) | 0.104 | 0.089 |
+| Moderate | 0.127 | 0.103 |
+| Low | 0.151 | 0.127 |
+
+**Decision: collapse the user-facing presentation to Moderate / Low.**
+
+The stricter High is better in both sets, but not separable at the margin set in advance. The gap's interval touches zero, and the ratio misses by 0.017. The internal `confidence` keeps `high`, so a later replay with more short-gap pairs can reopen this without a schema change.

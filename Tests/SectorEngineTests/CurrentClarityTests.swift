@@ -164,7 +164,8 @@ final class CurrentClarityTests: XCTestCase {
                     for c in cells {
                         let e = estimate(region(s, completeness: comp, flow: flow), c)
                         XCTAssertLessThanOrEqual(e.confidence, ClarityConfidence(e.authority), "\(s) \(comp) \(flow) \(c.kind)")
-                        XCTAssertEqual(e.display.confidenceText, e.confidence.label)
+                        XCTAssertEqual(e.display.confidenceText, e.confidence.presentedLabel)
+                        XCTAssertNotEqual(e.display.confidenceText, "High", "two user-facing tiers (Stage 5)")
                         if !e.magnitudeSupported { XCTAssertNil(e.centralFt) }
                         if e.confidence == .high { XCTAssertEqual(e.authority, .high) }
                     }
