@@ -13,13 +13,15 @@ and publish it:
                                      only (Stage 4): the engine's per-cell input
   index.json                         every lake's latest pass date + summary
 
-A lake with no new usable pass is left as it is. Storage is a local folder
+A lake with no new usable pass is left as it is. --pass-dates rebuilds the
+named days' passes instead (a history backfill): each day's scene files and
+history entry are published, and latest.json moves only to a newer day. Storage is a local folder
 (OUT_DIR) or a Cloud Storage bucket (BUCKET); the job runs as N parallel tasks
 (CLOUD_RUN_TASK_INDEX / CLOUD_RUN_TASK_COUNT), each taking every Nth lake, and
 LAKE_WORKERS lakes at a time inside a task (the work is mostly waiting on
 Sentinel-2 reads).
 
-usage: python daily.py [--lakes id1,id2] [--until YYYY-MM-DD] [--force]
+usage: python daily.py [--lakes id1,id2] [--until YYYY-MM-DD] [--force] [--pass-dates D1,D2]
 env:   OUT_DIR or BUCKET; POLYGONS (default polygons.geojson.gz); LAKES_URL;
        LAKE_WORKERS (default 4); MEM_BUDGET_GB (default 14)
 """
@@ -36,6 +38,7 @@ POLYGONS = os.environ.get("POLYGONS", os.path.join(os.path.dirname(os.path.abspa
 LOOKBACK_DAYS = 14          # passes older than this are not "fresh"
 GRID_FACTOR = 6             # the engine's point-lookup grid: 6 x 36 m cells (~216 m mercator)
 _build_lock = threading.Lock()   # build_clarity sets dws.UTM, a module global
+_publish_lock = threading.Lock() # latest.json / history.json are read, changed and written
 # Memory. Most of a build's peak is reading one Sentinel-2 tile's window at
 # 10 m (~100 bytes a pixel), which grows with the lake's ground area up to a
 # whole tile (110 km square) and does not shrink with a coarser frame; the
@@ -197,23 +200,29 @@ def summary(meta):
             "fnuP75": s.get("p75")}
 
 
-def process(lake_id, geom_json, store, until, force):
+def process(lake_id, geom_json, store, until, force, day=None):
+    """day: rebuild that day's pass only (a history backfill), whatever is published."""
     key = f"lakes/{slug(lake_id)}/clarity"
     latest = store.read_json(f"{key}/latest.json") or {}
     lake = shape(geom_json)
     bbox = list(lake.bounds)
-    newest = newest_pass_date(bbox, until)
-    if newest is None:
-        return lake_id, "no pass in the window", latest.get("summary")
     held = latest.get("summary") or {}
-    if not force and held.get("date", "") >= newest:
-        return lake_id, "up to date", held or None
-    # Only passes newer than the published one are read; a sparser one
-    # replaces it only if it reads nearly as much, or the published is old.
-    after, floor = (None, 0.0) if force or not held else (held["date"], 0.0)
-    if after and held.get("openWaterReadPct") and \
-            (until.date() - dt.date.fromisoformat(held["date"])).days <= REPLACE_DAYS:
-        floor = REPLACE_WITHIN * held["openWaterReadPct"] / 100
+    if day:
+        # Only that day's passes are candidates, and the job's own choice among them.
+        until = dt.datetime.fromisoformat(day + "T23:59:59")
+        after, floor = (dt.date.fromisoformat(day) - dt.timedelta(days=1)).isoformat(), 0.0
+    else:
+        newest = newest_pass_date(bbox, until)
+        if newest is None:
+            return lake_id, "no pass in the window", latest.get("summary")
+        if not force and held.get("date", "") >= newest:
+            return lake_id, "up to date", held or None
+        # Only passes newer than the published one are read; a sparser one
+        # replaces it only if it reads nearly as much, or the published is old.
+        after, floor = (None, 0.0) if force or not held else (held["date"], 0.0)
+        if after and held.get("openWaterReadPct") and \
+                (until.date() - dt.date.fromisoformat(held["date"])).days <= REPLACE_DAYS:
+            floor = REPLACE_WITHIN * held["openWaterReadPct"] / 100
     with tempfile.TemporaryDirectory() as tmp:
         out = os.path.join(tmp, "c")
         with _build_lock:
@@ -230,7 +239,7 @@ def process(lake_id, geom_json, store, until, force):
                      "pixelWidth": frame.width, "pixelHeight": frame.height,
                      "cellMetresMercator": frame.cell, "generatedOn": dt.date.today().isoformat()})
         date = meta["pass"]["date"]
-        if not force and latest.get("summary", {}).get("date", "") >= date:
+        if not force and not day and latest.get("summary", {}).get("date", "") >= date:
             return lake_id, f"newest usable pass {date} already published", latest.get("summary")
         files = {}
         for suffix, name in ((".png", "clarity"), (".measured.png", "measured"), (".distance.png", "distance")):
@@ -245,12 +254,15 @@ def process(lake_id, geom_json, store, until, force):
         files["grid"] = f"{key}/{date}.grid.json"
         files.update(current_cells_files(out, date, lake_id, store, key))
         s = summary(meta)
-        store.write_json(f"{key}/latest.json", {"lakeId": lake_id, "summary": s, "files": files,
-                                                "publishedAt": dt.datetime.utcnow().isoformat() + "Z"})
-        hist = store.read_json(f"{key}/history.json") or {"lakeId": lake_id, "passes": []}
-        hist["passes"] = [p for p in hist["passes"] if p["date"] != date] + [s]
-        hist["passes"].sort(key=lambda p: p["date"])
-        store.write_json(f"{key}/history.json", hist)
+        with _publish_lock:
+            held = (store.read_json(f"{key}/latest.json") or {}).get("summary") or {}
+            if not day or date >= held.get("date", ""):
+                store.write_json(f"{key}/latest.json", {"lakeId": lake_id, "summary": s, "files": files,
+                                                        "publishedAt": dt.datetime.utcnow().isoformat() + "Z"})
+            hist = store.read_json(f"{key}/history.json") or {"lakeId": lake_id, "passes": []}
+            hist["passes"] = [p for p in hist["passes"] if p["date"] != date] + [s]
+            hist["passes"].sort(key=lambda p: p["date"])
+            store.write_json(f"{key}/history.json", hist)
     return lake_id, f"published {date}", s
 
 
@@ -259,27 +271,29 @@ def main():
     ap.add_argument("--lakes", default=None)
     ap.add_argument("--until", default=None)
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--pass-dates", default=None, help="rebuild these days' passes (YYYY-MM-DD,...)")
     a = ap.parse_args()
     until = dt.datetime.fromisoformat(a.until) if a.until else dt.datetime.utcnow()
     with (gzip.open if POLYGONS.endswith(".gz") else open)(POLYGONS, "rt") as fh:
         polys = {f["properties"]["id"]: f["geometry"] for f in json.load(fh)["features"]
                  if f.get("geometry")}
-    ids = sorted(polys)
+    ids = every = sorted(polys)
     if a.lakes:
         want = set(a.lakes.split(","))
         ids = [i for i in ids if i in want]
     n = int(os.environ.get("CLOUD_RUN_TASK_COUNT", "1"))
     k = int(os.environ.get("CLOUD_RUN_TASK_INDEX", "0"))
-    mine = ids[k::n]
+    days = a.pass_dates.split(",") if a.pass_dates else [None]
+    mine = [(i, d) for i in ids for d in days][k::n]
     store = Store()
     workers = int(os.environ.get("LAKE_WORKERS", "4"))
-    print(f"task {k + 1}/{n}: {len(mine)} lakes, {workers} at a time, until {until.date()}", flush=True)
+    print(f"task {k + 1}/{n}: {len(mine)} builds, {workers} at a time, until {until.date()}", flush=True)
     results = {}
     t0 = time.time()
     with cf.ThreadPoolExecutor(workers) as ex:
-        futs = {ex.submit(process, i, polys[i], store, until, a.force): i for i in mine}
+        futs = {ex.submit(process, i, polys[i], store, until, a.force, d): (i, d) for i, d in mine}
         for f in cf.as_completed(futs):
-            i = futs[f]
+            i, d = futs[f]
             try:
                 lid, status, s = f.result()
             except SystemExit as e:
@@ -287,14 +301,15 @@ def main():
             except Exception as e:
                 lid, status, s = i, f"error: {e}", None
                 traceback.print_exc()
-            results[lid] = {"status": status, "summary": s}
-            print(f"  {lid}: {status}", flush=True)
+            results[lid if d is None else f"{lid} {d}"] = {"status": status, "summary": s}
+            print(f"  {lid}{'' if d is None else ' ' + d}: {status}", flush=True)
     store.write_json(f"runs/{until.date()}-task{k}.json", {"until": until.isoformat(), "seconds": round(time.time() - t0),
                                                            "results": results})
-    # The index is rebuilt from every lake's latest.json by task 0 (cheap reads).
+    # The index is rebuilt from every lake's latest.json by task 0 (cheap reads),
+    # all of them even when --lakes ran only a few.
     if k == 0:
         index = {}
-        for i in ids:
+        for i in every:
             l = store.read_json(f"lakes/{slug(i)}/clarity/latest.json")
             if l:
                 index[i] = {"slug": slug(i), **l["summary"]}
