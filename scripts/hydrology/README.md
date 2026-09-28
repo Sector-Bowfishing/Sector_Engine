@@ -43,3 +43,25 @@ per-pass files; the history runs from 2025-02-20 (rain, flow) or 2025-03-01
 
 The hourly job (`jobs/hydrology-hourly`) publishes the live rain feed and the
 hourly record the engine's state loader reads.
+
+## Stage 3A — within-arm spatial response
+
+Outputs are in `docs/data/hydrology/guntersville/stage3a/`. The hand-off is at
+`docs/clarity/CLARITY_FUSION_STAGE_3A_HANDOFF.md`. `CELLS` holds the per-cell
+pass files (about 21 MB, not committed). Rebuilding them takes about 2 h with
+10 workers, because it is network-bound.
+
+| Step | Script | What it does |
+|---|---|---|
+| 1 | `pass_history.py pass_candidates.json ARM_CELLS OUT --cells CELLS --only-read STAGE2_PASSES --worker k --workers 5 [--reverse]` | Re-reads the 147 usable passes and keeps every cell: observed FNU and cloud / grass / unreadable class. |
+| 2 | `arm_positions.py ARM_CELLS HYDROLOGY.json CELLS/<any>.npz OUT` | Builds the within-arm position (through-water distance from the head, distance to the mouth, normalized position) and the equal-area zones. |
+| 3 | `zone_history.py CELLS POSITIONS PASSES OUT` | Writes per pass × arm × zone statistics from observed cells, and per-arm anchors with through-water fill distances (`anchors/`, ArmAnchorFile JSON). |
+| 4 | `rain_pass_hours.py WEIGHTS LAKE.geojson pass_candidates.json OUT` | Reads hourly MRMS 01H Pass 2 for the day before each pass. |
+| 5 | `swift run -c release ClarityReplay … [--hourly rain_pass_hours.json] [--anchors ANCHORS]` | Runs the replay variants: v1 is Stage 2, v2 adds hourly rain, v3 adds fill distances. |
+| 6 | `replay_skill.py v1=… v2=… v3=… [--arms a,b]` | Scores the same pairs: Peirce skill and date-clustered bootstrap. |
+| 7 | `zone_events.py ZONE_HISTORY ARM_ZONES rain_daily.json rain_pass_hours.json usgs_iv.json nwm_daily16z.json HYDROLOGY.json ANCHORS OUT.json` | Runs the event studies, progression, measured and modeled flow, the holdout and the evidence gate. The gate is fixed in the docstring. |
+| 8 | `zone_season_check.py zone_events.json arm_zones.json` | Post-hoc cold vs warm season split. Exploratory, not gate evidence. |
+| 9 | `zone_map.py POSITIONS ZONE_HISTORY zone_events.json OUT date:arm …` | Draws developer-only validation images. They are never user-facing. |
+
+Wind (`wind_asos_4A6_GAD_HSV.csv.gz`, IEM ASOS: Scottsboro, Gadsden, Huntsville,
+hourly) is kept for Stage 4. Stage 3A does not use it.

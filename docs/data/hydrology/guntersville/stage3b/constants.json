@@ -1,0 +1,116 @@
+{
+ "discoveryYears": [
+  2025,
+  2026
+ ],
+ "rules": {
+  "coldMonths": [
+   1,
+   2,
+   3,
+   11,
+   12
+  ],
+  "stormIn": 1.0,
+  "dryWeekIn": 0.25,
+  "stormWindowDays": [
+   0,
+   3
+  ],
+  "lookbackDays": 45,
+  "minBaselinePasses": 2,
+  "episodeGapDays": 3,
+  "flowHigh": 3.0,
+  "flowLow": 1.5,
+  "minDeltaUnits": 8
+ },
+ "noise": {
+  "head": [
+   -0.1645,
+   0.0823,
+   185
+  ],
+  "upper": [
+   -0.1645,
+   0.1131,
+   138
+  ],
+  "middle": [
+   -0.1749,
+   0.1543,
+   252
+  ],
+  "lower": [
+   -0.1749,
+   0.1234,
+   194
+  ],
+  "mouth": [
+   -0.1646,
+   0.1492,
+   319
+  ],
+  "whole": [
+   -0.2777,
+   0.18,
+   80
+  ],
+  "mainstem": [
+   -0.1749,
+   0.1337,
+   1168
+  ],
+  "mainstem_fromPooled": true
+ },
+ "dryShare": {
+  "head": 0.1027,
+  "upper": 0.1159,
+  "middle": 0.1032,
+  "lower": 0.1082,
+  "mouth": 0.1003,
+  "whole": 0.1125,
+  "mainstem": 0.1019
+ },
+ "delta": {
+  "large": {
+   "season": 0.1183,
+   "flow": 0.072,
+   "combined": 0.0926,
+   "n": {
+    "season": 131,
+    "flow": 139,
+    "combined": 50
+   }
+  },
+  "medium": {
+   "season": 0.0412,
+   "flow": 0.1311,
+   "combined": 0.1337,
+   "n": {
+    "season": 59,
+    "flow": 44,
+    "combined": 12
+   }
+  },
+  "small": {
+   "season": 0.4319,
+   "flow": 0.0,
+   "combined": 0.216,
+   "n": {
+    "season": 21,
+    "flow": 1,
+    "combined": 1
+   }
+  },
+  "mainStem": {
+   "season": 0.0,
+   "flow": 0.0,
+   "combined": 0.0,
+   "n": {
+    "season": 4,
+    "flow": 0,
+    "combined": 0
+   }
+  }
+ }
+}

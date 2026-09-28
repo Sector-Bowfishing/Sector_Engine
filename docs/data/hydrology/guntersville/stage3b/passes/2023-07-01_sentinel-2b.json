@@ -1,0 +1,1 @@
+{"date": "2023-07-01", "platform": "sentinel-2b", "status": "rejected: SWIR DN over water is 2361; expected ~1000-1100 for sentinel-2-c1-l2a"}

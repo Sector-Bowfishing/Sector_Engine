@@ -38,6 +38,8 @@ def one(day):
         return day, None
     try:
         with h5py.File(path) as f:
+            ver = f.attrs.get("NWM_version_number")
+            ver = ver.decode() if isinstance(ver, bytes) else (str(ver[0] if hasattr(ver, "__len__") and not isinstance(ver, str) else ver) if ver is not None else None)
             fid = f["feature_id"][:]; s = f["streamflow"]; scale = float(s.attrs["scale_factor"][0])
             idx = np.searchsorted(fid, reaches)
             vals = s[:]
@@ -45,7 +47,7 @@ def one(day):
             for r, i in zip(reaches, idx):
                 if i < len(fid) and fid[i] == r and vals[i] > -9000:
                     out[str(r)] = round(float(vals[i]) * scale * CFS, 3)
-            return day, out
+            return day, (out, ver)
     except Exception:
         return day, None
     finally:
@@ -59,8 +61,10 @@ while d <= dt.date.fromisoformat(a.end):
         days.append(d)
     d += dt.timedelta(days=1)
 with cf.ThreadPoolExecutor(a.threads) as ex:
-    for n, (day, out) in enumerate(ex.map(one, days), 1):
+    for n, (day, got) in enumerate(ex.map(one, days), 1):
+        out, ver = got if got is not None else (None, None)
         res["days"][day.isoformat()] = out
+        if ver: res.setdefault("versions", {})[day.isoformat()] = ver
         if n % 20 == 0:
             json.dump(res, open(a.out, "w")); print(day, flush=True)
 json.dump(res, open(a.out, "w"))
