@@ -105,11 +105,18 @@ class Store:
             self.bucket = storage.Client().bucket(self.bucket_name)
 
     def read_json(self, key):
-        try:
-            if self.bucket_name:
+        """None only when the file does not exist. Any other failure raises: a
+        read that failed must never pass for an empty history and overwrite it
+        (2026-09-28: a --pass-dates backfill kept 3 of 11 passes that way)."""
+        if self.bucket_name:
+            from google.api_core.exceptions import NotFound
+            try:
                 return json.loads(self.bucket.blob(key).download_as_bytes())
+            except NotFound:
+                return None
+        try:
             return json.load(open(os.path.join(self.root, key)))
-        except Exception:
+        except FileNotFoundError:
             return None
 
     def write(self, key, data, content_type, cache="public, max-age=600"):
@@ -312,7 +319,10 @@ def main():
     if k == 0:
         index = {}
         for i in every:
-            l = store.read_json(f"lakes/{slug(i)}/clarity/latest.json")
+            try:
+                l = store.read_json(f"lakes/{slug(i)}/clarity/latest.json")
+            except Exception:
+                l = None      # one unreadable lake leaves the index, not the whole run
             if l:
                 index[i] = {"slug": slug(i), **l["summary"]}
         store.write_json("index.json", {"generatedAt": dt.datetime.utcnow().isoformat() + "Z", "lakes": index})

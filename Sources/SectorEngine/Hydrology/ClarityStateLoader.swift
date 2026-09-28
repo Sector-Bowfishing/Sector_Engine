@@ -136,9 +136,7 @@ public enum ClarityStateLoader {
 
         // 2. the hourly record, from 7 days before the oldest scene used (or 10 days back) to now
         let from = min(passes.min() ?? now, now.addingTimeInterval(-3 * 86_400)).addingTimeInterval(-7 * 86_400)
-        var days: [Date] = []
-        var d = from
-        while d <= now.addingTimeInterval(3600), days.count < 45 { days.append(d); d = d.addingTimeInterval(86_400) }
+        let days = Self.hourlyDays(from: from, now: now)
         let files: [HourlyDayFile] = await withTaskGroup(of: HourlyDayFile?.self) { g in
             for day in days {
                 g.addTask {
@@ -242,6 +240,16 @@ public enum ClarityStateLoader {
     public static let mainStemKey = "_mainStem"
     /// How far back a scene may still anchor (the replay's baseline window).
     static let anchorLookbackDays = 45.0
+
+    /// One moment in each day of the hourly record to read, newest first: at
+    /// most `maxDays`, so a long window loses its OLDEST days, never today's
+    /// (a 46-day window once dropped the newest file; 2026-09-28).
+    static func hourlyDays(from: Date, now: Date, maxDays: Int = 47) -> [Date] {
+        var days: [Date] = []
+        var d = now.addingTimeInterval(3600)
+        while d >= from.addingTimeInterval(-86_400), days.count < maxDays { days.append(d); d = d.addingTimeInterval(-86_400) }
+        return days
+    }
 
     /// The daily job's recent passes' anchor files, oldest first; `arms/latest.json` alone when there is no history.
     static func anchorFiles(slug: String, now: Date) async -> [ArmAnchorFile] {

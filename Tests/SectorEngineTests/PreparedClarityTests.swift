@@ -122,6 +122,20 @@ final class PreparedClarityTests: XCTestCase {
         XCTAssertEqual(grass.lakeSummary(path: "/x").overview!.supportedPct, 0)
     }
 
+    func testTheHourlyRecordAlwaysReadsToday() {
+        // scenes back to Aug 21 make a 46-day window; today's file must still be read
+        let now = ISO8601DateFormatter().date(from: "2026-09-28T21:39:00Z")!
+        let from = ISO8601DateFormatter().date(from: "2026-08-14T16:00:00Z")!
+        let keys = ClarityStateLoader.hourlyDays(from: from, now: now).map { ClarityTime.dayKey.string(from: $0) }
+        XCTAssertEqual(keys.first, "2026-09-28")
+        XCTAssertTrue(keys.contains("2026-08-14"))
+        XCTAssertEqual(Set(keys).count, keys.count)
+        // a longer window than the cap loses its oldest days only
+        let long = ClarityStateLoader.hourlyDays(from: from.addingTimeInterval(-30 * 86_400), now: now)
+        XCTAssertEqual(ClarityTime.dayKey.string(from: long.first!), "2026-09-28")
+        XCTAssertEqual(long.count, 47)
+    }
+
     func testTheLakeSummaryNamesItsFreshnessAndTheWordsForEachTier() {
         let w = world(regions: [context(.stable)], sceneFor: [0], scenes: [scene("d", code: 255)])
         let s = w.lakeSummary(path: "/x")
