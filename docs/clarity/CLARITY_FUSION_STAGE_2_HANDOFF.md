@@ -2,6 +2,8 @@
 
 Prepared 2026-09-27 in the `Sector_Engine` worktree `Sector_Engine-fusion`, branch `feat/clarity-fusion-stage1` (Stage 2 is on the same branch), stacked on `feat/lake-surface-job`. **Nothing is committed.** The Stage 1 items you approved are deployed (§0). Stage 2 itself is not deployed and does not score.
 
+> **Production (`sector-engine-00044-b6m`) and the `hydrology-hourly` job now run code from this uncommitted worktree.** Commit it, so what is live is in git. Stage 2's code is in that image but inert: its routes need `SECTOR_STAGE2_ROUTES=1`.
+
 Stage 2 answers one question per arm: *what does Sector currently believe this arm's clarity is, and why?* It gives one state per hydrologic arm and one for the main stem. Each state fuses:
 - the latest satellite scene of that water;
 - rain over that arm's own drainage since the scene;
@@ -49,16 +51,30 @@ There is no plume transport, no wind transport and no per-cell field.
 
 ### 0.1 Engine deploy
 
-- `sector-engine-00040-clq`, the first build, was tagged and tested with no traffic against production (00039) at nine points:
+Five revisions to get there. Traffic stays pinned to an explicit revision, so every new build served nothing until it was tagged, tested and routed.
+- **`00040-clq`** was tagged and A/B-tested against production (00039) at nine points:
   - Tonight's score was identical at all nine.
   - Every difference was an approved change:
     - Town Creek reads its own gauge (~3.5 ft vs ~4.0 ft).
     - Future nights use their real forecast rain (nights 5–6 drop, for example Wheeler's night 5 from 40 to 28).
     - The new `clarityVisibility` field appears.
     - Lakes without a graph no longer borrow the nearest gauge (Travis, 3.9 → 4.0 ft).
-  - **One regression.** At South Sauty the top-level `discharge` came back empty on Cloud Run, reproducibly, and not locally. The nearest-discharge lookup and the new arm-gauge lookup ran side by side. They now run one after the other.
-- `00041-dpx`: that fix, written as a closure inside an `async let`, **aborted the Linux Swift runtime** on the first request ("freed pointer was not the last allocation", signal 6). It never took traffic. The sequential fetch is now a plain static function.
-- `DEPLOY_RESULT_PLACEHOLDER`
+  - At South Sauty the top-level `discharge` came back empty. I first read that as a regression and restructured the fetch. It was not: at fresh coordinates next to the tested one, **production returns no discharge either**. Its steady 1.35 cfs at the tested point was an earlier success still cached. The nearest-discharge lookup failing around these arms on Cloud Run is pre-existing.
+- **`00041-dpx`, `00042-gg8`:** the restructured fetch (one `async let` whose child awaits two deadline-wrapped fetches) **aborted the Linux Swift runtime** on the first request ("freed pointer was not the last allocation", signal 6). Neither ever took traffic.
+- **`00043-6zt`:** clarity's own gauge is read with a plain `await` after the snapshot's fetches. `/conditions` passed the same nine-point A/B, and it went to production.
+  - **`/hydrology` then aborted the runtime** the same way. That is the Stage 1 code: two pending `async let`s beside a `withTaskGroup`.
+  - **Rolled back to 00039 within about 5 minutes.** Only my own test requests had reached `/hydrology`.
+  - Reproduced in a local Linux container (Docker, swift:6.1-jammy): the pre-fix image died 1.5 s into `/hydrology`.
+  - Fixed by awaiting in turn, with no `async let` anywhere in the hydrology paths.
+  - Verified in the container: `/hydrology`, `/conditions` at both gauged arms and Travis, `/clarity/states` and `/clarity/state` (arm, main stem, land) all answer, with no crash.
+- **`00044-b6m` is live** (100% since 2026-09-27 ~23:35Z; rollback `00039-9hc`). Before routing:
+  - `/hydrology`: 68 arms. Flow is measured 2, modeled 55, unavailable 11. Rain is MRMS for 64 arms, unavailable for 4. Nickajack 31,471 cfs.
+  - `/hydrology/graph` and `/lakes` answer.
+  - `/clarity/*` stays 404 (gated).
+  - No crash in its logs.
+  - The nine-point A/B again showed an identical tonight score everywhere, with only the approved differences.
+
+**Lesson for this service:** on Linux, `async let` beside a task group, or an `async let` whose child awaits several deadline-wrapped fetches, can abort the process. Hand the Linux image to Docker (`docker build -t sector-engine-local .`, about 1.5 min once cached) before tagging a build.
 
 **Pre-existing, not changed:**
 - Production's nearest-discharge lookup is flaky on its own. At the Town Creek point 00039 returned no discharge on one call and 25.8 cfs on the next.
