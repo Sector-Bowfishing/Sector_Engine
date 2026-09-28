@@ -66,6 +66,40 @@ struct ConditionsSnapshot {
     /// storm entirely. `alerts` is sorted most-severe-first, so the first match is
     /// the one to surface as the binding "why".
     var severeWarningLabel: String? { alerts.first(where: { $0.impliesUnsafeToFish })?.event }
+
+    /// The single water-temperature resolution (Stage 2E): the score and the
+    /// response both take this one state, so "shown" always equals "scored".
+    func resolvedWaterTemp(at date: Date) -> ResolvedWaterTemperatureState {
+        WaterTemperatureResolver.resolve(measurement: waterTemp, model: waterTempModel, at: date)
+    }
+
+    /// The engine input for `date` at `coordinate` — the ONE snapshot → input
+    /// mapping. The gauge, the score-only path and the 7-night forecast base all
+    /// build here. They used to each spell out this argument list, and the
+    /// forecast's copy dropped `severeWarningLabel`: during an active warning the
+    /// gauge capped at 25 while tonight's night and the Tonight curve did not.
+    func engineInput(coordinate: CLLocationCoordinate2D, date: Date) -> ConditionsInput {
+        engineInput(coordinate: coordinate, date: date, resolvedWaterTemp: resolvedWaterTemp(at: date))
+    }
+
+    /// Same mapping with a caller-supplied resolution, for the /conditions route
+    /// that also puts the resolved state in the response.
+    func engineInput(coordinate: CLLocationCoordinate2D, date: Date,
+                     resolvedWaterTemp: ResolvedWaterTemperatureState) -> ConditionsInput {
+        ConditionsInputBuilder.build(
+            coordinate: coordinate, date: date,
+            weather: weather, water: water, discharge: discharge,
+            waterTempC: waterTemp,
+            // The modeled water temp, so a lake with no temp gage scores off the
+            // model rather than falling through to raw AIR temp.
+            modeledWaterTempF: waterTempModel?.currentF,
+            turbidity: turbidity, generation: generation,
+            alertWindFloorMph: alertWindFloorMph,
+            severeWarningLabel: severeWarningLabel,
+            rainWatershed72hIn: mrms?.watershed72hIn,
+            clarityDischarge: clarityDischarge,
+            resolvedWaterTemp: resolvedWaterTemp)
+    }
 }
 
 /// Serialises and caches the shared fetch. An actor so concurrent callers

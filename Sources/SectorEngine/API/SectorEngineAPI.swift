@@ -408,18 +408,8 @@ public enum SectorEngineAPI {
         guard snap.hasAnyLiveInput else { return nil }
 
         // Water temperature is resolved ONCE; the score and the response both take it.
-        let waterTempState = WaterTemperatureResolver.resolve(
-            measurement: snap.waterTemp, model: snap.waterTempModel, at: date)
-        let input = ConditionsInputBuilder.build(
-            coordinate: coord, date: date,
-            weather: snap.weather, water: snap.water, discharge: snap.discharge,
-            waterTempC: snap.waterTemp, modeledWaterTempF: snap.waterTempModel?.currentF,
-            turbidity: snap.turbidity, generation: snap.generation,
-            alertWindFloorMph: snap.alertWindFloorMph,
-            severeWarningLabel: snap.severeWarningLabel,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn,
-            clarityDischarge: snap.clarityDischarge,
-            resolvedWaterTemp: waterTempState)
+        let waterTempState = snap.resolvedWaterTemp(at: date)
+        let input = snap.engineInput(coordinate: coord, date: date, resolvedWaterTemp: waterTempState)
         // Tuning comes from Firebase Remote Config (cached; falls back to the
         // compiled defaults). Change a weight in the console → both phones see it.
         let config = await RemoteConfigStore.shared.current()
@@ -527,18 +517,9 @@ public enum SectorEngineAPI {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         let snap = await ConditionsSnapshotProvider.shared.snapshot(for: coord)
         guard snap.hasAnyLiveInput else { return nil }
-        let waterTempState = WaterTemperatureResolver.resolve(
-            measurement: snap.waterTemp, model: snap.waterTempModel, at: date)
-        let input = ConditionsInputBuilder.build(
-            coordinate: coord, date: date,
-            weather: snap.weather, water: snap.water, discharge: snap.discharge,
-            waterTempC: snap.waterTemp, modeledWaterTempF: snap.waterTempModel?.currentF,
-            turbidity: snap.turbidity, generation: snap.generation,
-            alertWindFloorMph: snap.alertWindFloorMph,
-            severeWarningLabel: snap.severeWarningLabel,
-            rainWatershed72hIn: snap.mrms?.watershed72hIn,
-            clarityDischarge: snap.clarityDischarge,
-            resolvedWaterTemp: waterTempState)
+        // Water temperature is resolved ONCE; the score and the response both take it.
+        let waterTempState = snap.resolvedWaterTemp(at: date)
+        let input = snap.engineInput(coordinate: coord, date: date, resolvedWaterTemp: waterTempState)
         let result = ConditionsAggregator.evaluate(input, config: await RemoteConfigStore.shared.current())
         return (result.score, result.band.rawValue)
     }

@@ -226,6 +226,27 @@ final class ConditionsAggregatorTests: XCTestCase {
             windowStart: sun.astronomicalDusk, windowEnd: sun.sunrise, hasTurbidityGage: hasGage)
     }
 
+    /// A calm, clear, warm live snapshot at 34, -86: a fresh nearby temp gage
+    /// (22 °C ≈ 72 °F) and clear water (5 FNU), plus whatever NWS alerts apply.
+    private static func liveSnapshot(now: Date, alerts: [WeatherAlert]) -> ConditionsSnapshot {
+        func gage(_ code: String, _ name: String, _ value: Double, _ unit: String) -> WaterLevelReading {
+            WaterLevelReading(siteCode: "0", siteName: "TEST", parameterCode: code, parameterName: name,
+                              value: value, unit: unit, dateTime: now, latitude: 34.0, longitude: -86.0,
+                              trend: .steady, change: 0, history: [], distanceMiles: 1)
+        }
+        let weather = WeatherReading(
+            temperature: 75, conditionDescription: "Clear", conditionSymbol: "moon.stars",
+            windSpeed: 2, windDirection: 180, precipitation: 0, recentRainfall: 0,
+            humidity: 60, pressure: 1016, pressureTrend: .steady, pressureChange: 0,
+            cloudCover: 5, weatherCode: 0, time: now)
+        return ConditionsSnapshot(
+            weather: weather, water: nil, discharge: nil,
+            waterTemp: gage("00010", "Temperature, water, °C", 22.2, "°C"),
+            waterTempModel: nil,
+            turbidity: gage("63680", "Turbidity, FNU", 5, "FNU"),
+            generation: nil, alerts: alerts, mrms: nil, fetchedAt: now)
+    }
+
     /// `rain` maps a day offset relative to `now` (matching the -1...6 fixture
     /// range) to that day's precipitation_sum in inches.
     private static func makeForecast(around now: Date, rain: [Int: Double] = [:]) -> ForecastResponse {
@@ -303,6 +324,53 @@ final class ConditionsAggregatorTests: XCTestCase {
         guard let tonight = fc.nights.first else { return XCTFail("no tonight night") }
         XCTAssertEqual(tonight.score, gauge,
                        "forecast tonight (nights[0]) must equal the live gauge score")
+    }
+
+    // Regression: during an active NWS warning the gauge capped at 25, but the
+    // forecast built its OWN base from the snapshot and left out the warning, so
+    // tonight's outlook row and the Tonight curve scored the night uncapped — two
+    // different tonight numbers on one screen. test20 hands both sides the same
+    // `base` and so can't see that; this builds the gauge AND the forecast from
+    // one snapshot, the way the /conditions route does.
+    @MainActor
+    func test20b_severeWarningCapsTonightLikeTheGauge() {
+        let now = Date()
+        let coord = CLLocationCoordinate2D(latitude: 34.0, longitude: -86.0)
+        // Flash Flood: a warning with no wind floor, so the gate is the only
+        // thing that can cap the night — nothing else hides a missing label.
+        let warning = WeatherAlert(id: "t", event: "Flash Flood Warning", severity: .severe,
+                                   headline: "", details: "", ends: now.addingTimeInterval(3 * 3600))
+        let warned = Self.liveSnapshot(now: now, alerts: [warning])
+        let clear = Self.liveSnapshot(now: now, alerts: [])
+        XCTAssertEqual(warned.severeWarningLabel, "Flash Flood Warning")
+
+        let cap = Int(ConditionsConfig.default.gates.severeWarningCap)
+        let clearGauge = ConditionsAggregator.evaluate(clear.engineInput(coordinate: coord, date: now)).score
+        XCTAssertGreaterThan(clearGauge, cap, "fixture must score above the cap, or the warning proves nothing")
+
+        let gauge = ConditionsAggregator.evaluate(warned.engineInput(coordinate: coord, date: now)).score
+        let fc = ConditionsForecastService.compute(r: Self.makeForecast(around: now), snapshot: warned,
+                                                   coordinate: coord, now: now)
+        guard let tonight = fc.nights.first else { return XCTFail("no tonight night") }
+
+        XCTAssertLessThanOrEqual(gauge, cap, "the warning must cap the gauge")
+        XCTAssertEqual(tonight.score, gauge, "tonight's outlook row must equal the capped gauge")
+        XCTAssertTrue(tonight.topReasons.contains { $0.contains("Flash Flood Warning") },
+                      "tonight must say why it's capped: \(tonight.topReasons)")
+
+        let hours = fc.tonight?.hours ?? []
+        XCTAssertFalse(hours.isEmpty, "tonight curve should be populated")
+        XCTAssertTrue(hours.allSatisfy { $0.score <= gauge },
+                      "no Tonight hour may exceed the capped gauge (\(gauge)): \(hours.map(\.score))")
+        XCTAssertTrue(tonight.hourly.allSatisfy { $0.score <= gauge },
+                      "no ribbon hour may exceed the capped gauge (\(gauge))")
+
+        // The warning is in effect NOW — later nights are forecasts and must not
+        // inherit it.
+        let later = fc.nights.dropFirst()
+        XCTAssertFalse(later.isEmpty, "7-night outlook should be produced")
+        XCTAssertTrue(later.allSatisfy { n in !n.topReasons.contains { $0.contains("Flash Flood Warning") } },
+                      "a live warning must not cap future nights")
     }
 
     // Regression: the common no-gage case must not saturate green. A flawless
