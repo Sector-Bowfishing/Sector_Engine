@@ -9,6 +9,13 @@ the observed cells' FNU distribution. No fill and no grass-under-cloud lookups
 -- only what the satellite actually saw that day.
 
 usage: geo/bin/python pass_history.py <passes.json> <arm_cells.json> <out dir> [--worker k --workers n]
+                                     [--cells DIR] [--only-read PREVIOUS_OUT_DIR]
+
+--cells DIR  also keep every cell of the pass (Stage 3A): DIR/<date>_<platform>.npz
+             with `fnu` (uint8, 0 = none, else log10 FNU on the product's
+             encoding) and `cls` (0 off the lake, 1 observed, 2 cloud-hidden,
+             3 grass, 4 unreadable or dropped), on the clarity frame.
+--only-read  re-read only passes an earlier run read (skips known rejects).
 """
 import os, sys, json, math, argparse, datetime as dt, zlib, base64, time
 import numpy as np
@@ -19,6 +26,7 @@ import derive_water_surface as dws
 from shapely.geometry import shape
 from shapely.ops import unary_union
 
+ENC_LO, ENC_HI = math.log10(0.5), math.log10(200.0)   # the published product's encoding (top 254)
 WATERBODY = os.path.expanduser("~/Desktop/Development/iOS/Sector-mapbox/.fishintel-cache/guntersville/waterbody.geojson")
 
 
@@ -33,9 +41,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("passes"); ap.add_argument("arm_cells"); ap.add_argument("out")
     ap.add_argument("--worker", type=int, default=0); ap.add_argument("--workers", type=int, default=1)
+    ap.add_argument("--cells", default=None); ap.add_argument("--only-read", default=None)
+    ap.add_argument("--reverse", action="store_true", help="walk this worker's passes newest first")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
-    passes = json.load(open(a.passes))[a.worker::a.workers]
+    if a.cells:
+        os.makedirs(a.cells, exist_ok=True)
+    passes = json.load(open(a.passes))
+    if a.only_read:
+        passes = [p for p in passes if (json.load(open(os.path.join(a.only_read, f"{p['date']}_{p['platform']}.json")))
+                                        .get("status") == "read"
+                                        if os.path.exists(os.path.join(a.only_read, f"{p['date']}_{p['platform']}.json")) else False)]
+    passes = passes[a.worker::a.workers]
+    if a.reverse:
+        passes = passes[::-1]
     cells = json.load(open(a.arm_cells))
     arm = np.frombuffer(zlib.decompress(base64.b64decode(cells["armGrid"])), np.uint8).reshape(cells["height"], cells["width"])
     names = cells["arms"]
@@ -48,7 +67,8 @@ def main():
     bbox = list(lake_g.bounds)
     for p in passes:
         path = os.path.join(a.out, f"{p['date']}_{p['platform']}.json")
-        if os.path.exists(path):
+        cpath = os.path.join(a.cells, f"{p['date']}_{p['platform']}.npz") if a.cells else None
+        if os.path.exists(cpath if cpath else path):
             continue
         t0 = time.time()
         until = dt.datetime.fromisoformat(p["date"] + "T23:59:59")
@@ -83,6 +103,17 @@ def main():
             logv[np.isin(lab, np.nonzero(sz < dws.S2_MIN_PATCH_CELLS)[0] + 1)] = np.nan
         obs = lake & ~np.isnan(logv)
         fnu = 10 ** logv
+        if cpath:
+            enc = np.zeros(lake.shape, "uint8")
+            t = np.clip((logv[obs] - ENC_LO) / (ENC_HI - ENC_LO), 0, 1)
+            enc[obs] = (1 + np.round(t * 253)).astype("uint8")
+            hidden = np.nan_to_num(aux["hidden"]) >= 0.5
+            cls = np.zeros(lake.shape, "uint8")
+            cls[lake] = 4
+            cls[lake & hidden] = 2
+            cls[lake & grass] = 3
+            cls[obs] = 1
+            np.savez_compressed(cpath, fnu=enc, cls=cls)
         res = {"date": p["date"], "platform": p["platform"], "status": "read",
                "time": items[0]["properties"]["datetime"], "openWaterReadPct": round(100 * cov, 1),
                "lakeObservedPct": round(100 * float(obs.sum() / lake.sum()), 1),

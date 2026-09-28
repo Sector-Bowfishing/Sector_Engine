@@ -18,6 +18,9 @@ usage: geo/bin/python repaired_profile.py <final dir> <out dir> [--identity-only
 --identity-only  replace only tributaryId and lakeRegion on the segments (the
                  variant adopted 2026-09-27: no attraction or huntability score
                  moves; basinClass and both distances keep the shipped values)
+
+Both variants add throughWaterToArmMouthM, the Tributary Influence layer's own
+through-water distance to the mouth of the bank's arm (null off the arms).
 """
 import os, sys, json, gzip, collections
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -52,6 +55,10 @@ for s in seg_file["segments"]:
            "distanceToChannelM": m["throughWaterToChannelM"] if m["throughWaterToChannelM"] is not None else s["distanceToChannelM"]}
     if IDENTITY_ONLY:
         new = {k: new[k] for k in ("tributaryId", "lakeRegion")}
+    # The Tributary Influence layer's own distance (Stage 3A hardening): through
+    # the water to the mouth of the bank's own arm. Only that layer reads it;
+    # the species models keep distanceToTributaryM.
+    new["throughWaterToArmMouthM"] = m["throughWaterToMouthM"] if tid in arms else None
     for k, v in new.items():
         if s.get(k) != v:
             changed[k] += 1

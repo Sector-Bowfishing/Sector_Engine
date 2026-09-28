@@ -10,12 +10,29 @@
 //
 //  usage: ClarityReplay <passes dir> <rain_daily.json> <usgs_iv.json> <nwm_daily.json>
 //                       <mrms_weights.json> <out.json> [arm ...]
+//                       [--hourly rain_pass_hours.json] [--anchors DIR]
+//
+//  --hourly   Stage 3A: the day before each pass as HOURLY MRMS (17Z the day
+//             before -> 16Z on the day), replacing that day's 24 h total, plus
+//             the residual hour 16-17Z (which contains the pass and so is
+//             never visible to it). Without it the replay cannot see the last
+//             ~23.5 h before a pass.
+//  --anchors  Stage 3A: anchors from zone_history.py (ArmAnchorFile JSON, with
+//             through-water fill distances), so a weak scene is judged weak
+//             the way the live product judges it.
 //
 
 import Foundation
 import SectorEngine
 
-let args = CommandLine.arguments
+var argv = CommandLine.arguments
+func flag(_ name: String) -> String? {
+    guard let i = argv.firstIndex(of: name), i + 1 < argv.count else { return nil }
+    let v = argv[i + 1]; argv.removeSubrange(i...(i + 1)); return v
+}
+let hourlyPath = flag("--hourly")
+let anchorsDir = flag("--anchors")
+let args = argv
 guard args.count >= 7 else {
     FileHandle.standardError.write("usage: ClarityReplay <passes dir> <rain_daily.json> <usgs_iv.json> <nwm_daily.json> <mrms_weights.json> <out.json> [arm ...]\n".data(using: .utf8)!)
     exit(2)
@@ -40,7 +57,21 @@ let day = DateFormatter(); day.locale = Locale(identifier: "en_US_POSIX"); day.t
 let graph = Hydrology.guntersville
 let weights = (json(weightsPath) as! [String: Any])["arms"] as! [String: [String: Any]]
 var anchors: [String: [SatelliteAnchor]] = [:]
-for f in try! FileManager.default.contentsOfDirectory(atPath: passDir) where f.hasSuffix(".json") {
+if let dir = anchorsDir {
+    for f in try! FileManager.default.contentsOfDirectory(atPath: dir) where f.hasSuffix(".json") {
+        let file = try! JSONDecoder().decode(ArmAnchorFileReplay.self, from: Data(contentsOf: URL(fileURLWithPath: dir + "/" + f)))
+        guard let t = iso(file.sceneTime) else { continue }
+        for (arm, e) in file.arms.map({ ($0.key, $0.value) }) + (file.mainStem.map { [("mainstem", $0)] } ?? []) {
+            guard let o = e.observedFNU, e.waterCells > 0 else { continue }
+            anchors[arm, default: []].append(SatelliteAnchor(
+                sceneDate: file.sceneDate, sceneTime: t, platform: file.platform, waterCells: e.waterCells,
+                observedCells: e.observedCells, filledCells: e.filledCells, filledWithin500mCells: e.filledWithin500mCells,
+                medianFillDistanceM: e.medianFillDistanceM,
+                observedFNU: Distribution(n: o.n, p25: o.p25, p50: o.p50, p75: o.p75), allFNU: nil, source: file.source))
+        }
+    }
+}
+for f in (anchorsDir == nil ? try! FileManager.default.contentsOfDirectory(atPath: passDir) : []) where f.hasSuffix(".json") {
     let p = json(passDir + "/" + f) as! [String: Any]
     guard (p["status"] as? String) == "read", let t = (p["time"] as? String).flatMap(iso) else { continue }
     for (arm, v) in p["arms"] as! [String: [String: Any]] {
@@ -54,15 +85,27 @@ for f in try! FileManager.default.contentsOfDirectory(atPath: passDir) where f.h
     }
 }
 let rainDays = (json(rainPath) as! [String: Any])["days"] as! [String: Any]
+let hourKey = DateFormatter(); hourKey.locale = Locale(identifier: "en_US_POSIX"); hourKey.timeZone = TimeZone(identifier: "UTC"); hourKey.dateFormat = "yyyy-MM-dd'T'HH"
+let hourly = hourlyPath.map { (json($0) as! [String: Any])["hours"] as! [String: Any] } ?? [:]
 func rainRecord(_ key: String, basis: String, km2: Double?) -> RainRecord {
     var steps: [RainStep] = []
     for (d, v) in rainDays {
         guard let date = day.date(from: d) else { continue }
         let end = date.addingTimeInterval(17 * 3600)
         let inches = (v as? [String: Any]).flatMap { $0[key] as? Double }
+        // The day before a pass, hour by hour, where every hour was read.
+        let hours = (1...23).map { end.addingTimeInterval(Double($0 - 24) * 3600) }     // valid 18Z D-1 ... 16Z D
+        let vals = hours.map { h -> Double? in (hourly[hourKey.string(from: h)] as? [String: Any]).flatMap { $0[key] as? Double } }
+        if !hourly.isEmpty, vals.allSatisfy({ $0 != nil }), let daily = inches {
+            for (h, x) in zip(hours, vals) { steps.append(RainStep(start: h.addingTimeInterval(-3600), end: h, inches: x)) }
+            let rest = max(0, daily - vals.compactMap { $0 }.reduce(0, +))
+            steps.append(RainStep(start: end.addingTimeInterval(-3600), end: end, inches: rest))
+            continue
+        }
         steps.append(RainStep(start: end.addingTimeInterval(-86_400), end: end, inches: inches))
     }
-    return RainRecord(basis: basis, drainageKm2: km2, source: "MRMS 24H Pass 2 valid 17Z (daily)", steps: steps)
+    return RainRecord(basis: basis, drainageKm2: km2, source: hourly.isEmpty ? "MRMS 24H Pass 2 valid 17Z (daily)"
+                      : "MRMS 24H Pass 2 valid 17Z (daily), 01H Pass 2 for the day before each pass", steps: steps)
 }
 let usgs = json(usgsPath) as! [String: [[Any]]]
 var usgsSeries: [String: FlowSeries] = [:]
@@ -164,3 +207,22 @@ let out: [String: Any] = ["noiseFloorDlog10": ["p10": noiseLo, "p90": noiseHi], 
                                     "anchor": "ClarityHistory.selectAnchor", "usablePass": ">= 30% of the arm's lake cells and >= 30 cells observed"]]
 try! JSONSerialization.data(withJSONObject: out, options: [.prettyPrinted, .sortedKeys]).write(to: URL(fileURLWithPath: outPath))
 print("pairs", pairs.count, "trajectories", trajectories.mapValues(\.count))
+
+/// zone_history.py's anchor files (the engine's ArmAnchorFile is internal).
+struct ArmAnchorFileReplay: Decodable {
+    let sceneDate: String
+    let sceneTime: String
+    let platform: String?
+    let source: String
+    let arms: [String: Entry]
+    let mainStem: Entry?
+    struct Entry: Decodable {
+        let waterCells: Int
+        let observedCells: Int
+        let filledCells: Int
+        let filledWithin500mCells: Int?
+        let medianFillDistanceM: Double?
+        let observedFNU: Dist?
+    }
+    struct Dist: Decodable { let n: Int; let p25: Double; let p50: Double; let p75: Double }
+}
