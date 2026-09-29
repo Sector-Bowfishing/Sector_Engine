@@ -95,6 +95,10 @@ public struct CurrentClarityLake: Codable, Equatable {
         public let newestObservation: Date?
         public let oldestObservation: Date?
         public let headline: String
+        /// Stage 8 (master beta): share of the lake's water that has a current
+        /// number AND falls under the algal-water warning (NDCI > 0.03,
+        /// Sentinel-2). nil when no chosen scene carries NDCI.
+        public var algalWarningPct: Double? = nil
     }
 
     public static let keys = ["direct", "filled<=500", "filled<=5000", "filled>5000", "grass<=5000", "grass>5000", "none"]
@@ -170,10 +174,15 @@ public struct CurrentClarityWorld {
         let r = Int(index.region[i])
         let z = Int(index.zone[i])
         let zone = z >= 0 ? index.zones[z].map { (id: z, name: "\($0.name) (\($0.index + 1) of \($0.of))") } : nil
-        return CurrentClarityResolver.estimate(lakeId: lakeId, lat: lat, lon: lon,
-                                               region: r < regions.count ? regions[r] : nil, zone: zone,
-                                               cell: composite.evidence(atCell: i), inSitu: inSitu,
-                                               legacy: legacy, now: now)
+        let e = CurrentClarityResolver.estimate(lakeId: lakeId, lat: lat, lon: lon,
+                                                region: r < regions.count ? regions[r] : nil, zone: zone,
+                                                cell: composite.evidence(atCell: i), inSitu: inSitu,
+                                                legacy: legacy, now: now)
+        // Stage 8 (master beta): the algal-water reliability warning. Only the
+        // estimate's authority and words change; the outcome table, the map's
+        // value and every other consumer are untouched.
+        guard let w = composite.algalWarning(atCell: i) else { return e }
+        return e.applyingAlgalWarning(fired: w.fired, ndci: w.ndci, scene: w.scene)
     }
 
     public var etag: String {
@@ -214,7 +223,7 @@ public struct CurrentClarityWorld {
             outcomes: table,
             cells: .init(path: path, etag: etag, count: index.count, width: index.width, height: index.height,
                          cornersLonLat: index.cornersLonLat,
-                         encoding: "SCCC v1: value log10 FNU 1..254 over log10(0.5)..log10(200); code 255 read, 1 unreadable, 2 cloud, 3 grass, 0 none; dist 1 + m/100, 254 no path"),
+                         encoding: "SCCC v1: value log10 FNU 1..254 over log10(0.5)..log10(200); code 255 read, 1 unreadable, 2 cloud, 3 grass, 0 none; dist 1 + m/100, 254 no path; optional trailing NDC1 block: NDCI per cell, 0 none, else -0.30 + (q-1)*0.0025 (algal warning: code > 133, Sentinel-2 only)"),
             notes: notes, freshness: freshness, preparedAt: preparedAt,
             confidenceLabels: Dictionary(uniqueKeysWithValues: [ClarityConfidence.none, .low, .moderate, .high].map { ($0.rawValue, $0.presentedLabel) }),
             overview: overview(table: table))
@@ -236,7 +245,7 @@ public struct CurrentClarityWorld {
     /// one point, so the dashboard reads this instead of a coordinate.
     public func overview(table: [[CurrentClarityResolver.Outcome]]) -> CurrentClarityLake.Overview {
         let n = index.count
-        var supported = 0, changed = 0, grass = 0
+        var supported = 0, changed = 0, grass = 0, algal = 0
         var byConf: [String: Int] = [:]
         var ftBins = [Int](repeating: 0, count: 301)       // 0.1 ft, 0..30 ft
         for i in 0..<n {
@@ -249,6 +258,7 @@ public struct CurrentClarityWorld {
             if o.magnitudeSupported {
                 supported += 1
                 byConf[o.confidence.presentedLabel, default: 0] += 1
+                if composite.algalWarning(atCell: i)?.fired == true { algal += 1 }
                 if let fnu = ClarityCellCode.fnu(composite.value[i]) {
                     ftBins[min(300, Int((VisibilityModel.centralFt(fnu: fnu) * 10).rounded()))] += 1
                 }
@@ -273,11 +283,15 @@ public struct CurrentClarityWorld {
             parts.append(String(format: a == b ? "about %.1f ft where known" : "%.1f–%.1f ft where known", a, b))
         }
         if cp >= 0.05 { parts.append("\(words(cp)) has changed since its last clear view") }
-        return CurrentClarityLake.Overview(
+        let ap = composite.ndci == nil ? nil : pct(algal)
+        if let ap, ap >= 0.05 { parts.append("algal water over \(words(ap)): the estimate there may read clearer than the water is") }
+        var ov = CurrentClarityLake.Overview(
             waterCells: n, supportedPct: sp, changedPct: cp, unsupportedPct: max(0, (1000 - (sp * 1000).rounded() - (cp * 1000).rounded()) / 1000),
             grassPct: pct(grass), byConfidence: byConf.mapValues(pct),
             supportedFtP10: p10, supportedFtP50: p50, supportedFtP90: p90,
             newestObservation: times.max(), oldestObservation: times.min(), headline: parts.joined(separator: " · "))
+        ov.algalWarningPct = ap
+        return ov
     }
 }
 

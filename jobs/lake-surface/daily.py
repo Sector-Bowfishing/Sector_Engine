@@ -240,7 +240,9 @@ def process(lake_id, geom_json, store, until, force, day=None):
             masks = dws.lake_masks(lake, frame)
         _budget.take(gb)
         try:
-            dws.build_clarity(frame, masks, bbox, until, out, after=after, floor=floor)
+            # The algal-water NDCI product only where Current Clarity reads it (a regions index).
+            ndci = os.path.exists(os.path.join(REGIONS_DIR, slug(lake_id) + ".current_regions.bin"))
+            dws.build_clarity(frame, masks, bbox, until, out, after=after, floor=floor, ndci=ndci)
         finally:
             _budget.give(gb)
         meta = json.load(open(out + ".json"))
@@ -251,7 +253,10 @@ def process(lake_id, geom_json, store, until, force, day=None):
         if not force and not day and latest.get("summary", {}).get("date", "") >= date:
             return lake_id, f"newest usable pass {date} already published", latest.get("summary")
         files = {}
-        for suffix, name in ((".png", "clarity"), (".measured.png", "measured"), (".distance.png", "distance")):
+        for suffix, name in ((".png", "clarity"), (".measured.png", "measured"), (".distance.png", "distance"),
+                             (".ndci.png", "ndci")):
+            if name == "ndci" and not os.path.exists(out + suffix):
+                continue        # a pass read before Stage 8, or an item with no red-edge band
             fk = f"{key}/{date}{suffix}"
             store.write(fk, open(out + suffix, "rb").read(), "image/png", cache="public, max-age=31536000")
             files[name] = fk

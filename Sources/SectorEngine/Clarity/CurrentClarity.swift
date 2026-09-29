@@ -325,4 +325,7 @@ public struct CurrentClarityEstimate: Codable, Equatable {
     public let display: ClarityDisplay
     public let limitations: [String]
     public let generatedAt: Date
+    /// Stage 8: the algal-water reliability warning at this place (master
+    /// beta), nil where the cell's scene carried no NDCI or is not Sentinel-2.
+    public var algalWarning: AlgalWaterWarning? = nil
 }

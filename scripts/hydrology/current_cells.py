@@ -191,6 +191,15 @@ def scene(product_dir, date, regions_prefix, out):
     d = np.where((c == 255) | (c == 0), 0, np.maximum(d, 1)).astype(np.uint8)
     n = int(mask.sum())
     blob = b"SCC1" + struct.pack("<II", n, hsh) + v.tobytes() + c.tobytes() + d.tobytes()
+    # Stage 8: the pass's NDCI (algal-water warning), a tagged block after the
+    # three arrays. Readers that predate it stop at the arrays and never see it.
+    try:
+        nd = np.asarray(Image.open(io.BytesIO(load(".ndci.png"))), dtype=np.uint8)
+    except Exception:
+        nd = None
+    if nd is not None:
+        assert nd.shape == mask.shape, (nd.shape, mask.shape)
+        blob += b"NDC1" + nd[mask].tobytes()
     open(out, "wb").write(blob)
     outside = int(((val > 0) & ~mask).sum())
     print(f"{date}: {n:,} cells, read {int((c == 255).sum()):,}, filled {int(np.isin(c, (1, 2)).sum()):,}, "

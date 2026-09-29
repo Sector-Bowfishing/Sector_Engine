@@ -170,6 +170,9 @@ public struct ClaritySceneCells: Equatable {
     public let value: [UInt8]
     public let code: [UInt8]
     public let dist: [UInt8]
+    /// Stage 8: the pass's NDCI per cell (AlgalWaterRule's encoding, 0 = none);
+    /// nil for a pass read before the lake-surface job wrote it.
+    public let ndci: [UInt8]?
 
     public enum DecodeError: Error, Equatable { case notACellsFile, wrongIndex(expected: UInt32, got: UInt32), truncated }
 
@@ -179,10 +182,11 @@ public struct ClaritySceneCells: Equatable {
         guard h == index.hash, Int(n) == index.count else { throw DecodeError.wrongIndex(expected: index.hash, got: h) }
         guard let v = r.bytes(Int(n)), let c = r.bytes(Int(n)), let d = r.bytes(Int(n)) else { throw DecodeError.truncated }
         self.ref = ref; value = v; code = c; dist = d
+        ndci = r.taggedBlock("NDC1", count: Int(n))
     }
 
-    public init(ref: ClaritySceneRef, value: [UInt8], code: [UInt8], dist: [UInt8]) {
-        self.ref = ref; self.value = value; self.code = code; self.dist = dist
+    public init(ref: ClaritySceneRef, value: [UInt8], code: [UInt8], dist: [UInt8], ndci: [UInt8]? = nil) {
+        self.ref = ref; self.value = value; self.code = code; self.dist = dist; self.ndci = ndci
     }
 }
 
@@ -197,19 +201,24 @@ public struct ClarityComposite {
     public let value: [UInt8]
     public let code: [UInt8]
     public let dist: [UInt8]
+    /// Stage 8: each cell's NDCI from its region's scene (0 = none); nil when
+    /// no chosen scene carries one.
+    public let ndci: [UInt8]?
 
     public enum DecodeError: Error, Equatable { case notAComposite, wrongIndex, truncated, sceneMismatch }
 
     public init(index: ClarityRegionsIndex, scenes: [ClaritySceneCells], sceneForRegion: [Int?]) {
         self.index = index; refs = scenes.map(\.ref); self.sceneForRegion = sceneForRegion
         let n = index.count
-        var v = [UInt8](repeating: 0, count: n), c = v, d = v
+        var v = [UInt8](repeating: 0, count: n), c = v, d = v, nd = v
+        let anyNDCI = scenes.contains { $0.ndci != nil }
         for i in 0..<n {
             let r = Int(index.region[i])
             guard r < sceneForRegion.count, let s = sceneForRegion[r] else { continue }
             v[i] = scenes[s].value[i]; c[i] = scenes[s].code[i]; d[i] = scenes[s].dist[i]
+            if let x = scenes[s].ndci { nd[i] = x[i] }
         }
-        value = v; code = c; dist = d
+        value = v; code = c; dist = d; ndci = anyNDCI ? nd : nil
     }
 
     /// A prepared composite (`encoded()`) read back. The scene of every cell
@@ -231,6 +240,21 @@ public struct ClarityComposite {
         }
         self.index = index; self.refs = refs; self.sceneForRegion = sceneForRegion
         value = v; code = c; dist = d
+        ndci = r.taggedBlock("NDC1", count: count)
+    }
+
+    /// The cell's NDCI, nil where its scene carried none.
+    public func ndci(atCell i: Int) -> Double? {
+        guard let nd = ndci, i < nd.count else { return nil }
+        return AlgalWaterRule.decode(nd[i])
+    }
+
+    /// The algal-water warning at a cell: nil where the cell has no NDCI or
+    /// its scene is not Sentinel-2 (the rule was validated on Sentinel-2 only).
+    public func algalWarning(atCell i: Int) -> (fired: Bool, ndci: Double, scene: ClaritySceneRef)? {
+        guard let s = scene(atCell: i), s < refs.count, let nd = ndci, i < nd.count,
+              AlgalWaterRule.appliesTo(platform: refs[s].platform), let x = AlgalWaterRule.decode(nd[i]) else { return nil }
+        return (AlgalWaterRule.fires(code: nd[i]), x, refs[s])
     }
 
     public func scene(atCell i: Int) -> Int? {
@@ -247,6 +271,8 @@ public struct ClarityComposite {
     ///   "SCCC" | u32 version 1 | u32 width | u32 height | u32 N | u32 index hash
     ///   | u32 mask RLE length | mask RLE | u8[N] value | u8[N] code | u8[N] dist
     ///   | u8[N] region | i16[N] zone (little-endian) | u8[N] scene (255 = none)
+    ///   [ | "NDC1" | u8[N] NDCI ]   Stage 8, only when a scene carries NDCI;
+    ///   readers that predate it stop at the scene array.
     public func encoded() -> [UInt8] {
         var out: [UInt8] = Array("SCCC".utf8)
         func u32(_ v: Int) { var x = UInt32(v).littleEndian; withUnsafeBytes(of: &x) { out.append(contentsOf: $0) } }
@@ -259,6 +285,7 @@ public struct ClarityComposite {
         out.reserveCapacity(out.count + 3 * n)
         for z in index.zone { let x = UInt16(bitPattern: z).littleEndian; out.append(UInt8(x & 0xFF)); out.append(UInt8(x >> 8)) }
         out += sc
+        if let nd = ndci { out += Array("NDC1".utf8); out += nd }
         return out
     }
 }
@@ -275,6 +302,14 @@ struct ByteReader {
     mutating func u32() -> UInt32? {
         guard let x = bytes(4) else { return nil }
         return UInt32(x[0]) | UInt32(x[1]) << 8 | UInt32(x[2]) << 16 | UInt32(x[3]) << 24
+    }
+    /// An optional trailing block: `tag` then `count` bytes; nil (and nothing
+    /// consumed) when the file ends or holds something else.
+    mutating func taggedBlock(_ tag: String, count: Int) -> [UInt8]? {
+        let t = Array(tag.utf8)
+        guard i + t.count + count <= b.count, Array(b[i..<(i + t.count)]) == t else { return nil }
+        i += t.count
+        return bytes(count)
     }
 }
 
