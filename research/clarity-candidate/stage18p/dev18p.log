@@ -1,0 +1,29 @@
+events with >= 1 usable neighbour scene: 1035 scenes 1812
+fold 0 predicted
+fold 1 predicted
+fold 2 predicted
+fold 3 predicted
+fold 4 predicted
+fold 0 sigma {1: 0.188, 2: 0.165} kappa 0.00067 pairs 1421
+fold 1 sigma {1: 0.195, 2: 0.182} kappa 0.0 pairs 1340
+fold 2 sigma {1: 0.195, 2: 0.175} kappa 0.0 pairs 1320
+fold 3 sigma {1: 0.19, 2: 0.195} kappa 0.0 pairs 1366
+fold 4 sigma {1: 0.202, 2: 0.17} kappa 0.0 pairs 1369
+Stage 16 {'bal': 0.693, 'harm': 0.106, 'sev': 0.015, 'strong_share_usable': 0.113, 'strong_acc': 0.968, 'unknown_share': 0.128} {'clear': 0.88, 'normal': 0.643, 'stained': 0.571, 'limited': 0.676}
+M-agree|3|H0|S-off     bal 0.693 harm 0.106 sev 0.0152 stained 0.571 limited 0.676 strong 0.06/0.95 bars False
+M-iuw|3|H0|S-off       bal 0.685 harm 0.114 sev 0.0164 stained 0.529 limited 0.681 strong 0.07/0.96 bars False
+M-robust|3|H0|S-off    bal 0.685 harm 0.114 sev 0.0164 stained 0.529 limited 0.681 strong 0.07/0.96 bars False
+M-bayes|3|H0|S-off     bal 0.686 harm 0.113 sev 0.0164 stained 0.530 limited 0.681 strong 0.07/0.96 bars False
+M-agree|5|H0|S-off     bal 0.693 harm 0.106 sev 0.0152 stained 0.571 limited 0.676 strong 0.13/0.95 bars False
+M-iuw|5|H0|S-off       bal 0.712 harm 0.116 sev 0.0139 stained 0.602 limited 0.682 strong 0.15/0.96 bars True
+M-robust|5|H0|S-off    bal 0.712 harm 0.116 sev 0.0139 stained 0.602 limited 0.682 strong 0.15/0.96 bars True
+M-bayes|5|H0|S-off     bal 0.711 harm 0.117 sev 0.0139 stained 0.600 limited 0.683 strong 0.15/0.95 bars False
+M-agree|7|H0|S-off     bal 0.693 harm 0.106 sev 0.0152 stained 0.571 limited 0.676 strong 0.16/0.96 bars False
+M-iuw|7|H0|S-off       bal 0.721 harm 0.118 sev 0.0133 stained 0.625 limited 0.696 strong 0.20/0.96 bars True
+M-robust|7|H0|S-off    bal 0.721 harm 0.117 sev 0.0133 stained 0.622 limited 0.696 strong 0.20/0.96 bars True
+M-bayes|7|H0|S-off     bal 0.721 harm 0.118 sev 0.0139 stained 0.625 limited 0.696 strong 0.20/0.96 bars True
+M-agree|10|H0|S-off    bal 0.693 harm 0.106 sev 0.0152 stained 0.571 limited 0.676 strong 0.19/0.95 bars False
+M-iuw|10|H0|S-off      bal 0.737 harm 0.116 sev 0.0126 stained 0.668 limited 0.703 strong 0.23/0.95 bars True
+M-robust|10|H0|S-off   bal 0.738 harm 0.116 sev 0.0126 stained 0.668 limited 0.703 strong 0.23/0.95 bars True
+M-bayes|10|H0|S-off    bal 0.739 harm 0.116 sev 0.0126 stained 0.672 limited 0.706 strong 0.23/0.95 bars True
+SELECTED M-iuw|10|H0|S-off ADOPTED True | Stage 17 challenger rebuilt: stained diff 0.097 CI [0.0548, 0.1406] -> YES

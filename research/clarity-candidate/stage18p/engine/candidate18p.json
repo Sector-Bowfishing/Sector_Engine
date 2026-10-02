@@ -1,0 +1,54 @@
+{
+ "engine": "Stage 18P candidate: inverse-uncertainty weighting of frozen C-gbm scene predictions over +-10 days, up to 3 physically independent passes, no rain rule, S2C off",
+ "physical_pass": "(platform, UTC sensing date); one representative item per pass (most valid Sen2Cor pixels, then lowest scene cloud, then item id); the anchor's own pass is never a neighbour",
+ "scene_predictor": "stage14/engine/frozen_gbm.pkl (unchanged)",
+ "scene_path": "stage14/cert/run_cert_aco_a1.py (unchanged)",
+ "neighbours": "<= 3 nearest independent passes (production gates, >= 5 px) within +-10 days; tiers 1-2 only; S2C excluded",
+ "sigma_tier": {
+  "1": 0.19851488138522375,
+  "2": 0.1720820061465007
+ },
+ "kappa_per_day": 0.0001231153530012196,
+ "kappa_unclipped": 0.0001231153530012196,
+ "posteriors_n2": {
+  "6": [
+   -0.1355580900596577,
+   9.445378490603813
+  ],
+  "3": [
+   -0.455236470776157,
+   8.901624150140629
+  ],
+  "2": [
+   0.24926740009988108,
+   7.996330950890059
+  ]
+ },
+ "posteriors_n3": {
+  "6": [
+   0.044810704275520676,
+   10.331502720455193
+  ],
+  "3": [
+   -0.2946401075239737,
+   9.225890390990305
+  ],
+  "2": [
+   -0.3142163518561561,
+   9.845815457191863
+  ]
+ },
+ "n_calibration": {
+  "n2": 470,
+  "n3": 495
+ },
+ "n_pairs": 1704,
+ "gate": {
+  "t1": 0.7,
+  "t2": 0.7,
+  "tier2_only": "boundary-only (Stage 16)"
+ },
+ "fallback": "Stage 16 product when no full-authority scene contributes",
+ "strong_rule": ">= 2 compatible full-authority scenes from different physical passes whose states contain the answer, none disjoint, posterior >= 0.90",
+ "status": "UNCERTIFIED development candidate (Stage 18P adoption rule passed); not deployed"
+}
