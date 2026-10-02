@@ -423,7 +423,7 @@ def main():
     if not sc["pass"]:
         store.put(f"{PREFIX}/runs/{EXECUTION}/task{TASK}.json", {"status": "self-check-failed", "selfcheck": sc}); sys.exit(2)
     end = dt.date.today(); start = end - dt.timedelta(days=a.lookback)
-    workdir = os.path.join(ROOT, "stage14", "work", "shadow")
+    workdir = os.path.join(ROOT, "stage14", "work", f"shadow-{TASK}")
     import shutil; shutil.rmtree(workdir, ignore_errors=True); os.makedirs(workdir)    # never reuse an earlier run's samples
     res = []
     for lake in mine:
