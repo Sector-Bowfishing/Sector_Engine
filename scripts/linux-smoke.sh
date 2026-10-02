@@ -35,7 +35,8 @@ echo "▶ building the Cloud Run image on Linux ($IMAGE)"
 if ! docker build -q -t "$IMAGE" . >/dev/null; then
   echo "✗ docker build failed" >&2; exit 1
 fi
-docker run -d --name "$NAME" -p "$PORT:8080" -e SECTOR_STAGE2_ROUTES=1 -e SECTOR_CURRENT_CLARITY_ROUTES=1 "$IMAGE" >/dev/null
+docker run -d --name "$NAME" -p "$PORT:8080" -e SECTOR_STAGE2_ROUTES=1 -e SECTOR_CURRENT_CLARITY_ROUTES=1 \
+  -e SECTOR_CLARITY_CANDIDATE_ROUTES=1 -e SECTOR_CANDIDATE_UIDS=smoke-test-uid -e SECTOR_FIREBASE_API_KEY=smoke-test-key "$IMAGE" >/dev/null
 trap 'docker rm -f "$NAME" >/dev/null 2>&1' EXIT
 
 for _ in $(seq 1 30); do
@@ -89,6 +90,10 @@ check "clarity/current/cells"             "200"     "$B/clarity/current/cells?la
 check "clarity/current, an arm"           "200"     "$B/clarity/current?lake=$LAKE&lat=34.40823&lon=-86.21072"
 check "clarity/current, land"             "200"     "$B/clarity/current?lake=$LAKE&lat=34.3585&lon=-86.2945"
 check "clarity/current/change"            "200"     "$B/clarity/current/change?lake=$LAKE&region=town-creek-marshall&since=2026-09-27T00:00:00Z"
+# The uncertified candidate: master accounts only — no token and a rejected token are both 401 (the second goes out
+# through HTTP.post to Google's Identity Toolkit, the Linux path that must not abort).
+check "clarity/candidate, no token"       "401"     "$B/clarity/candidate"
+check "clarity/candidate, rejected token" "401"     -H "Authorization: Bearer not-a-token" "$B/clarity/candidate?lake=guntersville"
 
 # Stage 5: the hourly job, on Linux, from the same image; then a second server
 # that reads what it wrote (the prepared path the public routes use).

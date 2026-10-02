@@ -170,6 +170,37 @@ if ProcessInfo.processInfo.environment["SECTOR_CURRENT_CLARITY_ROUTES"] == "1" {
     }
 }
 
+// The UNCERTIFIED Current Clarity candidate (CandidateShadow; the shadow job in
+// jobs/clarity-candidate): the frozen Stage 16 candidate and Stage 17
+// challenger beside production, per pilot lake. Read-only, and for master
+// accounts only (a Firebase ID token whose uid is in SECTOR_CANDIDATE_UIDS).
+// Routed only where SECTOR_CLARITY_CANDIDATE_ROUTES=1, which is the
+// 0%-traffic review tag. Nothing scores from it.
+if ProcessInfo.processInfo.environment["SECTOR_CLARITY_CANDIDATE_ROUTES"] == "1" {
+    router.get("clarity/candidate") { request, _ -> Response in
+        var headers: HTTPFields = [.cacheControl: "private, no-store"]
+        let auth = request.headers[.authorization] ?? ""
+        let bearer = auth.hasPrefix("Bearer ") ? String(auth.dropFirst(7)) : nil
+        switch await CandidateShadow.authorize(bearer: bearer) {
+        case .unauthenticated: return Response(status: .unauthorized, headers: headers)
+        case .forbidden: return Response(status: .forbidden, headers: headers)
+        case .unavailable: return Response(status: .serviceUnavailable, headers: headers)
+        case .granted: break
+        }
+        let data: Data?
+        if let lake = request.uri.queryParameters.get("lake").map({ String($0) }) {
+            data = await CandidateShadow.lake(lake)
+        } else {
+            data = await CandidateShadow.index()
+        }
+        guard let data else { return Response(status: .notFound, headers: headers) }
+        headers[.contentType] = "application/json"
+        var buffer = ByteBuffer()
+        buffer.writeBytes(data)
+        return Response(status: .ok, headers: headers, body: .init(byteBuffer: buffer))
+    }
+}
+
 // Cloud Run injects PORT and expects the server to bind 0.0.0.0 (all interfaces).
 // Locally, without PORT set, that's still reachable as localhost:8080 for the A/B.
 let port = ProcessInfo.processInfo.environment["PORT"].flatMap(Int.init) ?? 8080

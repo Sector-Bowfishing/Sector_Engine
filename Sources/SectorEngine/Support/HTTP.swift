@@ -83,4 +83,24 @@ enum HTTP {
         let buffer = try await response.body.collect(upTo: maxBodyBytes)
         return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
     }
+
+    /// POST a JSON body to `url`. Same limits and error behaviour as `get`.
+    static func post(_ url: URL,
+                     json body: Data,
+                     headers: [String: String] = [:],
+                     timeout: TimeInterval = maxTimeout) async throws -> HTTPResult {
+        var request = HTTPClientRequest(url: url.absoluteString)
+        request.method = .POST
+        request.headers.add(name: "User-Agent", value: defaultUserAgent)
+        request.headers.add(name: "Content-Type", value: "application/json")
+        for (name, value) in headers {
+            request.headers.replaceOrAdd(name: name, value: value)
+        }
+        request.body = .bytes(ByteBuffer(bytes: body))
+
+        let ms = Int64(min(timeout, maxTimeout) * 1000)
+        let response = try await client.execute(request, timeout: .milliseconds(ms))
+        let buffer = try await response.body.collect(upTo: maxBodyBytes)
+        return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+    }
 }
