@@ -1,0 +1,21 @@
+{
+ "stage": 19,
+ "prereg_frozen_utc": "2026-10-02T23:17:58Z",
+ "note": "Frozen before any causal consensus prediction or score; only the value-blind read-outs, causal selection and frozen-ACOLITE samples existed.",
+ "files": {
+  "stage19/PREREGISTRATION_STAGE19.md": "5cd6cf68806b50c00e81a88bda35f53ab3708afb02a1ce00f8788c5af9f02860",
+  "stage19/passes19.py": "ded30efef742dd0802a3a6ec1a3503fc3fe3afb788acae95602e03adeefebb14",
+  "stage19/neighbors19.json": "4ee570c07cc7f207f40700d758520d073e299f883a3433b3c1dd6971675ee694",
+  "stage19/passes19.json": "37e6c5dc0c012a93a9d631077ac854c9af18fd66106f3cb0dd1fdab4a2f76bd1",
+  "stage19/readouts19.csv": "1296a03924d7c92bdcea58d8faac23f68141cb146dc659e6a12be1b210b3dad3",
+  "stage19/in19.csv": "968da48fe40791c844f7e6695334f24d02b320b4da7946328ec09d83d77563ce",
+  "stage19/tasks_nb19.json": "ebe8b35141c6c3df65ecad610eb0e8bae7035c772b4e0bee73f78b023e8b9d4f",
+  "stage19/elevations19.json": "80c892ca4e6b443b9305cbbd8236fabaa4ae5b0532d5d3a2350ead41651f9ef5",
+  "stage19/dev19.py": "5eca523f2a909ef0a799d9619a12f375b87275e0670db12c3e6653d9c9cc8e9c",
+  "stage18p/engine/candidate18p.json": "042b26adc758dcd9f40ae908d5c6ef6e653bb3ee63b11e60acc4c4d4ce4aaa1d",
+  "stage18p/dev18p.json": "1e024ddab347375b656585088eda1a93df3db015d47b8e9fed854f9051961a1b",
+  "stage18p/dev18p_rows.json": "88b2e0faae01d32166a1dcf4df944459dad3466c4c2fda164ea45815d9ba2064",
+  "stage14/engine/frozen_gbm.pkl": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+  "stage16/engine/rule16.json": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29"
+ }
+}
