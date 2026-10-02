@@ -1,0 +1,1 @@
+{"item": "S2B_T14TPL_20190813T172229_L2A", "crops": [{"attempts": [{"estimate": "tiled", "s": 1.6, "error": null, "l2w": null}, {"estimate": "fixed", "s": 1.1, "error": null, "l2w": null}], "points": {}, "error": "no L2W", "lat": 40.62144, "lon": -96.58303, "elevation_m": 391.949188232}], "l1c": "S2B_MSIL1C_20190813T170859_N0500_R112_T14TPL_20230503T193741", "seconds": 28.7}

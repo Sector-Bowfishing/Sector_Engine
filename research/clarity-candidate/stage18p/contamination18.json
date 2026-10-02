@@ -1,0 +1,14 @@
+{
+ "neighbour_obs": 2487,
+ "anchor_pass": 457,
+ "duplicate_neighbour": 271,
+ "events_with_neighbours": 1215,
+ "events_anchor_dup": 399,
+ "events_nb_dup": 268,
+ "by_kind": {
+  "anchor: overlapping tile": 453,
+  "neighbour: duplicate of another neighbour": 271,
+  "anchor: same tile (datastrip twin or duplicate)": 4
+ },
+ "removed": 728
+}

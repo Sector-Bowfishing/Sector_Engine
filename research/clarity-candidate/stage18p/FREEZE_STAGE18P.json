@@ -1,0 +1,22 @@
+{
+ "stage": "18P",
+ "prereg_frozen_utc": "2026-10-02T19:02:25Z",
+ "note": "Frozen before any consensus prediction or score; only the value-blind pass identity, validation and neighbour selection existed.",
+ "files": {
+  "stage18p/PREREGISTRATION_STAGE18P.md": "4ddada87c3b06e89be7894bb9f147498e4f253d0d9bdc226b5ca88ce0839de59",
+  "stage18p/passes18.py": "3bda7f6626460091686cf68bf505b9e671031c384b4324d79935537970c453c3",
+  "stage18p/neighbors18.json": "c52c9e10aa465572a3b0e14277733d3c6886b6f2966bf2f064360f0df6d0d72d",
+  "stage18p/validation18.json": "9cc0e7b0f3cca40e90ef4341bfa7318edf5f32ff637842f39b1e260b5bd38848",
+  "stage18p/contamination18.json": "43315b339deaa61e1ec5ce1ffbf33cef893a8185f61ac74721d674a5557fe65f",
+  "stage18p/tasks_nb18.json": "3a65b664ed64714e2c40b4c922205466e57dad2391b20a0c874b318024c93f4d",
+  "stage14/engine/frozen_gbm.pkl": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+  "stage16/engine/rule16.json": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+  "stage17/analysis/dev17.py": "2a231c7db843ada1f477227677d7aaff4f888913b522c4e67cfe7dbd16d8a320",
+  "stage18p/dev18p.py": "96332b130ae12c17680a416a21b89374d0552d712b1ba51bb7704b95e8544463",
+  "stage18p/dev18p.json": "1e024ddab347375b656585088eda1a93df3db015d47b8e9fed854f9051961a1b",
+  "stage18p/post18p.json": "c2c741523601611320a2e07d1886dbfeddf03533de2ba24a6b797eacadf4295d",
+  "stage18p/freeze18p.py": "6261ac074a0c52cdb30128d748d9638f1970a63956f37125711fe35bbb9aabe3",
+  "stage18p/engine/candidate18p.json": "042b26adc758dcd9f40ae908d5c6ef6e653bb3ee63b11e60acc4c4d4ce4aaa1d"
+ },
+ "candidate_frozen_utc": "2026-10-02T19:47:18Z"
+}
