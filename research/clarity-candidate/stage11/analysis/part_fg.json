@@ -1,0 +1,80 @@
+{
+ "F_landsat": {
+  "rows_with_read": 375,
+  "lakes": 301,
+  "S2_vs_Landsat_log_ratio": {
+   "median": -0.03,
+   "median_abs": 0.157,
+   "spearman": 0.732
+  },
+  "agree": {
+   "n": 179,
+   "median_abs_eS": 0.165
+  },
+  "disagree": {
+   "n": 196,
+   "median_abs_eS": 0.217
+  },
+  "agree_minus_disagree_ci": [
+   -0.096,
+   0.0
+  ],
+  "agree_relative_reduction": 0.241,
+  "S2 alone median_abs_eS": 0.191,
+  "Landsat alone median_abs_eS": 0.205,
+  "fused median_abs_eS": 0.177,
+  "fused_minus_S2_ci": [
+   -0.041,
+   0.002
+  ],
+  "eT": {
+   "n": 201,
+   "S2 median_abs_eT": 0.193,
+   "Landsat median_abs_eT": 0.218,
+   "fused median_abs_eT": 0.204
+  },
+  "worth_pursuing_by_rule": false
+ },
+ "F_olci": {
+  "rows_attempted": 241,
+  "rows_with_read": 119,
+  "lakes": 98,
+  "TSM_vs_S2_FNU_log_ratio": {
+   "median": 0.191,
+   "spread_p10_p90": [
+    -0.922,
+    0.794
+   ]
+  },
+  "agree (after median TSM/FNU offset)": {
+   "n": 23,
+   "median_abs_eS": 0.276
+  },
+  "disagree": {
+   "n": 96,
+   "median_abs_eS": 0.299
+  },
+  "TSM_vs_insitu_turbidity": {
+   "n": 58,
+   "spearman_rank": 0.818,
+   "S2 FNU spearman_rank": 0.675
+  }
+ },
+ "G": {
+  "rows_with_neighbors": 779,
+  "flagged": 84,
+  "flag_rate": 0.108,
+  "flagged median_abs_eS": 0.346,
+  "unflagged median_abs_eS": 0.216,
+  "ratio": 1.6,
+  "flagged after replacement median_abs_eS": 0.321,
+  "replacement_reduction": 0.071,
+  "useful_by_rule": false,
+  "exploratory_refuse": {
+   "all rows median_abs_eS": 0.231,
+   "after refusing flagged": 0.216,
+   "relative_reduction": 0.063,
+   "coverage_kept": 0.892
+  }
+ }
+}

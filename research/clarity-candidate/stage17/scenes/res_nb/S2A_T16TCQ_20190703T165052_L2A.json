@@ -1,0 +1,1 @@
+{"item": "S2A_T16TCQ_20190703T165052_L2A", "crops": [{"attempts": [{"estimate": "tiled", "s": 1.7, "error": null, "l2w": null}, {"estimate": "fixed", "s": 1.4, "error": null, "l2w": null}], "points": {}, "error": "no L2W", "lat": 45.03027, "lon": -88.248618, "elevation_m": 253.38999939}], "l1c": "S2A_MSIL1C_20190703T164901_N0500_R026_T16TCQ_20230603T093522", "seconds": 61.2}

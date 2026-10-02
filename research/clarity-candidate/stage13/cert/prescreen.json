@@ -1,0 +1,11 @@
+{
+ "candidates": 11267,
+ "already_extracted_stage12": 986,
+ "prescreened": 10281,
+ "passed": 4898,
+ "passed_cool": 687,
+ "by_collection": {
+  "sentinel-2-l2a": 825,
+  "sentinel-2-c1-l2a": 4073
+ }
+}

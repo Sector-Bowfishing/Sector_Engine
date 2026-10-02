@@ -1,0 +1,267 @@
+{
+ "BEST": "O2",
+ "variants": {
+  "M1": {
+   "n": 32,
+   "tier2_median_abs_log_A": 0.1894,
+   "tier1_median_abs_log_A": 0.1687,
+   "passes": true
+  },
+  "M2": {
+   "n": 158,
+   "tier2_median_abs_log_A": 0.1577,
+   "tier1_median_abs_log_A": 0.1687,
+   "passes": true
+  },
+  "M3": {
+   "n": 191,
+   "tier2_median_abs_log_A": 0.1726,
+   "tier1_median_abs_log_A": 0.1687,
+   "passes": true
+  }
+ },
+ "variant_chosen": "M3",
+ "A": {
+  "coverage": {
+   "tier1": 0.7623261694058154,
+   "tier2": 0.12073324905183312,
+   "tier3": 0.11694058154235146,
+   "unknown": 0.0
+  },
+  "tier1_only": {
+   "clear": [
+    0.577,
+    0.802
+   ],
+   "normal": [
+    0.478,
+    0.412
+   ],
+   "stained": [
+    0.225,
+    0.321
+   ],
+   "limited": [
+    0.245,
+    0.812
+   ],
+   "balanced": 0.381
+  },
+  "tiers1-2": {
+   "clear": [
+    0.644,
+    0.788
+   ],
+   "normal": [
+    0.577,
+    0.424
+   ],
+   "stained": [
+    0.269,
+    0.318
+   ],
+   "limited": [
+    0.271,
+    0.805
+   ],
+   "balanced": 0.44
+  },
+  "tiers1-3": {
+   "clear": [
+    0.734,
+    0.8
+   ],
+   "normal": [
+    0.625,
+    0.403
+   ],
+   "stained": [
+    0.278,
+    0.283
+   ],
+   "limited": [
+    0.284,
+    0.774
+   ],
+   "balanced": 0.48
+  },
+  "tier2_own_rows": {
+   "n": 191,
+   "balanced": 0.474,
+   "clear": [
+    0.833,
+    0.685
+   ],
+   "normal": [
+    0.585,
+    0.494
+   ],
+   "stained": [
+    0.263,
+    0.303
+   ],
+   "limited": [
+    0.214,
+    0.75
+   ]
+  },
+  "tier3_own_rows": {
+   "n": 185,
+   "balanced": 0.359,
+   "clear": [
+    0.604,
+    0.893
+   ],
+   "normal": [
+    0.6,
+    0.25
+   ],
+   "stained": [
+    0.125,
+    0.065
+   ],
+   "limited": [
+    0.107,
+    0.429
+   ]
+  },
+  "not_materially_worse": true
+ },
+ "best": {
+  "coverage": {
+   "tier1": 0.7623261694058154,
+   "tier2": 0.12073324905183312,
+   "tier3": 0.11694058154235146,
+   "unknown": 0.0
+  },
+  "tier1_only": {
+   "clear": [
+    0.644,
+    0.835
+   ],
+   "normal": [
+    0.31,
+    0.465
+   ],
+   "stained": [
+    0.286,
+    0.359
+   ],
+   "limited": [
+    0.489,
+    0.571
+   ],
+   "balanced": 0.432
+  },
+  "tiers1-2": {
+   "clear": [
+    0.709,
+    0.826
+   ],
+   "normal": [
+    0.37,
+    0.481
+   ],
+   "stained": [
+    0.366,
+    0.374
+   ],
+   "limited": [
+    0.585,
+    0.551
+   ],
+   "balanced": 0.507
+  },
+  "tiers1-3": {
+   "clear": [
+    0.799,
+    0.833
+   ],
+   "normal": [
+    0.417,
+    0.436
+   ],
+   "stained": [
+    0.374,
+    0.336
+   ],
+   "limited": [
+    0.598,
+    0.548
+   ],
+   "balanced": 0.547
+  },
+  "tier2_own_rows": {
+   "n": 191,
+   "balanced": 0.603,
+   "clear": [
+    0.8,
+    0.75
+   ],
+   "normal": [
+    0.354,
+    0.59
+   ],
+   "stained": [
+    0.474,
+    0.439
+   ],
+   "limited": [
+    0.786,
+    0.468
+   ]
+  },
+  "tier3_own_rows": {
+   "n": 185,
+   "balanced": 0.359,
+   "clear": [
+    0.604,
+    0.893
+   ],
+   "normal": [
+    0.6,
+    0.25
+   ],
+   "stained": [
+    0.125,
+    0.065
+   ],
+   "limited": [
+    0.107,
+    0.429
+   ]
+  },
+  "not_materially_worse": true
+ },
+ "feet_authorisation": {
+  "0": [
+   "clear",
+   "normal",
+   "stained",
+   "limited"
+  ],
+  "1": [
+   "clear",
+   "normal",
+   "stained",
+   "limited"
+  ],
+  "2": [
+   "clear",
+   "normal",
+   "stained",
+   "limited"
+  ],
+  "3": [
+   "clear",
+   "stained",
+   "limited"
+  ],
+  "4": [
+   "clear",
+   "normal",
+   "stained",
+   "limited"
+  ]
+ }
+}

@@ -1,0 +1,165 @@
+{
+ "engine": "C3",
+ "authorised_by_fold": {
+  "0": [
+   "limited",
+   "normal",
+   "stained"
+  ],
+  "1": [
+   "limited",
+   "stained"
+  ],
+  "2": [
+   "limited"
+  ],
+  "3": [
+   "limited",
+   "stained"
+  ],
+  "4": [
+   "limited"
+  ]
+ },
+ "rows": 1582,
+ "shares": {
+  "unknown": 0.238,
+  "class_only_feet_withheld": 0.611,
+  "feet_published": 0.151
+ },
+ "confusion": {
+  "clear": {
+   "clear": 430,
+   "normal": 133,
+   "stained": 11,
+   "limited": 0,
+   "unknown": 171
+  },
+  "normal": {
+   "clear": 69,
+   "normal": 182,
+   "stained": 30,
+   "limited": 5,
+   "unknown": 95
+  },
+  "stained": {
+   "clear": 26,
+   "normal": 88,
+   "stained": 51,
+   "limited": 8,
+   "unknown": 54
+  },
+  "limited": {
+   "clear": 11,
+   "normal": 39,
+   "stained": 67,
+   "limited": 56,
+   "unknown": 56
+  }
+ },
+ "exact_feet": {
+  "clear": {
+   "n_published": 37,
+   "coverage": 0.05,
+   "median_abs_log": 0.341,
+   "median_signed_ft": -4.41,
+   "verdict": "NOT"
+  },
+  "normal": {
+   "n_published": 47,
+   "coverage": 0.123,
+   "median_abs_log": 0.142,
+   "median_signed_ft": -0.78,
+   "verdict": "NOT"
+  },
+  "stained": {
+   "n_published": 42,
+   "coverage": 0.185,
+   "median_abs_log": 0.07,
+   "median_signed_ft": -0.01,
+   "verdict": "NOT"
+  },
+  "limited": {
+   "n_published": 113,
+   "coverage": 0.493,
+   "median_abs_log": 0.205,
+   "median_signed_ft": 0.78,
+   "verdict": "NOT"
+  },
+  "algae": {
+   "n_published": 71,
+   "coverage": 0.296,
+   "median_abs_log": 0.185,
+   "median_signed_ft": 0.51,
+   "n": 240,
+   "verdict": "NOT"
+  },
+  "sediment": {
+   "n_published": 33,
+   "coverage": 0.359,
+   "median_abs_log": 0.176,
+   "median_signed_ft": 0.52,
+   "n": 92,
+   "verdict": "NOT"
+  },
+  "bottom-risk": {
+   "verdict": "NOT"
+  }
+ },
+ "clarity_class": {
+  "clear": {
+   "n": 745,
+   "recall": 0.577,
+   "precision": 0.802,
+   "unknown": 0.23,
+   "verdict": "PARTIAL"
+  },
+  "normal": {
+   "n": 381,
+   "recall": 0.478,
+   "precision": 0.412,
+   "unknown": 0.249,
+   "verdict": "NOT"
+  },
+  "stained": {
+   "n": 227,
+   "recall": 0.225,
+   "precision": 0.321,
+   "unknown": 0.238,
+   "verdict": "NOT"
+  },
+  "limited": {
+   "n": 229,
+   "recall": 0.245,
+   "precision": 0.812,
+   "unknown": 0.245,
+   "verdict": "NOT"
+  },
+  "algae": {
+   "n": 240,
+   "class_acc": 0.329,
+   "constant": 0.371,
+   "median_signed_ft": 0.7875436129299778,
+   "verdict": "NOT"
+  },
+  "sediment": {
+   "n": 92,
+   "class_acc": 0.337,
+   "constant": 0.424,
+   "bright_called_clear": 0.0,
+   "bright_n": 25,
+   "verdict": "PARTIAL"
+  },
+  "bottom-risk": {
+   "verdict": "NOT"
+  }
+ },
+ "EXACT_FEET_CAPABILITY": {
+  "points_of_7": 0.0,
+  "score_of_10": 0
+ },
+ "CLARITY_CLASS_CAPABILITY": {
+  "points_of_7": 1.0,
+  "score_of_10": 1
+ }
+}

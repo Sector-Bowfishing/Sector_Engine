@@ -1,0 +1,137 @@
+{
+ "A_production_all_rows": {
+  "rows": 1582,
+  "unknown": 0.0,
+  "feet_published": 0.022,
+  "median_abs_log_all": 0.2245,
+  "class_recall_precision": {
+   "clear": [
+    0.455,
+    0.765
+   ],
+   "normal": [
+    0.677,
+    0.308
+   ],
+   "stained": [
+    0.238,
+    0.255
+   ],
+   "limited": [
+    0.262,
+    0.667
+   ]
+  },
+  "class_accuracy_answered": 0.449
+ },
+ "B_C3_on_Sen2Cor_all_rows": {
+  "rows": 1582,
+  "unknown": 0.0,
+  "feet_published": 0.0,
+  "median_abs_log_all": 0.1979,
+  "class_recall_precision": {
+   "clear": [
+    0.693,
+    0.754
+   ],
+   "normal": [
+    0.57,
+    0.324
+   ],
+   "stained": [
+    0.194,
+    0.246
+   ],
+   "limited": [
+    0.17,
+    0.78
+   ]
+  },
+  "class_accuracy_answered": 0.516
+ },
+ "C_C3_on_Sen2Cor_same_rows_as_ACOLITE": {
+  "rows": 1206,
+  "unknown": 0.0,
+  "feet_published": 0.012,
+  "median_abs_log_all": 0.2,
+  "class_recall_precision": {
+   "clear": [
+    0.707,
+    0.741
+   ],
+   "normal": [
+    0.545,
+    0.318
+   ],
+   "stained": [
+    0.22,
+    0.317
+   ],
+   "limited": [
+    0.225,
+    0.812
+   ]
+  },
+  "class_accuracy_answered": 0.53
+ },
+ "D_ACOLITE_C3_valid_rows_only": {
+  "rows": 1206,
+  "unknown": 0.0,
+  "feet_published": 0.198,
+  "median_abs_log_all": 0.1687,
+  "class_recall_precision": {
+   "clear": [
+    0.749,
+    0.802
+   ],
+   "normal": [
+    0.636,
+    0.412
+   ],
+   "stained": [
+    0.295,
+    0.321
+   ],
+   "limited": [
+    0.324,
+    0.812
+   ]
+  },
+  "class_accuracy_answered": 0.596
+ },
+ "E_ACOLITE_C3_all_rows (Unknown where no disk)": {
+  "rows": 1582,
+  "unknown": 0.238,
+  "feet_published": 0.151,
+  "median_abs_log_all": 0.1687,
+  "class_recall_precision": {
+   "clear": [
+    0.577,
+    0.802
+   ],
+   "normal": [
+    0.478,
+    0.412
+   ],
+   "stained": [
+    0.225,
+    0.321
+   ],
+   "limited": [
+    0.245,
+    0.812
+   ]
+  },
+  "class_accuracy_answered": 0.596
+ },
+ "attribution_same_rows": {
+  "n": 1206,
+  "aco_c3": 0.1687,
+  "s2c_c3": 0.2,
+  "diff": -0.0313,
+  "ci95": [
+   -0.0454,
+   -0.0164
+  ]
+ }
+}

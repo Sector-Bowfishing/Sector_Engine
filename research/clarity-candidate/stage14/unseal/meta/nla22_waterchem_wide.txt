@@ -1,0 +1,221 @@
+SAMPLE_TYPE	PARAMETER	LABEL	LEGAL_VALUES	RANGE_LOW	RANGE_HIGH
+	AMMONIA_N_DATE_ANALYZED	Date sample analyzed for analyte: ammonia			
+	AMMONIA_N_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Ammonia as N			
+	AMMONIA_N_HOLDING_TIME	Time from sampling to analysis (days): ammonia			
+	AMMONIA_N_LAB_SAMPLE_ID	Laboratory Sample ID for Ammonia as N			
+	AMMONIA_N_MDL	Method detection limit of ammonia			
+	AMMONIA_N_NARS_FLAG	"Flag assigned by NARS: ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence, NR = No lab result for analyte for Ammonia as N"			
+	AMMONIA_N_QA_FLAG	QA flag assigned by lab: ammonia			
+	AMMONIA_N_RESULT	Analyte value: ammonia			
+	AMMONIA_N_RL	Reporting limit of ammonia			
+	AMMONIA_N_UNITS	Units of measurement: ammonia			
+	ANC_DATE_ANALYZED	Date sample analyzed for analyte: acid neutralizing capacity			
+	ANC_HOLDING_TIME	Time from sampling to analysis (days): acid neutralizing capacity			
+	ANC_LAB_SAMPLE_ID	Laboratory Sample ID for Acid Neutralizing Capacity			
+	ANC_MDL	Method detection limit of Acid Neutralizing Capacity (ueq/L)			
+	ANC_NARS_FLAG	"Flag assigned by NARS for Acid Neutralizing Capacity. ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence , NR = No lab result for analyte"			
+	ANC_QA_FLAG	QA flag assigned by lab: acid neutralizing capacity			
+	ANC_RESULT	Analyte value: acid neutralizing capacity			
+	ANC_RL	Reporting limit for Acid Neutralizing Capacity			
+	ANC_UNITS	Units of measurement: acid neutralizing capacity			
+	CALCIUM_DATE_ANALYZED	Date sample analyzed for analyte: calcium			
+	CALCIUM_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Calcium			
+	CALCIUM_HOLDING_TIME	Time from sampling to analysis (days): calcium			
+	CALCIUM_LAB_SAMPLE_ID	Laboratory Sample ID for Calcium			
+	CALCIUM_MDL	Method detection limit of calcium			
+	CALCIUM_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Calcium"			
+	CALCIUM_QA_FLAG	QA flag assigned by lab: calcium			
+	CALCIUM_RESULT	Analyte value: calcium			
+	CALCIUM_RL	Reporting limit for Calcium			
+	CALCIUM_UNITS	Units of measurement: calcium			
+	CHLA_DATE_ANALYZED	Date sample analyzed for analyte: chlorophyll-a			
+	CHLA_DILUTION_FACTOR				
+	CHLA_EXTRACT	chlorophyll-a amount in extract by volume (ug/L)			
+	CHLA_EXTRACT_UNITS	Units of measurement: chlorophyll extract by volume			
+	CHLA_HOLDING_TIME	Time from sampling to analysis (days): chlorophyll-a			
+	CHLA_LAB_SAMPLE_ID	Laboratory Sample ID for Chlorophyll a			
+	CHLA_MDL	Method detection limit of chlorophyll-a			
+	CHLA_NARS_FLAG	"Flag assigned by NARS for Chlorophyll a. ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence , NR = No lab result for analyte"			
+	CHLA_QA_FLAG	QA flag associated with sample for Chlorophyll a			
+	CHLA_RESULT	Analyte value: chlorophyll-a			
+	CHLA_RESULT_UNITS	Units for Chlorophyll a			
+	CHLA_RL	Reporting limit for Chlorophyll a			
+	CHLA_SAMPLE_ID	ID for sample collected for Chlorophyll a			
+	CHLA_VOLUME_ADJUST				
+	CHLA_VOLUME_FILTERED	Volume filtered for chlorophyll-a sample			
+	CHLORIDE_DATE_ANALYZED	Date sample analyzed for analyte: chloride			
+	CHLORIDE_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Chloride			
+	CHLORIDE_HOLDING_TIME	Time from sampling to analysis (days): chloride			
+	CHLORIDE_LAB_SAMPLE_ID	Laboratory Sample ID for Chloride			
+	CHLORIDE_MDL	Method detection limit of chloride			
+	CHLORIDE_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Chloride"			
+	CHLORIDE_QA_FLAG	QA flag assigned by lab: chloride			
+	CHLORIDE_RESULT	Analyte value: chloride			
+	CHLORIDE_RL	Reporting limit of analyte: chloride			
+	CHLORIDE_UNITS	Units of measurement: chloride			
+	COLOR_DATE_ANALYZED	Date sample analyzed for analyte: color			
+	COLOR_HOLDING_TIME	Time from sampling to analysis (days): color			
+	COLOR_LAB_SAMPLE_ID	Laboratory Sample ID for Color			
+	COLOR_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Color"			
+	COLOR_QA_FLAG	QA flag assigned by lab: color			
+	COLOR_RESULT	Analyte value: color			
+	COLOR_UNITS	Units of measurement: color			
+	COND_DATE_ANALYZED	Date sample analyzed for analyte: conductivity			
+	COND_HOLDING_TIME	Time from sampling to analysis (days): conductivity			
+	COND_LAB_SAMPLE_ID	Laboratory Sample ID for Conductivity			
+	COND_MDL	Minimum detection limit of analyte for Conductivity			
+	COND_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Conductivity"			
+	COND_QA_FLAG	QA flag assigned by lab: conductivity			
+	COND_RESULT	Analyte value: conductivity			
+	COND_RL	Reporting limit for Conductivity			
+	COND_UNITS	Units of measurement: conductivity			
+VERIF	DATE_COL	Date of sample collection			
+	DOC_DATE_ANALYZED	Date sample analyzed for analyte: dissolved organic carbon			
+	DOC_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Dissolved Organic Carbon			
+	DOC_HOLDING_TIME	Time from sampling to analysis (days): dissolved organic carbon			
+	DOC_LAB_SAMPLE_ID	Laboratory Sample ID for Dissolved Organic Carbon			
+	DOC_MDL	Method detection limit of dissolved organic carbon			
+	DOC_NARS_FLAG	"Flag assigned by NARS for Dissolved Organic Carbon. ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence , NR = No lab result for analyte"			
+	DOC_QA_FLAG	QA flag assigned by lab: dissolved organic carbon			
+	DOC_RESULT	Analyte value: dissolved organic carbon			
+	DOC_RL	Reporting limit for Dissolved Organic Carbon			
+	DOC_UNITS	Units of measurement: dissolved organic carbon					
+BENT	LAB	Laboratory used for sample processing 			
+	MAGNESIUM_DATE_ANALYZED	Date sample analyzed for analyte: magnesium			
+	MAGNESIUM_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Magnesium			
+	MAGNESIUM_HOLDING_TIME	Time from sampling to analysis (days): magnesium			
+	MAGNESIUM_LAB_SAMPLE_ID	Laboratory Sample ID for Magnesium			
+	MAGNESIUM_MDL	Method detection limit of magnesium			
+	MAGNESIUM_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Magnesium"			
+	MAGNESIUM_QA_FLAG	QA flag assigned by lab: magnesium			
+	MAGNESIUM_RESULT	Analyte value: magnesium			
+	MAGNESIUM_RL	Reporting limit for Magnesium			
+	MAGNESIUM_UNITS	Units of measurement: magnesium			
+	MATRIX	Material used for analysis			
+	NITRATE_N_DATE_ANALYZED	Date sample analyzed for analyte: nitrate			
+	NITRATE_N_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Nitrate as N			
+	NITRATE_N_HOLDING_TIME	Time from sampling to analysis (days): nitrate			
+	NITRATE_N_LAB_SAMPLE_ID	Laboratory Sample ID for Nitrate as N			
+	NITRATE_N_MDL	Method detection limit of nitrate			
+	NITRATE_N_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Nitrate as N"			
+	NITRATE_N_QA_FLAG	QA flag assigned by lab: nitrate			
+	NITRATE_N_RESULT	Analyte value: nitrate			
+	NITRATE_N_RL	Reporting limit of nitrate			
+	NITRATE_N_UNITS	Units of measurement: nitrate			
+	NITRATE_NITRITE_N_DATE_ANALYZED	Date of sample analysis for Nitrate+Nitrite as N			
+	NITRATE_NITRITE_N_HOLDING_TIME	Sample holding time for Nitrate+Nitrite as N			
+	NITRATE_NITRITE_N_LAB_SAMPLE_ID	Laboratory Sample ID for Nitrate+Nitrite as N			
+	NITRATE_NITRITE_N_MDL	Method detection limit of nitrate-nitrite			
+	NITRATE_NITRITE_N_NARS_FLAG	"Flag assigned by NARS: ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence, NR = No lab result for analyte for Nitrate-Nitrite as N"			
+	NITRATE_NITRITE_N_RESULT	Analyte value: nitrate-nitrite			
+	NITRATE_NITRITE_N_RL	Reporting limit for Nitrate+Nitrite as N			
+	NITRATE_NITRITE_N_UNITS	Units of measurement: nitrate-nitrite			
+	NITRITE_N_DATE_ANALYZED	Date sample analyzed for analyte: nitrite			
+	NITRITE_N_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Nitrite as N			
+	NITRITE_N_HOLDING_TIME	Time from sampling to analysis (days): nitrite			
+	NITRITE_N_LAB_SAMPLE_ID	Laboratory Sample ID for Nitrite as N			
+	NITRITE_N_MDL	Method detection limit of nitrite			
+	NITRITE_N_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Nitrite as N"			
+	NITRITE_N_QA_FLAG	QA flag assigned by lab: nitrite			
+	NITRITE_N_RESULT	Analyte value: nitrite			
+	NITRITE_N_RL	Reporting limit for Nitrite as N			
+	NITRITE_N_UNITS	Units of measurement: nitrite			
+	NTL_DATE_ANALYZED	Date of sample analysis for Total Nitrogen			
+	NTL_DISS_DATE_ANALYZED	Date of sample analysis for Total Dissolved Nitrogen			
+	NTL_DISS_HOLDING_TIME	Sample holding time for Total Dissolved Nitrogen			
+	NTL_DISS_LAB_SAMPLE_ID	Laboratory Sample ID for Total Dissolved Nitrogen			
+	NTL_DISS_MDL	Minimum detection limit of analyte for Total Dissolved Nitrogen			
+	NTL_DISS_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Total Dissolved Nitrogen"			
+	NTL_DISS_QA_FLAG	QA flag associated with sample for Total Dissolved Nitrogen			
+	NTL_DISS_RESULT	Analyte value for Total Dissolved Nitrogen			
+	NTL_DISS_RL	Reporting limit for Total Dissolved Nitrogen			
+	NTL_DISS_UNITS	Units for Total Dissolved Nitrogen			
+	NTL_HOLDING_TIME	Sample holding time for Total Nitrogen			
+	NTL_LAB_SAMPLE_ID	Laboratory Sample ID for Total Nitrogen			
+	NTL_MDL	Method detection limit for Total Nitrogen (mg N/L)			
+	NTL_NARS_FLAG	"Flag assigned by NARS for Total Nitrogen. ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence , NR = No lab result for analyte"			
+	NTL_QA_FLAG	QA flag associated with sample for Total Nitrogen			
+	NTL_RESULT	Result for Total Nitrogen (mg N/L)			
+	NTL_RL	Reporting limit for Total Nitrogen			
+	NTL_UNITS	Units for Total Nitrogen			
+	PH_DATE_ANALYZED	Date sample analyzed for analyte: pH			
+	PH_HOLDING_TIME	Time from sampling to analysis (days): pH			
+	PH_LAB_SAMPLE_ID	Laboratory Sample ID for pH			
+	PH_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for pH"			
+	PH_QA_FLAG	QA flag assigned by lab: pH			
+	PH_RESULT	Analyte value: pH			
+	PH_UNITS	Units of measurement: pH			
+	POTASSIUM_DATE_ANALYZED	Date sample analyzed for analyte: potassium			
+	POTASSIUM_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Potassium			
+	POTASSIUM_HOLDING_TIME	Time from sampling to analysis (days): potassium			
+	POTASSIUM_LAB_SAMPLE_ID	Laboratory Sample ID for Potassium			
+	POTASSIUM_MDL	Method detection limit of potassium			
+	POTASSIUM_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Potassium"			
+	POTASSIUM_QA_FLAG	QA flag assigned by lab: potassium			
+	POTASSIUM_RESULT	Analyte value: potassium			
+	POTASSIUM_RL	Reporting limit of potassium			
+	POTASSIUM_UNITS	Units of measurement: potassium			
+DESIGN	PSTL_CODE	"State two letter postal code for site sampled. 50 state postal codes plus AS, MP, GU, PR, VI for American Samoa, Commonwealth of Northern Marianas, Guam, Puerto Rico and Virgin Islands.  No missing values allowed."			
+	PTL_DATE_ANALYZED	Date of sample analysis for Total Phosphorus			
+	PTL_DISS_DATE_ANALYZED	Date of sample analysis for Total Dissolved Phosphorus			
+	PTL_DISS_HOLDING_TIME	Sample holding time for Total Dissolved Phosphorus			
+	PTL_DISS_LAB_SAMPLE_ID	Laboratory Sample ID for Total Dissolved Phosphorus			
+	PTL_DISS_MDL	Minimum detection limit of analyte for Total Dissolved Phosphorus			
+	PTL_DISS_NARS_COMMENT	Comment to explain NARS-assigned flag for Total Dissolved Phosphorus			
+	PTL_DISS_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Total Dissolved Phosphorus"			
+	PTL_DISS_QA_FLAG	QA flag associated with sample for Total Dissolved Phosphorus			
+	PTL_DISS_RESULT	Analyte value for Total Dissolved Phosphorus			
+	PTL_DISS_RL	Reporting limit for Total Dissolved Phosphorus			
+	PTL_DISS_UNITS	Units for Total Dissolved Phosphorus			
+	PTL_HOLDING_TIME	Sample holding time for Total Phosphorus			
+	PTL_LAB_SAMPLE_ID	Laboratory Sample ID for Total Phosphorus			
+	PTL_MDL	Method detection limit for Total Phosphorus (ug/L)			
+	PTL_NARS_FLAG	"Flag assigned by NARS for Total Phosphorus. ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence , NR = No lab result for analyte"			
+	PTL_QA_FLAG	QA flag associated with sample for Total Phosphorus			
+	PTL_RESULT	Result for Total Phosphorus (ug/L)			
+	PTL_RL	Reporting limit for Total Phosphorus			
+	PTL_UNITS	Units for Total Phosphorus			
+	PUBLICATION_DATE	Date the dataset was published to the NARS site			
+	SAM_CODE	Sample code (Regular/Lab duplicate/Lab split)			
+	SILICA_DATE_ANALYZED	Date sample analyzed for analyte: silica			
+	SILICA_HOLDING_TIME	Time from sampling to analysis (days): silica			
+	SILICA_LAB_SAMPLE_ID	Laboratory Sample ID for Silica			
+	SILICA_MDL	Method detection limit of silica			
+	SILICA_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Silica"			
+	SILICA_QA_FLAG	QA flag assigned by lab: silica			
+	SILICA_RESULT	Analyte value: silica			
+	SILICA_RL	Reporting limit for Silica			
+	SILICA_UNITS	Units of measurement: silica			
+DESIGN	SITE_ID	"The NLA Site ID  for the study and year sampled.  Preferred form is NLAnn_MM-xxxxx  where  nn is current cycle year (07, 12, 17, etc), MM is two letter state code, and xxxxx is between 10001 and 99999. No missing values allowed."			
+	SODIUM_DATE_ANALYZED	Date sample analyzed for analyte: sodium			
+	SODIUM_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Sodium			
+	SODIUM_HOLDING_TIME	Time from sampling to analysis (days): sodium			
+	SODIUM_LAB_SAMPLE_ID	Laboratory Sample ID for Sodium			
+	SODIUM_MDL	Method detection limit of sodium			
+	SODIUM_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Sodium"			
+	SODIUM_QA_FLAG	QA flag assigned by lab: sodium			
+	SODIUM_RESULT	Analyte value: sodium			
+	SODIUM_RL	Reporting limit for Sodium			
+	SODIUM_UNITS	Units of measurement: sodium			
+	SULFATE_DATE_ANALYZED	Date sample analyzed for analyte: sulfate			
+	SULFATE_DILUTION_FACTOR	Dilution factor used in chlorophyll calculation for Sulfate			
+	SULFATE_HOLDING_TIME	Time from sampling to analysis (days): sulfate			
+	SULFATE_LAB_SAMPLE_ID	Laboratory Sample ID for Sulfate			
+	SULFATE_MDL	Method detection limit of sulfate			
+	SULFATE_NARS_FLAG	"Flag assigned by NARS for Sulfate. ND = Non-detect, L = Estimated, Q = Quality-related issue, S = Shipping time exceedence, H = Holding time exceedence , NR = No lab result for analyte"			
+	SULFATE_QA_FLAG	QA flag assigned by lab: sulfate			
+	SULFATE_RESULT	Analyte value: sulfate			
+	SULFATE_RL	Reporting limit for Sulfate			
+	SULFATE_UNITS	Units of measurement: sulfate			
+	TURB_DATE_ANALYZED	Date sample analyzed for analyte: turbidity			
+	TURB_HOLDING_TIME	Time from sampling to analysis (days): turbidity			
+	TURB_LAB_SAMPLE_ID	Laboratory Sample ID for Turbidity			
+	TURB_MDL	Minimum detection limit of analyte for Turbidity			
+	TURB_NARS_FLAG	"NARS FLAG. ND = Nondetect; H = holding time issue; S = shipping issue; L = Less than reporting limit but above MDL; Q = other quality issue. See NARS_COMMENT, NR = No lab result for analyte for Turbidity"			
+	TURB_QA_FLAG	QA flag assigned by lab: turbidity			
+	TURB_RESULT	Analyte value: turbidity			
+	TURB_RL	Reporting limit for Turbidity			
+	TURB_UNITS	Units of measurement: turbidity			
+	UID	Unique identifier for the site/visit			
+DESIGN	UNIQUE_ID	"Unique site ID based on location that does not depend on year sampled or any other factor.  Form is NLA_ss_nnnnn  where ss state and nnnnn is number that starts at 10001.   No missing or \blank\"" values allowed."""			
+VERIF	VISIT_NO	Sequential number of visit to site	|1|2		

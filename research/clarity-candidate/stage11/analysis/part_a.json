@@ -1,0 +1,386 @@
+{
+ "rows_with_turbidity": 831,
+ "lakes": 478,
+ "split_dt0": {
+  "n": 291,
+  "lakes": 216,
+  "var_eS": 0.1053,
+  "identity_max_err": 0.0,
+  "var_radiometric_term": 0.091,
+  "var_conversion_term": 0.0633,
+  "cov2": -0.049,
+  "share_radiometric": 0.631,
+  "share_conversion": 0.369,
+  "median_abs_eS": 0.188,
+  "median_abs_if_perfect_turbidity": 0.133,
+  "median_abs_if_perfect_conversion": 0.153,
+  "median_eT": 0.028,
+  "median_abs_eT": 0.24,
+  "median_eC": 0.054
+ },
+ "split_dt_le1": {
+  "n": 831,
+  "lakes": 478,
+  "var_eS": 0.0979,
+  "identity_max_err": 0.0,
+  "var_radiometric_term": 0.0711,
+  "var_conversion_term": 0.0536,
+  "cov2": -0.0268,
+  "share_radiometric": 0.59,
+  "share_conversion": 0.41,
+  "median_abs_eS": 0.187,
+  "median_abs_if_perfect_turbidity": 0.121,
+  "median_abs_if_perfect_conversion": 0.137,
+  "median_eT": 0.028,
+  "median_abs_eT": 0.216,
+  "median_eC": 0.025
+ },
+ "split_by_set_dt0": {
+  "G": {
+   "n": 15,
+   "lakes": 6,
+   "var_eS": 0.0894,
+   "identity_max_err": 0.0,
+   "var_radiometric_term": 0.0416,
+   "var_conversion_term": 0.0232,
+   "cov2": 0.0246,
+   "share_radiometric": 0.603,
+   "share_conversion": 0.397,
+   "median_abs_eS": 0.286,
+   "median_abs_if_perfect_turbidity": 0.114,
+   "median_abs_if_perfect_conversion": 0.153,
+   "median_eT": -0.084,
+   "median_abs_eT": 0.24,
+   "median_eC": -0.038
+  },
+  "N": {
+   "n": 82,
+   "lakes": 69,
+   "var_eS": 0.0827,
+   "identity_max_err": 0.0,
+   "var_radiometric_term": 0.1202,
+   "var_conversion_term": 0.0755,
+   "cov2": -0.113,
+   "share_radiometric": 0.771,
+   "share_conversion": 0.229,
+   "median_abs_eS": 0.164,
+   "median_abs_if_perfect_turbidity": 0.157,
+   "median_abs_if_perfect_conversion": 0.156,
+   "median_eT": 0.113,
+   "median_abs_eT": 0.245,
+   "median_eC": 0.087
+  },
+  "F": {
+   "n": 34,
+   "lakes": 31,
+   "var_eS": 0.095,
+   "identity_max_err": 0.0,
+   "var_radiometric_term": 0.0587,
+   "var_conversion_term": 0.0607,
+   "cov2": -0.0244,
+   "share_radiometric": 0.489,
+   "share_conversion": 0.511,
+   "median_abs_eS": 0.228,
+   "median_abs_if_perfect_turbidity": 0.153,
+   "median_abs_if_perfect_conversion": 0.152,
+   "median_eT": 0.104,
+   "median_abs_eT": 0.239,
+   "median_eC": 0.111
+  },
+  "E": {
+   "n": 160,
+   "lakes": 117,
+   "var_eS": 0.1194,
+   "identity_max_err": 0.0,
+   "var_radiometric_term": 0.0821,
+   "var_conversion_term": 0.0577,
+   "cov2": -0.0205,
+   "share_radiometric": 0.602,
+   "share_conversion": 0.398,
+   "median_abs_eS": 0.18,
+   "median_abs_if_perfect_turbidity": 0.114,
+   "median_abs_if_perfect_conversion": 0.148,
+   "median_eT": -0.018,
+   "median_abs_eT": 0.233,
+   "median_eC": 0.024
+  }
+ },
+ "split_by_unit_dt0": {
+  "NTU": {
+   "n": 269,
+   "lakes": 205,
+   "var_eS": 0.1076,
+   "identity_max_err": 0.0,
+   "var_radiometric_term": 0.0934,
+   "var_conversion_term": 0.0643,
+   "cov2": -0.0501,
+   "share_radiometric": 0.635,
+   "share_conversion": 0.365,
+   "median_abs_eS": 0.187,
+   "median_abs_if_perfect_turbidity": 0.133,
+   "median_abs_if_perfect_conversion": 0.15,
+   "median_eT": 0.032,
+   "median_abs_eT": 0.236,
+   "median_eC": 0.055
+  },
+  "FNU": {
+   "n": 10,
+   "lakes": 8,
+   "var_eS": 0.0288,
+   "identity_max_err": 0.0,
+   "var_radiometric_term": 0.0423,
+   "var_conversion_term": 0.0438,
+   "cov2": -0.0572,
+   "share_radiometric": 0.474,
+   "share_conversion": 0.526,
+   "median_abs_eS": 0.107,
+   "median_abs_if_perfect_turbidity": 0.194,
+   "median_abs_if_perfect_conversion": 0.189,
+   "median_eT": -0.015,
+   "median_abs_eT": 0.297,
+   "median_eC": 0.164
+  }
+ },
+ "share_ci_dt0": [
+  0.543,
+  0.714
+ ],
+ "best_conversion": {
+  "turbidity_only": {
+   "n": 291,
+   "median_abs_log": 0.15,
+   "champion_formula_on_same_rows": 0.133
+  },
+  "turbidity_and_chl": {
+   "n": 246,
+   "median_abs_log": 0.141,
+   "champion_formula_on_same_rows": 0.121
+  }
+ },
+ "shapley_eT_dt0": {
+  "AC/aerosol": 0.022,
+  "glint": 0.057,
+  "adjacency": 0.0586,
+  "platform": -0.0118,
+  "water type": 0.0793,
+  "_total_cv_R2": 0.2051
+ },
+ "shapley_eC_dt0": {
+  "AC/aerosol": -0.0004,
+  "glint": -0.0005,
+  "adjacency": -0.017,
+  "platform": 0.0094,
+  "water type": 0.0227,
+  "_total_cv_R2": 0.0141
+ },
+ "shapley_eS_dt0": {
+  "AC/aerosol": 0.0147,
+  "glint": 0.0846,
+  "adjacency": 0.0235,
+  "platform": -0.0057,
+  "water type": 0.1755,
+  "_total_cv_R2": 0.2925
+ },
+ "attribution_share_of_var_eS": {
+  "radiometric: unexplained (match-up, instrument, residual)": 0.502,
+  "conversion: unexplained (Secchi-turbidity scatter, CDOM, algae not typed)": 0.364,
+  "radiometric: water type": 0.05,
+  "radiometric: adjacency": 0.037,
+  "radiometric: glint": 0.036,
+  "radiometric: AC/aerosol": 0.014,
+  "conversion: water type": 0.008,
+  "conversion: other blocks": 0.003,
+  "radiometric: platform": 0.0
+ },
+ "primary": "radiometric: unexplained (match-up, instrument, residual)",
+ "by_owt_dt0": {
+  "algal": {
+   "n": 64,
+   "lakes": 56,
+   "median_eT": -0.181,
+   "median_abs_eT": 0.319,
+   "median_eC": 0.106,
+   "median_abs_eC": 0.155,
+   "median_eS": 0.199,
+   "median_abs_eS": 0.233
+  },
+  "clear": {
+   "n": 154,
+   "lakes": 117,
+   "median_eT": 0.143,
+   "median_abs_eT": 0.223,
+   "median_eC": 0.016,
+   "median_abs_eC": 0.123,
+   "median_eS": -0.064,
+   "median_abs_eS": 0.177
+  },
+  "mixed": {
+   "n": 29,
+   "lakes": 26,
+   "median_eT": -0.079,
+   "median_abs_eT": 0.203,
+   "median_eC": 0.145,
+   "median_abs_eC": 0.174,
+   "median_eS": 0.17,
+   "median_abs_eS": 0.274
+  },
+  "sediment": {
+   "n": 31,
+   "lakes": 29,
+   "median_eT": -0.009,
+   "median_abs_eT": 0.148,
+   "median_eC": -0.001,
+   "median_abs_eC": 0.074,
+   "median_eS": 0.029,
+   "median_abs_eS": 0.111
+  },
+  "unsupported": {
+   "n": 13,
+   "lakes": 10,
+   "median_eT": 0.058,
+   "median_abs_eT": 0.397,
+   "median_eC": 0.227,
+   "median_abs_eC": 0.227,
+   "median_eS": 0.257,
+   "median_abs_eS": 0.257
+  }
+ },
+ "by_insitu_type_dt0": {
+  "algal": {
+   "n": 35,
+   "lakes": 32,
+   "median_eT": -0.069,
+   "median_abs_eT": 0.119,
+   "median_eC": 0.079,
+   "median_abs_eC": 0.119,
+   "median_eS": 0.101,
+   "median_abs_eS": 0.165
+  },
+  "clear": {
+   "n": 141,
+   "lakes": 114,
+   "median_eT": 0.176,
+   "median_abs_eT": 0.271,
+   "median_eC": 0.024,
+   "median_abs_eC": 0.134,
+   "median_eS": -0.072,
+   "median_abs_eS": 0.176
+  },
+  "mixed": {
+   "n": 44,
+   "lakes": 38,
+   "median_eT": -0.279,
+   "median_abs_eT": 0.311,
+   "median_eC": 0.051,
+   "median_abs_eC": 0.1,
+   "median_eS": 0.228,
+   "median_abs_eS": 0.24
+  },
+  "sediment": {
+   "n": 29,
+   "lakes": 27,
+   "median_eT": -0.104,
+   "median_abs_eT": 0.131,
+   "median_eC": -0.005,
+   "median_abs_eC": 0.098,
+   "median_eS": 0.043,
+   "median_abs_eS": 0.106
+  }
+ },
+ "by_platform_dt0": {
+  "sentinel-2a": {
+   "n": 120,
+   "lakes": 97,
+   "median_eT": 0.066,
+   "median_abs_eT": 0.262,
+   "median_eC": 0.072,
+   "median_abs_eC": 0.15,
+   "median_eS": 0.078,
+   "median_abs_eS": 0.242
+  },
+  "sentinel-2b": {
+   "n": 166,
+   "lakes": 138,
+   "median_eT": 0.01,
+   "median_abs_eT": 0.21,
+   "median_eC": 0.021,
+   "median_abs_eC": 0.116,
+   "median_eS": 0.022,
+   "median_abs_eS": 0.168
+  }
+ },
+ "by_adjacency_dt0": {
+  "100-300 m": {
+   "n": 110,
+   "lakes": 90,
+   "median_eT": 0.062,
+   "median_abs_eT": 0.189,
+   "median_eC": 0.023,
+   "median_abs_eC": 0.144,
+   "median_eS": 0.016,
+   "median_abs_eS": 0.18
+  },
+  "<100 m": {
+   "n": 100,
+   "lakes": 81,
+   "median_eT": -0.08,
+   "median_abs_eT": 0.221,
+   "median_eC": 0.027,
+   "median_abs_eC": 0.103,
+   "median_eS": 0.045,
+   "median_abs_eS": 0.189
+  },
+  ">=300 m": {
+   "n": 81,
+   "lakes": 68,
+   "median_eT": 0.105,
+   "median_abs_eT": 0.293,
+   "median_eC": 0.125,
+   "median_abs_eC": 0.161,
+   "median_eS": 0.043,
+   "median_abs_eS": 0.208
+  }
+ },
+ "by_secchi_class_dt0": {
+  "clear >=6": {
+   "n": 91,
+   "lakes": 70,
+   "median_eT": 0.342,
+   "median_abs_eT": 0.394,
+   "median_eC": -0.04,
+   "median_abs_eC": 0.139,
+   "median_eS": -0.247,
+   "median_abs_eS": 0.256
+  },
+  "limited <2": {
+   "n": 54,
+   "lakes": 49,
+   "median_eT": -0.196,
+   "median_abs_eT": 0.235,
+   "median_eC": 0.201,
+   "median_abs_eC": 0.201,
+   "median_eS": 0.304,
+   "median_abs_eS": 0.329
+  },
+  "normal 3-6": {
+   "n": 92,
+   "lakes": 73,
+   "median_eT": -0.002,
+   "median_abs_eT": 0.173,
+   "median_eC": 0.006,
+   "median_abs_eC": 0.115,
+   "median_eS": 0.017,
+   "median_abs_eS": 0.097
+  },
+  "stained 2-3": {
+   "n": 54,
+   "lakes": 49,
+   "median_eT": -0.105,
+   "median_abs_eT": 0.135,
+   "median_eC": 0.081,
+   "median_abs_eC": 0.095,
+   "median_eS": 0.144,
+   "median_abs_eS": 0.152
+  }
+ }
+}

@@ -1,0 +1,50 @@
+{
+ "matched_observations": 289,
+ "us_core": 165,
+ "syke": 124,
+ "lakes": 272,
+ "us_states": 39,
+ "max_state_share_us": 0.097,
+ "cool_season_share": 0.042,
+ "cool_season_lakes": 12,
+ "expected_per_class_us_core (Stage 11 shares)": {
+  "clear": 77.4,
+  "normal": 40.6,
+  "stained": 23.9,
+  "algae": 36.0,
+  "sediment": 12.7,
+  "limited": 23.2
+ },
+ "minima": {
+  "clear": 40,
+  "normal": 40,
+  "stained": 60,
+  "algae": 30,
+  "sediment": 20,
+  "limited": 25
+ },
+ "by_source": {
+  "NLA17": 52,
+  "NLA22": 113,
+  "SYKE": 124
+ },
+ "months": {
+  "05": 4,
+  "06": 42,
+  "07": 93,
+  "08": 93,
+  "09": 45,
+  "10": 10,
+  "11": 2
+ },
+ "checks": {
+  "observations>=400": false,
+  "lakes>=100": true,
+  "us_states>=20": true,
+  "no_state_over_15pct": true,
+  "cool_season>=15%_across>=20_lakes": false,
+  "expected_class_counts_meet_minima": false
+ },
+ "READY": false,
+ "sha256": "111cff44282aeaea3c75e8f085ae362ce3e0a29880d147e02f5ead808dfaf1d2"
+}

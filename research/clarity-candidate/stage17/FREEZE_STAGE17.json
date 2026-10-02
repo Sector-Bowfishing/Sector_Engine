@@ -1,0 +1,31 @@
+{
+ "stage": 17,
+ "prereg_frozen_utc": "2026-10-01T18:19:29Z",
+ "files": {
+  "stage17/PREREGISTRATION_STAGE17.md": "a058f476584395fa0e4273133202668bc95b88b621e0643d93b101dc99469b5b",
+  "stage14/engine/engine14.py": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+  "stage14/engine/frozen_engine.json": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+  "stage14/engine/frozen_gbm.pkl": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+  "stage16/engine/engine16.py": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+  "stage16/engine/rule16.json": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+  "stage16/analysis/lib16.py": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+  "stage14/cert/run_cert_aco_a1.py": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+  "stage11/temporal/neighbors_readouts.csv": "7d5ff488960a49af5dff760913feba276181719369409e8feb3cf7a2ffcd19f6",
+  "stage17/scenes/aco_manifest_nb.txt": "a45c4710cdf3d9f524a73135078116b6b1b60e36f0b216f16f144594054b8ed6",
+  "stage17/scenes/rain17.json": "a9724be5ce1d3b080412758e7576b7f14e12165b858a70cda987d3edefab8529",
+  "stage17/scenes/neighbors.json": "76d7589203acc948736da8e8a6498e661c04db1c6a5a986767c96b31191d4a72",
+  "stage17/scenes/build_neighbors.py": "98be4d0cbed1833c13d0eeb27c90c93aa0e5e068bca6dd16e4d8721c113eaab0",
+  "stage17/scenes/fetch_rain.py": "5a2b701e2ed3f1992823aecfb132cb5d52495f643753f4badcd2246257de3d07",
+  "stage17/analysis/dev17.py": "ebeb93106c27a08729ba363b6391dcb9e905f67205344247e2c8ba3399ca2592"
+ },
+ "hash_check": {
+  "stage14/engine/engine14.py": true,
+  "stage14/engine/frozen_engine.json": true,
+  "stage14/engine/frozen_gbm.pkl": true,
+  "stage16/engine/engine16.py": true,
+  "stage16/engine/rule16.json": true,
+  "stage16/analysis/lib16.py": true,
+  "stage14/cert/run_cert_aco_a1.py": true
+ },
+ "inputs_frozen_utc": "2026-10-01T23:54:18Z"
+}

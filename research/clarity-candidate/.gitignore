@@ -1,0 +1,11 @@
+# rebuilt by env/bootstrap.sh
+geo/
+stage11/tools/acolite/venv/
+stage11/tools/acolite/src/
+# runtime
+stage11/safe_cache/
+stage14/work/
+golden_runs/
+__pycache__/
+*.pyc
+.DS_Store

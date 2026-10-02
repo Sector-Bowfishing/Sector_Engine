@@ -1,0 +1,9 @@
+{
+ "site_days": 77324,
+ "sites": 5427,
+ "lakes": 2350,
+ "states": 47,
+ "cool_site_days": 15935,
+ "with_same_day_turbidity": 13475,
+ "strict_subset_sites": 2279
+}

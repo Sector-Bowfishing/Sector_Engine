@@ -1,0 +1,205 @@
+site_id,site_name,org,lat,lon,date,time,time_zone,secchi_m,bottom_visible,state,flag_source
+21DELAWQ_WQX-304311,Concord Pond @ German Rd. (Rd. 524),21DELAWQ_WQX,38.643104,-75.553945,2026-07-28,09:56,EDT,0.4,true,DE,comment:bottom visible
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-01-07,11:12,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-01-20,11:25,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-02-03,15:06,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-02-18,14:38,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-03-02,14:55,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-03-17,14:17,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-04-08,10:31,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-04-21,11:08,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-05-05,14:06,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-05-19,14:32,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-06-01,14:37,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-06-15,14:12,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-06-30,11:18,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-07-14,14:42,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-08-17,11:29,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#1,Sandia Lakes Recreation area,SANDIAWQ_WQX,35.22602,-106.59064,2026-09-01,14:39,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-01-07,11:05,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-01-20,11:18,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-02-03,14:48,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-02-18,14:27,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-03-02,14:41,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-03-17,14:06,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-04-08,10:18,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-04-21,10:52,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-05-05,13:53,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-05-19,14:15,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-06-30,11:07,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-07-14,14:20,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#2,Sandia Lakes Recreation area near the crosswalk,SANDIAWQ_WQX,35.221111,-106.594722,2026-08-17,11:15,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-01-07,10:48,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-01-20,11:05,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-02-03,14:34,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-02-18,14:15,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-03-02,14:30,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-03-17,13:55,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-04-08,10:05,MST,0.5,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-06-01,14:08,MST,0.55,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-06-15,13:48,MST,0.35,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-06-30,10:49,MST,0.3,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-07-14,14:02,MST,0.6,true,NM,value written as '>' or '+'
+SANDIAWQ_WQX-SL#3,sandia lakes on the southern end near the wasteway,SANDIAWQ_WQX,35.21795,-106.59814,2026-08-17,11:02,MST,0.6,true,NM,value written as '>' or '+'
+21VASWCB-4AROA195.60,McVeigh Ford,21VASWCB,37.2189,-79.8305,2026-04-14,10:30,EST,2.0,true,VA,comment:bottom visible
+WIDNR_WQX-013018,Friendship Lake - Max Depth,WIDNR_WQX,43.975552,-89.815789,2026-06-22,12:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-013018,Friendship Lake - Max Depth,WIDNR_WQX,43.975552,-89.815789,2026-06-22,12:45,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-013018,Friendship Lake - Max Depth,WIDNR_WQX,43.975552,-89.815789,2026-07-24,11:32,CDT,1.829,true,WI,comp_secchi_choice (same site+day)
+WIDNR_WQX-013018,Friendship Lake - Max Depth,WIDNR_WQX,43.975552,-89.815789,2026-07-24,12:00,CDT,3.658,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-013144,Peppermill Lake - Deepest Point,WIDNR_WQX,43.787537,-89.64041,2026-07-30,10:10,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-043083,Long Lake (T47n R08w S03) - Deep Hole,WIDNR_WQX,46.57983,-91.346178,2026-07-23,12:00,CDT,5.486,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-043083,Long Lake (T47n R08w S03) - Deep Hole,WIDNR_WQX,46.57983,-91.346178,2026-09-17,11:00,CDT,3.658,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-043169,Birch Lake - Deep Hole (44-9-4),WIDNR_WQX,46.318108,-91.49247,2026-06-14,14:30,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-043169,Birch Lake - Deep Hole (44-9-4),WIDNR_WQX,46.318108,-91.49247,2026-07-21,13:15,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-043169,Birch Lake - Deep Hole (44-9-4),WIDNR_WQX,46.318108,-91.49247,2026-08-23,12:40,CDT,1.143,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-074013,Hanscom Lake - Deepest Spot,WIDNR_WQX,45.973324,-92.14417,2026-09-10,12:22,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10019775,Bakkens Pond -- Launch,WIDNR_WQX,43.178758,-90.138917,2026-05-27,14:30,CDT,0.945,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10019775,Bakkens Pond -- Launch,WIDNR_WQX,43.178758,-90.138917,2026-06-24,10:55,CDT,0.914,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10019775,Bakkens Pond -- Launch,WIDNR_WQX,43.178758,-90.138917,2026-07-27,09:30,CDT,0.823,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10019775,Bakkens Pond -- Launch,WIDNR_WQX,43.178758,-90.138917,2026-08-25,10:30,CDT,0.762,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10021087,Fawn Lake - Deepest Area Near Dam,WIDNR_WQX,43.723663,-89.81569,2026-08-08,11:00,CDT,3.505,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10021087,Fawn Lake - Deepest Area Near Dam,WIDNR_WQX,43.723663,-89.81569,2026-08-24,11:00,CDT,3.505,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10021087,Fawn Lake - Deepest Area Near Dam,WIDNR_WQX,43.723663,-89.81569,2026-08-24,11:30,CDT,3.505,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10029441,Lund Lake - Center,WIDNR_WQX,45.75694,-88.39869,2026-08-27,10:45,CDT,5.639,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10031263,Delavan Lake - SW End of Lake (S.S. Manor / Borg Mansion and Island House),WIDNR_WQX,42.592133,-88.62945,2026-04-30,10:45,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10031263,Delavan Lake - SW End of Lake (S.S. Manor / Borg Mansion and Island House),WIDNR_WQX,42.592133,-88.62945,2026-06-11,07:30,CDT,2.438,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10031264,Delavan Lake - NE End of Lake (Lake Lawn /Assembly Park),WIDNR_WQX,42.620956,-88.5998,2026-04-30,10:45,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10031264,Delavan Lake - NE End of Lake (Lake Lawn /Assembly Park),WIDNR_WQX,42.620956,-88.5998,2026-05-26,09:00,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10031334,Peppermill Lake - South End of Lake (Site # 60),WIDNR_WQX,43.78609,-89.65223,2026-07-30,09:30,CDT,1.524,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10033702,Fountain Lake - Deep Hole,WIDNR_WQX,44.30814,-89.2662,2026-05-20,14:00,CDT,7.772,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10037045,Lake Beulah at Stringers Bridge Rd,WIDNR_WQX,42.810783,-88.415634,2026-04-29,13:30,CDT,0.8,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10040760,Friendship Lake - Near 11th Ave (Site #2),WIDNR_WQX,43.982834,-89.79708,2026-05-30,13:40,CDT,1.372,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10040760,Friendship Lake - Near 11th Ave (Site #2),WIDNR_WQX,43.982834,-89.79708,2026-05-30,14:15,CDT,1.372,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10040760,Friendship Lake - Near 11th Ave (Site #2),WIDNR_WQX,43.982834,-89.79708,2026-06-23,13:20,CDT,1.372,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10040760,Friendship Lake - Near 11th Ave (Site #2),WIDNR_WQX,43.982834,-89.79708,2026-06-23,14:00,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10040760,Friendship Lake - Near 11th Ave (Site #2),WIDNR_WQX,43.982834,-89.79708,2026-07-22,14:20,CDT,1.372,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10040760,Friendship Lake - Near 11th Ave (Site #2),WIDNR_WQX,43.982834,-89.79708,2026-08-24,14:40,CDT,1.067,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10043374,Smoke Lake - Deep Hole,WIDNR_WQX,45.347121,-88.590727,2026-05-16,12:24,CDT,2.438,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10043374,Smoke Lake - Deep Hole,WIDNR_WQX,45.347121,-88.590727,2026-06-19,09:50,CDT,2.591,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10043374,Smoke Lake - Deep Hole,WIDNR_WQX,45.347121,-88.590727,2026-07-22,13:53,CDT,2.286,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10043374,Smoke Lake - Deep Hole,WIDNR_WQX,45.347121,-88.590727,2026-08-15,09:26,CDT,2.438,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052562,Skice Lake - Beaver Bay,WIDNR_WQX,44.890258,-88.624923,2026-07-13,10:00,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052562,Skice Lake - Beaver Bay,WIDNR_WQX,44.890258,-88.624923,2026-08-13,08:00,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052562,Skice Lake - Beaver Bay,WIDNR_WQX,44.890258,-88.624923,2026-09-14,08:00,CDT,3.658,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052563,Skice Lake - Medicine Hat Bay,WIDNR_WQX,44.900175,-88.598106,2026-05-11,11:00,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052563,Skice Lake - Medicine Hat Bay,WIDNR_WQX,44.900175,-88.598106,2026-06-15,13:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052563,Skice Lake - Medicine Hat Bay,WIDNR_WQX,44.900175,-88.598106,2026-07-13,09:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052563,Skice Lake - Medicine Hat Bay,WIDNR_WQX,44.900175,-88.598106,2026-08-13,09:00,CDT,1.524,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052563,Skice Lake - Medicine Hat Bay,WIDNR_WQX,44.900175,-88.598106,2026-09-14,09:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052564,Sapokesick Lake - White Eagle,WIDNR_WQX,44.908608,-88.546506,2026-08-17,09:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052564,Sapokesick Lake - White Eagle,WIDNR_WQX,44.908608,-88.546506,2026-09-16,08:00,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052565,Sapokesick Lake - Wood Duck Bay,WIDNR_WQX,44.902941,-88.527906,2026-05-19,11:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052565,Sapokesick Lake - Wood Duck Bay,WIDNR_WQX,44.902941,-88.527906,2026-06-15,09:00,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052565,Sapokesick Lake - Wood Duck Bay,WIDNR_WQX,44.902941,-88.527906,2026-07-13,14:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052565,Sapokesick Lake - Wood Duck Bay,WIDNR_WQX,44.902941,-88.527906,2026-08-17,10:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052565,Sapokesick Lake - Wood Duck Bay,WIDNR_WQX,44.902941,-88.527906,2026-09-16,09:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052566,Sapokesick Lake - Honey Tree Bay,WIDNR_WQX,44.897191,-88.536023,2026-05-19,11:30,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052566,Sapokesick Lake - Honey Tree Bay,WIDNR_WQX,44.897191,-88.536023,2026-06-15,09:30,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052566,Sapokesick Lake - Honey Tree Bay,WIDNR_WQX,44.897191,-88.536023,2026-07-13,13:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052566,Sapokesick Lake - Honey Tree Bay,WIDNR_WQX,44.897191,-88.536023,2026-08-17,09:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10052566,Sapokesick Lake - Honey Tree Bay,WIDNR_WQX,44.897191,-88.536023,2026-09-16,09:00,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10055907,Lake Helen - Water Quality - West Aerator,WIDNR_WQX,44.619535,-89.246457,2026-05-04,09:00,CDT,3.962,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10056904,New Zoo Pond - Deep Hole,WIDNR_WQX,43.02978,-88.04314,2026-05-22,12:00,CDT,2.896,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10056904,New Zoo Pond - Deep Hole,WIDNR_WQX,43.02978,-88.04314,2026-06-04,11:00,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10056904,New Zoo Pond - Deep Hole,WIDNR_WQX,43.02978,-88.04314,2026-06-12,11:00,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10056904,New Zoo Pond - Deep Hole,WIDNR_WQX,43.02978,-88.04314,2026-06-20,11:00,CDT,2.743,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10060784,Clam Falls Flowage Deep Hole,WIDNR_WQX,45.686454,-92.295361,2026-08-17,10:35,CDT,3.962,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10060784,Clam Falls Flowage Deep Hole,WIDNR_WQX,45.686454,-92.295361,2026-09-10,01:30,CDT,3.962,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10061211,School Section Outlet,WIDNR_WQX,44.551477,-88.932407,2026-06-23,12:00,CDT,0.914,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10061213,Unnamed (WBIC 1024800) near Boscobel Nursery,WIDNR_WQX,43.156226,-90.709681,2026-05-28,12:30,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10061213,Unnamed (WBIC 1024800) near Boscobel Nursery,WIDNR_WQX,43.156226,-90.709681,2026-06-25,16:25,CDT,1.494,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10061213,Unnamed (WBIC 1024800) near Boscobel Nursery,WIDNR_WQX,43.156226,-90.709681,2026-07-27,11:10,CDT,1.402,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-10061213,Unnamed (WBIC 1024800) near Boscobel Nursery,WIDNR_WQX,43.156226,-90.709681,2026-08-25,15:20,CDT,2.042,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-153121,KANGAROO LAKE - SITE 1 (SOUTH)-DEEP HOLE,WIDNR_WQX,45.025136,-87.155641,2026-05-16,16:00,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-163393,PERSON LAKE - NEAR DEEP HOLE,WIDNR_WQX,46.192494,-91.96556,2026-05-31,11:00,CDT,2.134,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-163393,PERSON LAKE - NEAR DEEP HOLE,WIDNR_WQX,46.192494,-91.96556,2026-06-21,10:00,CDT,2.21,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-07-07,14:00,CDT,1.981,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-07-15,11:00,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-07-21,14:30,CDT,1.981,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-07-28,16:00,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-08-03,17:30,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-08-10,13:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-08-24,10:00,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-193047,HALSEY LAKE - DEEP HOLE,WIDNR_WQX,45.848609,-88.632781,2026-08-31,13:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-194009,MORGAN LAKE - DEEPEST PART,WIDNR_WQX,45.774383,-88.544122,2026-08-20,11:45,CDT,3.139,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-263034,Wilson Lake - Deep Hole,WIDNR_WQX,46.117769,-90.115003,2026-07-21,10:00,CDT,6.401,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-283223,RED CEDAR LAKE - DEEP HOLE,WIDNR_WQX,42.97469,-88.98994,2026-07-13,09:10,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-373416,BIG BASS LAKE - DEEP HOLE,WIDNR_WQX,44.722775,-89.433622,2026-08-18,11:40,CDT,2.896,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-393008,Moon (Birch) Lake - Deep Hole,WIDNR_WQX,43.80398,-89.36112,2026-07-16,11:00,CDT,3.2,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-393008,Moon (Birch) Lake - Deep Hole,WIDNR_WQX,43.80398,-89.36112,2026-09-14,,,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-393153,SANDY LAKE - DEEP HOLE,WIDNR_WQX,43.97247,-89.29897,2026-05-18,14:15,CDT,3.2,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-403113,Legend Lake - Main Channel Deep Hole,WIDNR_WQX,44.895778,-88.590761,2026-06-15,11:30,CDT,1.829,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-403113,Legend Lake - Main Channel Deep Hole,WIDNR_WQX,44.895778,-88.590761,2026-07-13,08:00,CDT,2.438,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-403113,Legend Lake - Main Channel Deep Hole,WIDNR_WQX,44.895778,-88.590761,2026-08-13,10:00,CDT,2.438,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-403113,Legend Lake - Main Channel Deep Hole,WIDNR_WQX,44.895778,-88.590761,2026-09-14,10:00,CDT,2.438,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-433081,BOULDER LAKE - DEEP HOLE,WIDNR_WQX,45.149997,-88.63473,2026-05-31,10:00,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-433081,BOULDER LAKE - DEEP HOLE,WIDNR_WQX,45.149997,-88.63473,2026-07-23,09:30,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-433081,BOULDER LAKE - DEEP HOLE,WIDNR_WQX,45.149997,-88.63473,2026-09-15,11:00,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-433248,Pickerel Lake - Deepest Part,WIDNR_WQX,45.352152,-88.585533,2026-05-16,11:24,CDT,3.962,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443100,Franklin Lake - Deep Hole,WIDNR_WQX,45.86972,-89.86112,2026-04-16,15:00,CDT,7.391,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443100,Franklin Lake - Deep Hole,WIDNR_WQX,45.86972,-89.86112,2026-05-08,10:00,CDT,7.315,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443100,Franklin Lake - Deep Hole,WIDNR_WQX,45.86972,-89.86112,2026-05-18,14:00,CDT,7.163,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443233,Nose Lake - Deep Hole,WIDNR_WQX,45.599865,-89.56837,2026-06-27,11:15,CDT,3.658,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443233,Nose Lake - Deep Hole,WIDNR_WQX,45.599865,-89.56837,2026-07-25,11:30,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443233,Nose Lake - Deep Hole,WIDNR_WQX,45.599865,-89.56837,2026-08-14,13:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443399,BLUE LAKE - EAST BASIN,WIDNR_WQX,45.836388,-89.74889,2026-06-26,12:00,CDT,7.01,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-06-21,11:00,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-07-05,16:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-07-11,11:00,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-07-20,12:00,CDT,3.2,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-08-06,11:30,CDT,2.972,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-08-22,11:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-09-07,15:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-443545,Clear Lake Sec. 24 T37n R7e - Deep Hole,WIDNR_WQX,45.68278,-89.55583,2026-09-14,10:00,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503089,GLISEZINSKI LAKE - DEEP HOLE,WIDNR_WQX,44.673353,-89.424843,2026-04-11,10:00,CDT,3.81,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503089,GLISEZINSKI LAKE - DEEP HOLE,WIDNR_WQX,44.673353,-89.424843,2026-07-01,09:45,CDT,3.353,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503090,LAKE HELEN - DEEP HOLE,WIDNR_WQX,44.618051,-89.238617,2026-05-04,08:30,CDT,6.401,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503090,LAKE HELEN - DEEP HOLE,WIDNR_WQX,44.618051,-89.238617,2026-05-27,09:15,CDT,6.401,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503120,Pickerel Lake - Deep Hole,WIDNR_WQX,44.317943,-89.32442,2026-02-16,14:30,CST,7.01,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503120,Pickerel Lake - Deep Hole,WIDNR_WQX,44.317943,-89.32442,2026-05-20,14:45,CDT,7.315,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503120,Pickerel Lake - Deep Hole,WIDNR_WQX,44.317943,-89.32442,2026-09-16,13:15,CDT,6.858,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-503134,Rinehart Lake at Deepest Point,WIDNR_WQX,44.519024,-89.267754,2026-05-20,10:00,CDT,3.505,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-513098,COCHRAN LAKE - DEEP HOLE,WIDNR_WQX,45.967218,-90.109734,2026-05-09,14:00,CDT,4.572,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-513098,COCHRAN LAKE - DEEP HOLE,WIDNR_WQX,45.967218,-90.109734,2026-05-25,14:00,CDT,4.572,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-513098,COCHRAN LAKE - DEEP HOLE,WIDNR_WQX,45.967218,-90.109734,2026-06-03,14:00,CDT,4.648,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-583108,LAKE PLACID - DEEP HOLE,WIDNR_WQX,46.026104,-91.280563,2026-07-12,08:00,CDT,4.877,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-593045,Round Lake - Deep Hole,WIDNR_WQX,44.691659,-88.676123,2026-05-02,13:00,CDT,6.096,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-643219,ALDER LAKE - DEEP HOLE,WIDNR_WQX,46.091388,-89.820567,2026-07-01,13:15,CDT,3.048,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-653286,COMUS LAKE - DEEP HOLE,WIDNR_WQX,42.64166,-88.641113,2026-08-12,09:45,CDT,1.067,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-653286,COMUS LAKE - DEEP HOLE,WIDNR_WQX,42.64166,-88.641113,2026-09-15,11:59,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-05-28,10:00,CDT,0.914,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-05-29,11:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-06-20,10:00,CDT,1.524,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-06-28,10:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-07-05,11:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-07-09,11:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-08-04,10:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-08-11,09:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-08-23,11:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663059,LOWER KIMBALL LAKE - DEEP HOLE,WIDNR_WQX,46.122216,-91.949455,2026-09-02,11:00,CDT,1.676,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663062,LONG LAKE - NR MUD LK OUTLET,WIDNR_WQX,45.753137,-91.657588,2026-06-01,11:00,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663062,LONG LAKE - NR MUD LK OUTLET,WIDNR_WQX,45.753137,-91.657588,2026-06-30,11:15,CDT,1.524,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663062,LONG LAKE - NR MUD LK OUTLET,WIDNR_WQX,45.753137,-91.657588,2026-07-28,11:10,CDT,1.524,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663062,LONG LAKE - NR MUD LK OUTLET,WIDNR_WQX,45.753137,-91.657588,2026-09-01,10:45,CDT,1.524,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-663101,"LOWER MCKENZIE LAKE - DEEP HOLE, NEAR WEBB LAKE, WI",WIDNR_WQX,45.983884,-92.021671,2026-05-28,10:00,CDT,4.115,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-06-28,11:00,CDT,1.219,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-07-06,11:00,CDT,1.295,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-07-13,10:45,CDT,1.448,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-07-30,11:00,CDT,1.448,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-08-06,11:00,CDT,1.448,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-08-14,11:00,CDT,1.448,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-08-22,11:00,CDT,1.448,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-08-30,11:00,CDT,1.448,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-09-08,10:30,CDT,1.448,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-673221,Smith Lake - Deep Hole,WIDNR_WQX,43.472826,-88.192092,2026-09-16,11:00,CDT,1.524,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-683258,Eagle Spring Lake - Deep Hole,WIDNR_WQX,42.852517,-88.438463,2026-07-30,14:30,CDT,1.92,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-683260,LOWER PHANTOM LAKE - DEEP HOLE,WIDNR_WQX,42.856808,-88.33983,2026-09-08,13:14,CDT,1.899,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-683303,Okauchee Lake Site #1 - Cranes Nest Bay Near Okauchee WI,WIDNR_WQX,43.133047,-88.411677,2026-07-17,09:00,CDT,2.2,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-683304,Okauchee Lake Site #4 - Crazy Man'S Island At Okauchee WI,WIDNR_WQX,43.132492,-88.438064,2026-06-15,13:08,CDT,1.8,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-683305,Okauchee Lake Site #2 - Lower Site At Okauchee WI,WIDNR_WQX,43.1125,-88.445837,2026-06-15,13:56,CDT,1.7,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-683371,CROOKED LAKE - DEEP HOLE,WIDNR_WQX,43.054443,-88.455568,2026-04-26,10:31,CDT,4.648,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-684008,Ocauchee L (Icehouse Bay) - Ocauchee L (Icehouse Bay),WIDNR_WQX,43.11166,-88.423341,2026-06-15,13:27,CDT,1.8,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-703057,PLEASANT LAKE - DEEP HOLE,WIDNR_WQX,43.985278,-89.55251,2026-05-17,10:00,CDT,6.706,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-703057,PLEASANT LAKE - DEEP HOLE,WIDNR_WQX,43.985278,-89.55251,2026-05-29,11:00,CDT,6.706,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-703067,WITTERS LAKE - DEEP HOLE,WIDNR_WQX,44.032498,-89.303623,2026-05-07,11:40,CDT,4.724,true,WI,comp_secchi_choice (same visit)
+WIDNR_WQX-703067,WITTERS LAKE - DEEP HOLE,WIDNR_WQX,44.032498,-89.303623,2026-09-02,13:40,CDT,5.182,true,WI,comp_secchi_choice (same visit)

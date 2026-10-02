@@ -1,0 +1,14 @@
+{
+ "K4": {
+  "valid": 9,
+  "pooled_median_abs_log": 0.164,
+  "B04_bias": 0.24
+ },
+ "K4e": {
+  "valid": 9,
+  "pooled_median_abs_log": 0.177,
+  "B04_bias": 0.249
+ },
+ "B04_K4e_over_K4_median": 1.0216,
+ "n_pairs": 9
+}

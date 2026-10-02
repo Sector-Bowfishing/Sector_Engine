@@ -1,0 +1,25 @@
+{
+ "pred_ge_T": {
+  "10": {
+   "n": 343,
+   "median_abs_log": 0.13,
+   "median_true_minus_pred_ft": -0.62,
+   "P(truth>=T)": 0.72,
+   "P(truth>=6)": 0.924
+  },
+  "12": {
+   "n": 251,
+   "median_abs_log": 0.135,
+   "median_true_minus_pred_ft": -0.23,
+   "P(truth>=T)": 0.685,
+   "P(truth>=6)": 0.94
+  },
+  "15": {
+   "n": 114,
+   "median_abs_log": 0.129,
+   "median_true_minus_pred_ft": 0.19,
+   "P(truth>=T)": 0.702,
+   "P(truth>=6)": 0.939
+  }
+ }
+}

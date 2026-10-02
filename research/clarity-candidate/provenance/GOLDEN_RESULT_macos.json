@@ -1,0 +1,112 @@
+{
+ "root": "/Users/mcather/Desktop/Development/Sector_Engine-research/research/clarity-candidate",
+ "python": "3.12.8",
+ "platform": "darwin",
+ "started_utc": "2026-10-02T05:08:32Z",
+ "hashes": {
+  "pass": true,
+  "files_checked": 134,
+  "mismatched": []
+ },
+ "models": {
+  "regenerated": {
+   "stage14/analysis/dev14.py": {
+    "exit": 0,
+    "seconds": 47.9,
+    "identical": {
+     "stage14/analysis/dev14.json": true,
+     "stage14/analysis/dev14_rows.json": true
+    }
+   },
+   "stage15/analysis/dev15.py": {
+    "exit": 0,
+    "seconds": 8.0,
+    "identical": {
+     "stage15/engine/semantics15.json": true,
+     "stage15/analysis/dev15.json": true,
+     "stage15/analysis/dev15_rows.json": true
+    }
+   },
+   "stage16/analysis/dev16.py": {
+    "exit": 0,
+    "seconds": 8.6,
+    "identical": {
+     "stage16/engine/rule16.json": true,
+     "stage16/analysis/dev16.json": true,
+     "stage16/analysis/dev16_rows.json": true,
+     "stage16/analysis/dev16_feet.json": true
+    }
+   },
+   "stage18/freeze18.py": {
+    "exit": 0,
+    "seconds": 64.2,
+    "identical": {
+     "stage18/engine/challenger17.json": true
+    }
+   }
+  },
+  "pass": true,
+  "refit": {
+   "train_rows": 1206,
+   "compared_rows": 1397,
+   "max_abs_diff": 0.0
+  }
+ },
+ "selfcheck": {
+  "engine14_cert_rows": {
+   "rows": 1574,
+   "mismatched": 0
+  },
+  "engine16_fresh_rows": {
+   "rows": 108,
+   "mismatched": 0
+  },
+  "N:t15769": {
+   "p": 0.7750620848927173,
+   "state": "Normal",
+   "feet": 5.957,
+   "expected_p": 0.7750620848927173
+  },
+  "pass": true
+ },
+ "scenes": {
+  "exit": 0,
+  "seconds": 72.0,
+  "scenes": {
+   "S2B_T14SPB_20240306T170926_L2A": {
+    "values": 44,
+    "max_abs_diff": 0.0,
+    "structural_diffs": []
+   },
+   "S2B_T18TWK_20201009T154719_L2A": {
+    "values": 88,
+    "max_abs_diff": 0.0,
+    "structural_diffs": []
+   },
+   "S2A_T16TFQ_20230805T163154_L2A": {
+    "values": 44,
+    "max_abs_diff": 0.0,
+    "structural_diffs": []
+   },
+   "S2B_T16TCP_20210915T165906_L2A": {
+    "values": 44,
+    "max_abs_diff": 0.0,
+    "structural_diffs": []
+   },
+   "S2A_T10TFQ_20210728T185732_L2A": {
+    "values": 22,
+    "max_abs_diff": 0.0,
+    "structural_diffs": []
+   },
+   "S2A_T11SLC_20230426T184841_L2A": {
+    "values": 22,
+    "max_abs_diff": 0.0,
+    "structural_diffs": []
+   }
+  },
+  "values": 264,
+  "max_abs_diff": 0.0,
+  "pass": true
+ },
+ "GOLDEN_TEST_PASS": true
+}

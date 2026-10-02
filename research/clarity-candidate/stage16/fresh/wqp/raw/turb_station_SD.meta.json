@@ -1,0 +1,16 @@
+{
+ "name": "turb_station_SD",
+ "endpoint": "Station",
+ "url": "https://www.waterqualitydata.us/data/Station/search?statecode=US:46&siteType=Lake,%20Reservoir,%20Impoundment&characteristicName=Turbidity&startDateLo=01-01-2026&mimeType=csv&zip=no",
+ "headers": {
+  "Content-Type": "text/csv;charset=UTF-8",
+  "Total-Site-Count": "0"
+ },
+ "bytes": 1021,
+ "rows": 0,
+ "expected": 0,
+ "ok": true,
+ "seconds": 2.0,
+ "attempt": 1,
+ "fetched": "2026-10-01T12:33:29"
+}

@@ -1,0 +1,714 @@
+{
+ "rows_selection": 1206,
+ "lakes_selection": 792,
+ "all": {
+  "champion": {
+   "n": 1206,
+   "lakes": 792,
+   "coverage": 1.0,
+   "median_abs_log": 0.1903,
+   "median_signed_ft": 0.66,
+   "class_acc": 0.563
+  },
+  "P1": {
+   "n": 917,
+   "lakes": 618,
+   "coverage": 0.76,
+   "median_abs_log": 0.1846,
+   "median_signed_ft": -1.34,
+   "class_acc": 0.466
+  },
+  "champion_refit": {
+   "n": 1206,
+   "lakes": 792,
+   "coverage": 1.0,
+   "median_abs_log": 0.1857,
+   "median_signed_ft": -0.01,
+   "class_acc": 0.54
+  },
+  "N1": {
+   "n": 1206,
+   "lakes": 792,
+   "coverage": 1.0,
+   "median_abs_log": 0.1859,
+   "median_signed_ft": 0.02,
+   "class_acc": 0.538
+  },
+  "N2": {
+   "n": 1206,
+   "lakes": 792,
+   "coverage": 1.0,
+   "median_abs_log": 0.1783,
+   "median_signed_ft": 0.07,
+   "class_acc": 0.558
+  },
+  "C3": {
+   "n": 1206,
+   "lakes": 792,
+   "coverage": 1.0,
+   "median_abs_log": 0.1687,
+   "median_signed_ft": -0.03,
+   "class_acc": 0.596
+  },
+  "C6": {
+   "n": 1206,
+   "lakes": 792,
+   "coverage": 1.0,
+   "median_abs_log": 0.1704,
+   "median_signed_ft": 0.08,
+   "class_acc": 0.599
+  },
+  "P2": {
+   "n": 901,
+   "lakes": 609,
+   "coverage": 0.747,
+   "median_abs_log": 0.1693,
+   "median_signed_ft": -0.92,
+   "class_acc": 0.494
+  }
+ },
+ "production_sen2cor_champion_same_rows": {
+  "n": 1206,
+  "lakes": 792,
+  "coverage": 1.0,
+  "median_abs_log": 0.2188,
+  "median_signed_ft": -0.75,
+  "class_acc": 0.46
+ },
+ "eligible": [
+  "champion",
+  "champion_refit",
+  "N1",
+  "N2",
+  "C3",
+  "C6"
+ ],
+ "best": "C3",
+ "equivalence_vs_best": {
+  "champion": {
+   "diff": 0.0216,
+   "ci95": [
+    0.006,
+    0.0399
+   ],
+   "equivalent": false
+  },
+  "champion_refit": {
+   "diff": 0.0169,
+   "ci95": [
+    0.007,
+    0.0304
+   ],
+   "equivalent": false
+  },
+  "N1": {
+   "diff": 0.0172,
+   "ci95": [
+    0.0053,
+    0.0285
+   ],
+   "equivalent": false
+  },
+  "N2": {
+   "diff": 0.0095,
+   "ci95": [
+    -0.0025,
+    0.0238
+   ],
+   "equivalent": false
+  }
+ },
+ "engine_before_guard": "C3",
+ "by_owt": {
+  "clear": {
+   "champion": {
+    "n": 478,
+    "lakes": 346,
+    "coverage": 1.0,
+    "median_abs_log": 0.1752,
+    "median_signed_ft": -0.47,
+    "class_acc": 0.607
+   },
+   "P1": {
+    "n": 452,
+    "lakes": 323,
+    "coverage": 0.946,
+    "median_abs_log": 0.1855,
+    "median_signed_ft": -1.7,
+    "class_acc": 0.498
+   },
+   "champion_refit": {
+    "n": 478,
+    "lakes": 346,
+    "coverage": 1.0,
+    "median_abs_log": 0.1837,
+    "median_signed_ft": -1.42,
+    "class_acc": 0.533
+   },
+   "N1": {
+    "n": 478,
+    "lakes": 346,
+    "coverage": 1.0,
+    "median_abs_log": 0.1847,
+    "median_signed_ft": -1.46,
+    "class_acc": 0.523
+   },
+   "N2": {
+    "n": 478,
+    "lakes": 346,
+    "coverage": 1.0,
+    "median_abs_log": 0.1733,
+    "median_signed_ft": -1.22,
+    "class_acc": 0.563
+   },
+   "C3": {
+    "n": 478,
+    "lakes": 346,
+    "coverage": 1.0,
+    "median_abs_log": 0.1597,
+    "median_signed_ft": -0.42,
+    "class_acc": 0.628
+   },
+   "C6": {
+    "n": 478,
+    "lakes": 346,
+    "coverage": 1.0,
+    "median_abs_log": 0.1659,
+    "median_signed_ft": -0.08,
+    "class_acc": 0.634
+   },
+   "P2": {
+    "n": 466,
+    "lakes": 336,
+    "coverage": 0.975,
+    "median_abs_log": 0.1761,
+    "median_signed_ft": -1.32,
+    "class_acc": 0.524
+   }
+  },
+  "algal": {
+   "champion": {
+    "n": 582,
+    "lakes": 435,
+    "coverage": 1.0,
+    "median_abs_log": 0.2118,
+    "median_signed_ft": 1.83,
+    "class_acc": 0.54
+   },
+   "P1": {
+    "n": 369,
+    "lakes": 295,
+    "coverage": 0.634,
+    "median_abs_log": 0.2161,
+    "median_signed_ft": -1.9,
+    "class_acc": 0.404
+   },
+   "champion_refit": {
+    "n": 582,
+    "lakes": 435,
+    "coverage": 1.0,
+    "median_abs_log": 0.1983,
+    "median_signed_ft": 0.74,
+    "class_acc": 0.552
+   },
+   "N1": {
+    "n": 582,
+    "lakes": 435,
+    "coverage": 1.0,
+    "median_abs_log": 0.1931,
+    "median_signed_ft": 0.8,
+    "class_acc": 0.555
+   },
+   "N2": {
+    "n": 582,
+    "lakes": 435,
+    "coverage": 1.0,
+    "median_abs_log": 0.1838,
+    "median_signed_ft": 0.6,
+    "class_acc": 0.564
+   },
+   "C3": {
+    "n": 582,
+    "lakes": 435,
+    "coverage": 1.0,
+    "median_abs_log": 0.1893,
+    "median_signed_ft": -0.18,
+    "class_acc": 0.553
+   },
+   "C6": {
+    "n": 582,
+    "lakes": 435,
+    "coverage": 1.0,
+    "median_abs_log": 0.1847,
+    "median_signed_ft": -0.02,
+    "class_acc": 0.565
+   },
+   "P2": {
+    "n": 339,
+    "lakes": 272,
+    "coverage": 0.582,
+    "median_abs_log": 0.1929,
+    "median_signed_ft": -1.15,
+    "class_acc": 0.437
+   }
+  },
+  "sediment": {
+   "champion": {
+    "n": 76,
+    "lakes": 64,
+    "coverage": 1.0,
+    "median_abs_log": 0.1062,
+    "median_signed_ft": 0.04,
+    "class_acc": 0.5
+   },
+   "P1": {
+    "n": 71,
+    "lakes": 61,
+    "coverage": 0.934,
+    "median_abs_log": 0.083,
+    "median_signed_ft": 0.03,
+    "class_acc": 0.493
+   },
+   "champion_refit": {
+    "n": 76,
+    "lakes": 64,
+    "coverage": 1.0,
+    "median_abs_log": 0.1022,
+    "median_signed_ft": -0.1,
+    "class_acc": 0.474
+   },
+   "N1": {
+    "n": 76,
+    "lakes": 64,
+    "coverage": 1.0,
+    "median_abs_log": 0.1109,
+    "median_signed_ft": -0.14,
+    "class_acc": 0.487
+   },
+   "N2": {
+    "n": 76,
+    "lakes": 64,
+    "coverage": 1.0,
+    "median_abs_log": 0.106,
+    "median_signed_ft": 0.02,
+    "class_acc": 0.474
+   },
+   "C3": {
+    "n": 76,
+    "lakes": 64,
+    "coverage": 1.0,
+    "median_abs_log": 0.0822,
+    "median_signed_ft": 0.28,
+    "class_acc": 0.526
+   },
+   "C6": {
+    "n": 76,
+    "lakes": 64,
+    "coverage": 1.0,
+    "median_abs_log": 0.1032,
+    "median_signed_ft": 0.24,
+    "class_acc": 0.461
+   },
+   "P2": {
+    "n": 71,
+    "lakes": 61,
+    "coverage": 0.934,
+    "median_abs_log": 0.083,
+    "median_signed_ft": 0.03,
+    "class_acc": 0.493
+   }
+  },
+  "mixed": {
+   "champion": {
+    "n": 44,
+    "lakes": 40,
+    "coverage": 1.0,
+    "median_abs_log": 0.2486,
+    "median_signed_ft": 1.03,
+    "class_acc": 0.341
+   },
+   "P1": {
+    "n": 25,
+    "lakes": 24,
+    "coverage": 0.568,
+    "median_abs_log": 0.1663,
+    "median_signed_ft": 0.08,
+    "class_acc": 0.72
+   },
+   "champion_refit": {
+    "n": 44,
+    "lakes": 40,
+    "coverage": 1.0,
+    "median_abs_log": 0.2244,
+    "median_signed_ft": 0.84,
+    "class_acc": 0.386
+   },
+   "N1": {
+    "n": 44,
+    "lakes": 40,
+    "coverage": 1.0,
+    "median_abs_log": 0.2365,
+    "median_signed_ft": 0.79,
+    "class_acc": 0.386
+   },
+   "N2": {
+    "n": 44,
+    "lakes": 40,
+    "coverage": 1.0,
+    "median_abs_log": 0.2625,
+    "median_signed_ft": 0.98,
+    "class_acc": 0.409
+   },
+   "C3": {
+    "n": 44,
+    "lakes": 40,
+    "coverage": 1.0,
+    "median_abs_log": 0.1443,
+    "median_signed_ft": 0.3,
+    "class_acc": 0.795
+   },
+   "C6": {
+    "n": 44,
+    "lakes": 40,
+    "coverage": 1.0,
+    "median_abs_log": 0.1854,
+    "median_signed_ft": 0.33,
+    "class_acc": 0.75
+   },
+   "P2": {
+    "n": 25,
+    "lakes": 24,
+    "coverage": 0.568,
+    "median_abs_log": 0.1663,
+    "median_signed_ft": 0.08,
+    "class_acc": 0.72
+   }
+  },
+  "unsupported": {
+   "champion": {
+    "n": 26,
+    "lakes": 22,
+    "coverage": 1.0,
+    "median_abs_log": 0.337,
+    "median_signed_ft": 18.9,
+    "class_acc": 0.846
+   },
+   "P1": {
+    "n": 0,
+    "note": "INSUFFICIENT"
+   },
+   "champion_refit": {
+    "n": 26,
+    "lakes": 22,
+    "coverage": 1.0,
+    "median_abs_log": 0.2436,
+    "median_signed_ft": 10.02,
+    "class_acc": 0.846
+   },
+   "N1": {
+    "n": 26,
+    "lakes": 22,
+    "coverage": 1.0,
+    "median_abs_log": 0.2159,
+    "median_signed_ft": 7.92,
+    "class_acc": 0.846
+   },
+   "N2": {
+    "n": 26,
+    "lakes": 22,
+    "coverage": 1.0,
+    "median_abs_log": 0.3261,
+    "median_signed_ft": 12.97,
+    "class_acc": 0.846
+   },
+   "C3": {
+    "n": 26,
+    "lakes": 22,
+    "coverage": 1.0,
+    "median_abs_log": 0.1962,
+    "median_signed_ft": 7.28,
+    "class_acc": 0.846
+   },
+   "C6": {
+    "n": 26,
+    "lakes": 22,
+    "coverage": 1.0,
+    "median_abs_log": 0.146,
+    "median_signed_ft": 2.52,
+    "class_acc": 0.846
+   },
+   "P2": {
+    "n": 0,
+    "note": "INSUFFICIENT"
+   }
+  }
+ },
+ "c3_guard": {
+  "best_other_in_algal": "N2",
+  "passes": true
+ },
+ "engine": "C3",
+ "routing_choices": {
+  "0": {
+   "clear": "C3",
+   "algal": "N2",
+   "sediment": "P1",
+   "mixed": "C3",
+   "unsupported": "C6"
+  },
+  "1": {
+   "clear": "C3",
+   "algal": "C6",
+   "sediment": "C3",
+   "mixed": "P1",
+   "unsupported": "C6"
+  },
+  "2": {
+   "clear": "C3",
+   "algal": "N2",
+   "sediment": "champion_refit",
+   "mixed": "C3",
+   "unsupported": "C3"
+  },
+  "3": {
+   "clear": "C3",
+   "algal": "N2",
+   "sediment": "P1",
+   "mixed": "C3",
+   "unsupported": "C6"
+  },
+  "4": {
+   "clear": "C3",
+   "algal": "N2",
+   "sediment": "C3",
+   "mixed": "C3",
+   "unsupported": "C6"
+  }
+ },
+ "routed": {
+  "n": 1198,
+  "lakes": 786,
+  "coverage": 0.993,
+  "median_abs_log": 0.1677,
+  "median_signed_ft": 0.22,
+  "class_acc": 0.598
+ },
+ "routing_test": {
+  "routed_same_rows": 0.1677,
+  "engine_same_rows": 0.1691,
+  "relative_gain": 0.008,
+  "diff_ci95": [
+   -0.0108,
+   0.007
+  ],
+  "coverage": 0.993,
+  "stable": {
+   "clear": true,
+   "algal": true,
+   "sediment": false,
+   "mixed": true,
+   "unsupported": true
+  }
+ },
+ "routing_adopted": false,
+ "final_engine": "C3",
+ "feet_authorisation": {
+  "0": [
+   "normal",
+   "stained",
+   "limited"
+  ],
+  "1": [
+   "stained",
+   "limited"
+  ],
+  "2": [
+   "limited"
+  ],
+  "3": [
+   "stained",
+   "limited"
+  ],
+  "4": [
+   "limited"
+  ]
+ },
+ "per_class": {
+  "clear": {
+   "engine": {
+    "n": 268,
+    "lakes": 185,
+    "coverage": 1.0,
+    "median_abs_log": 0.1451,
+    "median_signed_ft": -0.21,
+    "class_acc": 0.631
+   },
+   "production": {
+    "n": 268,
+    "lakes": 185,
+    "coverage": 1.0,
+    "median_abs_log": 0.1967,
+    "median_signed_ft": -1.4,
+    "class_acc": 0.463
+   }
+  },
+  "normal": {
+   "engine": {
+    "n": 286,
+    "lakes": 208,
+    "coverage": 1.0,
+    "median_abs_log": 0.1044,
+    "median_signed_ft": 0.35,
+    "class_acc": 0.636
+   },
+   "production": {
+    "n": 286,
+    "lakes": 208,
+    "coverage": 1.0,
+    "median_abs_log": 0.1188,
+    "median_signed_ft": 0.21,
+    "class_acc": 0.668
+   }
+  },
+  "stained": {
+   "engine": {
+    "n": 173,
+    "lakes": 151,
+    "coverage": 1.0,
+    "median_abs_log": 0.1402,
+    "median_signed_ft": 0.9,
+    "class_acc": 0.295
+   },
+   "production": {
+    "n": 173,
+    "lakes": 151,
+    "coverage": 1.0,
+    "median_abs_log": 0.1469,
+    "median_signed_ft": 0.87,
+    "class_acc": 0.254
+   }
+  },
+  "limited": {
+   "engine": {
+    "n": 173,
+    "lakes": 137,
+    "coverage": 1.0,
+    "median_abs_log": 0.2569,
+    "median_signed_ft": 1.03,
+    "class_acc": 0.324
+   },
+   "production": {
+    "n": 173,
+    "lakes": 137,
+    "coverage": 1.0,
+    "median_abs_log": 0.2966,
+    "median_signed_ft": 1.3,
+    "class_acc": 0.295
+   }
+  },
+  "algal": {
+   "engine": {
+    "n": 94,
+    "lakes": 77,
+    "coverage": 1.0,
+    "median_abs_log": 0.1778,
+    "median_signed_ft": 0.99,
+    "class_acc": 0.447
+   },
+   "production": {
+    "n": 94,
+    "lakes": 77,
+    "coverage": 1.0,
+    "median_abs_log": 0.1961,
+    "median_signed_ft": 1.18,
+    "class_acc": 0.426
+   }
+  },
+  "sediment": {
+   "engine": {
+    "n": 64,
+    "lakes": 54,
+    "coverage": 1.0,
+    "median_abs_log": 0.1357,
+    "median_signed_ft": 0.56,
+    "class_acc": 0.484
+   },
+   "production": {
+    "n": 64,
+    "lakes": 54,
+    "coverage": 1.0,
+    "median_abs_log": 0.1038,
+    "median_signed_ft": -0.04,
+    "class_acc": 0.547
+   }
+  },
+  "mixed": {
+   "engine": {
+    "n": 83,
+    "lakes": 61,
+    "coverage": 1.0,
+    "median_abs_log": 0.194,
+    "median_signed_ft": 0.61,
+    "class_acc": 0.446
+   },
+   "production": {
+    "n": 83,
+    "lakes": 61,
+    "coverage": 1.0,
+    "median_abs_log": 0.2095,
+    "median_signed_ft": 0.91,
+    "class_acc": 0.325
+   }
+  }
+ },
+ "guntersville": {
+  "engine": {
+   "n": 42,
+   "lakes": 10,
+   "coverage": 1.0,
+   "median_abs_log": 0.1282,
+   "median_signed_ft": -0.7,
+   "class_acc": 0.524
+  },
+  "production": {
+   "n": 42,
+   "lakes": 10,
+   "coverage": 1.0,
+   "median_abs_log": 0.2359,
+   "median_signed_ft": -1.47,
+   "class_acc": 0.405
+  }
+ },
+ "platform": {
+  "sentinel-2a": {
+   "n": 501,
+   "diff": 0.0159,
+   "ci95": [
+    -0.0199,
+    0.0604
+   ]
+  },
+  "sentinel-2b": {
+   "n": 674,
+   "diff": -0.0091,
+   "ci95": [
+    -0.0489,
+    0.0338
+   ]
+  },
+  "sentinel-2c": {
+   "n": 31,
+   "diff": -0.1027,
+   "ci95": [
+    -0.1553,
+    0.0411
+   ]
+  }
+ },
+ "engine_production_coef": [
+  -0.6428146582086546,
+  -0.7551537885554485,
+  -0.848691914845564,
+  -0.7448781626674706
+ ]
+}

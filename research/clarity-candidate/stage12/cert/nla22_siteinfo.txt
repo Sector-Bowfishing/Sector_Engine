@@ -1,0 +1,87 @@
+COLUMN_NAME	LABEL	LEGAL_VALUES
+INDEX_SITE_DEPTH	Depth at the index site	
+AG_ECO3	"NARS 3-level reporting region (2015), based on aggregating AGGR_ECO9_2015 reporting regions.  No missing values allowed."	EHIGH|PLNLOW|WMTNS|
+AG_ECO3_NM	NARS 3-level reporting region Name.  No missing values allowed.	Eastern Highlands|Plains and Lowlands|West|
+AG_ECO9	"NARS 9-level reporting region (2015), based on aggregated Omernik Level III ecoregions.  No missing values allowed."	CPL|NAP|NPL|SAP|SPL|TPL|UMW|WMT|XER|
+AG_ECO9_NM	NARS 9-level reporting region Name.  No missing values allowed.	Coastal Plains|Northern Appalachians|Northern Plains|Southern Appalachians|Southern Plains|Temperate Plains|Upper Midwest|Western Mountains|Xeric|
+AREA_CAT6	Lake area categories (6) used in most NLA survey designs. HAND sites also assigned area category. Based on AREA_HA.  No missing values allowed.	"(0,1]| (1,4]| (4,10]|(10,20]| (20,50]|  >50|"
+AREA_HA	Surface area of lake based on NHD polygon.  No missing values allowed.	
+BORD_LAKE	"For a border lake text of two postal codes: MM:NN, where MM is one state code and NN is other state code.  Blank if not a border lake."	ST:ST|'Not_Border'
+CNTYNAME	County name (source ESRI counties based on census 2010).  No missing values allowed.	
+COMID	"NHD common identifier for NLA 2012 sampling frame and subsequent designs. Genrally,  no missing values allowed but it is possible that a few lakes may not be in sample frame if from a state study or are hand-picked lakes. "	
+DES_FTYPE	NLA design feature type (based on NHD feature type)	
+ELEVATION	"Elevation at lake coordinates (LAT_DD_N83, LON_DD_N83) from NHD Digital Elevation Map layer"	
+EPA_REG	EPA Region.  No missing values allowed.	Region_01|Region_02|Region_03|Region_04|Region_05|Region_06|Region_07|Region_08|Region_09|Region_10|
+EVAL_CAT	NLA site evaluation result. No missing values allowed.	
+FCODE	NHD 5-digit code for feature type	
+FED_NONFED	"Ownership divided into federal and non-federal land, based on OWN_NARS variable"	FEDERAL|NON_FEDERAL
+FEOW_ID	Freshwater Ecoregions of the World (2015) code	
+FRAME07	Lake is included or excluded from sample frame for the NLA 2007 survey design. Blank values are not allowed or NA for missing	Exclude|Include| Not Present|
+FRAME12	Lake is included or excluded from sample frame for the NLA 2012 survey design.  Blank values are not allowed or NA for missing. 	Exclude|Include| Not Present|
+FRAME17	Lake is included or excluded from sample frame for the NLA 2017 survey design.   Blank values are not allowed or NA for missing.	Exclude|Include|Not Present
+FRAME17_ID	Sample frame unit identification code assigned by Survey Design staff	
+FRAME17_IDs	Sample frame IDs from 2017 sample frame. May be more than one.	
+FRAME22	"Lake is included or excluded from sample frame for the NLA 2022 survey design.   No missing or \blank\"" values allowed."""	Exclude|Include | Not Present | Include_ExBorder | Exclude_ExBorder
+FRAME22_ID	"Unique sample frame unit identification code assigned by Survey Design staff.  Six-digit numeric code. May be \0\"" if not in NHD or in FRAME22 and not FRAME17. No missing or \""blank\"" values allowed."""	
+FS_EW	Eastern or western US Forest Service land. Not_USFS if not US Forest Service land.  No missing values allowed	East|West|Not_USFS|
+FTYPE	NHD feature type	
+GNIS_ID	Goegraphic Names Information System ID (from NHD)	
+GNIS_NAME	USGS Geographic Names Information System name (from NHD)	
+HUC2	Watershed Boundary Dataset Level 2 Hydrologic Unit Code where lake is located (based on NHDPlusV2 use of HUCs). No missing values allowed.	H01|H02|H03|H04|H05|H06|H07|H08|H09|H10|H11|H12|H13|H14|H15|H16|H17|H18|H19|H20
+HUC2_NM	Watershed Boundary Dataset Level 2 Hydrologic Unit Region Name where lake is located. No missing values allowed.	Arkansas-Red-White Region|California Region|Great Basin Region|Great Lakes Region|Lower Colorado Region|Lower Mississippi Region|Missouri Region|Mid-Atlantic Region|New England Region|Ohio Region|Pacific Northwest Region|Rio Grande Region|Souris-Red-Rainy Region|South Atlantic Region|Tennessee Region|Texas Region|Upper Colorado Region|Upper Mississippi Region|
+HUC8	Watershed Boundary Dataset Level 8 Hydrologic Unit Code where lake is located. No missing values allowed.	
+HUC8_NM	Watershed Boundary Dataset Level 8 Hydrologic  Cataloging Unit Name where lake is located.  No missing values allowed.	
+LAKE_ORGN	"Lake origin, based on evaluation on map or in field"	MAN_MADE|NATURAL|UNCERTAIN|UNKNOWN
+LAT_DD83	"Latitude (based on NAD83 datum) assigned to lake during site selection from NHD-based sample frame. Generally, but not always, represents centriod of lake polygon in NHD.   No missing values allowed."	
+LON_DD83	"Longitude (based on NAD83 datum) assigned to lake during site selection from NHD-based sample frame. Generally, but not always represents centriod of lake polygon in NHD.  No missing values allowed."	
+MAJ_BAS_NM	Major USGS Hydrologic Basins derived from NHDPlus names Text of 16 basin names	Arkansas-White-Red Region|California Region| Great Basin Region|Great Lakes Region|Lower Colorado Region|Lower Mississippi Region|Mid Atlantic Region|Missouri Region|New England Region|Ohio-Tennessee Region|Pacific Northwest Region|Rio Grande-Texas-Gulf Region|Souris-Red-Rainy Region|South Atlantic Gulf Region|Upper Colorado Region|Upper Mississippi Region|
+MAJ_BASIN	Major USGS Hydrologic Basins derived from NHDPlus codes Text of 16 basin codes from 01 to 18 with 05_06 and 12_13 combined preceeded by letter H	H01|H02|H03|H04|H05_06|H07|H08|H09|H10|H11|H12_13|H14|H15|H16|H17|H18
+MIS_BAS_NM	"The hydrologic basin name for lakes in the Mississippi Basin derived from NHDPlus names, or blank for lakes not in the Mississippi Basin Text of 7 basin names or blank"	
+MIS_BASIN	The hydrologic basin code for lakes in the Mississippi Basin derived from NHDPlus codes or blank for lakes not in the Mississippi Basin Text of 7 basin codes with H10 split into H10L and H10U or blank	
+MISS_BASIN	"Within Mississippi Basin or outside, based on MAJ_BAS_NM values"	MISSISSIPPI_BASIN|NOT_MISSISSIPPI_BASIN
+NA_L1CODE	CEC North American Level I ecoregion code.  No missing values allowed.	
+NA_L1NAME	CEC North American Level I ecoregion name.  No missing values allowed.	EASTERN TEMPERATE FORESTS|GREAT PLAINS|MARINE WEST COAST FOREST|MEDITERRANEAN CALIFORNIA|NORTH AMERICAN DESERTS|NORTHERN FORESTS|NORTHWESTERN FORESTED MOUNTAINS|SOUTHERN SEMI-ARID HIGHLANDS|TEMPERATE SIERRAS|TROPICAL WET FORESTS|
+NA_L2CODE	CEC North American Level II ecoregion code. Form is  n.n where leading is L1 and following is level 2  No missing values allowed.	
+NA_L2NAME	CEC North American Level II ecoregion name.  No missing values allowed.	
+NARS_NAME	Name of lake from field evaluation or GNIS NAME if the same.  Missing values allowed.	
+NES_ID	"National Eutrophication Study (NES) lake ID, in the form of a 6 character string, typically 4 numbers followed by XX. If not NES, value is missing or blank."	
+NES_SITE	"Indicator of whether a site is an National Eutrophication Study (NES) lake, with Y indicating NES lake and N or blank indicating not an NES lake."	
+OWN_NARS	Land ownership category used by NARS. Text of 13 land ownership category names. Similar to OWN_TYPE  in USGS PADUS dataset except that Federal_Land is separated into major federal agencies.   No missing values allowed.	BLM|DOD|USFS|FWS|Jointly Owned|Local Government|Native American|Non-Governmental Organization| NPS|Other Fed|Private|Regional Agency|State|
+PANEL_USE	"NLA Panel Assignment.  Text that has form NLAnn_mmXXXn_YYYY  where nn is current cycle year (07, 12, 17, etc), mm is cycle year lake was first selected for sampling, XXXn denotes revisit status, and YYYY denotes base or over sample status.  XXXn equals either RVT2 (if site should be visited twice in current cycle year) or RVT (if site should be visited once in current cycle and was previously visited in a prior cycle year) and is blank otherwise.  YYYY  is either blank (if the lake site is a base site) or equals OverSamp (if the lake site is an over sample site).  Note: For state specific designs, state two letter code is added.  If HAND-picked site, assign as \HAND\""."""	
+PERIM_KM	NHD lake polygon perimeter (kilometers). No missing values allowed	
+PERM_ID	40-char  value that uniquely identifies the occurrence of each feature in The National Map. National Database primary key.	
+PROB_CAT	NLA unequal probability categories used within a stratum. Missing values valid for Hand-picked sites as they are not a site from probability design.	
+PSTL_CODE	"State two letter postal code for site sampled. 50 state postal codes plus AS, MP, GU, PR, VI for American Samoa, Commonwealth of Northern Marianas, Guam, Puerto Rico and Virgin Islands.  No missing values allowed."	
+REACHCODE	NHD Reach code assigned	
+SITE_ID	"The NLA Site ID  for the study and year sampled.  Preferred form is NLAnn_MM-xxxxx  where  nn is current cycle year (07, 12, 17, etc), MM is two letter state code, and xxxxx is between 10001 and 99999. No missing values allowed."	
+SOURCE	"Sample frame source (e.g. NHDPlus, NHD High Res or state sample frames)"	NLA2012Frame Only|NHD High Res Lake Snapshot Only|MN High Res Lake Frame|NLA2017 Hand Picked Not in NLA Frame|NLA2012Frame and NH High Res Lake Frame|NHD High Res Lake Snapshot and NH High Res Lake Frame|
+STATE_PCT	Percent of lake area occurring in STATE. 50 to 100 since lake assigned to state if >= 50%	50 to 100|
+STATECTY	FIPS state and county code.  No missing values allowed	
+STATES	Two-letter codes of all states a lake intersects separated by colons	
+STRATUM	Strata used in the NLA survey design	
+STUDY	"Name of the study.  A unique lake may belong to multiple studies. Text. For NLA all studies are \NLA\"" but have different DSGN_CYCLE"""	NLA|
+TNT_CAT	NLA target status assigned based on lake evaluation for use in national assessments	Target|Non_Target|None
+UNIQUE_ID	"Unique site ID based on location that does not depend on year sampled or any other factor.  Form is NLA_ss_nnnnn  where ss state and nnnnn is number that starts at 10001.   No missing or \blank\"" values allowed."""	
+URBN_NLA07	Lake identified as an urban lake using 2007 definition of Urban. No missing or blank values allowed	Urban|Non-Urban|
+URBN_NLA17	Lake identified as an urban lake using 2017 definition of Urban. No missing or blank values allowed	Urban|Non-Urban|
+URBN_NLA22	"Lake identified as an urban lake using 2022 definition of Urban (HUC12 intersecting Census UAC from 2019).  No missing or \blank\"" values allowed."""	Urban | Non-Urban |
+US_L3CODE	Omernik Level III ecoregion code. No missing values allowed.	
+US_L3NAME	Omernik Level III ecoregion name. No missing values allowed.	
+US_L4CODE	Omernik Level IV ecoregion code. Level III code plus aphabetic ending identifying Level IV subregion. No missing values allowed.	
+US_L4NAME	Omernik Level IV ecoregion name. No missing values allowed.	
+WGT_CAT_NR	NLA categories used to adjust weights for each lake when both sampled and non-sampled (non-response) lakes are included.	
+WGT_DSGN	NLA initial lake weight assigned during site selection. DO NOT USE FOR POPULATION ESTIMATION!	
+XCOORD	x-coordinate from US Contiguous Albers Equal Area Conic projection EXCEPT Hawaii or Alaska lakes which are calculated from Hawaii or Alaska Albers Equal Area Conic projectionNo missing values allowed.	
+YCOORD	y-coordinate from US Contiguous Albers Equal Area Conic projection EXCEPT Hawaii or Alaska lakes which are calculated from Hawaii or Alaska Albers Equal Area Conic projection. No missing values allowed.	
+SITESAMP	Did you sample this site (Y/N)	Y|N
+INDEX_LAT_DD	Lattitude in decimal degrees at index site	
+INDEX_LON_DD	Longitude in decimal degrees at index site	
+DATE_COL	Date of sample collection	
+VISIT_NO	Sequential number of visit to site	|1|2
+PUBLICATION_DATE	Date the dataset was published to the NARS site	
+UID	Unique identifier for the site/visit	
+WGT_TP_NES	"NES adj. weight for estimates for Target Population. Includes weight adjustments to account for sites with unknown status and when lake status is known to be target but not sampled. Note: >0, or 0 if site not to be used for target population estimation"	
+WGT_CAT_NES	NES categories used to adjust weights for each lake.	
+WGT_TP_EXT_NLA	"NLA weight for estimates for extent of resource for target population. Applies to all evaluated sites. Note: >0, or 0 if site not to be used for population estimation"	
+WGT_TP_CORE_NLA	"NLA weight for estimates for target population based on sampled sites. Includes adjustments for sites with unknown status and when lake status is known to be target but not sampled. Note: >0, or 0 if site not used for target population estimation"	
+WGT_CAT_NR_NLA	NLA categories used to adjust weights for each lake when both sampled and non-sampled (non-response) lakes are included.	

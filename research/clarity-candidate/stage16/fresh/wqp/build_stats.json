@@ -1,0 +1,110 @@
+{
+ "built": "2026-10-01T12:35:15",
+ "station_jobs_failed": [],
+ "station_coordinate_sign_fixed": [],
+ "station_coordinates_rejected": {
+  "IDEQ_WQX-BPL3": "stored lon +116.565: flipping the sign lands ~40 km west of Payette Lake (sister sites BPL1/BPL4 sit at -116.06..-116.11), so a digit is also wrong"
+ },
+ "companion_flag_counts": {
+  "comp_secchi_choice=true": 167
+ },
+ "secchi": {
+  "failed_states": [],
+  "drops": {
+   "no_value(Present Above Quantification Limit)": 45,
+   "non_numeric_value": 4,
+   "date_out_of_range": 2,
+   "status_rejected": 2,
+   "junk_le_0m": 1,
+   "no_valid_coordinates": 1
+  },
+  "dedupe": {
+   "same_visit_same_value": 436,
+   "nh_viewscope_reading_with_standard_reading": 196,
+   "same_site_day_time_value_other_visit_id": 4092,
+   "same_place_day_time_value_other_site_id(other org copy)": 0,
+   "uncensored_copy_of_censored_reading_moved": 0
+  },
+  "units_seen": {
+   "m": 6624,
+   "ft": 3031,
+   "cm": 48
+  },
+  "qualifier_codes": {},
+  "flag_sources": {
+   "true: comp_secchi_choice (same visit)": 166,
+   "false: secchi < 'Depth, bottom' (same site+day)": 71,
+   "true: value written as '>' or '+'": 41,
+   "true: comment:bottom visible": 5,
+   "true: comp_secchi_choice (same site+day)": 2
+  },
+  "flag_by_org": {
+   "true: WIDNR_WQX": 168,
+   "false: 21AWIC": 71,
+   "true: SANDIAWQ_WQX": 41,
+   "true: 21VASWCB": 3,
+   "true: 21DELAWQ_WQX": 2
+  },
+  "flag_conflicts_resolved_true": {},
+  "statistical_base_minimum_orgs": {},
+  "time_zones": {
+   "EST": 4654,
+   "CDT": 3108,
+   "EDT": 1284,
+   "": 340,
+   "CST": 198,
+   "MST": 76,
+   "MDT": 33,
+   "PST": 8
+  },
+  "coord_source": {
+   "station": 9701
+  },
+  "visit_coords_over_100m_from_station": {
+   "WIDNR_WQX 100 m-1 km": 1
+  },
+  "rows_by_org_final": {
+   "WIDNR_WQX": 2899,
+   "21VASWCB": 571,
+   "21SC60WQ_WQX": 390,
+   "TCEQMAIN": 312,
+   "11113300": 209,
+   "21GAEPD_WQX": 197,
+   "REDLAKE_WQX": 104,
+   "21NDHDWQ_WQX": 78,
+   "21AWIC": 71,
+   "SANDIAWQ_WQX": 48,
+   "MDEQ_WQ_WQX": 33,
+   "GLEC": 26,
+   "CTVOLMON": 15,
+   "TDECWR_WQX": 11,
+   "OREGONDEQ": 8,
+   "21DELAWQ_WQX": 4,
+   "UTAHDWQ_WQX": 1
+  }
+ },
+ "turbidity": {
+  "failed_states": [],
+  "drops": {
+   "censored_or_not_reported": 126,
+   "negative_value": 33,
+   "censored_or_not_reported(Present Below Quantification Limit)": 9,
+   "qc_blank_or_spike_activity": 6,
+   "status_rejected": 3
+  },
+  "units_kept": {
+   "NTU": 3530,
+   "FNU": 361
+  },
+  "activity_types_kept": {
+   "Sample-Routine": 2037,
+   "Field Msr/Obs": 1749,
+   "Quality Control Sample-Field Replicate": 44,
+   "Quality Control Sample-Lab Duplicate": 43,
+   "Quality Control Sample-Blind Duplicate": 10,
+   "Quality Control Field Replicate Msr/Obs": 8
+  },
+  "exact_duplicates_removed": 471,
+  "same_place_other_site_id_duplicates_removed": 0
+ }
+}

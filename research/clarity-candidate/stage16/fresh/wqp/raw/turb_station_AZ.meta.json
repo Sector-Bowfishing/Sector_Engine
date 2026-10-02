@@ -1,0 +1,17 @@
+{
+ "name": "turb_station_AZ",
+ "endpoint": "Station",
+ "url": "https://www.waterqualitydata.us/data/Station/search?statecode=US:04&siteType=Lake,%20Reservoir,%20Impoundment&characteristicName=Turbidity&startDateLo=01-01-2026&mimeType=csv&zip=no",
+ "headers": {
+  "Content-Type": "text/csv;charset=UTF-8",
+  "Total-Site-Count": "1",
+  "STORET-Site-Count": "1"
+ },
+ "bytes": 1196,
+ "rows": 1,
+ "expected": 1,
+ "ok": true,
+ "seconds": 3.6,
+ "attempt": 1,
+ "fetched": "2026-10-01T12:27:18"
+}

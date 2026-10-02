@@ -1,0 +1,17 @@
+{
+ "name": "secchi_station_MT",
+ "endpoint": "Station",
+ "url": "https://www.waterqualitydata.us/data/Station/search?statecode=US:30&siteType=Lake,%20Reservoir,%20Impoundment&characteristicName=Depth,%20Secchi%20disk%20depth&startDateLo=01-01-2026&mimeType=csv&zip=no",
+ "headers": {
+  "Content-Type": "text/csv;charset=UTF-8",
+  "Total-Site-Count": "11",
+  "STORET-Site-Count": "11"
+ },
+ "bytes": 3750,
+ "rows": 11,
+ "expected": 11,
+ "ok": true,
+ "seconds": 2.9,
+ "attempt": 1,
+ "fetched": "2026-10-01T12:27:57"
+}

@@ -1,0 +1,31 @@
+{
+ "stage": 15,
+ "prereg_frozen_utc": "2026-10-01T17:04:40Z",
+ "files": {
+  "stage15/PREREGISTRATION_STAGE15.md": "8265b7a85ec0f584d92664e1f25aac853d59a051f092a727b019f4ba79453b01",
+  "stage14/engine/engine14.py": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+  "stage14/engine/frozen_engine.json": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+  "stage14/engine/frozen_gbm.pkl": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+  "stage14/unseal/truth14.json": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+  "stage14/cert/aco_manifest.txt": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+  "stage14/cert/wqp_sample.csv": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+  "stage13/cert/blind_sample13.csv": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+  "stage15/engine/engine15.py": "2f1f932c567db554c507a1e140b3310daad651dee8848c7f8a1aa76ad1c012ca",
+  "stage15/engine/semantics15.json": "a5d6da8d05f5f1e841a71eb92661f76195682a49a6a0a01dfed804fc00401fcd",
+  "stage15/analysis/lib15.py": "9baef78a77ac97ce488acc4f90a9a9e8d5e61a6ff0f685b944782e8f4deea34f",
+  "stage15/analysis/dev15.py": "a562ca4a7ba4f4b6cefe12abd0f3fefbcd2af394183624b5840e01220205ff61",
+  "stage15/analysis/dev15.json": "0aa17d143c374b70785d0a51ad7e7e3d6f6946c266ae8670237b18b2c2d8f3a7",
+  "stage15/analysis/floor_diag15.json": "b3fcceb0cea740968ef69949f63d9db653e8224807264f2798b06485d9961450"
+ },
+ "stage14_hash_check": {
+  "stage14/engine/engine14.py": true,
+  "stage14/engine/frozen_engine.json": true,
+  "stage14/engine/frozen_gbm.pkl": true,
+  "stage14/unseal/truth14.json": true,
+  "stage14/cert/aco_manifest.txt": true,
+  "stage14/cert/wqp_sample.csv": true,
+  "stage13/cert/blind_sample13.csv": true
+ },
+ "semantics_frozen_utc": "2026-10-01T17:08:04Z",
+ "note": "Semantics derived from development rows only (dev15.py) and frozen before the certification re-score."
+}

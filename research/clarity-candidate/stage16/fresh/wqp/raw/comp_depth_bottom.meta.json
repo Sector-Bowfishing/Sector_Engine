@@ -1,0 +1,21 @@
+{
+ "name": "comp_depth_bottom",
+ "endpoint": "Result",
+ "url": "https://www.waterqualitydata.us/data/Result/search?countrycode=US&siteType=Lake,%20Reservoir,%20Impoundment&characteristicName=Depth,%20bottom&startDateLo=01-01-2026&mimeType=csv&zip=no&dataProfile=resultPhysChem",
+ "headers": {
+  "Content-Type": "text/csv;charset=UTF-8",
+  "Total-Site-Count": "37",
+  "STORET-Site-Count": "37",
+  "Total-Activity-Count": "89",
+  "STORET-Activity-Count": "89",
+  "Total-Result-Count": "89",
+  "STORET-Result-Count": "89"
+ },
+ "bytes": 38380,
+ "rows": 89,
+ "expected": 89,
+ "ok": true,
+ "seconds": 1.0,
+ "attempt": 1,
+ "fetched": "2026-10-01T12:27:09"
+}

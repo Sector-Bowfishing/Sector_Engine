@@ -1,0 +1,199 @@
+{
+ "R1": {
+  "rows_processed": 1582,
+  "aco_valid_rate": 0.762,
+  "sen2cor_valid_rate": 1.0,
+  "by_class": {
+   "clear": 0.77,
+   "normal": 0.751,
+   "stained": 0.762,
+   "limited": 0.755
+  },
+  "by_set": {
+   "E": 0.709,
+   "F": 0.738,
+   "N": 0.823
+  },
+  "not_processed": 0
+ },
+ "R2": {
+  "same_day": {
+   "n": 200,
+   "lakes": 158,
+   "aco_median_abs_eT": 0.258,
+   "aco_median_eT": -0.116,
+   "s2c_median_abs_eT": 0.245,
+   "s2c_median_eT": 0.083,
+   "diff": 0.013,
+   "diff_ci": [
+    -0.0333,
+    0.0616
+   ]
+  },
+  "within_1_day": {
+   "n": 524,
+   "lakes": 337,
+   "aco_median_abs_eT": 0.251,
+   "aco_median_eT": -0.134,
+   "s2c_median_abs_eT": 0.21,
+   "s2c_median_eT": 0.042,
+   "diff": 0.041,
+   "diff_ci": [
+    0.0045,
+    0.0764
+   ]
+  },
+  "by_class_same_day": {
+   "clear": {
+    "n": 66,
+    "lakes": 55,
+    "aco_median_abs_eT": 0.259,
+    "aco_median_eT": 0.183,
+    "s2c_median_abs_eT": 0.391,
+    "s2c_median_eT": 0.376,
+    "diff": -0.132,
+    "diff_ci": [
+     -0.2073,
+     -0.0744
+    ]
+   },
+   "normal": {
+    "n": 59,
+    "lakes": 51,
+    "aco_median_abs_eT": 0.19,
+    "aco_median_eT": -0.139,
+    "s2c_median_abs_eT": 0.174,
+    "s2c_median_eT": 0.026,
+    "diff": 0.015,
+    "diff_ci": [
+     -0.0865,
+     0.0927
+    ]
+   },
+   "stained": {
+    "n": 35,
+    "lakes": 33,
+    "aco_median_abs_eT": 0.235,
+    "aco_median_eT": -0.208,
+    "s2c_median_abs_eT": 0.134,
+    "s2c_median_eT": -0.002,
+    "diff": 0.101,
+    "diff_ci": [
+     0.0284,
+     0.1655
+    ]
+   },
+   "limited": {
+    "n": 40,
+    "lakes": 35,
+    "aco_median_abs_eT": 0.325,
+    "aco_median_eT": -0.312,
+    "s2c_median_abs_eT": 0.23,
+    "s2c_median_eT": -0.177,
+    "diff": 0.095,
+    "diff_ci": [
+     0.0284,
+     0.2171
+    ]
+   }
+  },
+  "by_insitu_type_same_day": {
+   "clear": {
+    "n": 108,
+    "lakes": 91,
+    "aco_median_abs_eT": 0.224,
+    "aco_median_eT": -0.022,
+    "s2c_median_abs_eT": 0.276,
+    "s2c_median_eT": 0.203,
+    "diff": -0.052,
+    "diff_ci": [
+     -0.1302,
+     -0.0049
+    ]
+   },
+   "algal": {
+    "n": 20,
+    "lakes": 18,
+    "aco_median_abs_eT": 0.293,
+    "aco_median_eT": -0.279,
+    "s2c_median_abs_eT": 0.175,
+    "s2c_median_eT": -0.082,
+    "diff": 0.118,
+    "diff_ci": [
+     -0.0198,
+     0.2239
+    ]
+   },
+   "sediment": {
+    "n": 18,
+    "lakes": 16,
+    "aco_median_abs_eT": 0.256,
+    "aco_median_eT": -0.229,
+    "s2c_median_abs_eT": 0.148,
+    "s2c_median_eT": -0.028,
+    "diff": 0.108,
+    "diff_ci": null
+   },
+   "mixed": {
+    "n": 27,
+    "lakes": 25,
+    "aco_median_abs_eT": 0.332,
+    "aco_median_eT": -0.33,
+    "s2c_median_abs_eT": 0.204,
+    "s2c_median_eT": -0.181,
+    "diff": 0.128,
+    "diff_ci": [
+     0.045,
+     0.2011
+    ]
+   }
+  },
+  "reflectance_improved": false
+ },
+ "R3": {
+  "acolite": {
+   "n": 200,
+   "var_eS": 0.1066,
+   "share_radiometric": 0.601,
+   "share_conversion": 0.399,
+   "median_abs_eS": 0.219
+  },
+  "sen2cor": {
+   "n": 200,
+   "var_eS": 0.1175,
+   "share_radiometric": 0.65,
+   "share_conversion": 0.35,
+   "median_abs_eS": 0.177
+  }
+ },
+ "R4": {
+  "sentinel-2b": {
+   "n": 307,
+   "aco_median_eT": -0.12,
+   "s2c_median_eT": 0.032
+  },
+  "sentinel-2a": {
+   "n": 204,
+   "aco_median_eT": -0.139,
+   "s2c_median_eT": 0.062
+  },
+  "sentinel-2c": {
+   "n": 13,
+   "aco_median_eT": -0.259,
+   "s2c_median_eT": -0.169
+  },
+  "s2c_rows_harmonised_vs_raw": {
+   "n": 36,
+   "B02": 1.092,
+   "B04": 1.151,
+   "B05": 1.219,
+   "B11": 0.557
+  }
+ },
+ "band_ratio_aco_over_s2c": {
+  "blue": 0.672,
+  "green": 0.828,
+  "red": 0.701,
+  "re1": 0.761
+ }
+}

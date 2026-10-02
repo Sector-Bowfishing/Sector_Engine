@@ -1,0 +1,1091 @@
+{
+ "repository": "https://github.com/acolite/acolite",
+ "commit": "f73cbe73887c2b114d9d3c70865effee73871525",
+ "tree": "90595f1e01223cec10d920e6dde6afa4f3ba43af",
+ "commit_date": "2026-04-21T09:50:02+02:00",
+ "version_string": "Generic GitHub Clone (ACOLITE 20260421.0 source at the commit above)",
+ "status_porcelain_clean": true,
+ "lut_url_in_config": "https://raw.githubusercontent.com/acolite/acolite_luts/main (a moving branch: the exact files are pinned below by sha256)",
+ "lut_files": 269,
+ "lut_bytes": 1893690262,
+ "lut": {
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-1.nc": {
+   "bytes": 920633,
+   "sha256": "06db791598b6d00a10b2179e7c0c29f345f3f8587914b239ff63014bfbef7775"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-10.nc": {
+   "bytes": 920633,
+   "sha256": "3090049f518677267651516533f20eb7715b56a13bb9867e1fbdee906c8ec8cd"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-11.nc": {
+   "bytes": 920633,
+   "sha256": "24610828bde9186b59ac81958945976f99be93aa9293c54a42d4d40181576601"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-12.nc": {
+   "bytes": 920633,
+   "sha256": "fd247a38bdf9449126c29d165acd0aa93d7154533ad1af924a3526dc5e8c2d00"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-2.nc": {
+   "bytes": 920633,
+   "sha256": "6b2e514d20add81631103fdc8e58ba49ebe20659aacf02dd51b76a3ec9bda5a4"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-3.nc": {
+   "bytes": 920633,
+   "sha256": "05616857b294880556797328dc72bd0deef5edacd0c64bbfdfcd7cb977e989df"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-4.nc": {
+   "bytes": 920633,
+   "sha256": "1980b7a7b811c93d43b2a22823e78a0cc1e24c049cbcd6ac94eb2a35ae084ab7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-5.nc": {
+   "bytes": 920633,
+   "sha256": "5f7050b0cf7c7f9ac7dd2a81b8040a3d415eb30aee219f861fd4e04b5505181e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-6.nc": {
+   "bytes": 920633,
+   "sha256": "5c1ece0ec2638dad08b7e65dcf069335d7d821573f2f652dcb3f04b8b57ed53d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-7.nc": {
+   "bytes": 920633,
+   "sha256": "be5a5316f425f057924b19c5a74b254ca71e2d17f7916815645b5181be85fa59"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-8.nc": {
+   "bytes": 920633,
+   "sha256": "6bd6023f3fc5107f41b9dd68c596c935131787356706b88e352788cd974a4e2f"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-8A.nc": {
+   "bytes": 920633,
+   "sha256": "c252d4a69d086097c6e8a9824d0ca423fbb5e8865c68a13a0c2c34ae6ba9c415"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+ffss_toa-9.nc": {
+   "bytes": 920633,
+   "sha256": "522bf286eb281ba70a020b4a37e77cc65a6ac3ec3ea91d55967ebbd1a0140aab"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-1.nc": {
+   "bytes": 7281229,
+   "sha256": "5be2239f01bbbd17216086f261e8e14f22e02dd4378e4c8e0cb197215f7dd710"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-10.nc": {
+   "bytes": 7281229,
+   "sha256": "3b727ed6c4b09734584c6cd3d96f0c915ce7bae75f41f9c37472f1dfda03e033"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-11.nc": {
+   "bytes": 7281229,
+   "sha256": "e5d464c067cd1f2297ecab3027d3a78a03e60b8e838d20b104d91d3f5198bb42"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-12.nc": {
+   "bytes": 7281229,
+   "sha256": "5e2be97c1e29805e2d7a0a97aa9399526d35fcac7ed7e287e0ea3bdd36dd8bae"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-2.nc": {
+   "bytes": 7281229,
+   "sha256": "09e2dc8ccc1b9d889318a6b8212cb7cad9fcb71017d822617c87bedc5aaef23e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-3.nc": {
+   "bytes": 7281229,
+   "sha256": "02a6e27134cd3356f8ab4ffb4a2c316881297b40f95444ca4b2df3cb52ebc69e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-4.nc": {
+   "bytes": 7281229,
+   "sha256": "2ad8a9f52db89612a1c66305e4ae05f6bfe9abafb450cab93b6d2f3f60c92d11"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-5.nc": {
+   "bytes": 7281229,
+   "sha256": "ae6906d080e2d0831d9e0d08c3e7ceaebb5e7b733fae172b1ac3c499f001a474"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-6.nc": {
+   "bytes": 7281229,
+   "sha256": "414344dab0405bac9fde8e657727f1490debc1e76eda0de2395a2e9321b9b6a8"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-7.nc": {
+   "bytes": 7281229,
+   "sha256": "0f61c32f4f5b31eea1b91825e8be58d15accf0ca6594ad49772a25dac6897209"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-8.nc": {
+   "bytes": 7281229,
+   "sha256": "af2c144dfcbd2cf9879b8c8db87077041c3b783f98639abdb6a7caf0b2085292"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-8A.nc": {
+   "bytes": 7281229,
+   "sha256": "e3ada182040d80fd32893348814c8541064731f95aa3bf37ab719d06cc3b789b"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsky_t-9.nc": {
+   "bytes": 7281229,
+   "sha256": "d665298ee337533f7e9ed27e791a12a784d0ac97d479a459db311875e6db0080"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-1.nc": {
+   "bytes": 920633,
+   "sha256": "99d399f75c7cd2be1f29b6a96bced0b0138a179de9bf3d5295b7889a22e58542"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-10.nc": {
+   "bytes": 920633,
+   "sha256": "9cde227a56e05a0bf949519e06566a7fe5239ef0d9db5db9ea98c0133b01c7ca"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-11.nc": {
+   "bytes": 920633,
+   "sha256": "388301ebc0a3c5cc148031664ba86e4cf0956c9139c8374d5bdee274e6b9d37d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-12.nc": {
+   "bytes": 920633,
+   "sha256": "0e999c173d36acbabacb94b1c2088f17dba786d8948ffc2e61ba1e01feeccde6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-2.nc": {
+   "bytes": 920633,
+   "sha256": "392f783b3143a453966aab7185e940bde6cf215b8c1cb876efa73cf37e12ab55"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-3.nc": {
+   "bytes": 920633,
+   "sha256": "a49c671b6af2ac578110958480b9702ec7d38a2f62fe84bc0dc505684fe7fd56"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-4.nc": {
+   "bytes": 920633,
+   "sha256": "d6a5e7899cf94502ef2f111e0c8ce91317a1d2cdd9ce8a1c25b8f821d57adcd6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-5.nc": {
+   "bytes": 920633,
+   "sha256": "6d55d747cddbe5bde8133239cde94d984048971795e9edaa851d9328549af445"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-6.nc": {
+   "bytes": 920633,
+   "sha256": "94d7f565f0e979b1614d849adcce39cbb0a761368e2737246629f8d1ce072213"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-7.nc": {
+   "bytes": 920633,
+   "sha256": "562c18231e992ede7e6b9241d3654687bfacd473e571d02a457498e146925aec"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-8.nc": {
+   "bytes": 920633,
+   "sha256": "a3042d513fde5b2caa687ca3112e94bfacd7f41472fb9bd91b5959ff21f57ef6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-8A.nc": {
+   "bytes": 920633,
+   "sha256": "f6071eebf69f173de141219930ae8824bee26311595a28a4024a565e17c1b2a9"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2A_MSI-romix+rsurf-9.nc": {
+   "bytes": 920633,
+   "sha256": "e5151ed575345d0bb153d97132ccd95409c6e3240f540583f63e074f3c8e1124"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-1.nc": {
+   "bytes": 920633,
+   "sha256": "3fddd6ca7f5a43838a789aa0d23590fa1bd310cac6179ec9cd3ffca3ad867aa2"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-10.nc": {
+   "bytes": 920633,
+   "sha256": "7f55295e5eff46a062db388f0ff44314e0b59e8968d3a0b3cfbefec64b8400c8"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-11.nc": {
+   "bytes": 920633,
+   "sha256": "0ccd9fdd97771eb47ca8fd254f793be63544412b14341b142f072486cea78fd9"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-12.nc": {
+   "bytes": 920633,
+   "sha256": "f6c419c4bbe1ba8f4661202010ae7155c58e759aed9ae6560f188573a7c97e71"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-2.nc": {
+   "bytes": 920633,
+   "sha256": "0e9218e9a3cffbec902487e0b2ce53d4ee3d3a5425e4fe163f4368a20f9885fd"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-3.nc": {
+   "bytes": 920633,
+   "sha256": "fb322c405e963eec5934c4868628de1f87fc8e6264fb56a5731227da5f1e7309"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-4.nc": {
+   "bytes": 920633,
+   "sha256": "b9399d293ddf9c3c400586b48feccab6fc8f4ff57bd9ad98e99ee7318a86f5db"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-5.nc": {
+   "bytes": 920633,
+   "sha256": "9b9b6da09a139838bff34edd99f9bb4cbed66b772cb0d5f698e59c50d170d781"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-6.nc": {
+   "bytes": 920633,
+   "sha256": "008047ab26c2bd267a4bd6145cfc3b9c0f8f6177e3f261a7addbef851679f3a7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-7.nc": {
+   "bytes": 920633,
+   "sha256": "14c61b8f5f6157aa18f4084967ce514871114ad172b3f007494b5d5862989cea"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-8.nc": {
+   "bytes": 920633,
+   "sha256": "8aeaa64e2467228d57efdf35e1531fd5bcf4f1b67fd8aa603ad4117f4a391fb1"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-8A.nc": {
+   "bytes": 920633,
+   "sha256": "a4feb431808c10655d4044327b1d2e02738a285a6ef7bc08f32f1ac6e5e58d97"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+ffss_toa-9.nc": {
+   "bytes": 920633,
+   "sha256": "7429dd4bc5ea250c232403e0d195ab013a715faaccc4403066cdfb846b743fad"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-1.nc": {
+   "bytes": 7281229,
+   "sha256": "e7f64259c0f1b5819228899bf65f95c5ae0814156d0b0303542fed8669f08def"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-10.nc": {
+   "bytes": 7281229,
+   "sha256": "3e21da52e5bd2af5538da0ebb690096abde2301dd878703647f0e0b33929e70a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-11.nc": {
+   "bytes": 7281229,
+   "sha256": "7572a35e728d216f43ccf11ff933383b0a1574873f246907d822385b1f658e4a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-12.nc": {
+   "bytes": 7281229,
+   "sha256": "99d6f041a4f6bf75c40b1cd12d0d5605d24d21749056de71175c1bee21d69c8d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-2.nc": {
+   "bytes": 7281229,
+   "sha256": "e6434709349cd05d97171eb0e38509e0c612c8149d374a6851d30992a55a047c"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-3.nc": {
+   "bytes": 7281229,
+   "sha256": "e0215558485c10b54b12ee14897b9d1ad08b111f45d7c70bdde83754cd637154"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-4.nc": {
+   "bytes": 7281229,
+   "sha256": "96c72a675050ff225c8ea14ea4bd94d32bff27b662bcfa704f985dd397141ad9"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-5.nc": {
+   "bytes": 7281229,
+   "sha256": "87e7b780e2805dc3cc80994e7e5fd29b5e47d8ebb3eaad6d487b47ab8f9c082b"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-6.nc": {
+   "bytes": 7281229,
+   "sha256": "78935c2ecfd7c506f47684c3672ee254ade728cde5746ff5b1a2ca0c804bb60d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-7.nc": {
+   "bytes": 7281229,
+   "sha256": "050baf949533713ad3c22b9e28cb6ea6938c49ed8d1df4a95d0d6c2b3841b5b8"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-8.nc": {
+   "bytes": 7281229,
+   "sha256": "3eda21206ad6a1be6caa27e8d947aa237e447f39b5aaab409a00acd5721ced43"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-8A.nc": {
+   "bytes": 7281229,
+   "sha256": "ea93ac9ac667c6efc247d77ca4f8b96f3d426b1b43d9e6139c09d5946cc64ac2"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsky_t-9.nc": {
+   "bytes": 7281229,
+   "sha256": "f6f596184cd34edfc9486611930505b4aea1a940386fa59095ed497315e15446"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-1.nc": {
+   "bytes": 920633,
+   "sha256": "958fef8bf58adfa6099ab8c11ac042635ec854ed8011f01898a41c4abb752367"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-10.nc": {
+   "bytes": 920633,
+   "sha256": "0ea23921b928dce7ab7a3b199605380deac093b0c751699cb480bc013649b653"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-11.nc": {
+   "bytes": 920633,
+   "sha256": "30b9005f2b32fc97e9a6292fbf09b167ee48a643244b01e711a7f3a1dc9c53db"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-12.nc": {
+   "bytes": 920633,
+   "sha256": "27a8b965f4a463851b466e28f4259cf7bbc62fde42263c0234c898cac57f3a1d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-2.nc": {
+   "bytes": 920633,
+   "sha256": "1cf6bb47b5174c3ec1ef050b6a7f9d07a36dc8966aa581ee5866db823d59f808"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-3.nc": {
+   "bytes": 920633,
+   "sha256": "19ccbf7df583fd9074ad8689906e7d51b9701b55212c493fb4d5326ab2664f60"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-4.nc": {
+   "bytes": 920633,
+   "sha256": "f20e2278f3eccd6f638cda496ab8cc7a1081a0918495a1c1f299cce86101e864"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-5.nc": {
+   "bytes": 920633,
+   "sha256": "1bc871f715f0474236f1942e062acf26c5285036fd0d4702b70a319dd35e2a78"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-6.nc": {
+   "bytes": 920633,
+   "sha256": "126e28e6a732040bf5dd0b569a6f8926fdd8feff4b496cba7e1438287bab615b"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-7.nc": {
+   "bytes": 920633,
+   "sha256": "e29a74b5e8bdaa7163d1a85efc4ee9b77bdab1c1f9afc34281418d9f83695fbd"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-8.nc": {
+   "bytes": 920633,
+   "sha256": "31e963fb5e0b4d8c1ca32f1401713e5ae14597e85946daf6a53aef53394bfd1d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-8A.nc": {
+   "bytes": 920633,
+   "sha256": "53cca290c38ba6e6012a6b85c3e99edc47a0846767ff898cc3f0330be2a91433"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2A_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2A_MSI-romix+rsurf-9.nc": {
+   "bytes": 920633,
+   "sha256": "ec83dfc0e7ba4b4954c80b40d403c4ed48b1d3112832608e42d5ca347016686a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-1.nc": {
+   "bytes": 920633,
+   "sha256": "936757fdf709b8adb563276cbbd018c4d7eae65e408c82cd1888221bac8aac29"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-10.nc": {
+   "bytes": 920633,
+   "sha256": "a829f1751cffc3de90788ed0bb54c07372049974b57417b6387b6a3fb10509ae"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-11.nc": {
+   "bytes": 920633,
+   "sha256": "9bf333eebdad7d939c79526ff1875c23826ac2a8ee265f24ba290415033c76ed"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-12.nc": {
+   "bytes": 920633,
+   "sha256": "3372087457c45240ab4aea7519dc64a39164f2bca2d3444970c2c4789ef0b1a7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-2.nc": {
+   "bytes": 920633,
+   "sha256": "482ae8ec27566da4e1158b564d294a4ea72dc8225335bb368aadbd3548842756"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-3.nc": {
+   "bytes": 920633,
+   "sha256": "c9b830b472faff952ad86c18f02aa88e2a72ab9d3135516a66eabc848553db2e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-4.nc": {
+   "bytes": 920633,
+   "sha256": "34c1d20d45ae60e5475d0f6bc5492a3aa07f29947398c5bc5162a1fd22d2cb1b"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-5.nc": {
+   "bytes": 920633,
+   "sha256": "d66d3021aa70bfeefbc7db978bbbbdce42c7b7c2204ed69f109803c2ad8d08d1"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-6.nc": {
+   "bytes": 920633,
+   "sha256": "e4e22e2a4ed43a72241fbbf8aafdfbba323dc2dc1d82cdebdbe69473526a22af"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-7.nc": {
+   "bytes": 920633,
+   "sha256": "01785c5a721b8ac4a2c6c82b27ec6d619b6599cc0db15f7c64c12a3cea20a262"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-8.nc": {
+   "bytes": 920633,
+   "sha256": "19d59362d92cee9b5dddd07206768e08653337ba0d19b15ad3ecd5e030ac1138"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-8A.nc": {
+   "bytes": 920633,
+   "sha256": "72d980ca90028d3ac24068035e1d3a2500ce12a6de093ddab4a187e4798dfee0"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+ffss_toa-9.nc": {
+   "bytes": 920633,
+   "sha256": "66cc0759ecd905c492ad7a9470fa7e6f19ea94e52f20d0317b7bd154b47c2bc2"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-1.nc": {
+   "bytes": 7281229,
+   "sha256": "a9d26e5de71a4d02a522fa2a5c2a9e72bf051a5849736122e717d7dafc7af727"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-10.nc": {
+   "bytes": 7281229,
+   "sha256": "963f70ee400930b40c1c239a523d6858e384d4aab167e13c48fa83622548c2ee"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-11.nc": {
+   "bytes": 7281229,
+   "sha256": "79fc52476ebb22382ca793d68dfe8c4306373f732332bf6209d11bb9fb4a9f37"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-12.nc": {
+   "bytes": 7281229,
+   "sha256": "c5fe868cd8d3633a7829a2a1533728f50193a8d46d48fc288ea3e9951b61af91"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-2.nc": {
+   "bytes": 7281229,
+   "sha256": "a80d5cdf5f514e4dfca4f6993f82c8580e1523f40f9af9ff1beb9e9ed331576f"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-3.nc": {
+   "bytes": 7281229,
+   "sha256": "0b5e01a865ac45ba59f67b433af2940ba46f9d9b1c44b06b6baeae4db051bb97"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-4.nc": {
+   "bytes": 7281229,
+   "sha256": "72acf6875994e8890af0d67986ad9a5a0e9d569c78b67260def98e55c89f8bdd"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-5.nc": {
+   "bytes": 7281229,
+   "sha256": "26bf5cbb12654e3c88259f744f7fae68815aeecf88a8b1d3e97147d3756b5f45"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-6.nc": {
+   "bytes": 7281229,
+   "sha256": "f417b6a37ecf1fde31a58f4185d988a04d79094146a797ab2d15520488cd1ba2"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-7.nc": {
+   "bytes": 7281229,
+   "sha256": "06724c69709796115ed4d9ce67841d13d47c1ac2f7ef0644d15be351715d8b95"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-8.nc": {
+   "bytes": 7281229,
+   "sha256": "dc1e6920a02c1e579c1b2fa5a003881dff2a6fdc63de32817df458e3ad84d938"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-8A.nc": {
+   "bytes": 7281229,
+   "sha256": "e573867265d22fdc9467f90f66564b65c777d87b5dc8365212fd27e6931b8898"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsky_t-9.nc": {
+   "bytes": 7281229,
+   "sha256": "57d73e46d64cfee1f291b0871c4429c1e252866d79ec3c2946e495475effe270"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-1.nc": {
+   "bytes": 920633,
+   "sha256": "8f7747ab4f3ff5ba53f74db971702b5297e89f9decbd5624081267b0538f6bcc"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-10.nc": {
+   "bytes": 920633,
+   "sha256": "4a296c13553fca520046c0b4344d28e7a172fdea660eb95cbec7eeee6ca1ba90"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-11.nc": {
+   "bytes": 920633,
+   "sha256": "7f2add409d842fc6a2b93651a0dfe8e5ef4df1049dcd9857664cb659f709d521"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-12.nc": {
+   "bytes": 920633,
+   "sha256": "a38a35f074fe93ba81a665968db1f933f830701f35155d656979018820436fc3"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-2.nc": {
+   "bytes": 920633,
+   "sha256": "638c035bb95da56dbb7bc6eb14c1c46d284becf3903d6e490b8421c53122b437"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-3.nc": {
+   "bytes": 920633,
+   "sha256": "49df6e09b0b93c61bd411eedde5ccb357f307e340e3b855fdf815193be080031"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-4.nc": {
+   "bytes": 920633,
+   "sha256": "f9a23a74267a24a011cc317b7f925cf95dec53426089ebf41644544397b95e1c"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-5.nc": {
+   "bytes": 920633,
+   "sha256": "0d1b6e48dbb4ec4c610d4b2c300c697cf18646146bcbcf52ae9f85f1be3f9926"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-6.nc": {
+   "bytes": 920633,
+   "sha256": "148521904aeab27fbbb34193d0febc2dee21753088ad910df62f7a1576514f0b"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-7.nc": {
+   "bytes": 920633,
+   "sha256": "c9c39eed9dbdbfe0ecfaf6c8da93139e71f959a045e1e302787aafc03db5ea95"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-8.nc": {
+   "bytes": 920633,
+   "sha256": "cff10f913bc44ae01bb8cd4335983bde8786fed2e1859bacea860298580505cf"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-8A.nc": {
+   "bytes": 920633,
+   "sha256": "492e8b8e2409e691513861f11fcca0cefdddb80d95f8e068c785ad715239d8bf"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD1-reverse-S2B_MSI-romix+rsurf-9.nc": {
+   "bytes": 920633,
+   "sha256": "6a79fd8fe50cdc7fc6ac31f50acc5d9f3d6809f2cd4ec71b6c09af23d07b3ad6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-1.nc": {
+   "bytes": 920633,
+   "sha256": "4db729ac070bd1808bb9ae9653af153fba21c3eee1964b805fcda8c87caf8972"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-10.nc": {
+   "bytes": 920633,
+   "sha256": "50e6b9f40adf0cff9b04a45cd84a00adcca70e2fb2d1daa4ceb370d354b003e1"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-11.nc": {
+   "bytes": 920633,
+   "sha256": "702b5aaf2291fb99ca084a2314c540a0a415f1b286fa1e3d85dd1d1c29369d74"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-12.nc": {
+   "bytes": 920633,
+   "sha256": "13f3c4899bda684a66cbfece92172bc244dcd3c43f9ea192e150f02a9031e785"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-2.nc": {
+   "bytes": 920633,
+   "sha256": "20f704cedc9f7539953a8dcd3651d840246f6a3b95fac123090249e95b692c7a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-3.nc": {
+   "bytes": 920633,
+   "sha256": "4110ab2a0ead673e29863b33357c756ac84abe36fb308031a9188e1a49336dc2"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-4.nc": {
+   "bytes": 920633,
+   "sha256": "1e23004b314ef63f844efe15f785229e9585dfccb569d0d63a721933fe9e4b11"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-5.nc": {
+   "bytes": 920633,
+   "sha256": "c0e1deba59b3e38b0ef6d01b168e4fb9c15b7d31e7cbc19c79f29a56d520e018"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-6.nc": {
+   "bytes": 920633,
+   "sha256": "4f63fb2bffa8e5cd75b65759dd1e385800f77177d104f1ffcae55cdb9c4c807c"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-7.nc": {
+   "bytes": 920633,
+   "sha256": "f5db73e2b48da97f2dca05cf103db7875801fbe7be43dab16488cf8fc54007d0"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-8.nc": {
+   "bytes": 920633,
+   "sha256": "56844e8699180b290eb990edddf9dfa481c192f110ef9537eb10842c8c27d734"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-8A.nc": {
+   "bytes": 920633,
+   "sha256": "102028b1cf8a13a7c33dc2f0a95416de010cfa4e00232c5594a7bfdfc3726ef5"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+ffss_toa-9.nc": {
+   "bytes": 920633,
+   "sha256": "5dcd11a9987265c9f62cc9be8b29f16faf9438ed98ae32ec4fafed6c47f3beee"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-1.nc": {
+   "bytes": 7281229,
+   "sha256": "64d30e2e308a9d3c0a391fbd0fcb95066ed58320d1be6024532fa97fe21b568a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-10.nc": {
+   "bytes": 7281229,
+   "sha256": "54fa4eac540492452c8be4a4f7378b5c22a76630551cf324cc5a7ff30bfe5405"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-11.nc": {
+   "bytes": 7281229,
+   "sha256": "308e5ccd2ebb37980dd347046999183a5b2ea57cb5f4124992901830e388c421"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-12.nc": {
+   "bytes": 7281229,
+   "sha256": "790849e982a83469fd7f7664f1f53522907f32446b06784394bcee6ff1af6835"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-2.nc": {
+   "bytes": 7281229,
+   "sha256": "d9fa644c2d4e2d808d7f9190160a7a73e5ec0f8c3708f518d5615af0777f2445"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-3.nc": {
+   "bytes": 7281229,
+   "sha256": "7c6f9ecf06cb9dab93323912e488b52e4261e165bf07b584119d6958fd837ed6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-4.nc": {
+   "bytes": 7281229,
+   "sha256": "53986c696f26c2bac64d586f9052fa0d1be4515eb20252bc8a46f7875ff3ee6e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-5.nc": {
+   "bytes": 7281229,
+   "sha256": "7a1af765461676a2d0f1d7ca92b088a2be279e2d8518b876a67de711c9c0d50a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-6.nc": {
+   "bytes": 7281229,
+   "sha256": "e406daa725c430b7606bc405d6b225443bb87ada1b9eeddcac24e82efe0acb3b"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-7.nc": {
+   "bytes": 7281229,
+   "sha256": "600a96dd8373d5737fac227e13546c3a4634a6bc27fc672db30ae7473be5047f"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-8.nc": {
+   "bytes": 7281229,
+   "sha256": "b433bce9843dfe1d5a5b60f10a7f06ec155e69541ed6486383f5b4bf56b1b536"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-8A.nc": {
+   "bytes": 7281229,
+   "sha256": "d685cca09ba36790d5e7f1cba8c66c5ec7d80382e2fa2f7abdae8b6c16080e36"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsky_t-9.nc": {
+   "bytes": 7281229,
+   "sha256": "47015f6aee83ffc5bfb5329c5ea5e6fcc534aac766cfe7c84fb8f462aa49cdec"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-1.nc": {
+   "bytes": 920633,
+   "sha256": "995baaeeb95b44a3b80e05012f16cf3d5309c349d07313c67390cfe17c50b0c5"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-10.nc": {
+   "bytes": 920633,
+   "sha256": "d8b45c61f0d92e58c9c0db6bf8d90cf05c45a8943e5f2d48c8fdfa957f434c89"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-11.nc": {
+   "bytes": 920633,
+   "sha256": "3ce141d7f8fc91b6a21072d76d9aefb40ed61ae6b311aa7e80818d2dc695770e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-12.nc": {
+   "bytes": 920633,
+   "sha256": "0c8ccc84aeabfc1c76ea2b2bddb4be604c685114fd99977b8496f515aef8f843"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-2.nc": {
+   "bytes": 920633,
+   "sha256": "bf126b6887cd12a59fb65d878fb338e32f1a05740f8404bb65031f5d71d06c03"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-3.nc": {
+   "bytes": 920633,
+   "sha256": "bddc6e01b4dba3629a9085409ce1c0603dedb0e5c5012b15d41a77b44d2b6093"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-4.nc": {
+   "bytes": 920633,
+   "sha256": "baa13e11e8a50ffb985c9c287fc96689bce7b9cb1e8a935ff7caed5e1eab9c06"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-5.nc": {
+   "bytes": 920633,
+   "sha256": "6d73eefc1b087f1aca18e4cf09521c91d74d51c2ef3adaacebc72ef550739d65"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-6.nc": {
+   "bytes": 920633,
+   "sha256": "84f021980ee72d5a35fbdc3f7cf671ece85b4457b7da2150360857164e0576f1"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-7.nc": {
+   "bytes": 920633,
+   "sha256": "4eb8776f65342e9cfd53416017e15b344dd65f9054b003b22867c936e590f20f"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-8.nc": {
+   "bytes": 920633,
+   "sha256": "a743fda3c3027c77c8532c0c4b1fc72504c02061e9e4f0608fdda58af1567713"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-8A.nc": {
+   "bytes": 920633,
+   "sha256": "59dcf7a8d0b350bebc704c5734c2b80559d2556cfbc5bff52a2b0bd7a18c57b7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2B_MSI/ACOLITE-LUT-202110-MOD2-reverse-S2B_MSI-romix+rsurf-9.nc": {
+   "bytes": 920633,
+   "sha256": "fa66d6e2863fd671f353a522f7d014e288d0fc1f3c18e551cd0f8045fde99f15"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-1.nc": {
+   "bytes": 920633,
+   "sha256": "71ff8b1424d89f56be28cbff77750749e93e26854ef7c3f5f2e3a113354a7702"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-10.nc": {
+   "bytes": 920633,
+   "sha256": "910f07c6cd737bda6bbbec6503042fd39a3bfbc9728a39961bf4ec3bd84951b7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-11.nc": {
+   "bytes": 920633,
+   "sha256": "aab995035865fc85316c9ac14df97208d6c1e7fc556893a51e3efdd748020199"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-12.nc": {
+   "bytes": 920633,
+   "sha256": "0c6def0ee9ea1f5e1586f98a79dbfa4e9b045a63d9dd51971dc89cf564f5d3ce"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-2.nc": {
+   "bytes": 920633,
+   "sha256": "2eb9d063a4bc7134e0bb0009958b7e1c483895b21647024ad116e1a43e03c6eb"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-3.nc": {
+   "bytes": 920633,
+   "sha256": "8c7570a43949bd8d4d42f14b36e266d31012a249f3d2a40e127ad96a3e0ca39a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-4.nc": {
+   "bytes": 920633,
+   "sha256": "07e7b0d41058d41929a5337007f40db06f2dc75f8afcece631016dcaddf425fd"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-5.nc": {
+   "bytes": 920633,
+   "sha256": "551c013a848b8cc5342b7d8d71415dfe5b93479f39de5639027c6a8db7a43cb1"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-6.nc": {
+   "bytes": 920633,
+   "sha256": "a66e1e5dfd996dc28b98c46d5f57b1c00c22053e5d835ee0552f112d94215c7e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-7.nc": {
+   "bytes": 920633,
+   "sha256": "ebe74c61b39b599f9a77c870966540be917a152fddbda9d76f57df77670437b2"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-8.nc": {
+   "bytes": 920633,
+   "sha256": "1566783fc2d205e426c43b1c60e5381a54caef7b7a704e4d4e4ce51a0a46bc70"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-8A.nc": {
+   "bytes": 920633,
+   "sha256": "83f03021797c9f24cc37a527c253303e597fc7e49668da2de1ed4d8b7e07b99c"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+ffss_toa-9.nc": {
+   "bytes": 920633,
+   "sha256": "b7925d6efa0e4cbd37aa35df05c3169471d0c94f98145bced5d9453d9351e012"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-1.nc": {
+   "bytes": 7280441,
+   "sha256": "ff0b35907889408cfab9474cc46798dcc00d98bd53634e7a1e89f876484885a3"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-10.nc": {
+   "bytes": 7280441,
+   "sha256": "890e94143221c74a993453ff404027e52c7b60c816da577f3873638b2cebbeda"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-11.nc": {
+   "bytes": 7280441,
+   "sha256": "7dc88c2ab69de60a5d0588475c4f42ddfe87e01f2419d0335d11a3ec716121f7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-12.nc": {
+   "bytes": 7280441,
+   "sha256": "58830f92b502749106597f7788361f5d064ba2dc09f95d0826d8afde90a824f6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-2.nc": {
+   "bytes": 7280441,
+   "sha256": "76de0ec89b05bfcadf112e3b416637c822153aee0b26de29938dac307edb15d9"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-3.nc": {
+   "bytes": 7280441,
+   "sha256": "97d66bb68f9e789b9f607794d8b9d0978347ec456443fff6892c3e0b1197ec92"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-4.nc": {
+   "bytes": 7280441,
+   "sha256": "ff70aa27593a662a13254085fdea9708e57b09af28032347f04e85b64ad07dda"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-5.nc": {
+   "bytes": 7280441,
+   "sha256": "ceb64527e793c7ba5dd060b3cf75671b988a5cb98ab0047a70c8a045baed6749"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-6.nc": {
+   "bytes": 7280441,
+   "sha256": "b44fb63be2234c39a4f0a3286b222e91b286fb0e17e9b0a4970ea6e673af197e"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-7.nc": {
+   "bytes": 7280441,
+   "sha256": "823f1f0a3d157f75aae33ff4339f48d966407e276ef099d3170df127a49817ea"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-8.nc": {
+   "bytes": 7280441,
+   "sha256": "3f240ad3feefec68255cc7d0bbf7776d4d879091b9396305e0bd344236a3face"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-8A.nc": {
+   "bytes": 7280441,
+   "sha256": "f9d435cd33e64f186fb2bcc7787af8facf76b15d8d0821ba53fc70ca3f61e869"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsky_t-9.nc": {
+   "bytes": 7280441,
+   "sha256": "ffde30c1c611d1a79e7bcdc9c99cb8b1bcba53da6df8f0971d3ffc6976ffa79b"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-1.nc": {
+   "bytes": 920633,
+   "sha256": "27801903316d6c9ad75c07a5323b3896aa401d560ef4b6550ae18803dd49be82"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-10.nc": {
+   "bytes": 920633,
+   "sha256": "ad0f8801b76062d17e487e42cf2a1dd3cd5168c92adfef004770878e6f90ec50"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-11.nc": {
+   "bytes": 920633,
+   "sha256": "85c676f2b976d98f7f522c6342ad4ae61cc22c504e23ed3041dee26b949e9237"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-12.nc": {
+   "bytes": 920633,
+   "sha256": "ce4690882ef8f0bf08bd33fa80d3b62dee8830de026d5fc6ea0171c9ac3211e6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-2.nc": {
+   "bytes": 920633,
+   "sha256": "e1461507a41aa13427952cacea40191e598967de5970b2b1dff65a616a080e94"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-3.nc": {
+   "bytes": 920633,
+   "sha256": "55f901642d90c0961fca4dd3f7d5731a3acc409f481a3a7296d0b8ae95dde4b5"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-4.nc": {
+   "bytes": 920633,
+   "sha256": "2b42bfa1b789cceb9e1610762f58641949ac642046483825b4c83a4d973ee1cc"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-5.nc": {
+   "bytes": 920633,
+   "sha256": "6ac851a80ca13f7ecb7f7f3ea3e2a0dfd9ae8da80996fe57f791ae95104de624"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-6.nc": {
+   "bytes": 920633,
+   "sha256": "5d357111efb14807e903c12320878adb277f79b4bc71701956416d80137f3238"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-7.nc": {
+   "bytes": 920633,
+   "sha256": "7d14be0ec1eacacaabf168f11d9811ceb24a4efeae24b725c9c767ccf5d327c8"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-8.nc": {
+   "bytes": 920633,
+   "sha256": "de00177d555a7ba3c5a05b7806d136881e2b0b033f5fa4bda5c3cff4ba151ee0"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-8A.nc": {
+   "bytes": 920633,
+   "sha256": "1f4bf822354fb22f8841864572f958d87c32384b27c325bad35f398eb540e045"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-reverse-S2C_MSI_V4-romix+rsurf-9.nc": {
+   "bytes": 920633,
+   "sha256": "04cad2e3ef5a20dca39147636141901ac87e834674c7860684195882ee7be4bd"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-1.nc": {
+   "bytes": 920633,
+   "sha256": "bf7fdd56a1213356d83889ae4fa625b344e9a5cf61693d9623b6e342c5c5f889"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-10.nc": {
+   "bytes": 920633,
+   "sha256": "cb4dba3bcb3681ff34d732f3602105db3b30530f8763eacfed1e93f17cb75b03"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-11.nc": {
+   "bytes": 920633,
+   "sha256": "9cb697f5ef677a954d5cddf5673062f8d8cf80f27dc72cc88781f15462504298"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-12.nc": {
+   "bytes": 920633,
+   "sha256": "e5112e23ba47c158589e11b8cc571ca342481f59ebc63e45dec7a2889c678da7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-2.nc": {
+   "bytes": 920633,
+   "sha256": "936ff11c01c873092a6b6001686f0d6cb8d33a721ce0562568fdd20753dde613"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-3.nc": {
+   "bytes": 920633,
+   "sha256": "1213d92c9ea14b979db32fe8fdaed8e9b7d8b22a2a05e0c744f4a88105569f89"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-4.nc": {
+   "bytes": 920633,
+   "sha256": "3c4d8919a54c4a65d6f5fc161219621083028b45d8760611523494238f373065"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-5.nc": {
+   "bytes": 920633,
+   "sha256": "a0903baa6608e610a8117a30727b58c81b15e9b25db93e46b5f5b495953e3287"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-6.nc": {
+   "bytes": 920633,
+   "sha256": "778221894f9ba72dcdcd805458c623bcf03fd0d4a01c54f72af89fd7a750e4d5"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-7.nc": {
+   "bytes": 920633,
+   "sha256": "cdeb60b62355c5faeec216089c6530c9e67bb3b82b3184883d28381f4973dde9"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-8.nc": {
+   "bytes": 920633,
+   "sha256": "6d91cbe19e9c6fe746da1c5b4c1c4853698f0cf762a20546174bca858d161dad"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-8A.nc": {
+   "bytes": 920633,
+   "sha256": "b946d812f635e64a6ab1995321b94575272f68ca4689579a944782344bfe0ad6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+ffss_toa-9.nc": {
+   "bytes": 920633,
+   "sha256": "bb8b7dab57e1fe7c52d6eaf54e940a87d60b4443ff268d27cdecba38ff883d8d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-1.nc": {
+   "bytes": 7280441,
+   "sha256": "1a7f84c876a9262c686d8f8bea61349a9825f492617011934b385368cbe96dc6"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-10.nc": {
+   "bytes": 7280441,
+   "sha256": "fb4b69aa36996bc1bad4758a8a04fea2927166aa01b7a602a2f9f22665fcaf37"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-11.nc": {
+   "bytes": 7280441,
+   "sha256": "d2163770a6ff9022cb1b1420300a8aa6b815e1fe9b4025a77ff235e8bd16f823"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-12.nc": {
+   "bytes": 7280441,
+   "sha256": "be46809127950c451f88b6185c3fd9b6bce88de2e2c549f3feb5e193a9d0848d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-2.nc": {
+   "bytes": 7280441,
+   "sha256": "1f390296a08b3a6e2db4c7fc085d4b8d262ae33112150753bdfae6fdea375665"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-3.nc": {
+   "bytes": 7280441,
+   "sha256": "905cfc7a7e41f369bf9d1ca85d862d54a48d790df7ed9ff8a96ec84c70945797"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-4.nc": {
+   "bytes": 7280441,
+   "sha256": "a1ccb48b7833afb63f97df77f6fb87f4aad97439e414d37dce205b7d92e05bd1"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-5.nc": {
+   "bytes": 7280441,
+   "sha256": "7970c4af8a83be899c72bc449fab2a88c658b9c14ec4b0a70e240730ef3b841d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-6.nc": {
+   "bytes": 7280441,
+   "sha256": "9fffeaf7eaf0a4ca7ac643d9c4cee2a9c038df18ef293cce7d2cd9e12537c2cd"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-7.nc": {
+   "bytes": 7280441,
+   "sha256": "f99dc42b5231da90b4355e8ba184127a17e1fce82aee574cd1f8f566dd861e98"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-8.nc": {
+   "bytes": 7280441,
+   "sha256": "faa178c3527edf4b02e9fb7bdc2f8ab2ae294ca6813654d5f11cf466fb34b3f7"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-8A.nc": {
+   "bytes": 7280441,
+   "sha256": "c5110c7c65c30a4c4443e41e6112b7d4f23cef6b10b0c41d9c4fdf68d9f14bc0"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsky_t-9.nc": {
+   "bytes": 7280441,
+   "sha256": "4d7efe8886bbaaf5dc5a658ec7aa406a367017f9440fbfd45a3511664df6e49a"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-1.nc": {
+   "bytes": 920633,
+   "sha256": "1a44444b09959300d66a29ab7cb81be04eb5a535d0b4dba1903076d85e6280a3"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-10.nc": {
+   "bytes": 920633,
+   "sha256": "9d0b8ef12eb8c8145ed84dc017b47a5677531a13ed18a4018a88afd562c55a19"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-11.nc": {
+   "bytes": 920633,
+   "sha256": "0922cff6eb98339c27f852273e309e444511d41cf410ee76b3ff73dee8a960fc"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-12.nc": {
+   "bytes": 920633,
+   "sha256": "bfeae11a2f9494de493a1f587caa527fb4480fd9afefa65d32a2874c8ce29526"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-2.nc": {
+   "bytes": 920633,
+   "sha256": "6adb72b8bc6b3c433f049fb81c7b289b61be711fc397f4590e8c9b773b81e624"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-3.nc": {
+   "bytes": 920633,
+   "sha256": "69c89c1e9cb139d14694c158a21a261bb8ccacfff443e784c50c2b9e49e86c2d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-4.nc": {
+   "bytes": 920633,
+   "sha256": "6849f81c2a68c4a04a9400b08e2aaa045074df82549fe1fe7e07dd18ead4cf73"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-5.nc": {
+   "bytes": 920633,
+   "sha256": "aae9e70a619ded3476f3dd1d442f7e8e95e9f83b6afb995d0d845571e55c9686"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-6.nc": {
+   "bytes": 920633,
+   "sha256": "4b82708f1c33db2778faf4a2f3119a5aa7b207ab3a648d5cb41582206a950ab8"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-7.nc": {
+   "bytes": 920633,
+   "sha256": "120a3ba5743b07cd4707f17d66e87401f78209e11758e60c3c841a958e437e3d"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-8.nc": {
+   "bytes": 920633,
+   "sha256": "0a287d7bb97b2b6ad75359d36ca9c3f666816bf28db4852f2199d59cc98e5e26"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-8A.nc": {
+   "bytes": 920633,
+   "sha256": "e77c51524f3c3e2ce684ec4b71a92aca2d9e781c99c7f5250c72a240591e3dc9"
+  },
+  "ACOLITE-LUT-202110-Reverse/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-reverse-S2C_MSI_V4-romix+rsurf-9.nc": {
+   "bytes": 920633,
+   "sha256": "70f14cd44167db888464374368274644625662a4a424b9bdba6d09a600554b85"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD1-0500mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "25f6fad2fa6e8dde65ecd0e1ca9a59f28cc0dbcb094ec4972abd8815891301b7"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD1-0750mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "7364a8c70ef20c157a87762f1fe9ee7f04f05340227e67463b6e5e9ed2eb9408"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD1-1013mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "032e820fadb03c39285d24e99ff79a87c3193342d394916df8c7e39873a57212"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD1-1100mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "1805226dc06ad4c82d4b7419d60da5718c9e87252364f7f24672483744de7985"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD2-0500mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "6cb6413fffed7164cda4a92a2e11b9581e3b61250bd357a5b657b4b4ae47f6f2"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD2-0750mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "8ce26e77c1bc42d5c5babddbb33ad5c6a15f61c5aa5bc457f9733b15486a9ebd"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD2-1013mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "265636a92e46df0f68325d77a33a303617e02b532349738228ab49310c8ec688"
+  },
+  "ACOLITE-LUT-202110/S2A_MSI/ACOLITE-LUT-202110-MOD2-1100mb_S2A_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "d44f8a8f3f3086110306b85335e5c4c0b09fe5c59a9a7682fc41d08198e4a7f3"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD1-0500mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "4d63434199ed807c0a4a4a356458b46e07d0bd7153e577e5293b60b3d7c6d1db"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD1-0750mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "03676e0518602af3bad38dbb4ac544f48acceaefaad63b8ed4006523529f9f15"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD1-1013mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "831df78ac119ff16c0e9727e818a8342bea7b02751fbac5426607ba2d71f112d"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD1-1100mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "179a3d6cda42e9a2fe8954c3d08a77b021e530969fe4bda90e10dee32481c653"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD2-0500mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "c7f85bc3622e5537d94fecc8c26953f1d3907a686dc0a1c259ad4435b0374a55"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD2-0750mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "488ec3de9eda48d0803c18d999a4ea438e90f1eab7816f25660605af6646c5ac"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD2-1013mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "7cf8eb311c04bcbe3af8f058385e86b89270fbe4e52109f7153d2750325f8f0e"
+  },
+  "ACOLITE-LUT-202110/S2B_MSI/ACOLITE-LUT-202110-MOD2-1100mb_S2B_MSI.nc": {
+   "bytes": 42771826,
+   "sha256": "ac91258f9a22cbfce35431efd922ed393ef2e35cf7c4cb13eac303ff519ce79b"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-0500mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "36853d6c2c836593bee8fd796ba8ffe7a0664bfbf1fc63be1e9a73862711e12c"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-0750mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "addc546624c79971c37508c1b770dff7a8dd99e13c10f40fd9185210ad98482c"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-1013mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "072c3f7e8ff007c0535292595683168d17f36e185d4fb0bf660a66ba5f0e14ce"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD1-1100mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "c6dd02085abd4a8288a264ef7bf3be531f085da623bb4649d5aa9795ddc2eb2c"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-0500mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "7ace6ec1a666769691c68b33c448d61efaf42d49ba9c3fe1fbb66048a1a3a542"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-0750mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "37c1eb2fb12320d526d00a7e6af4bd66246e997eafe55b6046df199d1bedb65c"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-1013mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "5f2e1f2c6b9fbf49947516ef9bdc6e4295825384b7df65addb4b35004b7c1f30"
+  },
+  "ACOLITE-LUT-202110/S2C_MSI_V4/ACOLITE-LUT-202110-MOD2-1100mb_S2C_MSI_V4.nc": {
+   "bytes": 42767768,
+   "sha256": "e59e231f8e585d22a5d35667835531a1586920fffbf0c068118bc3d0753e75d8"
+  },
+  "Gas/Gas_202106F.nc": {
+   "bytes": 31251577,
+   "sha256": "584a660746b15e9ef81211574363797952b17d519f7cfd4186c44b7d39580449"
+  },
+  "RSKY-202102/S2A_MSI/ACOLITE-RSKY-202102-82W-MOD1_S2A_MSI.nc": {
+   "bytes": 18026687,
+   "sha256": "0d3e58844c45b3b537b8411c4e92202bd41acd2731f3a0f59f95e8038b6b24c9"
+  },
+  "RSKY-202102/S2A_MSI/ACOLITE-RSKY-202102-82W-MOD2_S2A_MSI.nc": {
+   "bytes": 18026687,
+   "sha256": "158c9f836feb7b125d019cdfadd98bad921cf7b1085abbfc20d0ad3e9288b4c7"
+  },
+  "RSKY-202102/S2B_MSI/ACOLITE-RSKY-202102-82W-MOD1_S2B_MSI.nc": {
+   "bytes": 18026687,
+   "sha256": "5a5fa9d11c948ab7e774fa17b1483c0ab209c69247b91ab21da26722106d3151"
+  },
+  "RSKY-202102/S2B_MSI/ACOLITE-RSKY-202102-82W-MOD2_S2B_MSI.nc": {
+   "bytes": 18026687,
+   "sha256": "91d99b17a4100bec1d69fdedbf703c03801f30d99cfdd38b663021ad19b1baa4"
+  },
+  "RSKY-202102/S2C_MSI_V4/ACOLITE-RSKY-202102-82W-MOD1_S2C_MSI_V4.nc": {
+   "bytes": 18019421,
+   "sha256": "c8c0416a4c7a37171049d4cca06fb2eb9c318754f8aa74a55374e8f7aa58a8e5"
+  },
+  "RSKY-202102/S2C_MSI_V4/ACOLITE-RSKY-202102-82W-MOD2_S2C_MSI_V4.nc": {
+   "bytes": 18019421,
+   "sha256": "c29a774490bd845c5b2c6c5bed4d9c5711a6b7eb7c3faf9eb00db12cfc8691c2"
+  },
+  "SKYDOME/S2A_MSI/ACOLITE-FFSS-202511-82W-rsky_S2A_MSI.nc": {
+   "bytes": 3077913,
+   "sha256": "be77a45bebbdf7b086155c8c9b8fdf5bb69d9465f1ae166288644a2e8eecc27a"
+  },
+  "SKYDOME/S2B_MSI/ACOLITE-FFSS-202511-82W-rsky_S2B_MSI.nc": {
+   "bytes": 3078575,
+   "sha256": "56ca0d8ee539931614668fc08a40dc61f0c9bd978cc159854d4ef2fed3bb9cb5"
+  },
+  "SKYDOME/S2C_MSI_V4/ACOLITE-FFSS-202511-82W-rsky_S2C_MSI_V4.nc": {
+   "bytes": 3078906,
+   "sha256": "74d03c28699f27872222103bf11546d190a679f42727aa4a19a5467ee8ab0eb8"
+  },
+  "WV/WV_201710C.nc": {
+   "bytes": 7032219,
+   "sha256": "b2bc88f7cbfacb16f47fe8aaa205340f6f322639b0a2075e37b786f05390e29b"
+  }
+ },
+ "not_used": "data/Copernicus_DSM_COG_10 (an elevation cache; every crop passes an explicit elevation, so it is never read)",
+ "gdal": "no osgeo bindings: stage11/tools/acolite/osgeo_shim (ctypes over the libgdal bundled in the rasterio 1.5.1 wheel)"
+}

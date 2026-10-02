@@ -1,0 +1,1407 @@
+{
+ "rules_in_order": [
+  [
+   "os.path.expanduser(\"~/Desktop/Development/Sector_Engine-fusion",
+   "os.path.expanduser(__import__(\"os\").environ[\"CLARITY_RESEARCH_ROOT\"] + \"/vendor/Sector_Engine-fusion"
+  ],
+  [
+   "\"/private/tmp/claude-501/-Users-mcather-Desktop-Development-iOS-Sector/ea2965be-d6fb-4701-8a4d-c2ceb08213d8/scratchpad",
+   "__import__(\"os\").environ[\"CLARITY_RESEARCH_ROOT\"] + \""
+  ],
+  [
+   "/private/tmp/claude-501/-Users-mcather-Desktop-Development-iOS-Sector/ea2965be-d6fb-4701-8a4d-c2ceb08213d8/scratchpad",
+   "$CLARITY_RESEARCH_ROOT"
+  ]
+ ],
+ "scratchpad": "/private/tmp/claude-501/-Users-mcather-Desktop-Development-iOS-Sector/ea2965be-d6fb-4701-8a4d-c2ceb08213d8/scratchpad",
+ "checks": [
+  {
+   "freeze": "stage10/FREEZE.json",
+   "entry": "manifestSha256",
+   "file": null,
+   "frozen_sha256": "374d4cd36c8a195daf577d4a680aa099a161fafd0e9af316253d380a1fdd96d4",
+   "status": "ok",
+   "note": "hash of frozen_manifest.json content in canonical form (checked separately)",
+   "canonical_sha256_now": "374d4cd36c8a195daf577d4a680aa099a161fafd0e9af316253d380a1fdd96d4"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/engine .../guntersville.arm_cells.json",
+   "file": "vendor/Sector_Engine-fusion/docs/data/hydrology/guntersville/guntersville.arm_cells.json",
+   "frozen_sha256": "133a5f22081fa01ffc67588848e630583605945e9551a1476a3f4dea20e16543",
+   "scratchpad_sha256": "133a5f22081fa01ffc67588848e630583605945e9551a1476a3f4dea20e16543",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "133a5f22081fa01ffc67588848e630583605945e9551a1476a3f4dea20e16543",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/engine .../stage3a/arm_positions.npz",
+   "file": "vendor/Sector_Engine-fusion/docs/data/hydrology/guntersville/stage3a/arm_positions.npz",
+   "frozen_sha256": "3fa7dc2234d286271acc5c8bd7d12d3d7d7e71fa941e61bd462b564c0982c95e",
+   "scratchpad_sha256": "3fa7dc2234d286271acc5c8bd7d12d3d7d7e71fa941e61bd462b564c0982c95e",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "3fa7dc2234d286271acc5c8bd7d12d3d7d7e71fa941e61bd462b564c0982c95e",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/engine .../stage3a/arm_zones.json",
+   "file": "vendor/Sector_Engine-fusion/docs/data/hydrology/guntersville/stage3a/arm_zones.json",
+   "frozen_sha256": "5817a77e24b844ebaea153a9eee7e883ff47a365b45da2a483420502637301da",
+   "scratchpad_sha256": "5817a77e24b844ebaea153a9eee7e883ff47a365b45da2a483420502637301da",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "5817a77e24b844ebaea153a9eee7e883ff47a365b45da2a483420502637301da",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/engine jobs/lake-surface/derive_water_surface.py",
+   "file": "vendor/Sector_Engine-fusion/jobs/lake-surface/derive_water_surface.py",
+   "frozen_sha256": "ef3a32863d04103a866127e2b5a4475059d9a199692fdc78f98e39914b8c636e",
+   "scratchpad_sha256": "ef3a32863d04103a866127e2b5a4475059d9a199692fdc78f98e39914b8c636e",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ef3a32863d04103a866127e2b5a4475059d9a199692fdc78f98e39914b8c636e",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/PREREGISTRATION_P2.md",
+   "file": "stage10/PREREGISTRATION_P2.md",
+   "frozen_sha256": "c2c6e14269e64e3244ea7df5c39a5a03d7e0ed3623acb9a1a7cb7ca4c86f3b38",
+   "scratchpad_sha256": "c2c6e14269e64e3244ea7df5c39a5a03d7e0ed3623acb9a1a7cb7ca4c86f3b38",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "c2c6e14269e64e3244ea7df5c39a5a03d7e0ed3623acb9a1a7cb7ca4c86f3b38",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/build_frozen.py",
+   "file": "stage10/frozen/build_frozen.py",
+   "frozen_sha256": "0cedee9ecbbc75f42639d90f3eb509139aefb30b470185931a505b785f9d1f05",
+   "scratchpad_sha256": "0cedee9ecbbc75f42639d90f3eb509139aefb30b470185931a505b785f9d1f05",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "0cedee9ecbbc75f42639d90f3eb509139aefb30b470185931a505b785f9d1f05",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/build_observations.py",
+   "file": "stage10/frozen/build_observations.py",
+   "frozen_sha256": "8361cf0f8eed83cb722f661990534d8f344af8ae9512a7ca1d66a00823468479",
+   "scratchpad_sha256": "8361cf0f8eed83cb722f661990534d8f344af8ae9512a7ca1d66a00823468479",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "8361cf0f8eed83cb722f661990534d8f344af8ae9512a7ca1d66a00823468479",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/c3_frozen.json",
+   "file": "stage10/frozen/c3_frozen.json",
+   "frozen_sha256": "08665fe0afe8a4c39281edaeb11b95103d44e333e94f9b716e6ea0477a6fdcdb",
+   "scratchpad_sha256": "08665fe0afe8a4c39281edaeb11b95103d44e333e94f9b716e6ea0477a6fdcdb",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "08665fe0afe8a4c39281edaeb11b95103d44e333e94f9b716e6ea0477a6fdcdb",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/c6_model.json",
+   "file": "stage10/frozen/c6_model.json",
+   "frozen_sha256": "206720531a4f9e243e95ea2cc413fdd94e6d9af638a47ae5d5ea4bb06e097d2d",
+   "scratchpad_sha256": "206720531a4f9e243e95ea2cc413fdd94e6d9af638a47ae5d5ea4bb06e097d2d",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "206720531a4f9e243e95ea2cc413fdd94e6d9af638a47ae5d5ea4bb06e097d2d",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/fresh_eval.py",
+   "file": "stage10/frozen/fresh_eval.py",
+   "frozen_sha256": "e3f094b24e7912d88462d22dfa294c677f0d562183ce545ec006b46f9f85d222",
+   "scratchpad_sha256": "e3f094b24e7912d88462d22dfa294c677f0d562183ce545ec006b46f9f85d222",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "e3f094b24e7912d88462d22dfa294c677f0d562183ce545ec006b46f9f85d222",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/metrics.py",
+   "file": "stage10/frozen/metrics.py",
+   "frozen_sha256": "7565d0c23d46caa789adccd9f94f48337d6b18c2881a77e93acd2067b60e185f",
+   "scratchpad_sha256": "7565d0c23d46caa789adccd9f94f48337d6b18c2881a77e93acd2067b60e185f",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "7565d0c23d46caa789adccd9f94f48337d6b18c2881a77e93acd2067b60e185f",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/models.py",
+   "file": "stage10/frozen/models.py",
+   "frozen_sha256": "dc81e23542ff56c5fa54898f4ea8fd9b922913d9e4751428f73b625e9e330b4c",
+   "scratchpad_sha256": "dc81e23542ff56c5fa54898f4ea8fd9b922913d9e4751428f73b625e9e330b4c",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "dc81e23542ff56c5fa54898f4ea8fd9b922913d9e4751428f73b625e9e330b4c",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/p1.py",
+   "file": "stage10/frozen/p1.py",
+   "frozen_sha256": "da26e4ee9a73ac3eeed8249ea3ffa56c42e3abbdb370bf06914820fccd743d0e",
+   "scratchpad_sha256": "da26e4ee9a73ac3eeed8249ea3ffa56c42e3abbdb370bf06914820fccd743d0e",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "da26e4ee9a73ac3eeed8249ea3ffa56c42e3abbdb370bf06914820fccd743d0e",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/p2.py",
+   "file": "stage10/frozen/p2.py",
+   "frozen_sha256": "6ffeb12ed0767c0820ccd92cae42e564ca03336621fc97ebc97f5d9d2197714c",
+   "scratchpad_sha256": "6ffeb12ed0767c0820ccd92cae42e564ca03336621fc97ebc97f5d9d2197714c",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "6ffeb12ed0767c0820ccd92cae42e564ca03336621fc97ebc97f5d9d2197714c",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage10/frozen/regions.py",
+   "file": "stage10/frozen/regions.py",
+   "frozen_sha256": "6a65c2e6973cbb8cbf9e294047f6caecbe1ac60d190835c42cec090fe84aa9b9",
+   "scratchpad_sha256": "6a65c2e6973cbb8cbf9e294047f6caecbe1ac60d190835c42cec090fe84aa9b9",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "6a65c2e6973cbb8cbf9e294047f6caecbe1ac60d190835c42cec090fe84aa9b9",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage6/extract.py",
+   "file": "stage6/extract.py",
+   "frozen_sha256": "2ac2d7865123f9345d8ec1f147d742a0a000f5bf6dea00e879465570c686760e",
+   "scratchpad_sha256": "2ac2d7865123f9345d8ec1f147d742a0a000f5bf6dea00e879465570c686760e",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2ac2d7865123f9345d8ec1f147d742a0a000f5bf6dea00e879465570c686760e",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage8/g2026_secchi.csv (exclusion list)",
+   "file": "stage8/g2026_secchi.csv",
+   "frozen_sha256": "4051da984cea7dfc9654cba33cfe84afb74aedacffb91698f9f7b77aeafdd903",
+   "scratchpad_sha256": "4051da984cea7dfc9654cba33cfe84afb74aedacffb91698f9f7b77aeafdd903",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "4051da984cea7dfc9654cba33cfe84afb74aedacffb91698f9f7b77aeafdd903",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage10/frozen_manifest.json",
+   "entry": "files/stage9/PREREGISTRATION.md (P1)",
+   "file": "stage9/PREREGISTRATION.md",
+   "frozen_sha256": "4cc302212a7923eb462b4de86a993de1cf763681a834a6f2c19bf9b1339b48bd",
+   "scratchpad_sha256": "4cc302212a7923eb462b4de86a993de1cf763681a834a6f2c19bf9b1339b48bd",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "4cc302212a7923eb462b4de86a993de1cf763681a834a6f2c19bf9b1339b48bd",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage11/FREEZE_STAGE11.json",
+   "entry": "files/PREREGISTRATION_STAGE11.md",
+   "file": "stage11/PREREGISTRATION_STAGE11.md",
+   "frozen_sha256": "274320fa7e262dc0db2e64eb4114b26ee98c82cdcbf3971728e25801acc05db9",
+   "scratchpad_sha256": "274320fa7e262dc0db2e64eb4114b26ee98c82cdcbf3971728e25801acc05db9",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "274320fa7e262dc0db2e64eb4114b26ee98c82cdcbf3971728e25801acc05db9",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage11/FREEZE_STAGE11.json",
+   "entry": "addenda/0/e_draw.csv sha256",
+   "file": "stage11/corpus/e_draw.csv",
+   "frozen_sha256": "4dfe9d7f002d03aa63fd48c456db233f9f6edf3d9c0361edbca98c82bdc04751",
+   "scratchpad_sha256": "4dfe9d7f002d03aa63fd48c456db233f9f6edf3d9c0361edbca98c82bdc04751",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "4dfe9d7f002d03aa63fd48c456db233f9f6edf3d9c0361edbca98c82bdc04751",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage11/FREEZE_STAGE11.json",
+   "entry": "addenda/1/tables_sha256/kou93b.dat",
+   "file": "stage11/tools/aw/kou93b.dat",
+   "frozen_sha256": "530e844734d0fcc17e9800a981f0842cbf9bd5c0d6184d58a3d5fb9406b6cb17",
+   "scratchpad_sha256": "530e844734d0fcc17e9800a981f0842cbf9bd5c0d6184d58a3d5fb9406b6cb17",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "530e844734d0fcc17e9800a981f0842cbf9bd5c0d6184d58a3d5fb9406b6cb17",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage11/FREEZE_STAGE11.json",
+   "entry": "addenda/1/tables_sha256/pope97.dat",
+   "file": "stage11/tools/aw/pope97.dat",
+   "frozen_sha256": "5c92c6a1e4be125cc9464fab33490ce4eb883fca7e84a21b0ca2b906cb35c8a7",
+   "scratchpad_sha256": "5c92c6a1e4be125cc9464fab33490ce4eb883fca7e84a21b0ca2b906cb35c8a7",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "5c92c6a1e4be125cc9464fab33490ce4eb883fca7e84a21b0ca2b906cb35c8a7",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage11/FREEZE_STAGE11.json",
+   "entry": "addenda/1/tables_sha256/segelstein81.dat",
+   "file": "stage11/tools/aw/segelstein81.dat",
+   "frozen_sha256": "61bfc15c08df4cfee68b51599e651db70fb02eea1dc98153667ef25f7f53f539",
+   "scratchpad_sha256": "61bfc15c08df4cfee68b51599e651db70fb02eea1dc98153667ef25f7f53f539",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "61bfc15c08df4cfee68b51599e651db70fb02eea1dc98153667ef25f7f53f539",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage11/FREEZE_STAGE11.json",
+   "entry": "addenda/1/tables_sha256/hale73.dat",
+   "file": "stage11/tools/aw/hale73.dat",
+   "frozen_sha256": "009a11eeec4c11497752095d640506f52ee22637adcb71b0fa8e117c917f968b",
+   "scratchpad_sha256": "009a11eeec4c11497752095d640506f52ee22637adcb71b0fa8e117c917f968b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "009a11eeec4c11497752095d640506f52ee22637adcb71b0fa8e117c917f968b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "files/PREREGISTRATION_STAGE12.md",
+   "file": "stage12/PREREGISTRATION_STAGE12.md",
+   "frozen_sha256": "474a8cd18dc6df7fe8357eb7b241a79852835ac45de04163c102e63399392d56",
+   "scratchpad_sha256": "474a8cd18dc6df7fe8357eb7b241a79852835ac45de04163c102e63399392d56",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "474a8cd18dc6df7fe8357eb7b241a79852835ac45de04163c102e63399392d56",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "files/exp1/guard.json",
+   "file": "stage12/exp1/guard.json",
+   "frozen_sha256": "35449ea7683f0baf2b586660fd7168b8a1d241858cd498ef23842ebef53b242a",
+   "scratchpad_sha256": "35449ea7683f0baf2b586660fd7168b8a1d241858cd498ef23842ebef53b242a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "35449ea7683f0baf2b586660fd7168b8a1d241858cd498ef23842ebef53b242a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "files/exp1/select_guard.py",
+   "file": "stage12/exp1/select_guard.py",
+   "frozen_sha256": "4875a7da8b035fe8d258ac0610846fee864540c20223f782de0e81c31392f43b",
+   "scratchpad_sha256": "4875a7da8b035fe8d258ac0610846fee864540c20223f782de0e81c31392f43b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "4875a7da8b035fe8d258ac0610846fee864540c20223f782de0e81c31392f43b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "files/cert/CERT_PROTOCOL_STAGE12.md",
+   "file": "stage12/cert/CERT_PROTOCOL_STAGE12.md",
+   "frozen_sha256": "1e8040b92be455eab864300aea66c001be6d3d48c31fe53d0b846cbd2fc0595e",
+   "scratchpad_sha256": "1e8040b92be455eab864300aea66c001be6d3d48c31fe53d0b846cbd2fc0595e",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "1e8040b92be455eab864300aea66c001be6d3d48c31fe53d0b846cbd2fc0595e",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "addenda/0/sha256",
+   "file": "stage12/ADDENDUM_A_harmonisation.md",
+   "frozen_sha256": "82bcd6d1c4b8106fd62b68fe1423b58683e72b8b5c5a0219adc5691fce670da2",
+   "scratchpad_sha256": "82bcd6d1c4b8106fd62b68fe1423b58683e72b8b5c5a0219adc5691fce670da2",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "82bcd6d1c4b8106fd62b68fe1423b58683e72b8b5c5a0219adc5691fce670da2",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "addenda/1/sha256",
+   "file": "stage12/ADDENDUM_B_cert_matching.md",
+   "frozen_sha256": "aacf2bfe5ac1bd84b9e55738139a0826d44c7187f681b7d7b04490b003b3ba5a",
+   "scratchpad_sha256": "aacf2bfe5ac1bd84b9e55738139a0826d44c7187f681b7d7b04490b003b3ba5a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "aacf2bfe5ac1bd84b9e55738139a0826d44c7187f681b7d7b04490b003b3ba5a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "addenda/2/sha256",
+   "file": "stage12/ADDENDUM_C_pressure.md",
+   "frozen_sha256": "1c68d23999e0bb2c3523a9c09520c8654949dbbd2162370183aaa0b2a8e6d221",
+   "scratchpad_sha256": "1c68d23999e0bb2c3523a9c09520c8654949dbbd2162370183aaa0b2a8e6d221",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "1c68d23999e0bb2c3523a9c09520c8654949dbbd2162370183aaa0b2a8e6d221",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "addenda/3/sha256",
+   "file": "stage12/ADDENDUM_B2_offset.md",
+   "frozen_sha256": "9e714c8d7a5985c6a9ef4be03d138282cdbc543b0ee5586f6bfa1c5709ab5e83",
+   "scratchpad_sha256": "9e714c8d7a5985c6a9ef4be03d138282cdbc543b0ee5586f6bfa1c5709ab5e83",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "9e714c8d7a5985c6a9ef4be03d138282cdbc543b0ee5586f6bfa1c5709ab5e83",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "addenda/4/sha256",
+   "file": "stage12/ADDENDUM_D_geometry.md",
+   "frozen_sha256": "104d825df17fbd56fd82ffd60cc2465924c039f052dcd9040a0e7f285798b51f",
+   "scratchpad_sha256": "104d825df17fbd56fd82ffd60cc2465924c039f052dcd9040a0e7f285798b51f",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "104d825df17fbd56fd82ffd60cc2465924c039f052dcd9040a0e7f285798b51f",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "part1_result/score_sha256",
+   "file": null,
+   "frozen_sha256": "72fe106725a56980336243c4c9b7282728d3491d604123ea2d343aac42f701f1",
+   "status": "not-a-file",
+   "note": "hash of the Part 1 score table (in-memory JSON), not a file"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "blind_sample/sha256",
+   "file": "stage12/cert/blind_sample.csv",
+   "frozen_sha256": "111cff44282aeaea3c75e8f085ae362ce3e0a29880d147e02f5ead808dfaf1d2",
+   "scratchpad_sha256": "111cff44282aeaea3c75e8f085ae362ce3e0a29880d147e02f5ead808dfaf1d2",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "111cff44282aeaea3c75e8f085ae362ce3e0a29880d147e02f5ead808dfaf1d2",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage12/FREEZE_STAGE12.json",
+   "entry": "blind_sample/checks_sha256",
+   "file": "stage12/cert/blind_sample.csv",
+   "frozen_sha256": "bc945b26a41360793cc3f72d8d6f53b04717e1bab5044026c0976200b822dc6b",
+   "scratchpad_sha256": "111cff44282aeaea3c75e8f085ae362ce3e0a29880d147e02f5ead808dfaf1d2",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "111cff44282aeaea3c75e8f085ae362ce3e0a29880d147e02f5ead808dfaf1d2",
+   "status": "not-a-file",
+   "note": "hash of the blind-sample check list, not the CSV (the CSV's own sha256 entry is checked)"
+  },
+  {
+   "freeze": "stage13/FREEZE_STAGE13.json",
+   "entry": "files/PREREGISTRATION_STAGE13.md",
+   "file": "stage13/PREREGISTRATION_STAGE13.md",
+   "frozen_sha256": "d44874fbeb599f5bef6de3c9faa60e73faa6d1108abf007898cc0d2a9412357d",
+   "scratchpad_sha256": "d44874fbeb599f5bef6de3c9faa60e73faa6d1108abf007898cc0d2a9412357d",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "d44874fbeb599f5bef6de3c9faa60e73faa6d1108abf007898cc0d2a9412357d",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage13/FREEZE_STAGE13.json",
+   "entry": "files/cert/CERT_ADDENDUM_2.md",
+   "file": "stage13/cert/CERT_ADDENDUM_2.md",
+   "frozen_sha256": "24884b3ced3c89a71b1a12135820c5deff26a25c44f9953a12b05de0ade6b0c5",
+   "scratchpad_sha256": "24884b3ced3c89a71b1a12135820c5deff26a25c44f9953a12b05de0ade6b0c5",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "24884b3ced3c89a71b1a12135820c5deff26a25c44f9953a12b05de0ade6b0c5",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage13/FREEZE_STAGE13.json",
+   "entry": "files/../stage12/analysis/rows12.json",
+   "file": "stage12/analysis/rows12.json",
+   "frozen_sha256": "38a49450bccb4714122580807e30acc630d1bc5a9037ceefda3393f690387092",
+   "scratchpad_sha256": "38a49450bccb4714122580807e30acc630d1bc5a9037ceefda3393f690387092",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "38a49450bccb4714122580807e30acc630d1bc5a9037ceefda3393f690387092",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage13/FREEZE_STAGE13.json",
+   "entry": "addenda/0/sha256",
+   "file": "stage13/cert/CERT_ADDENDUM_3.md",
+   "frozen_sha256": "56560c98e3fa86dd3cebe89894e558d8a6ee51c555f0bcf6bbed84a01803b7f1",
+   "scratchpad_sha256": "56560c98e3fa86dd3cebe89894e558d8a6ee51c555f0bcf6bbed84a01803b7f1",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "56560c98e3fa86dd3cebe89894e558d8a6ee51c555f0bcf6bbed84a01803b7f1",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage13/FREEZE_STAGE13.json",
+   "entry": "blind_sample13/sha256",
+   "file": "stage13/cert/blind_sample13.csv",
+   "frozen_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "scratchpad_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/q9/wqp/secchi.csv",
+   "file": "q9/wqp/secchi.csv",
+   "frozen_sha256": "fc64a1bbd735c9c0a41035970fdb6a7d16ba21241db77257c875357119b2acb6",
+   "scratchpad_sha256": "fc64a1bbd735c9c0a41035970fdb6a7d16ba21241db77257c875357119b2acb6",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "fc64a1bbd735c9c0a41035970fdb6a7d16ba21241db77257c875357119b2acb6",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/q9/wqp/turbidity.csv",
+   "file": "q9/wqp/turbidity.csv",
+   "frozen_sha256": "ef40a1547385b267207990e4c0e64494ee5db537979df695f1c2359f4a7d2ef3",
+   "scratchpad_sha256": "ef40a1547385b267207990e4c0e64494ee5db537979df695f1c2359f4a7d2ef3",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ef40a1547385b267207990e4c0e64494ee5db537979df695f1c2359f4a7d2ef3",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/q9/wqp/sites.csv",
+   "file": "q9/wqp/sites.csv",
+   "frozen_sha256": "61ec0111077d21057dfb2d20e6eb537aae1219034ccfcddb9cd6b0f48eb9581c",
+   "scratchpad_sha256": "61ec0111077d21057dfb2d20e6eb537aae1219034ccfcddb9cd6b0f48eb9581c",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "61ec0111077d21057dfb2d20e6eb537aae1219034ccfcddb9cd6b0f48eb9581c",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/CERT_PROTOCOL_STAGE14.md",
+   "file": "stage14/cert/CERT_PROTOCOL_STAGE14.md",
+   "frozen_sha256": "d0a7ebafe7eb4da9c1ecfb465acb1c3704d1dff8a721e211db1c52c76cea0817",
+   "scratchpad_sha256": "d0a7ebafe7eb4da9c1ecfb465acb1c3704d1dff8a721e211db1c52c76cea0817",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "d0a7ebafe7eb4da9c1ecfb465acb1c3704d1dff8a721e211db1c52c76cea0817",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/dev_footprint.py",
+   "file": "stage14/cert/dev_footprint.py",
+   "frozen_sha256": "2b6d373dc78f988366f6ecf7bdef0922e93887314572533f2d818bced4060d51",
+   "scratchpad_sha256": "2b6d373dc78f988366f6ecf7bdef0922e93887314572533f2d818bced4060d51",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2b6d373dc78f988366f6ecf7bdef0922e93887314572533f2d818bced4060d51",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/dev_footprint.json",
+   "file": "stage14/cert/dev_footprint.json",
+   "frozen_sha256": "00e0eb7deeb4dc42cd5a6e158d312d96d444e08fe8d9c713346cd374e9b2669c",
+   "scratchpad_sha256": "00e0eb7deeb4dc42cd5a6e158d312d96d444e08fe8d9c713346cd374e9b2669c",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "00e0eb7deeb4dc42cd5a6e158d312d96d444e08fe8d9c713346cd374e9b2669c",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/blind_index.py",
+   "file": "stage14/cert/blind_index.py",
+   "frozen_sha256": "e16562a92c7624039913b45accb3f462d5fd98621b98633c3a810a869a907c4b",
+   "scratchpad_sha256": "e16562a92c7624039913b45accb3f462d5fd98621b98633c3a810a869a907c4b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "e16562a92c7624039913b45accb3f462d5fd98621b98633c3a810a869a907c4b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/wqp_blind_index.csv",
+   "file": "stage14/cert/wqp_blind_index.csv",
+   "frozen_sha256": "32c933952ad0c3956ff6c00d92ea13e6a3ac04b017c5bb30a034e59de6ae99a1",
+   "scratchpad_sha256": "32c933952ad0c3956ff6c00d92ea13e6a3ac04b017c5bb30a034e59de6ae99a1",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "32c933952ad0c3956ff6c00d92ea13e6a3ac04b017c5bb30a034e59de6ae99a1",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/run_cert_aco.py",
+   "file": "stage14/cert/run_cert_aco.py",
+   "frozen_sha256": "6b4a0c4cf538d1b6eb269d6b1280d2fb3a45ff6694856a598c7e052a6cd14548",
+   "scratchpad_sha256": "6b4a0c4cf538d1b6eb269d6b1280d2fb3a45ff6694856a598c7e052a6cd14548",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "6b4a0c4cf538d1b6eb269d6b1280d2fb3a45ff6694856a598c7e052a6cd14548",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage13/cert/blind_sample13.csv",
+   "file": "stage13/cert/blind_sample13.csv",
+   "frozen_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "scratchpad_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/PREREGISTRATION_STAGE14.md",
+   "file": "stage14/PREREGISTRATION_STAGE14.md",
+   "frozen_sha256": "6681db609114754aea95df2f58a3d81dbc87105d8318bd7a0b80d0be2bc0ad90",
+   "scratchpad_sha256": "6681db609114754aea95df2f58a3d81dbc87105d8318bd7a0b80d0be2bc0ad90",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "6681db609114754aea95df2f58a3d81dbc87105d8318bd7a0b80d0be2bc0ad90",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/engine/engine14.py",
+   "file": "stage14/engine/engine14.py",
+   "frozen_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "scratchpad_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/engine/frozen_engine.json",
+   "file": "stage14/engine/frozen_engine.json",
+   "frozen_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "scratchpad_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/engine/frozen_gbm.pkl",
+   "file": "stage14/engine/frozen_gbm.pkl",
+   "frozen_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "scratchpad_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/analysis/lib14.py",
+   "file": "stage14/analysis/lib14.py",
+   "frozen_sha256": "3942ef64fe68cc00182c88c594fe9b7bdbacff1e62098cf52b1a2a2d5f681261",
+   "scratchpad_sha256": "3942ef64fe68cc00182c88c594fe9b7bdbacff1e62098cf52b1a2a2d5f681261",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "3942ef64fe68cc00182c88c594fe9b7bdbacff1e62098cf52b1a2a2d5f681261",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/analysis/dev14.py",
+   "file": "stage14/analysis/dev14.py",
+   "frozen_sha256": "aec5dbfeeec127f1661a4ff3866bc8753f5b44dd5a601b782b554979a368c1fd",
+   "scratchpad_sha256": "aec5dbfeeec127f1661a4ff3866bc8753f5b44dd5a601b782b554979a368c1fd",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "aec5dbfeeec127f1661a4ff3866bc8753f5b44dd5a601b782b554979a368c1fd",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/analysis/dev14.json",
+   "file": "stage14/analysis/dev14.json",
+   "frozen_sha256": "ab2b073ef1ec484af22d1a3f1d3bc54171d2c7545af2c38fe60256b646ebca61",
+   "scratchpad_sha256": "ab2b073ef1ec484af22d1a3f1d3bc54171d2c7545af2c38fe60256b646ebca61",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ab2b073ef1ec484af22d1a3f1d3bc54171d2c7545af2c38fe60256b646ebca61",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/ADDENDUM_A1_io.md",
+   "file": "stage14/cert/ADDENDUM_A1_io.md",
+   "frozen_sha256": "3c2b505f50f2314af0db995cda868363971ead5eeca4846d50ef272f7df67d56",
+   "scratchpad_sha256": "3c2b505f50f2314af0db995cda868363971ead5eeca4846d50ef272f7df67d56",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "3c2b505f50f2314af0db995cda868363971ead5eeca4846d50ef272f7df67d56",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/run_cert_aco_a1.py",
+   "file": "stage14/cert/run_cert_aco_a1.py",
+   "frozen_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "scratchpad_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/ADDENDUM_A2_draw.md",
+   "file": "stage14/cert/ADDENDUM_A2_draw.md",
+   "frozen_sha256": "e001c58a2a16cd312d9385bc52d5a81be7762515c70a0997a15a6e0302c3765a",
+   "scratchpad_sha256": "e001c58a2a16cd312d9385bc52d5a81be7762515c70a0997a15a6e0302c3765a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "e001c58a2a16cd312d9385bc52d5a81be7762515c70a0997a15a6e0302c3765a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/wqp_draw2.py",
+   "file": "stage14/cert/wqp_draw2.py",
+   "frozen_sha256": "75c34cc796972b8d1949d0c84aeeffdf39f48302da63ae8335886b0f820e2ad8",
+   "scratchpad_sha256": "75c34cc796972b8d1949d0c84aeeffdf39f48302da63ae8335886b0f820e2ad8",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "75c34cc796972b8d1949d0c84aeeffdf39f48302da63ae8335886b0f820e2ad8",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/wqp_draw2.csv",
+   "file": "stage14/cert/wqp_draw2.csv",
+   "frozen_sha256": "33aef071676caa24b57767cf1f907661b0842519ce1ec6d4cfb06628a979f845",
+   "scratchpad_sha256": "33aef071676caa24b57767cf1f907661b0842519ce1ec6d4cfb06628a979f845",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "33aef071676caa24b57767cf1f907661b0842519ce1ec6d4cfb06628a979f845",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/in_wqp_a2_c1.csv",
+   "file": "stage14/cert/in_wqp_a2_c1.csv",
+   "frozen_sha256": "407069ecdb01110e50ae488a3395f087fb3bf9760fdc34da57abc0921cd07803",
+   "scratchpad_sha256": "407069ecdb01110e50ae488a3395f087fb3bf9760fdc34da57abc0921cd07803",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "407069ecdb01110e50ae488a3395f087fb3bf9760fdc34da57abc0921cd07803",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/in_wqp_a2_legacy.csv",
+   "file": "stage14/cert/in_wqp_a2_legacy.csv",
+   "frozen_sha256": "3da97917441c7b082da7484905124a437db35b20b8ed73639ef09ca55d62c5d2",
+   "scratchpad_sha256": "3da97917441c7b082da7484905124a437db35b20b8ed73639ef09ca55d62c5d2",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "3da97917441c7b082da7484905124a437db35b20b8ed73639ef09ca55d62c5d2",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/wqp_sample.csv",
+   "file": "stage14/cert/wqp_sample.csv",
+   "frozen_sha256": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+   "scratchpad_sha256": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/finalize_wqp.py",
+   "file": "stage14/cert/finalize_wqp.py",
+   "frozen_sha256": "869ec1804e3e0caf7b801476ce9c62c7038f85c5f2bd064d0a8ea89789acc69f",
+   "scratchpad_sha256": "869ec1804e3e0caf7b801476ce9c62c7038f85c5f2bd064d0a8ea89789acc69f",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "869ec1804e3e0caf7b801476ce9c62c7038f85c5f2bd064d0a8ea89789acc69f",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/ADDENDUM_A3_statecap.md",
+   "file": "stage14/cert/ADDENDUM_A3_statecap.md",
+   "frozen_sha256": "f48affd75ceb3793827b988016a66b58f12f5292e7f3e8606fe3a3cf9e0eaceb",
+   "scratchpad_sha256": "f48affd75ceb3793827b988016a66b58f12f5292e7f3e8606fe3a3cf9e0eaceb",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "f48affd75ceb3793827b988016a66b58f12f5292e7f3e8606fe3a3cf9e0eaceb",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/finalize_a3.py",
+   "file": "stage14/cert/finalize_a3.py",
+   "frozen_sha256": "8843f4f5898b07431606b9a51f0e16f24c3018f033d94c9009f253f1fcb48ebf",
+   "scratchpad_sha256": "8843f4f5898b07431606b9a51f0e16f24c3018f033d94c9009f253f1fcb48ebf",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "8843f4f5898b07431606b9a51f0e16f24c3018f033d94c9009f253f1fcb48ebf",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/wqp_sample_pre_a3.csv",
+   "file": "stage14/cert/wqp_sample_pre_a3.csv",
+   "frozen_sha256": "8f48fe9546c688fb8cec5f0a1dc58f81e7bab5a2070535686ce0150d67617919",
+   "scratchpad_sha256": "8f48fe9546c688fb8cec5f0a1dc58f81e7bab5a2070535686ce0150d67617919",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "8f48fe9546c688fb8cec5f0a1dc58f81e7bab5a2070535686ce0150d67617919",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/ADDENDUM_A4_environment.md",
+   "file": "stage14/cert/ADDENDUM_A4_environment.md",
+   "frozen_sha256": "45f9712dcd9bc06a42a95f188b1449e6cb8889be70ceaf99d95e173bcf232d65",
+   "scratchpad_sha256": "45f9712dcd9bc06a42a95f188b1449e6cb8889be70ceaf99d95e173bcf232d65",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "45f9712dcd9bc06a42a95f188b1449e6cb8889be70ceaf99d95e173bcf232d65",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/geo_requirements.txt",
+   "file": "stage14/geo_requirements.txt",
+   "frozen_sha256": "b119add124af83b5d5ba4b1d18ea1a7cfb466bd4ec527c62fbb12ef49aa3afe6",
+   "scratchpad_sha256": "b119add124af83b5d5ba4b1d18ea1a7cfb466bd4ec527c62fbb12ef49aa3afe6",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b119add124af83b5d5ba4b1d18ea1a7cfb466bd4ec527c62fbb12ef49aa3afe6",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/cert/aco_manifest.txt",
+   "file": "stage14/cert/aco_manifest.txt",
+   "frozen_sha256": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+   "scratchpad_sha256": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/unseal/truth14.json",
+   "file": "stage14/unseal/truth14.json",
+   "frozen_sha256": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+   "scratchpad_sha256": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "files/stage14/unseal/unseal14.py",
+   "file": "stage14/unseal/unseal14.py",
+   "frozen_sha256": "4543a97e238cd062cf31148aa0ac33160885752d3b766b102d9cb748b3a0a182",
+   "scratchpad_sha256": "4543a97e238cd062cf31148aa0ac33160885752d3b766b102d9cb748b3a0a182",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "4543a97e238cd062cf31148aa0ac33160885752d3b766b102d9cb748b3a0a182",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage14/FREEZE_STAGE14.json",
+   "entry": "eligible_file_list_sha256",
+   "file": null,
+   "frozen_sha256": "ef88f8aeebcd4983c9ae00c4a68d10203a2b3e196525e3e5588dcf3e4dbca7b7",
+   "status": "not-a-file",
+   "note": "hash of the eligible-file list, not a file"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage15/PREREGISTRATION_STAGE15.md",
+   "file": "stage15/PREREGISTRATION_STAGE15.md",
+   "frozen_sha256": "8265b7a85ec0f584d92664e1f25aac853d59a051f092a727b019f4ba79453b01",
+   "scratchpad_sha256": "8265b7a85ec0f584d92664e1f25aac853d59a051f092a727b019f4ba79453b01",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "8265b7a85ec0f584d92664e1f25aac853d59a051f092a727b019f4ba79453b01",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage14/engine/engine14.py",
+   "file": "stage14/engine/engine14.py",
+   "frozen_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "scratchpad_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage14/engine/frozen_engine.json",
+   "file": "stage14/engine/frozen_engine.json",
+   "frozen_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "scratchpad_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage14/engine/frozen_gbm.pkl",
+   "file": "stage14/engine/frozen_gbm.pkl",
+   "frozen_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "scratchpad_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage14/unseal/truth14.json",
+   "file": "stage14/unseal/truth14.json",
+   "frozen_sha256": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+   "scratchpad_sha256": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage14/cert/aco_manifest.txt",
+   "file": "stage14/cert/aco_manifest.txt",
+   "frozen_sha256": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+   "scratchpad_sha256": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage14/cert/wqp_sample.csv",
+   "file": "stage14/cert/wqp_sample.csv",
+   "frozen_sha256": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+   "scratchpad_sha256": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage13/cert/blind_sample13.csv",
+   "file": "stage13/cert/blind_sample13.csv",
+   "frozen_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "scratchpad_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage15/engine/engine15.py",
+   "file": "stage15/engine/engine15.py",
+   "frozen_sha256": "2f1f932c567db554c507a1e140b3310daad651dee8848c7f8a1aa76ad1c012ca",
+   "scratchpad_sha256": "2f1f932c567db554c507a1e140b3310daad651dee8848c7f8a1aa76ad1c012ca",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2f1f932c567db554c507a1e140b3310daad651dee8848c7f8a1aa76ad1c012ca",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage15/engine/semantics15.json",
+   "file": "stage15/engine/semantics15.json",
+   "frozen_sha256": "a5d6da8d05f5f1e841a71eb92661f76195682a49a6a0a01dfed804fc00401fcd",
+   "scratchpad_sha256": "a5d6da8d05f5f1e841a71eb92661f76195682a49a6a0a01dfed804fc00401fcd",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a5d6da8d05f5f1e841a71eb92661f76195682a49a6a0a01dfed804fc00401fcd",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage15/analysis/lib15.py",
+   "file": "stage15/analysis/lib15.py",
+   "frozen_sha256": "9baef78a77ac97ce488acc4f90a9a9e8d5e61a6ff0f685b944782e8f4deea34f",
+   "scratchpad_sha256": "9baef78a77ac97ce488acc4f90a9a9e8d5e61a6ff0f685b944782e8f4deea34f",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "9baef78a77ac97ce488acc4f90a9a9e8d5e61a6ff0f685b944782e8f4deea34f",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage15/analysis/dev15.py",
+   "file": "stage15/analysis/dev15.py",
+   "frozen_sha256": "a562ca4a7ba4f4b6cefe12abd0f3fefbcd2af394183624b5840e01220205ff61",
+   "scratchpad_sha256": "a562ca4a7ba4f4b6cefe12abd0f3fefbcd2af394183624b5840e01220205ff61",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a562ca4a7ba4f4b6cefe12abd0f3fefbcd2af394183624b5840e01220205ff61",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage15/analysis/dev15.json",
+   "file": "stage15/analysis/dev15.json",
+   "frozen_sha256": "0aa17d143c374b70785d0a51ad7e7e3d6f6946c266ae8670237b18b2c2d8f3a7",
+   "scratchpad_sha256": "0aa17d143c374b70785d0a51ad7e7e3d6f6946c266ae8670237b18b2c2d8f3a7",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "0aa17d143c374b70785d0a51ad7e7e3d6f6946c266ae8670237b18b2c2d8f3a7",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage15/FREEZE_STAGE15.json",
+   "entry": "files/stage15/analysis/floor_diag15.json",
+   "file": "stage15/analysis/floor_diag15.json",
+   "frozen_sha256": "b3fcceb0cea740968ef69949f63d9db653e8224807264f2798b06485d9961450",
+   "scratchpad_sha256": "b3fcceb0cea740968ef69949f63d9db653e8224807264f2798b06485d9961450",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b3fcceb0cea740968ef69949f63d9db653e8224807264f2798b06485d9961450",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/PREREGISTRATION_STAGE16.md",
+   "file": "stage16/PREREGISTRATION_STAGE16.md",
+   "frozen_sha256": "cf7a8d91dfd06723457a853d6cf01013cd1cb0cf6964fd0c634b810da96b1b7b",
+   "scratchpad_sha256": "cf7a8d91dfd06723457a853d6cf01013cd1cb0cf6964fd0c634b810da96b1b7b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "cf7a8d91dfd06723457a853d6cf01013cd1cb0cf6964fd0c634b810da96b1b7b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage14/engine/engine14.py",
+   "file": "stage14/engine/engine14.py",
+   "frozen_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "scratchpad_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage14/engine/frozen_engine.json",
+   "file": "stage14/engine/frozen_engine.json",
+   "frozen_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "scratchpad_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage14/engine/frozen_gbm.pkl",
+   "file": "stage14/engine/frozen_gbm.pkl",
+   "frozen_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "scratchpad_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage15/engine/engine15.py",
+   "file": "stage15/engine/engine15.py",
+   "frozen_sha256": "2f1f932c567db554c507a1e140b3310daad651dee8848c7f8a1aa76ad1c012ca",
+   "scratchpad_sha256": "2f1f932c567db554c507a1e140b3310daad651dee8848c7f8a1aa76ad1c012ca",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2f1f932c567db554c507a1e140b3310daad651dee8848c7f8a1aa76ad1c012ca",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage15/engine/semantics15.json",
+   "file": "stage15/engine/semantics15.json",
+   "frozen_sha256": "a5d6da8d05f5f1e841a71eb92661f76195682a49a6a0a01dfed804fc00401fcd",
+   "scratchpad_sha256": "a5d6da8d05f5f1e841a71eb92661f76195682a49a6a0a01dfed804fc00401fcd",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a5d6da8d05f5f1e841a71eb92661f76195682a49a6a0a01dfed804fc00401fcd",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage15/analysis/lib15.py",
+   "file": "stage15/analysis/lib15.py",
+   "frozen_sha256": "9baef78a77ac97ce488acc4f90a9a9e8d5e61a6ff0f685b944782e8f4deea34f",
+   "scratchpad_sha256": "9baef78a77ac97ce488acc4f90a9a9e8d5e61a6ff0f685b944782e8f4deea34f",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "9baef78a77ac97ce488acc4f90a9a9e8d5e61a6ff0f685b944782e8f4deea34f",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage14/cert/run_cert_aco_a1.py",
+   "file": "stage14/cert/run_cert_aco_a1.py",
+   "frozen_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "scratchpad_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage14/cert/run_cert_aco.py",
+   "file": "stage14/cert/run_cert_aco.py",
+   "frozen_sha256": "6b4a0c4cf538d1b6eb269d6b1280d2fb3a45ff6694856a598c7e052a6cd14548",
+   "scratchpad_sha256": "6b4a0c4cf538d1b6eb269d6b1280d2fb3a45ff6694856a598c7e052a6cd14548",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "6b4a0c4cf538d1b6eb269d6b1280d2fb3a45ff6694856a598c7e052a6cd14548",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/engine/engine16.py",
+   "file": "stage16/engine/engine16.py",
+   "frozen_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "scratchpad_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/engine/rule16.json",
+   "file": "stage16/engine/rule16.json",
+   "frozen_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "scratchpad_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/analysis/lib16.py",
+   "file": "stage16/analysis/lib16.py",
+   "frozen_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "scratchpad_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/analysis/dev16.py",
+   "file": "stage16/analysis/dev16.py",
+   "frozen_sha256": "d845f2ae0738fc44ab249ef28544b971f25501af69d1b4951cb7519e15d30321",
+   "scratchpad_sha256": "d845f2ae0738fc44ab249ef28544b971f25501af69d1b4951cb7519e15d30321",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "d845f2ae0738fc44ab249ef28544b971f25501af69d1b4951cb7519e15d30321",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/analysis/dev16.json",
+   "file": "stage16/analysis/dev16.json",
+   "frozen_sha256": "8938dc4499971446727942e8463860e256da49ddec1160ac10fe7902316c5cac",
+   "scratchpad_sha256": "8938dc4499971446727942e8463860e256da49ddec1160ac10fe7902316c5cac",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "8938dc4499971446727942e8463860e256da49ddec1160ac10fe7902316c5cac",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/fresh_sample.csv",
+   "file": "stage16/fresh/fresh_sample.csv",
+   "frozen_sha256": "02fbe25f1513df525b61adc74481667cea7cf89dc678cd7603c6676318c1f575",
+   "scratchpad_sha256": "02fbe25f1513df525b61adc74481667cea7cf89dc678cd7603c6676318c1f575",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "02fbe25f1513df525b61adc74481667cea7cf89dc678cd7603c6676318c1f575",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/fresh_index.py",
+   "file": "stage16/fresh/fresh_index.py",
+   "frozen_sha256": "ac5f3ee02d849677a3a32e904d7aa82471e955f6e118d7332f7dbb8c7733e18d",
+   "scratchpad_sha256": "ac5f3ee02d849677a3a32e904d7aa82471e955f6e118d7332f7dbb8c7733e18d",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ac5f3ee02d849677a3a32e904d7aa82471e955f6e118d7332f7dbb8c7733e18d",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/finalize_fresh.py",
+   "file": "stage16/fresh/finalize_fresh.py",
+   "frozen_sha256": "a02df3f7b965eb101ae714438f2be84d009c715b8795cd427cda1da49d7bcc21",
+   "scratchpad_sha256": "a02df3f7b965eb101ae714438f2be84d009c715b8795cd427cda1da49d7bcc21",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a02df3f7b965eb101ae714438f2be84d009c715b8795cd427cda1da49d7bcc21",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/fresh_events.csv",
+   "file": "stage16/fresh/fresh_events.csv",
+   "frozen_sha256": "347e84d6f9a2f764677536facca8b1ae2aa6bc2a08b9dbbb168b8140c98b9d2b",
+   "scratchpad_sha256": "347e84d6f9a2f764677536facca8b1ae2aa6bc2a08b9dbbb168b8140c98b9d2b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "347e84d6f9a2f764677536facca8b1ae2aa6bc2a08b9dbbb168b8140c98b9d2b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/in_fresh_c1.csv",
+   "file": "stage16/fresh/in_fresh_c1.csv",
+   "frozen_sha256": "b7dd1c524e33195d67ae43b28450080ce925aaaff08f62aed8a7bb745702fd5c",
+   "scratchpad_sha256": "b7dd1c524e33195d67ae43b28450080ce925aaaff08f62aed8a7bb745702fd5c",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b7dd1c524e33195d67ae43b28450080ce925aaaff08f62aed8a7bb745702fd5c",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/aco_manifest_fresh.txt",
+   "file": "stage16/fresh/aco_manifest_fresh.txt",
+   "frozen_sha256": "282c81eda7d60bdd7ec59d45d1f936b569ade7eaa300f7df8318b1ee1ba76dad",
+   "scratchpad_sha256": "282c81eda7d60bdd7ec59d45d1f936b569ade7eaa300f7df8318b1ee1ba76dad",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "282c81eda7d60bdd7ec59d45d1f936b569ade7eaa300f7df8318b1ee1ba76dad",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/unseal_fresh.py",
+   "file": "stage16/fresh/unseal_fresh.py",
+   "frozen_sha256": "5d1f099ecc8aa1de8e7fd41a8df79b6ba562fd617cbe1e531c488b82b4a23bfc",
+   "scratchpad_sha256": "5d1f099ecc8aa1de8e7fd41a8df79b6ba562fd617cbe1e531c488b82b4a23bfc",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "5d1f099ecc8aa1de8e7fd41a8df79b6ba562fd617cbe1e531c488b82b4a23bfc",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/analysis/score16.py",
+   "file": "stage16/analysis/score16.py",
+   "frozen_sha256": "0f2ec2bb04728af31a77b86194dcd15a7661bd0192873923226dac52a8d9a89e",
+   "scratchpad_sha256": "0f2ec2bb04728af31a77b86194dcd15a7661bd0192873923226dac52a8d9a89e",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "0f2ec2bb04728af31a77b86194dcd15a7661bd0192873923226dac52a8d9a89e",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage16/FREEZE_STAGE16.json",
+   "entry": "files/stage16/fresh/truth16.json",
+   "file": "stage16/fresh/truth16.json",
+   "frozen_sha256": "3b77ffe90862e3ce629fba5dce99d49c7ef5346553cb2688900e69ebb3c3f1cc",
+   "scratchpad_sha256": "3b77ffe90862e3ce629fba5dce99d49c7ef5346553cb2688900e69ebb3c3f1cc",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "3b77ffe90862e3ce629fba5dce99d49c7ef5346553cb2688900e69ebb3c3f1cc",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage17/PREREGISTRATION_STAGE17.md",
+   "file": "stage17/PREREGISTRATION_STAGE17.md",
+   "frozen_sha256": "a058f476584395fa0e4273133202668bc95b88b621e0643d93b101dc99469b5b",
+   "scratchpad_sha256": "a058f476584395fa0e4273133202668bc95b88b621e0643d93b101dc99469b5b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a058f476584395fa0e4273133202668bc95b88b621e0643d93b101dc99469b5b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage14/engine/engine14.py",
+   "file": "stage14/engine/engine14.py",
+   "frozen_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "scratchpad_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage14/engine/frozen_engine.json",
+   "file": "stage14/engine/frozen_engine.json",
+   "frozen_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "scratchpad_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage14/engine/frozen_gbm.pkl",
+   "file": "stage14/engine/frozen_gbm.pkl",
+   "frozen_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "scratchpad_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage16/engine/engine16.py",
+   "file": "stage16/engine/engine16.py",
+   "frozen_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "scratchpad_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage16/engine/rule16.json",
+   "file": "stage16/engine/rule16.json",
+   "frozen_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "scratchpad_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage16/analysis/lib16.py",
+   "file": "stage16/analysis/lib16.py",
+   "frozen_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "scratchpad_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage14/cert/run_cert_aco_a1.py",
+   "file": "stage14/cert/run_cert_aco_a1.py",
+   "frozen_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "scratchpad_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage11/temporal/neighbors_readouts.csv",
+   "file": "stage11/temporal/neighbors_readouts.csv",
+   "frozen_sha256": "7d5ff488960a49af5dff760913feba276181719369409e8feb3cf7a2ffcd19f6",
+   "scratchpad_sha256": "7d5ff488960a49af5dff760913feba276181719369409e8feb3cf7a2ffcd19f6",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "7d5ff488960a49af5dff760913feba276181719369409e8feb3cf7a2ffcd19f6",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage17/scenes/aco_manifest_nb.txt",
+   "file": "stage17/scenes/aco_manifest_nb.txt",
+   "frozen_sha256": "a45c4710cdf3d9f524a73135078116b6b1b60e36f0b216f16f144594054b8ed6",
+   "scratchpad_sha256": "a45c4710cdf3d9f524a73135078116b6b1b60e36f0b216f16f144594054b8ed6",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a45c4710cdf3d9f524a73135078116b6b1b60e36f0b216f16f144594054b8ed6",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage17/scenes/rain17.json",
+   "file": "stage17/scenes/rain17.json",
+   "frozen_sha256": "a9724be5ce1d3b080412758e7576b7f14e12165b858a70cda987d3edefab8529",
+   "scratchpad_sha256": "a9724be5ce1d3b080412758e7576b7f14e12165b858a70cda987d3edefab8529",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a9724be5ce1d3b080412758e7576b7f14e12165b858a70cda987d3edefab8529",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage17/scenes/neighbors.json",
+   "file": "stage17/scenes/neighbors.json",
+   "frozen_sha256": "76d7589203acc948736da8e8a6498e661c04db1c6a5a986767c96b31191d4a72",
+   "scratchpad_sha256": "76d7589203acc948736da8e8a6498e661c04db1c6a5a986767c96b31191d4a72",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "76d7589203acc948736da8e8a6498e661c04db1c6a5a986767c96b31191d4a72",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage17/scenes/build_neighbors.py",
+   "file": "stage17/scenes/build_neighbors.py",
+   "frozen_sha256": "98be4d0cbed1833c13d0eeb27c90c93aa0e5e068bca6dd16e4d8721c113eaab0",
+   "scratchpad_sha256": "98be4d0cbed1833c13d0eeb27c90c93aa0e5e068bca6dd16e4d8721c113eaab0",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "98be4d0cbed1833c13d0eeb27c90c93aa0e5e068bca6dd16e4d8721c113eaab0",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage17/scenes/fetch_rain.py",
+   "file": "stage17/scenes/fetch_rain.py",
+   "frozen_sha256": "5a2b701e2ed3f1992823aecfb132cb5d52495f643753f4badcd2246257de3d07",
+   "scratchpad_sha256": "5a2b701e2ed3f1992823aecfb132cb5d52495f643753f4badcd2246257de3d07",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "5a2b701e2ed3f1992823aecfb132cb5d52495f643753f4badcd2246257de3d07",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage17/FREEZE_STAGE17.json",
+   "entry": "files/stage17/analysis/dev17.py",
+   "file": "stage17/analysis/dev17.py",
+   "frozen_sha256": "ebeb93106c27a08729ba363b6391dcb9e905f67205344247e2c8ba3399ca2592",
+   "scratchpad_sha256": "b65f502d0be49aea86571d34a6425f89b1419a5ad66857e9f4265a71395f423a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b65f502d0be49aea86571d34a6425f89b1419a5ad66857e9f4265a71395f423a",
+   "note": "pre-analysis hash; dev17.py was then corrected (the M-agree state bug) during Stage 17; the final version is the one frozen in FREEZE_STAGE18.json",
+   "status": "preserved-but-changed-since-freeze"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage14/engine/engine14.py",
+   "file": "stage14/engine/engine14.py",
+   "frozen_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "scratchpad_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage14/engine/frozen_engine.json",
+   "file": "stage14/engine/frozen_engine.json",
+   "frozen_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "scratchpad_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage14/engine/frozen_gbm.pkl",
+   "file": "stage14/engine/frozen_gbm.pkl",
+   "frozen_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "scratchpad_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage16/engine/engine16.py",
+   "file": "stage16/engine/engine16.py",
+   "frozen_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "scratchpad_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b927ef3ec81591cf96ae4d7f2f4e6c45d7379b5e23bf3bf05a60e55aeb7e049a",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage16/engine/rule16.json",
+   "file": "stage16/engine/rule16.json",
+   "frozen_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "scratchpad_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ed1142fbc415a6145ce30aceee311e5a34f1bc291ef5fa5fff09f15d64092e29",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage16/analysis/lib16.py",
+   "file": "stage16/analysis/lib16.py",
+   "frozen_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "scratchpad_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "0cf94c19ff848e26709e5e0cb3fb730785ee4576dbe51c67995b3b69661112da",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage17/analysis/dev17.py",
+   "file": "stage17/analysis/dev17.py",
+   "frozen_sha256": "b65f502d0be49aea86571d34a6425f89b1419a5ad66857e9f4265a71395f423a",
+   "scratchpad_sha256": "b65f502d0be49aea86571d34a6425f89b1419a5ad66857e9f4265a71395f423a",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "b65f502d0be49aea86571d34a6425f89b1419a5ad66857e9f4265a71395f423a",
+   "note": "pre-analysis hash; dev17.py was then corrected (the M-agree state bug) during Stage 17; the final version is the one frozen in FREEZE_STAGE18.json",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage17/PREREGISTRATION_STAGE17.md",
+   "file": "stage17/PREREGISTRATION_STAGE17.md",
+   "frozen_sha256": "a058f476584395fa0e4273133202668bc95b88b621e0643d93b101dc99469b5b",
+   "scratchpad_sha256": "a058f476584395fa0e4273133202668bc95b88b621e0643d93b101dc99469b5b",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "a058f476584395fa0e4273133202668bc95b88b621e0643d93b101dc99469b5b",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage18/engine/challenger17.json",
+   "file": "stage18/engine/challenger17.json",
+   "frozen_sha256": "3f404a1ac096047e23af5dd7219809e433a604259e1f958376415b21ba67beea",
+   "scratchpad_sha256": "3f404a1ac096047e23af5dd7219809e433a604259e1f958376415b21ba67beea",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "3f404a1ac096047e23af5dd7219809e433a604259e1f958376415b21ba67beea",
+   "status": "ok"
+  },
+  {
+   "freeze": "stage18/FREEZE_STAGE18.json",
+   "entry": "files/stage18/freeze18.py",
+   "file": "stage18/freeze18.py",
+   "frozen_sha256": "ef887518ba04e3603f732b08b36828c706174bb99d22f069712aa6dd36aaad2d",
+   "scratchpad_sha256": "ef887518ba04e3603f732b08b36828c706174bb99d22f069712aa6dd36aaad2d",
+   "preserved": true,
+   "preserved_original_bytes_sha256": "ef887518ba04e3603f732b08b36828c706174bb99d22f069712aa6dd36aaad2d",
+   "status": "ok"
+  }
+ ]
+}
