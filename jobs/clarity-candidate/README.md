@@ -93,6 +93,19 @@ Over the last 30 days the pilot lakes had about 13.7 Sentinel-2 L1C acquisitions
   Run's list price. Guntersville is about 60% of it (4 tiles, 10 crops).
 - **Storage:** under $0.10 a month.
 
+## Where it runs (decision pending)
+
+**On Linux x86-64 the frozen candidate is not bit-exact.** The Cloud Run image passes every environment check, and every
+decision is identical. But the numeric fields differ in the last bits:
+- engine `p`/`feet`: at most 1.6e-15 relative;
+- ACOLITE: one float32 ulp on Intel AVX-512 hosts.
+
+See `research/clarity-candidate/provenance/CROSS_PLATFORM_REPRODUCTION.md`.
+
+**So the cloud job fails closed:** it writes nothing, and its schedule is paused. Two ways forward, Michael's call:
+1. **A declared tolerance** for the cloud: decisions identical, numeric within 1e-12 relative, ACOLITE within 1e-8.
+2. **The exact host:** `run-on-mac.sh` runs the same job on macOS arm64, where every check is exact.
+
 ## Deploy, run, stop
 
 ```bash
