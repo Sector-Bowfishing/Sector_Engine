@@ -1,0 +1,76 @@
+{
+ "engine": "C-gbm (Stage 13 seven-feature constrained boosting), single continuous engine",
+ "fitted_on": "1206 E13 tier-1 development rows",
+ "bands": {
+  "3ft": [
+   0.4200812613969267,
+   0.5794511529010916
+  ],
+  "2ft": [
+   0.22929498730515369,
+   0.3766490103350608
+  ]
+ },
+ "bands_ft": {
+  "3ft": [
+   2.6307601907557867,
+   3.797092289251636
+  ],
+  "2ft": [
+   1.6954890421605682,
+   2.3803948957135415
+  ]
+ },
+ "band_fit": {
+  "3ft": {
+   "alpha": -0.19697930119887874,
+   "beta": 8.69859637874988,
+   "n": 730,
+   "d_lo": -0.05703999332273575,
+   "d_hi": 0.10232989818142921
+  },
+  "2ft": {
+   "alpha": -0.01827020375323026,
+   "beta": 9.407916612080058,
+   "n": 496,
+   "d_lo": -0.0717350083588275,
+   "d_hi": 0.07561901467107962
+  }
+ },
+ "feet_authorised": [
+  "clear",
+  "normal",
+  "stained",
+  "limited"
+ ],
+ "interval_q": [
+  -0.1990372023980159,
+  0.17895410095700381
+ ],
+ "tier3_c3s_coef": [
+  -0.11142695333985349,
+  -0.5196661207137413,
+  -0.5899647317553022,
+  -0.6720192301466251
+ ],
+ "tier3_fitted_on": "1582 processed development rows (Sen2Cor)",
+ "tier3_bands": {
+  "3ft": [
+   0.18364971768616145,
+   0.568719487170855
+  ],
+  "2ft": [
+   0.19773086783009147,
+   0.4069367621495275
+  ]
+ },
+ "tier3_allowed_states": [
+  "Clear"
+ ],
+ "tier3_feet_for": [
+  "clear"
+ ],
+ "tier3_behaviour": "lower-confidence feet",
+ "s2c": "V-rho_w production coefficients (stage12/harm/score_tandem.json)",
+ "acolite": "20260421.0 K4 + EPQS/GLO-30 elevation; tier 1 default mask, tier 2 M3"
+}

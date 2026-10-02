@@ -1,0 +1,26 @@
+OrganizationIdentifier,OrganizationFormalName,MonitoringLocationIdentifier,MonitoringLocationName,MonitoringLocationTypeName,MonitoringLocationDescriptionText,HUCEightDigitCode,DrainageAreaMeasure/MeasureValue,DrainageAreaMeasure/MeasureUnitCode,ContributingDrainageAreaMeasure/MeasureValue,ContributingDrainageAreaMeasure/MeasureUnitCode,LatitudeMeasure,LongitudeMeasure,SourceMapScaleNumeric,HorizontalAccuracyMeasure/MeasureValue,HorizontalAccuracyMeasure/MeasureUnitCode,HorizontalCollectionMethodName,HorizontalCoordinateReferenceSystemDatumName,VerticalMeasure/MeasureValue,VerticalMeasure/MeasureUnitCode,VerticalAccuracyMeasure/MeasureValue,VerticalAccuracyMeasure/MeasureUnitCode,VerticalCollectionMethodName,VerticalCoordinateReferenceSystemDatumName,CountryCode,StateCode,CountyCode,AquiferName,LocalAqfrName,FormationTypeText,AquiferTypeName,ConstructionDateText,WellDepthMeasure/MeasureValue,WellDepthMeasure/MeasureUnitCode,WellHoleDepthMeasure/MeasureValue,WellHoleDepthMeasure/MeasureUnitCode,ProviderName
+GLEC,Great Lakes Environmental Center,GLEC-BWALA-A,Alamo Lake,Lake,,15030204,,,,,34.2394849900,-113.5838246000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,012,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-CGMEAUSGS,Lake Mead,Lake,,15010005,,,,,36.1050000000,-114.4425000000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,015,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-CGPOW-A,Lake Powell,Lake,,14070006,,,,,36.9959880600,-111.4754113000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,005,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-CLHAV-A,Lake Havasu,Lake,,15030101,,,,,34.5883300000,-114.4297222000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,015,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-CLMIT-A,Mittry Lake,Lake,,15030107,,,,,32.8204472600,-114.4679071000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,027,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-CLMOH-A,Lake Mohave,Lake,,15030101,,,,,35.4494444400,-114.6416667000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,015,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-CLTOP-A,Topock Marsh,Lake,,15030101,,,,,34.8338727000,-114.5161736000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,015,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-LCLYM-B,Lyman Reservoir,Lake,,15020001,,,,,34.3659140000,-109.3710540000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,001,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-MGCHA-A,Chaparral Park Lake,Lake,,15060106,,,,,33.5115000000,-111.9076000000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,013,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-MGHTL-A,Horsethief Basin Lake,Lake,,15070102,,,,,34.1616666700,-112.2991667000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,025,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-MGRDM-MID,Red Mountain,Lake,,15050100,,,,,33.4334930000,-111.6689480000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,013,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-MGTTL-MID,Tempe Town Lake,Lake,,15060106,,,,,33.4325460000,-111.9337720000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,013,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-MGWTR-MID,Water Ranch,Lake,,15050100,,,,,33.3628960000,-111.7361170000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,013,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SCLAK-A,Lakeside Lake,Lake,,15050302,,,,,32.1860860000,-110.8165690000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,019,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SCPAK-A,Parker Canyon Lake,Lake,,15050301,,,,,31.4263900000,-110.4541667000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,003,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SCPAT-A,Patagonia Lake,Lake,,15050301,,,,,31.4988888900,-110.8469444000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,023,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SCPEN-B,Pena Blanca Lake,Lake,,15050301,,,,,31.4030090000,-111.0865220000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,023,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SCROS-A,Rose Canyon Lake,Lake,,15050302,,,,,32.3872220000,-110.7111110000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,019,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SCSIL-B,Silverbell Lake,Lake,,15050301,,,,,32.2845890000,-111.0326590000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,019,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SRAPA-A,Apache Lake,Lake,,15060106,,,,,33.5963360800,-111.2295056000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,013,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SRCAN-A,Canyon Lake,Lake,,15060106,,,,,33.5455555600,-111.4386111000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,013,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SRCRE-A,Crescent Lake,Lake,,15060101,,,,,33.9166000000,-109.4250000000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,001,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-SRROO-A,Roosevelt Lake,Lake,,15060103,,,,,33.6606498000,-111.0088418000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,007,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-UGLUN-2,Luna Lake,Lake,,15040004,,,,,33.8312100000,-109.0849400000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,001,,,,,,,,,,STORET
+GLEC,Great Lakes Environmental Center,GLEC-VRWAT-A,Watson Lake,Lake,,15060202,,,,,34.5868680000,-112.4200040000,,,,GPS-Unspecified,WGS84,,,,,,,US,04,025,,,,,,,,,,STORET

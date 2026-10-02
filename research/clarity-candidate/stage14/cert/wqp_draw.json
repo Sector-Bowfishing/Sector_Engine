@@ -1,0 +1,9 @@
+{
+ "drawn": 7000,
+ "passed": 3088,
+ "cool_passed": 639,
+ "by_collection": {
+  "sentinel-2-c1-l2a": 2596,
+  "sentinel-2-l2a": 492
+ }
+}

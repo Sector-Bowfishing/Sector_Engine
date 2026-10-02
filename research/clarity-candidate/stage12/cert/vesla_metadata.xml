@@ -1,0 +1,770 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="VeslaRajapinta.Models" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="AsemaTyyppi">
+        <Key>
+          <PropertyRef Name="AsemaTyyppi_Id" />
+        </Key>
+        <Property Name="AsemaTyyppi_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Lyhenne" Type="Edm.String" Nullable="false" />
+        <Property Name="Selite" Type="Edm.String" Nullable="false" />
+        <Property Name="SeliteRuo" Type="Edm.String" />
+        <Property Name="SeliteEng" Type="Edm.String" />
+        <Property Name="JarjNro" Type="Edm.Int32" />
+        <Property Name="HydroTempoData" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="Paikka" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_AsemaTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner" ToRole="Paikka" FromRole="PaikkaPartner" />
+      </EntityType>
+      <EntityType Name="Haju">
+        <Key>
+          <PropertyRef Name="Haju_Id" />
+        </Key>
+        <Property Name="Haju_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Lyhenne" Type="Edm.String" Nullable="false" />
+        <Property Name="Selite" Type="Edm.String" Nullable="false" />
+        <Property Name="SeliteRuo" Type="Edm.String" />
+        <Property Name="SeliteEng" Type="Edm.String" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Kayttaja" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="VedenlNayte" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Haju_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner" ToRole="VedenlNayte" FromRole="VedenlNaytePartner" />
+      </EntityType>
+      <EntityType Name="KoordLahde">
+        <Key>
+          <PropertyRef Name="KoordLahde_Id" />
+        </Key>
+        <Property Name="KoordLahde_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Selite" Type="Edm.String" Nullable="false" />
+        <Property Name="Kuvaus" Type="Edm.String" />
+        <Property Name="SeliteRuo" Type="Edm.String" />
+        <Property Name="KuvausRuo" Type="Edm.String" />
+        <Property Name="SeliteEng" Type="Edm.String" />
+        <Property Name="KuvausEng" Type="Edm.String" />
+        <Property Name="JarjNro" Type="Edm.Int32" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Kayttaja" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="Paikka" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_KoordLahde_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner" ToRole="Paikka" FromRole="PaikkaPartner" />
+      </EntityType>
+      <EntityType Name="Lippu">
+        <Key>
+          <PropertyRef Name="Lippu_Id" />
+        </Key>
+        <Property Name="Lippu_Id" Type="Edm.String" Nullable="false" />
+        <Property Name="Selite" Type="Edm.String" Nullable="false" />
+        <Property Name="SeliteRuo" Type="Edm.String" />
+        <Property Name="SeliteEng" Type="Edm.String" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Kayttaja" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="VedenlTulos" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Lippu_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner" ToRole="VedenlTulos" FromRole="VedenlTulosPartner" />
+      </EntityType>
+      <EntityType Name="Maaritys">
+        <Key>
+          <PropertyRef Name="Maaritys_id" />
+        </Key>
+        <Property Name="Maaritys_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="MaaritysKoodi" Type="Edm.String" />
+        <Property Name="Suure_Id" Type="Edm.Int16" Nullable="false" />
+        <Property Name="SuureKoodi" Type="Edm.String" />
+        <Property Name="EsiKasittKoodit" Type="Edm.String" />
+        <Property Name="MaaritysMenKoodi" Type="Edm.String" />
+        <Property Name="SuureNimi" Type="Edm.String" />
+        <Property Name="EsikasittSelite" Type="Edm.String" />
+        <Property Name="MaaritysMenSelite" Type="Edm.String" />
+        <Property Name="LyhytSelite" Type="Edm.String" />
+        <Property Name="PitkaSelite" Type="Edm.String" />
+        <Property Name="Yks" Type="Edm.String" />
+        <Property Name="Ryhma" Type="Edm.Byte" Nullable="false" />
+        <Property Name="Tarkkuus" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Vanhentunut" Type="Edm.String" />
+        <Property Name="HalrajaLimnAla" Type="Edm.Double" Nullable="false" />
+        <Property Name="HalrajaLimnYla" Type="Edm.Double" Nullable="false" />
+        <Property Name="HalrajaMarAla" Type="Edm.Double" Nullable="false" />
+        <Property Name="HalrajaMarYla" Type="Edm.Double" Nullable="false" />
+        <Property Name="Parncc" Type="Edm.String" />
+        <Property Name="JarjNroMeri" Type="Edm.Int32" />
+        <Property Name="JarjNroJarvi" Type="Edm.Int32" />
+        <Property Name="JarjNroVirta" Type="Edm.Int32" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" />
+        <Property Name="Kayttaja" Type="Edm.String" />
+        <NavigationProperty Name="VedenlTulos" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Maaritys_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner" ToRole="VedenlTulos" FromRole="VedenlTulosPartner" />
+      </EntityType>
+      <EntityType Name="MaaritysEng">
+        <Key>
+          <PropertyRef Name="Maaritys_id" />
+          <PropertyRef Name="SuureKoodi" />
+          <PropertyRef Name="SuureNimi" />
+          <PropertyRef Name="Ryhma" />
+          <PropertyRef Name="Tarkkuus" />
+          <PropertyRef Name="HalrajaLimnAla" />
+          <PropertyRef Name="HalrajaLimnYla" />
+          <PropertyRef Name="HalrajaMarAla" />
+          <PropertyRef Name="HalrajaMarYla" />
+        </Key>
+        <Property Name="Maaritys_id" Type="Edm.Int16" Nullable="false" />
+        <Property Name="SuureKoodi" Type="Edm.String" Nullable="false" />
+        <Property Name="EsiKasittKoodit" Type="Edm.String" />
+        <Property Name="MaaritysMenKoodi" Type="Edm.String" />
+        <Property Name="SuureNimi" Type="Edm.String" Nullable="false" />
+        <Property Name="EsikasittSelite" Type="Edm.String" />
+        <Property Name="MaaritysMenSelite" Type="Edm.String" />
+        <Property Name="Yks" Type="Edm.String" />
+        <Property Name="Ryhma" Type="Edm.Byte" Nullable="false" />
+        <Property Name="Tarkkuus" Type="Edm.Int32" Nullable="false" />
+        <Property Name="HalrajaLimnAla" Type="Edm.Double" Nullable="false" />
+        <Property Name="HalrajaLimnYla" Type="Edm.Double" Nullable="false" />
+        <Property Name="HalrajaMarAla" Type="Edm.Double" Nullable="false" />
+        <Property Name="HalrajaMarYla" Type="Edm.Double" Nullable="false" />
+        <Property Name="Parncc" Type="Edm.String" />
+        <Property Name="JarjNroMeri" Type="Edm.Int16" />
+        <Property Name="JarjNroJarvi" Type="Edm.Int16" />
+        <Property Name="JarjNroVirta" Type="Edm.Int16" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" />
+        <Property Name="Kayttaja" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="MaaritysYhd">
+        <Key>
+          <PropertyRef Name="MaaritysYhd_Id" />
+        </Key>
+        <Property Name="MaaritysYhd_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SuureKoodi" Type="Edm.String" Nullable="false" />
+        <Property Name="Nimi" Type="Edm.String" Nullable="false" />
+        <Property Name="NimiEng" Type="Edm.String" />
+        <NavigationProperty Name="MaaritysYhdMaaritys" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdMaaritys_VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhdMaaritysPartner" ToRole="MaaritysYhdMaaritys" FromRole="MaaritysYhdMaaritysPartner" />
+      </EntityType>
+      <EntityType Name="MaaritysYhdMaaritys">
+        <Key>
+          <PropertyRef Name="MaaritysYhd_id" />
+          <PropertyRef Name="Maaritys_Id" />
+        </Key>
+        <Property Name="MaaritysYhd_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Maaritys_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="EsikasittKoodit" Type="Edm.String" />
+        <Property Name="MaaritysMenKoodi" Type="Edm.String" />
+        <NavigationProperty Name="MaaritysYhd" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhd_VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdPartner" ToRole="MaaritysYhd" FromRole="MaaritysYhdPartner" />
+      </EntityType>
+      <EntityType Name="Naytteenotto">
+        <Key>
+          <PropertyRef Name="Naytteenotto_Id" />
+        </Key>
+        <Property Name="Naytteenotto_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Paikka_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Aika" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Nlaitos_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AsemaKaynti_Id" Type="Edm.Int32" />
+        <Property Name="LippuNaytteenotto_Id" Type="Edm.Int32" />
+        <Property Name="Koordsto" Type="Edm.String" />
+        <Property Name="KoordYKPohj" Type="Edm.Int32" />
+        <Property Name="KoordYKIta" Type="Edm.Int32" />
+        <Property Name="KoordErTmPohj" Type="Edm.Int32" />
+        <Property Name="KoordErTmIta" Type="Edm.Int32" />
+        <Property Name="KoordErLat" Type="Edm.Decimal" />
+        <Property Name="KoordErLong" Type="Edm.Decimal" />
+        <Property Name="TallentajaOrganis_Id" Type="Edm.Int32" />
+        <Property Name="Lisatieto" Type="Edm.String" />
+        <Property Name="AikaLisays" Type="Edm.DateTime" />
+        <Property Name="KayttajaLisays" Type="Edm.String" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" />
+        <Property Name="KayttajaMuutos" Type="Edm.String" />
+        <NavigationProperty Name="Paikka" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner" ToRole="Paikka" FromRole="PaikkaPartner" />
+        <NavigationProperty Name="VedenlNayte" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner" ToRole="VedenlNayte" FromRole="VedenlNaytePartner" />
+        <NavigationProperty Name="YmpHavainto" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartner" ToRole="YmpHavainto" FromRole="YmpHavaintoPartner" />
+        <NavigationProperty Name="Nlaitos" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_Nlaitos_VeslaRajapinta_Models_Nlaitos_NlaitosPartner" ToRole="Nlaitos" FromRole="NlaitosPartner" />
+      </EntityType>
+      <EntityType Name="Nlaitos">
+        <Key>
+          <PropertyRef Name="Nlaitos_Id" />
+        </Key>
+        <Property Name="Nlaitos_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Nro" Type="Edm.String" />
+        <Property Name="Nimi" Type="Edm.String" />
+        <Property Name="JarjNro" Type="Edm.Int32" />
+        <NavigationProperty Name="Naytteenotto" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Nlaitos_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner" ToRole="Naytteenotto" FromRole="NaytteenottoPartner" />
+      </EntityType>
+      <EntityType Name="Paikka">
+        <Key>
+          <PropertyRef Name="Paikka_Id" />
+        </Key>
+        <Property Name="Paikka_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Nimi" Type="Edm.String" Nullable="false" />
+        <Property Name="Koordsto" Type="Edm.String" Nullable="false" />
+        <Property Name="KoordLahde_Id" Type="Edm.Int32" />
+        <Property Name="Tarkkuus" Type="Edm.Int32" />
+        <Property Name="Ulkomailla" Type="Edm.Int16" Nullable="false" />
+        <Property Name="AsemaTyyppi_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="KoordYkPohj" Type="Edm.Int32" Nullable="false" />
+        <Property Name="KoordYkIta" Type="Edm.Int32" Nullable="false" />
+        <Property Name="KoordLat" Type="Edm.String" />
+        <Property Name="KoordLong" Type="Edm.String" />
+        <Property Name="KoordErTmPohj" Type="Edm.Int32" Nullable="false" />
+        <Property Name="KoordErTmIta" Type="Edm.Int32" Nullable="false" />
+        <Property Name="KoordErLat" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="KoordErLong" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="Syvyys" Type="Edm.Decimal" />
+        <Property Name="YmpTyyppi_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="H_Kunta_Id" Type="Edm.Int32" />
+        <Property Name="J_Jarvi_Id" Type="Edm.Int32" />
+        <Property Name="H_Vesal_Id" Type="Edm.Int32" />
+        <Property Name="H_VesienhoitoAlue_Id" Type="Edm.Int32" />
+        <Property Name="V_Vesimuodostuma_Id" Type="Edm.Int32" />
+        <Property Name="H_HelcomAlue_Id" Type="Edm.Int32" />
+        <Property Name="VastuuViranomainen_Id" Type="Edm.Int32" />
+        <Property Name="YllapitajaOrganis_Id" Type="Edm.Int32" />
+        <Property Name="Lisatieto" Type="Edm.String" />
+        <Property Name="AikaLisays" Type="Edm.DateTime" />
+        <Property Name="KayttajaLisays" Type="Edm.String" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" />
+        <Property Name="KayttajaMuutos" Type="Edm.String" />
+        <NavigationProperty Name="AsemaTyyppi" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_AsemaTyyppi_VeslaRajapinta_Models_AsemaTyyppi_AsemaTyyppiPartner" ToRole="AsemaTyyppi" FromRole="AsemaTyyppiPartner" />
+        <NavigationProperty Name="KoordLahde" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_KoordLahde_VeslaRajapinta_Models_KoordLahde_KoordLahdePartner" ToRole="KoordLahde" FromRole="KoordLahdePartner" />
+        <NavigationProperty Name="Naytteenotto" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner" ToRole="Naytteenotto" FromRole="NaytteenottoPartner" />
+        <NavigationProperty Name="YmpTyyppi" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_YmpTyyppi_VeslaRajapinta_Models_YmpTyyppi_YmpTyyppiPartner" ToRole="YmpTyyppi" FromRole="YmpTyyppiPartner" />
+      </EntityType>
+      <EntityType Name="Tutkl">
+        <Key>
+          <PropertyRef Name="Tutkl_Id" />
+        </Key>
+        <Property Name="Tutkl_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Nro" Type="Edm.Int32" />
+        <Property Name="Nimi" Type="Edm.String" />
+        <Property Name="JarjNro" Type="Edm.Int32" />
+        <Property Name="Kaytossa" Type="Edm.String" />
+        <NavigationProperty Name="VedenlTulos" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Tutkl_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner" ToRole="VedenlTulos" FromRole="VedenlTulosPartner" />
+      </EntityType>
+      <EntityType Name="VedenlNayte">
+        <Key>
+          <PropertyRef Name="VedenlNayte_Id" />
+        </Key>
+        <Property Name="VedenlNayte_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Naytteenotto_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SyvyysYla" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="SyvyysAla" Type="Edm.Decimal" />
+        <Property Name="Haju_Id" Type="Edm.Int32" />
+        <Property Name="Lisatieto" Type="Edm.String" />
+        <Property Name="AikaLisays" Type="Edm.DateTime" />
+        <Property Name="KayttajaLisays" Type="Edm.String" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" />
+        <Property Name="KayttajaMuutos" Type="Edm.String" />
+        <NavigationProperty Name="Haju" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlNayte_Haju_VeslaRajapinta_Models_Haju_HajuPartner" ToRole="Haju" FromRole="HajuPartner" />
+        <NavigationProperty Name="Naytteenotto" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlNayte_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner" ToRole="Naytteenotto" FromRole="NaytteenottoPartner" />
+        <NavigationProperty Name="VedenlTulos" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlNayte_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner" ToRole="VedenlTulos" FromRole="VedenlTulosPartner" />
+      </EntityType>
+      <EntityType Name="VedenlTulos">
+        <Key>
+          <PropertyRef Name="VedenlNayte_Id" />
+          <PropertyRef Name="Maaritys_Id" />
+        </Key>
+        <Property Name="VedenlNayte_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Maaritys_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Lippu_Id" Type="Edm.String" />
+        <Property Name="Arvo" Type="Edm.Double" Nullable="false" />
+        <Property Name="Tutkl_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Epavarmuus" Type="Edm.Double" />
+        <Property Name="AikaLisays" Type="Edm.DateTime" />
+        <Property Name="KayttajaLisays" Type="Edm.String" />
+        <NavigationProperty Name="Lippu" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_Lippu_VeslaRajapinta_Models_Lippu_LippuPartner" ToRole="Lippu" FromRole="LippuPartner" />
+        <NavigationProperty Name="VedenlNayte" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner" ToRole="VedenlNayte" FromRole="VedenlNaytePartner" />
+        <NavigationProperty Name="Tutkl" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_Tutkl_VeslaRajapinta_Models_Tutkl_TutklPartner" ToRole="Tutkl" FromRole="TutklPartner" />
+        <NavigationProperty Name="Maaritys" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_Maaritys_VeslaRajapinta_Models_Maaritys_MaaritysPartner" ToRole="Maaritys" FromRole="MaaritysPartner" />
+      </EntityType>
+      <EntityType Name="YmpHavainto">
+        <Key>
+          <PropertyRef Name="Naytteenotto_Id" />
+          <PropertyRef Name="YmpSuure_Id" />
+        </Key>
+        <Property Name="Naytteenotto_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="YmpSuure_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Arvo" Type="Edm.Decimal" Nullable="false" />
+        <NavigationProperty Name="Naytteenotto" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpHavainto_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner" ToRole="Naytteenotto" FromRole="NaytteenottoPartner" />
+        <NavigationProperty Name="YmpSuure" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpHavainto_YmpSuure_VeslaRajapinta_Models_YmpSuure_YmpSuurePartner" ToRole="YmpSuure" FromRole="YmpSuurePartner" />
+      </EntityType>
+      <EntityType Name="YmpSuure">
+        <Key>
+          <PropertyRef Name="YmpSuure_Id" />
+        </Key>
+        <Property Name="YmpSuure_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SuureKoodi" Type="Edm.String" Nullable="false" />
+        <Property Name="SuureNimi" Type="Edm.String" Nullable="false" />
+        <Property Name="SuureNimiRuo" Type="Edm.String" />
+        <Property Name="SuureNimiEng" Type="Edm.String" />
+        <Property Name="Yks" Type="Edm.String" />
+        <Property Name="Tarkkuus" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ArvoMin" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ArvoMax" Type="Edm.Int32" Nullable="false" />
+        <Property Name="JarjNro" Type="Edm.Int32" Nullable="false" />
+        <Property Name="H_Suure_Id" Type="Edm.Int16" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Kayttaja" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="YmpHavainto" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpSuure_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartner" ToRole="YmpHavainto" FromRole="YmpHavaintoPartner" />
+      </EntityType>
+      <EntityType Name="YmpTyyppi">
+        <Key>
+          <PropertyRef Name="YmpTyyppi_Id" />
+        </Key>
+        <Property Name="YmpTyyppi_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Nimi" Type="Edm.String" Nullable="false" />
+        <Property Name="Selite" Type="Edm.String" />
+        <Property Name="NimiRuo" Type="Edm.String" />
+        <Property Name="SeliteRuo" Type="Edm.String" />
+        <Property Name="NimiEng" Type="Edm.String" />
+        <Property Name="SeliteEng" Type="Edm.String" />
+        <Property Name="SyvyysMax" Type="Edm.Int32" />
+        <Property Name="SadePaikka" Type="Edm.Int32" />
+        <Property Name="AikaMuutos" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Kayttaja" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="Paikka" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner" ToRole="Paikka" FromRole="PaikkaPartner" />
+      </EntityType>
+      <EntityType Name="Determination">
+        <Key>
+          <PropertyRef Name="Determination_id" />
+        </Key>
+        <Property Name="Determination_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AnalyteCode" Type="Edm.String" />
+        <Property Name="PretreatmentCodes" Type="Edm.String" />
+        <Property Name="AnalysisMethodCode" Type="Edm.String" />
+        <Property Name="Analyte" Type="Edm.String" />
+        <Property Name="Pretreatments" Type="Edm.String" />
+        <Property Name="AnalysisMethod" Type="Edm.String" />
+        <Property Name="Unit" Type="Edm.String" />
+        <Property Name="AnalyteGroupId" Type="Edm.Byte" Nullable="false" />
+        <Property Name="DecimalCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AlarmLimnicLower" Type="Edm.Double" Nullable="false" />
+        <Property Name="AlarmLimnicUpper" Type="Edm.Double" Nullable="false" />
+        <Property Name="AlarmMarineLower" Type="Edm.Double" Nullable="false" />
+        <Property Name="AlarmMarineUpper" Type="Edm.Double" Nullable="false" />
+        <Property Name="TimeChanged" Type="Edm.DateTime" />
+        <NavigationProperty Name="Result_Wide" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Determination_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner" ToRole="Result_Wide" FromRole="Result_WidePartner" />
+      </EntityType>
+      <EntityType Name="Result_Wide">
+        <Key>
+          <PropertyRef Name="Sample_Id" />
+          <PropertyRef Name="Determination_Id" />
+        </Key>
+        <Property Name="Site_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Site" Type="Edm.String" />
+        <Property Name="Sampling_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Time" Type="Edm.DateTimeOffset" />
+        <Property Name="SampleDepth_m" Type="Edm.String" />
+        <Property Name="SampleDepthUpper_m" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="SampleDepthLower_m" Type="Edm.Decimal" />
+        <Property Name="Sample_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Determination_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Flag" Type="Edm.String" />
+        <Property Name="Value" Type="Edm.Double" Nullable="false" />
+        <Property Name="Unit" Type="Edm.String" />
+        <Property Name="Uncertainty" Type="Edm.Double" />
+        <Property Name="AnalyteCode" Type="Edm.String" />
+        <Property Name="AnalyteName" Type="Edm.String" />
+        <Property Name="AnalyteNameFI" Type="Edm.String" />
+        <Property Name="PretreatmentCodes" Type="Edm.String" />
+        <Property Name="AnalysisMethodCode" Type="Edm.String" />
+        <Property Name="DeterminationCode" Type="Edm.String" />
+        <Property Name="DeterminationName" Type="Edm.String" />
+        <Property Name="DeterminationNameFI" Type="Edm.String" />
+        <NavigationProperty Name="Site_Wide" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Result__Wide_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartner" ToRole="Site_Wide" FromRole="Site_WidePartner" />
+        <NavigationProperty Name="Sampling" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Result__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartner" ToRole="Sampling" FromRole="SamplingPartner" />
+        <NavigationProperty Name="Determination" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Result__Wide_Determination_VeslaRajapinta_Models_Determination_DeterminationPartner" ToRole="Determination" FromRole="DeterminationPartner" />
+      </EntityType>
+      <EntityType Name="Sampling">
+        <Key>
+          <PropertyRef Name="Sampling_id" />
+        </Key>
+        <Property Name="Site_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Site" Type="Edm.String" />
+        <Property Name="Sampling_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Time" Type="Edm.DateTimeOffset" />
+        <Property Name="ParameterCode" Type="Edm.String" />
+        <Property Name="Value" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="Unit" Type="Edm.String" />
+        <Property Name="DecimalCount" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ParameterName" Type="Edm.String" />
+        <Property Name="ParameterNameFI" Type="Edm.String" />
+        <NavigationProperty Name="Site_Wide" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Sampling_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartner" ToRole="Site_Wide" FromRole="Site_WidePartner" />
+        <NavigationProperty Name="Result_Wide" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Sampling_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner" ToRole="Result_Wide" FromRole="Result_WidePartner" />
+      </EntityType>
+      <EntityType Name="Site_Wide">
+        <Key>
+          <PropertyRef Name="Site_Id" />
+        </Key>
+        <Property Name="Site_Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="CoordinateSystem" Type="Edm.String" />
+        <Property Name="CoordYKJ_North" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoordYKJ_East" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoordMK_Lat" Type="Edm.String" />
+        <Property Name="CoordMK_Long" Type="Edm.String" />
+        <Property Name="CoordETRSTM35FIN_North" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoordETRSTM35FIN_East" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CoordEUREFFIN_WGS84_Lat" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="CoordEUREFFIN_WGS84_Long" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="SiteRadius_m" Type="Edm.Int32" />
+        <Property Name="Depth_m" Type="Edm.Decimal" />
+        <Property Name="EnvironmentType" Type="Edm.String" />
+        <Property Name="Municipal" Type="Edm.String" />
+        <Property Name="LakeCode" Type="Edm.String" />
+        <Property Name="Lake" Type="Edm.String" />
+        <Property Name="WaterManagementAreaCode" Type="Edm.String" />
+        <Property Name="WaterManagementArea" Type="Edm.String" />
+        <Property Name="WaterbasinCode" Type="Edm.String" />
+        <Property Name="Waterbasin" Type="Edm.String" />
+        <Property Name="WaterbodyCode" Type="Edm.String" />
+        <Property Name="WaterbodyType_Id" Type="Edm.Int32" />
+        <Property Name="WaterbodyType" Type="Edm.String" />
+        <Property Name="Waterbody" Type="Edm.String" />
+        <Property Name="HelcomSubbasinCode" Type="Edm.Byte" />
+        <Property Name="HelcomSubbasin" Type="Edm.String" />
+        <Property Name="HelcomCoastalAreaCode" Type="Edm.Byte" />
+        <Property Name="HelcomCoastalArea" Type="Edm.String" />
+        <Property Name="AdminOrganization" Type="Edm.String" />
+        <Property Name="AdditionalInfo" Type="Edm.String" />
+        <Property Name="DateAdded" Type="Edm.DateTimeOffset" />
+        <Property Name="DateChanged" Type="Edm.DateTimeOffset" />
+        <NavigationProperty Name="Result_Wide" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Site__Wide_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner" ToRole="Result_Wide" FromRole="Result_WidePartner" />
+        <NavigationProperty Name="Sampling" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_Site__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartner" ToRole="Sampling" FromRole="SamplingPartner" />
+      </EntityType>
+      <EntityType Name="TauluKuvaus">
+        <Key>
+          <PropertyRef Name="Nimi" />
+        </Key>
+        <Property Name="Nimi" Type="Edm.String" Nullable="false" />
+        <Property Name="KuvausSuomeksi" Type="Edm.String" />
+        <Property Name="KuvausEnglanniksi" Type="Edm.String" />
+        <Property Name="KuvausRuotsiksi" Type="Edm.String" />
+        <NavigationProperty Name="SarakeKuvaukset" Relationship="VeslaRajapinta.Models.VeslaRajapinta_Models_TauluKuvaus_SarakeKuvaukset_VeslaRajapinta_Models_SarakeKuvaus_SarakeKuvauksetPartner" ToRole="SarakeKuvaukset" FromRole="SarakeKuvauksetPartner" />
+      </EntityType>
+      <EntityType Name="SarakeKuvaus">
+        <Key>
+          <PropertyRef Name="Nimi" />
+          <PropertyRef Name="Taulu" />
+        </Key>
+        <Property Name="Nimi" Type="Edm.String" Nullable="false" />
+        <Property Name="Taulu" Type="Edm.String" Nullable="false" />
+        <Property Name="Tyyppi" Type="Edm.String" />
+        <Property Name="KuvausSuomeksi" Type="Edm.String" />
+        <Property Name="KuvausEnglanniksi" Type="Edm.String" />
+        <Property Name="KuvausRuotsiksi" Type="Edm.String" />
+      </EntityType>
+      <Association Name="VeslaRajapinta_Models_AsemaTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+        <End Type="VeslaRajapinta.Models.Paikka" Role="Paikka" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.AsemaTyyppi" Role="PaikkaPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Haju_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner">
+        <End Type="VeslaRajapinta.Models.VedenlNayte" Role="VedenlNayte" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Haju" Role="VedenlNaytePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_KoordLahde_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+        <End Type="VeslaRajapinta.Models.Paikka" Role="Paikka" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.KoordLahde" Role="PaikkaPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Lippu_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="VedenlTulos" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Lippu" Role="VedenlTulosPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Maaritys_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="VedenlTulos" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Maaritys" Role="VedenlTulosPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdMaaritys_VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhdMaaritysPartner">
+        <End Type="VeslaRajapinta.Models.MaaritysYhdMaaritys" Role="MaaritysYhdMaaritys" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.MaaritysYhd" Role="MaaritysYhdMaaritysPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhd_VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdPartner">
+        <End Type="VeslaRajapinta.Models.MaaritysYhd" Role="MaaritysYhd" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.MaaritysYhdMaaritys" Role="MaaritysYhdPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Naytteenotto_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+        <End Type="VeslaRajapinta.Models.Paikka" Role="Paikka" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="PaikkaPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Naytteenotto_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner">
+        <End Type="VeslaRajapinta.Models.VedenlNayte" Role="VedenlNayte" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="VedenlNaytePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Naytteenotto_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartner">
+        <End Type="VeslaRajapinta.Models.YmpHavainto" Role="YmpHavainto" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="YmpHavaintoPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Naytteenotto_Nlaitos_VeslaRajapinta_Models_Nlaitos_NlaitosPartner">
+        <End Type="VeslaRajapinta.Models.Nlaitos" Role="Nlaitos" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="NlaitosPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Nlaitos_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="Naytteenotto" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Nlaitos" Role="NaytteenottoPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Paikka_AsemaTyyppi_VeslaRajapinta_Models_AsemaTyyppi_AsemaTyyppiPartner">
+        <End Type="VeslaRajapinta.Models.AsemaTyyppi" Role="AsemaTyyppi" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Paikka" Role="AsemaTyyppiPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Paikka_KoordLahde_VeslaRajapinta_Models_KoordLahde_KoordLahdePartner">
+        <End Type="VeslaRajapinta.Models.KoordLahde" Role="KoordLahde" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Paikka" Role="KoordLahdePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Paikka_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="Naytteenotto" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Paikka" Role="NaytteenottoPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Paikka_YmpTyyppi_VeslaRajapinta_Models_YmpTyyppi_YmpTyyppiPartner">
+        <End Type="VeslaRajapinta.Models.YmpTyyppi" Role="YmpTyyppi" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Paikka" Role="YmpTyyppiPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Tutkl_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="VedenlTulos" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Tutkl" Role="VedenlTulosPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_VedenlNayte_Haju_VeslaRajapinta_Models_Haju_HajuPartner">
+        <End Type="VeslaRajapinta.Models.Haju" Role="Haju" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.VedenlNayte" Role="HajuPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_VedenlNayte_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="Naytteenotto" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.VedenlNayte" Role="NaytteenottoPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_VedenlNayte_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="VedenlTulos" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.VedenlNayte" Role="VedenlTulosPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_VedenlTulos_Lippu_VeslaRajapinta_Models_Lippu_LippuPartner">
+        <End Type="VeslaRajapinta.Models.Lippu" Role="Lippu" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="LippuPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_VedenlTulos_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner">
+        <End Type="VeslaRajapinta.Models.VedenlNayte" Role="VedenlNayte" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="VedenlNaytePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_VedenlTulos_Tutkl_VeslaRajapinta_Models_Tutkl_TutklPartner">
+        <End Type="VeslaRajapinta.Models.Tutkl" Role="Tutkl" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="TutklPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_VedenlTulos_Maaritys_VeslaRajapinta_Models_Maaritys_MaaritysPartner">
+        <End Type="VeslaRajapinta.Models.Maaritys" Role="Maaritys" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.VedenlTulos" Role="MaaritysPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_YmpHavainto_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+        <End Type="VeslaRajapinta.Models.Naytteenotto" Role="Naytteenotto" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.YmpHavainto" Role="NaytteenottoPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_YmpHavainto_YmpSuure_VeslaRajapinta_Models_YmpSuure_YmpSuurePartner">
+        <End Type="VeslaRajapinta.Models.YmpSuure" Role="YmpSuure" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.YmpHavainto" Role="YmpSuurePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_YmpSuure_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartner">
+        <End Type="VeslaRajapinta.Models.YmpHavainto" Role="YmpHavainto" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.YmpSuure" Role="YmpHavaintoPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_YmpTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+        <End Type="VeslaRajapinta.Models.Paikka" Role="Paikka" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.YmpTyyppi" Role="PaikkaPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Determination_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner">
+        <End Type="VeslaRajapinta.Models.Result_Wide" Role="Result_Wide" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Determination" Role="Result_WidePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Result__Wide_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartner">
+        <End Type="VeslaRajapinta.Models.Site_Wide" Role="Site_Wide" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Result_Wide" Role="Site_WidePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Result__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartner">
+        <End Type="VeslaRajapinta.Models.Sampling" Role="Sampling" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Result_Wide" Role="SamplingPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Result__Wide_Determination_VeslaRajapinta_Models_Determination_DeterminationPartner">
+        <End Type="VeslaRajapinta.Models.Determination" Role="Determination" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Result_Wide" Role="DeterminationPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Sampling_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartner">
+        <End Type="VeslaRajapinta.Models.Site_Wide" Role="Site_Wide" Multiplicity="0..1" />
+        <End Type="VeslaRajapinta.Models.Sampling" Role="Site_WidePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Sampling_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner">
+        <End Type="VeslaRajapinta.Models.Result_Wide" Role="Result_Wide" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Sampling" Role="Result_WidePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Site__Wide_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner">
+        <End Type="VeslaRajapinta.Models.Result_Wide" Role="Result_Wide" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Site_Wide" Role="Result_WidePartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_Site__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartner">
+        <End Type="VeslaRajapinta.Models.Sampling" Role="Sampling" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.Site_Wide" Role="SamplingPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="VeslaRajapinta_Models_TauluKuvaus_SarakeKuvaukset_VeslaRajapinta_Models_SarakeKuvaus_SarakeKuvauksetPartner">
+        <End Type="VeslaRajapinta.Models.SarakeKuvaus" Role="SarakeKuvaukset" Multiplicity="*" />
+        <End Type="VeslaRajapinta.Models.TauluKuvaus" Role="SarakeKuvauksetPartner" Multiplicity="0..1" />
+      </Association>
+    </Schema>
+    <Schema Namespace="Default" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityContainer Name="Container" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="AsemaTyyppi" EntityType="VeslaRajapinta.Models.AsemaTyyppi" />
+        <EntitySet Name="Haju" EntityType="VeslaRajapinta.Models.Haju" />
+        <EntitySet Name="KoordLahde" EntityType="VeslaRajapinta.Models.KoordLahde" />
+        <EntitySet Name="Lippu" EntityType="VeslaRajapinta.Models.Lippu" />
+        <EntitySet Name="Maaritys" EntityType="VeslaRajapinta.Models.Maaritys" />
+        <EntitySet Name="MaaritysEng" EntityType="VeslaRajapinta.Models.MaaritysEng" />
+        <EntitySet Name="MaaritysYhd" EntityType="VeslaRajapinta.Models.MaaritysYhd" />
+        <EntitySet Name="MaaritysYhdMaaritys" EntityType="VeslaRajapinta.Models.MaaritysYhdMaaritys" />
+        <EntitySet Name="Naytteenotto" EntityType="VeslaRajapinta.Models.Naytteenotto" />
+        <EntitySet Name="Nlaitos" EntityType="VeslaRajapinta.Models.Nlaitos" />
+        <EntitySet Name="Paikka" EntityType="VeslaRajapinta.Models.Paikka" />
+        <EntitySet Name="Tutkl" EntityType="VeslaRajapinta.Models.Tutkl" />
+        <EntitySet Name="VedenlNayte" EntityType="VeslaRajapinta.Models.VedenlNayte" />
+        <EntitySet Name="VedenlTulos" EntityType="VeslaRajapinta.Models.VedenlTulos" />
+        <EntitySet Name="YmpHavainto" EntityType="VeslaRajapinta.Models.YmpHavainto" />
+        <EntitySet Name="YmpSuure" EntityType="VeslaRajapinta.Models.YmpSuure" />
+        <EntitySet Name="YmpTyyppi" EntityType="VeslaRajapinta.Models.YmpTyyppi" />
+        <EntitySet Name="Determination" EntityType="VeslaRajapinta.Models.Determination" />
+        <EntitySet Name="Result_Wide" EntityType="VeslaRajapinta.Models.Result_Wide" />
+        <EntitySet Name="Sampling" EntityType="VeslaRajapinta.Models.Sampling" />
+        <EntitySet Name="Site_Wide" EntityType="VeslaRajapinta.Models.Site_Wide" />
+        <EntitySet Name="TauluKuvaus" EntityType="VeslaRajapinta.Models.TauluKuvaus" />
+        <EntitySet Name="SarakeKuvaus" EntityType="VeslaRajapinta.Models.SarakeKuvaus" />
+        <AssociationSet Name="VeslaRajapinta_Models_AsemaTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_AsemaTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+          <End Role="PaikkaPartner" EntitySet="AsemaTyyppi" />
+          <End Role="Paikka" EntitySet="Paikka" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Haju_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Haju_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner">
+          <End Role="VedenlNaytePartner" EntitySet="Haju" />
+          <End Role="VedenlNayte" EntitySet="VedenlNayte" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_KoordLahde_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_KoordLahde_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+          <End Role="PaikkaPartner" EntitySet="KoordLahde" />
+          <End Role="Paikka" EntitySet="Paikka" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Lippu_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Lippu_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+          <End Role="VedenlTulosPartner" EntitySet="Lippu" />
+          <End Role="VedenlTulos" EntitySet="VedenlTulos" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Maaritys_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Maaritys_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+          <End Role="VedenlTulosPartner" EntitySet="Maaritys" />
+          <End Role="VedenlTulos" EntitySet="VedenlTulos" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdMaaritys_VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhdMaaritysPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdMaaritys_VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhdMaaritysPartner">
+          <End Role="MaaritysYhdMaaritysPartner" EntitySet="MaaritysYhd" />
+          <End Role="MaaritysYhdMaaritys" EntitySet="MaaritysYhdMaaritys" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhd_VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_MaaritysYhdMaaritys_MaaritysYhd_VeslaRajapinta_Models_MaaritysYhd_MaaritysYhdPartner">
+          <End Role="MaaritysYhdPartner" EntitySet="MaaritysYhdMaaritys" />
+          <End Role="MaaritysYhd" EntitySet="MaaritysYhd" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Naytteenotto_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+          <End Role="PaikkaPartner" EntitySet="Naytteenotto" />
+          <End Role="Paikka" EntitySet="Paikka" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Naytteenotto_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner">
+          <End Role="VedenlNaytePartner" EntitySet="Naytteenotto" />
+          <End Role="VedenlNayte" EntitySet="VedenlNayte" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Naytteenotto_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartner">
+          <End Role="YmpHavaintoPartner" EntitySet="Naytteenotto" />
+          <End Role="YmpHavainto" EntitySet="YmpHavainto" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Naytteenotto_Nlaitos_VeslaRajapinta_Models_Nlaitos_NlaitosPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Naytteenotto_Nlaitos_VeslaRajapinta_Models_Nlaitos_NlaitosPartner">
+          <End Role="NlaitosPartner" EntitySet="Naytteenotto" />
+          <End Role="Nlaitos" EntitySet="Nlaitos" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Nlaitos_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Nlaitos_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+          <End Role="NaytteenottoPartner" EntitySet="Nlaitos" />
+          <End Role="Naytteenotto" EntitySet="Naytteenotto" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Paikka_AsemaTyyppi_VeslaRajapinta_Models_AsemaTyyppi_AsemaTyyppiPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_AsemaTyyppi_VeslaRajapinta_Models_AsemaTyyppi_AsemaTyyppiPartner">
+          <End Role="AsemaTyyppiPartner" EntitySet="Paikka" />
+          <End Role="AsemaTyyppi" EntitySet="AsemaTyyppi" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Paikka_KoordLahde_VeslaRajapinta_Models_KoordLahde_KoordLahdePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_KoordLahde_VeslaRajapinta_Models_KoordLahde_KoordLahdePartner">
+          <End Role="KoordLahdePartner" EntitySet="Paikka" />
+          <End Role="KoordLahde" EntitySet="KoordLahde" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Paikka_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+          <End Role="NaytteenottoPartner" EntitySet="Paikka" />
+          <End Role="Naytteenotto" EntitySet="Naytteenotto" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Paikka_YmpTyyppi_VeslaRajapinta_Models_YmpTyyppi_YmpTyyppiPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Paikka_YmpTyyppi_VeslaRajapinta_Models_YmpTyyppi_YmpTyyppiPartner">
+          <End Role="YmpTyyppiPartner" EntitySet="Paikka" />
+          <End Role="YmpTyyppi" EntitySet="YmpTyyppi" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Tutkl_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Tutkl_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+          <End Role="VedenlTulosPartner" EntitySet="Tutkl" />
+          <End Role="VedenlTulos" EntitySet="VedenlTulos" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_VedenlNayte_Haju_VeslaRajapinta_Models_Haju_HajuPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlNayte_Haju_VeslaRajapinta_Models_Haju_HajuPartner">
+          <End Role="HajuPartner" EntitySet="VedenlNayte" />
+          <End Role="Haju" EntitySet="Haju" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_VedenlNayte_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlNayte_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+          <End Role="NaytteenottoPartner" EntitySet="VedenlNayte" />
+          <End Role="Naytteenotto" EntitySet="Naytteenotto" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_VedenlNayte_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlNayte_VedenlTulos_VeslaRajapinta_Models_VedenlTulos_VedenlTulosPartner">
+          <End Role="VedenlTulosPartner" EntitySet="VedenlNayte" />
+          <End Role="VedenlTulos" EntitySet="VedenlTulos" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_VedenlTulos_Lippu_VeslaRajapinta_Models_Lippu_LippuPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_Lippu_VeslaRajapinta_Models_Lippu_LippuPartner">
+          <End Role="LippuPartner" EntitySet="VedenlTulos" />
+          <End Role="Lippu" EntitySet="Lippu" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_VedenlTulos_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_VedenlNayte_VeslaRajapinta_Models_VedenlNayte_VedenlNaytePartner">
+          <End Role="VedenlNaytePartner" EntitySet="VedenlTulos" />
+          <End Role="VedenlNayte" EntitySet="VedenlNayte" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_VedenlTulos_Tutkl_VeslaRajapinta_Models_Tutkl_TutklPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_Tutkl_VeslaRajapinta_Models_Tutkl_TutklPartner">
+          <End Role="TutklPartner" EntitySet="VedenlTulos" />
+          <End Role="Tutkl" EntitySet="Tutkl" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_VedenlTulos_Maaritys_VeslaRajapinta_Models_Maaritys_MaaritysPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_VedenlTulos_Maaritys_VeslaRajapinta_Models_Maaritys_MaaritysPartner">
+          <End Role="MaaritysPartner" EntitySet="VedenlTulos" />
+          <End Role="Maaritys" EntitySet="Maaritys" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_YmpHavainto_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpHavainto_Naytteenotto_VeslaRajapinta_Models_Naytteenotto_NaytteenottoPartner">
+          <End Role="NaytteenottoPartner" EntitySet="YmpHavainto" />
+          <End Role="Naytteenotto" EntitySet="Naytteenotto" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_YmpHavainto_YmpSuure_VeslaRajapinta_Models_YmpSuure_YmpSuurePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpHavainto_YmpSuure_VeslaRajapinta_Models_YmpSuure_YmpSuurePartner">
+          <End Role="YmpSuurePartner" EntitySet="YmpHavainto" />
+          <End Role="YmpSuure" EntitySet="YmpSuure" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_YmpSuure_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpSuure_YmpHavainto_VeslaRajapinta_Models_YmpHavainto_YmpHavaintoPartner">
+          <End Role="YmpHavaintoPartner" EntitySet="YmpSuure" />
+          <End Role="YmpHavainto" EntitySet="YmpHavainto" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_YmpTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_YmpTyyppi_Paikka_VeslaRajapinta_Models_Paikka_PaikkaPartner">
+          <End Role="PaikkaPartner" EntitySet="YmpTyyppi" />
+          <End Role="Paikka" EntitySet="Paikka" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Determination_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Determination_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner">
+          <End Role="Result_WidePartner" EntitySet="Determination" />
+          <End Role="Result_Wide" EntitySet="Result_Wide" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Result__Wide_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Result__Wide_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartner">
+          <End Role="Site_WidePartner" EntitySet="Result_Wide" />
+          <End Role="Site_Wide" EntitySet="Site_Wide" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Result__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Result__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartner">
+          <End Role="SamplingPartner" EntitySet="Result_Wide" />
+          <End Role="Sampling" EntitySet="Sampling" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Result__Wide_Determination_VeslaRajapinta_Models_Determination_DeterminationPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Result__Wide_Determination_VeslaRajapinta_Models_Determination_DeterminationPartner">
+          <End Role="DeterminationPartner" EntitySet="Result_Wide" />
+          <End Role="Determination" EntitySet="Determination" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Sampling_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Sampling_Site__Wide_VeslaRajapinta_Models_Site__Wide_Site__WidePartner">
+          <End Role="Site_WidePartner" EntitySet="Sampling" />
+          <End Role="Site_Wide" EntitySet="Site_Wide" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Sampling_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Sampling_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner">
+          <End Role="Result_WidePartner" EntitySet="Sampling" />
+          <End Role="Result_Wide" EntitySet="Result_Wide" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Site__Wide_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Site__Wide_Result__Wide_VeslaRajapinta_Models_Result__Wide_Result__WidePartner">
+          <End Role="Result_WidePartner" EntitySet="Site_Wide" />
+          <End Role="Result_Wide" EntitySet="Result_Wide" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_Site__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_Site__Wide_Sampling_VeslaRajapinta_Models_Sampling_SamplingPartner">
+          <End Role="SamplingPartner" EntitySet="Site_Wide" />
+          <End Role="Sampling" EntitySet="Sampling" />
+        </AssociationSet>
+        <AssociationSet Name="VeslaRajapinta_Models_TauluKuvaus_SarakeKuvaukset_VeslaRajapinta_Models_SarakeKuvaus_SarakeKuvauksetPartnerSet" Association="VeslaRajapinta.Models.VeslaRajapinta_Models_TauluKuvaus_SarakeKuvaukset_VeslaRajapinta_Models_SarakeKuvaus_SarakeKuvauksetPartner">
+          <End Role="SarakeKuvauksetPartner" EntitySet="TauluKuvaus" />
+          <End Role="SarakeKuvaukset" EntitySet="SarakeKuvaus" />
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

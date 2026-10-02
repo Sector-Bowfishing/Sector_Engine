@@ -1,0 +1,32 @@
+{
+ "frozenAtUTC": "2026-09-30T04:44:17Z",
+ "files": {
+  "PREREGISTRATION_STAGE11.md": "274320fa7e262dc0db2e64eb4114b26ee98c82cdcbf3971728e25801acc05db9"
+ },
+ "stage10ManifestCanonical": null,
+ "note": "Written before any Stage 11 error was computed. Addenda (constants recorded before use) are appended below, never edited.",
+ "addenda": [
+  {
+   "id": "B",
+   "atUTC": "2026-09-30T04:49:22Z",
+   "beforeAnyExtraction": true,
+   "text": "E-TVA is empty: the WQP organisation search returns no TVA organisation in TN or AL, and the pool has no TVA rows. Added E-TN = every TDEC (TDECWR_WQX) Tennessee lake/reservoir Secchi row in the pool dated <= 2025-12-31, as the nearest TVA-system state source. The WQP pool starts 2018-01-01, so E-AL covers 2018-2025, not 2017-2025.",
+   "e_draw.csv sha256": "4dfe9d7f002d03aa63fd48c456db233f9f6edf3d9c0361edbca98c82bdc04751"
+  },
+  {
+   "id": "A",
+   "atUTC": "2026-09-30T04:55:23Z",
+   "beforeAnyP1NIRoutput": true,
+   "aw783_per_m": 2.62,
+   "bbw783_per_m": 0.00016,
+   "source": "Kou, Labrie & Chylek 1993 (Appl. Opt. 32:3531), OMLC tabulation kou93b.dat, band-averaged over the S2A MSI V4 B07 spectral response (S2B 2.68, S2C 2.58; one value used for all platforms)",
+   "deviation": "The pre-registration named 'the table shipped with ACOLITE'; ACOLITE ships no pure-water absorption beyond the visible (its WOPP file holds only the real refractive index), so the published Kou et al. table was used instead. Chosen before any P1-NIR value was computed.",
+   "tables_sha256": {
+    "kou93b.dat": "530e844734d0fcc17e9800a981f0842cbf9bd5c0d6184d58a3d5fb9406b6cb17",
+    "pope97.dat": "5c92c6a1e4be125cc9464fab33490ce4eb883fca7e84a21b0ca2b906cb35c8a7",
+    "segelstein81.dat": "61bfc15c08df4cfee68b51599e651db70fb02eea1dc98153667ef25f7f53f539",
+    "hale73.dat": "009a11eeec4c11497752095d640506f52ee22637adcb71b0fa8e117c917f968b"
+   }
+  }
+ ]
+}

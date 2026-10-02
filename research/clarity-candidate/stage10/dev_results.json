@@ -1,0 +1,1925 @@
+{
+ "freeze": {
+  "frozenAtUTC": "2026-09-29T18:08:57Z",
+  "manifestSha256": "374d4cd36c8a195daf577d4a680aa099a161fafd0e9af316253d380a1fdd96d4",
+  "note": "sha256 of frozen_manifest.json content in canonical form (sort_keys, no spaces)"
+ },
+ "stage8Reproduced": {
+  "c6_results.json": true,
+  "c6_model.json": true
+ },
+ "routes": {
+  "G clean": {
+   "C3": 59,
+   "P1": 10,
+   "refused": 3
+  },
+  "G clean by class": {
+   "clear >=6": {
+    "C3": 22,
+    "refused": 1
+   },
+   "normal 3-6": {
+    "C3": 25,
+    "P1": 3,
+    "refused": 2
+   },
+   "stained 2-3": {
+    "P1": 7,
+    "C3": 11
+   },
+   "limited <2": {
+    "C3": 1
+   }
+  },
+  "G clean by kind": {
+   "arm": {
+    "C3": 27,
+    "P1": 8,
+    "refused": 1
+   },
+   "mainStem": {
+    "P1": 2,
+    "C3": 32,
+    "refused": 2
+   }
+  },
+  "G reasons": {
+   "residual-limited": 49,
+   "704 above the image residual": 10,
+   "P1 refuses once the residual is removed": 10,
+   "P1 domain: R5 NDCI": 3
+  },
+  "N clean": {
+   "C3": 396,
+   "P1": 129,
+   "refused": 118
+  },
+  "F": {
+   "P1": 58,
+   "C3": 304,
+   "refused": 50
+  }
+ },
+ "S_by_class": {
+  "clear >=6": {
+   "S p10/50/90": [
+    0.39,
+    0.56,
+    1.02
+   ],
+   "B05/B11 p10/50/90": [
+    1.56,
+    2.29,
+    2.87
+   ],
+   "S infinite": 6
+  },
+  "normal 3-6": {
+   "S p10/50/90": [
+    0.21,
+    0.41,
+    0.76
+   ],
+   "B05/B11 p10/50/90": [
+    1.76,
+    2.64,
+    4.54
+   ],
+   "S infinite": 2
+  },
+  "stained 2-3": {
+   "S p10/50/90": [
+    0.08,
+    0.27,
+    0.47
+   ],
+   "B05/B11 p10/50/90": [
+    1.96,
+    3.54,
+    8.77
+   ],
+   "S infinite": 2
+  },
+  "limited <2": {
+   "S p10/50/90": [
+    0.21,
+    0.21,
+    0.21
+   ],
+   "B05/B11 p10/50/90": [
+    4.69,
+    4.69,
+    4.69
+   ],
+   "S infinite": 0
+  }
+ },
+ "S_by_kind": {
+  "arm": {
+   "S p10/50/90": [
+    0.13,
+    0.34,
+    0.68
+   ],
+   "B05/B11 p10/50/90": [
+    1.73,
+    2.95,
+    5.55
+   ]
+  },
+  "mainStem": {
+   "S p10/50/90": [
+    0.26,
+    0.54,
+    0.97
+   ],
+   "B05/B11 p10/50/90": [
+    1.56,
+    2.32,
+    3.82
+   ]
+  }
+ },
+ "paired": {
+  "LOYO": {
+   "P2": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.558,
+     6.21e-07,
+     69
+    ],
+    "medianSigned": -0.28,
+    "meanSigned": -0.28,
+    "MAE": 1.66,
+    "medAE": 1.27,
+    "stationBalancedMedianSigned": 0.27,
+    "stationBalancedMAE": 1.53,
+    "predP10P90": [
+     2.77,
+     6.74
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 1,
+      "medianObs": 2.71
+     },
+     {
+      "bin": "2-3",
+      "n": 9,
+      "medianObs": 2.85
+     },
+     {
+      "bin": "3-4",
+      "n": 15,
+      "medianObs": 3.28
+     },
+     {
+      "bin": "4-5",
+      "n": 10,
+      "medianObs": 5.17
+     },
+     {
+      "bin": "5-6",
+      "n": 15,
+      "medianObs": 5.54
+     },
+     {
+      "bin": "6-8",
+      "n": 16,
+      "medianObs": 6.94
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 6.23
+     }
+    ],
+    "monotone": true,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 0.87,
+      "medianPred": 3.41,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -1.87,
+      "medianPred": 6.19,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 0.38,
+      "medianPred": 3.42,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -0.18,
+      "medianPred": 4.18,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.918,
+    "classAcc": 0.551,
+    "classAccConstant": 0.406
+   },
+   "C0": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     -0.114,
+     0.352,
+     69
+    ],
+    "medianSigned": -0.78,
+    "meanSigned": -1.17,
+    "MAE": 2.44,
+    "medAE": 2.19,
+    "stationBalancedMedianSigned": 0.1,
+    "stationBalancedMAE": 1.61,
+    "predP10P90": [
+     2.67,
+     5.52
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 1,
+      "medianObs": 2.71
+     },
+     {
+      "bin": "2-3",
+      "n": 11,
+      "medianObs": 4.43
+     },
+     {
+      "bin": "3-4",
+      "n": 23,
+      "medianObs": 4.59
+     },
+     {
+      "bin": "4-5",
+      "n": 22,
+      "medianObs": 5.02
+     },
+     {
+      "bin": "5-6",
+      "n": 11,
+      "medianObs": 3.94
+     },
+     {
+      "bin": "6-8",
+      "n": 1,
+      "medianObs": 2.25
+     },
+     {
+      "bin": "8-+",
+      "n": 0,
+      "medianObs": null
+     }
+    ],
+    "monotone": false,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 2.02,
+      "medianPred": 4.55,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -4.04,
+      "medianPred": 3.98,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 1.21,
+      "medianPred": 4.22,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -1.75,
+      "medianPred": 2.32,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.343,
+    "classAcc": 0.304,
+    "classAccConstant": 0.406
+   },
+   "C3": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.398,
+     0.000708,
+     69
+    ],
+    "medianSigned": 0.14,
+    "meanSigned": -0.01,
+    "MAE": 1.86,
+    "medAE": 1.58,
+    "stationBalancedMedianSigned": 0.47,
+    "stationBalancedMAE": 1.85,
+    "predP10P90": [
+     3.32,
+     7.04
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 0,
+      "medianObs": null
+     },
+     {
+      "bin": "2-3",
+      "n": 4,
+      "medianObs": 3.12
+     },
+     {
+      "bin": "3-4",
+      "n": 14,
+      "medianObs": 3.61
+     },
+     {
+      "bin": "4-5",
+      "n": 15,
+      "medianObs": 4.33
+     },
+     {
+      "bin": "5-6",
+      "n": 15,
+      "medianObs": 5.54
+     },
+     {
+      "bin": "6-8",
+      "n": 18,
+      "medianObs": 6.35
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 6.23
+     }
+    ],
+    "monotone": true,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 1.69,
+      "medianPred": 4.24,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -1.87,
+      "medianPred": 6.19,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 1.37,
+      "medianPred": 4.1,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": 0.16,
+      "medianPred": 4.18,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.826,
+    "classAcc": 0.493,
+    "classAccConstant": 0.406
+   },
+   "C6": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.39,
+     0.000909,
+     69
+    ],
+    "medianSigned": 0.17,
+    "meanSigned": -0.13,
+    "MAE": 1.82,
+    "medAE": 1.18,
+    "stationBalancedMedianSigned": 0.48,
+    "stationBalancedMAE": 1.78,
+    "predP10P90": [
+     3.28,
+     7.2
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 0,
+      "medianObs": null
+     },
+     {
+      "bin": "2-3",
+      "n": 3,
+      "medianObs": 2.82
+     },
+     {
+      "bin": "3-4",
+      "n": 19,
+      "medianObs": 3.28
+     },
+     {
+      "bin": "4-5",
+      "n": 11,
+      "medianObs": 4.59
+     },
+     {
+      "bin": "5-6",
+      "n": 22,
+      "medianObs": 5.75
+     },
+     {
+      "bin": "6-8",
+      "n": 11,
+      "medianObs": 5.41
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 6.23
+     }
+    ],
+    "monotone": true,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 1.23,
+      "medianPred": 3.72,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -2.42,
+      "medianPred": 5.55,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 0.72,
+      "medianPred": 3.72,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": 0.6,
+      "medianPred": 5.61,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.838,
+    "classAcc": 0.464,
+    "classAccConstant": 0.406
+   },
+   "P1 (rows P1 also answers)": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.508,
+     8.28e-06,
+     69
+    ],
+    "medianSigned": -1.48,
+    "meanSigned": -1.99,
+    "MAE": 2.28,
+    "medAE": 1.74,
+    "stationBalancedMedianSigned": -0.66,
+    "stationBalancedMAE": 1.5,
+    "predP10P90": [
+     2.23,
+     4.44
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 6,
+      "medianObs": 2.84
+     },
+     {
+      "bin": "2-3",
+      "n": 31,
+      "medianObs": 3.94
+     },
+     {
+      "bin": "3-4",
+      "n": 23,
+      "medianObs": 6.2
+     },
+     {
+      "bin": "4-5",
+      "n": 5,
+      "medianObs": 5.08
+     },
+     {
+      "bin": "5-6",
+      "n": 3,
+      "medianObs": 7.38
+     },
+     {
+      "bin": "6-8",
+      "n": 1,
+      "medianObs": 6.23
+     },
+     {
+      "bin": "8-+",
+      "n": 0,
+      "medianObs": null
+     }
+    ],
+    "monotone": false,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 0.11,
+      "medianPred": 2.63,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -4.43,
+      "medianPred": 3.52,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": -0.26,
+      "medianPred": 2.65,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -1.8,
+      "medianPred": 2.42,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.888,
+    "classAcc": 0.319,
+    "classAccConstant": 0.406
+   },
+   "P2 (same rows as P1)": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.558,
+     6.21e-07,
+     69
+    ],
+    "medianSigned": -0.28,
+    "meanSigned": -0.28,
+    "MAE": 1.66,
+    "medAE": 1.27,
+    "stationBalancedMedianSigned": 0.27,
+    "stationBalancedMAE": 1.53,
+    "predP10P90": [
+     2.77,
+     6.74
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 1,
+      "medianObs": 2.71
+     },
+     {
+      "bin": "2-3",
+      "n": 9,
+      "medianObs": 2.85
+     },
+     {
+      "bin": "3-4",
+      "n": 15,
+      "medianObs": 3.28
+     },
+     {
+      "bin": "4-5",
+      "n": 10,
+      "medianObs": 5.17
+     },
+     {
+      "bin": "5-6",
+      "n": 15,
+      "medianObs": 5.54
+     },
+     {
+      "bin": "6-8",
+      "n": 16,
+      "medianObs": 6.94
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 6.23
+     }
+    ],
+    "monotone": true,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 0.87,
+      "medianPred": 3.41,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -1.87,
+      "medianPred": 6.19,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 0.38,
+      "medianPred": 3.42,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -0.18,
+      "medianPred": 4.18,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.918,
+    "classAcc": 0.551,
+    "classAccConstant": 0.406
+   }
+  },
+  "LOSO": {
+   "P2": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.552,
+     8.63e-07,
+     69
+    ],
+    "medianSigned": -0.28,
+    "meanSigned": -0.3,
+    "MAE": 1.67,
+    "medAE": 1.32,
+    "stationBalancedMedianSigned": 0.29,
+    "stationBalancedMAE": 1.52,
+    "predP10P90": [
+     2.77,
+     6.74
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 1,
+      "medianObs": 2.71
+     },
+     {
+      "bin": "2-3",
+      "n": 9,
+      "medianObs": 2.85
+     },
+     {
+      "bin": "3-4",
+      "n": 15,
+      "medianObs": 3.28
+     },
+     {
+      "bin": "4-5",
+      "n": 10,
+      "medianObs": 5.17
+     },
+     {
+      "bin": "5-6",
+      "n": 15,
+      "medianObs": 5.54
+     },
+     {
+      "bin": "6-8",
+      "n": 16,
+      "medianObs": 6.94
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 6.23
+     }
+    ],
+    "monotone": true,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 0.88,
+      "medianPred": 3.41,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -1.9,
+      "medianPred": 6.17,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 0.38,
+      "medianPred": 3.42,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -0.21,
+      "medianPred": 4.15,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.915,
+    "classAcc": 0.551,
+    "classAccConstant": 0.406
+   },
+   "C0": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     -0.114,
+     0.352,
+     69
+    ],
+    "medianSigned": -0.78,
+    "meanSigned": -1.17,
+    "MAE": 2.44,
+    "medAE": 2.19,
+    "stationBalancedMedianSigned": 0.1,
+    "stationBalancedMAE": 1.61,
+    "predP10P90": [
+     2.67,
+     5.52
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 1,
+      "medianObs": 2.71
+     },
+     {
+      "bin": "2-3",
+      "n": 11,
+      "medianObs": 4.43
+     },
+     {
+      "bin": "3-4",
+      "n": 23,
+      "medianObs": 4.59
+     },
+     {
+      "bin": "4-5",
+      "n": 22,
+      "medianObs": 5.02
+     },
+     {
+      "bin": "5-6",
+      "n": 11,
+      "medianObs": 3.94
+     },
+     {
+      "bin": "6-8",
+      "n": 1,
+      "medianObs": 2.25
+     },
+     {
+      "bin": "8-+",
+      "n": 0,
+      "medianObs": null
+     }
+    ],
+    "monotone": false,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 2.02,
+      "medianPred": 4.55,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -4.04,
+      "medianPred": 3.98,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 1.21,
+      "medianPred": 4.22,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -1.75,
+      "medianPred": 2.32,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.343,
+    "classAcc": 0.304,
+    "classAccConstant": 0.406
+   },
+   "C3": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.386,
+     0.00106,
+     69
+    ],
+    "medianSigned": 0.1,
+    "meanSigned": -0.03,
+    "MAE": 1.87,
+    "medAE": 1.59,
+    "stationBalancedMedianSigned": 0.45,
+    "stationBalancedMAE": 1.84,
+    "predP10P90": [
+     3.33,
+     6.96
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 0,
+      "medianObs": null
+     },
+     {
+      "bin": "2-3",
+      "n": 4,
+      "medianObs": 3.12
+     },
+     {
+      "bin": "3-4",
+      "n": 14,
+      "medianObs": 3.61
+     },
+     {
+      "bin": "4-5",
+      "n": 15,
+      "medianObs": 4.33
+     },
+     {
+      "bin": "5-6",
+      "n": 15,
+      "medianObs": 5.54
+     },
+     {
+      "bin": "6-8",
+      "n": 18,
+      "medianObs": 6.35
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 6.23
+     }
+    ],
+    "monotone": true,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 1.68,
+      "medianPred": 4.2,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -1.9,
+      "medianPred": 6.17,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 1.38,
+      "medianPred": 4.12,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": 0.12,
+      "medianPred": 4.15,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.818,
+    "classAcc": 0.493,
+    "classAccConstant": 0.406
+   },
+   "C6": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.473,
+     3.98e-05,
+     69
+    ],
+    "medianSigned": 0.41,
+    "meanSigned": -0.04,
+    "MAE": 1.86,
+    "medAE": 1.37,
+    "stationBalancedMedianSigned": 0.58,
+    "stationBalancedMAE": 1.73,
+    "predP10P90": [
+     3.31,
+     7.46
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 0,
+      "medianObs": null
+     },
+     {
+      "bin": "2-3",
+      "n": 4,
+      "medianObs": 2.84
+     },
+     {
+      "bin": "3-4",
+      "n": 15,
+      "medianObs": 3.08
+     },
+     {
+      "bin": "4-5",
+      "n": 15,
+      "medianObs": 3.61
+     },
+     {
+      "bin": "5-6",
+      "n": 20,
+      "medianObs": 6.68
+     },
+     {
+      "bin": "6-8",
+      "n": 12,
+      "medianObs": 5.5
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 5.41
+     }
+    ],
+    "monotone": false,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 1.43,
+      "medianPred": 3.82,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -2.82,
+      "medianPred": 5.48,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 0.87,
+      "medianPred": 3.82,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": 1.64,
+      "medianPred": 6.02,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.947,
+    "classAcc": 0.42,
+    "classAccConstant": 0.406
+   },
+   "P1 (rows P1 also answers)": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.508,
+     8.28e-06,
+     69
+    ],
+    "medianSigned": -1.48,
+    "meanSigned": -1.99,
+    "MAE": 2.28,
+    "medAE": 1.74,
+    "stationBalancedMedianSigned": -0.66,
+    "stationBalancedMAE": 1.5,
+    "predP10P90": [
+     2.23,
+     4.44
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 6,
+      "medianObs": 2.84
+     },
+     {
+      "bin": "2-3",
+      "n": 31,
+      "medianObs": 3.94
+     },
+     {
+      "bin": "3-4",
+      "n": 23,
+      "medianObs": 6.2
+     },
+     {
+      "bin": "4-5",
+      "n": 5,
+      "medianObs": 5.08
+     },
+     {
+      "bin": "5-6",
+      "n": 3,
+      "medianObs": 7.38
+     },
+     {
+      "bin": "6-8",
+      "n": 1,
+      "medianObs": 6.23
+     },
+     {
+      "bin": "8-+",
+      "n": 0,
+      "medianObs": null
+     }
+    ],
+    "monotone": false,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 0.11,
+      "medianPred": 2.63,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -4.43,
+      "medianPred": 3.52,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": -0.26,
+      "medianPred": 2.65,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -1.8,
+      "medianPred": 2.42,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.888,
+    "classAcc": 0.319,
+    "classAccConstant": 0.406
+   },
+   "P2 (same rows as P1)": {
+    "n": 69,
+    "sites": 16,
+    "spearman": [
+     0.552,
+     8.63e-07,
+     69
+    ],
+    "medianSigned": -0.28,
+    "meanSigned": -0.3,
+    "MAE": 1.67,
+    "medAE": 1.32,
+    "stationBalancedMedianSigned": 0.29,
+    "stationBalancedMAE": 1.52,
+    "predP10P90": [
+     2.77,
+     6.74
+    ],
+    "obsP10P90": [
+     2.4,
+     8.69
+    ],
+    "calibration": [
+     {
+      "bin": "0-2",
+      "n": 1,
+      "medianObs": 2.71
+     },
+     {
+      "bin": "2-3",
+      "n": 9,
+      "medianObs": 2.85
+     },
+     {
+      "bin": "3-4",
+      "n": 15,
+      "medianObs": 3.28
+     },
+     {
+      "bin": "4-5",
+      "n": 10,
+      "medianObs": 5.17
+     },
+     {
+      "bin": "5-6",
+      "n": 15,
+      "medianObs": 5.54
+     },
+     {
+      "bin": "6-8",
+      "n": 16,
+      "medianObs": 6.94
+     },
+     {
+      "bin": "8-+",
+      "n": 3,
+      "medianObs": 6.23
+     }
+    ],
+    "monotone": true,
+    "subsets": {
+     "stained 2-3 ft": {
+      "n": 18,
+      "medianSigned": 0.88,
+      "medianPred": 3.41,
+      "medianObs": 2.51
+     },
+     "clear channel": {
+      "n": 20,
+      "medianSigned": -1.9,
+      "medianPred": 6.17,
+      "medianObs": 8.33
+     },
+     "algal arms": {
+      "n": 28,
+      "medianSigned": 0.38,
+      "medianPred": 3.42,
+      "medianObs": 2.84
+     },
+     "sediment turbid": {
+      "n": 6,
+      "medianSigned": -0.21,
+      "medianPred": 4.15,
+      "medianObs": 4.36
+     }
+    },
+    "AUC_clearChannel_vs_stainedArm": 0.915,
+    "classAcc": 0.551,
+    "classAccConstant": 0.406
+   }
+  }
+ },
+ "gates": {
+  "LOYO": {
+   "1 spearman>=0.5": true,
+   "2 monotone": true,
+   "3 |stationBalancedMedianSigned|<=0.75": true,
+   "4 stained medianSigned<=+1.0": true,
+   "5 clear channel medianSigned>=-1.5": false,
+   "6 AUC>=0.8": true,
+   "7 classAcc>=constant+0.10": true,
+   "8 beats champion MAE and medAE": true
+  },
+  "LOSO": {
+   "1 spearman>=0.5": true,
+   "2 monotone": true,
+   "3 |stationBalancedMedianSigned|<=0.75": true,
+   "4 stained medianSigned<=+1.0": true,
+   "5 clear channel medianSigned>=-1.5": false,
+   "6 AUC>=0.8": true,
+   "7 classAcc>=constant+0.10": true,
+   "8 beats champion MAE and medAE": true
+  },
+  "9 N medAE<=1.1x and AL MAE<=1.2x": true
+ },
+ "N_paired": {
+  "P2": {
+   "all": {
+    "n": 525,
+    "spearman": [
+     0.587,
+     5.93e-50,
+     525
+    ],
+    "medianSigned": -0.48,
+    "MAE": 4.62,
+    "medAE": 2.08
+   },
+   "AL": {
+    "n": 12,
+    "spearman": [
+     0.832,
+     0.000785,
+     12
+    ],
+    "medianSigned": -0.13,
+    "MAE": 1.12,
+    "medAE": 0.8
+   }
+  },
+  "C0": {
+   "all": {
+    "n": 525,
+    "spearman": [
+     0.582,
+     6.48e-49,
+     525
+    ],
+    "medianSigned": -1.4,
+    "MAE": 5.06,
+    "medAE": 2.25
+   },
+   "AL": {
+    "n": 12,
+    "spearman": [
+     0.315,
+     0.319,
+     12
+    ],
+    "medianSigned": 0.23,
+    "MAE": 1.46,
+    "medAE": 0.82
+   }
+  },
+  "C3": {
+   "all": {
+    "n": 525,
+    "spearman": [
+     0.574,
+     2.12e-47,
+     525
+    ],
+    "medianSigned": 0.07,
+    "MAE": 4.61,
+    "medAE": 2.23
+   },
+   "AL": {
+    "n": 12,
+    "spearman": [
+     0.804,
+     0.00161,
+     12
+    ],
+    "medianSigned": 0.21,
+    "MAE": 1.12,
+    "medAE": 0.64
+   }
+  },
+  "C6": {
+   "all": {
+    "n": 525,
+    "spearman": [
+     0.605,
+     1.06e-53,
+     525
+    ],
+    "medianSigned": 0.29,
+    "MAE": 4.59,
+    "medAE": 2.27
+   },
+   "AL": {
+    "n": 12,
+    "spearman": [
+     0.538,
+     0.0709,
+     12
+    ],
+    "medianSigned": 0.48,
+    "MAE": 1.37,
+    "medAE": 0.73
+   }
+  }
+ },
+ "F_paired": {
+  "P2": {
+   "n": 362,
+   "spearman": 0.575,
+   "medianSigned": -1.57,
+   "medAE": 2.73,
+   "classAcc": 0.599,
+   "stained": 0.32,
+   "stainedN": 45,
+   "clear": -3.82,
+   "clearN": 242
+  },
+  "C0": {
+   "n": 362,
+   "spearman": 0.564,
+   "medianSigned": -2.71,
+   "medAE": 3.0,
+   "classAcc": 0.492,
+   "stained": 0.9,
+   "stainedN": 45,
+   "clear": -5.25,
+   "clearN": 242
+  },
+  "C3": {
+   "n": 362,
+   "spearman": 0.545,
+   "medianSigned": -1.22,
+   "medAE": 2.68,
+   "classAcc": 0.61,
+   "stained": 0.99,
+   "stainedN": 45,
+   "clear": -3.62,
+   "clearN": 242
+  },
+  "C6": {
+   "n": 362,
+   "spearman": 0.548,
+   "medianSigned": -0.95,
+   "medAE": 2.63,
+   "classAcc": 0.602,
+   "stained": 1.33,
+   "stainedN": 45,
+   "clear": -3.19,
+   "clearN": 242
+  },
+  "P1 (rows P1 also answers)": {
+   "n": 355,
+   "spearman": 0.523,
+   "medianSigned": -4.58,
+   "medAE": 4.58,
+   "classAcc": 0.231,
+   "stained": -0.25,
+   "stainedN": 45,
+   "clear": -7.58,
+   "clearN": 236
+  },
+  "P2 (same rows as P1)": {
+   "n": 355,
+   "spearman": 0.574,
+   "medianSigned": -1.61,
+   "medAE": 2.69,
+   "classAcc": 0.594,
+   "stained": 0.32,
+   "stainedN": 45,
+   "clear": -3.84,
+   "clearN": 236
+  }
+ },
+ "subsets": {
+  "dark algal water": {
+   "n": 28,
+   "P2 answered": 28,
+   "P2 paths": {
+    "P1": 8,
+    "C3": 20
+   },
+   "P2": 0.38,
+   "C0": 1.21,
+   "C3": 1.37,
+   "C6": 0.72,
+   "P1 (same rows, where P1 answers)": -0.26,
+   "P2 on those rows": 0.38,
+   "P1S": 0.22,
+   "P1S n": 26
+  },
+  "stained arms": {
+   "n": 17,
+   "P2 answered": 17,
+   "P2 paths": {
+    "P1": 6,
+    "C3": 11
+   },
+   "P2": 0.92,
+   "C0": 1.99,
+   "C3": 1.76,
+   "C6": 1.22,
+   "P1 (same rows, where P1 answers)": 0.22,
+   "P2 on those rows": 0.92,
+   "P1S": 0.63,
+   "P1S n": 15
+  },
+  "stained 2-3 ft": {
+   "n": 18,
+   "P2 answered": 18,
+   "P2 paths": {
+    "P1": 7,
+    "C3": 11
+   },
+   "P2": 0.87,
+   "C0": 2.02,
+   "C3": 1.69,
+   "C6": 1.23,
+   "P1 (same rows, where P1 answers)": 0.11,
+   "P2 on those rows": 0.87,
+   "P1S": 0.63,
+   "P1S n": 16
+  },
+  "sediment-muddy": {
+   "n": 6,
+   "P2 answered": 6,
+   "P2 paths": {
+    "P1": 1,
+    "C3": 5
+   },
+   "P2": -0.18,
+   "C0": -1.75,
+   "C3": 0.16,
+   "C6": 0.6,
+   "P1 (same rows, where P1 answers)": -1.8,
+   "P2 on those rows": -0.18,
+   "P1S": -0.85,
+   "P1S n": 6
+  },
+  "very clear channel": {
+   "n": 21,
+   "P2 answered": 20,
+   "P2 paths": {
+    "C3": 20,
+    "refused": 1
+   },
+   "P2": -1.87,
+   "C0": -4.04,
+   "C3": -1.87,
+   "C6": -2.42,
+   "P1 (same rows, where P1 answers)": -4.43,
+   "P2 on those rows": -1.87,
+   "P1S": -2.74,
+   "P1S n": 15
+  },
+  "normal 3-6 ft": {
+   "n": 30,
+   "P2 answered": 28,
+   "P2 paths": {
+    "C3": 25,
+    "P1": 3,
+    "refused": 2
+   },
+   "P2": -0.05,
+   "C0": -0.61,
+   "C3": 0.16,
+   "C6": 0.11,
+   "P1 (same rows, where P1 answers)": -1.48,
+   "P2 on those rows": -0.05,
+   "P1S": -0.27,
+   "P1S n": 26
+  },
+  "tug-of-war (measured)": {
+   "n": 11,
+   "P2 answered": 11,
+   "P2 paths": {
+    "C3": 9,
+    "P1": 2
+   },
+   "P2": 1.17,
+   "C0": 1.91,
+   "C3": 1.76,
+   "C6": 1.22,
+   "P1 (same rows, where P1 answers)": -0.04,
+   "P2 on those rows": 1.17,
+   "P1S": 1.27,
+   "P1S n": 9
+  }
+ },
+ "promisingCriteria": {
+  "1 stained <= +1.0 and within 0.5 ft of P1": {
+   "P2": 0.87,
+   "P1": 0.11,
+   "P2 on P1's rows": 0.87,
+   "pass": false
+  },
+  "2 dark algal |median| <= 1.0": {
+   "P2": 0.38,
+   "pass": true
+  },
+  "3 clear channel >= C3 - 0.5": {
+   "P2": -1.87,
+   "C3": -1.87,
+   "pass": true
+  },
+  "4 normal |median| <= 1.0": {
+   "P2": -0.05,
+   "pass": true
+  },
+  "5 coverage >= 80% clean and stained": {
+   "clean": 0.958,
+   "stained": 1.0,
+   "pass": true
+  }
+ },
+ "promising": "NOT PROMISING",
+ "P1S": {
+  "criteria": {
+   "i clear >= -1.5 and >= 1.5 ft closer than P1": {
+    "P1S": -2.74,
+    "P1": -4.6,
+    "pass": false
+   },
+   "ii stained |median| <= 1.0 and <= 0.5 ft worse than P1": {
+    "P1S": 0.63,
+    "P1": 0.0,
+    "pass": false
+   },
+   "iii dark algal |median| <= 1.0": {
+    "P1S": 0.22,
+    "pass": true
+   },
+   "iv coverage >= 80% (clean, stained); arms and channel separately": {
+    "clean": 0.819,
+    "stained": 0.889,
+    "arms": 0.17,
+    "channel": -1.47,
+    "pass": true
+   },
+   "v nine gates": {
+    "gates": {
+     "1 spearman>=0.5": true,
+     "2 monotone": false,
+     "3 |stationBalancedMedianSigned|<=0.75": true,
+     "4 stained medianSigned<=+1.0": true,
+     "5 clear channel medianSigned>=-1.5": false,
+     "6 AUC>=0.8": true,
+     "7 classAcc>=constant+0.10": false,
+     "8 beats champion MAE and medAE": true
+    },
+    "pass": false
+   }
+  },
+  "evaluate": {
+   "n": 59,
+   "spearman": [
+    0.604,
+    4.01e-07,
+    59
+   ],
+   "medianSigned": -0.29,
+   "MAE": 1.55,
+   "medAE": 1.35,
+   "AUC_clearChannel_vs_stainedArm": 0.938,
+   "classAcc": 0.492,
+   "classAccConstant": 0.441,
+   "monotone": false
+  },
+  "subsets": {
+   "stained 2-3 ft": {
+    "n": 16,
+    "medianSigned": 0.63,
+    "medianPred": 3.16,
+    "medianObs": 2.58
+   },
+   "clear channel": {
+    "n": 15,
+    "medianSigned": -2.74,
+    "medianPred": 5.36,
+    "medianObs": 8.2
+   },
+   "algal arms": {
+    "n": 26,
+    "medianSigned": 0.22,
+    "medianPred": 3.38,
+    "medianObs": 2.9
+   },
+   "sediment turbid": {
+    "n": 6,
+    "medianSigned": -0.85,
+    "medianPred": 3.4,
+    "medianObs": 4.36
+   }
+  },
+  "refusals": {
+   "answered": 59,
+   "refused": 13
+  },
+  "verdict": "P1S FAILS ITS DEVELOPMENT CRITERIA"
+ },
+ "confusion_P2_LOYO": [
+  [
+   12,
+   10,
+   0,
+   0
+  ],
+  [
+   5,
+   20,
+   3,
+   0
+  ],
+  [
+   2,
+   9,
+   6,
+   1
+  ],
+  [
+   0,
+   1,
+   0,
+   0
+  ]
+ ],
+ "stained": [
+  {
+   "date": "2017-09-07",
+   "station": "Browns Creek",
+   "kind": "arm",
+   "secchi": 2.3,
+   "P1": 2.69,
+   "P2": 2.69,
+   "path": "P1",
+   "S": 0.09,
+   "B05/B11": 8.2,
+   "C3": 4.55,
+   "P1S": 2.92,
+   "ndci": 0.132
+  },
+  {
+   "date": "2018-03-06",
+   "station": "TENR-417",
+   "kind": "mainStem",
+   "secchi": 2.71,
+   "P1": 1.71,
+   "P2": 1.71,
+   "path": "P1",
+   "S": 0.08,
+   "B05/B11": 10.4,
+   "C3": 3.06,
+   "P1S": 1.85,
+   "ndci": -0.142
+  },
+  {
+   "date": "2018-05-15",
+   "station": "GUNM-8",
+   "kind": "arm",
+   "secchi": 2.82,
+   "P1": 1.95,
+   "P2": 3.07,
+   "path": "C3",
+   "S": 0.32,
+   "B05/B11": 2.5,
+   "C3": 3.07,
+   "P1S": 2.57,
+   "ndci": 0.09
+  },
+  {
+   "date": "2018-09-11",
+   "station": "Browns Creek",
+   "kind": "arm",
+   "secchi": 2.95,
+   "P1": 2.67,
+   "P2": 2.67,
+   "path": "P1",
+   "S": 0.2,
+   "B05/B11": 3.7,
+   "C3": 4.57,
+   "P1S": 3.2,
+   "ndci": 0.08
+  },
+  {
+   "date": "2019-10-22",
+   "station": "Browns Creek",
+   "kind": "arm",
+   "secchi": 2.3,
+   "P1": 2.3,
+   "P2": 2.3,
+   "path": "P1",
+   "S": 0.11,
+   "B05/B11": 6.2,
+   "C3": 4.15,
+   "P1S": 2.55,
+   "ndci": 0.125
+  },
+  {
+   "date": "2022-06-14",
+   "station": "GUNM-8",
+   "kind": "arm",
+   "secchi": 2.85,
+   "P1": 1.91,
+   "P2": 2.58,
+   "path": "C3",
+   "S": 0.6,
+   "B05/B11": 1.7,
+   "C3": 2.58,
+   "P1S": 3.05,
+   "ndci": 0.045
+  },
+  {
+   "date": "2022-09-29",
+   "station": "GUNM-10",
+   "kind": "arm",
+   "secchi": 2.43,
+   "P1": 2.0,
+   "P2": 2.79,
+   "path": "C3",
+   "S": 0.25,
+   "B05/B11": 3.5,
+   "C3": 2.79,
+   "P1S": 2.49,
+   "ndci": 0.054
+  },
+  {
+   "date": "2022-09-29",
+   "station": "GUNM-7",
+   "kind": "arm",
+   "secchi": 2.17,
+   "P1": 2.62,
+   "P2": 3.75,
+   "path": "C3",
+   "S": 0.43,
+   "B05/B11": 2.5,
+   "C3": 3.75,
+   "P1S": 3.73,
+   "ndci": 0.043
+  },
+  {
+   "date": "2022-09-29",
+   "station": "GUNM-8",
+   "kind": "arm",
+   "secchi": 2.5,
+   "P1": 2.41,
+   "P2": 3.66,
+   "path": "C3",
+   "S": 0.3,
+   "B05/B11": 3.1,
+   "C3": 3.66,
+   "P1S": 3.13,
+   "ndci": 0.089
+  },
+  {
+   "date": "2022-09-29",
+   "station": "GUNM-9",
+   "kind": "arm",
+   "secchi": 2.53,
+   "P1": 2.53,
+   "P2": 3.45,
+   "path": "C3",
+   "S": 0.46,
+   "B05/B11": 2.3,
+   "C3": 3.45,
+   "P1S": 3.68,
+   "ndci": 0.005
+  },
+  {
+   "date": "2023-06-28",
+   "station": "South Sauty Creek",
+   "kind": "arm",
+   "secchi": 2.62,
+   "P1": 2.84,
+   "P2": 4.22,
+   "path": "C3",
+   "S": 0.49,
+   "B05/B11": 2.1,
+   "C3": 4.22,
+   "P1S": 4.23,
+   "ndci": 0.012
+  },
+  {
+   "date": "2025-10-15",
+   "station": "GUNM-10",
+   "kind": "arm",
+   "secchi": 2.49,
+   "P1": 2.45,
+   "P2": 2.45,
+   "path": "P1",
+   "S": 0.06,
+   "B05/B11": 10.1,
+   "C3": 4.25,
+   "P1S": 2.61,
+   "ndci": 0.109
+  },
+  {
+   "date": "2025-10-15",
+   "station": "GUNM-7",
+   "kind": "arm",
+   "secchi": 2.76,
+   "P1": 3.29,
+   "P2": 5.3,
+   "path": "C3",
+   "S": 0.39,
+   "B05/B11": 2.7,
+   "C3": 5.3,
+   "P1S": 4.58,
+   "ndci": 0.069
+  },
+  {
+   "date": "2025-10-15",
+   "station": "GUNM-7B",
+   "kind": "arm",
+   "secchi": 2.25,
+   "P1": 2.93,
+   "P2": 6.46,
+   "path": "C3",
+   "S": Infinity,
+   "B05/B11": 0.9,
+   "C3": 6.46,
+   "P1S": null,
+   "ndci": 0.051
+  },
+  {
+   "date": "2025-10-15",
+   "station": "GUNM-8",
+   "kind": "arm",
+   "secchi": 2.23,
+   "P1": 2.64,
+   "P2": 5.51,
+   "path": "C3",
+   "S": Infinity,
+   "B05/B11": 4.2,
+   "C3": 5.51,
+   "P1S": null,
+   "ndci": 0.179
+  },
+  {
+   "date": "2025-10-15",
+   "station": "GUNM-9",
+   "kind": "arm",
+   "secchi": 2.62,
+   "P1": 3.45,
+   "P2": 3.45,
+   "path": "P1",
+   "S": 0.2,
+   "B05/B11": 4.3,
+   "C3": 5.51,
+   "P1S": 4.14,
+   "ndci": 0.038
+  },
+  {
+   "date": "2025-10-15",
+   "station": "TENR-350",
+   "kind": "mainStem",
+   "secchi": 2.85,
+   "P1": 4.86,
+   "P2": 8.09,
+   "path": "C3",
+   "S": 0.31,
+   "B05/B11": 3.6,
+   "C3": 8.09,
+   "P1S": 6.35,
+   "ndci": -0.119
+  },
+  {
+   "date": "2025-10-16",
+   "station": "GUNM-4",
+   "kind": "arm",
+   "secchi": 2.2,
+   "P1": 3.36,
+   "P2": 3.36,
+   "path": "P1",
+   "S": 0.17,
+   "B05/B11": 4.9,
+   "C3": 7.49,
+   "P1S": 3.95,
+   "ndci": -0.011
+  }
+ ]
+}

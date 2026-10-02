@@ -1,0 +1,21 @@
+{
+ "name": "secchi_result_WI",
+ "endpoint": "Result",
+ "url": "https://www.waterqualitydata.us/data/Result/search?statecode=US:55&siteType=Lake,%20Reservoir,%20Impoundment&characteristicName=Depth,%20Secchi%20disk%20depth&startDateLo=01-01-2026&mimeType=csv&zip=no&dataProfile=resultPhysChem",
+ "headers": {
+  "Content-Type": "text/csv;charset=UTF-8",
+  "Total-Site-Count": "603",
+  "STORET-Site-Count": "603",
+  "Total-Activity-Count": "2918",
+  "STORET-Activity-Count": "2918",
+  "Total-Result-Count": "2965",
+  "STORET-Result-Count": "2965"
+ },
+ "bytes": 1362172,
+ "rows": 2965,
+ "expected": 2965,
+ "ok": true,
+ "seconds": 2.2,
+ "attempt": 1,
+ "fetched": "2026-10-01T12:35:02"
+}

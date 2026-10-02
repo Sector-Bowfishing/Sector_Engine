@@ -1,0 +1,65 @@
+{
+ "frozen_at_utc": "2026-09-30T14:45:17Z",
+ "files": {
+  "PREREGISTRATION_STAGE12.md": "474a8cd18dc6df7fe8357eb7b241a79852835ac45de04163c102e63399392d56",
+  "exp1/guard.json": "35449ea7683f0baf2b586660fd7168b8a1d241858cd498ef23842ebef53b242a",
+  "exp1/select_guard.py": "4875a7da8b035fe8d258ac0610846fee864540c20223f782de0e81c31392f43b",
+  "cert/CERT_PROTOCOL_STAGE12.md": "1e8040b92be455eab864300aea66c001be6d3d48c31fe53d0b846cbd2fc0595e"
+ },
+ "pending": [],
+ "addenda": [
+  {
+   "id": "A",
+   "at_utc": "2026-09-30T15:04:45Z",
+   "file": "ADDENDUM_A_harmonisation.md",
+   "sha256": "82bcd6d1c4b8106fd62b68fe1423b58683e72b8b5c5a0219adc5691fce670da2",
+   "summary": "ACOLITE-path harmonisation: adds V-rho_w; operational method = lower held-out flip of V-op / V-rho_w; recorded before any ACOLITE-path tandem validation"
+  },
+  {
+   "id": "B",
+   "at_utc": "2026-09-30T15:31:21Z",
+   "file": "ADDENDUM_B_cert_matching.md",
+   "sha256": "aacf2bfe5ac1bd84b9e55738139a0826d44c7187f681b7d7b04490b003b3ba5a",
+   "summary": "certification matching: sentinel-2-l2a (own offsets) for 2017/2022, where the C1 collection has no scenes"
+  },
+  {
+   "id": "C",
+   "at_utc": "2026-09-30T15:59:31Z",
+   "file": "ADDENDUM_C_pressure.md",
+   "sha256": "1c68d23999e0bb2c3523a9c09520c8654949dbbd2162370183aaa0b2a8e6d221",
+   "summary": "corpus ACOLITE runs set elevation (USGS 3DEP at the crop's first station) -> pressure; corpus restarted"
+  },
+  {
+   "id": "B2",
+   "at_utc": "2026-09-30T16:32:51Z",
+   "file": "ADDENDUM_B2_offset.md",
+   "sha256": "9e714c8d7a5985c6a9ef4be03d138282cdbc543b0ee5586f6bfa1c5709ab5e83",
+   "summary": "sentinel-2-l2a 2022 scenes: offset already in DN, rho = DN*1e-4; NLA22 and SYKE 2022 rematched"
+  },
+  {
+   "id": "D",
+   "at_utc": "2026-09-30T17:23:18Z",
+   "file": "ADDENDUM_D_geometry.md",
+   "sha256": "104d825df17fbd56fd82ffd60cc2465924c039f052dcd9040a0e7f285798b51f",
+   "summary": "geometry_type=grids fallback when older-baseline GML footprints cannot be read; failed crops rerun"
+  }
+ ],
+ "cert_protocol_frozen_at_utc": "2026-09-30T15:04:45Z",
+ "part1_result": {
+  "at_utc": "2026-09-30T15:25:04Z",
+  "BEST": "K4",
+  "overrides": {
+   "dsf_interface_reflectance": true,
+   "dsf_interface_option": "ffss_boa"
+  },
+  "score_sha256": "72fe106725a56980336243c4c9b7282728d3491d604123ea2d343aac42f701f1",
+  "note": "frozen before any corpus run or downstream Secchi value"
+ },
+ "blind_sample": {
+  "at_utc": "2026-09-30T20:03:48Z",
+  "file": "cert/blind_sample.csv",
+  "sha256": "111cff44282aeaea3c75e8f085ae362ce3e0a29880d147e02f5ead808dfaf1d2",
+  "checks_sha256": "bc945b26a41360793cc3f72d8d6f53b04717e1bab5044026c0976200b822dc6b",
+  "note": "built from locations and dates only; no Secchi value fetched"
+ }
+}

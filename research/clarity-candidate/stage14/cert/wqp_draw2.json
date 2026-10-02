@@ -1,0 +1,22 @@
+{
+ "draw1_not_yet_extracted": 2384,
+ "draw2": 2655,
+ "draw2_cool": 378,
+ "passed_20pct": 2129,
+ "passed_from_draw1": 1364,
+ "passed_from_draw2": 765,
+ "by_collection": {
+  "sentinel-2-c1-l2a": 1829,
+  "sentinel-2-l2a": 300
+ },
+ "draw2_states": {
+  "MN": 1050,
+  "WI": 267,
+  "MO": 129,
+  "IN": 121,
+  "IL": 116,
+  "ND": 115,
+  "FL": 106,
+  "MI": 104
+ }
+}

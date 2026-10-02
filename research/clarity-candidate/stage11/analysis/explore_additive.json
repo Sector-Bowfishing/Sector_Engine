@@ -1,0 +1,46 @@
+{
+ "clear >=6": {
+  "n": 91,
+  "median_eT": 0.342,
+  "median_eT_minus_B11": -0.055,
+  "median_eS": -0.247,
+  "median_eS_minus_B11": 0.029,
+  "median_abs_eS": 0.256,
+  "median_abs_eS_minus_B11": 0.248,
+  "median_red": 0.012,
+  "median_B11": 0.0062
+ },
+ "normal 3-6": {
+  "n": 92,
+  "median_eT": -0.002,
+  "median_eT_minus_B11": -0.255,
+  "median_eS": 0.017,
+  "median_eS_minus_B11": 0.165,
+  "median_abs_eS": 0.097,
+  "median_abs_eS_minus_B11": 0.195,
+  "median_red": 0.0184,
+  "median_B11": 0.0067
+ },
+ "stained 2-3": {
+  "n": 54,
+  "median_eT": -0.105,
+  "median_eT_minus_B11": -0.317,
+  "median_eS": 0.144,
+  "median_eS_minus_B11": 0.259,
+  "median_abs_eS": 0.152,
+  "median_abs_eS_minus_B11": 0.259,
+  "median_red": 0.0227,
+  "median_B11": 0.0068
+ },
+ "limited <2": {
+  "n": 54,
+  "median_eT": -0.196,
+  "median_eT_minus_B11": -0.341,
+  "median_eS": 0.304,
+  "median_eS_minus_B11": 0.394,
+  "median_abs_eS": 0.329,
+  "median_abs_eS_minus_B11": 0.417,
+  "median_red": 0.0317,
+  "median_B11": 0.0058
+ }
+}

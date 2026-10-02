@@ -1,0 +1,1 @@
+{"item": "S2B_T16TCP_20230617T170122_L2A", "crops": [{"attempts": [{"estimate": "tiled", "s": 2.1, "error": null, "l2w": null}, {"estimate": "fixed", "s": 1.4, "error": null, "l2w": null}], "points": {}, "error": "no L2W", "lat": 43.39722, "lon": -89.038337, "elevation_m": 260.878845215}], "l1c": "S2B_MSIL1C_20230617T164849_N0509_R026_T16TCP_20230617T200117", "seconds": 33.4}

@@ -1,0 +1,1 @@
+{"item": "S2A_T14TQT_20240625T173029_L2A", "s2c": false, "crops": [{"lat": 47.1701, "lon": -95.70986, "raw": {"attempts": [{"estimate": "tiled", "s": 1.5, "error": null, "l2w": null}, {"estimate": "fixed", "s": 1.1, "error": null, "l2w": null}], "points": {}, "error": "no L2W"}}], "l1c": "S2A_MSIL1C_20240625T172001_N0510_R012_T14TQT_20240625T210718", "seconds": 10.3}

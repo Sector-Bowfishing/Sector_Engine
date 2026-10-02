@@ -1,0 +1,40 @@
+OrganizationIdentifier,OrganizationFormalName,MonitoringLocationIdentifier,MonitoringLocationName,MonitoringLocationTypeName,MonitoringLocationDescriptionText,HUCEightDigitCode,DrainageAreaMeasure/MeasureValue,DrainageAreaMeasure/MeasureUnitCode,ContributingDrainageAreaMeasure/MeasureValue,ContributingDrainageAreaMeasure/MeasureUnitCode,LatitudeMeasure,LongitudeMeasure,SourceMapScaleNumeric,HorizontalAccuracyMeasure/MeasureValue,HorizontalAccuracyMeasure/MeasureUnitCode,HorizontalCollectionMethodName,HorizontalCoordinateReferenceSystemDatumName,VerticalMeasure/MeasureValue,VerticalMeasure/MeasureUnitCode,VerticalAccuracyMeasure/MeasureValue,VerticalAccuracyMeasure/MeasureUnitCode,VerticalCollectionMethodName,VerticalCoordinateReferenceSystemDatumName,CountryCode,StateCode,CountyCode,AquiferName,LocalAqfrName,FormationTypeText,AquiferTypeName,ConstructionDateText,WellDepthMeasure/MeasureValue,WellDepthMeasure/MeasureUnitCode,WellHoleDepthMeasure/MeasureValue,WellHoleDepthMeasure/MeasureUnitCode,ProviderName
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-CL1,Clear Lake 1,Lake,,07040001,,,,,44.6483700000,-92.7123200000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-CL2,Clear Lake 2,Lake,,07040001,,,,,44.6650200000,-92.7246700000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-GL1,Goose Lake,Lake,,07040001,,,,,44.6156200000,-92.6504100000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-NL1,North Lake 1,Lake,,07040001,,,,,44.6563100000,-92.6853500000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-NL2,North Lake 2,Lake,,07040001,,,,,44.6765500000,-92.7101300000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-NL3,North Lake 3,Lake,,07040001,,,,,44.6866540000,-92.7288990000,,,,GPS-Unspecified,UNKWN,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-SL1,Sturgeon Lake 1,Lake,,07040001,,,,,44.6299900000,-92.6329100000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-SL2,Sturgeon Lake 2,Lake,,07040001,,,,,44.6494000000,-92.6525500000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,049,,,,,,,,,,STORET
+PIIC_WQX,Prairie Island Indian Community,PIIC_WQX-SL3,Sturgeon Lake 3,Lake,,07040001,,,,,44.6449510000,-92.6527740000,,,,GPS-Unspecified,UNKWN,,,,,,,US,27,049,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-BASS-NW,Bass Lake: Northwest Basin,Lake,,09020302,,,,,47.8342346000,-95.0794340000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-BASS-SE,Bass Lake: Southeast Basin,Lake,,09020302,,,,,47.8262126000,-95.0711819000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-BIGT,Big Thunder Lake,Lake,,09020302,,,,,47.8635772000,-95.0264273000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-CHAI-M,Chain: Middle Lake,Lake,,09020302,,,,,47.8512895000,-94.9454219000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-CHAI-S,Chain: South Lake,Lake,,09020302,,,,,47.8499092000,-94.9456494000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-DICK,Dickens Lake,Lake,,09020302,,,,,47.8165801000,-94.9957757000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-EMER,Emerald Lake,Lake,,09020302,,,,,47.8617366000,-94.9572437000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-FULL-E,Fullers Lake: East Basin,Lake,,09020302,,,,,47.8656026000,-95.0551175000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-FULL-W,Fullers Lake: West Basin,Lake,,09020302,,,,,47.8647582000,-95.0627493000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-GREE-REDBY,Green Lake (Redby),Lake,,09020302,,,,,47.8600998000,-94.9119468000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-HEAR,Heart Lake,Lake,,09020302,,,,,47.8746135000,-94.9646749000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-ISLA,Island Lake,Lake,,09020302,,,,,47.8655796000,-94.9284068000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-JOHN,Johnson Lake,Lake,,09020302,,,,,47.8563728000,-95.1541399000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-KINN,Kinney Lake,Lake,,09020302,,,,,47.8375129000,-94.9262981000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-LITT,Little Thunder Lake,Lake,,09020302,,,,,47.8675478000,-95.0287816000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-LONG,Long Lake (Burt),Lake,,09020302,,,,,47.8494184000,-95.0680745000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-LRC,Lower Red Lake : Central,Lake,,09020302,,,,,47.9586249000,-95.0183418000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-LRE,Lower Red Lake : East,Lake,,09020302,,,,,47.9575083000,-94.9072251000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-LRW,Lower Red Lake : West,Lake,,09020302,,,,,47.9586249000,-95.1461252000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-MORR,Morrison Lake,Lake,,09020302,,,,,47.8088299000,-95.2210882000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,029,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-NONA,No-Name Lake,Lake,,09020302,,,,,47.8217466000,-95.0040385000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-ROUN,Round Lake (Sylvia),Lake,,09020302,,,,,47.8054692000,-95.1757437000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-SAND,Sandy Lake,Lake,,09020302,,,,,47.8338600000,-95.1083611000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-SHEL,Shell Lake,Lake,,09020302,,,,,47.8154147000,-95.0854533000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-SHEM,Shemahgun Lake,Lake,,09020302,,,,,47.8694056000,-94.9555182000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-SQUA,Squaw Smith Lake,Lake,,09020302,,,,,47.8577997000,-94.9366296000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-URC,Upper Red Lake: Central,Lake,,09020302,,,,,48.1408417000,-94.7461251000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-URE,Upper Red Lake: East,Lake,,09020302,,,,,48.1613917000,-94.6338917000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+REDLAKE_WQX,Red Lake DNR,REDLAKE_WQX-URW,Upper Red Lake: West,Lake,,09020302,,,,,48.1097249000,-94.8958418000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,007,,,,,,,,,,STORET
+USIOUX_WQX,Upper Sioux Community (Tribal),USIOUX_WQX-Ruby Lake,Ruby Lake,Lake,,07020004,,,,,44.7594440000,-95.4936110000,,,,GPS-Unspecified,NAD83,,,,,,,US,27,173,,,,,,,,,,STORET

@@ -1,0 +1,23 @@
+{
+ "frozen_at_utc": "2026-09-30T20:39:59Z",
+ "files": {
+  "PREREGISTRATION_STAGE13.md": "d44874fbeb599f5bef6de3c9faa60e73faa6d1108abf007898cc0d2a9412357d",
+  "cert/CERT_ADDENDUM_2.md": "24884b3ced3c89a71b1a12135820c5deff26a25c44f9953a12b05de0ade6b0c5",
+  "../stage12/analysis/rows12.json": "38a49450bccb4714122580807e30acc630d1bc5a9037ceefda3393f690387092"
+ },
+ "addenda": [
+  {
+   "id": "CERT-3",
+   "at_utc": "2026-09-30T21:07:07Z",
+   "file": "cert/CERT_ADDENDUM_3.md",
+   "sha256": "56560c98e3fa86dd3cebe89894e558d8a6ee51c555f0bcf6bbed84a01803b7f1",
+   "summary": "SYKE extraction budget: all 687 cool-season + 1,500 seeded warm events"
+  }
+ ],
+ "blind_sample13": {
+  "sha256": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+  "rows": 914,
+  "hashed_utc": "2026-09-30T21:59:19Z",
+  "note": "built value-blind (ids, dates, items only); no Secchi value read"
+ }
+}

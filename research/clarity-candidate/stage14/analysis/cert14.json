@@ -1,0 +1,2653 @@
+{
+ "rows_total": 1574,
+ "missing_aco": 24,
+ "US": {
+  "n": 825,
+  "lakes": 675,
+  "classes": {
+   "normal": 177,
+   "clear": 393,
+   "limited": 156,
+   "stained": 99
+  },
+  "insitu": {
+   "algal": 52,
+   "clear": 138,
+   "mixed": 72,
+   "null": 525,
+   "sediment": 38
+  },
+  "tiers": {
+   "3": 116,
+   "1": 599,
+   "2": 110
+  },
+  "decision_balanced": 0.7262011680602252,
+  "specificity": 0.7559943582510579,
+  "decision": {
+   "clear": [
+    0.8128834355828221,
+    0.8717105263157895,
+    0.8295165394402035,
+    393
+   ],
+   "normal": [
+    0.6644736842105263,
+    0.5550660792951542,
+    0.8587570621468926,
+    177
+   ],
+   "stained": [
+    0.6931818181818182,
+    0.7401960784313726,
+    0.8888888888888888,
+    99
+   ],
+   "limited": [
+    0.7342657342657343,
+    0.8843537414965986,
+    0.9166666666666666,
+    156
+   ]
+  },
+  "by_state": {
+   "Clear": {
+    "n": 304,
+    "precision": 0.8717105263157895
+   },
+   "Normal": {
+    "n": 127,
+    "precision": 0.4094488188976378
+   },
+   "Normal-to-Stained": {
+    "n": 100,
+    "precision": 0.74
+   },
+   "Stained": {
+    "n": 31,
+    "precision": 0.3548387096774194
+   },
+   "Stained-to-Limited": {
+    "n": 73,
+    "precision": 0.9041095890410958
+   },
+   "Limited": {
+    "n": 74,
+    "precision": 0.8648648648648649
+   }
+  },
+  "hard": {
+   "clear": [
+    0.6743002544529262,
+    0.8717105263157895
+   ],
+   "normal": [
+    0.5028248587570622,
+    0.46113989637305697
+   ],
+   "stained": [
+    0.3333333333333333,
+    0.336734693877551
+   ],
+   "limited": [
+    0.5705128205128205,
+    0.7807017543859649
+   ],
+   "balanced": 0.5202428167640355,
+   "qwk": 0.8142335307871696
+  },
+  "feet_median_abs_log": 0.1343140748545001,
+  "feet_by_class": {
+   "clear": [
+    0.1442372122938592,
+    -2.2550699840253596,
+    372
+   ],
+   "normal": [
+    0.11899858834712218,
+    0.004761147516934017,
+    162
+   ],
+   "stained": [
+    0.10874242093727292,
+    0.375526692565028,
+    90
+   ],
+   "limited": [
+    0.17100328176827206,
+    0.5847855283589074,
+    144
+   ]
+  },
+  "interval_coverage": 0.6544428772919605,
+  "exact_feet": {
+   "clear": {
+    "n_published": 372,
+    "coverage": 0.947,
+    "median_abs_log": 0.144,
+    "median_signed_ft": -2.26,
+    "verdict": "PARTIAL"
+   },
+   "normal": {
+    "n_published": 162,
+    "coverage": 0.915,
+    "median_abs_log": 0.119,
+    "median_signed_ft": 0.0,
+    "verdict": "SUPPORTED"
+   },
+   "stained": {
+    "n_published": 90,
+    "coverage": 0.909,
+    "median_abs_log": 0.109,
+    "median_signed_ft": 0.38,
+    "verdict": "SUPPORTED"
+   },
+   "limited": {
+    "n_published": 144,
+    "coverage": 0.923,
+    "median_abs_log": 0.171,
+    "median_signed_ft": 0.58,
+    "verdict": "SUPPORTED"
+   },
+   "algae": {
+    "n_published": 110,
+    "coverage": 0.887,
+    "median_abs_log": 0.157,
+    "median_signed_ft": 0.5,
+    "n": 124,
+    "verdict": "PARTIAL"
+   },
+   "sediment": {
+    "n_published": 33,
+    "coverage": 0.868,
+    "median_abs_log": 0.134,
+    "median_signed_ft": 0.35,
+    "n": 38,
+    "verdict": "SUPPORTED"
+   },
+   "bottom-risk": {
+    "verdict": "NOT"
+   }
+  },
+  "hard_class_rubric": {
+   "clear": {
+    "n": 393,
+    "recall": 0.791,
+    "precision": 0.857,
+    "unknown": 0.053,
+    "verdict": "SUPPORTED"
+   },
+   "normal": {
+    "n": 177,
+    "recall": 0.503,
+    "precision": 0.461,
+    "unknown": 0.085,
+    "verdict": "PARTIAL"
+   },
+   "stained": {
+    "n": 99,
+    "recall": 0.333,
+    "precision": 0.337,
+    "unknown": 0.091,
+    "verdict": "NOT"
+   },
+   "limited": {
+    "n": 156,
+    "recall": 0.571,
+    "precision": 0.781,
+    "unknown": 0.077,
+    "verdict": "PARTIAL"
+   },
+   "algae": {
+    "n": 124,
+    "class_acc": 0.484,
+    "constant": 0.508,
+    "median_signed_ft": 0.50083622947017,
+    "verdict": "NOT"
+   },
+   "sediment": {
+    "n": 38,
+    "class_acc": 0.605,
+    "constant": 0.711,
+    "bright_called_clear": 0.0,
+    "bright_n": 20,
+    "verdict": "PARTIAL"
+   },
+   "bottom-risk": {
+    "verdict": "NOT"
+   }
+  },
+  "EXACT_FEET": {
+   "points_of_7": 5.0,
+   "score_of_10": 7
+  },
+  "HARD_CLASS": {
+   "points_of_7": 2.5,
+   "score_of_10": 4
+  },
+  "product": {
+   "clear": {
+    "n": 393,
+    "decision_recall": 0.8128834355828221,
+    "decision_precision": 0.8717105263157895,
+    "authority_share": 0.8295165394402035,
+    "single_class_share": 0.9785276073619632,
+    "verdict": "SUPPORTED"
+   },
+   "normal": {
+    "n": 177,
+    "decision_recall": 0.6644736842105263,
+    "decision_precision": 0.5550660792951542,
+    "authority_share": 0.8587570621468926,
+    "single_class_share": 0.631578947368421,
+    "verdict": "NOT"
+   },
+   "stained": {
+    "n": 99,
+    "decision_recall": 0.6931818181818182,
+    "decision_precision": 0.7401960784313726,
+    "authority_share": 0.8888888888888888,
+    "single_class_share": 0.4318181818181818,
+    "verdict": "PARTIAL"
+   },
+   "limited": {
+    "n": 156,
+    "decision_recall": 0.7342657342657343,
+    "decision_precision": 0.8843537414965986,
+    "authority_share": 0.9166666666666666,
+    "single_class_share": 0.5804195804195804,
+    "verdict": "PARTIAL"
+   },
+   "algae": {
+    "n": 106,
+    "decision_acc": 0.7169811320754716,
+    "constant": 0.7358490566037735,
+    "median_signed_ft": 0.4517547048150141,
+    "verdict": "NOT"
+   },
+   "sediment": {
+    "n": 33,
+    "decision_acc": 0.8484848484848485,
+    "constant": 0.8787878787878788,
+    "bright_called_clear": 0.0,
+    "bright_n": 18,
+    "verdict": "PARTIAL"
+   },
+   "bottom-risk": {
+    "verdict": "NOT"
+   }
+  },
+  "PRODUCT": {
+   "points_of_7": 2.5,
+   "score_of_10": 4
+  },
+  "shares": {
+   "unknown": 0.069,
+   "class_only_feet_withheld": 0.0,
+   "feet_published": 0.931
+  }
+ },
+ "SYKE": {
+  "n": 749,
+  "lakes": 658,
+  "classes": {
+   "normal": 270,
+   "clear": 308,
+   "stained": 87,
+   "limited": 84
+  },
+  "insitu": {
+   "clear": 421,
+   "null": 186,
+   "mixed": 37,
+   "algal": 98,
+   "sediment": 7
+  },
+  "tiers": {
+   "1": 608,
+   "3": 104,
+   "2": 37
+  },
+  "decision_balanced": 0.5887238156132018,
+  "specificity": 0.6961240310077519,
+  "decision": {
+   "clear": [
+    0.48928571428571427,
+    0.6492890995260664,
+    0.9090909090909091,
+    308
+   ],
+   "normal": [
+    0.6470588235294118,
+    0.5133531157270029,
+    0.8185185185185185,
+    270
+   ],
+   "stained": [
+    0.6533333333333333,
+    0.5934579439252337,
+    0.8620689655172413,
+    87
+   ],
+   "limited": [
+    0.5652173913043478,
+    0.6962025316455697,
+    0.8214285714285714,
+    84
+   ]
+  },
+  "by_state": {
+   "Clear": {
+    "n": 211,
+    "precision": 0.6492890995260664
+   },
+   "Normal": {
+    "n": 183,
+    "precision": 0.3989071038251366
+   },
+   "Normal-to-Stained": {
+    "n": 154,
+    "precision": 0.6493506493506493
+   },
+   "Stained": {
+    "n": 18,
+    "precision": 0.16666666666666666
+   },
+   "Stained-to-Limited": {
+    "n": 42,
+    "precision": 0.5714285714285714
+   },
+   "Limited": {
+    "n": 37,
+    "precision": 0.8378378378378378
+   }
+  },
+  "hard": {
+   "clear": [
+    0.4448051948051948,
+    0.6492890995260664
+   ],
+   "normal": [
+    0.4444444444444444,
+    0.42402826855123676
+   ],
+   "stained": [
+    0.3103448275862069,
+    0.27
+   ],
+   "limited": [
+    0.44047619047619047,
+    0.7254901960784313
+   ],
+   "balanced": 0.4100176643280091,
+   "qwk": 0.5699790233669935
+  },
+  "feet_median_abs_log": 0.17731159381475614,
+  "feet_by_class": {
+   "clear": [
+    0.1933616855536228,
+    -2.6549069609852167,
+    300
+   ],
+   "normal": [
+    0.15865277442295395,
+    -0.1595204867381903,
+    254
+   ],
+   "stained": [
+    0.13850029074182027,
+    0.4861157976941026,
+    83
+   ],
+   "limited": [
+    0.18717303585087725,
+    0.7652163493430766,
+    76
+   ]
+  },
+  "interval_coverage": 0.5441860465116279,
+  "exact_feet": {
+   "clear": {
+    "n_published": 300,
+    "coverage": 0.974,
+    "median_abs_log": 0.193,
+    "median_signed_ft": -2.65,
+    "verdict": "NOT"
+   },
+   "normal": {
+    "n_published": 254,
+    "coverage": 0.941,
+    "median_abs_log": 0.159,
+    "median_signed_ft": -0.16,
+    "verdict": "PARTIAL"
+   },
+   "stained": {
+    "n_published": 83,
+    "coverage": 0.954,
+    "median_abs_log": 0.139,
+    "median_signed_ft": 0.49,
+    "verdict": "SUPPORTED"
+   },
+   "limited": {
+    "n_published": 76,
+    "coverage": 0.905,
+    "median_abs_log": 0.187,
+    "median_signed_ft": 0.77,
+    "verdict": "PARTIAL"
+   },
+   "algae": {
+    "n_published": 128,
+    "coverage": 0.948,
+    "median_abs_log": 0.168,
+    "median_signed_ft": 0.27,
+    "n": 135,
+    "verdict": "PARTIAL"
+   },
+   "sediment": {
+    "n_published": 7,
+    "coverage": 1.0,
+    "median_abs_log": 0.329,
+    "median_signed_ft": 0.74,
+    "n": 7,
+    "verdict": "NOT"
+   },
+   "bottom-risk": {
+    "verdict": "NOT"
+   }
+  },
+  "hard_class_rubric": {
+   "clear": {
+    "n": 308,
+    "recall": 0.51,
+    "precision": 0.563,
+    "unknown": 0.026,
+    "verdict": "NOT"
+   },
+   "normal": {
+    "n": 270,
+    "recall": 0.444,
+    "precision": 0.424,
+    "unknown": 0.059,
+    "verdict": "NOT"
+   },
+   "stained": {
+    "n": 87,
+    "recall": 0.31,
+    "precision": 0.27,
+    "unknown": 0.046,
+    "verdict": "NOT"
+   },
+   "limited": {
+    "n": 84,
+    "recall": 0.44,
+    "precision": 0.725,
+    "unknown": 0.095,
+    "verdict": "NOT"
+   },
+   "algae": {
+    "n": 135,
+    "class_acc": 0.385,
+    "constant": 0.326,
+    "median_signed_ft": 0.27237179774370684,
+    "verdict": "PARTIAL"
+   },
+   "sediment": {
+    "n": 7,
+    "class_acc": 0.857,
+    "constant": 0.714,
+    "bright_called_clear": 0.0,
+    "bright_n": 2,
+    "verdict": "SUPPORTED"
+   },
+   "bottom-risk": {
+    "verdict": "NOT"
+   }
+  },
+  "EXACT_FEET": {
+   "points_of_7": 2.5,
+   "score_of_10": 4
+  },
+  "HARD_CLASS": {
+   "points_of_7": 1.5,
+   "score_of_10": 2
+  },
+  "product": {
+   "clear": {
+    "n": 308,
+    "decision_recall": 0.48928571428571427,
+    "decision_precision": 0.6492890995260664,
+    "authority_share": 0.9090909090909091,
+    "single_class_share": 0.8392857142857143,
+    "verdict": "NOT"
+   },
+   "normal": {
+    "n": 270,
+    "decision_recall": 0.6470588235294118,
+    "decision_precision": 0.5133531157270029,
+    "authority_share": 0.8185185185185185,
+    "single_class_share": 0.6244343891402715,
+    "verdict": "NOT"
+   },
+   "stained": {
+    "n": 87,
+    "decision_recall": 0.6533333333333333,
+    "decision_precision": 0.5934579439252337,
+    "authority_share": 0.8620689655172413,
+    "single_class_share": 0.38666666666666666,
+    "verdict": "NOT"
+   },
+   "limited": {
+    "n": 84,
+    "decision_recall": 0.5652173913043478,
+    "decision_precision": 0.6962025316455697,
+    "authority_share": 0.8214285714285714,
+    "single_class_share": 0.6811594202898551,
+    "verdict": "NOT"
+   },
+   "algae": {
+    "n": 115,
+    "decision_acc": 0.5826086956521739,
+    "constant": 0.6521739130434783,
+    "median_signed_ft": 0.053750643749943094,
+    "verdict": "NOT"
+   },
+   "sediment": {
+    "n": 7,
+    "decision_acc": 0.8571428571428571,
+    "constant": 1.0,
+    "bright_called_clear": 0.0,
+    "bright_n": 2,
+    "verdict": "PARTIAL"
+   },
+   "bottom-risk": {
+    "verdict": "NOT"
+   }
+  },
+  "PRODUCT": {
+   "points_of_7": 0.5,
+   "score_of_10": 1
+  },
+  "shares": {
+   "unknown": 0.048,
+   "class_only_feet_withheld": 0.0,
+   "feet_published": 0.952
+  }
+ },
+ "breakdown": {
+  "source": {
+   "NLA": {
+    "n": 155,
+    "lakes": 153,
+    "classes": {
+     "normal": 32,
+     "clear": 77,
+     "limited": 36,
+     "stained": 10
+    },
+    "insitu": {
+     "algal": 27,
+     "clear": 86,
+     "mixed": 38,
+     "null": 2,
+     "sediment": 2
+    },
+    "tiers": {
+     "3": 27,
+     "1": 99,
+     "2": 29
+    },
+    "decision_balanced": 0.7681390406800243,
+    "specificity": 0.75,
+    "decision": {
+     "clear": [
+      0.8688524590163934,
+      0.8833333333333333,
+      0.7922077922077922,
+      77
+     ],
+     "normal": [
+      0.7037037037037037,
+      0.6285714285714286,
+      0.84375,
+      32
+     ],
+     "stained": [
+      0.75,
+      0.7297297297297297,
+      0.8,
+      10
+     ],
+     "limited": [
+      0.75,
+      0.9285714285714286,
+      0.8888888888888888,
+      36
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 60,
+      "precision": 0.8833333333333333
+     },
+     "Normal": {
+      "n": 18,
+      "precision": 0.5555555555555556
+     },
+     "Normal-to-Stained": {
+      "n": 17,
+      "precision": 0.7058823529411765
+     },
+     "Stained": {
+      "n": 5,
+      "precision": 0.2
+     },
+     "Stained-to-Limited": {
+      "n": 15,
+      "precision": 0.9333333333333333
+     },
+     "Limited": {
+      "n": 13,
+      "precision": 0.9230769230769231
+     }
+    },
+    "hard": {
+     "clear": [
+      0.6883116883116883,
+      0.8833333333333333
+     ],
+     "normal": [
+      0.375,
+      0.48
+     ],
+     "stained": [
+      0.3,
+      0.14285714285714285
+     ],
+     "limited": [
+      0.5555555555555556,
+      0.9090909090909091
+     ],
+     "balanced": 0.47971681096681096,
+     "qwk": 0.8356797466729428
+    },
+    "feet_median_abs_log": 0.15218904382210702,
+    "feet_by_class": {
+     "clear": [
+      0.1424473549754268,
+      -1.8670609343168394,
+      75
+     ],
+     "normal": [
+      0.14738123102424025,
+      -0.17466152335829355,
+      29
+     ],
+     "stained": [
+      0.1464852225834785,
+      0.25945930433413356,
+      8
+     ],
+     "limited": [
+      0.216623993052056,
+      0.7028335203432763,
+      32
+     ]
+    },
+    "interval_coverage": 0.609375
+   },
+   "WQP": {
+    "n": 670,
+    "lakes": 522,
+    "classes": {
+     "clear": 316,
+     "normal": 145,
+     "stained": 89,
+     "limited": 120
+    },
+    "insitu": {
+     "null": 523,
+     "clear": 52,
+     "algal": 25,
+     "mixed": 34,
+     "sediment": 36
+    },
+    "tiers": {
+     "1": 500,
+     "3": 89,
+     "2": 81
+    },
+    "decision_balanced": 0.7183074324324324,
+    "specificity": 0.7573149741824441,
+    "decision": {
+     "clear": [
+      0.8,
+      0.8688524590163934,
+      0.8386075949367089,
+      316
+     ],
+     "normal": [
+      0.656,
+      0.5416666666666666,
+      0.8620689655172413,
+      145
+     ],
+     "stained": [
+      0.6875,
+      0.7425149700598802,
+      0.898876404494382,
+      89
+     ],
+     "limited": [
+      0.7297297297297297,
+      0.8739495798319328,
+      0.925,
+      120
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 244,
+      "precision": 0.8688524590163934
+     },
+     "Normal": {
+      "n": 109,
+      "precision": 0.3853211009174312
+     },
+     "Normal-to-Stained": {
+      "n": 83,
+      "precision": 0.7469879518072289
+     },
+     "Stained": {
+      "n": 26,
+      "precision": 0.38461538461538464
+     },
+     "Stained-to-Limited": {
+      "n": 58,
+      "precision": 0.896551724137931
+     },
+     "Limited": {
+      "n": 61,
+      "precision": 0.8524590163934426
+     }
+    },
+    "hard": {
+     "clear": [
+      0.6708860759493671,
+      0.8688524590163934
+     ],
+     "normal": [
+      0.5310344827586206,
+      0.4583333333333333
+     ],
+     "stained": [
+      0.33707865168539325,
+      0.38961038961038963
+     ],
+     "limited": [
+      0.575,
+      0.75
+     ],
+     "balanced": 0.5284998025983452,
+     "qwk": 0.8089216989713806
+    },
+    "feet_median_abs_log": 0.1324926393171204,
+    "feet_by_class": {
+     "clear": [
+      0.1443472944466736,
+      -2.3771345228913177,
+      297
+     ],
+     "normal": [
+      0.11807723924796543,
+      0.01826682141064495,
+      133
+     ],
+     "stained": [
+      0.10593607754939348,
+      0.375526692565028,
+      82
+     ],
+     "limited": [
+      0.1633729208366792,
+      0.5645474630865103,
+      112
+     ]
+    },
+    "interval_coverage": 0.6643717728055077
+   }
+  },
+  "tier": {
+   "1": {
+    "n": 599,
+    "lakes": 503,
+    "classes": {
+     "clear": 298,
+     "normal": 119,
+     "limited": 112,
+     "stained": 70
+    },
+    "insitu": {
+     "clear": 100,
+     "algal": 30,
+     "mixed": 41,
+     "null": 396,
+     "sediment": 32
+    },
+    "tiers": {
+     "1": 599
+    },
+    "decision_balanced": 0.744380428345835,
+    "specificity": 0.7779632721202003,
+    "decision": {
+     "clear": [
+      0.8120805369127517,
+      0.88,
+      1.0,
+      298
+     ],
+     "normal": [
+      0.6386554621848739,
+      0.5485714285714286,
+      1.0,
+      119
+     ],
+     "stained": [
+      0.7142857142857143,
+      0.7741935483870968,
+      1.0,
+      70
+     ],
+     "limited": [
+      0.8125,
+      0.889763779527559,
+      1.0,
+      112
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 275,
+      "precision": 0.88
+     },
+     "Normal": {
+      "n": 106,
+      "precision": 0.39622641509433965
+     },
+     "Normal-to-Stained": {
+      "n": 69,
+      "precision": 0.782608695652174
+     },
+     "Stained": {
+      "n": 22,
+      "precision": 0.36363636363636365
+     },
+     "Stained-to-Limited": {
+      "n": 64,
+      "precision": 0.90625
+     },
+     "Limited": {
+      "n": 63,
+      "precision": 0.873015873015873
+     }
+    },
+    "hard": {
+     "clear": [
+      0.8120805369127517,
+      0.88
+     ],
+     "normal": [
+      0.5798319327731093,
+      0.4423076923076923
+     ],
+     "stained": [
+      0.38571428571428573,
+      0.391304347826087
+     ],
+     "limited": [
+      0.6964285714285714,
+      0.7878787878787878
+     ],
+     "balanced": 0.6185138317071794,
+     "qwk": 0.831607974420052
+    },
+    "feet_median_abs_log": 0.1311402908601399,
+    "feet_by_class": {
+     "clear": [
+      0.14439416164257068,
+      -2.4180790629614566,
+      298
+     ],
+     "normal": [
+      0.1055199453669013,
+      -0.10951333694643672,
+      119
+     ],
+     "stained": [
+      0.10508334778573887,
+      0.24516328579025215,
+      70
+     ],
+     "limited": [
+      0.16103399793000409,
+      0.5169395237458057,
+      112
+     ]
+    },
+    "interval_coverage": 0.669449081803005
+   },
+   "2": {
+    "n": 110,
+    "lakes": 103,
+    "classes": {
+     "normal": 33,
+     "limited": 31,
+     "clear": 28,
+     "stained": 18
+    },
+    "insitu": {
+     "algal": 12,
+     "mixed": 23,
+     "clear": 11,
+     "sediment": 1,
+     "null": 63
+    },
+    "tiers": {
+     "2": 110
+    },
+    "decision_balanced": 0.6604320858353117,
+    "specificity": 0.6363636363636364,
+    "decision": {
+     "clear": [
+      0.8214285714285714,
+      0.7931034482758621,
+      1.0,
+      28
+     ],
+     "normal": [
+      0.7575757575757576,
+      0.5769230769230769,
+      1.0,
+      33
+     ],
+     "stained": [
+      0.6111111111111112,
+      0.6326530612244898,
+      1.0,
+      18
+     ],
+     "limited": [
+      0.45161290322580644,
+      0.85,
+      1.0,
+      31
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 29,
+      "precision": 0.7931034482758621
+     },
+     "Normal": {
+      "n": 21,
+      "precision": 0.47619047619047616
+     },
+     "Normal-to-Stained": {
+      "n": 31,
+      "precision": 0.6451612903225806
+     },
+     "Stained": {
+      "n": 9,
+      "precision": 0.3333333333333333
+     },
+     "Stained-to-Limited": {
+      "n": 9,
+      "precision": 0.8888888888888888
+     },
+     "Limited": {
+      "n": 11,
+      "precision": 0.8181818181818182
+     }
+    },
+    "hard": {
+     "clear": [
+      0.8214285714285714,
+      0.7931034482758621
+     ],
+     "normal": [
+      0.6060606060606061,
+      0.5405405405405406
+     ],
+     "stained": [
+      0.3333333333333333,
+      0.20689655172413793
+     ],
+     "limited": [
+      0.3548387096774194,
+      0.7333333333333333
+     ],
+     "balanced": 0.5289153051249825,
+     "qwk": 0.6918767507002801
+    },
+    "feet_median_abs_log": 0.16405482217934428,
+    "feet_by_class": {
+     "clear": [
+      0.14194116434201753,
+      -2.546527200247734,
+      28
+     ],
+     "normal": [
+      0.1329799072382706,
+      -0.4782658369661337,
+      33
+     ],
+     "stained": [
+      0.11850591913979437,
+      0.4238109338673355,
+      18
+     ],
+     "limited": [
+      0.22542105029307447,
+      1.0374494803402987,
+      31
+     ]
+    },
+    "interval_coverage": 0.5727272727272728
+   },
+   "3": {
+    "n": 116,
+    "lakes": 110,
+    "classes": {
+     "normal": 25,
+     "clear": 67,
+     "limited": 13,
+     "stained": 11
+    },
+    "insitu": {
+     "algal": 10,
+     "clear": 27,
+     "mixed": 8,
+     "sediment": 5,
+     "null": 66
+    },
+    "tiers": {
+     "3": 116
+    },
+    "decision_balanced": NaN,
+    "specificity": null,
+    "decision": {
+     "clear": [
+      null,
+      null,
+      0.0,
+      67
+     ],
+     "normal": [
+      null,
+      null,
+      0.0,
+      25
+     ],
+     "stained": [
+      null,
+      null,
+      0.0,
+      11
+     ],
+     "limited": [
+      null,
+      null,
+      0.0,
+      13
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 0,
+      "precision": 0.0
+     },
+     "Normal": {
+      "n": 0,
+      "precision": 0.0
+     },
+     "Normal-to-Stained": {
+      "n": 0,
+      "precision": 0.0
+     },
+     "Stained": {
+      "n": 0,
+      "precision": 0.0
+     },
+     "Stained-to-Limited": {
+      "n": 0,
+      "precision": 0.0
+     },
+     "Limited": {
+      "n": 0,
+      "precision": 0.0
+     }
+    },
+    "hard": {
+     "clear": [
+      0.0,
+      null
+     ],
+     "normal": [
+      0.0,
+      null
+     ],
+     "stained": [
+      0.0,
+      null
+     ],
+     "limited": [
+      0.0,
+      null
+     ],
+     "balanced": 0.0,
+     "qwk": null
+    },
+    "feet_median_abs_log": 0.1808882588330892,
+    "feet_by_class": {
+     "clear": [
+      0.13901295317428813,
+      -0.8509888230774791,
+      46
+     ],
+     "normal": [
+      0.2412054685347353,
+      2.793760392552141,
+      10
+     ],
+     "stained": [
+      0.36313702707450535,
+      3.5872231884178296,
+      2
+     ],
+     "limited": [
+      1.0112398981544557,
+      5.560958538638852,
+      1
+     ]
+    },
+    "interval_coverage": null
+   }
+  },
+  "platform": {
+   "sentinel-2a": {
+    "n": 363,
+    "lakes": 326,
+    "classes": {
+     "clear": 184,
+     "normal": 74,
+     "limited": 56,
+     "stained": 49
+    },
+    "insitu": {
+     "clear": 57,
+     "algal": 28,
+     "mixed": 28,
+     "null": 233,
+     "sediment": 17
+    },
+    "tiers": {
+     "1": 261,
+     "2": 46,
+     "3": 56
+    },
+    "decision_balanced": 0.7211173844537815,
+    "specificity": 0.7817589576547231,
+    "decision": {
+     "clear": [
+      0.82,
+      0.8723404255319149,
+      0.8152173913043478,
+      184
+     ],
+     "normal": [
+      0.703125,
+      0.5825242718446602,
+      0.8648648648648649,
+      74
+     ],
+     "stained": [
+      0.7142857142857143,
+      0.7283950617283951,
+      0.8571428571428571,
+      49
+     ],
+     "limited": [
+      0.6470588235294118,
+      0.8367346938775511,
+      0.9107142857142857,
+      56
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 141,
+      "precision": 0.8723404255319149
+     },
+     "Normal": {
+      "n": 57,
+      "precision": 0.45614035087719296
+     },
+     "Normal-to-Stained": {
+      "n": 46,
+      "precision": 0.7391304347826086
+     },
+     "Stained": {
+      "n": 14,
+      "precision": 0.5
+     },
+     "Stained-to-Limited": {
+      "n": 21,
+      "precision": 0.8571428571428571
+     },
+     "Limited": {
+      "n": 28,
+      "precision": 0.8214285714285714
+     }
+    },
+    "hard": {
+     "clear": [
+      0.6684782608695652,
+      0.8723404255319149
+     ],
+     "normal": [
+      0.527027027027027,
+      0.46987951807228917
+     ],
+     "stained": [
+      0.40816326530612246,
+      0.45454545454545453
+     ],
+     "limited": [
+      0.5357142857142857,
+      0.7692307692307693
+     ],
+     "balanced": 0.53484570972925,
+     "qwk": 0.8003415460711141
+    },
+    "feet_median_abs_log": 0.13003674301238258,
+    "feet_by_class": {
+     "clear": [
+      0.12766912927365798,
+      -2.1332550699052364,
+      174
+     ],
+     "normal": [
+      0.12149240047455935,
+      -0.06401706135310592,
+      68
+     ],
+     "stained": [
+      0.0973298769847131,
+      0.3812615466283411,
+      44
+     ],
+     "limited": [
+      0.2147137215003673,
+      0.6446448188181462,
+      51
+     ]
+    },
+    "interval_coverage": 0.6612377850162866
+   },
+   "sentinel-2b": {
+    "n": 429,
+    "lakes": 381,
+    "classes": {
+     "normal": 93,
+     "clear": 195,
+     "limited": 91,
+     "stained": 50
+    },
+    "insitu": {
+     "algal": 22,
+     "clear": 78,
+     "mixed": 42,
+     "null": 268,
+     "sediment": 19
+    },
+    "tiers": {
+     "3": 50,
+     "1": 320,
+     "2": 59
+    },
+    "decision_balanced": 0.7357179091177303,
+    "specificity": 0.7308707124010554,
+    "decision": {
+     "clear": [
+      0.8373493975903614,
+      0.8742138364779874,
+      0.8512820512820513,
+      195
+     ],
+     "normal": [
+      0.65,
+      0.5535714285714286,
+      0.8602150537634409,
+      93
+     ],
+     "stained": [
+      0.6739130434782609,
+      0.7606837606837606,
+      0.92,
+      50
+     ],
+     "limited": [
+      0.7816091954022989,
+      0.9139784946236559,
+      0.9560439560439561,
+      91
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 159,
+      "precision": 0.8742138364779874
+     },
+     "Normal": {
+      "n": 60,
+      "precision": 0.38333333333333336
+     },
+     "Normal-to-Stained": {
+      "n": 52,
+      "precision": 0.75
+     },
+     "Stained": {
+      "n": 15,
+      "precision": 0.26666666666666666
+     },
+     "Stained-to-Limited": {
+      "n": 50,
+      "precision": 0.92
+     },
+     "Limited": {
+      "n": 43,
+      "precision": 0.9069767441860465
+     }
+    },
+    "hard": {
+     "clear": [
+      0.7128205128205128,
+      0.8742138364779874
+     ],
+     "normal": [
+      0.5053763440860215,
+      0.47474747474747475
+     ],
+     "stained": [
+      0.26,
+      0.2653061224489796
+     ],
+     "limited": [
+      0.6263736263736264,
+      0.7916666666666666
+     ],
+     "balanced": 0.5261426208200402,
+     "qwk": 0.833701506990256
+    },
+    "feet_median_abs_log": 0.1343140748545001,
+    "feet_by_class": {
+     "clear": [
+      0.1443472944466736,
+      -2.4260260528693767,
+      185
+     ],
+     "normal": [
+      0.1055199453669013,
+      0.039527664111882466,
+      85
+     ],
+     "stained": [
+      0.11850591913979437,
+      0.24516328579025215,
+      46
+     ],
+     "limited": [
+      0.16326797639947094,
+      0.5355328464837328,
+      88
+     ]
+    },
+    "interval_coverage": 0.6701846965699209
+   },
+   "sentinel-2c": {
+    "n": 33,
+    "lakes": 32,
+    "classes": {
+     "clear": 14,
+     "normal": 10,
+     "limited": 9
+    },
+    "insitu": {
+     "null": 24,
+     "clear": 3,
+     "algal": 2,
+     "mixed": 2,
+     "sediment": 2
+    },
+    "tiers": {
+     "3": 10,
+     "1": 18,
+     "2": 5
+    },
+    "decision_balanced": 0.5333333333333333,
+    "specificity": 0.8260869565217391,
+    "decision": {
+     "clear": [
+      0.3,
+      0.75,
+      0.7142857142857143,
+      14
+     ],
+     "normal": [
+      0.5,
+      0.3333333333333333,
+      0.8,
+      10
+     ],
+     "stained": [
+      null,
+      0.5,
+      null,
+      0
+     ],
+     "limited": [
+      0.8,
+      0.8,
+      0.5555555555555556,
+      9
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 4,
+      "precision": 0.75
+     },
+     "Normal": {
+      "n": 10,
+      "precision": 0.3
+     },
+     "Normal-to-Stained": {
+      "n": 2,
+      "precision": 0.5
+     },
+     "Stained": {
+      "n": 2,
+      "precision": 0.0
+     },
+     "Stained-to-Limited": {
+      "n": 2,
+      "precision": 1.0
+     },
+     "Limited": {
+      "n": 3,
+      "precision": 0.6666666666666666
+     }
+    },
+    "hard": {
+     "clear": [
+      0.21428571428571427,
+      0.75
+     ],
+     "normal": [
+      0.3,
+      0.2727272727272727
+     ],
+     "stained": [
+      null,
+      0.0
+     ],
+     "limited": [
+      0.2222222222222222,
+      0.6666666666666666
+     ],
+     "balanced": 0.24550264550264547,
+     "qwk": 0.5882352941176471
+    },
+    "feet_median_abs_log": 0.2091442380210059,
+    "feet_by_class": {
+     "clear": [
+      0.22692969187565212,
+      -3.9171847665118538,
+      13
+     ],
+     "normal": [
+      0.18974288602239806,
+      -0.9390756154663116,
+      9
+     ],
+     "limited": [
+      0.14662087429384763,
+      0.6587756539133587,
+      5
+     ]
+    },
+    "interval_coverage": 0.30434782608695654
+   }
+  },
+  "season": {
+   "cool": {
+    "n": 166,
+    "lakes": 142,
+    "classes": {
+     "clear": 52,
+     "stained": 27,
+     "limited": 48,
+     "normal": 39
+    },
+    "insitu": {
+     "null": 108,
+     "clear": 20,
+     "mixed": 6,
+     "algal": 5,
+     "sediment": 27
+    },
+    "tiers": {
+     "1": 127,
+     "2": 26,
+     "3": 13
+    },
+    "decision_balanced": 0.7309575775001307,
+    "specificity": 0.6601307189542484,
+    "decision": {
+     "clear": [
+      0.5531914893617021,
+      0.8125,
+      0.9038461538461539,
+      52
+     ],
+     "normal": [
+      0.7297297297297297,
+      0.5692307692307692,
+      0.9487179487179487,
+      39
+     ],
+     "stained": [
+      0.8,
+      0.7758620689655172,
+      0.9259259259259259,
+      27
+     ],
+     "limited": [
+      0.8409090909090909,
+      0.9,
+      0.9166666666666666,
+      48
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 32,
+      "precision": 0.8125
+     },
+     "Normal": {
+      "n": 34,
+      "precision": 0.35294117647058826
+     },
+     "Normal-to-Stained": {
+      "n": 31,
+      "precision": 0.8064516129032258
+     },
+     "Stained": {
+      "n": 6,
+      "precision": 0.3333333333333333
+     },
+     "Stained-to-Limited": {
+      "n": 21,
+      "precision": 0.8571428571428571
+     },
+     "Limited": {
+      "n": 29,
+      "precision": 0.9310344827586207
+     }
+    },
+    "hard": {
+     "clear": [
+      0.5,
+      0.8125
+     ],
+     "normal": [
+      0.6153846153846154,
+      0.4067796610169492
+     ],
+     "stained": [
+      0.3333333333333333,
+      0.391304347826087
+     ],
+     "limited": [
+      0.7083333333333334,
+      0.8717948717948718
+     ],
+     "balanced": 0.5392628205128205,
+     "qwk": 0.792225003681343
+    },
+    "feet_median_abs_log": 0.1401835827467478,
+    "feet_by_class": {
+     "clear": [
+      0.15042353710345255,
+      -3.0857406326268317,
+      52
+     ],
+     "normal": [
+      0.10178430210238709,
+      -0.3069148918387785,
+      38
+     ],
+     "stained": [
+      0.10828202908951368,
+      0.4489991772014741,
+      26
+     ],
+     "limited": [
+      0.17642361495580028,
+      0.48717010432232255,
+      44
+     ]
+    },
+    "interval_coverage": 0.6797385620915033
+   },
+   "warm": {
+    "n": 659,
+    "lakes": 555,
+    "classes": {
+     "normal": 138,
+     "clear": 341,
+     "limited": 108,
+     "stained": 72
+    },
+    "insitu": {
+     "algal": 47,
+     "clear": 118,
+     "mixed": 66,
+     "null": 417,
+     "sediment": 11
+    },
+    "tiers": {
+     "3": 103,
+     "1": 472,
+     "2": 84
+    },
+    "decision_balanced": 0.7094428557261656,
+    "specificity": 0.7823741007194245,
+    "decision": {
+     "clear": [
+      0.8566308243727598,
+      0.8786764705882353,
+      0.8181818181818182,
+      341
+     ],
+     "normal": [
+      0.6434782608695652,
+      0.5493827160493827,
+      0.8333333333333334,
+      138
+     ],
+     "stained": [
+      0.6507936507936508,
+      0.726027397260274,
+      0.875,
+      72
+     ],
+     "limited": [
+      0.6868686868686869,
+      0.8762886597938144,
+      0.9166666666666666,
+      108
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 272,
+      "precision": 0.8786764705882353
+     },
+     "Normal": {
+      "n": 93,
+      "precision": 0.43010752688172044
+     },
+     "Normal-to-Stained": {
+      "n": 69,
+      "precision": 0.7101449275362319
+     },
+     "Stained": {
+      "n": 25,
+      "precision": 0.36
+     },
+     "Stained-to-Limited": {
+      "n": 52,
+      "precision": 0.9230769230769231
+     },
+     "Limited": {
+      "n": 45,
+      "precision": 0.8222222222222222
+     }
+    },
+    "hard": {
+     "clear": [
+      0.7008797653958945,
+      0.8786764705882353
+     ],
+     "normal": [
+      0.47101449275362317,
+      0.48507462686567165
+     ],
+     "stained": [
+      0.3333333333333333,
+      0.32
+     ],
+     "limited": [
+      0.5092592592592593,
+      0.7333333333333333
+     ],
+     "balanced": 0.5036217126855276,
+     "qwk": 0.8125845948816192
+    },
+    "feet_median_abs_log": 0.13393336304770276,
+    "feet_by_class": {
+     "clear": [
+      0.13476503195181672,
+      -2.225428130086344,
+      320
+     ],
+     "normal": [
+      0.12042412869063668,
+      0.04439577901512637,
+      124
+     ],
+     "stained": [
+      0.11076359367004533,
+      0.3338311995706691,
+      64
+     ],
+     "limited": [
+      0.16622505056798292,
+      0.6061246933169249,
+      100
+     ]
+    },
+    "interval_coverage": 0.6474820143884892
+   }
+  },
+  "region": {
+   "0": {
+    "n": 81,
+    "lakes": 67,
+    "classes": {
+     "clear": 65,
+     "limited": 3,
+     "stained": 5,
+     "normal": 8
+    },
+    "insitu": {
+     "clear": 14,
+     "mixed": 2,
+     "algal": 5,
+     "null": 60
+    },
+    "tiers": {
+     "3": 22,
+     "2": 7,
+     "1": 52
+    },
+    "decision_balanced": 0.5449275362318841,
+    "specificity": 0.9152542372881356,
+    "decision": {
+     "clear": [
+      0.9130434782608695,
+      0.9767441860465116,
+      0.7076923076923077,
+      65
+     ],
+     "normal": [
+      0.6666666666666666,
+      0.4,
+      0.75,
+      8
+     ],
+     "stained": [
+      0.6,
+      0.5,
+      1.0,
+      5
+     ],
+     "limited": [
+      0.0,
+      0.6666666666666666,
+      0.6666666666666666,
+      3
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 43,
+      "precision": 0.9767441860465116
+     },
+     "Normal": {
+      "n": 7,
+      "precision": 0.42857142857142855
+     },
+     "Normal-to-Stained": {
+      "n": 3,
+      "precision": 0.3333333333333333
+     },
+     "Stained": {
+      "n": 3,
+      "precision": 0.3333333333333333
+     },
+     "Stained-to-Limited": {
+      "n": 2,
+      "precision": 1.0
+     },
+     "Limited": {
+      "n": 1,
+      "precision": 0.0
+     }
+    },
+    "hard": {
+     "clear": [
+      0.6461538461538462,
+      0.9767441860465116
+     ],
+     "normal": [
+      0.5,
+      0.4444444444444444
+     ],
+     "stained": [
+      0.4,
+      0.4
+     ],
+     "limited": [
+      0.0,
+      0.0
+     ],
+     "balanced": 0.3865384615384615,
+     "qwk": 0.8479737643476224
+    },
+    "feet_median_abs_log": 0.15440572373943826,
+    "feet_by_class": {
+     "clear": [
+      0.15742891388065827,
+      -2.1716317549779074,
+      58
+     ],
+     "normal": [
+      0.06828561686891019,
+      0.039527664111882466,
+      7
+     ],
+     "stained": [
+      0.16400749827575173,
+      -0.3948086242349531,
+      5
+     ],
+     "limited": [
+      0.2546452262897413,
+      1.1783787647136423,
+      2
+     ]
+    },
+    "interval_coverage": 0.6610169491525424
+   },
+   "1": {
+    "n": 123,
+    "lakes": 97,
+    "classes": {
+     "clear": 36,
+     "stained": 19,
+     "normal": 38,
+     "limited": 30
+    },
+    "insitu": {
+     "clear": 28,
+     "algal": 23,
+     "sediment": 5,
+     "mixed": 16,
+     "null": 51
+    },
+    "tiers": {
+     "1": 73,
+     "3": 23,
+     "2": 27
+    },
+    "decision_balanced": 0.6960071301247772,
+    "specificity": 0.64,
+    "decision": {
+     "clear": [
+      0.76,
+      0.7307692307692307,
+      0.6944444444444444,
+      36
+     ],
+     "normal": [
+      0.696969696969697,
+      0.6666666666666666,
+      0.868421052631579,
+      38
+     ],
+     "stained": [
+      0.6470588235294118,
+      0.7441860465116279,
+      0.8947368421052632,
+      19
+     ],
+     "limited": [
+      0.68,
+      0.8636363636363636,
+      0.8333333333333334,
+      30
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 26,
+      "precision": 0.7307692307692307
+     },
+     "Normal": {
+      "n": 26,
+      "precision": 0.5769230769230769
+     },
+     "Normal-to-Stained": {
+      "n": 19,
+      "precision": 0.7894736842105263
+     },
+     "Stained": {
+      "n": 7,
+      "precision": 0.2857142857142857
+     },
+     "Stained-to-Limited": {
+      "n": 17,
+      "precision": 0.8823529411764706
+     },
+     "Limited": {
+      "n": 5,
+      "precision": 0.8
+     }
+    },
+    "hard": {
+     "clear": [
+      0.5277777777777778,
+      0.7307692307692307
+     ],
+     "normal": [
+      0.5789473684210527,
+      0.5641025641025641
+     ],
+     "stained": [
+      0.3684210526315789,
+      0.2916666666666667
+     ],
+     "limited": [
+      0.3333333333333333,
+      0.9090909090909091
+     ],
+     "balanced": 0.45211988304093564,
+     "qwk": 0.7171532846715328
+    },
+    "feet_median_abs_log": 0.12275677288536549,
+    "feet_by_class": {
+     "clear": [
+      0.09620201122808492,
+      -1.212242050513809,
+      33
+     ],
+     "normal": [
+      0.1217809136540607,
+      0.15834189428273326,
+      35
+     ],
+     "stained": [
+      0.09630524324524883,
+      0.4334313863565722,
+      17
+     ],
+     "limited": [
+      0.14662087429384763,
+      0.6541820887701466,
+      25
+     ]
+    },
+    "interval_coverage": 0.73
+   },
+   "2": {
+    "n": 333,
+    "lakes": 277,
+    "classes": {
+     "normal": 78,
+     "clear": 170,
+     "limited": 42,
+     "stained": 43
+    },
+    "insitu": {
+     "clear": 21,
+     "algal": 7,
+     "mixed": 14,
+     "null": 289,
+     "sediment": 2
+    },
+    "tiers": {
+     "1": 251,
+     "3": 47,
+     "2": 35
+    },
+    "decision_balanced": 0.6921719327006143,
+    "specificity": 0.7902097902097902,
+    "decision": {
+     "clear": [
+      0.8356164383561644,
+      0.8714285714285714,
+      0.8588235294117647,
+      170
+     ],
+     "normal": [
+      0.640625,
+      0.5454545454545454,
+      0.8205128205128205,
+      78
+     ],
+     "stained": [
+      0.7027027027027027,
+      0.726027397260274,
+      0.8604651162790697,
+      43
+     ],
+     "limited": [
+      0.5897435897435898,
+      0.8222222222222222,
+      0.9285714285714286,
+      42
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 140,
+      "precision": 0.8714285714285714
+     },
+     "Normal": {
+      "n": 51,
+      "precision": 0.39215686274509803
+     },
+     "Normal-to-Stained": {
+      "n": 37,
+      "precision": 0.7567567567567568
+     },
+     "Stained": {
+      "n": 13,
+      "precision": 0.38461538461538464
+     },
+     "Stained-to-Limited": {
+      "n": 23,
+      "precision": 0.8695652173913043
+     },
+     "Limited": {
+      "n": 22,
+      "precision": 0.7727272727272727
+     }
+    },
+    "hard": {
+     "clear": [
+      0.7176470588235294,
+      0.8714285714285714
+     ],
+     "normal": [
+      0.48717948717948717,
+      0.48717948717948717
+     ],
+     "stained": [
+      0.32558139534883723,
+      0.42424242424242425
+     ],
+     "limited": [
+      0.47619047619047616,
+      0.5714285714285714
+     ],
+     "balanced": 0.5016496043855825,
+     "qwk": 0.7608617750219896
+    },
+    "feet_median_abs_log": 0.12908921218278002,
+    "feet_by_class": {
+     "clear": [
+      0.12422371999175683,
+      -2.1387068468012584,
+      160
+     ],
+     "normal": [
+      0.12220120338018031,
+      -0.05126989428462436,
+      70
+     ],
+     "stained": [
+      0.11076359367004533,
+      0.24516328579025215,
+      38
+     ],
+     "limited": [
+      0.21453294710801124,
+      0.8140070615947839,
+      40
+     ]
+    },
+    "interval_coverage": 0.6433566433566433
+   },
+   "3": {
+    "n": 134,
+    "lakes": 109,
+    "classes": {
+     "normal": 26,
+     "stained": 27,
+     "limited": 58,
+     "clear": 23
+    },
+    "insitu": {
+     "algal": 8,
+     "mixed": 30,
+     "clear": 20,
+     "sediment": 27,
+     "null": 49
+    },
+    "tiers": {
+     "3": 11,
+     "2": 18,
+     "1": 105
+    },
+    "decision_balanced": 0.6908796296296296,
+    "specificity": 0.5772357723577236,
+    "decision": {
+     "clear": [
+      0.4,
+      0.6153846153846154,
+      0.8695652173913043,
+      23
+     ],
+     "normal": [
+      0.72,
+      0.5714285714285714,
+      0.9615384615384616,
+      26
+     ],
+     "stained": [
+      0.7916666666666666,
+      0.7894736842105263,
+      0.8888888888888888,
+      27
+     ],
+     "limited": [
+      0.8518518518518519,
+      0.9464285714285714,
+      0.9310344827586207,
+      58
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 13,
+      "precision": 0.6153846153846154
+     },
+     "Normal": {
+      "n": 22,
+      "precision": 0.36363636363636365
+     },
+     "Normal-to-Stained": {
+      "n": 27,
+      "precision": 0.7407407407407407
+     },
+     "Stained": {
+      "n": 5,
+      "precision": 0.4
+     },
+     "Stained-to-Limited": {
+      "n": 25,
+      "precision": 0.92
+     },
+     "Limited": {
+      "n": 31,
+      "precision": 0.967741935483871
+     }
+    },
+    "hard": {
+     "clear": [
+      0.34782608695652173,
+      0.6153846153846154
+     ],
+     "normal": [
+      0.5384615384615384,
+      0.3684210526315789
+     ],
+     "stained": [
+      0.2962962962962963,
+      0.2962962962962963
+     ],
+     "limited": [
+      0.6896551724137931,
+      0.8888888888888888
+     ],
+     "balanced": 0.4680597735320374,
+     "qwk": 0.7453558639212176
+    },
+    "feet_median_abs_log": 0.14278207158473466,
+    "feet_by_class": {
+     "clear": [
+      0.15194453987439316,
+      -2.808822632394624,
+      23
+     ],
+     "normal": [
+      0.12513740168328888,
+      -0.4598077840259738,
+      26
+     ],
+     "stained": [
+      0.11108837247739312,
+      0.5214514487920887,
+      25
+     ],
+     "limited": [
+      0.16113894236721238,
+      0.5151021742760584,
+      54
+     ]
+    },
+    "interval_coverage": 0.6422764227642277
+   },
+   "4": {
+    "n": 154,
+    "lakes": 125,
+    "classes": {
+     "normal": 27,
+     "clear": 99,
+     "limited": 23,
+     "stained": 5
+    },
+    "insitu": {
+     "algal": 9,
+     "clear": 55,
+     "mixed": 10,
+     "null": 76,
+     "sediment": 4
+    },
+    "tiers": {
+     "3": 13,
+     "1": 118,
+     "2": 23
+    },
+    "decision_balanced": 0.6706369076697607,
+    "specificity": 0.8581560283687943,
+    "decision": {
+     "clear": [
+      0.8314606741573034,
+      0.9024390243902439,
+      0.898989898989899,
+      99
+     ],
+     "normal": [
+      0.625,
+      0.45714285714285713,
+      0.8888888888888888,
+      27
+     ],
+     "stained": [
+      0.4,
+      0.7391304347826086,
+      1.0,
+      5
+     ],
+     "limited": [
+      0.8260869565217391,
+      0.9047619047619048,
+      1.0,
+      23
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 82,
+      "precision": 0.9024390243902439
+     },
+     "Normal": {
+      "n": 21,
+      "precision": 0.2857142857142857
+     },
+     "Normal-to-Stained": {
+      "n": 14,
+      "precision": 0.7142857142857143
+     },
+     "Stained": {
+      "n": 3,
+      "precision": 0.3333333333333333
+     },
+     "Stained-to-Limited": {
+      "n": 6,
+      "precision": 1.0
+     },
+     "Limited": {
+      "n": 15,
+      "precision": 0.8666666666666667
+     }
+    },
+    "hard": {
+     "clear": [
+      0.7474747474747475,
+      0.9024390243902439
+     ],
+     "normal": [
+      0.4074074074074074,
+      0.3793103448275862
+     ],
+     "stained": [
+      0.4,
+      0.2222222222222222
+     ],
+     "limited": [
+      0.8260869565217391,
+      0.9047619047619048
+     ],
+     "balanced": 0.5952422778509735,
+     "qwk": 0.8809146153053867
+    },
+    "feet_median_abs_log": 0.14789584206599837,
+    "feet_by_class": {
+     "clear": [
+      0.14586583880549053,
+      -3.2340592090710922,
+      98
+     ],
+     "normal": [
+      0.10139786248829669,
+      0.07983891682411715,
+      24
+     ],
+     "stained": [
+      0.1420710835998109,
+      0.258800610935741,
+      5
+     ],
+     "limited": [
+      0.16635366052687314,
+      0.5200137283000861,
+      23
+     ]
+    },
+    "interval_coverage": 0.6312056737588653
+   }
+  },
+  "strict_subset": {
+   "strict WQP + NLA": {
+    "n": 447,
+    "lakes": 391,
+    "classes": {
+     "normal": 96,
+     "clear": 238,
+     "limited": 71,
+     "stained": 42
+    },
+    "insitu": {
+     "algal": 31,
+     "clear": 92,
+     "mixed": 39,
+     "null": 282,
+     "sediment": 3
+    },
+    "tiers": {
+     "3": 68,
+     "1": 311,
+     "2": 68
+    },
+    "decision_balanced": 0.7109465534465534,
+    "specificity": 0.7651715039577837,
+    "decision": {
+     "clear": [
+      0.83,
+      0.8972972972972973,
+      0.8403361344537815,
+      238
+     ],
+     "normal": [
+      0.7051282051282052,
+      0.5508474576271186,
+      0.8125,
+      96
+     ],
+     "stained": [
+      0.6571428571428571,
+      0.693069306930693,
+      0.8333333333333334,
+      42
+     ],
+     "limited": [
+      0.6515151515151515,
+      0.84375,
+      0.9295774647887324,
+      71
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 185,
+      "precision": 0.8972972972972973
+     },
+     "Normal": {
+      "n": 62,
+      "precision": 0.41935483870967744
+     },
+     "Normal-to-Stained": {
+      "n": 56,
+      "precision": 0.6964285714285714
+     },
+     "Stained": {
+      "n": 12,
+      "precision": 0.16666666666666666
+     },
+     "Stained-to-Limited": {
+      "n": 33,
+      "precision": 0.8787878787878788
+     },
+     "Limited": {
+      "n": 31,
+      "precision": 0.8064516129032258
+     }
+    },
+    "hard": {
+     "clear": [
+      0.6974789915966386,
+      0.8972972972972973
+     ],
+     "normal": [
+      0.4791666666666667,
+      0.4742268041237113
+     ],
+     "stained": [
+      0.2857142857142857,
+      0.25
+     ],
+     "limited": [
+      0.5070422535211268,
+      0.7346938775510204
+     ],
+     "balanced": 0.4923505493746794,
+     "qwk": 0.7915781152438292
+    },
+    "feet_median_abs_log": 0.1447808970735558,
+    "feet_by_class": {
+     "clear": [
+      0.1433973247110502,
+      -2.0771865733719572,
+      226
+     ],
+     "normal": [
+      0.12050501202425326,
+      -0.09412039836768704,
+      86
+     ],
+     "stained": [
+      0.13605391330609673,
+      0.19940622790528018,
+      36
+     ],
+     "limited": [
+      0.2120598349453881,
+      0.7290249768050323,
+      67
+     ]
+    },
+    "interval_coverage": 0.6385224274406333
+   },
+   "non-strict WQP": {
+    "n": 378,
+    "lakes": 286,
+    "classes": {
+     "clear": 155,
+     "normal": 81,
+     "stained": 57,
+     "limited": 85
+    },
+    "insitu": {
+     "null": 243,
+     "clear": 46,
+     "algal": 21,
+     "mixed": 33,
+     "sediment": 35
+    },
+    "tiers": {
+     "1": 288,
+     "3": 48,
+     "2": 42
+    },
+    "decision_balanced": 0.7323779611515461,
+    "specificity": 0.7454545454545455,
+    "decision": {
+     "clear": [
+      0.7857142857142857,
+      0.8319327731092437,
+      0.8129032258064516,
+      155
+     ],
+     "normal": [
+      0.6216216216216216,
+      0.5596330275229358,
+      0.9135802469135802,
+      81
+     ],
+     "stained": [
+      0.7169811320754716,
+      0.7864077669902912,
+      0.9298245614035088,
+      57
+     ],
+     "limited": [
+      0.8051948051948052,
+      0.9156626506024096,
+      0.9058823529411765,
+      85
+     ]
+    },
+    "by_state": {
+     "Clear": {
+      "n": 119,
+      "precision": 0.8319327731092437
+     },
+     "Normal": {
+      "n": 65,
+      "precision": 0.4
+     },
+     "Normal-to-Stained": {
+      "n": 44,
+      "precision": 0.7954545454545454
+     },
+     "Stained": {
+      "n": 19,
+      "precision": 0.47368421052631576
+     },
+     "Stained-to-Limited": {
+      "n": 40,
+      "precision": 0.925
+     },
+     "Limited": {
+      "n": 43,
+      "precision": 0.9069767441860465
+     }
+    },
+    "hard": {
+     "clear": [
+      0.6387096774193548,
+      0.8319327731092437
+     ],
+     "normal": [
+      0.5308641975308642,
+      0.4479166666666667
+     ],
+     "stained": [
+      0.3684210526315789,
+      0.42
+     ],
+     "limited": [
+      0.6235294117647059,
+      0.8153846153846154
+     ],
+     "balanced": 0.540381084836626,
+     "qwk": 0.8307101963761723
+    },
+    "feet_median_abs_log": 0.13067436809840335,
+    "feet_by_class": {
+     "clear": [
+      0.14428407948975627,
+      -2.4900156464569694,
+      146
+     ],
+     "normal": [
+      0.11630357131209343,
+      0.04439577901512637,
+      76
+     ],
+     "stained": [
+      0.0973298769847131,
+      0.38025395725294553,
+      54
+     ],
+     "limited": [
+      0.16431288674393213,
+      0.49391780469828883,
+      77
+     ]
+    },
+    "interval_coverage": 0.6727272727272727
+   }
+  }
+ },
+ "readiness_lines": {
+  "CLEAR FEET READY": "PARTIAL",
+  "NORMAL READY": "NO",
+  "STAINED READY": "PARTIAL",
+  "LIMITED READY": "PARTIAL",
+  "ALGAL READY": "NO",
+  "SEDIMENT READY": "PARTIAL"
+ },
+ "counts_vs_minima": {
+  "clear": [
+   393,
+   40
+  ],
+  "normal": [
+   177,
+   40
+  ],
+  "stained": [
+   99,
+   60
+  ],
+  "algae": [
+   124,
+   30
+  ],
+  "sediment": [
+   38,
+   20
+  ],
+  "limited": [
+   156,
+   25
+  ]
+ },
+ "PASSED": "NO",
+ "pass_points": 2.0
+}

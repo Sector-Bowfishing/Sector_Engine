@@ -1,0 +1,60 @@
+{
+ "EXACT_FEET": {
+  "points_of_7": 5.0,
+  "score_of_10": 7
+ },
+ "exact_feet": {
+  "clear": {
+   "n_published": 679,
+   "coverage": 0.911,
+   "median_abs_log": 0.135,
+   "median_signed_ft": -1.68,
+   "verdict": "PARTIAL"
+  },
+  "normal": {
+   "n_published": 306,
+   "coverage": 0.803,
+   "median_abs_log": 0.107,
+   "median_signed_ft": 0.41,
+   "verdict": "SUPPORTED"
+  },
+  "stained": {
+   "n_published": 179,
+   "coverage": 0.789,
+   "median_abs_log": 0.152,
+   "median_signed_ft": 0.71,
+   "verdict": "PARTIAL"
+  },
+  "limited": {
+   "n_published": 181,
+   "coverage": 0.79,
+   "median_abs_log": 0.152,
+   "median_signed_ft": 0.46,
+   "verdict": "SUPPORTED"
+  },
+  "algae": {
+   "n_published": 191,
+   "coverage": 0.796,
+   "median_abs_log": 0.124,
+   "median_signed_ft": 0.7,
+   "n": 240,
+   "verdict": "SUPPORTED"
+  },
+  "sediment": {
+   "n_published": 71,
+   "coverage": 0.772,
+   "median_abs_log": 0.125,
+   "median_signed_ft": 0.07,
+   "n": 92,
+   "verdict": "SUPPORTED"
+  },
+  "bottom-risk": {
+   "verdict": "NOT"
+  }
+ },
+ "shares": {
+  "unknown": 0.07,
+  "class_only_feet_withheld": 0.08,
+  "feet_published": 0.85
+ }
+}

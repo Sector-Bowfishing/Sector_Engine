@@ -1,0 +1,78 @@
+{
+ "stage": 14,
+ "cert_protocol_frozen_utc": "2026-10-01T03:19:55Z",
+ "files": {
+  "q9/wqp/secchi.csv": "fc64a1bbd735c9c0a41035970fdb6a7d16ba21241db77257c875357119b2acb6",
+  "q9/wqp/turbidity.csv": "ef40a1547385b267207990e4c0e64494ee5db537979df695f1c2359f4a7d2ef3",
+  "q9/wqp/sites.csv": "61ec0111077d21057dfb2d20e6eb537aae1219034ccfcddb9cd6b0f48eb9581c",
+  "stage14/cert/CERT_PROTOCOL_STAGE14.md": "d0a7ebafe7eb4da9c1ecfb465acb1c3704d1dff8a721e211db1c52c76cea0817",
+  "stage14/cert/dev_footprint.py": "2b6d373dc78f988366f6ecf7bdef0922e93887314572533f2d818bced4060d51",
+  "stage14/cert/dev_footprint.json": "00e0eb7deeb4dc42cd5a6e158d312d96d444e08fe8d9c713346cd374e9b2669c",
+  "stage14/cert/blind_index.py": "e16562a92c7624039913b45accb3f462d5fd98621b98633c3a810a869a907c4b",
+  "stage14/cert/wqp_blind_index.csv": "32c933952ad0c3956ff6c00d92ea13e6a3ac04b017c5bb30a034e59de6ae99a1",
+  "stage14/cert/run_cert_aco.py": "6b4a0c4cf538d1b6eb269d6b1280d2fb3a45ff6694856a598c7e052a6cd14548",
+  "stage13/cert/blind_sample13.csv": "bcb186595693010e34524fada4553dd716a05b41f250661450e8f3bb3681c69d",
+  "stage14/PREREGISTRATION_STAGE14.md": "6681db609114754aea95df2f58a3d81dbc87105d8318bd7a0b80d0be2bc0ad90",
+  "stage14/engine/engine14.py": "f5e950e97ef1142794022080b966539db98eaa054b96041ab41b85984ac8f4c3",
+  "stage14/engine/frozen_engine.json": "71c511e10836f4696f9684427fa15210a601514f171d5acd88d362d0b86c10f7",
+  "stage14/engine/frozen_gbm.pkl": "2d0af6368e33f666a0520878684feacce63993dd63b0512864328be9fd070283",
+  "stage14/analysis/lib14.py": "3942ef64fe68cc00182c88c594fe9b7bdbacff1e62098cf52b1a2a2d5f681261",
+  "stage14/analysis/dev14.py": "aec5dbfeeec127f1661a4ff3866bc8753f5b44dd5a601b782b554979a368c1fd",
+  "stage14/analysis/dev14.json": "ab2b073ef1ec484af22d1a3f1d3bc54171d2c7545af2c38fe60256b646ebca61",
+  "stage14/cert/ADDENDUM_A1_io.md": "3c2b505f50f2314af0db995cda868363971ead5eeca4846d50ef272f7df67d56",
+  "stage14/cert/run_cert_aco_a1.py": "70de4aa739bb8706a336c9b41e79abb4238fffba0e3bbae38898376468a5b4ff",
+  "stage14/cert/ADDENDUM_A2_draw.md": "e001c58a2a16cd312d9385bc52d5a81be7762515c70a0997a15a6e0302c3765a",
+  "stage14/cert/wqp_draw2.py": "75c34cc796972b8d1949d0c84aeeffdf39f48302da63ae8335886b0f820e2ad8",
+  "stage14/cert/wqp_draw2.csv": "33aef071676caa24b57767cf1f907661b0842519ce1ec6d4cfb06628a979f845",
+  "stage14/cert/in_wqp_a2_c1.csv": "407069ecdb01110e50ae488a3395f087fb3bf9760fdc34da57abc0921cd07803",
+  "stage14/cert/in_wqp_a2_legacy.csv": "3da97917441c7b082da7484905124a437db35b20b8ed73639ef09ca55d62c5d2",
+  "stage14/cert/wqp_sample.csv": "42756ae05c0af68933e55cb97d68cba10d3c52bcc508997d60cc7c0e02c74e6b",
+  "stage14/cert/finalize_wqp.py": "869ec1804e3e0caf7b801476ce9c62c7038f85c5f2bd064d0a8ea89789acc69f",
+  "stage14/cert/ADDENDUM_A3_statecap.md": "f48affd75ceb3793827b988016a66b58f12f5292e7f3e8606fe3a3cf9e0eaceb",
+  "stage14/cert/finalize_a3.py": "8843f4f5898b07431606b9a51f0e16f24c3018f033d94c9009f253f1fcb48ebf",
+  "stage14/cert/wqp_sample_pre_a3.csv": "8f48fe9546c688fb8cec5f0a1dc58f81e7bab5a2070535686ce0150d67617919",
+  "stage14/cert/ADDENDUM_A4_environment.md": "45f9712dcd9bc06a42a95f188b1449e6cb8889be70ceaf99d95e173bcf232d65",
+  "stage14/geo_requirements.txt": "b119add124af83b5d5ba4b1d18ea1a7cfb466bd4ec527c62fbb12ef49aa3afe6",
+  "stage14/cert/aco_manifest.txt": "4e20bb31270223e7365bd955d74dca77fdd5482d02a05930618d469bac163563",
+  "stage14/unseal/truth14.json": "88b46c639d95fbd69b5202bcd3980157adebab1e7fc3a6eeaa70e865c0aa9d4a",
+  "stage14/unseal/unseal14.py": "4543a97e238cd062cf31148aa0ac33160885752d3b766b102d9cb748b3a0a182"
+ },
+ "eligible_file_list": [
+  "q9/wqp/secchi.csv",
+  "q9/wqp/turbidity.csv",
+  "q9/wqp/sites.csv"
+ ],
+ "eligible_file_list_sha256": "ef88f8aeebcd4983c9ae00c4a68d10203a2b3e196525e3e5588dcf3e4dbca7b7",
+ "note": "No Secchi, turbidity or chlorophyll value of any certification row has been read. The validation run of run_cert_aco.py used 6 development scenes only (exact match to Stage 12/13).",
+ "prereg_frozen_utc": "2026-10-01T03:25:06Z",
+ "engine_frozen_utc": "2026-10-01T03:30:20Z",
+ "engine_note": "Frozen before any certification Secchi value was read. Selected by the section 4 rule on development data (O2 - C-gbm decision-balanced -0.037, CI -0.063 to -0.010).",
+ "addenda": [
+  {
+   "id": "A1",
+   "at_utc": "2026-10-01T03:41:05Z",
+   "file": "stage14/cert/ADDENDUM_A1_io.md",
+   "summary": "L1C fetch skips the TCI preview (I/O only; re-validation identical)"
+  },
+  {
+   "id": "A2",
+   "at_utc": "2026-10-01T03:46:54Z",
+   "file": "stage14/cert/ADDENDUM_A2_draw.md",
+   "summary": "prescreen at <= 20% cloud for unextracted events; a second 7,000 site-day draw in the frozen order"
+  },
+  {
+   "id": "A3",
+   "at_utc": "2026-10-01T04:41:15Z",
+   "file": "stage14/cert/ADDENDUM_A3_statecap.md",
+   "summary": "state cap applied over the combined US core; 7 WQP rows removed (value-blind)"
+  },
+  {
+   "id": "A4",
+   "at_utc": "2026-10-01T07:34:52Z",
+   "file": "stage14/cert/ADDENDUM_A4_environment.md",
+   "summary": "OS tmp cleanup broke the geo venv at 00:00; repaired at identical versions; exact re-validation; failed items re-run unchanged"
+  }
+ ],
+ "aco_results_frozen_utc": "2026-10-01T10:32:52Z",
+ "unsealed_utc": "2026-10-01T10:42:04Z"
+}

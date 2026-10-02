@@ -1,0 +1,470 @@
+{
+ "D": {
+  "rows": 711,
+  "lakes": 417,
+  "unsupported_share": 0.025,
+  "confusion (rows = in-situ, cols = satellite)": {
+   "clear": {
+    "clear": 292,
+    "algal": 39,
+    "sediment": 21,
+    "mixed": 4,
+    "unsupported": 9
+   },
+   "algal": {
+    "clear": 52,
+    "algal": 64,
+    "sediment": 4,
+    "mixed": 10,
+    "unsupported": 1
+   },
+   "sediment": {
+    "clear": 15,
+    "algal": 8,
+    "sediment": 56,
+    "mixed": 13,
+    "unsupported": 3
+   },
+   "mixed": {
+    "clear": 9,
+    "algal": 46,
+    "sediment": 15,
+    "mixed": 45,
+    "unsupported": 5
+   }
+  },
+  "recall": {
+   "clear": 0.8,
+   "algal": 0.489,
+   "sediment": 0.589,
+   "mixed": 0.375
+  },
+  "precision": {
+   "clear": 0.793,
+   "algal": 0.408,
+   "sediment": 0.583,
+   "mixed": 0.625
+  },
+  "balanced_accuracy": 0.563,
+  "constant_baseline_balanced_accuracy": 0.25,
+  "majority_class": "clear",
+  "insitu_class_counts": {
+   "clear": 365,
+   "algal": 131,
+   "sediment": 95,
+   "mixed": 120
+  },
+  "satellite_class_counts_all_rows": {
+   "clear": 932,
+   "algal": 361,
+   "sediment": 148,
+   "unsupported": 53,
+   "mixed": 137
+  },
+  "useful": true,
+  "balanced_accuracy_ci": [
+   0.5182,
+   0.6041
+  ]
+ },
+ "E_by_state": {
+  "clear": {
+   "champion": {
+    "n": 932,
+    "lakes": 611,
+    "coverage": 1.0,
+    "median_abs_log": 0.225,
+    "median_signed_ft": -2.68,
+    "MAE_ft": 5.26,
+    "class_acc": 0.513
+   },
+   "P1": {
+    "n": 864,
+    "lakes": 574,
+    "coverage": 0.927,
+    "median_abs_log": 0.335,
+    "median_signed_ft": -4.34,
+    "MAE_ft": 6.37,
+    "class_acc": 0.26
+   },
+   "P1-NIR": {
+    "n": 732,
+    "lakes": 508,
+    "coverage": 0.785,
+    "median_abs_log": 0.872,
+    "median_signed_ft": -6.96,
+    "MAE_ft": 8.88,
+    "class_acc": 0.027
+   },
+   "C3": {
+    "n": 932,
+    "lakes": 611,
+    "coverage": 1.0,
+    "median_abs_log": 0.177,
+    "median_signed_ft": -0.99,
+    "MAE_ft": 4.73,
+    "class_acc": 0.643
+   },
+   "C6": {
+    "n": 932,
+    "lakes": 611,
+    "coverage": 1.0,
+    "median_abs_log": 0.181,
+    "median_signed_ft": -1.03,
+    "MAE_ft": 4.85,
+    "class_acc": 0.631
+   }
+  },
+  "algal": {
+   "champion": {
+    "n": 361,
+    "lakes": 288,
+    "coverage": 1.0,
+    "median_abs_log": 0.252,
+    "median_signed_ft": 1.16,
+    "MAE_ft": 3.25,
+    "class_acc": 0.327
+   },
+   "P1": {
+    "n": 258,
+    "lakes": 213,
+    "coverage": 0.715,
+    "median_abs_log": 0.172,
+    "median_signed_ft": -0.86,
+    "MAE_ft": 3.43,
+    "class_acc": 0.329
+   },
+   "P1-NIR": {
+    "n": 236,
+    "lakes": 196,
+    "coverage": 0.654,
+    "median_abs_log": 0.55,
+    "median_signed_ft": -2.28,
+    "MAE_ft": 4.57,
+    "class_acc": 0.14
+   },
+   "C3": {
+    "n": 361,
+    "lakes": 288,
+    "coverage": 1.0,
+    "median_abs_log": 0.221,
+    "median_signed_ft": 0.81,
+    "MAE_ft": 3.09,
+    "class_acc": 0.33
+   },
+   "C6": {
+    "n": 361,
+    "lakes": 288,
+    "coverage": 1.0,
+    "median_abs_log": 0.226,
+    "median_signed_ft": 0.82,
+    "MAE_ft": 2.97,
+    "class_acc": 0.371
+   }
+  },
+  "sediment": {
+   "champion": {
+    "n": 148,
+    "lakes": 115,
+    "coverage": 1.0,
+    "median_abs_log": 0.146,
+    "median_signed_ft": -0.63,
+    "MAE_ft": 2.74,
+    "class_acc": 0.345
+   },
+   "P1": {
+    "n": 143,
+    "lakes": 112,
+    "coverage": 0.966,
+    "median_abs_log": 0.147,
+    "median_signed_ft": -0.71,
+    "MAE_ft": 2.95,
+    "class_acc": 0.336
+   },
+   "P1-NIR": {
+    "n": 123,
+    "lakes": 98,
+    "coverage": 0.831,
+    "median_abs_log": 0.388,
+    "median_signed_ft": -1.56,
+    "MAE_ft": 2.93,
+    "class_acc": 0.285
+   },
+   "C3": {
+    "n": 148,
+    "lakes": 115,
+    "coverage": 1.0,
+    "median_abs_log": 0.224,
+    "median_signed_ft": 0.92,
+    "MAE_ft": 2.95,
+    "class_acc": 0.284
+   },
+   "C6": {
+    "n": 148,
+    "lakes": 115,
+    "coverage": 1.0,
+    "median_abs_log": 0.242,
+    "median_signed_ft": 1.08,
+    "MAE_ft": 3.1,
+    "class_acc": 0.243
+   }
+  },
+  "mixed": {
+   "champion": {
+    "n": 137,
+    "lakes": 112,
+    "coverage": 1.0,
+    "median_abs_log": 0.225,
+    "median_signed_ft": 0.57,
+    "MAE_ft": 1.48,
+    "class_acc": 0.372
+   },
+   "P1": {
+    "n": 91,
+    "lakes": 77,
+    "coverage": 0.664,
+    "median_abs_log": 0.164,
+    "median_signed_ft": -0.41,
+    "MAE_ft": 1.7,
+    "class_acc": 0.462
+   },
+   "P1-NIR": {
+    "n": 69,
+    "lakes": 56,
+    "coverage": 0.504,
+    "median_abs_log": 0.365,
+    "median_signed_ft": -1.0,
+    "MAE_ft": 1.37,
+    "class_acc": 0.522
+   },
+   "C3": {
+    "n": 137,
+    "lakes": 112,
+    "coverage": 1.0,
+    "median_abs_log": 0.228,
+    "median_signed_ft": 0.6,
+    "MAE_ft": 1.47,
+    "class_acc": 0.365
+   },
+   "C6": {
+    "n": 137,
+    "lakes": 112,
+    "coverage": 1.0,
+    "median_abs_log": 0.18,
+    "median_signed_ft": 0.39,
+    "MAE_ft": 1.28,
+    "class_acc": 0.584
+   }
+  },
+  "unsupported": {
+   "champion": {
+    "n": 53,
+    "lakes": 48,
+    "coverage": 1.0,
+    "median_abs_log": 0.271,
+    "median_signed_ft": 1.02,
+    "MAE_ft": 8.42,
+    "class_acc": 0.585
+   },
+   "P1": {
+    "n": 11,
+    "lakes": 11,
+    "coverage": 0.208,
+    "median_abs_log": 0.39,
+    "median_signed_ft": -2.81,
+    "MAE_ft": 4.9,
+    "class_acc": 0.0
+   },
+   "P1-NIR": {
+    "n": 11,
+    "lakes": 11,
+    "coverage": 0.208,
+    "median_abs_log": 0.868,
+    "median_signed_ft": -4.55,
+    "MAE_ft": 6.42,
+    "class_acc": 0.0
+   },
+   "C3": {
+    "n": 53,
+    "lakes": 48,
+    "coverage": 1.0,
+    "median_abs_log": 0.313,
+    "median_signed_ft": 1.6,
+    "MAE_ft": 7.68,
+    "class_acc": 0.528
+   },
+   "C6": {
+    "n": 53,
+    "lakes": 48,
+    "coverage": 1.0,
+    "median_abs_log": 0.285,
+    "median_signed_ft": 3.02,
+    "MAE_ft": 8.62,
+    "class_acc": 0.547
+   }
+  }
+ },
+ "E_all": {
+  "champion": {
+   "n": 1631,
+   "lakes": 1015,
+   "coverage": 1.0,
+   "median_abs_log": 0.225,
+   "median_signed_ft": -0.73,
+   "MAE_ft": 4.37,
+   "class_acc": 0.447
+  },
+  "P1": {
+   "n": 1367,
+   "lakes": 859,
+   "coverage": 0.838,
+   "median_abs_log": 0.269,
+   "median_signed_ft": -2.53,
+   "MAE_ft": 5.13,
+   "class_acc": 0.293
+  },
+  "P1-NIR": {
+   "n": 1171,
+   "lakes": 760,
+   "coverage": 0.718,
+   "median_abs_log": 0.711,
+   "median_signed_ft": -4.33,
+   "MAE_ft": 6.92,
+   "class_acc": 0.106
+  },
+  "C3": {
+   "n": 1631,
+   "lakes": 1015,
+   "coverage": 1.0,
+   "median_abs_log": 0.195,
+   "median_signed_ft": 0.22,
+   "MAE_ft": 4.03,
+   "class_acc": 0.514
+  },
+  "C6": {
+   "n": 1631,
+   "lakes": 1015,
+   "coverage": 1.0,
+   "median_abs_log": 0.194,
+   "median_signed_ft": 0.22,
+   "MAE_ft": 4.1,
+   "class_acc": 0.532
+  }
+ },
+ "E_state_counts": {
+  "clear": 932,
+  "algal": 361,
+  "sediment": 148,
+  "unsupported": 53,
+  "mixed": 137
+ },
+ "E_routing_choices_by_fold": {
+  "0": {
+   "clear": "C3",
+   "algal": "P1",
+   "sediment": "P1",
+   "mixed": "P1",
+   "unsupported": "champion"
+  },
+  "1": {
+   "clear": "C3",
+   "algal": "P1",
+   "sediment": "P1",
+   "mixed": "P1",
+   "unsupported": null
+  },
+  "2": {
+   "clear": "C3",
+   "algal": "P1",
+   "sediment": "P1",
+   "mixed": "P1",
+   "unsupported": null
+  },
+  "3": {
+   "clear": "C3",
+   "algal": "P1",
+   "sediment": "champion",
+   "mixed": "P1",
+   "unsupported": null
+  },
+  "4": {
+   "clear": "C3",
+   "algal": "P1",
+   "sediment": "champion",
+   "mixed": "P1",
+   "unsupported": null
+  }
+ },
+ "E_routed": {
+  "n": 1438,
+  "lakes": 897,
+  "coverage": 0.882,
+  "median_abs_log": 0.174,
+  "median_signed_ft": -0.8,
+  "MAE_ft": 4.17,
+  "class_acc": 0.542
+ },
+ "E_routed_coverage": 0.882,
+ "E_best_single": "C6",
+ "E_routed_vs_best_single_same_rows": {
+  "routed": 0.174,
+  "best_single": 0.188,
+  "diff_ci": [
+   -0.0246,
+   -0.0031
+  ]
+ },
+ "E_choice_stability": {
+  "clear": {
+   "picks": [
+    "C3",
+    "C3",
+    "C3",
+    "C3",
+    "C3"
+   ],
+   "stable": true
+  },
+  "algal": {
+   "picks": [
+    "P1",
+    "P1",
+    "P1",
+    "P1",
+    "P1"
+   ],
+   "stable": true
+  },
+  "sediment": {
+   "picks": [
+    "P1",
+    "P1",
+    "P1",
+    "champion",
+    "champion"
+   ],
+   "stable": false
+  },
+  "mixed": {
+   "picks": [
+    "P1",
+    "P1",
+    "P1",
+    "P1",
+    "P1"
+   ],
+   "stable": true
+  },
+  "unsupported": {
+   "picks": [
+    "champion",
+    null,
+    null,
+    null,
+    null
+   ],
+   "stable": false
+  }
+ },
+ "E_routing_supported": false
+}

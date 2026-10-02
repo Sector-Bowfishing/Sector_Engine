@@ -1,0 +1,22 @@
+{
+ "matched": 126,
+ "after_lake_cap": 108,
+ "lakes": 80,
+ "states": {
+  "WI": 95,
+  "MN": 7,
+  "AZ": 2,
+  "NH": 1,
+  "VA": 1,
+  "MT": 1,
+  "OR": 1
+ },
+ "platforms": {
+  "sentinel-2b": 43,
+  "sentinel-2a": 8,
+  "sentinel-2c": 57
+ },
+ "strict": 22,
+ "sha256": "02fbe25f1513df525b61adc74481667cea7cf89dc678cd7603c6676318c1f575",
+ "wisconsin_share": 0.8796296296296297
+}

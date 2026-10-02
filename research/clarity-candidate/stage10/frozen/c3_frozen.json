@@ -1,0 +1,37 @@
+{
+ "model": "C3",
+ "form": "log10 Secchi_ft = [1-a, (1-a)*log10(R), a, a*log10(R)] . beta, a = 1 if NDCI > 0 else 0; R = max(rho_B04, 0.001), NDCI from max(rho,0.001) of B05/B04 (Stage 7 feats)",
+ "fittedOn": {
+  "national": 643,
+  "guntersville": 72
+ },
+ "beta": [
+  -0.165172276896624,
+  -0.5590319678232194,
+  -0.7095135387627547,
+  -0.7430406246386451
+ ],
+ "domain": {
+  "note": "1st-99th percentile of the training INPUTS; outside = refuse (never clamp)",
+  "log10R_ndciLE0": [
+   -2.7746,
+   -1.1066
+  ],
+  "log10R_ndciGT0": [
+   -2.3588,
+   -0.9964
+  ],
+  "ndci": [
+   -0.461,
+   0.3612
+  ],
+  "outputFt": [
+   0.5,
+   20.0
+  ]
+ },
+ "stage7FilesReproduced": {
+  "results.json": true,
+  "tables.json": true
+ }
+}

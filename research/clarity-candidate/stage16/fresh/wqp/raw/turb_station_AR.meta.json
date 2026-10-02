@@ -1,0 +1,17 @@
+{
+ "name": "turb_station_AR",
+ "endpoint": "Station",
+ "url": "https://www.waterqualitydata.us/data/Station/search?statecode=US:05&siteType=Lake,%20Reservoir,%20Impoundment&characteristicName=Turbidity&startDateLo=01-01-2026&mimeType=csv&zip=no",
+ "headers": {
+  "Content-Type": "text/csv;charset=UTF-8",
+  "Total-Site-Count": "63",
+  "STORET-Site-Count": "63"
+ },
+ "bytes": 19423,
+ "rows": 63,
+ "expected": 63,
+ "ok": true,
+ "seconds": 3.1,
+ "attempt": 1,
+ "fetched": "2026-10-01T12:27:19"
+}

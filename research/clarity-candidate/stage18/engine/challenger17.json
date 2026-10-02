@@ -1,0 +1,50 @@
+{
+ "engine": "Stage 17 challenger: inverse-uncertainty weighting of frozen C-gbm scene predictions, +-10 days, no rain rule, S2C off",
+ "scene_predictor": "stage14/engine/frozen_gbm.pkl (unchanged)",
+ "scene_path": "stage14/cert/run_cert_aco_a1.py (unchanged)",
+ "neighbours": "<= 3 nearest valid passes (production gates, >= 5 px) within +-10 days, excluding the anchor; tiers 1-2 only; S2C excluded",
+ "sigma_tier": {
+  "1": 0.19851488138522375,
+  "2": 0.1720820061465007
+ },
+ "kappa_per_day": 0.001792385914535405,
+ "posteriors_n2": {
+  "6": [
+   -0.055059437789955167,
+   8.615733690626088
+  ],
+  "3": [
+   -0.4229464497051667,
+   8.168899006119178
+  ],
+  "2": [
+   0.23302779271054974,
+   8.31932817956046
+  ]
+ },
+ "posteriors_n3": {
+  "6": [
+   0.01689988999806345,
+   10.10842630567943
+  ],
+  "3": [
+   -0.3238884821678339,
+   9.066949058915883
+  ],
+  "2": [
+   -0.27534676766523514,
+   9.371126011153194
+  ]
+ },
+ "n_calibration": {
+  "n2": 433,
+  "n3": 642
+ },
+ "gate": {
+  "t1": 0.7,
+  "t2": 0.7,
+  "tier2_only": "boundary-only (Stage 16)"
+ },
+ "fallback": "Stage 16 product when no full-authority scene contributes",
+ "strong_rule": ">= 2 compatible full-authority scenes whose states contain the answer, none disjoint, posterior >= 0.90"
+}

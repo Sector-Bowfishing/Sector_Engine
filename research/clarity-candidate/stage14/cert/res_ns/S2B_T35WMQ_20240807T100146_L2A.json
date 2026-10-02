@@ -1,0 +1,1 @@
+{"item": "S2B_T35WMQ_20240807T100146_L2A", "crops": [{"attempts": [{"estimate": "tiled", "s": 1.4, "error": null, "l2w": null}, {"estimate": "fixed", "s": 1.1, "error": null, "l2w": null}], "points": {}, "error": "no L2W", "lat": 67.03398, "lon": 25.96735, "elevation_m": 194.5}], "l1c": "S2B_MSIL1C_20240807T095549_N0511_R122_T35WMQ_20240807T122054", "seconds": 17.4}

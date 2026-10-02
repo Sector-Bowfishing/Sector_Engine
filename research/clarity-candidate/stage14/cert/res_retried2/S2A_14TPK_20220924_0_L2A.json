@@ -1,0 +1,1 @@
+{"item": "S2A_14TPK_20220924_0_L2A", "crops": [{"attempts": [{"estimate": "tiled", "s": 1.8, "error": null, "l2w": null}, {"estimate": "fixed", "s": 1.2, "error": null, "l2w": null}], "points": {}, "error": "no L2W", "lat": 40.52002, "lon": -96.55351, "elevation_m": 403.485900879}], "l1c": "S2A_MSIL1C_20220924T172051_N0510_R012_T14TPK_20240721T132642", "seconds": 43.8}

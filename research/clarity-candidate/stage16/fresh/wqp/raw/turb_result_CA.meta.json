@@ -1,0 +1,21 @@
+{
+ "name": "turb_result_CA",
+ "endpoint": "Result",
+ "url": "https://www.waterqualitydata.us/data/Result/search?statecode=US:06&siteType=Lake,%20Reservoir,%20Impoundment&characteristicName=Turbidity&startDateLo=01-01-2026&mimeType=csv&zip=no&dataProfile=resultPhysChem",
+ "headers": {
+  "Content-Type": "text/csv;charset=UTF-8",
+  "Total-Site-Count": "33",
+  "STORET-Site-Count": "33",
+  "Total-Activity-Count": "235",
+  "STORET-Activity-Count": "235",
+  "Total-Result-Count": "235",
+  "STORET-Result-Count": "235"
+ },
+ "bytes": 121187,
+ "rows": 235,
+ "expected": 235,
+ "ok": true,
+ "seconds": 3.1,
+ "attempt": 1,
+ "fetched": "2026-10-01T12:27:21"
+}

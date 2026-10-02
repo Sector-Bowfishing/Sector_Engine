@@ -1,0 +1,25 @@
+{
+ "engineCommit": "03937913cd9c207c5f73a3dbbaaa430d74e7a903",
+ "engineFilesClean": true,
+ "files": {
+  "engine .../guntersville.arm_cells.json": "133a5f22081fa01ffc67588848e630583605945e9551a1476a3f4dea20e16543",
+  "engine .../stage3a/arm_positions.npz": "3fa7dc2234d286271acc5c8bd7d12d3d7d7e71fa941e61bd462b564c0982c95e",
+  "engine .../stage3a/arm_zones.json": "5817a77e24b844ebaea153a9eee7e883ff47a365b45da2a483420502637301da",
+  "engine jobs/lake-surface/derive_water_surface.py": "ef3a32863d04103a866127e2b5a4475059d9a199692fdc78f98e39914b8c636e",
+  "stage10/PREREGISTRATION_P2.md": "c2c6e14269e64e3244ea7df5c39a5a03d7e0ed3623acb9a1a7cb7ca4c86f3b38",
+  "stage10/frozen/build_frozen.py": "0cedee9ecbbc75f42639d90f3eb509139aefb30b470185931a505b785f9d1f05",
+  "stage10/frozen/build_observations.py": "8361cf0f8eed83cb722f661990534d8f344af8ae9512a7ca1d66a00823468479",
+  "stage10/frozen/c3_frozen.json": "08665fe0afe8a4c39281edaeb11b95103d44e333e94f9b716e6ea0477a6fdcdb",
+  "stage10/frozen/c6_model.json": "206720531a4f9e243e95ea2cc413fdd94e6d9af638a47ae5d5ea4bb06e097d2d",
+  "stage10/frozen/fresh_eval.py": "e3f094b24e7912d88462d22dfa294c677f0d562183ce545ec006b46f9f85d222",
+  "stage10/frozen/metrics.py": "7565d0c23d46caa789adccd9f94f48337d6b18c2881a77e93acd2067b60e185f",
+  "stage10/frozen/models.py": "dc81e23542ff56c5fa54898f4ea8fd9b922913d9e4751428f73b625e9e330b4c",
+  "stage10/frozen/p1.py": "da26e4ee9a73ac3eeed8249ea3ffa56c42e3abbdb370bf06914820fccd743d0e",
+  "stage10/frozen/p2.py": "6ffeb12ed0767c0820ccd92cae42e564ca03336621fc97ebc97f5d9d2197714c",
+  "stage10/frozen/regions.py": "6a65c2e6973cbb8cbf9e294047f6caecbe1ac60d190835c42cec090fe84aa9b9",
+  "stage6/extract.py": "2ac2d7865123f9345d8ec1f147d742a0a000f5bf6dea00e879465570c686760e",
+  "stage8/g2026_secchi.csv (exclusion list)": "4051da984cea7dfc9654cba33cfe84afb74aedacffb91698f9f7b77aeafdd903",
+  "stage9/PREREGISTRATION.md (P1)": "4cc302212a7923eb462b4de86a993de1cf763681a834a6f2c19bf9b1339b48bd"
+ },
+ "schema": "stage10-freeze-manifest-v1"
+}

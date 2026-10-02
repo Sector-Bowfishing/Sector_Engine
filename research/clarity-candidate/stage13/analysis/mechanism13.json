@@ -1,0 +1,102 @@
+{
+ "insitu_turb_chl": {
+  "n": 509,
+  "all": {
+   "particles (turbidity)": 0.4995,
+   "pigment (chlorophyll)": 0.1729,
+   "_total": 0.6724
+  },
+  "stained+limited": {
+   "particles (turbidity)": 0.3047,
+   "pigment (chlorophyll)": 0.0085,
+   "_total": 0.3132
+  }
+ },
+ "insitu_with_lcol": {
+  "n": 69,
+  "lakes": 49,
+  "all": {
+   "particles (turbidity)": 0.2341,
+   "pigment (chlorophyll)": 0.1076,
+   "dissolved colour (true colour)": 0.2865,
+   "_total": 0.6282
+  },
+  "stained+limited": {
+   "particles (turbidity)": 0.0092,
+   "pigment (chlorophyll)": -0.0184,
+   "dissolved colour (true colour)": 0.0092,
+   "_total": 0.0
+  },
+  "n_stained_limited": 38
+ },
+ "insitu_with_ldoc": {
+  "n": 155,
+  "lakes": 112,
+  "all": {
+   "particles (turbidity)": 0.309,
+   "pigment (chlorophyll)": 0.1995,
+   "dissolved colour (DOC/TOC)": 0.2111,
+   "_total": 0.7195
+  },
+  "stained+limited": {
+   "particles (turbidity)": 0.2763,
+   "pigment (chlorophyll)": 0.002,
+   "dissolved colour (DOC/TOC)": 0.0848,
+   "_total": 0.3632
+  },
+  "n_stained_limited": 64
+ },
+ "insitu_class_recall_turb_chl": {
+  "clear": [
+   0.682,
+   0.817
+  ],
+  "normal": [
+   0.62,
+   0.492
+  ],
+  "stained": [
+   0.484,
+   0.422
+  ],
+  "limited": [
+   0.617,
+   0.825
+  ],
+  "balanced": 0.601
+ },
+ "insitu_median_abs_log_turb_chl": 0.1333,
+ "satellite_groups": {
+  "all": {
+   "particles": 0.2907,
+   "dissolved colour": 0.1261,
+   "visibility ratio (green/red)": 0.187,
+   "pigment": 0.0388,
+   "_total": 0.6426
+  },
+  "stained+limited": {
+   "particles": 0.1937,
+   "dissolved colour": 0.0043,
+   "visibility ratio (green/red)": 0.0863,
+   "pigment": 0.0397,
+   "_total": 0.324
+  }
+ },
+ "resolution_ceiling_recall (true value + C-gbm held-out error)": {
+  "clear": 0.857,
+  "normal": 0.511,
+  "stained": 0.332,
+  "limited": 0.762
+ },
+ "class_width_log10": {
+  "clear": "open (>= 0.778)",
+  "normal": 0.301,
+  "stained": 0.176,
+  "limited": "open (< 0.301)"
+ },
+ "cgbm_error_quantiles_log": {
+  "median_abs": 0.134,
+  "p25": -0.14,
+  "p75": 0.124
+ }
+}

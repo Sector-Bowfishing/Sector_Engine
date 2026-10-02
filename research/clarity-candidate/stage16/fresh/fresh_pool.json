@@ -1,0 +1,37 @@
+{
+ "rows_read": 4773,
+ "excluded": {
+  "site in an earlier file": 3278
+ },
+ "eligible_site_days": 1486,
+ "events_after_site_month": 1111,
+ "sites": 419,
+ "lakes": 265,
+ "strict_events": 260,
+ "states": {
+  "WI": 926,
+  "MN": 54,
+  "NH": 38,
+  "ND": 24,
+  "SC": 18,
+  "AZ": 16,
+  "VA": 11,
+  "MT": 11,
+  "TX": 10,
+  "DE": 1,
+  "TN": 1,
+  "OR": 1
+ },
+ "by_month": {
+  "2026-01": 5,
+  "2026-02": 10,
+  "2026-03": 23,
+  "2026-04": 74,
+  "2026-05": 154,
+  "2026-06": 261,
+  "2026-07": 277,
+  "2026-08": 223,
+  "2026-09": 84
+ },
+ "prescreen_passed": 305
+}
