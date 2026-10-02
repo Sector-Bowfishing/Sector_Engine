@@ -56,8 +56,8 @@ class Store:
         try:
             req = urllib.request.Request("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token", headers={"Metadata-Flavor": "Google"})
             d = json.load(urllib.request.urlopen(req, timeout=10)); self._tok = (d["access_token"], time.time() + d["expires_in"])
-        except Exception:
-            t = subprocess.run(["gcloud", "auth", "print-access-token"], capture_output=True, text=True).stdout.strip(); self._tok = (t, time.time() + 1800)
+        except Exception:   # off Cloud Run: gcloud hands back a cached token of unknown remaining life, so keep it briefly
+            t = subprocess.run(["gcloud", "auth", "print-access-token"], capture_output=True, text=True).stdout.strip(); self._tok = (t, time.time() + 240)
         return self._tok[0]
 
     def _req(self, method, url, data=None, ctype=None):
@@ -68,6 +68,8 @@ class Store:
                 with urllib.request.urlopen(urllib.request.Request(url, data=data, method=method, headers=h), timeout=60) as r: return r.read()
             except urllib.error.HTTPError as e:
                 if e.code == 404: return None
+                if e.code == 401 and i == 0:            # an expired token: fetch a new one and retry once
+                    self._tok = (None, 0); h["Authorization"] = f"Bearer {self.token()}"; continue
                 if e.code < 500 and e.code != 429: raise
             except (urllib.error.URLError, TimeoutError, socket.timeout):
                 pass
