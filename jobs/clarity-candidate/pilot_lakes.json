@@ -1,0 +1,1595 @@
+{
+ "schema": "clarity-candidate-pilot/1",
+ "selection": "The lakes were chosen for environmental diversity (region, water type, lake form, latitude, Sentinel-2 tiles) before any\ncandidate output existed for them. No model output, Secchi value or field report enters this file.",
+ "lakes": [
+  {
+   "slug": "guntersville",
+   "directory_id": "Guntersville|AL",
+   "why": "Tennessee River mainstem reservoir (TVA), Southeastern Plains; dense submerged grass; the beta lake",
+   "area_km2": 265.487,
+   "points": [
+    {
+     "key": "guntersville:G01",
+     "lat": 34.306781,
+     "lon": -86.370158
+    },
+    {
+     "key": "guntersville:G02",
+     "lat": 34.323609,
+     "lon": -86.377919
+    },
+    {
+     "key": "guntersville:G03",
+     "lat": 34.33208,
+     "lon": -86.3445
+    },
+    {
+     "key": "guntersville:G04",
+     "lat": 34.314795,
+     "lon": -86.322619
+    },
+    {
+     "key": "guntersville:G05",
+     "lat": 34.34464,
+     "lon": -86.33057
+    },
+    {
+     "key": "guntersville:G06",
+     "lat": 34.334825,
+     "lon": -86.306126
+    },
+    {
+     "key": "guntersville:G07",
+     "lat": 34.417301,
+     "lon": -86.384711
+    },
+    {
+     "key": "guntersville:G08",
+     "lat": 34.3452,
+     "lon": -86.29182
+    },
+    {
+     "key": "guntersville:G09",
+     "lat": 34.424504,
+     "lon": -86.367247
+    },
+    {
+     "key": "guntersville:G10",
+     "lat": 34.392487,
+     "lon": -86.286722
+    },
+    {
+     "key": "guntersville:G11",
+     "lat": 34.364539,
+     "lon": -86.216931
+    },
+    {
+     "key": "guntersville:G12",
+     "lat": 34.356453,
+     "lon": -86.196496
+    },
+    {
+     "key": "guntersville:G13",
+     "lat": 34.417301,
+     "lon": -86.255677
+    },
+    {
+     "key": "guntersville:G14",
+     "lat": 34.431706,
+     "lon": -86.253736
+    },
+    {
+     "key": "guntersville:G15",
+     "lat": 34.459709,
+     "lon": -86.278961
+    },
+    {
+     "key": "guntersville:G16",
+     "lat": 34.405817,
+     "lon": -86.183175
+    },
+    {
+     "key": "guntersville:G17",
+     "lat": 34.471707,
+     "lon": -86.22172
+    },
+    {
+     "key": "guntersville:G18",
+     "lat": 34.43286,
+     "lon": -86.15564
+    },
+    {
+     "key": "guntersville:G19",
+     "lat": 34.472507,
+     "lon": -86.200376
+    },
+    {
+     "key": "guntersville:G20",
+     "lat": 34.504493,
+     "lon": -86.162539
+    },
+    {
+     "key": "guntersville:G21",
+     "lat": 34.46567,
+     "lon": -86.09133
+    },
+    {
+     "key": "guntersville:G22",
+     "lat": 34.552306,
+     "lon": -86.121611
+    },
+    {
+     "key": "guntersville:G23",
+     "lat": 34.580412,
+     "lon": -86.124702
+    },
+    {
+     "key": "guntersville:G24",
+     "lat": 34.561239,
+     "lon": -86.055819
+    },
+    {
+     "key": "guntersville:G25",
+     "lat": 34.616349,
+     "lon": -86.11112
+    },
+    {
+     "key": "guntersville:G26",
+     "lat": 34.570826,
+     "lon": -86.044177
+    },
+    {
+     "key": "guntersville:G27",
+     "lat": 34.608365,
+     "lon": -86.051939
+    },
+    {
+     "key": "guntersville:G28",
+     "lat": 34.583607,
+     "lon": -86.016042
+    },
+    {
+     "key": "guntersville:G29",
+     "lat": 34.639501,
+     "lon": -86.033505
+    },
+    {
+     "key": "guntersville:G30",
+     "lat": 34.63231,
+     "lon": -86.01811
+    },
+    {
+     "key": "guntersville:G31",
+     "lat": 34.615551,
+     "lon": -85.991788
+    },
+    {
+     "key": "guntersville:G32",
+     "lat": 34.636308,
+     "lon": -85.969473
+    },
+    {
+     "key": "guntersville:G33",
+     "lat": 34.653867,
+     "lon": -85.964622
+    },
+    {
+     "key": "guntersville:G34",
+     "lat": 34.656261,
+     "lon": -85.944249
+    },
+    {
+     "key": "guntersville:G35",
+     "lat": 34.707321,
+     "lon": -85.9491
+    },
+    {
+     "key": "guntersville:G36",
+     "lat": 34.747189,
+     "lon": -85.892829
+    },
+    {
+     "key": "guntersville:G37",
+     "lat": 34.774288,
+     "lon": -85.909322
+    },
+    {
+     "key": "guntersville:G38",
+     "lat": 34.744798,
+     "lon": -85.84238
+    },
+    {
+     "key": "guntersville:G39",
+     "lat": 34.762334,
+     "lon": -85.856932
+    },
+    {
+     "key": "guntersville:G40",
+     "lat": 34.7872,
+     "lon": -85.84777
+    },
+    {
+     "key": "guntersville:G41",
+     "lat": 34.86186,
+     "lon": -85.7708
+    },
+    {
+     "key": "guntersville:G42",
+     "lat": 35.00422,
+     "lon": -85.69738
+    }
+   ],
+   "crops": [
+    {
+     "lat": 34.608365,
+     "lon": -86.051939,
+     "points": [
+      [
+       34.552306,
+       -86.121611,
+       "guntersville:G22"
+      ],
+      [
+       34.580412,
+       -86.124702,
+       "guntersville:G23"
+      ],
+      [
+       34.561239,
+       -86.055819,
+       "guntersville:G24"
+      ],
+      [
+       34.616349,
+       -86.11112,
+       "guntersville:G25"
+      ],
+      [
+       34.570826,
+       -86.044177,
+       "guntersville:G26"
+      ],
+      [
+       34.608365,
+       -86.051939,
+       "guntersville:G27"
+      ],
+      [
+       34.583607,
+       -86.016042,
+       "guntersville:G28"
+      ],
+      [
+       34.639501,
+       -86.033505,
+       "guntersville:G29"
+      ],
+      [
+       34.63231,
+       -86.01811,
+       "guntersville:G30"
+      ],
+      [
+       34.615551,
+       -85.991788,
+       "guntersville:G31"
+      ],
+      [
+       34.636308,
+       -85.969473,
+       "guntersville:G32"
+      ],
+      [
+       34.653867,
+       -85.964622,
+       "guntersville:G33"
+      ]
+     ],
+     "elev": 180.686004639
+    },
+    {
+     "lat": 34.392487,
+     "lon": -86.286722,
+     "points": [
+      [
+       34.33208,
+       -86.3445,
+       "guntersville:G03"
+      ],
+      [
+       34.34464,
+       -86.33057,
+       "guntersville:G05"
+      ],
+      [
+       34.334825,
+       -86.306126,
+       "guntersville:G06"
+      ],
+      [
+       34.3452,
+       -86.29182,
+       "guntersville:G08"
+      ],
+      [
+       34.424504,
+       -86.367247,
+       "guntersville:G09"
+      ],
+      [
+       34.392487,
+       -86.286722,
+       "guntersville:G10"
+      ],
+      [
+       34.364539,
+       -86.216931,
+       "guntersville:G11"
+      ],
+      [
+       34.417301,
+       -86.255677,
+       "guntersville:G13"
+      ],
+      [
+       34.431706,
+       -86.253736,
+       "guntersville:G14"
+      ],
+      [
+       34.459709,
+       -86.278961,
+       "guntersville:G15"
+      ]
+     ],
+     "elev": 180.686004639
+    },
+    {
+     "lat": 34.747189,
+     "lon": -85.892829,
+     "points": [
+      [
+       34.707321,
+       -85.9491,
+       "guntersville:G35"
+      ],
+      [
+       34.747189,
+       -85.892829,
+       "guntersville:G36"
+      ],
+      [
+       34.774288,
+       -85.909322,
+       "guntersville:G37"
+      ],
+      [
+       34.744798,
+       -85.84238,
+       "guntersville:G38"
+      ],
+      [
+       34.762334,
+       -85.856932,
+       "guntersville:G39"
+      ],
+      [
+       34.7872,
+       -85.84777,
+       "guntersville:G40"
+      ]
+     ],
+     "elev": 180.699996948
+    },
+    {
+     "lat": 34.405817,
+     "lon": -86.183175,
+     "points": [
+      [
+       34.356453,
+       -86.196496,
+       "guntersville:G12"
+      ],
+      [
+       34.405817,
+       -86.183175,
+       "guntersville:G16"
+      ],
+      [
+       34.471707,
+       -86.22172,
+       "guntersville:G17"
+      ],
+      [
+       34.43286,
+       -86.15564,
+       "guntersville:G18"
+      ],
+      [
+       34.472507,
+       -86.200376,
+       "guntersville:G19"
+      ]
+     ],
+     "elev": 180.686004639
+    },
+    {
+     "lat": 34.306781,
+     "lon": -86.370158,
+     "points": [
+      [
+       34.306781,
+       -86.370158,
+       "guntersville:G01"
+      ],
+      [
+       34.323609,
+       -86.377919,
+       "guntersville:G02"
+      ],
+      [
+       34.314795,
+       -86.322619,
+       "guntersville:G04"
+      ]
+     ],
+     "elev": 180.686004639
+    },
+    {
+     "lat": 34.504493,
+     "lon": -86.162539,
+     "points": [
+      [
+       34.504493,
+       -86.162539,
+       "guntersville:G20"
+      ],
+      [
+       34.46567,
+       -86.09133,
+       "guntersville:G21"
+      ]
+     ],
+     "elev": 180.686004639
+    },
+    {
+     "lat": 34.417301,
+     "lon": -86.384711,
+     "points": [
+      [
+       34.417301,
+       -86.384711,
+       "guntersville:G07"
+      ]
+     ],
+     "elev": 180.649993896
+    },
+    {
+     "lat": 34.656261,
+     "lon": -85.944249,
+     "points": [
+      [
+       34.656261,
+       -85.944249,
+       "guntersville:G34"
+      ]
+     ],
+     "elev": 180.690994263
+    },
+    {
+     "lat": 34.86186,
+     "lon": -85.7708,
+     "points": [
+      [
+       34.86186,
+       -85.7708,
+       "guntersville:G41"
+      ]
+     ],
+     "elev": 181.08770752
+    },
+    {
+     "lat": 35.00422,
+     "lon": -85.69738,
+     "points": [
+      [
+       35.00422,
+       -85.69738,
+       "guntersville:G42"
+      ]
+     ],
+     "elev": 181.914154053
+    }
+   ],
+   "max_shore_distance_m": null
+  },
+  {
+   "slug": "okeechobee",
+   "directory_id": "Okeechobee|FL",
+   "why": "Peninsular Florida, subtropical; very large and shallow, wind-resuspended; cyanobacteria blooms",
+   "area_km2": 1375.885,
+   "points": [
+    {
+     "key": "okeechobee:P1",
+     "lat": 26.930131,
+     "lon": -80.79678
+    },
+    {
+     "key": "okeechobee:P2",
+     "lat": 26.860252,
+     "lon": -80.886745
+    },
+    {
+     "key": "okeechobee:P3",
+     "lat": 26.860243,
+     "lon": -80.706825
+    },
+    {
+     "key": "okeechobee:P4",
+     "lat": 26.999961,
+     "lon": -80.886545
+    },
+    {
+     "key": "okeechobee:P5",
+     "lat": 26.999952,
+     "lon": -80.707007
+    }
+   ],
+   "crops": [
+    {
+     "lat": 26.930131,
+     "lon": -80.79678,
+     "points": [
+      [
+       26.930131,
+       -80.79678,
+       "okeechobee:P1"
+      ],
+      [
+       26.860252,
+       -80.886745,
+       "okeechobee:P2"
+      ],
+      [
+       26.860243,
+       -80.706825,
+       "okeechobee:P3"
+      ],
+      [
+       26.999961,
+       -80.886545,
+       "okeechobee:P4"
+      ],
+      [
+       26.999952,
+       -80.707007,
+       "okeechobee:P5"
+      ]
+     ],
+     "elev": 2.283870935
+    }
+   ],
+   "max_shore_distance_m": 16862.668827916892
+  },
+  {
+   "slug": "pontchartrain",
+   "directory_id": "Lake Pontchartrain|LA",
+   "why": "Gulf Coast estuary; brackish, turbid, tidal exchange",
+   "area_km2": 1650.321,
+   "points": [
+    {
+     "key": "pontchartrain:P1",
+     "lat": 30.192459,
+     "lon": -90.157237
+    },
+    {
+     "key": "pontchartrain:P2",
+     "lat": 30.122566,
+     "lon": -90.247163
+    },
+    {
+     "key": "pontchartrain:P3",
+     "lat": 30.262207,
+     "lon": -90.247063
+    },
+    {
+     "key": "pontchartrain:P4",
+     "lat": 30.262289,
+     "lon": -90.067496
+    },
+    {
+     "key": "pontchartrain:P5",
+     "lat": 30.122648,
+     "lon": -90.067538
+    }
+   ],
+   "crops": [
+    {
+     "lat": 30.192459,
+     "lon": -90.157237,
+     "points": [
+      [
+       30.192459,
+       -90.157237,
+       "pontchartrain:P1"
+      ],
+      [
+       30.122566,
+       -90.247163,
+       "pontchartrain:P2"
+      ],
+      [
+       30.262207,
+       -90.247063,
+       "pontchartrain:P3"
+      ],
+      [
+       30.262289,
+       -90.067496,
+       "pontchartrain:P4"
+      ],
+      [
+       30.122648,
+       -90.067538,
+       "pontchartrain:P5"
+      ]
+     ],
+     "elev": -0.61264801
+    }
+   ],
+   "max_shore_distance_m": 18204.043506869566
+  },
+  {
+   "slug": "toledo-bend",
+   "directory_id": "Toledo Bend Reservoir|TX",
+   "why": "Western Gulf Coastal Plain; tannin-stained, standing timber",
+   "area_km2": 670.157,
+   "points": [
+    {
+     "key": "toledo-bend:P1",
+     "lat": 31.298615,
+     "lon": -93.653887
+    },
+    {
+     "key": "toledo-bend:P2",
+     "lat": 31.244022,
+     "lon": -93.743719
+    },
+    {
+     "key": "toledo-bend:P3",
+     "lat": 31.228707,
+     "lon": -93.580306
+    },
+    {
+     "key": "toledo-bend:P4",
+     "lat": 31.368448,
+     "lon": -93.679644
+    },
+    {
+     "key": "toledo-bend:P5",
+     "lat": 31.22908,
+     "lon": -93.65745
+    }
+   ],
+   "crops": [
+    {
+     "lat": 31.298615,
+     "lon": -93.653887,
+     "points": [
+      [
+       31.298615,
+       -93.653887,
+       "toledo-bend:P1"
+      ],
+      [
+       31.244022,
+       -93.743719,
+       "toledo-bend:P2"
+      ],
+      [
+       31.228707,
+       -93.580306,
+       "toledo-bend:P3"
+      ],
+      [
+       31.368448,
+       -93.679644,
+       "toledo-bend:P4"
+      ],
+      [
+       31.22908,
+       -93.65745,
+       "toledo-bend:P5"
+      ]
+     ],
+     "elev": 51.214000702
+    }
+   ],
+   "max_shore_distance_m": 3877.4347189862524
+  },
+  {
+   "slug": "marion",
+   "directory_id": "Lake Marion|SC",
+   "why": "Atlantic Coastal Plain (Santee Cooper); blackwater swamp reservoir, cypress",
+   "area_km2": 370.177,
+   "points": [
+    {
+     "key": "marion:P1",
+     "lat": 33.466181,
+     "lon": -80.212807
+    },
+    {
+     "key": "marion:P2",
+     "lat": 33.437705,
+     "lon": -80.302597
+    },
+    {
+     "key": "marion:P3",
+     "lat": 33.40596,
+     "lon": -80.15078
+    },
+    {
+     "key": "marion:P4",
+     "lat": 33.500164,
+     "lon": -80.290814
+    },
+    {
+     "key": "marion:P5",
+     "lat": 33.406988,
+     "lon": -80.230435
+    }
+   ],
+   "crops": [
+    {
+     "lat": 33.466181,
+     "lon": -80.212807,
+     "points": [
+      [
+       33.466181,
+       -80.212807,
+       "marion:P1"
+      ],
+      [
+       33.437705,
+       -80.302597,
+       "marion:P2"
+      ],
+      [
+       33.40596,
+       -80.15078,
+       "marion:P3"
+      ],
+      [
+       33.500164,
+       -80.290814,
+       "marion:P4"
+      ],
+      [
+       33.406988,
+       -80.230435,
+       "marion:P5"
+      ]
+     ],
+     "elev": 20.948900223
+    }
+   ],
+   "max_shore_distance_m": 4029.9503719028603
+  },
+  {
+   "slug": "texoma",
+   "directory_id": "Lake Texoma|TX",
+   "why": "Southern Great Plains (Red River); red-clay sediment, saline",
+   "area_km2": 240.442,
+   "points": [
+    {
+     "key": "texoma:P1",
+     "lat": 33.887258,
+     "lon": -96.680822
+    },
+    {
+     "key": "texoma:P2",
+     "lat": 33.820594,
+     "lon": -96.590839
+    },
+    {
+     "key": "texoma:P3",
+     "lat": 33.823492,
+     "lon": -96.770685
+    },
+    {
+     "key": "texoma:P4",
+     "lat": 33.915257,
+     "lon": -96.590917
+    },
+    {
+     "key": "texoma:P5",
+     "lat": 33.832874,
+     "lon": -96.66308
+    }
+   ],
+   "crops": [
+    {
+     "lat": 33.887258,
+     "lon": -96.680822,
+     "points": [
+      [
+       33.887258,
+       -96.680822,
+       "texoma:P1"
+      ],
+      [
+       33.820594,
+       -96.590839,
+       "texoma:P2"
+      ],
+      [
+       33.823492,
+       -96.770685,
+       "texoma:P3"
+      ],
+      [
+       33.915257,
+       -96.590917,
+       "texoma:P4"
+      ],
+      [
+       33.832874,
+       -96.66308,
+       "texoma:P5"
+      ]
+     ],
+     "elev": 188.5
+    }
+   ],
+   "max_shore_distance_m": 2526.420392571276
+  },
+  {
+   "slug": "ouachita",
+   "directory_id": "Ouachita (L. Ouachita)|AR",
+   "why": "Ouachita Mountains; deep, clear, oligotrophic",
+   "area_km2": 154.646,
+   "points": [
+    {
+     "key": "ouachita:P1",
+     "lat": 34.58778,
+     "lon": -93.31529
+    },
+    {
+     "key": "ouachita:P2",
+     "lat": 34.657048,
+     "lon": -93.387206
+    },
+    {
+     "key": "ouachita:P3",
+     "lat": 34.639882,
+     "lon": -93.235717
+    },
+    {
+     "key": "ouachita:P4",
+     "lat": 34.586198,
+     "lon": -93.401617
+    },
+    {
+     "key": "ouachita:P5",
+     "lat": 34.591501,
+     "lon": -93.254134
+    }
+   ],
+   "crops": [
+    {
+     "lat": 34.58778,
+     "lon": -93.31529,
+     "points": [
+      [
+       34.58778,
+       -93.31529,
+       "ouachita:P1"
+      ],
+      [
+       34.657048,
+       -93.387206,
+       "ouachita:P2"
+      ],
+      [
+       34.639882,
+       -93.235717,
+       "ouachita:P3"
+      ],
+      [
+       34.586198,
+       -93.401617,
+       "ouachita:P4"
+      ],
+      [
+       34.591501,
+       -93.254134,
+       "ouachita:P5"
+      ]
+     ],
+     "elev": 173.63999939
+    }
+   ],
+   "max_shore_distance_m": 1422.708684165525
+  },
+  {
+   "slug": "ozarks",
+   "directory_id": "Lake of the Ozarks|MO",
+   "why": "Ozark Highlands; long dendritic reservoir, moderate clarity",
+   "area_km2": 207.085,
+   "points": [
+    {
+     "key": "ozarks:P1",
+     "lat": 38.207724,
+     "lon": -92.759216
+    },
+    {
+     "key": "ozarks:P2",
+     "lat": 38.143587,
+     "lon": -92.849166
+    },
+    {
+     "key": "ozarks:P3",
+     "lat": 38.145847,
+     "lon": -92.669495
+    },
+    {
+     "key": "ozarks:P4",
+     "lat": 38.27771,
+     "lon": -92.780191
+    },
+    {
+     "key": "ozarks:P5",
+     "lat": 38.216658,
+     "lon": -92.670155
+    }
+   ],
+   "crops": [
+    {
+     "lat": 38.207724,
+     "lon": -92.759216,
+     "points": [
+      [
+       38.207724,
+       -92.759216,
+       "ozarks:P1"
+      ],
+      [
+       38.143587,
+       -92.849166,
+       "ozarks:P2"
+      ],
+      [
+       38.145847,
+       -92.669495,
+       "ozarks:P3"
+      ],
+      [
+       38.27771,
+       -92.780191,
+       "ozarks:P4"
+      ],
+      [
+       38.216658,
+       -92.670155,
+       "ozarks:P5"
+      ]
+     ],
+     "elev": 199.669998169
+    }
+   ],
+   "max_shore_distance_m": 684.7627326307996
+  },
+  {
+   "slug": "lanier",
+   "directory_id": "Lanier (Sidney Lanier)|GA",
+   "why": "Piedmont; deep reservoir, red-clay inflows",
+   "area_km2": 154.965,
+   "points": [
+    {
+     "key": "lanier:P1",
+     "lat": 34.199305,
+     "lon": -83.987187
+    },
+    {
+     "key": "lanier:P2",
+     "lat": 34.162462,
+     "lon": -84.071106
+    },
+    {
+     "key": "lanier:P3",
+     "lat": 34.250428,
+     "lon": -83.918822
+    },
+    {
+     "key": "lanier:P4",
+     "lat": 34.222234,
+     "lon": -84.06892
+    },
+    {
+     "key": "lanier:P5",
+     "lat": 34.236634,
+     "lon": -83.965717
+    }
+   ],
+   "crops": [
+    {
+     "lat": 34.199305,
+     "lon": -83.987187,
+     "points": [
+      [
+       34.199305,
+       -83.987187,
+       "lanier:P1"
+      ],
+      [
+       34.162462,
+       -84.071106,
+       "lanier:P2"
+      ],
+      [
+       34.250428,
+       -83.918822,
+       "lanier:P3"
+      ],
+      [
+       34.222234,
+       -84.06892,
+       "lanier:P4"
+      ],
+      [
+       34.236634,
+       -83.965717,
+       "lanier:P5"
+      ]
+     ],
+     "elev": 326.355957031
+    }
+   ],
+   "max_shore_distance_m": 1100.6361796706485
+  },
+  {
+   "slug": "winnebago",
+   "directory_id": "Lake Winnebago|WI",
+   "why": "Upper Midwest; large shallow natural lake, eutrophic, algal",
+   "area_km2": 534.165,
+   "points": [
+    {
+     "key": "winnebago:P1",
+     "lat": 44.009123,
+     "lon": -88.419933
+    },
+    {
+     "key": "winnebago:P2",
+     "lat": 43.93915,
+     "lon": -88.330269
+    },
+    {
+     "key": "winnebago:P3",
+     "lat": 44.079025,
+     "lon": -88.509434
+    },
+    {
+     "key": "winnebago:P4",
+     "lat": 44.07901,
+     "lon": -88.33228
+    },
+    {
+     "key": "winnebago:P5",
+     "lat": 43.95105,
+     "lon": -88.505154
+    }
+   ],
+   "crops": [
+    {
+     "lat": 44.009123,
+     "lon": -88.419933,
+     "points": [
+      [
+       44.009123,
+       -88.419933,
+       "winnebago:P1"
+      ],
+      [
+       43.93915,
+       -88.330269,
+       "winnebago:P2"
+      ],
+      [
+       44.079025,
+       -88.509434,
+       "winnebago:P3"
+      ],
+      [
+       44.07901,
+       -88.33228,
+       "winnebago:P4"
+      ],
+      [
+       43.95105,
+       -88.505154,
+       "winnebago:P5"
+      ]
+     ],
+     "elev": 227.338577271
+    }
+   ],
+   "max_shore_distance_m": 7725.800929353539
+  },
+  {
+   "slug": "mille-lacs",
+   "directory_id": "Mille Lacs Lake|MN",
+   "why": "Northern Lakes and Forests; glacial natural lake, ice-covered winters",
+   "area_km2": 518.672,
+   "points": [
+    {
+     "key": "mille-lacs:P1",
+     "lat": 46.269608,
+     "lon": -93.661971
+    },
+    {
+     "key": "mille-lacs:P2",
+     "lat": 46.19967,
+     "lon": -93.751753
+    },
+    {
+     "key": "mille-lacs:P3",
+     "lat": 46.199673,
+     "lon": -93.572183
+    },
+    {
+     "key": "mille-lacs:P4",
+     "lat": 46.339476,
+     "lon": -93.572349
+    },
+    {
+     "key": "mille-lacs:P5",
+     "lat": 46.333265,
+     "lon": -93.751587
+    }
+   ],
+   "crops": [
+    {
+     "lat": 46.269608,
+     "lon": -93.661971,
+     "points": [
+      [
+       46.269608,
+       -93.661971,
+       "mille-lacs:P1"
+      ],
+      [
+       46.19967,
+       -93.751753,
+       "mille-lacs:P2"
+      ],
+      [
+       46.199673,
+       -93.572183,
+       "mille-lacs:P3"
+      ],
+      [
+       46.339476,
+       -93.572349,
+       "mille-lacs:P4"
+      ],
+      [
+       46.333265,
+       -93.751587,
+       "mille-lacs:P5"
+      ]
+     ],
+     "elev": 381.788970947
+    }
+   ],
+   "max_shore_distance_m": 9753.368648831029
+  },
+  {
+   "slug": "champlain",
+   "directory_id": "Lake Champlain|VT",
+   "why": "Northeast; long deep natural lake, clear",
+   "area_km2": 1121.455,
+   "points": [
+    {
+     "key": "champlain:P1",
+     "lat": 44.472271,
+     "lon": -73.32175
+    },
+    {
+     "key": "champlain:P2",
+     "lat": 44.542155,
+     "lon": -73.411599
+    },
+    {
+     "key": "champlain:P3",
+     "lat": 44.402587,
+     "lon": -73.232114
+    },
+    {
+     "key": "champlain:P4",
+     "lat": 44.402309,
+     "lon": -73.410242
+    },
+    {
+     "key": "champlain:P5",
+     "lat": 44.542192,
+     "lon": -73.292312
+    }
+   ],
+   "crops": [
+    {
+     "lat": 44.472271,
+     "lon": -73.32175,
+     "points": [
+      [
+       44.472271,
+       -73.32175,
+       "champlain:P1"
+      ],
+      [
+       44.542155,
+       -73.411599,
+       "champlain:P2"
+      ],
+      [
+       44.402587,
+       -73.232114,
+       "champlain:P3"
+      ],
+      [
+       44.402309,
+       -73.410242,
+       "champlain:P4"
+      ],
+      [
+       44.542192,
+       -73.292312,
+       "champlain:P5"
+      ]
+     ],
+     "elev": 28.841999054
+    }
+   ],
+   "max_shore_distance_m": 4776.033919477541
+  },
+  {
+   "slug": "sakakawea",
+   "directory_id": "Lake Sakakawea|ND",
+   "why": "Northwestern Great Plains (Missouri River mainstem); sediment, cold",
+   "area_km2": 1271.696,
+   "points": [
+    {
+     "key": "sakakawea:P1",
+     "lat": 47.807517,
+     "lon": -102.311721
+    },
+    {
+     "key": "sakakawea:P2",
+     "lat": 47.877369,
+     "lon": -102.40155
+    },
+    {
+     "key": "sakakawea:P3",
+     "lat": 47.753254,
+     "lon": -102.401351
+    },
+    {
+     "key": "sakakawea:P4",
+     "lat": 47.73762,
+     "lon": -102.259731
+    },
+    {
+     "key": "sakakawea:P5",
+     "lat": 47.874161,
+     "lon": -102.306901
+    }
+   ],
+   "crops": [
+    {
+     "lat": 47.807517,
+     "lon": -102.311721,
+     "points": [
+      [
+       47.807517,
+       -102.311721,
+       "sakakawea:P1"
+      ],
+      [
+       47.877369,
+       -102.40155,
+       "sakakawea:P2"
+      ],
+      [
+       47.753254,
+       -102.401351,
+       "sakakawea:P3"
+      ],
+      [
+       47.73762,
+       -102.259731,
+       "sakakawea:P4"
+      ],
+      [
+       47.874161,
+       -102.306901,
+       "sakakawea:P5"
+      ]
+     ],
+     "elev": 560.624023438
+    }
+   ],
+   "max_shore_distance_m": 4061.539117132814
+  },
+  {
+   "slug": "utah-lake",
+   "directory_id": "Utah Lake|UT",
+   "why": "Great Basin; shallow, alkaline, very turbid",
+   "area_km2": 368.893,
+   "points": [
+    {
+     "key": "utah-lake:P1",
+     "lat": 40.224174,
+     "lon": -111.805045
+    },
+    {
+     "key": "utah-lake:P2",
+     "lat": 40.154412,
+     "lon": -111.894804
+    },
+    {
+     "key": "utah-lake:P3",
+     "lat": 40.166884,
+     "lon": -111.715218
+    },
+    {
+     "key": "utah-lake:P4",
+     "lat": 40.294117,
+     "lon": -111.868583
+    },
+    {
+     "key": "utah-lake:P5",
+     "lat": 40.294152,
+     "lon": -111.765204
+    }
+   ],
+   "crops": [
+    {
+     "lat": 40.224174,
+     "lon": -111.805045,
+     "points": [
+      [
+       40.224174,
+       -111.805045,
+       "utah-lake:P1"
+      ],
+      [
+       40.154412,
+       -111.894804,
+       "utah-lake:P2"
+      ],
+      [
+       40.166884,
+       -111.715218,
+       "utah-lake:P3"
+      ],
+      [
+       40.294117,
+       -111.868583,
+       "utah-lake:P4"
+      ],
+      [
+       40.294152,
+       -111.765204,
+       "utah-lake:P5"
+      ]
+     ],
+     "elev": 1367.050048828
+    }
+   ],
+   "max_shore_distance_m": 5238.415791057445
+  },
+  {
+   "slug": "elephant-butte",
+   "directory_id": "Elephant Butte Reservoir|NM",
+   "why": "Chihuahuan Desert (Rio Grande); arid, sediment-laden inflows, large drawdowns",
+   "area_km2": 44.145,
+   "points": [
+    {
+     "key": "elephant-butte:P1",
+     "lat": 33.291366,
+     "lon": -107.163767
+    },
+    {
+     "key": "elephant-butte:P2",
+     "lat": 33.221573,
+     "lon": -107.199167
+    },
+    {
+     "key": "elephant-butte:P3",
+     "lat": 33.248899,
+     "lon": -107.161191
+    },
+    {
+     "key": "elephant-butte:P4",
+     "lat": 33.221579,
+     "lon": -107.165053
+    },
+    {
+     "key": "elephant-butte:P5",
+     "lat": 33.313004,
+     "lon": -107.179553
+    }
+   ],
+   "crops": [
+    {
+     "lat": 33.291366,
+     "lon": -107.163767,
+     "points": [
+      [
+       33.291366,
+       -107.163767,
+       "elephant-butte:P1"
+      ],
+      [
+       33.221573,
+       -107.199167,
+       "elephant-butte:P2"
+      ],
+      [
+       33.248899,
+       -107.161191,
+       "elephant-butte:P3"
+      ],
+      [
+       33.221579,
+       -107.165053,
+       "elephant-butte:P4"
+      ],
+      [
+       33.313004,
+       -107.179553,
+       "elephant-butte:P5"
+      ]
+     ],
+     "elev": 1328.5
+    }
+   ],
+   "max_shore_distance_m": 1233.288287465668
+  },
+  {
+   "slug": "mead",
+   "directory_id": "Lake Mead|NV",
+   "why": "Mojave Desert (Colorado River); deep, very clear",
+   "area_km2": 549.168,
+   "points": [
+    {
+     "key": "mead:P1",
+     "lat": 36.128037,
+     "lon": -114.483644
+    },
+    {
+     "key": "mead:P2",
+     "lat": 36.196192,
+     "lon": -114.39365
+    },
+    {
+     "key": "mead:P3",
+     "lat": 36.058295,
+     "lon": -114.460935
+    },
+    {
+     "key": "mead:P4",
+     "lat": 36.124816,
+     "lon": -114.395662
+    },
+    {
+     "key": "mead:P5",
+     "lat": 36.151502,
+     "lon": -114.547006
+    }
+   ],
+   "crops": [
+    {
+     "lat": 36.128037,
+     "lon": -114.483644,
+     "points": [
+      [
+       36.128037,
+       -114.483644,
+       "mead:P1"
+      ],
+      [
+       36.196192,
+       -114.39365,
+       "mead:P2"
+      ],
+      [
+       36.058295,
+       -114.460935,
+       "mead:P3"
+      ],
+      [
+       36.124816,
+       -114.395662,
+       "mead:P4"
+      ],
+      [
+       36.151502,
+       -114.547006,
+       "mead:P5"
+      ]
+     ],
+     "elev": 329.549987793
+    }
+   ],
+   "max_shore_distance_m": 3407.8732370791026
+  },
+  {
+   "slug": "clear-lake-ca",
+   "directory_id": "Clear Lake|CA",
+   "why": "Mediterranean California; hypereutrophic natural lake, cyanobacteria",
+   "area_km2": 160.463,
+   "points": [
+    {
+     "key": "clear-lake-ca:P1",
+     "lat": 39.074356,
+     "lon": -122.84983
+    },
+    {
+     "key": "clear-lake-ca:P2",
+     "lat": 39.008705,
+     "lon": -122.762835
+    },
+    {
+     "key": "clear-lake-ca:P3",
+     "lat": 39.030261,
+     "lon": -122.909382
+    },
+    {
+     "key": "clear-lake-ca:P4",
+     "lat": 39.0587,
+     "lon": -122.785001
+    },
+    {
+     "key": "clear-lake-ca:P5",
+     "lat": 39.115138,
+     "lon": -122.882473
+    }
+   ],
+   "crops": [
+    {
+     "lat": 39.074356,
+     "lon": -122.84983,
+     "points": [
+      [
+       39.074356,
+       -122.84983,
+       "clear-lake-ca:P1"
+      ],
+      [
+       39.008705,
+       -122.762835,
+       "clear-lake-ca:P2"
+      ],
+      [
+       39.030261,
+       -122.909382,
+       "clear-lake-ca:P3"
+      ],
+      [
+       39.0587,
+       -122.785001,
+       "clear-lake-ca:P4"
+      ],
+      [
+       39.115138,
+       -122.882473,
+       "clear-lake-ca:P5"
+      ]
+     ],
+     "elev": 402.779998779
+    }
+   ],
+   "max_shore_distance_m": 4483.7707345492145
+  }
+ ]
+}

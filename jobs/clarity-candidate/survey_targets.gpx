@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Sector Current Clarity survey" xmlns="http://www.topografix.com/GPX/1/1">
+  <wpt lat="34.306781" lon="-86.370158"><name>G01</name><desc>likely under 2 ft — Browns Creek, head</desc></wpt>
+  <wpt lat="34.323609" lon="-86.377919"><name>G02</name><desc>likely under 2 ft — Beech Creek, head</desc></wpt>
+  <wpt lat="34.332080" lon="-86.344500"><name>G03</name><desc>known stained arm (agency station) — Browns Creek (AWW)</desc></wpt>
+  <wpt lat="34.314795" lon="-86.322619"><name>G04</name><desc>likely under 2 ft — Rocky Branch (Marshall Co.), whole</desc></wpt>
+  <wpt lat="34.344640" lon="-86.330570"><name>G05</name><desc>known stained arm (agency station) — GUNM-10 (Browns Creek)</desc></wpt>
+  <wpt lat="34.334825" lon="-86.306126"><name>G06</name><desc>agreement / control — Big Spring Creek, middle</desc></wpt>
+  <wpt lat="34.417301" lon="-86.384711"><name>G07</name><desc>clear main channel (open water) — Main channel</desc></wpt>
+  <wpt lat="34.345200" lon="-86.291820"><name>G08</name><desc>known stained arm (agency station) — GUNM-9 (Big Spring Creek)</desc></wpt>
+  <wpt lat="34.424504" lon="-86.367247"><name>G09</name><desc>clear main channel (open water) — Main channel</desc></wpt>
+  <wpt lat="34.392487" lon="-86.286722"><name>G10</name><desc>clear main channel (open water) — Main channel</desc></wpt>
+  <wpt lat="34.364539" lon="-86.216931"><name>G11</name><desc>known stained arm (agency station) — GUNM-8 (Short Creek)</desc></wpt>
+  <wpt lat="34.356453" lon="-86.196496"><name>G12</name><desc>active algal warning (NDCI &gt; 0.03) — Dry Creek (Marshall Co.), whole</desc></wpt>
+  <wpt lat="34.417301" lon="-86.255677"><name>G13</name><desc>active algal warning (NDCI &gt; 0.03) — Main channel</desc></wpt>
+  <wpt lat="34.431706" lon="-86.253736"><name>G14</name><desc>sediment after runoff (conditional) — Seibold Branch, head</desc></wpt>
+  <wpt lat="34.459709" lon="-86.278961"><name>G15</name><desc>active algal warning (NDCI &gt; 0.03) — Honeycomb Creek, head</desc></wpt>
+  <wpt lat="34.405817" lon="-86.183175"><name>G16</name><desc>known stained arm (agency station) — GUNM-7 (Town Creek)</desc></wpt>
+  <wpt lat="34.471707" lon="-86.221720"><name>G17</name><desc>agreement / control — Chandler Branch, head</desc></wpt>
+  <wpt lat="34.432860" lon="-86.155640"><name>G18</name><desc>known stained arm (agency station) — GUNM-7B (Town Creek, upper)</desc></wpt>
+  <wpt lat="34.472507" lon="-86.200376"><name>G19</name><desc>agreement / control — Main channel</desc></wpt>
+  <wpt lat="34.504493" lon="-86.162539"><name>G20</name><desc>agreement / control — Main channel</desc></wpt>
+  <wpt lat="34.465670" lon="-86.091330"><name>G21</name><desc>known stained arm (agency station) — South Sauty Creek (AWW)</desc></wpt>
+  <wpt lat="34.552306" lon="-86.121611"><name>G22</name><desc>clear main channel (agency station) — TENR-375 (main channel, mid-lake)</desc></wpt>
+  <wpt lat="34.580412" lon="-86.124702"><name>G23</name><desc>sediment after runoff (conditional) — Mink Creek (Jackson Co.), head</desc></wpt>
+  <wpt lat="34.561239" lon="-86.055819"><name>G24</name><desc>C3 says clear, P1 says murky — Main channel</desc></wpt>
+  <wpt lat="34.616349" lon="-86.111120"><name>G25</name><desc>C3 says clear, P1 says murky — North Sauty Creek, head</desc></wpt>
+  <wpt lat="34.570826" lon="-86.044177"><name>G26</name><desc>C3 says clear, P1 says murky — Main channel</desc></wpt>
+  <wpt lat="34.608365" lon="-86.051939"><name>G27</name><desc>P1 says stained, C3 says normal/clear — Roseberry Creek, lower</desc></wpt>
+  <wpt lat="34.583607" lon="-86.016042"><name>G28</name><desc>active algal warning (NDCI &gt; 0.03) — Main channel</desc></wpt>
+  <wpt lat="34.639501" lon="-86.033505"><name>G29</name><desc>sediment after runoff (conditional) — Roseberry Creek, head</desc></wpt>
+  <wpt lat="34.632310" lon="-86.018110"><name>G30</name><desc>known stained arm (agency station) — GUNM-4 (Dry Creek / Roseberry)</desc></wpt>
+  <wpt lat="34.615551" lon="-85.991788"><name>G31</name><desc>P1 says stained, C3 says normal/clear — Main channel</desc></wpt>
+  <wpt lat="34.636308" lon="-85.969473"><name>G32</name><desc>P1 says stained, C3 says normal/clear — Main channel</desc></wpt>
+  <wpt lat="34.653867" lon="-85.964622"><name>G33</name><desc>P1 says stained, C3 says normal/clear — Main channel</desc></wpt>
+  <wpt lat="34.656261" lon="-85.944249"><name>G34</name><desc>P1 says stained, C3 says normal/clear — Jones Creek (Jackson Co.), mouth</desc></wpt>
+  <wpt lat="34.707321" lon="-85.949100"><name>G35</name><desc>sediment after runoff (conditional) — Town Creek (Jackson Co.), head</desc></wpt>
+  <wpt lat="34.747189" lon="-85.892829"><name>G36</name><desc>P1 says stained, C3 says normal/clear — Mud Creek, lower</desc></wpt>
+  <wpt lat="34.774288" lon="-85.909322"><name>G37</name><desc>likely under 2 ft — Blue Spring Brook, whole</desc></wpt>
+  <wpt lat="34.744798" lon="-85.842380"><name>G38</name><desc>C3 says clear, P1 says murky — Kizzort Branch, whole</desc></wpt>
+  <wpt lat="34.762334" lon="-85.856932"><name>G39</name><desc>C3 says clear, P1 says murky — Main channel</desc></wpt>
+  <wpt lat="34.787200" lon="-85.847770"><name>G40</name><desc>clear main channel (agency station) — TENR-399 (main channel, upper lake)</desc></wpt>
+  <wpt lat="34.861860" lon="-85.770800"><name>G41</name><desc>clear main channel (agency station) — TENR-406 (main channel, upper lake)</desc></wpt>
+  <wpt lat="35.004220" lon="-85.697380"><name>G42</name><desc>clear main channel (agency station) — TENR-417 (main channel, below Nickajack)</desc></wpt>
+</gpx>
