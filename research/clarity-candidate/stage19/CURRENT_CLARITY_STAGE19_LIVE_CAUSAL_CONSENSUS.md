@@ -207,7 +207,7 @@ The pre-registered rule takes the smallest equivalent window, so **5 days** is t
 ## 10. What would make live consensus work
 
 The gain is limited by how many independent views exist before today, not by the method. Two levers:
-1. **Sentinel-2C at full authority.** S2C is a third satellite and a third to a half of 2025–26 passes, but it is excluded from consensus by rule. A dedicated S2C stage could roughly double the prior-pass supply. The S2C data here (agreement 100%, offset −0.06 log10) point that way, but the sample is too small.
+1. **Sentinel-2C at full authority.** S2C is a third satellite and a third to a half of 2025–26 passes, but it is excluded from consensus by rule. A dedicated S2C stage could add 50–100% more prior passes. The S2C data here (agreement 100%, offset −0.06 log10) point that way, but the sample is too small.
 2. **A longer lookback.** The pre-registered 15-day diagnostic recovers +0.073 on stained. It needs its own pre-registered test, which choosing it now would not be.
 
 ## Files
