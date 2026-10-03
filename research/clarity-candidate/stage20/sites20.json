@@ -1,0 +1,2780 @@
+[
+{
+"site": "L:Abiquiu Lake|NM",
+"lat": 36.251342,
+"lon": -106.443605,
+"shore_m": 932
+},
+{
+"site": "L:Alamo|AZ",
+"lat": 34.278103,
+"lon": -113.56332,
+"shore_m": 845
+},
+{
+"site": "L:Alcova Reservoir|WY",
+"lat": 42.52109,
+"lon": -106.764696,
+"shore_m": 765
+},
+{
+"site": "L:Aleknagik|AK",
+"lat": 59.362741,
+"lon": -158.89273,
+"shore_m": 1549
+},
+{
+"site": "L:Allatoona|GA",
+"lat": 34.196403,
+"lon": -84.564857,
+"shore_m": 604
+},
+{
+"site": "L:Allegheny Reservoir|PA",
+"lat": 42.022192,
+"lon": -78.951786,
+"shore_m": 732
+},
+{
+"site": "L:Almanor|CA",
+"lat": 40.272416,
+"lon": -121.193961,
+"shore_m": 2910
+},
+{
+"site": "L:Alum Creek Lake|OH",
+"lat": 40.194472,
+"lon": -82.960388,
+"shore_m": 792
+},
+{
+"site": "L:American Falls Reservoir|ID",
+"lat": 42.976466,
+"lon": -112.691903,
+"shore_m": 4377
+},
+{
+"site": "L:Amistad Reservoir|TX",
+"lat": 29.484733,
+"lon": -101.143383,
+"shore_m": 1233
+},
+{
+"site": "L:Anderson Ranch Reservoir|ID",
+"lat": 43.438771,
+"lon": -115.29689,
+"shore_m": 702
+},
+{
+"site": "L:Angostura Reservoir|SD",
+"lat": 43.311815,
+"lon": -103.425592,
+"shore_m": 1131
+},
+{
+"site": "L:Apopka|FL",
+"lat": 28.626288,
+"lon": -81.626194,
+"shore_m": 4768
+},
+{
+"site": "L:Arkabutla Lake|MS",
+"lat": 34.719019,
+"lon": -90.067344,
+"shore_m": 1200
+},
+{
+"site": "L:Assawompset Pond|MA",
+"lat": 41.83911,
+"lon": -70.917399,
+"shore_m": 1345
+},
+{
+"site": "L:Badin Lake|NC",
+"lat": 35.457617,
+"lon": -80.112951,
+"shore_m": 742
+},
+{
+"site": "L:Banks Lake|WA",
+"lat": 47.876331,
+"lon": -119.168668,
+"shore_m": 2113
+},
+{
+"site": "L:Barren River Lake|KY",
+"lat": 36.895517,
+"lon": -86.075155,
+"shore_m": 800
+},
+{
+"site": "L:Bay Springs Lake|MS",
+"lat": 34.578027,
+"lon": -88.309823,
+"shore_m": 684
+},
+{
+"site": "L:Bear Lake|UT",
+"lat": 42.021324,
+"lon": -111.328044,
+"shore_m": 5645
+},
+{
+"site": "L:Beaver|AR",
+"lat": 36.352623,
+"lon": -93.928193,
+"shore_m": 920
+},
+{
+"site": "L:Becharof|AK",
+"lat": 57.973636,
+"lon": -156.625728,
+"shore_m": 11078
+},
+{
+"site": "L:Berlin Lake|OH",
+"lat": 41.012561,
+"lon": -81.010511,
+"shore_m": 693
+},
+{
+"site": "L:Berryessa|CA",
+"lat": 38.631325,
+"lon": -122.260839,
+"shore_m": 2029
+},
+{
+"site": "L:Big Green Lake|WI",
+"lat": 43.79399,
+"lon": -89.05123,
+"shore_m": 1410
+},
+{
+"site": "L:Big Stone Lake|SD",
+"lat": 45.365553,
+"lon": -96.496693,
+"shore_m": 812
+},
+{
+"site": "L:Bighorn Lake|WY",
+"lat": 44.83989,
+"lon": -108.181995,
+"shore_m": 1150
+},
+{
+"site": "L:Bitter Lake|SD",
+"lat": 45.266495,
+"lon": -97.333683,
+"shore_m": 1702
+},
+{
+"site": "L:Black Hawk Lake|IA",
+"lat": 42.298803,
+"lon": -95.014996,
+"shore_m": 630
+},
+{
+"site": "L:Blackshear|GA",
+"lat": 31.996934,
+"lon": -83.946988,
+"shore_m": 731
+},
+{
+"site": "L:Blue Mesa Reservoir|CO",
+"lat": 38.474722,
+"lon": -107.202833,
+"shore_m": 866
+},
+{
+"site": "L:Box Butte Reservoir|NE",
+"lat": 42.457853,
+"lon": -103.085514,
+"shore_m": 649
+},
+{
+"site": "L:Boysen Reservoir|WY",
+"lat": 43.368153,
+"lon": -108.170849,
+"shore_m": 1839
+},
+{
+"site": "L:Branched Oak Lake|NE",
+"lat": 40.972397,
+"lon": -96.860876,
+"shore_m": 660
+},
+{
+"site": "L:Broken Bow Lake|OK",
+"lat": 34.176838,
+"lon": -94.690068,
+"shore_m": 1191
+},
+{
+"site": "L:Brookville Lake|IN",
+"lat": 39.514661,
+"lon": -84.997634,
+"shore_m": 661
+},
+{
+"site": "L:Buffalo Bill Reservoir|WY",
+"lat": 44.461216,
+"lon": -109.209332,
+"shore_m": 1308
+},
+{
+"site": "L:Bull Shoals Lake|AR",
+"lat": 36.459124,
+"lon": -92.643262,
+"shore_m": 993
+},
+{
+"site": "L:Burt Lake|MI",
+"lat": 45.455068,
+"lon": -84.667142,
+"shore_m": 2449
+},
+{
+"site": "L:C.J. Strike Reservoir|ID",
+"lat": 42.94681,
+"lon": -115.959165,
+"shore_m": 967
+},
+{
+"site": "L:Caballo Lake|NM",
+"lat": 32.932386,
+"lon": -107.297821,
+"shore_m": 990
+},
+{
+"site": "L:Caddo Lake|TX",
+"lat": 32.711984,
+"lon": -94.014242,
+"shore_m": 1830
+},
+{
+"site": "L:Caesar Creek Lake|OH",
+"lat": 39.526529,
+"lon": -83.991229,
+"shore_m": 648
+},
+{
+"site": "L:Calamus Reservoir|NE",
+"lat": 41.869103,
+"lon": -99.255781,
+"shore_m": 1015
+},
+{
+"site": "L:Calcasieu Lake|LA",
+"lat": 29.880959,
+"lon": -93.289684,
+"shore_m": 4860
+},
+{
+"site": "L:Canandaigua Lake|NY",
+"lat": 42.806745,
+"lon": -77.277764,
+"shore_m": 1167
+},
+{
+"site": "L:Canton Lake|OK",
+"lat": 36.106866,
+"lon": -98.593923,
+"shore_m": 1789
+},
+{
+"site": "L:Canyon Ferry Lake|MT",
+"lat": 46.418003,
+"lon": -111.530369,
+"shore_m": 3157
+},
+{
+"site": "L:Canyon Lake|TX",
+"lat": 29.880553,
+"lon": -98.240411,
+"shore_m": 949
+},
+{
+"site": "L:Carlyle Lake|IL",
+"lat": 38.65,
+"lon": -89.296674,
+"shore_m": 1959
+},
+{
+"site": "L:Castle Rock Lake|WI",
+"lat": 43.912798,
+"lon": -89.964394,
+"shore_m": 1909
+},
+{
+"site": "L:Catahoula Lake|LA",
+"lat": 31.52508,
+"lon": -92.104773,
+"shore_m": 2052
+},
+{
+"site": "L:Cave Run Lake|KY",
+"lat": 38.083148,
+"lon": -83.496849,
+"shore_m": 849
+},
+{
+"site": "L:Cayuga Lake|NY",
+"lat": 42.746496,
+"lon": -76.734667,
+"shore_m": 2656
+},
+{
+"site": "L:Cedar Bluff Reservoir|KS",
+"lat": 38.790211,
+"lon": -99.738675,
+"shore_m": 1144
+},
+{
+"site": "L:Cedar Creek Reservoir|TX",
+"lat": 32.371636,
+"lon": -96.186544,
+"shore_m": 1836
+},
+{
+"site": "L:Center Hill Lake|TN",
+"lat": 36.052416,
+"lon": -85.770946,
+"shore_m": 816
+},
+{
+"site": "L:Chamberlain Lake|ME",
+"lat": 46.220608,
+"lon": -69.312101,
+"shore_m": 1440
+},
+{
+"site": "L:Chatfield Reservoir|CO",
+"lat": 39.550079,
+"lon": -105.058468,
+"shore_m": 660
+},
+{
+"site": "L:Chautauqua Lake|NY",
+"lat": 42.12389,
+"lon": -79.368446,
+"shore_m": 1410
+},
+{
+"site": "L:Cheney Reservoir|KS",
+"lat": 37.736144,
+"lon": -97.812893,
+"shore_m": 1717
+},
+{
+"site": "L:Cherokee Lake|TN",
+"lat": 36.179178,
+"lon": -83.4733,
+"shore_m": 957
+},
+{
+"site": "L:Cherry Creek Reservoir|CO",
+"lat": 39.641868,
+"lon": -104.856228,
+"shore_m": 725
+},
+{
+"site": "L:Chesuncook Lake|ME",
+"lat": 45.917741,
+"lon": -69.303674,
+"shore_m": 1296
+},
+{
+"site": "L:Chickamauga Lake|TN",
+"lat": 35.116158,
+"lon": -85.186774,
+"shore_m": 792
+},
+{
+"site": "L:China Lake|ME",
+"lat": 44.438636,
+"lon": -69.571781,
+"shore_m": 836
+},
+{
+"site": "L:Chippewa Flowage|WI",
+"lat": 45.928785,
+"lon": -91.161053,
+"shore_m": 832
+},
+{
+"site": "L:Clarks Hill / J.S. Thurmond|GA",
+"lat": 33.748994,
+"lon": -82.253904,
+"shore_m": 1262
+},
+{
+"site": "L:Clear Lake|CA",
+"lat": 39.074356,
+"lon": -122.84983,
+"shore_m": 4484
+},
+{
+"site": "L:Clear Lake|IA",
+"lat": 43.126893,
+"lon": -93.400818,
+"shore_m": 1341
+},
+{
+"site": "L:Clinton Lake|IL",
+"lat": 40.136174,
+"lon": -88.84364,
+"shore_m": 711
+},
+{
+"site": "L:Clinton Lake|KS",
+"lat": 38.917323,
+"lon": -95.345729,
+"shore_m": 1316
+},
+{
+"site": "L:Coeur d'Alene|ID",
+"lat": 47.647992,
+"lon": -116.763113,
+"shore_m": 1710
+},
+{
+"site": "L:Conneaut Lake|PA",
+"lat": 41.624738,
+"lon": -80.306,
+"shore_m": 607
+},
+{
+"site": "L:Conowingo Reservoir|MD",
+"lat": 39.746988,
+"lon": -76.240466,
+"shore_m": 1158
+},
+{
+"site": "L:Crab Orchard Lake|IL",
+"lat": 37.725607,
+"lon": -89.137841,
+"shore_m": 825
+},
+{
+"site": "L:Cranberry Lake|NY",
+"lat": 44.173184,
+"lon": -74.809616,
+"shore_m": 1224
+},
+{
+"site": "L:Crater Lake|OR",
+"lat": 42.94323,
+"lon": -122.099595,
+"shore_m": 3312
+},
+{
+"site": "L:Crescent Lake|FL",
+"lat": 29.49294,
+"lon": -81.521791,
+"shore_m": 2071
+},
+{
+"site": "L:Crescent Lake|OR",
+"lat": 43.478784,
+"lon": -121.984604,
+"shore_m": 1566
+},
+{
+"site": "L:Cross Lake|LA",
+"lat": 32.508864,
+"lon": -93.812036,
+"shore_m": 1015
+},
+{
+"site": "L:Dale Hollow Lake|TN",
+"lat": 36.605018,
+"lon": -85.372799,
+"shore_m": 782
+},
+{
+"site": "L:Damariscotta Lake|ME",
+"lat": 44.186256,
+"lon": -69.476886,
+"shore_m": 858
+},
+{
+"site": "L:Dardanelle|AR",
+"lat": 35.370774,
+"lon": -93.4066,
+"shore_m": 1461
+},
+{
+"site": "L:DeGray|AR",
+"lat": 34.237837,
+"lon": -93.124313,
+"shore_m": 870
+},
+{
+"site": "L:Deer Creek Reservoir|UT",
+"lat": 40.431383,
+"lon": -111.500776,
+"shore_m": 677
+},
+{
+"site": "L:Detroit Lake|OR",
+"lat": 44.711189,
+"lon": -122.184285,
+"shore_m": 722
+},
+{
+"site": "L:Devils Lake|ND",
+"lat": 48.071456,
+"lon": -99.181839,
+"shore_m": 3555
+},
+{
+"site": "L:Diamond Lake|OR",
+"lat": 43.166663,
+"lon": -122.149476,
+"shore_m": 1294
+},
+{
+"site": "L:Dillon Reservoir|CO",
+"lat": 39.607199,
+"lon": -106.058095,
+"shore_m": 828
+},
+{
+"site": "L:Don Pedro|CA",
+"lat": 37.739489,
+"lon": -120.378756,
+"shore_m": 992
+},
+{
+"site": "L:Douglas Lake|TN",
+"lat": 36.007405,
+"lon": -83.255533,
+"shore_m": 1104
+},
+{
+"site": "L:Dworshak Reservoir|ID",
+"lat": 46.624659,
+"lon": -116.256545,
+"shore_m": 808
+},
+{
+"site": "L:Eagle Lake|CA",
+"lat": 40.699617,
+"lon": -120.70149,
+"shore_m": 2018
+},
+{
+"site": "L:Eagle Lake|MS",
+"lat": 32.49018,
+"lon": -90.9988,
+"shore_m": 960
+},
+{
+"site": "L:Eagle Nest Lake|NM",
+"lat": 36.534159,
+"lon": -105.251868,
+"shore_m": 870
+},
+{
+"site": "L:East Lake Tohopekaliga|FL",
+"lat": 28.164267,
+"lon": -81.361127,
+"shore_m": 2611
+},
+{
+"site": "L:East Okoboji|IA",
+"lat": 43.381348,
+"lon": -95.118165,
+"shore_m": 702
+},
+{
+"site": "L:El Dorado Lake|KS",
+"lat": 37.862476,
+"lon": -96.803739,
+"shore_m": 1026
+},
+{
+"site": "L:El Vado Lake|NM",
+"lat": 36.605192,
+"lon": -106.749097,
+"shore_m": 750
+},
+{
+"site": "L:Elephant Butte Reservoir|NM",
+"lat": 33.291366,
+"lon": -107.163767,
+"shore_m": 1233
+},
+{
+"site": "L:Eleven Mile Reservoir|CO",
+"lat": 38.927459,
+"lon": -105.509985,
+"shore_m": 732
+},
+{
+"site": "L:Elk Lake|MI",
+"lat": 44.89899,
+"lon": -85.369856,
+"shore_m": 1390
+},
+{
+"site": "L:Enemy Swim Lake|SD",
+"lat": 45.442769,
+"lon": -97.271187,
+"shore_m": 900
+},
+{
+"site": "L:Enid Lake|MS",
+"lat": 34.148037,
+"lon": -89.84945,
+"shore_m": 1250
+},
+{
+"site": "L:Eufaula / W.F. George|AL",
+"lat": 31.642131,
+"lon": -85.075474,
+"shore_m": 2037
+},
+{
+"site": "L:Falcon Lake|TX",
+"lat": 26.632417,
+"lon": -99.198304,
+"shore_m": 3013
+},
+{
+"site": "L:Falls Lake|NC",
+"lat": 36.028601,
+"lon": -78.718254,
+"shore_m": 966
+},
+{
+"site": "L:False River|LA",
+"lat": 30.687887,
+"lon": -91.428033,
+"shore_m": 600
+},
+{
+"site": "L:Fern Ridge Reservoir|OR",
+"lat": 44.099547,
+"lon": -123.298508,
+"shore_m": 1784
+},
+{
+"site": "L:First Connecticut Lake|NH",
+"lat": 45.094833,
+"lon": -71.246691,
+"shore_m": 1138
+},
+{
+"site": "L:Fish Lake|UT",
+"lat": 38.538536,
+"lon": -111.721725,
+"shore_m": 899
+},
+{
+"site": "L:Flagstaff Lake|ME",
+"lat": 45.170563,
+"lon": -70.195029,
+"shore_m": 1260
+},
+{
+"site": "L:Flaming Gorge Reservoir|UT",
+"lat": 41.220581,
+"lon": -109.586552,
+"shore_m": 1615
+},
+{
+"site": "L:Flaming Gorge Reservoir|WY",
+"lat": 41.220581,
+"lon": -109.586552,
+"shore_m": 1615
+},
+{
+"site": "L:Flathead Lake|MT",
+"lat": 47.853969,
+"lon": -114.116099,
+"shore_m": 5645
+},
+{
+"site": "L:Folsom|CA",
+"lat": 38.721717,
+"lon": -121.133491,
+"shore_m": 2264
+},
+{
+"site": "L:Fontenelle Reservoir|WY",
+"lat": 42.062169,
+"lon": -110.12523,
+"shore_m": 987
+},
+{
+"site": "L:Fort Gibson Lake|OK",
+"lat": 35.885948,
+"lon": -95.256478,
+"shore_m": 1209
+},
+{
+"site": "L:Fort Peck Lake|MT",
+"lat": 47.963293,
+"lon": -106.438771,
+"shore_m": 3525
+},
+{
+"site": "L:Fox Lake|IL",
+"lat": 42.407889,
+"lon": -88.15385,
+"shore_m": 882
+},
+{
+"site": "L:Fresno Reservoir|MT",
+"lat": 48.624455,
+"lon": -109.973021,
+"shore_m": 752
+},
+{
+"site": "L:Georgetown Lake|MT",
+"lat": 46.179566,
+"lon": -113.30371,
+"shore_m": 953
+},
+{
+"site": "L:Glendo Reservoir|WY",
+"lat": 42.530778,
+"lon": -105.003291,
+"shore_m": 1364
+},
+{
+"site": "L:Grand Lake|LA",
+"lat": 29.878749,
+"lon": -92.758593,
+"shore_m": 4168
+},
+{
+"site": "L:Grand Lake St. Marys|OH",
+"lat": 40.52729,
+"lon": -84.493161,
+"shore_m": 2026
+},
+{
+"site": "L:Grand Lake o' the Cherokees|OK",
+"lat": 36.61452,
+"lon": -94.847743,
+"shore_m": 1321
+},
+{
+"site": "L:Great East Lake|NH",
+"lat": 43.584548,
+"lon": -70.983846,
+"shore_m": 865
+},
+{
+"site": "L:Great Pond (Belgrade)|ME",
+"lat": 44.537172,
+"lon": -69.84305,
+"shore_m": 1362
+},
+{
+"site": "L:Great Sacandaga Lake|NY",
+"lat": 43.132912,
+"lon": -74.19541,
+"shore_m": 2754
+},
+{
+"site": "L:Green River Lake|KY",
+"lat": 37.246138,
+"lon": -85.299795,
+"shore_m": 741
+},
+{
+"site": "L:Greers Ferry|AR",
+"lat": 35.523575,
+"lon": -92.115318,
+"shore_m": 1679
+},
+{
+"site": "L:Grenada Lake|MS",
+"lat": 33.828574,
+"lon": -89.727656,
+"shore_m": 2130
+},
+{
+"site": "L:Griffin|FL",
+"lat": 28.84609,
+"lon": -81.846912,
+"shore_m": 1748
+},
+{
+"site": "L:Gull Lake|MI",
+"lat": 42.399809,
+"lon": -85.409356,
+"shore_m": 752
+},
+{
+"site": "L:Gull Lake|MN",
+"lat": 46.473162,
+"lon": -94.331346,
+"shore_m": 1691
+},
+{
+"site": "L:Guntersville|AL",
+"lat": 34.373148,
+"lon": -86.320454,
+"shore_m": 1595
+},
+{
+"site": "L:Harding|AK",
+"lat": 64.42139,
+"lon": -146.84573,
+"shore_m": 1290
+},
+{
+"site": "L:Harlan County Lake|NE",
+"lat": 40.062991,
+"lon": -99.232145,
+"shore_m": 1786
+},
+{
+"site": "L:Harris|FL",
+"lat": 28.773986,
+"lon": -81.807422,
+"shore_m": 2856
+},
+{
+"site": "L:Havasu|AZ",
+"lat": 34.481155,
+"lon": -114.380155,
+"shore_m": 1997
+},
+{
+"site": "L:Hebgen Lake|MT",
+"lat": 44.785291,
+"lon": -111.251337,
+"shore_m": 1740
+},
+{
+"site": "L:Henderson Lake|LA",
+"lat": 30.317335,
+"lon": -91.758548,
+"shore_m": 997
+},
+{
+"site": "L:Henrys Lake|ID",
+"lat": 44.647648,
+"lon": -111.405196,
+"shore_m": 2147
+},
+{
+"site": "L:Heron Lake|NM",
+"lat": 36.688283,
+"lon": -106.691509,
+"shore_m": 973
+},
+{
+"site": "L:Higgins Lake|MI",
+"lat": 44.491937,
+"lon": -84.749175,
+"shore_m": 2165
+},
+{
+"site": "L:High Rock Lake|NC",
+"lat": 35.628894,
+"lon": -80.257755,
+"shore_m": 875
+},
+{
+"site": "L:Holter Lake|MT",
+"lat": 46.970099,
+"lon": -111.981031,
+"shore_m": 638
+},
+{
+"site": "L:Hoover Reservoir|OH",
+"lat": 40.195131,
+"lon": -82.885167,
+"shore_m": 630
+},
+{
+"site": "L:Houghton Lake|MI",
+"lat": 44.341239,
+"lon": -84.728001,
+"shore_m": 3606
+},
+{
+"site": "L:Hungry Horse Reservoir|MT",
+"lat": 48.265755,
+"lon": -113.847771,
+"shore_m": 1461
+},
+{
+"site": "L:Indian Lake|OH",
+"lat": 40.493734,
+"lon": -83.897572,
+"shore_m": 1328
+},
+{
+"site": "L:Isabella|CA",
+"lat": 35.661782,
+"lon": -118.407234,
+"shore_m": 1468
+},
+{
+"site": "L:Istokpoga|FL",
+"lat": 27.39971,
+"lon": -81.268234,
+"shore_m": 1945
+},
+{
+"site": "L:Jackson Lake|WY",
+"lat": 43.939932,
+"lon": -110.674322,
+"shore_m": 2230
+},
+{
+"site": "L:Jenny Lake|WY",
+"lat": 43.763195,
+"lon": -110.72945,
+"shore_m": 977
+},
+{
+"site": "L:Jesup|FL",
+"lat": 28.713941,
+"lon": -81.229219,
+"shore_m": 1374
+},
+{
+"site": "L:John Martin Reservoir|CO",
+"lat": 38.07221,
+"lon": -103.004398,
+"shore_m": 1288
+},
+{
+"site": "L:John Redmond Reservoir|KS",
+"lat": 38.247932,
+"lon": -95.800584,
+"shore_m": 2381
+},
+{
+"site": "L:Johnson Lake|NE",
+"lat": 40.697325,
+"lon": -99.85771,
+"shore_m": 1015
+},
+{
+"site": "L:Jordan Lake|NC",
+"lat": 35.711849,
+"lon": -79.037312,
+"shore_m": 942
+},
+{
+"site": "L:Jordanelle Reservoir|UT",
+"lat": 40.605885,
+"lon": -111.415707,
+"shore_m": 849
+},
+{
+"site": "L:Kanopolis Lake|KS",
+"lat": 38.617372,
+"lon": -97.990585,
+"shore_m": 1230
+},
+{
+"site": "L:Kaw Lake|OK",
+"lat": 36.72931,
+"lon": -96.911971,
+"shore_m": 1213
+},
+{
+"site": "L:Kenai|AK",
+"lat": 60.409186,
+"lon": -149.660274,
+"shore_m": 1074
+},
+{
+"site": "L:Kentucky Lake|KY",
+"lat": 36.994552,
+"lon": -88.259549,
+"shore_m": 1652
+},
+{
+"site": "L:Kentucky Lake|TN",
+"lat": 36.994818,
+"lon": -88.25983,
+"shore_m": 1648
+},
+{
+"site": "L:Kerr Lake (John H. Kerr)|NC",
+"lat": 36.574783,
+"lon": -78.331096,
+"shore_m": 1237
+},
+{
+"site": "L:Kerr Reservoir (Buggs Island)|VA",
+"lat": 36.574783,
+"lon": -78.331096,
+"shore_m": 1237
+},
+{
+"site": "L:Keuka Lake|NY",
+"lat": 42.493985,
+"lon": -77.148192,
+"shore_m": 942
+},
+{
+"site": "L:Keyhole Reservoir|WY",
+"lat": 44.356378,
+"lon": -104.853761,
+"shore_m": 1410
+},
+{
+"site": "L:Keystone Lake|OK",
+"lat": 36.155665,
+"lon": -96.26669,
+"shore_m": 960
+},
+{
+"site": "L:Kissimmee|FL",
+"lat": 27.905134,
+"lon": -81.284932,
+"shore_m": 2854
+},
+{
+"site": "L:Kvichak / Ugashik|AK",
+"lat": 57.639863,
+"lon": -156.751099,
+"shore_m": 4794
+},
+{
+"site": "L:Lac Courte Oreilles|WI",
+"lat": 45.890876,
+"lon": -91.440473,
+"shore_m": 1231
+},
+{
+"site": "L:Lahontan Reservoir|NV",
+"lat": 39.377177,
+"lon": -119.174839,
+"shore_m": 942
+},
+{
+"site": "L:Lake Anna|VA",
+"lat": 38.029871,
+"lon": -77.740439,
+"shore_m": 907
+},
+{
+"site": "L:Lake Barkley|KY",
+"lat": 37.000065,
+"lon": -88.195852,
+"shore_m": 1234
+},
+{
+"site": "L:Lake Bemidji|MN",
+"lat": 47.519709,
+"lon": -94.8447,
+"shore_m": 1864
+},
+{
+"site": "L:Lake Bistineau|LA",
+"lat": 32.355198,
+"lon": -93.406825,
+"shore_m": 1195
+},
+{
+"site": "L:Lake Bomoseen|VT",
+"lat": 43.63361,
+"lon": -73.223801,
+"shore_m": 633
+},
+{
+"site": "L:Lake Buchanan|TX",
+"lat": 30.785287,
+"lon": -98.431799,
+"shore_m": 2255
+},
+{
+"site": "L:Lake Carmi|VT",
+"lat": 44.980677,
+"lon": -72.867922,
+"shore_m": 706
+},
+{
+"site": "L:Lake Cascade|ID",
+"lat": 44.573992,
+"lon": -116.111701,
+"shore_m": 2563
+},
+{
+"site": "L:Lake Champlain|VT",
+"lat": 44.472271,
+"lon": -73.32175,
+"shore_m": 4776
+},
+{
+"site": "L:Lake Charlevoix|MI",
+"lat": 45.26247,
+"lon": -85.094123,
+"shore_m": 1722
+},
+{
+"site": "L:Lake Chelan|WA",
+"lat": 47.865486,
+"lon": -120.12881,
+"shore_m": 1414
+},
+{
+"site": "L:Lake Clark|AK",
+"lat": 60.289187,
+"lon": -154.135612,
+"shore_m": 3078
+},
+{
+"site": "L:Lake Conroe|TX",
+"lat": 30.41106,
+"lon": -95.593461,
+"shore_m": 1387
+},
+{
+"site": "L:Lake Crescent|WA",
+"lat": 48.084304,
+"lon": -123.774123,
+"shore_m": 979
+},
+{
+"site": "L:Lake Cumberland|KY",
+"lat": 36.88798,
+"lon": -85.05045,
+"shore_m": 993
+},
+{
+"site": "L:Lake Cushman|WA",
+"lat": 47.487496,
+"lon": -123.259846,
+"shore_m": 860
+},
+{
+"site": "L:Lake D'Arbonne|LA",
+"lat": 32.760443,
+"lon": -92.428218,
+"shore_m": 1050
+},
+{
+"site": "L:Lake Darling|ND",
+"lat": 48.487941,
+"lon": -101.544084,
+"shore_m": 624
+},
+{
+"site": "L:Lake Dunmore|VT",
+"lat": 43.911465,
+"lon": -73.076389,
+"shore_m": 649
+},
+{
+"site": "L:Lake Eufaula|OK",
+"lat": 35.31376,
+"lon": -95.559855,
+"shore_m": 2206
+},
+{
+"site": "L:Lake Fork Reservoir|TX",
+"lat": 32.827072,
+"lon": -95.577006,
+"shore_m": 1237
+},
+{
+"site": "L:Lake Francis Case|SD",
+"lat": 43.071652,
+"lon": -98.596265,
+"shore_m": 1411
+},
+{
+"site": "L:Lake Gaston|VA",
+"lat": 36.505026,
+"lon": -77.926357,
+"shore_m": 1099
+},
+{
+"site": "L:Lake Geneva|WI",
+"lat": 42.557142,
+"lon": -88.550886,
+"shore_m": 1052
+},
+{
+"site": "L:Lake George|FL",
+"lat": 29.291988,
+"lon": -81.593389,
+"shore_m": 4997
+},
+{
+"site": "L:Lake George|NY",
+"lat": 43.504819,
+"lon": -73.652864,
+"shore_m": 1452
+},
+{
+"site": "L:Lake Gogebic|MI",
+"lat": 46.473626,
+"lon": -89.555991,
+"shore_m": 1832
+},
+{
+"site": "L:Lake Granby|CO",
+"lat": 40.165978,
+"lon": -105.876968,
+"shore_m": 1273
+},
+{
+"site": "L:Lake Greenwood|SC",
+"lat": 34.205969,
+"lon": -81.952451,
+"shore_m": 660
+},
+{
+"site": "L:Lake Hartwell|SC",
+"lat": 34.359501,
+"lon": -82.837107,
+"shore_m": 1348
+},
+{
+"site": "L:Lake Hudson|OK",
+"lat": 36.263008,
+"lon": -95.149379,
+"shore_m": 1075
+},
+{
+"site": "L:Lake Jocassee|SC",
+"lat": 34.973827,
+"lon": -82.92955,
+"shore_m": 1463
+},
+{
+"site": "L:Lake Keowee|SC",
+"lat": 34.743661,
+"lon": -82.915757,
+"shore_m": 721
+},
+{
+"site": "L:Lake Koocanusa|MT",
+"lat": 48.97738,
+"lon": -115.159242,
+"shore_m": 1477
+},
+{
+"site": "L:Lake Livingston|TX",
+"lat": 30.738191,
+"lon": -95.14523,
+"shore_m": 3950
+},
+{
+"site": "L:Lake Marion|SC",
+"lat": 33.466181,
+"lon": -80.212807,
+"shore_m": 4030
+},
+{
+"site": "L:Lake Martin|AL",
+"lat": 32.808822,
+"lon": -85.892968,
+"shore_m": 1073
+},
+{
+"site": "L:Lake Mattamuskeet|NC",
+"lat": 35.505072,
+"lon": -76.156835,
+"shore_m": 3867
+},
+{
+"site": "L:Lake Maurepas|LA",
+"lat": 30.250625,
+"lon": -90.502511,
+"shore_m": 7065
+},
+{
+"site": "L:Lake McConaughy|NE",
+"lat": 41.228041,
+"lon": -101.746057,
+"shore_m": 2313
+},
+{
+"site": "L:Lake Mead|NV",
+"lat": 36.128037,
+"lon": -114.483644,
+"shore_m": 3408
+},
+{
+"site": "L:Lake Memphremagog|VT",
+"lat": 44.975806,
+"lon": -72.218717,
+"shore_m": 1655
+},
+{
+"site": "L:Lake Mendota|WI",
+"lat": 43.109389,
+"lon": -89.419762,
+"shore_m": 2079
+},
+{
+"site": "L:Lake Minnetonka|MN",
+"lat": 44.943478,
+"lon": -93.544996,
+"shore_m": 1195
+},
+{
+"site": "L:Lake Mohave|NV",
+"lat": 35.432554,
+"lon": -114.649141,
+"shore_m": 2850
+},
+{
+"site": "L:Lake Monona|WI",
+"lat": 43.064834,
+"lon": -89.36604,
+"shore_m": 1310
+},
+{
+"site": "L:Lake Monticello|SC",
+"lat": 34.318052,
+"lon": -81.311349,
+"shore_m": 1599
+},
+{
+"site": "L:Lake Moultrie|SC",
+"lat": 33.310526,
+"lon": -80.080826,
+"shore_m": 4351
+},
+{
+"site": "L:Lake Murray (OK)|OK",
+"lat": 34.054307,
+"lon": -97.064039,
+"shore_m": 618
+},
+{
+"site": "L:Lake Murray (SC)|SC",
+"lat": 34.049128,
+"lon": -81.327029,
+"shore_m": 1682
+},
+{
+"site": "L:Lake Norman|NC",
+"lat": 35.506152,
+"lon": -80.909261,
+"shore_m": 953
+},
+{
+"site": "L:Lake Oahe|ND",
+"lat": 45.936586,
+"lon": -100.49095,
+"shore_m": 2076
+},
+{
+"site": "L:Lake Oahe|SD",
+"lat": 44.726476,
+"lon": -100.632021,
+"shore_m": 2430
+},
+{
+"site": "L:Lake Owyhee|OR",
+"lat": 43.436341,
+"lon": -117.35516,
+"shore_m": 616
+},
+{
+"site": "L:Lake Pend Oreille|ID",
+"lat": 48.165716,
+"lon": -116.328867,
+"shore_m": 4349
+},
+{
+"site": "L:Lake Pepin|MN",
+"lat": 44.434118,
+"lon": -92.2014,
+"shore_m": 1851
+},
+{
+"site": "L:Lake Petenwell|WI",
+"lat": 44.083322,
+"lon": -90.00254,
+"shore_m": 2503
+},
+{
+"site": "L:Lake Poinsett|SD",
+"lat": 44.562485,
+"lon": -97.076466,
+"shore_m": 2270
+},
+{
+"site": "L:Lake Pontchartrain|LA",
+"lat": 30.192459,
+"lon": -90.157237,
+"shore_m": 18204
+},
+{
+"site": "L:Lake Powell|UT",
+"lat": 37.064355,
+"lon": -111.296016,
+"shore_m": 1931
+},
+{
+"site": "L:Lake Quinault|WA",
+"lat": 47.473322,
+"lon": -123.867767,
+"shore_m": 1317
+},
+{
+"site": "L:Lake Red Rock|IA",
+"lat": 41.381903,
+"lon": -93.000656,
+"shore_m": 1276
+},
+{
+"site": "L:Lake Roosevelt (FDR)|WA",
+"lat": 47.951432,
+"lon": -118.835556,
+"shore_m": 1464
+},
+{
+"site": "L:Lake Russell (R.B. Russell)|GA",
+"lat": 34.043224,
+"lon": -82.610518,
+"shore_m": 994
+},
+{
+"site": "L:Lake Sakakawea|ND",
+"lat": 47.807517,
+"lon": -102.311721,
+"shore_m": 4062
+},
+{
+"site": "L:Lake Sammamish|WA",
+"lat": 47.604638,
+"lon": -122.09571,
+"shore_m": 1110
+},
+{
+"site": "L:Lake Seymour|VT",
+"lat": 44.899587,
+"lon": -71.985203,
+"shore_m": 691
+},
+{
+"site": "L:Lake Sharpe|SD",
+"lat": 44.203192,
+"lon": -99.672724,
+"shore_m": 1866
+},
+{
+"site": "L:Lake Springfield|IL",
+"lat": 39.709137,
+"lon": -89.60269,
+"shore_m": 780
+},
+{
+"site": "L:Lake St. Clair|MI",
+"lat": 42.412056,
+"lon": -82.725337,
+"shore_m": 12333
+},
+{
+"site": "L:Lake Strom Thurmond (Clarks Hill)|SC",
+"lat": 33.7489,
+"lon": -82.253767,
+"shore_m": 1248
+},
+{
+"site": "L:Lake Tahoe|NV",
+"lat": 39.118071,
+"lon": -120.053866,
+"shore_m": 8143
+},
+{
+"site": "L:Lake Tawakoni|TX",
+"lat": 32.839575,
+"lon": -95.92875,
+"shore_m": 2954
+},
+{
+"site": "L:Lake Tenkiller|OK",
+"lat": 35.659338,
+"lon": -94.993843,
+"shore_m": 1003
+},
+{
+"site": "L:Lake Texoma|TX",
+"lat": 33.887258,
+"lon": -96.680822,
+"shore_m": 2526
+},
+{
+"site": "L:Lake Thompson|SD",
+"lat": 44.285485,
+"lon": -97.469586,
+"shore_m": 2831
+},
+{
+"site": "L:Lake Travis|TX",
+"lat": 30.402815,
+"lon": -97.894392,
+"shore_m": 1080
+},
+{
+"site": "L:Lake Tschida|ND",
+"lat": 46.609782,
+"lon": -101.862853,
+"shore_m": 703
+},
+{
+"site": "L:Lake Vermilion|MN",
+"lat": 47.852559,
+"lon": -92.327988,
+"shore_m": 1595
+},
+{
+"site": "L:Lake Waccamaw|NC",
+"lat": 34.280877,
+"lon": -78.502016,
+"shore_m": 2650
+},
+{
+"site": "L:Lake Wallenpaupack|PA",
+"lat": 41.426578,
+"lon": -75.21425,
+"shore_m": 837
+},
+{
+"site": "L:Lake Washington|MS",
+"lat": 33.047729,
+"lon": -91.038692,
+"shore_m": 655
+},
+{
+"site": "L:Lake Washington|WA",
+"lat": 47.667471,
+"lon": -122.230283,
+"shore_m": 1710
+},
+{
+"site": "L:Lake Wateree|SC",
+"lat": 34.409998,
+"lon": -80.826142,
+"shore_m": 932
+},
+{
+"site": "L:Lake Wawasee|IN",
+"lat": 41.400546,
+"lon": -85.702401,
+"shore_m": 891
+},
+{
+"site": "L:Lake Wentworth|NH",
+"lat": 43.604495,
+"lon": -71.165492,
+"shore_m": 825
+},
+{
+"site": "L:Lake Willoughby|VT",
+"lat": 44.755179,
+"lon": -72.063066,
+"shore_m": 641
+},
+{
+"site": "L:Lake Winnebago|WI",
+"lat": 44.009123,
+"lon": -88.419933,
+"shore_m": 7726
+},
+{
+"site": "L:Lake Winnibigoshish|MN",
+"lat": 47.412475,
+"lon": -94.226847,
+"shore_m": 5721
+},
+{
+"site": "L:Lake Winnipesaukee|NH",
+"lat": 43.596829,
+"lon": -71.325324,
+"shore_m": 2556
+},
+{
+"site": "L:Lake Winnisquam|NH",
+"lat": 43.526792,
+"lon": -71.495335,
+"shore_m": 972
+},
+{
+"site": "L:Lake Wisconsin|WI",
+"lat": 43.376251,
+"lon": -89.594988,
+"shore_m": 1206
+},
+{
+"site": "L:Lake of the Ozarks|MO",
+"lat": 38.207724,
+"lon": -92.759216,
+"shore_m": 685
+},
+{
+"site": "L:Lanier (Sidney Lanier)|GA",
+"lat": 34.199305,
+"lon": -83.987187,
+"shore_m": 1101
+},
+{
+"site": "L:Leech Lake|MN",
+"lat": 47.164053,
+"lon": -94.384227,
+"shore_m": 4795
+},
+{
+"site": "L:Lewis and Clark Lake|SD",
+"lat": 42.84489,
+"lon": -97.724917,
+"shore_m": 2112
+},
+{
+"site": "L:Lochloosa|FL",
+"lat": 29.521565,
+"lon": -82.129419,
+"shore_m": 2007
+},
+{
+"site": "L:Logan Martin|AL",
+"lat": 33.450953,
+"lon": -86.319652,
+"shore_m": 631
+},
+{
+"site": "L:Long Lake|ME",
+"lat": 43.993531,
+"lon": -70.630184,
+"shore_m": 778
+},
+{
+"site": "L:Long Pond (Lakeville)|MA",
+"lat": 41.803365,
+"lon": -70.946837,
+"shore_m": 631
+},
+{
+"site": "L:Malheur Lake|OR",
+"lat": 43.319959,
+"lon": -118.800606,
+"shore_m": 3582
+},
+{
+"site": "L:Mark Twain Lake|MO",
+"lat": 39.502251,
+"lon": -91.744889,
+"shore_m": 1008
+},
+{
+"site": "L:Melvern Lake|KS",
+"lat": 38.495191,
+"lon": -95.822399,
+"shore_m": 819
+},
+{
+"site": "L:Merrill Creek Reservoir|NJ",
+"lat": 40.733367,
+"lon": -75.102069,
+"shore_m": 618
+},
+{
+"site": "L:Milford Lake|KS",
+"lat": 39.19908,
+"lon": -96.983409,
+"shore_m": 1594
+},
+{
+"site": "L:Mille Lacs Lake|MN",
+"lat": 46.269608,
+"lon": -93.661971,
+"shore_m": 9753
+},
+{
+"site": "L:Millwood|AR",
+"lat": 33.727293,
+"lon": -93.96368,
+"shore_m": 3302
+},
+{
+"site": "L:Mono|CA",
+"lat": 38.018614,
+"lon": -118.967763,
+"shore_m": 4705
+},
+{
+"site": "L:Monroe Lake|IN",
+"lat": 39.060549,
+"lon": -86.444141,
+"shore_m": 1195
+},
+{
+"site": "L:Moon Lake|MS",
+"lat": 34.418959,
+"lon": -90.506751,
+"shore_m": 648
+},
+{
+"site": "L:Moosehead Lake|ME",
+"lat": 45.644078,
+"lon": -69.650724,
+"shore_m": 2589
+},
+{
+"site": "L:Mooselookmeguntic Lake|ME",
+"lat": 44.922423,
+"lon": -70.803557,
+"shore_m": 2166
+},
+{
+"site": "L:Moses Lake|WA",
+"lat": 47.121114,
+"lon": -119.336578,
+"shore_m": 685
+},
+{
+"site": "L:Mosquito Creek Lake|OH",
+"lat": 41.35999,
+"lon": -80.754397,
+"shore_m": 1026
+},
+{
+"site": "L:Mullett Lake|MI",
+"lat": 45.53258,
+"lon": -84.503572,
+"shore_m": 2732
+},
+{
+"site": "L:Naknek|AK",
+"lat": 58.664079,
+"lon": -156.259026,
+"shore_m": 5041
+},
+{
+"site": "L:Navajo Reservoir|NM",
+"lat": 36.987415,
+"lon": -107.421477,
+"shore_m": 934
+},
+{
+"site": "L:Newfound Lake|NH",
+"lat": 43.668343,
+"lon": -71.771282,
+"shore_m": 1209
+},
+{
+"site": "L:Nickajack Lake|TN",
+"lat": 35.00059,
+"lon": -85.604261,
+"shore_m": 779
+},
+{
+"site": "L:Nimrod|AR",
+"lat": 34.952958,
+"lon": -93.243328,
+"shore_m": 658
+},
+{
+"site": "L:Ninigret Pond|RI",
+"lat": 41.353121,
+"lon": -71.684958,
+"shore_m": 685
+},
+{
+"site": "L:Norfork|AR",
+"lat": 36.345742,
+"lon": -92.231951,
+"shore_m": 806
+},
+{
+"site": "L:Norris Lake|TN",
+"lat": 36.279267,
+"lon": -83.936918,
+"shore_m": 693
+},
+{
+"site": "L:Oconee|GA",
+"lat": 33.455412,
+"lon": -83.263301,
+"shore_m": 660
+},
+{
+"site": "L:Odell Lake|OR",
+"lat": 43.569212,
+"lon": -121.990288,
+"shore_m": 1124
+},
+{
+"site": "L:Okatibbee Lake|MS",
+"lat": 32.495237,
+"lon": -88.793531,
+"shore_m": 845
+},
+{
+"site": "L:Okeechobee|FL",
+"lat": 26.930131,
+"lon": -80.79678,
+"shore_m": 16863
+},
+{
+"site": "L:Old Hickory Lake|TN",
+"lat": 36.281286,
+"lon": -86.640895,
+"shore_m": 849
+},
+{
+"site": "L:Oneida Lake|NY",
+"lat": 43.192114,
+"lon": -75.879224,
+"shore_m": 4041
+},
+{
+"site": "L:Oologah Lake|OK",
+"lat": 36.628494,
+"lon": -95.561468,
+"shore_m": 1900
+},
+{
+"site": "L:Orange Lake|FL",
+"lat": 29.472077,
+"lon": -82.181553,
+"shore_m": 1320
+},
+{
+"site": "L:Oroville|CA",
+"lat": 39.55857,
+"lon": -121.449315,
+"shore_m": 1120
+},
+{
+"site": "L:Ossipee Lake|NH",
+"lat": 43.783585,
+"lon": -71.132125,
+"shore_m": 1307
+},
+{
+"site": "L:Otter Tail Lake|MN",
+"lat": 46.411774,
+"lon": -95.644045,
+"shore_m": 2397
+},
+{
+"site": "L:Ouachita (L. Ouachita)|AR",
+"lat": 34.58778,
+"lon": -93.31529,
+"shore_m": 1423
+},
+{
+"site": "L:Owasco Lake|NY",
+"lat": 42.880624,
+"lon": -76.530579,
+"shore_m": 1020
+},
+{
+"site": "L:Palisades Reservoir|ID",
+"lat": 43.195766,
+"lon": -111.078835,
+"shore_m": 2096
+},
+{
+"site": "L:Pathfinder Reservoir|WY",
+"lat": 42.420605,
+"lon": -106.914233,
+"shore_m": 1848
+},
+{
+"site": "L:Patoka Lake|IN",
+"lat": 38.425892,
+"lon": -86.668387,
+"shore_m": 858
+},
+{
+"site": "L:Payette Lake|ID",
+"lat": 44.925548,
+"lon": -116.107664,
+"shore_m": 1201
+},
+{
+"site": "L:Percy Priest Lake|TN",
+"lat": 36.124199,
+"lon": -86.580237,
+"shore_m": 890
+},
+{
+"site": "L:Perry Lake|KS",
+"lat": 39.137913,
+"lon": -95.458692,
+"shore_m": 1071
+},
+{
+"site": "L:Pickwick Lake|TN",
+"lat": 35.04878,
+"lon": -88.190317,
+"shore_m": 1127
+},
+{
+"site": "L:Pleasant|AZ",
+"lat": 33.879733,
+"lon": -112.281841,
+"shore_m": 1116
+},
+{
+"site": "L:Pomme de Terre Lake|MO",
+"lat": 37.871402,
+"lon": -93.366416,
+"shore_m": 691
+},
+{
+"site": "L:Pomona Lake|KS",
+"lat": 38.660633,
+"lon": -95.570805,
+"shore_m": 849
+},
+{
+"site": "L:Possum Kingdom Lake|TX",
+"lat": 32.929552,
+"lon": -98.447481,
+"shore_m": 966
+},
+{
+"site": "L:Potholes Reservoir|WA",
+"lat": 46.989426,
+"lon": -119.32972,
+"shore_m": 1434
+},
+{
+"site": "L:Priest Lake|ID",
+"lat": 48.569827,
+"lon": -116.86913,
+"shore_m": 1804
+},
+{
+"site": "L:Pueblo Reservoir|CO",
+"lat": 38.266203,
+"lon": -104.733482,
+"shore_m": 655
+},
+{
+"site": "L:Pymatuning Reservoir|PA",
+"lat": 41.631308,
+"lon": -80.518377,
+"shore_m": 1347
+},
+{
+"site": "L:Pyramid Lake|NV",
+"lat": 40.099829,
+"lon": -119.596951,
+"shore_m": 7778
+},
+{
+"site": "L:Quabbin Reservoir|MA",
+"lat": 42.358041,
+"lon": -72.304301,
+"shore_m": 1321
+},
+{
+"site": "L:Rainy Lake|MN",
+"lat": 48.580283,
+"lon": -92.846853,
+"shore_m": 2028
+},
+{
+"site": "L:Rangeley Lake|ME",
+"lat": 44.942682,
+"lon": -70.689699,
+"shore_m": 1495
+},
+{
+"site": "L:Rathbun Lake|IA",
+"lat": 40.849516,
+"lon": -92.904289,
+"shore_m": 1101
+},
+{
+"site": "L:Raystown Lake|PA",
+"lat": 40.37528,
+"lon": -78.089077,
+"shore_m": 633
+},
+{
+"site": "L:Red Lake|MN",
+"lat": 47.969414,
+"lon": -95.081047,
+"shore_m": 10204
+},
+{
+"site": "L:Redfish Lake|ID",
+"lat": 44.108587,
+"lon": -114.933176,
+"shore_m": 607
+},
+{
+"site": "L:Rend Lake|IL",
+"lat": 38.071314,
+"lon": -88.968578,
+"shore_m": 1740
+},
+{
+"site": "L:Riffe Lake|WA",
+"lat": 46.479289,
+"lon": -122.214982,
+"shore_m": 1158
+},
+{
+"site": "L:Roosevelt|AZ",
+"lat": 33.682054,
+"lon": -111.113719,
+"shore_m": 1610
+},
+{
+"site": "L:Ross Barnett Reservoir|MS",
+"lat": 32.446072,
+"lon": -90.025765,
+"shore_m": 2605
+},
+{
+"site": "L:Ross Lake|WA",
+"lat": 48.993314,
+"lon": -121.081924,
+"shore_m": 942
+},
+{
+"site": "L:Round Valley Reservoir|NJ",
+"lat": 40.615106,
+"lon": -74.821395,
+"shore_m": 1177
+},
+{
+"site": "L:Rye Patch Reservoir|NV",
+"lat": 40.656799,
+"lon": -118.333031,
+"shore_m": 1273
+},
+{
+"site": "L:Sabine Lake|LA",
+"lat": 29.874032,
+"lon": -93.833062,
+"shore_m": 5048
+},
+{
+"site": "L:Salton Sea|CA",
+"lat": 33.246264,
+"lon": -115.729689,
+"shore_m": 11186
+},
+{
+"site": "L:Sam Rayburn Reservoir|TX",
+"lat": 31.142077,
+"lon": -94.216115,
+"shore_m": 2955
+},
+{
+"site": "L:San Carlos|AZ",
+"lat": 33.189066,
+"lon": -110.460641,
+"shore_m": 1616
+},
+{
+"site": "L:Sardis Lake|MS",
+"lat": 34.461288,
+"lon": -89.69083,
+"shore_m": 2115
+},
+{
+"site": "L:Sardis Lake|OK",
+"lat": 34.648492,
+"lon": -95.374774,
+"shore_m": 1319
+},
+{
+"site": "L:Saylorville Lake|IA",
+"lat": 41.714832,
+"lon": -93.688811,
+"shore_m": 999
+},
+{
+"site": "L:Schoodic Lake|ME",
+"lat": 45.35892,
+"lon": -68.926481,
+"shore_m": 1718
+},
+{
+"site": "L:Sebago Lake|ME",
+"lat": 43.867235,
+"lon": -70.579249,
+"shore_m": 4099
+},
+{
+"site": "L:Sebec Lake|ME",
+"lat": 45.282801,
+"lon": -69.314148,
+"shore_m": 1206
+},
+{
+"site": "L:Seminoe Reservoir|WY",
+"lat": 42.098141,
+"lon": -106.850655,
+"shore_m": 924
+},
+{
+"site": "L:Seminole|GA",
+"lat": 30.770449,
+"lon": -84.825273,
+"shore_m": 1006
+},
+{
+"site": "L:Seneca Lake|NY",
+"lat": 42.70189,
+"lon": -76.930044,
+"shore_m": 2372
+},
+{
+"site": "L:Senecaville Lake|OH",
+"lat": 39.906738,
+"lon": -81.403526,
+"shore_m": 600
+},
+{
+"site": "L:Sevier Lake|UT",
+"lat": 39.027985,
+"lon": -113.124984,
+"shore_m": 7418
+},
+{
+"site": "L:Shadow Mountain Reservoir|CO",
+"lat": 40.223448,
+"lon": -105.844384,
+"shore_m": 691
+},
+{
+"site": "L:Shasta|CA",
+"lat": 40.736,
+"lon": -122.413134,
+"shore_m": 1072
+},
+{
+"site": "L:Sherman Reservoir|NE",
+"lat": 41.308501,
+"lon": -98.887926,
+"shore_m": 722
+},
+{
+"site": "L:Skaneateles Lake|NY",
+"lat": 42.868986,
+"lon": -76.388696,
+"shore_m": 1110
+},
+{
+"site": "L:Skiatook Lake|OK",
+"lat": 36.342149,
+"lon": -96.110692,
+"shore_m": 999
+},
+{
+"site": "L:Skilak|AK",
+"lat": 60.100194,
+"lon": -150.008392,
+"shore_m": 4160
+},
+{
+"site": "L:Smith Mountain Lake|VA",
+"lat": 37.039522,
+"lon": -79.579267,
+"shore_m": 702
+},
+{
+"site": "L:Smithville Lake|MO",
+"lat": 39.462367,
+"lon": -94.53154,
+"shore_m": 779
+},
+{
+"site": "L:South Holston Lake|VA",
+"lat": 36.530403,
+"lon": -82.0706,
+"shore_m": 685
+},
+{
+"site": "L:Spirit Lake|IA",
+"lat": 43.480593,
+"lon": -95.101892,
+"shore_m": 1871
+},
+{
+"site": "L:Squam Lake|NH",
+"lat": 43.764133,
+"lon": -71.506533,
+"shore_m": 741
+},
+{
+"site": "L:Starvation Reservoir|UT",
+"lat": 40.211977,
+"lon": -110.439143,
+"shore_m": 765
+},
+{
+"site": "L:Stockton Lake|MO",
+"lat": 37.683542,
+"lon": -93.76421,
+"shore_m": 900
+},
+{
+"site": "L:Storm Lake|IA",
+"lat": 42.627235,
+"lon": -95.21383,
+"shore_m": 1172
+},
+{
+"site": "L:Strawberry Reservoir|UT",
+"lat": 40.191656,
+"lon": -111.129224,
+"shore_m": 1947
+},
+{
+"site": "L:Stump Lake|ND",
+"lat": 47.895012,
+"lon": -98.374293,
+"shore_m": 916
+},
+{
+"site": "L:Sunapee Lake|NH",
+"lat": 43.391073,
+"lon": -72.052662,
+"shore_m": 972
+},
+{
+"site": "L:Sutherland Reservoir|NE",
+"lat": 41.109317,
+"lon": -101.13272,
+"shore_m": 1423
+},
+{
+"site": "L:Swanson Reservoir|NE",
+"lat": 40.159001,
+"lon": -101.095018,
+"shore_m": 1282
+},
+{
+"site": "L:Table Rock Lake|MO",
+"lat": 36.559345,
+"lon": -93.301807,
+"shore_m": 834
+},
+{
+"site": "L:Teshekpuk|AK",
+"lat": 70.57383,
+"lon": -153.560779,
+"shore_m": 10401
+},
+{
+"site": "L:Tiber Reservoir (Lake Elwell)|MT",
+"lat": 48.311606,
+"lon": -111.140069,
+"shore_m": 1521
+},
+{
+"site": "L:Timothy Lake|OR",
+"lat": 45.118093,
+"lon": -121.788588,
+"shore_m": 973
+},
+{
+"site": "L:Tohopekaliga (Toho)|FL",
+"lat": 28.164267,
+"lon": -81.361127,
+"shore_m": 2611
+},
+{
+"site": "L:Toledo Bend Reservoir|TX",
+"lat": 31.298615,
+"lon": -93.653887,
+"shore_m": 3877
+},
+{
+"site": "L:Topaz Lake|NV",
+"lat": 38.685112,
+"lon": -119.535043,
+"shore_m": 1018
+},
+{
+"site": "L:Torch Lake|MI",
+"lat": 44.887253,
+"lon": -85.299663,
+"shore_m": 1831
+},
+{
+"site": "L:Trinity|CA",
+"lat": 40.975716,
+"lon": -122.674491,
+"shore_m": 1358
+},
+{
+"site": "L:Truman Lake|MO",
+"lat": 38.271902,
+"lon": -93.726122,
+"shore_m": 934
+},
+{
+"site": "L:Tustumena|AK",
+"lat": 60.214093,
+"lon": -150.909814,
+"shore_m": 4895
+},
+{
+"site": "L:Tuttle Creek Lake|KS",
+"lat": 39.290165,
+"lon": -96.624423,
+"shore_m": 1103
+},
+{
+"site": "L:Umbagog Lake|NH",
+"lat": 44.776705,
+"lon": -71.041177,
+"shore_m": 1075
+},
+{
+"site": "L:Upper Klamath Lake|OR",
+"lat": 42.395792,
+"lon": -121.881468,
+"shore_m": 3946
+},
+{
+"site": "L:Utah Lake|UT",
+"lat": 40.224174,
+"lon": -111.805045,
+"shore_m": 5238
+},
+{
+"site": "L:Ute Lake|NM",
+"lat": 35.336854,
+"lon": -103.54118,
+"shore_m": 674
+},
+{
+"site": "L:Wachusett Reservoir|MA",
+"lat": 42.390152,
+"lon": -71.717419,
+"shore_m": 800
+},
+{
+"site": "L:Waconda Lake|KS",
+"lat": 39.49883,
+"lon": -98.387998,
+"shore_m": 1827
+},
+{
+"site": "L:Waldo Lake|OR",
+"lat": 43.732174,
+"lon": -122.044553,
+"shore_m": 1624
+},
+{
+"site": "L:Walker Lake|NV",
+"lat": 38.683069,
+"lon": -118.720184,
+"shore_m": 4009
+},
+{
+"site": "L:Wallowa Lake|OR",
+"lat": 45.306303,
+"lon": -117.207546,
+"shore_m": 655
+},
+{
+"site": "L:Walter F. George / Eufaula|GA",
+"lat": 31.642131,
+"lon": -85.075474,
+"shore_m": 2037
+},
+{
+"site": "L:Wanaque Reservoir|NJ",
+"lat": 41.049322,
+"lon": -74.302266,
+"shore_m": 641
+},
+{
+"site": "L:Wappapello Lake|MO",
+"lat": 36.937255,
+"lon": -90.304402,
+"shore_m": 720
+},
+{
+"site": "L:Washoe Lake|NV",
+"lat": 39.246486,
+"lon": -119.788732,
+"shore_m": 1584
+},
+{
+"site": "L:Watts Bar Lake|TN",
+"lat": 35.687429,
+"lon": -84.725451,
+"shore_m": 1034
+},
+{
+"site": "L:Watuppa Ponds|MA",
+"lat": 41.69986,
+"lon": -71.112051,
+"shore_m": 607
+},
+{
+"site": "L:Waubay Lake|SD",
+"lat": 45.413882,
+"lon": -97.390788,
+"shore_m": 832
+},
+{
+"site": "L:Weiss|AL",
+"lat": 34.182227,
+"lon": -85.601932,
+"shore_m": 1499
+},
+{
+"site": "L:West Grand Lake|ME",
+"lat": 45.224874,
+"lon": -67.81524,
+"shore_m": 1670
+},
+{
+"site": "L:West Okoboji|IA",
+"lat": 43.377553,
+"lon": -95.152024,
+"shore_m": 912
+},
+{
+"site": "L:West Point|GA",
+"lat": 32.927652,
+"lon": -85.182723,
+"shore_m": 993
+},
+{
+"site": "L:Wheeler|AL",
+"lat": 34.660271,
+"lon": -87.036529,
+"shore_m": 1624
+},
+{
+"site": "L:White Bear Lake|MN",
+"lat": 45.070569,
+"lon": -92.971766,
+"shore_m": 849
+},
+{
+"site": "L:White Lake|LA",
+"lat": 29.762505,
+"lon": -92.556968,
+"shore_m": 5200
+},
+{
+"site": "L:Whitefish Lake|MT",
+"lat": 48.446884,
+"lon": -114.377425,
+"shore_m": 872
+},
+{
+"site": "L:Wild Horse Reservoir|NV",
+"lat": 41.677709,
+"lon": -115.817523,
+"shore_m": 684
+},
+{
+"site": "L:Willard Bay Reservoir|UT",
+"lat": 41.368473,
+"lon": -112.102758,
+"shore_m": 2516
+},
+{
+"site": "L:Wilson|AL",
+"lat": 34.7974,
+"lon": -87.435229,
+"shore_m": 1253
+},
+{
+"site": "L:Wilson Lake|KS",
+"lat": 38.938161,
+"lon": -98.51613,
+"shore_m": 1065
+},
+{
+"site": "L:Worden Pond|RI",
+"lat": 41.4365,
+"lon": -71.575001,
+"shore_m": 859
+},
+{
+"site": "L:Yellowstone Lake|WY",
+"lat": 44.472749,
+"lon": -110.347561,
+"shore_m": 4535
+},
+{
+"site": "G:Lake Okeechobee US",
+"lat": 26.95,
+"lon": -80.83,
+"shore_m": null
+},
+{
+"site": "G:Lake Pontchartrain US",
+"lat": 30.18,
+"lon": -90.1,
+"shore_m": null
+},
+{
+"site": "G:Mobile Bay US",
+"lat": 30.5,
+"lon": -88.0,
+"shore_m": null
+},
+{
+"site": "G:Tampa Bay US",
+"lat": 27.7,
+"lon": -82.6,
+"shore_m": null
+},
+{
+"site": "G:Great Salt Lake US",
+"lat": 41.1,
+"lon": -112.5,
+"shore_m": null
+},
+{
+"site": "G:Salton Sea US",
+"lat": 33.3,
+"lon": -115.8,
+"shore_m": null
+},
+{
+"site": "G:Lake Mead US",
+"lat": 36.1,
+"lon": -114.5,
+"shore_m": null
+},
+{
+"site": "G:Lake Powell US",
+"lat": 37.1,
+"lon": -111.2,
+"shore_m": null
+},
+{
+"site": "G:Toledo Bend US",
+"lat": 31.4,
+"lon": -93.7,
+"shore_m": null
+},
+{
+"site": "G:Sam Rayburn US",
+"lat": 31.1,
+"lon": -94.1,
+"shore_m": null
+},
+{
+"site": "G:Lake Texoma US",
+"lat": 33.9,
+"lon": -96.7,
+"shore_m": null
+},
+{
+"site": "G:Kentucky Lake US",
+"lat": 36.6,
+"lon": -88.1,
+"shore_m": null
+},
+{
+"site": "G:Guntersville US",
+"lat": 34.4,
+"lon": -86.2,
+"shore_m": null
+},
+{
+"site": "G:Wheeler US",
+"lat": 34.7,
+"lon": -87.1,
+"shore_m": null
+},
+{
+"site": "G:Lake Marion US",
+"lat": 33.5,
+"lon": -80.3,
+"shore_m": null
+},
+{
+"site": "G:Chesapeake US",
+"lat": 38.5,
+"lon": -76.4,
+"shore_m": null
+},
+{
+"site": "G:Lake Tahoe US",
+"lat": 39.1,
+"lon": -120.0,
+"shore_m": null
+},
+{
+"site": "G:Elephant Butte US",
+"lat": 33.25,
+"lon": -107.18,
+"shore_m": null
+},
+{
+"site": "G:Lake Nasser EG",
+"lat": 22.6,
+"lon": 31.8,
+"shore_m": null
+},
+{
+"site": "G:Lake Victoria UG",
+"lat": -1.0,
+"lon": 33.0,
+"shore_m": null
+},
+{
+"site": "G:Lake Tanganyika TZ",
+"lat": -6.0,
+"lon": 29.5,
+"shore_m": null
+},
+{
+"site": "G:Lake Malawi MW",
+"lat": -12.0,
+"lon": 34.5,
+"shore_m": null
+},
+{
+"site": "G:Lake Kariba ZW",
+"lat": -17.0,
+"lon": 28.0,
+"shore_m": null
+},
+{
+"site": "G:Lake Titicaca PE",
+"lat": -15.8,
+"lon": -69.4,
+"shore_m": null
+},
+{
+"site": "G:Rio de la Plata AR",
+"lat": -35.0,
+"lon": -57.0,
+"shore_m": null
+},
+{
+"site": "G:Lagoa dos Patos BR",
+"lat": -31.0,
+"lon": -51.2,
+"shore_m": null
+},
+{
+"site": "G:Lake Taupo NZ",
+"lat": -38.8,
+"lon": 176.0,
+"shore_m": null
+},
+{
+"site": "G:Dead Sea IL",
+"lat": 31.5,
+"lon": 35.5,
+"shore_m": null
+},
+{
+"site": "G:Lake Tana ET",
+"lat": 12.0,
+"lon": 37.3,
+"shore_m": null
+},
+{
+"site": "G:Lake Turkana KE",
+"lat": 3.5,
+"lon": 36.0,
+"shore_m": null
+},
+{
+"site": "G:Lake Volta GH",
+"lat": 7.5,
+"lon": 0.0,
+"shore_m": null
+},
+{
+"site": "G:Lake Maracaibo VE",
+"lat": 9.8,
+"lon": -71.6,
+"shore_m": null
+},
+{
+"site": "G:Tonle Sap KH",
+"lat": 12.9,
+"lon": 104.1,
+"shore_m": null
+},
+{
+"site": "G:Itaipu BR",
+"lat": -24.8,
+"lon": -54.4,
+"shore_m": null
+},
+{
+"site": "G:Tucurui BR",
+"lat": -4.0,
+"lon": -49.6,
+"shore_m": null
+},
+{
+"site": "G:Sobradinho BR",
+"lat": -9.5,
+"lon": -41.5,
+"shore_m": null
+},
+{
+"site": "G:Lake Kivu RW",
+"lat": -2.0,
+"lon": 29.2,
+"shore_m": null
+},
+{
+"site": "G:Lake Van TR",
+"lat": 38.6,
+"lon": 43.0,
+"shore_m": null
+},
+{
+"site": "G:Lake Argyle AU",
+"lat": -16.2,
+"lon": 128.7,
+"shore_m": null
+},
+{
+"site": "G:Moreton Bay AU",
+"lat": -27.3,
+"lon": 153.2,
+"shore_m": null
+},
+{
+"site": "G:Port Phillip AU",
+"lat": -38.1,
+"lon": 144.9,
+"shore_m": null
+},
+{
+"site": "G:Lake Alexandrina AU",
+"lat": -35.4,
+"lon": 139.1,
+"shore_m": null
+},
+{
+"site": "G:Lake Nasser south SD",
+"lat": 21.5,
+"lon": 31.2,
+"shore_m": null
+},
+{
+"site": "G:Aswan Nile EG",
+"lat": 24.1,
+"lon": 32.9,
+"shore_m": null
+},
+{
+"site": "G:Lake Chapala MX",
+"lat": 20.2,
+"lon": -103.0,
+"shore_m": null
+}
+]
