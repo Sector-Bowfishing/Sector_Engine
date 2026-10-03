@@ -1,0 +1,11 @@
+763 site-pass pairs
+/Users/mcather/Desktop/Development/Sector_Engine-research/research/clarity-candidate/stage6/extract.py:154: RuntimeWarning: Mean of empty slice
+  "hidden": float(np.nanmean(np.where(disk, hidden[sl], np.nan)))}
+100
+200
+300
+400
+500
+600
+700
+TANDEM20_DONE 763
