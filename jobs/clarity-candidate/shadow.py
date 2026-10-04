@@ -35,6 +35,7 @@ import run_cert_aco as RCA               # noqa: E402  frozen driver: RCA.one(ta
 import extract as E6                     # noqa: E402  frozen Sen2Cor read-out (stage6)
 import golden_test as GT                 # noqa: E402
 import challenger17 as C17               # noqa: E402
+import s2c22 as C22                      # noqa: E402  Stage 22: nominal-S2C path (Stage 12 retired -> C3)
 
 CANDIDATE = "clarity-candidate-v1"
 LABEL = "Uncertified candidate (shadow). Not a certified clarity reading."
@@ -121,7 +122,9 @@ def versions():
             "acolite": {"commit": lock["commit"], "tree": lock["tree"], "lut_lock_sha256": sha_file(f"{ROOT}/env/acolite.lock.json")},
             "production_model": {"id": "secchi-power-v1", "a": PROD_A, "b": PROD_B, "range80_log10": PROD_RANGE},
             "job": {"commit": os.environ.get("JOB_COMMIT", "dev"), "shadow_py": sha_file(__file__), "challenger17_py": sha_file(C17.__file__),
-                    "pilot_lakes": sha_file(os.path.join(HERE, "pilot_lakes.json"))}}
+                    "pilot_lakes": sha_file(os.path.join(HERE, "pilot_lakes.json"))},
+            "s2c22": {"path": C22.PATH, "scope": "nominal S2C baselines >= 05.11 (Stage 12 retired)", "hashes": C22.HASHES, "s2c22_py": sha_file(C22.__file__),
+                      "aco21_one": sha_file(f"{ROOT}/stage21/aco21_one.py"), "aco20_one": sha_file(f"{ROOT}/stage20/aco20_one.py"), "toa21": sha_file(f"{ROOT}/stage21/toa21.py")}}
 
 
 # ------------------------------------------------------------------ self-checks against frozen outputs
@@ -246,6 +249,19 @@ def process_item(lake, item, workdir, twins):
         pts = {}
         for c in aco.get("crops", []):
             for k, v in (c.get("points") or {}).items(): pts[k] = v
+    # Stage 22: nominal S2C also runs the C3 path (TOA B11/B12 offsets before ACOLITE); datastrip twins reuse it
+    c3, c3pts = None, {}
+    if C22.nominal(meta["platform"], meta["baseline"]) and meta.get("l1c"):
+        if twin and twin.get("c3_points") is not None and need <= {tuple(x) for x in twin["meta"].get("crops_run", [])}:
+            c3pts = twin["c3_points"]; c3 = dict(twin["meta"].get("c3") or {}, reused_from=twin["meta"]["item"])
+        else:
+            _fetch = lambda n: SAFE.fetch(n, ("HTML/", "rep_info/", "preview", "_TCI.jp2"))
+            r3 = C22.run_c3(task, meta["l1c"], _fetch, SAFE.delete, workdir)
+            c3 = {"toa_sub": r3.get("toa_sub"), "m_C": r3.get("m_C"), "acolite_seconds": r3.get("seconds"), "errors": [c.get("error") for c in r3["crops"] if c.get("error")]}
+            for c in r3["crops"]:
+                for kk, v in (c.get("points") or {}).items(): c3pts[kk] = v
+        c3.update({"path": C22.PATH, "hashes": C22.HASHES, "stage12_retired": True, "authority": "lower"})
+        meta["s2c_path"] = C22.PATH; meta["c3"] = c3
     out = {}
     for pt in lake["points"]:
         k = pt["key"]; s = readouts.get(k)
@@ -255,13 +271,21 @@ def process_item(lake, item, workdir, twins):
         sen = {"blue": g(s.get("rho_blue_v")), "green": g(s.get("rho_green_v")), "red": g(s.get("rho_red_v")), "re1": g(s.get("rho_rededge1_v")),
                "swir16": g(s.get("rho_swir16_v"))} if not s.get("readout_error") else None
         o16 = E16.answer16(a.get("M0"), a.get("M3"), sen, meta["sun_elev"], meta["platform"])
+        o16_stage12 = None
+        if c3 is not None:                                   # Stage 22: nominal S2C answered on the C3 path; Stage 12 answer kept
+            a3 = c3pts.get(k) or {}; o16_stage12 = o16
+            o16 = C22.answer16_c3(a3.get("M0"), a3.get("M3"), sen, meta["sun_elev"], E14, E16)
         out[k] = {"point": k, "lat": pt["lat"], "lon": pt["lon"],
                   "readout": {x: s.get(x) for x in ("n_disk", "n_valid", "n_water", "fnu_prod", "readout_error")},
                   "inputs": {"M0": a.get("M0"), "M3": a.get("M3"), "n_radius": a.get("n_radius"), "sen2cor": sen, "sun_elev": meta["sun_elev"],
                              "platform": meta["platform"], "acolite_point_error": a.get("error")},
                   "production": {"layer": production_layer(lake["directory_id"], meta["pass_date"], pt["lat"], pt["lon"]), "disk": production_disk(s)},
                   "stage16": o16}
+        if c3 is not None:
+            out[k]["stage16_stage12"] = o16_stage12
+            out[k]["inputs_c3"] = {"M0": (c3pts.get(k) or {}).get("M0"), "M3": (c3pts.get(k) or {}).get("M3"), "acolite_point_error": (c3pts.get(k) or {}).get("error")}
     meta["_acolite_points"] = pts
+    if c3 is not None: meta["_c3_points"] = c3pts
     return out, meta
 
 
@@ -337,7 +361,9 @@ def lake_summary(pts):
 
 def run_lake(store, lake, start, end, ver, max_items, workdir):
     t0 = time.time(); key = f"{PREFIX}/scenes/{lake['slug']}"
-    done = {os.path.basename(n)[:-5] for n in store.list(key + "/") if n.endswith(".json")}
+    stored0 = [store.get(n) for n in sorted(store.list(key + "/")) if n.endswith(".json")]
+    redo = {s["meta"]["item"] for s in stored0 if s and s.get("points") and C22.nominal(s["meta"].get("platform"), s["meta"].get("baseline")) and s["meta"].get("s2c_path") != C22.PATH}
+    done = {s["meta"]["item"] for s in stored0 if s} - redo           # Stage 22: stored nominal-S2C scenes are re-answered on the C3 path
     items = search(lake["points"], start, end); new = [i for i in items if i["id"] not in done][:max_items or None]
     stats = {"lake": lake["slug"], "searched": len(items), "already": len(items) - len([i for i in items if i["id"] not in done]), "new": len(new), "processed": 0,
              "outside": 0, "errors": [], "acolite_seconds": 0.0}
@@ -349,14 +375,14 @@ def run_lake(store, lake, start, end, ver, max_items, workdir):
             if recs is None:
                 meta.pop("_acolite_points", None)
                 store.put(f"{key}/{it['id']}.json", {"schema": "clarity-candidate-scene/1", "meta": meta, "points": {}, "note": "no pilot point in this scene"}); stats["outside"] += 1; continue
-            acop = meta.pop("_acolite_points", {})
+            acop = meta.pop("_acolite_points", {}); c3p = meta.pop("_c3_points", None)
             store.put(f"{key}/{it['id']}.json", {"schema": "clarity-candidate-scene/1", "candidate": CANDIDATE, "label": LABEL, "uncertified": True,
                                                  "lake": lake["slug"], "directory_id": lake["directory_id"], "meta": meta, "points": recs, "versions": ver,
-                                                 "acolite_points": acop,
+                                                 "acolite_points": acop, "c3_points": c3p,
                                                  "processed_utc": dt.datetime.now(dt.timezone.utc).isoformat(), "execution": EXECUTION})
             stats["processed"] += 1; stats["acolite_seconds"] += meta.get("acolite_seconds") or 0
             if meta.get("l1c") and meta.get("crops_run") and meta["l1c"] not in twins:
-                twins[meta["l1c"]] = {"meta": meta, "points": recs, "acolite_points": acop}
+                twins[meta["l1c"]] = {"meta": meta, "points": recs, "acolite_points": acop, "c3_points": c3p}
         except Exception as e:
             stats["errors"].append({"item": it["id"], "error": f"{type(e).__name__}: {str(e)[:200]}", "trace": traceback.format_exc()[-600:]})
     # Rebuild this lake's history, challenger answers and latest view from every stored scene (cheap; scenes are small).
