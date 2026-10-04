@@ -339,7 +339,9 @@ Nothing regresses.
 - N0511/N0512 keep C3;
 - the stored N0513 scenes were re-answered by the Mac run `mac-20261004T193556` (82 scenes, 0 errors, self-checks passed). All 73 stored S2C scenes now match their baseline: 68 N0513 on the raw path, 5 N0512 on C3.
 
-**The app** (`Sector-mapbox`, local): the candidate card's source line now shows satellite, processing baseline and path, for example "Sentinel-2C, N0513, raw path", beside the existing Candidate status, observation time, age and evidence.
+**The app** (`Sector-mapbox`, local): the candidate card's source line now shows satellite, processing baseline and path, for example "Sentinel-2C, N0513, raw path", beside the existing Candidate status, observation time, age and evidence. Local commit `8104771a`.
+  - Checked on the iPhone 17 Pro simulator: Guntersville cards read "Sentinel-2A, N0513".
+  - The two Guntersville points whose newest answer is S2C (raw path) were not captured in a screenshot; the bucket confirms their `stage24-n0513-raw` path.
 
 **Public users are unchanged.** No consensus change is surfaced, because nothing was adopted.
 
