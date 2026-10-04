@@ -123,7 +123,7 @@ def versions():
             "production_model": {"id": "secchi-power-v1", "a": PROD_A, "b": PROD_B, "range80_log10": PROD_RANGE},
             "job": {"commit": os.environ.get("JOB_COMMIT", "dev"), "shadow_py": sha_file(__file__), "challenger17_py": sha_file(C17.__file__),
                     "pilot_lakes": sha_file(os.path.join(HERE, "pilot_lakes.json"))},
-            "s2c22": {"path": C22.PATH, "scope": "nominal S2C baselines >= 05.11 (Stage 12 retired)", "hashes": C22.HASHES, "s2c22_py": sha_file(C22.__file__),
+            "s2c22": {"path": C22.PATH, "scope": "nominal S2C: N0511/N0512 -> C3 (Stage 22), N0513+ -> raw (Stage 24); Stage 12 retired", "raw_path": C22.RAW_PATH, "hashes": C22.HASHES, "s2c22_py": sha_file(C22.__file__),
                       "aco21_one": sha_file(f"{ROOT}/stage21/aco21_one.py"), "aco20_one": sha_file(f"{ROOT}/stage20/aco20_one.py"), "toa21": sha_file(f"{ROOT}/stage21/toa21.py")}}
 
 
@@ -250,8 +250,12 @@ def process_item(lake, item, workdir, twins):
         for c in aco.get("crops", []):
             for k, v in (c.get("points") or {}).items(): pts[k] = v
     # Stage 22: nominal S2C also runs the C3 path (TOA B11/B12 offsets before ACOLITE); datastrip twins reuse it
-    c3, c3pts = None, {}
-    if C22.nominal(meta["platform"], meta["baseline"]) and meta.get("l1c"):
+    c3, c3pts, raw = None, {}, False
+    if C22.nominal(meta["platform"], meta["baseline"]) and C22.path_for(meta["baseline"]) == C22.RAW_PATH:
+        raw = True; meta["s2c_path"] = C22.RAW_PATH
+        meta["s2c"] = {"path": C22.RAW_PATH, "prov": 3, "baseline": meta["baseline"], "acolite": C22.ACOLITE, "hashes": C22.HASHES, "stage12_retired": True, "authority": "lower",
+                       "decision": "Stage 24 section 4: raw won on T2N (J 0.007, tie with N2 0.003 -> simpler) and validated on 41 new pairs (+0.020 vs C3 -0.035)"}
+    elif C22.nominal(meta["platform"], meta["baseline"]) and meta.get("l1c"):
         if twin and twin.get("c3_points") is not None and (twin["meta"].get("c3") or {}).get("prov") == C22.PROV \
                 and need <= {tuple(x) for x in twin["meta"].get("crops_run", [])}:
             c3pts = twin["c3_points"]; c3 = dict(twin["meta"].get("c3") or {}, reused_from=twin["meta"]["item"])
@@ -274,6 +278,8 @@ def process_item(lake, item, workdir, twins):
                "swir16": g(s.get("rho_swir16_v"))} if not s.get("readout_error") else None
         o16 = E16.answer16(a.get("M0"), a.get("M3"), sen, meta["sun_elev"], meta["platform"])
         o16_stage12 = None
+        if raw:                                              # Stage 24: nominal N0513+ S2C answered raw; Stage 12 answer kept for comparison
+            o16_stage12 = o16; o16 = C22.answer16_raw(a.get("M0"), a.get("M3"), sen, meta["sun_elev"], E14, E16)
         if c3 is not None:                                   # Stage 22: nominal S2C answered on the C3 path; Stage 12 answer kept
             a3 = c3pts.get(k) or {}; o16_stage12 = o16
             o16 = C22.answer16_c3(a3.get("M0"), a3.get("M3"), sen, meta["sun_elev"], E14, E16)
@@ -283,6 +289,7 @@ def process_item(lake, item, workdir, twins):
                              "platform": meta["platform"], "acolite_point_error": a.get("error")},
                   "production": {"layer": production_layer(lake["directory_id"], meta["pass_date"], pt["lat"], pt["lon"]), "disk": production_disk(s)},
                   "stage16": o16}
+        if raw: out[k]["stage16_stage12"] = o16_stage12
         if c3 is not None:
             out[k]["stage16_stage12"] = o16_stage12
             out[k]["inputs_c3"] = {"M0": (c3pts.get(k) or {}).get("M0"), "M3": (c3pts.get(k) or {}).get("M3"), "acolite_point_error": (c3pts.get(k) or {}).get("error"),
@@ -366,7 +373,7 @@ def run_lake(store, lake, start, end, ver, max_items, workdir):
     t0 = time.time(); key = f"{PREFIX}/scenes/{lake['slug']}"
     stored0 = [store.get(n) for n in sorted(store.list(key + "/")) if n.endswith(".json")]
     redo = {s["meta"]["item"] for s in stored0 if s and s.get("points") and C22.nominal(s["meta"].get("platform"), s["meta"].get("baseline"))
-            and (s["meta"].get("s2c_path") != C22.PATH or (s["meta"].get("c3") or {}).get("prov") != C22.PROV)}
+            and (s["meta"].get("s2c_path") != C22.path_for(s["meta"].get("baseline")) or (C22.path_for(s["meta"].get("baseline")) == C22.PATH and (s["meta"].get("c3") or {}).get("prov") != C22.PROV))}
     done = {s["meta"]["item"] for s in stored0 if s} - redo           # Stage 22: stored nominal-S2C scenes are re-answered on the C3 path
     items = search(lake["points"], start, end); new = [i for i in items if i["id"] not in done][:max_items or None]
     stats = {"lake": lake["slug"], "searched": len(items), "already": len(items) - len([i for i in items if i["id"] not in done]), "new": len(new), "processed": 0,

@@ -16,11 +16,17 @@ CORR = json.load(open(f"{ROOT}/stage21/corr21.json"))
 B11, B12 = CORR["bands"]["B11"], CORR["bands"]["B12"]
 SBAF = CORR["b05_l2w"]
 PATH = "stage22-c3"
+RAW_PATH = "stage24-n0513-raw"                             # Stage 24 (PREREGISTRATION_STAGE24.md section 4): nominal N0513+ S2C answered raw
+RAW_FROM = 5.13
+def path_for(baseline):
+    """The nominal-S2C lower-authority path for a processing baseline: N0511/N0512 -> C3; N0513 and later -> raw."""
+    try: return RAW_PATH if float(baseline) >= RAW_FROM else PATH
+    except (TypeError, ValueError): return PATH
 PROV = 2                                                   # provenance version: 2 = DSF/glint diagnostics + ACOLITE commit stored
 RUNNER = "stage22/aco22_one.py"
 HASHES = {k: hashlib.sha256(open(f"{ROOT}/{p}", "rb").read()).hexdigest() for k, p in
           (("corr21", "stage21/corr21.json"), ("cand22", "stage22/cand22.json"), ("prereg22", "stage22/PREREGISTRATION_STAGE22.md"),
-           ("aco22_one", RUNNER))}
+           ("aco22_one", RUNNER), ("prereg24", "stage24/PREREGISTRATION_STAGE24.md"), ("derived24", "stage24/derived24.json"), ("eval24_n0513", "stage24/eval24_n0513.json"))}
 ACO = f"{ROOT}/stage11/tools/acolite/venv/bin/python"
 OV = {"dsf_interface_reflectance": True, "dsf_interface_option": "ffss_boa", "l2w_mask": False}
 
@@ -90,6 +96,20 @@ def run_c3(task, l1c, safe_fetch, safe_delete, workdir):
 def sbaf(a):
     if not a or not all(isinstance(a.get(b), (int, float)) for b in ("B04", "B05", "B06")): return a
     v = dict(a); v["B05"] = SBAF["g"] * a["B05"] + SBAF["k"] * (a["B06"] - a["B04"]); return v
+
+
+def answer16_raw(m0, m3, sen, sun, E14, E16):
+    """Stage 24: nominal N0513+ S2C on the RAW path - the frozen K4 samples as they are (no TOA offsets, no B05 adjustment,
+    no Stage 12), Stage 16 product with S2C lower authority."""
+    from lib14 import features, state_of
+    from lib16 import product16, evidence
+    a = E14.answer(m0, m3, sen, sun, "sentinel-2a")
+    ndci = features(dict(m0 if a["tier"] == 1 else m3), sun)[0]["F_ndci"] if a["tier"] in (1, 2) else None
+    st3 = state_of(a["p"], E16.TB3) if a["tier"] == 3 and a["p"] is not None else None
+    o = product16(a["tier"], a["p"], "sentinel-2c", ndci, st3, E16.R)
+    o.update({"p": a["p"], "hard": a["hard"], "ndci": ndci, "interval_ft": a["interval_ft"], "evidence": evidence(o), "s2c_path": RAW_PATH})
+    o["feet_shown"] = (10 ** a["p"]) if (o["display"] in ("exact", "approx") and a["p"] is not None) else None
+    return o
 
 
 def answer16_c3(m0, m3, sen, sun, E14, E16):
