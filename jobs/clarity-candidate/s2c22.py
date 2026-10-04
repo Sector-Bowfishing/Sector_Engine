@@ -6,7 +6,9 @@ nominal S2C (processing baselines 05.11, 05.12, 05.13 and newer nominal equivale
   2. after ACOLITE, the B05 band adjustment B05' = 1.0332*B05 - 0.0397*(B06 - B04) (srf20.json);
   3. the frozen C-gbm and Stage 16 gate, WITHOUT the Stage 12 V-rho_w correction; S2C keeps LOWER authority (Stage 16
      product rule unchanged).
-Preliminary research baselines (N9905/N9906) never reach this path. Provenance is returned with every result."""
+Preliminary research baselines (N9905/N9906) never reach this path. Provenance is returned with every result (section 19):
+the ACOLITE commit and frozen K4 settings, the TOA offsets and m_C, and per point the DSF/glint diagnostic state from the
+instrumented runner (stage22/aco22_one.py: recording lines only, verified to leave every output unchanged)."""
 import hashlib, json, os, shutil, subprocess, time
 import numpy as np
 ROOT = os.environ["CLARITY_RESEARCH_ROOT"]
@@ -14,10 +16,33 @@ CORR = json.load(open(f"{ROOT}/stage21/corr21.json"))
 B11, B12 = CORR["bands"]["B11"], CORR["bands"]["B12"]
 SBAF = CORR["b05_l2w"]
 PATH = "stage22-c3"
+PROV = 2                                                   # provenance version: 2 = DSF/glint diagnostics + ACOLITE commit stored
+RUNNER = "stage22/aco22_one.py"
 HASHES = {k: hashlib.sha256(open(f"{ROOT}/{p}", "rb").read()).hexdigest() for k, p in
-          (("corr21", "stage21/corr21.json"), ("cand22", "stage22/cand22.json"), ("prereg22", "stage22/PREREGISTRATION_STAGE22.md"))}
+          (("corr21", "stage21/corr21.json"), ("cand22", "stage22/cand22.json"), ("prereg22", "stage22/PREREGISTRATION_STAGE22.md"),
+           ("aco22_one", RUNNER))}
 ACO = f"{ROOT}/stage11/tools/acolite/venv/bin/python"
 OV = {"dsf_interface_reflectance": True, "dsf_interface_option": "ffss_boa", "l2w_mask": False}
+
+
+def _acolite_commit():
+    try: return subprocess.run(["git", "-C", f"{ROOT}/stage11/tools/acolite/src", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, timeout=10).stdout.strip() or None
+    except Exception: return None
+
+
+ACOLITE = {"commit": _acolite_commit(), "config": "frozen K4", "overrides": OV, "elevation": "per crop", "runner": RUNNER}
+
+
+def _dsf_compact(d):
+    """The crop's DSF state: selected model, mean AOT, per-tile model, and per aerosol model the modal lowest/second-lowest-AOT bands."""
+    if not d: return None
+    from collections import Counter
+    out = {"selected_model": d.get("selected_model"), "mean_aot": d.get("mean_aot"), "tile_model": d.get("tile_model")}
+    for lut, v in d.items():
+        if isinstance(v, dict) and "b1" in v:
+            mode = lambda xs: (Counter(x for x in xs if x).most_common(1) or [(None, 0)])[0][0]
+            out[lut] = {"b1": mode(v["b1"]), "b2": mode(v["b2"])}
+    return out
 
 
 def nominal(platform, baseline):
@@ -45,10 +70,15 @@ def run_c3(task, l1c, safe_fetch, safe_delete, workdir):
             ov = dict(OV, _toa_sub=sub)
             if c.get("elev") is not None: ov["elevation"] = c["elev"]
             wd = os.path.join(workdir, f"c3_{task['item']}_{i}")
-            p = subprocess.run([ACO, f"{ROOT}/stage21/aco21_one.py", path, str(c["lat"]), str(c["lon"]), wd, json.dumps(c["points"]), json.dumps(ov)],
+            p = subprocess.run([ACO, f"{ROOT}/{RUNNER}", path, str(c["lat"]), str(c["lon"]), wd, json.dumps(c["points"]), json.dumps(ov)],
                                capture_output=True, text=True, timeout=3600, env=dict(os.environ))
             line = [l for l in p.stdout.split("\n") if l.startswith("@@JSON@@")]
             rec = json.loads(line[0][8:]) if line else {"error": (p.stderr or p.stdout)[-300:]}
+            # each point carries its own diagnostic state (rhot/rhos/aot_550/rhog_ref/rhog, ac_model); the crop its DSF state
+            diag = rec.pop("diag", {}) or {}
+            rec["points"] = {k: dict(v, diag=diag.get(k)) if isinstance(v, dict) else v for k, v in (rec.get("points") or {}).items()}
+            rec["dsf"] = _dsf_compact(rec.pop("dsf", None))
+            for x in ("attempts", "files", "l2w_path"): rec.pop(x, None)
             rec.update({"lat": c["lat"], "lon": c["lon"], "elevation_m": c.get("elev")}); r["crops"].append(rec)
             shutil.rmtree(wd, ignore_errors=True)
     finally:

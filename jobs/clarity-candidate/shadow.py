@@ -252,15 +252,17 @@ def process_item(lake, item, workdir, twins):
     # Stage 22: nominal S2C also runs the C3 path (TOA B11/B12 offsets before ACOLITE); datastrip twins reuse it
     c3, c3pts = None, {}
     if C22.nominal(meta["platform"], meta["baseline"]) and meta.get("l1c"):
-        if twin and twin.get("c3_points") is not None and need <= {tuple(x) for x in twin["meta"].get("crops_run", [])}:
+        if twin and twin.get("c3_points") is not None and (twin["meta"].get("c3") or {}).get("prov") == C22.PROV \
+                and need <= {tuple(x) for x in twin["meta"].get("crops_run", [])}:
             c3pts = twin["c3_points"]; c3 = dict(twin["meta"].get("c3") or {}, reused_from=twin["meta"]["item"])
         else:
             _fetch = lambda n: SAFE.fetch(n, ("HTML/", "rep_info/", "preview", "_TCI.jp2"))
             r3 = C22.run_c3(task, meta["l1c"], _fetch, SAFE.delete, workdir)
-            c3 = {"toa_sub": r3.get("toa_sub"), "m_C": r3.get("m_C"), "acolite_seconds": r3.get("seconds"), "errors": [c.get("error") for c in r3["crops"] if c.get("error")]}
+            c3 = {"toa_sub": r3.get("toa_sub"), "m_C": r3.get("m_C"), "acolite_seconds": r3.get("seconds"), "errors": [c.get("error") for c in r3["crops"] if c.get("error")],
+                  "dsf": [{"lat": c.get("lat"), "lon": c.get("lon"), "elevation_m": c.get("elevation_m"), "dsf": c.get("dsf")} for c in r3["crops"]]}
             for c in r3["crops"]:
                 for kk, v in (c.get("points") or {}).items(): c3pts[kk] = v
-        c3.update({"path": C22.PATH, "hashes": C22.HASHES, "stage12_retired": True, "authority": "lower"})
+        c3.update({"path": C22.PATH, "prov": C22.PROV, "acolite": C22.ACOLITE, "hashes": C22.HASHES, "stage12_retired": True, "authority": "lower"})
         meta["s2c_path"] = C22.PATH; meta["c3"] = c3
     out = {}
     for pt in lake["points"]:
@@ -283,7 +285,8 @@ def process_item(lake, item, workdir, twins):
                   "stage16": o16}
         if c3 is not None:
             out[k]["stage16_stage12"] = o16_stage12
-            out[k]["inputs_c3"] = {"M0": (c3pts.get(k) or {}).get("M0"), "M3": (c3pts.get(k) or {}).get("M3"), "acolite_point_error": (c3pts.get(k) or {}).get("error")}
+            out[k]["inputs_c3"] = {"M0": (c3pts.get(k) or {}).get("M0"), "M3": (c3pts.get(k) or {}).get("M3"), "acolite_point_error": (c3pts.get(k) or {}).get("error"),
+                                   "diag": (c3pts.get(k) or {}).get("diag")}
     meta["_acolite_points"] = pts
     if c3 is not None: meta["_c3_points"] = c3pts
     return out, meta
@@ -362,7 +365,8 @@ def lake_summary(pts):
 def run_lake(store, lake, start, end, ver, max_items, workdir):
     t0 = time.time(); key = f"{PREFIX}/scenes/{lake['slug']}"
     stored0 = [store.get(n) for n in sorted(store.list(key + "/")) if n.endswith(".json")]
-    redo = {s["meta"]["item"] for s in stored0 if s and s.get("points") and C22.nominal(s["meta"].get("platform"), s["meta"].get("baseline")) and s["meta"].get("s2c_path") != C22.PATH}
+    redo = {s["meta"]["item"] for s in stored0 if s and s.get("points") and C22.nominal(s["meta"].get("platform"), s["meta"].get("baseline"))
+            and (s["meta"].get("s2c_path") != C22.PATH or (s["meta"].get("c3") or {}).get("prov") != C22.PROV)}
     done = {s["meta"]["item"] for s in stored0 if s} - redo           # Stage 22: stored nominal-S2C scenes are re-answered on the C3 path
     items = search(lake["points"], start, end); new = [i for i in items if i["id"] not in done][:max_items or None]
     stats = {"lake": lake["slug"], "searched": len(items), "already": len(items) - len([i for i in items if i["id"] not in done]), "new": len(new), "processed": 0,
