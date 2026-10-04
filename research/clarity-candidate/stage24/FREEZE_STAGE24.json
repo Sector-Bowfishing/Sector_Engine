@@ -1,0 +1,12 @@
+{
+ "prereg_sha256": "b9179365d06c58618415f37f8f5e7a93694d89a082111d6933c5c4e76e662766",
+ "files_sha256": {
+  "geom24_items.json": "e092a1f22b0589fddad848efca868c9cd8c32ac596a92b4fce6fa41d9ad06480",
+  "pairs24_meta.json": "6fb2a6907214d7351cd8c4f5185d7d3cda3b3804209fedf73dc8ae882693bd18",
+  "geom24_meta.py": "9c113e8de2629cae9c797655b6feef79f5a01e4a7dd49451ed4004d8dfcd9047",
+  "build24_pairs.py": "f5ee53af1071515865ab54219eade198a121c6f0fa4a6c601a9cb4427cda1df3"
+ },
+ "frozen_utc": "2026-10-04T18:49:38Z",
+ "derived24_sha256": "b8f8fa4587541a84d70693dd943fdec8a5c25b1ae3283ed76c8e2bdc3b015e86",
+ "note": "restored 2026-10-04: derive24.py had overwritten this file with Stage 23's freeze record (variable shadowing); values re-hashed from unchanged files"
+}
