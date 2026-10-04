@@ -292,7 +292,12 @@ Stage 12's retirement creates a new candidate path, so the candidate is now visi
 **Shadow job** (`Sector_Engine` branch `feat/clarity-candidate-shadow`, local):
 - every new nominal S2C pass over the 17 pilot lakes runs the C3 path, and stored nominal-S2C scenes are re-answered on it;
 - each answer is stored beside the old Stage 12 answer (`stage16_stage12`) with full provenance (section 10);
-- the Mac run on 2026-10-04 processed 77 new or re-answered scenes across the pilot lakes with zero errors.
+- **Two Mac runs on 2026-10-04, window 21 Sep – 4 Oct, all 17 pilot lakes:**
+  - `mac-20261004T050650` processed 82 scenes. 7 S2C scenes failed when the Mac ran out of disk; they were retried.
+  - `mac-20261004T055847` added provenance v2 and retried those scenes: 68 scenes, **0 errors**.
+- **Result:** all 68 stored S2C scenes (every one baseline 05.13) are on the C3 path at provenance v2.
+  - 396 of their 578 points carry the per-point diagnostic state: every point with an ACOLITE sample. The rest are cloud or outside the crop.
+  - 183 points have a usable C3 answer.
 
 **App** (`Sector-mapbox`, branch `feat/clarity-production`, commit `22d479d7`, local):
 - **Master accounts** see the candidate by default on the same Water Clarity layer: each pilot point is a small diamond in the layer's own clear-to-muddy colours.
@@ -328,7 +333,7 @@ The change was verified on the iPhone 17 Pro simulator at Guntersville: the key,
 | `meta.c3` | `prov: 2`; the ACOLITE commit, frozen K4 overrides and runner; TOA offsets; m_C; per-crop DSF state (selected model, mean AOT, per-tile model, modal b1/b2 per aerosol model); hashes of `corr21.json`, `cand22.json`, the pre-registration and the instrumented runner; `stage12_retired: true`; `authority: lower` |
 | Each point | raw inputs (`inputs`); corrected inputs (`inputs_c3`) with the point's diagnostic state (rhot, rhos, aot_550, glint reference, rhog, ac_model, geometry); the C3 answer (`stage16`: tier, state, display, authority, p, interval, evidence, `s2c_path`); the retired Stage 12 answer (`stage16_stage12`) |
 
-**Provenance version 2.** Diagnostics were added after the first C3 pass. Scenes stored without them are re-run once, from the stored list, by the next shadow run.
+**Provenance version 2.** Diagnostics were added after the first C3 pass. Scenes stored without them are re-run once by the next shadow run, and that has been done (section 9). The C3 crop run uses the instrumented runner, which only records values; its output was verified identical. Its hash is stored with the others.
 
 ## 11. Files (`research/clarity-candidate/stage22/`)
 
