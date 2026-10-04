@@ -1,0 +1,54 @@
+{
+ "selected": "C3",
+ "tests": {
+  "C3": {
+   "criteria": {
+    "1_bias": true,
+    "2_harmful": true,
+    "3_severe": true,
+    "4_operational": true,
+    "5_coverage": true,
+    "6_state_TH": true,
+    "6_state_T2H": true,
+    "7_pools": true,
+    "7_dp_TH": true,
+    "7_dp_T2H": true
+   },
+   "pools": {
+    "dev": true,
+    "cert": true,
+    "fresh": true
+   },
+   "passed": true,
+   "values": {
+    "R": {
+     "signed_log_bias_median": -0.0674456381839062,
+     "harmful": 0.13970588235294118,
+     "severe": 0.014705882352941176,
+     "operational": 0.6873200757575758,
+     "interval_coverage": 0.6176470588235294
+    },
+    "Stage12": {
+     "signed_log_bias_median": -0.10069512251405638,
+     "harmful": 0.17647058823529413,
+     "severe": 0.022058823529411766,
+     "operational": 0.7040435606060607,
+     "interval_coverage": 0.5514705882352942
+    },
+    "TH": {
+     "R_state": 1.0,
+     "S12_state": 1.0,
+     "R_dp": 0.0073940658171045
+    },
+    "T2H": {
+     "R_state": 0.9375,
+     "S12_state": 0.921875,
+     "R_dp": -0.008686864308171734
+    }
+   }
+  }
+ },
+ "RETIRE_STAGE12": true,
+ "replacement": "C3",
+ "scope": "nominal operational S2C: N0511, N0512, N0513 and newer nominal equivalents; preliminary N9905/N9906 research products untouched"
+}

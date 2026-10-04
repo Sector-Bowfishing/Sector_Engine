@@ -1,0 +1,11 @@
+# reproducible intermediates (lazy SAFE stubs, kept crop L1Rs, ACOLITE work dirs, tooling probes)
+lazy/
+l1r/
+work/
+_probe_aco/
+_dbg_res/
+_dbg_tasks.json
+_test_res/
+_test_tasks.json
+_bak_syke/
+_res_truth137/
