@@ -1,0 +1,18 @@
+events with >= 1 usable neighbour scene: 932 scenes 1539
+fold 0 predicted
+fold 1 predicted
+fold 2 predicted
+fold 3 predicted
+fold 4 predicted
+fold 0 sigma {1: 0.188, 2: 0.165} kappa 0.0004 pairs 1207
+fold 1 sigma {1: 0.195, 2: 0.174} kappa 0.00027 pairs 1119
+fold 2 sigma {1: 0.195, 2: 0.175} kappa 0.0002 pairs 1143
+fold 3 sigma {1: 0.19, 2: 0.189} kappa 0.00052 pairs 1162
+fold 4 sigma {1: 0.203, 2: 0.169} kappa 6e-05 pairs 1165
+A Stage 16  bal 0.693 clear 0.880 normal 0.643 stained 0.571 limited 0.676 harm 0.106 sev 0.0152 unk 0.128 strong 0.113/0.968
+B Stage 18  bal 0.737 clear 0.893 normal 0.685 stained 0.668 limited 0.703 harm 0.116 sev 0.0126 unk 0.067 strong 0.229/0.947
+C past  5 d bal 0.710 clear 0.884 normal 0.671 stained 0.606 limited 0.680 harm 0.114 sev 0.0139 unk 0.099 strong 0.109/0.929 bars True | vs16 stained 0.034 [0.0063, 0.0629]
+SELECTED 5 guard triggered False decisions {'engine': '5', 'CAUSAL_CONSENSUS_USEFUL': False, 'STAGE18_GAIN_SURVIVES': 'PARTIAL', 'stained_gain_retained': 0.3553530751708416, 'operational_gain_retained': 0.3966554070248465, 'STAGE16_BARS': True, 'DEV9': False, 'SCORE': 7, 'READY_S2C_STAGE': False, 'READY_FREEZE_AFTER_S2C': False}
+STAGE23 R0 selected 5 bal 0.710 clear 0.884 normal 0.671 stained 0.606 limited 0.680 harm 0.114 sev 0.0139 unk 0.099 strong 0.109/0.929 | stage16-c3 bal 0.693 clear 0.881 normal 0.645 stained 0.571 limited 0.676 harm 0.106 sev 0.0152 unk 0.127 strong 0.113/0.968 | exact feet {'points_of_7': 5.5, 'score_of_10': 8} | drops {'prior_no_c3': 4}
+  density 5d era before/after {'0': 0.7130434782608696, '1': 0.19130434782608696, '2': 0.08695652173913043, '3+': 0.008695652173913044} {'0': 0.591304347826087, '1': 0.30434782608695654, '2': 0.0782608695652174, '3+': 0.02608695652173913} | top harmful causes ['boundary_state', 'single_scene', 'high_posterior_wrong'] {'too_murky': 64, 'too_clear': 117} | severe 22
+EXIT 0

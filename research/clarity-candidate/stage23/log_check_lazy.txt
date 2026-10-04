@@ -1,0 +1,4 @@
+{'run': 'FL_R_702cf7301690', 'product': 'S2A_MSIL1C_20260907T130311_N0512_R038_T27WVM_20260907T195704', 'n_values': 24, 'max_abs_diff': 0.0, 'error': None, 'network_bytes_reported': [94212393, 94212393, 2097152]}
+{'run': 'FL_C_702cf7301690', 'product': 'S2B_MSIL1C_20260907T125259_N0512_R138_T27WVM_20260907T144430', 'n_values': 24, 'max_abs_diff': 0.0, 'error': None, 'network_bytes_reported': [38285438, 38285438, 346850]}
+IDENTICAL True
+EXIT 0

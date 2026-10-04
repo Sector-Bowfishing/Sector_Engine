@@ -1,0 +1,39 @@
+{
+ "outcome": "B",
+ "label": "LOWER AUTHORITY",
+ "sensor": {
+  "floor_usable": false,
+  "TH25": true,
+  "T2H25": true,
+  "T2N": false,
+  "baselines": {
+   "N0511": true,
+   "N0512": true,
+   "N0513": false
+  },
+  "outcome_before_secchi": "B"
+ },
+ "secchi_checks": {
+  "n_c3": 129,
+  "n_reference": 2556,
+  "harmful_le_ref_plus_0.05": true,
+  "severe_le_0.02": true,
+  "bias_within_0.05_of_ref": false,
+  "values": {
+   "c3_harm": 0.13953488372093023,
+   "ref_harm": 0.13810641627543035,
+   "c3_sev": 0.015503875968992248,
+   "c3_bias": -0.06239911555108296,
+   "ref_bias": -0.010058622774879511
+  },
+  "PASSED": false
+ },
+ "reasons": [
+  "floor not usable",
+  "T2N failed: systematic_bands, visibility",
+  "N0513: systematic_bands, visibility",
+  "Secchi >= 25: bias_within_0.05_of_ref failed ({'c3_harm': 0.13953488372093023, 'ref_harm': 0.13810641627543035, 'c3_sev': 0.015503875968992248, 'c3_bias': -0.06239911555108296, 'ref_bias': -0.010058622774879511})"
+ ],
+ "low_sun_authority": "LOWER",
+ "scope": "nominal S2C C3 (N0511, N0512, N0513 and later nominal equivalents), sun >= 25 deg, all normal quality gates"
+}
