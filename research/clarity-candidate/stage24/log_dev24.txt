@@ -1,0 +1,31 @@
+events with >= 1 usable neighbour scene: 932 scenes 1539
+fold 0 predicted
+fold 1 predicted
+fold 2 predicted
+fold 3 predicted
+fold 4 predicted
+fold 0 sigma {1: 0.188, 2: 0.165} kappa 0.0004 pairs 1207
+fold 1 sigma {1: 0.195, 2: 0.174} kappa 0.00027 pairs 1119
+fold 2 sigma {1: 0.195, 2: 0.175} kappa 0.0002 pairs 1143
+fold 3 sigma {1: 0.19, 2: 0.189} kappa 0.00052 pairs 1162
+fold 4 sigma {1: 0.203, 2: 0.169} kappa 6e-05 pairs 1165
+A Stage 16  bal 0.693 clear 0.880 normal 0.643 stained 0.571 limited 0.676 harm 0.106 sev 0.0152 unk 0.128 strong 0.113/0.968
+B Stage 18  bal 0.737 clear 0.893 normal 0.685 stained 0.668 limited 0.703 harm 0.116 sev 0.0126 unk 0.067 strong 0.229/0.947
+C past  5 d bal 0.710 clear 0.884 normal 0.671 stained 0.606 limited 0.680 harm 0.114 sev 0.0139 unk 0.099 strong 0.109/0.929 bars True | vs16 stained 0.034 [0.0063, 0.0629]
+C past 10 d bal 0.719 clear 0.889 normal 0.680 stained 0.616 limited 0.692 harm 0.116 sev 0.0120 unk 0.087 strong 0.162/0.936 bars True | vs16 stained 0.045 [0.0116, 0.079]
+C past 15 d bal 0.728 clear 0.889 normal 0.686 stained 0.644 limited 0.693 harm 0.123 sev 0.0133 unk 0.071 strong 0.206/0.947 bars True | vs16 stained 0.073 [0.036, 0.1123]
+SELECTED 15 guard triggered False decisions {'engine': '15', 'CAUSAL_CONSENSUS_USEFUL': True, 'STAGE18_GAIN_SURVIVES': 'YES', 'stained_gain_retained': 0.7539863325740325, 'operational_gain_retained': 0.796555786728685, 'STAGE16_BARS': True, 'DEV9': False, 'SCORE': 7, 'READY_S2C_STAGE': True, 'READY_FREEZE_AFTER_S2C': True}
+G0@ 5 bal 0.710 clear 0.884 normal 0.671 stained 0.606 limited 0.680 harm 0.114 sev 0.0139 unk 0.099 strong 0.109/0.929 | unk 0.099 feet avail 0.848 | murky too-clear 0.1754 | bars True | vs R0 
+G0@10 bal 0.719 clear 0.889 normal 0.680 stained 0.616 limited 0.692 harm 0.116 sev 0.0120 unk 0.087 strong 0.162/0.936 | unk 0.087 feet avail 0.865 | murky too-clear 0.1776 | bars True | vs R0 
+G0@15 bal 0.728 clear 0.889 normal 0.686 stained 0.644 limited 0.693 harm 0.123 sev 0.0133 unk 0.071 strong 0.206/0.947 | unk 0.071 feet avail 0.889 | murky too-clear 0.1842 | bars True | vs R0 
+G1@ 5 bal 0.711 clear 0.884 normal 0.669 stained 0.613 limited 0.680 harm 0.114 sev 0.0139 unk 0.099 strong 0.108/0.929 | unk 0.099 feet avail 0.849 | murky too-clear 0.1732 | bars True | vs R0 {'op': 0.0012, 'harm': 0.0, 'sev': 0.0, 'stained': 0.0068, 'limited': 0.0}
+G1@10 bal 0.719 clear 0.889 normal 0.677 stained 0.616 limited 0.694 harm 0.116 sev 0.0120 unk 0.087 strong 0.160/0.935 | unk 0.087 feet avail 0.865 | murky too-clear 0.1754 | bars True | vs R0 {'op': 0.0087, 'harm': 0.0013, 'sev': -0.0019, 'stained': 0.0106, 'limited': 0.014}
+G1@15 bal 0.729 clear 0.889 normal 0.686 stained 0.644 limited 0.695 harm 0.123 sev 0.0139 unk 0.070 strong 0.205/0.944 | unk 0.07 feet avail 0.891 | murky too-clear 0.1842 | bars True | vs R0 {'op': 0.0183, 'harm': 0.0082, 'sev': 0.0, 'stained': 0.0385, 'limited': 0.0148}
+G2@ 5 bal 0.711 clear 0.884 normal 0.671 stained 0.609 limited 0.680 harm 0.114 sev 0.0139 unk 0.099 strong 0.112/0.931 | unk 0.099 feet avail 0.849 | murky too-clear 0.1754 | bars True | vs R0 {'op': 0.0007, 'harm': 0.0, 'sev': 0.0, 'stained': 0.0029, 'limited': 0.0}
+G2@10 bal 0.719 clear 0.889 normal 0.680 stained 0.616 limited 0.692 harm 0.116 sev 0.0120 unk 0.087 strong 0.163/0.936 | unk 0.087 feet avail 0.865 | murky too-clear 0.1776 | bars True | vs R0 {'op': 0.009, 'harm': 0.0013, 'sev': -0.0019, 'stained': 0.0106, 'limited': 0.0118}
+G2@15 bal 0.729 clear 0.889 normal 0.686 stained 0.648 limited 0.694 harm 0.122 sev 0.0126 unk 0.071 strong 0.207/0.944 | unk 0.071 feet avail 0.889 | murky too-clear 0.182 | bars True | vs R0 {'op': 0.0189, 'harm': 0.0076, 'sev': -0.0013, 'stained': 0.0425, 'limited': 0.0135}
+G3@ 5 bal 0.714 clear 0.884 normal 0.669 stained 0.620 limited 0.683 harm 0.112 sev 0.0145 unk 0.100 strong 0.088/0.921 | unk 0.1 feet avail 0.848 | murky too-clear 0.1645 | bars True | vs R0 {'op': 0.0039, 'harm': -0.0025, 'sev': 0.0006, 'stained': 0.0148, 'limited': 0.0026}
+G3@10 bal 0.723 clear 0.884 normal 0.686 stained 0.619 limited 0.702 harm 0.113 sev 0.0152 unk 0.088 strong 0.128/0.935 | unk 0.088 feet avail 0.863 | murky too-clear 0.1645 | bars True | vs R0 {'op': 0.0125, 'harm': -0.0013, 'sev': 0.0013, 'stained': 0.0128, 'limited': 0.0221}
+G3@15 bal 0.731 clear 0.892 normal 0.683 stained 0.651 limited 0.697 harm 0.119 sev 0.0158 unk 0.072 strong 0.168/0.939 | unk 0.072 feet avail 0.888 | murky too-clear 0.1754 | bars True | vs R0 {'op': 0.0203, 'harm': 0.0051, 'sev': 0.0019, 'stained': 0.0454, 'limited': 0.0168}
+SELECTED {'G0': 15, 'G1': 15, 'G2': 15, 'G3': 15} BEST ('G3', 15) ADOPT False {'stage16_bars': True, 'op_material': True, 'harm': False, 'severe': False, 'stained': True, 'limited': True, 'strong_acc': True, 'exact_feet': True, 'coverage': True, 'no_future': True} FINAL ('G0', 5) feet {'points_of_7': 5.5, 'score_of_10': 8}
+EXIT 0
