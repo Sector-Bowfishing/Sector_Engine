@@ -337,7 +337,7 @@ Nothing regresses.
 - nominal N0513+ S2C is answered on the raw path (`stage24-n0513-raw`, provenance v3 with the Stage 24 hashes);
 - the Stage 12 answer is kept beside it for comparison, at lower authority;
 - N0511/N0512 keep C3;
-- the stored N0513 scenes were re-answered by a Mac run.
+- the stored N0513 scenes were re-answered by the Mac run `mac-20261004T193556` (82 scenes, 0 errors, self-checks passed). All 73 stored S2C scenes now match their baseline: 68 N0513 on the raw path, 5 N0512 on C3.
 
 **The app** (`Sector-mapbox`, local): the candidate card's source line now shows satellite, processing baseline and path, for example "Sentinel-2C, N0513, raw path", beside the existing Candidate status, observation time, age and evidence.
 
