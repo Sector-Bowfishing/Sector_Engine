@@ -26,7 +26,22 @@ from .sample import iso
 NBM_CORE = "https://noaa-nbm-grib2-pds.s3.amazonaws.com/blend.{d}/{h:02d}/core/blend.t{h:02d}z.core.f{f:03d}.co.grib2"
 NBM_QMD = "https://noaa-nbm-grib2-pds.s3.amazonaws.com/blend.{d}/{h:02d}/qmd/blend.t{h:02d}z.qmd.f{f:03d}.co.grib2"
 RTMA_RU = "https://noaa-rtma-pds.s3.amazonaws.com/rtma2p5_ru.{d}/rtma2p5_ru.t{hm}z.2dvaranl_ndfd.grb2"
-NBM_VERSION = "NBM v4.3"
+# Version by cycle init (NOAA/MDL): v4.3 operational 2025-05-27 12Z; v5.0 operational 2026-05-05 (SCN 26-24: from the
+# 13Z run), wind speed and gust re-calibrated in v5.0; v5.0 bug fix 2026-06-18; v5.0.14 2026-07-28 (temperature only).
+NBM_V50_START = datetime(2026, 5, 5, 13, tzinfo=timezone.utc)
+
+
+def nbm_version(init: datetime) -> str:
+    if init >= NBM_V50_START:
+        return "NBM v5.0"
+    if init >= datetime(2026, 5, 5, tzinfo=timezone.utc):
+        return "NBM v4.3 (transition day 2026-05-05, before the 13Z v5.0 start)"
+    if init >= datetime(2025, 5, 27, 12, tzinfo=timezone.utc):
+        return "NBM v4.3"
+    return "NBM pre-v4.3"
+
+
+NBM_VERSION = "NBM v5.0"   # current operational generation (kept for callers that need the live label)
 LEVEL = "10 m above ground"
 DEFAULT_LEADS = list(range(1, 25)) + list(range(27, 49, 3))
 
@@ -111,7 +126,7 @@ def ingest_nbm_cycle(store, cfg: dict, init: datetime, leads=DEFAULT_LEADS, with
     out = {}
     for lake, steps in per_lake.items():
         status = "complete" if steps and not any("error" in m for m in missing) else ("partial" if steps else "failed")
-        obj = {"schema": SCHEMA, "kind": "forecast", "model": "NBM", "modelVersion": NBM_VERSION,
+        obj = {"schema": SCHEMA, "kind": "forecast", "model": "NBM", "modelVersion": nbm_version(init),
                "hasPercentiles": bool(steps) and "speedP10" in steps[0],
                "lake": lake, "initTime": iso(init), "retrievedAt": iso(retrieved), "decoderVersion": DECODER_VERSION,
                "source": {"bucket": "noaa-nbm-grib2-pds", "core": NBM_CORE.format(d=f"{init:%Y%m%d}", h=init.hour, f=0).rsplit("/", 1)[0]},
