@@ -79,6 +79,12 @@ public struct ConditionsResponse: Codable, Equatable {
     /// Optional so pre-update clients still decode; appended so none of them breaks.
     public var clarityVisibility: ClarityVisibilityDTO? = nil
 
+    /// THE resolved water-temperature state (Stage 2E): the single source
+    /// decision the score ran on, with provenance. `waterTemp` above is a
+    /// back-compat projection of this same state. Optional so pre-update
+    /// clients still decode; appended so none of them breaks.
+    public var waterTempState: WaterTempStateDTO? = nil
+
     /// The canonical directory lake this coordinate scores as, when one is within
     /// range — the single source of lake identity + naming for every surface and
     /// both apps. Lets clients dedupe "the same water, two names" (a saved lake vs
@@ -251,7 +257,34 @@ public struct GenerationDTO: Codable, Equatable {
     }
 }
 
+/// The resolved water-temperature state — what every surface shows and what the
+/// score ran on (one decision, `WaterTemperatureResolver`).
+public struct WaterTempStateDTO: Codable, Equatable {
+    public let kind: String               // measured | modeled | unavailable
+    public let sourceKind: String         // usgsLakeSensor | cwmsLakeSensor | energyBalanceModel | none
+    public let valueF: Double?            // nil when unavailable — never a stand-in
+    public let unit: String               // degF
+    public let sourceId: String?
+    public let sourceName: String?
+    public let observedAt: Date?          // measurement instant (nil for a model day)
+    public let ageHours: Double?
+    public let lakeLocalDate: String?     // "yyyy-MM-dd" in the lake's zone; nil if unknown
+    public let lakeTimeZone: String?      // IANA zone the date is in
+    public let distanceMiles: Double?
+    public let depthM: Double?            // nil = depth not stated by the source
+    public let spatialSupport: String     // point | lakeWide | none
+    public let modelVersion: String?
+    public let qualityFlags: [String]
+    public let measurementMaxAgeHours: Double
+    /// The value the conditions score actually used for water temperature and
+    /// why: equal to valueF unless the state is unavailable, in which case the
+    /// score's existing air-temperature fallback is named here explicitly.
+    public let scoredValueF: Double?
+    public let scoredFrom: String         // resolvedState | airTemperatureFallback | none
+}
+
 /// The water temperature the score ran on, and where it came from.
+/// Back-compat projection of `WaterTempStateDTO` (same resolution).
 public struct WaterTempDTO: Codable, Equatable {
     public let valueF: Double
     public let source: String            // gauge | model
@@ -265,11 +298,17 @@ public struct WaterTempDTO: Codable, Equatable {
 public struct WaterTempModelDTO: Codable, Equatable {
     public let currentF: Double
     public let series: [Day]
+    /// Lake-local date `currentF` is for, and the lake's zone (additive, Stage 2E).
+    public var currentLocalDate: String? = nil
+    public var timeZone: String? = nil
 
     public struct Day: Codable, Equatable {
         public let date: Date
         public let waterF: Double
         public let airF: Double
+        /// The day's lake-local calendar date ("yyyy-MM-dd"). Select days by
+        /// this, never by `date` rendered in a device or server zone.
+        public var localDate: String? = nil
     }
 }
 
@@ -368,6 +407,9 @@ public enum SectorEngineAPI {
         let snap = await snapTask
         guard snap.hasAnyLiveInput else { return nil }
 
+        // Water temperature is resolved ONCE; the score and the response both take it.
+        let waterTempState = WaterTemperatureResolver.resolve(
+            measurement: snap.waterTemp, model: snap.waterTempModel, at: date)
         let input = ConditionsInputBuilder.build(
             coordinate: coord, date: date,
             weather: snap.weather, water: snap.water, discharge: snap.discharge,
@@ -376,7 +418,8 @@ public enum SectorEngineAPI {
             alertWindFloorMph: snap.alertWindFloorMph,
             severeWarningLabel: snap.severeWarningLabel,
             rainWatershed72hIn: snap.mrms?.watershed72hIn,
-            clarityDischarge: snap.clarityDischarge)
+            clarityDischarge: snap.clarityDischarge,
+            resolvedWaterTemp: waterTempState)
         // Tuning comes from Firebase Remote Config (cached; falls back to the
         // compiled defaults). Change a weight in the console → both phones see it.
         let config = await RemoteConfigStore.shared.current()
@@ -412,7 +455,7 @@ public enum SectorEngineAPI {
             discharge: snap.discharge.map(Self.waterDTO),
             generation: snap.generation.map(Self.generationDTO),
             waterTempModel: snap.waterTempModel.map(Self.waterTempModelDTO),
-            waterTemp: Self.waterTempDTO(gauge: snap.waterTemp, model: snap.waterTempModel),
+            waterTemp: Self.waterTempDTO(state: waterTempState),
             moonIllumination: Astronomy.moonIllumination(on: date),
             alerts: snap.alerts.map(Self.alertDTO),
             tonight: forecast?.tonight.map(Self.tonightDTO),
@@ -441,6 +484,8 @@ public enum SectorEngineAPI {
             generatedAt: Date())
         response.clarityVisibility = Self.clarityVisibilityDTO(input, turbidity: snap.turbidity,
                                                                mrms: snap.mrms, config: config)
+        response.waterTempState = Self.waterTempStateDTO(waterTempState, model: snap.waterTempModel,
+                                                         scoredValueF: input.waterTempF)
         return response
     }
 
@@ -482,6 +527,8 @@ public enum SectorEngineAPI {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         let snap = await ConditionsSnapshotProvider.shared.snapshot(for: coord)
         guard snap.hasAnyLiveInput else { return nil }
+        let waterTempState = WaterTemperatureResolver.resolve(
+            measurement: snap.waterTemp, model: snap.waterTempModel, at: date)
         let input = ConditionsInputBuilder.build(
             coordinate: coord, date: date,
             weather: snap.weather, water: snap.water, discharge: snap.discharge,
@@ -490,7 +537,8 @@ public enum SectorEngineAPI {
             alertWindFloorMph: snap.alertWindFloorMph,
             severeWarningLabel: snap.severeWarningLabel,
             rainWatershed72hIn: snap.mrms?.watershed72hIn,
-            clarityDischarge: snap.clarityDischarge)
+            clarityDischarge: snap.clarityDischarge,
+            resolvedWaterTemp: waterTempState)
         let result = ConditionsAggregator.evaluate(input, config: await RemoteConfigStore.shared.current())
         return (result.score, result.band.rawValue)
     }
@@ -568,24 +616,50 @@ public enum SectorEngineAPI {
             })
     }
 
-    /// Mirrors ConditionsInputBuilder's choice — gauge first, then the model —
-    /// so the number shown is the number scored.
-    static func waterTempDTO(gauge: WaterLevelReading?, model: WaterTempModel?) -> WaterTempDTO? {
-        if let g = gauge {
-            return WaterTempDTO(valueF: g.value * 9 / 5 + 32, source: "gauge", siteName: g.siteName,
-                                observedAt: g.dateTime, distanceMiles: g.distanceMiles)
+    /// Back-compat projection of the resolved state — the same decision the
+    /// score builder took, so the number shown is the number scored.
+    static func waterTempDTO(state: ResolvedWaterTemperatureState) -> WaterTempDTO? {
+        guard let v = state.valueF else { return nil }
+        switch state.kind {
+        case .measured:
+            return WaterTempDTO(valueF: v, source: "gauge", siteName: state.sourceName,
+                                observedAt: state.observedAt, distanceMiles: state.distanceMiles)
+        case .modeled:
+            return WaterTempDTO(valueF: v, source: "model", siteName: nil, observedAt: nil, distanceMiles: nil)
+        case .unavailable:
+            return nil
         }
-        if let m = model {
-            return WaterTempDTO(valueF: m.currentF, source: "model", siteName: nil,
-                                observedAt: nil, distanceMiles: nil)
-        }
-        return nil
     }
 
-    private static func waterTempModelDTO(_ m: WaterTempModel) -> WaterTempModelDTO {
-        WaterTempModelDTO(
+    /// The full resolved state for clients. `scoredValueF` is what the score
+    /// actually used (`input.waterTempF`), so a client can prove shown == scored.
+    static func waterTempStateDTO(_ s: ResolvedWaterTemperatureState, model: WaterTempModel?,
+                                  scoredValueF: Double?) -> WaterTempStateDTO {
+        let from: String
+        if s.valueF != nil { from = "resolvedState" }
+        else if scoredValueF != nil { from = "airTemperatureFallback" }
+        else { from = "none" }
+        return WaterTempStateDTO(
+            kind: s.kind.rawValue, sourceKind: s.sourceKind.rawValue, valueF: s.valueF, unit: s.unit,
+            sourceId: s.sourceId, sourceName: s.sourceName, observedAt: s.observedAt, ageHours: s.ageHours,
+            lakeLocalDate: s.lakeLocalDate, lakeTimeZone: model?.timeZoneIdentifier,
+            distanceMiles: s.distanceMiles, depthM: s.depthM, spatialSupport: s.spatialSupport,
+            modelVersion: s.modelVersion, qualityFlags: s.qualityFlags,
+            measurementMaxAgeHours: s.measurementMaxAgeHours,
+            scoredValueF: scoredValueF, scoredFrom: from)
+    }
+
+    static func waterTempModelDTO(_ m: WaterTempModel) -> WaterTempModelDTO {
+        var dto = WaterTempModelDTO(
             currentF: m.currentF,
-            series: m.series.map { WaterTempModelDTO.Day(date: $0.date, waterF: $0.waterF, airF: $0.airF) })
+            series: m.series.map {
+                var d = WaterTempModelDTO.Day(date: $0.date, waterF: $0.waterF, airF: $0.airF)
+                d.localDate = $0.localDate
+                return d
+            })
+        dto.currentLocalDate = m.currentLocalDate
+        dto.timeZone = m.timeZoneIdentifier
+        return dto
     }
 
     private static func alertDTO(_ a: WeatherAlert) -> AlertDTO {

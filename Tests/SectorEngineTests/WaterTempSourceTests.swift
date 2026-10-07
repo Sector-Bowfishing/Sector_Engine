@@ -26,21 +26,27 @@ final class WaterTempSourceTests: XCTestCase {
         XCTAssertTrue(WaterLevelService.isSurfaceSeries("[at 93.0 ft above NGVD of 1929]"))
     }
 
-    /// The field every surface shows is the gauge when there is one, in °F,
-    /// and the model otherwise.
+    /// The field every surface shows is the resolved state: a FRESH lake gauge
+    /// (°F), else the model — the same decision the score builder takes.
+    /// (Stage 2E: the old version passed a 1970 reading as "gauge"; a reading
+    /// that old is not the current water and is no longer shown as such.)
     func testTheShownTemperatureIsTheScoredOne() throws {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
         let model = WaterTempModel(currentF: 82.1, series: [])
         let gauge = WaterLevelReading(siteCode: "07048600", siteName: "BEAVER LAKE NR ROGERS, AR",
                                       parameterCode: "00010", parameterName: "Temperature, water",
-                                      value: 26.0, unit: "deg C", dateTime: Date(timeIntervalSince1970: 0),
+                                      value: 26.0, unit: "deg C", dateTime: now.addingTimeInterval(-3600),
                                       latitude: 36.3, longitude: -94.0, trend: .steady, change: 0)
-        let measured = try XCTUnwrap(SectorEngineAPI.waterTempDTO(gauge: gauge, model: model))
+        let measured = try XCTUnwrap(SectorEngineAPI.waterTempDTO(
+            state: WaterTemperatureResolver.resolve(measurement: gauge, model: model, at: now)))
         XCTAssertEqual(measured.source, "gauge")
         XCTAssertEqual(measured.valueF, 78.8, accuracy: 0.01)
         XCTAssertEqual(measured.siteName, "BEAVER LAKE NR ROGERS, AR")
-        let modeled = try XCTUnwrap(SectorEngineAPI.waterTempDTO(gauge: nil, model: model))
+        let modeled = try XCTUnwrap(SectorEngineAPI.waterTempDTO(
+            state: WaterTemperatureResolver.resolve(measurement: nil, model: model, at: now)))
         XCTAssertEqual(modeled.source, "model")
         XCTAssertEqual(modeled.valueF, 82.1)
-        XCTAssertNil(SectorEngineAPI.waterTempDTO(gauge: nil, model: nil))
+        XCTAssertNil(SectorEngineAPI.waterTempDTO(
+            state: WaterTemperatureResolver.resolve(measurement: nil, model: nil, at: now)))
     }
 }

@@ -279,7 +279,10 @@ final class ConditionsForecastService: ObservableObject {
             // correctly ignore a warning that's only in effect right now.
             alertWindFloorMph: snap.alertWindFloorMph,
             rainWatershed72hIn: snap.mrms?.watershed72hIn,
-            clarityDischarge: snap.clarityDischarge)
+            clarityDischarge: snap.clarityDischarge,
+            // The same single water-temperature resolution the gauge uses (Stage 2E).
+            resolvedWaterTemp: WaterTemperatureResolver.resolve(
+                measurement: snap.waterTemp, model: snap.waterTempModel, at: now))
 
         // Same Remote Config tuning the gauge uses, so the 7-night stays in lockstep.
         let config = await RemoteConfigStore.shared.current()
