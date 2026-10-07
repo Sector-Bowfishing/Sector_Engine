@@ -65,7 +65,8 @@ public enum ConditionsInputBuilder {
                       forecastDayIndex: Int = 0,
                       cityGlow: Double? = nil,
                       rainWatershed72hIn: Double? = nil,
-                      clarityDischarge: WaterLevelReading? = nil) -> ConditionsInput {
+                      clarityDischarge: WaterLevelReading? = nil,
+                      resolvedWaterTemp: ResolvedWaterTemperatureState? = nil) -> ConditionsInput {
 
         let lat = coordinate.latitude, lon = coordinate.longitude
         let region = RegionResolver.region(latitude: lat, longitude: lon)
@@ -77,13 +78,12 @@ public enum ConditionsInputBuilder {
         }
         let water = fresh(water, maxAgeHours: stageDischargeMaxAgeHours)
         let discharge = fresh(discharge, maxAgeHours: stageDischargeMaxAgeHours)
-        // Fresh AND nearby, same as turbidity — a temp gage on another watershed
-        // is not this water. Beyond the cap we use the modeled estimate.
-        let waterTempC = fresh(waterTempC, maxAgeHours: tempTurbidityMaxAgeHours)
-            .flatMap { r -> WaterLevelReading? in
-                if let miles = r.distanceMiles, miles > maxWaterTempDistanceMiles { return nil }
-                return r
-            }
+        // Water temperature is chosen ONCE, by WaterTemperatureResolver (fresh,
+        // nearby measurement → model → unavailable). Callers pass the state they
+        // also put in the response; tests may pass the raw inputs instead.
+        let waterTempState = resolvedWaterTemp ?? WaterTemperatureResolver.resolve(
+            measurement: waterTempC, modelValueF: modeledWaterTempF, modelLocalDate: nil,
+            lakeTimeZone: nil, at: date)
         // Turbidity also has to be *nearby* — a fresh reading from another
         // watershed is worse than useless because it overrides the rain signal.
         let turbidity = fresh(turbidity, maxAgeHours: tempTurbidityMaxAgeHours)
@@ -138,15 +138,14 @@ public enum ConditionsInputBuilder {
             return spreads.min()
         }()
 
-        // Water temperature: prefer a live nearby gage (°C → °F). Otherwise the
-        // MODELED estimate — a 5-day thermal lag of daily-mean air temp, which
-        // is what ~90% of users see because lake temp gages barely exist. Only
-        // if even that's unavailable do we fall back to raw air temp. Anything
-        // but the gage is flagged estimated (damps spawn, lowers confidence). §3.
-        let liveWaterTempF = waterTempC.map { $0.value * 9 / 5 + 32 }
+        // Water temperature: the resolved state (a fresh nearby measurement, else
+        // the calibrated surface-energy-balance model). Only when that is
+        // unavailable does the score fall back to raw air temp — the existing
+        // scoring fallback, reported as such, never shown as water. Anything but
+        // a measurement is flagged estimated (damps spawn, lowers confidence). §3.
         let airF = weather?.temperature
-        let waterTempF = liveWaterTempF ?? modeledWaterTempF ?? airF
-        let waterTempEstimated = liveWaterTempF == nil && waterTempF != nil
+        let waterTempF = waterTempState.valueF ?? airF
+        let waterTempEstimated = !waterTempState.isMeasured && waterTempF != nil
 
         let isTailwater = TailwaterRegistry.isTailwater(latitude: lat, longitude: lon)
         let clarityDischarge = fresh(clarityDischarge, maxAgeHours: stageDischargeMaxAgeHours)

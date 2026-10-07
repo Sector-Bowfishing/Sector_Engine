@@ -30,7 +30,9 @@ final class WaterTempStage2EReproTests: XCTestCase {
             coordinate: .init(latitude: 33.5, longitude: -80.4), date: now,
             weather: nil, water: nil, discharge: nil,
             waterTempC: g, modeledWaterTempF: model.currentF, turbidity: nil)
-        let shown = try XCTUnwrap(SectorEngineAPI.waterTempDTO(gauge: g, model: model))
+        // Post-fix path: the response's DTO is built from the one resolved state.
+        let shown = try XCTUnwrap(SectorEngineAPI.waterTempDTO(
+            state: WaterTemperatureResolver.resolve(measurement: g, model: model, at: now)))
         XCTAssertEqual(shown.valueF, try XCTUnwrap(input.waterTempF), accuracy: 0.001,
                        "shown \(shown.source) \(shown.valueF) but scored \(input.waterTempF ?? .nan)")
     }
@@ -44,7 +46,8 @@ final class WaterTempStage2EReproTests: XCTestCase {
             WaterTempDay(date: WaterTemperatureService.parseDay(d)!, waterF: 70 + Double(i), airF: 60)
         }
         let lakeEvening = ISO8601DateFormatter().date(from: "2026-10-08T04:30:00Z")!  // 23:30 CDT Oct 7
-        let current = try XCTUnwrap(WaterTemperatureService.currentDay(in: series, now: lakeEvening))
+        let current = try XCTUnwrap(WaterTemperatureService.currentDay(
+            in: series, now: lakeEvening, lakeTimeZone: TimeZone(identifier: "America/Chicago")))
         XCTAssertEqual(current.waterF, 71, "picked \(current.waterF) — Oct 7 is 71, Oct 8 is 72")
     }
 }

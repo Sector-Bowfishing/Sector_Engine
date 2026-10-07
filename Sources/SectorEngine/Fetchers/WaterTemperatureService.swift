@@ -65,6 +65,8 @@ struct WaterTempDay: Hashable {
     let date: Date
     let waterF: Double
     let airF: Double
+    /// The provider's lake-local calendar date ("yyyy-MM-dd") for this day.
+    var localDate: String? = nil
 }
 
 /// Result of the model: the current estimate plus the daily series for the chart.
@@ -73,9 +75,13 @@ struct WaterTempModel: Equatable {
     let currentF: Double
     /// Past ~45 days → next ~4 days, oldest → newest.
     let series: [WaterTempDay]
+    /// The lake-local date `currentF` is for, and the lake's zone (IANA) — nil when unknown.
+    var currentLocalDate: String? = nil
+    var timeZoneIdentifier: String? = nil
 
     static func == (l: WaterTempModel, r: WaterTempModel) -> Bool {
         l.currentF == r.currentF && l.series == r.series
+            && l.currentLocalDate == r.currentLocalDate && l.timeZoneIdentifier == r.timeZoneIdentifier
     }
 }
 
@@ -172,18 +178,30 @@ enum WaterTemperatureService {
             }
         guard days.count >= seedDays else { return nil }
 
-        let series = integrate(days)
+        // Physics unchanged; each modeled day keeps the provider's lake-local date.
+        let localDates: [String] = decoded.daily.time.indices.compactMap { i in
+            guard i < means.count, means[i] != nil, parseDay(decoded.daily.time[i]) != nil else { return nil }
+            return decoded.daily.time[i]
+        }
+        var series = integrate(days)
+        for i in series.indices where i < localDates.count { series[i].localDate = localDates[i] }
 
-        guard let current = currentDay(in: series, now: Date()) else { return nil }
-        return WaterTempModel(currentF: current.waterF, series: series)
+        let zone = LakeLocalDate.timeZone(identifier: decoded.timezone, utcOffsetSeconds: decoded.utc_offset_seconds)
+        guard let current = currentDay(in: series, now: Date(), lakeTimeZone: zone) else { return nil }
+        var m = WaterTempModel(currentF: current.waterF, series: series)
+        m.currentLocalDate = zone == nil ? nil : current.localDate
+        m.timeZoneIdentifier = zone?.identifier
+        return m
     }
 
-    /// "Now" = the modeled value for today (the last past day / first day that
-    /// isn't in the future). Fall back to the last point. (Extracted unchanged
-    /// for Stage 2E regression tests.)
-    static func currentDay(in series: [WaterTempDay], now: Date) -> WaterTempDay? {
-        let today = Calendar.current.startOfDay(for: now)
-        return series.last(where: { Calendar.current.startOfDay(for: $0.date) <= today })
+    /// "Now" = the modeled value for the LAKE-LOCAL today: the last day whose
+    /// lake-local date is not after today in the lake's zone. Never the server's
+    /// calendar (Cloud Run is UTC; in a US evening that is already tomorrow).
+    /// A day without a provider date is keyed by its parsed date. With no known
+    /// zone the selection uses UTC and the caller reports the date as unknown.
+    static func currentDay(in series: [WaterTempDay], now: Date, lakeTimeZone: TimeZone?) -> WaterTempDay? {
+        let today = LakeLocalDate.string(for: now, in: lakeTimeZone ?? TimeZone(identifier: "UTC")!)
+        return series.last(where: { ($0.localDate ?? dayFmt.string(from: $0.date)) <= today })
             ?? series.last
     }
 
@@ -197,6 +215,8 @@ enum WaterTemperatureService {
     static func parseDay(_ s: String) -> Date? { dayFmt.date(from: s) }
 
     private struct DailyMeanResponse: Decodable {
+        let timezone: String?
+        let utc_offset_seconds: Int?
         let daily: Daily
         struct Daily: Decodable {
             let time: [String]

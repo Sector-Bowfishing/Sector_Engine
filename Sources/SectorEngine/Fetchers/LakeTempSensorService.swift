@@ -65,12 +65,14 @@ enum LakeTempSensorService {
         func toF(_ v: Double) -> Double { celsius ? v * 9 / 5 + 32 : v }
         let latestF = toF(last.1)
         let changeF = latestF - toF(first.1)
-        return WaterLevelReading(
+        var reading = WaterLevelReading(
             siteCode: tsid, siteName: "\(lake.name) (USACE \(office))",
             parameterCode: "00010", parameterName: "Temperature, water",
             value: (latestF - 32) * 5 / 9, unit: "deg C", dateTime: last.0,
             latitude: lake.lat, longitude: lake.lon,
             trend: changeF > 0.9 ? .rising : (changeF < -0.9 ? .falling : .steady),
             change: changeF * 5 / 9)
+        reading.provider = "USACE CWMS"
+        return reading
     }
 }

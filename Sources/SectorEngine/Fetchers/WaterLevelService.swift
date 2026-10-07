@@ -36,6 +36,8 @@ struct WaterLevelReading: Identifiable, Equatable {
     /// Straight-line distance (miles) from the requested coordinate to this gage.
     /// Set by `latestReading(near:)`; nil when not computed against an origin.
     var distanceMiles: Double? = nil
+    /// Who publishes the series ("USGS" or "USACE CWMS"). Provenance only.
+    var provider: String = "USGS"
 
     /// The lake's normal ("full") pool elevation, when known (reservoir readings
     /// only). Lets us say how far above/below full pool the water is sitting.
