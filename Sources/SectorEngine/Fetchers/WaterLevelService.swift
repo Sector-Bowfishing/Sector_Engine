@@ -3,8 +3,9 @@
 //  Sector
 //
 //  Fetches current water levels (gage height / reservoir elevation) from the
-//  USGS Instantaneous Values web service. Free, no API key.
-//  https://waterservices.usgs.gov/
+//  USGS Water Data OGC API (see USGSWaterData.swift), falling back to the
+//  legacy Instantaneous Values service until USGS retires it in Q1 2027.
+//  https://api.waterdata.usgs.gov/ogcapi/v1/
 //
 
 import Foundation
@@ -68,15 +69,17 @@ final class WaterLevelService {
     static let shared = WaterLevelService()
     private init() {}
 
-    private let endpoint = "https://waterservices.usgs.gov/nwis/iv/"
+    private let legacyEndpoint = "https://waterservices.usgs.gov/nwis/iv/"
     // 00065 = gage height (ft); 62614 = reservoir/lake water-surface elevation (ft).
     private let parameterCodes = "00065,62614"
-    // USGS reports missing data with this sentinel.
-    private let noDataValue = -999_999.0
     // How far back to look when deciding whether the level is rising/falling.
     private let lookbackPeriod = "PT12H"
     // Changes smaller than this (in the reading's native unit, ft) read as "steady".
     private let steadyThreshold = 0.1
+    // Bound each USGS fetch — the default request timeout is 60s, long enough for
+    // one slow gage to tentpole the whole parallel snapshot. A dropped reading
+    // just degrades the score slightly; a 60s hang blocks the response.
+    private let requestTimeout: TimeInterval = 12
 
     private static let isoFormatter: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
@@ -95,22 +98,78 @@ final class WaterLevelService {
         let east = coordinate.longitude + radiusDegrees
         let south = coordinate.latitude - radiusDegrees
         let north = coordinate.latitude + radiusDegrees
+        let codes = parameterCd ?? parameterCodes
 
-        var components = URLComponents(string: endpoint)
+        // The USGS Water Data API first; the legacy service only while it still
+        // exists (decommissioned Q1 2027), so a 429 or an outage on the new API
+        // costs a slower answer instead of the reading.
+        let series: [USGSSeries]
+        do {
+            series = try await USGSWaterData.recentSeries(west: west, south: south, east: east, north: north,
+                                                          parameterCodes: codes, lookback: lookbackPeriod,
+                                                          timeout: requestTimeout)
+        } catch {
+            series = try await legacySeries(west: west, south: south, east: east, north: north,
+                                            parameterCodes: codes)
+        }
+        return series.compactMap { Self.reading(from: $0, absThreshold: absThreshold,
+                                                pctThreshold: pctThreshold) }
+    }
+
+    /// The trend and reading for one series — the same math whichever API
+    /// answered.
+    static func reading(from series: USGSSeries, absThreshold: Double,
+                        pctThreshold: Double) -> WaterLevelReading? {
+        guard let latest = series.points.last else { return nil }
+        let measurement = latest.value
+
+        // Compare the latest value to the oldest in the lookback window.
+        // Threshold is the larger of an absolute floor and a percentage of
+        // the value, so it works for both gage height (ft) and discharge
+        // (cfs, which ranges from ~10 to 10,000+).
+        let change = measurement - (series.points.first?.value ?? measurement)
+        let thr = Swift.max(absThreshold, pctThreshold * abs(measurement))
+        let trend: WaterTrend
+        if change > thr {
+            trend = .rising
+        } else if change < -thr {
+            trend = .falling
+        } else {
+            trend = .steady
+        }
+
+        return WaterLevelReading(
+            siteCode: series.siteCode,
+            siteName: series.siteName,
+            parameterCode: series.parameterCode,
+            parameterName: series.parameterName,
+            value: measurement,
+            unit: series.unit,
+            dateTime: latest.at,
+            latitude: series.latitude,
+            longitude: series.longitude,
+            trend: trend,
+            change: change,
+            history: series.points.map { $0.value }
+        )
+    }
+
+    // MARK: Legacy WaterServices (fallback until the Q1 2027 decommission)
+
+    private func legacySeries(west: Double, south: Double, east: Double, north: Double,
+                              parameterCodes: String) async throws -> [USGSSeries] {
+        var components = URLComponents(string: legacyEndpoint)
         components?.queryItems = [
             URLQueryItem(name: "format", value: "json"),
             URLQueryItem(name: "bBox", value: String(format: "%.5f,%.5f,%.5f,%.5f", west, south, east, north)),
-            URLQueryItem(name: "parameterCd", value: parameterCd ?? parameterCodes),
+            URLQueryItem(name: "parameterCd", value: parameterCodes),
             URLQueryItem(name: "siteStatus", value: "active"),
             URLQueryItem(name: "period", value: lookbackPeriod),
         ]
 
         guard let url = components?.url else { throw WaterLevelError.invalidURL }
 
-        // Bound the USGS fetch — the default request timeout is 60s, long enough for
-        // one slow gage to tentpole the whole parallel snapshot. A dropped reading
-        // just degrades the score slightly; a 60s hang blocks the response.
-        let request = URLRequest(url: url, timeoutInterval: 12)
+        let request = URLRequest(url: url, timeoutInterval: requestTimeout)
         let (data, response): (Data, URLResponse)
         do {
             (data, response) = try await Net.session.data(for: request)
@@ -121,7 +180,12 @@ final class WaterLevelService {
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw WaterLevelError.requestFailed
         }
+        return try Self.decodeLegacy(data)
+    }
 
+    /// WaterML-in-JSON → series. Keeps the first `values` block of each
+    /// timeSeries, as the engine always has.
+    static func decodeLegacy(_ data: Data) throws -> [USGSSeries] {
         let decoded: USGSResponse
         do {
             decoded = try JSONDecoder().decode(USGSResponse.self, from: data)
@@ -129,50 +193,26 @@ final class WaterLevelService {
             throw WaterLevelError.decodingFailed
         }
 
-        return decoded.value.timeSeries.compactMap { series -> WaterLevelReading? in
+        return decoded.value.timeSeries.compactMap { series -> USGSSeries? in
             let datapoints = series.values.first?.value ?? []
             // Keep only real measurements, in chronological order (USGS returns oldest-first).
-            let valid = datapoints.compactMap { point -> (Double, String)? in
-                guard let v = Double(point.value), v != noDataValue else { return nil }
-                return (v, point.dateTime)
+            let valid = datapoints.compactMap { point -> (value: Double, at: Date)? in
+                guard let v = Double(point.value), v != USGSWaterData.noDataValue else { return nil }
+                return (v, isoFormatter.date(from: point.dateTime) ?? Date())
             }
-            guard let latest = valid.last,
+            guard !valid.isEmpty,
                   let siteCode = series.sourceInfo.siteCode.first?.value,
                   let parameterCode = series.variable.variableCode.first?.value
             else { return nil }
 
-            let measurement = latest.0
-            let date = Self.isoFormatter.date(from: latest.1) ?? Date()
-
-            // Compare the latest value to the oldest in the lookback window.
-            // Threshold is the larger of an absolute floor and a percentage of
-            // the value, so it works for both gage height (ft) and discharge
-            // (cfs, which ranges from ~10 to 10,000+).
-            let change = measurement - (valid.first?.0 ?? measurement)
-            let thr = Swift.max(absThreshold, pctThreshold * abs(measurement))
-            let trend: WaterTrend
-            if change > thr {
-                trend = .rising
-            } else if change < -thr {
-                trend = .falling
-            } else {
-                trend = .steady
-            }
-
-            return WaterLevelReading(
-                siteCode: siteCode,
-                siteName: series.sourceInfo.siteName,
-                parameterCode: parameterCode,
-                parameterName: series.variable.variableName,
-                value: measurement,
-                unit: series.variable.unit.unitCode,
-                dateTime: date,
-                latitude: series.sourceInfo.geoLocation.geogLocation.latitude,
-                longitude: series.sourceInfo.geoLocation.geogLocation.longitude,
-                trend: trend,
-                change: change,
-                history: valid.map { $0.0 }
-            )
+            return USGSSeries(siteCode: siteCode,
+                              siteName: series.sourceInfo.siteName,
+                              parameterCode: parameterCode,
+                              parameterName: series.variable.variableName,
+                              unit: series.variable.unit.unitCode,
+                              latitude: series.sourceInfo.geoLocation.geogLocation.latitude,
+                              longitude: series.sourceInfo.geoLocation.geogLocation.longitude,
+                              points: valid)
         }
     }
 
@@ -256,7 +296,7 @@ final class WaterLevelService {
     }
 }
 
-// MARK: - USGS JSON (WaterML in JSON)
+// MARK: - Legacy USGS JSON (WaterML in JSON)
 
 private struct USGSResponse: Decodable {
     let value: Value
