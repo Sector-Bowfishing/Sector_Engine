@@ -174,13 +174,17 @@ enum WaterTemperatureService {
 
         let series = integrate(days)
 
-        // "Now" = the modeled value for today (the last past day / first day that
-        // isn't in the future). Fall back to the last point.
-        let today = Calendar.current.startOfDay(for: Date())
-        let current = series.last(where: { Calendar.current.startOfDay(for: $0.date) <= today })
-            ?? series.last
-        guard let current else { return nil }
+        guard let current = currentDay(in: series, now: Date()) else { return nil }
         return WaterTempModel(currentF: current.waterF, series: series)
+    }
+
+    /// "Now" = the modeled value for today (the last past day / first day that
+    /// isn't in the future). Fall back to the last point. (Extracted unchanged
+    /// for Stage 2E regression tests.)
+    static func currentDay(in series: [WaterTempDay], now: Date) -> WaterTempDay? {
+        let today = Calendar.current.startOfDay(for: now)
+        return series.last(where: { Calendar.current.startOfDay(for: $0.date) <= today })
+            ?? series.last
     }
 
     private static let dayFmt: DateFormatter = {
@@ -190,7 +194,7 @@ enum WaterTemperatureService {
         f.timeZone = .current
         return f
     }()
-    private static func parseDay(_ s: String) -> Date? { dayFmt.date(from: s) }
+    static func parseDay(_ s: String) -> Date? { dayFmt.date(from: s) }
 
     private struct DailyMeanResponse: Decodable {
         let daily: Daily
