@@ -25,7 +25,10 @@ from .fieldops import FIELD
 ROOT = os.path.join(FIELD, "exemplars")
 CSV = os.path.join(ROOT, "exemplars.csv")
 FIELDS = ["file", "utc", "lake", "lat", "lon", "class", "texture", "observer_a", "observer_b", "agree", "handheld_ms",
-          "handheld_height_m", "notes", "class_b", "texture_b", "attested_real_photo"]
+          "handheld_height_m", "notes", "class_b", "texture_b", "attested_real_photo", "agreement", "finalLabel", "finalTexture",
+          "resolutionNote"]
+# observer_a = labeler1, observer_b = labeler2. agreement: AGREED | REVIEW_REQUIRED | RESOLVED. A disagreement is never
+# resolved silently: `resolve` needs both labelers' names and a written note, and only then sets finalLabel.
 CLASS_DIRS = {1: "class-1-glassy-protected", 2: "class-2-ripple", 3: "class-3-light-chop", 4: "class-4-moderate-chop", 5: "class-5-rough"}
 TEXTURE_DIRS = {"T1": "texture-T1-glassy", "T2": "texture-T2-rippled", "T3": "texture-T3-textured", "T4": "texture-T4-broken"}
 
@@ -74,29 +77,48 @@ def review(file, observer_b, class_b, texture_b=""):
         raise KeyError(file)
     if observer_b == r["observer_a"]:
         raise ValueError("the second label must come from a different person")
-    r.update({"observer_b": observer_b, "class_b": class_b, "texture_b": texture_b,
-              "agree": "yes" if str(class_b) == str(r["class"]) else "no"})
+    agree = str(class_b) == str(r["class"]) and (not texture_b or texture_b == r["texture"])
+    r.update({"observer_b": observer_b, "class_b": class_b, "texture_b": texture_b, "agree": "yes" if agree else "no",
+              "agreement": "AGREED" if agree else "REVIEW_REQUIRED",
+              "finalLabel": r["class"] if agree else "", "finalTexture": r["texture"] if agree else ""})
+    _write(rows)
+    return r
+
+
+def resolve(file, final_class, final_texture, labelers, note):
+    """Close a REVIEW_REQUIRED exemplar after both labelers discussed it. Never automatic."""
+    rows = _rows()
+    r = next((x for x in rows if x["file"].endswith(file)), None)
+    if r is None or r.get("agreement") != "REVIEW_REQUIRED":
+        raise ValueError("only a REVIEW_REQUIRED exemplar can be resolved")
+    if set(labelers) != {r["observer_a"], r["observer_b"]} or not note.strip():
+        raise ValueError("resolution needs both labelers by name and a written note")
+    r.update({"agreement": "RESOLVED", "finalLabel": str(final_class), "finalTexture": final_texture, "resolutionNote": note})
     _write(rows)
     return r
 
 
 def status():
     rows = _rows()
-    agreed = [r for r in rows if r.get("agree") == "yes"]
-    cls = Counter(r["class"] for r in agreed); tex = Counter(r["texture"] for r in agreed)
+    agreed = [r for r in rows if r.get("agreement") in ("AGREED", "RESOLVED") and r.get("finalLabel")]
+    cls = Counter(r["finalLabel"] for r in agreed); tex = Counter(r["finalTexture"] for r in agreed if r.get("finalTexture"))
     need_c = {c: max(0, 2 - cls.get(str(c), 0)) for c in CLASS_DIRS}
     need_t = {t: max(0, 2 - tex.get(t, 0)) for t in TEXTURE_DIRS}
-    return {"photos": len(rows), "agreed": len(agreed), "disagreements": sum(r.get("agree") == "no" for r in rows),
-            "awaitingSecondLabel": sum(not r.get("agree") for r in rows),
+    review = [r["file"] for r in rows if r.get("agreement") == "REVIEW_REQUIRED"]
+    return {"photos": len(rows), "agreed": len(agreed), "reviewRequired": review,
+            "awaitingSecondLabel": sum(not r.get("agreement") for r in rows),
             "classAgreed": {c: cls.get(str(c), 0) for c in CLASS_DIRS}, "textureAgreed": {t: tex.get(t, 0) for t in TEXTURE_DIRS},
             "stillNeeded": {"classes": need_c, "textures": need_t},
-            "complete": all(v == 0 for v in need_c.values()), "textureComplete": all(v == 0 for v in need_t.values())}
+            # the set is usable only with no open disagreement
+            "complete": all(v == 0 for v in need_c.values()) and not review, "textureComplete": all(v == 0 for v in need_t.values()) and not review}
 
 
 def main(argv=None):
     import json
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["add", "review", "status"])
+    ap.add_argument("cmd", choices=["add", "review", "resolve", "status"])
+    ap.add_argument("--final-class"); ap.add_argument("--final-texture", default=""); ap.add_argument("--labelers", default="")
+    ap.add_argument("--note", default="")
     ap.add_argument("path", nargs="?")
     ap.add_argument("--class", dest="cls", type=int); ap.add_argument("--texture"); ap.add_argument("--lake", default="")
     ap.add_argument("--utc", default=""); ap.add_argument("--observer", default=""); ap.add_argument("--notes", default="")
@@ -108,6 +130,8 @@ def main(argv=None):
         print(add(a.path, a.cls, a.texture, a.lake, a.utc, a.observer, a.lat, a.lon, a.notes, a.handheld_ms, a.handheld_height_m))
     elif a.cmd == "review":
         print(json.dumps(review(a.path, a.observer_b, a.class_b, a.texture_b), indent=1))
+    elif a.cmd == "resolve":
+        print(json.dumps(resolve(a.path, a.final_class, a.final_texture, [x.strip() for x in a.labelers.split(",") if x.strip()], a.note), indent=1))
     else:
         print(json.dumps(status(), indent=1))
 

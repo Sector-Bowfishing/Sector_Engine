@@ -83,17 +83,14 @@ def verify(root=FIELD):
 
 
 def exemplar_set_complete(root=FIELD):
-    """Pre-registration §5.4: >= 2 reviewed exemplars per surface class before certification data."""
-    p = os.path.join(root, "exemplars", "exemplars.csv")
-    if not os.path.exists(p):
-        return False
-    import csv
-    rows = list(csv.DictReader(open(p)))
-    ok = defaultdict(int)
-    for r in rows:
-        if (r.get("reviewed") or "").lower() in ("yes", "true", "1") and r.get("class"):
-            ok[r["class"]] += 1
-    return all(ok.get(str(c), 0) >= 2 for c in range(1, 6))
+    """Pre-registration §5.4: >= 2 agreed (or explicitly resolved) exemplars per class 1-5, no open REVIEW_REQUIRED."""
+    from . import exemplars as X
+    old = X.CSV
+    try:
+        X.CSV = os.path.join(root, "exemplars", "exemplars.csv")
+        return X.status()["complete"]
+    finally:
+        X.CSV = old
 
 
 def check(r, bank_ids, photo_dir):

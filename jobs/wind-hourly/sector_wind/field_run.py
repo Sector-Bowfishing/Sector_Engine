@@ -35,7 +35,8 @@ def pairs_from(rows):
     for pid, rs in by.items():
         if len(rs) != 2: continue
         a, b = rs
-        out.append({"session": a["sessionId"], "hm0_A": a["hm0M"], "hm0_B": b["hm0M"], "obs_A": a["observed"], "obs_B": b["observed"]})
+        out.append({"session": a["sessionId"], "hm0_A": a["hm0M"], "hm0_B": b["hm0M"], "obs_A": a["observed"], "obs_B": b["observed"],
+                    "lake": a.get("lake"), "dirFromDeg": a.get("dirFromDeg") if a.get("dirFromDeg") is not None else b.get("dirFromDeg")})
     return out
 
 
@@ -70,9 +71,9 @@ def calibration(rows):
 GEOMETRY_TYPES = ["open main lake", "cove", "behind a point", "island-shielded", "creek arm"]
 TARGETS = {"observations": 60, "pairs": 40, "lakes": 2, "quadrants": 3, "binShare": 0.10, "geometryEach": 5,
            "maxBankShare": 0.05, "maxNightShare": 0.15}
-# Calibration readiness is NOT in the pre-registration. These are proposed thresholds (40% of each
-# certification target, the calibration share) so the one-time calibration is not wasted on too little
-# data. They decide only when to RUN calibration; Michael/ChatGPT confirm them before first use.
+# Calibration readiness: APPROVED / FROZEN BEFORE FIELD RESULTS (Michael + ChatGPT, 2026-10-07; documented in
+# stage3/WIND_FIELD_SCORING_ADDENDUM.md). They decide only when the ONE permitted calibration pass may run;
+# they are not certification thresholds.
 CAL_READY = {"observations": 24, "pairs": 16, "lakes": 2, "quadrants": 3, "binShare": 0.10}
 
 
@@ -132,7 +133,7 @@ def calstatus(rows) -> dict:
     return {"checks": {k: {"have": v[0], "need": v[1], "pass": v[2]} for k, v in checks.items()},
             "readyForCalibration": all(v[2] for v in checks.values()) and not freeze_exists,
             "calibrationAlreadyFrozen": freeze_exists,
-            "note": "readiness thresholds are proposed (not pre-registered); calibration may adjust only §6 (a)-(c), once"}
+            "note": "readiness thresholds APPROVED / FROZEN BEFORE FIELD RESULTS (scoring addendum v1); calibration may adjust only §6 (a)-(c), once"}
 
 
 VEG = ("grass", "vegetation", "hydrilla", "milfoil", "lily", "lilies", "pads", "emergent", "reeds", "cattail", "button")

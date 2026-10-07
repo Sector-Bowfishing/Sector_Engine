@@ -113,10 +113,40 @@ def dim5(fetch_ev: dict) -> dict:
             "why": f"independent exact-geometry median relative difference {f.get('independentMedianRel')}"}
 
 
-def dims_6_7(ledger_paths) -> dict:
-    """Only a one-time holdout certification counts. Before it exists both are 0 ('no field data').
-    The rubric gives no numeric zero threshold for 6 and 7, so each condition is pass/fail here; a
-    partial-credit rule must be set by Michael/ChatGPT before certification (the 8/10 gate needs >= 70%)."""
+ADDENDUM_SHA256 = "7f7a264be924253268dc7d3d3e94de6cffa4272dc587c41e8d0a7e12c8d73485"   # WIND_FIELD_SCORING_ADDENDUM.md v1
+
+
+def clamp01(x):
+    return max(0.0, min(1.0, x))
+
+
+def dim6_credit(conc: dict) -> dict:
+    """Field scoring addendum v1 (frozen 2026-10-07, before any field data)."""
+    n = conc.get("n", 0)
+    c = {"performance (0.50 -> 0.80)": clamp01(((conc.get("concordance") or 0) - 0.50) / 0.30) if n else 0.0,
+         "evidence (pairs / 40)": min(n / 40, 1.0),
+         "lakes (/ 2)": min(conc.get("lakes", 0) / 2, 1.0),
+         "directions (quadrants / 3)": min(conc.get("quadrants", 0) / 3, 1.0)}
+    return c
+
+
+def dim7_credit(surf: dict) -> dict:
+    n = surf.get("n", 0)
+    if not n:
+        return {"exact": 0.0, "within1": 0.0, "severe": 0.0, "evidence (obs / 60)": 0.0}
+    return {"exact (0.20 -> 0.60)": clamp01((surf["exact"] - 0.20) / 0.40),
+            "within1 (0.50 -> 0.90)": clamp01((surf["within1"] - 0.50) / 0.40),
+            "severe (0.25 -> 0.05)": clamp01((0.25 - surf["severe"]) / 0.20),
+            "evidence (obs / 60)": min(n / 60, 1.0)}
+
+
+def dims_6_7(ledger_paths, addendum_path=None) -> dict:
+    """Only the one-time HOLDOUT certification counts (practice and calibration never do). Partial credit
+    follows the field scoring addendum v1, whose hash is checked before it is applied."""
+    if addendum_path:
+        import hashlib
+        if hashlib.sha256(open(addendum_path, "rb").read()).hexdigest() != ADDENDUM_SHA256:
+            raise RuntimeError("WIND_FIELD_SCORING_ADDENDUM.md does not match its frozen hash; refusing to score dimensions 6-7")
     entries = []
     for p in ledger_paths:
         for path in glob.glob(p):
@@ -127,15 +157,12 @@ def dims_6_7(ledger_paths) -> dict:
         return {6: dict(z), 7: dict(z)}
     e = entries[-1]
     ex, sf = e.get("exposure", {}), e.get("surface", {})
-    if not e.get("sufficient"):
-        z = lambda w: {"credit": 0.0, "conditions": {"sufficient holdout": 0.0}, "source": "certification ledger", "window": None, "n": w,
-                       "why": "holdout below the frozen minimum (>= 24 pairs, >= 36 observations): insufficient, not pass/fail"}
-        return {6: z(ex.get("n")), 7: z(sf.get("n"))}
-    c6 = {"concordance >= 0.80": 1.0 if (ex.get("concordance") or 0) >= 0.80 else 0.0, ">= 40 pairs": 1.0 if ex.get("n", 0) >= 40 else 0.0}
-    c7 = {"exact >= 0.60": 1.0 if sf.get("exact", 0) >= 0.6 else 0.0, "within1 >= 0.90": 1.0 if sf.get("within1", 0) >= 0.9 else 0.0,
-          "severe <= 0.05": 1.0 if sf.get("severe", 1) <= 0.05 else 0.0, ">= 60 obs": 1.0 if sf.get("n", 0) >= 60 else 0.0}
-    return {6: {"credit": min(c6.values()), "conditions": c6, "source": "certification ledger", "window": None, "n": ex.get("n"), "why": json.dumps(ex)},
-            7: {"credit": min(c7.values()), "conditions": c7, "source": "certification ledger", "window": None, "n": sf.get("n"), "why": json.dumps(sf)}}
+    c6, c7 = dim6_credit(ex), dim7_credit(sf)
+    note = "" if e.get("sufficient") else " (below the §6 holdout minimum: reported as insufficient, credit by the addendum curves)"
+    return {6: {"credit": min(c6.values()), "conditions": c6, "source": "certification ledger (holdout) + addendum v1", "window": None,
+                "n": ex.get("n"), "why": f"concordance {ex.get('concordance')}, pairs {ex.get('n')}, lakes {ex.get('lakes')}, quadrants {ex.get('quadrants')}{note}"},
+            7: {"credit": min(c7.values()), "conditions": c7, "source": "certification ledger (holdout) + addendum v1", "window": None,
+                "n": sf.get("n"), "why": f"exact {sf.get('exact')}, within1 {sf.get('within1')}, severe {sf.get('severe')}, n {sf.get('n')}{note}"}}
 
 
 def dim8(store, cfg, now) -> dict:
@@ -186,7 +213,8 @@ def compute(store, cfg, evidence_dir, now=None) -> dict:
     skill = json.load(open(os.path.join(evidence_dir, w["file"])))
     d = dims_1_to_4(skill, w["label"])
     d[5] = dim5(E("fetch_method.json"))
-    d.update(dims_6_7([os.path.join(evidence_dir, "certification*.jsonl")]))
+    add = os.path.join(evidence_dir, "..", "..", "stage3", "WIND_FIELD_SCORING_ADDENDUM.md")
+    d.update(dims_6_7([os.path.join(evidence_dir, "certification*.jsonl")], add if os.path.exists(add) else None))
     d[8] = dim8(store, cfg, now)
     d[9] = dim9(E("coverage.json"))
     d[10] = dim10(E("provenance.json"))

@@ -46,7 +46,7 @@ def surface_metrics(rows: list[dict]) -> dict:
 def concordance(pairs: list[dict], tie_ratio: float = 0.20, boot: int = 2000, seed: int = 7) -> dict:
     """pairs: {'session','hm0_A','hm0_B','obs_A','obs_B'} with A the bank predicted MORE exposed.
     Prediction ties (Hm0 within 20%) are excluded and counted."""
-    elig, ties = [], 0
+    elig, ties, lakes, quads = [], 0, set(), set()
     for p in pairs:
         hi, lo = max(p["hm0_A"], p["hm0_B"]), min(p["hm0_A"], p["hm0_B"])
         if hi <= 0 or (hi - lo) / hi < tie_ratio:
@@ -54,6 +54,10 @@ def concordance(pairs: list[dict], tie_ratio: float = 0.20, boot: int = 2000, se
         a_more = p["hm0_A"] >= p["hm0_B"]
         oa, ob = (p["obs_A"], p["obs_B"]) if a_more else (p["obs_B"], p["obs_A"])
         elig.append((p["session"], 1.0 if oa > ob else 0.5 if oa == ob else 0.0))
+        if p.get("lake"):
+            lakes.add(p["lake"])
+        if p.get("dirFromDeg") is not None:
+            quads.add(int(((p["dirFromDeg"] + 45) % 360) // 90))
     if not elig:
         return {"n": 0, "predictionTies": ties}
     c = sum(v for _, v in elig) / len(elig)
@@ -66,7 +70,8 @@ def concordance(pairs: list[dict], tie_ratio: float = 0.20, boot: int = 2000, se
         vals = [v for s in pick for v in by[s]]
         bs.append(sum(vals) / len(vals))
     bs.sort()
-    return {"n": len(elig), "concordance": c, "ci95": [bs[int(0.025 * boot)], bs[int(0.975 * boot)]], "predictionTies": ties}
+    return {"n": len(elig), "concordance": c, "ci95": [bs[int(0.025 * boot)], bs[int(0.975 * boot)]], "predictionTies": ties,
+            "lakes": len(lakes), "quadrants": len(quads)}     # over eligible (non-tie) pairs; used by the addendum v1 credit
 
 
 def certify(store_root: str, calibration_freeze: str, holdout_rows: list[dict], holdout_pairs: list[dict]) -> dict:

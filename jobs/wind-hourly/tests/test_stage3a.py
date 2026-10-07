@@ -235,3 +235,60 @@ def test_synthetic_comparison_is_stamped_when_explicitly_allowed(tmp_path):
     r = overwater.compare(st, cfg, "SYN-WI1", init.replace(hour=0), init.replace(hour=0), allow_synthetic=True)
     assert "NOT SCIENTIFIC EVIDENCE" in r["BANNER"] and r["sources"]["NBM +3h"]["n"] >= 1
     assert "SENSITIVITY ONLY" in r["sensitivity"]["label"]
+
+
+# ── Stage 3B: field scoring addendum v1 (frozen before any field data) ───────────────────────
+
+def test_dim6_partial_credit_curve():
+    c = scoreboard.dim6_credit({"n": 20, "concordance": 0.65, "lakes": 2, "quadrants": 3})
+    assert c["performance (0.50 -> 0.80)"] == pytest.approx(0.5) and c["evidence (pairs / 40)"] == 0.5
+    assert min(scoreboard.dim6_credit({"n": 40, "concordance": 0.80, "lakes": 2, "quadrants": 3}).values()) == 1.0
+    assert min(scoreboard.dim6_credit({"n": 60, "concordance": 0.95, "lakes": 1, "quadrants": 3}).values()) == 0.5
+    assert scoreboard.dim6_credit({"n": 40, "concordance": 0.50, "lakes": 2, "quadrants": 3})["performance (0.50 -> 0.80)"] == 0.0
+
+
+def test_dim7_partial_credit_curve():
+    c = scoreboard.dim7_credit({"n": 60, "exact": 0.40, "within1": 0.70, "severe": 0.15})
+    assert c["exact (0.20 -> 0.60)"] == pytest.approx(0.5) and c["within1 (0.50 -> 0.90)"] == pytest.approx(0.5)
+    assert c["severe (0.25 -> 0.05)"] == pytest.approx(0.5) and c["evidence (obs / 60)"] == 1.0
+    assert min(scoreboard.dim7_credit({"n": 60, "exact": 0.6, "within1": 0.9, "severe": 0.05}).values()) == pytest.approx(1.0)
+    assert min(scoreboard.dim7_credit({"n": 30, "exact": 0.9, "within1": 1.0, "severe": 0.0}).values()) == 0.5
+
+
+@needs_ios
+def test_addendum_hash_guard(tmp_path):
+    good = os.path.join(IOS, "docs/intelligence/wind/stage3/WIND_FIELD_SCORING_ADDENDUM.md")
+    assert scoreboard.dims_6_7([str(tmp_path / "x*.jsonl")], good)[6]["credit"] == 0.0
+    bad = tmp_path / "a.md"; bad.write_text("tampered")
+    with pytest.raises(RuntimeError):
+        scoreboard.dims_6_7([str(tmp_path / "x*.jsonl")], str(bad))
+
+
+def test_concordance_counts_lakes_and_quadrants_on_eligible_pairs_only():
+    from sector_wind import field as F
+    pairs = [{"session": "s1", "hm0_A": 0.2, "hm0_B": 0.05, "obs_A": 3, "obs_B": 1, "lake": "wilson", "dirFromDeg": 10},
+             {"session": "s2", "hm0_A": 0.2, "hm0_B": 0.19, "obs_A": 3, "obs_B": 1, "lake": "wheeler", "dirFromDeg": 180}]
+    c = F.concordance(pairs)
+    assert c["n"] == 1 and c["lakes"] == 1 and c["quadrants"] == 1 and c["predictionTies"] == 1
+
+
+def test_exemplar_disagreement_requires_explicit_resolution(tmp_path, monkeypatch):
+    from sector_wind import exemplars as X
+    monkeypatch.setattr(X, "ROOT", str(tmp_path)); monkeypatch.setattr(X, "CSV", str(tmp_path / "exemplars.csv"))
+    photos = []
+    for i in range(11):
+        p = tmp_path / f"p{i}.jpg"; p.write_bytes(b"x"); photos.append(p)
+    for i, cls in enumerate([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]):
+        X.add(str(photos[i]), cls, "T2", "wilson", "2026-10-08T02:00:00Z", "mc")
+        X.review(f"p{i}.jpg", "jd", cls, "T2")
+    assert X.status()["complete"] is True
+    X.add(str(photos[10]), 3, "T3", "wilson", "t", "mc")
+    X.review("p10.jpg", "jd", 4, "T3")
+    s = X.status()
+    assert s["reviewRequired"] == ["class-3-light-chop/p10.jpg"] and s["complete"] is False
+    with pytest.raises(ValueError):
+        X.resolve("p10.jpg", 3, "T3", ["mc"], "talked")
+    X.resolve("p10.jpg", 3, "T3", ["mc", "jd"], "crests visible but no breaking: light chop")
+    assert X.status()["complete"] is True and X.status()["classAgreed"][3] == 3
+    with pytest.raises(ValueError):
+        X.review("p0.jpg", "mc", 1)                     # second label must be a different person
