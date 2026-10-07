@@ -44,6 +44,11 @@ def test_row_scramble_selfcheck_catches_unfixed_rows():
     bad = smooth.reshape(ny, nx).copy(); bad[1::2] = bad[1::2, ::-1]
     assert grib.row_scramble_ratio(bad.ravel(), cells, nx) > 3.0
 
+def test_selfcheck_does_not_fail_a_calm_quantised_field():
+    nx, ny = 30, 30
+    calm = np.zeros(nx * ny); calm[::97] = 0.1          # nearly all zero, a few quantised blips
+    assert grib.row_scramble_ratio(calm, np.arange(nx * ny), nx) < 3.0
+
 def test_hrrr_rotation_geometry():
     lon = np.array([-97.5, -86.27])
     u = np.array([1.0, 1.0]); v = np.array([0.0, 0.0])

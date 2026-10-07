@@ -165,5 +165,7 @@ def row_scramble_ratio(values: np.ndarray, cells: np.ndarray, nx: int) -> float:
         if (r, c + 1) in pos: dc.append(abs(pos[(r, c + 1)] - v))
     if not dr or not dc:
         return float("nan")
-    mc = float(np.median(dc)); mr = float(np.median(dr))
-    return mr / mc if mc > 0 else (1.0 if mr == 0 else float("inf"))
+    # Means plus a 0.05 m/s floor: a calm, quantised field has median differences of exactly 0,
+    # which made the first version fail closed on a real calm morning (RTMA-RU 2026-10-04 12Z).
+    eps = 0.05
+    return (float(np.mean(dr)) + eps) / (float(np.mean(dc)) + eps)
