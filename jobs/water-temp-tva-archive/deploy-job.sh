@@ -49,13 +49,14 @@ gcloud run jobs deploy "$JOB" --source . \
 
 echo "▶ schedule $SCHEDULE_JOB ($CRON UTC)"
 URI="https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/$JOB:run"
-gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-  --member "serviceAccount:$SA" --role roles/run.invoker --condition=None >/dev/null
+# least privilege: the SA may invoke THIS job only (same pattern as hydrology-hourly)
+gcloud run jobs add-iam-policy-binding "$JOB" --region "$REGION" --project "$PROJECT_ID" \
+  --member "serviceAccount:$SA" --role roles/run.invoker >/dev/null
 if gcloud scheduler jobs describe "$SCHEDULE_JOB" --location "$REGION" --project "$PROJECT_ID" >/dev/null 2>&1; then
   gcloud scheduler jobs update http "$SCHEDULE_JOB" --location "$REGION" --project "$PROJECT_ID" \
-    --schedule "$CRON" --time-zone UTC --uri "$URI" --http-method POST --oauth-service-account-email "$SA"
+    --schedule "$CRON" --time-zone UTC --uri "$URI" --http-method POST --oauth-service-account-email "$SA" --oauth-token-scope https://www.googleapis.com/auth/cloud-platform
 else
   gcloud scheduler jobs create http "$SCHEDULE_JOB" --location "$REGION" --project "$PROJECT_ID" \
-    --schedule "$CRON" --time-zone UTC --uri "$URI" --http-method POST --oauth-service-account-email "$SA"
+    --schedule "$CRON" --time-zone UTC --uri "$URI" --http-method POST --oauth-service-account-email "$SA" --oauth-token-scope https://www.googleapis.com/auth/cloud-platform
 fi
 echo "✓ deployed. Run once now: gcloud run jobs execute $JOB --region $REGION"
