@@ -66,9 +66,11 @@ def _metrics(pairs: list[tuple]) -> dict:
     return out
 
 
-def skill(store, cfg: dict, start: datetime, end: datetime, leads=(1, 3, 6, 12)) -> dict:
-    obs = load_obs(store, start - timedelta(days=1), end + timedelta(days=1))
-    by_lead = defaultdict(list); by_lead_night = defaultdict(list); by_station_night = defaultdict(list)
+def collect(store, cfg: dict, start: datetime, end: datetime, leads=(1, 3, 6, 12), obs=None) -> list[dict]:
+    """Every (archived NBM step, station observation) match in the window: the raw material for
+    skill(), the evidence dashboard and the diagnostics. Only cycles that existed are used."""
+    obs = obs if obs is not None else load_obs(store, start - timedelta(days=1), end + timedelta(days=1))
+    out = []
     idx_cache = {}
     stations_by_lake = defaultdict(list)
     for sid, st in cfg["stations"].items():
@@ -95,12 +97,20 @@ def skill(store, cfg: dict, start: datetime, end: datetime, leads=(1, 3, 6, 12))
                     if fs is None:
                         continue
                     fg = blend(step["gustMS"], wt)
-                    rec = (fs, fd, fg, o["speedMS"], o["dirFromDeg"], o["gustMS"])
-                    by_lead[step["leadHours"]].append(rec)
-                    if _night(vt):
-                        by_lead_night[step["leadHours"]].append(rec)
-                        by_station_night[(sid, step["leadHours"])].append(rec)
+                    out.append({"lake": lake, "station": sid, "lead": step["leadHours"], "validTime": vt, "init": t,
+                                "rec": (fs, fd, fg, o["speedMS"], o["dirFromDeg"], o["gustMS"])})
         t += timedelta(hours=1)
+    return out
+
+
+def skill(store, cfg: dict, start: datetime, end: datetime, leads=(1, 3, 6, 12)) -> dict:
+    obs = load_obs(store, start - timedelta(days=1), end + timedelta(days=1))
+    by_lead = defaultdict(list); by_lead_night = defaultdict(list); by_station_night = defaultdict(list)
+    for m in collect(store, cfg, start, end, leads, obs):
+        by_lead[m["lead"]].append(m["rec"])
+        if _night(m["validTime"]):
+            by_lead_night[m["lead"]].append(m["rec"])
+            by_station_night[(m["station"], m["lead"])].append(m["rec"])
     # persistence: obs at valid-lead, night only
     pers = {}
     for lead in leads:
