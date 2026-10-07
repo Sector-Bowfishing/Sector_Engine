@@ -85,3 +85,56 @@ def certify(store_root: str, calibration_freeze: str, holdout_rows: list[dict], 
     with open(ledger, "a") as f:
         f.write(json.dumps(res) + "\n")
     return res
+
+
+# ── Stage 3 AUXILIARY diagnostics ──────────────────────────────────────────────────────────────
+# These never feed `certify`, `surface_metrics` or `concordance` (the frozen Dimension 6/7 metrics).
+# They exist to explain failures: texture vs chop, shelter misses, geometry misses, pair contrast.
+
+TEXTURE_ORDER = {"T1": 1, "T2": 2, "T3": 3, "T4": 4}
+
+
+def texture_metrics(rows: list[dict]) -> dict:
+    """rows: {'predictedTexture': 'T1'..'T4', 'observedTexture': 'T1'..'T4'} (Stage 3 required field)."""
+    rows = [r for r in rows if r.get("predictedTexture") in TEXTURE_ORDER and r.get("observedTexture") in TEXTURE_ORDER]
+    if not rows:
+        return {"n": 0}
+    d = [TEXTURE_ORDER[r["predictedTexture"]] - TEXTURE_ORDER[r["observedTexture"]] for r in rows]
+    return {"n": len(rows), "exact": sum(x == 0 for x in d) / len(d), "within1": sum(abs(x) <= 1 for x in d) / len(d),
+            "meanSignedError": sum(d) / len(d)}   # > 0: Candidate predicts rougher texture than observed
+
+
+def chop_only_metrics(rows: list[dict]) -> dict:
+    """Chop class alone vs the observed 5-level class (diagnostic; the frozen map is predicted_class)."""
+    rows = [r for r in rows if r.get("chopClass") and r.get("observed")]
+    if not rows:
+        return {"n": 0}
+    d = [r["chopClass"] - r["observed"] for r in rows]
+    return {"n": len(rows), "exact": sum(x == 0 for x in d) / len(d), "within1": sum(abs(x) <= 1 for x in d) / len(d),
+            "meanSignedError": sum(d) / len(d)}   # > 0: CEM overpredicts chop
+
+
+def tags(row: dict) -> list[str]:
+    """Failure tags for analysis. possibleShelterMiss: Candidate rougher than observed where the observer
+    saw shelter (bluff / tree line / lee shoreline). possibleGeometryMiss: rougher than observed with
+    emergent vegetation or a shoreline the NHD polygon treats as open water."""
+    out = []
+    p, o = row.get("predicted"), row.get("observed")
+    if p and o and p > o:
+        if set(row.get("shelterFeatures") or []) & {"bluff", "tree line", "lee shoreline"}:
+            out.append("possibleShelterMiss")
+        if row.get("vegetationNoted") or "grass" in (row.get("notes") or "").lower():
+            out.append("possibleGeometryMiss")
+    if p and o and p < o:
+        out.append("candidateUnderpredicts")
+    return out
+
+
+def pair_contrast(key: dict, a: dict, b: dict) -> dict:
+    """Pair diagnostics (Stage 3 §19). key: sealed-key entries for X and Y; a/b: the two Candidate
+    snapshots (fetchM, hm0M, windMS, texture)."""
+    ratio = lambda x, y: (x / y) if (x and y) else None
+    return {"fetchA": a.get("fetchM"), "fetchB": b.get("fetchM"), "fetchRatio": ratio(a.get("fetchM"), b.get("fetchM")),
+            "hm0A": a.get("hm0M"), "hm0B": b.get("hm0M"), "hm0Ratio": ratio(a.get("hm0M"), b.get("hm0M")),
+            "windDifferenceAtoB": (a.get("windMS") - b.get("windMS")) if a.get("windMS") is not None and b.get("windMS") is not None else None,
+            "texturePredictionA": a.get("texture"), "texturePredictionB": b.get("texture")}

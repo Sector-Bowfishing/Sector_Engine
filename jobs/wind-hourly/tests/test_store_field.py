@@ -48,3 +48,14 @@ def test_certify_requires_freeze_and_runs_once(tmp_path):
     assert r["sufficient"] is False
     with pytest.raises(PermissionError):
         F.certify(str(tmp_path), str(fz), [], [])
+
+def test_aux_diagnostics_do_not_touch_frozen_metrics():
+    rows = [{"predictedTexture": "T3", "observedTexture": "T2"}, {"predictedTexture": "T1", "observedTexture": "T1"}]
+    m = F.texture_metrics(rows)
+    assert m["n"] == 2 and m["exact"] == 0.5 and m["meanSignedError"] == 0.5
+    assert F.tags({"predicted": 3, "observed": 1, "shelterFeatures": ["tree line"]}) == ["possibleShelterMiss"]
+    assert F.tags({"predicted": 1, "observed": 3}) == ["candidateUnderpredicts"]
+    c = F.pair_contrast({}, {"fetchM": 4000, "hm0M": 0.1, "windMS": 5, "texture": "T3"}, {"fetchM": 200, "hm0M": 0.02, "windMS": 4.5, "texture": "T3"})
+    assert c["fetchRatio"] == 20 and abs(c["hm0Ratio"] - 5) < 1e-9 and c["windDifferenceAtoB"] == 0.5
+    # the frozen predicted_class map is unchanged
+    assert F.predicted_class(2, "T3") == 2 and F.TEXTURE_FLOOR == {"T1": 1, "T2": 2, "T3": 2, "T4": 3}

@@ -13,5 +13,5 @@ gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>
 gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" --member "serviceAccount:$SA" --role roles/storage.objectViewer >/dev/null
 gcloud run deploy "$SVC" --source . --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --allow-unauthenticated --min-instances 0 --max-instances 2 --memory 512Mi --cpu 1 \
-  --set-env-vars "BUCKET=$BUCKET,PREFIX=wind/v1,FIREBASE_PROJECT=$PROJECT_ID,MASTER_UIDS=$MASTER_UIDS"
+  --set-env-vars "^@^BUCKET=$BUCKET@PREFIX=wind/v1@FIREBASE_PROJECT=$PROJECT_ID@MASTER_UIDS=$MASTER_UIDS"
 gcloud run services describe "$SVC" --region "$REGION" --project "$PROJECT_ID" --format 'value(status.url)'

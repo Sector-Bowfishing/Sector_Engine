@@ -21,7 +21,7 @@ def day(s):
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["hourly", "backfill", "validate", "status"])
+    ap.add_argument("cmd", choices=["hourly", "backfill", "validate", "status", "milestone"])
     ap.add_argument("--store", default="local:./archive")
     ap.add_argument("--start"); ap.add_argument("--end")
     ap.add_argument("--leads", default=None)
@@ -57,6 +57,9 @@ def main(argv=None):
                "rtma": V.rtma_skill(store, cfg, start, end)}
         store.put_json(f"reports/validation_{a.start}_{a.end}.json", rep)
         print(json.dumps(rep, indent=1, default=str)); return 0
+    if a.cmd == "milestone":
+        from sector_wind.monitor import milestone
+        print(json.dumps(milestone(store, cfg, start, end), indent=1, default=str)); return 0
     if a.cmd == "status":
         print(json.dumps({"NBM": V.archive_success(store, "NBM", start, end, 60, list(cfg["lakes"])),
                           "RTMA-RU (hourly :00)": V.archive_success(store, "RTMA", start, end, 60, list(cfg["lakes"]))}, indent=1))
