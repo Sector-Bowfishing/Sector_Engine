@@ -1,0 +1,104 @@
+{
+  "version": "wind-lakes-v1",
+  "note": "Cut-out boxes = NHD-HR waterbody bounds + ~5 km. Grid cells inside are archived every cycle. Pickwick's box is extended north to 35.215 so SNH (Savannah) has surrounding cells.",
+  "lakes": {
+    "guntersville": {
+      "name": "Lake Guntersville",
+      "bbox": [
+        -86.459,
+        34.235,
+        -85.559,
+        35.088
+      ],
+      "role": "primary geometry/exposure"
+    },
+    "wheeler": {
+      "name": "Wheeler Lake",
+      "bbox": [
+        -87.444,
+        34.34,
+        -86.331,
+        34.915
+      ],
+      "role": "primary atmospheric validation"
+    },
+    "wilson": {
+      "name": "Wilson Lake",
+      "bbox": [
+        -87.688,
+        34.714,
+        -87.321,
+        34.97
+      ],
+      "role": "compact control"
+    },
+    "pickwick": {
+      "name": "Pickwick Lake",
+      "bbox": [
+        -88.322,
+        34.677,
+        -87.565,
+        35.215
+      ],
+      "role": "weak-observation case"
+    }
+  },
+  "stations": {
+    "8A1": {
+      "lake": "guntersville",
+      "network": "AWOS",
+      "lat": 34.3996,
+      "lon": -86.2682,
+      "sensorHeightM": 10.0
+    },
+    "4A6": {
+      "lake": "guntersville",
+      "network": "AWOS",
+      "lat": 34.6887,
+      "lon": -86.0059,
+      "sensorHeightM": 10.0
+    },
+    "DCU": {
+      "lake": "wheeler",
+      "network": "ASOS",
+      "lat": 34.6525,
+      "lon": -86.9453,
+      "sensorHeightM": 10.0
+    },
+    "HSV": {
+      "lake": "wheeler",
+      "network": "ASOS",
+      "lat": 34.6439,
+      "lon": -86.7861,
+      "sensorHeightM": 10.0
+    },
+    "9A4": {
+      "lake": "wheeler",
+      "network": "AWOS",
+      "lat": 34.6594,
+      "lon": -87.3488,
+      "sensorHeightM": 10.0
+    },
+    "MSL": {
+      "lake": "wilson",
+      "network": "ASOS",
+      "lat": 34.7438,
+      "lon": -87.5996,
+      "sensorHeightM": 10.0
+    },
+    "SNH": {
+      "lake": "pickwick",
+      "network": "AWOS",
+      "lat": 35.1703,
+      "lon": -88.2167,
+      "sensorHeightM": 10.0
+    },
+    "15M": {
+      "lake": "pickwick",
+      "network": "AWOS",
+      "lat": 34.7723,
+      "lon": -88.1659,
+      "sensorHeightM": 10.0
+    }
+  }
+}

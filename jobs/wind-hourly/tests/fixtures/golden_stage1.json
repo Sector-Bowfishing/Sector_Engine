@@ -1,0 +1,245 @@
+{
+ "note": "Stage 1 decoded values (HRRR rotated to earth-relative; NBM odd rows reversed). Verified then against Open-Meteo at the same cells (NBM exact; HRRR f00 mean |d| 0.03 m/s). `openMeteo` = the independent reference the decoder must reproduce.",
+ "cells": [
+  {
+   "model": "hrrr",
+   "init": "2025100503",
+   "lead": 0,
+   "station": "8A1",
+   "grid_lat": 34.39931,
+   "grid_lon": -86.25834,
+   "speedMS": 1.94,
+   "dirFromDeg": 78.2,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 1.9,
+    "dirFromDeg": 79.0
+   }
+  },
+  {
+   "model": "hrrr",
+   "init": "2025100503",
+   "lead": 0,
+   "station": "DCU",
+   "grid_lat": 34.65635,
+   "grid_lon": -86.94503,
+   "speedMS": 1.57,
+   "dirFromDeg": 82.8,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 1.55,
+    "dirFromDeg": 82.0
+   }
+  },
+  {
+   "model": "hrrr",
+   "init": "2025100503",
+   "lead": 0,
+   "station": "HSV",
+   "grid_lat": 34.64083,
+   "grid_lon": -86.78251,
+   "speedMS": 2.23,
+   "dirFromDeg": 90.2,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 2.22,
+    "dirFromDeg": 89.0
+   }
+  },
+  {
+   "model": "hrrr",
+   "init": "2025100503",
+   "lead": 0,
+   "station": "SNH",
+   "grid_lat": 35.17658,
+   "grid_lon": -88.23066,
+   "speedMS": 1.57,
+   "dirFromDeg": 135.2,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 1.56,
+    "dirFromDeg": 136.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2025100502",
+   "lead": 1,
+   "station": "8A1",
+   "grid_lat": 34.40777,
+   "grid_lon": -86.25797,
+   "speedMS": 2.0,
+   "dirFromDeg": 90.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 2.0,
+    "dirFromDeg": 90.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2025100502",
+   "lead": 1,
+   "station": "DCU",
+   "grid_lat": 34.64625,
+   "grid_lon": -86.95195,
+   "speedMS": 2.8,
+   "dirFromDeg": 90.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 2.8,
+    "dirFromDeg": 90.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2025100502",
+   "lead": 1,
+   "station": "HSV",
+   "grid_lat": 34.63816,
+   "grid_lon": -86.7881,
+   "speedMS": 2.8,
+   "dirFromDeg": 90.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 2.8,
+    "dirFromDeg": 90.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2025100502",
+   "lead": 1,
+   "station": "SNH",
+   "grid_lat": 35.17564,
+   "grid_lon": -88.20744,
+   "speedMS": 2.0,
+   "dirFromDeg": 120.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 2.0,
+    "dirFromDeg": 120.0
+   }
+  },
+  {
+   "model": "hrrr",
+   "init": "2026030803",
+   "lead": 0,
+   "station": "8A1",
+   "grid_lat": 34.39931,
+   "grid_lon": -86.25834,
+   "speedMS": 2.75,
+   "dirFromDeg": 62.8,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 2.75,
+    "dirFromDeg": 64.0
+   }
+  },
+  {
+   "model": "hrrr",
+   "init": "2026030803",
+   "lead": 0,
+   "station": "DCU",
+   "grid_lat": 34.65635,
+   "grid_lon": -86.94503,
+   "speedMS": 2.03,
+   "dirFromDeg": 202.0,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 2.06,
+    "dirFromDeg": 201.0
+   }
+  },
+  {
+   "model": "hrrr",
+   "init": "2026030803",
+   "lead": 0,
+   "station": "HSV",
+   "grid_lat": 34.64083,
+   "grid_lon": -86.78251,
+   "speedMS": 2.96,
+   "dirFromDeg": 152.8,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 2.97,
+    "dirFromDeg": 154.0
+   }
+  },
+  {
+   "model": "hrrr",
+   "init": "2026030803",
+   "lead": 0,
+   "station": "SNH",
+   "grid_lat": 35.17658,
+   "grid_lon": -88.23066,
+   "speedMS": 1.78,
+   "dirFromDeg": 289.4,
+   "openMeteo": {
+    "model": "gfs_hrrr",
+    "speedMS": 1.75,
+    "dirFromDeg": 289.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2026030802",
+   "lead": 1,
+   "station": "8A1",
+   "grid_lat": 34.40777,
+   "grid_lon": -86.25797,
+   "speedMS": 1.6,
+   "dirFromDeg": 190.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 1.6,
+    "dirFromDeg": 190.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2026030802",
+   "lead": 1,
+   "station": "DCU",
+   "grid_lat": 34.64625,
+   "grid_lon": -86.95195,
+   "speedMS": 2.8,
+   "dirFromDeg": 180.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 2.8,
+    "dirFromDeg": 180.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2026030802",
+   "lead": 1,
+   "station": "HSV",
+   "grid_lat": 34.63816,
+   "grid_lon": -86.7881,
+   "speedMS": 2.0,
+   "dirFromDeg": 170.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 2.0,
+    "dirFromDeg": 170.0
+   }
+  },
+  {
+   "model": "nbm",
+   "init": "2026030802",
+   "lead": 1,
+   "station": "SNH",
+   "grid_lat": 35.17564,
+   "grid_lon": -88.20744,
+   "speedMS": 1.2,
+   "dirFromDeg": 200.0,
+   "openMeteo": {
+    "model": "ncep_nbm_conus",
+    "speedMS": 1.2,
+    "dirFromDeg": 200.0
+   }
+  }
+ ]
+}
