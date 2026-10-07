@@ -18,7 +18,7 @@ BUCKET="${BUCKET:-sector-wind-candidate}"
 JOB="${JOB:-wind-hourly}"
 SA_NAME="${SA_NAME:-wind-hourly-job}"
 SA="$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com"
-MINUTE="${MINUTE:-10}"
+MINUTE="${MINUTE:-5}"   # NBM posts ~57 min after the cycle; :05 catches the previous hour's run
 cd "$(dirname "$0")"
 
 gcloud storage buckets describe "gs://$BUCKET" --project "$PROJECT_ID" >/dev/null 2>&1 || \
@@ -32,9 +32,11 @@ gcloud run jobs deploy "$JOB" --source . --project "$PROJECT_ID" --region "$REGI
   --service-account "$SA" --tasks 1 --max-retries 1 --task-timeout 900 --memory 2Gi --cpu 1 \
   --set-env-vars "SECTOR_WIND_GCS_APPROVED=yes" \
   --args="hourly,--store,gs://$BUCKET/wind/v1"
+gcloud run jobs add-iam-policy-binding "$JOB" --region "$REGION" --project "$PROJECT_ID" \
+  --member "serviceAccount:$SA" --role roles/run.invoker >/dev/null
 gcloud scheduler jobs describe "$JOB" --location "$REGION" --project "$PROJECT_ID" >/dev/null 2>&1 || \
   gcloud scheduler jobs create http "$JOB" --location "$REGION" --project "$PROJECT_ID" \
     --schedule "$MINUTE * * * *" --time-zone UTC --http-method POST \
-    --uri "https://$REGION-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/$PROJECT_ID/jobs/$JOB:run" \
-    --oauth-service-account-email "$SA"
+    --uri "https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/$JOB:run" \
+    --oauth-service-account-email "$SA" --oauth-token-scope "https://www.googleapis.com/auth/cloud-platform"
 echo "deployed $JOB → gs://$BUCKET/wind/v1 (private)"

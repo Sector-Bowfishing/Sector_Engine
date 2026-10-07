@@ -32,14 +32,14 @@ def main(argv=None):
     leads = [int(x) for x in a.leads.split(",")] if a.leads else DEFAULT_LEADS
     now = datetime.now(timezone.utc)
     if a.cmd == "hourly":
-        c = latest_nbm_cycle(now)
-        res = {"nbm": ingest_nbm_cycle(store, cfg, c, leads, not a.no_qmd) if c else "no cycle"}
-        t0 = (now - timedelta(minutes=30)).replace(second=0, microsecond=0)
-        t0 = t0.replace(minute=(t0.minute // 15) * 15)
-        res["rtma"] = {f"{t:%H%M}": ingest_rtma(store, cfg, t) for t in [t0 - timedelta(minutes=15 * i) for i in range(4)]}
-        for d in {now.date(), (now - timedelta(hours=3)).date()}:
-            res.setdefault("metar", {})[str(d)] = ingest_metar_day(store, cfg, datetime(d.year, d.month, d.day, tzinfo=timezone.utc))
-        print(json.dumps(res, default=str)); return 0
+        from sector_wind.live import run_hourly
+        try:
+            res = run_hourly(store, cfg, now, leads)
+        finally:
+            store.flush_ledger()          # the ledger is written even when the run fails
+        print(json.dumps(res, default=str)[:4000])
+        # A failed run must be visible as a failed Cloud Run execution, never a silent success.
+        return 1 if res["errors"] else 0
     start, end = day(a.start), day(a.end) + timedelta(hours=23)
     if a.cmd == "backfill":
         cycles = [start + timedelta(hours=h) for h in range(int((end - start).total_seconds() // 3600) + 1)]

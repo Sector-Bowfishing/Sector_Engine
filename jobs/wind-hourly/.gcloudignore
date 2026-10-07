@@ -1,0 +1,6 @@
+archive/
+read_service/
+tests/
+__pycache__/
+.pytest_cache/
+*.md

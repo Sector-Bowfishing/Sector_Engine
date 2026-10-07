@@ -59,6 +59,9 @@ class LocalStore:
         with open(self._p("ledger/ingest.jsonl"), "a") as f:
             f.write(json.dumps(entry, separators=(",", ":")) + "\n")
 
+    def flush_ledger(self) -> None:
+        pass
+
     def read_ledger(self) -> list[dict]:
         p = os.path.join(self.root, "ledger/ingest.jsonl")
         if not os.path.exists(p):
@@ -66,24 +69,64 @@ class LocalStore:
         return [json.loads(l) for l in open(p) if l.strip()]
 
 
-class GcsStore(LocalStore):  # same interface; staged through a local spool then uploaded
-    def __init__(self, bucket: str, prefix: str, spool: str = "/tmp/sector-wind-spool"):
+class GcsStore:
+    """Cloud Storage archive with the LocalStore interface. Every write raises on failure (no
+    silent GCS failures). The ledger is buffered per run and flushed to its own object
+    (ledger/runs/<run>.jsonl), because objects can't be appended to."""
+    def __init__(self, bucket: str, prefix: str):
         if os.environ.get("SECTOR_WIND_GCS_APPROVED") != "yes":
             raise PermissionError("GCS writes need Michael's approval: set SECTOR_WIND_GCS_APPROVED=yes only after it is given")
         if bucket in SHARED_BUCKETS_NEVER:
             raise PermissionError(f"refusing to write the shared bucket {bucket}")
         from google.cloud import storage  # imported only when approved
-        super().__init__(spool)
         self.bucket = storage.Client().bucket(bucket)
         self.prefix = prefix.strip("/")
+        self.run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + os.urandom(3).hex()
+        self._ledger: list[dict] = []
+        self.root = f"gs://{bucket}/{self.prefix}"
+
+    def _k(self, key: str) -> str:
+        return f"{self.prefix}/{key}"
 
     def put_json(self, key: str, obj) -> int:
-        n = super().put_json(key, obj)
-        blob = self.bucket.blob(f"{self.prefix}/{key}")
-        blob.upload_from_filename(os.path.join(self.root, key),
-                                  content_type="application/json",
-                                  content_encoding="gzip" if key.endswith(".gz") else None)
-        return n
+        data = json.dumps(obj, separators=(",", ":")).encode()
+        blob = self.bucket.blob(self._k(key))
+        if key.endswith(".gz"):
+            data = gzip.compress(data, mtime=0)
+            blob.upload_from_string(data, content_type="application/gzip")
+        else:
+            blob.upload_from_string(data, content_type="application/json")
+        return len(data)
+
+    def get_json(self, key: str):
+        blob = self.bucket.blob(self._k(key))
+        if not blob.exists():
+            return None
+        raw = blob.download_as_bytes(raw_download=True)
+        if key.endswith(".gz") or raw[:2] == b"\x1f\x8b":
+            raw = gzip.decompress(raw)
+        return json.loads(raw)
+
+    def exists(self, key: str) -> bool:
+        return self.bucket.blob(self._k(key)).exists()
+
+    def list(self, prefix: str) -> list[str]:
+        n = len(self.prefix) + 1
+        return sorted(b.name[n:] for b in self.bucket.client.list_blobs(self.bucket, prefix=self._k(prefix)))
+
+    def append_ledger(self, entry: dict) -> None:
+        self._ledger.append({"at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "run": self.run_id, **entry})
+
+    def flush_ledger(self) -> None:
+        if self._ledger:
+            body = "".join(json.dumps(e, separators=(",", ":")) + "\n" for e in self._ledger)
+            self.bucket.blob(self._k(f"ledger/runs/{self.run_id}.jsonl")).upload_from_string(body, content_type="application/x-ndjson")
+
+    def read_ledger(self) -> list[dict]:
+        out = []
+        for k in self.list("ledger/runs/"):
+            out += [json.loads(l) for l in self.bucket.blob(self._k(k)).download_as_text().splitlines() if l.strip()]
+        return out
 
 
 def open_store(spec: str):
