@@ -30,6 +30,14 @@ def test_time_parsing_midnight_noon_and_zone():
     assert A.local_hour("01/07/2026", "3 PM CST").isoformat() == "2026-01-07T15:00:00-06:00"
 
 
+def test_tva_word_hours_are_hour_ending():
+    # observed live 2026-10-07: "10/06/2026 Midnight CDT" follows "10/06/2026 11 PM CDT"
+    assert A.local_hour("10/06/2026", "Midnight CDT").isoformat() == "2026-10-07T00:00:00-05:00"
+    assert A.local_hour("10/06/2026", "Noon CDT").isoformat() == "2026-10-06T12:00:00-05:00"
+    with pytest.raises(A.SchemaError):
+        A.local_hour("10/06/2026", "Midnite CDT")
+
+
 def test_numbers_with_thousands_separator_and_numeric():
     assert A.number("63,258") == 63258.0 and A.number(553.87) == 553.87
     with pytest.raises(A.SchemaError):

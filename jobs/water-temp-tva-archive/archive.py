@@ -34,6 +34,9 @@ OBSERVED_KEYS = {"Day", "Time", "ReservoirElevation", "TailwaterElevation", "Ave
 PREDICTED_KEYS = {"Day", "AverageInflow", "MidnightElevation", "AverageOutflow"}
 TZ_OFFSETS = {"CDT": -5, "CST": -6, "EDT": -4, "EST": -5}
 TIME_RE = re.compile(r"^(\d{1,2}) (AM|PM) (CDT|CST|EDT|EST)$")
+# TVA labels are hour-ENDING: "10/06/2026 Midnight CDT" follows "10/06/2026 11 PM CDT"
+# and means 24:00 on 10/06 (= 00:00 on 10/07). "Noon" is 12:00 the same day.
+WORD_RE = re.compile(r"^(Midnight|Noon) (CDT|CST|EDT|EST)$")
 SCHEMA_VERSION = 1
 
 
@@ -54,11 +57,18 @@ def number(v) -> float:
 
 
 def local_hour(day: str, tm: str) -> dt.datetime:
+    """Hour-ending label → local datetime (raw strings are always kept alongside)."""
+    d = dt.datetime.strptime(day, "%m/%d/%Y")
+    w = WORD_RE.match(tm.strip())
+    if w:
+        tz = dt.timezone(dt.timedelta(hours=TZ_OFFSETS[w.group(2)]))
+        if w.group(1) == "Midnight":
+            return (d + dt.timedelta(days=1)).replace(hour=0, tzinfo=tz)
+        return d.replace(hour=12, tzinfo=tz)
     m = TIME_RE.match(tm.strip())
     if not m:
         raise SchemaError(f"unexpected Time format: {tm!r}")
     hour = int(m.group(1)) % 12 + (12 if m.group(2) == "PM" else 0)
-    d = dt.datetime.strptime(day, "%m/%d/%Y")
     tz = dt.timezone(dt.timedelta(hours=TZ_OFFSETS[m.group(3)]))
     return d.replace(hour=hour, tzinfo=tz)
 
@@ -78,6 +88,7 @@ def parse_observed(rows):
         t = local_hour(r["Day"], r["Time"])
         out.append((t.isoformat(), {
             "localTime": t.isoformat(),
+            "timeConvention": "hour-ending label",
             "utcTime": t.astimezone(dt.timezone.utc).isoformat().replace("+00:00", "Z"),
             "reservoirElevationFt": number(r["ReservoirElevation"]),
             "tailwaterElevationFt": number(r["TailwaterElevation"]),
