@@ -259,8 +259,10 @@ def main(argv=None):
     store, cfg = _store(a.store), _cfg()
     if a.cmd == "status":
         start = datetime.fromisoformat(a.start).replace(tzinfo=timezone.utc) if a.start else CLOCK_START.replace(minute=0)
+        # default end: the newest cycle that can already be published (NBM posts ~65 min after init),
+        # so a not-yet-published hour is never counted as a gap
         end = (datetime.fromisoformat(a.end).replace(tzinfo=timezone.utc) + timedelta(hours=23)) if a.end else \
-            datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+            (datetime.now(timezone.utc) - timedelta(minutes=90)).replace(minute=0, second=0, microsecond=0)
         s = status(store, cfg, start, end)
         print(render_status(s))
     else:

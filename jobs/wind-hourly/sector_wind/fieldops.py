@@ -127,7 +127,10 @@ class LakeGeometry:
 def geometry_type(row, theta, bank_meta, geo: LakeGeometry, lat, lon):
     b = int(round(theta / 3.0)) % 120
     eff = float(np.mean([row[(b + k) % 120] for k in range(-4, 5)]))
-    if geo and geo.ray_ends_on_island(lat, lon, theta, row[b]):
+    near = [float(np.mean([row[(b + s + k) % 120] for k in range(-4, 5)])) for s in range(-20, 21, 5)]
+    # island-shielded: the wind-direction ray ends on an island AND the island actually cuts the fetch
+    # (the ±60° neighbourhood has at least twice the effective fetch)
+    if geo and eff < 1500 and eff < 0.5 * max(near) and geo.ray_ends_on_island(lat, lon, theta, row[b]):
         return "island-shielded"
     mx, med = float(row.max()), float(np.median(row))
     if mx < 800:
@@ -137,7 +140,6 @@ def geometry_type(row, theta, bank_meta, geo: LakeGeometry, lat, lon):
     im = int(np.argmax(row))
     if row[(im + 60) % 120] >= 0.5 * mx and row[(im + 30) % 120] < 0.15 * mx and row[(im - 30) % 120] < 0.15 * mx:
         return "creek arm"
-    near = [float(np.mean([row[(b + s + k) % 120] for k in range(-4, 5)])) for s in range(-20, 21, 5)]
     if eff < 0.33 * max(near):
         return "behind a point"
     if med >= 1500:
@@ -156,8 +158,13 @@ def newest_cycle(store, lake, now, back=8):
     return None
 
 
-def lake_hour(c, valid_iso):
-    return next((s for s in c["steps"] if s["validTime"] == valid_iso), None)
+def lake_hour(c, valid_iso, tol_min=90):
+    """The step valid at that hour, or the nearest step within 90 min (NBM is 3-hourly beyond +24 h)."""
+    t = parse_iso(valid_iso)
+    best = min(c["steps"], key=lambda s: abs((parse_iso(s["validTime"]) - t).total_seconds()), default=None)
+    if best is None or abs((parse_iso(best["validTime"]) - t).total_seconds()) > tol_min * 60:
+        return None
+    return best
 
 
 def lake_median(step):
@@ -381,7 +388,7 @@ def packet(store, lake, night, block=None, n_pairs=6, practice=False, seed=None,
             key.append({"pairId": pid, "bank": lab, "role": role, "bankId": b["id"], "fetchM": round(float(m[k])), "hm0M": round(float(hm0[k]), 4),
                         "chopClass": pc, "texturePrediction": tx, "predictedClass": int(max(pc, TEXTURE_FLOOR[tx])) if tx else None,
                         "windMS": None if u is None else round(u, 2), "dirFromDeg": None if db[k] is None else round(db[k]),
-                        "geometryType": p["gA"] if role == "A" else p["gB"]})
+                        "geometryType": p["gA"] if role == "A" else p["gB"], "geometryTypeSource": "planner heuristic (diversity only; the observer records their own)"})
     diags = []
     for n, p in enumerate(route, 1):
         pid = f"{lake[:2].upper()}{night.replace('-', '')}-P{n}"
@@ -396,10 +403,12 @@ def packet(store, lake, night, block=None, n_pairs=6, practice=False, seed=None,
                       "windDifference": round(A["windMS"] - Bk["windMS"], 2) if A["windMS"] is not None and Bk["windMS"] is not None else None,
                       "geometryTypeA": A["geometryType"], "geometryTypeB": Bk["geometryType"], "boatDistanceM": round(p["distM"]),
                       "tieExcluded": (A["hm0M"] - Bk["hm0M"]) / A["hm0M"] < TIE if A["hm0M"] else True})
-    lead = round((mid - parse_iso(c["initTime"])).total_seconds() / 3600)
+    lead = lake_hour(c, iso(mid))["leadHours"]
     minutes = round((t_cursor - start).total_seconds() / 60)
+    used = lake_hour(c, iso(mid))
     sealed = {"SEALED": "Scorer only. The observer must not open this file before the session is scored.",
-              "candidateId": CANDIDATE, "forecastInit": c["initTime"], "validTime": iso(mid), "leadHours": lead,
+              "candidateId": CANDIDATE, "forecastInit": c["initTime"], "validTime": iso(mid), "forecastStepValid": used["validTime"],
+              "leadHours": used["leadHours"],
               "windowUTC": [iso(start), iso(end)], "lake": lake, "lakeWindMS": round(u_l, 2), "lakeWindFromDeg": round(d_l),
               "geometryVersion": o["geometryVersion"], "status": tag, "estimateNote": "planning estimate (steady CEM, NBM at bank, frozen boundaries); "
               "the SCORED prediction is wind-eval as of each record time", "pairs": diags, "banks": key}
