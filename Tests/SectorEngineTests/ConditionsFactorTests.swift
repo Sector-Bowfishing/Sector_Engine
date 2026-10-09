@@ -37,7 +37,8 @@ enum CE {
                       dischargeCfs: Double? = 200, dischargeTrend: Double? = 0,
                       hasTurbGage: Bool? = nil, fcDay: Int = 0,
                       windowStart: Date? = utc(2024, 5, 15, 2, 30),
-                      astroDusk: Date? = utc(2024, 5, 15, 2, 30)) -> ConditionsInput {
+                      astroDusk: Date? = utc(2024, 5, 15, 2, 30),
+                      jurisdictions: [String] = []) -> ConditionsInput {
         ConditionsInput(
             date: date, latitude: lat, longitude: lon,
             region: RegionResolver.region(latitude: lat, longitude: lon),
@@ -61,7 +62,8 @@ enum CE {
             // A gage exists iff there's a turbidity reading, unless a test says
             // otherwise — keeps "turbidity: nil" from implying a phantom gage now
             // that the estimate caps key off hasTurbidityGage.
-            hasTurbidityGage: hasTurbGage ?? (turbidity != nil), forecastDayIndex: fcDay)
+            hasTurbidityGage: hasTurbGage ?? (turbidity != nil), forecastDayIndex: fcDay,
+            jurisdictions: jurisdictions)
     }
 }
 
@@ -316,11 +318,20 @@ final class SpawnFactorTests: XCTestCase {
     }
 
     func testFloodDependentSpawnerLiftedByRisingWater() {
-        // Alligator gar (flood-dependent) at peak temp + spring window.
-        let rising = SpawnFactor.score(CE.input(date: CE.utc(2024, 4, 20, 2), lat: 30, lon: -95,
-                                                waterTemp: 73, stageTrend: 0.8))
-        let falling = SpawnFactor.score(CE.input(date: CE.utc(2024, 4, 20, 2), lat: 30, lon: -95,
-                                                 waterTemp: 73, stageTrend: -0.8))
+        // The flood lift is biology, computed for every flood-dependent spawner —
+        // including gated ones (alligator gar), whose biology stays internal.
+        // Phase 5A: the score-level check moved to spotted gar, because the L7
+        // gate keeps alligator gar from ever leading the spawn factor.
+        let cfg = ConditionsConfig.default.spawn
+        for name in ["Alligator gar", "Spotted gar"] {
+            let s = SpeciesDatabase.all.first { $0.name == name }!
+            XCTAssertGreaterThan(SpawnFactor.floodScore(for: s, stageTrend12hFt: 0.8, cfg: cfg),
+                                 SpawnFactor.floodScore(for: s, stageTrend12hFt: -0.8, cfg: cfg), name)
+        }
+        let rising = SpawnFactor.score(CE.input(date: CE.utc(2024, 5, 20, 2), lat: 30, lon: -95,
+                                                waterTemp: 75, stageTrend: 0.8))
+        let falling = SpawnFactor.score(CE.input(date: CE.utc(2024, 5, 20, 2), lat: 30, lon: -95,
+                                                 waterTemp: 75, stageTrend: -0.8))
         XCTAssertGreaterThan(rising.intensity, falling.intensity)
     }
 

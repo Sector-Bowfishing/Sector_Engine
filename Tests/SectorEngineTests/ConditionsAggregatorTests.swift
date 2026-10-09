@@ -151,10 +151,15 @@ final class ConditionsAggregatorTests: XCTestCase {
             XCTAssertNotEqual(r.spawnSpeciesName, "Paddlefish")
             XCTAssertNotEqual(r.spawnSpeciesName, "American shad")
         }
-        // Alligator gar (check) leading → disclaimer flagged + present in the card.
+        // Phase 5A: alligator gar used to lead here (with a disclaimer). The L7
+        // gate refuses its spawn naming everywhere, so it must never lead now.
         let gar = eval(CE.input(date: CE.utc(2024, 4, 25, 2), lat: 29.7, lon: -95.0,
                                 waterTemp: 74, stageTrend: 0.9))
-        if gar.spawnSpeciesName == "Alligator gar" {
+        XCTAssertNotEqual(gar.spawnSpeciesName, "Alligator gar")
+        // A "check" species that is still permitted keeps the disclaimer path.
+        if let name = gar.spawnSpeciesName,
+           let s = SpeciesDatabase.all.first(where: { $0.name == name }),
+           SpeciesLegality.needsDisclaimer(s) {
             XCTAssertTrue(gar.spawnNeedsDisclaimer)
             XCTAssertTrue(gar.whereToLook.contains { $0.kind == .spawn && $0.body.contains("Verify") })
         }

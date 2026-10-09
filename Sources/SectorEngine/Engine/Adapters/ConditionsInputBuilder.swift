@@ -249,7 +249,9 @@ public enum ConditionsInputBuilder {
             moonAltitudeAtWindow: moonAltFrac,
             windowStart: windowStart, windowEnd: windowEnd,
             hasTurbidityGage: turbidity != nil,
-            forecastDayIndex: forecastDayIndex)
+            forecastDayIndex: forecastDayIndex,
+            // Same lake resolution the API reports as `resolvedLake`.
+            jurisdictions: LakeDirectory.nearest(to: coordinate, withinMiles: 25)?.states ?? [])
     }
 
     /// The generation level that best represents the REMAINING fishing window.
