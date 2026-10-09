@@ -141,6 +141,39 @@ final class ConservationGateTests: XCTestCase {
         }
     }
 
+    /// Phase 5A closeout: unassessed freshwater species fail closed.
+    private let unassessed = ["Bowfin", "Tilapia", "Freshwater drum", "Gizzard shad",
+                              "Striped mullet", "Channel catfish", "Paddlefish", "American shad"]
+
+    func testUnassessedSpeciesFailClosed() {
+        for name in unassessed {
+            guard let s = SpeciesDatabase.all.first(where: { $0.name == name }) else {
+                return XCTFail("\(name) missing")
+            }
+            XCTAssertNil(SpeciesPolicyRegistry.policy(s.id), name)
+            let d = ConservationGate.evaluate(speciesId: s.id, purpose: .spawnTiming, jurisdictions: [])
+            XCTAssertEqual(d.outcome, .suppress, name)
+            XCTAssertEqual(d.reasons, [.policyNotAssessed], name)
+            XCTAssertTrue(d.internallyKnown, name)
+            XCTAssertFalse(d.publicTargetingAllowed, name)
+        }
+    }
+
+    func testUnassessedSpeciesNeverLeadOrAppearInText() {
+        // Central Florida (tilapia country), Louisiana, Guntersville, coastal Carolina.
+        for (lat, lon) in [(27.5, -81.5), (30.0, -91.0), (34.4, -86.3), (33.8, -78.9)] {
+            sweep(lat: lat, lon: lon) { i, r in
+                XCTAssertFalse(unassessed.contains(r.species?.name ?? ""),
+                               "unassessed species led: \(r.species!.name)")
+                let c = ConditionsAggregator.evaluate(i)
+                XCTAssertFalse(unassessed.contains(c.spawnSpeciesName ?? ""))
+                let text = (c.topReasons + c.factors.flatMap { [$0.label, $0.why] }
+                            + c.whereToLook.flatMap { [$0.title, $0.body] }).joined(separator: " ").lowercased()
+                for n in unassessed { XCTAssertFalse(text.contains(n.lowercased()), "\(n) in: \(text)") }
+            }
+        }
+    }
+
     func testCommonCarpStillNamed() {
         let r = SpawnFactor.score(CE.input(date: CE.utc(2024, 5, 15, 2), lat: 34.4, lon: -86.3,
                                            waterTemp: 65, jurisdictions: ["AL"]))

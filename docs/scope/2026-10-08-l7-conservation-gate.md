@@ -31,13 +31,23 @@ FL, SC or TX. Spotted gar is not named in KS, OH, PA, IL, MI, NM or ON.
 Longnose gar is not named in NM, SD or NJ. Common carp and the Asian carps are
 unchanged.
 
-Species with no ratified policy keep their current behaviour: bowfin,
-tilapia, drum, gizzard shad and mullet.
+Species with no ratified policy **fail closed**: they are suppressed with the
+reason `policyNotAssessed` and stay internally known (their biology still
+runs), but they are never publicly named or targeted. This covers bowfin,
+tilapia, freshwater drum, gizzard shad and striped mullet, plus channel
+catfish, paddlefish and American shad, which were already excluded by the
+legality and sight-shoot checks. This was the Phase 5A closeout decision on
+2026-10-09.
+
+Side effect: on a night when only unassessed species are in their spawn
+window, the spawn factor is now out of season. It drops from the blend and
+the remaining weights are renormalised, instead of an unnamed spawn lifting
+the score.
 
 ## Tests
 
-`ConservationGateTests` adds 14 tests. `test09_legality` and the flood-lift
-test were rewritten. `swift test`: 94/94 pass.
+`ConservationGateTests` adds 16 tests. `test09_legality` and the flood-lift
+test were rewritten. `swift test`: 96/96 pass.
 
 ## Not touched
 
