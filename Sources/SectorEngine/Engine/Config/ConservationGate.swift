@@ -9,12 +9,11 @@
 //  every species' spawn state), presence (SpawnSpecies.present) and legality
 //  (SpeciesLegality): those are siblings, not the gate.
 //
-//  Mirrors the iOS gate (Sector/FishIntel/Policy/ConservationGate.swift) for
-//  the ratified species. One deliberate difference: a species with NO ratified
-//  policy (bowfin, tilapia, drum, shad, catfish, mullet) passes through here
-//  with `policyNotAssessed`, so Phase 5A doesn't change spawn naming for fish
-//  it never researched. The iOS map withholds unassessed species because it
-//  has no legacy behaviour to preserve.
+//  Mirrors the iOS gate (Sector/FishIntel/Policy/ConservationGate.swift).
+//  A freshwater species with NO ratified policy (bowfin, tilapia, freshwater
+//  drum, gizzard shad, striped mullet — and the already-excluded channel
+//  catfish, paddlefish, American shad) FAILS CLOSED: `policyNotAssessed`,
+//  internally known, public targeting suppressed. Phase 5A closeout decision.
 //
 //  Applied at the CANDIDATE stage of SpawnFactor: a gated species never
 //  becomes the spawn leader, so it can't drive naming, the spawn regime, the
@@ -153,9 +152,10 @@ public enum ConservationGate {
 
         guard purpose.isTargeting else { return decide(.allow, []) }
 
-        // Unassessed species keep their pre-5A behaviour on the engine (see header).
+        // Fail closed: a species with no ratified policy is internally known
+        // (its biology still runs) but never publicly targeted.
         guard let p = SpeciesPolicyRegistry.policy(speciesId) else {
-            return decide(.allow, [.policyNotAssessed])
+            return decide(.suppress, [.policyNotAssessed])
         }
 
         var outcome: GateOutcome
