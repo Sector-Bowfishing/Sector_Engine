@@ -114,6 +114,10 @@ public struct SpawnSpecies: Equatable {
         self.mississippiBasinOnly = mississippiBasinOnly
     }
 
+    /// Stable id shared with the app's policy tables ("Alligator gar" →
+    /// "alligator_gar"). Derived, so the rows keep their display names.
+    public var id: String { name.lowercased().replacingOccurrences(of: " ", with: "_") }
+
     /// True if this species can be present in `region` (region-only check).
     public func present(in region: Region) -> Bool { regions.contains(region) }
 

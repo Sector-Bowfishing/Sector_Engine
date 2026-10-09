@@ -253,7 +253,9 @@ public enum ConditionsInputBuilder {
             hasTurbidityGage: turbidity != nil,
             forecastDayIndex: forecastDayIndex,
             clarityDischargeCfs: clarityDischarge?.value,
-            clarityDischargeTrend12hCfs: clarityDischarge?.change)
+            clarityDischargeTrend12hCfs: clarityDischarge?.change,
+            // Same lake resolution the API reports as `resolvedLake`.
+            jurisdictions: LakeDirectory.nearest(to: coordinate, withinMiles: 25)?.states ?? [])
     }
 
     /// The generation level that best represents the REMAINING fishing window.

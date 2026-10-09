@@ -15,7 +15,8 @@
 //  lift a night whose temp AND date are already favorable — it can't manufacture
 //  a spawn out of cold or out-of-season water. Tier 2 (riverine Asian carps) is
 //  scored as *staging* on a separate, lower band; Tier 3 never contributes.
-//  Protected species are skipped entirely.
+//  Protected species are skipped entirely, and so is any species the L7
+//  conservation gate withholds from spawn timing (ConservationGate.swift).
 //
 
 import Foundation
@@ -46,6 +47,7 @@ public enum SpawnFactor {
             if species.tier == .tier3 { continue }
             if !species.sightShootableSpawn { continue }
             guard species.present(in: input.region, latitude: input.latitude, longitude: input.longitude) else { continue }
+            guard ConservationGate.permitsSpawnNaming(species, jurisdictions: input.jurisdictions) else { continue }
             let m = species.window(for: input.region).membership(dayOfYear: doy, taperDays: cfg.windowTaperDays)
             if m > 0.05 { return true }
         }
@@ -75,6 +77,9 @@ public enum SpawnFactor {
             if species.tier == .tier3 { continue }                            // never a warm-water spawn run
             if !species.sightShootableSpawn { continue }                       // cavity nesters (catfish) never headline
             guard species.present(in: input.region, latitude: input.latitude, longitude: input.longitude) else { continue }  // region + lat cap + basin gate
+            // L7 gate: a gated species never leads, so it can't be named, set the
+            // spawn regime, lift the score, or fire a "Spawn's on" alert.
+            guard ConservationGate.permitsSpawnNaming(species, jurisdictions: input.jurisdictions) else { continue }
 
             let dateScore = species.window(for: input.region)
                 .membership(dayOfYear: doy, taperDays: cfg.windowTaperDays)

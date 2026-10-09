@@ -20,6 +20,10 @@ public struct ConditionsInput: Equatable {
     public var latitude: Double
     public var longitude: Double
     public var region: Region
+    /// State/province codes of the water (from the lake directory), for the
+    /// L7 conservation gate's jurisdiction rules. Empty when the point isn't a
+    /// known lake — then only species-wide rules apply.
+    public var jurisdictions: [String]
 
     // MARK: Weather
     public var windMph: Double
@@ -151,7 +155,8 @@ public struct ConditionsInput: Equatable {
                 hasTurbidityGage: Bool = false,
                 forecastDayIndex: Int = 0,
                 clarityDischargeCfs: Double? = nil,
-                clarityDischargeTrend12hCfs: Double? = nil) {
+                clarityDischargeTrend12hCfs: Double? = nil,
+                jurisdictions: [String] = []) {
         self.date = date
         self.latitude = latitude
         self.longitude = longitude
@@ -201,5 +206,6 @@ public struct ConditionsInput: Equatable {
         self.forecastDayIndex = forecastDayIndex
         self.clarityDischargeCfs = clarityDischargeCfs
         self.clarityDischargeTrend12hCfs = clarityDischargeTrend12hCfs
+        self.jurisdictions = jurisdictions
     }
 }
