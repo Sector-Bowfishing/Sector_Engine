@@ -1,0 +1,212 @@
+{
+ "frozenAt": "2026-10-12T06:16:16Z",
+ "candidateModel": "wind-candidate-2026.10.stage2-baseline",
+ "forcing": "NOAA NBM v5.0, direct NODD, Candidate decoder, bilinear to station",
+ "window": {
+  "start": "2026-05-06",
+  "end": "2026-10-06",
+  "splits": [
+   "CAL",
+   "H1"
+  ],
+  "h2": "SEALED until 2027-01-01 (not read)"
+ },
+ "holdoutType": "pre-registered historical corpus; forcing untuned (no fitting), so CAL+H1 are both evaluation data",
+ "truth": "METAR/IEM at 8 frozen stations: 8A1 (AWOS), 4A6 (AWOS), DCU (ASOS), HSV (ASOS), 9A4 (AWOS), MSL (ASOS), SNH (AWOS), 15M (AWOS)",
+ "sampleCount": 140462,
+ "lakeCount": 4,
+ "stationCount": 8,
+ "metrics": {
+  "speedMaeMph": 2.189,
+  "speedBiasMph": -0.403,
+  "nightSpeedMaeMph": 1.878,
+  "nightSpeedBiasMph": -0.093,
+  "windyHourSpeedMaeMph": 4.375,
+  "directionMaeDeg": 18.321,
+  "directionWithin22_5Pct": 75.831,
+  "gustMaeMph": 5.256,
+  "gustConditionalBiasMph": -4.275,
+  "event15mphPod": 0.0,
+  "event15mphFar": 1.0
+ },
+ "byClass": [
+  {
+   "lakeClass": "station network ASOS",
+   "sampleCount": 52657,
+   "metrics": {
+    "speedMaeMph": 2.236,
+    "speedBiasMph": -0.639,
+    "nightSpeedMaeMph": 2.102,
+    "nightSpeedBiasMph": -0.434,
+    "windyHourSpeedMaeMph": 4.135,
+    "directionMaeDeg": 18.332,
+    "directionWithin22_5Pct": 75.654,
+    "gustMaeMph": 7.218,
+    "gustConditionalBiasMph": -6.93,
+    "event15mphPod": 0.0,
+    "event15mphFar": 1.0
+   }
+  },
+  {
+   "lakeClass": "station network AWOS",
+   "sampleCount": 87805,
+   "metrics": {
+    "speedMaeMph": 2.161,
+    "speedBiasMph": -0.261,
+    "nightSpeedMaeMph": 1.744,
+    "nightSpeedBiasMph": 0.112,
+    "windyHourSpeedMaeMph": 4.691,
+    "directionMaeDeg": 18.305,
+    "directionWithin22_5Pct": 76.058,
+    "gustMaeMph": 4.301,
+    "gustConditionalBiasMph": -2.984,
+    "event15mphPod": 0.0,
+    "event15mphFar": 1.0
+   }
+  }
+ ],
+ "perLake": {
+  "Guntersville|AL": {
+   "stations": [
+    "4A6",
+    "8A1"
+   ],
+   "sampleCount": 33934,
+   "metrics": {
+    "speedMaeMph": 2.138,
+    "speedBiasMph": -1.32,
+    "nightSpeedMaeMph": 1.516,
+    "nightSpeedBiasMph": -0.922,
+    "windyHourSpeedMaeMph": 6.513,
+    "directionMaeDeg": 20.013,
+    "directionWithin22_5Pct": 67.891,
+    "gustMaeMph": 4.903,
+    "gustConditionalBiasMph": -3.56,
+    "event15mphPod": 0.0,
+    "event15mphFar": null
+   }
+  },
+  "Wheeler|AL": {
+   "stations": [
+    "9A4",
+    "DCU",
+    "HSV"
+   ],
+   "sampleCount": 52532,
+   "metrics": {
+    "speedMaeMph": 2.221,
+    "speedBiasMph": -0.499,
+    "nightSpeedMaeMph": 2.13,
+    "nightSpeedBiasMph": -0.276,
+    "windyHourSpeedMaeMph": 4.305,
+    "directionMaeDeg": 18.767,
+    "directionWithin22_5Pct": 74.92,
+    "gustMaeMph": 6.947,
+    "gustConditionalBiasMph": -6.074,
+    "event15mphPod": 0.0,
+    "event15mphFar": null
+   }
+  },
+  "Wilson|AL": {
+   "stations": [
+    "MSL"
+   ],
+   "sampleCount": 18104,
+   "metrics": {
+    "speedMaeMph": 2.096,
+    "speedBiasMph": -0.151,
+    "nightSpeedMaeMph": 1.895,
+    "nightSpeedBiasMph": 0.237,
+    "windyHourSpeedMaeMph": 3.499,
+    "directionMaeDeg": 18.205,
+    "directionWithin22_5Pct": 76.7,
+    "gustMaeMph": 5.832,
+    "gustConditionalBiasMph": -5.419,
+    "event15mphPod": 0.0,
+    "event15mphFar": 1.0
+   }
+  },
+  "Pickwick Lake|TN": {
+   "stations": [
+    "15M",
+    "SNH"
+   ],
+   "sampleCount": 35892,
+   "metrics": {
+    "speedMaeMph": 2.236,
+    "speedBiasMph": 0.479,
+    "nightSpeedMaeMph": 1.843,
+    "nightSpeedBiasMph": 0.789,
+    "windyHourSpeedMaeMph": 4.161,
+    "directionMaeDeg": 16.602,
+    "directionWithin22_5Pct": 80.405,
+    "gustMaeMph": 3.55,
+    "gustConditionalBiasMph": -2.531,
+    "event15mphPod": 0.0,
+    "event15mphFar": 1.0
+   }
+  }
+ },
+ "productionProxy": {
+  "model": "HRRR (what Open-Meteo Best Match serves at 0-46 h)",
+  "sampleCount": 140462,
+  "metrics": {
+   "speedMaeMph": 2.775,
+   "speedBiasMph": 1.487,
+   "nightSpeedMaeMph": 2.892,
+   "nightSpeedBiasMph": 2.149,
+   "windyHourSpeedMaeMph": 3.288,
+   "directionMaeDeg": 23.632,
+   "directionWithin22_5Pct": 63.446,
+   "gustMaeMph": 6.124,
+   "gustConditionalBiasMph": -3.646,
+   "event15mphPod": 0.108,
+   "event15mphFar": 0.915
+  },
+  "candidateOnSameRows": {
+   "speedMaeMph": 2.189,
+   "speedBiasMph": -0.403,
+   "nightSpeedMaeMph": 1.878,
+   "nightSpeedBiasMph": -0.093,
+   "windyHourSpeedMaeMph": 4.375,
+   "directionMaeDeg": 18.321,
+   "directionWithin22_5Pct": 75.831,
+   "gustMaeMph": 5.256,
+   "gustConditionalBiasMph": -4.275,
+   "event15mphPod": 0.0,
+   "event15mphFar": 1.0
+  }
+ },
+ "surfacePhysics": {
+  "model": "frozen CEM (M0) + frozen duration rule",
+  "truth": "NDBC lake buoys, untouched 2020-2023 seasons (6 stations)",
+  "sampleCount": 48572,
+  "hm0MaeM": 0.1414,
+  "hm0BiasM": -0.1091,
+  "chopClassExactPct": 40.5,
+  "chopClassWithin1Pct": 77.9,
+  "severeMissPct": 4.89,
+  "note": "Buoys are not Sector banks: physics evidence only. No field (bank-scale) surface validation exists."
+ },
+ "scores": {
+  "windCertificationScore": 3.1,
+  "windCertificationRubric": "frozen Stage 1/2 rubric v1 (code-derived scoreboard)",
+  "bowfishingWindIntelligenceScore": 5.4,
+  "bwisDefinitionSha256": "21e2a3268f36643284036f74d576a9515c3189f5ee7fc60dda2444de6de233c1"
+ },
+ "failedGates": [
+  "dim1: >=15 mph POD >= 0.5 with FAR <= 0.5 (NBM POD 0)",
+  "dim2: direction >= 85% within 22.5 deg (75.8%)",
+  "dim3: gust conditional |bias| <= 1 m/s and >=20 kt POD >= 0.6 / FAR <= 0.6",
+  "dim6: no field exposure validation (cap 6/10)",
+  "dim7: no field surface validation (cap 6/10)",
+  "dim8: 30 live days >= 99% not yet reached",
+  "cap7: land-only wind validation (no over-water reference)"
+ ],
+ "liveValidation": "SEALED: live forecast-vs-observation checks are not computed or published before 2027-01-01 (H2 holdout).",
+ "artifactRefs": [
+  "docs/intelligence/wind/stage3c/WIND_HISTORICAL_EVENT_VALIDATION.md",
+  "docs/intelligence/wind/bowfishing/WIND_BOWFISHING_SCORE_REPORT.md",
+  "docs/intelligence/wind/WIND_SCORE_CHANGE_LOG.jsonl"
+ ]
+}

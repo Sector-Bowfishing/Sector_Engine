@@ -7,7 +7,7 @@
 
 Default store is local. A gs:// store refuses to open without SECTOR_WIND_GCS_APPROVED=yes
 (Michael's approval) and never opens the shared production buckets."""
-import argparse, json, sys, concurrent.futures as cf
+import argparse, json, os, sys, concurrent.futures as cf
 from datetime import datetime, timedelta, timezone
 
 from sector_wind.ingest import (DEFAULT_LEADS, ingest_metar_day, ingest_nbm_cycle, ingest_rtma, latest_nbm_cycle, load_config)
@@ -38,6 +38,17 @@ def main(argv=None):
         finally:
             store.flush_ledger()          # the ledger is written even when the run fails
         print(json.dumps(res, default=str)[:4000])
+        # WindBrain (additive, opt-in): publish the wind slot of the Brain RTDB from what this run archived.
+        # It never raises and never changes this job's exit code: a Brain RTDB failure cannot affect the archive.
+        brain_url = os.environ.get("SECTOR_WIND_BRAIN_RTDB_URL")
+        if brain_url:
+            from sector_wind.brain.publish import safe_publish
+            from sector_wind.brain.writer import RtdbWriter
+            try:
+                brain = safe_publish(store, cfg, RtdbWriter(brain_url), now=now, run_summary=res)
+            except Exception as e:                  # writer construction (bad URL) — still never fatal
+                brain = {"ok": False, "errors": [repr(e)]}
+            print("windbrain", json.dumps(brain, default=str)[:1500])
         # A failed run must be visible as a failed Cloud Run execution, never a silent success.
         return 1 if res["errors"] else 0
     start, end = day(a.start), day(a.end) + timedelta(hours=23)
