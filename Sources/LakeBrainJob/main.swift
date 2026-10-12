@@ -5,6 +5,7 @@
 //                      [--seed-archive gs://BUCKET] [--presence gs://BUCKET | DIR]
 //                      [--scope pilots|fleet] [--lake ID]... [--force] [--backfill] [--no-shared-tva-archive]
 //    --dry-run DIR      write every Brain RTDB path as a JSON file under DIR (no database)
+//    --read-rtdb URL    with --dry-run: read the live Brain RTDB (GET only) for plan()/previous profiles
 //    --rtdb URL         write the Brain RTDB (default $SECTOR_BRAIN_RTDB_URL)
 //    --archive X        history/baselines store; gs://… or a local directory (default: none)
 //    --seed-archive X   read-only fallback for --archive (dry runs start from the real bucket)
@@ -43,8 +44,14 @@ options.processingVersion = env["SECTOR_ENGINE_REVISION"] ?? env["K_REVISION"] ?
 var store: BrainStore? = nil
 var rest: RTDBRestStore? = nil
 if let dir = flag("--dry-run") {
-    store = LocalDirectoryStore(directory: dir)
-    print("▶ dry run → \(dir)")
+    if let live = flag("--read-rtdb") {
+        rest = RTDBRestStore(databaseURL: live)
+        store = ReadThroughDryRunStore(reader: rest!, writer: LocalDirectoryStore(directory: dir))
+        print("▶ dry run → \(dir) (reads \(live), GET only)")
+    } else {
+        store = LocalDirectoryStore(directory: dir)
+        print("▶ dry run → \(dir)")
+    }
 } else if let url = flag("--rtdb") ?? env["SECTOR_BRAIN_RTDB_URL"] {
     rest = RTDBRestStore(databaseURL: url); store = rest
     print("▶ Brain RTDB → \(url)")
