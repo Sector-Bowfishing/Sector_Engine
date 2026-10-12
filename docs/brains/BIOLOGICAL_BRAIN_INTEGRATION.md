@@ -170,3 +170,48 @@ python3 run.py --write                                   # one atomic publish
 Credentials: on Cloud Run, the job's service account (metadata server); locally, the gcloud user. No key files. The run refuses the Sector app databases.
 
 There is no scheduled job. Deployment to Cloud Run, if ever wanted, is a separate decision.
+
+## 10. Lake → species: not owned here (PROPOSED seam, 2026-10-12)
+
+**Status:** PROPOSED. Nothing in this section is published or implemented. It needs ratification and approval before a writer exists.
+
+The Biological Brain answers "what does Sector know about this species?". It does **not** answer "which species are on this lake?". That is lake context.
+
+| Question | Owner |
+|---|---|
+| Which species are associated with this lake? | **Lake context** (the canonical lake directory / Lake Brain), keyed by the directory `lakeId` |
+| What does Sector know about this species? | **Biological Brain** (`/species/{speciesId}`) |
+| Which species matter on this lake now, and what does it mean for the bowfisher? | **Sector Intelligence** |
+
+- The Biological Brain keeps **no lake registry**. It may *consume* lake presence later, for per-lake Biological State.
+- Sector Intelligence keeps **no fish list** and **no copy of species knowledge**. It reads presence from lake context and knowledge from this brain.
+- Sector Ops never maps species to lakes.
+
+**Proposed presence record:** `/lakes/{lakeKey}/speciesPresence/{speciesId}` in the Brain RTDB, written by the lake-context owner:
+```jsonc
+{ "lakeId": "Example|ST", "speciesId": "example_fish",
+  "presenceState": "historical",          // presence vocabulary below, verbatim
+  "presenceAuthority": "canonical-research",
+  "confidence": "medium", "nativeStatus": "…", "sourceTier": "…", "latestRecord": "YYYY",
+  "sourceRef": "gs://… (private, text only)", "researchVersion": "…",
+  "discrepancyIds": ["DISC-…"],           // when a production system disagrees
+  "updatedAt": "…" }
+```
+
+**Presence vocabulary:** the existing research presence states, unchanged: `established`, `reported`, `stocked`, `inRangeUnconfirmed`, `historical`, `failed/eradicated`, `unknown`. A disagreement with a shipping app's presence value is a published discrepancy (§7) and is never resolved silently.
+
+**Interface for Sector Intelligence:**
+```
+resolveLakeSpecies(lakeId) -> [{ speciesId, presenceState, presenceAuthority, confidence, latestRecord, sourceRef, discrepancyIds[] }]
+```
+
+**Flow (`evaluateLake(lakeId)`):**
+1. Resolve the canonical lake.
+2. `resolveLakeSpecies(lakeId)`.
+3. Filter to relevant species by a presence policy. **Open decision:** which presence states count as relevant.
+4. Read species knowledge from `/species/{speciesId}`.
+5. Read current condition-brain states (water-temp, water-clarity, wind, …).
+6. Read Biological State for those species where one exists (not started).
+7. Produce Sector Intelligence.
+
+None of this changes `/conditions`, `SpeciesDatabase`, `SpawnFactor`, `SpeciesLegality` or any shipping app behaviour.
