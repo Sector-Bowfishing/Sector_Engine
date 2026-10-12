@@ -148,12 +148,14 @@ python -m sector_wind.brain publish --store gs://sector-wind-candidate/wind/v1 -
 
 **Inside the job:** set `SECTOR_WIND_BRAIN_RTDB_URL=https://sector-brain.firebaseio.com`. Unset means no publish.
 
-## Deployment steps (NOT done; need Michael's approval)
+## Deployment (DONE 2026-10-12, approved by Michael)
 
-1. Copy the 4 frozen development fetch tables to `gs://sector-wind-candidate/wind/v1/fetch/dev/<lake>.windfetch.json.gz` (from the app assets; the SHA-256 is recorded in each profile). Without them, state is published with `surfaceState: null` + `fetchTablesUnavailable`.
-2. Grant the `wind-hourly` service account Brain RTDB write access on `sector-9393c`: `roles/firebasedatabase.admin`.
-   - **Security note:** this IAM role is project-wide, so it also reaches the app databases.
-   - `RtdbWriter` refuses any URL other than `sector-brain` (code guard).
+1. **Fetch tables:** the 4 frozen development fetch tables were copied to `gs://sector-wind-candidate/wind/v1/fetch/dev/<lake>.windfetch.json.gz`. Each table SHA-256 was verified before upload.
+2. **IAM:** `wind-hourly-job@sector-9393c.iam.gserviceaccount.com` was granted `roles/firebasedatabase.admin` on `sector-9393c`.
+   - An instance-scoped IAM condition (`resource.name.endsWith("/instances/sector-brain")`) was tried first. RTDB returned 401 for 15 min, so **RTDB does not honour it**, and the plain grant replaced it.
+   - The role is project-wide, so it also reaches the app databases. `RtdbWriter` refuses any URL other than `sector-brain` (code guard).
    - A stricter option for later is an Admin SDK identity with `databaseAuthVariableOverride` plus Brain rules that allow only that uid to write the wind paths. That rules change belongs in Sector_Ops.
-3. Redeploy the `wind-hourly` job from this branch with env `SECTOR_WIND_BRAIN_RTDB_URL` and `SECTOR_WIND_BUILD=<git sha>`.
-4. Rollback: unset the env var (the archive is unaffected). To remove data, delete the wind paths.
+3. **Job:** `wind-hourly` was redeployed from `brain/wind` (generation 3). All existing settings were kept; env added: `SECTOR_WIND_BRAIN_RTDB_URL=https://sector-brain.firebaseio.com`, `SECTOR_WIND_BUILD=brain/wind@<sha>`.
+   - Verified by execution `wind-hourly-b67j6`: archive OK, `windbrain ok`, `publishMode: scheduled`.
+   - The earlier 401 runs also proved the isolation: the archive still succeeded.
+4. **Rollback:** `gcloud run jobs update wind-hourly --region us-central1 --remove-env-vars SECTOR_WIND_BRAIN_RTDB_URL` (the archive is unaffected). To remove data, delete the wind paths.
