@@ -307,11 +307,15 @@ public struct LakeBrainProfileRecord: Codable, Equatable, Sendable {
         public var authority: String
         public var brains: [String]
     }
+    /// Sector_Ops `Issue`: severity critical | warning | info.
     public struct Issue: Codable, Equatable, Sendable {
         public var id: String
         public var severity: String
+        public var kind: String
         public var title: String
-        public var since: String?
+        public var lakeId: String
+        public var brainId: String
+        public var since: String
     }
 
     public var lakeId: String

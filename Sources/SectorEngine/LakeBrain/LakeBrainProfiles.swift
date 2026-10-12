@@ -121,18 +121,22 @@ public enum LakeBrainProfiles {
                                                         : LakeBrainReadiness.degraded.rawValue)
 
         var issues: [LakeBrainProfileRecord.Issue] = []
+        func issue(_ id: String, _ severity: String, _ kind: String, _ title: String) {
+            issues.append(.init(id: id, severity: severity, kind: kind, title: title, lakeId: lake.id,
+                                brainId: LakeBrainSpec.brainId, since: state?.freshness.generatedAt ?? gen))
+        }
         for f in state?.provenance.qualityFlags ?? [] {
             if f.hasPrefix("primarySourceStale:") {
-                issues.append(.init(id: "primary-source-stale", severity: "WARN", title: "Primary level source is stale; the reviewed fallback is in use (\(f.dropFirst("primarySourceStale:".count)))", since: nil))
+                issue("primary-source-stale", "warning", "source-stale", "Primary level source is stale; the reviewed fallback is in use (\(f.dropFirst("primarySourceStale:".count)))")
             } else if f.hasPrefix("sourceStale:") {
-                issues.append(.init(id: "source-stale", severity: "WARN", title: "Level source stale: \(f.dropFirst("sourceStale:".count)); last known value kept", since: nil))
+                issue("source-stale", "warning", "source-stale", "Level source stale: \(f.dropFirst("sourceStale:".count)); last known value kept")
             } else if f.hasPrefix("sourceError:") {
-                issues.append(.init(id: "source-error-\(BrainPlatform.lakeKey(String(f.dropFirst("sourceError:".count))))", severity: "INFO", title: "Fetch failed: \(f.dropFirst("sourceError:".count))", since: nil))
+                issue("source-error-\(BrainPlatform.lakeKey(String(f.dropFirst("sourceError:".count))))", "info", "source-error", "Fetch failed: \(f.dropFirst("sourceError:".count))")
             } else if f.hasPrefix("fallbackDatumDisagreement") {
-                issues.append(.init(id: "fallback-datum", severity: "WARN", title: "Fallback gauge disagrees with the operator pool (\(f))", since: nil))
+                issue("fallback-datum", "warning", "datum", "Fallback gauge disagrees with the operator pool (\(f))")
             }
         }
-        if state?.kind == .unavailable { issues.append(.init(id: "no-reading", severity: "WARN", title: "No reading from any reviewed source", since: nil)) }
+        if state?.kind == .unavailable, reviewed != nil { issue("no-reading", "warning", "source-unavailable", "No reading from any reviewed source") }
 
         var sources: [String: LakeBrainProfileRecord.TrustedSource]?
         if let b = reviewed {

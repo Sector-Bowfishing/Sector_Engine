@@ -74,7 +74,7 @@ Extends the frozen `LakeBrain` shape additively. `Known<T> = {value, source, qua
                               "researchVersion": "lake-presence-2026-10-12.1", "ref": "/lakes/Guntersville_AL/speciesPresence" },
   "trustedSources": { "tva_GVDA1": { sourceId, provider, sourceType, station, status, lastObservationAt, authority, brains } },
   "readiness": { "lake": "CALIBRATION" },
-  "activeIssues": [ { "id": "primary-source-stale", "severity": "WARN", "title": "…" } ] }
+  "activeIssues": [ { "id": "primary-source-stale", "severity": "warning", "kind": "source-stale", "title": "…", "lakeId": "…", "brainId": "lake-brain", "since": "…" } ] }
 ```
 
 - **Directory fields are not duplicated.** Name, states, coordinates, operator, `fullPoolFt`, `poolBasis` and `poolConfidence` come from `GET /lakes`.
