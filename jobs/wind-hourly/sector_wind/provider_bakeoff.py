@@ -451,6 +451,13 @@ def loop():
             collect()
         except Exception as e:
             print("collect failed", repr(e), flush=True)
+        try:   # RRFS/REFS prospective archive (research only); a no-op until NOAA publishes operational cycles
+            from sector_wind import rrfs
+            for s in rrfs.collect():
+                if s["status"] != "not published":
+                    print("  RRFS", s, flush=True)
+        except Exception as e:
+            print("rrfs failed", repr(e), flush=True)
 
 
 if __name__ == "__main__":
