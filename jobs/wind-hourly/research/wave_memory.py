@@ -64,6 +64,8 @@ def predict(row, table, model, p):
     if model in ("M0", "M1"):
         dh = duration(ser, tol, band)
         return cem(row["windMS"], row["fetchM"], dh * 3600) if dh is not None else 0.0
+    if model == "M4":
+        return predict_m4(row, table, p)
     tau = p["tau"]; H = None
     for j in range(len(ser)):
         s = ser[j]
@@ -75,6 +77,42 @@ def predict(row, table, model, p):
             forced = cem(s["speedMS"], x, dh * 3600)
         dec = H * math.exp(-1.0 / tau) if H is not None else None
         H = forced if dec is None else (dec if forced is None else max(forced, dec))
+    return H or 0.0
+
+
+def tp_cem(u, x, t_s=None):
+    if u <= 0 or x <= 0:
+        return 0.0
+    us = ustar(u); xd = x
+    if t_s is not None:
+        xd = min(xd, 5.23e-3 * (G * t_s / us) ** 1.5 * us * us / G)
+    h = 4.13e-2 * math.sqrt(G * xd / (us * us)) * us * us / G
+    if h > 2.115e2 * us * us / G:
+        return 2.398e2 * us / G
+    return 0.651 * (G * xd / (us * us)) ** (1 / 3) * us / G
+
+
+def predict_m4(row, table, p):
+    """M4 (pre-registered, parameter-free): M3 continuity + decay with tau = max(0.25 h, F_eff(t-1) / c_g(Tp(t-1)))."""
+    ser = row["series"]; tol, band = p["cont"]
+    H = None; T = None; F = None
+    for j in range(len(ser)):
+        s = ser[j]
+        forced = Tf = Fj = None
+        if s["speedMS"] is not None and s["dirFromDeg"] is not None:
+            dh = duration(ser[:j + 1], tol, band)
+            Fj = row["fetchM"] if j == len(ser) - 1 else nine_ray(table, s["dirFromDeg"])
+            forced = cem(s["speedMS"], Fj, dh * 3600); Tf = tp_cem(s["speedMS"], Fj, dh * 3600)
+        if H is None:
+            H, T, F = forced, Tf, Fj
+            continue
+        cg = G * T / (4 * math.pi) if T else 0.0
+        tau_h = max(0.25, (F / cg) / 3600.0) if cg > 0 and F else 0.25
+        dec = H * math.exp(-1.0 / tau_h)
+        if forced is None or dec > forced:
+            H = dec; F = Fj if Fj is not None else F          # decaying sea keeps its period
+        else:
+            H, T, F = forced, Tf, Fj
     return H or 0.0
 
 
