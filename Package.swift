@@ -9,6 +9,7 @@ let package = Package(
         .executable(name: "SectorEngineServer", targets: ["SectorEngineServer"]),
         .executable(name: "ClarityReplay", targets: ["ClarityReplay"]),
         .executable(name: "ClarityPrecompute", targets: ["ClarityPrecompute"]),
+        .executable(name: "WaterTempBrainJob", targets: ["WaterTempBrainJob"]),
     ],
     dependencies: [
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),
@@ -45,6 +46,8 @@ let package = Package(
                 .product(name: "NIOCore", package: "swift-nio"),
             ],
             path: "Sources/ClarityPrecompute"),
+        // Sector Brain Platform: the water-temp brain's fleet run → the Brain RTDB (Sector Ops reads it).
+        .executableTarget(name: "WaterTempBrainJob", dependencies: ["SectorEngine"], path: "Sources/WaterTempBrainJob"),
         .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine"], path: "Tests/SectorEngineTests"),
     ]
 )

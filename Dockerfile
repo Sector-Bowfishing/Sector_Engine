@@ -21,8 +21,13 @@ RUN swift build -c release --product SectorEngineServer \
 RUN swift build -c release --product ClarityPrecompute \
       -Xswiftc -static-stdlib \
     || swift build -c release --product ClarityPrecompute
+# The Water Temperature Brain job (Sector Brain Platform) runs from the same image too.
+RUN swift build -c release --product WaterTempBrainJob \
+      -Xswiftc -static-stdlib \
+    || swift build -c release --product WaterTempBrainJob
 RUN cp "$(swift build -c release --show-bin-path)/SectorEngineServer" /build/SectorEngineServer \
-    && cp "$(swift build -c release --show-bin-path)/ClarityPrecompute" /build/ClarityPrecompute
+    && cp "$(swift build -c release --show-bin-path)/ClarityPrecompute" /build/ClarityPrecompute \
+    && cp "$(swift build -c release --show-bin-path)/WaterTempBrainJob" /build/WaterTempBrainJob
 
 # ── Runtime stage ───────────────────────────────────────────────────────────
 # Slim image: Swift runtime libraries, no compiler. Add TLS roots + timezone data
@@ -34,6 +39,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY --from=build /build/SectorEngineServer /app/SectorEngineServer
 COPY --from=build /build/ClarityPrecompute /app/ClarityPrecompute
+COPY --from=build /build/WaterTempBrainJob /app/WaterTempBrainJob
 
 # Cloud Run sets PORT; the server reads it and binds 0.0.0.0.
 ENV PORT=8080
