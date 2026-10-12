@@ -211,6 +211,7 @@ class PayloadTests(unittest.TestCase):
         self.assertEqual(r["breakdowns"]["researchMaturity"], {"RESEARCH": 1, "NOT_STARTED": 1})
         self.assertEqual(self.updates()["/validation/biological-state"]["status"], "NOT_VALIDATED")
         self.assertNotIn("readinessCounts", r)
+        self.assertEqual(r["rubric"]["dimensionOrder"], bb.DOMAIN_IDS)
 
     def test_retired_species_removed_and_event_only_on_version_change(self):
         up = self.updates(published={"researchVersion": "0000-00-00.1"}, existing={"example_fish", "old_fish"})

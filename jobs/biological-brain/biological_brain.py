@@ -230,6 +230,7 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
         breakdowns=dict(researchMaturity=by_m, assessment=by_a),
         researchMaturityDefinitions=RESEARCH_MATURITY,
         rubric=dict(id=SCORING_VERSION, dimensions={did: dict(label=label, weight=w) for did, label, w in DOMAINS},
+                    dimensionOrder=DOMAIN_IDS,   # RTDB returns map keys sorted; this array keeps the rubric order
                     note="Evidence-completeness scores, not probabilities or predictive accuracy. Overall = sum(score x weight)/100, rounded to 0.5 (ties up). Potential gain per point = weight/100."),
         speciesGroups=b.registry.get("speciesGroups"),
         discrepancies=dict(openCount=len(open_disc),
