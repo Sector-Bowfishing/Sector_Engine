@@ -220,8 +220,14 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     live = len(WIND_LAKE_IDS)
     run_last, run_ok = (run_summary, run_summary if run_summary and not run_summary.get("errors") else None) if run_summary else _newest_run(store, now)
     ledger = _read_ledger_lines(store, now)
-    fails = lambda prod: (sum(1 for e in ledger if e.get("product") == prod and e.get("status") not in ("complete",))
-                          if any(e.get("product") == prod for e in ledger) else None)       # None = no ledger evidence (never a fake 0)
+    done = {(e.get("product"), e.get("cycle"), e.get("lake")) for e in ledger if e.get("status") == "complete"}
+    def _miss(prod, recovered):
+        if not any(e.get("product") == prod for e in ledger):
+            return None                                  # no ledger evidence: never a fake 0
+        return sum(1 for e in ledger if e.get("product") == prod and e.get("status") != "complete"
+                   and ((e.get("product"), e.get("cycle"), e.get("lake")) in done) == recovered)
+    fails = lambda prod: _miss(prod, False)              # never completed within the window
+    recovered = lambda prod: _miss(prod, True)           # partial / failed first attempt, completed by catch-up
     newest = lambda prod: max((e.get("cycle") for e in ledger if e.get("product") == prod and e.get("status") == "complete"), default=None)
     errors_now = list(rep["errors"]) + list((run_last or {}).get("errors") or [])
     health = _health_status(errors_now, stale_lakes, live)
@@ -245,12 +251,12 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     }
     srcs = {
         "noaa-nbm-v5": {"provider": "NOAA/NWS (NODD s3://noaa-nbm-grib2-pds)", "type": "forecast", "provides": "10 m wind speed, direction, gust; qmd percentiles",
-                        "staleThresholdHours": C.STALE_FORECAST_CYCLE_H, "latestObservationAt": None, "latestIssuedAt": newest("NBM"), "failures24h": fails("NBM")},
+                        "staleThresholdHours": C.STALE_FORECAST_CYCLE_H, "latestObservationAt": None, "latestIssuedAt": newest("NBM"), "failures24h": fails("NBM"), "recoveredRetries24h": recovered("NBM")},
         "noaa-rtma-ru": {"provider": "NOAA/NWS (NODD s3://noaa-rtma-pds)", "type": "analysis", "provides": "15-min 2.5 km 10 m wind analysis",
-                         "staleThresholdHours": C.ANALYSIS_MAX_AGE_H, "latestObservationAt": newest("RTMA-RU"), "failures24h": fails("RTMA-RU")},
+                         "staleThresholdHours": C.ANALYSIS_MAX_AGE_H, "latestObservationAt": newest("RTMA-RU"), "failures24h": fails("RTMA-RU"), "recoveredRetries24h": recovered("RTMA-RU")},
         "iem-metar-wind": {"provider": "Iowa Environmental Mesonet ASOS/AWOS archive", "type": "observation", "provides": "airport 10 m wind (8 frozen stations)",
                            "staleThresholdHours": C.OBSERVATION_MAX_AGE_H, "latestObservationAt": max((m.get("observationAt") or "" for m in rep["lakes"].values()), default=None) or None,
-                           "failures24h": fails("METAR")},
+                           "failures24h": fails("METAR"), "recoveredRetries24h": recovered("METAR")},
     }
     src_updates = {}
     for sid, s in srcs.items():
@@ -258,8 +264,9 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
         st = "UNKNOWN" if f24 is None else ("HEALTHY" if f24 == 0 else ("WARNING" if f24 < 6 else "DEGRADED"))
         src_updates[f"sources/{sid}"] = {"sourceId": sid, **s, "brains": [C.BRAIN_ID], "lakeCount": live, "health": st,
                                          "lastFetchAt": (run_last or {}).get("runAt"), "latencyMs": None,
-                                         "notes": "Counts from the wind-hourly ledger, last 24 h"}
-        src_updates[f"health/sources/{sid}"] = {"status": st, "lastFetchAt": (run_last or {}).get("runAt"), "failures24h": s["failures24h"]}
+                                         "notes": "wind-hourly ledger, last 24 h: failures24h = never completed; recoveredRetries24h = completed by catch-up"}
+        src_updates[f"health/sources/{sid}"] = {"status": st, "lastFetchAt": (run_last or {}).get("runAt"), "failures24h": s["failures24h"],
+                                                "recoveredRetries24h": s["recoveredRetries24h"]}
     writer.patch({f"brains/{C.BRAIN_ID}": registry, f"validation/{C.BRAIN_ID}": val_fleet, **src_updates}); rep["writes"] += 1
 
     # ── 4. health ─────────────────────────────────────────────────────────────────────────────

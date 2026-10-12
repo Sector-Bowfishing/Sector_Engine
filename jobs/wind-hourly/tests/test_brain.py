@@ -55,8 +55,8 @@ def make_store(tmp_path, with_rtma=True, with_nbm=True, speed=6.0, direction=225
                                                                           "grid": f"grids/rtma/{wl}.json", "speedMS": _arr(speed), "dirFromDeg": _arr(direction), "gustMS": _arr(speed + 2)})
     os.makedirs(os.path.join(str(tmp_path), "ledger", "runs"), exist_ok=True)
     with open(os.path.join(str(tmp_path), "ledger", "runs", f"{NOW:%Y%m%dT%H%M%SZ}-test.jsonl"), "w") as f:
-        for prod, stt in (("NBM", "complete"), ("RTMA-RU", "complete"), ("RTMA-RU", "failed"), ("METAR", "complete")):
-            f.write(json.dumps({"product": prod, "cycle": C.iso(NOW - timedelta(hours=1)), "status": stt}) + "\n")
+        for prod, stt, cyc in (("NBM", "partial", 1), ("NBM", "complete", 1), ("RTMA-RU", "complete", 1), ("RTMA-RU", "failed", 2), ("METAR", "complete", 1)):
+            f.write(json.dumps({"product": prod, "cycle": C.iso(NOW - timedelta(hours=cyc)), "lake": "wheeler", "status": stt}) + "\n")
     st.put_json(f"metar/{NOW:%Y%m%d}.json.gz", {"observations": [{"station": s, "network": v["network"], "validTime": C.iso(NOW - timedelta(minutes=25)),
                                                                    "speedMS": 5.0, "dirFromDeg": 220.0, "gustMS": None, "averaging": "2-min", "sensorHeightM": 10.0}
                                                                   for s, v in CFG["stations"].items()]})
@@ -152,7 +152,8 @@ def test_publish_writes_only_wind_owned_paths(tmp_path):
     assert w.get("validation/wind")["liveValidation"].startswith("SEALED")
     assert w.get("lakeFleet/Wheeler_AL/slots/wind") == {"readiness": "CALIBRATION", "stale": False, "stateType": "analysis", "issueCount": 0, "lastUpdatedAt": C.iso(NOW)}
     assert w.get("health/brains/wind")["status"] == "HEALTHY"
-    assert w.get("sources/noaa-rtma-ru")["failures24h"] == 1 and w.get("sources/noaa-rtma-ru")["health"] == "WARNING"
+    assert w.get("sources/noaa-rtma-ru")["failures24h"] == 1 and w.get("sources/noaa-rtma-ru")["health"] == "WARNING"   # never completed
+    assert w.get("sources/noaa-nbm-v5")["recoveredRetries24h"] == 1                                                     # partial, then completed
     assert w.get("sources/noaa-nbm-v5")["failures24h"] == 0 and w.get("sources/noaa-nbm-v5")["latestIssuedAt"] == C.iso(NOW - timedelta(hours=1))
 
 
