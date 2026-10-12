@@ -51,9 +51,8 @@ def _newest_run(store, now):
 def _read_ledger_lines(store, now):
     """Ledger runs are JSONL objects; read only the last 24 h of files."""
     cutoff = now - timedelta(hours=24); rows = []
-    keys = []
-    for d in (now, now - timedelta(days=1)):
-        keys += store.list(f"ledger/runs/{d:%Y%m%d}")
+    days = {f"{d:%Y%m%d}" for d in (now, now - timedelta(days=1))}
+    keys = [k for k in store.list("ledger/runs/") if k.rsplit("/", 1)[-1][:8] in days]   # LocalStore.list walks dirs only
     for k in sorted(set(keys)):
         try:
             if datetime.strptime(k.rsplit("/", 1)[-1][:16], "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc) < cutoff:
@@ -221,7 +220,8 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     live = len(WIND_LAKE_IDS)
     run_last, run_ok = (run_summary, run_summary if run_summary and not run_summary.get("errors") else None) if run_summary else _newest_run(store, now)
     ledger = _read_ledger_lines(store, now)
-    fails = lambda prod: sum(1 for e in ledger if e.get("product") == prod and e.get("status") not in ("complete",))
+    fails = lambda prod: (sum(1 for e in ledger if e.get("product") == prod and e.get("status") not in ("complete",))
+                          if any(e.get("product") == prod for e in ledger) else None)       # None = no ledger evidence (never a fake 0)
     newest = lambda prod: max((e.get("cycle") for e in ledger if e.get("product") == prod and e.get("status") == "complete"), default=None)
     errors_now = list(rep["errors"]) + list((run_last or {}).get("errors") or [])
     health = _health_status(errors_now, stale_lakes, live)
@@ -254,7 +254,8 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     }
     src_updates = {}
     for sid, s in srcs.items():
-        st = "HEALTHY" if s["failures24h"] == 0 else ("WARNING" if s["failures24h"] < 6 else "DEGRADED")
+        f24 = s["failures24h"]
+        st = "UNKNOWN" if f24 is None else ("HEALTHY" if f24 == 0 else ("WARNING" if f24 < 6 else "DEGRADED"))
         src_updates[f"sources/{sid}"] = {"sourceId": sid, **s, "brains": [C.BRAIN_ID], "lakeCount": live, "health": st,
                                          "lastFetchAt": (run_last or {}).get("runAt"), "latencyMs": None,
                                          "notes": "Counts from the wind-hourly ledger, last 24 h"}
