@@ -70,6 +70,7 @@ Per lake `k = lakeKey(lakeId)` (Engine slug), one atomic multi-path update per 5
 - `lakes/{k}/profiles/waterTemp`
 - `snapshots/{k}/latest/{lakeId, generatedAt, snapshotVersion, waterTemperature, brainVersions/water-temp}`
 - `lakeFleet/{k}/{lakeId, readiness/waterTemp, modelVersions/waterTemp, lastUpdatedAt}`
+- `lakeFleet/{k}/slots/waterTemp` `{issueCount, lastUpdatedAt, readiness, stale, stateType}`: the per-brain summary the clarity and wind brains already write. `issueCount` = 1 when the sensor has no fresh reading or no value exists.
 
 Then:
 - `validation/water-temp`

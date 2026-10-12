@@ -124,6 +124,10 @@ public enum WaterTemperatureBrainRunner {
                     paths["lakeFleet/\(k)/readiness/\(WaterTemperatureBrain.slot)"] = try BrainJSON.encode(st.provenance.readiness)
                     paths["lakeFleet/\(k)/modelVersions/\(WaterTemperatureBrain.slot)"] = try BrainJSON.encode(WaterTemperatureBrain.modelVersion)
                     paths["lakeFleet/\(k)/lastUpdatedAt"] = try BrainJSON.encode(gen)
+                    // Per-brain fleet summary, the convention the clarity and wind brains already write.
+                    paths["lakeFleet/\(k)/slots/\(WaterTemperatureBrain.slot)"] = try BrainJSON.encode(FleetSlot(
+                        issueCount: (st.stale || st.kind == "unavailable") ? 1 : 0, lastUpdatedAt: gen,
+                        readiness: st.provenance.readiness, stale: st.stale, stateType: st.kind))
                 }
                 try await store.update(paths)
             }
@@ -289,6 +293,15 @@ public enum WaterTemperatureBrainRunner {
                 title: "Water temp brain run failed: \(message.prefix(160))", brainId: WaterTemperatureBrain.brainId, lakeId: nil, severity: "critical")),
         ])
     }
+}
+
+/// `lakeFleet/{k}/slots/waterTemp`. issueCount = 1 when the lake's sensor has no fresh reading or no value exists.
+struct FleetSlot: Codable, Equatable {
+    var issueCount: Int
+    var lastUpdatedAt: String
+    var readiness: String?
+    var stale: Bool
+    var stateType: String
 }
 
 // MARK: - Registry entry (shared shell + water-temp extensions)
