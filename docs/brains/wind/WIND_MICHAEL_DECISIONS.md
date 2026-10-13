@@ -17,3 +17,13 @@ State: Wind Certification **3.1/10** (unchanged), BWIS 5.4. Customer wind is sti
 10. **Dual-wind logging terms:** the designed pilot lookups add ≈ 240 Open-Meteo calls/day. *Approve (or reject) before wiring; the request-path variant adds none.*
 11. **Name Wind's critical dimensions** for the production policy (≥ 8.0 and critical ≥ 7.5): proposed set in the readiness matrix (direction, useful speed/tonight, exposure, surface/roughness, reliability, provenance; gust *not* critical). Engine does not publish the set today, so Ops' guardrail cannot evaluate it.
 12. **Evening vs afternoon pair sessions:** evenings ≥ 8 mph occur only ≈ 3–4 times a month at Huntsville; afternoons ≈ 16. *Confirm daytime pairs are acceptable for the physics test (Evidence Addendum owner), otherwise the field programme takes a year.*
+
+---
+## Status after Michael's 2026-10-13/14 answers
+1. Provider: Open-Meteo stays customer-facing; NBM candidate; any move must be risk-aware — **closed**.
+2. Dual-wind logging: approved in principle, internal only, bounded cost, **not wired** until the prerequisite branch resolves (pilot lookups + request-path design only; never the 14,904-call fleet-hourly design) — **prepared**.
+3. ESTIMATED visibility: internal/Ops with EXPOSED / PROTECTED / UNKNOWN only (never DIRECT/CROSS as validated truth); the false-PROTECTED improvement stays "not independently validated" — **adopted in code and docs**.
+4. Daytime field pairs approved (Guntersville + Hartwell first; ≥ 40 pairs, ≥ 2 independent systems, ≥ 3 quadrants) — **packets generated for any lake** (`field_packet.py`).
+5. Portable anemometer plan approved (≥ 30 sessions, 2–3 lakes, ≥ 10 with land wind ≥ 8 mph; ±0.3 m/s or 3%); no purchase.
+6. Critical dimensions: **proposal written, awaiting approval** (`WIND_CRITICAL_DIMENSIONS_PROPOSAL.md`).
+7. **Published score refresh: approved → generated, committed, awaiting the orchestrator lineage.** Canonical scorer = 3.3 (raw 3.27); the generated `frozen-scores.json` is on `feat/wind-brain-adoption`; the deployed orchestrator still republishes 3.1 until its image carries the file (`WIND_SCORE_PUBLICATION_HANDOFF.md`). No one-off write, no orchestrator redeploy from Wind.
