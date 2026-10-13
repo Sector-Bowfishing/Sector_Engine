@@ -1,0 +1,1905 @@
+{
+ "summary": {
+  "n_lakes": 46,
+  "lakes": [
+   "Alum Creek Lake|OH",
+   "Bowman-Haley Reservoir|ND",
+   "Box Butte Reservoir|NE",
+   "Branched Oak Lake|NE",
+   "Caesar Creek Lake|OH",
+   "Calamus Reservoir|NE",
+   "Canyon Ferry Lake|MT",
+   "Cheney Reservoir|KS",
+   "Clinton Lake|KS",
+   "East Lake Tohopekaliga|FL",
+   "El Dorado Lake|KS",
+   "Flathead Lake|MT",
+   "Fort Gibson Lake|OK",
+   "Griffin|FL",
+   "Gull Lake|MN",
+   "Harlan County Lake|NE",
+   "Harris|FL",
+   "Hebgen Lake|MT",
+   "Hoover Reservoir|OH",
+   "Istokpoga|FL",
+   "Jennings Randolph Lake|MD",
+   "Johnson Lake|NE",
+   "Kanopolis Lake|KS",
+   "Kissimmee|FL",
+   "Lake Bemidji|MN",
+   "Lake McConaughy|NE",
+   "Lake Milton|OH",
+   "Lake Minnetonka|MN",
+   "Lake Pepin|MN",
+   "Lake Winnibigoshish|MN",
+   "Leech Lake|MN",
+   "Melvern Lake|KS",
+   "Merritt Reservoir|NE",
+   "Milford Lake|KS",
+   "Mille Lacs Lake|MN",
+   "Mosquito Creek Lake|OH",
+   "Otter Tail Lake|MN",
+   "Patterson Lake|ND",
+   "Pomona Lake|KS",
+   "Sardis Lake|OK",
+   "Senecaville Lake|OH",
+   "Spruce Run Reservoir|NJ",
+   "Swanson Reservoir|NE",
+   "Tappan Lake|OH",
+   "White Bear Lake|MN",
+   "Wilson Lake|KS"
+  ],
+  "n_segments": 5718,
+  "T1_per_lake_spearman": {
+   "sp_slope_10_60_vs_sh6": {
+    "n": 44,
+    "mean": -0.24122346035179068,
+    "median": -0.2854141195151351,
+    "n_neg": 33,
+    "n_pos": 11,
+    "ci_mean": [
+     -0.32015727748601613,
+     -0.15999319489465713
+    ]
+   },
+   "sp_slope_30_100_vs_sh6": {
+    "n": 9,
+    "mean": -0.08171882298777165,
+    "median": -0.13382856835375875,
+    "n_neg": 6,
+    "n_pos": 3,
+    "ci_mean": [
+     -0.22599258486731608,
+     0.06474401789035744
+    ]
+   },
+   "sp_slope_60_200_vs_sh6": {
+    "n": 9,
+    "mean": -0.038015182987501714,
+    "median": -0.06484002597278285,
+    "n_neg": 7,
+    "n_pos": 2,
+    "ci_mean": [
+     -0.18891214992380145,
+     0.1338568488273476
+    ]
+   },
+   "sp_rise200_vs_sh6": {
+    "n": 9,
+    "mean": -0.0522313996294501,
+    "median": -0.09041932669362913,
+    "n_neg": 6,
+    "n_pos": 3,
+    "ci_mean": [
+     -0.21975564391312813,
+     0.14042710073361048
+    ]
+   },
+   "sp_slope_10_60_vs_w6": {
+    "n": 44,
+    "mean": -0.2685360943322003,
+    "median": -0.28688080892131224,
+    "n_neg": 37,
+    "n_pos": 7,
+    "ci_mean": [
+     -0.3386067027441943,
+     -0.19537690823349665
+    ]
+   },
+   "sp_slope_30_100_vs_w6": {
+    "n": 9,
+    "mean": -0.10518155340507616,
+    "median": -0.12619931398690754,
+    "n_neg": 7,
+    "n_pos": 2,
+    "ci_mean": [
+     -0.24418876999871422,
+     0.03531399515516589
+    ]
+   },
+   "sp_slope_60_200_vs_w6": {
+    "n": 9,
+    "mean": -0.04068376367746914,
+    "median": -0.09307977378550371,
+    "n_neg": 5,
+    "n_pos": 4,
+    "ci_mean": [
+     -0.1998933676029516,
+     0.11850144390267303
+    ]
+   },
+   "sp_rise200_vs_w6": {
+    "n": 9,
+    "mean": -0.1089518789420039,
+    "median": -0.14496813537896708,
+    "n_neg": 6,
+    "n_pos": 3,
+    "ci_mean": [
+     -0.2707854084204547,
+     0.07479793578786664
+    ]
+   }
+  },
+  "T1_pooled_within_lake_rank_corr": {
+   "slope_10_60_vs_sh6": {
+    "n": 5718,
+    "spearman": -0.27190039022902585
+   },
+   "slope_30_100_vs_sh6": {
+    "n": 1679,
+    "spearman": -0.14468999546418207
+   },
+   "rise200_vs_sh6": {
+    "n": 1679,
+    "spearman": -0.18010706269407742
+   },
+   "slope_10_60_vs_w6_med": {
+    "n": 5717,
+    "spearman": -0.28442491564910694
+   },
+   "slope_30_100_vs_w6_med": {
+    "n": 1678,
+    "spearman": -0.14809691857936236
+   },
+   "rise200_vs_w6_med": {
+    "n": 1678,
+    "spearman": -0.21462076928115517
+   }
+  },
+  "T2_masks_le6ft": {
+   "n": 44,
+   "iou_const_mean": 0.4026734047298831,
+   "iou_slope_mean": 0.4388970846799657,
+   "iou_shuffled_slope_mean": 0.37811217687444976,
+   "n_lakes_slope_better_than_const": 26,
+   "n_lakes_slope_better_than_shuffled": 37,
+   "delta_iou_ci": [
+    0.005397568219201308,
+    0.07301968572198213
+   ],
+   "mean_delta": 0.03622367995008264
+  },
+  "T3_loo_auc": {
+   "d3": {
+    "auc_dist": {
+     "mean": 0.8643915543822861,
+     "median": 0.8773476148348404
+    },
+    "auc_dist_plus_slope": {
+     "mean": 0.8753787873326893,
+     "median": 0.8793676161992214
+    },
+    "auc_slope_only": {
+     "mean": 0.5904423609698208,
+     "median": 0.5784828630346386
+    }
+   },
+   "d6": {
+    "auc_dist": {
+     "mean": 0.8176070129457156,
+     "median": 0.8023362186908833
+    },
+    "auc_dist_plus_slope": {
+     "mean": 0.8216808062456802,
+     "median": 0.8173531566730781
+    },
+    "auc_slope_only": {
+     "mean": 0.585845901427669,
+     "median": 0.5845981932036913
+    }
+   },
+   "d10": {
+    "auc_dist": {
+     "mean": 0.7783241525395618,
+     "median": 0.7721555062534229
+    },
+    "auc_dist_plus_slope": {
+     "mean": 0.7795437894627127,
+     "median": 0.7964647857460544
+    },
+    "auc_slope_only": {
+     "mean": 0.5867775405351644,
+     "median": 0.5878447084682346
+    }
+   }
+  },
+  "T3_lakes_slope_improves_auc": {
+   "d3": [
+    26,
+    44
+   ],
+   "d6": [
+    22,
+    44
+   ],
+   "d10": [
+    23,
+    44
+   ]
+  },
+  "T3_mean_delta_auc_d6_ci": [
+   -0.014645109023138642,
+   0.021710266694329225
+  ]
+ },
+ "per_lake": [
+  {
+   "lakeId": "Alum Creek Lake|OH",
+   "src": "OH",
+   "n_seg": 184,
+   "reach_m": 400.0,
+   "lake_sh6": 0.18260923157517653,
+   "sp_slope_10_60_vs_sh6": 0.13922469391322928,
+   "sp_slope_10_60_vs_w6": 0.20128031875307642,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Bowman-Haley Reservoir|ND",
+   "src": "ND",
+   "n_seg": 64,
+   "reach_m": 400.0,
+   "lake_sh6": 0.3242124498764482,
+   "sp_slope_10_60_vs_sh6": -0.7053680046560111,
+   "sp_slope_10_60_vs_w6": -0.696653659257907,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Box Butte Reservoir|NE",
+   "src": "NE",
+   "n_seg": 41,
+   "reach_m": 400.0,
+   "lake_sh6": 0.18290143791360788,
+   "sp_slope_10_60_vs_sh6": -0.23537359339553385,
+   "sp_slope_10_60_vs_w6": -0.2910405508226956,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Branched Oak Lake|NE",
+   "src": "NE",
+   "n_seg": 48,
+   "reach_m": 400.0,
+   "lake_sh6": 0.22337889187447396,
+   "sp_slope_10_60_vs_sh6": -0.6551222332594453,
+   "sp_slope_10_60_vs_w6": -0.6687474577738175,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Caesar Creek Lake|OH",
+   "src": "OH",
+   "n_seg": 107,
+   "reach_m": 400.0,
+   "lake_sh6": 0.0975077060208465,
+   "sp_slope_10_60_vs_sh6": -0.2879319688151857,
+   "sp_slope_10_60_vs_w6": -0.3276573844597286,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Calamus Reservoir|NE",
+   "src": "NE",
+   "n_seg": 104,
+   "reach_m": 400.0,
+   "lake_sh6": 0.13990094441197282,
+   "sp_slope_10_60_vs_sh6": -0.14594204026397886,
+   "sp_slope_10_60_vs_w6": -0.1419300460188103,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Canyon Ferry Lake|MT",
+   "src": "MT",
+   "n_seg": 97,
+   "reach_m": 400.0,
+   "lake_sh6": 0.01784214503102131,
+   "sp_slope_10_60_vs_sh6": -0.4078739743320008,
+   "sp_slope_10_60_vs_w6": -0.3631264932362399,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Cheney Reservoir|KS",
+   "src": "KS",
+   "n_seg": 138,
+   "reach_m": 400.0,
+   "lake_sh6": 0.2151500828174351,
+   "sp_slope_10_60_vs_sh6": -0.2260914398384342,
+   "sp_slope_10_60_vs_w6": -0.34538918276629454,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Clinton Lake|KS",
+   "src": "KS",
+   "n_seg": 148,
+   "reach_m": 400.0,
+   "lake_sh6": 0.19079397415750482,
+   "sp_slope_10_60_vs_sh6": -0.5535363528408889,
+   "sp_slope_10_60_vs_w6": -0.5428428649445077,
+   "tier": "A"
+  },
+  {
+   "lakeId": "East Lake Tohopekaliga|FL",
+   "src": "FL",
+   "n_seg": 157,
+   "reach_m": 400.0,
+   "lake_sh6": 0.2929298687790046,
+   "sp_slope_10_60_vs_sh6": -0.34459380144168134,
+   "sp_slope_10_60_vs_w6": -0.3870089959922725,
+   "tier": "A"
+  },
+  {
+   "lakeId": "El Dorado Lake|KS",
+   "src": "KS",
+   "n_seg": 127,
+   "reach_m": 400.0,
+   "lake_sh6": 0.153061725107057,
+   "sp_slope_10_60_vs_sh6": -0.28289627021508457,
+   "sp_slope_10_60_vs_w6": -0.25944652273235247,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Flathead Lake|MT",
+   "src": "MT",
+   "n_seg": 0,
+   "reach_m": 765.4128771131345,
+   "lake_sh6": 0.03801479119834445,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Fort Gibson Lake|OK",
+   "src": "OK",
+   "n_seg": 0,
+   "reach_m": 556.7028876287472,
+   "lake_sh6": 0.28132247467973215,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Griffin|FL",
+   "src": "FL",
+   "n_seg": 115,
+   "reach_m": 400.0,
+   "lake_sh6": 0.21892633048570953,
+   "sp_slope_10_60_vs_sh6": -0.30796539915113974,
+   "sp_slope_10_60_vs_w6": -0.32835944560943214,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Gull Lake|MN",
+   "src": "MN",
+   "n_seg": 134,
+   "reach_m": 400.0,
+   "lake_sh6": 0.15866812286196533,
+   "sp_slope_10_60_vs_sh6": -0.29149153347810786,
+   "sp_slope_10_60_vs_w6": -0.38089003453341097,
+   "sp_slope_30_100_vs_sh6": -0.2643244731128388,
+   "sp_slope_30_100_vs_w6": -0.2994006003752261,
+   "sp_slope_60_200_vs_sh6": -0.06484002597278285,
+   "sp_slope_60_200_vs_w6": -0.09307977378550371,
+   "sp_rise200_vs_sh6": -0.1509892187744529,
+   "sp_rise200_vs_w6": -0.22821081620704312,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Harlan County Lake|NE",
+   "src": "NE",
+   "n_seg": 156,
+   "reach_m": 400.0,
+   "lake_sh6": 0.15003804998375053,
+   "sp_slope_10_60_vs_sh6": -0.4101667045738173,
+   "sp_slope_10_60_vs_w6": -0.41026603251206256,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Harris|FL",
+   "src": "FL",
+   "n_seg": 157,
+   "reach_m": 400.0,
+   "lake_sh6": 0.05607946799966795,
+   "sp_slope_10_60_vs_sh6": -0.4728004343373135,
+   "sp_slope_10_60_vs_w6": -0.4854625625636681,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Hebgen Lake|MT",
+   "src": "MT",
+   "n_seg": 177,
+   "reach_m": 400.0,
+   "lake_sh6": 0.13960118022461748,
+   "sp_slope_10_60_vs_sh6": -0.5747677387565101,
+   "sp_slope_10_60_vs_w6": -0.5192725340934856,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Hoover Reservoir|OH",
+   "src": "OH",
+   "n_seg": 135,
+   "reach_m": 400.0,
+   "lake_sh6": 0.1919874964115977,
+   "sp_slope_10_60_vs_sh6": 0.09778660361813103,
+   "sp_slope_10_60_vs_w6": -0.10116565361371155,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Istokpoga|FL",
+   "src": "FL",
+   "n_seg": 181,
+   "reach_m": 400.0,
+   "lake_sh6": 0.6089459911973772,
+   "sp_slope_10_60_vs_sh6": 0.10862456675008983,
+   "sp_slope_10_60_vs_w6": 0.02887599129810079,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Jennings Randolph Lake|MD",
+   "src": "WV",
+   "n_seg": 39,
+   "reach_m": 400.0,
+   "lake_sh6": 0.008457947087083023,
+   "sp_slope_10_60_vs_sh6": 0.20040508897998421,
+   "sp_slope_10_60_vs_w6": 0.2423015707130244,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Johnson Lake|NE",
+   "src": "NE",
+   "n_seg": 39,
+   "reach_m": 400.0,
+   "lake_sh6": 0.28953604984060644,
+   "sp_slope_10_60_vs_sh6": 0.5197355914792788,
+   "sp_slope_10_60_vs_w6": 0.44817813765182185,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Kanopolis Lake|KS",
+   "src": "KS",
+   "n_seg": 80,
+   "reach_m": 400.0,
+   "lake_sh6": 0.23753702360578657,
+   "sp_slope_10_60_vs_sh6": -0.4382317880178027,
+   "sp_slope_10_60_vs_w6": -0.5239368311595216,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Kissimmee|FL",
+   "src": "FL",
+   "n_seg": 148,
+   "reach_m": 428.2395402157071,
+   "lake_sh6": 0.1867985379488282,
+   "sp_slope_10_60_vs_sh6": 0.0667935550065605,
+   "sp_slope_10_60_vs_w6": -0.07158048672046001,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Lake Bemidji|MN",
+   "src": "MN",
+   "n_seg": 48,
+   "reach_m": 400.0,
+   "lake_sh6": 0.12112886737800757,
+   "sp_slope_10_60_vs_sh6": 0.045358674283973964,
+   "sp_slope_10_60_vs_w6": 0.0438558402084238,
+   "sp_slope_30_100_vs_sh6": 0.3442723378153624,
+   "sp_slope_30_100_vs_w6": 0.22970039079461574,
+   "sp_slope_60_200_vs_sh6": 0.5432835212362982,
+   "sp_slope_60_200_vs_w6": 0.4191272253582284,
+   "sp_rise200_vs_sh6": 0.5339849930080834,
+   "sp_rise200_vs_w6": 0.45744680851063835,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Lake McConaughy|NE",
+   "src": "NE",
+   "n_seg": 183,
+   "reach_m": 400.0,
+   "lake_sh6": 0.016299592510187245,
+   "sp_slope_10_60_vs_sh6": -0.4910156755163328,
+   "sp_slope_10_60_vs_w6": -0.44393517878825794,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Lake Milton|OH",
+   "src": "OH",
+   "n_seg": 62,
+   "reach_m": 400.0,
+   "lake_sh6": 0.22179445523307215,
+   "sp_slope_10_60_vs_sh6": -0.1701736683472589,
+   "sp_slope_10_60_vs_w6": -0.19499600129882178,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Lake Minnetonka|MN",
+   "src": "MN",
+   "n_seg": 238,
+   "reach_m": 400.0,
+   "lake_sh6": 0.1680006683593002,
+   "sp_slope_10_60_vs_sh6": -0.18977994200701148,
+   "sp_slope_10_60_vs_w6": -0.2130867894780137,
+   "sp_slope_30_100_vs_sh6": -0.031132849302899623,
+   "sp_slope_30_100_vs_w6": -0.003389620797382841,
+   "sp_slope_60_200_vs_sh6": -0.024652189418713263,
+   "sp_slope_60_200_vs_w6": 0.016421204832543574,
+   "sp_rise200_vs_sh6": -0.09041932669362913,
+   "sp_rise200_vs_w6": -0.06939843951164511,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Lake Pepin|MN",
+   "src": "MN",
+   "n_seg": 214,
+   "reach_m": 400.0,
+   "lake_sh6": 0.17309142496013255,
+   "sp_slope_10_60_vs_sh6": -0.47867782762540234,
+   "sp_slope_10_60_vs_w6": -0.5119918038660168,
+   "sp_slope_30_100_vs_sh6": -0.45974310175027217,
+   "sp_slope_30_100_vs_w6": -0.4941938862081836,
+   "sp_slope_60_200_vs_sh6": -0.4665498391763711,
+   "sp_slope_60_200_vs_w6": -0.48892510683524765,
+   "sp_rise200_vs_sh6": -0.47561598715013814,
+   "sp_rise200_vs_w6": -0.5210351247379251,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Lake Winnibigoshish|MN",
+   "src": "MN",
+   "n_seg": 162,
+   "reach_m": 400.0,
+   "lake_sh6": 0.12301909487295144,
+   "sp_slope_10_60_vs_sh6": 0.1595409545306277,
+   "sp_slope_10_60_vs_w6": 0.05400314753467638,
+   "sp_slope_30_100_vs_sh6": 0.03233534230250317,
+   "sp_slope_30_100_vs_w6": 0.18406203341256677,
+   "sp_slope_60_200_vs_sh6": 0.06796892273129546,
+   "sp_slope_60_200_vs_w6": 0.16569283315002248,
+   "sp_rise200_vs_sh6": 0.1742446934164147,
+   "sp_rise200_vs_w6": 0.06557353913037385,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Leech Lake|MN",
+   "src": "MN",
+   "n_seg": 499,
+   "reach_m": 400.0,
+   "lake_sh6": 0.21931062184114067,
+   "sp_slope_10_60_vs_sh6": -0.36714353128854127,
+   "sp_slope_10_60_vs_w6": -0.39678026424518864,
+   "sp_slope_30_100_vs_sh6": -0.13382856835375875,
+   "sp_slope_30_100_vs_w6": -0.18820863132467966,
+   "sp_slope_60_200_vs_sh6": -0.17166381105597656,
+   "sp_slope_60_200_vs_w6": -0.16258307433802843,
+   "sp_rise200_vs_sh6": -0.3220624860919157,
+   "sp_rise200_vs_w6": -0.3405885733855875,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Melvern Lake|KS",
+   "src": "KS",
+   "n_seg": 189,
+   "reach_m": 400.0,
+   "lake_sh6": 0.19945659676719094,
+   "sp_slope_10_60_vs_sh6": -0.4552257802831967,
+   "sp_slope_10_60_vs_w6": -0.4689532036749934,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Merritt Reservoir|NE",
+   "src": "NE",
+   "n_seg": 144,
+   "reach_m": 400.0,
+   "lake_sh6": 0.09969139486112769,
+   "sp_slope_10_60_vs_sh6": -0.38385370877570074,
+   "sp_slope_10_60_vs_w6": -0.16609151471480005,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Milford Lake|KS",
+   "src": "KS",
+   "n_seg": 83,
+   "reach_m": 400.0,
+   "lake_sh6": 0.21885664461322385,
+   "sp_slope_10_60_vs_sh6": -0.4838213472386495,
+   "sp_slope_10_60_vs_w6": -0.46269299116239143,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Mille Lacs Lake|MN",
+   "src": "MN",
+   "n_seg": 275,
+   "reach_m": 400.0,
+   "lake_sh6": 0.03953108590896072,
+   "sp_slope_10_60_vs_sh6": 0.005775167904670396,
+   "sp_slope_10_60_vs_w6": -0.0769930276301089,
+   "sp_slope_30_100_vs_sh6": -0.15761585334393005,
+   "sp_slope_30_100_vs_w6": -0.13303163114493563,
+   "sp_slope_60_200_vs_sh6": -0.10863367989569161,
+   "sp_slope_60_200_vs_w6": -0.1431436297447243,
+   "sp_rise200_vs_sh6": -0.1551721453183788,
+   "sp_rise200_vs_w6": -0.22447335947383965,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Mosquito Creek Lake|OH",
+   "src": "OH",
+   "n_seg": 122,
+   "reach_m": 400.0,
+   "lake_sh6": 0.3352110135866298,
+   "sp_slope_10_60_vs_sh6": -0.3294557948146199,
+   "sp_slope_10_60_vs_w6": -0.2827210670199289,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Otter Tail Lake|MN",
+   "src": "MN",
+   "n_seg": 74,
+   "reach_m": 400.0,
+   "lake_sh6": 0.16372462356430867,
+   "sp_slope_10_60_vs_sh6": 0.1357458044199299,
+   "sp_slope_10_60_vs_w6": 0.024139386445581768,
+   "sp_slope_30_100_vs_sh6": -0.20470277905366338,
+   "sp_slope_30_100_vs_w6": -0.11597272101555266,
+   "sp_slope_60_200_vs_sh6": -0.10207725627024654,
+   "sp_slope_60_200_vs_w6": 0.07580952099075648,
+   "sp_rise200_vs_sh6": -0.054677124086162335,
+   "sp_rise200_vs_w6": 0.025087190575960438,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Patterson Lake|ND",
+   "src": "ND",
+   "n_seg": 64,
+   "reach_m": 400.0,
+   "lake_sh6": 0.38484972054978533,
+   "sp_slope_10_60_vs_sh6": -0.5022176051886663,
+   "sp_slope_10_60_vs_w6": -0.5021351676161574,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Pomona Lake|KS",
+   "src": "KS",
+   "n_seg": 126,
+   "reach_m": 400.0,
+   "lake_sh6": 0.2677025831983405,
+   "sp_slope_10_60_vs_sh6": -0.6309042787179368,
+   "sp_slope_10_60_vs_w6": -0.6320543466788744,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Sardis Lake|OK",
+   "src": "OK",
+   "n_seg": 80,
+   "reach_m": 400.0,
+   "lake_sh6": 0.19989945704736795,
+   "sp_slope_10_60_vs_sh6": -0.2494200162588663,
+   "sp_slope_10_60_vs_w6": -0.15718563751815576,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Senecaville Lake|OH",
+   "src": "OH",
+   "n_seg": 130,
+   "reach_m": 400.0,
+   "lake_sh6": 0.35222746763603335,
+   "sp_slope_10_60_vs_sh6": -0.17280130188705273,
+   "sp_slope_10_60_vs_w6": -0.19358532885990928,
+   "tier": "B"
+  },
+  {
+   "lakeId": "Spruce Run Reservoir|NJ",
+   "src": "NJ",
+   "n_seg": 51,
+   "reach_m": 400.0,
+   "lake_sh6": 0.127213773576289,
+   "sp_slope_10_60_vs_sh6": -0.1634389140271493,
+   "sp_slope_10_60_vs_w6": -0.23835605233895812,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Swanson Reservoir|NE",
+   "src": "NE",
+   "n_seg": 65,
+   "reach_m": 400.0,
+   "lake_sh6": 0.17775713707564006,
+   "sp_slope_10_60_vs_sh6": -0.5671340793736399,
+   "sp_slope_10_60_vs_w6": -0.5794425201670221,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Tappan Lake|OH",
+   "src": "OH",
+   "n_seg": 111,
+   "reach_m": 400.0,
+   "lake_sh6": 0.28686756391683393,
+   "sp_slope_10_60_vs_sh6": -0.18220044248151676,
+   "sp_slope_10_60_vs_w6": -0.17050925456998306,
+   "tier": "A"
+  },
+  {
+   "lakeId": "White Bear Lake|MN",
+   "src": "MN",
+   "n_seg": 35,
+   "reach_m": 400.0,
+   "lake_sh6": 0.2413722379868166,
+   "sp_slope_10_60_vs_sh6": 0.21384948721608754,
+   "sp_slope_10_60_vs_w6": -0.08207857713243932,
+   "sp_slope_30_100_vs_sh6": 0.13927053790955238,
+   "sp_slope_30_100_vs_w6": -0.12619931398690754,
+   "sp_slope_60_200_vs_sh6": -0.014972289065327132,
+   "sp_slope_60_200_vs_w6": -0.15547307272526903,
+   "sp_rise200_vs_sh6": 0.07062400502512797,
+   "sp_rise200_vs_w6": -0.14496813537896708,
+   "tier": "A"
+  },
+  {
+   "lakeId": "Wilson Lake|KS",
+   "src": "KS",
+   "n_seg": 187,
+   "reach_m": 400.0,
+   "lake_sh6": 0.09811947368526604,
+   "sp_slope_10_60_vs_sh6": -0.1492552523768771,
+   "sp_slope_10_60_vs_w6": -0.23985707765111752,
+   "tier": "B"
+  }
+ ],
+ "t2": [
+  {
+   "lakeId": "Alum Creek Lake|OH",
+   "truth_frac": 0.19865,
+   "iou_const": 0.304972865790023,
+   "W": 120.0,
+   "iou_slope": 0.259120557525855,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.2823375758662194
+  },
+  {
+   "lakeId": "Bowman-Haley Reservoir|ND",
+   "truth_frac": 0.38206666666666667,
+   "iou_const": 0.48285619174434086,
+   "W": 120.0,
+   "iou_slope": 0.5811469390480005,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.4053830581929119
+  },
+  {
+   "lakeId": "Box Butte Reservoir|NE",
+   "truth_frac": 0.2604666666666667,
+   "iou_const": 0.4375121856112303,
+   "W": 120.0,
+   "iou_slope": 0.44328778271337016,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.4172833067118688
+  },
+  {
+   "lakeId": "Branched Oak Lake|NE",
+   "truth_frac": 0.3112333333333333,
+   "iou_const": 0.48057272612589885,
+   "W": 120.0,
+   "iou_slope": 0.6414595028067361,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.4444405569939123
+  },
+  {
+   "lakeId": "Caesar Creek Lake|OH",
+   "truth_frac": 0.10935,
+   "iou_const": 0.17398472752516486,
+   "W": 120.0,
+   "iou_slope": 0.28450611166171125,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.26676404195989906
+  },
+  {
+   "lakeId": "Calamus Reservoir|NE",
+   "truth_frac": 0.24871666666666667,
+   "iou_const": 0.4305177993527508,
+   "W": 120.0,
+   "iou_slope": 0.3760865418676258,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.33562516591452085
+  },
+  {
+   "lakeId": "Canyon Ferry Lake|MT",
+   "truth_frac": 0.029916666666666668,
+   "iou_const": 0.07541452739668378,
+   "W": 120.0,
+   "iou_slope": 0.08692845615922538,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.06497903901967107
+  },
+  {
+   "lakeId": "Cheney Reservoir|KS",
+   "truth_frac": 0.44035,
+   "iou_const": 0.5709143268538517,
+   "W": 120.0,
+   "iou_slope": 0.528832215981156,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.4855597262088761
+  },
+  {
+   "lakeId": "Clinton Lake|KS",
+   "truth_frac": 0.30738333333333334,
+   "iou_const": 0.4131280041637327,
+   "W": 120.0,
+   "iou_slope": 0.41233967271118976,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.28402701937467134
+  },
+  {
+   "lakeId": "East Lake Tohopekaliga|FL",
+   "truth_frac": 0.7434833333333334,
+   "iou_const": 0.49991362183639976,
+   "W": 120.0,
+   "iou_slope": 0.7777126422041878,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.7118121609243994
+  },
+  {
+   "lakeId": "El Dorado Lake|KS",
+   "truth_frac": 0.19195,
+   "iou_const": 0.3217659828171339,
+   "W": 120.0,
+   "iou_slope": 0.3127204326357865,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.2866158371169936
+  },
+  {
+   "lakeId": "Griffin|FL",
+   "truth_frac": 0.5286833333333333,
+   "iou_const": 0.505214490240891,
+   "W": 120.0,
+   "iou_slope": 0.5956486767504365,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.5170271728011606
+  },
+  {
+   "lakeId": "Gull Lake|MN",
+   "truth_frac": 0.32543333333333335,
+   "iou_const": 0.48295878327982616,
+   "W": 120.0,
+   "iou_slope": 0.4272604182337897,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.34158968051940625
+  },
+  {
+   "lakeId": "Harlan County Lake|NE",
+   "truth_frac": 0.4024333333333333,
+   "iou_const": 0.49230052688265946,
+   "W": 120.0,
+   "iou_slope": 0.5760506902568184,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.3798260215862106
+  },
+  {
+   "lakeId": "Harris|FL",
+   "truth_frac": 0.21316666666666667,
+   "iou_const": 0.4072943858230082,
+   "W": 120.0,
+   "iou_slope": 0.3036064921830338,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.27206483574623636
+  },
+  {
+   "lakeId": "Hebgen Lake|MT",
+   "truth_frac": 0.24801666666666666,
+   "iou_const": 0.35457920792079206,
+   "W": 120.0,
+   "iou_slope": 0.39238416669723764,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.26298349791673503
+  },
+  {
+   "lakeId": "Hoover Reservoir|OH",
+   "truth_frac": 0.2004,
+   "iou_const": 0.2900417542231804,
+   "W": 120.0,
+   "iou_slope": 0.2281755527902747,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.24379075565784428
+  },
+  {
+   "lakeId": "Istokpoga|FL",
+   "truth_frac": 0.8919833333333334,
+   "iou_const": 0.43193112749173274,
+   "W": 120.0,
+   "iou_slope": 0.8759095939103316,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.8748260774814343
+  },
+  {
+   "lakeId": "Jennings Randolph Lake|MD",
+   "truth_frac": 0.0085,
+   "iou_const": 0.009552350627458326,
+   "W": 120.0,
+   "iou_slope": 0.0893491124260355,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.08802883703282109
+  },
+  {
+   "lakeId": "Johnson Lake|NE",
+   "truth_frac": 0.6232166666666666,
+   "iou_const": 0.6577222607756958,
+   "W": 120.0,
+   "iou_slope": 0.6209399702590592,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.6468118445899795
+  },
+  {
+   "lakeId": "Kanopolis Lake|KS",
+   "truth_frac": 0.33376666666666666,
+   "iou_const": 0.42687028451958914,
+   "W": 120.0,
+   "iou_slope": 0.48677063255650954,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.30936936245346025
+  },
+  {
+   "lakeId": "Kissimmee|FL",
+   "truth_frac": 0.5967333333333333,
+   "iou_const": 0.5784774436090225,
+   "W": 120.0,
+   "iou_slope": 0.5973506710242681,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.6061297344362212
+  },
+  {
+   "lakeId": "Lake Bemidji|MN",
+   "truth_frac": 0.47386666666666666,
+   "iou_const": 0.6143005307790861,
+   "W": 120.0,
+   "iou_slope": 0.47256360625918237,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.48451583903096834
+  },
+  {
+   "lakeId": "Lake McConaughy|NE",
+   "truth_frac": 0.07078333333333334,
+   "iou_const": 0.12928759894459102,
+   "W": 120.0,
+   "iou_slope": 0.12895626026845222,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.09605799728137744
+  },
+  {
+   "lakeId": "Lake Milton|OH",
+   "truth_frac": 0.24375,
+   "iou_const": 0.3318892900120337,
+   "W": 120.0,
+   "iou_slope": 0.3190433903910341,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.3125871309520121
+  },
+  {
+   "lakeId": "Lake Minnetonka|MN",
+   "truth_frac": 0.21781666666666666,
+   "iou_const": 0.4203409360490731,
+   "W": 120.0,
+   "iou_slope": 0.3189479842866297,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.31174786692976847
+  },
+  {
+   "lakeId": "Lake Pepin|MN",
+   "truth_frac": 0.47053333333333336,
+   "iou_const": 0.49425797503467406,
+   "W": 120.0,
+   "iou_slope": 0.5167304143151363,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.34950254677012427
+  },
+  {
+   "lakeId": "Lake Winnibigoshish|MN",
+   "truth_frac": 0.8035666666666667,
+   "iou_const": 0.4476870474658085,
+   "W": 120.0,
+   "iou_slope": 0.6954686331089024,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.6872919764889173
+  },
+  {
+   "lakeId": "Leech Lake|MN",
+   "truth_frac": 0.6728166666666666,
+   "iou_const": 0.5046707254728819,
+   "W": 120.0,
+   "iou_slope": 0.6577407926176155,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.5518645109259188
+  },
+  {
+   "lakeId": "Melvern Lake|KS",
+   "truth_frac": 0.23856666666666668,
+   "iou_const": 0.289504928624679,
+   "W": 120.0,
+   "iou_slope": 0.37712357022313897,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.29138666088590215
+  },
+  {
+   "lakeId": "Merritt Reservoir|NE",
+   "truth_frac": 0.10148333333333333,
+   "iou_const": 0.14100953710165154,
+   "W": 120.0,
+   "iou_slope": 0.1583433213477161,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.14496715900376755
+  },
+  {
+   "lakeId": "Milford Lake|KS",
+   "truth_frac": 0.3101,
+   "iou_const": 0.316147967659763,
+   "W": 120.0,
+   "iou_slope": 0.4892640692640693,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.2934105075690116
+  },
+  {
+   "lakeId": "Mille Lacs Lake|MN",
+   "truth_frac": 0.26858333333333334,
+   "iou_const": 0.43707973102785785,
+   "W": 120.0,
+   "iou_slope": 0.29352337135674816,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.28305153074533423
+  },
+  {
+   "lakeId": "Mosquito Creek Lake|OH",
+   "truth_frac": 0.5502666666666667,
+   "iou_const": 0.5973651816348445,
+   "W": 120.0,
+   "iou_slope": 0.6166871629930943,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.5614733880250681
+  },
+  {
+   "lakeId": "Otter Tail Lake|MN",
+   "truth_frac": 0.6762666666666667,
+   "iou_const": 0.4922322350511593,
+   "W": 120.0,
+   "iou_slope": 0.5410822433962637,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.5541548189536896
+  },
+  {
+   "lakeId": "Patterson Lake|ND",
+   "truth_frac": 0.38866666666666666,
+   "iou_const": 0.44107338907186894,
+   "W": 120.0,
+   "iou_slope": 0.49690843066051626,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.42020448236170355
+  },
+  {
+   "lakeId": "Pomona Lake|KS",
+   "truth_frac": 0.3300166666666667,
+   "iou_const": 0.4455278400325989,
+   "W": 120.0,
+   "iou_slope": 0.5721425186334066,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.3685307266803061
+  },
+  {
+   "lakeId": "Sardis Lake|OK",
+   "truth_frac": 0.26375,
+   "iou_const": 0.3894246944039475,
+   "W": 120.0,
+   "iou_slope": 0.360898807704066,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.33753699972638856
+  },
+  {
+   "lakeId": "Senecaville Lake|OH",
+   "truth_frac": 0.42435,
+   "iou_const": 0.47515397363278833,
+   "W": 120.0,
+   "iou_slope": 0.35162200282087447,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.38164071444927866
+  },
+  {
+   "lakeId": "Spruce Run Reservoir|NJ",
+   "truth_frac": 0.12641666666666668,
+   "iou_const": 0.1910602963075137,
+   "W": 120.0,
+   "iou_slope": 0.2472540633019675,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.23987868047982552
+  },
+  {
+   "lakeId": "Swanson Reservoir|NE",
+   "truth_frac": 0.41328333333333334,
+   "iou_const": 0.5011310937676733,
+   "W": 120.0,
+   "iou_slope": 0.643671588577579,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.3881564183123878
+  },
+  {
+   "lakeId": "Tappan Lake|OH",
+   "truth_frac": 0.29965,
+   "iou_const": 0.3905634381571632,
+   "W": 120.0,
+   "iou_slope": 0.362259803316463,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.3125196355639334
+  },
+  {
+   "lakeId": "White Bear Lake|MN",
+   "truth_frac": 0.3792,
+   "iou_const": 0.5514668529337059,
+   "W": 120.0,
+   "iou_slope": 0.48030513980740225,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.45041475442547246
+  },
+  {
+   "lakeId": "Wilson Lake|KS",
+   "truth_frac": 0.16023333333333334,
+   "iou_const": 0.2879589703384294,
+   "W": 120.0,
+   "iou_slope": 0.31334771886559803,
+   "a": 2.0,
+   "iou_shuffled_slope": 0.2887661284091787
+  }
+ ],
+ "t3": {
+  "Alum Creek Lake|OH": {
+   "d3": {
+    "auc_dist": 0.9172303405903331,
+    "auc_dist_plus_slope": 0.869930828413073,
+    "auc_slope_only": 0.3663609581659284
+   },
+   "d6": {
+    "auc_dist": 0.8941404400671232,
+    "auc_dist_plus_slope": 0.8180358169709766,
+    "auc_slope_only": 0.37637420673264366
+   },
+   "d10": {
+    "auc_dist": 0.8647063381643376,
+    "auc_dist_plus_slope": 0.7574760788223461,
+    "auc_slope_only": 0.3781149987383392
+   }
+  },
+  "Bowman-Haley Reservoir|ND": {
+   "d3": {
+    "auc_dist": 0.8780547936849081,
+    "auc_dist_plus_slope": 0.9011006019393324,
+    "auc_slope_only": 0.7052501663933064
+   },
+   "d6": {
+    "auc_dist": 0.7834207852573084,
+    "auc_dist_plus_slope": 0.8658062982356067,
+    "auc_slope_only": 0.7305206280086353
+   },
+   "d10": {
+    "auc_dist": 0.7215866839070729,
+    "auc_dist_plus_slope": 0.8064720113557348,
+    "auc_slope_only": 0.7127997541424228
+   }
+  },
+  "Box Butte Reservoir|NE": {
+   "d3": {
+    "auc_dist": 0.8433648492301703,
+    "auc_dist_plus_slope": 0.8561564614646913,
+    "auc_slope_only": 0.5915031777426902
+   },
+   "d6": {
+    "auc_dist": 0.8765548623787103,
+    "auc_dist_plus_slope": 0.8787488188547434,
+    "auc_slope_only": 0.5700872900175635
+   },
+   "d10": {
+    "auc_dist": 0.9001000302659796,
+    "auc_dist_plus_slope": 0.8869256861631851,
+    "auc_slope_only": 0.5566081614153412
+   }
+  },
+  "Branched Oak Lake|NE": {
+   "d3": {
+    "auc_dist": 0.9071682160834321,
+    "auc_dist_plus_slope": 0.9460613335103503,
+    "auc_slope_only": 0.7325767711328962
+   },
+   "d6": {
+    "auc_dist": 0.8569130179105856,
+    "auc_dist_plus_slope": 0.9304787213687404,
+    "auc_slope_only": 0.732745365219238
+   },
+   "d10": {
+    "auc_dist": 0.799336161624053,
+    "auc_dist_plus_slope": 0.8724139948306734,
+    "auc_slope_only": 0.6978335519944302
+   }
+  },
+  "Caesar Creek Lake|OH": {
+   "d3": {
+    "auc_dist": 0.9354795863946691,
+    "auc_dist_plus_slope": 0.9298930807440272,
+    "auc_slope_only": 0.6052831243282865
+   },
+   "d6": {
+    "auc_dist": 0.8515537242387217,
+    "auc_dist_plus_slope": 0.8386179049995423,
+    "auc_slope_only": 0.5854629881260145
+   },
+   "d10": {
+    "auc_dist": 0.8654994077389643,
+    "auc_dist_plus_slope": 0.8529038257816294,
+    "auc_slope_only": 0.6043666351566138
+   }
+  },
+  "Calamus Reservoir|NE": {
+   "d3": {
+    "auc_dist": 0.9386885898747129,
+    "auc_dist_plus_slope": 0.9388872059385347,
+    "auc_slope_only": 0.5517684645083571
+   },
+   "d6": {
+    "auc_dist": 0.8766447057730314,
+    "auc_dist_plus_slope": 0.8755636329019005,
+    "auc_slope_only": 0.5697412166015151
+   },
+   "d10": {
+    "auc_dist": 0.8009828022075764,
+    "auc_dist_plus_slope": 0.7982943772358075,
+    "auc_slope_only": 0.5767211893857216
+   }
+  },
+  "Canyon Ferry Lake|MT": {
+   "d3": {
+    "auc_dist": 0.9569673301720716,
+    "auc_dist_plus_slope": 0.9586883405753547,
+    "auc_slope_only": 0.6305068843431726
+   },
+   "d6": {
+    "auc_dist": 0.9573657366540651,
+    "auc_dist_plus_slope": 0.95154430874067,
+    "auc_slope_only": 0.6465213696953832
+   },
+   "d10": {
+    "auc_dist": 0.8907766516012187,
+    "auc_dist_plus_slope": 0.9152750758849294,
+    "auc_slope_only": 0.6973148229779172
+   }
+  },
+  "Cheney Reservoir|KS": {
+   "d3": {
+    "auc_dist": 0.8909137256006416,
+    "auc_dist_plus_slope": 0.8964576660793506,
+    "auc_slope_only": 0.5439716888784358
+   },
+   "d6": {
+    "auc_dist": 0.8263627490060454,
+    "auc_dist_plus_slope": 0.7947663203737224,
+    "auc_slope_only": 0.5066324969464656
+   },
+   "d10": {
+    "auc_dist": 0.7600719272481531,
+    "auc_dist_plus_slope": 0.6707747908102725,
+    "auc_slope_only": 0.4376769452271932
+   }
+  },
+  "Clinton Lake|KS": {
+   "d3": {
+    "auc_dist": 0.7889882063272752,
+    "auc_dist_plus_slope": 0.8008972479004867,
+    "auc_slope_only": 0.6422643369497152
+   },
+   "d6": {
+    "auc_dist": 0.7695592007946404,
+    "auc_dist_plus_slope": 0.7974382356284422,
+    "auc_slope_only": 0.6629080178437553
+   },
+   "d10": {
+    "auc_dist": 0.7200859263001357,
+    "auc_dist_plus_slope": 0.7800099051658315,
+    "auc_slope_only": 0.6872676514517987
+   }
+  },
+  "East Lake Tohopekaliga|FL": {
+   "d3": {
+    "auc_dist": 0.9038569321842025,
+    "auc_dist_plus_slope": 0.910505476642714,
+    "auc_slope_only": 0.5729818671231743
+   },
+   "d6": {
+    "auc_dist": 0.7818238390784473,
+    "auc_dist_plus_slope": 0.840081543702012,
+    "auc_slope_only": 0.6858644170750468
+   },
+   "d10": {
+    "auc_dist": 0.6732151755401518,
+    "auc_dist_plus_slope": 0.7382972079582882,
+    "auc_slope_only": 0.733328596272657
+   }
+  },
+  "El Dorado Lake|KS": {
+   "d3": {
+    "auc_dist": 0.8766404359847726,
+    "auc_dist_plus_slope": 0.8813756249248648,
+    "auc_slope_only": 0.5839838589461029
+   },
+   "d6": {
+    "auc_dist": 0.8755002561335115,
+    "auc_dist_plus_slope": 0.8801361698046544,
+    "auc_slope_only": 0.5837333982813682
+   },
+   "d10": {
+    "auc_dist": 0.8316520845694935,
+    "auc_dist_plus_slope": 0.8413325767539471,
+    "auc_slope_only": 0.5966386699545233
+   }
+  },
+  "Griffin|FL": {
+   "d3": {
+    "auc_dist": 0.9272340652592832,
+    "auc_dist_plus_slope": 0.9315378989089105,
+    "auc_slope_only": 0.5613877235675451
+   },
+   "d6": {
+    "auc_dist": 0.7513972479737063,
+    "auc_dist_plus_slope": 0.8066171229623242,
+    "auc_slope_only": 0.6274687407138496
+   },
+   "d10": {
+    "auc_dist": 0.7352604942666705,
+    "auc_dist_plus_slope": 0.8204872641809718,
+    "auc_slope_only": 0.7061074537357539
+   }
+  },
+  "Gull Lake|MN": {
+   "d3": {
+    "auc_dist": 0.9230889041667515,
+    "auc_dist_plus_slope": 0.9194484064949459,
+    "auc_slope_only": 0.6026365075596669
+   },
+   "d6": {
+    "auc_dist": 0.8281738821220711,
+    "auc_dist_plus_slope": 0.8235666202676406,
+    "auc_slope_only": 0.6203383711277026
+   },
+   "d10": {
+    "auc_dist": 0.7609322933491371,
+    "auc_dist_plus_slope": 0.7617456043730256,
+    "auc_slope_only": 0.6212148017166794
+   }
+  },
+  "Harlan County Lake|NE": {
+   "d3": {
+    "auc_dist": 0.7743734534570614,
+    "auc_dist_plus_slope": 0.8499407083341622,
+    "auc_slope_only": 0.7076912778860548
+   },
+   "d6": {
+    "auc_dist": 0.7818357862431962,
+    "auc_dist_plus_slope": 0.8664351407001765,
+    "auc_slope_only": 0.7149172790553419
+   },
+   "d10": {
+    "auc_dist": 0.7920425908001022,
+    "auc_dist_plus_slope": 0.8420618017352431,
+    "auc_slope_only": 0.6938834408182372
+   }
+  },
+  "Harris|FL": {
+   "d3": {
+    "auc_dist": 0.9613768898004627,
+    "auc_dist_plus_slope": 0.9651749774076683,
+    "auc_slope_only": 0.6127294762498509
+   },
+   "d6": {
+    "auc_dist": 0.8864385212446376,
+    "auc_dist_plus_slope": 0.9038143389400644,
+    "auc_slope_only": 0.633104341902888
+   },
+   "d10": {
+    "auc_dist": 0.7563476353506455,
+    "auc_dist_plus_slope": 0.8171708995101294,
+    "auc_slope_only": 0.6861727287742485
+   }
+  },
+  "Hebgen Lake|MT": {
+   "d3": {
+    "auc_dist": 0.8589337191195159,
+    "auc_dist_plus_slope": 0.8736946269160033,
+    "auc_slope_only": 0.6482266118200617
+   },
+   "d6": {
+    "auc_dist": 0.7662336537461398,
+    "auc_dist_plus_slope": 0.815074292580101,
+    "auc_slope_only": 0.6636848114332317
+   },
+   "d10": {
+    "auc_dist": 0.7233802548714245,
+    "auc_dist_plus_slope": 0.7974688113771862,
+    "auc_slope_only": 0.6792270346291863
+   }
+  },
+  "Hoover Reservoir|OH": {
+   "d3": {
+    "auc_dist": 0.9204733602338333,
+    "auc_dist_plus_slope": 0.9038953340412832,
+    "auc_slope_only": 0.5254690621995078
+   },
+   "d6": {
+    "auc_dist": 0.8015183469146416,
+    "auc_dist_plus_slope": 0.7206906395923621,
+    "auc_slope_only": 0.44593088554007543
+   },
+   "d10": {
+    "auc_dist": 0.7638317217644488,
+    "auc_dist_plus_slope": 0.7057499451187955,
+    "auc_slope_only": 0.49538938830636664
+   }
+  },
+  "Istokpoga|FL": {
+   "d3": {
+    "auc_dist": 0.8085112413880577,
+    "auc_dist_plus_slope": 0.8052355248823214,
+    "auc_slope_only": 0.5131344395300144
+   },
+   "d6": {
+    "auc_dist": 0.7437650587971014,
+    "auc_dist_plus_slope": 0.716276108239635,
+    "auc_slope_only": 0.4235791779092918
+   },
+   "d10": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "Jennings Randolph Lake|MD": {
+   "d3": {
+    "auc_dist": 0.9710254478583762,
+    "auc_dist_plus_slope": 0.9610275926034533,
+    "auc_slope_only": 0.3550179715660256
+   },
+   "d6": {
+    "auc_dist": 0.9706941684053013,
+    "auc_dist_plus_slope": 0.9626350119809228,
+    "auc_slope_only": 0.3464362605018474
+   },
+   "d10": {
+    "auc_dist": 0.9711061050656028,
+    "auc_dist_plus_slope": 0.9658939527975102,
+    "auc_slope_only": 0.3519301957361585
+   }
+  },
+  "Johnson Lake|NE": {
+   "d3": {
+    "auc_dist": 0.9409671436968029,
+    "auc_dist_plus_slope": 0.9283876531623697,
+    "auc_slope_only": 0.4401872977429896
+   },
+   "d6": {
+    "auc_dist": 0.8963116387457956,
+    "auc_dist_plus_slope": 0.8130955564597429,
+    "auc_slope_only": 0.40554158968203924
+   },
+   "d10": {
+    "auc_dist": 0.8752483863283388,
+    "auc_dist_plus_slope": 0.7272721211773977,
+    "auc_slope_only": 0.3518075280623334
+   }
+  },
+  "Kanopolis Lake|KS": {
+   "d3": {
+    "auc_dist": 0.7317868632913851,
+    "auc_dist_plus_slope": 0.8060400667125658,
+    "auc_slope_only": 0.6973540997494102
+   },
+   "d6": {
+    "auc_dist": 0.7644429411675264,
+    "auc_dist_plus_slope": 0.8398591943297049,
+    "auc_slope_only": 0.6914401075719692
+   },
+   "d10": {
+    "auc_dist": 0.7747336461873104,
+    "auc_dist_plus_slope": 0.8780403825646631,
+    "auc_slope_only": 0.7305877102419275
+   }
+  },
+  "Kissimmee|FL": {
+   "d3": {
+    "auc_dist": 0.949271714448699,
+    "auc_dist_plus_slope": 0.9506966626029522,
+    "auc_slope_only": 0.5697210689286103
+   },
+   "d6": {
+    "auc_dist": 0.8394956594608818,
+    "auc_dist_plus_slope": 0.8096339667923296,
+    "auc_slope_only": 0.5037150046581746
+   },
+   "d10": {
+    "auc_dist": 0.7493983719828721,
+    "auc_dist_plus_slope": 0.7188127198271805,
+    "auc_slope_only": 0.48045119324882857
+   }
+  },
+  "Lake Bemidji|MN": {
+   "d3": {
+    "auc_dist": 0.9518263846159227,
+    "auc_dist_plus_slope": 0.9113394959908949,
+    "auc_slope_only": 0.49140246268756876
+   },
+   "d6": {
+    "auc_dist": 0.8662339835127556,
+    "auc_dist_plus_slope": 0.7643997333667212,
+    "auc_slope_only": 0.4929954025874346
+   },
+   "d10": {
+    "auc_dist": 0.7931045139925332,
+    "auc_dist_plus_slope": 0.6935176397741719,
+    "auc_slope_only": 0.5061719798102161
+   }
+  },
+  "Lake McConaughy|NE": {
+   "d3": {
+    "auc_dist": 0.8344114309952354,
+    "auc_dist_plus_slope": 0.9057524806709437,
+    "auc_slope_only": 0.8307066801585823
+   },
+   "d6": {
+    "auc_dist": 0.7882640628523863,
+    "auc_dist_plus_slope": 0.9000587335261763,
+    "auc_slope_only": 0.8153838423301275
+   },
+   "d10": {
+    "auc_dist": 0.8154311021962518,
+    "auc_dist_plus_slope": 0.909788383775393,
+    "auc_slope_only": 0.7516962700387059
+   }
+  },
+  "Lake Milton|OH": {
+   "d3": {
+    "auc_dist": 0.8600578801436678,
+    "auc_dist_plus_slope": 0.839083102631821,
+    "auc_slope_only": 0.5369516856784207
+   },
+   "d6": {
+    "auc_dist": 0.780013125191307,
+    "auc_dist_plus_slope": 0.7306432394810577,
+    "auc_slope_only": 0.5047784813166631
+   },
+   "d10": {
+    "auc_dist": 0.7009565540254091,
+    "auc_dist_plus_slope": 0.6269042386065028,
+    "auc_slope_only": 0.459424828565956
+   }
+  },
+  "Lake Minnetonka|MN": {
+   "d3": {
+    "auc_dist": 0.9632005874636851,
+    "auc_dist_plus_slope": 0.9463943711197659,
+    "auc_slope_only": 0.5063719707074397
+   },
+   "d6": {
+    "auc_dist": 0.9266431708173466,
+    "auc_dist_plus_slope": 0.870543086048711,
+    "auc_slope_only": 0.5039065088855048
+   },
+   "d10": {
+    "auc_dist": 0.8721942668160257,
+    "auc_dist_plus_slope": 0.7806339017735889,
+    "auc_slope_only": 0.5029755222853013
+   }
+  },
+  "Lake Pepin|MN": {
+   "d3": {
+    "auc_dist": 0.7859346337627369,
+    "auc_dist_plus_slope": 0.8531452161821487,
+    "auc_slope_only": 0.6985185702445925
+   },
+   "d6": {
+    "auc_dist": 0.7519434939110121,
+    "auc_dist_plus_slope": 0.8166704963751794,
+    "auc_slope_only": 0.7056642435872744
+   },
+   "d10": {
+    "auc_dist": 0.7530402895347054,
+    "auc_dist_plus_slope": 0.7688072067014272,
+    "auc_slope_only": 0.6619479104121867
+   }
+  },
+  "Lake Winnibigoshish|MN": {
+   "d3": {
+    "auc_dist": 0.8174705799010292,
+    "auc_dist_plus_slope": 0.8035387685723238,
+    "auc_slope_only": 0.5008452172005852
+   },
+   "d6": {
+    "auc_dist": 0.762513703382674,
+    "auc_dist_plus_slope": 0.7023769348264062,
+    "auc_slope_only": 0.49770173685674557
+   },
+   "d10": {
+    "auc_dist": 0.594344799636763,
+    "auc_dist_plus_slope": 0.5963067708798376,
+    "auc_slope_only": 0.5105503182416795
+   }
+  },
+  "Leech Lake|MN": {
+   "d3": {
+    "auc_dist": 0.8297299556145602,
+    "auc_dist_plus_slope": 0.85683121294267,
+    "auc_slope_only": 0.6209921380524763
+   },
+   "d6": {
+    "auc_dist": 0.7647654137209479,
+    "auc_dist_plus_slope": 0.8095912956529073,
+    "auc_slope_only": 0.6636619608087679
+   },
+   "d10": {
+    "auc_dist": 0.725234053951934,
+    "auc_dist_plus_slope": 0.7840786144311678,
+    "auc_slope_only": 0.679811324867509
+   }
+  },
+  "Melvern Lake|KS": {
+   "d3": {
+    "auc_dist": 0.6858565165675287,
+    "auc_dist_plus_slope": 0.7359916956386755,
+    "auc_slope_only": 0.6500739361629952
+   },
+   "d6": {
+    "auc_dist": 0.7157859960370879,
+    "auc_dist_plus_slope": 0.7706791778037922,
+    "auc_slope_only": 0.6398320610748657
+   },
+   "d10": {
+    "auc_dist": 0.7856877317699918,
+    "auc_dist_plus_slope": 0.8505327747917589,
+    "auc_slope_only": 0.669064165834931
+   }
+  },
+  "Merritt Reservoir|NE": {
+   "d3": {
+    "auc_dist": 0.8711651140740481,
+    "auc_dist_plus_slope": 0.8684672525885607,
+    "auc_slope_only": 0.612656181974521
+   },
+   "d6": {
+    "auc_dist": 0.7989772938269009,
+    "auc_dist_plus_slope": 0.7741300868926325,
+    "auc_slope_only": 0.5818266000405119
+   },
+   "d10": {
+    "auc_dist": 0.8791498294676722,
+    "auc_dist_plus_slope": 0.8217797332425161,
+    "auc_slope_only": 0.587526096564526
+   }
+  },
+  "Milford Lake|KS": {
+   "d3": {
+    "auc_dist": 0.6959009681673642,
+    "auc_dist_plus_slope": 0.8102448256168208,
+    "auc_slope_only": 0.7682767133757901
+   },
+   "d6": {
+    "auc_dist": 0.6589018537308144,
+    "auc_dist_plus_slope": 0.754135849260703,
+    "auc_slope_only": 0.6551212086424357
+   },
+   "d10": {
+    "auc_dist": 0.7337469284123078,
+    "auc_dist_plus_slope": 0.8047517076578561,
+    "auc_slope_only": 0.6396570299232301
+   }
+  },
+  "Mille Lacs Lake|MN": {
+   "d3": {
+    "auc_dist": 0.9101933066016283,
+    "auc_dist_plus_slope": 0.8667233843428872,
+    "auc_slope_only": 0.46644369699197724
+   },
+   "d6": {
+    "auc_dist": 0.8134624226415251,
+    "auc_dist_plus_slope": 0.7115327698889763,
+    "auc_slope_only": 0.4563908243101885
+   },
+   "d10": {
+    "auc_dist": 0.6955312229167,
+    "auc_dist_plus_slope": 0.5938428843035963,
+    "auc_slope_only": 0.44893211089146534
+   }
+  },
+  "Mosquito Creek Lake|OH": {
+   "d3": {
+    "auc_dist": 0.8431312285006219,
+    "auc_dist_plus_slope": 0.8593392472751187,
+    "auc_slope_only": 0.5680420067750156
+   },
+   "d6": {
+    "auc_dist": 0.8204151036770141,
+    "auc_dist_plus_slope": 0.8487556821851228,
+    "auc_slope_only": 0.6065571209452679
+   },
+   "d10": {
+    "auc_dist": 0.7662335584882395,
+    "auc_dist_plus_slope": 0.7964647857460544,
+    "auc_slope_only": 0.63229457932219
+   }
+  },
+  "Otter Tail Lake|MN": {
+   "d3": {
+    "auc_dist": 0.8790224765370798,
+    "auc_dist_plus_slope": 0.8175645630337816,
+    "auc_slope_only": 0.45227015196598486
+   },
+   "d6": {
+    "auc_dist": 0.8031540904671252,
+    "auc_dist_plus_slope": 0.671962522876915,
+    "auc_slope_only": 0.4316579041101792
+   },
+   "d10": {
+    "auc_dist": 0.6560146189743216,
+    "auc_dist_plus_slope": 0.5580699399015803,
+    "auc_slope_only": 0.3989365797585758
+   }
+  },
+  "Patterson Lake|ND": {
+   "d3": {
+    "auc_dist": 0.7942982833723038,
+    "auc_dist_plus_slope": 0.8365667825687941,
+    "auc_slope_only": 0.734150193238033
+   },
+   "d6": {
+    "auc_dist": 0.7743403737717705,
+    "auc_dist_plus_slope": 0.8200073090527505,
+    "auc_slope_only": 0.7018552350447335
+   },
+   "d10": {
+    "auc_dist": 0.6318355959997316,
+    "auc_dist_plus_slope": 0.6515691132297894,
+    "auc_slope_only": 0.5878447084682346
+   }
+  },
+  "Pomona Lake|KS": {
+   "d3": {
+    "auc_dist": 0.7366502880261945,
+    "auc_dist_plus_slope": 0.8158710582552623,
+    "auc_slope_only": 0.7594617343021853
+   },
+   "d6": {
+    "auc_dist": 0.7858155185552502,
+    "auc_dist_plus_slope": 0.8810155744802455,
+    "auc_slope_only": 0.7639993161439645
+   },
+   "d10": {
+    "auc_dist": 0.7721555062534229,
+    "auc_dist_plus_slope": 0.8804568865889506,
+    "auc_slope_only": 0.7667694565836976
+   }
+  },
+  "Sardis Lake|OK": {
+   "d3": {
+    "auc_dist": 0.8760189846025837,
+    "auc_dist_plus_slope": 0.877359607473578,
+    "auc_slope_only": 0.5729372428718353
+   },
+   "d6": {
+    "auc_dist": 0.8086429376197463,
+    "auc_dist_plus_slope": 0.8106390599645421,
+    "auc_slope_only": 0.5772270820760815
+   },
+   "d10": {
+    "auc_dist": 0.7463648149700495,
+    "auc_dist_plus_slope": 0.7504031241890059,
+    "auc_slope_only": 0.5806211919102832
+   }
+  },
+  "Senecaville Lake|OH": {
+   "d3": {
+    "auc_dist": 0.6874598403754449,
+    "auc_dist_plus_slope": 0.6463374898893145,
+    "auc_slope_only": 0.48524351570586305
+   },
+   "d6": {
+    "auc_dist": 0.7384703214506259,
+    "auc_dist_plus_slope": 0.6689422991852811,
+    "auc_slope_only": 0.4820475884034232
+   },
+   "d10": {
+    "auc_dist": 0.7132163515376378,
+    "auc_dist_plus_slope": 0.6594620251939015,
+    "auc_slope_only": 0.5046860508876052
+   }
+  },
+  "Spruce Run Reservoir|NJ": {
+   "d3": {
+    "auc_dist": 0.9716840148345977,
+    "auc_dist_plus_slope": 0.966643264814779,
+    "auc_slope_only": 0.5286537840589843
+   },
+   "d6": {
+    "auc_dist": 0.9355563664585239,
+    "auc_dist_plus_slope": 0.9230518632955098,
+    "auc_slope_only": 0.530119114910659
+   },
+   "d10": {
+    "auc_dist": 0.8678646785220351,
+    "auc_dist_plus_slope": 0.8194316639692442,
+    "auc_slope_only": 0.49423430251204425
+   }
+  },
+  "Swanson Reservoir|NE": {
+   "d3": {
+    "auc_dist": 0.7832291419118437,
+    "auc_dist_plus_slope": 0.882659221107583,
+    "auc_slope_only": 0.7657497467025395
+   },
+   "d6": {
+    "auc_dist": 0.7857720332654259,
+    "auc_dist_plus_slope": 0.908527459142999,
+    "auc_slope_only": 0.7612877131005295
+   },
+   "d10": {
+    "auc_dist": 0.7942711667485705,
+    "auc_dist_plus_slope": 0.8911055946284141,
+    "auc_slope_only": 0.7336936955319142
+   }
+  },
+  "Tappan Lake|OH": {
+   "d3": {
+    "auc_dist": 0.8010006311203148,
+    "auc_dist_plus_slope": 0.7993851124473607,
+    "auc_slope_only": 0.595672888505189
+   },
+   "d6": {
+    "auc_dist": 0.7937808023567747,
+    "auc_dist_plus_slope": 0.7832530078446166,
+    "auc_slope_only": 0.5877916424654986
+   },
+   "d10": {
+    "auc_dist": 0.8228340470740007,
+    "auc_dist_plus_slope": 0.7697650129128674,
+    "auc_slope_only": 0.5398494907748851
+   }
+  },
+  "White Bear Lake|MN": {
+   "d3": {
+    "auc_dist": 0.9086969938778453,
+    "auc_dist_plus_slope": 0.8903327667276907,
+    "auc_slope_only": 0.5390915281986002
+   },
+   "d6": {
+    "auc_dist": 0.8367508820077295,
+    "auc_dist_plus_slope": 0.7987759081864636,
+    "auc_slope_only": 0.5428689779141428
+   },
+   "d10": {
+    "auc_dist": 0.7809153672632079,
+    "auc_dist_plus_slope": 0.732165003327309,
+    "auc_slope_only": 0.5448683521379044
+   }
+  },
+  "Wilson Lake|KS": {
+   "d3": {
+    "auc_dist": 0.9418933429069268,
+    "auc_dist_plus_slope": 0.942062402548149,
+    "auc_slope_only": 0.5349450018011378
+   },
+   "d6": {
+    "auc_dist": 0.8843593982435626,
+    "auc_dist_plus_slope": 0.8853476210461974,
+    "auc_slope_only": 0.5477971326183994
+   },
+   "d10": {
+    "auc_dist": 0.8375168715159584,
+    "auc_dist_plus_slope": 0.8256669078469673,
+    "auc_slope_only": 0.5544358257023542
+   }
+  }
+ }
+}

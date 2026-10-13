@@ -1,0 +1,238 @@
+{
+ "matching": {
+  "pairs_by_confidence": {
+   "verified_spatial": 182,
+   "name_only_unverified": 59,
+   "rejected": 33
+  },
+  "verified_distinct_fleet_lakes": 140,
+  "verified_lakes_by_source": {
+   "CT": 12,
+   "FL": 8,
+   "IL": 1,
+   "IN": 2,
+   "KS": 11,
+   "MA": 10,
+   "MI": 9,
+   "MN": 12,
+   "MT": 7,
+   "ND": 3,
+   "NE": 10,
+   "NH": 12,
+   "NJ": 2,
+   "OH": 12,
+   "OK": 5,
+   "PA": 1,
+   "TWDB": 6,
+   "UT": 1,
+   "WA": 4,
+   "WI": 1,
+   "WV": 12
+  },
+  "verified_polygonless_point_matches": 0,
+  "rejected_by_kind": {
+   "name_collision_or_no_geometric_support(scout candidates)": 3,
+   "embedded_or_neighbouring_water_body_inside_polygon(name disagrees)": 6,
+   "weak_overlap": 24
+  },
+  "name_only_unverified_by_source": {
+   "S-depth-020": 24,
+   "S-depth-024": 16,
+   "S-depth-031": 10,
+   "S-depth-025": 6,
+   "S-depth-033": 3
+  },
+  "note": "matching tested every contour group against every fleet polygon (not only scout name candidates); 599 polygons, 621 fleet lakes"
+ },
+ "n_lake_rows": 138,
+ "n_unique_lakes_excl_fleet_duplicates": 137,
+ "n_pairs": 139,
+ "tier_counts": {
+  "A": 76,
+  "C": 35,
+  "B": 26
+ },
+ "by_source_all_tiers": {
+  "OH": 12,
+  "CT": 12,
+  "WV": 12,
+  "MN": 12,
+  "NH": 12,
+  "KS": 11,
+  "NE": 10,
+  "MA": 9,
+  "MT": 7,
+  "MI": 7,
+  "FL": 7,
+  "TWDB": 6,
+  "OK": 5,
+  "WA": 4,
+  "ND": 3,
+  "NJ": 2,
+  "IN": 2,
+  "WI": 1,
+  "PA": 1,
+  "IL": 1,
+  "UT": 1
+ },
+ "by_source_tierA": {
+  "WV": 12,
+  "NE": 9,
+  "OH": 7,
+  "FL": 7,
+  "MN": 7,
+  "TWDB": 6,
+  "KS": 5,
+  "MA": 5,
+  "CT": 4,
+  "NH": 4,
+  "ND": 3,
+  "MT": 3,
+  "OK": 1,
+  "WA": 1,
+  "IL": 1,
+  "NJ": 1
+ },
+ "by_source_tierAB": {
+  "WV": 12,
+  "OH": 10,
+  "NE": 10,
+  "MN": 10,
+  "KS": 8,
+  "MA": 8,
+  "CT": 7,
+  "FL": 7,
+  "TWDB": 6,
+  "NH": 6,
+  "MT": 5,
+  "OK": 4,
+  "ND": 3,
+  "PA": 1,
+  "MI": 1,
+  "WA": 1,
+  "IL": 1,
+  "IN": 1,
+  "NJ": 1
+ },
+ "by_regime_tierAB": {
+  "reservoir": 66,
+  "regulated_natural": 26,
+  "natural": 10
+ },
+ "by_lake_class_tierAB": {
+  "R4_open_basin_storage": 39,
+  "N2_regulated_natural_lake": 22,
+  "R2_flow_through_reservoir": 16,
+  "R3_dendritic_storage": 8,
+  "N3_small_pond_or_outlet_dam": 5,
+  "N1a_natural_deep_or_unknown": 5,
+  "N1b_natural_shallow": 4,
+  "R1_run_of_river_pool": 2,
+  "R5_small_impoundment": 1
+ },
+ "by_lake_class_tierA": {
+  "R4_open_basin_storage": 28,
+  "N2_regulated_natural_lake": 16,
+  "R2_flow_through_reservoir": 15,
+  "R3_dendritic_storage": 6,
+  "N1b_natural_shallow": 3,
+  "N1a_natural_deep_or_unknown": 3,
+  "R1_run_of_river_pool": 2,
+  "N3_small_pond_or_outlet_dam": 2,
+  "R5_small_impoundment": 1
+ },
+ "by_state_tierAB": {
+  "WV": 11,
+  "NE": 10,
+  "MN": 10,
+  "OH": 9,
+  "KS": 8,
+  "MA": 8,
+  "FL": 7,
+  "CT": 6,
+  "TX": 6,
+  "NH": 6,
+  "MT": 5,
+  "OK": 4,
+  "ND": 3,
+  "PA": 2,
+  "MI": 1,
+  "MD": 1,
+  "WA": 1,
+  "IL": 1,
+  "IN": 1,
+  "NJ": 1,
+  "RI": 1
+ },
+ "flags": {
+  "none": 95,
+  "contour_gap>10ft_in_0-10ft_zone": 10,
+  "contour_ladder_too_coarse_for_lake_depth": 9,
+  "partial_coverage;contour_gap>10ft_in_0-10ft_zone": 4,
+  "top_unverified(max contour<15ft and no consistent max-depth anchor)": 4,
+  "FL authority exception (full-lake hydroacoustic) for top check": 3,
+  "deep_part_missing_vs_reference(mean/max depth invalid; shares to 10ft ok if rings closed)": 3,
+  "polygon_area_mismatch(0.69)": 1,
+  "contour_ladder_too_coarse_for_lake_depth;top_unverified(max contour<15ft and no consistent max-depth anchor);agency DRAFT file; contours only to 10 ft": 1,
+  "partial_coverage;top_unverified(max contour<15ft and no consistent max-depth anchor)": 1,
+  "polygon_area_mismatch(0.64)": 1,
+  "polygon_area_off(0.75)": 1,
+  "partial_coverage": 1,
+  "partial_coverage;deep_part_missing_vs_reference(mean/max depth invalid; shares to 10ft ok if rings closed)": 1,
+  "partial_coverage;contour_gap>10ft_in_0-10ft_zone;deep_part_missing_vs_reference(mean/max depth invalid; shares to 10ft ok if rings closed)": 1,
+  "contour_ladder_too_coarse_for_lake_depth;datum_uncertain(elevation->depth vs compromise level)": 1
+ },
+ "max_depth_check": {
+  "consistent": 67,
+  "no_anchor": 62,
+  "contours_end_above_reference_max": 8
+ },
+ "method": {
+  "contour_interp": 131,
+  "area_capacity_table": 6
+ },
+ "shares_tierA_quantiles": {
+  "shr_0_3": [
+   0.0314,
+   0.0689,
+   0.0938,
+   0.133,
+   0.1838
+  ],
+  "shr_3_6": [
+   0.0316,
+   0.0587,
+   0.0869,
+   0.1266,
+   0.1919
+  ],
+  "shr_6_10": [
+   0.0492,
+   0.0709,
+   0.1118,
+   0.1578,
+   0.2794
+  ],
+  "shr_gt10": [
+   0.2721,
+   0.5848,
+   0.6897,
+   0.7752,
+   0.8503
+  ],
+  "shr_lt6": [
+   0.0846,
+   0.1449,
+   0.1821,
+   0.2644,
+   0.4122
+  ]
+ },
+ "licences": {
+  "FL": "FL FWC metadata: do not redistribute \u2013 internal research use only",
+  "TWDB": "TWDB: not for navigation/fishing; public domain data, check before shipping raw contours",
+  "MN": "MN DNR: public (Minnesota Geospatial Commons), attribution",
+  "MI": "MI DNR/IFR: public, partial digitized",
+  "default": "state agency open data; no raw contour redistribution implied; review before shipping to app users"
+ }
+}

@@ -1,0 +1,86 @@
+lakeId,src,survey_km2,survey_km2_max_group,how,poly_km2,ratio,ratio_max_group
+Alum Creek Lake|OH,OH,13.4807,13.4807,OH lake acres,13.0211,0.9659,0.9659
+Bantam Lake|CT,CT,3.8347,3.8347,shore rings in contour file,3.8593,1.0064,1.0064
+Berlin Lake|OH,OH,13.5321,13.5321,OH lake acres,14.5908,1.0782,1.0782
+Big Stone Lake|SD,MN,48.4958,48.4958,MN outline acres,48.0629,0.9911,0.9911
+Bighorn Lake|WY,MT,73.3511,73.3511,shore rings in contour file,50.5650,0.6894,0.6894
+Bowman-Haley Reservoir|ND,ND,6.9731,6.9731,shore rings in contour file,7.8122,1.1203,1.1203
+Box Butte Reservoir|NE,NE,5.0926,5.0926,NE shape acres,5.1159,1.0046,1.0046
+Branched Oak Lake|NE,NE,7.1221,7.1221,NE shape acres,7.0995,0.9968,0.9968
+Caesar Creek Lake|OH,OH,11.3561,11.3561,OH lake acres,10.7467,0.9463,0.9463
+Calamus Reservoir|NE,NE,20.6301,20.6301,NE shape acres,20.3302,0.9855,0.9855
+Candlewood Lake|CT,CT,21.2410,21.2410,shore rings in contour file,20.7775,0.9782,0.9782
+Canyon Ferry Lake|MT,MT,0.8937,0.8937,shore rings in contour file,132.9095,148.7113,148.7113
+Congamond Lakes|MA,CT,1.9205,1.9205,shore rings in contour file,0.5754,0.2996,0.2996
+Coventry Lake (Wangumbaug)|CT,CT,1.5196,1.5196,shore rings in contour file,1.5097,0.9935,0.9935
+First Connecticut Lake|NH,NH,12.4518,12.4518,shore rings in contour file,12.4400,0.9991,0.9991
+Flathead Lake|MT,MT,12.9334,12.9334,shore rings in contour file,494.6767,38.2479,38.2479
+Fort Gibson Lake|OK,OK,80.5270,80.5270,shore rings in contour file,72.6288,0.9019,0.9019
+Gardner Lake|CT,CT,2.1442,2.1442,shore rings in contour file,2.1215,0.9894,0.9894
+Georgetown Lake|MT,MT,11.4993,11.4993,shore rings in contour file,11.5821,1.0072,1.0072
+Grand Lake St. Marys|OH,OH,54.2258,54.2258,OH lake acres,52.0391,0.9597,0.9597
+Grand Lake o' the Cherokees|OK,OK,171.2820,171.2820,shore rings in contour file,157.9251,0.9220,0.9220
+Great East Lake|NH,NH,7.3997,7.3997,shore rings in contour file,7.3932,0.9991,0.9991
+Gull Lake|MN,MN,40.3394,40.3394,MN outline acres,40.0259,0.9922,0.9922
+Hebgen Lake|MT,MT,0.0080,0.0080,shore rings in contour file,50.2013,6276.7214,6276.7214
+Highland Lake|CT,CT,1.8014,1.8014,shore rings in contour file,1.8220,1.0114,1.0114
+Hoover Reservoir|OH,OH,11.6691,11.6691,OH lake acres,10.9984,0.9425,0.9425
+Indian Lake|OH,OH,20.8860,20.8860,OH lake acres,20.6356,0.9880,0.9880
+Johnson Lake|NE,NE,8.3365,8.3365,NE shape acres,8.9245,1.0705,1.0705
+Lake Bemidji|MN,MN,26.6301,26.6301,MN outline acres,26.5652,0.9976,0.9976
+Lake Chelan|WA,WA,132.2466,132.2466,shore rings in contour file,132.2549,1.0001,1.0001
+Lake Cochituate|MA,MA,0.8762,0.8762,shore rings in contour file,0.7962,0.9087,0.9087
+Lake Crescent|WA,WA,20.3230,20.3230,shore rings in contour file,20.3206,0.9999,0.9999
+Lake Hudson|OK,OK,44.8907,44.8907,shore rings in contour file,28.5569,0.6361,0.6361
+Lake Lillinonah|CT,CT,6.2653,6.2653,shore rings in contour file,6.2311,0.9945,0.9945
+Lake McConaughy|NE,NE,121.2807,121.2807,NE shape acres,100.7179,0.8305,0.8305
+Lake Milton|OH,OH,6.8607,6.8607,OH lake acres,6.7010,0.9767,0.9767
+Lake Minnetonka|MN,MN,113.5409,57.4868,MN outline acres,55.6411,0.4901,0.9679
+Lake Murray (OK)|OK,OK,24.7367,24.7367,shore rings in contour file,22.3617,0.9040,0.9040
+Lake Ogallala|NE,NE,2.5791,2.5791,NE shape acres,2.3173,0.8985,0.8985
+Lake Pepin|MN,MN,102.3991,102.3991,MN outline acres,103.1207,1.0070,1.0070
+Lake Quinsigamond|MA,MA,2.5308,2.5308,shore rings in contour file,1.9015,0.7513,0.7513
+Lake Sammamish|WA,WA,19.6374,19.6374,shore rings in contour file,19.6353,0.9999,0.9999
+Lake Vermilion|MN,MN,160.0538,114.0426,MN outline acres,157.4521,0.9837,1.3806
+Lake Waramaug|CT,CT,2.6560,2.6560,shore rings in contour file,2.6275,0.9893,0.9893
+Lake Wentworth|NH,NH,13.0325,13.0325,shore rings in contour file,12.5303,0.9615,0.9615
+Lake Winnibigoshish|MN,MN,230.2380,230.2380,MN outline acres,225.6678,0.9802,0.9802
+Lake Winnipesaukee|NH,NH,201.2873,201.2873,shore rings in contour file,184.8773,0.9185,0.9185
+Lake Winnisquam|NH,NH,17.2547,17.2547,shore rings in contour file,17.0415,0.9876,0.9876
+Lake Zoar|CT,CT,3.7417,3.7417,shore rings in contour file,3.0176,0.8065,0.8065
+Leech Lake|MN,MN,416.9774,413.0828,MN outline acres,418.2024,1.0029,1.0124
+Long Pond (Lakeville)|MA,MA,7.2821,7.2821,shore rings in contour file,7.1984,0.9885,0.9885
+Mansfield Hollow Lake|CT,CT,1.8751,1.8751,shore rings in contour file,1.9846,1.0584,1.0584
+Massabesic Lake|NH,NH,10.7606,10.7606,shore rings in contour file,10.3513,0.9620,0.9620
+Merritt Reservoir|NE,NE,11.0390,11.0390,NE shape acres,10.3123,0.9342,0.9342
+Merrymeeting Lake|NH,NH,4.9897,4.9897,shore rings in contour file,4.9947,1.0010,1.0010
+Mille Lacs Lake|MN,MN,518.4887,518.4887,MN outline acres,518.6221,1.0003,1.0003
+Moses Lake|WA,WA,29.7576,29.7576,shore rings in contour file,27.1575,0.9126,0.9126
+Mosquito Creek Lake|OH,OH,29.1868,29.1868,OH lake acres,28.3980,0.9730,0.9730
+Nelson Lake|ND,ND,2.3515,2.3515,shore rings in contour file,2.1326,0.9069,0.9069
+Newfound Lake|NH,NH,18.2413,18.2413,shore rings in contour file,18.0225,0.9880,0.9880
+Onota Lake|MA,MA,2.6460,2.6460,shore rings in contour file,2.6161,0.9887,0.9887
+Orange Lake|FL,FL,30.4468,30.4468,shore rings in contour file,29.4954,0.9688,0.9688
+Otis Reservoir|MA,MA,4.2980,4.2980,shore rings in contour file,4.0157,0.9343,0.9343
+Otter Tail Lake|MN,MN,56.9552,56.9552,MN outline acres,56.7120,0.9957,0.9957
+Pachaug Pond|CT,CT,3.5251,3.5251,shore rings in contour file,3.3006,0.9363,0.9363
+Patterson Lake|ND,ND,3.8291,3.8291,shore rings in contour file,3.2479,0.8482,0.8482
+Pontoosuc Lake|MA,MA,2.0710,2.0710,shore rings in contour file,2.0266,0.9786,0.9786
+Pymatuning Reservoir|PA,OH,65.7756,65.7756,OH lake acres,56.4201,0.8578,0.8578
+Rainy Lake|MN,MN,21.9677,21.9677,MN outline acres,857.9147,39.0535,39.0535
+Salt Fork Lake|OH,OH,12.3827,12.3827,OH lake acres,11.3390,0.9157,0.9157
+Sardis Lake|OK,OK,55.4461,55.4461,shore rings in contour file,54.3425,0.9801,0.9801
+Senecaville Lake|OH,OH,14.5164,14.5164,OH lake acres,14.0920,0.9708,0.9708
+Sherman Reservoir|NE,NE,11.5133,11.5133,NE shape acres,9.8681,0.8571,0.8571
+Squam Lake|NH,NH,30.4115,30.4115,shore rings in contour file,27.5450,0.9057,0.9057
+Squantz Pond|CT,CT,1.0944,1.0944,shore rings in contour file,1.1006,1.0056,1.0056
+Sunapee Lake|NH,NH,16.9173,16.9173,shore rings in contour file,16.6894,0.9865,0.9865
+Swanson Reservoir|NE,NE,16.5731,16.5731,NE shape acres,18.8395,1.1368,1.1368
+Tappan Lake|OH,OH,9.3347,9.3347,OH lake acres,8.6830,0.9302,0.9302
+Tiber Reservoir (Lake Elwell)|MT,MT,0.6598,0.6598,shore rings in contour file,53.0799,80.4513,80.4513
+Umbagog Lake|NH,NH,31.5799,31.5799,shore rings in contour file,30.9398,0.9797,0.9797
+Wachusett Reservoir|MA,MA,16.5910,16.5910,shore rings in contour file,16.0853,0.9695,0.9695
+Wallum Lake|RI,MA,1.3052,1.3052,shore rings in contour file,1.2540,0.9608,0.9608
+Webster Lake|MA,MA,5.3140,5.3140,shore rings in contour file,5.1668,0.9723,0.9723
+White Bear Lake|MN,MN,9.8465,9.8465,MN outline acres,9.7441,0.9896,0.9896
+Whitefish Lake|MT,MT,13.3519,13.3519,shore rings in contour file,13.4354,1.0063,1.0063

@@ -128,10 +128,28 @@ def main():
             rev.setdefault((r.lakeId, srcmap[r.sourceId]), r.matchConfidence)
     have = set(zip(m[m.matchConfidence == "verified_spatial"].lakeId, m[m.matchConfidence == "verified_spatial"].src))
     coll = []
+    gtabs = {gp.stem[:-7]: pd.read_csv(gp, dtype={"grp": str}) for gp in NORM.glob("*_groups.csv")}
+    featxy = feat.set_index("id")
     for (lid, s), how in rev.items():
         if (lid, s) in have: continue
-        coll.append(dict(lakeId=lid, lakeName=nm_of.get(lid, ""), state=st_of.get(lid, ""), src=s, grp="", grp_name="", matchBasis="scout_name_candidate:" + how,
-                         matchConfidence="rejected", reason="scout name/spatial candidate has no verified geometric support in the downloaded data (name collision, polygon mismatch or data gap)"))
+        why = "scout name/spatial candidate has no verified geometric support in the downloaded data"
+        g = gtabs.get(s)
+        if g is not None and lid in featxy.index:
+            lat, lon = featxy.loc[lid, "lat"], featxy.loc[lid, "lon"]
+            pa = poly.geometry[lid].area / 1e6 if lid in poly.index else np.nan
+            cands = g[g.grp_name.map(lambda x: name_agree(x, nm_of.get(lid, ""))) | (g.grp_name.fillna("").str.strip() == "")]
+            if len(cands):
+                dx = np.maximum(np.maximum(cands.minx - lon, lon - cands.maxx), 0) * 111.32 * np.cos(np.radians(lat)); dy = np.maximum(np.maximum(cands.miny - lat, lat - cands.maxy), 0) * 110.57
+                dist = np.hypot(dx, dy); j = dist.idxmin(); c = cands.loc[j]
+                bb = (c.maxx - c.minx) * 111.32 * np.cos(np.radians(lat)) * (c.maxy - c.miny) * 110.57
+                if dist[j] <= 2.0:
+                    why = (f"candidate group '{c.grp_name}' (src cluster) lies within 2 km of the fleet point but does not overlap the fleet polygon: extent mismatch, polygon {pa:.3f} km2 vs contour bbox ~{bb:.1f} km2 "
+                           f"(fleet polygon wrong/partial, or contours belong to a different water body) - cannot verify" if np.isfinite(pa) else f"name-matching group '{c.grp_name}' near fleet point but fleet has no polygon")
+                else:
+                    why = f"name collision: nearest same-name group '{c.grp_name}' is {dist[j]:.0f} km from the fleet lake point"
+            else:
+                why = "no group with a matching name in the downloaded data (scout candidate was name-normalisation or spatial-only)"
+        coll.append(dict(lakeId=lid, lakeName=nm_of.get(lid, ""), state=st_of.get(lid, ""), src=s, grp="", grp_name="", matchBasis="scout_name_candidate:" + how, matchConfidence="rejected", reason=why))
     m = pd.concat([m, pd.DataFrame(coll)], ignore_index=True)
     # name-only: candidates whose source is not downloaded as contours (index / catalog only)
     nd = []
