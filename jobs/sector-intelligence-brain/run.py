@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import brain_platform as bp                  # noqa: E402
 import orchestration as orch                 # noqa: E402
 import sector_intelligence_brain as sib      # noqa: E402
+import evaluation as ev                       # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RTDB_URL = os.environ.get("BRAIN_RTDB_URL", bp.BRAIN_RTDB_URL)
@@ -78,6 +79,7 @@ def main(argv=None) -> int:
     g.add_argument("--dry-run", action="store_true")
     g.add_argument("--write", action="store_true")
     ap.add_argument("--out", default="out")
+    ap.add_argument("--no-pilot", action="store_true", help="skip the pilot evaluations (inventory-only publish)")
     ap.add_argument("--force", action="store_true", help="publish even when --plan says SKIP")
     a = ap.parse_args(argv)
 
@@ -94,7 +96,23 @@ def main(argv=None) -> int:
     serving = sib.engine_serving(cloud_run_service(tokens, cat["codeLineage"]), cat["codeLineage"], now)
     deps = {bid: sib.dependency_status(bid, cat["dependencies"][bid], upstream[bid]["registry"], upstream[bid]["health"],
                                        upstream[bid]["validationStatus"], cat, now) for bid in sib.DEPENDENCY_ORDER}
-    fp = sib.fingerprint(cat_sha, serving, deps)
+    # Pilot evaluations (Phase 9): real specialist states for the pilot lakes; a lake that cannot be
+    # evaluated is recorded as an error and stays NOT_EVALUATED — never invented.
+    evaluations, eval_errors = {}, {}
+    if not a.no_pilot:
+        species = rtdb.get("species") or {}
+        fleet_rows = {}
+        for lid in ev.PILOT_LAKES:
+            k = bp.lake_key(lid)
+            try:
+                fleet_rows[k] = rtdb.get(f"lakeFleet/{k}")
+                evaluations[lid] = ev.evaluate(lid, snapshot=rtdb.get(f"snapshots/{k}/latest"), fleet_row=fleet_rows[k],
+                                               presence=rtdb.get(f"lakes/{k}/speciesPresence"), species=species,
+                                               deps=deps, cat=cat, serving=serving, now=now)
+            except Exception as e:                                 # degrade safely
+                eval_errors[lid] = repr(e)[:200]
+    inputs_fp = ev.inputs_fingerprint(evaluations) if evaluations else None
+    fp = sib.fingerprint(cat_sha, serving, deps, inputs_fp)
     decision = orch.plan(published, fp, sib.BRAIN_VERSION,
                          published_age_hours=bp.age_hours((published or {}).get("lastSuccessfulRun"), now))
     if a.plan:
@@ -106,11 +124,15 @@ def main(argv=None) -> int:
     updates = sib.build_updates(cat=cat, cat_sha=cat_sha, lakes=lakes, fleet=fleet, upstream=upstream, serving=serving,
                                 now=now, deployment=deployment_version(), descriptor=orch.DESCRIPTOR,
                                 duration_ms=int((time.time() - t0) * 1000), published=published,
-                                event_id=bp.event_id(now, sib.BRAIN_ID, 0))
+                                event_id=bp.event_id(now, sib.BRAIN_ID, 0),
+                                evaluations=evaluations, evaluation_errors=eval_errors, inputs_fp=inputs_fp)
     sib.check_keys(updates)
     body = json.dumps({k.lstrip("/"): v for k, v in updates.items()}, separators=(",", ":"), allow_nan=False)
     reg = updates[f"/brains/{sib.BRAIN_ID}"]
     summary = dict(decision=decision, fingerprint=fp, lakes=len(lakes), paths=len(updates), bytes=len(body),
+                   evaluated=sorted(evaluations), evaluationErrors=eval_errors,
+                   pilot={lid: {"inputsFresh": e["synthesis"]["inputsFresh"], "degraded": e.get("degradedInputs"), "drivers": [d["fact"] for d in e.get("drivers", [])]}
+                          for lid, e in evaluations.items()},
                    engineServing=serving, dependencySummary=reg["dependencySummary"],
                    connection={b: d["connectionStatus"] for b, d in reg["dependencies"].items()})
 

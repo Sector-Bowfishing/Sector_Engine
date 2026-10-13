@@ -49,9 +49,10 @@ def fetch_facts(db) -> dict:
     intel_reg = brains.get("sector-intelligence") or {}
     sampled = []
     if intel_reg.get("evaluatedLakeCount"):
-        for k in sorted(fleet)[:50]:
+        evaluated_keys = [k for k, row in fleet.items() if (((row or {}).get("slots") or {}).get("intelligence") or {}).get("kind") == "evaluated"]
+        for k in sorted(evaluated_keys)[:50]:
             s = db.get(f"lakes/{k}/states/intelligence")
-            if s and str(s.get("kind", s.get("stateType", ""))).lower() in ("evaluated",):
+            if s and str(s.get("kind", "")).lower() == "evaluated":
                 sampled.append(s)
     fleet_readiness = {k: ((row or {}).get("readiness") or {}) for k, row in fleet.items()}
     return {

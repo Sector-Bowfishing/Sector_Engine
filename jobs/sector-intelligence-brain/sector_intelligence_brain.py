@@ -94,16 +94,26 @@ def engine_serving(service: dict | None, lineage: dict, checked_at: dt.datetime)
 
 
 # ------------------------------------------------------------------ dependencies
+PILOT_IMPLEMENTATION = "normalized-sector-intelligence"
+
+
 def dependency_status(brain_id: str, decl: dict, registry: dict | None, health: dict | None,
-                      validation_status: str | None, cat: dict, now: dt.datetime) -> dict:
-    """One upstream brain, with 'exists', 'publishing', 'consumed' and 'used' kept separate."""
+                      validation_status: str | None, cat: dict, now: dt.datetime,
+                      pilot_ran: bool = False, used_in_last_evaluation: bool = False, last_evaluation_at: str | None = None) -> dict:
+    """One upstream brain, with 'exists', 'publishing', 'consumed' and 'used' kept separate.
+
+    CONNECTED means an Intelligence implementation that actually ran consumes this brain. The customer
+    path (the active implementation) and the pilot evaluation are reported separately so a pilot never
+    reads as customer consumption."""
     consumers = consumers_of(cat, brain_id)
     active_reads = cat["activeImplementation"] in consumers
+    pilot_reads = pilot_ran and PILOT_IMPLEMENTATION in consumers
     d = {"brainId": brain_id, "slot": decl["slot"], "displayName": decl["displayName"],
          "plannedRole": decl["plannedRole"], "plannedInputs": decl.get("plannedInputs", []),
          "customerPathToday": decl.get("customerPathToday"),
-         "exists": registry is not None, "consumedBySectorIntelligence": active_reads,
-         "consumedBy": consumers, "usedInLastEvaluation": False, "lastEvaluationAt": None}
+         "exists": registry is not None, "consumedBySectorIntelligence": active_reads or pilot_reads,
+         "consumedByCustomerPath": active_reads, "consumedByPilotEvaluation": pilot_reads,
+         "consumedBy": consumers, "usedInLastEvaluation": used_in_last_evaluation, "lastEvaluationAt": last_evaluation_at}
     if registry is None:
         d.update(publishingStatus="NOT_REGISTERED", connectionStatus="NOT_CONNECTED",
                  missingReason=f"/brains/{brain_id} is not registered; no publisher writes this brain yet")
@@ -126,7 +136,7 @@ def dependency_status(brain_id: str, decl: dict, registry: dict | None, health: 
     if hstat != "HEALTHY":
         degraded.append(f"brain health {hstat}")
 
-    if active_reads:
+    if active_reads or pilot_reads:
         connection = "CONNECTED_DEGRADED" if degraded else "CONNECTED"
     else:
         connection = "AVAILABLE_NOT_CONSUMED"
@@ -136,8 +146,10 @@ def dependency_status(brain_id: str, decl: dict, registry: dict | None, health: 
              validationStatus=validation_status, deploymentVersion=registry.get("deploymentVersion"))
     if degraded:
         d["degradedReason"] = "; ".join(degraded)
-    if not active_reads:
-        d["notConsumedReason"] = "No Intelligence implementation reads this brain yet"
+    if not (active_reads or pilot_reads):
+        d["notConsumedReason"] = "No Intelligence implementation has run that reads this brain yet"
+    elif not active_reads:
+        d["customerPathNote"] = "Consumed by the pilot evaluation only; the customer path does not read this brain"
     comps = _components(brain_id, registry)
     if comps:
         d["components"] = comps
@@ -298,38 +310,65 @@ def roster(cat: dict, serving: dict) -> list[dict]:
     return out
 
 
-def fingerprint(cat_sha: str, serving: dict, deps: dict) -> str:
+def fingerprint(cat_sha: str, serving: dict, deps: dict, inputs_fp: str | None = None) -> str:
     """What, if it changes, warrants a republish (used by orchestration.plan)."""
     dep_view = {k: [v["exists"], v.get("publishingStatus"), v.get("health"), v.get("version"), v.get("lifecycle"),
                     v["connectionStatus"]] for k, v in sorted(deps.items())}
     blob = json.dumps([BRAIN_VERSION, cat_sha, serving.get("revision"), serving.get("imageDigest"),
-                       serving.get("lineageVerified"), dep_view], sort_keys=True)
+                       serving.get("lineageVerified"), dep_view, inputs_fp], sort_keys=True)
     return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
 
 def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, upstream: dict, serving: dict,
                   now: dt.datetime, deployment: str, descriptor: dict, duration_ms: int, published: dict | None,
-                  event_id: str) -> dict:
-    """upstream: {brainId: {"registry": dict|None, "health": dict|None, "validationStatus": str|None}}."""
+                  event_id: str, evaluations: dict | None = None, evaluation_errors: dict | None = None,
+                  inputs_fp: str | None = None) -> dict:
+    """upstream: {brainId: {"registry": dict|None, "health": dict|None, "validationStatus": str|None}}.
+    evaluations: {lakeId: normalized evaluation (evaluation.evaluate)} for the pilot lakes that evaluated."""
+    evaluations = evaluations or {}
+    evaluation_errors = evaluation_errors or {}
+    now_iso = bp.iso(now)
+    slot_of = {bid: cat["dependencies"][bid]["slot"] for bid in DEPENDENCY_ORDER}
+    used_slots = {slot for e in evaluations.values() for slot in (e.get("inputsUsed") or {})}
     deps = {bid: dependency_status(bid, cat["dependencies"][bid], upstream[bid]["registry"], upstream[bid]["health"],
-                                   upstream[bid]["validationStatus"], cat, now) for bid in DEPENDENCY_ORDER}
+                                   upstream[bid]["validationStatus"], cat, now, pilot_ran=bool(evaluations),
+                                   used_in_last_evaluation=slot_of[bid] in used_slots,
+                                   last_evaluation_at=now_iso if evaluations else None) for bid in DEPENDENCY_ORDER}
     summary = dependency_summary(deps)
     keys = bp.lake_keys(lakes)
     updates: dict = {}
     published_counts: dict[str, int] = {}
+    snapshot_field = cat.get("snapshotField", "sectorIntelligence")
     for lid in lakes:
         k = keys[lid]
+        updates[f"/lakeFleet/{k}/lakeId"] = lid
+        ev = evaluations.get(lid)
+        if ev is not None:
+            updates[f"/lakes/{k}/states/{SLOT}"] = ev
+            updates[f"/snapshots/{k}/latest/lakeId"] = lid
+            updates[f"/snapshots/{k}/latest/{snapshot_field}"] = ev
+            updates[f"/snapshots/{k}/latest/brainVersions/{BRAIN_ID}"] = BRAIN_VERSION
+            updates[f"/lakeFleet/{k}/readiness/{SLOT}"] = "CALIBRATION"
+            updates[f"/lakeFleet/{k}/modelVersions/{SLOT}"] = ev["evaluationVersion"]
+            updates[f"/lakeFleet/{k}/slots/{SLOT}"] = {"readiness": "CALIBRATION", "stateType": "EVALUATED_PILOT", "kind": "evaluated",
+                                                        "stale": False, "evidenceStale": bool(ev.get("degradedInputs")),
+                                                        "issueCount": len(ev.get("degradedInputs") or []),
+                                                        "inputsPublished": ev["synthesis"]["inputsFresh"],
+                                                        "inputsConsumed": len(ev.get("inputsUsed") or {}),
+                                                        "generatedAt": now_iso, "lastUpdatedAt": now_iso}
+            continue
         inputs = lake_inputs(fleet.get(k), deps, now)
         st = lake_state(lid, inputs, cat, serving, now)
         updates[f"/lakes/{k}/states/{SLOT}"] = st
         n = st["inputCounts"]["published"]
         published_counts[f"{n} of {len(inputs)} published"] = published_counts.get(f"{n} of {len(inputs)} published", 0) + 1
-        updates[f"/lakeFleet/{k}/slots/{SLOT}"] = {"stateType": "NOT_EVALUATED", "issueCount": 0, "stale": False,
-                                                    "inputsPublished": n, "inputsConsumed": 0,
-                                                    "lastUpdatedAt": bp.iso(now)}
-        updates[f"/lakeFleet/{k}/lakeId"] = lid
+        slot = {"stateType": "NOT_EVALUATED", "kind": "not_evaluated", "issueCount": 0, "stale": False,
+                "inputsPublished": n, "inputsConsumed": 0, "lastUpdatedAt": now_iso}
+        if lid in evaluation_errors:
+            slot["lastErrorAt"], slot["lastError"] = now_iso, evaluation_errors[lid][:200]
+        updates[f"/lakeFleet/{k}/slots/{SLOT}"] = slot
 
-    fp = fingerprint(cat_sha, serving, deps)
+    fp = fingerprint(cat_sha, serving, deps, inputs_fp)
     blockers = list(cat.get("declaredBlockers", [])) + derived_blockers(deps, serving)
     today = now.date().isoformat()
     lin = cat["codeLineage"]
@@ -337,12 +376,20 @@ def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, ups
         "brainId": BRAIN_ID, "displayName": DISPLAY_NAME, "domain": "intelligence", "question": QUESTION,
         "platform": PLATFORM,
         "version": BRAIN_VERSION, "schemaVersion": bp.SCHEMA_VERSION, "enabled": True, "health": "HEALTHY",
-        "status": "DISCOVERED",
-        "statusBasis": ("Registered and inventoried. No normalized Sector Intelligence evaluation exists and no "
+        "status": "CALIBRATION" if evaluations else "DISCOVERED",
+        "statusBasis": (f"Pilot: normalized evaluations ({evaluations[next(iter(evaluations))]['evaluationVersion']}) for "
+                        f"{len(evaluations)} lakes consume real specialist Brain states with provenance. No customer "
+                        f"consumes them; customers get the Engine Conditions Score (PRODUCTION, NOT_VALIDATED)."
+                        if evaluations else
+                        "Registered and inventoried. No normalized Sector Intelligence evaluation exists and no "
                         "Intelligence implementation reads any Brain. Customers get the Engine Conditions Score "
                         "(PRODUCTION, NOT_VALIDATED)."),
-        "statusReasons": ["NO_NORMALIZED_EVALUATION", "NO_BRAIN_CONSUMED", "CUSTOMER_PATH_NOT_VALIDATED"],
-        "supportedLakeCount": 0, "evaluatedLakeCount": 0, "directoryLakeCount": len(lakes),
+        "statusReasons": (["PILOT_EVALUATION_ONLY", "NOT_CONSUMED_BY_CUSTOMER_PATH", "CUSTOMER_PATH_NOT_VALIDATED"]
+                          if evaluations else ["NO_NORMALIZED_EVALUATION", "NO_BRAIN_CONSUMED", "CUSTOMER_PATH_NOT_VALIDATED"]),
+        "supportedLakeCount": len(evaluations), "evaluatedLakeCount": len(evaluations), "directoryLakeCount": len(lakes),
+        "evaluation": _strip({"version": evaluations[next(iter(evaluations))]["evaluationVersion"] if evaluations else None,
+                              "pilotLakes": sorted(evaluations), "lastEvaluationAt": now_iso if evaluations else None,
+                              "customerConsumes": False, "errors": evaluation_errors or None}) if (evaluations or evaluation_errors) else None,
         "lastSuccessfulRun": bp.iso(now), "updatedAt": bp.iso(now),
         "deploymentVersion": deployment, "publishMode": "manual",
         "catalogVersion": cat["catalogVersion"], "catalogSha256": cat_sha, "fingerprint": fp,
@@ -353,7 +400,8 @@ def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, ups
         "dependencies": deps, "dependencyOrder": DEPENDENCY_ORDER, "dependencySummary": summary,
         "blockers": blockers,
         "versions": versions_list(cat, serving, today),
-        "breakdowns": {"normalizedEvaluation": {"NOT_EVALUATED": len(lakes)}, "upstreamStatesPublished": published_counts},
+        "breakdowns": {"normalizedEvaluation": _strip({"EVALUATED_PILOT": len(evaluations) or None, "NOT_EVALUATED": len(lakes) - len(evaluations)}),
+                       "upstreamStatesPublished": published_counts},
         "vocabularies": VOCABULARIES,
         "inputContract": cat.get("inputContract"), "outputContract": cat.get("outputContract"),
         "knownLimitations": cat.get("knownLimitations"),
@@ -366,8 +414,9 @@ def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, ups
                      "engineRevision": serving.get("revision"), "lakesPublished": len(lakes),
                      "dependencyFailures": len(stale_ids) + summary["unhealthy"],
                      "staleInputs": stale_ids or None, "notRegisteredInputs": missing or None,
-                     "note": "Publisher health only. Dependency freshness is reported per dependency and does not affect "
-                             "this status while no Intelligence implementation consumes a Brain."})
+                     "evaluatedLakes": len(evaluations) or None, "evaluationErrors": evaluation_errors or None,
+                     "note": "Publisher health only. Dependency freshness is reported per dependency; a pilot evaluation "
+                             "that could not run is recorded under evaluationErrors, never invented."})
     v = cat["validation"]
     validation = _strip({"brainId": BRAIN_ID, "modelVersion": cat["activeImplementation"], "validationVersion": "none",
                          "status": v["status"], "statusNote": v.get("statusNote"), "softwareTests": v.get("softwareTests"),

@@ -106,7 +106,8 @@ class DependencyTruth(unittest.TestCase):
                 m["readsBrains"] = ["wind"]
         d = sib.dependency_status("wind", cat["dependencies"]["wind"], reg("wind", stale_after=1.5, hours_ago=0.2), {"status": "HEALTHY"}, None, cat, NOW)
         self.assertEqual(d["connectionStatus"], "AVAILABLE_NOT_CONSUMED")
-        self.assertEqual(d["consumedBy"], ["ios-fishintel"])
+        self.assertEqual(d["consumedBy"], ["ios-fishintel", "normalized-sector-intelligence"])   # the pilot declares its reads
+        self.assertFalse(d["consumedByCustomerPath"]); self.assertFalse(d["consumedByPilotEvaluation"])   # …but nothing ran here
 
     def test_stale_by_the_brains_own_threshold(self):
         d = self.dep("water-temp", upstream(**{"water-temp": {"registry": reg("water-temp", hours_ago=16), "health": {"status": "HEALTHY"}, "validationStatus": None}}))
@@ -258,7 +259,9 @@ class Catalog(unittest.TestCase):
     def test_real_catalog_loads_and_reads_no_brain(self):
         cat, _ = real_catalog()
         self.assertEqual(cat["activeImplementation"], "engine-conditions-score")
-        self.assertEqual([m for m in cat["implementations"] if m.get("readsBrains")], [])
+        # Only the pilot implementation reads Brains; the customer path (active) reads none.
+        self.assertEqual([m["modelId"] for m in cat["implementations"] if m.get("readsBrains")], ["normalized-sector-intelligence"])
+        self.assertFalse(next(m for m in cat["implementations"] if m["modelId"] == cat["activeImplementation"]).get("readsBrains"))
 
     def test_catalog_rejects_unknown_brain(self):
         cat, _ = real_catalog()

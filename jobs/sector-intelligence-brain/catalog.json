@@ -1,5 +1,5 @@
 {
- "catalogVersion": "2026-10-12.1",
+ "catalogVersion": "2026-10-12.2",
  "reviewedAt": "2026-10-12",
  "reviewNote": "Declared facts about what constitutes Sector Intelligence today, from a read-only audit of Sector_Engine (deployed/sector-engine-00072-way), iOS Michael-Master (afc0095e) and Android Michael-Master (7b10cb3). Runtime facts (serving revision, upstream brain status, freshness, per-lake inputs) are read live by the publisher and are never declared here.",
  "codeLineage": {
@@ -19,13 +19,22 @@
    "certificationStatus": "NOT_VALIDATED",
    "servesCustomers": true,
    "publishesLakeState": false,
-   "consumers": ["iOS app (EngineAPIClient GET /conditions)", "Android app (EngineApiClient GET /conditions, /conditions/batch)"],
+   "consumers": [
+    "iOS app (EngineAPIClient GET /conditions)",
+    "Android app (EngineApiClient GET /conditions, /conditions/batch)"
+   ],
    "coverage": "On demand at any coordinate; every directory lake resolves",
    "method": "GET /conditions: 10 factors scored 0-100, regime weights (normal / spawn / tailwater), gate caps, seeability ceiling; returns score, band, confidence, factors[], gates[], topReasons[], whereToLook[], tonight, nights[]",
    "runsIn": "sector-engine Cloud Run service, per request (short response cache)",
    "versioning": "No score/engine version constant. Tuning is overridable through Firebase Remote Config without a version in the response. Only waterTempState.modelVersion and clarityVisibility.model carry versions.",
    "readsBrains": [],
-   "codeRef": {"repo": "Sector_Engine", "path": "Sources/SectorEngine/Engine/Aggregator/ConditionsAggregator.swift", "commit": "bc9e09fb", "kind": "code", "visibility": "public"}
+   "codeRef": {
+    "repo": "Sector_Engine",
+    "path": "Sources/SectorEngine/Engine/Aggregator/ConditionsAggregator.swift",
+    "commit": "bc9e09fb",
+    "kind": "code",
+    "visibility": "public"
+   }
   },
   {
    "modelId": "ios-fishintel",
@@ -38,10 +47,23 @@
    "coverage": "Guntersville only (Wheeler dry run shows nothing)",
    "method": "On-device: biological state per species, attraction percentile per shoreline segment, huntability 0-100, recommendation class via a decision table (no blended score), priority zones, answer-field map layer",
    "runsIn": "iOS app on the phone; inputs from Engine /conditions plus bundled Guntersville data",
-   "modelVersions": {"intelligence": "intelligence-2026.09.25.1", "attraction": "attraction-2026.09.25.2", "huntability": "huntability-2026.09.28.1", "biologicalState": "biostate-2026.09.20.1", "lakeProfile": "gt-2026.09.01"},
+   "modelVersions": {
+    "intelligence": "intelligence-2026.09.25.1",
+    "attraction": "attraction-2026.09.25.2",
+    "huntability": "huntability-2026.09.28.1",
+    "biologicalState": "biostate-2026.09.20.1",
+    "lakeProfile": "gt-2026.09.01"
+   },
    "readsBrains": [],
    "note": "Merged to iOS Michael-Master (PR #213, 2026-09-28) after the last tagged release v4.1.0-28; it has no account or flag gate, so the next iOS build cut from Michael-Master would show it to every user. Android has no FishIntel.",
-   "codeRef": {"repo": "iOS_Sector", "path": "Sector/FishIntel/Intelligence/SectorIntelligence.swift", "branch": "Michael-Master", "commit": "afc0095e", "kind": "code", "visibility": "private"}
+   "codeRef": {
+    "repo": "iOS_Sector",
+    "path": "Sector/FishIntel/Intelligence/SectorIntelligence.swift",
+    "branch": "Michael-Master",
+    "commit": "afc0095e",
+    "kind": "code",
+    "visibility": "private"
+   }
   },
   {
    "modelId": "phase5a-guardrails",
@@ -55,22 +77,47 @@
    "note": "The Engine part changes production spawn scoring, so deploying it is a customer-behaviour change that needs separate approval.",
    "readsBrains": [],
    "branches": [
-    {"repo": "iOS_Sector", "branch": "feat/intel-guardrails-5a", "commit": "8cfdce12"},
-    {"repo": "Sector_Engine", "branch": "feat/intel-guardrails-5a", "commit": "73cacb2c"},
-    {"repo": "Sector_Engine", "branch": "deploy/intel-guardrails-5a", "commit": "a7ae3a7e"}
+    {
+     "repo": "iOS_Sector",
+     "branch": "feat/intel-guardrails-5a",
+     "commit": "8cfdce12"
+    },
+    {
+     "repo": "Sector_Engine",
+     "branch": "feat/intel-guardrails-5a",
+     "commit": "73cacb2c"
+    },
+    {
+     "repo": "Sector_Engine",
+     "branch": "deploy/intel-guardrails-5a",
+     "commit": "a7ae3a7e"
+    }
    ]
   },
   {
    "modelId": "normalized-sector-intelligence",
    "displayName": "Normalized Sector Intelligence (Brain synthesis)",
-   "lifecycle": "NOT_STARTED",
+   "lifecycle": "PILOT",
    "deploymentStatus": "NOT_DEPLOYED",
    "certificationStatus": "NOT_VALIDATED",
    "servesCustomers": false,
-   "publishesLakeState": false,
+   "publishesLakeState": true,
    "method": "Planned: consume normalized Brain states (lake, water temp, clarity, wind, biological) and publish a per-lake evaluation with drivers, limiting factors and input versions",
-   "readsBrains": [],
-   "note": "Not built. No normalized evaluation exists for any lake."
+   "readsBrains": [
+    "lake-brain",
+    "water-temp",
+    "water-clarity",
+    "wind",
+    "biological-state"
+   ],
+   "note": "Pilot (2026-10-12): normalized inputs and an evaluation for the 5 pilot lakes from real specialist Brain states, with provenance. No fishing judgment, no customer score; the customer path is engine-conditions-score.",
+   "pilotLakes": [
+    "Guntersville|AL",
+    "Wheeler|AL",
+    "Wilson|AL",
+    "Pickwick Lake|TN",
+    "Lake Hartwell|SC"
+   ]
   }
  ],
  "activeImplementation": "engine-conditions-score",
@@ -79,56 +126,119 @@
    "slot": "lake",
    "displayName": "Lake Brain",
    "plannedRole": "REQUIRED",
-   "plannedInputs": ["LakeProfile /lakes/{k}/brain", "LakeState /lakes/{k}/states/lake", "species presence /lakes/{k}/speciesPresence"],
+   "plannedInputs": [
+    "LakeProfile /lakes/{k}/brain",
+    "LakeState /lakes/{k}/states/lake",
+    "species presence /lakes/{k}/speciesPresence"
+   ],
    "customerPathToday": "/conditions reads water level and dam generation itself (USGS nearest gauge, TVA/CWMS/SWPA/Alabama Power) and resolves the lake from the embedded directory; no Lake Brain is read."
   },
   "water-temp": {
    "slot": "waterTemp",
    "displayName": "Water Temperature",
    "plannedRole": "REQUIRED",
-   "plannedInputs": ["WaterTempState /lakes/{k}/states/waterTemp (snapshot waterTemperature)"],
+   "plannedInputs": [
+    "WaterTempState /lakes/{k}/states/waterTemp (snapshot waterTemperature)"
+   ],
    "customerPathToday": "/conditions resolves water temperature in-process (WaterTemperatureResolver). The Water Temp Brain republishes the same resolver's output, but nothing reads it back from the Brain."
   },
   "water-clarity": {
    "slot": "waterClarity",
    "displayName": "Water Clarity",
    "plannedRole": "REQUIRED",
-   "plannedInputs": ["WaterClarityState /lakes/{k}/states/waterClarity (snapshot waterClarity)"],
+   "plannedInputs": [
+    "WaterClarityState /lakes/{k}/states/waterClarity (snapshot waterClarity)"
+   ],
    "customerPathToday": "/conditions computes clarityVisibility in-process (secchi-power-v1 gauge path, else rain-decay-v0). The Water Clarity Brain restates that output; the dependency runs Engine -> Brain, not Brain -> Intelligence."
   },
   "wind": {
    "slot": "wind",
    "displayName": "Wind",
    "plannedRole": "REQUIRED",
-   "plannedInputs": ["WindState /lakes/{k}/states/wind (snapshot wind)"],
+   "plannedInputs": [
+    "WindState /lakes/{k}/states/wind (snapshot wind)"
+   ],
    "customerPathToday": "/conditions fetches Open-Meteo wind and gusts itself (WindFactor, gates, seeability). The Wind Brain's NBM candidate is a separate shadow and is not read."
   },
   "biological-state": {
    "slot": "biology",
    "displayName": "Biological Brain",
    "plannedRole": "REQUIRED",
-   "plannedInputs": ["species knowledge /species/{speciesId}", "per-lake Biological State /lakes/{k}/states/biology (not started)"],
+   "plannedInputs": [
+    "species knowledge /species/{speciesId}",
+    "per-lake Biological State /lakes/{k}/states/biology (not started)"
+   ],
    "customerPathToday": "/conditions uses its own species table (SpeciesDatabase.swift) for spawn scoring; iOS FishIntel uses its own SpeciesStateModels / SpeciesKnowledgeBase / WaterbodySpecies. Neither reads the Biological Brain."
   }
  },
  "declaredBlockers": [
-  {"id": "NO_NORMALIZED_EVALUATION", "severity": "critical", "title": "No normalized Sector Intelligence evaluation exists for any lake"},
-  {"id": "NO_BRAIN_CONSUMED", "severity": "critical", "title": "No Intelligence implementation reads any Brain; every upstream signal is fetched or computed inside /conditions"},
-  {"id": "CUSTOMER_PATH_NOT_VALIDATED", "severity": "warning", "title": "The customer Conditions Score has software tests but no predictive validation"},
-  {"id": "CUSTOMER_PATH_UNVERSIONED", "severity": "warning", "title": "The Conditions Score has no version constant and Remote Config can change tuning without a version"},
-  {"id": "FISHINTEL_UNRELEASED_UNGATED", "severity": "warning", "title": "iOS FishIntel is merged to Michael-Master with no gate and is in no release"},
-  {"id": "GUARDRAILS_UNMERGED", "severity": "info", "title": "Phase 5A guardrails are unmerged; the Engine part changes spawn scoring"},
-  {"id": "BIOLOGICAL_STATE_NOT_STARTED", "severity": "info", "title": "Per-lake Biological State is not started; only species knowledge is published"}
+  {
+   "id": "NO_NORMALIZED_EVALUATION",
+   "severity": "critical",
+   "title": "No normalized Sector Intelligence evaluation exists for any lake"
+  },
+  {
+   "id": "NO_BRAIN_CONSUMED",
+   "severity": "critical",
+   "title": "No Intelligence implementation reads any Brain; every upstream signal is fetched or computed inside /conditions"
+  },
+  {
+   "id": "CUSTOMER_PATH_NOT_VALIDATED",
+   "severity": "warning",
+   "title": "The customer Conditions Score has software tests but no predictive validation"
+  },
+  {
+   "id": "CUSTOMER_PATH_UNVERSIONED",
+   "severity": "warning",
+   "title": "The Conditions Score has no version constant and Remote Config can change tuning without a version"
+  },
+  {
+   "id": "FISHINTEL_UNRELEASED_UNGATED",
+   "severity": "warning",
+   "title": "iOS FishIntel is merged to Michael-Master with no gate and is in no release"
+  },
+  {
+   "id": "GUARDRAILS_UNMERGED",
+   "severity": "info",
+   "title": "Phase 5A guardrails are unmerged; the Engine part changes spawn scoring"
+  },
+  {
+   "id": "BIOLOGICAL_STATE_NOT_STARTED",
+   "severity": "info",
+   "title": "Per-lake Biological State is not started; only species knowledge is published"
+  }
  ],
  "validation": {
   "status": "NOT_VALIDATED",
   "statusNote": "Software is tested; Intelligence predictions are not validated. No calibration against logged trips or field observations exists for the Conditions Score, iOS FishIntel or a normalized evaluation.",
   "softwareTests": [
-   {"suite": "Sector_Engine Tests/SectorEngineTests", "covers": "Conditions factors, aggregator, gates, config overrides, clarity state, water temperature, lake directory, hydrology graph", "testCount": 154, "ref": "Sector_Engine@bc9e09fb", "kind": "SOFTWARE_TEST"},
-   {"suite": "iOS SectorTests (FishIntel)", "covers": "Attraction, biological state, huntability, Sector Intelligence decision table, priority zones, learning privacy/sync, evaluation harness on synthetic data", "testCount": 600, "testCountApprox": true, "ref": "iOS_Sector Michael-Master@afc0095e", "kind": "SOFTWARE_TEST"},
-   {"suite": "Phase 5A guardrail tests (unmerged)", "covers": "Conservation gate, species targeting policy, spawn-signal guard", "testCount": 26, "ref": "iOS_Sector feat/intel-guardrails-5a@8cfdce12 (+ Engine ConservationGateTests)", "kind": "SOFTWARE_TEST"}
+   {
+    "suite": "Sector_Engine Tests/SectorEngineTests",
+    "covers": "Conditions factors, aggregator, gates, config overrides, clarity state, water temperature, lake directory, hydrology graph",
+    "testCount": 154,
+    "ref": "Sector_Engine@bc9e09fb",
+    "kind": "SOFTWARE_TEST"
+   },
+   {
+    "suite": "iOS SectorTests (FishIntel)",
+    "covers": "Attraction, biological state, huntability, Sector Intelligence decision table, priority zones, learning privacy/sync, evaluation harness on synthetic data",
+    "testCount": 600,
+    "testCountApprox": true,
+    "ref": "iOS_Sector Michael-Master@afc0095e",
+    "kind": "SOFTWARE_TEST"
+   },
+   {
+    "suite": "Phase 5A guardrail tests (unmerged)",
+    "covers": "Conservation gate, species targeting policy, spawn-signal guard",
+    "testCount": 26,
+    "ref": "iOS_Sector feat/intel-guardrails-5a@8cfdce12 (+ Engine ConservationGateTests)",
+    "kind": "SOFTWARE_TEST"
+   }
   ],
-  "predictiveValidation": {"status": "NONE", "note": "No holdout, calibration or field-outcome validation of any Intelligence output."}
+  "predictiveValidation": {
+   "status": "NONE",
+   "note": "No holdout, calibration or field-outcome validation of any Intelligence output."
+  }
  },
  "inputContract": {
   "status": "PROPOSED",
@@ -142,5 +252,6 @@
  "knownLimitations": [
   "This brain currently publishes metadata, dependency status and per-lake input availability only; it evaluates nothing.",
   "Implementation facts are declared in catalog.json and reviewed by hand; runtime facts are read live."
- ]
+ ],
+ "snapshotField": "sectorIntelligence"
 }

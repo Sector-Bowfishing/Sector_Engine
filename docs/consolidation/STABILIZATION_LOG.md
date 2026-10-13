@@ -314,3 +314,35 @@ gin-clear is OPEN (values unchanged, now versioned).
 
 **Tests:** Swift **217/217**; Python platform 23, Biological 29, Intelligence 26, Clarity 35, Wind 55.
 **Rollback:** `git reset --hard a03ac84f` (Phase 7).
+
+---
+
+## Phase 9 — Sector Intelligence normalized integration (pilot) — PASS
+
+**Goal:** Intelligence consumes real specialist Brain states for the 5 pilot lakes with full
+provenance; failures degrade safely; nothing invented; customer path unchanged.
+
+- `jobs/sector-intelligence-brain/evaluation.py` (`intelligence-eval-v1`): normalized input per slot
+  (status PUBLISHED/STALE/DEGRADED/NOT_PUBLISHED, exact Brain + model version, generatedAt, age,
+  stale/evidenceStale, readiness, lowercase kind, the specialist's own values restated) and a
+  normalized evaluation (inputsUsed, drivers as facts, limiting factors, degradedInputs, synthesis,
+  validation NOT_VALIDATED, customerPath `consumesThisEvaluation: false`, provenance with one
+  `brainState` source per input, FINGERPRINT freshness). Biological input = Lake Brain presence ∩
+  Biological knowledge (gaps are limiting factors). **No fishing judgment and no customer score.**
+- Publisher: pilot evaluations computed before `plan()`; `inputs_fingerprint` joins the republish
+  fingerprint; a lake that cannot evaluate is recorded under `evaluation.errors` and stays
+  NOT_EVALUATED. Dependency status now separates `consumedByCustomerPath` (still false for all) from
+  `consumedByPilotEvaluation`; `connectionStatus` = CONNECTED when the pilot consumed the brain.
+  Catalog `normalized-sector-intelligence` → lifecycle PILOT, reads all 5 Brains; `catalogVersion 2026-10-12.2`.
+- **Published 2026-10-12:** 5/5 pilots evaluated (Guntersville, Wheeler, Wilson, Pickwick, Hartwell),
+  0 errors. Honest degradations surfaced: Lake and Water Temp inputs STALE on every pilot (those
+  brains last ran > 3 h / 6 h ago — they are unscheduled), Hartwell has no Wind state; connection:
+  lake-brain & water-temp CONNECTED_DEGRADED, clarity/wind/biological CONNECTED.
+- **Scores re-published:** Intelligence 1.0 → **4.5** (connectivity 10, provenance 10, evaluations
+  1/10, validation 0 → cap 5.0), Biological 3.5 → **4.0** (now consumed), **Engine 4.0 → 6.1**
+  (synthesis gate lifted; weakest = scientific validation 1.7, strongest = integration).
+- Tests: Intelligence **32/32** (26 + 6 evaluation); platform 23.
+
+**Customer behavior:** unchanged — `/conditions` does not read any of this. **Rollback:** `git reset
+--hard 76fcdd79`; delete the 5 pilots' `lakes/{k}/states/intelligence` + snapshot fields and rerun
+`run.py --no-pilot --write`.
