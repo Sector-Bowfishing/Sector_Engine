@@ -80,7 +80,7 @@ PILOTS = {  # the 5 hand-written bindings; their time zones are kept
 }
 
 # Providers that have a Swift adapter in LakeLevelFeeds*.swift (live series). Keep in sync with LevelSeriesRef.Provider.
-ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps"}
+ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps", "twdb"}
 
 ELEV_USGS_PARAMS = {"62614", "62615", "62616", "00062", "72020", "72022"}   # 00065 gage height is NOT an elevation
 
@@ -332,6 +332,17 @@ def a2w_resolve_tsid(inp: Inputs, station: str, probe: dict | None) -> tuple[str
     return None, f"{len(ok)} candidate tsids"
 
 
+TWDB_DRYRUN = os.path.join(HERE, "twdb_dryrun.v1.json")
+
+
+def twdb_catalog() -> dict[str, tuple[str, str]]:
+    """TWDB research station key (recent-conditions key, e.g. `CedarCreek`) -> (file slug, datum label the file declares), from the
+    committed dry run. Empty when the dry run is absent: a twdb row then has no adapter series and is not built."""
+    if not os.path.exists(TWDB_DRYRUN):
+        return {}
+    return {x["twdbKey"]: (x["slug"], x["datumLabel"]) for x in json.load(open(TWDB_DRYRUN))["lakes"]}
+
+
 def live_ref_for(inp: Inputs, row: dict, full: dict) -> dict | None:
     """The primary live series of a research row, in the Swift LevelSeriesRef shape."""
     prov, st, ser = row["provider"], row["station"], row["series_or_param"]
@@ -360,6 +371,12 @@ def live_ref_for(inp: Inputs, row: dict, full: dict) -> dict | None:
         ref.update(cadenceMin=1440, lagMin=2880, note=f"USBR RISE daily item {ser} ({full.get('stationName', '')}); ~48 h latency, 0.0 placeholders dropped")
     elif prov == "nwps":
         ref.update(cadenceMin=60, lagMin=120, note=f"NWS NWPS gauge {st} observed {ser}")
+    elif prov == "twdb":
+        hit = twdb_catalog().get(st)
+        if not hit:
+            return None
+        ref.update(station=hit[0], series=f"water_level@{hit[1]}", cadenceMin=1440, lagMin=1440,
+                   note="TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)")
     else:
         return None
     return ref
@@ -427,6 +444,11 @@ def parse_hist_series(inp: Inputs, hs: str, row: dict, full: dict) -> tuple[dict
         return {"kind": "cwmsDaily", "office": office, "series": tsid}, None
     if prov == "rise":
         return {"kind": "riseDaily", "item": hs.split(":")[1]}, None
+    if prov == "twdb":
+        hit = twdb_catalog().get(hs.split(":")[1]) or next((v for k, v in twdb_catalog().items() if v[0] == hs.split(":")[1]), None)
+        if not hit:
+            return None, f"{hs}: no TWDB file slug / datum label in the committed dry run"
+        return {"kind": "twdbDaily", "slug": hit[0], "datum": hit[1], "offsetFt": 0.0}, None
     if prov == "hads":
         _, lid, pe = hs.split(":", 2)
         return {"kind": "hadsDaily", "lid": lid, "pe": pe[:2], "offsetFt": 0.0}, None
