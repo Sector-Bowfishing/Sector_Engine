@@ -223,7 +223,8 @@ def simple(block: dict, bank: dict | None = None) -> dict:
     if block["freshness"]["stale"]:
         out["caveats"].append("forecast is stale")
     if bank and dr["shown"]:
-        out["bank"] = None if bank.get("bankImpact") in (None, "UNKNOWN") else bank["bankImpact"]
+        from .exposure import public_label
+        out["bank"] = public_label(bank.get("bankImpact"), bank.get("geometryTier"))
         c = bank.get("chopClass")
         out["fetch"] = None if c is None else ("HIGH" if c >= 4 else "MODERATE" if c == 3 else "LOW")
         if bank.get("geometryTier") == "ESTIMATED":

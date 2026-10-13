@@ -79,6 +79,16 @@ def label_bank_estimated(wind_from_deg: float | None, speed_mph: float | None, f
     return lab
 
 
+def public_label(label: str | None, tier: str | None) -> str | None:
+    """The word a customer-facing surface may use. ESTIMATED geometry cannot reliably separate DIRECT from CROSS (matched validation: recall 77% / 67%
+    when the facing is estimated), so it only says EXPOSED (DIRECT or CROSS) versus PROTECTED. AUDITED keeps the three-way split. UNKNOWN stays None."""
+    if label in (None, "UNKNOWN", "UNSURE"):
+        return None
+    if tier == "ESTIMATED" and label in ("DIRECT", "CROSS"):
+        return "EXPOSED"
+    return label
+
+
 def label_shares(labels: list[dict]) -> dict:
     n = len(labels)
     if not n:

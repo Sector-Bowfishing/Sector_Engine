@@ -105,3 +105,6 @@ def test_J_blocked_or_pointonly_lakes_never_get_bank_words():
 def test_K_ESTIMATED_bank_gets_the_estimate_caveat():
     s = TN.simple(tonight([8.0] * 7, p90=[8.5] * 7), {"bankImpact": "CROSS", "chopClass": 3, "geometryTier": "ESTIMATED"})
     assert "bank exposure is an estimate" in s["caveats"]
+    assert s["bank"] == "EXPOSED"                                       # ESTIMATED geometry does not separate DIRECT from CROSS
+    assert TN.simple(tonight([8.0] * 7, p90=[8.5] * 7), {"bankImpact": "DIRECT", "chopClass": 3, "geometryTier": "AUDITED"})["bank"] == "DIRECT"
+    assert EX.public_label("PROTECTED", "ESTIMATED") == "PROTECTED" and EX.public_label("UNKNOWN", "AUDITED") is None

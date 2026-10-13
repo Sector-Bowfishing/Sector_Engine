@@ -20,6 +20,9 @@
   "falseProtectedConservative_median": 0.016227720138334664,
   "falseProtected_vsDirectCross_pooled": 0.023614443856159194,
   "falseProtectedConservative_vsDirectCross_pooled": 0.014940600817317157,
+  "labelAgreementShippedPipeline_median": 0.7976656626506025,
+  "falseProtectedShippedPipeline_pooled": 0.012149879428677426,
+  "falseProtectedShippedPipeline_vsDirectCross_pooled": 0.06897420105150581,
   "exposedCells": 21564,
   "logRatioMedianFetch_median": 0.3210034802965926,
   "confusion_rows_audited_cols_estimated": [
@@ -112,6 +115,9 @@
   "falseProtectedConservative_median": 0.008127539856205065,
   "falseProtected_vsDirectCross_pooled": 0.01847557873555967,
   "falseProtectedConservative_vsDirectCross_pooled": 0.010156901415305638,
+  "labelAgreementShippedPipeline_median": 0.7816133720930233,
+  "falseProtectedShippedPipeline_pooled": 0.009202375630627754,
+  "falseProtectedShippedPipeline_vsDirectCross_pooled": 0.06078711208766723,
   "exposedCells": 156590,
   "logRatioMedianFetch_median": 0.2663948271719758,
   "confusion_rows_audited_cols_estimated": [
@@ -195,6 +201,26 @@
    "labelAgreement": 0.9711212737127372,
    "labelAgreementConservative": 0.9475779132791328,
    "labelAgreementEstFacing": 0.8347730352303523,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8216463414634146,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.017025804735301943,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.051548145627764545,
+   "confusionShippedPipeline": [
+    [
+     2223,
+     535,
+     11
+    ],
+    [
+     607,
+     2210,
+     292
+    ],
+    [
+     68,
+     593,
+     5269
+    ]
+   ],
    "highFetchPrecision": 0.9314079422382672,
    "highFetchRecall": 0.9393203883495146,
    "highFetchAuditedCells": 824,
@@ -261,6 +287,26 @@
    "labelAgreement": 0.9722222222222222,
    "labelAgreementConservative": 0.948509485094851,
    "labelAgreementEstFacing": 0.8360433604336044,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8254573170731707,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.013833466347432828,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04848587955086764,
+   "confusionShippedPipeline": [
+    [
+     2229,
+     529,
+     11
+    ],
+    [
+     603,
+     2232,
+     274
+    ],
+    [
+     75,
+     569,
+     5286
+    ]
+   ],
    "highFetchPrecision": 0.9364508393285371,
    "highFetchRecall": 0.9478155339805825,
    "highFetchAuditedCells": 824,
@@ -327,6 +373,26 @@
    "labelAgreement": 0.9770372928176796,
    "labelAgreementConservative": 0.9442334254143646,
    "labelAgreementEstFacing": 0.8339088397790055,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8154350828729282,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00494641384995878,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04201680672268908,
+   "confusionShippedPipeline": [
+    [
+     1063,
+     275,
+     4
+    ],
+    [
+     309,
+     975,
+     111
+    ],
+    [
+     42,
+     328,
+     2685
+    ]
+   ],
    "highFetchPrecision": 0.6666666666666666,
    "highFetchRecall": 0.8888888888888888,
    "highFetchAuditedCells": 9,
@@ -393,6 +459,26 @@
    "labelAgreement": null,
    "labelAgreementConservative": null,
    "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -459,6 +545,26 @@
    "labelAgreement": 0.9525,
    "labelAgreementConservative": 0.9056944444444445,
    "labelAgreementEstFacing": 0.8008333333333333,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7688888888888888,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006255585344057194,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05330564209068882,
+   "confusionShippedPipeline": [
+    [
+     1049,
+     336,
+     18
+    ],
+    [
+     404,
+     946,
+     136
+    ],
+    [
+     145,
+     625,
+     3541
+    ]
+   ],
    "highFetchPrecision": 0.8414634146341463,
    "highFetchRecall": 0.971830985915493,
    "highFetchAuditedCells": 71,
@@ -525,6 +631,26 @@
    "labelAgreement": 0.9806034482758621,
    "labelAgreementConservative": 0.9478448275862069,
    "labelAgreementEstFacing": 0.8392241379310345,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8224137931034483,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004651162790697674,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06329113924050633,
+   "confusionShippedPipeline": [
+    [
+     426,
+     94,
+     2
+    ],
+    [
+     96,
+     420,
+     68
+    ],
+    [
+     24,
+     128,
+     1062
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -591,6 +717,26 @@
    "labelAgreement": null,
    "labelAgreementConservative": null,
    "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -657,6 +803,26 @@
    "labelAgreement": 0.5,
    "labelAgreementConservative": 0.5,
    "labelAgreementEstFacing": 0.5,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.5,
+   "falseProtectedShippedPipeline(audited chop>=3)": 1.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 1.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     8
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -723,6 +889,26 @@
    "labelAgreement": 0.9652478448275862,
    "labelAgreementConservative": 0.9268139367816092,
    "labelAgreementEstFacing": 0.8188757183908046,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7948994252873564,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008683068017366137,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0751311647429171,
+   "confusionShippedPipeline": [
+    [
+     1762,
+     468,
+     42
+    ],
+    [
+     507,
+     1670,
+     316
+    ],
+    [
+     176,
+     775,
+     5420
+    ]
+   ],
    "highFetchPrecision": 0.5,
    "highFetchRecall": 1.0,
    "highFetchAuditedCells": 1,
@@ -789,6 +975,26 @@
    "labelAgreement": 0.9538461538461539,
    "labelAgreementConservative": 0.914792899408284,
    "labelAgreementEstFacing": 0.8144970414201184,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7887573964497041,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.013280212483399735,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05338384708110901,
+   "confusionShippedPipeline": [
+    [
+     2191,
+     595,
+     29
+    ],
+    [
+     697,
+     2014,
+     281
+    ],
+    [
+     258,
+     996,
+     6459
+    ]
+   ],
    "highFetchPrecision": 0.9382716049382716,
    "highFetchRecall": 0.9574803149606299,
    "highFetchAuditedCells": 635,
@@ -855,6 +1061,26 @@
    "labelAgreement": 0.9712722298221614,
    "labelAgreementConservative": 0.9455369357045144,
    "labelAgreementEstFacing": 0.8315663474692202,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8177154582763337,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0071301247771836,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0467028161623229,
+   "confusionShippedPipeline": [
+    [
+     2095,
+     578,
+     22
+    ],
+    [
+     643,
+     2134,
+     245
+    ],
+    [
+     81,
+     563,
+     5335
+    ]
+   ],
    "highFetchPrecision": 0.9024725274725275,
    "highFetchRecall": 0.95355587808418,
    "highFetchAuditedCells": 689,
@@ -921,6 +1147,26 @@
    "labelAgreement": 0.9887820512820513,
    "labelAgreementConservative": 0.9780982905982906,
    "labelAgreementEstFacing": 0.8643162393162394,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8595085470085471,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0027137042062415195,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04880581516095535,
+   "confusionShippedPipeline": [
+    [
+     392,
+     75,
+     0
+    ],
+    [
+     75,
+     374,
+     47
+    ],
+    [
+     0,
+     66,
+     843
+    ]
+   ],
    "highFetchPrecision": 0.8313253012048193,
    "highFetchRecall": 0.9452054794520548,
    "highFetchAuditedCells": 73,
@@ -987,6 +1233,26 @@
    "labelAgreement": 0.96875,
    "labelAgreementConservative": 0.9449404761904762,
    "labelAgreementEstFacing": 0.8125,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7991071428571429,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05844155844155844,
+   "confusionShippedPipeline": [
+    [
+     122,
+     32,
+     0
+    ],
+    [
+     39,
+     97,
+     18
+    ],
+    [
+     5,
+     41,
+     318
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -1053,6 +1319,26 @@
    "labelAgreement": 0.9717261904761905,
    "labelAgreementConservative": 0.9419642857142857,
    "labelAgreementEstFacing": 0.8139880952380952,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8020833333333334,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.048701298701298704,
+   "confusionShippedPipeline": [
+    [
+     121,
+     33,
+     0
+    ],
+    [
+     38,
+     101,
+     15
+    ],
+    [
+     6,
+     41,
+     317
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -1119,6 +1405,26 @@
    "labelAgreement": 0.9523991442542787,
    "labelAgreementConservative": 0.9118276283618582,
    "labelAgreementEstFacing": 0.8111246943765281,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7786522004889975,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01383508577753182,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07049306625577811,
+   "confusionShippedPipeline": [
+    [
+     1844,
+     517,
+     61
+    ],
+    [
+     626,
+     1839,
+     305
+    ],
+    [
+     326,
+     1062,
+     6508
+    ]
+   ],
    "highFetchPrecision": 0.9121338912133892,
    "highFetchRecall": 0.9316239316239316,
    "highFetchAuditedCells": 234,
@@ -1185,6 +1491,26 @@
    "labelAgreement": 0.9516185784658691,
    "labelAgreementConservative": 0.9044686840253343,
    "labelAgreementEstFacing": 0.7949947220267417,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.761039760731879,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01717699775952203,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06671917191719172,
+   "confusionShippedPipeline": [
+    [
+     3250,
+     973,
+     74
+    ],
+    [
+     1287,
+     2785,
+     519
+    ],
+    [
+     569,
+     2011,
+     11268
+    ]
+   ],
    "highFetchPrecision": 0.7565217391304347,
    "highFetchRecall": 0.8055555555555556,
    "highFetchAuditedCells": 108,
@@ -1251,6 +1577,26 @@
    "labelAgreement": 0.9385718113612004,
    "labelAgreementConservative": 0.8861200428724545,
    "labelAgreementEstFacing": 0.7822883172561629,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7397508038585209,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01251303441084463,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07275454715919745,
+   "confusionShippedPipeline": [
+    [
+     1897,
+     639,
+     58
+    ],
+    [
+     866,
+     1543,
+     330
+    ],
+    [
+     486,
+     1506,
+     7603
+    ]
+   ],
    "highFetchPrecision": 0.8488372093023255,
    "highFetchRecall": 0.8795180722891566,
    "highFetchAuditedCells": 83,
@@ -1317,6 +1663,26 @@
    "labelAgreement": 0.9830665024630542,
    "labelAgreementConservative": 0.9645935960591133,
    "labelAgreementEstFacing": 0.8839285714285714,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8740763546798029,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004827031375703942,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.032391048292108364,
+   "confusionShippedPipeline": [
+    [
+     668,
+     119,
+     1
+    ],
+    [
+     133,
+     723,
+     54
+    ],
+    [
+     3,
+     99,
+     1448
+    ]
+   ],
    "highFetchPrecision": 0.8536585365853658,
    "highFetchRecall": 0.875,
    "highFetchAuditedCells": 80,
@@ -1383,6 +1749,26 @@
    "labelAgreement": 0.9708393895348837,
    "labelAgreementConservative": 0.9533066860465116,
    "labelAgreementEstFacing": 0.8428869912790697,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8359829215116279,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.012865365082947748,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04694055944055944,
+   "confusionShippedPipeline": [
+    [
+     4198,
+     1040,
+     32
+    ],
+    [
+     1132,
+     4533,
+     505
+    ],
+    [
+     97,
+     805,
+     9674
+    ]
+   ],
    "highFetchPrecision": 0.9543285616905249,
    "highFetchRecall": 0.9630266552020637,
    "highFetchAuditedCells": 5815,
@@ -1449,6 +1835,26 @@
    "labelAgreement": 0.9573110079575596,
    "labelAgreementConservative": 0.9146220159151194,
    "labelAgreementEstFacing": 0.7475132625994695,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7224801061007957,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005206247496996396,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.055534779356768885,
+   "confusionShippedPipeline": [
+    [
+     1705,
+     538,
+     48
+    ],
+    [
+     731,
+     1444,
+     249
+    ],
+    [
+     201,
+     941,
+     5567
+    ]
+   ],
    "highFetchPrecision": 0.922316384180791,
    "highFetchRecall": 0.9659763313609467,
    "highFetchAuditedCells": 676,
@@ -1515,6 +1921,26 @@
    "labelAgreement": 0.9560018050541517,
    "labelAgreementConservative": 0.9093712394705175,
    "labelAgreementEstFacing": 0.8083634175691937,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7769253910950662,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008342401160681901,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05365680892509297,
+   "confusionShippedPipeline": [
+    [
+     2096,
+     608,
+     18
+    ],
+    [
+     784,
+     1856,
+     285
+    ],
+    [
+     199,
+     1072,
+     6378
+    ]
+   ],
    "highFetchPrecision": 0.8960244648318043,
    "highFetchRecall": 0.9421221864951769,
    "highFetchAuditedCells": 311,
@@ -1581,6 +2007,26 @@
    "labelAgreement": 0.9939516129032258,
    "labelAgreementConservative": 0.969758064516129,
    "labelAgreementEstFacing": 0.8991935483870968,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8870967741935484,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.032520325203252036,
+   "confusionShippedPipeline": [
+    [
+     109,
+     15,
+     0
+    ],
+    [
+     15,
+     99,
+     8
+    ],
+    [
+     0,
+     18,
+     232
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -1647,6 +2093,26 @@
    "labelAgreement": 0.9575460271317829,
    "labelAgreementConservative": 0.9098837209302325,
    "labelAgreementEstFacing": 0.8179505813953488,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7816133720930233,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00563014291901256,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06397204072329433,
+   "confusionShippedPipeline": [
+    [
+     2495,
+     668,
+     29
+    ],
+    [
+     760,
+     2237,
+     392
+    ],
+    [
+     356,
+     1401,
+     8174
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -1713,6 +2179,26 @@
    "labelAgreement": null,
    "labelAgreementConservative": null,
    "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -1779,6 +2265,26 @@
    "labelAgreement": 0.937570303712036,
    "labelAgreementConservative": 0.9017857142857143,
    "labelAgreementEstFacing": 0.780441507311586,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7579443194600675,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.023576512455516015,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.09012244897959183,
+   "confusionShippedPipeline": [
+    [
+     2164,
+     671,
+     145
+    ],
+    [
+     772,
+     1966,
+     407
+    ],
+    [
+     349,
+     1099,
+     6651
+    ]
+   ],
    "highFetchPrecision": 0.8583333333333333,
    "highFetchRecall": 0.8583333333333333,
    "highFetchAuditedCells": 240,
@@ -1845,6 +2351,26 @@
    "labelAgreement": 0.9446006749156356,
    "labelAgreementConservative": 0.9073397075365579,
    "labelAgreementEstFacing": 0.7827615298087739,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7594910011248593,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.018683274021352312,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0886530612244898,
+   "confusionShippedPipeline": [
+    [
+     2148,
+     684,
+     148
+    ],
+    [
+     786,
+     1964,
+     395
+    ],
+    [
+     328,
+     1080,
+     6691
+    ]
+   ],
    "highFetchPrecision": 0.8448979591836735,
    "highFetchRecall": 0.8625,
    "highFetchAuditedCells": 240,
@@ -1911,6 +2437,26 @@
    "labelAgreement": 0.9564530685920578,
    "labelAgreementConservative": 0.9221570397111913,
    "labelAgreementEstFacing": 0.7942238267148014,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7723375451263538,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.007352941176470588,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05787278415015641,
+   "confusionShippedPipeline": [
+    [
+     710,
+     221,
+     20
+    ],
+    [
+     294,
+     582,
+     91
+    ],
+    [
+     64,
+     319,
+     2131
+    ]
+   ],
    "highFetchPrecision": 0.852112676056338,
    "highFetchRecall": 0.9166666666666666,
    "highFetchAuditedCells": 132,
@@ -1977,6 +2523,26 @@
    "labelAgreement": 0.9541116870876531,
    "labelAgreementConservative": 0.8986215834118756,
    "labelAgreementEstFacing": 0.786227615457116,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7514137606032045,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0038910505836575876,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06996587030716724,
+   "confusionShippedPipeline": [
+    [
+     2481,
+     748,
+     57
+    ],
+    [
+     941,
+     1825,
+     394
+    ],
+    [
+     430,
+     1650,
+     8450
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -2043,6 +2609,26 @@
    "labelAgreement": 0.9783080260303688,
    "labelAgreementConservative": 0.9651572668112798,
    "labelAgreementEstFacing": 0.8724240780911063,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.86808568329718,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01615315584804068,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04061944656004062,
+   "confusionShippedPipeline": [
+    [
+     1525,
+     296,
+     4
+    ],
+    [
+     307,
+     1651,
+     156
+    ],
+    [
+     3,
+     207,
+     3227
+    ]
+   ],
    "highFetchPrecision": 0.973839110529758,
    "highFetchRecall": 0.962508080155139,
    "highFetchAuditedCells": 1547,
@@ -2109,6 +2695,26 @@
    "labelAgreement": 0.9663058659217877,
    "labelAgreementConservative": 0.94518156424581,
    "labelAgreementEstFacing": 0.8278631284916201,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8171263966480447,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.012074913750616067,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04983388704318937,
+   "confusionShippedPipeline": [
+    [
+     2082,
+     566,
+     32
+    ],
+    [
+     642,
+     2144,
+     253
+    ],
+    [
+     70,
+     532,
+     5135
+    ]
+   ],
    "highFetchPrecision": 0.951518691588785,
    "highFetchRecall": 0.9324556382369776,
    "highFetchAuditedCells": 1747,
@@ -2175,6 +2781,26 @@
    "labelAgreement": 0.9637430939226519,
    "labelAgreementConservative": 0.9312845303867403,
    "labelAgreementEstFacing": 0.8152624309392266,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.799378453038674,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0030959752321981426,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04637247569184742,
+   "confusionShippedPipeline": [
+    [
+     521,
+     137,
+     4
+    ],
+    [
+     151,
+     466,
+     58
+    ],
+    [
+     21,
+     210,
+     1328
+    ]
+   ],
    "highFetchPrecision": 1.0,
    "highFetchRecall": 1.0,
    "highFetchAuditedCells": 4,
@@ -2241,6 +2867,26 @@
    "labelAgreement": 0.9757300204918032,
    "labelAgreementConservative": 0.9622822745901639,
    "labelAgreementEstFacing": 0.8543801229508197,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8506659836065574,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.003600609333887273,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03682028773469885,
+   "confusionShippedPipeline": [
+    [
+     3060,
+     750,
+     17
+    ],
+    [
+     792,
+     3298,
+     285
+    ],
+    [
+     23,
+     465,
+     6926
+    ]
+   ],
    "highFetchPrecision": 0.8827160493827161,
    "highFetchRecall": 0.9192857142857143,
    "highFetchAuditedCells": 1400,
@@ -2307,6 +2953,26 @@
    "labelAgreement": 0.9742008339124392,
    "labelAgreementConservative": 0.9587821403752605,
    "labelAgreementEstFacing": 0.8570187630298819,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8508078526754691,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008704061895551257,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.040344136318075506,
+   "confusionShippedPipeline": [
+    [
+     4544,
+     984,
+     23
+    ],
+    [
+     1080,
+     4881,
+     460
+    ],
+    [
+     76,
+     812,
+     10164
+    ]
+   ],
    "highFetchPrecision": 0.9562600321027287,
    "highFetchRecall": 0.9726530612244898,
    "highFetchAuditedCells": 4900,
@@ -2373,6 +3039,26 @@
    "labelAgreement": 0.9462996389891697,
    "labelAgreementConservative": 0.8880866425992779,
    "labelAgreementEstFacing": 0.7913658243080626,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7489470517448856,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.009918068132815868,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06631198935968079,
+   "confusionShippedPipeline": [
+    [
+     1925,
+     595,
+     53
+    ],
+    [
+     782,
+     1612,
+     296
+    ],
+    [
+     331,
+     1281,
+     6421
+    ]
+   ],
    "highFetchPrecision": 0.8891089108910891,
    "highFetchRecall": 0.9373695198329853,
    "highFetchAuditedCells": 479,
@@ -2439,6 +3125,26 @@
    "labelAgreement": 0.9771241830065359,
    "labelAgreementConservative": 0.9581290849673203,
    "labelAgreementEstFacing": 0.8660130718954249,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8578431372549019,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0037071362372567192,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.036667995217218016,
+   "confusionShippedPipeline": [
+    [
+     950,
+     200,
+     5
+    ],
+    [
+     215,
+     1052,
+     87
+    ],
+    [
+     36,
+     153,
+     2198
+    ]
+   ],
    "highFetchPrecision": 0.9382239382239382,
    "highFetchRecall": 0.96684350132626,
    "highFetchAuditedCells": 754,
@@ -2505,6 +3211,26 @@
    "labelAgreement": 0.9450817510548524,
    "labelAgreementConservative": 0.8981408227848101,
    "labelAgreementEstFacing": 0.7822389240506329,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7480221518987342,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.021244309559939303,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.08751213199611776,
+   "confusionShippedPipeline": [
+    [
+     2087,
+     694,
+     98
+    ],
+    [
+     827,
+     2033,
+     443
+    ],
+    [
+     428,
+     1332,
+     7226
+    ]
+   ],
    "highFetchPrecision": 0.9402697495183044,
    "highFetchRecall": 0.9402697495183044,
    "highFetchAuditedCells": 1038,
@@ -2571,6 +3297,26 @@
    "labelAgreement": 0.986443661971831,
    "labelAgreementConservative": 0.9721830985915493,
    "labelAgreementEstFacing": 0.8734154929577465,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8684859154929577,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.003683241252302026,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03416557161629435,
+   "confusionShippedPipeline": [
+    [
+     1152,
+     251,
+     2
+    ],
+    [
+     261,
+     1276,
+     102
+    ],
+    [
+     2,
+     129,
+     2505
+    ]
+   ],
    "highFetchPrecision": 0.9860788863109049,
    "highFetchRecall": 0.9906759906759907,
    "highFetchAuditedCells": 2145,
@@ -2637,6 +3383,26 @@
    "labelAgreement": 0.9778397027600849,
    "labelAgreementConservative": 0.9585987261146497,
    "labelAgreementEstFacing": 0.8718152866242038,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8581475583864119,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0017568517217146872,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03412073490813648,
+   "confusionShippedPipeline": [
+    [
+     1486,
+     280,
+     1
+    ],
+    [
+     330,
+     1584,
+     129
+    ],
+    [
+     36,
+     293,
+     3397
+    ]
+   ],
    "highFetchPrecision": 0.9512453630100689,
    "highFetchRecall": 0.9819474835886215,
    "highFetchAuditedCells": 1828,
@@ -2703,6 +3469,26 @@
    "labelAgreement": 0.9284420289855072,
    "labelAgreementConservative": 0.8967391304347826,
    "labelAgreementEstFacing": 0.7437290969899666,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7258221850613155,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.018368617683686177,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.09525352340839138,
+   "confusionShippedPipeline": [
+    [
+     2071,
+     824,
+     144
+    ],
+    [
+     1092,
+     1598,
+     444
+    ],
+    [
+     305,
+     1126,
+     6748
+    ]
+   ],
    "highFetchPrecision": 0.8593155893536122,
    "highFetchRecall": 0.9362054681027341,
    "highFetchAuditedCells": 1207,
@@ -2769,6 +3555,26 @@
    "labelAgreement": 0.9721840659340659,
    "labelAgreementConservative": 0.9361263736263736,
    "labelAgreementEstFacing": 0.8145604395604396,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7984203296703297,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.003766478342749529,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0572289156626506,
+   "confusionShippedPipeline": [
+    [
+     513,
+     141,
+     6
+    ],
+    [
+     165,
+     433,
+     70
+    ],
+    [
+     24,
+     181,
+     1379
+    ]
+   ],
    "highFetchPrecision": 0.5,
    "highFetchRecall": 1.0,
    "highFetchAuditedCells": 3,
@@ -2835,6 +3641,26 @@
    "labelAgreement": 0.9533755612572161,
    "labelAgreementConservative": 0.9047065426555484,
    "labelAgreementEstFacing": 0.8000320718409236,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7664368184733804,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00498960498960499,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06726551075830374,
+   "confusionShippedPipeline": [
+    [
+     3630,
+     1081,
+     63
+    ],
+    [
+     1238,
+     2981,
+     581
+    ],
+    [
+     634,
+     2229,
+     12507
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -2901,6 +3727,26 @@
    "labelAgreement": 0.9540004748338081,
    "labelAgreementConservative": 0.9128679962013295,
    "labelAgreementEstFacing": 0.813627730294397,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7793803418803419,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.009190631485324638,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0565983665281559,
+   "confusionShippedPipeline": [
+    [
+     2564,
+     704,
+     36
+    ],
+    [
+     881,
+     2435,
+     359
+    ],
+    [
+     376,
+     1361,
+     8132
+    ]
+   ],
    "highFetchPrecision": 0.9124236252545825,
    "highFetchRecall": 0.9728555917480999,
    "highFetchAuditedCells": 921,
@@ -2967,6 +3813,26 @@
    "labelAgreement": 0.9607023411371237,
    "labelAgreementConservative": 0.9199414715719063,
    "labelAgreementEstFacing": 0.832566889632107,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7989130434782609,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0021810250817884407,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0472972972972973,
+   "confusionShippedPipeline": [
+    [
+     778,
+     195,
+     15
+    ],
+    [
+     219,
+     641,
+     76
+    ],
+    [
+     74,
+     383,
+     2403
+    ]
+   ],
    "highFetchPrecision": 0.9298245614035088,
    "highFetchRecall": 0.8833333333333333,
    "highFetchAuditedCells": 60,
@@ -3033,6 +3899,26 @@
    "labelAgreement": 0.9477833638025595,
    "labelAgreementConservative": 0.8885968921389397,
    "labelAgreementEstFacing": 0.7651965265082267,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7254341864716636,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005555555555555556,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.08042294136494713,
+   "confusionShippedPipeline": [
+    [
+     1179,
+     412,
+     44
+    ],
+    [
+     517,
+     762,
+     207
+    ],
+    [
+     305,
+     918,
+     4408
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -3099,6 +3985,26 @@
    "labelAgreement": 0.9452836004932182,
    "labelAgreementConservative": 0.8918002466091245,
    "labelAgreementEstFacing": 0.781827990135635,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7466091245376079,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004518072289156626,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0701483908267489,
+   "confusionShippedPipeline": [
+    [
+     1912,
+     582,
+     45
+    ],
+    [
+     786,
+     1545,
+     319
+    ],
+    [
+     355,
+     1201,
+     6231
+    ]
+   ],
    "highFetchPrecision": 0.4,
    "highFetchRecall": 1.0,
    "highFetchAuditedCells": 6,
@@ -3165,6 +4071,26 @@
    "labelAgreement": 0.9715643274853801,
    "labelAgreementConservative": 0.9543859649122807,
    "labelAgreementEstFacing": 0.8433479532163742,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8373538011695907,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.007884880741178789,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.043453070683661645,
+   "confusionShippedPipeline": [
+    [
+     2621,
+     635,
+     21
+    ],
+    [
+     695,
+     2653,
+     279
+    ],
+    [
+     62,
+     533,
+     6181
+    ]
+   ],
    "highFetchPrecision": 0.9533227848101266,
    "highFetchRecall": 0.9655448717948718,
    "highFetchAuditedCells": 2496,
@@ -3231,6 +4157,26 @@
    "labelAgreement": 0.9531601123595506,
    "labelAgreementConservative": 0.8968398876404494,
    "labelAgreementEstFacing": 0.7897471910112359,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7537921348314607,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.011009174311926606,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06471550627158698,
+   "confusionShippedPipeline": [
+    [
+     2044,
+     647,
+     59
+    ],
+    [
+     784,
+     1670,
+     297
+    ],
+    [
+     364,
+     1355,
+     7020
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -3297,6 +4243,26 @@
    "labelAgreement": 0.9650787965616046,
    "labelAgreementConservative": 0.936067335243553,
    "labelAgreementEstFacing": 0.8159025787965616,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8060530085959885,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006972690296339338,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.046781437125748504,
+   "confusionShippedPipeline": [
+    [
+     1012,
+     292,
+     9
+    ],
+    [
+     327,
+     916,
+     116
+    ],
+    [
+     35,
+     304,
+     2573
+    ]
+   ],
    "highFetchPrecision": 0.7678571428571429,
    "highFetchRecall": 0.7818181818181819,
    "highFetchAuditedCells": 55,
@@ -3363,6 +4329,26 @@
    "labelAgreement": 0.955868320610687,
    "labelAgreementConservative": 0.9150763358778626,
    "labelAgreementEstFacing": 0.7927003816793893,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7721851145038168,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01935483870967742,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07671673819742489,
+   "confusionShippedPipeline": [
+    [
+     686,
+     209,
+     25
+    ],
+    [
+     226,
+     600,
+     118
+    ],
+    [
+     72,
+     305,
+     1951
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -3429,6 +4415,26 @@
    "labelAgreement": 0.9532433712121212,
    "labelAgreementConservative": 0.9135890151515151,
    "labelAgreementEstFacing": 0.8057528409090909,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7762784090909091,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00578368999421631,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04897050639955482,
+   "confusionShippedPipeline": [
+    [
+     1333,
+     378,
+     18
+    ],
+    [
+     477,
+     1230,
+     158
+    ],
+    [
+     198,
+     661,
+     3995
+    ]
+   ],
    "highFetchPrecision": 0.6818181818181818,
    "highFetchRecall": 0.7894736842105263,
    "highFetchAuditedCells": 57,
@@ -3495,6 +4501,26 @@
    "labelAgreement": 0.9776484480431848,
    "labelAgreementConservative": 0.9621288798920378,
    "labelAgreementEstFacing": 0.8571187584345479,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8510458839406208,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006375772066148635,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.042170644001307614,
+   "confusionShippedPipeline": [
+    [
+     2332,
+     510,
+     9
+    ],
+    [
+     540,
+     2478,
+     249
+    ],
+    [
+     57,
+     401,
+     5280
+    ]
+   ],
    "highFetchPrecision": 0.9764799154334038,
    "highFetchRecall": 0.9890256959314775,
    "highFetchAuditedCells": 3736,
@@ -3561,6 +4587,26 @@
    "labelAgreement": 0.9414173789173789,
    "labelAgreementConservative": 0.9022435897435898,
    "labelAgreementEstFacing": 0.7872150997150997,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7662037037037037,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.02121390689451974,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0768012668250198,
+   "confusionShippedPipeline": [
+    [
+     836,
+     274,
+     37
+    ],
+    [
+     397,
+     825,
+     157
+    ],
+    [
+     90,
+     358,
+     2642
+    ]
+   ],
    "highFetchPrecision": 0.8394495412844036,
    "highFetchRecall": 0.9195979899497487,
    "highFetchAuditedCells": 199,
@@ -3627,6 +4673,26 @@
    "labelAgreement": 0.9612992398064962,
    "labelAgreementConservative": 0.9238078783690394,
    "labelAgreementEstFacing": 0.8134934346924672,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7906444367657222,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0034638955502264853,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05098896729947321,
+   "confusionShippedPipeline": [
+    [
+     3869,
+     1038,
+     48
+    ],
+    [
+     1240,
+     3401,
+     465
+    ],
+    [
+     348,
+     1708,
+     11035
+    ]
+   ],
    "highFetchPrecision": 0.8235294117647058,
    "highFetchRecall": 0.875,
    "highFetchAuditedCells": 128,
@@ -3693,6 +4759,26 @@
    "labelAgreement": 0.9454787234042553,
    "labelAgreementConservative": 0.8927071668533034,
    "labelAgreementEstFacing": 0.7906634938409854,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7516097424412094,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.011001100110011002,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.08625073342460395,
+   "confusionShippedPipeline": [
+    [
+     1836,
+     570,
+     85
+    ],
+    [
+     660,
+     1606,
+     356
+    ],
+    [
+     461,
+     1417,
+     7297
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -3759,6 +4845,26 @@
    "labelAgreement": 0.9459643288996372,
    "labelAgreementConservative": 0.8870918984280532,
    "labelAgreementEstFacing": 0.7823458282950423,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7367744860943168,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.014304291287386216,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07598235765838011,
+   "confusionShippedPipeline": [
+    [
+     1835,
+     580,
+     48
+    ],
+    [
+     729,
+     1465,
+     331
+    ],
+    [
+     414,
+     1381,
+     6449
+    ]
+   ],
    "highFetchPrecision": 0.5,
    "highFetchRecall": 0.5,
    "highFetchAuditedCells": 6,
@@ -3825,6 +4931,26 @@
    "labelAgreement": 0.9671900161030595,
    "labelAgreementConservative": 0.9490740740740741,
    "labelAgreementEstFacing": 0.8329307568438004,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8265901771336553,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.011023244668104481,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04533020711215319,
+   "confusionShippedPipeline": [
+    [
+     1884,
+     493,
+     15
+    ],
+    [
+     539,
+     1970,
+     217
+    ],
+    [
+     38,
+     421,
+     4359
+    ]
+   ],
    "highFetchPrecision": 0.946207818242566,
    "highFetchRecall": 0.9768885822697482,
    "highFetchAuditedCells": 2899,
@@ -3891,6 +5017,26 @@
    "labelAgreement": 0.9542921686746988,
    "labelAgreementConservative": 0.9192018072289156,
    "labelAgreementEstFacing": 0.8238704819277108,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7976656626506025,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01625207296849088,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06346153846153846,
+   "confusionShippedPipeline": [
+    [
+     2007,
+     559,
+     51
+    ],
+    [
+     655,
+     2136,
+     312
+    ],
+    [
+     262,
+     848,
+     6450
+    ]
+   ],
    "highFetchPrecision": 0.897196261682243,
    "highFetchRecall": 0.9035294117647059,
    "highFetchAuditedCells": 425,
@@ -3957,6 +5103,26 @@
    "labelAgreement": 0.9564006024096385,
    "labelAgreementConservative": 0.9215361445783132,
    "labelAgreementEstFacing": 0.8256024096385542,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7990963855421687,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.014593698175787729,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06293706293706294,
+   "confusionShippedPipeline": [
+    [
+     2006,
+     556,
+     55
+    ],
+    [
+     645,
+     2153,
+     305
+    ],
+    [
+     267,
+     840,
+     6453
+    ]
+   ],
    "highFetchPrecision": 0.8896551724137931,
    "highFetchRecall": 0.9105882352941177,
    "highFetchAuditedCells": 425,
@@ -4023,6 +5189,26 @@
    "labelAgreement": 0.9757653061224489,
    "labelAgreementConservative": 0.9272959183673469,
    "labelAgreementEstFacing": 0.8443877551020408,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8073979591836735,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0425531914893617,
+   "confusionShippedPipeline": [
+    [
+     141,
+     31,
+     1
+    ],
+    [
+     37,
+     106,
+     13
+    ],
+    [
+     7,
+     62,
+     386
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -4089,6 +5275,26 @@
    "labelAgreement": 0.9534684065934066,
    "labelAgreementConservative": 0.8976648351648352,
    "labelAgreementEstFacing": 0.7834821428571429,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7379807692307693,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07807953443258972,
+   "confusionShippedPipeline": [
+    [
+     777,
+     239,
+     13
+    ],
+    [
+     303,
+     582,
+     148
+    ],
+    [
+     193,
+     630,
+     2939
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -4155,6 +5361,26 @@
    "labelAgreement": 0.9563184306569343,
    "labelAgreementConservative": 0.9168567518248175,
    "labelAgreementEstFacing": 0.8125,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.781478102189781,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008064516129032258,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05645805592543276,
+   "confusionShippedPipeline": [
+    [
+     1399,
+     394,
+     29
+    ],
+    [
+     512,
+     1238,
+     183
+    ],
+    [
+     131,
+     667,
+     4215
+    ]
+   ],
    "highFetchPrecision": 0.8780487804878049,
    "highFetchRecall": 0.9204545454545454,
    "highFetchAuditedCells": 352,
@@ -4221,6 +5447,26 @@
    "labelAgreement": 0.9685792349726776,
    "labelAgreementConservative": 0.9486566484517304,
    "labelAgreementEstFacing": 0.8499544626593807,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8401070127504554,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004532967032967033,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04186467526589726,
+   "confusionShippedPipeline": [
+    [
+     3293,
+     750,
+     38
+    ],
+    [
+     830,
+     3595,
+     332
+    ],
+    [
+     134,
+     725,
+     7871
+    ]
+   ],
    "highFetchPrecision": 0.9585283201549136,
    "highFetchRecall": 0.9931449590369503,
    "highFetchAuditedCells": 5981,
@@ -4287,6 +5533,26 @@
    "labelAgreement": 0.9750113843351548,
    "labelAgreementConservative": 0.9567964480874317,
    "labelAgreementEstFacing": 0.8567281420765027,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8465960837887068,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005082417582417583,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04231726634985291,
+   "confusionShippedPipeline": [
+    [
+     3314,
+     745,
+     22
+    ],
+    [
+     831,
+     3574,
+     352
+    ],
+    [
+     112,
+     633,
+     7985
+    ]
+   ],
    "highFetchPrecision": 0.9702176403207331,
    "highFetchRecall": 0.9913058017054004,
    "highFetchAuditedCells": 5981,
@@ -4353,6 +5619,26 @@
    "labelAgreement": 0.9495865139949109,
    "labelAgreementConservative": 0.9076017811704835,
    "labelAgreementEstFacing": 0.7868161577608143,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7611323155216285,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.015163002274450341,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.060797034291010195,
+   "confusionShippedPipeline": [
+    [
+     1953,
+     613,
+     43
+    ],
+    [
+     777,
+     1691,
+     285
+    ],
+    [
+     218,
+     1004,
+     5928
+    ]
+   ],
    "highFetchPrecision": 0.8342541436464088,
    "highFetchRecall": 0.9226069246435845,
    "highFetchAuditedCells": 491,
@@ -4419,6 +5705,26 @@
    "labelAgreement": 0.9738023952095808,
    "labelAgreementConservative": 0.9607784431137725,
    "labelAgreementEstFacing": 0.8410179640718562,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.837874251497006,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00904977375565611,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04558445270077165,
+   "confusionShippedPipeline": [
+    [
+     2575,
+     678,
+     19
+    ],
+    [
+     731,
+     2695,
+     300
+    ],
+    [
+     22,
+     416,
+     5924
+    ]
+   ],
    "highFetchPrecision": 0.9660020986358867,
    "highFetchRecall": 0.9776975361087511,
    "highFetchAuditedCells": 4708,
@@ -4485,6 +5791,26 @@
    "labelAgreement": 0.9624445676274944,
    "labelAgreementConservative": 0.9212860310421286,
    "labelAgreementEstFacing": 0.7940687361419069,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7720343680709535,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008547008547008548,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06443215099251545,
+   "confusionShippedPipeline": [
+    [
+     1178,
+     345,
+     24
+    ],
+    [
+     419,
+     933,
+     174
+    ],
+    [
+     121,
+     562,
+     3460
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -4551,6 +5877,26 @@
    "labelAgreement": 0.9512635379061372,
    "labelAgreementConservative": 0.891245487364621,
    "labelAgreementEstFacing": 0.8009927797833934,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7454873646209387,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0016778523489932886,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07609384908053266,
+   "confusionShippedPipeline": [
+    [
+     550,
+     177,
+     18
+    ],
+    [
+     207,
+     523,
+     102
+    ],
+    [
+     160,
+     464,
+     2231
+    ]
+   ],
    "highFetchPrecision": 0.8666666666666667,
    "highFetchRecall": 1.0,
    "highFetchAuditedCells": 13,
@@ -4617,6 +5963,26 @@
    "labelAgreement": 0.9402083333333333,
    "labelAgreementConservative": 0.8830555555555556,
    "labelAgreementEstFacing": 0.7708333333333334,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7283333333333334,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006688963210702341,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07008244994110718,
+   "confusionShippedPipeline": [
+    [
+     1893,
+     639,
+     42
+    ],
+    [
+     860,
+     1345,
+     315
+    ],
+    [
+     495,
+     1561,
+     7250
+    ]
+   ],
    "highFetchPrecision": 0.3333333333333333,
    "highFetchRecall": 1.0,
    "highFetchAuditedCells": 1,
@@ -4683,6 +6049,26 @@
    "labelAgreement": 0.9670234806629834,
    "labelAgreementConservative": 0.9242058011049724,
    "labelAgreementEstFacing": 0.8254488950276243,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7916091160220995,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0581039755351682,
+   "confusionShippedPipeline": [
+    [
+     899,
+     216,
+     3
+    ],
+    [
+     224,
+     817,
+     130
+    ],
+    [
+     116,
+     518,
+     2869
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -4749,6 +6135,26 @@
    "labelAgreement": 0.96875,
    "labelAgreementConservative": 0.9330357142857143,
    "labelAgreementEstFacing": 0.7979910714285714,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7678571428571429,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.009009009009009009,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07828282828282829,
+   "confusionShippedPipeline": [
+    [
+     148,
+     48,
+     5
+    ],
+    [
+     52,
+     117,
+     26
+    ],
+    [
+     12,
+     65,
+     423
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -4815,6 +6221,26 @@
    "labelAgreement": 0.9776785714285714,
    "labelAgreementConservative": 0.9547413793103449,
    "labelAgreementEstFacing": 0.8466748768472906,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.834051724137931,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005248284214775939,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0425531914893617,
+   "confusionShippedPipeline": [
+    [
+     1242,
+     299,
+     11
+    ],
+    [
+     333,
+     1276,
+     129
+    ],
+    [
+     24,
+     282,
+     2900
+    ]
+   ],
    "highFetchPrecision": 0.9682819383259912,
    "highFetchRecall": 0.9856502242152466,
    "highFetchAuditedCells": 1115,
@@ -4881,6 +6307,26 @@
    "labelAgreement": 0.9862351190476191,
    "labelAgreementConservative": 0.9754464285714286,
    "labelAgreementEstFacing": 0.8768601190476191,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.875,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0011737089201877935,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03262013328656612,
+   "confusionShippedPipeline": [
+    [
+     1122,
+     220,
+     2
+    ],
+    [
+     224,
+     1192,
+     91
+    ],
+    [
+     0,
+     135,
+     2390
+    ]
+   ],
    "highFetchPrecision": 0.9504289799809342,
    "highFetchRecall": 0.9707887049659202,
    "highFetchAuditedCells": 1027,
@@ -4947,6 +6393,26 @@
    "labelAgreement": 0.9823943661971831,
    "labelAgreementConservative": 0.9665492957746479,
    "labelAgreementEstFacing": 0.8785211267605634,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8732394366197183,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.031141868512110725,
+   "confusionShippedPipeline": [
+    [
+     237,
+     42,
+     0
+    ],
+    [
+     46,
+     235,
+     18
+    ],
+    [
+     2,
+     36,
+     520
+    ]
+   ],
    "highFetchPrecision": 0.8636363636363636,
    "highFetchRecall": 0.95,
    "highFetchAuditedCells": 20,
@@ -5013,6 +6479,26 @@
    "labelAgreement": 0.9399553571428572,
    "labelAgreementConservative": 0.8940476190476191,
    "labelAgreementEstFacing": 0.7873511904761905,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7510416666666667,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.014768937589328252,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07991567650440783,
+   "confusionShippedPipeline": [
+    [
+     1815,
+     593,
+     86
+    ],
+    [
+     686,
+     1707,
+     331
+    ],
+    [
+     430,
+     1220,
+     6572
+    ]
+   ],
    "highFetchPrecision": 0.8830935251798561,
    "highFetchRecall": 0.9424184261036468,
    "highFetchAuditedCells": 521,
@@ -5079,6 +6565,26 @@
    "labelAgreement": null,
    "labelAgreementConservative": null,
    "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
    "highFetchPrecision": null,
    "highFetchRecall": null,
    "highFetchAuditedCells": 0,
@@ -5145,6 +6651,26 @@
    "labelAgreement": 0.949546485260771,
    "labelAgreementConservative": 0.8941326530612245,
    "labelAgreementEstFacing": 0.7816751700680272,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7436933106575964,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.007684918347742555,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07027958636537725,
+   "confusionShippedPipeline": [
+    [
+     1983,
+     586,
+     41
+    ],
+    [
+     843,
+     1443,
+     326
+    ],
+    [
+     407,
+     1414,
+     7069
+    ]
+   ],
    "highFetchPrecision": 0.6923076923076923,
    "highFetchRecall": 0.9,
    "highFetchAuditedCells": 10,
@@ -5211,6 +6737,26 @@
    "labelAgreement": 0.9359567901234568,
    "labelAgreementConservative": 0.8887485970819304,
    "labelAgreementEstFacing": 0.7676767676767676,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7376543209876543,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.02,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.11033641275928185,
+   "confusionShippedPipeline": [
+    [
+     1936,
+     654,
+     174
+    ],
+    [
+     735,
+     1779,
+     459
+    ],
+    [
+     452,
+     1266,
+     6801
+    ]
+   ],
    "highFetchPrecision": 0.8867924528301887,
    "highFetchRecall": 0.9330024813895782,
    "highFetchAuditedCells": 403,
@@ -5277,6 +6823,26 @@
    "labelAgreement": 0.9384798432250839,
    "labelAgreementConservative": 0.8965565509518477,
    "labelAgreementEstFacing": 0.7765257558790594,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7474104143337066,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0135,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.10485978052604077,
+   "confusionShippedPipeline": [
+    [
+     1968,
+     645,
+     154
+    ],
+    [
+     731,
+     1795,
+     448
+    ],
+    [
+     413,
+     1218,
+     6916
+    ]
+   ],
    "highFetchPrecision": 0.8909952606635071,
    "highFetchRecall": 0.9330024813895782,
    "highFetchAuditedCells": 403,
@@ -5343,6 +6909,26 @@
    "labelAgreement": 0.9507648183556405,
    "labelAgreementConservative": 0.9060109942638623,
    "labelAgreementEstFacing": 0.8185946462715105,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7835803059273423,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00718974679587371,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.061316501352569885,
+   "confusionShippedPipeline": [
+    [
+     2398,
+     672,
+     38
+    ],
+    [
+     805,
+     2371,
+     370
+    ],
+    [
+     424,
+     1313,
+     8345
+    ]
+   ],
    "highFetchPrecision": 0.884,
    "highFetchRecall": 0.9553314121037464,
    "highFetchAuditedCells": 694,
@@ -5409,6 +6995,26 @@
    "labelAgreement": 0.950107552581262,
    "labelAgreementConservative": 0.9031429254302104,
    "labelAgreementEstFacing": 0.8123804971319312,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7740798279158699,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006564551422319475,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06387135557559363,
+   "confusionShippedPipeline": [
+    [
+     2386,
+     681,
+     41
+    ],
+    [
+     822,
+     2340,
+     384
+    ],
+    [
+     441,
+     1412,
+     8229
+    ]
+   ],
    "highFetchPrecision": 0.8920377867746289,
    "highFetchRecall": 0.952449567723343,
    "highFetchAuditedCells": 694,
