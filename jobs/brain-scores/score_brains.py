@@ -87,37 +87,51 @@ def compute(facts: dict, now: dt.datetime) -> dict:
     }
 
 
+def _content(score: dict | None) -> dict:
+    """A score block without its refresh timestamp, for comparing substance."""
+    return {k: v for k, v in (score or {}).items() if k not in ("scoreUpdatedAt", "updatedAt")}
+
+
 def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None,
                 old_scores: dict | None = None) -> tuple[dict, list[str]]:
-    """Writes for scores whose value/version changed, plus a score.changed event per change.
+    """Writes for score blocks whose CONTENT changed (value, uncapped, breakdown, blockers, version), plus a score.changed
+    event only when the displayed value / version / basis changed.
+    Why content, not just value (2026-10-13): the displayed value can sit at a gate cap (3.0) while the breakdown underneath
+    improves (uncapped 4.3 -> 6.3 after the deep TVA history); comparing only the value left /scores/{id} stale for hours.
     Canonical nodes are /scores/{id} (platform-only root): a registry is written whole by its brain and
     would clobber a sub-node there (seen 2026-10-12 on the Biological republish)."""
     updates, changed, n = {}, [], 0
     old_scores = old_scores or {}
     if engine is not None:
         old = old_engine or {}
-        if old.get("engineScore") != engine["engineScore"] or old.get("engineScoreVersion") != engine["engineScoreVersion"]:
+        if _content(old) != _content(engine):
             updates["scores/engine"] = engine
             updates["engine/score"] = engine                    # alias kept for readers of the first publish
-            n += 1
-            ev = event(now, WRITER, n, "score.changed",
-                       f"Sector Engine score {old.get('engineScore', '—')} → {engine['engineScore']} / 10 ({engine['engineScoreVersion']})", "info")
-            updates[f"activity/{ev['id']}"] = ev
-            changed.append(f"engine: {old.get('engineScore', '—')} → {engine['engineScore']}")
+            if old.get("engineScore") != engine["engineScore"] or old.get("engineScoreVersion") != engine["engineScoreVersion"]:
+                n += 1
+                ev = event(now, WRITER, n, "score.changed",
+                           f"Sector Engine score {old.get('engineScore', '—')} → {engine['engineScore']} / 10 ({engine['engineScoreVersion']})", "info")
+                updates[f"activity/{ev['id']}"] = ev
+                changed.append(f"engine: {old.get('engineScore', '—')} → {engine['engineScore']}")
+            else:
+                changed.append(f"engine: breakdown refreshed (score unchanged {engine['engineScore']})")
     for bid in UPSTREAM:
         new = scores[bid]
         old = old_scores.get(bid) or {}
         if bid not in brains:
             changed.append(f"{bid}: brain not registered yet — score written anyway (registry absent)")
-        if old.get("value") == new["value"] and old.get("scoreVersion") == new["scoreVersion"] and old.get("basis") == new["basis"]:
+        if _content(old) == _content(new):
             continue
         updates[f"scores/{bid}"] = new
-        n += 1
-        ev = event(now, WRITER, n, "score.changed",
-                   f"{bid} score {old.get('value', '—')} → {new['value']} / 10 ({new['basis'].lower()}, {new['scoreVersion']})",
-                   "info")
-        updates[f"activity/{ev['id']}"] = ev
-        changed.append(f"{bid}: {old.get('value', '—')} → {new['value']}")
+        if not (old.get("value") == new["value"] and old.get("scoreVersion") == new["scoreVersion"] and old.get("basis") == new["basis"]):
+            n += 1
+            ev = event(now, WRITER, n, "score.changed",
+                       f"{bid} score {old.get('value', '—')} → {new['value']} / 10 ({new['basis'].lower()}, {new['scoreVersion']})",
+                       "info")
+            updates[f"activity/{ev['id']}"] = ev
+            changed.append(f"{bid}: {old.get('value', '—')} → {new['value']}")
+        else:
+            changed.append(f"{bid}: breakdown refreshed (displayed {new['value']} unchanged; uncapped {old.get('uncapped', '—')} → {new.get('uncapped', '—')})")
     return updates, changed
 
 
