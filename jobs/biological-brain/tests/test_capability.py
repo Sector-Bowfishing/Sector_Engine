@@ -135,6 +135,20 @@ class PublisherReflectsCapabilityTests(unittest.TestCase):
         # no per-lake state path and no customer path is ever written
         self.assertFalse([p for p in up if p.startswith("/lakes/") or p.startswith("/snapshots/") or p.startswith("/conditions")])
 
+    def test_transfer_summary_is_published_and_counts_southeast_transferable_rules(self):
+        _, up = self.updates(capability_files())
+        ts = up["/brains/biological-state"]["transferSummary"]
+        self.assertEqual(ts["usableRules"], 3)
+        self.assertEqual(sum(ts["byTransferability"].values()), 3)
+        self.assertEqual(ts["byTransferability"]["TRANSFERS"], 0)               # no synthetic rule claims Southeast transfer
+        facts = {f["label"]: f["value"] for f in up["/brains/biological-state"]["facts"]}
+        self.assertEqual(facts["Rules with Southeast-transferable evidence"], "0 of 3")
+        # the scorer ignores it today: publishing the fact cannot move the score
+        sys.path.insert(0, os.path.join(HERE, "..", "..", "brain_platform"))
+        from sector_brain_platform import scoring
+        s = scoring.score_biological({"registry": up["/brains/biological-state"], "species": {k.split("/")[-1]: v for k, v in up.items() if k.startswith("/species/") and v}}, NOW)
+        self.assertEqual(s["scoreBreakdown"]["regionalTransfer"]["status"], "UNKNOWN")
+
     def test_registry_publishes_generic_facts_for_ops(self):
         _, up = self.updates(capability_files())
         facts = {f["label"]: f["value"] for f in up["/brains/biological-state"]["facts"]}

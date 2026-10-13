@@ -58,8 +58,16 @@ def main(argv=None) -> int:
                                 daypart=bs.daypart_for(meta["lat"], meta["lon"], now), presence=presence, ruleset=ruleset, species_info=species_info)
     os.makedirs(a.out, exist_ok=True)
     path = os.path.join(a.out, f"biological_state_{meta['key']}.json")
+    fp = bs.state_fingerprint(state)
+    if os.path.exists(path):
+        try:
+            if bs.state_fingerprint(json.load(open(path))) == fp:
+                print(json.dumps({"written": None, "unchanged": True, "fingerprint": fp[:16], "note": "no material input change since the last run: nothing written"}, indent=1))
+                return 0
+        except (ValueError, KeyError):
+            pass
     json.dump(state, open(path, "w"), indent=1, ensure_ascii=False)
-    print(json.dumps({"written": path, "status": state["status"], "rulesVersion": state["provenance"]["rulesVersion"], **state["summary"]}, indent=1))
+    print(json.dumps({"written": path, "fingerprint": fp[:16], "status": state["status"], "rulesVersion": state["provenance"]["rulesVersion"], **state["summary"]}, indent=1))
     return 0
 
 

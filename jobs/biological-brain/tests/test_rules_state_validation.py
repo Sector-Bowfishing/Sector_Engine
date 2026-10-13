@@ -339,6 +339,17 @@ class BiologicalStateTests(unittest.TestCase):
         self.assertTrue(any("NOT_PUBLISHED" in u for u in s["unknowns"]))
         self.assertTrue(any("rapidDischargeIncrease" in u for u in s["unknowns"]))
 
+    def test_fingerprint_ignores_clock_noise_but_catches_material_change(self):
+        a = self.build()
+        later = dt.datetime(2026, 4, 20, 3, 5, tzinfo=dt.timezone.utc)
+        b = bs.build_lake_state("Example|ST", region="south", waterbody_type="run_of_river", now=later, inputs=inputs(temp_f=70, lake_trend="RISING"), daypart="NIGHT",
+                                presence=self.presence, ruleset=fixture_ruleset(), species_info={"example_fish": {"researchMaturity": "RESEARCH", "knowledgeScore": 3.5, "assessment": "ASSESSED"},
+                                                                                            "draft_fish": {"researchMaturity": "RESEARCH", "assessment": "ASSESSED"}, "old_fish": {"assessment": "ASSESSED"}, "no_rules_fish": {"assessment": "ASSESSED"}})
+        self.assertNotEqual(a["generatedAt"], b["generatedAt"])
+        self.assertEqual(bs.state_fingerprint(a), bs.state_fingerprint(b))                                     # same inputs five minutes later: no new work
+        self.assertNotEqual(bs.state_fingerprint(a), bs.state_fingerprint(self.build(inp=inputs(temp_f=70, lake_trend="FALLING"))))
+        self.assertNotEqual(bs.state_fingerprint(a), bs.state_fingerprint(self.build(daypart="DAY")))
+
     def test_night_rule_unknown_when_daypart_unknown(self):
         s = self.build(daypart=None)
         ex = next(x for x in s["species"] if x["speciesId"] == "example_fish")

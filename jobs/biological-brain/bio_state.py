@@ -160,3 +160,21 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
         "validation": {"status": "NOT_VALIDATED", "note": "Rules are research-derived; no prediction has been compared with outcomes."},
         "customerPath": {"consumed": False},
     }
+
+
+VOLATILE_KEYS = ("generatedAt", "ageHours")
+
+
+def state_fingerprint(state: dict) -> str:
+    """Stable hash of everything material in a Biological State (volatile timestamps/ages removed). A run whose fingerprint equals the last one
+    needs no new artifact, prediction or write: compute because INPUT TRUTH CHANGED, not because a page was opened or the clock ticked."""
+    import hashlib
+    import json
+
+    def strip(o):
+        if isinstance(o, dict):
+            return {k: strip(v) for k, v in o.items() if k not in VOLATILE_KEYS}
+        if isinstance(o, list):
+            return [strip(x) for x in o]
+        return o
+    return hashlib.sha256(json.dumps(strip(state), sort_keys=True, separators=(",", ":")).encode()).hexdigest()

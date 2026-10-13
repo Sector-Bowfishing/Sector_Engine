@@ -43,6 +43,11 @@ def assess(files: dict[str, bytes]) -> dict:
     usable = [r for r in rs.active_rules() if r["status"] in rl.USABLE_STATUSES]
     facts |= {"rulesVersion": rs.rules_version, "usableRules": len(usable), "draftRules": sum(r["status"] == "DRAFT" for r in rs.active_rules()), "retiredRules": len(rs.retired),
               "speciesWithUsableRules": len({r["speciesId"] for r in usable}), "speciesWithRules": len({r["speciesId"] for r in rs.active_rules()})}
+    tally = {t: 0 for t in rl.TRANSFER}
+    for r in usable:
+        tally[r["transferability"]["southeastReservoir"]] += 1
+    facts["transferSummary"] = {"usableRules": len(usable), "byTransferability": tally,
+                                "note": "TRANSFERS needs a counting evidence stream from a Southeast reservoir; every other rule is a northern/foreign/other-system finding applied by analogy."}
     facts["ruleCountsBySpecies"] = {sid: {"usable": rs.counts(sid)["usable"], "draft": rs.counts(sid)["draft"]} for sid in sorted(rs.by_species) if rs.counts(sid)["total"]}
     if not usable:
         blockers.append("no RECONCILED/APPROVED rule")

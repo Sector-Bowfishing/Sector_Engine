@@ -233,9 +233,12 @@ def _facts(b: Bundle, by_m: dict) -> list:
     f = b.capability["facts"]
     if not f:
         return []
+    ts = f.get("transferSummary") or {}
+    tr = ts.get("byTransferability") or {}
     rows = [("Species with usable rules", f.get("speciesWithUsableRules")), ("Usable rules", f.get("usableRules")), ("Draft rules", f.get("draftRules")),
             ("Retired rules", f.get("retiredRules")), ("Frozen rules", f.get("frozenRules")), ("Predictions logged", f.get("predictionsLogged", 0)),
             ("Observations logged", f.get("observationsLogged", 0)), ("Independent trips", f.get("independentTrips", 0)),
+            ("Rules with Southeast-transferable evidence", f"{tr.get('TRANSFERS', 0)} of {ts.get('usableRules', 0)}" if ts else None),
             ("Validated species", by_m.get("VALIDATED", 0)), ("Pilot lakes", ", ".join(f.get("pilotLakes") or []) or None), ("Rules version", f.get("rulesVersion"))]
     return [dict(label=k, value=v) for k, v in rows if v is not None]
 
@@ -248,7 +251,7 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
         by_a[p["assessment"]] = by_a.get(p["assessment"], 0) + 1
     open_disc = [d for d in b.discrepancies if d.get("status") == "OPEN"]
     return _clean(dict(
-        platform=PLATFORM, facts=_facts(b, by_m),
+        platform=PLATFORM, facts=_facts(b, by_m), transferSummary=(b.capability["facts"].get("transferSummary") or None),
         stalenessModel="VERSION", dependsOn=[],
         schedule=dict(cadence="manual (version-driven: runs when the canonical bundle changes)", running=False),
         brainId=BRAIN_ID, displayName=DISPLAY_NAME, domain="biology",
