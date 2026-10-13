@@ -463,3 +463,45 @@ def test_bank_validation_v2_prereg_is_immutable_and_tied_to_the_rules():
     assert sha("data/bank_validation_v2_lake_draw.json") == fz["lakeDrawSha256"] and sha("data/field_pairs_candidates.json") == fz["pairCandidatesSha256"]
     assert fz["rulesFingerprint"] == EX.rules_fingerprint()
     assert fz["rulesFingerprint"] in open(os.path.join(d, fz["file"])).read()
+
+
+# ── AK/HI behaviour, confidence-vs-risk separation, Intelligence compatibility keys ──────────────────────────
+def test_ak_hi_domain_behaviour():
+    m = FL.load_manifest()
+    assert TN.tz_for("AK", -150.0) == "America/Anchorage" and TN.tz_for("HI", -157.8) == "Pacific/Honolulu"
+    ak = [v for v in m["lakes"].values() if v["state"] == "AK"]; hi = [v for v in m["lakes"].values() if v["state"] == "HI"]
+    assert len(ak) == 12 and len(hi) == 9 and {v["forecastDomain"] for v in ak} == {"AK"} and {v["forecastDomain"] for v in hi} == {"HI"}
+    for v in ak + hi:
+        assert not FL.exposure_allowed(v)                                      # never silently treated like CONUS
+        if v["tier"] in ("AUDITED", "ESTIMATED"):
+            assert any(b.startswith("nbm") and "DomainNotTested" in b for b in v["blockers"])
+    assert FL.forecast_domain("PR") == "PR" and FL.forecast_domain("VI") == "PR" and FL.forecast_domain("AL") == "CONUS" and FL.forecast_domain(None) == "CONUS"
+
+
+def test_confidence_and_breezy_risk_are_independent_questions():
+    calm_high = tonight([6.0] * 7, p90=[7.0] * 7)
+    risky_medium = tonight([6.0] * 7, p90=[7, 8, 9, 11, 9, 8, 7])
+    light_risky = tonight([2.0] * 7, p90=[11.0] * 7)
+    assert (calm_high["confidence"]["label"], calm_high["breezyRisk"]["flag"]) == ("HIGH", False)
+    assert (risky_medium["confidence"]["label"], risky_medium["breezyRisk"]["flag"]) == ("MEDIUM", True)
+    assert (light_risky["confidence"]["label"], light_risky["breezyRisk"]["flag"]) == ("LOW", True)       # low direction confidence AND a risk flag: two different statements
+    # HIGH confidence says nothing about wind safety: the field exists only to qualify direction/category
+    assert "breezy" not in json.dumps(calm_high["confidence"]).lower().replace("breezyrisk", "")
+    s = TN.simple(light_risky)
+    assert s["risk"] == "COULD TURN BREEZY" and s["confidence"] == "LOW"
+
+
+def test_wind_state_keeps_the_keys_the_intelligence_evidence_layer_reads(tmp_path, monkeypatch):
+    """Pinned from jobs/sector-intelligence-brain/evidence.py + evaluation.py @ feat/intelligence-evidence-layer (e9e5e571). If this fails, Intelligence's reader breaks."""
+    from tests import test_brain as TB
+    from sector_wind.brain.state import build_state
+    now = datetime(2026, 10, 12, 18, 20, tzinfo=UTC)
+    monkeypatch.setattr(TB, "NOW", now)
+    st = TB.make_store(tmp_path, speed=6.0, direction=225.0)
+    d = next(x for x in TB.DIRECTORY if x["id"] == "Guntersville|AL")
+    state, _, _ = build_state(st, TB.CFG, "guntersville", "Guntersville|AL", d, now)
+    for k in ("kind", "stale", "forecastGeneratedAt", "analysis", "observation", "gustMph", "exposure", "provenance"):
+        assert k in state, k
+    assert set(["product", "analysisTime", "sustainedMph"]) <= set(state["analysis"]) and state["kind"] in ("analysis", "forecast", "unavailable")
+    assert "confidence" not in state                                          # known mismatch: Intelligence looks for a top-level `confidence` string (see WIND_INTELLIGENCE_COMPATIBILITY.md)
+    assert {"readiness", "generatedAt"} <= set(state["provenance"])

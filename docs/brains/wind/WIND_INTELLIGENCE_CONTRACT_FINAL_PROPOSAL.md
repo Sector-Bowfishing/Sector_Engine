@@ -42,3 +42,20 @@ Lake eligibility (which lakes may carry bank words at all): `brain/data/geometry
 - Intelligence's own reader/fixtures (not edited here).
 - Brain RTDB schema/rules entry for the new fields (Sector_Ops) and a publish path for the per-bank detail object.
 - Decision on ESTIMATED exposure visibility (Michael decision 5).
+
+## 6. Wind-owned semantics (final wording; these definitions are the contract)
+| Term | Definition (what Wind means) | What it is NOT |
+|---|---|---|
+| **wind direction** | meteorological bearing the wind blows FROM; shown only when the tonight mean forecast ≥ 5 mph | not shown (null) below 5 mph; not an over-water measurement |
+| **wind category / speed** | `calm < 5 · light 5–10 · breezy 10–15 · windy ≥ 15 mph` of the NBM point forecast (or the RTMA-RU analysis "now"); a **floor** for stronger winds | not a maximum, not a gust, not over-water speed |
+| **tonight category** | the category of the mean forecast speed over local 19:00–01:00 | not "quality of tonight" |
+| **trend** | `easing` (≥ 2 mph lower at 01:00 than 19:00), `steady` (< 2 mph change) or `null` | never "rising", never "lays down", `null` = no claim |
+| **breezyRisk** | NBM P90 sustained ≥ 10 mph at any tonight hour ⇒ "could turn breezy" | not a prediction of speed; absence is not "low risk" |
+| **bank exposure** | label of a bank from wind-FROM vs the bank's facing and the modelled chop class: AUDITED = DIRECT / CROSS / PROTECTED (+ HIGH FETCH); ESTIMATED = EXPOSED / PROTECTED (+ HIGH FETCH) | not measured; not "good fishing"; UNKNOWN is never PROTECTED |
+| **fetch tier / geometry tier** | AUDITED (frozen QA'd table), ESTIMATED (polygon estimate), POINT_ONLY (no bank words) | ESTIMATED is not validated truth |
+| **forecast horizon** | hours from generation to the end of the tonight window (`tonight.forecastHorizonHours`) and the NBM horizon (`forecast.horizonHours`) | not a skill horizon |
+| **freshness** | age of the NBM cycle and percentile cycle; stale > 3 h | not observation age |
+| **confidence** (`tonight.confidence`, to be named `forecastConfidence` in a v2) | how far to trust the direction and the calm-vs-light call: HIGH ≥ 5 mph mean and no flag; MEDIUM 3–5 mph or flag or unknown flag; LOW < 3 mph / stale / unavailable | not strong-wind risk, not a probability |
+| **evidence kind** | `MODELED_FORECAST` (tonight), `MODELED` (exposure) | never `observed` |
+| **validation tier** | `HISTORICAL_LAND_STATIONS_ONLY` (tonight); `AUDITED_/ESTIMATED_GEOMETRY_NO_FIELD_TRUTH` (exposure) | upgrades only with evidence (field pairs, H2) |
+Rule set `wind-exposure-rules-v2` (fingerprint pinned) governs the bank labels; its parameters change only by creating v3 plus a new independent validation.
