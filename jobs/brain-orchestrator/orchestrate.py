@@ -122,7 +122,12 @@ def with_single_flight(brains: dict, executions: dict[str, list[dict]], locks: d
             sched["running"] = True
         lock = (locks or {}).get(b) or {}
         if lock.get("lockedUntil") and lock["lockedUntil"] > iso(now):
-            sched["lockedUntil"] = lock["lockedUntil"]
+            # the lock only bridges the gap until the started execution is visible; once that execution has
+            # completed the real world says so and the lock is spent
+            done = any((e.get("metadata") or {}).get("name") == (lock.get("execution") or "").rsplit("/", 1)[-1]
+                       and (e.get("status") or {}).get("completionTime") for e in executions.get((ex or {}).get("job") or "") or [])
+            if not done:
+                sched["lockedUntil"] = lock["lockedUntil"]
         reg["schedule"] = sched
         out[b] = reg
     return out

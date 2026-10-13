@@ -42,3 +42,14 @@ def test_job_args_follow_scope(monkeypatch):
 def test_wind_and_clarity_are_never_started_here():
     assert "wind" not in o.EXECUTORS and "water-clarity" not in o.EXECUTORS
     assert set(o.NOT_STARTED_HERE) == {"wind", "water-clarity"}
+
+
+def test_lock_is_spent_once_its_execution_completed():
+    brains = {"water-temp": {"staleAfterHours": 6, "lastSuccessfulRun": "2026-10-12T06:40:17Z"}}
+    lock = {"water-temp": {"execution": "projects/p/locations/r/jobs/water-temp-brain/executions/water-temp-brain-x", "lockedUntil": "2026-10-13T07:00:00Z"}}
+    execs = {"water-temp-brain": [{"metadata": {"name": "water-temp-brain-x"}, "status": {"startTime": "2026-10-13T06:30:00Z", "completionTime": "2026-10-13T06:35:00Z"}}]}
+    merged = o.with_single_flight(brains, execs, lock, NOW)
+    assert "lockedUntil" not in merged["water-temp"]["schedule"]
+    still = {"water-temp-brain": [{"metadata": {"name": "water-temp-brain-x"}, "status": {"startTime": "2026-10-13T06:30:00Z"}}]}
+    merged = o.with_single_flight(brains, still, lock, NOW)
+    assert merged["water-temp"]["schedule"]["running"] is True

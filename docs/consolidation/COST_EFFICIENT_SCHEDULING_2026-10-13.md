@@ -59,5 +59,67 @@ no private Clarity exposure; nothing deleted (schedulers paused, not removed).
   lake-brain/water-temp-brain ≈ 0.2–0.4 (8 × 8 s + 4 × 4.4 min), lake-surface-daily now proportional to real work.
   Before: lake-surface-daily ≈ 9.6 vCPU-h/day (67 vCPU-h + 271 GiB-h per 7 d), hydrology 0.93, clarity-current 1.5.
 
-## First live cycle
-(filled below after execution)
+## First live cycles (2026-10-13 05:28–05:45 UTC)
+1. Cycle 1 (05:28): 21 `/jobs` records written; plan RUN lake-brain (5.7 h stale) + water-temp (22.8 h stale);
+   starts failed with 403 `run.jobs.runWithOverrides` → fixed by starting jobs **without** overrides (args are baked
+   into the job definitions; `roles/run.invoker` is enough). Intelligence published (upstream fingerprint changed);
+   scores + 627 control paths written (first publish after the Intelligence republish of 621 states).
+2. Cycle 2 (05:33): **`lake-brain-47lvs` started → 5 pilot lakes in 4.5 s (70 s execution), health WARNING
+   (baselines INSUFFICIENT, as before); `water-temp-brain-p2g5c` started → 621 lakes in 270 s (5 m 37 s execution),
+   HEALTHY, 32 measured / 586 modeled / 3 unavailable, 8 stale.** Intelligence deferred ("upstream started this
+   cycle"). Both registries now carry `stalenessModel: TIME`, `deploymentVersion: e6a5026f5d0f`.
+3. Cycle 3 (05:41): Intelligence re-evaluated the pilots on the fresh states; Lake / Water Temp reported WAIT
+   because the Lake Brain registry publishes `schedule.running` as the **string** `"false"` → fixed in the planning
+   core (`_truthy`), test added. `score_brains --if-changed` dry run afterwards: **5 of 628 control paths differ**
+   (the 5 pilot Intelligence states) — the diff gate works; cycle 2's 627 writes were real (fleet-wide Water Temp).
+4. Cycle 4 (after the fix, below): Lake / Water Temp SKIP "published state is current"; nothing started.
+
+## Phase 20 — self-audit (25 checks, re-verified at close)
+
+| # | Check | Result |
+|---|---|---|
+| 1 | No new customer-serving `sector-engine` revision | PASS — latest revision still `00080-wes` (2026-10-12 17:55) |
+| 2 | Traffic allocation unchanged | PASS — `00080-wes` 100 % |
+| 3 | Serving minScale unchanged | PASS — template minScale 1; `00080-wes` minScale 1 |
+| 4 | Public tags unchanged | PASS — `clarity`→`00078-kuv`, `fusion`→`00079-zab`, `watertemp`→`00080-wes` |
+| 5 | Warm-tag guard clean | PASS — `ops/check_warm_tags.sh` ✓ |
+| 6 | No candidate promotion, no 5A, no R3.1 | PASS — nothing in `Sources/SectorEngine/{Engine,Forecast,API,Clarity}` touched (diff vs main: `Dockerfile`, `Package.swift`, `BrainContract.swift` +1 root, `deploy.sh` guard) |
+| 7 | Customer Water Temp / Wind science unchanged | PASS — production paths untouched; `wind-hourly` remains candidate archive + Brain publish |
+| 8 | iOS / Android behavior unchanged | PASS — no API or app change |
+| 9 | Private Clarity research not exposed | PASS — `research/clarity-candidate` e8891326, `feat/clarity-candidate-shadow` 82515896, local `brain/water-clarity` 3c1d9736 unchanged and not on origin (origin holds only the public-safe `brain/water-clarity` 6220491b from consolidation) |
+| 10 | Nothing deleted | PASS — schedulers paused, not deleted; no branch / worktree / bucket / job deleted; only a superseded IAM binding (objectCreator → objectUser) was replaced |
+| 11 | No force-push / rewrite | PASS — `main == origin/main == e596a6bb`; branch is 9 linear commits ahead |
+| 12 | Customer RTDBs untouched | PASS — every writer uses `sector_brain_platform.rtdb` / `RTDBRestStore`, which refuse `sector-9393c-default-rtdb` and `sector-dev-1f4d0` |
+| 13 | `/jobs` reflects Cloud Scheduler | PASS — paused jobs show `enabled:false`, `PAUSED`; `lake-surface-daily` shows its paused legacy scheduler; one sync path (orchestrator) |
+| 14 | No secrets / SA identities / env values / private paths in `/jobs` | PASS — test `test_nothing_secret_is_published`; records inspected live |
+| 15 | Ops read access authenticated, never public | PASS — live rules: opsUsers read-only on `jobs`, `control`, `scores`, `engine`; root false |
+| 16 | Wind cadence kept at :05, RTMA/METAR/catch-up preserved | PASS — tests `test_live_early_exit.py`; live run summaries show rtma + metar + bundles |
+| 17 | TVA archive hourly kept | PASS |
+| 18 | Satellite heavy job not redeployed; dispatcher starts it only with work | PASS — image `30420dc6…` unchanged; dry runs started nothing; `--lakes` + task-count overrides via the narrow custom role |
+| 19 | Clarity Brain stays manual; no bad cron created | PASS |
+| 20 | Lake Brain pilot only, orchestrator-conditional | PASS — `--scope pilots`; started only when stale; skipped when current |
+| 21 | Water Temp no blind 3-h cron; runs on the 6-h rule | PASS — no scheduler exists for it; started once (22.9 h stale) |
+| 22 | Biological / Intelligence no cron, plan()-driven; Intelligence pilot only | PASS — Biological SKIP every cycle (version unchanged); Intelligence ran on fingerprint change |
+| 23 | Scores / control only after change | PASS — `--if-changed`; 5 of 628 on a quiet cycle |
+| 24 | IAM least privilege | PASS — new SAs `brain-writer` (RTDB admin + read-only Run/Scheduler viewers + job-level invoker + bucket reads) and `lake-surface-dispatch` (custom role on one job + bucket objectUser); no Brain credentials in GitHub; CI is offline |
+| 25 | Tests | PASS — Swift 217/217; Python 49 + 58 + 11 + 3 + 35 + 29 + 32 + 14 + 3 |
+
+## Rollback (each step independent)
+- Schedulers: `gcloud scheduler jobs resume hydrology-hourly|clarity-current-hourly|lake-surface-daily --location us-central1`;
+  `gcloud scheduler jobs pause brain-orchestrator|lake-surface-dispatch --location us-central1`.
+- Wind: `gcloud run jobs update wind-hourly --region us-central1 --image <previous image a90ea535…>` (the pre-migration image
+  is still in Artifact Registry) — or redeploy from `brain/wind @ 4da234cb`.
+- Brain jobs / orchestrator / dispatcher: pause their schedulers (above); deleting the jobs is optional and not needed.
+- `/jobs`, `/control/orchestrator`: platform-owned nodes; harmless to leave; `score_brains.py --write` keeps working without them.
+- Code: revert the branch; `main` is untouched.
+
+## Open decisions for Michael
+- D11 **Merge** `feat/cost-efficient-scheduling` → main (READY; see the handoff).
+- D12 Retire the `wind-hourly` cron into the orchestrator once it has run cleanly for a few days (the Wind job
+  would become orchestrator-triggered by NBM cycle id).
+- D13 Clarity Brain follow-up (dispatcher-driven publish) — `WATER_CLARITY_BRAIN_SCHEDULING.md`.
+- D14 Water Temp scope: fleet every 6 h (current, ≈ 4 × 4.5 min/day) vs pilots only (would blank the registry's fleet counts).
+- D15 Intelligence republishes 621 `NOT_EVALUATED` states (~950 KB) on every fingerprint change — write only changed states.
+- D16 Resume `hydrology-hourly` / `clarity-current-hourly` only when the Clarity research path needs them (or retire with D4).
+- D17 Next approved customer deploy: switch `sector-engine` to service-level min-instances so tagged candidates never
+  keep a warm instance (revision-level minScale is what bit in October).
