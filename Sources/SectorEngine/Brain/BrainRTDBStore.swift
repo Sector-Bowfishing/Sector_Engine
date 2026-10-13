@@ -22,6 +22,7 @@ public struct BrainStoreError: Error, CustomStringConvertible {
     public let description: String
     public let status: Int?
     public init(_ description: String, status: Int? = nil) { self.description = description; self.status = status }
+    public init(description: String) { self.description = description; self.status = nil }
 }
 
 public enum BrainTransportPolicy {

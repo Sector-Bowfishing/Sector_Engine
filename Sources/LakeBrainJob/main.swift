@@ -45,15 +45,15 @@ var store: BrainStore? = nil
 var rest: RTDBRestStore? = nil
 if let dir = flag("--dry-run") {
     if let live = flag("--read-rtdb") {
-        rest = RTDBRestStore(databaseURL: live)
-        store = ReadThroughDryRunStore(reader: rest!, writer: LocalDirectoryStore(directory: dir))
+        rest = try RTDBRestStore(databaseURL: live, brainId: LakeBrainSpec.brainId)
+        store = ReadThroughDryRunStore(reader: rest!, writer: LocalDirectoryStore(directory: dir, brainId: LakeBrainSpec.brainId))
         print("▶ dry run → \(dir) (reads \(live), GET only)")
     } else {
-        store = LocalDirectoryStore(directory: dir)
+        store = LocalDirectoryStore(directory: dir, brainId: LakeBrainSpec.brainId)
         print("▶ dry run → \(dir)")
     }
 } else if let url = flag("--rtdb") ?? env["SECTOR_BRAIN_RTDB_URL"] {
-    rest = RTDBRestStore(databaseURL: url); store = rest
+    rest = try RTDBRestStore(databaseURL: url, brainId: LakeBrainSpec.brainId); store = rest
     print("▶ Brain RTDB → \(url)")
 } else {
     FileHandle.standardError.write(Data("LakeBrainJob: give --dry-run DIR or --rtdb URL (or SECTOR_BRAIN_RTDB_URL)\n".utf8))

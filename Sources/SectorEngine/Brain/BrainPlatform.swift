@@ -125,6 +125,16 @@ public enum BrainPlatform {
 
 // MARK: - Shared shapes (Sector_Ops src/types/brain.ts, contract §4, §9)
 
+/// What a registry entry says about the platform it publishes through (contract §13; the Engine
+/// Score's platformHealth dimension reads `conformant`).
+public struct BrainPlatformRef: Codable, Equatable, Sendable {
+    public var implementation: String
+    public var contract: String
+    public var conformant: Bool
+    public static let current = BrainPlatformRef(implementation: "SectorEngine.Brain (Swift)",
+                                                 contract: "docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0", conformant: true)
+}
+
 public struct BrainSourceRef: Codable, Equatable, Sendable {
     public var sourceType: String
     public var sourceId: String

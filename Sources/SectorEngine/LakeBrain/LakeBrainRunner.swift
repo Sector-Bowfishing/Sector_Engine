@@ -54,6 +54,8 @@ public struct LakeBrainRunResult: Sendable {
 
 public struct LakeBrainRegistryEntry: Codable, Equatable, Sendable {
     public struct ErrorInfo: Codable, Equatable, Sendable { public var at: String; public var message: String }
+    /// Contract §13: the platform this brain publishes through.
+    public var platform: BrainPlatformRef? = nil
     public struct Version: Codable, Equatable, Sendable { public var version: String; public var date: String; public var note: String; public var status: String }
     public var brainId: String
     public var displayName: String
@@ -277,6 +279,7 @@ public enum LakeBrainRunner {
             }
             for e in activity(previous: previousRegistry, current: registry, now: finished) { tail["activity/\(e.id)"] = try BrainJSON.encode(e) }
             try await store.update(tail)
+            _ = try? await BrainActivity.prune(store: store, brainId: LakeBrainSpec.brainId, now: finished)
         } catch {
             result.writeError = "\(error)"; result.health = "FAILED"
             let at = BrainPlatform.iso(Date())
@@ -366,7 +369,7 @@ public enum LakeBrainRunner {
                 hist[s.historicalState.rawValue, default: 0] += 1
             }
         }
-        return LakeBrainRegistryEntry(
+        var entry = LakeBrainRegistryEntry(
             brainId: LakeBrainSpec.brainId, displayName: LakeBrainSpec.displayName, domain: "lake",
             question: "What does Sector know about this particular lake: its water level now, against its own history and operator guide, and which fish are recorded there?",
             version: LakeBrainSpec.brainVersion, schemaVersion: BrainPlatform.schemaVersion, enabled: true,
@@ -385,6 +388,8 @@ public enum LakeBrainRunner {
             healthRule: "FAILED: write failed or no lakes. DEGRADED: > 25 % of reviewed lakes unavailable. WARNING: any reviewed lake stale, unavailable or on a fallback source. HEALTHY otherwise.",
             orchestration: .current,
             fleetScope: options.scope.rawValue + (presence == nil ? " (no presence bundle)" : ""))
+        entry.platform = BrainPlatformRef.current
+        return entry
     }
 
     struct ValidationSummary: Codable, Equatable {
@@ -430,7 +435,7 @@ public enum LakeBrainRunner {
             }
             guard used > 0 else { continue }
             let h = failed == used ? "FAILED" : (failed > 0 || stale > 0) ? "WARNING" : "HEALTHY"
-            out[d.id] = (BrainDataSourceStatus(sourceId: d.id, provider: d.name, type: d.type, brains: [LakeBrainSpec.brainId],
+            out[d.id] = (BrainDataSourceStatus(sourceId: d.id, provider: d.name, type: d.type, ownerBrainId: LakeBrainSpec.brainId, brains: [LakeBrainSpec.brainId: true],
                                                lakeCount: used, health: h, lastFetchAt: at, latestObservationAt: latest,
                                                staleThresholdHours: 3, failures24h: nil, failuresLastRun: failed, provides: d.provides,
                                                notes: "Written by the Lake Brain run. \(stale) bound series stale at run time."),
@@ -442,22 +447,22 @@ public enum LakeBrainRunner {
     static func activity(previous: LakeBrainRegistryEntry?, current: LakeBrainRegistryEntry, now: Date) -> [BrainActivityEvent] {
         var out: [BrainActivityEvent] = []
         func ev(_ kind: String, _ title: String, _ sev: String) {
-            let id = BrainPlatform.eventKey(now.addingTimeInterval(Double(out.count) / 1000), suffix: "lake-brain-\(kind)")
+            let id = BrainActivity.eventId(at: now, brainId: LakeBrainSpec.brainId, n: out.count)   // contract §7
             out.append(BrainActivityEvent(id: id, at: BrainPlatform.iso(now), kind: kind, title: title,
                                           brainId: LakeBrainSpec.brainId, lakeId: nil, severity: sev))
         }
         guard let p = previous else {
-            ev("brain-registered", "Lake Brain registered (v\(current.version), \(current.supportedLakeCount) pilot lakes)", "info")
+            ev("brain.registered", "Lake Brain registered (v\(current.version), \(current.supportedLakeCount) pilot lakes)", "info")
             return out
         }
         if p.version != current.version || p.modelVersion != current.modelVersion {
-            ev("version-change", "Lake Brain \(p.version)/\(p.modelVersion) → \(current.version)/\(current.modelVersion)", "info")
+            ev("brain.version", "Lake Brain \(p.version)/\(p.modelVersion) → \(current.version)/\(current.modelVersion)", "info")
         }
         if p.readinessCounts != current.readinessCounts {
-            ev("readiness-change", "Lake Brain readiness: \((current.readinessCounts ?? [:]).sorted { $0.key < $1.key }.map { "\($0.key) \($0.value)" }.joined(separator: ", "))", "info")
+            ev("readiness.changed", "Lake Brain readiness: \((current.readinessCounts ?? [:]).sorted { $0.key < $1.key }.map { "\($0.key) \($0.value)" }.joined(separator: ", "))", "info")
         }
         if p.health != current.health {
-            ev("health-change", "Lake Brain health \(p.health) → \(current.health)",
+            ev("health.changed", "Lake Brain health \(p.health) → \(current.health)",
                current.health == "HEALTHY" ? "success" : current.health == "FAILED" ? "critical" : "warning")
         }
         return out

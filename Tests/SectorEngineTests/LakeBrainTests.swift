@@ -261,7 +261,7 @@ final class LakeBrainTests: XCTestCase {
     func testPublisherWritesLeafPathsOnlyOnSharedNodes() async throws {
         let feeds = FakeFeeds()
         let dir = NSTemporaryDirectory() + "lake-brain-test-\(UUID().uuidString)"
-        let store = LocalDirectoryStore(directory: dir)
+        let store = LocalDirectoryStore(directory: dir, brainId: LakeBrainSpec.brainId)
         var opts = LakeBrainRunOptions(); opts.lakeIds = ["Guntersville|AL"]; opts.force = true
         let r = await LakeBrainRunner.run(store: store, feeds: feeds, archive: nil, presenceArchive: nil, options: opts, now: feeds.now)
         XCTAssertTrue(r.ok, r.writeError ?? "")
