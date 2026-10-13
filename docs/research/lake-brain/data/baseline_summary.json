@@ -1,0 +1,3778 @@
+{
+ "generated": "2026-10-13T06:58:33.990074+00:00",
+ "series_inventory": [
+  {
+   "series": "Hartwell (USACE SAS, storage/hydro)",
+   "first": "1961-12-31",
+   "last": "2026-10-06",
+   "days": 23656,
+   "complete_years": 64,
+   "complete_range": "1962-2025",
+   "range_ft": 27.9,
+   "p05_p95_ft": 13.4,
+   "daily_abs_change_p50": 0.08,
+   "p95": 0.32,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Kentucky Lake (TVA)",
+   "first": "1998-07-10",
+   "last": "2026-10-13",
+   "days": 10207,
+   "complete_years": 27,
+   "complete_range": "1999-2025",
+   "range_ft": 19.8,
+   "p05_p95_ft": 5.5,
+   "daily_abs_change_p50": 0.12,
+   "p95": 0.61,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Cave Run (USACE LRL flood control)",
+   "first": "2002-01-01",
+   "last": "2026-10-12",
+   "days": 9049,
+   "complete_years": 24,
+   "complete_range": "2002-2025",
+   "range_ft": 37.0,
+   "p05_p95_ft": 16.7,
+   "daily_abs_change_p50": 0.08,
+   "p95": 0.877,
+   "resolution_ft": NaN
+  },
+  {
+   "series": "Allatoona (USACE SAM)",
+   "first": "2007-10-01",
+   "last": "2026-10-13",
+   "days": 6944,
+   "complete_years": 18,
+   "complete_range": "2008-2025",
+   "range_ft": 34.2,
+   "p05_p95_ft": 16.0,
+   "daily_abs_change_p50": 0.13,
+   "p95": 0.92,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Pueblo Res. (USACE SPA, arid storage)",
+   "first": "1998-10-01",
+   "last": "2026-10-12",
+   "days": 10075,
+   "complete_years": 26,
+   "complete_range": "1999-2025",
+   "range_ft": 67.5,
+   "p05_p95_ft": 48.6,
+   "daily_abs_change_p50": 0.1,
+   "p95": 0.29,
+   "resolution_ft": NaN
+  },
+  {
+   "series": "Shasta (USBR via CWMS)",
+   "first": "2013-02-12",
+   "last": "2026-10-11",
+   "days": 4976,
+   "complete_years": 12,
+   "complete_range": "2014-2025",
+   "range_ft": 182.2,
+   "p05_p95_ft": 146.0,
+   "daily_abs_change_p50": 0.32,
+   "p95": 1.23,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Guntersville (TVA pilot, composite)",
+   "first": "2005-01-30",
+   "last": "2026-10-13",
+   "days": 7404,
+   "complete_years": 17,
+   "complete_range": "2007-2025",
+   "range_ft": 3.1,
+   "p05_p95_ft": 1.5,
+   "daily_abs_change_p50": 0.1,
+   "p95": 0.41,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Wheeler (TVA pilot, composite)",
+   "first": "2005-11-23",
+   "last": "2026-10-13",
+   "days": 7137,
+   "complete_years": 18,
+   "complete_range": "2006-2025",
+   "range_ft": 6.8,
+   "p05_p95_ft": 4.5,
+   "daily_abs_change_p50": 0.1,
+   "p95": 0.7,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Wilson (TVA pilot, composite)",
+   "first": "2005-01-30",
+   "last": "2026-10-13",
+   "days": 7406,
+   "complete_years": 18,
+   "complete_range": "2006-2025",
+   "range_ft": 3.4,
+   "p05_p95_ft": 2.3,
+   "daily_abs_change_p50": 0.2,
+   "p95": 0.8,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Pickwick (TVA pilot, composite)",
+   "first": "2003-01-14",
+   "last": "2026-10-13",
+   "days": 6209,
+   "complete_years": 16,
+   "complete_range": "2003-2025",
+   "range_ft": 10.0,
+   "p05_p95_ft": 5.4,
+   "daily_abs_change_p50": 0.2,
+   "p95": 0.9,
+   "resolution_ft": 0.01
+  },
+  {
+   "series": "Lake Erie (NOAA, natural Great Lake)",
+   "first": "1962-01-01",
+   "last": "2026-09-30",
+   "days": 23587,
+   "complete_years": 64,
+   "complete_range": "1962-2025",
+   "range_ft": 6.6,
+   "p05_p95_ft": 3.5,
+   "daily_abs_change_p50": 0.058,
+   "p95": 0.298,
+   "resolution_ft": NaN
+  },
+  {
+   "series": "Lake Champlain (USGS, natural)",
+   "first": "1907-05-01",
+   "last": "2026-10-11",
+   "days": 39319,
+   "complete_years": 88,
+   "complete_range": "1938-2025",
+   "range_ft": 10.6,
+   "p05_p95_ft": 5.5,
+   "daily_abs_change_p50": 0.04,
+   "p95": 0.16,
+   "resolution_ft": 0.01
+  }
+ ],
+ "engine_reproduction_hartwell": {
+  "basis_years": "1996-2025",
+  "n_basis": 30,
+  "p10": 649.89,
+  "p50": 655.58,
+  "p90": 660.54,
+  "engine_doc": {
+   "p10": 649.89,
+   "p50": 655.58,
+   "p90": 660.54
+  },
+  "p02": 643.34,
+  "p98": 661.89
+ },
+ "min_years": {
+  "Hartwell (USACE SAS, storage/hydro)": {
+   "n_complete_years": 64,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 57.2,
+     "edge_rmse_p90_pct_of_width": 25.7,
+     "p50_rmse_pct_of_width": 24.4,
+     "median_width_ft": 9.72,
+     "class_agree_pct": 42.3,
+     "unusual_rate_pct": 61.2,
+     "ref_unusual_rate_pct": 23.6,
+     "very_unusual_rate_pct": 57.4
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 52.3,
+     "edge_rmse_p90_pct_of_width": 17.3,
+     "p50_rmse_pct_of_width": 21.9,
+     "median_width_ft": 9.63,
+     "class_agree_pct": 55.5,
+     "unusual_rate_pct": 46.6,
+     "ref_unusual_rate_pct": 22.6,
+     "very_unusual_rate_pct": 42.1
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 46.6,
+     "edge_rmse_p90_pct_of_width": 16.3,
+     "p50_rmse_pct_of_width": 17.7,
+     "median_width_ft": 9.65,
+     "class_agree_pct": 61.8,
+     "unusual_rate_pct": 43.2,
+     "ref_unusual_rate_pct": 23.5,
+     "very_unusual_rate_pct": 38.2
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 41.5,
+     "edge_rmse_p90_pct_of_width": 13.9,
+     "p50_rmse_pct_of_width": 17.5,
+     "median_width_ft": 9.6,
+     "class_agree_pct": 66.8,
+     "unusual_rate_pct": 35.5,
+     "ref_unusual_rate_pct": 24.4,
+     "very_unusual_rate_pct": 29.0
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 40.0,
+     "edge_rmse_p90_pct_of_width": 11.4,
+     "p50_rmse_pct_of_width": 12.8,
+     "median_width_ft": 9.75,
+     "class_agree_pct": 77.0,
+     "unusual_rate_pct": 23.7,
+     "ref_unusual_rate_pct": 18.8,
+     "very_unusual_rate_pct": 18.4
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 35.6,
+     "edge_rmse_p90_pct_of_width": 8.9,
+     "p50_rmse_pct_of_width": 10.7,
+     "median_width_ft": 9.75,
+     "class_agree_pct": 79.3,
+     "unusual_rate_pct": 26.7,
+     "ref_unusual_rate_pct": 18.6,
+     "very_unusual_rate_pct": 13.0
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 31.9,
+     "edge_rmse_p90_pct_of_width": 6.6,
+     "p50_rmse_pct_of_width": 7.7,
+     "median_width_ft": 9.75,
+     "class_agree_pct": 85.7,
+     "unusual_rate_pct": 22.2,
+     "ref_unusual_rate_pct": 18.5,
+     "very_unusual_rate_pct": 8.9
+    },
+    "20": {
+     "edge_rmse_p10_pct_of_width": 26.6,
+     "edge_rmse_p90_pct_of_width": 5.6,
+     "p50_rmse_pct_of_width": 6.1,
+     "median_width_ft": 9.73,
+     "class_agree_pct": 87.2,
+     "unusual_rate_pct": 24.2,
+     "ref_unusual_rate_pct": 21.0,
+     "very_unusual_rate_pct": 8.1
+    }
+   }
+  },
+  "Kentucky Lake (TVA)": {
+   "n_complete_years": 27,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 22.5,
+     "edge_rmse_p90_pct_of_width": 65.6,
+     "p50_rmse_pct_of_width": 25.4,
+     "median_width_ft": 1.56,
+     "class_agree_pct": 66.7,
+     "unusual_rate_pct": 38.7,
+     "ref_unusual_rate_pct": 20.5,
+     "very_unusual_rate_pct": 27.0
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 20.2,
+     "edge_rmse_p90_pct_of_width": 64.0,
+     "p50_rmse_pct_of_width": 18.6,
+     "median_width_ft": 1.56,
+     "class_agree_pct": 73.3,
+     "unusual_rate_pct": 32.4,
+     "ref_unusual_rate_pct": 19.7,
+     "very_unusual_rate_pct": 19.6
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 19.7,
+     "edge_rmse_p90_pct_of_width": 61.2,
+     "p50_rmse_pct_of_width": 14.1,
+     "median_width_ft": 1.56,
+     "class_agree_pct": 78.7,
+     "unusual_rate_pct": 28.2,
+     "ref_unusual_rate_pct": 20.3,
+     "very_unusual_rate_pct": 15.9
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 19.9,
+     "edge_rmse_p90_pct_of_width": 56.6,
+     "p50_rmse_pct_of_width": 11.7,
+     "median_width_ft": 1.55,
+     "class_agree_pct": 80.9,
+     "unusual_rate_pct": 27.1,
+     "ref_unusual_rate_pct": 20.3,
+     "very_unusual_rate_pct": 13.5
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 19.2,
+     "edge_rmse_p90_pct_of_width": 42.9,
+     "p50_rmse_pct_of_width": 9.0,
+     "median_width_ft": 1.56,
+     "class_agree_pct": 84.3,
+     "unusual_rate_pct": 24.0,
+     "ref_unusual_rate_pct": 19.7,
+     "very_unusual_rate_pct": 11.3
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 12.0,
+     "edge_rmse_p90_pct_of_width": 31.1,
+     "p50_rmse_pct_of_width": 6.9,
+     "median_width_ft": 1.56,
+     "class_agree_pct": 88.6,
+     "unusual_rate_pct": 22.4,
+     "ref_unusual_rate_pct": 20.6,
+     "very_unusual_rate_pct": 9.7
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 7.9,
+     "edge_rmse_p90_pct_of_width": 22.1,
+     "p50_rmse_pct_of_width": 4.7,
+     "median_width_ft": 1.55,
+     "class_agree_pct": 91.9,
+     "unusual_rate_pct": 21.9,
+     "ref_unusual_rate_pct": 20.8,
+     "very_unusual_rate_pct": 8.3
+    },
+    "20": {
+     "edge_rmse_p10_pct_of_width": 5.0,
+     "edge_rmse_p90_pct_of_width": 13.4,
+     "p50_rmse_pct_of_width": 3.0,
+     "median_width_ft": 1.55,
+     "class_agree_pct": 95.2,
+     "unusual_rate_pct": 20.5,
+     "ref_unusual_rate_pct": 20.2,
+     "very_unusual_rate_pct": 6.9
+    }
+   }
+  },
+  "Cave Run (USACE LRL flood control)": {
+   "n_complete_years": 24,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 20.3,
+     "edge_rmse_p90_pct_of_width": 107.7,
+     "p50_rmse_pct_of_width": 35.9,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 55.8,
+     "unusual_rate_pct": 49.7,
+     "ref_unusual_rate_pct": 24.3,
+     "very_unusual_rate_pct": 40.9
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 14.7,
+     "edge_rmse_p90_pct_of_width": 107.6,
+     "p50_rmse_pct_of_width": 21.9,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 66.1,
+     "unusual_rate_pct": 38.8,
+     "ref_unusual_rate_pct": 22.9,
+     "very_unusual_rate_pct": 28.1
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 13.5,
+     "edge_rmse_p90_pct_of_width": 117.8,
+     "p50_rmse_pct_of_width": 16.5,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 70.7,
+     "unusual_rate_pct": 34.0,
+     "ref_unusual_rate_pct": 21.3,
+     "very_unusual_rate_pct": 22.9
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 12.5,
+     "edge_rmse_p90_pct_of_width": 114.2,
+     "p50_rmse_pct_of_width": 16.0,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 75.6,
+     "unusual_rate_pct": 30.7,
+     "ref_unusual_rate_pct": 24.0,
+     "very_unusual_rate_pct": 19.0
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 10.3,
+     "edge_rmse_p90_pct_of_width": 107.3,
+     "p50_rmse_pct_of_width": 11.3,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 80.6,
+     "unusual_rate_pct": 25.9,
+     "ref_unusual_rate_pct": 22.2,
+     "very_unusual_rate_pct": 14.4
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 7.8,
+     "edge_rmse_p90_pct_of_width": 56.8,
+     "p50_rmse_pct_of_width": 8.1,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 84.8,
+     "unusual_rate_pct": 26.1,
+     "ref_unusual_rate_pct": 23.6,
+     "very_unusual_rate_pct": 12.0
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 5.9,
+     "edge_rmse_p90_pct_of_width": 31.3,
+     "p50_rmse_pct_of_width": 5.0,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 90.9,
+     "unusual_rate_pct": 22.9,
+     "ref_unusual_rate_pct": 23.0,
+     "very_unusual_rate_pct": 8.7
+    },
+    "20": {
+     "edge_rmse_p10_pct_of_width": 2.9,
+     "edge_rmse_p90_pct_of_width": 17.4,
+     "p50_rmse_pct_of_width": 2.6,
+     "median_width_ft": 5.15,
+     "class_agree_pct": 95.2,
+     "unusual_rate_pct": 24.6,
+     "ref_unusual_rate_pct": 24.8,
+     "very_unusual_rate_pct": 8.2
+    }
+   }
+  },
+  "Allatoona (USACE SAM)": {
+   "n_complete_years": 18,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 34.9,
+     "edge_rmse_p90_pct_of_width": 49.4,
+     "p50_rmse_pct_of_width": 25.5,
+     "median_width_ft": 5.4,
+     "class_agree_pct": 57.2,
+     "unusual_rate_pct": 48.1,
+     "ref_unusual_rate_pct": 23.2,
+     "very_unusual_rate_pct": 40.2
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 28.1,
+     "edge_rmse_p90_pct_of_width": 46.1,
+     "p50_rmse_pct_of_width": 20.9,
+     "median_width_ft": 5.41,
+     "class_agree_pct": 68.0,
+     "unusual_rate_pct": 37.6,
+     "ref_unusual_rate_pct": 21.6,
+     "very_unusual_rate_pct": 27.8
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 24.3,
+     "edge_rmse_p90_pct_of_width": 39.0,
+     "p50_rmse_pct_of_width": 16.0,
+     "median_width_ft": 5.4,
+     "class_agree_pct": 73.0,
+     "unusual_rate_pct": 33.1,
+     "ref_unusual_rate_pct": 22.8,
+     "very_unusual_rate_pct": 22.1
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 21.7,
+     "edge_rmse_p90_pct_of_width": 34.4,
+     "p50_rmse_pct_of_width": 14.3,
+     "median_width_ft": 5.39,
+     "class_agree_pct": 77.2,
+     "unusual_rate_pct": 30.4,
+     "ref_unusual_rate_pct": 22.7,
+     "very_unusual_rate_pct": 18.9
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 17.1,
+     "edge_rmse_p90_pct_of_width": 28.3,
+     "p50_rmse_pct_of_width": 11.2,
+     "median_width_ft": 5.47,
+     "class_agree_pct": 82.7,
+     "unusual_rate_pct": 26.5,
+     "ref_unusual_rate_pct": 22.5,
+     "very_unusual_rate_pct": 14.7
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 14.2,
+     "edge_rmse_p90_pct_of_width": 17.3,
+     "p50_rmse_pct_of_width": 8.0,
+     "median_width_ft": 5.47,
+     "class_agree_pct": 87.9,
+     "unusual_rate_pct": 25.8,
+     "ref_unusual_rate_pct": 22.4,
+     "very_unusual_rate_pct": 10.7
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 7.2,
+     "edge_rmse_p90_pct_of_width": 8.3,
+     "p50_rmse_pct_of_width": 4.0,
+     "median_width_ft": 5.41,
+     "class_agree_pct": 95.2,
+     "unusual_rate_pct": 23.3,
+     "ref_unusual_rate_pct": 22.2,
+     "very_unusual_rate_pct": 8.3
+    }
+   }
+  },
+  "Pueblo Res. (USACE SPA, arid storage)": {
+   "n_complete_years": 26,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 55.0,
+     "edge_rmse_p90_pct_of_width": 20.4,
+     "p50_rmse_pct_of_width": 29.0,
+     "median_width_ft": 37.44,
+     "class_agree_pct": 49.1,
+     "unusual_rate_pct": 58.6,
+     "ref_unusual_rate_pct": 23.2,
+     "very_unusual_rate_pct": 57.3
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 48.5,
+     "edge_rmse_p90_pct_of_width": 14.8,
+     "p50_rmse_pct_of_width": 24.7,
+     "median_width_ft": 37.52,
+     "class_agree_pct": 58.0,
+     "unusual_rate_pct": 45.9,
+     "ref_unusual_rate_pct": 18.8,
+     "very_unusual_rate_pct": 43.6
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 42.1,
+     "edge_rmse_p90_pct_of_width": 10.7,
+     "p50_rmse_pct_of_width": 22.9,
+     "median_width_ft": 37.44,
+     "class_agree_pct": 62.5,
+     "unusual_rate_pct": 39.7,
+     "ref_unusual_rate_pct": 23.8,
+     "very_unusual_rate_pct": 37.0
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 34.9,
+     "edge_rmse_p90_pct_of_width": 9.6,
+     "p50_rmse_pct_of_width": 22.8,
+     "median_width_ft": 37.44,
+     "class_agree_pct": 70.7,
+     "unusual_rate_pct": 30.7,
+     "ref_unusual_rate_pct": 18.5,
+     "very_unusual_rate_pct": 27.6
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 27.6,
+     "edge_rmse_p90_pct_of_width": 8.4,
+     "p50_rmse_pct_of_width": 15.3,
+     "median_width_ft": 37.44,
+     "class_agree_pct": 78.5,
+     "unusual_rate_pct": 23.2,
+     "ref_unusual_rate_pct": 21.4,
+     "very_unusual_rate_pct": 20.0
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 23.2,
+     "edge_rmse_p90_pct_of_width": 6.4,
+     "p50_rmse_pct_of_width": 9.1,
+     "median_width_ft": 37.44,
+     "class_agree_pct": 82.7,
+     "unusual_rate_pct": 30.5,
+     "ref_unusual_rate_pct": 23.9,
+     "very_unusual_rate_pct": 13.5
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 15.3,
+     "edge_rmse_p90_pct_of_width": 4.8,
+     "p50_rmse_pct_of_width": 5.6,
+     "median_width_ft": 37.43,
+     "class_agree_pct": 90.2,
+     "unusual_rate_pct": 23.2,
+     "ref_unusual_rate_pct": 23.4,
+     "very_unusual_rate_pct": 11.4
+    },
+    "20": {
+     "edge_rmse_p10_pct_of_width": 9.7,
+     "edge_rmse_p90_pct_of_width": 3.5,
+     "p50_rmse_pct_of_width": 3.7,
+     "median_width_ft": 37.35,
+     "class_agree_pct": 93.8,
+     "unusual_rate_pct": 24.3,
+     "ref_unusual_rate_pct": 23.2,
+     "very_unusual_rate_pct": 8.5
+    }
+   }
+  },
+  "Shasta (USBR via CWMS)": {
+   "n_complete_years": 12,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 50.5,
+     "edge_rmse_p90_pct_of_width": 27.6,
+     "p50_rmse_pct_of_width": 30.4,
+     "median_width_ft": 106.71,
+     "class_agree_pct": 45.4,
+     "unusual_rate_pct": 63.8,
+     "ref_unusual_rate_pct": 32.9,
+     "very_unusual_rate_pct": 61.8
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 33.8,
+     "edge_rmse_p90_pct_of_width": 17.0,
+     "p50_rmse_pct_of_width": 36.5,
+     "median_width_ft": 106.99,
+     "class_agree_pct": 61.0,
+     "unusual_rate_pct": 50.9,
+     "ref_unusual_rate_pct": 33.2,
+     "very_unusual_rate_pct": 47.9
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 28.1,
+     "edge_rmse_p90_pct_of_width": 10.6,
+     "p50_rmse_pct_of_width": 26.7,
+     "median_width_ft": 106.99,
+     "class_agree_pct": 69.7,
+     "unusual_rate_pct": 41.7,
+     "ref_unusual_rate_pct": 29.2,
+     "very_unusual_rate_pct": 37.9
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 21.6,
+     "edge_rmse_p90_pct_of_width": 7.6,
+     "p50_rmse_pct_of_width": 26.3,
+     "median_width_ft": 106.71,
+     "class_agree_pct": 72.8,
+     "unusual_rate_pct": 33.8,
+     "ref_unusual_rate_pct": 30.8,
+     "very_unusual_rate_pct": 29.5
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 14.6,
+     "edge_rmse_p90_pct_of_width": 3.7,
+     "p50_rmse_pct_of_width": 17.5,
+     "median_width_ft": 106.26,
+     "class_agree_pct": 78.8,
+     "unusual_rate_pct": 29.2,
+     "ref_unusual_rate_pct": 35.3,
+     "very_unusual_rate_pct": 23.5
+    }
+   }
+  },
+  "Guntersville (TVA pilot, composite)": {
+   "n_complete_years": 17,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 24.6,
+     "edge_rmse_p90_pct_of_width": 24.0,
+     "p50_rmse_pct_of_width": 19.6,
+     "median_width_ft": 0.83,
+     "class_agree_pct": 72.9,
+     "unusual_rate_pct": 32.0,
+     "ref_unusual_rate_pct": 17.1,
+     "very_unusual_rate_pct": 19.1
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 19.6,
+     "edge_rmse_p90_pct_of_width": 19.7,
+     "p50_rmse_pct_of_width": 15.2,
+     "median_width_ft": 0.83,
+     "class_agree_pct": 78.6,
+     "unusual_rate_pct": 28.9,
+     "ref_unusual_rate_pct": 17.8,
+     "very_unusual_rate_pct": 13.4
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 16.6,
+     "edge_rmse_p90_pct_of_width": 16.4,
+     "p50_rmse_pct_of_width": 12.6,
+     "median_width_ft": 0.83,
+     "class_agree_pct": 83.3,
+     "unusual_rate_pct": 24.5,
+     "ref_unusual_rate_pct": 17.7,
+     "very_unusual_rate_pct": 11.0
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 14.5,
+     "edge_rmse_p90_pct_of_width": 14.6,
+     "p50_rmse_pct_of_width": 11.2,
+     "median_width_ft": 0.83,
+     "class_agree_pct": 85.6,
+     "unusual_rate_pct": 24.5,
+     "ref_unusual_rate_pct": 18.3,
+     "very_unusual_rate_pct": 9.0
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 11.2,
+     "edge_rmse_p90_pct_of_width": 11.5,
+     "p50_rmse_pct_of_width": 8.5,
+     "median_width_ft": 0.83,
+     "class_agree_pct": 89.2,
+     "unusual_rate_pct": 21.7,
+     "ref_unusual_rate_pct": 17.1,
+     "very_unusual_rate_pct": 7.5
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 8.4,
+     "edge_rmse_p90_pct_of_width": 8.4,
+     "p50_rmse_pct_of_width": 6.5,
+     "median_width_ft": 0.83,
+     "class_agree_pct": 93.0,
+     "unusual_rate_pct": 19.4,
+     "ref_unusual_rate_pct": 17.7,
+     "very_unusual_rate_pct": 5.3
+    }
+   }
+  },
+  "Wheeler (TVA pilot, composite)": {
+   "n_complete_years": 18,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 26.4,
+     "edge_rmse_p90_pct_of_width": 28.9,
+     "p50_rmse_pct_of_width": 20.5,
+     "median_width_ft": 1.09,
+     "class_agree_pct": 72.4,
+     "unusual_rate_pct": 31.7,
+     "ref_unusual_rate_pct": 18.1,
+     "very_unusual_rate_pct": 20.4
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 21.6,
+     "edge_rmse_p90_pct_of_width": 24.5,
+     "p50_rmse_pct_of_width": 15.6,
+     "median_width_ft": 1.1,
+     "class_agree_pct": 79.7,
+     "unusual_rate_pct": 27.0,
+     "ref_unusual_rate_pct": 18.4,
+     "very_unusual_rate_pct": 13.0
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 19.5,
+     "edge_rmse_p90_pct_of_width": 20.9,
+     "p50_rmse_pct_of_width": 13.7,
+     "median_width_ft": 1.09,
+     "class_agree_pct": 83.0,
+     "unusual_rate_pct": 24.1,
+     "ref_unusual_rate_pct": 17.9,
+     "very_unusual_rate_pct": 11.4
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 17.0,
+     "edge_rmse_p90_pct_of_width": 18.4,
+     "p50_rmse_pct_of_width": 12.8,
+     "median_width_ft": 1.09,
+     "class_agree_pct": 85.3,
+     "unusual_rate_pct": 24.0,
+     "ref_unusual_rate_pct": 18.9,
+     "very_unusual_rate_pct": 9.8
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 13.4,
+     "edge_rmse_p90_pct_of_width": 15.5,
+     "p50_rmse_pct_of_width": 9.3,
+     "median_width_ft": 1.09,
+     "class_agree_pct": 89.8,
+     "unusual_rate_pct": 20.4,
+     "ref_unusual_rate_pct": 17.6,
+     "very_unusual_rate_pct": 7.6
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 11.1,
+     "edge_rmse_p90_pct_of_width": 10.4,
+     "p50_rmse_pct_of_width": 6.5,
+     "median_width_ft": 1.09,
+     "class_agree_pct": 93.2,
+     "unusual_rate_pct": 19.6,
+     "ref_unusual_rate_pct": 18.5,
+     "very_unusual_rate_pct": 6.1
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 5.4,
+     "edge_rmse_p90_pct_of_width": 4.9,
+     "p50_rmse_pct_of_width": 3.8,
+     "median_width_ft": 1.1,
+     "class_agree_pct": 97.2,
+     "unusual_rate_pct": 17.9,
+     "ref_unusual_rate_pct": 17.6,
+     "very_unusual_rate_pct": 5.0
+    }
+   }
+  },
+  "Wilson (TVA pilot, composite)": {
+   "n_complete_years": 18,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 23.2,
+     "edge_rmse_p90_pct_of_width": 17.8,
+     "p50_rmse_pct_of_width": 15.9,
+     "median_width_ft": 0.9,
+     "class_agree_pct": 78.5,
+     "unusual_rate_pct": 26.7,
+     "ref_unusual_rate_pct": 16.2,
+     "very_unusual_rate_pct": 13.3
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 19.2,
+     "edge_rmse_p90_pct_of_width": 14.9,
+     "p50_rmse_pct_of_width": 12.5,
+     "median_width_ft": 0.9,
+     "class_agree_pct": 82.5,
+     "unusual_rate_pct": 24.9,
+     "ref_unusual_rate_pct": 17.2,
+     "very_unusual_rate_pct": 9.7
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 16.0,
+     "edge_rmse_p90_pct_of_width": 12.9,
+     "p50_rmse_pct_of_width": 10.7,
+     "median_width_ft": 0.9,
+     "class_agree_pct": 86.0,
+     "unusual_rate_pct": 22.3,
+     "ref_unusual_rate_pct": 17.8,
+     "very_unusual_rate_pct": 8.8
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 13.6,
+     "edge_rmse_p90_pct_of_width": 10.9,
+     "p50_rmse_pct_of_width": 9.4,
+     "median_width_ft": 0.9,
+     "class_agree_pct": 88.2,
+     "unusual_rate_pct": 21.1,
+     "ref_unusual_rate_pct": 17.3,
+     "very_unusual_rate_pct": 6.9
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 11.2,
+     "edge_rmse_p90_pct_of_width": 9.0,
+     "p50_rmse_pct_of_width": 7.7,
+     "median_width_ft": 0.9,
+     "class_agree_pct": 90.8,
+     "unusual_rate_pct": 20.2,
+     "ref_unusual_rate_pct": 17.6,
+     "very_unusual_rate_pct": 6.2
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 8.1,
+     "edge_rmse_p90_pct_of_width": 6.8,
+     "p50_rmse_pct_of_width": 5.9,
+     "median_width_ft": 0.9,
+     "class_agree_pct": 94.3,
+     "unusual_rate_pct": 18.2,
+     "ref_unusual_rate_pct": 17.3,
+     "very_unusual_rate_pct": 4.8
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 4.6,
+     "edge_rmse_p90_pct_of_width": 3.5,
+     "p50_rmse_pct_of_width": 3.5,
+     "median_width_ft": 0.9,
+     "class_agree_pct": 97.6,
+     "unusual_rate_pct": 17.2,
+     "ref_unusual_rate_pct": 17.2,
+     "very_unusual_rate_pct": 3.8
+    }
+   }
+  },
+  "Pickwick (TVA pilot, composite)": {
+   "n_complete_years": 16,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 25.0,
+     "edge_rmse_p90_pct_of_width": 45.6,
+     "p50_rmse_pct_of_width": 19.9,
+     "median_width_ft": 1.98,
+     "class_agree_pct": 70.2,
+     "unusual_rate_pct": 35.0,
+     "ref_unusual_rate_pct": 19.7,
+     "very_unusual_rate_pct": 22.8
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 25.7,
+     "edge_rmse_p90_pct_of_width": 42.8,
+     "p50_rmse_pct_of_width": 14.4,
+     "median_width_ft": 1.98,
+     "class_agree_pct": 76.5,
+     "unusual_rate_pct": 31.4,
+     "ref_unusual_rate_pct": 22.5,
+     "very_unusual_rate_pct": 17.4
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 22.6,
+     "edge_rmse_p90_pct_of_width": 39.1,
+     "p50_rmse_pct_of_width": 10.6,
+     "median_width_ft": 1.96,
+     "class_agree_pct": 80.8,
+     "unusual_rate_pct": 26.2,
+     "ref_unusual_rate_pct": 21.0,
+     "very_unusual_rate_pct": 13.3
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 19.4,
+     "edge_rmse_p90_pct_of_width": 36.4,
+     "p50_rmse_pct_of_width": 9.2,
+     "median_width_ft": 1.98,
+     "class_agree_pct": 83.9,
+     "unusual_rate_pct": 27.0,
+     "ref_unusual_rate_pct": 22.9,
+     "very_unusual_rate_pct": 12.7
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 14.8,
+     "edge_rmse_p90_pct_of_width": 29.9,
+     "p50_rmse_pct_of_width": 6.7,
+     "median_width_ft": 1.98,
+     "class_agree_pct": 88.5,
+     "unusual_rate_pct": 24.1,
+     "ref_unusual_rate_pct": 21.6,
+     "very_unusual_rate_pct": 10.2
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 10.4,
+     "edge_rmse_p90_pct_of_width": 17.9,
+     "p50_rmse_pct_of_width": 4.7,
+     "median_width_ft": 1.98,
+     "class_agree_pct": 93.0,
+     "unusual_rate_pct": 22.3,
+     "ref_unusual_rate_pct": 21.3,
+     "very_unusual_rate_pct": 8.0
+    }
+   }
+  },
+  "Lake Erie (NOAA, natural Great Lake)": {
+   "n_complete_years": 64,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 41.5,
+     "edge_rmse_p90_pct_of_width": 38.8,
+     "p50_rmse_pct_of_width": 26.8,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 38.8,
+     "unusual_rate_pct": 65.2,
+     "ref_unusual_rate_pct": 21.4,
+     "very_unusual_rate_pct": 60.3
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 34.3,
+     "edge_rmse_p90_pct_of_width": 32.2,
+     "p50_rmse_pct_of_width": 24.4,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 52.3,
+     "unusual_rate_pct": 49.3,
+     "ref_unusual_rate_pct": 22.5,
+     "very_unusual_rate_pct": 44.3
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 30.2,
+     "edge_rmse_p90_pct_of_width": 25.3,
+     "p50_rmse_pct_of_width": 20.0,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 58.7,
+     "unusual_rate_pct": 44.1,
+     "ref_unusual_rate_pct": 20.8,
+     "very_unusual_rate_pct": 38.6
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 25.7,
+     "edge_rmse_p90_pct_of_width": 22.6,
+     "p50_rmse_pct_of_width": 18.5,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 70.1,
+     "unusual_rate_pct": 32.6,
+     "ref_unusual_rate_pct": 19.6,
+     "very_unusual_rate_pct": 27.0
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 24.6,
+     "edge_rmse_p90_pct_of_width": 19.4,
+     "p50_rmse_pct_of_width": 16.5,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 73.6,
+     "unusual_rate_pct": 28.2,
+     "ref_unusual_rate_pct": 19.6,
+     "very_unusual_rate_pct": 23.7
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 17.8,
+     "edge_rmse_p90_pct_of_width": 16.2,
+     "p50_rmse_pct_of_width": 13.9,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 73.1,
+     "unusual_rate_pct": 33.5,
+     "ref_unusual_rate_pct": 24.2,
+     "very_unusual_rate_pct": 19.3
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 15.2,
+     "edge_rmse_p90_pct_of_width": 12.1,
+     "p50_rmse_pct_of_width": 10.6,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 81.5,
+     "unusual_rate_pct": 29.5,
+     "ref_unusual_rate_pct": 26.1,
+     "very_unusual_rate_pct": 13.0
+    },
+    "20": {
+     "edge_rmse_p10_pct_of_width": 13.1,
+     "edge_rmse_p90_pct_of_width": 10.3,
+     "p50_rmse_pct_of_width": 9.4,
+     "median_width_ft": 2.5,
+     "class_agree_pct": 85.1,
+     "unusual_rate_pct": 23.0,
+     "ref_unusual_rate_pct": 19.2,
+     "very_unusual_rate_pct": 7.6
+    }
+   }
+  },
+  "Lake Champlain (USGS, natural)": {
+   "n_complete_years": 88,
+   "by_k": {
+    "2": {
+     "edge_rmse_p10_pct_of_width": 33.9,
+     "edge_rmse_p90_pct_of_width": 44.6,
+     "p50_rmse_pct_of_width": 27.5,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 43.5,
+     "unusual_rate_pct": 59.8,
+     "ref_unusual_rate_pct": 19.9,
+     "very_unusual_rate_pct": 55.8
+    },
+    "3": {
+     "edge_rmse_p10_pct_of_width": 24.5,
+     "edge_rmse_p90_pct_of_width": 38.4,
+     "p50_rmse_pct_of_width": 24.0,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 59.8,
+     "unusual_rate_pct": 41.6,
+     "ref_unusual_rate_pct": 20.1,
+     "very_unusual_rate_pct": 36.1
+    },
+    "4": {
+     "edge_rmse_p10_pct_of_width": 21.4,
+     "edge_rmse_p90_pct_of_width": 34.5,
+     "p50_rmse_pct_of_width": 18.8,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 67.2,
+     "unusual_rate_pct": 36.5,
+     "ref_unusual_rate_pct": 20.2,
+     "very_unusual_rate_pct": 31.1
+    },
+    "5": {
+     "edge_rmse_p10_pct_of_width": 19.1,
+     "edge_rmse_p90_pct_of_width": 32.7,
+     "p50_rmse_pct_of_width": 18.2,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 67.3,
+     "unusual_rate_pct": 35.1,
+     "ref_unusual_rate_pct": 21.1,
+     "very_unusual_rate_pct": 28.6
+    },
+    "7": {
+     "edge_rmse_p10_pct_of_width": 16.2,
+     "edge_rmse_p90_pct_of_width": 28.5,
+     "p50_rmse_pct_of_width": 14.7,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 76.2,
+     "unusual_rate_pct": 27.6,
+     "ref_unusual_rate_pct": 22.8,
+     "very_unusual_rate_pct": 20.0
+    },
+    "10": {
+     "edge_rmse_p10_pct_of_width": 13.0,
+     "edge_rmse_p90_pct_of_width": 23.4,
+     "p50_rmse_pct_of_width": 12.3,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 80.4,
+     "unusual_rate_pct": 25.5,
+     "ref_unusual_rate_pct": 18.7,
+     "very_unusual_rate_pct": 12.9
+    },
+    "15": {
+     "edge_rmse_p10_pct_of_width": 11.0,
+     "edge_rmse_p90_pct_of_width": 19.5,
+     "p50_rmse_pct_of_width": 10.0,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 82.7,
+     "unusual_rate_pct": 25.0,
+     "ref_unusual_rate_pct": 19.8,
+     "very_unusual_rate_pct": 10.0
+    },
+    "20": {
+     "edge_rmse_p10_pct_of_width": 8.8,
+     "edge_rmse_p90_pct_of_width": 16.6,
+     "p50_rmse_pct_of_width": 8.4,
+     "median_width_ft": 3.11,
+     "class_agree_pct": 86.3,
+     "unusual_rate_pct": 25.8,
+     "ref_unusual_rate_pct": 23.3,
+     "very_unusual_rate_pct": 10.1
+    }
+   }
+  }
+ },
+ "rolling_origin": {
+  "Hartwell (USACE SAS, storage/hydro)": {
+   "n_complete_years": 64,
+   "target_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 76.1,
+     "cov96": 81.7,
+     "pinball": 0.7278,
+     "width80_ft": 8.02,
+     "n": 410
+    },
+    "last10y_w7": {
+     "cov80": 86.1,
+     "cov96": 94.6,
+     "pinball": 0.7313,
+     "width80_ft": 9.21,
+     "n": 410
+    },
+    "last20y_w7": {
+     "cov80": 88.8,
+     "cov96": 96.6,
+     "pinball": 0.8103,
+     "width80_ft": 11.25,
+     "n": 410
+    },
+    "last30y_w7": {
+     "cov80": 92.4,
+     "cov96": 98.5,
+     "pinball": 0.7153,
+     "width80_ft": 10.86,
+     "n": 410
+    },
+    "lastally_w7": {
+     "cov80": 89.0,
+     "cov96": 98.0,
+     "pinball": 0.6823,
+     "width80_ft": 10.03,
+     "n": 410
+    },
+    "all_halflife5y_w7": {
+     "cov80": 90.0,
+     "cov96": 96.3,
+     "pinball": 0.735,
+     "width80_ft": 10.27,
+     "n": 410
+    },
+    "all_halflife10y_w7": {
+     "cov80": 92.0,
+     "cov96": 97.8,
+     "pinball": 0.7299,
+     "width80_ft": 10.94,
+     "n": 410
+    },
+    "last30y_w3": {
+     "cov80": 92.9,
+     "cov96": 98.0,
+     "pinball": 0.7155,
+     "width80_ft": 10.74,
+     "n": 410
+    },
+    "last30y_w10": {
+     "cov80": 92.4,
+     "cov96": 98.5,
+     "pinball": 0.7151,
+     "width80_ft": 10.9,
+     "n": 410
+    },
+    "last30y_w14": {
+     "cov80": 92.9,
+     "cov96": 98.5,
+     "pinball": 0.7145,
+     "width80_ft": 10.95,
+     "n": 410
+    }
+   }
+  },
+  "Kentucky Lake (TVA)": {
+   "n_complete_years": 27,
+   "target_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 76.8,
+     "cov96": 90.9,
+     "pinball": 0.2261,
+     "width80_ft": 2.24,
+     "n": 405
+    },
+    "last10y_w7": {
+     "cov80": 81.2,
+     "cov96": 93.8,
+     "pinball": 0.2245,
+     "width80_ft": 2.34,
+     "n": 405
+    },
+    "last20y_w7": {
+     "cov80": 84.7,
+     "cov96": 95.8,
+     "pinball": 0.2183,
+     "width80_ft": 2.19,
+     "n": 405
+    },
+    "last30y_w7": {
+     "cov80": 84.0,
+     "cov96": 95.8,
+     "pinball": 0.2166,
+     "width80_ft": 2.14,
+     "n": 405
+    },
+    "lastally_w7": {
+     "cov80": 84.0,
+     "cov96": 95.8,
+     "pinball": 0.2166,
+     "width80_ft": 2.14,
+     "n": 405
+    },
+    "all_halflife5y_w7": {
+     "cov80": 83.5,
+     "cov96": 95.3,
+     "pinball": 0.2162,
+     "width80_ft": 2.24,
+     "n": 405
+    },
+    "all_halflife10y_w7": {
+     "cov80": 83.5,
+     "cov96": 96.0,
+     "pinball": 0.2163,
+     "width80_ft": 2.21,
+     "n": 405
+    },
+    "last30y_w3": {
+     "cov80": 82.5,
+     "cov96": 95.1,
+     "pinball": 0.219,
+     "width80_ft": 2.09,
+     "n": 405
+    },
+    "last30y_w10": {
+     "cov80": 85.2,
+     "cov96": 96.3,
+     "pinball": 0.2161,
+     "width80_ft": 2.2,
+     "n": 405
+    },
+    "last30y_w14": {
+     "cov80": 85.7,
+     "cov96": 97.0,
+     "pinball": 0.2172,
+     "width80_ft": 2.28,
+     "n": 405
+    }
+   }
+  },
+  "Cave Run (USACE LRL flood control)": {
+   "n_complete_years": 24,
+   "target_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 70.5,
+     "cov96": 80.5,
+     "pinball": 1.0313,
+     "width80_ft": 8.05,
+     "n": 410
+    },
+    "last10y_w7": {
+     "cov80": 74.1,
+     "cov96": 88.5,
+     "pinball": 0.958,
+     "width80_ft": 7.95,
+     "n": 410
+    },
+    "last20y_w7": {
+     "cov80": 78.3,
+     "cov96": 92.9,
+     "pinball": 0.9592,
+     "width80_ft": 7.61,
+     "n": 410
+    },
+    "last30y_w7": {
+     "cov80": 78.8,
+     "cov96": 92.7,
+     "pinball": 0.9571,
+     "width80_ft": 7.64,
+     "n": 410
+    },
+    "lastally_w7": {
+     "cov80": 78.8,
+     "cov96": 92.7,
+     "pinball": 0.9571,
+     "width80_ft": 7.64,
+     "n": 410
+    },
+    "all_halflife5y_w7": {
+     "cov80": 77.3,
+     "cov96": 92.2,
+     "pinball": 0.9437,
+     "width80_ft": 8.13,
+     "n": 410
+    },
+    "all_halflife10y_w7": {
+     "cov80": 78.5,
+     "cov96": 93.2,
+     "pinball": 0.9451,
+     "width80_ft": 7.98,
+     "n": 410
+    },
+    "last30y_w3": {
+     "cov80": 77.6,
+     "cov96": 90.0,
+     "pinball": 0.9662,
+     "width80_ft": 7.61,
+     "n": 410
+    },
+    "last30y_w10": {
+     "cov80": 79.5,
+     "cov96": 93.7,
+     "pinball": 0.9519,
+     "width80_ft": 7.61,
+     "n": 410
+    },
+    "last30y_w14": {
+     "cov80": 79.8,
+     "cov96": 94.6,
+     "pinball": 0.9488,
+     "width80_ft": 7.59,
+     "n": 410
+    }
+   }
+  },
+  "Allatoona (USACE SAM)": {
+   "n_complete_years": 18,
+   "target_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 70.7,
+     "cov96": 81.4,
+     "pinball": 0.6051,
+     "width80_ft": 5.1,
+     "n": 409
+    },
+    "last10y_w7": {
+     "cov80": 79.0,
+     "cov96": 92.2,
+     "pinball": 0.5712,
+     "width80_ft": 5.42,
+     "n": 409
+    },
+    "last20y_w7": {
+     "cov80": 82.6,
+     "cov96": 94.6,
+     "pinball": 0.5619,
+     "width80_ft": 5.6,
+     "n": 409
+    },
+    "last30y_w7": {
+     "cov80": 82.6,
+     "cov96": 94.6,
+     "pinball": 0.5619,
+     "width80_ft": 5.6,
+     "n": 409
+    },
+    "lastally_w7": {
+     "cov80": 82.6,
+     "cov96": 94.6,
+     "pinball": 0.5619,
+     "width80_ft": 5.6,
+     "n": 409
+    },
+    "all_halflife5y_w7": {
+     "cov80": 81.2,
+     "cov96": 95.1,
+     "pinball": 0.5522,
+     "width80_ft": 5.57,
+     "n": 409
+    },
+    "all_halflife10y_w7": {
+     "cov80": 82.2,
+     "cov96": 95.4,
+     "pinball": 0.555,
+     "width80_ft": 5.69,
+     "n": 409
+    },
+    "last30y_w3": {
+     "cov80": 79.2,
+     "cov96": 91.7,
+     "pinball": 0.5718,
+     "width80_ft": 5.5,
+     "n": 409
+    },
+    "last30y_w10": {
+     "cov80": 84.1,
+     "cov96": 96.3,
+     "pinball": 0.5576,
+     "width80_ft": 5.67,
+     "n": 409
+    },
+    "last30y_w14": {
+     "cov80": 85.6,
+     "cov96": 96.3,
+     "pinball": 0.5536,
+     "width80_ft": 5.76,
+     "n": 409
+    }
+   }
+  },
+  "Pueblo Res. (USACE SPA, arid storage)": {
+   "n_complete_years": 26,
+   "target_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 63.3,
+     "cov96": 69.0,
+     "pinball": 1.8162,
+     "width80_ft": 15.36,
+     "n": 406
+    },
+    "last10y_w7": {
+     "cov80": 78.1,
+     "cov96": 87.4,
+     "pinball": 1.5262,
+     "width80_ft": 17.86,
+     "n": 406
+    },
+    "last20y_w7": {
+     "cov80": 75.4,
+     "cov96": 92.1,
+     "pinball": 2.7969,
+     "width80_ft": 37.83,
+     "n": 406
+    },
+    "last30y_w7": {
+     "cov80": 77.1,
+     "cov96": 94.1,
+     "pinball": 2.9387,
+     "width80_ft": 39.52,
+     "n": 406
+    },
+    "lastally_w7": {
+     "cov80": 77.1,
+     "cov96": 94.1,
+     "pinball": 2.9387,
+     "width80_ft": 39.52,
+     "n": 406
+    },
+    "all_halflife5y_w7": {
+     "cov80": 82.0,
+     "cov96": 87.7,
+     "pinball": 1.8066,
+     "width80_ft": 27.23,
+     "n": 406
+    },
+    "all_halflife10y_w7": {
+     "cov80": 81.0,
+     "cov96": 92.6,
+     "pinball": 2.2081,
+     "width80_ft": 34.51,
+     "n": 406
+    },
+    "last30y_w3": {
+     "cov80": 75.9,
+     "cov96": 93.8,
+     "pinball": 2.937,
+     "width80_ft": 39.21,
+     "n": 406
+    },
+    "last30y_w10": {
+     "cov80": 77.3,
+     "cov96": 94.3,
+     "pinball": 2.937,
+     "width80_ft": 39.7,
+     "n": 406
+    },
+    "last30y_w14": {
+     "cov80": 77.8,
+     "cov96": 94.3,
+     "pinball": 2.9385,
+     "width80_ft": 39.78,
+     "n": 406
+    }
+   }
+  },
+  "Shasta (USBR via CWMS)": {
+   "n_complete_years": 12,
+   "target_years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 68.3,
+     "cov96": 71.5,
+     "pinball": 17.0004,
+     "width80_ft": 98.5,
+     "n": 246
+    },
+    "last10y_w7": {
+     "cov80": 72.8,
+     "cov96": 79.3,
+     "pinball": 12.0026,
+     "width80_ft": 107.7,
+     "n": 246
+    },
+    "last20y_w7": {
+     "cov80": 72.4,
+     "cov96": 79.3,
+     "pinball": 12.2673,
+     "width80_ft": 109.33,
+     "n": 246
+    },
+    "last30y_w7": {
+     "cov80": 72.4,
+     "cov96": 79.3,
+     "pinball": 12.2673,
+     "width80_ft": 109.33,
+     "n": 246
+    },
+    "lastally_w7": {
+     "cov80": 72.4,
+     "cov96": 79.3,
+     "pinball": 12.2673,
+     "width80_ft": 109.33,
+     "n": 246
+    },
+    "all_halflife5y_w7": {
+     "cov80": 69.1,
+     "cov96": 79.7,
+     "pinball": 12.9901,
+     "width80_ft": 107.87,
+     "n": 246
+    },
+    "all_halflife10y_w7": {
+     "cov80": 72.8,
+     "cov96": 79.7,
+     "pinball": 12.4981,
+     "width80_ft": 110.9,
+     "n": 246
+    },
+    "last30y_w3": {
+     "cov80": 72.0,
+     "cov96": 77.6,
+     "pinball": 12.3382,
+     "width80_ft": 109.21,
+     "n": 246
+    },
+    "last30y_w10": {
+     "cov80": 72.0,
+     "cov96": 81.3,
+     "pinball": 12.2221,
+     "width80_ft": 109.32,
+     "n": 246
+    },
+    "last30y_w14": {
+     "cov80": 71.1,
+     "cov96": 82.9,
+     "pinball": 12.1693,
+     "width80_ft": 109.36,
+     "n": 246
+    }
+   }
+  },
+  "Guntersville (TVA pilot, composite)": {
+   "n_complete_years": 17,
+   "target_years": [
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 79.5,
+     "cov96": 92.2,
+     "pinball": 0.0889,
+     "width80_ft": 0.87,
+     "n": 400
+    },
+    "last10y_w7": {
+     "cov80": 82.0,
+     "cov96": 95.2,
+     "pinball": 0.0883,
+     "width80_ft": 0.92,
+     "n": 400
+    },
+    "last20y_w7": {
+     "cov80": 82.8,
+     "cov96": 95.0,
+     "pinball": 0.0894,
+     "width80_ft": 0.92,
+     "n": 400
+    },
+    "last30y_w7": {
+     "cov80": 82.8,
+     "cov96": 95.0,
+     "pinball": 0.0894,
+     "width80_ft": 0.92,
+     "n": 400
+    },
+    "lastally_w7": {
+     "cov80": 82.8,
+     "cov96": 95.0,
+     "pinball": 0.0894,
+     "width80_ft": 0.92,
+     "n": 400
+    },
+    "all_halflife5y_w7": {
+     "cov80": 81.8,
+     "cov96": 95.8,
+     "pinball": 0.0871,
+     "width80_ft": 0.93,
+     "n": 400
+    },
+    "all_halflife10y_w7": {
+     "cov80": 82.5,
+     "cov96": 95.2,
+     "pinball": 0.088,
+     "width80_ft": 0.93,
+     "n": 400
+    },
+    "last30y_w3": {
+     "cov80": 79.2,
+     "cov96": 93.5,
+     "pinball": 0.091,
+     "width80_ft": 0.89,
+     "n": 400
+    },
+    "last30y_w10": {
+     "cov80": 82.5,
+     "cov96": 95.5,
+     "pinball": 0.0892,
+     "width80_ft": 0.92,
+     "n": 400
+    },
+    "last30y_w14": {
+     "cov80": 84.5,
+     "cov96": 96.0,
+     "pinball": 0.0888,
+     "width80_ft": 0.94,
+     "n": 400
+    }
+   }
+  },
+  "Wheeler (TVA pilot, composite)": {
+   "n_complete_years": 18,
+   "target_years": [
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 81.5,
+     "cov96": 91.3,
+     "pinball": 0.1536,
+     "width80_ft": 1.47,
+     "n": 401
+    },
+    "last10y_w7": {
+     "cov80": 85.0,
+     "cov96": 94.5,
+     "pinball": 0.1509,
+     "width80_ft": 1.52,
+     "n": 401
+    },
+    "last20y_w7": {
+     "cov80": 84.8,
+     "cov96": 95.5,
+     "pinball": 0.1523,
+     "width80_ft": 1.52,
+     "n": 401
+    },
+    "last30y_w7": {
+     "cov80": 84.8,
+     "cov96": 95.5,
+     "pinball": 0.1523,
+     "width80_ft": 1.52,
+     "n": 401
+    },
+    "lastally_w7": {
+     "cov80": 84.8,
+     "cov96": 95.5,
+     "pinball": 0.1523,
+     "width80_ft": 1.52,
+     "n": 401
+    },
+    "all_halflife5y_w7": {
+     "cov80": 85.3,
+     "cov96": 95.0,
+     "pinball": 0.1506,
+     "width80_ft": 1.56,
+     "n": 401
+    },
+    "all_halflife10y_w7": {
+     "cov80": 84.5,
+     "cov96": 95.5,
+     "pinball": 0.1511,
+     "width80_ft": 1.55,
+     "n": 401
+    },
+    "last30y_w3": {
+     "cov80": 82.0,
+     "cov96": 93.3,
+     "pinball": 0.1543,
+     "width80_ft": 1.49,
+     "n": 401
+    },
+    "last30y_w10": {
+     "cov80": 85.5,
+     "cov96": 96.0,
+     "pinball": 0.1517,
+     "width80_ft": 1.59,
+     "n": 401
+    },
+    "last30y_w14": {
+     "cov80": 86.3,
+     "cov96": 97.3,
+     "pinball": 0.1522,
+     "width80_ft": 1.67,
+     "n": 401
+    }
+   }
+  },
+  "Wilson (TVA pilot, composite)": {
+   "n_complete_years": 18,
+   "target_years": [
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 79.1,
+     "cov96": 93.5,
+     "pinball": 0.1005,
+     "width80_ft": 0.96,
+     "n": 401
+    },
+    "last10y_w7": {
+     "cov80": 81.0,
+     "cov96": 94.0,
+     "pinball": 0.0996,
+     "width80_ft": 0.96,
+     "n": 401
+    },
+    "last20y_w7": {
+     "cov80": 81.0,
+     "cov96": 94.3,
+     "pinball": 0.099,
+     "width80_ft": 0.95,
+     "n": 401
+    },
+    "last30y_w7": {
+     "cov80": 81.0,
+     "cov96": 94.3,
+     "pinball": 0.099,
+     "width80_ft": 0.95,
+     "n": 401
+    },
+    "lastally_w7": {
+     "cov80": 81.0,
+     "cov96": 94.3,
+     "pinball": 0.099,
+     "width80_ft": 0.95,
+     "n": 401
+    },
+    "all_halflife5y_w7": {
+     "cov80": 82.3,
+     "cov96": 95.0,
+     "pinball": 0.0984,
+     "width80_ft": 0.98,
+     "n": 401
+    },
+    "all_halflife10y_w7": {
+     "cov80": 81.5,
+     "cov96": 95.3,
+     "pinball": 0.0986,
+     "width80_ft": 0.97,
+     "n": 401
+    },
+    "last30y_w3": {
+     "cov80": 78.3,
+     "cov96": 92.0,
+     "pinball": 0.1,
+     "width80_ft": 0.9,
+     "n": 401
+    },
+    "last30y_w10": {
+     "cov80": 81.8,
+     "cov96": 95.8,
+     "pinball": 0.0981,
+     "width80_ft": 0.97,
+     "n": 401
+    },
+    "last30y_w14": {
+     "cov80": 82.5,
+     "cov96": 96.0,
+     "pinball": 0.0986,
+     "width80_ft": 0.99,
+     "n": 401
+    }
+   }
+  },
+  "Pickwick (TVA pilot, composite)": {
+   "n_complete_years": 16,
+   "target_years": [
+    2010,
+    2011,
+    2012,
+    2013,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 76.1,
+     "cov96": 90.9,
+     "pinball": 0.2362,
+     "width80_ft": 2.1,
+     "n": 394
+    },
+    "last10y_w7": {
+     "cov80": 81.0,
+     "cov96": 95.4,
+     "pinball": 0.2327,
+     "width80_ft": 2.25,
+     "n": 394
+    },
+    "last20y_w7": {
+     "cov80": 82.2,
+     "cov96": 95.4,
+     "pinball": 0.2345,
+     "width80_ft": 2.31,
+     "n": 394
+    },
+    "last30y_w7": {
+     "cov80": 82.2,
+     "cov96": 95.4,
+     "pinball": 0.2345,
+     "width80_ft": 2.31,
+     "n": 394
+    },
+    "lastally_w7": {
+     "cov80": 82.2,
+     "cov96": 95.4,
+     "pinball": 0.2345,
+     "width80_ft": 2.31,
+     "n": 394
+    },
+    "all_halflife5y_w7": {
+     "cov80": 81.0,
+     "cov96": 95.4,
+     "pinball": 0.2315,
+     "width80_ft": 2.26,
+     "n": 394
+    },
+    "all_halflife10y_w7": {
+     "cov80": 81.0,
+     "cov96": 95.9,
+     "pinball": 0.2321,
+     "width80_ft": 2.29,
+     "n": 394
+    },
+    "last30y_w3": {
+     "cov80": 80.7,
+     "cov96": 92.9,
+     "pinball": 0.2411,
+     "width80_ft": 2.3,
+     "n": 394
+    },
+    "last30y_w10": {
+     "cov80": 84.0,
+     "cov96": 97.0,
+     "pinball": 0.2334,
+     "width80_ft": 2.4,
+     "n": 394
+    },
+    "last30y_w14": {
+     "cov80": 83.8,
+     "cov96": 96.7,
+     "pinball": 0.2336,
+     "width80_ft": 2.42,
+     "n": 394
+    }
+   }
+  },
+  "Lake Erie (NOAA, natural Great Lake)": {
+   "n_complete_years": 64,
+   "target_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 34.6,
+     "cov96": 47.1,
+     "pinball": 0.3038,
+     "width80_ft": 1.6,
+     "n": 410
+    },
+    "last10y_w7": {
+     "cov80": 44.4,
+     "cov96": 62.7,
+     "pinball": 0.335,
+     "width80_ft": 2.03,
+     "n": 410
+    },
+    "last20y_w7": {
+     "cov80": 57.1,
+     "cov96": 79.0,
+     "pinball": 0.395,
+     "width80_ft": 2.2,
+     "n": 410
+    },
+    "last30y_w7": {
+     "cov80": 60.5,
+     "cov96": 83.2,
+     "pinball": 0.3403,
+     "width80_ft": 2.27,
+     "n": 410
+    },
+    "lastally_w7": {
+     "cov80": 67.8,
+     "cov96": 89.0,
+     "pinball": 0.2871,
+     "width80_ft": 2.55,
+     "n": 410
+    },
+    "all_halflife5y_w7": {
+     "cov80": 61.7,
+     "cov96": 76.8,
+     "pinball": 0.2946,
+     "width80_ft": 2.35,
+     "n": 410
+    },
+    "all_halflife10y_w7": {
+     "cov80": 62.9,
+     "cov96": 87.6,
+     "pinball": 0.3047,
+     "width80_ft": 2.37,
+     "n": 410
+    },
+    "last30y_w3": {
+     "cov80": 60.5,
+     "cov96": 82.9,
+     "pinball": 0.3406,
+     "width80_ft": 2.26,
+     "n": 410
+    },
+    "last30y_w10": {
+     "cov80": 60.2,
+     "cov96": 83.7,
+     "pinball": 0.3398,
+     "width80_ft": 2.28,
+     "n": 410
+    },
+    "last30y_w14": {
+     "cov80": 60.5,
+     "cov96": 83.9,
+     "pinball": 0.3394,
+     "width80_ft": 2.29,
+     "n": 410
+    }
+   }
+  },
+  "Lake Champlain (USGS, natural)": {
+   "n_complete_years": 88,
+   "target_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "results": {
+    "last5y_w7": {
+     "cov80": 64.9,
+     "cov96": 74.7,
+     "pinball": 0.3452,
+     "width80_ft": 2.52,
+     "n": 407
+    },
+    "last10y_w7": {
+     "cov80": 65.1,
+     "cov96": 81.1,
+     "pinball": 0.3258,
+     "width80_ft": 2.74,
+     "n": 407
+    },
+    "last20y_w7": {
+     "cov80": 71.7,
+     "cov96": 91.9,
+     "pinball": 0.308,
+     "width80_ft": 3.11,
+     "n": 407
+    },
+    "last30y_w7": {
+     "cov80": 72.2,
+     "cov96": 94.3,
+     "pinball": 0.2979,
+     "width80_ft": 3.05,
+     "n": 407
+    },
+    "lastally_w7": {
+     "cov80": 82.8,
+     "cov96": 97.5,
+     "pinball": 0.2806,
+     "width80_ft": 3.08,
+     "n": 407
+    },
+    "all_halflife5y_w7": {
+     "cov80": 72.0,
+     "cov96": 89.9,
+     "pinball": 0.3086,
+     "width80_ft": 2.95,
+     "n": 407
+    },
+    "all_halflife10y_w7": {
+     "cov80": 72.7,
+     "cov96": 94.3,
+     "pinball": 0.2982,
+     "width80_ft": 3.03,
+     "n": 407
+    },
+    "last30y_w3": {
+     "cov80": 71.5,
+     "cov96": 94.3,
+     "pinball": 0.2989,
+     "width80_ft": 3.0,
+     "n": 407
+    },
+    "last30y_w10": {
+     "cov80": 73.0,
+     "cov96": 94.8,
+     "pinball": 0.2975,
+     "width80_ft": 3.06,
+     "n": 407
+    },
+    "last30y_w14": {
+     "cov80": 73.0,
+     "cov96": 95.1,
+     "pinball": 0.2972,
+     "width80_ft": 3.1,
+     "n": 407
+    }
+   }
+  }
+ },
+ "bands_extremes": {
+  "Hartwell (USACE SAS, storage/hydro)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 7.6,
+    "p05-p95": 3.7,
+    "p02-p98": 1.5
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2008,
+    2002
+   ],
+   "drop2_extreme_median_shift_p10_ft": 1.48,
+   "drop2_median_shift_p90_ft": 0.059,
+   "drop2_median_shift_p50_ft": 0.175,
+   "drop2_max_abs_shift_ft": 2.43,
+   "median_band_width_ft": 9.71
+  },
+  "Kentucky Lake (TVA)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 16.0,
+    "p05-p95": 7.9,
+    "p02-p98": 4.2
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2011,
+    2008
+   ],
+   "drop2_extreme_median_shift_p10_ft": -0.008,
+   "drop2_median_shift_p90_ft": -0.04,
+   "drop2_median_shift_p50_ft": -0.01,
+   "drop2_max_abs_shift_ft": 1.56,
+   "median_band_width_ft": 1.56
+  },
+  "Cave Run (USACE LRL flood control)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 21.2,
+    "p05-p95": 11.7,
+    "p02-p98": 7.3
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2025,
+    2011
+   ],
+   "drop2_extreme_median_shift_p10_ft": -0.013,
+   "drop2_median_shift_p90_ft": -0.096,
+   "drop2_median_shift_p50_ft": -0.027,
+   "drop2_max_abs_shift_ft": 14.49,
+   "median_band_width_ft": 4.93
+  },
+  "Allatoona (USACE SAM)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 17.4,
+    "p05-p95": 9.8,
+    "p02-p98": 5.4
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2009,
+    2008
+   ],
+   "drop2_extreme_median_shift_p10_ft": 0.009,
+   "drop2_median_shift_p90_ft": -0.066,
+   "drop2_median_shift_p50_ft": 0.0,
+   "drop2_max_abs_shift_ft": 2.15,
+   "median_band_width_ft": 5.78
+  },
+  "Pueblo Res. (USACE SPA, arid storage)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 22.9,
+    "p05-p95": 9.6,
+    "p02-p98": 5.9
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2003,
+    2004
+   ],
+   "drop2_extreme_median_shift_p10_ft": 3.034,
+   "drop2_median_shift_p90_ft": 0.133,
+   "drop2_median_shift_p50_ft": 0.555,
+   "drop2_max_abs_shift_ft": 9.61,
+   "median_band_width_ft": 37.03
+  },
+  "Shasta (USBR via CWMS)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 27.6,
+    "p05-p95": 22.8,
+    "p02-p98": 20.7
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2022,
+    2014
+   ],
+   "drop2_extreme_median_shift_p10_ft": 21.162,
+   "drop2_median_shift_p90_ft": 0.464,
+   "drop2_median_shift_p50_ft": 7.08,
+   "drop2_max_abs_shift_ft": 44.89,
+   "median_band_width_ft": 114.23
+  },
+  "Guntersville (TVA pilot, composite)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 17.2,
+    "p05-p95": 10.2,
+    "p02-p98": 5.0
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2015,
+    2014
+   ],
+   "drop2_extreme_median_shift_p10_ft": 0.0,
+   "drop2_median_shift_p90_ft": -0.004,
+   "drop2_median_shift_p50_ft": 0.0,
+   "drop2_max_abs_shift_ft": 0.2,
+   "median_band_width_ft": 0.8
+  },
+  "Wheeler (TVA pilot, composite)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 15.2,
+    "p05-p95": 9.5,
+    "p02-p98": 4.5
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2007,
+    2009
+   ],
+   "drop2_extreme_median_shift_p10_ft": 0.0,
+   "drop2_median_shift_p90_ft": 0.0,
+   "drop2_median_shift_p50_ft": 0.0,
+   "drop2_max_abs_shift_ft": 0.2,
+   "median_band_width_ft": 1.08
+  },
+  "Wilson (TVA pilot, composite)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 19.0,
+    "p05-p95": 11.7,
+    "p02-p98": 5.7
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2008,
+    2017
+   ],
+   "drop2_extreme_median_shift_p10_ft": 0.0,
+   "drop2_median_shift_p90_ft": 0.0,
+   "drop2_median_shift_p50_ft": 0.0,
+   "drop2_max_abs_shift_ft": 0.1,
+   "median_band_width_ft": 0.9
+  },
+  "Pickwick (TVA pilot, composite)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 17.8,
+    "p05-p95": 8.6,
+    "p02-p98": 4.6
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2003,
+    2007
+   ],
+   "drop2_extreme_median_shift_p10_ft": 0.079,
+   "drop2_median_shift_p90_ft": 0.044,
+   "drop2_median_shift_p50_ft": 0.03,
+   "drop2_max_abs_shift_ft": 0.4,
+   "median_band_width_ft": 1.96
+  },
+  "Lake Erie (NOAA, natural Great Lake)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 39.5,
+    "p05-p95": 31.5,
+    "p02-p98": 16.8
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2020,
+    2019
+   ],
+   "drop2_extreme_median_shift_p10_ft": -0.022,
+   "drop2_median_shift_p90_ft": -0.295,
+   "drop2_median_shift_p50_ft": -0.097,
+   "drop2_max_abs_shift_ft": 0.47,
+   "median_band_width_ft": 2.52
+  },
+  "Lake Champlain (USGS, natural)": {
+   "realised_outside_band_pct": {
+    "p10-p90": 27.8,
+    "p05-p95": 15.0,
+    "p02-p98": 5.7
+   },
+   "nominal_pct": {
+    "p10-p90": 20,
+    "p05-p95": 10,
+    "p02-p98": 4
+   },
+   "extreme_years_dropped": [
+    2011,
+    2006
+   ],
+   "drop2_extreme_median_shift_p10_ft": -0.012,
+   "drop2_median_shift_p90_ft": -0.176,
+   "drop2_median_shift_p50_ft": -0.065,
+   "drop2_max_abs_shift_ft": 0.61,
+   "median_band_width_ft": 3.17
+  }
+ },
+ "structural_change": {
+  "Hartwell (USACE SAS, storage/hydro)": {
+   "first10": "1962-1971",
+   "last10": "2016-2025",
+   "median_p50_shift_ft": -0.21,
+   "median_abs_p50_shift_ft": 0.39,
+   "max_abs_p50_shift_ft": 1.83,
+   "shift_as_pct_of_band_width": 8.8
+  },
+  "Kentucky Lake (TVA)": {
+   "first10": "1999-2008",
+   "last10": "2016-2025",
+   "median_p50_shift_ft": -0.04,
+   "median_abs_p50_shift_ft": 0.16,
+   "max_abs_p50_shift_ft": 0.51,
+   "shift_as_pct_of_band_width": 9.3
+  },
+  "Cave Run (USACE LRL flood control)": {
+   "first10": "2002-2011",
+   "last10": "2016-2025",
+   "median_p50_shift_ft": 0.19,
+   "median_abs_p50_shift_ft": 0.27,
+   "max_abs_p50_shift_ft": 12.69,
+   "shift_as_pct_of_band_width": 4.3
+  },
+  "Pueblo Res. (USACE SPA, arid storage)": {
+   "first10": "1999-2009",
+   "last10": "2016-2025",
+   "median_p50_shift_ft": 25.68,
+   "median_abs_p50_shift_ft": 25.68,
+   "max_abs_p50_shift_ft": 31.91,
+   "shift_as_pct_of_band_width": 61.8
+  },
+  "Lake Erie (NOAA, natural Great Lake)": {
+   "first10": "1962-1971",
+   "last10": "2016-2025",
+   "median_p50_shift_ft": 1.81,
+   "median_abs_p50_shift_ft": 1.81,
+   "max_abs_p50_shift_ft": 2.17,
+   "shift_as_pct_of_band_width": 78.6
+  },
+  "Lake Champlain (USGS, natural)": {
+   "first10": "1938-1947",
+   "last10": "2016-2025",
+   "median_p50_shift_ft": 0.55,
+   "median_abs_p50_shift_ft": 0.66,
+   "max_abs_p50_shift_ft": 1.48,
+   "shift_as_pct_of_band_width": 25.3
+  }
+ },
+ "guide_vs_history": {
+  "Allatoona (USACE SAM)": {
+   "years": "2017-2025",
+   "n_days": 1560,
+   "guide_n_days": 1560,
+   "guide_minus_p50_median_abs_ft": 0.96,
+   "spearman_pct_vs_guide_anomaly": 0.53,
+   "rmse_vs_guide_ft": 3.24,
+   "rmse_vs_hist_p50_ft": 2.86,
+   "guide_anom_p10_p50_p90_ft": [
+    -1.53,
+    0.26,
+    3.25
+   ]
+  },
+  "Guntersville (TVA pilot, composite)": {
+   "years": "2007-2025",
+   "n_days": 6129,
+   "guide_n_days": 6129,
+   "guide_minus_p50_median_abs_ft": 0.2,
+   "spearman_pct_vs_guide_anomaly": 0.645,
+   "rmse_vs_guide_ft": 0.57,
+   "rmse_vs_hist_p50_ft": 0.37,
+   "guide_anom_p10_p50_p90_ft": [
+    -0.4,
+    0.1,
+    0.92
+   ],
+   "zone_n_days": 6129,
+   "pct_in_zone": 77.6,
+   "pct_hist_normal": 78.5,
+   "zone_vs_hist_agreement_pct": 73.8,
+   "in_zone_but_hist_unusual_pct": 16.3,
+   "out_of_zone_but_hist_normal_pct": 60.4,
+   "below_zone_hist_low_pct": 100.0,
+   "above_zone_hist_high_pct": 37.4,
+   "spearman_pct_vs_zone_position": 0.892
+  },
+  "Hartwell (USACE SAS, storage/hydro)": {
+   "years": "1999-2025",
+   "n_days": 9491,
+   "guide_n_days": 9491,
+   "guide_minus_p50_median_abs_ft": 0.54,
+   "spearman_pct_vs_guide_anomaly": 0.926,
+   "rmse_vs_guide_ft": 5.14,
+   "rmse_vs_hist_p50_ft": 4.56,
+   "guide_anom_p10_p50_p90_ft": [
+    -8.73,
+    -1.68,
+    1.78
+   ]
+  },
+  "Pickwick (TVA pilot, composite)": {
+   "years": "2003-2025",
+   "n_days": 5696,
+   "guide_n_days": 5696,
+   "guide_minus_p50_median_abs_ft": 0.21,
+   "spearman_pct_vs_guide_anomaly": 0.723,
+   "rmse_vs_guide_ft": 1.49,
+   "rmse_vs_hist_p50_ft": 1.18,
+   "guide_anom_p10_p50_p90_ft": [
+    -0.46,
+    0.25,
+    2.2
+   ],
+   "zone_n_days": 5696,
+   "pct_in_zone": 63.0,
+   "pct_hist_normal": 78.5,
+   "zone_vs_hist_agreement_pct": 69.9,
+   "in_zone_but_hist_unusual_pct": 11.6,
+   "out_of_zone_but_hist_normal_pct": 61.6,
+   "below_zone_hist_low_pct": 97.0,
+   "above_zone_hist_high_pct": 32.3,
+   "spearman_pct_vs_zone_position": 0.78
+  },
+  "Wheeler (TVA pilot, composite)": {
+   "years": "2006-2025",
+   "n_days": 6473,
+   "guide_n_days": 6473,
+   "guide_minus_p50_median_abs_ft": 0.18,
+   "spearman_pct_vs_guide_anomaly": 0.604,
+   "rmse_vs_guide_ft": 1.11,
+   "rmse_vs_hist_p50_ft": 0.73,
+   "guide_anom_p10_p50_p90_ft": [
+    -0.4,
+    0.15,
+    1.8
+   ],
+   "zone_n_days": 6473,
+   "pct_in_zone": 71.5,
+   "pct_hist_normal": 79.9,
+   "zone_vs_hist_agreement_pct": 71.8,
+   "in_zone_but_hist_unusual_pct": 13.8,
+   "out_of_zone_but_hist_normal_pct": 64.1,
+   "below_zone_hist_low_pct": 97.7,
+   "above_zone_hist_high_pct": 31.3,
+   "spearman_pct_vs_zone_position": 0.754
+  },
+  "Wilson (TVA pilot, composite)": {
+   "years": "2006-2025",
+   "n_days": 6459,
+   "zone_n_days": 6459,
+   "pct_in_zone": 95.5,
+   "pct_hist_normal": 79.6,
+   "zone_vs_hist_agreement_pct": 82.2,
+   "in_zone_but_hist_unusual_pct": 17.6,
+   "out_of_zone_but_hist_normal_pct": 21.8,
+   "below_zone_hist_low_pct": 95.7,
+   "above_zone_hist_high_pct": 74.9,
+   "spearman_pct_vs_zone_position": 0.97
+  }
+ },
+ "stable_rule": {
+  "Pickwick (TVA, CWMS hourly)": {
+   "n_days": 2330,
+   "abs_d24_p50": 0.15,
+   "p75": 0.3,
+   "p90": 0.61,
+   "p95": 0.91,
+   "noise_sigma_hourly_ft": 0.0242,
+   "sigma_of_24h_diff_from_noise_ft": 0.0342,
+   "median_seasonal_p50": 0.13,
+   "current_rule_share_stable_pct": 51.8,
+   "share_le_0p05": 18.2,
+   "share_le_0p10": 37.3,
+   "share_le_0p15": 50.9,
+   "share_le_0p25": 69.4,
+   "stable_but_gt_0p25": 2.9,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 82.9,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 17.2,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "Kentucky Lake (TVA, hourly)": {
+   "n_days": 5169,
+   "abs_d24_p50": 0.12,
+   "p75": 0.24,
+   "p90": 0.44,
+   "p95": 0.59,
+   "noise_sigma_hourly_ft": 0.0121,
+   "sigma_of_24h_diff_from_noise_ft": 0.0171,
+   "median_seasonal_p50": 0.1,
+   "current_rule_share_stable_pct": 53.3,
+   "share_le_0p05": 22.7,
+   "share_le_0p10": 43.8,
+   "share_le_0p15": 58.6,
+   "share_le_0p25": 76.9,
+   "stable_but_gt_0p25": 0.0,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 53.8,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 11.8,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    11,
+    12
+   ]
+  },
+  "Cave Run (USACE LRL, hourly)": {
+   "n_days": 6125,
+   "abs_d24_p50": 0.1,
+   "p75": 0.363,
+   "p90": 0.707,
+   "p95": 0.9,
+   "noise_sigma_hourly_ft": 0.0,
+   "sigma_of_24h_diff_from_noise_ft": 0.0,
+   "median_seasonal_p50": 0.105,
+   "current_rule_share_stable_pct": 58.0,
+   "share_le_0p05": 36.6,
+   "share_le_0p10": 49.7,
+   "share_le_0p15": 60.1,
+   "share_le_0p25": 69.3,
+   "stable_but_gt_0p25": 3.8,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 54.7,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 12.6,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    10,
+    11,
+    12
+   ]
+  },
+  "Allatoona (USACE SAM, hourly)": {
+   "n_days": 6096,
+   "abs_d24_p50": 0.13,
+   "p75": 0.27,
+   "p90": 0.58,
+   "p95": 0.9,
+   "noise_sigma_hourly_ft": 0.0061,
+   "sigma_of_24h_diff_from_noise_ft": 0.0086,
+   "median_seasonal_p50": 0.13,
+   "current_rule_share_stable_pct": 53.1,
+   "share_le_0p05": 20.8,
+   "share_le_0p10": 38.6,
+   "share_le_0p15": 55.6,
+   "share_le_0p25": 73.5,
+   "stable_but_gt_0p25": 1.7,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 66.7,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 17.0,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "Pueblo (15-min)": {
+   "n_days": 6081,
+   "abs_d24_p50": 0.088,
+   "p75": 0.157,
+   "p90": 0.225,
+   "p95": 0.27,
+   "noise_sigma_hourly_ft": 0.003,
+   "sigma_of_24h_diff_from_noise_ft": 0.0043,
+   "median_seasonal_p50": 0.102,
+   "current_rule_share_stable_pct": 58.1,
+   "share_le_0p05": 28.6,
+   "share_le_0p10": 55.4,
+   "share_le_0p15": 73.3,
+   "share_le_0p25": 93.4,
+   "stable_but_gt_0p25": 0.0,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 54.7,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 1.0,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12
+   ]
+  },
+  "Guntersville (TVA, HADS hourly)": {
+   "n_days": 1432,
+   "abs_d24_p50": 0.1,
+   "p75": 0.17,
+   "p90": 0.28,
+   "p95": 0.35,
+   "noise_sigma_hourly_ft": 0.0121,
+   "sigma_of_24h_diff_from_noise_ft": 0.0171,
+   "median_seasonal_p50": 0.1,
+   "current_rule_share_stable_pct": 54.8,
+   "share_le_0p05": 27.6,
+   "share_le_0p10": 48.7,
+   "share_le_0p15": 70.9,
+   "share_le_0p25": 87.7,
+   "stable_but_gt_0p25": 0.0,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 54.9,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 6.1,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "Wheeler (TVA, HADS hourly)": {
+   "n_days": 1432,
+   "abs_d24_p50": 0.1,
+   "p75": 0.2,
+   "p90": 0.38,
+   "p95": 0.555,
+   "noise_sigma_hourly_ft": 0.0121,
+   "sigma_of_24h_diff_from_noise_ft": 0.0171,
+   "median_seasonal_p50": 0.088,
+   "current_rule_share_stable_pct": 57.7,
+   "share_le_0p05": 29.2,
+   "share_le_0p10": 49.7,
+   "share_le_0p15": 65.6,
+   "share_le_0p25": 81.4,
+   "stable_but_gt_0p25": 0.5,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 43.3,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 8.5,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    11,
+    12
+   ]
+  },
+  "Wilson (TVA, HADS hourly)": {
+   "n_days": 1432,
+   "abs_d24_p50": 0.17,
+   "p75": 0.33,
+   "p90": 0.559,
+   "p95": 0.72,
+   "noise_sigma_hourly_ft": 0.0242,
+   "sigma_of_24h_diff_from_noise_ft": 0.0342,
+   "median_seasonal_p50": 0.16,
+   "current_rule_share_stable_pct": 51.5,
+   "share_le_0p05": 18.5,
+   "share_le_0p10": 34.5,
+   "share_le_0p15": 46.6,
+   "share_le_0p25": 64.6,
+   "stable_but_gt_0p25": 2.8,
+   "stable_but_gt_0p50": 0.0,
+   "seasonal_p50_gt_0p10_share_days": 88.4,
+   "stable_by_current_but_3day_net_gt_0p5ft_pct": 18.4,
+   "months_where_seasonal_p50_exceeds_floor": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ]
+  }
+ },
+ "stable_alternatives": {
+  "Pickwick (TVA, CWMS hourly)": {
+   "n_days": 2330,
+   "abs_d24_p50": 0.15,
+   "p90": 0.61,
+   "p95": 0.91,
+   "rapid_share_current_pct": 5.4,
+   "rapid_share_with_0p25_min_pct": 5.4,
+   "median_seasonal_p95": 0.618,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 51.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 31.2,
+     "stable_but_d24_gt_0p25_pct": 3.1,
+     "label_flip_rate_pct": 39.7
+    },
+    "A 0.05 ft": {
+     "stable_pct": 18.2,
+     "false_stable_3d_net_ge_0p3ft_pct": 22.2,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 27.2
+    },
+    "A 0.10 ft": {
+     "stable_pct": 37.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 22.8,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 37.0
+    },
+    "A 0.15 ft": {
+     "stable_pct": 50.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 24.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 35.4
+    },
+    "A 0.25 ft": {
+     "stable_pct": 69.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 32.0,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 27.8
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 27.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 28.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 35.6
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 53.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 12.5,
+     "label_flip_rate_pct": 26.2
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 67.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 19.8,
+     "stable_but_d24_gt_0p25_pct": 16.1,
+     "label_flip_rate_pct": 19.8
+    }
+   }
+  },
+  "Kentucky Lake (TVA, hourly)": {
+   "n_days": 5169,
+   "abs_d24_p50": 0.12,
+   "p90": 0.44,
+   "p95": 0.59,
+   "rapid_share_current_pct": 5.2,
+   "rapid_share_with_0p25_min_pct": 5.2,
+   "median_seasonal_p95": 0.477,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 53.1,
+     "false_stable_3d_net_ge_0p3ft_pct": 27.4,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 38.2
+    },
+    "A 0.05 ft": {
+     "stable_pct": 22.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 17.8,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 30.2
+    },
+    "A 0.10 ft": {
+     "stable_pct": 43.8,
+     "false_stable_3d_net_ge_0p3ft_pct": 22.9,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 37.4
+    },
+    "A 0.15 ft": {
+     "stable_pct": 58.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 26.2,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 33.2
+    },
+    "A 0.25 ft": {
+     "stable_pct": 76.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 32.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 22.2
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 28.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 23.4,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 35.9
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 56.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 7.2,
+     "label_flip_rate_pct": 25.5
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 70.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 20.8,
+     "stable_but_d24_gt_0p25_pct": 9.8,
+     "label_flip_rate_pct": 18.5
+    }
+   }
+  },
+  "Cave Run (USACE LRL, hourly)": {
+   "n_days": 6125,
+   "abs_d24_p50": 0.1,
+   "p90": 0.707,
+   "p95": 0.9,
+   "rapid_share_current_pct": 5.0,
+   "rapid_share_with_0p25_min_pct": 5.0,
+   "median_seasonal_p95": 0.805,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 58.2,
+     "false_stable_3d_net_ge_0p3ft_pct": 22.6,
+     "stable_but_d24_gt_0p25_pct": 3.7,
+     "label_flip_rate_pct": 18.6
+    },
+    "A 0.05 ft": {
+     "stable_pct": 36.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 8.6,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 17.3
+    },
+    "A 0.10 ft": {
+     "stable_pct": 49.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 13.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 17.2
+    },
+    "A 0.15 ft": {
+     "stable_pct": 60.1,
+     "false_stable_3d_net_ge_0p3ft_pct": 22.4,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 16.5
+    },
+    "A 0.25 ft": {
+     "stable_pct": 69.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 28.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 14.2
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 42.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 13.9,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 19.4
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 51.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 3.9,
+     "label_flip_rate_pct": 13.3
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 61.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 16.3,
+     "stable_but_d24_gt_0p25_pct": 5.6,
+     "label_flip_rate_pct": 12.2
+    }
+   }
+  },
+  "Allatoona (USACE SAM, hourly)": {
+   "n_days": 6096,
+   "abs_d24_p50": 0.13,
+   "p90": 0.58,
+   "p95": 0.9,
+   "rapid_share_current_pct": 5.0,
+   "rapid_share_with_0p25_min_pct": 5.0,
+   "median_seasonal_p95": 0.626,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 53.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 36.6,
+     "stable_but_d24_gt_0p25_pct": 1.8,
+     "label_flip_rate_pct": 27.8
+    },
+    "A 0.05 ft": {
+     "stable_pct": 20.8,
+     "false_stable_3d_net_ge_0p3ft_pct": 19.4,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 20.6
+    },
+    "A 0.10 ft": {
+     "stable_pct": 38.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 23.4,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 25.0
+    },
+    "A 0.15 ft": {
+     "stable_pct": 55.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 33.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 22.6
+    },
+    "A 0.25 ft": {
+     "stable_pct": 73.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 43.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 15.8
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 27.8,
+     "false_stable_3d_net_ge_0p3ft_pct": 27.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 24.5
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 44.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 6.3,
+     "label_flip_rate_pct": 22.0
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 60.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 26.8,
+     "stable_but_d24_gt_0p25_pct": 7.4,
+     "label_flip_rate_pct": 18.3
+    }
+   }
+  },
+  "Pueblo (15-min)": {
+   "n_days": 6081,
+   "abs_d24_p50": 0.088,
+   "p90": 0.225,
+   "p95": 0.27,
+   "rapid_share_current_pct": 5.0,
+   "rapid_share_with_0p25_min_pct": 3.5,
+   "median_seasonal_p95": 0.256,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 58.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 12.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 16.2
+    },
+    "A 0.05 ft": {
+     "stable_pct": 28.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.7,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 18.3
+    },
+    "A 0.10 ft": {
+     "stable_pct": 55.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 9.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 16.9
+    },
+    "A 0.15 ft": {
+     "stable_pct": 73.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 24.0,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 12.9
+    },
+    "A 0.25 ft": {
+     "stable_pct": 93.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 39.2,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 5.0
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 29.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.7,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 18.8
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 57.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 0.6,
+     "label_flip_rate_pct": 9.0
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 74.2,
+     "false_stable_3d_net_ge_0p3ft_pct": 23.2,
+     "stable_but_d24_gt_0p25_pct": 0.6,
+     "label_flip_rate_pct": 7.0
+    }
+   }
+  },
+  "Guntersville (TVA, HADS hourly)": {
+   "n_days": 1432,
+   "abs_d24_p50": 0.1,
+   "p90": 0.28,
+   "p95": 0.35,
+   "rapid_share_current_pct": 5.0,
+   "rapid_share_with_0p25_min_pct": 4.5,
+   "median_seasonal_p95": 0.3,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 54.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 17.9,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 47.6
+    },
+    "A 0.05 ft": {
+     "stable_pct": 27.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 15.4,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 38.5
+    },
+    "A 0.10 ft": {
+     "stable_pct": 48.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 16.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 46.8
+    },
+    "A 0.15 ft": {
+     "stable_pct": 70.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 19.9,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 37.4
+    },
+    "A 0.25 ft": {
+     "stable_pct": 87.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 23.2,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 17.6
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 29.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 16.7,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 40.1
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 72.2,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 6.9,
+     "label_flip_rate_pct": 25.3
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 86.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 16.8,
+     "stable_but_d24_gt_0p25_pct": 8.7,
+     "label_flip_rate_pct": 14.2
+    }
+   }
+  },
+  "Wheeler (TVA, HADS hourly)": {
+   "n_days": 1432,
+   "abs_d24_p50": 0.1,
+   "p90": 0.38,
+   "p95": 0.555,
+   "rapid_share_current_pct": 4.6,
+   "rapid_share_with_0p25_min_pct": 3.7,
+   "median_seasonal_p95": 0.361,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 58.1,
+     "false_stable_3d_net_ge_0p3ft_pct": 20.3,
+     "stable_but_d24_gt_0p25_pct": 0.8,
+     "label_flip_rate_pct": 40.7
+    },
+    "A 0.05 ft": {
+     "stable_pct": 29.2,
+     "false_stable_3d_net_ge_0p3ft_pct": 12.9,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 34.0
+    },
+    "A 0.10 ft": {
+     "stable_pct": 49.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 14.6,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 37.5
+    },
+    "A 0.15 ft": {
+     "stable_pct": 65.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 18.0,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 31.7
+    },
+    "A 0.25 ft": {
+     "stable_pct": 81.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 22.7,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 18.9
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 34.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 19.3,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 39.7
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 68.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 8.2,
+     "label_flip_rate_pct": 23.3
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 79.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 14.4,
+     "stable_but_d24_gt_0p25_pct": 10.3,
+     "label_flip_rate_pct": 14.6
+    }
+   }
+  },
+  "Wilson (TVA, HADS hourly)": {
+   "n_days": 1432,
+   "abs_d24_p50": 0.17,
+   "p90": 0.559,
+   "p95": 0.72,
+   "rapid_share_current_pct": 5.2,
+   "rapid_share_with_0p25_min_pct": 5.2,
+   "median_seasonal_p95": 0.587,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 51.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 36.1,
+     "stable_but_d24_gt_0p25_pct": 3.2,
+     "label_flip_rate_pct": 45.2
+    },
+    "A 0.05 ft": {
+     "stable_pct": 18.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 33.6,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 27.4
+    },
+    "A 0.10 ft": {
+     "stable_pct": 34.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 31.2,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 37.8
+    },
+    "A 0.15 ft": {
+     "stable_pct": 46.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 32.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 40.2
+    },
+    "A 0.25 ft": {
+     "stable_pct": 64.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 35.2,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 36.6
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 28.1,
+     "false_stable_3d_net_ge_0p3ft_pct": 36.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 36.7
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 56.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 26.3,
+     "label_flip_rate_pct": 35.9
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 73.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 23.0,
+     "stable_but_d24_gt_0p25_pct": 29.1,
+     "label_flip_rate_pct": 27.1
+    }
+   }
+  },
+  "Lake Erie (NOAA, natural Great Lake) [daily mean]": {
+   "n_days": 5379,
+   "abs_d24_p50": 0.056,
+   "p90": 0.203,
+   "p95": 0.276,
+   "rapid_share_current_pct": 5.4,
+   "rapid_share_with_0p25_min_pct": 3.1,
+   "median_seasonal_p95": 0.22,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 71.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.8,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 29.5
+    },
+    "A 0.05 ft": {
+     "stable_pct": 47.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.0,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 39.3
+    },
+    "A 0.10 ft": {
+     "stable_pct": 71.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.7,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 29.4
+    },
+    "A 0.15 ft": {
+     "stable_pct": 82.8,
+     "false_stable_3d_net_ge_0p3ft_pct": 4.3,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 20.8
+    },
+    "A 0.25 ft": {
+     "stable_pct": 93.7,
+     "false_stable_3d_net_ge_0p3ft_pct": 5.5,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 9.4
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 47.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 39.5
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 92.5,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 4.3,
+     "label_flip_rate_pct": 10.9
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 97.6,
+     "false_stable_3d_net_ge_0p3ft_pct": 5.2,
+     "stable_but_d24_gt_0p25_pct": 5.4,
+     "label_flip_rate_pct": 3.7
+    }
+   }
+  },
+  "Lake Champlain (USGS, natural) [daily mean]": {
+   "n_days": 5373,
+   "abs_d24_p50": 0.04,
+   "p90": 0.1,
+   "p95": 0.15,
+   "rapid_share_current_pct": 4.8,
+   "rapid_share_with_0p25_min_pct": 1.5,
+   "median_seasonal_p95": 0.128,
+   "rules": {
+    "R0 current: max(0.10, seasonal p50)": {
+     "stable_pct": 89.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.0,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 10.9
+    },
+    "A 0.05 ft": {
+     "stable_pct": 65.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 1.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 27.3
+    },
+    "A 0.10 ft": {
+     "stable_pct": 89.3,
+     "false_stable_3d_net_ge_0p3ft_pct": 3.0,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 10.9
+    },
+    "A 0.15 ft": {
+     "stable_pct": 95.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 4.4,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 4.6
+    },
+    "A 0.25 ft": {
+     "stable_pct": 98.4,
+     "false_stable_3d_net_ge_0p3ft_pct": 6.7,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 1.6
+    },
+    "R5 max(0.05, 0.5*seasonal p50)": {
+     "stable_pct": 65.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 1.1,
+     "stable_but_d24_gt_0p25_pct": 0.0,
+     "label_flip_rate_pct": 27.3
+    },
+    "T72 |72h net|/3 <= 0.10 ft/day": {
+     "stable_pct": 91.9,
+     "false_stable_3d_net_ge_0p3ft_pct": 0.0,
+     "stable_but_d24_gt_0p25_pct": 0.1,
+     "label_flip_rate_pct": 4.9
+    },
+    "T72 |72h net|/3 <= 0.15 ft/day": {
+     "stable_pct": 96.0,
+     "false_stable_3d_net_ge_0p3ft_pct": 4.2,
+     "stable_but_d24_gt_0p25_pct": 0.3,
+     "label_flip_rate_pct": 2.5
+    }
+   }
+  }
+ },
+ "time_basis_00_vs_07_local": {
+  "Guntersville": {
+   "n": 1439,
+   "mean_abs_diff_00_vs_07_ft": 0.082,
+   "p95_abs_ft": 0.2,
+   "bias_ft": -0.036,
+   "baseline_p10_p50_p90_median_abs_shift_ft": [
+    0.036,
+    0.04,
+    0.029
+   ],
+   "baseline_max_abs_shift_ft": 0.14
+  },
+  "Wheeler": {
+   "n": 1439,
+   "mean_abs_diff_00_vs_07_ft": 0.097,
+   "p95_abs_ft": 0.27,
+   "bias_ft": 0.044,
+   "baseline_p10_p50_p90_median_abs_shift_ft": [
+    0.045,
+    0.047,
+    0.034
+   ],
+   "baseline_max_abs_shift_ft": 0.2
+  },
+  "Wilson": {
+   "n": 1439,
+   "mean_abs_diff_00_vs_07_ft": 0.165,
+   "p95_abs_ft": 0.42,
+   "bias_ft": 0.074,
+   "baseline_p10_p50_p90_median_abs_shift_ft": [
+    0.082,
+    0.1,
+    0.088
+   ],
+   "baseline_max_abs_shift_ft": 0.36
+  },
+  "Pickwick": {
+   "n": 1439,
+   "mean_abs_diff_00_vs_07_ft": 0.126,
+   "p95_abs_ft": 0.391,
+   "bias_ft": -0.047,
+   "baseline_p10_p50_p90_median_abs_shift_ft": [
+    0.104,
+    0.045,
+    0.05
+   ],
+   "baseline_max_abs_shift_ft": 0.34
+  }
+ },
+ "pilot_state_now": {
+  "Guntersville": {
+   "date": "2026-10-13",
+   "level_ft": 593.7,
+   "basis_years": "2007-2025",
+   "n_basis_years": 17,
+   "p02": 593.6,
+   "p10": 593.8,
+   "p50": 594.1,
+   "p90": 594.5,
+   "p98": 594.7,
+   "percentile": 5.0,
+   "historicalState": "UNUSUAL",
+   "current_history_days": 651,
+   "current_complete_years": 1
+  },
+  "Wheeler": {
+   "date": "2026-10-13",
+   "level_ft": 553.35,
+   "basis_years": "2006-2025",
+   "n_basis_years": 18,
+   "p02": 553.1,
+   "p10": 553.3,
+   "p50": 553.8,
+   "p90": 554.2,
+   "p98": 555.0,
+   "percentile": 12.5,
+   "historicalState": "NORMAL",
+   "current_history_days": 651,
+   "current_complete_years": 1
+  },
+  "Wilson": {
+   "date": "2026-10-13",
+   "level_ft": 506.98,
+   "basis_years": "2006-2025",
+   "n_basis_years": 18,
+   "p02": 506.41,
+   "p10": 506.8,
+   "p50": 507.2,
+   "p90": 507.5,
+   "p98": 507.6,
+   "percentile": 24.0,
+   "historicalState": "NORMAL",
+   "current_history_days": 651,
+   "current_complete_years": 1
+  },
+  "Pickwick": {
+   "date": "2026-10-13",
+   "level_ft": 411.24,
+   "basis_years": "2003-2025",
+   "n_basis_years": 16,
+   "p02": 410.6,
+   "p10": 411.0,
+   "p50": 411.7,
+   "p90": 412.34,
+   "p98": 413.87,
+   "percentile": 16.8,
+   "historicalState": "NORMAL",
+   "current_history_days": 651,
+   "current_complete_years": 1
+  }
+ },
+ "tva_pilot_history": {
+  "GVDA1": {
+   "rvdhun_first": "2005-01-30",
+   "rvdhun_last": "2021-09-30",
+   "rvdhun_days": 5964,
+   "hads_first": "2022-10-27",
+   "hads_last": "2026-10-13",
+   "hads_vs_tva_guide": {
+    "n": 647,
+    "bias_ft": 0.0,
+    "mae_ft": 0.001,
+    "p95_abs_ft": 0.0,
+    "max_abs_ft": 0.257,
+    "corr": 0.99958
+   },
+   "composite_first": "2005-01-30",
+   "composite_last": "2026-10-13",
+   "composite_days": 7404,
+   "complete_years_ge329": [
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2023,
+    2024,
+    2025
+   ],
+   "composite_per_year": {
+    "2005": 321,
+    "2006": 328,
+    "2007": 360,
+    "2008": 362,
+    "2009": 359,
+    "2010": 358,
+    "2011": 354,
+    "2012": 361,
+    "2013": 360,
+    "2014": 356,
+    "2015": 360,
+    "2016": 363,
+    "2017": 364,
+    "2018": 362,
+    "2019": 364,
+    "2020": 362,
+    "2021": 270,
+    "2022": 65,
+    "2023": 365,
+    "2024": 363,
+    "2025": 361,
+    "2026": 286
+   }
+  },
+  "WHLA1": {
+   "rvdhun_first": "2005-11-23",
+   "rvdhun_last": "2021-09-30",
+   "rvdhun_days": 5697,
+   "hads_first": "2022-10-27",
+   "hads_last": "2026-10-13",
+   "hads_vs_tva_guide": {
+    "n": 647,
+    "bias_ft": 0.0,
+    "mae_ft": 0.001,
+    "p95_abs_ft": 0.0,
+    "max_abs_ft": 0.17,
+    "corr": 0.99998
+   },
+   "composite_first": "2005-11-23",
+   "composite_last": "2026-10-13",
+   "composite_days": 7137,
+   "complete_years_ge329": [
+    2006,
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2023,
+    2024,
+    2025
+   ],
+   "composite_per_year": {
+    "2005": 38,
+    "2006": 347,
+    "2007": 359,
+    "2008": 361,
+    "2009": 358,
+    "2010": 357,
+    "2011": 354,
+    "2012": 361,
+    "2013": 360,
+    "2014": 356,
+    "2015": 360,
+    "2016": 363,
+    "2017": 364,
+    "2018": 363,
+    "2019": 364,
+    "2020": 362,
+    "2021": 270,
+    "2022": 65,
+    "2023": 365,
+    "2024": 363,
+    "2025": 361,
+    "2026": 286
+   }
+  },
+  "WLSA1": {
+   "rvdhun_first": "2005-01-30",
+   "rvdhun_last": "2021-09-30",
+   "rvdhun_days": 5966,
+   "hads_first": "2022-10-27",
+   "hads_last": "2026-10-13",
+   "hads_vs_tva_guide": {
+    "n": 647,
+    "bias_ft": 0.0,
+    "mae_ft": 0.002,
+    "p95_abs_ft": 0.0,
+    "max_abs_ft": 0.24,
+    "corr": 0.99972
+   },
+   "composite_first": "2005-01-30",
+   "composite_last": "2026-10-13",
+   "composite_days": 7406,
+   "complete_years_ge329": [
+    2006,
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2023,
+    2024,
+    2025
+   ],
+   "composite_per_year": {
+    "2005": 321,
+    "2006": 329,
+    "2007": 360,
+    "2008": 362,
+    "2009": 359,
+    "2010": 358,
+    "2011": 354,
+    "2012": 361,
+    "2013": 360,
+    "2014": 356,
+    "2015": 360,
+    "2016": 363,
+    "2017": 364,
+    "2018": 363,
+    "2019": 364,
+    "2020": 362,
+    "2021": 270,
+    "2022": 65,
+    "2023": 365,
+    "2024": 363,
+    "2025": 361,
+    "2026": 286
+   }
+  },
+  "PICT1": {
+   "rvdhun_first": "2003-01-14",
+   "rvdhun_last": "2021-12-30",
+   "rvdhun_days": 4212,
+   "hads_first": "2022-10-27",
+   "hads_last": "2026-10-13",
+   "hads_vs_tva_guide": {
+    "n": 647,
+    "bias_ft": -0.001,
+    "mae_ft": 0.003,
+    "p95_abs_ft": 0.0,
+    "max_abs_ft": 0.22,
+    "corr": 0.99994
+   },
+   "cwms_vs_tva_guide": {
+    "n": 643,
+    "bias_ft": -0.001,
+    "mae_ft": 0.002,
+    "p95_abs_ft": 0.0,
+    "max_abs_ft": 0.22
+   },
+   "rvdhun_vs_cwms_7am": {
+    "n": 485,
+    "bias_ft": 0.006,
+    "mae_ft": 0.034,
+    "p95_abs_ft": 0.09,
+    "max_abs_ft": 0.28
+   },
+   "composite_first": "2003-01-14",
+   "composite_last": "2026-10-13",
+   "composite_days": 6209,
+   "complete_years_ge329": [
+    2003,
+    2004,
+    2006,
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "composite_per_year": {
+    "2003": 332,
+    "2004": 360,
+    "2005": 51,
+    "2006": 355,
+    "2007": 360,
+    "2008": 362,
+    "2009": 359,
+    "2010": 356,
+    "2011": 352,
+    "2012": 361,
+    "2013": 364,
+    "2014": 106,
+    "2019": 65,
+    "2020": 347,
+    "2021": 365,
+    "2022": 333,
+    "2023": 365,
+    "2024": 365,
+    "2025": 365,
+    "2026": 286
+   }
+  }
+ },
+ "guide_availability_totals": {
+  "directory_lakes": 621,
+  "matched_any_elev_level": 143,
+  "flood_pool_bottom_level": 132,
+  "seasonal_guide_curve": 58,
+  "drought_or_bottom_cons": 89,
+  "matched_within_5km": 140,
+  "history_span_ge5y": 93,
+  "history_span_ge10y": 90,
+  "history_span_ge20y": 52,
+  "history_span_ge30y": 24,
+  "matched_with_any_elev_series": 102
+ }
+}

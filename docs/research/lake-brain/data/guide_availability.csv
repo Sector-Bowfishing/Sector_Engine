@@ -1,0 +1,39 @@
+operator_or_office,directory_lakes,matched_any_elev_level,flood_pool_bottom_level,flood_pool_bottom_seasonal,seasonal_guide_curve,drought_or_bottom_cons,top_of_flood_or_max_pool,matched_within_5km,operator_api_guide_lakes,machine_readable,source_api,status
+directory lakes with no cwmsOffice,444,23,20,8,5,6,18,22,,yes,cwms-data/levels (spatial match across all offices),automatic spatial match; unreviewed upper bound
+USACE CWMS SAM,16,15,11,11,12,10,11,15,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SWT,16,9,9,1,1,8,9,8,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS LRL,14,14,14,13,0,14,14,14,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NWK,13,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS LRH,12,11,9,9,11,10,11,11,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS LRP,11,8,8,8,8,0,8,8,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SWL,10,9,8,7,7,9,9,9,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS MVK,10,6,6,0,0,0,6,6,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SPA,10,7,7,2,2,7,7,7,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS LRN,7,7,7,2,0,7,7,7,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SPK,6,6,6,1,1,2,6,6,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SAS,6,4,4,4,4,4,4,4,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS LRE,6,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS MVS,5,5,5,0,5,5,5,5,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SAW,5,2,2,0,0,1,2,2,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS MVR,4,3,3,0,0,1,3,3,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS MVP,4,4,4,3,1,4,4,4,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SPL,3,2,2,0,0,0,2,2,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NWO,3,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NWW,2,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NWS,2,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NAB,2,2,2,0,0,0,2,2,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NWP,2,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NAP,2,2,2,1,1,0,2,2,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SWF,2,2,2,0,0,1,2,2,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NAE,1,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS SAJ,1,1,0,0,0,0,1,1,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS LRC,1,0,0,0,0,0,0,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+USACE CWMS NAO,1,1,1,0,0,0,1,0,,yes,cwms-data/levels,automatic spatial match; unreviewed upper bound
+operator family: USACE,168,105,98,56,46,78,105,103,,api,CWMS levels API (this table's USACE rows); NWD/other districts partly not on the public CWMS host,see per-office rows
+operator family: TVA,16,1,1,1,0,1,1,1,16,api,"TVA RestApi /operating-guide/{loc}: GuideCurve (15 of 16 lakes), Top/BtmOpZone (9 of 16), TopOfGates; 2 calendar years only",tested 43 TVA locations 2026-10-13; Cloudflare needs a browser User-Agent and Accept: application/json
+operator family: USBR,70,10,10,2,2,4,10,9,,api,RISE (data.usbr.gov/rise) elevation/storage series; flood-control top-of-conservation appears as CWMS SPK 'Elev-Top Con' for many USBR projects; no RISE rule-curve parameter found,partial via CWMS SPK; RISE catalog filters did not work in testing
+operator family: Alabama Power,8,7,6,6,6,1,1,7,,portal/partial api,"Guide curve is published as chart/app content (apcshorelines.com, Shorelines app); CWMS SAM carries 'Elev-Guide Curve' for several APC projects (Martin, Harris, HNHenry, Weiss/Logan Martin via SAM)",numeric table not found as a feed
+operator family: Duke Energy,8,0,0,0,0,0,0,0,,portal/pdf,Lake levels as feet-below/at full pond (100 ft local datum) on web/phone/app; targets in FERC relicensing documents; no API found,LEAD
+operator family: State / local / water-district,89,6,5,1,1,0,4,6,,mixed,"No uniform feed; SJRWMD/SFWMD/SAJ regulation schedules appear in CWMS SAJ as 'Elev-Zone' (Kissimmee chain, Okeechobee)",per-operator work
+operator family: Natural / none,113,2,1,0,0,0,1,2,,n/a,n/a (no operator guide),natural-surface lakes get history-only baselines
+operator family: other / unclassified,149,12,11,4,3,5,12,12,,n/a,n/a,unreviewed
