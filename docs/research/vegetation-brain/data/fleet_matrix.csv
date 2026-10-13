@@ -1,0 +1,622 @@
+id,name,state,region,lat,lon,poly_area_km2,regime,lake_class,has_dam,full_pool_ft,modeled_shallow_frac_le1p8m,ice_months_est,emergent_floating_feasibility,submerged_feasibility_tier,ground_truth,nla_submergent_mean_cover_code,validation_class
+Aleknagik|AK,Aleknagik,AK,ALASKA,59.3,-158.6,84.1,natural,N1a_natural_deep_or_unknown,False,30,0.05806,7,HIGH,S1b_limited_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Becharof|AK,Becharof,AK,ALASKA,57.9,-156.5,1171.74,natural,N1a_natural_deep_or_unknown,False,30,0.01108,7,HIGH,S1_little_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Big Lake|AK,Big Lake,AK,ALASKA,61.53,-149.95,12.4,natural,N1a_natural_deep_or_unknown,False,125,0.21616,7,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Harding|AK,Harding,AK,ALASKA,64.42,-146.85,9.1,natural,N1a_natural_deep_or_unknown,False,715,0.10574,7,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Iliamna|AK,Iliamna,AK,ALASKA,59.55,-155,,natural,Z_nodata,False,49,,7,UNKNOWN_no_polygon,UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Kenai|AK,Kenai,AK,ALASKA,60.42,-150.25,56.81,natural,N1a_natural_deep_or_unknown,False,436,0.05173,7,HIGH,S1b_limited_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Kvichak / Ugashik|AK,Kvichak / Ugashik,AK,ALASKA,57.5,-156.9,212.62,natural,N1a_natural_deep_or_unknown,False,10,0.03613,7,HIGH,S1b_limited_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Lake Clark|AK,Lake Clark,AK,ALASKA,60.2,-154.3,325.52,natural,N1a_natural_deep_or_unknown,False,254,0.02257,7,HIGH,S1_little_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Naknek|AK,Naknek,AK,ALASKA,58.7,-156,586.71,natural,N1a_natural_deep_or_unknown,False,34,0.02582,7,HIGH,S1_little_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Skilak|AK,Skilak,AK,ALASKA,60.43,-150.35,170.82,natural,N1a_natural_deep_or_unknown,False,200,,7,HIGH,S1b_limited_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Teshekpuk|AK,Teshekpuk,AK,ALASKA,70.6,-153.5,832.93,natural,N1b_natural_shallow,False,10,0.36206,7,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Tustumena|AK,Tustumena,AK,ALASKA,60.1,-150.9,295.85,natural,N1a_natural_deep_or_unknown,False,110,0.01657,7,HIGH,S1_little_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Bankhead|AL,Bankhead,AL,SOUTHEAST,33.45,-87.35,16.84,reservoir,R1_run_of_river_pool,True,255,,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Eufaula / W.F. George|AL,Eufaula / W.F. George,AL,SOUTHEAST,31.9,-85.1,141.83,reservoir,R2_flow_through_reservoir,True,190,0.24442,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Guntersville|AL,Guntersville,AL,SOUTHEAST,34.42,-86.26,266.74,reservoir,R1_run_of_river_pool,True,595,0.13005,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Jordan|AL,Jordan,AL,SOUTHEAST,32.62,-86.26,22.29,reservoir,R1_run_of_river_pool,True,252,0.26836,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Martin|AL,Lake Martin,AL,SOUTHEAST,32.7,-85.92,163.83,reservoir,R2_flow_through_reservoir,True,490,0.29258,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lay|AL,Lay,AL,SOUTHEAST,33,-86.52,54.7,reservoir,R1_run_of_river_pool,True,396,0.16756,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Logan Martin|AL,Logan Martin,AL,SOUTHEAST,33.47,-86.32,67.96,reservoir,R1_run_of_river_pool,True,465,0.30397,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Neely Henry|AL,Neely Henry,AL,SOUTHEAST,33.8,-86.05,35.86,reservoir,R1_run_of_river_pool,True,508,0.23701,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Smith (Lewis Smith)|AL,Smith (Lewis Smith),AL,SOUTHEAST,34.07,-87.1,86.39,reservoir,R3_dendritic_storage,True,510,0.27415,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Weiss|AL,Weiss,AL,SOUTHEAST,34.18,-85.65,103.9,reservoir,R1_run_of_river_pool,True,564,0.2509,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Wheeler|AL,Wheeler,AL,SOUTHEAST,34.63,-87.03,213.12,reservoir,R1_run_of_river_pool,True,556,0.11163,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Wilson|AL,Wilson,AL,SOUTHEAST,34.77,-87.45,63.31,reservoir,R1_run_of_river_pool,True,507.7,0.13534,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Beaver|AR,Beaver,AR,MIDSOUTH,36.42,-93.8,114.38,reservoir,R3_dendritic_storage,True,1120.43,0.21424,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Bull Shoals Lake|AR,Bull Shoals Lake,AR,MIDSOUTH,36.45,-92.55,184.34,reservoir,R3_dendritic_storage,True,659,0.16983,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Catherine|AR,Catherine,AR,MIDSOUTH,34.45,-93,6.26,reservoir,R1_run_of_river_pool,True,305,0.36337,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Chicot|AR,Chicot,AR,MIDSOUTH,33.33,-91.25,15.55,regulated_natural,N2_regulated_natural_lake,False,110,0.11677,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Dardanelle|AR,Dardanelle,AR,MIDSOUTH,35.35,-93.2,138.57,reservoir,R1_run_of_river_pool,True,338,0.25079,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+DeGray|AR,DeGray,AR,MIDSOUTH,34.22,-93.15,47.06,reservoir,R3_dendritic_storage,True,408,0.26049,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Greers Ferry|AR,Greers Ferry,AR,MIDSOUTH,35.55,-92.05,126.41,reservoir,R3_dendritic_storage,True,462.04,0.14612,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Hamilton|AR,Hamilton,AR,MIDSOUTH,34.45,-93.12,27.36,reservoir,R2_flow_through_reservoir,True,400,0.26747,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.10,VALIDATABLE_NOW
+Millwood|AR,Millwood,AR,MIDSOUTH,33.68,-93.95,113.47,reservoir,R2_flow_through_reservoir,True,259.2,0.14202,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Nimrod|AR,Nimrod,AR,MIDSOUTH,34.95,-93.17,11.65,reservoir,R2_flow_through_reservoir,True,342,0.32792,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Norfork|AR,Norfork,AR,MIDSOUTH,36.35,-92.24,76.77,reservoir,R3_dendritic_storage,True,553.75,0.28645,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Ouachita (L. Ouachita)|AR,Ouachita (L. Ouachita),AR,MIDSOUTH,34.57,-93.2,156.31,reservoir,R3_dendritic_storage,True,578,0.16806,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Alamo|AZ,Alamo,AZ,SOUTHWEST,34.23,-113.58,12.45,reservoir,R2_flow_through_reservoir,True,1160.4,0.1393,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Apache|AZ,Apache,AZ,SOUTHWEST,33.57,-111.55,8.45,reservoir,R2_flow_through_reservoir,True,1914,0.20497,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Bartlett|AZ,Bartlett,AZ,SOUTHWEST,33.82,-111.63,8.95,reservoir,R4_open_basin_storage,True,1798,0.19567,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Canyon|AZ,Canyon,AZ,SOUTHWEST,33.54,-111.43,1.83,reservoir,R1_run_of_river_pool,True,1660.5,0.29775,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Havasu|AZ,Havasu,AZ,SOUTHWEST,34.45,-114.35,75.4,reservoir,R2_flow_through_reservoir,True,450,0.33857,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Mary|AZ,Lake Mary,AZ,SOUTHWEST,35.09,-111.58,3.35,reservoir,R4_open_basin_storage,True,6831.82,0.32289,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pleasant|AZ,Pleasant,AZ,SOUTHWEST,33.86,-112.26,37.43,reservoir,R4_open_basin_storage,True,1702,0.13384,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Roosevelt|AZ,Roosevelt,AZ,SOUTHWEST,33.67,-111.15,39.77,reservoir,R4_open_basin_storage,True,2151,0.19078,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Saguaro|AZ,Saguaro,AZ,SOUTHWEST,33.57,-111.51,2.48,reservoir,R2_flow_through_reservoir,True,1529,0.0,1,MEDIUM_mixed_pixels,S1_little_shallow_area_modeled,NLA2017x1;NWI,0.75,VALIDATABLE_NOW
+San Carlos|AZ,San Carlos,AZ,SOUTHWEST,33.18,-110.45,53.07,reservoir,R4_open_basin_storage,True,2510.4,0.0936,1,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Almanor|CA,Almanor,CA,CALIFORNIA,40.26,-121.15,102.1,reservoir,R4_open_basin_storage,True,4494,0.15871,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Berryessa|CA,Berryessa,CA,CALIFORNIA,38.59,-122.23,73.39,reservoir,R4_open_basin_storage,True,440,0.19033,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Clear Lake|CA,Clear Lake,CA,CALIFORNIA,39.02,-122.83,160.73,natural,N1a_natural_deep_or_unknown,False,1326,0.04396,1,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Don Pedro|CA,Don Pedro,CA,CALIFORNIA,37.7,-120.4,44.7,reservoir,R3_dendritic_storage,True,830,0.21104,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Eagle Lake|CA,Eagle Lake,CA,CALIFORNIA,40.65,-120.73,73.58,natural,N1a_natural_deep_or_unknown,False,5100,0.04479,1,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Folsom|CA,Folsom,CA,CALIFORNIA,38.71,-121.15,44.43,reservoir,R2_flow_through_reservoir,True,466,0.18675,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.70,VALIDATABLE_NOW
+Isabella|CA,Isabella,CA,CALIFORNIA,35.65,-118.48,31.21,reservoir,R4_open_basin_storage,True,2585.5,0.12322,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Mono|CA,Mono,CA,CALIFORNIA,38,-119.01,182.85,natural,N1a_natural_deep_or_unknown,False,6383,0.08542,1,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Oroville|CA,Oroville,CA,CALIFORNIA,39.54,-121.48,46.73,reservoir,R3_dendritic_storage,True,900,0.10133,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Salton Sea|CA,Salton Sea,CA,CALIFORNIA,33.33,-115.83,945.79,natural,N1a_natural_deep_or_unknown,False,-236,0.22989,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Shasta|CA,Shasta,CA,CALIFORNIA,40.72,-122.32,115.64,reservoir,R3_dendritic_storage,True,1067,0.1118,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Trinity|CA,Trinity,CA,CALIFORNIA,40.8,-122.76,63.38,reservoir,R4_open_basin_storage,True,2370,0.23122,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Blue Mesa Reservoir|CO,Blue Mesa Reservoir,CO,MOUNTAIN_WEST,38.4586,-107.33,36.42,reservoir,R4_open_basin_storage,True,7519.4,0.10999,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Chatfield Reservoir|CO,Chatfield Reservoir,CO,MOUNTAIN_WEST,39.545,-105.065,5.63,reservoir,R4_open_basin_storage,True,5444,0.13424,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cherry Creek Reservoir|CO,Cherry Creek Reservoir,CO,MOUNTAIN_WEST,39.636,-104.85,3.59,reservoir,R4_open_basin_storage,True,5550,0.16417,5,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Dillon Reservoir|CO,Dillon Reservoir,CO,MOUNTAIN_WEST,39.61,-106.06,13.06,reservoir,R4_open_basin_storage,True,9017,0.12447,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Eleven Mile Reservoir|CO,Eleven Mile Reservoir,CO,MOUNTAIN_WEST,38.92,-105.465,12.62,reservoir,R4_open_basin_storage,True,8597,0.10124,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Grand Lake|CO,Grand Lake,CO,MOUNTAIN_WEST,40.2517,-105.828,1.95,natural,N3_small_pond_or_outlet_dam,False,8367,0.32353,5,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Horsetooth Reservoir|CO,Horsetooth Reservoir,CO,MOUNTAIN_WEST,40.545,-105.145,7.39,reservoir,R4_open_basin_storage,True,5430,0.11102,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+John Martin Reservoir|CO,John Martin Reservoir,CO,MOUNTAIN_WEST,38.07,-102.93,47.4,reservoir,R4_open_basin_storage,True,3851.9,0.17139,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Granby|CO,Lake Granby,CO,MOUNTAIN_WEST,40.145,-105.84,28.7,reservoir,R4_open_basin_storage,True,8280,0.06412,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Pueblo Reservoir|CO,Pueblo Reservoir,CO,MOUNTAIN_WEST,38.26,-104.735,9.46,reservoir,R4_open_basin_storage,True,4880.38,0.18906,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Ruedi Reservoir|CO,Ruedi Reservoir,CO,MOUNTAIN_WEST,39.362,-106.83,4.2,reservoir,R4_open_basin_storage,True,7766,0.11207,5,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Shadow Mountain Reservoir|CO,Shadow Mountain Reservoir,CO,MOUNTAIN_WEST,40.22,-105.845,5.34,reservoir,R4_open_basin_storage,True,8367,0.27853,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Bantam Lake|CT,Bantam Lake,CT,NORTHEAST,41.708,-73.218,3.86,regulated_natural,N2_regulated_natural_lake,False,902,0.25851,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Barkhamsted Reservoir|CT,Barkhamsted Reservoir,CT,NORTHEAST,41.93,-72.96,9.05,reservoir,R4_open_basin_storage,True,530,0.20513,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Candlewood Lake|CT,Candlewood Lake,CT,NORTHEAST,41.475,-73.448,20.79,reservoir,R4_open_basin_storage,True,429.5,0.19587,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Coventry Lake (Wangumbaug)|CT,Coventry Lake (Wangumbaug),CT,NORTHEAST,41.772,-72.308,1.51,regulated_natural,N3_small_pond_or_outlet_dam,False,495,0.24612,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Gardner Lake|CT,Gardner Lake,CT,NORTHEAST,41.542,-72.172,2.12,regulated_natural,N2_regulated_natural_lake,False,427,0.22105,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Highland Lake|CT,Highland Lake,CT,NORTHEAST,41.91,-73.072,1.82,regulated_natural,N3_small_pond_or_outlet_dam,False,832,0.20649,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Lillinonah|CT,Lake Lillinonah,CT,NORTHEAST,41.405,-73.305,6.24,reservoir,R1_run_of_river_pool,True,200,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Waramaug|CT,Lake Waramaug,CT,NORTHEAST,41.69,-73.378,2.63,regulated_natural,N2_regulated_natural_lake,False,684,0.24191,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Zoar|CT,Lake Zoar,CT,NORTHEAST,41.415,-73.25,3.02,reservoir,R1_run_of_river_pool,True,103,,4,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,1.70,VALIDATABLE_NOW
+Mansfield Hollow Lake|CT,Mansfield Hollow Lake,CT,NORTHEAST,41.755,-72.175,1.99,reservoir,R5_small_impoundment,True,210,0.43294,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pachaug Pond|CT,Pachaug Pond,CT,NORTHEAST,41.592,-71.888,3.3,reservoir,R2_flow_through_reservoir,True,159,0.35033,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Squantz Pond|CT,Squantz Pond,CT,NORTHEAST,41.49,-73.488,1.1,natural,N3_small_pond_or_outlet_dam,False,429.5,,4,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Andrews Lake|DE,Andrews Lake,DE,NORTHEAST,38.908,-75.542,0.08,reservoir,R5_small_impoundment,True,8.4,,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Becks Pond|DE,Becks Pond,DE,NORTHEAST,39.64,-75.687,0.11,reservoir,R5_small_impoundment,True,24.5,,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Concord Pond|DE,Concord Pond,DE,NORTHEAST,38.612,-75.592,0.31,reservoir,R5_small_impoundment,True,7.6,0.39733,4,LOW_lt0.5km2,S0_not_feasible_size,NLA2017x1;NWI,3.33,VALIDATABLE_NOW
+Garrisons Lake|DE,Garrisons Lake,DE,NORTHEAST,39.244,-75.628,0.33,reservoir,R5_small_impoundment,True,4.9,0.42936,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Griffith Lake|DE,Griffith Lake,DE,NORTHEAST,38.925,-75.545,0.16,reservoir,R5_small_impoundment,True,20,0.43176,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Killens Pond|DE,Killens Pond,DE,NORTHEAST,38.988,-75.539,0.32,reservoir,R5_small_impoundment,True,17.5,0.3493,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Lums Pond|DE,Lums Pond,DE,NORTHEAST,39.558,-75.72,0.8,reservoir,R5_small_impoundment,True,41.6,0.37688,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Records Pond|DE,Records Pond,DE,NORTHEAST,38.56,-75.575,0.34,reservoir,R5_small_impoundment,True,7.4,0.38116,4,LOW_lt0.5km2,S0_not_feasible_size,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Red Mill Pond|DE,Red Mill Pond,DE,NORTHEAST,38.753,-75.16,0.77,reservoir,R5_small_impoundment,True,4.6,0.24947,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Silver Lake (Dover)|DE,Silver Lake (Dover),DE,NORTHEAST,39.152,-75.515,0.69,reservoir,R5_small_impoundment,True,12.8,0.29893,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Trap Pond|DE,Trap Pond,DE,NORTHEAST,38.529,-75.48,0.38,reservoir,R5_small_impoundment,True,31.3,0.27248,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Wagamons Pond|DE,Wagamons Pond,DE,NORTHEAST,38.772,-75.307,0.17,reservoir,R5_small_impoundment,True,6.4,,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Apopka|FL,Apopka,FL,GULF,28.62,-81.62,125.88,natural,N1a_natural_deep_or_unknown,False,66.14,0.54445,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,FWC_LTM_pts6167;NWI,,VALIDATABLE_NOW
+Crescent Lake|FL,Crescent Lake,FL,GULF,29.445,-81.51,69.63,natural,N1b_natural_shallow,False,4,0.04215,0,HIGH,S1b_limited_shallow_area_modeled,FWC_LTM_pts7;NWI,,VALIDATABLE_NOW
+East Lake Tohopekaliga|FL,East Lake Tohopekaliga,FL,GULF,28.27,-81.33,75.7,regulated_natural,N2_regulated_natural_lake,False,58,0.22261,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,FWC_inventory(report);NWI,,NWI_PRIOR_ONLY
+Griffin|FL,Griffin,FL,GULF,28.86,-81.89,38.49,regulated_natural,N2_regulated_natural_lake,False,58.21,0.10151,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;FWC_LTM_pts7244;NWI,1.40,VALIDATABLE_NOW
+Harris|FL,Harris,FL,GULF,28.76,-81.81,74.84,regulated_natural,N2_regulated_natural_lake,False,62.21,0.34506,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,FWC_LTM_pts3883;NWI,,VALIDATABLE_NOW
+Istokpoga|FL,Istokpoga,FL,GULF,27.38,-81.3,96.95,natural,N1b_natural_shallow,False,39.5,0.05555,0,HIGH,S1b_limited_shallow_area_modeled,FWC_LTM_pts4162;NWI,,VALIDATABLE_NOW
+Jesup|FL,Jesup,FL,GULF,28.71,-81.24,32.73,natural,N1b_natural_shallow,False,5,0.03324,0,HIGH,S1b_limited_shallow_area_modeled,FWC_inventory(report);NWI,,NWI_PRIOR_ONLY
+Kissimmee|FL,Kissimmee,FL,GULF,27.94,-81.27,127.48,regulated_natural,N2_regulated_natural_lake,False,53,0.21726,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,FWC_LTM_pts3914;NWI,,VALIDATABLE_NOW
+Lake George|FL,Lake George,FL,GULF,29.285,-81.6,176.51,natural,N1a_natural_deep_or_unknown,False,3,0.04751,0,HIGH,S1b_limited_shallow_area_modeled,FWC_LTM_pts1129;NWI,,VALIDATABLE_NOW
+Lochloosa|FL,Lochloosa,FL,GULF,29.515,-82.125,22.15,natural,N1b_natural_shallow,False,57,0.17833,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,FWC_LTM_pts661;NWI,,VALIDATABLE_NOW
+Okeechobee|FL,Okeechobee,FL,GULF,26.94,-80.8,1381.83,MEGA,X_mega,False,15.5,0.73622,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;FWC_LTM_pts1272;NWI,,VALIDATABLE_NOW
+Orange Lake|FL,Orange Lake,FL,GULF,29.475,-82.2,29.6,regulated_natural,N2_regulated_natural_lake,False,58,,0,HIGH,S1b_limited_shallow_area_modeled,FWC_LTM_pts8374;NWI,,VALIDATABLE_NOW
+Tohopekaliga (Toho)|FL,Tohopekaliga (Toho),FL,GULF,28.19,-81.415,75.7,natural,N1a_natural_deep_or_unknown,False,55,,0,HIGH,S1b_limited_shallow_area_modeled,FWC_inventory(report);NWI,,NWI_PRIOR_ONLY
+Allatoona|GA,Allatoona,GA,SOUTHEAST,34.16,-84.725,45.95,reservoir,R2_flow_through_reservoir,True,840,0.26117,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Blackshear|GA,Blackshear,GA,SOUTHEAST,31.83,-83.955,32.54,reservoir,R1_run_of_river_pool,True,237,0.18655,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Burton|GA,Burton,GA,SOUTHEAST,34.77,-83.55,10.33,reservoir,R2_flow_through_reservoir,True,1866.6,0.18964,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Carters|GA,Carters,GA,SOUTHEAST,34.62,-84.67,12.16,reservoir,R3_dendritic_storage,True,1074,0.14417,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Clarks Hill / J.S. Thurmond|GA,Clarks Hill / J.S. Thurmond,GA,SOUTHEAST,33.66,-82.2,166.47,reservoir,R3_dendritic_storage,True,330,,0,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Lake Russell (R.B. Russell)|GA,Lake Russell (R.B. Russell),GA,SOUTHEAST,34.05,-82.65,100.29,reservoir,R2_flow_through_reservoir,True,475,0.26717,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lanier (Sidney Lanier)|GA,Lanier (Sidney Lanier),GA,SOUTHEAST,34.22,-84.07,156.34,reservoir,R3_dendritic_storage,True,1071,0.11164,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Oconee|GA,Oconee,GA,SOUTHEAST,33.43,-83.25,71.01,reservoir,R2_flow_through_reservoir,True,435,0.2974,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Seminole|GA,Seminole,GA,SOUTHEAST,30.8,-84.88,71.99,reservoir,R1_run_of_river_pool,True,77,0.30146,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sinclair|GA,Sinclair,GA,SOUTHEAST,33.15,-83.26,53.77,reservoir,R2_flow_through_reservoir,True,340,,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Walter F. George / Eufaula|GA,Walter F. George / Eufaula,GA,SOUTHEAST,31.9,-85.05,141.83,reservoir,R2_flow_through_reservoir,True,190,,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+West Point|GA,West Point,GA,SOUTHEAST,32.92,-85.18,90.87,reservoir,R2_flow_through_reservoir,True,635,0.32338,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Halulu Lake (Niihau)|HI,Halulu Lake (Niihau),HI,HAWAII,21.8639,-160.1533,1.01,natural,N3_small_pond_or_outlet_dam,False,20,,0,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Koele ponds (Lanai)|HI,Koele ponds (Lanai),HI,HAWAII,20.838,-156.921,,reservoir,Z_nodata,True,,,0,UNKNOWN_no_polygon,UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Lake Waiau|HI,Lake Waiau,HI,HAWAII,19.8117,-155.4736,0.0,natural,N3_small_pond_or_outlet_dam,False,13020,,0,LOW_lt0.5km2,S0_not_feasible_size,NWI(partial),,NWI_PRIOR_ONLY
+Nuuanu Reservoir|HI,Nuuanu Reservoir,HI,HAWAII,21.355,-157.822,,reservoir,R5_small_impoundment,True,,,0,UNKNOWN_no_polygon,UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Puu Loa Reservoir|HI,Puu Loa Reservoir,HI,HAWAII,22.103,-159.63,,reservoir,Z_nodata,True,,,0,UNKNOWN_no_polygon,UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Waiakea Pond|HI,Waiakea Pond,HI,HAWAII,19.7156,-155.09,,natural,Z_nodata,False,2,,0,UNKNOWN_no_polygon,UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Waimaluhia Reservoir|HI,Waimaluhia Reservoir,HI,HAWAII,21.392,-157.808,,reservoir,Z_nodata,True,,,0,UNKNOWN_no_polygon,UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Waita Reservoir|HI,Waita Reservoir,HI,HAWAII,21.93,-159.455,1.54,reservoir,R4_open_basin_storage,True,,0.15275,0,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI(partial),,NWI_PRIOR_ONLY
+Wilson Lake / Kaelepulu Pond|HI,Wilson Lake / Kaelepulu Pond,HI,HAWAII,21.3839,-157.7361,2.53,natural,N1a_natural_deep_or_unknown,False,3,,0,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI(partial),,NWI_PRIOR_ONLY
+Big Creek Lake|IA,Big Creek Lake,IA,MIDWEST,41.78,-93.75,3.47,reservoir,R4_open_basin_storage,True,920,,3,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Black Hawk Lake|IA,Black Hawk Lake,IA,MIDWEST,42.3,-95.03,3.68,regulated_natural,N2_regulated_natural_lake,False,1225,0.30097,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Clear Lake|IA,Clear Lake,IA,MIDWEST,43.13,-93.42,14.68,natural,N1a_natural_deep_or_unknown,False,1204,0.15893,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Coralville Lake|IA,Coralville Lake,IA,MIDWEST,41.72,-91.53,12.91,reservoir,R2_flow_through_reservoir,True,683,0.33967,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+East Okoboji|IA,East Okoboji,IA,MIDWEST,43.4,-95.12,7.42,natural,N1a_natural_deep_or_unknown,False,1400,,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Macbride|IA,Lake Macbride,IA,MIDWEST,41.8,-91.55,3.54,reservoir,R4_open_basin_storage,True,,0.28268,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Red Rock|IA,Lake Red Rock,IA,MIDWEST,41.37,-93.05,35.04,reservoir,R2_flow_through_reservoir,True,742,0.13011,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Rathbun Lake|IA,Rathbun Lake,IA,MIDWEST,40.85,-92.87,56.49,reservoir,R3_dendritic_storage,True,904,0.17633,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Saylorville Lake|IA,Saylorville Lake,IA,MIDWEST,41.72,-93.68,22.04,reservoir,R2_flow_through_reservoir,True,836.4,,3,HIGH,S1b_limited_shallow_area_modeled,USGS_UMR(possible);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Spirit Lake|IA,Spirit Lake,IA,MIDWEST,43.45,-95.1,22.1,natural,N1b_natural_shallow,False,1447,0.14107,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Storm Lake|IA,Storm Lake,IA,MIDWEST,42.63,-95.2,12.57,regulated_natural,N2_regulated_natural_lake,False,1437,0.38822,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+West Okoboji|IA,West Okoboji,IA,MIDWEST,43.37,-95.15,25.12,natural,N1a_natural_deep_or_unknown,False,1400,,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+American Falls Reservoir|ID,American Falls Reservoir,ID,MOUNTAIN_WEST,42.85,-112.87,223.94,reservoir,R2_flow_through_reservoir,True,4354.5,0.1139,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Anderson Ranch Reservoir|ID,Anderson Ranch Reservoir,ID,MOUNTAIN_WEST,43.35,-115.45,18.29,reservoir,R4_open_basin_storage,True,4196,0.24508,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+C.J. Strike Reservoir|ID,C.J. Strike Reservoir,ID,MOUNTAIN_WEST,42.95,-115.98,25.19,reservoir,R1_run_of_river_pool,True,2455,0.20209,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Coeur d'Alene|ID,Coeur d'Alene,ID,MOUNTAIN_WEST,47.55,-116.83,108.73,natural,N1a_natural_deep_or_unknown,False,2128,,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Dworshak Reservoir|ID,Dworshak Reservoir,ID,MOUNTAIN_WEST,46.6,-116.2,66.42,reservoir,R3_dendritic_storage,True,1600,0.08614,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Henrys Lake|ID,Henrys Lake,ID,MOUNTAIN_WEST,44.63,-111.38,25.05,regulated_natural,N2_regulated_natural_lake,False,6473.86,0.07211,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Cascade|ID,Lake Cascade,ID,MOUNTAIN_WEST,44.55,-116.05,101.27,reservoir,R4_open_basin_storage,True,4828,0.16069,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Pend Oreille|ID,Lake Pend Oreille,ID,MOUNTAIN_WEST,48.15,-116.4,374.83,regulated_natural,N2_regulated_natural_lake,False,2062.5,0.17408,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lucky Peak Lake|ID,Lucky Peak Lake,ID,MOUNTAIN_WEST,43.53,-116.05,11.25,reservoir,R2_flow_through_reservoir,True,3055,0.15754,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Palisades Reservoir|ID,Palisades Reservoir,ID,MOUNTAIN_WEST,43.4,-111.2,64.07,reservoir,R2_flow_through_reservoir,True,5620,0.254,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Payette Lake|ID,Payette Lake,ID,MOUNTAIN_WEST,44.93,-116.1,20.52,regulated_natural,N2_regulated_natural_lake,False,4988.8,0.13714,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Priest Lake|ID,Priest Lake,ID,MOUNTAIN_WEST,48.58,-116.87,94.66,regulated_natural,N2_regulated_natural_lake,False,2437.64,0.04823,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Redfish Lake|ID,Redfish Lake,ID,MOUNTAIN_WEST,44.13,-114.92,6.09,natural,N1a_natural_deep_or_unknown,False,6547,0.06642,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Carlyle Lake|IL,Carlyle Lake,IL,MIDWEST,38.65,-89.35,92.68,reservoir,R2_flow_through_reservoir,True,445,0.22366,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Chain O'Lakes|IL,Chain O'Lakes,IL,MIDWEST,42.46,-88.15,0.85,natural,N3_small_pond_or_outlet_dam,False,737,0.32722,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Clinton Lake|IL,Clinton Lake,IL,MIDWEST,40.17,-88.83,18.7,reservoir,R4_open_basin_storage,True,690,0.22031,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Crab Orchard Lake|IL,Crab Orchard Lake,IL,MIDWEST,37.72,-89.05,29.61,reservoir,R3_dendritic_storage,True,405,0.25005,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Devil's Kitchen Lake|IL,Devil's Kitchen Lake,IL,MIDWEST,37.66,-89.1,2.93,reservoir,R4_open_basin_storage,True,510,0.23937,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Fox Lake|IL,Fox Lake,IL,MIDWEST,42.4,-88.18,7.39,natural,N1a_natural_deep_or_unknown,False,737,,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Shelbyville|IL,Lake Shelbyville,IL,MIDWEST,39.45,-88.75,41.7,reservoir,R3_dendritic_storage,True,599.7,0.18807,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Springfield|IL,Lake Springfield,IL,MIDWEST,39.72,-89.6,15.82,reservoir,R4_open_basin_storage,True,560,0.35441,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake of Egypt|IL,Lake of Egypt,IL,MIDWEST,37.6,-88.97,8.69,reservoir,R3_dendritic_storage,True,500,0.25046,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Rend Lake|IL,Rend Lake,IL,MIDWEST,38.05,-88.95,69.4,reservoir,R3_dendritic_storage,True,405,0.21321,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Rice Lake|IL,Rice Lake,IL,MIDWEST,40.48,-89.92,5.35,regulated_natural,N2_regulated_natural_lake,False,440,0.1403,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sangchris Lake|IL,Sangchris Lake,IL,MIDWEST,39.62,-89.47,9.26,reservoir,R3_dendritic_storage,True,585,0.21243,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Brookville Lake|IN,Brookville Lake,IN,MIDWEST,39.45,-85,17.69,reservoir,R4_open_basin_storage,True,748,0.18624,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cagles Mill Lake|IN,Cagles Mill Lake,IN,MIDWEST,39.48,-86.88,5.02,reservoir,R4_open_basin_storage,True,639.5,0.26716,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cecil M. Harden Lake|IN,Cecil M. Harden Lake,IN,MIDWEST,39.78,-87.05,6.82,reservoir,R4_open_basin_storage,True,662,0.23791,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Eagle Creek Reservoir|IN,Eagle Creek Reservoir,IN,MIDWEST,39.87,-86.3,5.14,reservoir,R4_open_basin_storage,True,790,0.20016,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Geist Reservoir|IN,Geist Reservoir,IN,MIDWEST,39.93,-85.95,7.57,reservoir,R2_flow_through_reservoir,True,784.26,0.21459,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Freeman|IN,Lake Freeman,IN,MIDWEST,40.75,-86.75,6.35,reservoir,R1_run_of_river_pool,True,610.35,0.29875,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Michigan|IN,Lake Michigan,IN,MIDWEST,41.7,-87.2,,MEGA,X_mega,False,579,,3,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Shafer|IN,Lake Shafer,IN,MIDWEST,40.8,-86.77,0.0,reservoir,R5_small_impoundment,True,645.15,,3,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Lake Wawasee|IN,Lake Wawasee,IN,MIDWEST,41.4,-85.72,13.86,natural,N1b_natural_shallow,False,858,0.23434,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x2;NWI,1.35,VALIDATABLE_NOW
+Mississinewa Lake|IN,Mississinewa Lake,IN,MIDWEST,40.72,-85.9,8.76,reservoir,R4_open_basin_storage,True,737,0.28384,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Monroe Lake|IN,Monroe Lake,IN,MIDWEST,39.05,-86.42,45.15,reservoir,R3_dendritic_storage,True,538,0.26761,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Patoka Lake|IN,Patoka Lake,IN,MIDWEST,38.42,-86.65,37.18,reservoir,R3_dendritic_storage,True,536,0.25202,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Salamonie Lake|IN,Salamonie Lake,IN,MIDWEST,40.75,-85.65,11.66,reservoir,R4_open_basin_storage,True,755,0.28316,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Tippecanoe Lake|IN,Tippecanoe Lake,IN,MIDWEST,41.35,-85.73,3.39,natural,N1b_natural_shallow,False,801,0.31398,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,2.30,VALIDATABLE_NOW
+Cedar Bluff Reservoir|KS,Cedar Bluff Reservoir,KS,PLAINS,38.78,-99.73,24.04,reservoir,R4_open_basin_storage,True,2144,0.20147,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cheney Reservoir|KS,Cheney Reservoir,KS,PLAINS,37.73,-97.82,39.55,reservoir,R4_open_basin_storage,True,1421.6,0.14743,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Clinton Lake|KS,Clinton Lake,KS,PLAINS,38.925,-95.36,29.76,reservoir,R4_open_basin_storage,True,875.5,0.35554,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+El Dorado Lake|KS,El Dorado Lake,KS,PLAINS,37.84,-96.79,30.05,reservoir,R4_open_basin_storage,True,1339,0.18838,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+John Redmond Reservoir|KS,John Redmond Reservoir,KS,PLAINS,38.25,-95.76,33.4,reservoir,R2_flow_through_reservoir,True,1041,0.14143,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Kanopolis Lake|KS,Kanopolis Lake,KS,PLAINS,38.62,-98.01,14.02,reservoir,R4_open_basin_storage,True,1463,0.18624,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Marion Reservoir|KS,Marion Reservoir,KS,PLAINS,38.37,-97.09,0.57,reservoir,R5_small_impoundment,True,1350.5,0.17569,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Melvern Lake|KS,Melvern Lake,KS,PLAINS,38.51,-95.72,25.56,reservoir,R4_open_basin_storage,True,1036,0.13367,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Milford Lake|KS,Milford Lake,KS,PLAINS,39.1,-96.91,59.2,reservoir,R4_open_basin_storage,True,1144.4,0.12621,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Perry Lake|KS,Perry Lake,KS,PLAINS,39.14,-95.45,43.69,reservoir,R4_open_basin_storage,True,891.5,0.1536,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pomona Lake|KS,Pomona Lake,KS,PLAINS,38.65,-95.56,15.33,reservoir,R4_open_basin_storage,True,974,0.30402,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Tuttle Creek Lake|KS,Tuttle Creek Lake,KS,PLAINS,39.32,-96.61,48.75,reservoir,R4_open_basin_storage,True,1075,0.05468,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Waconda Lake|KS,Waconda Lake,KS,PLAINS,39.49,-98.31,37.83,reservoir,R4_open_basin_storage,True,1455.6,0.14292,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Wilson Lake|KS,Wilson Lake,KS,PLAINS,38.93,-98.51,31.83,reservoir,R4_open_basin_storage,True,1516,0.15002,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.20,VALIDATABLE_NOW
+Barren River Lake|KY,Barren River Lake,KY,MIDSOUTH,36.89,-86.13,38.7,reservoir,R3_dendritic_storage,True,552,0.21542,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Buckhorn Lake|KY,Buckhorn Lake,KY,MIDSOUTH,37.34,-83.4,4.76,reservoir,R2_flow_through_reservoir,True,782,0.20747,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cave Run Lake|KY,Cave Run Lake,KY,MIDSOUTH,38.12,-83.52,33.02,reservoir,R3_dendritic_storage,True,730,0.18535,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Green River Lake|KY,Green River Lake,KY,MIDSOUTH,37.25,-85.34,34.39,reservoir,R3_dendritic_storage,True,675,0.20289,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Herrington Lake|KY,Herrington Lake,KY,MIDSOUTH,37.75,-84.7,11.59,reservoir,R2_flow_through_reservoir,True,740,0.22799,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Kentucky Lake|KY,Kentucky Lake,KY,MIDSOUTH,36.9,-88.07,480.14,reservoir,R2_flow_through_reservoir,True,359,0.19094,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Barkley|KY,Lake Barkley,KY,MIDSOUTH,36.92,-87.94,201.36,reservoir,R1_run_of_river_pool,True,359,0.13548,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Cumberland|KY,Lake Cumberland,KY,MIDSOUTH,36.93,-85.05,207.62,reservoir,R3_dendritic_storage,True,723,0.11099,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Laurel River Lake|KY,Laurel River Lake,KY,MIDSOUTH,36.95,-84.22,24.58,reservoir,R3_dendritic_storage,True,1018.5,0.15508,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Nolin River Lake|KY,Nolin River Lake,KY,MIDSOUTH,37.3,-86.25,24.58,reservoir,R3_dendritic_storage,True,515,0.26185,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Rough River Lake|KY,Rough River Lake,KY,MIDSOUTH,37.61,-86.51,20.56,reservoir,R3_dendritic_storage,True,495,0.42266,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Taylorsville Lake|KY,Taylorsville Lake,KY,MIDSOUTH,38.02,-85.25,12.09,reservoir,R3_dendritic_storage,True,547,0.22308,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Calcasieu Lake|LA,Calcasieu Lake,LA,GULF,29.9,-93.31,184.16,natural,N1b_natural_shallow,False,1,0.07461,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Catahoula Lake|LA,Catahoula Lake,LA,GULF,31.53,-92.12,67.19,regulated_natural,N2_regulated_natural_lake,False,30,0.03975,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Cross Lake|LA,Cross Lake,LA,GULF,32.53,-93.85,28.61,reservoir,R4_open_basin_storage,True,171.1,0.2427,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+False River|LA,False River,LA,GULF,30.72,-91.43,12.74,regulated_natural,N2_regulated_natural_lake,False,20,0.03836,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Grand Lake|LA,Grand Lake,LA,GULF,29.92,-92.83,161.95,natural,N1b_natural_shallow,False,3,0.05467,0,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,0.05,VALIDATABLE_NOW
+Henderson Lake|LA,Henderson Lake,LA,GULF,30.32,-91.76,19.04,natural,N1b_natural_shallow,False,10,0.20749,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Bistineau|LA,Lake Bistineau,LA,GULF,32.4,-93.4,53.14,reservoir,R2_flow_through_reservoir,True,141,0.2491,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake D'Arbonne|LA,Lake D'Arbonne,LA,GULF,32.71,-92.46,52.83,reservoir,R2_flow_through_reservoir,True,80,0.27421,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Maurepas|LA,Lake Maurepas,LA,GULF,30.27,-90.5,236.75,natural,N1b_natural_shallow,False,1,0.04943,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Pontchartrain|LA,Lake Pontchartrain,LA,GULF,30.18,-90.1,1655.89,MEGA,X_mega,False,1,0.18052,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sabine Lake|LA,Sabine Lake,LA,GULF,29.85,-93.85,230.98,natural,N1b_natural_shallow,False,1,0.04724,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+White Lake|LA,White Lake,LA,GULF,29.74,-92.5,227.08,natural,N1b_natural_shallow,False,1,0.03335,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Assawompset Pond|MA,Assawompset Pond,MA,NORTHEAST,41.833,-70.933,10.72,regulated_natural,N2_regulated_natural_lake,False,54,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Congamond Lakes|MA,Congamond Lakes,MA,NORTHEAST,42.043,-72.757,0.58,regulated_natural,N3_small_pond_or_outlet_dam,False,250,,4,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Cochituate|MA,Lake Cochituate,MA,NORTHEAST,42.3,-71.36,0.8,regulated_natural,N3_small_pond_or_outlet_dam,False,141,0.34748,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Quinsigamond|MA,Lake Quinsigamond,MA,NORTHEAST,42.26,-71.777,1.9,regulated_natural,N2_regulated_natural_lake,False,460,0.42156,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Long Pond (Lakeville)|MA,Long Pond (Lakeville),MA,NORTHEAST,41.823,-70.91,7.2,natural,N1a_natural_deep_or_unknown,False,52,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Onota Lake|MA,Onota Lake,MA,NORTHEAST,42.47,-73.268,2.62,regulated_natural,N2_regulated_natural_lake,True,1131,0.32597,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Otis Reservoir|MA,Otis Reservoir,MA,NORTHEAST,42.178,-73.06,4.02,reservoir,R4_open_basin_storage,True,,0.12489,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pontoosuc Lake|MA,Pontoosuc Lake,MA,NORTHEAST,42.49,-73.251,2.03,reservoir,R2_flow_through_reservoir,True,1101,0.28098,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Quabbin Reservoir|MA,Quabbin Reservoir,MA,NORTHEAST,42.3736,-72.3369,97.4,reservoir,R4_open_basin_storage,True,530,0.13403,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Wachusett Reservoir|MA,Wachusett Reservoir,MA,NORTHEAST,42.39,-71.75,16.1,reservoir,R4_open_basin_storage,True,395,0.23913,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Watuppa Ponds|MA,Watuppa Ponds,MA,NORTHEAST,41.69,-71.1,7.13,regulated_natural,N2_regulated_natural_lake,False,131,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Webster Lake|MA,Webster Lake,MA,NORTHEAST,42.05,-71.825,5.17,regulated_natural,N2_regulated_natural_lake,False,463,0.36375,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Conowingo Reservoir|MD,Conowingo Reservoir,MD,NORTHEAST,39.66,-76.17,35.19,reservoir,R1_run_of_river_pool,True,109.2,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Deep Creek Lake|MD,Deep Creek Lake,MD,NORTHEAST,39.5,-79.3,14.99,reservoir,R4_open_basin_storage,True,2462,0.2062,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Jennings Randolph Lake|MD,Jennings Randolph Lake,MD,NORTHEAST,39.42,-79.12,3.34,reservoir,R2_flow_through_reservoir,True,1466,0.23097,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Habeeb (Rocky Gap)|MD,Lake Habeeb (Rocky Gap),MD,NORTHEAST,39.7,-78.65,0.81,reservoir,R5_small_impoundment,True,1166.4,0.17633,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,2.15,VALIDATABLE_NOW
+Liberty Reservoir|MD,Liberty Reservoir,MD,NORTHEAST,39.42,-76.9,11.92,reservoir,R3_dendritic_storage,True,420,0.33261,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Loch Raven Reservoir|MD,Loch Raven Reservoir,MD,NORTHEAST,39.47,-76.55,8.95,reservoir,R2_flow_through_reservoir,True,240,0.36243,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Piney Run Lake|MD,Piney Run Lake,MD,NORTHEAST,39.4,-77.02,1.15,reservoir,R5_small_impoundment,True,523,0.22707,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,2.67,VALIDATABLE_NOW
+Prettyboy Reservoir|MD,Prettyboy Reservoir,MD,NORTHEAST,39.62,-76.73,6.15,reservoir,R3_dendritic_storage,True,520,0.26004,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Rocky Gorge Reservoir|MD,Rocky Gorge Reservoir,MD,NORTHEAST,39.13,-76.95,2.68,reservoir,R2_flow_through_reservoir,True,286.4,0.36022,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Savage River Reservoir|MD,Savage River Reservoir,MD,NORTHEAST,39.5,-79.13,1.46,reservoir,R5_small_impoundment,True,1467,0.13747,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Triadelphia Reservoir|MD,Triadelphia Reservoir,MD,NORTHEAST,39.22,-77.03,3.23,reservoir,R2_flow_through_reservoir,True,366.4,0.3327,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Youghiogheny River Lake|MD,Youghiogheny River Lake,MD,NORTHEAST,39.7,-79.36,11.89,reservoir,R2_flow_through_reservoir,True,1438.35,0.20528,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Chamberlain Lake|ME,Chamberlain Lake,ME,NORTHEAST,46.22,-69.3,44.34,natural,N1b_natural_shallow,False,940,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Chesuncook Lake|ME,Chesuncook Lake,ME,NORTHEAST,46.05,-69.4,76.48,regulated_natural,N2_regulated_natural_lake,False,941.59,0.17887,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+China Lake|ME,China Lake,ME,NORTHEAST,44.44,-69.55,15.95,regulated_natural,N2_regulated_natural_lake,False,190,0.18737,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Damariscotta Lake|ME,Damariscotta Lake,ME,NORTHEAST,44.1,-69.48,18.94,regulated_natural,N2_regulated_natural_lake,False,52,0.22901,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Flagstaff Lake|ME,Flagstaff Lake,ME,NORTHEAST,45.18,-70.33,70.37,reservoir,R4_open_basin_storage,True,1146,0.19708,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Great Pond (Belgrade)|ME,Great Pond (Belgrade),ME,NORTHEAST,44.55,-69.86,34.54,regulated_natural,N2_regulated_natural_lake,False,240,0.20508,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Long Lake|ME,Long Lake,ME,NORTHEAST,44.05,-70.59,24.45,regulated_natural,N2_regulated_natural_lake,False,279,0.24476,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Moosehead Lake|ME,Moosehead Lake,ME,NORTHEAST,45.6,-69.7,305.94,regulated_natural,N2_regulated_natural_lake,False,1029,0.16604,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Mooselookmeguntic Lake|ME,Mooselookmeguntic Lake,ME,NORTHEAST,44.9,-70.8,55.32,regulated_natural,N2_regulated_natural_lake,False,1467,0.26745,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Rangeley Lake|ME,Rangeley Lake,ME,NORTHEAST,44.96,-70.7,25.52,regulated_natural,N2_regulated_natural_lake,False,1518,0.17276,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Schoodic Lake|ME,Schoodic Lake,ME,NORTHEAST,45.45,-69.1,28.44,regulated_natural,N2_regulated_natural_lake,False,400,0.22533,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sebago Lake|ME,Sebago Lake,ME,NORTHEAST,43.85,-70.56,123.65,regulated_natural,N2_regulated_natural_lake,False,270,0.22553,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sebec Lake|ME,Sebec Lake,ME,NORTHEAST,45.32,-69.25,25.78,regulated_natural,N2_regulated_natural_lake,False,300,0.33742,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+West Grand Lake|ME,West Grand Lake,ME,NORTHEAST,45.23,-67.85,58.65,regulated_natural,N2_regulated_natural_lake,False,259,0.23497,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Burt Lake|MI,Burt Lake,MI,UPPER_MIDWEST_GL,45.45,-84.65,70.38,natural,N1a_natural_deep_or_unknown,False,594,0.17664,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Elk Lake|MI,Elk Lake,MI,UPPER_MIDWEST_GL,44.895,-85.37,32.57,regulated_natural,N2_regulated_natural_lake,False,590,0.20438,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Gull Lake|MI,Gull Lake,MI,UPPER_MIDWEST_GL,42.4,-85.405,8.28,regulated_natural,N2_regulated_natural_lake,False,825,0.19123,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Higgins Lake|MI,Higgins Lake,MI,UPPER_MIDWEST_GL,44.47,-84.725,41.23,regulated_natural,N2_regulated_natural_lake,False,1150,0.2121,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Houghton Lake|MI,Houghton Lake,MI,UPPER_MIDWEST_GL,44.32,-84.75,71.28,regulated_natural,N2_regulated_natural_lake,False,1139,0.16595,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Charlevoix|MI,Lake Charlevoix,MI,UPPER_MIDWEST_GL,45.28,-85.14,70.15,natural,N1a_natural_deep_or_unknown,False,582,0.19374,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Erie|MI,Lake Erie,MI,UPPER_MIDWEST_GL,41.82,-83.25,,MEGA,X_mega,False,571,,5,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Gogebic|MI,Lake Gogebic,MI,UPPER_MIDWEST_GL,46.49,-89.57,52.88,regulated_natural,N2_regulated_natural_lake,False,1288,0.18489,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Huron|MI,Lake Huron,MI,UPPER_MIDWEST_GL,44.5,-82.9,,MEGA,X_mega,False,577,,5,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Michigan|MI,Lake Michigan,MI,UPPER_MIDWEST_GL,43.5,-86.5,,MEGA,X_mega,False,577,,5,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake St. Clair|MI,Lake St. Clair,MI,UPPER_MIDWEST_GL,42.45,-82.7,1124.19,regulated_natural,N2_regulated_natural_lake,False,574,0.40364,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Superior|MI,Lake Superior,MI,UPPER_MIDWEST_GL,47.45,-88.2,,MEGA,X_mega,False,601,,5,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Mullett Lake|MI,Mullett Lake,MI,UPPER_MIDWEST_GL,45.53,-84.52,67.61,natural,N1a_natural_deep_or_unknown,False,594,0.24567,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Torch Lake|MI,Torch Lake,MI,UPPER_MIDWEST_GL,44.983,-85.29,75.76,natural,N1a_natural_deep_or_unknown,False,590,0.15963,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Gull Lake|MN,Gull Lake,MN,UPPER_MIDWEST_GL,46.41,-94.35,40.02,regulated_natural,N2_regulated_natural_lake,False,1194,0.17099,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Bemidji|MN,Lake Bemidji,MN,UPPER_MIDWEST_GL,47.51,-94.85,26.55,natural,N1a_natural_deep_or_unknown,False,1352,0.12731,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Minnetonka|MN,Lake Minnetonka,MN,UPPER_MIDWEST_GL,44.935,-93.59,55.64,regulated_natural,N2_regulated_natural_lake,False,929.4,0.1761,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Pepin|MN,Lake Pepin,MN,UPPER_MIDWEST_GL,44.46,-92.17,103.09,natural,N1a_natural_deep_or_unknown,False,667,,5,HIGH,S1b_limited_shallow_area_modeled,UMN_MN_plants(unverified-match);USGS_UMR(possible);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Superior|MN,Lake Superior,MN,UPPER_MIDWEST_GL,47.15,-91.4,,MEGA,X_mega,False,601,,5,UNKNOWN_no_polygon,UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Vermilion|MN,Lake Vermilion,MN,UPPER_MIDWEST_GL,47.88,-92.4,157.33,natural,N1a_natural_deep_or_unknown,False,1350,0.29413,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Winnibigoshish|MN,Lake Winnibigoshish,MN,UPPER_MIDWEST_GL,47.42,-94.2,225.58,regulated_natural,N2_regulated_natural_lake,False,1298.44,0.15217,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake of the Woods|MN,Lake of the Woods,MN,UPPER_MIDWEST_GL,49.2,-94.85,,MEGA,X_mega,False,1061,,5,UNKNOWN_no_polygon,UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Leech Lake|MN,Leech Lake,MN,UPPER_MIDWEST_GL,47.15,-94.38,417.97,regulated_natural,N2_regulated_natural_lake,False,1294.9,0.11571,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Mille Lacs Lake|MN,Mille Lacs Lake,MN,UPPER_MIDWEST_GL,46.25,-93.65,518.86,regulated_natural,N2_regulated_natural_lake,False,1250,0.26196,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Otter Tail Lake|MN,Otter Tail Lake,MN,UPPER_MIDWEST_GL,46.415,-95.71,56.69,regulated_natural,N2_regulated_natural_lake,False,1327,0.06872,5,HIGH,S1b_limited_shallow_area_modeled,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Rainy Lake|MN,Rainy Lake,MN,UPPER_MIDWEST_GL,48.6,-93.15,856.97,regulated_natural,N2_regulated_natural_lake,False,1108,0.20265,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Red Lake|MN,Red Lake,MN,UPPER_MIDWEST_GL,48,-94.9,666.03,regulated_natural,N2_regulated_natural_lake,False,1175,0.28087,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+White Bear Lake|MN,White Bear Lake,MN,UPPER_MIDWEST_GL,45.08,-92.995,9.74,natural,N1b_natural_shallow,False,924,0.12458,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,UMN_MN_plants(unverified-match);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Clearwater Lake|MO,Clearwater Lake,MO,MIDWEST,37.12,-90.78,6.68,reservoir,R2_flow_through_reservoir,True,498,0.31562,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Taneycomo|MO,Lake Taneycomo,MO,MIDWEST,36.64,-93.22,8.66,reservoir,R1_run_of_river_pool,True,701.1,,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake of the Ozarks|MO,Lake of the Ozarks,MO,MIDWEST,38.2,-92.63,209.19,reservoir,R2_flow_through_reservoir,True,660,0.08102,3,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Longview Lake|MO,Longview Lake,MO,MIDWEST,38.9,-94.5,0.08,reservoir,R5_small_impoundment,True,891,,3,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Mark Twain Lake|MO,Mark Twain Lake,MO,MIDWEST,39.53,-91.63,74.77,reservoir,R3_dendritic_storage,True,606,0.25951,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pomme de Terre Lake|MO,Pomme de Terre Lake,MO,MIDWEST,37.89,-93.32,31.27,reservoir,R3_dendritic_storage,True,839,0.20642,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Smithville Lake|MO,Smithville Lake,MO,MIDWEST,39.42,-94.57,31.69,reservoir,R3_dendritic_storage,True,864.2,0.26826,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.40,VALIDATABLE_NOW
+Stockton Lake|MO,Stockton Lake,MO,MIDWEST,37.66,-93.76,101.82,reservoir,R3_dendritic_storage,True,867,0.16534,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Table Rock Lake|MO,Table Rock Lake,MO,MIDWEST,36.6,-93.31,170.79,reservoir,R3_dendritic_storage,True,915,0.11146,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Truman Lake|MO,Truman Lake,MO,MIDWEST,38.26,-93.4,201.35,reservoir,R3_dendritic_storage,True,706.02,0.1455,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Wappapello Lake|MO,Wappapello Lake,MO,MIDWEST,36.93,-90.28,31.01,reservoir,R3_dendritic_storage,True,359.7,0.20227,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Arkabutla Lake|MS,Arkabutla Lake,MS,SOUTHEAST,34.74,-90.11,46.21,reservoir,R4_open_basin_storage,True,220,0.15933,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.60,VALIDATABLE_NOW
+Bay Springs Lake|MS,Bay Springs Lake,MS,SOUTHEAST,34.58,-88.34,24.7,reservoir,R3_dendritic_storage,True,414,0.18706,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Columbus Lake|MS,Columbus Lake,MS,SOUTHEAST,33.56,-88.49,10.14,reservoir,R1_run_of_river_pool,True,164,0.28907,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Eagle Lake|MS,Eagle Lake,MS,SOUTHEAST,32.495,-90.94,19.6,natural,N1b_natural_shallow,False,76.9,0.13009,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Enid Lake|MS,Enid Lake,MS,SOUTHEAST,34.16,-89.9,25.49,reservoir,R4_open_basin_storage,True,250,0.18254,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Grenada Lake|MS,Grenada Lake,MS,SOUTHEAST,33.83,-89.73,68.99,reservoir,R4_open_basin_storage,True,215,0.04776,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Washington|MS,Lake Washington,MS,SOUTHEAST,33.1,-90.91,12.44,natural,N1b_natural_shallow,False,98,0.25955,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Moon Lake|MS,Moon Lake,MS,SOUTHEAST,34.46,-90.56,10.16,natural,N1b_natural_shallow,False,148,0.38375,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Okatibbee Lake|MS,Okatibbee Lake,MS,SOUTHEAST,32.49,-88.81,15.28,reservoir,R2_flow_through_reservoir,True,344,0.26644,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Ross Barnett Reservoir|MS,Ross Barnett Reservoir,MS,SOUTHEAST,32.43,-90.025,100.41,reservoir,R4_open_basin_storage,True,297.5,0.06516,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Sardis Lake|MS,Sardis Lake,MS,SOUTHEAST,34.41,-89.79,134.8,reservoir,R4_open_basin_storage,True,260,0.0663,0,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Canyon Ferry Lake|MT,Canyon Ferry Lake,MT,MOUNTAIN_WEST,46.5,-111.55,132.76,reservoir,R4_open_basin_storage,True,3797,0.13599,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Flathead Lake|MT,Flathead Lake,MT,MOUNTAIN_WEST,47.8686,-114.105,494.56,regulated_natural,N2_regulated_natural_lake,False,2893,0.40421,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Fort Peck Lake|MT,Fort Peck Lake,MT,MOUNTAIN_WEST,47.65,-106.72,945.66,reservoir,R3_dendritic_storage,True,2234,0.1089,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Fresno Reservoir|MT,Fresno Reservoir,MT,MOUNTAIN_WEST,48.63,-109.95,20.28,reservoir,R4_open_basin_storage,True,2575,0.21151,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Georgetown Lake|MT,Georgetown Lake,MT,MOUNTAIN_WEST,46.19,-113.29,11.58,reservoir,R4_open_basin_storage,True,,0.08114,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Hebgen Lake|MT,Hebgen Lake,MT,MOUNTAIN_WEST,44.86,-111.33,50.21,reservoir,R4_open_basin_storage,True,6534.87,0.12424,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Holter Lake|MT,Holter Lake,MT,MOUNTAIN_WEST,46.95,-112,14.81,reservoir,R1_run_of_river_pool,True,3562,0.20439,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Hungry Horse Reservoir|MT,Hungry Horse Reservoir,MT,MOUNTAIN_WEST,48.2,-113.9,95.5,reservoir,R4_open_basin_storage,True,3560,0.07681,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Koocanusa|MT,Lake Koocanusa,MT,MOUNTAIN_WEST,48.7,-115.3,117.04,reservoir,R4_open_basin_storage,True,2459,0.11092,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Tiber Reservoir (Lake Elwell)|MT,Tiber Reservoir (Lake Elwell),MT,MOUNTAIN_WEST,48.32,-111.1,53.04,reservoir,R3_dendritic_storage,True,2993,0.20664,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Whitefish Lake|MT,Whitefish Lake,MT,MOUNTAIN_WEST,48.44,-114.38,13.42,regulated_natural,N2_regulated_natural_lake,False,3000,0.15504,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.50,VALIDATABLE_NOW
+Badin Lake|NC,Badin Lake,NC,SOUTHEAST,35.42,-80.1,22.72,reservoir,R1_run_of_river_pool,True,541.1,0.2435,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Falls Lake|NC,Falls Lake,NC,SOUTHEAST,36.02,-78.7,48.78,reservoir,R3_dendritic_storage,True,251.5,0.39541,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Fontana Lake|NC,Fontana Lake,NC,SOUTHEAST,35.43,-83.75,38.8,reservoir,R3_dendritic_storage,True,1703,0.13204,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+High Rock Lake|NC,High Rock Lake,NC,SOUTHEAST,35.63,-80.25,50.12,reservoir,R1_run_of_river_pool,True,655,0.32811,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Hiwassee Lake|NC,Hiwassee Lake,NC,SOUTHEAST,35.2,-84.05,21.26,reservoir,R2_flow_through_reservoir,True,1520.9,0.19317,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Jordan Lake|NC,Jordan Lake,NC,SOUTHEAST,35.73,-79.02,53.68,reservoir,R3_dendritic_storage,True,216,0.24669,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Kerr Lake (John H. Kerr)|NC,Kerr Lake (John H. Kerr),NC,SOUTHEAST,36.55,-78.3,183.06,reservoir,R3_dendritic_storage,True,300,0.1537,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Hickory|NC,Lake Hickory,NC,SOUTHEAST,35.78,-81.25,15.58,reservoir,R1_run_of_river_pool,True,935,0.22784,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.35,VALIDATABLE_NOW
+Lake James|NC,Lake James,NC,SOUTHEAST,35.75,-81.88,24.37,reservoir,R3_dendritic_storage,True,1200,0.19514,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Mattamuskeet|NC,Lake Mattamuskeet,NC,SOUTHEAST,35.48,-76.18,105.91,natural,N1b_natural_shallow,False,0,0.03799,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Norman|NC,Lake Norman,NC,SOUTHEAST,35.55,-80.95,125.67,reservoir,R2_flow_through_reservoir,True,760,0.35862,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Waccamaw|NC,Lake Waccamaw,NC,SOUTHEAST,34.28,-78.5,35.86,natural,N1b_natural_shallow,False,43,0.06271,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Bowman-Haley Reservoir|ND,Bowman-Haley Reservoir,ND,PLAINS,46.03,-103.3,7.81,reservoir,R4_open_basin_storage,True,2754.8,0.13902,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Devils Lake|ND,Devils Lake,ND,PLAINS,48,-98.87,322.22,regulated_natural,N2_regulated_natural_lake,False,1449,,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Jamestown Reservoir|ND,Jamestown Reservoir,ND,PLAINS,47.03,-98.72,10.4,reservoir,R2_flow_through_reservoir,True,1431,0.25387,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Ashtabula|ND,Lake Ashtabula,ND,PLAINS,47.15,-98.05,22.15,reservoir,R4_open_basin_storage,True,1266,0.15245,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Darling|ND,Lake Darling,ND,PLAINS,48.55,-101.55,34.54,reservoir,R4_open_basin_storage,True,1597,0.12195,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Metigoshe|ND,Lake Metigoshe,ND,PLAINS,48.98,-100.34,6.36,regulated_natural,N2_regulated_natural_lake,False,2221,0.35124,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Oahe|ND,Lake Oahe,ND,PLAINS,46.2,-100.6,527.66,reservoir,R3_dendritic_storage,True,1607.5,,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Sakakawea|ND,Lake Sakakawea,ND,PLAINS,47.85,-102.3,1274.83,reservoir,R3_dendritic_storage,True,1837.5,0.11744,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Lake Tschida|ND,Lake Tschida,ND,PLAINS,46.62,-101.75,13.5,reservoir,R4_open_basin_storage,True,2064.5,0.17991,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.90,VALIDATABLE_NOW
+Nelson Lake|ND,Nelson Lake,ND,PLAINS,47.3,-101.45,2.13,reservoir,R4_open_basin_storage,True,1925,0.33318,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Patterson Lake|ND,Patterson Lake,ND,PLAINS,46.87,-102.83,3.25,reservoir,R2_flow_through_reservoir,True,2420,0.53241,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Stump Lake|ND,Stump Lake,ND,PLAINS,47.95,-98.42,17.6,natural,N1a_natural_deep_or_unknown,False,1449,0.21366,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Box Butte Reservoir|NE,Box Butte Reservoir,NE,PLAINS,42.45,-103.08,5.12,reservoir,R2_flow_through_reservoir,True,4007,0.27716,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.20,VALIDATABLE_NOW
+Branched Oak Lake|NE,Branched Oak Lake,NE,PLAINS,40.97,-96.86,7.11,reservoir,R4_open_basin_storage,True,1284,0.36695,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Calamus Reservoir|NE,Calamus Reservoir,NE,PLAINS,41.83,-99.25,20.34,reservoir,R4_open_basin_storage,True,2244,0.15357,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Harlan County Lake|NE,Harlan County Lake,NE,PLAINS,40.07,-99.2,51.97,reservoir,R4_open_basin_storage,True,1946,0.118,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.12,VALIDATABLE_NOW
+Johnson Lake|NE,Johnson Lake,NE,PLAINS,40.7,-99.83,8.93,reservoir,R4_open_basin_storage,True,2618,0.30592,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake McConaughy|NE,Lake McConaughy,NE,PLAINS,41.23,-101.7,100.82,reservoir,R4_open_basin_storage,True,3265,0.08553,3,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Ogallala|NE,Lake Ogallala,NE,PLAINS,41.19,-101.7,2.32,reservoir,R1_run_of_river_pool,True,3122,0.21925,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Merritt Reservoir|NE,Merritt Reservoir,NE,PLAINS,42.62,-100.88,10.32,reservoir,R4_open_basin_storage,True,2946,0.21528,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sherman Reservoir|NE,Sherman Reservoir,NE,PLAINS,41.26,-98.95,9.88,reservoir,R4_open_basin_storage,True,,0.1925,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Sutherland Reservoir|NE,Sutherland Reservoir,NE,PLAINS,41.13,-101.15,11.97,reservoir,R4_open_basin_storage,True,3043,0.16383,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Swanson Reservoir|NE,Swanson Reservoir,NE,PLAINS,40.14,-100.75,18.86,reservoir,R4_open_basin_storage,True,2752,0.19795,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+First Connecticut Lake|NH,First Connecticut Lake,NH,NORTHEAST,45.09,-71.28,12.44,reservoir,R4_open_basin_storage,True,1640,0.14721,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Great East Lake|NH,Great East Lake,NH,NORTHEAST,43.55,-70.95,7.4,regulated_natural,N2_regulated_natural_lake,False,587,0.26605,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Wentworth|NH,Lake Wentworth,NH,NORTHEAST,43.59,-71.2,12.53,regulated_natural,N2_regulated_natural_lake,False,534,0.13433,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,NORTHEAST,43.62,-71.33,184.89,regulated_natural,N2_regulated_natural_lake,False,504.32,0.16449,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Winnisquam|NH,Lake Winnisquam,NH,NORTHEAST,43.55,-71.5,17.05,regulated_natural,N2_regulated_natural_lake,False,485,0.28387,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.40,VALIDATABLE_NOW
+Massabesic Lake|NH,Massabesic Lake,NH,NORTHEAST,43,-71.4,10.36,regulated_natural,N2_regulated_natural_lake,True,250,0.19868,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Merrymeeting Lake|NH,Merrymeeting Lake,NH,NORTHEAST,43.56,-71.16,5.0,regulated_natural,N2_regulated_natural_lake,False,610,0.27118,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Newfound Lake|NH,Newfound Lake,NH,NORTHEAST,43.7,-71.75,18.03,regulated_natural,N2_regulated_natural_lake,False,588,0.15368,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Ossipee Lake|NH,Ossipee Lake,NH,NORTHEAST,43.81,-71.13,16.27,regulated_natural,N2_regulated_natural_lake,False,407,0.21399,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Squam Lake|NH,Squam Lake,NH,NORTHEAST,43.77,-71.54,27.55,regulated_natural,N2_regulated_natural_lake,False,561,0.22809,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sunapee Lake|NH,Sunapee Lake,NH,NORTHEAST,43.39,-72.05,16.7,regulated_natural,N2_regulated_natural_lake,False,1093,0.22096,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Umbagog Lake|NH,Umbagog Lake,NH,NORTHEAST,44.75,-71.05,30.94,regulated_natural,N2_regulated_natural_lake,False,1245,0.17936,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Budd Lake|NJ,Budd Lake,NJ,NORTHEAST,40.87,-74.73,1.57,natural,N3_small_pond_or_outlet_dam,False,928,0.12375,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Culvers Lake|NJ,Culvers Lake,NJ,NORTHEAST,41.14,-74.75,2.18,regulated_natural,N2_regulated_natural_lake,False,525,0.24477,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Greenwood Lake|NJ,Greenwood Lake,NJ,NORTHEAST,41.16,-74.32,7.5,regulated_natural,N2_regulated_natural_lake,False,620,0.33794,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Absegami|NJ,Lake Absegami,NJ,NORTHEAST,39.73,-74.43,0.2,regulated_natural,N3_small_pond_or_outlet_dam,True,90,0.27389,4,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Lake Hopatcong|NJ,Lake Hopatcong,NJ,NORTHEAST,40.95,-74.63,10.08,regulated_natural,N2_regulated_natural_lake,False,923.57,0.23322,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Manasquan Reservoir|NJ,Manasquan Reservoir,NJ,NORTHEAST,40.16,-74.14,2.86,reservoir,R4_open_basin_storage,True,103,0.18326,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Merrill Creek Reservoir|NJ,Merrill Creek Reservoir,NJ,NORTHEAST,40.73,-75.05,2.59,reservoir,R4_open_basin_storage,True,,0.1759,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Monksville Reservoir|NJ,Monksville Reservoir,NJ,NORTHEAST,41.11,-74.32,2.08,reservoir,R2_flow_through_reservoir,True,400,0.32975,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Round Valley Reservoir|NJ,Round Valley Reservoir,NJ,NORTHEAST,40.62,-74.84,9.2,reservoir,R4_open_basin_storage,True,384.2,0.11789,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Spruce Run Reservoir|NJ,Spruce Run Reservoir,NJ,NORTHEAST,40.65,-74.93,5.49,reservoir,R2_flow_through_reservoir,True,272.2,0.2261,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Swartswood Lake|NJ,Swartswood Lake,NJ,NORTHEAST,41.07,-74.83,2.11,regulated_natural,N2_regulated_natural_lake,False,502,0.21191,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Wanaque Reservoir|NJ,Wanaque Reservoir,NJ,NORTHEAST,41.04,-74.29,8.0,reservoir,R4_open_basin_storage,True,302.4,0.38215,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Abiquiu Lake|NM,Abiquiu Lake,NM,SOUTHWEST,36.24,-106.43,13.21,reservoir,R4_open_basin_storage,True,6220,0.10887,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Bluewater Lake|NM,Bluewater Lake,NM,SOUTHWEST,35.3,-108.1,2.51,reservoir,R4_open_basin_storage,True,7402.6,0.4882,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Caballo Lake|NM,Caballo Lake,NM,SOUTHWEST,32.9,-107.31,18.77,reservoir,R2_flow_through_reservoir,True,4172.44,0.1474,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cochiti Lake|NM,Cochiti Lake,NM,SOUTHWEST,35.65,-106.32,5.3,reservoir,R2_flow_through_reservoir,True,5345.5,0.11724,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Conchas Lake|NM,Conchas Lake,NM,SOUTHWEST,35.4,-104.19,13.83,reservoir,R4_open_basin_storage,True,4201,0.17345,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Eagle Nest Lake|NM,Eagle Nest Lake,NM,SOUTHWEST,36.53,-105.26,7.37,reservoir,R4_open_basin_storage,True,,0.15422,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+El Vado Lake|NM,El Vado Lake,NM,SOUTHWEST,36.59,-106.73,12.63,reservoir,R4_open_basin_storage,True,6902,0.09642,1,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Elephant Butte Reservoir|NM,Elephant Butte Reservoir,NM,SOUTHWEST,33.25,-107.2,44.26,reservoir,R4_open_basin_storage,True,4407,0.08188,1,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Heron Lake|NM,Heron Lake,NM,SOUTHWEST,36.7,-106.66,18.27,reservoir,R4_open_basin_storage,True,7186.1,0.08059,1,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,0.50,VALIDATABLE_NOW
+Navajo Reservoir|NM,Navajo Reservoir,NM,SOUTHWEST,36.8,-107.61,62.45,reservoir,R3_dendritic_storage,True,6085,0.12092,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Santa Rosa Lake|NM,Santa Rosa Lake,NM,SOUTHWEST,35.03,-104.68,3.78,reservoir,R4_open_basin_storage,True,4750.02,0.14645,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sumner Lake|NM,Sumner Lake,NM,SOUTHWEST,34.61,-104.38,5.13,reservoir,R2_flow_through_reservoir,True,4260.9,0.19507,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Ute Lake|NM,Ute Lake,NM,SOUTHWEST,35.35,-103.45,22.15,reservoir,R4_open_basin_storage,True,3788.86,0.17817,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lahontan Reservoir|NV,Lahontan Reservoir,NV,SOUTHWEST,39.45,-119.07,40.6,reservoir,R4_open_basin_storage,True,4162,0.18237,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Mead|NV,Lake Mead,NV,SOUTHWEST,36.15,-114.4,551.92,reservoir,R3_dendritic_storage,True,1219.6,0.0367,1,HIGH,S1b_limited_shallow_area_modeled,NLA2017x2;NWI,0.10,VALIDATABLE_NOW
+Lake Mohave|NV,Lake Mohave,NV,SOUTHWEST,35.4,-114.63,111.98,reservoir,R2_flow_through_reservoir,True,647,0.17661,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Tahoe|NV,Lake Tahoe,NV,SOUTHWEST,39.15,-119.93,498.54,regulated_natural,N2_regulated_natural_lake,False,6229.1,0.00613,1,HIGH,S1_little_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Pyramid Lake|NV,Pyramid Lake,NV,SOUTHWEST,40,-119.58,441.64,natural,N1a_natural_deep_or_unknown,False,3796,0.03663,1,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Ruby Lake|NV,Ruby Lake,NV,SOUTHWEST,40.18,-115.5,4.91,regulated_natural,N2_regulated_natural_lake,False,6008,0.43439,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Rye Patch Reservoir|NV,Rye Patch Reservoir,NV,SOUTHWEST,40.45,-118.32,46.54,reservoir,R1_run_of_river_pool,True,4136,0.1526,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Topaz Lake|NV,Topaz Lake,NV,SOUTHWEST,38.68,-119.53,7.5,reservoir,R4_open_basin_storage,True,5000.38,0.13805,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Walker Lake|NV,Walker Lake,NV,SOUTHWEST,38.7,-118.71,120.2,natural,N1a_natural_deep_or_unknown,False,3930,0.04044,1,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,0.11,VALIDATABLE_NOW
+Washoe Lake|NV,Washoe Lake,NV,SOUTHWEST,39.24,-119.77,22.84,regulated_natural,N2_regulated_natural_lake,False,5029,,1,HIGH,S1b_limited_shallow_area_modeled,NLA2017x2;NWI,,VALIDATABLE_NOW
+Wild Horse Reservoir|NV,Wild Horse Reservoir,NV,SOUTHWEST,41.68,-115.8,5.33,reservoir,R4_open_basin_storage,True,6205,0.09513,1,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Canandaigua Lake|NY,Canandaigua Lake,NY,NORTHEAST,42.75,-77.3,42.62,natural,N1a_natural_deep_or_unknown,False,688,0.15019,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cayuga Lake|NY,Cayuga Lake,NY,NORTHEAST,42.7,-76.72,173.72,regulated_natural,N2_regulated_natural_lake,False,381.9,0.0369,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Chautauqua Lake|NY,Chautauqua Lake,NY,NORTHEAST,42.15,-79.4,53.79,regulated_natural,N2_regulated_natural_lake,False,1308,0.15169,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cranberry Lake|NY,Cranberry Lake,NY,NORTHEAST,44.18,-74.83,28.01,regulated_natural,N2_regulated_natural_lake,False,1486.43,0.27659,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Great Sacandaga Lake|NY,Great Sacandaga Lake,NY,NORTHEAST,43.15,-74.15,100.85,reservoir,R2_flow_through_reservoir,True,768,0.2072,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Indian Lake|NY,Indian Lake,NY,NORTHEAST,43.75,-74.27,17.46,reservoir,R4_open_basin_storage,True,1651.29,0.17121,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Keuka Lake|NY,Keuka Lake,NY,NORTHEAST,42.55,-77.1,47.22,regulated_natural,N2_regulated_natural_lake,False,715,0.1824,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,1.40,VALIDATABLE_NOW
+Lake Erie|NY,Lake Erie,NY,NORTHEAST,42.55,-79.6,,MEGA,X_mega,False,571,,4,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake George|NY,Lake George,NY,NORTHEAST,43.55,-73.62,115.58,regulated_natural,N2_regulated_natural_lake,False,320,0.09027,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Ontario|NY,Lake Ontario,NY,NORTHEAST,43.55,-77.5,,MEGA,X_mega,False,245,,4,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Oneida Lake|NY,Oneida Lake,NY,NORTHEAST,43.2,-75.92,207.75,natural,N1a_natural_deep_or_unknown,False,369,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Owasco Lake|NY,Owasco Lake,NY,NORTHEAST,42.85,-76.53,27.31,regulated_natural,N2_regulated_natural_lake,False,712,0.14628,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Seneca Lake|NY,Seneca Lake,NY,NORTHEAST,42.67,-76.92,175.71,natural,N1a_natural_deep_or_unknown,False,445,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Skaneateles Lake|NY,Skaneateles Lake,NY,NORTHEAST,42.9,-76.42,35.49,regulated_natural,N2_regulated_natural_lake,False,863.3,0.15099,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.50,VALIDATABLE_NOW
+Alum Creek Lake|OH,Alum Creek Lake,OH,MIDWEST,40.2,-82.98,13.03,reservoir,R4_open_basin_storage,True,888,0.18943,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Berlin Lake|OH,Berlin Lake,OH,MIDWEST,41.03,-81,14.61,reservoir,R4_open_basin_storage,True,1024.01,0.25139,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Buckeye Lake|OH,Buckeye Lake,OH,MIDWEST,39.93,-82.48,0.0,reservoir,R5_small_impoundment,True,891.6,,3,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Caesar Creek Lake|OH,Caesar Creek Lake,OH,MIDWEST,39.48,-84.05,10.76,reservoir,R4_open_basin_storage,True,849,0.20088,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Grand Lake St. Marys|OH,Grand Lake St. Marys,OH,MIDWEST,40.53,-84.5,52.1,reservoir,R4_open_basin_storage,True,870.6,0.11757,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Hoover Reservoir|OH,Hoover Reservoir,OH,MIDWEST,40.15,-82.87,11.01,reservoir,R4_open_basin_storage,True,894,0.23344,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Indian Lake|OH,Indian Lake,OH,MIDWEST,40.5,-83.9,20.66,reservoir,R4_open_basin_storage,True,996.3,0.25145,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Erie|OH,Lake Erie,OH,MIDWEST,41.6,-82.5,,MEGA,X_mega,False,571,,3,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Milton|OH,Lake Milton,OH,MIDWEST,41.1,-80.97,6.71,reservoir,R2_flow_through_reservoir,True,947.43,0.23888,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Mosquito Creek Lake|OH,Mosquito Creek Lake,OH,MIDWEST,41.3,-80.76,28.43,reservoir,R4_open_basin_storage,True,900.73,0.12827,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Salt Fork Lake|OH,Salt Fork Lake,OH,MIDWEST,40.08,-81.42,11.35,reservoir,R4_open_basin_storage,True,800,0.25815,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Senecaville Lake|OH,Senecaville Lake,OH,MIDWEST,39.93,-81.42,14.11,reservoir,R4_open_basin_storage,True,832.2,0.22594,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Tappan Lake|OH,Tappan Lake,OH,MIDWEST,40.35,-81.23,8.69,reservoir,R4_open_basin_storage,True,899.3,0.26214,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Broken Bow Lake|OK,Broken Bow Lake,OK,PLAINS,34.15,-94.68,57.92,reservoir,R3_dendritic_storage,True,602.5,0.26315,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Canton Lake|OK,Canton Lake,OK,PLAINS,36.09,-98.59,28.84,reservoir,R4_open_basin_storage,True,1615.4,0.16271,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.80,VALIDATABLE_NOW
+Fort Gibson Lake|OK,Fort Gibson Lake,OK,PLAINS,35.87,-95.25,72.76,reservoir,R2_flow_through_reservoir,True,554,0.24153,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,PLAINS,36.55,-94.85,158.25,reservoir,R2_flow_through_reservoir,True,744,0.14923,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Kaw Lake|OK,Kaw Lake,OK,PLAINS,36.75,-96.92,65.76,reservoir,R3_dendritic_storage,True,1010,0.11639,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Keystone Lake|OK,Keystone Lake,OK,PLAINS,36.15,-96.25,93.53,reservoir,R2_flow_through_reservoir,True,723,0.17134,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Lake Eufaula|OK,Lake Eufaula,OK,PLAINS,35.3,-95.58,410.04,reservoir,R3_dendritic_storage,True,585,0.22691,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Hudson|OK,Lake Hudson,OK,PLAINS,36.22,-95.12,28.61,reservoir,R1_run_of_river_pool,True,619,0.24817,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Murray (OK)|OK,Lake Murray (OK),OK,PLAINS,34.06,-96.98,22.42,reservoir,R3_dendritic_storage,True,750,0.19112,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Tenkiller|OK,Lake Tenkiller,OK,PLAINS,35.6,-94.98,52.55,reservoir,R3_dendritic_storage,True,632,0.18279,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Oologah Lake|OK,Oologah Lake,OK,PLAINS,36.55,-95.67,120.71,reservoir,R4_open_basin_storage,True,638,0.15115,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sardis Lake|OK,Sardis Lake,OK,PLAINS,34.63,-95.35,54.47,reservoir,R4_open_basin_storage,True,599,0.22385,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Skiatook Lake|OK,Skiatook Lake,OK,PLAINS,36.37,-96.13,42.4,reservoir,R3_dendritic_storage,True,714,0.20887,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Crater Lake|OR,Crater Lake,OR,PACIFIC_NW,42.94,-122.1,53.49,natural,N1a_natural_deep_or_unknown,False,6178,0.00595,2,HIGH,S1_little_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Crescent Lake|OR,Crescent Lake,OR,PACIFIC_NW,43.48,-121.98,15.48,regulated_natural,N2_regulated_natural_lake,False,4845,0.1471,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Detroit Lake|OR,Detroit Lake,OR,PACIFIC_NW,44.72,-122.2,14.57,reservoir,R2_flow_through_reservoir,True,1563.5,0.15385,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Diamond Lake|OR,Diamond Lake,OR,PACIFIC_NW,43.18,-122.14,12.3,natural,N1a_natural_deep_or_unknown,False,5183,0.16061,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Fern Ridge Reservoir|OR,Fern Ridge Reservoir,OR,PACIFIC_NW,44.12,-123.3,26.68,reservoir,R2_flow_through_reservoir,True,373.5,0.27678,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Billy Chinook|OR,Lake Billy Chinook,OR,PACIFIC_NW,44.55,-121.28,15.68,reservoir,R2_flow_through_reservoir,True,1945,0.17477,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Owyhee|OR,Lake Owyhee,OR,PACIFIC_NW,43.65,-117.25,45.22,reservoir,R3_dendritic_storage,True,2670,0.16018,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Malheur Lake|OR,Malheur Lake,OR,PACIFIC_NW,43.32,-118.75,116.75,natural,N1b_natural_shallow,False,4093,0.16714,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Odell Lake|OR,Odell Lake,OR,PACIFIC_NW,43.57,-122.03,13.82,natural,N1a_natural_deep_or_unknown,False,4788,0.10718,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Suttle Lake|OR,Suttle Lake,OR,PACIFIC_NW,44.42,-121.74,1.07,regulated_natural,N3_small_pond_or_outlet_dam,False,3450,0.36578,2,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Timothy Lake|OR,Timothy Lake,OR,PACIFIC_NW,45.12,-121.79,5.67,reservoir,R4_open_basin_storage,True,3190,0.14612,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Upper Klamath Lake|OR,Upper Klamath Lake,OR,PACIFIC_NW,42.4,-121.9,251.61,regulated_natural,N2_regulated_natural_lake,False,4143,0.16607,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Waldo Lake|OR,Waldo Lake,OR,PACIFIC_NW,43.72,-122.03,24.55,natural,N1a_natural_deep_or_unknown,False,5414,0.08689,2,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,0.12,VALIDATABLE_NOW
+Wallowa Lake|OR,Wallowa Lake,OR,PACIFIC_NW,45.3,-117.21,6.42,regulated_natural,N2_regulated_natural_lake,False,4372,0.08779,2,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Allegheny Reservoir|PA,Allegheny Reservoir,PA,NORTHEAST,41.85,-78.9,49.65,reservoir,R2_flow_through_reservoir,True,1327.53,0.11893,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Beltzville Lake|PA,Beltzville Lake,PA,NORTHEAST,40.85,-75.63,4.25,reservoir,R4_open_basin_storage,True,627.34,0.19398,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.20,VALIDATABLE_NOW
+Blue Marsh Lake|PA,Blue Marsh Lake,PA,NORTHEAST,40.4,-76.03,4.84,reservoir,R4_open_basin_storage,True,289.27,0.36046,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Conneaut Lake|PA,Conneaut Lake,PA,NORTHEAST,41.62,-80.3,3.84,natural,N1b_natural_shallow,False,1077,0.22981,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Harveys Lake|PA,Harveys Lake,PA,NORTHEAST,41.36,-76.03,2.56,natural,N1a_natural_deep_or_unknown,False,1220,0.18449,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Arthur|PA,Lake Arthur,PA,NORTHEAST,40.95,-80.1,12.48,reservoir,R4_open_basin_storage,True,1189.8,0.22799,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Erie|PA,Lake Erie,PA,NORTHEAST,42.15,-80.1,,MEGA,X_mega,False,571,,4,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Marburg|PA,Lake Marburg,PA,NORTHEAST,39.75,-76.87,4.79,reservoir,R4_open_basin_storage,True,623,0.20251,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Nockamixon|PA,Lake Nockamixon,PA,NORTHEAST,40.47,-75.24,5.76,reservoir,R4_open_basin_storage,True,395,0.27271,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Wallenpaupack|PA,Lake Wallenpaupack,PA,NORTHEAST,41.42,-75.2,22.16,reservoir,R4_open_basin_storage,True,1187,0.16095,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pymatuning Reservoir|PA,Pymatuning Reservoir,PA,NORTHEAST,41.6,-80.47,56.47,reservoir,R4_open_basin_storage,True,1008,0.22846,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Raystown Lake|PA,Raystown Lake,PA,NORTHEAST,40.4,-78.05,33.13,reservoir,R3_dendritic_storage,True,786,0.23272,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.45,VALIDATABLE_NOW
+Shenango River Lake|PA,Shenango River Lake,PA,NORTHEAST,41.3,-80.44,14.1,reservoir,R4_open_basin_storage,True,894.67,0.25181,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Yellow Creek Lake|PA,Yellow Creek Lake,PA,NORTHEAST,40.56,-79.02,2.83,reservoir,R4_open_basin_storage,True,1280,0.14876,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Bowdish Reservoir|RI,Bowdish Reservoir,RI,NORTHEAST,41.9,-71.75,0.9,reservoir,R5_small_impoundment,True,569,0.20656,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Flat River Res. (Johnson's Pond)|RI,Flat River Res. (Johnson's Pond),RI,NORTHEAST,41.68,-71.63,2.42,reservoir,R2_flow_through_reservoir,True,248,,4,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Ninigret Pond|RI,Ninigret Pond,RI,NORTHEAST,41.35,-71.65,6.46,natural,N1b_natural_shallow,False,0,0.20358,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pascoag Reservoir|RI,Pascoag Reservoir,RI,NORTHEAST,41.95,-71.72,1.37,reservoir,R2_flow_through_reservoir,True,441,0.21319,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Point Judith Pond|RI,Point Judith Pond,RI,NORTHEAST,41.4,-71.51,6.35,natural,N1b_natural_shallow,False,0,0.269,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Scituate Reservoir|RI,Scituate Reservoir,RI,NORTHEAST,41.78,-71.6,9.49,reservoir,R4_open_basin_storage,True,284,,4,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Stafford Pond|RI,Stafford Pond,RI,NORTHEAST,41.57,-71.18,1.98,regulated_natural,N3_small_pond_or_outlet_dam,False,190,,4,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Tiogue Lake|RI,Tiogue Lake,RI,NORTHEAST,41.68,-71.65,0.91,reservoir,R5_small_impoundment,True,,,4,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Wallum Lake|RI,Wallum Lake,RI,NORTHEAST,41.97,-71.79,1.25,regulated_natural,N3_small_pond_or_outlet_dam,False,542,0.1914,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Watchaug Pond|RI,Watchaug Pond,RI,NORTHEAST,41.38,-71.66,2.32,natural,N1b_natural_shallow,False,42,0.24609,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Winnapaug Pond|RI,Winnapaug Pond,RI,NORTHEAST,41.33,-71.78,2.27,natural,N1b_natural_shallow,False,0,0.27409,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Worden Pond|RI,Worden Pond,RI,NORTHEAST,41.43,-71.55,4.43,natural,N1b_natural_shallow,False,63,0.32986,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Greenwood|SC,Lake Greenwood,SC,SOUTHEAST,34.19,-81.94,42.38,reservoir,R2_flow_through_reservoir,True,439,0.25972,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Hartwell|SC,Lake Hartwell,SC,SOUTHEAST,34.5,-82.85,136.98,reservoir,R3_dendritic_storage,True,660,0.14476,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Jocassee|SC,Lake Jocassee,SC,SOUTHEAST,34.97,-82.93,31.31,reservoir,R4_open_basin_storage,True,1110,0.19382,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Lake Keowee|SC,Lake Keowee,SC,SOUTHEAST,34.83,-82.9,69.09,reservoir,R3_dendritic_storage,True,800,0.26605,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Marion|SC,Lake Marion,SC,SOUTHEAST,33.5,-80.35,371.76,reservoir,R2_flow_through_reservoir,True,75.5,0.09792,0,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Lake Monticello|SC,Lake Monticello,SC,SOUTHEAST,34.3,-81.33,27.07,reservoir,R4_open_basin_storage,True,424.3,0.18172,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Moultrie|SC,Lake Moultrie,SC,SOUTHEAST,33.3,-80.05,230.72,reservoir,R4_open_basin_storage,True,75.5,0.0699,0,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Murray (SC)|SC,Lake Murray (SC),SC,SOUTHEAST,34.05,-81.23,199.07,reservoir,R3_dendritic_storage,True,360,0.11552,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Robinson|SC,Lake Robinson,SC,SOUTHEAST,34.47,-80.15,8.51,reservoir,R2_flow_through_reservoir,True,221.6,0.30207,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Strom Thurmond (Clarks Hill)|SC,Lake Strom Thurmond (Clarks Hill),SC,SOUTHEAST,33.68,-82.2,276.79,reservoir,R3_dendritic_storage,True,330,0.12922,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Wateree|SC,Lake Wateree,SC,SOUTHEAST,34.42,-80.87,47.88,reservoir,R1_run_of_river_pool,True,225.5,0.31008,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Wylie|SC,Lake Wylie,SC,SOUTHEAST,35.1,-81.05,39.26,reservoir,R1_run_of_river_pool,True,569.4,0.26199,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Angostura Reservoir|SD,Angostura Reservoir,SD,PLAINS,43.34,-103.43,19.33,reservoir,R2_flow_through_reservoir,True,3187.2,0.17345,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Big Stone Lake|SD,Big Stone Lake,SD,PLAINS,45.3,-96.6,48.06,regulated_natural,N2_regulated_natural_lake,False,965,0.58571,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Bitter Lake|SD,Bitter Lake,SD,PLAINS,45.43,-97.26,31.81,natural,N1b_natural_shallow,False,1798,0.18887,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x2;NWI,2.45,VALIDATABLE_NOW
+Enemy Swim Lake|SD,Enemy Swim Lake,SD,PLAINS,45.46,-97.32,8.75,natural,N1b_natural_shallow,False,1804,0.36755,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.17,VALIDATABLE_NOW
+Lake Francis Case|SD,Lake Francis Case,SD,PLAINS,43.55,-99.2,333.66,reservoir,R2_flow_through_reservoir,True,1355,,3,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Lake Oahe|SD,Lake Oahe,SD,PLAINS,44.9,-100.4,1258.75,MEGA,X_mega,True,1607.5,0.10387,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Lake Poinsett|SD,Lake Poinsett,SD,PLAINS,44.55,-97.08,39.53,regulated_natural,N2_regulated_natural_lake,False,1646,0.10921,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Sharpe|SD,Lake Sharpe,SD,PLAINS,44.35,-99.9,236.92,reservoir,R1_run_of_river_pool,True,1420,0.1573,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Thompson|SD,Lake Thompson,SD,PLAINS,44.31,-97.55,56.25,natural,N1b_natural_shallow,False,1729,0.1998,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lewis and Clark Lake|SD,Lewis and Clark Lake,SD,PLAINS,42.85,-97.65,102.07,reservoir,R1_run_of_river_pool,True,1207.5,0.10819,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pactola Reservoir|SD,Pactola Reservoir,SD,PLAINS,44.07,-103.5,3.44,reservoir,R4_open_basin_storage,True,4580.2,0.17735,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sheridan Lake|SD,Sheridan Lake,SD,PLAINS,43.93,-103.55,1.55,reservoir,R5_small_impoundment,True,4624,0.35411,3,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Waubay Lake|SD,Waubay Lake,SD,PLAINS,45.4,-97.3,22.52,natural,N1b_natural_shallow,False,1802,0.2071,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Center Hill Lake|TN,Center Hill Lake,TN,MIDSOUTH,36,-85.82,70.84,reservoir,R3_dendritic_storage,True,648,0.2657,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Cherokee Lake|TN,Cherokee Lake,TN,MIDSOUTH,36.25,-83.45,120.39,reservoir,R2_flow_through_reservoir,True,1070.8,0.20348,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Chickamauga Lake|TN,Chickamauga Lake,TN,MIDSOUTH,35.4,-85.05,111.02,reservoir,R1_run_of_river_pool,True,682.5,0.19702,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Dale Hollow Lake|TN,Dale Hollow Lake,TN,MIDSOUTH,36.55,-85.3,104.61,reservoir,R3_dendritic_storage,True,651,0.2829,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Douglas Lake|TN,Douglas Lake,TN,MIDSOUTH,36,-83.35,121.28,reservoir,R2_flow_through_reservoir,True,993.88,0.17413,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Fort Loudoun Lake|TN,Fort Loudoun Lake,TN,MIDSOUTH,35.85,-84.15,56.37,reservoir,R1_run_of_river_pool,True,813,0.31441,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Kentucky Lake|TN,Kentucky Lake,TN,MIDSOUTH,36.2,-88.05,586.73,reservoir,R2_flow_through_reservoir,True,359,0.19094,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Nickajack Lake|TN,Nickajack Lake,TN,MIDSOUTH,35.03,-85.53,28.14,reservoir,R1_run_of_river_pool,True,634.5,0.27963,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;TVA(request);NWI,3.50,VALIDATABLE_NOW
+Norris Lake|TN,Norris Lake,TN,MIDSOUTH,36.25,-83.9,96.89,reservoir,R3_dendritic_storage,True,1020,0.10713,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Old Hickory Lake|TN,Old Hickory Lake,TN,MIDSOUTH,36.28,-86.62,82.76,reservoir,R1_run_of_river_pool,True,445,0.34152,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Percy Priest Lake|TN,Percy Priest Lake,TN,MIDSOUTH,36.1,-86.6,57.16,reservoir,R3_dendritic_storage,True,490,0.34959,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pickwick Lake|TN,Pickwick Lake,TN,MIDSOUTH,35.05,-88.2,140.23,reservoir,R1_run_of_river_pool,True,414,0.17227,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Reelfoot Lake|TN,Reelfoot Lake,TN,MIDSOUTH,36.38,-89.38,0.75,regulated_natural,N3_small_pond_or_outlet_dam,False,282,0.31026,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Tims Ford Lake|TN,Tims Ford Lake,TN,MIDSOUTH,35.22,-86.25,31.82,reservoir,R3_dendritic_storage,True,888,0.31336,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Watts Bar Lake|TN,Watts Bar Lake,TN,MIDSOUTH,35.75,-84.75,136.4,reservoir,R1_run_of_river_pool,True,740.85,0.23682,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Amistad Reservoir|TX,Amistad Reservoir,TX,PLAINS,29.5,-101.15,76.49,reservoir,R3_dendritic_storage,True,1117,0.11048,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;TPWD_acreage(report);NWI,,VALIDATABLE_NOW
+Caddo Lake|TX,Caddo Lake,TX,SOUTHEAST,32.72,-94.1,61.07,regulated_natural,N2_regulated_natural_lake,False,168.5,0.27604,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Canyon Lake|TX,Canyon Lake,TX,PLAINS,29.87,-98.25,33.66,reservoir,R4_open_basin_storage,True,909,0.10356,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Cedar Creek Reservoir|TX,Cedar Creek Reservoir,TX,SOUTHEAST,32.18,-96.07,132.94,reservoir,R3_dendritic_storage,True,322,0.24159,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Falcon Lake|TX,Falcon Lake,TX,PLAINS,26.75,-99.25,327.56,reservoir,R2_flow_through_reservoir,True,301.2,0.09967,3,HIGH,S1b_limited_shallow_area_modeled,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Buchanan|TX,Lake Buchanan,TX,PLAINS,30.8,-98.42,89.3,reservoir,R4_open_basin_storage,True,1020,0.10842,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Conroe|TX,Lake Conroe,TX,SOUTHEAST,30.42,-95.6,80.51,reservoir,R3_dendritic_storage,True,201,0.30096,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Fork Reservoir|TX,Lake Fork Reservoir,TX,SOUTHEAST,32.83,-95.55,108.88,reservoir,R3_dendritic_storage,True,403,0.20965,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Livingston|TX,Lake Livingston,TX,SOUTHEAST,30.75,-95.1,338.7,reservoir,R2_flow_through_reservoir,True,131,0.06713,0,HIGH,S1b_limited_shallow_area_modeled,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Tawakoni|TX,Lake Tawakoni,TX,SOUTHEAST,32.88,-95.95,152.12,reservoir,R4_open_basin_storage,True,437.5,0.23144,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Texoma|TX,Lake Texoma,TX,SOUTHEAST,33.9,-96.6,241.57,reservoir,R3_dendritic_storage,True,617,0.19708,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Travis|TX,Lake Travis,TX,PLAINS,30.42,-97.92,73.38,reservoir,R3_dendritic_storage,True,681,0.10677,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Possum Kingdom Lake|TX,Possum Kingdom Lake,TX,PLAINS,32.87,-98.55,66.85,reservoir,R3_dendritic_storage,True,999,0.18614,3,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Sam Rayburn Reservoir|TX,Sam Rayburn Reservoir,TX,SOUTHEAST,31.1,-94.1,454.54,reservoir,R3_dendritic_storage,True,164.4,0.20755,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Toledo Bend Reservoir|TX,Toledo Bend Reservoir,TX,SOUTHEAST,31.35,-93.75,672.97,reservoir,R3_dendritic_storage,True,172,0.15608,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TPWD_acreage(report);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Bear Lake|UT,Bear Lake,UT,MOUNTAIN_WEST,41.95,-111.3,283.4,natural,N1a_natural_deep_or_unknown,False,5923,0.04612,5,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Deer Creek Reservoir|UT,Deer Creek Reservoir,UT,MOUNTAIN_WEST,40.42,-111.5,10.32,reservoir,R4_open_basin_storage,True,5417,0.1327,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Fish Lake|UT,Fish Lake,UT,MOUNTAIN_WEST,38.55,-111.7,10.46,natural,N1a_natural_deep_or_unknown,False,8843,0.08537,5,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,3.20,VALIDATABLE_NOW
+Flaming Gorge Reservoir|UT,Flaming Gorge Reservoir,UT,MOUNTAIN_WEST,40.92,-109.42,158.08,reservoir,R3_dendritic_storage,True,6040,0.08754,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Great Salt Lake|UT,Great Salt Lake,UT,MOUNTAIN_WEST,41.1,-112.55,,MEGA,X_mega,False,4200,,5,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Jordanelle Reservoir|UT,Jordanelle Reservoir,UT,MOUNTAIN_WEST,40.6,-111.42,12.07,reservoir,R4_open_basin_storage,True,6166.4,0.11259,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Powell|UT,Lake Powell,UT,MOUNTAIN_WEST,37,-110.9,518.5,reservoir,R3_dendritic_storage,True,3700,0.02085,5,HIGH,S1_little_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Pineview Reservoir|UT,Pineview Reservoir,UT,MOUNTAIN_WEST,41.25,-111.8,10.14,reservoir,R4_open_basin_storage,True,4900,0.13717,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sevier Lake|UT,Sevier Lake,UT,MOUNTAIN_WEST,38.95,-113.15,496.73,natural,N1b_natural_shallow,False,4519,0.66861,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Starvation Reservoir|UT,Starvation Reservoir,UT,MOUNTAIN_WEST,40.18,-110.45,12.15,reservoir,R4_open_basin_storage,True,5712,0.19766,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Strawberry Reservoir|UT,Strawberry Reservoir,UT,MOUNTAIN_WEST,40.15,-111.15,65.77,reservoir,R4_open_basin_storage,True,7602.4,0.12996,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Utah Lake|UT,Utah Lake,UT,MOUNTAIN_WEST,40.22,-111.8,369.37,regulated_natural,N2_regulated_natural_lake,False,4489,0.69596,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Willard Bay Reservoir|UT,Willard Bay Reservoir,UT,MOUNTAIN_WEST,41.37,-112.06,40.44,reservoir,R4_open_basin_storage,True,4226,0.09516,5,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Chickahominy Lake|VA,Chickahominy Lake,VA,SOUTHEAST,37.38,-77.05,,reservoir,Z_nodata,True,,,0,UNKNOWN_no_polygon,UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Claytor Lake|VA,Claytor Lake,VA,SOUTHEAST,37.06,-80.63,16.61,reservoir,R2_flow_through_reservoir,True,1846,0.22766,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Douthat Lake|VA,Douthat Lake,VA,SOUTHEAST,37.895,-79.8,0.19,reservoir,R5_small_impoundment,True,1444.2,0.22595,0,LOW_lt0.5km2,S0_not_feasible_size,NWI,,NWI_PRIOR_ONLY
+Flannagan Reservoir|VA,Flannagan Reservoir,VA,SOUTHEAST,37.23,-82.35,4.8,reservoir,R3_dendritic_storage,True,1396,0.21359,0,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Kerr Reservoir (Buggs Island)|VA,Kerr Reservoir (Buggs Island),VA,SOUTHEAST,36.6,-78.35,183.06,reservoir,R3_dendritic_storage,True,300,0.1537,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Anna|VA,Lake Anna,VA,SOUTHEAST,38.07,-77.8,51.67,reservoir,R3_dendritic_storage,True,250,0.3889,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Chesdin|VA,Lake Chesdin,VA,SOUTHEAST,37.23,-77.65,12.31,reservoir,R1_run_of_river_pool,True,157.2,0.41775,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Gaston|VA,Lake Gaston,VA,SOUTHEAST,36.52,-77.9,77.64,reservoir,R1_run_of_river_pool,True,200,0.32697,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Moomaw|VA,Lake Moomaw,VA,SOUTHEAST,37.96,-79.95,9.82,reservoir,R4_open_basin_storage,True,1582,0.23941,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Philpott Lake|VA,Philpott Lake,VA,SOUTHEAST,36.79,-80.03,11.63,reservoir,R3_dendritic_storage,True,974,0.32097,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Smith Mountain Lake|VA,Smith Mountain Lake,VA,SOUTHEAST,37.05,-79.7,80.69,reservoir,R3_dendritic_storage,True,795,0.28472,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+South Holston Lake|VA,South Holston Lake,VA,SOUTHEAST,36.6,-81.9,30.71,reservoir,R3_dendritic_storage,True,1729,0.14743,0,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,TVA(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Caspian Lake|VT,Caspian Lake,VT,NORTHEAST,44.58,-72.28,3.19,regulated_natural,N2_regulated_natural_lake,False,1417,0.18633,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Crystal Lake|VT,Crystal Lake,VT,NORTHEAST,44.73,-72.16,3.13,regulated_natural,N2_regulated_natural_lake,False,1145,0.11754,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Harriman Reservoir (Whitingham)|VT,Harriman Reservoir (Whitingham),VT,NORTHEAST,42.8,-72.9,7.91,reservoir,R4_open_basin_storage,True,1497.66,0.16499,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Bomoseen|VT,Lake Bomoseen,VT,NORTHEAST,43.65,-73.22,9.77,regulated_natural,N2_regulated_natural_lake,False,405,0.16791,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Carmi|VT,Lake Carmi,VT,NORTHEAST,44.95,-72.88,5.72,regulated_natural,N2_regulated_natural_lake,False,426,0.2144,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Champlain|VT,Lake Champlain,VT,NORTHEAST,44.47,-73.3,1125.25,natural,N1a_natural_deep_or_unknown,False,95.5,,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Dunmore|VT,Lake Dunmore,VT,NORTHEAST,43.9,-73.08,4.2,regulated_natural,N2_regulated_natural_lake,False,623,0.21158,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Memphremagog|VT,Lake Memphremagog,VT,NORTHEAST,44.95,-72.25,95.72,natural,N1a_natural_deep_or_unknown,False,682,0.05632,4,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Seymour|VT,Lake Seymour,VT,NORTHEAST,44.95,-72.05,7.18,regulated_natural,N2_regulated_natural_lake,False,1610,0.12454,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake St. Catherine|VT,Lake St. Catherine,VT,NORTHEAST,43.48,-73.2,3.59,regulated_natural,N2_regulated_natural_lake,False,427,0.20354,4,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Willoughby|VT,Lake Willoughby,VT,NORTHEAST,44.75,-72.05,7.0,natural,N1a_natural_deep_or_unknown,False,1152,0.14366,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Somerset Reservoir|VT,Somerset Reservoir,VT,NORTHEAST,42.98,-72.95,6.19,reservoir,R4_open_basin_storage,True,2128.23,0.10044,4,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Banks Lake|WA,Banks Lake,WA,PACIFIC_NW,47.8,-119.15,108.68,reservoir,R4_open_basin_storage,True,1570,0.1418,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Chelan|WA,Lake Chelan,WA,PACIFIC_NW,47.99,-120.2,132.07,regulated_natural,N2_regulated_natural_lake,False,1100,0.11951,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Crescent|WA,Lake Crescent,WA,PACIFIC_NW,48.06,-123.8,20.31,natural,N1a_natural_deep_or_unknown,False,580,0.12635,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Cushman|WA,Lake Cushman,WA,PACIFIC_NW,47.45,-123.22,16.25,reservoir,R4_open_basin_storage,True,738,0.1709,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Quinault|WA,Lake Quinault,WA,PACIFIC_NW,47.47,-123.85,14.32,natural,N1a_natural_deep_or_unknown,False,190,0.23402,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Roosevelt (FDR)|WA,Lake Roosevelt (FDR),WA,PACIFIC_NW,48,-118.2,288.7,reservoir,R1_run_of_river_pool,True,1290,0.1109,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Sammamish|WA,Lake Sammamish,WA,PACIFIC_NW,47.59,-122.08,19.62,natural,N1a_natural_deep_or_unknown,False,30,0.03581,2,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Lake Union|WA,Lake Union,WA,PACIFIC_NW,47.64,-122.335,3.06,natural,N1b_natural_shallow,False,16,0.42328,2,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Lake Washington|WA,Lake Washington,WA,PACIFIC_NW,47.62,-122.26,88.92,natural,N1a_natural_deep_or_unknown,False,16,0.06726,2,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Moses Lake|WA,Moses Lake,WA,PACIFIC_NW,47.13,-119.32,27.15,regulated_natural,N2_regulated_natural_lake,False,1046,0.21779,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Potholes Reservoir|WA,Potholes Reservoir,WA,PACIFIC_NW,46.98,-119.33,59.0,reservoir,R2_flow_through_reservoir,True,1046.5,0.21999,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Riffe Lake|WA,Riffe Lake,WA,PACIFIC_NW,46.5,-122.42,45.45,reservoir,R2_flow_through_reservoir,True,749,0.1287,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Ross Lake|WA,Ross Lake,WA,PACIFIC_NW,48.8,-121.07,48.9,reservoir,R4_open_basin_storage,True,1602.5,0.11794,2,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Big Green Lake|WI,Big Green Lake,WI,UPPER_MIDWEST_GL,43.83,-88.97,30.95,regulated_natural,N2_regulated_natural_lake,False,795,0.05151,5,HIGH,S1b_limited_shallow_area_modeled,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Castle Rock Lake|WI,Castle Rock Lake,WI,UPPER_MIDWEST_GL,43.9,-89.95,52.68,reservoir,R1_run_of_river_pool,True,882,0.25124,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Chippewa Flowage|WI,Chippewa Flowage,WI,UPPER_MIDWEST_GL,45.95,-91.1,60.41,reservoir,R3_dendritic_storage,True,1313,0.2125,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Green Bay|WI,Green Bay,WI,UPPER_MIDWEST_GL,44.7,-87.9,,MEGA,X_mega,False,577,,5,UNKNOWN_no_polygon,UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lac Courte Oreilles|WI,Lac Courte Oreilles,WI,UPPER_MIDWEST_GL,45.85,-91.4,20.79,natural,N1a_natural_deep_or_unknown,False,1293,0.20396,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Geneva|WI,Lake Geneva,WI,UPPER_MIDWEST_GL,42.58,-88.45,21.89,regulated_natural,N2_regulated_natural_lake,False,879,0.0703,5,HIGH,S1b_limited_shallow_area_modeled,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Mendota|WI,Lake Mendota,WI,UPPER_MIDWEST_GL,43.107,-89.42,39.61,regulated_natural,N2_regulated_natural_lake,False,850,0.1382,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Michigan|WI,Lake Michigan,WI,UPPER_MIDWEST_GL,43.5,-87.5,,MEGA,X_mega,False,577,,5,UNKNOWN_no_polygon,UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Monona|WI,Lake Monona,WI,UPPER_MIDWEST_GL,43.06,-89.37,13.6,natural,N1a_natural_deep_or_unknown,False,845,0.16669,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Petenwell|WI,Lake Petenwell,WI,UPPER_MIDWEST_GL,44.07,-89.92,93.17,reservoir,R2_flow_through_reservoir,True,923.9,0.18258,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Superior|WI,Lake Superior,WI,UPPER_MIDWEST_GL,46.85,-90.7,,MEGA,X_mega,False,601,,5,UNKNOWN_no_polygon,UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Winnebago|WI,Lake Winnebago,WI,UPPER_MIDWEST_GL,44,-88.42,534.58,regulated_natural,N2_regulated_natural_lake,False,746.8,0.54193,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Lake Wisconsin|WI,Lake Wisconsin,WI,UPPER_MIDWEST_GL,43.45,-89.65,29.2,reservoir,R1_run_of_river_pool,True,774.4,0.19415,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,WI_DNR_PI(request);NWI,,VALIDATABLE_WITH_REQUEST_OR_BROWSER_DOWNLOAD
+Beech Fork Lake|WV,Beech Fork Lake,WV,MIDSOUTH,38.28,-82.37,3.0,reservoir,R4_open_basin_storage,True,592,0.0,1,MEDIUM_mixed_pixels,S1_little_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Bluestone Lake|WV,Bluestone Lake,WV,MIDSOUTH,37.62,-80.9,4.58,reservoir,R2_flow_through_reservoir,True,1410,,1,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Burnsville Lake|WV,Burnsville Lake,WV,MIDSOUTH,38.85,-80.63,3.39,reservoir,R2_flow_through_reservoir,True,789,0.24529,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,0.00,VALIDATABLE_NOW
+Cheat Lake|WV,Cheat Lake,WV,MIDSOUTH,39.7,-79.85,5.49,reservoir,R1_run_of_river_pool,True,870,0.28087,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+East Lynn Lake|WV,East Lynn Lake,WV,MIDSOUTH,38.15,-82.33,4.78,reservoir,R3_dendritic_storage,True,662,0.18147,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Mount Storm Lake|WV,Mount Storm Lake,WV,MIDSOUTH,39.24,-79.27,4.59,reservoir,R4_open_basin_storage,True,3244,0.13354,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+R.D. Bailey Lake|WV,R.D. Bailey Lake,WV,MIDSOUTH,37.6,-81.83,2.25,reservoir,R2_flow_through_reservoir,True,1035,0.2358,1,MEDIUM_mixed_pixels,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Stonewall Jackson Lake|WV,Stonewall Jackson Lake,WV,MIDSOUTH,38.95,-80.53,8.53,reservoir,R3_dendritic_storage,True,1072.53,0.23877,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Summersville Lake|WV,Summersville Lake,WV,MIDSOUTH,38.23,-80.89,11.58,reservoir,R2_flow_through_reservoir,True,1652,0.20431,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Sutton Lake|WV,Sutton Lake,WV,MIDSOUTH,38.66,-80.66,6.7,reservoir,R2_flow_through_reservoir,True,922,0.24023,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Tygart Lake|WV,Tygart Lake,WV,MIDSOUTH,39.32,-80.03,7.63,reservoir,R2_flow_through_reservoir,True,1093.45,0.23616,1,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Alcova Reservoir|WY,Alcova Reservoir,WY,MOUNTAIN_WEST,42.54,-106.75,9.22,reservoir,R1_run_of_river_pool,True,5498,0.26531,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Bighorn Lake|WY,Bighorn Lake,WY,MOUNTAIN_WEST,44.9,-108.2,50.5,reservoir,R3_dendritic_storage,True,3640,0.17371,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Boysen Reservoir|WY,Boysen Reservoir,WY,MOUNTAIN_WEST,43.35,-108.17,78.5,reservoir,R4_open_basin_storage,True,4725,0.19802,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NLA2017x1;NWI,,VALIDATABLE_NOW
+Buffalo Bill Reservoir|WY,Buffalo Bill Reservoir,WY,MOUNTAIN_WEST,44.5,-109.2,26.39,reservoir,R4_open_basin_storage,True,5393.5,0.1311,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Flaming Gorge Reservoir|WY,Flaming Gorge Reservoir,WY,MOUNTAIN_WEST,41.4,-109.5,158.08,reservoir,R3_dendritic_storage,True,6040,0.08754,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Fontenelle Reservoir|WY,Fontenelle Reservoir,WY,MOUNTAIN_WEST,42.05,-110.07,31.78,reservoir,R2_flow_through_reservoir,True,6506,0.06381,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Glendo Reservoir|WY,Glendo Reservoir,WY,MOUNTAIN_WEST,42.48,-105,48.99,reservoir,R2_flow_through_reservoir,True,4635,0.19049,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Jackson Lake|WY,Jackson Lake,WY,MOUNTAIN_WEST,43.85,-110.6,108.8,regulated_natural,N2_regulated_natural_lake,False,6769,0.08648,5,HIGH,S1b_limited_shallow_area_modeled,NLA2017x1;NWI,,VALIDATABLE_NOW
+Jenny Lake|WY,Jenny Lake,WY,MOUNTAIN_WEST,43.76,-110.72,4.87,natural,N1a_natural_deep_or_unknown,False,6783,0.07075,5,MEDIUM_mixed_pixels,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
+Keyhole Reservoir|WY,Keyhole Reservoir,WY,MOUNTAIN_WEST,44.35,-104.78,35.87,reservoir,R4_open_basin_storage,True,4099.3,0.23212,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Pathfinder Reservoir|WY,Pathfinder Reservoir,WY,MOUNTAIN_WEST,42.47,-106.85,89.72,reservoir,R4_open_basin_storage,True,5852.49,0.13991,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Seminoe Reservoir|WY,Seminoe Reservoir,WY,MOUNTAIN_WEST,42.13,-106.9,76.34,reservoir,R3_dendritic_storage,True,6357,0.12295,5,HIGH,S2_shallow_candidate_CLARITY_UNKNOWN,NWI,,NWI_PRIOR_ONLY
+Yellowstone Lake|WY,Yellowstone Lake,WY,MOUNTAIN_WEST,44.42,-110.37,341.99,natural,N1a_natural_deep_or_unknown,False,7733,0.0435,5,HIGH,S1b_limited_shallow_area_modeled,NWI,,NWI_PRIOR_ONLY
