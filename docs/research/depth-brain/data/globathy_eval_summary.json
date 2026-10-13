@@ -1,0 +1,1449 @@
+{
+ "n_truth_rows": 232,
+ "n_truth_with_max_depth": 188,
+ "n_with_glob_match": 187,
+ "conf_counts": {
+  "low": 69,
+  "high": 61,
+  "medium": 55,
+  "excluded": 2
+ },
+ "tier_counts": {
+  "verified": 95,
+  "weak": 80,
+  "suspect": 12
+ },
+ "glob_dmax_source_counts_among_truth": {
+  "modeled_estimate": 145,
+  "supplied_observed": 42
+ },
+ "dmax_SUPPLIED_observed_lakes_not_a_test": {
+  "n": 36,
+  "bias_m": 0.8512738888888889,
+  "mae_m": 2.104558333333333,
+  "rmse_m": 4.417415695806266,
+  "median_ratio": 1.0024021322270897,
+  "geo_mean_ratio": 1.0186388134138993,
+  "log10_rmse": 0.048690326129543694,
+  "within_1p25": 0.9166666666666666,
+  "within_1p5": 1.0,
+  "within_2": 1.0,
+  "spearman": 0.9853263049831347,
+  "kendall": 0.9252793887387473,
+  "pearson_log": 0.9937471874040409,
+  "pct_over": 0.5833333333333334,
+  "spearman_ci95": [
+   0.9518617078011773,
+   0.9963793295213287
+  ],
+  "baseline_const_mae_m": 46.21472222222223,
+  "baseline_const_within_2": 0.7222222222222222
+ },
+ "dmax_estimated_incl_low_conf": {
+  "n": 135,
+  "bias_m": -10.163967185185186,
+  "mae_m": 26.028358296296293,
+  "rmse_m": 56.13990004201755,
+  "median_ratio": 1.0784436293436295,
+  "geo_mean_ratio": 1.0449559378036661,
+  "log10_rmse": 0.38014029371660435,
+  "within_1p25": 0.26666666666666666,
+  "within_1p5": 0.4,
+  "within_2": 0.6370370370370371,
+  "spearman": 0.391425980477864,
+  "kendall": 0.2849076863567462,
+  "pearson_log": 0.3559156531858832,
+  "pct_over": 0.5259259259259259,
+  "spearman_ci95": [
+   0.22189778578165692,
+   0.5498270065271876
+  ],
+  "baseline_const_mae_m": 28.102592592592593,
+  "baseline_const_within_2": 0.5407407407407407
+ },
+ "dmax_estimated_verified_match_only_hm": {
+  "n": 35,
+  "bias_m": -4.480057428571429,
+  "mae_m": 17.057327714285712,
+  "rmse_m": 25.599986995741283,
+  "median_ratio": 0.961637837837838,
+  "geo_mean_ratio": 1.0670463892777724,
+  "log10_rmse": 0.34167577617165773,
+  "within_1p25": 0.37142857142857144,
+  "within_1p5": 0.4857142857142857,
+  "within_2": 0.7142857142857143,
+  "spearman": 0.4790251429913694,
+  "kendall": 0.35323814007084936,
+  "pearson_log": 0.30121904751767337,
+  "pct_over": 0.4857142857142857,
+  "spearman_ci95": [
+   0.11442934031398676,
+   0.7548916310927337
+  ],
+  "baseline_const_mae_m": 19.921714285714284,
+  "baseline_const_within_2": 0.5714285714285714
+ },
+ "primary_n": 75,
+ "dmax_primary_all": {
+  "n": 75,
+  "bias_m": -9.757490666666666,
+  "mae_m": 22.2100808,
+  "rmse_m": 46.79742523092834,
+  "median_ratio": 1.0848957671957673,
+  "geo_mean_ratio": 0.9915417300157622,
+  "log10_rmse": 0.35978137564138174,
+  "within_1p25": 0.28,
+  "within_1p5": 0.44,
+  "within_2": 0.68,
+  "spearman": 0.41698199112155776,
+  "kendall": 0.30183924186755295,
+  "pearson_log": 0.32166062909117865,
+  "pct_over": 0.5333333333333333,
+  "spearman_ci95": [
+   0.18690915050139356,
+   0.6152295959773335
+  ],
+  "baseline_const_mae_m": 23.786,
+  "baseline_const_within_2": 0.56
+ },
+ "dmax_primary_verified_only": {
+  "n": 35,
+  "bias_m": -4.480057428571429,
+  "mae_m": 17.057327714285712,
+  "rmse_m": 25.599986995741283,
+  "median_ratio": 0.961637837837838,
+  "geo_mean_ratio": 1.0670463892777724,
+  "log10_rmse": 0.34167577617165773,
+  "within_1p25": 0.37142857142857144,
+  "within_1p5": 0.4857142857142857,
+  "within_2": 0.7142857142857143,
+  "spearman": 0.4790251429913694,
+  "kendall": 0.35323814007084936,
+  "pearson_log": 0.30121904751767337,
+  "pct_over": 0.4857142857142857,
+  "spearman_ci95": [
+   0.12559312503875336,
+   0.7511070918689671
+  ],
+  "baseline_const_mae_m": 19.921714285714284,
+  "baseline_const_within_2": 0.5714285714285714
+ },
+ "dmax_estimated_high_conf_only": {
+  "n": 31,
+  "bias_m": -6.45842806451613,
+  "mae_m": 15.120069354838712,
+  "rmse_m": 22.714035016232913,
+  "median_ratio": 1.1480355411954766,
+  "geo_mean_ratio": 0.9790654349926208,
+  "log10_rmse": 0.2594856657262766,
+  "within_1p25": 0.3225806451612903,
+  "within_1p5": 0.5161290322580645,
+  "within_2": 0.7096774193548387,
+  "spearman": 0.6363544744508067,
+  "kendall": 0.48654495356830935,
+  "pearson_log": 0.6264166239255674,
+  "pct_over": 0.5483870967741935,
+  "spearman_ci95": [
+   0.3516360263158488,
+   0.8419894169592533
+  ],
+  "baseline_const_mae_m": 18.531935483870967,
+  "baseline_const_within_2": 0.6129032258064516
+ },
+ "dmax_estimated_all_conf_incl_suspect_match": {
+  "n": 145,
+  "bias_m": -9.119799103448276,
+  "mae_m": 27.625699379310348,
+  "rmse_m": 57.93091995828823,
+  "median_ratio": 1.0829320849636668,
+  "geo_mean_ratio": 1.0366288959441317,
+  "log10_rmse": 0.3788062603623147,
+  "within_1p25": 0.2689655172413793,
+  "within_1p5": 0.4,
+  "within_2": 0.6344827586206897,
+  "spearman": 0.41538962814137215,
+  "kendall": 0.30085510598806864,
+  "pearson_log": 0.3972298857433348,
+  "pct_over": 0.5379310344827586,
+  "spearman_ci95": [
+   0.2559505329126059,
+   0.5631314553438189
+  ],
+  "baseline_const_mae_m": 29.659241379310345,
+  "baseline_const_within_2": 0.5310344827586206
+ },
+ "dmax_by_type": {
+  "natural": {
+   "n": 10,
+   "bias_m": -63.77537500000001,
+   "mae_m": 65.861467,
+   "rmse_m": 112.9799228253258,
+   "median_ratio": 0.45439458165131735,
+   "geo_mean_ratio": 0.38359535344041346,
+   "log10_rmse": 0.6064044593505754,
+   "within_1p25": 0.2,
+   "within_1p5": 0.2,
+   "within_2": 0.3,
+   "spearman": 0.24848484848484845,
+   "kendall": 0.15555555555555553,
+   "pearson_log": 0.1746670110936613,
+   "pct_over": 0.1,
+   "spearman_ci95": [
+    -0.5,
+    0.7484276729559749
+   ],
+   "baseline_const_mae_m": 56.559000000000005,
+   "baseline_const_within_2": 0.6
+  },
+  "storage_reservoir": {
+   "n": 47,
+   "bias_m": -5.315201063829788,
+   "mae_m": 17.225524468085105,
+   "rmse_m": 25.44423018996791,
+   "median_ratio": 1.0829320849636668,
+   "geo_mean_ratio": 0.9792047731128513,
+   "log10_rmse": 0.23856496479194905,
+   "within_1p25": 0.2553191489361702,
+   "within_1p5": 0.44680851063829785,
+   "within_2": 0.7659574468085106,
+   "spearman": 0.5514151082064843,
+   "kendall": 0.39055996777675567,
+   "pearson_log": 0.5195494674968039,
+   "pct_over": 0.5319148936170213,
+   "spearman_ci95": [
+    0.3061839576756869,
+    0.7393203837211516
+   ],
+   "baseline_const_mae_m": 19.5668085106383,
+   "baseline_const_within_2": 0.6808510638297872
+  },
+  "run_of_river": {
+   "n": 9,
+   "bias_m": -0.015479999999998975,
+   "mae_m": 4.627335555555555,
+   "rmse_m": 5.602300661777762,
+   "median_ratio": 1.0848957671957673,
+   "geo_mean_ratio": 1.022240759718819,
+   "log10_rmse": 0.11360755846632704,
+   "within_1p25": 0.5555555555555556,
+   "within_1p5": 0.8888888888888888,
+   "within_2": 1.0,
+   "spearman": 0.41666666666666663,
+   "kendall": 0.2222222222222222,
+   "pearson_log": 0.412322249935868,
+   "pct_over": 0.5555555555555556,
+   "spearman_ci95": [
+    -0.4655172413793104,
+    0.8421052631578948
+   ],
+   "baseline_const_mae_m": 4.537777777777778,
+   "baseline_const_within_2": 1.0
+  },
+  "complex_arm": {
+   "n": 4,
+   "bias_m": -3.570919999999999,
+   "mae_m": 25.062995,
+   "rmse_m": 32.2983213685549,
+   "median_ratio": 1.2362967463248475,
+   "geo_mean_ratio": 0.9085892215035762,
+   "log10_rmse": 0.29344842764314694,
+   "within_1p25": 0.25,
+   "within_1p5": 0.5,
+   "within_2": 0.75,
+   "spearman": 0.39999999999999997,
+   "kendall": 0.3333333333333334,
+   "pearson_log": 0.6498837666019008,
+   "pct_over": 0.75,
+   "spearman_ci95": [
+    -0.7777777777777779,
+    1.0
+   ],
+   "baseline_const_mae_m": 20.25,
+   "baseline_const_within_2": 0.75
+  },
+  "shallow_lake": {
+   "n": 13,
+   "bias_m": 14.980248461538462,
+   "mae_m": 14.980248461538462,
+   "rmse_m": 22.292328527085967,
+   "median_ratio": 2.150219012115564,
+   "geo_mean_ratio": 2.446714070319372,
+   "log10_rmse": 0.5164965981210342,
+   "within_1p25": 0.23076923076923078,
+   "within_1p5": 0.3076923076923077,
+   "within_2": 0.46153846153846156,
+   "spearman": -0.03846153846153846,
+   "kendall": -0.05128205128205127,
+   "pearson_log": -0.03677811441760829,
+   "pct_over": 1.0,
+   "spearman_ci95": [
+    -0.6949581032184347,
+    0.6525195618153358
+   ],
+   "baseline_const_mae_m": 4.364615384615385,
+   "baseline_const_within_2": 0.7692307692307693
+  }
+ },
+ "dmax_by_truth_bin": {
+  "lt8m": {
+   "n": 6,
+   "bias_m": 21.495741666666664,
+   "mae_m": 21.495741666666664,
+   "rmse_m": 30.48694892779504,
+   "median_ratio": 3.6124665802270197,
+   "geo_mean_ratio": 3.8097397295330886,
+   "log10_rmse": 0.708561587972106,
+   "within_1p25": 0.16666666666666666,
+   "within_1p5": 0.16666666666666666,
+   "within_2": 0.3333333333333333,
+   "spearman": -0.3142857142857143,
+   "kendall": -0.2,
+   "pearson_log": -0.637573723088476,
+   "pct_over": 1.0,
+   "spearman_ci95": [
+    -1.0,
+    0.9354838709677421
+   ],
+   "baseline_const_mae_m": 0.9500000000000002,
+   "baseline_const_within_2": 1.0
+  },
+  "8to20m": {
+   "n": 23,
+   "bias_m": 6.8864869565217415,
+   "mae_m": 7.29541391304348,
+   "rmse_m": 8.547938308728373,
+   "median_ratio": 1.51445625,
+   "geo_mean_ratio": 1.4678336967003525,
+   "log10_rmse": 0.20463738089995734,
+   "within_1p25": 0.21739130434782608,
+   "within_1p5": 0.4782608695652174,
+   "within_2": 0.8260869565217391,
+   "spearman": 0.2792191832214129,
+   "kendall": 0.190099382608703,
+   "pearson_log": 0.3694444140321217,
+   "pct_over": 0.9130434782608695,
+   "spearman_ci95": [
+    -0.18224807218962383,
+    0.6403505719942997
+   ],
+   "baseline_const_mae_m": 2.8726086956521737,
+   "baseline_const_within_2": 1.0
+  },
+  "20to40m": {
+   "n": 22,
+   "bias_m": 1.9133650000000009,
+   "mae_m": 10.247270454545452,
+   "rmse_m": 14.145638858698238,
+   "median_ratio": 1.020484428450372,
+   "geo_mean_ratio": 1.0210181464549704,
+   "log10_rmse": 0.19734568950724962,
+   "within_1p25": 0.5,
+   "within_1p5": 0.6363636363636364,
+   "within_2": 0.8181818181818182,
+   "spearman": 0.02598870471267943,
+   "kendall": 0.01304360154691106,
+   "pearson_log": -0.12535492271905155,
+   "pct_over": 0.5,
+   "spearman_ci95": [
+    -0.43970612326889413,
+    0.4788367570812492
+   ],
+   "baseline_const_mae_m": 4.513181818181818,
+   "baseline_const_within_2": 1.0
+  },
+  "gt40m": {
+   "n": 24,
+   "bias_m": -44.219561666666664,
+   "mae_m": 47.6477975,
+   "rmse_m": 79.73666930965301,
+   "median_ratio": 0.5097505071896888,
+   "geo_mean_ratio": 0.4734077689890767,
+   "log10_rmse": 0.4507348228998944,
+   "within_1p25": 0.16666666666666666,
+   "within_1p5": 0.2916666666666667,
+   "within_2": 0.5,
+   "spearman": -0.02478799797671961,
+   "kendall": -0.003629770043203138,
+   "pearson_log": -0.07475246702130815,
+   "pct_over": 0.08333333333333333,
+   "spearman_ci95": [
+    -0.4401105471853522,
+    0.4384434725121955
+   ],
+   "baseline_const_mae_m": 32.31166666666667,
+   "baseline_const_within_2": 0.9166666666666666
+  }
+ },
+ "dmax_dedup_chain_groups": {
+  "n": 71,
+  "bias_m": -10.902980674398448,
+  "mae_m": 22.1790429231552,
+  "rmse_m": 47.7490383528684,
+  "median_ratio": 1.015498305084746,
+  "geo_mean_ratio": 0.9787809217860487,
+  "log10_rmse": 0.36495242060011446,
+  "within_1p25": 0.30985915492957744,
+  "within_1p5": 0.4507042253521127,
+  "within_2": 0.6619718309859155,
+  "spearman": 0.3813611898790598,
+  "kendall": 0.2805958359422889,
+  "pearson_log": 0.303594184692798,
+  "pct_over": 0.5070422535211268,
+  "spearman_ci95": [
+   0.13487472673963483,
+   0.598877768753729
+  ],
+  "baseline_const_mae_m": 24.010731346555307,
+  "baseline_const_within_2": 0.5774647887323944
+ },
+ "dedup_groups": 71,
+ "pair_concordance_truth_ratio_ge_1p5": {
+  "pairs": 2035,
+  "concordant": 0.6756756756756757
+ },
+ "meandepth_glob_VoverA": {
+  "n": 59,
+  "bias_m": -6.005556101694916,
+  "mae_m": 9.231643898305084,
+  "rmse_m": 23.570573775043847,
+  "median_ratio": 0.9076968253968254,
+  "geo_mean_ratio": 0.8506121003693787,
+  "log10_rmse": 0.429632702768327,
+  "within_1p25": 0.2542372881355932,
+  "within_1p5": 0.4915254237288136,
+  "within_2": 0.6271186440677966,
+  "spearman": 0.23164262976826097,
+  "kendall": 0.1668620840897353,
+  "pearson_log": 0.12779985508483244,
+  "pct_over": 0.423728813559322,
+  "spearman_ci95": [
+   -0.046775235574692264,
+   0.4773568988804202
+  ],
+  "baseline_const_mae_m": 9.2035593220339,
+  "baseline_const_within_2": 0.559322033898305
+ },
+ "meandepth_glob_raster_mean": {
+  "n": 59,
+  "bias_m": -6.00507627118644,
+  "mae_m": 9.231234576271186,
+  "rmse_m": 23.570237437551175,
+  "median_ratio": 0.9077698412698414,
+  "geo_mean_ratio": 0.8506628670231374,
+  "log10_rmse": 0.42962300254254565,
+  "within_1p25": 0.2542372881355932,
+  "within_1p5": 0.4915254237288136,
+  "within_2": 0.6271186440677966,
+  "spearman": 0.23164262976826097,
+  "kendall": 0.1668620840897353,
+  "pearson_log": 0.12784543858895447,
+  "pct_over": 0.423728813559322,
+  "spearman_ci95": [
+   -0.05476718550747683,
+   0.4836652693444576
+  ],
+  "baseline_const_mae_m": 9.2035593220339,
+  "baseline_const_within_2": 0.559322033898305
+ },
+ "class3_accuracy": 0.6133333333333333,
+ "class3_confusion": {
+  "deep>=25": {
+   "deep>=25": 21,
+   "mid8-25": 12,
+   "shallow<8": 3
+  },
+  "mid8-25": {
+   "deep>=25": 12,
+   "mid8-25": 24,
+   "shallow<8": 2
+  },
+  "shallow<8": {
+   "deep>=25": 0,
+   "mid8-25": 0,
+   "shallow<8": 1
+  }
+ },
+ "class_shallow_lt8_recall": 0.16666666666666666,
+ "class_shallow_lt8_precision": 1.0,
+ "shallow_fraction": {
+  "lt_3ft": {
+   "n": 21,
+   "truth_mean": 0.08194535419343597,
+   "truth_range": [
+    0.018873508039324572,
+    0.21455495803387445
+   ],
+   "glob_mean": 0.09380647368860794,
+   "bias": 0.011861119495171954,
+   "mae": 0.037601044539721906,
+   "rmse": 0.04550583150641236,
+   "spearman": 0.35454545454545455,
+   "spearman_raster": 0.30458166912132123,
+   "mae_const_median": 0.02975385031541099,
+   "lakes": [
+    "Geist Reservoir|IN",
+    "Lake Eufaula|OK",
+    "Grand Lake o' the Cherokees|OK",
+    "Lake Hudson|OK",
+    "Fort Gibson Lake|OK",
+    "Cheney Reservoir|KS",
+    "Beaver|AR",
+    "Millwood|AR",
+    "Table Rock Lake|MO",
+    "Lake Fork Reservoir|TX",
+    "Lake Tawakoni|TX",
+    "Lake Conroe|TX",
+    "Cedar Creek Reservoir|TX",
+    "Lake Livingston|TX",
+    "Sam Rayburn Reservoir|TX",
+    "Possum Kingdom Lake|TX",
+    "Lake Buchanan|TX",
+    "Lake Travis|TX",
+    "Canyon Lake|TX",
+    "Lake Texoma|TX",
+    "Lake McConaughy|NE"
+   ],
+   "truth": [
+    0.0847,
+    0.0959,
+    0.1021,
+    0.0943,
+    0.2146,
+    0.0926,
+    0.0394,
+    0.16,
+    0.0495,
+    0.1014,
+    0.0782,
+    0.0768,
+    0.0769,
+    0.0922,
+    0.0674,
+    0.0786,
+    0.0256,
+    0.0362,
+    0.0398,
+    0.0959,
+    0.0189
+   ],
+   "glob": [
+    0.1122,
+    0.1206,
+    0.0779,
+    0.1319,
+    0.1289,
+    0.0764,
+    0.1136,
+    0.0735,
+    0.0579,
+    0.1105,
+    0.1223,
+    0.1613,
+    0.1282,
+    0.0344,
+    0.1096,
+    0.098,
+    0.056,
+    0.0554,
+    0.0535,
+    0.104,
+    0.0438
+   ]
+  },
+  "lt_6ft": {
+   "n": 21,
+   "truth_mean": 0.1595799301884725,
+   "truth_range": [
+    0.04434879821129035,
+    0.37846153846153946
+   ],
+   "glob_mean": 0.18080037064629972,
+   "bias": 0.021220440457827238,
+   "mae": 0.06422524628984246,
+   "rmse": 0.08195136854455547,
+   "spearman": 0.5311688311688313,
+   "spearman_raster": 0.43065932768266857,
+   "mae_const_median": 0.05312568801209274,
+   "lakes": [
+    "Geist Reservoir|IN",
+    "Lake Eufaula|OK",
+    "Grand Lake o' the Cherokees|OK",
+    "Lake Hudson|OK",
+    "Fort Gibson Lake|OK",
+    "Cheney Reservoir|KS",
+    "Beaver|AR",
+    "Millwood|AR",
+    "Table Rock Lake|MO",
+    "Lake Fork Reservoir|TX",
+    "Lake Tawakoni|TX",
+    "Lake Conroe|TX",
+    "Cedar Creek Reservoir|TX",
+    "Lake Livingston|TX",
+    "Sam Rayburn Reservoir|TX",
+    "Possum Kingdom Lake|TX",
+    "Lake Buchanan|TX",
+    "Lake Travis|TX",
+    "Canyon Lake|TX",
+    "Lake Texoma|TX",
+    "Lake McConaughy|NE"
+   ],
+   "truth": [
+    0.1882,
+    0.1861,
+    0.1743,
+    0.1915,
+    0.3136,
+    0.1845,
+    0.086,
+    0.3785,
+    0.0896,
+    0.161,
+    0.1423,
+    0.1647,
+    0.1824,
+    0.1593,
+    0.1423,
+    0.1865,
+    0.0592,
+    0.0724,
+    0.0791,
+    0.1656,
+    0.0443
+   ],
+   "glob": [
+    0.2178,
+    0.2302,
+    0.1515,
+    0.2518,
+    0.245,
+    0.1497,
+    0.2174,
+    0.1442,
+    0.1132,
+    0.2127,
+    0.2348,
+    0.3052,
+    0.2451,
+    0.0682,
+    0.2106,
+    0.1889,
+    0.1101,
+    0.1084,
+    0.1052,
+    0.2,
+    0.0869
+   ]
+  },
+  "lt_10ft": {
+   "n": 21,
+   "truth_mean": 0.2677721556187211,
+   "truth_range": [
+    0.08484398119225238,
+    0.8443076923076934
+   ],
+   "glob_mean": 0.28668958162028124,
+   "bias": 0.018917426001560118,
+   "mae": 0.10065268613586456,
+   "rmse": 0.16000060161401686,
+   "spearman": 0.587012987012987,
+   "spearman_raster": 0.5506493506493506,
+   "mae_const_median": 0.09441676864158793,
+   "lakes": [
+    "Geist Reservoir|IN",
+    "Lake Eufaula|OK",
+    "Grand Lake o' the Cherokees|OK",
+    "Lake Hudson|OK",
+    "Fort Gibson Lake|OK",
+    "Cheney Reservoir|KS",
+    "Beaver|AR",
+    "Millwood|AR",
+    "Table Rock Lake|MO",
+    "Lake Fork Reservoir|TX",
+    "Lake Tawakoni|TX",
+    "Lake Conroe|TX",
+    "Cedar Creek Reservoir|TX",
+    "Lake Livingston|TX",
+    "Sam Rayburn Reservoir|TX",
+    "Possum Kingdom Lake|TX",
+    "Lake Buchanan|TX",
+    "Lake Travis|TX",
+    "Canyon Lake|TX",
+    "Lake Texoma|TX",
+    "Lake McConaughy|NE"
+   ],
+   "truth": [
+    0.3628,
+    0.2973,
+    0.259,
+    0.293,
+    0.4269,
+    0.2884,
+    0.129,
+    0.8443,
+    0.1333,
+    0.2506,
+    0.255,
+    0.2862,
+    0.3124,
+    0.2331,
+    0.2542,
+    0.3049,
+    0.1211,
+    0.1251,
+    0.1299,
+    0.2316,
+    0.0848
+   ],
+   "glob": [
+    0.3485,
+    0.3603,
+    0.243,
+    0.3939,
+    0.3814,
+    0.2425,
+    0.3413,
+    0.2343,
+    0.183,
+    0.3367,
+    0.3701,
+    0.4715,
+    0.3844,
+    0.1122,
+    0.3327,
+    0.2995,
+    0.1793,
+    0.1754,
+    0.1713,
+    0.3161,
+    0.143
+   ]
+  }
+ },
+ "broad_shallow_detection": {
+  "n": 21,
+  "threshold_truth_frac_lt_6ft": 0.18309612455541724,
+  "n_pos": 7,
+  "auc_glob_frac_lt_6ft": 0.673469387755102,
+  "auc_raster_frac": 0.6020408163265306,
+  "auc_neg_dmax": 0.7142857142857143,
+  "auc_neg_mean_depth": 0.6836734693877551
+ },
+ "littoral_lt15ft": {
+  "n": 12,
+  "spearman": -0.09807370556736847,
+  "truth_mean": 0.4218333333333333,
+  "glob_mean": 0.46254195124556735,
+  "mae": 0.17821446228332663,
+  "mae_const": 0.11033333333333334
+ },
+ "cwms_rel_per_ft": {
+  "n": 34,
+  "spearman": 0.22566844919786092,
+  "spearman_verified_weak": 0.2551319648093841,
+  "glob_mean_frac_1ft": 0.03318550617812184,
+  "truth_mean": 0.024178023319064143,
+  "within2": 0.47058823529411764
+ },
+ "fleet": {
+  "n_fleet": 621,
+  "n_hl_matched": 554,
+  "n_glob_row": 554,
+  "n_no_polygon": 22,
+  "tier": {
+   "weak": 288,
+   "verified": 234,
+   "none": 67,
+   "suspect": 32
+  },
+  "match_mode": {
+   "name": 348,
+   "geo": 206
+  },
+  "dmax_source": {
+   "modeled_estimate": 495,
+   "supplied_observed": 59
+  },
+  "flags": {
+   "geo_only_match": 206,
+   "poly_spans_multi_HL": 100,
+   "no_match": 67,
+   "area_ratio_off": 62,
+   "low_iou": 20,
+   "area_ratio_bad": 19,
+   "shared_HL_id": 6,
+   "mega": 1
+  },
+  "dmax_by_hl_type": {
+   "1": {
+    "n": 152,
+    "p10": 9.3,
+    "p25": 12.8,
+    "median": 19.9,
+    "p75": 32.2,
+    "p90": 87.3
+   },
+   "2": {
+    "n": 397,
+    "p10": 14.3,
+    "p25": 19.1,
+    "median": 23.5,
+    "p75": 30.4,
+    "p90": 49.3
+   },
+   "3": {
+    "n": 5,
+    "p10": 4.8,
+    "p25": 6.4,
+    "median": 32.8,
+    "p75": 50.0,
+    "p90": 320.6
+   }
+  },
+  "dmax_by_hl_type_and_source": {
+   "1/modeled_estimate": {
+    "n": 135,
+    "p10": 9.7,
+    "p25": 12.8,
+    "median": 19.7,
+    "p75": 31.4,
+    "p90": 86.9
+   },
+   "1/supplied_observed": {
+    "n": 17,
+    "p10": 7.0,
+    "p25": 12.2,
+    "median": 21.3,
+    "p75": 35.6,
+    "p90": 87.0
+   },
+   "2/modeled_estimate": {
+    "n": 359,
+    "p10": 14.4,
+    "p25": 19.0,
+    "median": 23.3,
+    "p75": 29.5,
+    "p90": 48.2
+   },
+   "2/supplied_observed": {
+    "n": 38,
+    "p10": 11.1,
+    "p25": 20.4,
+    "median": 30.4,
+    "p75": 47.7,
+    "p90": 67.2
+   },
+   "3/supplied_observed": {
+    "n": 4,
+    "p10": 4.5,
+    "p25": 5.7,
+    "median": 28.2,
+    "p75": 162.8,
+    "p90": 365.7
+   }
+  },
+  "dmax_by_size_km2": {
+   "<5": {
+    "n": 79,
+    "p10": 7.8,
+    "p25": 10.2,
+    "median": 13.6,
+    "p75": 17.4,
+    "p90": 22.4
+   },
+   "5-20": {
+    "n": 146,
+    "p10": 12.0,
+    "p25": 15.5,
+    "median": 20.4,
+    "p75": 24.8,
+    "p90": 30.3
+   },
+   "20-100": {
+    "n": 202,
+    "p10": 17.7,
+    "p25": 20.3,
+    "median": 24.4,
+    "p75": 30.3,
+    "p90": 48.0
+   },
+   "100-500": {
+    "n": 106,
+    "p10": 20.1,
+    "p25": 27.3,
+    "median": 41.2,
+    "p75": 65.9,
+    "p90": 87.8
+   },
+   ">500": {
+    "n": 21,
+    "p10": 8.2,
+    "p25": 11.4,
+    "median": 23.0,
+    "p75": 62.5,
+    "p90": 287.1
+   }
+  },
+  "dmax_by_regime": {
+   "MEGA": {
+    "n": 3,
+    "p10": 7.0,
+    "p25": 11.8,
+    "median": 20.0,
+    "p75": 41.2,
+    "p90": 54.0
+   },
+   "natural": {
+    "n": 80,
+    "p10": 11.3,
+    "p25": 17.5,
+    "median": 26.2,
+    "p75": 70.4,
+    "p90": 103.8
+   },
+   "regulated_natural": {
+    "n": 101,
+    "p10": 10.2,
+    "p25": 13.8,
+    "median": 21.0,
+    "p75": 26.3,
+    "p90": 47.0
+   },
+   "reservoir": {
+    "n": 370,
+    "p10": 13.3,
+    "p25": 18.4,
+    "median": 23.3,
+    "p75": 30.1,
+    "p90": 48.8
+   }
+  },
+  "dmax_by_lake_class": {
+   "N1a_natural_deep_or_unknown": {
+    "n": 44,
+    "p10": 18.0,
+    "p25": 21.3,
+    "median": 38.3,
+    "p75": 88.6,
+    "p90": 174.7
+   },
+   "N1b_natural_shallow": {
+    "n": 33,
+    "p10": 9.8,
+    "p25": 12.1,
+    "median": 19.7,
+    "p75": 66.0,
+    "p90": 83.5
+   },
+   "N2_regulated_natural_lake": {
+    "n": 94,
+    "p10": 11.3,
+    "p25": 14.2,
+    "median": 21.4,
+    "p75": 27.3,
+    "p90": 47.8
+   },
+   "N3_small_pond_or_outlet_dam": {
+    "n": 10,
+    "p10": 7.5,
+    "p25": 10.3,
+    "median": 11.8,
+    "p75": 16.2,
+    "p90": 17.8
+   },
+   "R1_run_of_river_pool": {
+    "n": 41,
+    "p10": 13.7,
+    "p25": 17.1,
+    "median": 20.5,
+    "p75": 26.7,
+    "p90": 36.4
+   },
+   "R2_flow_through_reservoir": {
+    "n": 79,
+    "p10": 11.9,
+    "p25": 16.4,
+    "median": 21.5,
+    "p75": 26.6,
+    "p90": 34.6
+   },
+   "R3_dendritic_storage": {
+    "n": 89,
+    "p10": 19.3,
+    "p25": 23.2,
+    "median": 28.3,
+    "p75": 49.2,
+    "p90": 71.6
+   },
+   "R4_open_basin_storage": {
+    "n": 144,
+    "p10": 14.7,
+    "p25": 19.2,
+    "median": 23.8,
+    "p75": 30.7,
+    "p90": 44.5
+   },
+   "R5_small_impoundment": {
+    "n": 17,
+    "p10": 6.8,
+    "p25": 7.8,
+    "median": 10.0,
+    "p75": 14.2,
+    "p90": 16.8
+   },
+   "X_mega": {
+    "n": 3,
+    "p10": 7.0,
+    "p25": 11.8,
+    "median": 20.0,
+    "p75": 41.2,
+    "p90": 54.0
+   }
+  },
+  "shallow_frac_1p2m_by_regime": {
+   "MEGA": {
+    "n": 3,
+    "p10": 8.1,
+    "p25": 9.6,
+    "median": 12.2,
+    "p75": 33.3,
+    "p90": 45.9
+   },
+   "natural": {
+    "n": 80,
+    "p10": 2.4,
+    "p25": 3.4,
+    "median": 9.2,
+    "p75": 15.0,
+    "p90": 22.1
+   },
+   "regulated_natural": {
+    "n": 101,
+    "p10": 5.9,
+    "p25": 10.2,
+    "median": 13.9,
+    "p75": 18.3,
+    "p90": 24.4
+   },
+   "reservoir": {
+    "n": 370,
+    "p10": 7.4,
+    "p25": 9.6,
+    "median": 13.4,
+    "p75": 17.3,
+    "p90": 22.3
+   }
+  },
+  "glob_shallow_frac_1p2m_overall": {
+   "n": 554,
+   "p10": 5.6,
+   "p25": 9.0,
+   "median": 13.0,
+   "p75": 17.3,
+   "p90": 22.8
+  },
+  "glob_b_overall": {
+   "n": 554,
+   "p10": 17.5,
+   "p25": 20.5,
+   "median": 24.7,
+   "p75": 30.3,
+   "p90": 38.6
+  },
+  "dmax_estimate_range_among_modeled": {
+   "n": 495,
+   "p10": 12.4,
+   "p25": 17.5,
+   "median": 22.9,
+   "p75": 29.9,
+   "p90": 51.4
+  },
+  "frac_modeled_dmax_between_10_and_50m": 0.8484848484848485,
+  "suspect_matches": [
+   {
+    "id": "Jordan|AL",
+    "hl_name": "Lake Jordan",
+    "hl_over_poly": 0.5,
+    "poly_hl_n": 2.0,
+    "poly_hl_iou": 0.46,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;poly_spans_multi_HL;low_iou"
+   },
+   {
+    "id": "Weiss|AL",
+    "hl_name": "Weiss Lake",
+    "hl_over_poly": 0.43,
+    "poly_hl_n": 10.0,
+    "poly_hl_iou": 0.8,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;poly_spans_multi_HL"
+   },
+   {
+    "id": "Roosevelt|AZ",
+    "hl_name": "Roosevelt Lake",
+    "hl_over_poly": 1.02,
+    "poly_hl_n": 2.0,
+    "poly_hl_iou": 0.45,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "poly_spans_multi_HL;low_iou"
+   },
+   {
+    "id": "San Carlos|AZ",
+    "hl_name": "San Carlos Lake",
+    "hl_over_poly": 0.29,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.29,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Rice Lake|IL",
+    "hl_name": "Duck Creek Station Cooling",
+    "hl_over_poly": 0.8,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.47,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "geo_only_match;low_iou"
+   },
+   {
+    "id": "Buckhorn Lake|KY",
+    "hl_name": "Buckhorn Lake",
+    "hl_over_poly": 0.47,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.46,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Kentucky Lake|KY",
+    "hl_name": "Kentucky",
+    "hl_over_poly": 1.2,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.68,
+    "n_sector_per_hl": 2.0,
+    "match_flags": "shared_HL_id"
+   },
+   {
+    "id": "Lake Bistineau|LA",
+    "hl_name": "Lake Bistineau",
+    "hl_over_poly": 0.49,
+    "poly_hl_n": 4.0,
+    "poly_hl_iou": 0.54,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;poly_spans_multi_HL"
+   },
+   {
+    "id": "Lake Pontchartrain|LA",
+    "hl_name": "Pontchartrain",
+    "hl_over_poly": 1.0,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.99,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "mega"
+   },
+   {
+    "id": "Savage River Reservoir|MD",
+    "hl_name": "Savage Reservoir",
+    "hl_over_poly": 0.49,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.48,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Enid Lake|MS",
+    "hl_name": "Enid Lake",
+    "hl_over_poly": 2.32,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.43,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Kerr Lake (John H. Kerr)|NC",
+    "hl_name": "John H. Kerr Reservoir",
+    "hl_over_poly": 0.99,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.86,
+    "n_sector_per_hl": 2.0,
+    "match_flags": "shared_HL_id"
+   },
+   {
+    "id": "Stump Lake|ND",
+    "hl_name": NaN,
+    "hl_over_poly": 1.63,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.4,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "geo_only_match;area_ratio_off;low_iou"
+   },
+   {
+    "id": "Bluewater Lake|NM",
+    "hl_name": NaN,
+    "hl_over_poly": 0.49,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.49,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "geo_only_match;area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Conchas Lake|NM",
+    "hl_name": "Conchas Lake",
+    "hl_over_poly": 2.28,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.4,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Elephant Butte Reservoir|NM",
+    "hl_name": "Elephant Butte Reservoir",
+    "hl_over_poly": 2.5,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.4,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Santa Rosa Lake|NM",
+    "hl_name": "Santa Rosa Lake",
+    "hl_over_poly": 3.13,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.31,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Malheur Lake|OR",
+    "hl_name": "Malheur Lake",
+    "hl_over_poly": 2.57,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.35,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Lake Strom Thurmond (Clarks Hill)|SC",
+    "hl_name": "J. Strom Thurmond Lake",
+    "hl_over_poly": 0.48,
+    "poly_hl_n": 11.0,
+    "poly_hl_iou": 0.86,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;poly_spans_multi_HL"
+   },
+   {
+    "id": "Waubay Lake|SD",
+    "hl_name": NaN,
+    "hl_over_poly": 2.38,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.42,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "geo_only_match;area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Fort Loudoun Lake|TN",
+    "hl_name": "Tellico Lake",
+    "hl_over_poly": 1.77,
+    "poly_hl_n": 5.0,
+    "poly_hl_iou": 0.41,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "geo_only_match;area_ratio_off;poly_spans_multi_HL;low_iou"
+   },
+   {
+    "id": "Kentucky Lake|TN",
+    "hl_name": "Kentucky",
+    "hl_over_poly": 0.98,
+    "poly_hl_n": 8.0,
+    "poly_hl_iou": 0.69,
+    "n_sector_per_hl": 2.0,
+    "match_flags": "poly_spans_multi_HL;shared_HL_id"
+   },
+   {
+    "id": "Norris Lake|TN",
+    "hl_name": "Norris Lake",
+    "hl_over_poly": 0.91,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.5,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "low_iou"
+   },
+   {
+    "id": "Amistad Reservoir|TX",
+    "hl_name": "Amistad Reservoir",
+    "hl_over_poly": 1.72,
+    "poly_hl_n": 2.0,
+    "poly_hl_iou": 0.25,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;poly_spans_multi_HL;low_iou"
+   },
+   {
+    "id": "Falcon Lake|TX",
+    "hl_name": "Falcon Reservoir",
+    "hl_over_poly": 0.37,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.37,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Flaming Gorge Reservoir|UT",
+    "hl_name": "Flaming Gorge",
+    "hl_over_poly": 0.8,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.79,
+    "n_sector_per_hl": 2.0,
+    "match_flags": "shared_HL_id"
+   },
+   {
+    "id": "Lake Powell|UT",
+    "hl_name": "Lake Powell",
+    "hl_over_poly": 0.23,
+    "poly_hl_n": 8.0,
+    "poly_hl_iou": 0.54,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;poly_spans_multi_HL"
+   },
+   {
+    "id": "Kerr Reservoir (Buggs Island)|VA",
+    "hl_name": "John H. Kerr Reservoir",
+    "hl_over_poly": 0.99,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.86,
+    "n_sector_per_hl": 2.0,
+    "match_flags": "shared_HL_id"
+   },
+   {
+    "id": "Summersville Lake|WV",
+    "hl_name": "Summersville Lake",
+    "hl_over_poly": 0.42,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.42,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   },
+   {
+    "id": "Bighorn Lake|WY",
+    "hl_name": "Bighorn Lake",
+    "hl_over_poly": 0.22,
+    "poly_hl_n": 3.0,
+    "poly_hl_iou": 0.61,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;poly_spans_multi_HL"
+   },
+   {
+    "id": "Flaming Gorge Reservoir|WY",
+    "hl_name": "Flaming Gorge",
+    "hl_over_poly": 0.8,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.79,
+    "n_sector_per_hl": 2.0,
+    "match_flags": "shared_HL_id"
+   },
+   {
+    "id": "Keyhole Reservoir|WY",
+    "hl_name": "Keyhole",
+    "hl_over_poly": 0.42,
+    "poly_hl_n": 1.0,
+    "poly_hl_iou": 0.42,
+    "n_sector_per_hl": 1.0,
+    "match_flags": "area_ratio_off;area_ratio_bad;low_iou"
+   }
+  ],
+  "shared_hl_ids": [
+   {
+    "id": "Kentucky Lake|KY",
+    "hl_id": 801.0,
+    "hl_name": "Kentucky"
+   },
+   {
+    "id": "Kerr Lake (John H. Kerr)|NC",
+    "hl_id": 805.0,
+    "hl_name": "John H. Kerr Reservoir"
+   },
+   {
+    "id": "Kentucky Lake|TN",
+    "hl_id": 801.0,
+    "hl_name": "Kentucky"
+   },
+   {
+    "id": "Flaming Gorge Reservoir|UT",
+    "hl_id": 784.0,
+    "hl_name": "Flaming Gorge"
+   },
+   {
+    "id": "Kerr Reservoir (Buggs Island)|VA",
+    "hl_id": 805.0,
+    "hl_name": "John H. Kerr Reservoir"
+   },
+   {
+    "id": "Flaming Gorge Reservoir|WY",
+    "hl_id": 784.0,
+    "hl_name": "Flaming Gorge"
+   }
+  ],
+  "area_ratio_dist": {
+   "n": 554,
+   "p10": 7.1,
+   "p25": 8.4,
+   "median": 9.3,
+   "p75": 9.9,
+   "p90": 10.9
+  },
+  "pilots": [
+   {
+    "id": "Guntersville|AL",
+    "hl_name": "Guntersville Lake",
+    "hl_over_poly": 0.627,
+    "poly_hl_n": 16.0,
+    "match_tier": "weak",
+    "glob_dmax_m": 46.415,
+    "glob_mean_depth_m": 10.256,
+    "glob_shallow_frac_1p2m": 0.088,
+    "glob_dmax_source": "modeled_estimate"
+   },
+   {
+    "id": "Wheeler|AL",
+    "hl_name": "Wheeler Lake",
+    "hl_over_poly": 0.728,
+    "poly_hl_n": 11.0,
+    "match_tier": "weak",
+    "glob_dmax_m": 36.419,
+    "glob_mean_depth_m": 10.647,
+    "glob_shallow_frac_1p2m": 0.075,
+    "glob_dmax_source": "modeled_estimate"
+   },
+   {
+    "id": "Wilson|AL",
+    "hl_name": NaN,
+    "hl_over_poly": 0.918,
+    "poly_hl_n": 1.0,
+    "match_tier": "weak",
+    "glob_dmax_m": 20.739,
+    "glob_mean_depth_m": 7.777,
+    "glob_shallow_frac_1p2m": 0.091,
+    "glob_dmax_source": "modeled_estimate"
+   },
+   {
+    "id": "Lake Hartwell|SC",
+    "hl_name": "Hartwell Lake",
+    "hl_over_poly": 1.385,
+    "poly_hl_n": 2.0,
+    "match_tier": "weak",
+    "glob_dmax_m": 72.305,
+    "glob_mean_depth_m": 11.037,
+    "glob_shallow_frac_1p2m": 0.099,
+    "glob_dmax_source": "modeled_estimate"
+   },
+   {
+    "id": "Pickwick Lake|TN",
+    "hl_name": "Pickwick Lake",
+    "hl_over_poly": 1.113,
+    "poly_hl_n": 1.0,
+    "match_tier": "verified",
+    "glob_dmax_m": 28.826,
+    "glob_mean_depth_m": 7.333,
+    "glob_shallow_frac_1p2m": 0.117,
+    "glob_dmax_source": "modeled_estimate"
+   }
+  ]
+ }
+}

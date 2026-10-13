@@ -1,0 +1,641 @@
+{
+ "summary": {
+  "n_lakes": 11,
+  "spearman_slope_10_60_vs_sh3": {
+   "n": 3,
+   "mean": -0.48,
+   "median": -0.351,
+   "n_neg": 3
+  },
+  "spearman_slope_30_100_vs_sh3": {
+   "n": 3,
+   "mean": -0.256,
+   "median": -0.297,
+   "n_neg": 3
+  },
+  "spearman_slope_60_200_vs_sh3": {
+   "n": 3,
+   "mean": 0.002,
+   "median": 0.035,
+   "n_neg": 1
+  },
+  "spearman_rise200_vs_sh3": {
+   "n": 3,
+   "mean": -0.201,
+   "median": -0.201,
+   "n_neg": 3
+  },
+  "spearman_slope_10_60_vs_meandepth": {
+   "n": 3,
+   "mean": 0.441,
+   "median": 0.334,
+   "n_neg": 0
+  },
+  "auc_slope_10_60_top_tercile": {
+   "n": 3,
+   "mean": 0.761,
+   "median": 0.696,
+   "n_neg": 0
+  },
+  "auc_rise200_top_tercile": {
+   "n": 3,
+   "mean": 0.647,
+   "median": 0.599,
+   "n_neg": 0
+  },
+  "mask_slope<1.0": {
+   "pred_frac_of_band": 0.077,
+   "precision": 0.178,
+   "recall": 0.085,
+   "iou": 0.071
+  },
+  "mask_slope<2.0": {
+   "pred_frac_of_band": 0.111,
+   "precision": 0.155,
+   "recall": 0.11,
+   "iou": 0.083
+  },
+  "mask_slope<4.0": {
+   "pred_frac_of_band": 0.186,
+   "precision": 0.136,
+   "recall": 0.164,
+   "iou": 0.103
+  },
+  "mask_all_band_100m": {
+   "precision": 0.111,
+   "recall": 0.198,
+   "iou": 0.096
+  },
+  "T3_leave_one_lake_out_auc": {
+   "d3": {
+    "auc_dist": 0.876,
+    "auc_dist_plus_slope": 0.889,
+    "auc_slope_only": 0.683
+   },
+   "d6": {
+    "auc_dist": 0.818,
+    "auc_dist_plus_slope": 0.835,
+    "auc_slope_only": 0.672
+   }
+  },
+  "T3_lakes_where_slope_helps": {
+   "d3": 2,
+   "d6": 2
+  }
+ },
+ "per_lake": [
+  {
+   "key": "Bardwell_2020-07",
+   "n_seg": 79,
+   "lake_sh3": 0.1159080164786925,
+   "lake_sh6": 0.2525832376578645,
+   "spearman_slope_10_60_vs_sh3": -0.7613972128326013,
+   "spearman_slope_10_60_vs_meandepth": 0.72738558909445,
+   "spearman_slope_30_100_vs_sh3": -0.4409006230188784,
+   "spearman_slope_30_100_vs_meandepth": 0.42482960077896786,
+   "spearman_slope_60_200_vs_sh3": -0.08599639215235443,
+   "spearman_slope_60_200_vs_meandepth": 0.08268063948935661,
+   "spearman_slope_5_20_vs_sh3": -0.8386611622803242,
+   "spearman_slope_5_20_vs_meandepth": 0.8238487332719093,
+   "spearman_rise200_vs_sh3": -0.28914392931238053,
+   "spearman_rise200_vs_meandepth": 0.28622200584225904,
+   "auc_slope_10_60_top_tercile_sh3": 0.9209401709401709,
+   "auc_slope_30_100_top_tercile_sh3": 0.8404558404558404,
+   "auc_slope_60_200_top_tercile_sh3": 0.6759259259259259,
+   "auc_rise200_top_tercile_sh3": 0.7670940170940171,
+   "seg_sh3_sd": 0.3419621727077253,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.20757587282269718,
+     "precision": 0.8523268596555514,
+     "recall": 0.3388201019664967,
+     "iou": 0.3200330214639516
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.31649806039400624,
+     "precision": 0.7149723624128815,
+     "recall": 0.43335761107064824,
+     "iou": 0.3695193143708856
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.620217540123222,
+     "precision": 0.5623007113073338,
+     "recall": 0.6678805535324108,
+     "iou": 0.4394287904926203
+    },
+    "all_band_100m": {
+     "precision": 0.4369057579675972,
+     "recall": 0.836707938820102,
+     "iou": 0.40257919820577515
+    }
+   },
+   "cells": {
+    "n": 59228
+   }
+  },
+  {
+   "key": "BobSandlin_2018-02",
+   "n_seg": 0,
+   "lake_sh3": 0.06618163728507913,
+   "lake_sh6": 0.12882504741473122,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 160815
+   }
+  },
+  {
+   "key": "Brownwood_2013-06",
+   "n_seg": 0,
+   "lake_sh3": 0.09079211323438911,
+   "lake_sh6": 0.20631228970356694,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 125121
+   }
+  },
+  {
+   "key": "Cherokee_2023-01",
+   "n_seg": 152,
+   "lake_sh3": 0.24244155387590086,
+   "lake_sh6": 0.34969531845081153,
+   "spearman_slope_10_60_vs_sh3": -0.3280772539287327,
+   "spearman_slope_10_60_vs_meandepth": 0.26102898461580515,
+   "spearman_slope_30_100_vs_sh3": -0.03128411499597659,
+   "spearman_slope_30_100_vs_meandepth": -0.049904660365366074,
+   "spearman_slope_60_200_vs_sh3": 0.03511069805012746,
+   "spearman_slope_60_200_vs_meandepth": -0.09124242237850178,
+   "spearman_slope_5_20_vs_sh3": -0.5712040214784982,
+   "spearman_slope_5_20_vs_meandepth": 0.533020318618908,
+   "spearman_rise200_vs_sh3": -0.11411072258953968,
+   "spearman_rise200_vs_meandepth": 0.04045616124373674,
+   "auc_slope_10_60_top_tercile_sh3": 0.6955930887206367,
+   "auc_slope_30_100_top_tercile_sh3": 0.5428072218986605,
+   "auc_slope_60_200_top_tercile_sh3": 0.501067753834207,
+   "auc_rise200_top_tercile_sh3": 0.5761017278198408,
+   "seg_sh3_sd": 0.3326447409672921,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.23795643439555678,
+     "precision": 0.6381393808972025,
+     "recall": 0.23291644009425413,
+     "iou": 0.20574264823611038
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.3989049513530547,
+     "precision": 0.507554063394885,
+     "recall": 0.3105552534590055,
+     "iou": 0.2386479710279506
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.7648008823413558,
+     "precision": 0.4460754017305315,
+     "recall": 0.5232916440094254,
+     "iou": 0.3171830366952318
+    },
+    "all_band_100m": {
+     "precision": 0.38385788001733173,
+     "recall": 0.5887861760618693,
+     "iou": 0.30270555710868824
+    }
+   },
+   "cells": {
+    "n": 68268
+   }
+  },
+  {
+   "key": "Diversion_2013-06",
+   "n_seg": 139,
+   "lake_sh3": 0.1745853697620383,
+   "lake_sh6": 0.37681275538819003,
+   "spearman_slope_10_60_vs_sh3": -0.3510321844606141,
+   "spearman_slope_10_60_vs_meandepth": 0.33371316227021597,
+   "spearman_slope_30_100_vs_sh3": -0.29671096381642925,
+   "spearman_slope_30_100_vs_meandepth": 0.325334584615467,
+   "spearman_slope_60_200_vs_sh3": 0.05589417511532661,
+   "spearman_slope_60_200_vs_meandepth": 0.0009205305117117748,
+   "spearman_slope_5_20_vs_sh3": -0.4615259238634187,
+   "spearman_slope_5_20_vs_meandepth": 0.3979712671637042,
+   "spearman_rise200_vs_sh3": -0.20117589291594004,
+   "spearman_rise200_vs_meandepth": 0.22189601632099776,
+   "auc_slope_10_60_top_tercile_sh3": 0.6665124884366328,
+   "auc_slope_30_100_top_tercile_sh3": 0.6574930619796485,
+   "auc_slope_60_200_top_tercile_sh3": 0.48635522664199815,
+   "auc_rise200_top_tercile_sh3": 0.599213691026827,
+   "seg_sh3_sd": 0.3527628034579596,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.40601140427176957,
+     "precision": 0.4719114496548441,
+     "recall": 0.3639284075263883,
+     "iou": 0.25860944429950433
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.5078283560452305,
+     "precision": 0.4807308021695689,
+     "recall": 0.46369894446994037,
+     "iou": 0.30895303326810175
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.6618826713056924,
+     "precision": 0.48747901000219024,
+     "recall": 0.6128499311610831,
+     "iou": 0.37270443762210437
+    },
+    "all_band_100m": {
+     "precision": 0.397796462742824,
+     "recall": 0.7555759522716843,
+     "iou": 0.352442522584236
+    }
+   },
+   "cells": {
+    "n": 62405
+   }
+  },
+  {
+   "key": "Fork_2009-10",
+   "n_seg": 0,
+   "lake_sh3": 0.10384938985692697,
+   "lake_sh6": 0.16151891825964002,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 483739
+   }
+  },
+  {
+   "key": "JimChapman_2022-07",
+   "n_seg": 0,
+   "lake_sh3": 0.08516682145309669,
+   "lake_sh6": 0.2062390527675511,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 330563
+   }
+  },
+  {
+   "key": "Lavon_2021-07",
+   "n_seg": 0,
+   "lake_sh3": 0.0598413204881044,
+   "lake_sh6": 0.1429965706134553,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 372953
+   }
+  },
+  {
+   "key": "conroe_2020-10",
+   "n_seg": 0,
+   "lake_sh3": 0.07736864458874942,
+   "lake_sh6": 0.16928949044941938,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 357884
+   }
+  },
+  {
+   "key": "granbury_2015-06",
+   "n_seg": 0,
+   "lake_sh3": 0.13152454086564278,
+   "lake_sh6": 0.27399715390398455,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 148976
+   }
+  },
+  {
+   "key": "tawakoni_2009-08",
+   "n_seg": 0,
+   "lake_sh3": 0.07901959295148149,
+   "lake_sh6": 0.1428526753604153,
+   "masks": {
+    "slope<1.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<2.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "slope<4.0": {
+     "pred_frac_of_band": 0.0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    },
+    "all_band_100m": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "iou": 0.0
+    }
+   },
+   "cells": {
+    "n": 671517
+   }
+  }
+ ],
+ "t3": {
+  "Bardwell_2020-07": {
+   "d3": {
+    "auc_dist": 0.9101826500942624,
+    "auc_dist_plus_slope": 0.9466889902199678,
+    "auc_slope_only": 0.7516054388441912
+   },
+   "d6": {
+    "auc_dist": 0.8050659795826351,
+    "auc_dist_plus_slope": 0.8418399280156302,
+    "auc_slope_only": 0.7130053003846855
+   }
+  },
+  "BobSandlin_2018-02": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "Brownwood_2013-06": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "Cherokee_2023-01": {
+   "d3": {
+    "auc_dist": 0.8169436507209524,
+    "auc_dist_plus_slope": 0.844227822695071,
+    "auc_slope_only": 0.6716444157311382
+   },
+   "d6": {
+    "auc_dist": 0.8129511237213349,
+    "auc_dist_plus_slope": 0.8484032290134716,
+    "auc_slope_only": 0.6906983152269579
+   }
+  },
+  "Diversion_2013-06": {
+   "d3": {
+    "auc_dist": 0.8997601108846518,
+    "auc_dist_plus_slope": 0.876989872881006,
+    "auc_slope_only": 0.624645145588634
+   },
+   "d6": {
+    "auc_dist": 0.8372576265860762,
+    "auc_dist_plus_slope": 0.8144073285499557,
+    "auc_slope_only": 0.6119884673254554
+   }
+  },
+  "Fork_2009-10": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "JimChapman_2022-07": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "Lavon_2021-07": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "conroe_2020-10": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "granbury_2015-06": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  },
+  "tawakoni_2009-08": {
+   "d3": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   },
+   "d6": {
+    "auc_dist": NaN,
+    "auc_dist_plus_slope": NaN,
+    "auc_slope_only": NaN
+   }
+  }
+ }
+}

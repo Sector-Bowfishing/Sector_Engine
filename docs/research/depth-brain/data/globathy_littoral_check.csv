@@ -1,0 +1,13 @@
+id,truth,definition,glob15,src,tier
+Mille Lacs Lake|MN,0.258,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.5866,supplied_observed,verified
+Leech Lake|MN,0.561,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.2755,supplied_observed,verified
+Lake Winnibigoshish|MN,0.335,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.3605,supplied_observed,verified
+Lake Minnetonka|MN,0.412,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.4014,supplied_observed,weak
+Lake Vermilion|MN,0.382,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.6089,supplied_observed,verified
+Gull Lake|MN,0.282,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.3955,supplied_observed,verified
+Otter Tail Lake|MN,0.459,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.1713,supplied_observed,weak
+Lake Bemidji|MN,0.282,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.307,supplied_observed,weak
+White Bear Lake|MN,0.541,"MN DNR 'littoralAcres' / areaAcres (littoral = shallow zone, nominally <=15 ft; DNR may use 15 or 20 ft)",0.2998,supplied_observed,weak
+Apopka|FL,0.79,"% area between 1.0 and 2.0 m depth (3.3-6.6 ft), 1989 SJRWMD bathymetry",0.98,supplied_observed,verified
+Reelfoot Lake|TN,0.43,% of lake area with depth <=3.0 ft at normal pool,0.6791,modeled_estimate,weak
+Higgins Lake|MI,0.33,"% area shoal (<20 ft), approx one-third (DNR 1950s)",0.4851,modeled_estimate,weak

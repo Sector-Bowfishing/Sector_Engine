@@ -1,0 +1,371 @@
+{
+ "n_rows": {
+  "CWMS": 33,
+  "TWDB": 2
+ },
+ "rel_per_ft": {
+  "CWMS": {
+   "P_dem": {
+    "n": 33,
+    "spearman": 0.767,
+    "pearson_log": 0.842,
+    "log10_rmse": 0.219,
+    "median_ratio": 0.955,
+    "within_x2": 0.848,
+    "mae": 0.0126,
+    "bias": 0.0081
+   },
+   "P_dem_30_100": {
+    "n": 33,
+    "spearman": 0.713,
+    "pearson_log": 0.845,
+    "log10_rmse": 0.345,
+    "median_ratio": 1.818,
+    "within_x2": 0.606,
+    "mae": 0.0277,
+    "bias": 0.0266
+   },
+   "P_dem_200": {
+    "n": 33,
+    "spearman": 0.704,
+    "pearson_log": 0.827,
+    "log10_rmse": 0.399,
+    "median_ratio": 1.987,
+    "within_x2": 0.515,
+    "mae": 0.0351,
+    "bias": 0.0349
+   },
+   "P_flatshore": {
+    "n": 33,
+    "spearman": 0.656,
+    "pearson_log": 0.798,
+    "log10_rmse": 1.835,
+    "median_ratio": 66.371,
+    "within_x2": 0.0,
+    "mae": 1.3928,
+    "bias": 1.3928
+   },
+   "P_shape": {
+    "n": 33,
+    "spearman": -0.157,
+    "pearson_log": -0.167,
+    "log10_rmse": 2.397,
+    "median_ratio": 268.544,
+    "within_x2": 0.0,
+    "mae": 4.5912,
+    "bias": 4.5912
+   },
+   "P_slope_neg": {
+    "n": 33,
+    "spearman": 0.736
+   },
+   "frac_within_100m": {
+    "n": 33,
+    "spearman": -0.226
+   },
+   "frac_narrow_300m": {
+    "n": 33,
+    "spearman": -0.198
+   },
+   "constant_median": {
+    "n": 33,
+    "spearman": NaN,
+    "pearson_log": NaN,
+    "log10_rmse": 0.329,
+    "median_ratio": 1.0,
+    "within_x2": 0.758,
+    "mae": 0.0113,
+    "bias": 0.0
+   }
+  },
+  "TWDB": {
+   "P_dem": {
+    "n": 2
+   },
+   "P_dem_30_100": {
+    "n": 2
+   },
+   "P_dem_200": {
+    "n": 2
+   },
+   "P_flatshore": {
+    "n": 2
+   },
+   "P_shape": {
+    "n": 2
+   },
+   "P_slope_neg": {
+    "n": 2,
+    "spearman": 1.0
+   },
+   "frac_within_100m": {
+    "n": 2,
+    "spearman": -1.0
+   },
+   "frac_narrow_300m": {
+    "n": 2,
+    "spearman": -1.0
+   },
+   "constant_median": {
+    "n": 2
+   }
+  },
+  "POOLED": {
+   "P_dem": {
+    "n": 35,
+    "spearman": 0.756,
+    "pearson_log": 0.794,
+    "log10_rmse": 0.271,
+    "median_ratio": 0.955,
+    "within_x2": 0.829,
+    "mae": 0.0191,
+    "bias": 0.0144
+   },
+   "P_dem_30_100": {
+    "n": 35,
+    "spearman": 0.702,
+    "pearson_log": 0.82,
+    "log10_rmse": 0.375,
+    "median_ratio": 1.818,
+    "within_x2": 0.6,
+    "mae": 0.0335,
+    "bias": 0.0325
+   },
+   "P_dem_200": {
+    "n": 35,
+    "spearman": 0.695,
+    "pearson_log": 0.8,
+    "log10_rmse": 0.429,
+    "median_ratio": 1.987,
+    "within_x2": 0.514,
+    "mae": 0.0425,
+    "bias": 0.0423
+   },
+   "P_flatshore": {
+    "n": 35,
+    "spearman": 0.651,
+    "pearson_log": 0.797,
+    "log10_rmse": 1.833,
+    "median_ratio": 66.371,
+    "within_x2": 0.0,
+    "mae": 1.4134,
+    "bias": 1.4134
+   },
+   "P_shape": {
+    "n": 35,
+    "spearman": -0.195,
+    "pearson_log": -0.183,
+    "log10_rmse": 2.379,
+    "median_ratio": 243.528,
+    "within_x2": 0.0,
+    "mae": 4.5056,
+    "bias": 4.5056
+   },
+   "P_slope_neg": {
+    "n": 35,
+    "spearman": 0.733
+   },
+   "frac_within_100m": {
+    "n": 35,
+    "spearman": -0.269
+   },
+   "frac_narrow_300m": {
+    "n": 35,
+    "spearman": -0.23
+   },
+   "constant_median": {
+    "n": 35,
+    "spearman": NaN,
+    "pearson_log": NaN,
+    "log10_rmse": 0.323,
+    "median_ratio": 1.0,
+    "within_x2": 0.771,
+    "mae": 0.0109,
+    "bias": 0.0002
+   }
+  }
+ },
+ "twdb_lakes_used": 2,
+ "twdb_truth_quantiles": {
+  "S3": [
+   0.07,
+   0.074,
+   0.081,
+   0.088,
+   0.092
+  ],
+  "S6": [
+   0.157,
+   0.158,
+   0.159,
+   0.161,
+   0.162
+  ],
+  "rel_per_ft": [
+   0.026,
+   0.026,
+   0.027,
+   0.028,
+   0.029
+  ]
+ },
+ "shallow_share": {
+  "S3": {
+   "P_dem_raw": {
+    "n": 2
+   },
+   "P_dem_loo_loglinear": {
+    "n": 2
+   },
+   "P_dem_30_100_raw": {
+    "n": 2
+   },
+   "P_dem_30_100_loo_loglinear": {
+    "n": 2
+   },
+   "P_dem_200_raw": {
+    "n": 2
+   },
+   "P_dem_200_loo_loglinear": {
+    "n": 2
+   },
+   "frac_within_100m": {
+    "spearman": -1.0
+   },
+   "frac_within_100m_loo_loglinear": {
+    "n": 2
+   },
+   "frac_within_200m": {
+    "spearman": -1.0
+   },
+   "frac_within_200m_loo_loglinear": {
+    "n": 2
+   },
+   "frac_narrow_300m": {
+    "spearman": -1.0
+   },
+   "frac_narrow_300m_loo_loglinear": {
+    "n": 2
+   },
+   "P_shape": {
+    "spearman": 1.0
+   },
+   "P_shape_loo_loglinear": {
+    "n": 2
+   },
+   "constant_median": {
+    "n": 2
+   }
+  },
+  "S6": {
+   "P_dem_raw": {
+    "n": 2
+   },
+   "P_dem_loo_loglinear": {
+    "n": 2
+   },
+   "P_dem_30_100_raw": {
+    "n": 2
+   },
+   "P_dem_30_100_loo_loglinear": {
+    "n": 2
+   },
+   "P_dem_200_raw": {
+    "n": 2
+   },
+   "P_dem_200_loo_loglinear": {
+    "n": 2
+   },
+   "frac_within_100m": {
+    "spearman": -1.0
+   },
+   "frac_within_100m_loo_loglinear": {
+    "n": 2
+   },
+   "frac_within_200m": {
+    "spearman": -1.0
+   },
+   "frac_within_200m_loo_loglinear": {
+    "n": 2
+   },
+   "frac_narrow_300m": {
+    "spearman": -1.0
+   },
+   "frac_narrow_300m_loo_loglinear": {
+    "n": 2
+   },
+   "P_shape": {
+    "spearman": 1.0
+   },
+   "P_shape_loo_loglinear": {
+    "n": 2
+   },
+   "constant_median": {
+    "n": 2
+   }
+  }
+ },
+ "class_broad_shallow": {
+  "S3": {
+   "threshold": 0.085,
+   "n_pos": 1,
+   "n": 2,
+   "auc_P_dem": 1.0,
+   "acc_top_tercile_P_dem": 1.0,
+   "auc_P_dem_30_100": 1.0,
+   "acc_top_tercile_P_dem_30_100": 1.0,
+   "auc_P_dem_200": 1.0,
+   "acc_top_tercile_P_dem_200": 1.0,
+   "auc_P_shape": 1.0,
+   "acc_top_tercile_P_shape": 1.0,
+   "auc_frac_within_100m": 0.0,
+   "acc_top_tercile_frac_within_100m": 0.0,
+   "auc_frac_narrow_300m": 0.0,
+   "acc_top_tercile_frac_narrow_300m": 0.0,
+   "auc_slope_10_60_med": 1.0,
+   "acc_top_tercile_slope_10_60_med": 1.0,
+   "auc_frac_lt2": 1.0,
+   "acc_top_tercile_frac_lt2": 1.0
+  },
+  "S6": {
+   "threshold": 0.16,
+   "n_pos": 1,
+   "n": 2,
+   "auc_P_dem": 1.0,
+   "acc_top_tercile_P_dem": 1.0,
+   "auc_P_dem_30_100": 1.0,
+   "acc_top_tercile_P_dem_30_100": 1.0,
+   "auc_P_dem_200": 1.0,
+   "acc_top_tercile_P_dem_200": 1.0,
+   "auc_P_shape": 1.0,
+   "acc_top_tercile_P_shape": 1.0,
+   "auc_frac_within_100m": 0.0,
+   "acc_top_tercile_frac_within_100m": 0.0,
+   "auc_frac_narrow_300m": 0.0,
+   "acc_top_tercile_frac_narrow_300m": 0.0,
+   "auc_slope_10_60_med": 1.0,
+   "acc_top_tercile_slope_10_60_med": 1.0,
+   "auc_frac_lt2": 1.0,
+   "acc_top_tercile_frac_lt2": 1.0
+  }
+ },
+ "gsw_vs_cwms": {
+  "n": 11,
+  "lakes": [
+   "Lake Russell (R.B. Russell)|GA",
+   "Lake Hartwell|SC",
+   "Lake Strom Thurmond (Clarks Hill)|SC",
+   "Sardis Lake|MS",
+   "Enid Lake|MS",
+   "Grenada Lake|MS",
+   "Patoka Lake|IN",
+   "Monroe Lake|IN",
+   "Brookville Lake|IN",
+   "Cecil M. Harden Lake|IN",
+   "Cave Run Lake|KY"
+  ],
+  "spearman_fluct_in_frac": -0.7,
+  "spearman_ring_to_poly": 0.018,
+  "spearman_P_dem_same_lakes": 0.673
+ }
+}
