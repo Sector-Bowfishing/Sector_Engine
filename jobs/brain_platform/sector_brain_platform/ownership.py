@@ -4,11 +4,18 @@ from __future__ import annotations
 from .keys import BRAINS, slot_for, snapshot_field_for
 
 SOURCE_OWNERS = {
-    "tva-restapi": "lake-brain", "usace-cwms-pool": "lake-brain", "usgs-nwis-lake-elevation": "lake-brain",
-    "usgs-nwis-00010": "water-temp", "usace-cwms-water-temp": "water-temp", "open-meteo-water-temp-forcing": "water-temp",
-    "lake-surface-sentinel": "water-clarity", "usgs-turbidity": "water-clarity", "mrms-rain": "water-clarity",
-    "noaa-nbm": "wind", "noaa-rtma-ru": "wind", "metar": "wind", "open-meteo-best-match": "wind",
-    "sector-biology-private": "biological-state",
+    "tva-restapi": "lake-brain",
+    "usace-cwms-pool": "lake-brain",
+    "usgs-nwis-lake-elevation": "lake-brain",
+    "usgs-nwis-00010": "water-temp",
+    "usace-cwms-water-temp": "water-temp",
+    "open-meteo-forecast": "water-temp",
+    "sentinel-2-l2a": "water-clarity",
+    "usgs-nwis-turbidity": "water-clarity",
+    "noaa-mrms": "water-clarity",
+    "noaa-nbm-v5": "wind",
+    "noaa-rtma-ru": "wind",
+    "iem-metar-wind": "wind"
 }
 # Fleet-row and snapshot fields that are Orchestrator rollups: nobody writes them in v1.
 ROLLUP_FLEET = {"lastUpdatedAt", "stale", "issueCount", "hasObservations"}

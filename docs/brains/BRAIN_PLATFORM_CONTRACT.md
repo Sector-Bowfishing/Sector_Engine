@@ -115,15 +115,14 @@ A conforming writer validates every multi-path update against this table before 
 lastFetchAt, latestObservationAt, staleThresholdHours, failures24h?, failuresLastRun?, provides?, notes?}`.
 **`failures24h` is written only when a 24 h ledger exists; unknown is absent, never `0`.**
 
-Owner table (first column is the sourceId prefix):
+Owner table (the ids the Brains actually write, verified 2026-10-12):
 
 | sourceId | owner | also consumed by |
 |---|---|---|
 | `tva-restapi`, `usace-cwms-pool`, `usgs-nwis-lake-elevation` | `lake-brain` | |
-| `usgs-nwis-00010`, `usace-cwms-water-temp`, `open-meteo-water-temp-forcing` | `water-temp` | |
-| `lake-surface-sentinel`, `usgs-turbidity`, `mrms-rain` | `water-clarity` | |
-| `noaa-nbm`, `noaa-rtma-ru`, `metar`, `open-meteo-best-match` | `wind` | `water-temp` (append only) |
-| `sector-biology-private` | `biological-state` | |
+| `usgs-nwis-00010`, `usace-cwms-water-temp`, `open-meteo-forecast` | `water-temp` | |
+| `sentinel-2-l2a`, `usgs-nwis-turbidity`, `noaa-mrms` | `water-clarity` | |
+| `noaa-nbm-v5`, `noaa-rtma-ru`, `iem-metar-wind` | `wind` | |
 | any id not listed | the first brain to register it; it must set `ownerBrainId` | |
 
 ## 7. Activity

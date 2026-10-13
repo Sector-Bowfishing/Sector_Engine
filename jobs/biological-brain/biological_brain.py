@@ -214,6 +214,7 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
         by_a[p["assessment"]] = by_a.get(p["assessment"], 0) + 1
     open_disc = [d for d in b.discrepancies if d.get("status") == "OPEN"]
     return _clean(dict(
+        platform=PLATFORM,
         brainId=BRAIN_ID, displayName=DISPLAY_NAME, domain="biology",
         question="What does Sector know about each fish, and what is it likely doing?",
         version=BRAIN_VERSION, schemaVersion=SCHEMA_VERSION, enabled=True, health=health,
@@ -254,6 +255,10 @@ def health_record(now: str, duration_ms: int, deployment: str, status: str = "HE
                        staleLakeCount=0, errorCount=0 if error is None else 1, latestError=error, deployedVersion=deployment, publishMode="manual"))
 
 
+# The shared Brain Platform this brain publishes through (docs/brains/BRAIN_PLATFORM_CONTRACT.md §13; Engine Score reads it).
+PLATFORM = {"implementation": "sector_brain_platform", "contract": "docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0", "conformant": True}
+
+
 def build_updates(b: Bundle, *, now: dt.datetime, uri_root: str, deployment: str, descriptor: dict, duration_ms: int,
                   published: dict | None, existing_species: set[str] | None, event_id: str | None) -> dict:
     """The complete multi-path update for one publish (applied atomically)."""
@@ -270,7 +275,7 @@ def build_updates(b: Bundle, *, now: dt.datetime, uri_root: str, deployment: str
     up[f"/health/brains/{BRAIN_ID}"] = health_record(ts, duration_ms, deployment)
     prev = (published or {}).get("researchVersion")
     if event_id and prev != b.research_version:
-        up[f"/activity/{event_id}"] = dict(id=event_id, at=ts, brainId=BRAIN_ID, kind="version", severity="success",
+        up[f"/activity/{event_id}"] = dict(id=event_id, at=ts, brainId=BRAIN_ID, kind="brain.version" if prev else "brain.registered", severity="success",
                                            title=f"Biological Brain species knowledge {b.research_version} published ({len(b.profiles)} species)"
                                                  + (f"; was {prev}" if prev else ""))
     return up

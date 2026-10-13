@@ -27,7 +27,7 @@ import json
 import math
 import os
 
-from brain_platform import SCHEMA_VERSION, age_hours, event_id, iso, lake_key, parse_time
+from brain_platform import SCHEMA_VERSION, age_hours, event_id, freshness, iso, lake_key, parse_time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -251,6 +251,12 @@ CANDIDATE_REF = {"modelId": CANDIDATE["modelId"], "lifecycle": CANDIDATE["lifecy
                  "researchScore": CANDIDATE.get("researchScore"), "certificationRef": CANDIDATE.get("certificationRef")}
 
 
+# Contract §3 state kind beside the brain-specific stateType (Ops still reads stateType).
+KIND_OF = {"GAUGE_OBSERVED": "observed", "RAINFALL_MODELED": "modeled", "FALLBACK_NEUTRAL": "modeled", "UNAVAILABLE": "unavailable"}
+# The shared Brain Platform this brain publishes through (contract §13; Engine Score reads it).
+PLATFORM = {"implementation": "sector_brain_platform", "contract": "docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0", "conformant": True}
+
+
 def build_state(lake_id: str, est: dict, sat: dict, layers: list, layer_geo: dict | None, now: dt.datetime,
                 engine_revision: str | None) -> dict:
     st = est["stateType"]
@@ -280,7 +286,9 @@ def build_state(lake_id: str, est: dict, sat: dict, layers: list, layer_geo: dic
     return {
         "lakeId": lake_id, "schemaVersion": SCHEMA_VERSION, "brainId": BRAIN_ID, "brainVersion": BRAIN_VERSION,
         "generatedAt": iso(now), "evaluationTime": eng.get("evaluatedAt"),
-        "stateType": st, "basis": CATALOG["stateTypes"][st]["basis"], "readiness": readiness,
+        "stateType": st, "kind": KIND_OF[st], "basis": CATALOG["stateTypes"][st]["basis"], "readiness": readiness,
+        "freshness": freshness(now, now, STALE_AFTER_H, "TIME", evidence_stale=(st == "UNAVAILABLE"),
+                               evidence_reasons=["no usable clarity input this run"]),
         "processingPathId": "engine-conditions",
         "clarityFt": est.get("clarityFt"), "lowFt": est.get("lowFt"), "highFt": est.get("highFt"),
         "clarityUnit": "ft", "clarityQuantity": "SECCHI_EQUIVALENT_VISIBILITY",
@@ -352,18 +360,18 @@ def build_profile(lake: dict, est: dict, sat: dict, has_polygon: bool, now: dt.d
 def lake_writes(lake_id: str, profile: dict | None, state: dict | None, now: dt.datetime, error: str | None = None) -> dict:
     """Leaf-path updates for one lake. Nodes other brains share are written leaf by leaf."""
     k = lake_key(lake_id)
-    w = {f"/lakeFleet/{k}/lakeId": lake_id, f"/lakeFleet/{k}/lastUpdatedAt": iso(now)}
+    # Fleet-level lastUpdatedAt / snapshot generatedAt + snapshotVersion are Orchestrator rollups
+    # (Brain Platform contract §5): this brain writes only its own slot and snapshot field.
+    w = {f"/lakeFleet/{k}/lakeId": lake_id}
     if state is not None:
         w[f"/lakes/{k}/states/{SLOT}"] = state
         w[f"/snapshots/{k}/latest/lakeId"] = lake_id
-        w[f"/snapshots/{k}/latest/snapshotVersion"] = 1
-        w[f"/snapshots/{k}/latest/generatedAt"] = iso(now)
         w[f"/snapshots/{k}/latest/{CATALOG['snapshotField']}"] = state
         w[f"/snapshots/{k}/latest/brainVersions/{BRAIN_ID}"] = BRAIN_VERSION
         w[f"/lakeFleet/{k}/readiness/{SLOT}"] = state["provenance"]["readiness"]
         w[f"/lakeFleet/{k}/modelVersions/{SLOT}"] = state["provenance"]["modelVersion"]
         w[f"/lakeFleet/{k}/slots/{SLOT}"] = {
-            "readiness": state["provenance"]["readiness"], "stateType": state["stateType"], "stale": False,
+            "readiness": state["provenance"]["readiness"], "stateType": state["stateType"], "kind": state["kind"], "stale": False,
             "issueCount": sum(1 for f in state["provenance"]["qualityFlags"] if not f.startswith("uncalibratedModel")),
             "lastUpdatedAt": iso(now), "lastErrorAt": None, "satellite": state["satellite"]["status"]}
     if profile is not None:
@@ -417,6 +425,7 @@ def registry_entry(results: dict, prev_fleet: dict, now: dt.datetime, health: st
                  "status": vstatus[m["lifecycle"]], "lifecycle": m["lifecycle"]} for m in c["models"]]
     return {
         "brainId": BRAIN_ID, "displayName": c["displayName"], "domain": c["domain"], "question": c["question"],
+        "platform": PLATFORM,
         "version": BRAIN_VERSION, "schemaVersion": SCHEMA_VERSION, "enabled": True, "health": health,
         "status": c["brainStatus"], "statusReasons": c["brainStatusReasons"],
         "supportedLakeCount": len(lake_ids), "readinessCounts": readiness_counts, "staleLakeCount": stale,
@@ -470,7 +479,7 @@ def source_records(results: dict, now: dt.datetime, lake_surface_run: dict | Non
     recs = {}
     for sid, rec in out.items():
         meta = CATALOG["sources"][sid]
-        recs[sid] = {"sourceId": sid, "provider": meta["provider"], "type": meta["type"], "brains": [BRAIN_ID],
+        recs[sid] = {"sourceId": sid, "provider": meta["provider"], "type": meta["type"], "ownerBrainId": BRAIN_ID, "brains": {BRAIN_ID: True},
                      "provides": meta["provides"], "processingPathId": meta["processingPathId"],
                      "staleThresholdHours": meta["staleThresholdHours"], "latencyMs": None, **rec}
     return recs
@@ -483,7 +492,7 @@ def activity_events(prev_registry: dict | None, prev_fleet: dict, results: dict,
     def add(kind, title, severity, lake_id=None):
         nonlocal n
         n += 1
-        e = {"id": event_id(now, "wc", n), "at": iso(now), "kind": kind, "title": title, "brainId": BRAIN_ID, "severity": severity}
+        e = {"id": event_id(now, BRAIN_ID, n), "at": iso(now), "kind": kind, "title": title, "brainId": BRAIN_ID, "severity": severity}
         if lake_id:
             e["lakeId"] = lake_id
         ev[e["id"]] = e

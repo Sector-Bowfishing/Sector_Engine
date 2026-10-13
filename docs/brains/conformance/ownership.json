@@ -169,24 +169,24 @@
     },
     {
       "brainId": "water-temp",
-      "path": "sources/open-meteo-best-match",
+      "path": "sources/noaa-nbm-v5",
       "allowed": false,
       "note": "wind owns it"
     },
     {
       "brainId": "water-temp",
-      "path": "sources/open-meteo-best-match/brains/water-temp",
+      "path": "sources/noaa-nbm-v5/brains/water-temp",
       "allowed": true,
       "note": "append-only membership"
     },
     {
       "brainId": "water-temp",
-      "path": "health/sources/open-meteo-best-match",
+      "path": "health/sources/noaa-nbm-v5",
       "allowed": false
     },
     {
       "brainId": "wind",
-      "path": "health/sources/open-meteo-best-match",
+      "path": "health/sources/noaa-nbm-v5",
       "allowed": true
     },
     {
@@ -289,14 +289,12 @@
     "usgs-nwis-lake-elevation": "lake-brain",
     "usgs-nwis-00010": "water-temp",
     "usace-cwms-water-temp": "water-temp",
-    "open-meteo-water-temp-forcing": "water-temp",
-    "lake-surface-sentinel": "water-clarity",
-    "usgs-turbidity": "water-clarity",
-    "mrms-rain": "water-clarity",
-    "noaa-nbm": "wind",
+    "open-meteo-forecast": "water-temp",
+    "sentinel-2-l2a": "water-clarity",
+    "usgs-nwis-turbidity": "water-clarity",
+    "noaa-mrms": "water-clarity",
+    "noaa-nbm-v5": "wind",
     "noaa-rtma-ru": "wind",
-    "metar": "wind",
-    "open-meteo-best-match": "wind",
-    "sector-biology-private": "biological-state"
+    "iem-metar-wind": "wind"
   }
 }

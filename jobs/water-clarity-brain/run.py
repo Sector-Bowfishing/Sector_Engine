@@ -169,7 +169,7 @@ def main() -> int:
     t0 = time.time()
     report = {"startedAt": bp.iso(now), "dryRun": a.dry_run, "published": 0, "engineFailures": [], "publishFailures": [], "errors": []}
     tokens = bp.TokenProvider()
-    rtdb = None if a.dry_run else bp.BrainRtdb(a.rtdb_url, tokens)
+    rtdb = None if a.dry_run else bp.BrainRtdb(a.rtdb_url, tokens, brain_id=cb.BRAIN_ID)
     payload = {}                     # dry-run: everything that would be written
 
     def write(updates: dict, what: str) -> bool:
@@ -311,7 +311,9 @@ def main() -> int:
     glob = {f"/brains/{cb.BRAIN_ID}": registry, f"/health/brains/{cb.BRAIN_ID}": health, f"/validation/{cb.BRAIN_ID}": validation}
     for sid, rec in sources.items():
         glob[f"/sources/{sid}"] = rec
-        glob[f"/health/sources/{sid}"] = {"status": rec["health"], "lastFetchAt": rec["lastFetchAt"], "failures24h": rec["failures24h"] or 0}
+        glob[f"/health/sources/{sid}"] = {"status": rec["health"], "lastFetchAt": rec["lastFetchAt"]}
+        if rec.get("failures24h") is not None:            # unknown stays absent, never 0 (contract §6)
+            glob[f"/health/sources/{sid}"]["failures24h"] = rec["failures24h"]
     for jid, rec in jobs.items():
         glob[f"/health/jobs/{jid}"] = rec
     events = cb.activity_events(prev_registry, prev_fleet, results, now, status)

@@ -1,3 +1,5 @@
 __pycache__/
 polygons.geojson.gz
 catalog.private.json
+# vendored at deploy time by deploy-job.sh from jobs/brain_platform
+sector_brain_platform/

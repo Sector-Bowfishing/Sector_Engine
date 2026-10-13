@@ -38,6 +38,8 @@ done
 
 echo "▶ job $JOB"
 cp ../lake-surface/polygons.geojson.gz .
+# The shared Brain Platform (docs/brains/BRAIN_PLATFORM_CONTRACT.md): vendored into the image.
+rm -rf sector_brain_platform && cp -R ../brain_platform/sector_brain_platform .
 trap 'rm -f polygons.geojson.gz' EXIT
 gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" \

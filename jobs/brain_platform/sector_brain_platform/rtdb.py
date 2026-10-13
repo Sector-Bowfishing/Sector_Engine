@@ -71,7 +71,17 @@ class BrainRtdb:
     """GET / multi-path PATCH with the contract's retry policy. `transport(method, url, body) -> (status, text)` is injectable."""
 
     def __init__(self, url: str = BRAIN_RTDB_URL, tokens: TokenProvider | None = None, transport=None,
-                 brain_id: str | None = None, sleep=time.sleep):
+                 brain_id: str | None = None, sleep=time.sleep, attempts: int = ATTEMPTS,
+                 backoff_base_s: float = BACKOFF_BASE_S, retries: int | None = None, backoff_s: float | None = None,
+                 timeout_s: float | None = None):
+        """`attempts`/`backoff_base_s` default to the contract's policy. `retries`/`backoff_s`/`timeout_s` are the
+        pre-contract names (retries = attempts - 1) kept so existing brain tests can run without the backoff."""
+        if retries is not None:
+            attempts = retries + 1
+        if backoff_s is not None:
+            backoff_base_s = backoff_s
+        self.attempts, self.backoff_base_s = attempts, backoff_base_s
+        self.timeout_s = READ_TIMEOUT_S if timeout_s is None else timeout_s
         if not accepted_url(url):
             raise ValueError(f"refusing to write Brain data to {url}: not the dedicated sector-brain database")
         self.url = url.rstrip("/")
@@ -85,7 +95,7 @@ class BrainRtdb:
     def _urllib(self, method: str, url: str, body: bytes | None):
         req = urllib.request.Request(url, data=body, method=method, headers={"Content-Type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=READ_TIMEOUT_S) as r:
+            with urllib.request.urlopen(req, timeout=self.timeout_s) as r:
                 return r.status, r.read().decode()
         except urllib.error.HTTPError as e:
             return e.code, e.read().decode(errors="replace")
@@ -95,7 +105,7 @@ class BrainRtdb:
         url = f"{self.url}/{path.strip('/')}.json?" + urllib.parse.urlencode(q)
         body = None if payload is None else json.dumps(payload, separators=(",", ":"), allow_nan=False).encode()
         last = None
-        for attempt in range(ATTEMPTS):
+        for attempt in range(self.attempts):
             try:
                 status, text = self.transport(method, url, body)
             except Exception as e:                       # network-level failure
@@ -108,8 +118,8 @@ class BrainRtdb:
             last = f"{method} /{path.strip('/')} -> {status}: {str(text)[:200]}"
             if not should_retry(status):
                 break
-            if attempt < ATTEMPTS - 1:
-                self._sleep(backoff_seconds(attempt))
+            if attempt < self.attempts - 1:
+                self._sleep(self.backoff_base_s * (2 ** attempt))
         raise BrainRtdbError(last)
 
     def get(self, path: str, shallow: bool = False):

@@ -239,11 +239,16 @@ def lake_inputs(fleet_row: dict | None, deps: dict, now: dt.datetime) -> dict:
     return out
 
 
+# The shared Brain Platform this brain publishes through (docs/brains/BRAIN_PLATFORM_CONTRACT.md §13; Engine Score reads it).
+PLATFORM = {"implementation": "sector_brain_platform", "contract": "docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0", "conformant": True}
+
+
 def lake_state(lake_id: str, inputs: dict, cat: dict, serving: dict, now: dt.datetime) -> dict:
     published = sum(1 for v in inputs.values() if v["status"] == "PUBLISHED")
     stale = sum(1 for v in inputs.values() if v["status"] == "STALE")
     return _strip({
         "lakeId": lake_id,
+        "kind": "not_evaluated",                       # Brain Platform contract §3 state kind
         "evaluationStatus": "NOT_EVALUATED",
         "customerPath": {"implementation": cat["activeImplementation"], "engineRevision": serving.get("revision")},
         "inputs": inputs,
@@ -330,6 +335,7 @@ def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, ups
     lin = cat["codeLineage"]
     registry = _strip({
         "brainId": BRAIN_ID, "displayName": DISPLAY_NAME, "domain": "intelligence", "question": QUESTION,
+        "platform": PLATFORM,
         "version": BRAIN_VERSION, "schemaVersion": bp.SCHEMA_VERSION, "enabled": True, "health": "HEALTHY",
         "status": "DISCOVERED",
         "statusBasis": ("Registered and inventoried. No normalized Sector Intelligence evaluation exists and no "

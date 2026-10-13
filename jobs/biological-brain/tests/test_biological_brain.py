@@ -266,3 +266,18 @@ class CliTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PlatformConformanceTests(PayloadTests):
+    """The brain writes only paths it owns (Brain Platform contract §5) with a contract event id (§7)."""
+
+    def test_every_write_is_owned_and_the_event_id_names_this_brain(self):
+        up = bb.build_updates(self.b, now=NOW, uri_root="gs://bucket/biology/v1", deployment="brain/biological@test",
+                              descriptor=orch.DESCRIPTOR, duration_ms=5, published=None, existing_species=None,
+                              event_id=bp.event_id(NOW, bb.BRAIN_ID, 0))
+        bp.assert_owned({k.lstrip("/"): v for k, v in up.items()}, bb.BRAIN_ID)
+        ev = [v for k, v in up.items() if k.startswith("/activity/")]
+        self.assertEqual(len(ev), 1)
+        self.assertEqual(ev[0]["kind"], "brain.registered")
+        self.assertIn(ev[0]["kind"], bp.ACTIVITY_KIND)
+        self.assertTrue(up[f"/brains/{bb.BRAIN_ID}"]["platform"]["conformant"])

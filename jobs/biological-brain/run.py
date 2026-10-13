@@ -88,7 +88,7 @@ def main(argv=None) -> int:
     uri_root = f"gs://{BUCKET}/{PREFIX}" if not a.bundle else "local:" + os.path.abspath(a.bundle)
     deployment = deployment_version()
 
-    rtdb = None if a.offline else bp.BrainRtdb(RTDB_URL, tokens)     # --plan/--dry-run only GET; only --write writes
+    rtdb = None if a.offline else bp.BrainRtdb(RTDB_URL, tokens, brain_id=bb.BRAIN_ID)   # ownership-checked; --plan/--dry-run only GET
     published = rtdb.get(f"brains/{bb.BRAIN_ID}") if rtdb else None
     pointer = json.loads(read("latest.json"))
     decision = orch.plan(published, pointer, bb.BRAIN_VERSION)
@@ -100,7 +100,7 @@ def main(argv=None) -> int:
     existing = set((rtdb.get("species", shallow=True) or {}).keys()) if rtdb else set()
     updates = bb.build_updates(bundle, now=now, uri_root=uri_root, deployment=deployment, descriptor=orch.DESCRIPTOR,
                                duration_ms=int((time.time() - t0) * 1000), published=published, existing_species=existing,
-                               event_id=bp.event_id(now, "bio", 0))
+                               event_id=bp.event_id(now, bb.BRAIN_ID, 0))
     bb.check_keys(updates)
     body = json.dumps({k.lstrip("/"): v for k, v in updates.items()}, separators=(",", ":"), allow_nan=False)
     summary = dict(decision=decision, researchVersion=bundle.research_version, species=len(bundle.profiles),

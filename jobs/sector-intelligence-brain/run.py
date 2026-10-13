@@ -88,7 +88,7 @@ def main(argv=None) -> int:
         raw = fh.read()
     cat, cat_sha = sib.load_catalog(raw), sib.catalog_sha(raw)
 
-    rtdb = bp.BrainRtdb(RTDB_URL, tokens)                     # --plan/--dry-run only GET; only --write writes
+    rtdb = bp.BrainRtdb(RTDB_URL, tokens, brain_id=sib.BRAIN_ID)   # ownership-checked; --plan/--dry-run only GET
     published = rtdb.get(f"brains/{sib.BRAIN_ID}")
     upstream = read_upstream(rtdb)
     serving = sib.engine_serving(cloud_run_service(tokens, cat["codeLineage"]), cat["codeLineage"], now)
@@ -106,7 +106,7 @@ def main(argv=None) -> int:
     updates = sib.build_updates(cat=cat, cat_sha=cat_sha, lakes=lakes, fleet=fleet, upstream=upstream, serving=serving,
                                 now=now, deployment=deployment_version(), descriptor=orch.DESCRIPTOR,
                                 duration_ms=int((time.time() - t0) * 1000), published=published,
-                                event_id=bp.event_id(now, "intel", 0))
+                                event_id=bp.event_id(now, sib.BRAIN_ID, 0))
     sib.check_keys(updates)
     body = json.dumps({k.lstrip("/"): v for k, v in updates.items()}, separators=(",", ":"), allow_nan=False)
     reg = updates[f"/brains/{sib.BRAIN_ID}"]
