@@ -3,8 +3,8 @@
 Inputs are read-only research data outside Git. Output: data/fleet_matrix.csv.
 No clarity measurement exists fleet-wide, so submerged feasibility is a CONDITIONAL
 tier, never a detection claim."""
-import csv, gzip, json, math, re, collections, sys
-D = "/Users/mcather/Desktop/Development/Sector_Research_Data/"
+import csv, gzip, json, math, re, collections, os, sys
+D = os.environ.get("SECTOR_RESEARCH_DATA", os.path.expanduser("~/Desktop/Development/Sector_Research_Data")).rstrip("/") + "/"
 V = D + "vegetation-brain/sources/"
 dire = json.load(open(D + "lake-brain/directory_lakes_2026-10-13.json"))["lakes"]
 glob = {r["id"]: r for r in csv.DictReader(open(V + "globathy_fleet_match_from_depth_research.csv"))}
