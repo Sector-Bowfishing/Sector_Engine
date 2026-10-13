@@ -26,7 +26,7 @@ def summarize(name, level, fp, d0=4.0, start=None, end=None, extra=None):
     r = dict(name=name, fullPoolFt=fp, ref_depth_ft=d0, period=[str(s.index[0].date()), str(s.index[-1].date())], days=int(len(s)),
              shift_p05=float(shift.quantile(.05)), shift_p50=float(shift.median()), shift_p95=float(shift.quantile(.95)), shift_min=float(shift.min()), shift_max=float(shift.max()),
              eff_p05=float(eff.quantile(.05)), eff_p50=float(eff.median()), eff_p95=float(eff.quantile(.95)),
-             frac_days_eff_lt_3=float((eff < 3).mean()), frac_days_eff_lt_2=float((eff < 2).mean()), frac_days_eff_lt_1=float((eff < 1).mean()), frac_days_eff_ge_4=float((eff >= 4).mean()), frac_days_eff_gt_5=float((eff > 5).mean()))
+             frac_days_eff_lt_3=float((eff < 3).mean()), frac_days_eff_lt_2=float((eff < 2).mean()), frac_days_eff_lt_1=float((eff < 1).mean()), frac_days_dry=float((eff <= 0).mean()), frac_days_eff_ge_4=float((eff >= 4).mean()), frac_days_eff_gt_5=float((eff > 5).mean()))
     mo = pd.DataFrame(dict(shift=shift)).groupby(shift.index.month)["shift"].agg(["min", lambda x: x.quantile(.1), "median", lambda x: x.quantile(.9), "max"]); mo.columns = ["min", "p10", "median", "p90", "max"]
     r["monthly_shift_ft"] = {int(m): {k: round(float(v), 2) for k, v in row.items()} for m, row in mo.iterrows()}
     yr = shift.groupby(shift.index.year).agg(lambda x: x.quantile(.99) - x.quantile(.01))
@@ -67,10 +67,15 @@ def main():
                                      frac_flat_area_days_dry=round(float((eff <= 0).mean()), 3),
                                      lowest_day=str(shift.idxmin().date()), lowest_shift_ft=round(float(shift.min()), 2),
                                      acres_of_the_4ft_flat_dry_on_lowest_day=round(float((fd + shift.min() <= 0).sum() * cell_ac), 1),
-                                     lake_share_0_3ft_on_lowest_day=round(float((dep <= 3 - shift.min()).mean()), 4) if shift.min() < 0 else None)
+                                     wet_share_0_3ft_on_lowest_day=round(float(((dep > -shift.min()) & (dep <= 3 - shift.min())).sum() / max((dep > -shift.min()).sum(), 1)), 4),
+                                     pool_area_share_wet_0_3ft_on_lowest_day=round(float(((dep > -shift.min()) & (dep <= 3 - shift.min())).mean()), 4),
+                                     wet_surface_share_on_lowest_day=round(float((dep > -shift.min()).mean()), 4))
         # lake-wide share of surface 0-3 ft by day -> monthly median (shift moves the 3 ft line)
-        sh_by_day = np.array([(dep <= max(0.0, 3.0 - s_)).mean() for s_ in shift.values[::10]])
-        out["fork_real_flat"]["share_lake_0_3ft_effective_p10_p50_p90"] = [round(float(np.quantile(sh_by_day, q)), 4) for q in (.1, .5, .9)]
+        sv = shift.values[::10]
+        wet_sh = np.array([((dep > -s_) & (dep <= 3 - s_)).sum() / max((dep > -s_).sum(), 1) for s_ in sv])        # share of the CURRENTLY WET surface that is 0-3 ft deep
+        pool_sh = np.array([((dep > -s_) & (dep <= 3 - s_)).mean() for s_ in sv])                                # acres of 0-3 ft water as a share of the pool-level surface
+        out["fork_real_flat"]["wet_surface_share_0_3ft_p10_p50_p90"] = [round(float(np.quantile(wet_sh, q)), 4) for q in (.1, .5, .9)]
+        out["fork_real_flat"]["pool_area_share_wet_0_3ft_p10_p50_p90"] = [round(float(np.quantile(pool_sh, q)), 4) for q in (.1, .5, .9)]
     (OUT / "effective_depth_examples.json").write_text(json.dumps(out, indent=1, default=float))
     pd.concat(monthly).reset_index().rename(columns={"index": "month"}).round(2).to_csv(OUT / "effective_depth_monthly.csv", index=False)
     print(json.dumps({k: {kk: vv for kk, vv in v.items() if kk not in ("monthly_shift_ft", "annual_swing_p99_p01_ft_by_year")} for k, v in out.items()}, indent=1, default=float))

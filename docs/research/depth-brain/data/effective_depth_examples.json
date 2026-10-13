@@ -19,6 +19,7 @@
   "frac_days_eff_lt_3": 0.25729335494327393,
   "frac_days_eff_lt_2": 0.0009454349000540249,
   "frac_days_eff_lt_1": 0.0,
+  "frac_days_dry": 0.0,
   "frac_days_eff_ge_4": 0.08103727714748785,
   "frac_days_eff_gt_5": 0.0,
   "monthly_shift_ft": {
@@ -150,6 +151,7 @@
   "frac_days_eff_lt_3": 0.27710600564288596,
   "frac_days_eff_lt_2": 0.0014107214832728737,
   "frac_days_eff_lt_1": 0.0,
+  "frac_days_dry": 0.0,
   "frac_days_eff_ge_4": 0.07678355501813784,
   "frac_days_eff_gt_5": 0.0,
   "monthly_shift_ft": {
@@ -273,6 +275,7 @@
   "frac_days_eff_lt_3": 0.5486905669972032,
   "frac_days_eff_lt_2": 0.4591914569031274,
   "frac_days_eff_lt_1": 0.37528604118993136,
+  "frac_days_dry": 0.30663615560640733,
   "frac_days_eff_ge_4": 0.31070429697431984,
   "frac_days_eff_gt_5": 0.10424612255275871,
   "monthly_shift_ft": {
@@ -394,6 +397,7 @@
   "frac_days_eff_lt_3": 0.5912577258172611,
   "frac_days_eff_lt_2": 0.5007818899396828,
   "frac_days_eff_lt_1": 0.4125400253183409,
+  "frac_days_dry": 0.3475314617618587,
   "frac_days_eff_ge_4": 0.3001712711296448,
   "frac_days_eff_gt_5": 0.13500632958522601,
   "monthly_shift_ft": {
@@ -541,6 +545,7 @@
   "frac_days_eff_lt_3": 0.5744960560911481,
   "frac_days_eff_lt_2": 0.4349985392930178,
   "frac_days_eff_lt_1": 0.2900964066608238,
+  "frac_days_dry": 0.21370143149284254,
   "frac_days_eff_ge_4": 0.17995910020449898,
   "frac_days_eff_gt_5": 0.0026292725679228747,
   "monthly_shift_ft": {
@@ -649,5 +654,30 @@
    "2024": 3.2,
    "2025": 3.47
   }
+ },
+ "fork_real_flat": {
+  "cells": 8549,
+  "acres_at_pool": 475.3,
+  "lake_acres": 26895.3,
+  "share_of_lake_in_0_3ft_at_pool": 0.1038,
+  "median_flat_eff_depth_ft": 2.42,
+  "frac_flat_area_days_below_2ft": 0.432,
+  "frac_flat_area_days_dry": 0.21,
+  "lowest_day": "2011-12-03",
+  "lowest_shift_ft": -7.74,
+  "acres_of_the_4ft_flat_dry_on_lowest_day": 475.3,
+  "wet_share_0_3ft_on_lowest_day": 0.082,
+  "pool_area_share_wet_0_3ft_on_lowest_day": 0.0656,
+  "wet_surface_share_on_lowest_day": 0.7998,
+  "wet_surface_share_0_3ft_p10_p50_p90": [
+   0.0646,
+   0.0753,
+   0.0958
+  ],
+  "pool_area_share_wet_0_3ft_p10_p50_p90": [
+   0.0586,
+   0.0656,
+   0.0958
+  ]
  }
 }

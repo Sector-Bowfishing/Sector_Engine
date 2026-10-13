@@ -1,0 +1,281 @@
+lakeId,lakeName,state,src,grp,grp_name,nLines,lenKm,fracLenIn,hullCov,lakeAreaKm2,nameAgree,matchBasis,matchConfidence,reason
+Congamond Lakes|MA,Congamond Lakes,MA,CT,27|0,"Congamond Lakes (Suffield, Mass)",18.0000,42.2284,0.2571,1.0000,0.5754,True,polygon,verified_spatial,partial overlap (fracLenIn 0.26); name agrees; polygon/contour extent mismatch
+Lake Waramaug|CT,Lake Waramaug,CT,CT,50|0,Waramaug Lake (Washington),150.0000,92.6501,1.0000,0.9977,2.6275,True,polygon,verified_spatial,contours inside polygon
+Bantam Lake|CT,Bantam Lake,CT,CT,12|0,Bantam Lake (Morris),54.0000,76.0323,1.0000,0.9936,3.8593,True,polygon,verified_spatial,contours inside polygon
+Mansfield Hollow Lake|CT,Mansfield Hollow Lake,CT,CT,59|0,Mansfield Hollow Reservoir (Mansfield),131.0000,78.6555,0.9952,0.9665,1.9846,True,polygon,verified_spatial,contours inside polygon
+Highland Lake|CT,Highland Lake,CT,CT,40|0,Highland Lake (Winchester),54.0000,63.9321,1.0000,0.9817,1.8220,True,polygon,verified_spatial,contours inside polygon
+Coventry Lake (Wangumbaug)|CT,Coventry Lake (Wangumbaug),CT,CT,85|0,Coventry Lake (Coventry),41.0000,40.6186,1.0000,0.9966,1.5097,True,polygon,verified_spatial,contours inside polygon
+Pachaug Pond|CT,Pachaug Pond,CT,CT,68|0,Pachaug Pond (Griswold),74.0000,81.0991,0.9753,0.9986,3.3006,True,polygon,verified_spatial,contours inside polygon
+Lake Zoar|CT,Lake Zoar,CT,CT,53|0,Lake Zoar (Southbury),45.0000,97.9870,0.8514,0.9950,3.0176,True,polygon,verified_spatial,contours inside polygon
+Candlewood Lake|CT,Candlewood Lake,CT,CT,106|0,"Candlewood Lake (Brookfield, Danbury, New Fairfield, New Milford)",521.0000,501.9541,1.0000,0.9998,20.7775,True,polygon,verified_spatial,contours inside polygon
+Pachaug Pond|CT,Pachaug Pond,CT,CT,33|0,Glasgo Pond (Griswold),37.0000,15.6592,0.0545,0.0000,3.3006,False,polygon,rejected,weak geometric overlap (fracLenIn 0.05) and name disagrees
+Candlewood Lake|CT,Candlewood Lake,CT,CT,81|0,Squantz Pond (New Fairfield),19.0000,25.3589,0.0300,0.0000,20.7775,False,polygon,rejected,weak geometric overlap (fracLenIn 0.03) and name disagrees
+Squantz Pond|CT,Squantz Pond,CT,CT,81|0,Squantz Pond (New Fairfield),19.0000,25.3589,1.0000,0.9847,1.1006,True,polygon,verified_spatial,contours inside polygon
+Lake Lillinonah|CT,Lake Lillinonah,CT,CT,48|0,Lake Lillinonah (Bridgewater),57.0000,169.5210,0.9824,0.9984,6.2311,True,polygon,verified_spatial,contours inside polygon
+Gardner Lake|CT,Gardner Lake,CT,CT,32|0,Gardner Lake (Salem),11.0000,28.6460,1.0000,0.9979,2.1215,True,polygon,verified_spatial,contours inside polygon
+Griffin|FL,Griffin,FL,FL,FLc37,,412.0000,510.5632,0.9116,0.9990,38.3456,False,polygon,verified_spatial,contours inside polygon
+Griffin|FL,Griffin,FL,FL,FLc42,,1.0000,0.4663,1.0000,0.0004,38.3456,False,polygon,verified_spatial,contours inside polygon
+Harris|FL,Harris,FL,FL,FLc35,,331.0000,1055.7595,0.9942,0.9981,74.5637,False,polygon,verified_spatial,contours inside polygon
+Harris|FL,Harris,FL,FL,FLc47,,1.0000,2.5118,1.0000,0.0049,74.5637,False,polygon,verified_spatial,contours inside polygon
+Istokpoga|FL,Istokpoga,FL,FL,FLc130,,82.0000,592.2200,0.9571,0.9977,96.5775,False,polygon,verified_spatial,contours inside polygon
+Istokpoga|FL,Istokpoga,FL,FL,FLc133,,1.0000,0.0375,1.0000,0.0000,96.5775,False,polygon,verified_spatial,contours inside polygon
+Istokpoga|FL,Istokpoga,FL,FL,FLc131,,2.0000,2.7460,1.0000,0.0037,96.5775,False,polygon,verified_spatial,contours inside polygon
+Istokpoga|FL,Istokpoga,FL,FL,FLc134,,1.0000,0.0629,1.0000,0.0000,96.5775,False,polygon,verified_spatial,contours inside polygon
+Kissimmee|FL,Kissimmee,FL,FL,FLc121,,188.0000,1304.2305,0.9810,0.9999,126.9805,False,polygon,verified_spatial,contours inside polygon
+Kissimmee|FL,Kissimmee,FL,FL,FLc120,,1.0000,0.1801,1.0000,0.0000,126.9805,False,polygon,verified_spatial,contours inside polygon
+Lochloosa|FL,Lochloosa,FL,FL,FLc28,,2.0000,0.8216,1.0000,0.0029,22.0718,False,polygon,verified_spatial,contours inside polygon
+Lochloosa|FL,Lochloosa,FL,FL,FLc29,,29.0000,121.2664,0.9537,0.9777,22.0718,False,polygon,verified_spatial,contours inside polygon
+Lochloosa|FL,Lochloosa,FL,FL,FLc27,,1.0000,0.1899,1.0000,0.0001,22.0718,False,polygon,verified_spatial,contours inside polygon
+Lochloosa|FL,Lochloosa,FL,FL,FLc30,,1.0000,0.1414,1.0000,0.0001,22.0718,False,polygon,verified_spatial,contours inside polygon
+Orange Lake|FL,Orange Lake,FL,FL,FLc26,,39.0000,293.2715,0.9854,0.9790,29.4954,False,polygon,verified_spatial,contours inside polygon
+Orange Lake|FL,Orange Lake,FL,FL,FLc21,,1.0000,0.7749,1.0000,0.0012,29.4954,False,polygon,verified_spatial,contours inside polygon
+Seminole|GA,Seminole,GA,FL,FLc6,,427.0000,879.4625,0.2482,0.0796,71.7859,False,polygon,rejected,weak geometric overlap (fracLenIn 0.25) and name disagrees
+East Lake Tohopekaliga|FL,East Lake Tohopekaliga,FL,FL,FLc102,,218.0000,798.3360,0.9855,0.9986,75.4314,False,polygon,verified_spatial,contours inside polygon
+Tohopekaliga (Toho)|FL,Tohopekaliga (Toho),FL,FL,FLc102,,218.0000,798.3360,0.9855,0.9986,75.4314,False,polygon,verified_spatial,contours inside polygon
+East Lake Tohopekaliga|FL,East Lake Tohopekaliga,FL,FL,FLc113,,1.0000,2.9274,1.0000,0.0076,75.4314,False,polygon,verified_spatial,contours inside polygon
+Tohopekaliga (Toho)|FL,Tohopekaliga (Toho),FL,FL,FLc113,,1.0000,2.9274,1.0000,0.0076,75.4314,False,polygon,verified_spatial,contours inside polygon
+East Lake Tohopekaliga|FL,East Lake Tohopekaliga,FL,FL,FLc112,,1.0000,0.1383,1.0000,0.0000,75.4314,False,polygon,verified_spatial,contours inside polygon
+Tohopekaliga (Toho)|FL,Tohopekaliga (Toho),FL,FL,FLc112,,1.0000,0.1383,1.0000,0.0000,75.4314,False,polygon,verified_spatial,contours inside polygon
+Lake Springfield|IL,Lake Springfield,IL,IL,ILc9,Lake Springfield ,322.0000,437.1296,0.9960,0.9993,15.8022,True,polygon,verified_spatial,contours inside polygon
+Tippecanoe Lake|IN,Tippecanoe Lake,IN,IN,Oswego Lake,Oswego Lake,1.0000,0.4606,1.0000,0.0046,3.3897,False,polygon,rejected,contours inside polygon but name disagrees and hull covers only 0.005 of lake (neighbouring/embedded water body)
+Tippecanoe Lake|IN,Tippecanoe Lake,IN,IN,Tippecanoe Lake,Tippecanoe Lake,1.0000,0.1490,1.0000,0.0005,3.3897,True,polygon,verified_spatial,contours inside polygon
+Patoka Lake|IN,Patoka Lake,IN,IN,Olinger Lake,Olinger Lake,16.0000,8.4733,0.1857,0.0000,37.1213,False,polygon,rejected,weak geometric overlap (fracLenIn 0.19) and name disagrees
+Lake Wawasee|IN,Lake Wawasee,IN,IN,Lake Wawasee,Lake Wawasee,209.0000,312.6766,0.9988,0.8463,13.8496,True,polygon,verified_spatial,contours inside polygon
+Clinton Lake|KS,Clinton Lake,KS,KS,KSc72,,325.0000,303.3751,1.0000,0.9469,29.7113,False,polygon,verified_spatial,contours inside polygon
+El Dorado Lake|KS,El Dorado Lake,KS,KS,KSc19,,506.0000,539.7046,1.0000,0.9797,30.0056,False,polygon,verified_spatial,contours inside polygon
+Kanopolis Lake|KS,Kanopolis Lake,KS,KS,KSc4,,123.0000,129.3506,1.0000,0.8721,14.0019,False,polygon,verified_spatial,contours inside polygon
+Melvern Lake|KS,Melvern Lake,KS,KS,KSc50,,69.0000,221.5596,1.0000,0.8727,25.5254,False,polygon,verified_spatial,contours inside polygon
+Melvern Lake|KS,Melvern Lake,KS,KS,KSc51,,1.0000,0.0913,1.0000,0.0000,25.5254,False,polygon,verified_spatial,contours inside polygon
+Pomona Lake|KS,Pomona Lake,KS,KS,KSc60,,145.0000,188.3559,1.0000,0.8614,15.3103,False,polygon,verified_spatial,contours inside polygon
+Pomona Lake|KS,Pomona Lake,KS,KS,KSc61,,2.0000,1.4464,0.9134,0.0022,15.3103,False,polygon,verified_spatial,contours inside polygon
+Wilson Lake|KS,Wilson Lake,KS,KS,KSc5,,129.0000,249.5249,0.9943,0.9770,31.7799,False,polygon,verified_spatial,contours inside polygon
+John Redmond Reservoir|KS,John Redmond Reservoir,KS,KS,KSc54,,155.0000,246.0041,1.0000,0.9594,33.3541,False,polygon,verified_spatial,contours inside polygon
+Milford Lake|KS,Milford Lake,KS,KS,KSc17,,143.0000,273.8201,1.0000,0.8821,59.1190,False,polygon,verified_spatial,contours inside polygon
+Milford Lake|KS,Milford Lake,KS,KS,KSc20,,4.0000,0.4072,1.0000,0.0002,59.1190,False,polygon,verified_spatial,contours inside polygon
+Tuttle Creek Lake|KS,Tuttle Creek Lake,KS,KS,KSc22,,1.0000,0.0378,1.0000,0.0000,48.6838,False,polygon,verified_spatial,contours inside polygon
+Tuttle Creek Lake|KS,Tuttle Creek Lake,KS,KS,KSc21,,104.0000,188.6217,1.0000,0.7669,48.6838,False,polygon,verified_spatial,contours inside polygon
+Perry Lake|KS,Perry Lake,KS,KS,KSc70,,1.0000,0.0462,1.0000,0.0000,43.6318,False,polygon,verified_spatial,contours inside polygon
+Perry Lake|KS,Perry Lake,KS,KS,KSc68,,124.0000,198.2456,1.0000,0.7880,43.6318,False,polygon,verified_spatial,contours inside polygon
+Perry Lake|KS,Perry Lake,KS,KS,KSc69,,1.0000,0.1435,1.0000,0.0000,43.6318,False,polygon,verified_spatial,contours inside polygon
+Cheney Reservoir|KS,Cheney Reservoir,KS,KS,KSc7,,134.0000,237.8625,1.0000,0.9501,39.4873,False,polygon,verified_spatial,contours inside polygon
+Cheney Reservoir|KS,Cheney Reservoir,KS,KS,KSc8,,1.0000,0.2043,1.0000,0.0001,39.4873,False,polygon,verified_spatial,contours inside polygon
+Onota Lake|MA,Onota Lake,MA,MA,21078,Onota Lake,26.0000,69.7151,1.0000,0.9994,2.6161,True,polygon,verified_spatial,contours inside polygon
+Otis Reservoir|MA,Otis Reservoir,MA,MA,31027,Otis Reservoir,69.0000,138.1475,1.0000,1.0000,4.0157,True,polygon,verified_spatial,contours inside polygon
+Pontoosuc Lake|MA,Pontoosuc Lake,MA,MA,21083,Pontoosuc Lake,151.0000,50.8159,0.9289,1.0000,2.0266,True,polygon,verified_spatial,contours inside polygon
+Congamond Lakes|MA,Congamond Lakes,MA,MA,32021,Congomond Lakes (Middle basin ),17.0000,49.4734,0.1059,0.9992,0.5754,False,polygon,rejected,weak geometric overlap (fracLenIn 0.11) and name disagrees
+Congamond Lakes|MA,Congamond Lakes,MA,MA,32022,Congomond Lakes (North basin),23.0000,21.3795,0.0232,0.0000,0.5754,False,polygon,rejected,weak geometric overlap (fracLenIn 0.02) and name disagrees
+Congamond Lakes|MA,Congamond Lakes,MA,MA,32023,Congamond Lakes South Pond,6.0000,14.1456,1.0000,0.9365,0.5754,True,polygon,verified_spatial,contours inside polygon
+Long Pond (Lakeville)|MA,Long Pond (Lakeville),MA,MA,62108,Long Pond (Lakeville),11057.0000,204.0407,1.0000,0.9994,7.1984,True,polygon,verified_spatial,contours inside polygon
+Webster Lake|MA,Webster Lake,MA,MA,42064,Webster Lake,200.0000,167.5207,1.0000,0.9994,5.1668,True,polygon,verified_spatial,contours inside polygon
+Lake Quinsigamond|MA,Lake Quinsigamond,MA,MA,51050,Flint Pond north basin,10.0000,16.4922,0.0670,0.0000,1.9015,False,polygon,rejected,weak geometric overlap (fracLenIn 0.07) and name disagrees
+Lake Quinsigamond|MA,Lake Quinsigamond,MA,MA,51125,Lake Quinsigamond,204.0000,203.6627,0.9592,1.0000,1.9015,True,polygon,verified_spatial,contours inside polygon
+Wallum Lake|RI,Wallum Lake,RI,MA,51172,Wallum Lake,15.0000,40.3589,1.0000,1.0000,1.2540,True,polygon,verified_spatial,contours inside polygon
+Wachusett Reservoir|MA,Wachusett Reservoir,MA,MA,81065,Lancaster Mill pond,35.0000,7.9007,0.0327,0.0000,16.0853,False,polygon,rejected,weak geometric overlap (fracLenIn 0.03) and name disagrees
+Lake Cochituate|MA,Lake Cochituate,MA,MA,82020,Lake Cochituate North Basin,43.0000,55.8677,0.9740,1.0000,0.7962,True,polygon,verified_spatial,contours inside polygon
+Wachusett Reservoir|MA,Wachusett Reservoir,MA,MA,81147,Wachusett Reservoir,287.0000,488.2133,0.9980,0.9999,16.0853,True,polygon,verified_spatial,contours inside polygon
+Burt Lake|MI,Burt Lake,MI,MI,16-193,Burt Lake,12.0000,250.6170,1.0000,0.9973,70.3877,True,polygon,verified_spatial,contours inside polygon
+Mullett Lake|MI,Mullett Lake,MI,MI,16-192,Mullett Lake,37.0000,390.1825,0.9695,0.9802,67.5890,True,polygon,verified_spatial,contours inside polygon
+Elk Lake|MI,Elk Lake,MI,MI,5-2,Elk Lake,6.0000,183.7003,0.9680,0.9903,32.5719,True,polygon,verified_spatial,contours inside polygon
+Lake Charlevoix|MI,Lake Charlevoix,MI,MI,15-21,Lake Charlevoix,21.0000,522.0438,1.0000,0.9864,70.1351,True,polygon,verified_spatial,contours inside polygon
+Torch Lake|MI,Torch Lake,MI,MI,5-51,Torch Lake,7.0000,330.1027,0.9947,0.9994,75.7729,True,polygon,verified_spatial,contours inside polygon
+Houghton Lake|MI,Houghton Lake,MI,MI,72-78,Houghton Lake,72.0000,279.9789,0.8992,0.9898,71.2568,True,polygon,verified_spatial,contours inside polygon
+Higgins Lake|MI,Higgins Lake,MI,MI,72-117,Higgins Lake,46.0000,461.4208,1.0000,0.9952,41.2223,True,polygon,verified_spatial,contours inside polygon
+Gull Lake|MI,Gull Lake,MI,MI,39-13,Gull Lake,34.0000,163.0009,1.0000,0.9914,8.2716,True,polygon,verified_spatial,contours inside polygon
+Elk Lake|MI,Elk Lake,MI,MI,5-1,Lake Skegemog,9.0000,68.9266,0.0300,0.0008,32.5719,False,polygon,rejected,weak geometric overlap (fracLenIn 0.03) and name disagrees
+Lake Gogebic|MI,Lake Gogebic,MI,MI,66-377,Lake Gogebic,12.0000,287.7316,0.9991,0.9933,52.9007,True,polygon,verified_spatial,contours inside polygon
+Lake Bemidji|MN,Lake Bemidji,MN,MN,04013002,Bemidji (main lake),70.0000,222.0750,1.0000,0.9997,26.5652,True,polygon,verified_spatial,contours inside polygon
+Big Stone Lake|SD,Big Stone Lake,SD,MN,06015200,Big Stone,28.0000,331.6405,1.0000,0.9997,48.0629,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,10001500,Virginia,7.0000,13.5182,0.0642,0.0000,55.6411,False,polygon,rejected,weak geometric overlap (fracLenIn 0.06) and name disagrees
+Lake Winnibigoshish|MN,Lake Winnibigoshish,MN,MN,11014700,Winnibigoshish,107.0000,993.3381,0.9717,0.9990,225.6678,True,polygon,verified_spatial,contours inside polygon
+Leech Lake|MN,Leech Lake,MN,MN,11020301,Leech (Main Basin),142.0000,1549.6978,0.9982,0.9850,418.2024,True,polygon,verified_spatial,contours inside polygon
+Leech Lake|MN,Leech Lake,MN,MN,11020302,Leech (Kabekona Bay),7.0000,35.9413,1.0000,0.0093,418.2024,True,polygon,verified_spatial,contours inside polygon
+Gull Lake|MN,Gull Lake,MN,MN,11021800,Upper Gull,12.0000,53.8495,0.0261,0.0000,40.0259,True,polygon,rejected,weak geometric overlap (fracLenIn 0.03) and name agrees
+Gull Lake|MN,Gull Lake,MN,MN,11030500,Gull,87.0000,477.7405,0.9957,1.0000,40.0259,True,polygon,verified_spatial,contours inside polygon
+Gull Lake|MN,Gull Lake,MN,MN,18038800,Love,6.0000,8.0728,0.3113,0.0000,40.0259,False,polygon,rejected,weak geometric overlap (fracLenIn 0.31) and name disagrees
+Lake Pepin|MN,Lake Pepin,MN,MN,25000100,Pepin,26.0000,512.9388,0.9904,0.9857,103.1207,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013300,Minnetonka,518.0000,846.3119,0.9718,0.9998,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013301,Minnetonka-Grays Bay,13.0000,9.3025,0.1099,0.0000,55.6411,True,polygon,rejected,weak geometric overlap (fracLenIn 0.11) and name agrees
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013302,Minnetonka-Lower Lake,236.0000,359.6651,0.9968,0.4518,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013303,Minnetonka-Carsons Bay,9.0000,9.4665,0.8923,0.0068,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013304,Minnetonka-St. Albans Bay,13.0000,12.8964,0.0462,0.0000,55.6411,True,polygon,rejected,weak geometric overlap (fracLenIn 0.05) and name agrees
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013305,Minnetonka-Upper Lake,155.0000,240.1318,1.0000,0.3150,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013306,Minnetonka-Black Lake,12.0000,8.5831,1.0000,0.0068,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013307,Minnetonka-Seton Lake,13.0000,4.4261,1.0000,0.0032,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013308,Minnetonka-Emerald Lake,4.0000,2.4657,1.0000,0.0011,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013309,Minnetonka-Halsteds Bay,17.0000,26.3646,1.0000,0.0426,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013310,Minnetonka-Crystal Bay,45.0000,66.5422,1.0000,0.0584,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013311,Minnetonka-Maxwell Bay,17.0000,18.9924,1.0000,0.0218,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013312,Minnetonka-Stubbs Bay,10.0000,11.5338,1.0000,0.0142,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013313,Minnetonka-North Arm,24.0000,26.7289,0.9593,0.0227,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013314,Minnetonka-West Arm,29.0000,35.1119,1.0000,0.0611,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013315,Minnetonka-Jennings Bay,8.0000,14.0394,1.0000,0.0217,55.6411,True,polygon,verified_spatial,contours inside polygon
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013800,Peavey,6.0000,2.5231,0.2737,0.0000,55.6411,False,polygon,rejected,weak geometric overlap (fracLenIn 0.27) and name disagrees
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27013900,Forest,14.0000,16.0399,1.0000,0.0063,55.6411,False,polygon,rejected,contours inside polygon but name disagrees and hull covers only 0.006 of lake (neighbouring/embedded water body)
+Lake Minnetonka|MN,Lake Minnetonka,MN,MN,27014100,Tanager,6.0000,5.8923,0.2833,0.0000,55.6411,False,polygon,rejected,weak geometric overlap (fracLenIn 0.28) and name disagrees
+Spirit Lake|IA,Spirit Lake,IA,MN,32002400,Little Spirit,6.0000,24.4373,0.0610,0.0021,22.0978,True,polygon,rejected,weak geometric overlap (fracLenIn 0.06) and name agrees
+Mille Lacs Lake|MN,Mille Lacs Lake,MN,MN,48000200,Mille Lacs,816.0000,1841.1325,0.9989,1.0000,518.6221,True,polygon,verified_spatial,contours inside polygon
+Otter Tail Lake|MN,Otter Tail Lake,MN,MN,56024200,Otter Tail,308.0000,683.8700,1.0000,0.9999,56.7120,True,polygon,verified_spatial,contours inside polygon
+Lake Vermilion|MN,Lake Vermilion,MN,MN,69037801,East Vermilion,653.0000,1214.7443,0.9818,0.7082,157.4521,True,polygon,verified_spatial,contours inside polygon
+Lake Vermilion|MN,Lake Vermilion,MN,MN,69037802,West Vermilion,252.0000,586.5704,1.0000,0.2915,157.4521,True,polygon,verified_spatial,contours inside polygon
+Rainy Lake|MN,Rainy Lake,MN,MN,69069400,Rainy,211.0000,206.8165,0.9956,0.0261,857.9147,True,polygon,verified_spatial,contours inside polygon
+White Bear Lake|MN,White Bear Lake,MN,MN,82016700,White Bear,64.0000,148.3843,1.0000,0.9982,9.7441,True,polygon,verified_spatial,contours inside polygon
+Bighorn Lake|WY,Bighorn Lake,WY,MT,Bighorn Lake|1079733453062,Bighorn Lake,674.0000,2729.1405,0.9805,0.9848,50.5650,True,polygon,verified_spatial,contours inside polygon
+Georgetown Lake|MT,Georgetown Lake,MT,MT,Georgetown Lake|1132915461814,Georgetown Lake,7.0000,113.1904,1.0000,0.9955,11.5821,True,polygon,verified_spatial,contours inside polygon
+Flathead Lake|MT,Flathead Lake,MT,MT,FLATHEAD LAKE|1140996479165,FLATHEAD LAKE,224.0000,1912.7972,0.9856,0.9996,494.6767,True,polygon,verified_spatial,contours inside polygon
+Tiber Reservoir (Lake Elwell)|MT,Tiber Reservoir (Lake Elwell),MT,MT,Tiber Reservoir|1111912483707,Tiber Reservoir,7583.0000,1605.0197,0.8635,0.9936,53.0799,True,polygon,verified_spatial,contours inside polygon
+Canyon Ferry Lake|MT,Canyon Ferry Lake,MT,MT,Canyon Ferry Reservoir|1115272464371,Canyon Ferry Reservoir,4388.0000,3034.6663,0.8891,1.0000,132.9095,True,polygon,verified_spatial,contours inside polygon
+Whitefish Lake|MT,Whitefish Lake,MT,MT,Whitefish Lake|1143792484558,Whitefish Lake,15.0000,193.6050,1.0000,0.9870,13.4354,True,polygon,verified_spatial,contours inside polygon
+Hebgen Lake|MT,Hebgen Lake,MT,MT,Hebgen Lake|1112507447860,Hebgen Lake,17.0000,824.6598,0.9791,0.9962,50.2013,True,polygon,verified_spatial,contours inside polygon
+Nelson Lake|ND,Nelson Lake,ND,ND,258,Nelson Lake (Oliver),17.0000,174.4050,0.9952,0.9936,2.1326,True,polygon,verified_spatial,contours inside polygon
+Bowman-Haley Reservoir|ND,Bowman-Haley Reservoir,ND,ND,085,Bowman-Haley Dam,15.0000,283.1439,0.9773,0.9941,7.8122,True,polygon,verified_spatial,contours inside polygon
+Patterson Lake|ND,Patterson Lake,ND,ND,330,Dickinson Reservoir (Patterson Lake),25.0000,337.3024,0.9603,0.9768,3.2479,False,polygon,verified_spatial,contours inside polygon; name disagrees but hull covers >=25% of lake
+Lake Sakakawea|ND,Lake Sakakawea,ND,ND,018,Trenton Lake,9.0000,107.8664,0.1084,0.0001,1274.0496,False,polygon,rejected,weak geometric overlap (fracLenIn 0.11) and name disagrees
+Box Butte Reservoir|NE,Box Butte Reservoir,NE,NE,Box Butte Reservoir,Box Butte Reservoir,13.0000,103.2816,1.0000,0.8788,5.1159,True,polygon,verified_spatial,contours inside polygon
+Calamus Reservoir|NE,Calamus Reservoir,NE,NE,Calamus Reservoir,Calamus Reservoir,140.0000,559.6855,0.9991,0.9996,20.3302,True,polygon,verified_spatial,contours inside polygon
+Merritt Reservoir|NE,Merritt Reservoir,NE,NE,Merritt Reservoir,Merritt Reservoir,278.0000,297.2213,1.0000,0.9871,10.3123,True,polygon,verified_spatial,contours inside polygon
+Lake Ogallala|NE,Lake Ogallala,NE,NE,Lake Ogallala,Lake Ogallala,131.0000,121.6464,1.0000,0.9995,2.3173,True,polygon,verified_spatial,contours inside polygon
+Branched Oak Lake|NE,Branched Oak Lake,NE,NE,Branched Oak Lake,Branched Oak Lake,10.0000,116.6892,1.0000,0.9686,7.0995,True,polygon,verified_spatial,contours inside polygon
+Swanson Reservoir|NE,Swanson Reservoir,NE,NE,Swanson Reservoir,Swanson Reservoir,9.0000,123.6323,1.0000,0.8903,18.8395,True,polygon,verified_spatial,contours inside polygon
+Johnson Lake|NE,Johnson Lake,NE,NE,Johnson Lake,Johnson Lake,8.0000,76.4836,1.0000,0.9514,8.9245,True,polygon,verified_spatial,contours inside polygon
+Sherman Reservoir|NE,Sherman Reservoir,NE,NE,Sherman Reservoir,Sherman Reservoir,120.0000,669.1386,0.9552,1.0000,9.8681,True,polygon,verified_spatial,contours inside polygon
+Calamus Reservoir|NE,Calamus Reservoir,NE,NE,Calamus Reservoir (Gracie Creek),Calamus Reservoir (Gracie Creek),5.0000,1.9776,0.8104,0.0000,20.3302,True,polygon,verified_spatial,contours inside polygon
+Harlan County Lake|NE,Harlan County Lake,NE,NE,Harlan County Lake,Harlan County Lake,124.0000,345.6904,0.9968,0.9949,51.9084,True,polygon,verified_spatial,contours inside polygon
+Lake McConaughy|NE,Lake McConaughy,NE,NE,Lake McConaughy,Lake McConaughy,87.0000,1176.0132,0.9673,0.9998,100.7179,True,polygon,verified_spatial,contours inside polygon
+Ossipee Lake|NH,Ossipee Lake,NH,NH,NHLAK600020802-04-01|OSSIPEE LAKE,OSSIPEE LAKE,9.0000,92.5363,1.0000,0.8075,16.2679,True,polygon,verified_spatial,contours inside polygon
+Great East Lake|NH,Great East Lake,NH,NH,NHLAK600030403-01|GREAT EAST LAKE,GREAT EAST LAKE,6.0000,23.6695,1.0000,0.8913,7.3932,True,polygon,verified_spatial,contours inside polygon
+Great East Lake|NH,Great East Lake,NH,NH,MELAK600030403-01|GREAT EAST LAKE,GREAT EAST LAKE,16.0000,30.9925,1.0000,0.8225,7.3932,True,polygon,verified_spatial,contours inside polygon
+Newfound Lake|NH,Newfound Lake,NH,NH,NHLAK700010603-02-01|NEWFOUND LAKE,NEWFOUND LAKE,35.0000,202.5602,0.9961,0.9998,18.0225,True,polygon,verified_spatial,contours inside polygon
+First Connecticut Lake|NH,First Connecticut Lake,NH,NH,NHLAK801010102-02|FIRST CT LAKE,FIRST CT LAKE,24.0000,134.5373,1.0000,1.0000,12.4400,False,polygon,verified_spatial,contours inside polygon; name disagrees but hull covers >=25% of lake
+Lake Winnisquam|NH,Lake Winnisquam,NH,NH,NHLAK700020201-05-01|WINNISQUAM LAKE,WINNISQUAM LAKE,35.0000,190.3432,1.0000,1.0000,17.0415,True,polygon,verified_spatial,contours inside polygon
+Lake Winnisquam|NH,Lake Winnisquam,NH,NH,NHRIV700020201-19|WINNISQUAM LAKE,WINNISQUAM LAKE,2.0000,0.6302,1.0000,0.0004,17.0415,True,polygon,verified_spatial,contours inside polygon
+Lake Winnisquam|NH,Lake Winnisquam,NH,NH,NHLAK700020203-01|SILVER LAKE,SILVER LAKE,5.0000,9.9668,0.0379,0.0000,17.0415,False,polygon,rejected,weak geometric overlap (fracLenIn 0.04) and name disagrees
+Sunapee Lake|NH,Sunapee Lake,NH,NH,NHLAK801060402-05-01|SUNAPEE LAKE,SUNAPEE LAKE,43.0000,158.3979,1.0000,1.0000,16.6894,True,polygon,verified_spatial,contours inside polygon
+Ossipee Lake|NH,Ossipee Lake,NH,NH,"NHLAK600020803-01-01|DANFORTH POND, LOWER","DANFORTH POND, LOWER",9.0000,5.6897,0.0296,0.0000,16.2679,False,polygon,rejected,weak geometric overlap (fracLenIn 0.03) and name disagrees
+Ossipee Lake|NH,Ossipee Lake,NH,NH,NHLAK600020804-01-01|BERRY BAY,BERRY BAY,18.0000,20.6859,1.0000,0.0344,16.2679,False,polygon,rejected,contours inside polygon but name disagrees and hull covers only 0.034 of lake (neighbouring/embedded water body)
+Ossipee Lake|NH,Ossipee Lake,NH,NH,NHLAK600020804-01-02|LEAVITT BAY,LEAVITT BAY,41.0000,27.8605,1.0000,0.0478,16.2679,False,polygon,rejected,contours inside polygon but name disagrees and hull covers only 0.048 of lake (neighbouring/embedded water body)
+Ossipee Lake|NH,Ossipee Lake,NH,NH,NHLAK600020804-01-03|BROAD BAY,BROAD BAY,34.0000,53.3320,1.0000,0.1066,16.2679,False,polygon,rejected,contours inside polygon but name disagrees and hull covers only 0.107 of lake (neighbouring/embedded water body)
+Merrymeeting Lake|NH,Merrymeeting Lake,NH,NH,NHLAK700020102-03|MERRYMEETING LAKE,MERRYMEETING LAKE,165.0000,233.6313,1.0000,0.9999,4.9947,True,polygon,verified_spatial,contours inside polygon
+Umbagog Lake|NH,Umbagog Lake,NH,NH,NHLAK400010602-04|UMBAGOG LAKE,UMBAGOG LAKE,137.0000,251.0636,1.0000,0.9985,30.9398,True,polygon,verified_spatial,contours inside polygon
+Lake Wentworth|NH,Lake Wentworth,NH,NH,"NHLAK700020101-05-01|WENTWORTH, LAKE","WENTWORTH, LAKE",121.0000,233.8916,1.0000,0.9946,12.5303,True,polygon,verified_spatial,contours inside polygon
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,NH,NHLAK700020101-08|BACK BAY,BACK BAY,11.0000,4.2580,0.0645,0.0000,184.8773,False,polygon,rejected,weak geometric overlap (fracLenIn 0.06) and name disagrees
+Lake Winnisquam|NH,Lake Winnisquam,NH,NH,NHLAK700020201-05-01|EPHRAIM COVE,EPHRAIM COVE,34.0000,8.1303,0.4676,0.0000,17.0415,False,polygon,rejected,weak geometric overlap (fracLenIn 0.47) and name disagrees
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,NH,NHLAK700020110-02-09|WINNIPESAUKEE,WINNIPESAUKEE,270.0000,1558.0791,1.0000,0.9995,184.8773,True,polygon,verified_spatial,contours inside polygon
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,NH,NHLAK700020110-02-01|PAUGUS BAY,PAUGUS BAY,1.0000,21.2133,1.0000,0.0270,184.8773,False,polygon,rejected,contours inside polygon but name disagrees and hull covers only 0.027 of lake (neighbouring/embedded water body)
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,NH,NHLAK700020106-02-01|MIRROR LAKE,MIRROR LAKE,13.0000,30.2098,0.0280,0.0000,184.8773,False,polygon,rejected,weak geometric overlap (fracLenIn 0.03) and name disagrees
+Massabesic Lake|NH,Massabesic Lake,NH,NH,NHLAK700060702-03|MASSABESIC LAKE,MASSABESIC LAKE,265.0000,148.9470,1.0000,0.9999,10.3513,True,polygon,verified_spatial,contours inside polygon
+Squam Lake|NH,Squam Lake,NH,NH,NHLAK700010501-04-01|SQUAM LAKE,SQUAM LAKE,99.0000,957.8293,1.0000,0.9996,27.5450,True,polygon,verified_spatial,contours inside polygon
+Spruce Run Reservoir|NJ,Spruce Run Reservoir,NJ,NJ,Spruce Run Reservoir,Spruce Run Reservoir,75.0000,1096.1015,1.0000,0.9954,5.4807,True,polygon,verified_spatial,contours inside polygon
+Lake Absegami|NJ,Lake Absegami,NJ,NJ,Lake Absegami,Lake Absegami,13.0000,17.0382,1.0000,0.8688,0.1994,True,polygon,verified_spatial,contours inside polygon
+Alum Creek Lake|OH,Alum Creek Lake,OH,OH,ALUM CREEK LAKE,ALUM CREEK LAKE,93.0000,408.7709,1.0000,0.9831,13.0211,True,polygon,verified_spatial,contours inside polygon
+Berlin Lake|OH,Berlin Lake,OH,OH,BERLIN LAKE,BERLIN LAKE,21.0000,133.4174,1.0000,0.8183,14.5908,True,polygon,verified_spatial,contours inside polygon
+Caesar Creek Lake|OH,Caesar Creek Lake,OH,OH,CAESAR CREEK LAKE,CAESAR CREEK LAKE,30.0000,247.0482,0.9920,0.9907,10.7467,True,polygon,verified_spatial,contours inside polygon
+Berlin Lake|OH,Berlin Lake,OH,OH,DEER CREEK RESERVOIR,DEER CREEK RESERVOIR,7.0000,38.2836,0.0865,0.0000,14.5908,False,polygon,rejected,weak geometric overlap (fracLenIn 0.09) and name disagrees
+Grand Lake St. Marys|OH,Grand Lake St. Marys,OH,OH,GRAND LAKE ST MARY'S,GRAND LAKE ST MARY'S,17.0000,124.3600,1.0000,0.9665,52.0391,False,polygon,verified_spatial,contours inside polygon; name disagrees but hull covers >=25% of lake
+Hoover Reservoir|OH,Hoover Reservoir,OH,OH,HOOVER RESERVOIR,HOOVER RESERVOIR,35.0000,161.6559,1.0000,0.9653,10.9984,True,polygon,verified_spatial,contours inside polygon
+Indian Lake|OH,Indian Lake,OH,OH,INDIAN LAKE,INDIAN LAKE,116.0000,168.9773,1.0000,0.9418,20.6356,True,polygon,verified_spatial,contours inside polygon
+Lake Milton|OH,Lake Milton,OH,OH,LAKE MILTON,LAKE MILTON,28.0000,175.8573,1.0000,0.9816,6.7010,True,polygon,verified_spatial,contours inside polygon
+Mosquito Creek Lake|OH,Mosquito Creek Lake,OH,OH,MOSQUITO CREEK LAKE,MOSQUITO CREEK LAKE,35.0000,226.5828,1.0000,0.9796,28.3980,True,polygon,verified_spatial,contours inside polygon
+Pymatuning Reservoir|PA,Pymatuning Reservoir,PA,OH,PYMATUNING LAKE,PYMATUNING LAKE,112.0000,575.1786,0.9464,0.9878,56.4201,True,polygon,verified_spatial,contours inside polygon
+Salt Fork Lake|OH,Salt Fork Lake,OH,OH,SALT FORK LAKE,SALT FORK LAKE,53.0000,234.2176,1.0000,0.8909,11.3390,True,polygon,verified_spatial,contours inside polygon
+Senecaville Lake|OH,Senecaville Lake,OH,OH,SENECA LAKE,SENECA LAKE,44.0000,161.4189,1.0000,0.8454,14.0920,True,polygon,verified_spatial,contours inside polygon
+Tappan Lake|OH,Tappan Lake,OH,OH,TAPPAN LAKE,TAPPAN LAKE,24.0000,209.0493,1.0000,0.9822,8.6830,True,polygon,verified_spatial,contours inside polygon
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,OK,Grand,Grand,27.0000,6128.6249,0.9550,1.0000,157.9251,True,polygon,verified_spatial,contours inside polygon
+Lake Hudson|OK,Lake Hudson,OK,OK,Hudson,Hudson,13.0000,1315.9596,0.5550,0.9999,28.5569,True,polygon,verified_spatial,partial overlap (fracLenIn 0.56); name agrees; polygon/contour extent mismatch
+Lake Murray (OK)|OK,Lake Murray (OK),OK,OK,Murray,Murray,11.0000,623.3856,0.9997,0.9984,22.3617,True,polygon,verified_spatial,contours inside polygon
+Sardis Lake|OK,Sardis Lake,OK,OK,Sardis,Sardis,5.0000,540.9125,1.0000,1.0000,54.3425,True,polygon,verified_spatial,contours inside polygon
+Fort Gibson Lake|OK,Fort Gibson Lake,OK,OK,Ft Gibson,Ft Gibson,6.0000,728.8367,0.8755,0.9999,72.6288,False,polygon,verified_spatial,contours inside polygon; name disagrees but hull covers >=25% of lake
+Harveys Lake|PA,Harveys Lake,PA,PA,Harveys Lake,Harveys Lake,17.0000,71.1401,1.0000,0.9521,2.5530,True,polygon,verified_spatial,contours inside polygon
+Utah Lake|UT,Utah Lake,UT,UT,Utah Lake,Utah Lake,239.0000,840.1714,1.0000,0.9537,368.9057,True,polygon,verified_spatial,contours inside polygon
+Lake Chelan|WA,Lake Chelan,WA,WA,Lake Chelan|17020009000925,Lake Chelan,27.0000,1365.7464,1.0000,1.0000,132.2549,True,polygon,verified_spatial,contours inside polygon
+Lake Sammamish|WA,Lake Sammamish,WA,WA,Lake Sammamish|17110012000406,Lake Sammamish,11.0000,144.6839,1.0000,1.0000,19.6353,True,polygon,verified_spatial,contours inside polygon
+Lake Crescent|WA,Lake Crescent,WA,WA,Lake Crescent|17110021000278,Lake Crescent,136.0000,356.7464,1.0000,1.0000,20.3206,True,polygon,verified_spatial,contours inside polygon
+Moses Lake|WA,Moses Lake,WA,WA,Moses Lake|17020015006686,Moses Lake,26.0000,182.2871,1.0000,0.8550,27.1575,True,polygon,verified_spatial,contours inside polygon
+Moses Lake|WA,Moses Lake,WA,WA,Moses Lake|17020015006769,Moses Lake,1.0000,97.9466,0.9197,0.9950,27.1575,True,polygon,verified_spatial,contours inside polygon
+Moses Lake|WA,Moses Lake,WA,WA,Moses Lake|17020015007169,Moses Lake,1.0000,73.6321,1.0000,0.8984,27.1575,True,polygon,verified_spatial,contours inside polygon
+Chippewa Flowage|WI,Chippewa Flowage,WI,WI,Chippewa Flowage,Chippewa Flowage,274.0000,370.4850,0.9629,0.9956,60.4242,True,polygon,verified_spatial,contours inside polygon
+Mount Storm Lake|WV,Mount Storm Lake,WV,WV,Mount Storm Lake,Mount Storm Lake,943.0000,1399.3364,1.0000,0.9998,4.5836,True,polygon,verified_spatial,contours inside polygon
+Beech Fork Lake|WV,Beech Fork Lake,WV,WV,Beech Fork Lake,Beech Fork Lake,1237.0000,483.2901,1.0000,0.9464,2.9976,True,polygon,verified_spatial,contours inside polygon
+Summersville Lake|WV,Summersville Lake,WV,WV,Summersville Lake,Summersville Lake,8864.0000,6996.9041,1.0000,0.9116,11.5581,True,polygon,verified_spatial,contours inside polygon
+Tygart Lake|WV,Tygart Lake,WV,WV,Tygart Lake,Tygart Lake,1810.0000,3031.5320,0.9852,0.8862,7.6153,True,polygon,verified_spatial,contours inside polygon
+East Lynn Lake|WV,East Lynn Lake,WV,WV,East Lynn Lake,East Lynn Lake,2386.0000,1105.7414,1.0000,0.8988,4.7718,True,polygon,verified_spatial,contours inside polygon
+Stonewall Jackson Lake|WV,Stonewall Jackson Lake,WV,WV,Stonewall Jackson Lake,Stonewall Jackson Lake,7607.0000,3483.6115,0.9527,0.9935,8.5166,True,polygon,verified_spatial,contours inside polygon
+Jennings Randolph Lake|MD,Jennings Randolph Lake,MD,WV,Jennings Randolph Lake,Jennings Randolph Lake,2188.0000,2557.2371,0.9909,0.9999,3.3319,True,polygon,verified_spatial,contours inside polygon
+Sutton Lake|WV,Sutton Lake,WV,WV,Sutton Lake,Sutton Lake,5447.0000,3236.2462,1.0000,0.9696,6.6858,True,polygon,verified_spatial,contours inside polygon
+Burnsville Lake|WV,Burnsville Lake,WV,WV,Burnsville Lake,Burnsville Lake,1911.0000,938.1985,0.9999,0.9634,3.3829,True,polygon,verified_spatial,contours inside polygon
+Bluestone Lake|WV,Bluestone Lake,WV,WV,Bluestone Lake,Bluestone Lake,928.0000,753.2168,0.7339,0.9748,4.5760,True,polygon,verified_spatial,contours inside polygon
+R.D. Bailey Lake|WV,R.D. Bailey Lake,WV,WV,R.D. Bailey Lake,R.D. Bailey Lake,2481.0000,1336.4909,1.0000,0.9121,2.2501,True,polygon,verified_spatial,contours inside polygon
+Cheat Lake|WV,Cheat Lake,WV,WV,Cheat Lake,Cheat Lake,1927.0000,1714.8069,0.9099,0.9998,5.4877,True,polygon,verified_spatial,contours inside polygon
+Crescent Lake|FL,Crescent Lake,FL,FL,,,,,,,,,scout_name_candidate:spatial_only,rejected,"scout name/spatial candidate has no verified geometric support in the downloaded data (name collision, polygon mismatch or data gap)"
+Marion Reservoir|KS,Marion Reservoir,KS,KS,,,,,,,,,scout_name_candidate:spatial_only,rejected,"scout name/spatial candidate has no verified geometric support in the downloaded data (name collision, polygon mismatch or data gap)"
+Buckeye Lake|OH,Buckeye Lake,OH,OH,,,,,,,,,scout_name_candidate:exact,rejected,"scout name/spatial candidate has no verified geometric support in the downloaded data (name collision, polygon mismatch or data gap)"
+Kenai|AK,Kenai,AK,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Skilak|AK,Skilak,AK,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Beaver|AR,Beaver,AR,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Beaver|AR,Beaver,AR,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Nimrod|AR,Nimrod,AR,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Nimrod|AR,Nimrod,AR,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Norfork|AR,Norfork,AR,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Norfork|AR,Norfork,AR,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Mono|CA,Mono,CA,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Okeechobee|FL,Okeechobee,FL,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Macbride|IA,Lake Macbride,IA,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+American Falls Reservoir|ID,American Falls Reservoir,ID,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lucky Peak Lake|ID,Lucky Peak Lake,ID,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Geist Reservoir|IN,Geist Reservoir,IN,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Buckhorn Lake|KY,Buckhorn Lake,KY,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Green River Lake|KY,Green River Lake,KY,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Maurepas|LA,Lake Maurepas,LA,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Pontchartrain|LA,Lake Pontchartrain,LA,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Deep Creek Lake|MD,Deep Creek Lake,MD,S-depth-025,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Liberty Reservoir|MD,Liberty Reservoir,MD,S-depth-025,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Loch Raven Reservoir|MD,Loch Raven Reservoir,MD,S-depth-025,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Prettyboy Reservoir|MD,Prettyboy Reservoir,MD,S-depth-025,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Rocky Gorge Reservoir|MD,Rocky Gorge Reservoir,MD,S-depth-025,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Triadelphia Reservoir|MD,Triadelphia Reservoir,MD,S-depth-025,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Erie|MI,Lake Erie,MI,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Michigan|MI,Lake Michigan,MI,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake St. Clair|MI,Lake St. Clair,MI,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Superior|MI,Lake Superior,MI,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Pepin|MN,Lake Pepin,MN,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Superior|MN,Lake Superior,MN,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Clearwater Lake|MO,Clearwater Lake,MO,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Clearwater Lake|MO,Clearwater Lake,MO,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Table Rock Lake|MO,Table Rock Lake,MO,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Table Rock Lake|MO,Table Rock Lake,MO,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Koocanusa|MT,Lake Koocanusa,MT,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Mead|NV,Lake Mead,NV,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Tahoe|NV,Lake Tahoe,NV,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Walker Lake|NV,Walker Lake,NV,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Erie|NY,Lake Erie,NY,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Ontario|NY,Lake Ontario,NY,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Eufaula|OK,Lake Eufaula,OK,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Crater Lake|OR,Crater Lake,OR,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Upper Klamath Lake|OR,Upper Klamath Lake,OR,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Harveys Lake|PA,Harveys Lake,PA,S-depth-033,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Arthur|PA,Lake Arthur,PA,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Erie|PA,Lake Erie,PA,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Canyon Lake|TX,Canyon Lake,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Cedar Creek Reservoir|TX,Cedar Creek Reservoir,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Buchanan|TX,Lake Buchanan,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Conroe|TX,Lake Conroe,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Fork Reservoir|TX,Lake Fork Reservoir,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Livingston|TX,Lake Livingston,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Tawakoni|TX,Lake Tawakoni,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Texoma|TX,Lake Texoma,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Travis|TX,Lake Travis,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Possum Kingdom Lake|TX,Possum Kingdom Lake,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Sam Rayburn Reservoir|TX,Sam Rayburn Reservoir,TX,S-depth-001,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Bear Lake|UT,Bear Lake,UT,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Bear Lake|UT,Bear Lake,UT,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Great Salt Lake|UT,Great Salt Lake,UT,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Great Salt Lake|UT,Great Salt Lake,UT,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Powell|UT,Lake Powell,UT,S-depth-020,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Powell|UT,Lake Powell,UT,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Utah Lake|UT,Utah Lake,UT,S-depth-033,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Crescent|WA,Lake Crescent,WA,S-depth-020,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Crescent|WA,Lake Crescent,WA,S-depth-024,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Chippewa Flowage|WI,Chippewa Flowage,WI,S-depth-033,,,,,,,,,scout_name_candidate:exact,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Michigan|WI,Lake Michigan,WI,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)
+Lake Superior|WI,Lake Superior,WI,S-depth-031,,,,,,,,,scout_name_candidate:name_state,name_only_unverified,source not available as geometry here (TWDB handled via terrain tables / USGS index or catalog only / not downloaded)

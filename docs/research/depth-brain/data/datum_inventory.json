@@ -1,0 +1,60 @@
+{
+ "n_bound_lakes": 417,
+ "bound_by_provider": {
+  "a2w": 112,
+  "usgs": 67,
+  "cwms": 62,
+  "rise": 46,
+  "nwps": 41,
+  "tva": 17,
+  "coops": 14,
+  "usgs-d": 12,
+  "duke": 8,
+  "sjrwmd": 6,
+  "nhdes": 6,
+  "srp": 4,
+  "usbr-pnhm": 4,
+  "cdec": 2,
+  "cnppid": 2,
+  "twdb": 2,
+  "nipsco": 1,
+  "eccc": 1,
+  "mncsg": 1,
+  "cwms-saw": 1,
+  "nppd": 1,
+  "njwsa": 1,
+  "utahlake": 1,
+  "aep": 1,
+  "nwrfc": 1,
+  "cwms-nwdp": 1,
+  "wps-hydro": 1,
+  "alliant": 1
+ },
+ "a2w_all_projects_vertical_datum": {
+  "NGVD29": 456,
+  "LOCAL": 94,
+  "unrecorded": 25,
+  "NAVD88": 38
+ },
+ "a2w_bound_lakes_vertical_datum": {
+  "NGVD29": 79,
+  "LOCAL": 22,
+  "unrecorded": 2,
+  "NAVD88": 9
+ },
+ "usgs_bound_by_param": {
+  "62614": 31,
+  "62615": 19,
+  "00062": 14,
+  "00065+alt_va": 12,
+  "00065": 1,
+  "72020": 1,
+  "72275": 1
+ },
+ "interpretation": {
+  "62614": "NGVD29",
+  "62615": "NAVD88",
+  "00062": "datum per site (unspecified in the parameter)",
+  "00065+alt_va": "gage height + site datum (site-specific)"
+ }
+}

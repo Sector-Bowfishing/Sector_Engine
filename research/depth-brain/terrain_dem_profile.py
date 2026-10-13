@@ -15,6 +15,7 @@ URL = "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/Imag
 import os
 OFFS = [int(x) for x in os.environ.get("DEM_OFFS", "5,10,20,30,45,60,80,100,150,200").split(",")]
 NPTS = int(os.environ.get("DEM_N", "600"))
+SPACING = float(os.environ.get("DEM_SPACING_M", "0"))      # >0: one shore point per SPACING metres (capped at 9000 points)
 OUTSUB = os.environ.get("DEM_OUT", "dem")
 
 def rings(g):
@@ -64,7 +65,10 @@ def profile(geom, n=None):
     prj = f"+proj=laea +lat_0={c.y} +lon_0={c.x} +datum=WGS84 +units=m"
     fw = Transformer.from_crs("EPSG:4326", prj, always_xy=True); bw = Transformer.from_crs(prj, "EPSG:4326", always_xy=True)
     g = shapely.transform(geom, lambda a: np.column_stack(fw.transform(a[:, 0], a[:, 1]))).buffer(0)
-    sp = shore_points(g.simplify(15), n); P = []
+    gs_ = g.simplify(15)
+    if SPACING > 0:
+        n = int(min(9000, max(200, sum(r.length for r in rings(gs_) if r.length > 300) / SPACING)))
+    sp = shore_points(gs_, n); P = []
     for x, y, nx, ny, ri, s in sp:
         if g.contains(Point(x + 30 * nx, y + 30 * ny)): nx, ny = -nx, -ny
         if g.contains(Point(x + 30 * nx, y + 30 * ny)): continue

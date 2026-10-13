@@ -1,0 +1,340 @@
+{
+ "n_lakes": 621,
+ "n_bound": 417,
+ "n_pool_ref_ok": 387,
+ "n_delta_possible": 339,
+ "by_operator_delta_possible": {
+  "USACE": 146,
+  "OTHER": 111,
+  "USBR": 65,
+  "TVA": 16,
+  "NONE": 1
+ },
+ "by_regime_delta_possible": {
+  "reservoir": 313,
+  "regulated_natural": 20,
+  "natural": 5,
+  "MEGA": 1
+ },
+ "pool_ref_ok_but_unbound": 48,
+ "delta_possible_with_history_stats": 188,
+ "history_stats_after_datum_QC": 187,
+ "history_dropped_datum_or_unit": 1,
+ "range_class_counts": {
+  "large(>=4ft)": 145,
+  "moderate(1.5-4ft)": 30,
+  "small(<1.5ft)": 12
+ },
+ "regime_notes_among_history_lakes": {
+  "none": 155,
+  "flood-pool-excursions(p99>15ft above fullPool)": 30,
+  "rarely-full(p99>15ft below fullPool)": 2
+ },
+ "range_p05_p95_quantiles": {
+  "0.1": 2.04,
+  "0.25": 4.46,
+  "0.5": 9.98,
+  "0.75": 22.01,
+  "0.9": 36.77
+ },
+ "annual_swing_quantiles": {
+  "0.1": 2.55,
+  "0.25": 5.51,
+  "0.5": 10.28,
+  "0.75": 18.95,
+  "0.9": 34.91
+ },
+ "share_days_drawn_down_gt2ft_median_lake": 0.372,
+ "share_days_drawn_down_gt5ft_median_lake": 0.084,
+ "n_lakes_median_drawdown_gt2ft": 58,
+ "n_lakes_p95_drawdown_gt5ft": 104,
+ "n_lakes_p95_drawdown_gt10ft": 59,
+ "by_operator_with_history": {
+  "NONE": {
+   "n": 1,
+   "median_range": 2.83,
+   "median_p95_drawdown": 0.17
+  },
+  "OTHER": {
+   "n": 60,
+   "median_range": 4.36,
+   "median_p95_drawdown": 4.1
+  },
+  "TVA": {
+   "n": 2,
+   "median_range": 3.63,
+   "median_p95_drawdown": 3.45
+  },
+  "USACE": {
+   "n": 118,
+   "median_range": 13.22,
+   "median_p95_drawdown": 6.56
+  },
+  "USBR": {
+   "n": 6,
+   "median_range": 32.38,
+   "median_p95_drawdown": 34.16
+  }
+ },
+ "designed_winter_drawdown_n": 62,
+ "designed_winter_drawdown_quantiles": {
+  "0.1": 1.7,
+  "0.25": 3.5,
+  "0.5": 5.0,
+  "0.75": 17.1,
+  "0.9": 31.5
+ },
+ "designed_drawdown_examples": {
+  "Guntersville|AL": 1.7,
+  "Wheeler|AL": 5.0,
+  "Wilson|AL": 3.0,
+  "Pickwick Lake|TN": 5.0,
+  "Norris Lake|TN": 29.0,
+  "Douglas Lake|TN": 45.9,
+  "Kentucky Lake|TN": 5.0,
+  "Kentucky Lake|KY": 5.0
+ },
+ "sigma_level_evidence": {
+  "live_vs_binding_mae_ft_n": 33,
+  "median": 0.0,
+  "p90": 0.016,
+  "max": 0.063
+ },
+ "sigma_pool_evidence": {
+  "high": {
+   "n": 149,
+   "median_p95_minus_fullpool": 0.59,
+   "robust_sd_ft": 1.16,
+   "iqr_ft": [
+    -0.05,
+    1.6
+   ]
+  },
+  "low": {
+   "n": 1,
+   "median_p95_minus_fullpool": 0.78,
+   "robust_sd_ft": NaN,
+   "iqr_ft": [
+    0.78,
+    0.78
+   ]
+  },
+  "med": {
+   "n": 6,
+   "median_p95_minus_fullpool": 0.28,
+   "robust_sd_ft": 0.57,
+   "iqr_ft": [
+    0.0,
+    0.71
+   ]
+  }
+ },
+ "datum_shift_ngvd29_to_navd88": {
+  "n": 412,
+  "abs_median": 0.64,
+  "abs_p75": 1.79,
+  "abs_p90": 3.59,
+  "abs_max": 5.42,
+  "share_gt_0_5ft": 0.607,
+  "share_gt_1ft": 0.311,
+  "rms": 1.78,
+  "by_operator": {
+   "NONE": {
+    "n": 2,
+    "abs_median": 0.24,
+    "abs_max": 0.27
+   },
+   "OTHER": {
+    "n": 177,
+    "abs_median": 0.72,
+    "abs_max": 5.33
+   },
+   "TVA": {
+    "n": 16,
+    "abs_median": 0.22,
+    "abs_max": 0.56
+   },
+   "USACE": {
+    "n": 151,
+    "abs_median": 0.46,
+    "abs_max": 3.96
+   },
+   "USBR": {
+    "n": 66,
+    "abs_median": 3.13,
+    "abs_max": 5.42
+   }
+  }
+ },
+ "acres_per_ft_all_with_dem": {
+  "n": 290,
+  "rel_per_ft_quantiles": {
+   "0.1": 0.0038,
+   "0.25": 0.0093,
+   "0.5": 0.0177,
+   "0.75": 0.0337,
+   "0.9": 0.0766
+  },
+  "acres_per_ft_quantiles": {
+   "0.1": 27.0,
+   "0.25": 62.0,
+   "0.5": 150.0,
+   "0.75": 573.0,
+   "0.9": 1452.0
+  },
+  "share_rel_per_ft_gt_0_03": 0.279,
+  "share_capped": 0.062
+ },
+ "acres_per_ft_delta_possible": {
+  "n": 265,
+  "rel_per_ft_quantiles": {
+   "0.1": 0.0046,
+   "0.25": 0.0102,
+   "0.5": 0.018,
+   "0.75": 0.0363,
+   "0.9": 0.0897
+  },
+  "acres_per_ft_quantiles": {
+   "0.1": 28.0,
+   "0.25": 62.0,
+   "0.5": 151.0,
+   "0.75": 595.0,
+   "0.9": 1662.0
+  },
+  "share_rel_per_ft_gt_0_03": 0.287,
+  "share_capped": 0.068,
+  "n_of_339": 265
+ },
+ "acres_per_ft_pilots": {
+  "Guntersville|AL": {
+   "rel_per_ft": 0.0741,
+   "acres_per_ft": 4890.0
+  },
+  "Wheeler|AL": {
+   "rel_per_ft": 0.0934,
+   "acres_per_ft": 4903.0
+  },
+  "Wilson|AL": {
+   "rel_per_ft": 0.0084,
+   "acres_per_ft": 131.0
+  },
+  "Lake Hartwell|SC": {
+   "rel_per_ft": 0.0179,
+   "acres_per_ft": 1002.0
+  },
+  "Lake Fork Reservoir|TX": {
+   "rel_per_ft": 0.0276,
+   "acres_per_ft": 765.0
+  }
+ },
+ "sigma_propagation_ft": [
+  {
+   "scenario": "delta only (level - fullPool), same datum, pool high-conf",
+   "ref": 0.0,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 0.0,
+   "sigma_depth": 0.27,
+   "claim_flat_4ft_now_2ft_resolvable": true
+  },
+  {
+   "scenario": "delta only, pool sigma at the measured upper bound (robust SD of p95 level minus fullPool, 149 high-conf lakes)",
+   "ref": 0.0,
+   "level": 0.1,
+   "pool": 1.16,
+   "datum": 0.0,
+   "sigma_depth": 1.16,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "delta only, pool med-conf",
+   "ref": 0.0,
+   "level": 0.1,
+   "pool": 1.0,
+   "datum": 0.0,
+   "sigma_depth": 1.0,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "delta only, pool low-conf / natural-lake reference",
+   "ref": 0.0,
+   "level": 0.1,
+   "pool": 3.0,
+   "datum": 0.0,
+   "sigma_depth": 3.0,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "absolute depth, survey-grade contours (1-ft, TWDB-type), datum reconciled, pool high",
+   "ref": 0.3,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 0.0,
+   "sigma_depth": 0.4,
+   "claim_flat_4ft_now_2ft_resolvable": true
+  },
+  {
+   "scenario": "absolute depth, 2-ft contours (measured interpolation error)",
+   "ref": 0.28,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 0.23,
+   "sigma_depth": 0.45,
+   "claim_flat_4ft_now_2ft_resolvable": true
+  },
+  {
+   "scenario": "absolute depth, 5-ft contours (state lake map; measured)",
+   "ref": 1.3,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 0.23,
+   "sigma_depth": 1.35,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "absolute depth, 10-ft contours (measured)",
+   "ref": 2.81,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 0.23,
+   "sigma_depth": 2.83,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "absolute depth, survey contours but datum NOT reconciled (fleet NGVD29/NAVD88 RMS)",
+   "ref": 0.3,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 1.78,
+   "sigma_depth": 1.83,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "absolute depth, survey contours, Western (USBR-type) lake with unreconciled datum",
+   "ref": 0.3,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 3.13,
+   "sigma_depth": 3.16,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "Landsat drawdown-derived depth (measured MAE across 5 TX lakes)",
+   "ref": 0.93,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 0.0,
+   "sigma_depth": 0.97,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  },
+  {
+   "scenario": "absolute depth, modeled bathymetry (GLOBathy-type, Dmax-driven)",
+   "ref": 3.0,
+   "level": 0.1,
+   "pool": 0.25,
+   "datum": 0.0,
+   "sigma_depth": 3.01,
+   "claim_flat_4ft_now_2ft_resolvable": false
+  }
+ ]
+}

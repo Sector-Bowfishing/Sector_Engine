@@ -6,7 +6,8 @@ Truth sets
           rel_per_ft_15 / rel_per_ft_5 = area change per ft of pool near the top.
 Predictors (all bathymetry-free): shoreline slope from 3DEP (10-60 m and 30-100 m and 60-200 m slope; 200 m rise), polygon geometry, JRC GSW (SE tile only).
 Outputs: docs/research/depth-brain/data/shallow_proxy_validation.json, shallow_proxy_lake_table.csv.  Run with the venv python."""
-import gzip, json, re, sys
+import gzip, json, re, sys, warnings
+warnings.filterwarnings("ignore")
 from pathlib import Path
 import numpy as np, pandas as pd
 from scipy import stats
@@ -36,6 +37,11 @@ def rows():
         p = RAW / "twdb" / k / "pool_polygon.geojson"
         out.append(dict(set="TWDB", lake=k, npz=RAW / "dem" / (safe(k) + ".npz"), geom=shape(json.load(open(p))), rel_per_ft=v["rel_per_ft_5"], rel_per_ft_15=v["rel_per_ft_15"],
                         S1=v["S1"], S2=v["S2"], S3=v["S3"], S4=v["S4"], S6=v["S6"], S10=v["S10"], A_ref_ac=v["area_pool_ac"], pool_ft=v["pool_ft"], max_depth_ft=v["max_depth_ft"]))
+    mp = OUT / "mn_dnr_truth.json"
+    if mp.exists():
+        for k, v in json.load(open(mp)).items():
+            out.append(dict(set="MN", lake="MN_" + k, npz=RAW / "dem" / (safe("MN_" + k) + ".npz"), geom=shape(json.load(open(v["polygon"]))), rel_per_ft=np.nan,
+                            S3=v["S3"], S6=v["S6"], S10=v["S10"], A_ref_ac=v["area_ac"], max_depth_ft=v["max_depth_ft"]))
     return out
 
 
@@ -99,9 +105,9 @@ def main():
     # --- (2) S3 / S6 on TWDB
     W = T[(T.set == "TWDB") & (T.area_km2 >= 1)].copy()
     res["twdb_lakes_used"] = int(len(W))
-    res["twdb_truth_quantiles"] = {k: [round(float(W[k].quantile(q)), 3) for q in (.1, .25, .5, .75, .9)] for k in ("S3", "S6", "rel_per_ft")}
+    res["twdb_truth_quantiles"] = {k: [round(float(W[k].quantile(q)), 3) for q in (.1, .25, .5, .75, .9)] for k in ("S3", "S6", "S10", "rel_per_ft")}
     res["shallow_share"] = {}
-    for tgt, depth in (("S3", 3), ("S6", 6)):
+    for tgt, depth in (("S3", 3), ("S6", 6), ("S10", 10)):
         out = {}
         for p in ("P_dem", "P_dem_30_100", "P_dem_200"):
             raw = (W[p] * depth).clip(upper=1.0)
@@ -112,6 +118,20 @@ def main():
             idx, cal, y = loo_calibrated(W[p], W[tgt]); out[p + "_loo_loglinear"] = metrics(cal, y)
         out["constant_median"] = metrics(np.full(len(W), W[tgt].median()), W[tgt])
         res["shallow_share"][tgt] = out
+    # --- (2b) transfer: calibrate on Texas (TWDB), predict Minnesota (MN DNR contours), S10 and S6
+    M = T[T.set == "MN"].copy()
+    if len(M) >= 4:
+        tr_ = {}
+        for tgt in ("S6", "S10"):
+            for p in ("P_dem", "P_dem_30_100", "P_dem_200"):
+                d_ = W[[p, tgt]].dropna(); d_ = d_[(d_[p] > 0) & (d_[tgt] > 0)]
+                b, a = np.polyfit(np.log10(d_[p]), np.log10(d_[tgt]), 1)
+                pred = 10 ** (a + b * np.log10(M[p].clip(lower=1e-3)))
+                tr_[f"{p}->{tgt}"] = dict(metrics(pred, M[tgt]), coef=[round(float(a), 3), round(float(b), 3)])
+            tr_[f"constant_TX_median->{tgt}"] = metrics(np.full(len(M), W[tgt].median()), M[tgt])
+            tr_[f"spearman_P_dem_vs_{tgt}_MNonly"] = round(float(stats.spearmanr(M["P_dem"], M[tgt])[0]), 3)
+            tr_[f"spearman_frac_within_100m_vs_{tgt}_MNonly"] = round(float(stats.spearmanr(M["frac_within_100m"], M[tgt])[0]), 3)
+        res["transfer_TX_to_MN"] = tr_; res["mn_lakes"] = list(M.lake)
     # --- (3) class accuracy: broad-shallow lake = S3 in top tercile of the TWDB set
     cls = {}
     for tgt in ("S3", "S6"):

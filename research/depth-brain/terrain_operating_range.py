@@ -133,12 +133,16 @@ def stats(lake, s, fullpool):
     yrs = ser.groupby(ser.index.year)
     full = [y for y, g in yrs if len(g) >= 300 and y <= 2025]
     r = dict(lake=lake, days=len(ser), first=ser.index[0].date().isoformat(), last=ser.index[-1].date().isoformat(), full_years=len(full),
-             p05=ser.quantile(.05), p50=ser.median(), p95=ser.quantile(.95), p05_p95_range_ft=ser.quantile(.95) - ser.quantile(.05), max_min_ft=ser.max() - ser.min())
+             p05=ser.quantile(.05), p50=ser.median(), p95=ser.quantile(.95), p05_p95_range_ft=ser.quantile(.95) - ser.quantile(.05), max_min_ft=ser.max() - ser.min(), p99=ser.quantile(.99), p_max=ser.max())
     sw = [yrs.get_group(y).quantile(.99) - yrs.get_group(y).quantile(.01) for y in full]
     r["annual_swing_p99_p01_ft"] = float(np.mean(sw)) if sw else np.nan
     if fullpool is not None and np.isfinite(fullpool):
         dd = fullpool - ser
-        r["datum_flag"] = "median-far-from-fullpool(>25ft)" if abs(ser.median() - fullpool) > 25 else ""
+        # gross datum / unit mismatch only: median more than 200 ft from the stated full pool (Indian Lake OH: 1645 ft series vs 996 ft pool).
+        r["datum_flag"] = "median-differs-from-fullpool(>200ft)" if abs(ser.median() - fullpool) > 200 else ""
+        # regime notes (legitimate behaviour, not errors): flood-control lakes whose p99 sits far above the conservation pool, and drought-drawn lakes that rarely refill
+        q99 = ser.quantile(.99)
+        r["regime_note"] = "flood-pool-excursions(p99>15ft above fullPool)" if q99 - fullpool > 15 else ("rarely-full(p99>15ft below fullPool)" if fullpool - q99 > 15 else "")
         r.update(fullPoolFt=fullpool, median_minus_fullpool=ser.median() - fullpool, draw_p50=dd.quantile(.5), draw_p95=dd.quantile(.95), draw_p05=dd.quantile(.05),
                  frac_below_1=(dd > 1).mean(), frac_below_2=(dd > 2).mean(), frac_below_5=(dd > 5).mean(), frac_below_10=(dd > 10).mean(), frac_above_1=(dd < -1).mean())
     return r

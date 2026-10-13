@@ -113,7 +113,7 @@ def analyze(key, slug):
     inval_frac = inval[:, aoi].mean(axis=1)
     good = (inval_frac <= 0.03) & np.isfinite(lv)
     cube, lv, dates = cube[good], lv[good], dates[good]
-    wet = (cube == 1)
+    wet = (cube == 1); inval = (cube == 255)
     res = dict(key=key, scenes_total=int(N), scenes_used=int(good.sum()), level_min=float(lv.min()), level_max=float(lv.max()), pool_ft=pool, years=[int(dates.year.min()), int(dates.year.max())])
     res["scenes_with_level_ge_pool_minus"] = {str(d): int((lv >= pool - d).sum()) for d in (1, 3, 6, 10)}
     unit = 4046.856 if tab[:, 1].max() < 2e6 else 0.09290304
@@ -157,6 +157,15 @@ def analyze(key, slug):
     reach = np.isfinite(dtruth) & (dtruth <= pool - ls[0])
     res["truth_cells_within_observed_range"] = int(reach.sum()); res["recall_of_in_range_cells"] = float(cmp.sum() / max(reach.sum(), 1))
     if cmp.sum() > 100:
+        from scipy import ndimage
+        dist_px = (ndimage.distance_transform_edt(inside) * 30.0).ravel()[P]       # distance to shore, m (30 m grid)
+        rk = lambda v: stats.rankdata(v)
+        res["baseline_spearman_distance_to_shore"] = float(stats.spearmanr(dist_px[cmp], dtruth[cmp])[0])
+        iso_d = Isotonic().fit(dist_px[cmp], dtruth[cmp]); res["baseline_mae_ft_isotonic_on_distance"] = float(np.abs(iso_d.predict(dist_px[cmp]) - dtruth[cmp]).mean())
+        # partial rank correlation of sat depth with truth depth given distance to shore
+        A_, B_, C_ = rk(dsat[cmp]), rk(dtruth[cmp]), rk(dist_px[cmp])
+        ra = A_ - np.polyval(np.polyfit(C_, A_, 1), C_); rb = B_ - np.polyval(np.polyfit(C_, B_, 1), C_)
+        res["partial_spearman_given_distance"] = float(np.corrcoef(ra, rb)[0, 1])
         res["spearman_depth"] = float(stats.spearmanr(dsat[cmp], dtruth[cmp])[0]); res["mae_ft"] = float(np.abs(dsat[cmp] - dtruth[cmp]).mean()); res["bias_ft"] = float((dsat[cmp] - dtruth[cmp]).mean())
         res["within_1ft"] = float((np.abs(dsat[cmp] - dtruth[cmp]) <= 1).mean()); res["within_2ft"] = float((np.abs(dsat[cmp] - dtruth[cmp]) <= 2).mean())
         res["truth_depth_range_compared"] = [float(np.percentile(dtruth[cmp], 5)), float(np.percentile(dtruth[cmp], 95))]
@@ -174,3 +183,10 @@ if __name__ == "__main__":
         fetch(sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2000)
     elif sys.argv[1] == "analyze":
         analyze(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "summary":
+        rows = [json.load(open(p)) for p in sorted(SAT.glob("*_analysis.json"))]
+        out = Path(__file__).resolve().parents[2] / "docs/research/depth-brain/data/sat_hypso_validation.json"
+        keep = ["key", "scenes_used", "level_min", "level_max", "pool_ft", "area_sat_at_pool_ac", "area_table_at_pool_ac", "S3_sat", "S3_table", "S6_sat", "S6_table", "dAdz_sat_ac_per_ft", "dAdz_table_ac_per_ft",
+                "pixels_informative", "pixels_compared", "recall_of_in_range_cells", "spearman_depth", "baseline_spearman_distance_to_shore", "partial_spearman_given_distance", "mae_ft", "baseline_mae_ft_isotonic_on_distance", "bias_ft",
+                "within_1ft", "within_2ft", "truth_depth_range_compared", "le3_recovered_as_informative", "le3_precision", "scenes_with_level_ge_pool_minus"]
+        out.write_text(json.dumps([{k: r.get(k) for k in keep} for r in rows], indent=1)); print(len(rows), "lakes ->", out)

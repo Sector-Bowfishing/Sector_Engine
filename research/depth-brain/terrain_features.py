@@ -8,8 +8,13 @@ OFFS = [5, 10, 20, 30, 45, 60, 80, 100, 150, 200]
 IX = {o: i for i, o in enumerate(OFFS)}
 
 
-def slope_deg(z, a, b):
-    return np.degrees(np.arctan((z[:, IX[b]] - z[:, IX[a]]) / (b - a)))
+def slope_deg(z, a, b, ix=None):
+    ix = ix or IX
+    return np.degrees(np.arctan((z[:, ix[b]] - z[:, ix[a]]) / (b - a)))
+
+
+def _ix(d):
+    return {int(o): i for i, o in enumerate(d["offs"])} if "offs" in d else IX
 
 
 def clean(d):
@@ -19,6 +24,7 @@ def clean(d):
 
 
 def lake_features(d, area_km2=None):
+    IX = _ix(d)
     z, ok = clean(d)
     z = z[ok]
     if len(z) < 50:
@@ -26,7 +32,7 @@ def lake_features(d, area_km2=None):
     perim_km = None
     f = {}
     f["n_pts"] = int(len(z)); f["frac_valid"] = float(ok.mean())
-    s_in = slope_deg(z, 10, 60); s_mid = slope_deg(z, 30, 100); s_far = slope_deg(z, 60, 200)
+    s_in = slope_deg(z, 10, 60, IX); s_mid = slope_deg(z, 30, 100, IX); s_far = slope_deg(z, 60, 200, IX)
     f["slope_10_60_med"] = float(np.median(s_in)); f["slope_30_100_med"] = float(np.median(s_mid)); f["slope_60_200_med"] = float(np.median(s_far))
     f["frac_lt1"] = float((s_in < 1).mean()); f["frac_lt2"] = float((s_in < 2).mean()); f["frac_gt8"] = float((s_in >= 8).mean())
     f["rise_100_med_m"] = float(np.median(z[:, IX[100]] - z[:, IX[5]])); f["rise_200_med_m"] = float(np.median(z[:, IX[200]] - z[:, IX[5]]))
@@ -43,6 +49,7 @@ def lake_features(d, area_km2=None):
 
 
 def segment_features(d, seg_len_m=500.0):
+    IX = _ix(d)
     """Split the shoreline into arc-length segments of ~seg_len_m (per ring); return per-point segment id and per-segment medians."""
     z, ok = clean(d)
     ring, s = d["ring"], d["s"]
@@ -60,8 +67,8 @@ def segment_features(d, seg_len_m=500.0):
         if m.sum() < 3: continue
         zz = z[m]
         row = dict(seg=g, n=int(m.sum()), x=float(np.mean(d["x"][m])), y=float(np.mean(d["y"][m])),
-                   slope_10_60=float(np.median(slope_deg(zz, 10, 60))), slope_30_100=float(np.median(slope_deg(zz, 30, 100))), slope_60_200=float(np.median(slope_deg(zz, 60, 200))),
-                   slope_5_20=float(np.median(slope_deg(zz, 5, 20))),
+                   slope_10_60=float(np.median(slope_deg(zz, 10, 60, IX))), slope_30_100=float(np.median(slope_deg(zz, 30, 100, IX))), slope_60_200=float(np.median(slope_deg(zz, 60, 200, IX))),
+                   slope_5_20=float(np.median(slope_deg(zz, 5, 20, IX))),
                    rise200=float(np.median(zz[:, IX[200]] - zz[:, IX[5]])), rise100=float(np.median(zz[:, IX[100]] - zz[:, IX[5]])))
         out.append(row)
     return out, seg
