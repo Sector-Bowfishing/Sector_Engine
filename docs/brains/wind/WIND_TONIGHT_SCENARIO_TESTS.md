@@ -2,7 +2,7 @@
 
 Tests: `jobs/wind-hourly/tests/test_tonight_scenarios.py` (and the unit tests in `test_adoption.py`). All are offline and deterministic. `tonight.simple()` is the customer-simple contract: words only, `None` = **no claim** (never "calm", never "low risk").
 
-Example output (Scenario D):
+Example output (Scenario D, with a DIRECT long-fetch AUDITED bank supplied to `simple()`):
 ```
 wind: SW about 6 mph   tonight: LIGHT   risk: COULD TURN BREEZY   trend: None   bank: DIRECT   fetch: HIGH   confidence: MEDIUM
 caveats: modeled forecast; land-referenced · not an over-water measurement

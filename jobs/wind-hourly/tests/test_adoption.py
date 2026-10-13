@@ -419,3 +419,19 @@ def test_hard_blockers_withhold_exposure_even_for_audited_lakes():
     assert FL.exposure_allowed(m["lakes"]["Guntersville|AL"]) and FL.exposure_allowed(m["lakes"]["Lake Hartwell|SC"])
     assert not FL.exposure_allowed(FL.tier_for("Not A Lake|ZZ", m))                              # unknown lake: never
     assert not any(FL.exposure_allowed(v) for v in m["lakes"].values() if v["tier"] == "POINT_ONLY")
+
+
+def test_evidence_and_horizon_fields_for_consumers():
+    t = tonight([6.0] * 7, p90=[7.0] * 7)
+    assert t["evidence"]["kind"] == "MODELED_FORECAST" and t["evidence"]["validationTier"] == "HISTORICAL_LAND_STATIONS_ONLY"
+    assert t["forecastHorizonHours"] == 11.7                                      # now 18:20Z -> window end 06:00Z
+    assert TN.build_tonight([], None, None, None, NOW, "America/Chicago")["evidence"]["kind"] == "MODELED_FORECAST"
+
+
+def test_published_intelligence_fixtures_match_the_code():
+    """docs/brains/wind/fixtures are the examples Intelligence builds its tests on: regenerate them if this fails (and bump the schema if the shape changed)."""
+    fx = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(HERE))), "docs", "brains", "wind", "fixtures")
+    t = tonight([9, 9, 8, 7, 6, 5, 4], p90=[11, 10.5, 10, 9, 8, 7, 6])
+    t["current"] = {"kind": "analysis", "sustainedMph": 6.0, "gustMph": None, "directionDeg": 225, "note": "analysis/forecast value, not an observation"}
+    got = json.load(open(os.path.join(fx, "tonight_light_breezy_risk_easing.json")))
+    assert got == json.loads(json.dumps(t, sort_keys=True))

@@ -174,7 +174,9 @@ def surface_summary(u, d, dur_h, banks, table, tier="AUDITED"):
                 "basis": "share of resolvable bank segments with modeled Hm0 < 1 in (protected) and >= 6 in (exposed) for the current wind; "
                          "physical description only, not a fishing recommendation",
                 "bankImpact": EX.label_shares(labels) | {"convention": "alpha = angle between wind-FROM bearing and the bank's facing bearing; DIRECT <=45, CROSS <=90, else PROTECTED; modeled, not field-validated"},
-                "geometryTier": tier, "estimated": tier != "AUDITED", "validated": False}
+                "geometryTier": tier, "estimated": tier != "AUDITED", "validated": False, "evidenceKind": "MODELED",
+                "validationTier": "AUDITED_GEOMETRY_NO_FIELD_TRUTH" if tier == "AUDITED" else "ESTIMATED_GEOMETRY_NO_FIELD_TRUTH",
+                "publicVocabulary": "DIRECT/CROSS/PROTECTED + HIGH FETCH" if tier == "AUDITED" else "EXPOSED/PROTECTED + HIGH FETCH"}
     summary["geometryTier"] = tier
     return {"summary": summary, "exposure": exposure}, rows
 
@@ -183,7 +185,7 @@ def tonight_exposure(banks, table, dir_deg, mean_mph, blow_mph, tier="AUDITED", 
     """Share of resolvable banks by bank-impact label for tonight's mean speed and for 'if it blows' (P90). Lake-level only."""
     if dir_deg is None or mean_mph is None:
         return None
-    out = {"geometryTier": tier, "estimated": tier != "AUDITED", "validated": False, "direction": round(dir_deg), "durationH": dur_h}
+    out = {"geometryTier": tier, "estimated": tier != "AUDITED", "validated": False, "evidenceKind": "MODELED", "direction": round(dir_deg), "durationH": dur_h}
     for key, mph in (("atMean", mean_mph), ("ifItBlows", blow_mph)):
         if mph is None:
             out[key] = None

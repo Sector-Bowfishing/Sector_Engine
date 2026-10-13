@@ -117,7 +117,9 @@ def build_tonight(steps: list[dict], p90_steps: list[dict] | None, init: datetim
     p90_steps: [{'at': iso, 'p90Mph'}] from the newest percentile cycle, or None.
     current: {'kind','sustainedMph','gustMph','directionDeg'} already in the state (analysis or forecast), passed through unchanged."""
     block = {"schema": SCHEMA, "kind": "forecast", "basis": "NOAA NBM v5.0 point forecast (land-referenced; not an over-water observation)",
-             "window": None, "current": current, "available": False, "unavailableReason": None,
+             "evidence": {"kind": "MODELED_FORECAST", "validationTier": "HISTORICAL_LAND_STATIONS_ONLY",
+                          "detail": "validated on 5 months of land METAR at 4 lakes (CAL+H1); live holdout sealed until 2027-01-01; over-water unvalidated"},
+             "window": None, "forecastHorizonHours": None, "current": current, "available": False, "unavailableReason": None,
              "speed": None, "direction": None, "trend": None, "breezyRisk": None, "confidence": None, "freshness": None,
              "withheld": {"layDown": "no validated skill (POD 0.07)", "rising": "no validated skill", "gust": "forecast gusts unvalidated (NBM ≥20 kt POD 0)",
                           "overWaterSpeed": "no over-water reference", "directionBelow5mph": "unreliable (0.65 within 22.5° at 3-5 mph)"}}
@@ -126,6 +128,7 @@ def build_tonight(steps: list[dict], p90_steps: list[dict] | None, init: datetim
         return _finish(block, None, init, p90_init, now)
     ws, we = tonight_window(now, tzname)
     block["window"] = {"startUtc": C.iso(ws), "endUtc": C.iso(we), "timeZone": tzname, "localHours": "19:00-01:00"}
+    block["forecastHorizonHours"] = round((we - now).total_seconds() / 3600, 1)
     stale = init is None or (now - init).total_seconds() / 3600 > C.STALE_FORECAST_CYCLE_H
     inwin = [s for s in steps if s.get("mph") is not None and ws <= _t(s["at"]) <= we]
     if len(inwin) < MIN_WINDOW_HOURS:

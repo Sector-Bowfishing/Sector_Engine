@@ -1,0 +1,46 @@
+{
+ "available": false,
+ "basis": "NOAA NBM v5.0 point forecast (land-referenced; not an over-water observation)",
+ "breezyRisk": null,
+ "confidence": {
+  "basis": "frozen rule: WIND_H2_PREREG.md",
+  "label": "LOW",
+  "reasons": [
+   "forecastDoesNotCoverTonight"
+  ]
+ },
+ "current": null,
+ "direction": null,
+ "evidence": {
+  "detail": "validated on 5 months of land METAR at 4 lakes (CAL+H1); live holdout sealed until 2027-01-01; over-water unvalidated",
+  "kind": "MODELED_FORECAST",
+  "validationTier": "HISTORICAL_LAND_STATIONS_ONLY"
+ },
+ "forecastHorizonHours": 11.7,
+ "freshness": {
+  "forecastAgeHours": null,
+  "forecastInit": null,
+  "generatedAt": "2026-10-12T18:20:00Z",
+  "percentileAgeHours": null,
+  "percentileInit": null,
+  "stale": true
+ },
+ "kind": "forecast",
+ "schema": "sector-wind-tonight-v1",
+ "speed": null,
+ "trend": null,
+ "unavailableReason": "forecastDoesNotCoverTonight",
+ "window": {
+  "endUtc": "2026-10-13T06:00:00Z",
+  "localHours": "19:00-01:00",
+  "startUtc": "2026-10-13T00:00:00Z",
+  "timeZone": "America/Chicago"
+ },
+ "withheld": {
+  "directionBelow5mph": "unreliable (0.65 within 22.5\u00b0 at 3-5 mph)",
+  "gust": "forecast gusts unvalidated (NBM \u226520 kt POD 0)",
+  "layDown": "no validated skill (POD 0.07)",
+  "overWaterSpeed": "no over-water reference",
+  "rising": "no validated skill"
+ }
+}
