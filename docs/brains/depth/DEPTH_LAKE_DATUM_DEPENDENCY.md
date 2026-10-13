@@ -40,3 +40,12 @@ Rules Depth would apply to the new fields (tests already cover the guards): stam
 | Guide context (`guideFt`, `differenceFromGuideFt`) | published; Depth copies it into `level.*` for designed-drawdown context |
 | Seasonal pool awareness (Hartwell 660 summer / 656 winter) | via guide only; a reference-pool-by-season field would let Depth state "below guide" vs "below summer pool" |
 | `datum: null` on TVA states | requested above |
+
+## Addendum (2026-10-14): lakes that resolve only if Lake Brain rebinds
+
+| Lake | Current Lake binding | Rebind target | Evidence | Depth result after rebind |
+|---|---|---|---|---|
+| John Redmond (KS), Canton (OK), Kaw (OK), Tenkiller (OK), Skiatook (OK), Moomaw (VA) | NWPS pool (HP) | CWMS `Elev` series at the project that holds Top of Conservation | NWPS pool numerically identical to the CWMS Elev series (mean difference <= 0.008 ft, max <= 0.05 ft); CWMS location datum NGVD29 | SAME_SOURCE, sigma 0 |
+| Youghiogheny River Lake (MD) | NWPS | USGS 62615 or the CWMS series | NWPS pool identical to USGS 62615 (NAVD88); pool is a CWMS location tagged NAVD88 | SAME_DATUM (NAVD88) |
+
+The NWPS datum tables for these gauges are empty or contradictory (Canton lists NAVD88 0.6 while the feed equals the NGVD29 CWMS series), so Depth will not accept the NWPS-bound series on its own. `accepted_provider_rules.json` lists them under `heldWithReason`. Source detail: `DEPTH_NWPS_DATUM_AUDIT.md`.
