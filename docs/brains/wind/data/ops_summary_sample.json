@@ -1,0 +1,223 @@
+{
+ "schema": "wind-ops-summary-v1",
+ "generatedAt": "2026-10-13T20:36:06Z",
+ "brainId": "wind",
+ "brainVersion": "wind-brain-1.0.0",
+ "lifecycle": {
+  "status": "CALIBRATION",
+  "candidatePromoted": false,
+  "shadow": true
+ },
+ "certification": {
+  "value": 3.3,
+  "raw": 3.27,
+  "basis": "COMPUTED_FROM_FROZEN_RUBRIC_V1",
+  "computedAt": "2026-10-13T20:36:07Z",
+  "caps": [
+   6.0,
+   7.0
+  ],
+  "capRules": [
+   "Exposure or surface never field-validated",
+   "Land-only wind validation, no over-water reference"
+  ],
+  "dimensions": {
+   "1": {
+    "points": 0.0,
+    "weight": 12
+   },
+   "2": {
+    "points": 4.32,
+    "weight": 8
+   },
+   "3": {
+    "points": 0.0,
+    "weight": 5
+   },
+   "4": {
+    "points": 5.0,
+    "weight": 5
+   },
+   "5": {
+    "points": 10.0,
+    "weight": 10
+   },
+   "6": {
+    "points": 0.0,
+    "weight": 20
+   },
+   "7": {
+    "points": 0.0,
+    "weight": 20
+   },
+   "8": {
+    "points": 1.33,
+    "weight": 8
+   },
+   "9": {
+    "points": 4.0,
+    "weight": 4
+   },
+   "10": {
+    "points": 8.0,
+    "weight": 8
+   }
+  },
+  "changedSincePublished": {
+   "8": {
+    "before": 0.0,
+    "after": 1.33,
+    "why": "5/30 complete days, worst completeness 1.0000, median age 68.26666666666667 min, catch-up runs 20"
+   }
+  }
+ },
+ "bwis": {
+  "value": 5.4,
+  "total": 54.16,
+  "definition": "BWIS v1 (frozen)"
+ },
+ "publishedScore": {
+  "value": 3.1,
+  "basis": "FROZEN",
+  "updatedAt": "2026-10-12T06:16:16Z",
+  "differsFromComputed": true,
+  "explanation": "the Engine's published score is a FROZEN block; the scorer result is computed from the same frozen rubric and moves with live days. Refreshing the published block needs an explicit decision."
+ },
+ "reliability": {
+  "asOf": "2026-10-13T20:36:06Z",
+  "validArchiveDays": 5,
+  "validBrainPublishDays": 0,
+  "target": 30,
+  "lastValidArchiveDay": "2026-10-12",
+  "invalidArchiveDays": [
+   {
+    "date": "2026-10-07",
+    "reasons": [
+     "clock started 04:59Z: only 19 hourly cycles possible",
+     "RTMA-RU quarter-hours 89/96 on the worst lake (92.7% < 95%)"
+    ]
+   }
+  ],
+  "executions": 165,
+  "failedExecutions": 0,
+  "staleStates": 0,
+  "freshnessHoursAfterInit": {
+   "n": 632,
+   "median": 1.14,
+   "p95": 2.15,
+   "max": 2.17
+  },
+  "projectedArchiveGate": "2026-11-07T03:00Z",
+  "projectedBrainPublishGate": "2026-11-12T03:00Z",
+  "projectionAssumption": "every remaining day (including today) is valid; each invalid day moves the date one day later",
+  "progress": "5 / 30 valid archive days"
+ },
+ "coverage": {
+  "directoryLakes": 621,
+  "audited": 74,
+  "estimated": 471,
+  "pointOnly": 76,
+  "blocked": 17,
+  "labelEligible": 528,
+  "customerVisibleExposure": 0,
+  "note": "eligible = may carry conservative bank words if/when released; nothing is customer-visible"
+ },
+ "providers": {
+  "customer": {
+   "id": "open-meteo-best-match",
+   "status": "ACTIVE_PRODUCTION"
+  },
+  "candidate": {
+   "id": "nbm-v5.0 + rtma-ru",
+   "status": "RESEARCH_CANDIDATE",
+   "promoted": false
+  },
+  "dualLogging": "NOT_STARTED",
+  "customerSwitch": "NOT_APPROVED"
+ },
+ "tonightContract": {
+  "schema": "sector-wind-tonight-v1",
+  "rulesVersion": "wind-exposure-rules-v2",
+  "rulesFingerprint": "221a36470bbd58a54122bdeb65ee570e8c60e7898fcd8310c15300405d75f03c",
+  "published": false,
+  "withheldClaims": [
+   "layDown",
+   "rising",
+   "gust",
+   "overWaterSpeed",
+   "directionBelow5mph"
+  ]
+ },
+ "fieldValidation": {
+  "status": "NOT_STARTED",
+  "pairsCollected": 0,
+  "target": {
+   "pairs": 40,
+   "independentLakes": 2,
+   "quadrants": 3
+  },
+  "preregistration": "WIND_BANK_VALIDATION_V2_PREREG.md"
+ },
+ "h2": {
+  "status": "SEALED",
+  "sealedUntil": "2027-01-01T00:00:00Z",
+  "runnerHasRun": false,
+  "oneShot": true
+ },
+ "tests": {
+  "suite": "jobs/wind-hourly pytest",
+  "passed": null,
+  "note": "filled by the publisher"
+ },
+ "blockers": [
+  {
+   "id": "live-days",
+   "category": "TIME",
+   "text": "30 valid live archive days not yet reached",
+   "since": null
+  },
+  {
+   "id": "h2",
+   "category": "TIME",
+   "text": "H2 holdout sealed until 2027-01-01"
+  },
+  {
+   "id": "bank-pairs",
+   "category": "FIELD",
+   "text": "no physical bank-pair observations (certification dimensions 6 and 7 earn 0)"
+  },
+  {
+   "id": "over-water",
+   "category": "FIELD",
+   "text": "no over-water wind reference (certification cap 7)"
+  },
+  {
+   "id": "customer-provider",
+   "category": "MICHAEL",
+   "text": "customer provider switch and ESTIMATED visibility are undecided"
+  },
+  {
+   "id": "identity",
+   "category": "LAKE_IDENTITY",
+   "text": "six audited lakes carry a lake-identity risk (Lake Brain)"
+  },
+  {
+   "id": "validation-v2",
+   "category": "VALIDATION",
+   "text": "independent bank validation v2 and rule set v2 not yet evidenced"
+  },
+  {
+   "id": "prereq-branch",
+   "category": "PREREQUISITE_BRANCH",
+   "text": "feat/cost-efficient-scheduling not merged; Wind cannot be wired, published or deployed"
+  }
+ ],
+ "blockerCategories": [
+  "TIME",
+  "FIELD",
+  "PREREQUISITE_BRANCH",
+  "MICHAEL",
+  "LAKE_IDENTITY",
+  "VALIDATION"
+ ]
+}

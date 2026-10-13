@@ -24,8 +24,12 @@ CALM_MS = 0.5  # same calm rule as ingest (direction undefined below 0.5 m/s per
 PATCH = 2     # cells either side of the nearest cell used to build the local bilinear basis
 
 
-def build_point_index(grid_lat: np.ndarray, grid_lon: np.ndarray, nx: int, points: dict[str, tuple[float, float]]) -> dict:
-    """Per lake: the four full-grid cell indices and bilinear weights. points: {lakeId: (lat, lon)}. Deterministic."""
+MAX_NEAREST_KM = 6.0   # a lake farther than this from every grid cell is OUTSIDE the domain (about 2.4 cells of a 2.5 km grid): no value, never the nearest far cell
+
+
+def build_point_index(grid_lat: np.ndarray, grid_lon: np.ndarray, nx: int, points: dict[str, tuple[float, float]], max_nearest_km: float = MAX_NEAREST_KM) -> dict:
+    """Per lake: the four full-grid cell indices and bilinear weights. points: {lakeId: (lat, lon)}. Deterministic.
+    A point farther than `max_nearest_km` from every cell is marked method='outside' with no cells (sampled as unknown)."""
     ny = len(grid_lat) // nx
     coslat = math.cos(math.radians(float(np.mean([p[0] for p in points.values()])))) if points else 1.0
     out = {}
@@ -33,6 +37,9 @@ def build_point_index(grid_lat: np.ndarray, grid_lon: np.ndarray, nx: int, point
         lat, lon = points[lid]
         d2 = (grid_lon - lon) ** 2 * math.cos(math.radians(lat)) ** 2 + (grid_lat - lat) ** 2
         n0 = int(np.argmin(d2)); r0, c0 = divmod(n0, nx)
+        if math.sqrt(float(d2[n0])) * 111.0 > max_nearest_km:
+            out[lid] = {"cells": [], "w": [], "method": "outside"}
+            continue
         rows = range(max(0, r0 - PATCH), min(ny, r0 + PATCH + 1)); cols = range(max(0, c0 - PATCH), min(nx, c0 + PATCH + 1))
         cells = np.array([r * nx + c for r in rows for c in cols])
         ci = CutoutIndex(cells.tolist(), grid_lat[cells].tolist(), grid_lon[cells].tolist(), nx)
@@ -57,6 +64,9 @@ def sample_lead(index: dict, speed: np.ndarray, dir_from: np.ndarray, gust: np.n
     out = {}
     for lid, e in index["lakes"].items():
         c, w = e["cells"], e["w"]
+        if not c:                                                  # outside the domain: unknown, not zero
+            out[lid] = {"speedMS": None, "dirFromDeg": None, "gustMS": None, "speedP90": None}
+            continue
         s = _blend(speed, c, w)
         d = None
         if s is not None:
@@ -85,3 +95,24 @@ def cost_model(n_lakes: int = 621, leads: int = 36, cycles_per_day: int = 24, by
     return {"perLakeCutoutObjectsPerDay": per_lake_objects, "fleetObjectsPerDay": cycles_per_day,
             "fleetObjectBytesApprox": fleet_bytes, "fleetGBPerMonthApprox": round(fleet_bytes * cycles_per_day * 30 / 1e9, 2),
             "extraGribReads": 0, "extraNetworkCalls": 0}
+
+
+def sample_cycle(index: dict, init_iso: str, retrieved_iso: str, fields_by_lead: dict[int, dict | None]) -> dict:
+    """One archive object for the whole fleet. fields_by_lead: {lead: {'speed','dir','gust'?,'p90'?} | None}. A lead whose fields are missing or
+    malformed (partial GRIB) is listed in `missingLeads`, its values are null, and the cycle is `partial` - never silently filled."""
+    leads = sorted(fields_by_lead)
+    lakes = {lid: {"speedMS": [], "dirFromDeg": [], "gustMS": [], "speedP90": []} for lid in index["lakes"]}
+    missing = []
+    n = max((int(max(e["cells"])) for e in index["lakes"].values() if e["cells"]), default=-1) + 1
+    for lead in leads:
+        f = fields_by_lead[lead]
+        ok = isinstance(f, dict) and all(isinstance(f.get(k), np.ndarray) and f[k].shape[0] >= n for k in ("speed", "dir"))
+        row = sample_lead(index, f["speed"], f["dir"], f.get("gust"), f.get("p90")) if ok else None
+        if row is None:
+            missing.append(lead)
+        for lid in lakes:
+            v = row[lid] if row else {"speedMS": None, "dirFromDeg": None, "gustMS": None, "speedP90": None}
+            for k in ("speedMS", "dirFromDeg", "gustMS", "speedP90"):
+                lakes[lid][k].append(v[k])
+    return {"schema": SCHEMA, "init": init_iso, "retrievedAt": retrieved_iso, "leads": leads, "status": "complete" if not missing else "partial",
+            "missingLeads": missing, "outsideDomain": sorted(l for l, e in index["lakes"].items() if e["method"] == "outside"), "lakes": lakes}
