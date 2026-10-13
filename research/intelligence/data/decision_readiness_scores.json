@@ -25,6 +25,28 @@
    "integrity": 5
   }
  },
+ "internalPilotImplementedNotDeployed": {
+  "label": "UNDERLYING: current + internal evidence layer (implemented and tested, NOT deployed, NOT customer-visible, NOT published). Displayed/current stays the row above",
+  "uncapped": 3.8,
+  "value": 3.8,
+  "caps": [
+   [
+    "validation<5",
+    5.0
+   ]
+  ],
+  "dims": {
+   "specialistUse": 2,
+   "where": 3,
+   "when": 5,
+   "species": 3,
+   "why": 7,
+   "confidence": 5,
+   "validation": 1,
+   "coverage": 6,
+   "integrity": 5
+  }
+ },
  "currentWithoutFishIntel": {
   "label": "SENSITIVITY: customer path only (FishIntel unreleased, ignored)",
   "uncapped": 2.7,
