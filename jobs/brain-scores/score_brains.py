@@ -21,7 +21,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform import (BrainRtdb, DryRunStore, check_schema, event, frozen_score, prune_activity,   # noqa: E402
-                                   score_biological, score_intelligence, score_lake, slot_for)
+                                   score_biological, score_engine, score_intelligence, score_lake)
 
 WRITER = "brain-platform"
 FROZEN = os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json")
@@ -53,8 +53,11 @@ def fetch_facts(db) -> dict:
             s = db.get(f"lakes/{k}/states/intelligence")
             if s and str(s.get("kind", s.get("stateType", ""))).lower() in ("evaluated",):
                 sampled.append(s)
+    fleet_readiness = {k: ((row or {}).get("readiness") or {}) for k, row in fleet.items()}
     return {
         "brains": brains,
+        "engine": {"intelligenceRegistry": intel_reg, "validation": validation, "healthBrains": health,
+                   "healthJobs": db.get("health/jobs") or {}, "fleetReadiness": fleet_readiness},
         "lake": {"registry": lake_reg, "validation": validation.get("lake-brain"), "health": health.get("lake-brain"),
                  "profiles": profiles, "states": states, "directoryLakeCount": directory},
         "biological": {"registry": brains.get("biological-state") or {}, "validation": validation.get("biological-state"),
@@ -76,9 +79,18 @@ def compute(facts: dict, now: dt.datetime) -> dict:
     }
 
 
-def plan_writes(scores: dict, brains: dict, now: dt.datetime) -> tuple[dict, list[str]]:
+def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None) -> tuple[dict, list[str]]:
     """Writes for scores whose value/version changed, plus a score.changed event per change."""
     updates, changed, n = {}, [], 0
+    if engine is not None:
+        old = old_engine or {}
+        if old.get("engineScore") != engine["engineScore"] or old.get("engineScoreVersion") != engine["engineScoreVersion"]:
+            updates["engine/score"] = engine
+            n += 1
+            ev = event(now, WRITER, n, "score.changed",
+                       f"Sector Engine score {old.get('engineScore', '—')} → {engine['engineScore']} / 10 ({engine['engineScoreVersion']})", "info")
+            updates[f"activity/{ev['id']}"] = ev
+            changed.append(f"engine: {old.get('engineScore', '—')} → {engine['engineScore']}")
     for bid in UPSTREAM:
         new = scores[bid]
         old = (brains.get(bid) or {}).get("score") or {}
@@ -107,13 +119,17 @@ def main() -> int:
     check_schema(db)
     facts = fetch_facts(db)
     scores = compute(facts, now)
-    updates, changed = plan_writes(scores, facts["brains"], now)
-    report = {"at": now.isoformat(), "mode": "write" if a.write else "dry-run", "scores": scores, "changes": changed}
+    engine = score_engine(facts["engine"], scores, now)
+    updates, changed = plan_writes(scores, facts["brains"], now, engine, db.get("engine/score"))
+    report = {"at": now.isoformat(), "mode": "write" if a.write else "dry-run", "scores": scores, "engine": engine, "changes": changed}
     for bid in UPSTREAM:
         s = scores[bid]
         print(f"{bid:22s} {s['value']:>4} / 10  {s['basis']:8s} {s['scoreVersion']}  completeness {s.get('completenessPct')} %")
         for g in s.get("scoreBlockers", []):
             print(f"    - {g.get('gate') or g.get('dimension')}: {g.get('why')}" + (f" (cap {g['cap']})" if "cap" in g else ""))
+    print(f"{'ENGINE':22s} {engine['engineScore']:>4} / 10  COMPUTED {engine['engineScoreVersion']}  completeness {engine['completenessPct']} %  strongest {engine['strongestArea']}  weakest {engine['weakestArea']}")
+    for g in engine["blockers"]:
+        print(f"    - {g.get('gate') or g.get('dimension')}: {g.get('why')}" + (f" (cap {g['cap']})" if "cap" in g else ""))
     print(f"\n{len(changed)} change(s): " + ("; ".join(changed) if changed else "none"))
     if a.report:
         json.dump(report, open(a.report, "w"), indent=1)

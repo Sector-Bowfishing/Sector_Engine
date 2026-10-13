@@ -233,3 +233,24 @@ conformance suite; the Water Temp pruning bug fixed.
 
 Existing scores keep their original semantics (not rescored). Ops computes nothing.
 **Rollback:** delete `/brains/{id}/score` nodes (platform-owned) and `git reset --hard 04eff0b4`.
+
+---
+
+## Phase 6 — Sector Engine Score / readiness — PASS
+
+**Goal:** an explainable Engine-level score that is not a naive average, computed from Engine-owned facts.
+
+- `docs/brains/scoring/engine-score-v1.json` frozen **before** first computation; prose in SCORING.md.
+  Dimensions: specialist Brain maturity 25, integration completeness 20, lake coverage 10, scientific
+  validation 15, runtime reliability 10, production consistency 10, platform health 10. Gates:
+  synthesis disconnected → 4.0; lineage unverified → 3.0; any Brain FAILED → 5.0.
+- `sector_brain_platform.scoring.score_engine` + 3 tests (23/23 Python total); publisher writes
+  `/engine/score` as `brain-platform`.
+- **Published 2026-10-12: Engine Score 4.0 / 10** (uncapped 4.1, completeness 90 %).
+  Strongest: lake coverage (621/621 lakes have a specialist slot ≥ CALIBRATION). Weakest:
+  integration (0/5 Brains consumed by Intelligence) — the gate that caps it. Other facts it
+  surfaced: validation mean 1.7 (only Water Temp holdout-only), runtime 7.9 (5/6 brains, 6/8 jobs
+  HEALTHY), serving lineage verified, platform conformance UNKNOWN until Phase 7.
+- Engine Score, Brain scores, lifecycle, health, coverage and beta readiness are separate nodes.
+
+**Rollback:** delete `/engine/score`; `git reset --hard 7b3fc88a`.

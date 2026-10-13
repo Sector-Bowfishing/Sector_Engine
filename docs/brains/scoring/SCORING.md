@@ -101,3 +101,22 @@ NOT_VALIDATED → cap **5.0**.
 Brain facts; `--write` publishes `/brains/{id}/score` for all six Brains (frozen ones verbatim) and
 one `score.changed` activity event per changed value, as `brain-platform`. Manual only; no
 scheduler (the Orchestrator will own cadence).
+
+## Sector Engine Score — `engine-score-v1` (`/engine/score`)
+
+Not a naive average. Frozen before first computation (2026-10-12); rubric in `engine-score-v1.json`.
+
+| id | Dimension | Weight | Scale |
+|---|---|---|---|
+| specialistBrainMaturity | mean of the five specialist Brain scores | 25 | mean 0–10 |
+| integrationCompleteness | specialist Brains consumed by Intelligence | 20 | consumed/5 × 10 |
+| lakeCoverage | lakes with ≥ 1 specialist slot at readiness ≥ CALIBRATION | 10 | share × 10 |
+| scientificValidation | mean over six Brains of VALIDATED 10 / PARTIAL or holdout-only 5 / else 0 | 15 | |
+| runtimeReliability | Brains and scheduled jobs HEALTHY in their last run | 10 | share × 10 |
+| productionConsistency | serving revision's source lineage verified | 10 | 10 / 0 |
+| platformHealth | Brains on a conforming platform implementation | 10 | UNKNOWN until Phase 7 publishes it |
+
+Gates: no specialist Brain consumed → cap **4.0**; lineage unverified → cap **3.0**; any Brain
+FAILED → cap **5.0**. Output: `engineScore, engineScoreVersion, dimensions, blockers, strongestArea,
+weakestArea, updatedAt, brainScores{id→value}`. Engine Score, Brain scores, lifecycle, health,
+coverage and beta readiness stay separate nodes.

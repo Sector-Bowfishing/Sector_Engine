@@ -96,3 +96,48 @@ def test_frozen_scores_pass_through_verbatim():
         s = frozen_score(fz[bid])
         assert s["value"] == expect and s["basis"] == "FROZEN" and s["scale"] == 10
         assert s["scoreVersion"] and s["scoreRubric"] and s["scoreUpdatedAt"] and s["scoreBlockers"]
+
+
+from sector_brain_platform import score_engine
+
+
+def _engine_facts(consumed=0, validated=False, lineage=True, failed=False):
+    deps = {b: {"connectionStatus": "CONNECTED" if i < consumed else "NOT_CONNECTED"}
+            for i, b in enumerate(("lake-brain", "water-temp", "water-clarity", "wind", "biological-state"))}
+    val = {b: {"status": "VALIDATED" if validated else "NOT_VALIDATED"} for b in deps} | {"sector-intelligence": {"status": "NOT_VALIDATED"}}
+    val["water-temp"] = {"status": "VALIDATED" if validated else "GLOBAL_HOLDOUT_ONLY"}
+    health = {b: {"status": "FAILED" if (failed and b == "wind") else "HEALTHY"} for b in list(deps) + ["sector-intelligence"]}
+    fleet = {f"L{i}": {"waterTemp": "PRODUCTION", "intelligence": "DISCOVERED"} for i in range(600)} | {f"X{i}": {"intelligence": "DISCOVERED"} for i in range(21)}
+    return {"intelligenceRegistry": {"dependencies": deps, "engineServing": {"lineageVerified": lineage}}, "validation": val,
+            "healthBrains": health, "healthJobs": {"wind-hourly": {"status": "HEALTHY"}}, "fleetReadiness": fleet}
+
+
+def test_engine_score_today_is_gate_capped_and_explainable():
+    scores = {"lake-brain": {"value": 3.0}, "water-temp": {"value": 3.0}, "water-clarity": {"value": 8.0}, "wind": {"value": 3.1},
+              "biological-state": {"value": 3.5}, "sector-intelligence": {"value": 1.0}}
+    e = score_engine(_engine_facts(), scores, NOW)
+    d = e["dimensions"]
+    assert d["specialistBrainMaturity"]["value"] == 4.1 and d["integrationCompleteness"]["value"] == 0
+    assert d["lakeCoverage"]["value"] == 9.7 and d["scientificValidation"]["value"] == 0.8
+    assert d["runtimeReliability"]["value"] == 10 and d["productionConsistency"]["value"] == 10
+    assert d["platformHealth"]["status"] == "UNKNOWN" and e["completenessPct"] == 90
+    assert e["engineScore"] == 4.0 and e["uncapped"] == 4.1
+    assert e["blockers"][0]["gate"] == "synthesisDisconnected" and e["strongestArea"] in ("runtimeReliability", "productionConsistency")
+    assert e["weakestArea"] == "integrationCompleteness" and e["brainScores"]["wind"] == 3.1
+
+
+def test_engine_score_is_not_an_average_of_brain_scores():
+    scores = {b: {"value": 9.0} for b in ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")}
+    e = score_engine(_engine_facts(consumed=0, validated=True), scores, NOW)
+    assert e["engineScore"] == 4.0, "nines everywhere still capped while Intelligence consumes nothing"
+    e2 = score_engine(_engine_facts(consumed=5, validated=True, lineage=True), scores, NOW)
+    assert e2["engineScore"] > 8.0 and e2["blockers"] == []
+    e3 = score_engine(_engine_facts(consumed=5, validated=True, lineage=False), scores, NOW)
+    assert e3["engineScore"] == 3.0
+    e4 = score_engine(_engine_facts(consumed=5, validated=True, failed=True), scores, NOW)
+    assert e4["engineScore"] == 5.0
+
+
+def test_engine_score_unknown_specialist_leaves_maturity_unknown():
+    e = score_engine(_engine_facts(), {"lake-brain": {"value": 3.0}}, NOW)
+    assert e["dimensions"]["specialistBrainMaturity"]["status"] == "UNKNOWN" and e["brainScores"]["wind"] is None

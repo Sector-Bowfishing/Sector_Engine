@@ -219,3 +219,70 @@ def frozen_score(entry: dict) -> dict:
     out.setdefault("scoreBreakdown", {})
     out.setdefault("completenessPct", 100)
     return out
+
+
+# ---------------------------------------------------------------- Sector Engine Score
+SPECIALISTS = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state")
+ALL_BRAINS = SPECIALISTS + ("sector-intelligence",)
+
+
+def score_engine(facts: dict, brain_scores: dict, now: dt.datetime) -> dict:
+    """facts: intelligenceRegistry, validation{id}, healthBrains{id}, healthJobs{job}, fleetReadiness{key: {slot: readiness}},
+    lineageVerified (bool|None), platformConformant{id: bool} (optional). brain_scores: {id: score block}."""
+    vals = [brain_scores.get(b, {}).get("value") for b in SPECIALISTS]
+    maturity = None if any(v is None for v in vals) else statistics.fmean(vals)
+    deps = (facts.get("intelligenceRegistry") or {}).get("dependencies") or {}
+    consumed = sum(1 for b in SPECIALISTS if ((deps.get(b) or {}).get("connectionStatus")) in ("CONNECTED", "CONNECTED_DEGRADED"))
+    fleet = facts.get("fleetReadiness") or {}
+    ladder_ok = ("CALIBRATION", "BETA", "VALIDATED", "PRODUCTION")
+    covered = sum(1 for r in fleet.values() if any(v in ladder_ok for k, v in (r or {}).items() if k != "intelligence"))
+    cov = _share(covered, len(fleet)) if fleet else None
+    vmap = []
+    for b in ALL_BRAINS:
+        st = str(((facts.get("validation") or {}).get(b) or {}).get("status") or "")
+        vmap.append(10 if st == "VALIDATED" else (5 if ("PARTIAL" in st or "HOLDOUT" in st) else 0))
+    validation = statistics.fmean(vmap)
+    hb = facts.get("healthBrains") or {}
+    hj = facts.get("healthJobs") or {}
+    hb_ok = [((hb.get(b) or {}).get("status")) == "HEALTHY" for b in ALL_BRAINS if hb.get(b)]
+    hj_ok = [((j or {}).get("status")) == "HEALTHY" for j in hj.values()]
+    runtime = None
+    if hb_ok or hj_ok:
+        parts = [statistics.fmean(hb_ok) if hb_ok else None, statistics.fmean(hj_ok) if hj_ok else None]
+        parts = [p for p in parts if p is not None]
+        runtime = statistics.fmean(parts) * 10
+    lineage = facts.get("lineageVerified")
+    if lineage is None:
+        lineage = ((facts.get("intelligenceRegistry") or {}).get("engineServing") or {}).get("lineageVerified")
+    plat = facts.get("platformConformant") or {}
+    platform = None if not plat else statistics.fmean(1.0 if plat.get(b) else 0.0 for b in ALL_BRAINS) * 10
+
+    dims = [
+        dim("specialistBrainMaturity", 25, maturity, "mean of " + ", ".join(f"{b} {brain_scores.get(b, {}).get('value', '?')}" for b in SPECIALISTS)),
+        dim("integrationCompleteness", 20, consumed / 5 * 10, f"{consumed} of 5 specialist Brains consumed by Sector Intelligence"),
+        dim("lakeCoverage", 10, None if cov is None else cov * 10, f"{covered} of {len(fleet)} fleet lakes with a specialist slot at readiness >= CALIBRATION"),
+        dim("scientificValidation", 15, validation, "validation states: " + ", ".join(f"{b}={((facts.get('validation') or {}).get(b) or {}).get('status') or 'absent'}" for b in ALL_BRAINS)),
+        dim("runtimeReliability", 10, runtime, f"{sum(hb_ok)}/{len(hb_ok)} brains and {sum(hj_ok)}/{len(hj_ok)} jobs HEALTHY"),
+        dim("productionConsistency", 10, None if lineage is None else (10 if lineage else 0), f"serving lineage verified: {lineage}"),
+        dim("platformHealth", 10, platform, "not published until Brains land on the shared platform (Phase 7)" if platform is None else f"{sum(1 for b in ALL_BRAINS if plat.get(b))}/6 conformant"),
+    ]
+    gates = []
+    if consumed == 0:
+        gates.append({"gate": "synthesisDisconnected", "cap": 4.0, "why": "Sector Intelligence consumes no specialist Brain"})
+    if lineage is False:
+        gates.append({"gate": "lineageUnverified", "cap": 3.0, "why": "serving revision not verified against git"})
+    failed = [b for b in ALL_BRAINS if ((hb.get(b) or {}).get("status")) == "FAILED"]
+    if failed:
+        gates.append({"gate": "brainFailed", "cap": 5.0, "why": f"FAILED: {', '.join(failed)}"})
+    block = finish("engine-score-v1", "docs/brains/scoring/engine-score-v1.json", dims, gates, now,
+                   "connect Sector Intelligence to one specialist Brain (synthesis gate), then validation runs")
+    scored = {k: v for k, v in block["scoreBreakdown"].items() if v["status"] == "SCORED"}
+    strongest = max(scored, key=lambda k: scored[k]["value"]) if scored else None
+    weakest = min(scored, key=lambda k: scored[k]["value"]) if scored else None
+    return {
+        "engineScore": block["value"], "engineScoreVersion": "engine-score-v1", "scale": 10, "uncapped": block["uncapped"],
+        "completenessPct": block["completenessPct"], "dimensions": block["scoreBreakdown"], "blockers": block["scoreBlockers"],
+        "strongestArea": strongest, "weakestArea": weakest, "updatedAt": block["scoreUpdatedAt"],
+        "brainScores": {b: brain_scores.get(b, {}).get("value") for b in ALL_BRAINS},
+        "nextOpportunity": block["nextScoreOpportunity"], "rubric": "docs/brains/scoring/engine-score-v1.json",
+    }

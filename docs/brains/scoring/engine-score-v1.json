@@ -1,0 +1,90 @@
+{
+  "scoreVersion": "engine-score-v1",
+  "scale": 10,
+  "description": "Sector Engine Score: how far the Engine as a whole is from a trustworthy, connected, validated system. NOT a naive average of Brain scores. Frozen 2026-10-12 before first computation.",
+  "dimensions": [
+    {
+      "id": "specialistBrainMaturity",
+      "label": "Mean of the five specialist Brain scores (Lake, Temp, Clarity, Wind, Biological)",
+      "weight": 25,
+      "fact": "/brains/{id}/score.value",
+      "scale": "mean (0-10); UNKNOWN if any specialist score is absent"
+    },
+    {
+      "id": "integrationCompleteness",
+      "label": "Specialist Brains consumed by Sector Intelligence",
+      "weight": 20,
+      "fact": "/brains/sector-intelligence.dependencies[*].connectionStatus",
+      "scale": "consumed/5 x 10"
+    },
+    {
+      "id": "lakeCoverage",
+      "label": "Directory lakes with at least one specialist slot at readiness >= CALIBRATION",
+      "weight": 10,
+      "fact": "/lakeFleet/{k}/readiness",
+      "scale": "share x 10"
+    },
+    {
+      "id": "scientificValidation",
+      "label": "Validation state across the six Brains",
+      "weight": 15,
+      "fact": "/validation/{id}.status",
+      "scale": "mean of VALIDATED 10 / PARTIAL or holdout-only 5 / else 0"
+    },
+    {
+      "id": "runtimeReliability",
+      "label": "Brains and scheduled jobs healthy in their last run",
+      "weight": 10,
+      "fact": "/health/brains/{id}.status, /health/jobs/{job}.status",
+      "scale": "share HEALTHY x 10 (brains and jobs weighted equally)"
+    },
+    {
+      "id": "productionConsistency",
+      "label": "The serving revision's source lineage is verified against git",
+      "weight": 10,
+      "fact": "/brains/sector-intelligence.engineServing.lineageVerified (or publisher-supplied verification)",
+      "scale": "10 / 0; UNKNOWN if absent"
+    },
+    {
+      "id": "platformHealth",
+      "label": "Brains publishing through a conforming Brain Platform implementation",
+      "weight": 10,
+      "fact": "/brains/{id}.platform.conformant",
+      "scale": "share x 10; UNKNOWN until published (Phase 7)"
+    }
+  ],
+  "gates": [
+    {
+      "id": "synthesisDisconnected",
+      "when": "no specialist Brain consumed by Intelligence",
+      "cap": 4.0
+    },
+    {
+      "id": "lineageUnverified",
+      "when": "productionConsistency == 0",
+      "cap": 3.0
+    },
+    {
+      "id": "brainFailed",
+      "when": "any Brain health FAILED",
+      "cap": 5.0
+    }
+  ],
+  "outputs": [
+    "engineScore",
+    "engineScoreVersion",
+    "dimensions",
+    "blockers",
+    "strongestArea",
+    "weakestArea",
+    "updatedAt",
+    "brainScores"
+  ],
+  "keepSeparate": [
+    "Brain scores",
+    "lifecycle (brain status)",
+    "health",
+    "coverage",
+    "beta readiness"
+  ]
+}
