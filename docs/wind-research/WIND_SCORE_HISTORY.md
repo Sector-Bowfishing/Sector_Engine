@@ -17,7 +17,7 @@ Current point table (raw 31.3): dim2 4.3, dim4 5.0, dim5 10.0, dim9 4.0, dim10 8
 5.4 / 10 (54.1 pts): A input 17.9/25, B exposure geometry 18.0/25, C surface 12.4/25, D decision 3.3/20, E ops 2.4/5.
 
 ## Production wind
-Unscored. The Stage 2 report carries "3/10, unchanged" as a descriptive production note, with listed defects (hidden model identity, fallback host with a different product, non-commercial licence, single lake-wide reading).
+Unscored. The Stage 2 report carries "3/10, unchanged" as a descriptive production note, with listed defects (hidden model identity, fallback host with a different product, provider-terms review, single lake-wide reading).
 
 ## Observations about the history
 - The only movement was a drift **down** (3.4 → 3.1) as better evidence replaced judgment credits and a calm window. Nothing yet has earned points from new capability: the Brain's build-out (profiles, publishing, bank rank engine) shows up in BWIS, not in certification.
