@@ -72,3 +72,12 @@ Lake-level only today (`zoneId = "lake"`). Per-zone/segment states require licen
 ## 8. Staleness and orchestration
 
 `stalenessModel: FINGERPRINT` (a pure function of the Lake Brain state, the manifest and the Depth version). `plan()` returns PUBLISH when the input fingerprint changes. `evidenceStale` is set when the Lake Brain observation is > 6 h old or Lake Brain flags its own state stale. No Cloud Run job, scheduler or orchestrator registration exists; adopting it is a separate decision.
+
+## 9. Amendments (2026-10-14, additive; `stateSchema` stays `...-v1`)
+
+* `reference.datumAssessment.status` adds **`SAME_OPERATOR_SYSTEM`** (one operator publishes pool and level on one system, datum name unconfirmed; sigma 0.1) and an optional **`evidenceConfidence`** (`high|medium`) for reviewed datum evidence; `medium` caps a lake at MEDIUM_CONFIDENCE rollout.
+* `level` adds `lakeBrainGuideFt` and `lakeBrainDifferenceFromGuideFt` (copied context: designed seasonal pool vs unusual drawdown).
+* `coverage` adds `depthEvidence` (the named depth source for tier A/B/C, or "none: lake-level stage-area (hypsometry) only"; never names modeled evidence) and `surveyYear`.
+* `effectiveZones`: shares are re-based to the **survey** reference pool (`shift_survey = shift + referencePool - surveyPool`, same datum required, else `{available:false, reason: SURVEY_REFERENCE_DATUM_NOT_COMPATIBLE}`); bands whose bound is wider than 0.25 of the surface are **withheld** and listed in `withheldBands` (with `withheldWhy`); `dry` and shallow bands are the informative ones. Enabled in shadow only for lakes whose survey reference pool is VERIFIED and whose preregistered validation passed (5 TWDB lakes).
+* Registry node `/brains/depth` carries Engine-computed Ops summary fields (`fleet`, `breakdowns`, `research{maturity, official:false}`, `scoreStatus: NOT_ESTABLISHED`, `primaryBlocker`, `lakeDependency`, `orchestration`, `fieldValidation`, `statusBasis`, `blockers[]`); none is hardcoded (`ops_summary.py`).
+* New refusal/blocked codes: `LEVEL_DATUM_CONFLICT`, `SURVEY_REFERENCE_DATUM_NOT_COMPATIBLE`, `DUKE_LOCAL_SCALE_NOT_ENABLED`.
