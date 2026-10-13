@@ -346,3 +346,43 @@ provenance; failures degrade safely; nothing invented; customer path unchanged.
 **Customer behavior:** unchanged — `/conditions` does not read any of this. **Rollback:** `git reset
 --hard 76fcdd79`; delete the 5 pilots' `lakes/{k}/states/intelligence` + snapshot fields and rerun
 `run.py --no-pilot --write`.
+
+---
+
+## Phase 10 — Ops control-plane data — PASS (Ops not deployed)
+
+**Goal:** Engine publishes enough normalized state for Ops to be a truthful command center and to
+compute nothing. Contract: `docs/brains/OPS_CONTROL_PLANE_CONTRACT.md`.
+
+- `sector_brain_platform/control.py` → **`/control/overview`** (`control-plane-v1`): per Brain —
+  lifecycle, health, Engine-computed `stale` + reason, scheduled, score, coverage, active/candidate
+  model, validation, blockers, dependencies, next opportunity, platform conformance; Engine — score,
+  breakdown, blockers, serving revision + lineage, dependency completeness (consumed 5/5, by the
+  customer path 0/5), worst Brain health, conformant count; fleet counts; source health/staleness;
+  `workNext[]`. **`/control/fleet/{k}`** — the Orchestrator rollup per lake (max `lastUpdatedAt`,
+  any-stale, evidenceStale, issueCount, slotsPublished) that brains no longer write to `lakeFleet`.
+- **Scores relocated to `/scores/{id}` and `/scores/engine`** (platform-only root): the Biological
+  republish showed a brain's whole-node registry write clobbers a platform sub-node, so
+  `/brains/{id}/score` is retired (mirrors removed); contract §5/§9, fixtures, both implementations,
+  publisher and `control` updated. `/engine/score` kept as an alias.
+- Published 2026-10-12: overview for 6 Brains + 621 fleet rollups; worst health WARNING (Lake Brain,
+  stale and unscheduled); work-next order lake-brain 3.0, water-temp 3.0, wind 3.1, biological 4.0,
+  intelligence 4.5, clarity 8.0. Engine Score 6.1 → **6.4** once platform conformance became
+  measurable (2/6 registries republished with the ref; the others publish it on their next run).
+- Ops reconciliation documented per branch (biological species-first, intelligence portal, lake-brain
+  views, clarity/wind/temp views) and the browser-side computations to retire. **No Ops deploy.**
+- Tests: platform 27 → 33 (control + orchestrator); Swift conformance 11/11.
+
+## Phase 11 — Orchestrator foundation — PASS (design + planning core; NOT deployed)
+
+- `docs/brains/ORCHESTRATOR_DESIGN.md`: inputs every Brain publishes, the planning guarantees, the
+  (unbuilt) executor, and the stop condition (new recurring cloud work needs approval).
+- `sector_brain_platform/orchestrator.py`: pure `plan()` with dependency order, deduplication,
+  single-flight (running/lock), conditional refresh (TIME by age / VERSION-FINGERPRINT by the brain's
+  own verdict), retry backoff 5/15/45 min then "needs attention", failure isolation (downstream runs
+  flagged `degradedUpstream`, never blocked), lake targeting; `descriptor_gaps()`. 6 tests.
+- **All six Brains now publish `schedule`, `stalenessModel`, `dependsOn`** (and a descriptor where
+  missing) — Python and Swift publishers updated; Biological and Intelligence republished (gaps now
+  only on the four Brains awaiting their next run). No per-Brain cron added or changed.
+
+**Rollback:** `git reset --hard 568d6bb1` (Phase 9); `/control`, `/scores` are platform-owned nodes.

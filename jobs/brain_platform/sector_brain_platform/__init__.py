@@ -24,6 +24,8 @@ from .health import run_health
 from .ownership import OwnershipError, path_allowed, assert_owned, source_owner
 from .rtdb import BrainRtdb, BrainRtdbError, TokenProvider, DryRunStore, check_schema, should_retry, backoff_seconds, SCHEMA_VERSION, BRAIN_RTDB_URL
 from .failure import failure_writes
+from .orchestrator import plan as orchestrate, decide as orchestrator_decide, descriptor_gaps
+from .control import overview, brain_summary, fleet_rollup, brain_stale, CONTROL_VERSION
 from .scoring import score_lake, score_biological, score_intelligence, frozen_score, ladder, finish, dim, score_engine
 
 __all__ = [n for n in dir() if not n.startswith("_")]

@@ -20,8 +20,8 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
-from sector_brain_platform import (BrainRtdb, DryRunStore, check_schema, event, frozen_score, prune_activity,   # noqa: E402
-                                   score_biological, score_engine, score_intelligence, score_lake)
+from sector_brain_platform import (BrainRtdb, DryRunStore, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
+                                   prune_activity, score_biological, score_engine, score_intelligence, score_lake)
 
 WRITER = "brain-platform"
 FROZEN = os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json")
@@ -56,9 +56,14 @@ def fetch_facts(db) -> dict:
                 sampled.append(s)
     fleet_readiness = {k: ((row or {}).get("readiness") or {}) for k, row in fleet.items()}
     return {
-        "brains": brains,
+        "brains": brains, "health": health, "validation": validation, "fleet": fleet,
+        "sources": db.get("sources") or {}, "healthSources": db.get("health/sources") or {}, "jobs": db.get("health/jobs") or {},
         "engine": {"intelligenceRegistry": intel_reg, "validation": validation, "healthBrains": health,
-                   "healthJobs": db.get("health/jobs") or {}, "fleetReadiness": fleet_readiness},
+                   "healthJobs": db.get("health/jobs") or {}, "fleetReadiness": fleet_readiness,
+                   # platformHealth: measured from what each brain has PUBLISHED (a brain that conforms on main but has
+                   # not republished does not count yet); UNKNOWN until at least one registry carries the ref.
+                   "platformConformant": ({b: bool(((brains.get(b) or {}).get("platform") or {}).get("conformant"))
+                                           for b in UPSTREAM} if any((brains.get(b) or {}).get("platform") for b in UPSTREAM) else {})},
         "lake": {"registry": lake_reg, "validation": validation.get("lake-brain"), "health": health.get("lake-brain"),
                  "profiles": profiles, "states": states, "directoryLakeCount": directory},
         "biological": {"registry": brains.get("biological-state") or {}, "validation": validation.get("biological-state"),
@@ -80,13 +85,18 @@ def compute(facts: dict, now: dt.datetime) -> dict:
     }
 
 
-def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None) -> tuple[dict, list[str]]:
-    """Writes for scores whose value/version changed, plus a score.changed event per change."""
+def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None,
+                old_scores: dict | None = None) -> tuple[dict, list[str]]:
+    """Writes for scores whose value/version changed, plus a score.changed event per change.
+    Canonical nodes are /scores/{id} (platform-only root): a registry is written whole by its brain and
+    would clobber a sub-node there (seen 2026-10-12 on the Biological republish)."""
     updates, changed, n = {}, [], 0
+    old_scores = old_scores or {}
     if engine is not None:
         old = old_engine or {}
         if old.get("engineScore") != engine["engineScore"] or old.get("engineScoreVersion") != engine["engineScoreVersion"]:
-            updates["engine/score"] = engine
+            updates["scores/engine"] = engine
+            updates["engine/score"] = engine                    # alias kept for readers of the first publish
             n += 1
             ev = event(now, WRITER, n, "score.changed",
                        f"Sector Engine score {old.get('engineScore', '—')} → {engine['engineScore']} / 10 ({engine['engineScoreVersion']})", "info")
@@ -94,12 +104,12 @@ def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | Non
             changed.append(f"engine: {old.get('engineScore', '—')} → {engine['engineScore']}")
     for bid in UPSTREAM:
         new = scores[bid]
-        old = (brains.get(bid) or {}).get("score") or {}
+        old = old_scores.get(bid) or {}
         if bid not in brains:
             changed.append(f"{bid}: brain not registered yet — score written anyway (registry absent)")
         if old.get("value") == new["value"] and old.get("scoreVersion") == new["scoreVersion"] and old.get("basis") == new["basis"]:
             continue
-        updates[f"brains/{bid}/score"] = new
+        updates[f"scores/{bid}"] = new
         n += 1
         ev = event(now, WRITER, n, "score.changed",
                    f"{bid} score {old.get('value', '—')} → {new['value']} / 10 ({new['basis'].lower()}, {new['scoreVersion']})",
@@ -121,8 +131,14 @@ def main() -> int:
     facts = fetch_facts(db)
     scores = compute(facts, now)
     engine = score_engine(facts["engine"], scores, now)
-    updates, changed = plan_writes(scores, facts["brains"], now, engine, db.get("engine/score"))
-    report = {"at": now.isoformat(), "mode": "write" if a.write else "dry-run", "scores": scores, "engine": engine, "changes": changed}
+    old_scores = db.get("scores") or {}
+    updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores)   # canonical: /scores/engine
+    # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.
+    control = overview(brains=facts["brains"], health=facts["health"], validation=facts["validation"], scores=scores, engine=engine,
+                       fleet=facts["fleet"], sources=facts["sources"], health_sources=facts["healthSources"], jobs=facts["jobs"], now=now)
+    rollups = {f"control/fleet/{k}": r for k, row in facts["fleet"].items() if (r := fleet_rollup(k, row, now))}
+    control_updates = {"control/overview": control, **rollups}
+    report = {"at": now.isoformat(), "mode": "write" if a.write else "dry-run", "scores": scores, "engine": engine, "changes": changed, "control": control}
     for bid in UPSTREAM:
         s = scores[bid]
         print(f"{bid:22s} {s['value']:>4} / 10  {s['basis']:8s} {s['scoreVersion']}  completeness {s.get('completenessPct')} %")
@@ -134,14 +150,19 @@ def main() -> int:
     print(f"\n{len(changed)} change(s): " + ("; ".join(changed) if changed else "none"))
     if a.report:
         json.dump(report, open(a.report, "w"), indent=1)
-    if a.write and updates:
-        db.update(updates)
+    print(f"{'CONTROL':22s} overview for {len(control['brains'])} brains, {len(rollups)} fleet rollups; worst health {control['engine'].get('worstBrainHealth')}; work next: "
+          + ", ".join(f"{w['brainId']} ({w.get('score')})" for w in control.get("workNext", [])[:3]))
+    if a.write:
+        if updates:
+            db.update(updates)
+        stale_mirrors = {f"brains/{b}/score": None for b in UPSTREAM if (facts["brains"].get(b) or {}).get("score") is not None}
+        if stale_mirrors:                                     # retire the clobber-prone sub-nodes the first publish wrote
+            BrainRtdb(brain_id=None).update(stale_mirrors)
+        db.update(control_updates)
         pruned = prune_activity(db.get("activity"), WRITER, now)
         if pruned:
             db.update(pruned)
-        print(f"published {len(updates)} path(s); pruned {len(pruned)} old platform event(s)")
-    elif a.write:
-        print("nothing to publish")
+        print(f"published {len(updates)} score path(s) + {len(control_updates)} control path(s); pruned {len(pruned)} old platform event(s)")
     return 0
 
 

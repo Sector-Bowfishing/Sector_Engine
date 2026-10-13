@@ -426,6 +426,12 @@ def registry_entry(results: dict, prev_fleet: dict, now: dt.datetime, health: st
     return {
         "brainId": BRAIN_ID, "displayName": c["displayName"], "domain": c["domain"], "question": c["question"],
         "platform": PLATFORM,
+        "stalenessModel": "TIME", "dependsOn": [],
+        "schedule": {"cadence": "manual (deploy-job.sh not run; Orchestrator will own cadence)", "jobId": "water-clarity-brain", "running": False},
+        "descriptor": {"components": {"clarityState": {"status": "ACTIVE (mirror of production /conditions clarity)",
+                                                      "inputs": ["sector-engine /conditions (621 lakes)", "gs://sector-lake-surface lakes/<slug>/clarity/latest.json + meta"],
+                                                      "staleness": f"time-based: staleAfterHours {STALE_AFTER_H}",
+                                                      "recomputeWhen": ["published state older than staleAfterHours", "lake-surface-daily published a new pass", "brain or catalog version changed"]}}},
         "version": BRAIN_VERSION, "schemaVersion": SCHEMA_VERSION, "enabled": True, "health": health,
         "status": c["brainStatus"], "statusReasons": c["brainStatusReasons"],
         "supportedLakeCount": len(lake_ids), "readinessCounts": readiness_counts, "staleLakeCount": stale,

@@ -204,6 +204,14 @@ public enum WaterTemperatureBrainRunner {
             healthRule: "FAILED: write failed or no lakes. DEGRADED: > 25 % of lakes unavailable or model fetch failed. WARNING: > 5 %. HEALTHY otherwise.",
             fleetScope: fullFleet ? "full" : "partial")
         entry.platform = BrainPlatformRef.current
+        entry.stalenessModel = "TIME"
+        entry.dependsOn = []
+        entry.schedule = ["cadence": "manual (jobs/water-temp-brain/deploy-job.sh not run; Orchestrator will own cadence)", "jobId": "water-temp-brain", "running": "false"]
+        entry.descriptor = ["components": ["waterTempState": [
+            "status": "ACTIVE (production's own resolver, published per lake)",
+            "inputs": "USGS/CWMS lake sensors, USGS nearby gauges, Open-Meteo forcing via production fetchers",
+            "staleness": "time-based: staleAfterHours \(WaterTemperatureBrain.staleAfterHours)",
+            "recomputeWhen": "published state older than staleAfterHours; a configured sensor has a newer reading; brain or model version changed"]]]
         return entry
     }
 
@@ -313,6 +321,11 @@ struct FleetSlot: Codable, Equatable {
 public struct BrainRegistryEntry: Codable, Equatable, Sendable {
     /// Contract §13: the platform this brain publishes through.
     public var platform: BrainPlatformRef? = nil
+    /// Orchestrator inputs (contract §9/§11).
+    public var stalenessModel: String? = nil
+    public var dependsOn: [String]? = nil
+    public var schedule: [String: String]? = nil
+    public var descriptor: [String: [String: [String: String]]]? = nil
     public struct ErrorInfo: Codable, Equatable, Sendable { public var at: String; public var message: String }
     public struct Version: Codable, Equatable, Sendable { public var version: String; public var date: String; public var note: String; public var status: String }
     public struct ActiveModel: Codable, Equatable, Sendable { public var modelVersion: String; public var since: String; public var validationStatus: String; public var assimilation: String }

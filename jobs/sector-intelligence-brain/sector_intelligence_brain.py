@@ -375,6 +375,8 @@ def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, ups
     registry = _strip({
         "brainId": BRAIN_ID, "displayName": DISPLAY_NAME, "domain": "intelligence", "question": QUESTION,
         "platform": PLATFORM,
+        "stalenessModel": "FINGERPRINT", "dependsOn": list(DEPENDENCY_ORDER),
+        "schedule": {"cadence": "manual (fingerprint-driven; Orchestrator will own cadence)", "running": False},
         "version": BRAIN_VERSION, "schemaVersion": bp.SCHEMA_VERSION, "enabled": True, "health": "HEALTHY",
         "status": "CALIBRATION" if evaluations else "DISCOVERED",
         "statusBasis": (f"Pilot: normalized evaluations ({evaluations[next(iter(evaluations))]['evaluationVersion']}) for "

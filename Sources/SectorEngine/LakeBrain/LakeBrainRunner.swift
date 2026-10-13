@@ -56,6 +56,10 @@ public struct LakeBrainRegistryEntry: Codable, Equatable, Sendable {
     public struct ErrorInfo: Codable, Equatable, Sendable { public var at: String; public var message: String }
     /// Contract §13: the platform this brain publishes through.
     public var platform: BrainPlatformRef? = nil
+    /// Orchestrator inputs (contract §9/§11).
+    public var stalenessModel: String? = nil
+    public var dependsOn: [String]? = nil
+    public var schedule: [String: String]? = nil
     public struct Version: Codable, Equatable, Sendable { public var version: String; public var date: String; public var note: String; public var status: String }
     public var brainId: String
     public var displayName: String
@@ -389,6 +393,9 @@ public enum LakeBrainRunner {
             orchestration: .current,
             fleetScope: options.scope.rawValue + (presence == nil ? " (no presence bundle)" : ""))
         entry.platform = BrainPlatformRef.current
+        entry.stalenessModel = "TIME"
+        entry.dependsOn = []
+        entry.schedule = ["cadence": "manual (on demand; no Lake-specific cron — the Orchestrator will own cadence)", "running": "false"]
         return entry
     }
 

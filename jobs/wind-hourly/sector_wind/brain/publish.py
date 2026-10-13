@@ -228,6 +228,12 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     registry = {
         "brainId": C.BRAIN_ID, "displayName": C.DISPLAY_NAME, "domain": C.DOMAIN, "question": C.QUESTION,
         "platform": PLATFORM,
+        "stalenessModel": "TIME", "dependsOn": [],
+        "schedule": {"cadence": C.JOB_SCHEDULE, "jobId": C.JOB_ID, "running": False},
+        "descriptor": {"components": {"windState": {"status": "ACTIVE (candidate; production wind is Open-Meteo in /conditions)",
+                                                   "inputs": ["NOAA NBM (hourly cycles)", "RTMA-RU (15 min)", "METAR (8 frozen stations)", "gs://sector-wind-candidate/wind/v1"],
+                                                   "staleness": f"time-based: newest NBM cycle > {C.STALE_FORECAST_CYCLE_H} h or state > {C.STALE_AFTER_HOURS} h",
+                                                   "recomputeWhen": ["every hour (wind-hourly)", "a newer NBM cycle is available"]}}},
         "version": C.BRAIN_VERSION, "schemaVersion": C.SCHEMA_VERSION, "enabled": True, "health": health,
         "status": "CALIBRATION", "supportedLakeCount": live, "profiledLakeCount": live + len(national),
         "readinessCounts": counts, "staleLakeCount": stale_lakes, "staleAfterHours": C.STALE_AFTER_HOURS,

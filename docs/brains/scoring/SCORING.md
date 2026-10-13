@@ -21,7 +21,7 @@ Ops displays scores; it never computes them.
 - **Scores move only with evidence.** Each rubric lists what moves each dimension and what cannot
   count (e.g. UI work, docs, un-validated candidates).
 
-## The `score` block (`/brains/{brainId}/score`)
+## The `score` block (`/scores/{brainId}`; canonical, platform-written — a mirror may appear inside the registry)
 
 ```jsonc
 { "value": 3.0, "scale": 10, "basis": "COMPUTED",
@@ -98,11 +98,11 @@ NOT_VALIDATED → cap **5.0**.
 
 ## Publishing
 `jobs/brain-scores/score_brains.py --dry-run` prints every score with its breakdown from live
-Brain facts; `--write` publishes `/brains/{id}/score` for all six Brains (frozen ones verbatim) and
+Brain facts; `--write` publishes `/scores/{id}` for all six Brains (and `/scores/engine`) (frozen ones verbatim) and
 one `score.changed` activity event per changed value, as `brain-platform`. Manual only; no
 scheduler (the Orchestrator will own cadence).
 
-## Sector Engine Score — `engine-score-v1` (`/engine/score`)
+## Sector Engine Score — `engine-score-v1` (`/scores/engine`; `/engine/score` kept as an alias)
 
 Not a naive average. Frozen before first computation (2026-10-12); rubric in `engine-score-v1.json`.
 

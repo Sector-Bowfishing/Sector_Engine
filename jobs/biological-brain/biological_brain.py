@@ -215,6 +215,8 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
     open_disc = [d for d in b.discrepancies if d.get("status") == "OPEN"]
     return _clean(dict(
         platform=PLATFORM,
+        stalenessModel="VERSION", dependsOn=[],
+        schedule=dict(cadence="manual (version-driven: runs when the canonical bundle changes)", running=False),
         brainId=BRAIN_ID, displayName=DISPLAY_NAME, domain="biology",
         question="What does Sector know about each fish, and what is it likely doing?",
         version=BRAIN_VERSION, schemaVersion=SCHEMA_VERSION, enabled=True, health=health,

@@ -228,13 +228,14 @@
     {
       "brainId": "brain-platform",
       "path": "brains/water-temp/score",
-      "allowed": true,
-      "note": "platform score publisher"
+      "allowed": false,
+      "note": "registry nodes are written whole by their brain; a platform sub-node there would be clobbered \u2014 scores live at /scores/{id}"
     },
     {
       "brainId": "brain-platform",
       "path": "brains/water-temp/score/value",
-      "allowed": true
+      "allowed": false,
+      "note": "registry nodes are written whole by their brain; a platform sub-node there would be clobbered \u2014 scores live at /scores/{id}"
     },
     {
       "brainId": "brain-platform",
@@ -275,11 +276,53 @@
       "brainId": "water-temp",
       "path": "brains/water-temp/score",
       "allowed": true,
-      "note": "a brain may publish its own score"
+      "note": "a brain may mirror its own score inside its registry"
     },
     {
       "brainId": "water-temp",
       "path": "engine/score",
+      "allowed": false
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "control/overview",
+      "allowed": true,
+      "note": "Ops control plane"
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "control/fleet/Guntersville_AL",
+      "allowed": true
+    },
+    {
+      "brainId": "wind",
+      "path": "control/overview",
+      "allowed": false
+    },
+    {
+      "brainId": "sector-intelligence",
+      "path": "control/fleet/Guntersville_AL",
+      "allowed": false
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "scores/water-temp",
+      "allowed": true,
+      "note": "canonical score node"
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "scores/engine",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "scores/water-temp",
+      "allowed": false
+    },
+    {
+      "brainId": "sector-intelligence",
+      "path": "scores/sector-intelligence",
       "allowed": false
     }
   ],

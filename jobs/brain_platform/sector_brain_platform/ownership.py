@@ -21,7 +21,7 @@ SOURCE_OWNERS = {
 ROLLUP_FLEET = {"lastUpdatedAt", "stale", "issueCount", "hasObservations"}
 ROLLUP_SNAPSHOT = {"generatedAt", "snapshotVersion", "evaluationTime"}
 LAKE_BRAIN_ONLY_FLEET = {"riverSystem", "lakeType"}
-PLATFORM_ONLY = {"schemaVersion", "access", "validationOps", "engine"}
+PLATFORM_ONLY = {"schemaVersion", "access", "validationOps", "engine", "control", "scores"}
 PLATFORM_WRITER = "brain-platform"       # the Engine's own publisher (scores, engine health); not a brain
 
 
@@ -42,8 +42,6 @@ def path_allowed(brain_id: str, path: str) -> bool:
     if brain_id == PLATFORM_WRITER:
         if root in PLATFORM_ONLY or (root == "health" and len(p) >= 2 and p[1] in ("engine", "rtdb")):
             return True
-        if root == "brains":
-            return len(p) >= 3 and p[2] == "score"
         if root == "activity":
             return len(p) == 2 and f"-{PLATFORM_WRITER}-" in p[1]
         return False

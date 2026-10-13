@@ -136,7 +136,7 @@ public enum BrainOwnership {
     static let rollupFleet: Set<String> = ["lastUpdatedAt", "stale", "issueCount", "hasObservations"]
     static let rollupSnapshot: Set<String> = ["generatedAt", "snapshotVersion", "evaluationTime"]
     static let lakeBrainOnlyFleet: Set<String> = ["riverSystem", "lakeType"]
-    static let platformOnly: Set<String> = ["schemaVersion", "access", "validationOps", "engine"]
+    static let platformOnly: Set<String> = ["schemaVersion", "access", "validationOps", "engine", "control", "scores"]
     /// The Engine's own publisher (scores, engine health); not a brain.
     public static let platformWriter = "brain-platform"
 
@@ -148,7 +148,6 @@ public enum BrainOwnership {
         guard let root = p.first else { return false }
         if brainId == platformWriter {
             if platformOnly.contains(root) || (root == "health" && p.count >= 2 && (p[1] == "engine" || p[1] == "rtdb")) { return true }
-            if root == "brains" { return p.count >= 3 && p[2] == "score" }
             if root == "activity" { return p.count == 2 && p[1].contains("-\(platformWriter)-") }
             return false
         }

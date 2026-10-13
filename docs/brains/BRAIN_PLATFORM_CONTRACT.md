@@ -103,8 +103,8 @@ other. A VERSION/FINGERPRINT brain writes `stale: false` and omits `freshUntil`.
 | `/health/sources/{id}` | owner brain only | |
 | `/brains/{id}`, `/health/brains/{id}`, `/validation/{id}`, `/health/jobs/{jobId}` | that brain / that job | |
 | `/activity/{eventId}` | the brain named in the event; pruned only by that brain | §7 |
-| `/schemaVersion`, `/access/*`, `/health/engine`, `/health/rtdb`, `/validationOps`, `/engine/*` | the **platform writer** (`brainId = "brain-platform"`: the Engine's own score/health publisher), never a brain | |
-| `/brains/{id}/score` | that brain **or** the platform writer | the Engine-owned score publisher (Phase 5) computes every brain's score from published facts and frozen rubrics; a brain may also publish its own if it carries the same rubric |
+| `/schemaVersion`, `/access/*`, `/health/engine`, `/health/rtdb`, `/validationOps`, `/engine/*`, `/control/*`, `/scores/*` | the **platform writer** (`brainId = "brain-platform"`: the Engine's own score/health publisher), never a brain | |
+| `/scores/{brainId}`, `/scores/engine` | the platform writer only | **canonical score nodes** (Phase 5/6). A registry node is written whole by its brain, so a platform-written `/brains/{id}/score` was clobbered on every republish (found 2026-10-12); a brain MAY mirror its own score inside its registry but `/scores/{id}` is the truth and `control.brains[id].score` reads from it |
 
 A conforming writer validates every multi-path update against this table before sending it
 (`assert_owned` / `BrainOwnership.check`) and refuses the whole update on a violation.
@@ -159,8 +159,8 @@ schedule{cadence, jobId?, nextCheckAt?, running?, lockedUntil?}, models{active{m
 candidates[]}, versions[{version,date,note,status}], validation{ref,status}, sourceIds[], blockers[],
 descriptor{components{name→{status, inputs[], staleness, recomputeWhen[]}}}`.
 
-Optional (Phase 5/6 fill these): `score{value|null, scoreVersion, scoreRubric, scoreUpdatedAt,
-scoreBreakdown{dim→{value, weight, evidence}}, scoreBlockers[], nextScoreOpportunity}`,
+Optional: a mirror of the brain's `/scores/{id}` block (`score{value|null, scoreVersion, scoreRubric, scoreUpdatedAt,
+scoreBreakdown{dim→{value, weight, evidence}}, scoreBlockers[], nextScoreOpportunity}` — the canonical node is `/scores/{id}`, platform-written),
 `deploymentVersion`, `breakdowns{}`, brain-specific blocks (Clarity `sensorAuthority`, Wind extras).
 
 `readinessCounts` and `supportedLakeCount` are written **only from a full run**; a partial run keeps
