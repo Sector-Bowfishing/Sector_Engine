@@ -21,7 +21,7 @@ SOURCE_OWNERS = {
 ROLLUP_FLEET = {"lastUpdatedAt", "stale", "issueCount", "hasObservations"}
 ROLLUP_SNAPSHOT = {"generatedAt", "snapshotVersion", "evaluationTime"}
 LAKE_BRAIN_ONLY_FLEET = {"riverSystem", "lakeType"}
-PLATFORM_ONLY = {"schemaVersion", "access", "validationOps", "engine", "control", "scores"}
+PLATFORM_ONLY = {"schemaVersion", "access", "validationOps", "engine", "control", "scores", "jobs"}   # jobs: the /jobs contract (jobs.py)
 PLATFORM_WRITER = "brain-platform"       # the Engine's own publisher (scores, engine health); not a brain
 
 

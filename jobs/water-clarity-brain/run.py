@@ -292,9 +292,10 @@ def main() -> int:
     # counts span the whole directory: lakes not in this run keep their last published slot
     registry = cb.registry_entry(results, prev_fleet, now, status, last_error, rev, all_ids, last_success)
     sources = cb.source_records(results, now, run_rec)
+    # Job records for lake-surface-daily / hydrology-hourly / clarity-current-hourly / clarity-candidate-shadow are
+    # NOT written here any more: /jobs is the Engine's one canonical sync (sector_brain_platform.jobs, published by
+    # brain-orchestrator). A Brain that ran yesterday must not own today's job snapshots (cost audit 2026-10-13).
     jobs = {}
-    if not a.dry_run or os.environ.get("BRAIN_DRY_RUN_JOBS"):
-        jobs = {j: job_health(j, m, tokens) for j, m in cb.CATALOG["jobs"].items()}
     duration_ms = int((time.time() - t0) * 1000)
     jobs["water-clarity-brain"] = {"displayName": "water-clarity-brain", "brainId": cb.BRAIN_ID,
                                    "deploymentStatus": "SCHEDULED_JOB" if os.environ.get("CLOUD_RUN_JOB") else "MANUAL_RUN_NOT_DEPLOYED",

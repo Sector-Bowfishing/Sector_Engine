@@ -1,0 +1,4 @@
+__pycache__/
+.pytest_cache/
+# staged at deploy time by deploy-job.sh
+stage/

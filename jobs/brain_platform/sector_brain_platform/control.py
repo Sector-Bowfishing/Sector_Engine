@@ -32,6 +32,14 @@ def _strip(d):
     return d
 
 
+def _count(records, key: str) -> dict[str, int]:
+    out: dict[str, int] = {}
+    for r in records:
+        if isinstance(r, dict) and r.get(key):
+            out[str(r[key])] = out.get(str(r[key]), 0) + 1
+    return out
+
+
 def brain_stale(registry: dict | None, health: dict | None, now: dt.datetime) -> tuple[bool | None, str | None]:
     """The Engine's TIME rule for a brain as a whole: last successful run older than its staleAfterHours.
     VERSION/FINGERPRINT brains are never stale by age. None = unknown (never run / no rule)."""
@@ -85,7 +93,11 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
         return {"brainId": brain_id, "slot": slot, "displayName": display, "status": "NOT_REGISTERED", "health": "UNKNOWN", "stale": None}
     stale, why = brain_stale(reg, health, now)
     counts = reg.get("readinessCounts") or {}
-    scheduled = bool(((reg.get("schedule") or {}).get("jobId")) or any((j or {}).get("brainId") == brain_id for j in (jobs or {}).values()))
+    # `jobs` is /jobs (jobs-v1): a brain is scheduled when a job it owns runs on a schedule or by the orchestrator/dispatcher.
+    owned = [j for j in (jobs or {}).values() if isinstance(j, dict) and (j.get("owner") == brain_id or j.get("brainId") == brain_id)]
+    scheduled = any(j.get("executionMode") in ("SCHEDULED", "EVENT_DRIVEN") and j.get("brainPublishInJob") for j in owned) or \
+        bool((reg.get("schedule") or {}).get("jobId"))
+    execution = sorted({(j.get("executionMode") or "UNKNOWN") for j in owned if j.get("brainPublishInJob")}) or None
     blockers = []
     for b in reg.get("blockers") or []:
         blockers.append(b if isinstance(b, str) else (b.get("why") or b.get("id") or str(b)))
@@ -99,7 +111,7 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
         "healthAt": (health or {}).get("lastRun"), "lastSuccessfulRun": reg.get("lastSuccessfulRun"),
         "lastError": reg.get("lastError"), "stale": stale, "staleReason": why,
         "staleAfterHours": reg.get("staleAfterHours"), "stalenessModel": reg.get("stalenessModel"),
-        "scheduled": scheduled, "version": reg.get("version"),
+        "scheduled": scheduled, "executionModes": execution, "version": reg.get("version"),
         "score": _strip({k: (score or {}).get(k) for k in ("value", "scale", "basis", "scoreVersion", "completenessPct", "scoreUpdatedAt")}) or None,
         "nextOpportunity": (score or {}).get("nextScoreOpportunity"),
         "coverage": _strip({"directory": reg.get("directoryLakeCount"), "supported": reg.get("supportedLakeCount"),
@@ -137,22 +149,52 @@ def fleet_rollup(lake_key: str, row: dict | None, now: dt.datetime) -> dict | No
                    "rolledUpAt": iso(now)})
 
 
+def fleet_summary(fleet: dict, now: dt.datetime, directory_count: int | None = None) -> dict:
+    """The compact fleet summary Ops reads instead of all /lakeFleet rows: counts per slot and readiness, stale /
+    evidence-stale / issue totals, newest update. Published inside /control/overview.fleet (Phase 3, cost work 2026-10-13)."""
+    readiness_by_slot: dict[str, dict[str, int]] = {}
+    stale_slots: dict[str, int] = {}
+    published_by_slot: dict[str, int] = {}
+    evaluated = stale_lakes = evidence_stale_lakes = issues = with_slots = 0
+    newest = None
+    for row in fleet.values():
+        row = row or {}
+        for slot, r in (row.get("readiness") or {}).items():
+            readiness_by_slot.setdefault(slot, {})
+            readiness_by_slot[slot][r] = readiness_by_slot[slot].get(r, 0) + 1
+        slots = row.get("slots") or {}
+        any_stale = any_ev = False
+        for slot, s in slots.items():
+            if not isinstance(s, dict):
+                continue
+            published_by_slot[slot] = published_by_slot.get(slot, 0) + 1
+            if s.get("stale"):
+                stale_slots[slot] = stale_slots.get(slot, 0) + 1
+                any_stale = True
+            if s.get("evidenceStale"):
+                any_ev = True
+            issues += int(s.get("issueCount") or 0)
+            for k in ("generatedAt", "lastUpdatedAt"):
+                if s.get(k) and (newest is None or s[k] > newest):
+                    newest = s[k]
+            if slot == "intelligence" and s.get("kind") == "evaluated":
+                evaluated += 1
+        if slots:
+            with_slots += 1
+        stale_lakes += any_stale
+        evidence_stale_lakes += any_ev
+    return _strip({"lakes": len(fleet), "directoryLakes": directory_count, "withSlots": with_slots, "evaluatedByIntelligence": evaluated,
+                   "staleLakes": stale_lakes, "evidenceStaleLakes": evidence_stale_lakes, "issueCount": issues,
+                   "staleSlots": stale_slots, "publishedBySlot": published_by_slot, "readinessBySlot": readiness_by_slot,
+                   "newestUpdateAt": newest, "summarizedAt": iso(now),
+                   "note": "compact summary of /lakeFleet; per-lake detail stays in /control/fleet/{k}"})
+
+
 def overview(*, brains: dict, health: dict, validation: dict, scores: dict, engine: dict | None, fleet: dict, sources: dict,
              health_sources: dict, jobs: dict, now: dt.datetime) -> dict:
     """The one node Ops reads for the command center."""
     summaries = {b: brain_summary(b, brains.get(b), health.get(b), validation.get(b), scores.get(b), jobs, now) for b in ALL_BRAINS}
-    readiness_by_slot: dict[str, dict[str, int]] = {}
-    stale_slots: dict[str, int] = {}
-    evaluated = 0
-    for row in fleet.values():
-        for slot, r in ((row or {}).get("readiness") or {}).items():
-            readiness_by_slot.setdefault(slot, {})
-            readiness_by_slot[slot][r] = readiness_by_slot[slot].get(r, 0) + 1
-        for slot, s in ((row or {}).get("slots") or {}).items():
-            if isinstance(s, dict) and s.get("stale"):
-                stale_slots[slot] = stale_slots.get(slot, 0) + 1
-            if slot == "intelligence" and isinstance(s, dict) and s.get("kind") == "evaluated":
-                evaluated += 1
+    fs = fleet_summary(fleet, now, (brains.get("lake-brain") or {}).get("directoryLakeCount"))
     src = {}
     for sid, rec in (sources or {}).items():
         rec = rec or {}
@@ -188,7 +230,13 @@ def overview(*, brains: dict, health: dict, validation: dict, scores: dict, engi
                                                      "byBrain": {b: (deps.get(b) or {}).get("connectionStatus") for b in UPSTREAM}},
                           "worstBrainHealth": worst, "brainsConformant": sum(1 for b in ALL_BRAINS if (summaries[b].get("platform") or {}).get("conformant"))}),
         "brains": summaries,
-        "fleet": _strip({"lakes": len(fleet), "evaluatedByIntelligence": evaluated, "staleSlots": stale_slots, "readinessBySlot": readiness_by_slot}),
+        "fleet": fs,
+        "jobs": _strip({"total": len(jobs or {}),
+                        "byClassification": _count((jobs or {}).values(), "classification"),
+                        "byExecutionMode": _count((jobs or {}).values(), "executionMode"),
+                        "byRuntimeStatus": _count((jobs or {}).values(), "runtimeStatus"),
+                        "warnings": sorted(f"{jid}: {w}" for jid, j in (jobs or {}).items() if isinstance(j, dict) for w in (j.get("warnings") or []))[:20],
+                        "syncedAt": max((j.get("syncedAt") for j in (jobs or {}).values() if isinstance(j, dict) and j.get("syncedAt")), default=None)}),
         "sources": src,
         "workNext": [{"brainId": b, "score": summaries[b].get("score", {}).get("value") if summaries[b].get("score") else None,
                       "why": summaries[b].get("nextOpportunity")}

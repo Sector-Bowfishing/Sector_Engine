@@ -9,6 +9,7 @@ let package = Package(
         .executable(name: "SectorEngineServer", targets: ["SectorEngineServer"]),
         .executable(name: "ClarityReplay", targets: ["ClarityReplay"]),
         .executable(name: "WaterTempBrainJob", targets: ["WaterTempBrainJob"]),
+        .executable(name: "LakeBrainJob", targets: ["LakeBrainJob"]),
     ],
     dependencies: [
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0"),

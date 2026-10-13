@@ -56,7 +56,9 @@ def test_overview_is_owned_by_the_platform_writer_and_explains_work_next():
                  health_sources={"noaa-nbm-v5": {"status": "HEALTHY", "failures24h": 0}}, jobs={}, now=NOW)
     assert o["engine"]["score"] == 6.1 and o["engine"]["dependencyCompleteness"]["consumed"] == 5 and o["engine"]["dependencyCompleteness"]["consumedByCustomerPath"] == 0
     assert o["engine"]["worstBrainHealth"] == "UNKNOWN" and o["engine"]["brainsConformant"] == 1
-    assert o["fleet"] == {"lakes": 2, "evaluatedByIntelligence": 1, "staleSlots": {"wind": 1}, "readinessBySlot": {"wind": {"CALIBRATION": 1}}}
+    f = o["fleet"]
+    assert (f["lakes"], f["evaluatedByIntelligence"], f["staleSlots"], f["readinessBySlot"]) == (2, 1, {"wind": 1}, {"wind": {"CALIBRATION": 1}})
+    assert f["staleLakes"] == 1 and f["withSlots"] == 2 and f["publishedBySlot"]["wind"] == 2 and f["summarizedAt"] == o["updatedAt"]
     assert o["sources"]["noaa-nbm-v5"]["stale"] is True and o["sources"]["noaa-nbm-v5"]["failures24h"] == 0
     assert [w["brainId"] for w in o["workNext"]][:2] == ["wind", "sector-intelligence"]
     assert o["brains"]["lake-brain"]["status"] == "NOT_REGISTERED"

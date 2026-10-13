@@ -324,6 +324,26 @@
       "brainId": "sector-intelligence",
       "path": "scores/sector-intelligence",
       "allowed": false
+    },
+    {
+      "brainId": "wind",
+      "path": "jobs/wind-hourly",
+      "allowed": false
+    },
+    {
+      "brainId": "water-clarity",
+      "path": "jobs/lake-surface-daily",
+      "allowed": false
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "jobs/wind-hourly",
+      "allowed": true
+    },
+    {
+      "brainId": "wind",
+      "path": "health/jobs/wind-hourly",
+      "allowed": true
     }
   ],
   "sourceOwners": {

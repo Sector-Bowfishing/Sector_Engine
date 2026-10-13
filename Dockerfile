@@ -24,6 +24,11 @@ RUN swift build -c release --product WaterTempBrainJob \
       -Xswiftc -static-stdlib \
     || swift build -c release --product WaterTempBrainJob
 RUN cp "$(swift build -c release --show-bin-path)/WaterTempBrainJob" /build/WaterTempBrainJob
+# The Lake Brain job (pilot lakes; started by brain-orchestrator when due): jobs/lake-brain/deploy-job.sh.
+RUN swift build -c release --product LakeBrainJob \
+      -Xswiftc -static-stdlib \
+    || swift build -c release --product LakeBrainJob
+RUN cp "$(swift build -c release --show-bin-path)/LakeBrainJob" /build/LakeBrainJob
 
 # ── Runtime stage ───────────────────────────────────────────────────────────
 # Slim image: Swift runtime libraries, no compiler. Add TLS roots + timezone data
@@ -35,6 +40,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY --from=build /build/SectorEngineServer /app/SectorEngineServer
 COPY --from=build /build/WaterTempBrainJob /app/WaterTempBrainJob
+COPY --from=build /build/LakeBrainJob /app/LakeBrainJob
 
 # Cloud Run sets PORT; the server reads it and binds 0.0.0.0.
 ENV PORT=8080

@@ -24,7 +24,7 @@ from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check
                                    prune_activity, score_biological, score_engine, score_intelligence, score_lake)
 
 WRITER = "brain-platform"
-FROZEN = os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json")
+FROZEN = os.environ.get("FROZEN_SCORES", os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json"))
 UPSTREAM = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")
 
 
@@ -57,7 +57,8 @@ def fetch_facts(db) -> dict:
     fleet_readiness = {k: ((row or {}).get("readiness") or {}) for k, row in fleet.items()}
     return {
         "brains": brains, "health": health, "validation": validation, "fleet": fleet,
-        "sources": db.get("sources") or {}, "healthSources": db.get("health/sources") or {}, "jobs": db.get("health/jobs") or {},
+        "sources": db.get("sources") or {}, "healthSources": db.get("health/sources") or {},
+        "jobs": db.get("jobs") or {},                     # the Engine's /jobs contract (jobs-v1), not the brains' /health/jobs
         "intelStates": intel_states,
         "engine": {"intelligenceRegistry": intel_reg, "validation": validation, "healthBrains": health,
                    "healthJobs": db.get("health/jobs") or {}, "fleetReadiness": fleet_readiness,
@@ -125,6 +126,7 @@ def main() -> int:
     ap.add_argument("--write", action="store_true", help="publish to the Brain RTDB (default: dry run)")
     ap.add_argument("--db", default=None, help="Brain RTDB URL (default: the contract's)")
     ap.add_argument("--report", default=None, help="write the full report JSON here")
+    ap.add_argument("--if-changed", action="store_true", help="write a control node only when its content (minus timestamps) differs from what is published")
     a = ap.parse_args()
     now = dt.datetime.now(dt.timezone.utc)
     db = BrainRtdb(a.db, brain_id=WRITER) if a.db else BrainRtdb(brain_id=WRITER)
@@ -169,18 +171,48 @@ def main() -> int:
           + ", ".join(f"{w['brainId']} ({w.get('score')})" for w in control.get("workNext", [])[:3]))
     for k, b in betas.items():
         print(f"{'BETA':22s} {b['lakeId']:18s} {b['betaReadiness']:10s} blockers {[x['code'] + ':' + str(x.get('slot')) for x in b['blockers']]} warnings {len(b['warnings'])}")
+    if a.if_changed:                                          # publish only after a change (cost work 2026-10-13, Phase 14)
+        control_updates = changed_control(control_updates, db.get("control") or {})
     if a.write:
         if updates:
             db.update(updates)
         stale_mirrors = {f"brains/{b}/score": None for b in UPSTREAM if (facts["brains"].get(b) or {}).get("score") is not None}
         if stale_mirrors:                                     # retire the clobber-prone sub-nodes the first publish wrote
             BrainRtdb(brain_id=None).update(stale_mirrors)
-        db.update(control_updates)
+        if control_updates:
+            db.update(control_updates)
         pruned = prune_activity(db.get("activity"), WRITER, now)
         if pruned:
             db.update(pruned)
         print(f"published {len(updates)} score path(s) + {len(control_updates)} control path(s); pruned {len(pruned)} old platform event(s)")
     return 0
+
+
+VOLATILE = ("updatedAt", "rolledUpAt", "summarizedAt", "syncedAt", "evaluatedAt")
+
+
+def _stable(v):
+    if isinstance(v, dict):
+        return {k: _stable(x) for k, x in v.items() if k not in VOLATILE}
+    if isinstance(v, list):
+        return [_stable(x) for x in v]
+    return v
+
+
+def changed_control(control_updates: dict, published: dict) -> dict:
+    """Only the control paths whose content differs from what is published, ignoring the timestamps every publish refreshes.
+    The overview is always rewritten when any sibling changed (its updatedAt then means something)."""
+    def at(path):
+        node = {"control": published}
+        for p in path.split("/"):
+            node = node.get(p) if isinstance(node, dict) else None
+            if node is None:
+                return None
+        return node
+    out = {p: v for p, v in control_updates.items() if _stable(v) != _stable(at(p))}
+    if out and "control/overview" in control_updates:
+        out["control/overview"] = control_updates["control/overview"]
+    return out
 
 
 if __name__ == "__main__":
