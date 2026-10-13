@@ -1,0 +1,21 @@
+{
+ "clarityVisibility": {
+  "centralFt": 3.6747840209192324,
+  "confidence": "low",
+  "limitations": [
+   "Not calibrated: the rain-decay curve is heuristic, so no range is stated.",
+   "One value for the spot: creek backs and open water are not told apart."
+  ],
+  "model": "rain-decay-v0",
+  "provenance": "Rain-decay estimate from Open-Meteo rain at the point, 0.21 in in 48 h.",
+  "source": "rainDecayModel"
+ },
+ "clarityRain": null,
+ "clarityGauges": [],
+ "resolvedLake": {
+  "id": "Aleknagik|AK",
+  "name": "Aleknagik",
+  "state": "AK"
+ },
+ "generatedAt": "2026-10-12T06:12:13Z"
+}

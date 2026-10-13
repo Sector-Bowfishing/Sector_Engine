@@ -1,0 +1,8 @@
+{
+ "_overlay": {"of": "jobs/water-clarity-brain/catalog.json", "visibility": "SYNTHETIC TEST FIXTURE - not research results"},
+ "models": [{"modelId": "r3.1", "method": "EXAMPLE_METHOD", "researchScore": {"value": 0, "scale": 10}}],
+ "certifications": {"r3_1": {"researchScore": {"value": 0, "scale": 10},
+   "bars": [{"barId": "EXAMPLE_BAR", "comparator": ">=", "threshold": 0, "value": 0, "unit": "score", "pass": true, "population": "EXAMPLE"}]}},
+ "sensorAuthority": {"byProcessingPath": {"r3-usgs-aqr": {"evidence": {"example": 0}}}},
+ "validation": {"candidates": {"r3_1": {"sampleCount": 0, "lakeCount": 0, "metrics": {"exampleMetric": 0}}}}
+}
