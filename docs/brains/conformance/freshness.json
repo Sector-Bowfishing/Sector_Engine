@@ -1,0 +1,15 @@
+{
+  "description": "freshness envelope: stale = TIME rule only (now - generatedAt > staleAfterHours); evidenceStale is the brain's rule; freshUntil = generatedAt + staleAfterHours for TIME brains, absent otherwise.",
+  "cases": [
+    {"generatedAt": "2026-10-12T10:00:00Z", "now": "2026-10-12T12:00:00Z", "staleAfterHours": 3, "stalenessModel": "TIME", "evidenceStale": false,
+     "expect": {"stale": false, "freshUntil": "2026-10-12T13:00:00Z", "staleReasonsCount": 0}},
+    {"generatedAt": "2026-10-12T08:00:00Z", "now": "2026-10-12T12:00:00Z", "staleAfterHours": 3, "stalenessModel": "TIME", "evidenceStale": false,
+     "expect": {"stale": true, "freshUntil": "2026-10-12T11:00:00Z", "staleReasonsCount": 1}},
+    {"generatedAt": "2026-10-12T11:30:00Z", "now": "2026-10-12T12:00:00Z", "staleAfterHours": 6, "stalenessModel": "TIME", "evidenceStale": true, "evidenceReason": "no fresh sensor reading",
+     "expect": {"stale": false, "freshUntil": "2026-10-12T17:30:00Z", "staleReasonsCount": 1}},
+    {"generatedAt": "2026-01-01T00:00:00Z", "now": "2026-10-12T12:00:00Z", "staleAfterHours": 24, "stalenessModel": "VERSION", "evidenceStale": false,
+     "expect": {"stale": false, "freshUntil": null, "staleReasonsCount": 0}},
+    {"generatedAt": "2026-10-12T09:00:00Z", "now": "2026-10-12T12:00:00Z", "staleAfterHours": 3, "stalenessModel": "TIME", "evidenceStale": false,
+     "expect": {"stale": false, "freshUntil": "2026-10-12T12:00:00Z", "staleReasonsCount": 0}, "note": "exactly at the boundary is fresh"}
+  ]
+}

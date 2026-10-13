@@ -1,0 +1,14 @@
+{
+  "description": "eventId = {ms13}-{brainId}-{nnn}; lexical order == time order across brains.",
+  "cases": [
+    {"atMs": 1791784800000, "brainId": "water-temp", "n": 1, "id": "1791784800000-water-temp-001"},
+    {"atMs": 1791784800000, "brainId": "wind", "n": 12, "id": "1791784800000-wind-012"},
+    {"atMs": 946684800000, "brainId": "lake-brain", "n": 0, "id": "0946684800000-lake-brain-000"},
+    {"atMs": 1791784800123, "brainId": "sector-intelligence", "n": 999, "id": "1791784800123-sector-intelligence-999"}
+  ],
+  "ordering": {
+    "ids": ["1791784800123-sector-intelligence-999", "0946684800000-lake-brain-000", "1791784800000-wind-012", "1791784800000-water-temp-001"],
+    "sorted": ["0946684800000-lake-brain-000", "1791784800000-water-temp-001", "1791784800000-wind-012", "1791784800123-sector-intelligence-999"]
+  },
+  "pattern": "^[0-9]{13}-[a-z0-9-]+-[0-9]{3}$"
+}

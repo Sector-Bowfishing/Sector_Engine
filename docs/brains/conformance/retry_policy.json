@@ -1,0 +1,23 @@
+{
+  "description": "Retry only on transport errors, 5xx and 429. attempts=4, backoff seconds = 1.5*2^n.",
+  "attempts": 4,
+  "backoffSeconds": [1.5, 3.0, 6.0],
+  "decisions": [
+    {"status": null, "retry": true, "note": "transport error"},
+    {"status": 500, "retry": true},
+    {"status": 503, "retry": true},
+    {"status": 429, "retry": true},
+    {"status": 400, "retry": false},
+    {"status": 401, "retry": false},
+    {"status": 403, "retry": false},
+    {"status": 404, "retry": false},
+    {"status": 412, "retry": false},
+    {"status": 200, "retry": false, "note": "success"}
+  ],
+  "refusedUrls": [
+    "https://sector-9393c-default-rtdb.firebaseio.com",
+    "https://sector-dev-1f4d0.firebaseio.com",
+    "https://some-other-db.firebaseio.com"
+  ],
+  "acceptedUrls": ["https://sector-brain.firebaseio.com", "https://sector-brain.firebaseio.com/"]
+}

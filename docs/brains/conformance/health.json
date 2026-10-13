@@ -1,0 +1,13 @@
+{
+  "description": "Run health from attempted/ok/failed counts. FAILED: aborted or publishFailed with nothing written. DEGRADED: >25% unavailable or publish partially failed. WARNING: 5-25% unavailable or partial run. HEALTHY otherwise. UNKNOWN: nothing attempted.",
+  "cases": [
+    {"attempted": 621, "ok": 621, "failed": 0, "aborted": false, "partial": false, "publishFailed": false, "health": "HEALTHY"},
+    {"attempted": 621, "ok": 600, "failed": 21, "aborted": false, "partial": false, "publishFailed": false, "health": "HEALTHY", "note": "3.4% < 5%"},
+    {"attempted": 621, "ok": 560, "failed": 61, "aborted": false, "partial": false, "publishFailed": false, "health": "WARNING", "note": "9.8%"},
+    {"attempted": 621, "ok": 400, "failed": 221, "aborted": false, "partial": false, "publishFailed": false, "health": "DEGRADED", "note": "35.6%"},
+    {"attempted": 5, "ok": 5, "failed": 0, "aborted": false, "partial": true, "publishFailed": false, "health": "WARNING", "note": "partial run"},
+    {"attempted": 621, "ok": 621, "failed": 0, "aborted": false, "partial": false, "publishFailed": true, "health": "DEGRADED", "note": "lakes written, tail publish failed"},
+    {"attempted": 621, "ok": 0, "failed": 0, "aborted": true, "partial": false, "publishFailed": false, "health": "FAILED"},
+    {"attempted": 0, "ok": 0, "failed": 0, "aborted": false, "partial": false, "publishFailed": false, "health": "UNKNOWN"}
+  ]
+}

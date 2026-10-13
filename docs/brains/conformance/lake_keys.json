@@ -1,0 +1,19 @@
+{
+  "description": "lakeKey = replace every run of non-[A-Za-z0-9] with one underscore; collisions fail the run.",
+  "cases": [
+    {"lakeId": "Guntersville|AL", "key": "Guntersville_AL"},
+    {"lakeId": "Big Lake|AK", "key": "Big_Lake_AK"},
+    {"lakeId": "Lake O' the Pines|TX", "key": "Lake_O_the_Pines_TX"},
+    {"lakeId": "St. Marys|GA", "key": "St_Marys_GA"},
+    {"lakeId": "Lanier (Sidney Lanier)|GA", "key": "Lanier_Sidney_Lanier_GA"},
+    {"lakeId": "Lake Winnebago/Butte des Morts|WI", "key": "Lake_Winnebago_Butte_des_Morts_WI"},
+    {"lakeId": "D'Arbonne|LA", "key": "D_Arbonne_LA"},
+    {"lakeId": "Pickwick Lake|TN", "key": "Pickwick_Lake_TN"}
+  ],
+  "collisions": [
+    {"ids": ["Big Lake|AK", "Big.Lake|AK"], "collides": true},
+    {"ids": ["Guntersville|AL", "Wheeler|AL"], "collides": false}
+  ],
+  "illegal_keys": [".", "$", "#", "[", "]", "/", "a.b", "a$b", "a/b", "a\u0001b"],
+  "legal_keys": ["Guntersville_AL", "water-temp", "20261012T042000000-x", "1791784800000-water-temp-001"]
+}

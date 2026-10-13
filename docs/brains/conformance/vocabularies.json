@@ -1,0 +1,31 @@
+{
+  "health": ["HEALTHY", "WARNING", "DEGRADED", "FAILED", "UNKNOWN", "NOT_CONFIGURED"],
+  "readiness": ["DISCOVERED", "PROFILED", "CALIBRATION", "BETA", "VALIDATED", "PRODUCTION", "DEGRADED", "BLOCKED"],
+  "readinessLadder": ["DISCOVERED", "PROFILED", "CALIBRATION", "BETA", "VALIDATED", "PRODUCTION"],
+  "brainStatus": ["DISCOVERED", "PROFILED", "CALIBRATION", "BETA", "VALIDATED", "PRODUCTION"],
+  "modelLifecycle": ["RESEARCH", "CANDIDATE", "SHADOW", "REVIEW", "PRODUCTION", "RETIRED"],
+  "versionStatus": ["CURRENT", "SHADOW", "CANDIDATE", "RETIRED"],
+  "stateKind": ["measured", "modeled", "observed", "proxy", "analysis", "forecast", "evaluated", "not_evaluated", "unavailable"],
+  "stalenessModel": ["TIME", "VERSION", "FINGERPRINT"],
+  "severity": ["info", "success", "warning", "critical"],
+  "activityKind": ["brain.registered", "brain.version", "brain.updated", "run.failed", "run.degraded", "health.changed", "readiness.promoted", "readiness.changed", "model.changed", "source.changed", "score.changed"],
+  "brains": {
+    "lake-brain": {"slot": "lake", "snapshotField": "lakeState", "displayName": "Lake Brain"},
+    "water-temp": {"slot": "waterTemp", "snapshotField": "waterTemperature", "displayName": "Water Temperature"},
+    "water-clarity": {"slot": "waterClarity", "snapshotField": "waterClarity", "displayName": "Water Clarity"},
+    "wind": {"slot": "wind", "snapshotField": "wind", "displayName": "Wind"},
+    "biological-state": {"slot": "biology", "snapshotField": "biologicalState", "displayName": "Biological Brain"},
+    "sector-intelligence": {"slot": "intelligence", "snapshotField": "sectorIntelligence", "displayName": "Sector Intelligence"}
+  },
+  "promotions": [
+    {"from": "CALIBRATION", "to": "VALIDATED", "promoted": true},
+    {"from": "VALIDATED", "to": "CALIBRATION", "promoted": false},
+    {"from": "PRODUCTION", "to": "DEGRADED", "promoted": false},
+    {"from": "DEGRADED", "to": "PRODUCTION", "promoted": false, "note": "off-ladder to ladder is a change, not a promotion"},
+    {"from": "DISCOVERED", "to": "PROFILED", "promoted": true}
+  ],
+  "legacyMappings": {
+    "modelLifecycle": {"ACTIVE_PRODUCTION": "PRODUCTION", "RESEARCH_CANDIDATE": "CANDIDATE", "PRODUCTION_EVIDENCE": "PRODUCTION"},
+    "stateKind": {"OBSERVED": "observed", "PROXY": "proxy", "UNAVAILABLE": "unavailable", "MEASURED": "measured", "MODELED": "modeled", "NOT_EVALUATED": "not_evaluated"}
+  }
+}

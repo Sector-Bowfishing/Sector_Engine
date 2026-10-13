@@ -171,3 +171,38 @@ research exposed ✓ · no serving image from Brain/research branches ✓ · tes
 (Swift suite unchanged since Phase 2 at 169/169; Python 14 + 55).
 
 **Rollback:** `git reset --hard e7735791` (Phase 2 checkpoint).
+
+---
+
+## Phase 4 — Unified Brain Platform contract — PASS (Wind on a documented adapter)
+
+**Goal:** one Engine-owned contract; conforming Swift and Python implementations; one shared
+conformance suite; the Water Temp pruning bug fixed.
+
+**Delivered on main**
+- `docs/brains/BRAIN_PLATFORM_CONTRACT.md` v1.0 — instance/keys/atomicity, brain↔slot table, closed
+  vocabularies (health, readiness ladder, brain status, model lifecycle, version status, lowercase
+  state `kind`, staleness model, severity, activity kinds), the per-lake state envelope with the
+  single freshness block (`stale` = time rule, `evidenceStale` = brain rule), shared-field ownership
+  (no `lastUpdatedAt`/snapshot `generatedAt` writes by brains; `sources.brains` as a map; source owner
+  table), activity id `{ms13}-{brainId}-{nnn}` + own-brain pruning by `at`, transport policy, registry
+  shape incl. the Phase 5 `score` block, failure path, plan/descriptor, migration status.
+- `docs/brains/conformance/*.json` — 8 fixture files (keys, event ids, pruning, retry, health,
+  freshness, ownership, vocabularies).
+- Python `jobs/brain_platform/sector_brain_platform/` (stdlib-only; keys, timeutil, enums, activity,
+  freshness, health, ownership, rtdb with DryRunStore, failure) — **12/12** conformance tests.
+- Swift `Sources/SectorEngine/Brain/{BrainPlatform,BrainContract,BrainRTDBStore}.swift` (keeps the
+  lake-brain/water-temp API names; adds vocabularies, activity, freshness, health, ownership,
+  failure path, policy-compliant `RTDBRestStore`, `InMemoryBrainStore`) — **11/11** conformance tests;
+  full suite **180/180**.
+- **Water Temp pruning bug fixed** at the source: `brain/water-temp` @ `ec0ae0fa` (pushed; 17/17
+  Brain tests incl. a regression test). The shared Swift platform carries the same correct pruner.
+- Wind: **temporary adapter** (own writer, no pruning expected of it) documented in contract §13.
+
+**Vocabulary resolutions:** `stale`/`evidenceStale` split; readiness is never an evidence class;
+`ACTIVE_PRODUCTION`→`PRODUCTION`, `RESEARCH_CANDIDATE`→`CANDIDATE`; `stateType`→`kind` (lowercase);
+`failures24h` unknown → absent; last-writer-wins fields reassigned to the Orchestrator rollup.
+
+**Not done here (Phase 7):** migrating each Brain's publisher onto the shared implementations.
+
+**Checkpoint:** this commit. **Rollback:** `git reset --hard a9a7a272` (Phase 3).

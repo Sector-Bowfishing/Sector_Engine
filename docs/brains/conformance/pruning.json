@@ -1,0 +1,45 @@
+{
+  "description": "A brain prunes ONLY its own events, by the `at` field (never by key), keeping <= keep and <= maxAgeDays. Legacy-keyed events of other brains are untouched.",
+  "keep": 80,
+  "maxAgeDays": 30,
+  "now": "2026-10-12T12:00:00Z",
+  "cases": [
+    {
+      "name": "mixed key schemes: only own old events go",
+      "brainId": "water-temp",
+      "activity": {
+        "20260901T000000000-water-temp-brain-registered": {"at": "2026-09-01T00:00:00Z", "brainId": "water-temp", "kind": "brain.registered"},
+        "20261011T000000000-water-temp-run": {"at": "2026-10-11T00:00:00Z", "brainId": "water-temp", "kind": "brain.updated"},
+        "1756684800000-wc-001": {"at": "2026-09-01T00:00:00Z", "brainId": "water-clarity", "kind": "brain.registered"},
+        "1791784800000-wind-001": {"at": "2026-10-12T00:00:00Z", "brainId": "wind", "kind": "brain.updated"},
+        "1756684800000_wind_000": {"at": "2026-09-01T00:00:00Z", "brainId": "wind", "kind": "version"},
+        "orphan-no-brain": {"at": "2026-01-01T00:00:00Z", "kind": "legacy"}
+      },
+      "expectDeleted": ["20260901T000000000-water-temp-brain-registered"]
+    },
+    {
+      "name": "cap by count keeps the newest by at, not by key",
+      "brainId": "x",
+      "keep": 2,
+      "activity": {
+        "k3": {"at": "2026-10-12T03:00:00Z", "brainId": "x"},
+        "k1": {"at": "2026-10-12T01:00:00Z", "brainId": "x"},
+        "k2": {"at": "2026-10-12T02:00:00Z", "brainId": "x"},
+        "zzz-other": {"at": "2026-10-12T00:00:00Z", "brainId": "y"}
+      },
+      "expectDeleted": ["k1"]
+    },
+    {
+      "name": "nothing of mine, nothing deleted",
+      "brainId": "biological-state",
+      "activity": {"1756684800000-wc-001": {"at": "2026-09-01T00:00:00Z", "brainId": "water-clarity"}},
+      "expectDeleted": []
+    },
+    {
+      "name": "event with unparseable at counts as old only if it is mine? No: unparseable at is kept (unknown stays unknown)",
+      "brainId": "x",
+      "activity": {"k1": {"at": "garbage", "brainId": "x"}, "k2": {"brainId": "x"}},
+      "expectDeleted": []
+    }
+  ]
+}
