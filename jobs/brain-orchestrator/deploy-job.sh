@@ -45,6 +45,11 @@ for j in lake-brain water-temp-brain; do
   fi
 done
 
+echo "▶ stale-score guard (generated Brain score blocks must not be older than their Brain's branch)"
+if ! python3 "$ROOT/jobs/brain-scores/check_score_artifacts.py"; then
+  if [[ "${ALLOW_STALE_SCORES:-0}" == "1" ]]; then echo "  !! ALLOW_STALE_SCORES=1: deploying with a stale score artifact (record the decision)"; else echo "  refusing to deploy: carry the newer generated score block first (docs/brains/scoring/SCORE_ARTIFACT_DURABILITY.md)"; exit 1; fi
+fi
+
 echo "▶ stage the repo layout (commit $COMMIT)"
 rm -rf stage && mkdir -p stage/jobs stage/docs/brains/scoring
 cp -R "$ROOT/jobs/brain_platform" stage/jobs/brain_platform

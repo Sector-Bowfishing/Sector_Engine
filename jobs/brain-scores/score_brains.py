@@ -89,7 +89,9 @@ def compute(facts: dict, now: dt.datetime) -> dict:
 
 def _content(score: dict | None) -> dict:
     """A score block without its refresh timestamp, for comparing substance."""
-    return {k: v for k, v in (score or {}).items() if k not in ("scoreUpdatedAt", "updatedAt")}
+    # RTDB does not store empty objects/arrays, so a block computed with `scoreBreakdown: {}` reads back WITHOUT the key; treating {} / [] / None as
+    # absent keeps the comparison stable (otherwise every frozen block and the Engine block were rewritten every cycle with no change in content).
+    return {k: v for k, v in (score or {}).items() if k not in ("scoreUpdatedAt", "updatedAt") and v not in (None, {}, [])}
 
 
 def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None,

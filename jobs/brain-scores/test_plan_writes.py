@@ -60,3 +60,15 @@ def test_engine_node_follows_the_same_rule():
     updates, changed = plan_writes(all_scores(), brains(), NOW, eng_new, eng_old, all_scores())
     assert "scores/engine" in updates and "engine/score" in updates and not any(k.startswith("activity/") for k in updates)
     assert "breakdown refreshed" in changed[0]
+
+
+def test_empty_containers_read_back_from_rtdb_do_not_trigger_a_rewrite():
+    """RTDB drops empty objects/arrays: a frozen block computed with scoreBreakdown {} is published WITHOUT the key. That must not look like a change every cycle."""
+    computed = {b: {"value": 3.0, "scale": 10, "basis": "FROZEN", "scoreVersion": "v1", "scoreUpdatedAt": "2026-10-13T19:00:00Z", "scoreBreakdown": {}, "scoreBlockers": [{"gate": "g", "why": "w"}]} for b in UPSTREAM}
+    published = {b: {k: v for k, v in blk.items() if k != "scoreBreakdown"} for b, blk in computed.items()}          # what a read-back looks like
+    updates, changed = plan_writes(computed, brains(), NOW, None, None, published)
+    assert updates == {} and changed == []
+    # a real change in a populated breakdown still rewrites
+    computed["wind"]["scoreBreakdown"] = {"x": {"value": 1}}
+    updates, changed = plan_writes(computed, brains(), NOW, None, None, published)
+    assert "scores/wind" in updates and all(k == "scores/wind" for k in updates)

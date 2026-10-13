@@ -92,10 +92,17 @@ def test_intelligence_today_is_one():
 
 def test_frozen_scores_pass_through_verbatim():
     fz = json.load(open(os.path.join(FIX, "frozen-scores.json")))
-    for bid, expect in (("water-temp", 3.0), ("water-clarity", 8.0), ("wind", 3.1)):
+    for bid, expect in (("water-temp", 3.0), ("water-clarity", 8.0)):
         s = frozen_score(fz[bid])
         assert s["value"] == expect and s["basis"] == "FROZEN" and s["scale"] == 10
         assert s["scoreVersion"] and s["scoreRubric"] and s["scoreUpdatedAt"] and s["scoreBlockers"]
+    # Wind's block is GENERATED from the canonical Wind scorer (jobs/wind-hourly/research/wind_score_entry.py), not typed: it moves with live days,
+    # so the test pins the contract (published verbatim, complete, sourced) rather than a number.
+    w = frozen_score(fz["wind"])
+    assert w["value"] == fz["wind"]["value"] and w["basis"] in ("FROZEN", "COMPUTED") and w["scale"] == 10 and 0 < w["value"] <= 10
+    assert w["scoreVersion"] == "wind-certification-rubric-v1" and w["scoreRubric"] and w["scoreUpdatedAt"] and w["scoreBlockers"]
+    if w["basis"] == "COMPUTED":
+        assert w["scoreBreakdown"] and w["uncapped"] is not None and w["evidence"]["scorerCode"]
 
 
 from sector_brain_platform import score_engine
