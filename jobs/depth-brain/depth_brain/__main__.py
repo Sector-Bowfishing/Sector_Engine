@@ -41,6 +41,26 @@ def load_lake_states(spec: str, manifest: dict) -> dict:
     raise SystemExit(f"unknown --lake-states {spec!r}")
 
 
+def refresh_paths() -> dict:
+    spec = json.load(open(os.path.join(HERE, "data", "manifest_inputs.json")))["paths"]
+    repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    return {k: (os.path.join(repo, v[6:]) if v.startswith("@repo/") else os.path.join(HERE, "data", v)) for k, v in spec.items()}
+
+
+def run_refresh(a) -> int:
+    cur = json.load(open(DEFAULT_MANIFEST))
+    version = a.version or cur.get("manifestVersion")
+    new = cand.build(refresh_paths(), version)
+    strip = lambda m: json.dumps({**m, "manifestVersion": "x"}, sort_keys=True)
+    same = strip(new) == strip(cur)
+    if a.check:
+        print(json.dumps({"reproducible": same, "lakes": new["summary"]["lakes"], "shiftPossible": new["summary"]["shiftPossible"]}))
+        return 0 if same else 1
+    json.dump(new, open(DEFAULT_MANIFEST, "w"), indent=1, sort_keys=True)
+    print(json.dumps({"version": version, "changed": not same, **{k: new["summary"][k] for k in ("lakes", "shiftPossible", "rollout", "datumStatus")}}, indent=1))
+    return 0
+
+
 PROGRESS_LOG = os.path.join(HERE, "..", "..", "..", "docs", "brains", "depth", "data", "depth_progress_log.jsonl")
 
 
@@ -88,6 +108,9 @@ def main(argv=None) -> int:
     r.add_argument("--log", action="store_true")
     r.add_argument("--cycle", default="unnamed")
     r.add_argument("--note", default="")
+    f = sub.add_parser("refresh", help="rebuild candidates.json from the committed input snapshots (data/manifest_inputs.json); --check only verifies it reproduces")
+    f.add_argument("--version", default=None)
+    f.add_argument("--check", action="store_true")
     q = sub.add_parser("promote-proposals", help="validate evidence proposals and (with --apply) add accepted ones to datum_lake_overrides.json")
     q.add_argument("--manifest", default=DEFAULT_MANIFEST)
     q.add_argument("--apply", action="store_true")
@@ -100,6 +123,8 @@ def main(argv=None) -> int:
     p.add_argument("--yes-write-shadow", action="store_true", help="required with --rtdb")
     p.add_argument("--scope", choices=["pilots", "fleet"], default="pilots", help="pilots (default): only lakes with a Lake Brain state; fleet is analysis/dry-run only")
     a = ap.parse_args(argv)
+    if a.cmd == "refresh":
+        return run_refresh(a)
     if a.cmd == "build-manifest":
         m = cand.build(json.load(open(a.paths)), a.version)
         json.dump(m, open(a.out, "w"), indent=1, sort_keys=True)

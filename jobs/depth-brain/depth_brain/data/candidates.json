@@ -712,6 +712,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Bankhead?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.105,
     "reasons": [
      "reference and level share one operator record"
@@ -766,7 +770,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "reviewed-override:hartwell-pairing:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=0234296910&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/WalterFGeorge?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": -0.184,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -821,6 +830,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": 0.535,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -932,6 +945,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Martin?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.049,
     "reasons": [
      "reference and level share one operator record"
@@ -1043,6 +1060,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/LoganMartin?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.121,
     "reasons": [
      "reference and level share one operator record"
@@ -1154,6 +1175,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Smith?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.085,
     "reasons": [
      "reference and level share one operator record"
@@ -1208,6 +1233,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Weiss?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.125,
     "reasons": [
      "reference and level share one operator record"
@@ -1262,6 +1291,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": 0.125,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -1316,6 +1349,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": 0.151,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -1370,6 +1407,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWL:Beaver_Dam)]+reference[CWMS API vertical-datum SWL/Beaver_Dam]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Beaver_Dam?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.463,
     "reasons": [
      "both NGVD29"
@@ -1424,7 +1465,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/swl/locations/bull_shoals_dam",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SWL&name=Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.384,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -1596,7 +1642,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SWL&name=LD10_Dardanelle-Headwater.Elev.Inst.1Hour.0.Decodes-raw&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/LD10_Dardanelle-Headwater?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.062,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -1651,6 +1702,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVK",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (MVK:Degray Lake)]+reference[CWMS API vertical-datum MVK/Degray Lake]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Degray Lake?office=MVK"
+    ],
     "navd88MinusNgvd29Ft": -0.013,
     "reasons": [
      "both NGVD29"
@@ -1705,6 +1760,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWL:GreersFerry_Dam)]+reference[CWMS API vertical-datum SWL/GreersFerry_Dam]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/GreersFerry_Dam?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.256,
     "reasons": [
      "both NGVD29"
@@ -1817,6 +1876,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWL:Millwood_Dam)]+reference[CWMS API vertical-datum SWL/Millwood_Dam]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Millwood_Dam?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": -0.043,
     "reasons": [
      "both NGVD29"
@@ -1871,6 +1934,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWL:Nimrod_Dam)]+reference[CWMS API vertical-datum SWL/Nimrod_Dam]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Nimrod_Dam?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.092,
     "reasons": [
      "both NGVD29"
@@ -1925,6 +1992,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWL:Norfork_Dam)]+reference[CWMS API vertical-datum SWL/Norfork_Dam]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Norfork_Dam?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.367,
     "reasons": [
      "both NGVD29"
@@ -1979,6 +2050,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVK",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Blakely?office=MVK"
+    ],
     "navd88MinusNgvd29Ft": 0.043,
     "reasons": [
      "reference and level share one operator record"
@@ -2035,7 +2110,12 @@
    ],
    "cwmsOffice": "SPL",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/spl/locations/alamo",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPL&name=Alamo.Elev.Inst.1Hour.0.GOES-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 2.178,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -2090,7 +2170,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://streamflow.watershedconnection.com/Dwr"
+    ],
     "navd88MinusNgvd29Ft": 1.929,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -2202,7 +2286,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://streamflow.watershedconnection.com/Dwr"
+    ],
     "navd88MinusNgvd29Ft": 1.949,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -2484,7 +2572,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://streamflow.watershedconnection.com/Dwr"
+    ],
     "navd88MinusNgvd29Ft": 1.932,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -2768,7 +2860,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SPK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPK&name=Don+Pedro.Elev.Inst.~1Day.0.MANUAL&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Don%20Pedro?office=SPK"
+    ],
     "navd88MinusNgvd29Ft": 2.454,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -2882,7 +2979,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SPK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPK&name=Folsom+Lake.Elev.Inst.1Hour.0.CDEC-confidential-raw&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Folsom%20Lake?office=SPK"
+    ],
     "navd88MinusNgvd29Ft": 2.625,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -2939,7 +3041,12 @@
    ],
    "cwmsOffice": "SPK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/spk/locations/lake%20isabella",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPK&name=Lake+Isabella-Pool.Elev.Inst.1Hour.0.Calc-val&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 2.92,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -3053,7 +3160,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SPK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPK&name=Oroville+Dam.Elev.Inst.1Hour.0.Rev-CDEC-Combined&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Oroville%20Dam?office=SPK"
+    ],
     "navd88MinusNgvd29Ft": 2.316,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -3338,7 +3450,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWO",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwo/locations/chfi",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=CHFI.Elev.Inst.1Hour.0.Best-NWO&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.068,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -3393,7 +3510,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWO",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwo/locations/chcr",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=CHCR.Elev.Inst.1Hour.0.Best-NWO&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 2.969,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -3678,7 +3800,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/spa/locations/john%20martin",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPA&name=John+Martin.Elev.Inst.15Minutes.0.DCP-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 1.85,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -3790,6 +3917,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Pueblo?office=SPA"
+    ],
     "navd88MinusNgvd29Ft": 2.907,
     "reasons": [
      "reference and level share one operator record"
@@ -5513,7 +5644,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.892,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -5627,7 +5762,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://www.sfwmd.gov/sites/default/files/documents/kb_app_i_lakes_final.pdf",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/E%20Tohopekaliga?office=SAJ"
+    ],
     "navd88MinusNgvd29Ft": -0.928,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -5704,7 +5844,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.909,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -5781,7 +5925,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.922,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -5858,7 +6006,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://www.sfwmd.gov/sites/default/files/documents/doc-fd.pdf",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Lake%20Istokpoga?office=SAJ"
+    ],
     "navd88MinusNgvd29Ft": -1.132,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -5993,7 +6146,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/catalog/TIMESERIES?office=SAJ&like=^Kissimmee\\.Elev-Zone.*",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Kissimmee?office=SAJ&unit=EN"
+    ],
     "navd88MinusNgvd29Ft": -1.227,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -6346,6 +6504,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": -1.152,
     "reasons": [
      "reference and level share one operator record"
@@ -6422,6 +6584,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SAM:Allatoona)]+reference[CWMS API vertical-datum SAM/Allatoona]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Allatoona?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.075,
     "reasons": [
      "both NGVD29"
@@ -6590,6 +6756,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SAM:Carters)]+reference[CWMS API vertical-datum SAM/Carters]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Carters?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": -0.003,
     "reasons": [
      "both NGVD29"
@@ -6644,7 +6814,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAS",
    "datum": {
+    "basis": "reviewed-override:hartwell-pairing:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=02193900&parameterCd=00062&startDT=2025-10-13&endDT=2026-01-21",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Thurmond?office=SAS"
+    ],
     "navd88MinusNgvd29Ft": -0.663,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -6755,6 +6930,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SAM:Buford)]+reference[CWMS API vertical-datum SAM/Buford]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Buford?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.085,
     "reasons": [
      "both NGVD29"
@@ -6866,7 +7045,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.sam.usace.army.mil/JIM%20WOODRUFF%20Pertinent%20Data.pdf",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/JimWoodruff?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": -0.453,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -6978,7 +7162,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "reviewed-override:hartwell-pairing:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=02343240&parameterCd=00062&startDT=2025-10-13&endDT=2026-01-21",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/WalterFGeorge?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": -0.171,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -7033,6 +7222,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SAM:WestPoint)]+reference[CWMS API vertical-datum SAM/WestPoint]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/WestPoint?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.056,
     "reasons": [
      "both NGVD29"
@@ -7799,6 +7992,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVR",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (MVR:CRVI4)]+reference[CWMS API vertical-datum MVR/CRVI4]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/CRVI4?office=MVR"
+    ],
     "navd88MinusNgvd29Ft": -0.112,
     "reasons": [
      "both NGVD29"
@@ -7972,7 +8169,12 @@
    "blockedReasons": [],
    "cwmsOffice": "MVR",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=MVR&name=PELI4.Elev-Pool.Inst.30Minutes.0.rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/PELI4?office=MVR"
+    ],
     "navd88MinusNgvd29Ft": -0.003,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -8027,7 +8229,12 @@
    "blockedReasons": [],
    "cwmsOffice": "MVR",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/ratn",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=RATN.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.135,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -8082,6 +8289,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVR",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (MVR:SAYI4)]+reference[CWMS API vertical-datum MVR/Saylorville]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Saylorville?office=MVR"
+    ],
     "navd88MinusNgvd29Ft": 0.151,
     "reasons": [
      "both NGVD29"
@@ -8539,7 +8750,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWW",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nww/locations/dwr",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=DWR.Elev-Forebay.Ave.~1Day.1Day.CBT-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.481,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -8708,7 +8924,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWS",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://pubs.usgs.gov/sim/3272/pdf/sim3272.pdf",
+     "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDP&level-id-mask=ALF*&unit=EN"
+    ],
     "navd88MinusNgvd29Ft": 3.835,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -8763,7 +8984,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWW",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nww/locations/luc",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=LUC.Elev-Forebay.Inst.~1Day.0.USBR-COMPUTED-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.255,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -9048,6 +9274,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVS",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Carlyle Lk-Kaskaskia?office=MVS"
+    ],
     "navd88MinusNgvd29Ft": -0.39,
     "reasons": [
      "reference and level share one operator record"
@@ -9391,6 +9621,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVS",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Lk Shelbyville-Kaskaskia?office=MVS"
+    ],
     "navd88MinusNgvd29Ft": -0.269,
     "reasons": [
      "reference and level share one operator record"
@@ -9582,7 +9816,12 @@
    "blockedReasons": [],
    "cwmsOffice": "MVS",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/levels?office=MVS&level-id-mask=Rend%20Lk-Big%20Muddy.Elev*&unit=EN",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Rend%20Lk-Big%20Muddy?office=MVS&unit=EN"
+    ],
     "navd88MinusNgvd29Ft": -0.312,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -9753,6 +9992,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Brookville)]+reference[CWMS API vertical-datum LRL/Brookville]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Brookville?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.558,
     "reasons": [
      "both NGVD29"
@@ -9807,7 +10050,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrl/locations/caglesmill",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRL&name=CaglesMill.Elev.Inst.0.0.lrldlb-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.384,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -9862,7 +10110,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrl/locations/cmharden",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRL&name=CMHarden.Elev.Inst.0.0.lrldlb-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.318,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -9973,7 +10226,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://www.in.gov/drought/files/drought-water-soil-conditions-08072025.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.436,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -10143,7 +10400,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://www.nipsco.com/about-us/hydro-power/current-lake-levels-flow"
+    ],
     "navd88MinusNgvd29Ft": -0.367,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -10277,7 +10538,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRC",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRL&name=Mississinewa-Lake.Elev.Inst.15Minutes.0.Decodes-raw&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Mississinewa-Lake?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.413,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -10332,6 +10598,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Monroe)]+reference[CWMS API vertical-datum LRL/Monroe]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Monroe?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.39,
     "reasons": [
      "both NGVD29"
@@ -10386,6 +10656,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Patoka)]+reference[CWMS API vertical-datum LRL/Patoka]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Patoka?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.377,
     "reasons": [
      "both NGVD29"
@@ -10440,7 +10714,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRL&name=Salamonie-Lake.Elev.Inst.15Minutes.0.USGS-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Salamonie-Lake?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.413,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -10561,7 +10840,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/cebl",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=CEBL.Elev.Inst.1Day.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.909,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -10692,7 +10976,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/clin",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=CLIN.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.302,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -10767,6 +11056,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWT:ELDR)]+reference[CWMS API vertical-datum SWT/ELDR]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/ELDR?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.449,
     "reasons": [
      "both NGVD29"
@@ -10904,7 +11197,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/kans",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=KANS.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.44,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11022,7 +11320,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/meln",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=MELN.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.505,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11097,7 +11400,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/mild",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=MILD.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.43,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11172,7 +11480,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/pery",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=PERY.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.289,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11234,7 +11547,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/poma",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=POMA.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.456,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11309,7 +11627,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=TUCR.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/TUCR?office=NWDM"
+    ],
     "navd88MinusNgvd29Ft": 0.423,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11428,7 +11751,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/wiln",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=WILN.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.581,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11503,6 +11831,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Barren)]+reference[CWMS API vertical-datum LRL/Barren]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Barren?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.446,
     "reasons": [
      "both NGVD29"
@@ -11557,6 +11889,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Buckhorn)]+reference[CWMS API vertical-datum LRL/Buckhorn]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Buckhorn?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.518,
     "reasons": [
      "both NGVD29"
@@ -11611,6 +11947,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:CaveRun)]+reference[CWMS API vertical-datum LRL/CaveRun]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/CaveRun?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.512,
     "reasons": [
      "both NGVD29"
@@ -11665,6 +12005,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Green)]+reference[CWMS API vertical-datum LRL/Green]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Green?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.486,
     "reasons": [
      "both NGVD29"
@@ -11776,6 +12120,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.23,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -11830,7 +12178,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrn/locations/bahk2",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRN&name=BAHK2-BARKLEY.Elev-Pool.Inst.1Hour.0.man-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.194,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11885,7 +12238,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRN&name=WLCK2-WOLF_CREEK.Elev-Pool.Inst.15Minutes.0.dcp-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/WLCK2-WOLF_CREEK?office=LRN"
+    ],
     "navd88MinusNgvd29Ft": -0.479,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11940,7 +12298,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrn/locations/lapk2",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRN&name=LAPK2-LAUREL.Elev-Pool.Inst.1Hour.0.man-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.518,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -11995,6 +12358,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Nolin)]+reference[CWMS API vertical-datum LRL/Nolin]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Nolin?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.4,
     "reasons": [
      "both NGVD29"
@@ -12049,6 +12416,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Rough)]+reference[CWMS API vertical-datum LRL/Rough]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Rough?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.476,
     "reasons": [
      "both NGVD29"
@@ -12103,6 +12474,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:Taylorsville)]+reference[CWMS API vertical-datum LRL/Taylorsville]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Taylorsville?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.558,
     "reasons": [
      "both NGVD29"
@@ -13848,7 +14223,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NAB",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nab/locations/randolph",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NAB&name=Randolph.Elev.Inst.15Minutes.0.Best-NAB&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.502,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -14269,7 +14649,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nab/locations/savage",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NAB&name=Savage.Elev.Inst.15Minutes.0.Best-NAB&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.443,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -16154,6 +16539,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (MVP:MissHW_Gull)]+reference[CWMS API vertical-datum MVP/MissHW_Gull]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/MissHW_Gull?office=MVP"
+    ],
     "navd88MinusNgvd29Ft": 0.669,
     "reasons": [
      "both NGVD29"
@@ -16602,6 +16991,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (MVP:MissHW_Winni)]+reference[CWMS API vertical-datum MVP/MissHW_Winni]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/MissHW_Winni?office=MVP"
+    ],
     "navd88MinusNgvd29Ft": 0.83,
     "reasons": [
      "both NGVD29"
@@ -16735,7 +17128,12 @@
    "blockedReasons": [],
    "cwmsOffice": "MVP",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/mvp/locations/misshw_leech",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=MVP&name=MissHW_Leech-Lake.Elev.Inst.~15Minutes.0.best-NGVD29&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.781,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -17172,6 +17570,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWL:Clearwater_Dam)]+reference[CWMS API vertical-datum SWL/Clearwater_Dam]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Clearwater_Dam?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.003,
     "reasons": [
      "both NGVD29"
@@ -17339,7 +17741,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/lgvm",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=LGVM.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.308,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -17451,7 +17858,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/podt",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=PODT.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.364,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -17506,7 +17918,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/smie",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=SMIE.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.322,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -17561,7 +17978,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/ston",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=STON.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.377,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -17616,6 +18038,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWL:Table_Rock_Dam)]+reference[CWMS API vertical-datum SWL/Table_Rock_Dam]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Table_Rock_Dam?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.404,
     "reasons": [
      "both NGVD29"
@@ -17670,7 +18096,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/hast",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=HAST.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.397,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -17725,6 +18156,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVS",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Wappapello Lk-St Francis?office=MVS"
+    ],
     "navd88MinusNgvd29Ft": -0.108,
     "reasons": [
      "reference and level share one operator record"
@@ -17779,6 +18214,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVK",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Arkabutla Lake?office=MVK"
+    ],
     "navd88MinusNgvd29Ft": -0.033,
     "reasons": [
      "reference and level share one operator record"
@@ -17833,7 +18272,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SAM&name=Whitten.Elev.Inst.15Minutes.0.Raw-USGS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Whitten?office=SAM"
+    ],
     "navd88MinusNgvd29Ft": 0.141,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -17888,7 +18332,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Stennis?office=SAM",
+     "https://cwms-data.usace.army.mil/cwms-data/levels?office=SAM&level-id-mask=Stennis.Elev*&unit=EN"
+    ],
     "navd88MinusNgvd29Ft": 0.003,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -18001,6 +18450,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVK",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Enid Lake?office=MVK"
+    ],
     "navd88MinusNgvd29Ft": -0.059,
     "reasons": [
      "reference and level share one operator record"
@@ -18055,6 +18508,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVK",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Grenada Lake?office=MVK"
+    ],
     "navd88MinusNgvd29Ft": 0.007,
     "reasons": [
      "reference and level share one operator record"
@@ -18227,7 +18684,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/sam/locations/okatibbee",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SAM&name=Okatibbee.Elev.Inst.15Minutes.0.Raw-LRIT&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.157,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -18339,6 +18801,10 @@
    "blockedReasons": [],
    "cwmsOffice": "MVK",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Sardis Lake?office=MVK"
+    ],
     "navd88MinusNgvd29Ft": -0.056,
     "reasons": [
      "reference and level share one operator record"
@@ -18393,7 +18859,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwo/locations/cafe",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=CAFE.Elev.Inst.1Hour.0.Best-NWO&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.317,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -18468,7 +18939,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nws/locations/ker",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=KER.Elev-Forebay.Inst.~1Day.0.CBT-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.678,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -18530,7 +19006,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWO",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=FTPK.Elev.Inst.1Hour.0.Best-MRBWM&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/FTPK?office=NWDM"
+    ],
     "navd88MinusNgvd29Ft": 2.156,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -18856,7 +19337,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nws/locations/hgh",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=HGH.Elev-Forebay.Inst.1Hour.0.CBT-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 4.134,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -18911,7 +19397,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWS",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=LIB.Elev-Forebay.Inst.1Hour.0.IRIDIUM-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/LIB?office=NWDP"
+    ],
     "navd88MinusNgvd29Ft": 3.957,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -18966,7 +19457,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwo/locations/tibr",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=TIBR.Elev.Inst.1Hour.0.Best-NWO&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 2.966,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -19164,7 +19660,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/saw/locations/neu%20flp",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SAW&name=NEU+FLP.Elev.Inst.15Minutes.0.USGS-raw&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.853,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -19219,6 +19720,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.226,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -19330,6 +19835,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": 0.01,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -19384,7 +19893,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://pubs.usgs.gov/wdr/2005/wdr-nc-05/pdf/02098197.2005.sw.pdf",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/CFR%20BEJ?office=SAW"
+    ],
     "navd88MinusNgvd29Ft": -0.804,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -19439,7 +19953,11 @@
    "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://epec.saw.usace.army.mil/KERRWCP.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.984,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -19782,7 +20300,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwo/locations/boha",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=BOHA.Elev.Inst.1Hour.0.Best-NWO&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 1.611,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -19974,7 +20497,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/mvp/locations/baldhill_dam",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=MVP&name=Baldhill_Dam.Elev.Inst.~15Minutes.0.best-NGVD29&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 1.175,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -20029,7 +20557,12 @@
    "blockedReasons": [],
    "cwmsOffice": "MVP",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/mvp/locations/lakedarling_dam",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=MVP&name=LakeDarling_Dam.Elev.Inst.~15Minutes.0.best-NGVD29&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 1.138,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -20143,7 +20676,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=OAHE.Elev.Inst.1Hour.0.Best-MRBWM&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/OAHE?office=NWDM"
+    ],
     "navd88MinusNgvd29Ft": 1.26,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -20198,7 +20736,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=GARR.Elev.Inst.1Hour.0.Best-MRBWM&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/GARR?office=NWDM"
+    ],
     "navd88MinusNgvd29Ft": 1.381,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -20606,6 +21149,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": 0.404,
     "reasons": [
      "reference and level share one operator record"
@@ -20761,7 +21308,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "basis": "reviewed-override:hartwell-pairing:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwk/locations/haco",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=HACO.Elev.Inst.1Hour.0.Best-NWK&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 0.804,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -22692,7 +23244,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.njwsa.org/uploads/1/0/8/0/108064771/data.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.797,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -22884,7 +23440,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://pubs.usgs.gov/wdr/2004/wdr-nj-04-1/pdf/wdrnj04_1.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.837,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -22939,6 +23499,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SPA:Abiquiu)]+reference[CWMS API vertical-datum SPA/Abiquiu]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Abiquiu?office=SPA"
+    ],
     "navd88MinusNgvd29Ft": 3.389,
     "reasons": [
      "both NGVD29"
@@ -22993,7 +23557,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://pubs.usgs.gov/wdr/2005/wdr-nm-05-1/pdf/wdr-nm-05-1.pdf"
+    ],
     "navd88MinusNgvd29Ft": 3.638,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -23105,7 +23673,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/spa/locations/cochiti",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPA&name=Cochiti.Elev.Inst.15Minutes.0.DCP-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.087,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -23160,6 +23733,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SPA:Conchas)]+reference[CWMS API vertical-datum SPA/Conchas]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Conchas?office=SPA"
+    ],
     "navd88MinusNgvd29Ft": 2.037,
     "reasons": [
      "both NGVD29"
@@ -23502,6 +24079,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NAVD88 (SPA:Santa Rosa)]+reference[CWMS API vertical-datum SPA/Santa Rosa]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Santa Rosa?office=SPA"
+    ],
     "navd88MinusNgvd29Ft": 2.313,
     "reasons": [
      "both NAVD88"
@@ -23558,7 +24139,12 @@
    ],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPA&name=Sumner.Elev.Inst.15Minutes.0.DCP-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Sumner?office=SPA"
+    ],
     "navd88MinusNgvd29Ft": 2.11,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -24539,7 +25125,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://pubs.usgs.gov/wdr/2005/wdr-ny-05-1/wdrny051.rept.data.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.456,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -25119,6 +25709,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRH:AlumCr)]+reference[CWMS API vertical-datum LRH/AlumCr]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/AlumCr?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.509,
     "reasons": [
      "both NGVD29"
@@ -25193,6 +25787,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NAVD88 (LRP:Berlin)]+reference[CWMS API vertical-datum LRP/Berlin]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Berlin?office=LRP"
+    ],
     "navd88MinusNgvd29Ft": -0.551,
     "reasons": [
      "both NAVD88"
@@ -25310,6 +25908,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRL:CaesarCreek)]+reference[CWMS API vertical-datum LRL/CaesarCreek]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/CaesarCreek?office=LRL"
+    ],
     "navd88MinusNgvd29Ft": -0.587,
     "reasons": [
      "both NGVD29"
@@ -25659,7 +26261,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRP&name=Milton-Lake.Elev.Inst.1Hour.0.RESOPS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Milton-Lake?office=LRP"
+    ],
     "navd88MinusNgvd29Ft": -0.571,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -25736,6 +26343,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NAVD88 (LRP:Mosquito)]+reference[CWMS API vertical-datum LRP/Mosquito]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Mosquito?office=LRP"
+    ],
     "navd88MinusNgvd29Ft": -0.6,
     "reasons": [
      "both NAVD88"
@@ -25889,7 +26500,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRH&name=Senecaville-Lake.Elev.Inst.15Minutes.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Senecaville-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.663,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -25966,7 +26582,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRH&name=Tappan-Lake.Elev.Inst.15Minutes.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Tappan-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.643,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -26043,7 +26664,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SWL&name=Broken_Bow_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Broken_Bow_Dam-Headwater?office=SWL"
+    ],
     "navd88MinusNgvd29Ft": 0.082,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -26154,6 +26780,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "cwms-location-same-record",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/FGIB?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.377,
     "reasons": [
      "reference and level share one operator record"
@@ -26228,7 +26858,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SWT&name=PENS.Elev.Inst.1Hour.0.Ccp-Rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/PENS?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.348,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -26359,6 +26994,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWT:KEYS)]+reference[CWMS API vertical-datum SWT/KEYS]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/KEYS?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.361,
     "reasons": [
      "both NGVD29"
@@ -26413,6 +27052,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWT:EUFA)]+reference[CWMS API vertical-datum SWT/EUFA]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/EUFA?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.341,
     "reasons": [
      "both NGVD29"
@@ -26467,6 +27110,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWT:HUDS)]+reference[CWMS API vertical-datum SWT/HUDS]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/HUDS?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.42,
     "reasons": [
      "both NGVD29"
@@ -26661,6 +27308,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWT:OOLO)]+reference[CWMS API vertical-datum SWT/OOLO]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/OOLO?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.404,
     "reasons": [
      "both NGVD29"
@@ -26715,6 +27366,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWT:SARD)]+reference[CWMS API vertical-datum SWT/SARD]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/SARD?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.302,
     "reasons": [
      "both NGVD29"
@@ -26961,7 +27616,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWP",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwp/locations/det",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=DET.Elev-Forebay.Inst.0.0.MIXED-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.57,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -27074,7 +27734,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NWP",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwp/locations/frn",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=FRN.Elev-Forebay.Inst.0.0.MIXED-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.573,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -27129,7 +27794,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://pubs.usgs.gov/wdr/2005/wdr-or-05/pdf/deschutes.pdf"
+    ],
     "navd88MinusNgvd29Ft": 3.596,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -27653,6 +28322,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NAVD88 (LRP:Kinzua)]+reference[CWMS API vertical-datum LRP/Kinzua]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Kinzua?office=LRP"
+    ],
     "navd88MinusNgvd29Ft": -0.446,
     "reasons": [
      "both NAVD88"
@@ -27707,6 +28380,10 @@
    "blockedReasons": [],
    "cwmsOffice": "NAP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NAVD88 (NAP:Beltzville)]+reference[CWMS API vertical-datum NAP/Beltzville]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Beltzville?office=NAP"
+    ],
     "navd88MinusNgvd29Ft": -0.646,
     "reasons": [
      "both NAVD88"
@@ -27761,6 +28438,10 @@
    "blockedReasons": [],
    "cwmsOffice": "NAP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NAVD88 (NAP:BlueMarsh)]+reference[CWMS API vertical-datum NAP/BlueMarsh]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/BlueMarsh?office=NAP"
+    ],
     "navd88MinusNgvd29Ft": -0.715,
     "reasons": [
      "both NAVD88"
@@ -28320,7 +29001,12 @@
    "blockedReasons": [],
    "cwmsOffice": "NAB",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nab/locations/raystown",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NAB&name=Raystown.Elev.Inst.15Minutes.0.Best-NAB&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.643,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -28375,7 +29061,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrp/locations/shenango",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRP&name=Shenango-Lake.Elev.Inst.1Hour.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.561,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -29268,6 +29959,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAS",
    "datum": {
+    "basis": "reviewed-override:manual:datum_lake_overrides.json",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Hartwell?office=SAS"
+    ],
     "navd88MinusNgvd29Ft": -0.269,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -29722,7 +30417,12 @@
    "blockedReasons": [],
    "cwmsOffice": "SAS",
    "datum": {
+    "basis": "reviewed-override:hartwell-pairing:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=02193900&parameterCd=00062&startDT=2025-10-13&endDT=2026-01-21",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Thurmond?office=SAS"
+    ],
     "navd88MinusNgvd29Ft": -0.669,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -30188,7 +30888,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDM&name=OAHE.Elev.Inst.1Hour.0.Best-MRBWM&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/OAHE?office=NWDM"
+    ],
     "navd88MinusNgvd29Ft": 1.204,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -30650,7 +31355,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrn/locations/ceht1",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRN&name=CEHT1-CENTER_HILL.Elev-Pool.Inst.1Hour.0.man-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.138,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -30705,6 +31415,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.404,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -30759,6 +31473,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.21,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -30813,7 +31531,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrn/locations/dlht1",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRN&name=DLHT1-DALE_HOLLOW.Elev-Pool.Inst.1Hour.0.man-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.374,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -30868,6 +31591,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.564,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -30922,6 +31649,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.41,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -30976,7 +31707,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/provider_rules.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.tva.com/RestApi/operating-guide/GVDA1",
+     "https://api.water.noaa.gov/nwps/v1/gauges/GVDA1"
+    ],
     "navd88MinusNgvd29Ft": -0.131,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -31031,6 +31767,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": 0.0,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -31085,6 +31825,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.325,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -31139,7 +31883,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrn/locations/ohht1",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRN&name=OHHT1-OLD_HICKORY.Elev-Pool.Inst.1Hour.0.man-rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.184,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -31250,6 +31999,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.046,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -31363,6 +32116,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": 0.095,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -31417,6 +32174,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.315,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -31471,6 +32232,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[provider table: NGVD29]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": 0.302,
     "reasons": [
      "both NGVD29"
@@ -31525,6 +32290,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (MVK:Caddo Lake)]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": -0.21,
     "reasons": [
      "both NGVD29"
@@ -31579,6 +32348,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWF",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWF:SMCT2)]+reference[CWMS API vertical-datum SWF/SMCT2]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/SMCT2?office=SWF"
+    ],
     "navd88MinusNgvd29Ft": 0.338,
     "reasons": [
      "both NGVD29"
@@ -31633,6 +32406,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWF:TRNT2)]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": -0.023,
     "reasons": [
      "both NGVD29"
@@ -31712,6 +32489,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[provider table: NGVD29]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": -0.144,
     "reasons": [
      "both NGVD29"
@@ -31766,7 +32547,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SWF&name=BUDT2.Elev.Inst.1Hour.0.LCRA-Web-Rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/BUDT2?office=SWF"
+    ],
     "navd88MinusNgvd29Ft": 0.171,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -31821,6 +32607,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[USGS parameter 62614 is defined against NGVD29]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": -0.02,
     "reasons": [
      "both NGVD29"
@@ -31900,6 +32690,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[USGS parameter 62614 is defined against NGVD29]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": -0.066,
     "reasons": [
      "both NGVD29"
@@ -31979,6 +32773,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[USGS parameter 62614 is defined against NGVD29]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": 0.131,
     "reasons": [
      "both NGVD29"
@@ -32058,6 +32856,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[USGS parameter 62614 is defined against NGVD29]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": -0.046,
     "reasons": [
      "both NGVD29"
@@ -32137,6 +32939,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWT:DENI)]+reference[CWMS API vertical-datum SWT/DENI]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/DENI?office=SWT"
+    ],
     "navd88MinusNgvd29Ft": 0.066,
     "reasons": [
      "both NGVD29"
@@ -32211,6 +33017,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWF:MSDT2)]+reference[https://www.waterdatafortexas.org]",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_DATUM_AUDIT.md"
+    ],
     "navd88MinusNgvd29Ft": 0.105,
     "reasons": [
      "both NGVD29"
@@ -32265,7 +33075,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SWF&name=PSMT2.Elev.Inst.1Hour.0.Decodes-Rev&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/PSMT2?office=SWF"
+    ],
     "navd88MinusNgvd29Ft": 0.272,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -32320,6 +33135,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SWF",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SWF:JSPT2)]+reference[CWMS API vertical-datum SWF/JSPT2]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/JSPT2?office=SWF"
+    ],
     "navd88MinusNgvd29Ft": 0.007,
     "reasons": [
      "both NGVD29"
@@ -33248,7 +34067,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings_2.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://www.govinfo.gov/content/pkg/FR-2009-07-09/html/E9-16158.htm",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Claytor-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.328,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -33417,7 +34241,11 @@
    "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://epec.saw.usace.army.mil/KERRWCP.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.994,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -33699,6 +34527,10 @@
    "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (SAW:ROA PLP)]+reference[CWMS API vertical-datum SAW/ROA PLP]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/ROA PLP?office=SAW"
+    ],
     "navd88MinusNgvd29Ft": -0.607,
     "reasons": [
      "both NGVD29"
@@ -33753,7 +34585,11 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.smithmtn.com/lake-levels/"
+    ],
     "navd88MinusNgvd29Ft": -0.728,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -33808,6 +34644,10 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "tva-operator-system",
+    "evidenceUrls": [
+     "docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"
+    ],
     "navd88MinusNgvd29Ft": -0.266,
     "reasons": [
      "one operator system for pool and level; datum not named by the operator (inferred)"
@@ -34867,7 +35707,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=GCL.Elev-Forebay.Inst.1Hour.0.CBT-REV&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/GCL?office=NWDP"
+    ],
     "navd88MinusNgvd29Ft": 4.078,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -35299,7 +36144,12 @@
    "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/nws/locations/ros",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NWDP&name=ROS.Elev-Forebay.Ave.1Hour.1Hour.SCL-RAW&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": 3.983,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -36112,6 +36962,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRH:BeechFk)]+reference[CWMS API vertical-datum LRH/BeechFk]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/BeechFk?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.64,
     "reasons": [
      "both NGVD29"
@@ -36188,7 +37042,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRH&name=Bluestone-Lake.Elev.Inst.15Minutes.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Bluestone-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.518,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -36265,7 +37124,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRH&name=Burnsville-Lake.Elev.Inst.15Minutes.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Burnsville-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.682,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -36342,7 +37206,11 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_2.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.govinfo.gov/content/pkg/FR-2023-06-16/html/2023-12943.htm"
+    ],
     "navd88MinusNgvd29Ft": -0.367,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -36419,7 +37287,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRH&name=EastLynn-Lake.Elev.Inst.15Minutes.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/EastLynn-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.689,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -36576,7 +37449,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRH&name=RDBailey-Lake.Elev.Inst.15Minutes.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/RDBailey-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.673,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -36653,6 +37531,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NAVD88 (LRP:StonewallJackson)]+reference[CWMS API vertical-datum LRP/StonewallJackson]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/StonewallJackson?office=LRP"
+    ],
     "navd88MinusNgvd29Ft": -0.528,
     "reasons": [
      "both NAVD88"
@@ -36729,6 +37611,10 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "stated-datums:level[A2W project vertical_datum NGVD29 (LRH:Summersville)]+reference[CWMS API vertical-datum LRH/Summersville]",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Summersville?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.545,
     "reasons": [
      "both NGVD29"
@@ -36805,7 +37691,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRH&name=Sutton-Lake.Elev.Inst.15Minutes.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft",
+     "https://cwms-data.usace.army.mil/cwms-data/locations/Sutton-Lake?office=LRH"
+    ],
     "navd88MinusNgvd29Ft": -0.577,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -36882,7 +37773,12 @@
    "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
     "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://water.usace.army.mil/cda/reporting/providers/lrp/locations/tygart",
+     "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=LRP&name=Tygart-Lake.Elev.Inst.1Hour.0.OBS&begin=2026-10-09T20%3A00%3A00Z&end=2026-10-13T20%3A00%3A00Z&unit=ft"
+    ],
     "navd88MinusNgvd29Ft": -0.623,
     "reasons": [
      "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
@@ -37707,7 +38603,7 @@
    "state": "WY"
   }
  ],
- "manifestVersion": "2026-10-14.4",
+ "manifestVersion": "2026-10-14.5",
  "schema": "depth-candidates-v1",
  "summary": {
   "blockedReasons": {

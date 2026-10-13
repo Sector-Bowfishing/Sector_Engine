@@ -1,6 +1,6 @@
 # Decisions and actions for Michael (Depth Brain) - generated 2026-10-13
 
-Current: 198 of 621 lakes shift-defensible (181 verified datum, 17 TVA inferred); 91 HIGH / 102 MEDIUM / 423 BLOCKED; 5 live (pilot shadow state written 2026-10-14). Research maturity 4.65 (research rubric; **not** an official score; official Depth score NOT_ESTABLISHED).
+Current: 198 of 621 lakes shift-defensible (181 verified datum, 17 TVA inferred); 91 HIGH / 102 MEDIUM / 423 BLOCKED; 5 live (pilot shadow state written 2026-10-14). Research maturity 4.75 (research rubric; **not** an official score; official Depth score NOT_ESTABLISHED).
 
 ## Decided (2026-10-14)
 | Decision | Outcome |

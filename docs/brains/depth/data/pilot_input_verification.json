@@ -1,0 +1,155 @@
+{
+ "checkedAt": "2026-10-13T21:52:41+00:00",
+ "lakes": {
+  "Guntersville_AL": {
+   "lake": {
+    "elevationFt": 593.6,
+    "observationTime": "2026-10-13T18:00:00Z",
+    "unit": "ft",
+    "datum": null
+   },
+   "provider": {
+    "source": "TVA RestApi observed-data-48-hours/GVDA1",
+    "rowsLast48h": 48,
+    "latest": {
+     "day": "10/13/2026",
+     "time": "4 PM CDT",
+     "elevationFt": 593.56
+    },
+    "lakeValuePresentInProviderFeed": true,
+    "matchedRow": {
+     "day": "10/13/2026",
+     "time": "1 PM CDT",
+     "elevationFt": 593.6
+    },
+    "elevationFt": 593.6
+   },
+   "depth": {
+    "shiftFt": -1.4,
+    "levelDeltaFromReferenceFt": -1.4,
+    "referencePoolFt": 595
+   },
+   "diffLakeMinusProviderFt": 0.0,
+   "depthShiftEqualsLevelMinusPoolFt": -1.4,
+   "shiftArithmeticOk": true
+  },
+  "Wheeler_AL": {
+   "lake": {
+    "elevationFt": 553.6,
+    "observationTime": "2026-10-13T18:00:00Z",
+    "unit": "ft",
+    "datum": null
+   },
+   "provider": {
+    "source": "TVA RestApi observed-data-48-hours/WHLA1",
+    "rowsLast48h": 48,
+    "latest": {
+     "day": "10/13/2026",
+     "time": "4 PM CDT",
+     "elevationFt": 553.55
+    },
+    "lakeValuePresentInProviderFeed": true,
+    "matchedRow": {
+     "day": "10/13/2026",
+     "time": "1 PM CDT",
+     "elevationFt": 553.6
+    },
+    "elevationFt": 553.6
+   },
+   "depth": {
+    "shiftFt": -2.4,
+    "levelDeltaFromReferenceFt": -2.4,
+    "referencePoolFt": 556
+   },
+   "diffLakeMinusProviderFt": 0.0,
+   "depthShiftEqualsLevelMinusPoolFt": -2.4,
+   "shiftArithmeticOk": true
+  },
+  "Wilson_AL": {
+   "lake": {
+    "elevationFt": 506.76,
+    "observationTime": "2026-10-13T18:00:00Z",
+    "unit": "ft",
+    "datum": null
+   },
+   "provider": {
+    "source": "TVA RestApi observed-data-48-hours/WLSA1",
+    "rowsLast48h": 48,
+    "latest": {
+     "day": "10/13/2026",
+     "time": "4 PM CDT",
+     "elevationFt": 506.7
+    },
+    "lakeValuePresentInProviderFeed": true,
+    "matchedRow": {
+     "day": "10/13/2026",
+     "time": "1 PM CDT",
+     "elevationFt": 506.76
+    },
+    "elevationFt": 506.76
+   },
+   "depth": {
+    "shiftFt": -0.9,
+    "levelDeltaFromReferenceFt": -0.94,
+    "referencePoolFt": 507.7
+   },
+   "diffLakeMinusProviderFt": 0.0,
+   "depthShiftEqualsLevelMinusPoolFt": -0.94,
+   "shiftArithmeticOk": true
+  },
+  "Pickwick_Lake_TN": {
+   "lake": {
+    "elevationFt": 411.12,
+    "observationTime": "2026-10-13T18:00:00Z",
+    "unit": "ft",
+    "datum": null
+   },
+   "provider": {
+    "source": "TVA RestApi observed-data-48-hours/PICT1",
+    "rowsLast48h": 48,
+    "latest": {
+     "day": "10/13/2026",
+     "time": "4 PM CDT",
+     "elevationFt": 411.12
+    },
+    "lakeValuePresentInProviderFeed": true,
+    "matchedRow": {
+     "day": "10/13/2026",
+     "time": "4 PM CDT",
+     "elevationFt": 411.12
+    },
+    "elevationFt": 411.12
+   },
+   "depth": {
+    "shiftFt": -2.9,
+    "levelDeltaFromReferenceFt": -2.88,
+    "referencePoolFt": 414
+   },
+   "diffLakeMinusProviderFt": 0.0,
+   "depthShiftEqualsLevelMinusPoolFt": -2.88,
+   "shiftArithmeticOk": true
+  },
+  "Lake_Hartwell_SC": {
+   "lake": {
+    "elevationFt": 649.37,
+    "observationTime": "2026-10-13T17:00:00Z",
+    "unit": "ft",
+    "datum": "NGVD29"
+   },
+   "provider": {
+    "source": "USGS 02187010 parameter 00062 (instantaneous), nearest to the Lake observation time",
+    "elevationFt": 649.32,
+    "at": "2026-10-13T13:00:00.000-04:00",
+    "lakeObservationTime": "2026-10-13T17:00:00Z"
+   },
+   "depth": {
+    "shiftFt": -10.6,
+    "levelDeltaFromReferenceFt": -10.63,
+    "referencePoolFt": 660
+   },
+   "diffLakeMinusProviderFt": 0.05,
+   "depthShiftEqualsLevelMinusPoolFt": -10.63,
+   "shiftArithmeticOk": true
+  }
+ }
+}

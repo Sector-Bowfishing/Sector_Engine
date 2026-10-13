@@ -1,0 +1,413 @@
+id,state,operator_family,lat,lon,fullPoolFt,basis,conf,shift_ft_ngvd29_to_navd88
+Bankhead|AL,AL,OTHER,33.45,-87.35,255.0,fullPool,high,0.105
+Eufaula / W.F. George|AL,AL,USACE,31.9,-85.1,190.0,fullPool,high,-0.184
+Guntersville|AL,AL,TVA,34.42,-86.26,595.0,fullPool,high,0.535
+Jordan|AL,AL,OTHER,32.62,-86.26,252.0,fullPool,high,0.085
+Lake Martin|AL,AL,OTHER,32.7,-85.92,490.0,fullPool,high,0.049
+Lay|AL,AL,OTHER,33.0,-86.52,396.0,fullPool,high,0.131
+Logan Martin|AL,AL,OTHER,33.47,-86.32,465.0,fullPool,high,0.121
+Neely Henry|AL,AL,OTHER,33.8,-86.05,508.0,fullPool,high,0.174
+Smith (Lewis Smith)|AL,AL,OTHER,34.07,-87.1,510.0,fullPool,high,0.085
+Weiss|AL,AL,OTHER,34.18,-85.65,564.0,fullPool,high,0.125
+Wheeler|AL,AL,TVA,34.63,-87.03,556.0,fullPool,high,0.125
+Wilson|AL,AL,TVA,34.77,-87.45,507.7,fullPool,high,0.151
+Beaver|AR,AR,USACE,36.42,-93.8,1120.43,fullPool,high,0.463
+Bull Shoals Lake|AR,AR,USACE,36.45,-92.55,659.0,fullPool,high,0.384
+Catherine|AR,AR,OTHER,34.45,-93.0,305.0,fullPool,med,-0.007
+Dardanelle|AR,AR,USACE,35.35,-93.2,338.0,fullPool,high,0.062
+DeGray|AR,AR,USACE,34.22,-93.15,408.0,fullPool,high,-0.013
+Greers Ferry|AR,AR,USACE,35.55,-92.05,462.04,fullPool,high,0.256
+Hamilton|AR,AR,OTHER,34.45,-93.12,400.0,fullPool,med,0.0
+Millwood|AR,AR,USACE,33.68,-93.95,259.2,fullPool,high,-0.043
+Nimrod|AR,AR,USACE,34.95,-93.17,342.0,fullPool,high,0.092
+Norfork|AR,AR,USACE,36.35,-92.24,553.75,fullPool,high,0.367
+Ouachita (L. Ouachita)|AR,AR,USACE,34.57,-93.2,578.0,fullPool,high,0.043
+Alamo|AZ,AZ,USACE,34.23,-113.58,1160.4,fullPool,low,2.178
+Apache|AZ,AZ,OTHER,33.57,-111.55,1914.0,fullPool,high,1.929
+Bartlett|AZ,AZ,OTHER,33.82,-111.63,1798.0,fullPool,high,1.923
+Canyon|AZ,AZ,OTHER,33.54,-111.43,1660.5,fullPool,high,1.949
+Havasu|AZ,AZ,USBR,34.45,-114.35,450.0,fullPool,high,2.07
+Lake Mary|AZ,AZ,OTHER,35.09,-111.58,6831.82,fullPool,high,3.415
+Pleasant|AZ,AZ,USBR,33.86,-112.26,1702.0,fullPool,high,2.077
+Roosevelt|AZ,AZ,OTHER,33.67,-111.15,2151.0,fullPool,high,1.946
+Saguaro|AZ,AZ,OTHER,33.57,-111.51,1529.0,fullPool,high,1.932
+San Carlos|AZ,AZ,OTHER,33.18,-110.45,2510.4,fullPool,high,1.916
+Almanor|CA,CA,OTHER,40.26,-121.15,4494.0,fullPool,high,3.291
+Berryessa|CA,CA,USBR,38.59,-122.23,440.0,fullPool,high,2.717
+Don Pedro|CA,CA,OTHER,37.7,-120.4,830.0,fullPool,high,2.454
+Folsom|CA,CA,USBR,38.71,-121.15,466.0,fullPool,high,2.625
+Isabella|CA,CA,USACE,35.65,-118.48,2585.5,fullPool,med,2.92
+Oroville|CA,CA,OTHER,39.54,-121.48,900.0,fullPool,high,2.316
+Shasta|CA,CA,USBR,40.72,-122.32,1067.0,fullPool,high,2.657
+Trinity|CA,CA,USBR,40.8,-122.76,2370.0,fullPool,high,2.953
+Blue Mesa Reservoir|CO,CO,USBR,38.459,-107.33,7519.4,fullPool,high,4.974
+Chatfield Reservoir|CO,CO,USACE,39.545,-105.065,5444.0,fullPool,high,3.068
+Cherry Creek Reservoir|CO,CO,USACE,39.636,-104.85,5550.0,fullPool,high,2.969
+Dillon Reservoir|CO,CO,OTHER,39.61,-106.06,9017.0,fullPool,high,5.331
+Eleven Mile Reservoir|CO,CO,OTHER,38.92,-105.465,8597.0,fullPool,high,4.606
+Horsetooth Reservoir|CO,CO,USBR,40.545,-105.145,5430.0,fullPool,high,3.146
+John Martin Reservoir|CO,CO,USACE,38.07,-102.93,3851.9,fullPool,high,1.85
+Lake Granby|CO,CO,USBR,40.145,-105.84,8280.0,fullPool,high,4.514
+Pueblo Reservoir|CO,CO,USBR,38.26,-104.735,4880.38,fullPool,high,2.907
+Ruedi Reservoir|CO,CO,USBR,39.362,-106.83,7766.0,fullPool,high,5.423
+Shadow Mountain Reservoir|CO,CO,USBR,40.22,-105.845,8367.0,fullPool,high,4.587
+Barkhamsted Reservoir|CT,CT,OTHER,41.93,-72.96,530.0,fullPool,low,-0.719
+Candlewood Lake|CT,CT,OTHER,41.475,-73.448,429.5,fullPool,med,-0.883
+Lake Lillinonah|CT,CT,OTHER,41.405,-73.305,200.0,fullPool,med,-0.932
+Lake Zoar|CT,CT,OTHER,41.415,-73.25,103.0,fullPool,med,-0.932
+Mansfield Hollow Lake|CT,CT,USACE,41.755,-72.175,210.0,fullPool,low,-0.833
+Pachaug Pond|CT,CT,OTHER,41.592,-71.888,159.0,fullPool,low,-0.85
+Squantz Pond|CT,CT,OTHER,41.49,-73.488,429.5,fullPool,med,-0.837
+Andrews Lake|DE,DE,OTHER,38.908,-75.542,8.4,fullPool,low,-0.797
+Becks Pond|DE,DE,OTHER,39.64,-75.687,24.5,fullPool,low,-1.027
+Concord Pond|DE,DE,OTHER,38.612,-75.592,7.6,fullPool,low,-0.814
+Garrisons Lake|DE,DE,OTHER,39.244,-75.628,4.9,fullPool,low,-0.781
+Griffith Lake|DE,DE,OTHER,38.925,-75.545,20.0,fullPool,low,-0.794
+Killens Pond|DE,DE,OTHER,38.988,-75.539,17.5,fullPool,low,-0.774
+Lums Pond|DE,DE,OTHER,39.558,-75.72,41.6,fullPool,low,-0.778
+Records Pond|DE,DE,OTHER,38.56,-75.575,7.4,fullPool,low,-0.814
+Red Mill Pond|DE,DE,OTHER,38.753,-75.16,4.6,fullPool,low,-0.771
+Silver Lake (Dover)|DE,DE,OTHER,39.152,-75.515,12.8,fullPool,low,-0.778
+Trap Pond|DE,DE,OTHER,38.529,-75.48,31.3,fullPool,low,-0.781
+Wagamons Pond|DE,DE,OTHER,38.772,-75.307,6.4,fullPool,low,-0.787
+Apopka|FL,FL,OTHER,28.62,-81.62,66.14,fullPool,high,-0.892
+East Lake Tohopekaliga|FL,FL,OTHER,28.27,-81.33,58.0,fullPool,high,-0.928
+Griffin|FL,FL,OTHER,28.86,-81.89,58.21,fullPool,high,-0.909
+Harris|FL,FL,OTHER,28.76,-81.81,62.21,fullPool,high,-0.922
+Istokpoga|FL,FL,OTHER,27.38,-81.3,39.5,fullPool,high,-1.132
+Kissimmee|FL,FL,OTHER,27.94,-81.27,53.0,fullPool,high,-1.227
+Okeechobee|FL,FL,USACE,26.94,-80.8,15.5,fullPool,low,-1.234
+Tohopekaliga (Toho)|FL,FL,OTHER,28.19,-81.415,55.0,fullPool,high,-1.152
+Allatoona|GA,GA,USACE,34.16,-84.725,840.0,fullPool,high,0.075
+Blackshear|GA,GA,OTHER,31.83,-83.955,237.0,fullPool,high,-0.551
+Burton|GA,GA,OTHER,34.77,-83.55,1866.6,fullPool,high,0.105
+Carters|GA,GA,USACE,34.62,-84.67,1074.0,fullPool,high,-0.003
+Clarks Hill / J.S. Thurmond|GA,GA,USACE,33.66,-82.2,330.0,fullPool,high,-0.663
+Lake Russell (R.B. Russell)|GA,GA,USACE,34.05,-82.65,475.0,fullPool,high,-0.486
+Lanier (Sidney Lanier)|GA,GA,USACE,34.22,-84.07,1071.0,fullPool,high,0.085
+Oconee|GA,GA,OTHER,33.43,-83.25,435.0,fullPool,high,-0.413
+Seminole|GA,GA,USACE,30.8,-84.88,77.0,fullPool,high,-0.453
+Sinclair|GA,GA,OTHER,33.15,-83.26,340.0,fullPool,high,-0.518
+Walter F. George / Eufaula|GA,GA,USACE,31.9,-85.05,190.0,fullPool,high,-0.171
+West Point|GA,GA,USACE,32.92,-85.18,635.0,fullPool,high,0.056
+Big Creek Lake|IA,IA,USACE,41.78,-93.75,920.0,fullPool,med,0.161
+Coralville Lake|IA,IA,USACE,41.72,-91.53,683.0,fullPool,high,-0.112
+Lake Red Rock|IA,IA,USACE,41.37,-93.05,742.0,fullPool,high,-0.003
+Rathbun Lake|IA,IA,USACE,40.85,-92.87,904.0,fullPool,high,0.135
+Saylorville Lake|IA,IA,USACE,41.72,-93.68,836.4,fullPool,high,0.151
+American Falls Reservoir|ID,ID,USBR,42.85,-112.87,4354.5,fullPool,high,3.33
+Anderson Ranch Reservoir|ID,ID,USBR,43.35,-115.45,4196.0,fullPool,high,3.33
+C.J. Strike Reservoir|ID,ID,OTHER,42.95,-115.98,2455.0,fullPool,high,2.864
+Coeur d'Alene|ID,ID,OTHER,47.55,-116.83,2128.0,fullPool,high,3.668
+Dworshak Reservoir|ID,ID,USACE,46.6,-116.2,1600.0,fullPool,high,3.481
+Henrys Lake|ID,ID,OTHER,44.63,-111.38,6473.86,fullPool,high,4.429
+Lake Cascade|ID,ID,USBR,44.55,-116.05,4828.0,fullPool,high,3.688
+Lake Pend Oreille|ID,ID,USACE,48.15,-116.4,2062.5,fullPool,high,3.835
+Lucky Peak Lake|ID,ID,USACE,43.53,-116.05,3055.0,fullPool,high,3.255
+Palisades Reservoir|ID,ID,USBR,43.4,-111.2,5620.0,fullPool,high,4.19
+Payette Lake|ID,ID,OTHER,44.93,-116.1,4988.8,fullPool,med,3.77
+Priest Lake|ID,ID,OTHER,48.58,-116.87,2437.64,fullPool,high,3.947
+Carlyle Lake|IL,IL,USACE,38.65,-89.35,445.0,fullPool,high,-0.39
+Clinton Lake|IL,IL,OTHER,40.17,-88.83,690.0,fullPool,high,-0.223
+Crab Orchard Lake|IL,IL,OTHER,37.72,-89.05,405.0,fullPool,high,-0.312
+Devil's Kitchen Lake|IL,IL,OTHER,37.66,-89.1,510.0,fullPool,high,-0.269
+Lake Shelbyville|IL,IL,USACE,39.45,-88.75,599.7,fullPool,high,-0.269
+Lake Springfield|IL,IL,OTHER,39.72,-89.6,560.0,fullPool,high,-0.348
+Lake of Egypt|IL,IL,OTHER,37.6,-88.97,500.0,fullPool,med,-0.233
+Rend Lake|IL,IL,USACE,38.05,-88.95,405.0,fullPool,high,-0.312
+Sangchris Lake|IL,IL,OTHER,39.62,-89.47,585.0,fullPool,high,-0.325
+Brookville Lake|IN,IN,USACE,39.45,-85.0,748.0,fullPool,high,-0.558
+Cagles Mill Lake|IN,IN,USACE,39.48,-86.88,639.5,fullPool,high,-0.384
+Cecil M. Harden Lake|IN,IN,USACE,39.78,-87.05,662.0,fullPool,high,-0.318
+Eagle Creek Reservoir|IN,IN,OTHER,39.87,-86.3,790.0,fullPool,high,-0.387
+Geist Reservoir|IN,IN,OTHER,39.93,-85.95,784.26,fullPool,high,-0.436
+Lake Freeman|IN,IN,OTHER,40.75,-86.75,610.35,fullPool,high,-0.364
+Lake Shafer|IN,IN,OTHER,40.8,-86.77,645.15,fullPool,high,-0.367
+Mississinewa Lake|IN,IN,USACE,40.72,-85.9,737.0,fullPool,high,-0.413
+Monroe Lake|IN,IN,USACE,39.05,-86.42,538.0,fullPool,high,-0.39
+Patoka Lake|IN,IN,USACE,38.42,-86.65,536.0,fullPool,high,-0.377
+Salamonie Lake|IN,IN,USACE,40.75,-85.65,755.0,fullPool,high,-0.413
+Cedar Bluff Reservoir|KS,KS,USBR,38.78,-99.73,2144.0,fullPool,high,0.909
+Cheney Reservoir|KS,KS,USBR,37.73,-97.82,1421.6,fullPool,high,0.479
+Clinton Lake|KS,KS,USACE,38.925,-95.36,875.5,fullPool,high,0.302
+El Dorado Lake|KS,KS,USACE,37.84,-96.79,1339.0,fullPool,high,0.449
+John Redmond Reservoir|KS,KS,USACE,38.25,-95.76,1041.0,fullPool,high,0.512
+Kanopolis Lake|KS,KS,USACE,38.62,-98.01,1463.0,fullPool,high,0.44
+Marion Reservoir|KS,KS,USACE,38.37,-97.09,1350.5,fullPool,high,0.528
+Melvern Lake|KS,KS,USACE,38.51,-95.72,1036.0,fullPool,high,0.505
+Milford Lake|KS,KS,USACE,39.1,-96.91,1144.4,fullPool,high,0.43
+Perry Lake|KS,KS,USACE,39.14,-95.45,891.5,fullPool,high,0.289
+Pomona Lake|KS,KS,USACE,38.65,-95.56,974.0,fullPool,high,0.456
+Tuttle Creek Lake|KS,KS,USACE,39.32,-96.61,1075.0,fullPool,high,0.423
+Waconda Lake|KS,KS,USBR,39.49,-98.31,1455.6,fullPool,high,0.554
+Wilson Lake|KS,KS,USACE,38.93,-98.51,1516.0,fullPool,high,0.581
+Barren River Lake|KY,KY,USACE,36.89,-86.13,552.0,fullPool,high,-0.446
+Buckhorn Lake|KY,KY,USACE,37.34,-83.4,782.0,fullPool,high,-0.518
+Cave Run Lake|KY,KY,USACE,38.12,-83.52,730.0,fullPool,high,-0.512
+Green River Lake|KY,KY,USACE,37.25,-85.34,675.0,fullPool,high,-0.486
+Herrington Lake|KY,KY,OTHER,37.75,-84.7,740.0,fullPool,high,-0.528
+Kentucky Lake|KY,KY,OTHER,36.9,-88.07,359.0,fullPool,high,-0.23
+Lake Barkley|KY,KY,USACE,36.92,-87.94,359.0,fullPool,high,-0.194
+Lake Cumberland|KY,KY,USACE,36.93,-85.05,723.0,fullPool,high,-0.479
+Laurel River Lake|KY,KY,USACE,36.95,-84.22,1018.5,fullPool,high,-0.518
+Nolin River Lake|KY,KY,USACE,37.3,-86.25,515.0,fullPool,high,-0.4
+Rough River Lake|KY,KY,USACE,37.61,-86.51,495.0,fullPool,high,-0.476
+Taylorsville Lake|KY,KY,USACE,38.02,-85.25,547.0,fullPool,high,-0.558
+Cross Lake|LA,LA,OTHER,32.53,-93.85,171.1,fullPool,med,-0.233
+Lake Bistineau|LA,LA,OTHER,32.4,-93.4,141.0,fullPool,high,-0.22
+Lake D'Arbonne|LA,LA,OTHER,32.71,-92.46,80.0,fullPool,high,-0.282
+Quabbin Reservoir|MA,MA,OTHER,42.374,-72.337,530.0,fullPool,high,-0.512
+Wachusett Reservoir|MA,MA,OTHER,42.39,-71.75,395.0,fullPool,med,-0.725
+Conowingo Reservoir|MD,MD,OTHER,39.66,-76.17,109.2,fullPool,low,-0.843
+Deep Creek Lake|MD,MD,OTHER,39.5,-79.3,2462.0,fullPool,med,-0.44
+Jennings Randolph Lake|MD,MD,USACE,39.42,-79.12,1466.0,fullPool,high,-0.502
+Lake Habeeb (Rocky Gap)|MD,MD,OTHER,39.7,-78.65,1166.4,fullPool,low,-0.554
+Liberty Reservoir|MD,MD,OTHER,39.42,-76.9,420.0,fullPool,high,-0.699
+Loch Raven Reservoir|MD,MD,OTHER,39.47,-76.55,240.0,fullPool,high,-0.784
+Piney Run Lake|MD,MD,OTHER,39.4,-77.02,523.0,fullPool,high,-0.669
+Prettyboy Reservoir|MD,MD,OTHER,39.62,-76.73,520.0,fullPool,high,-0.715
+Rocky Gorge Reservoir|MD,MD,OTHER,39.13,-76.95,286.4,fullPool,med,-0.696
+Savage River Reservoir|MD,MD,OTHER,39.5,-79.13,1467.0,fullPool,high,-0.443
+Triadelphia Reservoir|MD,MD,OTHER,39.22,-77.03,366.4,fullPool,med,-0.692
+Youghiogheny River Lake|MD,MD,USACE,39.7,-79.36,1438.35,fullPool,high,-0.486
+Chesuncook Lake|ME,ME,OTHER,46.05,-69.4,941.59,fullPool,high,-0.594
+Flagstaff Lake|ME,ME,OTHER,45.18,-70.33,1146.0,fullPool,high,-0.505
+Gull Lake|MN,MN,USACE,46.41,-94.35,1194.0,fullPool,high,0.669
+Lake Winnibigoshish|MN,MN,USACE,47.42,-94.2,1298.44,fullPool,high,0.83
+Leech Lake|MN,MN,USACE,47.15,-94.38,1294.9,fullPool,high,0.781
+Clearwater Lake|MO,MO,USACE,37.12,-90.78,498.0,fullPool,high,0.003
+Lake Taneycomo|MO,MO,OTHER,36.64,-93.22,701.1,fullPool,high,0.413
+Lake of the Ozarks|MO,MO,OTHER,38.2,-92.63,660.0,fullPool,high,0.223
+Longview Lake|MO,MO,USACE,38.9,-94.5,891.0,fullPool,high,0.308
+Mark Twain Lake|MO,MO,USACE,39.53,-91.63,606.0,fullPool,high,-0.052
+Pomme de Terre Lake|MO,MO,USACE,37.89,-93.32,839.0,fullPool,high,0.364
+Smithville Lake|MO,MO,USACE,39.42,-94.57,864.2,fullPool,high,0.322
+Stockton Lake|MO,MO,USACE,37.66,-93.76,867.0,fullPool,high,0.377
+Table Rock Lake|MO,MO,USACE,36.6,-93.31,915.0,fullPool,high,0.404
+Truman Lake|MO,MO,USACE,38.26,-93.4,706.02,fullPool,high,0.397
+Wappapello Lake|MO,MO,USACE,36.93,-90.28,359.7,fullPool,high,-0.108
+Arkabutla Lake|MS,MS,USACE,34.74,-90.11,220.0,fullPool,high,-0.033
+Bay Springs Lake|MS,MS,USACE,34.58,-88.34,414.0,fullPool,high,0.141
+Columbus Lake|MS,MS,USACE,33.56,-88.49,164.0,fullPool,high,0.003
+Eagle Lake|MS,MS,USACE,32.495,-90.94,76.9,fullPool,med,-0.131
+Enid Lake|MS,MS,USACE,34.16,-89.9,250.0,fullPool,high,-0.059
+Grenada Lake|MS,MS,USACE,33.83,-89.73,215.0,fullPool,high,0.007
+Okatibbee Lake|MS,MS,USACE,32.49,-88.81,344.0,fullPool,high,0.157
+Ross Barnett Reservoir|MS,MS,OTHER,32.43,-90.025,297.5,fullPool,high,0.062
+Sardis Lake|MS,MS,USACE,34.41,-89.79,260.0,fullPool,high,-0.056
+Canyon Ferry Lake|MT,MT,USBR,46.5,-111.55,3797.0,fullPool,high,3.317
+Flathead Lake|MT,MT,OTHER,47.869,-114.105,2893.0,fullPool,high,3.678
+Fort Peck Lake|MT,MT,USACE,47.65,-106.72,2234.0,fullPool,high,2.156
+Fresno Reservoir|MT,MT,USBR,48.63,-109.95,2575.0,fullPool,high,2.789
+Hebgen Lake|MT,MT,OTHER,44.86,-111.33,6534.87,fullPool,high,4.032
+Hungry Horse Reservoir|MT,MT,USBR,48.2,-113.9,3560.0,fullPool,high,4.134
+Lake Koocanusa|MT,MT,USACE,48.7,-115.3,2459.0,fullPool,high,3.957
+Tiber Reservoir (Lake Elwell)|MT,MT,USBR,48.32,-111.1,2993.0,fullPool,high,2.966
+Badin Lake|NC,NC,OTHER,35.42,-80.1,541.1,fullPool,high,-0.879
+Falls Lake|NC,NC,USACE,36.02,-78.7,251.5,fullPool,high,-0.853
+Fontana Lake|NC,NC,TVA,35.43,-83.75,1703.0,fullPool,high,-0.226
+High Rock Lake|NC,NC,OTHER,35.63,-80.25,655.0,fullPool,high,-0.81
+Hiwassee Lake|NC,NC,TVA,35.2,-84.05,1520.9,fullPool,high,0.01
+Jordan Lake|NC,NC,USACE,35.73,-79.02,216.0,fullPool,high,-0.804
+Kerr Lake (John H. Kerr)|NC,NC,USACE,36.55,-78.3,300.0,fullPool,high,-0.984
+Lake Hickory|NC,NC,OTHER,35.78,-81.25,935.0,fullPool,high,-0.584
+Lake James|NC,NC,OTHER,35.75,-81.88,1200.0,fullPool,high,-0.312
+Lake Norman|NC,NC,OTHER,35.55,-80.95,760.0,fullPool,high,-0.84
+Bowman-Haley Reservoir|ND,ND,USACE,46.03,-103.3,2754.8,fullPool,high,1.611
+Jamestown Reservoir|ND,ND,USBR,47.03,-98.72,1431.0,fullPool,high,1.266
+Lake Ashtabula|ND,ND,USACE,47.15,-98.05,1266.0,fullPool,high,1.175
+Lake Darling|ND,ND,OTHER,48.55,-101.55,1597.0,fullPool,high,1.138
+Lake Oahe|ND,ND,USACE,46.2,-100.6,1607.5,fullPool,high,1.26
+Lake Sakakawea|ND,ND,USACE,47.85,-102.3,1837.5,fullPool,high,1.381
+Lake Tschida|ND,ND,USBR,46.62,-101.75,2064.5,fullPool,high,1.394
+Nelson Lake|ND,ND,OTHER,47.3,-101.45,1925.0,fullPool,med,1.25
+Patterson Lake|ND,ND,USBR,46.87,-102.83,2420.0,fullPool,high,1.772
+Box Butte Reservoir|NE,NE,USBR,42.45,-103.08,4007.0,fullPool,high,2.031
+Branched Oak Lake|NE,NE,USACE,40.97,-96.86,1284.0,fullPool,high,0.404
+Calamus Reservoir|NE,NE,USBR,41.83,-99.25,2244.0,fullPool,high,0.85
+Harlan County Lake|NE,NE,USACE,40.07,-99.2,1946.0,fullPool,high,0.804
+Johnson Lake|NE,NE,OTHER,40.7,-99.83,2618.0,fullPool,med,0.961
+Lake McConaughy|NE,NE,OTHER,41.23,-101.7,3265.0,fullPool,high,1.407
+Lake Ogallala|NE,NE,OTHER,41.19,-101.7,3122.0,fullPool,low,1.414
+Merritt Reservoir|NE,NE,USBR,42.62,-100.88,2946.0,fullPool,high,1.004
+Sutherland Reservoir|NE,NE,OTHER,41.13,-101.15,3043.0,fullPool,med,1.316
+Swanson Reservoir|NE,NE,USBR,40.14,-100.75,2752.0,fullPool,high,1.053
+First Connecticut Lake|NH,NH,OTHER,45.09,-71.28,1640.0,fullPool,med,-0.315
+Lake Winnipesaukee|NH,NH,OTHER,43.62,-71.33,504.32,fullPool,high,-0.482
+Lake Hopatcong|NJ,NJ,OTHER,40.95,-74.63,923.57,fullPool,high,-0.663
+Manasquan Reservoir|NJ,NJ,OTHER,40.16,-74.14,103.0,fullPool,high,-1.152
+Monksville Reservoir|NJ,NJ,OTHER,41.11,-74.32,400.0,fullPool,high,-0.906
+Round Valley Reservoir|NJ,NJ,OTHER,40.62,-74.84,384.2,fullPool,high,-0.797
+Spruce Run Reservoir|NJ,NJ,OTHER,40.65,-74.93,272.2,fullPool,high,-0.791
+Wanaque Reservoir|NJ,NJ,OTHER,41.04,-74.29,302.4,fullPool,high,-0.837
+Abiquiu Lake|NM,NM,USACE,36.24,-106.43,6220.0,fullPool,high,3.389
+Bluewater Lake|NM,NM,OTHER,35.3,-108.1,7402.6,fullPool,high,3.638
+Caballo Lake|NM,NM,USBR,32.9,-107.31,4172.44,fullPool,high,2.116
+Cochiti Lake|NM,NM,USACE,35.65,-106.32,5345.5,fullPool,high,3.087
+Conchas Lake|NM,NM,USACE,35.4,-104.19,4201.0,fullPool,high,2.037
+El Vado Lake|NM,NM,USBR,36.59,-106.73,6902.0,fullPool,high,4.072
+Elephant Butte Reservoir|NM,NM,USBR,33.25,-107.2,4407.0,fullPool,high,2.178
+Heron Lake|NM,NM,USBR,36.7,-106.66,7186.1,fullPool,high,4.334
+Navajo Reservoir|NM,NM,USBR,36.8,-107.61,6085.0,fullPool,high,3.609
+Santa Rosa Lake|NM,NM,USACE,35.03,-104.68,4750.02,fullPool,high,2.313
+Sumner Lake|NM,NM,USBR,34.61,-104.38,4260.9,fullPool,med,2.11
+Ute Lake|NM,NM,OTHER,35.35,-103.45,3788.86,fullPool,high,1.85
+Lahontan Reservoir|NV,NV,USBR,39.45,-119.07,4162.0,fullPool,med,3.107
+Lake Mead|NV,NV,USBR,36.15,-114.4,1219.6,fullPool,high,2.205
+Lake Mohave|NV,NV,USBR,35.4,-114.63,647.0,fullPool,high,2.306
+Lake Tahoe|NV,NV,USBR,39.15,-119.93,6229.1,fullPool,high,4.16
+Rye Patch Reservoir|NV,NV,USBR,40.45,-118.32,4136.0,fullPool,high,3.255
+Topaz Lake|NV,NV,OTHER,38.68,-119.53,5000.38,fullPool,high,3.77
+Wild Horse Reservoir|NV,NV,OTHER,41.68,-115.8,6205.0,fullPool,low,3.973
+Cranberry Lake|NY,NY,NONE,44.18,-74.83,1486.43,fullPool,high,-0.266
+Great Sacandaga Lake|NY,NY,OTHER,43.15,-74.15,768.0,fullPool,high,-0.456
+Indian Lake|NY,NY,OTHER,43.75,-74.27,1651.29,fullPool,high,-0.292
+Alum Creek Lake|OH,OH,USACE,40.2,-82.98,888.0,fullPool,high,-0.509
+Berlin Lake|OH,OH,USACE,41.03,-81.0,1024.01,fullPool,high,-0.551
+Buckeye Lake|OH,OH,OTHER,39.93,-82.48,891.6,fullPool,high,-0.61
+Caesar Creek Lake|OH,OH,USACE,39.48,-84.05,849.0,fullPool,high,-0.587
+Grand Lake St. Marys|OH,OH,OTHER,40.53,-84.5,870.6,fullPool,high,-0.531
+Hoover Reservoir|OH,OH,OTHER,40.15,-82.87,894.0,fullPool,high,-0.541
+Indian Lake|OH,OH,OTHER,40.5,-83.9,996.3,fullPool,high,-0.554
+Lake Milton|OH,OH,OTHER,41.1,-80.97,947.43,fullPool,high,-0.571
+Mosquito Creek Lake|OH,OH,USACE,41.3,-80.76,900.73,fullPool,high,-0.6
+Salt Fork Lake|OH,OH,OTHER,40.08,-81.42,800.0,fullPool,high,-0.682
+Senecaville Lake|OH,OH,USACE,39.93,-81.42,832.2,fullPool,high,-0.663
+Tappan Lake|OH,OH,USACE,40.35,-81.23,899.3,fullPool,high,-0.643
+Broken Bow Lake|OK,OK,USACE,34.15,-94.68,602.5,fullPool,high,0.082
+Canton Lake|OK,OK,USACE,36.09,-98.59,1615.4,fullPool,high,0.636
+Fort Gibson Lake|OK,OK,USACE,35.87,-95.25,554.0,fullPool,high,0.377
+Grand Lake o' the Cherokees|OK,OK,OTHER,36.55,-94.85,744.0,fullPool,high,0.348
+Kaw Lake|OK,OK,USACE,36.75,-96.92,1010.0,fullPool,high,0.41
+Keystone Lake|OK,OK,USACE,36.15,-96.25,723.0,fullPool,high,0.361
+Lake Eufaula|OK,OK,USACE,35.3,-95.58,585.0,fullPool,high,0.341
+Lake Hudson|OK,OK,OTHER,36.22,-95.12,619.0,fullPool,high,0.42
+Lake Murray (OK)|OK,OK,OTHER,34.06,-96.98,750.0,fullPool,high,0.18
+Lake Tenkiller|OK,OK,USACE,35.6,-94.98,632.0,fullPool,high,0.459
+Oologah Lake|OK,OK,USACE,36.55,-95.67,638.0,fullPool,high,0.404
+Sardis Lake|OK,OK,USACE,34.63,-95.35,599.0,fullPool,high,0.302
+Skiatook Lake|OK,OK,USACE,36.37,-96.13,714.0,fullPool,high,0.381
+Crescent Lake|OR,OR,OTHER,43.48,-121.98,4845.0,fullPool,med,4.252
+Detroit Lake|OR,OR,USACE,44.72,-122.2,1563.5,fullPool,high,3.57
+Fern Ridge Reservoir|OR,OR,USACE,44.12,-123.3,373.5,fullPool,high,3.573
+Lake Billy Chinook|OR,OR,OTHER,44.55,-121.28,1945.0,fullPool,high,3.596
+Lake Owyhee|OR,OR,USBR,43.65,-117.25,2670.0,fullPool,high,3.287
+Timothy Lake|OR,OR,OTHER,45.12,-121.79,3190.0,fullPool,med,3.638
+Allegheny Reservoir|PA,PA,USACE,41.85,-78.9,1327.53,fullPool,high,-0.446
+Beltzville Lake|PA,PA,USACE,40.85,-75.63,627.34,fullPool,high,-0.646
+Blue Marsh Lake|PA,PA,USACE,40.4,-76.03,289.27,fullPool,high,-0.715
+Lake Arthur|PA,PA,OTHER,40.95,-80.1,1189.8,fullPool,high,-0.423
+Lake Marburg|PA,PA,OTHER,39.75,-76.87,623.0,fullPool,med,-0.689
+Lake Nockamixon|PA,PA,OTHER,40.47,-75.24,395.0,fullPool,high,-0.883
+Lake Wallenpaupack|PA,PA,OTHER,41.42,-75.2,1187.0,fullPool,med,-0.63
+Pymatuning Reservoir|PA,PA,OTHER,41.6,-80.47,1008.0,fullPool,high,-0.577
+Raystown Lake|PA,PA,USACE,40.4,-78.05,786.0,fullPool,high,-0.643
+Shenango River Lake|PA,PA,USACE,41.3,-80.44,894.67,fullPool,high,-0.561
+Yellow Creek Lake|PA,PA,OTHER,40.56,-79.02,1280.0,fullPool,high,-0.577
+Bowdish Reservoir|RI,RI,OTHER,41.9,-71.75,569.0,fullPool,low,-0.781
+Flat River Res. (Johnson's Pond)|RI,RI,OTHER,41.68,-71.63,248.0,fullPool,low,-0.814
+Pascoag Reservoir|RI,RI,OTHER,41.95,-71.72,441.0,fullPool,low,-0.787
+Scituate Reservoir|RI,RI,OTHER,41.78,-71.6,284.0,fullPool,high,-0.81
+Lake Greenwood|SC,SC,OTHER,34.19,-81.94,439.0,fullPool,high,0.187
+Lake Hartwell|SC,SC,USACE,34.5,-82.85,660.0,fullPool,high,-0.269
+Lake Jocassee|SC,SC,OTHER,34.97,-82.93,1110.0,fullPool,high,-0.135
+Lake Keowee|SC,SC,OTHER,34.83,-82.9,800.0,fullPool,high,-0.174
+Lake Marion|SC,SC,OTHER,33.5,-80.35,75.5,fullPool,high,-0.879
+Lake Monticello|SC,SC,OTHER,34.3,-81.33,424.3,fullPool,high,-0.725
+Lake Moultrie|SC,SC,OTHER,33.3,-80.05,75.5,fullPool,med,-0.984
+Lake Murray (SC)|SC,SC,OTHER,34.05,-81.23,360.0,fullPool,high,-0.909
+Lake Robinson|SC,SC,OTHER,34.47,-80.15,221.6,fullPool,high,-0.866
+Lake Strom Thurmond (Clarks Hill)|SC,SC,USACE,33.68,-82.2,330.0,fullPool,high,-0.669
+Lake Wateree|SC,SC,OTHER,34.42,-80.87,225.5,fullPool,high,-0.771
+Lake Wylie|SC,SC,OTHER,35.1,-81.05,569.4,fullPool,high,-0.787
+Angostura Reservoir|SD,SD,USBR,43.34,-103.43,3187.2,fullPool,high,1.673
+Lake Francis Case|SD,SD,USACE,43.55,-99.2,1355.0,fullPool,high,1.168
+Lake Oahe|SD,SD,USACE,44.9,-100.4,1607.5,fullPool,high,1.204
+Lake Sharpe|SD,SD,USACE,44.35,-99.9,1420.0,fullPool,high,1.158
+Lewis and Clark Lake|SD,SD,USACE,42.85,-97.65,1207.5,fullPool,med,0.679
+Pactola Reservoir|SD,SD,USBR,44.07,-103.5,4580.2,fullPool,high,1.89
+Sheridan Lake|SD,SD,OTHER,43.93,-103.55,4624.0,fullPool,med,1.991
+Center Hill Lake|TN,TN,USACE,36.0,-85.82,648.0,fullPool,high,-0.138
+Cherokee Lake|TN,TN,TVA,36.25,-83.45,1070.8,fullPool,high,-0.404
+Chickamauga Lake|TN,TN,TVA,35.4,-85.05,682.5,fullPool,high,-0.21
+Dale Hollow Lake|TN,TN,USACE,36.55,-85.3,651.0,fullPool,high,-0.374
+Douglas Lake|TN,TN,TVA,36.0,-83.35,993.88,fullPool,high,-0.564
+Fort Loudoun Lake|TN,TN,TVA,35.85,-84.15,813.0,fullPool,high,-0.41
+Kentucky Lake|TN,TN,TVA,36.2,-88.05,359.0,fullPool,high,-0.131
+Nickajack Lake|TN,TN,TVA,35.03,-85.53,634.5,fullPool,high,0.0
+Norris Lake|TN,TN,TVA,36.25,-83.9,1020.0,fullPool,high,-0.325
+Old Hickory Lake|TN,TN,USACE,36.28,-86.62,445.0,fullPool,high,-0.184
+Percy Priest Lake|TN,TN,USACE,36.1,-86.6,490.0,fullPool,high,-0.092
+Pickwick Lake|TN,TN,TVA,35.05,-88.2,414.0,fullPool,high,-0.046
+Tims Ford Lake|TN,TN,TVA,35.22,-86.25,888.0,fullPool,high,0.095
+Watts Bar Lake|TN,TN,TVA,35.75,-84.75,740.85,fullPool,high,-0.315
+Amistad Reservoir|TX,TX,OTHER,29.5,-101.15,1117.0,fullPool,high,0.302
+Caddo Lake|TX,TX,NONE,32.72,-94.1,168.5,fullPool,high,-0.21
+Canyon Lake|TX,TX,USACE,29.87,-98.25,909.0,fullPool,high,0.338
+Cedar Creek Reservoir|TX,TX,OTHER,32.18,-96.07,322.0,fullPool,high,-0.023
+Falcon Lake|TX,TX,OTHER,26.75,-99.25,301.2,fullPool,high,-0.144
+Lake Buchanan|TX,TX,OTHER,30.8,-98.42,1020.0,fullPool,high,0.171
+Lake Conroe|TX,TX,OTHER,30.42,-95.6,201.0,fullPool,high,-0.02
+Lake Fork Reservoir|TX,TX,OTHER,32.83,-95.55,403.0,fullPool,high,-0.066
+Lake Livingston|TX,TX,OTHER,30.75,-95.1,131.0,fullPool,high,0.131
+Lake Tawakoni|TX,TX,OTHER,32.88,-95.95,437.5,fullPool,high,-0.046
+Lake Texoma|TX,TX,USACE,33.9,-96.6,617.0,fullPool,high,0.066
+Lake Travis|TX,TX,OTHER,30.42,-97.92,681.0,fullPool,high,0.105
+Possum Kingdom Lake|TX,TX,OTHER,32.87,-98.55,999.0,fullPool,high,0.272
+Sam Rayburn Reservoir|TX,TX,USACE,31.1,-94.1,164.4,fullPool,high,0.007
+Toledo Bend Reservoir|TX,TX,OTHER,31.35,-93.75,172.0,fullPool,high,-0.2
+Deer Creek Reservoir|UT,UT,USBR,40.42,-111.5,5417.0,fullPool,high,3.707
+Flaming Gorge Reservoir|UT,UT,USBR,40.92,-109.42,6040.0,fullPool,high,3.973
+Jordanelle Reservoir|UT,UT,USBR,40.6,-111.42,6166.4,fullPool,high,4.012
+Lake Powell|UT,UT,USBR,37.0,-110.9,3700.0,fullPool,high,3.891
+Pineview Reservoir|UT,UT,USBR,41.25,-111.8,4900.0,fullPool,high,3.458
+Starvation Reservoir|UT,UT,USBR,40.18,-110.45,5712.0,fullPool,high,4.288
+Strawberry Reservoir|UT,UT,USBR,40.15,-111.15,7602.4,fullPool,high,4.462
+Willard Bay Reservoir|UT,UT,USBR,41.37,-112.06,4226.0,fullPool,high,3.189
+Claytor Lake|VA,VA,OTHER,37.06,-80.63,1846.0,fullPool,high,-0.328
+Douthat Lake|VA,VA,OTHER,37.895,-79.8,1444.2,fullPool,low,-0.538
+Flannagan Reservoir|VA,VA,USACE,37.23,-82.35,1396.0,fullPool,high,-0.548
+Kerr Reservoir (Buggs Island)|VA,VA,USACE,36.6,-78.35,300.0,fullPool,high,-0.994
+Lake Anna|VA,VA,OTHER,38.07,-77.8,250.0,fullPool,high,-0.846
+Lake Chesdin|VA,VA,OTHER,37.23,-77.65,157.2,fullPool,high,-1.033
+Lake Gaston|VA,VA,OTHER,36.52,-77.9,200.0,fullPool,high,-0.85
+Lake Moomaw|VA,VA,USACE,37.96,-79.95,1582.0,fullPool,high,-0.489
+Philpott Lake|VA,VA,USACE,36.79,-80.03,974.0,fullPool,high,-0.607
+Smith Mountain Lake|VA,VA,OTHER,37.05,-79.7,795.0,fullPool,high,-0.728
+South Holston Lake|VA,VA,TVA,36.6,-81.9,1729.0,fullPool,high,-0.266
+Harriman Reservoir (Whitingham)|VT,VT,OTHER,42.8,-72.9,1497.66,fullPool,med,-0.105
+Somerset Reservoir|VT,VT,OTHER,42.98,-72.95,2128.23,fullPool,high,-0.958
+Banks Lake|WA,WA,USBR,47.8,-119.15,1570.0,fullPool,high,3.944
+Lake Chelan|WA,WA,OTHER,47.99,-120.2,1100.0,fullPool,high,4.108
+Lake Cushman|WA,WA,OTHER,47.45,-123.22,738.0,fullPool,high,3.556
+Lake Roosevelt (FDR)|WA,WA,USBR,48.0,-118.2,1290.0,fullPool,high,4.078
+Potholes Reservoir|WA,WA,USBR,46.98,-119.33,1046.5,fullPool,high,3.635
+Riffe Lake|WA,WA,OTHER,46.5,-122.42,749.0,fullPool,med,3.51
+Ross Lake|WA,WA,OTHER,48.8,-121.07,1602.5,fullPool,high,3.983
+Castle Rock Lake|WI,WI,OTHER,43.9,-89.95,882.0,fullPool,med,-0.026
+Chippewa Flowage|WI,WI,OTHER,45.95,-91.1,1313.0,fullPool,high,-0.112
+Lake Petenwell|WI,WI,OTHER,44.07,-89.92,923.9,fullPool,high,-0.016
+Lake Winnebago|WI,WI,USACE,44.0,-88.42,746.8,fullPool,med,-0.046
+Lake Wisconsin|WI,WI,OTHER,43.45,-89.65,774.4,fullPool,high,-0.049
+Beech Fork Lake|WV,WV,USACE,38.28,-82.37,592.0,fullPool,high,-0.64
+Bluestone Lake|WV,WV,USACE,37.62,-80.9,1410.0,fullPool,high,-0.518
+Burnsville Lake|WV,WV,USACE,38.85,-80.63,789.0,fullPool,high,-0.682
+Cheat Lake|WV,WV,OTHER,39.7,-79.85,870.0,fullPool,high,-0.367
+East Lynn Lake|WV,WV,USACE,38.15,-82.33,662.0,fullPool,high,-0.689
+Mount Storm Lake|WV,WV,OTHER,39.24,-79.27,3244.0,fullPool,med,-0.381
+R.D. Bailey Lake|WV,WV,USACE,37.6,-81.83,1035.0,fullPool,high,-0.673
+Stonewall Jackson Lake|WV,WV,USACE,38.95,-80.53,1072.53,fullPool,high,-0.528
+Summersville Lake|WV,WV,USACE,38.23,-80.89,1652.0,fullPool,high,-0.545
+Sutton Lake|WV,WV,USACE,38.66,-80.66,922.0,fullPool,high,-0.577
+Tygart Lake|WV,WV,USACE,39.32,-80.03,1093.45,fullPool,high,-0.623
+Alcova Reservoir|WY,WY,USBR,42.54,-106.75,5498.0,fullPool,high,2.966
+Bighorn Lake|WY,WY,USBR,44.9,-108.2,3640.0,fullPool,high,2.602
+Boysen Reservoir|WY,WY,USBR,43.35,-108.17,4725.0,fullPool,high,2.963
+Buffalo Bill Reservoir|WY,WY,USBR,44.5,-109.2,5393.5,fullPool,high,3.579
+Flaming Gorge Reservoir|WY,WY,USBR,41.4,-109.5,6040.0,fullPool,high,4.354
+Fontenelle Reservoir|WY,WY,USBR,42.05,-110.07,6506.0,fullPool,high,4.419
+Glendo Reservoir|WY,WY,USBR,42.48,-105.0,4635.0,fullPool,high,2.569
+Jackson Lake|WY,WY,USBR,43.85,-110.6,6769.0,fullPool,high,4.324
+Keyhole Reservoir|WY,WY,USBR,44.35,-104.78,4099.3,fullPool,high,1.877
+Pathfinder Reservoir|WY,WY,USBR,42.47,-106.85,5852.49,fullPool,high,3.081
+Seminoe Reservoir|WY,WY,USBR,42.13,-106.9,6357.0,fullPool,high,3.701

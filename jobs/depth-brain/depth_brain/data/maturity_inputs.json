@@ -78,7 +78,8 @@
     "arithmetic tested",
     "research evidence validation",
     "no field or prospective test",
-    "first hash-frozen preregistered offline validation passed (TWDB effective zones, 5 lakes); still no field/event validation; S2 does not beat a naive fleet-mean guess"
+    "first hash-frozen preregistered offline validation passed (TWDB effective zones, 5 lakes); still no field/event validation; S2 does not beat a naive fleet-mean guess",
+    "Level-1 input verification: Lake Brain levels for the 5 pilots equal the operators' own feeds (TVA rows identical, USGS 00062 within 0.05 ft at the same instant); shift arithmetic exact (DEPTH_PILOT_INPUT_VERIFICATION.md). This validates the derivation inputs, not field behaviour"
    ],
    "changeEvidence": []
   },
@@ -87,11 +88,14 @@
    "weight": 10,
    "critical": false,
    "basis": "judgment",
-   "score": 7,
+   "score": 8,
    "evidence": [
-    "tiers, datum status, licence gate, reasons, fingerprints, golden fixtures"
+    "tiers, datum status, licence gate, reasons, fingerprints, golden fixtures",
+    "every served state now carries tier, sigma components, level and pool sources, survey year, datum evidence (status, confidence, basis, up to 2 evidence URLs) and licence class (rubric anchor 8)"
    ],
-   "changeEvidence": []
+   "changeEvidence": [
+    "provenance-datum-licence-complete-2026-10-14"
+   ]
   },
   "scalability": {
    "label": "Fleet scalability",
@@ -104,7 +108,8 @@
     "233 lakes lack datum evidence",
     "23 states lack contours",
     "CWMS location-level matching generalises: 82 of 180 blocked lakes resolved by one method; 98 remain with named resolvers",
-    "orchestration prepared and gated off (run.py, executor entry, staging); cleanup of 17 GB of rebuildable research data with evidence preserved"
+    "orchestration prepared and gated off (run.py, executor entry, staging); cleanup of 17 GB of rebuildable research data with evidence preserved",
+    "manifest reproducible from 632 KB of committed input snapshots (`refresh --check` is a test); no dependency on research worktrees or cleaned scratch"
    ],
    "changeEvidence": []
   }

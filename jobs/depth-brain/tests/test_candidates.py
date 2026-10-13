@@ -216,3 +216,50 @@ def test_twdb_prereg_hash_in_proposal_matches_the_frozen_file():
     shas = {v["validation"]["preregSha256"] for v in pr["lakes"].values() if v.get("validation")}
     assert len(shas) == 1 and hashlib.sha256(frozen).hexdigest() in shas or True      # hash is of the pre-freeze document; presence checked below
     assert all(len(h) == 64 for h in shas)
+
+
+# ── provenance completeness (cycle 6) ─────────────────────────────────────────────────────────────────────────────
+def test_every_defensible_lake_names_how_its_datum_was_established_and_where_to_check():
+    for c in CANDS.values():
+        if c["shiftPossible"]:
+            assert c["datum"].get("basis"), c["lakeId"]
+            assert c["datum"].get("evidenceUrls"), c["lakeId"]
+            assert all(u.startswith(("http", "docs/")) for u in c["datum"]["evidenceUrls"])
+
+
+def test_state_provenance_carries_datum_evidence_and_licence_for_real_manifest_records():
+    from datetime import datetime, timezone
+    from depth_brain.state import build_state
+    for lid in ("Lake Hartwell|SC", "Guntersville|AL", "Lake Fork Reservoir|TX"):
+        c = CANDS[lid]
+        ls = {"kind": "OBSERVED", "sourceCapability": c["levelSource"]["capability"] or "DIRECT_OPERATOR_POOL", "currentElevationFt": c["reference"]["poolFt"] - 1.0, "unit": "ft",
+              "observationTime": "2026-10-14T11:00:00Z", "freshness": {"stale": False}, "provenance": {"brainVersion": "x"}}
+        s, _ = build_state(c, ls, datetime(2026, 10, 14, 12, tzinfo=timezone.utc))
+        p = s["provenance"]
+        assert p["datumEvidence"]["status"] and p["datumEvidence"]["basis"] and p["datumEvidence"]["evidenceUrls"]
+        assert s["reference"]["referencePoolSource"] and s["reference"]["datumAssessment"]["sigmaFt"] is not None
+    fork = build_state(CANDS["Lake Fork Reservoir|TX"], ls, datetime(2026, 10, 14, 12, tzinfo=timezone.utc))[0]
+    assert fork["provenance"]["licence"]["customerDerivedMetricsAllowed"] == "true" and fork["coverage"]["surveyYear"] == 2009
+
+
+def test_manifest_is_reproducible_from_committed_inputs_only():
+    import depth_brain.__main__ as cli
+    spec = json.load(open(os.path.join(HERE, "depth_brain", "data", "manifest_inputs.json")))["paths"]
+    for k, v in spec.items():
+        if not v.startswith("@repo/"):
+            assert os.path.exists(os.path.join(HERE, "depth_brain", "data", v)), (k, v)                 # every input lives in the repo
+        else:
+            assert os.path.exists(os.path.join(HERE, "..", "..", v[6:])), (k, v)
+    assert not any(str(v).startswith("/") for v in spec.values())                                      # no absolute / home-directory / worktree paths
+    assert cli.main(["refresh", "--check"]) == 0                                                       # rebuild == committed candidates.json
+
+
+def test_every_state_states_its_licence_position():
+    from datetime import datetime, timezone
+    from depth_brain.state import build_state
+    for lid in ("Lake Hartwell|SC", "Lake Fork Reservoir|TX"):
+        c = CANDS[lid]
+        ls = {"kind": "OBSERVED", "sourceCapability": c["levelSource"]["capability"] or "DIRECT_OPERATOR_POOL", "currentElevationFt": c["reference"]["poolFt"] - 1.0, "unit": "ft",
+              "observationTime": "2026-10-14T11:00:00Z", "freshness": {"stale": False}, "provenance": {"brainVersion": "x"}}
+        lic = build_state(c, ls, datetime(2026, 10, 14, 12, tzinfo=timezone.utc))[0]["provenance"]["licence"]
+        assert ("contourData" in lic) != ("classes" in lic)

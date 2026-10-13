@@ -101,9 +101,22 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None)
     same_sys = bool(prov == "tva" and (src_str or "").startswith("TVA"))
     ov = overrides.get(lid)
     if ov:
-        a = DatumAssessment(ov["status"], float(ov["sigmaFt"]), 0.0, ["reviewed per-lake datum override (evidence in datum_lake_overrides.json)"], ov.get("confidence"))
+        a = DatumAssessment(ov["status"], float(ov["sigmaFt"]), 0.0, ["reviewed per-lake datum override (evidence in datum_lake_overrides.json)"], ov.get("confidence"),
+                            f"reviewed-override:{ov.get('method') or 'manual'}:{ov.get('promotedFrom') or 'datum_lake_overrides.json'}",
+                            [e["url"] for e in (ov.get("evidence") or []) if isinstance(e, dict) and str(e.get("url", "")).startswith("http")][:2])
         return a, normalize_datum(ov.get("levelDatum")) or ld, True, "reviewed override", normalize_datum(ov.get("referenceDatum")) or rd, True, "override", blocked
     a = assess(ld, rd, same_source=same_src, same_operator_system=same_sys, level_datum_verified=ld_ver, reference_datum_verified=rd_ver)
+    if a.usable:
+        a.basis = ("cwms-location-same-record" if same_src else "tva-operator-system" if same_sys else
+                   f"stated-datums:level[{ld_note[:60]}]+reference[{(rd_pat or 'cwms-location-api')[:60]}]")
+        if same_sys:
+            a.evidence_urls = ["docs/brains/depth/DEPTH_TVA_DATUM_CONFIRMATION.md"]
+        elif not same_src and not loc.get("datum"):
+            a.evidence_urls = ["docs/brains/depth/DEPTH_DATUM_AUDIT.md"]
+        if same_src or loc.get("datum"):
+            a.evidence_urls = [f"https://cwms-data.usace.army.mil/cwms-data/locations/{loc.get('location') or ''}?office={loc.get('office') or ''}"] if loc.get("location") else []
+    if a.usable and not a.evidence_urls:
+        a.evidence_urls = ["docs/brains/depth/DEPTH_DATUM_AUDIT.md"]                  # always give a reader somewhere to check
     return a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, blocked
 
 

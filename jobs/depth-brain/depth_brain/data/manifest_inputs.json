@@ -1,0 +1,26 @@
+{
+ "schema": "depth-manifest-inputs-v1",
+ "note": "The recipe for candidates.json. Every input is a small snapshot committed in data/inputs (taken 2026-10-14 from the sources named in `origin`) or an already-committed data file. `python -m depth_brain refresh --check` rebuilds the manifest from these and fails if it differs from the committed one, so the manifest never depends on a research worktree, a research branch, or a cleaned scratch folder.",
+ "paths": {
+  "directory": "inputs/directory_lakes_2026-10-13.json",
+  "bindings": "inputs/verified_bindings_v2.csv",
+  "full_pool": "inputs/full_pool.csv",
+  "matrix": "inputs/depth_fleet_evidence_matrix.csv",
+  "contour_truth": "inputs/contour_truth_lakes.csv",
+  "operating_range": "inputs/operating_range_by_lake.csv",
+  "datum_shift": "inputs/datum_shift_ngvd29_navd88.csv",
+  "licences": "source_licences.csv",
+  "providers": "datum_providers.json",
+  "cwms_locations": "cwms_location_datums.json",
+  "overrides": "datum_lake_overrides.json",
+  "a2w_datums": "a2w_project_datums.json",
+  "twdb_reference_pools": "proposals/twdb_reference_pools.json",
+  "reviewed_swift": "@repo/Sources/SectorEngine/LakeBrain/LakeSourceBindings.swift"
+ },
+ "origin": {
+  "directory": "GET <engine>/lakes snapshot 2026-10-13 (via Lake Brain research data)",
+  "bindings": "docs/research/lake-brain/data/verified_bindings_v2.csv (Lake Brain research branch)",
+  "full_pool": "docs/data/full_pool.csv (main)",
+  "matrix, contour_truth, operating_range, datum_shift": "docs/research/depth-brain/data/*.csv (branch docs/depth-brain-research)"
+ }
+}

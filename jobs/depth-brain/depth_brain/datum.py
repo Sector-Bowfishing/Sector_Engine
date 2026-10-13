@@ -51,6 +51,8 @@ class DatumAssessment:
     conversion_ft: float = 0.0          # added to the LEVEL (in level datum) to express it in the reference datum
     reasons: list = field(default_factory=list)
     evidence_confidence: str | None = None      # reviewed overrides only: "high" | "medium" (medium caps the lake at MEDIUM_CONFIDENCE rollout)
+    basis: str | None = None                    # how the relationship was established (provenance): e.g. cwms-location-same-record, tva-operator-system, reviewed-override
+    evidence_urls: list = field(default_factory=list)   # up to 2 URLs a reader can open to check it
 
     @property
     def usable(self) -> bool:
@@ -64,6 +66,10 @@ class DatumAssessment:
             d["reasons"] = list(self.reasons)
         if self.evidence_confidence:
             d["evidenceConfidence"] = self.evidence_confidence
+        if self.basis:
+            d["basis"] = self.basis
+        if self.evidence_urls:
+            d["evidenceUrls"] = list(self.evidence_urls)[:2]
         return d
 
 

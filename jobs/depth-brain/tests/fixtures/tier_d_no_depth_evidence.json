@@ -52,10 +52,18 @@
  ],
  "provenance": {
   "brainId": "depth",
-  "brainVersion": "depth-brain-0.1.0-shadow",
+  "brainVersion": "depth-brain-0.1.1-shadow",
+  "datumEvidence": {
+   "confidence": "high",
+   "status": "SAME_DATUM"
+  },
   "generatedAt": "2026-10-13T19:00:00Z",
   "inputAgeHours": 1.0,
-  "inputFingerprint": "e437a48103ea1438",
+  "inputFingerprint": "eef2a6c7a0d62b56",
+  "licence": {
+   "contourData": "none used",
+   "note": "shift-only state: level from the Lake Brain state (operator feed) and the directory reference pool; no third-party depth/contour data is involved"
+  },
   "modelVersion": "effective-depth-shift-v1",
   "processingVersion": "effective-depth-shift-v1 @ manifest fixture",
   "qualityFlags": [],

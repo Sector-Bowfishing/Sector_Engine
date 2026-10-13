@@ -167,6 +167,10 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
         flags.append("contourLicenceInternalOnly")
     if not ok:
         flags.append("shiftUnavailable")
+    datum_prov = {k: v for k, v in {
+        "status": (rec.get("datum") or {}).get("status"), "confidence": (rec.get("datum") or {}).get("evidenceConfidence") or ("high" if (rec.get("datum") or {}).get("status") in ("SAME_SOURCE", "SAME_DATUM") else None),
+        "basis": (rec.get("datum") or {}).get("basis"), "evidenceUrls": (rec.get("datum") or {}).get("evidenceUrls")}.items() if v}
+    lic = rec.get("licence") or {}
     state["provenance"] = {
         "brainId": C.BRAIN_ID, "brainVersion": brain_version, "modelVersion": C.MODEL_ID,
         "processingVersion": f"{C.MODEL_ID} @ manifest {manifest_version}", "generatedAt": C.iso(now),
@@ -175,6 +179,12 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
         "inputAgeHours": (round(res.level_age_hours, 2) if res.level_age_hours is not None else None),
         "readiness": None, "qualityFlags": flags, "validationRef": "/validation/depth",
         "inputFingerprint": input_fingerprint(rec, lake_state, manifest_version)}
+    if datum_prov:
+        state["provenance"]["datumEvidence"] = datum_prov
+    if lic and lic.get("customerDerivedMetricsAllowed") not in (None, "n/a"):
+        state["provenance"]["licence"] = {"classes": lic.get("classes"), "customerDerivedMetricsAllowed": lic.get("customerDerivedMetricsAllowed")}
+    else:
+        state["provenance"]["licence"] = {"contourData": "none used", "note": "shift-only state: level from the Lake Brain state (operator feed) and the directory reference pool; no third-party depth/contour data is involved"}
     if state["provenance"]["inputAgeHours"] is None:
         del state["provenance"]["inputAgeHours"]
 
