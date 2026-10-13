@@ -1,0 +1,1 @@
+{"date": "2026-10-14", "previous": 2.32, "new": 2.7, "moved": {"authority": [3.5, 4.0], "spatial": [2.0, 2.5], "presence": [3.0, 2.5], "seasonality": [2.0, 2.5], "validation": [3.0, 4.0], "provenance": [3.0, 5.0]}, "evidence": ["docs/brains/vegetation/validation/12_v02_dev_test_evaluation.md", "docs/brains/vegetation/VEGETATION_STATE_CONTRACT.md"], "official": false}
