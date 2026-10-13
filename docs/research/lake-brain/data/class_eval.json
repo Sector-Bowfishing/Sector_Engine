@@ -1,0 +1,139 @@
+{
+ "n": 563,
+ "fnuP50": {
+  "class": {
+   "adj_r2": 0.10344168155992639,
+   "n_params": 8
+  },
+  "region": {
+   "adj_r2": 0.2527716427699038,
+   "n_params": 5
+  },
+  "operator_family": {
+   "adj_r2": 0.08063781351574306,
+   "n_params": 4
+  },
+  "regime": {
+   "adj_r2": 0.07332607669953894,
+   "n_params": 2
+  },
+  "class+region": {
+   "adj_r2": 0.3095275166618009,
+   "n_params": 13
+  },
+  "region+operator": {
+   "adj_r2": 0.2742341599400381,
+   "n_params": 9
+  },
+  "spearman": {
+   "mean_depth_m": -0.14,
+   "area_ref_km2": 0.17,
+   "sdi_ext": 0.15,
+   "res_time_d": -0.08,
+   "frac_within_100m": -0.05,
+   "frac_narrow_300m": 0.06,
+   "lat": -0.35,
+   "lon": -0.2
+  }
+ },
+ "grassPct": {
+  "class": {
+   "adj_r2": 0.014349573757777345,
+   "n_params": 8
+  },
+  "region": {
+   "adj_r2": 0.10732864452149948,
+   "n_params": 5
+  },
+  "operator_family": {
+   "adj_r2": 0.01415690482602916,
+   "n_params": 4
+  },
+  "regime": {
+   "adj_r2": 0.011360358906874923,
+   "n_params": 2
+  },
+  "class+region": {
+   "adj_r2": 0.11719013133071465,
+   "n_params": 13
+  },
+  "region+operator": {
+   "adj_r2": 0.10920077173980514,
+   "n_params": 9
+  },
+  "spearman": {
+   "mean_depth_m": -0.06,
+   "area_ref_km2": -0.07,
+   "sdi_ext": -0.0,
+   "res_time_d": -0.09,
+   "frac_within_100m": 0.04,
+   "frac_narrow_300m": 0.06,
+   "lat": 0.12,
+   "lon": 0.08
+  }
+ },
+ "median_by_class": {
+  "N1a_natural_deep_or_unknown": {
+   "fnuP50": 1.3,
+   "grassPct": 3.6
+  },
+  "N1b_natural_shallow": {
+   "fnuP50": 3.6,
+   "grassPct": 2.7
+  },
+  "N2_regulated_natural_lake": {
+   "fnuP50": 1.2,
+   "grassPct": 7.5
+  },
+  "N3_small_pond_or_outlet_dam": {
+   "fnuP50": 1.2,
+   "grassPct": 6.3
+  },
+  "R1_run_of_river_pool": {
+   "fnuP50": 3.5,
+   "grassPct": 4.6
+  },
+  "R2_flow_through_reservoir": {
+   "fnuP50": 3.3,
+   "grassPct": 5.9
+  },
+  "R3_dendritic_storage": {
+   "fnuP50": 2.6,
+   "grassPct": 5.3
+  },
+  "R4_open_basin_storage": {
+   "fnuP50": 3.6,
+   "grassPct": 5.6
+  },
+  "R5_small_impoundment": {
+   "fnuP50": 2.4,
+   "grassPct": 21.9
+  }
+ },
+ "median_by_region": {
+  "AKHI": {
+   "fnuP50": 0.9,
+   "grassPct": 24.2
+  },
+  "GP": {
+   "fnuP50": 5.2,
+   "grassPct": 2.5
+  },
+  "MW": {
+   "fnuP50": 3.8,
+   "grassPct": 2.2
+  },
+  "NE": {
+   "fnuP50": 1.2,
+   "grassPct": 12.2
+  },
+  "SE": {
+   "fnuP50": 2.9,
+   "grassPct": 4.6
+  },
+  "W": {
+   "fnuP50": 1.6,
+   "grassPct": 9.5
+  }
+ }
+}

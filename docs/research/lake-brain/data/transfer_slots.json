@@ -1,0 +1,530 @@
+{
+ "n_lakes_in_metric": 597,
+ "pilots_only": {
+  "mean": 1.8812040572118742,
+  "median": 1.8963031610226708,
+  "p90": 2.915565808775062,
+  "cov_0_75": 0.09715242881072027,
+  "cov_1_0": 0.16917922948073702,
+  "cov_1_25": 0.24958123953098826
+ },
+ "greedy_steps": [
+  {
+   "step": 1,
+   "lake": "First Connecticut Lake|NH",
+   "lake_class": "R4_open_basin_storage",
+   "region": "NE",
+   "operator_family": "OTHER",
+   "mean_nn": 1.3294893617570631,
+   "cov_1_0": 0.2747068676716918,
+   "cov_0_75": 0.1423785594639866
+  },
+  {
+   "step": 2,
+   "lake": "Burt Lake|MI",
+   "lake_class": "N1a_natural_deep_or_unknown",
+   "region": "MW",
+   "operator_family": "NONE",
+   "mean_nn": 1.200639882682398,
+   "cov_1_0": 0.3082077051926298,
+   "cov_0_75": 0.15577889447236182
+  },
+  {
+   "step": 3,
+   "lake": "Skaneateles Lake|NY",
+   "lake_class": "N2_regulated_natural_lake",
+   "region": "NE",
+   "operator_family": "OTHER",
+   "mean_nn": 1.1110098337092271,
+   "cov_1_0": 0.38860971524288107,
+   "cov_0_75": 0.20268006700167504
+  },
+  {
+   "step": 4,
+   "lake": "Blue Mesa Reservoir|CO",
+   "lake_class": "R4_open_basin_storage",
+   "region": "W",
+   "operator_family": "USBR",
+   "mean_nn": 1.0255964909679045,
+   "cov_1_0": 0.4991624790619765,
+   "cov_0_75": 0.2613065326633166
+  },
+  {
+   "step": 5,
+   "lake": "Melvern Lake|KS",
+   "lake_class": "R4_open_basin_storage",
+   "region": "GP",
+   "operator_family": "USACE",
+   "mean_nn": 0.9789254822866325,
+   "cov_1_0": 0.5728643216080402,
+   "cov_0_75": 0.3082077051926298
+  },
+  {
+   "step": 6,
+   "lake": "Garrisons Lake|DE",
+   "lake_class": "R5_small_impoundment",
+   "region": "NE",
+   "operator_family": "OTHER",
+   "mean_nn": 0.9430613961484481,
+   "cov_1_0": 0.5963149078726968,
+   "cov_0_75": 0.3249581239530988
+  },
+  {
+   "step": 7,
+   "lake": "Taylorsville Lake|KY",
+   "lake_class": "R3_dendritic_storage",
+   "region": "SE",
+   "operator_family": "USACE",
+   "mean_nn": 0.908566022665506,
+   "cov_1_0": 0.6314907872696818,
+   "cov_0_75": 0.37185929648241206
+  },
+  {
+   "step": 8,
+   "lake": "Culvers Lake|NJ",
+   "lake_class": "N2_regulated_natural_lake",
+   "region": "NE",
+   "operator_family": "NONE",
+   "mean_nn": 0.8783975741368601,
+   "cov_1_0": 0.6582914572864321,
+   "cov_0_75": 0.40033500837520936
+  },
+  {
+   "step": 9,
+   "lake": "Istokpoga|FL",
+   "lake_class": "N1b_natural_shallow",
+   "region": "SE",
+   "operator_family": "OTHER",
+   "mean_nn": 0.8543546879018014,
+   "cov_1_0": 0.6834170854271356,
+   "cov_0_75": 0.4137353433835846
+  },
+  {
+   "step": 10,
+   "lake": "Lake Springfield|IL",
+   "lake_class": "R4_open_basin_storage",
+   "region": "MW",
+   "operator_family": "OTHER",
+   "mean_nn": 0.8309248109350104,
+   "cov_1_0": 0.7051926298157454,
+   "cov_0_75": 0.4472361809045226
+  },
+  {
+   "step": 11,
+   "lake": "Yellowstone Lake|WY",
+   "lake_class": "N1a_natural_deep_or_unknown",
+   "region": "W",
+   "operator_family": "NONE",
+   "mean_nn": 0.811921640751355,
+   "cov_1_0": 0.7252931323283082,
+   "cov_0_75": 0.4539363484087102
+  },
+  {
+   "step": 12,
+   "lake": "Keyhole Reservoir|WY",
+   "lake_class": "R4_open_basin_storage",
+   "region": "W",
+   "operator_family": "USBR",
+   "mean_nn": 0.7944317822473332,
+   "cov_1_0": 0.7504187604690117,
+   "cov_0_75": 0.47571189279731996
+  },
+  {
+   "step": 13,
+   "lake": "High Rock Lake|NC",
+   "lake_class": "R1_run_of_river_pool",
+   "region": "SE",
+   "operator_family": "OTHER",
+   "mean_nn": 0.7784680097055157,
+   "cov_1_0": 0.7520938023450586,
+   "cov_0_75": 0.5041876046901173
+  },
+  {
+   "step": 14,
+   "lake": "Dillon Reservoir|CO",
+   "lake_class": "R4_open_basin_storage",
+   "region": "W",
+   "operator_family": "OTHER",
+   "mean_nn": 0.763823698023066,
+   "cov_1_0": 0.7654941373534339,
+   "cov_0_75": 0.5192629815745393
+  }
+ ],
+ "pilots_covered_by_class": {
+  "R1_run_of_river_pool": 4,
+  "R3_dendritic_storage": 1
+ },
+ "class_counts": {
+  "R4_open_basin_storage": 146,
+  "N2_regulated_natural_lake": 99,
+  "R3_dendritic_storage": 91,
+  "R2_flow_through_reservoir": 85,
+  "N1a_natural_deep_or_unknown": 56,
+  "R1_run_of_river_pool": 46,
+  "N1b_natural_shallow": 34,
+  "R5_small_impoundment": 25,
+  "N3_small_pond_or_outlet_dam": 15
+ },
+ "class_covered_by_pilots_share": 0.22948073701842547,
+ "region_covered_by_pilots_share": 0.23953098827470687,
+ "slots": [
+  {
+   "slot": "S01",
+   "label": "Run-of-river hydropower pool, SE mainstem (TVA)",
+   "why": "pilots Guntersville/Wheeler/Wilson/Pickwick: one regime, one operator, one chain",
+   "n_fleet": 8,
+   "pilots_in_slot": [
+    "Guntersville|AL",
+    "Wheeler|AL",
+    "Wilson|AL",
+    "Pickwick Lake|TN"
+   ],
+   "candidates": [
+    {
+     "lake": "Chickamauga Lake|TN",
+     "score": 7,
+     "area_km2": 145.9,
+     "res_time_d": 11.0,
+     "operator": "TVA",
+     "cwms": false,
+     "region": "SE"
+    },
+    {
+     "lake": "Fort Loudoun Lake|TN",
+     "score": 5,
+     "area_km2": 99.8,
+     "res_time_d": 18.0,
+     "operator": "TVA",
+     "cwms": false,
+     "region": "SE"
+    }
+   ]
+  },
+  {
+   "slot": "S02",
+   "label": "Run-of-river / low-head pool, non-TVA operator (USACE or utility)",
+   "why": "tests whether run-of-river transfer survives a change of operator and basin",
+   "n_fleet": 38,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Lake Wateree|SC",
+     "score": 5,
+     "area_km2": 53.6,
+     "res_time_d": 20.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "SE"
+    },
+    {
+     "lake": "Jordan|AL",
+     "score": 5,
+     "area_km2": 27.5,
+     "res_time_d": 7.0,
+     "operator": "OTHER",
+     "cwms": true,
+     "region": "SE"
+    }
+   ]
+  },
+  {
+   "slot": "S03",
+   "label": "Deep dendritic Piedmont/Appalachian storage reservoir",
+   "why": "Hartwell is the only pilot; needs a second, different operator (TVA Norris/Cherokee-type or USACE SAM)",
+   "n_fleet": 41,
+   "pilots_in_slot": [
+    "Lake Hartwell|SC"
+   ],
+   "candidates": [
+    {
+     "lake": "Norfork|AR",
+     "score": 7,
+     "area_km2": 89.0,
+     "res_time_d": 428.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "SE"
+    },
+    {
+     "lake": "Cave Run Lake|KY",
+     "score": 9,
+     "area_km2": 33.5,
+     "res_time_d": 289.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "SE"
+    }
+   ]
+  },
+  {
+   "slot": "S04",
+   "label": "Dendritic Ozark / interior-highland storage reservoir",
+   "why": "deep clear storage lakes outside the Southeast (Missouri/Oklahoma/Arkansas)",
+   "n_fleet": 33,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Stockton Lake|MO",
+     "score": 7,
+     "area_km2": 101.6,
+     "res_time_d": 649.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "MW"
+    },
+    {
+     "lake": "Broken Bow Lake|OK",
+     "score": 6,
+     "area_km2": 83.0,
+     "res_time_d": 594.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "GP"
+    }
+   ]
+  },
+  {
+   "slot": "S05",
+   "label": "Shallow open-basin Great Plains flood-control reservoir",
+   "why": "turbid, large pool swings, flats; the biggest block of the fleet",
+   "n_fleet": 22,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Lake Darling|ND",
+     "score": 6,
+     "area_km2": 39.1,
+     "res_time_d": 323.0,
+     "operator": "OTHER",
+     "cwms": true,
+     "region": "GP"
+    },
+    {
+     "lake": "Sardis Lake|OK",
+     "score": 8,
+     "area_km2": 55.1,
+     "res_time_d": 428.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "GP"
+    }
+   ]
+  },
+  {
+   "slot": "S06",
+   "label": "Western storage reservoir with large drawdown (USBR / irrigation)",
+   "why": "steep shores, multi-metre annual drawdown, snowmelt regime",
+   "n_fleet": 68,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Heron Lake|NM",
+     "score": 6,
+     "area_km2": 24.9,
+     "res_time_d": 382.0,
+     "operator": "USBR",
+     "cwms": true,
+     "region": "W"
+    },
+    {
+     "lake": "Starvation Reservoir|UT",
+     "score": 5,
+     "area_km2": 13.4,
+     "res_time_d": 690.0,
+     "operator": "USBR",
+     "cwms": false,
+     "region": "W"
+    }
+   ]
+  },
+  {
+   "slot": "S07",
+   "label": "Flow-through reservoir (30-180 d residence)",
+   "why": "intermediate flushing; Gulf-coastal and interior lakes",
+   "n_fleet": 49,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Allatoona|GA",
+     "score": 9,
+     "area_km2": 48.0,
+     "res_time_d": 161.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "SE"
+    },
+    {
+     "lake": "Millwood|AR",
+     "score": 7,
+     "area_km2": 117.4,
+     "res_time_d": 179.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "SE"
+    }
+   ]
+  },
+  {
+   "slot": "S08",
+   "label": "Dam-raised natural lake, northeastern glacial",
+   "why": "outlet-dam lakes with small managed range; mostly state/no-operator data",
+   "n_fleet": 49,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Massabesic Lake|NH",
+     "score": 3,
+     "area_km2": 10.8,
+     "res_time_d": 398.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "NE"
+    },
+    {
+     "lake": "Sunapee Lake|NH",
+     "score": 3,
+     "area_km2": 16.7,
+     "res_time_d": 213.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "NE"
+    }
+   ]
+  },
+  {
+   "slot": "S09",
+   "label": "Headwaters regulated natural lake, Upper Midwest (USACE)",
+   "why": "natural basins with managed outlets, shallow, vegetated",
+   "n_fleet": 26,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Lake Mendota|WI",
+     "score": 3,
+     "area_km2": 41.1,
+     "res_time_d": 681.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "MW"
+    },
+    {
+     "lake": "Houghton Lake|MI",
+     "score": 3,
+     "area_km2": 80.2,
+     "res_time_d": 1332.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "MW"
+    }
+   ]
+  },
+  {
+   "slot": "S10",
+   "label": "Natural deep lake, no dam",
+   "why": "negative control for pool-management features (no operator)",
+   "n_fleet": 44,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Yellowstone Lake|WY",
+     "score": 3,
+     "area_km2": 341.6,
+     "res_time_d": 7689.0,
+     "operator": "NONE",
+     "cwms": false,
+     "region": "W"
+    },
+    {
+     "lake": "Clear Lake|CA",
+     "score": 3,
+     "area_km2": 160.5,
+     "res_time_d": 2834.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "W"
+    }
+   ]
+  },
+  {
+   "slot": "S11",
+   "label": "Natural shallow vegetated lake",
+   "why": "Florida/Upper-Midwest shallow lakes; the vegetated-flat bowfishing archetype without a dam",
+   "n_fleet": 34,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Eagle Lake|MS",
+     "score": 3,
+     "area_km2": 19.5,
+     "res_time_d": 528.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "SE"
+    },
+    {
+     "lake": "Crescent Lake|FL",
+     "score": 3,
+     "area_km2": 69.4,
+     "res_time_d": 384.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "SE"
+    }
+   ]
+  },
+  {
+   "slot": "S12",
+   "label": "Small impoundment / pond (< 2 km2)",
+   "why": "state-managed ponds; high count, low data per lake",
+   "n_fleet": 40,
+   "pilots_in_slot": [],
+   "candidates": [
+    {
+     "lake": "Highland Lake|CT",
+     "score": 3,
+     "area_km2": 1.8,
+     "res_time_d": 399.0,
+     "operator": "OTHER",
+     "cwms": false,
+     "region": "NE"
+    },
+    {
+     "lake": "Mansfield Hollow Lake|CT",
+     "score": 5,
+     "area_km2": 2.0,
+     "res_time_d": 14.0,
+     "operator": "USACE",
+     "cwms": true,
+     "region": "NE"
+    }
+   ]
+  }
+ ],
+ "slot_picks_first_candidate": [
+  "Lake Wateree|SC",
+  "Stockton Lake|MO",
+  "Lake Darling|ND",
+  "Heron Lake|NM",
+  "Allatoona|GA",
+  "Massabesic Lake|NH",
+  "Lake Mendota|WI",
+  "Yellowstone Lake|WY",
+  "Eagle Lake|MS",
+  "Highland Lake|CT"
+ ],
+ "pilots_plus_slot_picks": {
+  "mean": 0.9099303420491225,
+  "median": 0.8715770256643921,
+  "p90": 1.4342038290470223,
+  "cov_0_75": 0.37353433835845895,
+  "cov_1_0": 0.6180904522613065,
+  "cov_1_25": 0.8190954773869347
+ },
+ "random_same_k_mean_nn": {
+  "mean": 1.0309590875893095,
+  "p5": 0.9595644615555213,
+  "p95": 1.1110234468489881,
+  "cov_1_0_mean": 0.4974623115577889,
+  "cov_1_0_p95": 0.5746231155778894
+ }
+}

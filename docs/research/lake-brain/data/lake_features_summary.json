@@ -1,0 +1,835 @@
+{
+ "n_lakes": 621,
+ "built": "context_features.py",
+ "class_counts": {
+  "R4_open_basin_storage": 146,
+  "N2_regulated_natural_lake": 99,
+  "R3_dendritic_storage": 91,
+  "R2_flow_through_reservoir": 85,
+  "N1a_natural_deep_or_unknown": 56,
+  "R1_run_of_river_pool": 46,
+  "N1b_natural_shallow": 34,
+  "R5_small_impoundment": 25,
+  "X_mega": 18,
+  "N3_small_pond_or_outlet_dam": 15,
+  "Z_nodata": 6
+ },
+ "regime_counts": {
+  "reservoir": 397,
+  "regulated_natural": 108,
+  "natural": 98,
+  "MEGA": 18
+ },
+ "hyd_counts_reservoirs": {
+  "STOR": 239,
+  "FLOW": 91,
+  "RoR": 57,
+  "unk": 10
+ },
+ "coverage": {
+  "polygon": 599,
+  "hydrolakes_match": 554,
+  "hydrolakes_name": 348,
+  "nid_match": 501,
+  "nid_name": 460,
+  "erom": 499,
+  "res_time": 577,
+  "mean_depth": 577,
+  "inflow": 575
+ },
+ "operator_family": {
+  "OTHER": 253,
+  "USACE": 168,
+  "NONE": 113,
+  "USBR": 71,
+  "TVA": 16
+ },
+ "region": {
+  "SE": 146,
+  "NE": 138,
+  "W": 135,
+  "MW": 103,
+  "GP": 78,
+  "AKHI": 21
+ },
+ "class_by_region": {
+  "N1a_natural_deep_or_unknown": {
+   "AKHI": 11,
+   "GP": 1,
+   "MW": 13,
+   "NE": 8,
+   "SE": 3,
+   "W": 20
+  },
+  "N1b_natural_shallow": {
+   "AKHI": 1,
+   "GP": 4,
+   "MW": 4,
+   "NE": 7,
+   "SE": 15,
+   "W": 3
+  },
+  "N2_regulated_natural_lake": {
+   "AKHI": 0,
+   "GP": 5,
+   "MW": 21,
+   "NE": 49,
+   "SE": 8,
+   "W": 16
+  },
+  "N3_small_pond_or_outlet_dam": {
+   "AKHI": 2,
+   "GP": 0,
+   "MW": 1,
+   "NE": 9,
+   "SE": 1,
+   "W": 2
+  },
+  "R1_run_of_river_pool": {
+   "AKHI": 0,
+   "GP": 4,
+   "MW": 4,
+   "NE": 3,
+   "SE": 29,
+   "W": 6
+  },
+  "R2_flow_through_reservoir": {
+   "AKHI": 0,
+   "GP": 11,
+   "MW": 9,
+   "NE": 13,
+   "SE": 33,
+   "W": 19
+  },
+  "R3_dendritic_storage": {
+   "AKHI": 0,
+   "GP": 17,
+   "MW": 16,
+   "NE": 3,
+   "SE": 41,
+   "W": 14
+  },
+  "R4_open_basin_storage": {
+   "AKHI": 1,
+   "GP": 33,
+   "MW": 21,
+   "NE": 25,
+   "SE": 12,
+   "W": 54
+  },
+  "R5_small_impoundment": {
+   "AKHI": 1,
+   "GP": 2,
+   "MW": 3,
+   "NE": 18,
+   "SE": 1,
+   "W": 0
+  },
+  "X_mega": {
+   "AKHI": 0,
+   "GP": 1,
+   "MW": 11,
+   "NE": 3,
+   "SE": 2,
+   "W": 1
+  },
+  "Z_nodata": {
+   "AKHI": 5,
+   "GP": 0,
+   "MW": 0,
+   "NE": 0,
+   "SE": 1,
+   "W": 0
+  }
+ },
+ "class_by_operator": {
+  "N1a_natural_deep_or_unknown": {
+   "NONE": 42,
+   "OTHER": 13,
+   "TVA": 0,
+   "USACE": 1,
+   "USBR": 0
+  },
+  "N1b_natural_shallow": {
+   "NONE": 25,
+   "OTHER": 7,
+   "TVA": 0,
+   "USACE": 2,
+   "USBR": 0
+  },
+  "N2_regulated_natural_lake": {
+   "NONE": 34,
+   "OTHER": 51,
+   "TVA": 0,
+   "USACE": 9,
+   "USBR": 5
+  },
+  "N3_small_pond_or_outlet_dam": {
+   "NONE": 6,
+   "OTHER": 8,
+   "TVA": 0,
+   "USACE": 0,
+   "USBR": 1
+  },
+  "R1_run_of_river_pool": {
+   "NONE": 0,
+   "OTHER": 28,
+   "TVA": 8,
+   "USACE": 7,
+   "USBR": 3
+  },
+  "R2_flow_through_reservoir": {
+   "NONE": 0,
+   "OTHER": 35,
+   "TVA": 4,
+   "USACE": 32,
+   "USBR": 14
+  },
+  "R3_dendritic_storage": {
+   "NONE": 0,
+   "OTHER": 22,
+   "TVA": 4,
+   "USACE": 55,
+   "USBR": 10
+  },
+  "R4_open_basin_storage": {
+   "NONE": 0,
+   "OTHER": 62,
+   "TVA": 0,
+   "USACE": 46,
+   "USBR": 38
+  },
+  "R5_small_impoundment": {
+   "NONE": 0,
+   "OTHER": 22,
+   "TVA": 0,
+   "USACE": 3,
+   "USBR": 0
+  },
+  "X_mega": {
+   "NONE": 4,
+   "OTHER": 2,
+   "TVA": 0,
+   "USACE": 12,
+   "USBR": 0
+  },
+  "Z_nodata": {
+   "NONE": 2,
+   "OTHER": 3,
+   "TVA": 0,
+   "USACE": 1,
+   "USBR": 0
+  }
+ },
+ "class_examples": {
+  "N1a_natural_deep_or_unknown": [
+   "Aleknagik|AK",
+   "Becharof|AK",
+   "Big Lake|AK",
+   "Harding|AK",
+   "Kenai|AK",
+   "Kvichak / Ugashik|AK"
+  ],
+  "N1b_natural_shallow": [
+   "Teshekpuk|AK",
+   "Crescent Lake|FL",
+   "Istokpoga|FL",
+   "Jesup|FL",
+   "Lochloosa|FL",
+   "Spirit Lake|IA"
+  ],
+  "N2_regulated_natural_lake": [
+   "Chicot|AR",
+   "Bantam Lake|CT",
+   "Gardner Lake|CT",
+   "Lake Waramaug|CT",
+   "East Lake Tohopekaliga|FL",
+   "Griffin|FL"
+  ],
+  "N3_small_pond_or_outlet_dam": [
+   "Grand Lake|CO",
+   "Coventry Lake (Wangumbaug)|CT",
+   "Highland Lake|CT",
+   "Squantz Pond|CT",
+   "Halulu Lake (Niihau)|HI",
+   "Lake Waiau|HI"
+  ],
+  "R1_run_of_river_pool": [
+   "Bankhead|AL",
+   "Guntersville|AL",
+   "Jordan|AL",
+   "Lay|AL",
+   "Logan Martin|AL",
+   "Neely Henry|AL"
+  ],
+  "R2_flow_through_reservoir": [
+   "Eufaula / W.F. George|AL",
+   "Lake Martin|AL",
+   "Hamilton|AR",
+   "Millwood|AR",
+   "Nimrod|AR",
+   "Alamo|AZ"
+  ],
+  "R3_dendritic_storage": [
+   "Smith (Lewis Smith)|AL",
+   "Beaver|AR",
+   "Bull Shoals Lake|AR",
+   "DeGray|AR",
+   "Greers Ferry|AR",
+   "Norfork|AR"
+  ],
+  "R4_open_basin_storage": [
+   "Bartlett|AZ",
+   "Lake Mary|AZ",
+   "Pleasant|AZ",
+   "Roosevelt|AZ",
+   "San Carlos|AZ",
+   "Almanor|CA"
+  ],
+  "R5_small_impoundment": [
+   "Mansfield Hollow Lake|CT",
+   "Andrews Lake|DE",
+   "Becks Pond|DE",
+   "Concord Pond|DE",
+   "Garrisons Lake|DE",
+   "Griffith Lake|DE"
+  ],
+  "X_mega": [
+   "Okeechobee|FL",
+   "Lake Michigan|IN",
+   "Lake Pontchartrain|LA",
+   "Lake Erie|MI",
+   "Lake Huron|MI",
+   "Lake Michigan|MI"
+  ],
+  "Z_nodata": [
+   "Iliamna|AK",
+   "Koele ponds (Lanai)|HI",
+   "Puu Loa Reservoir|HI",
+   "Waiakea Pond|HI",
+   "Waimaluhia Reservoir|HI",
+   "Chickahominy Lake|VA"
+  ]
+ },
+ "pilots": {
+  "Guntersville|AL": {
+   "name": "Guntersville",
+   "state1": "AL",
+   "region": "SE",
+   "lat": 34.42,
+   "lon": -86.26,
+   "operator_family": "TVA",
+   "hasDam": true,
+   "poolBasis": "fullPool",
+   "apiLevel": "dedicated",
+   "usgsGage": "yes",
+   "cwms": false,
+   "regime": "reservoir",
+   "lake_class": "R1_run_of_river_pool",
+   "hyd": "RoR",
+   "size": "l",
+   "depth_class": "mid",
+   "dendritic": true,
+   "area_km2": 266.2241714578247,
+   "area_ref_km2": 267.09276,
+   "poly_to_nid_area": 0.9967479891923117,
+   "perim_km": 1261.3651799963177,
+   "sdi_ext": 18.3307909502451,
+   "n_islands": 419.0,
+   "solidity": 0.1560235501432025,
+   "frac_within_100m": 0.35135276706621377,
+   "frac_narrow_300m": 0.1448570390489995,
+   "n_narrow_arms": 113.0,
+   "storage_mcm": 1293.9,
+   "storage_src": "HL",
+   "inflow_m3s": 1155.597412419348,
+   "inflow_src": "EROM_qema",
+   "res_time_d": 12.959266162678114,
+   "mean_depth_m": 4.844384400385843,
+   "drainage_km2": 61909.737284790004,
+   "da_to_area": 231.79114733319616,
+   "hl_type": 2.0,
+   "hl_match": "name",
+   "nid_match": "name",
+   "nid_year": 1939.0,
+   "nid_height_ft": 94.0,
+   "glob_dmax_m": 46.4145393371582,
+   "glob_shallow_frac_1p2m": 0.08813686028912138,
+   "hydropower": true,
+   "hl_elev_m": 180.0,
+   "n_up_lakes": 1.0,
+   "n_down_lakes": 4.0,
+   "nearest_down": "Wheeler|AL",
+   "chain_id": "chain-ChickamaugaLak"
+  },
+  "Wheeler|AL": {
+   "name": "Wheeler",
+   "state1": "AL",
+   "region": "SE",
+   "lat": 34.63,
+   "lon": -87.03,
+   "operator_family": "TVA",
+   "hasDam": true,
+   "poolBasis": "fullPool",
+   "apiLevel": "dedicated",
+   "usgsGage": "yes",
+   "cwms": false,
+   "regime": "reservoir",
+   "lake_class": "R1_run_of_river_pool",
+   "hyd": "RoR",
+   "size": "l",
+   "depth_class": "mid",
+   "dendritic": true,
+   "area_km2": 212.49564226977313,
+   "area_ref_km2": 212.49564226977313,
+   "poly_to_nid_area": 16.30707152891555,
+   "perim_km": 970.8195650085217,
+   "sdi_ext": 16.034307458609337,
+   "n_islands": 277.0,
+   "solidity": 0.0997577694703307,
+   "frac_within_100m": 0.3032115683868992,
+   "frac_narrow_300m": 0.12772466482805622,
+   "n_narrow_arms": 78.0,
+   "storage_mcm": 1318.6,
+   "storage_src": "HL",
+   "inflow_m3s": 1369.90132098758,
+   "inflow_src": "EROM_qema",
+   "res_time_d": 11.140637533710677,
+   "mean_depth_m": 6.205303722539288,
+   "drainage_km2": 75036.63418312,
+   "da_to_area": 353.12081406289496,
+   "hl_type": 2.0,
+   "hl_match": "name",
+   "nid_match": "name",
+   "nid_year": 1936.0,
+   "nid_height_ft": 175.0,
+   "glob_dmax_m": 36.418819427490234,
+   "glob_shallow_frac_1p2m": 0.07525573600879865,
+   "hydropower": true,
+   "hl_elev_m": 167.0,
+   "n_up_lakes": 1.0,
+   "n_down_lakes": 3.0,
+   "nearest_down": "Wilson|AL",
+   "chain_id": "chain-ChickamaugaLak"
+  },
+  "Wilson|AL": {
+   "name": "Wilson",
+   "state1": "AL",
+   "region": "SE",
+   "lat": 34.77,
+   "lon": -87.45,
+   "operator_family": "TVA",
+   "hasDam": true,
+   "poolBasis": "fullPool",
+   "apiLevel": "dedicated",
+   "usgsGage": "yes",
+   "cwms": false,
+   "regime": "reservoir",
+   "lake_class": "R1_run_of_river_pool",
+   "hyd": "RoR",
+   "size": "m",
+   "depth_class": "deep",
+   "dendritic": false,
+   "area_km2": 63.174326714333354,
+   "area_ref_km2": 63.174326714333354,
+   "poly_to_nid_area": 1.000686044943952,
+   "perim_km": 223.3500119504608,
+   "sdi_ext": 7.661597780804289,
+   "n_islands": 24.0,
+   "solidity": 0.2389630696238412,
+   "frac_within_100m": 0.2198368422577186,
+   "frac_narrow_300m": 0.10871339787093426,
+   "n_narrow_arms": 24.0,
+   "storage_mcm": 1055.46,
+   "storage_src": "HL",
+   "inflow_m3s": 1418.2315104818779,
+   "inflow_src": "EROM_qema",
+   "res_time_d": 8.613524753847527,
+   "mean_depth_m": 16.707103263207888,
+   "drainage_km2": 77982.78368337,
+   "da_to_area": 1234.4062491714187,
+   "hl_type": 1.0,
+   "hl_match": "geo",
+   "nid_match": "name",
+   "nid_year": 1924.0,
+   "nid_height_ft": 137.0,
+   "glob_dmax_m": 20.73870086669922,
+   "glob_shallow_frac_1p2m": 0.09104914659387842,
+   "hydropower": true,
+   "hl_elev_m": 157.0,
+   "n_up_lakes": 2.0,
+   "n_down_lakes": 3.0,
+   "nearest_down": "Pickwick Lake|TN",
+   "chain_id": "chain-ChickamaugaLak"
+  },
+  "Pickwick Lake|TN": {
+   "name": "Pickwick Lake",
+   "state1": "TN",
+   "region": "SE",
+   "lat": 35.05,
+   "lon": -88.2,
+   "operator_family": "TVA",
+   "hasDam": true,
+   "poolBasis": "fullPool",
+   "apiLevel": "dedicated",
+   "usgsGage": "yes",
+   "cwms": false,
+   "regime": "reservoir",
+   "lake_class": "R1_run_of_river_pool",
+   "hyd": "RoR",
+   "size": "l",
+   "depth_class": "mid",
+   "dendritic": true,
+   "area_km2": 139.93176168266692,
+   "area_ref_km2": 172.800922,
+   "poly_to_nid_area": 0.8097859667824394,
+   "perim_km": 504.97719316171555,
+   "sdi_ext": 9.24506435288504,
+   "n_islands": 134.0,
+   "solidity": 0.14102117213294757,
+   "frac_within_100m": 0.2629502828838586,
+   "frac_narrow_300m": 0.07687969296878572,
+   "n_narrow_arms": 41.0,
+   "storage_mcm": 1363.0,
+   "storage_src": "HL",
+   "inflow_m3s": 1501.377706361616,
+   "inflow_src": "EROM_qema",
+   "res_time_d": 10.507324636644995,
+   "mean_depth_m": 7.887689395546165,
+   "drainage_km2": 83314.32058236,
+   "da_to_area": 482.14048639370105,
+   "hl_type": 2.0,
+   "hl_match": "name",
+   "nid_match": "name",
+   "nid_year": 1938.0,
+   "nid_height_ft": 113.0,
+   "glob_dmax_m": 28.825979232788086,
+   "glob_shallow_frac_1p2m": 0.11722270217175135,
+   "hydropower": true,
+   "hl_elev_m": 126.0,
+   "n_up_lakes": null,
+   "n_down_lakes": null,
+   "nearest_down": "",
+   "chain_id": "chain-ChickamaugaLak"
+  },
+  "Lake Hartwell|SC": {
+   "name": "Lake Hartwell",
+   "state1": "SC",
+   "region": "SE",
+   "lat": 34.5,
+   "lon": -82.85,
+   "operator_family": "USACE",
+   "hasDam": true,
+   "poolBasis": "fullPool",
+   "apiLevel": "dedicated",
+   "usgsGage": "yes",
+   "cwms": true,
+   "regime": "reservoir",
+   "lake_class": "R3_dendritic_storage",
+   "hyd": "STOR",
+   "size": "l",
+   "depth_class": "deep",
+   "dendritic": true,
+   "area_km2": 136.6812654334037,
+   "area_ref_km2": 226.421817,
+   "poly_to_nid_area": 0.603657665345048,
+   "perim_km": 859.3516517068251,
+   "sdi_ext": 19.44143972910989,
+   "n_islands": 89.0,
+   "solidity": 0.21033585856430373,
+   "frac_within_100m": 0.4563928824147261,
+   "frac_narrow_300m": 0.22795858999516339,
+   "n_narrow_arms": 118.0,
+   "storage_mcm": 4241.6,
+   "storage_src": "HL",
+   "inflow_m3s": 132.74011479080983,
+   "inflow_src": "EROM_qema",
+   "res_time_d": 369.83991365352875,
+   "mean_depth_m": 18.733177112521805,
+   "drainage_km2": 5425.15649986,
+   "da_to_area": 23.96039644828042,
+   "hl_type": 2.0,
+   "hl_match": "name",
+   "nid_match": "name",
+   "nid_year": 1962.0,
+   "nid_height_ft": 204.0,
+   "glob_dmax_m": 72.30492401123047,
+   "glob_shallow_frac_1p2m": 0.09860080719607633,
+   "hydropower": true,
+   "hl_elev_m": 204.0,
+   "n_up_lakes": null,
+   "n_down_lakes": null,
+   "nearest_down": "",
+   "chain_id": "chain-Burton"
+  }
+ },
+ "shore_dem": {
+  "Guntersville|AL": {
+   "n_points": 725,
+   "n_requested": 725,
+   "slope_med": 1.2767389487603005,
+   "slope_p25": 0.1278871565755366,
+   "slope_p75": 4.147889000964365,
+   "slope2_med": 0.4932976378884203,
+   "frac_lt2deg": 0.5875862068965517,
+   "frac_2_8deg": 0.25103448275862067,
+   "frac_gt8deg": 0.16137931034482758,
+   "frac_neg": 0.19724137931034483,
+   "run_per_ft_med": 44.869231831976535,
+   "run_per_ft_mean": 110.92288820151663,
+   "bank_rise30_med_m": 0.6023406980000061,
+   "perim_km": 1261.365179996313,
+   "dem_resolution_counts": {
+    "1": 2628,
+    "9.259259341472414e-05": 272
+   }
+  },
+  "Wheeler|AL": {
+   "n_points": 702,
+   "n_requested": 702,
+   "slope_med": 1.1100192382869323,
+   "slope_p25": 0.0,
+   "slope_p75": 3.708019976724674,
+   "slope2_med": 0.1380710309021807,
+   "frac_lt2deg": 0.6168091168091168,
+   "frac_2_8deg": 0.2934472934472934,
+   "frac_gt8deg": 0.08974358974358974,
+   "frac_neg": 0.245014245014245,
+   "run_per_ft_med": 51.616613852276785,
+   "run_per_ft_mean": 121.28864073140025,
+   "bank_rise30_med_m": 0.6417922974999897,
+   "perim_km": 970.8195650085243,
+   "dem_resolution_counts": {
+    "1": 2451,
+    "0.9999999999999971": 357
+   }
+  },
+  "Wilson|AL": {
+   "n_points": 688,
+   "n_requested": 688,
+   "slope_med": 7.962602230115891,
+   "slope_p25": 2.8552279263791016,
+   "slope_p75": 14.575747417552314,
+   "slope2_med": 3.624378534639928,
+   "frac_lt2deg": 0.20784883720930233,
+   "frac_2_8deg": 0.2936046511627907,
+   "frac_gt8deg": 0.498546511627907,
+   "frac_neg": 0.06540697674418605,
+   "run_per_ft_med": 7.149347061492089,
+   "run_per_ft_mean": 41.28687971066094,
+   "bank_rise30_med_m": 3.5121154785000073,
+   "perim_km": 223.35001195046075,
+   "dem_resolution_counts": {
+    "1": 2752
+   }
+  },
+  "Pickwick Lake|TN": {
+   "n_points": 655,
+   "n_requested": 655,
+   "slope_med": 3.895321447272068,
+   "slope_p25": 0.47975001779817866,
+   "slope_p75": 15.451106968471919,
+   "slope2_med": 1.5665532706112102,
+   "frac_lt2deg": 0.40916030534351144,
+   "frac_2_8deg": 0.20610687022900764,
+   "frac_gt8deg": 0.3847328244274809,
+   "frac_neg": 0.1450381679389313,
+   "run_per_ft_med": 14.686201654869087,
+   "run_per_ft_mean": 79.42917752188296,
+   "bank_rise30_med_m": 1.972305298000009,
+   "perim_km": 504.9771931617142,
+   "dem_resolution_counts": {
+    "1": 2592,
+    "3.086419871794868e-05": 28
+   }
+  },
+  "Lake Hartwell|SC": {
+   "n_points": 709,
+   "n_requested": 709,
+   "slope_med": 6.298374651125014,
+   "slope_p25": 3.2562188599545827,
+   "slope_p75": 9.191160436255549,
+   "slope2_med": 3.790714435358243,
+   "frac_lt2deg": 0.16784203102961917,
+   "frac_2_8deg": 0.4908321579689704,
+   "frac_gt8deg": 0.34132581100141046,
+   "frac_neg": 0.076163610719323,
+   "run_per_ft_med": 9.06024309531366,
+   "run_per_ft_mean": 41.653560642827685,
+   "bank_rise30_med_m": 2.699996948000006,
+   "perim_km": 859.3516517068254,
+   "dem_resolution_counts": {
+    "1": 2299,
+    "9.259259341472414e-05": 499,
+    "3.086419871794868e-05": 38
+   }
+  }
+ },
+ "gsw": {
+  "Guntersville|AL": {
+   "gsw_poly_km2": 265.06797533211625,
+   "gsw_perm_km2": 95.7313477758863,
+   "gsw_fluct_in_frac": 0.5645896983519084,
+   "gsw_lowocc_in_frac": 0.08947124326443574,
+   "gsw_fluct_ring_km2": 7.332899700559044,
+   "gsw_ring_wet_km2": 7.353177335403314,
+   "gsw_seasonal_in_frac": 0.1898365295886704,
+   "gsw_nodata_in_frac": 0.0,
+   "gsw_fluct_ring_to_poly": 0.02766422345578075
+  },
+  "Lake Hartwell|SC": {
+   "gsw_poly_km2": 136.06905052488807,
+   "gsw_perm_km2": 72.80004715289881,
+   "gsw_fluct_in_frac": 0.3802417681803984,
+   "gsw_lowocc_in_frac": 0.07454441196626621,
+   "gsw_fluct_ring_km2": 6.707571177326968,
+   "gsw_ring_wet_km2": 7.067879521257526,
+   "gsw_seasonal_in_frac": 0.06838132800007458,
+   "gsw_nodata_in_frac": 0.0,
+   "gsw_fluct_ring_to_poly": 0.04929534785061282
+  },
+  "Pickwick Lake|TN": {
+   "gsw_poly_km2": 139.34170829562808,
+   "gsw_perm_km2": 85.15449301286024,
+   "gsw_fluct_in_frac": 0.32872531662191473,
+   "gsw_lowocc_in_frac": 0.03608833264658338,
+   "gsw_fluct_ring_km2": 3.9042707889776476,
+   "gsw_ring_wet_km2": 4.361703937330717,
+   "gsw_seasonal_in_frac": 0.04370899310382301,
+   "gsw_nodata_in_frac": 0.0,
+   "gsw_fluct_ring_to_poly": 0.028019398044800244
+  },
+  "Wheeler|AL": {
+   "gsw_poly_km2": 211.5823301262967,
+   "gsw_perm_km2": 133.18337624497815,
+   "gsw_fluct_in_frac": 0.29624789547815633,
+   "gsw_lowocc_in_frac": 0.05927350261214896,
+   "gsw_fluct_ring_km2": 6.563880552065653,
+   "gsw_ring_wet_km2": 7.065630819830069,
+   "gsw_seasonal_in_frac": 0.07560728351460382,
+   "gsw_nodata_in_frac": 0.0,
+   "gsw_fluct_ring_to_poly": 0.031022820044318316
+  },
+  "Wilson|AL": {
+   "gsw_poly_km2": 62.88298013176384,
+   "gsw_perm_km2": 49.4002962074477,
+   "gsw_fluct_in_frac": 0.16019163938048653,
+   "gsw_lowocc_in_frac": 0.028886522970611277,
+   "gsw_fluct_ring_km2": 1.4356181458739197,
+   "gsw_ring_wet_km2": 1.7109940858655734,
+   "gsw_seasonal_in_frac": 0.035073622466402846,
+   "gsw_nodata_in_frac": 0.0,
+   "gsw_fluct_ring_to_poly": 0.022829995379763362
+  }
+ },
+ "nwi": {
+  "Wilson|AL": {
+   "n_tiles": 17,
+   "n_nwi_polys": 1298,
+   "nwi_lake_l2_in_frac": 0.0014472534471176093,
+   "nwi_aquatic_bed_in_frac": 0.0,
+   "nwi_fringe_km2": 1.5047002793186934,
+   "nwi_fringe_pem_km2": 0.07081752295908147,
+   "nwi_fringe_pss_km2": 0.01010234565013973,
+   "nwi_fringe_pfo_km2": 1.423780410709472,
+   "nwi_fringe_frac_of_ring": 0.041600002340004626,
+   "nwi_fringe_per_shore_km": 0.006736960818486264
+  },
+  "Pickwick Lake|TN": {
+   "n_tiles": 38,
+   "n_nwi_polys": 2452,
+   "nwi_lake_l2_in_frac": 0.024225095444239474,
+   "nwi_aquatic_bed_in_frac": 0.0,
+   "nwi_fringe_km2": 11.177719876144584,
+   "nwi_fringe_pem_km2": 0.4116888631261001,
+   "nwi_fringe_pss_km2": 0.11617606859411822,
+   "nwi_fringe_pfo_km2": 10.649854944424366,
+   "nwi_fringe_frac_of_ring": 0.15975593575649732,
+   "nwi_fringe_per_shore_km": 0.02213509843119789
+  },
+  "Wheeler|AL": {
+   "n_tiles": 63,
+   "n_nwi_polys": 5849,
+   "nwi_lake_l2_in_frac": 0.14792729349730527,
+   "nwi_aquatic_bed_in_frac": 0.0011687292563194883,
+   "nwi_fringe_km2": 27.71563336492548,
+   "nwi_fringe_pem_km2": 3.136533342319523,
+   "nwi_fringe_pss_km2": 1.7856869346408295,
+   "nwi_fringe_pfo_km2": 22.79341308796513,
+   "nwi_fringe_frac_of_ring": 0.21378306633739272,
+   "nwi_fringe_per_shore_km": 0.028548696754666408
+  },
+  "Guntersville|AL": {
+   "n_tiles": 69,
+   "n_nwi_polys": 4605,
+   "nwi_lake_l2_in_frac": 0.15084082702871812,
+   "nwi_aquatic_bed_in_frac": 0.10585836320939512,
+   "nwi_fringe_km2": 11.745012889225874,
+   "nwi_fringe_pem_km2": 0.2716796691901106,
+   "nwi_fringe_pss_km2": 0.6406787369091648,
+   "nwi_fringe_pfo_km2": 10.8326544831266,
+   "nwi_fringe_frac_of_ring": 0.07040582641951736,
+   "nwi_fringe_per_shore_km": 0.009311350174784603
+  },
+  "Lake Hartwell|SC": {
+   "n_tiles": 34,
+   "n_nwi_polys": 3514,
+   "nwi_lake_l2_in_frac": 0.020640725283514204,
+   "nwi_aquatic_bed_in_frac": 0.0,
+   "nwi_fringe_km2": 0.7747146345394931,
+   "nwi_fringe_pem_km2": 0.27430366367037623,
+   "nwi_fringe_pss_km2": 0.24786571569728733,
+   "nwi_fringe_pfo_km2": 0.2525452551718295,
+   "nwi_fringe_frac_of_ring": 0.006415754268976099,
+   "nwi_fringe_per_shore_km": 0.0009015106132638159
+  }
+ },
+ "chain_downstream_within_250km": {
+  "Guntersville|AL": [
+   [
+    "Wheeler|AL",
+    0.0
+   ],
+   [
+    "Wilson|AL",
+    116.7
+   ],
+   [
+    "Pickwick Lake|TN",
+    142.5
+   ],
+   [
+    "Kentucky Lake|TN",
+    205.3
+   ]
+  ],
+  "Wheeler|AL": [
+   [
+    "Wilson|AL",
+    0.0
+   ],
+   [
+    "Pickwick Lake|TN",
+    26.7
+   ],
+   [
+    "Kentucky Lake|TN",
+    92.2
+   ]
+  ],
+  "Wilson|AL": [
+   [
+    "Pickwick Lake|TN",
+    0.0
+   ],
+   [
+    "Kentucky Lake|TN",
+    74.8
+   ],
+   [
+    "Kentucky Lake|KY",
+    130.5
+   ]
+  ]
+ }
+}
