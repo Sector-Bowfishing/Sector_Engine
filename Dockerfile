@@ -17,6 +17,13 @@ RUN swift build -c release --product SectorEngineServer \
       -Xswiftc -static-stdlib \
     || swift build -c release --product SectorEngineServer
 RUN cp "$(swift build -c release --show-bin-path)/SectorEngineServer" /build/SectorEngineServer
+# The Water Temperature Brain job (Sector Brain Platform) runs from the same image:
+# jobs/water-temp-brain/deploy-job.sh deploys a Cloud Run job from the serving revision's image.
+# Nothing in the request path imports Sources/SectorEngine/Brain.
+RUN swift build -c release --product WaterTempBrainJob \
+      -Xswiftc -static-stdlib \
+    || swift build -c release --product WaterTempBrainJob
+RUN cp "$(swift build -c release --show-bin-path)/WaterTempBrainJob" /build/WaterTempBrainJob
 
 # ── Runtime stage ───────────────────────────────────────────────────────────
 # Slim image: Swift runtime libraries, no compiler. Add TLS roots + timezone data
@@ -27,6 +34,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /build/SectorEngineServer /app/SectorEngineServer
+COPY --from=build /build/WaterTempBrainJob /app/WaterTempBrainJob
 
 # Cloud Run sets PORT; the server reads it and binds 0.0.0.0.
 ENV PORT=8080

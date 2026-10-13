@@ -189,13 +189,15 @@ event-id format and ordering, pruning decisions (own-brain, by `at`, caps), retr
 health thresholds, freshness/stale evaluation, ownership checks, and the closed vocabularies.
 A brain lands on `main` only when its publisher passes the suite (or is listed below as an adapter).
 
-## 13. Implementation status (2026-10-12)
+## 13. Implementation status (2026-10-12, after Phase 7)
 
 | Brain | Publisher | Conforms | Notes |
 |---|---|---|---|
-| Lake | Swift `BrainPlatform` + `BrainRTDBStore` (on main) | pending Phase 7 landing | source of the freshness envelope; must drop `lastUpdatedAt`/`snapshots.generatedAt` writes |
-| Water Temp | Swift (same) | pending Phase 7 | **pruner fixed on `brain/water-temp` @ `ec0ae0fa`** (own events, by `at`; regression test); `PRODUCTION/BETA` readiness → `evidenceClass` still pending |
-| Water Clarity | Python `sector_brain_platform` | pending Phase 7 | source of the retry policy and schema gate; `stateType`→`kind`; `failures24h` 0→absent |
-| Biological | Python `sector_brain_platform` | pending Phase 7 | adds a failure write path |
-| Sector Intelligence | Python `sector_brain_platform` | pending Phase 7 | adds a failure write path; descriptor already matches §11 |
-| Wind | **temporary adapter**: its own `sector_wind/brain/writer.py` | NO (documented) | live job; event ids `{ms}_wind_{n}`, global pruning by `at`, no retries. Migrates to `sector_brain_platform` when Wind is reconciled in Phase 7; until then its writes are limited to its own slot and it must not prune (Orchestrator sweep covers it). |
+| Lake | Swift `Sources/SectorEngine/Brain` (shared) | **yes** (on main) | contract event ids/kinds, ownership-checked stores, own-brain pruning, `platform` ref |
+| Water Temp | Swift (shared) | **yes** (on main) | replayed from `brain/water-temp` @ `ec0ae0fa`; readiness = CALIBRATION, evidence in `evidenceClass`; no rollup-field writes |
+| Water Clarity | Python `sector_brain_platform` (vendored) | **yes** (on main) | `kind` + freshness beside `stateType`; no rollup-field writes; `failures24h` absent when unknown |
+| Biological | Python `sector_brain_platform` | **yes** (on main) | event kinds `brain.registered`/`brain.version` |
+| Sector Intelligence | Python `sector_brain_platform` | **yes** (on main) | states carry `kind: not_evaluated` |
+| Wind | **temporary adapter**: its own `sector_wind/brain/writer.py` | NO (documented) | live job; event ids `{ms}_wind_{n}`, global pruning by `at`, no retries, `sources.brains` array. Migrates to `sector_brain_platform` in the Wind reconciliation (Phase 8 ownership work); until then it must not prune other brains' events (it prunes by `at` globally — Orchestrator sweep will replace this). |
+
+Each conforming registry entry publishes `platform{implementation, contract, conformant}`.
