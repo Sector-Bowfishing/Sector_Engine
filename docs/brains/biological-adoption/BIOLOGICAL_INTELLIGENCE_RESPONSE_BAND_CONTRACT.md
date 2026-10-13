@@ -48,3 +48,10 @@ Band semantics: support for the fish being **present and findable in shootable h
 * Area-level classes (backwater, tailwater, vegetated shallows, flooded vegetation) need Depth/Vegetation/Lake map layers; until those publish they are knowledge for Intelligence to apply per area, not lake-level bands.
 * No band has any T2-T4 validation; every `validationTier` is `T1` (literature).
 * Species outside the Lake Brain's assessed set, and species with only DRAFT rules, have **no** object: Intelligence must show them as NOT_ASSESSED / UNSUPPORTED, never rated.
+
+## 6. Verified compatibility check (read-only; Intelligence untouched)
+On 2026-10-14 the candidate's published species nodes were passed through the unmodified `parse_bands` from `feat/intelligence-evidence-layer` (extracted to a scratch directory):
+* Species with `responseBands` (status `PROPOSED`) → **UNSUPPORTED** ("status is 'PROPOSED', not APPROVED"; "decidingFactors missing or empty"). No crash, no rating.
+* Species with no object (e.g. the unresolved tilapia row) → **UNSUPPORTED** ("no responseBands published").
+* A band **forced** to `APPROVED`/`REVIEWED` is still **rejected** ("decidingFactors missing or empty"): the provisional parser cannot misread the Biological shape as one of its own. This is the desired failure mode until the reconciliation session adapts one side.
+So publishing the Biological `responseBands` cannot cause Intelligence to invent a rating.
