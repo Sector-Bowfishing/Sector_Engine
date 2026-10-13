@@ -1,0 +1,35 @@
+{
+ "schema": "depth-field-validation-prereg-v1",
+ "preregisteredAt": "2026-10-14",
+ "status": "FROZEN-BEFORE-ANY-FIELD-DATA",
+ "plan": "docs/brains/depth/DEPTH_FIELD_VALIDATION_PLAN.md",
+ "units": "feet; UTC; GPS WGS84",
+ "classBins": {
+  "note": "measurement bins only; they say nothing about fish preference (Biological owns that)",
+  "DRY": "no water over the marker (measured depth <= 0 ft)",
+  "TOO_SHALLOW": "0 < depth < 1 ft",
+  "SHOOTABLE": "1 <= depth < 3 ft",
+  "GOOD": "3 <= depth <= 5 ft",
+  "DEEP": "depth > 5 ft"
+ },
+ "predictionRule": "For a named flat with a reference observation at pool P0 (depth d0, pool from the operator at that hour), the prediction at a later visit with pool P1 is d_pred = d0 + (P1 - P0) using Depth's shift definition; uncertainty sigma_pred = sqrt(sigma_ref_obs^2 + sigma_shift0^2 + sigma_shift1^2) with sigma_ref_obs = 0.25 ft (hand/sonar), and Depth's published uncertaintyFt per visit for the shift components.",
+ "shiftCheck": "Independent of any reference depth: observed change in depth at a fixed marker between two visits vs the Depth shift difference (shift1 - shift0).",
+ "criteria": {
+  "shiftVsObservedMaeFt": {"max": 0.5, "n_min_pairs": 20, "lakes_min": 5},
+  "classAccuracy": {"min": 0.80, "n_min_obs": 60},
+  "forbiddenErrors": {"DRY_predicted_as": ["SHOOTABLE", "GOOD"], "max_count": 0},
+  "withinOneSigma": {"min": 0.53, "max": 0.83, "note": "68% +/- 15% of observations within 1 sigma"},
+  "dryRecall": {"note": "reported, not a pass criterion: share of observed DRY markers predicted DRY or TOO_SHALLOW"}
+ },
+ "design": {
+  "lakes": ["Lake Hartwell|SC", "Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "1-2 Texas TWDB-contour lakes", "1 Minnesota natural-lake control"],
+  "flatsPerLake": "3-5 named shallow locations", "datesPerLake": "2-4", "poolChangeSpan": ">= 2 ft where possible"
+ },
+ "rules": [
+  "Thresholds above are frozen. They may not be changed after field outcomes are seen.",
+  "Observations are scored on the Depth state generated at the observation time (fingerprint recorded), not recomputed afterwards.",
+  "Exclusions need a recorded reason decided before looking at the prediction error (e.g. sonar failure); excluded rows are reported.",
+  "Report all lakes, including failures; no lake-level cherry-picking.",
+  "A failure of any criterion means effective depth is NOT field-validated, whatever the other results."
+ ]
+}
