@@ -27,7 +27,31 @@
 | Blockers | `/control/overview.brains[...].blockers[]` | PUBLISHES (4 items) | CONSUMES (typed) | Only in Overview **Attention** and only when health is fair/poor | **OPS GAP**: a HEALTHY brain's blockers are not shown on its page |
 | Next opportunity | `control.brains[...].nextOpportunity`, `/scores.nextScoreOpportunity` | PUBLISHES | typed | not verified rendered | check in the deployed UI |
 
-## Engine-side change made in the candidate (not yet published)
+
+## POST-PUBLICATION VERIFICATION (live Engine state 2026-10-14; Ops source `main` @ 12b59f7, read-only)
+The candidate `2026-10-14.4` is published and `score_brains --write` has refreshed the platform-owned nodes. Verified directly in the Brain RTDB:
+`/scores/biological-state` = **4.6** (uncapped 4.6, completeness 95%, updated 2026-10-13T21:29Z) · `/control/overview.brains["biological-state"]` = status PROFILED, score 4.6, validation NOT_VALIDATED, stale false, last run 2026-10-13T21:28Z, 2 blockers (speciesValidation gate; biologicalStateValidation), next-opportunity text updated · `/brains/biological-state.responsibilities.biologicalState` = **IN_PROGRESS** / validation NOT_STARTED, researchVersion 2026-10-14.4, 11 `facts[]`, counters (usable 48 · draft 10 · retired 3 · frozen 51 · predictions 7 · observations 0 · trips 0), no per-lake node written.
+
+| Item | Engine | Ops can consume | Ops will display (from source reading) |
+|---|---|---|---|
+| Score 4.6 | yes | yes | **yes** (score tile; Overview card) |
+| Capability IN_PROGRESS + note | yes | yes (`BiologyStatusStrip`) | **yes** (badge + note on the Biological page) |
+| Validation NOT_VALIDATED | yes | yes | **yes** |
+| Species totals (29 / 27 / 2) | yes | yes | **yes** |
+| Research version 2026-10-14.4, rubric | yes | yes | **yes** |
+| Last updated / freshness | yes | yes | **yes** |
+| Maturity badges per species | yes | yes (computed client-side) | yes; **no "validated species" tile** |
+| `facts[]` (rule counts, frozen, predictions, observations, trips, validated species, pilots, rules version) | **yes** | **no** (no field typed or rendered) | **no** |
+| Counters under `responsibilities.biologicalState` | yes | no | no |
+| Score breakdown by dimension (`/scores/biological-state.scoreBreakdown`) | yes | typed as a future contract | **no** |
+| Score gates | yes (`scoreBlockers`: 6.0 speciesValidation) | **yes**: Ops main now has `ScoreCapPanel`/`ScoreCapLine` | **only when a gate is below the underlying score.** At 4.6/4.6 no gate binds, so the 6.0 gate is **not shown** |
+| Blockers (2) | yes | typed | **no** for a healthy Brain (shown only in the Overview Attention list for fair/poor health) |
+| Pilot state / lakes | counters only | no | no |
+| `responseBands` per species | yes (PROPOSED) | no | no |
+
+**Verdict:** Engine now publishes the real capability; the **visible** change in Ops is the score (4.0 → 4.6), the Biological State badge (IN_PROGRESS), the research version and the blockers list inside control data. The new maturity facts, the 6.0 gate, dimension breakdown and blockers remain **OPS PRESENTATION** gaps. Engine-side remainder: `/scores/biological-state.nextScoreOpportunity` still carries the pre-publication wording until the score value next changes (the control overview already shows the corrected text).
+
+## Engine-side change made in the candidate (now published)
 The candidate bundle's registry now carries a generic, Engine-computed `facts[]` list `[{label, value}]` (Species with usable rules, Usable / Draft / Retired / Frozen rules, Predictions logged, Observations logged, Independent trips, Validated species, Pilot lakes, Rules version) in addition to the `responsibilities.biologicalState` counters (`usableRules`, `draftRules`, `retiredRules`, `frozenRules`, `predictionsLogged`, `observationsLogged`, `independentTrips`, `speciesWithUsableRules`, `pilotLakes`, `rulesVersion`). **Once published, the ENGINE GAP rows for supported species, rule counts, pilots, predictions, rules version become ENGINE PUBLISHES; the OPS GAP remains until Ops renders `facts[]` (or the new `responsibilities` fields).** Score gates and dimension values are still only in `/scores/biological-state`.
 
 ## What the Engine could add so Ops needs no per-brain code

@@ -277,3 +277,36 @@ class ObservationToolTests(unittest.TestCase):
         from tools import observations as tool
         self.assertEqual(tool.main(["x"]), 2)
         self.assertEqual(tool.main(["x", "bogus"]), 2)
+
+
+class CsvIntakeTests(unittest.TestCase):
+    HEADER = "tripId,observerId,lakeId,localDateTime,species,speciesIdConfidence,speciesGroup,encountered,count,shootableCount,effortMinutes,zone,depthClass,vegetation,waterTempF,clarityBand,windBand,levelContext,spawnBehaviorObserved,observerConfidence,notes"
+
+    def run_csv(self, body):
+        from tools import observations as tool
+        d = tempfile.mkdtemp()
+        p, o = os.path.join(d, "t.csv"), os.path.join(d, "t.json")
+        open(p, "w").write(self.HEADER + "\n" + body)
+        rc = tool.cmd_from_csv(p, o)
+        res = json.load(open(o)) if os.path.exists(o) else None
+        shutil.rmtree(d)
+        return rc, res
+
+    def test_local_time_is_converted_to_utc_with_the_lake_timezone_and_rows_validate(self):
+        rc, res = self.run_csv("t1,u_ab,Guntersville|AL,2026-05-02 21:30,common_carp,CONFIRMED,,yes,4,2,90,backwaterHabitat,,,66.5,,,RISING,,HIGH,pod near grass\n"
+                               "t1,u_ab,Guntersville|AL,2026-05-02 23:00,common_carp,CONFIRMED,,no,,,60,channelBorder,,,,,,,,MEDIUM,\n"
+                               "t2,u_cd,Lake Hartwell|SC,2026-05-03 21:30,,GROUP_ONLY,gar,yes,1,1,45,woodyCover,,,,,,,,LOW,\n")
+        self.assertEqual(rc, 0)
+        self.assertEqual(res[0]["observedAt"], "2026-05-03T02:30:00Z")             # 21:30 CDT (UTC-5)
+        self.assertEqual(res[2]["observedAt"], "2026-05-04T01:30:00Z")             # 21:30 EDT (UTC-4)
+        self.assertEqual((res[1]["encountered"], res[1]["count"], res[1]["shootableCount"]), (False, 0, 0))     # a non-encounter keeps its effort
+        self.assertEqual((res[2]["speciesIdConfidence"], res[2]["speciesGroup"]), ("GROUP_ONLY", "gar"))
+        self.assertEqual(res[0]["levelContext"], "RISING")
+        self.assertNotIn("depthClass", res[0])                                       # blank optional cells are omitted, never defaulted
+        self.assertEqual(res[0]["observationId"], self.run_csv("t1,u_ab,Guntersville|AL,2026-05-02 21:30,common_carp,CONFIRMED,,yes,4,2,90,backwaterHabitat,,,66.5,,,RISING,,HIGH,pod near grass\n")[1][0]["observationId"])
+
+    def test_bad_rows_write_nothing(self):
+        rc, res = self.run_csv("t1,u_ab,Guntersville|AL,2026-05-02 21:30,common_carp,CONFIRMED,,yes,4,2,0,backwaterHabitat,,,,,,,,HIGH,\n"
+                               "t1,u_ab,Guntersville|AL,not-a-date,common_carp,CONFIRMED,,yes,1,1,30,backwaterHabitat,,,,,,,,HIGH,\n"
+                               "t1,mike@example.com,Guntersville|AL,2026-05-02 22:30,common_carp,CONFIRMED,,yes,1,1,30,backwaterHabitat,,,,,,,,HIGH,\n")
+        self.assertEqual((rc, res), (1, None))

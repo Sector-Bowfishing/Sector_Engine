@@ -2,7 +2,10 @@
 
 Nothing below has been applied. Customer behaviour, labels, policy, production and the live Brain RTDB are unchanged. Unrelated implementation is not waiting on these.
 
-## 00. Where things stand (2026-10-14)
+## 000. UPDATE: decisions received and executed (2026-10-14)
+Recorded in `BIOLOGICAL_DECISIONS_RECORD.md`. **Candidate `2026-10-14.4` is PUBLISHED; the canonical scorer set the published score to 4.6** (State IN_PROGRESS; only the 6.0 no-VALIDATED-species gate remains). The branch history was cleaned with `--force-with-lease`. Still **not approved** and unchanged: production-table patches, customer LIVE of any species, `knowledgeDepth` basis (deferred), per-lake publication (off). Prepared: reviewer workflow, preregistered criterion (frozen), field program. The sections below are the earlier decision packet, kept for the record.
+
+## 00. Where things stand (2026-10-14, before the decisions above)
 Rule set `2026-10-14.2-rules`: 61 rules, 48 usable and active, 10 DRAFT, 3 retired by supersession; 51 frozen identities; 7 predictions; 0 observations. Candidate bundle `2026-10-14.4` passes the 14-point audit (`tools/audit_bundle.py`). Canonical rescore after every change: **published 4.0, implementation-supported 4.6, research potential 4.0 (capped; 4.3 uncapped), research + implementation 4.9, all unchanged by this cycle.** Nothing further can move the score without an approval below, a reviewer, or field data.
 **What is waiting on you, in order of leverage:** (1) approve publishing the candidate (4.0 → 4.6); (2) set the knowledgeDepth basis and the unassessed rows (→ up to 4.9); (3) approve a reviewer role; (4) tell me how many testers can log trips at which lakes, and preregister the success criterion (`BIOLOGICAL_VALIDATION_FLEET_DESIGN.md`).
 
