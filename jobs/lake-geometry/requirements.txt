@@ -1,0 +1,4 @@
+shapely>=2.0,<3
+pyproj>=3.6
+numpy>=1.26
+pytest>=8
