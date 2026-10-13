@@ -90,7 +90,7 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
             rec |= {"evaluated": False, "notEvaluatedReason": f"presence state {p.get('presenceState')!r} is outside the relevance policy (Lake Brain owns presence)"}
             species_out.append(rec)
             continue
-        all_rules = ruleset.by_species.get(sid, [])
+        all_rules = [r for r in ruleset.by_species.get(sid, []) if ruleset.is_active(r)]
         use = ruleset.for_species(sid)
         rec["knowledge"]["rules"] = ruleset.counts(sid)
         rec["seasonState"] = {"calendarSeason": SEASONS[month]}

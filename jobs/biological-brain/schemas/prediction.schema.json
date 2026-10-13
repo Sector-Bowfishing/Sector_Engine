@@ -1,5 +1,6 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "description": "optional context fields are frozen with the prediction so it can be judged without hindsight",
  "properties": {
   "confidence": {
    "enum": [
@@ -9,6 +10,7 @@
     "UNKNOWN"
    ]
   },
+  "environment": {},
   "evidenceBasis": {
    "type": "object"
   },
@@ -24,6 +26,9 @@
    },
    "type": "object"
   },
+  "expectedResponses": {},
+  "featuresVersion": {},
+  "inputs": {},
   "lakeId": {
    "type": "string"
   },
@@ -47,7 +52,8 @@
   },
   "speciesId": {
    "type": "string"
-  }
+  },
+  "zone": {}
  },
  "required": [
   "lakeId",

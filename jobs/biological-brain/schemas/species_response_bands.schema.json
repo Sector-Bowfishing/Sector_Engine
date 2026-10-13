@@ -1,0 +1,509 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "description": "Omitted when a species has no usable rule (=> UNSUPPORTED downstream). PROPOSED until every contributing rule is APPROVED. A feature absent from bands is UNKNOWN.",
+ "properties": {
+  "bands": {
+   "items": {
+    "properties": {
+     "band": {
+      "enum": [
+       "FAVORABLE",
+       "WORKABLE",
+       "LIMITING",
+       "BLOCKING",
+       "UNKNOWN"
+      ]
+     },
+     "bandId": {
+      "type": "string"
+     },
+     "behavior": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "confidence": {
+      "enum": [
+       "LOW",
+       "MEDIUM",
+       "HIGH",
+       null
+      ]
+     },
+     "confidenceBasis": {
+      "required": [
+       "independentStreams",
+       "confidenceCap"
+      ],
+      "type": "object"
+     },
+     "conflict": {
+      "type": "boolean"
+     },
+     "conflictsWith": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "context": {
+      "properties": {
+       "lifeStage": {
+        "enum": [
+         "ADULT",
+         "JUVENILE",
+         "ANY"
+        ]
+       },
+       "months": {
+        "oneOf": [
+         {
+          "const": "all"
+         },
+         {
+          "items": {
+           "maximum": 12,
+           "minimum": 1,
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        ]
+       },
+       "regions": {
+        "items": {
+         "enum": [
+          "south",
+          "lowerMid",
+          "north",
+          "west",
+          "any"
+         ]
+        },
+        "type": "array"
+       },
+       "waterbodyTypes": {
+        "items": {
+         "enum": [
+          "run_of_river",
+          "storage_reservoir",
+          "natural_lake",
+          "river",
+          "any"
+         ]
+        },
+        "type": "array"
+       }
+      },
+      "type": "object"
+     },
+     "evidenceKind": {
+      "enum": [
+       "DIRECT",
+       "INFERRED",
+       "MIXED"
+      ]
+     },
+     "featureId": {
+      "type": "string"
+     },
+     "featureStates": {
+      "items": {
+       "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+     },
+     "limitations": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "reason": {
+      "maxLength": 160,
+      "type": "string"
+     },
+     "ruleVersion": {
+      "required": [
+       "ruleIds",
+       "versions"
+      ],
+      "type": "object"
+     },
+     "sourceCount": {
+      "minimum": 1,
+      "type": "integer"
+     },
+     "transferability": {
+      "enum": [
+       "UNTESTED",
+       "PARTIAL",
+       "TRANSFERS"
+      ]
+     },
+     "validationTier": {
+      "enum": [
+       "NONE",
+       "T1",
+       "T2",
+       "T3",
+       "T4"
+      ]
+     }
+    },
+    "required": [
+     "bandId",
+     "featureId",
+     "featureStates",
+     "band",
+     "conflict",
+     "context",
+     "confidence",
+     "ruleVersion",
+     "transferability",
+     "sourceCount",
+     "evidenceKind",
+     "confidenceBasis",
+     "validationTier",
+     "reason",
+     "limitations"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "contractVersion": {
+   "const": "biological-response-bands-v1"
+  },
+  "coveredFeatures": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array"
+  },
+  "evidenceTier": {
+   "description": "VALIDATED is never asserted by the compiler",
+   "enum": [
+    "RESEARCH",
+    "REVIEWED"
+   ]
+  },
+  "featuresVersion": {
+   "type": "string"
+  },
+  "generatedAt": {
+   "type": "string"
+  },
+  "habitatPreferences": {
+   "items": {
+    "properties": {
+     "confidence": {
+      "enum": [
+       "LOW",
+       "MEDIUM",
+       "HIGH",
+       null
+      ]
+     },
+     "confidenceBasis": {
+      "required": [
+       "independentStreams",
+       "confidenceCap"
+      ],
+      "type": "object"
+     },
+     "context": {
+      "properties": {
+       "lifeStage": {
+        "enum": [
+         "ADULT",
+         "JUVENILE",
+         "ANY"
+        ]
+       },
+       "months": {
+        "oneOf": [
+         {
+          "const": "all"
+         },
+         {
+          "items": {
+           "maximum": 12,
+           "minimum": 1,
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        ]
+       },
+       "regions": {
+        "items": {
+         "enum": [
+          "south",
+          "lowerMid",
+          "north",
+          "west",
+          "any"
+         ]
+        },
+        "type": "array"
+       },
+       "waterbodyTypes": {
+        "items": {
+         "enum": [
+          "run_of_river",
+          "storage_reservoir",
+          "natural_lake",
+          "river",
+          "any"
+         ]
+        },
+        "type": "array"
+       }
+      },
+      "type": "object"
+     },
+     "depthClass": {
+      "enum": [
+       "LT_0_5M",
+       "M0_5_1_5",
+       "M1_5_3",
+       "GT_3M",
+       null
+      ]
+     },
+     "direction": {
+      "enum": [
+       "FAVOR",
+       "AVOID"
+      ]
+     },
+     "evidenceKind": {
+      "enum": [
+       "DIRECT",
+       "INFERRED",
+       "MIXED"
+      ]
+     },
+     "habitatClass": {
+      "enum": [
+       "shallowVegetatedHabitat",
+       "floodedVegetation",
+       "backwaterHabitat",
+       "tributaryAccess",
+       "tributaryMouth",
+       "tailwaterHabitat",
+       "channelBorder",
+       "deepChannelPool",
+       "openWaterBasin",
+       "woodyCover"
+      ]
+     },
+     "limitations": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "reason": {
+      "maxLength": 160,
+      "type": "string"
+     },
+     "requires": {
+      "type": "array"
+     },
+     "ruleVersion": {
+      "required": [
+       "ruleIds",
+       "versions"
+      ],
+      "type": "object"
+     },
+     "sourceCount": {
+      "minimum": 1,
+      "type": "integer"
+     },
+     "transferability": {
+      "enum": [
+       "UNTESTED",
+       "PARTIAL",
+       "TRANSFERS"
+      ]
+     },
+     "validationTier": {
+      "enum": [
+       "NONE",
+       "T1",
+       "T2",
+       "T3",
+       "T4"
+      ]
+     }
+    },
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "limitations": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array"
+  },
+  "rulesVersion": {
+   "type": "string"
+  },
+  "spawn": {
+   "items": {
+    "properties": {
+     "confidence": {
+      "enum": [
+       "LOW",
+       "MEDIUM",
+       "HIGH",
+       null
+      ]
+     },
+     "confidenceBasis": {
+      "required": [
+       "independentStreams",
+       "confidenceCap"
+      ],
+      "type": "object"
+     },
+     "context": {
+      "properties": {
+       "lifeStage": {
+        "enum": [
+         "ADULT",
+         "JUVENILE",
+         "ANY"
+        ]
+       },
+       "months": {
+        "oneOf": [
+         {
+          "const": "all"
+         },
+         {
+          "items": {
+           "maximum": 12,
+           "minimum": 1,
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        ]
+       },
+       "regions": {
+        "items": {
+         "enum": [
+          "south",
+          "lowerMid",
+          "north",
+          "west",
+          "any"
+         ]
+        },
+        "type": "array"
+       },
+       "waterbodyTypes": {
+        "items": {
+         "enum": [
+          "run_of_river",
+          "storage_reservoir",
+          "natural_lake",
+          "river",
+          "any"
+         ]
+        },
+        "type": "array"
+       }
+      },
+      "type": "object"
+     },
+     "event": {
+      "const": "spawn"
+     },
+     "evidenceKind": {
+      "enum": [
+       "DIRECT",
+       "INFERRED",
+       "MIXED"
+      ]
+     },
+     "limitations": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "reason": {
+      "maxLength": 160,
+      "type": "string"
+     },
+     "ruleVersion": {
+      "required": [
+       "ruleIds",
+       "versions"
+      ],
+      "type": "object"
+     },
+     "sourceCount": {
+      "minimum": 1,
+      "type": "integer"
+     },
+     "tempC": {
+      "required": [
+       "min",
+       "max"
+      ],
+      "type": "object"
+     },
+     "transferability": {
+      "enum": [
+       "UNTESTED",
+       "PARTIAL",
+       "TRANSFERS"
+      ]
+     },
+     "validationTier": {
+      "enum": [
+       "NONE",
+       "T1",
+       "T2",
+       "T3",
+       "T4"
+      ]
+     }
+    },
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "speciesId": {
+   "type": "string"
+  },
+  "status": {
+   "enum": [
+    "PROPOSED",
+    "APPROVED",
+    "WITHDRAWN"
+   ]
+  }
+ },
+ "required": [
+  "contractVersion",
+  "speciesId",
+  "status",
+  "evidenceTier",
+  "rulesVersion",
+  "featuresVersion",
+  "generatedAt",
+  "bands"
+ ],
+ "title": "Biological species response bands (biological-response-bands-v1): the Biological-owned object under species/{id}.responseBands",
+ "type": "object"
+}

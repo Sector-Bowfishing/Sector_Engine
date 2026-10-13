@@ -37,13 +37,13 @@ def assess(files: dict[str, bytes]) -> dict:
         rules = []
         for f in man["files"]:
             rules += json.loads(files[f"rules/{f['path']}"])["rules"]
-        rs = rl.RuleSet(rules, man["rulesVersion"], source="bundle")
+        rs = rl.RuleSet(rules, man["rulesVersion"], source="bundle", retired=man.get("retired"))
     except (KeyError, ValueError, rl.RuleError) as e:
         return {"status": "NOT_STARTED", "validation": "NOT_STARTED", "blockers": [f"rules invalid: {e}"], "facts": {}}
-    usable = [r for r in rs.rules if r["status"] in rl.USABLE_STATUSES]
-    facts |= {"rulesVersion": rs.rules_version, "usableRules": len(usable), "draftRules": sum(r["status"] == "DRAFT" for r in rs.rules),
-              "speciesWithUsableRules": len({r["speciesId"] for r in usable}), "speciesWithRules": len(rs.by_species)}
-    facts["ruleCountsBySpecies"] = {sid: {"usable": rs.counts(sid)["usable"], "draft": rs.counts(sid)["draft"]} for sid in sorted(rs.by_species)}
+    usable = [r for r in rs.active_rules() if r["status"] in rl.USABLE_STATUSES]
+    facts |= {"rulesVersion": rs.rules_version, "usableRules": len(usable), "draftRules": sum(r["status"] == "DRAFT" for r in rs.active_rules()), "retiredRules": len(rs.retired),
+              "speciesWithUsableRules": len({r["speciesId"] for r in usable}), "speciesWithRules": len({r["speciesId"] for r in rs.active_rules()})}
+    facts["ruleCountsBySpecies"] = {sid: {"usable": rs.counts(sid)["usable"], "draft": rs.counts(sid)["draft"]} for sid in sorted(rs.by_species) if rs.counts(sid)["total"]}
     if not usable:
         blockers.append("no RECONCILED/APPROVED rule")
 
@@ -93,4 +93,4 @@ def assess(files: dict[str, bytes]) -> dict:
         blockers.append("no verifying pilot Biological State artifact")
     facts["pilotLakes"] = pilots
     status = "IN_PROGRESS" if not blockers else "NOT_STARTED"
-    return {"status": status, "validation": "NOT_STARTED", "blockers": blockers, "facts": facts}
+    return {"status": status, "validation": "NOT_STARTED", "blockers": blockers, "facts": facts, "ruleset": rs}

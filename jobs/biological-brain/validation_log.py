@@ -99,6 +99,8 @@ class FrozenRuleRegister:
 
 # ---------------------------------------------------------------- 2. prediction log
 PRED_FIELDS = ("lakeId", "speciesId", "predictedAt", "ruleRefs", "seasonState", "expected", "confidence", "evidenceBasis")
+# Optional context frozen WITH the prediction so it can be judged later without hindsight (older entries predate these fields and stay valid).
+PRED_OPTIONAL = ("zone", "environment", "inputs", "expectedResponses", "featuresVersion")
 EXPECTED_KEYS = ("habitat", "depthClass", "movementState", "temperatureAlignment", "spawnState", "vegetationAssociation")
 
 
@@ -110,6 +112,9 @@ def validate_prediction(p: dict) -> list[str]:
         e.append("speciesId")
     if not p["ruleRefs"] or any(not {"ruleId", "ruleVersion", "ruleSha256"} <= set(r) for r in p["ruleRefs"]):
         e.append("ruleRefs must be non-empty {ruleId, ruleVersion, ruleSha256}")
+    extra = set(p) - set(PRED_FIELDS) - set(PRED_OPTIONAL) - {"predictionId", "prevHash", "entryHash"}
+    if extra:
+        e.append(f"unexpected prediction keys {sorted(extra)}")
     if not isinstance(p["expected"], dict) or set(p["expected"]) - set(EXPECTED_KEYS):
         e.append(f"expected keys must be within {EXPECTED_KEYS}")
     if p["confidence"] not in rl.CONFIDENCE + ("UNKNOWN",):
@@ -147,7 +152,7 @@ class PredictionLog:
                 raise LogError(f"rule {r['ruleId']} was frozen after the prediction time")
         es = self.entries()
         _chain(es, "prediction log")
-        pid = _h({k: pred[k] for k in PRED_FIELDS})[:24]
+        pid = _h({k: pred[k] for k in PRED_FIELDS + PRED_OPTIONAL if k in pred})[:24]
         if any(e["predictionId"] == pid for e in es):
             raise LogError(f"prediction {pid} already logged (predictions are immutable and not duplicated)")
         e = dict(pred) | {"predictionId": pid, "prevHash": es[-1]["entryHash"] if es else GENESIS}
@@ -156,11 +161,22 @@ class PredictionLog:
         return e
 
 
+def _activated(s: dict) -> bool:
+    """A supported rule is genuinely ACTIVATED by the current state: a response band that is not UNKNOWN, an ACTIVE habitat rule, or the
+    spawn window actually IN_WINDOW. Conditional-unknown habitat, TEMP_ONLY/OUTSIDE spawn states and UNKNOWN bands are not predictions."""
+    return (any(r["response"] != "UNKNOWN" for r in s.get("responses", [])) or any(h["state"] == "ACTIVE" for h in s.get("habitat", []))
+            or (s.get("spawnWindow") or {}).get("state") == "IN_WINDOW")
+
+
 def predictions_from_state(state: dict, register: FrozenRuleRegister, rules_by_id: dict, now: dt.datetime) -> list[dict]:
-    """Machine predictions from a Biological State, one per evaluated species that has at least one frozen, evaluable basis."""
+    """Machine predictions from a Biological State: one per evaluated species with a genuinely activated, frozen rule.
+    Each carries the environment it was made under, the expected response bands and the input versions."""
+    env_keys = ("waterTempBand", "temperatureTrend", "stageTrend", "warmRise", "coldRise", "clarityBand", "daypart")
+    env = {k: state["features"][k]["state"] for k in env_keys if k in state["features"]}
+    inputs = {k: {x: v for x, v in d.items() if x in ("brainId", "status", "generatedAt", "ageHours", "brainVersion")} for k, d in state["inputs"].items()}
     out = []
     for s in state["species"]:
-        if not s.get("evaluated"):
+        if not s.get("evaluated") or not _activated(s):
             continue
         habitat = sorted({h["habitatClass"] for h in s.get("habitat", []) if h["direction"] == "FAVOR" and h["state"] == "ACTIVE"})
         depth = sorted({h["depthClass"] for h in s.get("habitat", []) if h["direction"] == "FAVOR" and h["state"] == "ACTIVE" and h.get("depthClass")})
@@ -168,9 +184,9 @@ def predictions_from_state(state: dict, register: FrozenRuleRegister, rules_by_i
                and h["direction"] == "FAVOR" and h["state"] == "ACTIVE"]
         moves = sorted({b for r in s.get("responses", []) if r["response"] in ("FAVORABLE", "WORKABLE") for b in (r.get("behavior") or [])})
         used_ids = {r_id for r in s.get("responses", []) if r["response"] != "UNKNOWN" for r_id in r["evidenceBasis"]["ruleIds"]}
-        used_ids |= {h["ruleId"] for h in s.get("habitat", [])}
+        used_ids |= {h["ruleId"] for h in s.get("habitat", []) if h["state"] == "ACTIVE"}
         sw = s.get("spawnWindow") or {}
-        if sw.get("ruleId"):
+        if sw.get("ruleId") and sw.get("state") == "IN_WINDOW":
             used_ids.add(sw["ruleId"])
         refs = []
         for rid in sorted(used_ids):
@@ -180,16 +196,29 @@ def predictions_from_state(state: dict, register: FrozenRuleRegister, rules_by_i
                 refs.append({"ruleId": rid, "ruleVersion": r["ruleVersion"], "ruleSha256": fr["ruleSha256"]})
         if not refs:
             continue
-        confs = [r["confidence"] for r in s.get("responses", []) if r["response"] != "UNKNOWN"] + [h["confidence"] for h in s.get("habitat", [])]
-        out.append({"lakeId": state["lakeId"], "speciesId": s["speciesId"], "predictedAt": _iso(now), "ruleRefs": refs,
-                    "seasonState": s["seasonState"],
+        confs = [r["confidence"] for r in s.get("responses", []) if r["response"] != "UNKNOWN"] + [h["confidence"] for h in s.get("habitat", []) if h["state"] == "ACTIVE"]
+        out.append({"lakeId": state["lakeId"], "speciesId": s["speciesId"], "predictedAt": _iso(now), "ruleRefs": refs, "zone": "LAKE",
+                    "seasonState": s["seasonState"], "environment": env, "inputs": inputs, "featuresVersion": state["provenance"]["featuresVersion"],
+                    "expectedResponses": [{"featureId": r["featureId"], "featureState": r["featureState"], "band": r["response"], "confidence": r.get("confidence")}
+                                          for r in s.get("responses", []) if r["response"] != "UNKNOWN"],
                     "expected": {k: v for k, v in {"habitat": habitat, "depthClass": depth, "movementState": moves,
                                                    "temperatureAlignment": sw.get("state"), "spawnState": sw.get("state"),
                                                    "vegetationAssociation": veg}.items() if v},
                     "confidence": max(confs, key=rl.CONFIDENCE.index) if confs else "UNKNOWN",
-                    "evidenceBasis": {"rulesVersion": state["provenance"]["rulesVersion"], "stateVersion": state["provenance"]["stateVersion"],
-                                      "ruleCount": len(refs)}})
+                    "evidenceBasis": {"rulesVersion": state["provenance"]["rulesVersion"], "stateVersion": state["provenance"]["stateVersion"], "ruleCount": len(refs)}})
     return out
+
+
+def is_repeat(entries: list[dict], pred: dict, window_hours: float = 24.0) -> bool:
+    """True if the latest logged prediction for the same lake+species is materially identical and recent, so a re-run does not inflate the log."""
+    def t(s):
+        return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+    prior = [e for e in entries if e["lakeId"] == pred["lakeId"] and e["speciesId"] == pred["speciesId"]]
+    if not prior:
+        return False
+    last = prior[-1]
+    same = all(last.get(k) == pred.get(k) for k in ("ruleRefs", "expected", "seasonState", "environment"))
+    return same and (t(pred["predictedAt"]) - t(last["predictedAt"])).total_seconds() / 3600.0 < window_hours
 
 
 # ---------------------------------------------------------------- 3. observations
@@ -287,7 +316,7 @@ class ObservationStore:
 
 # ---------------------------------------------------------------- 4. evaluation
 def evaluate(predictions: list[dict], observations: list[dict], *, min_streams: int = 30, window_hours: float = 36.0) -> dict:
-    """Join each prediction to confirmed/likely encounter observations of that species on that lake within `window_hours`.
+    """Score each confirmed/likely observation against the single latest prior prediction for that species and lake within `window_hours`.
 
     Reports counts only. `claim` stays 'INSUFFICIENT_EVIDENCE' until >= min_streams independent trips (tripId) have been
     compared; even then it is a hit-rate with a naive-baseline lift, not a validation verdict (the threshold for VALIDATED is a
@@ -295,18 +324,19 @@ def evaluate(predictions: list[dict], observations: list[dict], *, min_streams: 
     def t(s):
         return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
     scored, trips = [], set()
-    for p in predictions:
-        exp_h = (p.get("expected") or {}).get("habitat")
-        if not exp_h:
+    for o in observations:
+        if o["speciesIdConfidence"] not in ("CONFIRMED", "LIKELY"):
+            continue                                   # group-level or uncertain IDs never score a species-level prediction
+        ot = t(o["observedAt"])
+        cands = [p for p in predictions if p["lakeId"] == o["lakeId"] and p["speciesId"] == o["speciesId"] and (p.get("expected") or {}).get("habitat")
+                 and t(p["predictedAt"]) <= ot and (ot - t(p["predictedAt"])).total_seconds() / 3600.0 <= window_hours]
+        if not cands:
             continue
-        for o in observations:
-            if o["lakeId"] != p["lakeId"] or o["speciesIdConfidence"] not in ("CONFIRMED", "LIKELY") or o["speciesId"] != p["speciesId"]:
-                continue
-            if abs((t(o["observedAt"]) - t(p["predictedAt"])).total_seconds()) / 3600.0 > window_hours or t(o["observedAt"]) < t(p["predictedAt"]):
-                continue
-            scored.append({"predictionId": p["predictionId"], "tripId": o["tripId"], "encountered": o["encountered"], "hit": bool(o["encountered"] and o["zone"] in exp_h),
-                           "predictedClasses": len(exp_h), "classesAvailable": len(ft.HABITAT_CLASSES)})
-            trips.add(o["tripId"])
+        p = max(cands, key=lambda x: x["predictedAt"])   # ONE prediction per observation: the latest made before it (no double scoring)
+        exp_h = p["expected"]["habitat"]
+        scored.append({"predictionId": p["predictionId"], "tripId": o["tripId"], "encountered": o["encountered"], "hit": bool(o["encountered"] and o["zone"] in exp_h),
+                       "predictedClasses": len(exp_h), "classesAvailable": len(ft.HABITAT_CLASSES)})
+        trips.add(o["tripId"])
     enc = [s for s in scored if s["encountered"]]
     hit_rate = (sum(s["hit"] for s in enc) / len(enc)) if enc else None
     baseline = (sum(s["predictedClasses"] / s["classesAvailable"] for s in enc) / len(enc)) if enc else None

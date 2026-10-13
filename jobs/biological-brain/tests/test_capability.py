@@ -138,8 +138,15 @@ class PublisherReflectsCapabilityTests(unittest.TestCase):
         _, up = self.updates(capability_files())
         blob = json.dumps(up)
         self.assertNotIn('"statement"', blob)
-        self.assertNotIn("feature", json.dumps(up["/species/example_fish"]))
+        sp = json.dumps(up["/species/example_fish"])
+        for private_text in ('"statement"', '"evidenceId"', '"packet"', '"streamId"', '"conflicts"'):
+            self.assertNotIn(private_text, sp)
         self.assertEqual(up["/species/example_fish"]["machineRules"], {"usable": 3, "draft": 0})
+        import bands
+        rb = up["/species/example_fish"]["responseBands"]
+        self.assertEqual(bands.validate_response_bands(rb), [])
+        self.assertEqual(rb["status"], "PROPOSED")             # no rule is APPROVED, so no band is APPROVED
+        self.assertLess(len(sp), 16000)
 
     def test_canonical_scorer_moves_only_because_capability_exists(self):
         sys.path.insert(0, os.path.join(HERE, "..", "..", "brain_platform"))

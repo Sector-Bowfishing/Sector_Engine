@@ -13,6 +13,7 @@ sys.path.insert(0, ROOT)
 import features as ft      # noqa: E402
 import rules as rl         # noqa: E402
 import validation_log as vl  # noqa: E402
+import bands as bd           # noqa: E402
 
 S = "https://json-schema.org/draft/2020-12/schema"
 
@@ -62,7 +63,8 @@ def build():
             "properties": {"lakeId": {"type": "string"}, "speciesId": {"type": "string"}, "predictedAt": {"type": "string"},
                            "ruleRefs": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["ruleId", "ruleVersion", "ruleSha256"]}},
                            "seasonState": {"type": "object"}, "expected": {"type": "object", "properties": {k: {} for k in vl.EXPECTED_KEYS}, "additionalProperties": False},
-                           "confidence": {"enum": list(rl.CONFIDENCE) + ["UNKNOWN"]}, "evidenceBasis": {"type": "object"}}}
+                           "confidence": {"enum": list(rl.CONFIDENCE) + ["UNKNOWN"]}, "evidenceBasis": {"type": "object"},
+                           **{k: {} for k in vl.PRED_OPTIONAL}}, "description": "optional context fields are frozen with the prediction so it can be judged without hindsight"}
     obs = {"$schema": S, "title": "Structured Sector biological observation", "type": "object", "required": list(vl.OBS_REQUIRED),
            "properties": {"observationId": {"type": "string"}, "tripId": {"type": "string", "description": "observations of one trip are ONE evidence stream"},
                           "observerId": {"type": "string", "description": "pseudonymous; no contact details"}, "lakeId": {"type": "string"}, "observedAt": {"type": "string"},
@@ -73,7 +75,29 @@ def build():
                           "windBand": {"enum": list(vl.WIND_BANDS)}, "levelContext": {"enum": list(vl.LEVEL_CONTEXT)},
                           "spawnBehaviorObserved": {"enum": [True, False, "UNKNOWN"]}, "notes": {"type": "string", "maxLength": 280},
                           "observerConfidence": {"enum": list(vl.OBSERVER_CONF)}}}
-    return {"condition_features.json": contract, "biological_rule.schema.json": rule, "response_band.schema.json": band,
+    ctx = {"type": "object", "properties": {"months": {"oneOf": [{"const": "all"}, {"type": "array", "items": {"type": "integer", "minimum": 1, "maximum": 12}}]},
+                                            "regions": {"type": "array", "items": {"enum": list(rl.REGIONS)}}, "waterbodyTypes": {"type": "array", "items": {"enum": list(rl.WATERBODIES)}},
+                                            "lifeStage": {"enum": list(rl.LIFE_STAGES)}}}
+    common = {"context": ctx, "confidence": {"enum": list(rl.CONFIDENCE) + [None]}, "ruleVersion": {"type": "object", "required": ["ruleIds", "versions"]},
+              "transferability": {"enum": list(rl.TRANSFER)}, "sourceCount": {"type": "integer", "minimum": 1}, "evidenceKind": {"enum": list(bd.EVIDENCE_KIND)},
+              "confidenceBasis": {"type": "object", "required": ["independentStreams", "confidenceCap"]}, "validationTier": {"enum": list(bd.VALIDATION_TIER)},
+              "reason": {"type": "string", "maxLength": bd.MAX_REASON}, "limitations": {"type": "array", "items": {"type": "string"}}}
+    sp_bands = {"$schema": S, "title": "Biological species response bands (biological-response-bands-v1): the Biological-owned object under species/{id}.responseBands",
+                "description": "Omitted when a species has no usable rule (=> UNSUPPORTED downstream). PROPOSED until every contributing rule is APPROVED. A feature absent from bands is UNKNOWN.",
+                "type": "object", "required": ["contractVersion", "speciesId", "status", "evidenceTier", "rulesVersion", "featuresVersion", "generatedAt", "bands"],
+                "properties": {"contractVersion": {"const": bd.CONTRACT_VERSION}, "speciesId": {"type": "string"}, "status": {"enum": list(bd.BAND_STATUS)},
+                               "evidenceTier": {"enum": ["RESEARCH", "REVIEWED"], "description": "VALIDATED is never asserted by the compiler"},
+                               "rulesVersion": {"type": "string"}, "featuresVersion": {"type": "string"}, "generatedAt": {"type": "string"},
+                               "coveredFeatures": {"type": "array", "items": {"type": "string"}},
+                               "bands": {"type": "array", "items": {"type": "object", "required": ["bandId", "featureId", "featureStates", "band", "conflict", *common],
+                                                                    "properties": {"bandId": {"type": "string"}, "featureId": {"type": "string"}, "featureStates": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                                                                                   "behavior": {"type": ["string", "null"]}, "band": {"enum": list(bd.BAND_VALUES)}, "conflict": {"type": "boolean"},
+                                                                                   "conflictsWith": {"type": "array", "items": {"type": "string"}}, **common}}},
+                               "habitatPreferences": {"type": "array", "items": {"type": "object", "properties": {"habitatClass": {"enum": list(ft.HABITAT_CLASSES)}, "direction": {"enum": list(rl.DIRECTIONS)},
+                                                                                                                  "depthClass": {"enum": list(ft.DEPTH_CLASSES) + [None]}, "requires": {"type": "array"}, **common}}},
+                               "spawn": {"type": "array", "items": {"type": "object", "properties": {"event": {"const": "spawn"}, "tempC": {"type": "object", "required": ["min", "max"]}, **common}}},
+                               "limitations": {"type": "array", "items": {"type": "string"}}}}
+    return {"species_response_bands.schema.json": sp_bands, "condition_features.json": contract, "biological_rule.schema.json": rule, "response_band.schema.json": band,
             "prediction.schema.json": pred, "observation.schema.json": obs}
 
 

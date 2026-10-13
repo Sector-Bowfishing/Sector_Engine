@@ -169,6 +169,37 @@ class RuleContractTests(unittest.TestCase):
                 rl.load_rules_dir(d)
 
 
+class SupersessionTests(unittest.TestCase):
+    def test_a_frozen_rule_is_superseded_by_a_new_version_without_editing_it(self):
+        v1, v2 = rule("EX-FLW-01"), rule("EX-FLW-01", ruleVersion=2, response="WORKABLE")
+        retired = [{"ruleId": "EX-FLW-01", "ruleVersion": 1, "supersededBy": {"ruleId": "EX-FLW-01", "ruleVersion": 2}, "reason": "narrowed", "retiredAt": "2026-10-14"}]
+        h1 = rl.rule_hash(v1)
+        rs = rl.RuleSet([v1, v2], "t.2", retired=retired)
+        self.assertEqual([r["ruleVersion"] for r in rs.for_species("example_fish")], [2])
+        self.assertEqual(rl.rule_hash(v1), h1)                                   # v1 content is untouched
+        self.assertEqual(rs.counts("example_fish")["retired"], 1)
+        self.assertEqual([r["ruleVersion"] for r in rs.active_rules()], [2])
+        out = rl.evaluate_responses(rs.for_species("example_fish"), ft.evaluate_features(inputs(temp_f=70)), {"month": 4, "region": "south", "waterbodyType": "run_of_river"})
+        self.assertEqual(out[0]["response"], "WORKABLE")                         # only the new version speaks
+
+    def test_bad_supersession_is_refused(self):
+        v1 = rule("EX-FLW-01")
+        for retired in ([{"ruleId": "EX-FLW-09", "ruleVersion": 1, "reason": "x"}],
+                        [{"ruleId": "EX-FLW-01", "ruleVersion": 1, "supersededBy": {"ruleId": "EX-FLW-01", "ruleVersion": 1}, "reason": "x"}],
+                        [{"ruleId": "EX-FLW-01", "ruleVersion": 1, "supersededBy": {"ruleId": "EX-FLW-01", "ruleVersion": 2}, "reason": "x"}],
+                        [{"ruleId": "EX-FLW-01", "ruleVersion": 1}]):
+            with self.assertRaises(rl.RuleError):
+                rl.RuleSet([v1], "t", retired=retired)
+
+    def test_retired_rule_is_not_in_published_bands(self):
+        import bands
+        v1, v2 = rule("EX-FLW-01"), rule("EX-FLW-01", ruleVersion=2, response="WORKABLE")
+        rs = rl.RuleSet([v1, v2], "t.2", retired=[{"ruleId": "EX-FLW-01", "ruleVersion": 1, "supersededBy": {"ruleId": "EX-FLW-01", "ruleVersion": 2}, "reason": "narrowed"}])
+        rb = bands.compile_species_bands("example_fish", rs.active_rules(), generated_at="x", rules_version="t.2")
+        self.assertEqual([b["band"] for b in rb["bands"]], ["WORKABLE"])
+        self.assertFalse(rb["bands"][0]["conflict"])                              # v1 vs v2 never conflict: v1 is not active
+
+
 class ResponseBandTests(unittest.TestCase):
     ctx = {"month": 4, "region": "south", "waterbodyType": "run_of_river"}
 
@@ -267,7 +298,7 @@ class BiologicalStateTests(unittest.TestCase):
         self.assertTrue(ex["evaluated"])
         self.assertEqual(ex["seasonState"], {"calendarSeason": "SPRING", "spawnWindow": "IN_WINDOW"})      # 21.1 C, April
         self.assertEqual(ex["nightMovementSupported"], "TRUE")
-        self.assertEqual(ex["knowledge"]["rules"], {"usable": 3, "draft": 0, "total": 3})
+        self.assertEqual(ex["knowledge"]["rules"], {"usable": 3, "draft": 0, "total": 3, "retired": 0})
         self.assertTrue(any(r["featureId"] == "warmRise" and r["response"] == "FAVORABLE" for r in ex["responses"]))
 
     def test_presence_outside_policy_is_reported_not_dropped(self):
@@ -376,6 +407,33 @@ class ValidationFoundationTests(unittest.TestCase):
             with self.assertRaises(vl.LogError):
                 self.log.append(bad)
 
+    def test_prediction_carries_environment_expected_responses_and_input_versions(self):
+        rs = fixture_ruleset()
+        for r in rs.rules:
+            if r["status"] in rl.USABLE_STATUSES:
+                self.reg.freeze(r, NOW, "t")
+        state = BiologicalStateTests().build()
+        p = vl.predictions_from_state(state, self.reg, {r["ruleId"]: r for r in rs.rules}, NOW)[0]
+        self.assertEqual(p["zone"], "LAKE")
+        self.assertEqual(p["environment"]["warmRise"], "TRUE")
+        self.assertIn({"featureId": "warmRise", "featureState": "TRUE", "band": "FAVORABLE", "confidence": "LOW"}, p["expectedResponses"])
+        self.assertEqual(p["inputs"]["waterTemp"]["status"], "PUBLISHED")
+        self.assertEqual(p["featuresVersion"], ft.FEATURES_VERSION)
+        e = self.log.append(p)                                     # optional context is accepted and hashed into the chain
+        self.assertTrue(vl.is_repeat(self.log.entries(), dict(p, predictedAt="2026-04-20T09:00:00Z")))
+        self.assertFalse(vl.is_repeat(self.log.entries(), dict(p, predictedAt="2026-04-22T09:00:00Z")))        # >24h: a new prediction
+        self.assertFalse(vl.is_repeat(self.log.entries(), dict(p, expected={"habitat": ["tailwaterHabitat"]})))
+        with self.assertRaises(vl.LogError):
+            self.log.append(dict(p, speciesId="other_fish", surprise=1))
+
+    def test_no_prediction_when_nothing_is_activated(self):
+        rs = fixture_ruleset()
+        for r in rs.rules:
+            if r["status"] in rl.USABLE_STATUSES:
+                self.reg.freeze(r, NOW, "t")
+        quiet = BiologicalStateTests().build(inp=inputs(temp_f=40, lake_trend="FALLING"), daypart="DAY")        # cold, falling, day: nothing activates
+        self.assertEqual(vl.predictions_from_state(quiet, self.reg, {r["ruleId"]: r for r in rs.rules}, NOW), [])
+
     def test_predictions_from_state_use_only_frozen_rules(self):
         rs = fixture_ruleset()
         for r in rs.rules:
@@ -429,6 +487,13 @@ class ValidationFoundationTests(unittest.TestCase):
         self.assertEqual(res["claim"], "INSUFFICIENT_EVIDENCE")
         self.assertEqual(res["hitRate"], 1.0)
         self.assertGreater(res["lift"], 1.0)
+
+    def test_two_near_identical_predictions_do_not_double_score_one_observation(self):
+        p1 = self.log.append(self.pred())
+        p2 = self.log.append(self.pred(predictedAt="2026-04-20T09:00:00Z", expected={"habitat": ["backwaterHabitat", "tributaryMouth"]}))
+        res = vl.evaluate([p1, p2], [dict(self.OBS)])
+        self.assertEqual(res["comparisons"], 1)
+        self.assertEqual(res["independentTrips"], 1)
 
     def test_evaluation_never_scores_group_level_or_pre_prediction_observations_and_counts_trips_once(self):
         p = self.log.append(self.pred())

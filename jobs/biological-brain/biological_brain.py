@@ -19,6 +19,7 @@ import math
 import re
 
 from capability import IN_PROGRESS_NOTE, NOT_STARTED_NOTE  # noqa: E402  (stdlib-only sibling module)
+import bands as _bands  # noqa: E402
 
 BRAIN_ID = "biological-state"
 DISPLAY_NAME = "Biological Brain"
@@ -100,6 +101,7 @@ class Bundle:
         import capability                      # local import: capability reads rules/validation artifacts; absent artifacts -> NOT_STARTED
         self.capability = capability.assess(files)
         self.rule_counts = self.capability["facts"].get("ruleCountsBySpecies", {})
+        self.ruleset = self.capability.get("ruleset")        # a validated RuleSet or None; bands are compiled only from validated rules
 
     @property
     def research_version(self) -> str:
@@ -202,6 +204,8 @@ def species_summary(p: dict, b: Bundle, profile_uri: str, now: str) -> dict:
         contradictionCount=contradictions or None,
         ruleCount=len(p.get("rules") or []) or None,
         machineRules=(b.rule_counts.get(p["speciesId"]) if getattr(b, "rule_counts", None) else None),
+        responseBands=(_bands.compile_species_bands(p["speciesId"], b.ruleset.active_rules(), generated_at=now, rules_version=b.ruleset.rules_version)
+                       if getattr(b, "ruleset", None) else None),
         evidence=dict(relationshipRecordCount=ev.get("relationshipRecordCount"),
                       sourcesByVerification=ev.get("sourcesByVerification2026_10_12")),
         openDiscrepancies=disc,
@@ -220,7 +224,7 @@ def _state_responsibility(b: Bundle) -> dict:
         f = c["facts"]
         return dict(status="IN_PROGRESS", validation=c["validation"], question=q, note=IN_PROGRESS_NOTE, pilotLakes=f.get("pilotLakes"),
                     rulesVersion=f.get("rulesVersion"), speciesWithUsableRules=f.get("speciesWithUsableRules"), usableRules=f.get("usableRules"),
-                    draftRules=f.get("draftRules"), frozenRules=f.get("frozenRules"), predictionsLogged=f.get("predictionsLogged", 0))
+                    draftRules=f.get("draftRules"), retiredRules=f.get("retiredRules"), frozenRules=f.get("frozenRules"), predictionsLogged=f.get("predictionsLogged", 0))
     return dict(status="NOT_STARTED", question=q, note=NOT_STARTED_NOTE + (f" Capability blockers: {'; '.join(c['blockers'][:3])}" if b.capability["facts"] else ""))
 
 

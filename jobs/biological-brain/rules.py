@@ -176,10 +176,28 @@ def validate_rule_set(rules: list[dict]) -> list[str]:
 
 
 class RuleSet:
-    """Rules for many species, indexed. Validated on construction (fail closed)."""
+    """Rules for many species, indexed. Validated on construction (fail closed).
 
-    def __init__(self, rules: list[dict], rules_version: str, source: str = "memory"):
+    `retired` supersedes a frozen rule WITHOUT touching its content: [{ruleId, ruleVersion, supersededBy:{ruleId, ruleVersion}|None, reason, retiredAt}].
+    A retired (ruleId, version) stays in `rules` (and in the frozen register, for audit) but is never active, so a revised rule gets a new
+    version and a new frozen identity instead of being edited after it was frozen."""
+
+    def __init__(self, rules: list[dict], rules_version: str, source: str = "memory", retired: list[dict] | None = None):
         errs = validate_rule_set(rules)
+        keys = {(r["ruleId"], r["ruleVersion"]): r for r in rules}
+        self.retired: dict[tuple, dict] = {}
+        for x in retired or []:
+            k = (x.get("ruleId"), x.get("ruleVersion"))
+            sb = x.get("supersededBy")
+            if k not in keys:
+                errs.append(f"retired rule {k} does not exist")
+            elif sb is not None:
+                sk = (sb.get("ruleId"), sb.get("ruleVersion"))
+                if sk not in keys or sb.get("ruleId") != x["ruleId"] or not sb.get("ruleVersion", 0) > x["ruleVersion"] or keys[sk]["speciesId"] != keys[k]["speciesId"]:
+                    errs.append(f"retired rule {k}: supersededBy must be a later version of the same rule")
+            if not x.get("reason"):
+                errs.append(f"retired rule {k} needs a reason")
+            self.retired[k] = x
         if errs:
             raise RuleError("; ".join(errs[:8]) + (f" (+{len(errs) - 8} more)" if len(errs) > 8 else ""))
         self.rules_version, self.source = rules_version, source
@@ -188,12 +206,19 @@ class RuleSet:
         for r in rules:
             self.by_species.setdefault(r["speciesId"], []).append(r)
 
+    def is_active(self, r: dict) -> bool:
+        return (r["ruleId"], r["ruleVersion"]) not in self.retired
+
+    def active_rules(self) -> list[dict]:
+        return [r for r in self.rules if self.is_active(r)]
+
     def for_species(self, sid: str, statuses=USABLE_STATUSES) -> list[dict]:
-        return [r for r in self.by_species.get(sid, []) if r["status"] in statuses]
+        return [r for r in self.by_species.get(sid, []) if r["status"] in statuses and self.is_active(r)]
 
     def counts(self, sid: str) -> dict:
-        rs = self.by_species.get(sid, [])
-        return {"usable": sum(r["status"] in USABLE_STATUSES for r in rs), "draft": sum(r["status"] == "DRAFT" for r in rs), "total": len(rs)}
+        rs = [r for r in self.by_species.get(sid, []) if self.is_active(r)]
+        return {"usable": sum(r["status"] in USABLE_STATUSES for r in rs), "draft": sum(r["status"] == "DRAFT" for r in rs), "total": len(rs),
+                "retired": sum(not self.is_active(r) for r in self.by_species.get(sid, []))}
 
 
 def load_rules_dir(root: str) -> RuleSet:
@@ -207,7 +232,7 @@ def load_rules_dir(root: str) -> RuleSet:
             raise RuleError(f"rules file hash/size mismatch: {f['path']}")
         doc = json.loads(raw)
         rules += doc["rules"]
-    return RuleSet(rules, man["rulesVersion"], source=root)
+    return RuleSet(rules, man["rulesVersion"], source=root, retired=man.get("retired"))
 
 
 # ---------------------------------------------------------------- applicability
