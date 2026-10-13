@@ -1,0 +1,622 @@
+lakeId,name,state,region,areaKm2,geometryConfidence,tier,readiness,reasons
+Abiquiu Lake|NM,Abiquiu Lake,NM,W,13.175,MEDIUM,HIGH,PROFILED,
+Alamo|AZ,Alamo,AZ,W,12.425,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Alcova Reservoir|WY,Alcova Reservoir,WY,W,9.225,HIGH,HIGH,PROFILED,
+Aleknagik|AK,Aleknagik,AK,AKHI,84.373,HIGH,HIGH,PROFILED,
+Allatoona|GA,Allatoona,GA,SE,46.173,HIGH,HIGH,PROFILED,
+Allegheny Reservoir|PA,Allegheny Reservoir,PA,NE,49.792,MEDIUM,HIGH,PROFILED,
+Almanor|CA,Almanor,CA,W,100.093,HIGH,HIGH,PROFILED,
+Alum Creek Lake|OH,Alum Creek Lake,OH,MW,13.122,MEDIUM,HIGH,PROFILED,
+American Falls Reservoir|ID,American Falls Reservoir,ID,W,223.954,HIGH,HIGH,PROFILED,
+Amistad Reservoir|TX,Amistad Reservoir,TX,GP,103.152,MEDIUM,HIGH,PROFILED,
+Anderson Ranch Reservoir|ID,Anderson Ranch Reservoir,ID,W,18.339,HIGH,HIGH,PROFILED,
+Andrews Lake|DE,Andrews Lake,DE,NE,0.084,LOW,LOW,BLOCKED,TOO_NARROW;GEOMETRY_LOW
+Angostura Reservoir|SD,Angostura Reservoir,SD,GP,19.399,HIGH,HIGH,PROFILED,
+Apache|AZ,Apache,AZ,W,8.451,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Apopka|FL,Apopka,FL,SE,125.375,HIGH,HIGH,PROFILED,
+Arkabutla Lake|MS,Arkabutla Lake,MS,SE,46.134,MEDIUM,HIGH,PROFILED,
+Assawompset Pond|MA,Assawompset Pond,MA,NE,10.688,MEDIUM,HIGH,PROFILED,
+Badin Lake|NC,Badin Lake,NC,SE,22.755,HIGH,HIGH,PROFILED,
+Bankhead|AL,Bankhead,AL,SE,22.581,MEDIUM,HIGH,PROFILED,
+Banks Lake|WA,Banks Lake,WA,W,108.906,HIGH,HIGH,PROFILED,
+Bantam Lake|CT,Bantam Lake,CT,NE,3.856,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Barkhamsted Reservoir|CT,Barkhamsted Reservoir,CT,NE,9.06,HIGH,HIGH,PROFILED,
+Barren River Lake|KY,Barren River Lake,KY,SE,38.715,HIGH,HIGH,PROFILED,
+Bartlett|AZ,Bartlett,AZ,W,8.939,MEDIUM,HIGH,PROFILED,
+Bay Springs Lake|MS,Bay Springs Lake,MS,SE,24.674,MEDIUM,HIGH,PROFILED,
+Bear Lake|UT,Bear Lake,UT,W,283.156,HIGH,HIGH,PROFILED,
+Beaver|AR,Beaver,AR,SE,114.871,HIGH,HIGH,PROFILED,
+Becharof|AK,Becharof,AK,AKHI,1172.087,HIGH,HIGH,PROFILED,
+Becks Pond|DE,Becks Pond,DE,NE,0.112,MEDIUM,LOW,BLOCKED,TOO_NARROW
+Beech Fork Lake|WV,Beech Fork Lake,WV,SE,3.056,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Beltzville Lake|PA,Beltzville Lake,PA,NE,4.255,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Berlin Lake|OH,Berlin Lake,OH,MW,14.601,MEDIUM,HIGH,PROFILED,
+Berryessa|CA,Berryessa,CA,W,73.322,HIGH,HIGH,PROFILED,
+Big Creek Lake|IA,Big Creek Lake,IA,MW,3.477,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Big Green Lake|WI,Big Green Lake,WI,MW,31.859,HIGH,HIGH,PROFILED,
+Big Lake|AK,Big Lake,AK,AKHI,12.475,HIGH,HIGH,PROFILED,
+Big Stone Lake|SD,Big Stone Lake,SD,GP,47.964,HIGH,HIGH,PROFILED,
+Bighorn Lake|WY,Bighorn Lake,WY,W,50.626,HIGH,HIGH,PROFILED,
+Bitter Lake|SD,Bitter Lake,SD,GP,31.828,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Black Hawk Lake|IA,Black Hawk Lake,IA,MW,3.666,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Blackshear|GA,Blackshear,GA,SE,32.555,HIGH,HIGH,PROFILED,
+Blue Marsh Lake|PA,Blue Marsh Lake,PA,NE,4.905,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Blue Mesa Reservoir|CO,Blue Mesa Reservoir,CO,W,36.467,HIGH,HIGH,PROFILED,
+Bluestone Lake|WV,Bluestone Lake,WV,SE,4.605,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Bluewater Lake|NM,Bluewater Lake,NM,W,2.488,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Bowdish Reservoir|RI,Bowdish Reservoir,RI,NE,0.93,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Bowman-Haley Reservoir|ND,Bowman-Haley Reservoir,ND,GP,7.802,MEDIUM,HIGH,PROFILED,
+Box Butte Reservoir|NE,Box Butte Reservoir,NE,GP,5.108,MEDIUM,HIGH,PROFILED,
+Boysen Reservoir|WY,Boysen Reservoir,WY,W,78.517,MEDIUM,HIGH,PROFILED,
+Branched Oak Lake|NE,Branched Oak Lake,NE,GP,7.095,HIGH,HIGH,PROFILED,
+Broken Bow Lake|OK,Broken Bow Lake,OK,GP,58.122,MEDIUM,HIGH,PROFILED,
+Brookville Lake|IN,Brookville Lake,IN,MW,17.696,HIGH,HIGH,PROFILED,
+Buckeye Lake|OH,Buckeye Lake,OH,MW,11.2,MEDIUM,HIGH,PROFILED,
+Buckhorn Lake|KY,Buckhorn Lake,KY,SE,4.757,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Budd Lake|NJ,Budd Lake,NJ,NE,1.57,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Buffalo Bill Reservoir|WY,Buffalo Bill Reservoir,WY,W,26.394,MEDIUM,HIGH,PROFILED,
+Bull Shoals Lake|AR,Bull Shoals Lake,AR,SE,185.338,MEDIUM,HIGH,PROFILED,
+Burnsville Lake|WV,Burnsville Lake,WV,SE,3.413,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Burt Lake|MI,Burt Lake,MI,MW,70.386,HIGH,HIGH,PROFILED,
+Burton|GA,Burton,GA,SE,10.363,HIGH,HIGH,PROFILED,
+C.J. Strike Reservoir|ID,C.J. Strike Reservoir,ID,W,30.363,HIGH,HIGH,PROFILED,
+Caballo Lake|NM,Caballo Lake,NM,W,18.684,MEDIUM,HIGH,PROFILED,
+Caddo Lake|TX,Caddo Lake,TX,GP,60.99,MEDIUM,HIGH,PROFILED,
+Caesar Creek Lake|OH,Caesar Creek Lake,OH,MW,10.748,MEDIUM,HIGH,PROFILED,
+Cagles Mill Lake|IN,Cagles Mill Lake,IN,MW,5.034,HIGH,HIGH,PROFILED,
+Calamus Reservoir|NE,Calamus Reservoir,NE,GP,20.312,HIGH,HIGH,PROFILED,
+Calcasieu Lake|LA,Calcasieu Lake,LA,SE,183.583,HIGH,HIGH,PROFILED,
+Canandaigua Lake|NY,Canandaigua Lake,NY,NE,42.518,HIGH,HIGH,PROFILED,
+Candlewood Lake|CT,Candlewood Lake,CT,NE,20.854,HIGH,HIGH,PROFILED,
+Canton Lake|OK,Canton Lake,OK,GP,28.791,HIGH,HIGH,PROFILED,
+Canyon Ferry Lake|MT,Canyon Ferry Lake,MT,W,132.946,HIGH,HIGH,PROFILED,
+Canyon Lake|TX,Canyon Lake,TX,GP,33.606,HIGH,HIGH,PROFILED,
+Canyon|AZ,Canyon,AZ,W,1.826,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Carlyle Lake|IL,Carlyle Lake,IL,MW,92.79,HIGH,HIGH,PROFILED,
+Carters|GA,Carters,GA,SE,12.169,MEDIUM,HIGH,PROFILED,
+Caspian Lake|VT,Caspian Lake,VT,NE,3.164,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Castle Rock Lake|WI,Castle Rock Lake,WI,MW,52.788,MEDIUM,HIGH,PROFILED,
+Catahoula Lake|LA,Catahoula Lake,LA,SE,67.051,MEDIUM,HIGH,PROFILED,
+Catherine|AR,Catherine,AR,SE,6.311,HIGH,HIGH,PROFILED,
+Cave Run Lake|KY,Cave Run Lake,KY,SE,33.057,HIGH,HIGH,PROFILED,
+Cayuga Lake|NY,Cayuga Lake,NY,NE,173.423,HIGH,HIGH,PROFILED,
+Cecil M. Harden Lake|IN,Cecil M. Harden Lake,IN,MW,6.84,HIGH,HIGH,PROFILED,
+Cedar Bluff Reservoir|KS,Cedar Bluff Reservoir,KS,GP,24.014,MEDIUM,HIGH,PROFILED,
+Cedar Creek Reservoir|TX,Cedar Creek Reservoir,TX,GP,132.835,MEDIUM,HIGH,PROFILED,
+Center Hill Lake|TN,Center Hill Lake,TN,SE,71.238,HIGH,HIGH,PROFILED,
+Chain O'Lakes|IL,Chain O'Lakes,IL,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Chamberlain Lake|ME,Chamberlain Lake,ME,NE,44.376,HIGH,HIGH,PROFILED,
+Chatfield Reservoir|CO,Chatfield Reservoir,CO,W,5.622,MEDIUM,HIGH,PROFILED,
+Chautauqua Lake|NY,Chautauqua Lake,NY,NE,53.674,MEDIUM,HIGH,PROFILED,
+Cheat Lake|WV,Cheat Lake,WV,SE,5.716,HIGH,HIGH,PROFILED,
+Cheney Reservoir|KS,Cheney Reservoir,KS,GP,39.448,MEDIUM,HIGH,PROFILED,
+Cherokee Lake|TN,Cherokee Lake,TN,SE,120.911,HIGH,HIGH,PROFILED,
+Cherry Creek Reservoir|CO,Cherry Creek Reservoir,CO,W,3.576,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Chesuncook Lake|ME,Chesuncook Lake,ME,NE,76.441,HIGH,HIGH,PROFILED,
+Chickahominy Lake|VA,Chickahominy Lake,VA,SE,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Chickamauga Lake|TN,Chickamauga Lake,TN,SE,111.417,MEDIUM,HIGH,PROFILED,
+Chicot|AR,Chicot,AR,SE,20.853,HIGH,HIGH,PROFILED,
+China Lake|ME,China Lake,ME,NE,15.944,HIGH,HIGH,PROFILED,
+Chippewa Flowage|WI,Chippewa Flowage,WI,MW,60.572,HIGH,HIGH,PROFILED,
+Clarks Hill / J.S. Thurmond|GA,Clarks Hill / J.S. Thurmond,GA,SE,166.707,MEDIUM,HIGH,PROFILED,
+Claytor Lake|VA,Claytor Lake,VA,SE,16.635,HIGH,HIGH,PROFILED,
+Clear Lake|CA,Clear Lake,CA,W,160.456,HIGH,HIGH,PROFILED,
+Clear Lake|IA,Clear Lake,IA,MW,15.62,HIGH,HIGH,PROFILED,
+Clearwater Lake|MO,Clearwater Lake,MO,MW,6.674,HIGH,HIGH,PROFILED,
+Clinton Lake|IL,Clinton Lake,IL,MW,18.726,HIGH,HIGH,PROFILED,
+Clinton Lake|KS,Clinton Lake,KS,GP,29.714,HIGH,HIGH,PROFILED,
+Cochiti Lake|NM,Cochiti Lake,NM,W,5.274,HIGH,HIGH,PROFILED,
+Coeur d'Alene|ID,Coeur d'Alene,ID,W,108.745,HIGH,HIGH,PROFILED,
+Columbus Lake|MS,Columbus Lake,MS,SE,10.148,MEDIUM,HIGH,PROFILED,
+Conchas Lake|NM,Conchas Lake,NM,W,13.816,MEDIUM,HIGH,PROFILED,
+Concord Pond|DE,Concord Pond,DE,NE,0.314,LOW,LOW,BLOCKED,TOO_NARROW;GEOMETRY_LOW
+Congamond Lakes|MA,Congamond Lakes,MA,NE,0.577,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Conneaut Lake|PA,Conneaut Lake,PA,NE,4.006,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Conowingo Reservoir|MD,Conowingo Reservoir,MD,NE,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Coralville Lake|IA,Coralville Lake,IA,MW,12.91,MEDIUM,HIGH,PROFILED,
+Coventry Lake (Wangumbaug)|CT,Coventry Lake (Wangumbaug),CT,NE,1.521,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Crab Orchard Lake|IL,Crab Orchard Lake,IL,MW,29.553,HIGH,HIGH,PROFILED,
+Cranberry Lake|NY,Cranberry Lake,NY,NE,28.097,HIGH,HIGH,PROFILED,
+Crater Lake|OR,Crater Lake,OR,W,53.465,HIGH,HIGH,PROFILED,
+Crescent Lake|FL,Crescent Lake,FL,SE,69.371,HIGH,HIGH,PROFILED,
+Crescent Lake|OR,Crescent Lake,OR,W,15.484,HIGH,HIGH,PROFILED,
+Cross Lake|LA,Cross Lake,LA,SE,28.587,HIGH,HIGH,PROFILED,
+Crystal Lake|VT,Crystal Lake,VT,NE,3.086,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Culvers Lake|NJ,Culvers Lake,NJ,NE,2.178,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Dale Hollow Lake|TN,Dale Hollow Lake,TN,SE,105.243,HIGH,HIGH,PROFILED,
+Damariscotta Lake|ME,Damariscotta Lake,ME,NE,18.865,HIGH,HIGH,PROFILED,
+Dardanelle|AR,Dardanelle,AR,SE,138.748,HIGH,HIGH,PROFILED,
+DeGray|AR,DeGray,AR,SE,47.115,MEDIUM,HIGH,PROFILED,
+Deep Creek Lake|MD,Deep Creek Lake,MD,NE,15.063,HIGH,HIGH,PROFILED,
+Deer Creek Reservoir|UT,Deer Creek Reservoir,UT,W,10.311,HIGH,HIGH,PROFILED,
+Detroit Lake|OR,Detroit Lake,OR,W,14.628,HIGH,HIGH,PROFILED,
+Devil's Kitchen Lake|IL,Devil's Kitchen Lake,IL,MW,2.951,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Devils Lake|ND,Devils Lake,ND,GP,359.416,HIGH,HIGH,PROFILED,
+Diamond Lake|OR,Diamond Lake,OR,W,12.265,HIGH,HIGH,PROFILED,
+Dillon Reservoir|CO,Dillon Reservoir,CO,W,13.08,HIGH,HIGH,PROFILED,
+Don Pedro|CA,Don Pedro,CA,W,44.839,HIGH,HIGH,PROFILED,
+Douglas Lake|TN,Douglas Lake,TN,SE,119.924,HIGH,HIGH,PROFILED,
+Douthat Lake|VA,Douthat Lake,VA,SE,0.189,HIGH,LOW,BLOCKED,TOO_NARROW
+Dworshak Reservoir|ID,Dworshak Reservoir,ID,W,66.722,HIGH,HIGH,PROFILED,
+Eagle Creek Reservoir|IN,Eagle Creek Reservoir,IN,MW,5.122,MEDIUM,HIGH,PROFILED,
+Eagle Lake|CA,Eagle Lake,CA,W,73.414,HIGH,HIGH,PROFILED,
+Eagle Lake|MS,Eagle Lake,MS,SE,19.554,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Eagle Nest Lake|NM,Eagle Nest Lake,NM,W,7.337,MEDIUM,HIGH,PROFILED,
+East Lake Tohopekaliga|FL,East Lake Tohopekaliga,FL,SE,75.393,HIGH,HIGH,PROFILED,
+East Lynn Lake|WV,East Lynn Lake,WV,SE,4.84,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+East Okoboji|IA,East Okoboji,IA,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+El Dorado Lake|KS,El Dorado Lake,KS,GP,30.032,MEDIUM,HIGH,PROFILED,
+El Vado Lake|NM,El Vado Lake,NM,W,12.603,HIGH,HIGH,PROFILED,
+Elephant Butte Reservoir|NM,Elephant Butte Reservoir,NM,W,44.146,MEDIUM,HIGH,PROFILED,
+Eleven Mile Reservoir|CO,Eleven Mile Reservoir,CO,W,12.616,MEDIUM,HIGH,PROFILED,
+Elk Lake|MI,Elk Lake,MI,MW,32.556,MEDIUM,HIGH,PROFILED,
+Enemy Swim Lake|SD,Enemy Swim Lake,SD,GP,9.056,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Enid Lake|MS,Enid Lake,MS,SE,25.44,MEDIUM,HIGH,PROFILED,
+Eufaula / W.F. George|AL,Eufaula / W.F. George,AL,SE,141.706,MEDIUM,HIGH,PROFILED,
+Falcon Lake|TX,Falcon Lake,TX,GP,326.69,MEDIUM,HIGH,PROFILED,
+Falls Lake|NC,Falls Lake,NC,SE,48.711,MEDIUM,HIGH,PROFILED,
+False River|LA,False River,LA,SE,12.696,HIGH,HIGH,PROFILED,
+Fern Ridge Reservoir|OR,Fern Ridge Reservoir,OR,W,26.708,MEDIUM,HIGH,PROFILED,
+First Connecticut Lake|NH,First Connecticut Lake,NH,NE,12.453,HIGH,HIGH,PROFILED,
+Fish Lake|UT,Fish Lake,UT,W,10.462,HIGH,HIGH,PROFILED,
+Flagstaff Lake|ME,Flagstaff Lake,ME,NE,70.354,HIGH,HIGH,PROFILED,
+Flaming Gorge Reservoir|UT,Flaming Gorge Reservoir,UT,W,169.37,HIGH,HIGH,PROFILED,
+Flaming Gorge Reservoir|WY,Flaming Gorge Reservoir,WY,W,169.389,HIGH,HIGH,PROFILED,
+Flannagan Reservoir|VA,Flannagan Reservoir,VA,SE,4.828,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Flat River Res. (Johnson's Pond)|RI,Flat River Res. (Johnson's Pond),RI,NE,2.569,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Flathead Lake|MT,Flathead Lake,MT,W,494.617,HIGH,HIGH,PROFILED,
+Folsom|CA,Folsom,CA,W,44.505,HIGH,HIGH,PROFILED,
+Fontana Lake|NC,Fontana Lake,NC,SE,38.912,HIGH,HIGH,PROFILED,
+Fontenelle Reservoir|WY,Fontenelle Reservoir,WY,W,31.771,HIGH,HIGH,PROFILED,
+Fort Gibson Lake|OK,Fort Gibson Lake,OK,GP,72.783,HIGH,HIGH,PROFILED,
+Fort Loudoun Lake|TN,Fort Loudoun Lake,TN,SE,56.585,HIGH,HIGH,PROFILED,
+Fort Peck Lake|MT,Fort Peck Lake,MT,W,946.733,HIGH,HIGH,PROFILED,
+Fox Lake|IL,Fox Lake,IL,MW,10.118,MEDIUM,HIGH,PROFILED,
+Fresno Reservoir|MT,Fresno Reservoir,MT,W,20.369,MEDIUM,HIGH,PROFILED,
+Gardner Lake|CT,Gardner Lake,CT,NE,2.127,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Garrisons Lake|DE,Garrisons Lake,DE,NE,0.333,MEDIUM,LOW,BLOCKED,TOO_NARROW
+Geist Reservoir|IN,Geist Reservoir,IN,MW,7.56,MEDIUM,HIGH,PROFILED,
+Georgetown Lake|MT,Georgetown Lake,MT,W,11.575,HIGH,HIGH,PROFILED,
+Glendo Reservoir|WY,Glendo Reservoir,WY,W,49.072,MEDIUM,HIGH,PROFILED,
+Grand Lake St. Marys|OH,Grand Lake St. Marys,OH,MW,52.102,HIGH,HIGH,PROFILED,
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,GP,167.951,HIGH,HIGH,PROFILED,
+Grand Lake|CO,Grand Lake,CO,W,1.94,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Grand Lake|LA,Grand Lake,LA,SE,161.41,HIGH,HIGH,PROFILED,
+Great East Lake|NH,Great East Lake,NH,NE,7.389,MEDIUM,HIGH,PROFILED,
+Great Pond (Belgrade)|ME,Great Pond (Belgrade),ME,NE,34.568,HIGH,HIGH,PROFILED,
+Great Sacandaga Lake|NY,Great Sacandaga Lake,NY,NE,98.953,HIGH,HIGH,PROFILED,
+Great Salt Lake|UT,Great Salt Lake,UT,W,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Green Bay|WI,Green Bay,WI,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Green River Lake|KY,Green River Lake,KY,SE,34.393,HIGH,HIGH,PROFILED,
+Greenwood Lake|NJ,Greenwood Lake,NJ,NE,7.451,HIGH,HIGH,PROFILED,
+Greers Ferry|AR,Greers Ferry,AR,SE,126.447,HIGH,HIGH,PROFILED,
+Grenada Lake|MS,Grenada Lake,MS,SE,68.764,MEDIUM,HIGH,PROFILED,
+Griffin|FL,Griffin,FL,SE,39.788,HIGH,HIGH,PROFILED,
+Griffith Lake|DE,Griffith Lake,DE,NE,0.158,LOW,LOW,BLOCKED,TOO_NARROW;GEOMETRY_LOW
+Gull Lake|MI,Gull Lake,MI,MW,8.286,HIGH,HIGH,PROFILED,
+Gull Lake|MN,Gull Lake,MN,MW,41.655,MEDIUM,HIGH,PROFILED,
+Guntersville|AL,Guntersville,AL,SE,266.822,HIGH,HIGH,PROFILED,
+Halulu Lake (Niihau)|HI,Halulu Lake (Niihau),HI,AKHI,1.0,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Hamilton|AR,Hamilton,AR,SE,27.504,HIGH,HIGH,PROFILED,
+Harding|AK,Harding,AK,AKHI,9.148,HIGH,HIGH,PROFILED,
+Harlan County Lake|NE,Harlan County Lake,NE,GP,51.894,HIGH,HIGH,PROFILED,
+Harriman Reservoir (Whitingham)|VT,Harriman Reservoir (Whitingham),VT,NE,7.952,HIGH,HIGH,PROFILED,
+Harris|FL,Harris,FL,SE,74.515,MEDIUM,HIGH,PROFILED,
+Harveys Lake|PA,Harveys Lake,PA,NE,2.547,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Havasu|AZ,Havasu,AZ,W,80.204,HIGH,HIGH,PROFILED,
+Hebgen Lake|MT,Hebgen Lake,MT,W,50.198,HIGH,HIGH,PROFILED,
+Henderson Lake|LA,Henderson Lake,LA,SE,19.656,MEDIUM,HIGH,PROFILED,
+Henrys Lake|ID,Henrys Lake,ID,W,25.078,HIGH,HIGH,PROFILED,
+Heron Lake|NM,Heron Lake,NM,W,18.271,MEDIUM,HIGH,PROFILED,
+Herrington Lake|KY,Herrington Lake,KY,SE,11.568,HIGH,HIGH,PROFILED,
+Higgins Lake|MI,Higgins Lake,MI,MW,41.185,HIGH,HIGH,PROFILED,
+High Rock Lake|NC,High Rock Lake,NC,SE,50.229,MEDIUM,HIGH,PROFILED,
+Highland Lake|CT,Highland Lake,CT,NE,1.83,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Hiwassee Lake|NC,Hiwassee Lake,NC,SE,24.324,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Holter Lake|MT,Holter Lake,MT,W,14.861,HIGH,HIGH,PROFILED,
+Hoover Reservoir|OH,Hoover Reservoir,OH,MW,10.98,HIGH,HIGH,PROFILED,
+Horsetooth Reservoir|CO,Horsetooth Reservoir,CO,W,7.445,HIGH,HIGH,PROFILED,
+Houghton Lake|MI,Houghton Lake,MI,MW,71.219,MEDIUM,HIGH,PROFILED,
+Hungry Horse Reservoir|MT,Hungry Horse Reservoir,MT,W,95.687,HIGH,HIGH,PROFILED,
+Iliamna|AK,Iliamna,AK,AKHI,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Indian Lake|NY,Indian Lake,NY,NE,17.474,HIGH,HIGH,PROFILED,
+Indian Lake|OH,Indian Lake,OH,MW,20.697,MEDIUM,HIGH,PROFILED,
+Isabella|CA,Isabella,CA,W,31.145,MEDIUM,HIGH,PROFILED,
+Istokpoga|FL,Istokpoga,FL,SE,96.636,HIGH,HIGH,PROFILED,
+Jackson Lake|WY,Jackson Lake,WY,W,108.82,HIGH,HIGH,PROFILED,
+Jamestown Reservoir|ND,Jamestown Reservoir,ND,GP,10.402,MEDIUM,HIGH,PROFILED,
+Jennings Randolph Lake|MD,Jennings Randolph Lake,MD,NE,3.329,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Jenny Lake|WY,Jenny Lake,WY,W,4.872,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Jesup|FL,Jesup,FL,SE,32.622,HIGH,HIGH,PROFILED,
+John Martin Reservoir|CO,John Martin Reservoir,CO,W,47.4,MEDIUM,HIGH,PROFILED,
+John Redmond Reservoir|KS,John Redmond Reservoir,KS,GP,33.355,HIGH,HIGH,PROFILED,
+Johnson Lake|NE,Johnson Lake,NE,GP,8.919,HIGH,HIGH,PROFILED,
+Jordan Lake|NC,Jordan Lake,NC,SE,53.885,HIGH,HIGH,PROFILED,
+Jordanelle Reservoir|UT,Jordanelle Reservoir,UT,W,12.06,HIGH,HIGH,PROFILED,
+Jordan|AL,Jordan,AL,SE,24.673,HIGH,HIGH,PROFILED,
+Kanopolis Lake|KS,Kanopolis Lake,KS,GP,13.996,HIGH,HIGH,PROFILED,
+Kaw Lake|OK,Kaw Lake,OK,GP,65.703,HIGH,HIGH,PROFILED,
+Kenai|AK,Kenai,AK,AKHI,56.919,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Kentucky Lake|KY,Kentucky Lake,KY,SE,573.424,HIGH,HIGH,PROFILED,
+Kentucky Lake|TN,Kentucky Lake,TN,SE,573.39,HIGH,HIGH,PROFILED,
+Kerr Lake (John H. Kerr)|NC,Kerr Lake (John H. Kerr),NC,SE,183.413,HIGH,HIGH,PROFILED,
+Kerr Reservoir (Buggs Island)|VA,Kerr Reservoir (Buggs Island),VA,SE,183.436,HIGH,HIGH,PROFILED,
+Keuka Lake|NY,Keuka Lake,NY,NE,47.132,HIGH,HIGH,PROFILED,
+Keyhole Reservoir|WY,Keyhole Reservoir,WY,W,35.861,HIGH,HIGH,PROFILED,
+Keystone Lake|OK,Keystone Lake,OK,GP,93.608,HIGH,HIGH,PROFILED,
+Killens Pond|DE,Killens Pond,DE,NE,0.315,MEDIUM,LOW,BLOCKED,TOO_NARROW
+Kissimmee|FL,Kissimmee,FL,SE,126.997,HIGH,HIGH,PROFILED,
+Koele ponds (Lanai)|HI,Koele ponds (Lanai),HI,AKHI,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Kvichak / Ugashik|AK,Kvichak / Ugashik,AK,AKHI,213.113,HIGH,HIGH,PROFILED,
+Lac Courte Oreilles|WI,Lac Courte Oreilles,WI,MW,21.664,HIGH,HIGH,PROFILED,
+Lahontan Reservoir|NV,Lahontan Reservoir,NV,W,40.494,MEDIUM,HIGH,PROFILED,
+Lake Absegami|NJ,Lake Absegami,NJ,NE,0.202,LOW,LOW,BLOCKED,TOO_NARROW;GEOMETRY_LOW
+Lake Anna|VA,Lake Anna,VA,SE,51.746,HIGH,HIGH,PROFILED,
+Lake Arthur|PA,Lake Arthur,PA,NE,12.489,HIGH,HIGH,PROFILED,
+Lake Ashtabula|ND,Lake Ashtabula,ND,GP,22.161,HIGH,HIGH,PROFILED,
+Lake Barkley|KY,Lake Barkley,KY,SE,200.28,HIGH,HIGH,PROFILED,
+Lake Bemidji|MN,Lake Bemidji,MN,MW,26.486,MEDIUM,HIGH,PROFILED,
+Lake Billy Chinook|OR,Lake Billy Chinook,OR,W,15.761,HIGH,HIGH,PROFILED,
+Lake Bistineau|LA,Lake Bistineau,LA,SE,53.06,MEDIUM,HIGH,PROFILED,
+Lake Bomoseen|VT,Lake Bomoseen,VT,NE,9.78,HIGH,HIGH,PROFILED,
+Lake Buchanan|TX,Lake Buchanan,TX,GP,92.209,HIGH,HIGH,PROFILED,
+Lake Carmi|VT,Lake Carmi,VT,NE,5.719,HIGH,HIGH,PROFILED,
+Lake Cascade|ID,Lake Cascade,ID,W,101.395,HIGH,HIGH,PROFILED,
+Lake Champlain|VT,Lake Champlain,VT,NE,1120.654,HIGH,HIGH,PROFILED,
+Lake Charlevoix|MI,Lake Charlevoix,MI,MW,70.062,HIGH,HIGH,PROFILED,
+Lake Chelan|WA,Lake Chelan,WA,W,132.221,HIGH,HIGH,PROFILED,
+Lake Chesdin|VA,Lake Chesdin,VA,SE,12.371,HIGH,HIGH,PROFILED,
+Lake Clark|AK,Lake Clark,AK,AKHI,342.955,HIGH,HIGH,PROFILED,
+Lake Cochituate|MA,Lake Cochituate,MA,NE,0.82,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Conroe|TX,Lake Conroe,TX,GP,80.358,HIGH,HIGH,PROFILED,
+Lake Crescent|WA,Lake Crescent,WA,W,20.295,HIGH,HIGH,PROFILED,
+Lake Cumberland|KY,Lake Cumberland,KY,SE,208.667,HIGH,HIGH,PROFILED,
+Lake Cushman|WA,Lake Cushman,WA,W,16.257,HIGH,HIGH,PROFILED,
+Lake D'Arbonne|LA,Lake D'Arbonne,LA,SE,52.721,HIGH,HIGH,PROFILED,
+Lake Darling|ND,Lake Darling,ND,GP,34.602,HIGH,HIGH,PROFILED,
+Lake Dunmore|VT,Lake Dunmore,VT,NE,4.212,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Erie|MI,Lake Erie,MI,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Erie|NY,Lake Erie,NY,NE,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Erie|OH,Lake Erie,OH,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Erie|PA,Lake Erie,PA,NE,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Eufaula|OK,Lake Eufaula,OK,GP,410.152,MEDIUM,HIGH,PROFILED,
+Lake Fork Reservoir|TX,Lake Fork Reservoir,TX,GP,108.772,MEDIUM,HIGH,PROFILED,
+Lake Francis Case|SD,Lake Francis Case,SD,GP,333.286,HIGH,HIGH,PROFILED,
+Lake Freeman|IN,Lake Freeman,IN,MW,6.337,HIGH,HIGH,PROFILED,
+Lake Gaston|VA,Lake Gaston,VA,SE,77.934,HIGH,HIGH,PROFILED,
+Lake Geneva|WI,Lake Geneva,WI,MW,21.884,HIGH,HIGH,PROFILED,
+Lake George|FL,Lake George,FL,SE,175.819,HIGH,HIGH,PROFILED,
+Lake George|NY,Lake George,NY,NE,115.493,HIGH,HIGH,PROFILED,
+Lake Gogebic|MI,Lake Gogebic,MI,MW,52.943,HIGH,HIGH,PROFILED,
+Lake Granby|CO,Lake Granby,CO,W,28.705,HIGH,HIGH,PROFILED,
+Lake Greenwood|SC,Lake Greenwood,SC,SE,42.573,MEDIUM,HIGH,PROFILED,
+Lake Habeeb (Rocky Gap)|MD,Lake Habeeb (Rocky Gap),MD,NE,0.812,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Hartwell|SC,Lake Hartwell,SC,SE,218.708,HIGH,HIGH,PROFILED,
+Lake Hickory|NC,Lake Hickory,NC,SE,15.645,HIGH,HIGH,PROFILED,
+Lake Hopatcong|NJ,Lake Hopatcong,NJ,NE,10.127,HIGH,HIGH,PROFILED,
+Lake Hudson|OK,Lake Hudson,OK,GP,39.352,MEDIUM,HIGH,PROFILED,
+Lake Huron|MI,Lake Huron,MI,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake James|NC,Lake James,NC,SE,24.448,HIGH,HIGH,PROFILED,
+Lake Jocassee|SC,Lake Jocassee,SC,SE,31.265,HIGH,HIGH,PROFILED,
+Lake Keowee|SC,Lake Keowee,SC,SE,69.404,HIGH,HIGH,PROFILED,
+Lake Koocanusa|MT,Lake Koocanusa,MT,W,117.232,MEDIUM,HIGH,PROFILED,
+Lake Lillinonah|CT,Lake Lillinonah,CT,NE,6.205,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Lake Livingston|TX,Lake Livingston,TX,GP,337.223,HIGH,HIGH,PROFILED,
+Lake Macbride|IA,Lake Macbride,IA,MW,3.566,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Marburg|PA,Lake Marburg,PA,NE,4.801,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Marion|SC,Lake Marion,SC,SE,324.548,HIGH,HIGH,PROFILED,
+Lake Martin|AL,Lake Martin,AL,SE,163.997,HIGH,HIGH,PROFILED,
+Lake Mary|AZ,Lake Mary,AZ,W,3.346,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Lake Mattamuskeet|NC,Lake Mattamuskeet,NC,SE,163.273,HIGH,HIGH,PROFILED,
+Lake Maurepas|LA,Lake Maurepas,LA,SE,235.974,HIGH,HIGH,PROFILED,
+Lake McConaughy|NE,Lake McConaughy,NE,GP,100.703,HIGH,HIGH,PROFILED,
+Lake Mead|NV,Lake Mead,NV,W,543.538,HIGH,HIGH,PROFILED,
+Lake Memphremagog|VT,Lake Memphremagog,VT,NE,95.706,HIGH,HIGH,PROFILED,
+Lake Mendota|WI,Lake Mendota,WI,MW,39.571,HIGH,HIGH,PROFILED,
+Lake Metigoshe|ND,Lake Metigoshe,ND,GP,6.337,HIGH,HIGH,PROFILED,
+Lake Michigan|IN,Lake Michigan,IN,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Michigan|MI,Lake Michigan,MI,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Michigan|WI,Lake Michigan,WI,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Milton|OH,Lake Milton,OH,MW,6.705,HIGH,HIGH,PROFILED,
+Lake Minnetonka|MN,Lake Minnetonka,MN,MW,55.545,HIGH,HIGH,PROFILED,
+Lake Mohave|NV,Lake Mohave,NV,W,111.903,HIGH,HIGH,PROFILED,
+Lake Monona|WI,Lake Monona,WI,MW,13.616,HIGH,HIGH,PROFILED,
+Lake Monticello|SC,Lake Monticello,SC,SE,27.062,HIGH,HIGH,PROFILED,
+Lake Moomaw|VA,Lake Moomaw,VA,SE,9.813,HIGH,HIGH,PROFILED,
+Lake Moultrie|SC,Lake Moultrie,SC,SE,230.203,HIGH,HIGH,PROFILED,
+Lake Murray (OK)|OK,Lake Murray (OK),OK,GP,22.374,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Lake Murray (SC)|SC,Lake Murray (SC),SC,SE,199.424,HIGH,HIGH,PROFILED,
+Lake Nockamixon|PA,Lake Nockamixon,PA,NE,5.771,HIGH,HIGH,PROFILED,
+Lake Norman|NC,Lake Norman,NC,SE,126.04,HIGH,HIGH,PROFILED,
+Lake Oahe|ND,Lake Oahe,ND,GP,1258.93,HIGH,HIGH,PROFILED,
+Lake Oahe|SD,Lake Oahe,SD,GP,1258.93,HIGH,HIGH,PROFILED,
+Lake Ogallala|NE,Lake Ogallala,NE,GP,2.307,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Lake Ontario|NY,Lake Ontario,NY,NE,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Owyhee|OR,Lake Owyhee,OR,W,45.244,HIGH,HIGH,PROFILED,
+Lake Pend Oreille|ID,Lake Pend Oreille,ID,W,375.335,HIGH,HIGH,PROFILED,
+Lake Pepin|MN,Lake Pepin,MN,MW,103.086,HIGH,HIGH,PROFILED,
+Lake Petenwell|WI,Lake Petenwell,WI,MW,93.131,HIGH,HIGH,PROFILED,
+Lake Poinsett|SD,Lake Poinsett,SD,GP,39.459,MEDIUM,HIGH,PROFILED,
+Lake Pontchartrain|LA,Lake Pontchartrain,LA,SE,1650.227,HIGH,HIGH,PROFILED,
+Lake Powell|UT,Lake Powell,UT,W,504.379,HIGH,HIGH,PROFILED,
+Lake Quinault|WA,Lake Quinault,WA,W,14.319,HIGH,HIGH,PROFILED,
+Lake Quinsigamond|MA,Lake Quinsigamond,MA,NE,1.987,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Red Rock|IA,Lake Red Rock,IA,MW,35.079,MEDIUM,HIGH,PROFILED,
+Lake Robinson|SC,Lake Robinson,SC,SE,8.478,HIGH,HIGH,PROFILED,
+Lake Roosevelt (FDR)|WA,Lake Roosevelt (FDR),WA,W,289.046,HIGH,HIGH,PROFILED,
+Lake Russell (R.B. Russell)|GA,Lake Russell (R.B. Russell),GA,SE,100.41,HIGH,HIGH,PROFILED,
+Lake Sakakawea|ND,Lake Sakakawea,ND,GP,1275.937,HIGH,HIGH,PROFILED,
+Lake Sammamish|WA,Lake Sammamish,WA,W,19.627,HIGH,HIGH,PROFILED,
+Lake Seymour|VT,Lake Seymour,VT,NE,7.184,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Lake Shafer|IN,Lake Shafer,IN,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Sharpe|SD,Lake Sharpe,SD,GP,237.094,HIGH,HIGH,PROFILED,
+Lake Shelbyville|IL,Lake Shelbyville,IL,MW,41.752,HIGH,HIGH,PROFILED,
+Lake Springfield|IL,Lake Springfield,IL,MW,15.866,MEDIUM,HIGH,PROFILED,
+Lake St. Catherine|VT,Lake St. Catherine,VT,NE,3.589,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Lake St. Clair|MI,Lake St. Clair,MI,MW,1124.26,MEDIUM,HIGH,PROFILED,
+Lake Strom Thurmond (Clarks Hill)|SC,Lake Strom Thurmond (Clarks Hill),SC,SE,271.34,HIGH,HIGH,PROFILED,
+Lake Superior|MI,Lake Superior,MI,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Superior|MN,Lake Superior,MN,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Superior|WI,Lake Superior,WI,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Tahoe|NV,Lake Tahoe,NV,W,497.515,HIGH,HIGH,PROFILED,
+Lake Taneycomo|MO,Lake Taneycomo,MO,MW,8.7,HIGH,HIGH,PROFILED,
+Lake Tawakoni|TX,Lake Tawakoni,TX,GP,151.741,HIGH,HIGH,PROFILED,
+Lake Tenkiller|OK,Lake Tenkiller,OK,GP,52.693,HIGH,HIGH,PROFILED,
+Lake Texoma|TX,Lake Texoma,TX,GP,348.928,MEDIUM,HIGH,PROFILED,
+Lake Thompson|SD,Lake Thompson,SD,GP,61.081,HIGH,HIGH,PROFILED,
+Lake Travis|TX,Lake Travis,TX,GP,78.639,HIGH,HIGH,PROFILED,
+Lake Tschida|ND,Lake Tschida,ND,GP,13.498,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Lake Union|WA,Lake Union,WA,W,3.068,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Vermilion|MN,Lake Vermilion,MN,MW,157.592,HIGH,HIGH,PROFILED,
+Lake Waccamaw|NC,Lake Waccamaw,NC,SE,35.743,HIGH,HIGH,PROFILED,
+Lake Waiau|HI,Lake Waiau,HI,AKHI,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lake Wallenpaupack|PA,Lake Wallenpaupack,PA,NE,22.122,HIGH,HIGH,PROFILED,
+Lake Waramaug|CT,Lake Waramaug,CT,NE,2.632,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Lake Washington|MS,Lake Washington,MS,SE,12.39,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Lake Washington|WA,Lake Washington,WA,W,88.998,HIGH,HIGH,PROFILED,
+Lake Wateree|SC,Lake Wateree,SC,SE,47.931,HIGH,HIGH,PROFILED,
+Lake Wawasee|IN,Lake Wawasee,IN,MW,13.82,HIGH,HIGH,PROFILED,
+Lake Wentworth|NH,Lake Wentworth,NH,NE,12.527,HIGH,HIGH,PROFILED,
+Lake Willoughby|VT,Lake Willoughby,VT,NE,7.026,HIGH,HIGH,PROFILED,
+Lake Winnebago|WI,Lake Winnebago,WI,MW,534.051,HIGH,HIGH,PROFILED,
+Lake Winnibigoshish|MN,Lake Winnibigoshish,MN,MW,225.539,HIGH,HIGH,PROFILED,
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,NE,184.902,HIGH,HIGH,PROFILED,
+Lake Winnisquam|NH,Lake Winnisquam,NH,NE,17.033,HIGH,HIGH,PROFILED,
+Lake Wisconsin|WI,Lake Wisconsin,WI,MW,29.171,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Lake Wylie|SC,Lake Wylie,SC,SE,43.744,HIGH,HIGH,PROFILED,
+Lake Zoar|CT,Lake Zoar,CT,NE,3.033,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Lake of Egypt|IL,Lake of Egypt,IL,MW,8.759,HIGH,HIGH,PROFILED,
+Lake of the Ozarks|MO,Lake of the Ozarks,MO,MW,210.597,HIGH,HIGH,PROFILED,
+Lake of the Woods|MN,Lake of the Woods,MN,MW,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Lanier (Sidney Lanier)|GA,Lanier (Sidney Lanier),GA,SE,156.976,MEDIUM,HIGH,PROFILED,
+Laurel River Lake|KY,Laurel River Lake,KY,SE,24.677,HIGH,HIGH,PROFILED,
+Lay|AL,Lay,AL,SE,54.906,HIGH,HIGH,PROFILED,
+Leech Lake|MN,Leech Lake,MN,MW,418.095,HIGH,HIGH,PROFILED,
+Lewis and Clark Lake|SD,Lewis and Clark Lake,SD,GP,99.418,HIGH,HIGH,PROFILED,
+Liberty Reservoir|MD,Liberty Reservoir,MD,NE,12.034,HIGH,HIGH,PROFILED,
+Loch Raven Reservoir|MD,Loch Raven Reservoir,MD,NE,8.957,HIGH,HIGH,PROFILED,
+Lochloosa|FL,Lochloosa,FL,SE,30.862,HIGH,HIGH,PROFILED,
+Logan Martin|AL,Logan Martin,AL,SE,67.967,HIGH,HIGH,PROFILED,
+Long Lake|ME,Long Lake,ME,NE,24.463,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Long Pond (Lakeville)|MA,Long Pond (Lakeville),MA,NE,7.221,HIGH,HIGH,PROFILED,
+Longview Lake|MO,Longview Lake,MO,MW,0.081,MEDIUM,LOW,BLOCKED,TOO_NARROW
+Lucky Peak Lake|ID,Lucky Peak Lake,ID,W,11.278,HIGH,HIGH,PROFILED,
+Lums Pond|DE,Lums Pond,DE,NE,0.808,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Malheur Lake|OR,Malheur Lake,OR,W,118.846,HIGH,HIGH,PROFILED,
+Manasquan Reservoir|NJ,Manasquan Reservoir,NJ,NE,2.986,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Mansfield Hollow Lake|CT,Mansfield Hollow Lake,CT,NE,1.996,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Marion Reservoir|KS,Marion Reservoir,KS,GP,0.564,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Mark Twain Lake|MO,Mark Twain Lake,MO,MW,75.127,HIGH,HIGH,PROFILED,
+Massabesic Lake|NH,Massabesic Lake,NH,NE,10.317,HIGH,HIGH,PROFILED,
+Melvern Lake|KS,Melvern Lake,KS,GP,25.593,HIGH,HIGH,PROFILED,
+Merrill Creek Reservoir|NJ,Merrill Creek Reservoir,NJ,NE,2.635,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Merritt Reservoir|NE,Merritt Reservoir,NE,GP,10.316,MEDIUM,HIGH,PROFILED,
+Merrymeeting Lake|NH,Merrymeeting Lake,NH,NE,4.986,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Milford Lake|KS,Milford Lake,KS,GP,59.175,HIGH,HIGH,PROFILED,
+Mille Lacs Lake|MN,Mille Lacs Lake,MN,MW,518.501,HIGH,HIGH,PROFILED,
+Millwood|AR,Millwood,AR,SE,113.287,MEDIUM,HIGH,PROFILED,
+Mississinewa Lake|IN,Mississinewa Lake,IN,MW,8.782,MEDIUM,HIGH,PROFILED,
+Monksville Reservoir|NJ,Monksville Reservoir,NJ,NE,2.09,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Mono|CA,Mono,CA,W,182.42,HIGH,HIGH,PROFILED,
+Monroe Lake|IN,Monroe Lake,IN,MW,45.209,HIGH,HIGH,PROFILED,
+Moon Lake|MS,Moon Lake,MS,SE,10.155,HIGH,HIGH,PROFILED,
+Moosehead Lake|ME,Moosehead Lake,ME,NE,306.013,HIGH,HIGH,PROFILED,
+Mooselookmeguntic Lake|ME,Mooselookmeguntic Lake,ME,NE,55.322,HIGH,HIGH,PROFILED,
+Moses Lake|WA,Moses Lake,WA,W,27.177,HIGH,HIGH,PROFILED,
+Mosquito Creek Lake|OH,Mosquito Creek Lake,OH,MW,28.399,MEDIUM,HIGH,PROFILED,
+Mount Storm Lake|WV,Mount Storm Lake,WV,SE,4.573,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Mullett Lake|MI,Mullett Lake,MI,MW,67.532,HIGH,HIGH,PROFILED,
+Naknek|AK,Naknek,AK,AKHI,588.247,HIGH,HIGH,PROFILED,
+Navajo Reservoir|NM,Navajo Reservoir,NM,W,62.403,HIGH,HIGH,PROFILED,
+Neely Henry|AL,Neely Henry,AL,SE,44.434,HIGH,HIGH,PROFILED,
+Nelson Lake|ND,Nelson Lake,ND,GP,2.195,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Newfound Lake|NH,Newfound Lake,NH,NE,18.016,MEDIUM,HIGH,PROFILED,
+Nickajack Lake|TN,Nickajack Lake,TN,SE,28.121,MEDIUM,HIGH,PROFILED,
+Nimrod|AR,Nimrod,AR,SE,12.044,HIGH,HIGH,PROFILED,
+Ninigret Pond|RI,Ninigret Pond,RI,NE,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Nolin River Lake|KY,Nolin River Lake,KY,SE,24.623,HIGH,HIGH,PROFILED,
+Norfork|AR,Norfork,AR,SE,76.942,HIGH,HIGH,PROFILED,
+Norris Lake|TN,Norris Lake,TN,SE,133.423,HIGH,HIGH,PROFILED,
+Nuuanu Reservoir|HI,Nuuanu Reservoir,HI,AKHI,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Oconee|GA,Oconee,GA,SE,70.947,HIGH,HIGH,PROFILED,
+Odell Lake|OR,Odell Lake,OR,W,13.824,HIGH,HIGH,PROFILED,
+Okatibbee Lake|MS,Okatibbee Lake,MS,SE,15.206,HIGH,HIGH,PROFILED,
+Okeechobee|FL,Okeechobee,FL,SE,1376.08,MEDIUM,HIGH,PROFILED,
+Old Hickory Lake|TN,Old Hickory Lake,TN,SE,83.125,MEDIUM,HIGH,PROFILED,
+Oneida Lake|NY,Oneida Lake,NY,NE,207.649,MEDIUM,HIGH,PROFILED,
+Onota Lake|MA,Onota Lake,MA,NE,2.61,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Oologah Lake|OK,Oologah Lake,OK,GP,120.662,HIGH,HIGH,PROFILED,
+Orange Lake|FL,Orange Lake,FL,SE,29.552,HIGH,HIGH,PROFILED,
+Oroville|CA,Oroville,CA,W,46.839,MEDIUM,HIGH,PROFILED,
+Ossipee Lake|NH,Ossipee Lake,NH,NE,16.238,HIGH,HIGH,PROFILED,
+Otis Reservoir|MA,Otis Reservoir,MA,NE,4.02,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Otter Tail Lake|MN,Otter Tail Lake,MN,MW,56.672,HIGH,HIGH,PROFILED,
+Ouachita (L. Ouachita)|AR,Ouachita (L. Ouachita),AR,SE,156.902,MEDIUM,HIGH,PROFILED,
+Owasco Lake|NY,Owasco Lake,NY,NE,27.295,HIGH,HIGH,PROFILED,
+Pachaug Pond|CT,Pachaug Pond,CT,NE,3.313,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Pactola Reservoir|SD,Pactola Reservoir,SD,GP,3.471,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Palisades Reservoir|ID,Palisades Reservoir,ID,W,64.011,HIGH,HIGH,PROFILED,
+Pascoag Reservoir|RI,Pascoag Reservoir,RI,NE,1.424,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Pathfinder Reservoir|WY,Pathfinder Reservoir,WY,W,89.756,HIGH,HIGH,PROFILED,
+Patoka Lake|IN,Patoka Lake,IN,MW,37.299,HIGH,HIGH,PROFILED,
+Patterson Lake|ND,Patterson Lake,ND,GP,3.247,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Payette Lake|ID,Payette Lake,ID,W,20.525,HIGH,HIGH,PROFILED,
+Percy Priest Lake|TN,Percy Priest Lake,TN,SE,57.238,HIGH,HIGH,PROFILED,
+Perry Lake|KS,Perry Lake,KS,GP,43.667,HIGH,HIGH,PROFILED,
+Philpott Lake|VA,Philpott Lake,VA,SE,11.739,HIGH,HIGH,PROFILED,
+Pickwick Lake|TN,Pickwick Lake,TN,SE,169.367,HIGH,HIGH,PROFILED,
+Pineview Reservoir|UT,Pineview Reservoir,UT,W,10.152,HIGH,HIGH,PROFILED,
+Piney Run Lake|MD,Piney Run Lake,MD,NE,1.136,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Pleasant|AZ,Pleasant,AZ,W,37.297,HIGH,HIGH,PROFILED,
+Point Judith Pond|RI,Point Judith Pond,RI,NE,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Pomme de Terre Lake|MO,Pomme de Terre Lake,MO,MW,31.331,HIGH,HIGH,PROFILED,
+Pomona Lake|KS,Pomona Lake,KS,GP,15.343,HIGH,HIGH,PROFILED,
+Pontoosuc Lake|MA,Pontoosuc Lake,MA,NE,2.045,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Possum Kingdom Lake|TX,Possum Kingdom Lake,TX,GP,66.723,HIGH,HIGH,PROFILED,
+Potholes Reservoir|WA,Potholes Reservoir,WA,W,59.721,HIGH,HIGH,PROFILED,
+Prettyboy Reservoir|MD,Prettyboy Reservoir,MD,NE,6.153,HIGH,HIGH,PROFILED,
+Priest Lake|ID,Priest Lake,ID,W,94.785,HIGH,HIGH,PROFILED,
+Pueblo Reservoir|CO,Pueblo Reservoir,CO,W,9.441,MEDIUM,HIGH,PROFILED,
+Puu Loa Reservoir|HI,Puu Loa Reservoir,HI,AKHI,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Pymatuning Reservoir|PA,Pymatuning Reservoir,PA,NE,63.625,HIGH,HIGH,PROFILED,
+Pyramid Lake|NV,Pyramid Lake,NV,W,440.935,HIGH,HIGH,PROFILED,
+Quabbin Reservoir|MA,Quabbin Reservoir,MA,NE,97.514,HIGH,HIGH,PROFILED,
+R.D. Bailey Lake|WV,R.D. Bailey Lake,WV,SE,2.245,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Rainy Lake|MN,Rainy Lake,MN,MW,908.436,HIGH,HIGH,PROFILED,
+Rangeley Lake|ME,Rangeley Lake,ME,NE,25.491,HIGH,HIGH,PROFILED,
+Rathbun Lake|IA,Rathbun Lake,IA,MW,56.742,MEDIUM,HIGH,PROFILED,
+Raystown Lake|PA,Raystown Lake,PA,NE,33.25,HIGH,HIGH,PROFILED,
+Records Pond|DE,Records Pond,DE,NE,0.338,MEDIUM,LOW,BLOCKED,TOO_NARROW
+Red Lake|MN,Red Lake,MN,MW,1149.263,MEDIUM,HIGH,PROFILED,
+Red Mill Pond|DE,Red Mill Pond,DE,NE,0.786,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Redfish Lake|ID,Redfish Lake,ID,W,6.079,HIGH,HIGH,PROFILED,
+Reelfoot Lake|TN,Reelfoot Lake,TN,SE,0.747,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Rend Lake|IL,Rend Lake,IL,MW,69.48,MEDIUM,HIGH,PROFILED,
+Rice Lake|IL,Rice Lake,IL,MW,5.831,MEDIUM,HIGH,PROFILED,
+Riffe Lake|WA,Riffe Lake,WA,W,45.546,HIGH,HIGH,PROFILED,
+Rocky Gorge Reservoir|MD,Rocky Gorge Reservoir,MD,NE,2.714,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Roosevelt|AZ,Roosevelt,AZ,W,60.509,MEDIUM,HIGH,PROFILED,
+Ross Barnett Reservoir|MS,Ross Barnett Reservoir,MS,SE,100.203,MEDIUM,HIGH,PROFILED,
+Ross Lake|WA,Ross Lake,WA,W,48.961,MEDIUM,HIGH,PROFILED,
+Rough River Lake|KY,Rough River Lake,KY,SE,20.638,HIGH,HIGH,PROFILED,
+Round Valley Reservoir|NJ,Round Valley Reservoir,NJ,NE,9.186,HIGH,HIGH,PROFILED,
+Ruby Lake|NV,Ruby Lake,NV,W,30.085,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Ruedi Reservoir|CO,Ruedi Reservoir,CO,W,4.194,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Rye Patch Reservoir|NV,Rye Patch Reservoir,NV,W,46.467,HIGH,HIGH,PROFILED,
+Sabine Lake|LA,Sabine Lake,LA,SE,230.305,HIGH,HIGH,PROFILED,
+Saguaro|AZ,Saguaro,AZ,W,2.478,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Salamonie Lake|IN,Salamonie Lake,IN,MW,11.672,HIGH,HIGH,PROFILED,
+Salt Fork Lake|OH,Salt Fork Lake,OH,MW,11.326,HIGH,HIGH,PROFILED,
+Salton Sea|CA,Salton Sea,CA,W,942.93,HIGH,HIGH,PROFILED,
+Sam Rayburn Reservoir|TX,Sam Rayburn Reservoir,TX,GP,453.731,HIGH,HIGH,PROFILED,
+San Carlos|AZ,San Carlos,AZ,W,53.056,MEDIUM,HIGH,PROFILED,
+Sangchris Lake|IL,Sangchris Lake,IL,MW,9.315,HIGH,HIGH,PROFILED,
+Santa Rosa Lake|NM,Santa Rosa Lake,NM,W,4.738,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Sardis Lake|MS,Sardis Lake,MS,SE,134.422,MEDIUM,HIGH,PROFILED,
+Sardis Lake|OK,Sardis Lake,OK,GP,54.342,HIGH,HIGH,PROFILED,
+Savage River Reservoir|MD,Savage River Reservoir,MD,NE,1.441,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Saylorville Lake|IA,Saylorville Lake,IA,MW,22.059,HIGH,HIGH,PROFILED,
+Schoodic Lake|ME,Schoodic Lake,ME,NE,28.459,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Scituate Reservoir|RI,Scituate Reservoir,RI,NE,13.354,HIGH,HIGH,PROFILED,
+Sebago Lake|ME,Sebago Lake,ME,NE,123.674,MEDIUM,HIGH,PROFILED,
+Sebec Lake|ME,Sebec Lake,ME,NE,25.812,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Seminoe Reservoir|WY,Seminoe Reservoir,WY,W,76.27,HIGH,HIGH,PROFILED,
+Seminole|GA,Seminole,GA,SE,71.968,MEDIUM,HIGH,PROFILED,
+Seneca Lake|NY,Seneca Lake,NY,NE,175.462,HIGH,HIGH,PROFILED,
+Senecaville Lake|OH,Senecaville Lake,OH,MW,14.09,HIGH,HIGH,PROFILED,
+Sevier Lake|UT,Sevier Lake,UT,W,495.771,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Shadow Mountain Reservoir|CO,Shadow Mountain Reservoir,CO,W,5.333,MEDIUM,HIGH,PROFILED,
+Shasta|CA,Shasta,CA,W,115.925,HIGH,HIGH,PROFILED,
+Shenango River Lake|PA,Shenango River Lake,PA,NE,14.143,MEDIUM,HIGH,PROFILED,
+Sheridan Lake|SD,Sheridan Lake,SD,GP,1.551,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Sherman Reservoir|NE,Sherman Reservoir,NE,GP,9.88,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Silver Lake (Dover)|DE,Silver Lake (Dover),DE,NE,0.692,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Sinclair|GA,Sinclair,GA,SE,53.874,HIGH,HIGH,PROFILED,
+Skaneateles Lake|NY,Skaneateles Lake,NY,NE,35.436,HIGH,HIGH,PROFILED,
+Skiatook Lake|OK,Skiatook Lake,OK,GP,42.471,HIGH,HIGH,PROFILED,
+Skilak|AK,Skilak,AK,AKHI,100.247,MEDIUM,HIGH,PROFILED,
+Smith (Lewis Smith)|AL,Smith (Lewis Smith),AL,SE,86.779,HIGH,HIGH,PROFILED,
+Smith Mountain Lake|VA,Smith Mountain Lake,VA,SE,81.096,HIGH,HIGH,PROFILED,
+Smithville Lake|MO,Smithville Lake,MO,MW,31.652,MEDIUM,HIGH,PROFILED,
+Somerset Reservoir|VT,Somerset Reservoir,VT,NE,6.198,HIGH,HIGH,PROFILED,
+South Holston Lake|VA,South Holston Lake,VA,SE,30.902,HIGH,HIGH,PROFILED,
+Spirit Lake|IA,Spirit Lake,IA,MW,24.455,HIGH,HIGH,PROFILED,
+Spruce Run Reservoir|NJ,Spruce Run Reservoir,NJ,NE,5.468,HIGH,HIGH,PROFILED,
+Squam Lake|NH,Squam Lake,NH,NE,27.533,MEDIUM,HIGH,PROFILED,
+Squantz Pond|CT,Squantz Pond,CT,NE,1.105,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Stafford Pond|RI,Stafford Pond,RI,NE,1.999,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Starvation Reservoir|UT,Starvation Reservoir,UT,W,12.149,HIGH,HIGH,PROFILED,
+Stockton Lake|MO,Stockton Lake,MO,MW,102.077,HIGH,HIGH,PROFILED,
+Stonewall Jackson Lake|WV,Stonewall Jackson Lake,WV,SE,8.904,MEDIUM,HIGH,PROFILED,
+Storm Lake|IA,Storm Lake,IA,MW,12.52,HIGH,HIGH,PROFILED,
+Strawberry Reservoir|UT,Strawberry Reservoir,UT,W,65.725,HIGH,HIGH,PROFILED,
+Stump Lake|ND,Stump Lake,ND,GP,57.149,HIGH,HIGH,PROFILED,
+Summersville Lake|WV,Summersville Lake,WV,SE,11.583,HIGH,HIGH,PROFILED,
+Sumner Lake|NM,Sumner Lake,NM,W,5.111,MEDIUM,HIGH,PROFILED,
+Sunapee Lake|NH,Sunapee Lake,NH,NE,16.734,HIGH,HIGH,PROFILED,
+Sutherland Reservoir|NE,Sutherland Reservoir,NE,GP,12.902,HIGH,HIGH,PROFILED,
+Suttle Lake|OR,Suttle Lake,OR,W,1.067,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Sutton Lake|WV,Sutton Lake,WV,SE,7.072,HIGH,HIGH,PROFILED,
+Swanson Reservoir|NE,Swanson Reservoir,NE,GP,18.852,LOW,MEDIUM,PROFILED,GEOMETRY_LOW
+Swartswood Lake|NJ,Swartswood Lake,NJ,NE,2.108,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Table Rock Lake|MO,Table Rock Lake,MO,MW,171.566,HIGH,HIGH,PROFILED,
+Tappan Lake|OH,Tappan Lake,OH,MW,8.694,HIGH,HIGH,PROFILED,
+Taylorsville Lake|KY,Taylorsville Lake,KY,SE,12.105,HIGH,HIGH,PROFILED,
+Teshekpuk|AK,Teshekpuk,AK,AKHI,835.999,HIGH,HIGH,PROFILED,
+Tiber Reservoir (Lake Elwell)|MT,Tiber Reservoir (Lake Elwell),MT,W,63.263,MEDIUM,HIGH,PROFILED,
+Timothy Lake|OR,Timothy Lake,OR,W,5.681,HIGH,HIGH,PROFILED,
+Tims Ford Lake|TN,Tims Ford Lake,TN,SE,32.012,MEDIUM,HIGH,PROFILED,
+Tiogue Lake|RI,Tiogue Lake,RI,NE,0.941,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Tippecanoe Lake|IN,Tippecanoe Lake,IN,MW,3.364,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Tohopekaliga (Toho)|FL,Tohopekaliga (Toho),FL,SE,75.393,HIGH,HIGH,PROFILED,
+Toledo Bend Reservoir|TX,Toledo Bend Reservoir,TX,GP,671.678,HIGH,HIGH,PROFILED,
+Topaz Lake|NV,Topaz Lake,NV,W,7.494,HIGH,HIGH,PROFILED,
+Torch Lake|MI,Torch Lake,MI,MW,75.717,HIGH,HIGH,PROFILED,
+Trap Pond|DE,Trap Pond,DE,NE,0.383,HIGH,LOW,BLOCKED,TOO_NARROW
+Triadelphia Reservoir|MD,Triadelphia Reservoir,MD,NE,3.233,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Trinity|CA,Trinity,CA,W,63.483,HIGH,HIGH,PROFILED,
+Truman Lake|MO,Truman Lake,MO,MW,202.047,HIGH,HIGH,PROFILED,
+Tustumena|AK,Tustumena,AK,AKHI,296.716,HIGH,HIGH,PROFILED,
+Tuttle Creek Lake|KS,Tuttle Creek Lake,KS,GP,48.736,HIGH,HIGH,PROFILED,
+Tygart Lake|WV,Tygart Lake,WV,SE,7.682,MEDIUM,HIGH,PROFILED,
+Umbagog Lake|NH,Umbagog Lake,NH,NE,30.965,HIGH,HIGH,PROFILED,
+Upper Klamath Lake|OR,Upper Klamath Lake,OR,W,251.516,HIGH,HIGH,PROFILED,
+Utah Lake|UT,Utah Lake,UT,W,368.852,HIGH,HIGH,PROFILED,
+Ute Lake|NM,Ute Lake,NM,W,24.345,HIGH,HIGH,PROFILED,
+Wachusett Reservoir|MA,Wachusett Reservoir,MA,NE,16.127,HIGH,HIGH,PROFILED,
+Waconda Lake|KS,Waconda Lake,KS,GP,43.393,HIGH,HIGH,PROFILED,
+Wagamons Pond|DE,Wagamons Pond,DE,NE,0.212,MEDIUM,LOW,BLOCKED,TOO_NARROW
+Waiakea Pond|HI,Waiakea Pond,HI,AKHI,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Waimaluhia Reservoir|HI,Waimaluhia Reservoir,HI,AKHI,,MISSING,UNKNOWN,BLOCKED,NO_GEOMETRY
+Waita Reservoir|HI,Waita Reservoir,HI,AKHI,1.54,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Waldo Lake|OR,Waldo Lake,OR,W,24.522,HIGH,HIGH,PROFILED,
+Walker Lake|NV,Walker Lake,NV,W,119.939,HIGH,HIGH,PROFILED,
+Wallowa Lake|OR,Wallowa Lake,OR,W,6.436,HIGH,HIGH,PROFILED,
+Wallum Lake|RI,Wallum Lake,RI,NE,1.256,LOW,LOW,PROFILED,MIXED_PIXELS;GEOMETRY_LOW
+Walter F. George / Eufaula|GA,Walter F. George / Eufaula,GA,SE,141.706,MEDIUM,HIGH,PROFILED,
+Wanaque Reservoir|NJ,Wanaque Reservoir,NJ,NE,8.791,HIGH,HIGH,PROFILED,
+Wappapello Lake|MO,Wappapello Lake,MO,MW,31.063,MEDIUM,HIGH,PROFILED,
+Washoe Lake|NV,Washoe Lake,NV,W,22.546,MEDIUM,HIGH,PROFILED,
+Watchaug Pond|RI,Watchaug Pond,RI,NE,2.322,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Watts Bar Lake|TN,Watts Bar Lake,TN,SE,136.702,HIGH,HIGH,PROFILED,
+Watuppa Ponds|MA,Watuppa Ponds,MA,NE,7.136,HIGH,HIGH,PROFILED,
+Waubay Lake|SD,Waubay Lake,SD,GP,22.531,HIGH,HIGH,PROFILED,
+Webster Lake|MA,Webster Lake,MA,NE,5.168,MEDIUM,HIGH,PROFILED,
+Weiss|AL,Weiss,AL,SE,103.931,HIGH,HIGH,PROFILED,
+West Grand Lake|ME,West Grand Lake,ME,NE,58.668,MEDIUM,HIGH,PROFILED,
+West Okoboji|IA,West Okoboji,IA,MW,25.059,MEDIUM,HIGH,PROFILED,
+West Point|GA,West Point,GA,SE,90.872,HIGH,HIGH,PROFILED,
+Wheeler|AL,Wheeler,AL,SE,232.379,HIGH,HIGH,PROFILED,
+White Bear Lake|MN,White Bear Lake,MN,MW,9.716,HIGH,HIGH,PROFILED,
+White Lake|LA,White Lake,LA,SE,226.281,HIGH,HIGH,PROFILED,
+Whitefish Lake|MT,Whitefish Lake,MT,W,13.427,HIGH,HIGH,PROFILED,
+Wild Horse Reservoir|NV,Wild Horse Reservoir,NV,W,5.337,MEDIUM,HIGH,PROFILED,
+Willard Bay Reservoir|UT,Willard Bay Reservoir,UT,W,40.373,HIGH,HIGH,PROFILED,
+Wilson Lake / Kaelepulu Pond|HI,Wilson Lake / Kaelepulu Pond,HI,AKHI,0.334,MEDIUM,LOW,BLOCKED,TOO_NARROW
+Wilson Lake|KS,Wilson Lake,KS,GP,31.853,HIGH,HIGH,PROFILED,
+Wilson|AL,Wilson,AL,SE,63.276,HIGH,HIGH,PROFILED,
+Winnapaug Pond|RI,Winnapaug Pond,RI,NE,1.928,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Worden Pond|RI,Worden Pond,RI,NE,4.423,HIGH,MEDIUM,PROFILED,MIXED_PIXELS
+Yellow Creek Lake|PA,Yellow Creek Lake,PA,NE,2.917,MEDIUM,MEDIUM,PROFILED,MIXED_PIXELS
+Yellowstone Lake|WY,Yellowstone Lake,WY,W,341.635,HIGH,HIGH,PROFILED,
+Youghiogheny River Lake|MD,Youghiogheny River Lake,MD,NE,11.932,HIGH,HIGH,PROFILED,
