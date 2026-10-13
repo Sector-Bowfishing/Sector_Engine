@@ -144,3 +144,24 @@ def test_accepted_restricts_the_batches(tmp_path):
     d = json.load(open(out))
     flat = [l for v in d["batches"].values() for l in v["lakes"]]
     assert sorted(flat) == keep and d["projection"][-1]["profiled"] == 35
+
+
+@pytest.mark.skipif(not HAVE_TABLE, reason="bindings table missing")
+def test_emit_stage_is_a_cumulative_subset_of_the_accepted_batch(tmp_path):
+    doc, rows = P.load_bindings(P.DEFAULT_BINDINGS)
+    pilots = sorted(p["lakeId"] for p in doc["pilotReproduction"])
+    keep = sorted(set(rows) - set(pilots))[:80]
+    acc = tmp_path / "accepted_batch.json"
+    acc.write_text(json.dumps(sorted(keep)))
+    seen = []
+    for st in "ABCD":
+        out = tmp_path / f"stage_{st}.json"
+        assert R.main(["--accepted", str(acc), "--emit-stage", st, "--out", str(out)]) == 0
+        d = json.load(open(out))
+        assert d["stage"] == st and set(d["lakeIds"]) <= set(keep) and not set(d["lakeIds"]) & set(pilots)
+        assert d["stagedFromAcceptedBatchSha256"] == P.sha256_file(str(acc))
+        assert set(seen) <= set(d["lakeIds"]) and len(d["lakeIds"]) >= len(seen)
+        seen = d["lakeIds"]
+    assert seen == keep
+    with pytest.raises(SystemExit):
+        R.main(["--emit-stage", "A"])

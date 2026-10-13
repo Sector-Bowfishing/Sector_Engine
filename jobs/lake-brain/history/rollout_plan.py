@@ -213,6 +213,8 @@ def main(argv=None):
     ap.add_argument("--observed-share", type=float, default=1.0)
     ap.add_argument("--accepted", help="the real accepted_batch.json: batches are then built from the accepted lakes only (pilots stay)")
     ap.add_argument("--out")
+    ap.add_argument("--emit-stage", choices=["A", "B", "C", "D"], help="with --accepted and --out: write the CUMULATIVE staged accepted file (batches A..X restricted to the real accepted batch; "
+                    "pilots excluded) in the dict form scripts/generate-lake-bindings.py reads. A derived subset, never a review result")
     ap.add_argument("--make-throughput", help="comma list of preseed state.json files: write their aggregate seconds-per-call JSON to --out and exit")
     a = ap.parse_args(argv)
     if a.make_throughput:
@@ -233,6 +235,16 @@ def main(argv=None):
                projection=project(rows, pilots, batches, now, a.observed_share),
                projectionObserved90=project(rows, pilots, batches, now, 0.9),
                fleet=batch_summary([l for v in batches.values() for l in v], info, spc))
+    if a.emit_stage:
+        if not (a.accepted and a.out):
+            raise SystemExit("--emit-stage needs --accepted and --out")
+        upto = "ABCD"[: "ABCD".index(a.emit_stage) + 1]
+        ids = sorted(l for b in upto for l in batches[b])
+        stage = dict(lakeIds=ids, stage=a.emit_stage, cumulativeBatches=list(upto), stagedFromAcceptedBatchSha256=P.sha256_file(a.accepted),
+                     note="DERIVED subset of the real accepted_batch.json for a staged rollout (jobs/lake-brain/history/rollout_plan.py --emit-stage); not a review result")
+        P.atomic_write(a.out, json.dumps(stage, indent=1))
+        print(f"stage {a.emit_stage}: {len(ids)} accepted lakes -> {a.out}")
+        return 0
     text = json.dumps(res, indent=1)
     if a.out:
         P.atomic_write(a.out, text)
