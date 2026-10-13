@@ -1,0 +1,721 @@
+{
+ "criteriaVersion": "binding-review-v1 (+v1.1 extensions labelled)",
+ "lakes": 621,
+ "wave1": {
+  "core": 258,
+  "flagged": 57,
+  "stageOnly": 32,
+  "none": 274
+ },
+ "layers": {
+  "L1_v1_rules": {
+   "core": 278,
+   "flagged": 94,
+   "stageOnly": 9,
+   "none": 240,
+   "pctCore": 44.8,
+   "pctCorePlusFlag": 59.9,
+   "ladderPointsCore": 5,
+   "ladderPointsCorePlusFlag": 7
+  },
+  "L2_v1.1_rules": {
+   "core": 300,
+   "flagged": 116,
+   "stageOnly": 11,
+   "none": 194,
+   "pctCore": 48.3,
+   "pctCorePlusFlag": 67.0,
+   "ladderPointsCore": 5,
+   "ladderPointsCorePlusFlag": 7
+  },
+  "L3_v1.1_plus_R7h": {
+   "core": 389,
+   "flagged": 28,
+   "stageOnly": 10,
+   "none": 194,
+   "pctCore": 62.6,
+   "pctCorePlusFlag": 67.1,
+   "ladderPointsCore": 7,
+   "ladderPointsCorePlusFlag": 7
+  }
+ },
+ "byStatus": {
+  "NONE": 194,
+  "VERIFIED": 283,
+  "STAGE_ONLY": 10,
+  "VERIFIED_FLAG": 28,
+  "VERIFIED_ENVELOPE": 90,
+  "VERIFIED_CORROBORATED": 16
+ },
+ "byWave": {
+  "w1": 315,
+  "w2-v1": 57,
+  "w2-v1.1": 45
+ },
+ "byProvider": {
+  "cwms": 62,
+  "usgs": 67,
+  "tva": 17,
+  "nwps": 41,
+  "a2w": 112,
+  "srp": 4,
+  "rise": 46,
+  "cdec": 2,
+  "sjrwmd": 6,
+  "usgs-d": 12,
+  "usbr-pnhm": 4,
+  "coops": 14,
+  "nipsco": 1,
+  "eccc": 1,
+  "mncsg": 1,
+  "cwms-saw": 1,
+  "duke": 8,
+  "cnppid": 2,
+  "nppd": 1,
+  "nhdes": 6,
+  "njwsa": 1,
+  "twdb": 2,
+  "utahlake": 1,
+  "aep": 1,
+  "nwrfc": 1,
+  "cwms-nwdp": 1,
+  "wps-hydro": 1,
+  "alliant": 1
+ },
+ "newByProvider": {
+  "usgs": 20,
+  "cwms": 5,
+  "srp": 4,
+  "cdec": 2,
+  "sjrwmd": 6,
+  "usgs-d": 12,
+  "usbr-pnhm": 4,
+  "coops": 13,
+  "nipsco": 1,
+  "nwps": 5,
+  "a2w": 2,
+  "eccc": 1,
+  "mncsg": 1,
+  "cwms-saw": 1,
+  "duke": 8,
+  "cnppid": 2,
+  "nppd": 1,
+  "nhdes": 6,
+  "njwsa": 1,
+  "utahlake": 1,
+  "aep": 1,
+  "nwrfc": 1,
+  "cwms-nwdp": 1,
+  "wps-hydro": 1,
+  "alliant": 1,
+  "rise": 1
+ },
+ "newByState": {
+  "AL": 2,
+  "AZ": 4,
+  "CA": 3,
+  "FL": 7,
+  "GA": 1,
+  "IA": 5,
+  "ID": 4,
+  "IL": 2,
+  "IN": 3,
+  "LA": 1,
+  "MD": 2,
+  "MI": 7,
+  "MN": 6,
+  "MO": 1,
+  "MS": 2,
+  "NC": 4,
+  "ND": 4,
+  "NE": 3,
+  "NH": 6,
+  "NJ": 3,
+  "NY": 2,
+  "OH": 1,
+  "OR": 2,
+  "PA": 1,
+  "SC": 6,
+  "SD": 2,
+  "UT": 1,
+  "VA": 2,
+  "WA": 5,
+  "WI": 9,
+  "WY": 1
+ },
+ "historyClassBound": {
+  "SUFFICIENT": 359,
+  "NONE": 34,
+  "LIMITED": 20,
+  "INSUFFICIENT": 4
+ },
+ "capabilityBound": {
+  "DIRECT_OPERATOR_POOL": 247,
+  "DIRECT_LAKE_GAUGE": 170
+ },
+ "noBindingReasons": {
+  "no-candidate": 149,
+  "candidates-rejected": 42,
+  "pending:PENDING_NO_FULLPOOL": 2,
+  "pending:PENDING_CORROBORATION": 1
+ },
+ "ablation": {
+  "v1_only": {
+   "core": 262,
+   "flag": 110,
+   "bound": 372
+  },
+  "all_on": {
+   "core": 281,
+   "flag": 134,
+   "bound": 415
+  },
+  "minus_R1b": {
+   "core": 280,
+   "flag": 134,
+   "bound": 414,
+   "marginal": 1
+  },
+  "only_R1b": {
+   "core": 265,
+   "flag": 110,
+   "bound": 375,
+   "gain": 3
+  },
+  "minus_R2b": {
+   "core": 281,
+   "flag": 134,
+   "bound": 415,
+   "marginal": 0
+  },
+  "only_R2b": {
+   "core": 263,
+   "flag": 110,
+   "bound": 373,
+   "gain": 2
+  },
+  "minus_R2c": {
+   "core": 281,
+   "flag": 134,
+   "bound": 415,
+   "marginal": 0
+  },
+  "only_R2c": {
+   "core": 262,
+   "flag": 110,
+   "bound": 372,
+   "gain": 0
+  },
+  "minus_R2d": {
+   "core": 281,
+   "flag": 133,
+   "bound": 414,
+   "marginal": 1
+  },
+  "only_R2d": {
+   "core": 264,
+   "flag": 111,
+   "bound": 375,
+   "gain": 4
+  },
+  "minus_R4b": {
+   "core": 281,
+   "flag": 133,
+   "bound": 414,
+   "marginal": 1
+  },
+  "only_R4b": {
+   "core": 262,
+   "flag": 111,
+   "bound": 373,
+   "gain": 1
+  },
+  "minus_R5b": {
+   "core": 279,
+   "flag": 134,
+   "bound": 413,
+   "marginal": 2
+  },
+  "only_R5b": {
+   "core": 264,
+   "flag": 110,
+   "bound": 374,
+   "gain": 2
+  },
+  "minus_R8b": {
+   "core": 273,
+   "flag": 134,
+   "bound": 407,
+   "marginal": 8
+  },
+  "only_R8b": {
+   "core": 276,
+   "flag": 109,
+   "bound": 385,
+   "gain": 13
+  },
+  "minus_R8c": {
+   "core": 281,
+   "flag": 128,
+   "bound": 409,
+   "marginal": 6
+  },
+  "only_R8c": {
+   "core": 267,
+   "flag": 113,
+   "bound": 380,
+   "gain": 8
+  },
+  "minus_RGL": {
+   "core": 281,
+   "flag": 120,
+   "bound": 401,
+   "marginal": 14
+  },
+  "only_RGL": {
+   "core": 262,
+   "flag": 124,
+   "bound": 386,
+   "gain": 14
+  },
+  "minus_RI": {
+   "core": 281,
+   "flag": 130,
+   "bound": 411,
+   "marginal": 4
+  },
+  "only_RI": {
+   "core": 262,
+   "flag": 112,
+   "bound": 374,
+   "gain": 2
+  },
+  "minus_R1c": {
+   "core": 281,
+   "flag": 133,
+   "bound": 414,
+   "marginal": 1
+  },
+  "only_R1c": {
+   "core": 263,
+   "flag": 111,
+   "bound": 374,
+   "gain": 2
+  }
+ },
+ "r7hNegativeControl": {
+  "nPromoted": 90,
+  "nSeries": 338,
+  "medianChanceRate": 0.003,
+  "maxChanceRate": 0.042,
+  "over10pct": 0
+ },
+ "stateCoverage": {
+  "AK": {
+   "n": 12,
+   "w1core": 0,
+   "w1flag": 0,
+   "core": 0,
+   "flag": 0
+  },
+  "AL": {
+   "n": 12,
+   "w1core": 10,
+   "w1flag": 0,
+   "core": 12,
+   "flag": 0
+  },
+  "AR": {
+   "n": 12,
+   "w1core": 9,
+   "w1flag": 0,
+   "core": 9,
+   "flag": 0
+  },
+  "AZ": {
+   "n": 10,
+   "w1core": 2,
+   "w1flag": 2,
+   "core": 5,
+   "flag": 3
+  },
+  "CA": {
+   "n": 12,
+   "w1core": 2,
+   "w1flag": 4,
+   "core": 8,
+   "flag": 1
+  },
+  "CO": {
+   "n": 12,
+   "w1core": 7,
+   "w1flag": 3,
+   "core": 10,
+   "flag": 0
+  },
+  "CT": {
+   "n": 12,
+   "w1core": 0,
+   "w1flag": 0,
+   "core": 0,
+   "flag": 0
+  },
+  "DE": {
+   "n": 12,
+   "w1core": 0,
+   "w1flag": 1,
+   "core": 1,
+   "flag": 0
+  },
+  "FL": {
+   "n": 13,
+   "w1core": 3,
+   "w1flag": 1,
+   "core": 11,
+   "flag": 0
+  },
+  "GA": {
+   "n": 12,
+   "w1core": 11,
+   "w1flag": 0,
+   "core": 12,
+   "flag": 0
+  },
+  "HI": {
+   "n": 9,
+   "w1core": 0,
+   "w1flag": 0,
+   "core": 0,
+   "flag": 0
+  },
+  "IA": {
+   "n": 12,
+   "w1core": 4,
+   "w1flag": 0,
+   "core": 6,
+   "flag": 3
+  },
+  "ID": {
+   "n": 13,
+   "w1core": 3,
+   "w1flag": 5,
+   "core": 11,
+   "flag": 1
+  },
+  "IL": {
+   "n": 12,
+   "w1core": 5,
+   "w1flag": 0,
+   "core": 7,
+   "flag": 0
+  },
+  "IN": {
+   "n": 14,
+   "w1core": 8,
+   "w1flag": 0,
+   "core": 11,
+   "flag": 0
+  },
+  "KS": {
+   "n": 14,
+   "w1core": 12,
+   "w1flag": 1,
+   "core": 13,
+   "flag": 0
+  },
+  "KY": {
+   "n": 12,
+   "w1core": 12,
+   "w1flag": 0,
+   "core": 12,
+   "flag": 0
+  },
+  "LA": {
+   "n": 12,
+   "w1core": 3,
+   "w1flag": 1,
+   "core": 3,
+   "flag": 2
+  },
+  "MA": {
+   "n": 12,
+   "w1core": 0,
+   "w1flag": 2,
+   "core": 0,
+   "flag": 2
+  },
+  "MD": {
+   "n": 12,
+   "w1core": 3,
+   "w1flag": 0,
+   "core": 5,
+   "flag": 0
+  },
+  "ME": {
+   "n": 14,
+   "w1core": 0,
+   "w1flag": 1,
+   "core": 1,
+   "flag": 0
+  },
+  "MI": {
+   "n": 14,
+   "w1core": 0,
+   "w1flag": 2,
+   "core": 8,
+   "flag": 1
+  },
+  "MN": {
+   "n": 14,
+   "w1core": 3,
+   "w1flag": 2,
+   "core": 9,
+   "flag": 2
+  },
+  "MO": {
+   "n": 11,
+   "w1core": 10,
+   "w1flag": 0,
+   "core": 11,
+   "flag": 0
+  },
+  "MS": {
+   "n": 11,
+   "w1core": 7,
+   "w1flag": 0,
+   "core": 9,
+   "flag": 0
+  },
+  "MT": {
+   "n": 11,
+   "w1core": 8,
+   "w1flag": 0,
+   "core": 8,
+   "flag": 0
+  },
+  "NC": {
+   "n": 12,
+   "w1core": 5,
+   "w1flag": 2,
+   "core": 10,
+   "flag": 1
+  },
+  "ND": {
+   "n": 12,
+   "w1core": 6,
+   "w1flag": 0,
+   "core": 10,
+   "flag": 0
+  },
+  "NE": {
+   "n": 11,
+   "w1core": 6,
+   "w1flag": 0,
+   "core": 9,
+   "flag": 0
+  },
+  "NH": {
+   "n": 12,
+   "w1core": 0,
+   "w1flag": 0,
+   "core": 6,
+   "flag": 0
+  },
+  "NJ": {
+   "n": 12,
+   "w1core": 2,
+   "w1flag": 0,
+   "core": 5,
+   "flag": 0
+  },
+  "NM": {
+   "n": 13,
+   "w1core": 9,
+   "w1flag": 3,
+   "core": 11,
+   "flag": 1
+  },
+  "NV": {
+   "n": 11,
+   "w1core": 3,
+   "w1flag": 5,
+   "core": 5,
+   "flag": 3
+  },
+  "NY": {
+   "n": 14,
+   "w1core": 2,
+   "w1flag": 8,
+   "core": 12,
+   "flag": 0
+  },
+  "OH": {
+   "n": 13,
+   "w1core": 11,
+   "w1flag": 0,
+   "core": 12,
+   "flag": 0
+  },
+  "OK": {
+   "n": 13,
+   "w1core": 12,
+   "w1flag": 0,
+   "core": 12,
+   "flag": 0
+  },
+  "OR": {
+   "n": 14,
+   "w1core": 3,
+   "w1flag": 2,
+   "core": 7,
+   "flag": 0
+  },
+  "PA": {
+   "n": 14,
+   "w1core": 5,
+   "w1flag": 0,
+   "core": 6,
+   "flag": 0
+  },
+  "RI": {
+   "n": 12,
+   "w1core": 1,
+   "w1flag": 0,
+   "core": 1,
+   "flag": 0
+  },
+  "SC": {
+   "n": 12,
+   "w1core": 6,
+   "w1flag": 0,
+   "core": 9,
+   "flag": 3
+  },
+  "SD": {
+   "n": 13,
+   "w1core": 5,
+   "w1flag": 0,
+   "core": 6,
+   "flag": 1
+  },
+  "TN": {
+   "n": 15,
+   "w1core": 14,
+   "w1flag": 0,
+   "core": 14,
+   "flag": 0
+  },
+  "TX": {
+   "n": 15,
+   "w1core": 13,
+   "w1flag": 2,
+   "core": 15,
+   "flag": 0
+  },
+  "UT": {
+   "n": 13,
+   "w1core": 5,
+   "w1flag": 4,
+   "core": 9,
+   "flag": 1
+  },
+  "VA": {
+   "n": 12,
+   "w1core": 6,
+   "w1flag": 0,
+   "core": 8,
+   "flag": 0
+  },
+  "VT": {
+   "n": 12,
+   "w1core": 0,
+   "w1flag": 2,
+   "core": 2,
+   "flag": 0
+  },
+  "WA": {
+   "n": 13,
+   "w1core": 3,
+   "w1flag": 2,
+   "core": 8,
+   "flag": 2
+  },
+  "WI": {
+   "n": 13,
+   "w1core": 1,
+   "w1flag": 0,
+   "core": 9,
+   "flag": 1
+  },
+  "WV": {
+   "n": 11,
+   "w1core": 10,
+   "w1flag": 0,
+   "core": 10,
+   "flag": 0
+  },
+  "WY": {
+   "n": 13,
+   "w1core": 8,
+   "w1flag": 2,
+   "core": 11,
+   "flag": 0
+  }
+ },
+ "operatorFamilyCoverage": {
+  "NONE": {
+   "n": 113,
+   "w1core": 1,
+   "w1flag": 11,
+   "core": 19,
+   "flag": 9
+  },
+  "OTHER": {
+   "n": 253,
+   "w1core": 70,
+   "w1flag": 17,
+   "core": 132,
+   "flag": 11
+  },
+  "USACE": {
+   "n": 168,
+   "w1core": 131,
+   "w1flag": 8,
+   "core": 157,
+   "flag": 4
+  },
+  "TVA": {
+   "n": 16,
+   "w1core": 15,
+   "w1flag": 1,
+   "core": 15,
+   "flag": 1
+  },
+  "USBR": {
+   "n": 71,
+   "w1core": 41,
+   "w1flag": 20,
+   "core": 66,
+   "flag": 3
+  }
+ },
+ "rules": {
+  "v1": "binding-review-v1 R1-R9 unchanged",
+  "v1.1": [
+   "R1b",
+   "R2b",
+   "R2c",
+   "R2d",
+   "R4b",
+   "R5b",
+   "R8b",
+   "R8c",
+   "RGL",
+   "RI",
+   "R1c",
+   "S-derived",
+   "SIB"
+  ],
+  "R7h": "history envelope p99 within +-8 ft of directory full pool, >=5 complete years"
+ }
+}
