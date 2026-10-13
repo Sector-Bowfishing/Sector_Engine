@@ -1,0 +1,714 @@
+{
+ "schema": "depth-provider-proposals-v1",
+ "generatedAt": "2026-10-14",
+ "rules": [
+  {
+   "provider": "rise",
+   "scope": "provider-level, all 45 RISE series (46 candidate rows)",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [],
+   "evidence": [
+    {
+     "url": "https://data.usbr.gov/rise/api/parameter/2",
+     "says": "parameter text: elevation is feet above msl for the location specified datum; no datum is declared for the series"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/6128",
+     "says": "catalog-item verticalDatum null for 45 of 45 bound series"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/CheneyReservoir2015SedimentationSurvey_Final508.pdf",
+     "says": "Cheney operates on a project datum coinciding with NGVD29 while the RISE location tags NAVD88: the location tag is not the gage datum"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/471",
+     "says": "Shasta asset record says NGVD 29 while the location record says NAVD88"
+    }
+   ],
+   "caveat": "No provider-level rule. Location verticalDatum is unreliable (15 of 45 are EGM96, which is not a reservoir-gage datum; 3 conflict with the asset record). Lake-scoped rules below govern."
+  },
+  {
+   "provider": "rise",
+   "scope": "lake-scoped, tier A: Reclamation TSC document states the dam gage record AND the pool in one project datum (RPVD / project datum)",
+   "decision": "SAME_DATUM",
+   "levelDatum": "RECLAMATION_PROJECT_DATUM",
+   "referenceDatum": "RECLAMATION_PROJECT_DATUM",
+   "sigmaFt": 0.1,
+   "lakes": [
+    "Blue Mesa Reservoir|CO",
+    "Cheney Reservoir|KS",
+    "Fresno Reservoir|MT",
+    "Jamestown Reservoir|ND",
+    "Lake Tschida|ND",
+    "Patterson Lake|ND",
+    "Box Butte Reservoir|NE",
+    "Merritt Reservoir|NE",
+    "Caballo Lake|NM",
+    "El Vado Lake|NM",
+    "Elephant Butte Reservoir|NM",
+    "Heron Lake|NM",
+    "Navajo Reservoir|NM",
+    "Angostura Reservoir|SD",
+    "Flaming Gorge Reservoir|UT",
+    "Bighorn Lake|WY",
+    "Flaming Gorge Reservoir|WY",
+    "Fontenelle Reservoir|WY",
+    "Keyhole Reservoir|WY"
+   ],
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/BlueMesaReservoir2019SedimentationSurvey_Final508.pdf",
+     "says": "Blue Mesa Reservoir: pool top of joint-use pool 7519.4 ft stated in RPVD; gage dam gage records converted to RPVD; datum RPVD is 4.71 ft below NAVD88 (2019 area-capacity tables)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/CheneyReservoir2015SedimentationSurvey_Final508.pdf",
+     "says": "Cheney Reservoir: pool storage allocations including top of active conservation 1,421.6 ft listed in NGVD29 (= Cheney project datum); gage dam gage tied to the Cheney Dam vertical datum coincident with NGVD29; datum project datum coincides with NGVD29; NGVD29 is 0.479 ft below NAVD88 (2015 survey)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Fresno_Reservoir_2010_Sedimentation_Survey.pdf",
+     "says": "Fresno Reservoir: pool surveys use pool 2575 ft on the project datum; gage Reclamation gage record is on the project datum (survey: gage ~4.7 ft above NGVD29 water surface); datum project datum 4.7 ft above NGVD29 and 2.0 ft above NAVD88 (2010 survey; NOT the RISE location NGVD29 tag)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Jamestown_Reservoir_2009_Report_Final.pdf",
+     "says": "Jamestown Reservoir: pool joint-use storage 1,428.0-1,431.0 ft (top 1431) in the project-datum report; gage water surface recorded by the Reclamation gage at the dam, tied to NGVD29; datum project datum tied to NGVD29; NGVD29 is 1.25 ft below NAVD88 (2009 survey)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Lake_Tschida_(Heart_Butte_Reservoir)_Sedimentation_Survey_2013.pdf",
+     "says": "Lake Tschida: pool top of conservation pool 2,064.5 ft in the project-datum report; gage gage records tied to the project vertical datum; datum project datum 0.2 ft below NGVD29 and 1.7 ft below NAVD88 (2013 survey; capacity table: gage datum = NAVD88 - 1.7)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Edward_Arthur_Patterson_Lake_Sedimentation_Survey_2013.pdf",
+     "says": "Patterson Lake: pool conservation pool 2,420.0 ft in the project-datum report (but the same report digitizes a 2,420 contour as NAVD88: see caveat); gage gage records tied to project vertical elevation; datum project datum 0.1 ft below NGVD29 and 1.9 ft below NAVD88 (2013 survey; capacity table: gage datum = NAVD88 - 1.9)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Box_Butte_Reservoir_2003_Survey.pdf",
+     "says": "Box Butte Reservoir: pool pool 4,007.0 ft in the project-datum report; RISE asset record lists 4007 as capacity elevation, vertical datum NGVD 29; gage elevations are based on the project water-surface gage datum; datum project water-surface gage datum tied to NGVD29; 2.0 ft below NAVD88 (2003 survey)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Merritt_Reservoir_2003_Survey.pdf",
+     "says": "Merritt Reservoir: pool top of active pool 2,946 ft in the project-datum report; gage vertical information referenced to Reclamation gauge measurements tied to NGVD29; datum project datum tied to NGVD29, ~1.0 ft below NAVD88 (2003 survey)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/CaballoReservoir2007SedimentationSurvey_508.pdf",
+     "says": "Caballo Lake: pool top of active conservation 4172.44 ft listed with the project-datum allocations; gage survey compares Reclamation gage to RTK; all elevations in project datum; datum project datum 43.3 ft below NGVD29 and 45.5 ft below NAVD88 (2007 survey)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/El_Vado_Reservoir_2007_Sedimentation_Survey.pdf",
+     "says": "El Vado Lake: pool top of active conservation 6902 ft used as a project-datum elevation (6,902 listed as converted to project vertical elevation); gage gage readings are in the project datum (survey reports the gage-to-NGVD29 shift); datum project datum ~7.8 ft below NGVD29 and 12.0 ft below NAVD88 (2007 survey; add 7.8 ft to reach NGVD29)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Elephant_Butte_Reservoir_2017_&_2019_Sedimentation_Survey.pdf",
+     "says": "Elephant Butte Reservoir: pool top of active storage 4407 ft stated in project vertical datum; gage dam gage records converted to RPVD; datum project datum ~43.3 ft below NGVD29 and 45.5 ft below NAVD88 (2007 survey); 2017/2019 tables: RPVD 45.0 ft below NAVD88, NGVD29 2.1 ft below NAVD88 (the two reports differ by 0.5 ft)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Heron_Reservoir_2010_Bathymetric_Survey.pdf",
+     "says": "Heron Lake: pool active conservation pool 7186.1 ft in the project-datum report; gage water surface recorded by a Reclamation gage at the dam used for NGVD29 elevations; datum project datum tied to NGVD29; 4.278 ft below NAVD88 (2010 survey)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/NavajoReservoir2019SedimentationSurvey_final508VI.pdf",
+     "says": "Navajo Reservoir: pool spillway/top of active 6085 ft stated in project vertical datum; report header lists Vertical Datum RPVD; gage dam gage records converted to RPVD; datum RPVD is 2.97 ft below NAVD88 (2019 area-capacity tables)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/AngosturaReservoir2004SedimentationSurvey.pdf",
+     "says": "Angostura Reservoir: pool conservation elevation 3,187.2 ft in the project-datum report; gage vertical information referenced to Reclamation reservoir water-surface gauge; datum original project datum reported as NGVD29; ~2 ft below NAVD88 (2004 survey)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/FlamingGorgeRes2019SedimentationSurvey_final508.pdf",
+     "says": "Flaming Gorge Reservoir: pool top of active conservation 6040.0 ft stated in RPVD; gage RTK checked against dam gage records to establish RPVD vs NAVD88; datum RPVD defined; the 2019 survey states CorpsCon results were inconclusive on whether RPVD equals NGVD29 (absolute datum NOT established)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/BighornReservoirSedimentationSurvey2017_Final508Rev1.pdf",
+     "says": "Bighorn Lake: pool top of joint-use operations pool 3640.00 ft stated in RPVD; gage vertical datum is the Yellowtail Dam water-surface gage, referenced to RPVD; datum RPVD assumed equivalent to NGVD29; NAVD88 minus NGVD29 = 2.63 sft at Yellowtail Dam (2017 tables)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/FontenelleReservoir2019SedimentationSurvey_final508.pdf",
+     "says": "Fontenelle Reservoir: pool top of active conservation 6506 ft stated in RPVD; gage dam gage records converted to RPVD; datum RPVD; offset to NAVD88/NGVD29 not extracted from the 2019 survey"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Keyhole_Reservoir_2003_Sedimentation_Survey.pdf",
+     "says": "Keyhole Reservoir: pool spillway crest / pool 4,099.3 ft in the project-datum report; gage all vertical information referenced to the Reclamation gauge; datum project datum reported as NGVD29; 2.1 ft below NAVD88 (2003 survey)"
+    }
+   ],
+   "caveat": "PROPOSED, pending lead acceptance. Residual not documented by RISE: that the RISE daily value is the dam gage record described in the survey. Project datums must never be converted with NCAT/VERTCON; shift only. Absolute datum name is not asserted (Flaming Gorge's own survey could not confirm RPVD = NGVD29). Patterson 2013 labels a 2,420 contour NAVD88: drop to UNKNOWN if Reclamation says the project-datum pool is 2,418.1. Surveys date 1979 to 2019."
+  },
+  {
+   "provider": "rise",
+   "scope": "lake-scoped, tier B: a datum relation is documented but the gage-to-datum or pool-to-datum link is missing",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Havasu|AZ",
+    "Shadow Mountain Reservoir|CO",
+    "Waconda Lake|KS",
+    "Calamus Reservoir|NE",
+    "Swanson Reservoir|NE",
+    "Lake Mead|NV",
+    "Buffalo Bill Reservoir|WY",
+    "Glendo Reservoir|WY"
+   ],
+   "evidence": [
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Havasu|AZ",
+     "says": "Havasu: RISE asset record: elevations on USGS 1912/Powerhouse datum (+0.55 ft to NGVD29); location tag agrees; missing: no TSC survey fetched; no gage statement"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Shadow Mountain Reservoir|CO",
+     "says": "Shadow Mountain Reservoir: RPVD (offset not extracted); missing: pool 8367 wording not found in the survey"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Waconda Lake|KS",
+     "says": "Waconda Lake: project datum ~1.2 ft above NGVD29 (2001 survey; RISE asset: RPVD is 1.2 ft greater than NGVD29); missing: no document found that says the dam gage record is on the project datum"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Calamus Reservoir|NE",
+     "says": "Calamus Reservoir: project datum near NGVD29, 0.84 ft below NAVD88 (2012 report); missing: report pool wording (morning-glory crest 2,244.5) and gage statement not matched to 2,244"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Swanson Reservoir|NE",
+     "says": "Swanson Reservoir: project datum tied to NGVD29, 1.1 ft below NAVD88 (2011 report); missing: gage statement not found"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Lake Mead|NV",
+     "says": "Lake Mead: dam construction (Powerhouse/USGS 1912) datum: add 0.55 ft to reach NGVD29 (2001 survey, 2009 LiDAR report, RISE asset); missing: no document ties the Hoover dam gage/RISE series to the construction datum"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Buffalo Bill Reservoir|WY",
+     "says": "Buffalo Bill Reservoir: 1986 survey on 'Shoshone Project Datum'; conversion to USC&GS datum printed but text garbled; missing: gage statement absent; 1986 datum may have been superseded"
+    },
+    {
+     "url": "https://api.wwdh.internetofwater.app/collections/rise-edr/items/Glendo Reservoir|WY",
+     "says": "Glendo Reservoir: project datum ~2.55 ft below NAVD88 (2003 survey); missing: gage-to-datum statement not found; RISE asset says project datum"
+    }
+   ],
+   "caveat": "Becomes tier A when Reclamation states the gage record is in the project datum, or the survey states the pool in it."
+  },
+  {
+   "provider": "rise",
+   "scope": "lake-scoped, tier C: no reservoir-specific datum document, or Reclamation records conflict",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Shasta|CA",
+    "Trinity|CA",
+    "Grand Lake|CO",
+    "Horsetooth Reservoir|CO",
+    "Lake Granby|CO",
+    "Ruedi Reservoir|CO",
+    "Lake Mohave|NV",
+    "Pactola Reservoir|SD",
+    "Deer Creek Reservoir|UT",
+    "Jordanelle Reservoir|UT",
+    "Lake Powell|UT",
+    "Pineview Reservoir|UT",
+    "Starvation Reservoir|UT",
+    "Strawberry Reservoir|UT",
+    "Willard Bay Reservoir|UT",
+    "Alcova Reservoir|WY",
+    "Boysen Reservoir|WY",
+    "Pathfinder Reservoir|WY",
+    "Seminoe Reservoir|WY"
+   ],
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Shasta: RISE asset says NGVD 29, RISE location says NAVD88; no survey fetched"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Trinity: RISE asset says NGVD 29, location NAVD88; asset capacity elevation 2345 differs from pool 2370"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Grand Lake: no reservoir document; pool is a natural-surface directory figure (low confidence)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Horsetooth Reservoir: no TSC datum document downloaded; resaloc diagram states no datum"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Lake Granby: no TSC datum document downloaded; resaloc diagram states no datum"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Ruedi Reservoir: no TSC datum document downloaded; resaloc diagram states no datum"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Lake Mohave: RISE asset record says USGS 1912 datum but the RISE location tags the same site NAVD88; unresolved conflict"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Pactola Reservoir: resaloc diagram states no datum; no TSC document downloaded"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Deer Creek Reservoir: no datum document fetched"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Jordanelle Reservoir: no datum document fetched; RISE asset TCE 8182 is a typo-level conflict with pool 6166.4"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Lake Powell: USGS 2021 Glen Canyon survey exists because of uncertainty in Reclamation's local datum; USGS 2018 capacity release is NAVD88; no statement ties the RISE series to either"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Pineview Reservoir: no datum document fetched; RISE location tag EGM96 is not a reservoir-gage datum"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Starvation Reservoir: RISE asset says 'Local Datum'; no relation given"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Strawberry Reservoir: no datum document fetched"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Willard Bay Reservoir: no datum document fetched"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Alcova Reservoir: no TSC datum document; Annual Operating Plan gives 'feet msl' only"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Boysen Reservoir: 1994 survey fetched states no datum; no gage statement"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Pathfinder Reservoir: only a combined Pathfinder/Seminoe sedimentation PDF exists (64.8 MB, not fetched)"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir.html",
+     "says": "Seminoe Reservoir: only a combined Pathfinder/Seminoe sedimentation PDF exists (64.8 MB, not fetched)"
+    }
+   ],
+   "caveat": "Mohave, Shasta and Trinity: asset record and location tag disagree. Powell: the 2021 USGS Glen Canyon survey exists because of uncertainty in Reclamation's local datum."
+  },
+  {
+   "provider": "nwps",
+   "scope": "provider-level, all 43 NWPS lakes",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [],
+   "evidence": [
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/docs/swagger.json",
+     "says": "the swagger defines no semantics for datums.vertical value; gaugeZeroDatum exists only under inundation"
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/BRTA3",
+     "says": "Bartlett table NGVD29=1599.46 matches the USGS gage datum, but NWPS reads 0.54 ft above gage height + that value"
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/CNLO2",
+     "says": "Canton lists NAVD88=0.6 while NWPS equals the CWMS NGVD29 series"
+    }
+   ],
+   "caveat": "HP/HL/HG labels are reliable (stageflow primaryName); datum tables are not. Accept NWPS only through an independent labelled source."
+  },
+  {
+   "provider": "nwps",
+   "scope": "rebind: NWPS Pool is numerically identical to the CWMS Elev series at the project that holds Top of Conservation",
+   "decision": "SAME_SOURCE",
+   "levelDatum": "NGVD29 (CWMS location vertical-datum)",
+   "referenceDatum": "NGVD29 (CWMS location vertical-datum)",
+   "sigmaFt": 0.0,
+   "lakes": [
+    "John Redmond Reservoir|KS",
+    "Canton Lake|OK",
+    "Kaw Lake|OK",
+    "Lake Tenkiller|OK",
+    "Skiatook Lake|OK",
+    "Lake Moomaw|VA"
+   ],
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/JOHN?office=SWT",
+     "says": "CWMS location vertical-datum NGVD29 (also CANT, KAWL, TENK, SKIA; NAO Moomaw)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SWT&name=JOHN.Elev.Inst.30Minutes.0.Ccp-Rev",
+     "says": "paired with NWPS JRLK1 hourly, 2026-10-12..14: mean diff 0.000, max 0.00; other lakes mean diff -0.008..+0.001, max abs 0.05 ft"
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/JRLK1/stageflow/observed",
+     "says": "NWPS observed Pool values used in the pairing"
+    }
+   ],
+   "caveat": "Applies only if the live level is read from the CWMS series (rebind). NWPS-sourced reading alone remains UNKNOWN. NWS datum tables for these gauges are empty or contradictory (Canton NAVD88=0.6, John Redmond NGVD29=995)."
+  },
+  {
+   "provider": "nwps",
+   "scope": "rebind: NWPS Pool identical to USGS 62615 (NAVD88) and pool is a CWMS location tagged NAVD88",
+   "decision": "SAME_DATUM",
+   "levelDatum": "NAVD88",
+   "referenceDatum": "NAVD88",
+   "sigmaFt": 0.1,
+   "lakes": [
+    "Youghiogheny River Lake|MD"
+   ],
+   "evidence": [
+    {
+     "url": "https://waterservices.usgs.gov/nwis/iv/?sites=03077000&parameterCd=62615",
+     "says": "NWPS YGBP1 minus USGS 62615 over 237 hours: mean 0.0, sd 0.007 ft; 62615 is NAVD88 by USGS parameter definition"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Youghiogheny?office=LRP",
+     "says": "CWMS location vertical-datum NAVD88; pool is its Top of Conservation"
+    }
+   ],
+   "caveat": "Rebind the live source to USGS 62615 or the CWMS series first; the NWPS table is empty."
+  },
+  {
+   "provider": "nwps",
+   "scope": "series datum reproduced against a labelled USGS series but the pool figure's datum is undocumented",
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29 (Herrington, Priest); NAVD88 (Ute)",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Herrington Lake|KY",
+    "Ute Lake|NM",
+    "Priest Lake|ID"
+   ],
+   "evidence": [
+    {
+     "url": "https://waterservices.usgs.gov/nwis/iv/?sites=03286000&parameterCd=62614",
+     "says": "Herrington NWPS == USGS 62614 (NGVD29)"
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/iv/?sites=07226800&parameterCd=62615",
+     "says": "Ute NWPS == USGS 62615 (NAVD88)"
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/PSLI1",
+     "says": "Priest NWPS = USGS 00065 + the NGVD29 table value 2434.64 to 0.003 ft"
+    }
+   ],
+   "caveat": "Need the operator document stating the datum of the pool figure (KU ISARA report 740; NM ISC / USGS WDR 3788.86; Idaho statute 2437.64)."
+  },
+  {
+   "provider": "nwps",
+   "scope": "remaining NWPS lakes",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Neely Henry|AL",
+    "Bartlett|AZ",
+    "Pleasant|AZ",
+    "Crescent Lake|FL",
+    "Blackshear|GA",
+    "Burton|GA",
+    "Lake Russell (R.B. Russell)|GA",
+    "Oconee|GA",
+    "Sinclair|GA",
+    "American Falls Reservoir|ID",
+    "Crab Orchard Lake|IL",
+    "Devil's Kitchen Lake|IL",
+    "Liberty Reservoir|MD",
+    "Lake Minnetonka|MN",
+    "Lake Vermilion|MN",
+    "Rainy Lake|MN",
+    "Lake of the Ozarks|MO",
+    "Badin Lake|NC",
+    "High Rock Lake|NC",
+    "Topaz Lake|NV",
+    "Canandaigua Lake|NY",
+    "Cayuga Lake|NY",
+    "Indian Lake|NY",
+    "Keuka Lake|NY",
+    "Oneida Lake|NY",
+    "Seneca Lake|NY",
+    "Scituate Reservoir|RI",
+    "Lake Poinsett|SD",
+    "Lake Sharpe|SD",
+    "Lewis and Clark Lake|SD",
+    "Flannagan Reservoir|VA",
+    "Lake Gaston|VA",
+    "Lake Petenwell|WI"
+   ],
+   "evidence": [
+    {
+     "url": "docs/brains/depth/DEPTH_NWPS_DATUM_AUDIT.md",
+     "says": "per-lake class: empty table, nonzero or contradicted table, local scale, stage code or table-value-0 only"
+    }
+   ],
+   "caveat": "Lake Russell matches USGS 00062 (Hartwell method) and needs a paired CWMS series; Vermilion, Topaz, Scituate, Liberty, Crescent are local or stage."
+  },
+  {
+   "provider": "duke",
+   "scope": "Duke Energy 'relative' scale: 100.0 ft = full pond, 1 unit per foot (documented definition)",
+   "decision": "SAME_SOURCE",
+   "levelDatum": "DUKE_RELATIVE_SCALE (100.0 = full pond)",
+   "referenceDatum": "DUKE_RELATIVE_SCALE (100.0 = full pond)",
+   "sigmaFt": 0.1,
+   "lakes": [
+    "Lake Hickory|NC",
+    "Lake James|NC",
+    "Lake Norman|NC",
+    "Lake Wylie|SC",
+    "Lake Wateree|SC",
+    "Lake Jocassee|SC",
+    "Lake Keowee|SC"
+   ],
+   "evidence": [
+    {
+     "url": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
+     "says": "Catawba-Wateree LIP (2006): Licensee refers to Full Pond Elevation for all reservoirs as equal to 100.0 ft relative; full pond (ft above MSL) James 1200.0, Hickory 935.0, Norman 760.0, Wylie 569.4, Wateree 225.5"
+    },
+    {
+     "url": "https://www.des.sc.gov/sites/des/files/DNR/Hydrology/pdfs/basin-planning/uppsav/USRBC5%20-%20Item%205%20(Duke%20Energy%20Operations).pdf",
+     "says": "Duke 2023-12-13: Jocassee 100.0-70.0 ft (1110-1080 ft AMSL); Keowee 100.0-90.0 ft (800-790 ft AMSL)"
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/CWAN7",
+     "says": "NWS Norman NGVD29 zero 660 + 100 = 760.0; Hickory 835, James 1100, Wylie 469.4 likewise equal LIP full pond; observed 84 to 100, action stage 100"
+    }
+   ],
+   "caveat": "shift = scale - 100 (never level - fullPoolFt). PROVISIONAL: that the Duke API/page series is on this scale is not verified (API HTTP 403; page is a JS app). Datum name (NGVD29) rests on NWS metadata only. Needs Duke confirmation."
+  },
+  {
+   "provider": "duke",
+   "scope": "Lake Robinson (Duke Energy Progress)",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Lake Robinson|SC"
+   ],
+   "evidence": [
+    {
+     "url": "docs/brains/depth/DEPTH_DUKE_DATUM_EVIDENCE.md",
+     "says": "no public document found; 'real feet' is a project note only"
+    }
+   ],
+   "caveat": "Ask Duke."
+  },
+  {
+   "provider": "tva",
+   "scope": "TVA reading and TVA operating-guide pool are one TVA JSON service (candidates.json status SAME_OPERATOR_SYSTEM); includes Kentucky Lake|TN whose pool equals the guide GuideCurve max 359",
+   "decision": "SAME_SOURCE",
+   "levelDatum": "UNKNOWN (inferred NGVD29, not confirmed by TVA)",
+   "referenceDatum": "UNKNOWN (same system)",
+   "sigmaFt": 0.1,
+   "lakes": [
+    "Guntersville|AL",
+    "Wheeler|AL",
+    "Wilson|AL",
+    "Kentucky Lake|KY",
+    "Fontana Lake|NC",
+    "Hiwassee Lake|NC",
+    "Cherokee Lake|TN",
+    "Chickamauga Lake|TN",
+    "Douglas Lake|TN",
+    "Fort Loudoun Lake|TN",
+    "Kentucky Lake|TN",
+    "Nickajack Lake|TN",
+    "Norris Lake|TN",
+    "Pickwick Lake|TN",
+    "Tims Ford Lake|TN",
+    "Watts Bar Lake|TN",
+    "South Holston Lake|VA"
+   ],
+   "evidence": [
+    {
+     "url": "https://www.tva.com/RestApi/operating-guide/GVDA1",
+     "says": "guide MidNightElevation 593.70 equals the observed-data-48-hours midnight reading; directory pool 595 equals max TopOpZone; same check passes for all 16 lakes (identical for 7, within 0.05 ft for the rest)"
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/GVDA1",
+     "says": "NWS Guntersville tailwater NGVD29 zero 538.2 + stage 17.31 = 555.51 = TVA TailwaterElevation at the same hour"
+    },
+    {
+     "url": "https://lakeinfo.tva.gov/web/sites/guntersville.htm",
+     "says": "TVA page gives operating range 594-595 ft and winter minimum 593 ft; states no datum"
+    }
+   ],
+   "caveat": "Rule (a) only. Absolute datum NOT confirmed; no raising of levelDatumBasis above inferred. Request text in DEPTH_TVA_DATUM_CONFIRMATION.md."
+  },
+  {
+   "provider": "srp",
+   "scope": "SRP daily report: pool derived as current elevation + 'Remaining Elevation' (feet below maximum conservation storage level)",
+   "decision": "SAME_SOURCE",
+   "levelDatum": "UNKNOWN (SRP states no datum)",
+   "referenceDatum": "UNKNOWN (same SRP table)",
+   "sigmaFt": 0.1,
+   "lakes": [
+    "Apache|AZ",
+    "Canyon|AZ",
+    "Saguaro|AZ"
+   ],
+   "evidence": [
+    {
+     "url": "https://streamflow.watershedconnection.com/Dwr",
+     "says": "columns Current Elevation (ft) and Remaining Elevation (ft); glossary: 'Remaining' is how many feet the water is below the maximum conservation storage level; no datum text"
+    }
+   ],
+   "caveat": "Pool derived by construction, so shift = -Remaining. Roosevelt's pool is a CWMS Top of Conservation (a different provider): derive it from SRP's Remaining column instead to unlock."
+  },
+  {
+   "provider": "srp",
+   "scope": "Roosevelt: pool is a USACE CWMS value, level is SRP",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Roosevelt|AZ"
+   ],
+   "evidence": [
+    {
+     "url": "https://streamflow.watershedconnection.com/Dwr",
+     "says": "SRP states no datum"
+    }
+   ],
+   "caveat": "Derive from SRP Remaining Elevation (as for the other three)."
+  },
+  {
+   "provider": "sjrwmd",
+   "scope": "Upper Ocklawaha River Basin levels table: 'All levels in NAVD88 Datum'",
+   "decision": "SAME_DATUM",
+   "levelDatum": "NAVD88",
+   "referenceDatum": "NAVD88",
+   "sigmaFt": 0.1,
+   "lakes": [
+    "Apopka|FL",
+    "Griffin|FL",
+    "Harris|FL"
+   ],
+   "evidence": [
+    {
+     "url": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf",
+     "says": "re-fetched 2026-10-14: 'All levels in NAVD88 Datum', 'NAVD88 Datum'"
+    }
+   ],
+   "caveat": "Jesup, Lochloosa, Orange Lake have a natural-surface directory figure, not a pool."
+  },
+  {
+   "provider": "nipsco",
+   "scope": "NIPSCO page states 'Elevation in feet Local Datum' for the level and gives the FERC normal level on the same page",
+   "decision": "SAME_DATUM",
+   "levelDatum": "NIPSCO local datum",
+   "referenceDatum": "NIPSCO local datum",
+   "sigmaFt": 0.1,
+   "lakes": [
+    "Lake Shafer|IN"
+   ],
+   "evidence": [
+    {
+     "url": "https://www.nipsco.com/about-us/hydro-power/current-lake-levels-flow",
+     "says": "re-fetched 2026-10-14: levels in 'Elevation in feet Local Datum'; Norway/Lake Shafer normal 645.15 ft"
+    }
+   ],
+   "caveat": "Never convert with NCAT; the local-to-NGVD offset (2.32 ft) is a project note, not re-fetched."
+  },
+  {
+   "provider": "cnppid",
+   "scope": "CNPPID McConaughy / Johnson",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Lake McConaughy|NE",
+    "Johnson Lake|NE"
+   ],
+   "evidence": [
+    {
+     "url": "https://www.cnppid.com/operations/lake-mcconaughy-operating-levels",
+     "says": "table column 'Maximum Elevation' 3265.0, no unit or datum"
+    },
+    {
+     "url": "https://cnppid.com/?p=11938",
+     "says": "level table headed 'Today (Feet above Sea Level)', no datum; other sources give 3270 ft maximum"
+    }
+   ],
+   "caveat": "Same-operator, but two different pages and a 3265 vs 3270 disagreement; confirm the pool and datum with CNPPID."
+  },
+  {
+   "provider": "cdec",
+   "scope": "CDEC ALM (PG&E) and BER (USBR)",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Almanor|CA",
+    "Berryessa|CA"
+   ],
+   "evidence": [
+    {
+     "url": "https://cdec.water.ca.gov/dynamicapp/staMeta?station_id=ALM",
+     "says": "Almanor RES_ELE comes via DATA XCHG-PGE, no datum remark"
+    },
+    {
+     "url": "https://cdec.water.ca.gov/dynamicapp/staMeta?station_id=BER",
+     "says": "Berryessa RES_ELE (USBR), no datum remark"
+    }
+   ],
+   "caveat": "Almanor pool is on the PG&E datum (project note, not re-fetched)."
+  },
+  {
+   "provider": "usgs-d",
+   "scope": "USGS gage height + site altitude lakes with a pool figure (C.J. Strike, Henrys, Payette, Hopatcong)",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "C.J. Strike Reservoir|ID",
+    "Henrys Lake|ID",
+    "Payette Lake|ID",
+    "Lake Hopatcong|NJ"
+   ],
+   "evidence": [
+    {
+     "url": "docs/brains/depth/DEPTH_DATUM_AUDIT.md",
+     "says": "Hopatcong: USGS altitude 914.5 NAVD88 vs plan gauge datum 914.57 NGVD29; pool datums undocumented"
+    }
+   ],
+   "caveat": "Not re-researched in this pass."
+  },
+  {
+   "provider": "usbr-pnhm",
+   "scope": "Pacific Northwest hydromet forebay (Cascade, Crescent OR, Banks, Potholes)",
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "lakes": [
+    "Lake Cascade|ID",
+    "Crescent Lake|OR",
+    "Banks Lake|WA",
+    "Potholes Reservoir|WA"
+   ],
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Cascade_Reservoir_1995_Sedimentation_Survey.pdf",
+     "says": "Cascade 1995 survey: Reclamation levels are 0.66 ft higher than the U.S. Coast and Geodetic Survey datum; Banks Lake gage shift to NAVD88 noted in the Lake Roosevelt 2010-11 survey"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Lake_Roosevelt_Reservoir_Survey_2010-11.pdf",
+     "says": "Grand Coulee project datum ~2.5 ft below NAVD88"
+    }
+   ],
+   "caveat": "Hydromet FB series has no documented datum; a Cascade/Banks gage statement is needed. Same method as RISE tier B."
+  }
+ ]
+}

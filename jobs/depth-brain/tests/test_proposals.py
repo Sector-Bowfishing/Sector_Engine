@@ -108,3 +108,32 @@ def test_verbose_datum_strings_are_reduced_to_their_token_and_stats_still_gate()
     r = rec(levelDatum="NGVD29 (00062 series; numerically equal to CWMS NGVD29 pool series)")
     assert ok(r)[0]
     assert not ok({**r, "offsetStats": {"n": 5, "meanFt": 0.0, "sdFt": 0.05}})[0]
+
+
+def test_provider_rules_need_explicit_lead_acceptance(tmp_path):
+    d = tmp_path / "p"; d.mkdir()
+    rule = {"provider": "x", "scope": "Some scope", "decision": "SAME_DATUM", "levelDatum": "NAVD88", "referenceDatum": "NAVD88", "sigmaFt": 0.1, "lakes": BLOCKED[:2], "evidence": EV}
+    (d / "provider_rules.json").write_text(json.dumps({"rules": [rule]}))
+    r = P.plan(MAN, str(d))
+    assert r["accepted"] == {} and "not accepted by lead" in r["rejected"][0]["reason"]
+    (d / "accepted_provider_rules.json").write_text(json.dumps({"accepted": [{"provider": "x", "decision": "SAME_DATUM", "scopeStartsWith": "Some", "confidence": "high"}]}))
+    r2 = P.plan(MAN, str(d))
+    assert set(r2["accepted"]) == set(BLOCKED[:2]) and r2["accepted"][BLOCKED[0]]["status"] == "SAME_DATUM"
+    (d / "accepted_provider_rules.json").write_text(json.dumps({"accepted": [{"provider": "x", "decision": "SAME_DATUM", "scopeStartsWith": "Some", "asStatus": "SAME_SOURCE", "confidence": "medium"}]}))
+    r3 = P.plan(MAN, str(d))
+    assert r3["accepted"][BLOCKED[0]]["status"] == "SAME_SOURCE" and r3["accepted"][BLOCKED[0]]["confidence"] == "medium"
+
+
+def test_acceptance_never_relaxes_evidence_or_sigma(tmp_path):
+    d = tmp_path / "p"; d.mkdir()
+    (d / "accepted_provider_rules.json").write_text(json.dumps({"accepted": [{"provider": "x", "decision": "SAME_DATUM", "scopeStartsWith": "S", "asStatus": "SAME_SOURCE"}]}))
+    for bad in ({"evidence": []}, {"sigmaFt": 0.01}, {"lakes": [OK_LAKE]}):
+        rule = {"provider": "x", "scope": "S", "decision": "SAME_DATUM", "levelDatum": "LOCAL", "referenceDatum": "LOCAL", "sigmaFt": 0.1, "lakes": BLOCKED[:1], "evidence": EV, **bad}
+        (d / "provider_rules.json").write_text(json.dumps({"rules": [rule]}))
+        assert P.plan(MAN, str(d))["accepted"] == {}
+
+
+def test_held_rules_are_not_in_the_accepted_file_as_promotable():
+    acc = json.load(open(os.path.join(HERE, "depth_brain", "data", "proposals", "accepted_provider_rules.json")))
+    assert {a["provider"] for a in acc["accepted"]} == {"sjrwmd", "srp", "nipsco", "tva"}
+    assert {h["provider"] for h in acc["heldWithReason"]} == {"rise", "nwps", "duke"}

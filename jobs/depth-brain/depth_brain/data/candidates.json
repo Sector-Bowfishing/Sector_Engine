@@ -2087,18 +2087,16 @@
    "state": "AZ"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 1.929,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -2118,8 +2116,8 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "srp",
     "series": "Elevation.Official.395",
     "status": "RESEARCH_VERIFIED"
@@ -2133,14 +2131,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1914,
     "source": "https://streamflow.watershedconnection.com/Dwr",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "AZ"
   },
   {
@@ -2201,18 +2199,16 @@
    "state": "AZ"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 1.949,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -2232,8 +2228,8 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "srp",
     "series": "Elevation.Official.399",
     "status": "RESEARCH_VERIFIED_LABELLED"
@@ -2247,14 +2243,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1660.5,
     "source": "https://streamflow.watershedconnection.com/dwr",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "AZ"
   },
   {
@@ -2485,18 +2481,16 @@
    "state": "AZ"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 1.932,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -2516,8 +2510,8 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "srp",
     "series": "Elevation.Official.405",
     "status": "RESEARCH_VERIFIED"
@@ -2531,14 +2525,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1529,
     "source": "https://streamflow.watershedconnection.com/dwr",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "AZ"
   },
   {
@@ -5516,17 +5510,16 @@
    "state": "DE"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.892,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -5546,7 +5539,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NAVD88",
-    "datumNote": "provider table: NAVD88",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "sjrwmd",
     "series": "Water_Level/Cmd_E",
@@ -5560,15 +5553,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 66.14,
     "source": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "FL"
   },
   {
@@ -5710,17 +5703,16 @@
    "state": "FL"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.909,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:FL",
@@ -5744,7 +5736,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NAVD88",
-    "datumNote": "provider table: NAVD88",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "sjrwmd",
     "series": "Water_Level/Cmd_E",
@@ -5763,9 +5755,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 58.21,
     "source": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf",
     "winterPoolFt": null
@@ -5783,22 +5775,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "FL"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "FL"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.922,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:FL",
@@ -5822,7 +5813,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NAVD88",
-    "datumNote": "provider table: NAVD88",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "sjrwmd",
     "series": "Water_Level/Cmd_E",
@@ -5841,9 +5832,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 62.21,
     "source": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf",
     "winterPoolFt": null
@@ -5861,8 +5852,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "FL"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "FL"
   },
   {
@@ -10160,17 +10151,16 @@
    "state": "IN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.367,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -10190,7 +10180,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "nipsco",
     "series": "Plant Lake Level (El ft local datum)",
@@ -10205,14 +10195,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 645.15,
     "source": "https://www.nipsco.com/about-us/hydro-power/current-lake-levels-flow",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IN"
   },
   {
@@ -31004,18 +30994,16 @@
    "state": "TN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.131,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_OPERATOR_SYSTEM"
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
@@ -31035,8 +31023,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "provider table: NGVD29",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "tva",
     "series": "ReservoirElevation",
     "status": "RESEARCH_VERIFIED"
@@ -31050,14 +31038,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 359,
     "source": "https://lakeinfo.tva.gov/web/sites/kentucky.htm",
     "winterPoolFt": 354.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "TN"
   },
   {
@@ -37745,12 +37733,12 @@
    "state": "WY"
   }
  ],
- "manifestVersion": "2026-10-14.2",
+ "manifestVersion": "2026-10-14.3",
  "schema": "depth-candidates-v1",
  "summary": {
   "blockedReasons": {
    "DATUM_CONVERSION_NOT_ENABLED": 1,
-   "DATUM_UNKNOWN": 234,
+   "DATUM_UNKNOWN": 226,
    "DUKE_LOCAL_SCALE_NOT_ENABLED": 8,
    "MISSING_REFERENCE_POOL": 13,
    "NO_VERIFIED_LEVEL_BINDING": 204,
@@ -37759,10 +37747,10 @@
   },
   "datumStatus": {
    "INCOMPATIBLE": 1,
-   "SAME_DATUM": 87,
-   "SAME_OPERATOR_SYSTEM": 16,
-   "SAME_SOURCE": 71,
-   "UNKNOWN": 446
+   "SAME_DATUM": 90,
+   "SAME_OPERATOR_SYSTEM": 17,
+   "SAME_SOURCE": 75,
+   "UNKNOWN": 438
   },
   "lakes": 621,
   "levelSourceStatus": {
@@ -37812,12 +37800,12 @@
    "U": 56
   },
   "rollout": {
-   "BLOCKED": 450,
-   "HIGH_CONFIDENCE": 84,
-   "MEDIUM_CONFIDENCE": 82,
+   "BLOCKED": 442,
+   "HIGH_CONFIDENCE": 87,
+   "MEDIUM_CONFIDENCE": 87,
    "PILOT_VERIFIED": 5
   },
-  "shiftPossible": 171,
+  "shiftPossible": 179,
   "tier": {
    "A": 77,
    "B": 26,

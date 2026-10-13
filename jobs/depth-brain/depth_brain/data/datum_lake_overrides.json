@@ -41,6 +41,42 @@
   "status": "SAME_SOURCE",
   "summary": "CWMS series Alamo.Elev.Inst.1Hour.0.GOES-rev and pool level Alamo.Elev.Inst.0.Bottom of Flood share location Alamo; pool figure 1160.4 equals the level value."
  },
+ "Apache|AZ": {
+  "caveat": "Pool derived by construction, so shift = -Remaining. Roosevelt's pool is a CWMS Top of Conservation (a different provider): derive it from SRP's Remaining column instead to unlock.",
+  "confidence": "medium",
+  "evidence": [
+   {
+    "says": "columns Current Elevation (ft) and Remaining Elevation (ft); glossary: 'Remaining' is how many feet the water is below the maximum conservation storage level; no datum text",
+    "url": "https://streamflow.watershedconnection.com/Dwr"
+   }
+  ],
+  "levelDatum": "UNKNOWN (SRP states no datum)",
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": "UNKNOWN (same SRP table)",
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_SOURCE",
+  "summary": "provider rule srp: SRP daily report: pool derived as current elevation + 'Remaining Elevation' (feet below maximum conservation storage level)"
+ },
+ "Apopka|FL": {
+  "caveat": "Jesup, Lochloosa, Orange Lake have a natural-surface directory figure, not a pool.",
+  "confidence": "high",
+  "evidence": [
+   {
+    "says": "re-fetched 2026-10-14: 'All levels in NAVD88 Datum', 'NAVD88 Datum'",
+    "url": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf"
+   }
+  ],
+  "levelDatum": "NAVD88",
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": "NAVD88",
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_DATUM",
+  "summary": "provider rule sjrwmd: Upper Ocklawaha River Basin levels table: 'All levels in NAVD88 Datum'"
+ },
  "Bay Springs Lake|MS": {
   "caveat": "The CWMS level is seasonal ([408.0, 414.0, 480.0]); the shift is relative to 414.0 only in the season that value applies. No independent USGS elevation series within 3 km usable for pairing; decision rests on CWMS metadata.",
   "confidence": "high",
@@ -394,6 +430,24 @@
   "sigmaFt": 0.0,
   "status": "SAME_SOURCE",
   "summary": "CWMS series CAFE.Elev.Inst.1Hour.0.Best-NWO and pool level CAFE.Elev.Inst.0.Bottom of Flood share location CAFE; pool figure 3797.0 equals the level value."
+ },
+ "Canyon|AZ": {
+  "caveat": "Pool derived by construction, so shift = -Remaining. Roosevelt's pool is a CWMS Top of Conservation (a different provider): derive it from SRP's Remaining column instead to unlock.",
+  "confidence": "medium",
+  "evidence": [
+   {
+    "says": "columns Current Elevation (ft) and Remaining Elevation (ft); glossary: 'Remaining' is how many feet the water is below the maximum conservation storage level; no datum text",
+    "url": "https://streamflow.watershedconnection.com/Dwr"
+   }
+  ],
+  "levelDatum": "UNKNOWN (SRP states no datum)",
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": "UNKNOWN (same SRP table)",
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_SOURCE",
+  "summary": "provider rule srp: SRP daily report: pool derived as current elevation + 'Remaining Elevation' (feet below maximum conservation storage level)"
  },
  "Cecil M. Harden Lake|IN": {
   "caveat": "The CWMS level is seasonal ([640.0, 662.0]); the shift is relative to 662.0 only in the season that value applies. The USGS pairing is circular (CWMS series is the USGS feed): it fixes the datum of the numbers, it does not independently confirm the CWMS tag.",
@@ -1384,6 +1438,24 @@
   "status": "SAME_SOURCE",
   "summary": "CWMS series PENS.Elev.Inst.1Hour.0.Ccp-Rev and pool level PENS.Elev.Inst.0.Top of Conservation share location PENS; pool figure 744.0 equals the level value."
  },
+ "Griffin|FL": {
+  "caveat": "Jesup, Lochloosa, Orange Lake have a natural-surface directory figure, not a pool.",
+  "confidence": "high",
+  "evidence": [
+   {
+    "says": "re-fetched 2026-10-14: 'All levels in NAVD88 Datum', 'NAVD88 Datum'",
+    "url": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf"
+   }
+  ],
+  "levelDatum": "NAVD88",
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": "NAVD88",
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_DATUM",
+  "summary": "provider rule sjrwmd: Upper Ocklawaha River Basin levels table: 'All levels in NAVD88 Datum'"
+ },
  "Harlan County Lake|NE": {
   "caveat": "The CWMS series location is LOCAL; the NGVD29 claim rests on the USGS 62614 pairing (mean offset in offsetStats) plus the NGVD29-stamped pool level at a sibling location; the CWMS same-location pool level is LOCAL.",
   "confidence": "medium",
@@ -1442,6 +1514,24 @@
   "sigmaFt": 0.15,
   "status": "SAME_DATUM",
   "summary": "CWMS series location is LOCAL; the pool level is stamped NGVD29; an independent USGS 62614 series on the same pool equals the series, so the series values are NGVD29; pool figure 1946.0 equals the level value."
+ },
+ "Harris|FL": {
+  "caveat": "Jesup, Lochloosa, Orange Lake have a natural-surface directory figure, not a pool.",
+  "confidence": "high",
+  "evidence": [
+   {
+    "says": "re-fetched 2026-10-14: 'All levels in NAVD88 Datum', 'NAVD88 Datum'",
+    "url": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf"
+   }
+  ],
+  "levelDatum": "NAVD88",
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": "NAVD88",
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_DATUM",
+  "summary": "provider rule sjrwmd: Upper Ocklawaha River Basin levels table: 'All levels in NAVD88 Datum'"
  },
  "Hungry Horse Reservoir|MT": {
   "caveat": "Pool figure came from a document (doc), not from CWMS; it equals the CWMS level exactly, so the recommended reference is the CWMS level itself (re-bind).",
@@ -1720,6 +1810,32 @@
   "sigmaFt": 0.0,
   "status": "SAME_SOURCE",
   "summary": "CWMS series KANS.Elev.Inst.1Hour.0.Best-NWK and pool level KANS.Elev.Inst.0.Top of Conservation share location KANS; pool figure 1463.0 equals the level value."
+ },
+ "Kentucky Lake|TN": {
+  "caveat": "Rule (a) only. Absolute datum NOT confirmed; no raising of levelDatumBasis above inferred. Request text in DEPTH_TVA_DATUM_CONFIRMATION.md.",
+  "confidence": "high",
+  "evidence": [
+   {
+    "says": "guide MidNightElevation 593.70 equals the observed-data-48-hours midnight reading; directory pool 595 equals max TopOpZone; same check passes for all 16 lakes (identical for 7, within 0.05 ft for the rest)",
+    "url": "https://www.tva.com/RestApi/operating-guide/GVDA1"
+   },
+   {
+    "says": "NWS Guntersville tailwater NGVD29 zero 538.2 + stage 17.31 = 555.51 = TVA TailwaterElevation at the same hour",
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/GVDA1"
+   },
+   {
+    "says": "TVA page gives operating range 594-595 ft and winter minimum 593 ft; states no datum",
+    "url": "https://lakeinfo.tva.gov/web/sites/guntersville.htm"
+   }
+  ],
+  "levelDatum": null,
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": null,
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_OPERATOR_SYSTEM",
+  "summary": "provider rule tva: TVA reading and TVA operating-guide pool are one TVA JSON service (candidates.json status SAME_OPERATOR_SYSTEM); includes Kentucky Lake|TN whose pool equals the guide GuideCurve max 359"
  },
  "Lake Ashtabula|ND": {
   "caveat": "The CWMS level is seasonal ([1262.5, 1266.0]); the shift is relative to 1266.0 only in the season that value applies. The USGS pairing is circular (CWMS series is the USGS feed): it fixes the datum of the numbers, it does not independently confirm the CWMS tag.",
@@ -2298,6 +2414,24 @@
   "sigmaFt": 0.0,
   "status": "SAME_SOURCE",
   "summary": "CWMS series GARR.Elev.Inst.1Hour.0.Best-MRBWM and pool level GARR.Elev.Inst.0.Top of Conservation share location GARR; pool figure 1837.5 equals the level value."
+ },
+ "Lake Shafer|IN": {
+  "caveat": "Never convert with NCAT; the local-to-NGVD offset (2.32 ft) is a project note, not re-fetched.",
+  "confidence": "medium",
+  "evidence": [
+   {
+    "says": "re-fetched 2026-10-14: levels in 'Elevation in feet Local Datum'; Norway/Lake Shafer normal 645.15 ft",
+    "url": "https://www.nipsco.com/about-us/hydro-power/current-lake-levels-flow"
+   }
+  ],
+  "levelDatum": null,
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": null,
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_SOURCE",
+  "summary": "provider rule nipsco: NIPSCO page states 'Elevation in feet Local Datum' for the level and gives the FERC normal level on the same page"
  },
  "Lake Strom Thurmond (Clarks Hill)|SC": {
   "caveat": "Offset is +0.18 ft (larger than Hartwell's -0.12); sigma carries it. CWMS Top of Conservation is seasonal (326/330 ft); 330 is the summer value. USGS 00062 itself carries no datum label: the datum rests on the CWMS pairing.",
@@ -3205,6 +3339,24 @@
   "sigmaFt": 0.0,
   "status": "SAME_SOURCE",
   "summary": "CWMS series ROS.Elev-Forebay.Ave.1Hour.1Hour.SCL-RAW and pool level ROS.Elev-Forebay.Inst.0.Top of Normal share location ROS; pool figure 1602.5 equals the level value."
+ },
+ "Saguaro|AZ": {
+  "caveat": "Pool derived by construction, so shift = -Remaining. Roosevelt's pool is a CWMS Top of Conservation (a different provider): derive it from SRP's Remaining column instead to unlock.",
+  "confidence": "medium",
+  "evidence": [
+   {
+    "says": "columns Current Elevation (ft) and Remaining Elevation (ft); glossary: 'Remaining' is how many feet the water is below the maximum conservation storage level; no datum text",
+    "url": "https://streamflow.watershedconnection.com/Dwr"
+   }
+  ],
+  "levelDatum": "UNKNOWN (SRP states no datum)",
+  "method": "operator-doc",
+  "promotedFrom": "proposals/provider_rules.json",
+  "referenceDatum": "UNKNOWN (same SRP table)",
+  "rulesVersion": "proposal-rules-1",
+  "sigmaFt": 0.1,
+  "status": "SAME_SOURCE",
+  "summary": "provider rule srp: SRP daily report: pool derived as current elevation + 'Remaining Elevation' (feet below maximum conservation storage level)"
  },
  "Salamonie Lake|IN": {
   "caveat": "The USGS pairing is circular (CWMS series is the USGS feed): it fixes the datum of the numbers, it does not independently confirm the CWMS tag.",

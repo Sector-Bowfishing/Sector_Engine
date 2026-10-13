@@ -71,13 +71,14 @@ def validate_pairing(lid: str, rec: dict, manifest_by_id: dict) -> tuple[bool, s
     return True, "ok"
 
 
-def validate_provider_rule(rule: dict, manifest_by_id: dict) -> tuple[bool, str, list]:
+def validate_provider_rule(rule: dict, manifest_by_id: dict, relax_datum_token: bool = False) -> tuple[bool, str, list]:
+    """`relax_datum_token` only for a lead-reclassified rule (e.g. a local-datum SAME_DATUM accepted as SAME_SOURCE); it never relaxes evidence or sigma."""
     if rule.get("decision") not in ("SAME_DATUM", "SAME_SOURCE"):
         return False, f"decision {rule.get('decision')!r} not promotable", []
     if not _has_evidence(rule):
         return False, "no evidence URLs", []
-    ld, rd = normalize_datum(rule.get("levelDatum")), normalize_datum(rule.get("referenceDatum"))
-    if rule["decision"] == "SAME_DATUM" and (ld is None or ld != rd or ld not in ("NGVD29", "NAVD88")):
+    ld, rd = datum_token(rule.get("levelDatum")), datum_token(rule.get("referenceDatum"))
+    if rule["decision"] == "SAME_DATUM" and not relax_datum_token and (ld is None or ld != rd or ld not in ("NGVD29", "NAVD88")):
         return False, "levels and references must be the same documented NGVD29/NAVD88", []
     sig = rule.get("sigmaFt")
     if not isinstance(sig, (int, float)) or sig < ALLOWED_SIGMA_MIN:
@@ -106,11 +107,21 @@ def plan(manifest: dict, proposals_dir: str | None = None) -> dict:
         else:
             rejected.append({"lakeId": lid, "file": "datum_pairings.json", "reason": why})
     pr = load(os.path.join(d, "provider_rules.json"))
+    acc = (load(os.path.join(d, "accepted_provider_rules.json")) or {}).get("accepted", [])
     for rule in (pr or {}).get("rules", []):
-        ok, why, lakes = validate_provider_rule(rule, by_id)
+        entry = next((a for a in acc if a.get("provider") == rule.get("provider") and a.get("decision") == rule.get("decision")
+                      and str(rule.get("scope", "")).startswith(a.get("scopeStartsWith", "\0"))), None)
+        if entry is None:                                                   # a provider rule needs an explicit, reasoned lead acceptance
+            if rule.get("decision") in ("SAME_DATUM", "SAME_SOURCE"):
+                rejected.append({"provider": rule.get("provider"), "file": "provider_rules.json", "reason": "not accepted by lead (see accepted_provider_rules.json)"})
+            continue
+        ok, why, lakes = validate_provider_rule(rule, by_id, relax_datum_token=bool(entry.get("asStatus")))
         if not ok:
             rejected.append({"provider": rule.get("provider"), "file": "provider_rules.json", "reason": why})
             continue
+        rule = {**rule, "confidence": entry.get("confidence", rule.get("confidence"))}                       # the lead's confidence wins
+        if entry.get("asStatus"):
+            rule = {**rule, "decision": entry["asStatus"], "levelDatum": None, "referenceDatum": None}
         for lid in lakes:
             if lid in accepted:
                 continue

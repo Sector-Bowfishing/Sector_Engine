@@ -1,0 +1,21 @@
+{
+ "schema": "depth-accepted-provider-rules-v1",
+ "acceptedAt": "2026-10-14",
+ "acceptedBy": "lead (Depth Brain session), pending Michael review of the datum audit",
+ "policy": "A provider rule is promoted only if listed here with a reason. Everything else in provider_rules.json is evidence for the unlock queue, not data.",
+ "accepted": [
+  {"provider": "sjrwmd", "decision": "SAME_DATUM", "scopeStartsWith": "Upper Ocklawaha", "confidence": "high",
+   "reason": "SJRWMD chart text states all levels NAVD88 (fetched and re-fetched 2026-10-14); level series and regulation line are one chart"},
+  {"provider": "srp", "decision": "SAME_SOURCE", "scopeStartsWith": "SRP daily report", "confidence": "medium",
+   "reason": "pool figure is derived from the same SRP daily table (current elevation + Remaining Elevation); shift = -Remaining by construction. Medium because the pool is only as reliable as SRP's remaining column"},
+  {"provider": "nipsco", "decision": "SAME_DATUM", "scopeStartsWith": "NIPSCO page", "asStatus": "SAME_SOURCE", "confidence": "medium",
+   "reason": "level and FERC normal level are on one NIPSCO page in NIPSCO local datum; a local datum can never be SAME_DATUM, so it is accepted as SAME_SOURCE; no conversion"},
+  {"provider": "tva", "decision": "SAME_SOURCE", "scopeStartsWith": "TVA reading and TVA operating-guide pool", "asStatus": "SAME_OPERATOR_SYSTEM", "confidence": "high",
+   "reason": "TVA REST payloads: directory pool equals an operating-guide figure and MidNightElevation matches the reading (DEPTH_TVA_DATUM_CONFIRMATION.md). Accepted ONLY at the existing SAME_OPERATOR_SYSTEM level (datum name unconfirmed); only newly unlocks lakes not already defensible"}
+ ],
+ "heldWithReason": [
+  {"provider": "rise", "lakes": 19, "why": "Reclamation documents the pool and the dam gage record in one project datum, but not that the RISE daily value IS that gage record; project datum is not NGVD29/NAVD88. Needs Reclamation confirmation (DEPTH_RISE_DATUM_RULES.md section 7)."},
+  {"provider": "nwps", "lakes": 7, "why": "Valid only after Lake Brain rebinds to the CWMS/USGS series (the bound NWPS product's datum table is empty/contradictory). Lake-side dependency, recorded in DEPTH_LAKE_DATUM_DEPENDENCY.md."},
+  {"provider": "duke", "lakes": 7, "why": "100-scale is documented, but that the Duke series IS on that scale is unverified (API 403, JS shell). Remains DUKE_LOCAL_SCALE_NOT_ENABLED."}
+ ]
+}
