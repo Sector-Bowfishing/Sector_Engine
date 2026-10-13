@@ -47,14 +47,15 @@ def main():
     outp = DATA / "context/chain.json"
     out = json.load(open(outp)) if outp.exists() else {}
     todo = [k for k, v in ej.items() if v.get("nid_lat") and k not in out]
-    todo.sort(key=lambda k: (k not in ("Pickwick Lake|TN", "Lake Hartwell|SC"), k))   # pilots first
+    dirl = {l["id"]: l for l in json.load(open(DATA / "directory_lakes_2026-10-13.json"))["lakes"]}
+    todo.sort(key=lambda k: (k not in ("Pickwick Lake|TN", "Lake Hartwell|SC"), not (dirl[k]["cwmsOffice"] or dirl[k]["operatorName"] == "TVA"), k))   # pilots, then operator-feed lakes, then the rest
     print("todo", len(todo), flush=True)
     for i, k in enumerate(todo):
         v = ej[k]
         r = get(f"{N}/comid/position", {"coords": f"POINT({v['nid_lon']} {v['nid_lat']})"})
         if not r or not r.get("features"): out[k] = {"error": "no comid"}; outp.write_text(json.dumps(out)); continue
         comid = r["features"][0]["properties"]["comid"]; rec = {"comid": comid}
-        for nav, dist in (("DM", 250), ("UM", 120)):
+        for nav, dist in (("DM", 250),):          # UM dropped: direction comes from DM only (and it halves the NLDI quota use)
             fl = get(f"{N}/comid/{comid}/navigation/{nav}/flowlines", {"distance": dist, "f": "json"})
             time.sleep(0.4)
             if not fl: rec[nav] = None; continue
@@ -68,8 +69,7 @@ def main():
             rec[nav] = sorted([(ids[ix], round(polys[ix].distance(sp) * 111.0, 1)) for ix in hit], key=lambda t: t[1])
             rec[nav + "_n_flowlines"] = len(geoms)
         out[k] = rec
-        if i % 25 == 0:
-            outp.write_text(json.dumps(out)); print(i, k, rec.get("DM"), flush=True)
+        outp.write_text(json.dumps(out)); print(i, k, [d[0] for d in (rec.get("DM") or [])][:4], flush=True)
     outp.write_text(json.dumps(out)); print("done", len(out))
 
 

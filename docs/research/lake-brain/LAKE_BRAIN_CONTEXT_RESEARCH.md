@@ -32,7 +32,7 @@ All numbers use the 621-lake directory snapshot (`directory_lakes_2026-10-13.jso
 | NID via Esri mirror (92,627 dams) | dam presence, height, year, purposes, storage, drainage area | within 5 km; name match preferred, dikes/saddles demoted, else surface area 0.2-5x polygon | 501 (460 name, 41 geometry) | official API returns 403 (B-context-001) |
 | NHDPlus HR flowline at the matched dam | EROM mean annual flow, drainage area, stream order | +-0.004 degree box around the dam, keep largest `totdasqkm` | 499 of 501 | rejected where yield < 0.01 cfs/km2 |
 | GLOBathy (Dmax, A = a h^b) | modeled depth and shallow fraction | via HydroLAKES id | 554 | modeled, see 4.3 |
-| NLDI downstream navigation (250 km) | upstream/downstream directory lakes | from the matched dam coordinate | {{CHAIN_N}} lakes processed | resumable, NLDI rate-limits |
+| NLDI downstream navigation (250 km) | upstream/downstream directory lakes | from the matched dam coordinate | 377 of 501 lakes with a dam coordinate (all 5 pilots, 82 % of CWMS lakes, 11 of 16 TVA lakes) | NLDI throttled after about 1,000 calls; the remaining 124 (mostly lakes with no operator feed) are pending, `context_chain.py` is resumable |
 
 Derived reference quantities (all in `lake_features.csv`): `area_ref_km2` = max of polygon, HydroLAKES, and NID surface area when within 2x of the other two; `storage_mcm` = HydroLAKES capacity, else NID; `inflow_m3s` = EROM gage-adjusted (qema), else runoff EROM, else HydroLAKES; `res_time_d` = storage / inflow; `dor` = residence time / 365 (degree of regulation); `mean_depth_m` = storage / `area_ref`.
 
@@ -69,7 +69,7 @@ Run-of-river means the whole pool turns over in about one to two weeks at mean f
 |---|---|
 | EROM `qema` vs long-term gauge means below/near the pilots | Guntersville 40,809 cfs vs Whitesburg gauge 43,265 (-6 %); Wilson 50,084 vs Florence 52,139 (-4 %); Pickwick 53,022 vs Savannah TN 56,477 (-6 %); Hartwell 4,689 vs Savannah River near Iva 4,525 (+4 %) |
 | HydroLAKES `Dis_avg` vs the same gauges | Guntersville +24 %, Wheeler +22 %, Wilson +25 %, Pickwick +23 % (runoff routing without regulation); Hartwell -4 % |
-| EROM vs HydroLAKES, fleet | median log10 ratio -0.03 (-7 %), IQR -0.13 to +0.06, n = 433 |
+| EROM vs HydroLAKES, fleet | median log10 ratio -0.03 (-7 %), IQR -0.13 to +0.06, n = 430 |
 | Drainage area: EROM vs NID | within x1.25 for 80 % (n = 483); HydroLAKES vs EROM median log10 -0.005 |
 | NID attribute errors found | Wheeler Dam drainage 232 mi2 (true about 29,000) and storage 228,045 ac-ft (HydroLAKES 1.07 M); Bull Shoals surface area about 10x; outlet structures on natural lakes carry the structure's surface area (Sebago x16) |
 | EROM failure mode | about 0 cfs at some western and plains dams (diverted / endorheic). Rejected where `qema/DA < 0.01 cfs/km2` or residence time > 10,000 d; falls back to HydroLAKES |
@@ -91,7 +91,7 @@ How tightly the pilot pools are coupled (TVA RestApi `predicted-data`, 3-day ave
 
 Downstream inflow equals upstream outflow plus 0-4 % of tributary water; midnight pool elevations change by 0 to 0.14 ft per day (Guntersville 593.81 -> 593.95 -> 594.06). **Consequence for validation:** leave-one-lake-out inside this chain mostly tests the same flow signal four times. Transfer evidence has to come from lakes outside the chain (section 3.5).
 
-Fleet chains: {{CHAIN_FLEET}}
+Fleet chains (377 lakes navigated): 130 have at least one directory lake downstream within 250 km and 91 at least one upstream. Downstream links join 197 lakes into 63 river systems. The Tennessee system holds 14 directory rows (13 lakes; Kentucky Lake is listed under TN and KY), including 13 of the 16 TVA lakes (Guntersville, Wheeler, Wilson, Pickwick, Kentucky, Chickamauga, Nickajack, Watts Bar, Fort Loudoun, Douglas, Cherokee, Fontana, Hiwassee). **Hartwell is also part of a cascade**: Hartwell -> Richard B. Russell (0 km) -> Thurmond (44 km), all USACE Savannah District; Jocassee and Keowee feed Hartwell (3 upstream directory lakes), so the Hartwell "independent" pilot is the middle of a seven-row Savannah/Keowee system (Hartwell, Russell and Thurmond are USACE Savannah District; Jocassee and Keowee are Duke Energy). Other systems: Alabama/Coosa (Weiss, Neely Henry, Logan Martin, Lay, Jordan) joined with Allatoona and Carters (7), Chattahoochee/Flint (Lanier, West Point, Walter F. George, Blackshear, Seminole; 6), Missouri mainstem (Oahe, Sakakawea and small ND lakes; 6), Housatonic (Candlewood, Zoar, Lillinonah, Waramaug and others; 7).
 
 ### 2.5 Public release / discharge data (verified 2026-10-13)
 
@@ -136,7 +136,7 @@ Operator families in the fleet: USACE 168, other (utilities, states, municipal) 
 Data-quality findings:
 
 * **`hasDam` is not a reliable "regulated" flag.** 105 lakes with `hasDam=false` carry a dam signal (an NID name match or HydroLAKES reservoir/control-structure type); among the 93 with a name-matched NID dam, 13 dams are 25 ft or higher and four 50 ft or higher (Lake Pend Oreille 180 ft, Jackson Lake WY 84 ft, Lake Chelan 66 ft, Catahoula 61 ft). Maine, New Hampshire and Minnesota headwater lakes are dam-raised natural lakes.
-* **Polygon area is the currently mapped water.** Against NID surface area, 81 % of polygons are within 0.7-1.4, 13 % are below 0.7 (low-pool western reservoirs: Alamo 0.07, Elephant Butte 0.26, Oahe ND 0.35, Roosevelt 0.31) and 6 % above 1.4. Against HydroLAKES, 67 % are within 0.8-1.25; HydroLAKES under-maps large narrow reservoirs (Powell 121 vs 518 km2). `area_ref_km2` takes the maximum of the credible estimates.
+* **Polygon area is the currently mapped water.** Against NID surface area, 81 % of polygons are within 0.7-1.4, 13 % are below 0.7 (low-pool western reservoirs: Alamo 0.07, Elephant Butte 0.26, Oahe ND 0.35, Roosevelt 0.31) and 6 % above 1.4. Against HydroLAKES (348 name-matched lakes), 71 % of polygons are within 0.8-1.25 of the HydroLAKES area, 22 % larger (HydroLAKES is an older, smaller mask) and 7 % smaller; HydroLAKES under-maps large narrow reservoirs (Powell 121 vs 518 km2). `area_ref_km2` takes the maximum of the credible estimates.
 * About 20 polygons are wrong by more than 2x or tiny (Lake Shafer IN 0.0002 km2, Buckeye Lake OH 0.003, Longview Lake MO 0.08, Reelfoot TN 0.75); 22 lakes have none. B-context-007, handed to the geometry thread.
 * Multi-state lakes appear as separate rows with separately trimmed polygons (Oahe ND/SD, Kerr NC/VA, Thurmond GA/SC, Flaming Gorge UT/WY).
 
@@ -155,7 +155,7 @@ Selected by the product filter: each feature must change what a bowfisher would 
 | 7 | operator family and release-feed availability | 621 | determines how the pool is managed (flood-season drawdown, irrigation draw, hydropower peaking) and what data exist |
 | 8 | region (SE / NE / MW / GP / W / AK-HI) | 621 | explains more variance in clarity than any hydraulic class (3.4) |
 | 9 | shoreline slope index from 3DEP (median slope, share under 2 degrees, run per foot) | pilots + 51 lakes now; about 1 min per lake | the only proxy that predicts how much surface is gained or lost per foot of pool change (4.3) |
-| 10 | chain position: `n_up_lakes`, `n_down_lakes`, `nearest_down` | {{CHAIN_N}} lakes | upstream releases govern downstream pools; defines non-independent validation lakes |
+| 10 | chain position: `n_up_lakes`, `n_down_lakes`, `nearest_down` | 377 lakes now | upstream releases govern downstream pools; defines non-independent validation lakes |
 | 11 | measured vegetated-shallows share: Water Clarity `grassPct` (existing production product) | 566 lakes | vegetation is lake-specific and cannot be inferred from morphology (3.4); Guntersville 23 %, Wheeler 5.8 %, Hartwell 6.4 %, Pickwick 2.0 %, Wilson 1.6 % |
 
 Low value (computed or tested, not retained): `hl_type` as a standalone feature (folded into regime), elevation, HydroLAKES shore development (duplicates SDI), volume (area x depth), NID dam year/height beyond the regulated flag, hydropower flag beyond operator, GLOBathy Dmax and shallow fraction (4.3), JRC occurrence, NWI littoral class, tributary-mouth density.
@@ -317,7 +317,7 @@ Limits stated honestly:
 
 | Item | Path |
 |---|---|
-| Features for all lakes | `docs/research/lake-brain/data/lake_features.csv` (621 rows, 43 columns), `lake_features_summary.json` |
+| Features for all lakes | `docs/research/lake-brain/data/lake_features.csv` (621 rows, 49 columns), `lake_features_summary.json` |
 | Transfer slots and coverage | `data/transfer_slots.json`, `data/class_eval.json`, `data/hypso_validation.json` |
 | Scripts | `research/lake-brain/context_features.py` (build), `context_geom.py`, `context_join.py`, `context_fetch_nid.py`, `context_erom.py`, `context_chain.py`, `context_transfer.py`, `context_class_eval.py`, `context_shore_dem.py`, `context_gsw.py`, `context_nwi.py`, `context_tribs.py`, `context_hypso_validate.py`, `context_hypso_truth.py`, `context_hypso_eval.py`, `context_hypso_cwms.py` |
 | Bulk data (never in Git) | `~/Desktop/Development/Sector_Research_Data/lake-brain/context/` with retention rows in `MANIFEST.jsonl` |

@@ -357,10 +357,10 @@
    "glob_shallow_frac_1p2m": 0.08813686028912138,
    "hydropower": true,
    "hl_elev_m": 180.0,
-   "n_up_lakes": 1.0,
+   "n_up_lakes": 2.0,
    "n_down_lakes": 4.0,
    "nearest_down": "Wheeler|AL",
-   "chain_id": "chain-ChickamaugaLak"
+   "chain_id": "chain-CherokeeLake"
   },
   "Wheeler|AL": {
    "name": "Wheeler",
@@ -407,10 +407,10 @@
    "glob_shallow_frac_1p2m": 0.07525573600879865,
    "hydropower": true,
    "hl_elev_m": 167.0,
-   "n_up_lakes": 1.0,
+   "n_up_lakes": 2.0,
    "n_down_lakes": 3.0,
    "nearest_down": "Wilson|AL",
-   "chain_id": "chain-ChickamaugaLak"
+   "chain_id": "chain-CherokeeLake"
   },
   "Wilson|AL": {
    "name": "Wilson",
@@ -460,7 +460,7 @@
    "n_up_lakes": 2.0,
    "n_down_lakes": 3.0,
    "nearest_down": "Pickwick Lake|TN",
-   "chain_id": "chain-ChickamaugaLak"
+   "chain_id": "chain-CherokeeLake"
   },
   "Pickwick Lake|TN": {
    "name": "Pickwick Lake",
@@ -507,10 +507,10 @@
    "glob_shallow_frac_1p2m": 0.11722270217175135,
    "hydropower": true,
    "hl_elev_m": 126.0,
-   "n_up_lakes": null,
-   "n_down_lakes": null,
-   "nearest_down": "",
-   "chain_id": "chain-ChickamaugaLak"
+   "n_up_lakes": 3.0,
+   "n_down_lakes": 2.0,
+   "nearest_down": "Kentucky Lake|TN",
+   "chain_id": "chain-CherokeeLake"
   },
   "Lake Hartwell|SC": {
    "name": "Lake Hartwell",
@@ -557,9 +557,9 @@
    "glob_shallow_frac_1p2m": 0.09860080719607633,
    "hydropower": true,
    "hl_elev_m": 204.0,
-   "n_up_lakes": null,
-   "n_down_lakes": null,
-   "nearest_down": "",
+   "n_up_lakes": 3.0,
+   "n_down_lakes": 3.0,
+   "nearest_down": "Lake Russell (R.B. Russell)|GA",
    "chain_id": "chain-Burton"
   }
  },
@@ -784,6 +784,53 @@
    "nwi_fringe_per_shore_km": 0.0009015106132638159
   }
  },
+ "tribs": {
+  "Wilson|AL": {
+   "n_flowlines": 361,
+   "n_mouth_ge5": 12,
+   "n_mouth_ge50": 1,
+   "n_mouth_ge500": 1,
+   "mouths_per_shore_km": 0.053727330906351636,
+   "largest_mouth_km2": 584.8736003500001,
+   "shore_km": 223.3500119504608
+  },
+  "Pickwick Lake|TN": {
+   "n_flowlines": 695,
+   "n_mouth_ge5": 24,
+   "n_mouth_ge50": 3,
+   "n_mouth_ge500": 0,
+   "mouths_per_shore_km": 0.0475268988877171,
+   "largest_mouth_km2": 109.26740009,
+   "shore_km": 504.9771931617147
+  },
+  "Wheeler|AL": {
+   "n_flowlines": 1101,
+   "n_mouth_ge5": 53,
+   "n_mouth_ge50": 12,
+   "n_mouth_ge500": 0,
+   "mouths_per_shore_km": 0.05459304891484618,
+   "largest_mouth_km2": 381.68449988,
+   "shore_km": 970.8195650085232
+  },
+  "Guntersville|AL": {
+   "n_flowlines": 1034,
+   "n_mouth_ge5": 49,
+   "n_mouth_ge50": 3,
+   "n_mouth_ge500": 0,
+   "mouths_per_shore_km": 0.03884679930687738,
+   "largest_mouth_km2": 185.53279993,
+   "shore_km": 1261.3651799963122
+  },
+  "Lake Hartwell|SC": {
+   "n_flowlines": 565,
+   "n_mouth_ge5": 27,
+   "n_mouth_ge50": 4,
+   "n_mouth_ge500": 0,
+   "mouths_per_shore_km": 0.03141903543953538,
+   "largest_mouth_km2": 74.09609993000001,
+   "shore_km": 859.3516517068251
+  }
+ },
  "chain_downstream_within_250km": {
   "Guntersville|AL": [
    [
@@ -829,6 +876,30 @@
    [
     "Kentucky Lake|KY",
     130.5
+   ]
+  ],
+  "Lake Hartwell|SC": [
+   [
+    "Lake Russell (R.B. Russell)|GA",
+    0.0
+   ],
+   [
+    "Clarks Hill / J.S. Thurmond|GA",
+    44.2
+   ],
+   [
+    "Lake Strom Thurmond (Clarks Hill)|SC",
+    44.2
+   ]
+  ],
+  "Pickwick Lake|TN": [
+   [
+    "Kentucky Lake|TN",
+    0.0
+   ],
+   [
+    "Kentucky Lake|KY",
+    98.6
    ]
   ]
  }

@@ -203,7 +203,7 @@ def main():
         r = df.loc[k]
         pil[k] = {c: (None if (isinstance(r[c], float) and not np.isfinite(r[c])) else (r[c].item() if hasattr(r[c], "item") else r[c])) for c in out.columns if c in r.index}
     S["pilots"] = pil
-    for fn, key in (("shore_dem.json", "shore_dem"), ("gsw_features.json", "gsw"), ("nwi_features.json", "nwi")):
+    for fn, key in (("shore_dem.json", "shore_dem"), ("gsw_features.json", "gsw"), ("nwi_features.json", "nwi"), ("tribs.json", "tribs")):
         p = CTX / fn
         if p.exists():
             d = json.load(open(p)); S[key] = {k: v for k, v in d.items() if k in PILOTS} if key != "gsw" else {k: v for k, v in d.items() if k in PILOTS}
