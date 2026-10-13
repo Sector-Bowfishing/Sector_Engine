@@ -1,0 +1,81 @@
+"""wind-hourly CLI.
+
+  python main.py hourly   --store local:/path            # latest NBM cycle + last hour of RTMA-RU + METAR
+  python main.py backfill --store local:/path --start 2026-09-22 --end 2026-10-05 [--leads 1,3,6,12]
+  python main.py validate --store local:/path --start ... --end ...
+  python main.py status   --store local:/path --start ... --end ...
+
+Default store is local. A gs:// store refuses to open without SECTOR_WIND_GCS_APPROVED=yes
+(Michael's approval) and never opens the shared production buckets."""
+import argparse, json, os, sys, concurrent.futures as cf
+from datetime import datetime, timedelta, timezone
+
+from sector_wind.ingest import (DEFAULT_LEADS, ingest_metar_day, ingest_nbm_cycle, ingest_rtma, latest_nbm_cycle, load_config)
+from sector_wind.store import open_store
+from sector_wind import validate as V
+
+
+def day(s):
+    return datetime.strptime(s, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("cmd", choices=["hourly", "backfill", "validate", "status", "milestone"])
+    ap.add_argument("--store", default="local:./archive")
+    ap.add_argument("--start"); ap.add_argument("--end")
+    ap.add_argument("--leads", default=None)
+    ap.add_argument("--no-qmd", action="store_true")
+    ap.add_argument("--workers", type=int, default=4)
+    a = ap.parse_args(argv)
+    cfg = load_config(); store = open_store(a.store)
+    leads = [int(x) for x in a.leads.split(",")] if a.leads else DEFAULT_LEADS
+    now = datetime.now(timezone.utc)
+    if a.cmd == "hourly":
+        from sector_wind.live import run_hourly
+        try:
+            res = run_hourly(store, cfg, now, leads)
+        finally:
+            store.flush_ledger()          # the ledger is written even when the run fails
+        print(json.dumps(res, default=str)[:4000])
+        # WindBrain (additive, opt-in): publish the wind slot of the Brain RTDB from what this run archived.
+        # It never raises and never changes this job's exit code: a Brain RTDB failure cannot affect the archive.
+        brain_url = os.environ.get("SECTOR_WIND_BRAIN_RTDB_URL")
+        if brain_url:
+            from sector_wind.brain.publish import safe_publish
+            from sector_wind.brain.writer import RtdbWriter
+            try:
+                brain = safe_publish(store, cfg, RtdbWriter(brain_url), now=now, run_summary=res)
+            except Exception as e:                  # writer construction (bad URL) — still never fatal
+                brain = {"ok": False, "errors": [repr(e)]}
+            print("windbrain", json.dumps(brain, default=str)[:1500])
+        # A failed run must be visible as a failed Cloud Run execution, never a silent success.
+        return 1 if res["errors"] else 0
+    start, end = day(a.start), day(a.end) + timedelta(hours=23)
+    if a.cmd == "backfill":
+        cycles = [start + timedelta(hours=h) for h in range(int((end - start).total_seconds() // 3600) + 1)]
+        with cf.ThreadPoolExecutor(a.workers) as ex:
+            for c, r in zip(cycles, ex.map(lambda c: ingest_nbm_cycle(store, cfg, c, leads, not a.no_qmd), cycles)):
+                print("NBM", c.isoformat(), r, flush=True)
+            for c, r in zip(cycles, ex.map(lambda c: ingest_rtma(store, cfg, c), cycles)):
+                print("RTMA", c.isoformat(), r, flush=True)
+        d = start
+        while d <= end + timedelta(days=1):
+            print("METAR", d.date(), ingest_metar_day(store, cfg, d), flush=True); d += timedelta(days=1)
+        return 0
+    if a.cmd == "validate":
+        rep = {"nbm": V.skill(store, cfg, start, end, tuple(leads) if a.leads else (1, 3, 6, 12)),
+               "rtma": V.rtma_skill(store, cfg, start, end)}
+        store.put_json(f"reports/validation_{a.start}_{a.end}.json", rep)
+        print(json.dumps(rep, indent=1, default=str)); return 0
+    if a.cmd == "milestone":
+        from sector_wind.monitor import milestone
+        print(json.dumps(milestone(store, cfg, start, end), indent=1, default=str)); return 0
+    if a.cmd == "status":
+        print(json.dumps({"NBM": V.archive_success(store, "NBM", start, end, 60, list(cfg["lakes"])),
+                          "RTMA-RU (hourly :00)": V.archive_success(store, "RTMA", start, end, 60, list(cfg["lakes"]))}, indent=1))
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

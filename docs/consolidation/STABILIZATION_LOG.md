@@ -145,3 +145,29 @@ changed in production** (nothing deployed); the next deploy from main restores t
 
 **Checkpoint commits:** `c153ea01`, `e1a4e6ac`, `fbd6f4cf`, USGS pick, deploy/ops commit,
 this log. **Rollback:** `git reset --hard 08f453ed` (Phase 1 checkpoint) on main.
+
+---
+
+## Phase 3 — Live job lineage normalization — PASS (two explicit exceptions)
+
+**Goal:** every active job reproducible from canonical source or an explicit exception.
+Registry: `jobs/README.md`.
+
+| Job | Result |
+|---|---|
+| `hydrology-hourly` | already canonical on main (`hourly.py` identical in both lineages; deploy-copied inputs present on main) |
+| `water-temp-tva-archive` | **landed** `jobs/water-temp-tva-archive` from `intelligence/water-temp` @ `79b966cc` (identical to live source and to `brain/water-temp`). Tests 14/14 |
+| `wind-hourly` + `wind-candidate-read` | **landed** `jobs/wind-hourly` (84 files) from `brain/wind` @ `948fd5e2` (= live `4da234cb` tree). Tests 55 passed / 16 network deselected. Its Brain publisher (`sector_wind/brain/`) is conformed to the shared platform in Phase 4 |
+| `lake-surface-daily` | **exception** — live source `feat/clarity-algal-warning` @ `03937913` (Clarity Stage 4 job semantics + data files not on main). `jobs/lake-surface/LINEAGE.md` warns that main's copy is older than live. Pending D4 |
+| `clarity-current-hourly` | **exception** — runs ClarityPrecompute from `03937913`, depends on the unshipped Stage 5 engine sources. Pending D4 |
+| `clarity-candidate-shadow` | **exception** — paused, private research branch; never public by design |
+
+**No job was redeployed.** No serving image built. Private boundary unchanged (wind job
+directory scanned; its docs say detail stays in the private iOS repo). Root `.gitignore`
+now excludes `__pycache__/`, `.pytest_cache/`, `.venv/`.
+
+**Acceptance:** canonical path or explicit exception for every live job ✓ · no private
+research exposed ✓ · no serving image from Brain/research branches ✓ · tests pass ✓
+(Swift suite unchanged since Phase 2 at 169/169; Python 14 + 55).
+
+**Rollback:** `git reset --hard e7735791` (Phase 2 checkpoint).
