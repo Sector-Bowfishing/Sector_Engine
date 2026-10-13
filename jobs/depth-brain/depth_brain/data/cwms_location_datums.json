@@ -1,0 +1,665 @@
+{
+ "fetchedAt": "2026-10-13",
+ "lakes": {
+  "Abiquiu Lake|NM": {
+   "datum": "NGVD29",
+   "elevation": 1944.9288,
+   "location": "Abiquiu",
+   "name": "Abiquiu",
+   "office": "SPA"
+  },
+  "Allatoona|GA": {
+   "datum": "NGVD29",
+   "elevation": 209.36102400000001,
+   "location": "Allatoona",
+   "name": "Allatoona",
+   "office": "SAM"
+  },
+  "Allegheny Reservoir|PA": {
+   "datum": "NAVD88",
+   "elevation": 0.0,
+   "location": "Kinzua",
+   "name": "Kinzua",
+   "office": "LRP"
+  },
+  "Alum Creek Lake|OH": {
+   "datum": "NGVD29",
+   "elevation": 243.84,
+   "location": "AlumCr",
+   "name": "AlumCr",
+   "office": "LRH"
+  },
+  "Arkabutla Lake|MS": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Arkabutla Lake",
+   "name": "Arkabutla Lake",
+   "office": "MVK"
+  },
+  "Bankhead|AL": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Bankhead",
+   "name": "Bankhead",
+   "office": "SAM"
+  },
+  "Barren River Lake|KY": {
+   "datum": "NGVD29",
+   "elevation": 500.0,
+   "location": "Barren",
+   "name": "Barren",
+   "office": "LRL"
+  },
+  "Beaver|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Beaver_Dam",
+   "name": "Beaver_Dam",
+   "office": "SWL"
+  },
+  "Beech Fork Lake|WV": {
+   "datum": "NGVD29",
+   "elevation": 152.4,
+   "location": "BeechFk",
+   "name": "BeechFk",
+   "office": "LRH"
+  },
+  "Beltzville Lake|PA": {
+   "datum": "NAVD88",
+   "elevation": 191.222376,
+   "location": "Beltzville",
+   "name": "Beltzville",
+   "office": "NAP"
+  },
+  "Berlin Lake|OH": {
+   "datum": "NAVD88",
+   "elevation": 0.0,
+   "location": "Berlin",
+   "name": "Berlin",
+   "office": "LRP"
+  },
+  "Blue Marsh Lake|PA": {
+   "datum": "NAVD88",
+   "elevation": 88.199976,
+   "location": "BlueMarsh",
+   "name": "BlueMarsh",
+   "office": "NAP"
+  },
+  "Bluestone Lake|WV": {
+   "datum": "NGVD29",
+   "elevation": 426.72,
+   "location": "Bluestone",
+   "name": "Bluestone",
+   "office": "LRH"
+  },
+  "Brookville Lake|IN": {
+   "datum": "NGVD29",
+   "elevation": 181.57240800000002,
+   "location": "Brookville",
+   "name": "Brookville",
+   "office": "LRL"
+  },
+  "Buckhorn Lake|KY": {
+   "datum": "NGVD29",
+   "elevation": 230.73360000000002,
+   "location": "Buckhorn",
+   "name": "Buckhorn",
+   "office": "LRL"
+  },
+  "Burnsville Lake|WV": {
+   "datum": "NGVD29",
+   "elevation": 213.36,
+   "location": "Burnsville",
+   "name": "Burnsville",
+   "office": "LRH"
+  },
+  "Caesar Creek Lake|OH": {
+   "datum": "NGVD29",
+   "elevation": 257.86080000000004,
+   "location": "CaesarCreek",
+   "name": "CaesarCreek",
+   "office": "LRL"
+  },
+  "Canton Lake|OK": {
+   "datum": "NGVD29",
+   "elevation": 480.06,
+   "location": "CANT",
+   "name": "CANT",
+   "office": "SWT"
+  },
+  "Canyon Lake|TX": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "SMCT2",
+   "name": "SMCT2",
+   "office": "SWF"
+  },
+  "Carlyle Lake|IL": {
+   "datum": "NAVD88",
+   "elevation": 121.80417600000001,
+   "location": "Carlyle Lk-Kaskaskia",
+   "name": "Carlyle Lk-Kaskaskia",
+   "office": "MVS"
+  },
+  "Carters|GA": {
+   "datum": "NGVD29",
+   "elevation": 0.015240000000000002,
+   "location": "Carters",
+   "name": "Carters",
+   "office": "SAM"
+  },
+  "Cave Run Lake|KY": {
+   "datum": "NGVD29",
+   "elevation": 220.67520000000002,
+   "location": "CaveRun",
+   "name": "CaveRun",
+   "office": "LRL"
+  },
+  "Cheney Reservoir|KS": {
+   "datum": "NGVD29",
+   "elevation": 426.72,
+   "location": "CHEN",
+   "name": "CHEN",
+   "office": "SWT"
+  },
+  "Clarks Hill / J.S. Thurmond|GA": {
+   "datum": "NGVD29",
+   "elevation": 106.9848,
+   "location": "Thurmond",
+   "name": "Thurmond",
+   "office": "SAS"
+  },
+  "Clearwater Lake|MO": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Clearwater_Dam",
+   "name": "Clearwater_Dam",
+   "office": "SWL"
+  },
+  "Conchas Lake|NM": {
+   "datum": "NGVD29",
+   "elevation": 1290.828,
+   "location": "Conchas",
+   "name": "Conchas",
+   "office": "SPA"
+  },
+  "Coralville Lake|IA": {
+   "datum": "NGVD29",
+   "elevation": 196.596,
+   "location": "CRVI4",
+   "name": "CRVI4",
+   "office": "MVR"
+  },
+  "Dardanelle|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "LD10_Dardanelle",
+   "name": "LD10_Dardanelle",
+   "office": "SWL"
+  },
+  "DeGray|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Degray Lake",
+   "name": "Degray Lake",
+   "office": "MVK"
+  },
+  "East Lynn Lake|WV": {
+   "datum": "NGVD29",
+   "elevation": 182.883048,
+   "location": "EastLynn",
+   "name": "EastLynn",
+   "office": "LRH"
+  },
+  "El Dorado Lake|KS": {
+   "datum": "NGVD29",
+   "elevation": 387.553,
+   "location": "ELDR",
+   "name": "ELDR",
+   "office": "SWT"
+  },
+  "Enid Lake|MS": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Enid Lake",
+   "name": "Enid Lake",
+   "office": "MVK"
+  },
+  "Falls Lake|NC": {
+   "datum": null,
+   "elevation": null,
+   "location": "NEU FLP",
+   "name": "NEU FLP",
+   "office": "SAW"
+  },
+  "Flannagan Reservoir|VA": {
+   "datum": "NGVD29",
+   "elevation": 396.20342400000004,
+   "location": "JWFlannagan",
+   "name": "JWFlannagan",
+   "office": "LRH"
+  },
+  "Fort Gibson Lake|OK": {
+   "datum": "NGVD29",
+   "elevation": 147.218,
+   "location": "FGIB",
+   "name": "FGIB",
+   "office": "SWT"
+  },
+  "Green River Lake|KY": {
+   "datum": "NGVD29",
+   "elevation": 203.6064,
+   "location": "Green",
+   "name": "Green",
+   "office": "LRL"
+  },
+  "Greers Ferry|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "GreersFerry_Dam",
+   "name": "GreersFerry_Dam",
+   "office": "SWL"
+  },
+  "Grenada Lake|MS": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Grenada Lake",
+   "name": "Grenada Lake",
+   "office": "MVK"
+  },
+  "Gull Lake|MN": {
+   "datum": "NGVD29",
+   "elevation": 335.28,
+   "location": "MissHW_Gull",
+   "name": "MissHW_Gull",
+   "office": "MVP"
+  },
+  "Jennings Randolph Lake|MD": {
+   "datum": "LOCAL",
+   "elevation": 426.72,
+   "location": "Randolph",
+   "name": "Randolph",
+   "office": "NAB"
+  },
+  "John Redmond Reservoir|KS": {
+   "datum": "NGVD29",
+   "elevation": 303.276,
+   "location": "JOHN",
+   "name": "JOHN",
+   "office": "SWT"
+  },
+  "Kaw Lake|OK": {
+   "datum": "NGVD29",
+   "elevation": 304.8,
+   "location": "KAWL",
+   "name": "KAWL",
+   "office": "SWT"
+  },
+  "Keystone Lake|OK": {
+   "datum": "NGVD29",
+   "elevation": 187.522,
+   "location": "KEYS",
+   "name": "KEYS",
+   "office": "SWT"
+  },
+  "Lake Eufaula|OK": {
+   "datum": "NGVD29",
+   "elevation": 151.79,
+   "location": "EUFA",
+   "name": "EUFA",
+   "office": "SWT"
+  },
+  "Lake Hartwell|SC": {
+   "datum": "NGVD29",
+   "elevation": 206.9592,
+   "location": "Hartwell",
+   "name": "Hartwell",
+   "office": "SAS"
+  },
+  "Lake Hudson|OK": {
+   "datum": "NGVD29",
+   "elevation": 169.164,
+   "location": "HUDS",
+   "name": "HUDS",
+   "office": "SWT"
+  },
+  "Lake Martin|AL": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Martin",
+   "name": "Martin",
+   "office": "SAM"
+  },
+  "Lake Milton|OH": {
+   "datum": "NAVD88",
+   "elevation": 0.0,
+   "location": "Milton",
+   "name": "Milton",
+   "office": "LRP"
+  },
+  "Lake Moomaw|VA": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Moomaw",
+   "name": "Moomaw",
+   "office": "NAO"
+  },
+  "Lake Red Rock|IA": {
+   "datum": "NGVD29",
+   "elevation": 209.3976,
+   "location": "Red Rock",
+   "name": "Red Rock",
+   "office": "MVR"
+  },
+  "Lake Russell (R.B. Russell)|GA": {
+   "datum": "NGVD29",
+   "elevation": 150.876,
+   "location": "Russell",
+   "name": "Russell",
+   "office": "SAS"
+  },
+  "Lake Shelbyville|IL": {
+   "datum": "NAVD88",
+   "elevation": 175.16856,
+   "location": "Lk Shelbyville-Kaskaskia",
+   "name": "Lk Shelbyville-Kaskaskia",
+   "office": "MVS"
+  },
+  "Lake Strom Thurmond (Clarks Hill)|SC": {
+   "datum": "NGVD29",
+   "elevation": 106.9848,
+   "location": "Thurmond",
+   "name": "Thurmond",
+   "office": "SAS"
+  },
+  "Lake Tenkiller|OK": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "TENK",
+   "name": "TENK",
+   "office": "SWT"
+  },
+  "Lake Texoma|TX": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "DENI",
+   "name": "DENI",
+   "office": "SWT"
+  },
+  "Lake Winnibigoshish|MN": {
+   "datum": "NGVD29",
+   "elevation": 365.76,
+   "location": "MissHW_Winni",
+   "name": "MissHW_Winni",
+   "office": "MVP"
+  },
+  "Lanier (Sidney Lanier)|GA": {
+   "datum": "NGVD29",
+   "elevation": 337.1088,
+   "location": "Buford",
+   "name": "Buford",
+   "office": "SAM"
+  },
+  "Logan Martin|AL": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "LoganMartin",
+   "name": "LoganMartin",
+   "office": "SAM"
+  },
+  "Marion Reservoir|KS": {
+   "datum": "NAVD88",
+   "elevation": 396.545,
+   "location": "MARI",
+   "name": "MARI",
+   "office": "SWT"
+  },
+  "Mark Twain Lake|MO": {
+   "datum": null,
+   "elevation": null,
+   "location": "Mark Twain Lk",
+   "name": "Mark Twain Lk",
+   "office": "MVS"
+  },
+  "Millwood|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Millwood_Dam",
+   "name": "Millwood_Dam",
+   "office": "SWL"
+  },
+  "Monroe Lake|IN": {
+   "datum": "NGVD29",
+   "elevation": 163.9824,
+   "location": "Monroe",
+   "name": "Monroe",
+   "office": "LRL"
+  },
+  "Mosquito Creek Lake|OH": {
+   "datum": "NAVD88",
+   "elevation": 0.0,
+   "location": "Mosquito",
+   "name": "Mosquito",
+   "office": "LRP"
+  },
+  "Nimrod|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Nimrod_Dam",
+   "name": "Nimrod_Dam",
+   "office": "SWL"
+  },
+  "Nolin River Lake|KY": {
+   "datum": "NGVD29",
+   "elevation": 149.352,
+   "location": "Nolin",
+   "name": "Nolin",
+   "office": "LRL"
+  },
+  "Norfork|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Norfork_Dam",
+   "name": "Norfork_Dam",
+   "office": "SWL"
+  },
+  "Oologah Lake|OK": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "OOLO",
+   "name": "OOLO",
+   "office": "SWT"
+  },
+  "Ouachita (L. Ouachita)|AR": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Blakely",
+   "name": "Blakely",
+   "office": "MVK"
+  },
+  "Patoka Lake|IN": {
+   "datum": "NGVD29",
+   "elevation": 163.3728,
+   "location": "Patoka",
+   "name": "Patoka",
+   "office": "LRL"
+  },
+  "Philpott Lake|VA": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "ROA PLP",
+   "name": "ROA PLP",
+   "office": "SAW"
+  },
+  "Pueblo Reservoir|CO": {
+   "datum": "NGVD29",
+   "elevation": 1501.14,
+   "location": "Pueblo",
+   "name": "Pueblo",
+   "office": "SPA"
+  },
+  "R.D. Bailey Lake|WV": {
+   "datum": "NGVD29",
+   "elevation": 304.8,
+   "location": "RDBailey",
+   "name": "RDBailey",
+   "office": "LRH"
+  },
+  "Raystown Lake|PA": {
+   "datum": "LOCAL",
+   "elevation": 213.36,
+   "location": "Raystown",
+   "name": "Raystown",
+   "office": "NAB"
+  },
+  "Rend Lake|IL": {
+   "datum": null,
+   "elevation": null,
+   "location": "Rend Lk",
+   "name": "Rend Lk",
+   "office": "MVS"
+  },
+  "Roosevelt|AZ": {
+   "datum": "NGVD29",
+   "elevation": 618.744,
+   "location": "Mod Roosevelt",
+   "name": "Mod Roosevelt",
+   "office": "SPL"
+  },
+  "Rough River Lake|KY": {
+   "datum": "NGVD29",
+   "elevation": 143.256,
+   "location": "Rough",
+   "name": "Rough",
+   "office": "LRL"
+  },
+  "Sam Rayburn Reservoir|TX": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "JSPT2",
+   "name": "JSPT2",
+   "office": "SWF"
+  },
+  "Santa Rosa Lake|NM": {
+   "datum": "NAVD88",
+   "elevation": 1470.9983,
+   "location": "Santa Rosa",
+   "name": "Santa Rosa",
+   "office": "SPA"
+  },
+  "Sardis Lake|MS": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Sardis Lake",
+   "name": "Sardis Lake",
+   "office": "MVK"
+  },
+  "Sardis Lake|OK": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "SARD",
+   "name": "SARD",
+   "office": "SWT"
+  },
+  "Saylorville Lake|IA": {
+   "datum": "NGVD29",
+   "elevation": 240.005616,
+   "location": "Saylorville",
+   "name": "Saylorville",
+   "office": "MVR"
+  },
+  "Skiatook Lake|OK": {
+   "datum": "NGVD29",
+   "elevation": 205.13,
+   "location": "SKIA",
+   "name": "SKIA",
+   "office": "SWT"
+  },
+  "Smith (Lewis Smith)|AL": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Smith",
+   "name": "Smith",
+   "office": "SAM"
+  },
+  "Stonewall Jackson Lake|WV": {
+   "datum": "NAVD88",
+   "elevation": 0.0,
+   "location": "StonewallJackson",
+   "name": "StonewallJackson",
+   "office": "LRP"
+  },
+  "Summersville Lake|WV": {
+   "datum": "NGVD29",
+   "elevation": 457.2,
+   "location": "Summersville",
+   "name": "Summersville",
+   "office": "LRH"
+  },
+  "Sutton Lake|WV": {
+   "datum": "NGVD29",
+   "elevation": 457.187808,
+   "location": "Sutton",
+   "name": "Sutton",
+   "office": "LRH"
+  },
+  "Table Rock Lake|MO": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Table_Rock_Dam",
+   "name": "Table_Rock_Dam",
+   "office": "SWL"
+  },
+  "Tappan Lake|OH": {
+   "datum": "NGVD29",
+   "elevation": 265.176,
+   "location": "Tappan",
+   "name": "Tappan",
+   "office": "LRH"
+  },
+  "Taylorsville Lake|KY": {
+   "datum": "NGVD29",
+   "elevation": 142.29588,
+   "location": "Taylorsville",
+   "name": "Taylorsville",
+   "office": "LRL"
+  },
+  "Walter F. George / Eufaula|GA": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "WalterFGeorge",
+   "name": "WalterFGeorge",
+   "office": "SAM"
+  },
+  "Wappapello Lake|MO": {
+   "datum": "NAVD88",
+   "elevation": 105.866184,
+   "location": "Wappapello Lk-St Francis",
+   "name": "Wappapello Lk-St Francis",
+   "office": "MVS"
+  },
+  "Weiss|AL": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "Weiss",
+   "name": "Weiss",
+   "office": "SAM"
+  },
+  "West Point|GA": {
+   "datum": "NGVD29",
+   "elevation": 0.0,
+   "location": "WestPoint",
+   "name": "WestPoint",
+   "office": "SAM"
+  },
+  "Youghiogheny River Lake|MD": {
+   "datum": "NAVD88",
+   "elevation": 0.0,
+   "location": "Youghiogheny",
+   "name": "Youghiogheny",
+   "office": "LRP"
+  }
+ },
+ "schema": "depth-cwms-location-datums-v1",
+ "source": "https://cwms-data.usace.army.mil/cwms-data/locations/<loc>?office=<office> (vertical-datum)"
+}

@@ -92,6 +92,7 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
         "effectiveDepth": eff,
         "coverage": {k: v for k, v in {
             "sourceTier": tier, "researchTier": ev.get("researchTier"), "evidenceKind": ev.get("kind", "unknown"),
+            "depthEvidence": ("none: lake-level stage-area (hypsometry) only" if ev.get("hypsometryOnly") else ev.get("bestSource")),
             "contourCoverage": ev.get("coverage"), "knownAreaShare": ev.get("coverage"),
             "unknownAreaShare": (round(1 - ev["coverage"], 3) if ev.get("coverage") is not None else None),
             "contourIntervalFt": ev.get("intervalFt"), "surveyYear": ev.get("surveyYear")}.items() if v is not None},
@@ -102,6 +103,7 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
             "observedAt": C.iso(lvl.observed_at) if lvl.observed_at else None, "sourceCapability": lvl.capability,
             "levelDeltaFromReferenceFt": (round(res.shift_ft, 2) if ok else None),
             "sourceBrain": "lake-brain", "lakeBrainDifferenceFromNormalPoolFt": lvl.lake_difference_ft,
+            "lakeBrainGuideFt": (lake_state or {}).get("guideFt"), "lakeBrainDifferenceFromGuideFt": (lake_state or {}).get("differenceFromGuideFt"),
             "sourceBrainVersion": ((lake_state or {}).get("provenance") or {}).get("brainVersion")}.items() if v is not None}
 
     # Contour zones: only for tier A/B/C lakes whose manifest carries supported cumulative shares.

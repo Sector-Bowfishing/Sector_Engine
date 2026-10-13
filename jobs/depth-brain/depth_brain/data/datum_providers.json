@@ -1,0 +1,674 @@
+{
+ "schema": "depth-datum-providers-v1",
+ "generatedAt": "2026-10-13",
+ "providers": {
+  "a2w": {
+   "levelDatum": "PER_SITE",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "file:///Users/mcather/Desktop/Development/Sector_Research_Data/lake-brain/binding/raw/a2w/locations_*.json",
+     "note": "[cached A2W location records, field vertical_datum] 613 PROJECT records: NGVD29 456, LOCAL 94, NAVD88 38, blank 25 (+4 spelling variants of NGVD29/LOCAL). The 112 bound A2W lakes: NGVD29 79, LOCAL 22, NAVD88 9, blank 2."
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Abiquiu?office=SPA",
+     "note": "[fetched live] A2W/CWMS project location carries vertical-datum (Abiquiu NGVD29). Same CWMS location attribute family as provider cwms."
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/iv/?sites=06865000&parameterCd=62614",
+     "note": "[fetched live 2026-10-13] USACE NWK Kanopolis A2W series (tag LOCAL) read 1467.08 = USGS 06865000 62614 (NGVD29) 1467.08: here LOCAL numerically equals NGVD29."
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/iv/?sites=06903880&parameterCd=00065",
+     "note": "[fetched live 2026-10-13] Rathbun A2W series (tag LOCAL) 906.96 vs USGS 06903880 gage height 906.90 (USGS site altitude datum NAVD88): here LOCAL may equal NAVD88. So the LOCAL tag does NOT identify NGVD29 vs NAVD88."
+    }
+   ],
+   "fullPoolIsElevation": "mixed",
+   "referenceDatumRule": "Look up the project vertical_datum. NGVD29 or NAVD88 and the pool source is the same CWMS/A2W location's Top of Conservation/Multi-Purpose/Normal level -> same datum by construction (COMPATIBLE_SAME_SOURCE). Pool from a URL document -> need the document to state a datum; else UNKNOWN. LOCAL or blank -> UNKNOWN for absolute comparisons across sources (same-source CWMS pool still compatible). Never convert LOCAL.",
+   "datumChanges": [
+    {
+     "when": "unknown",
+     "what": "No dated NGVD29->NAVD88 re-datum events were found in the sources fetched. CWMS API documents that a posted series without vertical-datum-info is assumed to be in the location's datum; district conversions (e.g. LRP/NAP/MVS/MVK/SPA NAVD88 projects) are visible only as the current tag, not as dated events."
+    }
+   ],
+   "conversionRequiredWhenMixed": true,
+   "notes": "9 bound A2W lakes are NAVD88 (LRP/NAP: Berlin, Mosquito, Allegheny, Beltzville, Blue Marsh, Shenango, Stonewall Jackson, Tygart; SPA Santa Rosa). 22 LOCAL (NWK/NWO Kansas City district lakes, NAB Raystown/Randolph/Savage, MVP Pepin/Red Lake, USBR-owned Canyon Ferry/Tiber). Falls Lake and Lake Chelan blank. CWMS API 'datum' query parameter is documented as not supported for version=2 JSON and had no effect in a live test (Abiquiu level 6230.0 identical with datum=NAVD88); do not rely on server-side conversion."
+  },
+  "cwms": {
+   "levelDatum": "PER_SITE",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Abiquiu?office=SPA",
+     "note": "[fetched live] location JSON has vertical-datum NGVD29; elevation-units m (the location 'elevation' field is the site elevation, NOT the lake level)."
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Carlyle%20Lk-Kaskaskia?office=MVS",
+     "note": "[fetched live] vertical-datum NAVD88 (MVS)."
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/PENS?office=SWT",
+     "note": "[fetched live] vertical-datum LOCAL (Pensacola/Grand Lake)."
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/swagger-docs",
+     "note": "[fetched] CWMS API: on /timeseries POST, a series without explicit vertical-datum-info is assumed to be in the datum of the location; /timeseries GET 'datum' (NAVD88|NGVD29) is documented as not supported for application/json;version=2."
+    }
+   ],
+   "fullPoolIsElevation": "mixed",
+   "referenceDatumRule": "Fetch GET /locations/<base location>?office=<office>; vertical-datum gives the stored datum of that location's Elev series AND its Elev location levels (Top of Conservation etc.). Pool taken from CWMS level of the same location -> COMPATIBLE_SAME_SOURCE. Check sub-location: Rend Lake, Wappapello are STREAM_LOCATION and Cross/Bistineau/Milton are SITE kinds, not PROJECT; use the datum of the location that holds the Elev series. Pool from non-CWMS URL -> require stated datum.",
+   "datumChanges": [
+    {
+     "when": "unknown",
+     "what": "No dated re-datum events found; the datum tag is the current state only."
+    }
+   ],
+   "conversionRequiredWhenMixed": true,
+   "notes": "Of 64 CWMS-family bound series (63 cwms + cwms-saw + cwms-nwdp resolved through /locations): NGVD29 52, NAVD88 9 (Carlyle, Shelbyville, Rend, Mark Twain, Wappapello [MVS]; Cross Lake, Bistineau [MVK]; Sumner [SPA]; Milton [LRP]), LOCAL 3 (Tuttle Creek TUCR, Branched Oak SC18 [NWDM]; Grand Lake PENS [SWT]), 1 unresolved lookup (Roosevelt, resolved separately via cwms-nwdp). Pensacola LOCAL is Pensacola Datum = NGVD29 - 1.07 ft per GRDA FERC exhibit (project note, not re-fetched). Lake Bistineau: LDWF text says 'NGVD' 141 ft but CWMS location says NAVD88 -> do not mix the LDWF pool with the CWMS series (project note full_pool.csv; CWMS tag fetched)."
+  },
+  "cwms-saw": {
+   "levelDatum": "NGVD29",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/ROA%20JHK?office=SAW",
+     "note": "[fetched live] ROA JHK (John H. Kerr Dam) vertical-datum NGVD29."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Same rule as cwms. Kerr pool 300.0 is the USACE water control plan Top of Conservation (NGVD29-consistent).",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Single lake (Kerr). USGS 02079490 62614 (NGVD29) is a second bound series for the same reservoir under provider usgs."
+  },
+  "cwms-nwdp": {
+   "levelDatum": "NGVD29",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/GCL?office=NWDP",
+     "note": "[fetched live] GCL (Grand Coulee Dam) vertical-datum NGVD29."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Series is CWMS NWDP GCL Elev-Forebay (USACE-hosted copy of a USBR/CBT project). Pool 1290.0 comes from a USBR project page that states no datum -> pool datum UNKNOWN at document level; treat as same-system only with the label 'unverified'.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Single lake (Lake Roosevelt / FDR)."
+  },
+  "tva": {
+   "levelDatum": "NGVD29",
+   "levelDatumBasis": "inferred",
+   "levelDatumEvidence": [
+    {
+     "url": "https://lakeinfo.tva.gov/web/sites/kentucky.htm",
+     "note": "[fetched] TVA lake page gives 354 ft winter minimum and 359 ft summer target and states NO datum."
+    },
+    {
+     "url": "https://transportation.ky.gov/Construction-Procurement/Project%20Related%20Information/KY%20Lake%20Historic%20Water%20Surface%20Elevations.pdf",
+     "note": "[fetched, text extracted] KYTC record for the TVA-maintained Kentucky Dam upstream gauge: 'DATUM: NGVD29 (CONVERSION FROM NGVD29 TO NAVD88 IS -0.2 ft)'; 'SITE IS MAINTAINED BY THE TVA'."
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/GVDA1",
+     "note": "[fetched live] NWS gauge for the Guntersville tailwater lists vertical datum NGVD29 = 538.2 ft."
+    },
+    {
+     "url": "file:///Users/mcather/Desktop/Development/Sector_Engine-depth-research/docs/research/depth-brain/data/datum_shift_ngvd29_navd88.csv",
+     "note": "[computed earlier by NCAT] TVA lakes (16): median shift -0.17 ft, abs max 0.56 ft (Guntersville +0.535, Kentucky -0.13/-0.23)."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "TVA operating-guide numbers and the TVA REST ReservoirElevation series are one system (TVA does not name the datum on lakeinfo pages). Treat TVA level and TVA pool as COMPATIBLE_SAME_SOURCE. For a third-party NAVD88 quantity (3DEP) convert from NGVD29 with NCAT, sigma 0.23 ft; do not assert NGVD29 as a published TVA fact.",
+   "datumChanges": [
+    {
+     "when": "unknown",
+     "what": "No TVA statement of a datum change was found."
+    }
+   ],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Level/pool basis 'inferred': TVA's own pages (lakeinfo.tva.gov, tva.com city-elevation pages -> 403 to bots) never state the datum in anything I could fetch. Pool types vary: 'top of summer operating zone' (Guntersville 595, Wheeler 556.3, Wilson, Chickamauga, Fort Loudoun, Nickajack, Pickwick, Watts Bar) vs 'operating guide max (June fill target)' for tributary reservoirs (Norris, Cherokee, Douglas, South Holston, Tims Ford, Fontana, Hiwassee) vs 'top of gates' sheet values; Kentucky Lake pool 359 is shared with Lake Barkley (USACE)."
+  },
+  "duke": {
+   "levelDatum": "LOCAL",
+   "levelDatumBasis": "inferred",
+   "levelDatumEvidence": [
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/CWAN7",
+     "note": "[fetched live] NWS gauge for Lake Norman/Cowans Ford: vertical datum NGVD29 = 660 ft; observed 99.44; action stage 100 (so stage 100 = 760 ft NGVD29). Same for OXFN7 Lake Hickory NGVD29 835 (observed 98.36) and BRWN7 Lake James NGVD29 1100 (observed 100.27)."
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/JCSS1",
+     "note": "[fetched live] NWS Jocassee and Keowee (KEOS1) gauges have EMPTY datum tables; observed values 83.99 / 96.65 are on the same 100-scale."
+    },
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-levels",
+     "note": "[fetch failed 2026-10-13: HTTP 403 Missing Authentication Token] Duke API text 'full pond 935.0 ft AMSL, NGVD 29 datum; local scale 100 = full pond' is recorded only in the project's full_pool.csv notes (written by an earlier thread) and is NOT re-verified here."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Duke publishes the series on a local scale where 100 = full pond, one unit per foot. Elevation = fullPondFt + (scale - 100). The full_pool.csv pools (Norman 760.0, Hickory 935.0, James 1200.0, Jocassee 1110.0, Keowee 800.0, Wateree 225.5, Wylie 569.4) are true NGVD29 elevations. shift = scale - 100 (ft), NOT scale - fullPoolFt. Lake Robinson (221.6) is reported in real feet, not on the 100-scale. A series value around 100 with a pool value in hundreds is the signature of the local scale; a plausibility guard is mandatory.",
+   "datumChanges": [
+    {
+     "when": "unknown",
+     "what": "No Duke datum change was found."
+    }
+   ],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Verified from NWS metadata only for Norman, Hickory, James (NGVD29 gage zero 660/835/1100). Jocassee, Keowee, Wateree, Wylie: local-scale equivalence inferred from the NWS stage text and Duke API note; Robinson NGVD29 real feet per Duke API note (unverified). Normal operating targets sit below full pond (Norman 98.5 summer, 96 winter) so the shift is negative most of the year by design."
+  },
+  "usgs": {
+   "levelDatum": "PER_SITE",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/parameter-codes/items/62614",
+     "note": "[fetched] 62614 = 'Lake or reservoir water surface elevation above NGVD 1929, feet'."
+    },
+    {
+     "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/parameter-codes/items/62615",
+     "note": "[fetched] 62615 = 'Lake or reservoir water surface elevation above NAVD 1988, feet'."
+    },
+    {
+     "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/parameter-codes/items/00062",
+     "note": "[fetched] 00062 = 'Elevation of reservoir water surface above datum, feet' (datum unspecified, site-specific)."
+    },
+    {
+     "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/parameter-codes/items/00065",
+     "note": "[fetched] 00065 = 'Gage height, feet' (above the gage datum, not an elevation)."
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/iv/?sites=02171000,02172000,02168500,02166500,02160900,03075871,10055000&parameterCd=00062,62615",
+     "note": "[fetched live 2026-10-13] 00062 minus 62615 at the same instant: Lake Marion +0.88, Moultrie +0.99, Murray +1.31, Greenwood +0.57, Monticello +0.16, Deep Creek -1.82, Bear Lake -6.88. 00062 is on a site/plant datum, NOT NAVD88, and the offset is not recoverable from the site 'alt_va' field (e.g. Monticello alt_va 382.43, Deep Creek alt_va 0.0 but offset -1.82)."
+    },
+    {
+     "url": "https://water.usgs.gov/water-resources/memos/memo.php?id=4447",
+     "note": "[fetched] USGS WMA 2020.02: active stations with published water-surface elevation must be referenced to NAVD88 (compliance 2023-01-27); NGVD29 vs NAVD88 differ by -1.3 to 4.9 ft in CONUS."
+    }
+   ],
+   "fullPoolIsElevation": "mixed",
+   "referenceDatumRule": "By parameter: 62614 -> NGVD29, 62615 -> NAVD88, 72020 -> NGVD29, 72275 -> USBR Klamath Basin datum (not convertible). 00062 -> UNKNOWN until a paired 62615/62614 series or a written site statement fixes the offset. 00065 -> gage height, never an elevation without the gage-datum altitude AND its datum. Pool datum: look at the pool source (CWMS pool -> location datum; operator document -> its stated datum); when pool and series datums differ and both are NGVD29/NAVD88 convert with NCAT.",
+   "datumChanges": [
+    {
+     "when": "2020-2023",
+     "what": "USGS WMA 2020.02 mandated NAVD88 re-datum of active water-surface-elevation stations (deadline 2023-01-27). A site's 62614 series can therefore be discontinued and replaced by 62615; the bound parameter must be re-checked, and long histories can straddle a datum change."
+    }
+   ],
+   "conversionRequiredWhenMixed": true,
+   "notes": "Bound counts (74): 62614 31, 62615 19, 00062 14, 00065 8, 72020 1, 72275 1 (Upper Klamath Lake, USBRKB datum). Santee Cooper lakes Marion (02171000) and Moultrie (02172000) are bound by 00062: Santee Cooper's lake-data page prints a rule curve (72.0 winter to 75.5 summer, FERC max 76.8) with no datum and points to the USGS gauges for live levels, so its figures are on the 00062 gauge scale; the USGS NAVD88 series (62615) reads 0.88 ft (Marion) / 0.99 ft (Moultrie) LOWER. NWS gauge PNVS1 (Marion) lists 'NAVD88 0' in its datum table while its observed value 72.96 equals USGS 00062, not 62615, so NWS metadata contradicts the numbers: do not trust NWS datum tables. Lake Murray: Dominion page shows 356.0 on 2026-10-13 (= USGS 00062 355.97), pool 360 is Saluda Plant Datum; NAVD88 = plant datum - 1.31 (62615 354.66)."
+  },
+  "usgs-d": {
+   "levelDatum": "PER_SITE",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&siteOutput=expanded&sites=05482315,13238500,01455400",
+     "note": "[fetched] Site altitude (alt_va) and datum code (alt_datum_cd): 11 of 12 are NAVD88, Payette Lake NGVD29. Lake Hopatcong alt_va 914.5 NAVD88."
+    },
+    {
+     "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/parameter-codes/items/00065",
+     "note": "[fetched] 00065 = gage height, feet."
+    }
+   ],
+   "fullPoolIsElevation": "mixed",
+   "referenceDatumRule": "Series = 00065 gage height + site altitude (alt_va). Resulting elevation is in the site's alt_datum_cd (11 NAVD88, 1 NGVD29). Pool datum must be established separately; where the lake's operator publishes pool as a gauge reading (Hopatcong: 9.0 ft on dam gauge = 923.57 ft NGVD29 per the Lake Hopatcong plan) the USGS alt_datum_cd may disagree with the operator (alt 914.5 NAVD88 vs plan gauge datum 914.57 NGVD29, a ~0.66 ft discrepancy equal to the NGVD29->NAVD88 shift). Mark such lakes UNKNOWN/low confidence.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": true,
+   "notes": "Only 4 of 12 usgs-d lakes have a pool in full_pool.csv (C.J. Strike, Henrys, Payette, Hopatcong)."
+  },
+  "nwps": {
+   "levelDatum": "PER_SITE",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/RGLA1",
+     "note": "[fetched live, all 43 bound gauges sampled] NWPS datums.vertical table is EMPTY for 27 of 43, and lists NGVD29 (about 9), NAVD88 (about 5), STND and MHW (1 each) for the rest. Its numeric 'value' semantics are not documented (Seneca GNVN6 lists STND 0, NGVD29 -1.33, NAVD88 0)."
+    },
+    {
+     "url": "https://www.weather.gov/media/mdl/SHEF_CodeManual_5July2012.pdf",
+     "note": "[fetched, text extracted] SHEF: HP 'Elevation, pool ... usually expressed in MSL'; HL 'Elevation, natural lake ... in MSL'; HG 'Height, river stage'; HK 'Height, lake above a specified datum ... usually not MSL'; HF forebay elevation; HR rule curve. MSL is not a datum realization (NGVD29 vs NAVD88)."
+    },
+    {
+     "url": "https://api.water.noaa.gov/nwps/v1/gauges/LVOM5",
+     "note": "[fetched live] Lake Vermilion MN coded HPIRG reads 56.74 ft: a local gage scale, not an elevation (true elevation ~1,300 ft). HG-coded Crescent Lake FL reads 1.68 (NAVD88 per gauge name) and Liberty Reservoir MFEM2 HGIRR reads 410.88 (an elevation)."
+    }
+   ],
+   "fullPoolIsElevation": "mixed",
+   "referenceDatumRule": "Do not rely on the SHEF code or the datum table. Accept NWPS levels only when (a) the observed magnitude is within a plausibility window of the pool (|obs - pool| < ~60 ft for flood-control/storage lakes) AND (b) the operator document for the pool states a datum or the gauge page does. Otherwise UNKNOWN. Georgia Power/Alabama Power/Duke/Dominion lakes appear via NWPS but their datum is that of the operator (see duke, usgs notes).",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": true,
+   "notes": "43 bound NWPS lakes; pool in full_pool.csv for 34. HPIRG/HPIRZ/HPIRP/HPIRR/HPIRV/HPIRA/HLIRG/HGIRR/HGIRP all appear: the 4th-5th SHEF letters are source/probability codes, not datum."
+  },
+  "coops": {
+   "levelDatum": "PROJECT",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://tidesandcurrents.noaa.gov/datum-updates/igld/",
+     "note": "[fetched] 'CO-OPS and its partners currently utilize IGLD 1985.' IGLD (2020) tentatively scheduled for release in 2027, aligned with the NGS geoid-based North American-Pacific Geopotential Datum."
+    },
+    {
+     "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=water_level&datum=NAVD",
+     "note": "[fetched live] station 9087044: datum=IGLD returns 579.x ft; datum=NAVD returns 'There is no NAVD for the station'. Station datums list only GL_LWD 577.43 ft (Great Lakes Low Water Datum)."
+    }
+   ],
+   "fullPoolIsElevation": null,
+   "referenceDatumRule": "Great Lakes have no operator full pool in full_pool.csv (14 coops stations, none in the pool table). No depth shift versus a pool applies. If a reference is ever added (chart datum LWD, long-term mean), it must be in IGLD85 or Low Water Datum with an explicit LWD offset; IGLD85 is a dynamic-height system, NOT convertible with NCAT as NAVD88.",
+   "datumChanges": [
+    {
+     "when": "2027 (tentative)",
+     "what": "IGLD 1985 to be replaced by IGLD (2020); all stored Great Lakes elevations and any LWD offsets will shift (post-glacial rebound)."
+    }
+   ],
+   "conversionRequiredWhenMixed": false,
+   "notes": "levelDatum value PROJECT is used as the closest enum for IGLD85; the true datum is IGLD (1985)."
+  },
+  "rise": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/6128",
+     "note": "[fetched live, all 46 bound items] RISE catalog-item verticalDatum is null for every one of the 46 bound Lake/Reservoir Elevation series: the series datum is not declared."
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/location/7197",
+     "note": "[fetched live] The RISE location record has a verticalDatum field, but it describes the location 'elevation' attribute (dam/site), and varies: EGM96 16, NGVD29 11, NAVD88 5, 'USGS 1912' 2 (Havasu, Mead), none 12 of the 46 bound lakes; for Lake Powell location elevation 3596 vs reservoir pool 3700."
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/East_Park_2023_Survey.pdf",
+     "note": "[fetched, text extracted] Reclamation surveys use a local 'Reclamation Project Vertical Datum (RPVD)'; East Park: NAVD88 is 3.55 ft higher than RPVD. RPVD is project-specific and not a standard datum."
+    }
+   ],
+   "fullPoolIsElevation": "mixed",
+   "referenceDatumRule": "Treat RISE series as UNKNOWN datum. Pool from USBR project pages is 'top of active conservation / joint use' in the same Reclamation system the live series uses, so COMPATIBLE_SAME_SOURCE may be assumed for shift only when pool basis is the same USBR source; never convert to NAVD88/NGVD29. For Lower Colorado reservoirs (Havasu, Mohave, Mead) project datums apply: Havasu 'USGS 1912', Mohave RPVD Davis (project note: NAVD88 - 3.39 ft), Havasu RPVD Parker (project note: NAVD88 - 2.72 ft) - unverified offsets.",
+   "datumChanges": [
+    {
+     "when": "unknown",
+     "what": "USBR project datums have been revised by survey (2022 Mohave/Havasu resurvey updated area-capacity relations); effect on the elevation series not established."
+    }
+   ],
+   "conversionRequiredWhenMixed": false,
+   "notes": "46 bound lakes, 45 with a pool figure in full_pool.csv. NCAT shift for USBR lakes is large (median 3.13 ft, max 5.4) so a wrong NGVD29/NAVD88 assumption would be material; because the datum is undeclared, an NCAT conversion for RISE lakes is not defensible."
+  },
+  "usbr-pnhm": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "file:///Users/mcather/Desktop/Development/Sector_Engine-depth-research/docs/data/full_pool.csv",
+     "note": "[project note, not re-fetched] Lake Cascade note: 'Datum per USBR RISE' - but RISE does not declare the series datum (see rise)."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Hydromet FB (forebay) series for Cascade, Crescent Lake OR, Banks Lake, Potholes. USBR pools are top of active conservation on the same Reclamation system; shift valid only as same-source, datum UNKNOWN.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Crescent Lake OR pool 4845 comes from a Tumalo ID handbook with OWRD capacity curve (project note)."
+  },
+  "sjrwmd": {
+   "levelDatum": "NAVD88",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://aws.sjrwmd.com/SJRWMD/hydrologicdata/watercontrol/UORB_Daily_Levels.pdf",
+     "note": "[fetched, text extracted] 'Upper Ocklawaha River Basin Levels -- Provisional Data -- All levels in NAVD88 Datum'; charts titled 'Elevation, feet NAVD88' for Lake Apopka and Lakes Eustis/Harris with Max Desirable, Regulation, Min Desirable lines."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Regulation line is NAVD88 (Apopka 66.14, Griffin 58.21, Harris 62.21 from the chart). Series and pool both NAVD88 for the three lakes on the UORB chart; COMPATIBLE_SAME_DATUM. Jesup, Lochloosa, Orange Lake have no pool figure.",
+   "datumChanges": [
+    {
+     "when": "pre-2025 (undated)",
+     "what": "SJRWMD moved to NAVD88; NGVD29 values are about 1 ft higher in this region (project note). A historical SJRWMD series could be NGVD29 before the switch; the switch date was not established."
+    }
+   ],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Only 3 of 6 sjrwmd lakes have a pool."
+  },
+  "nhdes": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "file:///Users/mcather/Desktop/Development/Sector_Engine-depth-research/docs/data/full_pool.csv",
+     "note": "[project note, not re-fetched] Winnipesaukee: NHDES graph FULL LAKE 504.32 ft = 4.32 on its lake-level scale; '+500.00 ft offset is the USGS 01080000 gage datum (NGVD29)'."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "NHDES lake-level scale = elevation - 500 ft at Winnipesaukee; series PELV.PT1H datum not established (NWS handbook IDs WEIN3 etc. are not in NWPS). Winnipesaukee only pool; 5 other NH lakes have no pool.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Unverified."
+  },
+  "srp": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "https://streamflow.watershedconnection.com/Dwr",
+     "note": "[project note, not re-fetched] SRP daily report states elevations and 'remaining available' but 'Datum not stated.'"
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Apache 1914.0, Canyon 1660.5, Saguaro 1529.0 derived as current level + SRP 'below max conservation' figure -> pool is in the SAME system as the live SRP reading by construction (COMPATIBLE_SAME_SOURCE). Roosevelt pool 2151 is a CWMS Top of Conservation (SRP series vs USACE CWMS level: different providers, datum unverified).",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Absolute datum UNKNOWN."
+  },
+  "cdec": {
+   "levelDatum": "LOCAL",
+   "levelDatumBasis": "inferred",
+   "levelDatumEvidence": [
+    {
+     "url": "file:///Users/mcather/Desktop/Development/Sector_Engine-depth-research/docs/data/full_pool.csv",
+     "note": "[project note, not re-fetched] Almanor: PG&E 'operating high water line 4,494 feet (PG&E datum)'; USGS WDR CA 2000: gage datum 10.23 ft below sea level so 4,494 PG&E = ~4,483.8 ft above sea level. CDEC ALM elevations are PG&E-supplied (PG&E datum). Berryessa: pool 440 ft from USBR page; datum not established."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Almanor series and 4,494 pool are both on the PG&E datum (COMPATIBLE_SAME_SOURCE) but PG&E datum is about 10 ft off any sea-level datum: no conversion to NGVD29/NAVD88 may be applied. Berryessa (CDEC BER, USBR): UNKNOWN.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Almanor offset taken from a USGS water-data report cited in a project note; not re-fetched."
+  },
+  "twdb": {
+   "levelDatum": "NGVD29",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://www.waterdatafortexas.org/reservoirs/individual/amistad",
+     "note": "[fetched] 'Vertical datum NGVD29'; conservation pool 1,117.00 ft above NGVD29; flood pool 1,140.40."
+    },
+    {
+     "url": "https://www.waterdatafortexas.org/reservoirs/individual/falcon",
+     "note": "[fetched] 'NGVD29'; conservation pool 301.20 ft above NGVD29 since 2023-10-01 (previously 301.10); top of gate 306.70."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Series and pool both NGVD29 on the same TWDB page: COMPATIBLE_SAME_DATUM. The IBWC conservation pool changed from 301.10 to 301.20 on 2023-10-01 (Falcon): pool figure used in history must be date-aware.",
+   "datumChanges": [
+    {
+     "when": "2023-10-01",
+     "what": "Falcon conservation pool 301.10 -> 301.20 ft NGVD29 (pool revision, not a datum change)."
+    }
+   ],
+   "conversionRequiredWhenMixed": false,
+   "notes": "TWDB lakes Texas also bound through usgs 62614/62615; see usgs."
+  },
+  "cnppid": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "https://www.cnppid.com/operations/ (URL truncated in full_pool.csv)",
+     "note": "[project note, not re-fetched] CNPPID series label 'Today (Feet above Sea Level)'; pool 3265.0 (McConaughy) from CNPPID table; no datum named."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Series and pool from the same operator table: COMPATIBLE_SAME_SOURCE; datum UNKNOWN.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Johnson Lake pool derived from CNPPID wording (approx 2618)."
+  },
+  "nipsco": {
+   "levelDatum": "LOCAL",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://www.nipsco.com/about-us/hydro-power/current-lake-levels",
+     "note": "[fetched] NIPSCO: lake levels in 'Elevation in feet Local Datum'; normal Norway/Lake Shafer 645.15 ft, Oakdale/Lake Freeman 610.35 ft."
+    },
+    {
+     "url": "file:///Users/mcather/Desktop/Development/Sector_Engine-depth-research/docs/data/full_pool.csv",
+     "note": "[project note, not re-fetched] FERC P-12514 licenses Shafer at 647.47 ft NGVD, so local = NGVD - 2.32."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Series and pool (645.15) both on NIPSCO local datum: COMPATIBLE_SAME_DATUM. Converting to NGVD29 needs the operator offset (2.32 ft, project note) and cannot be done with NCAT.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Local offset 2.32 ft from a FERC notice cited in a project note; unverified here."
+  },
+  "eccc": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [],
+   "fullPoolIsElevation": null,
+   "referenceDatumRule": "Lake of the Woods (Environment Canada station 05PE014, metres -> ft). No pool in full_pool.csv; Canadian CGVD28/IGLD relation not established.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "No reference pool; no shift computed."
+  },
+  "mncsg": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [],
+   "fullPoolIsElevation": null,
+   "referenceDatumRule": "White Bear Lake (var232 via MN Climatology / DNR gauge). No pool in full_pool.csv.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "No reference pool."
+  },
+  "nppd": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/Historical/ (URL truncated in full_pool.csv)",
+     "note": "[project note, not re-fetched] Sutherland Reservoir pool 3043 taken from USGS quad labels 'ELEVATION 3043' (NGVD29-era mean sea level); NPPD figure not found."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Pool from USGS topo (NGVD29-era) vs NPPD live series (datum unstated): INCOMPATIBLE->UNKNOWN until NPPD states a datum.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "low confidence."
+  },
+  "njwsa": {
+   "levelDatum": "NAVD88",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://www.njwsa.org/uploads/1/0/8/0/108064771/data.pdf",
+     "note": "[fetched, text extracted] 'As of November 19, 2025, Spruce Run Reservoir and Round Valley Reservoir water surface elevations are being reported in NAVD 1988 datum. Previous to this date, elevations referenced the NGVD 1929 datum. To convert between datums, use (NAVD 1988 ELEVATION=NGVD 1929 ELEVATION [minus] 0.8).'"
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Since 2025-11-19 series are NAVD88; the NJWSA full pool 384.20 ft is NAVD88 (385.00 NGVD29). Any stored series before 2025-11-19 is NGVD29: must be shifted by -0.8 ft (NJWSA's own factor, preferred over NCAT -0.797) or else shift engine will show a spurious 0.8 ft step.",
+   "datumChanges": [
+    {
+     "when": "2025-11-19",
+     "what": "NJWSA reservoir elevations switched from NGVD29 to NAVD88 (NAVD88 = NGVD29 - 0.8 ft)."
+    }
+   ],
+   "conversionRequiredWhenMixed": true,
+   "notes": "This is the one dated, documented datum switch found among bound providers."
+  },
+  "utahlake": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [],
+   "fullPoolIsElevation": null,
+   "referenceDatumRule": "Utah Lake Commission CALC_UL_ELEVATION; no pool in full_pool.csv (Utah Lake uses a 'compromise' elevation, datum not established).",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "No pool; unverified."
+  },
+  "aep": {
+   "levelDatum": "NGVD29",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://www.smithmtn.com/lake-levels/",
+     "note": "[fetched] 'National Geodetic Vertical Datum of 1929 (NGVD 29)' defines the 795-ft base level of Smith Mountain Lake; 'normal full pond elevation ... is 795 feet'; Full pond 795.0 ft in the live display."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Series (SMFB forebay) and pool 795.0 share AEP's NGVD29 system: COMPATIBLE_SAME_DATUM.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Single lake."
+  },
+  "nwrfc": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "https://www.mytpu.org/community-environment-parks/parks-recr (URL truncated in full_pool.csv)",
+     "note": "[project note, not re-fetched] Tacoma Power gives 'maximum of 738 ft' for Lake Cushman, datum not stated."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Series from NWRFC CSHW1 forebay (HF); pool 738 from Tacoma Power; datum unknown for both: UNKNOWN.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "low confidence."
+  },
+  "wps-hydro": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [
+    {
+     "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/Historical/ (URL truncated in full_pool.csv)",
+     "note": "[project note, not re-fetched] Castle Rock pool 882 from USGS map label (NGVD29-era); WPS/WRPCO 'Head Water Level (ft)' datum not stated."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "UNKNOWN datum; pool is a map label.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "low confidence."
+  },
+  "alliant": {
+   "levelDatum": "NGVD29",
+   "levelDatumBasis": "verified_doc",
+   "levelDatumEvidence": [
+    {
+     "url": "https://www.alliantenergy.com/our-energy/hydro/flow-rate",
+     "note": "[fetched] Prairie du Sac series 'Head Water (feet NGVD)' = 774.38 on 2026-10-13; page defines 'NGVD is National Geodetic Vertical Datum'."
+    }
+   ],
+   "fullPoolIsElevation": true,
+   "referenceDatumRule": "Series NGVD (29); FERC pool 774.4 ft NGVD (FERC text typo '744.4' noted in project file): COMPATIBLE_SAME_DATUM after confirming 774.4.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Single lake, Lake Wisconsin."
+  },
+  "default_unlisted": {
+   "levelDatum": "UNKNOWN",
+   "levelDatumBasis": "unverified",
+   "levelDatumEvidence": [],
+   "fullPoolIsElevation": null,
+   "referenceDatumRule": "Any provider not listed: datum UNKNOWN. A shift may be emitted only if level and pool are from the same published source (COMPATIBLE_SAME_SOURCE) or both carry the same explicitly stated datum; otherwise suppress.",
+   "datumChanges": [],
+   "conversionRequiredWhenMixed": false,
+   "notes": "Fallback for new providers and for unmapped lakes."
+  }
+ },
+ "referencePoolSources": {
+  "CWMS <loc> Top of Conservation|Top of Normal|Top of Multi-Purpose|Guide Curve|Top of Power (CWMS location level)": {
+   "datum": "PER_SITE (= vertical-datum of the CWMS location holding the Elev series)",
+   "basis": "verified_doc",
+   "note": "~150 rows. Native datum of the location (NGVD29 52 of 64, NAVD88 9, LOCAL 3 among cwms; A2W set 79/9/22). Same datum as the same-location CWMS/A2W series -> COMPATIBLE_SAME_SOURCE. Beware level effective-date/seasonal variants: (max)/(min)/(summer) labels pick a seasonal level; Abiquiu live Top of Conservation reads 6230.0 vs 6220.0 in full_pool.csv (not a datum issue)."
+  },
+  "https://www.usbr.gov/(projects|gp/aop/resaloc|gp/aop/np)": {
+   "datum": "UNKNOWN (document seldom states one)",
+   "basis": "unverified",
+   "note": "62 rows, 'top of active conservation / joint use'. Notes say 'Datum per USBR RISE' but RISE does not declare series datums (all 46 catalog items null). Pool and RISE live series are the same Reclamation system -> same-source shift plausible; datum unknown; large NCAT shift (median 3.1 ft) makes mixing with NGVD29/NAVD88 sources unsafe."
+  },
+  "https://pubs.usgs.gov (WDR/SIR)": {
+   "datum": "PER_SITE (gage datum of the USGS station)",
+   "basis": "inferred",
+   "note": "26 rows. USGS Water Data Report figures are referenced to the station gage datum, often NGVD29 or a site/'sea level' datum; pre-2023 reports predate the WMA 2020.02 NAVD88 policy. Compatible with 62614 only if the report gives NGVD29; 00062 sites need the paired-series offset."
+  },
+  "https://epqs.nationalmap.gov (3DEP point)": {
+   "datum": "NAVD88",
+   "basis": "inferred",
+   "note": "14 rows. USGS 3DEP elevation-point service returns NAVD88 water-surface elevations from lidar; low-confidence pools. Convertible to NGVD29 series with NCAT (sigma 0.23 ft)."
+  },
+  "(blank)": {
+   "datum": "UNKNOWN",
+   "basis": "unverified",
+   "note": "13 rows: no published pool (tidal/natural lakes). No shift."
+  },
+  "https://www.waterdatafortexas.org": {
+   "datum": "NGVD29",
+   "basis": "verified_doc",
+   "note": "11 rows; page states NGVD29 for conservation pool (Amistad, Falcon fetched)."
+  },
+  "https://web.archive.org / state DNR / ODNR (standard pool)": {
+   "datum": "UNKNOWN (state usually does not state)",
+   "basis": "unverified",
+   "note": "10 rows (Buckeye etc.). Buckeye note: ODNR states no datum; USGS gages on the lake report NGVD29 (project note). Eagle Creek IN: IDNR footnote says NAVD88 but readings match NGVD29 (project note) -> documented footnotes can be wrong."
+  },
+  "https://www.federalregister.gov / govinfo.gov (FERC license notices)": {
+   "datum": "MIXED (NGVD29 usually, local plant datum sometimes)",
+   "basis": "inferred",
+   "note": "12 rows. FERC text often says 'msl' without datum (Greenwood, Badin 'Yadkin local 1926 Alcoa datum'). Lake Murray: FERC 2009 'full pool 358.5 ft NAVD88' = Saluda Plant Datum 360 minus 1.5 (project note). Do not treat 'msl' as NGVD29 without evidence."
+  },
+  "https://api.hydro-derived.duke-energy.app / files.nc.gov (Duke full-pond table)": {
+   "datum": "NGVD29 (true elevation) with a parallel local 100-scale",
+   "basis": "inferred",
+   "note": "8 rows. 'AMSL, NGVD 29 datum' per Duke API note (not re-verified); NWS metadata verifies NGVD29 gage-zero 660/835/1100 for Norman/Hickory/James."
+  },
+  "https://cwms-data.usace.army.mil/cwms-data/levels?... (USACE level fetched by URL)": {
+   "datum": "PER_SITE (CWMS location datum)",
+   "basis": "verified_doc",
+   "note": "8 rows, NWDM Kansas City district: location datum tag LOCAL; Kanopolis equals USGS NGVD29, Rathbun appears to equal NAVD88."
+  },
+  "https://prd-tnm.s3.amazonaws.com (USGS historical topo labels)": {
+   "datum": "NGVD29 (map era) assumed",
+   "basis": "inferred",
+   "note": "7 rows. Quad labels predate NAVD88; datum rarely printed. Low confidence."
+  },
+  "TVA operating guide / top of summer operating zone / USACE published pool inside TVA zone": {
+   "datum": "TVA system (NGVD29 inferred)",
+   "basis": "inferred",
+   "note": "~26 rows. Same system as TVA live reading by construction. 'USACE published pool inside TVA summer zone' (Center Hill, Dale Hollow, Old Hickory, Percy Priest, Lake Barkley, Lake Cumberland) uses the USACE Nashville CWMS datum; TVA/USACE shared lakes assumed both NGVD29."
+  },
+  "https://www.santeecooper.com/community/lakes/lake-data (Marion), https://water.noaa.gov/gauges/pins1 (Moultrie)": {
+   "datum": "Santee Cooper gauge scale = USGS 00062 scale (about NGVD29-equivalent); NOT NAVD88",
+   "basis": "inferred",
+   "note": "Page fetched: rule curve 'just above 72.0 ft in winter to 75.5 feet in the summer', FERC max 76.8; page states NO datum and points to USGS gauges. USGS 00062 reads 0.88 ft (Marion) / 0.99 ft (Moultrie) higher than its NAVD88 62615 series; NCAT NGVD29->NAVD88 at the lakes is -0.879 / -0.984, matching. So 00062 is NGVD29-equivalent (inference); USGS 62615 requires pool - 0.88."
+  },
+  "https://streamflow.watershedconnection.com (SRP)": {
+   "datum": "UNKNOWN",
+   "basis": "unverified",
+   "note": "4 rows. SRP report; 'Datum not stated'."
+  },
+  "https://aws.sjrwmd.com/.../UORB_Daily_Levels.pdf": {
+   "datum": "NAVD88",
+   "basis": "verified_doc",
+   "note": "3 rows; chart states all levels NAVD88."
+  },
+  "https://www.njwsa.org": {
+   "datum": "NAVD88 (since 2025-11-19)",
+   "basis": "verified_doc",
+   "note": "2 rows (Round Valley 384.20 NAVD88; Spruce Run 272.2 - project note); NGVD29 = NAVD88 + 0.8."
+  },
+  "https://lakes.southernco.com (Georgia Power Full Elevation)": {
+   "datum": "UNKNOWN (not stated on page)",
+   "basis": "unverified",
+   "note": "3 rows. Page fetched: 'Current Elevation' and 'Full Elevation' columns, no datum. Hartwell 660, Thurmond 330, Russell 475 equal the USACE CWMS NGVD29 pools, which suggests NGVD29; Burton 1866.6 equals NWS TIGG1 action stage."
+  },
+  "https://grda.com (Pensacola Datum)": {
+   "datum": "LOCAL: Pensacola Datum (NGVD29 = PD + 1.07)",
+   "basis": "inferred",
+   "note": "Grand Lake o' the Cherokees: pool 744 PD; CWMS PENS is tagged LOCAL; project note says GRDA and USACE Tulsa both report PD (not re-fetched)."
+  },
+  "https://www.fws.gov (Union Electric Datum)": {
+   "datum": "LOCAL: Union Electric Datum (UED)",
+   "basis": "inferred",
+   "note": "Lake of the Ozarks: full pool 660.0 UED; 'UED is 0.9 feet higher than ...' (truncated project note). NWS LKSM7 lists NGVD29. Convert only with the operator's stated offset."
+  },
+  "https://www.pge.com (PG&E datum)": {
+   "datum": "LOCAL: PG&E datum (approx +10.2 ft above sea level datum)",
+   "basis": "inferred",
+   "note": "Almanor; CDEC series on the same datum."
+  },
+  "Other single-operator URLs (Dominion, FirstLight, Avista, Denver Water, NIPSCO, AEP, Alliant, Tacoma, etc.)": {
+   "datum": "PER OPERATOR (see provider entries)",
+   "basis": "mixed",
+   "note": "AEP Smith Mountain: NGVD29 (fetched). Alliant: NGVD (fetched). NIPSCO: local datum (fetched). Dominion Lake Murray: Saluda Plant Datum (page shows no datum text). Others unverified."
+  }
+ }
+}

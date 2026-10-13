@@ -18,7 +18,7 @@ from collections import Counter
 
 from . import contract as C
 from . import zones as Z
-from .datum import DATA_DIR, assess, load_provider_table, normalize_datum, provider_level_datum
+from .datum import DATA_DIR, DatumAssessment, assess, load_provider_table, normalize_datum, provider_level_datum
 from .evidence import depth_tier_from_research
 
 USGS_PARAM_DATUM = {"62614": "NGVD29", "62615": "NAVD88"}       # USGS parameter definitions: surface elevation above NGVD 1929 / NAVD 1988
@@ -80,6 +80,32 @@ def licence_for(sources: list, lic: dict) -> dict:
     return {"classes": classes, "sources": list(sources), "customerDerivedMetricsAllowed": "true" if allowed else "false"}
 
 
+def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None):
+    """Datum relationship for one lake -> (assessment, level_datum, level_verified, level_note, ref_datum, ref_verified, ref_rule, blocked_extra).
+    Order: per-lake reviewed override > operator rules (TVA system, CWMS same location) > both-datums-stated > UNKNOWN."""
+    prov = ((b or {}).get("provider") or "").lower()
+    ld, ld_ver, ld_note = level_datum_for(b, table) if b else (None, False, "no binding")
+    rd, rd_ver, rd_pat = reference_datum_for(src_str, table)
+    loc = cwms_locs.get(lid) or {}
+    if normalize_datum(loc.get("datum")):
+        rd, rd_ver, rd_pat = normalize_datum(loc["datum"]), True, f"CWMS API vertical-datum {loc.get('office')}/{loc.get('location')}"
+    if prov == "a2w" and (a2w or {}).get(lid, {}).get("verticalDatum"):
+        d = normalize_datum(a2w[lid]["verticalDatum"])
+        if d in ("NGVD29", "NAVD88"):                                  # LOCAL project tags are unresolved, never trusted as equal
+            ld, ld_ver, ld_note = d, True, f"A2W project vertical_datum {a2w[lid]['verticalDatum']} ({a2w[lid]['office']}:{a2w[lid]['code']})"
+    blocked = []
+    if prov == "duke":
+        blocked.append("DUKE_LOCAL_SCALE_NOT_ENABLED")      # series is a 100-based local scale; shift = scale - 100 (unverified, API now 403)
+    same_src = bool(b and prov.startswith("cwms") and src_str and cwms_project(src_str) and cwms_project(src_str) == cwms_project(b.get("series_or_param")))
+    same_sys = bool(prov == "tva" and (src_str or "").startswith("TVA"))
+    ov = overrides.get(lid)
+    if ov:
+        a = DatumAssessment(ov["status"], float(ov["sigmaFt"]), 0.0, ["reviewed per-lake datum override (evidence in datum_lake_overrides.json)"])
+        return a, normalize_datum(ov.get("levelDatum")) or ld, True, "reviewed override", normalize_datum(ov.get("referenceDatum")) or rd, True, "override", blocked
+    a = assess(ld, rd, same_source=same_src, same_operator_system=same_sys, level_datum_verified=ld_ver, reference_datum_verified=rd_ver)
+    return a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, blocked
+
+
 def range_class(p05_p95: float | None) -> str | None:
     if p05_p95 is None:
         return None
@@ -96,6 +122,9 @@ def build(paths: dict, manifest_version: str) -> dict:
     truth = {r["lakeId"]: r for r in read_csv(paths["contour_truth"])}
     oprange = {r["lake"]: r for r in read_csv(paths["operating_range"])}
     lic = {r["sourceKey"]: r for r in read_csv(paths["licences"])} if paths.get("licences") and os.path.exists(paths["licences"]) else {}
+    cwms_locs = json.load(open(paths["cwms_locations"]))["lakes"] if paths.get("cwms_locations") and os.path.exists(paths["cwms_locations"]) else {}
+    a2w = json.load(open(paths["a2w_datums"]))["lakes"] if paths.get("a2w_datums") and os.path.exists(paths["a2w_datums"]) else {}
+    overrides = json.load(open(paths["overrides"])) if paths.get("overrides") and os.path.exists(paths["overrides"]) else {}
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
     out = []
     for lk in directory:
@@ -105,19 +134,17 @@ def build(paths: dict, manifest_version: str) -> dict:
         m = matrix.get(lid, {})
         ref_conf = lk.get("poolConfidence")
         src_str = p["source"] if p else None
-        rd, rd_ver, rd_pat = reference_datum_for(src_str, table)
         blocked: list[str] = []
         # level side
         if lid in reviewed:
             lstat = "LIVE_REVIEWED"
-        elif b and b.get("binding_status") == "VERIFIED":
+        elif b and b.get("binding_status") in ("VERIFIED", "VERIFIED_CORROBORATED"):
             lstat = "RESEARCH_VERIFIED"
+        elif b and b.get("binding_status") in ("VERIFIED_ENVELOPE", "VERIFIED_FLAG"):
+            lstat = "RESEARCH_VERIFIED_LABELLED"          # verified under the labelled v1.1 rules: usable, never HIGH_CONFIDENCE
         else:
             lstat = "NONE"
         cap = b.get("capability_class") if b else None
-        ld, ld_ver, ld_note = (level_datum_for(b, table) if b else (None, False, "no binding"))
-        same_src = bool(b and (b.get("provider") or "").lower().startswith("cwms") and src_str and cwms_project(src_str)
-                        and cwms_project(src_str) == cwms_project(b.get("series_or_param")))
         if lk.get("poolBasis") != "fullPool":
             blocked.append("REFERENCE_NOT_A_POOL_ELEVATION")
         if ref_conf not in C.REFERENCE_CONF_ALLOWED:
@@ -129,8 +156,9 @@ def build(paths: dict, manifest_version: str) -> dict:
         elif cap not in C.ALLOWED_LEVEL_CAPABILITIES and lstat != "LIVE_REVIEWED":
             blocked.append("LEVEL_SOURCE_NOT_DIRECT")
         conv_ft = conv.get(lid)
-        a = assess(ld, rd, same_source=same_src, level_datum_verified=ld_ver, reference_datum_verified=rd_ver)   # conversion NOT enabled
-        if lstat != "NONE" and not a.usable:
+        a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, extra = assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w)   # conversion NOT enabled
+        blocked.extend(extra)
+        if lstat != "NONE" and not a.usable and not extra:
             blocked.append("DATUM_UNKNOWN" if a.status == "UNKNOWN" else ("DATUM_CONVERSION_NOT_ENABLED" if (ld and rd and {ld, rd} == {"NGVD29", "NAVD88"}) else "DATUM_INCOMPATIBLE"))
         shift_possible = not blocked
         # history
@@ -140,7 +168,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         # rollout
         if shift_possible and lstat == "LIVE_REVIEWED":
             rollout = "PILOT_VERIFIED"
-        elif shift_possible and ref_conf == "high" and a.status in ("SAME_SOURCE", "SAME_DATUM") and (hyears or 0) >= 10 and cap in C.ALLOWED_LEVEL_CAPABILITIES:
+        elif shift_possible and lstat == "RESEARCH_VERIFIED" and ref_conf == "high" and a.status in ("SAME_SOURCE", "SAME_OPERATOR_SYSTEM", "SAME_DATUM") and (hyears or 0) >= 10 and cap in C.ALLOWED_LEVEL_CAPABILITIES:
             rollout = "HIGH_CONFIDENCE"
         elif shift_possible:
             rollout = "MEDIUM_CONFIDENCE"
@@ -149,8 +177,12 @@ def build(paths: dict, manifest_version: str) -> dict:
         # evidence + zones
         rt = m.get("evidenceTier", "U")
         tier = depth_tier_from_research(rt)
-        ev = {"tier": tier, "researchTier": rt, "kind": "contour" if tier in ("A", "B") else ("measured" if rt == "C" else ("proxy" if tier == "D" else "unknown")),
-              "bestSource": m.get("bestDepthSource"), "contourSources": [s for s in (m.get("contourSources") or "").split(";") if s]}
+        # evidence kind is about DEPTH: contours (incl. partial / the single IENC contour) are `contour`; stage-area hypsometry says nothing about depth -> `unknown`
+        kind = "contour" if rt in ("A", "B", "B-partial", "B-binary") else ("proxy" if tier == "D" else "unknown")
+        ev = {"tier": tier, "researchTier": rt, "kind": kind, "hypsometryOnly": rt == "C",
+              # D/UNKNOWN evidence is never named as a depth source
+              "bestSource": (m.get("bestDepthSource") if tier in ("A", "B", "C") else None),
+              "contourSources": [s for s in (m.get("contourSources") or "").split(";") if s]}
         t = truth.get(lid)
         zr = None
         if t and tier in ("A", "B"):

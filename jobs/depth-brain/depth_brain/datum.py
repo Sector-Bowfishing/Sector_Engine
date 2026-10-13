@@ -4,6 +4,8 @@ vertical reference system. Anything not provably compatible is UNKNOWN and produ
 Statuses
   SAME_SOURCE   reference pool and level series come from the same operator record (e.g. one CWMS project: top of conservation vs
                 the pool series); datum identical by construction.
+  SAME_OPERATOR_SYSTEM  one operator publishes both the pool figure and the level series on one system (e.g. TVA operating-zone elevations and its
+                reservoir elevation); the operator does not NAME the datum, so the relationship is inferred but internally consistent. Small sigma.
   SAME_DATUM    both datums are known (document-verified or explicitly stamped on the data) and equal.
   CONVERTED     datums known and different, and an explicit conversion (ft, NAVD88 - NGVD29) was supplied. Adds sigma.
   INCOMPATIBLE  datums known and different, no conversion supplied.
@@ -19,7 +21,7 @@ from dataclasses import dataclass, field
 from . import contract as C
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-USABLE = ("SAME_SOURCE", "SAME_DATUM", "CONVERTED")
+USABLE = ("SAME_SOURCE", "SAME_OPERATOR_SYSTEM", "SAME_DATUM", "CONVERTED")
 
 _ALIASES = {
     "NGVD29": "NGVD29", "NGVD 29": "NGVD29", "NGVD1929": "NGVD29", "NGVD": "NGVD29", "MSL29": "NGVD29",
@@ -62,7 +64,7 @@ class DatumAssessment:
         return d
 
 
-def assess(level_datum, reference_datum, *, same_source: bool = False, level_datum_verified: bool = True,
+def assess(level_datum, reference_datum, *, same_source: bool = False, same_operator_system: bool = False, level_datum_verified: bool = True,
            reference_datum_verified: bool = True, navd88_minus_ngvd29_ft: float | None = None) -> DatumAssessment:
     """Decide whether `level - reference` is defensible.
 
@@ -70,6 +72,8 @@ def assess(level_datum, reference_datum, *, same_source: bool = False, level_dat
     `navd88_minus_ngvd29_ft` = (elevation in NAVD88) - (elevation of the same point in NGVD29) at this lake."""
     if same_source:
         return DatumAssessment("SAME_SOURCE", C.SIGMA_DATUM["SAME_SOURCE"], 0.0, ["reference and level share one operator record"])
+    if same_operator_system:
+        return DatumAssessment("SAME_OPERATOR_SYSTEM", C.SIGMA_DATUM["SAME_OPERATOR_SYSTEM"], 0.0, ["one operator system for pool and level; datum not named by the operator (inferred)"])
     ld = normalize_datum(level_datum) if level_datum_verified else None
     rd = normalize_datum(reference_datum) if reference_datum_verified else None
     if ld is None or rd is None:

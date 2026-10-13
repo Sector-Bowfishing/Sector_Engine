@@ -1,0 +1,12 @@
+{
+ "Lake Hartwell|SC": {
+  "status": "SAME_DATUM", "sigmaFt": 0.15, "levelDatum": "NGVD29", "referenceDatum": "NGVD29",
+  "summary": "Level is USGS 02187010 parameter 00062 (datum not declared by the parameter); reference is the CWMS Hartwell Top of Conservation (location vertical-datum NGVD29). On 35 overlapping daily values the USGS 00062 series minus the CWMS NGVD29 series is -0.12 ft mean, 0.06 ft SD (range -0.22 to +0.07); NAVD88 would be offset about -0.32 ft (CWMS vertical-datum-info). Lake Brain also stamps datum NGVD29 on the live state and re-checks the CWMS overlap (flag at 0.10 ft).",
+  "evidence": [
+   {"what": "CWMS location record", "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Hartwell?office=SAS", "says": "vertical-datum NGVD29; timeseries vertical-datum-info native NGVD-29, NAVD-88 offset -0.3246 (estimate)"},
+   {"what": "USGS 02187010 vs CWMS daily comparison", "checkedAt": "2026-10-13", "result": "35 days 2025-04-27..2025-06-01: mean -0.117, sd 0.059 ft"},
+   {"what": "Hartwell audit", "ref": "docs/brains/depth/DEPTH_HARTWELL_EFFECTIVE_DEPTH.md", "says": "USGS 02187010 agrees with the CWMS daily pool, median absolute deviation 0.09 ft"}
+  ],
+  "caveat": "CWMS Top of Conservation is 660 ft only in summer (about April to mid-October); winter guide is 656 ft. The shift is relative to 660."
+ }
+}

@@ -72,7 +72,7 @@ REFERENCE_CONF_ALLOWED = ("high", "medium")   # `low` references (natural-lake s
 #    (DEPTH_BRAIN_EFFECTIVE_DEPTH_RESEARCH.md); some are ASSUMED, not measured, and are flagged in the state. ─
 SIGMA_POOL = {"high": 0.25, "medium": 1.0, "low": 3.0}
 SIGMA_LEVEL = {"DIRECT_OPERATOR_POOL": 0.1, "DIRECT_LAKE_GAUGE": 0.15}
-SIGMA_DATUM = {"SAME_SOURCE": 0.0, "SAME_DATUM": 0.1, "CONVERTED": 0.3}
+SIGMA_DATUM = {"SAME_SOURCE": 0.0, "SAME_OPERATOR_SYSTEM": 0.1, "SAME_DATUM": 0.1, "CONVERTED": 0.3}
 SIGMA_ASSUMED = ("pool", "level", "datum")
 CONF_HIGH_MAX_SIGMA = 0.5
 CONF_MEDIUM_MAX_SIGMA = 1.2

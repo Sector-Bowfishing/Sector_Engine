@@ -1,0 +1,566 @@
+{
+ "lakes": {
+  "Abiquiu Lake|NM": {
+   "code": "Abiquiu",
+   "office": "SPA",
+   "verticalDatum": "NGVD29"
+  },
+  "Alamo|AZ": {
+   "code": "Alamo",
+   "office": "SPL",
+   "verticalDatum": "NGVD29"
+  },
+  "Allatoona|GA": {
+   "code": "Allatoona",
+   "office": "SAM",
+   "verticalDatum": "NGVD29"
+  },
+  "Allegheny Reservoir|PA": {
+   "code": "Kinzua",
+   "office": "LRP",
+   "verticalDatum": "NAVD88"
+  },
+  "Alum Creek Lake|OH": {
+   "code": "AlumCr",
+   "office": "LRH",
+   "verticalDatum": "NGVD29"
+  },
+  "Anderson Ranch Reservoir|ID": {
+   "code": "AND",
+   "office": "NWW",
+   "verticalDatum": "NGVD29"
+  },
+  "Barren River Lake|KY": {
+   "code": "Barren",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Beaver|AR": {
+   "code": "Beaver_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Beech Fork Lake|WV": {
+   "code": "BeechFk",
+   "office": "LRH",
+   "verticalDatum": "NGVD29"
+  },
+  "Beltzville Lake|PA": {
+   "code": "Beltzville",
+   "office": "NAP",
+   "verticalDatum": "NAVD88"
+  },
+  "Berlin Lake|OH": {
+   "code": "Berlin",
+   "office": "LRP",
+   "verticalDatum": "NAVD88"
+  },
+  "Blue Marsh Lake|PA": {
+   "code": "BlueMarsh",
+   "office": "NAP",
+   "verticalDatum": "NAVD88"
+  },
+  "Bowman-Haley Reservoir|ND": {
+   "code": "BOHA",
+   "office": "NWO",
+   "verticalDatum": "LOCAL"
+  },
+  "Brookville Lake|IN": {
+   "code": "Brookville",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Buckhorn Lake|KY": {
+   "code": "Buckhorn",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Bull Shoals Lake|AR": {
+   "code": "Bull_Shoals_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Caddo Lake|TX": {
+   "code": "Caddo Lake",
+   "office": "MVK",
+   "verticalDatum": "NGVD29"
+  },
+  "Caesar Creek Lake|OH": {
+   "code": "CaesarCreek",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Cagles Mill Lake|IN": {
+   "code": "CaglesMill",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Canyon Ferry Lake|MT": {
+   "code": "CAFE",
+   "office": "NWO",
+   "verticalDatum": "LOCAL"
+  },
+  "Canyon Lake|TX": {
+   "code": "SMCT2",
+   "office": "SWF",
+   "verticalDatum": "NGVD29"
+  },
+  "Carters|GA": {
+   "code": "Carters",
+   "office": "SAM",
+   "verticalDatum": "NGVD29"
+  },
+  "Cave Run Lake|KY": {
+   "code": "CaveRun",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Cecil M. Harden Lake|IN": {
+   "code": "CMHarden",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Cedar Bluff Reservoir|KS": {
+   "code": "CEBL",
+   "office": "NWK",
+   "verticalDatum": "NGVD29"
+  },
+  "Cedar Creek Reservoir|TX": {
+   "code": "TRNT2",
+   "office": "SWF",
+   "verticalDatum": "NGVD29"
+  },
+  "Center Hill Lake|TN": {
+   "code": "CEHT1",
+   "office": "LRN",
+   "verticalDatum": "NGVD29"
+  },
+  "Chatfield Reservoir|CO": {
+   "code": "CHFI",
+   "office": "NWO",
+   "verticalDatum": "LOCAL"
+  },
+  "Cherry Creek Reservoir|CO": {
+   "code": "CHCR",
+   "office": "NWO",
+   "verticalDatum": "LOCAL"
+  },
+  "Clearwater Lake|MO": {
+   "code": "Clearwater_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Clinton Lake|KS": {
+   "code": "CLIN",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Cochiti Lake|NM": {
+   "code": "Cochiti",
+   "office": "SPA",
+   "verticalDatum": "NGVD29"
+  },
+  "Coeur d'Alene|ID": {
+   "code": "COEI",
+   "office": "NWS",
+   "verticalDatum": "NGVD29"
+  },
+  "Conchas Lake|NM": {
+   "code": "Conchas",
+   "office": "SPA",
+   "verticalDatum": "NGVD29"
+  },
+  "Coralville Lake|IA": {
+   "code": "CRVI4",
+   "office": "MVR",
+   "verticalDatum": "NGVD29"
+  },
+  "Dale Hollow Lake|TN": {
+   "code": "DLHT1",
+   "office": "LRN",
+   "verticalDatum": "NGVD29"
+  },
+  "DeGray|AR": {
+   "code": "Degray Lake",
+   "office": "MVK",
+   "verticalDatum": "NGVD29"
+  },
+  "Detroit Lake|OR": {
+   "code": "DET",
+   "office": "NWP",
+   "verticalDatum": "NGVD29"
+  },
+  "Dworshak Reservoir|ID": {
+   "code": "DWR",
+   "office": "NWW",
+   "verticalDatum": "NGVD29"
+  },
+  "El Dorado Lake|KS": {
+   "code": "ELDR",
+   "office": "SWT",
+   "verticalDatum": "NGVD29"
+  },
+  "Falls Lake|NC": {
+   "code": "NEU FLP",
+   "office": "SAW",
+   "verticalDatum": ""
+  },
+  "Fern Ridge Reservoir|OR": {
+   "code": "FRN",
+   "office": "NWP",
+   "verticalDatum": "NGVD29"
+  },
+  "Flathead Lake|MT": {
+   "code": "KER",
+   "office": "NWS",
+   "verticalDatum": "NGVD29"
+  },
+  "Green River Lake|KY": {
+   "code": "Green",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Greers Ferry|AR": {
+   "code": "GreersFerry_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Gull Lake|MN": {
+   "code": "MissHW_Gull",
+   "office": "MVP",
+   "verticalDatum": "NGVD29"
+  },
+  "Harlan County Lake|NE": {
+   "code": "HACO",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Hungry Horse Reservoir|MT": {
+   "code": "HGH",
+   "office": "NWS",
+   "verticalDatum": "NGVD29"
+  },
+  "Isabella|CA": {
+   "code": "Lake Isabella",
+   "office": "SPK",
+   "verticalDatum": "NGVD29"
+  },
+  "Istokpoga|FL": {
+   "code": "Lake Istokpoga",
+   "office": "SAJ",
+   "verticalDatum": "NGVD29"
+  },
+  "Jackson Lake|WY": {
+   "code": "JCK",
+   "office": "NWW",
+   "verticalDatum": "NGVD29"
+  },
+  "Jennings Randolph Lake|MD": {
+   "code": "Randolph",
+   "office": "NAB",
+   "verticalDatum": "LOCAL"
+  },
+  "John Martin Reservoir|CO": {
+   "code": "John Martin",
+   "office": "SPA",
+   "verticalDatum": "NGVD29"
+  },
+  "Kanopolis Lake|KS": {
+   "code": "KANS",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Keystone Lake|OK": {
+   "code": "KEYS",
+   "office": "SWT",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Ashtabula|ND": {
+   "code": "Baldhill_Dam",
+   "office": "MVP",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Barkley|KY": {
+   "code": "BAHK2",
+   "office": "LRN",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Chelan|WA": {
+   "code": "CHL",
+   "office": "NWS",
+   "verticalDatum": ""
+  },
+  "Lake Darling|ND": {
+   "code": "LakeDarling_Dam",
+   "office": "MVP",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Eufaula|OK": {
+   "code": "EUFA",
+   "office": "SWT",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Hudson|OK": {
+   "code": "HUDS",
+   "office": "SWT",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Pend Oreille|ID": {
+   "code": "HOPI",
+   "office": "NWS",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Pepin|MN": {
+   "code": "LakeCity",
+   "office": "MVP",
+   "verticalDatum": "LOCAL"
+  },
+  "Lake Texoma|TX": {
+   "code": "DENI",
+   "office": "SWT",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Travis|TX": {
+   "code": "MSDT2",
+   "office": "SWF",
+   "verticalDatum": "NGVD29"
+  },
+  "Lake Winnibigoshish|MN": {
+   "code": "MissHW_Winni",
+   "office": "MVP",
+   "verticalDatum": "NGVD29"
+  },
+  "Lanier (Sidney Lanier)|GA": {
+   "code": "Buford",
+   "office": "SAM",
+   "verticalDatum": "NGVD29"
+  },
+  "Laurel River Lake|KY": {
+   "code": "LAPK2",
+   "office": "LRN",
+   "verticalDatum": "NGVD29"
+  },
+  "Leech Lake|MN": {
+   "code": "MissHW_Leech",
+   "office": "MVP",
+   "verticalDatum": "NGVD29"
+  },
+  "Longview Lake|MO": {
+   "code": "LGVM",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Lucky Peak Lake|ID": {
+   "code": "LUC",
+   "office": "NWW",
+   "verticalDatum": "NGVD29"
+  },
+  "Melvern Lake|KS": {
+   "code": "MELN",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Milford Lake|KS": {
+   "code": "MILD",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Millwood|AR": {
+   "code": "Millwood_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Monroe Lake|IN": {
+   "code": "Monroe",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Mosquito Creek Lake|OH": {
+   "code": "Mosquito",
+   "office": "LRP",
+   "verticalDatum": "NAVD88"
+  },
+  "Nimrod|AR": {
+   "code": "Nimrod_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Nolin River Lake|KY": {
+   "code": "Nolin",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Norfork|AR": {
+   "code": "Norfork_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Okatibbee Lake|MS": {
+   "code": "Okatibbee",
+   "office": "SAM",
+   "verticalDatum": "NGVD29"
+  },
+  "Okeechobee|FL": {
+   "code": "Okeechobee",
+   "office": "SAJ",
+   "verticalDatum": "NGVD29"
+  },
+  "Old Hickory Lake|TN": {
+   "code": "OHHT1",
+   "office": "LRN",
+   "verticalDatum": "NGVD29"
+  },
+  "Oologah Lake|OK": {
+   "code": "OOLO",
+   "office": "SWT",
+   "verticalDatum": "NGVD29"
+  },
+  "Palisades Reservoir|ID": {
+   "code": "PAL",
+   "office": "NWW",
+   "verticalDatum": "NGVD29"
+  },
+  "Patoka Lake|IN": {
+   "code": "Patoka",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Percy Priest Lake|TN": {
+   "code": "JPHT1",
+   "office": "LRN",
+   "verticalDatum": "NGVD29"
+  },
+  "Perry Lake|KS": {
+   "code": "PERY",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Philpott Lake|VA": {
+   "code": "ROA PLP",
+   "office": "SAW",
+   "verticalDatum": "NGVD29"
+  },
+  "Pomme de Terre Lake|MO": {
+   "code": "PODT",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Pomona Lake|KS": {
+   "code": "POMA",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Rathbun Lake|IA": {
+   "code": "RATN",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Raystown Lake|PA": {
+   "code": "Raystown",
+   "office": "NAB",
+   "verticalDatum": "LOCAL"
+  },
+  "Red Lake|MN": {
+   "code": "RedLake_Dam",
+   "office": "MVP",
+   "verticalDatum": "LOCAL"
+  },
+  "Ross Lake|WA": {
+   "code": "ROS",
+   "office": "NWS",
+   "verticalDatum": "NGVD29"
+  },
+  "Rough River Lake|KY": {
+   "code": "Rough",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Sam Rayburn Reservoir|TX": {
+   "code": "JSPT2",
+   "office": "SWF",
+   "verticalDatum": "NGVD29"
+  },
+  "Santa Rosa Lake|NM": {
+   "code": "Santa Rosa",
+   "office": "SPA",
+   "verticalDatum": "NAVD88"
+  },
+  "Sardis Lake|OK": {
+   "code": "SARD",
+   "office": "SWT",
+   "verticalDatum": "NGVD29"
+  },
+  "Savage River Reservoir|MD": {
+   "code": "Savage",
+   "office": "NAB",
+   "verticalDatum": "LOCAL"
+  },
+  "Saylorville Lake|IA": {
+   "code": "SAYI4",
+   "office": "MVR",
+   "verticalDatum": "NGVD29"
+  },
+  "Shenango River Lake|PA": {
+   "code": "Shenango",
+   "office": "LRP",
+   "verticalDatum": "NAVD88"
+  },
+  "Smithville Lake|MO": {
+   "code": "SMIE",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  },
+  "Stockton Lake|MO": {
+   "code": "STON",
+   "office": "NWK",
+   "verticalDatum": "NGVD29"
+  },
+  "Stonewall Jackson Lake|WV": {
+   "code": "StonewallJackson",
+   "office": "LRP",
+   "verticalDatum": "NAVD88"
+  },
+  "Summersville Lake|WV": {
+   "code": "Summersville",
+   "office": "LRH",
+   "verticalDatum": "NGVD29"
+  },
+  "Table Rock Lake|MO": {
+   "code": "Table_Rock_Dam",
+   "office": "SWL",
+   "verticalDatum": "NGVD29"
+  },
+  "Taylorsville Lake|KY": {
+   "code": "Taylorsville",
+   "office": "LRL",
+   "verticalDatum": "NGVD29"
+  },
+  "Tiber Reservoir (Lake Elwell)|MT": {
+   "code": "TIBR",
+   "office": "NWO",
+   "verticalDatum": "LOCAL"
+  },
+  "Truman Lake|MO": {
+   "code": "HAST",
+   "office": "NWK",
+   "verticalDatum": "NGVD29"
+  },
+  "Tygart Lake|WV": {
+   "code": "Tygart",
+   "office": "LRP",
+   "verticalDatum": "NAVD88"
+  },
+  "West Point|GA": {
+   "code": "WestPoint",
+   "office": "SAM",
+   "verticalDatum": "NGVD29"
+  },
+  "Wilson Lake|KS": {
+   "code": "WILN",
+   "office": "NWK",
+   "verticalDatum": "LOCAL"
+  }
+ },
+ "schema": "depth-a2w-project-datums-v1",
+ "source": "USACE Access2Water reporting API /cda/reporting locations (vertical_datum), cached 2026-10-13 by Lake Brain binding research"
+}
