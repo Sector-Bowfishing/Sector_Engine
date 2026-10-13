@@ -38,7 +38,7 @@ def test_missing_inputs_are_unknown_never_zero():
 
 def test_coverage_counts_match_the_manifest_and_nothing_is_customer_visible():
     c = build()["coverage"]
-    assert (c["audited"], c["estimated"], c["pointOnly"]) == (74, 471, 76) and c["labelEligible"] == 528 and c["blocked"] == 17 and c["directoryLakes"] == 621
+    assert (c["audited"], c["estimated"], c["pointOnly"]) == (74, 473, 74) and c["labelEligible"] == 522 and c["blocked"] == 25 and c["directoryLakes"] == 621
     assert c["customerVisibleExposure"] == 0
 
 

@@ -1,12 +1,20 @@
 {
 "counts":{
 "AUDITED":74,
-"ESTIMATED":471,
-"POINT_ONLY":76
+"ESTIMATED":473,
+"POINT_ONLY":74
 },
 "directoryLakes":621,
 "evidence":"docs/wind-research (branch docs/wind-brain-research): polygon fetch matched audited magnitude (-6%) but FAILED direction-rank agreement; ESTIMATED is not validated.",
-"exposureAllowedCount":528,
+"exposureAllowedCount":522,
+"inputs":{
+"registry":{
+"count":621,
+"generatedAt":"2026-10-13T20:20:54Z",
+"geometryVersion":"v1",
+"schema":"sector.lake-registry/v1"
+}
+},
 "lakes":{
 "Abiquiu Lake|NM":{
 "blockers":[],
@@ -15,10 +23,13 @@
 "id":"Abiquiu Lake|NM",
 "lat":36.24,
 "lon":-106.43,
+"memberIds":[
+"Abiquiu Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":472,
-"maxP90FetchM":1805,
+"banksSampled":466,
+"maxP90FetchM":1770,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -32,10 +43,13 @@
 "id":"Alamo|AZ",
 "lat":34.23,
 "lon":-113.58,
+"memberIds":[
+"Alamo|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":477,
-"maxP90FetchM":2382,
+"banksSampled":465,
+"maxP90FetchM":3006,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -49,10 +63,13 @@
 "id":"Alcova Reservoir|WY",
 "lat":42.54,
 "lon":-106.75,
+"memberIds":[
+"Alcova Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":470,
-"maxP90FetchM":1714,
+"banksSampled":460,
+"maxP90FetchM":1786,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -68,10 +85,13 @@
 "id":"Aleknagik|AK",
 "lat":59.3,
 "lon":-158.6,
+"memberIds":[
+"Aleknagik|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":4114,
+"banksSampled":406,
+"maxP90FetchM":4422,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -85,10 +105,13 @@
 "id":"Allatoona|GA",
 "lat":34.16,
 "lon":-84.725,
+"memberIds":[
+"Allatoona|GA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":777,
+"banksSampled":410,
+"maxP90FetchM":858,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -102,10 +125,13 @@
 "id":"Allegheny Reservoir|PA",
 "lat":41.85,
 "lon":-78.9,
+"memberIds":[
+"Allegheny Reservoir|PA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1540,
+"banksSampled":413,
+"maxP90FetchM":1462,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -115,14 +141,17 @@
 "Almanor|CA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Almanor|CA",
 "lat":40.26,
 "lon":-121.15,
+"memberIds":[
+"Almanor|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":7892,
+"banksSampled":437,
+"maxP90FetchM":8432,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -136,10 +165,13 @@
 "id":"Alum Creek Lake|OH",
 "lat":40.2,
 "lon":-82.98,
+"memberIds":[
+"Alum Creek Lake|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":1308,
+"banksSampled":443,
+"maxP90FetchM":1331,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -153,10 +185,13 @@
 "id":"American Falls Reservoir|ID",
 "lat":42.85,
 "lon":-112.87,
+"memberIds":[
+"American Falls Reservoir|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":7893,
+"banksSampled":412,
+"maxP90FetchM":7296,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -170,10 +205,13 @@
 "id":"Amistad Reservoir|TX",
 "lat":29.5,
 "lon":-101.15,
+"memberIds":[
+"Amistad Reservoir|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":1126,
+"banksSampled":405,
+"maxP90FetchM":997,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -187,10 +225,13 @@
 "id":"Anderson Ranch Reservoir|ID",
 "lat":43.35,
 "lon":-115.45,
+"memberIds":[
+"Anderson Ranch Reservoir|ID"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":454,
-"maxP90FetchM":1641,
+"banksSampled":448,
+"maxP90FetchM":1702,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -199,17 +240,21 @@
 },
 "Andrews Lake|DE":{
 "blockers":[
-"lakeIdentityRisk"
+"lakeIdentityRisk",
+"auditedGeometryAreaMismatch"
 ],
 "forecastDomain":"CONUS",
 "geometryConfidence":"LOW",
 "id":"Andrews Lake|DE",
 "lat":38.908,
 "lon":-75.542,
+"memberIds":[
+"Andrews Lake|DE"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":112,
-"maxP90FetchM":307,
+"banksSampled":118,
+"maxP90FetchM":266,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -223,10 +268,13 @@
 "id":"Angostura Reservoir|SD",
 "lat":43.34,
 "lon":-103.43,
+"memberIds":[
+"Angostura Reservoir|SD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1589,
+"banksSampled":441,
+"maxP90FetchM":1588,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -242,10 +290,13 @@
 "id":"Apache|AZ",
 "lat":33.57,
 "lon":-111.55,
+"memberIds":[
+"Apache|AZ"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":489,
-"maxP90FetchM":1280,
+"banksSampled":476,
+"maxP90FetchM":1364,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -259,10 +310,13 @@
 "id":"Apopka|FL",
 "lat":28.62,
 "lon":-81.62,
+"memberIds":[
+"Apopka|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":12310,
+"banksSampled":414,
+"maxP90FetchM":12106,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -276,10 +330,13 @@
 "id":"Arkabutla Lake|MS",
 "lat":34.74,
 "lon":-90.11,
+"memberIds":[
+"Arkabutla Lake|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":2678,
+"banksSampled":404,
+"maxP90FetchM":2654,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -293,10 +350,13 @@
 "id":"Assawompset Pond|MA",
 "lat":41.833,
 "lon":-70.933,
+"memberIds":[
+"Assawompset Pond|MA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":488,
-"maxP90FetchM":3009,
+"banksSampled":485,
+"maxP90FetchM":3186,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -310,10 +370,13 @@
 "id":"Badin Lake|NC",
 "lat":35.42,
 "lon":-80.1,
+"memberIds":[
+"Badin Lake|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":1261,
+"banksSampled":410,
+"maxP90FetchM":1182,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -327,10 +390,13 @@
 "id":"Bankhead|AL",
 "lat":33.45,
 "lon":-87.35,
+"memberIds":[
+"Bankhead|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":413,
-"maxP90FetchM":750,
+"maxP90FetchM":670,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -344,10 +410,13 @@
 "id":"Banks Lake|WA",
 "lat":47.8,
 "lon":-119.15,
+"memberIds":[
+"Banks Lake|WA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":416,
-"maxP90FetchM":4176,
+"banksSampled":405,
+"maxP90FetchM":4427,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -361,10 +430,13 @@
 "id":"Bantam Lake|CT",
 "lat":41.708,
 "lon":-73.218,
+"memberIds":[
+"Bantam Lake|CT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":687,
-"maxP90FetchM":1502,
+"banksSampled":679,
+"maxP90FetchM":1508,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -378,10 +450,13 @@
 "id":"Barkhamsted Reservoir|CT",
 "lat":41.93,
 "lon":-72.96,
+"memberIds":[
+"Barkhamsted Reservoir|CT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":1676,
+"banksSampled":409,
+"maxP90FetchM":1741,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -395,10 +470,13 @@
 "id":"Barren River Lake|KY",
 "lat":36.89,
 "lon":-86.13,
+"memberIds":[
+"Barren River Lake|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":828,
+"banksSampled":402,
+"maxP90FetchM":984,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -412,10 +490,13 @@
 "id":"Bartlett|AZ",
 "lat":33.82,
 "lon":-111.63,
+"memberIds":[
+"Bartlett|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":1063,
+"banksSampled":473,
+"maxP90FetchM":1106,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -429,10 +510,13 @@
 "id":"Bay Springs Lake|MS",
 "lat":34.58,
 "lon":-88.34,
+"memberIds":[
+"Bay Springs Lake|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":423,
-"maxP90FetchM":1231,
+"banksSampled":411,
+"maxP90FetchM":1284,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -446,10 +530,13 @@
 "id":"Bear Lake|UT",
 "lat":41.95,
 "lon":-111.3,
+"memberIds":[
+"Bear Lake|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":21557,
+"banksSampled":430,
+"maxP90FetchM":21559,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -463,10 +550,13 @@
 "id":"Beaver|AR",
 "lat":36.42,
 "lon":-93.8,
+"memberIds":[
+"Beaver|AR"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1236,
+"banksSampled":406,
+"maxP90FetchM":1230,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -482,10 +572,13 @@
 "id":"Becharof|AK",
 "lat":57.9,
 "lon":-156.5,
+"memberIds":[
+"Becharof|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":23258,
+"banksSampled":410,
+"maxP90FetchM":21908,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -499,10 +592,13 @@
 "id":"Becks Pond|DE",
 "lat":39.64,
 "lon":-75.687,
+"memberIds":[
+"Becks Pond|DE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":129,
-"maxP90FetchM":284,
+"banksSampled":136,
+"maxP90FetchM":280,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -516,10 +612,13 @@
 "id":"Beech Fork Lake|WV",
 "lat":38.28,
 "lon":-82.37,
+"memberIds":[
+"Beech Fork Lake|WV"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":448,
-"maxP90FetchM":482,
+"banksSampled":442,
+"maxP90FetchM":487,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -533,10 +632,13 @@
 "id":"Beltzville Lake|PA",
 "lat":40.85,
 "lon":-75.63,
+"memberIds":[
+"Beltzville Lake|PA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":516,
-"maxP90FetchM":1106,
+"banksSampled":504,
+"maxP90FetchM":1149,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -550,10 +652,13 @@
 "id":"Berlin Lake|OH",
 "lat":41.03,
 "lon":-81,
+"memberIds":[
+"Berlin Lake|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":436,
-"maxP90FetchM":894,
+"banksSampled":425,
+"maxP90FetchM":884,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -567,10 +672,13 @@
 "id":"Berryessa|CA",
 "lat":38.59,
 "lon":-122.23,
+"memberIds":[
+"Berryessa|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":2300,
+"banksSampled":411,
+"maxP90FetchM":2100,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -580,19 +688,22 @@
 "Big Creek Lake|IA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"LOW",
+"geometryConfidence":"HIGH",
 "id":"Big Creek Lake|IA",
 "lat":41.78,
 "lon":-93.75,
+"memberIds":[
+"Big Creek Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":495,
-"maxP90FetchM":871,
+"banksSampled":478,
+"maxP90FetchM":888,
 "rasterM":20.0
 },
-"reason":"geometryConfidence:LOW",
+"reason":"polygonFetch",
 "state":"IA",
-"tier":"POINT_ONLY"
+"tier":"ESTIMATED"
 },
 "Big Green Lake|WI":{
 "blockers":[],
@@ -601,10 +712,13 @@
 "id":"Big Green Lake|WI",
 "lat":43.83,
 "lon":-88.97,
+"memberIds":[
+"Big Green Lake|WI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":4802,
+"banksSampled":413,
+"maxP90FetchM":4552,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -620,10 +734,13 @@
 "id":"Big Lake|AK",
 "lat":61.53,
 "lon":-149.95,
+"memberIds":[
+"Big Lake|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":449,
-"maxP90FetchM":1389,
+"banksSampled":437,
+"maxP90FetchM":1410,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -637,10 +754,13 @@
 "id":"Big Stone Lake|SD",
 "lat":45.3,
 "lon":-96.6,
+"memberIds":[
+"Big Stone Lake|SD"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":432,
-"maxP90FetchM":3474,
+"banksSampled":429,
+"maxP90FetchM":3545,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -654,10 +774,13 @@
 "id":"Bighorn Lake|WY",
 "lat":44.9,
 "lon":-108.2,
+"memberIds":[
+"Bighorn Lake|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":986,
+"banksSampled":401,
+"maxP90FetchM":980,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -673,10 +796,13 @@
 "id":"Bitter Lake|SD",
 "lat":45.43,
 "lon":-97.26,
+"memberIds":[
+"Bitter Lake|SD"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":4340,
+"banksSampled":403,
+"maxP90FetchM":4334,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -690,10 +816,13 @@
 "id":"Black Hawk Lake|IA",
 "lat":42.3,
 "lon":-95.03,
+"memberIds":[
+"Black Hawk Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":457,
-"maxP90FetchM":1220,
+"banksSampled":450,
+"maxP90FetchM":1217,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -707,10 +836,13 @@
 "id":"Blackshear|GA",
 "lat":31.83,
 "lon":-83.955,
+"memberIds":[
+"Blackshear|GA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":1813,
+"banksSampled":415,
+"maxP90FetchM":1774,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -724,10 +856,13 @@
 "id":"Blue Marsh Lake|PA",
 "lat":40.4,
 "lon":-76.03,
+"memberIds":[
+"Blue Marsh Lake|PA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":442,
-"maxP90FetchM":624,
+"banksSampled":433,
+"maxP90FetchM":567,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -741,10 +876,13 @@
 "id":"Blue Mesa Reservoir|CO",
 "lat":38.4586,
 "lon":-107.33,
+"memberIds":[
+"Blue Mesa Reservoir|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":423,
-"maxP90FetchM":1668,
+"banksSampled":415,
+"maxP90FetchM":1861,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -758,10 +896,13 @@
 "id":"Bluestone Lake|WV",
 "lat":37.62,
 "lon":-80.9,
+"memberIds":[
+"Bluestone Lake|WV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":423,
-"maxP90FetchM":1075,
+"banksSampled":419,
+"maxP90FetchM":1105,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -775,10 +916,13 @@
 "id":"Bluewater Lake|NM",
 "lat":35.3,
 "lon":-108.1,
+"memberIds":[
+"Bluewater Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":964,
+"banksSampled":797,
+"maxP90FetchM":929,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -786,16 +930,21 @@
 "tier":"ESTIMATED"
 },
 "Bowdish Reservoir|RI":{
-"blockers":[],
+"blockers":[
+"auditedGeometryAreaMismatch"
+],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MEDIUM",
 "id":"Bowdish Reservoir|RI",
 "lat":41.9,
 "lon":-71.75,
+"memberIds":[
+"Bowdish Reservoir|RI"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":481,
-"maxP90FetchM":600,
+"banksSampled":501,
+"maxP90FetchM":584,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -809,10 +958,13 @@
 "id":"Bowman-Haley Reservoir|ND",
 "lat":46.03,
 "lon":-103.3,
+"memberIds":[
+"Bowman-Haley Reservoir|ND"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":531,
-"maxP90FetchM":1432,
+"banksSampled":521,
+"maxP90FetchM":1484,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -826,10 +978,13 @@
 "id":"Box Butte Reservoir|NE",
 "lat":42.45,
 "lon":-103.08,
+"memberIds":[
+"Box Butte Reservoir|NE"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":432,
-"maxP90FetchM":2502,
+"banksSampled":427,
+"maxP90FetchM":2469,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -843,10 +998,13 @@
 "id":"Boysen Reservoir|WY",
 "lat":43.35,
 "lon":-108.17,
+"memberIds":[
+"Boysen Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":2718,
+"banksSampled":405,
+"maxP90FetchM":3086,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -860,10 +1018,13 @@
 "id":"Branched Oak Lake|NE",
 "lat":40.97,
 "lon":-96.86,
+"memberIds":[
+"Branched Oak Lake|NE"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":521,
-"maxP90FetchM":1948,
+"banksSampled":511,
+"maxP90FetchM":1916,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -877,10 +1038,13 @@
 "id":"Broken Bow Lake|OK",
 "lat":34.15,
 "lon":-94.68,
+"memberIds":[
+"Broken Bow Lake|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":1086,
+"banksSampled":408,
+"maxP90FetchM":1108,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -894,10 +1058,13 @@
 "id":"Brookville Lake|IN",
 "lat":39.45,
 "lon":-85,
+"memberIds":[
+"Brookville Lake|IN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":440,
-"maxP90FetchM":2334,
+"banksSampled":435,
+"maxP90FetchM":1678,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -907,11 +1074,19 @@
 "Buckeye Lake|OH":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"LOW",
+"geometryConfidence":"MEDIUM",
 "id":"Buckeye Lake|OH",
 "lat":39.93,
 "lon":-82.48,
+"memberIds":[
+"Buckeye Lake|OH"
+],
 "pointFlag":"ok",
+"polygonFetch":{
+"banksSampled":428,
+"maxP90FetchM":1551,
+"rasterM":20.0
+},
 "reason":"frozenFetchTable",
 "state":"OH",
 "tier":"AUDITED"
@@ -925,10 +1100,13 @@
 "id":"Buckhorn Lake|KY",
 "lat":37.34,
 "lon":-83.4,
+"memberIds":[
+"Buckhorn Lake|KY"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":431,
-"maxP90FetchM":376,
+"banksSampled":426,
+"maxP90FetchM":380,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -942,10 +1120,13 @@
 "id":"Budd Lake|NJ",
 "lat":40.87,
 "lon":-74.73,
+"memberIds":[
+"Budd Lake|NJ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":231,
-"maxP90FetchM":1656,
+"banksSampled":230,
+"maxP90FetchM":1661,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -959,10 +1140,13 @@
 "id":"Buffalo Bill Reservoir|WY",
 "lat":44.5,
 "lon":-109.2,
+"memberIds":[
+"Buffalo Bill Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":451,
-"maxP90FetchM":3384,
+"banksSampled":441,
+"maxP90FetchM":3488,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -976,10 +1160,13 @@
 "id":"Bull Shoals Lake|AR",
 "lat":36.45,
 "lon":-92.55,
+"memberIds":[
+"Bull Shoals Lake|AR"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":983,
+"banksSampled":401,
+"maxP90FetchM":1000,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -993,10 +1180,13 @@
 "id":"Burnsville Lake|WV",
 "lat":38.85,
 "lon":-80.63,
+"memberIds":[
+"Burnsville Lake|WV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":454,
-"maxP90FetchM":455,
+"banksSampled":450,
+"maxP90FetchM":444,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1010,10 +1200,13 @@
 "id":"Burt Lake|MI",
 "lat":45.45,
 "lon":-84.65,
+"memberIds":[
+"Burt Lake|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":474,
-"maxP90FetchM":8057,
+"banksSampled":467,
+"maxP90FetchM":7961,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1027,10 +1220,13 @@
 "id":"Burton|GA",
 "lat":34.77,
 "lon":-83.55,
+"memberIds":[
+"Burton|GA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":443,
-"maxP90FetchM":718,
+"banksSampled":431,
+"maxP90FetchM":780,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1040,14 +1236,17 @@
 "C.J. Strike Reservoir|ID":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"C.J. Strike Reservoir|ID",
 "lat":42.95,
 "lon":-115.98,
+"memberIds":[
+"C.J. Strike Reservoir|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":1205,
+"banksSampled":421,
+"maxP90FetchM":1276,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -1061,10 +1260,13 @@
 "id":"Caballo Lake|NM",
 "lat":32.9,
 "lon":-107.31,
+"memberIds":[
+"Caballo Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":447,
-"maxP90FetchM":2523,
+"banksSampled":439,
+"maxP90FetchM":2040,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1078,10 +1280,13 @@
 "id":"Caddo Lake|TX",
 "lat":32.72,
 "lon":-94.1,
+"memberIds":[
+"Caddo Lake|TX"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":2474,
+"banksSampled":421,
+"maxP90FetchM":2984,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -1095,10 +1300,13 @@
 "id":"Caesar Creek Lake|OH",
 "lat":39.48,
 "lon":-84.05,
+"memberIds":[
+"Caesar Creek Lake|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":460,
-"maxP90FetchM":1337,
+"banksSampled":453,
+"maxP90FetchM":1342,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1112,10 +1320,13 @@
 "id":"Cagles Mill Lake|IN",
 "lat":39.48,
 "lon":-86.88,
+"memberIds":[
+"Cagles Mill Lake|IN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":1016,
+"banksSampled":407,
+"maxP90FetchM":953,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1129,10 +1340,13 @@
 "id":"Calamus Reservoir|NE",
 "lat":41.83,
 "lon":-99.25,
+"memberIds":[
+"Calamus Reservoir|NE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":445,
-"maxP90FetchM":4266,
+"banksSampled":437,
+"maxP90FetchM":4490,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1146,10 +1360,13 @@
 "id":"Calcasieu Lake|LA",
 "lat":29.9,
 "lon":-93.31,
+"memberIds":[
+"Calcasieu Lake|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":14654,
+"banksSampled":419,
+"maxP90FetchM":14470,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1163,10 +1380,13 @@
 "id":"Canandaigua Lake|NY",
 "lat":42.75,
 "lon":-77.3,
+"memberIds":[
+"Canandaigua Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":5196,
+"banksSampled":467,
+"maxP90FetchM":6653,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1180,10 +1400,13 @@
 "id":"Candlewood Lake|CT",
 "lat":41.475,
 "lon":-73.448,
+"memberIds":[
+"Candlewood Lake|CT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":435,
-"maxP90FetchM":1582,
+"banksSampled":428,
+"maxP90FetchM":1600,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1197,10 +1420,13 @@
 "id":"Canton Lake|OK",
 "lat":36.09,
 "lon":-98.59,
+"memberIds":[
+"Canton Lake|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":437,
-"maxP90FetchM":5134,
+"banksSampled":428,
+"maxP90FetchM":3779,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1214,10 +1440,13 @@
 "id":"Canyon Ferry Lake|MT",
 "lat":46.5,
 "lon":-111.55,
+"memberIds":[
+"Canyon Ferry Lake|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":8364,
+"banksSampled":410,
+"maxP90FetchM":7414,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1231,10 +1460,13 @@
 "id":"Canyon Lake|TX",
 "lat":29.87,
 "lon":-98.25,
+"memberIds":[
+"Canyon Lake|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":1929,
+"banksSampled":410,
+"maxP90FetchM":1797,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1248,10 +1480,13 @@
 "id":"Canyon|AZ",
 "lat":33.54,
 "lon":-111.43,
+"memberIds":[
+"Canyon|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":600,
-"maxP90FetchM":1160,
+"banksSampled":584,
+"maxP90FetchM":1186,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1261,14 +1496,17 @@
 "Carlyle Lake|IL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Carlyle Lake|IL",
 "lat":38.65,
 "lon":-89.35,
+"memberIds":[
+"Carlyle Lake|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":2320,
+"banksSampled":403,
+"maxP90FetchM":2533,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1282,10 +1520,13 @@
 "id":"Carters|GA",
 "lat":34.62,
 "lon":-84.67,
+"memberIds":[
+"Carters|GA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":858,
+"banksSampled":436,
+"maxP90FetchM":976,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1299,9 +1540,12 @@
 "id":"Caspian Lake|VT",
 "lat":44.58,
 "lon":-72.28,
+"memberIds":[
+"Caspian Lake|VT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":399,
+"banksSampled":394,
 "maxP90FetchM":1932,
 "rasterM":20.0
 },
@@ -1316,10 +1560,13 @@
 "id":"Castle Rock Lake|WI",
 "lat":43.9,
 "lon":-89.95,
+"memberIds":[
+"Castle Rock Lake|WI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":2585,
+"banksSampled":417,
+"maxP90FetchM":2341,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1333,10 +1580,13 @@
 "id":"Catahoula Lake|LA",
 "lat":31.53,
 "lon":-92.12,
+"memberIds":[
+"Catahoula Lake|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":4934,
+"banksSampled":405,
+"maxP90FetchM":4691,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1350,10 +1600,13 @@
 "id":"Catherine|AR",
 "lat":34.45,
 "lon":-93,
+"memberIds":[
+"Catherine|AR"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":427,
-"maxP90FetchM":578,
+"banksSampled":419,
+"maxP90FetchM":532,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1367,10 +1620,13 @@
 "id":"Cave Run Lake|KY",
 "lat":38.12,
 "lon":-83.52,
+"memberIds":[
+"Cave Run Lake|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":826,
+"banksSampled":411,
+"maxP90FetchM":808,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1384,10 +1640,13 @@
 "id":"Cayuga Lake|NY",
 "lat":42.7,
 "lon":-76.72,
+"memberIds":[
+"Cayuga Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":8608,
+"banksSampled":413,
+"maxP90FetchM":9039,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1401,10 +1660,13 @@
 "id":"Cecil M. Harden Lake|IN",
 "lat":39.78,
 "lon":-87.05,
+"memberIds":[
+"Cecil M. Harden Lake|IN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":432,
-"maxP90FetchM":952,
+"banksSampled":422,
+"maxP90FetchM":984,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1418,10 +1680,13 @@
 "id":"Cedar Bluff Reservoir|KS",
 "lat":38.78,
 "lon":-99.73,
+"memberIds":[
+"Cedar Bluff Reservoir|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":2659,
+"banksSampled":462,
+"maxP90FetchM":2793,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1435,10 +1700,13 @@
 "id":"Cedar Creek Reservoir|TX",
 "lat":32.18,
 "lon":-96.07,
+"memberIds":[
+"Cedar Creek Reservoir|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":2361,
+"banksSampled":404,
+"maxP90FetchM":2664,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1452,10 +1720,13 @@
 "id":"Center Hill Lake|TN",
 "lat":36,
 "lon":-85.82,
+"memberIds":[
+"Center Hill Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":830,
+"banksSampled":401,
+"maxP90FetchM":896,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1465,17 +1736,16 @@
 "Chain O'Lakes|IL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"LOW",
+"geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Chain O'Lakes|IL",
 "lat":42.46,
 "lon":-88.15,
-"pointFlag":"ok",
-"polygonFetch":{
-"banksSampled":362,
-"maxP90FetchM":677,
-"rasterM":20.0
-},
-"reason":"geometryConfidence:LOW",
+"memberIds":[
+"Chain O'Lakes|IL"
+],
+"pointFlag":"",
+"reason":"noPolygon",
 "state":"IL",
 "tier":"POINT_ONLY"
 },
@@ -1486,10 +1756,13 @@
 "id":"Chamberlain Lake|ME",
 "lat":46.22,
 "lon":-69.3,
+"memberIds":[
+"Chamberlain Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":4654,
+"banksSampled":402,
+"maxP90FetchM":4499,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1503,10 +1776,13 @@
 "id":"Chatfield Reservoir|CO",
 "lat":39.545,
 "lon":-105.065,
+"memberIds":[
+"Chatfield Reservoir|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":668,
-"maxP90FetchM":2005,
+"banksSampled":660,
+"maxP90FetchM":2043,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1520,10 +1796,13 @@
 "id":"Chautauqua Lake|NY",
 "lat":42.15,
 "lon":-79.4,
+"memberIds":[
+"Chautauqua Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":4552,
+"banksSampled":407,
+"maxP90FetchM":4950,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1537,10 +1816,13 @@
 "id":"Cheat Lake|WV",
 "lat":39.7,
 "lon":-79.85,
+"memberIds":[
+"Cheat Lake|WV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":439,
-"maxP90FetchM":1235,
+"banksSampled":486,
+"maxP90FetchM":1102,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1554,10 +1836,13 @@
 "id":"Cheney Reservoir|KS",
 "lat":37.73,
 "lon":-97.82,
+"memberIds":[
+"Cheney Reservoir|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":4210,
+"banksSampled":454,
+"maxP90FetchM":4528,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1571,10 +1856,13 @@
 "id":"Cherokee Lake|TN",
 "lat":36.25,
 "lon":-83.45,
+"memberIds":[
+"Cherokee Lake|TN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1031,
+"banksSampled":402,
+"maxP90FetchM":1125,
 "rasterM":27.1
 },
 "reason":"polygonFetch",
@@ -1588,10 +1876,13 @@
 "id":"Cherry Creek Reservoir|CO",
 "lat":39.636,
 "lon":-104.85,
+"memberIds":[
+"Cherry Creek Reservoir|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":432,
-"maxP90FetchM":2092,
+"banksSampled":434,
+"maxP90FetchM":2102,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1605,10 +1896,13 @@
 "id":"Chesuncook Lake|ME",
 "lat":46.05,
 "lon":-69.4,
+"memberIds":[
+"Chesuncook Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":3841,
+"banksSampled":427,
+"maxP90FetchM":3929,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -1619,9 +1913,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Chickahominy Lake|VA",
 "lat":37.38,
 "lon":-77.05,
+"memberIds":[
+"Chickahominy Lake|VA"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"VA",
@@ -1634,10 +1932,13 @@
 "id":"Chickamauga Lake|TN",
 "lat":35.4,
 "lon":-85.05,
+"memberIds":[
+"Chickamauga Lake|TN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1113,
+"banksSampled":401,
+"maxP90FetchM":1136,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1647,14 +1948,17 @@
 "Chicot|AR":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Chicot|AR",
 "lat":33.33,
 "lon":-91.25,
+"memberIds":[
+"Chicot|AR"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":463,
-"maxP90FetchM":2668,
+"banksSampled":405,
+"maxP90FetchM":2250,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1668,10 +1972,13 @@
 "id":"China Lake|ME",
 "lat":44.44,
 "lon":-69.55,
+"memberIds":[
+"China Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":433,
-"maxP90FetchM":2074,
+"banksSampled":428,
+"maxP90FetchM":2066,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1685,10 +1992,13 @@
 "id":"Chippewa Flowage|WI",
 "lat":45.95,
 "lon":-91.1,
+"memberIds":[
+"Chippewa Flowage|WI"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":906,
+"banksSampled":408,
+"maxP90FetchM":925,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1702,10 +2012,14 @@
 "id":"Clarks Hill / J.S. Thurmond|GA",
 "lat":33.66,
 "lon":-82.2,
+"memberIds":[
+"Clarks Hill / J.S. Thurmond|GA",
+"Lake Strom Thurmond (Clarks Hill)|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1260,
+"banksSampled":403,
+"maxP90FetchM":1169,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1719,10 +2033,13 @@
 "id":"Claytor Lake|VA",
 "lat":37.06,
 "lon":-80.63,
+"memberIds":[
+"Claytor Lake|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":833,
+"banksSampled":414,
+"maxP90FetchM":938,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1736,10 +2053,13 @@
 "id":"Clear Lake|CA",
 "lat":39.02,
 "lon":-122.83,
+"memberIds":[
+"Clear Lake|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":6531,
+"banksSampled":405,
+"maxP90FetchM":6677,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1749,14 +2069,17 @@
 "Clear Lake|IA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Clear Lake|IA",
 "lat":43.13,
 "lon":-93.42,
+"memberIds":[
+"Clear Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":513,
-"maxP90FetchM":4030,
+"banksSampled":448,
+"maxP90FetchM":3181,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -1770,10 +2093,13 @@
 "id":"Clearwater Lake|MO",
 "lat":37.12,
 "lon":-90.78,
+"memberIds":[
+"Clearwater Lake|MO"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":467,
-"maxP90FetchM":1154,
+"banksSampled":457,
+"maxP90FetchM":1160,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1787,10 +2113,13 @@
 "id":"Clinton Lake|IL",
 "lat":40.17,
 "lon":-88.83,
+"memberIds":[
+"Clinton Lake|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1330,
+"banksSampled":426,
+"maxP90FetchM":1244,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1804,10 +2133,13 @@
 "id":"Clinton Lake|KS",
 "lat":38.925,
 "lon":-95.36,
+"memberIds":[
+"Clinton Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":2846,
+"banksSampled":408,
+"maxP90FetchM":2804,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1821,10 +2153,13 @@
 "id":"Cochiti Lake|NM",
 "lat":35.65,
 "lon":-106.32,
+"memberIds":[
+"Cochiti Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":462,
-"maxP90FetchM":1060,
+"banksSampled":455,
+"maxP90FetchM":1102,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1838,10 +2173,13 @@
 "id":"Coeur d'Alene|ID",
 "lat":47.55,
 "lon":-116.83,
+"memberIds":[
+"Coeur d'Alene|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":3463,
+"banksSampled":409,
+"maxP90FetchM":3582,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1855,10 +2193,13 @@
 "id":"Columbus Lake|MS",
 "lat":33.56,
 "lon":-88.49,
+"memberIds":[
+"Columbus Lake|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":434,
-"maxP90FetchM":887,
+"banksSampled":424,
+"maxP90FetchM":840,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1872,10 +2213,13 @@
 "id":"Conchas Lake|NM",
 "lat":35.4,
 "lon":-104.19,
+"memberIds":[
+"Conchas Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":429,
-"maxP90FetchM":1127,
+"banksSampled":422,
+"maxP90FetchM":1077,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1891,10 +2235,13 @@
 "id":"Concord Pond|DE",
 "lat":38.612,
 "lon":-75.592,
+"memberIds":[
+"Concord Pond|DE"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":244,
-"maxP90FetchM":392,
+"banksSampled":242,
+"maxP90FetchM":391,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -1908,10 +2255,13 @@
 "id":"Congamond Lakes|MA",
 "lat":42.043,
 "lon":-72.757,
+"memberIds":[
+"Congamond Lakes|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":174,
-"maxP90FetchM":858,
+"banksSampled":172,
+"maxP90FetchM":870,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1925,10 +2275,13 @@
 "id":"Conneaut Lake|PA",
 "lat":41.62,
 "lon":-80.3,
+"memberIds":[
+"Conneaut Lake|PA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":586,
-"maxP90FetchM":2188,
+"banksSampled":674,
+"maxP90FetchM":2110,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1938,19 +2291,18 @@
 "Conowingo Reservoir|MD":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Conowingo Reservoir|MD",
 "lat":39.66,
 "lon":-76.17,
-"pointFlag":"ok",
-"polygonFetch":{
-"banksSampled":445,
-"maxP90FetchM":4511,
-"rasterM":20.0
-},
-"reason":"polygonFetch",
+"memberIds":[
+"Conowingo Reservoir|MD"
+],
+"pointFlag":"",
+"reason":"noPolygon",
 "state":"MD",
-"tier":"ESTIMATED"
+"tier":"POINT_ONLY"
 },
 "Coralville Lake|IA":{
 "blockers":[],
@@ -1959,10 +2311,13 @@
 "id":"Coralville Lake|IA",
 "lat":41.72,
 "lon":-91.53,
+"memberIds":[
+"Coralville Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":850,
+"banksSampled":401,
+"maxP90FetchM":828,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -1976,10 +2331,13 @@
 "id":"Coventry Lake (Wangumbaug)|CT",
 "lat":41.772,
 "lon":-72.308,
+"memberIds":[
+"Coventry Lake (Wangumbaug)|CT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":395,
-"maxP90FetchM":1366,
+"banksSampled":392,
+"maxP90FetchM":1392,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -1993,10 +2351,13 @@
 "id":"Crab Orchard Lake|IL",
 "lat":37.72,
 "lon":-89.05,
+"memberIds":[
+"Crab Orchard Lake|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":1334,
+"banksSampled":418,
+"maxP90FetchM":1367,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2010,10 +2371,13 @@
 "id":"Cranberry Lake|NY",
 "lat":44.18,
 "lon":-74.83,
+"memberIds":[
+"Cranberry Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1686,
+"banksSampled":426,
+"maxP90FetchM":1904,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2027,10 +2391,13 @@
 "id":"Crater Lake|OR",
 "lat":42.94,
 "lon":-122.1,
+"memberIds":[
+"Crater Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":423,
-"maxP90FetchM":7525,
+"banksSampled":419,
+"maxP90FetchM":7954,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2040,14 +2407,17 @@
 "Crescent Lake|FL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Crescent Lake|FL",
 "lat":29.445,
 "lon":-81.51,
+"memberIds":[
+"Crescent Lake|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":431,
-"maxP90FetchM":8348,
+"banksSampled":427,
+"maxP90FetchM":8293,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2061,10 +2431,13 @@
 "id":"Crescent Lake|OR",
 "lat":43.48,
 "lon":-121.98,
+"memberIds":[
+"Crescent Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":422,
-"maxP90FetchM":4927,
+"banksSampled":419,
+"maxP90FetchM":4941,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2078,10 +2451,13 @@
 "id":"Cross Lake|LA",
 "lat":32.53,
 "lon":-93.85,
+"memberIds":[
+"Cross Lake|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":2036,
+"banksSampled":416,
+"maxP90FetchM":2176,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2095,10 +2471,13 @@
 "id":"Crystal Lake|VT",
 "lat":44.73,
 "lon":-72.16,
+"memberIds":[
+"Crystal Lake|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":438,
-"maxP90FetchM":2361,
+"banksSampled":424,
+"maxP90FetchM":2486,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2114,10 +2493,13 @@
 "id":"Culvers Lake|NJ",
 "lat":41.14,
 "lon":-74.75,
+"memberIds":[
+"Culvers Lake|NJ"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":509,
-"maxP90FetchM":1418,
+"banksSampled":511,
+"maxP90FetchM":1444,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -2131,10 +2513,13 @@
 "id":"Dale Hollow Lake|TN",
 "lat":36.55,
 "lon":-85.3,
-"pointFlag":"ok",
+"memberIds":[
+"Dale Hollow Lake|TN"
+],
+"pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1146,
+"banksSampled":402,
+"maxP90FetchM":920,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2148,10 +2533,13 @@
 "id":"Damariscotta Lake|ME",
 "lat":44.1,
 "lon":-69.48,
+"memberIds":[
+"Damariscotta Lake|ME"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1343,
+"banksSampled":432,
+"maxP90FetchM":1518,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2165,10 +2553,13 @@
 "id":"Dardanelle|AR",
 "lat":35.35,
 "lon":-93.2,
+"memberIds":[
+"Dardanelle|AR"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":1443,
+"banksSampled":404,
+"maxP90FetchM":1672,
 "rasterM":20.7
 },
 "reason":"frozenFetchTable",
@@ -2182,10 +2573,13 @@
 "id":"DeGray|AR",
 "lat":34.22,
 "lon":-93.15,
+"memberIds":[
+"DeGray|AR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":1477,
+"banksSampled":412,
+"maxP90FetchM":1558,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -2199,10 +2593,13 @@
 "id":"Deep Creek Lake|MD",
 "lat":39.5,
 "lon":-79.3,
+"memberIds":[
+"Deep Creek Lake|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":438,
-"maxP90FetchM":970,
+"banksSampled":434,
+"maxP90FetchM":915,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2216,10 +2613,13 @@
 "id":"Deer Creek Reservoir|UT",
 "lat":40.42,
 "lon":-111.5,
+"memberIds":[
+"Deer Creek Reservoir|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":478,
-"maxP90FetchM":2586,
+"banksSampled":474,
+"maxP90FetchM":2453,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2233,10 +2633,13 @@
 "id":"Detroit Lake|OR",
 "lat":44.72,
 "lon":-122.2,
+"memberIds":[
+"Detroit Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":438,
-"maxP90FetchM":1657,
+"banksSampled":432,
+"maxP90FetchM":1726,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2250,10 +2653,13 @@
 "id":"Devil's Kitchen Lake|IL",
 "lat":37.66,
 "lon":-89.1,
+"memberIds":[
+"Devil's Kitchen Lake|IL"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":443,
-"maxP90FetchM":548,
+"banksSampled":436,
+"maxP90FetchM":562,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2263,14 +2669,22 @@
 "Devils Lake|ND":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Devils Lake|ND",
 "lat":48,
 "lon":-98.87,
+"memberIds":[
+"Devils Lake|ND"
+],
 "pointFlag":"off_water",
-"reason":"polygonFetchFailed",
+"polygonFetch":{
+"banksSampled":407,
+"maxP90FetchM":5274,
+"rasterM":20.0
+},
+"reason":"polygonFetch",
 "state":"ND",
-"tier":"POINT_ONLY"
+"tier":"ESTIMATED"
 },
 "Diamond Lake|OR":{
 "blockers":[],
@@ -2279,10 +2693,13 @@
 "id":"Diamond Lake|OR",
 "lat":43.18,
 "lon":-122.14,
+"memberIds":[
+"Diamond Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":702,
-"maxP90FetchM":4504,
+"banksSampled":699,
+"maxP90FetchM":4506,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2296,10 +2713,13 @@
 "id":"Dillon Reservoir|CO",
 "lat":39.61,
 "lon":-106.06,
+"memberIds":[
+"Dillon Reservoir|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":466,
-"maxP90FetchM":2018,
+"banksSampled":454,
+"maxP90FetchM":1836,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2313,10 +2733,13 @@
 "id":"Don Pedro|CA",
 "lat":37.7,
 "lon":-120.4,
+"memberIds":[
+"Don Pedro|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":1415,
+"banksSampled":414,
+"maxP90FetchM":1207,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2326,14 +2749,17 @@
 "Douglas Lake|TN":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Douglas Lake|TN",
 "lat":36,
 "lon":-83.35,
+"memberIds":[
+"Douglas Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1251,
+"banksSampled":404,
+"maxP90FetchM":1302,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -2347,10 +2773,13 @@
 "id":"Douthat Lake|VA",
 "lat":37.895,
 "lon":-79.8,
+"memberIds":[
+"Douthat Lake|VA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":97,
-"maxP90FetchM":570,
+"banksSampled":98,
+"maxP90FetchM":574,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2364,10 +2793,13 @@
 "id":"Dworshak Reservoir|ID",
 "lat":46.6,
 "lon":-116.2,
+"memberIds":[
+"Dworshak Reservoir|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1196,
+"banksSampled":406,
+"maxP90FetchM":1380,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2381,10 +2813,13 @@
 "id":"Eagle Creek Reservoir|IN",
 "lat":39.87,
 "lon":-86.3,
+"memberIds":[
+"Eagle Creek Reservoir|IN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":1362,
+"banksSampled":401,
+"maxP90FetchM":1352,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2398,10 +2833,13 @@
 "id":"Eagle Lake|CA",
 "lat":40.65,
 "lon":-120.73,
+"memberIds":[
+"Eagle Lake|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":4763,
+"banksSampled":414,
+"maxP90FetchM":4638,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2417,10 +2855,13 @@
 "id":"Eagle Lake|MS",
 "lat":32.495,
 "lon":-90.94,
+"memberIds":[
+"Eagle Lake|MS"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":452,
-"maxP90FetchM":3942,
+"banksSampled":451,
+"maxP90FetchM":3340,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -2434,10 +2875,13 @@
 "id":"Eagle Nest Lake|NM",
 "lat":36.53,
 "lon":-105.26,
+"memberIds":[
+"Eagle Nest Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":483,
-"maxP90FetchM":2178,
+"banksSampled":475,
+"maxP90FetchM":2412,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2451,10 +2895,14 @@
 "id":"East Lake Tohopekaliga|FL",
 "lat":28.27,
 "lon":-81.33,
+"memberIds":[
+"East Lake Tohopekaliga|FL",
+"Tohopekaliga (Toho)|FL"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":449,
-"maxP90FetchM":5475,
+"banksSampled":444,
+"maxP90FetchM":5996,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2470,10 +2918,13 @@
 "id":"East Lynn Lake|WV",
 "lat":38.15,
 "lon":-82.33,
+"memberIds":[
+"East Lynn Lake|WV"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":397,
+"banksSampled":421,
+"maxP90FetchM":392,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -2483,19 +2934,18 @@
 "East Okoboji|IA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"East Okoboji|IA",
 "lat":43.4,
 "lon":-95.12,
-"pointFlag":"off_water",
-"polygonFetch":{
-"banksSampled":596,
-"maxP90FetchM":1564,
-"rasterM":20.0
-},
-"reason":"polygonFetch",
+"memberIds":[
+"East Okoboji|IA"
+],
+"pointFlag":"",
+"reason":"noPolygon",
 "state":"IA",
-"tier":"ESTIMATED"
+"tier":"POINT_ONLY"
 },
 "El Dorado Lake|KS":{
 "blockers":[],
@@ -2504,10 +2954,13 @@
 "id":"El Dorado Lake|KS",
 "lat":37.84,
 "lon":-96.79,
+"memberIds":[
+"El Dorado Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":1794,
+"banksSampled":416,
+"maxP90FetchM":1624,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2521,10 +2974,13 @@
 "id":"El Vado Lake|NM",
 "lat":36.59,
 "lon":-106.73,
+"memberIds":[
+"El Vado Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":2157,
+"banksSampled":413,
+"maxP90FetchM":2196,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2538,10 +2994,13 @@
 "id":"Elephant Butte Reservoir|NM",
 "lat":33.25,
 "lon":-107.2,
+"memberIds":[
+"Elephant Butte Reservoir|NM"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":3038,
+"banksSampled":401,
+"maxP90FetchM":3036,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2555,10 +3014,13 @@
 "id":"Eleven Mile Reservoir|CO",
 "lat":38.92,
 "lon":-105.465,
+"memberIds":[
+"Eleven Mile Reservoir|CO"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":458,
-"maxP90FetchM":2416,
+"banksSampled":425,
+"maxP90FetchM":2614,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2572,10 +3034,13 @@
 "id":"Elk Lake|MI",
 "lat":44.895,
 "lon":-85.37,
+"memberIds":[
+"Elk Lake|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":448,
-"maxP90FetchM":6281,
+"banksSampled":449,
+"maxP90FetchM":6265,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2591,10 +3056,13 @@
 "id":"Enemy Swim Lake|SD",
 "lat":45.46,
 "lon":-97.32,
+"memberIds":[
+"Enemy Swim Lake|SD"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":490,
-"maxP90FetchM":2206,
+"banksSampled":540,
+"maxP90FetchM":2104,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -2608,10 +3076,13 @@
 "id":"Enid Lake|MS",
 "lat":34.16,
 "lon":-89.9,
+"memberIds":[
+"Enid Lake|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":456,
-"maxP90FetchM":4826,
+"banksSampled":452,
+"maxP90FetchM":4983,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2625,10 +3096,14 @@
 "id":"Eufaula / W.F. George|AL",
 "lat":31.9,
 "lon":-85.1,
+"memberIds":[
+"Eufaula / W.F. George|AL",
+"Walter F. George / Eufaula|GA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":2046,
+"banksSampled":401,
+"maxP90FetchM":2432,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2642,10 +3117,13 @@
 "id":"Falcon Lake|TX",
 "lat":26.75,
 "lon":-99.25,
+"memberIds":[
+"Falcon Lake|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":3376,
+"banksSampled":400,
+"maxP90FetchM":3129,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2659,10 +3137,13 @@
 "id":"Falls Lake|NC",
 "lat":36.02,
 "lon":-78.7,
+"memberIds":[
+"Falls Lake|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":1056,
+"banksSampled":404,
+"maxP90FetchM":1146,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2676,10 +3157,13 @@
 "id":"False River|LA",
 "lat":30.72,
 "lon":-91.43,
+"memberIds":[
+"False River|LA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":476,
-"maxP90FetchM":2046,
+"banksSampled":471,
+"maxP90FetchM":2376,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2693,10 +3177,13 @@
 "id":"Fern Ridge Reservoir|OR",
 "lat":44.12,
 "lon":-123.3,
+"memberIds":[
+"Fern Ridge Reservoir|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":424,
-"maxP90FetchM":3274,
+"banksSampled":416,
+"maxP90FetchM":3564,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2710,10 +3197,13 @@
 "id":"First Connecticut Lake|NH",
 "lat":45.09,
 "lon":-71.28,
+"memberIds":[
+"First Connecticut Lake|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":528,
-"maxP90FetchM":2384,
+"banksSampled":518,
+"maxP90FetchM":2371,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2727,10 +3217,13 @@
 "id":"Fish Lake|UT",
 "lat":38.55,
 "lon":-111.7,
+"memberIds":[
+"Fish Lake|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":484,
-"maxP90FetchM":3664,
+"banksSampled":482,
+"maxP90FetchM":4358,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2744,10 +3237,13 @@
 "id":"Flagstaff Lake|ME",
 "lat":45.18,
 "lon":-70.33,
+"memberIds":[
+"Flagstaff Lake|ME"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":416,
-"maxP90FetchM":2052,
+"banksSampled":402,
+"maxP90FetchM":2208,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2757,14 +3253,18 @@
 "Flaming Gorge Reservoir|UT":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Flaming Gorge Reservoir|UT",
 "lat":40.92,
 "lon":-109.42,
+"memberIds":[
+"Flaming Gorge Reservoir|UT",
+"Flaming Gorge Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1922,
+"banksSampled":401,
+"maxP90FetchM":1631,
 "rasterM":21.7
 },
 "reason":"polygonFetch",
@@ -2774,14 +3274,18 @@
 "Flaming Gorge Reservoir|WY":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Flaming Gorge Reservoir|WY",
 "lat":41.4,
 "lon":-109.5,
+"memberIds":[
+"Flaming Gorge Reservoir|UT",
+"Flaming Gorge Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1922,
+"banksSampled":401,
+"maxP90FetchM":1736,
 "rasterM":21.7
 },
 "reason":"polygonFetch",
@@ -2795,10 +3299,13 @@
 "id":"Flannagan Reservoir|VA",
 "lat":37.23,
 "lon":-82.35,
+"memberIds":[
+"Flannagan Reservoir|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":442,
-"maxP90FetchM":376,
+"banksSampled":435,
+"maxP90FetchM":406,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2812,10 +3319,13 @@
 "id":"Flat River Res. (Johnson's Pond)|RI",
 "lat":41.68,
 "lon":-71.63,
+"memberIds":[
+"Flat River Res. (Johnson's Pond)|RI"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":457,
-"maxP90FetchM":513,
+"banksSampled":504,
+"maxP90FetchM":468,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2829,10 +3339,13 @@
 "id":"Flathead Lake|MT",
 "lat":47.8686,
 "lon":-114.105,
+"memberIds":[
+"Flathead Lake|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":14832,
+"banksSampled":409,
+"maxP90FetchM":13593,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -2846,10 +3359,13 @@
 "id":"Folsom|CA",
 "lat":38.71,
 "lon":-121.15,
+"memberIds":[
+"Folsom|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":2630,
+"banksSampled":409,
+"maxP90FetchM":2449,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -2863,10 +3379,13 @@
 "id":"Fontana Lake|NC",
 "lat":35.43,
 "lon":-83.75,
+"memberIds":[
+"Fontana Lake|NC"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":796,
+"banksSampled":403,
+"maxP90FetchM":821,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2880,10 +3399,13 @@
 "id":"Fontenelle Reservoir|WY",
 "lat":42.05,
 "lon":-110.07,
+"memberIds":[
+"Fontenelle Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":456,
-"maxP90FetchM":3076,
+"banksSampled":450,
+"maxP90FetchM":3342,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2897,10 +3419,13 @@
 "id":"Fort Gibson Lake|OK",
 "lat":35.87,
 "lon":-95.25,
+"memberIds":[
+"Fort Gibson Lake|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1858,
+"banksSampled":407,
+"maxP90FetchM":1808,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2914,10 +3439,13 @@
 "id":"Fort Loudoun Lake|TN",
 "lat":35.85,
 "lon":-84.15,
+"memberIds":[
+"Fort Loudoun Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":804,
+"banksSampled":403,
+"maxP90FetchM":827,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2931,10 +3459,13 @@
 "id":"Fort Peck Lake|MT",
 "lat":47.65,
 "lon":-106.72,
+"memberIds":[
+"Fort Peck Lake|MT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":3972,
+"banksSampled":404,
+"maxP90FetchM":3645,
 "rasterM":54.6
 },
 "reason":"coarseRaster",
@@ -2948,10 +3479,13 @@
 "id":"Fox Lake|IL",
 "lat":42.4,
 "lon":-88.18,
+"memberIds":[
+"Fox Lake|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":584,
-"maxP90FetchM":1834,
+"banksSampled":415,
+"maxP90FetchM":1431,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2965,10 +3499,13 @@
 "id":"Fresno Reservoir|MT",
 "lat":48.63,
 "lon":-109.95,
+"memberIds":[
+"Fresno Reservoir|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":438,
-"maxP90FetchM":1969,
+"banksSampled":428,
+"maxP90FetchM":1982,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -2984,10 +3521,13 @@
 "id":"Gardner Lake|CT",
 "lat":41.542,
 "lon":-72.172,
+"memberIds":[
+"Gardner Lake|CT"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":1534,
+"banksSampled":409,
+"maxP90FetchM":1628,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -3001,10 +3541,13 @@
 "id":"Garrisons Lake|DE",
 "lat":39.244,
 "lon":-75.628,
+"memberIds":[
+"Garrisons Lake|DE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":203,
-"maxP90FetchM":710,
+"banksSampled":206,
+"maxP90FetchM":716,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3018,10 +3561,13 @@
 "id":"Geist Reservoir|IN",
 "lat":39.93,
 "lon":-85.95,
+"memberIds":[
+"Geist Reservoir|IN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":960,
+"banksSampled":451,
+"maxP90FetchM":976,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3035,10 +3581,13 @@
 "id":"Georgetown Lake|MT",
 "lat":46.19,
 "lon":-113.29,
+"memberIds":[
+"Georgetown Lake|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":421,
-"maxP90FetchM":2768,
+"banksSampled":417,
+"maxP90FetchM":2736,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3052,10 +3601,13 @@
 "id":"Glendo Reservoir|WY",
 "lat":42.48,
 "lon":-105,
+"memberIds":[
+"Glendo Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":421,
-"maxP90FetchM":1944,
+"banksSampled":414,
+"maxP90FetchM":2060,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -3069,10 +3621,13 @@
 "id":"Grand Lake St. Marys|OH",
 "lat":40.53,
 "lon":-84.5,
+"memberIds":[
+"Grand Lake St. Marys|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":3894,
+"banksSampled":405,
+"maxP90FetchM":3816,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3082,14 +3637,17 @@
 "Grand Lake o' the Cherokees|OK":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Grand Lake o' the Cherokees|OK",
 "lat":36.55,
 "lon":-94.85,
+"memberIds":[
+"Grand Lake o' the Cherokees|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1738,
+"banksSampled":403,
+"maxP90FetchM":1870,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3103,9 +3661,12 @@
 "id":"Grand Lake|CO",
 "lat":40.2517,
 "lon":-105.828,
-"pointFlag":"ok",
+"memberIds":[
+"Grand Lake|CO"
+],
+"pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":275,
+"banksSampled":272,
 "maxP90FetchM":1840,
 "rasterM":20.0
 },
@@ -3120,10 +3681,13 @@
 "id":"Grand Lake|LA",
 "lat":29.92,
 "lon":-92.83,
+"memberIds":[
+"Grand Lake|LA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":12573,
+"banksSampled":444,
+"maxP90FetchM":10935,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3137,10 +3701,13 @@
 "id":"Great East Lake|NH",
 "lat":43.55,
 "lon":-70.95,
+"memberIds":[
+"Great East Lake|NH"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":522,
-"maxP90FetchM":1615,
+"banksSampled":505,
+"maxP90FetchM":1661,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3154,10 +3721,13 @@
 "id":"Great Pond (Belgrade)|ME",
 "lat":44.55,
 "lon":-69.86,
+"memberIds":[
+"Great Pond (Belgrade)|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":3588,
+"banksSampled":406,
+"maxP90FetchM":3188,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3167,14 +3737,17 @@
 "Great Sacandaga Lake|NY":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Great Sacandaga Lake|NY",
 "lat":43.15,
 "lon":-74.15,
+"memberIds":[
+"Great Sacandaga Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":408,
-"maxP90FetchM":4028,
+"maxP90FetchM":4870,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3185,9 +3758,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Great Salt Lake|UT",
 "lat":41.1,
 "lon":-112.55,
+"memberIds":[
+"Great Salt Lake|UT"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"UT",
@@ -3197,9 +3774,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Green Bay|WI",
 "lat":44.7,
 "lon":-87.9,
+"memberIds":[
+"Green Bay|WI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"WI",
@@ -3212,10 +3793,13 @@
 "id":"Green River Lake|KY",
 "lat":37.25,
 "lon":-85.34,
+"memberIds":[
+"Green River Lake|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":1206,
+"banksSampled":408,
+"maxP90FetchM":1122,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -3229,10 +3813,13 @@
 "id":"Greenwood Lake|NJ",
 "lat":41.16,
 "lon":-74.32,
+"memberIds":[
+"Greenwood Lake|NJ"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":588,
-"maxP90FetchM":2624,
+"banksSampled":578,
+"maxP90FetchM":3132,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3246,10 +3833,13 @@
 "id":"Greers Ferry|AR",
 "lat":35.55,
 "lon":-92.05,
+"memberIds":[
+"Greers Ferry|AR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":1706,
+"banksSampled":408,
+"maxP90FetchM":1800,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3263,10 +3853,13 @@
 "id":"Grenada Lake|MS",
 "lat":33.83,
 "lon":-89.73,
+"memberIds":[
+"Grenada Lake|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":3386,
+"banksSampled":421,
+"maxP90FetchM":3840,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3276,14 +3869,17 @@
 "Griffin|FL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Griffin|FL",
 "lat":28.86,
 "lon":-81.89,
+"memberIds":[
+"Griffin|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":4276,
+"banksSampled":401,
+"maxP90FetchM":4140,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3292,17 +3888,21 @@
 },
 "Griffith Lake|DE":{
 "blockers":[
-"lakeIdentityRisk"
+"lakeIdentityRisk",
+"auditedGeometryAreaMismatch"
 ],
 "forecastDomain":"CONUS",
 "geometryConfidence":"LOW",
 "id":"Griffith Lake|DE",
 "lat":38.925,
 "lon":-75.545,
+"memberIds":[
+"Griffith Lake|DE"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":124,
-"maxP90FetchM":438,
+"banksSampled":125,
+"maxP90FetchM":446,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -3316,10 +3916,13 @@
 "id":"Gull Lake|MI",
 "lat":42.4,
 "lon":-85.405,
+"memberIds":[
+"Gull Lake|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":502,
-"maxP90FetchM":2930,
+"banksSampled":492,
+"maxP90FetchM":2952,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3333,10 +3936,13 @@
 "id":"Gull Lake|MN",
 "lat":46.41,
 "lon":-94.35,
+"memberIds":[
+"Gull Lake|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":3784,
+"banksSampled":441,
+"maxP90FetchM":3788,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3350,10 +3956,13 @@
 "id":"Guntersville|AL",
 "lat":34.42,
 "lon":-86.26,
+"memberIds":[
+"Guntersville|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1898,
+"banksSampled":405,
+"maxP90FetchM":1719,
 "rasterM":27.7
 },
 "reason":"frozenFetchTable",
@@ -3370,10 +3979,13 @@
 "id":"Halulu Lake (Niihau)|HI",
 "lat":21.8639,
 "lon":-160.1533,
+"memberIds":[
+"Halulu Lake (Niihau)|HI"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
 "banksSampled":197,
-"maxP90FetchM":1115,
+"maxP90FetchM":1105,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -3387,10 +3999,13 @@
 "id":"Hamilton|AR",
 "lat":34.45,
 "lon":-93.12,
+"memberIds":[
+"Hamilton|AR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":910,
+"banksSampled":411,
+"maxP90FetchM":756,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3406,10 +4021,13 @@
 "id":"Harding|AK",
 "lat":64.42,
 "lon":-146.85,
+"memberIds":[
+"Harding|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":629,
-"maxP90FetchM":3363,
+"banksSampled":624,
+"maxP90FetchM":3376,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3423,10 +4041,13 @@
 "id":"Harlan County Lake|NE",
 "lat":40.07,
 "lon":-99.2,
+"memberIds":[
+"Harlan County Lake|NE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":416,
-"maxP90FetchM":6122,
+"banksSampled":409,
+"maxP90FetchM":4742,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3440,10 +4061,13 @@
 "id":"Harriman Reservoir (Whitingham)|VT",
 "lat":42.8,
 "lon":-72.9,
+"memberIds":[
+"Harriman Reservoir (Whitingham)|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":484,
-"maxP90FetchM":1090,
+"banksSampled":474,
+"maxP90FetchM":1086,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3457,10 +4081,13 @@
 "id":"Harris|FL",
 "lat":28.76,
 "lon":-81.81,
+"memberIds":[
+"Harris|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":444,
-"maxP90FetchM":5139,
+"banksSampled":442,
+"maxP90FetchM":5728,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3474,10 +4101,13 @@
 "id":"Harveys Lake|PA",
 "lat":41.36,
 "lon":-76.03,
+"memberIds":[
+"Harveys Lake|PA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":594,
-"maxP90FetchM":1266,
+"banksSampled":591,
+"maxP90FetchM":1280,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3487,14 +4117,17 @@
 "Havasu|AZ":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Havasu|AZ",
 "lat":34.45,
 "lon":-114.35,
+"memberIds":[
+"Havasu|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":1796,
+"banksSampled":404,
+"maxP90FetchM":1840,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3508,10 +4141,13 @@
 "id":"Hebgen Lake|MT",
 "lat":44.86,
 "lon":-111.33,
+"memberIds":[
+"Hebgen Lake|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":416,
-"maxP90FetchM":4292,
+"banksSampled":411,
+"maxP90FetchM":3700,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3525,10 +4161,13 @@
 "id":"Henderson Lake|LA",
 "lat":30.32,
 "lon":-91.76,
+"memberIds":[
+"Henderson Lake|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":664,
+"banksSampled":404,
+"maxP90FetchM":695,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3542,10 +4181,13 @@
 "id":"Henrys Lake|ID",
 "lat":44.63,
 "lon":-111.38,
+"memberIds":[
+"Henrys Lake|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":502,
-"maxP90FetchM":5030,
+"banksSampled":498,
+"maxP90FetchM":5352,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3559,10 +4201,13 @@
 "id":"Heron Lake|NM",
 "lat":36.7,
 "lon":-106.66,
+"memberIds":[
+"Heron Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":475,
-"maxP90FetchM":2517,
+"banksSampled":463,
+"maxP90FetchM":2595,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -3576,10 +4221,13 @@
 "id":"Herrington Lake|KY",
 "lat":37.75,
 "lon":-84.7,
+"memberIds":[
+"Herrington Lake|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":465,
+"banksSampled":414,
+"maxP90FetchM":470,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3593,10 +4241,13 @@
 "id":"Higgins Lake|MI",
 "lat":44.47,
 "lon":-84.725,
+"memberIds":[
+"Higgins Lake|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":410,
-"maxP90FetchM":5577,
+"maxP90FetchM":5808,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3610,10 +4261,13 @@
 "id":"High Rock Lake|NC",
 "lat":35.63,
 "lon":-80.25,
+"memberIds":[
+"High Rock Lake|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":1057,
+"banksSampled":401,
+"maxP90FetchM":780,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3627,10 +4281,13 @@
 "id":"Highland Lake|CT",
 "lat":41.91,
 "lon":-73.072,
+"memberIds":[
+"Highland Lake|CT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":565,
-"maxP90FetchM":986,
+"banksSampled":556,
+"maxP90FetchM":1040,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3646,10 +4303,13 @@
 "id":"Hiwassee Lake|NC",
 "lat":35.2,
 "lon":-84.05,
+"memberIds":[
+"Hiwassee Lake|NC"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":653,
+"banksSampled":401,
+"maxP90FetchM":636,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -3663,10 +4323,13 @@
 "id":"Holter Lake|MT",
 "lat":46.95,
 "lon":-112,
+"memberIds":[
+"Holter Lake|MT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":453,
-"maxP90FetchM":1306,
+"banksSampled":449,
+"maxP90FetchM":1390,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3680,10 +4343,13 @@
 "id":"Hoover Reservoir|OH",
 "lat":40.15,
 "lon":-82.87,
+"memberIds":[
+"Hoover Reservoir|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":455,
-"maxP90FetchM":1240,
+"banksSampled":443,
+"maxP90FetchM":1396,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3697,10 +4363,13 @@
 "id":"Horsetooth Reservoir|CO",
 "lat":40.545,
 "lon":-105.145,
+"memberIds":[
+"Horsetooth Reservoir|CO"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":472,
-"maxP90FetchM":2060,
+"banksSampled":463,
+"maxP90FetchM":2093,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3714,10 +4383,13 @@
 "id":"Houghton Lake|MI",
 "lat":44.32,
 "lon":-84.75,
+"memberIds":[
+"Houghton Lake|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":9784,
+"banksSampled":407,
+"maxP90FetchM":10009,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3731,10 +4403,13 @@
 "id":"Hungry Horse Reservoir|MT",
 "lat":48.2,
 "lon":-113.9,
+"memberIds":[
+"Hungry Horse Reservoir|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":3121,
+"banksSampled":404,
+"maxP90FetchM":3144,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3747,9 +4422,13 @@
 ],
 "forecastDomain":"AK",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Iliamna|AK",
 "lat":59.55,
 "lon":-155,
+"memberIds":[
+"Iliamna|AK"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"AK",
@@ -3758,14 +4437,17 @@
 "Indian Lake|NY":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Indian Lake|NY",
 "lat":43.75,
 "lon":-74.27,
+"memberIds":[
+"Indian Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":438,
-"maxP90FetchM":1816,
+"banksSampled":422,
+"maxP90FetchM":1684,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3779,10 +4461,13 @@
 "id":"Indian Lake|OH",
 "lat":40.5,
 "lon":-83.9,
+"memberIds":[
+"Indian Lake|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":1322,
+"banksSampled":421,
+"maxP90FetchM":1300,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3796,10 +4481,13 @@
 "id":"Isabella|CA",
 "lat":35.65,
 "lon":-118.48,
+"memberIds":[
+"Isabella|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":436,
-"maxP90FetchM":3220,
+"banksSampled":429,
+"maxP90FetchM":3186,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3813,10 +4501,13 @@
 "id":"Istokpoga|FL",
 "lat":27.38,
 "lon":-81.3,
+"memberIds":[
+"Istokpoga|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":6492,
+"banksSampled":405,
+"maxP90FetchM":6132,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -3830,10 +4521,13 @@
 "id":"Jackson Lake|WY",
 "lat":43.85,
 "lon":-110.6,
+"memberIds":[
+"Jackson Lake|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":5450,
+"banksSampled":420,
+"maxP90FetchM":6013,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -3847,10 +4541,13 @@
 "id":"Jamestown Reservoir|ND",
 "lat":47.03,
 "lon":-98.72,
+"memberIds":[
+"Jamestown Reservoir|ND"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":453,
-"maxP90FetchM":1379,
+"banksSampled":447,
+"maxP90FetchM":1394,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3864,10 +4561,13 @@
 "id":"Jennings Randolph Lake|MD",
 "lat":39.42,
 "lon":-79.12,
+"memberIds":[
+"Jennings Randolph Lake|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":444,
-"maxP90FetchM":1151,
+"maxP90FetchM":1172,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3881,10 +4581,13 @@
 "id":"Jenny Lake|WY",
 "lat":43.76,
 "lon":-110.72,
+"memberIds":[
+"Jenny Lake|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":421,
-"maxP90FetchM":2740,
+"banksSampled":412,
+"maxP90FetchM":2728,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3898,10 +4601,13 @@
 "id":"Jesup|FL",
 "lat":28.71,
 "lon":-81.24,
+"memberIds":[
+"Jesup|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":435,
-"maxP90FetchM":4109,
+"banksSampled":429,
+"maxP90FetchM":4076,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3915,10 +4621,13 @@
 "id":"John Martin Reservoir|CO",
 "lat":38.07,
 "lon":-102.93,
+"memberIds":[
+"John Martin Reservoir|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":442,
-"maxP90FetchM":3981,
+"banksSampled":432,
+"maxP90FetchM":4094,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3932,10 +4641,13 @@
 "id":"John Redmond Reservoir|KS",
 "lat":38.25,
 "lon":-95.76,
+"memberIds":[
+"John Redmond Reservoir|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":4494,
+"banksSampled":422,
+"maxP90FetchM":4366,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3949,10 +4661,13 @@
 "id":"Johnson Lake|NE",
 "lat":40.7,
 "lon":-99.83,
+"memberIds":[
+"Johnson Lake|NE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":3581,
+"banksSampled":414,
+"maxP90FetchM":3544,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3966,10 +4681,13 @@
 "id":"Jordan Lake|NC",
 "lat":35.73,
 "lon":-79.02,
+"memberIds":[
+"Jordan Lake|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":1289,
+"banksSampled":403,
+"maxP90FetchM":1498,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3983,10 +4701,13 @@
 "id":"Jordanelle Reservoir|UT",
 "lat":40.6,
 "lon":-111.42,
+"memberIds":[
+"Jordanelle Reservoir|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":486,
-"maxP90FetchM":2078,
+"banksSampled":479,
+"maxP90FetchM":1935,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -3996,14 +4717,17 @@
 "Jordan|AL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Jordan|AL",
 "lat":32.62,
 "lon":-86.26,
+"memberIds":[
+"Jordan|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":1250,
+"banksSampled":422,
+"maxP90FetchM":1115,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4017,10 +4741,13 @@
 "id":"Kanopolis Lake|KS",
 "lat":38.62,
 "lon":-98.01,
+"memberIds":[
+"Kanopolis Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":445,
-"maxP90FetchM":2148,
+"banksSampled":437,
+"maxP90FetchM":2671,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4030,14 +4757,17 @@
 "Kaw Lake|OK":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Kaw Lake|OK",
 "lat":36.75,
 "lon":-96.92,
+"memberIds":[
+"Kaw Lake|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":1998,
+"banksSampled":406,
+"maxP90FetchM":2342,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4054,10 +4784,13 @@
 "id":"Kenai|AK",
 "lat":60.42,
 "lon":-150.25,
+"memberIds":[
+"Kenai|AK"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":3341,
+"banksSampled":415,
+"maxP90FetchM":3872,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -4067,15 +4800,19 @@
 "Kentucky Lake|KY":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Kentucky Lake|KY",
 "lat":36.9,
 "lon":-88.07,
+"memberIds":[
+"Kentucky Lake|KY",
+"Kentucky Lake|TN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
 "banksSampled":401,
-"maxP90FetchM":3074,
-"rasterM":40.2
+"maxP90FetchM":2369,
+"rasterM":72.2
 },
 "reason":"coarseRaster",
 "state":"KY",
@@ -4088,10 +4825,14 @@
 "id":"Kentucky Lake|TN",
 "lat":36.2,
 "lon":-88.05,
+"memberIds":[
+"Kentucky Lake|KY",
+"Kentucky Lake|TN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":2169,
+"banksSampled":401,
+"maxP90FetchM":2267,
 "rasterM":72.2
 },
 "reason":"coarseRaster",
@@ -4105,10 +4846,14 @@
 "id":"Kerr Lake (John H. Kerr)|NC",
 "lat":36.55,
 "lon":-78.3,
+"memberIds":[
+"Kerr Lake (John H. Kerr)|NC",
+"Kerr Reservoir (Buggs Island)|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1064,
+"banksSampled":404,
+"maxP90FetchM":1178,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4122,10 +4867,14 @@
 "id":"Kerr Reservoir (Buggs Island)|VA",
 "lat":36.6,
 "lon":-78.35,
+"memberIds":[
+"Kerr Lake (John H. Kerr)|NC",
+"Kerr Reservoir (Buggs Island)|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":401,
-"maxP90FetchM":1064,
+"maxP90FetchM":1188,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4139,10 +4888,13 @@
 "id":"Keuka Lake|NY",
 "lat":42.55,
 "lon":-77.1,
+"memberIds":[
+"Keuka Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":4345,
+"banksSampled":415,
+"maxP90FetchM":4468,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4156,10 +4908,13 @@
 "id":"Keyhole Reservoir|WY",
 "lat":44.35,
 "lon":-104.78,
+"memberIds":[
+"Keyhole Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":2882,
+"banksSampled":402,
+"maxP90FetchM":2654,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4173,10 +4928,13 @@
 "id":"Keystone Lake|OK",
 "lat":36.15,
 "lon":-96.25,
+"memberIds":[
+"Keystone Lake|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":1361,
+"banksSampled":401,
+"maxP90FetchM":1316,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4190,9 +4948,12 @@
 "id":"Killens Pond|DE",
 "lat":38.988,
 "lon":-75.539,
+"memberIds":[
+"Killens Pond|DE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":204,
+"banksSampled":197,
 "maxP90FetchM":542,
 "rasterM":20.0
 },
@@ -4207,10 +4968,13 @@
 "id":"Kissimmee|FL",
 "lat":27.94,
 "lon":-81.27,
+"memberIds":[
+"Kissimmee|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":6622,
+"banksSampled":409,
+"maxP90FetchM":6832,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4223,9 +4987,13 @@
 ],
 "forecastDomain":"HI",
 "geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Koele ponds (Lanai)|HI",
 "lat":20.838,
 "lon":-156.921,
+"memberIds":[
+"Koele ponds (Lanai)|HI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"HI",
@@ -4236,14 +5004,17 @@
 "nbmAKDomainNotTested"
 ],
 "forecastDomain":"AK",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Kvichak / Ugashik|AK",
 "lat":57.5,
 "lon":-156.9,
+"memberIds":[
+"Kvichak / Ugashik|AK"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":430,
-"maxP90FetchM":13507,
+"banksSampled":425,
+"maxP90FetchM":13755,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4251,23 +5022,24 @@
 "tier":"ESTIMATED"
 },
 "Lac Courte Oreilles|WI":{
-"blockers":[
-"lakeIdentityRisk"
-],
+"blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"LOW",
+"geometryConfidence":"HIGH",
 "id":"Lac Courte Oreilles|WI",
 "lat":45.85,
 "lon":-91.4,
-"pointFlag":"identity_risk",
+"memberIds":[
+"Lac Courte Oreilles|WI"
+],
+"pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":450,
-"maxP90FetchM":3603,
+"banksSampled":407,
+"maxP90FetchM":2946,
 "rasterM":20.0
 },
-"reason":"geometryConfidence:LOW",
+"reason":"polygonFetch",
 "state":"WI",
-"tier":"POINT_ONLY"
+"tier":"ESTIMATED"
 },
 "Lahontan Reservoir|NV":{
 "blockers":[],
@@ -4276,10 +5048,13 @@
 "id":"Lahontan Reservoir|NV",
 "lat":39.45,
 "lon":-119.07,
+"memberIds":[
+"Lahontan Reservoir|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":1984,
+"banksSampled":409,
+"maxP90FetchM":2095,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4295,10 +5070,13 @@
 "id":"Lake Absegami|NJ",
 "lat":39.73,
 "lon":-74.43,
+"memberIds":[
+"Lake Absegami|NJ"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":164,
-"maxP90FetchM":387,
+"banksSampled":166,
+"maxP90FetchM":396,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -4312,10 +5090,13 @@
 "id":"Lake Anna|VA",
 "lat":38.07,
 "lon":-77.8,
+"memberIds":[
+"Lake Anna|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":403,
-"maxP90FetchM":822,
+"maxP90FetchM":802,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4329,10 +5110,13 @@
 "id":"Lake Arthur|PA",
 "lat":40.95,
 "lon":-80.1,
+"memberIds":[
+"Lake Arthur|PA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":457,
-"maxP90FetchM":1071,
+"banksSampled":448,
+"maxP90FetchM":1013,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4346,10 +5130,13 @@
 "id":"Lake Ashtabula|ND",
 "lat":47.15,
 "lon":-98.05,
+"memberIds":[
+"Lake Ashtabula|ND"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":1394,
+"banksSampled":417,
+"maxP90FetchM":1358,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4359,14 +5146,17 @@
 "Lake Barkley|KY":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Barkley|KY",
 "lat":36.92,
 "lon":-87.94,
+"memberIds":[
+"Lake Barkley|KY"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
 "banksSampled":401,
-"maxP90FetchM":1016,
+"maxP90FetchM":1310,
 "rasterM":25.8
 },
 "reason":"polygonFetch",
@@ -4380,10 +5170,13 @@
 "id":"Lake Bemidji|MN",
 "lat":47.51,
 "lon":-94.85,
+"memberIds":[
+"Lake Bemidji|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":545,
-"maxP90FetchM":7350,
+"banksSampled":539,
+"maxP90FetchM":7343,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4397,10 +5190,13 @@
 "id":"Lake Billy Chinook|OR",
 "lat":44.55,
 "lon":-121.28,
+"memberIds":[
+"Lake Billy Chinook|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":990,
+"banksSampled":406,
+"maxP90FetchM":992,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4414,10 +5210,13 @@
 "id":"Lake Bistineau|LA",
 "lat":32.4,
 "lon":-93.4,
+"memberIds":[
+"Lake Bistineau|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":2014,
+"banksSampled":414,
+"maxP90FetchM":2005,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4431,10 +5230,13 @@
 "id":"Lake Bomoseen|VT",
 "lat":43.65,
 "lon":-73.22,
+"memberIds":[
+"Lake Bomoseen|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":530,
-"maxP90FetchM":2140,
+"banksSampled":527,
+"maxP90FetchM":2162,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -4448,10 +5250,13 @@
 "id":"Lake Buchanan|TX",
 "lat":30.8,
 "lon":-98.42,
+"memberIds":[
+"Lake Buchanan|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":3798,
+"banksSampled":408,
+"maxP90FetchM":3116,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4465,10 +5270,13 @@
 "id":"Lake Carmi|VT",
 "lat":44.95,
 "lon":-72.88,
+"memberIds":[
+"Lake Carmi|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":567,
-"maxP90FetchM":2925,
+"banksSampled":560,
+"maxP90FetchM":2998,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4482,10 +5290,13 @@
 "id":"Lake Cascade|ID",
 "lat":44.55,
 "lon":-116.05,
+"memberIds":[
+"Lake Cascade|ID"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":4412,
+"banksSampled":414,
+"maxP90FetchM":5080,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4499,10 +5310,13 @@
 "id":"Lake Champlain|VT",
 "lat":44.47,
 "lon":-73.3,
+"memberIds":[
+"Lake Champlain|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":8851,
+"banksSampled":405,
+"maxP90FetchM":8321,
 "rasterM":55.4
 },
 "reason":"coarseRaster",
@@ -4516,10 +5330,13 @@
 "id":"Lake Charlevoix|MI",
 "lat":45.28,
 "lon":-85.14,
+"memberIds":[
+"Lake Charlevoix|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":437,
-"maxP90FetchM":4902,
+"banksSampled":435,
+"maxP90FetchM":5570,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4533,10 +5350,13 @@
 "id":"Lake Chelan|WA",
 "lat":47.99,
 "lon":-120.2,
+"memberIds":[
+"Lake Chelan|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":420,
-"maxP90FetchM":4864,
+"banksSampled":415,
+"maxP90FetchM":4814,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -4550,10 +5370,13 @@
 "id":"Lake Chesdin|VA",
 "lat":37.23,
 "lon":-77.65,
+"memberIds":[
+"Lake Chesdin|VA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":850,
+"banksSampled":430,
+"maxP90FetchM":964,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4565,15 +5388,18 @@
 "nbmAKDomainNotTested"
 ],
 "forecastDomain":"AK",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Clark|AK",
 "lat":60.2,
 "lon":-154.3,
+"memberIds":[
+"Lake Clark|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":8615,
-"rasterM":20.0
+"banksSampled":414,
+"maxP90FetchM":8674,
+"rasterM":23.3
 },
 "reason":"frozenFetchTable",
 "state":"AK",
@@ -4586,10 +5412,13 @@
 "id":"Lake Cochituate|MA",
 "lat":42.3,
 "lon":-71.36,
+"memberIds":[
+"Lake Cochituate|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":261,
-"maxP90FetchM":804,
+"banksSampled":325,
+"maxP90FetchM":748,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4603,10 +5432,13 @@
 "id":"Lake Conroe|TX",
 "lat":30.42,
 "lon":-95.6,
+"memberIds":[
+"Lake Conroe|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":1818,
+"banksSampled":401,
+"maxP90FetchM":2208,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4620,10 +5452,13 @@
 "id":"Lake Crescent|WA",
 "lat":48.06,
 "lon":-123.8,
+"memberIds":[
+"Lake Crescent|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":423,
-"maxP90FetchM":3622,
+"banksSampled":420,
+"maxP90FetchM":3404,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4637,10 +5472,13 @@
 "id":"Lake Cumberland|KY",
 "lat":36.93,
 "lon":-85.05,
+"memberIds":[
+"Lake Cumberland|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":401,
-"maxP90FetchM":833,
+"maxP90FetchM":758,
 "rasterM":26.9
 },
 "reason":"polygonFetch",
@@ -4654,10 +5492,13 @@
 "id":"Lake Cushman|WA",
 "lat":47.45,
 "lon":-123.22,
+"memberIds":[
+"Lake Cushman|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":451,
-"maxP90FetchM":2440,
+"banksSampled":441,
+"maxP90FetchM":2632,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4671,10 +5512,13 @@
 "id":"Lake D'Arbonne|LA",
 "lat":32.71,
 "lon":-92.46,
+"memberIds":[
+"Lake D'Arbonne|LA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":1400,
+"banksSampled":405,
+"maxP90FetchM":1192,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4688,10 +5532,13 @@
 "id":"Lake Darling|ND",
 "lat":48.55,
 "lon":-101.55,
+"memberIds":[
+"Lake Darling|ND"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":2778,
+"banksSampled":409,
+"maxP90FetchM":2738,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4705,10 +5552,13 @@
 "id":"Lake Dunmore|VT",
 "lat":43.9,
 "lon":-73.08,
+"memberIds":[
+"Lake Dunmore|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":768,
-"maxP90FetchM":1881,
+"banksSampled":759,
+"maxP90FetchM":1941,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4719,9 +5569,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Erie|MI",
 "lat":41.82,
 "lon":-83.25,
+"memberIds":[
+"Lake Erie|MI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"MI",
@@ -4731,9 +5585,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Erie|NY",
 "lat":42.55,
 "lon":-79.6,
+"memberIds":[
+"Lake Erie|NY"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"NY",
@@ -4743,9 +5601,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Erie|OH",
 "lat":41.6,
 "lon":-82.5,
+"memberIds":[
+"Lake Erie|OH"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"OH",
@@ -4755,9 +5617,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Erie|PA",
 "lat":42.15,
 "lon":-80.1,
+"memberIds":[
+"Lake Erie|PA"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"PA",
@@ -4770,10 +5636,13 @@
 "id":"Lake Eufaula|OK",
 "lat":35.3,
 "lon":-95.58,
+"memberIds":[
+"Lake Eufaula|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":400,
-"maxP90FetchM":1719,
+"banksSampled":401,
+"maxP90FetchM":1677,
 "rasterM":23.1
 },
 "reason":"frozenFetchTable",
@@ -4787,10 +5656,13 @@
 "id":"Lake Fork Reservoir|TX",
 "lat":32.83,
 "lon":-95.55,
+"memberIds":[
+"Lake Fork Reservoir|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1962,
+"banksSampled":403,
+"maxP90FetchM":2183,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4804,10 +5676,13 @@
 "id":"Lake Francis Case|SD",
 "lat":43.55,
 "lon":-99.2,
+"memberIds":[
+"Lake Francis Case|SD"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":4371,
+"banksSampled":407,
+"maxP90FetchM":3650,
 "rasterM":37.4
 },
 "reason":"polygonFetch",
@@ -4821,10 +5696,13 @@
 "id":"Lake Freeman|IN",
 "lat":40.75,
 "lon":-86.75,
+"memberIds":[
+"Lake Freeman|IN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":409,
-"maxP90FetchM":738,
+"maxP90FetchM":773,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4838,10 +5716,13 @@
 "id":"Lake Gaston|VA",
 "lat":36.52,
 "lon":-77.9,
+"memberIds":[
+"Lake Gaston|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":995,
+"banksSampled":406,
+"maxP90FetchM":1128,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4855,10 +5736,13 @@
 "id":"Lake Geneva|WI",
 "lat":42.58,
 "lon":-88.45,
+"memberIds":[
+"Lake Geneva|WI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":524,
-"maxP90FetchM":3873,
+"banksSampled":521,
+"maxP90FetchM":4192,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4872,10 +5756,13 @@
 "id":"Lake George|FL",
 "lat":29.285,
 "lon":-81.6,
+"memberIds":[
+"Lake George|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":427,
-"maxP90FetchM":15852,
+"banksSampled":423,
+"maxP90FetchM":15886,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4889,10 +5776,13 @@
 "id":"Lake George|NY",
 "lat":43.55,
 "lon":-73.62,
+"memberIds":[
+"Lake George|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":3519,
+"banksSampled":410,
+"maxP90FetchM":3756,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4906,10 +5796,13 @@
 "id":"Lake Gogebic|MI",
 "lat":46.49,
 "lon":-89.57,
+"memberIds":[
+"Lake Gogebic|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":445,
-"maxP90FetchM":7033,
+"banksSampled":443,
+"maxP90FetchM":9020,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -4923,10 +5816,13 @@
 "id":"Lake Granby|CO",
 "lat":40.145,
 "lon":-105.84,
+"memberIds":[
+"Lake Granby|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":438,
-"maxP90FetchM":3245,
+"banksSampled":430,
+"maxP90FetchM":3285,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4940,10 +5836,13 @@
 "id":"Lake Greenwood|SC",
 "lat":34.19,
 "lon":-81.94,
+"memberIds":[
+"Lake Greenwood|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":946,
+"banksSampled":413,
+"maxP90FetchM":1011,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4957,10 +5856,13 @@
 "id":"Lake Habeeb (Rocky Gap)|MD",
 "lat":39.7,
 "lon":-78.65,
+"memberIds":[
+"Lake Habeeb (Rocky Gap)|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":342,
-"maxP90FetchM":844,
+"banksSampled":335,
+"maxP90FetchM":841,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4970,14 +5872,17 @@
 "Lake Hartwell|SC":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Hartwell|SC",
 "lat":34.5,
 "lon":-82.85,
+"memberIds":[
+"Lake Hartwell|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":1106,
+"banksSampled":402,
+"maxP90FetchM":934,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -4991,10 +5896,13 @@
 "id":"Lake Hickory|NC",
 "lat":35.78,
 "lon":-81.25,
+"memberIds":[
+"Lake Hickory|NC"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":720,
+"banksSampled":424,
+"maxP90FetchM":764,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5008,10 +5916,13 @@
 "id":"Lake Hopatcong|NJ",
 "lat":40.95,
 "lon":-74.63,
+"memberIds":[
+"Lake Hopatcong|NJ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":945,
+"banksSampled":402,
+"maxP90FetchM":1164,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5025,10 +5936,13 @@
 "id":"Lake Hudson|OK",
 "lat":36.22,
 "lon":-95.12,
+"memberIds":[
+"Lake Hudson|OK"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":420,
-"maxP90FetchM":2556,
+"banksSampled":410,
+"maxP90FetchM":2226,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5039,9 +5953,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Huron|MI",
 "lat":44.5,
 "lon":-82.9,
+"memberIds":[
+"Lake Huron|MI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"MI",
@@ -5054,10 +5972,13 @@
 "id":"Lake James|NC",
 "lat":35.75,
 "lon":-81.88,
+"memberIds":[
+"Lake James|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":818,
+"banksSampled":403,
+"maxP90FetchM":895,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5071,10 +5992,13 @@
 "id":"Lake Jocassee|SC",
 "lat":34.97,
 "lon":-82.93,
+"memberIds":[
+"Lake Jocassee|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":1504,
+"banksSampled":431,
+"maxP90FetchM":2080,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5088,10 +6012,13 @@
 "id":"Lake Keowee|SC",
 "lat":34.83,
 "lon":-82.9,
+"memberIds":[
+"Lake Keowee|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1004,
+"banksSampled":405,
+"maxP90FetchM":1007,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5105,10 +6032,13 @@
 "id":"Lake Koocanusa|MT",
 "lat":48.7,
 "lon":-115.3,
+"memberIds":[
+"Lake Koocanusa|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":4193,
+"banksSampled":417,
+"maxP90FetchM":3986,
 "rasterM":21.8
 },
 "reason":"polygonFetch",
@@ -5124,10 +6054,13 @@
 "id":"Lake Lillinonah|CT",
 "lat":41.405,
 "lon":-73.305,
+"memberIds":[
+"Lake Lillinonah|CT"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":477,
-"maxP90FetchM":854,
+"banksSampled":472,
+"maxP90FetchM":804,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -5141,10 +6074,13 @@
 "id":"Lake Livingston|TX",
 "lat":30.75,
 "lon":-95.1,
+"memberIds":[
+"Lake Livingston|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":1218,
+"banksSampled":401,
+"maxP90FetchM":1291,
 "rasterM":24.3
 },
 "reason":"polygonFetch",
@@ -5158,10 +6094,13 @@
 "id":"Lake Macbride|IA",
 "lat":41.8,
 "lon":-91.55,
+"memberIds":[
+"Lake Macbride|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":458,
-"maxP90FetchM":933,
+"banksSampled":454,
+"maxP90FetchM":967,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5175,10 +6114,13 @@
 "id":"Lake Marburg|PA",
 "lat":39.75,
 "lon":-76.87,
+"memberIds":[
+"Lake Marburg|PA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1376,
+"banksSampled":525,
+"maxP90FetchM":1202,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5188,14 +6130,17 @@
 "Lake Marion|SC":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Marion|SC",
 "lat":33.5,
 "lon":-80.35,
+"memberIds":[
+"Lake Marion|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1846,
+"banksSampled":405,
+"maxP90FetchM":3204,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -5209,10 +6154,13 @@
 "id":"Lake Martin|AL",
 "lat":32.7,
 "lon":-85.92,
+"memberIds":[
+"Lake Martin|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1255,
+"banksSampled":403,
+"maxP90FetchM":1091,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5228,10 +6176,13 @@
 "id":"Lake Mary|AZ",
 "lat":35.09,
 "lon":-111.58,
+"memberIds":[
+"Lake Mary|AZ"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":466,
-"maxP90FetchM":1284,
+"banksSampled":463,
+"maxP90FetchM":1217,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -5241,14 +6192,17 @@
 "Lake Mattamuskeet|NC":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Mattamuskeet|NC",
 "lat":35.48,
 "lon":-76.18,
+"memberIds":[
+"Lake Mattamuskeet|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":457,
-"maxP90FetchM":10969,
+"banksSampled":415,
+"maxP90FetchM":7760,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5262,10 +6216,13 @@
 "id":"Lake Maurepas|LA",
 "lat":30.27,
 "lon":-90.5,
+"memberIds":[
+"Lake Maurepas|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":18076,
+"banksSampled":410,
+"maxP90FetchM":18021,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -5279,10 +6236,13 @@
 "id":"Lake McConaughy|NE",
 "lat":41.23,
 "lon":-101.7,
+"memberIds":[
+"Lake McConaughy|NE"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":10869,
+"banksSampled":405,
+"maxP90FetchM":8450,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -5296,10 +6256,13 @@
 "id":"Lake Mead|NV",
 "lat":36.15,
 "lon":-114.4,
+"memberIds":[
+"Lake Mead|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":3198,
+"banksSampled":401,
+"maxP90FetchM":3265,
 "rasterM":32.8
 },
 "reason":"frozenFetchTable",
@@ -5313,10 +6276,13 @@
 "id":"Lake Memphremagog|VT",
 "lat":44.95,
 "lon":-72.25,
+"memberIds":[
+"Lake Memphremagog|VT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":4184,
+"banksSampled":415,
+"maxP90FetchM":4258,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5330,10 +6296,13 @@
 "id":"Lake Mendota|WI",
 "lat":43.107,
 "lon":-89.42,
+"memberIds":[
+"Lake Mendota|WI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":5956,
+"banksSampled":407,
+"maxP90FetchM":5816,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5347,10 +6316,13 @@
 "id":"Lake Metigoshe|ND",
 "lat":48.98,
 "lon":-100.34,
+"memberIds":[
+"Lake Metigoshe|ND"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":469,
-"maxP90FetchM":858,
+"banksSampled":462,
+"maxP90FetchM":875,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5361,9 +6333,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Michigan|IN",
 "lat":41.7,
 "lon":-87.2,
+"memberIds":[
+"Lake Michigan|IN"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"IN",
@@ -5373,9 +6349,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Michigan|MI",
 "lat":43.5,
 "lon":-86.5,
+"memberIds":[
+"Lake Michigan|MI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"MI",
@@ -5385,9 +6365,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Michigan|WI",
 "lat":43.5,
 "lon":-87.5,
+"memberIds":[
+"Lake Michigan|WI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"WI",
@@ -5400,10 +6384,13 @@
 "id":"Lake Milton|OH",
 "lat":41.1,
 "lon":-80.97,
+"memberIds":[
+"Lake Milton|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":460,
-"maxP90FetchM":1368,
+"banksSampled":452,
+"maxP90FetchM":1448,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5417,10 +6404,13 @@
 "id":"Lake Minnetonka|MN",
 "lat":44.935,
 "lon":-93.59,
+"memberIds":[
+"Lake Minnetonka|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":1660,
+"banksSampled":412,
+"maxP90FetchM":1560,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5434,10 +6424,13 @@
 "id":"Lake Mohave|NV",
 "lat":35.4,
 "lon":-114.63,
+"memberIds":[
+"Lake Mohave|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":405,
-"maxP90FetchM":1719,
+"maxP90FetchM":1660,
 "rasterM":25.6
 },
 "reason":"polygonFetch",
@@ -5451,10 +6444,13 @@
 "id":"Lake Monona|WI",
 "lat":43.06,
 "lon":-89.37,
+"memberIds":[
+"Lake Monona|WI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":567,
-"maxP90FetchM":3446,
+"banksSampled":561,
+"maxP90FetchM":3708,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5468,10 +6464,13 @@
 "id":"Lake Monticello|SC",
 "lat":34.3,
 "lon":-81.33,
+"memberIds":[
+"Lake Monticello|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":2678,
+"banksSampled":445,
+"maxP90FetchM":2939,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5485,10 +6484,13 @@
 "id":"Lake Moomaw|VA",
 "lat":37.96,
 "lon":-79.95,
+"memberIds":[
+"Lake Moomaw|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":452,
-"maxP90FetchM":1003,
+"banksSampled":446,
+"maxP90FetchM":1122,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5502,10 +6504,13 @@
 "id":"Lake Moultrie|SC",
 "lat":33.3,
 "lon":-80.05,
+"memberIds":[
+"Lake Moultrie|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":4861,
+"banksSampled":404,
+"maxP90FetchM":6070,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5521,10 +6526,13 @@
 "id":"Lake Murray (OK)|OK",
 "lat":34.06,
 "lon":-96.98,
+"memberIds":[
+"Lake Murray (OK)|OK"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":1255,
+"banksSampled":420,
+"maxP90FetchM":1188,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -5538,10 +6546,13 @@
 "id":"Lake Murray (SC)|SC",
 "lat":34.05,
 "lon":-81.23,
+"memberIds":[
+"Lake Murray (SC)|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":1393,
+"banksSampled":401,
+"maxP90FetchM":1256,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5555,10 +6566,13 @@
 "id":"Lake Nockamixon|PA",
 "lat":40.47,
 "lon":-75.24,
+"memberIds":[
+"Lake Nockamixon|PA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1434,
+"banksSampled":532,
+"maxP90FetchM":1239,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5572,10 +6586,13 @@
 "id":"Lake Norman|NC",
 "lat":35.55,
 "lon":-80.95,
+"memberIds":[
+"Lake Norman|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":403,
-"maxP90FetchM":1075,
+"maxP90FetchM":1056,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5585,17 +6602,21 @@
 "Lake Oahe|ND":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"LOW",
+"geometryConfidence":"HIGH",
 "id":"Lake Oahe|ND",
 "lat":46.2,
 "lon":-100.6,
+"memberIds":[
+"Lake Oahe|ND",
+"Lake Oahe|SD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":3357,
-"rasterM":53.6
+"banksSampled":406,
+"maxP90FetchM":3728,
+"rasterM":85.7
 },
-"reason":"geometryConfidence:LOW",
+"reason":"coarseRaster",
 "state":"ND",
 "tier":"POINT_ONLY"
 },
@@ -5606,10 +6627,14 @@
 "id":"Lake Oahe|SD",
 "lat":44.9,
 "lon":-100.4,
+"memberIds":[
+"Lake Oahe|ND",
+"Lake Oahe|SD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":3543,
+"banksSampled":406,
+"maxP90FetchM":3728,
 "rasterM":85.7
 },
 "reason":"coarseRaster",
@@ -5625,10 +6650,13 @@
 "id":"Lake Ogallala|NE",
 "lat":41.19,
 "lon":-101.7,
+"memberIds":[
+"Lake Ogallala|NE"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":628,
-"maxP90FetchM":1152,
+"banksSampled":618,
+"maxP90FetchM":1242,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -5639,9 +6667,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Ontario|NY",
 "lat":43.55,
 "lon":-77.5,
+"memberIds":[
+"Lake Ontario|NY"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"NY",
@@ -5654,10 +6686,13 @@
 "id":"Lake Owyhee|OR",
 "lat":43.65,
 "lon":-117.25,
+"memberIds":[
+"Lake Owyhee|OR"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1242,
+"banksSampled":415,
+"maxP90FetchM":1241,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5671,10 +6706,13 @@
 "id":"Lake Pend Oreille|ID",
 "lat":48.15,
 "lon":-116.4,
+"memberIds":[
+"Lake Pend Oreille|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":5960,
+"banksSampled":407,
+"maxP90FetchM":5741,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5688,10 +6726,13 @@
 "id":"Lake Pepin|MN",
 "lat":44.46,
 "lon":-92.17,
+"memberIds":[
+"Lake Pepin|MN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":6652,
+"banksSampled":425,
+"maxP90FetchM":6204,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5705,10 +6746,13 @@
 "id":"Lake Petenwell|WI",
 "lat":44.07,
 "lon":-89.92,
+"memberIds":[
+"Lake Petenwell|WI"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":420,
-"maxP90FetchM":4550,
+"banksSampled":406,
+"maxP90FetchM":5342,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5722,10 +6766,13 @@
 "id":"Lake Poinsett|SD",
 "lat":44.55,
 "lon":-97.08,
+"memberIds":[
+"Lake Poinsett|SD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":476,
-"maxP90FetchM":5690,
+"banksSampled":474,
+"maxP90FetchM":5701,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5739,9 +6786,12 @@
 "id":"Lake Pontchartrain|LA",
 "lat":30.18,
 "lon":-90.1,
+"memberIds":[
+"Lake Pontchartrain|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":416,
+"banksSampled":409,
 "maxP90FetchM":30000,
 "rasterM":22.2
 },
@@ -5756,10 +6806,13 @@
 "id":"Lake Powell|UT",
 "lat":37,
 "lon":-110.9,
+"memberIds":[
+"Lake Powell|UT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
 "banksSampled":402,
-"maxP90FetchM":1672,
+"maxP90FetchM":1536,
 "rasterM":45.2
 },
 "reason":"coarseRaster",
@@ -5773,10 +6826,13 @@
 "id":"Lake Quinault|WA",
 "lat":47.47,
 "lon":-123.85,
+"memberIds":[
+"Lake Quinault|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":438,
-"maxP90FetchM":4297,
+"banksSampled":427,
+"maxP90FetchM":4766,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5790,10 +6846,13 @@
 "id":"Lake Quinsigamond|MA",
 "lat":42.26,
 "lon":-71.777,
+"memberIds":[
+"Lake Quinsigamond|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":433,
-"maxP90FetchM":826,
+"banksSampled":470,
+"maxP90FetchM":753,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5807,10 +6866,13 @@
 "id":"Lake Red Rock|IA",
 "lat":41.37,
 "lon":-93.05,
+"memberIds":[
+"Lake Red Rock|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":1282,
+"banksSampled":404,
+"maxP90FetchM":1382,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5824,10 +6886,13 @@
 "id":"Lake Robinson|SC",
 "lat":34.47,
 "lon":-80.15,
+"memberIds":[
+"Lake Robinson|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":528,
-"maxP90FetchM":1686,
+"banksSampled":515,
+"maxP90FetchM":1677,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -5841,10 +6906,13 @@
 "id":"Lake Roosevelt (FDR)|WA",
 "lat":48,
 "lon":-118.2,
+"memberIds":[
+"Lake Roosevelt (FDR)|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":3134,
+"banksSampled":404,
+"maxP90FetchM":3422,
 "rasterM":41.9
 },
 "reason":"coarseRaster",
@@ -5858,10 +6926,13 @@
 "id":"Lake Russell (R.B. Russell)|GA",
 "lat":34.05,
 "lon":-82.65,
+"memberIds":[
+"Lake Russell (R.B. Russell)|GA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
 "banksSampled":404,
-"maxP90FetchM":860,
+"maxP90FetchM":1330,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5875,10 +6946,13 @@
 "id":"Lake Sakakawea|ND",
 "lat":47.85,
 "lon":-102.3,
+"memberIds":[
+"Lake Sakakawea|ND"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":4743,
+"banksSampled":403,
+"maxP90FetchM":4062,
 "rasterM":65.7
 },
 "reason":"coarseRaster",
@@ -5892,10 +6966,13 @@
 "id":"Lake Sammamish|WA",
 "lat":47.59,
 "lon":-122.08,
+"memberIds":[
+"Lake Sammamish|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":460,
-"maxP90FetchM":3684,
+"banksSampled":456,
+"maxP90FetchM":3824,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5911,10 +6988,13 @@
 "id":"Lake Seymour|VT",
 "lat":44.95,
 "lon":-72.05,
+"memberIds":[
+"Lake Seymour|VT"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":765,
-"maxP90FetchM":2639,
+"banksSampled":764,
+"maxP90FetchM":2624,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -5924,12 +7004,16 @@
 "Lake Shafer|IN":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"LOW",
+"geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Lake Shafer|IN",
 "lat":40.8,
 "lon":-86.77,
-"pointFlag":"off_water",
-"reason":"polygonFetchFailed",
+"memberIds":[
+"Lake Shafer|IN"
+],
+"pointFlag":"",
+"reason":"noPolygon",
 "state":"IN",
 "tier":"POINT_ONLY"
 },
@@ -5940,10 +7024,13 @@
 "id":"Lake Sharpe|SD",
 "lat":44.35,
 "lon":-99.9,
+"memberIds":[
+"Lake Sharpe|SD"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
 "banksSampled":406,
-"maxP90FetchM":3037,
+"maxP90FetchM":3279,
 "rasterM":25.7
 },
 "reason":"polygonFetch",
@@ -5957,10 +7044,13 @@
 "id":"Lake Shelbyville|IL",
 "lat":39.45,
 "lon":-88.75,
+"memberIds":[
+"Lake Shelbyville|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":1049,
+"banksSampled":403,
+"maxP90FetchM":998,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -5974,10 +7064,13 @@
 "id":"Lake Springfield|IL",
 "lat":39.72,
 "lon":-89.6,
+"memberIds":[
+"Lake Springfield|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":430,
-"maxP90FetchM":1106,
+"banksSampled":419,
+"maxP90FetchM":1198,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -5991,10 +7084,13 @@
 "id":"Lake St. Catherine|VT",
 "lat":43.48,
 "lon":-73.2,
+"memberIds":[
+"Lake St. Catherine|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":745,
-"maxP90FetchM":1811,
+"banksSampled":730,
+"maxP90FetchM":1844,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6008,10 +7104,13 @@
 "id":"Lake St. Clair|MI",
 "lat":42.45,
 "lon":-82.7,
+"memberIds":[
+"Lake St. Clair|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":17594,
+"banksSampled":407,
+"maxP90FetchM":20210,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6025,10 +7124,14 @@
 "id":"Lake Strom Thurmond (Clarks Hill)|SC",
 "lat":33.68,
 "lon":-82.2,
+"memberIds":[
+"Clarks Hill / J.S. Thurmond|GA",
+"Lake Strom Thurmond (Clarks Hill)|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1296,
+"banksSampled":402,
+"maxP90FetchM":1173,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6039,9 +7142,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Superior|MI",
 "lat":47.45,
 "lon":-88.2,
+"memberIds":[
+"Lake Superior|MI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"MI",
@@ -6051,9 +7158,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Superior|MN",
 "lat":47.15,
 "lon":-91.4,
+"memberIds":[
+"Lake Superior|MN"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"MN",
@@ -6063,9 +7174,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake Superior|WI",
 "lat":46.85,
 "lon":-90.7,
+"memberIds":[
+"Lake Superior|WI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"WI",
@@ -6078,10 +7193,13 @@
 "id":"Lake Tahoe|NV",
 "lat":39.15,
 "lon":-119.93,
+"memberIds":[
+"Lake Tahoe|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":420,
-"maxP90FetchM":21942,
+"banksSampled":411,
+"maxP90FetchM":21388,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6095,10 +7213,13 @@
 "id":"Lake Taneycomo|MO",
 "lat":36.64,
 "lon":-93.22,
+"memberIds":[
+"Lake Taneycomo|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":508,
+"banksSampled":402,
+"maxP90FetchM":532,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6112,10 +7233,13 @@
 "id":"Lake Tawakoni|TX",
 "lat":32.88,
 "lon":-95.95,
+"memberIds":[
+"Lake Tawakoni|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":3824,
+"banksSampled":414,
+"maxP90FetchM":3798,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6129,10 +7253,13 @@
 "id":"Lake Tenkiller|OK",
 "lat":35.6,
 "lon":-94.98,
+"memberIds":[
+"Lake Tenkiller|OK"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":1524,
+"banksSampled":406,
+"maxP90FetchM":1570,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6140,16 +7267,21 @@
 "tier":"ESTIMATED"
 },
 "Lake Texoma|TX":{
-"blockers":[],
+"blockers":[
+"auditedGeometryAreaMismatch"
+],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MEDIUM",
 "id":"Lake Texoma|TX",
 "lat":33.9,
 "lon":-96.6,
+"memberIds":[
+"Lake Texoma|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":2435,
+"banksSampled":404,
+"maxP90FetchM":2308,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6159,14 +7291,17 @@
 "Lake Thompson|SD":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Thompson|SD",
 "lat":44.31,
 "lon":-97.55,
+"memberIds":[
+"Lake Thompson|SD"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":433,
-"maxP90FetchM":5205,
+"banksSampled":439,
+"maxP90FetchM":4287,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6176,14 +7311,17 @@
 "Lake Travis|TX":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Travis|TX",
 "lat":30.42,
 "lon":-97.92,
+"memberIds":[
+"Lake Travis|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":404,
-"maxP90FetchM":1175,
+"maxP90FetchM":1000,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6199,10 +7337,13 @@
 "id":"Lake Tschida|ND",
 "lat":46.62,
 "lon":-101.75,
+"memberIds":[
+"Lake Tschida|ND"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":429,
-"maxP90FetchM":1370,
+"banksSampled":425,
+"maxP90FetchM":1344,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -6216,10 +7357,13 @@
 "id":"Lake Union|WA",
 "lat":47.64,
 "lon":-122.335,
+"memberIds":[
+"Lake Union|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":685,
-"maxP90FetchM":1327,
+"banksSampled":675,
+"maxP90FetchM":1516,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6233,10 +7377,13 @@
 "id":"Lake Vermilion|MN",
 "lat":47.88,
 "lon":-92.4,
+"memberIds":[
+"Lake Vermilion|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1727,
+"banksSampled":403,
+"maxP90FetchM":2017,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6250,10 +7397,13 @@
 "id":"Lake Waccamaw|NC",
 "lat":34.28,
 "lon":-78.5,
+"memberIds":[
+"Lake Waccamaw|NC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":7296,
+"banksSampled":593,
+"maxP90FetchM":7367,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6265,12 +7415,16 @@
 "nbmHIDomainNotTested"
 ],
 "forecastDomain":"HI",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Lake Waiau|HI",
 "lat":19.8117,
 "lon":-155.4736,
-"pointFlag":"off_water",
-"reason":"polygonFetchFailed",
+"memberIds":[
+"Lake Waiau|HI"
+],
+"pointFlag":"",
+"reason":"noPolygon",
 "state":"HI",
 "tier":"POINT_ONLY"
 },
@@ -6281,10 +7435,13 @@
 "id":"Lake Wallenpaupack|PA",
 "lat":41.42,
 "lon":-75.2,
+"memberIds":[
+"Lake Wallenpaupack|PA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":2064,
+"banksSampled":406,
+"maxP90FetchM":2048,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6298,10 +7455,13 @@
 "id":"Lake Waramaug|CT",
 "lat":41.69,
 "lon":-73.378,
+"memberIds":[
+"Lake Waramaug|CT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":655,
-"maxP90FetchM":942,
+"banksSampled":643,
+"maxP90FetchM":963,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6317,10 +7477,13 @@
 "id":"Lake Washington|MS",
 "lat":33.1,
 "lon":-90.91,
+"memberIds":[
+"Lake Washington|MS"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":2658,
+"banksSampled":409,
+"maxP90FetchM":2416,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -6334,10 +7497,13 @@
 "id":"Lake Washington|WA",
 "lat":47.62,
 "lon":-122.26,
+"memberIds":[
+"Lake Washington|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":4636,
+"banksSampled":414,
+"maxP90FetchM":4583,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6351,10 +7517,13 @@
 "id":"Lake Wateree|SC",
 "lat":34.42,
 "lon":-80.87,
+"memberIds":[
+"Lake Wateree|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1242,
+"banksSampled":408,
+"maxP90FetchM":1325,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6368,10 +7537,13 @@
 "id":"Lake Wawasee|IN",
 "lat":41.4,
 "lon":-85.72,
+"memberIds":[
+"Lake Wawasee|IN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":424,
-"maxP90FetchM":2298,
+"banksSampled":411,
+"maxP90FetchM":1744,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6385,10 +7557,13 @@
 "id":"Lake Wentworth|NH",
 "lat":43.59,
 "lon":-71.2,
+"memberIds":[
+"Lake Wentworth|NH"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":489,
-"maxP90FetchM":2467,
+"banksSampled":472,
+"maxP90FetchM":2527,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6402,10 +7577,13 @@
 "id":"Lake Willoughby|VT",
 "lat":44.75,
 "lon":-72.05,
+"memberIds":[
+"Lake Willoughby|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":766,
-"maxP90FetchM":3340,
+"banksSampled":756,
+"maxP90FetchM":3404,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6419,10 +7597,13 @@
 "id":"Lake Winnebago|WI",
 "lat":44,
 "lon":-88.42,
+"memberIds":[
+"Lake Winnebago|WI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":23326,
+"banksSampled":405,
+"maxP90FetchM":22283,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6436,10 +7617,13 @@
 "id":"Lake Winnibigoshish|MN",
 "lat":47.42,
 "lon":-94.2,
+"memberIds":[
+"Lake Winnibigoshish|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":15303,
+"banksSampled":411,
+"maxP90FetchM":15728,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6453,10 +7637,13 @@
 "id":"Lake Winnipesaukee|NH",
 "lat":43.62,
 "lon":-71.33,
+"memberIds":[
+"Lake Winnipesaukee|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":2350,
+"banksSampled":403,
+"maxP90FetchM":2763,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6470,10 +7657,13 @@
 "id":"Lake Winnisquam|NH",
 "lat":43.55,
 "lon":-71.5,
+"memberIds":[
+"Lake Winnisquam|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":435,
-"maxP90FetchM":2183,
+"banksSampled":426,
+"maxP90FetchM":2128,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6489,10 +7679,13 @@
 "id":"Lake Wisconsin|WI",
 "lat":43.45,
 "lon":-89.65,
+"memberIds":[
+"Lake Wisconsin|WI"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":429,
-"maxP90FetchM":2496,
+"banksSampled":421,
+"maxP90FetchM":2332,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -6502,14 +7695,17 @@
 "Lake Wylie|SC":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lake Wylie|SC",
 "lat":35.1,
 "lon":-81.05,
+"memberIds":[
+"Lake Wylie|SC"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":749,
+"banksSampled":406,
+"maxP90FetchM":828,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6523,10 +7719,13 @@
 "id":"Lake Zoar|CT",
 "lat":41.415,
 "lon":-73.25,
+"memberIds":[
+"Lake Zoar|CT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":571,
-"maxP90FetchM":816,
+"banksSampled":568,
+"maxP90FetchM":848,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6540,10 +7739,13 @@
 "id":"Lake of Egypt|IL",
 "lat":37.6,
 "lon":-88.97,
+"memberIds":[
+"Lake of Egypt|IL"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":570,
+"banksSampled":436,
+"maxP90FetchM":582,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6557,10 +7759,13 @@
 "id":"Lake of the Ozarks|MO",
 "lat":38.2,
 "lon":-92.63,
+"memberIds":[
+"Lake of the Ozarks|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":977,
+"banksSampled":403,
+"maxP90FetchM":1043,
 "rasterM":25.7
 },
 "reason":"frozenFetchTable",
@@ -6571,9 +7776,13 @@
 "blockers":[],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MISSING",
+"geometryMissing":"held-large-water",
 "id":"Lake of the Woods|MN",
 "lat":49.2,
 "lon":-94.85,
+"memberIds":[
+"Lake of the Woods|MN"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"MN",
@@ -6586,10 +7795,13 @@
 "id":"Lanier (Sidney Lanier)|GA",
 "lat":34.22,
 "lon":-84.07,
+"memberIds":[
+"Lanier (Sidney Lanier)|GA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":402,
-"maxP90FetchM":823,
+"maxP90FetchM":914,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6603,10 +7815,13 @@
 "id":"Laurel River Lake|KY",
 "lat":36.95,
 "lon":-84.22,
+"memberIds":[
+"Laurel River Lake|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":633,
+"banksSampled":411,
+"maxP90FetchM":616,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6620,10 +7835,13 @@
 "id":"Lay|AL",
 "lat":33,
 "lon":-86.52,
+"memberIds":[
+"Lay|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":696,
+"banksSampled":401,
+"maxP90FetchM":816,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6637,10 +7855,13 @@
 "id":"Leech Lake|MN",
 "lat":47.15,
 "lon":-94.38,
+"memberIds":[
+"Leech Lake|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":7166,
+"banksSampled":410,
+"maxP90FetchM":7820,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6654,10 +7875,13 @@
 "id":"Lewis and Clark Lake|SD",
 "lat":42.85,
 "lon":-97.65,
+"memberIds":[
+"Lewis and Clark Lake|SD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":5844,
+"banksSampled":410,
+"maxP90FetchM":7413,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6671,10 +7895,13 @@
 "id":"Liberty Reservoir|MD",
 "lat":39.42,
 "lon":-76.9,
+"memberIds":[
+"Liberty Reservoir|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":425,
-"maxP90FetchM":582,
+"banksSampled":415,
+"maxP90FetchM":610,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6688,10 +7915,13 @@
 "id":"Loch Raven Reservoir|MD",
 "lat":39.47,
 "lon":-76.55,
+"memberIds":[
+"Loch Raven Reservoir|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":933,
+"banksSampled":405,
+"maxP90FetchM":778,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6701,14 +7931,17 @@
 "Lochloosa|FL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Lochloosa|FL",
 "lat":29.515,
 "lon":-82.125,
+"memberIds":[
+"Lochloosa|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":443,
-"maxP90FetchM":5815,
+"banksSampled":444,
+"maxP90FetchM":3848,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6722,10 +7955,13 @@
 "id":"Logan Martin|AL",
 "lat":33.47,
 "lon":-86.32,
+"memberIds":[
+"Logan Martin|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":405,
-"maxP90FetchM":885,
+"maxP90FetchM":866,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6741,10 +7977,13 @@
 "id":"Long Lake|ME",
 "lat":44.05,
 "lon":-70.59,
+"memberIds":[
+"Long Lake|ME"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":433,
-"maxP90FetchM":2814,
+"banksSampled":426,
+"maxP90FetchM":2798,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6754,14 +7993,17 @@
 "Long Pond (Lakeville)|MA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Long Pond (Lakeville)|MA",
 "lat":41.823,
 "lon":-70.91,
+"memberIds":[
+"Long Pond (Lakeville)|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":558,
-"maxP90FetchM":2268,
+"banksSampled":552,
+"maxP90FetchM":2338,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6775,10 +8017,13 @@
 "id":"Longview Lake|MO",
 "lat":38.9,
 "lon":-94.5,
+"memberIds":[
+"Longview Lake|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":53,
-"maxP90FetchM":352,
+"banksSampled":54,
+"maxP90FetchM":354,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6792,10 +8037,13 @@
 "id":"Lucky Peak Lake|ID",
 "lat":43.53,
 "lon":-116.05,
+"memberIds":[
+"Lucky Peak Lake|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":440,
-"maxP90FetchM":1056,
+"banksSampled":435,
+"maxP90FetchM":1101,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6809,10 +8057,13 @@
 "id":"Lums Pond|DE",
 "lat":39.558,
 "lon":-75.72,
+"memberIds":[
+"Lums Pond|DE"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":572,
+"banksSampled":409,
+"maxP90FetchM":610,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6822,14 +8073,17 @@
 "Malheur Lake|OR":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Malheur Lake|OR",
 "lat":43.32,
 "lon":-118.75,
+"memberIds":[
+"Malheur Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":2265,
+"banksSampled":410,
+"maxP90FetchM":4052,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6845,10 +8099,13 @@
 "id":"Manasquan Reservoir|NJ",
 "lat":40.16,
 "lon":-74.14,
+"memberIds":[
+"Manasquan Reservoir|NJ"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":497,
-"maxP90FetchM":1698,
+"banksSampled":595,
+"maxP90FetchM":1546,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -6862,10 +8119,13 @@
 "id":"Mansfield Hollow Lake|CT",
 "lat":41.755,
 "lon":-72.175,
+"memberIds":[
+"Mansfield Hollow Lake|CT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":449,
-"maxP90FetchM":599,
+"banksSampled":430,
+"maxP90FetchM":600,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6881,10 +8141,13 @@
 "id":"Marion Reservoir|KS",
 "lat":38.37,
 "lon":-97.09,
+"memberIds":[
+"Marion Reservoir|KS"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":321,
-"maxP90FetchM":560,
+"banksSampled":320,
+"maxP90FetchM":562,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -6898,10 +8161,13 @@
 "id":"Mark Twain Lake|MO",
 "lat":39.53,
 "lon":-91.63,
+"memberIds":[
+"Mark Twain Lake|MO"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":1043,
+"banksSampled":406,
+"maxP90FetchM":996,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6915,10 +8181,13 @@
 "id":"Massabesic Lake|NH",
 "lat":43,
 "lon":-71.4,
+"memberIds":[
+"Massabesic Lake|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":452,
-"maxP90FetchM":1364,
+"banksSampled":443,
+"maxP90FetchM":1356,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6932,10 +8201,13 @@
 "id":"Melvern Lake|KS",
 "lat":38.51,
 "lon":-95.72,
+"memberIds":[
+"Melvern Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":416,
-"maxP90FetchM":1764,
+"banksSampled":409,
+"maxP90FetchM":1824,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -6951,10 +8223,13 @@
 "id":"Merrill Creek Reservoir|NJ",
 "lat":40.73,
 "lon":-75.05,
+"memberIds":[
+"Merrill Creek Reservoir|NJ"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":459,
-"maxP90FetchM":1522,
+"banksSampled":446,
+"maxP90FetchM":1556,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -6968,10 +8243,13 @@
 "id":"Merritt Reservoir|NE",
 "lat":42.62,
 "lon":-100.88,
+"memberIds":[
+"Merritt Reservoir|NE"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":416,
-"maxP90FetchM":1008,
+"banksSampled":410,
+"maxP90FetchM":1106,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -6987,10 +8265,13 @@
 "id":"Merrymeeting Lake|NH",
 "lat":43.56,
 "lon":-71.16,
+"memberIds":[
+"Merrymeeting Lake|NH"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":798,
-"maxP90FetchM":1624,
+"banksSampled":795,
+"maxP90FetchM":1618,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -7004,10 +8285,13 @@
 "id":"Milford Lake|KS",
 "lat":39.1,
 "lon":-96.91,
+"memberIds":[
+"Milford Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":2986,
+"banksSampled":411,
+"maxP90FetchM":2828,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7021,10 +8305,13 @@
 "id":"Mille Lacs Lake|MN",
 "lat":46.25,
 "lon":-93.65,
+"memberIds":[
+"Mille Lacs Lake|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":22929,
+"banksSampled":410,
+"maxP90FetchM":21963,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -7038,10 +8325,13 @@
 "id":"Millwood|AR",
 "lat":33.68,
 "lon":-93.95,
+"memberIds":[
+"Millwood|AR"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":1143,
+"banksSampled":403,
+"maxP90FetchM":1362,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7055,10 +8345,13 @@
 "id":"Mississinewa Lake|IN",
 "lat":40.72,
 "lon":-85.9,
+"memberIds":[
+"Mississinewa Lake|IN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":1034,
+"banksSampled":463,
+"maxP90FetchM":1024,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7072,10 +8365,13 @@
 "id":"Monksville Reservoir|NJ",
 "lat":41.11,
 "lon":-74.32,
+"memberIds":[
+"Monksville Reservoir|NJ"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":618,
-"maxP90FetchM":829,
+"banksSampled":593,
+"maxP90FetchM":876,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7089,10 +8385,13 @@
 "id":"Mono|CA",
 "lat":38,
 "lon":-119.01,
+"memberIds":[
+"Mono|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":440,
-"maxP90FetchM":10445,
+"banksSampled":430,
+"maxP90FetchM":11458,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7106,10 +8405,13 @@
 "id":"Monroe Lake|IN",
 "lat":39.05,
 "lon":-86.42,
+"memberIds":[
+"Monroe Lake|IN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":1856,
+"banksSampled":411,
+"maxP90FetchM":1560,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7119,14 +8421,17 @@
 "Moon Lake|MS":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Moon Lake|MS",
 "lat":34.46,
 "lon":-90.56,
+"memberIds":[
+"Moon Lake|MS"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":533,
-"maxP90FetchM":1803,
+"banksSampled":531,
+"maxP90FetchM":1756,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7140,10 +8445,13 @@
 "id":"Moosehead Lake|ME",
 "lat":45.6,
 "lon":-69.7,
+"memberIds":[
+"Moosehead Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":4417,
+"banksSampled":408,
+"maxP90FetchM":4050,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7157,10 +8465,13 @@
 "id":"Mooselookmeguntic Lake|ME",
 "lat":44.9,
 "lon":-70.8,
+"memberIds":[
+"Mooselookmeguntic Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":4261,
+"banksSampled":420,
+"maxP90FetchM":4364,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7174,10 +8485,13 @@
 "id":"Moses Lake|WA",
 "lat":47.13,
 "lon":-119.32,
+"memberIds":[
+"Moses Lake|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":1654,
+"banksSampled":402,
+"maxP90FetchM":1865,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7191,10 +8505,13 @@
 "id":"Mosquito Creek Lake|OH",
 "lat":41.3,
 "lon":-80.76,
+"memberIds":[
+"Mosquito Creek Lake|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":3394,
+"banksSampled":416,
+"maxP90FetchM":3546,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -7210,10 +8527,13 @@
 "id":"Mount Storm Lake|WV",
 "lat":39.24,
 "lon":-79.27,
+"memberIds":[
+"Mount Storm Lake|WV"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":544,
-"maxP90FetchM":1203,
+"banksSampled":536,
+"maxP90FetchM":1150,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -7227,10 +8547,13 @@
 "id":"Mullett Lake|MI",
 "lat":45.53,
 "lon":-84.52,
+"memberIds":[
+"Mullett Lake|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":472,
-"maxP90FetchM":7410,
+"banksSampled":468,
+"maxP90FetchM":7368,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7246,10 +8569,13 @@
 "id":"Naknek|AK",
 "lat":58.7,
 "lon":-156,
+"memberIds":[
+"Naknek|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":9475,
+"banksSampled":403,
+"maxP90FetchM":9165,
 "rasterM":22.2
 },
 "reason":"polygonFetch",
@@ -7263,10 +8589,13 @@
 "id":"Navajo Reservoir|NM",
 "lat":36.8,
 "lon":-107.61,
+"memberIds":[
+"Navajo Reservoir|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1392,
+"banksSampled":407,
+"maxP90FetchM":1457,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -7274,16 +8603,21 @@
 "tier":"AUDITED"
 },
 "Neely Henry|AL":{
-"blockers":[],
+"blockers":[
+"auditedGeometryAreaMismatch"
+],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Neely Henry|AL",
 "lat":33.8,
 "lon":-86.05,
+"memberIds":[
+"Neely Henry|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":743,
+"banksSampled":403,
+"maxP90FetchM":654,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -7299,10 +8633,13 @@
 "id":"Nelson Lake|ND",
 "lat":47.3,
 "lon":-101.45,
+"memberIds":[
+"Nelson Lake|ND"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1044,
+"banksSampled":432,
+"maxP90FetchM":1036,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -7316,10 +8653,13 @@
 "id":"Newfound Lake|NH",
 "lat":43.7,
 "lon":-71.75,
+"memberIds":[
+"Newfound Lake|NH"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":444,
-"maxP90FetchM":3487,
+"banksSampled":440,
+"maxP90FetchM":3409,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7333,10 +8673,13 @@
 "id":"Nickajack Lake|TN",
 "lat":35.03,
 "lon":-85.53,
+"memberIds":[
+"Nickajack Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":1472,
+"banksSampled":412,
+"maxP90FetchM":1456,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7350,10 +8693,13 @@
 "id":"Nimrod|AR",
 "lat":34.95,
 "lon":-93.17,
+"memberIds":[
+"Nimrod|AR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":457,
+"banksSampled":402,
+"maxP90FetchM":509,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7363,19 +8709,18 @@
 "Ninigret Pond|RI":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Ninigret Pond|RI",
 "lat":41.35,
 "lon":-71.65,
-"pointFlag":"ok",
-"polygonFetch":{
-"banksSampled":422,
-"maxP90FetchM":1434,
-"rasterM":20.0
-},
-"reason":"polygonFetch",
+"memberIds":[
+"Ninigret Pond|RI"
+],
+"pointFlag":"",
+"reason":"noPolygon",
 "state":"RI",
-"tier":"ESTIMATED"
+"tier":"POINT_ONLY"
 },
 "Nolin River Lake|KY":{
 "blockers":[],
@@ -7384,10 +8729,13 @@
 "id":"Nolin River Lake|KY",
 "lat":37.3,
 "lon":-86.25,
+"memberIds":[
+"Nolin River Lake|KY"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":545,
+"banksSampled":403,
+"maxP90FetchM":615,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7401,10 +8749,13 @@
 "id":"Norfork|AR",
 "lat":36.35,
 "lon":-92.24,
+"memberIds":[
+"Norfork|AR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":983,
+"banksSampled":402,
+"maxP90FetchM":1085,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7412,16 +8763,21 @@
 "tier":"ESTIMATED"
 },
 "Norris Lake|TN":{
-"blockers":[],
+"blockers":[
+"auditedGeometryAreaMismatch"
+],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Norris Lake|TN",
 "lat":36.25,
 "lon":-83.9,
+"memberIds":[
+"Norris Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":726,
+"banksSampled":402,
+"maxP90FetchM":741,
 "rasterM":22.9
 },
 "reason":"frozenFetchTable",
@@ -7434,9 +8790,13 @@
 ],
 "forecastDomain":"HI",
 "geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Nuuanu Reservoir|HI",
 "lat":21.355,
 "lon":-157.822,
+"memberIds":[
+"Nuuanu Reservoir|HI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"HI",
@@ -7445,14 +8805,17 @@
 "Oconee|GA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Oconee|GA",
 "lat":33.43,
 "lon":-83.25,
+"memberIds":[
+"Oconee|GA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":940,
+"banksSampled":405,
+"maxP90FetchM":909,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7466,10 +8829,13 @@
 "id":"Odell Lake|OR",
 "lat":43.57,
 "lon":-122.03,
+"memberIds":[
+"Odell Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":457,
-"maxP90FetchM":4842,
+"banksSampled":452,
+"maxP90FetchM":4821,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7483,10 +8849,13 @@
 "id":"Okatibbee Lake|MS",
 "lat":32.49,
 "lon":-88.81,
+"memberIds":[
+"Okatibbee Lake|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":1946,
+"banksSampled":404,
+"maxP90FetchM":1932,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7500,10 +8869,13 @@
 "id":"Okeechobee|FL",
 "lat":26.94,
 "lon":-80.8,
+"memberIds":[
+"Okeechobee|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":406,
-"maxP90FetchM":27586,
+"maxP90FetchM":27446,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7517,10 +8889,13 @@
 "id":"Old Hickory Lake|TN",
 "lat":36.28,
 "lon":-86.62,
+"memberIds":[
+"Old Hickory Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":753,
+"banksSampled":405,
+"maxP90FetchM":856,
 "rasterM":21.6
 },
 "reason":"polygonFetch",
@@ -7534,10 +8909,13 @@
 "id":"Oneida Lake|NY",
 "lat":43.2,
 "lon":-75.92,
+"memberIds":[
+"Oneida Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":12856,
+"banksSampled":402,
+"maxP90FetchM":12813,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -7551,9 +8929,12 @@
 "id":"Onota Lake|MA",
 "lat":42.47,
 "lon":-73.268,
+"memberIds":[
+"Onota Lake|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":569,
+"banksSampled":558,
 "maxP90FetchM":1465,
 "rasterM":20.0
 },
@@ -7568,10 +8949,13 @@
 "id":"Oologah Lake|OK",
 "lat":36.55,
 "lon":-95.67,
+"memberIds":[
+"Oologah Lake|OK"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":3032,
+"banksSampled":405,
+"maxP90FetchM":3158,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7581,14 +8965,17 @@
 "Orange Lake|FL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Orange Lake|FL",
 "lat":29.475,
 "lon":-82.2,
+"memberIds":[
+"Orange Lake|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":444,
-"maxP90FetchM":3343,
+"banksSampled":437,
+"maxP90FetchM":3360,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7602,10 +8989,13 @@
 "id":"Oroville|CA",
 "lat":39.54,
 "lon":-121.48,
+"memberIds":[
+"Oroville|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":1092,
+"banksSampled":414,
+"maxP90FetchM":1067,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7619,10 +9009,13 @@
 "id":"Ossipee Lake|NH",
 "lat":43.81,
 "lon":-71.13,
+"memberIds":[
+"Ossipee Lake|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":2358,
+"banksSampled":403,
+"maxP90FetchM":2756,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7636,10 +9029,13 @@
 "id":"Otis Reservoir|MA",
 "lat":42.178,
 "lon":-73.06,
+"memberIds":[
+"Otis Reservoir|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":445,
-"maxP90FetchM":1013,
+"banksSampled":429,
+"maxP90FetchM":978,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7653,10 +9049,13 @@
 "id":"Otter Tail Lake|MN",
 "lat":46.415,
 "lon":-95.71,
+"memberIds":[
+"Otter Tail Lake|MN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
 "banksSampled":411,
-"maxP90FetchM":11040,
+"maxP90FetchM":10276,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7670,10 +9069,13 @@
 "id":"Ouachita (L. Ouachita)|AR",
 "lat":34.57,
 "lon":-93.2,
+"memberIds":[
+"Ouachita (L. Ouachita)|AR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":402,
-"maxP90FetchM":1158,
+"maxP90FetchM":1225,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7687,10 +9089,13 @@
 "id":"Owasco Lake|NY",
 "lat":42.85,
 "lon":-76.53,
+"memberIds":[
+"Owasco Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":476,
-"maxP90FetchM":5600,
+"banksSampled":473,
+"maxP90FetchM":5694,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7704,10 +9109,13 @@
 "id":"Pachaug Pond|CT",
 "lat":41.592,
 "lon":-71.888,
+"memberIds":[
+"Pachaug Pond|CT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":465,
-"maxP90FetchM":1274,
+"banksSampled":451,
+"maxP90FetchM":1168,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7721,10 +9129,13 @@
 "id":"Pactola Reservoir|SD",
 "lat":44.07,
 "lon":-103.5,
+"memberIds":[
+"Pactola Reservoir|SD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":427,
-"maxP90FetchM":768,
+"banksSampled":417,
+"maxP90FetchM":827,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7738,10 +9149,13 @@
 "id":"Palisades Reservoir|ID",
 "lat":43.4,
 "lon":-111.2,
+"memberIds":[
+"Palisades Reservoir|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":4883,
+"banksSampled":438,
+"maxP90FetchM":5161,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7755,10 +9169,13 @@
 "id":"Pascoag Reservoir|RI",
 "lat":41.95,
 "lon":-71.72,
+"memberIds":[
+"Pascoag Reservoir|RI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":695,
-"maxP90FetchM":910,
+"banksSampled":732,
+"maxP90FetchM":911,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7772,10 +9189,13 @@
 "id":"Pathfinder Reservoir|WY",
 "lat":42.47,
 "lon":-106.85,
+"memberIds":[
+"Pathfinder Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":2890,
+"banksSampled":416,
+"maxP90FetchM":2900,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7789,10 +9209,13 @@
 "id":"Patoka Lake|IN",
 "lat":38.42,
 "lon":-86.65,
+"memberIds":[
+"Patoka Lake|IN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":880,
+"banksSampled":409,
+"maxP90FetchM":950,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7806,10 +9229,13 @@
 "id":"Patterson Lake|ND",
 "lat":46.87,
 "lon":-102.83,
+"memberIds":[
+"Patterson Lake|ND"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":746,
+"banksSampled":403,
+"maxP90FetchM":636,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7823,10 +9249,13 @@
 "id":"Payette Lake|ID",
 "lat":44.93,
 "lon":-116.1,
+"memberIds":[
+"Payette Lake|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":460,
-"maxP90FetchM":3551,
+"banksSampled":455,
+"maxP90FetchM":3392,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7840,10 +9269,13 @@
 "id":"Percy Priest Lake|TN",
 "lat":36.1,
 "lon":-86.6,
+"memberIds":[
+"Percy Priest Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":1447,
+"banksSampled":406,
+"maxP90FetchM":1362,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7857,10 +9289,13 @@
 "id":"Perry Lake|KS",
 "lat":39.14,
 "lon":-95.45,
+"memberIds":[
+"Perry Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":2098,
+"banksSampled":403,
+"maxP90FetchM":2054,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7874,10 +9309,13 @@
 "id":"Philpott Lake|VA",
 "lat":36.79,
 "lon":-80.03,
+"memberIds":[
+"Philpott Lake|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":517,
+"banksSampled":412,
+"maxP90FetchM":499,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7887,14 +9325,17 @@
 "Pickwick Lake|TN":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Pickwick Lake|TN",
 "lat":35.05,
 "lon":-88.2,
+"memberIds":[
+"Pickwick Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":2532,
+"banksSampled":402,
+"maxP90FetchM":2164,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -7908,10 +9349,13 @@
 "id":"Pineview Reservoir|UT",
 "lat":41.25,
 "lon":-111.8,
+"memberIds":[
+"Pineview Reservoir|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":446,
-"maxP90FetchM":1610,
+"banksSampled":439,
+"maxP90FetchM":1633,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7925,10 +9369,13 @@
 "id":"Piney Run Lake|MD",
 "lat":39.4,
 "lon":-77.02,
+"memberIds":[
+"Piney Run Lake|MD"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":513,
-"maxP90FetchM":787,
+"banksSampled":498,
+"maxP90FetchM":815,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7942,10 +9389,13 @@
 "id":"Pleasant|AZ",
 "lat":33.86,
 "lon":-112.26,
+"memberIds":[
+"Pleasant|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":1714,
+"banksSampled":417,
+"maxP90FetchM":1845,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7955,19 +9405,18 @@
 "Point Judith Pond|RI":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Point Judith Pond|RI",
 "lat":41.4,
 "lon":-71.51,
-"pointFlag":"ok",
-"polygonFetch":{
-"banksSampled":474,
-"maxP90FetchM":770,
-"rasterM":20.0
-},
-"reason":"polygonFetch",
+"memberIds":[
+"Point Judith Pond|RI"
+],
+"pointFlag":"",
+"reason":"noPolygon",
 "state":"RI",
-"tier":"ESTIMATED"
+"tier":"POINT_ONLY"
 },
 "Pomme de Terre Lake|MO":{
 "blockers":[],
@@ -7976,10 +9425,13 @@
 "id":"Pomme de Terre Lake|MO",
 "lat":37.89,
 "lon":-93.32,
+"memberIds":[
+"Pomme de Terre Lake|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1203,
+"banksSampled":413,
+"maxP90FetchM":962,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -7993,10 +9445,13 @@
 "id":"Pomona Lake|KS",
 "lat":38.65,
 "lon":-95.56,
+"memberIds":[
+"Pomona Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":2172,
+"banksSampled":459,
+"maxP90FetchM":2017,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8010,10 +9465,13 @@
 "id":"Pontoosuc Lake|MA",
 "lat":42.49,
 "lon":-73.251,
+"memberIds":[
+"Pontoosuc Lake|MA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":443,
-"maxP90FetchM":1350,
+"banksSampled":433,
+"maxP90FetchM":1346,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -8027,10 +9485,13 @@
 "id":"Possum Kingdom Lake|TX",
 "lat":32.87,
 "lon":-98.55,
+"memberIds":[
+"Possum Kingdom Lake|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1631,
+"banksSampled":407,
+"maxP90FetchM":1411,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8044,10 +9505,13 @@
 "id":"Potholes Reservoir|WA",
 "lat":46.98,
 "lon":-119.33,
+"memberIds":[
+"Potholes Reservoir|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":393,
+"banksSampled":402,
+"maxP90FetchM":428,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8061,10 +9525,13 @@
 "id":"Prettyboy Reservoir|MD",
 "lat":39.62,
 "lon":-76.73,
+"memberIds":[
+"Prettyboy Reservoir|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":454,
-"maxP90FetchM":554,
+"banksSampled":445,
+"maxP90FetchM":576,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -8078,10 +9545,13 @@
 "id":"Priest Lake|ID",
 "lat":48.58,
 "lon":-116.87,
+"memberIds":[
+"Priest Lake|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":5097,
+"banksSampled":414,
+"maxP90FetchM":5534,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8095,10 +9565,13 @@
 "id":"Pueblo Reservoir|CO",
 "lat":38.26,
 "lon":-104.735,
+"memberIds":[
+"Pueblo Reservoir|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":422,
-"maxP90FetchM":1418,
+"banksSampled":412,
+"maxP90FetchM":1407,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8111,9 +9584,13 @@
 ],
 "forecastDomain":"HI",
 "geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Puu Loa Reservoir|HI",
 "lat":22.103,
 "lon":-159.63,
+"memberIds":[
+"Puu Loa Reservoir|HI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"HI",
@@ -8122,14 +9599,17 @@
 "Pymatuning Reservoir|PA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Pymatuning Reservoir|PA",
 "lat":41.6,
 "lon":-80.47,
+"memberIds":[
+"Pymatuning Reservoir|PA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":3437,
+"banksSampled":412,
+"maxP90FetchM":2979,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8143,10 +9623,13 @@
 "id":"Pyramid Lake|NV",
 "lat":40,
 "lon":-119.58,
+"memberIds":[
+"Pyramid Lake|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":21688,
+"banksSampled":408,
+"maxP90FetchM":21280,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8160,10 +9643,13 @@
 "id":"Quabbin Reservoir|MA",
 "lat":42.3736,
 "lon":-72.3369,
+"memberIds":[
+"Quabbin Reservoir|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":3622,
+"banksSampled":410,
+"maxP90FetchM":3669,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8177,10 +9663,13 @@
 "id":"R.D. Bailey Lake|WV",
 "lat":37.6,
 "lon":-81.83,
+"memberIds":[
+"R.D. Bailey Lake|WV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":482,
+"banksSampled":405,
+"maxP90FetchM":486,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8190,15 +9679,18 @@
 "Rainy Lake|MN":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Rainy Lake|MN",
 "lat":48.6,
 "lon":-93.15,
+"memberIds":[
+"Rainy Lake|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":401,
-"maxP90FetchM":1742,
-"rasterM":26.6
+"maxP90FetchM":2063,
+"rasterM":29.1
 },
 "reason":"polygonFetch",
 "state":"MN",
@@ -8211,10 +9703,13 @@
 "id":"Rangeley Lake|ME",
 "lat":44.96,
 "lon":-70.7,
+"memberIds":[
+"Rangeley Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":458,
-"maxP90FetchM":3838,
+"banksSampled":453,
+"maxP90FetchM":3850,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8228,10 +9723,13 @@
 "id":"Rathbun Lake|IA",
 "lat":40.85,
 "lon":-92.87,
+"memberIds":[
+"Rathbun Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":1266,
+"banksSampled":407,
+"maxP90FetchM":1259,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8245,10 +9743,13 @@
 "id":"Raystown Lake|PA",
 "lat":40.4,
 "lon":-78.05,
+"memberIds":[
+"Raystown Lake|PA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":982,
+"banksSampled":408,
+"maxP90FetchM":1009,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8262,10 +9763,13 @@
 "id":"Records Pond|DE",
 "lat":38.56,
 "lon":-75.575,
+"memberIds":[
+"Records Pond|DE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":229,
-"maxP90FetchM":487,
+"banksSampled":224,
+"maxP90FetchM":495,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8279,10 +9783,13 @@
 "id":"Red Lake|MN",
 "lat":48,
 "lon":-94.9,
+"memberIds":[
+"Red Lake|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":29708,
+"banksSampled":403,
+"maxP90FetchM":28140,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8298,10 +9805,13 @@
 "id":"Red Mill Pond|DE",
 "lat":38.753,
 "lon":-75.16,
+"memberIds":[
+"Red Mill Pond|DE"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":535,
-"maxP90FetchM":514,
+"banksSampled":521,
+"maxP90FetchM":556,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -8315,10 +9825,13 @@
 "id":"Redfish Lake|ID",
 "lat":44.13,
 "lon":-114.92,
+"memberIds":[
+"Redfish Lake|ID"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":683,
-"maxP90FetchM":2988,
+"banksSampled":679,
+"maxP90FetchM":3073,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8334,10 +9847,13 @@
 "id":"Reelfoot Lake|TN",
 "lat":36.38,
 "lon":-89.38,
+"memberIds":[
+"Reelfoot Lake|TN"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":375,
-"maxP90FetchM":791,
+"banksSampled":372,
+"maxP90FetchM":795,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -8351,10 +9867,13 @@
 "id":"Rend Lake|IL",
 "lat":38.05,
 "lon":-88.95,
+"memberIds":[
+"Rend Lake|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":2161,
+"banksSampled":407,
+"maxP90FetchM":2021,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8368,10 +9887,13 @@
 "id":"Rice Lake|IL",
 "lat":40.48,
 "lon":-89.92,
+"memberIds":[
+"Rice Lake|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":1756,
+"banksSampled":495,
+"maxP90FetchM":1650,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8385,10 +9907,13 @@
 "id":"Riffe Lake|WA",
 "lat":46.5,
 "lon":-122.42,
+"memberIds":[
+"Riffe Lake|WA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":4059,
+"banksSampled":409,
+"maxP90FetchM":4208,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8402,10 +9927,13 @@
 "id":"Rocky Gorge Reservoir|MD",
 "lat":39.13,
 "lon":-76.95,
+"memberIds":[
+"Rocky Gorge Reservoir|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":426,
-"maxP90FetchM":360,
+"banksSampled":413,
+"maxP90FetchM":402,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8413,16 +9941,21 @@
 "tier":"ESTIMATED"
 },
 "Roosevelt|AZ":{
-"blockers":[],
+"blockers":[
+"auditedGeometryAreaMismatch"
+],
 "forecastDomain":"CONUS",
 "geometryConfidence":"MEDIUM",
 "id":"Roosevelt|AZ",
 "lat":33.67,
 "lon":-111.15,
+"memberIds":[
+"Roosevelt|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":2884,
+"banksSampled":423,
+"maxP90FetchM":3519,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -8436,10 +9969,13 @@
 "id":"Ross Barnett Reservoir|MS",
 "lat":32.43,
 "lon":-90.025,
+"memberIds":[
+"Ross Barnett Reservoir|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":2807,
+"banksSampled":413,
+"maxP90FetchM":3766,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8449,14 +9985,17 @@
 "Ross Lake|WA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"HIGH",
+"geometryConfidence":"MEDIUM",
 "id":"Ross Lake|WA",
 "lat":48.8,
 "lon":-121.07,
+"memberIds":[
+"Ross Lake|WA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":3242,
+"banksSampled":402,
+"maxP90FetchM":3385,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8470,10 +10009,13 @@
 "id":"Rough River Lake|KY",
 "lat":37.61,
 "lon":-86.51,
+"memberIds":[
+"Rough River Lake|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":390,
+"banksSampled":401,
+"maxP90FetchM":388,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8487,10 +10029,13 @@
 "id":"Round Valley Reservoir|NJ",
 "lat":40.62,
 "lon":-74.84,
+"memberIds":[
+"Round Valley Reservoir|NJ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":669,
-"maxP90FetchM":3756,
+"banksSampled":666,
+"maxP90FetchM":3800,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8504,10 +10049,13 @@
 "id":"Ruby Lake|NV",
 "lat":40.18,
 "lon":-115.5,
+"memberIds":[
+"Ruby Lake|NV"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":481,
-"maxP90FetchM":1928,
+"banksSampled":408,
+"maxP90FetchM":901,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -8521,10 +10069,13 @@
 "id":"Ruedi Reservoir|CO",
 "lat":39.362,
 "lon":-106.83,
+"memberIds":[
+"Ruedi Reservoir|CO"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":440,
-"maxP90FetchM":1989,
+"banksSampled":436,
+"maxP90FetchM":1946,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8538,10 +10089,13 @@
 "id":"Rye Patch Reservoir|NV",
 "lat":40.45,
 "lon":-118.32,
+"memberIds":[
+"Rye Patch Reservoir|NV"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":1998,
+"banksSampled":417,
+"maxP90FetchM":2217,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8555,10 +10109,13 @@
 "id":"Sabine Lake|LA",
 "lat":29.85,
 "lon":-93.85,
+"memberIds":[
+"Sabine Lake|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":408,
-"maxP90FetchM":17456,
+"banksSampled":404,
+"maxP90FetchM":21018,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8572,10 +10129,13 @@
 "id":"Saguaro|AZ",
 "lat":33.57,
 "lon":-111.51,
+"memberIds":[
+"Saguaro|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":462,
-"maxP90FetchM":1684,
+"banksSampled":450,
+"maxP90FetchM":1740,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8589,10 +10149,13 @@
 "id":"Salamonie Lake|IN",
 "lat":40.75,
 "lon":-85.65,
+"memberIds":[
+"Salamonie Lake|IN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":432,
-"maxP90FetchM":871,
+"banksSampled":417,
+"maxP90FetchM":882,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8606,10 +10169,13 @@
 "id":"Salt Fork Lake|OH",
 "lat":40.08,
 "lon":-81.42,
+"memberIds":[
+"Salt Fork Lake|OH"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":708,
+"banksSampled":420,
+"maxP90FetchM":690,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8623,10 +10189,13 @@
 "id":"Salton Sea|CA",
 "lat":33.33,
 "lon":-115.83,
+"memberIds":[
+"Salton Sea|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":25236,
+"banksSampled":414,
+"maxP90FetchM":25416,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -8640,10 +10209,13 @@
 "id":"Sam Rayburn Reservoir|TX",
 "lat":31.1,
 "lon":-94.1,
+"memberIds":[
+"Sam Rayburn Reservoir|TX"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":403,
-"maxP90FetchM":2749,
+"maxP90FetchM":3385,
 "rasterM":21.9
 },
 "reason":"polygonFetch",
@@ -8657,10 +10229,13 @@
 "id":"San Carlos|AZ",
 "lat":33.18,
 "lon":-110.45,
+"memberIds":[
+"San Carlos|AZ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":420,
-"maxP90FetchM":2664,
+"banksSampled":406,
+"maxP90FetchM":2816,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8674,10 +10249,13 @@
 "id":"Sangchris Lake|IL",
 "lat":39.62,
 "lon":-89.47,
+"memberIds":[
+"Sangchris Lake|IL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":419,
-"maxP90FetchM":481,
+"banksSampled":408,
+"maxP90FetchM":518,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8691,10 +10269,13 @@
 "id":"Santa Rosa Lake|NM",
 "lat":35.03,
 "lon":-104.68,
+"memberIds":[
+"Santa Rosa Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":448,
-"maxP90FetchM":1204,
+"banksSampled":441,
+"maxP90FetchM":1052,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -8708,10 +10289,13 @@
 "id":"Sardis Lake|MS",
 "lat":34.41,
 "lon":-89.79,
+"memberIds":[
+"Sardis Lake|MS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":5854,
+"banksSampled":408,
+"maxP90FetchM":6942,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8725,10 +10309,13 @@
 "id":"Sardis Lake|OK",
 "lat":34.63,
 "lon":-95.35,
+"memberIds":[
+"Sardis Lake|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":2577,
+"banksSampled":420,
+"maxP90FetchM":2343,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -8742,10 +10329,13 @@
 "id":"Savage River Reservoir|MD",
 "lat":39.5,
 "lon":-79.13,
+"memberIds":[
+"Savage River Reservoir|MD"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":653,
-"maxP90FetchM":764,
+"banksSampled":646,
+"maxP90FetchM":784,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8759,10 +10349,13 @@
 "id":"Saylorville Lake|IA",
 "lat":41.72,
 "lon":-93.68,
+"memberIds":[
+"Saylorville Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":437,
-"maxP90FetchM":2843,
+"banksSampled":424,
+"maxP90FetchM":2759,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8778,10 +10371,13 @@
 "id":"Schoodic Lake|ME",
 "lat":45.45,
 "lon":-69.1,
+"memberIds":[
+"Schoodic Lake|ME"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":458,
-"maxP90FetchM":4985,
+"banksSampled":452,
+"maxP90FetchM":5130,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -8791,14 +10387,17 @@
 "Scituate Reservoir|RI":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Scituate Reservoir|RI",
 "lat":41.78,
 "lon":-71.6,
+"memberIds":[
+"Scituate Reservoir|RI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":487,
-"maxP90FetchM":1391,
+"banksSampled":421,
+"maxP90FetchM":1380,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8812,10 +10411,13 @@
 "id":"Sebago Lake|ME",
 "lat":43.85,
 "lon":-70.56,
+"memberIds":[
+"Sebago Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":4882,
+"banksSampled":415,
+"maxP90FetchM":5372,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8831,10 +10433,13 @@
 "id":"Sebec Lake|ME",
 "lat":45.32,
 "lon":-69.25,
+"memberIds":[
+"Sebec Lake|ME"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":2591,
+"banksSampled":405,
+"maxP90FetchM":2462,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -8848,10 +10453,13 @@
 "id":"Seminoe Reservoir|WY",
 "lat":42.13,
 "lon":-106.9,
+"memberIds":[
+"Seminoe Reservoir|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":1766,
+"banksSampled":411,
+"maxP90FetchM":1776,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8865,10 +10473,13 @@
 "id":"Seminole|GA",
 "lat":30.8,
 "lon":-84.88,
+"memberIds":[
+"Seminole|GA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":1044,
+"banksSampled":403,
+"maxP90FetchM":1058,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8882,10 +10493,13 @@
 "id":"Seneca Lake|NY",
 "lat":42.67,
 "lon":-76.92,
+"memberIds":[
+"Seneca Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":418,
-"maxP90FetchM":12598,
+"banksSampled":416,
+"maxP90FetchM":12932,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8899,10 +10513,13 @@
 "id":"Senecaville Lake|OH",
 "lat":39.93,
 "lon":-81.42,
+"memberIds":[
+"Senecaville Lake|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":425,
-"maxP90FetchM":1301,
+"banksSampled":407,
+"maxP90FetchM":1648,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8916,10 +10533,13 @@
 "id":"Sevier Lake|UT",
 "lat":38.95,
 "lon":-113.15,
+"memberIds":[
+"Sevier Lake|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":424,
-"maxP90FetchM":18169,
+"banksSampled":418,
+"maxP90FetchM":18824,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -8933,10 +10553,13 @@
 "id":"Shadow Mountain Reservoir|CO",
 "lat":40.22,
 "lon":-105.845,
+"memberIds":[
+"Shadow Mountain Reservoir|CO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":455,
-"maxP90FetchM":2397,
+"banksSampled":447,
+"maxP90FetchM":2116,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8950,10 +10573,13 @@
 "id":"Shasta|CA",
 "lat":40.72,
 "lon":-122.32,
+"memberIds":[
+"Shasta|CA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1320,
+"banksSampled":403,
+"maxP90FetchM":1286,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -8967,10 +10593,13 @@
 "id":"Shenango River Lake|PA",
 "lat":41.3,
 "lon":-80.44,
+"memberIds":[
+"Shenango River Lake|PA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":421,
-"maxP90FetchM":1124,
+"banksSampled":410,
+"maxP90FetchM":1212,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -8986,10 +10615,13 @@
 "id":"Sheridan Lake|SD",
 "lat":43.93,
 "lon":-103.55,
+"memberIds":[
+"Sheridan Lake|SD"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":538,
-"maxP90FetchM":912,
+"banksSampled":519,
+"maxP90FetchM":933,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -9005,10 +10637,13 @@
 "id":"Sherman Reservoir|NE",
 "lat":41.26,
 "lon":-98.95,
+"memberIds":[
+"Sherman Reservoir|NE"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":478,
-"maxP90FetchM":1444,
+"banksSampled":468,
+"maxP90FetchM":1511,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -9022,10 +10657,13 @@
 "id":"Silver Lake (Dover)|DE",
 "lat":39.152,
 "lon":-75.515,
+"memberIds":[
+"Silver Lake (Dover)|DE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":380,
-"maxP90FetchM":513,
+"banksSampled":388,
+"maxP90FetchM":502,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9039,10 +10677,13 @@
 "id":"Sinclair|GA",
 "lat":33.15,
 "lon":-83.26,
+"memberIds":[
+"Sinclair|GA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":755,
+"banksSampled":406,
+"maxP90FetchM":724,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9056,10 +10697,13 @@
 "id":"Skaneateles Lake|NY",
 "lat":42.9,
 "lon":-76.42,
+"memberIds":[
+"Skaneateles Lake|NY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":473,
-"maxP90FetchM":5856,
+"banksSampled":464,
+"maxP90FetchM":5984,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9073,10 +10717,13 @@
 "id":"Skiatook Lake|OK",
 "lat":36.37,
 "lon":-96.13,
+"memberIds":[
+"Skiatook Lake|OK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":1224,
+"banksSampled":401,
+"maxP90FetchM":1108,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9085,23 +10732,25 @@
 },
 "Skilak|AK":{
 "blockers":[
-"nbmAKDomainNotTested",
-"lakeIdentityRisk"
+"nbmAKDomainNotTested"
 ],
 "forecastDomain":"AK",
-"geometryConfidence":"LOW",
+"geometryConfidence":"MEDIUM",
 "id":"Skilak|AK",
 "lat":60.43,
 "lon":-150.35,
-"pointFlag":"identity_risk",
+"memberIds":[
+"Skilak|AK"
+],
+"pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":420,
-"maxP90FetchM":10639,
+"banksSampled":445,
+"maxP90FetchM":7680,
 "rasterM":20.0
 },
-"reason":"geometryConfidence:LOW",
+"reason":"polygonFetch",
 "state":"AK",
-"tier":"POINT_ONLY"
+"tier":"ESTIMATED"
 },
 "Smith (Lewis Smith)|AL":{
 "blockers":[],
@@ -9110,10 +10759,13 @@
 "id":"Smith (Lewis Smith)|AL",
 "lat":34.07,
 "lon":-87.1,
+"memberIds":[
+"Smith (Lewis Smith)|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":402,
-"maxP90FetchM":740,
+"maxP90FetchM":635,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9127,10 +10779,13 @@
 "id":"Smith Mountain Lake|VA",
 "lat":37.05,
 "lon":-79.7,
+"memberIds":[
+"Smith Mountain Lake|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":752,
+"banksSampled":401,
+"maxP90FetchM":888,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -9144,10 +10799,13 @@
 "id":"Smithville Lake|MO",
 "lat":39.42,
 "lon":-94.57,
+"memberIds":[
+"Smithville Lake|MO"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":1011,
+"banksSampled":403,
+"maxP90FetchM":1184,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9161,10 +10819,13 @@
 "id":"Somerset Reservoir|VT",
 "lat":42.98,
 "lon":-72.95,
+"memberIds":[
+"Somerset Reservoir|VT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":493,
-"maxP90FetchM":1650,
+"banksSampled":482,
+"maxP90FetchM":1480,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9178,10 +10839,13 @@
 "id":"South Holston Lake|VA",
 "lat":36.6,
 "lon":-81.9,
+"memberIds":[
+"South Holston Lake|VA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":861,
+"banksSampled":406,
+"maxP90FetchM":780,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9191,14 +10855,17 @@
 "Spirit Lake|IA":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Spirit Lake|IA",
 "lat":43.45,
 "lon":-95.1,
+"memberIds":[
+"Spirit Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":486,
-"maxP90FetchM":4230,
+"banksSampled":411,
+"maxP90FetchM":3684,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9212,10 +10879,13 @@
 "id":"Spruce Run Reservoir|NJ",
 "lat":40.65,
 "lon":-74.93,
+"memberIds":[
+"Spruce Run Reservoir|NJ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":550,
-"maxP90FetchM":1349,
+"banksSampled":538,
+"maxP90FetchM":1372,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9229,10 +10899,13 @@
 "id":"Squam Lake|NH",
 "lat":43.77,
 "lon":-71.54,
+"memberIds":[
+"Squam Lake|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":1403,
+"banksSampled":434,
+"maxP90FetchM":1410,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9246,10 +10919,13 @@
 "id":"Squantz Pond|CT",
 "lat":41.49,
 "lon":-73.488,
+"memberIds":[
+"Squantz Pond|CT"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":384,
-"maxP90FetchM":1270,
+"banksSampled":375,
+"maxP90FetchM":1260,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9265,10 +10941,13 @@
 "id":"Stafford Pond|RI",
 "lat":41.57,
 "lon":-71.18,
+"memberIds":[
+"Stafford Pond|RI"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":1706,
+"banksSampled":409,
+"maxP90FetchM":1742,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -9282,10 +10961,13 @@
 "id":"Starvation Reservoir|UT",
 "lat":40.18,
 "lon":-110.45,
+"memberIds":[
+"Starvation Reservoir|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":1592,
+"banksSampled":473,
+"maxP90FetchM":1652,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9299,10 +10981,13 @@
 "id":"Stockton Lake|MO",
 "lat":37.66,
 "lon":-93.76,
+"memberIds":[
+"Stockton Lake|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":1432,
+"banksSampled":408,
+"maxP90FetchM":1534,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9316,10 +11001,13 @@
 "id":"Stonewall Jackson Lake|WV",
 "lat":38.95,
 "lon":-80.53,
+"memberIds":[
+"Stonewall Jackson Lake|WV"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":422,
-"maxP90FetchM":435,
+"banksSampled":432,
+"maxP90FetchM":468,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9333,10 +11021,13 @@
 "id":"Storm Lake|IA",
 "lat":42.63,
 "lon":-95.2,
+"memberIds":[
+"Storm Lake|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":482,
-"maxP90FetchM":3804,
+"banksSampled":481,
+"maxP90FetchM":3400,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9350,10 +11041,13 @@
 "id":"Strawberry Reservoir|UT",
 "lat":40.15,
 "lon":-111.15,
+"memberIds":[
+"Strawberry Reservoir|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":3263,
+"banksSampled":420,
+"maxP90FetchM":2842,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9361,23 +11055,24 @@
 "tier":"ESTIMATED"
 },
 "Stump Lake|ND":{
-"blockers":[
-"lakeIdentityRisk"
-],
+"blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"LOW",
+"geometryConfidence":"HIGH",
 "id":"Stump Lake|ND",
 "lat":47.95,
 "lon":-98.42,
-"pointFlag":"identity_risk",
+"memberIds":[
+"Stump Lake|ND"
+],
+"pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":430,
-"maxP90FetchM":4049,
+"banksSampled":442,
+"maxP90FetchM":4420,
 "rasterM":20.0
 },
-"reason":"geometryConfidence:LOW",
+"reason":"polygonFetch",
 "state":"ND",
-"tier":"POINT_ONLY"
+"tier":"ESTIMATED"
 },
 "Summersville Lake|WV":{
 "blockers":[],
@@ -9386,10 +11081,13 @@
 "id":"Summersville Lake|WV",
 "lat":38.23,
 "lon":-80.89,
+"memberIds":[
+"Summersville Lake|WV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":663,
+"banksSampled":409,
+"maxP90FetchM":659,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9403,10 +11101,13 @@
 "id":"Sumner Lake|NM",
 "lat":34.61,
 "lon":-104.38,
+"memberIds":[
+"Sumner Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":435,
-"maxP90FetchM":1157,
+"banksSampled":423,
+"maxP90FetchM":1202,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9420,10 +11121,13 @@
 "id":"Sunapee Lake|NH",
 "lat":43.39,
 "lon":-72.05,
+"memberIds":[
+"Sunapee Lake|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":460,
-"maxP90FetchM":2379,
+"banksSampled":455,
+"maxP90FetchM":2310,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9433,14 +11137,17 @@
 "Sutherland Reservoir|NE":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Sutherland Reservoir|NE",
 "lat":41.13,
 "lon":-101.15,
+"memberIds":[
+"Sutherland Reservoir|NE"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":548,
-"maxP90FetchM":3561,
+"banksSampled":429,
+"maxP90FetchM":3074,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9454,10 +11161,13 @@
 "id":"Suttle Lake|OR",
 "lat":44.42,
 "lon":-121.74,
+"memberIds":[
+"Suttle Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":253,
-"maxP90FetchM":1398,
+"banksSampled":250,
+"maxP90FetchM":1422,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9471,10 +11181,13 @@
 "id":"Sutton Lake|WV",
 "lat":38.66,
 "lon":-80.66,
+"memberIds":[
+"Sutton Lake|WV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":441,
-"maxP90FetchM":488,
+"banksSampled":425,
+"maxP90FetchM":478,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -9490,10 +11203,13 @@
 "id":"Swanson Reservoir|NE",
 "lat":40.14,
 "lon":-100.75,
+"memberIds":[
+"Swanson Reservoir|NE"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
 "banksSampled":487,
-"maxP90FetchM":5108,
+"maxP90FetchM":5064,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -9507,10 +11223,13 @@
 "id":"Swartswood Lake|NJ",
 "lat":41.07,
 "lon":-74.83,
+"memberIds":[
+"Swartswood Lake|NJ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":470,
-"maxP90FetchM":1512,
+"banksSampled":464,
+"maxP90FetchM":1531,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -9524,10 +11243,13 @@
 "id":"Table Rock Lake|MO",
 "lat":36.6,
 "lon":-93.31,
+"memberIds":[
+"Table Rock Lake|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":936,
+"banksSampled":401,
+"maxP90FetchM":912,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9541,10 +11263,13 @@
 "id":"Tappan Lake|OH",
 "lat":40.35,
 "lon":-81.23,
+"memberIds":[
+"Tappan Lake|OH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":414,
-"maxP90FetchM":1043,
+"maxP90FetchM":1177,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9558,10 +11283,13 @@
 "id":"Taylorsville Lake|KY",
 "lat":38.02,
 "lon":-85.25,
+"memberIds":[
+"Taylorsville Lake|KY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":666,
+"banksSampled":404,
+"maxP90FetchM":663,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9577,10 +11305,13 @@
 "id":"Teshekpuk|AK",
 "lat":70.6,
 "lon":-153.5,
+"memberIds":[
+"Teshekpuk|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":17138,
+"banksSampled":402,
+"maxP90FetchM":19466,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9594,10 +11325,13 @@
 "id":"Tiber Reservoir (Lake Elwell)|MT",
 "lat":48.32,
 "lon":-111.1,
+"memberIds":[
+"Tiber Reservoir (Lake Elwell)|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":411,
-"maxP90FetchM":2164,
+"banksSampled":401,
+"maxP90FetchM":1996,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9611,10 +11345,13 @@
 "id":"Timothy Lake|OR",
 "lat":45.12,
 "lon":-121.79,
+"memberIds":[
+"Timothy Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":2466,
+"banksSampled":797,
+"maxP90FetchM":2375,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9628,10 +11365,13 @@
 "id":"Tims Ford Lake|TN",
 "lat":35.22,
 "lon":-86.25,
+"memberIds":[
+"Tims Ford Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":844,
+"banksSampled":406,
+"maxP90FetchM":926,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9647,10 +11387,13 @@
 "id":"Tiogue Lake|RI",
 "lat":41.68,
 "lon":-71.65,
+"memberIds":[
+"Tiogue Lake|RI"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":328,
-"maxP90FetchM":789,
+"banksSampled":384,
+"maxP90FetchM":736,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -9664,10 +11407,13 @@
 "id":"Tippecanoe Lake|IN",
 "lat":41.35,
 "lon":-85.73,
+"memberIds":[
+"Tippecanoe Lake|IN"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":539,
-"maxP90FetchM":969,
+"banksSampled":513,
+"maxP90FetchM":1080,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9681,10 +11427,14 @@
 "id":"Tohopekaliga (Toho)|FL",
 "lat":28.19,
 "lon":-81.415,
+"memberIds":[
+"East Lake Tohopekaliga|FL",
+"Tohopekaliga (Toho)|FL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":449,
-"maxP90FetchM":5475,
+"banksSampled":444,
+"maxP90FetchM":5996,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -9698,10 +11448,13 @@
 "id":"Toledo Bend Reservoir|TX",
 "lat":31.35,
 "lon":-93.75,
+"memberIds":[
+"Toledo Bend Reservoir|TX"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":3419,
+"banksSampled":401,
+"maxP90FetchM":2529,
 "rasterM":32.5
 },
 "reason":"polygonFetch",
@@ -9715,10 +11468,13 @@
 "id":"Topaz Lake|NV",
 "lat":38.68,
 "lon":-119.53,
+"memberIds":[
+"Topaz Lake|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":694,
-"maxP90FetchM":3066,
+"banksSampled":690,
+"maxP90FetchM":3060,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9732,10 +11488,13 @@
 "id":"Torch Lake|MI",
 "lat":44.983,
 "lon":-85.29,
+"memberIds":[
+"Torch Lake|MI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":439,
-"maxP90FetchM":7618,
+"banksSampled":438,
+"maxP90FetchM":7760,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -9749,9 +11508,12 @@
 "id":"Trap Pond|DE",
 "lat":38.529,
 "lon":-75.48,
+"memberIds":[
+"Trap Pond|DE"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":243,
+"banksSampled":245,
 "maxP90FetchM":516,
 "rasterM":20.0
 },
@@ -9766,10 +11528,13 @@
 "id":"Triadelphia Reservoir|MD",
 "lat":39.22,
 "lon":-77.03,
+"memberIds":[
+"Triadelphia Reservoir|MD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":471,
-"maxP90FetchM":684,
+"banksSampled":463,
+"maxP90FetchM":742,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9783,10 +11548,13 @@
 "id":"Trinity|CA",
 "lat":40.8,
 "lon":-122.76,
+"memberIds":[
+"Trinity|CA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":416,
-"maxP90FetchM":1722,
+"banksSampled":410,
+"maxP90FetchM":2011,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9796,14 +11564,17 @@
 "Truman Lake|MO":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Truman Lake|MO",
 "lat":38.26,
 "lon":-93.4,
+"memberIds":[
+"Truman Lake|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":1132,
+"banksSampled":401,
+"maxP90FetchM":1168,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9819,10 +11590,13 @@
 "id":"Tustumena|AK",
 "lat":60.1,
 "lon":-150.9,
+"memberIds":[
+"Tustumena|AK"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":15228,
+"banksSampled":406,
+"maxP90FetchM":15464,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9836,10 +11610,13 @@
 "id":"Tuttle Creek Lake|KS",
 "lat":39.32,
 "lon":-96.61,
+"memberIds":[
+"Tuttle Creek Lake|KS"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":428,
-"maxP90FetchM":4807,
+"banksSampled":423,
+"maxP90FetchM":4520,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9853,10 +11630,13 @@
 "id":"Tygart Lake|WV",
 "lat":39.32,
 "lon":-80.03,
+"memberIds":[
+"Tygart Lake|WV"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":442,
-"maxP90FetchM":780,
+"banksSampled":440,
+"maxP90FetchM":761,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9870,10 +11650,13 @@
 "id":"Umbagog Lake|NH",
 "lat":44.75,
 "lon":-71.05,
+"memberIds":[
+"Umbagog Lake|NH"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":410,
-"maxP90FetchM":2065,
+"banksSampled":402,
+"maxP90FetchM":1945,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9887,10 +11670,13 @@
 "id":"Upper Klamath Lake|OR",
 "lat":42.4,
 "lon":-121.9,
+"memberIds":[
+"Upper Klamath Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":402,
-"maxP90FetchM":7743,
+"banksSampled":413,
+"maxP90FetchM":7655,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9904,10 +11690,13 @@
 "id":"Utah Lake|UT",
 "lat":40.22,
 "lon":-111.8,
+"memberIds":[
+"Utah Lake|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":407,
-"maxP90FetchM":13882,
+"banksSampled":401,
+"maxP90FetchM":14356,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9917,14 +11706,17 @@
 "Ute Lake|NM":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Ute Lake|NM",
 "lat":35.35,
 "lon":-103.45,
+"memberIds":[
+"Ute Lake|NM"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":417,
-"maxP90FetchM":1387,
+"banksSampled":424,
+"maxP90FetchM":1150,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9938,10 +11730,13 @@
 "id":"Wachusett Reservoir|MA",
 "lat":42.39,
 "lon":-71.75,
+"memberIds":[
+"Wachusett Reservoir|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":452,
-"maxP90FetchM":1872,
+"banksSampled":446,
+"maxP90FetchM":1900,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9951,14 +11746,17 @@
 "Waconda Lake|KS":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Waconda Lake|KS",
 "lat":39.49,
 "lon":-98.31,
+"memberIds":[
+"Waconda Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":443,
-"maxP90FetchM":3746,
+"banksSampled":428,
+"maxP90FetchM":3010,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9972,10 +11770,13 @@
 "id":"Wagamons Pond|DE",
 "lat":38.772,
 "lon":-75.307,
+"memberIds":[
+"Wagamons Pond|DE"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":128,
-"maxP90FetchM":422,
+"banksSampled":168,
+"maxP90FetchM":389,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -9988,9 +11789,13 @@
 ],
 "forecastDomain":"HI",
 "geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Waiakea Pond|HI",
 "lat":19.7156,
 "lon":-155.09,
+"memberIds":[
+"Waiakea Pond|HI"
+],
 "pointFlag":"",
 "reason":"noPolygon",
 "state":"HI",
@@ -9998,13 +11803,18 @@
 },
 "Waimaluhia Reservoir|HI":{
 "blockers":[
-"nbmHIDomainNotTested"
+"nbmHIDomainNotTested",
+"registryGeometryMissing"
 ],
 "forecastDomain":"HI",
 "geometryConfidence":"MISSING",
+"geometryMissing":"no-nhd",
 "id":"Waimaluhia Reservoir|HI",
 "lat":21.392,
 "lon":-157.808,
+"memberIds":[
+"Waimaluhia Reservoir|HI"
+],
 "pointFlag":"",
 "reason":"frozenFetchTable",
 "state":"HI",
@@ -10019,10 +11829,13 @@
 "id":"Waita Reservoir|HI",
 "lat":21.93,
 "lon":-159.455,
+"memberIds":[
+"Waita Reservoir|HI"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":241,
-"maxP90FetchM":1476,
+"banksSampled":240,
+"maxP90FetchM":1488,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10036,10 +11849,13 @@
 "id":"Waldo Lake|OR",
 "lat":43.72,
 "lon":-122.03,
+"memberIds":[
+"Waldo Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":434,
-"maxP90FetchM":4692,
+"banksSampled":417,
+"maxP90FetchM":4524,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10053,10 +11869,13 @@
 "id":"Walker Lake|NV",
 "lat":38.7,
 "lon":-118.71,
+"memberIds":[
+"Walker Lake|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":432,
-"maxP90FetchM":14648,
+"banksSampled":431,
+"maxP90FetchM":15280,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10070,10 +11889,13 @@
 "id":"Wallowa Lake|OR",
 "lat":45.3,
 "lon":-117.21,
+"memberIds":[
+"Wallowa Lake|OR"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":667,
-"maxP90FetchM":3460,
+"banksSampled":661,
+"maxP90FetchM":3464,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -10089,10 +11911,13 @@
 "id":"Wallum Lake|RI",
 "lat":41.97,
 "lon":-71.79,
+"memberIds":[
+"Wallum Lake|RI"
+],
 "pointFlag":"identity_risk",
 "polygonFetch":{
-"banksSampled":373,
-"maxP90FetchM":1143,
+"banksSampled":367,
+"maxP90FetchM":1150,
 "rasterM":20.0
 },
 "reason":"geometryConfidence:LOW",
@@ -10106,10 +11931,14 @@
 "id":"Walter F. George / Eufaula|GA",
 "lat":31.9,
 "lon":-85.05,
+"memberIds":[
+"Eufaula / W.F. George|AL",
+"Walter F. George / Eufaula|GA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":2046,
+"banksSampled":401,
+"maxP90FetchM":2432,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -10119,14 +11948,17 @@
 "Wanaque Reservoir|NJ":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Wanaque Reservoir|NJ",
 "lat":41.04,
 "lon":-74.29,
+"memberIds":[
+"Wanaque Reservoir|NJ"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":522,
-"maxP90FetchM":1522,
+"banksSampled":482,
+"maxP90FetchM":1552,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10140,10 +11972,13 @@
 "id":"Wappapello Lake|MO",
 "lat":36.93,
 "lon":-90.28,
+"memberIds":[
+"Wappapello Lake|MO"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":412,
-"maxP90FetchM":770,
+"banksSampled":406,
+"maxP90FetchM":870,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10157,10 +11992,13 @@
 "id":"Washoe Lake|NV",
 "lat":39.24,
 "lon":-119.77,
+"memberIds":[
+"Washoe Lake|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":2952,
+"banksSampled":442,
+"maxP90FetchM":3440,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10168,16 +12006,21 @@
 "tier":"ESTIMATED"
 },
 "Watchaug Pond|RI":{
-"blockers":[],
+"blockers":[
+"auditedGeometryAreaMismatch"
+],
 "forecastDomain":"CONUS",
 "geometryConfidence":"HIGH",
 "id":"Watchaug Pond|RI",
 "lat":41.38,
 "lon":-71.66,
+"memberIds":[
+"Watchaug Pond|RI"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":371,
-"maxP90FetchM":1468,
+"banksSampled":369,
+"maxP90FetchM":1448,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -10191,10 +12034,13 @@
 "id":"Watts Bar Lake|TN",
 "lat":35.75,
 "lon":-84.75,
+"memberIds":[
+"Watts Bar Lake|TN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
 "banksSampled":403,
-"maxP90FetchM":1183,
+"maxP90FetchM":1279,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10208,10 +12054,13 @@
 "id":"Watuppa Ponds|MA",
 "lat":41.69,
 "lon":-71.1,
+"memberIds":[
+"Watuppa Ponds|MA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":556,
-"maxP90FetchM":2238,
+"banksSampled":539,
+"maxP90FetchM":2222,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10225,10 +12074,13 @@
 "id":"Waubay Lake|SD",
 "lat":45.4,
 "lon":-97.3,
+"memberIds":[
+"Waubay Lake|SD"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":414,
-"maxP90FetchM":1982,
+"banksSampled":407,
+"maxP90FetchM":2010,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10242,10 +12094,13 @@
 "id":"Webster Lake|MA",
 "lat":42.05,
 "lon":-71.825,
+"memberIds":[
+"Webster Lake|MA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":400,
-"maxP90FetchM":940,
+"banksSampled":520,
+"maxP90FetchM":924,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10255,14 +12110,17 @@
 "Weiss|AL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Weiss|AL",
 "lat":34.18,
 "lon":-85.65,
+"memberIds":[
+"Weiss|AL"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":1464,
+"banksSampled":404,
+"maxP90FetchM":1362,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10276,10 +12134,13 @@
 "id":"West Grand Lake|ME",
 "lat":45.23,
 "lon":-67.85,
+"memberIds":[
+"West Grand Lake|ME"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":413,
-"maxP90FetchM":3691,
+"banksSampled":405,
+"maxP90FetchM":3678,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10293,10 +12154,13 @@
 "id":"West Okoboji|IA",
 "lat":43.37,
 "lon":-95.15,
+"memberIds":[
+"West Okoboji|IA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":445,
-"maxP90FetchM":1873,
+"banksSampled":442,
+"maxP90FetchM":2279,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10310,10 +12174,13 @@
 "id":"West Point|GA",
 "lat":32.92,
 "lon":-85.18,
+"memberIds":[
+"West Point|GA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":405,
-"maxP90FetchM":785,
+"banksSampled":401,
+"maxP90FetchM":900,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -10323,14 +12190,17 @@
 "Wheeler|AL":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Wheeler|AL",
 "lat":34.63,
 "lon":-87.03,
+"memberIds":[
+"Wheeler|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":403,
-"maxP90FetchM":1609,
+"banksSampled":406,
+"maxP90FetchM":1512,
 "rasterM":30.3
 },
 "reason":"frozenFetchTable",
@@ -10344,10 +12214,13 @@
 "id":"White Bear Lake|MN",
 "lat":45.08,
 "lon":-92.995,
+"memberIds":[
+"White Bear Lake|MN"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":464,
-"maxP90FetchM":2622,
+"banksSampled":462,
+"maxP90FetchM":2664,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10361,10 +12234,13 @@
 "id":"White Lake|LA",
 "lat":29.74,
 "lon":-92.5,
+"memberIds":[
+"White Lake|LA"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":415,
-"maxP90FetchM":15143,
+"banksSampled":411,
+"maxP90FetchM":12976,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10378,10 +12254,13 @@
 "id":"Whitefish Lake|MT",
 "lat":48.44,
 "lon":-114.38,
+"memberIds":[
+"Whitefish Lake|MT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":561,
-"maxP90FetchM":3520,
+"banksSampled":557,
+"maxP90FetchM":3883,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10395,10 +12274,13 @@
 "id":"Wild Horse Reservoir|NV",
 "lat":41.68,
 "lon":-115.8,
+"memberIds":[
+"Wild Horse Reservoir|NV"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":535,
-"maxP90FetchM":1867,
+"banksSampled":524,
+"maxP90FetchM":1819,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10412,10 +12294,13 @@
 "id":"Willard Bay Reservoir|UT",
 "lat":41.37,
 "lon":-112.06,
+"memberIds":[
+"Willard Bay Reservoir|UT"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":401,
-"maxP90FetchM":8456,
+"banksSampled":599,
+"maxP90FetchM":8922,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10427,19 +12312,22 @@
 "nbmHIDomainNotTested"
 ],
 "forecastDomain":"HI",
-"geometryConfidence":"LOW",
+"geometryConfidence":"MEDIUM",
 "id":"Wilson Lake / Kaelepulu Pond|HI",
 "lat":21.3839,
 "lon":-157.7361,
-"pointFlag":"off_water",
+"memberIds":[
+"Wilson Lake / Kaelepulu Pond|HI"
+],
+"pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":673,
-"maxP90FetchM":951,
+"banksSampled":195,
+"maxP90FetchM":474,
 "rasterM":20.0
 },
-"reason":"geometryConfidence:LOW",
+"reason":"polygonFetch",
 "state":"HI",
-"tier":"POINT_ONLY"
+"tier":"ESTIMATED"
 },
 "Wilson Lake|KS":{
 "blockers":[],
@@ -10448,10 +12336,13 @@
 "id":"Wilson Lake|KS",
 "lat":38.93,
 "lon":-98.51,
+"memberIds":[
+"Wilson Lake|KS"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":420,
-"maxP90FetchM":2667,
+"banksSampled":412,
+"maxP90FetchM":2420,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10465,10 +12356,13 @@
 "id":"Wilson|AL",
 "lat":34.77,
 "lon":-87.45,
+"memberIds":[
+"Wilson|AL"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":404,
-"maxP90FetchM":2930,
+"banksSampled":415,
+"maxP90FetchM":2769,
 "rasterM":20.0
 },
 "reason":"frozenFetchTable",
@@ -10478,14 +12372,17 @@
 "Winnapaug Pond|RI":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Winnapaug Pond|RI",
 "lat":41.33,
 "lon":-71.78,
+"memberIds":[
+"Winnapaug Pond|RI"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":456,
-"maxP90FetchM":1102,
+"banksSampled":770,
+"maxP90FetchM":939,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10495,14 +12392,17 @@
 "Worden Pond|RI":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Worden Pond|RI",
 "lat":41.43,
 "lon":-71.55,
+"memberIds":[
+"Worden Pond|RI"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":456,
-"maxP90FetchM":2300,
+"banksSampled":451,
+"maxP90FetchM":2296,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10516,10 +12416,13 @@
 "id":"Yellow Creek Lake|PA",
 "lat":40.56,
 "lon":-79.02,
+"memberIds":[
+"Yellow Creek Lake|PA"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":748,
-"maxP90FetchM":1366,
+"banksSampled":741,
+"maxP90FetchM":1356,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10533,10 +12436,13 @@
 "id":"Yellowstone Lake|WY",
 "lat":44.42,
 "lon":-110.37,
+"memberIds":[
+"Yellowstone Lake|WY"
+],
 "pointFlag":"ok",
 "polygonFetch":{
-"banksSampled":409,
-"maxP90FetchM":8898,
+"banksSampled":406,
+"maxP90FetchM":9020,
 "rasterM":20.0
 },
 "reason":"polygonFetch",
@@ -10546,14 +12452,17 @@
 "Youghiogheny River Lake|MD":{
 "blockers":[],
 "forecastDomain":"CONUS",
-"geometryConfidence":"MEDIUM",
+"geometryConfidence":"HIGH",
 "id":"Youghiogheny River Lake|MD",
 "lat":39.7,
 "lon":-79.36,
+"memberIds":[
+"Youghiogheny River Lake|MD"
+],
 "pointFlag":"off_water",
 "polygonFetch":{
-"banksSampled":406,
-"maxP90FetchM":972,
+"banksSampled":405,
+"maxP90FetchM":947,
 "rasterM":20.0
 },
 "reason":"polygonFetch",

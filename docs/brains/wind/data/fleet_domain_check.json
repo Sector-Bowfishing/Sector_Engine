@@ -1,0 +1,44 @@
+{
+ "ak": {
+  "lakes": 12,
+  "gridKey": "polar_stereographic:1649x1105:40.53:181.429:2976.56",
+  "gridSpacingKmApprox": 2.1,
+  "decoded": true,
+  "windLevelsListed": [
+   "10 m above ground",
+   "30 m above ground",
+   "80 m above ground",
+   "surface - 610 m above ground"
+  ],
+  "lakesCovered": 12,
+  "lakesOutsideCoverage": [],
+  "nonBilinear": 0,
+  "unresolved": 0,
+  "maxSpeedDiffMS": 0.0048,
+  "maxDirDiffDeg": 0.5,
+  "meanSpeedMS_atLakes": 1.7
+ },
+ "hi": {
+  "lakes": 9,
+  "gridKey": "mercator:625x561:14.3515:195.0305:2500.0",
+  "gridSpacingKmApprox": 2.48,
+  "decoded": true,
+  "windLevelsListed": [
+   "10 m above ground",
+   "30 m above ground",
+   "80 m above ground",
+   "surface - 610 m above ground"
+  ],
+  "lakesCovered": 9,
+  "lakesOutsideCoverage": [],
+  "nonBilinear": 0,
+  "unresolved": 0,
+  "maxSpeedDiffMS": 0.0045,
+  "maxDirDiffDeg": 0.5,
+  "meanSpeedMS_atLakes": 5.68
+ },
+ "pr": {
+  "lakes": 0,
+  "note": "no directory lakes"
+ }
+}

@@ -1,0 +1,166 @@
+{
+ "assets": {
+  "registryIndex": "8ae465ab2e39",
+  "registryGeneratedAt": "2026-10-13T20:20:54Z",
+  "registryFleetFetch": "733ba5452e33",
+  "auditedCheck": "2c7b73b48282"
+ },
+ "lakes": 621,
+ "categories": {
+  "ESTIMATED_MEDIUM_GEOMETRY": 126,
+  "LOW_GEOMETRY": 37,
+  "ESTIMATED_HIGH_GEOMETRY": 337,
+  "BLOCKED": 25,
+  "AUDITED": 59,
+  "NO_GEOMETRY": 28,
+  "POINT_ONLY": 9
+ },
+ "beforeBlockedOverlay": {
+  "ESTIMATED_MEDIUM_GEOMETRY": 129,
+  "LOW_GEOMETRY": 37,
+  "ESTIMATED_HIGH_GEOMETRY": 344,
+  "AUDITED": 74,
+  "NO_GEOMETRY": 28,
+  "POINT_ONLY": 9
+ },
+ "blocked": [
+  [
+   "Aleknagik|AK",
+   "AUDITED",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Andrews Lake|DE",
+   "AUDITED",
+   "lakeIdentityRisk; auditedGeometryAreaMismatch"
+  ],
+  [
+   "Becharof|AK",
+   "ESTIMATED_HIGH_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Big Lake|AK",
+   "ESTIMATED_HIGH_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Bowdish Reservoir|RI",
+   "AUDITED",
+   "auditedGeometryAreaMismatch"
+  ],
+  [
+   "Eagle Lake|MS",
+   "AUDITED",
+   "lakeIdentityRisk"
+  ],
+  [
+   "Griffith Lake|DE",
+   "AUDITED",
+   "lakeIdentityRisk; auditedGeometryAreaMismatch"
+  ],
+  [
+   "Harding|AK",
+   "ESTIMATED_HIGH_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Hiwassee Lake|NC",
+   "AUDITED",
+   "lakeIdentityRisk"
+  ],
+  [
+   "Kvichak / Ugashik|AK",
+   "ESTIMATED_HIGH_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Lake Clark|AK",
+   "AUDITED",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Lake Texoma|TX",
+   "AUDITED",
+   "auditedGeometryAreaMismatch"
+  ],
+  [
+   "Long Lake|ME",
+   "AUDITED",
+   "lakeIdentityRisk"
+  ],
+  [
+   "Naknek|AK",
+   "ESTIMATED_HIGH_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Neely Henry|AL",
+   "AUDITED",
+   "auditedGeometryAreaMismatch"
+  ],
+  [
+   "Norris Lake|TN",
+   "AUDITED",
+   "auditedGeometryAreaMismatch"
+  ],
+  [
+   "Roosevelt|AZ",
+   "AUDITED",
+   "auditedGeometryAreaMismatch"
+  ],
+  [
+   "Sherman Reservoir|NE",
+   "AUDITED",
+   "lakeIdentityRisk"
+  ],
+  [
+   "Skilak|AK",
+   "ESTIMATED_MEDIUM_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Teshekpuk|AK",
+   "ESTIMATED_HIGH_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Tustumena|AK",
+   "ESTIMATED_HIGH_GEOMETRY",
+   "nbmAKDomainNotTested"
+  ],
+  [
+   "Waimaluhia Reservoir|HI",
+   "AUDITED",
+   "nbmHIDomainNotTested; registryGeometryMissing"
+  ],
+  [
+   "Waita Reservoir|HI",
+   "ESTIMATED_MEDIUM_GEOMETRY",
+   "nbmHIDomainNotTested"
+  ],
+  [
+   "Watchaug Pond|RI",
+   "AUDITED",
+   "auditedGeometryAreaMismatch"
+  ],
+  [
+   "Wilson Lake / Kaelepulu Pond|HI",
+   "ESTIMATED_MEDIUM_GEOMETRY",
+   "nbmHIDomainNotTested"
+  ]
+ ],
+ "confidenceAll621": {
+  "MEDIUM": 144,
+  "LOW": 44,
+  "HIGH": 404,
+  "MISSING": 29
+ },
+ "pointFlags": {
+  "ok": 427,
+  "off_water": 125,
+  "identity_risk": 40,
+  "": 29
+ },
+ "labelEligible": 522
+}

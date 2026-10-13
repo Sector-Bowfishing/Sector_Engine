@@ -44,6 +44,29 @@ def decide_tier(audited: bool, polygon_present: bool, fetch_ok: bool | None, con
     return "ESTIMATED", "polygonFetch"
 
 
+AUDITED_AREA_RATIO = (0.8, 1.25)   # registry shoreline area / area of the NHD feature the audited table was built from
+
+
+def registry_flags(entry: dict) -> dict:
+    """Map a Lake Registry v1 index entry to the flag vocabulary used here (confidence, point_flag). MISSING when the registry has no geometry."""
+    gc = (entry.get("geometryConfidence") or {}).get("level") or "MISSING"
+    pf = entry.get("pointFlag") or ""
+    return {"confidence": gc, "point_flag": {"identity-risk": "identity_risk", "off-water": "off_water", "ok": "ok"}.get(pf, pf)}
+
+
+def audited_check_blockers(check: dict | None) -> list[str]:
+    """Blockers from the audited-table vs registry cross-check (research/audited_vs_registry.py): the table may not describe the registry's water."""
+    if not check:
+        return []
+    b = []
+    r = check.get("areaRatio")
+    if r is not None and not (AUDITED_AREA_RATIO[0] <= r <= AUDITED_AREA_RATIO[1]):
+        b.append("auditedGeometryAreaMismatch")
+    if check.get("registryAreaKm2") is None and not check.get("dev"):
+        b.append("registryGeometryMissing")
+    return b
+
+
 def blockers(state: str | None, point_flag: str | None) -> list[str]:
     """Hard blockers that withhold ANY bank-exposure label even when a tier exists (checked in the manifest, enforced by exposure_allowed)."""
     b = []
@@ -70,8 +93,12 @@ def tier_for(lake_id: str, manifest: dict | None = None) -> dict:
     return m["lakes"].get(lake_id, {"id": lake_id, "tier": "POINT_ONLY", "reason": "notInManifest", "forecastDomain": "CONUS"})
 
 
-def build_manifest(directory: list[dict], flags: dict[str, dict], fleet_fetch: dict[str, dict], audited_ids: set[str]) -> dict:
+def build_manifest(directory: list[dict], flags: dict[str, dict], fleet_fetch: dict[str, dict], audited_ids: set[str], registry: dict | None = None,
+                   audited_checks: dict[str, dict] | None = None) -> dict:
+    """flags: {lakeId: {'confidence','point_flag'}} (from Lake Registry v1 via registry_flags, or the older research CSV). registry: the index (for memberIds + provenance).
+    audited_checks: {lakeId: row from audited_vs_registry.py}."""
     lakes, counts = {}, {t: 0 for t in TIERS}
+    reg = {l["lakeId"]: l for l in (registry or {}).get("lakes", [])}
     for l in sorted(directory, key=lambda x: x["id"]):
         i = l["id"]; f = fleet_fetch.get(i); fl = flags.get(i, {})
         tier, why = decide_tier(i in audited_ids, f is not None, bool(f and f.get("ok")), fl.get("confidence") or None,
@@ -79,12 +106,17 @@ def build_manifest(directory: list[dict], flags: dict[str, dict], fleet_fetch: d
         counts[tier] += 1
         e = {"id": i, "tier": tier, "reason": why, "geometryConfidence": fl.get("confidence") or "MISSING",
              "forecastDomain": forecast_domain(l.get("state")), "lat": l["lat"], "lon": l["lon"], "state": l.get("state"),
-             "pointFlag": fl.get("point_flag") or "", "blockers": blockers(l.get("state"), fl.get("point_flag"))}
+             "pointFlag": fl.get("point_flag") or "", "blockers": blockers(l.get("state"), fl.get("point_flag")) + (audited_check_blockers((audited_checks or {}).get(i)) if tier == "AUDITED" else [])}
+        if i in reg:
+            e["memberIds"] = reg[i].get("memberIds") or [i]
+            if reg[i].get("geometry") is None:
+                e["geometryMissing"] = reg[i].get("geometryMissingStatus") or "unknown"
         if f and f.get("ok"):
             e["polygonFetch"] = {"rasterM": round(f["res"], 1), "banksSampled": f["nBanks"],
                                  "maxP90FetchM": int(max(f["p90FetchByDir"]))}
         lakes[i] = e
-    return {"schema": "sector-wind-geometry-tiers-v1", "directoryLakes": len(lakes), "counts": counts,
+    prov = {"registry": {"schema": registry.get("schema"), "geometryVersion": registry.get("geometryVersion"), "generatedAt": registry.get("generatedAt"), "count": registry.get("count")}} if registry else {}
+    return {"schema": "sector-wind-geometry-tiers-v1", "directoryLakes": len(lakes), "counts": counts, "inputs": prov,
             "exposureAllowedCount": sum(exposure_allowed(v) for v in lakes.values()),
             "rules": {"ESTIMATED": f"polygon fetch ok, Lake Brain confidence in {OK_CONFIDENCE}, >= {MIN_BANKS} sampled banks, raster <= {MAX_RASTER_M:g} m",
                       "AUDITED": "frozen NHD fetch table (SHA-256 verified)", "POINT_ONLY": "everything else; no bank labels"},
@@ -96,13 +128,17 @@ def _cli():
     ap = argparse.ArgumentParser()
     ap.add_argument("build")
     ap.add_argument("--directory", required=True)       # directory_lakes_*.json {"lakes": [...]}
-    ap.add_argument("--flags", required=True)           # lake_geometry_flags.csv (Lake Brain)
+    ap.add_argument("--flags")                          # legacy: lake_geometry_flags.csv (Lake Brain research copy)
+    ap.add_argument("--registry")                       # PREFERRED: published Lake Registry v1 index (registry/lakes.v1.json)
+    ap.add_argument("--audited-check")                  # audited_vs_registry.json
     ap.add_argument("--fleet-fetch", required=True)     # per-lake polygon-fetch summary (list of {id, ok, nBanks, res, p90FetchByDir})
     ap.add_argument("--audited-dir", nargs="+", required=True)  # dirs/globs of *.windfetch.json.gz
     ap.add_argument("--out", default=MANIFEST)
     a = ap.parse_args()
     directory = json.load(open(a.directory))["lakes"]
-    flags = {r["id"]: r for r in csv.DictReader(open(a.flags))}
+    registry = json.load(open(a.registry)) if a.registry else None
+    flags = {l["lakeId"]: registry_flags(l) for l in registry["lakes"]} if registry else {r["id"]: r for r in csv.DictReader(open(a.flags))}
+    checks = {r["lakeId"]: r for r in json.load(open(a.audited_check))} if a.audited_check else None
     ff = {r["id"]: r for r in json.load(open(a.fleet_fetch))}
     audited = {"Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"}
     for pat in a.audited_dir:
@@ -110,7 +146,7 @@ def _cli():
             d = json.load(gzip.open(p)).get("directory")
             if d:
                 audited.add(f"{d['name']}|{d['state']}")
-    m = build_manifest(directory, flags, ff, audited)
+    m = build_manifest(directory, flags, ff, audited, registry, checks)
     json.dump(m, open(a.out, "w"), indent=0, sort_keys=True, separators=(",", ":"))
     print(m["counts"], "->", a.out)
 

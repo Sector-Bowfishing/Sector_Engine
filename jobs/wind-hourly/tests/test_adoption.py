@@ -231,7 +231,7 @@ def test_tier_decisions():
 def test_committed_manifest_matches_research_counts_and_never_promotes_unknown():
     m = FL.load_manifest()
     assert m["directoryLakes"] == 621 and sum(m["counts"].values()) == 621
-    assert m["counts"] == {"AUDITED": 74, "ESTIMATED": 471, "POINT_ONLY": 76}
+    assert m["counts"] == {"AUDITED": 74, "ESTIMATED": 473, "POINT_ONLY": 74}
     assert FL.tier_for("Guntersville|AL", m)["tier"] == "AUDITED"
     assert FL.tier_for("Lake Michigan|WI", m)["tier"] == "POINT_ONLY" and FL.tier_for("Lake Michigan|WI", m)["reason"] == "noPolygon"
     assert FL.tier_for("Not A Lake|ZZ", m)["tier"] == "POINT_ONLY"
@@ -411,7 +411,7 @@ def test_state_tier_changes_label_policy(tmp_path, monkeypatch):
 
 def test_hard_blockers_withhold_exposure_even_for_audited_lakes():
     m = FL.load_manifest()
-    assert m["exposureAllowedCount"] == sum(FL.exposure_allowed(v) for v in m["lakes"].values()) == 528
+    assert m["exposureAllowedCount"] == sum(FL.exposure_allowed(v) for v in m["lakes"].values()) == 522
     for lid in ("Andrews Lake|DE", "Eagle Lake|MS", "Hiwassee Lake|NC", "Long Lake|ME"):      # audited table exists but Lake Brain flags a lake-identity risk
         e = m["lakes"][lid]
         assert e["tier"] == "AUDITED" and "lakeIdentityRisk" in e["blockers"] and not FL.exposure_allowed(e)
@@ -505,3 +505,20 @@ def test_wind_state_keeps_the_keys_the_intelligence_evidence_layer_reads(tmp_pat
     assert set(["product", "analysisTime", "sustainedMph"]) <= set(state["analysis"]) and state["kind"] in ("analysis", "forecast", "unavailable")
     assert "confidence" not in state                                          # known mismatch: Intelligence looks for a top-level `confidence` string (see WIND_INTELLIGENCE_COMPATIBILITY.md)
     assert {"readiness", "generatedAt"} <= set(state["provenance"])
+
+
+def test_registry_flag_mapping_and_audited_cross_check_blockers():
+    assert FL.registry_flags({"geometryConfidence": {"level": "HIGH"}, "pointFlag": "ok"}) == {"confidence": "HIGH", "point_flag": "ok"}
+    assert FL.registry_flags({"geometryConfidence": {"level": "LOW"}, "pointFlag": "identity-risk"}) == {"confidence": "LOW", "point_flag": "identity_risk"}
+    assert FL.registry_flags({"geometryConfidence": {"level": "MISSING"}, "pointFlag": None}) == {"confidence": "MISSING", "point_flag": ""}
+    assert FL.audited_check_blockers(None) == []
+    assert FL.audited_check_blockers({"areaRatio": 1.0, "registryAreaKm2": 5}) == []
+    assert FL.audited_check_blockers({"areaRatio": 0.8, "registryAreaKm2": 5}) == [] and FL.audited_check_blockers({"areaRatio": 1.25, "registryAreaKm2": 5}) == []        # inclusive limits
+    assert FL.audited_check_blockers({"areaRatio": 0.36, "registryAreaKm2": 5}) == ["auditedGeometryAreaMismatch"] and FL.audited_check_blockers({"areaRatio": 1.45, "registryAreaKm2": 5}) == ["auditedGeometryAreaMismatch"]
+    assert FL.audited_check_blockers({"areaRatio": None, "registryAreaKm2": None}) == ["registryGeometryMissing"]
+    m = FL.load_manifest()
+    assert m["inputs"]["registry"]["schema"] == "sector.lake-registry/v1" and m["directoryLakes"] == 621
+    for lid in ("Andrews Lake|DE", "Griffith Lake|DE", "Lake Texoma|TX", "Norris Lake|TN", "Roosevelt|AZ"):                   # audited table describes a different/partial water than the registry polygon
+        assert "auditedGeometryAreaMismatch" in m["lakes"][lid]["blockers"] and not FL.exposure_allowed(m["lakes"][lid]), lid
+    # member lakes that share one water body keep the link
+    assert set(m["lakes"]["Kentucky Lake|KY"]["memberIds"]) >= {"Kentucky Lake|KY", "Kentucky Lake|TN"}
