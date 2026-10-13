@@ -76,15 +76,14 @@ public enum WaterTemperatureBrainRunner {
 
         // ---- compute (bounded concurrency; same fetch + resolver as /conditions)
         var inputs: [WaterTemperatureBrain.LakeInputs] = []
-        let width = BrainPlatform.clampConcurrency(options.concurrency)
         var i = 0
         while i < lakes.count {
-            let batch = lakes[i..<min(i + width, lakes.count)]
+            let batch = lakes[i..<min(i + max(1, options.concurrency), lakes.count)]
             await withTaskGroup(of: WaterTemperatureBrain.LakeInputs.self) { g in
                 for lake in batch { g.addTask { await WaterTemperatureBrain.fetchInputs(for: lake) } }
                 for await x in g { inputs.append(x) }
             }
-            i += width
+            i += options.concurrency
         }
         inputs.sort { $0.lake.id < $1.lake.id }
         let generatedAt = Date()
@@ -109,10 +108,9 @@ public enum WaterTemperatureBrainRunner {
         // ---- write
         do {
             let gen = BrainPlatform.iso(generatedAt)
-            let chunkSize = max(1, options.chunkSize)      // stride(by: 0) traps
-            for chunk in stride(from: 0, to: inputs.count, by: chunkSize) {
+            for chunk in stride(from: 0, to: inputs.count, by: options.chunkSize) {
                 var paths: [String: Data] = [:]
-                for j in chunk..<min(chunk + chunkSize, inputs.count) {
+                for j in chunk..<min(chunk + options.chunkSize, inputs.count) {
                     let lake = inputs[j].lake, st = result.states[j], k = BrainPlatform.lakeKey(lake.id)
                     let stateJSON = try BrainJSON.encode(st)
                     paths["lakes/\(k)/states/\(WaterTemperatureBrain.slot)"] = stateJSON
