@@ -29,3 +29,21 @@ Total 100 = 12 + 12 + 8 + 4 + 8 + 20 + 8 + 5 + 5 + 5 + 5 + 8.
 
 ## Process needed before adoption
 Independent review (Michael + reviewer); pre-register the v2 scorer; keep v1 in parallel for continuity; do not evaluate v2 on H2 before the holdout opens; log any change in `WIND_SCORE_CHANGE_LOG.jsonl` as a new rubric version, never as an in-place edit.
+
+## Review pass 2026-10-13 (still a proposal; nothing adopted)
+Test applied to every v2 dimension: *does it make Wind better for bowfishing, and could Wind score well on it without extreme-weather science?*
+| v2 dimension | Better for bowfishing? | Needs obscure science? | Finding from this cycle | Change to the proposal |
+|---|---|---|---|---|
+| Useful tonight speed (12) | yes — calm vs light decides the night | no | provider shadow: NBM 0.79 vs 0.64 category; skill is calm-vs-light | add **windy-night handling** (the point forecast under-calls: require the risk-aware value to be what is scored when wind ≥ 10 mph), so a score cannot be earned by being right only on calm nights |
+| Direction when it matters (12) | yes | no | night ≥ 5 mph 0.81–0.97; 3 stations weak | score per-lake (min-station gate) so one good lake cannot hide a poor one; keep suppression correctness |
+| Strong-wind risk (8) | yes | no (percentiles already published) | ladder 1.9% / 27.6% / 52.7%; half of breezy hours unflagged | require both lift and an **absent-flag statement test** (no "low risk" text); POD floor stays modest (0.4) |
+| Tonight trend (4) | yes | no | easing 0.65; lay-down none | unchanged |
+| Geometry & tier discipline (8) | yes | no | identity risk found in 6 audited lakes; vocabulary defect found by the matched test | add **identity/blocker gate** (a lake with an unresolved identity flag earns nothing) and require the validated rule-set version to match the shipped fingerprint |
+| Bank exposure field-validated (20) | yes — the product question | no | field plan: 40 pairs, 2 independent lakes, 3 quadrants; afternoons are the practical volume | state explicitly whether daytime pairs count (Addendum owner), since evenings ≥ 8 mph are ~4 a month |
+| Practical roughness (8) | yes | no | one-minute record exists | unchanged |
+| Over-water reference (5) | yes — largest unknown | no | portable plan ≥ 30 sessions | unchanged |
+| Confidence calibration (5) | yes | no | label orders direction reliability, not strong-wind risk | **split**: score `forecastConfidence` on direction ordering and `windRisk` on lift; do not score one blended "confidence" |
+| Reliability & freshness (5) | operations | no | scorer already earns 1.33/8 at 5 days | unchanged rule |
+| Fleet coverage (5, tier-capped) | yes | no | 528 eligible, 0 validated | cap by validation tier (ESTIMATED ≤ 50% until field-validated), blocked lakes count 0 |
+| Honesty & provenance (8) | yes | no | withheld-claims list, forecast ≠ observation | keep |
+Not rewarded by v2 by design: gust-event POD, ≥ 15 mph event skill, wave-height science, extra atmospheric variables. Cap logic unchanged (no field truth ⇒ ≤ 6.0). **Do not adopt during this phase**; the canonical score stays on frozen rubric v1.

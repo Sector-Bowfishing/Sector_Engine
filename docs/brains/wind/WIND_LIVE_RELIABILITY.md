@@ -39,3 +39,10 @@
 
 ## Re-running
 `gcloud storage cp -r gs://sector-wind-candidate/wind/v1/{ledger,runs} <meta>/`, `gcloud run jobs executions list --job wind-hourly --region us-central1 --format=json > <meta>/executions.json`, `gcloud logging read '… textPayload:"windbrain"' > <meta>/brainlogs.json`, then `python research/live_reliability.py <meta> out.json`. Data copy: `docs/brains/wind/data/live_reliability_asof_2026-10-13.json`.
+
+---
+## Audit log (re-run weekly; `research/run_cycle.py`)
+| Run (UTC) | Valid archive days | Valid Brain-publish days | Invalid | Executions (failed) | Partial cycles (recovered) | Stale states | Freshness after init (median / p95 / max) | Source outages | Archive gate | Brain-publish gate |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-10-13 20:36 | **5** (10-08…10-12) | **0** (10-12 partial chain start + 2 IAM 401s; 10-13 open) | 10-07: clock started 04:59Z; RTMA 92.7% | 165 (0) | 24 (24) | 0 of 160 | 1.14 / 2.15 / 2.17 h | RTMA: 4 failed attempts at 21:45Z on 10-11 (recovered); NBM: none | 2026-11-07 03:00Z | 2026-11-12 03:00Z |
+Method change in this cycle: the audit now also reports Brain-publish days (≥ 23 successful publishes, none failed, no gap > 90 min, no stale state) and the freshness distribution; projections assume every remaining day is valid and move one day per invalid day. Metadata only: no H2 value is read.
