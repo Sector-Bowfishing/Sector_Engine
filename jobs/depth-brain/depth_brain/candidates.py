@@ -67,6 +67,19 @@ def level_datum_for(binding: dict, table: dict) -> tuple[str | None, bool, str]:
     return d, verified, f"provider table: {raw}" if raw else "provider not in datum audit"
 
 
+def licence_for(sources: list, lic: dict) -> dict:
+    """Most restrictive wins; `unknown`/missing counts as NOT allowed. Only sources that actually carry depth evidence matter."""
+    if not sources:
+        return {"classes": [], "customerDerivedMetricsAllowed": "n/a"}
+    classes, allowed = [], True
+    for sk in sources:
+        r = lic.get(sk)
+        classes.append(r["classification"] if r else "UNREVIEWED")
+        if not r or str(r.get("customerDerivedMetricsAllowed")).lower() != "true":
+            allowed = False
+    return {"classes": classes, "sources": list(sources), "customerDerivedMetricsAllowed": "true" if allowed else "false"}
+
+
 def range_class(p05_p95: float | None) -> str | None:
     if p05_p95 is None:
         return None
@@ -151,10 +164,7 @@ def build(paths: dict, manifest_version: str) -> dict:
                       "referenceStatus": "UNVERIFIED", "referencePoolFt": None,
                       "note": "survey reference pool not verified for this lake: effective zones are withheld until it is"}
                 ev.update({"coverage": cov, "intervalFt": itv})
-        licence = {"class": "UNREVIEWED", "customerDerivedMetricsAllowed": "unknown"}
-        for sk in ev["contourSources"]:
-            if sk in lic:
-                licence = {"class": lic[sk]["classification"], "customerDerivedMetricsAllowed": lic[sk]["customerDerivedMetricsAllowed"], "sourceKey": sk}
+        licence = licence_for(ev["contourSources"], lic)
         rec = {
             "lakeId": lid, "lakeName": lk.get("name"), "state": lk.get("state"), "operator": lk.get("operatorName"), "cwmsOffice": lk.get("cwmsOffice"),
             "reference": {"poolFt": lk.get("fullPoolFt"), "basis": lk.get("poolBasis"), "confidence": ref_conf, "source": src_str or "engine-directory:fullPoolFt",

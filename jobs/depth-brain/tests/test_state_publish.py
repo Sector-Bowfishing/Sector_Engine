@@ -167,3 +167,22 @@ def test_key_collision_is_refused():
     m = {"manifestVersion": "x", "candidates": [candidate(lakeId="A B|XX"), candidate(lakeId="A-B|XX")]}
     rep = publish(m, {}, DryRunWriter(), NOW)
     assert not rep["ok"] and "collision" in rep["errors"][0]
+
+
+def test_licence_blocked_contour_lake_is_flagged_internal_only():
+    rec = candidate(tier="A", evidence={"tier": "A", "kind": "contour"}, licence={"classes": ["INTERNAL_ONLY"], "customerDerivedMetricsAllowed": "false"})
+    s, _ = build_state(rec, lake_state(), NOW)
+    assert "contourLicenceInternalOnly" in s["provenance"]["qualityFlags"] and any("internal / shadow use only" in l for l in s["limitations"])
+    ok = candidate(tier="A", evidence={"tier": "A", "kind": "contour"}, licence={"classes": ["PUBLIC_REUSABLE"], "customerDerivedMetricsAllowed": "true"})
+    s2, _ = build_state(ok, lake_state(), NOW)
+    assert "contourLicenceInternalOnly" not in s2["provenance"]["qualityFlags"]
+
+
+def test_licence_most_restrictive_wins_and_unknown_is_not_allowed():
+    from depth_brain.candidates import licence_for
+    lic = {"A": {"classification": "PUBLIC_REUSABLE", "customerDerivedMetricsAllowed": "true"},
+           "B": {"classification": "UNCLEAR", "customerDerivedMetricsAllowed": "unknown"}}
+    assert licence_for(["A"], lic)["customerDerivedMetricsAllowed"] == "true"
+    assert licence_for(["A", "B"], lic)["customerDerivedMetricsAllowed"] == "false"
+    assert licence_for(["Z"], lic)["customerDerivedMetricsAllowed"] == "false"          # unreviewed
+    assert licence_for([], lic)["customerDerivedMetricsAllowed"] == "n/a"

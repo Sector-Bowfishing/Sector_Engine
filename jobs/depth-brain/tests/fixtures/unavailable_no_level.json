@@ -1,0 +1,69 @@
+{
+ "brainId": "depth",
+ "coverage": {
+  "evidenceKind": "unknown",
+  "sourceTier": "UNKNOWN"
+ },
+ "effectiveDepth": {
+  "mode": "unknown",
+  "note": "no shift defended",
+  "reasons": [
+   "LAKE_STATE_MISSING"
+  ]
+ },
+ "freshness": {
+  "evidenceStale": true,
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "refreshReason": "scheduled",
+  "stale": false,
+  "staleReasons": [
+   "no defended shift: LAKE_STATE_MISSING"
+  ]
+ },
+ "kind": "unavailable",
+ "lakeId": "No Level|GA",
+ "limitations": [
+  "Depth Brain is SHADOW / internal: no customer surface consumes this state.",
+  "A shift is not an absolute depth. Reference depths exist only where real contour evidence is listed under coverage.",
+  "No shift is published for this lake this run (see effectiveDepth.reasons).",
+  "No measured or contour depth evidence for this lake: depth zones, flats and drop-offs are unknown, and modeled bathymetry is not used."
+ ],
+ "provenance": {
+  "brainId": "depth",
+  "brainVersion": "depth-brain-0.1.0-shadow",
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "inputFingerprint": "40201dd4985d62bd",
+  "modelVersion": "effective-depth-shift-v1",
+  "processingVersion": "effective-depth-shift-v1 @ manifest fixture",
+  "qualityFlags": [
+   "shiftUnavailable"
+  ],
+  "readiness": "DEGRADED",
+  "sources": [
+   {
+    "lastObservationAt": null,
+    "sourceId": "lake-brain/states/lake",
+    "sourceType": "brainState"
+   },
+   {
+    "sourceId": "engine-directory:fullPoolFt",
+    "sourceType": "referencePool"
+   }
+  ],
+  "validationRef": "/validation/depth"
+ },
+ "reference": {
+  "datumAssessment": {
+   "sigmaFt": 0.1,
+   "status": "SAME_DATUM"
+  },
+  "referencePoolBasis": "fullPool",
+  "referencePoolConfidence": "high",
+  "referencePoolDatum": "NGVD29",
+  "referencePoolFt": 595.0,
+  "referencePoolSource": "engine-directory:fullPoolFt"
+ },
+ "schemaVersion": 1,
+ "slot": "depth",
+ "stateSchema": "sector-brain-depth-state-v1"
+}

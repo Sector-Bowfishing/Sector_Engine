@@ -123,6 +123,10 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
                    "A shift is not an absolute depth. Reference depths exist only where real contour evidence is listed under coverage."]
     if not ok:
         limitations.append("No shift is published for this lake this run (see effectiveDepth.reasons).")
+    lic = rec.get("licence") or {}
+    licence_blocked = tier in ("A", "B", "C") and lic.get("customerDerivedMetricsAllowed") == "false"
+    if licence_blocked:
+        limitations.append("Contour source terms do not (yet) permit customer-facing derived numbers: internal / shadow use only.")
     if tier in ("D", "UNKNOWN"):
         limitations.append("No measured or contour depth evidence for this lake: depth zones, flats and drop-offs are unknown, and modeled bathymetry is not used.")
     if ok and "pool" in C.SIGMA_ASSUMED:
@@ -146,6 +150,8 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
     state["freshness"] = fresh
 
     flags = list(res.flags)
+    if licence_blocked:
+        flags.append("contourLicenceInternalOnly")
     if not ok:
         flags.append("shiftUnavailable")
     state["provenance"] = {

@@ -1,0 +1,115 @@
+{
+ "brainId": "depth",
+ "coverage": {
+  "contourCoverage": 0.9,
+  "contourIntervalFt": 2,
+  "evidenceKind": "contour",
+  "knownAreaShare": 0.9,
+  "researchTier": "A",
+  "sourceTier": "A",
+  "unknownAreaShare": 0.1
+ },
+ "effectiveDepth": {
+  "confidence": "HIGH",
+  "evidenceKind": "levelDelta",
+  "mode": "shiftOnly",
+  "note": "shift of reference depths; absolute depth requires a reference depth that this record does not claim",
+  "resolvable": true,
+  "shiftFt": -1.4,
+  "sigmaAssumed": [
+   "pool",
+   "level",
+   "datum"
+  ],
+  "sigmaComponentsFt": {
+   "datum": 0.1,
+   "level": 0.1,
+   "pool": 0.25
+  },
+  "uncertaintyFt": 0.29
+ },
+ "effectiveZones": {
+  "available": false,
+  "reason": "SURVEY_REFERENCE_POOL_UNVERIFIED"
+ },
+ "facts": [
+  "The lake is 1.4 ft below its reference pool; depths measured at the reference pool should be read as about -1.4 ft (+/- 0.3 ft). This is a shift, not a measured depth for any particular spot."
+ ],
+ "freshness": {
+  "evidenceStale": false,
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "refreshReason": "scheduled",
+  "sourceObservationAt": "2026-10-13T18:00:00Z",
+  "stale": false
+ },
+ "kind": "observed",
+ "lakeId": "Contour Lake|TX",
+ "level": {
+  "currentElevationFt": 593.6,
+  "datum": "NGVD29",
+  "levelDeltaFromReferenceFt": -1.4,
+  "observedAt": "2026-10-13T18:00:00Z",
+  "sourceBrain": "lake-brain",
+  "sourceBrainVersion": "1.0.0",
+  "sourceCapability": "DIRECT_OPERATOR_POOL"
+ },
+ "limitations": [
+  "Depth Brain is SHADOW / internal: no customer surface consumes this state.",
+  "A shift is not an absolute depth. Reference depths exist only where real contour evidence is listed under coverage.",
+  "Uncertainty components (pool, level, datum) are research estimates, not instrument specifications."
+ ],
+ "provenance": {
+  "brainId": "depth",
+  "brainVersion": "depth-brain-0.1.0-shadow",
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "inputAgeHours": 1.0,
+  "inputFingerprint": "306b86ec6a8692c2",
+  "modelVersion": "effective-depth-shift-v1",
+  "processingVersion": "effective-depth-shift-v1 @ manifest fixture",
+  "qualityFlags": [],
+  "readiness": "CALIBRATION",
+  "sources": [
+   {
+    "lastObservationAt": "2026-10-13T18:00:00Z",
+    "sourceId": "lake-brain/states/lake",
+    "sourceType": "brainState"
+   },
+   {
+    "sourceId": "engine-directory:fullPoolFt",
+    "sourceType": "referencePool"
+   }
+  ],
+  "validationRef": "/validation/depth"
+ },
+ "reference": {
+  "datumAssessment": {
+   "sigmaFt": 0.1,
+   "status": "SAME_DATUM"
+  },
+  "referencePoolBasis": "fullPool",
+  "referencePoolConfidence": "high",
+  "referencePoolDatum": "NGVD29",
+  "referencePoolFt": 595.0,
+  "referencePoolSource": "engine-directory:fullPoolFt"
+ },
+ "referenceZones": {
+  "basis": "share of the surveyed surface at the survey reference pool",
+  "evidenceKind": "contour",
+  "share3To6Ft": 0.1,
+  "share6To10Ft": 0.1,
+  "shareDeeper": 0.7,
+  "shareUnder10Ft": 0.3,
+  "shareUnder3Ft": 0.1,
+  "shareUnder6Ft": 0.2,
+  "source": "TWDB",
+  "support": {
+   "contourIntervalFt": 2,
+   "coverage": 0.9,
+   "surveyYear": null
+  },
+  "tier": "A"
+ },
+ "schemaVersion": 1,
+ "slot": "depth",
+ "stateSchema": "sector-brain-depth-state-v1"
+}

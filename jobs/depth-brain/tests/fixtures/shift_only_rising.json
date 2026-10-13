@@ -1,0 +1,90 @@
+{
+ "brainId": "depth",
+ "coverage": {
+  "evidenceKind": "unknown",
+  "sourceTier": "UNKNOWN"
+ },
+ "effectiveDepth": {
+  "confidence": "HIGH",
+  "evidenceKind": "levelDelta",
+  "mode": "shiftOnly",
+  "note": "shift of reference depths; absolute depth requires a reference depth that this record does not claim",
+  "resolvable": true,
+  "shiftFt": 1.2,
+  "sigmaAssumed": [
+   "pool",
+   "level",
+   "datum"
+  ],
+  "sigmaComponentsFt": {
+   "datum": 0.1,
+   "level": 0.1,
+   "pool": 0.25
+  },
+  "uncertaintyFt": 0.29
+ },
+ "facts": [
+  "The lake is 1.2 ft above its reference pool; depths measured at the reference pool should be read as about +1.2 ft (+/- 0.3 ft). This is a shift, not a measured depth for any particular spot."
+ ],
+ "freshness": {
+  "evidenceStale": false,
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "refreshReason": "scheduled",
+  "sourceObservationAt": "2026-10-13T18:00:00Z",
+  "stale": false
+ },
+ "kind": "observed",
+ "lakeId": "Rising|AL",
+ "level": {
+  "currentElevationFt": 596.2,
+  "datum": "NGVD29",
+  "levelDeltaFromReferenceFt": 1.2,
+  "observedAt": "2026-10-13T18:00:00Z",
+  "sourceBrain": "lake-brain",
+  "sourceBrainVersion": "1.0.0",
+  "sourceCapability": "DIRECT_OPERATOR_POOL"
+ },
+ "limitations": [
+  "Depth Brain is SHADOW / internal: no customer surface consumes this state.",
+  "A shift is not an absolute depth. Reference depths exist only where real contour evidence is listed under coverage.",
+  "No measured or contour depth evidence for this lake: depth zones, flats and drop-offs are unknown, and modeled bathymetry is not used.",
+  "Uncertainty components (pool, level, datum) are research estimates, not instrument specifications."
+ ],
+ "provenance": {
+  "brainId": "depth",
+  "brainVersion": "depth-brain-0.1.0-shadow",
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "inputAgeHours": 1.0,
+  "inputFingerprint": "2076c133db026062",
+  "modelVersion": "effective-depth-shift-v1",
+  "processingVersion": "effective-depth-shift-v1 @ manifest fixture",
+  "qualityFlags": [],
+  "readiness": "CALIBRATION",
+  "sources": [
+   {
+    "lastObservationAt": "2026-10-13T18:00:00Z",
+    "sourceId": "lake-brain/states/lake",
+    "sourceType": "brainState"
+   },
+   {
+    "sourceId": "engine-directory:fullPoolFt",
+    "sourceType": "referencePool"
+   }
+  ],
+  "validationRef": "/validation/depth"
+ },
+ "reference": {
+  "datumAssessment": {
+   "sigmaFt": 0.1,
+   "status": "SAME_DATUM"
+  },
+  "referencePoolBasis": "fullPool",
+  "referencePoolConfidence": "high",
+  "referencePoolDatum": "NGVD29",
+  "referencePoolFt": 595.0,
+  "referencePoolSource": "engine-directory:fullPoolFt"
+ },
+ "schemaVersion": 1,
+ "slot": "depth",
+ "stateSchema": "sector-brain-depth-state-v1"
+}
