@@ -50,7 +50,8 @@
    "evidence": [
     "no scalable flats method (policy codified)",
     "contour shares exist for 94 lakes, effective zones withheld",
-    "5 TWDB lakes: effective-zone dry/under3 bounds validated against exact elevation-area tables (preregistered, S2 independent MAE 0.016, bounds coverage 1.0) - one regional family; deeper bands withheld as uninformative"
+    "5 TWDB lakes: effective-zone dry/under3 bounds validated against exact elevation-area tables (preregistered, S2 independent MAE 0.016, bounds coverage 1.0) - one regional family; deeper bands withheld as uninformative",
+    "NEGATIVE: non-TWDB contour lakes (4 graded with CWMS stage-area curves) did not pass the preregistered effective-zone validation (Tappan MAE 0.047 fails 0.03; 3 lakes withheld at 5/10 ft intervals; publish rate 0.20); effective zones remain withheld for all of them"
    ],
    "changeEvidence": []
   },

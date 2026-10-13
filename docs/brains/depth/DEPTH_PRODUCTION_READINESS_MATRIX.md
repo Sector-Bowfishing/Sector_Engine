@@ -16,7 +16,7 @@ Sector standard: overall Brain score >= 8.0 **and** every critical dimension >= 
 | 4 | Current level | **PARTIAL** | consumed from Lake Brain `states/lake` (read-only); live for 5 reviewed pilots; 193 defensible lakes await Lake Brain fleet bindings (unmerged); TVA states publish `datum: null` |
 | 5 | Effective depth (shift) | **PARTIAL** | engine + tests + live GET-only dry run on all 5 pilots; defensible for 198 of 621; no field/event validation |
 | 6 | Authoritative contours | **PARTIAL** | 103 tier A/B lakes; 59 licensed for customer-derived numbers; ingest pipeline exists only as research scripts; no Southeast contours |
-| 7 | Shallow zones | **PARTIAL** | reference shares for 100 lakes; effective zones eligible for 5 (TWDB: 5 survey reference pools verified + preregistered validation passed; dry/under3 bounds only) |
+| 7 | Shallow zones | **PARTIAL** | reference shares for 100 lakes; effective zones eligible for 5 (TWDB: 5 survey reference pools verified + preregistered validation passed; dry/under3 bounds only). Non-TWDB contour lakes FAILED the preregistered validation (4 graded; 5 reference pools verified but none validated) - effective zones stay withheld; survey-date water levels are needed |
 | 8 | Fleet coverage | **FAIL** | shift-defensible 198/621 (31.9%); live 5; HIGH 91, MEDIUM 102, BLOCKED 423 |
 | 9 | Validation | **PARTIAL** | arithmetic tests; TWDB effective-zone validation preregistered (hash-frozen) and passed on 5 lakes; field validation preregistered, NOT run; `/validation/depth` = NOT_VALIDATED |
 | 10 | Field truth | **WAITING** | DEPTH_FIELD_VALIDATION_PLAN.md + hash-pinned prereg + analysis tooling ready; needs bowfishers/beta testers and sonar |
