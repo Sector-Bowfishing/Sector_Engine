@@ -182,8 +182,4 @@ public enum LakeBaselineBuilder {
                                  coveragePct: coverage, completeYears: complete, basisYears: basis, status: status,
                                  historicalTier: LakeLevelBaseline.tier(basisYears: basis.count), windowDays: w, days: days)
     }
-
-    public static func path(_ b: LakeLevelBaseline) -> String {
-        "baselines/\(BrainPlatform.lakeKey(b.lakeId))/\(BrainPlatform.lakeKey(b.baselineVersion)).json"
-    }
 }
