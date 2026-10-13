@@ -24,14 +24,17 @@ BAND = {"p02": 9.0, "p10": 10.0, "p50": 15.0, "p90": 20.0, "p98": 21.0}
 
 
 def record(base, *, lake=LAKE, run="r1", gen=None, label="STABLE", floor=0.1, rapid=0.5, kind="OBSERVED", tier="FULL",
-           provider="tva", pool="fullPool", band=BAND, rate_p95=0.3, horizons=(1, 7, 30), version="lake-prediction-ledger-v1"):
+           provider="tva", pool="fullPool", band=BAND, rate_p95=0.3, horizons=(1, 7, 30), version="lake-prediction-ledger-v1",
+           obs_at=None, rules="lake-level-rules-v2", binding="bindings-test.1", tz="America/Chicago", targets=None):
     b = dt.date.fromisoformat(base)
     return {
-        "ledgerVersion": version, "rulesVersion": "lake-level-rules-v2", "runId": run, "generatedAt": gen or f"{base}T12:00:00Z", "lakeId": lake, "baseDate": base,
+        "ledgerVersion": version, "rulesVersion": rules, "runId": run, "generatedAt": gen or f"{base}T12:30:00Z", "lakeId": lake, "baseDate": base,
+        "bindingVersion": binding, "baselineMethod": "doy15-percentile-v2", "timeZone": tz,
+        "observation": {"at": obs_at or f"{base}T12:00:00Z", "ft": 15.0},
         "kind": kind, "provider": provider, "poolBasis": pool, "historicalTier": tier,
         "labels": {"levelState": "IN_ZONE", "historicalState": "NORMAL", "trendState": label, "floodPoolState": "UNKNOWN"},
         "rapidThresholdFt": rapid, "stableFloorFt": floor,
-        "horizons": [{"days": h, "targetDate": (b + dt.timedelta(days=h)).isoformat(), "doy": 1,
+        "horizons": [{"days": h, "targetDate": (targets or {}).get(h) or (b + dt.timedelta(days=h)).isoformat(), "doy": 1,
                       **({"band": dict(band), "bandN": 100} if band else {}), **({"rateP95": rate_p95} if rate_p95 is not None else {})}
                      for h in horizons],
     }
@@ -178,15 +181,15 @@ def test_unknown_trend_is_counted_not_tabulated(root):
 
 
 def test_primary_dedupes_to_one_record_per_lake_day_and_all_records_pools(root):
-    recs = [record("2026-10-01", run=f"r{i}", gen=f"2026-10-01T{10 + i:02d}:00:00Z", horizons=(1,)) for i in range(3)]
-    write_ledger(root, {"01/100000Z-r0.jsonl": recs[:1], "01/110000Z-r1.jsonl": recs[1:2], "01/120000Z-r2.jsonl": recs[2:]})
+    recs = [record("2026-10-01", run=f"r{i}", gen=f"2026-10-01T{12 + i:02d}:00:00Z", horizons=(1,)) for i in range(3)]
+    write_ledger(root, {"01/120000Z-r0.jsonl": recs[:1], "01/130000Z-r1.jsonl": recs[1:2], "01/140000Z-r2.jsonl": recs[2:]})
     write_history(root, {"2026-10-02": 15.0})
     d = score(root)
     assert d["inputs"]["records"] == 3 and d["inputs"]["primaryRecords"] == 1 and d["inputs"]["objects"] == 3
     assert h(d["primary"]["overall"], 1)["predictions"] == 1
     assert h(d["allRecords"]["overall"], 1)["predictions"] == 3
     # Earliest generatedAt is the primary: change the realised band so only a r0-specific band would differ.
-    other = record("2026-10-01", run="r0", gen="2026-10-01T00:00:01Z", band={"p02": 0, "p10": 1, "p50": 2, "p90": 3, "p98": 4}, horizons=(1,))
+    other = record("2026-10-01", run="r0", gen="2026-10-01T06:00:01Z", obs_at="2026-10-01T06:00:00Z", band={"p02": 0, "p10": 1, "p50": 2, "p90": 3, "p98": 4}, horizons=(1,))
     write_ledger(root, {"01/000001Z-r00.jsonl": [other]})
     assert h(score(root)["primary"]["overall"], 1)["coverageP10P90"]["inside"] == 0
 
@@ -278,7 +281,8 @@ def test_as_of_changes_only_pending_counts_not_scored_results(root):
     known_coverage_ledger(root)
     early = h(score(root, as_of=dt.date(2026, 10, 6))["primary"]["overall"], 1)       # targets Oct 2..11; < Oct 6 -> 4 scored
     late = h(score(root, as_of=dt.date(2026, 10, 30))["primary"]["overall"], 1)
-    assert early["scored"] == 4 and early["pending"] + early["missingRealised"] == 6
+    # Records generated after the as-of date are not yet "known" and are excluded (a replay as of Oct 6 sees bases Oct 1..6 only).
+    assert early["predictions"] == 6 and early["scored"] == 4 and early["pending"] + early["missingRealised"] == 2
     assert late["scored"] == 10
     assert early["coverageP10P90"]["inside"] <= late["coverageP10P90"]["inside"]
 
@@ -361,3 +365,149 @@ def test_swift_golden_fixture_parses_and_scores():
         x = d["primary"]["overall"]["horizons"]["1"]
         assert x["coverageP10P90"] == {"n": 2, "inside": 2, "rate": 1.0}
         assert d["primary"]["overall"]["horizons"]["30"]["pending"] == 2
+
+
+# ----------------------------------------------------------------------------- hardening (2026-10-13)
+
+def test_each_horizon_joins_to_its_own_target_day(root):
+    # Base Oct 1: +1 -> Oct 2 (inside p10..p90), +7 -> Oct 8 (p02..p10: inside p02..p98 only), +30 -> Oct 31 (above p98).
+    write_ledger(root, {"01/120000Z-r1.jsonl": [record("2026-10-01")]})
+    write_history(root, {"2026-10-02": 15.0, "2026-10-08": 9.5, "2026-10-31": 25.0})
+    g = score(root, as_of=dt.date(2026, 11, 5))["primary"]["overall"]
+    assert h(g, 1)["coverageP10P90"]["inside"] == 1
+    assert h(g, 7)["coverageP10P90"] == {"n": 1, "inside": 0, "rate": 0.0} and h(g, 7)["coverageP02P98"]["inside"] == 1
+    assert h(g, 30)["tailOutsideP02P98"] == {"n": 1, "outside": 1, "below": 0, "above": 1, "rate": 1.0}
+    assert [h(g, d)["scored"] for d in (1, 7, 30)] == [1, 1, 1]
+
+
+def test_a_month_with_only_future_targets_is_a_pending_report(root):
+    # What the live ledger looks like on its first day: nothing has arrived, nothing is scored, no rate exists.
+    write_ledger(root, {"13/185314Z-x.jsonl": [record("2026-10-13", gen="2026-10-13T18:53:14Z", obs_at="2026-10-13T18:00:00Z")]})
+    write_history(root, {"2026-10-13": 15.0})
+    d = score(root, as_of=dt.date(2026, 10, 13))
+    g = d["primary"]["overall"]
+    for days in (1, 7, 30):
+        x = h(g, days)
+        assert (x["predictions"], x["pending"], x["scored"], x["missingRealised"]) == (1, 1, 0, 0)
+        assert x["coverageP10P90"]["rate"] is None and x["rapidExceedanceVsStoredThreshold"]["rate"] is None
+    assert g["labelPersistence"]["STABLE"]["next24h"]["pending"] == 1
+
+
+def test_realisation_must_be_the_exact_target_day_never_a_neighbour(root):
+    write_ledger(root, {"01/120000Z-r1.jsonl": [record("2026-10-01", horizons=(1,))]})
+    write_history(root, {"2026-10-01": 15.0, "2026-10-03": 15.0, "2026-10-04": 15.0})      # rows the day before and after Oct 2, none on it
+    x = h(score(root)["primary"]["overall"], 1)
+    assert (x["scored"], x["missingRealised"]) == (0, 1)
+
+
+def test_rows_dated_on_or_after_as_of_are_never_realisations(root):
+    write_ledger(root, {"01/120000Z-r1.jsonl": [record("2026-10-01", horizons=(1,))]})
+    write_history(root, {"2026-10-02": 15.0})
+    assert h(score(root, as_of=dt.date(2026, 10, 2))["primary"]["overall"], 1)["pending"] == 1      # the day is not over yet
+    assert h(score(root, as_of=dt.date(2026, 10, 3))["primary"]["overall"], 1)["scored"] == 1
+
+
+def test_default_as_of_waits_for_the_last_us_day_to_end():
+    assert S.default_as_of(dt.datetime(2026, 11, 1, 3, 0, tzinfo=dt.timezone.utc)) == dt.date(2026, 10, 31)
+    assert S.default_as_of(dt.datetime(2026, 11, 1, 11, 59, tzinfo=dt.timezone.utc)) == dt.date(2026, 10, 31)
+    assert S.default_as_of(dt.datetime(2026, 11, 1, 12, 0, tzinfo=dt.timezone.utc)) == dt.date(2026, 11, 1)
+
+
+def test_stale_history_is_flagged_and_its_targets_are_missing_not_imputed(root):
+    write_ledger(root, {"01/120000Z-r1.jsonl": [record("2026-10-01", horizons=(1, 7))]})
+    write_history(root, {"2026-10-02": 15.0})                                    # history stopped on Oct 2; as-of Oct 12
+    d = score(root)
+    assert any(w.startswith("STALE_HISTORY") for w in d["warnings"])
+    assert d["inputs"]["historyLatestDate"] == {LAKE: "2026-10-02"}
+    g = d["primary"]["overall"]
+    assert (h(g, 1)["scored"], h(g, 7)["missingRealised"]) == (1, 1)
+
+
+def test_rules_binding_and_baseline_changes_are_grouped_never_pooled_silently(root):
+    recs = [record("2026-10-01", horizons=(1,), rules="lake-level-rules-v2", binding="bindings-A"),
+            record("2026-10-02", horizons=(1,), rules="lake-level-rules-v3", binding="bindings-B", band={"p02": 0, "p10": 1, "p50": 2, "p90": 3, "p98": 4})]
+    write_ledger(root, {"01/120000Z-r1.jsonl": recs[:1], "02/120000Z-r2.jsonl": recs[1:]})
+    write_history(root, {"2026-10-02": 15.0, "2026-10-03": 15.0})
+    d = score(root)
+    by = d["primary"]["byClass"]
+    assert set(by["rulesVersion"]) == {"lake-level-rules-v2", "lake-level-rules-v3"}
+    assert h(by["rulesVersion"]["lake-level-rules-v2"], 1)["coverageP10P90"]["rate"] == 1.0
+    assert h(by["rulesVersion"]["lake-level-rules-v3"], 1)["coverageP10P90"]["rate"] == 0.0       # v3's own stored band, not v2's
+    assert set(by["bindingVersion"]) == {"bindings-A", "bindings-B"}
+    assert d["inputs"]["versions"]["rulesVersion"] == {"lake-level-rules-v2": 1, "lake-level-rules-v3": 1}
+    w = " ".join(d["warnings"])
+    assert "MIXED_RULES_VERSIONS" in w and "MIXED_BINDING_VERSIONS" in w
+    # One version only: no warning.
+    write_ledger(root, {"02/120000Z-r2.jsonl": [record("2026-10-02", horizons=(1,), binding="bindings-A")]})
+    assert not any(x.startswith("MIXED_") for x in score(root)["warnings"])
+
+
+def test_duplicate_objects_and_lines_are_counted_once_and_scoring_twice_is_identical(root):
+    r = record("2026-10-01", horizons=(1,))
+    write_ledger(root, {"01/120000Z-r1.jsonl": [r, r], "01/120000Z-copy.jsonl": [r]})       # the same claim in two objects and twice in one
+    write_history(root, {"2026-10-02": 15.0})
+    d = score(root)
+    assert d["inputs"]["lines"] == 3 and d["inputs"]["records"] == 1 and d["inputs"]["duplicateRecords"] == 2
+    assert h(d["allRecords"]["overall"], 1)["predictions"] == 1
+    assert S.to_json(score(root)) == S.to_json(d)
+
+
+def test_scoring_uses_only_the_stored_thresholds_never_a_baseline(root):
+    # Same realised path; two records that differ ONLY in their stored thresholds/bands give different, predictable answers.
+    tight = record("2026-10-01", lake="Tight Lake|TN", rapid=0.1, rate_p95=0.1, band={"p02": 14, "p10": 14.5, "p50": 15, "p90": 15.2, "p98": 15.4}, horizons=(1,))
+    loose = record("2026-10-01", lake="Loose Lake|TN", rapid=2.0, rate_p95=2.0, band={"p02": 0, "p10": 5, "p50": 15, "p90": 25, "p98": 30}, horizons=(1,))
+    write_ledger(root, {"01/120000Z-r1.jsonl": [tight, loose]})
+    for lake in ("Tight Lake|TN", "Loose Lake|TN"):
+        write_history(root, {"2026-10-01": 15.0, "2026-10-02": 15.5}, lake=lake)
+    # A baseline artifact that would give a different answer sits right there; the scorer must not look at it.
+    os.makedirs(os.path.join(root, "baselines", "Tight_Lake_TN"))
+    open(os.path.join(root, "baselines", "Tight_Lake_TN", "b.json"), "w").write("{}")
+    reads = []
+
+    class Spy(S.LocalSource):
+        def read(self, path):
+            reads.append(path)
+            return super().read(path)
+    d = S.score_month(Spy(root), Spy(root), "2026-10", AS_OF, 3)
+    lakes = d["primary"]["byLake"]
+    t, l = h(lakes["Tight Lake|TN"], 1), h(lakes["Loose Lake|TN"], 1)
+    assert t["coverageP10P90"]["inside"] == 0 and l["coverageP10P90"]["inside"] == 1
+    assert t["rapidExceedanceVsStoredThreshold"]["exceeded"] == 1 and l["rapidExceedanceVsStoredThreshold"]["exceeded"] == 0
+    assert reads and all(p.startswith(("predictions/", "history/")) for p in reads)
+
+
+@pytest.mark.parametrize("kw,reason", [
+    (dict(obs_at="2026-10-01T13:00:00Z", gen="2026-10-01T12:30:00Z"), "observationAfterPrediction"),
+    (dict(targets={1: "2026-10-01"}), "targetNotBasePlusDays"),                       # the base day's own row would be the "realisation"
+    (dict(targets={1: "2026-09-30"}), "targetNotBasePlusDays"),                       # a value from before the prediction
+    (dict(targets={1: "2026-10-03"}), "targetNotBasePlusDays"),                       # date does not match days
+    (dict(obs_at="2026-10-01T04:30:00Z", gen="2026-10-02T04:30:00Z"), "baseDateNotObservationDate"),   # 23:30 Chicago on Sep 30 is not base Oct 1
+    (dict(obs_at="2026-10-02T03:30:00Z", gen="2026-10-02T04:30:00Z", targets={}), None),               # 22:30 Oct 1 local, made 23:30 Oct 1 local: fine
+])
+def test_no_hindsight_records_that_need_it_are_rejected_not_scored(root, kw, reason):
+    r = record("2026-10-01", horizons=(1,), **kw)
+    write_ledger(root, {"01/120000Z-r1.jsonl": [r]})
+    write_history(root, {"2026-09-30": 15.0, "2026-10-01": 15.0, "2026-10-02": 15.0, "2026-10-03": 15.0})
+    d = score(root)
+    if reason is None:
+        assert d["inputs"]["invalidRecords"] == 0 and d["inputs"]["records"] == 1
+        return
+    assert d["inputs"]["invalidReasons"] == {reason: 1}
+    assert d["inputs"]["records"] == 0 and d["primary"]["overall"]["records"] == 0
+    assert any(w.startswith("INVALID_RECORDS") for w in d["warnings"])
+
+
+def test_target_on_the_day_the_prediction_was_made_is_not_a_realisation(root):
+    # Observation 23:00 Oct 1 local (Chicago = 04:00Z Oct 2), made 01:00 Oct 2 local: base Oct 1, +1 d target Oct 2 is the day it was made.
+    r = record("2026-10-01", horizons=(1,), obs_at="2026-10-02T04:00:00Z", gen="2026-10-02T06:00:00Z")
+    write_ledger(root, {"02/060000Z-r1.jsonl": [r]})
+    write_history(root, {"2026-10-02": 15.0})
+    d = score(root)
+    assert d["inputs"]["invalidReasons"] == {"targetNotAfterPredictionDay": 1}
+
+
+def test_records_generated_after_the_as_of_date_are_excluded(root):
+    write_ledger(root, {"05/120000Z-r1.jsonl": [record("2026-10-05", horizons=(1,))]})
+    write_history(root, {"2026-10-06": 15.0})
+    d = score(root, as_of=dt.date(2026, 10, 4))
+    assert d["inputs"]["futureDatedRecords"] == 1 and d["inputs"]["records"] == 0
