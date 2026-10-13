@@ -35,6 +35,8 @@ let package = Package(
             path: "Sources/SectorEngineServer"),
         // Clarity Fusion Stage 2's historical replay; not built into the image.
         .executableTarget(name: "ClarityReplay", dependencies: ["SectorEngine"], path: "Sources/ClarityReplay"),
+        // Lake Brain: one on-demand run → gs://sector-lake-brain history + the Brain RTDB (Sector Ops reads it).
+        .executableTarget(name: "LakeBrainJob", dependencies: ["SectorEngine"], path: "Sources/LakeBrainJob"),
         .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine"], path: "Tests/SectorEngineTests"),
     ]
 )
