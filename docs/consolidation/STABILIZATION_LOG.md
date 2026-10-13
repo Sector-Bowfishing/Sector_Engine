@@ -112,3 +112,36 @@ just no longer checked out) · lineage documented ✓ · full suite passes ✓.
 **Files changed (this checkpoint):** `docs/production/PRODUCTION_LINEAGE.md`,
 `docs/consolidation/STABILIZATION_LOG.md`. **Rollback:** `git reset --hard
 archive/main-pre-ff-2026-10-12` would un-fast-forward main (not needed; FF is additive).
+
+---
+
+## Phase 2 — Production fix reconciliation — PASS (customer-semantics items preserved for Michael)
+
+**Goal:** known lost/never-shipped fixes represented correctly on canonical `main`.
+Detail: `docs/consolidation/PHASE2_FIX_RECONCILIATION.md`.
+
+**Integrated (cherry-picks onto main, conflicts resolved against production):**
+- Regression restore: `e88f7002` falling-water copy, `23232a49` rain gate (+test) — the
+  fix that served customers 09-17→09-23 and was dropped on 09-23.
+- `d4b67085` severe-warning parity (tonight capped like the gauge) — resolved against Stage 2E
+  via `ConditionsSnapshot.engineInput(...)` carrying production's full builder list.
+- `42032991` USGS OGC migration (legacy fallback) — resolved: `HTTP.get` transport, OGC only
+  for bbox queries, surface-sensor filter kept on both paths. **Deploy prerequisite:**
+  `USGS_API_KEY` on Cloud Run (Michael); without it behavior = today's legacy path.
+- One canonical `deploy.sh` (rain-gate + hardening lineages + on-main policy gate; live sizing).
+- `ops/setup_alerting.py` checked in, not run.
+
+**Superseded with evidence:** `32f21c4c` (older USGS migration), `0f13f0bc` (lake-zone
+times; production handles TZ), `a021de86`/`77fa75ab` (USGS fetch internals rewritten).
+
+**Preserved, not merged (customer semantics / build-system — need approval):** `0e865d2e`,
+`abc793f2`, `b57cfe7d`, `f04ae4e3`, `198d5dce`, `f67e42e9`, `4dd43e7d` on
+`fix/pressure-consistency`; `wip/gauge-context-2026-09-14`. `deploy/intel-guardrails-5a`
+untouched (policy).
+
+**Tests:** `swift test` **169 executed, 0 failures** (154 baseline + 15 new: rain gate,
+severe-warning parity test20b, USGS fixture tests). **No deploy. No customer behavior
+changed in production** (nothing deployed); the next deploy from main restores the rain gate.
+
+**Checkpoint commits:** `c153ea01`, `e1a4e6ac`, `fbd6f4cf`, USGS pick, deploy/ops commit,
+this log. **Rollback:** `git reset --hard 08f453ed` (Phase 1 checkpoint) on main.
