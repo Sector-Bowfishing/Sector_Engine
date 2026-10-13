@@ -7,3 +7,4 @@
 3. **Lake draw eligibility** was checked against Registry v1: all 12 drawn lakes are ESTIMATED, confidence HIGH, no blocker. A drawn lake that Registry v2 (or any later version) downgrades is replaced by the next in its frozen stratum order, with the replacement logged.
 4. Part B lake status was checked against Registry v1: Lake Guntersville (AUDITED, HIGH, unblocked) and Lake Hartwell (ESTIMATED, HIGH, unblocked) are eligible.
 5. Same-water directory IDs (registry `memberIds`) count as **one** lake for independence and volume.
+6. **Pair candidates for the ESTIMATED lakes (Hartwell, Toledo Bend) were regenerated from the Registry v1 polygons** before any session (the first draft, built from older engine polygons, put most banks > 300 m from the registry shoreline). `data/field_pairs_candidates.json` is the regenerated file; its sha256 is pinned in the pre-registration freeze (`revision` note). No outcome existed when this was done.

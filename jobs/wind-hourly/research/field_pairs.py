@@ -13,6 +13,7 @@ from sector_wind.brain import fleet as FL
 from sector_wind.brain.state import decode_fetch_table
 from matched_bank_validation import audited_tables, ENGINE, load_poly
 
+REGISTRY = os.path.expanduser("~/Desktop/Development/Sector_Research_Data/wind-brain/registry/")
 AXES = {"SW-NE": 225, "S-N": 180, "W-E": 270, "NW-SE": 315}
 LAKES = [("Guntersville|AL", "pilot"), ("Wheeler|AL", "pilot"), ("Wilson|AL", "pilot"), ("Pickwick Lake|TN", "pilot"), ("Lake Hartwell|SC", "pilot (ESTIMATED geometry)"),
          ("Mille Lacs Lake|MN", "open natural lake"), ("Lake McConaughy|NE", "plains reservoir"), ("Toledo Bend Reservoir|TX", "large southern reservoir (ESTIMATED geometry)"),
@@ -47,8 +48,12 @@ def pick(lake_id, kind):
     if tier == "AUDITED":
         A = audited_tables()[lake_id]; banks, T = A["banks"], A["table"]
     else:
-        feat = next(f for f in json.load(gzip.open(ENGINE))["features"] if f["properties"]["id"] == lake_id)
-        obj = ES.build_estimated_table(load_poly(feat), lake_id); banks, T = decode_fetch_table(obj)
+        # ESTIMATED lakes: the published Lake Registry v1 analysis polygon (current geometry asset; the older engine polygons put banks >300 m from the registry shoreline)
+        reg = {l["lakeId"]: l for l in json.load(open(REGISTRY + "lakes.v1.json"))["lakes"]}[lake_id]
+        j = json.load(open(REGISTRY + "geom/" + reg["lakeKey"] + ".geojson"))
+        g = j["features"][0]["geometry"] if j.get("type") == "FeatureCollection" else (j["geometry"] if j.get("type") == "Feature" else j)
+        from shapely.geometry import shape
+        obj = ES.build_estimated_table(ES.clean_geometry(shape(g)), lake_id); banks, T = decode_fetch_table(obj)
     idx = [i for i, b in enumerate(banks) if not b.get("belowResolution") and EX.facing_deg(b) is not None]
     mx = float(np.percentile([BF.nine_ray(T[i], t) for i in idx[::max(1, len(idx) // 400)] for t in (225, 180, 270, 315, 45, 0, 90, 135)], 95))
     hi = max(1200.0, min(3000.0, 0.5 * mx)); lo = 300.0
