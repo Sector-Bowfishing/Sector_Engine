@@ -15,7 +15,7 @@ Assets (SHA-256 prefix): directory `9af94218486d`, Lake Brain geometry flags `a6
 Before the BLOCKED overlay: AUDITED 74, ESTIMATED_HIGH 302, ESTIMATED_MEDIUM 169. **Bank labels may be produced for 528 lakes** (`exposure_allowed` in the committed manifest): 65 audited + 463 estimated.
 
 ## Findings that change earlier statements
-1. **Nine AUDITED lakes carry a Lake Brain `identity_risk` flag** (directory point far from the polygon the table was built from): Andrews Lake DE, Griffith Lake DE, Eagle Lake MS, Hiwassee Lake NC, Long Lake ME, Sherman Reservoir NE and others. An audited table is only as good as the lake identity it was seeded from, so these are BLOCKED until Lake Brain resolves identity. "AUDITED = trustworthy" is false for these.
+1. **Six AUDITED lakes carry a Lake Brain `identity_risk` flag** (directory point far from the polygon the table was built from): Andrews Lake DE, Griffith Lake DE, Eagle Lake MS, Hiwassee Lake NC, Long Lake ME, Sherman Reservoir NE (three more audited lakes are AK/HI, see 2). An audited table is only as good as the lake identity it was seeded from, so these are BLOCKED until Lake Brain resolves identity. "AUDITED = trustworthy" is false for these.
 2. **Alaska and Hawaii (21 lakes)** have geometry but no tested NBM domain: BLOCKED for any Wind output beyond a labelled "unavailable".
 3. **126 directory points are off-water** (Lake Brain `off_water`); sampling the forecast at that point is fine at 2.5 km but the state must keep saying "representative point".
 4. The earlier "471 ESTIMATED / 76 POINT_ONLY" counts merge LOW-confidence and identity cases differently; this table separates them.
@@ -29,7 +29,7 @@ Before the BLOCKED overlay: AUDITED 74, ESTIMATED_HIGH 302, ESTIMATED_MEDIUM 169
 Legend: A = audited geometry, exposure modeled; E = polygon estimate (bank-level matched checks vs audited pass, lake-level dominant direction failed); FV = field-validation candidate.
 
 ## All lakes
-| lakeId | lake | geometry source | conf. | fetch | bank labels | validation tier | eligibility |
+| lakeId | category | geometry source | conf. | fetch | bank labels | validation tier | eligibility |
 |---|---|---|---|---|---|---|---|
 | Abiquiu Lake|NM | ESTIMATED_MEDIUM_GEOMETRY | name | MEDIUM | estimated | yes (modeled) | E | tonight only; labels internal |
 | Alamo|AZ | LOW_GEOMETRY | name | LOW | estimated | no | none | tonight only |
