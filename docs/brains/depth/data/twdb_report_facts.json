@@ -1,0 +1,126 @@
+{
+ "Cedar Creek Reservoir|TX": {
+  "reportUrl": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/CedarCreek/2017-10/CedarCreek2017_FinalReport2.pdf",
+  "pdfSha256": "3fd4af497612d6f3c3b53aec0ce9f03d6259e54251eed183fd61d21385c3a125",
+  "pdfBytes": 24256012,
+  "reportAcresAtConservationPool": 33099.0,
+  "statedConservationPoolFt": 322.0,
+  "tableAcresAtConservationPool": 33099.5,
+  "tableAcresAtBasis": 33099.5,
+  "basisFt": 322.0,
+  "tableTopFt": 322.0,
+  "tableBottomFt": 257.6,
+  "tableStepFt": 0.1,
+  "areaRatioTableOverReportAtConservationPool": 1.0,
+  "datumLabelsInReportText": [
+   "NGVD29",
+   "NAVD88"
+  ],
+  "surveyDateSnippets": [
+   "April 3 and October 26, 2017",
+   "April 3 and October 26, 2017"
+  ]
+ },
+ "Lake Conroe|TX": {
+  "reportUrl": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/conroe/2020-10/Conroe2020_FinalReport.pdf",
+  "pdfSha256": "4257a20728b01ea12757e32701af004c60b4c2decfa136193bfa91a22b8aef3e",
+  "pdfBytes": 6833051,
+  "reportAcresAtConservationPool": 19894.0,
+  "statedConservationPoolFt": 201.0,
+  "tableAcresAtConservationPool": 19894.4,
+  "tableAcresAtBasis": 19894.4,
+  "basisFt": 201.0,
+  "tableTopFt": 201.0,
+  "tableBottomFt": 139.6,
+  "tableStepFt": 0.1,
+  "areaRatioTableOverReportAtConservationPool": 1.0,
+  "datumLabelsInReportText": [
+   "NGVD29",
+   "NAVD88"
+  ],
+  "surveyDateSnippets": [
+   "March 2 and October 30, 2020",
+   "March 2 and October 30, 2020"
+  ]
+ },
+ "Lake Fork Reservoir|TX": {
+  "reportUrl": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/Fork/2009-10/Fork2009_FinalReport.pdf",
+  "pdfSha256": "d40e863437c090179cde1623dc04d5e140b82ad723330282c5eaf63f83dace11",
+  "pdfBytes": 9347624,
+  "reportAcresAtConservationPool": 26889.0,
+  "statedConservationPoolFt": 403.0,
+  "tableAcresAtConservationPool": 26889.1,
+  "tableAcresAtBasis": 26889.1,
+  "basisFt": 403.0,
+  "tableTopFt": 403.0,
+  "tableBottomFt": 327.9,
+  "tableStepFt": 0.1,
+  "areaRatioTableOverReportAtConservationPool": 1.0,
+  "datumLabelsInReportText": [
+   "NGVD29"
+  ],
+  "surveyDateSnippets": [
+   "July 28, 2009, and November 5, 2009",
+   "July 28, 2009, and November 5, 2009"
+  ]
+ },
+ "Lake Livingston|TX": {
+  "reportUrl": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/Livingston/2019-11/Livingston2019_FinalReport.pdf",
+  "pdfSha256": "bc59c219e94df61167d68204991e0bc27fb92360173391f9d848da160473de72",
+  "pdfBytes": 25280552,
+  "reportAcresAtConservationPool": 77729.0,
+  "statedConservationPoolFt": 131.0,
+  "tableAcresAtConservationPool": 77729.3,
+  "tableAcresAtBasis": 78169.6,
+  "basisFt": 131.1,
+  "tableTopFt": 131.1,
+  "tableBottomFt": 57.4,
+  "tableStepFt": 0.1,
+  "areaRatioTableOverReportAtConservationPool": 1.0,
+  "datumLabelsInReportText": [
+   "NGVD29",
+   "NAVD88"
+  ],
+  "surveyDateSnippets": [
+   "September 17, 2018, and November 21, 2019",
+   "September 17, 2018, and November 21, 2019"
+  ]
+ },
+ "Lake Tawakoni|TX": {
+  "reportUrl": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/tawakoni/2009-08/Tawakoni2009_FinalReport.pdf",
+  "pdfSha256": "368fcf4532b2a52f2b0b1a7c5125dfab14b46755c445ca0f549050fd18ae343b",
+  "pdfBytes": 7520653,
+  "reportAcresAtConservationPool": 37325.0,
+  "statedConservationPoolFt": 437.5,
+  "tableAcresAtConservationPool": 37325.4,
+  "tableAcresAtBasis": 37325.4,
+  "basisFt": 437.5,
+  "tableTopFt": 437.5,
+  "tableBottomFt": 374.4,
+  "tableStepFt": 0.1,
+  "areaRatioTableOverReportAtConservationPool": 1.0,
+  "datumLabelsInReportText": [
+   "NGVD29"
+  ],
+  "surveyDateSnippets": [
+   "June 10, 2009, and August 18, 2009",
+   "June 10, 2009, and August 18, 2009"
+  ]
+ },
+ "Lake Texoma|TX": {
+  "reportUrl": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/Texoma/2002-07/Texoma2002_FinalReport.pdf",
+  "pdfSha256": "51b2f9f2a2866e7425b631bf554d3d59e401625d9dff1b692a4abdcaff67cecf",
+  "pdfBytes": 9991066,
+  "reportAcresAtConservationPool": 74686.0,
+  "statedConservationPoolFt": 617.0,
+  "tableAcresAtConservationPool": 74685.7,
+  "tableAcresAtBasis": 80052.9,
+  "basisFt": 620.0,
+  "tableTopFt": 620.0,
+  "tableBottomFt": 520.6,
+  "tableStepFt": 0.1,
+  "areaRatioTableOverReportAtConservationPool": 1.0,
+  "datumLabelsInReportText": [],
+  "surveyDateSnippets": []
+ }
+}

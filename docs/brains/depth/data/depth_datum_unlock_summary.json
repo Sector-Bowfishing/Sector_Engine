@@ -1,0 +1,46 @@
+{
+ "blocked": 529,
+ "plausibleBlocked": 233,
+ "groups": {
+  "cwms-pool-datum-unstated": {
+   "n": 47,
+   "plausible": 41
+  },
+  "a2w-pool-datum-unstated": {
+   "n": 36,
+   "plausible": 33
+  },
+  "usgs-pairing": {
+   "n": 73,
+   "plausible": 31
+  },
+  "a2w-local-or-blank": {
+   "n": 24,
+   "plausible": 22
+  },
+  "rise-usbr": {
+   "n": 50,
+   "plausible": 48
+  },
+  "nwps": {
+   "n": 41,
+   "plausible": 32
+  },
+  "duke-local-scale": {
+   "n": 8,
+   "plausible": 8
+  },
+  "other-operator": {
+   "n": 45,
+   "plausible": 17
+  },
+  "conversion-disabled": {
+   "n": 1,
+   "plausible": 1
+  },
+  "lake-binding": {
+   "n": 204,
+   "plausible": 0
+  }
+ }
+}
