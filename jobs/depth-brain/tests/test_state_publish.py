@@ -200,3 +200,16 @@ def test_registry_carries_computed_ops_summary_not_hardcoded_numbers():
     assert reg["blockers"] and all(isinstance(b, str) for b in reg["blockers"])
     assert reg["breakdowns"]["rollout"]["BLOCKED"] == 1
     assert all(isinstance(v, (int, float)) for grp in reg["breakdowns"].values() for v in grp.values())    # fits Ops' Record<string, Record<string, number>>
+
+
+def test_brain_plan_publish_skip_and_targeting():
+    from depth_brain.state import brain_plan, input_fingerprint
+    m = {"manifestVersion": "t1", "candidates": [candidate(lakeId="A|AL"), candidate(lakeId="B|AL", rollout="MEDIUM_CONFIDENCE")]}
+    ls = {"A|AL": lake_state(593.6)}
+    fp = {"A|AL": input_fingerprint(m["candidates"][0], ls["A|AL"], "t1")}
+    assert brain_plan(fp, m, ls, C.BRAIN_VERSION)["action"] == "SKIP"                       # B has no state and is not a pilot: nothing to do
+    ls2 = {"A|AL": lake_state(593.4, obs="2026-10-13T19:00:00Z")}
+    p = brain_plan(fp, m, ls2, C.BRAIN_VERSION)
+    assert p["action"] == "PUBLISH" and p["lakes"] == ["A|AL"]
+    assert brain_plan(fp, m, ls, "depth-brain-0.0.1")["action"] == "PUBLISH"                # version change
+    assert brain_plan({}, m, ls, C.BRAIN_VERSION)["action"] == "PUBLISH"                    # first run

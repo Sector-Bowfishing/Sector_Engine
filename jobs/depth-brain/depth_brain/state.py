@@ -177,3 +177,22 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
     meta = {"readiness": readiness, "kind": state["kind"], "stale": bool(evidence_stale), "mode": eff["mode"], "tier": tier,
             "shiftFt": (round(res.shift_ft, 2) if ok else None), "reasons": list(res.reasons)}
     return state, meta
+
+
+def brain_plan(published_fingerprints: dict, manifest: dict, lake_states: dict, published_registry_version: str | None = None) -> dict:
+    """Brain-level orchestrator verdict (contract section 11): PUBLISH when any evaluable lake's input fingerprint changed, a lake lost/gained a state,
+    or the Depth version changed; else SKIP. Pure; reads nothing. Not registered with the orchestrator (shadow)."""
+    mv = manifest.get("manifestVersion", "unversioned")
+    reasons, changed = [], []
+    if published_registry_version != C.BRAIN_VERSION:
+        reasons.append(f"Depth version {published_registry_version!r} -> {C.BRAIN_VERSION!r}")
+    for rec in manifest["candidates"]:
+        lid = rec["lakeId"]
+        ls = lake_states.get(lid)
+        if ls is None and rec.get("rollout") != "PILOT_VERIFIED" and lid not in published_fingerprints:
+            continue                                            # never evaluated and nothing to evaluate
+        if published_fingerprints.get(lid) != input_fingerprint(rec, ls, mv):
+            changed.append(lid)
+    if changed:
+        reasons.append(f"{len(changed)} lake(s) with a changed input fingerprint")
+    return {"action": "PUBLISH" if reasons else "SKIP", "reasons": reasons or ["inputs unchanged"], "lakes": sorted(changed)}
