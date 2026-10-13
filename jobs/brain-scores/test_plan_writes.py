@@ -1,10 +1,12 @@
 """plan_writes: a score node is rewritten when its CONTENT changes (breakdown/uncapped behind a gate cap), the activity event
 only when the displayed value/version/basis changes; identical content (ignoring the refresh timestamp) writes nothing."""
+import json
 import datetime as dt
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import score_brains  # noqa: E402
 from score_brains import UPSTREAM, plan_writes  # noqa: E402
 
 NOW = dt.datetime(2026, 10, 13, 19, 0, tzinfo=dt.timezone.utc)
@@ -72,3 +74,16 @@ def test_empty_containers_read_back_from_rtdb_do_not_trigger_a_rewrite():
     computed["wind"]["scoreBreakdown"] = {"x": {"value": 1}}
     updates, changed = plan_writes(computed, brains(), NOW, None, None, published)
     assert "scores/wind" in updates and all(k == "scores/wind" for k in updates)
+
+
+def test_frozen_block_with_rtdb_illegal_dimension_keys_is_publishable():
+    """Incident 2026-10-13 21:50Z: the Wind block's 'Freshness/reliability' key made the whole scores update fail (IllegalKey)."""
+    from sector_brain_platform.keys import check_keys
+    sb = score_brains.rtdb_safe({"wind": {"scoreBreakdown": {"Freshness/reliability": {"value": 1}, "Provenance/Unknown": {"value": 0}}}})
+    check_keys(sb)
+    assert "Freshness-reliability" in sb["wind"]["scoreBreakdown"]
+
+
+def test_committed_frozen_scores_are_publishable_after_sanitising():
+    from sector_brain_platform.keys import check_keys
+    check_keys(score_brains.rtdb_safe(json.load(open(score_brains.FROZEN))))

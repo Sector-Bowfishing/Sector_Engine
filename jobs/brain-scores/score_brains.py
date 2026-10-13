@@ -16,6 +16,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -75,8 +76,16 @@ def fetch_facts(db) -> dict:
     }
 
 
+def rtdb_safe(o):
+    """Frozen blocks come from generators on other branches and may name dimensions with RTDB-illegal key characters (the Wind block has
+    'Freshness/reliability'); one illegal key fails the whole multi-path update. Replace them in KEYS only (values untouched)."""
+    if isinstance(o, dict):
+        return {re.sub(r"[.$#\[\]/\x00-\x1f\x7f]", "-", k): rtdb_safe(v) for k, v in o.items()}
+    return [rtdb_safe(v) for v in o] if isinstance(o, list) else o
+
+
 def compute(facts: dict, now: dt.datetime) -> dict:
-    frozen = json.load(open(FROZEN))
+    frozen = rtdb_safe(json.load(open(FROZEN)))
     return {
         "lake-brain": score_lake(facts["lake"], now),
         "water-temp": frozen_score(frozen["water-temp"]),
