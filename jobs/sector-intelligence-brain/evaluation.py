@@ -11,6 +11,10 @@ module turns one lake's published snapshot (`/snapshots/{k}/latest`), fleet row,
     quality and knowledge completeness), degraded inputs, synthesis, version, validation state and
     full provenance.
 
+v2 adds the pilot EVIDENCE LAYER (`evidence.py`, contract intelligence-evidence-v1): per-factor evidence, per-species
+assessment (UNSUPPORTED/UNRANKED until Biological publishes approved response bands), weakest-link confidence and a
+structured explanation. All v1 fields are unchanged.
+
 The synthesis produces NO fishing judgment and NO customer score: the customer path is still the
 Engine Conditions Score, which does not read this evaluation. Pilot lakes only.
 """
@@ -22,8 +26,9 @@ import json
 import statistics
 
 import brain_platform as bp
+import evidence as evd
 
-EVAL_VERSION = "intelligence-eval-v1"
+EVAL_VERSION = "intelligence-eval-v2"
 PILOT_LAKES = ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Lake Hartwell|SC"]
 CONDITION_SLOTS = (("lake-brain", "lake", "lakeState"), ("water-temp", "waterTemp", "waterTemperature"),
                    ("water-clarity", "waterClarity", "waterClarity"), ("wind", "wind", "wind"))
@@ -178,14 +183,20 @@ def evaluate(lake_id: str, *, snapshot: dict | None, fleet_row: dict | None, pre
             limiting.append(f"{slot}: {r}")
     limiting.append("no outcome validation exists for this evaluation (NOT_VALIDATED)")
 
+    evidence = evd.build_evidence(inputs=inputs, snapshot=snapshot, presence=presence, species=species)
+    es = evidence["summary"]
+    if es["speciesTotal"] and not es["ratingsIssued"]:
+        limiting.append(f"evidence: no species could be rated ({es['speciesTotal']} present; no approved Biological response bands)")
+    limiting.append("evidence: depth and vegetation are UNKNOWN (no Depth or Vegetation Brain); wind exposure is lake-level only")
+
     published = sum(1 for i in inputs.values() if i["status"] == "PUBLISHED")
     sources = [{"sourceType": "brainState", "sourceId": f"{u['brainId']}@{u.get('brainVersion') or '?'}", "lastObservationAt": u.get("generatedAt")}
                for u in used.values()]
-    flags = ["PILOT", "NO_CUSTOMER_SCORE"] + (["DEGRADED_INPUTS"] if degraded_inputs else [])
+    flags = ["PILOT", "NO_CUSTOMER_SCORE", "EVIDENCE_LAYER_PILOT"] + (["DEGRADED_INPUTS"] if degraded_inputs else [])
     return _strip({
         "lakeId": lake_id, "kind": "evaluated", "evaluationStatus": "EVALUATED_PILOT", "evaluationVersion": EVAL_VERSION,
         "generatedAt": bp.iso(now),
-        "inputsUsed": used, "inputs": inputs, "drivers": drivers, "limitingFactors": limiting, "degradedInputs": degraded_inputs,
+        "inputsUsed": used, "inputs": inputs, "evidence": evidence, "drivers": drivers, "limitingFactors": limiting, "degradedInputs": degraded_inputs,
         "synthesis": {"inputCompleteness": f"{published} of {len(inputs)} inputs fresh", "inputsFresh": published,
                       "inputsDegraded": len(degraded_inputs),
                       "note": "Normalized specialist inputs assembled with provenance. No fishing judgment and no customer "

@@ -15,3 +15,8 @@ python -m unittest discover -s tests
 - **Credentials:** the gcloud CLI token on a developer machine, or the metadata server on Cloud Run.
 - **Scheduling:** none. Scheduling belongs to the future Sector Brain Orchestrator (see `orchestration.py`).
 - **`brain_platform.py`:** a verbatim copy of the Water Clarity / Biological platform module. Lift it into a shared module when the Brain platform is unified.
+
+
+## Pilot evidence layer (intelligence-eval-v2)
+
+`evidence.py` adds a structured, internal, non-customer `evidence` block to each pilot evaluation: per-factor evidence (kind, age, staleness, weakest-link confidence with basis), per-species assessment (UNSUPPORTED/UNRANKED until the Biological Brain publishes approved response bands) and a structured explanation. Unknown never improves a rating. It produces no score and changes no customer behaviour. Contract: `docs/brains/SECTOR_INTELLIGENCE_EVIDENCE_LAYER.md`. Tests: `python3 -m unittest discover -s tests`.
