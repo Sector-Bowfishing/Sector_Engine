@@ -1,0 +1,1529 @@
+{
+ "criteriaVersion": "mismatch14-v1",
+ "runDate": "2026-10-13",
+ "results": {
+  "Bartlett|AZ": {
+   "lake": "Bartlett|AZ",
+   "tests": [
+    {
+     "id": "hads-fresh_vs_nwps",
+     "label": "live NWPS BRTA3 HPIRG (30 d) tied to IEM HADS BRTA3 HPIR*; history = IEM HADS BRTA3 HP (fresh pull, the runtime source)",
+     "live": {
+      "kind": "hads",
+      "lid": "BRTA3",
+      "pe": "HPIR"
+     },
+     "history": {
+      "kind": "hads",
+      "lid": "BRTA3",
+      "pe": "HPIR"
+     },
+     "historyDays": 2438,
+     "historyFirst": "2020-01-01",
+     "O4": true,
+     "historyLast": "2026-10-13",
+     "staleDays": 0,
+     "liveDays": 1382,
+     "liveRange": [
+      "2023-01-01",
+      "2026-10-13"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-15",
+       "2026-10-13"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 1765.39,
+      "liveMedianLast30d": 1785.29,
+      "diffFt": 19.9
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 289.28,
+      "max": 1787.95
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 289.28,
+      "max": 1787.95
+     },
+     "lastDays": {
+      "2026-10-11": 1786.75,
+      "2026-10-12": 1786.98,
+      "2026-10-13": 1787.14
+     },
+     "s1a": {
+      "matchedDays": 31,
+      "medianAbsFt": 0.0,
+      "maxAbsFt": 0.03,
+      "S1a": true
+     }
+    },
+    {
+     "id": "hads-fresh_vs_cachefile",
+     "label": "integrity: fresh IEM pull vs the research cache file hads_BRTA3_HPIRG",
+     "live": {
+      "kind": "hads",
+      "lid": "BRTA3",
+      "pe": "HPIR"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding2/history/hads_BRTA3_HPIRG.csv.gz"
+     },
+     "historyDays": 5361,
+     "historyFirst": "2010-12-07",
+     "O4": false,
+     "historyLast": "2025-12-31",
+     "staleDays": 286,
+     "liveDays": 1096,
+     "liveRange": [
+      "2023-01-01",
+      "2025-12-31"
+     ],
+     "overlap": {
+      "window": [
+       "2023-01-02",
+       "2025-12-31"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.029,
+      "maxAbsFt": 552.259,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 1759.55,
+      "liveMedianLast30d": 1785.08,
+      "diffFt": 25.5
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 289.28,
+      "max": 1787.95
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 657.47,
+      "max": 1787.94
+     },
+     "lastDays": {
+      "2025-12-29": 1781.45,
+      "2025-12-30": 1781.07,
+      "2025-12-31": 1780.65
+     }
+    },
+    {
+     "id": "hads-fresh_vs_holdout-composite",
+     "label": "the series the hold-out QA used (plan composite)",
+     "live": {
+      "kind": "hads",
+      "lid": "BRTA3",
+      "pe": "HPIR"
+     },
+     "history": {
+      "kind": "file",
+      "file": "plan/history/composite/Bartlett_AZ.csv.gz"
+     },
+     "historyDays": 5712,
+     "historyFirst": "2010-12-31",
+     "O4": true,
+     "historyLast": "2026-10-13",
+     "staleDays": 0,
+     "liveDays": 1382,
+     "liveRange": [
+      "2023-01-01",
+      "2026-10-13"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-15",
+       "2026-10-13"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.025,
+      "p95AbsFt": 0.279,
+      "maxAbsFt": 1491.17,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 1765.39,
+      "liveMedianLast30d": 1785.29,
+      "diffFt": 19.9
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 289.28,
+      "max": 1787.95
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 1657.95,
+      "max": 1787.91
+     },
+     "lastDays": {
+      "2026-10-11": 1786.75,
+      "2026-10-12": 1786.98,
+      "2026-10-13": 1787.14
+     }
+    }
+   ]
+  },
+  "Blue Mesa Reservoir|CO": {
+   "lake": "Blue Mesa Reservoir|CO",
+   "tests": [
+    {
+     "id": "rise78_vs_rise78",
+     "label": "live RISE 78 fresh vs generator history rise_78 (research cache)",
+     "live": {
+      "kind": "rise",
+      "item": "78"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_78.csv.gz"
+     },
+     "historyDays": 21848,
+     "historyFirst": "1965-11-30",
+     "O4": true,
+     "historyLast": "2026-10-11",
+     "staleDays": 2,
+     "liveDays": 1096,
+     "liveRange": [
+      "2023-10-13",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-13",
+       "2026-10-11"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 7467.47,
+      "liveMedianLast30d": 7413.19,
+      "diffFt": -54.3
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 7412.4,
+      "max": 7499.75
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 7412.4,
+      "max": 7499.75
+     },
+     "lastDays": {
+      "2026-10-10": 7412.51,
+      "2026-10-11": 7412.4,
+      "2026-10-12": 7412.21
+     }
+    }
+   ]
+  },
+  "Glendo Reservoir|WY": {
+   "lake": "Glendo Reservoir|WY",
+   "tests": [
+    {
+     "id": "rise374_vs_rise374",
+     "label": "live RISE 374 fresh vs generator history rise_374 (research cache)",
+     "live": {
+      "kind": "rise",
+      "item": "374"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_374.csv.gz"
+     },
+     "historyDays": 25197,
+     "historyFirst": "1957-10-17",
+     "O4": true,
+     "historyLast": "2026-10-11",
+     "staleDays": 2,
+     "liveDays": 1096,
+     "liveRange": [
+      "2023-10-13",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-13",
+       "2026-10-11"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.005,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 4612.62,
+      "liveMedianLast30d": 4592.94,
+      "diffFt": -19.7
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 4582.13,
+      "max": 4634.09
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 4582.13,
+      "max": 4634.09
+     },
+     "lastDays": {
+      "2026-10-10": 4595.14,
+      "2026-10-11": 4595.31,
+      "2026-10-12": 4595.46
+     }
+    }
+   ]
+  },
+  "Jordanelle Reservoir|UT": {
+   "lake": "Jordanelle Reservoir|UT",
+   "tests": [
+    {
+     "id": "rise471_vs_rise471",
+     "label": "live RISE 471 fresh vs generator history rise_471 (research cache)",
+     "live": {
+      "kind": "rise",
+      "item": "471"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_471.csv.gz"
+     },
+     "historyDays": 12301,
+     "historyFirst": "1993-02-05",
+     "O4": true,
+     "historyLast": "2026-10-10",
+     "staleDays": 3,
+     "liveDays": 1096,
+     "liveRange": [
+      "2023-10-12",
+      "2026-10-11"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-12",
+       "2026-10-10"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 6137.01,
+      "liveMedianLast30d": 6117.77,
+      "diffFt": -19.2
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 6114.83,
+      "max": 6166.57
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 6114.83,
+      "max": 6166.57
+     },
+     "lastDays": {
+      "2026-10-09": 6115.08,
+      "2026-10-10": 6114.83,
+      "2026-10-11": 6114.68
+     }
+    }
+   ]
+  },
+  "Navajo Reservoir|NM": {
+   "lake": "Navajo Reservoir|NM",
+   "tests": [
+    {
+     "id": "rise612_vs_rise612",
+     "label": "live RISE 612 fresh vs generator history rise_612 (research cache)",
+     "live": {
+      "kind": "rise",
+      "item": "612"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_612.csv.gz"
+     },
+     "historyDays": 23484,
+     "historyFirst": "1962-06-26",
+     "O4": true,
+     "historyLast": "2026-10-11",
+     "staleDays": 2,
+     "liveDays": 1096,
+     "liveRange": [
+      "2023-10-13",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-13",
+       "2026-10-11"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 6033.54,
+      "liveMedianLast30d": 6012.36,
+      "diffFt": -21.2
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 6009.65,
+      "max": 6053.46
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 6009.65,
+      "max": 6053.46
+     },
+     "lastDays": {
+      "2026-10-10": 6017.04,
+      "2026-10-11": 6017.07,
+      "2026-10-12": 6017.24
+     }
+    }
+   ]
+  },
+  "Pineview Reservoir|UT": {
+   "lake": "Pineview Reservoir|UT",
+   "tests": [
+    {
+     "id": "rise656_vs_rise656",
+     "label": "live RISE 656 fresh vs generator history rise_656 (research cache)",
+     "live": {
+      "kind": "rise",
+      "item": "656"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_656.csv.gz"
+     },
+     "historyDays": 17630,
+     "historyFirst": "1977-12-01",
+     "O4": true,
+     "historyLast": "2026-10-08",
+     "staleDays": 5,
+     "liveDays": 1095,
+     "liveRange": [
+      "2023-10-10",
+      "2026-10-08"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-10",
+       "2026-10-08"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 4888.01,
+      "liveMedianLast30d": 4830.8,
+      "diffFt": -57.2
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 4829.0,
+      "max": 4900.77
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 4829.0,
+      "max": 4900.77
+     },
+     "lastDays": {
+      "2026-10-06": 4830.8,
+      "2026-10-07": 4830.8,
+      "2026-10-08": 4830.8
+     }
+    }
+   ]
+  },
+  "Buffalo Bill Reservoir|WY": {
+   "lake": "Buffalo Bill Reservoir|WY",
+   "tests": [
+    {
+     "id": "rise152_vs_rise152",
+     "label": "live RISE 152 (South Fork Dike) vs generator history rise_152",
+     "live": {
+      "kind": "rise",
+      "item": "152"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_152.csv.gz"
+     },
+     "historyDays": 11338,
+     "historyFirst": "1995-08-25",
+     "O4": true,
+     "historyLast": "2026-10-11",
+     "staleDays": 2,
+     "liveDays": 1095,
+     "liveRange": [
+      "2023-10-13",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-13",
+       "2026-10-11"
+      ],
+      "matchedDays": 1094,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 5392.83,
+      "liveMedianLast30d": 5393.01,
+      "diffFt": 0.2
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 5392.0,
+      "max": 5394.16
+     },
+     "historyWindowRange": {
+      "n": 1094,
+      "min": 5392.0,
+      "max": 5394.16
+     },
+     "lastDays": {
+      "2026-10-10": 5393.1,
+      "2026-10-11": 5393.14,
+      "2026-10-12": 5393.18
+     }
+    },
+    {
+     "id": "rise152_vs_rise146",
+     "label": "live RISE 152 vs RISE 146 (Buffalo Bill Dam and Powerplants forebay; the series the hold-out QA used)",
+     "live": {
+      "kind": "rise",
+      "item": "152"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_146.csv.gz"
+     },
+     "historyDays": 27233,
+     "historyFirst": "1952-03-16",
+     "O4": true,
+     "historyLast": "2026-10-11",
+     "staleDays": 2,
+     "liveDays": 1095,
+     "liveRange": [
+      "2023-10-13",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-13",
+       "2026-10-11"
+      ],
+      "matchedDays": 1094,
+      "medianAbsFt": 25.45,
+      "p95AbsFt": 38.295,
+      "maxAbsFt": 43.64,
+      "medianSignedFt": 25.45,
+      "O1": true,
+      "O2": false,
+      "O3": false
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 5392.83,
+      "liveMedianLast30d": 5393.01,
+      "diffFt": 0.2
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 5392.0,
+      "max": 5394.16
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 5350.28,
+      "max": 5389.33
+     },
+     "lastDays": {
+      "2026-10-10": 5393.1,
+      "2026-10-11": 5393.14,
+      "2026-10-12": 5393.18
+     }
+    },
+    {
+     "id": "rise146_vs_rise146",
+     "label": "candidate correction: live RISE 146 vs history rise_146",
+     "live": {
+      "kind": "rise",
+      "item": "146"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/rise_146.csv.gz"
+     },
+     "historyDays": 27233,
+     "historyFirst": "1952-03-16",
+     "O4": true,
+     "historyLast": "2026-10-11",
+     "staleDays": 2,
+     "liveDays": 1096,
+     "liveRange": [
+      "2023-10-13",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-13",
+       "2026-10-11"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 5360.63,
+      "liveMedianLast30d": 5364.34,
+      "diffFt": 3.7
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 5350.28,
+      "max": 5389.33
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 5350.28,
+      "max": 5389.33
+     },
+     "lastDays": {
+      "2026-10-10": 5359.63,
+      "2026-10-11": 5359.33,
+      "2026-10-12": 5359.18
+     }
+    }
+   ]
+  },
+  "Canyon Lake|TX": {
+   "lake": "Canyon Lake|TX",
+   "tests": [
+    {
+     "id": "cwms-swf-1h_vs_1day",
+     "label": "live a2w SWF:SMCT2 tsid (read via CDA SWF) vs generator history ~1Day Decodes-Rev",
+     "live": {
+      "kind": "cwms",
+      "office": "SWF",
+      "name": "SMCT2.Elev.Inst.1Hour.0.Decodes-Rev"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_SWF_SMCT2.Elev.Inst._1Day.0.Decodes-Rev.csv.gz"
+     },
+     "historyDays": 22763,
+     "historyFirst": "1964-06-18",
+     "O4": true,
+     "historyLast": "2026-10-13",
+     "staleDays": 0,
+     "liveDays": 1095,
+     "liveRange": [
+      "2023-10-15",
+      "2026-10-13"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-15",
+       "2026-10-13"
+      ],
+      "matchedDays": 1095,
+      "medianAbsFt": 0.007,
+      "p95AbsFt": 0.021,
+      "maxAbsFt": 5.7,
+      "medianSignedFt": -0.006,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 888.0,
+      "liveMedianLast30d": 908.03,
+      "diffFt": 20.0
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 876.95,
+      "max": 910.19
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 876.96,
+      "max": 910.19
+     },
+     "lastDays": {
+      "2026-10-11": 907.92,
+      "2026-10-12": 907.9,
+      "2026-10-13": 907.88
+     },
+     "a2wTie": {
+      "a2wTime": "2026-10-13T19:00:00Z",
+      "a2wValueFt": 907.87,
+      "cdaOffsetMin": 0,
+      "cdaValueFt": 907.87,
+      "diffFt": 0.0,
+      "matchedPoints": 1
+     }
+    }
+   ]
+  },
+  "Detroit Lake|OR": {
+   "lake": "Detroit Lake|OR",
+   "tests": [
+    {
+     "id": "cwms-nwdp-det_vs_usgs14180500",
+     "label": "live a2w NWP:DET Elev-Forebay (read via CDA NWP) vs generator history USGS 14180500 62614 dv",
+     "live": {
+      "kind": "cwms",
+      "office": "NWDP",
+      "name": "DET.Elev-Forebay.Inst.0.0.MIXED-REV"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/usgs_14180500_62614.csv.gz"
+     },
+     "historyDays": 15411,
+     "historyFirst": "1974-10-01",
+     "O4": true,
+     "historyLast": "2026-10-11",
+     "staleDays": 2,
+     "liveDays": 1094,
+     "liveRange": [
+      "2023-10-13",
+      "2026-10-11"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-13",
+       "2026-10-11"
+      ],
+      "matchedDays": 1094,
+      "medianAbsFt": 0.465,
+      "p95AbsFt": 3.095,
+      "maxAbsFt": 14.69,
+      "medianSignedFt": 0.23,
+      "O1": true,
+      "O2": true,
+      "O3": false
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 1531.57,
+      "liveMedianLast30d": 1509.69,
+      "diffFt": -21.9
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 1445.86,
+      "max": 1562.62
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 1445.86,
+      "max": 1562.69
+     },
+     "lastDays": {
+      "2026-10-09": 1499.44,
+      "2026-10-10": 1498.55,
+      "2026-10-11": 1497.67
+     },
+     "a2wTie": {
+      "a2wTime": "2026-10-13T20:00:00Z",
+      "a2wValueFt": 1495.7,
+      "cdaOffsetMin": 0,
+      "cdaValueFt": 1495.7,
+      "diffFt": 0.0,
+      "matchedPoints": 1
+     }
+    },
+    {
+     "id": "cwms-nwdp-det_vs_usgs-fresh",
+     "label": "same, history re-pulled from USGS dv",
+     "live": {
+      "kind": "cwms",
+      "office": "NWDP",
+      "name": "DET.Elev-Forebay.Inst.0.0.MIXED-REV"
+     },
+     "history": {
+      "kind": "usgsdv",
+      "site": "14180500",
+      "param": "62614"
+     },
+     "historyDays": 2187,
+     "historyFirst": "2020-10-14",
+     "O4": true,
+     "historyLast": "2026-10-12",
+     "staleDays": 1,
+     "liveDays": 1094,
+     "liveRange": [
+      "2023-10-14",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-14",
+       "2026-10-12"
+      ],
+      "matchedDays": 1094,
+      "medianAbsFt": 0.465,
+      "p95AbsFt": 3.095,
+      "maxAbsFt": 14.69,
+      "medianSignedFt": 0.23,
+      "O1": true,
+      "O2": true,
+      "O3": false
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 1531.41,
+      "liveMedianLast30d": 1508.91,
+      "diffFt": -22.5
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 1445.86,
+      "max": 1562.62
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 1445.86,
+      "max": 1562.69
+     },
+     "lastDays": {
+      "2026-10-10": 1498.55,
+      "2026-10-11": 1497.67,
+      "2026-10-12": 1496.79
+     }
+    },
+    {
+     "id": "cwms-nwdp-det_vs_version-matched-daily",
+     "error": "history unavailable"
+    }
+   ]
+  },
+  "Jackson Lake|WY": {
+   "lake": "Jackson Lake|WY",
+   "tests": [
+    {
+     "id": "cdanwdp_vs_cwmsfile",
+     "label": "live a2w NWW:JCK tsid read via CDA NWDP vs generator history (NWDP ~1Day USBR-COMPUTED-REV)",
+     "live": {
+      "kind": "cwms",
+      "office": "NWDP",
+      "name": "JCK.Elev-Forebay.Inst.~1Day.0.USBR-COMPUTED-REV"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_NWDP_JCK.Elev-Forebay.Inst._1Day.0.USBR-COMPUTED-REV.csv.gz"
+     },
+     "historyDays": 42671,
+     "historyFirst": "1909-10-01",
+     "O4": true,
+     "historyLast": "2026-10-12",
+     "staleDays": 1,
+     "liveDays": 1091,
+     "liveRange": [
+      "2023-10-14",
+      "2026-10-12"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-14",
+       "2026-10-12"
+      ],
+      "matchedDays": 1091,
+      "medianAbsFt": 0.0,
+      "p95AbsFt": 0.0,
+      "maxAbsFt": 0.0,
+      "medianSignedFt": 0.0,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 6760.85,
+      "liveMedianLast30d": 6734.05,
+      "diffFt": -26.8
+     },
+     "liveWindowRange": {
+      "n": 1091,
+      "min": 6733.72,
+      "max": 6768.92
+     },
+     "historyWindowRange": {
+      "n": 1091,
+      "min": 6733.72,
+      "max": 6768.92
+     },
+     "lastDays": {
+      "2026-10-10": 6733.77,
+      "2026-10-11": 6733.79,
+      "2026-10-12": 6733.94
+     },
+     "a2wTie": {
+      "a2wTime": "2026-10-13T08:00:00Z",
+      "a2wValueFt": 6734.03,
+      "cdaOffsetMin": 0,
+      "cdaValueFt": 6734.03,
+      "diffFt": 0.0,
+      "matchedPoints": 1
+     }
+    }
+   ]
+  },
+  "Lake Koocanusa|MT": {
+   "lake": "Lake Koocanusa|MT",
+   "tests": [
+    {
+     "id": "live-iridium_vs_cbtraw",
+     "label": "live LIB Elev-Forebay 1Hour IRIDIUM-REV vs generator history Ave ~1Day CBT-RAW",
+     "live": {
+      "kind": "cwms",
+      "office": "NWDP",
+      "name": "LIB.Elev-Forebay.Inst.1Hour.0.IRIDIUM-REV"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_NWDP_LIB.Elev-Forebay.Ave._1Day.1Day.CBT-RAW.csv.gz"
+     },
+     "historyDays": 18624,
+     "historyFirst": "1975-09-19",
+     "O4": true,
+     "historyLast": "2026-10-13",
+     "staleDays": 0,
+     "liveDays": 1091,
+     "liveRange": [
+      "2023-10-15",
+      "2026-10-13"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-15",
+       "2026-10-13"
+      ],
+      "matchedDays": 1088,
+      "medianAbsFt": 0.11,
+      "p95AbsFt": 0.708,
+      "maxAbsFt": 1.805,
+      "medianSignedFt": -0.01,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 2426.86,
+      "liveMedianLast30d": 2444.28,
+      "diffFt": 17.4
+     },
+     "liveWindowRange": {
+      "n": 1091,
+      "min": 2369.49,
+      "max": 2456.21
+     },
+     "historyWindowRange": {
+      "n": 1088,
+      "min": 2369.38,
+      "max": 2456.14
+     },
+     "lastDays": {
+      "2026-10-11": 2444.24,
+      "2026-10-12": 2444.16,
+      "2026-10-13": 2444.14
+     }
+    }
+   ]
+  },
+  "Lake Shelbyville|IL": {
+   "lake": "Lake Shelbyville|IL",
+   "tests": [
+    {
+     "id": "pool30m_vs_pool-datman",
+     "label": "live pool 30Minutes lrgsShef-rev vs generator history pool ~1Day datman-rev",
+     "live": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Lk Shelbyville-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-rev"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_MVS_Lk_Shelbyville-Kaskaskia.Elev.Inst._1Day.0.datman-rev.csv.gz"
+     },
+     "historyDays": 20308,
+     "historyFirst": "1971-02-11",
+     "O4": true,
+     "historyLast": "2026-10-03",
+     "staleDays": 10,
+     "liveDays": 1094,
+     "liveRange": [
+      "2023-10-05",
+      "2026-10-03"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-05",
+       "2026-10-03"
+      ],
+      "matchedDays": 1093,
+      "medianAbsFt": 0.3,
+      "p95AbsFt": 0.33,
+      "maxAbsFt": 0.52,
+      "medianSignedFt": -0.3,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 598.1,
+      "liveMedianLast30d": 599.69,
+      "diffFt": 1.6
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 593.74,
+      "max": 610.04
+     },
+     "historyWindowRange": {
+      "n": 1094,
+      "min": 594.03,
+      "max": 610.34
+     },
+     "lastDays": {
+      "2026-10-01": 599.48,
+      "2026-10-02": 599.53,
+      "2026-10-03": 599.5
+     }
+    },
+    {
+     "id": "pool30m_vs_TW-datman",
+     "label": "NEGATIVE CONTROL: live pool vs Shelbyville TW (tailwater) daily - what the hold-out QA loaded",
+     "live": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Lk Shelbyville-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-rev"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_MVS_Shelbyville_TW-Kaskaskia.Elev.Inst._1Day.0.datman-rev.csv.gz"
+     },
+     "historyDays": 20876,
+     "historyFirst": "1969-06-12",
+     "O4": true,
+     "historyLast": "2026-10-03",
+     "staleDays": 10,
+     "liveDays": 1094,
+     "liveRange": [
+      "2023-10-05",
+      "2026-10-03"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-05",
+       "2026-10-03"
+      ],
+      "matchedDays": 1094,
+      "medianAbsFt": 61.465,
+      "p95AbsFt": 63.65,
+      "maxAbsFt": 71.3,
+      "medianSignedFt": 61.465,
+      "O1": true,
+      "O2": false,
+      "O3": false
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 598.1,
+      "liveMedianLast30d": 599.69,
+      "diffFt": 1.6
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 593.74,
+      "max": 610.04
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 535.95,
+      "max": 544.19
+     },
+     "lastDays": {
+      "2026-10-01": 599.48,
+      "2026-10-02": 599.53,
+      "2026-10-03": 599.5
+     }
+    },
+    {
+     "id": "DIAGNOSTIC_live-raw_vs_datman-rev",
+     "label": "DIAGNOSTIC ONLY: Shelbyville raw 30-min vs datman-rev",
+     "live": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Lk Shelbyville-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-raw"
+     },
+     "history": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Lk Shelbyville-Kaskaskia.Elev.Inst.~1Day.0.datman-rev"
+     },
+     "historyDays": 2179,
+     "historyFirst": "2020-10-14",
+     "O4": true,
+     "historyLast": "2026-10-03",
+     "staleDays": 10,
+     "liveDays": 1094,
+     "liveRange": [
+      "2023-10-05",
+      "2026-10-03"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-05",
+       "2026-10-03"
+      ],
+      "matchedDays": 1093,
+      "medianAbsFt": 0.3,
+      "p95AbsFt": 0.335,
+      "maxAbsFt": 66.082,
+      "medianSignedFt": -0.3,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 598.08,
+      "liveMedianLast30d": 599.69,
+      "diffFt": 1.6
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 574.7,
+      "max": 665.0
+     },
+     "historyWindowRange": {
+      "n": 1094,
+      "min": 594.03,
+      "max": 610.34
+     },
+     "lastDays": {
+      "2026-10-01": 599.48,
+      "2026-10-02": 599.53,
+      "2026-10-03": 599.5
+     }
+    }
+   ]
+  },
+  "Rend Lake|IL": {
+   "lake": "Rend Lake|IL",
+   "tests": [
+    {
+     "id": "pool30m_vs_MVDhist",
+     "label": "live pool 30Minutes lrgsShef-raw vs generator history pool ~1Day MVDhist-rev",
+     "live": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_MVS_Rend_Lk-Big_Muddy.Elev.Inst._1Day.0.MVDhist-rev.csv.gz"
+     },
+     "historyDays": 18061,
+     "historyFirst": "1971-01-16",
+     "O4": false,
+     "historyLast": "2024-07-23",
+     "staleDays": 812,
+     "liveDays": 1095,
+     "liveRange": [
+      "2021-07-25",
+      "2024-07-23"
+     ],
+     "overlap": {
+      "window": [
+       "2021-07-25",
+       "2024-07-23"
+      ],
+      "matchedDays": 8,
+      "medianAbsFt": 0.55,
+      "p95AbsFt": 0.596,
+      "maxAbsFt": 0.61,
+      "medianSignedFt": -0.55,
+      "O1": false,
+      "O2": false,
+      "O3": true
+     },
+     "qaReproduction": {},
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 402.84,
+      "max": 410.18
+     },
+     "historyWindowRange": {
+      "n": 8,
+      "min": 407.13,
+      "max": 408.83
+     },
+     "lastDays": {
+      "2024-07-21": 408.29,
+      "2024-07-22": 408.28,
+      "2024-07-23": 408.25
+     }
+    },
+    {
+     "id": "pool30m_vs_pool-datman-fresh",
+     "label": "candidate correction: same CWMS location, ~1Day datman-rev (fresh pull)",
+     "live": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw"
+     },
+     "history": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Rend Lk-Big Muddy.Elev.Inst.~1Day.0.datman-rev"
+     },
+     "historyDays": 2181,
+     "historyFirst": "2020-10-14",
+     "O4": true,
+     "historyLast": "2026-10-03",
+     "staleDays": 10,
+     "liveDays": 1092,
+     "liveRange": [
+      "2023-10-05",
+      "2026-10-03"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-05",
+       "2026-10-03"
+      ],
+      "matchedDays": 1092,
+      "medianAbsFt": 0.55,
+      "p95AbsFt": 0.58,
+      "maxAbsFt": 2.05,
+      "medianSignedFt": -0.55,
+      "O1": true,
+      "O2": false,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 405.61,
+      "liveMedianLast30d": 404.27,
+      "diffFt": -1.3
+     },
+     "liveWindowRange": {
+      "n": 1092,
+      "min": 402.84,
+      "max": 412.94
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 403.39,
+      "max": 413.48
+     },
+     "lastDays": {
+      "2026-10-01": 403.86,
+      "2026-10-02": 403.84,
+      "2026-10-03": 403.81
+     }
+    },
+    {
+     "id": "pool30m_vs_TW-datman",
+     "label": "NEGATIVE CONTROL: live pool vs Rend Lk TW (tailwater) daily - what the hold-out QA loaded",
+     "live": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_MVS_Rend_Lk_TW-Big_Muddy.Elev.Inst._1Day.0.datman-rev.csv.gz"
+     },
+     "historyDays": 19936,
+     "historyFirst": "1971-01-01",
+     "O4": true,
+     "historyLast": "2026-10-03",
+     "staleDays": 10,
+     "liveDays": 1092,
+     "liveRange": [
+      "2023-10-05",
+      "2026-10-03"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-05",
+       "2026-10-03"
+      ],
+      "matchedDays": 1092,
+      "medianAbsFt": 30.86,
+      "p95AbsFt": 31.45,
+      "maxAbsFt": 31.995,
+      "medianSignedFt": 30.86,
+      "O1": true,
+      "O2": false,
+      "O3": false
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 405.61,
+      "liveMedianLast30d": 404.27,
+      "diffFt": -1.3
+     },
+     "liveWindowRange": {
+      "n": 1092,
+      "min": 402.84,
+      "max": 412.94
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 372.58,
+      "max": 387.45
+     },
+     "lastDays": {
+      "2026-10-01": 403.86,
+      "2026-10-02": 403.84,
+      "2026-10-03": 403.81
+     }
+    },
+    {
+     "id": "DIAGNOSTIC_live-rev_vs_datman-rev",
+     "label": "DIAGNOSTIC ONLY (not used for classification): reviewed 30-min series lrgsShef-rev vs the same daily datman-rev",
+     "live": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-rev"
+     },
+     "history": {
+      "kind": "cwms",
+      "office": "MVS",
+      "name": "Rend Lk-Big Muddy.Elev.Inst.~1Day.0.datman-rev"
+     },
+     "historyDays": 2181,
+     "historyFirst": "2020-10-14",
+     "O4": true,
+     "historyLast": "2026-10-03",
+     "staleDays": 10,
+     "liveDays": 1094,
+     "liveRange": [
+      "2023-10-05",
+      "2026-10-03"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-05",
+       "2026-10-03"
+      ],
+      "matchedDays": 1094,
+      "medianAbsFt": 0.55,
+      "p95AbsFt": 0.58,
+      "maxAbsFt": 2.05,
+      "medianSignedFt": -0.55,
+      "O1": true,
+      "O2": false,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 405.62,
+      "liveMedianLast30d": 404.27,
+      "diffFt": -1.3
+     },
+     "liveWindowRange": {
+      "n": 1094,
+      "min": 402.84,
+      "max": 412.94
+     },
+     "historyWindowRange": {
+      "n": 1095,
+      "min": 403.39,
+      "max": 413.48
+     },
+     "lastDays": {
+      "2026-10-01": 403.86,
+      "2026-10-02": 403.84,
+      "2026-10-03": 403.81
+     }
+    }
+   ]
+  },
+  "Lake Taneycomo|MO": {
+   "lake": "Lake Taneycomo|MO",
+   "tests": [
+    {
+     "id": "usgsiv_vs_usgsdv",
+     "label": "live USGS 07053600 62615 IV vs generator history USGS dv (all stats, 30800 first per generator)",
+     "live": {
+      "kind": "usgsiv",
+      "site": "07053600",
+      "param": "62615"
+     },
+     "history": {
+      "kind": "usgsdv",
+      "site": "07053600",
+      "param": "62615"
+     },
+     "historyDays": 2172,
+     "historyFirst": "2020-10-14",
+     "O4": true,
+     "historyLast": "2026-10-13",
+     "staleDays": 0,
+     "liveDays": 1095,
+     "liveRange": [
+      "2023-10-15",
+      "2026-10-13"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-15",
+       "2026-10-13"
+      ],
+      "matchedDays": 1091,
+      "medianAbsFt": 0.105,
+      "p95AbsFt": 0.932,
+      "maxAbsFt": 2.75,
+      "medianSignedFt": 0.01,
+      "O1": true,
+      "O2": true,
+      "O3": true
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 701.33,
+      "liveMedianLast30d": 701.04,
+      "diffFt": -0.3
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 700.24,
+      "max": 704.48
+     },
+     "historyWindowRange": {
+      "n": 1091,
+      "min": 700.2,
+      "max": 705.93
+     },
+     "lastDays": {
+      "2026-10-11": 700.92,
+      "2026-10-12": 700.97,
+      "2026-10-13": 701.07
+     }
+    },
+    {
+     "id": "usgsiv_vs_holdout-TableRock",
+     "label": "NEGATIVE CONTROL: live Taneycomo vs Table Rock Dam headwater (a different lake) - what the hold-out QA loaded",
+     "live": {
+      "kind": "usgsiv",
+      "site": "07053600",
+      "param": "62615"
+     },
+     "history": {
+      "kind": "file",
+      "file": "binding/history/cwms_SWL_Table_Rock_Dam-Headwater.Elev.Inst._1Day.0.MN-Elev.csv.gz"
+     },
+     "historyDays": 25606,
+     "historyFirst": "1956-09-02",
+     "O4": true,
+     "historyLast": "2026-10-13",
+     "staleDays": 0,
+     "liveDays": 1095,
+     "liveRange": [
+      "2023-10-15",
+      "2026-10-13"
+     ],
+     "overlap": {
+      "window": [
+       "2023-10-15",
+       "2026-10-13"
+      ],
+      "matchedDays": 1092,
+      "medianAbsFt": 213.683,
+      "p95AbsFt": 216.459,
+      "maxAbsFt": 225.745,
+      "medianSignedFt": -213.683,
+      "O1": true,
+      "O2": false,
+      "O3": false
+     },
+     "qaReproduction": {
+      "liveMedianSince2025": 701.33,
+      "liveMedianLast30d": 701.04,
+      "diffFt": -0.3
+     },
+     "liveWindowRange": {
+      "n": 1095,
+      "min": 700.24,
+      "max": 704.48
+     },
+     "historyWindowRange": {
+      "n": 1092,
+      "min": 907.96,
+      "max": 928.26
+     },
+     "lastDays": {
+      "2026-10-11": 700.92,
+      "2026-10-12": 700.97,
+      "2026-10-13": 701.07
+     }
+    }
+   ]
+  }
+ }
+}
