@@ -68,12 +68,17 @@ Fleet scale, 315 bound lakes, every lake due each 2 h run: about 400 KB per obje
 The v2 hold-out criteria H-A to H-D (coverage near 0.80, tail below 0.06, RAPID rate between 0.03 and 0.08, label stability) were set for the hold-out. The ledger's counts are the inputs a prospective application would use (coverage, tail rate and RAPID rate per lake and class). Which thresholds apply prospectively, and when they are applied once, is a decision that belongs in a new pre-registration before the 12 months are read. Proposed `PARTIAL` item 4 (ledger running at least 90 days and a first monthly scorer output) is a process check, not evidence of accuracy.
 
 ## Start record
-*To be filled by the lead when the ledger is first enabled in production.*
+The ledger was first enabled in production on **2026-10-13 18:53:14 UTC**. Validation of the Lake Brain stays `NOT_VALIDATED`; the ledger starting does not change any status.
 
 | Item | Value |
 |---|---|
-| `rulesVersion` in force | |
-| `bindingVersion` in force | |
-| First production object (path, UTC time) | |
-| First scorer output (path, date) | |
-| Enabled by / approved by | |
+| First ledger object | `gs://sector-lake-brain/predictions/2026/10/13/185314Z-740761e4e50a.jsonl` (6,620 bytes, 5 records) |
+| First run | Cloud Run job execution `lake-brain-qz28h`, job image `brain-jobs:98c8871798c5` (adoption branch commit `98c88717`), health `HEALTHY`, 0 errors |
+| `rulesVersion` in force | `lake-level-rules-v2` (pre-registration commit `4a59715b`) |
+| `baselineMethod` | `doy15-percentile-v2` (the 4 TVA pilots carry the `nws:rvd` rate filter from commit `98c88717`) |
+| `bindingVersion` in force | `bindings-2026-10-13.1` |
+| Lakes recorded | the 5 reviewed pilots (Guntersville, Wheeler, Wilson, Pickwick, Hartwell); no generated binding is REVIEWED |
+| Historical tier at start | `FULL` for all five (17 / 18 / 18 / 16 / 60 complete years) |
+| Trigger | the `brain-orchestrator` hourly wake-up (`50 * * * *` UTC) starts `lake-brain` when it is stale; no new schedule was created |
+| Earliest meaningful scoring | 1 d horizons from 2026-10-14; 30 d horizons from 2026-11-12; first monthly scorer run: 2026-11-01 for October |
+| Rollback | `IMAGE=…/brain-jobs:e6a5026f5d0f bash jobs/lake-brain/deploy-job.sh` (the previous image); ledger objects already written are immutable and are kept |
