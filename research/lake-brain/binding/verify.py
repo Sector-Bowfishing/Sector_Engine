@@ -42,7 +42,7 @@ def evaluate(r, lake, probes, haspoly, claim):
     lakeparam = r["prov"] == "usgs" and r["series"] in ("00062", "62614", "62615", "62616", "72020", "72022")
     inside = int(r["distM"]) <= 150
     c["R2_identity"] = bool(r["nameSim"] >= 0.5 or (inside and (r["stype"] in ("LK", "Reservoir", "Corps Reservoir", "RES", "HP") or lakeparam)))
-    c["R3_notrap"] = "TRAP" not in r["reasons"]
+    c["R3_notrap"] = "TRAP" not in r["reasons"] and not re.search(r"(piezometer|\bwell\b|seepage|toe drain|relief well|\bditch\b|pump(ing)? (plant|station))", r["stationName"] or "", re.I)
     stt = None
     c["R4_state"] = "state-mismatch" not in r["reasons"]
     ck = claim.get(probe_key(r))
@@ -111,10 +111,14 @@ def run():
             status = "PENDING_CORROBORATION"
         elif hard and level == "na":
             if fam == "stage":
-                lakey = r["stype"] == "LK" or bool(re.search(r"\b(lake|lk|res|reservoir|pond|pool)\b", r["stationName"] or "", re.I))
+                lakey = (r["stype"] == "LK" or bool(re.search(r"\b(lake|lk|res|reservoir|pond|pool)\b", r["stationName"] or "", re.I))) and \
+                        (r["stype"] == "LK" or not re.search(r"\b(river|creek|canal|rv|brook)\b", r["stationName"] or "", re.I))
                 status = "STAGE_ONLY" if (ident and lakey) else "REJECT"
             else:
                 status = "PENDING_NO_FULLPOOL"
+        if status == "REJECT" and not c["R6_live"] and all(c[k] for k in ("R1_geo", "R2_identity", "R3_notrap", "R4_state", "R5_unique", "R8_datum")) and \
+                (level == "strong" or (level in ("weak", "drawdown") and ident)) and fam == "elev":
+            status = "HISTORY_ONLY"    # right lake and plausible level, but not live: usable only as the history leg of a binding
         rows.append(dict(lakeId=r["lakeId"], lakeName=r["lakeName"], state=r["lakeState"], prov=r["prov"], station=r["station"], series=(pr or {}).get("series") or (pr or {}).get("param") or (pr or {}).get("item") or r["series"],
                          stationName=r["stationName"], stype=r["stype"], family=fam, distM=r["distM"], nameSim=r["nameSim"], matchScore=r["score"], live=int(bool(pr and pr.get("live"))),
                          lastObs=st.get("last_t"), ageH=st.get("age_h"), nObs30=st.get("n"), medFt=st.get("med_ft"), lastFt=st.get("last_ft"), fullPoolFt=lake.get("fullPoolFt"),
@@ -198,7 +202,7 @@ if __name__ == "__main__":
     with open(f"{BIND}/candidates.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
     best = {}
-    rank = {"VERIFIED": 0, "VERIFIED_CORROBORATED": 1, "VERIFIED_FLAG": 1, "STAGE_ONLY": 2, "PENDING_CORROBORATION": 3, "PENDING_NO_FULLPOOL": 4, "CONFLICT": 8, "REJECT": 9, "REJECT_CONFLICT": 9}
+    rank = {"VERIFIED": 0, "VERIFIED_CORROBORATED": 1, "VERIFIED_FLAG": 1, "STAGE_ONLY": 2, "PENDING_CORROBORATION": 3, "PENDING_NO_FULLPOOL": 4, "CONFLICT": 8, "HISTORY_ONLY": 8, "REJECT": 9, "REJECT_CONFLICT": 9}
     for x in rows:
         k = x["lakeId"]
         key = (rank[x["status"]], 0 if x["capability"] == "DIRECT_OPERATOR_POOL" else 1, -x["matchScore"])

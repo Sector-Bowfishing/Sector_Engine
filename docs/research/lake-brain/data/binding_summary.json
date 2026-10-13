@@ -2,8 +2,8 @@
  "criteriaVersion": "binding-review-v1",
  "lakes": 621,
  "strictVerified": 315,
- "stageOnly": 33,
- "total": 348,
+ "stageOnly": 32,
+ "total": 347,
  "core": 258,
  "flagged": 57,
  "pctCore": 41.5,
@@ -16,39 +16,39 @@
   "DIRECT_LAKE_GAUGE": 31
  },
  "coreHistory": {
-  "SUFFICIENT": 199,
-  "NONE": 51,
+  "SUFFICIENT": 203,
+  "NONE": 47,
   "LIMITED": 8
  },
  "flaggedHistory": {
-  "SUFFICIENT": 40,
-  "NONE": 15,
+  "SUFFICIENT": 41,
+  "NONE": 14,
   "INSUFFICIENT": 2
  },
  "coreCapabilityByHistory": {
-  "DIRECT_OPERATOR_POOL|SUFFICIENT": 179,
-  "DIRECT_OPERATOR_POOL|NONE": 20,
-  "DIRECT_LAKE_GAUGE|NONE": 31,
+  "DIRECT_OPERATOR_POOL|SUFFICIENT": 181,
+  "DIRECT_OPERATOR_POOL|NONE": 18,
+  "DIRECT_LAKE_GAUGE|NONE": 29,
   "DIRECT_OPERATOR_POOL|LIMITED": 4,
-  "DIRECT_LAKE_GAUGE|SUFFICIENT": 20,
+  "DIRECT_LAKE_GAUGE|SUFFICIENT": 22,
   "DIRECT_LAKE_GAUGE|LIMITED": 4
  },
  "strictCapabilityByHistory": {
-  "DIRECT_OPERATOR_POOL|SUFFICIENT": 203,
-  "DIRECT_OPERATOR_POOL|NONE": 21,
-  "DIRECT_LAKE_GAUGE|NONE": 45,
-  "DIRECT_LAKE_GAUGE|SUFFICIENT": 36,
+  "DIRECT_OPERATOR_POOL|SUFFICIENT": 205,
+  "DIRECT_OPERATOR_POOL|NONE": 19,
+  "DIRECT_LAKE_GAUGE|NONE": 42,
+  "DIRECT_LAKE_GAUGE|SUFFICIENT": 39,
   "DIRECT_OPERATOR_POOL|LIMITED": 4,
   "DIRECT_LAKE_GAUGE|LIMITED": 4,
   "DIRECT_LAKE_GAUGE|INSUFFICIENT": 1,
   "DIRECT_OPERATOR_POOL|INSUFFICIENT": 1
  },
  "pctStrict": 50.7,
- "pctWithStage": 56.0,
+ "pctWithStage": 55.9,
  "ladderPointsStrict": 7,
  "ladderPointsWithStage": 7,
  "byCapability": {
-  "DIRECT_OPERATOR_POOL": 233,
+  "DIRECT_OPERATOR_POOL": 232,
   "DIRECT_LAKE_GAUGE": 115
  },
  "byCapabilityStrict": {
@@ -56,56 +56,56 @@
   "DIRECT_LAKE_GAUGE": 86
  },
  "byProvider": {
-  "cwms": 61,
+  "cwms": 60,
   "tva": 17,
-  "nwps": 52,
+  "nwps": 50,
   "a2w": 110,
   "rise": 45,
-  "usgs": 59,
+  "usgs": 61,
   "coops": 1,
   "twdb": 3
  },
  "byStatus": {
-  "NONE": 273,
+  "NONE": 274,
   "VERIFIED": 243,
-  "STAGE_ONLY": 33,
+  "STAGE_ONLY": 32,
   "VERIFIED_FLAG": 57,
   "VERIFIED_CORROBORATED": 15
  },
  "historyClass": {
-  "SUFFICIENT": 241,
-  "NONE": 97,
+  "SUFFICIENT": 246,
+  "NONE": 91,
   "LIMITED": 8,
   "INSUFFICIENT": 2
  },
  "historyClassStrict": {
-  "SUFFICIENT": 239,
-  "NONE": 66,
+  "SUFFICIENT": 244,
+  "NONE": 61,
   "LIMITED": 8,
   "INSUFFICIENT": 2
  },
  "capabilityByHistory": {
-  "DIRECT_OPERATOR_POOL|SUFFICIENT": 203,
-  "DIRECT_OPERATOR_POOL|NONE": 25,
-  "DIRECT_LAKE_GAUGE|NONE": 72,
-  "DIRECT_LAKE_GAUGE|SUFFICIENT": 38,
+  "DIRECT_OPERATOR_POOL|SUFFICIENT": 205,
+  "DIRECT_OPERATOR_POOL|NONE": 22,
+  "DIRECT_LAKE_GAUGE|NONE": 69,
+  "DIRECT_LAKE_GAUGE|SUFFICIENT": 41,
   "DIRECT_OPERATOR_POOL|LIMITED": 4,
   "DIRECT_LAKE_GAUGE|LIMITED": 4,
   "DIRECT_LAKE_GAUGE|INSUFFICIENT": 1,
   "DIRECT_OPERATOR_POOL|INSUFFICIENT": 1
  },
- "strictWith5yHistory": 239,
- "strictWith5yHistoryAndOperatorPlan": 94,
+ "strictWith5yHistory": 244,
+ "strictWith5yHistoryAndOperatorPlan": 96,
  "operatorPlanEvidence": 117,
  "noBindingReasons": {
   "no-candidate": 171,
-  "candidates-rejected": 95,
+  "candidates-rejected": 96,
   "pending:PENDING_CORROBORATION": 5,
   "pending:PENDING_NO_FULLPOOL": 2
  },
  "hasDamLakes": 401,
  "hasDamVerified": 272,
- "nidResolvedStrong": 268,
+ "nidResolvedStrong": 267,
  "byOperatorGroup": {
   "USBR": [
    58,
@@ -209,11 +209,11 @@
   ]
  },
  "crossValidation": {
-  "independentPairs": 125,
-  "lakes": 70,
-  "medianGapFt": 0.02,
-  "within0_5ft": 123,
-  "within2ft": 124,
+  "independentPairs": 123,
+  "lakes": 69,
+  "medianGapFt": 0.015,
+  "within0_5ft": 121,
+  "within2ft": 122,
   "disagree": [
    {
     "lake": "Kerr Reservoir (Buggs Island)|VA",
@@ -227,19 +227,20 @@
   "evaluated": 1392,
   "lakesEvaluated": 450,
   "byStatus": {
-   "VERIFIED": 599,
-   "REJECT": 539,
-   "STAGE_ONLY": 87,
+   "VERIFIED": 598,
+   "REJECT": 515,
+   "STAGE_ONLY": 80,
    "VERIFIED_FLAG": 144,
    "PENDING_CORROBORATION": 16,
-   "REJECT_CONFLICT": 4,
+   "HISTORY_ONLY": 33,
+   "REJECT_CONFLICT": 3,
    "PENDING_NO_FULLPOOL": 2,
    "VERIFIED_CORROBORATED": 1
   },
   "failedCheck": {
    "R1_geo": 82,
    "R2_identity": 146,
-   "R3_notrap": 0,
+   "R3_notrap": 11,
    "R4_state": 29,
    "R5_unique": 45,
    "R6_live": 211,
@@ -335,7 +336,7 @@
    "station": "02187010",
    "series": "00062",
    "history": "SUFFICIENT",
-   "completeYears": "19"
+   "completeYears": "64"
   }
  },
  "directoryNameCollisions": {
@@ -345,16 +346,16 @@
  },
  "providerLeverage": {
   "lakesReachable": {
+   "nwps": 223,
    "usace": 185,
-   "nwps": 222,
-   "rise": 49,
+   "rise": 48,
    "usgs": 88,
    "twdb": 15,
    "tva": 22,
    "coops": 1
   },
   "lakesOnlyReachableVia": {
-   "usace": 31,
+   "usace": 30,
    "nwps": 37,
    "usgs": 20,
    "rise": 14,

@@ -43,12 +43,15 @@ def main():
         b = xs[0]
         # best history among all passing candidates (levels must agree with the live binding within 3 ft; stage series skip the level test)
         bh = None
-        for x in xs:
+        hx_pool = xs + [x for x in byl.get(l["id"], []) if x["status"] == "HISTORY_ONLY"]
+        for x in hx_pool:
             h = hist.get(f"{x['lakeId']}|{x['prov']}|{x['station']}|{x['loc']}", {}).get("best") or site_hist.get((x["prov"], x["station"], x["loc"]))
             if not h:
                 continue
-            if x["family"] == "elev" and b["family"] == "elev" and f(x["medFt"]) is not None and f(b["medFt"]) is not None and abs(f(x["medFt"]) - f(b["medFt"])) > 3.0:
-                continue
+            if x["family"] == "elev" and b["family"] == "elev":
+                gs = [abs(f(x[k]) - f(b[k])) for k in ("medFt", "lastFt") if f(x[k]) is not None and f(b[k]) is not None]
+                if gs and min(gs) > 3.0:
+                    continue
             if bh is None or h["completeYears"] > bh[0]["completeYears"]:
                 bh = (h, x)
         h, hx = bh if bh else ({}, None)

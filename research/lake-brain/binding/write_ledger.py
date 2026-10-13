@@ -70,7 +70,7 @@ dataset("binding/spotcheck.csv", "binding", "KEEP", "python research/lake-brain/
 dataset("binding/raw/nid/nid.jsonl", "binding", "REBUILDABLE", "python research/lake-brain/binding/fetch_nid.py", "NID 92,627 dams")
 for n in ("raw/usgs", "raw/cwms", "raw/a2w", "raw/rise", "raw/nwps", "raw/twdb", "raw/coops", "raw/tva", "raw/probe", "history"):
     ds.append(dict(kind="dataset", path=f"binding/{n}/", bytes=sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(f"{BIND}/{n}") for f in fs), sha256="", track="binding", retention="REBUILDABLE", rebuild="fetch_*.py / probe.py / history.py in research/lake-brain/binding", note="raw provider downloads and cached probes/history (2026-10-13)"))
-scores = [dict(kind="score", step="binding-machine-verification", previous=0.8, candidate=S["pctStrict"], dimensions={"coveragePctStrict": S["pctStrict"], "coveragePctWithStageOnly": S["pctWithStage"], "ladderPointsStrict": S["ladderPointsStrict"]},
+scores = [dict(kind="score", step="binding-machine-verification", previous=0.8, candidate=S["pctCore"], dimensions={"coveragePctCore": S["pctCore"], "coveragePctStrict": S["pctStrict"], "coveragePctWithStageOnly": S["pctWithStage"], "ladderPointsStrict": S["ladderPointsStrict"], "coreLakes": S["core"], "flaggedLakes": S["flagged"], "coreWith5yHistory": S["coreHistory"].get("SUFFICIENT")},
                evidence="binding_summary.json", confidence="medium: machine-verified, not human-reviewed", remaining="human review adoption; history for no-5y sites")]
 with open(f"{REPO}/docs/research/lake-brain/ledger/binding.jsonl", "w") as f:
     for r in src + blk + act + ds + scores:

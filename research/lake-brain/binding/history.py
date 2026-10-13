@@ -96,7 +96,7 @@ def site_task(r, probes):
     return dict(best=best, tried=tried)
 
 
-def run(statuses=("VERIFIED", "VERIFIED_CORROBORATED", "VERIFIED_FLAG", "STAGE_ONLY", "PENDING_CORROBORATION", "PENDING_NO_FULLPOOL")):
+def run(statuses=("VERIFIED", "VERIFIED_CORROBORATED", "VERIFIED_FLAG", "HISTORY_ONLY", "STAGE_ONLY", "PENDING_CORROBORATION", "PENDING_NO_FULLPOOL")):
     from concurrent.futures import ThreadPoolExecutor
     rows = list(csv.DictReader(open(f"{BIND}/candidates.csv")))
     probes = json.load(open(f"{BIND}/probe_results.json"))
