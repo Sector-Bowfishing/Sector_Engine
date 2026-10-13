@@ -175,6 +175,14 @@ Same harness functions, restricted to the 188 of the 196 lakes that have a hold-
 
 The accepted fleet does not change any conclusion; it makes the narrow passes narrower and the H-A sample size marginally short.
 
+## 5b. Caveat found afterwards: the hold-out series for five lakes (added 2026-10-13, by the lead)
+The mismatch investigation (`LAKE_BRAIN_MISMATCH14_DISPOSITION.md`) found that the rules-v2 hold-out loaded a series a generated binding would **not** use for
+five lakes: Shelbyville and Rend (tailwater series, 61 ft and 31 ft off), Taneycomo (Table Rock Dam headwater, a different lake, 214 ft off), Bartlett (sentinel
+values and long constant runs) and Buffalo Bill (the research bound RISE item 152, which does not follow the pool; item 146 does). None of the five is in the
+accepted-196 candidate table, so the *information-only* 196-lake sensitivity in section 5 is unaffected. The pre-registered hold-out result (H-A..H-D as reported)
+is **not re-run or re-tuned**; the five-lake effect on the pooled numbers is a limitation to state, not a reason to change a verdict. Any future v2 hold-out should
+use series selected by the binding table, pre-registered before it is run.
+
 ## 6. Calendar of next evidence
 
 | Date | What becomes possible | Family |
