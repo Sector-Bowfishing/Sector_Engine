@@ -52,5 +52,7 @@ def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = No
         "contractVersion": C.STATE_SCHEMA,
         "manifestVersion": manifest.get("manifestVersion"),
         "lastDryRun": {"evaluated": (rep or {}).get("evaluated"), "unavailable": (rep or {}).get("unavailable")} if rep else None,
+        "statusBasis": ("Shadow foundation: effective-depth shift only. No official score, no field validation, not scheduled. "
+                        f"{fm['shiftPossible']} of {fm['totalLakes']} lakes have a defensible shift; {live_lake_states} have a live Lake Brain level."),
         "blockers": blockers,
     }
