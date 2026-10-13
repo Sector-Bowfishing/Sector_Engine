@@ -43,13 +43,26 @@ Guarantees:
   `degradedUpstream` so the brain publishes degraded inputs honestly (Intelligence already does).
 - **Lake targeting:** `targets[]` passes through to every run (a brain may refresh a subset).
 
-## Executor (not built)
-A single Cloud Run job `brain-orchestrator` on a coarse cron (e.g. every 15 min) that: reads
-`/brains`, `/health/brains`; asks each Python brain's `--plan` (or reads the published `fingerprint`);
-calls `plan()`; executes `runs` in `priority` order honoring `after[]` by invoking the existing per-brain
-jobs (Cloud Run Jobs API) with `schedule.running=true` / `lockedUntil` written first and cleared after;
-records the plan under `/control/orchestrator/lastPlan` and runs under `/health/jobs/brain-orchestrator`.
-Per-brain crons (`wind-hourly` etc.) stay until the executor proves itself; then only the Orchestrator
-schedules Brains and the per-brain cron architecture is retired.
+## Executor — `jobs/brain-orchestrator` (built 2026-10-13, cost-efficient scheduling work)
+A single scale-to-zero Cloud Run job `brain-orchestrator` (1 vCPU / 512 Mi, single task, usually < 1 min) on an
+**hourly** Cloud Scheduler wake-up (`50 * * * *` UTC — after `wind-hourly` at :05 and the TVA archive at :20).
+Each cycle (`orchestrate.py`):
 
-**Stop condition:** creating the orchestrator job/scheduler is new recurring cloud work — Michael approves.
+1. **Sync `/jobs`** from Cloud Scheduler + Cloud Run (`docs/brains/JOBS_CONTRACT.md`); only changed records are written.
+2. **Plan** with `orchestrator.plan()`. TIME brains (Lake, Water Temp) from their published `staleAfterHours` /
+   `lastSuccessfulRun`; VERSION / FINGERPRINT brains (Biological, Intelligence) from their own `run.py --plan`.
+   Single-flight comes from the real world: a running Cloud Run execution of the brain's job, or the lock this job
+   wrote when it started one (`/control/orchestrator/locks`, 15 min).
+3. **Execute** only `runs`: `lake-brain` / `water-temp-brain` through the Jobs API (`jobs.run` with arg overrides —
+   pilot scope for Lake, fleet for Water Temp); `biological-brain` / `sector-intelligence-brain` **in-process**
+   (`run.py --write`, their plan() decides). A run whose `after[]` upstream was *started asynchronously this cycle*
+   waits for the next wake-up (Intelligence re-evaluates after Lake / Water Temp have published). **Wind** keeps its
+   own cron and **Water Clarity** stays manual: both are planned for visibility and never started here.
+4. **Scores / control** (`score_brains.py --write --if-changed`) only when a Brain's `lastSuccessfulRun` changed
+   since the last cycle, something published this cycle, or a job record changed — never on a blind timer.
+5. **Record** `/control/orchestrator` (plan, executed, deferred, locks, lastSeen).
+
+Identity: service account `brain-writer` (shared with the two Brain jobs): `firebasedatabase.admin`,
+`run.viewer`, `cloudscheduler.viewer`, `run.invoker` on `lake-brain` and `water-temp-brain` only,
+`storage.objectViewer` on the biology bundle bucket. Per-brain crons for Lake / Water Temp were never created;
+`wind-hourly` stays until the executor has proven itself across a few days (then it is the next candidate).

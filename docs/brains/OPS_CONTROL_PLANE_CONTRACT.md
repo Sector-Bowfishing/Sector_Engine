@@ -15,7 +15,11 @@ Engine from published Brain facts; Ops renders it verbatim and computes none of 
 | `/control/overview/brains/{id}` | `status` (lifecycle), `health`, `healthAt`, `lastSuccessfulRun`, `lastError`, **`stale` + `staleReason`** (Engine TIME rule), `staleAfterHours`, `stalenessModel`, `scheduled`, `version`, **`score{value, scale, basis, scoreVersion, completenessPct}`**, `nextOpportunity`, `coverage{directory, supported, evaluated, stale, readinessCounts, onLadder}`, `activeModel`, `candidateModel`, `validation{status, ref}`, `blockers[]`, `dependsOn` / `dependencyStatus`, `platform{conformant}` | brain header badges, score tile (`lib/brainScore.ts`), Models card, Validation badge, blockers list |
 | `/control/fleet/{lakeKey}` | the Orchestrator rollup per lake: `lakeId, lastUpdatedAt (max over slots), stale (any slot), evidenceStale, issueCount (sum), slotsPublished, readiness{slot}, riverSystem, rolledUpAt` | `lakeFleet/{k}.lastUpdatedAt/stale/issueCount` (which brains no longer write) and browser-side derivations |
 | `/brains/{id}`, `/health/*`, `/validation/*`, `/sources`, `/species`, `/lakes/{k}/*`, `/snapshots/{k}/latest`, `/activity` | detail, unchanged | detail pages |
-| `/brains/{id}/score`, `/engine/score` | full score blocks with breakdown and blockers | score detail |
+| `/scores/{id}`, `/scores/engine` (`/engine/score` alias) | full score blocks with breakdown and blockers | score detail |
+| **`/jobs/{jobId}`** | the Jobs & Schedules contract (`docs/brains/JOBS_CONTRACT.md`): Cloud Scheduler authoritative for enabled/cron/next run, Cloud Run executions for runtime, manifest for owner/purpose/classification, cost metadata | Jobs page (`/health/jobs` is the fallback only) |
+| **`/control/overview/fleet`** | the compact fleet summary: `lakes, directoryLakes, withSlots, evaluatedByIntelligence, staleLakes, evidenceStaleLakes, issueCount, staleSlots{slot}, publishedBySlot{slot}, readinessBySlot{slot}{readiness}, newestUpdateAt, summarizedAt` | Overview must read this instead of all 621 `/lakeFleet` rows |
+| `/control/overview/jobs` | `total, byClassification, byExecutionMode, byRuntimeStatus, warnings[], syncedAt` | Overview jobs tile |
+| `/control/orchestrator` | last plan / executed / deferred / locks of `brain-orchestrator` | System page |
 
 ## What Ops must not compute (and where it still does today)
 
@@ -42,6 +46,18 @@ Engine from published Brain facts; Ops renders it verbatim and computes none of 
 Catalog check: Ops `src/lib/brainCatalog.ts` ids/slots match contract §2. Its Biological question
 ("What are the fish likely doing?") differs from the Brain's ("What does Sector know about the
 fish?"); the Brain's `displayName`/`question` in `/brains/{id}` are authoritative.
+
+## Engine summary: one canonical node
+`/control/overview` **is** the Engine summary (`engine{…}`, `brains{…}`, `fleet{…}`, `jobs{…}`, `sources{…}`,
+`workNext[]`). No separate `/engine/summary` projection is published: Ops reads nothing under `/engine` today
+except the `/engine/score` alias, and a second copy would be a second thing to go stale. If an Ops view needs a
+different shape, it is added to `/control/overview`, never computed in the browser.
+
+## Brain RTDB rules (deployed from `Sector-Ops`, verified live 2026-10-13)
+Authenticated `access/opsUsers/{uid} === true` **read-only** on `schemaVersion, brains, lakeFleet, lakes,
+snapshots, species, validation, validationOps, sources, control, scores, engine, jobs, health, activity`; root
+`.read/.write: false`; `opsPreferences/{uid}` is the only client-writable node. Deploy command:
+`firebase deploy --project sector-9393c --only database:brain` (Ops repo). Nothing is public.
 
 ## Rules
 - Ops never writes any of these nodes (`database.rules.json` already denies client writes).

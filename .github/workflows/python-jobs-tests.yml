@@ -1,0 +1,34 @@
+# Offline unit tests for the Python jobs and the Brain Platform package. No credentials, no cloud access:
+# Brain writer credentials never live in GitHub (docs/brains/JOBS_CONTRACT.md). Swift is built on Cloud Build
+# at deploy time and tested locally (`swift test`); it is not run here to keep CI free of a 20-minute toolchain job.
+name: python-jobs-tests
+on:
+  push:
+    branches: [main]
+    paths: ["jobs/**", "docs/brains/conformance/**", ".github/workflows/python-jobs-tests.yml"]
+  pull_request:
+    paths: ["jobs/**", "docs/brains/conformance/**", ".github/workflows/python-jobs-tests.yml"]
+permissions:
+  contents: read
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest numpy requests google-cloud-storage
+      - name: Brain Platform + jobs (offline)
+        run: |
+          set -e
+          for d in jobs/brain_platform jobs/lake-surface-dispatch jobs/brain-orchestrator jobs/water-clarity-brain \
+                   jobs/biological-brain jobs/sector-intelligence-brain jobs/water-temp-tva-archive; do
+            echo "== $d"; (cd "$d" && python -m pytest -q)
+          done
+          (cd jobs/brain-scores && python -m pytest -q test_changed_control.py)
+      - name: wind-hourly (network tests deselected by pytest.ini; eccodes/shapely/pyproj only for Stage 3A tests)
+        run: |
+          pip install eccodes shapely pyproj || true
+          (cd jobs/wind-hourly && python -m pytest -q)
