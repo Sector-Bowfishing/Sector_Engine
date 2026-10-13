@@ -62,4 +62,14 @@ Seasonal states (`EMERGING/GROWING/PEAK/DECLINING/DORMANT`) are published for a 
 Submerged observation; species; underwater density; potential habitat as vegetation. Potential habitat is a separate, always `potentialOnly:true` product with its own (non-observation) checks.
 
 ## Amendments
-*(none)*
+**Amendments change definitions, never §5–§7 thresholds. Each cites the evidence that forced it; none was made after seeing a gate-eligible PASS.**
+
+### A1 — 2026-10-14 (after production-code scoring, `notes/06_production_observer_scoring.md`, run on the frozen v1 text)
+1. **DARK_WATER (replaces the "red and B8A < 0.01 → pixel excluded, cell UNKNOWN if > 50 % excluded" rule in §1).** As written it blanked 40–58 % of clear-lake cells and made `NOT_OBSERVED` unreachable. New rule: a pixel is a plant pixel only if `NDVI ≥ 0.30` **and** NIR ≥ a floor (provisional 0.03, to be calibrated label-free on open water of negative-control lakes); a cell is `UNKNOWN(DARK_WATER)` only when ≥ 25 % of its pixels cross NDVI 0.30 but fail the floor **and** plant fraction ≥ 0.2 (borderline). Dark water elsewhere is a valid "not plant" look.
+2. **Pass acceptance statistic (replaces "reads ≥ 50 % of the non-plant lake water", which is a Clarity turbidity statistic).** Acceptance uses the share of interior cells that are *known* (seen, not hazy/cloudy/shore). Thresholds are unchanged (≥ 50 %; fallback ≥ 25 %, flagged). The production whole-scene SWIR-DN rejection is **not** inherited.
+3. **S (single pass) is evaluation-only.** It is never published as presence (`PASS_NOT_ACCEPTED`).
+4. **Burst check.** With ≥ 3 accepted scenes, a scene with ≥ 20 plant cells and > 5× the others' median plant-cell count is excluded as an implausible burst (production: one Storm scene gave 39 false cells at coverage 0.03).
+5. **Recall population.** Headline recall is **interior-only** (cells not SHORE_ADJACENT); whole-lake recall is reported beside it. Raw prevalence is the headline for precision; shore-matched numbers accompany it. Negatives: strict-none (< 5 % of any mapped class) headline, buffered-none (no label within 2 cells) secondary.
+6. **Frame pinned.** Observer cell = 5 × 5 native 10 m pixels (≈ 50 m). Production `daily.py` runs a 36 m frame; results agree within noise on Snohomish, but the observer contract pins 50 m.
+7. **Florida / presence-only classes.** At the observer as scored, recall on Florida point truth is < 0.35; presence-only truth never supports a `PARTIAL` claim for that regime.
+

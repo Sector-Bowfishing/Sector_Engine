@@ -37,7 +37,9 @@ LIMITATIONS = [
     "V1 observes SURFACE-REACHING vegetation only (floating-leaf beds, mats, emergent belts, surface-topped canopy).",
     "Submerged vegetation is NOT observable with Sentinel-2 at fleet scale and is never reported as observed.",
     "Plant type is not classified (typeBasis NOT_CLASSIFIED); no species identification is possible from multispectral imagery.",
-    "Cells touching the lake edge are not claimed (shore-adjacent) because bank vegetation cannot be separated from aquatic vegetation.",
+    "Cells touching the lake edge are not claimed (shore-adjacent) because bank vegetation cannot be separated from aquatic vegetation; claims are INTERIOR-ONLY (about half of mapped floating-leaf beds lie in the unclaimed shore band in the validation lakes).",
+    "A single clear-looking scene can be wrong (a burst of false cells); presence needs an accepted pass and, where possible, persistence over >= 3 accepted scenes.",
+    "Where truth is presence-only (e.g. Florida point surveys) recall has been low (< 0.35); treat PRESENT/NOT_OBSERVED there as unvalidated evidence, not a map.",
     "Density is not calibrated; only presence and counts are published.",
     "Algal blooms and floating plant mats can share a spectrum; ambiguity is not yet resolved.",
 ]
@@ -139,6 +141,9 @@ def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = Non
         pres, pres_reason = "UNKNOWN", (cand.get("reasons") or ["BLOCKED"])[0]
     elif obs is not None:
         pres, pres_reason = O.presence(obs)
+        if getattr(obs, "evidence_kind", None) == "SATELLITE_SINGLE_PASS":
+            # never expose a single un-accepted pass: one scene produced 39 false cells in production scoring (note 06)
+            pres, pres_reason = "UNKNOWN", "PASS_NOT_ACCEPTED"
 
     observed_on = getattr(obs, "observed_on", None)
     age_days = (now.date() - observed_on).days if observed_on else None

@@ -59,6 +59,7 @@ Forbidden in any Brain output or derived copy (enforced by test): "grass is here
 * Pass acceptance: the scene must read ≥ 50 % of interior cells (fallback ≥ 25 %, flagged).
 * Persistence: per-cell **median** over ≥ 3 accepted scenes within ±21 days; otherwise the nearest accepted pass with `persistence: INSUFFICIENT`.
 * Forbidden: max / second-highest / votes ≥ 2 composites.
+* A **single un-accepted pass is never published** (`PASS_NOT_ACCEPTED`); a **burst check** excludes implausible scenes when ≥ 3 accepted scenes exist.
 * Presence: `PRESENT` needs ≥ 3 plant cells after dropping isolated singletons; `NOT_OBSERVED` needs ≥ 50 % of interior cells read.
 
 ## 6. Readiness mapping (platform ladder)

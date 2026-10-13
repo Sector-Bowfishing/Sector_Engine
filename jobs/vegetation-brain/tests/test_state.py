@@ -191,3 +191,16 @@ def test_package_source_has_no_credentials_or_private_paths():
             if f.endswith((".py", ".json", ".csv", ".md")):
                 txt = open(os.path.join(dp, f)).read()
                 assert not pat.search(txt), f"{f} matches a secret/private-path pattern"
+
+
+def test_single_unaccepted_pass_is_never_published_as_presence():
+    one = O.observe([scene("s", REF, plant=BED)], REF, mode="S")
+    assert one.evidence_kind == "SATELLITE_SINGLE_PASS"
+    st, _ = build(obs=one)
+    assert st["surfaceVegetation"]["status"] == "UNKNOWN" and st["surfaceVegetation"]["statusReason"] == "PASS_NOT_ACCEPTED"
+
+
+def test_limitations_state_interior_only_and_burst_risk():
+    st, _ = build(obs=obs_present())
+    text = " ".join(st["limitations"]).lower()
+    assert "interior-only" in text and "burst" in text and "presence-only" in text

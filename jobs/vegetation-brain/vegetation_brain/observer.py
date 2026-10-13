@@ -235,16 +235,38 @@ def accept_pass(scene: Scene) -> bool:
     return scene.cells.coverage() >= C.PASS_MIN_COVERAGE
 
 
+BURST_MIN_CELLS = 20
+BURST_FACTOR = 5.0
+
+
+def drop_bursts(accepted: list) -> tuple[list, list]:
+    """Burst-failure check (production scoring, note 06: one clear-looking Storm scene produced 39 false cells at coverage 0.03).
+    With >= 3 accepted scenes, a scene whose plant-cell count is >= BURST_FACTOR x the others' median (and >= BURST_MIN_CELLS) is
+    an implausible burst and is excluded from the evidence. With fewer scenes a burst cannot be checked; the caller notes that."""
+    if len(accepted) < 3:
+        return accepted, []
+    counts = [int((s.cells.state == PLANT).sum()) for s in accepted]
+    keep, dropped = [], []
+    for i, s in enumerate(accepted):
+        others = sorted(c for j, c in enumerate(counts) if j != i)
+        med = others[len(others) // 2]
+        if counts[i] >= BURST_MIN_CELLS and counts[i] > BURST_FACTOR * max(med, 1):
+            dropped.append(s.id)
+        else:
+            keep.append(s)
+    return keep, dropped
+
+
 def select_scenes(scenes: list, reference: date, window_days: int = C.PERSISTENCE_WINDOW_DAYS) -> dict:
     """Scenes inside +-window of the reference date, split into accepted (>=50 % read) and the fallback (best >=25 %)."""
     inwin = sorted([s for s in scenes if abs((s.when - reference).days) <= window_days], key=lambda s: abs((s.when - reference).days))
-    accepted = [s for s in inwin if accept_pass(s)]
+    accepted, bursts = drop_bursts([s for s in inwin if accept_pass(s)])
     fallback = None
     if not accepted:
         cand = [s for s in inwin if s.cells.coverage() >= C.PASS_FALLBACK_COVERAGE]
         if cand:
             fallback = max(cand, key=lambda s: (s.cells.coverage(), -abs((s.when - reference).days)))
-    return {"inWindow": inwin, "accepted": accepted, "fallback": fallback}
+    return {"inWindow": inwin, "accepted": accepted, "fallback": fallback, "bursts": bursts}
 
 
 def _drop_isolated(plant: np.ndarray) -> tuple[np.ndarray, int]:
@@ -308,10 +330,17 @@ def observe(scenes: list, reference: date, *, mode: str = "P") -> LakeObservatio
         return _from_single(s, "SATELLITE_SINGLE_PASS", "NOT_APPLICABLE", 1)
     acc = sel["accepted"]
     if mode == "P" and len(acc) >= C.PERSISTENCE_MIN_SCENES:
-        return _from_persistence(acc)
+        obs = _from_persistence(acc)
+        if sel["bursts"]:
+            obs.notes.append(f"excluded implausible burst scene(s): {sel['bursts']}")
+        return obs
     if acc:
         best = acc[0]
         obs = _from_single(best, "SATELLITE_ACCEPTED_PASS", "INSUFFICIENT" if mode == "P" else "NOT_APPLICABLE", len(acc))
+        if len(acc) < 3:
+            obs.notes.append("burst check needs >= 3 accepted scenes; this pass could not be checked against its neighbours")
+        if sel["bursts"]:
+            obs.notes.append(f"excluded implausible burst scene(s): {sel['bursts']}")
         if mode == "P":
             obs.notes.append(f"only {len(acc)} accepted scene(s); persistence needs {C.PERSISTENCE_MIN_SCENES}")
         return obs

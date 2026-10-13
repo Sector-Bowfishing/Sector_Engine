@@ -186,3 +186,18 @@ def test_present_when_enough_connected_plant_cells():
 def test_single_pass_mode_requires_mostly_clear_scene():
     cloudy = scene("c", days(0), plant=BED, cloud=patch((10, 90), (10, 50)))
     assert O.observe([cloudy], REF, mode="S").evidence_kind == "NONE"
+
+
+# ---------------------------------------------------------------- burst check (production scoring, note 06)
+def test_a_burst_scene_among_consistent_scenes_is_excluded():
+    big = patch((12, 88), (12, 88))                        # nearly the whole lake "flags": implausible vs the neighbours
+    scenes = [scene("a", days(-6), plant=BED), scene("b", days(-1), plant=BED), scene("c", days(3), plant=BED), scene("burst", days(0), plant=big)]
+    sel = O.select_scenes(scenes, REF)
+    assert sel["bursts"] == ["burst"] and all(s.id != "burst" for s in sel["accepted"])
+    obs = O.observe(scenes, REF, mode="P")
+    assert "burst" not in obs.scene_ids and any("burst" in n for n in obs.notes)
+
+
+def test_single_accepted_pass_declares_it_cannot_be_burst_checked():
+    obs = O.observe([scene("only", days(0), plant=BED)], REF, mode="A")
+    assert any("burst check" in n for n in obs.notes)
