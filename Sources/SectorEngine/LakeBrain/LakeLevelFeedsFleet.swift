@@ -381,19 +381,24 @@ final class LakeFleetClients: @unchecked Sendable {
         return LakeDailyHistory.dedupe(out).filter { since == nil || $0.date >= since! }
     }
 
-    /// IEM `what=txt&delim=comma`: `station,utc_valid,HPIRZZZ,…`. The first column that starts with `HPIR` is the pool elevation.
+    /// IEM `what=txt&delim=comma`: `station,utc_valid,HPIRZZZ,…`. A gauge can report its pool under several `HPIR…` columns over the years
+    /// (different DCP configurations); per row the first non-empty `HPIR…` column is the pool elevation.
     static func parseHADS(_ data: Data, prefix: String) -> [LevelObservation] {
         let text = String(decoding: data, as: UTF8.self)
         var lines = text.split(whereSeparator: \.isNewline).makeIterator()
         guard let header = lines.next() else { return [] }
         let cols = header.split(separator: ",", omittingEmptySubsequences: false).map { String($0) }
-        guard let tIdx = cols.firstIndex(of: "utc_valid"), let vIdx = cols.firstIndex(where: { $0.hasPrefix(prefix) }) else { return [] }
+        guard let tIdx = cols.firstIndex(of: "utc_valid") else { return [] }
+        let vIdx = cols.indices.filter { cols[$0].hasPrefix(prefix) }
+        guard !vIdx.isEmpty else { return [] }
         let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX"); f.timeZone = TimeZone(identifier: "UTC"); f.dateFormat = "yyyy-MM-dd HH:mm:ss"
         var out: [LevelObservation] = []
         while let line = lines.next() {
             let c = line.split(separator: ",", omittingEmptySubsequences: false)
-            guard c.count > max(tIdx, vIdx), let at = f.date(from: String(c[tIdx])), let v = Double(c[vIdx]), v > -990 else { continue }
-            out.append(LevelObservation(at: at, ft: v))
+            guard c.count > tIdx, let at = f.date(from: String(c[tIdx])) else { continue }
+            for i in vIdx where i < c.count {
+                if let v = Double(c[i]), v > -990 { out.append(LevelObservation(at: at, ft: v)); break }
+            }
         }
         return out
     }

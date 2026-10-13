@@ -273,6 +273,13 @@ final class LakeBrainBindingsTests: XCTestCase {
         XCTAssertTrue(LakeFleetClients.parseHADS(Data(csv.utf8), prefix: "HGIR").isEmpty, "no stage column is read as a pool")
     }
 
+    func testHADSTakesTheFirstNonEmptyPoolColumnPerRow() {
+        // A gauge can change its DCP configuration over a multi-year chunk: the pool moves from HPIRZZZ to HPIRGZZ.
+        let csv = "station,utc_valid,HPIRGZZ,HPIRZZZ\nX,2021-01-01 00:00:00,,100.5\nX,2023-01-01 00:00:00,101.5,\nX,2023-01-01 01:00:00,,\n"
+        let obs = LakeFleetClients.parseHADS(Data(csv.utf8), prefix: "HPIR")
+        XCTAssertEqual(obs.map(\.ft), [100.5, 101.5])
+    }
+
     func testDailyMediansAreLakeLocalAndShifted() {
         let chicago = TimeZone(identifier: "America/Chicago")!
         // 04:00Z on Oct 14 is 23:00 CDT Oct 13

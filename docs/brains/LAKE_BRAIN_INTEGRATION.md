@@ -128,8 +128,60 @@ Extends the frozen `LakeBrain` shape additively. `Known<T> = {value, source, qua
 ## 5. Source capability and the reviewed bindings
 
 Production resolves dams and gages at request time by proximity. The Lake Brain **does not**:
-- A state is published only from a **reviewed** binding (`LakeSourceBindings.swift`, version `bindings-2026-10-12.1`).
-- Every other directory lake gets a `CANDIDATE` class from its directory hints. A candidate never publishes a state.
+- A state is published only from a **reviewed** binding (`LakeSourceBindings.swift`, version `bindings-2026-10-13.1`).
+- Every other lake gets a `CANDIDATE` class. A candidate never publishes a state.
+
+### 5.1 Where bindings come from
+
+| Set | Source | Status |
+|---|---|---|
+| Pilots (5) | hand-written in `LakeSourceBindings.handWritten` (probed by hand 2026-10-12) | `REVIEWED` |
+| Generated (196 rows; the 5 pilots among them stay hand-written, so 191 candidates) | `jobs/lake-brain/data/bindings.proposed.v1.json` -> `scripts/generate-lake-bindings.py` -> `LakeSourceBindingsGenerated.swift` | `CANDIDATE`, unless the lake is in `accepted_batch.json` |
+
+`LakeSourceBindings.binding(for:)` returns the hand-written pilot first, then the generated row. `LakeSourceBindings.reviewed` (the only list a run publishes from) holds `REVIEWED` rows only; `LakeSourceBindings.candidates` holds the rest. The runner, the planner and the classifier each require `.reviewed` independently, and a normal run's scope is the reviewed lakes only.
+
+**The version bump.** `bindings-2026-10-12.1` -> `bindings-2026-10-13.1`. The planner compares the published binding version with the current one, so the five pilots **republish once** on the first run after this change (new profile fields: identity pointer, context features, source text). Their states do not change. Accepting a batch adds the suffix `+accepted.<n>.<fingerprint>`, which republishes the lakes again once.
+
+### 5.2 The proposed table (`build_bindings_table.py`)
+
+`jobs/lake-brain/bindings/build_bindings_table.py` is reproducible from the cached research data (no network): it reads `verified_bindings_v2.csv`, `plan_flood_evidence.csv`, `lake_features.csv`, `history_extension.csv` and the bulk probe data (inputs and their sha256 are recorded in the output) and writes the proposed table plus `bindings.proposed.v1.excluded.json`.
+
+**Eligible** = Michael's final decisions: only STRICT rows (waves `w1` and `w2-v1`, status `VERIFIED` or `VERIFIED_CORROBORATED`, `binding-review-v1` as pre-registered); never v1.1 extensions, R7h / `VERIFIED_ENVELOPE` or other post-hoc promotions; Clinton Lake|IL excluded; allow-listed providers only (`tva, cwms, cwms-saw, usgs, a2w, rise, nwps, twdb`; HADS/IEM only as a history source); no lake whose directory coordinate is flagged (`point_flag != ok`); not one of the 57 wave-1 flagged rows (including Red Lake|MN, which the wave-2 audit re-labelled); and not one of the 14 lakes whose research history series differs from the live series by more than 15 ft (rules-v2 hold-out QA: held back "pending datum resolution", no offset guessed).
+
+| | Count |
+|---|---|
+| Research-bound lakes (rows in `verified_bindings_v2.csv`) | 427 |
+| **Proposed (MACHINE_VERIFIED)** | **196**: a2w 75, cwms 42 (incl. 1 `cwms-saw`), usgs 28, nwps 21, rise 19, tva 11 |
+| Excluded | 231: post-hoc / not strict 130, coordinate flag 58, flagged 19, history/live mismatch 14, undocumented provider 9, wave-1 flagged 1 (primary reason; every reason is listed per lake) |
+| History | 176 SUFFICIENT (>= 5 complete years), 6 LIMITED, 14 NONE |
+| Operator plan evidence (strict, verified match) | 125 lakes: 84 with a guide curve or a zone, 111 with a flood-pool bottom |
+
+The five pilots are reproduced (asserted on every build): the four TVA rows exactly; Hartwell with the same station + parameter (`usgs 02187010 00062`, the hand-written fallback; the machine probe found the CWMS pool feed silent) and the same CWMS daily history.
+
+**Time zones.** `timeZone` is the lake's state with a longitude/latitude refinement for states that straddle a boundary (documented in the script; the 5 pilots keep theirs). It sets the lake-local day of the history and the baseline.
+
+**Live fallbacks.** Other series of the same lake that independently passed `binding-review-v1` (R1-R8) in the research candidate table, on an adapter-backed provider, at most two. A fallback is never silent (`primarySourceStale`, `fallbackSource`, `fallbackDatumDisagreement`).
+
+**History.** The series the research history table used: `cwmsDaily`, `usgsDaily` (daily values or instantaneous reduced to a daily median; a gage height only with its datum offset), `riseDaily`, `hadsDaily` (IEM HADS, NWPS gauges), `tvaOperatingGuide`. Composites list the lowest precedence first (the runner's merge lets the last entry win a date). The complete-year counts are the research's (`historyCompleteYears`, `historyClass`); a research extension the Brain cannot read (NWS RVDHUN text, CO-OPS) falls back to the base series, and the count follows.
+
+**Operator plan evidence** appears only where `plan_flood_evidence.csv` has `verifiedMatch` and a strict column (`planStrict`: a seasonal guide curve, or a zone with BOTH a top and a bottom; `floodStrict`: an operator flood-pool bottom). Each level is `{name, value | ref, source}`: constants are embedded (`static`), seasonal levels are read each run (`a2w` from the district listing already fetched for the live value, `cwmsLevel` from `/levels/{id}/timeseries`, `cwmsSeries` for a CWMS `Elev-Guide Curve` series). A guide series that stopped publishing is not claimed. They flow into the state's `operatingZone`, `guideFt`, `operatorLevels` and `floodPoolState` through `LakeGuideSource.operatorLevels`; the pilots are unaffected.
+
+### 5.3 The acceptance gate
+
+1. Michael reviews the proposed table (sampled review, flagged rows first; see `docs/research/lake-brain/LAKE_BRAIN_MICHAEL_ACTION_QUEUE.md`).
+2. A work package writes `jobs/lake-brain/data/accepted_batch.json` **only after that review**. Formats: a JSON array of lakeIds, an array of `{"lakeId": ...}`, or `{"lakeIds": [...], "reviewedAt": "YYYY-MM-DD", "reviewedBy": "..."}`. The file does not exist today; a missing file is an empty list.
+3. `python3 scripts/generate-lake-bindings.py` embeds the ids. It refuses an id that is not in the proposed table (or was excluded). `LakeGeneratedBindings.make(records:accepted:)` is the only place a status is decided: `.reviewed` iff the lakeId is accepted.
+4. Tests prove the gate (`LakeBrainBindingsTests`): with the real (empty) batch no generated binding is reviewed and a candidate triggers no fetch, no plan and no state, even with `force`; a synthetic batch flips exactly its ids.
+
+Nothing in this change publishes to any RTDB or bucket, and nothing is deployed.
+
+### 5.4 Provider adapters
+
+`LevelSeriesRef.Provider` is `tva | cwms | usgs | a2w | rise | nwps` (`LakeLevelFeedsFleet.swift`; provider table, traps and live dry-run results in `docs/brains/LAKE_BRAIN_PROVIDERS.md`). TWDB has no strict lake in the proposed table, so it has no adapter yet.
+
+### 5.5 Candidate dry run
+
+`LakeBrainJob --dry-run DIR --include-candidates [--lake ID]...` evaluates CANDIDATE bindings as if reviewed: local files only (history archive `DIR/_archive`; a `gs://` archive is refused; `--rtdb` is refused; the shared TVA archive is not read), every output marked `dryRunCandidate` (state quality flag, profile note, `bindingStatus` stays `CANDIDATE`). Every run, candidate or not, also flags `historyLiveMismatch:+/-Nft` and records an error when the seeded history of the last 365 days has a median more than 15 ft from the live level (a series/datum mismatch that would give a wrong "unusual" label).
 
 **Pilot probe record (2026-10-12):**
 
@@ -288,10 +340,15 @@ export SECTOR_GCS_ACCESS_TOKEN=$(gcloud auth print-access-token) SECTOR_BRAIN_AC
 Other options:
 - `--scope fleet` also writes DISCOVERED profiles and presence for all 621 lakes.
 - `--lake ID` limits the run to one lake.
+- `--include-candidates` (with `--dry-run` only): evaluate the CANDIDATE bindings, see §5.5.
 
 ## 13. Known limits (v1)
 
 - **TVA history** is 2025-01-01 onward (the guide's two years). Pilots stay `INSUFFICIENT` until 2027 and `SUFFICIENT` only in 2030, unless a deeper TVA source is found. That is why `historicalState` is withheld there.
 - **No navigation or run-of-river facts.** No reviewed source states them; they stay unknown.
-- **Only the 5 pilots are reviewed.** The other 616 lakes are `CANDIDATE` and need probing (§5) before they publish a state.
+- **Only the 5 pilots are reviewed.** 191 generated bindings (the 196-row table minus the 5 pilots, which stay hand-written) are `CANDIDATE` until `accepted_batch.json` exists (§5.3); the other lakes have no binding (research: unbound, post-hoc only, or held back for a flagged coordinate, an undocumented provider or a history/live series mismatch).
+- **A2W gives the latest value and its 24 h change, not a history**: 1 h / 6 h / 3 d / 7 d changes are unknown for A2W-primary lakes.
+- **Daily sources** (RISE about 48 h latency; CWMS daily series) are stale after `lag + 3 x cadence`; operator levels from Access2Water are today's value only.
+- **HADS history** is rate-limited by IEM (one request per 15 s, 3-year chunks): a first seed of a 15-year NWPS lake takes minutes.
+- **The geometry pointer** (`identity.geometry`) names a registry URL another service creates; nothing here reads it.
 - **The shared fleet fields** (`stale`, `issueCount`, `hasObservations`) need a cross-brain rule from the platform.
