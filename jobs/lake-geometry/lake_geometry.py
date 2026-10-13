@@ -319,8 +319,10 @@ def match_seed(rows, engine_usable, refs=()):
     return [], "none"
 
 
-def adjacent_pieces(rows, seed):
-    """Unnamed or same-named NHD features within ADJ_DIST_M of the seed union that are >= 2 % of its area."""
+def adjacent_pieces(rows, seed, near=None):
+    """Unnamed or same-named NHD features within ADJ_DIST_M of the seed union that are >= 2 % of its area. `near` (optional, metric)
+    is the Engine's own outline: a feature that touches what the Engine shipped also counts as adjacent (the Engine joined some
+    pieces the NHD seed alone does not touch, e.g. Norris Lake TN)."""
     if not seed:
         return []
     u = unary_union([r["g"] for r in seed])
@@ -328,7 +330,9 @@ def adjacent_pieces(rows, seed):
     for r in rows:
         if r in seed:
             continue
-        if (not r["name"] or r["nm"] >= 0.99) and r["area"] >= ADJ_MIN_SHARE * u.area and r["g"].distance(u) <= ADJ_DIST_M:
+        if not ((not r["name"] or r["nm"] >= 0.99) and r["area"] >= ADJ_MIN_SHARE * u.area):
+            continue
+        if r["g"].distance(u) <= ADJ_DIST_M or (near is not None and r["g"].distance(near) <= ADJ_DIST_M):
             out.append(r)
     return out
 

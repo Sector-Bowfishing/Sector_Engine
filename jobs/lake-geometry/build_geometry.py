@@ -286,10 +286,12 @@ def plan_lake(lake, flag, engine_feat, cache, notes):
             seed, method = lg.match_seed(rows, False, refs)
             usable = False
     except LookupError:
-        plan.update(status="query-missing", reason="NHD search around the directory point is not cached and live queries were disabled (--offline)")
+        plan.update(status="query-missing", reason="geometry pending: this lake needs a fresh NHD search around its coordinates (its research polygon is "
+                    "unusable or unverified) and the USGS NHD service was unavailable at build time; added in a later index refresh")
         return plan
     except Exception as e:  # noqa: BLE001
-        plan.update(status="query-error", reason="NHD search around the directory point failed (USGS service error: " + str(e)[-60:] + "); re-run to retry")
+        plan.update(status="query-error", reason="geometry pending: this lake needs a fresh NHD search around its coordinates (its research polygon is "
+                    "unusable or unverified) and the USGS NHD service errored (" + str(e)[-40:] + "); added in a later index refresh")
         return plan
     plan["pick_method"] = method
     if not seed:
@@ -306,7 +308,7 @@ def plan_lake(lake, flag, engine_feat, cache, notes):
             plan["nearest"] = {"name": near[0]["name"], "areaKm2": round(near[0]["area"] / 1e6, 3), "distM": round(near[0]["dist"])}
         return plan
     seed_area = unary_union([r["g"] for r in seed]).area / 1e6
-    adj = lg.adjacent_pieces(rows, seed)
+    adj = lg.adjacent_pieces(rows, seed, engine_m if (usable and method == "engine-overlap") else None)
     base_km2 = seed_area
     full = unary_union([r["g"] for r in seed + adj])
     full_km2 = full.area / 1e6
@@ -446,9 +448,13 @@ def main():
     ap.add_argument("--offline", action="store_true", help="never query the NHD REST service (cache only)")
     ap.add_argument("--built-at", default="", help="ISO timestamp recorded as geometryUpdatedAt (default: now, UTC)")
     ap.add_argument("--upload", action="store_true", help="write to gs://%s (default: dry run)" % BUCKET)
+    ap.add_argument("--upload-only", action="store_true", help="upload the artifacts already in --out (no rebuild)")
     ap.add_argument("--enrich", action="store_true", help="fetch GNIS_ID for the selected NHD features (a few hundred small GETs)")
     a = ap.parse_args()
 
+    if a.upload_only:
+        upload(a.out)
+        return
     built_at = a.built_at or dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     directory = json.load(open(a.directory))
     lakes = directory["lakes"]
@@ -576,6 +582,7 @@ def registry_entry(lake, flag, plan, geom, fr, gsw, built_at, out, files):
     if geom is None:
         reason = plan.get("reason") or "no usable polygon"
         e["geometryMissingReason"] = reason
+        e["geometryMissingStatus"] = {"query-missing": "pending", "query-error": "pending"}.get(plan.get("status"), plan.get("status") or "no-nhd")
         if plan.get("engine_polygon"):
             e["geometryWithheld"] = {"engineSource": plan["engine_polygon"]}
         if plan.get("status") == "held-large-water":
@@ -712,7 +719,8 @@ def make_manifest(index, files, inputs, commit, dirty, built_at, cache):
         "counts": {"lakes": len(index), "withGeometry": len(disp), "geometryNull": len(index) - len(disp),
                    "confidenceAfter": dict(levels), "confidenceBefore": dict(before),
                    "pointFlag": dict(Counter(e["pointFlag"] or "none" for e in index)),
-                   "memberGroups": sum(1 for e in index if len(e["memberIds"]) > 1)},
+                   "memberGroups": sum(1 for e in index if len(e["memberIds"]) > 1),
+                   "nullByStatus": dict(Counter(e["geometryMissingStatus"] for e in index if not e["geometry"]))},
         "bytes": {"displayGzipTotal": sum(disp), "analysisGzipTotal": sum(ana), "objectsGzipTotal": sum(disp) + sum(ana),
                   "displayGzipMedian": int(np.median(disp)) if disp else 0, "displayGzipMax": max(disp) if disp else 0},
         "inputs": inputs,
