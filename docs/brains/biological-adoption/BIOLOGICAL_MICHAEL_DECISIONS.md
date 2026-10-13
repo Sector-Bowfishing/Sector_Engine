@@ -3,7 +3,7 @@
 Nothing below has been applied. Customer behaviour, labels, policy, production and the live Brain RTDB are unchanged. Unrelated implementation is not waiting on these.
 
 ## 00. Where things stand (2026-10-14)
-Rule set `2026-10-14.1-rules`: 61 rules, 47 usable and active, 11 DRAFT, 3 retired by supersession; 50 frozen identities; 7 predictions; 0 observations. Candidate bundle `2026-10-14.3` passes the 14-point audit (`tools/audit_bundle.py`). Canonical rescore after every change: **published 4.0, implementation-supported 4.6, research potential 4.0 (capped; 4.3 uncapped), research + implementation 4.9, all unchanged by this cycle.** Nothing further can move the score without an approval below, a reviewer, or field data.
+Rule set `2026-10-14.2-rules`: 61 rules, 48 usable and active, 10 DRAFT, 3 retired by supersession; 51 frozen identities; 7 predictions; 0 observations. Candidate bundle `2026-10-14.4` passes the 14-point audit (`tools/audit_bundle.py`). Canonical rescore after every change: **published 4.0, implementation-supported 4.6, research potential 4.0 (capped; 4.3 uncapped), research + implementation 4.9, all unchanged by this cycle.** Nothing further can move the score without an approval below, a reviewer, or field data.
 **What is waiting on you, in order of leverage:** (1) approve publishing the candidate (4.0 → 4.6); (2) set the knowledgeDepth basis and the unassessed rows (→ up to 4.9); (3) approve a reviewer role; (4) tell me how many testers can log trips at which lakes, and preregister the success criterion (`BIOLOGICAL_VALIDATION_FLEET_DESIGN.md`).
 
 ## 0. Corrected numbers
@@ -35,7 +35,7 @@ Criteria: bowfishing importance + rule evidence + Intelligence usefulness + pres
 |---|---|---:|---|
 | **A** | common carp | 11 (0) | richest evidence; summer-night position deliberately UNKNOWN |
 | **A** | spotted gar | 7 (1; 3 older versions retired) | night movement outside spring, shallow vegetation, backwaters |
-| **A** | silver carp | 8 (1) | flow-driven; spawn untested on TVA pools |
+| **A** | silver carp | 9 (0) | flow-driven; spawn untested on TVA pools |
 | **A** | longnose gar | 3 (1) | tailwater spring staging only |
 | B | alligator gar | 5 (1) | strong flood-spawn evidence; confirm presence first |
 | B | grass carp | 7 (1) | good rules; confirm presence before use |

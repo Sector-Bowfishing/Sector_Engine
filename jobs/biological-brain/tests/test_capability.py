@@ -243,3 +243,37 @@ class AuditBundleTests(unittest.TestCase):
             self.assertFalse(rep["ok"])
         finally:
             shutil.rmtree(out)
+
+
+class ObservationToolTests(unittest.TestCase):
+    def setUp(self):
+        self.d = tempfile.mkdtemp()
+        self.obs = {"observationId": "o1", "tripId": "t1", "observerId": "u_ab12", "lakeId": "Example|ST", "observedAt": "2026-04-20T22:00:00Z", "speciesId": "example_fish",
+                    "speciesIdConfidence": "CONFIRMED", "encountered": True, "count": 3, "shootableCount": 2, "effortMinutes": 90, "zone": "backwaterHabitat", "observerConfidence": "HIGH"}
+
+    def tearDown(self):
+        shutil.rmtree(self.d)
+
+    def write(self, name, data):
+        p = os.path.join(self.d, name)
+        json.dump(data, open(p, "w"))
+        return p
+
+    def test_validate_append_summary_and_all_or_nothing(self):
+        from tools import observations as tool
+        good = self.write("good.json", [self.obs, dict(self.obs, observationId="o2", tripId="t2", encountered=False, count=0, shootableCount=0)])
+        store = os.path.join(self.d, "store.jsonl")
+        self.assertEqual(tool.cmd_validate(good), 0)
+        self.assertEqual(tool.cmd_append(store, good), 0)
+        s = tool.summarize(vl.ObservationStore(store).entries())
+        self.assertEqual((s["observations"], s["independentTrips"], s["nonEncounters"], s["effortHours"]), (2, 2, 1, 3.0))
+        mixed = self.write("mixed.json", [dict(self.obs, observationId="o3", tripId="t3"), dict(self.obs, observationId="o4", encountered="yes")])
+        self.assertEqual(tool.cmd_append(store, mixed), 1)
+        self.assertEqual(len(vl.ObservationStore(store).entries()), 2)                # the valid half was NOT written
+        with self.assertRaises(vl.LogError):                                           # a duplicate id is refused by the store
+            vl.ObservationStore(store).append(self.obs)
+
+    def test_cli_usage_error(self):
+        from tools import observations as tool
+        self.assertEqual(tool.main(["x"]), 2)
+        self.assertEqual(tool.main(["x", "bogus"]), 2)
