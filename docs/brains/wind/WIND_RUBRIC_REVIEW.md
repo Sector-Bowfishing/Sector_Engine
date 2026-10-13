@@ -13,7 +13,7 @@ Canonical score unchanged: **Certification 3.1 / 10** (rubric v1), **BWIS v1 5.4
 | 6 | Exposure field-validated (20) | **Yes — the most bowfishing-relevant item.** | Needs bank-pair truth (hardware/volunteers); correct to keep. |
 | 7 | Surface field-validated (20) | Yes (practical roughness). | Needs the same field programme. |
 | 8 | Reliability (8) | Operations hygiene. | Not wind knowledge; automatic by ≈ 2026-11-07. |
-| 9 | Coverage (4) — 4 lakes + 50 QA'd | Weak. | Coverage that exists as AUDITED tables; ESTIMATED tier (471 lakes) earns nothing and rightly so. |
+| 9 | Coverage (4) — 4 lakes + 50 QA'd | Weak. | Coverage that exists as AUDITED tables; ESTIMATED tier (473 lakes) earns nothing and rightly so. |
 | 10 | Provenance / Unknown / explanation (8) | Yes (honesty). | Fine. |
 
 ## What the rubric does not value but customers do

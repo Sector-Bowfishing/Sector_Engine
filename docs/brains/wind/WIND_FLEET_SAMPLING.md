@@ -20,4 +20,4 @@ One point-sampled object per cycle: `nbm_fleet/<YYYYMMDDHH>.json.gz` → `{lakeI
 4. Orchestrator registration: no new schedule; same job, same cadence.
 
 ## Tiers (manifest, 621 lakes)
-AUDITED 74 · ESTIMATED 471 (Lake Brain confidence HIGH/MEDIUM, ≥ 20 sampled banks, raster ≤ 40 m) · POINT_ONLY 76 (44 LOW geometry confidence, 21 no polygon, 8 coarse raster, 3 polygon fetch failed). Regenerate with `python -m sector_wind.brain.fleet build …`; the diff is the review.
+AUDITED 74 · ESTIMATED 473 (Lake Registry v1 confidence HIGH/MEDIUM, ≥ 20 sampled banks, raster ≤ 40 m) · POINT_ONLY 74 (37 LOW confidence, 28 no registry geometry, 9 coarse raster) — recomputed 2026-10-13 from the published registry; see `WIND_FLEET_EXPOSURE_READINESS.md`. Regenerate with `python -m sector_wind.brain.fleet build …`; the diff is the review.

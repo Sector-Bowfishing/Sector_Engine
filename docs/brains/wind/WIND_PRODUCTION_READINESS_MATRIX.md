@@ -11,7 +11,7 @@ Status words: PASS · PARTIAL · FAIL · WAITING (blocked on time, humans or a d
 | **Trend** | PARTIAL | "Easing" precision 0.65 vs 0.57 for current provider; accuracy 0.55 vs 0.42 baseline | Rising and lay-down withheld (no skill) |
 | **Bank exposure** | PARTIAL | Vocabulary + tests; matched vs audited: label agreement 0.96 (audited facing), PROTECTED precision 0.95, false-PROTECTED ≈ 1% | MODELED only; no field truth; ESTIMATED shows EXPOSED/PROTECTED only |
 | **Fetch** | PARTIAL | Frozen 9-ray CEM; audited tables QA'd; matched polygon fetch ρ 0.93, HIGH FETCH P/R 0.89/0.95 | ESTIMATED dominant-direction line failed (58% vs 80%); identity-risk lakes blocked |
-| **Fleet coverage** | PARTIAL | 4 live; 74 audited; 528 label-eligible; 621 manifest (`WIND_FLEET_EXPOSURE_READINESS.md`); fleet sampler validated on 600 lakes | Live archive still 4 lakes; sampler not wired; AK/HI untested; 21 no-polygon lakes |
+| **Fleet coverage** | PARTIAL | 4 live; 74 audited; 522 label-eligible IDs (517 distinct waters); 621 manifest (`WIND_FLEET_EXPOSURE_READINESS.md`); fleet sampler validated on 600 lakes | Live archive still 4 lakes; sampler not wired; AK/HI untested; 21 no-polygon lakes |
 | **Freshness** | PASS | 3 h stale rule; archive median 1.14 h after init (NBM posting floor); 0 stale of 156 logged states (`WIND_LIVE_RELIABILITY.md`) | Only 7 days of history |
 | **Confidence** | PARTIAL | Frozen rule; H2-C1/C2 pre-registered; scenario tests | Label does not rank strong-wind risk; ordering unproven until H2 |
 | **Provider reliability** | PARTIAL | 164 executions, 0 failed; 744 NBM cycles complete; transient RTMA failures 0.15% recovered | NOAA S3 is a single upstream; 7 days |
@@ -54,7 +54,7 @@ PASS 2 · PARTIAL 17 · WAITING 9 · NOT_REQUIRED 1 · FAIL 0. There is no FAIL 
 | Coverage | 9 | 4/4 dev lakes + 50 audited QA lakes | 10.0 | 7.5 | 0 | note: coverage does not count ESTIMATED/blocked | — |
 | Gust | 3 | NBM gust POD 0.04 | 0.0 | 7.5 if critical | 7.5 | **recommend not critical**; withhold gust claims | rubric decision |
 | Over-water reference | cap 7 (no dimension) | none | n/a | gate | gate | portable instrument sessions | FIELD / Michael |
-| Fleet exposure coverage | none | 528 label-eligible, 0 validated | unscored | — | n/a | v2 coverage dimension capped by validation tier | rubric decision |
+| Fleet exposure coverage | none | 522 label-eligible IDs (517 distinct waters), 0 validated | unscored | — | n/a | v2 coverage dimension capped by validation tier | rubric decision |
 | Confidence | none | rule frozen, ordering unproven | unscored | — | n/a | H2-C1/C2 on 2027-01-01 | H2 |
 | Intelligence contract | none | proposal + fixtures | unscored | — | n/a | reconcile (`WIND_INTELLIGENCE_COMPATIBILITY.md`) | prerequisite branch |
 

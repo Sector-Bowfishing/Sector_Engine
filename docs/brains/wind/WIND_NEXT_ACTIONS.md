@@ -3,7 +3,7 @@
 Rule for this phase: do not invent desk work. Everything below is either **technically complete** or **blocked on time, people, a decision, or a merge**.
 
 ## Technically complete (on `feat/wind-brain-adoption`, tested)
-Tonight block + `simple()` words + withheld claims · bank vocabulary (AUDITED three-way, ESTIMATED EXPOSED/PROTECTED) with conservative PROTECTED rules · geometry-tier manifest with hard blockers (528 label-eligible lakes) · estimated-geometry builder · fleet NBM point sampler (validated against production interpolation) · one-shot gated H2 runner and frozen criteria · field record schema, validator and pair concordance · provider shadow comparison (historical) · strong-wind mechanism validation · matched bank validation · fleet readiness · live-reliability audit tool · Intelligence contract proposal with pinned fixtures · rubric v2 proposal · readiness matrix · 104 tests.
+Tonight block + `simple()` words + withheld claims · bank vocabulary (AUDITED three-way, ESTIMATED EXPOSED/PROTECTED) with conservative PROTECTED rules · geometry-tier manifest with hard blockers 522 label-eligible lake IDs · estimated-geometry builder · fleet NBM point sampler (validated against production interpolation) · one-shot gated H2 runner and frozen criteria · field record schema, validator and pair concordance · provider shadow comparison (historical) · strong-wind mechanism validation · matched bank validation · fleet readiness · live-reliability audit tool · Intelligence contract proposal with pinned fixtures · rubric v2 proposal · readiness matrix · 104 tests.
 
 ## Waiting on TIME
 | Item | Date |

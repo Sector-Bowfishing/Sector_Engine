@@ -522,3 +522,12 @@ def test_registry_flag_mapping_and_audited_cross_check_blockers():
         assert "auditedGeometryAreaMismatch" in m["lakes"][lid]["blockers"] and not FL.exposure_allowed(m["lakes"][lid]), lid
     # member lakes that share one water body keep the link
     assert set(m["lakes"]["Kentucky Lake|KY"]["memberIds"]) >= {"Kentucky Lake|KY", "Kentucky Lake|TN"}
+
+
+def test_bank_validation_v2_clarification_is_frozen_and_changes_no_threshold():
+    import hashlib
+    d = H2.PREREG
+    fz = json.load(open(os.path.join(d, "WIND_BANK_VALIDATION_V2_PREREG_CLARIFICATION.freeze.json")))
+    assert hashlib.sha256(open(os.path.join(d, fz["file"]), "rb").read()).hexdigest() == fz["sha256"], "clarification changed after freeze"
+    txt = open(os.path.join(d, fz["file"])).read()
+    assert "changes **no** threshold" in txt and "Lake Registry v1" in txt

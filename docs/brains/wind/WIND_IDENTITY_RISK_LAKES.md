@@ -1,21 +1,35 @@
-# Audited lakes with a lake-identity risk (Lake Brain owns identity; Wind blocks until it is resolved)
+# Audited fetch tables vs the published Lake Registry — identity and geometry-agreement blocks
 
-Lake Brain's geometry flags (`lake_geometry_flags.csv`, sha256 prefix a6986e005ad3, 621 lakes) mark 43 lakes `identity_risk` (all confidence LOW). Six of them nevertheless have an **AUDITED** Wind fetch table. Wind does **not** fix identity: those six are `BLOCKED` in the geometry manifest (`exposure_allowed` = false), so no bank statement is produced for them. The other 37 identity-risk lakes were already LOW/POINT_ONLY (no bank labels). Machine-readable evidence: `data/identity_risk_audited_lakes.json`.
+Lake Brain owns canonical lake identity and publishes the Lake Registry (`gs://sector-lake-registry`, v1, generated 2026-10-13T20:20Z). Wind does **not** fix identity. Each of the 74 audited fetch tables was cross-checked against the registry (`research/audited_vs_registry.py`, `data/audited_vs_registry.json`): area of the NHD feature the table was built from vs the registry shoreline union, the table's GNIS name vs the directory name, and the registry's `pointFlag` / confidence. **Fifteen audited lakes are blocked** (no bank word of any kind) until Lake Brain resolves them; the manifest enforces it (`exposure_allowed` false; tests).
 
-| Lake ID | Lake Brain evidence | What the audited table was actually built on | Severity |
+## A. Lake-identity risk (registry `pointFlag: identity-risk`, confidence LOW) — 6 audited lakes
+| Lake ID | Registry evidence | Audited table was built on | Area ratio (registry / table) | Verdict |
+|---|---|---|---|---|
+| **Andrews Lake\|DE** | directory point 12.7 km from the polygon (allowed 3.0 km) | NHD **"McColley Pond"** (0.232 km²), seed 6.7 km away | **0.36** | **Different water body.** Table unusable. |
+| **Griffith Lake\|DE** | 6.3 km; polygon 0.159 km² | NHD **"Killen Pond"** (0.319 km²), seed 6.1 km | **0.50** | **Different water body.** |
+| **Hiwassee Lake\|NC** | 8.9 km; registry source OSM; NHD name differs from the directory name | NHD **"Persimmon Lake"** (23.9 km²), seed 8.9 km | 1.02 | **Ambiguous.** The registry's polygon has the same area as the audited feature, so the table may well describe the right reservoir (named "Persimmon Lake" in NHD); the *directory name/point* disagree. Lake Brain must rule. (Earlier note calling it a wrong water body is withdrawn.) |
+| **Eagle Lake\|MS** | 4.1 km | NHD "Eagle Lake" (19.5 km²), name matches | 1.00 | Geometry agrees; **directory coordinate is off ≈ 4 km** (also shifts the forecast point) |
+| **Long Lake\|ME** | 4.8 km | NHD "Long Lake" (24.4 km²) | 1.00 | same |
+| **Sherman Reservoir\|NE** | 4.6 km | NHD "Sherman Reservoir" (9.9 km²) | 1.00 | same |
+
+## B. Audited table disagrees with the registry polygon (area ratio outside 0.8–1.25) — 6 more audited lakes (blocker `auditedGeometryAreaMismatch`)
+| Lake ID | Ratio | GNIS name matches directory? | Note |
 |---|---|---|---|
-| **Andrews Lake\|DE** | directory point **12.7 km** from the polygon (allowed 3.0 km); engine polygon "Andrews Lake" 0.084 km²; 25% of polygon water ≥ 50% of the time (GSW) | NHD feature **"McColley Pond"** (0.232 km²), seed 6.7 km from the directory point, `nameMatchesDirectory: false` | **Wrong water body.** Table must not be used. |
-| **Griffith Lake\|DE** | point **6.3 km** from polygon; polygon "Griffith Lake" 0.159 km² | NHD **"Killen Pond"** (0.319 km²), seed 6.1 km, name mismatch | **Wrong water body.** |
-| **Hiwassee Lake\|NC** | point **8.9 km** from polygon; source osm; NHD name differs from directory name; NHD area ratio 0.88 | NHD **"Persimmon Lake"** (23.9 km²), seed 8.9 km, name mismatch | **Wrong water body (or a differently named reach).** |
-| **Eagle Lake\|MS** | point **4.1 km** from polygon (allowed 3.0) | NHD "Eagle Lake" (19.5 km²), name matches, seed 4.1 km | Name matches; the **directory coordinate is off by 4 km** (also shifts the forecast sampling point by ≥ 1 cell) |
-| **Long Lake\|ME** | point **4.8 km** from polygon | NHD "Long Lake" (24.4 km²), name matches | same |
-| **Sherman Reservoir\|NE** | point **4.6 km** from polygon | NHD "Sherman Reservoir" (9.9 km²), name matches | same |
+| Bowdish Reservoir\|RI | 0.68 | no | possible partial/other feature |
+| Watchaug Pond\|RI | 1.36 | no | registry union larger |
+| Norris Lake\|TN | 1.40 | yes | table may cover part of the reservoir (arms) — fetch from a partial polygon is unsafe |
+| Lake Texoma\|TX | 1.45 | yes | same |
+| Roosevelt\|AZ | 1.53 | yes | same |
+| Neely Henry\|AL | 1.251 | yes | marginal (limit 1.25) |
+These are blocked because a fetch table that covers only part of the water body mis-measures open-water runs; whether the registry or the table is right is Lake Brain's/Wind's joint review.
 
-## What Lake Brain needs to decide (per lake)
-1. Is the directory name/state the lake in the engine polygon, or the pond/lake the audited table used? (The three mismatches look like the directory name belonging to a small pond that NHD names differently; Hiwassee's reservoir may be a different feature entirely.)
-2. If the polygon is right: correct the directory coordinate (this also fixes the forecast sampling point).
-3. If the audited table's feature is right: replace the engine polygon.
-Evidence Wind can hand over: table SHA-256 prefixes (8fa2941c3b04 Andrews, bc347a2db835 Griffith, 416877cb8380 Hiwassee, 9c1d73c7bf99 Eagle, 476d44f1951a Long, 7582a8d6403d Sherman), seed distances above, the NHD features used.
+## C. Noted, not blocking (area agrees; name or confidence differs)
+Buckeye Lake OH and DeGray AR (GNIS name differs from the directory name; area ratio 1.00), Sevier Lake UT (registry confidence LOW; area ratio 1.00). Waimaluhia Reservoir HI has no registry geometry (and an untested HI forecast domain): blocked.
+
+## What Lake Brain needs to decide (per lake) and what Wind can supply
+1. Which water is the directory entry? (A: name/point vs polygon; B: which polygon is the whole reservoir.)
+2. If the polygon is right: correct the directory coordinate (also fixes the forecast sampling point). If the audited feature is right: replace the registry polygon.
+Wind can supply: table SHA-256 prefixes (Andrews 8fa2941c3b04, Griffith bc347a2db835, Hiwassee 416877cb8380, Eagle 9c1d73c7bf99, Long 476d44f1951a, Sherman 7582a8d6403d), seed distances, the NHD features used (`data/identity_risk_audited_lakes.json`, `data/audited_vs_registry.json`).
 
 ## Wind policy until resolved
-`blockers: ["lakeIdentityRisk"]` ⇒ no bank labels and no exposure shares; wind direction/tonight for these lakes should carry a "representative point may be off" caveat (their directory coordinate is 4–13 km from the water). When Lake Brain publishes a corrected identity, rebuild the manifest (`python -m sector_wind.brain.fleet build …`); Wind re-audits the table only if the underlying feature changed.
+No bank labels or exposure shares for these 15 lakes; wind direction/tonight for the six identity-risk lakes should carry "representative point may be off". After Lake Brain publishes a corrected registry version, rebuild the manifest (`python -m sector_wind.brain.fleet build --registry … --audited-check …`); Wind rebuilds an audited table only if the underlying feature changed.

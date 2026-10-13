@@ -44,6 +44,6 @@ Test applied to every v2 dimension: *does it make Wind better for bowfishing, an
 | Over-water reference (5) | yes — largest unknown | no | portable plan ≥ 30 sessions | unchanged |
 | Confidence calibration (5) | yes | no | label orders direction reliability, not strong-wind risk | **split**: score `forecastConfidence` on direction ordering and `windRisk` on lift; do not score one blended "confidence" |
 | Reliability & freshness (5) | operations | no | scorer already earns 1.33/8 at 5 days | unchanged rule |
-| Fleet coverage (5, tier-capped) | yes | no | 528 eligible, 0 validated | cap by validation tier (ESTIMATED ≤ 50% until field-validated), blocked lakes count 0 |
+| Fleet coverage (5, tier-capped) | yes | no | 522 label-eligible IDs (517 distinct waters), 0 validated | cap by validation tier (ESTIMATED ≤ 50% until field-validated), blocked lakes count 0 |
 | Honesty & provenance (8) | yes | no | withheld-claims list, forecast ≠ observation | keep |
 Not rewarded by v2 by design: gust-event POD, ≥ 15 mph event skill, wave-height science, extra atmospheric variables. Cap logic unchanged (no field truth ⇒ ≤ 6.0). **Do not adopt during this phase**; the canonical score stays on frozen rubric v1.

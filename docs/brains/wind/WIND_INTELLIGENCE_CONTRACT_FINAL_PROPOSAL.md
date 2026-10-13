@@ -22,7 +22,7 @@ Fixtures to build consumer tests on: `docs/brains/wind/fixtures/*.json` (generat
 | Evidence kind | `tonight.evidence.kind` (`MODELED_FORECAST`), `exposure.evidenceKind` (`MODELED`) | | |
 | Validation tier | `tonight.evidence.validationTier` (`HISTORICAL_LAND_STATIONS_ONLY`), `exposure.validationTier` (`AUDITED_/ESTIMATED_GEOMETRY_NO_FIELD_TRUTH`) | | upgrades only when evidence earns it |
 | Refused claims | `tonight.withheld.{layDown, rising, gust, overWaterSpeed, directionBelow5mph}` | reasons | |
-Lake eligibility (which lakes may carry bank words at all): `brain/data/geometry_tiers.json` → `exposure_allowed` (528 lakes; AUDITED 65 + ESTIMATED 463; identity-risk and AK/HI blocked). A lake outside it carries wind/tonight only.
+Lake eligibility (which lakes may carry bank words at all): `brain/data/geometry_tiers.json` → `exposure_allowed` (522 lake IDs = 517 distinct waters; AUDITED 59 + ESTIMATED 463; identity-risk, registry-mismatch and AK/HI lakes blocked). A lake outside it carries wind/tonight only.
 
 ## 2. Customer-simple answers Wind already provides
 `tonight.simple(block, bank)` → `{wind, tonight, risk, trend, bank, fetch, confidence, caveats}`. Intelligence may use these words verbatim; `None` always means "no claim".

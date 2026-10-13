@@ -1,4 +1,6 @@
-# Wind validation + shadow readiness — summary (2026-10-13)
+# Wind validation + shadow readiness — summary (2026-10-13, previous phase)
+
+> **Superseded numbers (2026-10-13, continuous-validation phase):** fleet readiness is now recomputed from the published Lake Registry v1 — AUDITED 59 · ESTIMATED_HIGH 337 · ESTIMATED_MEDIUM 126 · LOW 37 · POINT_ONLY 9 · NO_GEOMETRY 28 · BLOCKED 25; **522** label-eligible lake IDs (517 distinct waters). The canonical scorer now returns 3.3 (published frozen block 3.1). See `WIND_VALIDATION_CYCLE_SUMMARY.md`.
 
 Branch `feat/wind-brain-adoption` (additional commits on the existing remote branch; still based on the unmerged `feat/cost-efficient-scheduling`). Canonical Wind Certification **3.1 / 10**, unchanged; no rubric edit. H2 completely sealed: no row read, summarised or copied; the live-reliability audit used operational metadata only. Customer wind unchanged (Open-Meteo). Nothing deployed, merged or rebased.
 

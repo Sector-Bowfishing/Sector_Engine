@@ -1,0 +1,7 @@
+{
+ "file": "WIND_BANK_VALIDATION_V2_PREREG_CLARIFICATION.md",
+ "sha256": "4a268e2a21047550790a500e1e6db6650629033ad28220f8e8e283a984b9c8f0",
+ "clarifies": "WIND_BANK_VALIDATION_V2_PREREG.md",
+ "registryIndexSha256Prefix": "8ae465ab2e39",
+ "frozenAt": "2026-10-13"
+}
