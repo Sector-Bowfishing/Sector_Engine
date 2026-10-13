@@ -308,7 +308,7 @@ def test_h2_scoring_applies_frozen_thresholds():
 # ── field validation schema ──────────────────────────────────────────────────────────────────
 def obs(**kw):
     r = {"schema": FS.SCHEMA, "id": "o1", "lakeId": "Guntersville|AL", "bankId": "GT-000123", "observedAtUtc": "2026-10-10T01:30:00Z", "observer": "mc",
-         "roughnessObserved": "lightChop", "bankImpactObserved": "DIRECT", "boatability": "manageable", "observerConfidence": 3, "observerSawPrediction": False,
+         "roughnessObserved": "choppy", "bankImpactObserved": "DIRECT", "boatability": "noticeable", "observerConfidence": 3, "observerSawPrediction": False,
          "wind": {"source": "handheld", "speedMph": 9.0, "gustMph": 13.0, "directionFromDeg": 225, "deviceId": "kestrel-1", "heightM": 2.0, "averagingSec": 60}}
     r.update(kw); return r
 
@@ -336,7 +336,7 @@ def test_field_pair_rules_and_concordance():
         {"predictedLabelA": "DIRECT", "predictedLabelB": "PROTECTED", "predictedHm0A": 8, "predictedHm0B": 1, "obsA": 3, "obsB": 1},
         {"predictedLabelA": "DIRECT", "predictedLabelB": "PROTECTED", "predictedHm0A": 8, "predictedHm0B": 1, "obsA": 1, "obsB": 3},
         {"predictedLabelA": "CROSS", "predictedLabelB": "CROSS", "predictedHm0A": 4.0, "predictedHm0B": 3.9, "obsA": 2, "obsB": 2},   # tie: excluded
-        {"predictedLabelA": "UNKNOWN", "predictedLabelB": "DIRECT", "predictedHm0A": 0, "predictedHm0B": 5, "obsA": 1, "obsB": 4}])    # unknown: excluded
+        {"predictedLabelA": "UNKNOWN", "predictedLabelB": "DIRECT", "predictedHm0A": 0, "predictedHm0B": 5, "obsA": 1, "obsB": 3}])    # unknown: excluded
     assert c == {"n": 2, "predictionTies": 2, "concordance": 0.5}
 
 

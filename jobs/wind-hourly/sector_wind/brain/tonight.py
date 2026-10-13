@@ -193,3 +193,39 @@ def _t(iso_s: str) -> datetime:
 
 def _nearest(rows, t):
     return min(rows, key=lambda r: abs((_t(r["at"]) - t).total_seconds())) if rows else None
+
+
+def _word(x):
+    return None if x is None else str(x).upper()
+
+
+def simple(block: dict, bank: dict | None = None) -> dict:
+    """Customer-simple answers from a tonight block (and optionally ONE bank row). Words only; no coefficients.
+    {'wind': 'SW 7-10 mph', 'tonight': 'LIGHT', 'risk': 'COULD TURN BREEZY' | None, 'trend': 'EASING' | 'STEADY' | None,
+     'bank': 'DIRECT' | 'CROSS' | 'PROTECTED' | None, 'fetch': 'HIGH' | 'MODERATE' | 'LOW' | None, 'confidence': 'MEDIUM', 'caveats': [...]}
+    None means NO CLAIM (never 'calm', never 'low risk')."""
+    out = {"wind": None, "tonight": None, "risk": None, "trend": None, "bank": None, "fetch": None, "confidence": block["confidence"]["label"] if block.get("confidence") else "LOW",
+           "caveats": ["modeled forecast; land-referenced", "not an over-water measurement"]}
+    if not block.get("available"):
+        out["caveats"].append(block.get("unavailableReason") or "unavailable")
+        return out
+    sp, dr = block["speed"], block["direction"]
+    lo, hi = round(sp["minMph"]), round(sp["maxMph"])
+    rng = f"{lo}-{hi} mph" if lo != hi else f"about {lo} mph"
+    out["wind"] = f"{dr['fromCardinal']} {rng}" if dr["shown"] else f"light and variable, {rng}" if sp["meanMph"] < DIRECTION_MIN_MPH else rng
+    out["tonight"] = _word(sp["category"])
+    if block["breezyRisk"]["meaning"]:
+        out["risk"] = _word(block["breezyRisk"]["meaning"])
+    if block["trend"] and block["trend"]["label"]:
+        out["trend"] = _word(block["trend"]["label"])
+    if not dr["shown"]:
+        out["caveats"].append("direction not shown below 5 mph")
+    if block["freshness"]["stale"]:
+        out["caveats"].append("forecast is stale")
+    if bank and dr["shown"]:
+        out["bank"] = None if bank.get("bankImpact") in (None, "UNKNOWN") else bank["bankImpact"]
+        c = bank.get("chopClass")
+        out["fetch"] = None if c is None else ("HIGH" if c >= 4 else "MODERATE" if c == 3 else "LOW")
+        if bank.get("geometryTier") == "ESTIMATED":
+            out["caveats"].append("bank exposure is an estimate")
+    return out

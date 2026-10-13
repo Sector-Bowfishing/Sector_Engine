@@ -97,7 +97,7 @@ def evaluate(lake_id, A, geom, max_banks):
             eff_est[wi, j] = np.mean([ES.ray_distances(mask, res, sx[wi], sy[wi], (b + o) % 360) for o in OFFS], axis=0)
     eff_aud = np.array([[BF.nine_ray(table[i], b) for b in DIRS] for i in sel])
     # label cells
-    L = {"aud": [], "est": [], "estC": [], "estFace": []}
+    L = {"aud": [], "est": [], "estC": [], "estFace": [], "estFaceC": []}
     hi_aud, hi_est, exposed_aud, exp_label_est, exp_label_estC = [], [], [], [], []
     spear, unk = [], 0
     ang = EX.angdiff
@@ -111,16 +111,21 @@ def evaluate(lake_id, A, geom, max_banks):
             ce = chop12(eff_est[k, j]); cc = chop12(eff_est[k, j] * 1.5)
             le = EX.label_bank(b, 12, fa, ce)["label"]
             lf = EX.label_bank(b, 12, None if np.isnan(face_est[k]) else face_est[k], ce)["label"]
+            lfc = EX.label_bank_estimated(b, 12, None if np.isnan(face_est[k]) else face_est[k], ce, cc)["label"]   # the pipeline an ESTIMATED lake would really publish
             lc = EX.label_bank_estimated(b, 12, fa, ce, cc)["label"]       # shipped ESTIMATED policy (M2-C)
-            L["aud"].append(la); L["est"].append(le); L["estC"].append(lc); L["estFace"].append(lf)
+            L["aud"].append(la); L["est"].append(le); L["estC"].append(lc); L["estFace"].append(lf); L["estFaceC"].append(lfc)
             hi_aud.append(ca >= 4); hi_est.append(ce >= 4); exposed_aud.append(ca >= 3)
-    A_, E_, C_, F_ = (np.array(L[k]) for k in ("aud", "est", "estC", "estFace"))
+    A_, E_, C_, F_, G_ = (np.array(L[k]) for k in ("aud", "est", "estC", "estFace", "estFaceC"))
     ex = np.array(exposed_aud); ha = np.array(hi_aud); he = np.array(hi_est)
     kn = (A_ != "UNKNOWN")
     out = {"lake": lake_id, "banksAudited": len(banks), "banksSampled": len(sel), "rasterM": round(res, 1), "standoffNotWater": int((~water).sum()),
            "cellsCompared": int(kn.sum()), "cellsUnknownEstimate": int(unk),
            "labelAgreement": float((A_[kn] == E_[kn]).mean()) if kn.any() else None, "labelAgreementConservative": float((A_[kn] == C_[kn]).mean()) if kn.any() else None,
            "labelAgreementEstFacing": float((A_[kn] == F_[kn]).mean()) if kn.any() else None,
+           "labelAgreementShippedPipeline(est facing + conservative)": float((A_[kn] == G_[kn]).mean()) if kn.any() else None,
+           "falseProtectedShippedPipeline(audited chop>=3)": float(((G_ == "PROTECTED") & ex).sum() / ex.sum()) if ex.sum() else None,
+           "falseProtectedShippedPipeline_vsAuditedDirectCross": float(((G_ == "PROTECTED") & np.isin(A_, ["DIRECT", "CROSS"])).sum() / max(np.isin(A_, ["DIRECT", "CROSS"]).sum(), 1)),
+           "confusionShippedPipeline": [[int(((A_ == a) & (G_ == e)).sum()) for e in ["DIRECT", "CROSS", "PROTECTED"]] for a in ["DIRECT", "CROSS", "PROTECTED"]],
            "highFetchPrecision": float((ha & he).sum() / he.sum()) if he.sum() else None, "highFetchRecall": float((ha & he).sum() / ha.sum()) if ha.sum() else None,
            "highFetchAuditedCells": int(ha.sum()),
            "falseProtected(audited chop>=3)": float(((E_ == "PROTECTED") & ex).sum() / ex.sum()) if ex.sum() else None,
@@ -171,6 +176,9 @@ def summarize(rs, tag):
          "falseProtected_median": med(w("falseProtected(audited chop>=3)")), "falseProtectedConservative_median": med(w("falseProtectedConservative")),
          "falseProtected_vsDirectCross_pooled": pool("falseProtected_vsAuditedDirectCross", "cellsCompared"),
          "falseProtectedConservative_vsDirectCross_pooled": pool("falseProtectedConservative_vsAuditedDirectCross", "cellsCompared"),
+         "labelAgreementShippedPipeline_median": med(w("labelAgreementShippedPipeline(est facing + conservative)")),
+         "falseProtectedShippedPipeline_pooled": pool("falseProtectedShippedPipeline(audited chop>=3)", "exposedCells"),
+         "falseProtectedShippedPipeline_vsDirectCross_pooled": pool("falseProtectedShippedPipeline_vsAuditedDirectCross", "cellsCompared"),
          "exposedCells": ex, "logRatioMedianFetch_median": med(w("logRatioMedianFetch"))}
     for key in ("confusion_rows_audited_cols_estimated", "confusion_rows_audited_cols_estimatedConservative"):
         M = np.sum([r[key] for r in rs], axis=0)

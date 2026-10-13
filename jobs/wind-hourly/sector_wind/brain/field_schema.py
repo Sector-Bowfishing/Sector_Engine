@@ -16,9 +16,9 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 
 SCHEMA = "sector-wind-field-v2"
-BANK_IMPACT = ("DIRECT", "CROSS", "PROTECTED", "UNKNOWN")
-ROUGHNESS = ("calm", "ripple", "lightChop", "moderateChop", "rough", "veryRough")      # 0..5; maps to chop classes 1..5 (+ veryRough)
-BOATABILITY = ("easy", "manageable", "difficult", "unsafe")
+BANK_IMPACT = ("DIRECT", "CROSS", "PROTECTED", "UNSURE")
+ROUGHNESS = ("calm", "light", "choppy", "rough")      # ordinal 0..3. Mapping to the frozen chop classes: calm = 1 (<1 in), light = 2 (ripple), choppy = 3-4 (light/moderate chop), rough = 5
+BOATABILITY = ("easy", "noticeable", "difficult")      # boat control: easy / noticeable effort / difficult
 WIND_SOURCES = ("handheld", "fixedAnemometer", "boatMounted", "visualEstimate", "nearbyStation")
 MEASURED_SOURCES = ("handheld", "fixedAnemometer", "boatMounted")
 PAIR_WINDOW_MIN = 60
@@ -107,19 +107,23 @@ def validate_pair(a: dict, b: dict) -> list[str]:
     return why
 
 
+def roughness_index(r: str) -> int:
+    return ROUGHNESS.index(r)
+
+
 def _rank(label: str) -> int:
     return {"PROTECTED": 0, "CROSS": 1, "DIRECT": 2}[label]
 
 
 def pair_concordance(pairs: list[dict]) -> dict:
-    """pairs: {'predictedLabelA','predictedLabelB','predictedHm0A','predictedHm0B','obsA','obsB'} where obs are roughness indices 0-5.
+    """pairs: {'predictedLabelA','predictedLabelB','predictedHm0A','predictedHm0B','obsA','obsB'} where obs are roughness indices 0-3 (`roughness_index`).
     Counts only pairs where the model made a call (labels differ, or Hm0 differs by >= 20%). 'Concordance' = share where the bank
     the model called more exposed was observed rougher (ties count 0.5). Volume reported; no pass line here (scoring is the
     canonical scorer's job)."""
     elig, ties = [], 0
     for p in pairs:
         la, lb = p["predictedLabelA"], p["predictedLabelB"]
-        if "UNKNOWN" in (la, lb):
+        if "UNKNOWN" in (la, lb) or "UNSURE" in (la, lb):
             ties += 1; continue
         if _rank(la) != _rank(lb):
             a_more = _rank(la) > _rank(lb)

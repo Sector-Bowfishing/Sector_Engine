@@ -15,7 +15,7 @@ import math
 
 LABELS = ("DIRECT", "CROSS", "PROTECTED", "UNKNOWN")
 DIRECT_MAX_DEG, CROSS_MAX_DEG = 45.0, 90.0
-MIN_LABEL_MPH = 3.0          # below this the wind direction is not meaningful: no labels
+MIN_LABEL_MPH = 5.0          # below this the wind direction is not reliable (3-5 mph: 0.65 within 22.5 deg): no labels, UNKNOWN not PROTECTED
 HIGH_FETCH_CHOP_CLASS = 4    # frozen CEM chop class >= 4 (Hm0 >= 6 in)
 PROTECTED_MAX_CHOP = 2       # PROTECTED needs modelled Hm0 < 3 in (chop class <= 2) even when the bank faces away from the wind
 ESTIMATED_FETCH_MARGIN = 1.5 # ESTIMATED geometry: PROTECTED must survive 1.5x the estimated fetch
