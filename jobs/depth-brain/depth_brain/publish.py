@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from sector_brain_platform import event_id as _event_id, lake_key, key_collisions, prune_activity as _prune_own
 
 from . import contract as C
+from . import ops_summary
 from .state import build_state, plan
 from .writer import PLATFORM
 
@@ -107,8 +108,7 @@ def publish(manifest: dict, lake_states: dict, writer, now: datetime | None = No
             "models": {"active": None, "candidates": [{"modelId": C.MODEL_ID, "status": "SHADOW", "version": C.BRAIN_VERSION}]},
             "versions": [{"version": C.BRAIN_VERSION, "date": now_iso[:10], "note": "Effective-depth shift foundation; shadow/internal only", "status": "SHADOW"}],
             "validation": {"ref": f"/validation/{C.BRAIN_ID}", "status": "NOT_VALIDATED"},
-            "sourceIds": [], "blockers": ["external Southeast bathymetry", "field validation of effective depth", "operator datum confirmation",
-                                          "Michael production decision"],
+            "sourceIds": [],
             "descriptor": {"components": {"effectiveDepthShift": {
                 "status": "SHADOW", "inputs": ["lake-brain states/lake (currentElevationFt, datum, sourceCapability)", "engine-directory fullPoolFt/poolBasis/poolConfidence",
                                                 "audited datum table", "candidate manifest " + mv],
@@ -118,6 +118,11 @@ def publish(manifest: dict, lake_states: dict, writer, now: datetime | None = No
             "publishMode": ("shadow: internal only, not scheduled" if mode == "shadow" else mode),
             "scoreNote": C.SCORE_NOTE,
         }
+        try:
+            reg.update(ops_summary.registry_extras(manifest, sum(1 for lid in lake_states if lid in readiness), {"evaluated": evaluated, "unavailable": unavailable}))
+        except Exception as e:      # the Ops summary must never block the registry write
+            rep["errors"].append(f"ops summary: {e!r}")
+            reg["blockers"] = ["Ops summary unavailable this run"]
         writer.patch({f"brains/{C.BRAIN_ID}": reg, f"validation/{C.BRAIN_ID}": {**NOT_VALIDATED, "publishedAt": now_iso}})
         rep["writes"] += 1
         writer.patch({f"health/brains/{C.BRAIN_ID}": {"status": health, "lastRun": now_iso, "lastSuccess": reg["lastSuccessfulRun"],

@@ -38,6 +38,41 @@ def load_lake_states(spec: str, manifest: dict) -> dict:
     raise SystemExit(f"unknown --lake-states {spec!r}")
 
 
+PROGRESS_LOG = os.path.join(HERE, "..", "..", "..", "docs", "brains", "depth", "data", "depth_progress_log.jsonl")
+
+
+def last_log_entry(path=PROGRESS_LOG):
+    if not os.path.exists(path):
+        return None
+    rows = [json.loads(l) for l in open(path) if l.strip()]
+    return rows[-1] if rows else None
+
+
+def run_report(a) -> int:
+    import datetime as dt
+    from . import maturity as M
+    manifest = json.load(open(a.manifest))
+    inputs = M.load_json("maturity_inputs.json")
+    cur = M.evaluate(manifest, inputs)
+    prev = last_log_entry()
+    problems = M.check_increase(prev, inputs)
+    d = M.diff(prev, cur)
+    out = {"research": {"overall": cur["overall"], "official": False, "scoreStatus": cur["scoreStatus"], "criticalBelowThreshold": cur["criticalBelowThreshold"],
+                        "meetsProductionPolicy": cur["meetsProductionPolicy"], "dimensions": {k: v["score"] for k, v in cur["dimensions"].items()}},
+           "fleet": cur["fleet"], "changes": d, "unsupportedIncreases": problems}
+    print(json.dumps(out, indent=1))
+    if problems:
+        print("REFUSING: unsupported judgment-score increase(s) (cite new changeEvidence in maturity_inputs.json)", file=sys.stderr)
+        return 2
+    if a.log:
+        entry = {"at": dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"), "cycle": a.cycle, "overall": cur["overall"],
+                 "official": False, "dimensions": {k: {"score": v["score"]} for k, v in cur["dimensions"].items()}, "fleet": cur["fleet"],
+                 "citedEvidence": {k: d_.get("changeEvidence") or [] for k, d_ in inputs["dimensions"].items()}, "note": a.note}
+        with open(PROGRESS_LOG, "a") as f:
+            f.write(json.dumps(entry, sort_keys=True) + "\n")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="depth_brain")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -45,6 +80,11 @@ def main(argv=None) -> int:
     b.add_argument("--paths", required=True, help="JSON file of input paths (see candidates.build)")
     b.add_argument("--version", required=True)
     b.add_argument("--out", default=DEFAULT_MANIFEST)
+    r = sub.add_parser("report", help="fleet metrics + research maturity (NOT an official score); --log appends to the progress log")
+    r.add_argument("--manifest", default=DEFAULT_MANIFEST)
+    r.add_argument("--log", action="store_true")
+    r.add_argument("--cycle", default="unnamed")
+    r.add_argument("--note", default="")
     p = sub.add_parser("publish")
     p.add_argument("--manifest", default=DEFAULT_MANIFEST)
     p.add_argument("--lake-states", required=True)
@@ -58,6 +98,8 @@ def main(argv=None) -> int:
         json.dump(m, open(a.out, "w"), indent=1, sort_keys=True)
         print(json.dumps(m["summary"], indent=1))
         return 0
+    if a.cmd == "report":
+        return run_report(a)
     manifest = json.load(open(a.manifest))
     states = load_lake_states(a.lake_states, manifest)
     if a.rtdb and not a.yes_write_shadow:

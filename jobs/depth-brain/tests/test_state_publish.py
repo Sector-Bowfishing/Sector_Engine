@@ -186,3 +186,17 @@ def test_licence_most_restrictive_wins_and_unknown_is_not_allowed():
     assert licence_for(["A", "B"], lic)["customerDerivedMetricsAllowed"] == "false"
     assert licence_for(["Z"], lic)["customerDerivedMetricsAllowed"] == "false"          # unreviewed
     assert licence_for([], lic)["customerDerivedMetricsAllowed"] == "n/a"
+
+
+def test_registry_carries_computed_ops_summary_not_hardcoded_numbers():
+    w = DryRunWriter()
+    m = manifest()
+    publish(m, {"Guntersville|AL": lake_state(593.6)}, w, NOW)
+    reg = w.tree["brains"]["depth"]
+    assert reg["scoreStatus"] == "NOT_ESTABLISHED" and reg["research"]["official"] is False and "score" not in reg
+    assert reg["fleet"]["totalLakes"] == 4 and reg["fleet"]["shiftPossible"] == 3
+    assert reg["lakeDependency"]["liveLakeStates"] == 1 and reg["lakeDependency"]["awaitingLakeBrain"] == 2
+    assert reg["orchestration"]["status"] == "NOT_STARTED" and reg["fieldValidation"]["status"] == "NOT_STARTED"
+    assert reg["blockers"] and all(isinstance(b, str) for b in reg["blockers"])
+    assert reg["breakdowns"]["rollout"]["BLOCKED"] == 1
+    assert all(isinstance(v, (int, float)) for grp in reg["breakdowns"].values() for v in grp.values())    # fits Ops' Record<string, Record<string, number>>
