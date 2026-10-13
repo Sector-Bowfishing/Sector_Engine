@@ -106,6 +106,90 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 |---|---|---|---|---|---|---|---|---|---|---|
 | ACCEPTED | Engine lake polygons jobs/lake-surface/polygons.geojson.gz | Sector (Engine repo) | 1 | 599 of 621; 22 missing | NHD features 2001-2023; file 2026-09-27 | static | bulk (machine) | NHD public domain; 11 osm features ODbL | coverage | S-geometry-001 |
 
+## binding
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | USGS NWIS site service + series catalog (legacy waterservices) | USGS | 1 | — | 1900-present | daily/15min | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-001 |
+| LEAD | USGS OGC API (api.waterdata.usgs.gov/ogcapi/v0) | USGS | 1 | — | - | - | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-002 |
+| ACCEPTED | USACE CWMS Data API (cwms-data.usace.army.mil/cwms-data) | USACE | 1 | — | to 1950s | 15min-daily | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-003 |
+| ACCEPTED | USACE Access2Water reporting API | USACE | 1 | — | latest + levels | hourly-daily | api (machine) | US public domain / public data | sourceAuthority, operatorPlan, floodDroughtContext, trendQuality | S-binding-004 |
+| ACCEPTED | USBR RISE API | USBR | 1 | — | decades | daily | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-005 |
+| ACCEPTED | TWDB Water Data for Texas reservoirs | Texas Water Development Board | 1 | — | 1999-present | daily | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-006 |
+| ACCEPTED | NOAA NWPS gauges API | NOAA/NWS | 1 | — | latest ~30d | 15min-hourly | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-007 |
+| ACCEPTED | NOAA CO-OPS Great Lakes water level | NOAA | 1 | — | decades | 6min | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-008 |
+| ACCEPTED | TVA RestApi (locations, observed-data-48-hours, operating-guide) | TVA | 1 | — | 48h + 2y guide | hourly | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-009 |
+| ACCEPTED | National Inventory of Dams (USACE) via hosted ArcGIS FeatureServer NID_v1 | USACE NID | 1 | — | current | periodic | api (machine) | US public domain / public data | coverage | S-binding-010 |
+| LEAD | WWDH (Internet of Water) USACE EDR mirror | Internet of Water / Western Water Data Hub | 3 | — | - | - | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-012 |
+| LEAD | California CDEC JSONDataServlet | CA DWR | 1 | — | decades | daily | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-013 |
+| LEAD | Colorado DWR CDSS telemetry REST | CO DWR | 1 | — | - | 15min | api (machine) | US public domain / public data | sourceAuthority, trendQuality, historyQuality | S-binding-014 |
+| LEAD | Operator pages without APIs: Alabama Power, Duke Energy, Georgia Power, Santee Cooper, SRP, LCRA, Dominion, state DEPs | operators | 4 | — | - | - | portal (machine) | US public domain / public data | sourceAuthority | S-binding-015 |
+| ACCEPTED | NOAA CO-OPS Great Lakes water level (IGLD85) | NOAA NOS CO-OPS | 7 | 13 lakes with live candidate | 1900-2026 (Duluth, Buffalo, Cleveland, Toledo, Rochester, Oswego, Harbor Beach, Mackinaw City); 1950s-70s for most others; Green Bay East 2009-, only 5 complete years | — | api (machine) | NOAA public domain | coverage, historyQuality | S-gaps-001 |
+| ACCEPTED | USACE LRE CWMS Great Lakes lake-wide mean levels (gpl-ccp) | USACE Detroit/Buffalo (Coordinating Committee on Great Lakes Basic Hydraulic and Hydrologic Data) | 6 | 13 lakes with live candidate | 2020-2026 only (5 complete years) | — | api (machine) | USACE public | coverage, historyQuality | S-gaps-002 |
+| ACCEPTED | MN DNR Cooperative Stream Gaging (CSG) API | Minnesota DNR / PCA / USACE / USGS (providers) | 6 | 2 lakes with live candidate | White Bear 2013-2026 (hourly->daily, 8 complete years); Vermilion outlet 2008-2026 (stage, winter gaps -> 0 complete years) | — | api (machine) | MN DNR public (provisional data) | coverage, historyQuality | S-gaps-004 |
+| ACCEPTED | USGS NWIS IV/DV state sweep (lake-elevation params 62614/62615/62616/00062/72020/00065) | USGS | 7 | 8 lakes with live candidate | 1933-2026 West Okoboji/Spirit; 1974- Houghton (+offset 1129.61 validated to 0.00 ft vs live 62615); 1988- Longview; 1993- Green Lake & Chain O'Lakes; 2008- Clinton; 2016- Minnetonka | — | api (machine) | USGS public domain | coverage, historyQuality | S-gaps-005 |
+| ACCEPTED | USACE CWMS (NWDM, SWT, MVP, MVR) pool/elev series | USACE Omaha / Tulsa / St. Paul / Rock Island Districts | 7 | 6 lakes with live candidate | see candidates (hourly record, daily means computed) | — | api (machine) | USACE public | coverage, historyQuality | S-gaps-006 |
+| ACCEPTED | Environment & Climate Change Canada / Water Survey of Canada real-time + daily-mean hydrometric (OGC API) | WSC (contributor Lake of the Woods Control Board) | 7 | 1 lakes with live candidate | 1913/1962/1963/1983 - 2025 daily + last 30 d realtime (gap Jan-Sep 2026) | — | api (machine) | Open Government Licence - Canada | coverage, historyQuality | S-gaps-007 |
+| ACCEPTED | NWS National Water Prediction Service (NWPS) gauges | NOAA/NWS (forecast offices + RFCs) | 4 | 8 lakes with live candidate | none (30 d window) | — | api (machine) | NOAA public domain | coverage, historyQuality | S-gaps-008 |
+| ACCEPTED | CNPPID Lake & Reservoir Elevations table | Central Nebraska Public Power & Irrigation District | 6 | 2 lakes with live candidate | none (only 1 wk/1 mo/1 yr ago values) | — | portal | public web page (operator) | coverage, historyQuality | S-gaps-009 |
+| ACCEPTED | NPPD Reservoir Elevations and Canal Flows (v1.nppd.com) | Nebraska Public Power District | 6 | 1 lakes with live candidate | none in HTML (12-month and 1-month graph images via chart.aspx) | — | portal | public web page (operator) | coverage, historyQuality | S-gaps-011 |
+| ACCEPTED | NIPSCO 'Current Lake Levels' (Norway/Oakdale hydro) | NIPSCO (NiSource) | 6 | 2 lakes with live candidate | none | — | portal | public web page (operator) | coverage, historyQuality | S-gaps-012 |
+| ACCEPTED | We Energies / Wisconsin Public Service / Wisconsin River Power hydro project data page | WPS / We Energies / WRPCO | 6 | 1 lakes with live candidate | none | — | portal | public web page (utilities) | coverage, historyQuality | S-gaps-013 |
+| ACCEPTED | Alliant Energy hydro flow-rate page (Prairie du Sac, Kilbourn) | Alliant Energy | 6 | 1 lakes with live candidate | none | — | portal | public web page (utility) | coverage, historyQuality | S-gaps-014 |
+| ACCEPTED | CWLP Lake Springfield water level table | City Water, Light & Power (Springfield IL) | 6 | 1 lakes with live candidate | 2 years of ~weekly reads (not daily) | — | portal | public web page (utility) | coverage, historyQuality | S-gaps-015 |
+| LEAD | Minnesota (Lake Minnetonka) MCWD water level updates | Minnehaha Creek Watershed District | 6 | 1 lakes with live candidate | none | — | portal | public / US gov or operator web data | coverage, historyQuality | S-gaps-017 |
+| LEAD | Apps.sd.gov Measured Lakes (SD DENR/GFP spring+fall surface elevations) | South Dakota DANR | 5 | 0 lakes with live candidate | none | — | portal | public / US gov or operator web data | coverage, historyQuality | S-gaps-018 |
+| ACCEPTED | SD glacial lakes live elevation | NWS ABR / USACE Omaha / USGS | 5 | 1 lakes with live candidate | none | — | api (machine) | public / US gov or operator web data | coverage, historyQuality | S-gaps-019 |
+| ACCEPTED | Michigan inland lakes (Burt, Torch, Gull, Elk, Charlevoix, Houghton) | USGS MI / EGLE / county | 7 | 2 lakes with live candidate | none | — | api (machine) | public / US gov or operator web data | coverage, historyQuality | S-gaps-022 |
+| ACCEPTED | Iowa lakes (East Okoboji, Big Creek, Lake Macbride) | USGS IA / USACE MVR / Iowa DNR | 6 | 2 lakes with live candidate | none | — | api (machine) | public / US gov or operator web data | coverage, historyQuality | S-gaps-024 |
+| LEAD | per-lake dead end: Big Stone Lake\|SD | various | 1 | 0 lakes with live candidate | none | — | portal | public / US gov or operator web data | coverage, historyQuality | S-gaps-026 |
+| ACCEPTED | NHDES real-time lake-level platform (RTI 'Amanzi', Dam Bureau telemetry) | NH Department of Environmental Services, Dam Bureau | 7 | 8 lakes with live candidate | 2010-04 .. now, hourly (daily means in history/nhdes_*) | — | api (machine) | Public data; NHDES disclaimer: provisional, informational, use at own risk | coverage, historyQuality | S-gaps-050 |
+| ACCEPTED | Brookfield Renewable 'Safe Waters' public facility pages | Brookfield Renewable North America (dam owner/operator; Great Lakes Hydro America, Brookfield White Pine, Brookfield Power PA) | 6 | 6 lakes with live candidate | none (current value only) | — | portal | Public safety information; terms not stated. Hourly polling of ~6 pages is light. | coverage, historyQuality | S-gaps-051 |
+| ACCEPTED | USGS NWIS (iv/dv/site services), 12-state series-catalog scan | U.S. Geological Survey | 7 | 4 lakes with live candidate | West Grand 2010-, Youghiogheny 2007- (dv to 2015 + iv), Lake Arthur 2007-, Haven Lake 2015- | — | api (machine) | Public domain (provisional data) | coverage, historyQuality | S-gaps-052 |
+| ACCEPTED | USACE CWMS data API (NAE, LRP) | U.S. Army Corps of Engineers | 7 | 1 lakes with live candidate | Mansfield Hollow 2005-2026 | — | api (machine) | Public domain | coverage, historyQuality | S-gaps-054 |
+| ACCEPTED | NOAA/NWS NWPS gauges (api.water.noaa.gov/nwps/v1) | NOAA National Water Prediction Service | 5 | 3 lakes with live candidate | none (about 30 d) | — | api (machine) | Public domain | coverage, historyQuality | S-gaps-055 |
+| ACCEPTED | NJ Water Supply Authority operations data (Manasquan page + Raritan weekday PDF) | New Jersey Water Supply Authority | 6 | 2 lakes with live candidate | none online (accumulate) | — | pdf | Public | coverage, historyQuality | S-gaps-056 |
+| LEAD | MWRA Quabbin/Wachusett reservoir levels | Massachusetts Water Resources Authority / MA DCR | 6 | 0 lakes with live candidate | monthly since 2005 (not daily) | — | portal | Public | coverage, historyQuality | S-gaps-057 |
+| LEAD | Maryland / Baltimore reservoirs (Baltimore City DPW, MDE drought reports, WSSC, Constellation Conowingo) | Baltimore City DPW; MDE; WSSC Water; Constellation | 6 | 1 lakes with live candidate | none | — | portal | n/a | coverage, historyQuality | S-gaps-063 |
+| LEAD | Connecticut MDC (Barkhamsted/Nepaug) reservoir status | Metropolitan District Commission | 6 | 0 lakes with live candidate | none | — | portal | n/a | coverage, historyQuality | S-gaps-064 |
+| ACCEPTED | Duke Energy Lake View API (api.hydro-derived.duke-energy.app) | Duke Energy | 7 | 8 lakes with live candidate | 5 y rolling daily mean (2021-10-13+) = 4 complete calendar years (Robinson: since 2022-05-26) | — | api (machine) | public web-app endpoint; terms not stated (Duke site ToS apply); API is undocumented -> may change | coverage, historyQuality | S-gaps-087 |
+| ACCEPTED | NWPS Catawba/Keowee chain gauges (Duke relay) | NOAA NWS / Duke Energy | 6 | 7 lakes with live candidate | ~30 days only | — | api (machine) | NOAA public domain | coverage, historyQuality | S-gaps-088 |
+| ACCEPTED | SJRWMD WISKI-Web public data store (mdp.sjrwmd.com/data/internet) | St. Johns River Water Management District | 7 | 7 lakes with live candidate | Daily means since 1992-2005 depending on station (Harris 1993, George 1992, Jesup 1996, Lochloosa/Orange 1995, Apopka NP 2005, Jake Voss 2020, Griffin Emeralda 2020) | — | bulk (machine) | SJRWMD public data; no explicit licence | coverage, historyQuality | S-gaps-089 |
+| ACCEPTED | USACE CWMS data API (SAJ) - SFWMD stage mirror | USACE Jacksonville / SFWMD | 7 | 1 lakes with live candidate | 2010-2026 hourly | — | api (machine) | USACE public | coverage, historyQuality | S-gaps-090 |
+| ACCEPTED | USACE CWMS data API (SAM) - Alabama Power Logan Martin | Alabama Power / USACE Mobile | 7 | 1 lakes with live candidate | 2017-2026 | — | api (machine) | USACE public | coverage, historyQuality | S-gaps-091 |
+| ACCEPTED | USGS NWIS 02193900 THURMOND LAKE NEAR PLUM BRANCH, SC | USGS / USACE Savannah | 7 | 2 lakes with live candidate | 1954-2026 (68 complete years) | — | api (machine) | USGS public | coverage, historyQuality | S-gaps-092 |
+| ACCEPTED | USGS NWIS 02079490 + CWMS SAW 'ROA JHK' (John H. Kerr) | USACE Wilmington / USGS | 7 | 1 lakes with live candidate | 2005-2026 (20 complete years) | — | api (machine) | public | coverage, historyQuality | S-gaps-093 |
+| ACCEPTED | CWMS SAM Whitten / Stennis (Tenn-Tom) | USACE Mobile | 7 | 2 lakes with live candidate | Whitten 2018-; Stennis 2018- (after +100 ft correction) | — | api (machine) | USACE public | coverage, historyQuality | S-gaps-094 |
+| ACCEPTED | CWMS MVK Chicot Pumping Plant landside | USACE Vicksburg | 6 | 1 lakes with live candidate | 2011-2026 hourly (11 complete years) | — | api (machine) | USACE public | coverage, historyQuality | S-gaps-095 |
+| ACCEPTED | CWMS MVN False River at New Roads (52330) | USACE New Orleans | 6 | 1 lakes with live candidate | 1996-2026 | — | api (machine) | USACE public | coverage, historyQuality | S-gaps-096 |
+| ACCEPTED | USGS NWIS 07027000 Reelfoot Lake near Tiptonville TN | USGS | 7 | 1 lakes with live candidate | 1984-2026 | — | api (machine) | USGS public | coverage, historyQuality | S-gaps-097 |
+| ACCEPTED | USGS NWIS 073802302 Pass Manchac nr Lake Maurepas | USGS | 5 | 1 lakes with live candidate | 2022-2026 | — | api (machine) | USGS public | coverage, historyQuality | S-gaps-098 |
+| ACCEPTED | NOAA CO-OPS 8770475 Port Arthur TX | NOAA CO-OPS | 6 | 1 lakes with live candidate | 2012-2026 (patchy 2013-2017) | — | api (machine) | NOAA public domain | coverage, historyQuality | S-gaps-099 |
+| ACCEPTED | AEP / Appalachian Power plant-levels API | AEP (Appalachian Power) | 7 | 1 lakes with live candidate | none (poll-and-archive) | — | api (machine) | public web-app endpoint | coverage, historyQuality | S-gaps-100 |
+| ACCEPTED | NWPS Dominion/AEP/USACE pool relays (GASN7, SMIV2, CHDS1, KERV2) | NOAA NWS | 6 | 13 lakes with live candidate | ~30 days | — | api (machine) | NOAA public domain | coverage, historyQuality | S-gaps-101 |
+| ACCEPTED | ARWA Chesdin Reservoir Daily Status Report | Appomattox River Water Authority | 6 | 1 lakes with live candidate | none | — | portal | public web page | coverage, historyQuality | S-gaps-102 |
+| LEAD | Dominion Energy Lake Gaston water levels page | Dominion Energy | 7 | 0 lakes with live candidate | none | — | portal | public web page | coverage, historyQuality | S-gaps-106 |
+| LEAD | Re-pointing notes for wave-1 'candidates-rejected' lakes in this area | n/a | 3 | 0 lakes with live candidate | n/a | — | analysis | n/a | coverage, historyQuality | S-gaps-114 |
+| ACCEPTED | USBR Pacific Northwest Hydromet (pn-bin instant.pl / daily.pl) | US Bureau of Reclamation, Columbia-Pacific NW Region | 1 | 6 lakes with live candidate | CSC 1979-, CRE 1982-, POT 1952-, BNK 1951-, HEN 1977-, PAY 1943- (daily.pl; a 655 ft sentinel in PAY 1991 is removed by the outlier filter) | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-115 |
+| ACCEPTED | California Data Exchange Center (CDEC) JSONDataServlet | California DWR (aggregator for PG&E, USBR, USACE, utilities) | 2 | 2 lakes with live candidate | BER 1985- (26 complete yrs), ALM 1985- (gappy, 11 complete yrs by the 90% rule); sentinels -1/959746 ft dropped | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-116 |
+| ACCEPTED | Salt River Project Watershed Connection public JSON (streamflow.watershedconnection.com/api/watershedconnectiondata) | Salt River Project (SRP) | 1 | 4 lakes with live candidate | 2023-10-13 .. now (about 3 yrs, 5-min; daily means written) | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-117 |
+| ACCEPTED | Colorado DWR / CDSS telemetry REST API | Colorado Division of Water Resources (data from Denver Water) | 2 | 1 lakes with live candidate | 1987-06..2002 + 2021..now (16 complete years by the 90% rule; sentinel values dropped) | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-118 |
+| ACCEPTED | USACE CWMS Data API, office NWDP (Northwest Division portal) | US Army Corps of Engineers NWD (republishing USBR, Seattle District, Tacoma, Seattle City Light data) | 1 | 2 lakes with live candidate | LWSC 2001-, GCL 1960- | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-119 |
+| ACCEPTED | NWRFC station XML (xml.cgi, pe=HF forebay elevation) | NOAA/NWS Northwest River Forecast Center (relay of Tacoma Power, USBR, utilities) | 4 | 2 lakes with live candidate | none (10 days) | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-120 |
+| ACCEPTED | USGS NWIS (iv, dv, site) - systematic state sweep | US Geological Survey | 1 | 6 lakes with live candidate | GSL 10010000 1900-, UKL 11507000 1904-, Payette 1965-, Henrys 1977-, Georgetown 2013-, Eagle Nest 2013- (dv) | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-121 |
+| ACCEPTED | Utah Lake Commission live data feed (WordPress admin-ajax action=ulc_data) | Utah Lake Commission, data stated to originate from Utah Division of Water Rights | 3 | 1 lakes with live candidate | about 90 days only | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-122 |
+| ACCEPTED | USBR RISE API (data.usbr.gov/rise/api/result) | US Bureau of Reclamation | 1 | 2 lakes with live candidate | daily from dam closure (1960s) | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-123 |
+| LEAD | NOAA NWPS gauges API (api.water.noaa.gov/nwps/v1/gauges/{lid}) | NOAA National Water Prediction Service | 4 | 0 lakes with live candidate | none | — | api (machine) | US public domain / public data | coverage, historyQuality | S-gaps-125 |
+| LEAD | Tacoma Public Utilities - River Flows & Lake Levels page | Tacoma Power | 2 | 0 lakes with live candidate | none | — | portal | US public domain / public data | coverage, historyQuality | S-gaps-126 |
+| LEAD | Oregon Water Resources Department near-real-time hydrographics | Oregon WRD | 2 | 0 lakes with live candidate | none | — | portal | US public domain / public data | coverage, historyQuality | S-gaps-127 |
+| LEAD | Denver Water supply data (Water Watch report / reservoir page) | Denver Water | 2 | 0 lakes with live candidate | none | — | pdf | US public domain / public data | coverage, historyQuality | S-gaps-128 |
+| LEAD | Mono Lake level tables (Mono Lake Committee / LADWP) | Mono Lake Committee, LADWP | 2 | 0 lakes with live candidate | none | — | portal | US public domain / public data | coverage, historyQuality | S-gaps-129 |
+| LEAD | Lassen County Eagle Lake monthly survey | Lassen County Surveyor | 3 | 0 lakes with live candidate | none | — | portal | US public domain / public data | coverage, historyQuality | S-gaps-130 |
+| ACCEPTED | USGS NWIS iv bounding-box scan for 00062/62614/62615/62616/72020/72022/00065 (binding2/usgs_scan.py) | USGS | 1 | — | — | — | api (machine) | public data | coverage, historyQuality | S-gaps-181 |
+| LEAD | USGS gage height + site altitude (alt_va) as derived elevation | USGS | 1 | — | — | — | api (machine) | public data | coverage, historyQuality | S-gaps-182 |
+| ACCEPTED | IEM HADS raw DCP archive (mesonet.agron.iastate.edu/cgi-bin/request/hads.py) as NWPS history | Iowa Environmental Mesonet / NWS | 2 | — | — | — | api (machine) | public data | coverage, historyQuality | S-gaps-183 |
+| ACCEPTED | NWPS as DIRECT_LAKE_GAUGE (acceptability test) | NOAA/NWS | 1 | — | — | — | api (machine) | public data | coverage, historyQuality | S-gaps-184 |
+
 ## canonical shoreline
 
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
@@ -173,6 +257,12 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 |---|---|---|---|---|---|---|---|---|---|---|
 | ACCEPTED | NOAA NWPS gauge catalog (api.water.noaa.gov/nwps/v1/gauges) | NOAA/NWS | 1 | bbox query for the TN valley returned 750 gauges | live | live | api (machine) | public domain | — | S-context-018 |
 
+## floodDroughtContext (tier 2)
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | TWDB recent-conditions: conservation_pool_elevation, dead_pool_elevation, flood_control_lake | TWDB | 1 | 122 reservoirs; 13 core bound lakes | snapshot | n/a | api (machine) | public (US federal/state data; see source terms) | floodDroughtContext, operatorPlan | S-plan-017 |
+
 ## fluctuating-water share inside the polygon and in a 150 m outside ring
 
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
@@ -190,6 +280,32 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
 |---|---|---|---|---|---|---|---|---|---|---|
 | ACCEPTED | USGS NWIS Site / Daily values / Statistics services | USGS | 1 | 310 directory lakes list a USGS gauge; 5 pilots' tailwater/river gauges inspected | varies | daily | api (machine) | public domain | coverage | S-context-011 |
+
+## history
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | TWDB Water Data for Texas reservoir CSV | TWDB | 1 | Amistad 1968+, Falcon 1953+ | 1953 -> today | daily | api (machine) | public (US federal/state data; see source terms) | historyQuality | S-plan-005 |
+| ACCEPTED | NOAA CO-OPS daily_mean (IGLD) station 9034052 | NOAA CO-OPS | 1 | Lake St. Clair | 1995 -> 2026 | daily | api (machine) | public (US federal/state data; see source terms) | historyQuality | S-plan-006 |
+| ACCEPTED | NWS RVDHUN text archive (Nickajack HW 2007-2021, Tims Ford 2003-2013) | NWS Huntsville via IEM AFOS | 1 | Nickajack (13 complete y with HADS), Tims Ford (6 y) | 2003 -> 2021 | daily | api (machine) | public (US federal/state data; see source terms) | historyQuality | S-plan-007 |
+
+## history for NWPS-relay lakes: same DCP stream that NWPS serves live
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | IEM HADS archive, pool elevation stream HPIR* by NWS location id | NWS HADS via Iowa Environmental Mesonet | 1 | 34 NWPS-bound lakes (27 core + 7 flagged) lacked >= 5 y; archive starts 2010-12/2011-01 | 2011 -> today | 15 min - daily | api (machine) | public (US federal/state data; see source terms) | historyQuality, seasonalBaseline | S-plan-001 |
+
+## history legs
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | CWMS Data API timeseries (unit=EN) on alternative tsids | USACE CWMS | 1 | Chatfield 40 y, Buckhorn 23 y, Okatibbee 14 y, Pend Oreille (Hope) 26 y, Lake Washington 30 y, Kentucky Lake 27 y | 1984 -> 2026 | 15 min - 1 h | api (machine) | public (US federal/state data; see source terms) | historyQuality, seasonalBaseline | S-plan-004 |
+
+## history legs for lakes whose binding feed is a relay or a different USGS statistic
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | USGS NWIS dv statCd 30800/32400 and iv->daily; gage height 00065 with calibrated datum offset | USGS | 1 | Taneycomo 29 y, Herrington 15 y, Topaz 25 y, Indian Lake NY 100+ y, Priest 69 y, Bartlett 48 y, D'Arbonne 16 y, Ute 15 y (iv), Buckeye 6 y (iv), Lahontan 24 y (two parameter codes) | 1900 -> 2026 | daily | api (machine) | public (US federal/state data; see source terms) | historyQuality, seasonalBaseline | S-plan-003 |
 
 ## independent QA, holes test
 
@@ -270,6 +386,18 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 |---|---|---|---|---|---|---|---|---|---|---|
 | LEAD | NHDPlus HR (REST NHDPlus_HR/MapServer/9, National Release 2 GDB 31.3 GB) | USGS | 1 | same as NHD HR | release 2 2026-02-11 | release | bulk (machine) | public domain | — | S-geometry-004 |
 
+## normal pool only
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| LEAD | KARS GeoPlatform PhysicalLakeData (76 lakes, Elev_ft) | Kansas Water Office / KARS | 4 | 76 Kansas lakes | static | n/a | api (machine) | public (US federal/state data; see source terms) | floodDroughtContext | S-plan-023 |
+
+## normal pool only (not an operator flood-pool bottom)
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| LEAD | NWPS gauge normalThreshold | NOAA NWPS | 3 | 11 of 48 NWPS-bound gauges carry a non-zero value | snapshot | n/a | api (machine) | public (US federal/state data; see source terms) | floodDroughtContext | S-plan-018 |
+
 ## normal-pool extent
 
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
@@ -299,6 +427,27 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
 |---|---|---|---|---|---|---|---|---|---|---|
 | LEAD | State portals (e.g. TWDB existing-reservoir boundaries) | State agencies | 1 | TX only (example) | 2012-era | irregular | portal (machine) | public | — | S-geometry-016 |
+
+## operatorPlan
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | TVA RestApi operating-guide (GuideCurve, TopOpZone, BtmOpZone, TopOfGates) | TVA | 1 | 17 bound TVA lakes | 2 calendar years | daily | api (machine) | public (US federal/state data; see source terms) | operatorPlan | S-plan-016 |
+| LEAD | FERC eLibrary (docket documents) and operator pages: Santee Cooper (P-199), Appalachian Power Smith Mountain (P-2210), Duke Catawba-Wateree (P-2232), GRDA Pensacola | FERC / operators | 1 | 0 of 8 Duke lakes bound; Santee Cooper, SML, Norman bound or bindable | n/a | n/a | pdf | public (US federal/state data; see source terms) | operatorPlan | S-plan-020 |
+| LEAD | lakes.santeecooper.com/lakes (daily table incl. rule curve) | Santee Cooper | 1 | Lake Marion, Lake Moultrie | daily | daily | portal (machine) | public (US federal/state data; see source terms) | operatorPlan | S-plan-021 |
+
+## operatorPlan validation
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | GRDA Datawrapper: historic and current seasonal target lake elevations (monthly CSV) | Grand River Dam Authority | 1 | Grand Lake o' the Cherokees (Pensacola) | static | n/a | api (machine) | public (US federal/state data; see source terms) | operatorPlan | S-plan-022 |
+
+## operatorPlan, floodDroughtContext
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | Access2Water locations: levels (label/type/tsid/latest), aliases (NWS Handbook 5 ID, USGS station, NIDID) | USACE Access2Water | 1 | 613 projects; 23 without coordinates are matched by alias only | snapshot | n/a | api (machine) | public (US federal/state data; see source terms) | operatorPlan, floodDroughtContext | S-plan-014 |
+| ACCEPTED | CWMS /levels (all Elev levels) plus CWMS time-series guides (Elev-Guide Curve, Elev-Top Con, Elev-Zone, Elev-L1..L3) | USACE CWMS | 1 | see plan_flood_evidence.csv | snapshot | n/a | api (machine) | public (US federal/state data; see source terms) | operatorPlan, floodDroughtContext | S-plan-015 |
 
 ## operatorPlan, floodDroughtContext candidates
 
@@ -336,6 +485,12 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
 |---|---|---|---|---|---|---|---|---|---|---|
 | ACCEPTED | USACE Reservoirs usace_rez | USACE | 1 | 149 of 621 lakes | edited 2024-04-02 | ad hoc | api (machine) | used without restrictions per item metadata; national scale | coverage | S-geometry-005 |
+
+## possible fill for TVA tributary lakes and others
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| LEAD | ResOpsUS (Steyaert et al. 2022) daily storage/elevation 1980-2020, 679 reservoirs | PNNL / U. Arizona (Zenodo 5367383, 5893641) | 2 | unknown overlap with our 71 targets (TVA tributaries?) | 1980 -> 2020 | daily | bulk (machine) | public (US federal/state data; see source terms) | historyQuality | S-plan-011 |
 
 ## possible proxy for other lakes
 
@@ -380,6 +535,12 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 |---|---|---|---|---|---|---|---|---|---|---|
 | ACCEPTED | TVA RestApi observed-data / predicted-data per dam (NWS-style location id) | TVA | 1 | 16 of 16 TVA directory lakes verified returning rows (GVDA1 WHLA1 WLSA1 PICT1 NKJT1 CKDT1 FLDT1 DUGT1 KYDK2 NRST1 FONN7 WBOT1 CRKT1 HIWN7 SHDT1 TMFT1) | live ~8 h | hourly, ~1 h lag | api (machine) | public TVA site (no stated licence) | coverage | S-context-009 |
 
+## relevance of flooded vegetation and drawdown access
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | bowhuntersunited.com 'best locations and habitats for successful bowfishing' (opened); USBR news release 5214 Banks Lake 6.2 ft drawdown (opened) | community / USBR | 6 | n/a | 2023, 2025 | n/a | web | public (US federal/state data; see source terms) | operatorPlan | S-plan-024 |
+
 ## river-reservoir chain: which directory lakes lie downstream/upstream on the main stem; nearby NWIS gauges and reference dams
 
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
@@ -421,3 +582,9 @@ Sources worth permanently integrating (ACCEPTED) or following up (LEAD), grouped
 | Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
 |---|---|---|---|---|---|---|---|---|---|---|
 | ACCEPTED | USGS 3DHP_all waterbody (REST 3DHP_all/MapServer/60) | USGS | 1 | 609 of 621 matched | 2023-09-14 (602), 2025-2026 (7) | annual | api (machine) | public domain | coverage | S-geometry-003 |
+
+## usgsId relay to long USGS series; normalThreshold = normal pool for 11 gauges
+
+| Decision | Source | Org | Auth | Lake coverage | Time | Cadence | Access | License | Dimension | ID |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ACCEPTED | NWPS gauge metadata (usgsId, normalThreshold, flood categories) | NOAA NWS NWPS API | 1 | 48 NWPS-bound lakes | snapshot | n/a | api (machine) | public (US federal/state data; see source terms) | historyQuality, floodDroughtContext | S-plan-002 |

@@ -1,0 +1,167 @@
+[
+ {
+  "tier": "T1",
+  "profiled": 279,
+  "profiledPct": 44.9,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.43,
+   "hist": 0.918,
+   "base": 0.975,
+   "obs": 1.0,
+   "flood": 0.563
+  },
+  "byProvider": {
+   "cwms": 53,
+   "usgs": 34,
+   "tva": 16,
+   "nwps": 31,
+   "a2w": 102,
+   "rise": 33,
+   "sjrwmd": 3,
+   "nipsco": 1,
+   "cwms-saw": 1,
+   "nhdes": 1,
+   "njwsa": 1,
+   "duke": 1,
+   "wps-hydro": 1,
+   "alliant": 1
+  },
+  "scores": {
+   "NOT_VALIDATED": {
+    "displayed": 5.0,
+    "uncapped": 6.6,
+    "gates": [
+     "validation"
+    ]
+   },
+   "PARTIAL": {
+    "displayed": 7.3,
+    "uncapped": 7.3,
+    "gates": []
+   },
+   "VALIDATED": {
+    "displayed": 8.1,
+    "uncapped": 8.1,
+    "gates": []
+   }
+  }
+ },
+ {
+  "tier": "T2",
+  "profiled": 299,
+  "profiledPct": 48.1,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.401,
+   "hist": 0.906,
+   "base": 0.967,
+   "obs": 1.0,
+   "flood": 0.525
+  },
+  "byProvider": {
+   "cwms": 58,
+   "usgs": 35,
+   "tva": 16,
+   "nwps": 31,
+   "a2w": 103,
+   "srp": 2,
+   "rise": 33,
+   "cdec": 2,
+   "sjrwmd": 3,
+   "usbr-pnhm": 4,
+   "nipsco": 1,
+   "cwms-saw": 1,
+   "cnppid": 1,
+   "nppd": 1,
+   "nhdes": 1,
+   "njwsa": 1,
+   "duke": 1,
+   "aep": 1,
+   "nwrfc": 1,
+   "cwms-nwdp": 1,
+   "wps-hydro": 1,
+   "alliant": 1
+  },
+  "scores": {
+   "NOT_VALIDATED": {
+    "displayed": 5.0,
+    "uncapped": 6.5,
+    "gates": [
+     "validation"
+    ]
+   },
+   "PARTIAL": {
+    "displayed": 7.2,
+    "uncapped": 7.2,
+    "gates": []
+   },
+   "VALIDATED": {
+    "displayed": 8.0,
+    "uncapped": 8.0,
+    "gates": []
+   }
+  }
+ },
+ {
+  "tier": "T3",
+  "profiled": 389,
+  "profiledPct": 62.6,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.321,
+   "hist": 0.928,
+   "base": 0.974,
+   "obs": 1.0,
+   "flood": 0.427
+  },
+  "byProvider": {
+   "cwms": 60,
+   "usgs": 58,
+   "tva": 16,
+   "nwps": 39,
+   "a2w": 109,
+   "srp": 2,
+   "rise": 46,
+   "cdec": 2,
+   "sjrwmd": 6,
+   "usgs-d": 7,
+   "usbr-pnhm": 4,
+   "coops": 14,
+   "nipsco": 1,
+   "eccc": 1,
+   "mncsg": 1,
+   "cwms-saw": 1,
+   "duke": 5,
+   "cnppid": 2,
+   "nppd": 1,
+   "nhdes": 6,
+   "njwsa": 1,
+   "twdb": 2,
+   "aep": 1,
+   "nwrfc": 1,
+   "cwms-nwdp": 1,
+   "wps-hydro": 1,
+   "alliant": 1
+  },
+  "scores": {
+   "NOT_VALIDATED": {
+    "displayed": 5.0,
+    "uncapped": 6.8,
+    "gates": [
+     "validation"
+    ]
+   },
+   "PARTIAL": {
+    "displayed": 7.5,
+    "uncapped": 7.5,
+    "gates": []
+   },
+   "VALIDATED": {
+    "displayed": 8.3,
+    "uncapped": 8.3,
+    "gates": []
+   }
+  }
+ }
+]

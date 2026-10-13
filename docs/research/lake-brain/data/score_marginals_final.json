@@ -1,0 +1,162 @@
+[
+ {
+  "lever": "T1 strict research core (279 lakes)",
+  "profiled": 279,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.6
+  },
+  "PARTIAL": {
+   "displayed": 7.3,
+   "uncapped": 7.3
+  },
+  "VALIDATED": {
+   "displayed": 8.1,
+   "uncapped": 8.1
+  }
+ },
+ {
+  "lever": "plan share 0.43 -> 0.70",
+  "profiled": 279,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.8
+  },
+  "PARTIAL": {
+   "displayed": 7.6,
+   "uncapped": 7.6
+  },
+  "VALIDATED": {
+   "displayed": 8.3,
+   "uncapped": 8.3
+  }
+ },
+ {
+  "lever": "plan 0.43 -> 0.90",
+  "profiled": 279,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 7.0
+  },
+  "PARTIAL": {
+   "displayed": 7.8,
+   "uncapped": 7.8
+  },
+  "VALIDATED": {
+   "displayed": 8.5,
+   "uncapped": 8.5
+  }
+ },
+ {
+  "lever": "flood share 0.56 -> 0.80",
+  "profiled": 279,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.7
+  },
+  "PARTIAL": {
+   "displayed": 7.4,
+   "uncapped": 7.4
+  },
+  "VALIDATED": {
+   "displayed": 8.2,
+   "uncapped": 8.2
+  }
+ },
+ {
+  "lever": "history share 0.918 -> 1.00 (+base 1.0)",
+  "profiled": 279,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.7
+  },
+  "PARTIAL": {
+   "displayed": 7.5,
+   "uncapped": 7.5
+  },
+  "VALIDATED": {
+   "displayed": 8.2,
+   "uncapped": 8.2
+  }
+ },
+ {
+  "lever": "coverage -> 50% (311 lakes), same shares",
+  "profiled": 311,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 7.0
+  },
+  "PARTIAL": {
+   "displayed": 7.7,
+   "uncapped": 7.7
+  },
+  "VALIDATED": {
+   "displayed": 8.5,
+   "uncapped": 8.5
+  }
+ },
+ {
+  "lever": "coverage -> 75% (466 lakes), same shares",
+  "profiled": 466,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 7.4
+  },
+  "PARTIAL": {
+   "displayed": 8.1,
+   "uncapped": 8.1
+  },
+  "VALIDATED": {
+   "displayed": 8.9,
+   "uncapped": 8.9
+  }
+ },
+ {
+  "lever": "coverage 75% + plan 0.7 + flood 0.8",
+  "profiled": 466,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 7.8
+  },
+  "PARTIAL": {
+   "displayed": 8.5,
+   "uncapped": 8.5
+  },
+  "VALIDATED": {
+   "displayed": 9.2,
+   "uncapped": 9.2
+  }
+ },
+ {
+  "lever": "coverage 90% + plan 0.9 + flood 0.8 + hist 1.0",
+  "profiled": 559,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 8.3
+  },
+  "PARTIAL": {
+   "displayed": 9.1,
+   "uncapped": 9.1
+  },
+  "VALIDATED": {
+   "displayed": 9.8,
+   "uncapped": 9.8
+  }
+ },
+ {
+  "lever": "10-year history rule (hist share 0.577)",
+  "profiled": 279,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.0
+  },
+  "PARTIAL": {
+   "displayed": 6.8,
+   "uncapped": 6.8
+  },
+  "VALIDATED": {
+   "displayed": 7.5,
+   "uncapped": 7.5
+  }
+ }
+]

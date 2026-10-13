@@ -1,0 +1,122 @@
+[
+ {
+  "step": "S0 published",
+  "profiled": 5,
+  "shares": {
+   "src": 1,
+   "plan": 1,
+   "hist": 0.2,
+   "base": 0.2,
+   "obs": 1,
+   "flood": 0.2
+  },
+  "dims": {
+   "sourceAuthority": 10.0,
+   "operatorPlan": 10.0,
+   "historyQuality": 2.0,
+   "seasonalBaseline": 2.0,
+   "trendQuality": 10.0,
+   "floodDroughtContext": 2.0,
+   "validation": 0.0,
+   "coverage": 1.0
+  },
+  "uncapped": 4.3,
+  "displayed": 3.0
+ },
+ {
+  "step": "S1 +deep TVA history (5 lakes)",
+  "profiled": 5,
+  "shares": {
+   "src": 1,
+   "plan": 1,
+   "hist": 1,
+   "base": 1,
+   "obs": 1,
+   "flood": 0.2
+  },
+  "dims": {
+   "sourceAuthority": 10.0,
+   "operatorPlan": 10.0,
+   "historyQuality": 10.0,
+   "seasonalBaseline": 10.0,
+   "trendQuality": 10.0,
+   "floodDroughtContext": 2.0,
+   "validation": 0.0,
+   "coverage": 1.0
+  },
+  "uncapped": 6.3,
+  "displayed": 3.0
+ },
+ {
+  "step": "S2 +258 machine-verified bindings",
+  "profiled": 258,
+  "shares": {
+   "src": 1,
+   "plan": 0.186,
+   "hist": 0.798,
+   "base": 0.876,
+   "obs": 1,
+   "flood": 0.322
+  },
+  "dims": {
+   "sourceAuthority": 10.0,
+   "operatorPlan": 1.9,
+   "historyQuality": 8.0,
+   "seasonalBaseline": 8.8,
+   "trendQuality": 10.0,
+   "floodDroughtContext": 3.2,
+   "validation": 0.0,
+   "coverage": 5.0
+  },
+  "uncapped": 5.9,
+  "displayed": 5.0
+ },
+ {
+  "step": "S3 +history ext + verified plan/flood",
+  "profiled": 258,
+  "shares": {
+   "src": 1,
+   "plan": 0.461,
+   "hist": 0.938,
+   "base": 0.996,
+   "obs": 1,
+   "flood": 0.609
+  },
+  "dims": {
+   "sourceAuthority": 10.0,
+   "operatorPlan": 4.6,
+   "historyQuality": 9.4,
+   "seasonalBaseline": 10.0,
+   "trendQuality": 10.0,
+   "floodDroughtContext": 6.1,
+   "validation": 0.0,
+   "coverage": 5.0
+  },
+  "uncapped": 6.7,
+  "displayed": 5.0
+ },
+ {
+  "step": "S4 FINAL strict v1 (279 lakes)",
+  "profiled": 279,
+  "shares": {
+   "src": 1,
+   "plan": 0.43,
+   "hist": 0.918,
+   "base": 0.975,
+   "obs": 1,
+   "flood": 0.563
+  },
+  "dims": {
+   "sourceAuthority": 10.0,
+   "operatorPlan": 4.3,
+   "historyQuality": 9.2,
+   "seasonalBaseline": 9.7,
+   "trendQuality": 10.0,
+   "floodDroughtContext": 5.6,
+   "validation": 0.0,
+   "coverage": 5.0
+  },
+  "uncapped": 6.6,
+  "displayed": 5.0
+ }
+]

@@ -65,7 +65,18 @@ def main() -> int:
     src = [r for r in rows if r.get("kind") == "source"]
     blk = [r for r in rows if r.get("kind") == "blocker"]
     act = [r for r in rows if r.get("kind") == "action"]
-    dat = [r for r in rows if r.get("kind") == "dataset"]
+    # datasets: the manifest next to the data (authoritative, de-duplicated by path); per-thread dataset rows are only a fallback
+    mp = os.path.join(DOCS, "data", "MANIFEST.jsonl")
+    if os.path.exists(mp):
+        seen = {}
+        for line in open(mp):
+            line = line.strip()
+            if line:
+                r = json.loads(line)
+                seen[r["path"]] = r
+        dat = list(seen.values())
+    else:
+        dat = [r for r in rows if r.get("kind") == "dataset"]
     sc = [r for r in rows if r.get("kind") == "score"]
     dec = collections.Counter(r.get("decision", "—") for r in src)
 

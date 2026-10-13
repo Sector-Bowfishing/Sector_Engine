@@ -1,0 +1,19 @@
+# Lake Brain — Michael action queue (curated)
+
+None of these blocks the research; each raises confidence, unlocks a dimension, or needs an approval the campaign was not allowed to give itself.
+The full generated queue (every thread's raw ids) is in `LAKE_BRAIN_BLOCKER_QUEUE.md`. IDs in brackets map to it.
+
+| # | Priority | Decision / action | Effort | Unlocks | Recommendation |
+|---|---|---|---|---|---|
+| 1 | **High** | **Review the machine-verified bindings by acceptance sampling** [M-B02]: stratified sample n = 60 of the 279 strict rows (provider × capability), accept the batch at ≤ 1 error (95 % upper bound ≤ 7.7 %); review the 57 flagged rows in full. Rows: `data/verified_bindings_v2.csv` (`wave` w1 / w2-v1) | ~1 h | the rubric counts only REVIEWED bindings: displayed 3.0 → 5.0 once adapters exist | Do it first |
+| 2 | **High** | **Do not count the post-hoc rules** [M-G01]: v1.1 extensions and `R7h` were written after seeing failures (+110 lakes of coverage for +0.2 uncapped, error rate unmeasured). Confirm "strict rows only" | 5 min | keeps the score honest | Adopt strict only |
+| 3 | **High** | **Geometry policy + delivery** [M-geometry-01, -02]: approve NHD-union canonical shoreline with `extentKind`/pool layers; choose static GeoJSON + bucket CORS (infra only) **or** an Engine `/lakes/{id}/geometry` route (customer-serving deploy → needs your approval) | 15 min | Ops `Lakes → Info` draws the real boundary | Static + CORS first |
+| 4 | **High** | **Bowfin and freshwater drum** [M-species-01]: join the assessed presence species? (independent records in 79 / 146 lakes) | 5 min | presence for two bowfishing targets | Yes — both are legal bowfishing targets in most states |
+| 5 | Medium | **Validation definition** (new): approve the PARTIAL definition and the v2 pre-registration (year-block intervals, prospective ledger) in `LAKE_BRAIN_VALIDATION_STRATEGY.md` §6–7 | 20 min | the only route past the 5.0 cap | Approve; start logging now |
+| 6 | Medium | **Visible-change threshold** [M-baselines-03]: what rate of level change (in/day) should count as rising/falling for bowfishing; natural lakes 0.05 ft floor? | 10 min | sets STABLE/RAPID in rules v2 | Reservoirs 0.10 ft, natural 0.05 ft |
+| 7 | Medium | **TVA archiver 5 → 16 dams** [M-ctx-01] (Cloud Run job config; a deploy) and optionally ask TVA River Operations for the tributary pool archive [M-baselines-01, M-plan-05] | 15 min + email | 12 TVA lakes from 3.9 y (LIMITED) to SUFFICIENT; release history | Approve the config change |
+| 8 | Medium | **Review 43 identity-risk and 126 off-water directory coordinates** [M-geometry-03] (CSV column `point_flag`) | ~1 h | removes wrong-lake risk before bindings go live | Do before #1's adapters ship |
+| 9 | Medium | **ResOpsUS one-time download** (Zenodo 5893641, ~299 MB) [M-plan-03] | 5 min | up to +0.3 uncapped (TVA tributaries/others) | Approve |
+| 10 | Medium | **Rubric v2** (new): applicability-aware flood share, per-dimension validation, optional geometry/presence dimensions, coverage counts only lakes with level evidence | decision | fixes the denominator effect and the NO_SOURCE gaming vector | Decide after #1 |
+| 11 | Medium | **Terms**: iNaturalist CC BY-NC legal review; MN/IN/USGS NAS API use [M-species-03]; Duke Lake View and other undocumented operator endpoints [M-G02] | email / legal | productionising presence and the Duke block (8 lakes) | Treat as optional until reviewed |
+| 12 | Low | USGS Water Data API key (free) [M-baselines-02, M-B01, M-ctx-02]; SFWMD client id [M-plan-02]; Santee Cooper rule-curve page check [M-plan-04]; Native Ranges 10 GB download [M-species-04]; directory full-pool suspects [M-G03]; does a polygon builder exist outside the searched repos [M-geometry-04]; policy for the 22 lakes without polygon [M-geometry-05]; private tier legend T2–T5 [M-species-02] | – | small | batch later |
