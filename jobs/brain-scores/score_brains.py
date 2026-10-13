@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 import sys
@@ -25,6 +26,8 @@ from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check
 
 WRITER = "brain-platform"
 FROZEN = os.environ.get("FROZEN_SCORES", os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json"))
+MAX_LAKE_PROFILES = 1000     # > the 621-lake directory; a guard, not a sample size
+LAKE_READ_WORKERS = 8
 UPSTREAM = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")
 
 
@@ -38,13 +41,19 @@ def fetch_facts(db) -> dict:
     directory = lake_reg.get("directoryLakeCount") or (len(fleet) if fleet else None)
     profiled = [k for k, row in fleet.items() if ((row or {}).get("slots") or {}).get("lake") or ((row or {}).get("readiness") or {}).get("lake")]
     profiles, states = {}, {}
-    for k in sorted(profiled)[:200]:
-        p = db.get(f"lakes/{k}/brain")
-        if p:
-            profiles[k] = p
-        s = db.get(f"lakes/{k}/states/lake")
-        if s:
-            states[k] = s
+    # Read EVERY profiled lake (bounded for safety): the coverage dimension counts profiles, so a silent first-200 cap would
+    # misreport coverage once the reviewed fleet exceeds 200. Reads are small documents, fetched concurrently.
+    keys = sorted(profiled)[:MAX_LAKE_PROFILES]
+
+    def _read(k):
+        return k, db.get(f"lakes/{k}/brain"), db.get(f"lakes/{k}/states/lake")
+
+    with ThreadPoolExecutor(max_workers=LAKE_READ_WORKERS) as pool:
+        for k, p, s in pool.map(_read, keys):
+            if p:
+                profiles[k] = p
+            if s:
+                states[k] = s
     species = db.get("species") or {}
     intel_reg = brains.get("sector-intelligence") or {}
     sampled, intel_states = [], {}
@@ -67,7 +76,8 @@ def fetch_facts(db) -> dict:
                    "platformConformant": ({b: bool(((brains.get(b) or {}).get("platform") or {}).get("conformant"))
                                            for b in UPSTREAM} if any((brains.get(b) or {}).get("platform") for b in UPSTREAM) else {})},
         "lake": {"registry": lake_reg, "validation": validation.get("lake-brain"), "health": health.get("lake-brain"),
-                 "profiles": profiles, "states": states, "directoryLakeCount": directory},
+                 "profiles": profiles, "states": states, "directoryLakeCount": directory,
+                 "profiledCount": len(profiled)},
         "biological": {"registry": brains.get("biological-state") or {}, "validation": validation.get("biological-state"),
                        "species": species, "intelligenceRegistry": intel_reg},
         "intelligence": {"registry": intel_reg, "validation": validation.get("sector-intelligence"),

@@ -60,3 +60,27 @@ def test_engine_node_follows_the_same_rule():
     updates, changed = plan_writes(all_scores(), brains(), NOW, eng_new, eng_old, all_scores())
     assert "scores/engine" in updates and "engine/score" in updates and not any(k.startswith("activity/") for k in updates)
     assert "breakdown refreshed" in changed[0]
+
+
+class _FakeDb:
+    """A Brain RTDB with N profiled Lake Brain lakes: the scorer must read ALL of them (no silent first-200 cap)."""
+    def __init__(self, n):
+        self.n = n
+        self.keys = [f"Lake_{i:04d}_XX" for i in range(n)]
+
+    def get(self, path):
+        if path == "lakeFleet":
+            return {k: {"slots": {"lake": True}} for k in self.keys}
+        if path == "brains":
+            return {"lake-brain": {"directoryLakeCount": 621}}
+        if path.startswith("lakes/") and path.endswith("/brain"):
+            return {"sourceCapability": {"level": "DIRECT_OPERATOR_POOL"}, "historicalCoverage": {"baselineStatus": "SUFFICIENT"}}
+        if path.startswith("lakes/") and path.endswith("/states/lake"):
+            return {"kind": "OBSERVED", "floodPoolState": "UNKNOWN"}
+        return None
+
+
+def test_fetch_facts_reads_every_profiled_lake_not_just_the_first_200():
+    from score_brains import fetch_facts
+    f = fetch_facts(_FakeDb(327))["lake"]
+    assert len(f["profiles"]) == 327 and len(f["states"]) == 327 and f["profiledCount"] == 327
