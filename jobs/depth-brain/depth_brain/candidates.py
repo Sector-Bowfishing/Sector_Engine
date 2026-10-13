@@ -19,6 +19,7 @@ from collections import Counter
 from . import contract as C
 from . import zones as Z
 from .datum import DATA_DIR, DatumAssessment, assess, load_provider_table, normalize_datum, provider_level_datum
+from . import proposals
 from .evidence import depth_tier_from_research
 
 USGS_PARAM_DATUM = {"62614": "NGVD29", "62615": "NAVD88"}       # USGS parameter definitions: surface elevation above NGVD 1929 / NAVD 1988
@@ -125,6 +126,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     cwms_locs = json.load(open(paths["cwms_locations"]))["lakes"] if paths.get("cwms_locations") and os.path.exists(paths["cwms_locations"]) else {}
     a2w = json.load(open(paths["a2w_datums"]))["lakes"] if paths.get("a2w_datums") and os.path.exists(paths["a2w_datums"]) else {}
     overrides = json.load(open(paths["overrides"])) if paths.get("overrides") and os.path.exists(paths["overrides"]) else {}
+    twdb_ver = proposals.twdb_updates(paths.get("twdb_reference_pools")) if paths.get("twdb_reference_pools") else {}
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
     out = []
     for lk in directory:
@@ -196,6 +198,11 @@ def build(paths: dict, manifest_version: str) -> dict:
                       "referenceStatus": "UNVERIFIED", "referencePoolFt": None,
                       "note": "survey reference pool not verified for this lake: effective zones are withheld until it is"}
                 ev.update({"coverage": cov, "intervalFt": itv})
+        tw = twdb_ver.get(lid)
+        if zr and tw:                                                  # survey reference pool verified AND preregistered validation passed
+            zr.update({"referenceStatus": "VERIFIED", "referencePoolFt": tw["referencePoolFt"], "referencePoolDatum": tw["referencePoolDatum"],
+                       "surveyYear": tw.get("surveyYear"), "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)"})
+            ev["surveyYear"] = tw.get("surveyYear")
         licence = licence_for(ev["contourSources"], lic)
         rec = {
             "lakeId": lid, "lakeName": lk.get("name"), "state": lk.get("state"), "operator": lk.get("operatorName"), "cwmsOffice": lk.get("cwmsOffice"),

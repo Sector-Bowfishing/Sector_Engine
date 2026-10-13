@@ -23,7 +23,7 @@ CASES = {
     "contour_zones_effective": (
         candidate(lakeId="Contour Lake|MN", tier="A",
                   evidence={"tier": "A", "researchTier": "A", "kind": "contour", "coverage": 0.9, "intervalFt": 2},
-                  referenceZones={"cumulative": {"3.0": 0.1, "6.0": 0.2, "10.0": 0.3}, "intervalFt": 2, "coverage": 0.9, "source": "MN", "referenceStatus": "VERIFIED", "referencePoolFt": 595.0}),
+                  referenceZones={"cumulative": {"3.0": 0.1, "6.0": 0.2, "10.0": 0.3}, "intervalFt": 2, "coverage": 0.9, "source": "MN", "referenceStatus": "VERIFIED", "referencePoolFt": 595.0, "referencePoolDatum": "NGVD29"}),
         lake_state(592.0)),
 }
 

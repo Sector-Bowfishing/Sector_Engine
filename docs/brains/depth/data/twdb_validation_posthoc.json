@@ -1,0 +1,250 @@
+{
+ "note": "post-hoc, descriptive only",
+ "dryByLevel": {
+  "S1|production|1.5": {
+   "n": 5,
+   "mae": 0.0078,
+   "bias": -0.0068,
+   "coverage": 1.0,
+   "widthMedian": 0.078
+  },
+  "S1|production|3.0": {
+   "n": 5,
+   "mae": 0.0123,
+   "bias": -0.0043,
+   "coverage": 1.0,
+   "widthMedian": 0.162
+  },
+  "S1|production|4.5": {
+   "n": 5,
+   "mae": 0.0043,
+   "bias": 0.0017,
+   "coverage": 1.0,
+   "widthMedian": 0.068
+  },
+  "S1|production|6.0": {
+   "n": 5,
+   "mae": 0.0142,
+   "bias": 0.0142,
+   "coverage": 1.0,
+   "widthMedian": 0.177
+  },
+  "S1|production|8.0": {
+   "n": 5,
+   "mae": 0.0023,
+   "bias": -0.0019,
+   "coverage": 1.0,
+   "widthMedian": 0.113
+  },
+  "S1|zero|1.5": {
+   "n": 5,
+   "mae": 0.0078,
+   "bias": -0.0068,
+   "coverage": 1.0,
+   "widthMedian": 0.078
+  },
+  "S1|zero|3.0": {
+   "n": 5,
+   "mae": 0.0003,
+   "bias": -0.0001,
+   "coverage": 1.0,
+   "widthMedian": 0.0
+  },
+  "S1|zero|4.5": {
+   "n": 5,
+   "mae": 0.0043,
+   "bias": 0.0017,
+   "coverage": 1.0,
+   "widthMedian": 0.068
+  },
+  "S1|zero|6.0": {
+   "n": 5,
+   "mae": 0.0002,
+   "bias": -0.0001,
+   "coverage": 1.0,
+   "widthMedian": 0.0
+  },
+  "S1|zero|8.0": {
+   "n": 5,
+   "mae": 0.0023,
+   "bias": -0.0019,
+   "coverage": 1.0,
+   "widthMedian": 0.113
+  },
+  "S2|production|1.5": {
+   "n": 4,
+   "mae": 0.0083,
+   "bias": 0.0019,
+   "coverage": 1.0,
+   "widthMedian": 0.097
+  },
+  "S2|production|3.0": {
+   "n": 4,
+   "mae": 0.015,
+   "bias": 0.0039,
+   "coverage": 1.0,
+   "widthMedian": 0.176
+  },
+  "S2|production|4.5": {
+   "n": 4,
+   "mae": 0.0179,
+   "bias": 0.0179,
+   "coverage": 1.0,
+   "widthMedian": 0.075
+  },
+  "S2|production|6.0": {
+   "n": 4,
+   "mae": 0.0299,
+   "bias": 0.0299,
+   "coverage": 1.0,
+   "widthMedian": 0.189
+  },
+  "S2|production|8.0": {
+   "n": 4,
+   "mae": 0.0084,
+   "bias": 0.0084,
+   "coverage": 1.0,
+   "widthMedian": 0.114
+  },
+  "S2|zero|1.5": {
+   "n": 4,
+   "mae": 0.0083,
+   "bias": 0.0019,
+   "coverage": 1.0,
+   "widthMedian": 0.097
+  },
+  "S2|zero|3.0": {
+   "n": 4,
+   "mae": 0.0162,
+   "bias": 0.0162,
+   "coverage": 0.0,
+   "widthMedian": 0.0
+  },
+  "S2|zero|4.5": {
+   "n": 4,
+   "mae": 0.0179,
+   "bias": 0.0179,
+   "coverage": 1.0,
+   "widthMedian": 0.075
+  },
+  "S2|zero|6.0": {
+   "n": 4,
+   "mae": 0.0119,
+   "bias": 0.0119,
+   "coverage": 0.0,
+   "widthMedian": 0.0
+  },
+  "S2|zero|8.0": {
+   "n": 4,
+   "mae": 0.0084,
+   "bias": 0.0084,
+   "coverage": 1.0,
+   "widthMedian": 0.114
+  }
+ },
+ "bandWidthByLevel": {
+  "under3|1.5": {
+   "widthMedian": 0.162,
+   "mae": 0.008
+  },
+  "under3|3.0": {
+   "widthMedian": 0.177,
+   "mae": 0.018
+  },
+  "under3|4.5": {
+   "widthMedian": 0.177,
+   "mae": 0.009
+  },
+  "under3|6.0": {
+   "widthMedian": 0.177,
+   "mae": 0.011
+  },
+  "under3|8.0": {
+   "widthMedian": 0.838,
+   "mae": 0.344
+  },
+  "threeToSix|1.5": {
+   "widthMedian": 0.177,
+   "mae": 0.009
+  },
+  "threeToSix|3.0": {
+   "widthMedian": 0.177,
+   "mae": 0.011
+  },
+  "threeToSix|4.5": {
+   "widthMedian": 0.838,
+   "mae": 0.343
+  },
+  "threeToSix|6.0": {
+   "widthMedian": 0.838,
+   "mae": 0.343
+  },
+  "threeToSix|8.0": {
+   "widthMedian": 0.745,
+   "mae": 0.29
+  },
+  "sixToTen|1.5": {
+   "widthMedian": 0.838,
+   "mae": 0.318
+  },
+  "sixToTen|3.0": {
+   "widthMedian": 0.838,
+   "mae": 0.318
+  },
+  "sixToTen|4.5": {
+   "widthMedian": 0.745,
+   "mae": 0.267
+  },
+  "sixToTen|6.0": {
+   "widthMedian": 0.745,
+   "mae": 0.271
+  },
+  "sixToTen|8.0": {
+   "widthMedian": 0.745,
+   "mae": 0.276
+  },
+  "deeper|1.5": {
+   "widthMedian": 0.745,
+   "mae": 0.329
+  },
+  "deeper|3.0": {
+   "widthMedian": 0.745,
+   "mae": 0.29
+  },
+  "deeper|4.5": {
+   "widthMedian": 0.745,
+   "mae": 0.255
+  },
+  "deeper|6.0": {
+   "widthMedian": 0.745,
+   "mae": 0.221
+  },
+  "deeper|8.0": {
+   "widthMedian": 0.745,
+   "mae": 0.176
+  }
+ },
+ "sameSubsetBaseline": {
+  "S1_allVerified": {
+   "lakes": [
+    "Cedar Creek Reservoir|TX",
+    "Lake Conroe|TX",
+    "Lake Fork Reservoir|TX",
+    "Lake Livingston|TX",
+    "Lake Tawakoni|TX"
+   ],
+   "maeLeaveOneLakeOutMean": 0.014,
+   "n": 25
+  },
+  "S2_subset": {
+   "lakes": [
+    "Cedar Creek Reservoir|TX",
+    "Lake Conroe|TX",
+    "Lake Fork Reservoir|TX",
+    "Lake Tawakoni|TX"
+   ],
+   "maeLeaveOneLakeOutMean": 0.0152,
+   "n": 20
+  }
+ }
+}

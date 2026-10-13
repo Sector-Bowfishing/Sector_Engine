@@ -85,6 +85,9 @@ def main(argv=None) -> int:
     r.add_argument("--log", action="store_true")
     r.add_argument("--cycle", default="unnamed")
     r.add_argument("--note", default="")
+    q = sub.add_parser("promote-proposals", help="validate evidence proposals and (with --apply) add accepted ones to datum_lake_overrides.json")
+    q.add_argument("--manifest", default=DEFAULT_MANIFEST)
+    q.add_argument("--apply", action="store_true")
     p = sub.add_parser("publish")
     p.add_argument("--manifest", default=DEFAULT_MANIFEST)
     p.add_argument("--lake-states", required=True)
@@ -97,6 +100,12 @@ def main(argv=None) -> int:
         m = cand.build(json.load(open(a.paths)), a.version)
         json.dump(m, open(a.out, "w"), indent=1, sort_keys=True)
         print(json.dumps(m["summary"], indent=1))
+        return 0
+    if a.cmd == "promote-proposals":
+        from . import proposals as PR
+        res = PR.promote(json.load(open(a.manifest)), os.path.join(HERE, "data", "datum_lake_overrides.json"), apply=a.apply)
+        print(json.dumps({"rulesVersion": res["rulesVersion"], "accepted": len(res["accepted"]), "newOverrides": res["newOverrides"], "applied": a.apply,
+                          "rejected": res["rejected"][:60], "rejectedCount": len(res["rejected"])}, indent=1))
         return 0
     if a.cmd == "report":
         return run_report(a)

@@ -213,3 +213,25 @@ def test_brain_plan_publish_skip_and_targeting():
     assert p["action"] == "PUBLISH" and p["lakes"] == ["A|AL"]
     assert brain_plan(fp, m, ls, "depth-brain-0.0.1")["action"] == "PUBLISH"                # version change
     assert brain_plan({}, m, ls, C.BRAIN_VERSION)["action"] == "PUBLISH"                    # first run
+
+
+def _zone_rec(survey_pool, survey_datum="NGVD29", status="VERIFIED"):
+    return candidate(tier="A", evidence={"tier": "A", "kind": "contour"},
+                     referenceZones={"cumulative": {"3.0": 0.1, "6.0": 0.2, "10.0": 0.3}, "intervalFt": 2, "coverage": 1.0, "source": "TWDB",
+                                     "referenceStatus": status, "referencePoolFt": survey_pool, "referencePoolDatum": survey_datum})
+
+
+def test_effective_zones_rebase_to_the_survey_pool():
+    same, _ = build_state(_zone_rec(595.0), lake_state(592.0), NOW)                 # survey pool == directory pool: shift -3
+    assert same["effectiveZones"]["shiftFt"] == -3.0
+    lower, _ = build_state(_zone_rec(594.0), lake_state(592.0), NOW)                # survey pool 1 ft lower: lake is 2 ft below the survey pool
+    assert lower["effectiveZones"]["shiftFt"] == -2.0
+
+
+def test_effective_zones_refuse_an_incompatible_survey_datum():
+    r, _ = build_state(_zone_rec(595.0, survey_datum="NAVD88"), lake_state(592.0), NOW)
+    assert r["effectiveZones"] == {"available": False, "reason": "SURVEY_REFERENCE_DATUM_NOT_COMPATIBLE"}
+    r2, _ = build_state(_zone_rec(595.0, survey_datum=None), lake_state(592.0), NOW)
+    assert r2["effectiveZones"]["available"] is False
+    r3, _ = build_state(_zone_rec(None, status="UNVERIFIED"), lake_state(592.0), NOW)
+    assert r3["effectiveZones"]["reason"] == "SURVEY_REFERENCE_POOL_UNVERIFIED"

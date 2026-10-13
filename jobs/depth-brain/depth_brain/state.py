@@ -68,6 +68,17 @@ def _facts(res: ShiftResult, rec: dict) -> list[str]:
     return out
 
 
+def _effective_zones(z, res, ref) -> dict:
+    """Shift the zones relative to the SURVEY reference pool. The state's shift is against the directory pool; when the survey pool differs it is
+    re-based (`shift_survey = shift + refPool - surveyPool`) - valid only if the survey pool is in the same datum as the Depth reference."""
+    if z.reference_status != "VERIFIED" or z.reference_pool_ft is None:
+        return Z.effective_zones(z, res.shift_ft, res.sigma_ft)            # withheld by zones.py (SURVEY_REFERENCE_POOL_UNVERIFIED)
+    sd, rd = normalize_datum(z.reference_pool_datum), normalize_datum(ref.datum)
+    if sd is None or rd is None or sd != rd:
+        return {"available": False, "reason": "SURVEY_REFERENCE_DATUM_NOT_COMPATIBLE"}
+    return Z.effective_zones(z, res.shift_ft + (ref.pool_ft - z.reference_pool_ft), res.sigma_ft)
+
+
 def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_version: str = "unversioned", brain_version: str = C.BRAIN_VERSION) -> tuple[dict, dict]:
     """-> (state payload, meta). meta carries readiness / kind / stale for the publisher's fleet rows."""
     lid = rec["lakeId"]
@@ -114,7 +125,7 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
         state["referenceZones"] = {"evidenceKind": "contour", "tier": tier, "source": z.source, **Z.reference_state(z),
                                    "support": {"contourIntervalFt": z.interval_ft, "coverage": z.coverage, "surveyYear": z.survey_year},
                                    "basis": "share of the surveyed surface at the survey reference pool"}
-        eff_z = Z.effective_zones(z, res.shift_ft, res.sigma_ft)
+        eff_z = _effective_zones(z, res, ref)
         state["effectiveZones"] = eff_z
         if eff_z.get("available"):
             eff["mode"] = "zoned"
