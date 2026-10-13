@@ -1,0 +1,266 @@
+[
+ {
+  "lever": "research core as measured",
+  "profiled": 258,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.198,
+   "hist": 0.779,
+   "base": 0.86,
+   "obs": 1.0,
+   "flood": 0.302
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 5.9
+  },
+  "PARTIAL": {
+   "displayed": 6.6,
+   "uncapped": 6.6
+  },
+  "VALIDATED": {
+   "displayed": 7.4,
+   "uncapped": 7.4
+  }
+ },
+ {
+  "lever": "+ promote the 57 flagged (315 lakes, shares per fleet_score --with-flagged)",
+  "profiled": 315,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.178,
+   "hist": 0.765,
+   "base": 0.835,
+   "obs": 1.0,
+   "flood": 0.27
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.2
+  },
+  "PARTIAL": {
+   "displayed": 7.0,
+   "uncapped": 7.0
+  },
+  "VALIDATED": {
+   "displayed": 7.7,
+   "uncapped": 7.7
+  }
+ },
+ {
+  "lever": "operatorPlan share 0.20 -> 0.50",
+  "profiled": 258,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.5,
+   "hist": 0.779,
+   "base": 0.86,
+   "obs": 1.0,
+   "flood": 0.302
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.2
+  },
+  "PARTIAL": {
+   "displayed": 6.9,
+   "uncapped": 6.9
+  },
+  "VALIDATED": {
+   "displayed": 7.7,
+   "uncapped": 7.7
+  }
+ },
+ {
+  "lever": "operatorPlan share 0.20 -> 0.80",
+  "profiled": 258,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.8,
+   "hist": 0.779,
+   "base": 0.86,
+   "obs": 1.0,
+   "flood": 0.302
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.5
+  },
+  "PARTIAL": {
+   "displayed": 7.2,
+   "uncapped": 7.2
+  },
+  "VALIDATED": {
+   "displayed": 8.0,
+   "uncapped": 8.0
+  }
+ },
+ {
+  "lever": "floodDroughtContext share 0.30 -> 0.60",
+  "profiled": 258,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.198,
+   "hist": 0.779,
+   "base": 0.86,
+   "obs": 1.0,
+   "flood": 0.6
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.0
+  },
+  "PARTIAL": {
+   "displayed": 6.8,
+   "uncapped": 6.8
+  },
+  "VALIDATED": {
+   "displayed": 7.5,
+   "uncapped": 7.5
+  }
+ },
+ {
+  "lever": "history share 0.78 -> 0.95 (deep history for the remaining lakes)",
+  "profiled": 258,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.198,
+   "hist": 0.95,
+   "base": 0.97,
+   "obs": 1.0,
+   "flood": 0.302
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.2
+  },
+  "PARTIAL": {
+   "displayed": 7.0,
+   "uncapped": 7.0
+  },
+  "VALIDATED": {
+   "displayed": 7.7,
+   "uncapped": 7.7
+  }
+ },
+ {
+  "lever": "coverage 41.5% -> 50% (311 lakes) at the same quality shares",
+  "profiled": 311,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.198,
+   "hist": 0.779,
+   "base": 0.86,
+   "obs": 1.0,
+   "flood": 0.302
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.3
+  },
+  "PARTIAL": {
+   "displayed": 7.0,
+   "uncapped": 7.0
+  },
+  "VALIDATED": {
+   "displayed": 7.8,
+   "uncapped": 7.8
+  }
+ },
+ {
+  "lever": "coverage -> 75% (466 lakes) at the same quality shares",
+  "profiled": 466,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.198,
+   "hist": 0.779,
+   "base": 0.86,
+   "obs": 1.0,
+   "flood": 0.302
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.7
+  },
+  "PARTIAL": {
+   "displayed": 7.4,
+   "uncapped": 7.4
+  },
+  "VALIDATED": {
+   "displayed": 8.2,
+   "uncapped": 8.2
+  }
+ },
+ {
+  "lever": "coverage -> 90% (559 lakes) at the same quality shares",
+  "profiled": 559,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.198,
+   "hist": 0.779,
+   "base": 0.86,
+   "obs": 1.0,
+   "flood": 0.302
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.9
+  },
+  "PARTIAL": {
+   "displayed": 7.6,
+   "uncapped": 7.6
+  },
+  "VALIDATED": {
+   "displayed": 8.4,
+   "uncapped": 8.4
+  }
+ },
+ {
+  "lever": "coverage 75% AND plan 0.5 AND flood 0.5 AND history 0.95",
+  "profiled": 466,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.5,
+   "hist": 0.95,
+   "base": 0.97,
+   "obs": 1.0,
+   "flood": 0.5
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 7.4
+  },
+  "PARTIAL": {
+   "displayed": 8.2,
+   "uncapped": 8.2
+  },
+  "VALIDATED": {
+   "displayed": 8.9,
+   "uncapped": 8.9
+  }
+ },
+ {
+  "lever": "coverage 90% AND plan 0.8 AND flood 0.6 AND history 0.95",
+  "profiled": 559,
+  "shares": {
+   "src": 1.0,
+   "plan": 0.8,
+   "hist": 0.95,
+   "base": 0.97,
+   "obs": 1.0,
+   "flood": 0.6
+  },
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 8.0
+  },
+  "PARTIAL": {
+   "displayed": 8.7,
+   "uncapped": 8.7
+  },
+  "VALIDATED": {
+   "displayed": 9.5,
+   "uncapped": 9.5
+  }
+ }
+]
