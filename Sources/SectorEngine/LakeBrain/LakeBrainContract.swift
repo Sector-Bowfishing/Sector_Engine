@@ -25,9 +25,9 @@ public enum LakeBrainSpec {
     public static let snapshotField = "lakeState"
     public static let brainVersion = "1.0.0"
     /// The classification rules (§7 of the spec). Bump on any rule change.
-    public static let modelVersion = "lake-level-rules-v1"
+    public static let modelVersion = "lake-level-rules-v2"
     /// Day-of-year percentile climatology (§6 of the spec).
-    public static let baselineMethod = "doy15-percentile-v1"
+    public static let baselineMethod = "doy15-percentile-v2"
     public static let profileSchemaVersion = 1
     public static let stateSchemaVersion = 1
     /// A published state older than this is stale whatever the source says.
@@ -75,7 +75,8 @@ public enum LakeLevelState: String, Codable, Sendable, CaseIterable {
     case unknown = "UNKNOWN"
 }
 
-/// 24-hour change against this lake's own seasonal |Δ24h| distribution.
+/// Direction from the 72 h mean rate (24 h fallback) against a lake-class floor; RAPID when the 24 h change
+/// exceeds max(this lake's seasonal p95 |Δ24h|, 0.25 ft) (rules v2 R2).
 public enum LakeTrendState: String, Codable, Sendable, CaseIterable {
     case stable = "STABLE"
     case rising = "RISING"
@@ -110,6 +111,19 @@ public enum LakeBaselineStatus: String, Codable, Sendable, CaseIterable {
     /// Some history, < 2 complete years.
     case insufficient = "INSUFFICIENT"
     case none = "NONE"
+}
+
+/// What a lake's history may be used for (rules v2 R1), by complete basis years.
+/// Separate from `LakeBaselineStatus`, which keeps its v1 meaning.
+public enum LakeHistoricalTier: String, Codable, Sendable, CaseIterable {
+    /// < 5 complete years: INSUFFICIENT_HISTORY only.
+    case none = "NONE"
+    /// 5–9: NORMAL / UNUSUAL (flag `historicalProvisional`); never VERY_UNUSUAL.
+    case provisional = "PROVISIONAL"
+    /// 10–14: NORMAL / UNUSUAL; never VERY_UNUSUAL.
+    case standard = "STANDARD"
+    /// ≥ 15: NORMAL / UNUSUAL / VERY_UNUSUAL.
+    case full = "FULL"
 }
 
 /// Per-lake readiness for `lake-brain` (shared Brain vocabulary; rule in the spec §9).
@@ -221,6 +235,8 @@ public struct LakeLevelStateRecord: Codable, Equatable, Sendable {
     public var rapidChangeThresholdFt: Double?
     public var seasonalBand: LakeSeasonalBand?
     public var baselineStatus: LakeBaselineStatus
+    /// Rules v2 R1: how much the history may say. Absent on states published under v1.
+    public var historicalTier: LakeHistoricalTier?
     /// Engine-authored, factual sentences in display order. No fish wording.
     public var facts: [String]?
     public var freshness: LakeStateFreshness
@@ -286,6 +302,8 @@ public struct LakeBrainProfileRecord: Codable, Equatable, Sendable {
         public var coveragePct: Double?
         public var yearsCovered: Int
         public var baselineStatus: LakeBaselineStatus
+        /// Rules v2 R1 (absent on profiles written under v1).
+        public var historicalTier: LakeHistoricalTier?
         public var baselineMethod: String
         public var baselineVersion: String?
         public var historyRef: String?

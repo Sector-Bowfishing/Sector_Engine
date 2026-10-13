@@ -152,7 +152,7 @@ public enum LakeBrainRunner {
                     do { try await archive.write(LakeDailyHistory.path(lake.id), LakeDailyHistory.encode(merged), contentType: "text/csv"); historyWritten = true }
                     catch { errors.append("history write: \(error)") }
                 }
-                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today)
+                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today, poolBasisIsFullPool: lake.poolBasis == .fullPool)
                 baseline = b
                 if let archive, b.status != .none, (try? await archive.read(LakeBaselineBuilder.path(b))) == nil {
                     do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }

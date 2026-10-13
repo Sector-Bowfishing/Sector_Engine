@@ -108,7 +108,9 @@ final class LakeBrainTests: XCTestCase {
         XCTAssertEqual(LakeLevelClassifier.trend(delta24h: 0.30, day: rates).0, .rising)
         XCTAssertEqual(LakeLevelClassifier.trend(delta24h: -0.49, day: rates).0, .fallingRapidly)
         XCTAssertEqual(LakeLevelClassifier.trend(delta24h: 0.08, day: nil).0, .stable, "0.10 ft floor without a baseline")
-        XCTAssertEqual(LakeLevelClassifier.trend(delta24h: 0.9, day: nil).0, .rising, "no rapid without a rate baseline")
+        // v2 (R2): without a rate baseline RAPID still fires at the 0.25 ft floor (flag rateBaselineLimited); v1 never did.
+        XCTAssertEqual(LakeLevelClassifier.trend(delta24h: 0.9, day: nil).0, .risingRapidly, "v2: 0.25 ft RAPID floor applies without a rate baseline")
+        XCTAssertEqual(LakeLevelClassifier.trend(delta24h: 0.2, day: nil).0, .rising)
         XCTAssertEqual(LakeLevelClassifier.trend(delta24h: nil, day: rates).0, .unknown)
     }
 

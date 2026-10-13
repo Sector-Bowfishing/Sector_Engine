@@ -19,6 +19,7 @@ public enum LakeBrainProfiles {
         var operatingPools: LakeBrainProfileRecord.OperatingPools?
         var sourceCapability: LakeBrainProfileRecord.SourceCapability
         var baselineStatus: String?
+        var historicalTier: String?
         var basisYears: Int?
         var presenceVersion: String?
         var readiness: [String: String]
@@ -110,7 +111,7 @@ public enum LakeBrainProfiles {
         if let b = baseline {
             coverage = .init(historyStart: b.historyStart, historyEnd: b.historyEnd, observationCount: b.observationCount,
                              coveragePct: b.coveragePct, yearsCovered: b.basisYears.count, baselineStatus: b.status,
-                             baselineMethod: b.method, baselineVersion: b.baselineVersion,
+                             historicalTier: b.historicalTier, baselineMethod: b.method, baselineVersion: b.baselineVersion,
                              historyRef: archiveURI.map { "\($0)/\(LakeDailyHistory.path(lake.id))" })
         } else {
             coverage = previous?.historicalCoverage
@@ -150,7 +151,7 @@ public enum LakeBrainProfiles {
         let summary = presence?.summary(lake.id)
         let basis = HashBasis(identity: identity, hydrology: hydrology, characteristics: characteristics, operatingPools: pools,
                               sourceCapability: capability, baselineStatus: coverage?.baselineStatus.rawValue,
-                              basisYears: coverage?.yearsCovered, presenceVersion: summary?.researchVersion,
+                              historicalTier: coverage?.historicalTier?.rawValue, basisYears: coverage?.yearsCovered, presenceVersion: summary?.researchVersion,
                               readiness: [LakeBrainSpec.slot: readiness])
         let hash = LakeBaselineBuilder.fingerprint(String(decoding: (try? BrainJSON.encode(basis)) ?? Data(), as: UTF8.self))
         let version = previous.map { $0.profileHash == hash ? $0.profileVersion : $0.profileVersion + 1 } ?? 1
