@@ -144,7 +144,8 @@ def main() -> int:
     betas = {}
     for k, st in facts["intelStates"].items():
         row = facts["fleet"].get(k) or {}
-        betas[k] = beta_readiness(row.get("lakeId") or k, row, st, facts["validation"], facts["health"], src_stale, now)
+        betas[k] = beta_readiness(row.get("lakeId") or k, row, st, facts["validation"], facts["health"], src_stale, now,
+                                  brain_stale={b: (control["brains"].get(b) or {}).get("stale") for b in control["brains"]})
         control_updates[f"control/beta/{k}"] = betas[k]
     if betas:
         counts = {}

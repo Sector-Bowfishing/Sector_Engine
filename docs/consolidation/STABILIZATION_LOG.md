@@ -403,3 +403,35 @@ compute nothing. Contract: `docs/brains/OPS_CONTROL_PLANE_CONTRACT.md`.
 - Intelligence score 4.5 → 4.8 after it republished with `schedule` (runtime dimension).
 
 **Rollback:** `git reset --hard 26276088`; `/control/beta` is platform-owned.
+
+---
+
+## Phase 13 — Cleanup plan (not deletion) — PASS
+`docs/consolidation/CLEANUP_PLAN.md`: every worktree and branch classified KEEP / ARCHIVE /
+REMOVE-CANDIDATE / BLOCKED from a fresh containment check against `main`. **Nothing deleted.**
+
+## Final self-audit — PASS (independent re-check of the run)
+- Production lineage: `sector-engine-00080-wes` still 100 %; the six jobs unchanged; `main == origin/main`.
+- Git history: linear consolidation commits on top of `bc9e09fb`; tags intact; no force-push, no rewrite.
+- Private boundary: 132 private-only commits unchanged; no private path on `main`.
+- Customer behavior: nothing deployed; the `main` diff vs production under `Engine/ Forecast/ API/
+  Fetchers/ Hydrology/ Support/` is exactly the Phase 2 restores + USGS migration + additive score
+  version + gin-clear config read + slug fix + dead-code removal (14 files).
+- Duplicated truth / stale constants: tracked in `OWNERSHIP_MATRIX.md` (7 explicit exceptions).
+- Forgotten flags: `SECTOR_CURRENT_CLARITY_ROUTES` / `SECTOR_CLARITY_CANDIDATE_ROUTES` remain set on
+  the live revision and inert (documented in `PRODUCTION_LINEAGE.md`).
+- Paths pointing at feature worktrees: only inside historical hand-off docs.
+- IAM / service accounts: none changed; `score_brains.py` and the brain publishers used the gcloud user
+  credential for manual publishes.
+- Water Temp pruning regression: fixed on `brain/water-temp` and in the shared pruner; tested in both.
+- Lake slugs: one algorithm, fixture-pinned for all 621 ids.
+- Candidates presented as production: none — R3.1 and the wind candidate are CANDIDATE/NOT_DEPLOYED
+  everywhere; frozen scores say what they score.
+- Strong: untouched (frozen Stage 19 semantics; Clarity Brain publishes `NOT_EVALUATED`).
+- Presence vs knowledge: Lake Brain owns presence, Biological owns knowledge; Intelligence joins them.
+- Intelligence owning specialist science: no — it restates and references; no thresholds of its own.
+- Tests re-run at close: Swift 217/217; Python 38 + 29 + 32 + 35 + 55 + 14.
+- Beta readiness corrected during the audit: brain-level staleness is now a blocker (was missed when
+  only `slots.stale` was read).
+
+**Handoff:** `docs/consolidation/HANDOFF_2026-10-12.md` (also placed in the Desktop handoff folder).

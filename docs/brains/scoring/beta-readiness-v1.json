@@ -17,6 +17,10 @@
       "when": "a required slot's state is stale (Engine time rule, slots.stale)"
     },
     {
+      "code": "BRAIN_STALE",
+      "when": "the slot's owning brain has not published within its staleAfterHours (control.brains[id].stale)"
+    },
+    {
       "code": "EVIDENCE_STALE",
       "when": "a required slot's brain reports evidenceStale"
     },

@@ -51,3 +51,8 @@ def test_missing_slot_and_missing_evaluation_block():
 def test_candidate_when_only_warnings():
     r = beta_readiness("D|AL", row(waterClarity={"readiness": "BETA", "kind": "observed", "stale": False}), intel(), VAL_OK, {}, {}, NOW)
     assert r["betaReadiness"] == "CANDIDATE" and [w["code"] for w in r["warnings"]] == ["READINESS_NOT_VALIDATED"]
+
+
+def test_brain_level_staleness_blocks_even_when_the_slot_said_fresh_at_publish():
+    r = beta_readiness("E|AL", row(), intel(), VAL_OK, {}, {}, NOW, brain_stale={"lake-brain": True, "water-temp": False})
+    assert [b["code"] + ":" + b["slot"] for b in r["blockers"]] == ["BRAIN_STALE:lake"]

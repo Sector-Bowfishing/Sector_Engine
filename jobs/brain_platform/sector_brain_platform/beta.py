@@ -22,8 +22,13 @@ def _rank(r: str | None) -> int:
     return READINESS_LADDER.index(r) if r in READINESS_LADDER else -1
 
 
+SLOT_BRAIN = {"lake": "lake-brain", "waterTemp": "water-temp", "waterClarity": "water-clarity", "wind": "wind"}
+
+
 def beta_readiness(lake_id: str, fleet_row: dict | None, intel_state: dict | None, validation: dict, health: dict,
-                   source_stale: dict | None, now: dt.datetime) -> dict:
+                   source_stale: dict | None, now: dt.datetime, brain_stale: dict | None = None) -> dict:
+    """brain_stale: {brainId: bool|None} — the Engine's brain-level TIME rule (control.brains[id].stale)."""
+    brain_stale = brain_stale or {}
     slots = ((fleet_row or {}).get("slots") or {})
     readiness = ((fleet_row or {}).get("readiness") or {})
     blockers, warnings, supporting = [], [], {}
@@ -38,6 +43,8 @@ def beta_readiness(lake_id: str, fleet_row: dict | None, intel_state: dict | Non
             continue
         if s.get("stale"):
             blockers.append({"code": "SLOT_STALE", "slot": slot, "why": f"{slot} state is stale (Engine time rule)"})
+        elif brain_stale.get(SLOT_BRAIN[slot]):
+            blockers.append({"code": "BRAIN_STALE", "slot": slot, "why": f"{SLOT_BRAIN[slot]} has not published within its staleAfterHours (brain-level time rule)"})
         if s.get("evidenceStale"):
             blockers.append({"code": "EVIDENCE_STALE", "slot": slot, "why": f"{slot} brain reports its evidence is stale"})
         if (s.get("kind") or "").lower() == "unavailable":
