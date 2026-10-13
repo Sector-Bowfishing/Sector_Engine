@@ -1,0 +1,988 @@
+{
+ "adjacent_unmatched_lakes": 67,
+ "confidence": {
+  "HIGH": 351,
+  "LOW": 53,
+  "MEDIUM": 195,
+  "MISSING": 22
+ },
+ "directory_lakes": 621,
+ "directory_point_flag": {
+  "(none)": 22,
+  "identity_risk": 43,
+  "off_water": 126,
+  "ok": 430
+ },
+ "fleet_delivery_sizes": {
+  "0": {
+   "geojson_5dp_bytes_total": 27545715,
+   "gz_max": 232340,
+   "gz_median": 4056,
+   "gz_p95": 49778,
+   "gz_total": 7255687,
+   "vertices": 1304888
+  },
+  "100": {
+   "geojson_5dp_bytes_total": 7745820,
+   "gz_max": 89308,
+   "gz_median": 1226,
+   "gz_p95": 16382,
+   "gz_total": 2204673,
+   "vertices": 363792
+  },
+  "25": {
+   "geojson_5dp_bytes_total": 19003174,
+   "gz_max": 167439,
+   "gz_median": 2801,
+   "gz_p95": 36905,
+   "gz_total": 5143348,
+   "vertices": 898842
+  },
+  "50": {
+   "geojson_5dp_bytes_total": 12084788,
+   "gz_max": 117633,
+   "gz_median": 1808,
+   "gz_p95": 24462,
+   "gz_total": 3362117,
+   "vertices": 570049
+  }
+ },
+ "generated": "2026-10-13",
+ "geom_type": {
+  "(none)": 22,
+  "GeometryCollection": 1,
+  "MultiPolygon": 157,
+  "Polygon": 441
+ },
+ "geometrycollection_ids": [
+  "Devils Lake|ND"
+ ],
+ "gsw_inside_ge50_median_pct": 89.4,
+ "holes": {
+  "hole_area_km2_total": 1108.0,
+  "holes_lt_100m2": 1435,
+  "lakes_with_holes": 470,
+  "total_holes": 23910
+ },
+ "holes_vs_gsw_pilots": {
+  "Guntersville|AL": {
+   "area_km2": {
+    "land(<20)": 8.041,
+    "mixed(20-50)": 0.355,
+    "sub-pixel(<2 px)": 0.057,
+    "water-like(>=50)": 0.023
+   },
+   "classes": {
+    "land(<20)": 205,
+    "mixed(20-50)": 45,
+    "sub-pixel(<2 px)": 155,
+    "water-like(>=50)": 14
+   },
+   "lake_mean_occurrence": 77.5,
+   "lake_pct_ge90": 60.6,
+   "n_holes": 419,
+   "px_m": 30
+  },
+  "Lake Hartwell|SC": {
+   "area_km2": {
+    "land(<20)": 2.412,
+    "mixed(20-50)": 0.159,
+    "sub-pixel(<2 px)": 0.01,
+    "water-like(>=50)": 0.043
+   },
+   "classes": {
+    "land(<20)": 39,
+    "mixed(20-50)": 20,
+    "sub-pixel(<2 px)": 22,
+    "water-like(>=50)": 8
+   },
+   "lake_mean_occurrence": 81.3,
+   "lake_pct_ge90": 72.1,
+   "n_holes": 89,
+   "px_m": 30
+  },
+  "Pickwick Lake|TN": {
+   "area_km2": {
+    "land(<20)": 5.013,
+    "mixed(20-50)": 0.172,
+    "sub-pixel(<2 px)": 0.019,
+    "water-like(>=50)": 0.091
+   },
+   "classes": {
+    "land(<20)": 50,
+    "mixed(20-50)": 10,
+    "sub-pixel(<2 px)": 59,
+    "water-like(>=50)": 15
+   },
+   "lake_mean_occurrence": 85.9,
+   "lake_pct_ge90": 81.8,
+   "n_holes": 134,
+   "px_m": 30
+  },
+  "Wheeler|AL": {
+   "area_km2": {
+    "land(<20)": 4.996,
+    "mixed(20-50)": 0.082,
+    "sub-pixel(<2 px)": 0.047,
+    "water-like(>=50)": 0.042
+   },
+   "classes": {
+    "land(<20)": 159,
+    "mixed(20-50)": 20,
+    "sub-pixel(<2 px)": 90,
+    "water-like(>=50)": 8
+   },
+   "lake_mean_occurrence": 83.7,
+   "lake_pct_ge90": 76.8,
+   "n_holes": 277,
+   "px_m": 30
+  },
+  "Wilson|AL": {
+   "area_km2": {
+    "land(<20)": 0.073,
+    "mixed(20-50)": 0.005,
+    "sub-pixel(<2 px)": 0.005,
+    "water-like(>=50)": 0.008
+   },
+   "classes": {
+    "land(<20)": 9,
+    "mixed(20-50)": 2,
+    "sub-pixel(<2 px)": 12,
+    "water-like(>=50)": 1
+   },
+   "lake_mean_occurrence": 88.8,
+   "lake_pct_ge90": 86.9,
+   "n_holes": 24,
+   "px_m": 30
+  }
+ },
+ "hydrolakes_matched": 587,
+ "identity_risk_ids": [
+  "Andrews Lake|DE",
+  "Apache|AZ",
+  "Bitter Lake|SD",
+  "Buckhorn Lake|KY",
+  "Concord Pond|DE",
+  "Culvers Lake|NJ",
+  "Eagle Lake|MS",
+  "East Lynn Lake|WV",
+  "Enemy Swim Lake|SD",
+  "Gardner Lake|CT",
+  "Griffith Lake|DE",
+  "Halulu Lake (Niihau)|HI",
+  "Hiwassee Lake|NC",
+  "Kenai|AK",
+  "Lac Courte Oreilles|WI",
+  "Lake Absegami|NJ",
+  "Lake Lillinonah|CT",
+  "Lake Mary|AZ",
+  "Lake Murray (OK)|OK",
+  "Lake Ogallala|NE",
+  "Lake Seymour|VT",
+  "Lake Tschida|ND",
+  "Lake Washington|MS",
+  "Lake Wisconsin|WI",
+  "Long Lake|ME",
+  "Manasquan Reservoir|NJ",
+  "Marion Reservoir|KS",
+  "Merrill Creek Reservoir|NJ",
+  "Merrymeeting Lake|NH",
+  "Mount Storm Lake|WV",
+  "Nelson Lake|ND",
+  "Red Mill Pond|DE",
+  "Reelfoot Lake|TN",
+  "Schoodic Lake|ME",
+  "Sebec Lake|ME",
+  "Sheridan Lake|SD",
+  "Sherman Reservoir|NE",
+  "Skilak|AK",
+  "Stafford Pond|RI",
+  "Stump Lake|ND",
+  "Swanson Reservoir|NE",
+  "Tiogue Lake|RI",
+  "Wallum Lake|RI"
+ ],
+ "invalid_ids": [],
+ "median_segment_m": 115.8,
+ "median_vertices": 709,
+ "missing_ids": [
+  "Chickahominy Lake|VA",
+  "Great Salt Lake|UT",
+  "Green Bay|WI",
+  "Iliamna|AK",
+  "Koele ponds (Lanai)|HI",
+  "Lake Erie|MI",
+  "Lake Erie|NY",
+  "Lake Erie|OH",
+  "Lake Erie|PA",
+  "Lake Huron|MI",
+  "Lake Michigan|IN",
+  "Lake Michigan|MI",
+  "Lake Michigan|WI",
+  "Lake Ontario|NY",
+  "Lake Superior|MI",
+  "Lake Superior|MN",
+  "Lake Superior|WI",
+  "Lake of the Woods|MN",
+  "Nuuanu Reservoir|HI",
+  "Puu Loa Reservoir|HI",
+  "Waiakea Pond|HI",
+  "Waimaluhia Reservoir|HI"
+ ],
+ "nhd_area_ratio": {
+  "median": 1.0007,
+  "n": 590,
+  "p05": 0.9965,
+  "p95": 1.0072
+ },
+ "nhd_feature_year": {
+  "2001": 1,
+  "2002": 14,
+  "2003": 21,
+  "2004": 38,
+  "2005": 25,
+  "2006": 9,
+  "2007": 20,
+  "2008": 3,
+  "2009": 24,
+  "2010": 28,
+  "2011": 24,
+  "2012": 34,
+  "2013": 69,
+  "2014": 35,
+  "2015": 40,
+  "2016": 32,
+  "2017": 31,
+  "2018": 14,
+  "2019": 19,
+  "2020": 29,
+  "2021": 45,
+  "2022": 28,
+  "2023": 7
+ },
+ "nhd_iou": {
+  "median": 0.9895,
+  "n": 590,
+  "p05": 0.9609
+ },
+ "nhd_matched": 606,
+ "nid_matched_with_polygon": 389,
+ "nid_ratio_within_20pct": 287,
+ "osm_name_ok": 593,
+ "osm_polygons_pilots": {
+  "Guntersville|AL": {
+   "engine_area_km2": 266.224,
+   "osm": [
+    {
+     "area_km2": 234.133,
+     "cover_of_engine": 0.8675,
+     "holes": 100,
+     "iou_vs_engine": 0.8572,
+     "name": "Guntersville Lake",
+     "osm": "relation/911315",
+     "source_tag": "Yahoo",
+     "vertices": 12395,
+     "water": "reservoir",
+     "wikidata": "Q3561578"
+    }
+   ]
+  },
+  "Lake Hartwell|SC": {
+   "engine_area_km2": 136.681,
+   "osm": [
+    {
+     "area_km2": 219.94,
+     "cover_of_engine": 0.9832,
+     "holes": 116,
+     "iou_vs_engine": 0.6047,
+     "name": "Lake Hartwell",
+     "osm": "relation/142716",
+     "source_tag": null,
+     "vertices": 78753,
+     "water": "reservoir",
+     "wikidata": "Q1800945"
+    }
+   ]
+  },
+  "Pickwick Lake|TN": {
+   "engine_area_km2": 139.932,
+   "osm": [
+    {
+     "area_km2": 162.663,
+     "cover_of_engine": 0.9537,
+     "holes": 45,
+     "iou_vs_engine": 0.789,
+     "name": "Pickwick Lake",
+     "osm": "relation/1750733",
+     "source_tag": null,
+     "vertices": 10558,
+     "water": "reservoir",
+     "wikidata": "Q7190954"
+    }
+   ]
+  },
+  "Wheeler|AL": {
+   "engine_area_km2": 212.496,
+   "osm": []
+  },
+  "Wilson|AL": {
+   "engine_area_km2": 63.174,
+   "osm": [
+    {
+     "area_km2": 62.34,
+     "cover_of_engine": 0.9757,
+     "holes": 4,
+     "iou_vs_engine": 0.965,
+     "name": "Wilson Lake",
+     "osm": "relation/11643538",
+     "source_tag": null,
+     "vertices": 4664,
+     "water": "river",
+     "wikidata": null
+    },
+    {
+     "area_km2": 0.007,
+     "cover_of_engine": 0.0,
+     "holes": 0,
+     "iou_vs_engine": 0.0,
+     "name": "Wilson Lock",
+     "osm": "relation/11643536",
+     "source_tag": "USACE Docks GIS map layer",
+     "vertices": 7,
+     "water": "canal",
+     "wikidata": null
+    }
+   ]
+  }
+ },
+ "pilots": {
+  "Guntersville|AL": {
+   "confidence": "HIGH",
+   "contains_point": "False",
+   "geom_area_km2": "266.224",
+   "geom_type": "MultiPolygon",
+   "n_holes": "419",
+   "n_parts": "6",
+   "n_vertices": "11694",
+   "nhd_area_ratio": "1.0015",
+   "nhd_iou": "0.988"
+  },
+  "Lake Hartwell|SC": {
+   "confidence": "MEDIUM",
+   "contains_point": "True",
+   "geom_area_km2": "136.681",
+   "geom_type": "Polygon",
+   "n_holes": "89",
+   "n_parts": "1",
+   "n_vertices": "9142",
+   "nhd_area_ratio": "1.0025",
+   "nhd_iou": "0.9828"
+  },
+  "Pickwick Lake|TN": {
+   "confidence": "MEDIUM",
+   "contains_point": "True",
+   "geom_area_km2": "139.932",
+   "geom_type": "MultiPolygon",
+   "n_holes": "134",
+   "n_parts": "5",
+   "n_vertices": "3985",
+   "nhd_area_ratio": "1.0018",
+   "nhd_iou": "0.9903"
+  },
+  "Wheeler|AL": {
+   "confidence": "MEDIUM",
+   "contains_point": "True",
+   "geom_area_km2": "212.496",
+   "geom_type": "MultiPolygon",
+   "n_holes": "277",
+   "n_parts": "12",
+   "n_vertices": "7972",
+   "nhd_area_ratio": "1.0014",
+   "nhd_iou": "0.9876"
+  },
+  "Wilson|AL": {
+   "confidence": "HIGH",
+   "contains_point": "False",
+   "geom_area_km2": "63.174",
+   "geom_type": "MultiPolygon",
+   "n_holes": "24",
+   "n_parts": "2",
+   "n_vertices": "1885",
+   "nhd_area_ratio": "1.0032",
+   "nhd_iou": "0.9903"
+  }
+ },
+ "point_outside_beyond_rounding_tolerance": 171,
+ "point_outside_polygon": 374,
+ "repair_hints": {
+  "add_adjacent_pieces": 11,
+  "none": 549,
+  "review_adjacent_pieces": 39
+ },
+ "simplify_sizes_pilots": {
+  "Guntersville": [
+   {
+    "area_delta_pct": 0.0,
+    "area_km2": 265.487,
+    "geojson_bytes_4dp": 1061844,
+    "geojson_bytes_5dp": 1175210,
+    "geojson_bytes_6dp": 1287852,
+    "gz_4dp": 171559,
+    "gz_5dp": 274715,
+    "gz_6dp": 342722,
+    "hausdorff_m": null,
+    "polyline5_chars": 152509,
+    "rings": 421,
+    "tol_m": 0,
+    "vertices": 56508
+   },
+   {
+    "area_delta_pct": 0.064,
+    "area_km2": 265.657,
+    "geojson_bytes_4dp": 438443,
+    "geojson_bytes_5dp": 485148,
+    "geojson_bytes_6dp": 531529,
+    "gz_4dp": 86661,
+    "gz_5dp": 123140,
+    "gz_6dp": 150831,
+    "hausdorff_m": 8.0,
+    "polyline5_chars": 79479,
+    "rings": 421,
+    "tol_m": 5,
+    "vertices": 23302
+   },
+   {
+    "area_delta_pct": 0.174,
+    "area_km2": 265.948,
+    "geojson_bytes_4dp": 283875,
+    "geojson_bytes_5dp": 314072,
+    "geojson_bytes_6dp": 344124,
+    "gz_4dp": 60354,
+    "gz_5dp": 82446,
+    "gz_6dp": 100029,
+    "hausdorff_m": 17.2,
+    "polyline5_chars": 56375,
+    "rings": 421,
+    "tol_m": 10,
+    "vertices": 15073
+   },
+   {
+    "area_delta_pct": 0.526,
+    "area_km2": 266.883,
+    "geojson_bytes_4dp": 164303,
+    "geojson_bytes_5dp": 181766,
+    "geojson_bytes_6dp": 199127,
+    "gz_4dp": 37497,
+    "gz_5dp": 49313,
+    "gz_6dp": 59377,
+    "hausdorff_m": 33.2,
+    "polyline5_chars": 35244,
+    "rings": 421,
+    "tol_m": 25,
+    "vertices": 8704
+   },
+   {
+    "area_delta_pct": 1.222,
+    "area_km2": 268.731,
+    "geojson_bytes_4dp": 109969,
+    "geojson_bytes_5dp": 121602,
+    "geojson_bytes_6dp": 133175,
+    "gz_4dp": 25933,
+    "gz_5dp": 33399,
+    "gz_6dp": 39927,
+    "hausdorff_m": 77.2,
+    "polyline5_chars": 24863,
+    "rings": 421,
+    "tol_m": 50,
+    "vertices": 5810
+   },
+   {
+    "area_delta_pct": 2.83,
+    "area_km2": 273.0,
+    "geojson_bytes_4dp": 75129,
+    "geojson_bytes_5dp": 83087,
+    "geojson_bytes_6dp": 90905,
+    "gz_4dp": 17984,
+    "gz_5dp": 22954,
+    "gz_6dp": 27262,
+    "hausdorff_m": 99.9,
+    "polyline5_chars": 18021,
+    "rings": 421,
+    "tol_m": 100,
+    "vertices": 3955
+   },
+   {
+    "area_delta_pct": 6.605,
+    "area_km2": 283.022,
+    "geojson_bytes_4dp": 52373,
+    "geojson_bytes_5dp": 57891,
+    "geojson_bytes_6dp": 63322,
+    "gz_4dp": 12375,
+    "gz_5dp": 15765,
+    "gz_6dp": 18605,
+    "hausdorff_m": 249.4,
+    "polyline5_chars": 13463,
+    "rings": 421,
+    "tol_m": 250,
+    "vertices": 2742
+   }
+  ],
+  "Hartwell": [
+   {
+    "area_delta_pct": 0.0,
+    "area_km2": 135.959,
+    "geojson_bytes_4dp": 1085413,
+    "geojson_bytes_5dp": 1200830,
+    "geojson_bytes_6dp": 1316825,
+    "gz_4dp": 152258,
+    "gz_5dp": 264585,
+    "gz_6dp": 341329,
+    "hausdorff_m": null,
+    "polyline5_chars": 137054,
+    "rings": 88,
+    "tol_m": 0,
+    "vertices": 57796
+   },
+   {
+    "area_delta_pct": 0.145,
+    "area_km2": 136.156,
+    "geojson_bytes_4dp": 360175,
+    "geojson_bytes_5dp": 398600,
+    "geojson_bytes_6dp": 437013,
+    "gz_4dp": 67630,
+    "gz_5dp": 98023,
+    "gz_6dp": 122139,
+    "hausdorff_m": 7.8,
+    "polyline5_chars": 63023,
+    "rings": 88,
+    "tol_m": 5,
+    "vertices": 19171
+   },
+   {
+    "area_delta_pct": 0.346,
+    "area_km2": 136.429,
+    "geojson_bytes_4dp": 227344,
+    "geojson_bytes_5dp": 251635,
+    "geojson_bytes_6dp": 275909,
+    "gz_4dp": 46504,
+    "gz_5dp": 64305,
+    "gz_6dp": 79263,
+    "hausdorff_m": 14.4,
+    "polyline5_chars": 43774,
+    "rings": 88,
+    "tol_m": 10,
+    "vertices": 12100
+   },
+   {
+    "area_delta_pct": 1.049,
+    "area_km2": 137.385,
+    "geojson_bytes_4dp": 121639,
+    "geojson_bytes_5dp": 134675,
+    "geojson_bytes_6dp": 147632,
+    "gz_4dp": 27162,
+    "gz_5dp": 35935,
+    "gz_6dp": 43926,
+    "hausdorff_m": 32.1,
+    "polyline5_chars": 25048,
+    "rings": 88,
+    "tol_m": 25,
+    "vertices": 6468
+   },
+   {
+    "area_delta_pct": 2.195,
+    "area_km2": 138.943,
+    "geojson_bytes_4dp": 74868,
+    "geojson_bytes_5dp": 82867,
+    "geojson_bytes_6dp": 90838,
+    "gz_4dp": 17542,
+    "gz_5dp": 22903,
+    "gz_6dp": 27648,
+    "hausdorff_m": 64.3,
+    "polyline5_chars": 15949,
+    "rings": 88,
+    "tol_m": 50,
+    "vertices": 3976
+   },
+   {
+    "area_delta_pct": 4.134,
+    "area_km2": 141.579,
+    "geojson_bytes_4dp": 46341,
+    "geojson_bytes_5dp": 51303,
+    "geojson_bytes_6dp": 56248,
+    "gz_4dp": 11313,
+    "gz_5dp": 14535,
+    "gz_6dp": 17508,
+    "hausdorff_m": 110.0,
+    "polyline5_chars": 10297,
+    "rings": 88,
+    "tol_m": 100,
+    "vertices": 2457
+   },
+   {
+    "area_delta_pct": 9.366,
+    "area_km2": 148.692,
+    "geojson_bytes_4dp": 23072,
+    "geojson_bytes_5dp": 25513,
+    "geojson_bytes_6dp": 27979,
+    "gz_4dp": 5832,
+    "gz_5dp": 7393,
+    "gz_6dp": 8790,
+    "hausdorff_m": 249.4,
+    "polyline5_chars": 5786,
+    "rings": 88,
+    "tol_m": 250,
+    "vertices": 1216
+   }
+  ],
+  "Pickwick": [
+   {
+    "area_delta_pct": 0.0,
+    "area_km2": 139.494,
+    "geojson_bytes_4dp": 443545,
+    "geojson_bytes_5dp": 490706,
+    "geojson_bytes_6dp": 537990,
+    "gz_4dp": 68211,
+    "gz_5dp": 113374,
+    "gz_6dp": 142311,
+    "hausdorff_m": null,
+    "polyline5_chars": 60612,
+    "rings": 133,
+    "tol_m": 0,
+    "vertices": 23603
+   },
+   {
+    "area_delta_pct": 0.074,
+    "area_km2": 139.597,
+    "geojson_bytes_4dp": 155247,
+    "geojson_bytes_5dp": 171760,
+    "geojson_bytes_6dp": 188231,
+    "gz_4dp": 31389,
+    "gz_5dp": 44218,
+    "gz_6dp": 54016,
+    "hausdorff_m": 6.4,
+    "polyline5_chars": 28360,
+    "rings": 133,
+    "tol_m": 5,
+    "vertices": 8248
+   },
+   {
+    "area_delta_pct": 0.189,
+    "area_km2": 139.758,
+    "geojson_bytes_4dp": 98176,
+    "geojson_bytes_5dp": 108630,
+    "geojson_bytes_6dp": 119047,
+    "gz_4dp": 21453,
+    "gz_5dp": 29007,
+    "gz_6dp": 35092,
+    "hausdorff_m": 12.5,
+    "polyline5_chars": 19501,
+    "rings": 133,
+    "tol_m": 10,
+    "vertices": 5210
+   },
+   {
+    "area_delta_pct": 0.558,
+    "area_km2": 140.272,
+    "geojson_bytes_4dp": 54769,
+    "geojson_bytes_5dp": 60587,
+    "geojson_bytes_6dp": 66375,
+    "gz_4dp": 12811,
+    "gz_5dp": 16689,
+    "gz_6dp": 20191,
+    "hausdorff_m": 39.5,
+    "polyline5_chars": 11769,
+    "rings": 133,
+    "tol_m": 25,
+    "vertices": 2899
+   },
+   {
+    "area_delta_pct": 1.232,
+    "area_km2": 141.213,
+    "geojson_bytes_4dp": 35981,
+    "geojson_bytes_5dp": 39801,
+    "geojson_bytes_6dp": 43579,
+    "gz_4dp": 8679,
+    "gz_5dp": 11149,
+    "gz_6dp": 13355,
+    "hausdorff_m": 56.7,
+    "polyline5_chars": 8195,
+    "rings": 133,
+    "tol_m": 50,
+    "vertices": 1899
+   },
+   {
+    "area_delta_pct": 2.1,
+    "area_km2": 142.423,
+    "geojson_bytes_4dp": 25452,
+    "geojson_bytes_5dp": 28139,
+    "geojson_bytes_6dp": 30800,
+    "gz_4dp": 6220,
+    "gz_5dp": 7920,
+    "gz_6dp": 9421,
+    "hausdorff_m": 103.4,
+    "polyline5_chars": 6126,
+    "rings": 133,
+    "tol_m": 100,
+    "vertices": 1338
+   },
+   {
+    "area_delta_pct": 6.12,
+    "area_km2": 148.031,
+    "geojson_bytes_4dp": 17386,
+    "geojson_bytes_5dp": 19190,
+    "geojson_bytes_6dp": 20995,
+    "gz_4dp": 4194,
+    "gz_5dp": 5312,
+    "gz_6dp": 6257,
+    "hausdorff_m": 247.5,
+    "polyline5_chars": 4457,
+    "rings": 133,
+    "tol_m": 250,
+    "vertices": 907
+   }
+  ],
+  "Wheeler": [
+   {
+    "area_delta_pct": 0.0,
+    "area_km2": 211.906,
+    "geojson_bytes_4dp": 807364,
+    "geojson_bytes_5dp": 893303,
+    "geojson_bytes_6dp": 979286,
+    "gz_4dp": 129818,
+    "gz_5dp": 207831,
+    "gz_6dp": 258568,
+    "hausdorff_m": null,
+    "polyline5_chars": 112662,
+    "rings": 281,
+    "tol_m": 0,
+    "vertices": 42958
+   },
+   {
+    "area_delta_pct": 0.06,
+    "area_km2": 212.033,
+    "geojson_bytes_4dp": 296968,
+    "geojson_bytes_5dp": 328581,
+    "geojson_bytes_6dp": 360119,
+    "gz_4dp": 59166,
+    "gz_5dp": 83860,
+    "gz_6dp": 102424,
+    "hausdorff_m": 6.4,
+    "polyline5_chars": 54391,
+    "rings": 281,
+    "tol_m": 5,
+    "vertices": 15779
+   },
+   {
+    "area_delta_pct": 0.173,
+    "area_km2": 212.272,
+    "geojson_bytes_4dp": 193015,
+    "geojson_bytes_5dp": 213518,
+    "geojson_bytes_6dp": 233955,
+    "gz_4dp": 41348,
+    "gz_5dp": 56364,
+    "gz_6dp": 68418,
+    "hausdorff_m": 17.5,
+    "polyline5_chars": 38622,
+    "rings": 281,
+    "tol_m": 10,
+    "vertices": 10242
+   },
+   {
+    "area_delta_pct": 0.446,
+    "area_km2": 212.852,
+    "geojson_bytes_4dp": 112123,
+    "geojson_bytes_5dp": 123993,
+    "geojson_bytes_6dp": 135863,
+    "gz_4dp": 25769,
+    "gz_5dp": 33821,
+    "gz_6dp": 40811,
+    "hausdorff_m": 31.4,
+    "polyline5_chars": 24200,
+    "rings": 281,
+    "tol_m": 25,
+    "vertices": 5936
+   },
+   {
+    "area_delta_pct": 1.037,
+    "area_km2": 214.103,
+    "geojson_bytes_4dp": 78179,
+    "geojson_bytes_5dp": 86430,
+    "geojson_bytes_6dp": 94661,
+    "gz_4dp": 18470,
+    "gz_5dp": 23998,
+    "gz_6dp": 28760,
+    "hausdorff_m": 65.2,
+    "polyline5_chars": 17702,
+    "rings": 281,
+    "tol_m": 50,
+    "vertices": 4128
+   },
+   {
+    "area_delta_pct": 2.887,
+    "area_km2": 218.023,
+    "geojson_bytes_4dp": 56236,
+    "geojson_bytes_5dp": 62156,
+    "geojson_bytes_6dp": 68055,
+    "gz_4dp": 13484,
+    "gz_5dp": 17368,
+    "gz_6dp": 20613,
+    "hausdorff_m": 120.6,
+    "polyline5_chars": 13405,
+    "rings": 281,
+    "tol_m": 100,
+    "vertices": 2959
+   },
+   {
+    "area_delta_pct": 6.062,
+    "area_km2": 224.751,
+    "geojson_bytes_4dp": 39057,
+    "geojson_bytes_5dp": 43136,
+    "geojson_bytes_6dp": 47227,
+    "gz_4dp": 9333,
+    "gz_5dp": 11940,
+    "gz_6dp": 14148,
+    "hausdorff_m": 259.9,
+    "polyline5_chars": 9961,
+    "rings": 281,
+    "tol_m": 250,
+    "vertices": 2045
+   }
+  ],
+  "Wilson": [
+   {
+    "area_delta_pct": 0.0,
+    "area_km2": 62.867,
+    "geojson_bytes_4dp": 140115,
+    "geojson_bytes_5dp": 155108,
+    "geojson_bytes_6dp": 169981,
+    "gz_4dp": 24096,
+    "gz_5dp": 37071,
+    "gz_6dp": 45102,
+    "hausdorff_m": null,
+    "polyline5_chars": 21290,
+    "rings": 25,
+    "tol_m": 0,
+    "vertices": 7460
+   },
+   {
+    "area_delta_pct": 0.075,
+    "area_km2": 62.914,
+    "geojson_bytes_4dp": 71676,
+    "geojson_bytes_5dp": 79300,
+    "geojson_bytes_6dp": 86888,
+    "gz_4dp": 14426,
+    "gz_5dp": 20235,
+    "gz_6dp": 24641,
+    "hausdorff_m": 6.0,
+    "polyline5_chars": 12971,
+    "rings": 25,
+    "tol_m": 5,
+    "vertices": 3810
+   },
+   {
+    "area_delta_pct": 0.253,
+    "area_km2": 63.026,
+    "geojson_bytes_4dp": 46672,
+    "geojson_bytes_5dp": 51639,
+    "geojson_bytes_6dp": 56563,
+    "gz_4dp": 10077,
+    "gz_5dp": 13732,
+    "gz_6dp": 16567,
+    "hausdorff_m": 10.0,
+    "polyline5_chars": 9093,
+    "rings": 25,
+    "tol_m": 10,
+    "vertices": 2479
+   },
+   {
+    "area_delta_pct": 0.647,
+    "area_km2": 63.274,
+    "geojson_bytes_4dp": 26149,
+    "geojson_bytes_5dp": 28926,
+    "geojson_bytes_6dp": 31684,
+    "gz_4dp": 6074,
+    "gz_5dp": 7902,
+    "gz_6dp": 9555,
+    "hausdorff_m": 25.0,
+    "polyline5_chars": 5417,
+    "rings": 25,
+    "tol_m": 25,
+    "vertices": 1386
+   },
+   {
+    "area_delta_pct": 1.197,
+    "area_km2": 63.62,
+    "geojson_bytes_4dp": 17015,
+    "geojson_bytes_5dp": 18799,
+    "geojson_bytes_6dp": 20597,
+    "gz_4dp": 4134,
+    "gz_5dp": 5292,
+    "gz_6dp": 6341,
+    "hausdorff_m": 49.8,
+    "polyline5_chars": 3676,
+    "rings": 25,
+    "tol_m": 50,
+    "vertices": 899
+   },
+   {
+    "area_delta_pct": 2.915,
+    "area_km2": 64.7,
+    "geojson_bytes_4dp": 11324,
+    "geojson_bytes_5dp": 12505,
+    "geojson_bytes_6dp": 13690,
+    "gz_4dp": 2847,
+    "gz_5dp": 3601,
+    "gz_6dp": 4264,
+    "hausdorff_m": 99.8,
+    "polyline5_chars": 2553,
+    "rings": 25,
+    "tol_m": 100,
+    "vertices": 596
+   },
+   {
+    "area_delta_pct": 5.406,
+    "area_km2": 66.266,
+    "geojson_bytes_4dp": 6578,
+    "geojson_bytes_5dp": 7245,
+    "geojson_bytes_6dp": 7938,
+    "gz_4dp": 1706,
+    "gz_5dp": 2132,
+    "gz_6dp": 2503,
+    "hausdorff_m": 239.2,
+    "polyline5_chars": 1587,
+    "rings": 25,
+    "tol_m": 250,
+    "vertices": 343
+   }
+  ]
+ },
+ "slivers": {
+  "lakes_with_sliver_parts": 151,
+  "sliver_area_km2_total": 6.2
+ },
+ "source": {
+  "(none)": 22,
+  "name": 558,
+  "osm": 11,
+  "repaired:contains-point": 10,
+  "repaired:largest-nearby": 20
+ },
+ "tdhp_matched": 609,
+ "tdhp_workunits": {
+  "300285": 1,
+  "300286": 2,
+  "300706": 2,
+  "NHD": 604
+ },
+ "total_vertices": 1304888,
+ "usace_area_ratio": {
+  "median": 0.9644,
+  "n": 149,
+  "p05": 0.3851,
+  "p95": 1.1269
+ },
+ "usace_matched": 149,
+ "with_multiple_substantial_parts": 10,
+ "with_polygon": 599,
+ "with_sliver_parts": 151
+}
