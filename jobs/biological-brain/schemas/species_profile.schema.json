@@ -1,0 +1,778 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Canonical species knowledge profile (private bundle)",
+ "type": "object",
+ "required": [
+  "schemaVersion",
+  "speciesId",
+  "displayName",
+  "assessment",
+  "researchMaturity",
+  "researchVersion",
+  "scoringVersion",
+  "knowledge"
+ ],
+ "properties": {
+  "schemaVersion": {
+   "const": 1
+  },
+  "speciesId": {
+   "type": "string",
+   "pattern": "^[a-z][a-z0-9_]{1,63}$"
+  },
+  "displayName": {
+   "type": "string"
+  },
+  "scientificName": {
+   "type": "string"
+  },
+  "aliases": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "appKeys": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "string"
+   }
+  },
+  "taxonomyStatus": {
+   "type": "string"
+  },
+  "taxonomyNotes": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "assessment": {
+   "enum": [
+    "ASSESSED",
+    "NOT_ASSESSED"
+   ]
+  },
+  "researchMaturity": {
+   "enum": [
+    "NOT_STARTED",
+    "RESEARCH",
+    "REVIEWED",
+    "VALIDATED"
+   ]
+  },
+  "researchVersion": {
+   "type": "string"
+  },
+  "scoringVersion": {
+   "const": "species-v2"
+  },
+  "lastReviewedAt": {
+   "type": "string"
+  },
+  "knowledge": {
+   "type": "object",
+   "required": [
+    "rubric"
+   ],
+   "properties": {
+    "rubric": {
+     "const": "species-v2"
+    },
+    "overallExact": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "overallRounded": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "domains": {
+     "type": "object",
+     "properties": {
+      "seasonalLocationReproduction": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      },
+      "habitatDepthCover": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      },
+      "temperatureOxygen": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      },
+      "hydrologyRainInflowLevel": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      },
+      "foodFeedingLocation": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      },
+      "dayNightMovement": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      },
+      "clarityLightWind": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      },
+      "aggregationMobilityLifeStage": {
+       "allOf": [
+        {
+         "type": "object",
+         "required": [
+          "weight",
+          "score",
+          "status"
+         ],
+         "properties": {
+          "label": {
+           "type": "string"
+          },
+          "weight": {
+           "type": "integer"
+          },
+          "score": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 10
+          },
+          "status": {
+           "enum": [
+            "SCORED",
+            "UNKNOWN"
+           ]
+          },
+          "potentialGainPerPoint": {
+           "type": "number"
+          }
+         }
+        },
+        {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "contradictions": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "limits": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "recordIds": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "calibrationNote": {
+           "type": [
+            "string",
+            "null"
+           ]
+          }
+         }
+        }
+       ]
+      }
+     },
+     "additionalProperties": false
+    },
+    "strongest": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "seasonalLocationReproduction",
+       "habitatDepthCover",
+       "temperatureOxygen",
+       "hydrologyRainInflowLevel",
+       "foodFeedingLocation",
+       "dayNightMovement",
+       "clarityLightWind",
+       "aggregationMobilityLifeStage"
+      ]
+     }
+    },
+    "weakest": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "seasonalLocationReproduction",
+       "habitatDepthCover",
+       "temperatureOxygen",
+       "hydrologyRainInflowLevel",
+       "foodFeedingLocation",
+       "dayNightMovement",
+       "clarityLightWind",
+       "aggregationMobilityLifeStage"
+      ]
+     }
+    },
+    "unknownDomains": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "seasonalLocationReproduction",
+       "habitatDepthCover",
+       "temperatureOxygen",
+       "hydrologyRainInflowLevel",
+       "foodFeedingLocation",
+       "dayNightMovement",
+       "clarityLightWind",
+       "aggregationMobilityLifeStage"
+      ]
+     }
+    }
+   }
+  },
+  "rules": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "description": "engine-format rule: ruleId, dimension, conditions, locationImplication, mechanism, exceptionsAndConflicts, evidence, confidenceAndTransfer, inputDependency"
+   }
+  },
+  "evidence": {
+   "type": "object"
+  },
+  "gaps": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "nextResearchPriority": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "policyNote": {
+   "type": "string",
+   "description": "reference only; policy is not knowledge"
+  },
+  "separateAssessments": {
+   "type": "object"
+  },
+  "discrepancies": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "history": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "date",
+     "rubric"
+    ],
+    "properties": {
+     "date": {
+      "type": "string"
+     },
+     "rubric": {
+      "type": "string",
+      "description": "species-v2, v1-14dim, v1-family-sprint, v0-audit-11cat; not comparable across rubrics"
+     },
+     "overallRounded": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "overallExact": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "label": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     },
+     "ref": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "provenance": {
+   "type": "object"
+  }
+ }
+}

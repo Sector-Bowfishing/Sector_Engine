@@ -1,0 +1,85 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Biological Brain research manifest",
+ "type": "object",
+ "required": [
+  "schemaVersion",
+  "brainId",
+  "researchVersion",
+  "scoringVersion",
+  "files"
+ ],
+ "properties": {
+  "schemaVersion": {
+   "const": 1
+  },
+  "brainId": {
+   "const": "biological-state"
+  },
+  "displayName": {
+   "type": "string"
+  },
+  "researchVersion": {
+   "type": "string"
+  },
+  "scoringVersion": {
+   "const": "species-v2"
+  },
+  "rubricRef": {
+   "type": "string"
+  },
+  "createdAt": {
+   "type": "string"
+  },
+  "source": {
+   "type": "object"
+  },
+  "storage": {
+   "type": "object"
+  },
+  "lifecycle": {
+   "type": "object"
+  },
+  "counts": {
+   "type": "object"
+  },
+  "knownLimitations": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "validationRef": {
+   "type": "string"
+  },
+  "files": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "path",
+     "sha256",
+     "bytes"
+    ],
+    "properties": {
+     "path": {
+      "type": "string"
+     },
+     "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+     },
+     "bytes": {
+      "type": "integer"
+     },
+     "visibility": {
+      "enum": [
+       "private",
+       "public"
+      ]
+     }
+    }
+   }
+  }
+ }
+}
