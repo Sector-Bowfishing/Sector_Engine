@@ -25,8 +25,37 @@ Status words: PASS · PARTIAL · FAIL · WAITING (blocked on time, humans or a d
 | **Customer-provider migration** | WAITING | Staged recommendation + 8 gates (`WIND_PROVIDER_DECISION.md`); shadow comparison (`WIND_PROVIDER_SHADOW_COMPARISON.md`) | Michael approval; 30 live days; fleet sampling; risk-aware gauge input |
 | **Rollback** | PARTIAL | Brain publishing: remove `SECTOR_WIND_BRAIN_RTDB_URL`, archive unaffected (documented, exercised by the 401 incident) | Migration rollback (switch back to Open-Meteo) undefined until a migration path exists |
 | **Intelligence contract** | PARTIAL | Final proposal, fixtures, tests that pin the fixtures (`WIND_INTELLIGENCE_CONTRACT_FINAL_PROPOSAL.md`) | Intelligence reader; Ops schema/rules; publish path for bank detail |
+| **Ops visibility** | PARTIAL | `WIND_OPS_VISIBILITY_GAP.md`: Ops shows score/BWIS/lifecycle/validation/models/health; cannot show live days, gate date, tiers, field progress, categorised blockers; builder + sample exist (`ops_summary.py`) | Engine publication (blocked by the prerequisite branch) and Ops rendering |
+| **Lake identity (6 audited lakes)** | WAITING | `WIND_IDENTITY_RISK_LAKES.md`: 3 audited tables are the wrong water body, 3 have a 4–5 km coordinate error; all blocked | Lake Brain resolution |
+| **AK / HI** | PARTIAL | `WIND_AK_HI_STATUS.md`: NBM AK/HI products decode and the sampler matches (≤ 0.005 m/s); skill untested; exposure BLOCKED | station-based regional check; per-domain ingest |
+| **Dual-wind logging** | WAITING | record builder, H2-safe truth attachment, growth model (≈ 12 MB/month gz, +240 calls/day) tested; not wired | prerequisite branch; Engine request-path hook |
+| **Independent bank validation v2** | WAITING | rules frozen (fingerprint), pre-registration frozen with lake draw and pair set; Part A needs fresh audited tables, Part B needs field pairs | field sessions; NHD staging for Part A |
+| **Strong-wind formulation** | PARTIAL | flag ladder explored (1.9% / 27.6% / 52.7%); proposal to split forecastConfidence from windRisk | pre-registration and fresh data before any change |
 | Gust claims | NOT_REQUIRED | Withheld (NBM gust POD 0.04; HRRR 0.19, FAR > 0.9) | — |
 | H2 holdout | WAITING | Sealed; criteria frozen; runner gated | 2027-01-01 |
 
 ## Summary
-PASS 2 · PARTIAL 14 · WAITING 6 · NOT_REQUIRED 1 · FAIL 0. There is **no FAIL** because nothing is yet claimed that has failed; the blockers are time (30 live days, H2), humans (bank-pair and over-water observations), a decision (customer provider; ESTIMATED visibility) and a merge (`feat/cost-efficient-scheduling`).
+PASS 2 · PARTIAL 17 · WAITING 9 · NOT_REQUIRED 1 · FAIL 0. There is no FAIL because nothing is yet claimed that has failed; blockers are time (30 live days, H2), humans (bank pairs, over-water), a decision (customer provider; ESTIMATED visibility), Lake Brain (identity) and a merge (`feat/cost-efficient-scheduling`).
+
+## Production policy check (Sector policy: Brain score ≥ 8.0 AND every critical dimension ≥ 7.5)
+**Overall:** canonical Wind Certification **3.3** (computed 2026-10-13; Engine-published frozen block 3.1) vs floor **8.0** → gap **4.7**. BWIS 5.4 (separate). Engine has not named Wind's critical dimensions (Ops' guardrail only evaluates them when Engine does). Proposed critical set below; each is judged on its v1 credit × 10 (a dimension is "met" at ≥ 7.5).
+
+| Critical capability | v1 dimension | Current state | Score now (credit × 10) | Floor | Gap | Next action | Blocking dependency |
+|---|---|---|---|---|---|---|---|
+| Direction | 2 | within 22.5° 0.758 all hours (0.81–0.97 at night when forecast ≥ 5 mph) | 5.4 | 7.5 | 2.1 | decide rubric scope (night/speed-weighted direction, v2) — **no tuning** | rubric review (Michael); H2 for any new claim |
+| Useful speed / tonight forecast | 1 | MAE/bias pass; the ≥ 15 mph event condition fails (NBM forecasts none) | 0.0 | 7.5 | 7.5 | rubric v2 replaces the extreme-event gate by tonight-category + risk-flag skill | rubric decision; H2 |
+| Stronger-wind risk | 1 / 3 (events) | flag 33% vs 3.4% nights; misses half | unscored (no v1 dimension) | 7.5 | n/a | pre-register ladder test on fresh data | dual-wind logging (prerequisite branch) |
+| Trend | 4 (lead) | easing precision 0.65; rising/lay-down withheld | 10.0 (lead dimension only) | 7.5 | 0 | none | — |
+| Bank exposure validated | 6 | no field data | 0.0 | 7.5 | 7.5 | bank-pair programme (≥ 40 pairs, ≥ 2 lakes, ≥ 3 quadrants) | FIELD |
+| Surface / roughness validated | 7 | no field data | 0.0 | 7.5 | 7.5 | same sessions record roughness | FIELD |
+| Fetch method | 5 | audited method QA pass | 10.0 | 7.5 | 0 | keep; ESTIMATED tier remains outside | — |
+| Reliability (30 valid live days) | 8 | 5 / 30 | 1.7 | 7.5 | 5.8 | accumulate; weekly audit | TIME (≈ 2026-11-07) |
+| Provenance / Unknown | 10 | pass | 10.0 | 7.5 | 0 | keep | — |
+| Coverage | 9 | 4/4 dev lakes + 50 audited QA lakes | 10.0 | 7.5 | 0 | note: coverage does not count ESTIMATED/blocked | — |
+| Gust | 3 | NBM gust POD 0.04 | 0.0 | 7.5 if critical | 7.5 | **recommend not critical**; withhold gust claims | rubric decision |
+| Over-water reference | cap 7 (no dimension) | none | n/a | gate | gate | portable instrument sessions | FIELD / Michael |
+| Fleet exposure coverage | none | 528 label-eligible, 0 validated | unscored | — | n/a | v2 coverage dimension capped by validation tier | rubric decision |
+| Confidence | none | rule frozen, ordering unproven | unscored | — | n/a | H2-C1/C2 on 2027-01-01 | H2 |
+| Intelligence contract | none | proposal + fixtures | unscored | — | n/a | reconcile (`WIND_INTELLIGENCE_COMPATIBILITY.md`) | prerequisite branch |
+
+**Reading:** even if the unscorable capabilities were excluded, three critical v1 dimensions are at 0 (speed event gate, exposure, surface) and one at 1.7 (reliability). Production eligibility needs field truth, 30 valid days and a rubric decision; no engineering change inside Wind closes those gaps.
