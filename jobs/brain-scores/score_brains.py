@@ -20,7 +20,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
-from sector_brain_platform import (BrainRtdb, DryRunStore, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
+from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
                                    prune_activity, score_biological, score_engine, score_intelligence, score_lake)
 
 WRITER = "brain-platform"
@@ -47,17 +47,18 @@ def fetch_facts(db) -> dict:
             states[k] = s
     species = db.get("species") or {}
     intel_reg = brains.get("sector-intelligence") or {}
-    sampled = []
+    sampled, intel_states = [], {}
     if intel_reg.get("evaluatedLakeCount"):
         evaluated_keys = [k for k, row in fleet.items() if (((row or {}).get("slots") or {}).get("intelligence") or {}).get("kind") == "evaluated"]
         for k in sorted(evaluated_keys)[:50]:
             s = db.get(f"lakes/{k}/states/intelligence")
             if s and str(s.get("kind", "")).lower() == "evaluated":
-                sampled.append(s)
+                sampled.append(s); intel_states[k] = s
     fleet_readiness = {k: ((row or {}).get("readiness") or {}) for k, row in fleet.items()}
     return {
         "brains": brains, "health": health, "validation": validation, "fleet": fleet,
         "sources": db.get("sources") or {}, "healthSources": db.get("health/sources") or {}, "jobs": db.get("health/jobs") or {},
+        "intelStates": intel_states,
         "engine": {"intelligenceRegistry": intel_reg, "validation": validation, "healthBrains": health,
                    "healthJobs": db.get("health/jobs") or {}, "fleetReadiness": fleet_readiness,
                    # platformHealth: measured from what each brain has PUBLISHED (a brain that conforms on main but has
@@ -138,7 +139,20 @@ def main() -> int:
                        fleet=facts["fleet"], sources=facts["sources"], health_sources=facts["healthSources"], jobs=facts["jobs"], now=now)
     rollups = {f"control/fleet/{k}": r for k, row in facts["fleet"].items() if (r := fleet_rollup(k, row, now))}
     control_updates = {"control/overview": control, **rollups}
-    report = {"at": now.isoformat(), "mode": "write" if a.write else "dry-run", "scores": scores, "engine": engine, "changes": changed, "control": control}
+    # Beta readiness (Phase 12): pilot lakes = those with a normalized Intelligence evaluation. Never a customer rollout.
+    src_stale = {sid: v.get("stale") for sid, v in (control.get("sources") or {}).items() if v.get("stale")}
+    betas = {}
+    for k, st in facts["intelStates"].items():
+        row = facts["fleet"].get(k) or {}
+        betas[k] = beta_readiness(row.get("lakeId") or k, row, st, facts["validation"], facts["health"], src_stale, now)
+        control_updates[f"control/beta/{k}"] = betas[k]
+    if betas:
+        counts = {}
+        for b in betas.values():
+            counts[b["betaReadiness"]] = counts.get(b["betaReadiness"], 0) + 1
+        control_updates["control/beta/_summary"] = {"version": betas[next(iter(betas))]["betaReadinessVersion"], "lakes": len(betas), "counts": counts,
+                                                     "updatedAt": control["updatedAt"], "note": "pilot lakes only; not a customer rollout decision"}
+    report = {"at": now.isoformat(), "mode": "write" if a.write else "dry-run", "scores": scores, "engine": engine, "changes": changed, "control": control, "beta": betas}
     for bid in UPSTREAM:
         s = scores[bid]
         print(f"{bid:22s} {s['value']:>4} / 10  {s['basis']:8s} {s['scoreVersion']}  completeness {s.get('completenessPct')} %")
@@ -152,6 +166,8 @@ def main() -> int:
         json.dump(report, open(a.report, "w"), indent=1)
     print(f"{'CONTROL':22s} overview for {len(control['brains'])} brains, {len(rollups)} fleet rollups; worst health {control['engine'].get('worstBrainHealth')}; work next: "
           + ", ".join(f"{w['brainId']} ({w.get('score')})" for w in control.get("workNext", [])[:3]))
+    for k, b in betas.items():
+        print(f"{'BETA':22s} {b['lakeId']:18s} {b['betaReadiness']:10s} blockers {[x['code'] + ':' + str(x.get('slot')) for x in b['blockers']]} warnings {len(b['warnings'])}")
     if a.write:
         if updates:
             db.update(updates)

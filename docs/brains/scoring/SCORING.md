@@ -120,3 +120,14 @@ Gates: no specialist Brain consumed → cap **4.0**; lineage unverified → cap 
 FAILED → cap **5.0**. Output: `engineScore, engineScoreVersion, dimensions, blockers, strongestArea,
 weakestArea, updatedAt, brainScores{id→value}`. Engine Score, Brain scores, lifecycle, health,
 coverage and beta readiness stay separate nodes.
+
+## Beta Readiness — `beta-readiness-v1` (`/control/beta/{lakeKey}`, pilot lakes)
+
+Separate from Brain scores and never averaged from them. Required slots: lake, waterTemp, waterClarity,
+wind. **Hard blockers** (→ NOT_READY): a required slot not published / stale / evidence-stale /
+unavailable / readiness below CALIBRATION; no Sector Intelligence evaluation; Intelligence not
+VALIDATED; a required Brain FAILED. **Warnings** (→ CANDIDATE): slot readiness below VALIDATED; a
+degraded Intelligence input; species-knowledge median < 5; no species presence; a required Brain
+NOT_VALIDATED; a stale owning source. READY needs neither. Every item names the slot and the fact.
+Rubric: `beta-readiness-v1.json`; module `sector_brain_platform/beta.py`; published by the platform
+publisher for the pilot lakes only. Not a customer rollout decision.

@@ -1,0 +1,91 @@
+{
+  "betaReadinessVersion": "beta-readiness-v1",
+  "description": "Which lakes could be trusted in a controlled beta. Separate from Brain scores (never averaged). Hard blockers \u2192 NOT_READY; warnings \u2192 CANDIDATE; neither \u2192 READY. Every item traces to a published Brain fact. Frozen 2026-10-12.",
+  "requiredSlots": [
+    "lake",
+    "waterTemp",
+    "waterClarity",
+    "wind"
+  ],
+  "hardBlockers": [
+    {
+      "code": "SLOT_NOT_PUBLISHED",
+      "when": "a required slot has no published state for the lake"
+    },
+    {
+      "code": "SLOT_STALE",
+      "when": "a required slot's state is stale (Engine time rule, slots.stale)"
+    },
+    {
+      "code": "EVIDENCE_STALE",
+      "when": "a required slot's brain reports evidenceStale"
+    },
+    {
+      "code": "VALUE_UNAVAILABLE",
+      "when": "a required slot's kind is unavailable"
+    },
+    {
+      "code": "READINESS_BELOW_MINIMUM",
+      "when": "a required slot's readiness is below CALIBRATION on the ladder"
+    },
+    {
+      "code": "NO_INTELLIGENCE_EVALUATION",
+      "when": "no normalized Sector Intelligence evaluation exists for the lake"
+    },
+    {
+      "code": "SYNTHESIS_NOT_VALIDATED",
+      "when": "/validation/sector-intelligence.status != VALIDATED"
+    },
+    {
+      "code": "BRAIN_FAILED",
+      "when": "a required brain's health is FAILED"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "READINESS_NOT_VALIDATED",
+      "when": "a required slot's readiness is below VALIDATED"
+    },
+    {
+      "code": "INTELLIGENCE_INPUT_DEGRADED",
+      "when": "the last Intelligence evaluation saw a degraded input"
+    },
+    {
+      "code": "SPECIES_KNOWLEDGE_LOW",
+      "when": "species-v2 knowledge median over present species < 5.0"
+    },
+    {
+      "code": "NO_SPECIES_PRESENCE",
+      "when": "no species presence for the lake"
+    },
+    {
+      "code": "BRAIN_NOT_VALIDATED",
+      "when": "a required brain's validation is NOT_VALIDATED/absent"
+    },
+    {
+      "code": "SOURCE_STALE",
+      "when": "an owning source is past its stale threshold"
+    }
+  ],
+  "outputs": [
+    "betaReadiness",
+    "betaReadinessVersion",
+    "blockers",
+    "warnings",
+    "supportingBrainStates",
+    "updatedAt"
+  ],
+  "pilotLakes": [
+    "Guntersville|AL",
+    "Wheeler|AL",
+    "Wilson|AL",
+    "Pickwick Lake|TN",
+    "Lake Hartwell|SC"
+  ],
+  "notCounted": [
+    "Brain scores",
+    "Ops views",
+    "client-side models",
+    "customer feedback (none collected)"
+  ]
+}

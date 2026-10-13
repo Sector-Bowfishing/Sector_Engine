@@ -386,3 +386,20 @@ compute nothing. Contract: `docs/brains/OPS_CONTROL_PLANE_CONTRACT.md`.
   only on the four Brains awaiting their next run). No per-Brain cron added or changed.
 
 **Rollback:** `git reset --hard 568d6bb1` (Phase 9); `/control`, `/scores` are platform-owned nodes.
+
+---
+
+## Phase 12 — Beta readiness model — PASS (all pilots NOT_READY, explainably)
+
+- `docs/brains/scoring/beta-readiness-v1.json` + `sector_brain_platform/beta.py` (+4 tests): hard blockers
+  (required slot not published / stale / evidence-stale / unavailable / below CALIBRATION; no Intelligence
+  evaluation; Intelligence not VALIDATED; a required Brain FAILED) → NOT_READY; warnings (readiness below
+  VALIDATED, degraded Intelligence input, species-knowledge median < 5, no presence, Brain NOT_VALIDATED,
+  stale source) → CANDIDATE; READY needs neither. Never averaged from Brain scores; every item names its slot
+  and published fact. Not a customer rollout decision.
+- Published `/control/beta/{k}` for the 5 pilot lakes + `_summary`. Result 2026-10-12: **5 × NOT_READY** —
+  blockers trace to the Lake and Water Temp slots being stale (unscheduled brains), Intelligence
+  NOT_VALIDATED, and Hartwell's missing wind; warnings list the sub-VALIDATED readiness of every slot.
+- Intelligence score 4.5 → 4.8 after it republished with `schedule` (runtime dimension).
+
+**Rollback:** `git reset --hard 26276088`; `/control/beta` is platform-owned.
