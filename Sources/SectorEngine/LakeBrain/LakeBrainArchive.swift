@@ -5,7 +5,8 @@
 //  History never goes in the Brain RTDB. It lives in the private, versioned
 //  bucket gs://sector-lake-brain:
 //    history/{lakeKey}/daily.csv              date,elevationFt,sourceId (one row per lake-local day)
-//    baselines/{lakeKey}/{baselineVersion}.json
+//    baselines/{lakeKey}/latest.json                 pointer to the current immutable artifact (LakeBaselineStore)
+//    baselines-archive/{lakeKey}/{method}_{end}_{fp}.json   immutable baseline artifacts (legacy: baselines/{lakeKey}/{baselineVersion}.json)
 //    presence/latest.json → presence/releases/{researchVersion}/presence.json   (private research data)
 //
 //  The Water Temp lane's TVA archive (gs://sector-water-temp-archive) is read,

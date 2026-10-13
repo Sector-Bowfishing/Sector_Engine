@@ -201,12 +201,14 @@ public enum LakeBrainRunner {
                     do { try await archive.write(LakeDailyHistory.path(lake.id), LakeDailyHistory.encode(merged), contentType: "text/csv"); historyWritten = true }
                     catch { errors.append("history write: \(error)") }
                 }
-                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today, poolBasisIsFullPool: lake.poolBasis == .fullPool)
+                // Baseline: the stored artifact named by baselines/{key}/latest.json, recomputed at most weekly or when an input changes
+                // (LakeBaselineStore). No archive, or a missing/corrupt pointer: build from the merged history, as before.
+                let ensured = await LakeBaselineStore.ensure(lakeId: lake.id, merged: merged, today: today,
+                                                              poolBasisIsFullPool: lake.poolBasis == .fullPool, archive: archive,
+                                                              now: now, forceRecompute: options.backfill)
+                let b = ensured.baseline
                 baseline = b
-                if let archive, b.status != .none, (try? await archive.read(LakeBaselineBuilder.path(b))) == nil {
-                    do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }
-                    catch { errors.append("baseline write: \(error)") }
-                }
+                errors += ensured.errors
                 state = LakeLevelClassifier.evaluate(LakeLevelInputs(
                     lakeId: lake.id, binding: binding, capabilityIfUnbound: binding.capability,
                     fullPoolFt: lake.fullPoolFt, poolBasisIsFullPool: lake.poolBasis == .fullPool,
