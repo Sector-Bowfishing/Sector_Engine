@@ -47,7 +47,7 @@ def test_wind_from_southwest_hits_the_northeast_shore():
 def test_from_direction_is_not_inverted():
     # wind FROM 270 (west) hits a bank that faces west (water to its west), not one that faces east
     assert EX.label_bank(270, 10, 270, 3)["label"] == "DIRECT"
-    assert EX.label_bank(270, 10, 90, 3)["label"] == "PROTECTED"
+    assert EX.label_bank(270, 10, 90, 2)["label"] == "PROTECTED"
     assert EX.label_bank(270, 10, 0, 3)["label"] == "CROSS"                    # shore-parallel
 
 
@@ -55,9 +55,12 @@ def test_direct_cross_protected_thresholds_and_high_fetch():
     assert EX.label_bank(0, 10, 45, 3)["label"] == "DIRECT"                    # alpha 45 inclusive
     assert EX.label_bank(0, 10, 46, 3)["label"] == "CROSS"
     assert EX.label_bank(0, 10, 90, 3)["label"] == "CROSS"
-    assert EX.label_bank(0, 10, 91, 3)["label"] == "PROTECTED"
+    assert EX.label_bank(0, 10, 91, 2)["label"] == "PROTECTED"
     odd = EX.label_bank(0, 18, 180, 4)                                           # fetch says HIGH although facing says lee: never PROTECTED
-    assert odd["label"] == "CROSS" and odd["highFetch"] is True and odd["reason"] == "longFetchOverridesFacing"
+    assert odd["label"] == "CROSS" and odd["highFetch"] is True and odd["reason"] == "fetchOverridesFacing"
+    mid = EX.label_bank(0, 12, 180, 3)                                           # 3-6 in of chop on a lee-facing bank: also never PROTECTED
+    assert mid["label"] == "CROSS" and mid["highFetch"] is False
+    assert EX.label_bank(0, 12, 180, 2)["label"] == "PROTECTED"                  # < 3 in and lee: protected
     d = EX.label_bank(0, 18, 0, 4); assert d["label"] == "DIRECT" and d["highFetch"] is True
     c = EX.label_bank(0, 18, 80, 3); assert c["label"] == "CROSS" and c["highFetch"] is False
     cove = EX.label_bank(0, 12, 0, 1); assert cove["label"] == "PROTECTED" and cove["reason"] == "shortFetch"   # short fetch protects even facing the wind
@@ -358,3 +361,61 @@ def test_state_with_estimated_geometry_labels_banks_and_marks_estimate(tmp_path,
     tn = state["tonight"]
     assert tn["available"] and tn["exposure"]["estimated"] is True and tn["exposure"]["atMean"]["knownBanks"] > 0
     assert tn["exposure"]["ifItBlows"] is None or tn["exposure"]["ifItBlows"]["speedMph"] >= tn["exposure"]["atMean"]["speedMph"]
+
+
+def test_fleet_sampler_follows_the_archive_calm_rule():
+    import numpy as np
+    nx = 6
+    lat = np.array([30 + r * 0.025 for r in range(6) for c in range(nx)]); lon = np.array([-90 + c * 0.03 for r in range(6) for c in range(nx)])
+    speed = np.full(36, 4.0); dirf = np.full(36, 270.0)
+    idx = FSM.build_point_index(lat, lon, nx, {"A|XX": (30.06, -89.94)})
+    assert FSM.sample_lead(idx, speed, dirf)["A|XX"]["dirFromDeg"] == 270
+    calm = np.full(36, 0.3)                                                   # every cell calm: archive stores no direction
+    out = FSM.sample_lead(idx, calm, dirf)["A|XX"]
+    assert out["dirFromDeg"] is None and out["speedMS"] == 0.3
+    nan = np.full(36, np.nan)
+    assert FSM.sample_lead(idx, nan, nan)["A|XX"]["speedMS"] is None              # unknown stays unknown
+
+
+def test_estimated_tier_protected_needs_margin():
+    # lee-facing, chop 2 now but 3 at 1.5x fetch -> ESTIMATED geometry may not call it PROTECTED
+    assert EX.label_bank(0, 12, 180, 2)["label"] == "PROTECTED"
+    e = EX.label_bank_estimated(0, 12, 180, 2, 3)
+    assert e["label"] == "CROSS" and e["reason"] == "estimatedGeometryMargin"
+    assert EX.label_bank_estimated(0, 12, 180, 1, 2)["label"] == "PROTECTED"          # robust to the margin
+    assert EX.label_bank_estimated(0, 12, 180, 2, None)["label"] == "UNKNOWN"          # no margin evaluation -> never PROTECTED
+    assert EX.label_bank_estimated(0, 12, None, 1, 1)["label"] == "UNKNOWN"
+    assert EX.label_bank_estimated(0, 12, 0, 3, 4)["label"] == "DIRECT"               # exposure is never softened
+    for fa in range(0, 360, 30):                                                     # never more protective than the audited rule
+        for c, cm in ((1, 1), (1, 2), (2, 3), (3, 4), (4, 4)):
+            a, b = EX.label_bank(90, 12, fa, c)["label"], EX.label_bank_estimated(90, 12, fa, c, cm)["label"]
+            assert not (b == "PROTECTED" and a != "PROTECTED")
+
+
+def test_state_tier_changes_label_policy(tmp_path, monkeypatch):
+    # an AUDITED and an ESTIMATED run over the same geometry: ESTIMATED never has more PROTECTED banks
+    pytest.importorskip("shapely"); pytest.importorskip("PIL"); pytest.importorskip("scipy")
+    from shapely.geometry import box
+    from tests import test_brain as TB
+    from sector_wind.brain import estimate as ES
+    from sector_wind.brain.state import build_state
+    now = datetime(2026, 10, 12, 18, 20, tzinfo=UTC)
+    monkeypatch.setattr(TB, "NOW", now)
+    st = TB.make_store(tmp_path, speed=7.0, direction=225.0)
+    d = next(x for x in TB.DIRECTORY if x["id"] == "Guntersville|AL")
+    obj = ES.build_estimated_table(box(d["lon"] - 0.04, d["lat"] - 0.03, d["lon"] + 0.04, d["lat"] + 0.03), "Guntersville|AL")
+    a, _, _ = build_state(st, TB.CFG, "guntersville", "Guntersville|AL", d, now, obj, geometry_tier="AUDITED")
+    e, _, _ = build_state(st, TB.CFG, "guntersville", "Guntersville|AL", d, now, obj, geometry_tier="ESTIMATED")
+    assert e["exposure"]["bankImpact"]["protectedPct"] <= a["exposure"]["bankImpact"]["protectedPct"]
+
+
+def test_hard_blockers_withhold_exposure_even_for_audited_lakes():
+    m = FL.load_manifest()
+    assert m["exposureAllowedCount"] == sum(FL.exposure_allowed(v) for v in m["lakes"].values()) == 528
+    for lid in ("Andrews Lake|DE", "Eagle Lake|MS", "Hiwassee Lake|NC", "Long Lake|ME"):      # audited table exists but Lake Brain flags a lake-identity risk
+        e = m["lakes"][lid]
+        assert e["tier"] == "AUDITED" and "lakeIdentityRisk" in e["blockers"] and not FL.exposure_allowed(e)
+    assert not FL.exposure_allowed(m["lakes"]["Aleknagik|AK"])                                  # forecast domain untested
+    assert FL.exposure_allowed(m["lakes"]["Guntersville|AL"]) and FL.exposure_allowed(m["lakes"]["Lake Hartwell|SC"])
+    assert not FL.exposure_allowed(FL.tier_for("Not A Lake|ZZ", m))                              # unknown lake: never
+    assert not any(FL.exposure_allowed(v) for v in m["lakes"].values() if v["tier"] == "POINT_ONLY")

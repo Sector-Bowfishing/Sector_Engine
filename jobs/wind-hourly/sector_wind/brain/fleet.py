@@ -44,6 +44,22 @@ def decide_tier(audited: bool, polygon_present: bool, fetch_ok: bool | None, con
     return "ESTIMATED", "polygonFetch"
 
 
+def blockers(state: str | None, point_flag: str | None) -> list[str]:
+    """Hard blockers that withhold ANY bank-exposure label even when a tier exists (checked in the manifest, enforced by exposure_allowed)."""
+    b = []
+    d = forecast_domain(state)
+    if d != "CONUS":
+        b.append(f"nbm{d}DomainNotTested")
+    if point_flag == "identity_risk":
+        b.append("lakeIdentityRisk")
+    return b
+
+
+def exposure_allowed(entry: dict) -> bool:
+    """Bank labels may be produced only for AUDITED/ESTIMATED lakes with no hard blocker. Everything else: wind/tonight only."""
+    return entry.get("tier") in ("AUDITED", "ESTIMATED") and not entry.get("blockers")
+
+
 def load_manifest(path: str = MANIFEST) -> dict:
     return json.load(open(path))
 
@@ -62,12 +78,14 @@ def build_manifest(directory: list[dict], flags: dict[str, dict], fleet_fetch: d
                                 f.get("nBanks") if f else None, f.get("res") if f else None)
         counts[tier] += 1
         e = {"id": i, "tier": tier, "reason": why, "geometryConfidence": fl.get("confidence") or "MISSING",
-             "forecastDomain": forecast_domain(l.get("state")), "lat": l["lat"], "lon": l["lon"], "state": l.get("state")}
+             "forecastDomain": forecast_domain(l.get("state")), "lat": l["lat"], "lon": l["lon"], "state": l.get("state"),
+             "pointFlag": fl.get("point_flag") or "", "blockers": blockers(l.get("state"), fl.get("point_flag"))}
         if f and f.get("ok"):
             e["polygonFetch"] = {"rasterM": round(f["res"], 1), "banksSampled": f["nBanks"],
                                  "maxP90FetchM": int(max(f["p90FetchByDir"]))}
         lakes[i] = e
     return {"schema": "sector-wind-geometry-tiers-v1", "directoryLakes": len(lakes), "counts": counts,
+            "exposureAllowedCount": sum(exposure_allowed(v) for v in lakes.values()),
             "rules": {"ESTIMATED": f"polygon fetch ok, Lake Brain confidence in {OK_CONFIDENCE}, >= {MIN_BANKS} sampled banks, raster <= {MAX_RASTER_M:g} m",
                       "AUDITED": "frozen NHD fetch table (SHA-256 verified)", "POINT_ONLY": "everything else; no bank labels"},
             "evidence": "docs/wind-research (branch docs/wind-brain-research): polygon fetch matched audited magnitude (-6%) but FAILED direction-rank agreement; ESTIMATED is not validated.",

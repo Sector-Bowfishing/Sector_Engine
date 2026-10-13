@@ -17,6 +17,8 @@ LABELS = ("DIRECT", "CROSS", "PROTECTED", "UNKNOWN")
 DIRECT_MAX_DEG, CROSS_MAX_DEG = 45.0, 90.0
 MIN_LABEL_MPH = 3.0          # below this the wind direction is not meaningful: no labels
 HIGH_FETCH_CHOP_CLASS = 4    # frozen CEM chop class >= 4 (Hm0 >= 6 in)
+PROTECTED_MAX_CHOP = 2       # PROTECTED needs modelled Hm0 < 3 in (chop class <= 2) even when the bank faces away from the wind
+ESTIMATED_FETCH_MARGIN = 1.5 # ESTIMATED geometry: PROTECTED must survive 1.5x the estimated fetch
 
 
 def bearing_deg(a: tuple[float, float], b: tuple[float, float]) -> float:
@@ -50,16 +52,31 @@ def label_bank(wind_from_deg: float | None, speed_mph: float | None, facing: flo
     alpha = angdiff(wind_from_deg, facing)
     high = chop_class >= HIGH_FETCH_CHOP_CLASS
     if alpha > CROSS_MAX_DEG:
-        if high:
-            # Conservative: the fetch model says long open water while the facing says lee. Facing is the weaker signal
-            # (research AUC 0.70; narrow arms/creek mouths misestimate it), so never call this PROTECTED.
-            return {"label": "CROSS", "alphaDeg": round(alpha), "highFetch": True, "reason": "longFetchOverridesFacing"}
+        if chop_class > PROTECTED_MAX_CHOP:
+            # Conservative: the fetch model says >= 3 in of chop while the facing says lee. Facing is the weaker signal
+            # (research AUC 0.70; narrow arms/creek mouths misestimate it; matched validation: 10% of audited-exposed cells
+            # would otherwise read PROTECTED), so never call this PROTECTED.
+            return {"label": "CROSS", "alphaDeg": round(alpha), "highFetch": high, "reason": "fetchOverridesFacing"}
         return {"label": "PROTECTED", "alphaDeg": round(alpha), "highFetch": False, "reason": "windComesOverLand"}
     if chop_class <= 1:
         return {"label": "PROTECTED", "alphaDeg": round(alpha), "highFetch": False, "reason": "shortFetch"}
     if alpha <= DIRECT_MAX_DEG:
         return {"label": "DIRECT", "alphaDeg": round(alpha), "highFetch": high, "reason": "windBlowsOntoBank"}
     return {"label": "CROSS", "alphaDeg": round(alpha), "highFetch": high, "reason": "windSkimsAlongBank"}
+
+
+def label_bank_estimated(wind_from_deg: float | None, speed_mph: float | None, facing: float | None, chop_class: int | None,
+                         chop_class_at_margin: int | None, below_resolution: bool = False) -> dict:
+    """ESTIMATED geometry (polygon fetch, not audited): a bank is PROTECTED only if it is still PROTECTED with its estimated
+    fetch multiplied by ESTIMATED_FETCH_MARGIN; otherwise CROSS. UNKNOWN stays UNKNOWN. Never more protective than label_bank."""
+    lab = label_bank(wind_from_deg, speed_mph, facing, chop_class, below_resolution)
+    if lab["label"] == "PROTECTED" and chop_class_at_margin is not None:
+        again = label_bank(wind_from_deg, speed_mph, facing, chop_class_at_margin)
+        if again["label"] != "PROTECTED":
+            return {"label": "CROSS", "alphaDeg": lab["alphaDeg"], "highFetch": again["highFetch"], "reason": "estimatedGeometryMargin"}
+    elif lab["label"] == "PROTECTED":
+        return {"label": "UNKNOWN", "alphaDeg": lab["alphaDeg"], "highFetch": None, "reason": "noMarginEvaluation"}
+    return lab
 
 
 def label_shares(labels: list[dict]) -> dict:

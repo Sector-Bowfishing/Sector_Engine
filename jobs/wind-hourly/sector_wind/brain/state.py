@@ -128,6 +128,13 @@ def latest_metar(store, stations, lat, lon, now):
     return best
 
 
+def _label(tier, d, mph, bank, chop, eff, u, t_s):
+    fac = EX.facing_deg(bank)
+    if tier == "AUDITED":
+        return EX.label_bank(d, mph, fac, chop, bank.get("belowResolution", False))
+    return EX.label_bank_estimated(d, mph, fac, chop, BF.chop_class(BF.cem(u, eff * EX.ESTIMATED_FETCH_MARGIN, t_s)), bank.get("belowResolution", False))
+
+
 def surface_summary(u, d, dur_h, banks, table, tier="AUDITED"):
     """Frozen CEM over every resolvable bank for the CURRENT wind. Lake-level physical description only;
     per-bank rows go to storage (never RTDB) for downstream consumers."""
@@ -139,7 +146,7 @@ def surface_summary(u, d, dur_h, banks, table, tier="AUDITED"):
         h = BF.cem(u, eff, t_s)
         lo = BF.cem(max(0.0, u - 1.0), eff * 0.7, t_s); hi = BF.cem(u + 1.0, eff * 1.3, t_s)
         c = BF.chop_class(h); p = BF.surface_p(h, u); chop.append(c); surf.append(p)
-        lab = EX.label_bank(d, C.mph(u), EX.facing_deg(banks[i]), c)
+        lab = _label(tier, d, C.mph(u), banks[i], c, eff, u, t_s)
         labels.append(lab)
         rows.append({"bankId": banks[i]["id"], "effectiveFetchM": round(eff, 1), "hm0In": round(h / 0.0254, 2), "chopClass": c,
                      "surfaceClass": p, "exposureRank": BF.RANK[c], "confidence": "firm" if BF.chop_class(lo) == BF.chop_class(hi) else "boundary",
@@ -186,7 +193,7 @@ def tonight_exposure(banks, table, dir_deg, mean_mph, blow_mph, tier="AUDITED", 
             if b.get("belowResolution"):
                 labels.append(EX.label_bank(dir_deg, mph, None, None, True)); continue
             eff = BF.nine_ray(table[i], dir_deg)
-            labels.append(EX.label_bank(dir_deg, mph, EX.facing_deg(b), BF.chop_class(BF.cem(u, eff, dur_h * 3600))))
+            labels.append(_label(tier, dir_deg, mph, b, BF.chop_class(BF.cem(u, eff, dur_h * 3600)), eff, u, dur_h * 3600))
         out[key] = {"speedMph": mph} | EX.label_shares(labels)
     return out
 

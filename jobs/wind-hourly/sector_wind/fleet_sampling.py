@@ -20,6 +20,7 @@ import numpy as np
 from .interp import CutoutIndex
 
 SCHEMA = "sector-wind-nbm-fleet-v1"
+CALM_MS = 0.5  # same calm rule as ingest (direction undefined below 0.5 m/s per cell)
 PATCH = 2     # cells either side of the nearest cell used to build the local bilinear basis
 
 
@@ -62,11 +63,11 @@ def sample_lead(index: dict, speed: np.ndarray, dir_from: np.ndarray, gust: np.n
             us = vs = ws = 0.0
             for ci, wi in zip(c, w):
                 sp, dr = speed[ci], dir_from[ci]
-                if np.isnan(sp) or np.isnan(dr):
+                if np.isnan(sp) or np.isnan(dr) or sp < CALM_MS:      # ingest masks direction in calm cells (< 0.5 m/s) before archiving
                     continue
                 r = math.radians(dr)
                 us += wi * -sp * math.sin(r); vs += wi * -sp * math.cos(r); ws += wi
-            if ws and math.hypot(us, vs) >= 1e-9 and s >= 0.5:
+            if ws and math.hypot(us, vs) >= 1e-9:
                 d = (math.degrees(math.atan2(-us, -vs)) + 360.0) % 360.0
         out[lid] = {"speedMS": None if s is None else round(s, 2), "dirFromDeg": None if d is None else round(d),
                     "gustMS": None if gust is None else _r(_blend(gust, c, w)), "speedP90": None if p90 is None else _r(_blend(p90, c, w))}

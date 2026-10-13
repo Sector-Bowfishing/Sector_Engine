@@ -35,8 +35,8 @@ The accuracy gap (MAE −40%, night bias from +1.1 to ≈ 0, direction +0.10–0
 4. Gust penalty and wind gate (`windCurve`, gust excess) re-reviewed: they were tuned on HRRR gusts; NBM gusts are not better and tend lower.
 5. A side-by-side shadow period where the Engine logs both winds (no customer change) and Michael reviews disagreements.
 6. H2 outcome recorded (sealed until 2027-01-01). The decision does not need H2 to *start* shadowing; customer promotion of any new claim does.
-8. **Windy-night handling (new, from the shadow comparison):** the wind gate / gauge must be driven by the risk-aware value (P90 / `ifItBlows` or the flag), not the NBM mean alone, otherwise windy nights would look calmer to customers than they do today.
-7. Provider-terms review for whatever remains on Open-Meteo (other fields stay there regardless).
+7. **Windy-night handling (new, from the shadow comparison):** the wind gate / gauge must be driven by the risk-aware value (P90 / `ifItBlows` or the flag), not the NBM mean alone, otherwise windy nights would look calmer to customers than they do today.
+8. Provider-terms review for whatever remains on Open-Meteo (other fields stay there regardless).
 
 ## What would change the recommendation
 A materially better source for the windy tail (none found), evidence that NBM degrades outside the Southeast (only 4 lakes, 8 land stations validated), or an unrecoverable Engine operations cost.
