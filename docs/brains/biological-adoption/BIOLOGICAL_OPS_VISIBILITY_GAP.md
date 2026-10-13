@@ -27,6 +27,9 @@
 | Blockers | `/control/overview.brains[...].blockers[]` | PUBLISHES (4 items) | CONSUMES (typed) | Only in Overview **Attention** and only when health is fair/poor | **OPS GAP**: a HEALTHY brain's blockers are not shown on its page |
 | Next opportunity | `control.brains[...].nextOpportunity`, `/scores.nextScoreOpportunity` | PUBLISHES | typed | not verified rendered | check in the deployed UI |
 
+## Engine-side change made in the candidate (not yet published)
+The candidate bundle's registry now carries a generic, Engine-computed `facts[]` list `[{label, value}]` (Species with usable rules, Usable / Draft / Retired / Frozen rules, Predictions logged, Observations logged, Independent trips, Validated species, Pilot lakes, Rules version) in addition to the `responsibilities.biologicalState` counters (`usableRules`, `draftRules`, `retiredRules`, `frozenRules`, `predictionsLogged`, `observationsLogged`, `independentTrips`, `speciesWithUsableRules`, `pilotLakes`, `rulesVersion`). **Once published, the ENGINE GAP rows for supported species, rule counts, pilots, predictions, rules version become ENGINE PUBLISHES; the OPS GAP remains until Ops renders `facts[]` (or the new `responsibilities` fields).** Score gates and dimension values are still only in `/scores/biological-state`.
+
 ## What the Engine could add so Ops needs no per-brain code
 A generic, Engine-computed `control.brains[id].facts[]` of `{label, value, tone?, hint?}` (rendered verbatim) would let every Brain surface its own maturity facts (rules, pilots, predictions, validated species, gate requirements) without Ops learning each schema. For Biological the first facts would be: usable / draft / frozen rules, species with usable rules, pilot lakes, predictions logged, independent trips, VALIDATED species, rules version, and "what moves each score gate". This is an Engine contract change (not made here) and an Ops renderer (not made here).
 

@@ -287,7 +287,8 @@ class BiologicalStateTests(unittest.TestCase):
     def build(self, inp=None, daypart="NIGHT", now=NOW):
         return bs.build_lake_state("Example|ST", region="south", waterbody_type="run_of_river", now=now, inputs=inp or inputs(temp_f=70, lake_trend="RISING"),
                                    daypart=daypart, presence=self.presence, ruleset=fixture_ruleset(),
-                                   species_info={"example_fish": {"researchMaturity": "RESEARCH", "knowledgeScore": 3.5}})
+                                   species_info={"example_fish": {"researchMaturity": "RESEARCH", "knowledgeScore": 3.5, "assessment": "ASSESSED"},
+                                  "draft_fish": {"researchMaturity": "RESEARCH", "assessment": "ASSESSED"}, "old_fish": {"assessment": "ASSESSED"}, "no_rules_fish": {"assessment": "ASSESSED"}})
 
     def test_state_shape_and_pilot_internal_status(self):
         s = self.build()
@@ -306,6 +307,20 @@ class BiologicalStateTests(unittest.TestCase):
         old = next(x for x in s["species"] if x["speciesId"] == "old_fish")
         self.assertFalse(old["evaluated"])
         self.assertIn("relevance policy", old["notEvaluatedReason"])
+
+    def test_present_but_not_assessed_or_unknown_species_is_unknown_not_rated(self):
+        pres = dict(self.presence, tilapia_unresolved={"presenceState": "established"}, mystery_fish={"presenceState": "established"})
+        s = bs.build_lake_state("Example|ST", region="south", waterbody_type="run_of_river", now=NOW, inputs=inputs(temp_f=70, lake_trend="RISING"), daypart="NIGHT",
+                                presence=pres, ruleset=fixture_ruleset(),
+                                species_info={"example_fish": {"assessment": "ASSESSED"}, "tilapia_unresolved": {"assessment": "NOT_ASSESSED"}})
+        tl = next(x for x in s["species"] if x["speciesId"] == "tilapia_unresolved")
+        self.assertEqual((tl["evaluated"], tl["knowledge"]["state"]), (False, "NOT_ASSESSED"))
+        self.assertEqual(tl["presence"]["presenceState"], "established")            # presence stays known
+        self.assertIn("UNKNOWN, not rated", tl["notEvaluatedReason"])
+        my = next(x for x in s["species"] if x["speciesId"] == "mystery_fish")
+        self.assertEqual((my["evaluated"], my["knowledge"]["state"]), (False, "NO_KNOWLEDGE_ROW"))
+        ex = next(x for x in s["species"] if x["speciesId"] == "example_fish")
+        self.assertEqual(ex["knowledge"]["state"], "ASSESSED_WITH_RULES")
 
     def test_draft_only_species_has_no_bands_and_says_why(self):
         s = self.build()
@@ -506,6 +521,51 @@ class ValidationFoundationTests(unittest.TestCase):
         self.assertEqual(res["hitRate"], 0.5)
 
 
+class EffortRateTests(unittest.TestCase):
+    def setUp(self):
+        d = tempfile.mkdtemp()
+        reg = vl.FrozenRuleRegister(os.path.join(d, "r.jsonl"))
+        self.rule = rule()
+        fz = reg.freeze(self.rule, NOW, "t")
+        self.log = vl.PredictionLog(os.path.join(d, "p.jsonl"), reg)
+        self.p = self.log.append({"lakeId": "Example|ST", "speciesId": "example_fish", "predictedAt": "2026-04-20T03:00:00Z",
+                                  "ruleRefs": [{"ruleId": "EX-FLW-01", "ruleVersion": 1, "ruleSha256": fz["ruleSha256"]}], "seasonState": {}, "expected": {"habitat": ["backwaterHabitat"]},
+                                  "confidence": "LOW", "evidenceBasis": {}})
+
+    def obs(self, oid, zone, minutes, shootable, trip="t1", enc=None):
+        o = dict(ValidationFoundationTests.OBS, observationId=oid, tripId=trip, zone=zone, effortMinutes=minutes)
+        if shootable is not None:
+            o["shootableCount"] = shootable
+        enc = (shootable or 0) > 0 if enc is None else enc
+        o.update(encountered=enc, count=max(shootable or 0, 1) if enc else 0)
+        return o
+
+    def test_non_encounters_contribute_effort_and_rates_are_per_hour(self):
+        res = vl.effort_adjusted_rates([self.p], [self.obs("a", "backwaterHabitat", 60, 4), self.obs("b", "channelBorder", 120, 1), self.obs("c", "channelBorder", 60, 0)])
+        self.assertEqual(res["favoured"]["ratePerHour"], 4.0)
+        self.assertAlmostEqual(res["other"]["ratePerHour"], 1 / 3.0)                  # 1 shootable over 3 effort hours, the empty hour counted
+        self.assertAlmostEqual(res["lift"], 12.0)
+        self.assertEqual(res["claim"], "INSUFFICIENT_EVIDENCE")
+        self.assertEqual(res["independentTrips"], 1)
+
+    def test_rate_is_none_not_imputed_when_shootable_count_is_missing(self):
+        res = vl.effort_adjusted_rates([self.p], [self.obs("a", "backwaterHabitat", 60, None, enc=True)])
+        self.assertIsNone(res["favoured"]["ratePerHour"])
+        self.assertIsNone(res["lift"])
+
+    def test_paired_trips_are_counted_and_group_ids_never_score(self):
+        g = dict(self.obs("g", "backwaterHabitat", 60, 3), speciesIdConfidence="GROUP_ONLY", speciesGroup="gar")
+        res = vl.effort_adjusted_rates([self.p], [self.obs("a", "backwaterHabitat", 60, 2), self.obs("b", "channelBorder", 60, 0), g])
+        self.assertEqual(res["pairedTripsWithBothGroups"], 1)
+        self.assertEqual(res["favoured"]["observations"], 1)
+
+    def test_shootable_count_validation(self):
+        base = ValidationFoundationTests.OBS
+        self.assertEqual(vl.validate_observation(dict(base, shootableCount=2)), [])
+        for bad in (dict(base, shootableCount=-1), dict(base, shootableCount=9), dict(base, shootableCount=True), dict(base, encountered=False, count=0, shootableCount=1)):
+            self.assertTrue(vl.validate_observation(bad), bad)
+
+
 class SchemaAndLeakTests(unittest.TestCase):
     def test_committed_schemas_match_the_code(self):
         import subprocess
@@ -531,6 +591,26 @@ class SchemaAndLeakTests(unittest.TestCase):
                     bad.append(f"private path referenced in code: {p}")
                 if f.endswith((".json", ".md", ".py")) and "gs://sector-biology-private/biology/v1/releases/" in txt and "tests" not in p:
                     bad.append(f"private release path: {p}")
+        self.assertEqual(bad, [])
+
+    def test_no_per_lake_species_presence_labels_in_public_docs_or_code(self):
+        """Lake Brain presence per lake is private research. A public doc/code line may not name a pilot lake together with a presence state."""
+        lakes = ("guntersville", "wheeler", "wilson", "pickwick", "hartwell")
+        states = ("historical", "established", "inrangeunconfirmed", "stocked", "reported")
+        repo = os.path.dirname(os.path.dirname(ROOT))
+        scan = [os.path.join(repo, "docs", "brains", "biological-adoption"), ROOT]
+        bad = []
+        for base in scan:
+            for dp, _, fs in os.walk(base):
+                if os.sep + "tests" in dp or "__pycache__" in dp or dp.endswith("tools") or os.sep + "out" in dp:
+                    continue
+                for f in fs:
+                    if not f.endswith((".md", ".py", ".json", ".patch")):
+                        continue
+                    for i, line in enumerate(open(os.path.join(dp, f), errors="ignore"), 1):
+                        low = line.lower().replace("_", "")
+                        if any(l in low for l in lakes) and any(s in low for s in states):
+                            bad.append(f"{os.path.join(dp, f)}:{i}")
         self.assertEqual(bad, [])
 
     def test_fixtures_are_synthetic(self):

@@ -265,6 +265,14 @@ def validate_observation(o: dict) -> list[str]:
         e.append("clarityBand")
     if o.get("waterTempF") is not None and not (30 <= o["waterTempF"] <= 105):
         e.append("waterTempF out of range")
+    sc = o.get("shootableCount")
+    if sc is not None:
+        if not isinstance(sc, int) or isinstance(sc, bool) or sc < 0:
+            e.append("shootableCount must be an integer >= 0")
+        elif o.get("encountered") is False and sc != 0:
+            e.append("shootableCount must be 0 when nothing was encountered")
+        elif isinstance(o.get("count"), int) and sc > o["count"]:
+            e.append("shootableCount cannot exceed count")
     if o.get("spawnBehaviorObserved") not in (None, True, False, "UNKNOWN"):
         e.append("spawnBehaviorObserved")
     if o["observerConfidence"] not in OBSERVER_CONF:
@@ -345,3 +353,45 @@ def evaluate(predictions: list[dict], observations: list[dict], *, min_streams: 
             "lift": (hit_rate / baseline) if hit_rate is not None and baseline else None,
             "claim": "INSUFFICIENT_EVIDENCE" if len(trips) < min_streams else "SAMPLE_REACHED_NOT_A_VALIDATION_VERDICT",
             "note": "Counts only. VALIDATED requires a decision on the success criterion; non-encounters are retained for effort-adjusted analysis."}
+
+
+def effort_adjusted_rates(predictions: list[dict], observations: list[dict], *, window_hours: float = 36.0, min_trips: int = 30) -> dict:
+    """The validation outcome Sector cares about: SHOOTABLE ENCOUNTERS PER EFFORT-HOUR in habitat classes a rule favoured vs the rest.
+
+    Each observation (one zone on one trip, with its effort) is matched to the single latest prior prediction for that lake+species; its zone is
+    'favoured' if it is in that prediction's expected habitat classes, else 'other'. Non-encounters contribute effort with zero encounters, so a rule
+    cannot look good from successful trips alone. Reports rates and a lift; it never issues a verdict (the criterion is a preregistered decision)."""
+    def t(s):
+        return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+    acc = {k: {"effortHours": 0.0, "shootable": 0, "shootableUnknown": 0, "observations": 0, "trips": set()} for k in ("favoured", "other")}
+    per_trip: dict[str, set] = {}
+    for o in observations:
+        if o["speciesIdConfidence"] not in ("CONFIRMED", "LIKELY"):
+            continue
+        ot = t(o["observedAt"])
+        cands = [p for p in predictions if p["lakeId"] == o["lakeId"] and p["speciesId"] == o["speciesId"] and (p.get("expected") or {}).get("habitat")
+                 and t(p["predictedAt"]) <= ot and (ot - t(p["predictedAt"])).total_seconds() / 3600.0 <= window_hours]
+        if not cands:
+            continue
+        p = max(cands, key=lambda x: x["predictedAt"])
+        grp = "favoured" if o["zone"] in p["expected"]["habitat"] else "other"
+        a = acc[grp]
+        a["effortHours"] += o["effortMinutes"] / 60.0
+        a["observations"] += 1
+        a["trips"].add(o["tripId"])
+        per_trip.setdefault(o["tripId"], set()).add(grp)
+        if o.get("shootableCount") is None:
+            a["shootableUnknown"] += 1 if o["encountered"] else 0
+        else:
+            a["shootable"] += o["shootableCount"]
+    out = {}
+    for k, a in acc.items():
+        out[k] = {"effortHours": round(a["effortHours"], 3), "shootableEncounters": a["shootable"], "encounterObservationsWithoutShootableCount": a["shootableUnknown"],
+                  "observations": a["observations"], "trips": len(a["trips"]),
+                  "ratePerHour": (a["shootable"] / a["effortHours"]) if a["effortHours"] > 0 and not a["shootableUnknown"] else None}
+    trips = set().union(acc["favoured"]["trips"], acc["other"]["trips"])
+    rf, ro = out["favoured"]["ratePerHour"], out["other"]["ratePerHour"]
+    return {"favoured": out["favoured"], "other": out["other"], "independentTrips": len(trips), "pairedTripsWithBothGroups": sum(1 for g in per_trip.values() if len(g) == 2),
+            "lift": (rf / ro) if rf is not None and ro else None,
+            "claim": "INSUFFICIENT_EVIDENCE" if len(trips) < min_trips else "SAMPLE_REACHED_NOT_A_VALIDATION_VERDICT",
+            "note": "Rates are None when any encounter lacks a shootableCount (never imputed). A lift is descriptive; the success criterion must be preregistered before outcomes are examined."}

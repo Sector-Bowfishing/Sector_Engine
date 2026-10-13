@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import datetime as dt
 
+import contracts_in as ci
 import features as ft
 import rules as rl
 
@@ -59,13 +60,21 @@ def _slot(st: dict | None, values: dict, now: dt.datetime, stale_after_h: float,
 
 
 def normalize_inputs(snapshot: dict | None, now: dt.datetime, stale_after_h: float = DEFAULT_STALE_AFTER_H) -> dict:
-    """The published lake snapshot (`/snapshots/{k}/latest`) -> the three slots Biological features read."""
+    """The published lake snapshot (`/snapshots/{k}/latest`) -> the slots Biological features read. Implausible values and unrecognised vocabulary
+    are dropped here (they become UNKNOWN features), never repaired."""
     s = snapshot or {}
     lk, wt, wc = s.get("lakeState"), s.get("waterTemperature"), s.get("waterClarity")
     pick = lambda d, ks: {k: (d or {}).get(k) for k in ks if (d or {}).get(k) is not None}      # noqa: E731
+    cur, tr = ci.sane_temperature((wt or {}).get("currentTempF"), (wt or {}).get("trend24hF"))
+    wt_vals = {k: v for k, v in (("currentTempF", cur), ("trend24hF", tr)) if v is not None}
+    lk_vals = pick(lk, ("levelState", "floodPoolState", "tributaryDischargeTrend"))
+    if ci.lake_trend((lk or {}).get("trendState")) != ci.UNKNOWN:
+        lk_vals["trendState"] = lk["trendState"]
+    if ci.lake_trend(lk_vals.get("tributaryDischargeTrend")) == ci.UNKNOWN:
+        lk_vals.pop("tributaryDischargeTrend", None)
     return {
-        "lake": _slot(lk, pick(lk, ("trendState", "levelState", "floodPoolState", "tributaryDischargeTrend")), now, stale_after_h, "lake-brain"),
-        "waterTemp": _slot(wt, pick(wt, ("currentTempF", "trend24hF")), now, stale_after_h, "water-temp"),
+        "lake": _slot(lk, lk_vals, now, stale_after_h, "lake-brain"),
+        "waterTemp": _slot(wt, wt_vals, now, stale_after_h, "water-temp"),
         "waterClarity": _slot(wc, pick(wc, ("clarityFt",)), now, stale_after_h, "water-clarity"),
     }
 
@@ -85,7 +94,20 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
         p = presence[sid] or {}
         info = (species_info or {}).get(sid) or {}
         rec = {"speciesId": sid, "presence": {k: p.get(k) for k in ("presenceState", "confidence", "latestRecord") if p.get(k) is not None},
-               "knowledge": {k: info.get(k) for k in ("researchMaturity", "knowledgeScore") if info.get(k) is not None}}
+               "knowledge": {k: info.get(k) for k in ("researchMaturity", "knowledgeScore", "assessment") if info.get(k) is not None}}
+        # Presence (Lake Brain) and knowledge (Biological) are separate: a present species may be unassessed or have no knowledge row at all.
+        if info.get("assessment") == "NOT_ASSESSED":
+            rec["knowledge"]["state"] = "NOT_ASSESSED"
+        elif not info:
+            rec["knowledge"]["state"] = "NO_KNOWLEDGE_ROW"
+        elif ruleset.counts(sid)["usable"]:
+            rec["knowledge"]["state"] = "ASSESSED_WITH_RULES"
+        else:
+            rec["knowledge"]["state"] = "ASSESSED_NO_RULES"
+        if rec["knowledge"]["state"] in ("NOT_ASSESSED", "NO_KNOWLEDGE_ROW"):
+            rec |= {"evaluated": False, "notEvaluatedReason": f"presence {p.get('presenceState')!r} is known but Biological knowledge is {rec['knowledge']['state']}: UNKNOWN, not rated"}
+            species_out.append(rec)
+            continue
         if p.get("presenceState") not in relevant_presence:
             rec |= {"evaluated": False, "notEvaluatedReason": f"presence state {p.get('presenceState')!r} is outside the relevance policy (Lake Brain owns presence)"}
             species_out.append(rec)

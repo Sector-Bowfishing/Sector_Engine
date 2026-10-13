@@ -18,7 +18,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bio_state as bs      # noqa: E402
 import rules as rl         # noqa: E402
 
-PILOT_LAKES = {"Guntersville|AL": {"key": "Guntersville_AL", "region": "south", "waterbodyType": "run_of_river", "lat": 34.4, "lon": -86.3}}
+PILOT_LAKES = {
+    "Guntersville|AL": {"key": "Guntersville_AL", "region": "south", "waterbodyType": "run_of_river", "lat": 34.4, "lon": -86.3},
+    # second independent system for transfer testing (Savannah basin, Corps storage reservoir). Internal dry runs only; not part of any bundle yet.
+    "Lake Hartwell|SC": {"key": "Lake_Hartwell_SC", "region": "south", "waterbodyType": "storage_reservoir", "lat": 34.5, "lon": -82.9},
+}
 
 
 def main(argv=None) -> int:
@@ -45,7 +49,7 @@ def main(argv=None) -> int:
         presence = r.get(f"lakes/{meta['key']}/speciesPresence") or {}
         for sid in presence:
             sp = r.get(f"species/{sid}") or {}
-            species_info[sid] = {"researchMaturity": sp.get("researchMaturity"), "knowledgeScore": (sp.get("knowledge") or {}).get("overallRounded")}
+            species_info[sid] = {k: v for k, v in {"researchMaturity": sp.get("researchMaturity"), "knowledgeScore": (sp.get("knowledge") or {}).get("overallRounded"), "assessment": sp.get("assessment")}.items() if v is not None}
     else:
         snap = json.load(open(a.snapshot))
         presence = json.load(open(a.presence)) if a.presence else {}

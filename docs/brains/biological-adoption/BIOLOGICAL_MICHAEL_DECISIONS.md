@@ -2,6 +2,10 @@
 
 Nothing below has been applied. Customer behaviour, labels, policy, production and the live Brain RTDB are unchanged. Unrelated implementation is not waiting on these.
 
+## 00. Where things stand (2026-10-14)
+Rule set `2026-10-14.1-rules`: 61 rules, 47 usable and active, 11 DRAFT, 3 retired by supersession; 50 frozen identities; 7 predictions; 0 observations. Candidate bundle `2026-10-14.3` passes the 14-point audit (`tools/audit_bundle.py`). Canonical rescore after every change: **published 4.0, implementation-supported 4.6, research potential 4.0 (capped; 4.3 uncapped), research + implementation 4.9, all unchanged by this cycle.** Nothing further can move the score without an approval below, a reviewer, or field data.
+**What is waiting on you, in order of leverage:** (1) approve publishing the candidate (4.0 → 4.6); (2) set the knowledgeDepth basis and the unassessed rows (→ up to 4.9); (3) approve a reviewer role; (4) tell me how many testers can log trips at which lakes, and preregister the success criterion (`BIOLOGICAL_VALIDATION_FLEET_DESIGN.md`).
+
 ## 0. Corrected numbers
 | | Score | |
 |---|---:|---|
@@ -13,7 +17,7 @@ Nothing below has been applied. Customer behaviour, labels, policy, production a
 Next steps up: contradictions resolved in the bundle → ≈5.0; State LIVE + partial validation + a regional-transfer fact → ≈6.0 (cap 6.0 until a species is VALIDATED); ≥1 VALIDATED species lifts the 6.0 cap.
 
 ## 1. Production-table corrections (`SpeciesDatabase.swift`; customer-facing)
-Approve / reject each. Detail, evidence and confidence: `BIOLOGICAL_ADOPTION_RECONCILIATION.md`.
+Approve / reject each. Detail, evidence and confidence: `BIOLOGICAL_ADOPTION_RECONCILIATION.md`. **Exact diffs, verified to apply cleanly and not applied:** `proposed/SpeciesDatabase.approve-candidates.patch` (wording for smallmouth/silver/bighead/grass carp, catfish 70/77/80 F, and the one-line `SpawnFactor` sentence that otherwise still says "staging in warm backwaters") and `proposed/SpeciesDatabase.hold-pending-evidence.patch` (longnose, bowfin window, spotted gar). Targeted research this cycle: longnose gar 64-70 F is supported by several agency compilations but no modern southern primary study, and **nothing supports 22/25 C**; bowfin's February start is supported for coastal Louisiana only and **no temperature** change is justified.
 | # | Change | My recommendation |
 |---|---|---|
 | A2 | smallmouth buffalo: drop "submerged vegetation"; use tailrace / creek-mouth / backwater wording | **Approve** (unsupported claim) |
@@ -21,8 +25,8 @@ Approve / reject each. Detail, evidence and confidence: `BIOLOGICAL_ADOPTION_REC
 | A5 | grass carp habitat → vegetation + tributary mouths from ~60 F (drop ">70 F slow backwaters") | **Approve** |
 | A4 | bighead carp wording → same as silver or remove | Approve (low priority) |
 | A7 | channel catfish `70/77/80` F | Approve (no customer effect: never headlines) |
-| A1 | longnose gar `64/67/77` F | Hold: single old compilation; **needs a modern Southeast temperature source** |
-| A6 | bowfin south window Feb-May, min 57 F | Hold: compilation + one observation |
+| A1 | longnose gar `64/67/77` F | Hold: agency compilations support ~17-21 C and nothing supports 22/25 C, but there is **no modern southern primary source** |
+| A6 | bowfin south window Feb-May (temperature unchanged) | Hold: supported for Louisiana only (Davidson 1991 abstract); no other southern timing study |
 | A8 | spotted gar `68/75/86` F | Hold: compilations only |
 
 ## 2. First LIVE species set
@@ -30,15 +34,15 @@ Criteria: bowfishing importance + rule evidence + Intelligence usefulness + pres
 | Tier | Species | Usable rules (draft) | Note |
 |---|---|---:|---|
 | **A** | common carp | 11 (0) | richest evidence; summer-night position deliberately UNKNOWN |
-| **A** | spotted gar | 7 (1) | night movement, shallow vegetation, backwaters |
+| **A** | spotted gar | 7 (1; 3 older versions retired) | night movement outside spring, shallow vegetation, backwaters |
 | **A** | silver carp | 8 (1) | flow-driven; spawn untested on TVA pools |
 | **A** | longnose gar | 3 (1) | tailwater spring staging only |
 | B | alligator gar | 5 (1) | strong flood-spawn evidence; confirm presence first |
 | B | grass carp | 7 (1) | good rules; confirm presence before use |
 | C | bighead carp | 2 (0) | evidence mostly pooled with silver carp |
 | C | smallmouth buffalo | 1 (3) | most rules DRAFT |
-| C | bigmouth buffalo | 1 (3) | numbers unconfirmed; all direct data northern |
-Recommended first LIVE set: **common carp, spotted gar, silver carp, longnose gar**.
+| C | bigmouth buffalo | 3 (3) | all direct data northern; spawn temperature unverified |
+Recommended first LIVE set: **common carp, spotted gar, silver carp, longnose gar**, subject to presence on the specific lake.
 
 ## 3. Previously unassessed species (policy `policyNotAssessed` and the Lake Brain's 12-species presence list are **unchanged**)
 Current policy: the 8 below sit outside the Lake Brain's 12 assessed species, so Intelligence guardrails treat them as not assessed (fail closed on the unmerged `feat/intel-guardrails-5a` branch). They have rows in the Biological bundle (some all-zero), which is a separate "knowledge" row, not presence or policy.

@@ -1,6 +1,6 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
- "description": "Omitted when a species has no usable rule (=> UNSUPPORTED downstream). PROPOSED until every contributing rule is APPROVED. A feature absent from bands is UNKNOWN.",
+ "description": "Omitted when a species has no usable rule (=> UNSUPPORTED downstream). PROPOSED until every contributing rule is APPROVED. A feature absent from bands is UNKNOWN. The RTDB stores no empty arrays, so an absent bands/habitatPreferences/spawn means none.",
  "properties": {
   "bands": {
    "items": {
@@ -501,8 +501,7 @@
   "evidenceTier",
   "rulesVersion",
   "featuresVersion",
-  "generatedAt",
-  "bands"
+  "generatedAt"
  ],
  "title": "Biological species response bands (biological-response-bands-v1): the Biological-owned object under species/{id}.responseBands",
  "type": "object"

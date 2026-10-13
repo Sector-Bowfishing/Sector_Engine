@@ -224,8 +224,20 @@ def _state_responsibility(b: Bundle) -> dict:
         f = c["facts"]
         return dict(status="IN_PROGRESS", validation=c["validation"], question=q, note=IN_PROGRESS_NOTE, pilotLakes=f.get("pilotLakes"),
                     rulesVersion=f.get("rulesVersion"), speciesWithUsableRules=f.get("speciesWithUsableRules"), usableRules=f.get("usableRules"),
-                    draftRules=f.get("draftRules"), retiredRules=f.get("retiredRules"), frozenRules=f.get("frozenRules"), predictionsLogged=f.get("predictionsLogged", 0))
+                    draftRules=f.get("draftRules"), retiredRules=f.get("retiredRules"), frozenRules=f.get("frozenRules"), predictionsLogged=f.get("predictionsLogged", 0), observationsLogged=f.get("observationsLogged", 0), independentTrips=f.get("independentTrips", 0))
     return dict(status="NOT_STARTED", question=q, note=NOT_STARTED_NOTE + (f" Capability blockers: {'; '.join(c['blockers'][:3])}" if b.capability["facts"] else ""))
+
+
+def _facts(b: Bundle, by_m: dict) -> list:
+    """Generic, Engine-computed maturity facts [{label, value}] that an Ops renderer can show verbatim without per-Brain code."""
+    f = b.capability["facts"]
+    if not f:
+        return []
+    rows = [("Species with usable rules", f.get("speciesWithUsableRules")), ("Usable rules", f.get("usableRules")), ("Draft rules", f.get("draftRules")),
+            ("Retired rules", f.get("retiredRules")), ("Frozen rules", f.get("frozenRules")), ("Predictions logged", f.get("predictionsLogged", 0)),
+            ("Observations logged", f.get("observationsLogged", 0)), ("Independent trips", f.get("independentTrips", 0)),
+            ("Validated species", by_m.get("VALIDATED", 0)), ("Pilot lakes", ", ".join(f.get("pilotLakes") or []) or None), ("Rules version", f.get("rulesVersion"))]
+    return [dict(label=k, value=v) for k, v in rows if v is not None]
 
 
 def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_uri: str, descriptor: dict) -> dict:
@@ -236,7 +248,7 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
         by_a[p["assessment"]] = by_a.get(p["assessment"], 0) + 1
     open_disc = [d for d in b.discrepancies if d.get("status") == "OPEN"]
     return _clean(dict(
-        platform=PLATFORM,
+        platform=PLATFORM, facts=_facts(b, by_m),
         stalenessModel="VERSION", dependsOn=[],
         schedule=dict(cadence="manual (version-driven: runs when the canonical bundle changes)", running=False),
         brainId=BRAIN_ID, displayName=DISPLAY_NAME, domain="biology",

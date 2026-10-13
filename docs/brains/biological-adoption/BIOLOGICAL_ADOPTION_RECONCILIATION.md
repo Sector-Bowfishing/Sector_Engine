@@ -2,6 +2,10 @@
 
 **Nothing in this document has been applied.** `Sources/SectorEngine/Engine/Config/SpeciesDatabase.swift` is **unchanged** (it drives customer-facing spawn-run windows and "where to look" copy, so every change needs Michael's approval). Evidence is cited by source identifier; the full ledger is private (`Sector_Research_Data/biological-brain/packets/` and `adoption/verification/`). Classification vocabulary: WRONG · TOO BROAD · UNSUPPORTED · REGIONALLY LIMITED · STILL DEFENSIBLE. Temperatures: 15 C = 59 F, 18 C = 64.4 F, 20 C = 68 F, 21.1 C = 70 F, 30 C = 86 F.
 
+**Exact diffs (prepared, verified to apply cleanly, NOT applied):** `proposed/SpeciesDatabase.approve-candidates.patch` (A2, A3, A4, A5, A7, plus the one-line `SpawnFactor.swift` change below) and `proposed/SpeciesDatabase.hold-pending-evidence.patch` (A1, A6, A8). No Swift test pins any of the changed strings.
+
+**Customer-text coherence finding (new).** `SpawnFactor.whyText` hard-codes `"<species> staging in warm backwaters — <habitat>"` for river-dependent species, so correcting only the habitat string would still print "staging in warm backwaters" for silver, bighead and grass carp. The approve-candidates patch therefore also changes that sentence to `"<species> staging — <habitat>"`. Where-to-look spawn cards use the habitat string verbatim as the body (`WhereToLookEngine.swift:27`).
+
 ## A. Production table (`SpeciesDatabase.swift`)
 
 ### A1. Longnose gar: temperature (lines 187-191) → **PENDING REVIEW**
@@ -12,7 +16,8 @@
 | CLASS | Lower bound and peak TOO WARM; upper bound UNSUPPORTED either way |
 | WHY | Literature spawn range is 17.8-21.1 C (64-70 F); production's whole band sits ~2-3 C warmer and its peak (72 F) is above the top of the literature range |
 | EVIDENCE | Fishes of Texas compilation (citing Dean 1895; Netsch & Witt 1962) read in full; Outdoor Alabama account (May aggregations, lower Coosa River; quoting *Fishes of Alabama and the Mobile Basin*); McGrath et al. 2012 (York R., VA: spawn ~1 month, ended late June; two fish left the spawning ground at 29 C, n=2). No modern Southeast temperature measurement |
-| CONFIDENCE | LOW-MEDIUM (old compilation is the only temperature source) |
+| UPDATE 2026-10-14 (targeted check) | Agency compilations agree on roughly 17-21 C: Iowa DNR (reaches ~70 F / 21 C), MN DNR (above ~67 F / 19 C, snippet), Ontario Fishes (16.5-21 C, snippet), USFS citing Sublette 1990 (19.5-21 C, snippet). **No source supports the production 22 C peak or 25 C maximum; none is a modern southern primary study.** Timing varies widely: Alabama May aggregations below Mobile-basin locks; Missouri late April-mid June; South Carolina late April-May; Virginia May-late June; Florida Ichetucknee Springs 18-19 Feb 2023 (thermally stable spring run, so temperature is not the only trigger). Johnson & Noltie 1996 (second-hand): migration tracks flow/level more than warming |
+| CONFIDENCE | LOW-MEDIUM for the 64-70 F band; the 77 F maximum is unsupported in either direction (hold) |
 | CUSTOMER IMPACT | spawn-run signal for longnose gar would start ~4 F cooler (earlier in spring) |
 | INTELLIGENCE IMPACT | none: rule `LG-SPN-01` already carries the range 17.8-21.1 C |
 
@@ -67,10 +72,11 @@
 | | |
 |---|---|
 | CURRENT | `61 / 64 / 66` F (16 / 18 / 19 C); south Mar-May |
-| PROPOSED | south window **Feb-May**; `spawnMinF` **57** |
+| PROPOSED | south window **Feb-May**; `spawnMinF` unchanged (no temperature evidence) |
 | CLASS | REGIONALLY LIMITED: the band matches northern accounts; Gulf-state spawning begins earlier |
 | EVIDENCE | Vermont F&W and Fishes of Texas compilation (16-19 C, northern); Alabama River male running milt at 14 C (57 F) in February 1990 (a single observation); southeastern Louisiana spawning late Feb-early Mar (Davis 2006, via compilation) |
-| CONFIDENCE | LOW-MEDIUM (compilation + one observation) |
+| UPDATE 2026-10-14 (targeted check) | **Window:** a February start is supported for coastal Louisiana: Davidson, Walker, Tilyou & Lutz 1991 (J. SEAFWA, three Louisiana study areas, READ-ABSTRACT) report female GSI rising through February with all females spent by early March; Davis 2006 (via compilation) agrees but is not independent of that region. Unsupported elsewhere (no Tennessee Valley, Arkansas, Mississippi, Alabama or Texas timing study; Santee Cooper "March to early June" is an uncited quote). **Temperature:** **no measured water temperature exists for any southern Feb-Mar spawning**; the 16-19 C band is northern/old-compilation and the 14 C Alabama milt record was not re-found. Therefore: propose the window change only; **do not change `spawnMinF`** (the patch leaves 61/64/66 F). Possible taxonomy caveat: Tennessee Valley/Arkansas/Mississippi fish may be *A. ocellicauda*, not *A. calva* |
+| CONFIDENCE | MEDIUM for a Louisiana February start; LOW elsewhere; no temperature claim |
 | CUSTOMER / INTELLIGENCE IMPACT | earlier southern spawn-run window for bowfin / no bowfin rules exist (bowfin is outside the Lake Brain's 12 assessed species) |
 
 ### A7. Channel catfish: temperature (lines 203-206) → **PROPOSE NARROW CORRECTION; earlier concern overstated**
@@ -101,8 +107,8 @@ Alligator gar `68/73/86` F (20-30 C) STILL DEFENSIBLE; bigmouth buffalo `60/65/7
 |---|---|---|---|
 | B1 | Grass carp "feeding onset 10-16 C" (profile basis) | CONTRADICTED by Truman winter telemetry (full guts, littoral ≤3 m, three winters) | rule `GC-TMP-01` encodes winter feeding; profile text unchanged (private bundle, pending approval) |
 | B2 | Channel catfish "feeding heaviest 75-85 F" (v1 basis) | UNSUPPORTED by any opened peer-reviewed source | no rules built for catfish |
-| B3 | Spotted gar "a rise at ~15 C is needed; cold rises do not move fish" | the 15 C qualifier and cold-rise null are **not confirmed at abstract level** (Snedden 1999 abstract supports floodplain use in the flood pulse and rising activity with temperature and stage) | rule `SG-FLO-02` is DRAFT; `SG-FLO-01` carries no temperature qualifier |
-| B4 | Bigmouth buffalo "17-19 C, 0.3-0.9 m, spawned in ~16% of years, 7.2 cm/d recession" | abstract confirms only the rapid-recession recruitment failure; all four numbers are full-text-unconfirmed | spawn and habitat rules are DRAFT; only `BM-FLO-01` (rapid recession) is usable |
+| B3 | Spotted gar "a rise at ~15 C is needed; cold rises do not move fish" | **Still unverified after a targeted attempt**: Snedden's full text is unreachable (LSU repository unavailable, publisher 403). COSEWIC, citing Snedden, says only that rising photoperiod and ~15 C water initiated spring spawning in Louisiana; it says nothing about a river rise or dispersal. The abstract also indicates nocturnal activity applied *outside spring*. New directly observed fact (Tyler & Granger 1984, read in full): spawning ~22 Apr-10 Jun, peak mid-May, 15-46 cm in dense vegetation, stopping in cool turbid rain spells (no temperature measured) | `SG-FLO-02` stays DRAFT; `SG-NGT-01` **v2** is restricted to non-spring months (v1 retired, not edited); `SG-SPN-01` and `SG-HAB-01` **v2** add the Oklahoma stream |
+| B4 | Bigmouth buffalo "17-19 C, 0.3-0.9 m, spawned in ~16% of years, 7.2 cm/d recession" | **Targeted check:** Lackmann 2023's full text is not reachable (abstract only). 17-19 C and 0.3-0.9 m appear in none of the three open-access companion papers (Lackmann 2024 Sci Rep, Gutowsky 2024 and Bryshun 2025 FACETS, all read in full): **still unverified**. "~16% of years" is **corrected**: Bryshun 2025 says ~10 spawning attempts in 66 years (1956-2022), about 15%. 7.2 cm/d unverified (qualitative recession failure confirmed). New usable facts: in non-flood years tagged fish stayed in the lake with minimal river use; spawning is in shallow flooded marshes, riverbanks and lake shores; water level is positively related to spawning success; closed gates are barriers | `BM-SPN-01`, `BM-HAB-01` stay DRAFT; new usable `BM-HAB-03` (flooded vegetation on a rise) and `BM-HAB-04` (no tributary run without a pulse); `BM-FLO-01` retained |
 | B5 | "Four independent silver carp flow datasets" (research summary) | the Illinois (DeGrandchamp 2008) and Swan Lake (Coulter 2017) papers come from the same 2004-05 tagged program | counted as **one** stream; three independent streams plus Wabash; rule confidence MEDIUM |
 | B6 | Silver carp "TVA warm coves" winter claim | the quote is ADCNR (D. Armstrong), about electrofishing catch, not TVA; snippet-only | rule `SC-HAB-05` is DRAFT; attribute to ADCNR only |
 | B7 | Longnose gar riffle-spawning "Mettee et al. 1996" | cited as Outdoor Alabama quoting the book; riffle spawning is the lower Coosa River | evidence entry reworded |

@@ -73,6 +73,7 @@ def build():
                           "zone": {"enum": list(ft.HABITAT_CLASSES) + ["openWater", "unknown"]}, "depthClass": {"enum": list(ft.DEPTH_CLASSES)},
                           "vegetation": {"enum": list(vl.VEG)}, "waterTempF": {"type": "number"}, "clarityBand": {"enum": list(ft.REGISTRY["clarityBand"]["states"])},
                           "windBand": {"enum": list(vl.WIND_BANDS)}, "levelContext": {"enum": list(vl.LEVEL_CONTEXT)},
+                          "shootableCount": {"type": "integer", "minimum": 0, "description": "shootable fish in this zone/trip; the validation outcome is shootable encounters per effort-hour"},
                           "spawnBehaviorObserved": {"enum": [True, False, "UNKNOWN"]}, "notes": {"type": "string", "maxLength": 280},
                           "observerConfidence": {"enum": list(vl.OBSERVER_CONF)}}}
     ctx = {"type": "object", "properties": {"months": {"oneOf": [{"const": "all"}, {"type": "array", "items": {"type": "integer", "minimum": 1, "maximum": 12}}]},
@@ -83,8 +84,8 @@ def build():
               "confidenceBasis": {"type": "object", "required": ["independentStreams", "confidenceCap"]}, "validationTier": {"enum": list(bd.VALIDATION_TIER)},
               "reason": {"type": "string", "maxLength": bd.MAX_REASON}, "limitations": {"type": "array", "items": {"type": "string"}}}
     sp_bands = {"$schema": S, "title": "Biological species response bands (biological-response-bands-v1): the Biological-owned object under species/{id}.responseBands",
-                "description": "Omitted when a species has no usable rule (=> UNSUPPORTED downstream). PROPOSED until every contributing rule is APPROVED. A feature absent from bands is UNKNOWN.",
-                "type": "object", "required": ["contractVersion", "speciesId", "status", "evidenceTier", "rulesVersion", "featuresVersion", "generatedAt", "bands"],
+                "description": "Omitted when a species has no usable rule (=> UNSUPPORTED downstream). PROPOSED until every contributing rule is APPROVED. A feature absent from bands is UNKNOWN. The RTDB stores no empty arrays, so an absent bands/habitatPreferences/spawn means none.",
+                "type": "object", "required": ["contractVersion", "speciesId", "status", "evidenceTier", "rulesVersion", "featuresVersion", "generatedAt"],
                 "properties": {"contractVersion": {"const": bd.CONTRACT_VERSION}, "speciesId": {"type": "string"}, "status": {"enum": list(bd.BAND_STATUS)},
                                "evidenceTier": {"enum": ["RESEARCH", "REVIEWED"], "description": "VALIDATED is never asserted by the compiler"},
                                "rulesVersion": {"type": "string"}, "featuresVersion": {"type": "string"}, "generatedAt": {"type": "string"},

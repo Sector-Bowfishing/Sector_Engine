@@ -71,6 +71,16 @@ def assess(files: dict[str, bytes]) -> dict:
         except (vl.LogError, ValueError) as e:
             blockers.append(f"prediction log invalid: {e}")
 
+    obs_raw = files.get("validation/observations.jsonl")
+    if obs_raw is not None:
+        try:
+            oes = _jsonl(obs_raw)
+            vl._chain(oes, "observation store")
+            facts["observationsLogged"] = len(oes)
+            facts["independentTrips"] = len({o["tripId"] for o in oes if o.get("speciesIdConfidence") in ("CONFIRMED", "LIKELY")})
+        except (vl.LogError, KeyError, ValueError) as e:
+            blockers.append(f"observation store invalid: {e}")
+
     pilots = []
     for path, raw in sorted(files.items()):
         if not (path.startswith("state/pilot_") and path.endswith(".json")):

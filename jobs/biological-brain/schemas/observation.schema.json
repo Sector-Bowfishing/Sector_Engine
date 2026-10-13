@@ -60,6 +60,11 @@
    "description": "pseudonymous; no contact details",
    "type": "string"
   },
+  "shootableCount": {
+   "description": "shootable fish in this zone/trip; the validation outcome is shootable encounters per effort-hour",
+   "minimum": 0,
+   "type": "integer"
+  },
   "spawnBehaviorObserved": {
    "enum": [
     true,

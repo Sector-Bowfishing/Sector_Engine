@@ -43,7 +43,8 @@ def capability_files(tamper=None):
     files["validation/frozen_rules.jsonl"] = open(os.path.join(d, "r.jsonl"), "rb").read()
     shutil.rmtree(d)
     st = bs.build_lake_state("Example|ST", region="south", waterbody_type="run_of_river", now=T0, inputs=inputs(temp_f=70, lake_trend="RISING"),
-                             daypart="NIGHT", presence={"example_fish": {"presenceState": "established"}}, ruleset=rs)
+                             daypart="NIGHT", presence={"example_fish": {"presenceState": "established"}}, ruleset=rs,
+                             species_info={"example_fish": {"assessment": "ASSESSED"}})
     files["state/pilot_Example_ST.json"] = json.dumps(st).encode()
     if tamper:
         tamper(files)
@@ -134,6 +135,18 @@ class PublisherReflectsCapabilityTests(unittest.TestCase):
         # no per-lake state path and no customer path is ever written
         self.assertFalse([p for p in up if p.startswith("/lakes/") or p.startswith("/snapshots/") or p.startswith("/conditions")])
 
+    def test_registry_publishes_generic_facts_for_ops(self):
+        _, up = self.updates(capability_files())
+        facts = {f["label"]: f["value"] for f in up["/brains/biological-state"]["facts"]}
+        self.assertEqual(facts["Usable rules"], 3)
+        self.assertEqual(facts["Frozen rules"], 3)
+        self.assertEqual(facts["Observations logged"], 0)
+        self.assertEqual(facts["Independent trips"], 0)
+        self.assertEqual(facts["Validated species"], 0)
+        self.assertEqual(facts["Pilot lakes"], "Example|ST")
+        _, none = self.updates({})
+        self.assertNotIn("facts", none["/brains/biological-state"])                    # unchanged when there is no capability
+
     def test_public_payload_has_counts_only_never_rule_text(self):
         _, up = self.updates(capability_files())
         blob = json.dumps(up)
@@ -184,3 +197,49 @@ class StageBundleTests(unittest.TestCase):
                 stage(os.path.join(src, "releases", "0000-00-00.1"), tempfile.mkdtemp(), "0000-00-02.1", extra_files={"registry.json": b"{}"})
         finally:
             shutil.rmtree(src), shutil.rmtree(out)
+
+
+class AuditBundleTests(unittest.TestCase):
+    def stage(self, extra):
+        src, out = tempfile.mkdtemp(), tempfile.mkdtemp()
+        write_bundle(src, [synthetic_profile(), synthetic_profile("draft_fish"), not_assessed()])
+        from tools.stage_bundle import stage
+        man_patch = {"counts": {"machineRules": {"total": 4, "usable": 3, "retired": 0}}}
+        stage(os.path.join(src, "releases", "0000-00-00.1"), out, "0000-00-01.1", extra_files=extra, manifest_patch=man_patch, now=NOW)
+        shutil.rmtree(src)
+        return out
+
+    def test_a_consistent_candidate_passes_every_check(self):
+        from tools.audit_bundle import audit
+        out = self.stage(capability_files())
+        try:
+            rep = audit(out)
+            self.assertTrue(rep["ok"], [c for c in rep["checks"] if not c["ok"]])
+            self.assertEqual(rep["capability"], "IN_PROGRESS")
+        finally:
+            shutil.rmtree(out)
+
+    def test_wrong_declared_counts_and_missing_register_fail(self):
+        from tools.audit_bundle import audit
+        files = capability_files()
+        files.pop("validation/frozen_rules.jsonl")
+        out = self.stage(files)
+        try:
+            rep = audit(out)
+            self.assertFalse(rep["ok"])
+            self.assertTrue(any(not c["ok"] and "frozen register" in c["check"] for c in rep["checks"]))
+        finally:
+            shutil.rmtree(out)
+
+    def test_a_draft_rule_cannot_become_usable_silently(self):
+        from tools.audit_bundle import audit
+        files = capability_files()
+        d = json.loads(files["rules/draft_fish.json"])
+        d["rules"][0]["status"] = "RECONCILED"               # promoted without evidence: the validator must refuse the whole rules set
+        files["rules/draft_fish.json"] = json.dumps(d).encode()
+        out = self.stage(files)
+        try:
+            rep = audit(out)
+            self.assertFalse(rep["ok"])
+        finally:
+            shutil.rmtree(out)
