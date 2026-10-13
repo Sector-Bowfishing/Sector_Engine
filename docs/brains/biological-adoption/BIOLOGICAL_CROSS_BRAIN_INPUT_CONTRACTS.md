@@ -37,6 +37,11 @@ Per lake, `lakeState.inflow` (or an `inflow` state beside it):
 ```
 Biological would read `inflow.trendState` as `tributaryDischargeTrend` (already wired, vocabulary-checked) and `poolOperations` for spillway/tailwater rules (smallmouth buffalo, longnose gar, silver carp tailwater schools). Until published: UNKNOWN.
 
+
+### The data already exists (Guntersville), but has no Brain publisher
+The Clarity Fusion job `jobs/hydrology-hourly` writes, hourly, `gs://sector-lake-surface/hydrology/{lakeKey}/hourly/{date}.json` with `rows[hour].flows[arm] = {usgs?: …, nwm?: {cfs, validTime, reach}}` (measured USGS gauge where an arm has one, National Water Model analysis where it has a reach; both kept, never merged) and `rows[hour].tva` (Guntersville/Nickajack dam release, pool, tailwater; measured), with a 30-day backfill. It is a Clarity input, published to Cloud Storage, not a Brain state, and it covers one lake; when checked its newest row was about a day old.
+Recommendation to the Lake/hydrology owner: publish a Brain-normalised `inflow` state from it (measured gauges preferred; NWM flagged `sourceKind: modeled`; `tva.releaseCfs` into `poolOperations.releaseCfs`), with the trend classified against a lake-seasonal baseline built from the existing hourly history (the 24 h change distribution; "rapid" = above its p95, exactly like the pool trend). Biological would then read `inflow.trendState` as `tributaryDischargeTrend` and lower band confidence one level for modeled input. **Biological must not read that bucket itself** (ownership), and until a Brain publishes the state `rapidDischargeIncrease` stays UNKNOWN.
+
 ## 3. Clarity (consumed today)
 `waterClarity.clarityFt` → `clarityBand` (turbid < 1.3 ft, moderate, clear ≥ 3.3 ft; coarse engineering bands, not biological thresholds). Used only by the few rules with clarity evidence (carp tolerance, spotted gar preference).
 

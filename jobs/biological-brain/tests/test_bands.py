@@ -117,5 +117,35 @@ class BandContractTests(unittest.TestCase):
         self.assertEqual({o["featureId"] for o in out} - {"daypart"}, covered - {"daypart"})      # compile and runtime cover the same features
 
 
+class EvaluatedBandTests(unittest.TestCase):
+    ctx = {"month": 4, "region": "south", "waterbodyType": "run_of_river"}
+
+    def test_every_band_in_a_real_state_output_validates(self):
+        from test_rules_state_validation import BiologicalStateTests
+        s = BiologicalStateTests().build()
+        n = 0
+        for sp in s["species"]:
+            for r in sp.get("responses", []):
+                n += 1
+                self.assertEqual(bands.validate_evaluated_band(r), [], r)
+        self.assertGreater(n, 0)
+
+    def test_unknown_conflict_and_missing_provenance_forms(self):
+        rs = fixture_ruleset()
+        unk = rl.evaluate_responses(rs.for_species("example_fish"), ft.evaluate_features({}), self.ctx)
+        for r in unk:
+            self.assertEqual(bands.validate_evaluated_band(r), [])
+        conflict = rl.evaluate_responses([rule("EX-FLW-01", response="FAVORABLE"), rule("EX-FLW-02", response="LIMITING")], ft.evaluate_features({"waterTemp": {"status": "PUBLISHED", "values": {"currentTempF": 70.0}}, "lake": {"status": "PUBLISHED", "values": {"trendState": "RISING"}}}), self.ctx)
+        self.assertEqual(conflict[0]["response"], "UNKNOWN")
+        self.assertEqual(bands.validate_evaluated_band(conflict[0]), [])
+        good = rl.evaluate_responses([rule("EX-FLW-01")], ft.evaluate_features({"waterTemp": {"status": "PUBLISHED", "values": {"currentTempF": 70.0}}, "lake": {"status": "PUBLISHED", "values": {"trendState": "RISING"}}}), self.ctx)[0]
+        for mutate in (lambda b: b.pop("transferability"), lambda b: b.__setitem__("confidence", "HIGH"), lambda b: b["evidenceBasis"].__setitem__("independentStreams", 0),
+                       lambda b: b.__setitem__("response", "GREAT"), lambda b: b.__setitem__("featureState", "MAYBE"), lambda b: b["regionApplicability"].__setitem__("applies", False)):
+            import copy
+            bb = copy.deepcopy(good)
+            mutate(bb)
+            self.assertTrue(bands.validate_evaluated_band(bb), mutate)
+
+
 if __name__ == "__main__":
     unittest.main()

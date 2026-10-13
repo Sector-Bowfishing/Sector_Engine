@@ -223,3 +223,32 @@ def validate_response_bands(rb: dict) -> list[str]:
     if not (rb.get("bands") or rb.get("habitatPreferences") or rb.get("spawn")):
         e.append("empty: a species without a usable rule must omit responseBands")
     return e
+
+
+def validate_evaluated_band(x: dict) -> list[str]:
+    """Consistency problems with ONE evaluated band (a `species[].responses[]` entry from the Biological State). Empty = valid."""
+    e = []
+    if x.get("response") not in BAND_VALUES:
+        e.append("response")
+    spec = ft.REGISTRY.get(x.get("featureId"))
+    if spec is None or spec["availability"] == "AREA":
+        e.append("featureId")
+    elif x.get("featureState") not in tuple(spec["states"]) + (ft.UNKNOWN,):
+        e.append("featureState")
+    if x.get("response") == "UNKNOWN":
+        if x.get("confidence") is not None or not x.get("reason"):
+            e.append("an UNKNOWN band carries a reason and no confidence")
+        return e
+    if x.get("confidence") not in rl.CONFIDENCE:
+        e.append("confidence")
+    eb = x.get("evidenceBasis") or {}
+    if not eb.get("ruleIds") or not isinstance(eb.get("independentStreams"), int) or eb["independentStreams"] < 1:
+        e.append("evidenceBasis needs ruleIds and >=1 independent stream")
+    if x.get("transferability") not in rl.TRANSFER:
+        e.append("transferability")
+    for k in ("regionApplicability", "seasonApplicability"):
+        if not (x.get(k) or {}).get("applies"):
+            e.append(f"{k} must state it applies")
+    if x.get("confidence") == "HIGH" and x.get("transferability") != "TRANSFERS":
+        e.append("HIGH confidence needs a Southeast-transferable basis")
+    return e
