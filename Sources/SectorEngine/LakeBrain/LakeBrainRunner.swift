@@ -112,6 +112,26 @@ public struct LakeBrainRegistryEntry: Codable, Equatable, Sendable {
     public var healthRule: String
     public var orchestration: LakeBrainDescriptor
     public var fleetScope: String
+    /// Prospective prediction-ledger status (Ops-visible validation clock). `startedAt` is the fixed start of the prospective clock.
+    public var predictionLedger: PredictionLedgerStatus? = nil
+}
+
+/// The prospective prediction ledger as Sector Ops should see it. Validation stays NOT_VALIDATED regardless of this.
+public struct PredictionLedgerStatus: Codable, Equatable, Sendable {
+    public var status: String
+    public var startedAt: String
+    public var lastObject: String?
+    public var lastRecords: Int?
+    public var warning: String?
+    public var rulesVersion: String
+    public var note: String
+    /// 2026-10-13T18:53:14Z: first object `predictions/2026/10/13/185314Z-740761e4e50a.jsonl` (docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md).
+    public static let startedAt = "2026-10-13T18:53:14Z"
+    public static func make(status: String, lastObject: String?, lastRecords: Int, warning: String?) -> PredictionLedgerStatus {
+        PredictionLedgerStatus(status: status, startedAt: startedAt, lastObject: lastObject, lastRecords: lastObject == nil ? nil : lastRecords,
+                               warning: warning, rulesVersion: LakeBrainSpec.modelVersion,
+                               note: "Prospective evidence only. Validation stays NOT_VALIDATED until pre-registered scoring of logged predictions supports a change.")
+    }
 }
 
 public enum LakeBrainRunner {
@@ -483,6 +503,8 @@ public enum LakeBrainRunner {
             orchestration: .current,
             fleetScope: options.scope.rawValue + (presence == nil ? " (no presence bundle)" : ""))
         entry.platform = BrainPlatformRef.current
+        entry.predictionLedger = PredictionLedgerStatus.make(status: result.ledgerStatus, lastObject: result.ledgerObject,
+                                                              lastRecords: result.ledgerRecords, warning: result.ledgerWarning)
         entry.stalenessModel = "TIME"
         entry.dependsOn = []
         entry.schedule = ["cadence": "manual (on demand; no Lake-specific cron — the Orchestrator will own cadence)", "running": "false"]
