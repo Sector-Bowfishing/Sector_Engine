@@ -435,3 +435,31 @@ def test_published_intelligence_fixtures_match_the_code():
     t["current"] = {"kind": "analysis", "sustainedMph": 6.0, "gustMph": None, "directionDeg": 225, "note": "analysis/forecast value, not an observation"}
     got = json.load(open(os.path.join(fx, "tonight_light_breezy_risk_easing.json")))
     assert got == json.loads(json.dumps(t, sort_keys=True))
+
+
+def test_exposure_rules_v2_are_frozen():
+    fz = json.load(open(os.path.join(H2.PREREG, "WIND_EXPOSURE_RULES_V2.freeze.json")))
+    assert EX.RULES_VERSION == fz["version"] == "wind-exposure-rules-v2"
+    assert EX.rules_fingerprint() == fz["fingerprint"], "a bank-label parameter changed: create wind-exposure-rules-v3 and a new independent validation instead of editing v2"
+    assert fz["spec"] == json.loads(json.dumps(EX.rules_spec(), sort_keys=True))
+
+
+def test_field_schema_accepts_coarse_exposed_and_ranks_it():
+    now = datetime(2026, 10, 15, tzinfo=UTC)
+    assert FS.validate_observation(obs(bankImpactObserved="EXPOSED"), now) == []
+    assert FS.validate_observation(obs(bankImpactObserved="UNSURE"), now) == []
+    c = FS.pair_concordance([{"predictedLabelA": "EXPOSED", "predictedLabelB": "PROTECTED", "predictedHm0A": 6, "predictedHm0B": 1, "obsA": 2, "obsB": 0},
+                             {"predictedLabelA": "EXPOSED", "predictedLabelB": "EXPOSED", "predictedHm0A": 6, "predictedHm0B": 3, "obsA": 2, "obsB": 1},
+                             {"predictedLabelA": "EXPOSED", "predictedLabelB": "EXPOSED", "predictedHm0A": 6, "predictedHm0B": 5.6, "obsA": 2, "obsB": 2}])
+    assert c == {"n": 2, "predictionTies": 1, "concordance": 1.0}
+
+
+def test_bank_validation_v2_prereg_is_immutable_and_tied_to_the_rules():
+    import hashlib
+    d = H2.PREREG
+    fz = json.load(open(os.path.join(d, "WIND_BANK_VALIDATION_V2_PREREG.freeze.json")))
+    sha = lambda p: hashlib.sha256(open(os.path.join(d, p), "rb").read()).hexdigest()
+    assert sha(fz["file"]) == fz["sha256"], "the v2 bank-validation pre-registration changed after freeze: write a v3 file"
+    assert sha("data/bank_validation_v2_lake_draw.json") == fz["lakeDrawSha256"] and sha("data/field_pairs_candidates.json") == fz["pairCandidatesSha256"]
+    assert fz["rulesFingerprint"] == EX.rules_fingerprint()
+    assert fz["rulesFingerprint"] in open(os.path.join(d, fz["file"])).read()

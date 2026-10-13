@@ -16,7 +16,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 
 SCHEMA = "sector-wind-field-v2"
-BANK_IMPACT = ("DIRECT", "CROSS", "PROTECTED", "UNSURE")
+BANK_IMPACT = ("EXPOSED", "DIRECT", "CROSS", "PROTECTED", "UNSURE")   # EXPOSED = coarse call (all testers); DIRECT/CROSS = richer optional call for AUDITED validation
 ROUGHNESS = ("calm", "light", "choppy", "rough")      # ordinal 0..3. Mapping to the frozen chop classes: calm = 1 (<1 in), light = 2 (ripple), choppy = 3-4 (light/moderate chop), rough = 5
 BOATABILITY = ("easy", "noticeable", "difficult")      # boat control: easy / noticeable effort / difficult
 WIND_SOURCES = ("handheld", "fixedAnemometer", "boatMounted", "visualEstimate", "nearbyStation")
@@ -112,7 +112,7 @@ def roughness_index(r: str) -> int:
 
 
 def _rank(label: str) -> int:
-    return {"PROTECTED": 0, "CROSS": 1, "DIRECT": 2}[label]
+    return {"PROTECTED": 0, "EXPOSED": 1, "CROSS": 1, "DIRECT": 2}[label]
 
 
 def pair_concordance(pairs: list[dict]) -> dict:

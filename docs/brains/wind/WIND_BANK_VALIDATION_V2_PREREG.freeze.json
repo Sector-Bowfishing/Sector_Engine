@@ -1,0 +1,8 @@
+{
+ "file": "WIND_BANK_VALIDATION_V2_PREREG.md",
+ "sha256": "daab8d0c8e3739f2b72cbd11faa9346aa17dce706f098665b7ddba429a26d4ee",
+ "lakeDrawSha256": "bbe1fc6787c283f8459a964f2e223d0da2fe2c13e613fb7f3d8d78c48140f298",
+ "pairCandidatesSha256": "a0070c4460202b16263da33db0151979376e4bdb840382ac7f45688bad771ffe",
+ "rulesFingerprint": "221a36470bbd58a54122bdeb65ee570e8c60e7898fcd8310c15300405d75f03c",
+ "frozenAt": "2026-10-13"
+}

@@ -1,0 +1,30 @@
+{
+ "fingerprint": "221a36470bbd58a54122bdeb65ee570e8c60e7898fcd8310c15300405d75f03c",
+ "frozenAt": "2026-10-13",
+ "spec": {
+  "chopBoundsM": [
+   0.0254,
+   0.0762,
+   0.1524,
+   0.3048
+  ],
+  "crossMaxDeg": 90.0,
+  "directMaxDeg": 45.0,
+  "estimatedFetchMargin": 1.5,
+  "estimatedPublicVocabulary": {
+   "CROSS": "EXPOSED",
+   "DIRECT": "EXPOSED",
+   "PROTECTED": "PROTECTED"
+  },
+  "fetch": "mean of 9 rays at 3 deg across +-12 deg of wind-FROM (frozen CEM EM 1110-2-1100)",
+  "highFetchChopClass": 4,
+  "lowChopShortFetchProtected": 1,
+  "minLabelMph": 5.0,
+  "protectedMaxChopClass": 2,
+  "steadyDurationH": 6.0,
+  "unknownNeverProtected": true,
+  "version": "wind-exposure-rules-v2"
+ },
+ "status": "FROZEN for independent validation; the development-data fixes (PROTECTED needs chop<=2; ESTIMATED x1.5 margin; EXPOSED/PROTECTED public vocabulary) were made post-hoc on the M1/M2 sample and are NOT independently validated",
+ "version": "wind-exposure-rules-v2"
+}

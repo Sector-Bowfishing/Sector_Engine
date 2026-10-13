@@ -102,3 +102,23 @@ def label_shares(labels: list[dict]) -> dict:
             "protectedPct": round(100.0 * c["PROTECTED"] / n, 1),
             "highFetchPct": round(100.0 * sum(1 for x in labels if x["highFetch"]) / n, 1),
             "knownBanks": known}
+
+
+# ── Frozen rule set (wind-exposure-rules-v2) ──────────────────────────────────────────────────────────────────
+RULES_VERSION = "wind-exposure-rules-v2"
+
+
+def rules_spec() -> dict:
+    """Every parameter that changes a bank label. `rules_fingerprint()` is pinned in docs/brains/wind/WIND_EXPOSURE_RULES_V2.freeze.json:
+    changing any of them requires a new version (v3) and a new independent validation, never an edit."""
+    from .. import bowfishing as BF
+    return {"version": RULES_VERSION, "directMaxDeg": DIRECT_MAX_DEG, "crossMaxDeg": CROSS_MAX_DEG, "minLabelMph": MIN_LABEL_MPH,
+            "highFetchChopClass": HIGH_FETCH_CHOP_CLASS, "protectedMaxChopClass": PROTECTED_MAX_CHOP, "estimatedFetchMargin": ESTIMATED_FETCH_MARGIN,
+            "lowChopShortFetchProtected": 1, "estimatedPublicVocabulary": {"DIRECT": "EXPOSED", "CROSS": "EXPOSED", "PROTECTED": "PROTECTED"},
+            "unknownNeverProtected": True, "chopBoundsM": list(BF.CHOP_BOUNDS_M), "steadyDurationH": BF.STEADY_H,
+            "fetch": "mean of 9 rays at 3 deg across +-12 deg of wind-FROM (frozen CEM EM 1110-2-1100)"}
+
+
+def rules_fingerprint() -> str:
+    import hashlib, json
+    return hashlib.sha256(json.dumps(rules_spec(), sort_keys=True, separators=(",", ":")).encode()).hexdigest()
