@@ -213,11 +213,14 @@ public enum LakePredictionLedger {
         guard !records.isEmpty else { return Outcome(path: nil, records: 0, warning: nil) }
         let path = path(generatedAt: now, runId: runId)
         do {
-            // Immutable: an existing object is never replaced.
+            // Immutable: an existing object is never replaced. Check first (cheap, and keeps the warning explicit), then create-only
+            // (GCS: ifGenerationMatch=0), so a concurrent writer between the two cannot be overwritten either.
             if try await archive.read(path) != nil {
                 return Outcome(path: nil, records: 0, warning: "ledger: \(path) already exists; not overwritten")
             }
-            try await archive.write(path, try encode(records), contentType: "application/x-ndjson")
+            guard try await archive.writeIfAbsent(path, try encode(records), contentType: "application/x-ndjson") else {
+                return Outcome(path: nil, records: 0, warning: "ledger: \(path) already exists; not overwritten")
+            }
             return Outcome(path: path, records: records.count, warning: nil)
         } catch {
             return Outcome(path: nil, records: 0, warning: "ledger: \(error)")

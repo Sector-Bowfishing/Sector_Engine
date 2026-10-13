@@ -188,4 +188,34 @@ final class LakeBrainRunnerHardeningTests: XCTestCase {
             XCTAssertFalse(text.contains("gmail.com"), "\(f) carries a personal mailbox")
         }
     }
+
+    // MARK: create-only ledger writes
+
+    /// An archive whose object appears between the existence check and the write (the race `ifGenerationMatch=0` closes).
+    final class RacingArchive: LakeBrainArchive, @unchecked Sendable {
+        var uri: String { "gs://fake-never-real" }
+        private let lock = NSLock()
+        private var plainWrites = 0
+        var plainWriteCount: Int { lock.withLock { plainWrites } }
+        func read(_ path: String) async throws -> Data? { nil }
+        func write(_ path: String, _ data: Data, contentType: String) async throws { lock.withLock { plainWrites += 1 } }
+        func writeIfAbsent(_ path: String, _ data: Data, contentType: String) async throws -> Bool { false }
+    }
+
+    func testLedgerUsesCreateOnlyWriteAndNeverOverwritesARacingObject() async throws {
+        let racing = RacingArchive()
+        var o = baseOptions(); o.ledgerArchive = racing
+        let r = await run(o, store: LocalDirectoryStore(directory: tempDir(), brainId: LakeBrainSpec.brainId), now: iso("2026-06-01T12:30:00Z"))
+        XCTAssertTrue(r.ok)
+        XCTAssertNil(r.ledgerObject)
+        XCTAssertEqual(r.ledgerRecords, 0)
+        XCTAssertTrue(r.ledgerWarning?.contains("already exists; not overwritten") ?? false, r.ledgerWarning ?? "nil")
+        XCTAssertEqual(racing.plainWriteCount, 0, "the ledger never uses the replacing write")
+    }
+
+    func testGCSCreateOnlyUploadUsesIfGenerationMatchZero() {
+        let url = GCSLakeBrainArchive.uploadURL(bucket: "b", path: "predictions/2026/10/13/185314Z-x.jsonl", createOnly: true)
+        XCTAssertTrue(url.hasSuffix("&ifGenerationMatch=0"), url)
+        XCTAssertFalse(GCSLakeBrainArchive.uploadURL(bucket: "b", path: "history/x/daily.csv", createOnly: false).contains("ifGenerationMatch"))
+    }
 }
