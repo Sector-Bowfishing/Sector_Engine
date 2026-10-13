@@ -159,7 +159,7 @@ public enum LakeBrainRunner {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
                         if let d = await feeds.daily(h, since: nil, now: now, timeZone: tz) { fresh += d } else { errors.append("history: TVA operating guide unavailable") }
-                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily:
+                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily, .twdbDaily:
                         // Backfill (or an empty archive) pulls the whole record; otherwise the last 21 days.
                         let since: String? = (options.backfill || existing.isEmpty) ? nil
                             : existing.last.map { _ in LakeLevelCalendar.dayString(now.addingTimeInterval(-21 * 86_400), timeZone: tz) }
@@ -498,6 +498,7 @@ public enum LakeBrainRunner {
             ("usace-access2water", .a2w, "USACE Access2Water", "reservoir-elevation", "latest pool elevation + 24 h change and operator levels (one listing per district)"),
             ("usbr-rise", .rise, "USBR RISE", "reservoir-elevation", "daily lake/reservoir elevation (about 48 h latency; 0.0 placeholders dropped)"),
             ("nws-nwps", .nwps, "NWS NWPS", "lake-surface-elevation", "hourly pool elevation of NWS gauges (HP pe codes)"),
+            ("twdb-water-data-texas", .twdb, "TWDB Water Data for Texas", "reservoir-elevation", "estimated daily average reservoir elevation of Texas lakes (a relay of USGS / USACE / USBR / IBWC / LCRA gauges; the file declares its datum)"),
         ]
         var out: [String: (BrainDataSourceStatus, BrainSourceHealth)] = [:]
         for d in defs {
