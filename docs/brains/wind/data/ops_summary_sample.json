@@ -1,6 +1,6 @@
 {
  "schema": "wind-ops-summary-v1",
- "generatedAt": "2026-10-13T20:36:06Z",
+ "generatedAt": "2026-10-13T20:47:57Z",
  "brainId": "wind",
  "brainVersion": "wind-brain-1.0.0",
  "lifecycle": {
@@ -12,7 +12,7 @@
   "value": 3.3,
   "raw": 3.27,
   "basis": "COMPUTED_FROM_FROZEN_RUBRIC_V1",
-  "computedAt": "2026-10-13T20:36:07Z",
+  "computedAt": "2026-10-13T20:48:10Z",
   "caps": [
    6.0,
    7.0
@@ -84,7 +84,7 @@
   "explanation": "the Engine's published score is a FROZEN block; the scorer result is computed from the same frozen rubric and moves with live days. Refreshing the published block needs an explicit decision."
  },
  "reliability": {
-  "asOf": "2026-10-13T20:36:06Z",
+  "asOf": "2026-10-13T20:47:57Z",
   "validArchiveDays": 5,
   "validBrainPublishDays": 0,
   "target": 30,
@@ -115,10 +115,10 @@
  "coverage": {
   "directoryLakes": 621,
   "audited": 74,
-  "estimated": 471,
-  "pointOnly": 76,
-  "blocked": 17,
-  "labelEligible": 528,
+  "estimated": 473,
+  "pointOnly": 74,
+  "blocked": 25,
+  "labelEligible": 522,
   "customerVisibleExposure": 0,
   "note": "eligible = may carry conservative bank words if/when released; nothing is customer-visible"
  },
@@ -165,9 +165,8 @@
   "oneShot": true
  },
  "tests": {
-  "suite": "jobs/wind-hourly pytest",
-  "passed": null,
-  "note": "filled by the publisher"
+  "value": null,
+  "unknownReason": "not supplied"
  },
  "blockers": [
   {

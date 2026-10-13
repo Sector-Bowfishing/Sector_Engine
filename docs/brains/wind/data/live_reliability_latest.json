@@ -1,0 +1,290 @@
+{
+ "asOf": "2026-10-13T20:47:57Z",
+ "summary": {
+  "asOf": "2026-10-13T20:47:57Z",
+  "calendarDate": "2026-10-13",
+  "validArchiveDays": 5,
+  "validBrainPublishDays": 0,
+  "invalidArchiveDays": [
+   {
+    "date": "2026-10-07",
+    "reasons": [
+     "clock started 04:59Z: only 19 hourly cycles possible",
+     "RTMA-RU quarter-hours 89/96 on the worst lake (92.7% < 95%)"
+    ]
+   }
+  ],
+  "invalidBrainDays": [
+   {
+    "date": "2026-10-12",
+    "reasons": [
+     "18/24 successful publishes (chain started 06:55Z)",
+     "2 failed publish(es)"
+    ]
+   }
+  ],
+  "executions": 165,
+  "failedExecutions": 0,
+  "nbmPartialLakeCycles": 24,
+  "nbmPartialRecovered": 24,
+  "staleStatesLogged": 0,
+  "lakeStatesLogged": 160,
+  "freshnessHoursAfterInit": {
+   "n": 632,
+   "median": 1.14,
+   "p95": 2.15,
+   "max": 2.17
+  },
+  "sourceOutages": {
+   "rtmaFailedAttempts": 4,
+   "nbmFailedAttempts": 0,
+   "rtmaFailedCycles": [
+    "2026-10-11T21:45:00Z"
+   ]
+  },
+  "projectedArchiveGate": "2026-11-07T03:00Z",
+  "projectedBrainPublishGate": "2026-11-12T03:00Z",
+  "projectionAssumption": "every remaining day (including today) is valid; each invalid day moves the date one day later"
+ },
+ "brainDays": [
+  {
+   "date": "2026-10-12",
+   "closed": true,
+   "okPublishes": 18,
+   "failedPublishes": 2,
+   "maxGapMin": 61.3,
+   "staleStates": 0,
+   "valid": false,
+   "reasons": [
+    "18/24 successful publishes (chain started 06:55Z)",
+    "2 failed publish(es)"
+   ]
+  },
+  {
+   "date": "2026-10-13",
+   "closed": false,
+   "okPublishes": 22,
+   "failedPublishes": 0,
+   "maxGapMin": 61.5,
+   "staleStates": 0,
+   "valid": false,
+   "reasons": [
+    "day still open",
+    "22/24 successful publishes"
+   ]
+  }
+ ],
+ "days": [
+  {
+   "date": "2026-10-07",
+   "closed": true,
+   "nbmCompletePerLake": {
+    "guntersville": 24,
+    "wheeler": 24,
+    "wilson": 24,
+    "pickwick": 24
+   },
+   "nbmPct": 1.0,
+   "rtmaCompletePerLake": {
+    "guntersville": 89,
+    "wheeler": 89,
+    "wilson": 89,
+    "pickwick": 89
+   },
+   "rtmaPct": 0.9271,
+   "metarObsCount": 378,
+   "executions": 20,
+   "maxStateGapMin": 60.2,
+   "brainPublishOk": 0,
+   "brainPublishFailed": 0,
+   "brainStaleStates": 0,
+   "valid": false,
+   "reasons": [
+    "clock started 04:59Z: only 19 hourly cycles possible",
+    "RTMA-RU quarter-hours 89/96 on the worst lake (92.7% < 95%)"
+   ]
+  },
+  {
+   "date": "2026-10-08",
+   "closed": true,
+   "nbmCompletePerLake": {
+    "guntersville": 24,
+    "wheeler": 24,
+    "wilson": 24,
+    "pickwick": 24
+   },
+   "nbmPct": 1.0,
+   "rtmaCompletePerLake": {
+    "guntersville": 96,
+    "wheeler": 96,
+    "wilson": 96,
+    "pickwick": 96
+   },
+   "rtmaPct": 1.0,
+   "metarObsCount": 426,
+   "executions": 24,
+   "maxStateGapMin": 60.2,
+   "brainPublishOk": 0,
+   "brainPublishFailed": 0,
+   "brainStaleStates": 0,
+   "valid": true,
+   "reasons": []
+  },
+  {
+   "date": "2026-10-09",
+   "closed": true,
+   "nbmCompletePerLake": {
+    "guntersville": 24,
+    "wheeler": 24,
+    "wilson": 24,
+    "pickwick": 24
+   },
+   "nbmPct": 1.0,
+   "rtmaCompletePerLake": {
+    "guntersville": 96,
+    "wheeler": 96,
+    "wilson": 96,
+    "pickwick": 96
+   },
+   "rtmaPct": 1.0,
+   "metarObsCount": 416,
+   "executions": 24,
+   "maxStateGapMin": 60.2,
+   "brainPublishOk": 0,
+   "brainPublishFailed": 0,
+   "brainStaleStates": 0,
+   "valid": true,
+   "reasons": []
+  },
+  {
+   "date": "2026-10-10",
+   "closed": true,
+   "nbmCompletePerLake": {
+    "guntersville": 24,
+    "wheeler": 24,
+    "wilson": 24,
+    "pickwick": 24
+   },
+   "nbmPct": 1.0,
+   "rtmaCompletePerLake": {
+    "guntersville": 96,
+    "wheeler": 96,
+    "wilson": 96,
+    "pickwick": 96
+   },
+   "rtmaPct": 1.0,
+   "metarObsCount": 440,
+   "executions": 24,
+   "maxStateGapMin": 60.2,
+   "brainPublishOk": 0,
+   "brainPublishFailed": 0,
+   "brainStaleStates": 0,
+   "valid": true,
+   "reasons": []
+  },
+  {
+   "date": "2026-10-11",
+   "closed": true,
+   "nbmCompletePerLake": {
+    "guntersville": 24,
+    "wheeler": 24,
+    "wilson": 24,
+    "pickwick": 24
+   },
+   "nbmPct": 1.0,
+   "rtmaCompletePerLake": {
+    "guntersville": 96,
+    "wheeler": 96,
+    "wilson": 96,
+    "pickwick": 96
+   },
+   "rtmaPct": 1.0,
+   "metarObsCount": 453,
+   "executions": 24,
+   "maxStateGapMin": 60.3,
+   "brainPublishOk": 0,
+   "brainPublishFailed": 0,
+   "brainStaleStates": 0,
+   "valid": true,
+   "reasons": []
+  },
+  {
+   "date": "2026-10-12",
+   "closed": true,
+   "nbmCompletePerLake": {
+    "guntersville": 24,
+    "wheeler": 24,
+    "wilson": 24,
+    "pickwick": 24
+   },
+   "nbmPct": 1.0,
+   "rtmaCompletePerLake": {
+    "guntersville": 96,
+    "wheeler": 96,
+    "wilson": 96,
+    "pickwick": 96
+   },
+   "rtmaPct": 1.0,
+   "metarObsCount": 441,
+   "executions": 27,
+   "maxStateGapMin": 60.2,
+   "brainPublishOk": 18,
+   "brainPublishFailed": 2,
+   "brainStaleStates": 0,
+   "valid": true,
+   "reasons": []
+  },
+  {
+   "date": "2026-10-13",
+   "closed": false,
+   "nbmCompletePerLake": {
+    "guntersville": 19,
+    "wheeler": 19,
+    "wilson": 19,
+    "pickwick": 19
+   },
+   "nbmPct": 0.7917,
+   "rtmaCompletePerLake": {
+    "guntersville": 80,
+    "wheeler": 80,
+    "wilson": 80,
+    "pickwick": 80
+   },
+   "rtmaPct": 0.8333,
+   "metarObsCount": 0,
+   "executions": 22,
+   "maxStateGapMin": 60.3,
+   "brainPublishOk": 22,
+   "brainPublishFailed": 0,
+   "brainStaleStates": 0,
+   "valid": false,
+   "reasons": [
+    "day still open",
+    "NBM complete cycles 19/24 on the worst lake (79.2% < 99%)",
+    "RTMA-RU quarter-hours 80/96 on the worst lake (83.3% < 95%)"
+   ]
+  }
+ ],
+ "executionsTotal": 165,
+ "executionsFailed": 0,
+ "brainFailures": [
+  {
+   "at": "2026-10-12T06:38:25Z",
+   "ok": false,
+   "errors": [
+    "publish crashed: WriteError('PATCH / -> HTTP 401: {\\n  \"error\" : \"Unauthorized request.\"\\n}\\n')"
+   ],
+   "lakeStates": {}
+  },
+  {
+   "at": "2026-10-12T06:47:56Z",
+   "ok": false,
+   "errors": [
+    "publish crashed: WriteError('PATCH / -> HTTP 401: {\\n  \"error\" : \"Unauthorized request.\"\\n}\\n')"
+   ],
+   "lakeStates": {}
+  }
+ ],
+ "brainOk": 40,
+ "brainFirstOk": "2026-10-12T06:55:19Z"
+}
