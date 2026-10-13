@@ -50,7 +50,7 @@ Commands: `gcloud storage buckets describe gs://sector-lake-brain` / `gs://secto
 
 Hartwell alone has 7 noncurrent copies of `daily.csv` at 1.68 MB each (it was rewritten 8 times in 20 hours, mostly identical content). The 20 legacy baselines are 4 per pilot lake (one per day of change, v1 and v2 names) and show the old growth mechanism directly: 114-122 KB each for SUFFICIENT lakes, about 50 KB for INSUFFICIENT ones.
 
-`sector-lake-registry`: 1,183 live objects, 9,338,... bytes (`lakes/` 1,180 objects for 590 lakes = 9,108,590 B, 15.4 KB per lake, largest 174 KB; `registry/` 3 objects, 229,393 B), 0 noncurrent versions (versioning is off).
+`sector-lake-registry`: 1,183 live objects, 9,337,983 bytes (`lakes/` 1,180 objects for 590 lakes = 9,108,590 B, 15.4 KB per lake, largest 174 KB; `registry/` 3 objects, 229,393 B), 0 noncurrent versions (versioning is off).
 
 Cloud Run job `lake-brain` (`us-central1`, 1 vCPU, 1 GiB, task timeout 900 s, 0 retries, args `--scope pilots`): 5 executions on 2026-10-13, all succeeded.
 
