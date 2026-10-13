@@ -47,12 +47,23 @@ LOCK_MINUTES = 15                       # covers the gap between `:run` and the 
 PYTHON = sys.executable
 
 # Executors: how each brain is started. Anything absent here is never started by the orchestrator.
-EXECUTORS = {
-    "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
-    "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
-    "biological-state": {"kind": "in-process", "dir": os.path.join(HERE, "..", "biological-brain"), "jobId": "biological-brain"},
-    "sector-intelligence": {"kind": "in-process", "dir": os.path.join(HERE, "..", "sector-intelligence-brain"), "jobId": "sector-intelligence-brain"},
-}
+def build_executors(env=None) -> dict:
+    """How each brain is started. Anything absent is never started by the orchestrator.
+    Depth is an in-process SHADOW brain (jobs/depth-brain/run.py: --plan / --write). It is present only when DEPTH_ORCHESTRATION_ENABLED=1,
+    which is NOT set anywhere: Michael approved preparing the integration, not scheduling it (2026-10-14)."""
+    env = os.environ if env is None else env
+    ex = {
+        "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
+        "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
+        "biological-state": {"kind": "in-process", "dir": os.path.join(HERE, "..", "biological-brain"), "jobId": "biological-brain"},
+        "sector-intelligence": {"kind": "in-process", "dir": os.path.join(HERE, "..", "sector-intelligence-brain"), "jobId": "sector-intelligence-brain"},
+    }
+    if env.get("DEPTH_ORCHESTRATION_ENABLED") == "1":
+        ex["depth"] = {"kind": "in-process", "dir": os.path.join(HERE, "..", "depth-brain"), "jobId": "depth-brain"}
+    return ex
+
+
+EXECUTORS = build_executors()
 NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)", "water-clarity": "MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md)"}
 
 

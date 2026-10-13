@@ -53,3 +53,18 @@ def test_lock_is_spent_once_its_execution_completed():
     still = {"water-temp-brain": [{"metadata": {"name": "water-temp-brain-x"}, "status": {"startTime": "2026-10-13T06:30:00Z"}}]}
     merged = o.with_single_flight(brains, still, lock, NOW)
     assert merged["water-temp"]["schedule"]["running"] is True
+
+
+def test_depth_is_not_an_executor_unless_explicitly_enabled(monkeypatch):
+    assert "depth" not in o.build_executors({})                                   # default: Depth is never started by the orchestrator
+    assert "depth" not in o.EXECUTORS or os.environ.get("DEPTH_ORCHESTRATION_ENABLED") == "1"
+    on = o.build_executors({"DEPTH_ORCHESTRATION_ENABLED": "1"})
+    assert on["depth"]["kind"] == "in-process" and on["depth"]["dir"].endswith("depth-brain") and on["depth"]["jobId"] == "depth-brain"
+    assert o.build_executors({"DEPTH_ORCHESTRATION_ENABLED": "yes"}).get("depth") is None          # only the exact value "1"
+    assert {"lake-brain", "water-temp", "biological-state", "sector-intelligence"} <= set(on)       # existing executors unchanged
+
+
+def test_a_registered_depth_brain_without_an_executor_is_never_run():
+    reg = {"stalenessModel": "FINGERPRINT", "dependsOn": ["lake-brain"], "health": "HEALTHY", "lastSuccessfulRun": "2026-10-13T20:00:00Z"}
+    plan = o.orchestrate({"depth": reg}, {"depth": {"status": "HEALTHY"}}, NOW, {})            # no brain plan: nothing triggers a run
+    assert plan["runs"] == [] and [s["brainId"] for s in plan["skipped"]] == ["depth"]

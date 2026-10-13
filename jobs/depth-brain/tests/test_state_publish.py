@@ -119,10 +119,13 @@ def test_publish_writes_only_depth_owned_paths_and_skips_unevaluated_states():
     assert tree["lakes"][lake_key("Guntersville|AL")]["states"]["depth"]["effectiveDepth"]["shiftFt"] == -1.4
     assert tree["lakes"][lake_key("Lake Hartwell|SC")]["states"]["depth"]["effectiveDepth"]["shiftFt"] == pytest.approx(-10.6)
     assert lake_key("Blocked Lake|XX") not in tree.get("lakes", {}) and lake_key("Awaiting Lake|YY") not in tree.get("lakes", {})
-    ready = {l: tree["lakeFleet"][lake_key(l)]["readiness"]["depth"] for l in ("Guntersville|AL", "Blocked Lake|XX", "Awaiting Lake|YY")}
-    assert ready == {"Guntersville|AL": "CALIBRATION", "Blocked Lake|XX": "BLOCKED", "Awaiting Lake|YY": "PROFILED"}
+    ready = {l: tree["lakeFleet"][lake_key(l)]["readiness"]["depth"] for l in ("Guntersville|AL",)}
+    assert ready == {"Guntersville|AL": "CALIBRATION"}
+    for unsupported in ("Blocked Lake|XX", "Awaiting Lake|YY"):                 # pilot scope: unsupported lakes get NO fleet rows at all
+        assert lake_key(unsupported) not in tree.get("lakeFleet", {})
     reg = tree["brains"]["depth"]
     assert reg["status"] == "PROFILED" and reg["stalenessModel"] == "FINGERPRINT" and reg["publishMode"].startswith("shadow") and reg["dependsOn"] == ["lake-brain"]
+    assert reg["shadow"] is True and reg["scope"] == "pilots" and "jobId" not in reg["schedule"]
     assert reg["validation"]["status"] == "NOT_VALIDATED" and reg["models"]["active"] is None
     assert "score" not in reg                                   # Depth never carries an official score
     for patch in w.patches:

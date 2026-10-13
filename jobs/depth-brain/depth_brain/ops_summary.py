@@ -25,10 +25,11 @@ def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = No
     ab = [x for x in cands if x["evidence"]["tier"] in ("A", "B")]
     blockers = [
         primary_blocker(fm),
-        f"Lake dependency: {awaiting} defensible-shift lakes await a live Lake Brain state ({live_lake_states} live)",
+        f"Lake fleet-state expansion: {awaiting} defensible-shift lakes await a live Lake Brain state ({live_lake_states} live)",
+        "Field validation not started (preregistered, tooling ready); validation NOT_VALIDATED",
         f"Licensing: {fm['tierAB'] - fm['licenceAllowedAB']} of {fm['tierAB']} tier A/B contour lakes lack customer-derived-use permission",
-        f"Survey reference pools unverified: effective zones withheld for {fm['referenceZoneLakes'] - fm['effectiveZoneEligible']} contour lakes",
-        "Field validation not started; orchestration not started; no official score (shadow)",
+        f"Survey reference pools unverified or unvalidated: effective zones withheld for {fm['referenceZoneLakes'] - fm['effectiveZoneEligible']} contour lakes",
+        "Orchestration not started (not approved for scheduling); no official score (shadow)",
     ]
     return {
         "directoryLakeCount": fm["totalLakes"],
@@ -44,6 +45,7 @@ def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = No
                      "meetsProductionPolicy": ev["meetsProductionPolicy"],
                      "note": "research-only rubric; Depth has no official score and no /scores/depth node"},
         "scoreStatus": "NOT_ESTABLISHED",
+        "shadow": True,
         "primaryBlocker": primary_blocker(fm),
         "lakeDependency": {"liveLakeStates": live_lake_states, "defensibleShiftLakes": fm["shiftPossible"], "awaitingLakeBrain": awaiting,
                            "note": "Lake Brain owns the level; Depth consumes states/lake"},

@@ -54,6 +54,8 @@ for d in biological-brain sector-intelligence-brain brain-scores brain-orchestra
   [[ -f "$ROOT/jobs/$d/catalog.json" ]] && cp "$ROOT/jobs/$d/catalog.json" "stage/jobs/$d/"
   cp -R "$ROOT/jobs/$d/schemas" "stage/jobs/$d/" 2>/dev/null || true
 done
+# Depth Brain (SHADOW): staged so it can be enabled later with DEPTH_ORCHESTRATION_ENABLED=1; the executor entry is absent unless that env var is set.
+mkdir -p stage/jobs/depth-brain && cp -R "$ROOT/jobs/depth-brain/depth_brain" "$ROOT/jobs/depth-brain/run.py" stage/jobs/depth-brain/
 cp "$ROOT/docs/brains/scoring/frozen-scores.json" stage/docs/brains/scoring/
 find stage -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'tests' -type d -prune -exec rm -rf {} + 2>/dev/null || true

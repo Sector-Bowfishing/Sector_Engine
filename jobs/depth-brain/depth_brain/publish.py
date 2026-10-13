@@ -35,10 +35,14 @@ def _health(errors: list, evaluated: int, unavailable: int) -> str:
     return "HEALTHY" if evaluated else "UNKNOWN"
 
 
-def publish(manifest: dict, lake_states: dict, writer, now: datetime | None = None, mode: str = "shadow") -> dict:
+def publish(manifest: dict, lake_states: dict, writer, now: datetime | None = None, mode: str = "shadow", scope: str = "pilots") -> dict:
+    """scope="pilots" (default, the only scope a live write is approved for): per-lake nodes and fleet rows ONLY for lakes with a Lake Brain state
+    (or a reviewed pilot). scope="fleet" additionally writes PROFILED/BLOCKED readiness for every candidate - analysis/dry-run only."""
     now = (now or datetime.now(timezone.utc)).replace(microsecond=0)
     now_iso = C.iso(now)
-    rep: dict = {"ok": False, "errors": [], "writes": 0, "lakes": {}}
+    if scope not in ("pilots", "fleet"):
+        raise ValueError(f"unknown scope {scope!r}")
+    rep: dict = {"ok": False, "errors": [], "writes": 0, "lakes": {}, "scope": scope}
     try:
         cands = manifest["candidates"]
         coll = key_collisions([c["lakeId"] for c in cands])
@@ -82,8 +86,9 @@ def publish(manifest: dict, lake_states: dict, writer, now: datetime | None = No
                 stale_lakes += 1
                 rep["errors"].append(f"lake {lid}: {e!r} {traceback.format_exc()[-300:]}")
 
+        written = {lid: r for lid, r in readiness.items() if lid in rep["lakes"]} if scope == "pilots" else dict(readiness)
         fleet = {}
-        for lid, r in readiness.items():
+        for lid, r in written.items():
             k = lake_key(lid)
             fleet[f"lakeFleet/{k}/lakeId"] = lid
             fleet[f"lakeFleet/{k}/readiness/{C.SLOT}"] = r
@@ -95,16 +100,17 @@ def publish(manifest: dict, lake_states: dict, writer, now: datetime | None = No
         writer.patch(fleet)
         rep["writes"] += 1
 
-        counts = dict(Counter(readiness.values()))
+        counts = dict(Counter(written.values()))
         health = _health(rep["errors"], evaluated, unavailable)
         reg = {
             "brainId": C.BRAIN_ID, "displayName": C.DISPLAY_NAME, "domain": C.DOMAIN, "question": C.QUESTION, "platform": PLATFORM,
             "version": C.BRAIN_VERSION, "schemaVersion": C.SCHEMA_VERSION, "enabled": True, "health": health, "status": "PROFILED",
-            "supportedLakeCount": sum(1 for c in cands if c.get("shiftPossible")), "readinessCounts": counts, "staleLakeCount": stale_lakes,
+            "supportedLakeCount": sum(1 for lid, m in rep["lakes"].items() if m["kind"] == "observed"), "readinessCounts": counts, "staleLakeCount": stale_lakes,
             "staleAfterHours": None, "stalenessModel": C.STALENESS_MODEL, "dependsOn": list(C.DEPENDS_ON),
             "lastSuccessfulRun": now_iso if not rep["errors"] else last.get("lastSuccessfulRun"),
             "lastError": {"at": now_iso, "message": rep["errors"][0][:300]} if rep["errors"] else None,
-            "schedule": {"cadence": "SHADOW: not scheduled, not deployed (FINGERPRINT-triggered once adopted)", "jobId": C.JOB_ID, "running": False},
+            "schedule": {"cadence": "SHADOW: not scheduled, not deployed (FINGERPRINT-triggered once the orchestrator is approved)", "running": False},
+            "shadow": True, "scope": scope,
             "models": {"active": None, "candidates": [{"modelId": C.MODEL_ID, "status": "SHADOW", "version": C.BRAIN_VERSION}]},
             "versions": [{"version": C.BRAIN_VERSION, "date": now_iso[:10], "note": "Effective-depth shift foundation; shadow/internal only", "status": "SHADOW"}],
             "validation": {"ref": f"/validation/{C.BRAIN_ID}", "status": "NOT_VALIDATED"},

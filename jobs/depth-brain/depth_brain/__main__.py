@@ -98,6 +98,7 @@ def main(argv=None) -> int:
     g.add_argument("--dry-run", metavar="OUT.json")
     g.add_argument("--rtdb", metavar="URL")
     p.add_argument("--yes-write-shadow", action="store_true", help="required with --rtdb")
+    p.add_argument("--scope", choices=["pilots", "fleet"], default="pilots", help="pilots (default): only lakes with a Lake Brain state; fleet is analysis/dry-run only")
     a = ap.parse_args(argv)
     if a.cmd == "build-manifest":
         m = cand.build(json.load(open(a.paths)), a.version)
@@ -112,12 +113,14 @@ def main(argv=None) -> int:
         return 0
     if a.cmd == "report":
         return run_report(a)
-    manifest = json.load(open(a.manifest))
-    states = load_lake_states(a.lake_states, manifest)
     if a.rtdb and not a.yes_write_shadow:
         raise SystemExit("a live shadow write needs --yes-write-shadow")
+    if a.rtdb and a.scope != "pilots":
+        raise SystemExit("a live write is approved for scope=pilots only")
+    manifest = json.load(open(a.manifest))
+    states = load_lake_states(a.lake_states, manifest)
     writer = DryRunWriter() if a.dry_run else RtdbWriter(a.rtdb)
-    rep = publish(manifest, states, writer, mode="shadow")
+    rep = publish(manifest, states, writer, mode="shadow", scope=a.scope)
     if a.dry_run:
         writer.dump(a.dry_run)
         rep["dryRunFile"] = a.dry_run
