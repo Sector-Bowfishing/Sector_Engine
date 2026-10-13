@@ -1,31 +1,26 @@
 [
  {
   "tier": "T1",
-  "profiled": 279,
-  "profiledPct": 44.9,
+  "profiled": 273,
+  "profiledPct": 44.0,
   "shares": {
    "src": 1.0,
-   "plan": 0.43,
-   "hist": 0.918,
-   "base": 0.975,
+   "plan": 0.44,
+   "hist": 0.934,
+   "base": 0.989,
    "obs": 1.0,
-   "flood": 0.563
+   "flood": 0.575
   },
   "byProvider": {
    "cwms": 53,
-   "usgs": 34,
+   "usgs": 33,
    "tva": 16,
    "nwps": 31,
    "a2w": 102,
    "rise": 33,
    "sjrwmd": 3,
-   "nipsco": 1,
    "cwms-saw": 1,
-   "nhdes": 1,
-   "njwsa": 1,
-   "duke": 1,
-   "wps-hydro": 1,
-   "alliant": 1
+   "nhdes": 1
   },
   "scores": {
    "NOT_VALIDATED": {
@@ -36,8 +31,8 @@
     ]
    },
    "PARTIAL": {
-    "displayed": 7.3,
-    "uncapped": 7.3,
+    "displayed": 7.4,
+    "uncapped": 7.4,
     "gates": []
    },
    "VALIDATED": {

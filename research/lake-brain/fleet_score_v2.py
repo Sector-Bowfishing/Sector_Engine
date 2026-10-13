@@ -3,6 +3,8 @@
 
 Three counting tiers, fixed before the numbers were computed (the order is by how little post-hoc judgement they contain):
   T1 STRICT      wave w1 + w2-v1, status VERIFIED / VERIFIED_CORROBORATED          binding-review-v1 as pre-registered   <- PRIMARY research score
+                 minus rows that carry a v1.1 rule tag (Clinton Lake) and rows whose ONLY source is an undocumented operator web endpoint
+                 (nipsco, njwsa, duke, wps-hydro, alliant: terms unreviewed, M-G02) -> 6 lakes excluded from the primary figure
   T2 +v1.1       T1 + wave w2-v1.1 VERIFIED                                         rules written after seeing wave-1 failures (labelled v1.1)
   T3 +R7h        T2 + VERIFIED_ENVELOPE (flagged lakes promoted by their own 5-y history envelope)   post-hoc rule, error rate unmeasured
 Quality shares: history = recount of composite series where the plan thread built one, else the v2 table's class; plan / flood evidence
@@ -24,9 +26,14 @@ TIERS = {"T1": ({"w1", "w2-v1"}, {"VERIFIED", "VERIFIED_CORROBORATED"}),
          "T3": ({"w1", "w2-v1", "w2-v1.1"}, {"VERIFIED", "VERIFIED_CORROBORATED", "VERIFIED_ENVELOPE"})}
 
 
+UNDOCUMENTED = {"nipsco", "njwsa", "duke", "wps-hydro", "alliant", "srp", "cnppid", "nppd", "utahlake", "aep", "eccc", "mncsg"}
+
+
 def run(tier: str, min_years: int, plan_col="planStrict", flood_col="floodStrict") -> dict:
     waves, statuses = TIERS[tier]
     rows = [r for r in csv.DictReader(open(V2)) if r["wave"] in waves and r["binding_status"] in statuses]
+    if tier == "T1":
+        rows = [r for r in rows if "v1.1" not in r["checks_passed"] and r["provider"] not in UNDOCUMENTED]
     ov = F.overlay_tables(); ty = F.tva_years()
     cl = []
     for r in rows:

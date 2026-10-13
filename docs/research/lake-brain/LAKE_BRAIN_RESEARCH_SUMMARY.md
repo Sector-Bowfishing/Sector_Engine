@@ -7,15 +7,15 @@ Detail lives in the per-track documents; every claim below points to one. Number
 ## The answers
 
 **1. What does Lake Brain know now?** *Published (unchanged):* 5 lakes (4 TVA pools, Hartwell) — live level from the operator, change over 1 h/6 h/24 h/3 d, operator zone and guide state, flood state (Hartwell only), a 60-year baseline for Hartwell only, no boundary, private species presence. Score 3.0.
-*Researched (not published):* a machine-verified level source for **279 of 621 lakes (44.9 %)** under the pre-registered review, 92 % of them with ≥ 5 complete years of daily history, operator plan evidence for 43 %, flood-pool bottoms for 56 %, a shipped polygon for 599 lakes (NHD HR shoreline available for 606, confidence HIGH 351 / MEDIUM 195 / LOW 53 / MISSING 22), a class and region for 615, and independent public presence records for 62 % of lakes.
+*Researched (not published):* a machine-verified level source for **273 of 621 lakes (44.0 %)** under the pre-registered review, 93 % of them with ≥ 5 complete years of daily history, operator plan evidence for 44 %, flood-pool bottoms for 57.5 %, a shipped polygon for 599 lakes (NHD HR shoreline available for 606, confidence HIGH 351 / MEDIUM 195 / LOW 53 / MISSING 22), a class and region for 615, and independent public presence records for 62 % of lakes.
 
 **2. What did we discover that it did not know?** (a) The four TVA pilots have **16–18 years** of daily pool history in public NWS products (NWS Huntsville RVD via IEM AFOS 2005–2021 and NWS/TVA HADS from 2022-10), exactly agreeing with the TVA feed (0.00 ft) ✔. (b) The IEM HADS archive recovers history for **every NWS-relay lake** (34 lakes, 5–15 y). (c) USACE **Access2Water** is a one-call-per-district route to levels, NID ids and operator levels, the only route for districts the CWMS API serves empty. (d) **5-year baselines are overconfident in the tails** (VERY_UNUSUAL fires on 5.9 % of days vs 4 % nominal, 101/237 lakes > 8 %) ✔. (e) The STABLE rule marks 51–58 % of days stable by construction. (f) **We already own Guntersville's boundary** (NHD HR, IoU 0.98 against the live service ✔) — it is simply not served anywhere. (g) The directory's 401 `hasDam` lakes resolve to NID dams for 368 by name+geometry. (h) The rubric has a denominator effect: adding weaker lakes lowers the score.
 
-**3. New scientifically defensible score?** **Published 3.0 is unchanged.** Research score on strict pre-registered evidence: **6.6 uncapped, 5.0 displayed** while validation is NOT_VALIDATED — conditional on human acceptance of the bindings, provider adapters, and adoption of the history and plan/flood evidence (`LAKE_BRAIN_SCORE_HISTORY.md`). If validation were PARTIAL: 7.3; VALIDATED: 8.1.
+**3. New scientifically defensible score?** **Published 3.0 is unchanged.** Research score on strict pre-registered evidence: **6.6 uncapped, 5.0 displayed** while validation is NOT_VALIDATED — conditional on human acceptance of the bindings, provider adapters, and adoption of the history and plan/flood evidence (`LAKE_BRAIN_SCORE_HISTORY.md`). If validation were PARTIAL: 7.4; VALIDATED: 8.1.
 
-**4. Why each dimension moved** — `LAKE_BRAIN_SCORE_HISTORY.md` (dimension table). Unchanged: sourceAuthority 10, trendQuality 10. Up: historyQuality 2→9.2, seasonalBaseline 2→9.7 (deep TVA history + HADS), floodDroughtContext 2→5.6, coverage 1→5. **Down: operatorPlan 10→4.3** (denominator effect). Zero: validation (hold-out failed its pre-registered bar; no claim).
+**4. Why each dimension moved** — `LAKE_BRAIN_SCORE_HISTORY.md` (dimension table). Unchanged: sourceAuthority 10, trendQuality 10. Up: historyQuality 2→9.3, seasonalBaseline 2→9.9 (deep TVA history + HADS), floodDroughtContext 2→5.8, coverage 1→5. **Down: operatorPlan 10→4.4** (denominator effect). Zero: validation (hold-out failed its pre-registered bar; no claim).
 
-**5. What raises it one more point?** Validation leaving NOT_VALIDATED (+2.3 displayed on the research state). From the published state, adopting the reviewed bindings with provider adapters (3.0 → 5.0).
+**5. What raises it one more point?** Validation leaving NOT_VALIDATED (+2.4 displayed on the research state). From the published state, adopting the reviewed bindings with provider adapters (3.0 → 5.0).
 
 **6. What reaches 8.0?** VALIDATED with the current evidence (8.1), or PARTIAL with operator-plan ≥ 0.8, flood ≥ 0.85 and complete history, or PARTIAL with coverage at 75 %. Nothing reaches 8.0 under NOT_VALIDATED (hard cap 5.0). Production additionally needs every critical condition ≥ 7.5 — Michael's gate, untouched.
 
@@ -38,7 +38,7 @@ Detail lives in the per-track documents; every claim below points to one. Number
 ## What changed my mind during the campaign
 - I expected USGS to carry the TVA history; **it does not** (zero elevation series at all four pilots). The answer came from NWS products.
 - I expected the validation gate to be earnable from history alone; **my pre-registered hold-out failed its per-lake bar** (32.5 % of lakes; 70 % needed). The fleet is near nominal in aggregate, but individual lakes vary far more than a binomial predicts, because hydrology is autocorrelated and operations change.
-- I expected more coverage to raise the score monotonically; **it can lower it** (operatorPlan 10 → 4.3).
+- I expected more coverage to raise the score monotonically; **it can lower it** (operatorPlan 10 → 4.4).
 - A wave-2 rule (`R7h`) bought 110 lakes of coverage for +0.2 uncapped; it is reported as a labelled sensitivity, not counted.
 
 ## Honest limits

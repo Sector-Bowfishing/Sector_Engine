@@ -7,7 +7,7 @@ Evidence run: `research/lake-brain/holdout_validation.py` (pre-registered, commi
 ## 1. Why it matters, and what the rubric can and cannot see
 `validation` is 15 % of the Lake score **and** a gate: `NOT_VALIDATED` caps the score at **5.0** regardless of anything else
 (`LAKE_BRAIN_AUDIT.md` §3). With coverage and quality evidence in hand, the displayed research score is pinned at 5.0 until this
-changes (`data/score_marginals.json`: core research scenario 5.0 → 6.6 at PARTIAL → 7.4 at VALIDATED).
+changes (`data/score_marginals_final.json`: strict research scenario 5.0 → 7.4 at PARTIAL → 8.1 at VALIDATED).
 The rubric knows only a fleet-wide ternary. The evidence does not arrive that way, so this document validates **per dimension**
 and then says honestly what a single status can and cannot claim.
 

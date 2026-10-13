@@ -1,14 +1,14 @@
 [
  {
-  "lever": "T1 strict research core (279 lakes)",
-  "profiled": 279,
+  "lever": "strict research core (273 lakes)",
+  "profiled": 273,
   "NOT_VALIDATED": {
    "displayed": 5.0,
    "uncapped": 6.6
   },
   "PARTIAL": {
-   "displayed": 7.3,
-   "uncapped": 7.3
+   "displayed": 7.4,
+   "uncapped": 7.4
   },
   "VALIDATED": {
    "displayed": 8.1,
@@ -16,56 +16,40 @@
   }
  },
  {
-  "lever": "plan share 0.43 -> 0.70",
-  "profiled": 279,
+  "lever": "plan share 0.44 -> 0.70",
+  "profiled": 273,
   "NOT_VALIDATED": {
    "displayed": 5.0,
-   "uncapped": 6.8
+   "uncapped": 6.9
   },
   "PARTIAL": {
    "displayed": 7.6,
    "uncapped": 7.6
   },
   "VALIDATED": {
-   "displayed": 8.3,
-   "uncapped": 8.3
+   "displayed": 8.4,
+   "uncapped": 8.4
   }
  },
  {
-  "lever": "plan 0.43 -> 0.90",
-  "profiled": 279,
+  "lever": "plan 0.44 -> 0.90",
+  "profiled": 273,
   "NOT_VALIDATED": {
    "displayed": 5.0,
-   "uncapped": 7.0
+   "uncapped": 7.1
   },
   "PARTIAL": {
    "displayed": 7.8,
    "uncapped": 7.8
   },
   "VALIDATED": {
-   "displayed": 8.5,
-   "uncapped": 8.5
+   "displayed": 8.6,
+   "uncapped": 8.6
   }
  },
  {
-  "lever": "flood share 0.56 -> 0.80",
-  "profiled": 279,
-  "NOT_VALIDATED": {
-   "displayed": 5.0,
-   "uncapped": 6.7
-  },
-  "PARTIAL": {
-   "displayed": 7.4,
-   "uncapped": 7.4
-  },
-  "VALIDATED": {
-   "displayed": 8.2,
-   "uncapped": 8.2
-  }
- },
- {
-  "lever": "history share 0.918 -> 1.00 (+base 1.0)",
-  "profiled": 279,
+  "lever": "flood share 0.575 -> 0.80",
+  "profiled": 273,
   "NOT_VALIDATED": {
    "displayed": 5.0,
    "uncapped": 6.7
@@ -80,15 +64,31 @@
   }
  },
  {
-  "lever": "coverage -> 50% (311 lakes), same shares",
+  "lever": "history 0.934 -> 1.0",
+  "profiled": 273,
+  "NOT_VALIDATED": {
+   "displayed": 5.0,
+   "uncapped": 6.7
+  },
+  "PARTIAL": {
+   "displayed": 7.5,
+   "uncapped": 7.5
+  },
+  "VALIDATED": {
+   "displayed": 8.2,
+   "uncapped": 8.2
+  }
+ },
+ {
+  "lever": "coverage 50% (311 lakes)",
   "profiled": 311,
   "NOT_VALIDATED": {
    "displayed": 5.0,
    "uncapped": 7.0
   },
   "PARTIAL": {
-   "displayed": 7.7,
-   "uncapped": 7.7
+   "displayed": 7.8,
+   "uncapped": 7.8
   },
   "VALIDATED": {
    "displayed": 8.5,
@@ -96,15 +96,15 @@
   }
  },
  {
-  "lever": "coverage -> 75% (466 lakes), same shares",
+  "lever": "coverage 75% (466 lakes)",
   "profiled": 466,
   "NOT_VALIDATED": {
    "displayed": 5.0,
    "uncapped": 7.4
   },
   "PARTIAL": {
-   "displayed": 8.1,
-   "uncapped": 8.1
+   "displayed": 8.2,
+   "uncapped": 8.2
   },
   "VALIDATED": {
    "displayed": 8.9,
@@ -123,12 +123,12 @@
    "uncapped": 8.5
   },
   "VALIDATED": {
-   "displayed": 9.2,
-   "uncapped": 9.2
+   "displayed": 9.3,
+   "uncapped": 9.3
   }
  },
  {
-  "lever": "coverage 90% + plan 0.9 + flood 0.8 + hist 1.0",
+  "lever": "coverage 90% + plan .9 + flood .8 + hist 1",
   "profiled": 559,
   "NOT_VALIDATED": {
    "displayed": 5.0,
@@ -144,19 +144,19 @@
   }
  },
  {
-  "lever": "10-year history rule (hist share 0.577)",
-  "profiled": 279,
+  "lever": "10-year history rule (hist 0.586)",
+  "profiled": 273,
   "NOT_VALIDATED": {
    "displayed": 5.0,
-   "uncapped": 6.0
+   "uncapped": 6.1
   },
   "PARTIAL": {
-   "displayed": 6.8,
-   "uncapped": 6.8
+   "displayed": 6.9,
+   "uncapped": 6.9
   },
   "VALIDATED": {
-   "displayed": 7.5,
-   "uncapped": 7.5
+   "displayed": 7.6,
+   "uncapped": 7.6
   }
  }
 ]

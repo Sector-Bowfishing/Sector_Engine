@@ -96,23 +96,23 @@
   "displayed": 5.0
  },
  {
-  "step": "S4 FINAL strict v1 (279 lakes)",
-  "profiled": 279,
+  "step": "S4 FINAL strict v1 (273 lakes)",
+  "profiled": 273,
   "shares": {
-   "src": 1,
-   "plan": 0.43,
-   "hist": 0.918,
-   "base": 0.975,
-   "obs": 1,
-   "flood": 0.563
+   "src": 1.0,
+   "plan": 0.44,
+   "hist": 0.934,
+   "base": 0.989,
+   "obs": 1.0,
+   "flood": 0.575
   },
   "dims": {
    "sourceAuthority": 10.0,
-   "operatorPlan": 4.3,
-   "historyQuality": 9.2,
-   "seasonalBaseline": 9.7,
+   "operatorPlan": 4.4,
+   "historyQuality": 9.3,
+   "seasonalBaseline": 9.9,
    "trendQuality": 10.0,
-   "floodDroughtContext": 5.6,
+   "floodDroughtContext": 5.8,
    "validation": 0.0,
    "coverage": 5.0
   },

@@ -8,7 +8,7 @@ binding status `CANDIDATE`/`REVIEWED`, source capability `DIRECT_OPERATOR_POOL |
 |---|---|
 | Directory lakes | 621 (50 states; 16 duplicated names covering 41 ids) |
 | Operator families | USACE 198 · USBR 61 · TVA 18 · natural/none 101 · other operators/utilities/states 243 |
-| Machine-verified level binding (binding-review-v1) | **258 core** (203 operator pool, 55 own gauge) + 57 flagged = 315 (50.7 %); 33 stage-only not counted |
+| Machine-verified level binding, strict v1, **final: 273 core (44.0 %)** (wave 1: **258 core** (203 operator pool, 55 own gauge) + 57 flagged = 315 (50.7 %); 33 stage-only not counted) |
 | …with ≥ 5 complete years of daily history | 203 core (181 + 22) · 244 of 315; TVA pilots 16–18 y via the NWS/HADS composite |
 | …with operator plan evidence (guide curve or zone) | ≈ 51 core under the conservative rule (117 bound lakes have any operator level text) |
 | …with an operator flood-pool bottom | ≈ 78 core |
