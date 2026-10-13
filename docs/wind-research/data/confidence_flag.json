@@ -1,0 +1,35 @@
+{
+ "n": 4716,
+ "obs>=10": {
+  "flagShare": 0.0479,
+  "obsRate": 0.0352,
+  "P(ev|flag)": 0.358,
+  "P(ev|noflag)": 0.0189,
+  "POD": 0.488,
+  "FAR": 0.642,
+  "lift": 18.9,
+  "nEvents": 166,
+  "nFlag": 226,
+  "compare_P50_flag": {
+   "POD": 0.151,
+   "FAR": 0.219,
+   "nFlag": 32
+  }
+ },
+ "obs>=8": {
+  "flagShare": 0.1378,
+  "obsRate": 0.0914,
+  "P(ev|flag)": 0.374,
+  "P(ev|noflag)": 0.0462,
+  "POD": 0.564,
+  "FAR": 0.626,
+  "lift": 8.1,
+  "nEvents": 431,
+  "nFlag": 650,
+  "compare_P50_flag": {
+   "POD": 0.227,
+   "FAR": 0.269,
+   "nFlag": 134
+  }
+ }
+}

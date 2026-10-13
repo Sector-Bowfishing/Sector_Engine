@@ -1,0 +1,996 @@
+[
+ {
+  "lake": "Pontoosuc Lake",
+  "state": "MA",
+  "banks": 49,
+  "medianFetch": {
+   "DIRECT": 645.5555555555555,
+   "CROSS": 311.1111111111111,
+   "LEE": 37.77777777777778
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 17.088235294117645,
+  "auc": null
+ },
+ {
+  "lake": "Dardanelle",
+  "state": "AR",
+  "banks": 3269,
+  "medianFetch": {
+   "DIRECT": 298.8888888888889,
+   "CROSS": 291.1111111111111,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0055,
+  "highShareAll": 0.0173,
+  "ratioDirectOverLee": 8.67741935483871,
+  "auc": 0.6485767864289306
+ },
+ {
+  "lake": "Shenango River Lake",
+  "state": "PA",
+  "banks": 451,
+  "medianFetch": {
+   "DIRECT": 459.44444444444446,
+   "CROSS": 317.77777777777777,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 13.338709677419356,
+  "auc": null
+ },
+ {
+  "lake": "Walter F. George / Eufaula",
+  "state": "GA",
+  "banks": 2518,
+  "medianFetch": {
+   "DIRECT": 275.55555555555554,
+   "CROSS": 238.33333333333331,
+   "LEE": 35.55555555555556
+  },
+  "highShareLee": 0.0118,
+  "highShareAll": 0.0429,
+  "ratioDirectOverLee": 7.749999999999999,
+  "auc": 0.694150530198248
+ },
+ {
+  "lake": "Folsom",
+  "state": "CA",
+  "banks": 754,
+  "medianFetch": {
+   "DIRECT": 475.55555555555554,
+   "CROSS": 320.55555555555554,
+   "LEE": 37.77777777777778
+  },
+  "highShareLee": 0.029,
+  "highShareAll": 0.0594,
+  "ratioDirectOverLee": 12.588235294117647,
+  "auc": 0.6940887868410844
+ },
+ {
+  "lake": "Lake of the Ozarks",
+  "state": "MO",
+  "banks": 7295,
+  "medianFetch": {
+   "DIRECT": 285.55555555555554,
+   "CROSS": 262.22222222222223,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0004,
+  "highShareAll": 0.0007,
+  "ratioDirectOverLee": 8.566666666666666,
+  "auc": 0.6989657689613107
+ },
+ {
+  "lake": "Lake Shelbyville",
+  "state": "IL",
+  "banks": 1559,
+  "medianFetch": {
+   "DIRECT": 362.22222222222223,
+   "CROSS": 252.22222222222223,
+   "LEE": 36.666666666666664
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 9.878787878787879,
+  "auc": null
+ },
+ {
+  "lake": "Lake Gogebic",
+  "state": "MI",
+  "banks": 306,
+  "medianFetch": {
+   "DIRECT": 2516.1111111111113,
+   "CROSS": 2208.8888888888887,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0366,
+  "highShareAll": 0.145,
+  "ratioDirectOverLee": 78.08620689655173,
+  "auc": 0.7183313930405173
+ },
+ {
+  "lake": "Roosevelt",
+  "state": "AZ",
+  "banks": 548,
+  "medianFetch": {
+   "DIRECT": 748.3333333333334,
+   "CROSS": 371.1111111111111,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0091,
+  "highShareAll": 0.0404,
+  "ratioDirectOverLee": 21.725806451612904,
+  "auc": 0.6939711726084721
+ },
+ {
+  "lake": "Sutton Lake",
+  "state": "WV",
+  "banks": 362,
+  "medianFetch": {
+   "DIRECT": 194.44444444444446,
+   "CROSS": 259.44444444444446,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 5.833333333333333,
+  "auc": null
+ },
+ {
+  "lake": "Lake of Egypt",
+  "state": "IL",
+  "banks": 547,
+  "medianFetch": {
+   "DIRECT": 193.8888888888889,
+   "CROSS": 177.22222222222223,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 5.629032258064517,
+  "auc": null
+ },
+ {
+  "lake": "Navajo Reservoir",
+  "state": "NM",
+  "banks": 1447,
+  "medianFetch": {
+   "DIRECT": 483.3333333333333,
+   "CROSS": 372.77777777777777,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0019,
+  "highShareAll": 0.0053,
+  "ratioDirectOverLee": 15.0,
+  "auc": 0.668878084892834
+ },
+ {
+  "lake": "Heron Lake",
+  "state": "NM",
+  "banks": 277,
+  "medianFetch": {
+   "DIRECT": 686.1111111111111,
+   "CROSS": 316.1111111111111,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0054,
+  "highShareAll": 0.0289,
+  "ratioDirectOverLee": 19.919354838709676,
+  "auc": 0.7062761384758365
+ },
+ {
+  "lake": "Lake Eufaula",
+  "state": "OK",
+  "banks": 7471,
+  "medianFetch": {
+   "DIRECT": 392.22222222222223,
+   "CROSS": 257.77777777777777,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0086,
+  "highShareAll": 0.0363,
+  "ratioDirectOverLee": 11.38709677419355,
+  "auc": 0.6972236155955309
+ },
+ {
+  "lake": "Green River Lake",
+  "state": "KY",
+  "banks": 1032,
+  "medianFetch": {
+   "DIRECT": 468.8888888888889,
+   "CROSS": 390.0,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 13.612903225806454,
+  "auc": null
+ },
+ {
+  "lake": "Istokpoga",
+  "state": "FL",
+  "banks": 461,
+  "medianFetch": {
+   "DIRECT": 3413.3333333333335,
+   "CROSS": 2430.5555555555557,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.032,
+  "highShareAll": 0.2131,
+  "ratioDirectOverLee": 99.0967741935484,
+  "auc": 0.7968826447672308
+ },
+ {
+  "lake": "Flathead Lake",
+  "state": "MT",
+  "banks": 1376,
+  "medianFetch": {
+   "DIRECT": 4217.777777777777,
+   "CROSS": 1884.4444444444443,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0644,
+  "highShareAll": 0.2653,
+  "ratioDirectOverLee": 130.8965517241379,
+  "auc": 0.798029551644242
+ },
+ {
+  "lake": "Lake Mead",
+  "state": "NV",
+  "banks": 6279,
+  "medianFetch": {
+   "DIRECT": 523.3333333333334,
+   "CROSS": 300.0,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0256,
+  "highShareAll": 0.0814,
+  "ratioDirectOverLee": 15.193548387096776,
+  "auc": 0.6977071347317284
+ },
+ {
+  "lake": "Grand Lake",
+  "state": "CO",
+  "banks": 31,
+  "medianFetch": {
+   "DIRECT": 982.2222222222222,
+   "CROSS": 605.0,
+   "LEE": 37.77777777777778
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 25.999999999999996,
+  "auc": null
+ },
+ {
+  "lake": "Prettyboy Reservoir",
+  "state": "MD",
+  "banks": 364,
+  "medianFetch": {
+   "DIRECT": 195.0,
+   "CROSS": 197.22222222222223,
+   "LEE": 32.77777777777778
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 5.9491525423728815,
+  "auc": null
+ },
+ {
+  "lake": "Lake Chelan",
+  "state": "WA",
+  "banks": 976,
+  "medianFetch": {
+   "DIRECT": 1868.888888888889,
+   "CROSS": 1827.7777777777778,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0333,
+  "highShareAll": 0.0991,
+  "ratioDirectOverLee": 56.06666666666666,
+  "auc": 0.661777530914811
+ },
+ {
+  "lake": "Salton Sea",
+  "state": "CA",
+  "banks": 1098,
+  "medianFetch": {
+   "DIRECT": 15152.222222222223,
+   "CROSS": 3318.8888888888887,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0803,
+  "highShareAll": 0.3436,
+  "ratioDirectOverLee": 470.2413793103448,
+  "auc": 0.8368966453332267
+ },
+ {
+  "lake": "Logan Martin",
+  "state": "AL",
+  "banks": 2668,
+  "medianFetch": {
+   "DIRECT": 244.44444444444446,
+   "CROSS": 242.22222222222223,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0001,
+  "ratioDirectOverLee": 7.096774193548388,
+  "auc": 0.8334973292100084
+ },
+ {
+  "lake": "Caddo Lake",
+  "state": "TX",
+  "banks": 845,
+  "medianFetch": {
+   "DIRECT": 747.7777777777778,
+   "CROSS": 396.6666666666667,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0084,
+  "highShareAll": 0.0464,
+  "ratioDirectOverLee": 21.70967741935484,
+  "auc": 0.7369642161929286
+ },
+ {
+  "lake": "Lake Wawasee",
+  "state": "IN",
+  "banks": 299,
+  "medianFetch": {
+   "DIRECT": 692.7777777777778,
+   "CROSS": 292.77777777777777,
+   "LEE": 31.11111111111111
+  },
+  "highShareLee": 0.0017,
+  "highShareAll": 0.0121,
+  "ratioDirectOverLee": 22.267857142857146,
+  "auc": 0.7648372174471376
+ },
+ {
+  "lake": "Mosquito Creek Lake",
+  "state": "OH",
+  "banks": 351,
+  "medianFetch": {
+   "DIRECT": 1232.2222222222222,
+   "CROSS": 649.4444444444445,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0063,
+  "highShareAll": 0.0231,
+  "ratioDirectOverLee": 35.774193548387096,
+  "auc": 0.6694859642726941
+ },
+ {
+  "lake": "Torch Lake",
+  "state": "MI",
+  "banks": 336,
+  "medianFetch": {
+   "DIRECT": 3171.1111111111113,
+   "CROSS": 2765.5555555555557,
+   "LEE": 31.11111111111111
+  },
+  "highShareLee": 0.0444,
+  "highShareAll": 0.2087,
+  "ratioDirectOverLee": 101.92857142857143,
+  "auc": 0.7592929209124347
+ },
+ {
+  "lake": "Sherman Reservoir",
+  "state": "NE",
+  "banks": 277,
+  "medianFetch": {
+   "DIRECT": 297.77777777777777,
+   "CROSS": 212.22222222222223,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0045,
+  "ratioDirectOverLee": 9.241379310344827,
+  "auc": 0.7587941976427924
+ },
+ {
+  "lake": "Douglas Lake",
+  "state": "TN",
+  "banks": 3731,
+  "medianFetch": {
+   "DIRECT": 201.11111111111111,
+   "CROSS": 178.33333333333331,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0021,
+  "highShareAll": 0.0056,
+  "ratioDirectOverLee": 5.838709677419355,
+  "auc": 0.68357760557053
+ },
+ {
+  "lake": "Lake Maurepas",
+  "state": "LA",
+  "banks": 355,
+  "medianFetch": {
+   "DIRECT": 12918.888888888889,
+   "CROSS": 4830.555555555556,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0715,
+  "highShareAll": 0.3831,
+  "ratioDirectOverLee": 387.5666666666666,
+  "auc": 0.8873766116035455
+ },
+ {
+  "lake": "Norris Lake",
+  "state": "TN",
+  "banks": 4133,
+  "medianFetch": {
+   "DIRECT": 242.22222222222223,
+   "CROSS": 233.33333333333334,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0005,
+  "highShareAll": 0.0009,
+  "ratioDirectOverLee": 7.03225806451613,
+  "auc": 0.567109644608585
+ },
+ {
+  "lake": "Leech Lake",
+  "state": "MN",
+  "banks": 1710,
+  "medianFetch": {
+   "DIRECT": 2840.0,
+   "CROSS": 1253.3333333333333,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0364,
+  "highShareAll": 0.1846,
+  "ratioDirectOverLee": 85.19999999999999,
+  "auc": 0.7936545457100911
+ },
+ {
+  "lake": "Jackson Lake",
+  "state": "WY",
+  "banks": 716,
+  "medianFetch": {
+   "DIRECT": 1855.5555555555557,
+   "CROSS": 1081.6666666666665,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0357,
+  "highShareAll": 0.1463,
+  "ratioDirectOverLee": 55.666666666666664,
+  "auc": 0.7029064234153769
+ },
+ {
+  "lake": "Lake Robinson",
+  "state": "SC",
+  "banks": 182,
+  "medianFetch": {
+   "DIRECT": 690.0,
+   "CROSS": 388.33333333333337,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0021,
+  "ratioDirectOverLee": 20.7,
+  "auc": 0.6928194540032118
+ },
+ {
+  "lake": "Chesuncook Lake",
+  "state": "ME",
+  "banks": 731,
+  "medianFetch": {
+   "DIRECT": 1412.2222222222222,
+   "CROSS": 915.0,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0229,
+  "highShareAll": 0.0626,
+  "ratioDirectOverLee": 42.36666666666666,
+  "auc": 0.6583707633327552
+ },
+ {
+  "lake": "Watchaug Pond",
+  "state": "RI",
+  "banks": 77,
+  "medianFetch": {
+   "DIRECT": 253.33333333333334,
+   "CROSS": 193.88888888888889,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 7.35483870967742,
+  "auc": null
+ },
+ {
+  "lake": "Hiwassee Lake",
+  "state": "NC",
+  "banks": 1220,
+  "medianFetch": {
+   "DIRECT": 226.66666666666666,
+   "CROSS": 222.22222222222223,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 6.580645161290323,
+  "auc": null
+ },
+ {
+  "lake": "Oneida Lake",
+  "state": "NY",
+  "banks": 621,
+  "medianFetch": {
+   "DIRECT": 6161.666666666667,
+   "CROSS": 2261.1111111111113,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0603,
+  "highShareAll": 0.2878,
+  "ratioDirectOverLee": 191.2241379310345,
+  "auc": 0.8154314594393736
+ },
+ {
+  "lake": "DeGray",
+  "state": "AR",
+  "banks": 1421,
+  "medianFetch": {
+   "DIRECT": 288.8888888888889,
+   "CROSS": 258.8888888888889,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0033,
+  "highShareAll": 0.0055,
+  "ratioDirectOverLee": 8.38709677419355,
+  "auc": 0.6789550908082531
+ },
+ {
+  "lake": "Long Lake",
+  "state": "ME",
+  "banks": 349,
+  "medianFetch": {
+   "DIRECT": 1108.888888888889,
+   "CROSS": 773.3333333333333,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0007,
+  "highShareAll": 0.0082,
+  "ratioDirectOverLee": 33.266666666666666,
+  "auc": 0.748253175687346
+ },
+ {
+  "lake": "Melvern Lake",
+  "state": "KS",
+  "banks": 528,
+  "medianFetch": {
+   "DIRECT": 385.55555555555554,
+   "CROSS": 336.1111111111111,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0014,
+  "highShareAll": 0.0057,
+  "ratioDirectOverLee": 11.96551724137931,
+  "auc": 0.6193551587301588
+ },
+ {
+  "lake": "Anderson Ranch Reservoir",
+  "state": "ID",
+  "banks": 362,
+  "medianFetch": {
+   "DIRECT": 683.3333333333334,
+   "CROSS": 638.3333333333334,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0021,
+  "ratioDirectOverLee": 21.20689655172414,
+  "auc": 0.5914071510957324
+ },
+ {
+  "lake": "Swartswood Lake",
+  "state": "NJ",
+  "banks": 56,
+  "medianFetch": {
+   "DIRECT": 532.2222222222222,
+   "CROSS": 322.22222222222223,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 16.517241379310345,
+  "auc": null
+ },
+ {
+  "lake": "Glendo Reservoir",
+  "state": "WY",
+  "banks": 831,
+  "medianFetch": {
+   "DIRECT": 556.6666666666666,
+   "CROSS": 316.6666666666667,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0066,
+  "highShareAll": 0.0215,
+  "ratioDirectOverLee": 16.161290322580644,
+  "auc": 0.6763189155195304
+ },
+ {
+  "lake": "Eagle Lake",
+  "state": "MS",
+  "banks": 203,
+  "medianFetch": {
+   "DIRECT": 1034.4444444444443,
+   "CROSS": 1444.4444444444443,
+   "LEE": 40.55555555555556
+  },
+  "highShareLee": 0.0012,
+  "highShareAll": 0.0222,
+  "ratioDirectOverLee": 25.50684931506849,
+  "auc": 0.7066715645116148
+ },
+ {
+  "lake": "Bowdish Reservoir",
+  "state": "RI",
+  "banks": 74,
+  "medianFetch": {
+   "DIRECT": 273.8888888888889,
+   "CROSS": 245.0,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 7.951612903225808,
+  "auc": null
+ },
+ {
+  "lake": "Smith Mountain Lake",
+  "state": "VA",
+  "banks": 3598,
+  "medianFetch": {
+   "DIRECT": 205.55555555555554,
+   "CROSS": 172.77777777777777,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0002,
+  "highShareAll": 0.0002,
+  "ratioDirectOverLee": 5.967741935483871,
+  "auc": 0.5726953681503875
+ },
+ {
+  "lake": "Sardis Lake",
+  "state": "OK",
+  "banks": 786,
+  "medianFetch": {
+   "DIRECT": 544.4444444444445,
+   "CROSS": 313.3333333333333,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0108,
+  "highShareAll": 0.0396,
+  "ratioDirectOverLee": 16.333333333333332,
+  "auc": 0.6942577396853518
+ },
+ {
+  "lake": "Massabesic Lake",
+  "state": "NH",
+  "banks": 262,
+  "medianFetch": {
+   "DIRECT": 574.4444444444445,
+   "CROSS": 320.0,
+   "LEE": 40.0
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 14.36111111111111,
+  "auc": null
+ },
+ {
+  "lake": "West Point",
+  "state": "GA",
+  "banks": 3525,
+  "medianFetch": {
+   "DIRECT": 248.88888888888889,
+   "CROSS": 207.77777777777777,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0001,
+  "highShareAll": 0.0008,
+  "ratioDirectOverLee": 7.225806451612903,
+  "auc": 0.6978309475350695
+ },
+ {
+  "lake": "Lake Marion",
+  "state": "SC",
+  "banks": 3790,
+  "medianFetch": {
+   "DIRECT": 306.6666666666667,
+   "CROSS": 261.1111111111111,
+   "LEE": 36.666666666666664
+  },
+  "highShareLee": 0.0193,
+  "highShareAll": 0.0666,
+  "ratioDirectOverLee": 8.363636363636365,
+  "auc": 0.7203578506465624
+ },
+ {
+  "lake": "Bluestone Lake",
+  "state": "WV",
+  "banks": 145,
+  "medianFetch": {
+   "DIRECT": 393.3333333333333,
+   "CROSS": 545.0,
+   "LEE": 40.55555555555556
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 9.698630136986301,
+  "auc": null
+ },
+ {
+  "lake": "Lake Texoma",
+  "state": "TX",
+  "banks": 3158,
+  "medianFetch": {
+   "DIRECT": 375.55555555555554,
+   "CROSS": 306.6666666666667,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0129,
+  "highShareAll": 0.0549,
+  "ratioDirectOverLee": 11.266666666666666,
+  "auc": 0.6906829618736189
+ },
+ {
+  "lake": "Lake McConaughy",
+  "state": "NE",
+  "banks": 471,
+  "medianFetch": {
+   "DIRECT": 3196.666666666667,
+   "CROSS": 2027.7777777777778,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0529,
+  "highShareAll": 0.2455,
+  "ratioDirectOverLee": 92.80645161290325,
+  "auc": 0.745607894211482
+ },
+ {
+  "lake": "Lake Bomoseen",
+  "state": "VT",
+  "banks": 181,
+  "medianFetch": {
+   "DIRECT": 751.6666666666667,
+   "CROSS": 557.7777777777778,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 23.327586206896555,
+  "auc": null
+ },
+ {
+  "lake": "Neely Henry",
+  "state": "AL",
+  "banks": 1786,
+  "medianFetch": {
+   "DIRECT": 204.44444444444446,
+   "CROSS": 195.55555555555554,
+   "LEE": 37.77777777777778
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 5.411764705882353,
+  "auc": null
+ },
+ {
+  "lake": "Lake Clark",
+  "state": "AK",
+  "banks": 1439,
+  "medianFetch": {
+   "DIRECT": 2847.777777777778,
+   "CROSS": 1802.7777777777778,
+   "LEE": 37.77777777777778
+  },
+  "highShareLee": 0.048,
+  "highShareAll": 0.2119,
+  "ratioDirectOverLee": 75.38235294117646,
+  "auc": 0.7029768159469316
+ },
+ {
+  "lake": "Clear Lake",
+  "state": "IA",
+  "banks": 117,
+  "medianFetch": {
+   "DIRECT": 2086.6666666666665,
+   "CROSS": 1035.5555555555557,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0019,
+  "highShareAll": 0.0374,
+  "ratioDirectOverLee": 64.75862068965517,
+  "auc": 0.7195814174726495
+ },
+ {
+  "lake": "Wallowa Lake",
+  "state": "OR",
+  "banks": 71,
+  "medianFetch": {
+   "DIRECT": 1228.3333333333333,
+   "CROSS": 1427.7777777777778,
+   "LEE": 31.11111111111111
+  },
+  "highShareLee": 0.0039,
+  "highShareAll": 0.0282,
+  "ratioDirectOverLee": 39.482142857142854,
+  "auc": 0.686141304347826
+ },
+ {
+  "lake": "C.J. Strike Reservoir",
+  "state": "ID",
+  "banks": 696,
+  "medianFetch": {
+   "DIRECT": 325.55555555555554,
+   "CROSS": 373.8888888888889,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 9.451612903225806,
+  "auc": null
+ },
+ {
+  "lake": "Mille Lacs Lake",
+  "state": "MN",
+  "banks": 741,
+  "medianFetch": {
+   "DIRECT": 13656.666666666666,
+   "CROSS": 2489.4444444444443,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0567,
+  "highShareAll": 0.317,
+  "ratioDirectOverLee": 396.48387096774195,
+  "auc": 0.8397149553415051
+ },
+ {
+  "lake": "Angostura Reservoir",
+  "state": "SD",
+  "banks": 450,
+  "medianFetch": {
+   "DIRECT": 399.44444444444446,
+   "CROSS": 302.22222222222223,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0011,
+  "highShareAll": 0.0094,
+  "ratioDirectOverLee": 11.596774193548388,
+  "auc": 0.7360199267592623
+ },
+ {
+  "lake": "Aleknagik",
+  "state": "AK",
+  "banks": 738,
+  "medianFetch": {
+   "DIRECT": 1567.7777777777778,
+   "CROSS": 792.2222222222222,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.015,
+  "highShareAll": 0.0744,
+  "ratioDirectOverLee": 45.51612903225807,
+  "auc": 0.7070319094173525
+ },
+ {
+  "lake": "Tohopekaliga (Toho)",
+  "state": "FL",
+  "banks": 406,
+  "medianFetch": {
+   "DIRECT": 2203.3333333333335,
+   "CROSS": 1268.3333333333335,
+   "LEE": 33.333333333333336
+  },
+  "highShareLee": 0.0316,
+  "highShareAll": 0.1752,
+  "ratioDirectOverLee": 66.1,
+  "auc": 0.7945991441603673
+ },
+ {
+  "lake": "Buckeye Lake",
+  "state": "OH",
+  "banks": 324,
+  "medianFetch": {
+   "DIRECT": 591.1111111111111,
+   "CROSS": 383.33333333333337,
+   "LEE": 38.888888888888886
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 15.200000000000001,
+  "auc": null
+ },
+ {
+  "lake": "Sevier Lake",
+  "state": "UT",
+  "banks": 835,
+  "medianFetch": {
+   "DIRECT": 10418.333333333334,
+   "CROSS": 3252.777777777778,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0683,
+  "highShareAll": 0.3516,
+  "ratioDirectOverLee": 302.4677419354839,
+  "auc": 0.8610720636586023
+ },
+ {
+  "lake": "Coventry Lake (Wangumbaug)",
+  "state": "CT",
+  "banks": 42,
+  "medianFetch": {
+   "DIRECT": 471.66666666666663,
+   "CROSS": 403.33333333333337,
+   "LEE": 32.22222222222222
+  },
+  "highShareLee": 0.0,
+  "highShareAll": 0.0,
+  "ratioDirectOverLee": 14.637931034482758,
+  "auc": null
+ },
+ {
+  "lake": "Wheeler",
+  "state": null,
+  "banks": 4462,
+  "medianFetch": {
+   "DIRECT": 315.55555555555554,
+   "CROSS": 291.66666666666663,
+   "LEE": 36.666666666666664
+  },
+  "highShareLee": 0.0096,
+  "highShareAll": 0.0269,
+  "ratioDirectOverLee": 8.606060606060606,
+  "auc": 0.7083438497546535
+ },
+ {
+  "lake": "Guntersville",
+  "state": null,
+  "banks": 6217,
+  "medianFetch": {
+   "DIRECT": 363.3333333333333,
+   "CROSS": 326.6666666666667,
+   "LEE": 35.55555555555556
+  },
+  "highShareLee": 0.0073,
+  "highShareAll": 0.0154,
+  "ratioDirectOverLee": 10.218749999999998,
+  "auc": 0.6457753374913231
+ },
+ {
+  "lake": "Pickwick",
+  "state": null,
+  "banks": 2490,
+  "medianFetch": {
+   "DIRECT": 510.0,
+   "CROSS": 526.6666666666666,
+   "LEE": 37.77777777777778
+  },
+  "highShareLee": 0.012,
+  "highShareAll": 0.0359,
+  "ratioDirectOverLee": 13.5,
+  "auc": 0.6174017080938677
+ },
+ {
+  "lake": "Wilson",
+  "state": null,
+  "banks": 1046,
+  "medianFetch": {
+   "DIRECT": 287.77777777777777,
+   "CROSS": 279.44444444444446,
+   "LEE": 34.44444444444444
+  },
+  "highShareLee": 0.0138,
+  "highShareAll": 0.047,
+  "ratioDirectOverLee": 8.35483870967742,
+  "auc": 0.7347391259262804
+ }
+]

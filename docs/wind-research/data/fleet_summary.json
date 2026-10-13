@@ -1,0 +1,100 @@
+{
+ "directoryLakes": 621,
+ "withEnginePolygon": 599,
+ "polygonFetchComputed": 595,
+ "geometryConfidence(all621)": {
+  "HIGH": 351,
+  "MISSING": 22,
+  "LOW": 53,
+  "MEDIUM": 195
+ },
+ "fetchComputed_and_confidenceHIGH_or_MEDIUM": 544,
+ "fetchComputed_and_confidenceHIGH": 351,
+ "frozenTables(profiled)": 74,
+ "newlyCoveredBeyondFrozen(HIGH|MEDIUM)": 479,
+ "newlyCoveredBeyondFrozen(HIGH)": 309,
+ "rasterResolutionM_median/p90/max": [
+  20.0,
+  20.0,
+  85.6933756799999
+ ],
+ "lakes_res_gt_40m": 9,
+ "maxP90FetchBins(good)": {
+  "pond-like (max p90 fetch < 300 m)": 1,
+  "300 m-1 km": 113,
+  "1-3 km": 262,
+  "3-10 km": 137,
+  ">10 km": 31
+ },
+ "meanClassShare@8mph(good)": {
+  "LOW": 0.63,
+  "MODERATE": 0.357,
+  "HIGH": 0.013
+ },
+ "lakes_with_>=10%_HIGH@8mph(good)": 28,
+ "meanClassShare@12mph(good)": {
+  "LOW": 0.521,
+  "MODERATE": 0.434,
+  "HIGH": 0.045
+ },
+ "lakes_with_>=10%_HIGH@12mph(good)": 76,
+ "meanClassShare@18mph(good)": {
+  "LOW": 0.421,
+  "MODERATE": 0.454,
+  "HIGH": 0.125
+ },
+ "lakes_with_>=10%_HIGH@18mph(good)": 250,
+ "G4_monotone_HIGH_share_8<=12<=18": "595/595",
+ "dominantP90Dir(good)": {
+  "E": 53,
+  "N": 47,
+  "SE": 44,
+  "S": 44,
+  "SSE": 38,
+  "SW": 37,
+  "NW": 37,
+  "NE": 36,
+  "NNW": 33,
+  "NNE": 33,
+  "W": 30,
+  "SSW": 27,
+  "WSW": 25,
+  "WNW": 21,
+  "ENE": 20,
+  "ESE": 19
+ },
+ "AK_HI_lakes": {
+  "AK": 12,
+  "HI": 9
+ },
+ "failed_polygon_fetch": [
+  "Lake Waiau|HI",
+  "Lake Shafer|IN",
+  "Devils Lake|ND",
+  "Buckeye Lake|OH"
+ ],
+ "noPolygon": [
+  "Iliamna|AK",
+  "Koele ponds (Lanai)|HI",
+  "Nuuanu Reservoir|HI",
+  "Puu Loa Reservoir|HI",
+  "Waiakea Pond|HI",
+  "Waimaluhia Reservoir|HI",
+  "Lake Michigan|IN",
+  "Lake Erie|MI",
+  "Lake Huron|MI",
+  "Lake Michigan|MI",
+  "Lake Superior|MI",
+  "Lake Superior|MN",
+  "Lake of the Woods|MN",
+  "Lake Erie|NY",
+  "Lake Ontario|NY",
+  "Lake Erie|OH",
+  "Lake Erie|PA",
+  "Great Salt Lake|UT",
+  "Chickahominy Lake|VA",
+  "Green Bay|WI",
+  "Lake Michigan|WI",
+  "Lake Superior|WI"
+ ]
+}

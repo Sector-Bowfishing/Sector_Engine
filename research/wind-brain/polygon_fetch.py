@@ -143,7 +143,7 @@ def load_frozen(path):
     for b in DIRS16:
         c = int(round(b / 3.0)) % 120
         cols.append(np.mean([tab[:, (c + k) % 120] for k in range(-4, 5)], axis=0))
-    return d["directory"], np.array(cols).T
+    return (d.get("directory") or {"name": {"guntersville":"Guntersville","wheeler":"Wheeler","wilson":"Wilson","pickwick":"Pickwick Lake"}.get(d.get("lake")), "state": {"pickwick":"TN"}.get(d.get("lake"), "AL")}), np.array(cols).T
 
 if __name__ == "__main__":
     {"test": cmd_test, "fleet": lambda: cmd_fleet(sys.argv[2])}[sys.argv[1]]()

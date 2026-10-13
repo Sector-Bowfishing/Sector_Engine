@@ -1,0 +1,527 @@
+{
+ "nRows": 141730,
+ "V1_direction": {
+  "allHours|lead<=6|byObserved|3-5mph": {
+   "n": 15547,
+   "within22_5": 0.49,
+   "within45": 0.728,
+   "circMAE": 36.7
+  },
+  "allHours|lead<=6|byObserved|5-10mph": {
+   "n": 19075,
+   "within22_5": 0.613,
+   "within45": 0.823,
+   "circMAE": 28.1
+  },
+  "allHours|lead<=6|byObserved|10-99mph": {
+   "n": 4988,
+   "within22_5": 0.74,
+   "within45": 0.891,
+   "circMAE": 22.3
+  },
+  "allHours|lead<=6|byForecast|3-5mph": {
+   "n": 11775,
+   "within22_5": 0.538,
+   "within45": 0.759,
+   "circMAE": 33.6
+  },
+  "allHours|lead<=6|byForecast|5-10mph": {
+   "n": 14819,
+   "within22_5": 0.685,
+   "within45": 0.891,
+   "circMAE": 22.4
+  },
+  "allHours|lead<=6|byForecast|10-99mph": {
+   "n": 2114,
+   "within22_5": 0.826,
+   "within45": 0.955,
+   "circMAE": 15.4
+  },
+  "allHours|lead12-18|byObserved|3-5mph": {
+   "n": 10369,
+   "within22_5": 0.457,
+   "within45": 0.695,
+   "circMAE": 39.1
+  },
+  "allHours|lead12-18|byObserved|5-10mph": {
+   "n": 12638,
+   "within22_5": 0.584,
+   "within45": 0.805,
+   "circMAE": 30.0
+  },
+  "allHours|lead12-18|byObserved|10-99mph": {
+   "n": 3228,
+   "within22_5": 0.715,
+   "within45": 0.882,
+   "circMAE": 23.5
+  },
+  "allHours|lead12-18|byForecast|3-5mph": {
+   "n": 7932,
+   "within22_5": 0.502,
+   "within45": 0.74,
+   "circMAE": 35.6
+  },
+  "allHours|lead12-18|byForecast|5-10mph": {
+   "n": 9538,
+   "within22_5": 0.666,
+   "within45": 0.872,
+   "circMAE": 23.9
+  },
+  "allHours|lead12-18|byForecast|10-99mph": {
+   "n": 1303,
+   "within22_5": 0.8,
+   "within45": 0.956,
+   "circMAE": 16.1
+  },
+  "night|lead<=6|byObserved|3-5mph": {
+   "n": 5556,
+   "within22_5": 0.56,
+   "within45": 0.797,
+   "circMAE": 30.3
+  },
+  "night|lead<=6|byObserved|5-10mph": {
+   "n": 3416,
+   "within22_5": 0.733,
+   "within45": 0.894,
+   "circMAE": 21.6
+  },
+  "night|lead<=6|byObserved|10-99mph": {
+   "n": 444,
+   "within22_5": 0.764,
+   "within45": 0.878,
+   "circMAE": 21.3
+  },
+  "night|lead<=6|byForecast|3-5mph": {
+   "n": 3007,
+   "within22_5": 0.651,
+   "within45": 0.867,
+   "circMAE": 23.9
+  },
+  "night|lead<=6|byForecast|5-10mph": {
+   "n": 2305,
+   "within22_5": 0.807,
+   "within45": 0.958,
+   "circMAE": 16.1
+  },
+  "night|lead<=6|byForecast|10-99mph": {
+   "n": 224,
+   "within22_5": 0.969,
+   "within45": 1.0,
+   "circMAE": 8.5
+  },
+  "night|lead12-18|byObserved|3-5mph": {
+   "n": 3702,
+   "within22_5": 0.509,
+   "within45": 0.761,
+   "circMAE": 33.1
+  },
+  "night|lead12-18|byObserved|5-10mph": {
+   "n": 2234,
+   "within22_5": 0.68,
+   "within45": 0.872,
+   "circMAE": 23.9
+  },
+  "night|lead12-18|byObserved|10-99mph": {
+   "n": 244,
+   "within22_5": 0.627,
+   "within45": 0.795,
+   "circMAE": 28.5
+  },
+  "night|lead12-18|byForecast|3-5mph": {
+   "n": 2049,
+   "within22_5": 0.581,
+   "within45": 0.838,
+   "circMAE": 27.3
+  },
+  "night|lead12-18|byForecast|5-10mph": {
+   "n": 1373,
+   "within22_5": 0.771,
+   "within45": 0.939,
+   "circMAE": 17.5
+  },
+  "night|lead12-18|byForecast|10-99mph": {
+   "n": 102,
+   "within22_5": 0.922,
+   "within45": 1.0,
+   "circMAE": 9.5
+  }
+ },
+ "V2_speed": {
+  "night|+1h|<5": {
+   "byForecast": {
+    "n": 8405,
+    "biasMph": -0.22,
+    "maeMph": 1.78
+   },
+   "byObserved": {
+    "n": 8008,
+    "biasMph": 0.43,
+    "maeMph": 1.58
+   }
+  },
+  "night|+1h|5-10": {
+   "byForecast": {
+    "n": 974,
+    "biasMph": 1.15,
+    "maeMph": 2.32
+   },
+   "byObserved": {
+    "n": 1301,
+    "biasMph": -2.55,
+    "maeMph": 3.05
+   }
+  },
+  "night|+1h|10-15": {
+   "byForecast": {
+    "n": 93,
+    "biasMph": 0.57,
+    "maeMph": 2.99
+   },
+   "byObserved": {
+    "n": 150,
+    "biasMph": -4.61,
+    "maeMph": 4.9
+   }
+  },
+  "night|+1h|>=15": {
+   "byForecast": {
+    "n": 0,
+    "biasMph": null,
+    "maeMph": null
+   },
+   "byObserved": {
+    "n": 13,
+    "biasMph": -10.29,
+    "maeMph": 10.29
+   }
+  },
+  "night|+3h|<5": {
+   "byForecast": {
+    "n": 8434,
+    "biasMph": -0.22,
+    "maeMph": 1.79
+   },
+   "byObserved": {
+    "n": 8023,
+    "biasMph": 0.43,
+    "maeMph": 1.59
+   }
+  },
+  "night|+3h|5-10": {
+   "byForecast": {
+    "n": 960,
+    "biasMph": 1.07,
+    "maeMph": 2.35
+   },
+   "byObserved": {
+    "n": 1291,
+    "biasMph": -2.61,
+    "maeMph": 3.07
+   }
+  },
+  "night|+3h|10-15": {
+   "byForecast": {
+    "n": 78,
+    "biasMph": 1.09,
+    "maeMph": 3.08
+   },
+   "byObserved": {
+    "n": 147,
+    "biasMph": -4.83,
+    "maeMph": 5.07
+   }
+  },
+  "night|+3h|>=15": {
+   "byForecast": {
+    "n": 0,
+    "biasMph": null,
+    "maeMph": null
+   },
+   "byObserved": {
+    "n": 11,
+    "biasMph": -12.0,
+    "maeMph": 12.0
+   }
+  },
+  "night|+6h|<5": {
+   "byForecast": {
+    "n": 8480,
+    "biasMph": -0.22,
+    "maeMph": 1.8
+   },
+   "byObserved": {
+    "n": 8046,
+    "biasMph": 0.43,
+    "maeMph": 1.6
+   }
+  },
+  "night|+6h|5-10": {
+   "byForecast": {
+    "n": 930,
+    "biasMph": 1.03,
+    "maeMph": 2.36
+   },
+   "byObserved": {
+    "n": 1280,
+    "biasMph": -2.72,
+    "maeMph": 3.13
+   }
+  },
+  "night|+6h|10-15": {
+   "byForecast": {
+    "n": 62,
+    "biasMph": 1.33,
+    "maeMph": 3.38
+   },
+   "byObserved": {
+    "n": 135,
+    "biasMph": -5.29,
+    "maeMph": 5.41
+   }
+  },
+  "night|+6h|>=15": {
+   "byForecast": {
+    "n": 0,
+    "biasMph": null,
+    "maeMph": null
+   },
+   "byObserved": {
+    "n": 11,
+    "biasMph": -11.92,
+    "maeMph": 11.92
+   }
+  },
+  "night|+12h|<5": {
+   "byForecast": {
+    "n": 8551,
+    "biasMph": -0.27,
+    "maeMph": 1.82
+   },
+   "byObserved": {
+    "n": 8067,
+    "biasMph": 0.41,
+    "maeMph": 1.59
+   }
+  },
+  "night|+12h|5-10": {
+   "byForecast": {
+    "n": 874,
+    "biasMph": 1.19,
+    "maeMph": 2.43
+   },
+   "byObserved": {
+    "n": 1275,
+    "biasMph": -2.84,
+    "maeMph": 3.23
+   }
+  },
+  "night|+12h|10-15": {
+   "byForecast": {
+    "n": 47,
+    "biasMph": 2.76,
+    "maeMph": 3.34
+   },
+   "byObserved": {
+    "n": 123,
+    "biasMph": -6.01,
+    "maeMph": 6.09
+   }
+  },
+  "night|+12h|>=15": {
+   "byForecast": {
+    "n": 0,
+    "biasMph": null,
+    "maeMph": null
+   },
+   "byObserved": {
+    "n": 7,
+    "biasMph": -16.97,
+    "maeMph": 16.97
+   }
+  },
+  "night|+18h|<5": {
+   "byForecast": {
+    "n": 8541,
+    "biasMph": -0.28,
+    "maeMph": 1.83
+   },
+   "byObserved": {
+    "n": 8067,
+    "biasMph": 0.43,
+    "maeMph": 1.61
+   }
+  },
+  "night|+18h|5-10": {
+   "byForecast": {
+    "n": 865,
+    "biasMph": 1.29,
+    "maeMph": 2.45
+   },
+   "byObserved": {
+    "n": 1275,
+    "biasMph": -2.84,
+    "maeMph": 3.3
+   }
+  },
+  "night|+18h|10-15": {
+   "byForecast": {
+    "n": 66,
+    "biasMph": 3.75,
+    "maeMph": 4.17
+   },
+   "byObserved": {
+    "n": 123,
+    "biasMph": -5.9,
+    "maeMph": 6.03
+   }
+  },
+  "night|+18h|>=15": {
+   "byForecast": {
+    "n": 0,
+    "biasMph": null,
+    "maeMph": null
+   },
+   "byObserved": {
+    "n": 7,
+    "biasMph": -17.08,
+    "maeMph": 17.08
+   }
+  }
+ },
+ "V3_tonightCategories": {
+  "n": 4724,
+  "exact": 0.792,
+  "within1": 0.986,
+  "modalBaselineExact": 0.774,
+  "modal": "calm<5",
+  "confusion_rows_obs_cols_fc": [
+   [
+    3392,
+    262,
+    4,
+    0
+   ],
+   [
+    569,
+    328,
+    3,
+    0
+   ],
+   [
+    42,
+    81,
+    23,
+    0
+   ],
+   [
+    9,
+    9,
+    2,
+    0
+   ]
+  ],
+  "cats": [
+   "calm<5",
+   "light5-10",
+   "breezy10-15",
+   "windy>=15"
+  ],
+  "obsShare": [
+   0.774,
+   0.191,
+   0.031,
+   0.004
+  ],
+  "fcShare": [
+   0.849,
+   0.144,
+   0.007,
+   0.0
+  ]
+ },
+ "V4_trend_00Z_to_06Z": {
+  "n": 2324,
+  "accuracy": 0.554,
+  "alwaysSteadyBaseline": 0.417,
+  "confusion_rows_obs_cols_fc[easing,steady,rising]": [
+   [
+    554,
+    551,
+    1
+   ],
+   [
+    239,
+    725,
+    4
+   ],
+   [
+    56,
+    185,
+    9
+   ]
+  ],
+  "layDown": {
+   "POD": 0.066,
+   "FAR": 0.634,
+   "obsEvents": 226,
+   "fcEvents": 41
+  }
+ },
+ "V5_dirShift45": {
+  "POD": 0.4,
+  "FAR": 0.556,
+  "obsEvents": 10,
+  "fcEvents": 9,
+  "n": 63
+ },
+ "V1_nightByStation_fc>=5mph_lead<=12": {
+  "15M": {
+   "n": 270,
+   "within22_5": 0.785,
+   "within45": 0.97,
+   "circMAE": 17.6
+  },
+  "4A6": {
+   "n": 28,
+   "within22_5": 0.75,
+   "within45": 1.0,
+   "circMAE": 15.8
+  },
+  "8A1": {
+   "n": 50,
+   "within22_5": 0.44,
+   "within45": 0.6,
+   "circMAE": 34.7
+  },
+  "9A4": {
+   "n": 402,
+   "within22_5": 0.878,
+   "within45": 0.99,
+   "circMAE": 13.5
+  },
+  "DCU": {
+   "n": 821,
+   "within22_5": 0.798,
+   "within45": 0.954,
+   "circMAE": 16.1
+  },
+  "HSV": {
+   "n": 508,
+   "within22_5": 0.813,
+   "within45": 0.967,
+   "circMAE": 14.4
+  },
+  "MSL": {
+   "n": 873,
+   "within22_5": 0.79,
+   "within45": 0.948,
+   "circMAE": 17.5
+  },
+  "SNH": {
+   "n": 315,
+   "within22_5": 0.914,
+   "within45": 0.987,
+   "circMAE": 10.3
+  }
+ }
+}
