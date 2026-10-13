@@ -152,7 +152,7 @@ public enum LakeBrainRunner {
                     do { try await archive.write(LakeDailyHistory.path(lake.id), LakeDailyHistory.encode(merged), contentType: "text/csv"); historyWritten = true }
                     catch { errors.append("history write: \(error)") }
                 }
-                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today)
+                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today, poolBasisIsFullPool: lake.poolBasis == .fullPool)
                 baseline = b
                 if let archive, b.status != .none, (try? await archive.read(LakeBaselineBuilder.path(b))) == nil {
                     do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }
@@ -385,8 +385,8 @@ public enum LakeBrainRunner {
             baselineMethod: LakeBrainSpec.baselineMethod, bindingVersion: LakeSourceBindings.version,
             breakdowns: ["readiness": readiness, "sourceCapability": cap, "bindingStatus": binding, "baselineStatus": base,
                          "levelState": level, "trendState": trend, "historicalState": hist],
-            versions: [.init(version: "\(LakeBrainSpec.brainVersion) · \(LakeBrainSpec.modelVersion)", date: "2026-10-12",
-                             note: "v1 pilot: Guntersville, Wheeler, Wilson, Pickwick (TVA) + Lake Hartwell (CWMS). Operator zone first, p10/p90 + p02/p98, rapid = seasonal p95 |Δ24h|, ≥ 5 years SUFFICIENT.",
+            versions: [.init(version: "\(LakeBrainSpec.brainVersion) · \(LakeBrainSpec.modelVersion)", date: "2026-10-13",
+                             note: "Rules v2 (pre-registered): history tiers gate VERY_UNUSUAL (≥ 15 years), trend from the 72 h mean (floors 0.10 / 0.05 ft), RAPID = max(seasonal p95 |Δ24h|, 0.25 ft). baselineStatus (≥ 5 years SUFFICIENT) and NOT_VALIDATED unchanged.",
                              status: "CURRENT")],
             readinessDefinitions: readinessDefinitions, stateKindDefinitions: stateKindDefinitions,
             healthRule: "FAILED: write failed or no lakes. DEGRADED: > 25 % of reviewed lakes unavailable. WARNING: any reviewed lake stale, unavailable or on a fallback source. HEALTHY otherwise.",
