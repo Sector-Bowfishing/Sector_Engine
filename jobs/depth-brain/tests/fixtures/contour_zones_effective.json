@@ -33,16 +33,8 @@
   "basis": "share of the reference-pool surveyed surface",
   "resolution": "bounds: the shifted edge falls between supported contour levels",
   "shares": {
-   "deeper": {
-    "hi": 0.7,
-    "lo": 0.0
-   },
    "dry": {
     "hi": 0.2,
-    "lo": 0.0
-   },
-   "sixToTen": {
-    "hi": 0.8,
     "lo": 0.0
    },
    "threeToSix": {
@@ -54,7 +46,12 @@
     "lo": 0.0
    }
   },
-  "shiftFt": -3.0
+  "shiftFt": -3.0,
+  "withheldBands": [
+   "deeper",
+   "sixToTen"
+  ],
+  "withheldWhy": "bound wider than 0.25 of the surface: the contours cannot resolve it"
  },
  "facts": [
   "The lake is 3.0 ft below its reference pool; depths measured at the reference pool should be read as about -3.0 ft (+/- 0.3 ft). This is a shift, not a measured depth for any particular spot."

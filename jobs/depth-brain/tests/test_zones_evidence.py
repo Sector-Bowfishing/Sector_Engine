@@ -51,12 +51,15 @@ def test_zero_shift_reproduces_reference_shares():
 
 
 def test_lowering_exposes_shallow_water_and_brackets_the_surface():
-    r = Z.effective_zones(zref(2), -3.0, 0.0)["shares"]
+    out = Z.effective_zones(zref(2), -3.0, 0.0)
+    r = out["shares"]
     assert r["dry"] == {"lo": 0.1, "hi": 0.1}                                   # reference depth < 3 ft is now dry (edge supported)
     assert r["under3"]["lo"] == pytest.approx(0.1) and r["under3"]["hi"] == pytest.approx(0.1)       # ref 3-6 ft -> now 0-3 ft
     assert r["threeToSix"] == {"lo": 0.0, "hi": 0.1}                            # ref 6-9 ft: 9 ft is not a supported edge -> bound
-    lo = sum(r[k]["lo"] for k in ("dry", "under3", "threeToSix", "sixToTen", "deeper"))
-    hi = sum(r[k]["hi"] for k in ("dry", "under3", "threeToSix", "sixToTen", "deeper"))
+    assert "sixToTen" in out["withheldBands"] and "sixToTen" not in r           # [0.0, 0.8]: uninformative, withheld
+    keys = ("dry", "under3", "threeToSix", "sixToTen", "deeper")
+    lo = sum(r.get(k, {"lo": 0.0})["lo"] for k in keys)
+    hi = sum(r.get(k, {"hi": 1.0})["hi"] for k in keys)
     assert lo <= 1.0 + 1e-9 <= hi + 1e-9                                        # the true partition lies inside the bounds
 
 
@@ -77,8 +80,8 @@ def test_rising_lake_flags_unquantified_flooded_margin():
 
 
 def test_coarse_survey_cannot_resolve_shallow_effective_zones():
-    r = Z.effective_zones(zref(5), -2.0, 0.0)["shares"]           # only the 10 ft edge is known
-    assert r["under3"]["hi"] - r["under3"]["lo"] > 0.2           # honest, wide bound
+    out = Z.effective_zones(zref(5), -2.0, 0.0)                    # only the 10 ft edge is known
+    assert "under3" in out["withheldBands"] and "under3" not in out["shares"]      # honest: not published as a wide range
 
 
 # ── evidence tiers + GLOBathy policy ───────────────────────────────────────────────────────────────

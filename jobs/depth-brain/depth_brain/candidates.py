@@ -127,6 +127,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     a2w = json.load(open(paths["a2w_datums"]))["lakes"] if paths.get("a2w_datums") and os.path.exists(paths["a2w_datums"]) else {}
     overrides = json.load(open(paths["overrides"])) if paths.get("overrides") and os.path.exists(paths["overrides"]) else {}
     twdb_ver = proposals.twdb_updates(paths.get("twdb_reference_pools")) if paths.get("twdb_reference_pools") else {}
+    twdb_all = (proposals.load(paths["twdb_reference_pools"]) or {}).get("lakes", {}) if paths.get("twdb_reference_pools") else {}
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
     out = []
     for lk in directory:
@@ -188,7 +189,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         t = truth.get(lid)
         zr = None
         if t and tier in ("A", "B"):
-            itv = float(t["interval_ft"]) if t.get("interval_ft") else None
+            itv = float(t["interval_ft"]) if t.get("interval_ft") else (twdb_all.get(lid) or {}).get("contourIntervalFt")   # TWDB rows: interval from the verified survey facts
             sh = {"lt3": float(t["shr_0_3"]), "lt6": float(t["shr_0_3"]) + float(t["shr_3_6"]), "lt10": float(t["shr_0_3"]) + float(t["shr_3_6"]) + float(t["shr_6_10"])} \
                 if all(t.get(k) not in (None, "") for k in ("shr_0_3", "shr_3_6", "shr_6_10")) else {}
             cov = float(t["cov_raster"]) if t.get("cov_raster") else None

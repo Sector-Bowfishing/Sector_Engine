@@ -4,22 +4,105 @@
  "rubricVersion": "research-rubric-1",
  "official": false,
  "dimensions": {
-  "authority":   {"label": "Source authority",              "weight": 15, "critical": true,  "basis": "judgment", "score": 5,
-                  "evidence": ["103 tier A/B lakes (17%) with instrument-survey contours/tables", "0 TVA lakes", "datum audit adds provenance not surveys"], "changeEvidence": []},
-  "coverage":    {"label": "Coverage",                      "weight": 15, "critical": true,  "basis": "computed", "score": null,
-                  "evidence": ["anchor table on defensible-shift share of the directory (see maturity.COVERAGE_ANCHORS)"], "changeEvidence": []},
-  "absolute":    {"label": "Absolute depth accuracy",       "weight": 10, "critical": false, "basis": "judgment", "score": 3,
-                  "evidence": ["no absolute depth published", "sigma components are research estimates"], "changeEvidence": []},
-  "relative":    {"label": "Relative morphology accuracy",  "weight": 15, "critical": true,  "basis": "judgment", "score": 3,
-                  "evidence": ["no scalable flats method (policy codified)", "contour shares exist for 94 lakes, effective zones withheld"], "changeEvidence": []},
-  "effective":   {"label": "Effective-depth capability",    "weight": 15, "critical": true,  "basis": "judgment", "score": 6,
-                  "evidence": ["shift engine + contract + 106 tests + live GET-only dry run on 5 pilots", "no event/field validation"], "changeEvidence": []},
-  "validation":  {"label": "Validation",                    "weight": 15, "critical": true,  "basis": "judgment", "score": 5,
-                  "evidence": ["arithmetic tested", "research evidence validation", "no field or prospective test"], "changeEvidence": []},
-  "provenance":  {"label": "Confidence and provenance",     "weight": 10, "critical": false, "basis": "judgment", "score": 7,
-                  "evidence": ["tiers, datum status, licence gate, reasons, fingerprints, golden fixtures"], "changeEvidence": []},
-  "scalability": {"label": "Fleet scalability",             "weight": 5,  "critical": false, "basis": "judgment", "score": 4,
-                  "evidence": ["unlock path is data-only", "233 lakes lack datum evidence", "23 states lack contours"], "changeEvidence": []}
+  "authority": {
+   "label": "Source authority",
+   "weight": 15,
+   "critical": true,
+   "basis": "judgment",
+   "score": 5,
+   "evidence": [
+    "103 tier A/B lakes (17%) with instrument-survey contours/tables",
+    "0 TVA lakes",
+    "datum audit adds provenance not surveys"
+   ],
+   "changeEvidence": []
+  },
+  "coverage": {
+   "label": "Coverage",
+   "weight": 15,
+   "critical": true,
+   "basis": "computed",
+   "score": null,
+   "evidence": [
+    "anchor table on defensible-shift share of the directory (see maturity.COVERAGE_ANCHORS)"
+   ],
+   "changeEvidence": []
+  },
+  "absolute": {
+   "label": "Absolute depth accuracy",
+   "weight": 10,
+   "critical": false,
+   "basis": "judgment",
+   "score": 3,
+   "evidence": [
+    "no absolute depth published",
+    "sigma components are research estimates"
+   ],
+   "changeEvidence": []
+  },
+  "relative": {
+   "label": "Relative morphology accuracy",
+   "weight": 15,
+   "critical": true,
+   "basis": "judgment",
+   "score": 3,
+   "evidence": [
+    "no scalable flats method (policy codified)",
+    "contour shares exist for 94 lakes, effective zones withheld",
+    "5 TWDB lakes: effective-zone dry/under3 bounds validated against exact elevation-area tables (preregistered, S2 independent MAE 0.016, bounds coverage 1.0) - one regional family; deeper bands withheld as uninformative"
+   ],
+   "changeEvidence": []
+  },
+  "effective": {
+   "label": "Effective-depth capability",
+   "weight": 15,
+   "critical": true,
+   "basis": "judgment",
+   "score": 6,
+   "evidence": [
+    "shift engine + contract + 106 tests + live GET-only dry run on 5 pilots",
+    "no event/field validation"
+   ],
+   "changeEvidence": []
+  },
+  "validation": {
+   "label": "Validation",
+   "weight": 15,
+   "critical": true,
+   "basis": "judgment",
+   "score": 5,
+   "evidence": [
+    "arithmetic tested",
+    "research evidence validation",
+    "no field or prospective test",
+    "first hash-frozen preregistered offline validation passed (TWDB effective zones, 5 lakes); still no field/event validation; S2 does not beat a naive fleet-mean guess"
+   ],
+   "changeEvidence": []
+  },
+  "provenance": {
+   "label": "Confidence and provenance",
+   "weight": 10,
+   "critical": false,
+   "basis": "judgment",
+   "score": 7,
+   "evidence": [
+    "tiers, datum status, licence gate, reasons, fingerprints, golden fixtures"
+   ],
+   "changeEvidence": []
+  },
+  "scalability": {
+   "label": "Fleet scalability",
+   "weight": 5,
+   "critical": false,
+   "basis": "judgment",
+   "score": 4,
+   "evidence": [
+    "unlock path is data-only",
+    "233 lakes lack datum evidence",
+    "23 states lack contours"
+   ],
+   "changeEvidence": []
+  }
  },
  "criticalThreshold": 7.5,
  "overallThreshold": 8.0

@@ -31783,9 +31783,12 @@
     "contourSources": [
      "TWDB"
     ],
+    "coverage": 1.0,
     "hypsometryOnly": false,
+    "intervalFt": 1.0,
     "kind": "contour",
     "researchTier": "A",
+    "surveyYear": 2017,
     "tier": "A"
    },
    "history": {
@@ -31823,6 +31826,21 @@
     "poolFt": 322,
     "source": "https://www.waterdatafortexas.org/reservoirs/individual/cedar-creek",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3124,
+     "3.0": 0.0769,
+     "6.0": 0.1824
+    },
+    "intervalFt": 1.0,
+    "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)",
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 322.0,
+    "referenceStatus": "VERIFIED",
+    "source": "TWDB",
+    "surveyYear": 2017
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -31954,9 +31972,12 @@
     "contourSources": [
      "TWDB"
     ],
+    "coverage": 1.0,
     "hypsometryOnly": false,
+    "intervalFt": 1.0,
     "kind": "contour",
     "researchTier": "A",
+    "surveyYear": 2020,
     "tier": "A"
    },
    "history": {
@@ -31995,6 +32016,21 @@
     "source": "https://www.waterdatafortexas.org/reservoirs/individual/conroe",
     "winterPoolFt": null
    },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2862,
+     "3.0": 0.0768,
+     "6.0": 0.1647
+    },
+    "intervalFt": 1.0,
+    "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)",
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 201.0,
+    "referenceStatus": "VERIFIED",
+    "source": "TWDB",
+    "surveyYear": 2020
+   },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
    "state": "TX"
@@ -32015,9 +32051,12 @@
     "contourSources": [
      "TWDB"
     ],
+    "coverage": 1.0,
     "hypsometryOnly": false,
+    "intervalFt": 2.0,
     "kind": "contour",
     "researchTier": "A",
+    "surveyYear": 2009,
     "tier": "A"
    },
    "history": {
@@ -32056,6 +32095,21 @@
     "source": "https://www.waterdatafortexas.org/reservoirs/individual/fork",
     "winterPoolFt": null
    },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2506,
+     "3.0": 0.1014,
+     "6.0": 0.161
+    },
+    "intervalFt": 2.0,
+    "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)",
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 403.0,
+    "referenceStatus": "VERIFIED",
+    "source": "TWDB",
+    "surveyYear": 2009
+   },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
    "state": "TX"
@@ -32076,9 +32130,12 @@
     "contourSources": [
      "TWDB"
     ],
+    "coverage": 1.0,
     "hypsometryOnly": false,
+    "intervalFt": 1.0,
     "kind": "contour",
     "researchTier": "A",
+    "surveyYear": 2019,
     "tier": "A"
    },
    "history": {
@@ -32117,6 +32174,21 @@
     "source": "https://www.waterdatafortexas.org/reservoirs/individual/livingston",
     "winterPoolFt": null
    },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.23559999999999998,
+     "3.0": 0.0945,
+     "6.0": 0.1621
+    },
+    "intervalFt": 1.0,
+    "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)",
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 131.1,
+    "referenceStatus": "VERIFIED",
+    "source": "TWDB",
+    "surveyYear": 2019
+   },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
    "state": "TX"
@@ -32137,9 +32209,12 @@
     "contourSources": [
      "TWDB"
     ],
+    "coverage": 1.0,
     "hypsometryOnly": false,
+    "intervalFt": 1.0,
     "kind": "contour",
     "researchTier": "A",
+    "surveyYear": 2009,
     "tier": "A"
    },
    "history": {
@@ -32178,6 +32253,21 @@
     "source": "https://www.waterdatafortexas.org/reservoirs/individual/tawakoni",
     "winterPoolFt": null
    },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.255,
+     "3.0": 0.0782,
+     "6.0": 0.1423
+    },
+    "intervalFt": 1.0,
+    "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)",
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 437.5,
+    "referenceStatus": "VERIFIED",
+    "source": "TWDB",
+    "surveyYear": 2009
+   },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
    "state": "TX"
@@ -32198,7 +32288,9 @@
     "contourSources": [
      "TWDB"
     ],
+    "coverage": 1.0,
     "hypsometryOnly": false,
+    "intervalFt": 5.0,
     "kind": "contour",
     "researchTier": "A",
     "tier": "A"
@@ -32238,6 +32330,17 @@
     "poolFt": 617,
     "source": "CWMS DENI.Elev.Inst.0.Top of Constant Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2377
+    },
+    "intervalFt": 5.0,
+    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
+    "referencePoolFt": null,
+    "referenceStatus": "UNVERIFIED",
+    "source": "TWDB"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -37758,7 +37861,7 @@
    "state": "WY"
   }
  ],
- "manifestVersion": "2026-10-13.1",
+ "manifestVersion": "2026-10-14.1",
  "schema": "depth-candidates-v1",
  "summary": {
   "blockedReasons": {
@@ -37838,6 +37941,6 @@
    "D": 371,
    "UNKNOWN": 56
   },
-  "zonesAvailableForReference": 94
+  "zonesAvailableForReference": 100
  }
 }

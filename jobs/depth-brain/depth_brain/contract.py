@@ -81,6 +81,7 @@ CONF_MEDIUM_MAX_SIGMA = 1.2
 INTERVAL_RMS_FT = {1: 0.28, 2: 0.28, 5: 1.3, 10: 2.8}
 EDGES_FT = (3.0, 6.0, 10.0)           # bowfishing bands: under 3, 3-6, 6-10, deeper
 MAX_INTERVAL_FOR_ARBITRARY_EDGE_FT = 3.0
+MAX_PUBLISHED_BOUND_WIDTH = 0.25      # effective-zone bands wider than this share-width are uninformative and are withheld (TWDB validation: deeper bands span 0.75-0.84)
 
 SCORE_NOTE = "Depth has NO official score. The research-only rubric (docs/research/depth-brain on docs/depth-brain-research) is separate from live Brain maturity."
 

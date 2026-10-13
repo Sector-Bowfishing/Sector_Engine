@@ -127,10 +127,13 @@ def effective_zones(z: ReferenceZones, shift_ft: float, sigma_ft: float) -> dict
         lo10, hi10 = _bounds(c, 10.0 - s)
         d_lo, d_hi = (1.0 - hi10, 1.0 - lo10)
         upd("deeper", d_lo, d_hi)
+    keep = {k: v for k, v in agg.items() if round(v[1] - v[0], 6) <= C.MAX_PUBLISHED_BOUND_WIDTH}
+    withheld = sorted(k for k in agg if k not in keep)
     out = {"available": True, "basis": "share of the reference-pool surveyed surface", "shiftFt": round(shift_ft, 1),
-           "shares": {k: {"lo": round(v[0], 3), "hi": round(v[1], 3)} for k, v in agg.items()},
+           "shares": {k: {"lo": round(v[0], 3), "hi": round(v[1], 3)} for k, v in keep.items()},
+           **({"withheldBands": withheld, "withheldWhy": f"bound wider than {C.MAX_PUBLISHED_BOUND_WIDTH} of the surface: the contours cannot resolve it"} if withheld else {}),
            "resolution": "bounds: the shifted edge falls between supported contour levels" if any(
-               round(v[1] - v[0], 3) > 0.02 for v in agg.values()) else "point-like"}
+               round(v[1] - v[0], 3) > 0.02 for v in keep.values()) else "point-like"}
     if shift_ft > 0:
         out["floodedMarginUnquantified"] = True
     return out

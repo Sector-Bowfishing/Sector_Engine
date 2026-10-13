@@ -1,0 +1,344 @@
+{
+ "note": "SYNTHETIC lake levels applied to real manifest records through build_state (offline, nothing published). Shows what the shadow state would carry; not an observation.",
+ "results": {
+  "Cedar Creek Reservoir|TX": {
+   "lake_2.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -2.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.0,
+      "hi": 0.077
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.182
+     },
+     "threeToSix": {
+      "lo": 0.0,
+      "hi": 0.236
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen"
+    ]
+   },
+   "lake_4.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -4.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.077,
+      "hi": 0.182
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.236
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   },
+   "lake_6.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -6.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.077,
+      "hi": 0.312
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.236
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   }
+  },
+  "Lake Conroe|TX": {
+   "lake_2.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -2.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.0,
+      "hi": 0.077
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.165
+     },
+     "threeToSix": {
+      "lo": 0.0,
+      "hi": 0.209
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen"
+    ]
+   },
+   "lake_4.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -4.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.077,
+      "hi": 0.165
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.209
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   },
+   "lake_6.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -6.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.077,
+      "hi": 0.286
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.209
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   }
+  },
+  "Lake Fork Reservoir|TX": {
+   "lake_2.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -2.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.0,
+      "hi": 0.101
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.161
+     },
+     "threeToSix": {
+      "lo": 0.0,
+      "hi": 0.149
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen"
+    ]
+   },
+   "lake_4.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -4.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.101,
+      "hi": 0.161
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.149
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   },
+   "lake_6.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -6.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.101,
+      "hi": 0.251
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.149
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   }
+  },
+  "Lake Livingston|TX": {
+   "lake_2.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -2.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.0,
+      "hi": 0.095
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.162
+     },
+     "threeToSix": {
+      "lo": 0.0,
+      "hi": 0.141
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen"
+    ]
+   },
+   "lake_4.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -4.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.095,
+      "hi": 0.162
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.141
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   },
+   "lake_6.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -6.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.095,
+      "hi": 0.236
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.141
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   }
+  },
+  "Lake Tawakoni|TX": {
+   "lake_2.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -2.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.0,
+      "hi": 0.078
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.142
+     },
+     "threeToSix": {
+      "lo": 0.0,
+      "hi": 0.177
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen"
+    ]
+   },
+   "lake_4.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -4.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.078,
+      "hi": 0.142
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.177
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   },
+   "lake_6.0ft_below_pool": {
+    "mode": "zoned",
+    "shiftFt": -6.0,
+    "effectiveZones": {
+     "dry": {
+      "lo": 0.078,
+      "hi": 0.255
+     },
+     "under3": {
+      "lo": 0.0,
+      "hi": 0.177
+     }
+    },
+    "withheld": [
+     "deeper",
+     "sixToTen",
+     "threeToSix"
+    ]
+   }
+  },
+  "Lake Texoma|TX": {
+   "lake_2.0ft_below_pool": {
+    "mode": "shiftOnly",
+    "shiftFt": -2.0,
+    "effectiveZones": {
+     "available": false,
+     "reason": "SURVEY_REFERENCE_POOL_UNVERIFIED"
+    },
+    "withheld": null
+   },
+   "lake_4.0ft_below_pool": {
+    "mode": "shiftOnly",
+    "shiftFt": -4.0,
+    "effectiveZones": {
+     "available": false,
+     "reason": "SURVEY_REFERENCE_POOL_UNVERIFIED"
+    },
+    "withheld": null
+   },
+   "lake_6.0ft_below_pool": {
+    "mode": "shiftOnly",
+    "shiftFt": -6.0,
+    "effectiveZones": {
+     "available": false,
+     "reason": "SURVEY_REFERENCE_POOL_UNVERIFIED"
+    },
+    "withheld": null
+   }
+  }
+ }
+}

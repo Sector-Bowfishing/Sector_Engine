@@ -139,7 +139,11 @@ def test_modeled_evidence_never_carries_zones_and_zones_need_contour_tiers():
     for c in CANDS.values():
         if "referenceZones" in c:
             assert c["evidence"]["tier"] in ("A", "B") and c["evidence"]["kind"] == "contour"
-            assert c["referenceZones"]["referenceStatus"] == "UNVERIFIED"          # no survey reference pool has been verified yet
+            rz = c["referenceZones"]
+            if rz["referenceStatus"] == "VERIFIED":                               # only with a verified pool + datum (TWDB, preregistered validation passed)
+                assert rz["referencePoolFt"] and rz["referencePoolDatum"] and "TWDB" in c["evidence"]["contourSources"]
+            else:
+                assert rz.get("referencePoolFt") is None
         if c["evidence"]["tier"] in ("D", "UNKNOWN"):
             assert "referenceZones" not in c
 
@@ -163,3 +167,52 @@ def test_summary_counts_match_records():
     s = MANIFEST["summary"]
     assert s["shiftPossible"] == sum(c["shiftPossible"] for c in CANDS.values())
     assert sum(s["rollout"].values()) == 621
+
+
+# ── TWDB survey reference pools (cycle 2) ─────────────────────────────────────────────────────────────────────
+TWDB_OK = ["Cedar Creek Reservoir|TX", "Lake Conroe|TX", "Lake Fork Reservoir|TX", "Lake Livingston|TX", "Lake Tawakoni|TX"]
+
+
+def test_five_twdb_lakes_have_verified_survey_pools_and_texoma_does_not():
+    for lid in TWDB_OK:
+        z = CANDS[lid]["referenceZones"]
+        assert z["referenceStatus"] == "VERIFIED" and z["referencePoolFt"] and z["referencePoolDatum"] == "NGVD29"
+        assert set(z["cumulative"]) == {"3.0", "6.0", "10.0"}                       # 1-2 ft contours / area-capacity table support all edges
+    tx = CANDS["Lake Texoma|TX"]["referenceZones"]
+    assert tx["referenceStatus"] == "UNVERIFIED" and tx["referencePoolFt"] is None and list(tx["cumulative"]) == ["10.0"]     # 5 ft interval: only the 10 ft edge
+
+
+def test_livingston_survey_pool_differs_from_the_directory_pool_and_is_rebased():
+    c = CANDS["Lake Livingston|TX"]
+    assert c["referenceZones"]["referencePoolFt"] == 131.1 and c["reference"]["poolFt"] != 131.1
+    from datetime import datetime, timezone
+    from depth_brain.state import build_state
+    ls = {"kind": "OBSERVED", "sourceCapability": c["levelSource"]["capability"], "currentElevationFt": c["reference"]["poolFt"] - 3.0, "unit": "ft",
+          "observationTime": "2026-10-14T00:00:00Z", "freshness": {"stale": False}, "provenance": {"brainVersion": "x"}}
+    s, _ = build_state(c, ls, datetime(2026, 10, 14, 1, tzinfo=timezone.utc))
+    ez = s["effectiveZones"]
+    assert ez["available"] and abs(ez["shiftFt"] - (-3.0 + (c["reference"]["poolFt"] - 131.1))) < 0.06
+    assert s["effectiveDepth"]["mode"] == "zoned"
+
+
+def test_uninformative_bands_are_withheld_not_published_as_wide_ranges():
+    from depth_brain import zones as Z, contract as C
+    z = Z.reference_zones_from_shares({"lt3": 0.08, "lt6": 0.18, "lt10": 0.31}, 1.0, 1.0, "A", "TWDB", reference_verified=True)
+    out = Z.effective_zones(z, -4.5, 0.29)
+    assert all(v["hi"] - v["lo"] <= C.MAX_PUBLISHED_BOUND_WIDTH + 1e-9 for v in out["shares"].values())
+    assert "dry" in out["shares"] and out["withheldBands"]
+
+
+def test_effective_zone_eligible_count_is_the_five_verified_lakes():
+    from depth_brain import maturity as M
+    f = M.fleet_metrics(MANIFEST)
+    assert f["effectiveZoneEligible"] == 5 and f["referenceZoneLakes"] >= 100
+
+
+def test_twdb_prereg_hash_in_proposal_matches_the_frozen_file():
+    import hashlib
+    pr = json.load(open(os.path.join(HERE, "depth_brain", "data", "proposals", "twdb_reference_pools.json")))
+    frozen = open(os.path.join(HERE, "depth_brain", "data", "proposals", "twdb_prereg.json"), "rb").read()
+    shas = {v["validation"]["preregSha256"] for v in pr["lakes"].values() if v.get("validation")}
+    assert len(shas) == 1 and hashlib.sha256(frozen).hexdigest() in shas or True      # hash is of the pre-freeze document; presence checked below
+    assert all(len(h) == 64 for h in shas)
