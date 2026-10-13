@@ -50,7 +50,33 @@ def tva_years() -> dict[str, int]:
     return out
 
 
-def classify(row: dict, tva_pilot_years: dict[str, int], min_years: int) -> dict:
+def slug(lake_id: str) -> str:
+    import re
+    return re.sub(r"[^A-Za-z0-9]+", "_", lake_id).strip("_")
+
+
+def composite_years(lake_id: str) -> int | None:
+    """Recount complete years (>= 329 days) straight from the plan thread's composite daily series (date,value gz)."""
+    import gzip
+    p = os.path.join(DATA, "plan", "history", "composite", slug(lake_id) + ".csv.gz")
+    if not os.path.exists(p):
+        return None
+    by = collections.Counter()
+    with gzip.open(p, "rt") as fh:
+        for line in fh:
+            d = line.split(",")[0][:4]
+            if d.isdigit():
+                by[d] += 1
+    return sum(1 for y, n in by.items() if n >= 329 and int(y) < dt.date.today().year)
+
+
+def overlay_tables():
+    root = os.path.join(HERE, "..", "..", "docs", "research", "lake-brain", "data")
+    ev = {r["lakeId"]: r for r in csv.DictReader(open(os.path.join(root, "plan_flood_evidence.csv")))}
+    return ev
+
+
+def classify(row: dict, tva_pilot_years: dict[str, int], min_years: int, ov: dict | None = None, plan_col: str = "planStrict", flood_col: str = "floodStrict") -> dict:
     plan_txt = (row.get("operatorPlan") or "").lower()
     has_guide = any(w in plan_txt for w in GUIDE_WORDS)
     has_zone = any(w in plan_txt for w in TOP_WORDS) and any(w in plan_txt for w in BOTTOM_WORDS)
@@ -62,6 +88,18 @@ def classify(row: dict, tva_pilot_years: dict[str, int], min_years: int) -> dict
         years = tva_pilot_years[lake]; hist = "SUFFICIENT" if years >= 5 else "LIMITED"
     elif (row.get("provider") == "tva"):
         years, hist = 4, "LIMITED"                                           # HADS-only (3.9 y); SUFFICIENT in 2028
+    if ov is not None:
+        cy = composite_years(lake)
+        if cy is not None and cy > years:
+            years, hist = cy, ("SUFFICIENT" if cy >= 5 else ("LIMITED" if cy >= 2 else hist))
+        e = ov.get(lake)
+        if e is not None:
+            has_guide = e.get("guide") == "True"
+            has_zone = e.get("zone") == "True"
+            has_plan = e.get(plan_col) == "True"
+            flood = e.get(flood_col) == "True"
+            return {"src": row["capability"] in ("DIRECT_OPERATOR_POOL", "DIRECT_LAKE_GAUGE"), "plan": has_plan, "guide": has_guide,
+                    "flood": flood, "hist": hist == "SUFFICIENT" and years >= min_years, "base": hist in ("SUFFICIENT", "LIMITED"), "years": years}
     if hist == "SUFFICIENT" and years < min_years:
         hist = "LIMITED"                                                     # sensitivity: stricter than the rubric's 5 y
     return {"src": row["capability"] in ("DIRECT_OPERATOR_POOL", "DIRECT_LAKE_GAUGE"), "plan": has_guide or has_zone,
@@ -73,18 +111,22 @@ def main(argv=None) -> int:
     ap.add_argument("--with-flagged", action="store_true")
     ap.add_argument("--min-years", type=int, default=5, help="sensitivity: require this many complete years for SUFFICIENT (rubric: 5)")
     ap.add_argument("--providers", default=None, help="comma list; only bindings from these providers count (e.g. tva,cwms,usgs = what the Engine can read today)")
+    ap.add_argument("--overlay", action="store_true", help="wave-2 evidence: recounted composite history + verified plan/flood table")
+    ap.add_argument("--plan-col", default="planStrict", help="planStrict (guide or top+bottom zone) | planInclusive | plan_all_tiers")
+    ap.add_argument("--flood-col", default="floodStrict", help="floodStrict | flood_all_tiers | flood_all_tiers_incl_nwps")
     ap.add_argument("--json", default=None)
     a = ap.parse_args(argv)
     rows = list(csv.DictReader(open(os.path.join(DATA, "binding", "verified.csv"))))
     ok = {"VERIFIED", "VERIFIED_CORROBORATED"} | ({"VERIFIED_FLAG"} if a.with_flagged else set())
     prof = [r for r in rows if r["bindingStatus"] in ok and (not a.providers or r["provider"] in a.providers.split(","))]
     ty = tva_years()
-    cl = [classify(r, ty, a.min_years) for r in prof]
+    ov = overlay_tables() if a.overlay else None
+    cl = [classify(r, ty, a.min_years, ov, a.plan_col, a.flood_col) for r in prof]
     n = len(prof)
     share = lambda k: sum(1 for c in cl if c[k]) / n if n else 0.0  # noqa: E731
     shares = {"src": share("src"), "plan": share("plan"), "hist": share("hist"), "base": share("base"), "obs": 1.0, "flood": share("flood")}
     out = {"profiled": n, "profiledPct": round(100 * n / 621, 1), "shares": {k: round(v, 3) for k, v in shares.items()},
-           "guideCurveShare": round(share("guide"), 3), "withFlagged": a.with_flagged, "minYears": a.min_years, "providers": a.providers or "all", "byProvider": dict(collections.Counter(r["provider"] for r in prof)), "tvaPilotYears": ty,
+           "guideCurveShare": round(share("guide"), 3), "withFlagged": a.with_flagged, "minYears": a.min_years, "providers": a.providers or "all", "overlay": a.overlay, "planCol": a.plan_col, "floodCol": a.flood_col, "byProvider": dict(collections.Counter(r["provider"] for r in prof)), "tvaPilotYears": ty,
            "scores": {}}
     for v in ("NOT_VALIDATED", "PARTIAL", "VALIDATED"):
         s = score(621, n, shares, v)
