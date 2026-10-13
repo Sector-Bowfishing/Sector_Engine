@@ -24,3 +24,17 @@ All wind validation to date is on land (8 METAR stations); every exposure number
 1. **Start portable now** (no purchase decision needed beyond a calibrated handheld/boat-mounted unit — Michael's call): add the wind reading to every bank-pair session at mid-fetch.
 2. **Decide on one fixed station only after** the portable ratio is known and the Guntersville host/26a questions are answered.
 3. Do not buy sensors for other lakes; validation across lakes should come from portable sessions and testers.
+
+## Minimum instrument requirements (specification, not a purchase)
+| Item | Requirement |
+|---|---|
+| Speed accuracy | ± 0.3 m/s or ± 3% of reading, whichever is larger; resolution 0.1 m/s (or 0.1 mph) |
+| Range | at least 0.5–25 m/s (1–55 mph); starting threshold ≤ 0.5 m/s |
+| Direction | wind-FROM bearing to ± 10° (vane/compass or ultrasonic); recorded as degrees true |
+| Averaging / sampling | device-averaged or hand-logged: ≥ 10 minutes per session at mid-fetch, sampled at ≥ 1 reading per 5 s (or the device's 60-s average ten times); also record the maximum 3-s gust if the device reports it, labelled as a gust |
+| Mount (portable) | pole ≥ 2 m clear of the boat's superstructure and people, ≥ 1 m upwind of any obstruction; or a boat-mounted unit with a documented height; hold the boat head-to-wind so the sensor is upwind; engine/bow-wave effects noted |
+| Height | measured above the water surface and **recorded for every session** (never assumed); conversion to 10 m with the same stated profile for all sessions |
+| Location | GPS fix and time (UTC) per session; position described as mid-fetch / near-bank / cove; distance to the upwind shore |
+| Documentation | device model/serial, last check date, observer, photo of the mount; verification side-by-side with a second unit or an ASOS before the season and after every ~10 sessions; drift > 0.3 m/s retires the unit |
+| Environment | 8–15 mph sustained from the pair axis; avoid gust fronts and rain; no readings in lightning |
+This is the minimum for the portable plan; a fixed station would add continuous logging, a 4–5 m mast and a gust definition the audit can trust.

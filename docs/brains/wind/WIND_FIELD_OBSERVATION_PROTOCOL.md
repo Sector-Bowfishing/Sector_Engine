@@ -7,7 +7,7 @@ Goal: let a trusted tester, a local bowfisher or a beta user give Sector physica
 |---|---|---|
 | lake, bank/zone | picked from the map (canonical bank/zone id) | auto: time (UTC), GPS, device |
 | **Water surface** | CALM · LIGHT · CHOPPY · ROUGH | calm = glass/no ripple · light = small ripples · choppy = whitecap-free chop that slaps the hull · rough = whitecaps/waves |
-| **Bank exposure** (the tester's judgement) | DIRECT · CROSS · PROTECTED · UNSURE | "is the wind coming straight at this bank / along it / is the bank in the lee?" |
+| **Bank exposure** (the tester's judgement) | **EXPOSED · PROTECTED · UNSURE** (everyone) · optional richer **DIRECT · CROSS** for AUDITED-lake validation | "is the wind reaching this bank, or is the bank in the lee?" ESTIMATED lakes only claim EXPOSED/PROTECTED, so that is all a tester needs to say |
 | **Boat-control difficulty** | EASY · NOTICEABLE · DIFFICULT | holding position/steering while hunting |
 | Wind direction FROM | 16-point compass, or degrees | from a compass/flag/handheld; optional |
 | Wind speed | mph from a handheld anemometer, **or** "visual estimate" | optional; measured reading needs device, height above water, averaging (60 s) |
