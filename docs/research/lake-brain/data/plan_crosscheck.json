@@ -1,0 +1,84 @@
+{
+ "pairs": 11,
+ "within1ft": 10,
+ "within3ft": 11,
+ "rows": [
+  {
+   "lake": "Canton Lake|OK",
+   "tier2": "NWPS:CNLO2",
+   "tier2Ft": 1615.4,
+   "tier1TopConsFt": 1615.4,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Kaw Lake|OK",
+   "tier2": "NWPS:KAWO2",
+   "tier2Ft": 1013.0,
+   "tier1TopConsFt": 1010.0,
+   "diffFt": 3.0
+  },
+  {
+   "lake": "Lake Tenkiller|OK",
+   "tier2": "NWPS:TENO2",
+   "tier2Ft": 632.0,
+   "tier1TopConsFt": 632.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Skiatook Lake|OK",
+   "tier2": "NWPS:SKLO2",
+   "tier2Ft": 714.0,
+   "tier1TopConsFt": 714.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Canyon Lake|TX",
+   "tier2": "TWDB:Canyon",
+   "tier2Ft": 909.0,
+   "tier1TopConsFt": 909.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Cedar Creek Reservoir|TX",
+   "tier2": "TWDB:CedarCreek",
+   "tier2Ft": 322.0,
+   "tier1TopConsFt": 322.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Lake Buchanan|TX",
+   "tier2": "TWDB:Buchanan",
+   "tier2Ft": 1020.0,
+   "tier1TopConsFt": 1020.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Lake Texoma|TX",
+   "tier2": "TWDB:Texoma",
+   "tier2Ft": 617.0,
+   "tier1TopConsFt": 617.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Lake Travis|TX",
+   "tier2": "TWDB:Travis",
+   "tier2Ft": 681.0,
+   "tier1TopConsFt": 681.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Possum Kingdom Lake|TX",
+   "tier2": "TWDB:PossumKingdom",
+   "tier2Ft": 999.0,
+   "tier1TopConsFt": 999.0,
+   "diffFt": 0.0
+  },
+  {
+   "lake": "Sam Rayburn Reservoir|TX",
+   "tier2": "TWDB:SamRayburn",
+   "tier2Ft": 164.4,
+   "tier1TopConsFt": 164.4,
+   "diffFt": 0.0
+  }
+ ]
+}

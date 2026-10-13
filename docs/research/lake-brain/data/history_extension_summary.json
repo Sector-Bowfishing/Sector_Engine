@@ -1,0 +1,344 @@
+{
+ "core": {
+  "targets": 55,
+  "newlySufficient": 36,
+  "pilotsAlreadyCounted": 4,
+  "fromNone": 34,
+  "fromLimitedOrInsufficient": 2,
+  "ge10y": 30,
+  "ge15y": 20,
+  "stillLimited": 6,
+  "stillNone": 9,
+  "bySource": {
+   "hads": 27,
+   "cwms": 5,
+   "usgs": 2,
+   "rvd": 2
+  }
+ },
+ "flagged": {
+  "targets": 16,
+  "newlySufficient": 12,
+  "pilotsAlreadyCounted": 0,
+  "fromNone": 10,
+  "fromLimitedOrInsufficient": 2,
+  "ge10y": 9,
+  "ge15y": 5,
+  "stillLimited": 0,
+  "stillNone": 4,
+  "bySource": {
+   "hads": 7,
+   "coops": 1,
+   "usgs": 1,
+   "twdb": 2,
+   "cwms": 1
+  }
+ },
+ "all71": {
+  "targets": 71,
+  "newlySufficient": 48,
+  "pilotsAlreadyCounted": 4,
+  "fromNone": 44,
+  "fromLimitedOrInsufficient": 4,
+  "ge10y": 39,
+  "ge15y": 25,
+  "stillLimited": 6,
+  "stillNone": 13,
+  "bySource": {
+   "hads": 34,
+   "cwms": 6,
+   "coops": 1,
+   "usgs": 3,
+   "rvd": 2,
+   "twdb": 2
+  }
+ },
+ "liveAgreementNWPS": {
+  "lakes": 33,
+  "medianMAEft": 0.0,
+  "maxMAEft": 0.063,
+  "within0.05ft": 32,
+  "datumShifted": [
+   "Cayuga Lake|NY"
+  ]
+ },
+ "usgsOffsets": [
+  {
+   "lake": "Priest Lake|ID",
+   "agreement": "12393000_00065_32400_dv: n=68d offset=+2434.40ft sd=0.05 MAE_after=0.04 p95=0.08 merged=yes"
+  },
+  {
+   "lake": "Herrington Lake|KY",
+   "agreement": "03286000_62614_00003_dv: n=1011d offset=-0.00ft sd=0.09 MAE_after=0.03 p95=0.11 merged=yes"
+  },
+  {
+   "lake": "Lake D'Arbonne|LA",
+   "agreement": "07366364_00065_00003_dv: n=1006d offset=+40.20ft sd=0.02 MAE_after=0.01 p95=0.04 merged=yes"
+  },
+  {
+   "lake": "Rainy Lake|MN",
+   "agreement": "05129400_62614_00003_dv: n=0d offset=+0.00ft sd=nan MAE_after=nan p95=nan merged=yes"
+  },
+  {
+   "lake": "Ute Lake|NM",
+   "agreement": "07226800_62615_iv: n=5506d offset=+0.00ft sd=0.78 MAE_after=0.13 p95=0.43 merged=yes"
+  },
+  {
+   "lake": "Lahontan Reservoir|NV",
+   "agreement": "10312100_00062_30800_dv: n=0d offset=-0.34ft sd=nan MAE_after=nan p95=nan merged=yes"
+  },
+  {
+   "lake": "Topaz Lake|NV",
+   "agreement": "10297000_00062_32400_dv: n=1015d offset=+4899.97ft sd=0.15 MAE_after=0.08 p95=0.18 merged=yes"
+  },
+  {
+   "lake": "Indian Lake|NY",
+   "agreement": "01314500_62614_00003_dv: n=600d offset=+0.00ft sd=0.82 MAE_after=0.09 p95=0.15 merged=yes; 01314500_62614_30800_dv: n=3849d offset=-0.01ft sd=0.05 MAE_after=0.03 p95=0.08 merged=yes"
+  }
+ ],
+ "hadsCadence": {
+  "lakes": 34,
+  "firstYearAtMost2PerDay": 12,
+  "firstYearHourly": 15,
+  "rows": [
+   [
+    "Neely Henry|AL",
+    "RGLA1",
+    1.0,
+    23,
+    12.2
+   ],
+   [
+    "Bartlett|AZ",
+    "BRTA3",
+    23.6,
+    12,
+    18.4
+   ],
+   [
+    "Pleasant|AZ",
+    "LKPA3",
+    19.7,
+    12,
+    18.0
+   ],
+   [
+    "Blackshear|GA",
+    "WWCG1",
+    2.0,
+    7,
+    0.8
+   ],
+   [
+    "Burton|GA",
+    "TIGG1",
+    1.0,
+    7,
+    1.3
+   ],
+   [
+    "Oconee|GA",
+    "WDMG1",
+    1.0,
+    7,
+    18.4
+   ],
+   [
+    "Sinclair|GA",
+    "SNCG1",
+    1.0,
+    7,
+    18.4
+   ],
+   [
+    "Priest Lake|ID",
+    "PSLI1",
+    37.4,
+    13,
+    72.3
+   ],
+   [
+    "Crab Orchard Lake|IL",
+    "CODI2",
+    5.7,
+    9,
+    73.6
+   ],
+   [
+    "Devil's Kitchen Lake|IL",
+    "DKLI2",
+    9.8,
+    18,
+    70.2
+   ],
+   [
+    "John Redmond Reservoir|KS",
+    "JRLK1",
+    50.3,
+    9,
+    37.3
+   ],
+   [
+    "Herrington Lake|KY",
+    "DIXK2",
+    95.9,
+    1,
+    74.4
+   ],
+   [
+    "Lake D'Arbonne|LA",
+    "LDBL1",
+    95.9,
+    12,
+    74.3
+   ],
+   [
+    "Rainy Lake|MN",
+    "FFCQ6",
+    50.0,
+    15,
+    50.0
+   ],
+   [
+    "Lake of the Ozarks|MO",
+    "LKSM7",
+    2.0,
+    0,
+    0.5
+   ],
+   [
+    "Badin Lake|NC",
+    "BADN7",
+    0.8,
+    8,
+    17.7
+   ],
+   [
+    "High Rock Lake|NC",
+    "HGRN7",
+    0.8,
+    8,
+    17.6
+   ],
+   [
+    "Ute Lake|NM",
+    "UTEN5",
+    95.0,
+    1,
+    74.3
+   ],
+   [
+    "Topaz Lake|NV",
+    "TOPN2",
+    95.8,
+    1,
+    74.6
+   ],
+   [
+    "Canandaigua Lake|NY",
+    "CNDN6",
+    0.6,
+    6,
+    76.3
+   ],
+   [
+    "Cayuga Lake|NY",
+    "CAYN6",
+    1.5,
+    8,
+    18.8
+   ],
+   [
+    "Indian Lake|NY",
+    "INDN6",
+    90.9,
+    6,
+    17.3
+   ],
+   [
+    "Keuka Lake|NY",
+    "KKPN6",
+    3.1,
+    10,
+    9.3
+   ],
+   [
+    "Oneida Lake|NY",
+    "CLEN6",
+    0.6,
+    8,
+    74.0
+   ],
+   [
+    "Seneca Lake|NY",
+    "GNVN6",
+    0.6,
+    8,
+    73.0
+   ],
+   [
+    "Canton Lake|OK",
+    "CNLO2",
+    25.6,
+    23,
+    37.1
+   ],
+   [
+    "Kaw Lake|OK",
+    "KAWO2",
+    38.3,
+    18,
+    37.4
+   ],
+   [
+    "Lake Tenkiller|OK",
+    "TENO2",
+    27.5,
+    9,
+    37.3
+   ],
+   [
+    "Skiatook Lake|OK",
+    "SKLO2",
+    23.9,
+    1,
+    37.3
+   ],
+   [
+    "Scituate Reservoir|RI",
+    "SCIR1",
+    4.4,
+    0,
+    18.5
+   ],
+   [
+    "Lake Sharpe|SD",
+    "BBDS2",
+    13.2,
+    14,
+    13.9
+   ],
+   [
+    "Lewis and Clark Lake|SD",
+    "GPDN1",
+    6.2,
+    13,
+    18.7
+   ],
+   [
+    "Lake Moomaw|VA",
+    "MOOV2",
+    39.8,
+    12,
+    37.0
+   ],
+   [
+    "Lake Petenwell|WI",
+    "PETW3",
+    23.1,
+    7,
+    24.1
+   ]
+  ]
+ }
+}

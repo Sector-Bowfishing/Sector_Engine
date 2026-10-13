@@ -1,0 +1,1110 @@
+{
+ "flagged=False,minYears=5": {
+  "profiled": 258,
+  "withFlagged": false,
+  "minYears": 5,
+  "scenarios": {
+   "S0": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.186,
+     "flood": 0.322,
+     "hist": 0.798,
+     "base": 0.876
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 5.9,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 8.0,
+       "seasonalBaseline": 8.8,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 6.7,
+      "uncapped": 6.7,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 8.0,
+       "seasonalBaseline": 8.8,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.4,
+      "uncapped": 7.4,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 8.0,
+       "seasonalBaseline": 8.8,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S1": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.186,
+     "flood": 0.322,
+     "hist": 0.938,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.3,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.0,
+      "uncapped": 7.0,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.8,
+      "uncapped": 7.8,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S2": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.461,
+     "flood": 0.609,
+     "hist": 0.938,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.7,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.6,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.4,
+      "uncapped": 7.4,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.6,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.2,
+      "uncapped": 8.2,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.6,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S3": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.543,
+     "flood": 0.609,
+     "hist": 0.938,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.8,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.4,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.5,
+      "uncapped": 7.5,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.4,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.3,
+      "uncapped": 8.3,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.4,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S4": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.589,
+     "flood": 0.632,
+     "hist": 0.938,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.8,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.9,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.3,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.6,
+      "uncapped": 7.6,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.9,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.3,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.3,
+      "uncapped": 8.3,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.9,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.3,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   }
+  }
+ },
+ "flagged=False,minYears=10": {
+  "profiled": 258,
+  "withFlagged": false,
+  "minYears": 10,
+  "scenarios": {
+   "S0": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.186,
+     "flood": 0.322,
+     "hist": 0.465,
+     "base": 0.876
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 5.4,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 4.7,
+       "seasonalBaseline": 8.8,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 6.2,
+      "uncapped": 6.2,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 4.7,
+       "seasonalBaseline": 8.8,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 6.9,
+      "uncapped": 6.9,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 4.7,
+       "seasonalBaseline": 8.8,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S1": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.186,
+     "flood": 0.322,
+     "hist": 0.581,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 5.7,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 6.5,
+      "uncapped": 6.5,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.2,
+      "uncapped": 7.2,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.9,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 3.2,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S2": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.461,
+     "flood": 0.609,
+     "hist": 0.581,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.1,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.6,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 6.9,
+      "uncapped": 6.9,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.6,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.6,
+      "uncapped": 7.6,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.6,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S3": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.543,
+     "flood": 0.609,
+     "hist": 0.581,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.2,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.4,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.0,
+      "uncapped": 7.0,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.4,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.7,
+      "uncapped": 7.7,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.4,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.1,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   },
+   "S4": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.589,
+     "flood": 0.632,
+     "hist": 0.581,
+     "base": 0.996
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.3,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.9,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.3,
+       "validation": 0.0,
+       "coverage": 5.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.0,
+      "uncapped": 7.0,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.9,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.3,
+       "validation": 5.0,
+       "coverage": 5.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.8,
+      "uncapped": 7.8,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.9,
+       "historyQuality": 5.8,
+       "seasonalBaseline": 10.0,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 6.3,
+       "validation": 10.0,
+       "coverage": 5.0
+      }
+     }
+    }
+   }
+  }
+ },
+ "flagged=True,minYears=5": {
+  "profiled": 315,
+  "withFlagged": true,
+  "minYears": 5,
+  "scenarios": {
+   "S0": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.168,
+     "flood": 0.286,
+     "hist": 0.784,
+     "base": 0.851
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.2,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 7.8,
+       "seasonalBaseline": 8.5,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.0,
+      "uncapped": 7.0,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 7.8,
+       "seasonalBaseline": 8.5,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.7,
+      "uncapped": 7.7,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 7.8,
+       "seasonalBaseline": 8.5,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S1": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.168,
+     "flood": 0.286,
+     "hist": 0.937,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.6,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.4,
+      "uncapped": 7.4,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.1,
+      "uncapped": 8.1,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S2": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.4,
+     "flood": 0.533,
+     "hist": 0.937,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 7.0,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.0,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.7,
+      "uncapped": 7.7,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.0,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.5,
+      "uncapped": 8.5,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.0,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S3": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.483,
+     "flood": 0.533,
+     "hist": 0.937,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 7.0,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.8,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.8,
+      "uncapped": 7.8,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.8,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.5,
+      "uncapped": 8.5,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.8,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S4": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.527,
+     "flood": 0.559,
+     "hist": 0.937,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 7.1,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.3,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.6,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.9,
+      "uncapped": 7.9,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.3,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.6,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.6,
+      "uncapped": 8.6,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.3,
+       "historyQuality": 9.4,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.6,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   }
+  }
+ },
+ "flagged=True,minYears=10": {
+  "profiled": 315,
+  "withFlagged": true,
+  "minYears": 10,
+  "scenarios": {
+   "S0": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.168,
+     "flood": 0.286,
+     "hist": 0.502,
+     "base": 0.851
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 5.8,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 5.0,
+       "seasonalBaseline": 8.5,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 6.6,
+      "uncapped": 6.6,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 5.0,
+       "seasonalBaseline": 8.5,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.3,
+      "uncapped": 7.3,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 5.0,
+       "seasonalBaseline": 8.5,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S1": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.168,
+     "flood": 0.286,
+     "hist": 0.625,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.2,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 6.9,
+      "uncapped": 6.9,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 7.7,
+      "uncapped": 7.7,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 1.7,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 2.9,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S2": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.4,
+     "flood": 0.533,
+     "hist": 0.625,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.5,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.0,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.2,
+      "uncapped": 7.2,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.0,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.0,
+      "uncapped": 8.0,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.0,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S3": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.483,
+     "flood": 0.533,
+     "hist": 0.625,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.6,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.8,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.3,
+      "uncapped": 7.3,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.8,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.1,
+      "uncapped": 8.1,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 4.8,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.3,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   },
+   "S4": {
+    "shares": {
+     "src": 1.0,
+     "obs": 1.0,
+     "plan": 0.527,
+     "flood": 0.559,
+     "hist": 0.625,
+     "base": 0.987
+    },
+    "scores": {
+     "NOT_VALIDATED": {
+      "value": 5.0,
+      "uncapped": 6.6,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.3,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.6,
+       "validation": 0.0,
+       "coverage": 7.0
+      }
+     },
+     "PARTIAL": {
+      "value": 7.4,
+      "uncapped": 7.4,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.3,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.6,
+       "validation": 5.0,
+       "coverage": 7.0
+      }
+     },
+     "VALIDATED": {
+      "value": 8.1,
+      "uncapped": 8.1,
+      "dims": {
+       "sourceAuthority": 10.0,
+       "operatorPlan": 5.3,
+       "historyQuality": 6.3,
+       "seasonalBaseline": 9.9,
+       "trendQuality": 10.0,
+       "floodDroughtContext": 5.6,
+       "validation": 10.0,
+       "coverage": 7.0
+      }
+     }
+    }
+   }
+  }
+ }
+}
