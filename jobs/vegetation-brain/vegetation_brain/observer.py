@@ -24,11 +24,17 @@ import numpy as np
 
 from . import contract as C
 
-# Provisional (see module docstring); calibrated label-free on open-water NIR of negative-control lakes, not on truth lakes.
+# NIR floor (v0.2): per-SCENE and adaptive. A single global floor failed (note 11: 0.13 from a Leech Lake bloom/ice tail erased real plants;
+# 0.03 passes dark-water noise only at clear lakes). The floor is the larger of NIR_PLANT_MIN and the scene's own open-water NIR tail.
 NIR_PLANT_MIN = 0.03
+NIR_TAIL_QUANTILE = 0.995
+NIR_TAIL_NDVI_MAX = 0.10               # open water for the tail = SCL water with NDVI < this (plants excluded by construction)
+NIR_TAIL_EDGE_PX = 10                  # >= 100 m from the lake edge
+NIR_TAIL_MIN_PIXELS = 1000
+NIR_AMBIGUOUS_CAP = 0.10               # open-water NIR tail above this = bloom / turbid / ice-edge scene: the whole scene is BLOOM_AMBIGUOUS
 DARK_ARTIFACT_CELL_SHARE = 0.25        # cell with this share of NDVI-crossing-but-dark pixels is flagged DARK_WATER if borderline
 DISTURBED_SWIR = 0.010                 # production HAZE_EDGE_SWIR: the water-at-a-haze-fringe limit, applied when the surface is disturbed
-HAZE_STANDOFF_PX = 10                  # 100 m, as production S2_HAZE_STANDOFF_M
+HAZE_STANDOFF_PX = 10                  # 100 m, as production S2_HAZE_STANDOFF_M (v0.2: tunable on the dev lakes only, amendment A4)
 MIN_PLANT_CELLS = 3                    # presence needs >= 3 plant cells after dropping isolated singletons
 MIN_READ_FRACTION = 0.5                # NOT_OBSERVED needs >= half of the eligible interior cells read
 
@@ -102,18 +108,41 @@ class SceneFields:
     blocked: dict            # reason name -> bool array (pixels blocked for that reason)
     dark_artifact: np.ndarray  # bool: NDVI >= 0.30 but NIR below the floor (rounding noise, NOT plant)
     lake: np.ndarray
+    nir_floor: float = 0.03
+    floor_diag: dict = field(default_factory=dict)
 
 
-def scene_fields(scl: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.ndarray, lake_mask: np.ndarray) -> SceneFields:
-    """All inputs on one 10 m grid (20 m bands already repeated to 10 m). red/nir/swir are reflectances (NaN = no data)."""
+def scene_nir_floor(scl, ndvi, nir, lake_mask) -> tuple[float, bool, dict]:
+    """-> (floor, ambiguous, diag). The floor is max(NIR_PLANT_MIN, the scene's own open-water NIR tail); a tail above
+    NIR_AMBIGUOUS_CAP marks the scene bloom/turbid/ice-edge ambiguous (every cell BLOOM_AMBIGUOUS), never 'no vegetation'."""
+    open_w = erode(lake_mask, NIR_TAIL_EDGE_PX) & (scl == C.SCL_WATER) & np.isfinite(ndvi) & (ndvi < NIR_TAIL_NDVI_MAX) & np.isfinite(nir)
+    n = int(open_w.sum())
+    if n < NIR_TAIL_MIN_PIXELS:
+        return NIR_PLANT_MIN, False, {"openWaterPixels": n, "tail": None}
+    tail = float(np.quantile(nir[open_w], NIR_TAIL_QUANTILE))
+    return max(NIR_PLANT_MIN, tail), tail > NIR_AMBIGUOUS_CAP, {"openWaterPixels": n, "tail": round(tail, 4)}
+
+
+def scene_fields(scl: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.ndarray, lake_mask: np.ndarray, *,
+                 nir_floor: float | None = None, haze_swir: float = C.HAZE_SWIR, haze_standoff_px: int | None = None,
+                 adaptive_floor: bool = True) -> SceneFields:
+    """All inputs on one 10 m grid (20 m bands already repeated to 10 m). red/nir/swir are reflectances (NaN = no data).
+    nir_floor overrides the adaptive floor (evaluation sensitivity only)."""
     with np.errstate(invalid="ignore", divide="ignore"):
         ndvi = (nir - red) / np.maximum(1e-6, nir + red)
     finite = np.isfinite(red) & np.isfinite(nir) & np.isfinite(swir)
     valid_scl = scl > 0
     water = scl == C.SCL_WATER
+    ambiguous = False
+    if nir_floor is not None:
+        floor, diag = nir_floor, {"override": True}
+    elif adaptive_floor:
+        floor, ambiguous, diag = scene_nir_floor(scl, ndvi, nir, lake_mask)
+    else:
+        floor, diag = NIR_PLANT_MIN, {"fixed": True}
     plant_spec = np.isfinite(ndvi) & (ndvi >= C.PLANT_NDVI_MIN)
-    plant_px = plant_spec & (nir >= NIR_PLANT_MIN)
-    dark_artifact = plant_spec & (nir < NIR_PLANT_MIN)
+    plant_px = plant_spec & (nir >= floor)
+    dark_artifact = plant_spec & (nir < floor)
 
     cloud_cls = np.isin(scl, (1, 8, 9, 10))
     shadow_cls = scl == C.SCL_SHADOW
@@ -124,15 +153,16 @@ def scene_fields(scl: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.nda
         "ICE_OR_SNOW": grow(snow_cls, C.CLOUD_STANDOFF_PX // 3),
     }
     with np.errstate(invalid="ignore"):
-        haze_px = water & (swir > C.HAZE_SWIR) & ~plant_px
-    blocked["HAZE"] = grow(haze_px, HAZE_STANDOFF_PX)
+        haze_px = water & (swir > haze_swir) & ~plant_px
+    blocked["HAZE"] = grow(haze_px, HAZE_STANDOFF_PX if haze_standoff_px is None else haze_standoff_px)
+    blocked["BLOOM_AMBIGUOUS"] = lake_mask.copy() if ambiguous else np.zeros_like(haze_px)
     blocked["GLARE"] = np.zeros_like(haze_px)      # reserved: set by `apply_surface_disturbance` from the Wind Brain, never inferred here
     any_block = np.zeros_like(haze_px)
     for m in blocked.values():
         any_block |= m
     seen = lake_mask & valid_scl & finite & ~any_block
     plant = plant_px & seen
-    return SceneFields(plant=plant, seen=seen, blocked=blocked, dark_artifact=dark_artifact & seen, lake=lake_mask)
+    return SceneFields(plant=plant, seen=seen, blocked=blocked, dark_artifact=dark_artifact & seen, lake=lake_mask, nir_floor=float(floor), floor_diag=diag)
 
 
 def apply_surface_disturbance(fields: SceneFields, swir: np.ndarray, disturbed: bool, glint_swir: float = DISTURBED_SWIR) -> SceneFields:
@@ -208,7 +238,7 @@ def to_cells(fields: SceneFields, cell_px: int = C.CELL_PX) -> CellScene:
     reason[dark_bad] = REASON_CODES["DARK_WATER"]
     # why a cell is UNKNOWN: dominant blocking reason, else insufficient valid pixels
     unk = eligible & (state == UNKNOWN) & ~dark_bad
-    order = ["ICE_OR_SNOW", "CLOUD", "SHADOW", "HAZE", "GLARE"]
+    order = ["BLOOM_AMBIGUOUS", "ICE_OR_SNOW", "CLOUD", "SHADOW", "HAZE", "GLARE"]
     best = np.zeros(shape, bool)
     for nm in order:
         hit = unk & ~best & (blocked_counts[nm] > 0) & (blocked_counts[nm] >= np.maximum(1, (lake_b - seen_b) * 0.5))

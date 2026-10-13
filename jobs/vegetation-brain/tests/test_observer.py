@@ -201,3 +201,38 @@ def test_a_burst_scene_among_consistent_scenes_is_excluded():
 def test_single_accepted_pass_declares_it_cannot_be_burst_checked():
     obs = O.observe([scene("only", days(0), plant=BED)], REF, mode="A")
     assert any("burst check" in n for n in obs.notes)
+
+
+# ---------------------------------------------------------------- v0.2: scene-adaptive NIR floor, tunable haze
+def test_adaptive_floor_follows_the_scenes_own_open_water_tail():
+    scl, red, nir, swir = scene_arrays()
+    f = O.scene_fields(scl, red, nir, swir, lake_mask())
+    assert f.nir_floor == O.NIR_PLANT_MIN and f.floor_diag["tail"] < 0.01          # clean water: floor stays at the minimum
+    nir2 = nir.copy()
+    nir2[lake_mask()] = 0.06                                                          # a slightly bright but not-blooming lake
+    red2 = np.full_like(red, 0.06)
+    f2 = O.scene_fields(scl, red2, nir2, swir, lake_mask())
+    assert f2.nir_floor == pytest.approx(0.06, abs=1e-4)
+
+
+def test_bloom_or_ice_edge_scene_is_refused_not_called_clear():
+    scl, red, nir, swir = scene_arrays()
+    nir[lake_mask()] = 0.15
+    red[lake_mask()] = 0.14                                                            # NDVI ~0.03 bright water: bloom / ice-edge look
+    f = O.scene_fields(scl, red, nir, swir, lake_mask())
+    c = O.to_cells(f)
+    unk = c.interior & (c.state == O.UNKNOWN)
+    assert unk.sum() == c.interior.sum() and set(c.reason[unk]) == {O.REASON_CODES["BLOOM_AMBIGUOUS"]}
+    assert (c.state == O.NO_PLANT).sum() == 0                                          # never a false 'no vegetation'
+
+
+def test_plant_bed_survives_the_adaptive_floor_on_clean_water():
+    c = cells_for(plant=BED)
+    assert (c.state == O.PLANT).sum() > 0
+
+
+def test_haze_parameters_are_explicit_and_change_the_refusal():
+    scl, red, nir, swir = scene_arrays(haze=patch((20, 40), (20, 40)))
+    wide = O.to_cells(O.scene_fields(scl, red, nir, swir, lake_mask(), haze_standoff_px=10))
+    none = O.to_cells(O.scene_fields(scl, red, nir, swir, lake_mask(), haze_standoff_px=0))
+    assert (none.state == O.UNKNOWN).sum() < (wide.state == O.UNKNOWN).sum()

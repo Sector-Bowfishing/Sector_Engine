@@ -79,3 +79,22 @@ The frozen §7 compares the lake climatology only with the generic calendar rule
 
 ### A3 — 2026-10-14 (before evaluating the shipped V1 observer module) — NIR floor calibration protocol
 The provisional absolute NIR floor of A1 (0.03) is calibrated **label-free** on open water of lakes with no measurable surface-vegetation signal that are **not** evaluation lakes: Hartwell SC/GA and Leech Lake MN from the seasonal back-test caches (belt share ≈ 0.3 % and ≈ 1 %). Rule, fixed now: `NIR_PLANT_MIN = max(0.03, 99.5th percentile of B8A reflectance over SCL-water pixels ≥ 100 m from the polygon edge, accepted scenes only)`, rounded up to 0.005. No truth label (Snohomish, NLA, FWC, UMN) is used to choose it, and it is then **frozen** for all scoring. The evaluation of `jobs/vegetation-brain/vegetation_brain` (the shipped module, not a replica) follows §1 with A1/A2 and the gates unchanged: Snohomish (cell P/R/F1/IoU, LOLO), NLA 2017 (§4), FWC (recall only), with Snohomish ≥ 30-positive-cell limits making gate (a) NOT_TESTABLE unless more floating-leaf lakes are added. Results from the earlier non-V1 observers (notes 06, 07) are not evidence for the V1 module.
+
+### A4 — 2026-10-14 (after `notes/11_v1_module_evaluation.md`) — observer v0.2 and a strict dev/test split
+**Evidence that forced it (A3 was my own flawed protocol, kept as a negative result):** the frozen A3 calibration produced `NIR_PLANT_MIN = 0.13` (a Leech Lake bloom/ice-shoulder tail) and erased real plants; the pixel-level haze rule (SWIR > 0.02, 100 m standoff) blanked 44 % of Snohomish cells; with those two defects V1 recovered 0 of 24 interior positives and passed no gate. Dark-water blanking (A1.1) was genuinely fixed.
+
+**Observer v0.2 (implemented in `observer.py`, tests included):**
+1. *NIR floor is per scene and adaptive:* `floor = max(0.03, q99.5 of NIR over the scene's own open water)` where open water = SCL water, NDVI < 0.10, ≥ 100 m from the edge, ≥ 1,000 pixels; a tail above 0.10 marks the scene `BLOOM_AMBIGUOUS` (every cell UNKNOWN). These four constants are **fixed, not tunable**. A3's global calibration is withdrawn.
+2. *Haze parameters are explicit:* `haze_swir` (default 0.02) and `haze_standoff_px` (default 10).
+
+**Split (fixed now, by lake, before any v0.2 scoring):**
+| Set | Lakes | Use |
+|---|---|---|
+| DEV | Snohomish: **Roesiger, Serene**; NLA: eligible lakes whose `sha256(lakeId)` first byte is even | the only data the two haze parameters may be tuned on |
+| TEST | Snohomish: **Bosworth, Blackmans, Storm**; NLA: odd first byte; FWC points; UMN; SFWMD; UMR Pool 5; the 2018–2019 NLA secondary | scored **once**, with the frozen parameters, never used to choose anything |
+
+**Tuning rule (DEV only):** grid `haze_swir ∈ {0.02, 0.03, 0.04, 0.06, 0.10}` × `haze_standoff_px ∈ {0, 2, 5, 10}`; observer A. Choose the setting that maximises DEV interior cell F1 (raw prevalence, strict-none negatives) **subject to** DEV open-water FPR (known cells) ≤ 2 % and DEV-NLA negative-control flagged share ≤ 2 %; ties → fewer UNKNOWN cells, then the larger `haze_swir`, then the smaller standoff. The chosen pair is written to a file with a timestamp **before** the TEST run and then frozen. If no setting meets the constraints, the constraint-violating minimum-FPR setting is NOT used: the verdict is "no admissible setting" and the observer stays at the defaults.
+
+**TEST reporting:** all gates of §5 for observers S (evaluation only), A and P with the frozen pair; any gate whose population is too thin is NOT_TESTABLE, never relaxed. No re-tuning after TEST, whatever it shows. A result that fails remains in the record.
+
+**Gate (c) caveat (declared now, not an excuse later):** NLA stations are shoreline plots (162 of 467 stations lie 10–90 m from the edge, 191 within 10 m in the unclaimed shore band), so the interior-belt statistic is not co-located with the truth. If gate (c) fails on TEST this is reported as a failure of the V1 *design* to be validated against NLA, with the co-located-truth requirement listed as a blocker, not as a pass.
