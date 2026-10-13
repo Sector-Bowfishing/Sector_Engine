@@ -159,3 +159,15 @@ python -m sector_wind.brain publish --store gs://sector-wind-candidate/wind/v1 -
    - Verified by execution `wind-hourly-b67j6`: archive OK, `windbrain ok`, `publishMode: scheduled`.
    - The earlier 401 runs also proved the isolation: the archive still succeeded.
 4. **Rollback:** `gcloud run jobs update wind-hourly --region us-central1 --remove-env-vars SECTOR_WIND_BRAIN_RTDB_URL` (the archive is unaffected). To remove data, delete the wind paths.
+
+
+## Adoption foundation (branch `feat/wind-brain-adoption`; shadow only, undeployed)
+
+Additive to the state above; production wind, the hourly job's behaviour, lifecycle and the Certification score are unchanged.
+
+- `tonight` block (`brain/tonight.py`, `sector-wind-tonight-v1`): direction (>= 5 mph only), category, `ifItBlows` from NBM P90, easing/steady (never rising or lay-down), breezy-risk flag, confidence word, freshness; `withheld` lists refused claims.
+- Bank-impact vocabulary (`brain/exposure.py`): DIRECT / CROSS / PROTECTED + HIGH FETCH from wind-FROM vs the bank's facing; modeled, never "measured". Per-bank rows gain `bankImpact`, `highFetch`, `windAngleDeg`, `geometryTier`.
+- Geometry tiers (`brain/fleet.py`, `brain/data/geometry_tiers.json`): AUDITED 74, ESTIMATED 471 (polygon fetch, `brain/estimate.py`, not audited), POINT_ONLY 76.
+- Fleet NBM sampling (`sector_wind/fleet_sampling.py`): foundation only, not wired.
+- H2 (`sector_wind/h2.py`, `docs/brains/wind/WIND_H2_PREREG.md`): frozen criteria, gated one-shot runner; NOT run.
+- Field validation record v2 (`brain/field_schema.py`). Docs: `docs/brains/wind/`.
