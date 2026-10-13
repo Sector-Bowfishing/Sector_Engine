@@ -1,0 +1,684 @@
+lakeId,lakeName,state,sourceId,matchConfidence,note
+Aleknagik|AK,Aleknagik,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Becharof|AK,Becharof,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Big Lake|AK,Big Lake,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Harding|AK,Harding,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Iliamna|AK,Iliamna,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Kenai|AK,Kenai,AK,S-depth-020,name_state,"USGS inventory feature 'Kenai Lake, AK'"
+Kvichak / Ugashik|AK,Kvichak / Ugashik,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Clark|AK,Lake Clark,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Naknek|AK,Naknek,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Skilak|AK,Skilak,AK,S-depth-020,exact,"USGS inventory feature 'Skilak Lake, AK'; name+spatial"
+Teshekpuk|AK,Teshekpuk,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Tustumena|AK,Tustumena,AK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Bankhead|AL,Bankhead,AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Eufaula / W.F. George|AL,Eufaula / W.F. George,AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Guntersville|AL,Guntersville,AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Jordan|AL,Jordan,AL,S-depth-039,name_state,NLA2007 'Jordan Lake' DEPTHMAX=21.5 DEPTH_X=21.5 m (single-point max-depth)
+Lake Martin|AL,Lake Martin,AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lay|AL,Lay,AL,S-depth-039,name_state,NLA2007 'Lay Reservoir' DEPTHMAX=12.6 DEPTH_X=12.6 m (single-point max-depth)
+Logan Martin|AL,Logan Martin,AL,S-depth-039,name_state,NLA2007 'Logan Martin Lake' DEPTHMAX=9.5 DEPTH_X=9.5 m (single-point max-depth)
+Neely Henry|AL,Neely Henry,AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Smith (Lewis Smith)|AL,Smith (Lewis Smith),AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Weiss|AL,Weiss,AL,S-depth-039,name_state,NLA2007 'Weiss Reservoir' DEPTHMAX=13.5 DEPTH_X=13.5 m (single-point max-depth)
+Wheeler|AL,Wheeler,AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wilson|AL,Wilson,AL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Beaver|AR,Beaver,AR,S-depth-020,exact,"USGS inventory feature 'Beaver Lake, AR'; name+spatial"
+Beaver|AR,Beaver,AR,S-depth-024,name_state,"ScienceBase item 5da872cbe4b09fd3b0c9c574: Bathymetric data for Beaver Lake, 2018"
+Bull Shoals Lake|AR,Bull Shoals Lake,AR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Catherine|AR,Catherine,AR,S-depth-039,name_state,NLA2007 'Lake Catherine' DEPTHMAX=8.2 DEPTH_X=8.2 m (single-point max-depth)
+Chicot|AR,Chicot,AR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Dardanelle|AR,Dardanelle,AR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+DeGray|AR,DeGray,AR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Greers Ferry|AR,Greers Ferry,AR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Hamilton|AR,Hamilton,AR,S-depth-039,name_state,NLA2007 'Hamilton Lake' DEPTHMAX=30 DEPTH_X=30 m (single-point max-depth)
+Millwood|AR,Millwood,AR,S-depth-039,name_state,NLA2007 'Millwood Lake' DEPTHMAX=10 DEPTH_X=10 m (single-point max-depth)
+Nimrod|AR,Nimrod,AR,S-depth-020,exact,"USGS inventory feature 'Nimrod Lake, AR'; name+spatial"
+Nimrod|AR,Nimrod,AR,S-depth-024,name_state,ScienceBase item 59f0b708e4b0220bbd9b1757: Bathymetry and Storage Capacity of Nimrod Lake
+Norfork|AR,Norfork,AR,S-depth-020,name_state,"inventory feature 'Norfork Lake, AR and MO'"
+Norfork|AR,Norfork,AR,S-depth-024,name_state,"ScienceBase item 58cff9b5e4b0236b68f52788: Bathymetry and Storage Capacity of Norfork Lake, 2015 (+GDB 58e6bf2fe4b09da6799ac953, DEM 58e66ca2e4b09da6799ac7ef)"
+Ouachita (L. Ouachita)|AR,Ouachita (L. Ouachita),AR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Alamo|AZ,Alamo,AZ,S-depth-039,name_state,NLA2007 'Alamo' DEPTHMAX=15.3 DEPTH_X= m (single-point max-depth)
+Apache|AZ,Apache,AZ,S-depth-039,name_state,NLA2007 'Apache Lake' DEPTHMAX=26.2 DEPTH_X=26.2 m (single-point max-depth)
+Bartlett|AZ,Bartlett,AZ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Canyon|AZ,Canyon,AZ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Havasu|AZ,Havasu,AZ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Mary|AZ,Lake Mary,AZ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pleasant|AZ,Pleasant,AZ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Roosevelt|AZ,Roosevelt,AZ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Saguaro|AZ,Saguaro,AZ,S-depth-039,name_state,NLA2007 'Saguaro Lake' DEPTHMAX=24 DEPTH_X=20.4 m (single-point max-depth)
+San Carlos|AZ,San Carlos,AZ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Almanor|CA,Almanor,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Berryessa|CA,Berryessa,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Clear Lake|CA,Clear Lake,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Don Pedro|CA,Don Pedro,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Eagle Lake|CA,Eagle Lake,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Folsom|CA,Folsom,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Isabella|CA,Isabella,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Mono|CA,Mono,CA,S-depth-020,exact,"USGS inventory feature 'Mono Lake, CA'; name+spatial"
+Oroville|CA,Oroville,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Salton Sea|CA,Salton Sea,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Shasta|CA,Shasta,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Trinity|CA,Trinity,CA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Blue Mesa Reservoir|CO,Blue Mesa Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Chatfield Reservoir|CO,Chatfield Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Cherry Creek Reservoir|CO,Cherry Creek Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Dillon Reservoir|CO,Dillon Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Eleven Mile Reservoir|CO,Eleven Mile Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Grand Lake|CO,Grand Lake,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Horsetooth Reservoir|CO,Horsetooth Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+John Martin Reservoir|CO,John Martin Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Granby|CO,Lake Granby,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pueblo Reservoir|CO,Pueblo Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Ruedi Reservoir|CO,Ruedi Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Shadow Mountain Reservoir|CO,Shadow Mountain Reservoir,CO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Bantam Lake|CT,Bantam Lake,CT,S-depth-019,exact,matched 'Bantam Lake' (54 features); name=True spatial=True
+Barkhamsted Reservoir|CT,Barkhamsted Reservoir,CT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Candlewood Lake|CT,Candlewood Lake,CT,S-depth-019,exact,matched 'Candlewood Lake' (521 features); name=True spatial=True
+Coventry Lake (Wangumbaug)|CT,Coventry Lake (Wangumbaug),CT,S-depth-019,exact,matched 'Coventry Lake' (41 features); name=True spatial=True
+Gardner Lake|CT,Gardner Lake,CT,S-depth-019,name_state,matched 'Gardner Lake' (11 features); name=True spatial=False
+Highland Lake|CT,Highland Lake,CT,S-depth-019,name_state,matched 'Highland Lake' (54 features); name=True spatial=False
+Lake Lillinonah|CT,Lake Lillinonah,CT,S-depth-019,name_state,matched 'Lake Lillinonah' (57 features); name=True spatial=False
+Lake Waramaug|CT,Lake Waramaug,CT,S-depth-019,exact,matched 'Waramaug Lake' (150 features); name=True spatial=True
+Lake Waramaug|CT,Lake Waramaug,CT,S-depth-039,name_state,NLA2007 'Lake Waramaug' DEPTHMAX=13 DEPTH_X=12.5 m (single-point max-depth)
+Lake Zoar|CT,Lake Zoar,CT,S-depth-019,exact,matched 'Lake Zoar' (45 features); name=True spatial=True
+Lake Zoar|CT,Lake Zoar,CT,S-depth-039,name_state,NLA2007 'Lake Zoar' DEPTHMAX=16 DEPTH_X=15.2 m (single-point max-depth)
+Mansfield Hollow Lake|CT,Mansfield Hollow Lake,CT,S-depth-019,exact,matched 'Mansfield Hollow Reservoir' (131 features); name=True spatial=True
+Pachaug Pond|CT,Pachaug Pond,CT,S-depth-019,name_state,matched 'Pachaug Pond' (74 features); name=True spatial=False
+Pachaug Pond|CT,Pachaug Pond,CT,S-depth-039,name_state,NLA2007 'Pachaug Pond' DEPTHMAX=3 DEPTH_X=3 m (single-point max-depth)
+Squantz Pond|CT,Squantz Pond,CT,S-depth-019,name_state,matched 'Squantz Pond' (19 features); name=True spatial=False
+Andrews Lake|DE,Andrews Lake,DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Becks Pond|DE,Becks Pond,DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Concord Pond|DE,Concord Pond,DE,S-depth-039,name_state,NLA2007 'Concord Pond' DEPTHMAX=1.5 DEPTH_X=1.5 m (single-point max-depth)
+Garrisons Lake|DE,Garrisons Lake,DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Griffith Lake|DE,Griffith Lake,DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Killens Pond|DE,Killens Pond,DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lums Pond|DE,Lums Pond,DE,S-depth-039,name_state,NLA2007 'Lums Pond' DEPTHMAX=2 DEPTH_X=2 m (single-point max-depth)
+Records Pond|DE,Records Pond,DE,S-depth-039,name_state,NLA2007 'Records Pond' DEPTHMAX=1.7 DEPTH_X=1.7 m (single-point max-depth)
+Red Mill Pond|DE,Red Mill Pond,DE,S-depth-039,name_state,NLA2007 'Red Mill Pond' DEPTHMAX=1.7 DEPTH_X=1.7 m (single-point max-depth)
+Silver Lake (Dover)|DE,Silver Lake (Dover),DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Trap Pond|DE,Trap Pond,DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wagamons Pond|DE,Wagamons Pond,DE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Apopka|FL,Apopka,FL,S-depth-039,name_state,NLA2007 'Lake Apopka' DEPTHMAX=1.3 DEPTH_X=1.3 m (single-point max-depth)
+Crescent Lake|FL,Crescent Lake,FL,S-depth-012,spatial_only,144 contour/point features within ~3km of fleet point
+Crescent Lake|FL,Crescent Lake,FL,S-depth-039,name_state,NLA2007 'Crescent Lake' DEPTHMAX=3.7 DEPTH_X=3.7 m (single-point max-depth)
+East Lake Tohopekaliga|FL,East Lake Tohopekaliga,FL,S-depth-012,spatial_only,88 contour/point features within ~3km of fleet point
+Griffin|FL,Griffin,FL,S-depth-012,spatial_only,43 contour/point features within ~3km of fleet point
+Griffin|FL,Griffin,FL,S-depth-039,name_state,NLA2007 'Lake Griffin' DEPTHMAX=2.2 DEPTH_X=2.2 m (single-point max-depth)
+Harris|FL,Harris,FL,S-depth-012,spatial_only,114 contour/point features within ~3km of fleet point
+Istokpoga|FL,Istokpoga,FL,S-depth-012,spatial_only,45 contour/point features within ~3km of fleet point
+Jesup|FL,Jesup,FL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Kissimmee|FL,Kissimmee,FL,S-depth-012,spatial_only,66 contour/point features within ~3km of fleet point
+Lake George|FL,Lake George,FL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lochloosa|FL,Lochloosa,FL,S-depth-012,spatial_only,37 contour/point features within ~3km of fleet point
+Okeechobee|FL,Okeechobee,FL,S-depth-039,name_state,NLA2007 'Lake Okeechobee' DEPTHMAX=2 DEPTH_X=2 m (single-point max-depth)
+Okeechobee|FL,Okeechobee,FL,S-depth-020,exact,"USGS inventory feature 'Lake Okeechobee, FL'; name+spatial"
+Orange Lake|FL,Orange Lake,FL,S-depth-012,spatial_only,34 contour/point features within ~3km of fleet point
+Tohopekaliga (Toho)|FL,Tohopekaliga (Toho),FL,S-depth-012,spatial_only,19 contour/point features within ~3km of fleet point
+Allatoona|GA,Allatoona,GA,S-depth-039,name_state,NLA2007 'Lake Allatoona' DEPTHMAX=17.7 DEPTH_X=17.7 m (single-point max-depth)
+Blackshear|GA,Blackshear,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Burton|GA,Burton,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Carters|GA,Carters,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Clarks Hill / J.S. Thurmond|GA,Clarks Hill / J.S. Thurmond,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Russell (R.B. Russell)|GA,Lake Russell (R.B. Russell),GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lanier (Sidney Lanier)|GA,Lanier (Sidney Lanier),GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Oconee|GA,Oconee,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Seminole|GA,Seminole,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sinclair|GA,Sinclair,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Walter F. George / Eufaula|GA,Walter F. George / Eufaula,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+West Point|GA,West Point,GA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Halulu Lake (Niihau)|HI,Halulu Lake (Niihau),HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Koele ponds (Lanai)|HI,Koele ponds (Lanai),HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Waiau|HI,Lake Waiau,HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Nuuanu Reservoir|HI,Nuuanu Reservoir,HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Puu Loa Reservoir|HI,Puu Loa Reservoir,HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Waiakea Pond|HI,Waiakea Pond,HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Waimaluhia Reservoir|HI,Waimaluhia Reservoir,HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Waita Reservoir|HI,Waita Reservoir,HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wilson Lake / Kaelepulu Pond|HI,Wilson Lake / Kaelepulu Pond,HI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Big Creek Lake|IA,Big Creek Lake,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Black Hawk Lake|IA,Black Hawk Lake,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Clear Lake|IA,Clear Lake,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Coralville Lake|IA,Coralville Lake,IA,S-depth-039,name_state,NLA2007 'Coralville Lake' DEPTHMAX=9.1 DEPTH_X=9.1 m (single-point max-depth)
+East Okoboji|IA,East Okoboji,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Macbride|IA,Lake Macbride,IA,S-depth-020,exact,"USGS inventory feature 'Lake Macbride, IA'; name+spatial"
+Lake Red Rock|IA,Lake Red Rock,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Rathbun Lake|IA,Rathbun Lake,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Saylorville Lake|IA,Saylorville Lake,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Spirit Lake|IA,Spirit Lake,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Storm Lake|IA,Storm Lake,IA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+West Okoboji|IA,West Okoboji,IA,S-depth-039,name_state,NLA2007 'West Okoboji Lake' DEPTHMAX=32 DEPTH_X=32 m (single-point max-depth)
+American Falls Reservoir|ID,American Falls Reservoir,ID,S-depth-024,name_state,ScienceBase item 5d541be8e4b01d82ce8e366d: River-mile 713-714 reach ONLY (2019) - partial coverage
+Anderson Ranch Reservoir|ID,Anderson Ranch Reservoir,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+C.J. Strike Reservoir|ID,C.J. Strike Reservoir,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Coeur d'Alene|ID,Coeur d'Alene,ID,S-depth-039,name_state,NLA2007 'Lake Coeur D'Alene' DEPTHMAX=48.8 DEPTH_X=48.8 m (single-point max-depth)
+Dworshak Reservoir|ID,Dworshak Reservoir,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Henrys Lake|ID,Henrys Lake,ID,S-depth-039,name_state,NLA2007 'Henry's Lake' DEPTHMAX=5.6 DEPTH_X=5.6 m (single-point max-depth)
+Lake Cascade|ID,Lake Cascade,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Pend Oreille|ID,Lake Pend Oreille,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lucky Peak Lake|ID,Lucky Peak Lake,ID,S-depth-024,name_state,ScienceBase item 60f9bbd3d34e3ccd82fe7848: Mores Creek arm ONLY (2021) depth contours/DEM - partial coverage
+Palisades Reservoir|ID,Palisades Reservoir,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Payette Lake|ID,Payette Lake,ID,S-depth-039,name_state,NLA2007 'Payette Lake' DEPTHMAX=52.5 DEPTH_X=50.2 m (single-point max-depth)
+Priest Lake|ID,Priest Lake,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Redfish Lake|ID,Redfish Lake,ID,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Carlyle Lake|IL,Carlyle Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Chain O'Lakes|IL,Chain O'Lakes,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Clinton Lake|IL,Clinton Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Crab Orchard Lake|IL,Crab Orchard Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Devil's Kitchen Lake|IL,Devil's Kitchen Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Fox Lake|IL,Fox Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Shelbyville|IL,Lake Shelbyville,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Springfield|IL,Lake Springfield,IL,S-depth-014,spatial_only,249 contour/point features within ~3km of fleet point
+Lake of Egypt|IL,Lake of Egypt,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Rend Lake|IL,Rend Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Rice Lake|IL,Rice Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sangchris Lake|IL,Sangchris Lake,IL,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Brookville Lake|IN,Brookville Lake,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Cagles Mill Lake|IN,Cagles Mill Lake,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Cecil M. Harden Lake|IN,Cecil M. Harden Lake,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Eagle Creek Reservoir|IN,Eagle Creek Reservoir,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Geist Reservoir|IN,Geist Reservoir,IN,S-depth-024,name_state,"ScienceBase item 5d8bb950e4b0c4f70d0beec2: Bathymetry of Morse and Geist Reservoirs, 2016"
+Lake Freeman|IN,Lake Freeman,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Michigan|IN,Lake Michigan,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Shafer|IN,Lake Shafer,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Wawasee|IN,Lake Wawasee,IN,S-depth-003,exact,matched 'Lake Wawasee' (209 features); name=True spatial=True
+Mississinewa Lake|IN,Mississinewa Lake,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Monroe Lake|IN,Monroe Lake,IN,S-depth-039,name_state,NLA2007 'Monroe Lake' DEPTHMAX=13.2 DEPTH_X=12.2 m (single-point max-depth)
+Patoka Lake|IN,Patoka Lake,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Salamonie Lake|IN,Salamonie Lake,IN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Tippecanoe Lake|IN,Tippecanoe Lake,IN,S-depth-003,name_state,matched 'Tippecanoe Lake' (1 features); name=True spatial=False
+Tippecanoe Lake|IN,Tippecanoe Lake,IN,S-depth-039,name_state,NLA2007 'Tippecanoe Lake' DEPTHMAX=33 DEPTH_X=33 m (single-point max-depth)
+Cedar Bluff Reservoir|KS,Cedar Bluff Reservoir,KS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Cheney Reservoir|KS,Cheney Reservoir,KS,S-depth-011,spatial_only,89 contour/point features within ~3km of fleet point
+Clinton Lake|KS,Clinton Lake,KS,S-depth-011,spatial_only,239 contour/point features within ~3km of fleet point
+El Dorado Lake|KS,El Dorado Lake,KS,S-depth-011,spatial_only,254 contour/point features within ~3km of fleet point
+John Redmond Reservoir|KS,John Redmond Reservoir,KS,S-depth-011,spatial_only,72 contour/point features within ~3km of fleet point
+Kanopolis Lake|KS,Kanopolis Lake,KS,S-depth-011,spatial_only,72 contour/point features within ~3km of fleet point
+Marion Reservoir|KS,Marion Reservoir,KS,S-depth-011,spatial_only,88 contour/point features within ~3km of fleet point
+Melvern Lake|KS,Melvern Lake,KS,S-depth-011,spatial_only,31 contour/point features within ~3km of fleet point
+Melvern Lake|KS,Melvern Lake,KS,S-depth-039,name_state,NLA2007 'Melvern Lake' DEPTHMAX=20.1 DEPTH_X=20.1 m (single-point max-depth)
+Milford Lake|KS,Milford Lake,KS,S-depth-011,spatial_only,93 contour/point features within ~3km of fleet point
+Perry Lake|KS,Perry Lake,KS,S-depth-011,spatial_only,82 contour/point features within ~3km of fleet point
+Pomona Lake|KS,Pomona Lake,KS,S-depth-011,spatial_only,80 contour/point features within ~3km of fleet point
+Tuttle Creek Lake|KS,Tuttle Creek Lake,KS,S-depth-011,spatial_only,19 contour/point features within ~3km of fleet point
+Waconda Lake|KS,Waconda Lake,KS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wilson Lake|KS,Wilson Lake,KS,S-depth-011,spatial_only,74 contour/point features within ~3km of fleet point
+Wilson Lake|KS,Wilson Lake,KS,S-depth-039,name_state,NLA2007 'Wilson Lake' DEPTHMAX=22 DEPTH_X=19.6 m (single-point max-depth)
+Barren River Lake|KY,Barren River Lake,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Buckhorn Lake|KY,Buckhorn Lake,KY,S-depth-024,name_state,"ScienceBase item 65737df0d34e952b2274437f: Bathymetry of Buckhorn Lake, May 2023"
+Cave Run Lake|KY,Cave Run Lake,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Green River Lake|KY,Green River Lake,KY,S-depth-020,name_state,"USGS inventory feature 'Green River, KY'"
+Herrington Lake|KY,Herrington Lake,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Kentucky Lake|KY,Kentucky Lake,KY,S-depth-039,name_state,NLA2007 'Kentucky Lake' DEPTHMAX=17.7 DEPTH_X=17.7 m (single-point max-depth)
+Lake Barkley|KY,Lake Barkley,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Cumberland|KY,Lake Cumberland,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Laurel River Lake|KY,Laurel River Lake,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Nolin River Lake|KY,Nolin River Lake,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Rough River Lake|KY,Rough River Lake,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Taylorsville Lake|KY,Taylorsville Lake,KY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Calcasieu Lake|LA,Calcasieu Lake,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Catahoula Lake|LA,Catahoula Lake,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Cross Lake|LA,Cross Lake,LA,S-depth-039,name_state,NLA2007 'Cross Lake' DEPTHMAX=3.5 DEPTH_X=3.5 m (single-point max-depth)
+False River|LA,False River,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Grand Lake|LA,Grand Lake,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Henderson Lake|LA,Henderson Lake,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Bistineau|LA,Lake Bistineau,LA,S-depth-039,name_state,NLA2007 'Lake Bistineau' DEPTHMAX=5 DEPTH_X=5 m (single-point max-depth)
+Lake D'Arbonne|LA,Lake D'Arbonne,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Maurepas|LA,Lake Maurepas,LA,S-depth-020,exact,"USGS inventory feature 'Lake Maurepas, LA'; name+spatial"
+Lake Pontchartrain|LA,Lake Pontchartrain,LA,S-depth-020,exact,"USGS inventory feature 'Lake Pontchartrain, LA'; name+spatial"
+Sabine Lake|LA,Sabine Lake,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+White Lake|LA,White Lake,LA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Assawompset Pond|MA,Assawompset Pond,MA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Congamond Lakes|MA,Congamond Lakes,MA,S-depth-010,name_state,matched 'Congamond Lakes South Pond' (6 features); name=True spatial=False
+Lake Cochituate|MA,Lake Cochituate,MA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Quinsigamond|MA,Lake Quinsigamond,MA,S-depth-010,name_state,matched 'Lake Quinsigamond' (204 features); name=True spatial=False
+Long Pond (Lakeville)|MA,Long Pond (Lakeville),MA,S-depth-039,name_state,NLA2007 'Long Pond' DEPTHMAX=6.5 DEPTH_X=6.5 m (single-point max-depth)
+Onota Lake|MA,Onota Lake,MA,S-depth-010,exact,matched 'Onota Lake' (26 features); name=True spatial=True
+Otis Reservoir|MA,Otis Reservoir,MA,S-depth-010,exact,matched 'Otis Reservoir' (69 features); name=True spatial=True
+Pontoosuc Lake|MA,Pontoosuc Lake,MA,S-depth-010,exact,matched 'Pontoosuc Lake' (151 features); name=True spatial=True
+Quabbin Reservoir|MA,Quabbin Reservoir,MA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wachusett Reservoir|MA,Wachusett Reservoir,MA,S-depth-010,exact,matched 'Wachusett Reservoir' (287 features); name=True spatial=True
+Watuppa Ponds|MA,Watuppa Ponds,MA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Webster Lake|MA,Webster Lake,MA,S-depth-010,exact,matched 'Webster Lake' (187 features); name=True spatial=True
+Conowingo Reservoir|MD,Conowingo Reservoir,MD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Deep Creek Lake|MD,Deep Creek Lake,MD,S-depth-025,exact,MGS depth soundings CSV in DeepCreekLake2012.zip (downloaded md_mgs/)
+Jennings Randolph Lake|MD,Jennings Randolph Lake,MD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Habeeb (Rocky Gap)|MD,Lake Habeeb (Rocky Gap),MD,S-depth-039,name_state,NLA2007 'Lake Habeeb' DEPTHMAX=12.3 DEPTH_X=12.3 m (single-point max-depth)
+Liberty Reservoir|MD,Liberty Reservoir,MD,S-depth-025,exact,MGS depth soundings CSV in LibertyReservoir2001.zip (downloaded md_mgs/)
+Loch Raven Reservoir|MD,Loch Raven Reservoir,MD,S-depth-025,exact,MGS depth soundings CSV in LochRaven1996.zip (downloaded md_mgs/)
+Piney Run Lake|MD,Piney Run Lake,MD,S-depth-039,name_state,NLA2007 'Piney Run Reservoir' DEPTHMAX=9.1 DEPTH_X=9.1 m (single-point max-depth)
+Prettyboy Reservoir|MD,Prettyboy Reservoir,MD,S-depth-025,exact,MGS depth soundings CSV in PrettyBoy1998.zip (downloaded md_mgs/)
+Rocky Gorge Reservoir|MD,Rocky Gorge Reservoir,MD,S-depth-025,exact,MGS depth soundings CSV in RockyGorge2006.zip / RockyGorge2015.zip (downloaded md_mgs/)
+Savage River Reservoir|MD,Savage River Reservoir,MD,S-depth-039,name_state,NLA2007 'Savage River Reservoir' DEPTHMAX=21 DEPTH_X=21 m (single-point max-depth)
+Triadelphia Reservoir|MD,Triadelphia Reservoir,MD,S-depth-025,exact,MGS depth soundings CSV in triadelphia2006.zip / triadelphia2015.zip (downloaded md_mgs/)
+Youghiogheny River Lake|MD,Youghiogheny River Lake,MD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Chamberlain Lake|ME,Chamberlain Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Chesuncook Lake|ME,Chesuncook Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+China Lake|ME,China Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Damariscotta Lake|ME,Damariscotta Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Flagstaff Lake|ME,Flagstaff Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Great Pond (Belgrade)|ME,Great Pond (Belgrade),ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Long Lake|ME,Long Lake,ME,S-depth-039,name_state,NLA2007 'Long Lake' DEPTHMAX=50 DEPTH_X=50 m (single-point max-depth)
+Moosehead Lake|ME,Moosehead Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Mooselookmeguntic Lake|ME,Mooselookmeguntic Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Rangeley Lake|ME,Rangeley Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Schoodic Lake|ME,Schoodic Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sebago Lake|ME,Sebago Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sebec Lake|ME,Sebec Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+West Grand Lake|ME,West Grand Lake,ME,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Burt Lake|MI,Burt Lake,MI,S-depth-009,exact,matched 'Burt Lake' (12 features); name=True spatial=True
+Burt Lake|MI,Burt Lake,MI,S-depth-022,exact,max-depth point 'Burt Lake' depth=73 dist_km=3.7
+Elk Lake|MI,Elk Lake,MI,S-depth-022,exact,max-depth point 'Elk Lake' depth=150 dist_km=4.4
+Gull Lake|MI,Gull Lake,MI,S-depth-009,exact,matched 'Gull Lake' (34 features); name=True spatial=True
+Gull Lake|MI,Gull Lake,MI,S-depth-022,exact,max-depth point 'Gull Lake' depth=110 dist_km=0.5
+Higgins Lake|MI,Higgins Lake,MI,S-depth-009,exact,matched 'Higgins Lake' (46 features); name=True spatial=True
+Higgins Lake|MI,Higgins Lake,MI,S-depth-022,exact,max-depth point 'Higgins Lake' depth=130 dist_km=3.9
+Houghton Lake|MI,Houghton Lake,MI,S-depth-009,exact,matched 'Houghton Lake' (72 features); name=True spatial=True
+Houghton Lake|MI,Houghton Lake,MI,S-depth-022,exact,max-depth point 'Houghton Lake' depth=21 dist_km=2.9
+Lake Charlevoix|MI,Lake Charlevoix,MI,S-depth-009,exact,matched 'Lake Charlevoix' (21 features); name=True spatial=True
+Lake Charlevoix|MI,Lake Charlevoix,MI,S-depth-022,exact,"max-depth point 'Charlevoix, Lake' depth=122 dist_km=2.9"
+Lake Erie|MI,Lake Erie,MI,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake Gogebic|MI,Lake Gogebic,MI,S-depth-009,exact,matched 'Lake Gogebic' (12 features); name=True spatial=True
+Lake Gogebic|MI,Lake Gogebic,MI,S-depth-022,name_state,max-depth point 'Lake Gogebic' depth=35 dist_km=5.7
+Lake Gogebic|MI,Lake Gogebic,MI,S-depth-039,name_state,NLA2007 'Lake Gogebic' DEPTHMAX=7 DEPTH_X=6.7 m (single-point max-depth)
+Lake Huron|MI,Lake Huron,MI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Michigan|MI,Lake Michigan,MI,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake St. Clair|MI,Lake St. Clair,MI,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake Superior|MI,Lake Superior,MI,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Mullett Lake|MI,Mullett Lake,MI,S-depth-009,exact,matched 'Mullett Lake' (37 features); name=True spatial=True
+Mullett Lake|MI,Mullett Lake,MI,S-depth-022,name_state,max-depth point 'Mullett Lake' depth=120 dist_km=5.8
+Torch Lake|MI,Torch Lake,MI,S-depth-009,exact,matched 'Torch Lake' (7 features); name=True spatial=True
+Torch Lake|MI,Torch Lake,MI,S-depth-022,exact,max-depth point 'Torch Lake' depth=250 dist_km=4.3
+Gull Lake|MN,Gull Lake,MN,S-depth-002,exact,matched 'Gull' (135 features); name=True spatial=True
+Lake Bemidji|MN,Lake Bemidji,MN,S-depth-002,exact,matched 'Bemidji (main lake)' (70 features); name=True spatial=True
+Lake Minnetonka|MN,Lake Minnetonka,MN,S-depth-002,exact,matched 'Minnetonka' (518 features); name=True spatial=True
+Lake Pepin|MN,Lake Pepin,MN,S-depth-002,exact,matched 'Pepin' (33 features); name=True spatial=True
+Lake Pepin|MN,Lake Pepin,MN,S-depth-020,name_state,"inventory feature 'Upper Mississippi River, Pool 4, WI' (river pool bathymetry; Lake Pepin lies in Pool 4) - weak"
+Lake Superior|MN,Lake Superior,MN,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake Vermilion|MN,Lake Vermilion,MN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Winnibigoshish|MN,Lake Winnibigoshish,MN,S-depth-002,exact,matched 'Winnibigoshish' (107 features); name=True spatial=True
+Lake of the Woods|MN,Lake of the Woods,MN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Leech Lake|MN,Leech Lake,MN,S-depth-002,exact,matched 'Leech (Main Basin)' (142 features); name=True spatial=True
+Mille Lacs Lake|MN,Mille Lacs Lake,MN,S-depth-002,exact,matched 'Mille Lacs' (816 features); name=True spatial=True
+Otter Tail Lake|MN,Otter Tail Lake,MN,S-depth-002,exact,matched 'Otter Tail' (308 features); name=True spatial=True
+Rainy Lake|MN,Rainy Lake,MN,S-depth-002,exact,matched 'Rainy' (211 features); name=True spatial=True
+Red Lake|MN,Red Lake,MN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+White Bear Lake|MN,White Bear Lake,MN,S-depth-002,exact,matched 'White Bear' (64 features); name=True spatial=True
+Clearwater Lake|MO,Clearwater Lake,MO,S-depth-039,name_state,NLA2007 'Clearwater Lake' DEPTHMAX=8.7 DEPTH_X=8.7 m (single-point max-depth)
+Clearwater Lake|MO,Clearwater Lake,MO,S-depth-020,exact,"USGS inventory feature 'Clearwater Lake, MO'; name+spatial"
+Clearwater Lake|MO,Clearwater Lake,MO,S-depth-024,name_state,"ScienceBase item 5a9d9fd3e4b06990607187a5: Bathymetric data for Clearwater Lake, 2017"
+Lake Taneycomo|MO,Lake Taneycomo,MO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake of the Ozarks|MO,Lake of the Ozarks,MO,S-depth-039,name_state,NLA2007 'Lake of the Ozarks' DEPTHMAX=31 DEPTH_X=31 m (single-point max-depth)
+Longview Lake|MO,Longview Lake,MO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Mark Twain Lake|MO,Mark Twain Lake,MO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pomme de Terre Lake|MO,Pomme de Terre Lake,MO,S-depth-039,name_state,NLA2007 'Pomme de Terre Lake' DEPTHMAX=10 DEPTH_X=8.4 m (single-point max-depth)
+Smithville Lake|MO,Smithville Lake,MO,S-depth-039,name_state,NLA2007 'Smithville' DEPTHMAX=9.2 DEPTH_X=9.2 m (single-point max-depth)
+Stockton Lake|MO,Stockton Lake,MO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Table Rock Lake|MO,Table Rock Lake,MO,S-depth-020,name_state,"USGS inventory feature 'Table Rock, MO'"
+Table Rock Lake|MO,Table Rock Lake,MO,S-depth-024,name_state,"ScienceBase item 62b4d245d34e8f4977cbd09f: Bathymetric and Supporting Data for Table Rock Lake, 2020 (points, QA)"
+Truman Lake|MO,Truman Lake,MO,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wappapello Lake|MO,Wappapello Lake,MO,S-depth-039,name_state,NLA2007 'Lake Wappapello' DEPTHMAX=4.1 DEPTH_X=4.1 m (single-point max-depth)
+Arkabutla Lake|MS,Arkabutla Lake,MS,S-depth-039,name_state,NLA2007 'Arkabutla Lake' DEPTHMAX=5.5 DEPTH_X=5.5 m (single-point max-depth)
+Bay Springs Lake|MS,Bay Springs Lake,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Columbus Lake|MS,Columbus Lake,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Eagle Lake|MS,Eagle Lake,MS,S-depth-039,name_state,NLA2007 'Eagle Lake' DEPTHMAX=2.6 DEPTH_X=2.6 m (single-point max-depth)
+Enid Lake|MS,Enid Lake,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Grenada Lake|MS,Grenada Lake,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Washington|MS,Lake Washington,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Moon Lake|MS,Moon Lake,MS,S-depth-039,name_state,NLA2007 'Moon Lake' DEPTHMAX=5 DEPTH_X=5 m (single-point max-depth)
+Okatibbee Lake|MS,Okatibbee Lake,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Ross Barnett Reservoir|MS,Ross Barnett Reservoir,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sardis Lake|MS,Sardis Lake,MS,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Canyon Ferry Lake|MT,Canyon Ferry Lake,MT,S-depth-004,exact,matched 'Canyon Ferry Reservoir' (4388 features); name=True spatial=True
+Flathead Lake|MT,Flathead Lake,MT,S-depth-004,exact,matched 'FLATHEAD LAKE' (224 features); name=True spatial=True
+Fort Peck Lake|MT,Fort Peck Lake,MT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Fresno Reservoir|MT,Fresno Reservoir,MT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Georgetown Lake|MT,Georgetown Lake,MT,S-depth-004,exact,matched 'Georgetown Lake' (7 features); name=True spatial=True
+Georgetown Lake|MT,Georgetown Lake,MT,S-depth-039,name_state,NLA2007 'Georgetown Lake' DEPTHMAX=8.8 DEPTH_X=8.8 m (single-point max-depth)
+Hebgen Lake|MT,Hebgen Lake,MT,S-depth-004,exact,matched 'Hebgen Lake' (17 features); name=True spatial=True
+Holter Lake|MT,Holter Lake,MT,S-depth-039,name_state,NLA2007 'Holter Lake' DEPTHMAX=35.1 DEPTH_X=35.1 m (single-point max-depth)
+Hungry Horse Reservoir|MT,Hungry Horse Reservoir,MT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Koocanusa|MT,Lake Koocanusa,MT,S-depth-039,name_state,NLA2007 'Koocanusa Reservoir' DEPTHMAX=48.8 DEPTH_X=48.8 m (single-point max-depth)
+Lake Koocanusa|MT,Lake Koocanusa,MT,S-depth-024,name_state,ScienceBase item 5f3b0d7182ce8df5b6c41294: USGS+USACE bathymetric survey of Lake Koocanusa (+DEM 5f3d6dba82ce8df5b6c7222d)
+Tiber Reservoir (Lake Elwell)|MT,Tiber Reservoir (Lake Elwell),MT,S-depth-004,exact,matched 'Tiber Reservoir' (7583 features); name=True spatial=True
+Whitefish Lake|MT,Whitefish Lake,MT,S-depth-004,exact,matched 'Whitefish Lake' (15 features); name=True spatial=True
+Whitefish Lake|MT,Whitefish Lake,MT,S-depth-039,name_state,NLA2007 'Whitefish Lake' DEPTHMAX=49.7 DEPTH_X=49.7 m (single-point max-depth)
+Badin Lake|NC,Badin Lake,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Falls Lake|NC,Falls Lake,NC,S-depth-039,name_state,NLA2007 'Falls Lake' DEPTHMAX=7 DEPTH_X=7 m (single-point max-depth)
+Fontana Lake|NC,Fontana Lake,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+High Rock Lake|NC,High Rock Lake,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Hiwassee Lake|NC,Hiwassee Lake,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Jordan Lake|NC,Jordan Lake,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Kerr Lake (John H. Kerr)|NC,Kerr Lake (John H. Kerr),NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Hickory|NC,Lake Hickory,NC,S-depth-039,name_state,NLA2007 'Lake Hickory' DEPTHMAX=20.3 DEPTH_X=20.3 m (single-point max-depth)
+Lake James|NC,Lake James,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Mattamuskeet|NC,Lake Mattamuskeet,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Norman|NC,Lake Norman,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Waccamaw|NC,Lake Waccamaw,NC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Bowman-Haley Reservoir|ND,Bowman-Haley Reservoir,ND,S-depth-006,name_state,matched 'Bowman-Haley Dam' (15 features); name=True spatial=False
+Devils Lake|ND,Devils Lake,ND,S-depth-039,name_state,NLA2007 'Devils Lake' DEPTHMAX=11.5 DEPTH_X=11.5 m (single-point max-depth)
+Jamestown Reservoir|ND,Jamestown Reservoir,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Ashtabula|ND,Lake Ashtabula,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Darling|ND,Lake Darling,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Metigoshe|ND,Lake Metigoshe,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Oahe|ND,Lake Oahe,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Sakakawea|ND,Lake Sakakawea,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Tschida|ND,Lake Tschida,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Nelson Lake|ND,Nelson Lake,ND,S-depth-006,name_state,matched 'Nelson Lake (Oliver)' (17 features); name=True spatial=False
+Patterson Lake|ND,Patterson Lake,ND,S-depth-023,spatial_only,max-depth point '331' depth=19.89999962 dist_km=0.7
+Patterson Lake|ND,Patterson Lake,ND,S-depth-006,name_state,ND GNF group 'Dickinson Reservoir (Patterson Lake)' (25 features)
+Stump Lake|ND,Stump Lake,ND,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Box Butte Reservoir|NE,Box Butte Reservoir,NE,S-depth-005,exact,matched 'Box Butte Reservoir' (13 features); name=True spatial=True
+Box Butte Reservoir|NE,Box Butte Reservoir,NE,S-depth-039,name_state,NLA2007 'Box Butte Reservoir' DEPTHMAX=4.5 DEPTH_X=4.4 m (single-point max-depth)
+Branched Oak Lake|NE,Branched Oak Lake,NE,S-depth-005,exact,matched 'Branched Oak Lake' (10 features); name=True spatial=True
+Branched Oak Lake|NE,Branched Oak Lake,NE,S-depth-039,name_state,NLA2007 'Branched Oak Lake' DEPTHMAX=8.2 DEPTH_X=8.2 m (single-point max-depth)
+Calamus Reservoir|NE,Calamus Reservoir,NE,S-depth-005,exact,matched 'Calamus Reservoir' (140 features); name=True spatial=True
+Harlan County Lake|NE,Harlan County Lake,NE,S-depth-005,name_state,matched 'Harlan County Lake' (124 features); name=True spatial=False
+Harlan County Lake|NE,Harlan County Lake,NE,S-depth-039,name_state,NLA2007 'Harlan County Lake' DEPTHMAX=13.7 DEPTH_X=13.7 m (single-point max-depth)
+Johnson Lake|NE,Johnson Lake,NE,S-depth-005,exact,matched 'Johnson Lake' (8 features); name=True spatial=True
+Johnson Lake|NE,Johnson Lake,NE,S-depth-039,name_state,NLA2007 'Johnson Lake' DEPTHMAX=10.7 DEPTH_X=10.7 m (single-point max-depth)
+Lake McConaughy|NE,Lake McConaughy,NE,S-depth-005,exact,matched 'Lake McConaughy' (87 features); name=True spatial=True
+Lake Ogallala|NE,Lake Ogallala,NE,S-depth-005,name_state,matched 'Lake Ogallala' (131 features); name=True spatial=False
+Lake Ogallala|NE,Lake Ogallala,NE,S-depth-039,name_state,NLA2007 'Ogallala Lake' DEPTHMAX=10.4 DEPTH_X=10.4 m (single-point max-depth)
+Merritt Reservoir|NE,Merritt Reservoir,NE,S-depth-005,exact,matched 'Merritt Reservoir' (278 features); name=True spatial=True
+Sherman Reservoir|NE,Sherman Reservoir,NE,S-depth-005,name_state,matched 'Sherman Reservoir' (120 features); name=True spatial=False
+Sherman Reservoir|NE,Sherman Reservoir,NE,S-depth-039,name_state,NLA2007 'Sherman Reservoir' DEPTHMAX=11.2 DEPTH_X=11.2 m (single-point max-depth)
+Sutherland Reservoir|NE,Sutherland Reservoir,NE,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Swanson Reservoir|NE,Swanson Reservoir,NE,S-depth-005,name_state,matched 'Swanson Reservoir' (9 features); name=True spatial=False
+First Connecticut Lake|NH,First Connecticut Lake,NH,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Great East Lake|NH,Great East Lake,NH,S-depth-007,name_state,matched 'GREAT EAST LAKE' (22 features); name=True spatial=False
+Lake Wentworth|NH,Lake Wentworth,NH,S-depth-007,exact,"matched 'WENTWORTH, LAKE' (121 features); name=True spatial=True"
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,S-depth-007,exact,matched 'WINNIPESAUKEE' (270 features); name=True spatial=True
+Lake Winnisquam|NH,Lake Winnisquam,NH,S-depth-007,exact,matched 'WINNISQUAM LAKE' (37 features); name=True spatial=True
+Lake Winnisquam|NH,Lake Winnisquam,NH,S-depth-039,name_state,NLA2007 'Winnisquam Lake' DEPTHMAX=39 DEPTH_X= m (single-point max-depth)
+Massabesic Lake|NH,Massabesic Lake,NH,S-depth-007,exact,matched 'MASSABESIC LAKE' (265 features); name=True spatial=True
+Merrymeeting Lake|NH,Merrymeeting Lake,NH,S-depth-007,name_state,matched 'MERRYMEETING LAKE' (165 features); name=True spatial=False
+Newfound Lake|NH,Newfound Lake,NH,S-depth-007,exact,matched 'NEWFOUND LAKE' (35 features); name=True spatial=True
+Ossipee Lake|NH,Ossipee Lake,NH,S-depth-007,exact,matched 'OSSIPEE LAKE' (9 features); name=True spatial=True
+Squam Lake|NH,Squam Lake,NH,S-depth-007,exact,matched 'SQUAM LAKE' (99 features); name=True spatial=True
+Sunapee Lake|NH,Sunapee Lake,NH,S-depth-007,exact,matched 'SUNAPEE LAKE' (43 features); name=True spatial=True
+Umbagog Lake|NH,Umbagog Lake,NH,S-depth-007,exact,matched 'UMBAGOG LAKE' (137 features); name=True spatial=True
+Budd Lake|NJ,Budd Lake,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Culvers Lake|NJ,Culvers Lake,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Greenwood Lake|NJ,Greenwood Lake,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Absegami|NJ,Lake Absegami,NJ,S-depth-018,name_state,matched 'Lake Absegami' (13 features); name=True spatial=False
+Lake Hopatcong|NJ,Lake Hopatcong,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Manasquan Reservoir|NJ,Manasquan Reservoir,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Merrill Creek Reservoir|NJ,Merrill Creek Reservoir,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Monksville Reservoir|NJ,Monksville Reservoir,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Round Valley Reservoir|NJ,Round Valley Reservoir,NJ,S-depth-039,name_state,NLA2007 'Round Valley Reservoir' DEPTHMAX=9.1 DEPTH_X=9.1 m (single-point max-depth)
+Spruce Run Reservoir|NJ,Spruce Run Reservoir,NJ,S-depth-018,exact,matched 'Spruce Run Reservoir' (75 features); name=True spatial=True
+Swartswood Lake|NJ,Swartswood Lake,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wanaque Reservoir|NJ,Wanaque Reservoir,NJ,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Abiquiu Lake|NM,Abiquiu Lake,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Bluewater Lake|NM,Bluewater Lake,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Caballo Lake|NM,Caballo Lake,NM,S-depth-039,name_state,NLA2007 'Caballo Reservoir' DEPTHMAX=7 DEPTH_X=7 m (single-point max-depth)
+Cochiti Lake|NM,Cochiti Lake,NM,S-depth-039,name_state,NLA2007 'Cochiti Lake' DEPTHMAX=25.8 DEPTH_X=25 m (single-point max-depth)
+Conchas Lake|NM,Conchas Lake,NM,S-depth-039,name_state,NLA2007 'Conchas Lake' DEPTHMAX=30 DEPTH_X=19.1 m (single-point max-depth)
+Eagle Nest Lake|NM,Eagle Nest Lake,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+El Vado Lake|NM,El Vado Lake,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Elephant Butte Reservoir|NM,Elephant Butte Reservoir,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Heron Lake|NM,Heron Lake,NM,S-depth-039,name_state,NLA2007 'Heron Reservoir' DEPTHMAX=48 DEPTH_X=45 m (single-point max-depth)
+Navajo Reservoir|NM,Navajo Reservoir,NM,S-depth-039,name_state,NLA2007 'Navajo Reservoir' DEPTHMAX=48.5 DEPTH_X=44.7 m (single-point max-depth)
+Santa Rosa Lake|NM,Santa Rosa Lake,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sumner Lake|NM,Sumner Lake,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Ute Lake|NM,Ute Lake,NM,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lahontan Reservoir|NV,Lahontan Reservoir,NV,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Mead|NV,Lake Mead,NV,S-depth-039,name_state,NLA2007 'Lake Mead' DEPTHMAX=19.5 DEPTH_X=19.5 m (single-point max-depth)
+Lake Mead|NV,Lake Mead,NV,S-depth-020,name_state,"inventory feature 'Lake Mead, AZ and NV'"
+Lake Mohave|NV,Lake Mohave,NV,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Tahoe|NV,Lake Tahoe,NV,S-depth-020,name_state,"inventory feature 'Lake Tahoe, CA and NV'"
+Pyramid Lake|NV,Pyramid Lake,NV,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Ruby Lake|NV,Ruby Lake,NV,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Rye Patch Reservoir|NV,Rye Patch Reservoir,NV,S-depth-039,name_state,NLA2007 'Rye Patch Reservoir' DEPTHMAX=14.3 DEPTH_X=14.3 m (single-point max-depth)
+Topaz Lake|NV,Topaz Lake,NV,S-depth-039,name_state,NLA2007 'Topaz Lake' DEPTHMAX=20.6 DEPTH_X=20.6 m (single-point max-depth)
+Walker Lake|NV,Walker Lake,NV,S-depth-039,name_state,NLA2007 'Walker Lake' DEPTHMAX=24 DEPTH_X=24 m (single-point max-depth)
+Walker Lake|NV,Walker Lake,NV,S-depth-024,name_state,ScienceBase item 631405d3d34e36012efa3434: Digital elevation model of Walker Lake
+Washoe Lake|NV,Washoe Lake,NV,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wild Horse Reservoir|NV,Wild Horse Reservoir,NV,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Canandaigua Lake|NY,Canandaigua Lake,NY,S-depth-039,name_state,NLA2007 'Canandaigua Lake' DEPTHMAX=53 DEPTH_X=53 m (single-point max-depth)
+Cayuga Lake|NY,Cayuga Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Chautauqua Lake|NY,Chautauqua Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Cranberry Lake|NY,Cranberry Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Great Sacandaga Lake|NY,Great Sacandaga Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Indian Lake|NY,Indian Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Keuka Lake|NY,Keuka Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Erie|NY,Lake Erie,NY,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake George|NY,Lake George,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Ontario|NY,Lake Ontario,NY,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Oneida Lake|NY,Oneida Lake,NY,S-depth-039,name_state,NLA2007 'Oneida Lake' DEPTHMAX=11.5 DEPTH_X=11.5 m (single-point max-depth)
+Owasco Lake|NY,Owasco Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Seneca Lake|NY,Seneca Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Skaneateles Lake|NY,Skaneateles Lake,NY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Alum Creek Lake|OH,Alum Creek Lake,OH,S-depth-015,exact,matched 'ALUM CREEK LAKE' (93 features); name=True spatial=True
+Berlin Lake|OH,Berlin Lake,OH,S-depth-015,exact,matched 'BERLIN LAKE' (21 features); name=True spatial=True
+Buckeye Lake|OH,Buckeye Lake,OH,S-depth-015,exact,matched 'BUCKEYE LAKE' (47 features); name=True spatial=True
+Caesar Creek Lake|OH,Caesar Creek Lake,OH,S-depth-015,exact,matched 'CAESAR CREEK LAKE' (30 features); name=True spatial=True
+Grand Lake St. Marys|OH,Grand Lake St. Marys,OH,S-depth-015,exact,matched 'GRAND LAKE ST MARY'S' (17 features); name=True spatial=True
+Grand Lake St. Marys|OH,Grand Lake St. Marys,OH,S-depth-039,name_state,NLA2007 'Grand Lake St. Marys' DEPTHMAX=2.2 DEPTH_X=2.2 m (single-point max-depth)
+Hoover Reservoir|OH,Hoover Reservoir,OH,S-depth-015,exact,matched 'HOOVER RESERVOIR' (35 features); name=True spatial=True
+Indian Lake|OH,Indian Lake,OH,S-depth-015,exact,matched 'INDIAN LAKE' (116 features); name=True spatial=True
+Lake Erie|OH,Lake Erie,OH,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Milton|OH,Lake Milton,OH,S-depth-015,exact,matched 'LAKE MILTON' (28 features); name=True spatial=True
+Mosquito Creek Lake|OH,Mosquito Creek Lake,OH,S-depth-015,exact,matched 'MOSQUITO CREEK LAKE' (35 features); name=True spatial=True
+Salt Fork Lake|OH,Salt Fork Lake,OH,S-depth-015,name_state,matched 'SALT FORK LAKE' (53 features); name=True spatial=False
+Senecaville Lake|OH,Senecaville Lake,OH,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Tappan Lake|OH,Tappan Lake,OH,S-depth-015,exact,matched 'TAPPAN LAKE' (24 features); name=True spatial=True
+Broken Bow Lake|OK,Broken Bow Lake,OK,S-depth-021,exact,max-depth point 'Broken Bow Lake' depth=None dist_km=3.4
+Canton Lake|OK,Canton Lake,OK,S-depth-021,exact,max-depth point 'Canton Lake' depth=-35.2 dist_km=4.1
+Canton Lake|OK,Canton Lake,OK,S-depth-039,name_state,NLA2007 'Canton Lake' DEPTHMAX=7.5 DEPTH_X=7.5 m (single-point max-depth)
+Fort Gibson Lake|OK,Fort Gibson Lake,OK,S-depth-021,name_state,max-depth point 'Fort Gibson Lake' depth=-71 dist_km=11.3
+Fort Gibson Lake|OK,Fort Gibson Lake,OK,S-depth-013,name_state,"OWRB contours group 'Ft Gibson' (6 features, 10ft step); short alias"
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,S-depth-021,name_state,max-depth point 'Grand Lake 'O' the Cherokees' depth=-133 dist_km=6.0
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,S-depth-020,exact,"USGS inventory feature 'Grand Lake O the Cherokees, OK'; name+spatial"
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,S-depth-024,name_state,"ScienceBase item 5e4c001fe4b0ff554f6c6531: Bathymetric Map, Surface Area, Capacity of Grand Lake O' the Cherokees (uses OWRB 2009 survey)"
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,S-depth-013,name_state,"OWRB contours group 'Grand' (27 features, 5ft step to -130ft); short name, confirm by location"
+Kaw Lake|OK,Kaw Lake,OK,S-depth-021,exact,max-depth point 'Kaw Lake' depth=-74.5 dist_km=4.7
+Kaw Lake|OK,Kaw Lake,OK,S-depth-039,name_state,NLA2007 'Kaw Lake' DEPTHMAX=15.5 DEPTH_X=15 m (single-point max-depth)
+Keystone Lake|OK,Keystone Lake,OK,S-depth-021,exact,max-depth point 'Keystone Lake' depth=-73 dist_km=1.4
+Keystone Lake|OK,Keystone Lake,OK,S-depth-039,name_state,NLA2007 'Keystone' DEPTHMAX=20.6 DEPTH_X=20.6 m (single-point max-depth)
+Lake Eufaula|OK,Lake Eufaula,OK,S-depth-001,name_state,TWDB survey directory 'Eufaula_OK' surveys 2004-06; shapefile zip(s) listed on index; downloaded twdb_shapefiles/Eufaula_OK_2004-06.zip
+Lake Hudson|OK,Lake Hudson,OK,S-depth-013,name_state,matched 'Hudson' (13 features); name=True spatial=False; 1 other cand
+Lake Hudson|OK,Lake Hudson,OK,S-depth-021,name_state,max-depth point 'Hudson Lake' depth=None dist_km=105.8
+Lake Hudson|OK,Lake Hudson,OK,S-depth-039,name_state,NLA2007 'Hudson Lake' DEPTHMAX=6 DEPTH_X=5.8 m (single-point max-depth)
+Lake Murray (OK)|OK,Lake Murray (OK),OK,S-depth-013,name_state,matched 'Murray' (11 features); name=True spatial=False
+Lake Murray (OK)|OK,Lake Murray (OK),OK,S-depth-021,name_state,max-depth point 'Lake Murray' depth=-102.8 dist_km=8.4
+Lake Tenkiller|OK,Lake Tenkiller,OK,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Oologah Lake|OK,Oologah Lake,OK,S-depth-021,name_state,max-depth point 'Oologah Lake' depth=None dist_km=6.7
+Sardis Lake|OK,Sardis Lake,OK,S-depth-013,exact,matched 'Sardis' (5 features); name=True spatial=True
+Sardis Lake|OK,Sardis Lake,OK,S-depth-021,name_state,max-depth point 'Sardis Lake' depth=-55.2 dist_km=5.1
+Skiatook Lake|OK,Skiatook Lake,OK,S-depth-021,exact,max-depth point 'Skiatook Lake' depth=-143 dist_km=4.3
+Skiatook Lake|OK,Skiatook Lake,OK,S-depth-039,name_state,NLA2007 'Skiatook Lake' DEPTHMAX=17 DEPTH_X=17 m (single-point max-depth)
+Crater Lake|OR,Crater Lake,OR,S-depth-020,exact,"USGS inventory feature 'Crater Lake, OR'; name+spatial"
+Crescent Lake|OR,Crescent Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Detroit Lake|OR,Detroit Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Diamond Lake|OR,Diamond Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Fern Ridge Reservoir|OR,Fern Ridge Reservoir,OR,S-depth-039,name_state,NLA2007 'Fern Ridge Lake' DEPTHMAX=5.3 DEPTH_X=5.3 m (single-point max-depth)
+Lake Billy Chinook|OR,Lake Billy Chinook,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Owyhee|OR,Lake Owyhee,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Malheur Lake|OR,Malheur Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Odell Lake|OR,Odell Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Suttle Lake|OR,Suttle Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Timothy Lake|OR,Timothy Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Upper Klamath Lake|OR,Upper Klamath Lake,OR,S-depth-020,name_state,"inventory feature 'Upper Klamath and Agency Lakes, OR'"
+Waldo Lake|OR,Waldo Lake,OR,S-depth-039,name_state,NLA2007 'Waldo Lake' DEPTHMAX=45 DEPTH_X=45 m (single-point max-depth)
+Wallowa Lake|OR,Wallowa Lake,OR,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Allegheny Reservoir|PA,Allegheny Reservoir,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Beltzville Lake|PA,Beltzville Lake,PA,S-depth-039,name_state,NLA2007 'Beltzville Lake' DEPTHMAX=28.5 DEPTH_X=24 m (single-point max-depth)
+Blue Marsh Lake|PA,Blue Marsh Lake,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Conneaut Lake|PA,Conneaut Lake,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Harveys Lake|PA,Harveys Lake,PA,S-depth-033,exact,Harveys Lake 10ft contours (17 lines); misc_ago/pa_harveys_lake_contours10ft.geojson
+Lake Arthur|PA,Lake Arthur,PA,S-depth-020,exact,"USGS inventory feature 'Lake Arthur, PA'; name+spatial"
+Lake Erie|PA,Lake Erie,PA,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake Marburg|PA,Lake Marburg,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Nockamixon|PA,Lake Nockamixon,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Wallenpaupack|PA,Lake Wallenpaupack,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pymatuning Reservoir|PA,Pymatuning Reservoir,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Raystown Lake|PA,Raystown Lake,PA,S-depth-039,name_state,NLA2007 'Raystown Lake' DEPTHMAX=28 DEPTH_X=28 m (single-point max-depth)
+Shenango River Lake|PA,Shenango River Lake,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Yellow Creek Lake|PA,Yellow Creek Lake,PA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Bowdish Reservoir|RI,Bowdish Reservoir,RI,S-depth-039,name_state,NLA2007 'Bowdish Reservoir' DEPTHMAX=2.5 DEPTH_X=2.5 m (single-point max-depth)
+Flat River Res. (Johnson's Pond)|RI,Flat River Res. (Johnson's Pond),RI,S-depth-039,name_state,NLA2007 'Flat River Reservoir' DEPTHMAX=10 DEPTH_X=10 m (single-point max-depth)
+Ninigret Pond|RI,Ninigret Pond,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pascoag Reservoir|RI,Pascoag Reservoir,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Point Judith Pond|RI,Point Judith Pond,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Scituate Reservoir|RI,Scituate Reservoir,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Stafford Pond|RI,Stafford Pond,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Tiogue Lake|RI,Tiogue Lake,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Wallum Lake|RI,Wallum Lake,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Watchaug Pond|RI,Watchaug Pond,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Winnapaug Pond|RI,Winnapaug Pond,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Worden Pond|RI,Worden Pond,RI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Greenwood|SC,Lake Greenwood,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Hartwell|SC,Lake Hartwell,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Jocassee|SC,Lake Jocassee,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Keowee|SC,Lake Keowee,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Marion|SC,Lake Marion,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Monticello|SC,Lake Monticello,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Moultrie|SC,Lake Moultrie,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Murray (SC)|SC,Lake Murray (SC),SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Robinson|SC,Lake Robinson,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Strom Thurmond (Clarks Hill)|SC,Lake Strom Thurmond (Clarks Hill),SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Wateree|SC,Lake Wateree,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Wylie|SC,Lake Wylie,SC,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Angostura Reservoir|SD,Angostura Reservoir,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Big Stone Lake|SD,Big Stone Lake,SD,S-depth-039,name_state,NLA2007 'Big Stone Lake' DEPTHMAX=3.9 DEPTH_X=3.9 m (single-point max-depth)
+Bitter Lake|SD,Bitter Lake,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Enemy Swim Lake|SD,Enemy Swim Lake,SD,S-depth-039,name_state,NLA2007 'Enemy Swim Lake' DEPTHMAX=7.6 DEPTH_X=7.6 m (single-point max-depth)
+Lake Francis Case|SD,Lake Francis Case,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Oahe|SD,Lake Oahe,SD,S-depth-039,name_state,NLA2007 'Lake Oahe' DEPTHMAX=20.7 DEPTH_X=20.7 m (single-point max-depth)
+Lake Poinsett|SD,Lake Poinsett,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Sharpe|SD,Lake Sharpe,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Thompson|SD,Lake Thompson,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lewis and Clark Lake|SD,Lewis and Clark Lake,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pactola Reservoir|SD,Pactola Reservoir,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sheridan Lake|SD,Sheridan Lake,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Waubay Lake|SD,Waubay Lake,SD,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Center Hill Lake|TN,Center Hill Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Cherokee Lake|TN,Cherokee Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Chickamauga Lake|TN,Chickamauga Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Dale Hollow Lake|TN,Dale Hollow Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Douglas Lake|TN,Douglas Lake,TN,S-depth-039,name_state,NLA2007 'Douglas Lake' DEPTHMAX=13.5 DEPTH_X=12.8 m (single-point max-depth)
+Fort Loudoun Lake|TN,Fort Loudoun Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Kentucky Lake|TN,Kentucky Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Nickajack Lake|TN,Nickajack Lake,TN,S-depth-039,name_state,NLA2007 'Nickajack Lake' DEPTHMAX=16.5 DEPTH_X=15.2 m (single-point max-depth)
+Norris Lake|TN,Norris Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Old Hickory Lake|TN,Old Hickory Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Percy Priest Lake|TN,Percy Priest Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pickwick Lake|TN,Pickwick Lake,TN,S-depth-039,name_state,NLA2007 'Pickwick Lake' DEPTHMAX=3.6 DEPTH_X=3.6 m (single-point max-depth)
+Reelfoot Lake|TN,Reelfoot Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Tims Ford Lake|TN,Tims Ford Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Watts Bar Lake|TN,Watts Bar Lake,TN,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Amistad Reservoir|TX,Amistad Reservoir,TX,S-depth-039,name_state,NLA2007 'Amistad Reservoir' DEPTHMAX=41.6 DEPTH_X=41.6 m (single-point max-depth)
+Caddo Lake|TX,Caddo Lake,TX,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Canyon Lake|TX,Canyon Lake,TX,S-depth-001,name_state,TWDB survey directory 'Canyon' surveys 2001-11 (recalc 2016); shapefile zip(s) listed on index; downloaded twdb_shapefiles/Canyon_2001-11.zip
+Cedar Creek Reservoir|TX,Cedar Creek Reservoir,TX,S-depth-001,name_state,"TWDB survey directory 'CedarCreek' surveys 1995,2005,2017; shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)"
+Falcon Lake|TX,Falcon Lake,TX,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Buchanan|TX,Lake Buchanan,TX,S-depth-039,name_state,NLA2007 'Buchanan Lake' DEPTHMAX=22.1 DEPTH_X=22.1 m (single-point max-depth)
+Lake Buchanan|TX,Lake Buchanan,TX,S-depth-001,name_state,"TWDB survey directory 'Buchanan' surveys 2006,2019; shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)"
+Lake Conroe|TX,Lake Conroe,TX,S-depth-001,name_state,"TWDB survey directory 'conroe' surveys 1996,2010,2020; shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)"
+Lake Fork Reservoir|TX,Lake Fork Reservoir,TX,S-depth-001,name_state,"TWDB survey directory 'Fork' surveys 2001,2009; shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)"
+Lake Livingston|TX,Lake Livingston,TX,S-depth-039,name_state,NLA2007 'Livingston Reservoir' DEPTHMAX=20 DEPTH_X=20 m (single-point max-depth)
+Lake Livingston|TX,Lake Livingston,TX,S-depth-001,name_state,TWDB survey directory 'Livingston' surveys 2019; shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)
+Lake Tawakoni|TX,Lake Tawakoni,TX,S-depth-001,name_state,"TWDB survey directory 'tawakoni' surveys 1997,2009; shapefile zip(s) listed on index; downloaded twdb_shapefiles/tawakoni_2009-08.zip"
+Lake Texoma|TX,Lake Texoma,TX,S-depth-001,name_state,TWDB survey directory 'Texoma' surveys 2002; shapefile zip(s) listed on index; downloaded twdb_shapefiles/Texoma_2002-07.zip
+Lake Travis|TX,Lake Travis,TX,S-depth-001,name_state,"TWDB survey directory 'Travis' surveys 2008,2019; shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)"
+Possum Kingdom Lake|TX,Possum Kingdom Lake,TX,S-depth-001,name_state,"TWDB survey directory 'PossumKingdom' surveys 1994,2005,2016; shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)"
+Sam Rayburn Reservoir|TX,Sam Rayburn Reservoir,TX,S-depth-039,name_state,NLA2007 'Sam Rayburn' DEPTHMAX=17.4 DEPTH_X=17.4 m (single-point max-depth)
+Sam Rayburn Reservoir|TX,Sam Rayburn Reservoir,TX,S-depth-001,name_state,TWDB survey directory 'SamRayburn' surveys 2004 (recalc 2016); shapefile zip(s) listed on index; not downloaded (zip 0.2-1.8 GB)
+Toledo Bend Reservoir|TX,Toledo Bend Reservoir,TX,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Bear Lake|UT,Bear Lake,UT,S-depth-020,name_state,"inventory feature 'Bear Lake, UT and ID'"
+Bear Lake|UT,Bear Lake,UT,S-depth-024,name_state,ScienceBase item 698226f4b66b018d00102e42: Half-meter TBDEM for Bear Lake UT/ID (1.3 GB zip)
+Deer Creek Reservoir|UT,Deer Creek Reservoir,UT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Fish Lake|UT,Fish Lake,UT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Flaming Gorge Reservoir|UT,Flaming Gorge Reservoir,UT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Great Salt Lake|UT,Great Salt Lake,UT,S-depth-020,name_state,"inventory features 'North/South part of Great Salt Lake, UT'"
+Great Salt Lake|UT,Great Salt Lake,UT,S-depth-024,name_state,ScienceBase item 64595c00d34ec179a8368788: Half-meter topobathymetric elevation model for Great Salt Lake
+Jordanelle Reservoir|UT,Jordanelle Reservoir,UT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Powell|UT,Lake Powell,UT,S-depth-020,name_state,"inventory features 'Lake Powell, UT and AZ'"
+Lake Powell|UT,Lake Powell,UT,S-depth-024,name_state,"ScienceBase item 5c6c1e4be4b0fe48cb3e59e1: One Meter Topobathymetric DEM for Lake Powell, 1947-2018"
+Pineview Reservoir|UT,Pineview Reservoir,UT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Sevier Lake|UT,Sevier Lake,UT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Starvation Reservoir|UT,Starvation Reservoir,UT,S-depth-039,name_state,NLA2007 'Starvation Reservoir' DEPTHMAX=25 DEPTH_X=25 m (single-point max-depth)
+Strawberry Reservoir|UT,Strawberry Reservoir,UT,S-depth-039,name_state,NLA2007 'Strawberry Reservoir' DEPTHMAX=23 DEPTH_X=23 m (single-point max-depth)
+Utah Lake|UT,Utah Lake,UT,S-depth-033,exact,"Utah Lake contours (239 lines, owner msilski_MAG = local council of governments); misc_ago/ut_utah_lake_contours.geojson"
+Willard Bay Reservoir|UT,Willard Bay Reservoir,UT,S-depth-039,name_state,NLA2007 'Willard Bay Reservoir' DEPTHMAX=3 DEPTH_X=3 m (single-point max-depth)
+Chickahominy Lake|VA,Chickahominy Lake,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Claytor Lake|VA,Claytor Lake,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Douthat Lake|VA,Douthat Lake,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Flannagan Reservoir|VA,Flannagan Reservoir,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Kerr Reservoir (Buggs Island)|VA,Kerr Reservoir (Buggs Island),VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Anna|VA,Lake Anna,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Chesdin|VA,Lake Chesdin,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Gaston|VA,Lake Gaston,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Moomaw|VA,Lake Moomaw,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Philpott Lake|VA,Philpott Lake,VA,S-depth-039,name_state,NLA2007 'Philpott Reservoir' DEPTHMAX=41 DEPTH_X=41 m (single-point max-depth)
+Smith Mountain Lake|VA,Smith Mountain Lake,VA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+South Holston Lake|VA,South Holston Lake,VA,S-depth-039,name_state,NLA2007 'South Holston Lake' DEPTHMAX=38.5 DEPTH_X=38.5 m (single-point max-depth)
+Caspian Lake|VT,Caspian Lake,VT,S-depth-039,name_state,NLA2007 'Caspian Lake' DEPTHMAX=43.6 DEPTH_X=43.6 m (single-point max-depth)
+Crystal Lake|VT,Crystal Lake,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Harriman Reservoir (Whitingham)|VT,Harriman Reservoir (Whitingham),VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Bomoseen|VT,Lake Bomoseen,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Carmi|VT,Lake Carmi,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Champlain|VT,Lake Champlain,VT,S-depth-039,name_state,NLA2007 'Lake Champlain' DEPTHMAX=97 DEPTH_X=97 m (single-point max-depth)
+Lake Dunmore|VT,Lake Dunmore,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Memphremagog|VT,Lake Memphremagog,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Seymour|VT,Lake Seymour,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake St. Catherine|VT,Lake St. Catherine,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Willoughby|VT,Lake Willoughby,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Somerset Reservoir|VT,Somerset Reservoir,VT,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Banks Lake|WA,Banks Lake,WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Chelan|WA,Lake Chelan,WA,S-depth-008,exact,matched 'Lake Chelan' (27 features); name=True spatial=True
+Lake Crescent|WA,Lake Crescent,WA,S-depth-008,exact,matched 'Lake Crescent' (136 features); name=True spatial=True
+Lake Crescent|WA,Lake Crescent,WA,S-depth-020,exact,"USGS inventory feature 'Lake Crescent, WA'; name+spatial"
+Lake Crescent|WA,Lake Crescent,WA,S-depth-024,name_state,ScienceBase item 5eea74cb82ce3bd58d8572af: Multibeam bathymetry Lake Crescent 2016
+Lake Cushman|WA,Lake Cushman,WA,S-depth-039,name_state,NLA2007 'Cushman Lake' DEPTHMAX=44.8 DEPTH_X=44.8 m (single-point max-depth)
+Lake Quinault|WA,Lake Quinault,WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Roosevelt (FDR)|WA,Lake Roosevelt (FDR),WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Sammamish|WA,Lake Sammamish,WA,S-depth-008,exact,matched 'Lake Sammamish' (11 features); name=True spatial=True
+Lake Sammamish|WA,Lake Sammamish,WA,S-depth-039,name_state,NLA2007 'Lake Sammamish' DEPTHMAX=27.6 DEPTH_X=27.6 m (single-point max-depth)
+Lake Union|WA,Lake Union,WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Washington|WA,Lake Washington,WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Moses Lake|WA,Moses Lake,WA,S-depth-008,exact,matched 'Moses Lake' (28 features); name=True spatial=True
+Moses Lake|WA,Moses Lake,WA,S-depth-039,name_state,NLA2007 'Moses Lake' DEPTHMAX=8.5 DEPTH_X=8.5 m (single-point max-depth)
+Potholes Reservoir|WA,Potholes Reservoir,WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Riffe Lake|WA,Riffe Lake,WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Ross Lake|WA,Ross Lake,WA,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Big Green Lake|WI,Big Green Lake,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Castle Rock Lake|WI,Castle Rock Lake,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Chippewa Flowage|WI,Chippewa Flowage,WI,S-depth-033,exact,"Chippewa Flowage 5ft/30ft DRAFT contours (hosted by a lake association, not DNR); misc_ago/wi_chippewa_*"
+Green Bay|WI,Green Bay,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lac Courte Oreilles|WI,Lac Courte Oreilles,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Geneva|WI,Lake Geneva,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Mendota|WI,Lake Mendota,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Michigan|WI,Lake Michigan,WI,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake Monona|WI,Lake Monona,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Petenwell|WI,Lake Petenwell,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Lake Superior|WI,Lake Superior,WI,S-depth-031,name_state,Great Lakes seamless topobathy DEM / NOAA NCEI Great Lakes bathymetry (open lake; nearshore bowfishing relevance limited)
+Lake Winnebago|WI,Lake Winnebago,WI,S-depth-039,name_state,NLA2007 'Lake Winnebago' DEPTHMAX=5 DEPTH_X=4.8 m (single-point max-depth)
+Lake Wisconsin|WI,Lake Wisconsin,WI,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Beech Fork Lake|WV,Beech Fork Lake,WV,S-depth-017,exact,matched 'Beech Fork Lake' (1237 features); name=True spatial=True
+Bluestone Lake|WV,Bluestone Lake,WV,S-depth-017,exact,matched 'Bluestone Lake' (928 features); name=True spatial=True
+Burnsville Lake|WV,Burnsville Lake,WV,S-depth-017,name_state,matched 'Burnsville Lake' (1911 features); name=True spatial=False
+Cheat Lake|WV,Cheat Lake,WV,S-depth-017,exact,matched 'Cheat Lake' (1927 features); name=True spatial=True
+East Lynn Lake|WV,East Lynn Lake,WV,S-depth-017,name_state,matched 'East Lynn Lake' (2386 features); name=True spatial=False
+Mount Storm Lake|WV,Mount Storm Lake,WV,S-depth-017,name_state,matched 'Mount Storm Lake' (943 features); name=True spatial=False
+R.D. Bailey Lake|WV,R.D. Bailey Lake,WV,S-depth-017,name_state,matched 'R.D. Bailey Lake' (2481 features); name=True spatial=False
+Stonewall Jackson Lake|WV,Stonewall Jackson Lake,WV,S-depth-017,name_state,matched 'Stonewall Jackson Lake' (7607 features); name=True spatial=False
+Summersville Lake|WV,Summersville Lake,WV,S-depth-017,exact,matched 'Summersville Lake' (8864 features); name=True spatial=True
+Summersville Lake|WV,Summersville Lake,WV,S-depth-039,name_state,NLA2007 'Summersville Lake' DEPTHMAX=43 DEPTH_X=43 m (single-point max-depth)
+Sutton Lake|WV,Sutton Lake,WV,S-depth-017,exact,matched 'Sutton Lake' (5447 features); name=True spatial=True
+Tygart Lake|WV,Tygart Lake,WV,S-depth-017,name_state,matched 'Tygart Lake' (1810 features); name=True spatial=False
+Alcova Reservoir|WY,Alcova Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Bighorn Lake|WY,Bighorn Lake,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Boysen Reservoir|WY,Boysen Reservoir,WY,S-depth-039,name_state,NLA2007 'Boysen Reservoir' DEPTHMAX=19.8 DEPTH_X=18.9 m (single-point max-depth)
+Buffalo Bill Reservoir|WY,Buffalo Bill Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Flaming Gorge Reservoir|WY,Flaming Gorge Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Fontenelle Reservoir|WY,Fontenelle Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Glendo Reservoir|WY,Glendo Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Jackson Lake|WY,Jackson Lake,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Jenny Lake|WY,Jenny Lake,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Keyhole Reservoir|WY,Keyhole Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Pathfinder Reservoir|WY,Pathfinder Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Seminoe Reservoir|WY,Seminoe Reservoir,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
+Yellowstone Lake|WY,Yellowstone Lake,WY,,none,no candidate in any fetched source (not proof that none exists; see notes for states not probed)
