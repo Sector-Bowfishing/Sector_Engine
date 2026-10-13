@@ -22,7 +22,7 @@ TVA_BUCKET="${TVA_BUCKET:-sector-water-temp-archive}"
 [[ -n "${IMAGE:-}" ]] || { echo "✗ IMAGE=… required (output of jobs/brain-image-build.sh)"; exit 2; }
 run() { if [[ "${DRY_RUN:-0}" == "1" ]]; then echo "+ $*"; else "$@"; fi; }
 cd "$(dirname "$0")/../.."
-COMMIT="${COMMIT:-$(git rev-parse --short=12 HEAD)}"
+COMMIT="${COMMIT:-${IMAGE##*:}}"      # the image tag is the commit it was built from (jobs/brain-image-build.sh)
 
 gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1 || { echo "✗ $SA missing: run jobs/brain-orchestrator/deploy-job.sh first"; exit 2; }
 run gcloud storage buckets add-iam-policy-binding "gs://$ARCHIVE_BUCKET" --member "serviceAccount:$SA" --role roles/storage.objectAdmin
@@ -32,7 +32,7 @@ echo "▶ job $JOB from $IMAGE (commit $COMMIT)"
 run gcloud run jobs deploy "$JOB" --image "$IMAGE" \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --command /app/LakeBrainJob \
-  --args "--rtdb,$RTDB_URL,--archive,gs://$ARCHIVE_BUCKET,--scope,pilots" \
+  --args="--rtdb,$RTDB_URL,--archive,gs://$ARCHIVE_BUCKET,--scope,pilots" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 1Gi --task-timeout 15m \
   --labels "commit=$COMMIT" \
   --set-env-vars "SECTOR_BRAIN_RTDB_URL=$RTDB_URL,SECTOR_ENGINE_COMMIT=$COMMIT"
