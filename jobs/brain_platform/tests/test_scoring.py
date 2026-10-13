@@ -148,3 +148,12 @@ def test_engine_score_is_not_an_average_of_brain_scores():
 def test_engine_score_unknown_specialist_leaves_maturity_unknown():
     e = score_engine(_engine_facts(), {"lake-brain": {"value": 3.0}}, NOW)
     assert e["dimensions"]["specialistBrainMaturity"]["status"] == "UNKNOWN" and e["brainScores"]["wind"] is None
+
+
+def test_lake_coverage_counts_all_profiled_lakes_even_when_fewer_profiles_were_read():
+    profiles = {f"L{i}": pilot_profile(sufficient=True) for i in range(200)}
+    s = score_lake({"registry": {"health": "HEALTHY", "directoryLakeCount": 621}, "validation": {"status": "NOT_VALIDATED"},
+                    "health": {"status": "HEALTHY"}, "profiles": profiles, "states": {}, "profiledCount": 320}, NOW)
+    assert "320 of 621" in s["scoreBreakdown"]["coverage"]["evidence"]
+    gated = {g.get("gate") for g in s["scoreBlockers"] if "gate" in g}
+    assert "coverage" not in gated, "320/621 = 51 % clears the 10 % coverage gate"

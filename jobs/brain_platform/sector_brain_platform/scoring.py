@@ -68,7 +68,8 @@ def score_lake(facts: dict, now: dt.datetime) -> dict:
     reg = facts.get("registry") or {}
     profiles = facts.get("profiles") or {}
     states = facts.get("states") or {}
-    n = len(profiles)
+    # Coverage counts every lake the Brain profiled; `profiles` may be a subset read for the evidence shares.
+    n = max(len(profiles), int(facts.get("profiledCount") or 0))
     directory = facts.get("directoryLakeCount") or reg.get("directoryLakeCount") or 0
 
     def share_of(pred, items):

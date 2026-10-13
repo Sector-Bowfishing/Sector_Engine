@@ -87,3 +87,27 @@ def test_frozen_block_with_rtdb_illegal_dimension_keys_is_publishable():
 def test_committed_frozen_scores_are_publishable_after_sanitising():
     from sector_brain_platform.keys import check_keys
     check_keys(score_brains.rtdb_safe(json.load(open(score_brains.FROZEN))))
+
+
+class _FakeDb:
+    """A Brain RTDB with N profiled Lake Brain lakes: the scorer must read ALL of them (no silent first-200 cap)."""
+    def __init__(self, n):
+        self.n = n
+        self.keys = [f"Lake_{i:04d}_XX" for i in range(n)]
+
+    def get(self, path):
+        if path == "lakeFleet":
+            return {k: {"slots": {"lake": True}} for k in self.keys}
+        if path == "brains":
+            return {"lake-brain": {"directoryLakeCount": 621}}
+        if path.startswith("lakes/") and path.endswith("/brain"):
+            return {"sourceCapability": {"level": "DIRECT_OPERATOR_POOL"}, "historicalCoverage": {"baselineStatus": "SUFFICIENT"}}
+        if path.startswith("lakes/") and path.endswith("/states/lake"):
+            return {"kind": "OBSERVED", "floodPoolState": "UNKNOWN"}
+        return None
+
+
+def test_fetch_facts_reads_every_profiled_lake_not_just_the_first_200():
+    from score_brains import fetch_facts
+    f = fetch_facts(_FakeDb(327))["lake"]
+    assert len(f["profiles"]) == 327 and len(f["states"]) == 327 and f["profiledCount"] == 327
