@@ -1,0 +1,108 @@
+{
+ "minTrain": 10,
+ "testYears": 5,
+ "lakesTested": 154,
+ "passV1V2": 50,
+ "passV1V2Pct": 32.5,
+ "passV3": 123,
+ "passV3Pct": 79.9,
+ "median": {
+  "in80": 0.84,
+  "in96": 0.973,
+  "tail": 0.027,
+  "rapid": 0.045
+ },
+ "nominal": {
+  "in80": 0.8,
+  "in96": 0.96,
+  "tail": 0.04,
+  "rapid": 0.05
+ },
+ "verdict": "NOT_ELIGIBLE",
+ "byProvider": {
+  "a2w": {
+   "n": 41,
+   "passV1V2Pct": 37,
+   "passV3Pct": 85
+  },
+  "cwms": {
+   "n": 35,
+   "passV1V2Pct": 37,
+   "passV3Pct": 69
+  },
+  "nwps": {
+   "n": 11,
+   "passV1V2Pct": 27,
+   "passV3Pct": 100
+  },
+  "rise": {
+   "n": 45,
+   "passV1V2Pct": 22,
+   "passV3Pct": 71
+  },
+  "twdb": {
+   "n": 1,
+   "passV1V2Pct": 100,
+   "passV3Pct": 100
+  },
+  "usgs": {
+   "n": 21,
+   "passV1V2Pct": 38,
+   "passV3Pct": 95
+  }
+ },
+ "byClass": {
+  "N1a_natural_deep_or_unknown": {
+   "n": 7,
+   "passV1V2Pct": 29,
+   "passV3Pct": 100
+  },
+  "N1b_natural_shallow": {
+   "n": 1,
+   "passV1V2Pct": 0,
+   "passV3Pct": 100
+  },
+  "N2_regulated_natural_lake": {
+   "n": 11,
+   "passV1V2Pct": 27,
+   "passV3Pct": 100
+  },
+  "N3_small_pond_or_outlet_dam": {
+   "n": 1,
+   "passV1V2Pct": 100,
+   "passV3Pct": 100
+  },
+  "R1_run_of_river_pool": {
+   "n": 5,
+   "passV1V2Pct": 80,
+   "passV3Pct": 80
+  },
+  "R2_flow_through_reservoir": {
+   "n": 35,
+   "passV1V2Pct": 34,
+   "passV3Pct": 80
+  },
+  "R3_dendritic_storage": {
+   "n": 40,
+   "passV1V2Pct": 32,
+   "passV3Pct": 88
+  },
+  "R4_open_basin_storage": {
+   "n": 53,
+   "passV1V2Pct": 28,
+   "passV3Pct": 66
+  },
+  "X_mega": {
+   "n": 1,
+   "passV1V2Pct": 0,
+   "passV3Pct": 100
+  }
+ },
+ "failuresByMode": {
+  "in80_low": 25,
+  "in80_high": 47,
+  "tail_high": 34,
+  "rapid_low": 21,
+  "rapid_high": 10
+ }
+}

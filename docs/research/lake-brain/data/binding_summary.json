@@ -1,0 +1,374 @@
+{
+ "criteriaVersion": "binding-review-v1",
+ "lakes": 621,
+ "strictVerified": 315,
+ "stageOnly": 33,
+ "total": 348,
+ "core": 258,
+ "flagged": 57,
+ "pctCore": 41.5,
+ "coreByCapability": {
+  "DIRECT_OPERATOR_POOL": 203,
+  "DIRECT_LAKE_GAUGE": 55
+ },
+ "flaggedByCapability": {
+  "DIRECT_OPERATOR_POOL": 26,
+  "DIRECT_LAKE_GAUGE": 31
+ },
+ "coreHistory": {
+  "SUFFICIENT": 199,
+  "NONE": 51,
+  "LIMITED": 8
+ },
+ "flaggedHistory": {
+  "SUFFICIENT": 40,
+  "NONE": 15,
+  "INSUFFICIENT": 2
+ },
+ "coreCapabilityByHistory": {
+  "DIRECT_OPERATOR_POOL|SUFFICIENT": 179,
+  "DIRECT_OPERATOR_POOL|NONE": 20,
+  "DIRECT_LAKE_GAUGE|NONE": 31,
+  "DIRECT_OPERATOR_POOL|LIMITED": 4,
+  "DIRECT_LAKE_GAUGE|SUFFICIENT": 20,
+  "DIRECT_LAKE_GAUGE|LIMITED": 4
+ },
+ "strictCapabilityByHistory": {
+  "DIRECT_OPERATOR_POOL|SUFFICIENT": 203,
+  "DIRECT_OPERATOR_POOL|NONE": 21,
+  "DIRECT_LAKE_GAUGE|NONE": 45,
+  "DIRECT_LAKE_GAUGE|SUFFICIENT": 36,
+  "DIRECT_OPERATOR_POOL|LIMITED": 4,
+  "DIRECT_LAKE_GAUGE|LIMITED": 4,
+  "DIRECT_LAKE_GAUGE|INSUFFICIENT": 1,
+  "DIRECT_OPERATOR_POOL|INSUFFICIENT": 1
+ },
+ "pctStrict": 50.7,
+ "pctWithStage": 56.0,
+ "ladderPointsStrict": 7,
+ "ladderPointsWithStage": 7,
+ "byCapability": {
+  "DIRECT_OPERATOR_POOL": 233,
+  "DIRECT_LAKE_GAUGE": 115
+ },
+ "byCapabilityStrict": {
+  "DIRECT_OPERATOR_POOL": 229,
+  "DIRECT_LAKE_GAUGE": 86
+ },
+ "byProvider": {
+  "cwms": 61,
+  "tva": 17,
+  "nwps": 52,
+  "a2w": 110,
+  "rise": 45,
+  "usgs": 59,
+  "coops": 1,
+  "twdb": 3
+ },
+ "byStatus": {
+  "NONE": 273,
+  "VERIFIED": 243,
+  "STAGE_ONLY": 33,
+  "VERIFIED_FLAG": 57,
+  "VERIFIED_CORROBORATED": 15
+ },
+ "historyClass": {
+  "SUFFICIENT": 241,
+  "NONE": 97,
+  "LIMITED": 8,
+  "INSUFFICIENT": 2
+ },
+ "historyClassStrict": {
+  "SUFFICIENT": 239,
+  "NONE": 66,
+  "LIMITED": 8,
+  "INSUFFICIENT": 2
+ },
+ "capabilityByHistory": {
+  "DIRECT_OPERATOR_POOL|SUFFICIENT": 203,
+  "DIRECT_OPERATOR_POOL|NONE": 25,
+  "DIRECT_LAKE_GAUGE|NONE": 72,
+  "DIRECT_LAKE_GAUGE|SUFFICIENT": 38,
+  "DIRECT_OPERATOR_POOL|LIMITED": 4,
+  "DIRECT_LAKE_GAUGE|LIMITED": 4,
+  "DIRECT_LAKE_GAUGE|INSUFFICIENT": 1,
+  "DIRECT_OPERATOR_POOL|INSUFFICIENT": 1
+ },
+ "strictWith5yHistory": 239,
+ "strictWith5yHistoryAndOperatorPlan": 94,
+ "operatorPlanEvidence": 117,
+ "noBindingReasons": {
+  "no-candidate": 171,
+  "candidates-rejected": 95,
+  "pending:PENDING_CORROBORATION": 5,
+  "pending:PENDING_NO_FULLPOOL": 2
+ },
+ "hasDamLakes": 401,
+ "hasDamVerified": 272,
+ "nidResolvedStrong": 268,
+ "byOperatorGroup": {
+  "USBR": [
+   58,
+   49
+  ],
+  "none": [
+   45,
+   2
+  ],
+  "Natural": [
+   25,
+   0
+  ],
+  "TVA": [
+   17,
+   17
+  ],
+  "\u2014": [
+   15,
+   1
+  ],
+  "USACE Louisville": [
+   14,
+   14
+  ],
+  "USACE": [
+   14,
+   9
+  ],
+  "USACE Kansas City": [
+   13,
+   12
+  ],
+  "USACE Tulsa": [
+   13,
+   12
+  ],
+  "USACE Mobile": [
+   10,
+   7
+  ],
+  "USACE Huntington": [
+   10,
+   10
+  ],
+  "USACE Little Rock": [
+   9,
+   9
+  ],
+  "DE DNREC": [
+   9,
+   1
+  ],
+  "Alabama Power": [
+   8,
+   7
+  ],
+  "SJRWMD": [
+   8,
+   0
+  ],
+  "Duke Energy": [
+   8,
+   0
+  ],
+  "NH DES": [
+   8,
+   0
+  ],
+  "USACE Vicksburg": [
+   7,
+   7
+  ],
+  "Local": [
+   7,
+   0
+  ],
+  "USACE Nashville": [
+   7,
+   7
+  ],
+  "USACE Pittsburgh": [
+   7,
+   6
+  ],
+  "State": [
+   6,
+   1
+  ],
+  "SRP": [
+   5,
+   1
+  ],
+  "USACE Albuquerque": [
+   5,
+   5
+  ],
+  "USACE St. Louis": [
+   5,
+   5
+  ]
+ },
+ "crossValidation": {
+  "independentPairs": 125,
+  "lakes": 70,
+  "medianGapFt": 0.02,
+  "within0_5ft": 123,
+  "within2ft": 124,
+  "disagree": [
+   {
+    "lake": "Kerr Reservoir (Buggs Island)|VA",
+    "gapFt": 29.3,
+    "a": "a2w",
+    "b": "usgs"
+   }
+  ]
+ },
+ "candidates": {
+  "evaluated": 1392,
+  "lakesEvaluated": 450,
+  "byStatus": {
+   "VERIFIED": 599,
+   "REJECT": 539,
+   "STAGE_ONLY": 87,
+   "VERIFIED_FLAG": 144,
+   "PENDING_CORROBORATION": 16,
+   "REJECT_CONFLICT": 4,
+   "PENDING_NO_FULLPOOL": 2,
+   "VERIFIED_CORROBORATED": 1
+  },
+  "failedCheck": {
+   "R1_geo": 82,
+   "R2_identity": 146,
+   "R3_notrap": 0,
+   "R4_state": 29,
+   "R5_unique": 45,
+   "R6_live": 211,
+   "R8_datum": 67
+  },
+  "levelImplausible": 100,
+  "staleOrNoDataByProvider": {
+   "rise|nodata": 5,
+   "cwms|nodata": 54,
+   "rise|stale": 13,
+   "usgs|nodata": 69,
+   "a2w|stale": 24,
+   "nwps|nodata": 26,
+   "cwms|stale": 13,
+   "usgs|stale": 7
+  }
+ },
+ "spotCheck": {
+  "sampled": 57,
+  "byProvider": {
+   "cwms": 7,
+   "tva": 4,
+   "nwps": 9,
+   "a2w": 16,
+   "rise": 9,
+   "usgs": 8,
+   "coops": 1,
+   "twdb": 3
+  },
+  "byStatus": {
+   "VERIFIED": 34,
+   "VERIFIED_CORROBORATED": 2,
+   "VERIFIED_FLAG": 21
+  },
+  "secondOriginAvailableAndAgree": 10,
+  "operatorLevelsChecked": 15,
+  "operatorLevelsFailed": 0,
+  "nidAliasAgree": 15,
+  "nidAliasDiffer": 1,
+  "manualAdjudicationWrong": 0,
+  "manualAdjudicationUncertain": 0,
+  "note": "Adjudicated by the research thread from station names, NID dam names, operator levels and domain knowledge; there is no external ground truth. 95% upper bound on the error rate with 0/57 is about 5% (rule of three)."
+ },
+ "nid": {
+  "hasDamLakes": 401,
+  "anyCandidate": 399,
+  "resolvedByNameAndGeometry": 368,
+  "resolvedByGeometryOnlyReview": 17,
+  "unresolved": 16,
+  "a2wNidAliasCrossCheck": {
+   "compared": 144,
+   "agree": 140,
+   "formatOnlyDifferences": 4,
+   "note": "the 4 differences are zero-padding variants of the same dam id (VA05101 vs VA051001)"
+  }
+ },
+ "pilotReproduction": {
+  "Guntersville|AL": {
+   "status": "VERIFIED",
+   "provider": "tva",
+   "station": "GVDA1",
+   "series": "ReservoirElevation",
+   "history": "NONE",
+   "completeYears": "0"
+  },
+  "Wheeler|AL": {
+   "status": "VERIFIED",
+   "provider": "tva",
+   "station": "WHLA1",
+   "series": "ReservoirElevation",
+   "history": "NONE",
+   "completeYears": "0"
+  },
+  "Wilson|AL": {
+   "status": "VERIFIED",
+   "provider": "tva",
+   "station": "WLSA1",
+   "series": "ReservoirElevation",
+   "history": "NONE",
+   "completeYears": "0"
+  },
+  "Pickwick Lake|TN": {
+   "status": "VERIFIED",
+   "provider": "tva",
+   "station": "PICT1",
+   "series": "ReservoirElevation",
+   "history": "NONE",
+   "completeYears": "0"
+  },
+  "Lake Hartwell|SC": {
+   "status": "VERIFIED",
+   "provider": "usgs",
+   "station": "02187010",
+   "series": "00062",
+   "history": "SUFFICIENT",
+   "completeYears": "19"
+  }
+ },
+ "directoryNameCollisions": {
+  "names": 16,
+  "lakes": 41,
+  "note": "the directory has 16 duplicated names (41 lake ids), not 19; several are one physical lake split by state (Kentucky Lake KY/TN, Lake Erie x4, Lake Superior x3, Lake Michigan x3, Lake Oahe ND/SD, Flaming Gorge UT/WY)"
+ },
+ "providerLeverage": {
+  "lakesReachable": {
+   "usace": 185,
+   "nwps": 222,
+   "rise": 49,
+   "usgs": 88,
+   "twdb": 15,
+   "tva": 22,
+   "coops": 1
+  },
+  "lakesOnlyReachableVia": {
+   "usace": 31,
+   "nwps": 37,
+   "usgs": 20,
+   "rise": 14,
+   "tva": 6,
+   "coops": 1
+  }
+ },
+ "byDirectoryApiLevel": {
+  "none|False": 152,
+  "usgsOnly|False": 111,
+  "usgsOnly|True": 73,
+  "dedicated|False": 43,
+  "dedicated|True": 229,
+  "none|True": 13
+ },
+ "generated": "2026-10-13"
+}

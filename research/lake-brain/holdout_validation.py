@@ -39,14 +39,22 @@ WINDOW = 7
 QS = (2, 10, 50, 90, 98)
 
 
+_NORM = None
+
+
+def _norm(x: str) -> str:
+    import re
+    return re.sub(r"[^A-Za-z0-9.\-]+", "_", x)
+
+
 def series_path(series: str) -> str | None:
-    """'cwms:SPA:Abiquiu.Elev.Inst.~1Day.0.MRS' -> history/cwms_SPA_Abiquiu....csv.gz ; 'usgs:0106:62614' ; 'rise:106'."""
-    base = series.replace(":", "_").replace("/", "_")
-    for cand in (os.path.join(HIST, base + ".csv.gz"),):
-        if os.path.exists(cand):
-            return cand
-    g = glob.glob(os.path.join(HIST, glob.escape(base) + "*.csv.gz"))
-    return g[0] if g else None
+    """'cwms:SPA:Abiquiu.Elev.Inst.~1Day.0.MRS' -> history/cwms_SPA_Abiquiu.Elev.Inst._1Day.0.MRS.csv.gz ; 'usgs:0106:62614:dv' ; 'rise:106'.
+    The binding thread sanitises every non [A-Za-z0-9.-] run to '_' in file names and drops the ':dv'/':iv' suffix."""
+    global _NORM
+    if _NORM is None:
+        _NORM = {f[:-7]: os.path.join(HIST, f) for f in os.listdir(HIST) if f.endswith(".csv.gz")}
+    s0 = series[:-3] if series.endswith((":dv", ":iv")) else series
+    return _NORM.get(_norm(s0))
 
 
 def read_daily(path: str) -> dict[dt.date, float]:
@@ -140,7 +148,7 @@ def main(argv=None) -> int:
     os.makedirs(a.out, exist_ok=True)
     res = json.load(open(os.path.join(DATA, "binding", "history_results.json")))
     ver = {r["lakeId"]: r for r in csv.DictReader(open(os.path.join(DATA, "binding", "verified.csv")))}
-    feats = {r["lakeId"]: r for r in csv.DictReader(open(os.path.join(REPO, "docs", "research", "lake-brain", "data", "lake_features.csv")))} \
+    feats = {r["id"]: r for r in csv.DictReader(open(os.path.join(REPO, "docs", "research", "lake-brain", "data", "lake_features.csv")))} \
         if os.path.exists(os.path.join(REPO, "docs", "research", "lake-brain", "data", "lake_features.csv")) else {}
     today_year = dt.date.today().year
     lakes = {}
@@ -160,7 +168,7 @@ def main(argv=None) -> int:
         if not rows:
             continue
         m = lambda k: float(np.nanmean([r[k] for r in rows]))  # noqa: E731
-        cls = (feats.get(lake) or {}).get("class") or (feats.get(lake) or {}).get("regime") or ""
+        cls = (feats.get(lake) or {}).get("lake_class") or ""
         rec = {"lakeId": lake, "series": info["series"], "testYears": len(rows), "train": rows[-1]["train"], "in80": m("in80"), "in96": m("in96"),
                "tail": m("tail"), "rapid": m("rapid"), "class": cls, "provider": ver[lake]["provider"], "capability": ver[lake]["capability"]}
         rec["V1"] = 0.70 <= rec["in80"] <= 0.90 and 0.92 <= rec["in96"] <= 0.99

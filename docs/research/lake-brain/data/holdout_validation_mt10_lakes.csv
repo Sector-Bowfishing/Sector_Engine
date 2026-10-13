@@ -1,0 +1,155 @@
+lakeId,provider,class,trainYears,testYears,cov_p10_p90,cov_p02_p98,tailRate,rapidRate,V1,V2,V3
+Abiquiu Lake|NM,a2w,R4_open_basin_storage,14,5,0.758,0.878,0.122,0.106,0,0,0
+Alcova Reservoir|WY,rise,R1_run_of_river_pool,30,5,0.761,0.941,0.059,0.008,1,1,0
+Allatoona|GA,cwms,R2_flow_through_reservoir,19,5,0.907,0.994,0.006,0.042,0,1,1
+Allegheny Reservoir|PA,a2w,R2_flow_through_reservoir,11,2,0.7,0.836,0.164,0.069,0,0,1
+Anderson Ranch Reservoir|ID,a2w,R4_open_basin_storage,30,5,0.845,0.972,0.028,0.013,1,1,0
+Angostura Reservoir|SD,rise,R2_flow_through_reservoir,30,5,1.0,1.0,0.0,0.039,0,1,1
+Arkabutla Lake|MS,cwms,R4_open_basin_storage,26,5,0.488,0.741,0.259,0.158,0,0,0
+Bankhead|AL,cwms,R1_run_of_river_pool,30,5,0.812,0.973,0.027,0.045,1,1,1
+Barren River Lake|KY,a2w,R3_dendritic_storage,13,4,0.775,0.884,0.116,0.056,0,0,1
+Bear Lake|UT,usgs,N1a_natural_deep_or_unknown,30,5,1.0,1.0,0.0,0.048,0,1,1
+Beaver|AR,a2w,R3_dendritic_storage,30,5,0.958,0.992,0.008,0.043,0,1,1
+Bighorn Lake|WY,rise,R3_dendritic_storage,30,5,0.947,1.0,0.0,0.027,0,1,1
+Blue Mesa Reservoir|CO,rise,R4_open_basin_storage,30,5,0.606,0.778,0.222,0.029,0,0,1
+Bluestone Lake|WV,cwms,R2_flow_through_reservoir,12,3,1.0,1.0,0.0,0.0,0,1,0
+Bluewater Lake|NM,usgs,R4_open_basin_storage,18,5,0.61,0.79,0.21,0.021,0,0,1
+Box Butte Reservoir|NE,rise,R2_flow_through_reservoir,27,5,1.0,1.0,0.0,0.007,0,1,0
+Boysen Reservoir|WY,rise,R4_open_basin_storage,30,5,0.959,0.997,0.003,0.016,0,1,0
+Buffalo Bill Reservoir|WY,rise,R4_open_basin_storage,30,5,0.844,1.0,0.0,0.052,0,1,1
+Bull Shoals Lake|AR,a2w,R3_dendritic_storage,30,5,0.919,0.996,0.004,0.063,0,1,1
+Burnsville Lake|WV,cwms,R2_flow_through_reservoir,12,3,1.0,1.0,0.0,0.0,0,1,0
+Caballo Lake|NM,rise,R2_flow_through_reservoir,30,5,0.712,0.985,0.015,0.064,1,1,1
+Caddo Lake|TX,a2w,N2_regulated_natural_lake,30,5,0.911,0.969,0.031,0.041,0,1,1
+Calamus Reservoir|NE,rise,R4_open_basin_storage,25,5,0.821,0.988,0.012,0.022,1,1,1
+Canyon Ferry Lake|MT,a2w,R4_open_basin_storage,30,5,0.779,0.897,0.103,0.042,0,0,1
+Canyon Lake|TX,a2w,R4_open_basin_storage,30,5,0.396,0.603,0.397,0.006,0,0,0
+Carlyle Lake|IL,cwms,R2_flow_through_reservoir,30,5,0.859,0.97,0.03,0.058,1,1,1
+Carters|GA,a2w,R3_dendritic_storage,17,5,0.887,0.967,0.033,0.051,1,1,1
+Catahoula Lake|LA,cwms,N2_regulated_natural_lake,30,5,0.753,0.912,0.088,0.062,0,0,1
+Cedar Bluff Reservoir|KS,a2w,R4_open_basin_storage,30,5,1.0,1.0,0.0,0.025,0,1,1
+Cedar Creek Reservoir|TX,a2w,R3_dendritic_storage,28,5,0.886,0.973,0.027,0.054,1,1,1
+Chautauqua Lake|NY,nwps,N2_regulated_natural_lake,30,5,0.916,0.978,0.022,0.044,0,1,1
+Cheney Reservoir|KS,rise,R4_open_basin_storage,30,5,0.461,0.808,0.192,0.028,0,0,1
+Clearwater Lake|MO,a2w,R2_flow_through_reservoir,30,5,0.918,0.986,0.014,0.045,0,1,1
+Cochiti Lake|NM,a2w,R2_flow_through_reservoir,30,5,0.553,0.827,0.173,0.083,0,0,1
+Conchas Lake|NM,a2w,R4_open_basin_storage,14,5,0.87,0.952,0.048,0.069,1,1,1
+Crater Lake|OR,usgs,N1a_natural_deep_or_unknown,30,5,0.212,0.635,0.365,0.054,0,0,1
+Dardanelle|AR,cwms,R1_run_of_river_pool,30,5,0.857,0.988,0.012,0.035,1,1,1
+DeGray|AR,a2w,R3_dendritic_storage,27,5,0.846,0.985,0.015,0.043,1,1,1
+Deer Creek Reservoir|UT,rise,R4_open_basin_storage,30,5,0.833,0.997,0.003,0.065,0,1,1
+Detroit Lake|OR,a2w,R2_flow_through_reservoir,30,5,0.745,0.958,0.042,0.072,1,1,1
+Diamond Lake|OR,usgs,N1a_natural_deep_or_unknown,21,5,0.905,0.958,0.042,0.029,0,1,1
+Don Pedro|CA,cwms,R3_dendritic_storage,24,5,0.653,0.973,0.027,0.064,0,1,1
+Dworshak Reservoir|ID,a2w,R3_dendritic_storage,30,5,0.919,0.997,0.003,0.027,0,1,1
+Eagle Creek Reservoir|IN,usgs,R4_open_basin_storage,30,5,0.941,0.996,0.004,0.043,0,1,1
+East Lynn Lake|WV,cwms,R3_dendritic_storage,12,3,1.0,1.0,0.0,0.0,0,1,0
+El Vado Lake|NM,rise,R4_open_basin_storage,30,5,0.322,0.555,0.445,0.042,0,0,1
+Elephant Butte Reservoir|NM,rise,R4_open_basin_storage,30,5,0.652,0.97,0.03,0.099,0,1,0
+Enid Lake|MS,cwms,R4_open_basin_storage,26,5,0.901,0.976,0.024,0.063,0,1,1
+Falls Lake|NC,a2w,R3_dendritic_storage,16,5,0.782,0.921,0.079,0.085,1,1,1
+Fern Ridge Reservoir|OR,a2w,R2_flow_through_reservoir,30,5,0.733,0.954,0.046,0.041,1,1,1
+Flaming Gorge Reservoir|UT,rise,R3_dendritic_storage,30,5,0.758,0.93,0.07,0.057,1,1,1
+Flathead Lake|MT,a2w,N2_regulated_natural_lake,30,5,0.752,0.88,0.12,0.032,0,0,1
+Folsom|CA,cwms,R2_flow_through_reservoir,11,2,0.864,0.932,0.068,0.036,1,1,1
+Fontenelle Reservoir|WY,rise,R2_flow_through_reservoir,30,5,0.965,1.0,0.0,0.016,0,1,0
+Fresno Reservoir|MT,rise,R4_open_basin_storage,30,5,0.744,0.973,0.027,0.104,1,1,0
+Glendo Reservoir|WY,rise,R2_flow_through_reservoir,30,5,0.948,0.997,0.003,0.022,0,1,1
+Grand Lake|CO,rise,N3_small_pond_or_outlet_dam,14,5,0.776,0.928,0.072,0.031,1,1,1
+Great Sacandaga Lake|NY,usgs,R2_flow_through_reservoir,30,5,0.812,0.967,0.033,0.051,1,1,1
+Greers Ferry|AR,a2w,R3_dendritic_storage,30,5,0.938,0.989,0.011,0.046,0,1,1
+Grenada Lake|MS,cwms,R4_open_basin_storage,26,5,0.86,0.973,0.027,0.067,1,1,1
+Havasu|AZ,rise,R2_flow_through_reservoir,30,5,0.924,0.988,0.012,0.069,0,1,1
+Heron Lake|NM,rise,R4_open_basin_storage,30,5,0.367,0.513,0.487,0.135,0,0,0
+Horsetooth Reservoir|CO,rise,R4_open_basin_storage,30,5,0.874,0.998,0.002,0.013,0,1,0
+Hungry Horse Reservoir|MT,a2w,R4_open_basin_storage,18,5,0.841,0.942,0.058,0.037,1,1,1
+Isabella|CA,a2w,R4_open_basin_storage,30,5,0.593,0.973,0.027,0.102,0,1,0
+Jackson Lake|WY,a2w,N2_regulated_natural_lake,30,5,0.86,0.97,0.03,0.038,1,1,1
+Jamestown Reservoir|ND,rise,R2_flow_through_reservoir,30,5,0.747,1.0,0.0,0.051,0,1,1
+John Martin Reservoir|CO,a2w,R4_open_basin_storage,26,5,0.938,1.0,0.0,0.063,0,1,1
+Jordan Lake|NC,cwms,R3_dendritic_storage,29,5,0.836,0.955,0.045,0.061,1,1,1
+Jordanelle Reservoir|UT,rise,R4_open_basin_storage,30,5,0.9,0.998,0.002,0.03,0,1,1
+Kerr Reservoir (Buggs Island)|VA,usgs,R3_dendritic_storage,14,5,0.655,0.854,0.146,0.15,0,0,0
+Keyhole Reservoir|WY,rise,R4_open_basin_storage,30,5,1.0,1.0,0.0,0.026,0,1,1
+Lake Ashtabula|ND,cwms,R4_open_basin_storage,20,5,0.845,0.969,0.031,0.076,1,1,1
+Lake Billy Chinook|OR,usgs,R2_flow_through_reservoir,19,5,0.746,0.909,0.091,0.05,0,0,1
+Lake Champlain|VT,usgs,N1a_natural_deep_or_unknown,30,5,0.745,0.928,0.072,0.048,1,1,1
+Lake Chelan|WA,a2w,N2_regulated_natural_lake,30,5,0.755,0.97,0.03,0.045,1,1,1
+Lake Conroe|TX,usgs,R3_dendritic_storage,28,5,0.859,0.962,0.038,0.059,1,1,1
+Lake Darling|ND,a2w,R4_open_basin_storage,24,5,0.896,0.957,0.043,0.028,1,1,1
+Lake Fork Reservoir|TX,nwps,R3_dendritic_storage,30,5,0.71,0.889,0.111,0.043,0,0,1
+Lake George|NY,usgs,N2_regulated_natural_lake,30,5,0.778,0.956,0.044,0.048,1,1,1
+Lake Granby|CO,rise,R4_open_basin_storage,30,5,0.925,0.981,0.019,0.021,0,1,1
+Lake Greenwood|SC,nwps,R2_flow_through_reservoir,30,5,0.825,0.982,0.018,0.034,1,1,1
+Lake Hartwell|SC,usgs,R3_dendritic_storage,18,5,0.911,0.979,0.021,0.05,0,1,1
+Lake Koocanusa|MT,cwms,R4_open_basin_storage,30,5,0.815,0.994,0.006,0.023,0,1,1
+Lake Livingston|TX,usgs,R2_flow_through_reservoir,26,5,0.783,0.965,0.035,0.083,1,1,1
+Lake Marion|SC,nwps,R2_flow_through_reservoir,30,5,0.919,0.992,0.008,0.047,0,1,1
+Lake Mattamuskeet|NC,nwps,N1b_natural_shallow,11,2,0.618,0.856,0.144,0.059,0,0,1
+Lake Mead|NV,rise,R3_dendritic_storage,30,5,0.012,0.607,0.393,0.065,0,0,1
+Lake Memphremagog|VT,usgs,N1a_natural_deep_or_unknown,30,5,0.65,0.893,0.107,0.046,0,0,1
+Lake Mohave|NV,rise,R2_flow_through_reservoir,30,5,0.891,0.991,0.009,0.021,0,1,1
+Lake Moultrie|SC,usgs,R4_open_basin_storage,30,5,0.754,0.917,0.083,0.083,0,0,1
+Lake Murray (SC)|SC,nwps,R3_dendritic_storage,30,5,0.775,0.922,0.078,0.045,1,1,1
+Lake Powell|UT,rise,R3_dendritic_storage,30,5,0.162,0.605,0.395,0.075,0,0,1
+Lake Sammamish|WA,usgs,N1a_natural_deep_or_unknown,26,5,0.732,0.955,0.045,0.039,1,1,1
+Lake Shelbyville|IL,cwms,R3_dendritic_storage,30,5,0.866,0.985,0.015,0.043,1,1,1
+Lake Tahoe|NV,cwms,N2_regulated_natural_lake,10,1,1.0,1.0,0.0,0.031,0,1,1
+Lake Taneycomo|MO,usgs,R1_run_of_river_pool,30,5,0.895,0.991,0.009,0.055,0,1,1
+Lake Tawakoni|TX,twdb,R4_open_basin_storage,29,5,0.84,0.984,0.016,0.045,1,1,1
+Lake Tschida|ND,rise,R4_open_basin_storage,30,5,0.832,0.993,0.007,0.079,0,1,1
+Lake of the Ozarks|MO,nwps,R2_flow_through_reservoir,15,5,0.735,0.894,0.106,0.038,0,0,1
+Lanier (Sidney Lanier)|GA,cwms,R3_dendritic_storage,19,5,0.943,0.997,0.003,0.038,0,1,1
+Lucky Peak Lake|ID,a2w,R2_flow_through_reservoir,30,5,0.851,0.992,0.008,0.092,0,1,0
+Mark Twain Lake|MO,cwms,R3_dendritic_storage,30,5,0.882,0.973,0.027,0.027,1,1,1
+Merritt Reservoir|NE,rise,R4_open_basin_storage,30,5,0.763,0.97,0.03,0.029,1,1,1
+Millwood|AR,a2w,R2_flow_through_reservoir,30,5,0.848,0.984,0.016,0.041,1,1,1
+Moses Lake|WA,cwms,N2_regulated_natural_lake,30,5,0.772,0.887,0.113,0.045,0,0,1
+Navajo Reservoir|NM,rise,R3_dendritic_storage,30,5,0.748,1.0,0.0,0.043,0,1,1
+Nimrod|AR,a2w,R2_flow_through_reservoir,30,5,0.837,0.984,0.016,0.039,1,1,1
+Norfork|AR,a2w,R3_dendritic_storage,30,5,0.909,0.997,0.003,0.076,0,1,1
+Okeechobee|FL,a2w,X_mega,30,5,0.956,1.0,0.0,0.03,0,1,1
+Oroville|CA,cwms,R3_dendritic_storage,10,1,0.644,0.929,0.071,0.058,0,1,1
+Ouachita (L. Ouachita)|AR,cwms,R3_dendritic_storage,27,5,0.861,0.986,0.014,0.054,1,1,1
+Owasco Lake|NY,nwps,N2_regulated_natural_lake,30,5,0.912,0.981,0.019,0.034,0,1,1
+Pactola Reservoir|SD,rise,R4_open_basin_storage,30,5,0.994,1.0,0.0,0.01,0,1,0
+Palisades Reservoir|ID,a2w,R2_flow_through_reservoir,30,5,0.93,1.0,0.0,0.066,0,1,1
+Pathfinder Reservoir|WY,rise,R4_open_basin_storage,30,5,1.0,1.0,0.0,0.065,0,1,1
+Patterson Lake|ND,rise,R2_flow_through_reservoir,30,5,0.946,0.985,0.015,0.026,0,1,1
+Philpott Lake|VA,a2w,R3_dendritic_storage,15,5,0.761,0.897,0.103,0.09,0,0,0
+Pineview Reservoir|UT,rise,R4_open_basin_storage,30,5,0.473,0.923,0.077,0.034,0,1,1
+Possum Kingdom Lake|TX,cwms,R3_dendritic_storage,30,5,0.885,0.991,0.009,0.018,0,1,0
+Pueblo Reservoir|CO,cwms,R4_open_basin_storage,30,5,0.934,1.0,0.0,0.006,0,1,0
+R.D. Bailey Lake|WV,cwms,R2_flow_through_reservoir,12,3,0.992,1.0,0.0,0.005,0,1,0
+Rend Lake|IL,cwms,R3_dendritic_storage,30,5,0.57,0.787,0.213,0.042,0,0,1
+Ruedi Reservoir|CO,rise,R4_open_basin_storage,30,5,0.728,1.0,0.0,0.015,0,1,0
+Sam Rayburn Reservoir|TX,a2w,R3_dendritic_storage,30,5,0.795,0.959,0.041,0.085,1,1,1
+Santa Rosa Lake|NM,a2w,R4_open_basin_storage,30,5,0.896,1.0,0.0,0.075,0,1,1
+Sardis Lake|MS,cwms,R4_open_basin_storage,26,5,0.895,1.0,0.0,0.091,0,1,0
+Sebago Lake|ME,usgs,N2_regulated_natural_lake,24,5,0.734,0.899,0.101,0.051,0,0,1
+Seminoe Reservoir|WY,rise,R3_dendritic_storage,30,5,1.0,1.0,0.0,0.009,0,1,0
+Seminole|GA,cwms,R1_run_of_river_pool,17,5,0.821,0.953,0.047,0.058,1,1,1
+Senecaville Lake|OH,cwms,R4_open_basin_storage,12,3,0.99,1.0,0.0,0.012,0,1,0
+Shadow Mountain Reservoir|CO,rise,R4_open_basin_storage,30,5,0.831,0.968,0.032,0.028,1,1,1
+Shasta|CA,rise,R3_dendritic_storage,30,5,0.606,0.811,0.189,0.056,0,0,1
+Spruce Run Reservoir|NJ,nwps,R2_flow_through_reservoir,11,2,0.558,0.722,0.278,0.058,0,0,1
+Starvation Reservoir|UT,rise,R4_open_basin_storage,30,5,0.845,0.985,0.015,0.014,1,1,0
+Stockton Lake|MO,a2w,R3_dendritic_storage,13,4,0.754,0.871,0.129,0.034,0,0,1
+Strawberry Reservoir|UT,rise,R4_open_basin_storage,30,5,0.682,0.855,0.145,0.053,0,0,1
+Sumner Lake|NM,cwms,R2_flow_through_reservoir,30,5,1.0,1.0,0.0,0.049,0,1,1
+Sutton Lake|WV,cwms,R2_flow_through_reservoir,12,3,1.0,1.0,0.0,0.0,0,1,0
+Swanson Reservoir|NE,rise,R4_open_basin_storage,30,5,0.945,1.0,0.0,0.031,0,1,1
+Table Rock Lake|MO,a2w,R3_dendritic_storage,30,5,0.895,0.991,0.009,0.055,0,1,1
+Tappan Lake|OH,cwms,R4_open_basin_storage,12,3,1.0,1.0,0.0,0.003,0,1,0
+Tiber Reservoir (Lake Elwell)|MT,a2w,R3_dendritic_storage,30,5,0.903,1.0,0.0,0.021,0,1,1
+Toledo Bend Reservoir|TX,usgs,R3_dendritic_storage,30,5,0.951,0.985,0.015,0.057,0,1,1
+Trinity|CA,rise,R4_open_basin_storage,30,5,0.652,0.897,0.103,0.068,0,0,1
+Truman Lake|MO,a2w,R3_dendritic_storage,15,5,0.735,0.894,0.106,0.038,0,0,1
+Waconda Lake|KS,rise,R4_open_basin_storage,30,5,0.47,1.0,0.0,0.015,0,1,0
+Walker Lake|NV,nwps,N1a_natural_deep_or_unknown,19,5,0.796,0.99,0.01,0.048,0,1,1
+Walter F. George / Eufaula|GA,usgs,R2_flow_through_reservoir,17,5,0.787,0.966,0.034,0.053,1,1,1
+Wanaque Reservoir|NJ,nwps,R4_open_basin_storage,20,5,0.78,0.939,0.061,0.03,1,1,1
+Wappapello Lake|MO,cwms,R3_dendritic_storage,30,5,0.817,0.979,0.021,0.069,1,1,1
+West Point|GA,cwms,R2_flow_through_reservoir,17,5,0.834,0.956,0.044,0.061,1,1,1
+Wild Horse Reservoir|NV,usgs,R4_open_basin_storage,21,5,0.854,0.971,0.029,0.025,1,1,1
+Willard Bay Reservoir|UT,rise,R4_open_basin_storage,26,5,0.791,0.943,0.057,0.071,1,1,1
