@@ -86,6 +86,23 @@ def _candidate_model(reg: dict) -> dict | None:
     return None
 
 
+def _score_gates(score: dict | None) -> list[dict] | None:
+    """Active score caps, mirrored from /scores/{id}.scoreBlockers (entries that carry a cap). Engine truth; Ops only shows it."""
+    gates = [_strip({"gate": b.get("gate"), "cap": b.get("cap"), "why": b.get("why")})
+             for b in ((score or {}).get("scoreBlockers") or []) if isinstance(b, dict) and b.get("gate") and b.get("cap") is not None]
+    return gates or None
+
+
+def _score_dimensions(score: dict | None) -> dict | None:
+    """Per-dimension scores mirrored from /scores/{id}.scoreBreakdown (value/weight/status only; evidence text stays on /scores/{id})."""
+    bd = (score or {}).get("scoreBreakdown")
+    if not isinstance(bd, dict):
+        return None
+    scale = (score or {}).get("scale")
+    return _strip({k: {"value": v.get("value"), "scale": scale, "weight": v.get("weight"), "status": v.get("status")}
+                   for k, v in bd.items() if isinstance(v, dict)}) or None
+
+
 def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validation: dict | None, score: dict | None,
                   jobs: dict | None, now: dt.datetime) -> dict:
     slot, _, display = BRAINS[brain_id]
@@ -112,7 +129,9 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
         "lastError": reg.get("lastError"), "stale": stale, "staleReason": why,
         "staleAfterHours": reg.get("staleAfterHours"), "stalenessModel": reg.get("stalenessModel"),
         "scheduled": scheduled, "executionModes": execution, "version": reg.get("version"),
-        "score": _strip({k: (score or {}).get(k) for k in ("value", "scale", "basis", "scoreVersion", "completenessPct", "scoreUpdatedAt")}) or None,
+        "score": _strip({**{k: (score or {}).get(k) for k in ("value", "scale", "basis", "scoreVersion", "completenessPct", "scoreUpdatedAt", "uncapped")},
+                         "gates": _score_gates(score)}) or None,
+        "dimensions": _score_dimensions(score),
         "nextOpportunity": (score or {}).get("nextScoreOpportunity"),
         "coverage": _strip({"directory": reg.get("directoryLakeCount"), "supported": reg.get("supportedLakeCount"),
                             "evaluated": reg.get("evaluatedLakeCount"), "stale": reg.get("staleLakeCount"),

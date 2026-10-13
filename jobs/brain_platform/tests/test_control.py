@@ -64,3 +64,22 @@ def test_overview_is_owned_by_the_platform_writer_and_explains_work_next():
     assert o["brains"]["lake-brain"]["status"] == "NOT_REGISTERED"
     writes = {"control/overview": o, **{f"control/fleet/{k}": fleet_rollup(k, r, NOW) for k, r in fleet.items()}}
     assert_owned(writes, "brain-platform")
+
+
+def test_brain_summary_mirrors_uncapped_gates_and_dimensions():
+    """Ops must be able to show WHY a displayed score is capped without reading /scores/{id}: Engine mirrors the facts."""
+    score = {"value": 3.0, "uncapped": 6.3, "scale": 10, "basis": "COMPUTED", "scoreVersion": "lake-brain-score-v1",
+             "scoreBlockers": [{"gate": "coverage", "cap": 3.0, "why": "5 of 621 lakes profiled (1 % < 10 %)"},
+                               {"gate": "validation", "cap": 5.0, "why": "validation NOT_VALIDATED"},
+                               {"dimension": "validation", "why": "/validation/lake-brain: NOT_VALIDATED"}],
+             "scoreBreakdown": {"coverage": {"value": 1.0, "weight": 20, "status": "SCORED", "evidence": "long text stays on /scores"},
+                                "validation": {"value": 0.0, "weight": 15, "status": "SCORED"}}}
+    reg = {"displayName": "Lake Brain", "status": "CALIBRATION", "lastSuccessfulRun": ISO(1), "staleAfterHours": 3}
+    s = brain_summary("lake-brain", reg, None, None, score, {}, NOW)
+    assert s["score"]["uncapped"] == 6.3 and s["score"]["value"] == 3.0
+    assert s["score"]["gates"] == [{"gate": "coverage", "cap": 3.0, "why": "5 of 621 lakes profiled (1 % < 10 %)"},
+                                   {"gate": "validation", "cap": 5.0, "why": "validation NOT_VALIDATED"}]  # dimension rows are not gates
+    assert s["dimensions"]["coverage"] == {"value": 1.0, "scale": 10, "weight": 20, "status": "SCORED"}  # no evidence text
+    # nothing published -> nothing invented
+    bare = brain_summary("lake-brain", reg, None, None, {"value": 3.0}, {}, NOW)
+    assert "dimensions" not in bare and "gates" not in bare["score"] and "uncapped" not in bare["score"]
