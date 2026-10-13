@@ -76,9 +76,9 @@ md = ["# Depth datum unlock queue", "",
       f"({len(rows)} blocked lakes; {summary['plausibleBlocked']} are 'plausible', i.e. acceptable pool + verified level binding, blocked only by datum/other rules). "
       "Fields per lake: lakeId, lake, operator, referencePoolSource, levelSource, datumState, missingEvidence, possibleResolver, expectedConfidenceIfResolved, customer/licence status, priority.", "",
       "Rules that stay on: no guessed conversions, LOCAL stage never treated as elevation, USGS 00065 never treated as elevation, no 'close enough' pairing (hard statistical gate in `proposals.py`).", "",
-      "## Groups ranked by unlock potential (sum of lake priority)", "",
+      "## Groups ranked by unlock potential (plausible lakes, then summed priority)", "",
       "| # | Group | Blocked | Plausible | Missing evidence | Possible resolver | Confidence if resolved | Examples |", "|---|---|---|---|---|---|---|---|"]
-for i, (k, v) in enumerate(sorted(grp.items(), key=lambda kv: -kv[1]["score"]), 1):
+for i, (k, v) in enumerate(sorted(grp.items(), key=lambda kv: (-kv[1]["plausible"], -kv[1]["score"])), 1):
     md.append(f"| {i} | `{k}` | {v['n']} | {v['plausible']} | {v['missing']} | {v['resolver']} | {v['conf']} | {', '.join(v['ex'])} |")
 md += ["", "## Top 40 lakes by priority", "", "| Rank | Lake | Operator | Group | Reference pool source | Level source | Datum state | Tier | Licence | Priority |", "|---|---|---|---|---|---|---|---|---|---|"]
 for r in rows[:40]:
