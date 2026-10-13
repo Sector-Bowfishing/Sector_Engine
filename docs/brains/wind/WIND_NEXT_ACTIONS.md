@@ -1,4 +1,4 @@
-# Wind — next actions (what is waiting on what)
+# Wind — next actions (what is waiting on what) — updated 2026-10-13 (continuous-validation phase)
 
 Rule for this phase: do not invent desk work. Everything below is either **technically complete** or **blocked on time, people, a decision, or a merge**.
 
@@ -30,3 +30,12 @@ Re-run the reliability audit weekly (`research/live_reliability.py`); a redeploy
 
 ## Not to do
 More provider shopping, gust or lay-down claims, numeric speed corrections, DIRECT-vs-CROSS on ESTIMATED lakes, any H2 read, any early customer exposure of modeled banks as measured.
+
+
+---
+## Update 2026-10-13 (continuous-validation phase) — exhaustion check
+Technically complete in this phase: weekly reliability cycle runner (`research/run_cycle.py`: metadata refresh → reliability → canonical rescore → Ops summary) · canonical rescore (3.3 computed vs 3.1 published) · provider shadow + strong-wind formulation (CAL+H1) · frozen rule set v2 + independent validation v2 pre-registration (+ clarification; lake draw and pair set pinned) · field programme plan · instrument spec · fleet readiness from the published Lake Registry v1 (592 polygons recomputed) and audited-vs-registry cross-check · AK/HI decode/sampling check · fleet sampler edge hardening and partial-cycle object · dual-wind log record + plan · Ops summary builder + visibility audit · Intelligence compatibility report · rubric v2 review · readiness matrix with the ≥ 8.0 / ≥ 7.5 policy table · cost model · 130 tests.
+
+Not done on purpose (judgment, not blockage): a regional AK/HI skill study (21 lakes, no bank geometry; low value until the product is anywhere near customers there); building fresh audited tables for Part A (needs NHD staging, heavy; field Part B is the real test); renaming `tonight.confidence` (contract-v2 decision); any change to H2 or the frozen rules.
+
+Waiting on **TIME** (30 live days ≈ 2026-11-07 / 11-12; H2 2027-01-01; weekly cycle) · **FIELD** (pairs, over-water) · **PREREQUISITE BRANCH** (wiring, publication, deploy, dual logging, Ops schema) · **MICHAEL** (#1, #8–#12) · **LAKE IDENTITY** (15 audited lakes; 40 identity-risk lakes overall) · **VALIDATION** (independent v2 Parts A/B need data above).
