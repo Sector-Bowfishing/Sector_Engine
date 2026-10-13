@@ -1,0 +1,622 @@
+lakeId,lakeName,state,regime,geometryAvailable,authoritativeDepthAvailable,contoursAvailable,contourSources,ienc9ftFootprint,hypsometryTruthAvailable,globathyAvailable,globathyMatchTier,terrainInferencePossible,poolRefAndLevelBoundForShift,levelHistory10y,bestDepthSource,evidenceTier,absoluteDepthConfidence,relativeDepthConfidence,scoutCandidateOnly,manualReviewNeeded,licenseStatus
+Aleknagik|AK,Aleknagik,AK,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Becharof|AK,Becharof,AK,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Big Lake|AK,Big Lake,AK,natural,True,False,False,,False,False,True,weak,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Harding|AK,Harding,AK,natural,True,False,False,,False,False,True,weak,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Iliamna|AK,Iliamna,AK,natural,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Kenai|AK,Kenai,AK,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Kvichak / Ugashik|AK,Kvichak / Ugashik,AK,natural,True,False,False,,False,False,True,weak,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Clark|AK,Lake Clark,AK,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Naknek|AK,Naknek,AK,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Skilak|AK,Skilak,AK,natural,True,False,False,,False,False,False,none,True,False,False,3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Teshekpuk|AK,Teshekpuk,AK,natural,True,False,False,,False,False,False,verified,True,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Tustumena|AK,Tustumena,AK,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Bankhead|AL,Bankhead,AL,reservoir,True,False,False,,True,False,False,none,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Eufaula / W.F. George|AL,Eufaula / W.F. George,AL,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Guntersville|AL,Guntersville,AL,reservoir,True,False,False,,True,False,True,weak,True,True,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Jordan|AL,Jordan,AL,reservoir,True,False,False,,False,False,False,suspect,True,True,True,3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Martin|AL,Lake Martin,AL,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lay|AL,Lay,AL,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Logan Martin|AL,Logan Martin,AL,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Neely Henry|AL,Neely Henry,AL,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Smith (Lewis Smith)|AL,Smith (Lewis Smith),AL,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Weiss|AL,Weiss,AL,reservoir,True,False,False,,False,False,False,suspect,True,True,True,3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Wheeler|AL,Wheeler,AL,reservoir,True,False,False,,True,False,True,weak,True,True,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Wilson|AL,Wilson,AL,reservoir,True,False,False,,True,False,True,weak,True,True,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Beaver|AR,Beaver,AR,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Bull Shoals Lake|AR,Bull Shoals Lake,AR,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Catherine|AR,Catherine,AR,reservoir,True,False,False,,False,False,True,weak,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Chicot|AR,Chicot,AR,regulated_natural,True,False,False,,True,False,True,weak,True,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Dardanelle|AR,Dardanelle,AR,reservoir,True,False,False,,True,False,True,weak,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+DeGray|AR,DeGray,AR,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Greers Ferry|AR,Greers Ferry,AR,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Hamilton|AR,Hamilton,AR,reservoir,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Millwood|AR,Millwood,AR,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Nimrod|AR,Nimrod,AR,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Norfork|AR,Norfork,AR,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Ouachita (L. Ouachita)|AR,Ouachita (L. Ouachita),AR,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Alamo|AZ,Alamo,AZ,reservoir,True,False,False,,False,False,True,weak,True,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Apache|AZ,Apache,AZ,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Bartlett|AZ,Bartlett,AZ,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Canyon|AZ,Canyon,AZ,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Havasu|AZ,Havasu,AZ,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Mary|AZ,Lake Mary,AZ,reservoir,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Pleasant|AZ,Pleasant,AZ,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Roosevelt|AZ,Roosevelt,AZ,reservoir,True,False,False,,False,False,False,suspect,True,True,False,3DEP shoreline slope,D,none,very_low,False,True,GLOBathy CC0 / 3DEP public
+Saguaro|AZ,Saguaro,AZ,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+San Carlos|AZ,San Carlos,AZ,reservoir,True,False,False,,False,False,False,suspect,True,False,False,3DEP shoreline slope,D,none,very_low,False,True,GLOBathy CC0 / 3DEP public
+Almanor|CA,Almanor,CA,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Berryessa|CA,Berryessa,CA,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Clear Lake|CA,Clear Lake,CA,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Don Pedro|CA,Don Pedro,CA,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Eagle Lake|CA,Eagle Lake,CA,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Folsom|CA,Folsom,CA,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Isabella|CA,Isabella,CA,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Mono|CA,Mono,CA,natural,True,False,False,,False,False,True,verified,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Oroville|CA,Oroville,CA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Salton Sea|CA,Salton Sea,CA,natural,True,False,False,,False,False,False,verified,True,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Shasta|CA,Shasta,CA,reservoir,True,False,False,,False,True,True,weak,True,True,False,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Trinity|CA,Trinity,CA,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Blue Mesa Reservoir|CO,Blue Mesa Reservoir,CO,reservoir,True,False,False,,False,True,True,verified,True,True,False,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Chatfield Reservoir|CO,Chatfield Reservoir,CO,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Cherry Creek Reservoir|CO,Cherry Creek Reservoir,CO,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Dillon Reservoir|CO,Dillon Reservoir,CO,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Eleven Mile Reservoir|CO,Eleven Mile Reservoir,CO,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Grand Lake|CO,Grand Lake,CO,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Horsetooth Reservoir|CO,Horsetooth Reservoir,CO,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+John Martin Reservoir|CO,John Martin Reservoir,CO,reservoir,True,False,False,,False,False,False,verified,True,True,True,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Granby|CO,Lake Granby,CO,reservoir,True,False,False,,False,False,False,verified,True,True,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Pueblo Reservoir|CO,Pueblo Reservoir,CO,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Ruedi Reservoir|CO,Ruedi Reservoir,CO,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Shadow Mountain Reservoir|CO,Shadow Mountain Reservoir,CO,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Bantam Lake|CT,Bantam Lake,CT,regulated_natural,True,False,True,CT,False,False,True,weak,False,False,False,contour(partial/coarse):CT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Barkhamsted Reservoir|CT,Barkhamsted Reservoir,CT,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Candlewood Lake|CT,Candlewood Lake,CT,reservoir,True,True,True,CT,False,False,True,verified,False,False,False,contour:CT,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Coventry Lake (Wangumbaug)|CT,Coventry Lake (Wangumbaug),CT,regulated_natural,True,False,True,CT,False,False,True,weak,False,False,False,contour(partial/coarse):CT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Gardner Lake|CT,Gardner Lake,CT,regulated_natural,True,False,True,CT,False,False,True,weak,False,False,False,contour(partial/coarse):CT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Highland Lake|CT,Highland Lake,CT,regulated_natural,True,True,True,CT,False,False,True,verified,False,False,False,contour:CT,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Lillinonah|CT,Lake Lillinonah,CT,reservoir,True,False,True,CT,False,False,False,none,False,False,False,contour(partial/coarse):CT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Waramaug|CT,Lake Waramaug,CT,regulated_natural,True,True,True,CT,False,False,True,weak,False,False,False,contour:CT,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Zoar|CT,Lake Zoar,CT,reservoir,True,False,True,CT,False,False,False,none,False,False,False,contour(partial/coarse):CT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Mansfield Hollow Lake|CT,Mansfield Hollow Lake,CT,reservoir,True,True,True,CT,False,False,True,weak,False,False,False,contour:CT,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Pachaug Pond|CT,Pachaug Pond,CT,reservoir,True,True,True,CT,False,False,True,weak,False,False,False,contour:CT,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Squantz Pond|CT,Squantz Pond,CT,natural,True,True,True,CT,False,False,False,none,False,False,False,contour:CT,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Andrews Lake|DE,Andrews Lake,DE,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Becks Pond|DE,Becks Pond,DE,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Concord Pond|DE,Concord Pond,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Garrisons Lake|DE,Garrisons Lake,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Griffith Lake|DE,Griffith Lake,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Killens Pond|DE,Killens Pond,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lums Pond|DE,Lums Pond,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Records Pond|DE,Records Pond,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Red Mill Pond|DE,Red Mill Pond,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Silver Lake (Dover)|DE,Silver Lake (Dover),DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Trap Pond|DE,Trap Pond,DE,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Wagamons Pond|DE,Wagamons Pond,DE,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Apopka|FL,Apopka,FL,natural,True,False,False,,False,False,False,verified,True,True,False,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Crescent Lake|FL,Crescent Lake,FL,natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+East Lake Tohopekaliga|FL,East Lake Tohopekaliga,FL,regulated_natural,True,True,True,FL,False,False,True,weak,True,True,True,contour:FL,A,high,high,False,True,internal_only(FL FWC no-redistribute)
+Griffin|FL,Griffin,FL,regulated_natural,True,True,True,FL,False,False,True,weak,True,True,False,contour:FL,A,high,high,False,False,internal_only(FL FWC no-redistribute)
+Harris|FL,Harris,FL,regulated_natural,True,True,True,FL,False,False,True,verified,True,True,False,contour:FL,A,high,high,False,False,internal_only(FL FWC no-redistribute)
+Istokpoga|FL,Istokpoga,FL,natural,True,True,True,FL,False,False,True,verified,True,True,True,contour:FL,A,high,high,False,False,internal_only(FL FWC no-redistribute)
+Jesup|FL,Jesup,FL,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Kissimmee|FL,Kissimmee,FL,regulated_natural,True,True,True,FL,False,False,True,verified,True,True,True,contour:FL,A,high,high,False,False,internal_only(FL FWC no-redistribute)
+Lake George|FL,Lake George,FL,natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lochloosa|FL,Lochloosa,FL,natural,True,True,True,FL,False,False,True,weak,False,False,False,contour:FL,A,high,high,False,True,internal_only(FL FWC no-redistribute)
+Okeechobee|FL,Okeechobee,FL,MEGA,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Orange Lake|FL,Orange Lake,FL,regulated_natural,True,True,True,FL,False,False,False,none,False,False,False,contour:FL,A,high,high,False,True,internal_only(FL FWC no-redistribute)
+Tohopekaliga (Toho)|FL,Tohopekaliga (Toho),FL,natural,True,True,True,FL,False,False,False,none,True,True,True,contour:FL,A,high,high,False,True,internal_only(FL FWC no-redistribute)
+Allatoona|GA,Allatoona,GA,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Blackshear|GA,Blackshear,GA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Burton|GA,Burton,GA,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Carters|GA,Carters,GA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Clarks Hill / J.S. Thurmond|GA,Clarks Hill / J.S. Thurmond,GA,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Russell (R.B. Russell)|GA,Lake Russell (R.B. Russell),GA,reservoir,True,False,False,,False,True,True,verified,True,True,False,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Lanier (Sidney Lanier)|GA,Lanier (Sidney Lanier),GA,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Oconee|GA,Oconee,GA,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Seminole|GA,Seminole,GA,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Sinclair|GA,Sinclair,GA,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Walter F. George / Eufaula|GA,Walter F. George / Eufaula,GA,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+West Point|GA,West Point,GA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Halulu Lake (Niihau)|HI,Halulu Lake (Niihau),HI,natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Koele ponds (Lanai)|HI,Koele ponds (Lanai),HI,reservoir,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lake Waiau|HI,Lake Waiau,HI,natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Nuuanu Reservoir|HI,Nuuanu Reservoir,HI,reservoir,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Puu Loa Reservoir|HI,Puu Loa Reservoir,HI,reservoir,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Waiakea Pond|HI,Waiakea Pond,HI,natural,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Waimaluhia Reservoir|HI,Waimaluhia Reservoir,HI,reservoir,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Waita Reservoir|HI,Waita Reservoir,HI,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Wilson Lake / Kaelepulu Pond|HI,Wilson Lake / Kaelepulu Pond,HI,natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Big Creek Lake|IA,Big Creek Lake,IA,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Black Hawk Lake|IA,Black Hawk Lake,IA,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Clear Lake|IA,Clear Lake,IA,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Coralville Lake|IA,Coralville Lake,IA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+East Okoboji|IA,East Okoboji,IA,natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lake Macbride|IA,Lake Macbride,IA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Red Rock|IA,Lake Red Rock,IA,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Rathbun Lake|IA,Rathbun Lake,IA,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Saylorville Lake|IA,Saylorville Lake,IA,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Spirit Lake|IA,Spirit Lake,IA,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Storm Lake|IA,Storm Lake,IA,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+West Okoboji|IA,West Okoboji,IA,natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,False,unreviewed
+American Falls Reservoir|ID,American Falls Reservoir,ID,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Anderson Ranch Reservoir|ID,Anderson Ranch Reservoir,ID,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+C.J. Strike Reservoir|ID,C.J. Strike Reservoir,ID,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Coeur d'Alene|ID,Coeur d'Alene,ID,natural,True,False,False,,False,False,False,none,True,True,False,3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Dworshak Reservoir|ID,Dworshak Reservoir,ID,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Henrys Lake|ID,Henrys Lake,ID,regulated_natural,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake Cascade|ID,Lake Cascade,ID,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Pend Oreille|ID,Lake Pend Oreille,ID,regulated_natural,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lucky Peak Lake|ID,Lucky Peak Lake,ID,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Palisades Reservoir|ID,Palisades Reservoir,ID,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Payette Lake|ID,Payette Lake,ID,regulated_natural,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Priest Lake|ID,Priest Lake,ID,regulated_natural,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Redfish Lake|ID,Redfish Lake,ID,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Carlyle Lake|IL,Carlyle Lake,IL,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Chain O'Lakes|IL,Chain O'Lakes,IL,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Clinton Lake|IL,Clinton Lake,IL,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Crab Orchard Lake|IL,Crab Orchard Lake,IL,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Devil's Kitchen Lake|IL,Devil's Kitchen Lake,IL,reservoir,True,False,False,,True,False,True,weak,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Fox Lake|IL,Fox Lake,IL,natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lake Shelbyville|IL,Lake Shelbyville,IL,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Springfield|IL,Lake Springfield,IL,reservoir,True,True,True,IL,False,False,True,weak,False,False,False,contour:IL,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake of Egypt|IL,Lake of Egypt,IL,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Rend Lake|IL,Rend Lake,IL,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Rice Lake|IL,Rice Lake,IL,regulated_natural,True,False,False,,True,False,False,suspect,False,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,True,federal_public
+Sangchris Lake|IL,Sangchris Lake,IL,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Brookville Lake|IN,Brookville Lake,IN,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Cagles Mill Lake|IN,Cagles Mill Lake,IN,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Cecil M. Harden Lake|IN,Cecil M. Harden Lake,IN,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Eagle Creek Reservoir|IN,Eagle Creek Reservoir,IN,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Geist Reservoir|IN,Geist Reservoir,IN,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Freeman|IN,Lake Freeman,IN,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Michigan|IN,Lake Michigan,IN,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lake Shafer|IN,Lake Shafer,IN,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lake Wawasee|IN,Lake Wawasee,IN,natural,True,True,True,IN,False,False,True,weak,False,False,False,contour:IN,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Mississinewa Lake|IN,Mississinewa Lake,IN,reservoir,True,False,False,,False,True,True,verified,True,True,False,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Monroe Lake|IN,Monroe Lake,IN,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,True,False,federal_public
+Patoka Lake|IN,Patoka Lake,IN,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Salamonie Lake|IN,Salamonie Lake,IN,reservoir,True,False,False,,False,True,True,weak,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Tippecanoe Lake|IN,Tippecanoe Lake,IN,natural,True,False,True,IN,False,False,True,weak,False,False,False,contour(partial/coarse):IN,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Cedar Bluff Reservoir|KS,Cedar Bluff Reservoir,KS,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Cheney Reservoir|KS,Cheney Reservoir,KS,reservoir,True,True,True,KS,False,False,True,verified,True,True,False,contour:KS,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Clinton Lake|KS,Clinton Lake,KS,reservoir,True,True,True,KS,False,False,True,verified,True,True,False,contour:KS,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+El Dorado Lake|KS,El Dorado Lake,KS,reservoir,True,True,True,KS,False,True,True,verified,True,True,True,contour:KS,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+John Redmond Reservoir|KS,John Redmond Reservoir,KS,reservoir,True,False,True,KS,False,False,True,verified,True,True,True,contour(partial/coarse):KS,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Kanopolis Lake|KS,Kanopolis Lake,KS,reservoir,True,True,True,KS,False,False,True,weak,True,True,False,contour:KS,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Marion Reservoir|KS,Marion Reservoir,KS,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Melvern Lake|KS,Melvern Lake,KS,reservoir,True,True,True,KS,False,False,True,verified,True,True,False,contour:KS,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Milford Lake|KS,Milford Lake,KS,reservoir,True,True,True,KS,False,False,True,verified,True,True,False,contour:KS,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Perry Lake|KS,Perry Lake,KS,reservoir,True,False,True,KS,False,False,True,weak,True,True,False,contour(partial/coarse):KS,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Pomona Lake|KS,Pomona Lake,KS,reservoir,True,True,True,KS,False,False,True,verified,True,True,False,contour:KS,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Tuttle Creek Lake|KS,Tuttle Creek Lake,KS,reservoir,True,False,True,KS,False,False,True,verified,True,True,True,contour(partial/coarse):KS,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Waconda Lake|KS,Waconda Lake,KS,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Wilson Lake|KS,Wilson Lake,KS,reservoir,True,True,True,KS,False,False,True,verified,True,True,False,contour:KS,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Barren River Lake|KY,Barren River Lake,KY,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Buckhorn Lake|KY,Buckhorn Lake,KY,reservoir,True,False,False,,False,False,False,suspect,True,True,True,3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Cave Run Lake|KY,Cave Run Lake,KY,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Green River Lake|KY,Green River Lake,KY,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Herrington Lake|KY,Herrington Lake,KY,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Kentucky Lake|KY,Kentucky Lake,KY,reservoir,True,False,False,,True,False,False,suspect,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,True,True,federal_public
+Lake Barkley|KY,Lake Barkley,KY,reservoir,True,False,False,,True,False,True,weak,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Lake Cumberland|KY,Lake Cumberland,KY,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Laurel River Lake|KY,Laurel River Lake,KY,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Nolin River Lake|KY,Nolin River Lake,KY,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Rough River Lake|KY,Rough River Lake,KY,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Taylorsville Lake|KY,Taylorsville Lake,KY,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Calcasieu Lake|LA,Calcasieu Lake,LA,natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Catahoula Lake|LA,Catahoula Lake,LA,regulated_natural,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Cross Lake|LA,Cross Lake,LA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+False River|LA,False River,LA,regulated_natural,True,False,False,,True,False,True,weak,False,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Grand Lake|LA,Grand Lake,LA,natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Henderson Lake|LA,Henderson Lake,LA,natural,True,False,False,,True,False,True,weak,False,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Lake Bistineau|LA,Lake Bistineau,LA,reservoir,True,False,False,,True,False,False,suspect,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,True,True,federal_public
+Lake D'Arbonne|LA,Lake D'Arbonne,LA,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Maurepas|LA,Lake Maurepas,LA,natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Pontchartrain|LA,Lake Pontchartrain,LA,MEGA,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,True,True,unreviewed
+Sabine Lake|LA,Sabine Lake,LA,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+White Lake|LA,White Lake,LA,natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Assawompset Pond|MA,Assawompset Pond,MA,regulated_natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Congamond Lakes|MA,Congamond Lakes,MA,regulated_natural,True,True,True,CT;MA,False,False,False,none,False,False,False,contour:CT;MA,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Cochituate|MA,Lake Cochituate,MA,regulated_natural,True,True,True,MA,False,False,True,weak,False,False,False,contour:MA,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Quinsigamond|MA,Lake Quinsigamond,MA,regulated_natural,True,True,True,MA,False,False,True,weak,False,False,False,contour:MA,B,medium,medium,False,True,state_open_data_no_explicit_licence; derived metrics only
+Long Pond (Lakeville)|MA,Long Pond (Lakeville),MA,natural,True,False,True,MA,False,False,False,none,False,False,False,contour(partial/coarse):MA,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Onota Lake|MA,Onota Lake,MA,regulated_natural,True,True,True,MA,False,False,True,weak,False,False,False,contour:MA,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Otis Reservoir|MA,Otis Reservoir,MA,reservoir,True,True,True,MA,False,False,True,weak,False,False,False,contour:MA,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Pontoosuc Lake|MA,Pontoosuc Lake,MA,reservoir,True,True,True,MA,False,False,True,weak,False,False,False,contour:MA,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Quabbin Reservoir|MA,Quabbin Reservoir,MA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Wachusett Reservoir|MA,Wachusett Reservoir,MA,reservoir,True,True,True,MA,False,False,True,verified,False,False,False,contour:MA,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Watuppa Ponds|MA,Watuppa Ponds,MA,regulated_natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Webster Lake|MA,Webster Lake,MA,regulated_natural,True,True,True,MA,False,False,True,weak,False,False,False,contour:MA,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Conowingo Reservoir|MD,Conowingo Reservoir,MD,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Deep Creek Lake|MD,Deep Creek Lake,MD,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Jennings Randolph Lake|MD,Jennings Randolph Lake,MD,reservoir,True,True,True,WV,False,False,True,weak,True,True,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Habeeb (Rocky Gap)|MD,Lake Habeeb (Rocky Gap),MD,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Liberty Reservoir|MD,Liberty Reservoir,MD,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Loch Raven Reservoir|MD,Loch Raven Reservoir,MD,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Piney Run Lake|MD,Piney Run Lake,MD,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Prettyboy Reservoir|MD,Prettyboy Reservoir,MD,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Rocky Gorge Reservoir|MD,Rocky Gorge Reservoir,MD,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Savage River Reservoir|MD,Savage River Reservoir,MD,reservoir,True,False,False,,False,False,False,suspect,True,True,True,3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Triadelphia Reservoir|MD,Triadelphia Reservoir,MD,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Youghiogheny River Lake|MD,Youghiogheny River Lake,MD,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Chamberlain Lake|ME,Chamberlain Lake,ME,natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Chesuncook Lake|ME,Chesuncook Lake,ME,regulated_natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+China Lake|ME,China Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Damariscotta Lake|ME,Damariscotta Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Flagstaff Lake|ME,Flagstaff Lake,ME,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Great Pond (Belgrade)|ME,Great Pond (Belgrade),ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Long Lake|ME,Long Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Moosehead Lake|ME,Moosehead Lake,ME,regulated_natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Mooselookmeguntic Lake|ME,Mooselookmeguntic Lake,ME,regulated_natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Rangeley Lake|ME,Rangeley Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Schoodic Lake|ME,Schoodic Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Sebago Lake|ME,Sebago Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Sebec Lake|ME,Sebec Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+West Grand Lake|ME,West Grand Lake,ME,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Burt Lake|MI,Burt Lake,MI,natural,True,False,True,MI,False,False,True,verified,False,False,False,contour(partial/coarse):MI,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Elk Lake|MI,Elk Lake,MI,regulated_natural,True,False,True,MI,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Gull Lake|MI,Gull Lake,MI,regulated_natural,True,False,True,MI,False,False,True,weak,False,False,False,contour(partial/coarse):MI,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Higgins Lake|MI,Higgins Lake,MI,regulated_natural,True,False,True,MI,False,False,True,weak,False,False,False,contour(partial/coarse):MI,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Houghton Lake|MI,Houghton Lake,MI,regulated_natural,True,True,True,MI,False,False,True,verified,False,False,False,contour:MI,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Charlevoix|MI,Lake Charlevoix,MI,natural,True,False,True,MI,False,False,True,verified,False,False,False,contour(partial/coarse):MI,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Erie|MI,Lake Erie,MI,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Lake Gogebic|MI,Lake Gogebic,MI,regulated_natural,True,False,True,MI,False,False,True,weak,False,False,False,contour(partial/coarse):MI,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Huron|MI,Lake Huron,MI,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lake Michigan|MI,Lake Michigan,MI,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Lake St. Clair|MI,Lake St. Clair,MI,regulated_natural,True,False,False,,False,False,False,weak,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Superior|MI,Lake Superior,MI,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Mullett Lake|MI,Mullett Lake,MI,natural,True,False,True,MI,False,False,True,weak,False,False,True,contour(partial/coarse):MI,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Torch Lake|MI,Torch Lake,MI,natural,True,False,True,MI,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Gull Lake|MN,Gull Lake,MN,regulated_natural,True,True,True,MN,False,False,False,verified,True,True,True,contour:MN,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Bemidji|MN,Lake Bemidji,MN,natural,True,True,True,MN,False,False,False,weak,False,False,False,contour:MN,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Minnetonka|MN,Lake Minnetonka,MN,regulated_natural,True,True,True,MN,True,False,False,weak,False,False,False,contour:MN,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Pepin|MN,Lake Pepin,MN,natural,True,True,True,MN,True,False,False,none,False,False,True,contour:MN,A,high,high,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Superior|MN,Lake Superior,MN,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Lake Vermilion|MN,Lake Vermilion,MN,natural,True,True,True,MN,False,False,False,verified,False,False,False,contour:MN,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Winnibigoshish|MN,Lake Winnibigoshish,MN,regulated_natural,True,True,True,MN,False,False,False,verified,True,True,True,contour:MN,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake of the Woods|MN,Lake of the Woods,MN,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Leech Lake|MN,Leech Lake,MN,regulated_natural,True,True,True,MN,False,False,False,verified,True,True,True,contour:MN,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Mille Lacs Lake|MN,Mille Lacs Lake,MN,regulated_natural,True,True,True,MN,False,False,False,verified,False,False,False,contour:MN,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Otter Tail Lake|MN,Otter Tail Lake,MN,regulated_natural,True,True,True,MN,False,False,False,weak,False,False,False,contour:MN,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Rainy Lake|MN,Rainy Lake,MN,regulated_natural,True,False,True,MN,False,False,False,weak,False,False,True,contour(partial/coarse):MN,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Red Lake|MN,Red Lake,MN,regulated_natural,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+White Bear Lake|MN,White Bear Lake,MN,natural,True,True,True,MN,True,False,False,weak,False,False,False,contour:MN,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Clearwater Lake|MO,Clearwater Lake,MO,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Taneycomo|MO,Lake Taneycomo,MO,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake of the Ozarks|MO,Lake of the Ozarks,MO,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Longview Lake|MO,Longview Lake,MO,reservoir,True,False,False,,False,False,False,none,True,True,False,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Mark Twain Lake|MO,Mark Twain Lake,MO,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Pomme de Terre Lake|MO,Pomme de Terre Lake,MO,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Smithville Lake|MO,Smithville Lake,MO,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Stockton Lake|MO,Stockton Lake,MO,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Table Rock Lake|MO,Table Rock Lake,MO,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Truman Lake|MO,Truman Lake,MO,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Wappapello Lake|MO,Wappapello Lake,MO,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Arkabutla Lake|MS,Arkabutla Lake,MS,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,True,False,federal_public
+Bay Springs Lake|MS,Bay Springs Lake,MS,reservoir,True,False,False,,True,False,True,verified,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Columbus Lake|MS,Columbus Lake,MS,reservoir,True,False,False,,True,False,True,verified,True,True,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Eagle Lake|MS,Eagle Lake,MS,natural,True,False,False,,True,False,True,weak,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,True,False,federal_public
+Enid Lake|MS,Enid Lake,MS,reservoir,True,False,False,,False,True,False,suspect,True,True,True,measured hypsometry (CWMS),C,low,medium,False,True,federal_public
+Grenada Lake|MS,Grenada Lake,MS,reservoir,True,False,False,,False,True,True,weak,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Lake Washington|MS,Lake Washington,MS,natural,True,False,False,,True,False,True,weak,True,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Moon Lake|MS,Moon Lake,MS,natural,True,False,False,,True,False,True,weak,True,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,True,False,federal_public
+Okatibbee Lake|MS,Okatibbee Lake,MS,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Ross Barnett Reservoir|MS,Ross Barnett Reservoir,MS,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Sardis Lake|MS,Sardis Lake,MS,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Canyon Ferry Lake|MT,Canyon Ferry Lake,MT,reservoir,True,True,True,MT,False,False,True,verified,True,True,False,contour:MT,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Flathead Lake|MT,Flathead Lake,MT,regulated_natural,True,True,True,MT,False,False,True,weak,True,True,False,contour:MT,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Fort Peck Lake|MT,Fort Peck Lake,MT,reservoir,True,False,False,,False,False,False,weak,True,True,True,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Fresno Reservoir|MT,Fresno Reservoir,MT,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Georgetown Lake|MT,Georgetown Lake,MT,reservoir,True,True,True,MT,False,False,True,verified,False,False,False,contour:MT,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Hebgen Lake|MT,Hebgen Lake,MT,reservoir,True,True,True,MT,False,False,True,verified,True,True,False,contour:MT,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Holter Lake|MT,Holter Lake,MT,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Hungry Horse Reservoir|MT,Hungry Horse Reservoir,MT,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Koocanusa|MT,Lake Koocanusa,MT,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Tiber Reservoir (Lake Elwell)|MT,Tiber Reservoir (Lake Elwell),MT,reservoir,True,True,True,MT,False,False,True,weak,True,True,False,contour:MT,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Whitefish Lake|MT,Whitefish Lake,MT,regulated_natural,True,False,True,MT,False,False,True,weak,False,False,False,contour(partial/coarse):MT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Badin Lake|NC,Badin Lake,NC,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Falls Lake|NC,Falls Lake,NC,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Fontana Lake|NC,Fontana Lake,NC,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+High Rock Lake|NC,High Rock Lake,NC,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Hiwassee Lake|NC,Hiwassee Lake,NC,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Jordan Lake|NC,Jordan Lake,NC,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Kerr Lake (John H. Kerr)|NC,Kerr Lake (John H. Kerr),NC,reservoir,True,False,False,,False,False,False,suspect,True,True,True,3DEP shoreline slope,D,none,very_low,False,True,GLOBathy CC0 / 3DEP public
+Lake Hickory|NC,Lake Hickory,NC,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake James|NC,Lake James,NC,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Mattamuskeet|NC,Lake Mattamuskeet,NC,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Norman|NC,Lake Norman,NC,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Waccamaw|NC,Lake Waccamaw,NC,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Bowman-Haley Reservoir|ND,Bowman-Haley Reservoir,ND,reservoir,True,True,True,ND,False,False,True,verified,True,True,False,contour:ND,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Devils Lake|ND,Devils Lake,ND,regulated_natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,False,unreviewed
+Jamestown Reservoir|ND,Jamestown Reservoir,ND,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Ashtabula|ND,Lake Ashtabula,ND,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Darling|ND,Lake Darling,ND,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Metigoshe|ND,Lake Metigoshe,ND,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Oahe|ND,Lake Oahe,ND,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Sakakawea|ND,Lake Sakakawea,ND,reservoir,True,False,False,,False,False,False,weak,True,True,True,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Tschida|ND,Lake Tschida,ND,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Nelson Lake|ND,Nelson Lake,ND,reservoir,True,True,True,ND,False,False,True,verified,False,False,False,contour:ND,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Patterson Lake|ND,Patterson Lake,ND,reservoir,True,True,True,ND,False,False,True,weak,True,True,False,contour:ND,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Stump Lake|ND,Stump Lake,ND,natural,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,False,True,unreviewed
+Box Butte Reservoir|NE,Box Butte Reservoir,NE,reservoir,True,True,True,NE,False,False,False,verified,True,True,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Branched Oak Lake|NE,Branched Oak Lake,NE,reservoir,True,True,True,NE,False,False,False,verified,True,True,True,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Calamus Reservoir|NE,Calamus Reservoir,NE,reservoir,True,True,True,NE,False,False,True,weak,True,True,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Harlan County Lake|NE,Harlan County Lake,NE,reservoir,True,True,True,NE,False,False,True,verified,True,True,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Johnson Lake|NE,Johnson Lake,NE,reservoir,True,True,True,NE,False,False,False,weak,True,True,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake McConaughy|NE,Lake McConaughy,NE,reservoir,True,True,True,NE,False,False,True,verified,True,True,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Ogallala|NE,Lake Ogallala,NE,reservoir,True,True,True,NE,False,False,False,weak,False,False,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Merritt Reservoir|NE,Merritt Reservoir,NE,reservoir,True,True,True,NE,False,False,False,verified,True,True,False,contour:NE,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Sherman Reservoir|NE,Sherman Reservoir,NE,reservoir,True,True,True,NE,False,False,False,verified,False,False,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Sutherland Reservoir|NE,Sutherland Reservoir,NE,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Swanson Reservoir|NE,Swanson Reservoir,NE,reservoir,True,True,True,NE,False,False,False,verified,True,True,False,contour:NE,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+First Connecticut Lake|NH,First Connecticut Lake,NH,reservoir,True,True,True,NH,False,False,True,weak,False,False,False,contour:NH,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Great East Lake|NH,Great East Lake,NH,regulated_natural,True,False,True,NH,False,False,True,weak,False,False,False,contour(partial/coarse):NH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Wentworth|NH,Lake Wentworth,NH,regulated_natural,True,True,True,NH,False,False,True,weak,False,False,False,contour:NH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Winnipesaukee|NH,Lake Winnipesaukee,NH,regulated_natural,True,False,True,NH,False,False,True,verified,True,True,False,contour(partial/coarse):NH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Winnisquam|NH,Lake Winnisquam,NH,regulated_natural,True,False,True,NH,False,False,True,verified,False,False,False,contour(partial/coarse):NH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Massabesic Lake|NH,Massabesic Lake,NH,regulated_natural,True,True,True,NH,False,False,True,verified,False,False,False,contour:NH,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Merrymeeting Lake|NH,Merrymeeting Lake,NH,regulated_natural,True,True,True,NH,False,False,True,weak,False,False,False,contour:NH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Newfound Lake|NH,Newfound Lake,NH,regulated_natural,True,False,True,NH,False,False,True,weak,False,False,False,contour(partial/coarse):NH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Ossipee Lake|NH,Ossipee Lake,NH,regulated_natural,True,False,True,NH,False,False,True,weak,False,False,False,contour(partial/coarse):NH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Squam Lake|NH,Squam Lake,NH,regulated_natural,True,True,True,NH,False,False,True,weak,False,False,False,contour:NH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Sunapee Lake|NH,Sunapee Lake,NH,regulated_natural,True,False,True,NH,False,False,True,verified,False,False,False,contour(partial/coarse):NH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Umbagog Lake|NH,Umbagog Lake,NH,regulated_natural,True,True,True,NH,False,False,True,weak,False,False,False,contour:NH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Budd Lake|NJ,Budd Lake,NJ,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Culvers Lake|NJ,Culvers Lake,NJ,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Greenwood Lake|NJ,Greenwood Lake,NJ,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Absegami|NJ,Lake Absegami,NJ,regulated_natural,True,False,True,NJ,False,False,True,weak,False,False,False,contour(partial/coarse):NJ,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Hopatcong|NJ,Lake Hopatcong,NJ,regulated_natural,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Manasquan Reservoir|NJ,Manasquan Reservoir,NJ,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Merrill Creek Reservoir|NJ,Merrill Creek Reservoir,NJ,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Monksville Reservoir|NJ,Monksville Reservoir,NJ,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Round Valley Reservoir|NJ,Round Valley Reservoir,NJ,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Spruce Run Reservoir|NJ,Spruce Run Reservoir,NJ,reservoir,True,True,True,NJ,False,False,True,weak,True,True,False,contour:NJ,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Swartswood Lake|NJ,Swartswood Lake,NJ,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Wanaque Reservoir|NJ,Wanaque Reservoir,NJ,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Abiquiu Lake|NM,Abiquiu Lake,NM,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Bluewater Lake|NM,Bluewater Lake,NM,reservoir,True,False,False,,False,False,False,suspect,True,True,False,3DEP shoreline slope,D,none,very_low,False,True,GLOBathy CC0 / 3DEP public
+Caballo Lake|NM,Caballo Lake,NM,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Cochiti Lake|NM,Cochiti Lake,NM,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Conchas Lake|NM,Conchas Lake,NM,reservoir,True,False,False,,False,False,False,suspect,True,True,True,3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Eagle Nest Lake|NM,Eagle Nest Lake,NM,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+El Vado Lake|NM,El Vado Lake,NM,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Elephant Butte Reservoir|NM,Elephant Butte Reservoir,NM,reservoir,True,False,False,,False,False,False,suspect,True,True,False,3DEP shoreline slope,D,none,very_low,False,True,GLOBathy CC0 / 3DEP public
+Heron Lake|NM,Heron Lake,NM,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Navajo Reservoir|NM,Navajo Reservoir,NM,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Santa Rosa Lake|NM,Santa Rosa Lake,NM,reservoir,True,False,False,,False,False,False,suspect,True,True,True,3DEP shoreline slope,D,none,very_low,False,True,GLOBathy CC0 / 3DEP public
+Sumner Lake|NM,Sumner Lake,NM,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Ute Lake|NM,Ute Lake,NM,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lahontan Reservoir|NV,Lahontan Reservoir,NV,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Mead|NV,Lake Mead,NV,reservoir,True,False,False,,False,False,False,verified,True,True,False,GLOBathy supplied-observed Dmax,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Mohave|NV,Lake Mohave,NV,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Tahoe|NV,Lake Tahoe,NV,regulated_natural,True,False,False,,False,False,False,verified,True,True,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Pyramid Lake|NV,Pyramid Lake,NV,natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Ruby Lake|NV,Ruby Lake,NV,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Rye Patch Reservoir|NV,Rye Patch Reservoir,NV,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Topaz Lake|NV,Topaz Lake,NV,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Walker Lake|NV,Walker Lake,NV,natural,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Washoe Lake|NV,Washoe Lake,NV,regulated_natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Wild Horse Reservoir|NV,Wild Horse Reservoir,NV,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Canandaigua Lake|NY,Canandaigua Lake,NY,natural,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Cayuga Lake|NY,Cayuga Lake,NY,regulated_natural,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Chautauqua Lake|NY,Chautauqua Lake,NY,regulated_natural,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Cranberry Lake|NY,Cranberry Lake,NY,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Great Sacandaga Lake|NY,Great Sacandaga Lake,NY,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Indian Lake|NY,Indian Lake,NY,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Keuka Lake|NY,Keuka Lake,NY,regulated_natural,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Erie|NY,Lake Erie,NY,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Lake George|NY,Lake George,NY,regulated_natural,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Ontario|NY,Lake Ontario,NY,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Oneida Lake|NY,Oneida Lake,NY,natural,True,False,False,,False,False,False,none,False,False,True,none,U,none,none,True,False,unreviewed
+Owasco Lake|NY,Owasco Lake,NY,regulated_natural,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Seneca Lake|NY,Seneca Lake,NY,natural,True,False,False,,False,False,False,none,False,False,True,none,U,none,none,False,False,unreviewed
+Skaneateles Lake|NY,Skaneateles Lake,NY,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Alum Creek Lake|OH,Alum Creek Lake,OH,reservoir,True,True,True,OH,False,False,True,verified,True,True,True,contour:OH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Berlin Lake|OH,Berlin Lake,OH,reservoir,True,False,True,OH,False,False,True,verified,True,True,True,contour(partial/coarse):OH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Buckeye Lake|OH,Buckeye Lake,OH,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Caesar Creek Lake|OH,Caesar Creek Lake,OH,reservoir,True,True,True,OH,False,False,True,verified,True,True,True,contour:OH,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Grand Lake St. Marys|OH,Grand Lake St. Marys,OH,reservoir,True,True,True,OH,False,False,True,weak,True,True,False,contour:OH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Hoover Reservoir|OH,Hoover Reservoir,OH,reservoir,True,True,True,OH,False,False,True,weak,True,True,True,contour:OH,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Indian Lake|OH,Indian Lake,OH,reservoir,True,False,True,OH,False,False,True,weak,True,True,True,contour(partial/coarse):OH,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Erie|OH,Lake Erie,OH,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lake Milton|OH,Lake Milton,OH,reservoir,True,True,True,OH,False,False,True,weak,True,True,False,contour:OH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Mosquito Creek Lake|OH,Mosquito Creek Lake,OH,reservoir,True,True,True,OH,False,False,True,verified,True,True,True,contour:OH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Salt Fork Lake|OH,Salt Fork Lake,OH,reservoir,True,True,True,OH,False,False,True,weak,False,False,False,contour:OH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Senecaville Lake|OH,Senecaville Lake,OH,reservoir,True,True,True,OH,False,False,True,verified,True,True,True,contour:OH,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Tappan Lake|OH,Tappan Lake,OH,reservoir,True,True,True,OH,False,False,True,verified,True,True,True,contour:OH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Broken Bow Lake|OK,Broken Bow Lake,OK,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Canton Lake|OK,Canton Lake,OK,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Fort Gibson Lake|OK,Fort Gibson Lake,OK,reservoir,True,True,True,OK,True,True,True,verified,True,True,True,contour:OK,B,medium,medium,False,True,state_open_data_no_explicit_licence; derived metrics only
+Grand Lake o' the Cherokees|OK,Grand Lake o' the Cherokees,OK,reservoir,True,True,True,OK,False,False,True,weak,True,True,True,contour:OK,A,high,high,False,True,state_open_data_no_explicit_licence; derived metrics only
+Kaw Lake|OK,Kaw Lake,OK,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Keystone Lake|OK,Keystone Lake,OK,reservoir,True,False,False,,False,True,True,weak,True,True,True,measured hypsometry (CWMS),C,low,medium,True,False,federal_public
+Lake Eufaula|OK,Lake Eufaula,OK,reservoir,True,False,False,,False,True,False,weak,False,False,True,measured hypsometry (CWMS),C,low,medium,True,False,federal_public
+Lake Hudson|OK,Lake Hudson,OK,reservoir,True,False,True,OK,True,True,True,weak,True,True,True,contour(partial/coarse):OK,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Murray (OK)|OK,Lake Murray (OK),OK,reservoir,True,True,True,OK,False,False,True,weak,False,False,False,contour:OK,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Tenkiller|OK,Lake Tenkiller,OK,reservoir,True,False,False,,True,False,True,weak,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Oologah Lake|OK,Oologah Lake,OK,reservoir,True,False,False,,False,True,True,verified,True,True,True,measured hypsometry (CWMS),C,low,medium,True,False,federal_public
+Sardis Lake|OK,Sardis Lake,OK,reservoir,True,True,True,OK,False,True,True,weak,True,True,True,contour:OK,B,medium,medium,False,True,state_open_data_no_explicit_licence; derived metrics only
+Skiatook Lake|OK,Skiatook Lake,OK,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Crater Lake|OR,Crater Lake,OR,natural,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Crescent Lake|OR,Crescent Lake,OR,regulated_natural,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Detroit Lake|OR,Detroit Lake,OR,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Diamond Lake|OR,Diamond Lake,OR,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Fern Ridge Reservoir|OR,Fern Ridge Reservoir,OR,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake Billy Chinook|OR,Lake Billy Chinook,OR,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Owyhee|OR,Lake Owyhee,OR,reservoir,True,False,False,,False,False,False,verified,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Malheur Lake|OR,Malheur Lake,OR,natural,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,False,True,unreviewed
+Odell Lake|OR,Odell Lake,OR,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Suttle Lake|OR,Suttle Lake,OR,regulated_natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Timothy Lake|OR,Timothy Lake,OR,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Upper Klamath Lake|OR,Upper Klamath Lake,OR,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Waldo Lake|OR,Waldo Lake,OR,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Wallowa Lake|OR,Wallowa Lake,OR,regulated_natural,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Allegheny Reservoir|PA,Allegheny Reservoir,PA,reservoir,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Beltzville Lake|PA,Beltzville Lake,PA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Blue Marsh Lake|PA,Blue Marsh Lake,PA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Conneaut Lake|PA,Conneaut Lake,PA,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Harveys Lake|PA,Harveys Lake,PA,natural,True,True,True,PA,False,False,True,weak,False,False,False,contour:PA,B,medium,medium,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Arthur|PA,Lake Arthur,PA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Lake Erie|PA,Lake Erie,PA,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Lake Marburg|PA,Lake Marburg,PA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Nockamixon|PA,Lake Nockamixon,PA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Wallenpaupack|PA,Lake Wallenpaupack,PA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Pymatuning Reservoir|PA,Pymatuning Reservoir,PA,reservoir,True,True,True,OH,False,False,True,verified,False,False,False,contour:OH,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Raystown Lake|PA,Raystown Lake,PA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Shenango River Lake|PA,Shenango River Lake,PA,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Yellow Creek Lake|PA,Yellow Creek Lake,PA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Bowdish Reservoir|RI,Bowdish Reservoir,RI,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Flat River Res. (Johnson's Pond)|RI,Flat River Res. (Johnson's Pond),RI,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,False,unreviewed
+Ninigret Pond|RI,Ninigret Pond,RI,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Pascoag Reservoir|RI,Pascoag Reservoir,RI,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Point Judith Pond|RI,Point Judith Pond,RI,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Scituate Reservoir|RI,Scituate Reservoir,RI,reservoir,True,False,False,,False,False,False,none,True,True,True,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Stafford Pond|RI,Stafford Pond,RI,regulated_natural,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Tiogue Lake|RI,Tiogue Lake,RI,reservoir,True,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Wallum Lake|RI,Wallum Lake,RI,regulated_natural,True,True,True,MA,False,False,True,weak,False,False,False,contour:MA,B,medium,medium,False,False,state_open_data_no_explicit_licence; derived metrics only
+Watchaug Pond|RI,Watchaug Pond,RI,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Winnapaug Pond|RI,Winnapaug Pond,RI,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Worden Pond|RI,Worden Pond,RI,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Greenwood|SC,Lake Greenwood,SC,reservoir,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Hartwell|SC,Lake Hartwell,SC,reservoir,True,False,False,,False,True,True,weak,True,True,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Lake Jocassee|SC,Lake Jocassee,SC,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Keowee|SC,Lake Keowee,SC,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Marion|SC,Lake Marion,SC,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Monticello|SC,Lake Monticello,SC,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Moultrie|SC,Lake Moultrie,SC,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Murray (SC)|SC,Lake Murray (SC),SC,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Robinson|SC,Lake Robinson,SC,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Strom Thurmond (Clarks Hill)|SC,Lake Strom Thurmond (Clarks Hill),SC,reservoir,True,False,False,,False,True,False,suspect,False,False,True,measured hypsometry (CWMS),C,low,medium,False,True,federal_public
+Lake Wateree|SC,Lake Wateree,SC,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Wylie|SC,Lake Wylie,SC,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Angostura Reservoir|SD,Angostura Reservoir,SD,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Big Stone Lake|SD,Big Stone Lake,SD,regulated_natural,True,False,True,MN,False,False,False,verified,False,False,False,contour(partial/coarse):MN,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Bitter Lake|SD,Bitter Lake,SD,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Enemy Swim Lake|SD,Enemy Swim Lake,SD,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake Francis Case|SD,Lake Francis Case,SD,reservoir,True,False,False,,False,False,False,none,True,True,False,3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Oahe|SD,Lake Oahe,SD,MEGA,True,False,False,,False,False,False,weak,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake Poinsett|SD,Lake Poinsett,SD,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Sharpe|SD,Lake Sharpe,SD,reservoir,True,False,False,,False,False,True,verified,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Thompson|SD,Lake Thompson,SD,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lewis and Clark Lake|SD,Lewis and Clark Lake,SD,reservoir,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Pactola Reservoir|SD,Pactola Reservoir,SD,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Sheridan Lake|SD,Sheridan Lake,SD,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Waubay Lake|SD,Waubay Lake,SD,natural,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,False,True,unreviewed
+Center Hill Lake|TN,Center Hill Lake,TN,reservoir,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Cherokee Lake|TN,Cherokee Lake,TN,reservoir,True,False,False,,False,False,True,weak,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Chickamauga Lake|TN,Chickamauga Lake,TN,reservoir,True,False,False,,True,False,True,weak,False,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Dale Hollow Lake|TN,Dale Hollow Lake,TN,reservoir,True,False,False,,False,False,True,weak,True,True,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Douglas Lake|TN,Douglas Lake,TN,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Fort Loudoun Lake|TN,Fort Loudoun Lake,TN,reservoir,True,False,False,,True,False,False,suspect,True,True,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,True,federal_public
+Kentucky Lake|TN,Kentucky Lake,TN,reservoir,True,False,False,,True,False,False,suspect,False,False,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,True,federal_public
+Nickajack Lake|TN,Nickajack Lake,TN,reservoir,True,False,False,,True,False,True,weak,False,False,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,True,False,federal_public
+Norris Lake|TN,Norris Lake,TN,reservoir,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,False,True,unreviewed
+Old Hickory Lake|TN,Old Hickory Lake,TN,reservoir,True,False,False,,True,False,True,weak,True,True,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Percy Priest Lake|TN,Percy Priest Lake,TN,reservoir,True,False,False,,True,False,True,verified,False,False,True,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Pickwick Lake|TN,Pickwick Lake,TN,reservoir,True,False,False,,True,False,True,verified,False,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,True,False,federal_public
+Reelfoot Lake|TN,Reelfoot Lake,TN,regulated_natural,True,False,False,,True,False,True,weak,False,False,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Tims Ford Lake|TN,Tims Ford Lake,TN,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Watts Bar Lake|TN,Watts Bar Lake,TN,reservoir,True,False,False,,True,False,True,weak,True,True,False,USACE IENC 9ft contour (intersects footprint; interior coverage unverified),B-binary,low,low,False,False,federal_public
+Amistad Reservoir|TX,Amistad Reservoir,TX,reservoir,True,False,False,,False,False,False,suspect,False,False,True,none,U,none,none,True,True,unreviewed
+Caddo Lake|TX,Caddo Lake,TX,regulated_natural,True,False,False,,False,True,True,verified,False,False,True,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Canyon Lake|TX,Canyon Lake,TX,reservoir,True,False,False,,False,False,False,weak,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Cedar Creek Reservoir|TX,Cedar Creek Reservoir,TX,reservoir,True,True,True,TWDB,False,False,False,verified,True,True,True,contour:TWDB,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Falcon Lake|TX,Falcon Lake,TX,reservoir,True,False,False,,False,False,False,suspect,False,False,True,none,U,none,none,False,True,unreviewed
+Lake Buchanan|TX,Lake Buchanan,TX,reservoir,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake Conroe|TX,Lake Conroe,TX,reservoir,True,True,True,TWDB,False,False,True,weak,False,False,True,contour:TWDB,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Fork Reservoir|TX,Lake Fork Reservoir,TX,reservoir,True,True,True,TWDB,False,False,False,verified,True,True,True,contour:TWDB,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Livingston|TX,Lake Livingston,TX,reservoir,True,True,True,TWDB,False,False,True,weak,False,False,False,contour:TWDB,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Tawakoni|TX,Lake Tawakoni,TX,reservoir,True,True,True,TWDB,False,False,False,verified,False,False,True,contour:TWDB,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Texoma|TX,Lake Texoma,TX,reservoir,True,True,True,TWDB,False,True,False,weak,False,False,True,contour:TWDB,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Lake Travis|TX,Lake Travis,TX,reservoir,True,False,False,,False,False,False,verified,True,True,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Possum Kingdom Lake|TX,Possum Kingdom Lake,TX,reservoir,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Sam Rayburn Reservoir|TX,Sam Rayburn Reservoir,TX,reservoir,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Toledo Bend Reservoir|TX,Toledo Bend Reservoir,TX,reservoir,True,False,False,,False,False,False,weak,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Bear Lake|UT,Bear Lake,UT,natural,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,True,True,GLOBathy CC0 / 3DEP public
+Deer Creek Reservoir|UT,Deer Creek Reservoir,UT,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Fish Lake|UT,Fish Lake,UT,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Flaming Gorge Reservoir|UT,Flaming Gorge Reservoir,UT,reservoir,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,False,True,unreviewed
+Great Salt Lake|UT,Great Salt Lake,UT,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Jordanelle Reservoir|UT,Jordanelle Reservoir,UT,reservoir,True,False,False,,False,True,True,weak,False,False,False,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Lake Powell|UT,Lake Powell,UT,reservoir,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,True,True,unreviewed
+Pineview Reservoir|UT,Pineview Reservoir,UT,reservoir,True,False,False,,False,True,True,verified,False,False,False,measured hypsometry (CWMS),C,low,medium,False,False,federal_public
+Sevier Lake|UT,Sevier Lake,UT,natural,True,False,False,,False,False,False,verified,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Starvation Reservoir|UT,Starvation Reservoir,UT,reservoir,True,False,False,,False,True,True,weak,False,False,False,measured hypsometry (CWMS),C,low,medium,True,False,federal_public
+Strawberry Reservoir|UT,Strawberry Reservoir,UT,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Utah Lake|UT,Utah Lake,UT,regulated_natural,True,False,True,UT,False,False,False,weak,False,False,False,contour(partial/coarse):UT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Willard Bay Reservoir|UT,Willard Bay Reservoir,UT,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Chickahominy Lake|VA,Chickahominy Lake,VA,reservoir,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Claytor Lake|VA,Claytor Lake,VA,reservoir,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Douthat Lake|VA,Douthat Lake,VA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Flannagan Reservoir|VA,Flannagan Reservoir,VA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Kerr Reservoir (Buggs Island)|VA,Kerr Reservoir (Buggs Island),VA,reservoir,True,False,False,,False,False,False,suspect,False,False,True,none,U,none,none,False,True,unreviewed
+Lake Anna|VA,Lake Anna,VA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Chesdin|VA,Lake Chesdin,VA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Gaston|VA,Lake Gaston,VA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Moomaw|VA,Lake Moomaw,VA,reservoir,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Philpott Lake|VA,Philpott Lake,VA,reservoir,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Smith Mountain Lake|VA,Smith Mountain Lake,VA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+South Holston Lake|VA,South Holston Lake,VA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Caspian Lake|VT,Caspian Lake,VT,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Crystal Lake|VT,Crystal Lake,VT,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Harriman Reservoir (Whitingham)|VT,Harriman Reservoir (Whitingham),VT,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Bomoseen|VT,Lake Bomoseen,VT,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Carmi|VT,Lake Carmi,VT,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Champlain|VT,Lake Champlain,VT,natural,True,False,False,,False,False,False,none,False,False,True,none,U,none,none,True,False,unreviewed
+Lake Dunmore|VT,Lake Dunmore,VT,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Memphremagog|VT,Lake Memphremagog,VT,natural,True,False,False,,False,False,True,weak,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Seymour|VT,Lake Seymour,VT,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake St. Catherine|VT,Lake St. Catherine,VT,regulated_natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Willoughby|VT,Lake Willoughby,VT,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Somerset Reservoir|VT,Somerset Reservoir,VT,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Banks Lake|WA,Banks Lake,WA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Chelan|WA,Lake Chelan,WA,regulated_natural,True,False,True,WA,False,False,True,verified,False,False,False,contour(partial/coarse):WA,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Crescent|WA,Lake Crescent,WA,natural,True,False,True,WA,False,False,True,weak,False,False,False,contour(partial/coarse):WA,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Cushman|WA,Lake Cushman,WA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake Quinault|WA,Lake Quinault,WA,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Roosevelt (FDR)|WA,Lake Roosevelt (FDR),WA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Sammamish|WA,Lake Sammamish,WA,natural,True,True,True,WA,False,False,True,weak,False,False,True,contour:WA,A,high,high,False,True,state_open_data_no_explicit_licence; derived metrics only
+Lake Union|WA,Lake Union,WA,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Washington|WA,Lake Washington,WA,natural,True,False,False,,False,False,False,verified,False,False,True,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Moses Lake|WA,Moses Lake,WA,regulated_natural,True,False,True,WA,False,False,True,verified,False,False,True,contour(partial/coarse):WA,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Potholes Reservoir|WA,Potholes Reservoir,WA,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Riffe Lake|WA,Riffe Lake,WA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Ross Lake|WA,Ross Lake,WA,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Big Green Lake|WI,Big Green Lake,WI,regulated_natural,True,False,False,,False,False,False,weak,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Castle Rock Lake|WI,Castle Rock Lake,WI,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Chippewa Flowage|WI,Chippewa Flowage,WI,reservoir,True,False,True,WI,False,False,True,weak,False,False,False,contour(partial/coarse):WI,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Green Bay|WI,Green Bay,WI,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,False,False,unreviewed
+Lac Courte Oreilles|WI,Lac Courte Oreilles,WI,natural,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Geneva|WI,Lake Geneva,WI,regulated_natural,True,False,False,,False,False,False,weak,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Mendota|WI,Lake Mendota,WI,regulated_natural,True,False,False,,False,False,False,weak,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Michigan|WI,Lake Michigan,WI,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Lake Monona|WI,Lake Monona,WI,natural,True,False,False,,False,False,False,weak,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Petenwell|WI,Lake Petenwell,WI,reservoir,True,False,False,,False,False,True,verified,False,False,True,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Lake Superior|WI,Lake Superior,WI,MEGA,False,False,False,,False,False,False,none,False,False,False,none,U,none,none,True,True,unreviewed
+Lake Winnebago|WI,Lake Winnebago,WI,regulated_natural,True,False,False,,False,False,False,verified,False,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Lake Wisconsin|WI,Lake Wisconsin,WI,reservoir,True,False,False,,False,False,True,weak,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Beech Fork Lake|WV,Beech Fork Lake,WV,reservoir,True,True,True,WV,False,False,True,verified,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Bluestone Lake|WV,Bluestone Lake,WV,reservoir,True,True,True,WV,False,False,False,none,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Burnsville Lake|WV,Burnsville Lake,WV,reservoir,True,True,True,WV,False,False,True,verified,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Cheat Lake|WV,Cheat Lake,WV,reservoir,True,True,True,WV,True,False,True,weak,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+East Lynn Lake|WV,East Lynn Lake,WV,reservoir,True,True,True,WV,False,False,True,verified,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Mount Storm Lake|WV,Mount Storm Lake,WV,reservoir,True,True,True,WV,False,False,True,weak,False,False,False,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+R.D. Bailey Lake|WV,R.D. Bailey Lake,WV,reservoir,True,True,True,WV,False,False,True,weak,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Stonewall Jackson Lake|WV,Stonewall Jackson Lake,WV,reservoir,True,True,True,WV,False,False,True,weak,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Summersville Lake|WV,Summersville Lake,WV,reservoir,True,True,True,WV,False,False,False,suspect,False,False,True,contour:WV,A,high,high,False,True,state_open_data_no_explicit_licence; derived metrics only
+Sutton Lake|WV,Sutton Lake,WV,reservoir,True,True,True,WV,False,False,True,verified,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Tygart Lake|WV,Tygart Lake,WV,reservoir,True,True,True,WV,False,False,True,verified,False,False,True,contour:WV,A,high,high,False,False,state_open_data_no_explicit_licence; derived metrics only
+Alcova Reservoir|WY,Alcova Reservoir,WY,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Bighorn Lake|WY,Bighorn Lake,WY,reservoir,True,False,True,MT,False,False,False,suspect,False,False,False,contour(partial/coarse):MT,B-partial,low,low,False,True,state_open_data_no_explicit_licence; derived metrics only
+Boysen Reservoir|WY,Boysen Reservoir,WY,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,True,False,GLOBathy CC0 / 3DEP public
+Buffalo Bill Reservoir|WY,Buffalo Bill Reservoir,WY,reservoir,True,False,False,,False,False,True,verified,False,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Flaming Gorge Reservoir|WY,Flaming Gorge Reservoir,WY,reservoir,True,False,False,,False,False,False,suspect,False,False,False,none,U,none,none,False,True,unreviewed
+Fontenelle Reservoir|WY,Fontenelle Reservoir,WY,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Glendo Reservoir|WY,Glendo Reservoir,WY,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Jackson Lake|WY,Jackson Lake,WY,regulated_natural,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Jenny Lake|WY,Jenny Lake,WY,natural,True,False,False,,False,False,True,weak,True,False,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Keyhole Reservoir|WY,Keyhole Reservoir,WY,reservoir,True,False,False,,False,False,False,suspect,True,True,False,3DEP shoreline slope,D,none,very_low,False,True,GLOBathy CC0 / 3DEP public
+Pathfinder Reservoir|WY,Pathfinder Reservoir,WY,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Seminoe Reservoir|WY,Seminoe Reservoir,WY,reservoir,True,False,False,,False,False,True,verified,True,True,False,GLOBathy modeled prior + 3DEP shoreline slope,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public
+Yellowstone Lake|WY,Yellowstone Lake,WY,natural,True,False,False,,False,False,False,weak,True,False,False,GLOBathy supplied-observed Dmax,D,none,very_low,False,False,GLOBathy CC0 / 3DEP public

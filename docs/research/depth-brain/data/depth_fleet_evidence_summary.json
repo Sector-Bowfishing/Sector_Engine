@@ -1,0 +1,82 @@
+{
+ "n": 621,
+ "tier": {
+  "D": 371,
+  "A": 77,
+  "U": 56,
+  "B-partial": 35,
+  "B-binary": 28,
+  "C": 28,
+  "B": 26
+ },
+ "contoursAvailable": 140,
+ "authoritative_AB": 103,
+ "globathyModeledUsable": 468,
+ "terrain": 290,
+ "shiftPossible": 265,
+ "shift_hist10y": 153,
+ "scoutOnly": 130,
+ "review": 117,
+ "abBy_state": {
+  "WV": 11,
+  "MN": 10,
+  "NE": 10,
+  "OH": 9,
+  "FL": 8,
+  "KS": 8,
+  "MA": 8,
+  "CT": 6,
+  "NH": 6,
+  "TX": 6,
+  "MT": 5,
+  "OK": 4,
+  "ND": 3,
+  "PA": 2,
+  "IL": 1,
+  "IN": 1,
+  "MD": 1,
+  "MI": 1,
+  "NJ": 1,
+  "RI": 1,
+  "WA": 1
+ },
+ "tier_by_regime": {
+  "MEGA": {
+   "A": 0,
+   "B": 0,
+   "B-binary": 0,
+   "B-partial": 0,
+   "C": 0,
+   "D": 2,
+   "U": 16
+  },
+  "natural": {
+   "A": 7,
+   "B": 4,
+   "B-binary": 4,
+   "B-partial": 6,
+   "C": 0,
+   "D": 62,
+   "U": 15
+  },
+  "regulated_natural": {
+   "A": 18,
+   "B": 8,
+   "B-binary": 4,
+   "B-partial": 19,
+   "C": 1,
+   "D": 53,
+   "U": 5
+  },
+  "reservoir": {
+   "A": 52,
+   "B": 14,
+   "B-binary": 20,
+   "B-partial": 10,
+   "C": 27,
+   "D": 254,
+   "U": 20
+  }
+ },
+ "anyShiftOrZones": 322
+}
