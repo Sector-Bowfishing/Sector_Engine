@@ -1240,11 +1240,42 @@ def cwms_series_minutes(series):
     return 1440
 
 
-def plan_lake(binding, now, tz_years=None):
-    """Expected HTTP calls per host for one lake (history + one live read). A model, validated against the measured smoke in the rollout doc."""
+def load_cwms_catalog(path):
+    """Research catalog (jsonl, Sector_Research_Data/lake-brain/binding/catalog_usgs_cwms.jsonl): sid -> first year of the CWMS series."""
+    out = {}
+    with open(path) as f:
+        for line in f:
+            try:
+                d = json.loads(line)
+            except ValueError:
+                continue
+            if d.get("prov") == "cwms" and isinstance(d.get("begin"), str) and d.get("sid") and d["begin"][:4].isdigit():
+                out[d["sid"]] = int(d["begin"][:4])
+    return out
+
+
+def cwms_series_interval_token(series):
+    parts = series.split(".")
+    if len(parts) >= 6:
+        m = re.match(r"^\d+", parts[3].strip("~"))
+        if m:
+            return int(m.group(0))
+    return None
+
+
+def plan_lake(binding, now, cwms_first_years=None):
+    """Expected HTTP calls per host for one lake (history + one live read). A model, compared with the measured smoke in the rollout doc.
+    `cwms_first_years` (sid -> first year, from the research catalog) replaces the binding's historyFirstYear for CWMS series: the binding's
+    value is the research window (2018 for many sub-daily series) and can be 20-30 years later than the series really starts."""
     calls = {}
     year_now = now.year
     first = binding.get("historyFirstYear")
+    if cwms_first_years:
+        for h in binding.get("history", []):
+            if h["kind"] == "cwmsDaily":
+                y = cwms_first_years.get(f"cwms:{h['office']}:{h['series']}")
+                if y:
+                    first = min(first, y) if first else y
     span_years = max(1, year_now - first + 1) if first else 1
     def add(h, n):
         calls[h] = calls.get(h, 0) + n
@@ -1254,9 +1285,10 @@ def plan_lake(binding, now, tz_years=None):
             window = cwms_window_seconds(h["series"])
             chunks = math.ceil(((now - dt.datetime(1950, 1, 1, tzinfo=UTC)).total_seconds()) / window)
             minutes = cwms_series_minutes(h["series"])
-            pts_per_year = 525960 / minutes
+            irregular = cwms_series_interval_token(h["series"]) == 0          # "...Inst.0.0.x": Swift window = 0.25 y; readings per window unknown, 1 page assumed
+            pts_per_year = 0 if irregular else 525960 / minutes
             data_chunks = max(1, math.ceil(span_years * 365.25 * 86400 / window))
-            pages = max(1, math.ceil(min(window / (365.25 * 86400), span_years) * pts_per_year / 5000))
+            pages = 1 if irregular else max(1, math.ceil(min(window / (365.25 * 86400), span_years) * pts_per_year / 5000))
             add("cwms", (chunks - data_chunks) + data_chunks * pages)
         elif k == "usgsDaily":
             add("usgs", 1 if h["stat"] != "iv" else min(span_years, year_now - 1990 + 1) + 2)
@@ -1617,7 +1649,10 @@ def build_parser():
     ap.add_argument("--only-hosts", help="comma list of the first history host of a lake: cwms,usgs,rise,hads,tva")
     ap.add_argument("--exclude-hosts", help="comma list of first-history hosts to leave for a later batch")
     ap.add_argument("--smoke", help="comma list of already-REVIEWED pilot lake ids (bindings pilotReproduction): read-only live smoke, no batch needed, no publication")
+    ap.add_argument("--measure", help="comma list of any bindings-table lake ids: read-only THROUGHPUT MEASUREMENT (mode=measure), local work dir only, "
+                    "never publishable, needs no batch. It is not a pre-seed and its output must not be copied into the history bucket")
     ap.add_argument("--plan", action="store_true", help="print the expected HTTP calls per host and exit (no network, no work dir writes)")
+    ap.add_argument("--catalog", help="with --plan: research CWMS catalog jsonl for the real first year of each CWMS series")
     ap.add_argument("--allow-fixture", action="store_true", help="accept a FIXTURE batch (tests only; never with --gcs-prefix or the real bindings)")
     ap.add_argument("--replay", help="directory of recorded/canned responses instead of the network")
     ap.add_argument("--record", help="directory to record every live response into (for building fixtures)")
@@ -1668,11 +1703,22 @@ def _main(args, transport, clock, sleep, gcs_runner):
     if args.gcs_prefix:
         if not args.write_dir:
             raise PreseedError("--gcs-prefix requires --write-dir (files are staged and verified locally first)")
-        if args.smoke:
-            raise PreseedError("--smoke never publishes")
+        if args.smoke or args.measure:
+            raise PreseedError("--smoke / --measure never publish")
         GcsPublisher(args.gcs_prefix, None)                       # validates the prefix shape
     # ---- inputs
-    if args.smoke:
+    if args.measure:
+        if args.write_dir or args.gcs_prefix or args.batch or args.smoke:
+            raise PreseedError("--measure is read-only and takes no --batch / --write-dir / --gcs-prefix / --smoke")
+        bdoc, brows = load_bindings(args.bindings)
+        want = [x.strip() for x in args.measure.split(",") if x.strip()]
+        bad = [w for w in want if w not in brows]
+        if bad:
+            raise PreseedError(f"--measure lakes not in the bindings table: {bad}")
+        info = dict(mode="measure", batch=want, bindings=brows, bindingsDoc=dict(bdoc, pilotReproduction=[]), bindingsSha256=sha256_file(args.bindings),
+                    fixture=False)
+        lakes, skipped = want, []
+    elif args.smoke:
         if args.write_dir or args.gcs_prefix or args.batch:
             raise PreseedError("--smoke is read-only and takes no --batch / --write-dir / --gcs-prefix")
         bdoc, brows = load_bindings(args.bindings)
@@ -1698,8 +1744,9 @@ def _main(args, transport, clock, sleep, gcs_runner):
     if args.plan:
         now = parse_iso(args.now) if args.now else dt.datetime.now(UTC)
         tot, per = {}, {}
+        cat = load_cwms_catalog(args.catalog) if args.catalog else None
         for l in lakes:
-            c = plan_lake(info["bindings"][l], now)
+            c = plan_lake(info["bindings"][l], now, cat)
             per[l] = c
             for h, n in c.items():
                 tot[h] = tot.get(h, 0) + n

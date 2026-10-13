@@ -876,3 +876,33 @@ def test_plan_model_covers_every_real_binding_and_history_kind_is_supported():
         assert (not b["history"]) or sum(c.values()) >= 1
         assert (b["live"][0]["provider"] in P.HOST_BASE)
     assert {p["lakeId"] for p in doc["pilotReproduction"]} <= set(rows)
+
+
+def test_measure_mode_is_read_only_unpublishable_and_needs_no_batch(fx, tmp_path):
+    base = ["--bindings", fx["bindings"], "--work-dir", str(tmp_path / "w"), "--measure", "FIXTURE Golf Lake|ZZ", "--now", F.NOW, "--quiet"]
+    for bad in (["--write-dir", str(tmp_path / "o")], ["--batch", fx["batch"]], ["--gcs-prefix", "gs://b/history"], ["--smoke", "x"]):
+        assert P.main(base + bad, transport=F.FakeServer()) == 2
+    assert P.main(["--bindings", fx["bindings"], "--work-dir", str(tmp_path / "w"), "--measure", "Nope|ZZ"]) == 2
+    clk = Clock()
+    assert P.main(base, transport=F.FakeServer(), clock=clk, sleep=clk.sleep) == 0
+    m = manifest(tmp_path / "w")
+    assert m["mode"] == "measure" and m["counts"] == {"PASS": 1} and not os.path.exists(tmp_path / "o")
+
+
+def test_plan_model_catalog_and_irregular_series(tmp_path):
+    cat_file = tmp_path / "cat.jsonl"
+    cat_file.write_text("\n".join(json.dumps(x) for x in [
+        dict(prov="cwms", sid="cwms:LRL:Cave.Elev.Inst.0.0.raw", begin="2002-01-01"), dict(prov="cwms", sid="cwms:X:Bad", begin=""),
+        dict(prov="usgs", sid="usgs:1", begin="1990-01-01")]) + "\nnot json\n")
+    cat = P.load_cwms_catalog(str(cat_file))
+    assert cat == {"cwms:LRL:Cave.Elev.Inst.0.0.raw": 2002}
+    now = dt.datetime(2026, 10, 13, tzinfo=P.UTC)
+    irregular = dict(history=[dict(kind="cwmsDaily", office="LRL", series="Cave.Elev.Inst.0.0.raw")], live=[dict(provider="a2w")], historyFirstYear=2018)
+    # irregular interval: Swift window = 0.25 y, so 1950..2026 is ceil(76.8 / 0.25) = 308 windows of one page
+    assert P.plan_lake(irregular, now) == {"cwms": 308, "a2w": 1} == P.plan_lake(irregular, now, cat)
+    daily = dict(history=[dict(kind="cwmsDaily", office="X", series="A.Elev.Inst.~1Day.0.MRS")], live=[dict(provider="cwms")], historyFirstYear=2000)
+    assert P.plan_lake(daily, now) == {"cwms": 17}            # 16 five-year windows + 1 live read (Bankhead measured 17)
+    hourly_long = dict(history=[dict(kind="cwmsDaily", office="X", series="A.Elev.Inst.1Hour.0.R")], live=[dict(provider="cwms")], historyFirstYear=2018)
+    short, longer = P.plan_lake(hourly_long, now)["cwms"], P.plan_lake(hourly_long, now, {"cwms:X:A.Elev.Inst.1Hour.0.R": 1984})["cwms"]
+    assert longer > 2 * short
+    assert P.plan_lake(dict(history=[dict(kind="hadsDaily", lid="X", pe="HP")], live=[dict(provider="nwps")], historyFirstYear=2019), now) == {"hads": 4, "nwps": 1}
