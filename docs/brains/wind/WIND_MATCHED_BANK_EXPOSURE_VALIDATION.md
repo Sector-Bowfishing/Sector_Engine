@@ -21,7 +21,7 @@ Every estimate is computed **at the audited bank's own standoff coordinates**, f
 | PROTECTED recall / precision | 0.934 / 0.981 | 0.940 / 0.985 | — | |
 | HIGH FETCH precision / recall | 0.892 / 0.936 | 0.890 / 0.948 | M1 ≥ 0.85 both · M2 recall ≥ 0.80 | PASS |
 | Per-direction Spearman of effective fetch (median) | 0.928 | 0.932 | M1 ≥ 0.90 · M2 ≥ 0.80 | PASS |
-| Lake dominant-exposure direction within 22.5° | 6/7 (86%) | **58% of 65 lakes** | M2 ≥ 80% of lakes | **FAIL (M2, M2-C)** |
+| Lake dominant-exposure direction within 22.5° | 6/7 (86%) | **58% (40 of 69 lakes)** | M2 ≥ 80% of lakes | **FAIL (M2, M2-C)** |
 | False-PROTECTED, audited chop ≥ 3 (pooled) | 1.76% (M2-C 1.26%) | 1.49% (**M2-C 0.98%**) | ≤ 2% | PASS (4 of 65 M2 lakes exceed 2% per-lake, max 2.5% Lake Marion) |
 | False-PROTECTED vs audited DIRECT/CROSS labels | 2.36% (C 1.49%) | 1.85% (C 1.02%) | secondary | |
 | Median estimated/audited fetch (log ratio) | +0.32 (≈ +38%) | +0.27 (≈ +31%) | — | estimates are *longer* ⇒ safe direction |
