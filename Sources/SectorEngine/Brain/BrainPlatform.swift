@@ -18,6 +18,13 @@ import Foundation
 public enum BrainPlatform {
 
     public static let schemaVersion = 1
+
+    /// Upper bound for any worker-pool / batch width a job takes from a flag or option.
+    public static let maxConcurrency = 32
+    /// A concurrency (or batch-size) value that is safe to loop with: 0 and negatives become 1 (they used to spin a batch loop
+    /// forever or trap in `stride`), anything above `maxConcurrency` is capped. Every `while i < n { …; i += width }` loop
+    /// over a job option must take its width from here.
+    public static func clampConcurrency(_ n: Int) -> Int { min(max(1, n), maxConcurrency) }
     public static let databaseURL = "https://sector-brain.firebaseio.com"
     /// Customer-data instances: a writer refuses these URLs outright.
     public static let appDatabases = ["sector-9393c-default-rtdb", "sector-dev-1f4d0"]

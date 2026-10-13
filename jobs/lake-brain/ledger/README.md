@@ -6,7 +6,7 @@ Format and guarantees: `docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md`.
 ## What writes the ledger
 The existing orchestrator-triggered `lake-brain` job, after it has published to the Brain RTDB: one object per run at
 `gs://sector-lake-brain/predictions/{yyyy}/{MM}/{dd}/{HHmmss}Z-{runId}.jsonl`. No schedule, no extra service. A pure skip run writes nothing.
-A dry run writes under `<dry-run dir>/_ledger/` and never to the bucket.
+A dry run writes under `<dry-run dir>/_ledger/` and never to the bucket. The ledger is ON by default; only `LakeBrainJob --no-ledger` (dry runs, debugging, replay) turns it off, and the run prints `ledger: disabled`. Objects are created with `ifGenerationMatch=0` (never replaced).
 
 ## Run the scorer
 ```bash
@@ -17,7 +17,7 @@ python3 jobs/lake-brain/ledger/score_predictions.py --out ./ledger-scores
 python3 jobs/lake-brain/ledger/score_predictions.py --month 2026-11 --predictions /data/lake-brain --as-of 2026-12-15 --out ./ledger-scores
 ```
 Options: `--month YYYY-MM` (default: the month before `--as-of`), `--predictions` and `--history` (a local directory or `gs://BUCKET`; default `gs://sector-lake-brain`; history defaults to the predictions location),
-`--out` (a directory, or `gs://BUCKET/PATH` copied with `gcloud storage cp`; default `./ledger-scores`), `--as-of YYYY-MM-DD` (default: today UTC), `--grace-days N` (default 3).
+`--out` (a directory, or `gs://BUCKET/PATH` copied with `gcloud storage cp`; default `./ledger-scores`), `--as-of YYYY-MM-DD` (default: today UTC after 12:00Z, else yesterday), `--grace-days N` (default 3).
 Output: `{out}/predictions_scores/{YYYY-MM}.json`. Standard library only; tests: `python -m pytest jobs/lake-brain/ledger -q`.
 
 Both locations use the same layout: `predictions/{yyyy}/{MM}/...jsonl` and `history/{lakeKey}/daily.csv` (`date,elevationFt,sourceId`, the `LakeDailyHistory` encoder; `lakeKey` = runs of non-alphanumerics become `_`).
@@ -30,6 +30,9 @@ predictions, **pending**, **missingRealised**, scored; coverage of [p10,p90] and
 - **Pending:** a target date on or after `--as-of` is never scored, even if the history has a row; a target within `--grace-days` before it with no row yet is also pending. **Missing:** arrived, grace over, no row; counted, never imputed.
 - **Idempotent:** same inputs and `--as-of` give the same bytes (a SHA-256 of the input lines is in `inputs.inputsSha256`). The month file is overwritten as targets arrive (a month's +30 d horizon settles about two months after month end); scoring the same month later with a later `--as-of` only moves pending to scored.
 - A header repeats `NOT_VALIDATED`; there are no verdict keys.
+
+## v2 checks (2026-10-13)
+Thresholds come only from the record (the scorer reads `predictions/` and `history/` only). Records that would need hindsight are skipped and counted in `inputs.invalidReasons` (observation after the prediction, base date not the observation's local date, target not base + days, target not after the day the prediction was made). A realisation is the row dated exactly the target date. Duplicate lines/objects count once (`duplicateRecords`); records generated after `--as-of` are excluded; `warnings` lists mixed rules/binding/baseline versions, stale history and invalid records. First monthly evaluation (2026-11-01) and the optional scheduler: `docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md`, "Monthly evaluation".
 
 ## Retention
 Keep `predictions/` forever (no lifecycle deletion). Score files are small and re-creatable. History is the operators' daily values at scoring time (revisions are possible).

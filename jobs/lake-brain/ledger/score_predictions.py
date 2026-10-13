@@ -9,10 +9,18 @@ in each lake's history (history/{lakeKey}/daily.csv), and writes predictions_sco
   * A target date that has arrived but has no row in the history is counted as MISSING (never imputed), after a grace period for late data.
   * Several predictions for one lake on one lake-local day are the same claim repeated (a stable lake publishes about every 2 h). The headline
     figures use ONE record per lake per base date (the earliest generatedAt); `allRecords` pools every record and is NOT independent data.
+  * Thresholds are immutable: bands, rapid thresholds and the STABLE floor are read from the prediction record only. The scorer never opens a
+    baseline, never recomputes a band, and never reads anything under baselines/.
+  * No hindsight: a horizon is scored only if its target date is after the base date, equals base date + days, and is after the lake-local
+    date the prediction was made; the observation behind a record must not be later than the record. Anything else is counted as invalid.
+    A realisation is the row dated EXACTLY the target date (no nearest/previous row), and only once that day is complete (target < as-of).
+  * Versions are never pooled silently: rulesVersion / bindingVersion / baselineMethod are group dimensions and `inputs.versions` +
+    `warnings` say when a month mixes them.
   * Deterministic: the same inputs and the same --as-of give byte-identical output. The month file is re-scored (overwritten) as targets arrive.
 
 usage:
   score_predictions.py [--month YYYY-MM] [--predictions SRC] [--history SRC] [--out DIR|gs://BUCKET/PATH] [--as-of YYYY-MM-DD] [--grace-days N]
+  --as-of default: today UTC after 12:00Z, otherwise yesterday (see default_as_of).
   SRC is a local directory or gs://BUCKET (read with `gcloud storage cat`); default gs://sector-lake-brain. --out default ./ledger-scores.
 Python 3, standard library only.
 """
@@ -28,7 +36,12 @@ import subprocess
 import sys
 import tempfile
 
-SCORER_VERSION = "lake-prediction-scorer-v1"
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:  # pragma: no cover
+    ZoneInfo = None
+
+SCORER_VERSION = "lake-prediction-scorer-v2"
 LEDGER_VERSION = "lake-prediction-ledger-v1"
 RAPID_FLOOR_FT = 0.25
 NOTICE = ("Counts and rates only. No pass/fail verdict, no status change. Lake Brain validation remains NOT_VALIDATED; this file existing does not "
@@ -134,12 +147,56 @@ class History:
 
 # ----------------------------------------------------------------------------- records
 
-def load_records(source, month: str):
-    """-> (records, info). Month = the UTC month in the object path. Malformed lines and other ledger versions are counted, not scored."""
+def parse_utc(text: str) -> dt.datetime:
+    return dt.datetime.fromisoformat(text.replace("Z", "+00:00")).astimezone(dt.timezone.utc)
+
+
+def local_date(instant: dt.datetime, tz_name: str) -> dt.date:
+    """The lake-local calendar date of a UTC instant; falls back to the UTC date only if the zone database is missing."""
+    if ZoneInfo is not None:
+        try:
+            return instant.astimezone(ZoneInfo(tz_name)).date()
+        except Exception:  # unknown zone name or no tzdata
+            pass
+    return instant.date()
+
+
+def invalid_reason(r: dict) -> str | None:
+    """Why a record cannot be scored without hindsight (None = fine). Checks the record against itself only."""
+    try:
+        gen = parse_utc(r["generatedAt"])
+        obs = parse_utc(r["observation"]["at"])
+        tz = r["timeZone"]
+        base = dt.date.fromisoformat(r["baseDate"])
+        if not isinstance(tz, str) or not tz:
+            return "missingTimeZone"
+    except (KeyError, TypeError, ValueError):
+        return "missingObservationOrTime"
+    if obs > gen:
+        return "observationAfterPrediction"
+    if local_date(obs, tz) != base:
+        return "baseDateNotObservationDate"
+    made = local_date(gen, tz)
+    for h in r["horizons"]:
+        try:
+            days, target = int(h["days"]), dt.date.fromisoformat(h["targetDate"])
+        except (KeyError, TypeError, ValueError):
+            return "badHorizon"
+        if days <= 0 or target != base + dt.timedelta(days=days):
+            return "targetNotBasePlusDays"
+        if target <= made:
+            return "targetNotAfterPredictionDay"
+    return None
+
+
+def load_records(source, month: str, as_of: dt.date | None = None):
+    """-> (records, info). Month = the UTC month in the object path. Malformed lines, other ledger versions, records that would need hindsight
+    (see invalid_reason), records dated after `as_of` and exact duplicate lines (same lake, run and time) are counted, never scored."""
     y, m = month.split("-")
     objects = source.list(f"predictions/{y}/{m}/")
-    info = {"objects": len(objects), "lines": 0, "malformedLines": 0, "otherLedgerVersion": 0}
-    records, h = [], hashlib.sha256()
+    info = {"objects": len(objects), "lines": 0, "malformedLines": 0, "otherLedgerVersion": 0, "duplicateRecords": 0,
+            "futureDatedRecords": 0, "invalidRecords": 0, "invalidReasons": {}}
+    records, h, seen = [], hashlib.sha256(), set()
     for name in objects:
         data = source.read(name)
         if data is None:
@@ -160,6 +217,19 @@ def load_records(source, month: str):
             if r.get("ledgerVersion") != LEDGER_VERSION:
                 info["otherLedgerVersion"] += 1
                 continue
+            why = invalid_reason(r)
+            if why:
+                info["invalidRecords"] += 1
+                info["invalidReasons"][why] = info["invalidReasons"].get(why, 0) + 1
+                continue
+            if as_of is not None and parse_utc(r["generatedAt"]).date() > as_of:
+                info["futureDatedRecords"] += 1
+                continue
+            key = (r["lakeId"], r.get("runId"), r["generatedAt"])
+            if key in seen:
+                info["duplicateRecords"] += 1
+                continue
+            seen.add(key)
             records.append(r)
     info["inputsSha256"] = h.hexdigest()
     return records, info
@@ -337,7 +407,7 @@ class Group:
         return {"records": self.records, "horizons": hz, "labelPersistence": tr, "unknownTrendRecords": self.unknown_trend}
 
 
-DIMENSIONS = ["provider", "poolBasis", "historicalTier", "kind", "rulesVersion"]
+DIMENSIONS = ["provider", "poolBasis", "historicalTier", "kind", "rulesVersion", "bindingVersion", "baselineMethod"]
 
 
 def summarise(records, history: History, as_of: dt.date, grace: int) -> dict:
@@ -356,12 +426,34 @@ def summarise(records, history: History, as_of: dt.date, grace: int) -> dict:
             "byLake": {k: g.out() for k, g in sorted(by_lake.items())}}
 
 
+def _count(values) -> dict:
+    out: dict = {}
+    for v in values:
+        out[str(v)] = out.get(str(v), 0) + 1
+    return dict(sorted(out.items()))
+
+
 def score_month(predictions, history, month: str, as_of: dt.date, grace: int = 3) -> dict:
-    records, info = load_records(predictions, month)
+    records, info = load_records(predictions, month, as_of)
     hist = History(history)
     prim = primary_records(records)
     lakes = sorted({r["lakeId"] for r in records})
     no_history = [l for l in lakes if hist.get(l) is None]
+    latest = {l: (max(hist.get(l)) if hist.get(l) else None) for l in lakes if hist.get(l) is not None}
+    # A history that stopped updating: its last row is older than the grace window before as-of. Targets after it become `missing`, not scored.
+    stale_history = sorted(l for l, d in latest.items() if d is None or dt.date.fromisoformat(d) < as_of - dt.timedelta(days=grace + 1))
+    versions = {k: _count(r.get(k) for r in records) for k in ("rulesVersion", "bindingVersion", "baselineMethod", "baselineVersion")}
+    warnings = []
+    if len(versions["rulesVersion"]) > 1:
+        warnings.append("MIXED_RULES_VERSIONS: results are grouped by rulesVersion (byClass.rulesVersion); do not read `overall` as one rule set")
+    if len(versions["bindingVersion"]) > 1:
+        warnings.append("MIXED_BINDING_VERSIONS: results are grouped by bindingVersion (byClass.bindingVersion)")
+    if len(versions["baselineMethod"]) > 1:
+        warnings.append("MIXED_BASELINE_METHODS: results are grouped by baselineMethod (byClass.baselineMethod)")
+    if stale_history:
+        warnings.append(f"STALE_HISTORY: {len(stale_history)} lake(s) have no history row within the grace window before asOf; later targets count as pending/missing")
+    if info["invalidRecords"]:
+        warnings.append(f"INVALID_RECORDS: {info['invalidRecords']} record(s) skipped because scoring them would need hindsight or they are inconsistent: {info['invalidReasons']}")
     return {
         "scorerVersion": SCORER_VERSION,
         "ledgerVersion": LEDGER_VERSION,
@@ -379,7 +471,9 @@ def score_month(predictions, history, month: str, as_of: dt.date, grace: int = 3
             "labelPersistence": "forward windows from the base day: next 24 h change vs the stored STABLE floor and RAPID threshold; next 72 h mean rate class "
                                 "(STABLE if |mean| <= floor) against the predicted label's direction",
         },
-        "inputs": dict(info, records=len(records), primaryRecords=len(prim), lakes=len(lakes), lakesWithoutHistory=no_history),
+        "warnings": warnings,
+        "inputs": dict(info, records=len(records), primaryRecords=len(prim), lakes=len(lakes), lakesWithoutHistory=no_history,
+                       historyLatestDate=latest, versions=versions),
         "primary": summarise(prim, hist, as_of, grace),
         "allRecords": summarise(records, hist, as_of, grace),
     }
@@ -412,6 +506,13 @@ def write_out(out: str, month: str, text: str, run=None) -> str:
     return path
 
 
+def default_as_of(now_utc: dt.datetime) -> dt.date:
+    """Today (UTC) once 12:00Z has passed, else yesterday. Operator daily values for a lake-local day are only complete after that day ends
+    everywhere in the US (Hawaii ends at 10:00Z), so a run in the small hours must not treat today's partial day as a realisation."""
+    d = now_utc.date()
+    return d if now_utc.hour >= 12 else d - dt.timedelta(days=1)
+
+
 def previous_month(today: dt.date) -> str:
     last = today.replace(day=1) - dt.timedelta(days=1)
     return f"{last.year:04d}-{last.month:02d}"
@@ -426,7 +527,7 @@ def main(argv=None) -> int:
     ap.add_argument("--as-of", help="YYYY-MM-DD, the scoring date (default: today, UTC)")
     ap.add_argument("--grace-days", type=int, default=3)
     a = ap.parse_args(argv)
-    as_of = dt.date.fromisoformat(a.as_of) if a.as_of else dt.datetime.now(dt.timezone.utc).date()
+    as_of = dt.date.fromisoformat(a.as_of) if a.as_of else default_as_of(dt.datetime.now(dt.timezone.utc))
     month = a.month or previous_month(as_of)
     if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", month):
         ap.error("--month must be YYYY-MM")

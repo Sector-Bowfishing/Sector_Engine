@@ -22,7 +22,19 @@ import NIOHTTP1
 // MARK: - HTTP
 
 enum LakeFeedHTTP {
-    static let userAgent = "Sector-LakeBrain/1.0 (io.sector.co; read-only public data; contact mgcather07@gmail.com)"
+    /// The identity every Lake Brain request carries. No personal mailbox: a role contact is added only when the operator sets
+    /// `SECTOR_CONTACT` (an email or URL) in the job environment. See `userAgent(contact:)`.
+    static let baseUserAgent = "Sector-LakeBrain/1.0 (io.sector.co; Rehtac Labs; read-only public data)"
+
+    /// `baseUserAgent`, plus `; contact <value>` when `SECTOR_CONTACT` is set to a non-empty, printable, <= 120 character value.
+    static func userAgent(contact: String?) -> String {
+        guard let raw = contact?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty, raw.count <= 120,
+              raw.unicodeScalars.allSatisfy({ $0.value >= 0x20 && $0.value < 0x7F && $0 != "(" && $0 != ")" })
+        else { return baseUserAgent }
+        return String(baseUserAgent.dropLast()) + "; contact \(raw))"
+    }
+
+    static let userAgent = userAgent(contact: ProcessInfo.processInfo.environment["SECTOR_CONTACT"])
 
     /// Process-lifetime client with a long read timeout (a HADS chunk or an Access2Water listing can take well over the
     /// engine's 8 s cap). Never shut down, like `HTTP.client`.

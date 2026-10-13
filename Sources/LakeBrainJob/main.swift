@@ -4,7 +4,9 @@
 //  usage: LakeBrainJob [--dry-run DIR | --rtdb URL] [--archive gs://BUCKET | --archive DIR]
 //                      [--seed-archive gs://BUCKET] [--presence gs://BUCKET | DIR]
 //                      [--scope pilots|fleet] [--lake ID]... [--force] [--backfill] [--no-shared-tva-archive]
-//                      [--include-candidates]   (ONLY with --dry-run DIR)
+//                      [--include-candidates]   (ONLY with --dry-run DIR) [--no-ledger]
+//    --no-ledger        do NOT write the prospective prediction ledger (dry runs, debugging, replay, local tests). The ledger is ON by
+//                       default and the production job (jobs/lake-brain/deploy-job.sh) never passes this; the run prints `ledger: disabled`.
 //    --dry-run DIR      write every Brain RTDB path as a JSON file under DIR (no database)
 //    --read-rtdb URL    with --dry-run: read the live Brain RTDB (GET only) for plan()/previous profiles
 //    --rtdb URL         write the Brain RTDB (default $SECTOR_BRAIN_RTDB_URL)
@@ -59,6 +61,7 @@ let lakeArgs = flags("--lake")
 if !lakeArgs.isEmpty { options.lakeIds = lakeArgs }
 options.force = argv.contains("--force")
 options.backfill = argv.contains("--backfill")
+LakeBrainJobFlags.apply(argv: argv, to: &options)
 options.processingVersion = env["SECTOR_ENGINE_REVISION"] ?? env["K_REVISION"] ?? env["SECTOR_ENGINE_COMMIT"]
 
 var store: BrainStore? = nil
@@ -91,6 +94,10 @@ let shared: (String) -> LakeBrainArchive? = (argv.contains("--no-shared-tva-arch
     : { $0 == sharedTVA.bucket ? sharedTVA : nil }
 let feeds = PublicLakeLevelFeeds(sharedArchive: shared)
 if includeCandidates { print("▶ CANDIDATE DRY RUN: unreviewed bindings evaluated as if reviewed; local files only; outputs marked dryRunCandidate") }
+print("▶ \(LakeBrainJobFlags.ledgerLine(enabled: options.ledgerEnabled))")
+if let w = LakeBrainJobFlags.publishWithoutLedgerWarning(argv: argv, hasRTDB: rest != nil && flag("--dry-run") == nil) {
+    FileHandle.standardError.write(Data("LakeBrainJob: \(w)\n".utf8))
+}
 print("▶ archive \(hist?.uri ?? "none") · presence \(presenceArchive?.uri ?? "none") · scope \(options.scope.rawValue)\(options.force ? " · force" : "")\(options.backfill ? " · backfill" : "")")
 
 let r = await LakeBrainRunner.run(store: store, feeds: feeds, archive: hist, presenceArchive: presenceArchive, options: options)
@@ -105,6 +112,8 @@ for l in r.lakes {
 }
 for e in r.archiveErrors { print("  ! \(e)") }
 if let e = r.presenceError { print("  ! presence: \(e)") }
+print("  \(LakeBrainJobFlags.ledgerLine(enabled: r.ledgerStatus == "enabled"))"
+      + (r.ledgerObject.map { " · \($0) (\(r.ledgerRecords) records)" } ?? ""))
 print("\(r.ok ? "✓" : "✗") \(r.lakes.count) lakes in \(r.durationMs) ms · health \(r.health)")
 if let e = r.writeError { print("✗ \(e)") }
 await rest?.shutdown()
