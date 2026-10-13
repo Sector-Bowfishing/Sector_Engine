@@ -5,12 +5,12 @@
 ## Result
 | UTC day | NBM complete (worst lake) | RTMA-RU (worst lake) | METAR obs | Exec / max gap | Verdict | Reason |
 |---|---|---|---|---|---|---|
-| 2026-10-07 | 24/24* | 89/96 (92.7%) | 378 | 23 / 60 min | **INVALID** | Live clock started 04:59Z (first run 05:01Z, only 19 live hourly cycles possible); RTMA 92.7% < 95%. (*hours 00–04Z were backfilled, not live) |
+| 2026-10-07 | 24/24* | 89/96 (92.7%) | 378 | 20 / 60 min | **INVALID** | Live clock started 04:59Z (first run 05:01Z, only 19 live hourly cycles possible); RTMA 92.7% < 95%. (*hours 00–04Z were backfilled, not live) |
 | 2026-10-08 | 24/24 | 96/96 | 426 | 24 / 60 min | VALID | |
 | 2026-10-09 | 24/24 | 96/96 | 416 | 24 / 60 min | VALID | one NBM cycle (00Z) first archived `partial`, completed by catch-up |
 | 2026-10-10 | 24/24 | 96/96 | 440 | 24 / 60 min | VALID | |
 | 2026-10-11 | 24/24 | 96/96 | 453 | 24 / 60 min | VALID | 12Z NBM partial then completed; RTMA 21:45Z attempt failed once, filled by catch-up |
-| 2026-10-12 | 24/24 | 96/96 | 441 | 24 / 60 min | VALID | 06Z and 12Z partials completed; redeploy at ≈ 06:30Z with a 15-minute Brain-RTDB 401 window (see below) did not break the archive |
+| 2026-10-12 | 24/24 | 96/96 | 441 | 27 / 60 min | VALID | 06Z and 12Z partials completed; 3 extra manual/verification executions around the redeploy at ≈ 06:30Z with a 15-minute Brain-RTDB 401 window (see below) did not break the archive |
 | 2026-10-13 | 19/24 (so far) | 76/96 (so far) | — | open | OPEN | day not finished |
 
 **Valid live days: 5 (2026-10-08 … 2026-10-12). Invalid: 1 (10-07). Open: 1.**
