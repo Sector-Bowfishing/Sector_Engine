@@ -56,7 +56,12 @@ EXECUTORS = {
 NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)", "water-clarity": "MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md)"}
 
 
-def job_args(brain_id: str) -> list[str]:
+def job_args(brain_id: str) -> list[str] | None:
+    """Container-arg overrides for a brain's job. By default NONE: the jobs are deployed with their arguments baked in
+    (jobs/lake-brain, jobs/water-temp-brain deploy scripts) so `roles/run.invoker` is enough — `jobs.run` with overrides
+    needs `run.jobs.runWithOverrides` (run.developer). Set ORCHESTRATOR_OVERRIDE_ARGS=1 to pass scope overrides instead."""
+    if os.environ.get("ORCHESTRATOR_OVERRIDE_ARGS") != "1":
+        return None
     if brain_id == "lake-brain":
         args = ["--rtdb", RTDB_URL, "--scope", os.environ.get("ORCHESTRATOR_SCOPE", "pilots")]
         if os.environ.get("LAKE_BRAIN_ARCHIVE"):

@@ -27,6 +27,9 @@ def test_running_execution_or_lock_means_wait():
 
 
 def test_job_args_follow_scope(monkeypatch):
+    monkeypatch.delenv("ORCHESTRATOR_OVERRIDE_ARGS", raising=False)
+    assert o.job_args("lake-brain") is None and o.job_args("water-temp") is None     # invoker-only by default
+    monkeypatch.setenv("ORCHESTRATOR_OVERRIDE_ARGS", "1")
     monkeypatch.setenv("ORCHESTRATOR_SCOPE", "pilots")
     monkeypatch.setenv("LAKE_BRAIN_ARCHIVE", "gs://x")
     assert o.job_args("lake-brain") == ["--rtdb", o.RTDB_URL, "--scope", "pilots", "--archive", "gs://x"]

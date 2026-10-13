@@ -4,7 +4,7 @@
 # only for lakes with a newer pass (cost work 2026-10-13, Phase 8). Single task, 1 vCPU / 512 Mi.
 #
 # Least privilege: its own service account `lake-surface-dispatch` with
-#   roles/run.invoker            on job lake-surface-daily only (job-level, not project-level)
+#   custom role jobRunnerWithOverrides (run.jobs.run + runWithOverrides + get) on job lake-surface-daily only
 #   roles/storage.objectUser     on gs://$BUCKET (dispatch/<date>.json summaries + the attempted-pass ledger, overwritten daily; latest.json is read publicly)
 # It never redeploys lake-surface-daily (live source is feat/clarity-algal-warning @ 03937913 — LINEAGE.md).
 #
@@ -32,8 +32,15 @@ echo "▶ service account $SA"
 if ! gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1; then
   run gcloud iam service-accounts create "$SA_NAME" --project "$PROJECT_ID" --display-name "Lake surface dispatch (satellite discovery)"
 fi
+# jobs.run WITH overrides (--lakes, taskCount) needs run.jobs.runWithOverrides, which roles/run.invoker lacks and
+# roles/run.developer over-grants: a narrow custom role bound on the heavy job only.
+ROLE_ID="${ROLE_ID:-jobRunnerWithOverrides}"
+if ! gcloud iam roles describe "$ROLE_ID" --project "$PROJECT_ID" >/dev/null 2>&1; then
+  run gcloud iam roles create "$ROLE_ID" --project "$PROJECT_ID" --title "Cloud Run job runner (with overrides)" \
+    --permissions run.jobs.run,run.jobs.runWithOverrides,run.jobs.get --stage GA
+fi
 run gcloud run jobs add-iam-policy-binding "$HEAVY_JOB" --project "$PROJECT_ID" --region "$REGION" \
-  --member "serviceAccount:$SA" --role roles/run.invoker
+  --member "serviceAccount:$SA" --role "projects/$PROJECT_ID/roles/$ROLE_ID"
 run gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" --member "serviceAccount:$SA" --role roles/storage.objectUser
 
 echo "▶ job $JOB (commit $COMMIT)"
