@@ -296,7 +296,7 @@ Each classification is its own field; none is folded into another. `differenceFr
 
 | Store | Content |
 |---|---|
-| `gs://sector-lake-brain` | Private: uniform access, public access prevention enforced, versioning on, us-central1. Created 2026-10-12. Holds `history/{k}/daily.csv`, `baselines/{k}/*.json` and `presence/…` |
+| `gs://sector-lake-brain` | Private: uniform access, public access prevention enforced, versioning on, us-central1. Created 2026-10-12. Holds `history/{k}/daily.csv`, `baselines/{k}/*.json`, `presence/…` and the prospective prediction ledger `predictions/{yyyy}/{MM}/{dd}/{HHmmss}Z-{runId}.jsonl` (immutable; see `LAKE_BRAIN_PREDICTION_LEDGER.md`) |
 | `gs://sector-water-temp-archive/water-temp/tva/{loc}/{date}.json` | The Water Temp lane's hourly TVA archive. **Read-only** for the Lake Brain (shared, approved 2026-10-12; no new TVA poller). Covers GVDA1, WHLA1, WLSA1, PICT1 and NKJT1 since 2026-10-06 |
 | Brain RTDB | Summaries only |
 

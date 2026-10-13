@@ -27,6 +27,13 @@ public struct LakeBrainRunOptions: Sendable {
     /// Pull full operator history (decades of CWMS daily) instead of the recent tail.
     public var backfill = false
     public var processingVersion: String? = nil
+    /// Prospective prediction ledger (docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md). On by default; never affects the publish.
+    public var ledgerEnabled = true
+    /// Where the ledger object goes. Default: a live run writes to the history archive; a dry run (local RTDB store)
+    /// writes under `<dry-run dir>/_ledger` and never to GCS.
+    public var ledgerArchive: LakeBrainArchive? = nil
+    /// Run id in the ledger object name; default is a short random id.
+    public var runId: String? = nil
     public init() {}
 }
 
@@ -49,6 +56,10 @@ public struct LakeBrainRunResult: Sendable {
     public var writeError: String? = nil
     public var archiveErrors: [String] = []
     public var presenceError: String? = nil
+    /// Prediction ledger outcome: object path (nil when nothing was written), record count, and a warning if the write failed.
+    public var ledgerObject: String? = nil
+    public var ledgerRecords = 0
+    public var ledgerWarning: String? = nil
     public var ok: Bool { writeError == nil && health != "FAILED" }
 }
 
@@ -262,7 +273,7 @@ public enum LakeBrainRunner {
             for r in out { try await store.update(try lakePaths(r, presence: presence)) }
             let finished = Date()
             result.durationMs = Int(finished.timeIntervalSince(t0) * 1000)
-            guard options.lakeIds == nil else { return result }
+            guard options.lakeIds == nil else { await appendLedger(&result, lakes: lakes, store: store, archive: archive, options: options, now: now); return result }
             let registry = registryEntry(result: result, options: options, now: finished, presence: presence)
             var tail: [String: Data] = [
                 "brains/\(LakeBrainSpec.brainId)": try BrainJSON.encode(registry),
@@ -284,6 +295,7 @@ public enum LakeBrainRunner {
             for e in activity(previous: previousRegistry, current: registry, now: finished) { tail["activity/\(e.id)"] = try BrainJSON.encode(e) }
             try await store.update(tail)
             _ = try? await BrainActivity.prune(store: store, brainId: LakeBrainSpec.brainId, now: finished)
+            await appendLedger(&result, lakes: lakes, store: store, archive: archive, options: options, now: now)
         } catch {
             result.writeError = "\(error)"; result.health = "FAILED"
             let at = BrainPlatform.iso(Date())
@@ -294,6 +306,27 @@ public enum LakeBrainRunner {
             ])
         }
         return result
+    }
+
+    // MARK: prediction ledger
+
+    /// After the RTDB writes succeeded: append the run's prediction object. Cannot throw and cannot change `ok`/`health`:
+    /// a failure is only `ledgerWarning` (and a line in `archiveErrors` so the job prints it).
+    static func appendLedger(_ result: inout LakeBrainRunResult, lakes: [DirectoryLake], store: BrainStore,
+                             archive: LakeBrainArchive?, options: LakeBrainRunOptions, now: Date) async {
+        guard options.ledgerEnabled else { return }
+        let target: LakeBrainArchive?
+        if let explicit = options.ledgerArchive { target = explicit }
+        else if let local = store as? LocalDirectoryStore { target = LocalLakeBrainArchive(directory: local.dir.appendingPathComponent("_ledger").path) }
+        else if let rt = store as? ReadThroughDryRunStore { target = LocalLakeBrainArchive(directory: rt.writer.dir.appendingPathComponent("_ledger").path) }
+        else { target = archive }
+        guard let target else { return }
+        var pool: [String: (Bool?, String?)] = [:]
+        for l in lakes { pool[l.id] = (l.poolBasis.map { $0 == .fullPool }, l.poolBasis?.rawValue) }
+        let runId = options.runId ?? String(UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "").prefix(12))
+        let o = await LakePredictionLedger.append(results: result.lakes, regulated: pool, archive: target, runId: runId, now: now)
+        result.ledgerObject = o.path; result.ledgerRecords = o.records; result.ledgerWarning = o.warning
+        if let w = o.warning { result.archiveErrors.append(w) }
     }
 
     // MARK: paths
