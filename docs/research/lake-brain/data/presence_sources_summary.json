@@ -148,36 +148,6 @@
     "historical": 36,
     "reported": 2
    }
-  },
-  "pilot": {
-   "Guntersville|AL": {
-    "inRangeUnconfirmed": 1,
-    "reported": 2,
-    "historical": 4,
-    "established": 3
-   },
-   "Wheeler|AL": {
-    "inRangeUnconfirmed": 1,
-    "historical": 3,
-    "established": 4,
-    "stocked": 1
-   },
-   "Wilson|AL": {
-    "inRangeUnconfirmed": 3,
-    "established": 1,
-    "historical": 4,
-    "reported": 2
-   },
-   "Pickwick Lake|TN": {
-    "inRangeUnconfirmed": 3,
-    "established": 3,
-    "historical": 4,
-    "reported": 1
-   },
-   "Lake Hartwell|SC": {
-    "established": 2,
-    "inRangeUnconfirmed": 1
-   }
   }
  },
  "apiTests": {
@@ -679,37 +649,6 @@
    "alligator_gar": 6,
    "black_carp": 4
   },
-  "pilot": {
-   "Guntersville|AL": {
-    "speciesWithIndependentRecord": 7,
-    "indep_priv_established": 3,
-    "indep_priv_historical": 2,
-    "indep_priv_reported": 2
-   },
-   "Wheeler|AL": {
-    "speciesWithIndependentRecord": 8,
-    "indep_priv_established": 4,
-    "indep_priv_stocked": 1,
-    "indep_priv_historical": 3
-   },
-   "Wilson|AL": {
-    "speciesWithIndependentRecord": 7,
-    "indep_priv_reported": 2,
-    "indep_priv_established": 1,
-    "indep_priv_historical": 4
-   },
-   "Pickwick Lake|TN": {
-    "speciesWithIndependentRecord": 8,
-    "indep_priv_established": 3,
-    "indep_priv_reported": 1,
-    "indep_priv_historical": 3,
-    "indep_priv_inRangeUnconfirmed": 1
-   },
-   "Lake Hartwell|SC": {
-    "speciesWithIndependentRecord": 2,
-    "indep_priv_established": 2
-   }
-  },
   "notAssessedButIndependentRecord": {
    "bowfin": 79,
    "freshwater_drum": 146
@@ -1014,5 +953,6 @@
    "verdict": "DEAD_END",
    "note": "stocking PDFs moved/404"
   }
- }
+ },
+ "redaction": "per-lake pilot comparisons of private presence labels removed from the public-safe summary (2026-10-13)"
 }

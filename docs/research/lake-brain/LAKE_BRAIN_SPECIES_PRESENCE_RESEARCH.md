@@ -61,18 +61,8 @@ Per species (rows):
 | shortnose_gar | 9 | 1 | 0 | 26 | 0 | 211 | 374 |
 | spotted_gar | 32 | 2 | 0 | 36 | 0 | 154 | 397 |
 
-### 2.3 Pilot lakes (published `/lakes/*/speciesPresence`, aggregate)
-Non-unknown species per pilot lake, by state:
-
-| Lake | established | reported | stocked | historical | inRangeUnconfirmed |
-|---|---|---|---|---|---|
-| Guntersville, AL | 3 | 2 | 0 | 4 | 1 |
-| Wheeler, AL | 4 | 0 | 1 | 3 | 1 |
-| Wilson, AL | 1 | 2 | 0 | 4 | 3 |
-| Pickwick Lake, TN | 3 | 1 | 0 | 4 | 3 |
-| Lake Hartwell, SC | 2 | 0 | 0 | 0 | 1 |
-
-Qualitatively: the Alabama and Tennessee reservoirs carry established carp and gar and a long `historical` tail for buffalo; on Guntersville bighead and silver carp are `reported` at T4. Hartwell has only 3 stated species, which reflects thin public data (section 7 shows only 2 species with an independent record there). On Guntersville the Biological Brain discrepancies DISC-001/002/003 (grass carp, smallmouth buffalo, bigmouth/black buffalo) all concern `historical` labels versus the shipping app.
+### 2.3 Pilot lakes
+Per-lake presence labels are private research output and are intentionally **not reproduced here**. Aggregate finding only: the Alabama/Tennessee reservoirs carry a mix of `established`, `reported` and `historical` states, and Hartwell is thin on public data. The per-lake comparison is kept in the private research workspace.
 
 ### 2.4 Methodological weaknesses
 1. State-level range prior is 59 % of stated rows. `inRangeUnconfirmed` says "the species occurs somewhere in this state", not that it is in this lake. For gars and buffalo it is the dominant state (e.g. longnose gar 283 of 404 stated rows).
@@ -217,7 +207,7 @@ Private state for the 956 pairs: established 332, historical 347, inRangeUnconfi
 | shortnose_gar | 41 | 26 | 14 | 1 | 0.63 | 10 | 6 |
 | spotted_gar | 69 | 49 | 19 | 1 | 0.71 | 34 | 23 |
 
-Pilot lakes (species with an independent in-waterbody record, and how the private release labels them): Guntersville 7 (3 established, 2 reported, 2 historical); Wheeler 8 (4 established, 1 stocked, 3 historical); Wilson 7 (1 established, 2 reported, 4 historical); Pickwick 8 (3 established, 1 reported, 3 historical, 1 range-only); Hartwell 2 (2 established). No pilot lake had an independent record for a species the private release labels `unknown`.
+Pilot-lake comparisons are withheld from the public record (private labels). In aggregate, no pilot lake had an independent record for a species the private release labels `unknown`.
 
 Agency cross-check, Minnesota (9 lakes with a LakeFinder species list), common carp: agency lists it on 4 lakes, all 4 are `established` in the private release; on the 5 lakes where the agency does not list it, the private release says `unknown` (2) or `inRangeUnconfirmed` (3), so no private positive is contradicted. The sample is small.
 
