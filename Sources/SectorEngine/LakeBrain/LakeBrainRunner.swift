@@ -428,6 +428,15 @@ public enum LakeBrainRunner {
         "UNAVAILABLE": "No reading from any reviewed source.",
     ]
 
+    /// Fleet-wide binding gate, independent of what this run evaluated: how many directory lakes have a REVIEWED binding (published)
+    /// and how many only a CANDIDATE (machine-verified, awaiting human acceptance, never published). `bindingStatus` above counts only
+    /// the lakes this run published, so on its own it hides the candidate fleet from Sector Ops.
+    static func fleetBindingBreakdown() -> [String: Int] {
+        var m: [String: Int] = [:]
+        for b in LakeSourceBindings.all { m[b.status.rawValue, default: 0] += 1 }
+        return m
+    }
+
     static func registryEntry(result: LakeBrainRunResult, options: LakeBrainRunOptions, now: Date,
                               presence: LakePresenceIndex?) -> LakeBrainRegistryEntry {
         var readiness: [String: Int] = [:], cap: [String: Int] = [:], base: [String: Int] = [:]
@@ -453,7 +462,7 @@ public enum LakeBrainRunner {
             staleAfterHours: LakeBrainSpec.staleAfterHours, lastSuccessfulRun: BrainPlatform.iso(now), lastError: nil,
             deploymentVersion: options.processingVersion, modelVersion: LakeBrainSpec.modelVersion,
             baselineMethod: LakeBrainSpec.baselineMethod, bindingVersion: LakeSourceBindings.version,
-            breakdowns: ["readiness": readiness, "sourceCapability": cap, "bindingStatus": binding, "baselineStatus": base,
+            breakdowns: ["readiness": readiness, "sourceCapability": cap, "bindingStatus": binding, "fleetBindingStatus": fleetBindingBreakdown(), "baselineStatus": base,
                          "levelState": level, "trendState": trend, "historicalState": hist],
             versions: [.init(version: "\(LakeBrainSpec.brainVersion) · \(LakeBrainSpec.modelVersion)", date: "2026-10-13",
                              note: "Rules v2 (pre-registered): history tiers gate VERY_UNUSUAL (≥ 15 years), trend from the 72 h mean (floors 0.10 / 0.05 ft), RAPID = max(seasonal p95 |Δ24h|, 0.25 ft). baselineStatus (≥ 5 years SUFFICIENT) and NOT_VALIDATED unchanged.",
