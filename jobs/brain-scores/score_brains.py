@@ -172,7 +172,9 @@ def main() -> int:
     for k, b in betas.items():
         print(f"{'BETA':22s} {b['lakeId']:18s} {b['betaReadiness']:10s} blockers {[x['code'] + ':' + str(x.get('slot')) for x in b['blockers']]} warnings {len(b['warnings'])}")
     if a.if_changed:                                          # publish only after a change (cost work 2026-10-13, Phase 14)
+        before = len(control_updates)
         control_updates = changed_control(control_updates, db.get("control") or {})
+        print(f"{'IF-CHANGED':22s} {len(control_updates)} of {before} control path(s) differ from what is published")
     if a.write:
         if updates:
             db.update(updates)
