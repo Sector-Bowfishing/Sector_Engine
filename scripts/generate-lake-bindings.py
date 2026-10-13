@@ -32,7 +32,7 @@ EXCLUDED = os.path.join(DATA, "bindings.proposed.v1.excluded.json")
 ACCEPTED = os.path.join(DATA, "accepted_batch.json")
 OUT = os.path.join(ROOT, "Sources", "SectorEngine", "LakeBrain", "LakeSourceBindingsGenerated.swift")
 
-ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps"}
+ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps", "twdb"}
 FORBIDDEN_PROVIDERS = {"nipsco", "njwsa", "duke", "wps-hydro", "alliant", "srp", "cnppid", "nppd", "utahlake", "aep", "eccc", "mncsg",
                        "sjrwmd", "nhdes"}
 

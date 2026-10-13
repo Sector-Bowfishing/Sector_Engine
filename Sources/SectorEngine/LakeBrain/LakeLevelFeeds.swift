@@ -88,6 +88,7 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         case .a2w: return await fleet.a2wRecent(ref)
         case .rise: return await fleet.riseRecent(ref, hours: hours, now: now)
         case .nwps: return await fleet.nwpsRecent(ref, since: now.addingTimeInterval(-Double(hours) * 3600))
+        case .twdb: return await fleet.twdbRecent(ref, hours: hours, now: now)
         }
     }
 
@@ -154,7 +155,7 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
                 chunkStart = chunkEnd
             }
             return LakeDailyHistory.dedupe(out)
-        case .usgsDaily, .riseDaily, .hadsDaily:
+        case .usgsDaily, .riseDaily, .hadsDaily, .twdbDaily:
             return await fleetDaily(source, since: since, now: now, timeZone: timeZone)
         case .sharedTVAArchive:
             return nil

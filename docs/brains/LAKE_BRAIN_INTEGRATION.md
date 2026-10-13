@@ -177,7 +177,7 @@ Nothing in this change publishes to any RTDB or bucket, and nothing is deployed.
 
 ### 5.4 Provider adapters
 
-`LevelSeriesRef.Provider` is `tva | cwms | usgs | a2w | rise | nwps` (`LakeLevelFeedsFleet.swift`; provider table, traps and live dry-run results in `docs/brains/LAKE_BRAIN_PROVIDERS.md`). TWDB has no strict lake in the proposed table, so it has no adapter yet.
+`LevelSeriesRef.Provider` is `tva | cwms | usgs | a2w | rise | nwps | twdb` (`LakeLevelFeedsFleet.swift`; provider table, traps and live dry-run results in `docs/brains/LAKE_BRAIN_PROVIDERS.md`). TWDB has no strict-eligible primary lake in the proposed table; its adapter (`LakeLevelFeedsTWDB.swift`) is built and tested but its transport is gated off pending the robots.txt / terms question (providers doc section 4).
 
 ### 5.5 Candidate dry run
 

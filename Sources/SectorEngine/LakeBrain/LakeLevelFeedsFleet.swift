@@ -139,6 +139,8 @@ actor HADSGate {
 final class LakeFleetClients: @unchecked Sendable {
     let a2w = A2WDistrictCache()
     let hads = HADSGate()
+    /// TWDB pacing gate + transport (LakeLevelFeedsTWDB.swift).
+    let twdbTransport = TWDBTransport.live()
     static let a2wBase = "https://water.usace.army.mil/cda/reporting"
     static let nwpsBase = "https://api.water.noaa.gov/nwps/v1"
     static let riseBase = "https://data.usbr.gov/rise/api"
@@ -479,6 +481,8 @@ extension PublicLakeLevelFeeds {
             return await fleet.riseDaily(item: item, since: since)
         case .hadsDaily(let lid, let pe, let offset):
             return await fleet.hadsDaily(lid: lid, pe: pe, offsetFt: offset, since: since, now: now, timeZone: timeZone)
+        case .twdbDaily(let slug, let datum, let offset):
+            return await fleet.twdbDaily(slug: slug, datum: datum, offsetFt: offset, since: since, now: now)
         default:
             return nil
         }
@@ -499,6 +503,8 @@ extension LakeHistorySource {
         case .riseDaily(let item): return "rise:\(item) (daily)"
         case .hadsDaily(let lid, let pe, let off):
             return "hads:\(lid):\(pe) (IEM HADS archive, daily median)" + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
+        case .twdbDaily(let slug, let datum, let off):
+            return "twdb:\(slug) (TWDB Water Data for Texas, estimated daily average, file datum \(datum))" + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
         }
     }
 }

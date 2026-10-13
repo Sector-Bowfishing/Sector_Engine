@@ -1,0 +1,103 @@
+{
+ "Amistad": {
+  "area": 22483.28,
+  "condensed_name": "Amistad",
+  "conservation_capacity": 1813408.0,
+  "conservation_pool_elevation": 1117.0,
+  "conservation_storage": 791141.0,
+  "dead_pool_elevation": 930.0,
+  "elevation": 1059.79,
+  "flood_control_lake": "Y",
+  "full_name": "Amistad Reservoir",
+  "gauge_location": {
+   "coordinates": [
+    -101.05583,
+    29.44972
+   ],
+   "type": "Point"
+  },
+  "percent_full": 43.6,
+  "short_name": "Amistad",
+  "tags": [
+   "climate_edwards_plateau",
+   "monitored",
+   "municipal_brownsville",
+   "municipal_laredo",
+   "region_plateau",
+   "water_supply",
+   "texas",
+   "major",
+   "basin_rio_grande"
+  ],
+  "timestamp": "2026-10-13",
+  "volume": 845060.0,
+  "volume_under_conservation_pool_elevation": 3226704.0
+ },
+ "SamRayburn": {
+  "area": 82816.8,
+  "condensed_name": "SamRayburn",
+  "conservation_capacity": 2857077.0,
+  "conservation_pool_elevation": 164.4,
+  "conservation_storage": 1804619.0,
+  "dead_pool_elevation": 105.0,
+  "elevation": 153.68,
+  "flood_control_lake": "Y",
+  "full_name": "Sam Rayburn Reservoir",
+  "gauge_location": {
+   "coordinates": [
+    -94.1060257,
+    31.06075096
+   ],
+   "type": "Point"
+  },
+  "percent_full": 63.2,
+  "short_name": "Sam Rayburn",
+  "tags": [
+   "climate_east_texas",
+   "monitored",
+   "municipal_beaumont_port_arthur",
+   "region_east_texas",
+   "water_supply",
+   "texas",
+   "major",
+   "basin_neches"
+  ],
+  "timestamp": "2026-10-12",
+  "volume": 1823575.0,
+  "volume_under_conservation_pool_elevation": 2876033.0
+ },
+ "Travis": {
+  "area": 18322.44,
+  "condensed_name": "Travis",
+  "conservation_capacity": 1098044.0,
+  "conservation_pool_elevation": 681.0,
+  "conservation_storage": 1039394.0,
+  "dead_pool_elevation": 535.75,
+  "elevation": 677.86,
+  "flood_control_lake": "Y",
+  "full_name": "Lake Travis",
+  "gauge_location": {
+   "coordinates": [
+    -97.90723419,
+    30.39186859
+   ],
+   "type": "Point"
+  },
+  "percent_full": 94.7,
+  "short_name": "Travis",
+  "tags": [
+   "climate_south_central",
+   "monitored",
+   "municipal_austin",
+   "region_lower_colorado",
+   "water_supply",
+   "highland",
+   "texas",
+   "major",
+   "basin_colorado"
+  ],
+  "timestamp": "2026-10-13",
+  "volume": 1056426.0,
+  "volume_under_conservation_pool_elevation": 1115076.239555
+ }
+}

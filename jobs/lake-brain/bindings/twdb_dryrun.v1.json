@@ -1,0 +1,1821 @@
+{
+ "fetchedAt": "2026-10-13T20:22:21Z",
+ "inputs": {
+  "bindings.proposed.v1.excluded.json": "94d27967b5079f5226b6fbcc3e2f514e326e703c5a8fe06467bf074019c0cc9f",
+  "bindings.proposed.v1.json": "9a460c72c9d03a4d150328a4843d7c6719b0fd7ac723f5a604ea619ef0b5f6a9",
+  "candidates.csv": "0aff732a190f605db712823df7d49b6ea51dca5402613da8eff2d1840e14efe3",
+  "directory_lakes_2026-10-13.json": "9af94218486df8944c5e71c480c1301dbea7f2f69ab727c42805d646d754a0a3",
+  "history_overlap.json": "6dcfb3e817c15f6823f0bf4f01133a8a83ff6ee2c1a5bfe37cf788ca74f9b3af",
+  "individual/amistad.csv": "09c9ffa59cf002401037f5ac64e349ecbea771cc338b4490ecb0160e802a46e2",
+  "individual/buchanan.csv": "28bc55a5e39f1c9eba2e397fcc5e3acc38553b464c0bb3ebc8f3c45105218f4c",
+  "individual/caddo.csv": "a91a0257a2d81ba8c239bb92c0c79ad263e14ff00cba3bcceed3dd7918240048",
+  "individual/canyon.csv": "069732a1a0185a08c8f13c2b3dd5bbb4fe854c968612bbf9e098a92ae50e9d5d",
+  "individual/cedar-creek.csv": "970ab308843b3c4877c0fe2158f48e06fa1fecb27cfb6ac4dfd962efcb776088",
+  "individual/conroe.csv": "8aeee05ebfcb5c06b8033debfb326756bc95f7117dea84d0e180db276895a2dd",
+  "individual/elephant-butte.csv": "0c3a5520513f9f7c2f9096cf37ce4e8f5242df448398c0fb0c4762f522787ad0",
+  "individual/falcon.csv": "7509452eb5e2a427b1b054c451ddc1025385f78fd59f0080691c144111878e8f",
+  "individual/fork.csv": "a0bf1f173ee6df2316408d9e53cbb28cd01282649b9783f2658bea6150dba965",
+  "individual/livingston.csv": "20f41d1346321b2cbd15806e46bb4de2b95f41e55a41f82e69d46a5cc6a06527",
+  "individual/possum-kingdom.csv": "5231b5a101ad1bc0cf837bae3835809b2fcd96d9b05e87f6e908b5970e8a6847",
+  "individual/sam-rayburn.csv": "07dee82a22e6a8275d2e657fea9518093437ef1c1a04187de2a3bf91f2b46542",
+  "individual/tawakoni.csv": "686a68f864b38fa7fdf21f84aeb1ddc52e4ef06dfbe333dedc4ba1f2a67ce5b1",
+  "individual/texoma.csv": "bee8d2232be5849f51550c8e37f1d089133b2836084ab07b225243398918176e",
+  "individual/toledo-bend.csv": "7dec8e630ca2ad22e35363098e13b657d21b95363e11b73f77f8deffa558f8dc",
+  "individual/travis.csv": "5e160e4a9fa7fb41e9e243e79ffdad35c23f2ced200419b4410e65f39718b8ec",
+  "recent-conditions.json": "616458520977f8f8836cbc52d2daae64f07dae77a044db79cf22872b3c55bf0d",
+  "reference.json": "80b68e46ce7078c1c93384bbdfaa388db573ac84b5cad5d9dce03f42533f5634"
+ },
+ "lakes": [
+  {
+   "agreement": {
+    "daysCompared": 6,
+    "diffsFt": [
+     -0.348,
+     -0.038,
+     -0.018,
+     -0.01,
+     -0.015,
+     0.033
+    ],
+    "medianAbsFt": 0.026,
+    "medianSignedFt": -0.017,
+    "origin": {
+     "provider": "cwms",
+     "series": "E Butte.Elev.Inst.15Minutes.0.DCP-rev",
+     "station": "SPA"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": false,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [
+    "datumNGVD29"
+   ],
+   "datumIsNGVD29": false,
+   "datumLabel": "NGVD29 -43.3",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1915-03-21",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 13,
+    "completeYears": 109,
+    "continuityPass": true,
+    "glitchDaysDropped": 3,
+    "median365Ft": 4305.64,
+    "median365MinusLiveFt": 10.02,
+    "nonPositiveRows": 0,
+    "rawDays": 40636
+   },
+   "historyOverlap": null,
+   "lakeId": "Elephant Butte Reservoir|NM",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 4295.62,
+   "matchDistKm": 10.7,
+   "pool": {
+    "conservationMinusDirectoryFt": -0.7,
+    "conservationPoolFt": 4406.297704,
+    "deadPoolFt": 4231.5,
+    "directoryFullPoolFt": 4407,
+    "levelFt": 4295.62,
+    "levelMinusConservationFt": -110.68,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": null,
+   "referenceCandidate": {
+    "provider": "cwms",
+    "series": "E Butte.Elev.Inst.15Minutes.0.DCP-rev",
+    "station": "SPA"
+   },
+   "role": "none-today",
+   "roleWhy": "lake is excluded for coordinate-flag; TWDB is a relay of the same gauges and cures none of it",
+   "slug": "elephant-butte",
+   "table": {
+    "reasons": [
+     "coordinate-flag"
+    ],
+    "researchProvider": "rise",
+    "researchStatus": "VERIFIED_CORROBORATED",
+    "state": "excluded"
+   },
+   "twdbKey": "ElephantButte",
+   "twdbName": "Elephant Butte Lake"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.047,
+     -0.048,
+     -0.053,
+     -0.055,
+     -0.049,
+     -0.049,
+     -0.05
+    ],
+    "medianAbsFt": 0.049,
+    "medianSignedFt": -0.049,
+    "origin": {
+     "provider": "nwps",
+     "series": "HPIRG",
+     "station": "AMIT2"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1968-06-01",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 2,
+    "completeYears": 57,
+    "continuityPass": true,
+    "glitchDaysDropped": 2,
+    "median365Ft": 1053.32,
+    "median365MinusLiveFt": -6.47,
+    "nonPositiveRows": 0,
+    "rawDays": 21301
+   },
+   "historyOverlap": null,
+   "lakeId": "Amistad Reservoir|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 1059.79,
+   "matchDistKm": 10.7,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 1117.0,
+    "deadPoolFt": 930.0,
+    "directoryFullPoolFt": 1117,
+    "levelFt": 1059.79,
+    "levelMinusConservationFt": -57.21,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": null,
+   "referenceCandidate": {
+    "provider": "nwps",
+    "series": "HPIRG",
+    "station": "AMIT2"
+   },
+   "role": "none-today",
+   "roleWhy": "research row is VERIFIED_ENVELOPE (post-hoc, flagged-wave1): excluded by Michael's eligibility decisions, which this work does not change",
+   "slug": "amistad",
+   "table": {
+    "reasons": [
+     "post-hoc",
+     "flagged-wave1"
+    ],
+    "researchProvider": "twdb",
+    "researchStatus": "VERIFIED_ENVELOPE",
+    "state": "excluded"
+   },
+   "twdbKey": "Amistad",
+   "twdbName": "Amistad Reservoir"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.11,
+     -0.12,
+     0.06,
+     0.05,
+     0.02,
+     0.04,
+     0.0
+    ],
+    "medianAbsFt": 0.05,
+    "medianSignedFt": 0.02,
+    "origin": {
+     "provider": "nwps",
+     "series": "HPIRZ",
+     "station": "LCOL1"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "2012-06-17",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 58,
+    "completeYears": 9,
+    "continuityPass": true,
+    "glitchDaysDropped": 1,
+    "median365Ft": 168.83,
+    "median365MinusLiveFt": 1.35,
+    "nonPositiveRows": 0,
+    "rawDays": 4712
+   },
+   "historyOverlap": null,
+   "lakeId": "Caddo Lake|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 167.48,
+   "matchDistKm": 17.4,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 168.5,
+    "deadPoolFt": 166.0,
+    "directoryFullPoolFt": 168.5,
+    "levelFt": 167.48,
+    "levelMinusConservationFt": -1.02,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": null,
+   "referenceCandidate": {
+    "provider": "nwps",
+    "series": "HPIRZ",
+    "station": "LCOL1"
+   },
+   "role": "none-today",
+   "roleWhy": "lake is excluded for coordinate-flag; TWDB is a relay of the same gauges and cures none of it",
+   "slug": "caddo",
+   "table": {
+    "reasons": [
+     "coordinate-flag"
+    ],
+    "researchProvider": "a2w",
+    "researchStatus": "VERIFIED",
+    "state": "excluded"
+   },
+   "twdbKey": "Caddo",
+   "twdbName": "Caddo Lake"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     0.0,
+     0.0,
+     -0.005,
+     0.002,
+     -0.002,
+     -0.002,
+     -0.004
+    ],
+    "medianAbsFt": 0.002,
+    "medianSignedFt": -0.002,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08167700"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": false,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [
+    "historyContinuity"
+   ],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1988-10-01",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 9780,
+    "completeYears": 35,
+    "continuityPass": false,
+    "glitchDaysDropped": 0,
+    "median365Ft": 888.48,
+    "median365MinusLiveFt": -19.4,
+    "nonPositiveRows": 0,
+    "rawDays": 13645
+   },
+   "historyOverlap": null,
+   "lakeId": "Canyon Lake|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 907.88,
+   "matchDistKm": 4.9,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 909.0,
+    "deadPoolFt": 775.0,
+    "directoryFullPoolFt": 909,
+    "levelFt": 907.88,
+    "levelMinusConservationFt": -1.12,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": null,
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08167700"
+   },
+   "role": "none-today",
+   "roleWhy": "lake is excluded for history-live-mismatch; TWDB is a relay of the same gauges and cures none of it",
+   "slug": "canyon",
+   "table": {
+    "reasons": [
+     "history-live-mismatch"
+    ],
+    "researchProvider": "a2w",
+    "researchStatus": "VERIFIED",
+    "state": "excluded"
+   },
+   "twdbKey": "Canyon",
+   "twdbName": "Canyon Lake"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.002,
+     0.0,
+     0.0,
+     0.003,
+     0.003,
+     0.003,
+     0.0
+    ],
+    "medianAbsFt": 0.002,
+    "medianSignedFt": 0.0,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08063010"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1996-10-02",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 11636,
+    "completeYears": 29,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 318.6,
+    "median365MinusLiveFt": 2.15,
+    "nonPositiveRows": 0,
+    "rawDays": 10929
+   },
+   "historyEffect": {
+    "currentBasisYears": 29,
+    "currentCompleteYears": 29,
+    "currentTier": "FULL",
+    "improvesTier": false,
+    "twdbBasisYears": 29,
+    "twdbCompleteYears": 29,
+    "twdbTier": "FULL",
+    "useful": false
+   },
+   "historyOverlap": null,
+   "lakeId": "Cedar Creek Reservoir|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 316.45,
+   "matchDistKm": 9.7,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 322.0,
+    "deadPoolFt": 263.5,
+    "directoryFullPoolFt": 322,
+    "levelFt": 316.45,
+    "levelMinusConservationFt": -5.55,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": null,
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "cedar-creek"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08063010"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on a2w; TWDB can only be a relay fallback / history source",
+   "slug": "cedar-creek",
+   "table": {
+    "historyCompleteYears": 29,
+    "historyKinds": [
+     "usgsDaily"
+    ],
+    "liveProviders": [
+     "a2w",
+     "cwms",
+     "usgs"
+    ],
+    "primaryProvider": "a2w",
+    "state": "proposed"
+   },
+   "twdbKey": "CedarCreek",
+   "twdbName": "Cedar Creek Reservoir"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     0.014,
+     0.002,
+     0.005,
+     0.001,
+     0.0,
+     0.001,
+     -0.003
+    ],
+    "medianAbsFt": 0.002,
+    "medianSignedFt": 0.001,
+    "origin": {
+     "provider": "nwps",
+     "series": "HPIRG",
+     "station": "FALT2"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1953-08-23",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 0,
+    "completeYears": 72,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 257.55,
+    "median365MinusLiveFt": -3.87,
+    "nonPositiveRows": 0,
+    "rawDays": 26696
+   },
+   "historyOverlap": null,
+   "lakeId": "Falcon Lake|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 261.42,
+   "matchDistKm": 23.2,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 301.2,
+    "deadPoolFt": 204.34,
+    "directoryFullPoolFt": 301.2,
+    "levelFt": 261.42,
+    "levelMinusConservationFt": -39.78,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": null,
+   "referenceCandidate": {
+    "provider": "nwps",
+    "series": "HPIRG",
+    "station": "FALT2"
+   },
+   "role": "none-today",
+   "roleWhy": "research row is VERIFIED_ENVELOPE (post-hoc, flagged-wave1): excluded by Michael's eligibility decisions, which this work does not change",
+   "slug": "falcon",
+   "table": {
+    "reasons": [
+     "post-hoc",
+     "flagged-wave1"
+    ],
+    "researchProvider": "twdb",
+    "researchStatus": "VERIFIED_ENVELOPE",
+    "state": "excluded"
+   },
+   "twdbKey": "Falcon",
+   "twdbName": "Falcon Reservoir"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     0.005,
+     0.005,
+     -0.002,
+     0.002,
+     -0.004,
+     -0.004,
+     -0.005
+    ],
+    "medianAbsFt": 0.004,
+    "medianSignedFt": -0.002,
+    "origin": {
+     "provider": "usgs",
+     "series": "00062",
+     "station": "08148000"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": false,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [
+    "datumNGVD29"
+   ],
+   "datumIsNGVD29": false,
+   "datumLabel": "NAVD88 +0.26",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1937-06-30",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 0,
+    "completeYears": 83,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 1018.58,
+    "median365MinusLiveFt": 0.06,
+    "nonPositiveRows": 0,
+    "rawDays": 30745
+   },
+   "historyEffect": {
+    "currentBasisYears": 8,
+    "currentCompleteYears": 8,
+    "currentTier": "PROVISIONAL",
+    "improvesTier": true,
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 83,
+    "twdbTier": "FULL",
+    "useful": true
+   },
+   "historyOverlap": {
+    "daysCompared": 366,
+    "medianAbsFt": 0.023,
+    "medianSignedFt": 0.017,
+    "p95AbsFt": 0.114,
+    "source": "cwms:SWF:BUDT2.Elev.Inst.1Hour.0.LCRA-Web-Rev",
+    "year": 2024
+   },
+   "lakeId": "Lake Buchanan|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 1018.52,
+   "matchDistKm": 5.4,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 1020.0,
+    "deadPoolFt": 937.0,
+    "directoryFullPoolFt": 1020,
+    "levelFt": 1018.52,
+    "levelMinusConservationFt": -1.48,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [
+     "datum label is not NGVD29: values equal the primary source's native numbers within the compared window, the label is carried verbatim and no offset is applied"
+    ],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": {
+     "datum": "NAVD88 +0.26",
+     "kind": "twdbDaily",
+     "offsetFt": 0.0,
+     "slug": "buchanan"
+    },
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NAVD88 +0.26",
+     "station": "buchanan"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "00062",
+    "station": "08148000"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on cwms; TWDB can only be a relay fallback / history source",
+   "slug": "buchanan",
+   "table": {
+    "historyCompleteYears": 8,
+    "historyKinds": [
+     "cwmsDaily"
+    ],
+    "liveProviders": [
+     "cwms",
+     "usgs",
+     "nwps"
+    ],
+    "primaryProvider": "cwms",
+    "state": "proposed"
+   },
+   "twdbKey": "Buchanan",
+   "twdbName": "Lake Buchanan"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.002,
+     0.006,
+     0.003,
+     0.002,
+     0.002,
+     -0.001,
+     0.0
+    ],
+    "medianAbsFt": 0.002,
+    "medianSignedFt": 0.002,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08067600"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1996-10-02",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 8710,
+    "completeYears": 29,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 199.98,
+    "median365MinusLiveFt": 0.26,
+    "nonPositiveRows": 0,
+    "rawDays": 10925
+   },
+   "historyEffect": {
+    "currentBasisYears": 29,
+    "currentCompleteYears": 29,
+    "currentTier": "FULL",
+    "improvesTier": false,
+    "twdbBasisYears": 29,
+    "twdbCompleteYears": 29,
+    "twdbTier": "FULL",
+    "useful": false
+   },
+   "historyOverlap": null,
+   "lakeId": "Lake Conroe|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 199.72,
+   "matchDistKm": 7.8,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 201.0,
+    "deadPoolFt": 145.0,
+    "directoryFullPoolFt": 201,
+    "levelFt": 199.72,
+    "levelMinusConservationFt": -1.28,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": null,
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "conroe"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08067600"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on usgs; TWDB can only be a relay fallback / history source",
+   "slug": "conroe",
+   "table": {
+    "historyCompleteYears": 29,
+    "historyKinds": [
+     "usgsDaily"
+    ],
+    "liveProviders": [
+     "usgs",
+     "nwps"
+    ],
+    "primaryProvider": "usgs",
+    "state": "proposed"
+   },
+   "twdbKey": "Conroe",
+   "twdbName": "Lake Conroe"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.003,
+     -0.003,
+     0.0,
+     0.001,
+     0.002,
+     -0.002,
+     -0.001
+    ],
+    "medianAbsFt": 0.002,
+    "medianSignedFt": -0.001,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08018800"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1988-10-02",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 3108,
+    "completeYears": 35,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 400.22,
+    "median365MinusLiveFt": 1.85,
+    "nonPositiveRows": 0,
+    "rawDays": 13705
+   },
+   "historyEffect": {
+    "currentBasisYears": 30,
+    "currentCompleteYears": 35,
+    "currentTier": "FULL",
+    "improvesTier": false,
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 35,
+    "twdbTier": "FULL",
+    "useful": false
+   },
+   "historyOverlap": null,
+   "lakeId": "Lake Fork Reservoir|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 398.37,
+   "matchDistKm": 2.8,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 403.0,
+    "deadPoolFt": 360.0,
+    "directoryFullPoolFt": 403,
+    "levelFt": 398.37,
+    "levelMinusConservationFt": -4.63,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": null,
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "fork"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08018800"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on usgs; TWDB can only be a relay fallback / history source",
+   "slug": "fork",
+   "table": {
+    "historyCompleteYears": 35,
+    "historyKinds": [
+     "usgsDaily"
+    ],
+    "liveProviders": [
+     "usgs",
+     "nwps"
+    ],
+    "primaryProvider": "usgs",
+    "state": "proposed"
+   },
+   "twdbKey": "Fork",
+   "twdbName": "Lake Fork Reservoir"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.006,
+     -0.001,
+     -0.003,
+     -0.003,
+     0.011,
+     0.01,
+     0.011
+    ],
+    "medianAbsFt": 0.006,
+    "medianSignedFt": -0.001,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08066190"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1996-10-03",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 12777,
+    "completeYears": 20,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 130.99,
+    "median365MinusLiveFt": 1.44,
+    "nonPositiveRows": 0,
+    "rawDays": 8419
+   },
+   "historyEffect": {
+    "currentBasisYears": 27,
+    "currentCompleteYears": 27,
+    "currentTier": "FULL",
+    "improvesTier": false,
+    "twdbBasisYears": 20,
+    "twdbCompleteYears": 20,
+    "twdbTier": "FULL",
+    "useful": false
+   },
+   "historyOverlap": null,
+   "lakeId": "Lake Livingston|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 129.55,
+   "matchDistKm": 15.5,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 131.0,
+    "deadPoolFt": 58.0,
+    "directoryFullPoolFt": 131,
+    "levelFt": 129.55,
+    "levelMinusConservationFt": -1.45,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": null,
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "livingston"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08066190"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on usgs; TWDB can only be a relay fallback / history source",
+   "slug": "livingston",
+   "table": {
+    "historyCompleteYears": 27,
+    "historyKinds": [
+     "usgsDaily"
+    ],
+    "liveProviders": [
+     "usgs",
+     "nwps"
+    ],
+    "primaryProvider": "usgs",
+    "state": "proposed"
+   },
+   "twdbKey": "Livingston",
+   "twdbName": "Livingston Reservoir"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.004,
+     0.005,
+     0.001,
+     -0.005,
+     -0.004,
+     -0.003,
+     0.003
+    ],
+    "medianAbsFt": 0.004,
+    "medianSignedFt": -0.003,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08017400"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1995-10-02",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 12656,
+    "completeYears": 30,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 436.24,
+    "median365MinusLiveFt": 0.94,
+    "nonPositiveRows": 0,
+    "rawDays": 11268
+   },
+   "historyEffect": {
+    "currentBasisYears": 30,
+    "currentCompleteYears": 30,
+    "currentTier": "FULL",
+    "improvesTier": false,
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 30,
+    "twdbTier": "FULL",
+    "useful": false
+   },
+   "historyOverlap": null,
+   "lakeId": "Lake Tawakoni|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 435.3,
+   "matchDistKm": 8.4,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 437.5,
+    "deadPoolFt": 378.0,
+    "directoryFullPoolFt": 437.5,
+    "levelFt": 435.3,
+    "levelMinusConservationFt": -2.2,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": null,
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "tawakoni"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08017400"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on usgs; TWDB can only be a relay fallback / history source",
+   "slug": "tawakoni",
+   "table": {
+    "historyCompleteYears": 30,
+    "historyKinds": [
+     "usgsDaily"
+    ],
+    "liveProviders": [
+     "usgs",
+     "nwps"
+    ],
+    "primaryProvider": "usgs",
+    "state": "proposed"
+   },
+   "twdbKey": "Tawakoni",
+   "twdbName": "Lake Tawakoni"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     0.002,
+     0.006,
+     -0.004,
+     -0.003,
+     -0.004,
+     -0.001,
+     0.003
+    ],
+    "medianAbsFt": 0.003,
+    "medianSignedFt": -0.001,
+    "origin": {
+     "provider": "nwps",
+     "series": "HPIRG",
+     "station": "DSNT2"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1994-12-01",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 18263,
+    "completeYears": 30,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 616.79,
+    "median365MinusLiveFt": 1.82,
+    "nonPositiveRows": 0,
+    "rawDays": 11571
+   },
+   "historyEffect": {
+    "currentBasisYears": 8,
+    "currentCompleteYears": 8,
+    "currentTier": "PROVISIONAL",
+    "improvesTier": true,
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 30,
+    "twdbTier": "FULL",
+    "useful": true
+   },
+   "historyOverlap": {
+    "daysCompared": 366,
+    "medianAbsFt": 0.01,
+    "medianSignedFt": 0.0,
+    "p95AbsFt": 0.075,
+    "source": "cwms:SWT:DENI.Elev.Inst.1Hour.0.Ccp-Rev",
+    "year": 2024
+   },
+   "lakeId": "Lake Texoma|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 614.97,
+   "matchDistKm": 9.5,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 617.0,
+    "deadPoolFt": 523.0,
+    "directoryFullPoolFt": 617,
+    "levelFt": 614.97,
+    "levelMinusConservationFt": -2.03,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": {
+     "datum": "NGVD29",
+     "kind": "twdbDaily",
+     "offsetFt": 0.0,
+     "slug": "texoma"
+    },
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "texoma"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "nwps",
+    "series": "HPIRG",
+    "station": "DSNT2"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on a2w; TWDB can only be a relay fallback / history source",
+   "slug": "texoma",
+   "table": {
+    "historyCompleteYears": 8,
+    "historyKinds": [
+     "cwmsDaily"
+    ],
+    "liveProviders": [
+     "a2w",
+     "cwms",
+     "nwps"
+    ],
+    "primaryProvider": "a2w",
+    "state": "proposed"
+   },
+   "twdbKey": "Texoma",
+   "twdbName": "Lake Texoma"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.004,
+     -0.002,
+     0.005,
+     0.001,
+     0.004,
+     -0.002,
+     -0.001
+    ],
+    "medianAbsFt": 0.002,
+    "medianSignedFt": -0.001,
+    "origin": {
+     "provider": "usgs",
+     "series": "00062",
+     "station": "08154500"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": false,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [
+    "datumNGVD29"
+   ],
+   "datumIsNGVD29": false,
+   "datumLabel": "NAVD88 +0.6",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1940-09-30",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 0,
+    "completeYears": 83,
+    "continuityPass": true,
+    "glitchDaysDropped": 3,
+    "median365Ft": 668.38,
+    "median365MinusLiveFt": -9.49,
+    "nonPositiveRows": 0,
+    "rawDays": 30687
+   },
+   "historyEffect": {
+    "currentBasisYears": 8,
+    "currentCompleteYears": 8,
+    "currentTier": "PROVISIONAL",
+    "improvesTier": true,
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 83,
+    "twdbTier": "FULL",
+    "useful": true
+   },
+   "historyOverlap": {
+    "daysCompared": 366,
+    "medianAbsFt": 0.012,
+    "medianSignedFt": -0.008,
+    "p95AbsFt": 0.059,
+    "source": "cwms:SWF:MSDT2.Elev.Inst.1Hour.0.LCRA-Web-Rev",
+    "year": 2024
+   },
+   "lakeId": "Lake Travis|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 677.86,
+   "matchDistKm": 3.4,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 681.0,
+    "deadPoolFt": 535.75,
+    "directoryFullPoolFt": 681,
+    "levelFt": 677.86,
+    "levelMinusConservationFt": -3.14,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [
+     "datum label is not NGVD29: values equal the primary source's native numbers within the compared window, the label is carried verbatim and no offset is applied"
+    ],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": {
+     "datum": "NAVD88 +0.6",
+     "kind": "twdbDaily",
+     "offsetFt": 0.0,
+     "slug": "travis"
+    },
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NAVD88 +0.6",
+     "station": "travis"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "00062",
+    "station": "08154500"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on a2w; TWDB can only be a relay fallback / history source",
+   "slug": "travis",
+   "table": {
+    "historyCompleteYears": 8,
+    "historyKinds": [
+     "cwmsDaily"
+    ],
+    "liveProviders": [
+     "a2w",
+     "cwms",
+     "usgs"
+    ],
+    "primaryProvider": "a2w",
+    "state": "proposed"
+   },
+   "twdbKey": "Travis",
+   "twdbName": "Lake Travis"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     0.004,
+     0.002,
+     -0.001,
+     -0.004,
+     -0.003,
+     -0.003,
+     0.001
+    ],
+    "medianAbsFt": 0.003,
+    "medianSignedFt": -0.001,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08088500"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1947-01-01",
+   "fullFileHadNoHeaderBlock": true,
+   "history": {
+    "blankLevelRows": 2410,
+    "completeYears": 76,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 996.6,
+    "median365MinusLiveFt": 2.29,
+    "nonPositiveRows": 0,
+    "rawDays": 28836
+   },
+   "historyEffect": {
+    "currentBasisYears": 30,
+    "currentCompleteYears": 35,
+    "currentTier": "FULL",
+    "improvesTier": false,
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 76,
+    "twdbTier": "FULL",
+    "useful": false
+   },
+   "historyOverlap": null,
+   "lakeId": "Possum Kingdom Lake|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 994.31,
+   "matchDistKm": 11.6,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 999.0,
+    "deadPoolFt": 874.8,
+    "directoryFullPoolFt": 999,
+    "levelFt": 994.31,
+    "levelMinusConservationFt": -4.69,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": null,
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "possum-kingdom"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08088500"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on cwms; TWDB can only be a relay fallback / history source",
+   "slug": "possum-kingdom",
+   "table": {
+    "historyCompleteYears": 35,
+    "historyKinds": [
+     "usgsDaily"
+    ],
+    "liveProviders": [
+     "cwms",
+     "usgs",
+     "usgs"
+    ],
+    "primaryProvider": "cwms",
+    "state": "proposed"
+   },
+   "twdbKey": "PossumKingdom",
+   "twdbName": "Possum Kingdom Lake"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     -0.006,
+     0.001,
+     -0.008,
+     -0.006,
+     -0.003,
+     -0.006,
+     -0.003
+    ],
+    "medianAbsFt": 0.006,
+    "medianSignedFt": -0.006,
+    "origin": {
+     "provider": "usgs",
+     "series": "62614",
+     "station": "08039300"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1988-06-19",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 8679,
+    "completeYears": 37,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 155.67,
+    "median365MinusLiveFt": 1.99,
+    "nonPositiveRows": 9,
+    "rawDays": 13865
+   },
+   "historyEffect": {
+    "currentBasisYears": 30,
+    "currentCompleteYears": 60,
+    "currentTier": "FULL",
+    "improvesTier": false,
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 37,
+    "twdbTier": "FULL",
+    "useful": false
+   },
+   "historyOverlap": null,
+   "lakeId": "Sam Rayburn Reservoir|TX",
+   "liveAgeDays": 1,
+   "liveDate": "2026-10-12",
+   "liveFt": 153.68,
+   "matchDistKm": 4.4,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 164.4,
+    "deadPoolFt": 105.0,
+    "directoryFullPoolFt": 164.4,
+    "levelFt": 153.68,
+    "levelMinusConservationFt": -10.72,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": {
+    "caveats": [],
+    "historyOrder": "twdbDaily first (lowest precedence, the runner's merge lets the last entry win a date), then the existing sources",
+    "historySource": null,
+    "liveFallback": {
+     "cadenceMin": 1440,
+     "capability": "DIRECT_LAKE_GAUGE",
+     "datumOffsetFt": 0.0,
+     "lagMin": 1440,
+     "note": "TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)",
+     "provider": "twdb",
+     "series": "water_level@NGVD29",
+     "station": "sam-rayburn"
+    }
+   },
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62614",
+    "station": "08039300"
+   },
+   "role": "backup-and-history",
+   "roleWhy": "already proposed on a2w; TWDB can only be a relay fallback / history source",
+   "slug": "sam-rayburn",
+   "table": {
+    "historyCompleteYears": 60,
+    "historyKinds": [
+     "cwmsDaily"
+    ],
+    "liveProviders": [
+     "a2w",
+     "cwms",
+     "cwms"
+    ],
+    "primaryProvider": "a2w",
+    "state": "proposed"
+   },
+   "twdbKey": "SamRayburn",
+   "twdbName": "Sam Rayburn Reservoir"
+  },
+  {
+   "agreement": {
+    "daysCompared": 7,
+    "diffsFt": [
+     0.203,
+     0.182,
+     0.171,
+     0.177,
+     0.138,
+     0.132,
+     0.127
+    ],
+    "medianAbsFt": 0.171,
+    "medianSignedFt": 0.171,
+    "origin": {
+     "provider": "usgs",
+     "series": "62615",
+     "station": "312914093422701"
+    },
+    "pass": true
+   },
+   "checks": {
+    "datumNGVD29": true,
+    "fileHeaderMatchesName": true,
+    "historyContinuity": true,
+    "liveAgreesWithIndependentOrigin": true,
+    "liveFresh": true,
+    "poolSanity": true,
+    "recentConditionsEqualsFile": true
+   },
+   "checksFailed": [],
+   "datumIsNGVD29": true,
+   "datumLabel": "NGVD29",
+   "fileHeaderMatchesName": true,
+   "firstDate": "1986-10-02",
+   "fullFileHadNoHeaderBlock": false,
+   "history": {
+    "blankLevelRows": 7317,
+    "completeYears": 39,
+    "continuityPass": true,
+    "glitchDaysDropped": 0,
+    "median365Ft": 168.62,
+    "median365MinusLiveFt": 0.63,
+    "nonPositiveRows": 0,
+    "rawDays": 14610
+   },
+   "historyOverlap": null,
+   "lakeId": "Toledo Bend Reservoir|TX",
+   "liveAgeDays": 0,
+   "liveDate": "2026-10-13",
+   "liveFt": 167.99,
+   "matchDistKm": 24.0,
+   "pool": {
+    "conservationMinusDirectoryFt": 0.0,
+    "conservationPoolFt": 172.0,
+    "deadPoolFt": 100.0,
+    "directoryFullPoolFt": 172,
+    "levelFt": 167.99,
+    "levelMinusConservationFt": -4.01,
+    "levelWithinStorageRange": true,
+    "poolAgreesWithDirectory": true,
+    "recentConditionsEqualsFile": true
+   },
+   "proposedAdditions": null,
+   "referenceCandidate": {
+    "provider": "usgs",
+    "series": "62615",
+    "station": "312914093422701"
+   },
+   "role": "none-today",
+   "roleWhy": "lake is excluded for coordinate-flag; TWDB is a relay of the same gauges and cures none of it",
+   "slug": "toledo-bend",
+   "table": {
+    "reasons": [
+     "coordinate-flag"
+    ],
+    "researchProvider": "usgs",
+    "researchStatus": "VERIFIED",
+    "state": "excluded"
+   },
+   "twdbKey": "ToledoBend",
+   "twdbName": "Toledo Bend Reservoir"
+  }
+ ],
+ "note": "DRY RUN. Reads the published bindings table, never writes it. No TWDB row exists in bindings.proposed.v1.json, none is REVIEWED, none is in accepted_batch.json.",
+ "researchDate": "2026-10-13",
+ "schema": "lake-brain-twdb-dryrun/v1",
+ "summary": {
+  "alreadyProposedLakesTwdbCouldBackUp": [
+   "Cedar Creek Reservoir|TX",
+   "Lake Buchanan|TX",
+   "Lake Conroe|TX",
+   "Lake Fork Reservoir|TX",
+   "Lake Livingston|TX",
+   "Lake Tawakoni|TX",
+   "Lake Texoma|TX",
+   "Lake Travis|TX",
+   "Possum Kingdom Lake|TX",
+   "Sam Rayburn Reservoir|TX"
+  ],
+  "directoryLakes": 621,
+  "directoryLakesMatched": 16,
+  "excludedTodayWithTwdbAsResearchProvider": [
+   "Amistad Reservoir|TX",
+   "Falcon Lake|TX"
+  ],
+  "excludedTodayWithTwdbMatch": [
+   "Elephant Butte Reservoir|NM",
+   "Amistad Reservoir|TX",
+   "Caddo Lake|TX",
+   "Canyon Lake|TX",
+   "Falcon Lake|TX",
+   "Toledo Bend Reservoir|TX"
+  ],
+  "historyDepthImproves": [
+   {
+    "currentBasisYears": 8,
+    "currentCompleteYears": 8,
+    "currentTier": "PROVISIONAL",
+    "improvesTier": true,
+    "lakeId": "Lake Buchanan|TX",
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 83,
+    "twdbTier": "FULL",
+    "useful": true
+   },
+   {
+    "currentBasisYears": 8,
+    "currentCompleteYears": 8,
+    "currentTier": "PROVISIONAL",
+    "improvesTier": true,
+    "lakeId": "Lake Texoma|TX",
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 30,
+    "twdbTier": "FULL",
+    "useful": true
+   },
+   {
+    "currentBasisYears": 8,
+    "currentCompleteYears": 8,
+    "currentTier": "PROVISIONAL",
+    "improvesTier": true,
+    "lakeId": "Lake Travis|TX",
+    "twdbBasisYears": 30,
+    "twdbCompleteYears": 83,
+    "twdbTier": "FULL",
+    "useful": true
+   }
+  ],
+  "newTwdbPrimaryCandidatesUnderUnchangedRules": [],
+  "nonTexasMatched": [
+   "Elephant Butte Reservoir|NM"
+  ],
+  "proposedHistoryAdditions": [
+   "Lake Buchanan|TX",
+   "Lake Texoma|TX",
+   "Lake Travis|TX"
+  ],
+  "proposedLiveRelayFallbacks": [
+   "Cedar Creek Reservoir|TX",
+   "Lake Buchanan|TX",
+   "Lake Conroe|TX",
+   "Lake Fork Reservoir|TX",
+   "Lake Livingston|TX",
+   "Lake Tawakoni|TX",
+   "Lake Texoma|TX",
+   "Lake Travis|TX",
+   "Possum Kingdom Lake|TX",
+   "Sam Rayburn Reservoir|TX"
+  ],
+  "rowsWithAnyFailedCheck": [
+   {
+    "failed": [
+     "datumNGVD29"
+    ],
+    "lakeId": "Elephant Butte Reservoir|NM"
+   },
+   {
+    "failed": [
+     "historyContinuity"
+    ],
+    "lakeId": "Canyon Lake|TX"
+   },
+   {
+    "failed": [
+     "datumNGVD29"
+    ],
+    "lakeId": "Lake Buchanan|TX"
+   },
+   {
+    "failed": [
+     "datumNGVD29"
+    ],
+    "lakeId": "Lake Travis|TX"
+   }
+  ],
+  "texasDirectoryLakes": 15,
+  "texasDirectoryLakesMatched": 15,
+  "texasFleetSizeIfTwdbProvidersOnlyDirectoryLakes": 15,
+  "twdbPrimaryRowsInPublishedTable": [],
+  "twdbReservoirsInRecentConditions": 122
+ },
+ "thresholds": {
+  "completeYearShare": 0.9,
+  "continuityFt": 15.0,
+  "floodAllowFt": 25.0,
+  "glitchFt": 15.0,
+  "liveAgreeFt": 0.25,
+  "matchKm": 30.0,
+  "maxGlitchRunDays": 3,
+  "poolAgreeFt": 2.0
+ }
+}
