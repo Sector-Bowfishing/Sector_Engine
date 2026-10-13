@@ -1,0 +1,103 @@
+{
+  "scoreVersion": "biological-state-score-v1",
+  "brainId": "biological-state",
+  "scale": 10,
+  "scope": "NOT an average of species scores; knowledge depth is one dimension",
+  "dimensions": [
+    {
+      "id": "registryCompleteness",
+      "label": "Every registered species assessed or explicitly NOT_ASSESSED",
+      "weight": 10,
+      "fact": "responsibilities.speciesKnowledge {speciesCount, assessedCount, notAssessedCount}",
+      "scale": "10 if speciesCount > 0 and assessed + notAssessed == speciesCount else 0"
+    },
+    {
+      "id": "assessedCoverage",
+      "label": "Share of species assessed",
+      "weight": 15,
+      "fact": "assessedCount / speciesCount",
+      "scale": "share x 10"
+    },
+    {
+      "id": "knowledgeDepth",
+      "label": "Median species-v2 overallRounded over assessed species",
+      "weight": 20,
+      "fact": "/species/*.knowledge.overallRounded",
+      "scale": "median (0-10)"
+    },
+    {
+      "id": "evidenceQuality",
+      "label": "Research maturity",
+      "weight": 10,
+      "fact": "/species/*.researchMaturity",
+      "scale": "VALIDATED share x 10, else REVIEWED share x 7, else RESEARCH present -> 2"
+    },
+    {
+      "id": "contradictionsGaps",
+      "label": "Open contradictions",
+      "weight": 10,
+      "fact": "mean over assessed of min(contradictionCount,5)/5",
+      "scale": "10 x (1 - mean)"
+    },
+    {
+      "id": "regionalTransfer",
+      "label": "Knowledge tagged for the lake's region",
+      "weight": 5,
+      "fact": "not published",
+      "scale": "UNKNOWN"
+    },
+    {
+      "id": "biologicalStateImpl",
+      "label": "Per-lake Biological State exists",
+      "weight": 15,
+      "fact": "responsibilities.biologicalState.status",
+      "scale": {
+        "NOT_STARTED": 0,
+        "IN_PROGRESS": 4,
+        "LIVE": 8,
+        "VALIDATED": 10
+      }
+    },
+    {
+      "id": "biologicalStateValidation",
+      "label": "Per-lake state validated",
+      "weight": 10,
+      "fact": "responsibilities.biologicalState.validation",
+      "scale": {
+        "NOT_STARTED": 0,
+        "PARTIAL": 5,
+        "VALIDATED": 10
+      }
+    },
+    {
+      "id": "productionIntegration",
+      "label": "Consumed by Intelligence or a customer path",
+      "weight": 5,
+      "fact": "/brains/sector-intelligence.dependencies.biological-state.connectionStatus in {CONNECTED, CONNECTED_DEGRADED}",
+      "scale": "10 / 0"
+    }
+  ],
+  "gates": [
+    {
+      "id": "biologicalState",
+      "when": "biologicalState NOT_STARTED",
+      "cap": 4.0
+    },
+    {
+      "id": "speciesValidation",
+      "when": "no species VALIDATED",
+      "cap": 6.0
+    }
+  ],
+  "movesUp": [
+    "assess the remaining species",
+    "independent review (REVIEWED) then field validation (VALIDATED)",
+    "resolve contradictions",
+    "build and validate per-lake Biological State"
+  ],
+  "cannotCount": [
+    "species-first Ops views",
+    "research prose without rubric scores",
+    "lake presence (Lake Brain's)"
+  ]
+}

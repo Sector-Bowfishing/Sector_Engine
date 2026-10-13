@@ -14,7 +14,8 @@ SOURCE_OWNERS = {
 ROLLUP_FLEET = {"lastUpdatedAt", "stale", "issueCount", "hasObservations"}
 ROLLUP_SNAPSHOT = {"generatedAt", "snapshotVersion", "evaluationTime"}
 LAKE_BRAIN_ONLY_FLEET = {"riverSystem", "lakeType"}
-PLATFORM_ONLY = {"schemaVersion", "access", "validationOps"}
+PLATFORM_ONLY = {"schemaVersion", "access", "validationOps", "engine"}
+PLATFORM_WRITER = "brain-platform"       # the Engine's own publisher (scores, engine health); not a brain
 
 
 class OwnershipError(PermissionError):
@@ -27,12 +28,20 @@ def source_owner(source_id: str) -> str | None:
 
 def path_allowed(brain_id: str, path: str) -> bool:
     """May `brain_id` write `path` (a root-relative path, no leading slash)?"""
-    if brain_id not in BRAINS:
-        return False
     p = [s for s in path.strip("/").split("/") if s]
     if not p:
         return False
     root = p[0]
+    if brain_id == PLATFORM_WRITER:
+        if root in PLATFORM_ONLY or (root == "health" and len(p) >= 2 and p[1] in ("engine", "rtdb")):
+            return True
+        if root == "brains":
+            return len(p) >= 3 and p[2] == "score"
+        if root == "activity":
+            return len(p) == 2 and f"-{PLATFORM_WRITER}-" in p[1]
+        return False
+    if brain_id not in BRAINS:
+        return False
     slot = slot_for(brain_id)
     if root in PLATFORM_ONLY or (root == "health" and len(p) > 1 and p[1] in ("engine", "rtdb")):
         return False

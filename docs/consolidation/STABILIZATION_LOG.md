@@ -206,3 +206,30 @@ conformance suite; the Water Temp pruning bug fixed.
 **Not done here (Phase 7):** migrating each Brain's publisher onto the shared implementations.
 
 **Checkpoint:** this commit. **Rollback:** `git reset --hard a9a7a272` (Phase 3).
+
+---
+
+## Phase 5 — Brain Score System — PASS
+
+**Goal:** every active Brain has a legitimate, versioned, Engine-owned published score.
+
+- `docs/brains/scoring/SCORING.md` + machine-readable rubrics `lake-brain-score-v1.json`,
+  `biological-state-score-v1.json`, `sector-intelligence-score-v1.json`, and `frozen-scores.json`.
+- Evaluator `sector_brain_platform/scoring.py` (pure; UNKNOWN stays unknown; gates cap, never add;
+  `completenessPct` excludes UNKNOWN). Tests: 8 scoring + 12 conformance = **20/20**.
+- Publisher `jobs/brain-scores/score_brains.py` (platform writer `brain-platform`; contract §5
+  amended so `brains/{id}/score` is writable by the brain or the platform writer; fixtures + both
+  implementations updated, Swift 11/11, Python 12/12). Manual only — no scheduler.
+- **Published 2026-10-12 to `/brains/{id}/score`** (read-back verified):
+
+| Brain | Score | Basis | Why |
+|---|---|---|---|
+| Lake | **3.0** (uncapped 4.3) | COMPUTED | 5/621 profiled → coverage cap 3.0; NOT_VALIDATED → cap 5.0; pilots score 10 on source authority, operator plan, trend; 20 % on history/baseline |
+| Water Temp | **3.0** | FROZEN | Stage 3C.3 Level-4 protected-truth gate FAILED (2 of 4 protected lakes < 25 casts) |
+| Water Clarity | **8.0** (research) | FROZEN | R3.1 CERTIFIED candidate, NOT_DEPLOYED; production clarity unscored |
+| Wind | **3.1** (certification; BWIS 5.4) | FROZEN | frozen Stage 1/2 rubric v1; caps 6/7 active; production wind unscored |
+| Biological | **3.5** | COMPUTED | 27/29 assessed but median species-v2 depth 1.0; Biological State NOT_STARTED → cap 4.0; no VALIDATED species → cap 6.0 |
+| Sector Intelligence | **1.0** | COMPUTED | 0/621 evaluated → cap 1.0; 0/5 consumed → cap 2.0; NOT_VALIDATED → cap 5.0 |
+
+Existing scores keep their original semantics (not rescored). Ops computes nothing.
+**Rollback:** delete `/brains/{id}/score` nodes (platform-owned) and `git reset --hard 04eff0b4`.

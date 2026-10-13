@@ -1,0 +1,38 @@
+{
+  "description": "Scores approved/frozen outside this system. Published verbatim with basis FROZEN; never recomputed here.",
+  "water-temp": {
+    "value": 3.0, "scale": 10, "basis": "FROZEN",
+    "scoreVersion": "water-temp-level-ladder-v1",
+    "scoreRubric": "Water Temp level ladder — Stage 3C.3 decision (iOS private repo docs/intelligence/water-temp/WATER_TEMP_STAGE_3C3_PROTECTED_VALIDATION.md)",
+    "scoreUpdatedAt": "2026-10-11T00:00:00Z",
+    "scoreBlockers": [
+      {"gate": "level4ProtectedTruth", "why": "Level-4 protected-truth sufficiency gate FAILED: two of the four protected lakes are below the 25-cast minimum; the model did not fail"}
+    ],
+    "nextScoreOpportunity": "Protected truth for Wilson and Wheeler (TVA forebay profiles or Sector loggers), then the Level-4 comparison",
+    "note": "Production model surface-energy-balance-v2 (k=0.09) is live; the V2 Kalman candidate is frozen RESEARCH, not promoted"
+  },
+  "water-clarity": {
+    "value": 8.0, "scale": 10, "basis": "FROZEN",
+    "scoreVersion": "clarity-research-certification-r3.1",
+    "scoreRubric": "Clarity research certification bars (private detail: gs://sector-clarity-candidate/research-archive/2026-10-12-closeout/)",
+    "scoreUpdatedAt": "2026-10-12T00:00:00Z",
+    "appliesTo": {"modelId": "r3.1", "status": "CANDIDATE", "certificationStatus": "CERTIFIED", "deploymentStatus": "NOT_DEPLOYED"},
+    "scoreBlockers": [
+      {"gate": "deployment", "why": "R3.1 is a certified CANDIDATE, NOT_DEPLOYED; production clarity is secchi-power-v1 / rain-decay-v0 (unscored). Promotion needs Michael's explicit approval"}
+    ],
+    "nextScoreOpportunity": "Approve and deploy R3.1 as production clarity, then re-certify on live data",
+    "note": "research score, not a production-quality score"
+  },
+  "wind": {
+    "value": 3.1, "scale": 10, "basis": "FROZEN",
+    "scoreVersion": "wind-certification-rubric-v1",
+    "scoreRubric": "frozen Stage 1/2 rubric v1 (code-derived scoreboard) — jobs/wind-hourly/sector_wind/brain/validation_evidence.json",
+    "scoreUpdatedAt": "2026-10-12T06:16:16Z",
+    "secondary": {"bowfishingWindIntelligenceScore": 5.4, "definition": "BWIS v1 (sha256 in validation_evidence.json)"},
+    "scoreBlockers": [
+      {"gate": "fieldValidation", "why": "surface/exposure physics not field-validated (certification caps 6 and 7 active); candidate NBM model is RESEARCH_CANDIDATE, production wind is Open-Meteo Best Match (unscored)"}
+    ],
+    "nextScoreOpportunity": "Bank-scale exposure + surface validation under Evidence Addendum v1",
+    "note": "certification score of the candidate pipeline, not of production wind"
+  }
+}

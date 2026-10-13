@@ -1,0 +1,93 @@
+{
+  "scoreVersion": "sector-intelligence-score-v1",
+  "brainId": "sector-intelligence",
+  "scale": 10,
+  "dimensions": [
+    {
+      "id": "specialistConnectivity",
+      "label": "Upstream Brains actually consumed",
+      "weight": 20,
+      "fact": "dependencies[*].connectionStatus in {CONNECTED, CONNECTED_DEGRADED} / 5",
+      "scale": "share x 10"
+    },
+    {
+      "id": "normalizedEvaluations",
+      "label": "Lakes with a normalized evaluation",
+      "weight": 20,
+      "fact": "evaluatedLakeCount / directoryLakeCount",
+      "scale": "coverage ladder"
+    },
+    {
+      "id": "dependencyHandling",
+      "label": "Every upstream Brain has a published dependency status",
+      "weight": 10,
+      "fact": "dependencies has all 5 with a status",
+      "scale": "10 x present/5"
+    },
+    {
+      "id": "provenance",
+      "label": "Evaluations carry full provenance",
+      "weight": 10,
+      "fact": "share of sampled evaluated states with provenance and inputs",
+      "scale": "share x 10; UNKNOWN when nothing evaluated"
+    },
+    {
+      "id": "validation",
+      "label": "/validation/sector-intelligence.status",
+      "weight": 15,
+      "fact": "validation status",
+      "scale": {
+        "NOT_VALIDATED": 0,
+        "PARTIAL": 5,
+        "VALIDATED": 10
+      }
+    },
+    {
+      "id": "lakeCoverage",
+      "label": "supportedLakeCount / directoryLakeCount",
+      "weight": 10,
+      "fact": "registry.supportedLakeCount",
+      "scale": "coverage ladder"
+    },
+    {
+      "id": "runtime",
+      "label": "Health and schedule",
+      "weight": 5,
+      "fact": "health == HEALTHY (+5), schedule or job present (+5)",
+      "scale": "0-10"
+    },
+    {
+      "id": "synthesisQuality",
+      "label": "Drivers / limiting factors present and consistent",
+      "weight": 10,
+      "fact": "not measurable until evaluations exist",
+      "scale": "UNKNOWN"
+    }
+  ],
+  "gates": [
+    {
+      "id": "evaluations",
+      "when": "evaluatedLakeCount == 0",
+      "cap": 1.0
+    },
+    {
+      "id": "connectivity",
+      "when": "no upstream Brain consumed",
+      "cap": 2.0
+    },
+    {
+      "id": "validation",
+      "when": "validation NOT_VALIDATED",
+      "cap": 5.0
+    }
+  ],
+  "movesUp": [
+    "consume a specialist Brain's normalized state",
+    "evaluate the pilot lakes with full provenance",
+    "validate synthesis against outcomes"
+  ],
+  "cannotCount": [
+    "the production Conditions Score (a separate, unversioned implementation)",
+    "Ops Intelligence Portal views"
+  ]
+}

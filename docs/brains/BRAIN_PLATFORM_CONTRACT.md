@@ -103,7 +103,8 @@ other. A VERSION/FINGERPRINT brain writes `stale: false` and omits `freshUntil`.
 | `/health/sources/{id}` | owner brain only | |
 | `/brains/{id}`, `/health/brains/{id}`, `/validation/{id}`, `/health/jobs/{jobId}` | that brain / that job | |
 | `/activity/{eventId}` | the brain named in the event; pruned only by that brain | §7 |
-| `/schemaVersion`, `/access/*`, `/health/engine`, `/health/rtdb`, `/validationOps` | platform / Engine service, not brains | |
+| `/schemaVersion`, `/access/*`, `/health/engine`, `/health/rtdb`, `/validationOps`, `/engine/*` | the **platform writer** (`brainId = "brain-platform"`: the Engine's own score/health publisher), never a brain | |
+| `/brains/{id}/score` | that brain **or** the platform writer | the Engine-owned score publisher (Phase 5) computes every brain's score from published facts and frozen rubrics; a brain may also publish its own if it carries the same rubric |
 
 A conforming writer validates every multi-path update against this table before sending it
 (`assert_owned` / `BrainOwnership.check`) and refuses the whole update on a violation.

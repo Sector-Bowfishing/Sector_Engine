@@ -129,15 +129,23 @@ public enum BrainOwnership {
     static let rollupFleet: Set<String> = ["lastUpdatedAt", "stale", "issueCount", "hasObservations"]
     static let rollupSnapshot: Set<String> = ["generatedAt", "snapshotVersion", "evaluationTime"]
     static let lakeBrainOnlyFleet: Set<String> = ["riverSystem", "lakeType"]
-    static let platformOnly: Set<String> = ["schemaVersion", "access", "validationOps"]
+    static let platformOnly: Set<String> = ["schemaVersion", "access", "validationOps", "engine"]
+    /// The Engine's own publisher (scores, engine health); not a brain.
+    public static let platformWriter = "brain-platform"
 
     public static func sourceOwner(_ sourceId: String) -> String? { sourceOwners[sourceId] }
 
     /// May `brainId` write `path` (root-relative, no leading slash)?
     public static func pathAllowed(_ brainId: String, _ path: String) -> Bool {
-        guard let slot = BrainPlatform.slot(for: brainId), let field = BrainPlatform.snapshotField(for: brainId) else { return false }
         let p = path.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
         guard let root = p.first else { return false }
+        if brainId == platformWriter {
+            if platformOnly.contains(root) || (root == "health" && p.count >= 2 && (p[1] == "engine" || p[1] == "rtdb")) { return true }
+            if root == "brains" { return p.count >= 3 && p[2] == "score" }
+            if root == "activity" { return p.count == 2 && p[1].contains("-\(platformWriter)-") }
+            return false
+        }
+        guard let slot = BrainPlatform.slot(for: brainId), let field = BrainPlatform.snapshotField(for: brainId) else { return false }
         if platformOnly.contains(root) || (root == "health" && p.count > 1 && (p[1] == "engine" || p[1] == "rtdb")) { return false }
         switch root {
         case "lakeFleet":

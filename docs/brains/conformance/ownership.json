@@ -1,56 +1,302 @@
 {
   "description": "Which brain may write which path. A multi-path update containing a forbidden path is refused whole.",
   "cases": [
-    {"brainId": "water-temp", "path": "lakeFleet/Guntersville_AL/slots/waterTemp/readiness", "allowed": true},
-    {"brainId": "water-temp", "path": "lakeFleet/Guntersville_AL/readiness/waterTemp", "allowed": true},
-    {"brainId": "water-temp", "path": "lakeFleet/Guntersville_AL/modelVersions/waterTemp", "allowed": true},
-    {"brainId": "water-temp", "path": "lakeFleet/Guntersville_AL/lakeId", "allowed": true},
-    {"brainId": "water-temp", "path": "lakeFleet/Guntersville_AL/lastUpdatedAt", "allowed": false},
-    {"brainId": "water-temp", "path": "lakeFleet/Guntersville_AL/stale", "allowed": false},
-    {"brainId": "water-temp", "path": "lakeFleet/Guntersville_AL/riverSystem", "allowed": false},
-    {"brainId": "lake-brain", "path": "lakeFleet/Guntersville_AL/riverSystem", "allowed": true},
-    {"brainId": "lake-brain", "path": "lakeFleet/Guntersville_AL/slots/lake/readiness", "allowed": true},
-    {"brainId": "lake-brain", "path": "lakeFleet/Guntersville_AL/slots/waterTemp/readiness", "allowed": false},
-    {"brainId": "water-temp", "path": "lakes/Guntersville_AL/states/waterTemp", "allowed": true},
-    {"brainId": "water-temp", "path": "lakes/Guntersville_AL/states/wind", "allowed": false},
-    {"brainId": "water-temp", "path": "lakes/Guntersville_AL/profiles/waterTemp", "allowed": true},
-    {"brainId": "water-temp", "path": "lakes/Guntersville_AL/validation/water-temp", "allowed": true},
-    {"brainId": "water-temp", "path": "lakes/Guntersville_AL/validation/wind", "allowed": false},
-    {"brainId": "lake-brain", "path": "lakes/Guntersville_AL/brain", "allowed": true},
-    {"brainId": "biological-state", "path": "lakes/Guntersville_AL/speciesPresence/common_carp", "allowed": false},
-    {"brainId": "lake-brain", "path": "lakes/Guntersville_AL/speciesPresence/common_carp", "allowed": true},
-    {"brainId": "biological-state", "path": "species/common_carp", "allowed": true},
-    {"brainId": "lake-brain", "path": "species/common_carp", "allowed": false},
-    {"brainId": "water-temp", "path": "snapshots/Guntersville_AL/latest/waterTemperature", "allowed": true},
-    {"brainId": "water-temp", "path": "snapshots/Guntersville_AL/latest/brainVersions/water-temp", "allowed": true},
-    {"brainId": "water-temp", "path": "snapshots/Guntersville_AL/latest/generatedAt", "allowed": false},
-    {"brainId": "water-temp", "path": "snapshots/Guntersville_AL/latest/snapshotVersion", "allowed": false},
-    {"brainId": "water-temp", "path": "snapshots/Guntersville_AL/latest/wind", "allowed": false},
-    {"brainId": "wind", "path": "snapshots/Guntersville_AL/latest/wind", "allowed": true},
-    {"brainId": "water-temp", "path": "brains/water-temp", "allowed": true},
-    {"brainId": "water-temp", "path": "brains/wind/health", "allowed": false},
-    {"brainId": "water-temp", "path": "health/brains/water-temp", "allowed": true},
-    {"brainId": "water-temp", "path": "health/jobs/water-temp-brain", "allowed": true},
-    {"brainId": "water-temp", "path": "validation/water-temp", "allowed": true},
-    {"brainId": "water-temp", "path": "validation/wind", "allowed": false},
-    {"brainId": "water-temp", "path": "sources/usgs-nwis-00010", "allowed": true, "note": "owner"},
-    {"brainId": "water-temp", "path": "sources/open-meteo-best-match", "allowed": false, "note": "wind owns it"},
-    {"brainId": "water-temp", "path": "sources/open-meteo-best-match/brains/water-temp", "allowed": true, "note": "append-only membership"},
-    {"brainId": "water-temp", "path": "health/sources/open-meteo-best-match", "allowed": false},
-    {"brainId": "wind", "path": "health/sources/open-meteo-best-match", "allowed": true},
-    {"brainId": "lake-brain", "path": "sources/some-new-source", "allowed": true, "note": "unlisted: first registrant"},
-    {"brainId": "water-temp", "path": "activity/1791784800000-water-temp-001", "allowed": true},
-    {"brainId": "water-temp", "path": "activity/1791784800000-wind-001", "allowed": false},
-    {"brainId": "water-temp", "path": "schemaVersion", "allowed": false},
-    {"brainId": "water-temp", "path": "access/opsUsers/abc", "allowed": false},
-    {"brainId": "sector-intelligence", "path": "lakes/Guntersville_AL/states/intelligence", "allowed": true},
-    {"brainId": "sector-intelligence", "path": "lakeFleet/Guntersville_AL/slots/intelligence/readiness", "allowed": true}
+    {
+      "brainId": "water-temp",
+      "path": "lakeFleet/Guntersville_AL/slots/waterTemp/readiness",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakeFleet/Guntersville_AL/readiness/waterTemp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakeFleet/Guntersville_AL/modelVersions/waterTemp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakeFleet/Guntersville_AL/lakeId",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakeFleet/Guntersville_AL/lastUpdatedAt",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakeFleet/Guntersville_AL/stale",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakeFleet/Guntersville_AL/riverSystem",
+      "allowed": false
+    },
+    {
+      "brainId": "lake-brain",
+      "path": "lakeFleet/Guntersville_AL/riverSystem",
+      "allowed": true
+    },
+    {
+      "brainId": "lake-brain",
+      "path": "lakeFleet/Guntersville_AL/slots/lake/readiness",
+      "allowed": true
+    },
+    {
+      "brainId": "lake-brain",
+      "path": "lakeFleet/Guntersville_AL/slots/waterTemp/readiness",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakes/Guntersville_AL/states/waterTemp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakes/Guntersville_AL/states/wind",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakes/Guntersville_AL/profiles/waterTemp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakes/Guntersville_AL/validation/water-temp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "lakes/Guntersville_AL/validation/wind",
+      "allowed": false
+    },
+    {
+      "brainId": "lake-brain",
+      "path": "lakes/Guntersville_AL/brain",
+      "allowed": true
+    },
+    {
+      "brainId": "biological-state",
+      "path": "lakes/Guntersville_AL/speciesPresence/common_carp",
+      "allowed": false
+    },
+    {
+      "brainId": "lake-brain",
+      "path": "lakes/Guntersville_AL/speciesPresence/common_carp",
+      "allowed": true
+    },
+    {
+      "brainId": "biological-state",
+      "path": "species/common_carp",
+      "allowed": true
+    },
+    {
+      "brainId": "lake-brain",
+      "path": "species/common_carp",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "snapshots/Guntersville_AL/latest/waterTemperature",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "snapshots/Guntersville_AL/latest/brainVersions/water-temp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "snapshots/Guntersville_AL/latest/generatedAt",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "snapshots/Guntersville_AL/latest/snapshotVersion",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "snapshots/Guntersville_AL/latest/wind",
+      "allowed": false
+    },
+    {
+      "brainId": "wind",
+      "path": "snapshots/Guntersville_AL/latest/wind",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "brains/water-temp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "brains/wind/health",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "health/brains/water-temp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "health/jobs/water-temp-brain",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "validation/water-temp",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "validation/wind",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "sources/usgs-nwis-00010",
+      "allowed": true,
+      "note": "owner"
+    },
+    {
+      "brainId": "water-temp",
+      "path": "sources/open-meteo-best-match",
+      "allowed": false,
+      "note": "wind owns it"
+    },
+    {
+      "brainId": "water-temp",
+      "path": "sources/open-meteo-best-match/brains/water-temp",
+      "allowed": true,
+      "note": "append-only membership"
+    },
+    {
+      "brainId": "water-temp",
+      "path": "health/sources/open-meteo-best-match",
+      "allowed": false
+    },
+    {
+      "brainId": "wind",
+      "path": "health/sources/open-meteo-best-match",
+      "allowed": true
+    },
+    {
+      "brainId": "lake-brain",
+      "path": "sources/some-new-source",
+      "allowed": true,
+      "note": "unlisted: first registrant"
+    },
+    {
+      "brainId": "water-temp",
+      "path": "activity/1791784800000-water-temp-001",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "activity/1791784800000-wind-001",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "schemaVersion",
+      "allowed": false
+    },
+    {
+      "brainId": "water-temp",
+      "path": "access/opsUsers/abc",
+      "allowed": false
+    },
+    {
+      "brainId": "sector-intelligence",
+      "path": "lakes/Guntersville_AL/states/intelligence",
+      "allowed": true
+    },
+    {
+      "brainId": "sector-intelligence",
+      "path": "lakeFleet/Guntersville_AL/slots/intelligence/readiness",
+      "allowed": true
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "brains/water-temp/score",
+      "allowed": true,
+      "note": "platform score publisher"
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "brains/water-temp/score/value",
+      "allowed": true
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "brains/water-temp/health",
+      "allowed": false
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "engine/score",
+      "allowed": true
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "health/engine",
+      "allowed": true
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "health/rtdb",
+      "allowed": true
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "schemaVersion",
+      "allowed": true
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "lakes/Guntersville_AL/states/waterTemp",
+      "allowed": false
+    },
+    {
+      "brainId": "brain-platform",
+      "path": "activity/1791784800000-brain-platform-001",
+      "allowed": true
+    },
+    {
+      "brainId": "water-temp",
+      "path": "brains/water-temp/score",
+      "allowed": true,
+      "note": "a brain may publish its own score"
+    },
+    {
+      "brainId": "water-temp",
+      "path": "engine/score",
+      "allowed": false
+    }
   ],
   "sourceOwners": {
-    "tva-restapi": "lake-brain", "usace-cwms-pool": "lake-brain", "usgs-nwis-lake-elevation": "lake-brain",
-    "usgs-nwis-00010": "water-temp", "usace-cwms-water-temp": "water-temp", "open-meteo-water-temp-forcing": "water-temp",
-    "lake-surface-sentinel": "water-clarity", "usgs-turbidity": "water-clarity", "mrms-rain": "water-clarity",
-    "noaa-nbm": "wind", "noaa-rtma-ru": "wind", "metar": "wind", "open-meteo-best-match": "wind",
+    "tva-restapi": "lake-brain",
+    "usace-cwms-pool": "lake-brain",
+    "usgs-nwis-lake-elevation": "lake-brain",
+    "usgs-nwis-00010": "water-temp",
+    "usace-cwms-water-temp": "water-temp",
+    "open-meteo-water-temp-forcing": "water-temp",
+    "lake-surface-sentinel": "water-clarity",
+    "usgs-turbidity": "water-clarity",
+    "mrms-rain": "water-clarity",
+    "noaa-nbm": "wind",
+    "noaa-rtma-ru": "wind",
+    "metar": "wind",
+    "open-meteo-best-match": "wind",
     "sector-biology-private": "biological-state"
   }
 }
