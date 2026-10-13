@@ -1,0 +1,576 @@
+{
+ "brainId": "water-clarity",
+ "slot": "waterClarity",
+ "snapshotField": "waterClarity",
+ "displayName": "Water Clarity",
+ "domain": "condition",
+ "question": "What does the water look like?",
+ "brainVersion": "1.1.0",
+ "brainStatus": "BETA",
+ "brainStatusReasons": [
+  "MOST_LAKES_ON_UNVALIDATED_MODEL",
+  "PUBLISHER_NOT_SCHEDULED"
+ ],
+ "staleAfterHours": 26,
+ "satelliteFreshDays": 14,
+ "satelliteFreshBasis": "LAKE_SURFACE_LOOKBACK_DAYS_14",
+ "vocabularies": {
+  "stateType": [
+   "GAUGE_OBSERVED",
+   "RAINFALL_MODELED",
+   "FALLBACK_NEUTRAL",
+   "UNAVAILABLE"
+  ],
+  "basis": [
+   "OBSERVATION",
+   "MODEL",
+   "FALLBACK",
+   "NONE"
+  ],
+  "readiness": [
+   "DISCOVERED",
+   "PROFILED",
+   "CALIBRATION",
+   "BETA",
+   "VALIDATED",
+   "PRODUCTION",
+   "DEGRADED",
+   "BLOCKED"
+  ],
+  "modelLifecycle": [
+   "PRODUCTION",
+   "PRODUCTION_EVIDENCE",
+   "CANDIDATE",
+   "SHADOW",
+   "REVIEW",
+   "RETIRED"
+  ],
+  "certificationStatus": [
+   "CERTIFIED",
+   "VALIDATED_NO_GATE",
+   "NOT_VALIDATED",
+   "NOT_CERTIFIED"
+  ],
+  "deploymentStatus": [
+   "SERVING_CUSTOMERS",
+   "RUNNING_NOT_SERVING",
+   "PAUSED",
+   "NOT_DEPLOYED"
+  ],
+  "sensorAuthority": [
+   "FULL",
+   "LOWER",
+   "UNTIERED",
+   "NOT_CERTIFIED",
+   "NOT_USED"
+  ],
+  "strongState": [
+   "STRONG",
+   "NOT_STRONG",
+   "NOT_EVALUATED"
+  ],
+  "satelliteStatus": [
+   "FRESH",
+   "STALE",
+   "NONE",
+   "UNSUPPORTED"
+  ],
+  "trend": [
+   "IMPROVING",
+   "STABLE",
+   "WORSENING",
+   "UNKNOWN"
+  ],
+  "rainfallSource": [
+   "MRMS_WATERSHED_72H",
+   "OPEN_METEO_POINT_48H"
+  ],
+  "sourceHealth": [
+   "HEALTHY",
+   "WARNING",
+   "DEGRADED",
+   "FAILED",
+   "UNKNOWN",
+   "PAUSED"
+  ]
+ },
+ "stateTypes": {
+  "GAUGE_OBSERVED": {
+   "basis": "OBSERVATION",
+   "engineSource": "inSituGauge",
+   "modelId": "secchi-power-v1"
+  },
+  "RAINFALL_MODELED": {
+   "basis": "MODEL",
+   "engineSource": "rainDecayModel",
+   "modelId": "rain-decay-v0"
+  },
+  "FALLBACK_NEUTRAL": {
+   "basis": "FALLBACK",
+   "engineSource": "noRainData",
+   "modelId": "rain-decay-v0"
+  },
+  "UNAVAILABLE": {
+   "basis": "NONE",
+   "engineSource": null,
+   "modelId": null
+  }
+ },
+ "readinessRule": {
+  "ruleId": "clarity-readiness-v1",
+  "byStateType": {
+   "GAUGE_OBSERVED": "PRODUCTION",
+   "RAINFALL_MODELED": "BETA",
+   "FALLBACK_NEUTRAL": "DEGRADED",
+   "UNAVAILABLE": "DEGRADED"
+  },
+  "reasons": {
+   "GAUGE_OBSERVED": "SERVED_AND_VALIDATED",
+   "RAINFALL_MODELED": "SERVED_NOT_VALIDATED",
+   "FALLBACK_NEUTRAL": "NO_MEASUREMENT",
+   "UNAVAILABLE": "ENGINE_NO_ANSWER"
+  },
+  "satelliteAffectsReadiness": false,
+  "unusedLevels": [
+   "VALIDATED",
+   "CALIBRATION"
+  ]
+ },
+ "strongPolicy": {
+  "policyId": "stage19-strong",
+  "policyVersion": "stage19-frozen",
+  "method": "M_AGREE",
+  "consensusWindowDays": 10,
+  "minFullAuthorityScenes": 2,
+  "minConfidence": 0.9,
+  "requiresKnownFullAuthorityState": true,
+  "disjointSceneAllowed": false,
+  "evaluatedByModels": [
+   "r3.1",
+   "r0-stage19"
+  ],
+  "evaluatedByActiveModel": false,
+  "specRef": {
+   "repo": "Sector_Engine",
+   "branch": "research/clarity-candidate",
+   "path": "research/clarity-candidate/stage19",
+   "visibility": "LOCAL_BRANCH"
+  }
+ },
+ "processingPaths": {
+  "engine-conditions": {
+   "pathId": "engine-conditions",
+   "modelIds": [
+    "secchi-power-v1",
+    "rain-decay-v0"
+   ],
+   "inputs": [
+    "USGS_TURBIDITY_GAUGE",
+    "MRMS_WATERSHED_72H",
+    "OPEN_METEO_POINT_48H",
+    "USGS_ARM_DISCHARGE_12H"
+   ],
+   "usesSatellite": false
+  },
+  "lake-surface-l2a-red": {
+   "pathId": "lake-surface-l2a-red",
+   "modelIds": [
+    "lake-surface-s2-fnu"
+   ],
+   "inputs": [
+    "SENTINEL2_L2A_C1_EARTH_SEARCH"
+   ],
+   "usesSatellite": true
+  },
+  "r0-acolite-l1c": {
+   "pathId": "r0-acolite-l1c",
+   "modelIds": [
+    "r0-stage19"
+   ],
+   "inputs": [
+    "SENTINEL2_L1C",
+    "ACOLITE_K4"
+   ],
+   "usesSatellite": true
+  },
+  "r3-usgs-aqr": {
+   "pathId": "r3-usgs-aqr",
+   "modelIds": [
+    "r3.1"
+   ],
+   "inputs": [
+    "USGS_AQR"
+   ],
+   "usesSatellite": true
+  }
+ },
+ "activeModel": {
+  "modelIds": [
+   "secchi-power-v1",
+   "rain-decay-v0"
+  ],
+  "selectionRule": "PER_LAKE_ENGINE_SOURCE",
+  "servedBy": "sector-engine:/conditions",
+  "processingPathId": "engine-conditions"
+ },
+ "candidateModel": {
+  "modelId": "r3.1"
+ },
+ "models": [
+  {
+   "modelId": "secchi-power-v1",
+   "method": "TURBIDITY_POWER_LAW",
+   "processingPathId": "engine-conditions",
+   "lifecycle": "PRODUCTION",
+   "deploymentStatus": "SERVING_CUSTOMERS",
+   "certificationStatus": "VALIDATED_NO_GATE",
+   "servesCustomers": true,
+   "coverage": "LAKES_WITH_DRIVING_TURBIDITY_GAUGE",
+   "publishesLakeState": true,
+   "parameters": {
+    "a": 11.123,
+    "b": -0.637,
+    "unitIn": "FNU",
+    "unitOut": "ft"
+   },
+   "since": "2026-09-27",
+   "validationRef": "/validation/water-clarity",
+   "codeRef": {
+    "repo": "Sector_Engine",
+    "path": "Sources/SectorEngine/Hydrology/VisibilityModel.swift",
+    "deployedRevision": "sector-engine-00072-way"
+   }
+  },
+  {
+   "modelId": "rain-decay-v0",
+   "method": "RAIN_DECAY_HEURISTIC",
+   "processingPathId": "engine-conditions",
+   "lifecycle": "PRODUCTION",
+   "deploymentStatus": "SERVING_CUSTOMERS",
+   "certificationStatus": "NOT_VALIDATED",
+   "servesCustomers": true,
+   "coverage": "LAKES_WITHOUT_DRIVING_TURBIDITY_GAUGE",
+   "publishesLakeState": true,
+   "since": "2026-09-27",
+   "validationRef": null,
+   "codeRef": {
+    "repo": "Sector_Engine",
+    "path": "Sources/SectorEngine/Engine/Factors/ClarityFactor.swift",
+    "deployedRevision": "sector-engine-00072-way"
+   }
+  },
+  {
+   "modelId": "lake-surface-s2-fnu",
+   "method": "S2_RED_BAND_DOGLIOTTI2015",
+   "processingPathId": "lake-surface-l2a-red",
+   "lifecycle": "PRODUCTION_EVIDENCE",
+   "deploymentStatus": "RUNNING_NOT_SERVING",
+   "certificationStatus": "VALIDATED_NO_GATE",
+   "servesCustomers": false,
+   "coverage": "LAKES_WITH_OUTLINE_AND_PASS",
+   "publishesLakeState": false,
+   "runsIn": "cloud-run-job:lake-surface-daily",
+   "validationRef": "/validation/water-clarity",
+   "codeRef": {
+    "repo": "Sector_Engine",
+    "branch": "feat/clarity-algal-warning",
+    "path": "jobs/lake-surface"
+   }
+  },
+  {
+   "modelId": "r3.1",
+   "processingPathId": "r3-usgs-aqr",
+   "lifecycle": "CANDIDATE",
+   "deploymentStatus": "NOT_DEPLOYED",
+   "certificationStatus": "CERTIFIED",
+   "servesCustomers": false,
+   "coverage": null,
+   "publishesLakeState": false,
+   "certificationRef": "/brains/water-clarity/certifications/r3_1",
+   "validationRef": "/validation/water-clarity/candidates/r3_1"
+  },
+  {
+   "modelId": "r0-stage19",
+   "processingPathId": "r0-acolite-l1c",
+   "lifecycle": "SHADOW",
+   "deploymentStatus": "PAUSED",
+   "certificationStatus": "NOT_CERTIFIED",
+   "servesCustomers": false,
+   "coverage": "PILOT_LAKES_17",
+   "publishesLakeState": false,
+   "runsIn": "cloud-run-job:clarity-candidate-shadow",
+   "codeRef": {
+    "repo": "Sector_Engine",
+    "branch": "feat/clarity-candidate-shadow",
+    "path": "jobs/clarity-candidate",
+    "visibility": "LOCAL_BRANCH"
+   }
+  },
+  {
+   "modelId": "current-clarity-stage5",
+   "method": "CLARITY_FUSION_STAGE5",
+   "processingPathId": "engine-conditions",
+   "lifecycle": "REVIEW",
+   "deploymentStatus": "RUNNING_NOT_SERVING",
+   "certificationStatus": "NOT_CERTIFIED",
+   "servesCustomers": false,
+   "coverage": "MASTER_ACCOUNT_BETA",
+   "publishesLakeState": false,
+   "trafficPct": 0,
+   "runsIn": "cloud-run-tag:clarity + cloud-run-job:clarity-current-hourly",
+   "codeRef": {
+    "repo": "Sector_Engine",
+    "branch": "feat/clarity-production"
+   }
+  }
+ ],
+ "certifications": {
+  "r3_1": {
+   "modelId": "r3.1",
+   "certificationStatus": "CERTIFIED",
+   "result": "ALL_FROZEN_BARS_PASS",
+   "certifiedAt": "2026-10-12",
+   "deploymentStatus": "NOT_DEPLOYED",
+   "detailRef": {
+    "visibility": "PRIVATE",
+    "store": "gs://sector-clarity-candidate/research-archive/2026-10-12-closeout",
+    "ref": "clarity-research:R3_1_CERTIFICATION"
+   }
+  }
+ },
+ "sensorAuthority": {
+  "ownedBy": "water-clarity",
+  "byProcessingPath": {
+   "lake-surface-l2a-red": {
+    "pathId": "lake-surface-l2a-red",
+    "modelIds": [
+     "lake-surface-s2-fnu"
+    ],
+    "policy": "UNTIERED",
+    "sensors": {
+     "S2A": "UNTIERED",
+     "S2B": "UNTIERED",
+     "S2C": "UNTIERED",
+     "LANDSAT": "NOT_USED"
+    },
+    "evidenceRef": {
+     "repo": "Sector_Engine",
+     "branch": "research/clarity-candidate",
+     "path": "docs/intelligence/clarity/CLARITY_PARITY_AUDIT.md",
+     "visibility": "LOCAL_BRANCH"
+    }
+   },
+   "r0-acolite-l1c": {
+    "pathId": "r0-acolite-l1c",
+    "modelIds": [
+     "r0-stage19"
+    ],
+    "policy": "TIERED",
+    "sensors": {
+     "S2A": "FULL",
+     "S2B": "FULL",
+     "S2C": "LOWER",
+     "LANDSAT": "NOT_CERTIFIED"
+    },
+    "evidenceRef": {
+     "repo": "Sector_Engine",
+     "branch": "research/clarity-candidate",
+     "path": "research/clarity-candidate/stage24",
+     "visibility": "LOCAL_BRANCH"
+    }
+   },
+   "r3-usgs-aqr": {
+    "pathId": "r3-usgs-aqr",
+    "modelIds": [
+     "r3.1"
+    ],
+    "policy": "TIERED",
+    "sensors": {
+     "S2A": "FULL",
+     "S2B": "FULL",
+     "S2C": "FULL",
+     "LANDSAT": "NOT_CERTIFIED"
+    },
+    "scope": "THIS_PATH_ONLY",
+    "certifiedAt": {
+     "S2C": "2026-10-12"
+    },
+    "evidencePrivateRef": {
+     "visibility": "PRIVATE",
+     "store": "gs://sector-clarity-candidate/research-archive/2026-10-12-closeout",
+     "ref": "clarity-research:S2C_AUTHORITY_CERTIFICATION"
+    }
+   }
+  }
+ },
+ "validation": {
+  "production": {
+   "brainId": "water-clarity",
+   "modelVersion": "secchi-power-v1",
+   "validationVersion": "visibility_validation@be1d8932",
+   "status": "VALIDATED_NO_GATE",
+   "lastRunAt": "2026-09-28T00:00:00Z",
+   "holdoutType": "EXTERNAL_FIXED_FORMULA_WQP_SAME_SITE_SAME_DAY",
+   "sampleCount": 81661,
+   "lakeCount": null,
+   "failedGates": [],
+   "gates": null,
+   "unvalidatedActiveModels": [
+    "rain-decay-v0"
+   ],
+   "metrics": {
+    "secchiMedianAbsErrorFt": 1.22,
+    "within30Pct": 42.0,
+    "log10Rmse": 0.272,
+    "medianBiasLog10": 0.109,
+    "satelliteSecchiMedianAbsErrorFt": 2.18,
+    "satelliteWithin30Pct": 31.2,
+    "satelliteSampleCount": 905
+   },
+   "metricUnits": {
+    "secchiMedianAbsErrorFt": "ft",
+    "within30Pct": "%",
+    "log10Rmse": "log10",
+    "medianBiasLog10": "log10",
+    "satelliteSecchiMedianAbsErrorFt": "ft",
+    "satelliteWithin30Pct": "%",
+    "satelliteSampleCount": "pairs"
+   },
+   "byClass": [
+    {
+     "lakeClass": "IN_SITU_NATIONAL",
+     "sampleCount": 81661,
+     "metrics": {
+      "secchiMedianAbsErrorFt": 1.22,
+      "within30Pct": 42.0
+     }
+    },
+    {
+     "lakeClass": "IN_SITU_ALABAMA",
+     "sampleCount": 3311,
+     "metrics": {
+      "secchiMedianAbsErrorFt": 0.81,
+      "within30Pct": 59.9
+     }
+    },
+    {
+     "lakeClass": "IN_SITU_TN_RIVER_RESERVOIRS",
+     "sampleCount": 130,
+     "metrics": {
+      "secchiMedianAbsErrorFt": 0.94,
+      "within30Pct": 63.8
+     }
+    },
+    {
+     "lakeClass": "SENTINEL2_FNU_NATIONAL",
+     "sampleCount": 905,
+     "metrics": {
+      "secchiMedianAbsErrorFt": 2.18,
+      "within30Pct": 31.2
+     }
+    }
+   ],
+   "inputUnits": {
+    "NTU": 75857,
+    "FNU": 4312,
+    "NTRU": 1401,
+    "FTU": 91
+   },
+   "modelHistory": [
+    {
+     "version": "secchi-power-v1",
+     "date": "2026-09-27",
+     "status": "VALIDATED_NO_GATE"
+    },
+    {
+     "version": "rain-decay-v0",
+     "date": "2026-09-27",
+     "status": "NOT_VALIDATED"
+    }
+   ],
+   "artifactRef": "Sector_Engine:docs/data/hydrology/guntersville/visibility_validation.json@be1d8932",
+   "artifacts": [
+    {
+     "kind": "VALIDATION_RESULT",
+     "repo": "Sector_Engine",
+     "commit": "be1d8932",
+     "path": "docs/data/hydrology/guntersville/visibility_validation.json",
+     "visibility": "PUBLIC_REPO"
+    },
+    {
+     "kind": "VALIDATION_SCRIPT",
+     "repo": "Sector_Engine",
+     "commit": "be1d8932",
+     "path": "scripts/hydrology/visibility_validation.py",
+     "visibility": "PUBLIC_REPO"
+    }
+   ]
+  },
+  "candidates": {
+   "r3_1": {
+    "brainId": "water-clarity",
+    "modelVersion": "r3.1",
+    "status": "CERTIFIED",
+    "certificationStatus": "CERTIFIED",
+    "candidateStatus": "CANDIDATE",
+    "deploymentStatus": "NOT_DEPLOYED",
+    "lastRunAt": "2026-10-12T00:00:00Z",
+    "sampleCount": null,
+    "lakeCount": null,
+    "failedGates": [],
+    "metrics": {},
+    "certificationRef": "/brains/water-clarity/certifications/r3_1",
+    "artifactRef": "private:clarity-research (R3.1 certification)"
+   }
+  }
+ },
+ "jobs": {
+  "lake-surface-daily": {
+   "displayName": "lake-surface-daily",
+   "kind": "Cloud Run job",
+   "schedule": "0 3 * * * America/Chicago",
+   "processingPathId": "lake-surface-l2a-red"
+  },
+  "hydrology-hourly": {
+   "displayName": "hydrology-hourly",
+   "kind": "Cloud Run job",
+   "schedule": "15 * * * * UTC",
+   "processingPathId": null
+  },
+  "clarity-current-hourly": {
+   "displayName": "clarity-current-hourly",
+   "kind": "Cloud Run job",
+   "schedule": "40 * * * * UTC",
+   "processingPathId": null
+  },
+  "clarity-candidate-shadow": {
+   "displayName": "clarity-candidate-shadow",
+   "kind": "Cloud Run job",
+   "schedule": "0 7 * * * America/Chicago",
+   "processingPathId": "r0-acolite-l1c"
+  }
+ },
+ "sources": {
+  "sentinel-2-l2a": {
+   "provider": "Copernicus Sentinel-2 L2A (Collection 1), Element84 Earth Search",
+   "type": "satellite",
+   "provides": "TURBIDITY_FIELD_AND_MAP_RASTERS",
+   "processingPathId": "lake-surface-l2a-red",
+   "staleThresholdHours": 336
+  },
+  "usgs-nwis-turbidity": {
+   "provider": "USGS NWIS turbidity (63680)",
+   "type": "in-situ gauge",
+   "provides": "IN_SITU_TURBIDITY",
+   "processingPathId": "engine-conditions",
+   "staleThresholdHours": null
+  },
+  "noaa-mrms": {
+   "provider": "NOAA MRMS via IEM",
+   "type": "radar rainfall",
+   "provides": "WATERSHED_RAIN_72H",
+   "processingPathId": "engine-conditions",
+   "staleThresholdHours": 26
+  }
+ }
+}

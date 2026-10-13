@@ -1,0 +1,25 @@
+{
+ "lakeId": "Guntersville|AL",
+ "summary": {
+  "date": "2026-10-08",
+  "platform": "sentinel-2c",
+  "time": "2026-10-08T16:44:07.216000Z",
+  "measuredPct": 56.1,
+  "openWaterReadPct": 80.6,
+  "grassPct": 23.1,
+  "fnuP25": 3.363,
+  "fnuP50": 3.707,
+  "fnuP75": 4.111
+ },
+ "files": {
+  "clarity": "lakes/Guntersville_AL/clarity/2026-10-08.png",
+  "measured": "lakes/Guntersville_AL/clarity/2026-10-08.measured.png",
+  "distance": "lakes/Guntersville_AL/clarity/2026-10-08.distance.png",
+  "ndci": "lakes/Guntersville_AL/clarity/2026-10-08.ndci.png",
+  "meta": "lakes/Guntersville_AL/clarity/2026-10-08.json",
+  "grid": "lakes/Guntersville_AL/clarity/2026-10-08.grid.json",
+  "cells": "lakes/Guntersville_AL/clarity/2026-10-08.cells.bin",
+  "arms": "lakes/Guntersville_AL/clarity/arms/2026-10-08.json"
+ },
+ "publishedAt": "2026-10-09T08:08:29.970531Z"
+}

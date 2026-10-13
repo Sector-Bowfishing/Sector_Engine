@@ -1,0 +1,64 @@
+{
+ "field": "turbidity",
+ "unit": "FNU",
+ "encoding": {
+  "kind": "log10",
+  "lo": -0.3010299956639812,
+  "hi": 2.3010299956639813,
+  "top": 254
+ },
+ "pass": {
+  "date": "2026-10-08",
+  "platform": "sentinel-2c",
+  "sceneIds": [
+   "S2C_T16SEC_20261008T163310_L2A",
+   "S2C_T16SED_20261008T163310_L2A",
+   "S2C_T16SFD_20261008T163310_L2A"
+  ],
+  "time": "2026-10-08T16:44:07.216000Z"
+ },
+ "measuredStatsFNU": {
+  "p1": 2.433,
+  "p5": 2.804,
+  "p25": 3.363,
+  "p50": 3.707,
+  "p75": 4.111,
+  "p95": 5.139,
+  "p99": 5.96
+ },
+ "measuredPct": 56.1,
+ "openWaterReadPct": 80.6,
+ "grassPct": 23.1,
+ "algorithm": {
+  "name": "Dogliotti et al. 2015, red band",
+  "formula": "T = A*rho/(1 - rho/C)",
+  "A": 228.1,
+  "C": 0.1641,
+  "band": "B04 (665 nm), native 10 m",
+  "citation": "Remote Sensing of Environment 156:157-168; coefficients as in ACOLITE's defaults"
+ },
+ "lakeId": "Guntersville|AL",
+ "projection": "EPSG:3857",
+ "coordinates": [
+  [
+   -86.40750987500218,
+   35.04519013544567
+  ],
+  [
+   -85.60937471136765,
+   35.04519013544567
+  ],
+  [
+   -85.60937471136765,
+   34.277524948714294
+  ],
+  [
+   -86.40750987500218,
+   34.277524948714294
+  ]
+ ],
+ "pixelWidth": 2468,
+ "pixelHeight": 2886,
+ "cellMetresMercator": 36.0,
+ "generatedOn": "2026-10-09"
+}
