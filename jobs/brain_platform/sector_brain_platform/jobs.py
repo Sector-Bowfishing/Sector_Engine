@@ -218,7 +218,8 @@ def _res(run_job: dict | None) -> dict | None:
     mem = lim.get("memory")
     out = {"cpu": float(cpu[:-1]) / 1000 if isinstance(cpu, str) and cpu.endswith("m") else (float(cpu) if cpu else None),
            "memoryGi": (float(mem[:-2]) / 1024 if mem.endswith("Mi") else float(mem[:-2])) if isinstance(mem, str) and mem[-2:] in ("Gi", "Mi") else None,
-           "tasks": spec.get("taskCount"), "parallelism": spec.get("parallelism") or spec.get("taskCount"), "taskTimeoutS": t.get("timeoutSeconds")}
+           "tasks": spec.get("taskCount"), "parallelism": spec.get("parallelism") or spec.get("taskCount"),
+           "taskTimeoutS": int(t["timeoutSeconds"]) if str(t.get("timeoutSeconds", "")).isdigit() else None}
     return {k: v for k, v in out.items() if v is not None}
 
 
