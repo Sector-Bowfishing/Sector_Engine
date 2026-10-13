@@ -130,3 +130,17 @@ def test_cli_writes_json(tmp_path):
     assert R.main(["--out", str(out)]) == 0
     d = json.load(open(out))
     assert set(d["batches"]) == {"A", "B", "C", "D"} and len(d["projection"]) == 5
+
+
+@pytest.mark.skipif(not HAVE_TABLE, reason="bindings table missing")
+def test_accepted_restricts_the_batches(tmp_path):
+    doc, rows = P.load_bindings(P.DEFAULT_BINDINGS)
+    pilots = sorted(p["lakeId"] for p in doc["pilotReproduction"])
+    keep = sorted(set(rows) - set(pilots))[:30]
+    acc = tmp_path / "accepted_batch.json"
+    acc.write_text(json.dumps(sorted(keep + pilots)))
+    out = tmp_path / "p.json"
+    assert R.main(["--accepted", str(acc), "--out", str(out)]) == 0
+    d = json.load(open(out))
+    flat = [l for v in d["batches"].values() for l in v["lakes"]]
+    assert sorted(flat) == keep and d["projection"][-1]["profiled"] == 35

@@ -211,6 +211,7 @@ def main(argv=None):
     ap.add_argument("--throughput", help="measured_throughput.json (seconds per call per host); default: built-in estimates")
     ap.add_argument("--now", default="2026-10-13T20:00:00Z")
     ap.add_argument("--observed-share", type=float, default=1.0)
+    ap.add_argument("--accepted", help="the real accepted_batch.json: batches are then built from the accepted lakes only (pilots stay)")
     ap.add_argument("--out")
     ap.add_argument("--make-throughput", help="comma list of preseed state.json files: write their aggregate seconds-per-call JSON to --out and exit")
     a = ap.parse_args(argv)
@@ -221,6 +222,9 @@ def main(argv=None):
     doc, rows = P.load_bindings(a.bindings)
     now = P.parse_iso(a.now)
     pilots = {p["lakeId"] for p in doc.get("pilotReproduction", [])}
+    if a.accepted:
+        acc = set(json.load(open(a.accepted)))
+        rows = {l: b for l, b in rows.items() if l in acc or l in pilots}
     cat = P.load_cwms_catalog(a.catalog) if a.catalog else None
     spc = load_throughput(a.throughput) if a.throughput else dict(DEFAULT_SECONDS_PER_CALL)
     batches, info = select_batches(rows, pilots, now, cat, spc)
