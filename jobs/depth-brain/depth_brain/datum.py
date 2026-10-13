@@ -50,6 +50,7 @@ class DatumAssessment:
     sigma_ft: float = 0.0
     conversion_ft: float = 0.0          # added to the LEVEL (in level datum) to express it in the reference datum
     reasons: list = field(default_factory=list)
+    evidence_confidence: str | None = None      # reviewed overrides only: "high" | "medium" (medium caps the lake at MEDIUM_CONFIDENCE rollout)
 
     @property
     def usable(self) -> bool:
@@ -61,6 +62,8 @@ class DatumAssessment:
             d["conversionFt"] = round(self.conversion_ft, 3)
         if self.reasons:
             d["reasons"] = list(self.reasons)
+        if self.evidence_confidence:
+            d["evidenceConfidence"] = self.evidence_confidence
         return d
 
 

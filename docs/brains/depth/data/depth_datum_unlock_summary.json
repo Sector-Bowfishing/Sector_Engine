@@ -1,22 +1,18 @@
 {
- "blocked": 529,
- "plausibleBlocked": 233,
+ "blocked": 450,
+ "plausibleBlocked": 154,
  "groups": {
   "cwms-pool-datum-unstated": {
-   "n": 47,
-   "plausible": 41
-  },
-  "a2w-pool-datum-unstated": {
-   "n": 36,
-   "plausible": 33
+   "n": 18,
+   "plausible": 13
   },
   "usgs-pairing": {
-   "n": 73,
-   "plausible": 31
+   "n": 69,
+   "plausible": 27
   },
-  "a2w-local-or-blank": {
-   "n": 24,
-   "plausible": 22
+  "a2w-pool-datum-unstated": {
+   "n": 8,
+   "plausible": 7
   },
   "rise-usbr": {
    "n": 50,
@@ -25,6 +21,10 @@
   "nwps": {
    "n": 41,
    "plausible": 32
+  },
+  "a2w-local-or-blank": {
+   "n": 3,
+   "plausible": 1
   },
   "duke-local-scale": {
    "n": 8,
@@ -40,6 +40,10 @@
   },
   "lake-binding": {
    "n": 204,
+   "plausible": 0
+  },
+  "reference-pool": {
+   "n": 3,
    "plausible": 0
   }
  }

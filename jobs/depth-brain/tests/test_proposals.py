@@ -91,3 +91,20 @@ def test_twdb_requires_verified_pool_datum_evidence_and_a_passed_validation(tmp_
 
 def test_gitted_proposal_rules_are_the_strict_ones():
     assert (P.PAIRING_MIN_N, P.PAIRING_MAX_ABS_MEAN_FT, P.PAIRING_MAX_SD_FT, P.ALLOWED_SIGMA_MIN) == (20, 0.35, 0.25, 0.1)
+
+
+def test_same_source_may_have_zero_sigma_but_same_datum_may_not():
+    ss = rec(decision="SAME_SOURCE", method="cwms-location", sigmaFt=0.0, offsetStats=None, levelDatum="LOCAL (CWMS location datum unnamed)", referenceDatum="LOCAL (same CWMS location)")
+    assert ok(ss)[0]
+    assert not ok(rec(sigmaFt=0.0))[0]                                        # SAME_DATUM keeps the 0.1 floor
+    assert not ok(rec(decision="SAME_SOURCE", method="cwms-location", sigmaFt=-0.1, offsetStats=None))[0]
+    bad = rec(decision="SAME_SOURCE", method="cwms-location", sigmaFt=0.0, offsetStats=None, levelDatum="NGVD29", referenceDatum="NAVD88")
+    assert not ok(bad)[0]                                                      # internally inconsistent
+
+
+def test_verbose_datum_strings_are_reduced_to_their_token_and_stats_still_gate():
+    assert P.datum_token("NGVD29 (USGS 62614 by parameter definition)") == "NGVD29"
+    assert P.datum_token("LOCAL (same CWMS location)") == "LOCAL" and P.datum_token("weird text") is None
+    r = rec(levelDatum="NGVD29 (00062 series; numerically equal to CWMS NGVD29 pool series)")
+    assert ok(r)[0]
+    assert not ok({**r, "offsetStats": {"n": 5, "meanFt": 0.0, "sdFt": 0.05}})[0]

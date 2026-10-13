@@ -763,17 +763,16 @@
    "state": "AL"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.184,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -793,7 +792,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "USGS parameter 62614 is defined against NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62614",
@@ -807,15 +806,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 190,
     "source": "https://water.sam.usace.army.mil/wfg-pert.htm",
     "winterPoolFt": 188.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "AL"
   },
   {
@@ -1422,17 +1421,16 @@
    "state": "AR"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.384,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -1452,7 +1450,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (SWL:Bull_Shoals_Dam)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -1466,15 +1464,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 659,
     "source": "CWMS Bull_Shoals_Dam Top of Conservation (base of 659-662 seasonal pool)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "AR"
   },
   {
@@ -1595,17 +1593,16 @@
    "state": "AR"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.062,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
@@ -1624,9 +1621,9 @@
    "lakeName": "Dardanelle",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "LD10_Dardanelle-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
     "status": "RESEARCH_VERIFIED"
@@ -1640,14 +1637,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum SWL/LD10_Dardanelle",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 338,
     "source": "CWMS LD10_Dardanelle.Elev-Pool.Inst.0.Top of Normal (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "AR"
   },
   {
@@ -2034,17 +2031,17 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
-    "DATUM_UNKNOWN"
+    "REFERENCE_POOL_CONFIDENCE_LOW"
    ],
    "cwmsOffice": "SPL",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 2.178,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -2064,7 +2061,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (SPL:Alamo)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -2078,9 +2075,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "low",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1160.4,
     "source": "CWMS Alamo Top of Conservation (= bottom of flood control)",
     "winterPoolFt": null
@@ -2774,18 +2771,16 @@
    "state": "CA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPK",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 2.454,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "measured hypsometry (CWMS)",
@@ -2804,9 +2799,9 @@
    "lakeName": "Don Pedro",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Don Pedro.Elev.Inst.~1Day.0.MANUAL",
     "status": "RESEARCH_VERIFIED"
@@ -2819,15 +2814,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 830,
     "source": "https://www.tid.org/facilities/don-pedro-reservoir/",
     "winterPoolFt": 802.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "CA"
   },
   {
@@ -2890,18 +2885,16 @@
    "state": "CA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPK",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 2.625,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "measured hypsometry (CWMS)",
@@ -2920,9 +2913,9 @@
    "lakeName": "Folsom",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Folsom Lake.Elev.Inst.1Hour.0.CDEC-confidential-raw",
     "status": "RESEARCH_VERIFIED_LABELLED"
@@ -2935,30 +2928,30 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 466,
     "source": "https://www.usbr.gov/projects/index.php?id=74",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "CA"
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
-    "DATUM_UNKNOWN"
+    "REFERENCE_POOL_CONFIDENCE_LOW"
    ],
    "cwmsOffice": "SPK",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 2.92,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "measured hypsometry (CWMS)",
@@ -2978,7 +2971,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (SPK:Lake Isabella)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -2992,9 +2985,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "med",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2585.5,
     "source": "CWMS Isabella Dam Top of Conservation max",
     "winterPoolFt": null
@@ -3063,18 +3056,16 @@
    "state": "CA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPK",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 2.316,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -3093,9 +3084,9 @@
    "lakeName": "Oroville",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Oroville Dam.Elev.Inst.1Hour.0.Rev-CDEC-Combined",
     "status": "RESEARCH_VERIFIED_LABELLED"
@@ -3108,15 +3099,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 900,
     "source": "https://pubs.usgs.gov/wdr/WDR-CA-00-4/pdf/WRD.CA.00.Vol4.pdf",
     "winterPoolFt": 848.5
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "CA"
   },
   {
@@ -3350,18 +3341,16 @@
    "state": "CO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWO",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.068,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -3380,9 +3369,9 @@
    "lakeName": "Chatfield Reservoir",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -3395,30 +3384,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 5444,
     "source": "CWMS NWDM CHFI Top of Conservation",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "CO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWO",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 2.969,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -3437,9 +3424,9 @@
    "lakeName": "Cherry Creek Reservoir",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -3452,15 +3439,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 5550,
     "source": "CWMS NWDM CHCR Top of Multipurpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "CO"
   },
   {
@@ -3694,17 +3681,16 @@
    "state": "CO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 1.85,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -3724,7 +3710,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (SPA:John Martin)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -3738,15 +3724,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 3851.9,
     "source": "CWMS John Martin Top of Conservation",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "CO"
   },
   {
@@ -6669,17 +6655,16 @@
    "state": "GA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAS",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.663,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.178,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -6698,9 +6683,9 @@
    "lakeName": "Clarks Hill / J.S. Thurmond",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "usgs",
     "series": "00062",
     "status": "RESEARCH_VERIFIED"
@@ -6714,14 +6699,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum SAS/Thurmond",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 330,
     "source": "CWMS Thurmond.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "GA"
   },
   {
@@ -7006,17 +6991,16 @@
    "state": "GA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.171,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -7035,9 +7019,9 @@
    "lakeName": "Walter F. George / Eufaula",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "usgs",
     "series": "00062",
     "status": "RESEARCH_VERIFIED"
@@ -7051,14 +7035,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum SAM/WalterFGeorge",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 190,
     "source": "CWMS WalterFGeorge.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "GA"
   },
   {
@@ -8001,17 +7985,16 @@
    "state": "IA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "MVR",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.003,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -8030,9 +8013,9 @@
    "lakeName": "Lake Red Rock",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "PELI4.Elev-Pool.Inst.30Minutes.0.rev",
     "status": "RESEARCH_VERIFIED"
@@ -8046,29 +8029,27 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum MVR/Red Rock",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 742,
     "source": "CWMS Red Rock.Elev.Const.0.Top of Conservation (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "MVR",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.135,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -8087,9 +8068,9 @@
    "lakeName": "Rathbun Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -8102,15 +8083,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 904,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDM&level-id-mask=RATN.Elev.Inst.0.Top%20of%20Conservation&unit=EN",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IA"
   },
   {
@@ -8571,17 +8552,16 @@
    "state": "ID"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWW",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.481,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -8601,7 +8581,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWW:DWR)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Forebay",
@@ -8615,15 +8595,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1600,
     "source": "CWMS NWDP DWR Top of Normal",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ID"
   },
   {
@@ -8797,17 +8777,16 @@
    "state": "ID"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWW",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.255,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -8827,7 +8806,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWW:LUC)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Forebay",
@@ -8841,15 +8820,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 3055,
     "source": "CWMS NWDP LUC Top of Normal",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ID"
   },
   {
@@ -9844,17 +9823,16 @@
    "state": "IN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.384,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -9874,7 +9852,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (LRL:CaglesMill)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -9888,29 +9866,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 639.5,
     "source": "CWMS CaglesMill Top of Conservation (summer)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.318,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "measured hypsometry (CWMS)",
@@ -9930,7 +9907,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (LRL:CMHarden)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -9944,15 +9921,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 662,
     "source": "CWMS CMHarden Top of Conservation (summer)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IN"
   },
   {
@@ -10318,18 +10295,16 @@
    "state": "IN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRC",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.413,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "measured hypsometry (CWMS)",
@@ -10348,9 +10323,9 @@
    "lakeName": "Mississinewa Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Mississinewa-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
     "status": "RESEARCH_VERIFIED"
@@ -10363,15 +10338,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 737,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=LRL&level-id-mask=Mississinewa.Elev*&unit=EN",
     "winterPoolFt": 712.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IN"
   },
   {
@@ -10483,18 +10458,16 @@
    "state": "IN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRL",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.413,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "measured hypsometry (CWMS)",
@@ -10513,9 +10486,9 @@
    "lakeName": "Salamonie Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Salamonie-Lake.Elev.Inst.15Minutes.0.USGS-rev",
     "status": "RESEARCH_VERIFIED"
@@ -10528,15 +10501,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 755,
     "source": "CWMS Salamonie Top of Conservation (summer)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IN"
   },
   {
@@ -10606,17 +10579,16 @@
    "state": "IN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.909,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -10636,7 +10608,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWK:CEBL)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -10650,15 +10622,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2144,
     "source": "https://www.usbr.gov/gp/aop/resaloc/cedar_bluff.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
@@ -10738,18 +10710,16 @@
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.302,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:KS",
@@ -10772,9 +10742,9 @@
    "lakeName": "Clinton Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -10792,9 +10762,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 875.5,
     "source": "CWMS NWDM CLIN Top of Multi-Purpose",
     "winterPoolFt": null
@@ -10810,8 +10780,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "KS"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
@@ -10952,18 +10922,16 @@
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.44,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:KS",
@@ -10984,9 +10952,9 @@
    "lakeName": "Kanopolis Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -11004,15 +10972,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1463,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDM&level-id-mask=KANS.Elev*&unit=EN",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
@@ -11072,18 +11040,16 @@
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.505,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:KS",
@@ -11106,9 +11072,9 @@
    "lakeName": "Melvern Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -11126,9 +11092,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1036,
     "source": "CWMS NWDM MELN Top of Multi-Purpose",
     "winterPoolFt": null
@@ -11144,23 +11110,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "KS"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.43,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:KS",
@@ -11183,9 +11147,9 @@
    "lakeName": "Milford Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -11203,9 +11167,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1144.4,
     "source": "CWMS NWDM MILD Top of Multi-Purpose",
     "winterPoolFt": null
@@ -11221,23 +11185,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "KS"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.289,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour(partial/coarse):KS",
@@ -11258,9 +11220,9 @@
    "lakeName": "Perry Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -11278,30 +11240,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 891.5,
     "source": "CWMS NWDM PERY Top of Multi-Purpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.456,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:KS",
@@ -11324,9 +11284,9 @@
    "lakeName": "Pomona Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -11344,9 +11304,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 974,
     "source": "CWMS NWDM POMA Top of Multi-Purpose",
     "winterPoolFt": null
@@ -11362,23 +11322,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "KS"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.423,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour(partial/coarse):KS",
@@ -11399,9 +11357,9 @@
    "lakeName": "Tuttle Creek Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "TUCR.Elev.Inst.1Hour.0.Best-NWK",
     "status": "RESEARCH_VERIFIED"
@@ -11419,15 +11377,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1075,
     "source": "CWMS NWDM TUCR Top of Multi-Purpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
@@ -11488,18 +11446,16 @@
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.581,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:KS",
@@ -11522,9 +11478,9 @@
    "lakeName": "Wilson Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -11542,9 +11498,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1516,
     "source": "CWMS NWDM WILN Top of Multi-Purpose",
     "winterPoolFt": null
@@ -11560,8 +11516,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "KS"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
@@ -11892,17 +11848,16 @@
    "state": "KY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.194,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
@@ -11922,7 +11877,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (LRN:BAHK2)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Pool",
@@ -11936,30 +11891,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 359,
     "source": "USACE published pool, inside TVA summer zone 358.5-359.5 (BARK2)",
     "winterPoolFt": 354.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.479,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -11978,9 +11931,9 @@
    "lakeName": "Lake Cumberland",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "WLCK2-WOLF_CREEK.Elev-Pool.Inst.15Minutes.0.dcp-rev",
     "status": "RESEARCH_VERIFIED"
@@ -11993,29 +11946,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 723,
     "source": "USACE published pool, inside TVA summer zone 711-723 (WLCK2)",
     "winterPoolFt": 690.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.518,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -12035,7 +11987,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (LRN:LAPK2)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Pool",
@@ -12049,15 +12001,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1018.5,
     "source": "CWMS LAUREL Top of Conservation / Top of Power",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KY"
   },
   {
@@ -13914,17 +13866,16 @@
    "state": "MD"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NAB",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.502,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -13947,9 +13898,9 @@
    "lakeName": "Jennings Randolph Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -13968,7 +13919,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "LOCAL",
-    "datumRule": "CWMS API vertical-datum NAB/Randolph",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 1466,
     "source": "CWMS Randolph.Elev.Inst.0.Top of Conservation (max)",
@@ -13987,8 +13938,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MD"
   },
   {
@@ -14336,18 +14287,16 @@
    "state": "MD"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.443,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -14366,9 +14315,9 @@
    "lakeName": "Savage River Reservoir",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -14381,15 +14330,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1467,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NAB&level-id-mask=Savage*&unit=EN",
     "winterPoolFt": 1420.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MD"
   },
   {
@@ -16804,17 +16753,16 @@
    "state": "MN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "MVP",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.781,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:MN",
@@ -16838,7 +16786,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (MVP:MissHW_Leech)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -16857,9 +16805,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1294.9,
     "source": "CWMS MissHW_Leech Top of Normal",
     "winterPoolFt": null
@@ -16875,8 +16823,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "MN"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MN"
   },
   {
@@ -17409,18 +17357,16 @@
    "state": "MO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.308,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -17439,9 +17385,9 @@
    "lakeName": "Longview Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -17454,15 +17400,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 891,
     "source": "CWMS NWDM LGVM Top of Multi-Purpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MO"
   },
   {
@@ -17523,18 +17469,16 @@
    "state": "MO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.364,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -17553,9 +17497,9 @@
    "lakeName": "Pomme de Terre Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -17568,30 +17512,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 839,
     "source": "CWMS NWDM PODT Top of Multi-Purpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.322,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -17610,9 +17552,9 @@
    "lakeName": "Smithville Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -17625,29 +17567,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 864.2,
     "source": "CWMS NWDM SMIE Top of Multi-Purpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.377,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -17667,7 +17608,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWK:STON)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -17681,15 +17622,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 867,
     "source": "CWMS NWDM STON Top of Multi-Purpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MO"
   },
   {
@@ -17747,17 +17688,16 @@
    "state": "MO"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.397,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -17777,7 +17717,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWK:HAST)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -17791,15 +17731,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 706.02,
     "source": "CWMS NWDM HAST Top of Multi-Purpose",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MO"
   },
   {
@@ -17911,18 +17851,16 @@
    "state": "MS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.141,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
@@ -17941,9 +17879,9 @@
    "lakeName": "Bay Springs Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Whitten.Elev.Inst.15Minutes.0.Raw-USGS",
     "status": "RESEARCH_VERIFIED"
@@ -17956,15 +17894,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 414,
     "source": "CWMS Whitten Top of Normal (408-414 band)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MS"
   },
   {
@@ -18309,17 +18247,16 @@
    "state": "MS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 0.157,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -18339,7 +18276,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (SAM:Okatibbee)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -18353,15 +18290,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 344,
     "source": "CWMS Okatibbee Top of Conservation max (summer)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MS"
   },
   {
@@ -18476,18 +18413,16 @@
    "state": "MS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 3.317,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:MT",
@@ -18510,9 +18445,9 @@
    "lakeName": "Canyon Ferry Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -18530,9 +18465,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 3797,
     "source": "https://www.usbr.gov/gp/aop/resaloc/canyon_ferry.pdf",
     "winterPoolFt": null
@@ -18548,22 +18483,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "MT"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MT"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 3.678,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:MT",
@@ -18585,7 +18519,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWS:KER)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Forebay",
@@ -18604,30 +18538,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2893,
     "source": "https://pubs.usgs.gov/wdr/2005/wdr-mt-05/pdf/Vol2_8.pdf",
     "winterPoolFt": 2883.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MT"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWO",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 2.156,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -18646,9 +18578,9 @@
    "lakeName": "Fort Peck Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "FTPK.Elev.Inst.1Hour.0.Best-MRBWM",
     "status": "RESEARCH_VERIFIED"
@@ -18661,15 +18593,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2234,
     "source": "CWMS NWDM FTPK Top of Conservation (= base of flood control; USACE AOP full-reservoir shoreline)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MT"
   },
   {
@@ -18944,17 +18876,16 @@
    "state": "MT"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 4.134,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -18974,7 +18905,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWS:HGH)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Forebay",
@@ -18988,30 +18919,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 3560,
     "source": "https://www.usbr.gov/projects/index.php?id=255",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MT"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWS",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.957,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -19030,9 +18959,9 @@
    "lakeName": "Lake Koocanusa",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "LIB.Elev-Forebay.Inst.1Hour.0.IRIDIUM-REV",
     "status": "RESEARCH_VERIFIED"
@@ -19045,30 +18974,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2459,
     "source": "CWMS NWDP LIB (Libby Dam) Top of Normal",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MT"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 2.966,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:MT",
@@ -19091,9 +19018,9 @@
    "lakeName": "Tiber Reservoir (Lake Elwell)",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -19111,9 +19038,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2993,
     "source": "https://www.usbr.gov/gp/aop/resaloc/tiber_dam.pdf",
     "winterPoolFt": null
@@ -19129,8 +19056,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "MT"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MT"
   },
   {
@@ -19257,18 +19184,16 @@
    "state": "NC"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.853,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -19288,8 +19213,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -19303,14 +19228,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 251.5,
     "source": "CWMS NEU FLP.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NC"
   },
   {
@@ -19880,18 +19805,16 @@
    "state": "NC"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 1.611,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:ND",
@@ -19914,9 +19837,9 @@
    "lakeName": "Bowman-Haley Reservoir",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -19934,9 +19857,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2754.8,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDM&level-id-mask=BOHA.Elev*&unit=EN",
     "winterPoolFt": null
@@ -19954,8 +19877,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "ND"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ND"
   },
   {
@@ -20074,17 +19997,16 @@
    "state": "ND"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 1.175,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20104,7 +20026,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (MVP:Baldhill_Dam)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -20118,29 +20040,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1266,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=MVP&level-id-mask=Baldhill_Dam.Elev*&unit=EN",
     "winterPoolFt": 1262.5
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ND"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "MVP",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 1.138,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20160,7 +20081,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (MVP:LakeDarling_Dam)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -20174,15 +20095,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1597,
     "source": "CWMS LakeDarling_Dam Top of Conservation",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ND"
   },
   {
@@ -20245,18 +20166,16 @@
    "state": "ND"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 1.26,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20275,9 +20194,9 @@
    "lakeName": "Lake Oahe",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "OAHE.Elev.Inst.1Hour.0.Best-MRBWM",
     "status": "RESEARCH_VERIFIED"
@@ -20290,30 +20209,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1607.5,
     "source": "https://www.nwd-mr.usace.army.mil/rcc/reports/pdfs/finalAOP2025-2026.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ND"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 1.381,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20332,9 +20249,9 @@
    "lakeName": "Lake Sakakawea",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "GARR.Elev.Inst.1Hour.0.Best-MRBWM",
     "status": "RESEARCH_VERIFIED"
@@ -20347,15 +20264,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1837.5,
     "source": "https://www.nwd-mr.usace.army.mil/rcc/reports/pdfs/finalAOP2025-2026.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ND"
   },
   {
@@ -20867,18 +20784,16 @@
    "state": "NE"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWK",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.804,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:NE",
@@ -20901,9 +20816,9 @@
    "lakeName": "Harlan County Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -20921,9 +20836,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1946,
     "source": "CWMS NWDM HACO Top of Multi-Purpose",
     "winterPoolFt": null
@@ -20939,8 +20854,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "NE"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NE"
   },
   {
@@ -23216,17 +23131,16 @@
    "state": "NM"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.087,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -23246,7 +23160,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (SPA:Cochiti)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -23260,15 +23174,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 5345.5,
     "source": "CWMS Cochiti Top of Conservation (permanent pool)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NM"
   },
   {
@@ -23669,18 +23583,17 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
-    "DATUM_UNKNOWN"
+    "REFERENCE_POOL_CONFIDENCE_LOW"
    ],
    "cwmsOffice": "SPA",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 2.11,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -23699,9 +23612,9 @@
    "lakeName": "Sumner Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Sumner.Elev.Inst.15Minutes.0.DCP-rev",
     "status": "RESEARCH_VERIFIED"
@@ -23714,9 +23627,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "med",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 4260.9,
     "source": "CWMS Sumner Top of Conservation",
     "winterPoolFt": null
@@ -25773,17 +25686,16 @@
    "state": "OH"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.571,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:OH",
@@ -25806,9 +25718,9 @@
    "lakeName": "Lake Milton",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Milton-Lake.Elev.Inst.1Hour.0.RESOPS",
     "status": "RESEARCH_VERIFIED"
@@ -25827,7 +25739,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NAVD88",
-    "datumRule": "CWMS API vertical-datum LRP/Milton",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 947.43,
     "source": "CWMS Milton.Elev.Inst.0.Top of Conservation (max)",
@@ -25846,8 +25758,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "OH"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OH"
   },
   {
@@ -26004,18 +25916,16 @@
    "state": "OH"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.663,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.312,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:OH",
@@ -26038,9 +25948,9 @@
    "lakeName": "Senecaville Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Senecaville-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -26058,9 +25968,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 832.2,
     "source": "CWMS Senecaville Top of Recreation / Top of Normal max",
     "winterPoolFt": null
@@ -26078,22 +25988,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "OH"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OH"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.643,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:OH",
@@ -26116,9 +26025,9 @@
    "lakeName": "Tappan Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Tappan-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -26137,7 +26046,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum LRH/Tappan",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 899.3,
     "source": "CWMS Tappan.Elev.Inst.0.Top of Normal (max)",
@@ -26156,23 +26065,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "OH"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OH"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SWL",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.082,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -26191,9 +26098,9 @@
    "lakeName": "Broken Bow Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Broken_Bow_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
     "status": "RESEARCH_VERIFIED"
@@ -26206,15 +26113,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 602.5,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=SWT&level-id-mask=BROK.Elev*&unit=EN",
     "winterPoolFt": 599.5
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OK"
   },
   {
@@ -26348,18 +26255,16 @@
    "state": "OK"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.348,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:OK",
@@ -26382,9 +26287,9 @@
    "lakeName": "Grand Lake o' the Cherokees",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "PENS.Elev.Inst.1Hour.0.Ccp-Rev",
     "status": "RESEARCH_VERIFIED"
@@ -26402,9 +26307,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 744,
     "source": "https://grda.com/wp-content/uploads/2023/05/20230530-Pensacola-FINAL-FLA-Exhibit-B.pdf",
     "winterPoolFt": 742.0
@@ -26420,8 +26325,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "OK"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OK"
   },
   {
@@ -27083,17 +26988,16 @@
    "state": "OR"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWP",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.57,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -27113,7 +27017,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWP:DET)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Forebay",
@@ -27127,15 +27031,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1563.5,
     "source": "CWMS NWDP DET Top of Conservation",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OR"
   },
   {
@@ -27197,17 +27101,16 @@
    "state": "OR"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWP",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.573,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -27227,7 +27130,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWP:FRN)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Forebay",
@@ -27241,15 +27144,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 373.5,
     "source": "CWMS NWDP FRN Top of Conservation",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OR"
   },
   {
@@ -28445,17 +28348,16 @@
    "state": "PA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NAB",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.643,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -28474,9 +28376,9 @@
    "lakeName": "Raystown Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "LOCAL",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
     "status": "RESEARCH_VERIFIED"
@@ -28490,28 +28392,27 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "LOCAL",
-    "datumRule": "CWMS API vertical-datum NAB/Raystown",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 786,
     "source": "CWMS Raystown.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "PA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.561,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -28531,7 +28432,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NAVD88",
-    "datumNote": "A2W project vertical_datum NAVD88 (LRP:Shenango)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -28545,15 +28446,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 894.67,
     "source": "CWMS Shenango Top of Conservation max (summer)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "PA"
   },
   {
@@ -29849,17 +29750,16 @@
    "state": "SC"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAS",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.669,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.178,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "measured hypsometry (CWMS)",
@@ -29878,9 +29778,9 @@
    "lakeName": "Lake Strom Thurmond (Clarks Hill)",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "usgs",
     "series": "00062",
     "status": "RESEARCH_VERIFIED"
@@ -29894,14 +29794,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum SAS/Thurmond",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 330,
     "source": "CWMS Thurmond.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SC"
   },
   {
@@ -30316,18 +30216,16 @@
    "state": "SD"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 1.204,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -30346,9 +30244,9 @@
    "lakeName": "Lake Oahe",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "OAHE.Elev.Inst.1Hour.0.Best-MRBWM",
     "status": "RESEARCH_VERIFIED"
@@ -30361,15 +30259,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1607.5,
     "source": "https://www.nwd-mr.usace.army.mil/rcc/reports/pdfs/finalAOP2025-2026.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SD"
   },
   {
@@ -30780,17 +30678,16 @@
    "state": "SD"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.138,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -30810,7 +30707,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (LRN:CEHT1)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Pool",
@@ -30824,15 +30721,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 648,
     "source": "USACE published pool, inside TVA summer zone 640.5-648 (CEHT1)",
     "winterPoolFt": 627.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "TN"
   },
   {
@@ -30944,17 +30841,16 @@
    "state": "TN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.374,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -30974,7 +30870,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (LRN:DLHT1)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Pool",
@@ -30988,15 +30884,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 651,
     "source": "USACE published pool, inside TVA summer zone 644.7-651 (DLHT1)",
     "winterPoolFt": 635.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "TN"
   },
   {
@@ -31273,17 +31169,16 @@
    "state": "TN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRN",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.184,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
@@ -31303,7 +31198,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (LRN:OHHT1)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Pool",
@@ -31317,15 +31212,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 445,
     "source": "USACE published pool, inside TVA summer zone 444-446 (OHHT1)",
     "winterPoolFt": 444.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "TN"
   },
   {
@@ -31901,17 +31796,16 @@
    "state": "TX"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.171,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -31930,9 +31824,9 @@
    "lakeName": "Lake Buchanan",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "BUDT2.Elev.Inst.1Hour.0.LCRA-Web-Rev",
     "status": "RESEARCH_VERIFIED"
@@ -31946,14 +31840,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "https://www.waterdatafortexas.org",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 1020,
     "source": "https://www.waterdatafortexas.org/reservoirs/individual/buchanan",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "TX"
   },
   {
@@ -32401,18 +32295,16 @@
    "state": "TX"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.272,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -32431,9 +32323,9 @@
    "lakeName": "Possum Kingdom Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "PSMT2.Elev.Inst.1Hour.0.Decodes-Rev",
     "status": "RESEARCH_VERIFIED"
@@ -32446,15 +32338,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 999,
     "source": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/PossumKingdom/2016-12/PossumKingdom2016_FinalReport.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "TX"
   },
   {
@@ -35009,17 +34901,16 @@
    "state": "WA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 4.078,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -35039,7 +34930,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "provider table: NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "cwms-nwdp",
     "series": "Elev-Forebay.Inst.1Hour.0.CBT-REV",
@@ -35053,15 +34944,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1290,
     "source": "https://www.usbr.gov/projects/index.php?id=155",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WA"
   },
   {
@@ -35442,17 +35333,16 @@
    "state": "WA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 3.983,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
     "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -35472,7 +35362,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWS:ROS)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Forebay",
@@ -35486,15 +35376,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1602.5,
     "source": "https://pubs.usgs.gov/wdr/2005/wdr-wa-05-1/pdf/wa00103ADR2005_Figure40.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WA"
   },
   {
@@ -36332,17 +36222,16 @@
    "state": "WV"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.518,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -36365,9 +36254,9 @@
    "lakeName": "Bluestone Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Bluestone-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -36386,7 +36275,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum LRH/Bluestone",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 1410,
     "source": "CWMS Bluestone.Elev.Inst.0.Top of Conservation (max)",
@@ -36405,22 +36294,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WV"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.682,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -36443,9 +36331,9 @@
    "lakeName": "Burnsville Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Burnsville-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -36464,7 +36352,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum LRH/Burnsville",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 789,
     "source": "CWMS Burnsville.Elev.Inst.0.Top of Normal (max)",
@@ -36483,8 +36371,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WV"
   },
   {
@@ -36566,17 +36454,16 @@
    "state": "WV"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.689,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -36599,9 +36486,9 @@
    "lakeName": "East Lynn Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "EastLynn-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -36620,7 +36507,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum LRH/EastLynn",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 662,
     "source": "CWMS EastLynn.Elev.Inst.0.Top of Normal (max)",
@@ -36639,8 +36526,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WV"
   },
   {
@@ -36724,17 +36611,16 @@
    "state": "WV"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.673,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -36757,9 +36643,9 @@
    "lakeName": "R.D. Bailey Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "RDBailey-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -36778,7 +36664,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum LRH/RDBailey",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 1035,
     "source": "CWMS RDBailey.Elev.Inst.0.Top of Normal (max)",
@@ -36797,8 +36683,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WV"
   },
   {
@@ -36954,17 +36840,16 @@
    "state": "WV"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.577,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -36987,9 +36872,9 @@
    "lakeName": "Sutton Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Sutton-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -37008,7 +36893,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum LRH/Sutton",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 922,
     "source": "CWMS Sutton.Elev.Inst.0.Top of Normal (max)",
@@ -37027,22 +36912,21 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WV"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.623,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -37066,7 +36950,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NAVD88",
-    "datumNote": "A2W project vertical_datum NAVD88 (LRP:Tygart)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -37085,9 +36969,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1093.45,
     "source": "CWMS Tygart Top of Conservation max (summer)",
     "winterPoolFt": null
@@ -37105,8 +36989,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WV"
   },
   {
@@ -37861,12 +37745,12 @@
    "state": "WY"
   }
  ],
- "manifestVersion": "2026-10-14.1",
+ "manifestVersion": "2026-10-14.2",
  "schema": "depth-candidates-v1",
  "summary": {
   "blockedReasons": {
    "DATUM_CONVERSION_NOT_ENABLED": 1,
-   "DATUM_UNKNOWN": 316,
+   "DATUM_UNKNOWN": 234,
    "DUKE_LOCAL_SCALE_NOT_ENABLED": 8,
    "MISSING_REFERENCE_POOL": 13,
    "NO_VERIFIED_LEVEL_BINDING": 204,
@@ -37875,10 +37759,10 @@
   },
   "datumStatus": {
    "INCOMPATIBLE": 1,
-   "SAME_DATUM": 59,
+   "SAME_DATUM": 87,
    "SAME_OPERATOR_SYSTEM": 16,
-   "SAME_SOURCE": 17,
-   "UNKNOWN": 528
+   "SAME_SOURCE": 71,
+   "UNKNOWN": 446
   },
   "lakes": 621,
   "levelSourceStatus": {
@@ -37928,12 +37812,12 @@
    "U": 56
   },
   "rollout": {
-   "BLOCKED": 529,
-   "HIGH_CONFIDENCE": 65,
-   "MEDIUM_CONFIDENCE": 22,
+   "BLOCKED": 450,
+   "HIGH_CONFIDENCE": 84,
+   "MEDIUM_CONFIDENCE": 82,
    "PILOT_VERIFIED": 5
   },
-  "shiftPossible": 92,
+  "shiftPossible": 171,
   "tier": {
    "A": 77,
    "B": 26,

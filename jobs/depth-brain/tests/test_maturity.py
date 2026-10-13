@@ -61,7 +61,7 @@ def test_anti_gaming_unsupported_increase_is_flagged():
 def test_diff_reports_previous_and_new():
     prev = {"overall": 4.5, "fleet": {"shiftPossible": 90, "verifiedDatum": 70, "highConfidence": 60, "mediumConfidence": 20, "blocked": 531, "shiftPossibleShare": 0.145}}
     d = M.diff(prev, M.evaluate(MAN, INP))
-    assert d["shiftPossible"]["previous"] == 90 and d["shiftPossible"]["new"] == 92 and d["researchMaturity"]["previous"] == 4.5
+    assert d["shiftPossible"]["previous"] == 90 and d["shiftPossible"]["new"] == M.fleet_metrics(MAN)["shiftPossible"] and d["researchMaturity"]["previous"] == 4.5
 
 
 def test_baseline_matches_the_foundation_handoff():

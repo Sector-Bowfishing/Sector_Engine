@@ -13,7 +13,8 @@
    "evidence": [
     "103 tier A/B lakes (17%) with instrument-survey contours/tables",
     "0 TVA lakes",
-    "datum audit adds provenance not surveys"
+    "datum audit adds provenance not surveys",
+    "82 more lakes carry CWMS-location datum evidence (location vertical-datum fetched; 10-lake random audit re-fetched live)"
    ],
    "changeEvidence": []
   },
@@ -99,7 +100,8 @@
    "evidence": [
     "unlock path is data-only",
     "233 lakes lack datum evidence",
-    "23 states lack contours"
+    "23 states lack contours",
+    "CWMS location-level matching generalises: 82 of 180 blocked lakes resolved by one method; 98 remain with named resolvers"
    ],
    "changeEvidence": []
   }

@@ -8,7 +8,15 @@ from __future__ import annotations
 import json
 import os
 
+import re
+
 from .datum import normalize_datum
+
+
+def datum_token(v):
+    """Leading datum token of a descriptive string ('NGVD29 (USGS 62614 by parameter definition)' -> NGVD29). Free text beyond the token is ignored; no token -> None."""
+    m = re.match(r"\s*(NGVD\s?29|NAVD\s?88|LOCAL|PROJECT)\b", str(v or ""), re.I)
+    return normalize_datum(m.group(1).replace(" ", "")) if m else normalize_datum(v)
 
 DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 RULES_VERSION = "proposal-rules-1"
@@ -39,9 +47,12 @@ def validate_pairing(lid: str, rec: dict, manifest_by_id: dict) -> tuple[bool, s
     if rec.get("method") not in PAIRING_METHODS:
         return False, f"method {rec.get('method')!r} not allowed"
     sig = rec.get("sigmaFt")
-    if not isinstance(sig, (int, float)) or sig < ALLOWED_SIGMA_MIN:
-        return False, "sigmaFt missing or below 0.1"
-    ld, rd = normalize_datum(rec.get("levelDatum")), normalize_datum(rec.get("referenceDatum"))
+    floor = 0.0 if rec["decision"] == "SAME_SOURCE" else ALLOWED_SIGMA_MIN          # same CWMS/operator record: zero datum sigma by construction
+    if not isinstance(sig, (int, float)) or sig < floor:
+        return False, "sigmaFt missing or below 0.1" if floor else "sigmaFt missing or negative"
+    ld, rd = datum_token(rec.get("levelDatum")), datum_token(rec.get("referenceDatum"))
+    if rec["decision"] == "SAME_SOURCE" and ld in ("NGVD29", "NAVD88") and rd in ("NGVD29", "NAVD88") and ld != rd:
+        return False, "same-source proposal states two different datums"
     if rec["decision"] == "SAME_DATUM":
         if ld is None or rd is None or ld != rd or ld not in ("NGVD29", "NAVD88"):
             return False, "SAME_DATUM needs identical NGVD29/NAVD88 on both sides (LOCAL/PROJECT never qualifies)"
@@ -89,8 +100,8 @@ def plan(manifest: dict, proposals_dir: str | None = None) -> dict:
     for lid, rec in ((pp or {}).get("lakes") or {}).items():
         ok, why = validate_pairing(lid, rec, by_id)
         if ok:
-            accepted[lid] = {"status": rec["decision"], "sigmaFt": rec["sigmaFt"], "levelDatum": rec.get("levelDatum"), "referenceDatum": rec.get("referenceDatum"),
-                             "summary": rec.get("summary", ""), "evidence": rec["evidence"], "caveat": rec.get("caveat"), "method": rec["method"],
+            accepted[lid] = {"status": rec["decision"], "sigmaFt": rec["sigmaFt"], "levelDatum": datum_token(rec.get("levelDatum")), "referenceDatum": datum_token(rec.get("referenceDatum")),
+                             "summary": rec.get("summary", ""), "evidence": rec["evidence"], "caveat": rec.get("caveat"), "method": rec["method"], "confidence": rec.get("confidence"),
                              "offsetStats": rec.get("offsetStats"), "promotedFrom": "proposals/datum_pairings.json", "rulesVersion": RULES_VERSION}
         else:
             rejected.append({"lakeId": lid, "file": "datum_pairings.json", "reason": why})
@@ -105,7 +116,7 @@ def plan(manifest: dict, proposals_dir: str | None = None) -> dict:
                 continue
             accepted[lid] = {"status": rule["decision"], "sigmaFt": rule["sigmaFt"], "levelDatum": rule.get("levelDatum"), "referenceDatum": rule.get("referenceDatum"),
                              "summary": f"provider rule {rule.get('provider')}: {rule.get('scope', '')}", "evidence": rule["evidence"], "caveat": rule.get("caveat"),
-                             "method": "operator-doc", "promotedFrom": "proposals/provider_rules.json", "rulesVersion": RULES_VERSION}
+                             "method": "operator-doc", "confidence": rule.get("confidence", "medium"), "promotedFrom": "proposals/provider_rules.json", "rulesVersion": RULES_VERSION}
     return {"rulesVersion": RULES_VERSION, "accepted": accepted, "rejected": rejected}
 
 

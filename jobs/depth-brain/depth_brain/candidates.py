@@ -101,7 +101,7 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None)
     same_sys = bool(prov == "tva" and (src_str or "").startswith("TVA"))
     ov = overrides.get(lid)
     if ov:
-        a = DatumAssessment(ov["status"], float(ov["sigmaFt"]), 0.0, ["reviewed per-lake datum override (evidence in datum_lake_overrides.json)"])
+        a = DatumAssessment(ov["status"], float(ov["sigmaFt"]), 0.0, ["reviewed per-lake datum override (evidence in datum_lake_overrides.json)"], ov.get("confidence"))
         return a, normalize_datum(ov.get("levelDatum")) or ld, True, "reviewed override", normalize_datum(ov.get("referenceDatum")) or rd, True, "override", blocked
     a = assess(ld, rd, same_source=same_src, same_operator_system=same_sys, level_datum_verified=ld_ver, reference_datum_verified=rd_ver)
     return a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, blocked
@@ -171,7 +171,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         # rollout
         if shift_possible and lstat == "LIVE_REVIEWED":
             rollout = "PILOT_VERIFIED"
-        elif shift_possible and lstat == "RESEARCH_VERIFIED" and ref_conf == "high" and a.status in ("SAME_SOURCE", "SAME_OPERATOR_SYSTEM", "SAME_DATUM") and (hyears or 0) >= 10 and cap in C.ALLOWED_LEVEL_CAPABILITIES:
+        elif shift_possible and lstat == "RESEARCH_VERIFIED" and ref_conf == "high" and a.status in ("SAME_SOURCE", "SAME_OPERATOR_SYSTEM", "SAME_DATUM") and a.evidence_confidence != "medium" and (hyears or 0) >= 10 and cap in C.ALLOWED_LEVEL_CAPABILITIES:
             rollout = "HIGH_CONFIDENCE"
         elif shift_possible:
             rollout = "MEDIUM_CONFIDENCE"
