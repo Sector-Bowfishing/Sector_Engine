@@ -1,0 +1,94 @@
+{
+  "_doc": [
+    "Hand corrections for scripts/generate-dam-roster.py. Every coordinate here is traceable to USGS site locations (anchorSites are resolved from the USGS site service at generation time; explicit lat/lon carry a note naming the sites).",
+    "dams: keyed by the generated dam name. impoundmentLakeID (a DirectoryLake.id) or impoundmentName fixes a reservoir the name match cannot find; normalPoolFt is used only when no USGS pool median or NWPS full pool exists (spec order); anchorSites / lat+lon re-anchor; river and rename are cosmetic.",
+    "lakes: keyed by DirectoryLake.id, for hasDam lakes. damName names the generated dam; anchorSites or lat+lon anchor it when the USGS pool/tailrace pair rule cannot.",
+    "add: dams no rule generates (no directory lake, gauge not named BELOW..DAM).",
+    "drop: generated dam names to leave out."
+  ],
+  "dams": {
+    "J. Percy Priest Dam": { "impoundmentLakeID": "Percy Priest Lake|TN" },
+    "Wolf Creek Dam": { "impoundmentLakeID": "Lake Cumberland|KY" },
+    "Ocoee No. 1 Dam": { "impoundmentName": "Parksville Lake" },
+
+    "Jordan Dam": {
+      "anchorSites": ["02411000"],
+      "_why": "AlabamaPowerGenerationService's coordinate is a point on the impoundment, 3.8 mi above 'COOSA RIVER AT JORDAN DAM'; a reach starting there runs down the lake."
+    },
+    "Bankhead Dam": {
+      "anchorSites": ["02462500", "02462501"],
+      "_why": "APC impoundment point is 8.1 mi above the USGS gauges at / below Bankhead L&D."
+    },
+    "Holt Dam": {
+      "anchorSites": ["02462951", "02462952"],
+      "_why": "APC impoundment point is 6.4 mi above the USGS gauges at / below Holt L&D."
+    },
+
+    "Bull Shoals Dam": { "normalPoolFt": 654 },
+    "Table Rock Dam": { "normalPoolFt": 915 },
+    "Beaver Dam": { "normalPoolFt": 1120 },
+    "Norfork Dam": { "normalPoolFt": 552 },
+    "Greers Ferry Dam": { "normalPoolFt": 461 },
+    "Buford Dam": { "normalPoolFt": 1071 },
+    "Allatoona Dam": { "normalPoolFt": 840 },
+    "Carters Dam": { "normalPoolFt": 1072 },
+    "West Point Dam": { "normalPoolFt": 635 },
+    "Philpott Dam": { "normalPoolFt": 974 },
+    "Saluda Dam": { "normalPoolFt": 358 },
+    "Keystone Dam": { "normalPoolFt": 723 },
+    "Denison Dam": { "normalPoolFt": 617 },
+    "Tenkiller Ferry Dam": { "normalPoolFt": 632 },
+    "Bagnell Dam": { "normalPoolFt": 660 },
+    "Walter F. George Dam": { "normalPoolFt": 188 }
+  },
+  "lakes": {
+    "Lanier (Sidney Lanier)|GA": { "damName": "Buford Dam" },
+    "Lake Murray (SC)|SC": { "damName": "Saluda Dam" },
+    "Lake Moultrie|SC": { "damName": "Pinopolis Dam" },
+    "Lake Marion|SC": { "damName": "Santee Dam" },
+    "Lake Russell (R.B. Russell)|GA": { "damName": "Richard B. Russell Dam" },
+    "Jordan Lake|NC": { "damName": "B. Everett Jordan Dam" },
+    "C.J. Strike Reservoir|ID": { "damName": "C.J. Strike Dam" },
+    "Rough River Lake|KY": { "damName": "Rough River Dam" },
+    "Savage River Reservoir|MD": { "damName": "Savage River Dam" },
+    "Youghiogheny River Lake|MD": { "damName": "Youghiogheny River Dam" },
+    "Clarks Hill / J.S. Thurmond|GA": { "damName": "J. Strom Thurmond Dam" },
+    "Lake Strom Thurmond (Clarks Hill)|SC": { "damName": "J. Strom Thurmond Dam" },
+    "Eufaula / W.F. George|AL": {
+      "damName": "Walter F. George Dam",
+      "anchorSites": ["02343240", "02343241"],
+      "_why": "The pool gauge is 'WALTER F. GEORGE RESERVOIR', the tailrace 'BELOW WFG DAM': neither name-matches 'W.F. George'."
+    },
+    "Walter F. George / Eufaula|GA": { "damName": "Walter F. George Dam", "anchorSites": ["02343240", "02343241"] },
+    "Philpott Lake|VA": {
+      "damName": "Philpott Dam",
+      "anchorSites": ["02071900", "02072000"],
+      "_why": "Pool gauge 'PHILPOTT RES AT PHILPOTT DAM' and 'SMITH RIVER NEAR PHILPOTT' 0.3 mi below; the river gauge is not named as a tailrace."
+    },
+    "Lake of the Ozarks|MO": {
+      "damName": "Bagnell Dam",
+      "anchorSites": ["06925500"],
+      "_why": "'Lake of the Ozarks near Bagnell' sits at the dam (0.05 mi from the public dam coordinate); no tailrace gauge exists."
+    },
+    "Lake Moomaw|VA": {
+      "damName": "Gathright Dam",
+      "anchorSites": ["02011800"],
+      "_why": "'JACKSON RIVER BL GATHRIGHT DAM' names the dam, not the lake."
+    },
+    "Lake Livingston|TX": {
+      "damName": "Livingston Dam",
+      "lat": 30.63256,
+      "lon": -95.01507,
+      "note": "midpoint of USGS 08066190 'Livingston Res nr Goodrich' (30.63353,-95.01021) and discontinued 08066192 'Trinity Rv bl Livingston Dam' (30.63159,-95.01994); 08066192 has no IV/DV record so the pair rule cannot see it"
+    }
+  },
+  "add": [
+    {
+      "name": "Murray Lock and Dam",
+      "anchorSites": ["07263450"],
+      "river": "Arkansas",
+      "_why": "Low-head lock and dam with no directory lake; its gauge 'Arkansas River at Murray Dam' carries HEADWATER/TAILWATER method blocks, not a BELOW..DAM name."
+    }
+  ],
+  "drop": []
+}

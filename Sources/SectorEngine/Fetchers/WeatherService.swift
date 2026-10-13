@@ -84,6 +84,13 @@ struct WeatherReading: Equatable {
     /// clock for "tonight" math on a UTC server.
     var utcOffsetSeconds: Int? = nil
 
+    /// Ground elevation at the point (ft), from the top-level `elevation` Open-Meteo
+    /// returns on every forecast response (its DEM, reported in meters). Nothing
+    /// scores on it: it lets the gauge context tell a bluff standing well above a
+    /// dam's pool from the tailwater below it, which share a horizontal position
+    /// but not a height. Nil when the response didn't carry it.
+    var elevationFt: Double? = nil
+
     /// Hourly barometric series around `time` — roughly the past 24h plus the next
     /// 12h of forecast — so the pressure detail can chart where it's been and where
     /// it's headed. Chronological; empty if the hourly data was unavailable.
@@ -105,6 +112,8 @@ struct WeatherReading: Equatable {
     /// pressure in inHg everywhere it's user-facing. `pressure`/`pressureChange`
     /// stay in hPa (what Open-Meteo returns); convert only at the display edge.
     static let hPaToInHg = 0.0295299830714
+    /// Open-Meteo reports elevation in meters; pool elevations are in feet.
+    static let feetPerMeter = 3.28084
     var pressureInHg: Double { pressure * WeatherReading.hPaToInHg }
     /// Signed pressure change over the lookback window, in inHg.
     var pressureChangeInHg: Double { pressureChange * WeatherReading.hPaToInHg }
@@ -508,6 +517,7 @@ final class WeatherService: Sendable {
             weatherCode: effectiveCode,
             time: now,
             utcOffsetSeconds: decoded.utc_offset_seconds,
+            elevationFt: decoded.elevation.map { $0 * WeatherReading.feetPerMeter },
             pressureHistory: history,
             hourlyConditions: hourlyConditions
         )
@@ -669,6 +679,10 @@ private struct WindowResponse: Decodable {
 private struct OpenMeteoResponse: Decodable {
     /// The location's offset from UTC; every time string below is local.
     let utc_offset_seconds: Int?
+    /// Ground elevation (m) of the grid point Open-Meteo downscaled to. Sent on
+    /// every forecast response without being asked for; optional so canned test
+    /// JSON without it still decodes.
+    let elevation: Double?
     let current: Current
     let hourly: Hourly
     let daily: Daily?

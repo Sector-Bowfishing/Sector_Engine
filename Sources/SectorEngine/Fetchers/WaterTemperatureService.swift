@@ -50,6 +50,11 @@ struct WaterTempModel: Equatable {
     let currentF: Double
     /// Past ~14 days → next ~4 days, oldest → newest.
     let series: [WaterTempDay]
+    /// Ground elevation at the point (ft), from the same Open-Meteo response. A
+    /// second source for the gauge context's bluff-above-pool test when the
+    /// weather fetch failed. Not part of `==`: it's a fact about the coordinate,
+    /// not about the modeled temperature.
+    var elevationFt: Double? = nil
 
     static func == (l: WaterTempModel, r: WaterTempModel) -> Bool {
         l.currentF == r.currentF && l.series == r.series
@@ -107,7 +112,8 @@ enum WaterTemperatureService {
         let todayMidnight = parseDay(todayLabel) ?? Date()
         let current = series.last(where: { $0.date <= todayMidnight }) ?? series.last
         guard let current else { return nil }
-        return WaterTempModel(currentF: current.waterF, series: series)
+        return WaterTempModel(currentF: current.waterF, series: series,
+                              elevationFt: decoded.elevation.map { $0 * WeatherReading.feetPerMeter })
     }
 
     /// A local date label ("yyyy-MM-dd") pinned to UTC midnight, on every host.
@@ -118,6 +124,8 @@ enum WaterTemperatureService {
     private struct DailyMeanResponse: Decodable {
         /// The location's offset from UTC; `daily.time` holds its local dates.
         let utc_offset_seconds: Int?
+        /// Ground elevation (m); Open-Meteo sends it on every forecast response.
+        let elevation: Double?
         let daily: Daily
         struct Daily: Decodable {
             let time: [String]

@@ -56,6 +56,11 @@ public struct ConditionsConfigOverrides: Codable, Equatable, Sendable {
     public var darknessAstroDarkBonus: Double?
     public var seeabilityEnabled: Bool?
 
+    /// Kill switch for context-aware gauge selection → `gaugeSelection.enabled`.
+    /// `false` restores the legacy nearest-gauge path on every instance within
+    /// the Remote Config refresh, without a deploy.
+    public var gaugeSelectionEnabled: Bool?
+
     /// Problems that make this payload unsafe to apply; empty means valid.
     ///
     /// Remote Config is edited by hand in the Firebase console, and a typo used
@@ -101,6 +106,10 @@ public struct ConditionsConfigOverrides: Codable, Equatable, Sendable {
         if let v = darknessAstroDarkBonus, !(v.isFinite && (-50...50).contains(v)) {
             out.append("darknessAstroDarkBonus=\(v) must be within -50...50")
         }
+        // The switches (`seeabilityEnabled`, `gaugeSelectionEnabled`) have no
+        // unsafe value to catch here: either Bool is a valid config, and a
+        // non-Bool ("false" in quotes) fails decoding, which rejects the payload
+        // whole just as a problem would.
         return out
     }
 
@@ -114,6 +123,7 @@ public struct ConditionsConfigOverrides: Codable, Equatable, Sendable {
         if let v = clarityEstimatedScoreCap { c.clarity.estimatedScoreCap = v }
         if let v = darknessAstroDarkBonus { c.darkness.astroDarkBonus = v }
         if let v = seeabilityEnabled { c.seeability.enabled = v }
+        if let v = gaugeSelectionEnabled { c.gaugeSelection.enabled = v }
         return c
     }
 }

@@ -130,6 +130,12 @@ struct DamGeneration: Equatable, Identifiable {
     let reservoirElevationFt: Double?
     /// Water level BELOW the dam (ft) — the level you're actually standing in.
     let tailwaterElevationFt: Double?
+    /// Measured water temperature BELOW the dam (°F), from CWMS. Operator feeds
+    /// don't publish it, and USGS thermometers sit on only some tailwaters — so
+    /// on a tailwater with no accepted gauge this is the live release temperature
+    /// instead of the air-driven model, which runs 20°F+ warm on a cold release.
+    /// Defaulted so operator adapters that never see it build unchanged.
+    var tailwaterTempF: Double? = nil
     let observedAt: Date?
     /// The last 48 hours of observed record, oldest → newest. Pairs with
     /// `windows`: the schedule is what TVA intends, this is what the dam did.
@@ -223,6 +229,7 @@ struct DamGeneration: Equatable, Identifiable {
                       dischargeCfs: dischargeCfs, dischargeTrend12hCfs: dischargeTrend12hCfs,
                       reservoirElevationFt: reservoirElevationFt,
                       tailwaterElevationFt: tailwaterElevationFt,
+                      tailwaterTempF: tailwaterTempF,
                       observedAt: observedAt, history: history)
     }
 }
@@ -308,7 +315,10 @@ final class GenerationService: Sendable {
     }
 
     /// Normalized so "Chickamauga Dam" and the lake "Chickamauga Lake" meet.
-    private static func damKey(_ n: String) -> String {
+    /// Internal, not private: the gauge context uses the same key to decide
+    /// whether a generation reading describes the lake a point resolved to, so
+    /// a neighbor dam's pool is never shown as this lake's.
+    static func damKey(_ n: String) -> String {
         var s = n.lowercased()
         for w in ["dam", "lake", "reservoir", "the", "of"] {
             s = s.replacingOccurrences(of: "\\b\(w)\\b", with: " ", options: .regularExpression)
@@ -371,6 +381,7 @@ final class GenerationService: Sendable {
             dischargeTrend12hCfs: obs.dischargeTrend12hCfs,
             reservoirElevationFt: obs.reservoirFt,
             tailwaterElevationFt: obs.tailwaterFt,
+            tailwaterTempF: obs.tailwaterTempF,
             observedAt: obs.observedAt,
             history: obs.history)
     }
@@ -411,6 +422,7 @@ final class GenerationService: Sendable {
             dischargeTrend12hCfs: g.dischargeTrend12hCfs ?? obs.dischargeTrend12hCfs,
             reservoirElevationFt: g.reservoirElevationFt ?? obs.reservoirFt,
             tailwaterElevationFt: g.tailwaterElevationFt ?? obs.tailwaterFt,
+            tailwaterTempF: g.tailwaterTempF ?? obs.tailwaterTempF,
             observedAt: g.observedAt ?? obs.observedAt,
             history: g.history.isEmpty ? obs.history : g.history)
     }

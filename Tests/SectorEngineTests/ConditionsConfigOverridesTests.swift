@@ -61,6 +61,24 @@ final class ConditionsConfigOverridesTests: XCTestCase {
         try JSONDecoder().decode(ConditionsConfigOverrides.self, from: Data(json.utf8))
     }
 
+    // The gauge-selection kill switch: on by default, and a console edit turns it
+    // off without touching anything else. A quoted "false" is not a Bool, so the
+    // payload fails to decode (rejected whole) rather than leaving it on silently.
+    func testGaugeSelectionKillSwitch() throws {
+        XCTAssertTrue(ConditionsConfig.default.gaugeSelection.enabled, "selection ships enabled")
+
+        let off = try decode(#"{"gaugeSelectionEnabled": false}"#)
+        XCTAssertEqual(off.problems(), [], "turning the switch off is a valid edit")
+        let c = off.apply(to: .default)
+        XCTAssertFalse(c.gaugeSelection.enabled)
+        XCTAssertEqual(c.seeability.enabled, ConditionsConfig.default.seeability.enabled)
+        XCTAssertEqual(c.weights.normal.wind, ConditionsConfig.default.weights.normal.wind)
+
+        XCTAssertTrue(try decode(#"{"gaugeSelectionEnabled": true}"#).apply(to: .default).gaugeSelection.enabled)
+        XCTAssertTrue(try decode("{}").apply(to: .default).gaugeSelection.enabled, "omitted keeps the default")
+        XCTAssertThrowsError(try decode(#"{"gaugeSelectionEnabled": "false"}"#))
+    }
+
     func testEmptyOverridesAreIdentity() throws {
         let ov = try JSONDecoder().decode(ConditionsConfigOverrides.self, from: Data("{}".utf8))
         let c = ov.apply(to: .default)

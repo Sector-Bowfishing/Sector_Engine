@@ -45,7 +45,9 @@ struct CWMSObserved: Equatable {
     let dischargeCfs: Double?
     let dischargeTrend12hCfs: Double?
     let observedAt: Date?
-    /// Oldest → newest, for the history chart.
+    /// Oldest → newest, for the history chart. Outflow with the pool series
+    /// merged in (`CWMSObservedService.mergeHistory`), so a pool trend can be
+    /// read from it.
     let history: [GenerationObservation]
 }
 
@@ -138,7 +140,10 @@ final class CWMSObservedService: Sendable {
         }
         guard let series else { return nil }
 
-        async let resTask  = latest(series.reservoir, office: office)
+        // The pool keeps its whole 48 h series, not just the last value: the
+        // points are already downloaded to find the latest one, and they're
+        // what gives a USACE lake a pool TREND (see `mergeHistory`).
+        async let resTask  = latestSeries(series.reservoir, office: office)
         async let tailTask = latest(series.tailwater, office: office)
         async let tempTask = latest(series.temp, office: office)
         async let flowTask = history(series.outflow, office: office)
@@ -147,13 +152,13 @@ final class CWMSObservedService: Sendable {
         let flow = await flowTask
 
         let result = CWMSObserved(
-            reservoirFt: res?.value,
+            reservoirFt: res?.last?.1,
             tailwaterFt: tail?.value,
             tailwaterTempF: temp?.value,
             dischargeCfs: flow?.points.last?.dischargeCfs,
             dischargeTrend12hCfs: flow?.trend12h,
-            observedAt: [res?.at, tail?.at, flow?.points.last?.at].compactMap { $0 }.max(),
-            history: flow?.points ?? [])
+            observedAt: [res?.last?.0, tail?.at, flow?.points.last?.at].compactMap { $0 }.max(),
+            history: Self.mergeHistory(outflow: flow?.points ?? [], pool: res ?? []))
 
         guard result.reservoirFt != nil || result.tailwaterFt != nil
                 || result.dischargeCfs != nil || result.tailwaterTempF != nil else { return nil }
@@ -365,13 +370,84 @@ final class CWMSObservedService: Sendable {
     private static let freshWindow: TimeInterval = 36 * 3600
 
     private func latest(_ names: [String], office: String) async -> Reading? {
+        guard let pts = await latestSeries(names, office: office), let last = pts.last else { return nil }
+        return Reading(value: last.1, at: last.0)
+    }
+
+    /// The same walk as `latest`, returning the fresh candidate's whole 48 h
+    /// series (oldest → newest) instead of only its last point. Never nil-but-
+    /// empty: a series that answers with no points isn't fresh and is skipped.
+    private func latestSeries(_ names: [String], office: String) async -> [(Date, Double)]? {
         let cutoff = Date().addingTimeInterval(-Self.freshWindow)
         for name in names.prefix(Self.maxCandidates) {
             guard let pts = await points(name, office: office, hours: 48), let last = pts.last,
                   last.0 >= cutoff else { continue }
-            return Reading(value: last.1, at: last.0)
+            return pts
         }
         return nil
+    }
+
+    /// How close a pool reading has to be to an outflow observation to be the
+    /// same hour's record. Districts post pool and outflow on their own clocks
+    /// (hourly vs 15-min, :00 vs :05), so exact timestamps rarely meet.
+    static let historyMergeWindow: TimeInterval = 30 * 60
+
+    /// Outflow history with the pool series folded in, oldest → newest.
+    ///
+    /// History used to carry outflow only, so `reservoirFt` was nil on every
+    /// CWMS observation and the builder's pool trend never fired for a USACE
+    /// lake (Lanier) or a SWPA dam enriched from CWMS (Bull Shoals) — the level
+    /// tile showed the pool with no idea whether it was rising or falling.
+    ///
+    /// A pool point within `historyMergeWindow` of an outflow observation fills
+    /// that observation's `reservoirFt`; when several qualify the nearest in time
+    /// wins, and the others are absorbed rather than duplicated. A pool point
+    /// with no outflow observation near it is appended as a pool-only
+    /// observation, so a project with a pool series but no outflow still gets a
+    /// trend. Outflow values are never altered.
+    static func mergeHistory(outflow: [GenerationObservation],
+                             pool: [(Date, Double)]) -> [GenerationObservation] {
+        let flows = outflow.sorted { $0.at < $1.at }
+        let flowTimes = flows.map(\.at)
+        // Per outflow index: the nearest pool point so far (gap, value).
+        var nearest: [Int: (gap: TimeInterval, value: Double)] = [:]
+        var poolOnly: [GenerationObservation] = []
+
+        for (at, value) in pool {
+            guard let i = nearestIndex(of: at, in: flowTimes) else {
+                poolOnly.append(GenerationObservation(at: at, dischargeCfs: nil, reservoirFt: value, tailwaterFt: nil))
+                continue
+            }
+            let gap = abs(flowTimes[i].timeIntervalSince(at))
+            guard gap <= historyMergeWindow else {
+                poolOnly.append(GenerationObservation(at: at, dischargeCfs: nil, reservoirFt: value, tailwaterFt: nil))
+                continue
+            }
+            if let held = nearest[i], held.gap <= gap { continue }
+            nearest[i] = (gap, value)
+        }
+
+        let merged = flows.enumerated().map { i, o -> GenerationObservation in
+            guard let pool = nearest[i] else { return o }
+            return GenerationObservation(at: o.at, dischargeCfs: o.dischargeCfs,
+                                         reservoirFt: pool.value, tailwaterFt: o.tailwaterFt)
+        }
+        return (merged + poolOnly).sorted { $0.at < $1.at }
+    }
+
+    /// Index of the time in `sorted` (ascending) nearest to `date`, or nil when empty.
+    private static func nearestIndex(of date: Date, in sorted: [Date]) -> Int? {
+        guard !sorted.isEmpty else { return nil }
+        var lo = 0, hi = sorted.count
+        while lo < hi {                      // first index with sorted[i] >= date
+            let mid = (lo + hi) / 2
+            if sorted[mid] < date { lo = mid + 1 } else { hi = mid }
+        }
+        if lo == sorted.count { return lo - 1 }
+        if lo == 0 { return 0 }
+        let before = date.timeIntervalSince(sorted[lo - 1])
+        let after = sorted[lo].timeIntervalSince(date)
+        return before <= after ? lo - 1 : lo
     }
 
     private func history(_ names: [String], office: String)

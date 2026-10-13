@@ -228,6 +228,17 @@ public struct ConditionsConfig: Sendable {
         public var fastFallScore: Double = 20
     }
 
+    // MARK: - Gauge selection (which USGS series may describe this water)
+    // The kill switch for context-aware gauge selection. Picking the nearest
+    // gauge handed lakes their dam's tailwater stage and cold release temps, so
+    // selection now judges each series against the point's water context. It
+    // shifts live temp/level/discharge coverage across hundreds of lakes at
+    // once — if it misbehaves in production, Remote Config turns it off and the
+    // legacy nearest-gauge path comes back without a deploy.
+    public struct GaugeSelection: Sendable {
+        public var enabled: Bool = true
+    }
+
     // MARK: - Current / generation (§5.7)
     public struct Current: Sendable {
         public var nonTailwaterScore: Double = 90
@@ -383,6 +394,7 @@ public struct ConditionsConfig: Sendable {
     public var wind = Wind()
     public var waterTemp = WaterTemp()
     public var level = Level()
+    public var gaugeSelection = GaugeSelection()
     public var current = Current()
     public var pressure = Pressure()
     public var sky = Sky()

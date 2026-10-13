@@ -6,6 +6,11 @@
 //  USGS Instantaneous Values web service. Free, no API key.
 //  https://waterservices.usgs.gov/
 //
+//  Every series AND every method block (HEADWATER/TAILWATER, left/right bank)
+//  comes back as its own reading, carrying the site type and method text, so
+//  GaugeSelector can tell a lake's pool from the release below its dam instead
+//  of trusting whichever gage happens to be nearest.
+//
 
 import Foundation
 #if canImport(CoreLocation)
@@ -18,8 +23,73 @@ enum WaterTrend: Equatable {
     case steady
 }
 
+/// Why GaugeSelector let a reading drive an input. The builder reads it to
+/// relax a cap only for a gage proven to sit on this lake's own pool.
+enum GaugeAcceptance: String, Sendable {
+    /// A gage at a site identified as the context lake's pool (name or pool-value match, or NWPS).
+    case matchedPool
+    /// A gage on the release reach below the context dam.
+    case onReach
+    /// Accepted on distance and role alone (open water, unmatched rivers).
+    case nearby
+}
+
+/// One USGS input the snapshot scores, with the query it makes. Thresholds and
+/// search distances are the values the nearest* helpers have always used, so
+/// the candidate path and the legacy kill-switch path ask USGS the same thing.
+enum GaugeKind: String, CaseIterable, Sendable {
+    case level, discharge, waterTemp, turbidity
+
+    var parameterCd: String {
+        switch self {
+        // 00065 = gage height (ft); 62614 = reservoir/lake water-surface elevation (ft).
+        // 62615 (lake elevation, NAVD88) and 00062 (reservoir elevation above a
+        // datum) are how most lakes actually publish their pool: Lanier, West
+        // Point, Allatoona and Carters report only 00062, Taneycomo only 62615.
+        // Without them the nearest level is the TAILWATER stage below the dam.
+        case .level: return "00065,62614,62615,00062"
+        case .discharge: return "00060"
+        case .waterTemp: return "00010"
+        case .turbidity: return "63680"
+        }
+    }
+
+    /// Absolute floor for a rising/falling trend, in the reading's unit.
+    var absThreshold: Double {
+        switch self {
+        case .level: return 0.1       // ft
+        case .discharge: return 20    // ignore <20 cfs noise
+        case .waterTemp: return 0.5   // °C; temp moves slowly
+        case .turbidity: return 1.0   // FNU; ignore sub-1 noise
+        }
+    }
+
+    /// Relative floor for a trend (fraction of the value) — discharge and
+    /// turbidity span orders of magnitude, so a fixed floor alone won't do.
+    var pctThreshold: Double {
+        switch self {
+        case .level, .waterTemp: return 0
+        case .discharge: return 0.08
+        case .turbidity: return 0.10
+        }
+    }
+
+    /// Half-width of the ONE box this input queries: the farthest gage it could
+    /// use. Every USGS call carries a fixed multi-second cost, so the box is sized
+    /// to the builder's cap rather than to the service-wide 40 miles.
+    var searchMiles: Double {
+        switch self {
+        case .level, .discharge: return WaterLevelService.maxUsefulMiles
+        case .waterTemp: return ConditionsInputBuilder.maxWaterTempDistanceMiles
+        case .turbidity: return ConditionsInputBuilder.maxTurbidityDistanceMiles
+        }
+    }
+}
+
 struct WaterLevelReading: Identifiable, Equatable {
-    var id: String { siteCode + "-" + parameterCode }
+    /// Includes the block index: one site/parameter can publish several method
+    /// blocks (HEADWATER and TAILWATER at a lock), and they are different water.
+    var id: String { "\(siteCode)-\(parameterCode)-\(blockIndex)" }
     let siteCode: String
     let siteName: String
     let parameterCode: String      // e.g. "00065"
@@ -34,12 +104,27 @@ struct WaterLevelReading: Identifiable, Equatable {
     /// The lookback-window values (oldest → newest) for a sparkline. May be empty.
     var history: [Double] = []
     /// Straight-line distance (miles) from the requested coordinate to this gage.
-    /// Set by `latestReading(near:)`; nil when not computed against an origin.
+    /// Set by `candidates(near:kind:)` and `latestReading(near:)`; nil when not
+    /// computed against an origin (NWPS pool readings).
     var distanceMiles: Double? = nil
 
     /// The lake's normal ("full") pool elevation, when known (reservoir readings
     /// only). Lets us say how far above/below full pool the water is sitting.
     var fullPoolFt: Double? = nil
+
+    /// USGS site type (`siteTypeCd`: ST stream, LK lake, SP spring, GW well…).
+    /// A spring or well thermometer is not surface water, whatever it's named.
+    var siteTypeCode: String? = nil
+    /// The values block's method text ("HEADWATER", "TAILWATER", "[Lake]"). At
+    /// dams it's the only thing separating the pool from the release. nil when
+    /// USGS leaves it blank.
+    var methodDescription: String? = nil
+    /// Position of this block in the series' `values` array. The legacy nearest
+    /// path only ever looked at block 0, so it keeps doing exactly that.
+    var blockIndex: Int = 0
+    /// Why GaugeSelector picked this reading; nil for unselected candidates and
+    /// for the legacy nearest path.
+    var acceptance: GaugeAcceptance? = nil
 
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -66,10 +151,10 @@ final class WaterLevelService: Sendable {
     private init() {}
 
     private let endpoint = "https://waterservices.usgs.gov/nwis/iv/"
-    // 00065 = gage height (ft); 62614 = reservoir/lake water-surface elevation (ft).
-    private let parameterCodes = "00065,62614"
+    // Stage + the three pool-elevation codes (see GaugeKind.level).
+    private var parameterCodes: String { GaugeKind.level.parameterCd }
     // USGS reports missing data with this sentinel.
-    private let noDataValue = -999_999.0
+    private static let noDataValue = -999_999.0
     // How far back to look when deciding whether the level is rising/falling.
     private let lookbackPeriod = "PT12H"
     // Changes smaller than this (in the reading's native unit, ft) read as "steady".
@@ -118,8 +203,19 @@ final class WaterLevelService: Sendable {
         guard result.isSuccess else {
             throw WaterLevelError.requestFailed
         }
-        let data = result.body
+        return try Self.parseWaterML(result.body, absThreshold: absThreshold, pctThreshold: pctThreshold)
+    }
 
+    /// Decodes a WaterML-JSON IV response into one reading per non-empty values
+    /// block. Pure, so the decoding is testable without the network.
+    ///
+    /// Every block is kept, not just the first: a lock publishes HEADWATER and
+    /// TAILWATER as two blocks of one series, a lake gage can carry a "Tailwater"
+    /// thermometer block, and a river gage a second turbidity sensor. Which of
+    /// them is this spot's water is GaugeSelector's call, so it needs them all.
+    ///
+    /// - Throws: `WaterLevelError.decodingFailed` when the body isn't WaterML JSON.
+    static func parseWaterML(_ data: Data, absThreshold: Double, pctThreshold: Double) throws -> [WaterLevelReading] {
         let decoded: USGSResponse
         do {
             decoded = try JSONDecoder().decode(USGSResponse.self, from: data)
@@ -127,52 +223,63 @@ final class WaterLevelService: Sendable {
             throw WaterLevelError.decodingFailed
         }
 
-        return decoded.value.timeSeries.compactMap { series -> WaterLevelReading? in
-            let datapoints = series.values.first?.value ?? []
-            // Keep only real measurements, in chronological order (USGS returns oldest-first).
-            let valid = datapoints.compactMap { point -> (Double, String)? in
-                guard let v = Double(point.value), v != noDataValue else { return nil }
-                return (v, point.dateTime)
-            }
-            guard let latest = valid.last,
-                  let siteCode = series.sourceInfo.siteCode.first?.value,
+        return decoded.value.timeSeries.flatMap { series -> [WaterLevelReading] in
+            guard let siteCode = series.sourceInfo.siteCode.first?.value,
                   let parameterCode = series.variable.variableCode.first?.value
-            else { return nil }
+            else { return [] }
+            let siteTypeCode = series.sourceInfo.siteProperty?
+                .first(where: { $0.name == "siteTypeCd" })?.value
 
-            let measurement = latest.0
-            // An unparseable timestamp drops the reading. It used to fall back to
-            // `Date()`, which let a gage of unknown age pass every freshness check.
-            guard let date = ISODate.parse(latest.1) else { return nil }
+            return series.values.enumerated().compactMap { index, block -> WaterLevelReading? in
+                // Keep only real measurements, in chronological order (USGS returns
+                // oldest-first). A point whose timestamp doesn't parse is dropped
+                // like a missing value: a whole reading used to fall back to
+                // `Date()` for it, which let a gage of unknown age pass every
+                // freshness check — and dropping just the point keeps the block's
+                // good data instead of losing the gage.
+                let valid = block.value.compactMap { point -> (value: Double, at: Date)? in
+                    guard let v = Double(point.value), v != noDataValue,
+                          let at = ISODate.parse(point.dateTime) else { return nil }
+                    return (v, at)
+                }
+                guard let latest = valid.last else { return nil }
 
-            // Compare the latest value to the oldest in the lookback window.
-            // Threshold is the larger of an absolute floor and a percentage of
-            // the value, so it works for both gage height (ft) and discharge
-            // (cfs, which ranges from ~10 to 10,000+).
-            let change = measurement - (valid.first?.0 ?? measurement)
-            let thr = Swift.max(absThreshold, pctThreshold * abs(measurement))
-            let trend: WaterTrend
-            if change > thr {
-                trend = .rising
-            } else if change < -thr {
-                trend = .falling
-            } else {
-                trend = .steady
+                // Compare the latest value to the oldest in the lookback window.
+                // Threshold is the larger of an absolute floor and a percentage of
+                // the value, so it works for both gage height (ft) and discharge
+                // (cfs, which ranges from ~10 to 10,000+).
+                let measurement = latest.value
+                let change = measurement - (valid.first?.value ?? measurement)
+                let thr = Swift.max(absThreshold, pctThreshold * abs(measurement))
+                let trend: WaterTrend
+                if change > thr {
+                    trend = .rising
+                } else if change < -thr {
+                    trend = .falling
+                } else {
+                    trend = .steady
+                }
+
+                // USGS sends "" for a block with no method text; treat it as none.
+                let method = block.method?.first?.methodDescription
+                return WaterLevelReading(
+                    siteCode: siteCode,
+                    siteName: series.sourceInfo.siteName,
+                    parameterCode: parameterCode,
+                    parameterName: series.variable.variableName,
+                    value: measurement,
+                    unit: series.variable.unit.unitCode,
+                    dateTime: latest.at,
+                    latitude: series.sourceInfo.geoLocation.geogLocation.latitude,
+                    longitude: series.sourceInfo.geoLocation.geogLocation.longitude,
+                    trend: trend,
+                    change: change,
+                    history: valid.map { $0.value },
+                    siteTypeCode: siteTypeCode,
+                    methodDescription: (method?.isEmpty ?? true) ? nil : method,
+                    blockIndex: index
+                )
             }
-
-            return WaterLevelReading(
-                siteCode: siteCode,
-                siteName: series.sourceInfo.siteName,
-                parameterCode: parameterCode,
-                parameterName: series.variable.variableName,
-                value: measurement,
-                unit: series.variable.unit.unitCode,
-                dateTime: date,
-                latitude: series.sourceInfo.geoLocation.geogLocation.latitude,
-                longitude: series.sourceInfo.geoLocation.geogLocation.longitude,
-                trend: trend,
-                change: change,
-                history: valid.map { $0.0 }
-            )
         }
     }
 
@@ -206,8 +313,6 @@ final class WaterLevelService: Sendable {
                        parameterCd: String? = nil,
                        absThreshold: Double = 0.1,
                        pctThreshold: Double = 0) async throws -> WaterLevelReading? {
-        let origin = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-
         // Managed reservoirs (Kentucky Lake, Lake Barkley, …) have NO nearby USGS
         // pool gauge, so the fallback below grabs an unrelated river's gage height
         // and shows it as "the water level." For those lakes, read the real pool
@@ -221,38 +326,74 @@ final class WaterLevelService: Sendable {
         let readings = try await nearbyReadings(near: coordinate, halfWidthMiles: maxMiles,
                                                 parameterCd: parameterCd,
                                                 absThreshold: absThreshold, pctThreshold: pctThreshold)
-        let ranked = readings
-            .map { r -> (WaterLevelReading, Double) in
-                (r, origin.distance(from: CLLocation(latitude: r.latitude, longitude: r.longitude)) / 1609.34)
-            }
+        return Self.legacyNearest(Self.stampingDistance(readings, from: coordinate), maxMiles: maxMiles)
+    }
+
+    /// Every reading USGS has for `kind` around the coordinate — each series and
+    /// each method block, with `distanceMiles` stamped — for GaugeSelector to
+    /// judge. The SAME single query `latestReading` makes for that input (same
+    /// box, limiter and timeout), so switching paths costs no extra USGS load.
+    ///
+    /// Nothing is filtered by distance here: the box's corners reach past
+    /// `kind.searchMiles`, and the caps (including a wider one for a lake's own
+    /// pool thermometer) belong to the selector.
+    ///
+    /// NWPS pool readings are NOT included; the snapshot asks `reservoirReading`
+    /// separately so a lake context can use one and a tailwater can refuse it.
+    ///
+    /// - Returns: `[]` when USGS has no active gage of this kind in the box.
+    /// - Throws: on transport, HTTP status or decode failure — a failed fetch,
+    ///   which the snapshot must report as degraded, never as "nothing here".
+    func candidates(near coordinate: CLLocationCoordinate2D, kind: GaugeKind) async throws -> [WaterLevelReading] {
+        let readings = try await nearbyReadings(near: coordinate, halfWidthMiles: kind.searchMiles,
+                                                parameterCd: kind.parameterCd,
+                                                absThreshold: kind.absThreshold, pctThreshold: kind.pctThreshold)
+        return Self.stampingDistance(readings, from: coordinate)
+    }
+
+    /// The pre-GaugeSelector pick, kept for the `gaugeSelection.enabled` kill
+    /// switch: the nearest FIRST-block reading within `maxMiles`. Only block 0,
+    /// because that's all the old decoder ever saw — a TAILWATER block 1 that
+    /// happens to be listed second must not start winning when selection is off.
+    static func legacyNearest(_ readings: [WaterLevelReading], maxMiles: Double) -> WaterLevelReading? {
+        readings
+            .filter { $0.blockIndex == 0 }
             // The box's corners reach past maxMiles; beyond it isn't your water.
-            .filter { $0.1 <= maxMiles }
-        guard let nearest = ranked.min(by: { $0.1 < $1.1 }) else { return nil }
-        var result = nearest.0
-        result.distanceMiles = nearest.1
-        return result
+            .filter { ($0.distanceMiles ?? .infinity) <= maxMiles }
+            .min(by: { ($0.distanceMiles ?? .infinity) < ($1.distanceMiles ?? .infinity) })
+    }
+
+    private static func stampingDistance(_ readings: [WaterLevelReading],
+                                         from coordinate: CLLocationCoordinate2D) -> [WaterLevelReading] {
+        let origin = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        return readings.map { reading in
+            var stamped = reading
+            stamped.distanceMiles = origin.distance(
+                from: CLLocation(latitude: reading.latitude, longitude: reading.longitude)) / 1609.34
+            return stamped
+        }
     }
 
     /// Nearest USGS **discharge** (streamflow) gage — cfs released/flowing, the
     /// observed "generator output / current" signal. Nationwide, no auth, no
     /// backend. Trend uses a relative threshold (discharge varies hugely by river).
+    /// Legacy nearest path; GaugeSelector uses `candidates(near:kind: .discharge)`.
     func nearestDischarge(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
-        try await latestReading(near: coordinate,
-                                parameterCd: "00060",
-                                absThreshold: 20,      // ignore <20 cfs noise
-                                pctThreshold: 0.08)    // …or <8% of the flow
+        let kind = GaugeKind.discharge
+        return try await latestReading(near: coordinate, maxMiles: kind.searchMiles,
+                                       parameterCd: kind.parameterCd,
+                                       absThreshold: kind.absThreshold, pctThreshold: kind.pctThreshold)
     }
 
     /// Nearest USGS **water temperature** gage (param 00010, °C). Drives fish
     /// activity — rough fish hold shallow & feed hard in warm water. Sparse
-    /// coverage; returns nil where no temp gage is near.
+    /// coverage; returns nil where no temp gage is near (no farther than the
+    /// builder will use one). Legacy nearest path.
     func nearestWaterTemp(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
-        try await latestReading(near: coordinate,
-                                // No farther than the builder will use a temp gage.
-                                maxMiles: ConditionsInputBuilder.maxWaterTempDistanceMiles,
-                                parameterCd: "00010",
-                                absThreshold: 0.5,     // °C; temp moves slowly
-                                pctThreshold: 0)
+        let kind = GaugeKind.waterTemp
+        return try await latestReading(near: coordinate, maxMiles: kind.searchMiles,
+                                       parameterCd: kind.parameterCd,
+                                       absThreshold: kind.absThreshold, pctThreshold: kind.pctThreshold)
     }
 
     /// Nearest USGS **turbidity** gage (param 63680, FNU). The master clarity
@@ -260,14 +401,12 @@ final class WaterLevelService: Sendable {
     /// the USGS Secchi regression. Sparse coverage; returns nil where none is
     /// near (the engine then falls back to the rain-decay model + lowers
     /// confidence). USGS reports raw FNU only — it can't distinguish algal from
-    /// sediment, so callers treat the type as `.unknown`.
+    /// sediment, so callers treat the type as `.unknown`. Legacy nearest path.
     func nearestTurbidity(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
-        try await latestReading(near: coordinate,
-                                // No farther than the builder will use a turbidity gage.
-                                maxMiles: ConditionsInputBuilder.maxTurbidityDistanceMiles,
-                                parameterCd: "63680",
-                                absThreshold: 1.0,     // FNU; ignore sub-1 noise
-                                pctThreshold: 0.10)    // …or <10% of the reading
+        let kind = GaugeKind.turbidity
+        return try await latestReading(near: coordinate, maxMiles: kind.searchMiles,
+                                       parameterCd: kind.parameterCd,
+                                       absThreshold: kind.absThreshold, pctThreshold: kind.pctThreshold)
     }
 }
 
@@ -290,6 +429,13 @@ private struct SourceInfo: Decodable {
     let siteName: String
     let siteCode: [CodeValue]
     let geoLocation: GeoLocation
+    /// Site metadata pairs; `siteTypeCd` is the one GaugeClassifier needs.
+    /// Optional throughout so a response without it still decodes.
+    let siteProperty: [NameValue]?
+    struct NameValue: Decodable {
+        let name: String?
+        let value: String?
+    }
 }
 
 private struct GeoLocation: Decodable {
@@ -315,6 +461,11 @@ private struct CodeValue: Decodable {
 
 private struct ValueBlock: Decodable {
     let value: [Datapoint]
+    /// The block's measurement method ("HEADWATER", "TAILWATER", "[Lake]", or "").
+    let method: [Method]?
+    struct Method: Decodable {
+        let methodDescription: String?
+    }
 }
 
 private struct Datapoint: Decodable {
@@ -658,7 +809,12 @@ extension WaterLevelService {
             trend: trend,
             change: change,
             history: observed.map { $0.value } + forecast.map { $0.value },
-            fullPoolFt: lake.fullPoolFt
+            fullPoolFt: lake.fullPoolFt,
+            // A pool gauge by construction. Stamped so GaugeSelector classifies
+            // it as the lake's pool — accepted on the lake, refused below the dam
+            // (these boxes reach over the tailwater, e.g. below Kentucky Dam).
+            siteTypeCode: "LK",
+            methodDescription: "NWPS pool"
         )
     }
 }
