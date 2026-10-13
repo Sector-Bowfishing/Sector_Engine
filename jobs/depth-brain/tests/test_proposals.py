@@ -137,3 +137,19 @@ def test_held_rules_are_not_in_the_accepted_file_as_promotable():
     acc = json.load(open(os.path.join(HERE, "depth_brain", "data", "proposals", "accepted_provider_rules.json")))
     assert {a["provider"] for a in acc["accepted"]} == {"sjrwmd", "srp", "nipsco", "tva"}
     assert {h["provider"] for h in acc["heldWithReason"]} == {"rise", "nwps", "duke"}
+
+
+def test_held_pairings_are_not_promoted_and_usgs_d_datum_must_match_site(tmp_path):
+    d = tmp_path / "p"; d.mkdir()
+    (d / "datum_pairings.json").write_text(json.dumps({"lakes": {BLOCKED[0]: rec(), BLOCKED[1]: rec()}}))
+    (d / "held_pairings.json").write_text(json.dumps({"held": {BLOCKED[0]: "reason"}}))
+    r = P.plan(MAN, str(d))
+    assert BLOCKED[0] not in r["accepted"] and BLOCKED[1] in r["accepted"]
+    assert any("held by lead review" in x["reason"] for x in r["rejected"])
+
+
+def test_repo_held_list_and_usgs_d_site_datums_exist():
+    h = json.load(open(os.path.join(HERE, "depth_brain", "data", "proposals", "held_pairings.json")))["held"]
+    assert {"Henrys Lake|ID", "C.J. Strike Reservoir|ID", "Lake McConaughy|NE", "Lake Winnipesaukee|NH", "Roosevelt|AZ"} <= set(h)
+    sites = json.load(open(os.path.join(HERE, "depth_brain", "data", "usgs_d_site_datums.json")))["lakes"]
+    assert sites["Henrys Lake|ID"]["altDatumCd"] == "NAVD88" and sites["C.J. Strike Reservoir|ID"]["altDatumCd"] == "NAVD88"

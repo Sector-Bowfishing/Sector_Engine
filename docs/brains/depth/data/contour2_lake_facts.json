@@ -1,0 +1,2533 @@
+{
+ "generatedAtUtc": "2026-10-13T21:22:13Z",
+ "lakes": {
+  "Alum Creek Lake|OH": {
+   "coverage": 0.9968,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "1970-01-01T00:00:00Z",
+    "elevMax": 920.0,
+    "elevMin": 821.0,
+    "nPoints": 101,
+    "office": "LRH",
+    "ratingId": "AlumCr.Elev;Area.Standard.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 888,
+   "intervalFt": 5.0,
+   "lakeId": "Alum Creek Lake|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 888.0,
+    "surveyYear": 2001,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/alumcreeklake2.pdf"
+   },
+   "shares": {
+    "lt10": 0.26639999999999997
+   },
+   "src": "OH",
+   "tier": "A"
+  },
+  "Beech Fork Lake|WV": {
+   "coverage": 0.9946,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 592,
+   "intervalFt": 1.0,
+   "lakeId": "Beech Fork Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.5744,
+    "lt3": 0.225,
+    "lt6": 0.4161
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Bluestone Lake|WV": {
+   "coverage": 0.9968,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1410,
+   "intervalFt": 1.0,
+   "lakeId": "Bluestone Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.3938,
+    "lt3": 0.1209,
+    "lt6": 0.23609999999999998
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Bowman-Haley Reservoir|ND": {
+   "coverage": 0.8651,
+   "curve": {
+    "datumNative": "OTHER",
+    "effectiveDate": "2024-06-01T00:00:00Z",
+    "elevMax": 2793.5,
+    "elevMin": 2728.4,
+    "nPoints": 6511,
+    "office": "NWDM",
+    "ratingId": "BOHA.Elev;Area.Linear.Step",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01",
+     "2010-06-27",
+     "2024-06-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 2754.8,
+   "intervalFt": 2.0,
+   "lakeId": "Bowman-Haley Reservoir|ND",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USACE (Bowman-Haley Dam)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "ND G&F contour attribute ELEVATION - CONTOUR (constant per lake)",
+    "poolFt": 2757.0,
+    "surveyYear": null,
+    "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer"
+   },
+   "shares": {
+    "lt10": 0.511,
+    "lt3": 0.1119,
+    "lt6": 0.3042
+   },
+   "src": "ND",
+   "tier": "A"
+  },
+  "Box Butte Reservoir|NE": {
+   "coverage": 0.9998,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 4007,
+   "intervalFt": 3.0,
+   "lakeId": "Box Butte Reservoir|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USBR (Box Butte Dam)",
+   "pSrc": {
+    "conservationPoolAttr": 4007.0,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.22049999999990177,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=4007.0",
+    "poolFt": 4006.8597,
+    "surveyYear": 2002,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.22760000000000002,
+    "lt3": 0.1398,
+    "lt6": 0.171
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Branched Oak Lake|NE": {
+   "coverage": 0.9999,
+   "curve": {
+    "datumNative": "OTHER",
+    "effectiveDate": "2020-10-01T05:00:00Z",
+    "elevMax": 1317.30005,
+    "elevMin": 1255.30005,
+    "nPoints": 620,
+    "office": "NWDM",
+    "ratingId": "SC18.Elev;Area.Linear.Step",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01",
+     "2020-10-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 1284,
+   "intervalFt": 3.0,
+   "lakeId": "Branched Oak Lake|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "Lower Platte South NRD / USACE",
+   "pSrc": {
+    "conservationPoolAttr": 1284.0,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.03019999999992251,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=1284.0",
+    "poolFt": 1283.99015,
+    "surveyYear": 2003,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.3762,
+    "lt3": 0.1076,
+    "lt6": 0.2086
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Burnsville Lake|WV": {
+   "coverage": 0.9963,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 789,
+   "intervalFt": 1.0,
+   "lakeId": "Burnsville Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.3188,
+    "lt3": 0.0911,
+    "lt6": 0.1629
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Caesar Creek Lake|OH": {
+   "coverage": 0.997,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 849,
+   "intervalFt": 10.0,
+   "lakeId": "Caesar Creek Lake|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USACE Louisville",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 849.0,
+    "surveyYear": 1997,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/caesarcreeklake2.pdf"
+   },
+   "shares": {
+    "lt10": 0.14350000000000002
+   },
+   "src": "OH",
+   "tier": "B"
+  },
+  "Calamus Reservoir|NE": {
+   "coverage": 0.9993,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 2244,
+   "intervalFt": 3.0,
+   "lakeId": "Calamus Reservoir|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USBR (Virginia Smith Dam)",
+   "pSrc": {
+    "conservationPoolAttr": 2244.1,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.03150000000005093,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2244.1",
+    "poolFt": 2244.0026,
+    "surveyYear": 2003,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.2429,
+    "lt3": 0.0531,
+    "lt6": 0.1252
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Candlewood Lake|CT": {
+   "coverage": 0.9887,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 429.5,
+   "intervalFt": 10.0,
+   "lakeId": "Candlewood Lake|CT",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "FirstLight Power",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.1011
+   },
+   "src": "CT",
+   "tier": "B"
+  },
+  "Canyon Ferry Lake|MT": {
+   "coverage": 0.9966,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 3797,
+   "intervalFt": 5.0,
+   "lakeId": "Canyon Ferry Lake|MT",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USBR (Great Plains)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.0342
+   },
+   "src": "MT",
+   "tier": "A"
+  },
+  "Cheat Lake|WV": {
+   "coverage": 0.9985,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 870,
+   "intervalFt": 1.0,
+   "lakeId": "Cheat Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "Eagle Creek Renewable (Lake Lynn)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.15089999999999998,
+    "lt3": 0.0177,
+    "lt6": 0.0581
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Cheney Reservoir|KS": {
+   "coverage": 0.9986,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "2014-09-02T06:00:00Z",
+    "elevMax": 1450.0,
+    "elevMin": 1361.0,
+    "nPoints": 90,
+    "office": "SWT",
+    "ratingId": "CHEN.Elev;Area.Linear.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1965-03-01",
+     "2014-09-02",
+     "2016-12-13"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1421.6,
+   "intervalFt": 5.0,
+   "lakeId": "Cheney Reservoir|KS",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "USBR (Wichita supply)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool_contradictory",
+    "origin": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory)",
+    "poolFt": 1420.7,
+    "surveyYear": 2010,
+    "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query"
+   },
+   "shares": {
+    "lt10": 0.3473
+   },
+   "src": "KS",
+   "tier": "A"
+  },
+  "Clinton Lake|KS": {
+   "coverage": 0.9984,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "2012-03-31T11:00:00Z",
+    "elevMax": 929.0,
+    "elevMin": 831.0,
+    "nPoints": 102,
+    "office": "NWDM",
+    "ratingId": "CLIN-Clinton_Lake-Wakarusa.Elev;Area.Area_Curves.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "2012-03-31"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 875.5,
+   "intervalFt": 5.0,
+   "lakeId": "Clinton Lake|KS",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "USACE Kansas City (NWK)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool_contradictory",
+    "origin": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory)",
+    "poolFt": 875.5,
+    "surveyYear": 2009,
+    "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query"
+   },
+   "shares": {
+    "lt10": 0.3082
+   },
+   "src": "KS",
+   "tier": "A"
+  },
+  "Congamond Lakes|MA": {
+   "coverage": 0.9986,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 250,
+   "intervalFt": 5.0,
+   "lakeId": "Congamond Lakes|MA",
+   "licenceClass": [
+    "PUBLIC_REUSABLE",
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "Local / DCR",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.4127
+   },
+   "src": "CT",
+   "tier": "A"
+  },
+  "East Lake Tohopekaliga|FL": {
+   "coverage": 0.9999,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 58,
+   "intervalFt": 1.0,
+   "lakeId": "East Lake Tohopekaliga|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SFWMD (S-59)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.7802,
+    "lt3": 0.0669,
+    "lt6": 0.2804
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "East Lynn Lake|WV": {
+   "coverage": 0.9984,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 662,
+   "intervalFt": 1.0,
+   "lakeId": "East Lynn Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.5667,
+    "lt3": 0.3621,
+    "lt6": 0.4808
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "El Dorado Lake|KS": {
+   "coverage": 0.9988,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "2014-11-01T06:00:00Z",
+    "elevMax": 1360.0,
+    "elevMin": 1280.0,
+    "nPoints": 81,
+    "office": "SWT",
+    "ratingId": "ELDR.Elev;Area.Linear.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "2004-01-01",
+     "2014-11-01",
+     "2026-04-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1339,
+   "intervalFt": 5.0,
+   "lakeId": "El Dorado Lake|KS",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "USACE Tulsa (SWT)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool_contradictory",
+    "origin": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory)",
+    "poolFt": 1339.0,
+    "surveyYear": 2010,
+    "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query"
+   },
+   "shares": {
+    "lt10": 0.2559
+   },
+   "src": "KS",
+   "tier": "A"
+  },
+  "Fort Gibson Lake|OK": {
+   "coverage": 0.9878,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "1951-09-01T05:00:00Z",
+    "elevMax": 600.0,
+    "elevMin": 508.0,
+    "nPoints": 93,
+    "office": "SWT",
+    "ratingId": "FGIB.Elev;Area.Linear.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1951-09-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 554,
+   "intervalFt": 10.0,
+   "lakeId": "Fort Gibson Lake|OK",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "USACE Tulsa",
+   "pSrc": {
+    "datumStated": "NGVD29",
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year",
+    "poolFt": 554.0,
+    "surveyYear": 2012,
+    "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer"
+   },
+   "shares": {
+    "lt10": 0.43320000000000003
+   },
+   "src": "OK",
+   "tier": "B"
+  },
+  "Georgetown Lake|MT": {
+   "coverage": 0.9635,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": null,
+   "dirDatum": null,
+   "dirPoolFt": null,
+   "intervalFt": 5.0,
+   "lakeId": "Georgetown Lake|MT",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "DNRC/NW Energy (Flint Creek)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.24409999999999998
+   },
+   "src": "MT",
+   "tier": "A"
+  },
+  "Grand Lake St. Marys|OH": {
+   "coverage": 0.9988,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 870.6,
+   "intervalFt": 2.0,
+   "lakeId": "Grand Lake St. Marys|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "ODNR (canal feeder reservoir)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 871.0,
+    "surveyYear": 2004,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/grandlakestmarys2.pdf"
+   },
+   "shares": {
+    "lt10": 0.9994000000000001,
+    "lt3": 0.1216,
+    "lt6": 0.9493
+   },
+   "src": "OH",
+   "tier": "A"
+  },
+  "Grand Lake o' the Cherokees|OK": {
+   "coverage": 0.9939,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 744,
+   "intervalFt": 5.0,
+   "lakeId": "Grand Lake o' the Cherokees|OK",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "Grand River Dam Authority",
+   "pSrc": {
+    "datumStated": "NAVD88",
+    "decimals": 1,
+    "internalRange": 20.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year",
+    "poolFt": 745.0,
+    "surveyYear": 2008,
+    "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer"
+   },
+   "shares": {
+    "lt10": 0.2091
+   },
+   "src": "OK",
+   "tier": "A"
+  },
+  "Griffin|FL": {
+   "coverage": 0.9999,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NAVD88",
+   "dirPoolFt": 58.21,
+   "intervalFt": 1.0,
+   "lakeId": "Griffin|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SJRWMD (Burrell Lock)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.8682000000000001,
+    "lt3": 0.0332,
+    "lt6": 0.21100000000000002
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "Gull Lake|MN": {
+   "coverage": 0.9971,
+   "curve": {
+    "datumNative": null,
+    "effectiveDate": "2003-01-06T13:20:00Z",
+    "elevMax": 1195.0,
+    "elevMin": 1188.75,
+    "nPoints": 305,
+    "office": "MVP",
+    "ratingId": "MissHW_Gull.Stage;Area.Standard.Production",
+    "stageZeroFt": 1100.0,
+    "units": "ft;acre",
+    "versions": [
+     "2003-01-06"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1194,
+   "intervalFt": 10.0,
+   "lakeId": "Gull Lake|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USACE St. Paul (Gull Lake Dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2831
+   },
+   "src": "MN",
+   "tier": "B"
+  },
+  "Harlan County Lake|NE": {
+   "coverage": 0.9908,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "1998-05-13T17:00:00Z",
+    "elevMax": 1986.0,
+    "elevMin": 1895.0,
+    "nPoints": 47,
+    "office": "NWDM",
+    "ratingId": "HACO-Harlan_Co_Lake-Republican.Elev;Area.Area_Curves.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1998-05-13"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1946,
+   "intervalFt": 5.0,
+   "lakeId": "Harlan County Lake|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE (Kansas City Dist)",
+   "pSrc": {
+    "conservationPoolAttr": null,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=None",
+    "poolFt": 1945.0,
+    "surveyYear": null,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.2168
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Harris|FL": {
+   "coverage": 0.9999,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NAVD88",
+   "dirPoolFt": 62.21,
+   "intervalFt": 1.0,
+   "lakeId": "Harris|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SJRWMD (Harris Chain)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.3124,
+    "lt3": 0.0168,
+    "lt6": 0.04869999999999999
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "Harveys Lake|PA": {
+   "coverage": 0.9994,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1220,
+   "intervalFt": 10.0,
+   "lakeId": "Harveys Lake|PA",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "Natural (glacial)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.0993
+   },
+   "src": "PA",
+   "tier": "B"
+  },
+  "Hebgen Lake|MT": {
+   "coverage": 0.9819,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 6534.87,
+   "intervalFt": 5.0,
+   "lakeId": "Hebgen Lake|MT",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "NorthWestern Energy",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2116
+   },
+   "src": "MT",
+   "tier": "A"
+  },
+  "Highland Lake|CT": {
+   "coverage": 0.9589,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 832,
+   "intervalFt": 6.0,
+   "lakeId": "Highland Lake|CT",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "Town of Winchester",
+   "pSrc": null,
+   "shares": {
+    "lt6": 0.1321
+   },
+   "src": "CT",
+   "tier": "B"
+  },
+  "Hoover Reservoir|OH": {
+   "coverage": 0.9977,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 894,
+   "intervalFt": 10.0,
+   "lakeId": "Hoover Reservoir|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "City of Columbus (water supply)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 894.0,
+    "surveyYear": 2001,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/hooverreservoir2.pdf"
+   },
+   "shares": {
+    "lt10": 0.35719999999999996
+   },
+   "src": "OH",
+   "tier": "B"
+  },
+  "Houghton Lake|MI": {
+   "coverage": 0.9897,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1139,
+   "intervalFt": 1.0,
+   "lakeId": "Houghton Lake|MI",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "Local (Reedsburg Dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.6085,
+    "lt3": 0.3284,
+    "lt6": 0.45620000000000005
+   },
+   "src": "MI",
+   "tier": "B"
+  },
+  "Istokpoga|FL": {
+   "coverage": 0.9974,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 39.5,
+   "intervalFt": 1.0,
+   "lakeId": "Istokpoga|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SFWMD",
+   "pSrc": null,
+   "shares": {
+    "lt10": 1.0,
+    "lt3": 0.1003,
+    "lt6": 0.5967
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "Jennings Randolph Lake|MD": {
+   "coverage": 0.9984,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 1466,
+   "intervalFt": 1.0,
+   "lakeId": "Jennings Randolph Lake|MD",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Baltimore (NAB)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.0139,
+    "lt3": 0.0016,
+    "lt6": 0.0066
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Johnson Lake|NE": {
+   "coverage": 1.0,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 2618,
+   "intervalFt": 5.0,
+   "lakeId": "Johnson Lake|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "CNPPID (supply canal)",
+   "pSrc": {
+    "conservationPoolAttr": 2617.0,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2617.0",
+    "poolFt": 2617.0,
+    "surveyYear": 2008,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.38660000000000005
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Kissimmee|FL": {
+   "coverage": 0.9999,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 53,
+   "intervalFt": 1.0,
+   "lakeId": "Kissimmee|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SFWMD (S-65 structures)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.6141,
+    "lt3": 0.0233,
+    "lt6": 0.1744
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "Lake Bemidji|MN": {
+   "coverage": 0.9988,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1352,
+   "intervalFt": 10.0,
+   "lakeId": "Lake Bemidji|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "\u2014",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.22949999999999998
+   },
+   "src": "MN",
+   "tier": "B"
+  },
+  "Lake Cochituate|MA": {
+   "coverage": 0.9764,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 141,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Cochituate|MA",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "MA DCR (state park)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.1021
+   },
+   "src": "MA",
+   "tier": "A"
+  },
+  "Lake McConaughy|NE": {
+   "coverage": 1.0,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 3265,
+   "intervalFt": 5.0,
+   "lakeId": "Lake McConaughy|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "CNPPID (Kingsley Dam)",
+   "pSrc": {
+    "conservationPoolAttr": 3266.4,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=3266.4",
+    "poolFt": 3265.0,
+    "surveyYear": null,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.022799999999999997
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Lake Milton|OH": {
+   "coverage": 0.9874,
+   "curve": {
+    "datumNative": "NAVD-88",
+    "effectiveDate": "1970-01-01T00:00:00Z",
+    "elevMax": 953.429993,
+    "elevMin": 899.929993,
+    "nPoints": 25,
+    "office": "LRP",
+    "ratingId": "Milton.Elev;Area.Standard.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NAVD88",
+   "dirPoolFt": 947.43,
+   "intervalFt": 3.0,
+   "lakeId": "Lake Milton|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "ODNR (Lake Milton Dam)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 948.0,
+    "surveyYear": 1998,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/lakemilton2.pdf"
+   },
+   "shares": {
+    "lt10": 0.39,
+    "lt3": 0.091,
+    "lt6": 0.1989
+   },
+   "src": "OH",
+   "tier": "A"
+  },
+  "Lake Minnetonka|MN": {
+   "coverage": 0.9815,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 929.4,
+   "intervalFt": 10.0,
+   "lakeId": "Lake Minnetonka|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "Local (Gray's Bay Dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2712
+   },
+   "src": "MN",
+   "tier": "B"
+  },
+  "Lake Murray (OK)|OK": {
+   "coverage": 0.9943,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 750,
+   "intervalFt": 10.0,
+   "lakeId": "Lake Murray (OK)|OK",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "OK State Parks",
+   "pSrc": {
+    "datumStated": "NGVD29",
+    "decimals": 1,
+    "internalRange": 200.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year",
+    "poolFt": 850.0,
+    "surveyYear": 2001,
+    "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer"
+   },
+   "shares": {
+    "lt10": 0.23609999999999998
+   },
+   "src": "OK",
+   "tier": "B"
+  },
+  "Lake Ogallala|NE": {
+   "coverage": 0.9964,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 3122,
+   "intervalFt": 2.0,
+   "lakeId": "Lake Ogallala|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "CNPPID (Keystone Diversion)",
+   "pSrc": {
+    "conservationPoolAttr": 3126.3,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.030200000000149885,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=3126.3",
+    "poolFt": 3126.5027,
+    "surveyYear": 2005,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.5884,
+    "lt3": 0.0772,
+    "lt6": 0.14090000000000003
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Lake Pepin|MN": {
+   "coverage": 0.9826,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 667,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Pepin|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "\u2014",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2489
+   },
+   "src": "MN",
+   "tier": "A"
+  },
+  "Lake Quinsigamond|MA": {
+   "coverage": 0.9957,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 460,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Quinsigamond|MA",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "Local",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.1166
+   },
+   "src": "MA",
+   "tier": "B"
+  },
+  "Lake Sammamish|WA": {
+   "coverage": 0.9981,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 30,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Sammamish|WA",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "King County (outlet weir)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.1487
+   },
+   "src": "WA",
+   "tier": "A"
+  },
+  "Lake Springfield|IL": {
+   "coverage": 0.9901,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 560,
+   "intervalFt": 2.0,
+   "lakeId": "Lake Springfield|IL",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "City Water Light & Power",
+   "pSrc": {
+    "datumStated": "code 2 (undefined)",
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "attribute_pool_semantics_unstated",
+    "origin": "IDNR il_lakes_surveyed norm_pool, surv_date, ver_datum; contour semantic (depth vs elevation) is not stated: research resolved it from max_dpth",
+    "poolFt": 560.0,
+    "surveyYear": 2020,
+    "url": "https://maps.dnr.illinois.gov/geoservices/rest/services/WaterResources/LakeDepthAndCapacity/MapServer"
+   },
+   "shares": {
+    "lt10": 0.41080000000000005,
+    "lt3": 0.1233,
+    "lt6": 0.274
+   },
+   "src": "IL",
+   "tier": "A"
+  },
+  "Lake Vermilion|MN": {
+   "coverage": 0.9921,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1350,
+   "intervalFt": 10.0,
+   "lakeId": "Lake Vermilion|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "\u2014",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.26280000000000003
+   },
+   "src": "MN",
+   "tier": "A"
+  },
+  "Lake Waramaug|CT": {
+   "coverage": 0.978,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 684,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Waramaug|CT",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "State/assoc.",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.1431
+   },
+   "src": "CT",
+   "tier": "A"
+  },
+  "Lake Wawasee|IN": {
+   "coverage": 0.9986,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 858,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Wawasee|IN",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "none (natural glacial)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.5573
+   },
+   "src": "IN",
+   "tier": "B"
+  },
+  "Lake Wentworth|NH": {
+   "coverage": 0.9916,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 534,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Wentworth|NH",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "NH DES (outlet dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2748
+   },
+   "src": "NH",
+   "tier": "A"
+  },
+  "Lake Winnibigoshish|MN": {
+   "coverage": 0.9976,
+   "curve": {
+    "datumNative": null,
+    "effectiveDate": "2003-01-06T13:20:00Z",
+    "elevMax": 1304.36,
+    "elevMin": 1288.0,
+    "nPoints": 826,
+    "office": "MVP",
+    "ratingId": "MissHW_Winni.Stage;Area.Standard.Production",
+    "stageZeroFt": 1200.0,
+    "units": "ft;acre",
+    "versions": [
+     "2003-01-06"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1298.44,
+   "intervalFt": 5.0,
+   "lakeId": "Lake Winnibigoshish|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USACE St. Paul (Winnie Dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.21
+   },
+   "src": "MN",
+   "tier": "A"
+  },
+  "Leech Lake|MN": {
+   "coverage": 0.9909,
+   "curve": {
+    "datumNative": null,
+    "effectiveDate": "2003-01-06T13:20:00Z",
+    "elevMax": 1299.54,
+    "elevMin": 1292.0,
+    "nPoints": 596,
+    "office": "MVP",
+    "ratingId": "MissHW_Leech.Stage;Area.Standard.Production",
+    "stageZeroFt": 1200.0,
+    "units": "ft;acre",
+    "versions": [
+     "2003-01-06"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1294.9,
+   "intervalFt": 5.0,
+   "lakeId": "Leech Lake|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USACE St. Paul (Leech Lake Dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.3486
+   },
+   "src": "MN",
+   "tier": "A"
+  },
+  "Lochloosa|FL": {
+   "coverage": 0.9999,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 57,
+   "intervalFt": 1.0,
+   "lakeId": "Lochloosa|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SJRWMD",
+   "pSrc": null,
+   "shares": {
+    "lt10": 1.0,
+    "lt3": 0.1683,
+    "lt6": 0.8393
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "Mansfield Hollow Lake|CT": {
+   "coverage": 0.8935,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 210,
+   "intervalFt": 3.0,
+   "lakeId": "Mansfield Hollow Lake|CT",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE New England",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.8735999999999999,
+    "lt3": 0.27,
+    "lt6": 0.5785
+   },
+   "src": "CT",
+   "tier": "A"
+  },
+  "Massabesic Lake|NH": {
+   "coverage": 0.9516,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 250,
+   "intervalFt": 10.0,
+   "lakeId": "Massabesic Lake|NH",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "Manchester Water Works",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.5295
+   },
+   "src": "NH",
+   "tier": "B"
+  },
+  "Melvern Lake|KS": {
+   "coverage": 0.9996,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "2019-01-01T06:00:00Z",
+    "elevMax": 1080.60999,
+    "elevMin": 968.609985,
+    "nPoints": 117,
+    "office": "NWDM",
+    "ratingId": "MELN-Melvern_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1998-05-13",
+     "2019-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 1036,
+   "intervalFt": 10.0,
+   "lakeId": "Melvern Lake|KS",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "USACE Kansas City (NWK)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool_contradictory",
+    "origin": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory)",
+    "poolFt": 1036.0,
+    "surveyYear": 2009,
+    "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query"
+   },
+   "shares": {
+    "lt10": 0.2914
+   },
+   "src": "KS",
+   "tier": "B"
+  },
+  "Merritt Reservoir|NE": {
+   "coverage": 0.9952,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 2946,
+   "intervalFt": 10.0,
+   "lakeId": "Merritt Reservoir|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USBR (Ainsworth Unit)",
+   "pSrc": {
+    "conservationPoolAttr": 2947.0,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.026199999999789725,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2947.0",
+    "poolFt": 2953.3334,
+    "surveyYear": 2001,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.1724
+   },
+   "src": "NE",
+   "tier": "B"
+  },
+  "Merrymeeting Lake|NH": {
+   "coverage": 0.9968,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 610,
+   "intervalFt": 5.0,
+   "lakeId": "Merrymeeting Lake|NH",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "NH DES (outlet dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.19469999999999998
+   },
+   "src": "NH",
+   "tier": "A"
+  },
+  "Milford Lake|KS": {
+   "coverage": 0.999,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "2012-03-31T13:29:00Z",
+    "elevMax": 1214.0,
+    "elevMin": 1080.0,
+    "nPoints": 137,
+    "office": "NWDM",
+    "ratingId": "MILD-Milford_Lake-Republican.Elev;Area.Area_Curves.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "2012-03-31"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 1144.4,
+   "intervalFt": 10.0,
+   "lakeId": "Milford Lake|KS",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "USACE Kansas City (NWK)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool_contradictory",
+    "origin": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory)",
+    "poolFt": 1144.4,
+    "surveyYear": 2009,
+    "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query"
+   },
+   "shares": {
+    "lt10": 0.2966
+   },
+   "src": "KS",
+   "tier": "B"
+  },
+  "Mille Lacs Lake|MN": {
+   "coverage": 0.995,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1250,
+   "intervalFt": 5.0,
+   "lakeId": "Mille Lacs Lake|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "\u2014",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.0674
+   },
+   "src": "MN",
+   "tier": "A"
+  },
+  "Mosquito Creek Lake|OH": {
+   "coverage": 0.998,
+   "curve": {
+    "datumNative": "NAVD-88",
+    "effectiveDate": "1970-01-01T00:00:00Z",
+    "elevMax": 914.130005,
+    "elevMin": 868.330017,
+    "nPoints": 60,
+    "office": "LRP",
+    "ratingId": "Mosquito.Elev;Area.Standard.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NAVD88",
+   "dirPoolFt": 900.73,
+   "intervalFt": 3.0,
+   "lakeId": "Mosquito Creek Lake|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USACE Pittsburgh",
+   "pSrc": {
+    "datumStated": "above mean sea level",
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 901.0,
+    "surveyYear": 2004,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/mosquitocreeklake2.pdf"
+   },
+   "shares": {
+    "lt10": 0.5738,
+    "lt3": 0.1785,
+    "lt6": 0.3257
+   },
+   "src": "OH",
+   "tier": "A"
+  },
+  "Mount Storm Lake|WV": {
+   "coverage": 0.9996,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 3244,
+   "intervalFt": 1.0,
+   "lakeId": "Mount Storm Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "Dominion (power-plant cooling)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.15460000000000002,
+    "lt3": 0.0334,
+    "lt6": 0.0902
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Nelson Lake|ND": {
+   "coverage": 0.9809,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 1925,
+   "intervalFt": 2.0,
+   "lakeId": "Nelson Lake|ND",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "Minnkota Power (cooling reservoir)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "ND G&F contour attribute ELEVATION - CONTOUR (constant per lake)",
+    "poolFt": 1926.69995,
+    "surveyYear": null,
+    "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer"
+   },
+   "shares": {
+    "lt10": 0.3212,
+    "lt3": 0.0583,
+    "lt6": 0.1722
+   },
+   "src": "ND",
+   "tier": "A"
+  },
+  "Onota Lake|MA": {
+   "coverage": 0.9958,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1131,
+   "intervalFt": 5.0,
+   "lakeId": "Onota Lake|MA",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "City of Pittsfield",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.4546
+   },
+   "src": "MA",
+   "tier": "A"
+  },
+  "Orange Lake|FL": {
+   "coverage": 0.9729,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 58,
+   "intervalFt": 1.0,
+   "lakeId": "Orange Lake|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SJRWMD",
+   "pSrc": null,
+   "shares": {
+    "lt10": 1.0,
+    "lt3": 0.2247,
+    "lt6": 0.7395
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "Otis Reservoir|MA": {
+   "coverage": 0.9942,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": null,
+   "dirDatum": null,
+   "dirPoolFt": null,
+   "intervalFt": 5.0,
+   "lakeId": "Otis Reservoir|MA",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "MA DCR / local",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2175
+   },
+   "src": "MA",
+   "tier": "A"
+  },
+  "Otter Tail Lake|MN": {
+   "coverage": 0.9989,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1327,
+   "intervalFt": 10.0,
+   "lakeId": "Otter Tail Lake|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "\u2014",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.39890000000000003
+   },
+   "src": "MN",
+   "tier": "A"
+  },
+  "Pachaug Pond|CT": {
+   "coverage": 0.9534,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 159,
+   "intervalFt": 3.0,
+   "lakeId": "Pachaug Pond|CT",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "State (DEEP)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.9544999999999999,
+    "lt3": 0.2426,
+    "lt6": 0.5235
+   },
+   "src": "CT",
+   "tier": "A"
+  },
+  "Patterson Lake|ND": {
+   "coverage": 0.9627,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 2420,
+   "intervalFt": 1.0,
+   "lakeId": "Patterson Lake|ND",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USBR (Dickinson Dam)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "ND G&F contour attribute ELEVATION - CONTOUR (constant per lake)",
+    "poolFt": 2421.80005,
+    "surveyYear": null,
+    "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer"
+   },
+   "shares": {
+    "lt10": 0.6755,
+    "lt3": 0.17,
+    "lt6": 0.3614
+   },
+   "src": "ND",
+   "tier": "A"
+  },
+  "Pomona Lake|KS": {
+   "coverage": 0.9989,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "1998-05-13T17:00:00Z",
+    "elevMax": 1035.0,
+    "elevMin": 930.0,
+    "nPoints": 49,
+    "office": "NWDM",
+    "ratingId": "POMA-Pomona_Lake-110-Quenemo.Elev;Area.Area_Curves.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1998-05-13"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 974,
+   "intervalFt": 5.0,
+   "lakeId": "Pomona Lake|KS",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "USACE Kansas City (NWK)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool_contradictory",
+    "origin": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory)",
+    "poolFt": 974.0,
+    "surveyYear": 2009,
+    "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query"
+   },
+   "shares": {
+    "lt10": 0.36419999999999997
+   },
+   "src": "KS",
+   "tier": "A"
+  },
+  "Pontoosuc Lake|MA": {
+   "coverage": 0.9995,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 1101,
+   "intervalFt": 5.0,
+   "lakeId": "Pontoosuc Lake|MA",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "Pittsfield/Lanesborough",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.3005
+   },
+   "src": "MA",
+   "tier": "A"
+  },
+  "Pymatuning Reservoir|PA": {
+   "coverage": 0.9948,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 1008,
+   "intervalFt": 3.0,
+   "lakeId": "Pymatuning Reservoir|PA",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "PA DCNR",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 1008.0,
+    "surveyYear": 2008,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/pymatuninglake2.pdf"
+   },
+   "shares": {
+    "lt10": 0.4229,
+    "lt3": 0.0785,
+    "lt6": 0.1859
+   },
+   "src": "OH",
+   "tier": "A"
+  },
+  "R.D. Bailey Lake|WV": {
+   "coverage": 0.9988,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1035,
+   "intervalFt": 1.0,
+   "lakeId": "R.D. Bailey Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2517,
+    "lt3": 0.1717,
+    "lt6": 0.2135
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Salt Fork Lake|OH": {
+   "coverage": 0.9996,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 800,
+   "intervalFt": 5.0,
+   "lakeId": "Salt Fork Lake|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "ODNR (state park reservoir)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 0,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 800.0,
+    "surveyYear": 1998,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/saltforklake2.pdf"
+   },
+   "shares": {
+    "lt10": 0.5015000000000001
+   },
+   "src": "OH",
+   "tier": "A"
+  },
+  "Sardis Lake|OK": {
+   "coverage": 0.9668,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "2010-01-01T06:00:00Z",
+    "elevMax": 631.0,
+    "elevMin": 538.0,
+    "nPoints": 94,
+    "office": "SWT",
+    "ratingId": "SARD.Elev;Area.Linear.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "2010-01-01",
+     "2019-09-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 599,
+   "intervalFt": 10.0,
+   "lakeId": "Sardis Lake|OK",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "USACE Tulsa / OWRB",
+   "pSrc": {
+    "datumStated": "NGVD29",
+    "decimals": 1,
+    "internalRange": 0.0,
+    "kind": "dataset_internal_elevation",
+    "origin": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year",
+    "poolFt": 599.0,
+    "surveyYear": 1999,
+    "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer"
+   },
+   "shares": {
+    "lt10": 0.3027
+   },
+   "src": "OK",
+   "tier": "B"
+  },
+  "Senecaville Lake|OH": {
+   "coverage": 0.9999,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "1970-01-01T00:00:00Z",
+    "elevMax": 864.0,
+    "elevMin": 803.0,
+    "nPoints": 59,
+    "office": "LRH",
+    "ratingId": "Senecaville.Elev;Area.Standard.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 832.2,
+   "intervalFt": 3.0,
+   "lakeId": "Senecaville Lake|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "MWCD / USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.5463,
+    "lt3": 0.2721,
+    "lt6": 0.33740000000000003
+   },
+   "src": "OH",
+   "tier": "B"
+  },
+  "Sherman Reservoir|NE": {
+   "coverage": 0.9992,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": null,
+   "dirDatum": null,
+   "dirPoolFt": null,
+   "intervalFt": 3.0,
+   "lakeId": "Sherman Reservoir|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USBR (Farwell Unit)",
+   "pSrc": {
+    "conservationPoolAttr": 2162.0,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.04859999999962383,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2162.0",
+    "poolFt": 2162.3058,
+    "surveyYear": 2003,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.1401,
+    "lt3": 0.0297,
+    "lt6": 0.0415
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Spruce Run Reservoir|NJ": {
+   "coverage": 0.9988,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 272.2,
+   "intervalFt": 0.8202,
+   "lakeId": "Spruce Run Reservoir|NJ",
+   "licenceClass": [
+    "RESTRICTED"
+   ],
+   "operator": "NJWSA",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2272,
+    "lt3": 0.0606,
+    "lt6": 0.1272
+   },
+   "src": "NJ",
+   "tier": "A"
+  },
+  "Squam Lake|NH": {
+   "coverage": 0.9928,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 561,
+   "intervalFt": 5.0,
+   "lakeId": "Squam Lake|NH",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "NH DES (Squam Dam)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2152
+   },
+   "src": "NH",
+   "tier": "A"
+  },
+  "Squantz Pond|CT": {
+   "coverage": 0.9611,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 429.5,
+   "intervalFt": 10.0,
+   "lakeId": "Squantz Pond|CT",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "State / FirstLight-linked",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.1627
+   },
+   "src": "CT",
+   "tier": "B"
+  },
+  "Stonewall Jackson Lake|WV": {
+   "coverage": 0.9975,
+   "curve": {
+    "datumNative": "NAVD-88",
+    "effectiveDate": "1970-01-01T00:00:00Z",
+    "elevMax": 1099.32996,
+    "elevMin": 1006.33002,
+    "nPoints": 92,
+    "office": "LRP",
+    "ratingId": "StonewallJackson.Elev;Area.Standard.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NAVD88",
+   "dirPoolFt": 1072.53,
+   "intervalFt": 1.0,
+   "lakeId": "Stonewall Jackson Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Pittsburgh",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.34919999999999995,
+    "lt3": 0.0839,
+    "lt6": 0.2007
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Summersville Lake|WV": {
+   "coverage": 0.9991,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 1652,
+   "intervalFt": 1.0,
+   "lakeId": "Summersville Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.19479999999999997,
+    "lt3": 0.1152,
+    "lt6": 0.145
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Sutton Lake|WV": {
+   "coverage": 0.978,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 922,
+   "intervalFt": 1.0,
+   "lakeId": "Sutton Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Huntington",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2882,
+    "lt3": 0.1306,
+    "lt6": 0.211
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Swanson Reservoir|NE": {
+   "coverage": 1.0,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "1998-05-13T17:00:00Z",
+    "elevMax": 2785.0,
+    "elevMin": 2703.0,
+    "nPoints": 42,
+    "office": "NWDM",
+    "ratingId": "TREN-Swanson_Res-Republican.Elev;Area.Area_Curves.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1998-05-13"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 2752,
+   "intervalFt": 5.0,
+   "lakeId": "Swanson Reservoir|NE",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USBR (Trenton Dam)",
+   "pSrc": {
+    "conservationPoolAttr": 2752.1,
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": 0.026200000000244472,
+    "kind": "dataset_internal_elevation",
+    "origin": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2752.1",
+    "poolFt": 2752.1129,
+    "surveyYear": 2001,
+    "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)"
+   },
+   "shares": {
+    "lt10": 0.2385
+   },
+   "src": "NE",
+   "tier": "A"
+  },
+  "Tappan Lake|OH": {
+   "coverage": 0.9996,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "1970-01-01T00:00:00Z",
+    "elevMax": 925.0,
+    "elevMin": 868.0,
+    "nPoints": 42,
+    "office": "LRH",
+    "ratingId": "Tappan.Elev;Area.Standard.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "NGVD29",
+   "dirPoolFt": 899.3,
+   "intervalFt": 3.0,
+   "lakeId": "Tappan Lake|OH",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "MWCD / USACE Huntington",
+   "pSrc": {
+    "datumStated": "above mean sea level",
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool",
+    "origin": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY'",
+    "poolFt": 899.3,
+    "surveyYear": 1998,
+    "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/tappanlake2.pdf"
+   },
+   "shares": {
+    "lt10": 0.3821,
+    "lt3": 0.143,
+    "lt6": 0.26339999999999997
+   },
+   "src": "OH",
+   "tier": "A"
+  },
+  "Tiber Reservoir (Lake Elwell)|MT": {
+   "coverage": 0.935,
+   "curve": {
+    "datumNative": "OTHER",
+    "effectiveDate": "2024-03-19T05:00:00Z",
+    "elevMax": 3025.0,
+    "elevMin": 2839.0,
+    "nPoints": 187,
+    "office": "NWDM",
+    "ratingId": "TIBR.Elev;Area.Linear.Step",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01",
+     "2024-03-19"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 2993,
+   "intervalFt": 10.0,
+   "lakeId": "Tiber Reservoir (Lake Elwell)|MT",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "USBR",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.12390000000000001
+   },
+   "src": "MT",
+   "tier": "B"
+  },
+  "Tohopekaliga (Toho)|FL": {
+   "coverage": 0.9999,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 55,
+   "intervalFt": 1.0,
+   "lakeId": "Tohopekaliga (Toho)|FL",
+   "licenceClass": [
+    "INTERNAL_ONLY"
+   ],
+   "operator": "SFWMD (S-61)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.7802,
+    "lt3": 0.0669,
+    "lt6": 0.2804
+   },
+   "src": "FL",
+   "tier": "A"
+  },
+  "Tygart Lake|WV": {
+   "coverage": 0.9996,
+   "curve": {
+    "datumNative": "NAVD-88",
+    "effectiveDate": "1970-01-01T00:00:00Z",
+    "elevMax": 1188.40002,
+    "elevMin": 979.450012,
+    "nPoints": 191,
+    "office": "LRP",
+    "ratingId": "Tygart.Elev;Area.Standard.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "1970-01-01"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "NAVD88",
+   "dirPoolFt": 1093.45,
+   "intervalFt": 1.0,
+   "lakeId": "Tygart Lake|WV",
+   "licenceClass": [
+    "PUBLIC_REUSABLE"
+   ],
+   "operator": "USACE Pittsburgh",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.2062,
+    "lt3": 0.1603,
+    "lt6": 0.182
+   },
+   "src": "WV",
+   "tier": "A"
+  },
+  "Umbagog Lake|NH": {
+   "coverage": 0.9811,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 1245,
+   "intervalFt": 5.0,
+   "lakeId": "Umbagog Lake|NH",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "Brookfield/Union Water Power (Errol)",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.5851
+   },
+   "src": "NH",
+   "tier": "A"
+  },
+  "Wachusett Reservoir|MA": {
+   "coverage": 0.9852,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": null,
+   "dirPoolFt": 395,
+   "intervalFt": 10.0,
+   "lakeId": "Wachusett Reservoir|MA",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "MWRA / DCR",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.1234
+   },
+   "src": "MA",
+   "tier": "B"
+  },
+  "Wallum Lake|RI": {
+   "coverage": 0.996,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 542,
+   "intervalFt": 10.0,
+   "lakeId": "Wallum Lake|RI",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "Natural",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.16870000000000002
+   },
+   "src": "MA",
+   "tier": "B"
+  },
+  "Webster Lake|MA": {
+   "coverage": 0.9826,
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 463,
+   "intervalFt": 5.0,
+   "lakeId": "Webster Lake|MA",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "Local / DCR",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.3145
+   },
+   "src": "MA",
+   "tier": "A"
+  },
+  "White Bear Lake|MN": {
+   "coverage": 0.9882,
+   "customerDerivedMetricsAllowed": "false",
+   "dirBasis": "naturalSurface",
+   "dirDatum": null,
+   "dirPoolFt": 924,
+   "intervalFt": 10.0,
+   "lakeId": "White Bear Lake|MN",
+   "licenceClass": [
+    "UNCLEAR"
+   ],
+   "operator": "\u2014",
+   "pSrc": null,
+   "shares": {
+    "lt10": 0.3891
+   },
+   "src": "MN",
+   "tier": "A"
+  },
+  "Wilson Lake|KS": {
+   "coverage": 0.9973,
+   "curve": {
+    "datumNative": "NGVD-29",
+    "effectiveDate": "2012-03-31T11:00:00Z",
+    "elevMax": 1594.0,
+    "elevMin": 1436.0,
+    "nPoints": 159,
+    "office": "NWDM",
+    "ratingId": "WILN-Wilson_Lake-Saline.Elev;Area.Area_Curves.Production",
+    "stageZeroFt": null,
+    "units": "ft;acre",
+    "versions": [
+     "2012-03-31"
+    ]
+   },
+   "customerDerivedMetricsAllowed": "true",
+   "dirBasis": "fullPool",
+   "dirDatum": "LOCAL",
+   "dirPoolFt": 1516,
+   "intervalFt": 10.0,
+   "lakeId": "Wilson Lake|KS",
+   "licenceClass": [
+    "ATTRIBUTION_REQUIRED"
+   ],
+   "operator": "USACE Kansas City (NWK)",
+   "pSrc": {
+    "datumStated": null,
+    "decimals": 1,
+    "internalRange": null,
+    "kind": "documented_pool_contradictory",
+    "origin": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory)",
+    "poolFt": 1516.0,
+    "surveyYear": 2008,
+    "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query"
+   },
+   "shares": {
+    "lt10": 0.185
+   },
+   "src": "KS",
+   "tier": "B"
+  }
+ },
+ "schema": "depth-contour2-lake-facts-v1"
+}

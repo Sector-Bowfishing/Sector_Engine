@@ -1,0 +1,3251 @@
+{
+ "schema": "depth-twdb-reference-pools-v1",
+ "family": "contour (non-TWDB)",
+ "status": "PROPOSAL (research output; not read by production)",
+ "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+ "generatedFrom": [
+  "docs/brains/depth/data/contour2_lake_facts.json",
+  "docs/brains/depth/data/contour2_validation_summary.json",
+  "docs/brains/depth/data/contour2_source_semantics.json"
+ ],
+ "lakes": {
+  "Alum Creek Lake|OH": {
+   "referenceStatus": "VERIFIED",
+   "referencePoolFt": 888.0,
+   "referencePoolDatum": "NGVD29",
+   "surveyYear": 2001,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 888,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/alumcreeklake2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 888.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/AlumCr.Elev;Area.Standard.Production?office=LRH",
+     "says": "CWMS AlumCr.Elev;Area.Standard.Production, native datum NGVD-29, effective 1970-01-01, elevations 821.0-920.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent)",
+    "passed": false,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 2.0
+   },
+   "caveats": [
+    "Verified on the documented pool figure equalling the directory pool (R1-R4); the water level on the survey DATE is still not stated by the source.",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ]
+  },
+  "Beech Fork Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 592,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Bluestone Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 1410,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Bowman-Haley Reservoir|ND": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 2757.0,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 2.0,
+   "directoryPoolFt": 2754.8,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer/info/iteminfo?f=pjson",
+     "says": "ND Game and Fish / ND GIS Hub: CONTOUR (negative ft) and ELEVATION attributes; ELEVATION - CONTOUR constant per lake | water level at survey: not stated; implied pools differ from directory pools by 1.7-2.2 ft | datum: not stated"
+    },
+    {
+     "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer",
+     "says": "ND G&F contour attribute ELEVATION - CONTOUR (constant per lake) -> pool 2757.00 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source ND: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/BOHA.Elev;Area.Linear.Step?office=NWDM",
+     "says": "CWMS BOHA.Elev;Area.Linear.Step, native datum OTHER, effective 2024-06-01, elevations 2728.4-2793.5 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 3,
+    "publishRate": 0.6,
+    "maeDryShare": 0.0321,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.192,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 1.8
+   },
+   "caveats": [
+    "R2: source pool 2757.00 ft differs from directory pool 2754.80 ft by 2.20 ft (> 0.25)",
+    "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)",
+    "which pool is right: source 2757.00 ft vs directory 2754.80 ft"
+   ]
+  },
+  "Box Butte Reservoir|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 4006.8597,
+   "referencePoolDatum": null,
+   "surveyYear": 2002,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 4007,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=4007.0 -> pool 4006.86 ft (dataset_internal_elevation); implied-pool range within lake 0.22 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Branched Oak Lake|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1283.99015,
+   "referencePoolDatum": null,
+   "surveyYear": 2003,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 1284,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=1284.0 -> pool 1283.99 ft (dataset_internal_elevation); implied-pool range within lake 0.03 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/SC18.Elev;Area.Linear.Step?office=NWDM",
+     "says": "CWMS SC18.Elev;Area.Linear.Step, native datum OTHER, effective 2020-10-01, elevations 1255.3-1317.3 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 4,
+    "publishRate": 0.8,
+    "maeDryShare": 0.0068,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.138,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -0.1
+   },
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Burnsville Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 789,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Caesar Creek Lake|OH": {
+   "referenceStatus": "VERIFIED",
+   "referencePoolFt": 849.0,
+   "referencePoolDatum": "NGVD29",
+   "surveyYear": 1997,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 849,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/caesarcreeklake2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 849.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "Verified on the documented pool figure equalling the directory pool (R1-R4); the water level on the survey DATE is still not stated by the source.",
+    "No CWMS Elev;Area curve (only Elev;Stor) so no validation was run; validation.passed is null.",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ]
+  },
+  "Calamus Reservoir|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 2244.0026,
+   "referencePoolDatum": null,
+   "surveyYear": 2003,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 2244,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2244.1 -> pool 2244.00 ft (dataset_internal_elevation); implied-pool range within lake 0.03 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Candlewood Lake|CT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 429.5,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json",
+     "says": "CT DEEP: DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source CT: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Canyon Ferry Lake|MT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 3797,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://fwp-gis.mt.gov/arcgis/rest/directories/arcgisoutput/webResources/metadata/refrnc/lakesBathymetry.htm",
+     "says": "Montana FWP: 'CONTOUR: Contour depth in feet'; shoreline type S, depth contours C | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MT: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  },
+  "Cheat Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 870,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Cheney Reservoir|KS": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1420.7,
+   "referencePoolDatum": null,
+   "surveyYear": 2010,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1421.6,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+     "says": "Kansas Biological Survey (KARS): 'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft) | water level at survey: CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft | datum: not stated"
+    },
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query",
+     "says": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory) -> pool 1420.70 ft (documented_pool_contradictory)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source KS: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CHEN.Elev;Area.Linear.Production?office=SWT",
+     "says": "CWMS CHEN.Elev;Area.Linear.Production, native datum NGVD-29, effective 2014-09-02, elevations 1361.0-1450.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 0.5
+   },
+   "caveats": [
+    "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+    "R2: source pool 1420.70 ft differs from directory pool 1421.60 ft by 0.90 ft (> 0.25)"
+   ],
+   "missingEvidence": [
+    "agency confirmation of which water level (normal pool vs level at survey) the depth surface is referenced to, per lake",
+    "which pool is right: source 1420.70 ft vs directory 1421.60 ft"
+   ]
+  },
+  "Clinton Lake|KS": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 875.5,
+   "referencePoolDatum": null,
+   "surveyYear": 2009,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 875.5,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+     "says": "Kansas Biological Survey (KARS): 'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft) | water level at survey: CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft | datum: not stated"
+    },
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query",
+     "says": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory) -> pool 875.50 ft (documented_pool_contradictory)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source KS: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CLIN-Clinton_Lake-Wakarusa.Elev;Area.Area_Curves.Production?office=NWDM",
+     "says": "CWMS CLIN-Clinton_Lake-Wakarusa.Elev;Area.Area_Curves.Production, native datum NGVD-29, effective 2012-03-31, elevations 831.0-929.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 2.3
+   },
+   "caveats": [
+    "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+    "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "agency confirmation of which water level (normal pool vs level at survey) the depth surface is referenced to, per lake",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  },
+  "Congamond Lakes|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 250,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json",
+     "says": "CT DEEP: DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source CT: PUBLIC_REUSABLE,ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "East Lake Tohopekaliga|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 58,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "East Lynn Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 662,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "El Dorado Lake|KS": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1339.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2010,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1339,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+     "says": "Kansas Biological Survey (KARS): 'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft) | water level at survey: CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft | datum: not stated"
+    },
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query",
+     "says": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory) -> pool 1339.00 ft (documented_pool_contradictory)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source KS: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/ELDR.Elev;Area.Linear.Production?office=SWT",
+     "says": "CWMS ELDR.Elev;Area.Linear.Production, native datum NGVD-29, effective 2014-11-01, elevations 1280.0-1360.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 3.0
+   },
+   "caveats": [
+    "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)"
+   ],
+   "missingEvidence": [
+    "agency confirmation of which water level (normal pool vs level at survey) the depth surface is referenced to, per lake"
+   ]
+  },
+  "Fort Gibson Lake|OK": {
+   "referenceStatus": "VERIFIED",
+   "referencePoolFt": 554.0,
+   "referencePoolDatum": "NGVD29",
+   "surveyYear": 2012,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 554,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "Oklahoma Water Resources Board: contour attributes depth (negative ft), elevation, vert_datum, year: elevation = pool + depth with a constant pool within most lakes | water level at survey: not stated; Grand (range 20 ft) and Murray (range 200 ft) have non-constant implied pools | datum: stated per lake (vert_datum)"
+    },
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year -> pool 554.00 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OK: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/FGIB.Elev;Area.Linear.Production?office=SWT",
+     "says": "CWMS FGIB.Elev;Area.Linear.Production, native datum NGVD-29, effective 1951-09-01, elevations 508.0-600.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent)",
+    "passed": false,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -6.0
+   },
+   "caveats": [
+    "Verified on the documented pool figure equalling the directory pool (R1-R4); the water level on the survey DATE is still not stated by the source.",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ]
+  },
+  "Georgetown Lake|MT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": null,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://fwp-gis.mt.gov/arcgis/rest/directories/arcgisoutput/webResources/metadata/refrnc/lakesBathymetry.htm",
+     "says": "Montana FWP: 'CONTOUR: Contour depth in feet'; shoreline type S, depth contours C | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MT: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Grand Lake St. Marys|OH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 871.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2004,
+   "contourIntervalFt": 2.0,
+   "directoryPoolFt": 870.6,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/grandlakestmarys2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 871.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R2: source pool 871.00 ft differs from directory pool 870.60 ft by 0.40 ft (> 0.25)",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)",
+    "which pool is right: source 871.00 ft vs directory 870.60 ft"
+   ]
+  },
+  "Grand Lake o' the Cherokees|OK": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": 2008,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 744,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "Oklahoma Water Resources Board: contour attributes depth (negative ft), elevation, vert_datum, year: elevation = pool + depth with a constant pool within most lakes | water level at survey: not stated; Grand (range 20 ft) and Murray (range 200 ft) have non-constant implied pools | datum: stated per lake (vert_datum)"
+    },
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year -> pool 745.00 ft (dataset_internal_elevation); implied-pool range within lake 20.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OK: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: implied pool (elevation + depth) is not constant within the lake (range 20.00 ft)",
+    "R2: source pool 745.00 ft differs from directory pool 744.00 ft by 1.00 ft (> 0.25)",
+    "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "why the contour-implied pool varies within the lake",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)",
+    "which pool is right: source 745.00 ft vs directory 744.00 ft"
+   ]
+  },
+  "Griffin|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 58.21,
+   "directoryPoolDatum": "NAVD88",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Gull Lake|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1194,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MissHW_Gull.Stage;Area.Standard.Production?office=MVP",
+     "says": "CWMS MissHW_Gull.Stage;Area.Standard.Production, native datum None, effective 2003-01-06, elevations 1188.8-1195.0 ft (stage + 1100.0 ft gauge zero from the CWMS location elevation, assumption)"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 3,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": null
+   },
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Harlan County Lake|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1945.0,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1946,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=None -> pool 1945.00 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/HACO-Harlan_Co_Lake-Republican.Elev;Area.Area_Curves.Production?office=NWDM",
+     "says": "CWMS HACO-Harlan_Co_Lake-Republican.Elev;Area.Area_Curves.Production, native datum NGVD-29, effective 1998-05-13, elevations 1895.0-1986.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 5,
+    "publishRate": 1.0,
+    "maeDryShare": 0.0434,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.217,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -3.5
+   },
+   "caveats": [
+    "R2: source pool 1945.00 ft differs from directory pool 1946.00 ft by 1.00 ft (> 0.25)"
+   ],
+   "missingEvidence": [
+    "which pool is right: source 1945.00 ft vs directory 1946.00 ft"
+   ]
+  },
+  "Harris|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 62.21,
+   "directoryPoolDatum": "NAVD88",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Harveys Lake|PA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1220,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source PA: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Hebgen Lake|MT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 6534.87,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://fwp-gis.mt.gov/arcgis/rest/directories/arcgisoutput/webResources/metadata/refrnc/lakesBathymetry.htm",
+     "says": "Montana FWP: 'CONTOUR: Contour depth in feet'; shoreline type S, depth contours C | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MT: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Highland Lake|CT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 6.0,
+   "directoryPoolFt": 832,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json",
+     "says": "CT DEEP: DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source CT: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Hoover Reservoir|OH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 894.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2001,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 894,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/hooverreservoir2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 894.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Houghton Lake|MI": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 1139,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/2eceeac00aa74abe858f1deb268b0efb?f=json",
+     "says": "MI DNR / IFR: contours where MinDepth == MaxDepth; band rings otherwise | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MI: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Istokpoga|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 39.5,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Jennings Randolph Lake|MD": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 1466,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  },
+  "Johnson Lake|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 2617.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2008,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 2618,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2617.0 -> pool 2617.00 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R2: source pool 2617.00 ft differs from directory pool 2618.00 ft by 1.00 ft (> 0.25)",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)",
+    "which pool is right: source 2617.00 ft vs directory 2618.00 ft"
+   ]
+  },
+  "Kissimmee|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 53,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Bemidji|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1352,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Cochituate|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 141,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake McConaughy|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 3265.0,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 3265,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=3266.4 -> pool 3265.00 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Milton|OH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 948.0,
+   "referencePoolDatum": null,
+   "surveyYear": 1998,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 947.43,
+   "directoryPoolDatum": "NAVD88",
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/lakemilton2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 948.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Milton.Elev;Area.Standard.Production?office=LRP",
+     "says": "CWMS Milton.Elev;Area.Standard.Production, native datum NAVD-88, effective 1970-01-01, elevations 899.9-953.4 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 4,
+    "publishRate": 0.8,
+    "maeDryShare": 0.0168,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.149,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -2.4
+   },
+   "caveats": [
+    "R2: source pool 948.00 ft differs from directory pool 947.43 ft by 0.57 ft (> 0.25)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "which pool is right: source 948.00 ft vs directory 947.43 ft"
+   ]
+  },
+  "Lake Minnetonka|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 929.4,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Murray (OK)|OK": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": 2001,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 750,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "Oklahoma Water Resources Board: contour attributes depth (negative ft), elevation, vert_datum, year: elevation = pool + depth with a constant pool within most lakes | water level at survey: not stated; Grand (range 20 ft) and Murray (range 200 ft) have non-constant implied pools | datum: stated per lake (vert_datum)"
+    },
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year -> pool 850.00 ft (dataset_internal_elevation); implied-pool range within lake 200.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OK: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: implied pool (elevation + depth) is not constant within the lake (range 200.00 ft)",
+    "R2: source pool 850.00 ft differs from directory pool 750.00 ft by 100.00 ft (> 0.25)",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "why the contour-implied pool varies within the lake",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)",
+    "which pool is right: source 850.00 ft vs directory 750.00 ft"
+   ]
+  },
+  "Lake Ogallala|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 3126.5027,
+   "referencePoolDatum": null,
+   "surveyYear": 2005,
+   "contourIntervalFt": 2.0,
+   "directoryPoolFt": 3122,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=3126.3 -> pool 3126.50 ft (dataset_internal_elevation); implied-pool range within lake 0.03 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R2: source pool 3126.50 ft differs from directory pool 3122.00 ft by 4.50 ft (> 0.25)",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)",
+    "which pool is right: source 3126.50 ft vs directory 3122.00 ft"
+   ]
+  },
+  "Lake Pepin|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 667,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Quinsigamond|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 460,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Sammamish|WA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 30,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gis.ecology.wa.gov/serverext/rest/services/Authoritative/ECY/MapServer/3/iteminfo?f=pjson",
+     "says": "WA Ecology (digitised from USGS Water-Supply Bulletin 43; Sammamish from King County 2013): 'bathymetric elevation bands (derived from bathymetric contours)'; Depth attribute | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WA: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Springfield|IL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 560.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2020,
+   "contourIntervalFt": 2.0,
+   "directoryPoolFt": 560,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://maps.dnr.illinois.gov/geoservices/rest/services/WaterResources/LakeDepthAndCapacity/MapServer",
+     "says": "IDNR Office of Water Resources: contour attribute CONTOUR is depth for most lakes but elevation-like for some; survey polygon has norm_pool, surv_date, ver_datum (code, undefined) | water level at survey: not stated | datum: code '2' (undefined)"
+    },
+    {
+     "url": "https://maps.dnr.illinois.gov/geoservices/rest/services/WaterResources/LakeDepthAndCapacity/MapServer",
+     "says": "IDNR il_lakes_surveyed norm_pool, surv_date, ver_datum; contour semantic (depth vs elevation) is not stated: research resolved it from max_dpth -> pool 560.00 ft (attribute_pool_semantics_unstated)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source IL: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: attribute pool exists but the source does not say the contours are measured from it",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Vermilion|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1350,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Waramaug|CT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 684,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json",
+     "says": "CT DEEP: DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source CT: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Wawasee|IN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 858,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bea7752105a840afbbee1256f9b7a19b?f=json",
+     "says": "Indiana DNR: 'shoreline of each lake as elevation 0 ... Contour values are feet below the surface' and 'contour values of some lakes were adjusted to coincide with the lake's legal gauge level' (item description) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source IN: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Wentworth|NH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 534,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://ftp.granit.sr.unh.edu/GRANIT_Data/Vector_Data/Inland_Water_Resources/d-bathymetry/bathymetry_lakes_lines/bathymetry_lakes_lines.html",
+     "says": "NHDES / NH Fish and Game: 'bathymetric depth contours in feet'; Garmin sounder points -> TIN -> raster -> contours; 'rough estimate' | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NH: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Lake Winnibigoshish|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1298.44,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MissHW_Winni.Stage;Area.Standard.Production?office=MVP",
+     "says": "CWMS MissHW_Winni.Stage;Area.Standard.Production, native datum None, effective 2003-01-06, elevations 1288.0-1304.4 ft (stage + 1200.0 ft gauge zero from the CWMS location elevation, assumption)"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 5,
+    "publishRate": 1.0,
+    "maeDryShare": 0.0842,
+    "boundsCoverage": 0.6,
+    "medianBoundsWidth": 0.21,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -0.4
+   },
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Leech Lake|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1294.9,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MissHW_Leech.Stage;Area.Standard.Production?office=MVP",
+     "says": "CWMS MissHW_Leech.Stage;Area.Standard.Production, native datum None, effective 2003-01-06, elevations 1292.0-1299.5 ft (stage + 1200.0 ft gauge zero from the CWMS location elevation, assumption)"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 1,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": null
+   },
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Lochloosa|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 57,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Mansfield Hollow Lake|CT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 210,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json",
+     "says": "CT DEEP: DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source CT: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Massabesic Lake|NH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 250,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://ftp.granit.sr.unh.edu/GRANIT_Data/Vector_Data/Inland_Water_Resources/d-bathymetry/bathymetry_lakes_lines/bathymetry_lakes_lines.html",
+     "says": "NHDES / NH Fish and Game: 'bathymetric depth contours in feet'; Garmin sounder points -> TIN -> raster -> contours; 'rough estimate' | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NH: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Melvern Lake|KS": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1036.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2009,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1036,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+     "says": "Kansas Biological Survey (KARS): 'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft) | water level at survey: CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft | datum: not stated"
+    },
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query",
+     "says": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory) -> pool 1036.00 ft (documented_pool_contradictory)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source KS: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MELN-Melvern_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production?office=NWDM",
+     "says": "CWMS MELN-Melvern_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production, native datum NGVD-29, effective 2019-01-01, elevations 968.6-1080.6 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -0.9
+   },
+   "caveats": [
+    "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+    "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "agency confirmation of which water level (normal pool vs level at survey) the depth surface is referenced to, per lake",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  },
+  "Merritt Reservoir|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 2953.3334,
+   "referencePoolDatum": null,
+   "surveyYear": 2001,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 2946,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2947.0 -> pool 2953.33 ft (dataset_internal_elevation); implied-pool range within lake 0.03 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R2: source pool 2953.33 ft differs from directory pool 2946.00 ft by 7.33 ft (> 0.25)",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)",
+    "which pool is right: source 2953.33 ft vs directory 2946.00 ft"
+   ]
+  },
+  "Merrymeeting Lake|NH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 610,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://ftp.granit.sr.unh.edu/GRANIT_Data/Vector_Data/Inland_Water_Resources/d-bathymetry/bathymetry_lakes_lines/bathymetry_lakes_lines.html",
+     "says": "NHDES / NH Fish and Game: 'bathymetric depth contours in feet'; Garmin sounder points -> TIN -> raster -> contours; 'rough estimate' | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NH: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Milford Lake|KS": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1144.4,
+   "referencePoolDatum": null,
+   "surveyYear": 2009,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1144.4,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+     "says": "Kansas Biological Survey (KARS): 'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft) | water level at survey: CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft | datum: not stated"
+    },
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query",
+     "says": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory) -> pool 1144.40 ft (documented_pool_contradictory)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source KS: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MILD-Milford_Lake-Republican.Elev;Area.Area_Curves.Production?office=NWDM",
+     "says": "CWMS MILD-Milford_Lake-Republican.Elev;Area.Area_Curves.Production, native datum NGVD-29, effective 2012-03-31, elevations 1080.0-1214.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 5.8
+   },
+   "caveats": [
+    "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+    "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "agency confirmation of which water level (normal pool vs level at survey) the depth surface is referenced to, per lake",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  },
+  "Mille Lacs Lake|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1250,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Mosquito Creek Lake|OH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 901.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2004,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 900.73,
+   "directoryPoolDatum": "NAVD88",
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/mosquitocreeklake2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 901.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Mosquito.Elev;Area.Standard.Production?office=LRP",
+     "says": "CWMS Mosquito.Elev;Area.Standard.Production, native datum NAVD-88, effective 1970-01-01, elevations 868.3-914.1 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 3,
+    "publishRate": 0.6,
+    "maeDryShare": 0.0278,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.178,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -2.9
+   },
+   "caveats": [
+    "R2: source pool 901.00 ft differs from directory pool 900.73 ft by 0.27 ft (> 0.25)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "which pool is right: source 901.00 ft vs directory 900.73 ft"
+   ]
+  },
+  "Mount Storm Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 3244,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Nelson Lake|ND": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1926.69995,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 2.0,
+   "directoryPoolFt": 1925,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer/info/iteminfo?f=pjson",
+     "says": "ND Game and Fish / ND GIS Hub: CONTOUR (negative ft) and ELEVATION attributes; ELEVATION - CONTOUR constant per lake | water level at survey: not stated; implied pools differ from directory pools by 1.7-2.2 ft | datum: not stated"
+    },
+    {
+     "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer",
+     "says": "ND G&F contour attribute ELEVATION - CONTOUR (constant per lake) -> pool 1926.70 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source ND: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R2: source pool 1926.70 ft differs from directory pool 1925.00 ft by 1.70 ft (> 0.25)",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)",
+    "which pool is right: source 1926.70 ft vs directory 1925.00 ft"
+   ]
+  },
+  "Onota Lake|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1131,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Orange Lake|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 58,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Otis Reservoir|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": null,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Otter Tail Lake|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1327,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Pachaug Pond|CT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 159,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json",
+     "says": "CT DEEP: DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source CT: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Patterson Lake|ND": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 2421.80005,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 2420,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer/info/iteminfo?f=pjson",
+     "says": "ND Game and Fish / ND GIS Hub: CONTOUR (negative ft) and ELEVATION attributes; ELEVATION - CONTOUR constant per lake | water level at survey: not stated; implied pools differ from directory pools by 1.7-2.2 ft | datum: not stated"
+    },
+    {
+     "url": "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer",
+     "says": "ND G&F contour attribute ELEVATION - CONTOUR (constant per lake) -> pool 2421.80 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source ND: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R2: source pool 2421.80 ft differs from directory pool 2420.00 ft by 1.80 ft (> 0.25)",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)",
+    "which pool is right: source 2421.80 ft vs directory 2420.00 ft"
+   ]
+  },
+  "Pomona Lake|KS": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 974.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2009,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 974,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+     "says": "Kansas Biological Survey (KARS): 'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft) | water level at survey: CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft | datum: not stated"
+    },
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query",
+     "says": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory) -> pool 974.00 ft (documented_pool_contradictory)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source KS: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/POMA-Pomona_Lake-110-Quenemo.Elev;Area.Area_Curves.Production?office=NWDM",
+     "says": "CWMS POMA-Pomona_Lake-110-Quenemo.Elev;Area.Area_Curves.Production, native datum NGVD-29, effective 1998-05-13, elevations 930.0-1035.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -0.9
+   },
+   "caveats": [
+    "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+    "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "agency confirmation of which water level (normal pool vs level at survey) the depth surface is referenced to, per lake",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  },
+  "Pontoosuc Lake|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1101,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Pymatuning Reservoir|PA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1008.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2008,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 1008,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/pymatuninglake2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 1008.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "R.D. Bailey Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 1035,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Salt Fork Lake|OH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 800.0,
+   "referencePoolDatum": null,
+   "surveyYear": 1998,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 800,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/saltforklake2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 800.00 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Sardis Lake|OK": {
+   "referenceStatus": "VERIFIED",
+   "referencePoolFt": 599.0,
+   "referencePoolDatum": "NGVD29",
+   "surveyYear": 1999,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 599,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "Oklahoma Water Resources Board: contour attributes depth (negative ft), elevation, vert_datum, year: elevation = pool + depth with a constant pool within most lakes | water level at survey: not stated; Grand (range 20 ft) and Murray (range 200 ft) have non-constant implied pools | datum: stated per lake (vert_datum)"
+    },
+    {
+     "url": "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer",
+     "says": "OWRB contour attributes elevation + |depth| (constant per lake), vert_datum, year -> pool 599.00 ft (dataset_internal_elevation); implied-pool range within lake 0.00 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OK: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/SARD.Elev;Area.Linear.Production?office=SWT",
+     "says": "CWMS SARD.Elev;Area.Linear.Production, native datum NGVD-29, effective 2010-01-01, elevations 538.0-631.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 0,
+    "publishRate": 0.0,
+    "maeDryShare": null,
+    "boundsCoverage": null,
+    "medianBoundsWidth": null,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent)",
+    "passed": false,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -4.1
+   },
+   "caveats": [
+    "Verified on the documented pool figure equalling the directory pool (R1-R4); the water level on the survey DATE is still not stated by the source.",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ]
+  },
+  "Senecaville Lake|OH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 832.2,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Senecaville.Elev;Area.Standard.Production?office=LRH",
+     "says": "CWMS Senecaville.Elev;Area.Standard.Production, native datum NGVD-29, effective 1970-01-01, elevations 803.0-864.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 2,
+    "publishRate": 0.4,
+    "maeDryShare": 0.1019,
+    "boundsCoverage": 0.5,
+    "medianBoundsWidth": 0.137,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -6.0
+   },
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Sherman Reservoir|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 2162.3058,
+   "referencePoolDatum": null,
+   "surveyYear": 2003,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": null,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2162.0 -> pool 2162.31 ft (dataset_internal_elevation); implied-pool range within lake 0.05 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R2: directory has no pool elevation",
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Spruce Run Reservoir|NJ": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 0.8202,
+   "directoryPoolFt": 272.2,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/f42bc7d994c142fd8fae7af61a021a33?f=json",
+     "says": "NJDEP BFBM: VAL2NUM metres; DATESAMP per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NJ: RESTRICTED (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Squam Lake|NH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 561,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://ftp.granit.sr.unh.edu/GRANIT_Data/Vector_Data/Inland_Water_Resources/d-bathymetry/bathymetry_lakes_lines/bathymetry_lakes_lines.html",
+     "says": "NHDES / NH Fish and Game: 'bathymetric depth contours in feet'; Garmin sounder points -> TIN -> raster -> contours; 'rough estimate' | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NH: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Squantz Pond|CT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 429.5,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json",
+     "says": "CT DEEP: DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source CT: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Stonewall Jackson Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 1072.53,
+   "directoryPoolDatum": "NAVD88",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/StonewallJackson.Elev;Area.Standard.Production?office=LRP",
+     "says": "CWMS StonewallJackson.Elev;Area.Standard.Production, native datum NAVD-88, effective 1970-01-01, elevations 1006.3-1099.3 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 4,
+    "publishRate": 0.8,
+    "maeDryShare": 0.0086,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.133,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 0.8
+   },
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Summersville Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 1652,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Sutton Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 922,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Swanson Reservoir|NE": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 2752.1129,
+   "referencePoolDatum": null,
+   "surveyYear": 2001,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 2752,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json",
+     "says": "Nebraska Game and Parks Commission / USBR mapping program: contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation | water level at survey: not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5) | datum: not stated in the item or attributes"
+    },
+    {
+     "url": "https://services.arcgis.com (NGPC Lake Contours item 0f0e603f248d4a4bb79f350db3780d72)",
+     "says": "NGPC contour attribute Elevation + Depth (constant per lake: median); shape attribute Conservati=2752.1 -> pool 2752.11 ft (dataset_internal_elevation); implied-pool range within lake 0.03 ft"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NE: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/TREN-Swanson_Res-Republican.Elev;Area.Area_Curves.Production?office=NWDM",
+     "says": "CWMS TREN-Swanson_Res-Republican.Elev;Area.Area_Curves.Production, native datum NGVD-29, effective 1998-05-13, elevations 2703.0-2785.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 5,
+    "publishRate": 1.0,
+    "maeDryShare": 0.0451,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.238,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -0.5
+   },
+   "caveats": [
+    "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Tappan Lake|OH": {
+   "referenceStatus": "VERIFIED",
+   "referencePoolFt": 899.3,
+   "referencePoolDatum": "NGVD29",
+   "surveyYear": 1998,
+   "contourIntervalFt": 3.0,
+   "directoryPoolFt": 899.3,
+   "directoryPoolDatum": "NGVD29",
+   "evidence": [
+    {
+     "url": "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+     "says": "Ohio DNR Division of Wildlife: DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text) | water level at survey: not stated (maps state the pool the depths are based on, not the level on the survey date) | datum: maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label"
+    },
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/tappanlake2.pdf",
+     "says": "ODNR Division of Wildlife lake map PDF: 'Depths based on normal summer pool elevation of X ft'; 'Reservoir last surveyed: YYYY' -> pool 899.30 ft (documented_pool)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source OH: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Tappan.Elev;Area.Standard.Production?office=LRH",
+     "says": "CWMS Tappan.Elev;Area.Standard.Production, native datum NGVD-29, effective 1970-01-01, elevations 868.0-925.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 4,
+    "publishRate": 0.8,
+    "maeDryShare": 0.0469,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.132,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent)",
+    "passed": false,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": -5.3
+   },
+   "caveats": [
+    "Verified on the documented pool figure equalling the directory pool (R1-R4); the water level on the survey DATE is still not stated by the source.",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ]
+  },
+  "Tiber Reservoir (Lake Elwell)|MT": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 2993,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://fwp-gis.mt.gov/arcgis/rest/directories/arcgisoutput/webResources/metadata/refrnc/lakesBathymetry.htm",
+     "says": "Montana FWP: 'CONTOUR: Contour depth in feet'; shoreline type S, depth contours C | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MT: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/TIBR.Elev;Area.Linear.Step?office=NWDM",
+     "says": "CWMS TIBR.Elev;Area.Linear.Step, native datum OTHER, effective 2024-03-19, elevations 2839.0-3025.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 5,
+    "publishRate": 1.0,
+    "maeDryShare": 0.0321,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.124,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 1.0
+   },
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  },
+  "Tohopekaliga (Toho)|FL": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 55,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json",
+     "says": "FWC-FWRI (data by ReMetrix, processed by BioSonics): one-foot contours (DEPTHF negative) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source FL: INTERNAL_ONLY (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Tygart Lake|WV": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 1.0,
+   "directoryPoolFt": 1093.45,
+   "directoryPoolDatum": "NAVD88",
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json",
+     "says": "WV DNR (Wildlife Resources): 1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source WV: PUBLIC_REUSABLE (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Tygart.Elev;Area.Standard.Production?office=LRP",
+     "says": "CWMS Tygart.Elev;Area.Standard.Production, native datum NAVD-88, effective 1970-01-01, elevations 979.5-1188.4 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 5,
+    "publishRate": 1.0,
+    "maeDryShare": 0.1,
+    "boundsCoverage": 0.4,
+    "medianBoundsWidth": 0.046,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 4.9
+   },
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date"
+   ]
+  },
+  "Umbagog Lake|NH": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 1245,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://ftp.granit.sr.unh.edu/GRANIT_Data/Vector_Data/Inland_Water_Resources/d-bathymetry/bathymetry_lakes_lines/bathymetry_lakes_lines.html",
+     "says": "NHDES / NH Fish and Game: 'bathymetric depth contours in feet'; Garmin sounder points -> TIN -> raster -> contours; 'rough estimate' | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source NH: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Wachusett Reservoir|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 395,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Wallum Lake|RI": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 542,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Webster Lake|MA": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 5.0,
+   "directoryPoolFt": 463,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json",
+     "says": "MassWildlife (MassGIS): contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403 | water level at survey: not retrieved | datum: not retrieved"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MA: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "White Bear Lake|MN": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": null,
+   "referencePoolDatum": null,
+   "surveyYear": null,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 924,
+   "directoryPoolDatum": null,
+   "evidence": [
+    {
+     "url": "https://gisdata.mn.gov/dataset/water-lake-bathymetry",
+     "says": "Minnesota DNR (lake mapping unit; digitised from lake maps): depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404) | water level at survey: not stated | datum: not stated"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source MN: UNCLEAR (customerDerivedMetricsAllowed=false)"
+    }
+   ],
+   "validation": null,
+   "caveats": [
+    "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)",
+    "Licence blocks customer-facing derived numbers for this source (internal use only)."
+   ],
+   "missingEvidence": [
+    "water-surface elevation (and its datum) at which the contour depths were measured, i.e. the reference pool or the water level on the survey date",
+    "vertical datum of the directory pool and of the survey pool (directory datum is None)"
+   ]
+  },
+  "Wilson Lake|KS": {
+   "referenceStatus": "UNVERIFIED",
+   "referencePoolFt": 1516.0,
+   "referencePoolDatum": null,
+   "surveyYear": 2008,
+   "contourIntervalFt": 10.0,
+   "directoryPoolFt": 1516,
+   "directoryPoolDatum": "LOCAL",
+   "evidence": [
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+     "says": "Kansas Biological Survey (KARS): 'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft) | water level at survey: CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft | datum: not stated"
+    },
+    {
+     "url": "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer/0/query",
+     "says": "KARS PhysicalLakeData Elev_ft (water surface elevation that areas/volumes are computed at; service text: federal reservoirs = normal operating (conservation/multi-purpose) pool by USACE/USBR) -- but the BathymetryContour layer text says 'operating water level at the time of the survey' (contradictory) -> pool 1516.00 ft (documented_pool_contradictory)"
+    },
+    {
+     "url": "docs/brains/depth/DEPTH_LICENSING_MATRIX.md",
+     "says": "licence class for source KS: ATTRIBUTION_REQUIRED (customerDerivedMetricsAllowed=true)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/WILN-Wilson_Lake-Saline.Elev;Area.Area_Curves.Production?office=NWDM",
+     "says": "CWMS WILN-Wilson_Lake-Saline.Elev;Area.Area_Curves.Production, native datum NGVD-29, effective 2012-03-31, elevations 1436.0-1594.0 ft"
+    }
+   ],
+   "validation": {
+    "levels": [
+     1.5,
+     3.0,
+     4.5,
+     6.0,
+     8.0
+    ],
+    "levelsMeaningFtBelowReferencePool": true,
+    "includedLevels": 5,
+    "publishedLevels": 5,
+    "publishRate": 1.0,
+    "maeDryShare": 0.0383,
+    "boundsCoverage": 1.0,
+    "medianBoundsWidth": 0.185,
+    "predictor": "C1 manifest contour shares vs CWMS stage-area curve (independent) -- ASSUMED pool, informational only",
+    "passed": null,
+    "preregSha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+    "impliedPoolMinusPRefFt_informational": 0.0
+   },
+   "caveats": [
+    "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+    "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+   ],
+   "missingEvidence": [
+    "agency confirmation of which water level (normal pool vs level at survey) the depth surface is referenced to, per lake",
+    "vertical datum of the directory pool and of the survey pool (directory datum is LOCAL)"
+   ]
+  }
+ }
+}

@@ -1,0 +1,1410 @@
+{
+ "schema": "depth-datum-proposals-v1",
+ "generatedAt": "2026-10-14",
+ "lakes": {
+  "Lake Texoma|TX": {
+   "decision": "SAME_SOURCE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29 (Denison gauge datum; 2002 report says only msl)",
+   "sigmaFt": 0.1,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "TWDB 2002 survey elevations are referenced to the USACE Denison Dam gauge 07331500, the same gauge whose CWMS location SWT:DENI (NGVD29) is the Brain level series, so survey elevation and level share one gauge; the survey states 'msl' not NGVD29.",
+   "evidence": [
+    {
+     "url": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/Texoma/2002-07/Texoma2002_FinalReport.pdf",
+     "says": "The vertical datum used during this survey is that used by the United States Army Corps of Engineers (USACE) for the lake (Texoma) elevation gauge at Denison Dam. The official name of the gauge is \u201cUSCE 07331500 USCOE Lk Texoma nr Denison, TX\u201d. The datum for this gauge is reported as mean sea level (msl). Thus, elevations are reported here in feet (ft) above msl."
+    },
+    {
+     "url": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/Texoma/2002-07/Texoma2002_FinalReport.pdf",
+     "says": "Table 2: 'Upper Limits of 2002 TWDB Volumetric Survey' 620.0 ft; 'Conservation Storage (Top of Active Pool)' 617.0 ft above msl; 620.0 contour taken from USGS 7.5 min quads; lake level during survey 617.53-619.71 per the USACE gauge"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/DENI?office=SWT",
+     "says": "CWMS location DENI long-name 'USCOE Lk Texoma nr Denison, TX' vertical-datum NGVD29"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=SWT&level-id-mask=DENI*&unit=EN",
+     "says": "DENI Elev levels Top of Constant Conservation 617.0, Top of Power 617.0, Bottom of Flood Control 617.0, Bottom of Conservation 590.0"
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=07331500&siteOutput=expanded",
+     "says": "USCE 07331500 'USCOE Lk Texoma nr Denison, TX' alt_va 0 alt_datum_cd NGVD29 (placeholder altitude 0, not a gauge-datum statement)"
+    }
+   ],
+   "caveat": "No document fetched states NGVD29 for the 2002 gauge; the CWMS NGVD29 stamp is current. The 3.0 ft re-base (survey boundary 620.0 -> conservation pool 617.0) is a statement about elevations on the gauge scale; if the gauge datum was redefined after 2002 that is undocumented either way. Use the 617.0 conservation pool (CWMS Top of Constant Conservation), not 620.0.",
+   "confidence": "medium",
+   "docType": "state-report+cwms-location",
+   "deadEnds": [
+    "TWDB report: no NGVD29/NAVD88 label anywhere (only 'mean sea level (msl)')",
+    "USGS site service alt_va is 0 placeholder"
+   ],
+   "stillNeeds": "USACE Tulsa District statement that the Denison gauge datum has been NGVD29 since before 2002 (pertinent data sheet)"
+  },
+  "Lake Tahoe|NV": {
+   "decision": "INCOMPATIBLE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "LOCAL (Lake Tahoe Datum / USBR datum)",
+   "sigmaFt": null,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "Pool figure 6229.1 ft is in the USBR/Lake Tahoe local datum (equals 6227.96 ft above sea level), while the CWMS series sits in NGVD29 sea-level elevations (about 6227.4 ft now), so they differ and no conversion is permitted.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wri/wri024030/text/environmental.htm",
+     "says": "Federal Court Decree limits the maximum permissible elevation of Lake Tahoe to 6,229.1 ft, U.S. Bureau of Reclamation (BOR) datum, which equals 6,227.96 ft above sea level."
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Lake%20Tahoe?office=SPK",
+     "says": "CWMS location Lake Tahoe (SPK) vertical-datum NGVD29"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=SPK&name=Lake%20Tahoe.Elev.Inst.~1Day.0.MANUAL",
+     "says": "Series values ~6227.3-6227.5 ft in Sept 2026, consistent with sea-level (not Tahoe-datum) elevations"
+    }
+   ],
+   "caveat": "The USGS text equates BOR datum to sea level without naming NGVD29; the 1.14 ft offset must not be applied as a conversion. Level-side NGVD29 comes from the CWMS location record only.",
+   "confidence": "medium",
+   "docType": "usgs-wri-report + cwms-location",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Lake Pend Oreille|ID": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "USGS SIR 3272 states the 2,062.5 ft normal maximum summer pool is referenced to NGVD 1929, matching the NGVD29 A2W level series.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/sim/3272/pdf/sim3272.pdf",
+     "says": "Elevation is referenced to National Geodetic Vertical Datum of 1929 (NGVD 29); '...lake level of 2,062.5 ft above NGVD 1929 ... has been maintained during the summer (normal maximum summer full pool)'"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDP&level-id-mask=ALF*&unit=EN",
+     "says": "CWMS ALF.Elev.Inst.0.Top of Normal = 2062.5 ft (location record has no vertical-datum field)"
+    }
+   ],
+   "caveat": "Datum statement is from USGS, not the USACE record; the CWMS ALF location carries no datum field.",
+   "confidence": "medium",
+   "docType": "usgs-sim-report",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Kerr Lake (John H. Kerr)|NC": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "USACE Wilmington Kerr water control plan states all elevations are NGVD29 and the top of conservation pool is 300 ft-NGVD29.",
+   "evidence": [
+    {
+     "url": "https://epec.saw.usace.army.mil/KERRWCP.pdf",
+     "says": "'All elevations in this Water Control Plan are referenced to NGVD29 vertical datum. The conversion to NAVD88 is -1.02 ft (e.g., elevation 300 ft-NGVD29 ...)'; Conservation Pool 268-300 (ft-NGVD29)"
+    }
+   ],
+   "caveat": "",
+   "confidence": "high",
+   "docType": "usace-water-control-plan",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Hebgen Lake|MT": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "Operator reports (NorthWestern Energy 2188 annual reports) give full pool 6,534.87 ft only as 'msl', which is not an NGVD29 statement.",
+   "evidence": [
+    {
+     "url": "https://northwesternenergy.com/docs/default-source/default-document-library/clean-energy/environmental-projects/missouri-madison-hydro-project/2025-madison-river-2188-annual-report.pdf",
+     "says": "Hebgen Reservoir has a full pool elevation of 6534.87 feet (msl) and license article 403 requires 6530.26-6534.87 ft"
+    },
+    {
+     "url": "https://madisondss.com/page/dashboard.php",
+     "says": "Dashboard shows USGS 06038000 gage value beside 'full at 6534.87 ft', no datum words"
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=06038000&siteOutput=expanded",
+     "says": "USGS 06038000 vertical datum NGVD29 (level side)"
+    }
+   ],
+   "caveat": "",
+   "confidence": "medium",
+   "docType": "operator-annual-report",
+   "deadEnds": [
+    "https://retirees-test.northwesternenergy.com/docs/default-source/default-document-library/about-us/regulatory/2015-plan/nwe-hydropower-operational-plan.pdf - not retrievable"
+   ],
+   "stillNeeds": "FERC licence order or Exhibit/Article 403 drawing for P-2188 (or NorthWestern Energy hydro compliance staff) stating the datum of 6534.87 ft; NWE can confirm."
+  },
+  "Mark Twain Lake|MO": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NAVD88",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "CWMS stamps the series location Mark Twain Lk-Salt NAVD88 and holds 606.0 there, but a Corps lake-level update relayed by the Hannibal Courier-Post states \"Normal lake elevation is 606.0 NGVD\", so the stamp and the Corps wording conflict for the same 606.0 figure.",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Mark%20Twain%20Lk-Salt?office=MVS",
+     "says": "vertical-datum NAVD88"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=MVS&level-id-mask=Mark%20Twain%20Lk-Salt.Elev*&unit=EN",
+     "says": "Seasonal Rule Curve Production 606.0 ft and 0 Percent Flood Control 606.0 ft at the same location"
+    },
+    {
+     "url": "https://www.hannibal.net/news/local/mark-twain-lake-level-update/article_dda071bc-f610-11eb-8816-176d34fe72ea.html",
+     "says": "Aug 5 2021 Corps update: \"The Mark Twain Lake level on Thursday, Aug. 5, was 619.2 NGVD. Normal lake elevation is 606.0 NGVD.\""
+    }
+   ],
+   "caveat": "Not downgraded for lack of a CWMS match (606.0 matches the project Top of Conservation) but for the NAVD88-vs-NGVD wording conflict; the same check found no such conflict for Rend Lake.",
+   "confidence": "medium",
+   "docType": "cwms-level (conflict)",
+   "deadEnds": [],
+   "stillNeeds": "USACE St. Louis District (Mark Twain Lake project office / Water Control) statement of the vertical datum of the CWMS Mark Twain Lk-Salt elevation series and of the 606.0 ft conservation pool"
+  },
+  "Lake Greenwood|SC": {
+   "decision": "UNKNOWN",
+   "levelDatum": "UNKNOWN (00062 is site-specific)",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "FERC Article 407 (via Federal Register) states 439 ft only as 'msl'; no NGVD29/NAVD88 statement.",
+   "evidence": [
+    {
+     "url": "https://www.federalregister.gov/documents/full_text/text/2015/09/17/2015-23319.txt",
+     "says": "licensee must maintain a reservoir elevation of 439 feet mean sea level (msl) between April 15 and November 1"
+    }
+   ],
+   "caveat": "",
+   "confidence": "medium",
+   "docType": "ferc-notice",
+   "deadEnds": [],
+   "stillNeeds": "Greenwood CPW or FERC P-2077 exhibit/gage datum statement for the 439 ft and USGS gage datum for the 00062 series."
+  },
+  "Percy Priest Lake|TN": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "No fetched document states the datum for the 490 ft summer pool; CWMS JPHT1 has no pool-like level (power/recreation levels null) to value-match.",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/JPHT1?office=LRN",
+     "says": "JPHT1 vertical-datum NGVD29 (level side)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=LRN&level-id-mask=JPHT1*&unit=EN",
+     "says": "Spillway Crest 463.5, Top of Flood 504.5, Top of Power/Recreation null; no 490 level"
+    }
+   ],
+   "caveat": "Same USACE basin likely NGVD29 but not documented.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "Wikipedia/army.mil results say only 'above mean sea level' (not fetched, no datum)"
+   ],
+   "stillNeeds": "USACE Nashville District pertinent-data sheet or Cumberland basin water-control manual stating elevation datum for 490/summer pool; Nashville District water management office."
+  },
+  "Lake Chelan|WA": {
+   "decision": "UNKNOWN",
+   "levelDatum": "UNKNOWN (A2W blank)",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "FERC/Chelan PUD material gives 1,100 ft as 'msl'; the USGS WDR figure fetched is a map only, and the level datum is blank.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2005/wdr-wa-05-1/pdf/wa00103ADR2005_Figure54.pdf",
+     "says": "Map of Methow/Chelan stations; no pool datum statement for Lake Chelan"
+    }
+   ],
+   "caveat": "",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://www.chelanpud.org/.../36078.pdf and 9009.pdf - returned error pages",
+    "https://lowimpacthydro.org/chelan-puds-low-impact-hydropower-institute-application-final-august-30-2018 - only datum glossary, no pool datum"
+   ],
+   "stillNeeds": "Chelan PUD (P-637 Article 405 lake level plan) datum statement for 1,100 ft and for the forebay series."
+  },
+  "Jordan|AL": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "CWMS location Jordan (SAM) is NGVD29 but no fetched document states the datum of the 252 ft figure (sources say only 'msl').",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Jordan?office=SAM",
+     "says": "vertical-datum NGVD29"
+    }
+   ],
+   "caveat": "",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://apcshorelines.com/lake/jordan/ - fetch returned a stub page",
+    "CWMS levels?office=SAM&level-id-mask=Jordan* - no levels"
+   ],
+   "stillNeeds": "FERC P-618 Exhibit/licence drawing or Alabama Power statement of datum for 252 ft."
+  },
+  "Columbus Lake|MS": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "164 ft equals CWMS Stennis Top of Normal (location NGVD29), and USGS parameter 72020 is elevation above NGVD 1929.",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Stennis?office=SAM",
+     "says": "vertical-datum NGVD29"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=SAM&level-id-mask=Stennis.Elev*&unit=EN",
+     "says": "Stennis.Elev.Inst.0.Top of Normal 164.0; Bottom of Normal 162.0"
+    },
+    {
+     "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/parameter-codes/items/72020",
+     "says": "72020 'Elevation above NGVD 1929, feet'"
+    }
+   ],
+   "caveat": "Relies on CWMS convention that level values are in the location datum.",
+   "confidence": "medium",
+   "docType": "cwms-level",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Jackson Lake|WY": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "Reclamation material found says 6,769 ft only as 'm.s.l.'; no fetched document states its datum.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/projects/index.php?id=162",
+     "says": "fetch returned no datum text"
+    }
+   ],
+   "caveat": "",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://www.usbr.gov/projects/index.php?id=162 - no datum statement retrieved",
+    "a search snippet cites a data.usbr.gov record as NAVD88 (not fetched; location, not pool)"
+   ],
+   "stillNeeds": "Reclamation Pacific Northwest (Snake River Area) or Jackson Lake Dam SOP/Hydromet datum statement for 6,769 ft."
+  },
+  "Bluewater Lake|NM": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "The USGS 2005 NM WDR gage entry gives datum of gage as NGVD of 1929 with gage heights converted to sea-level elevations, in the same remarks block as the 7,402.6 ft spillway crest.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2005/wdr-nm-05-1/pdf/wdr-nm-05-1.pdf",
+     "says": "08341400: 'Datum of gage is 7,345.57 ft above NGVD of 1929 ... Gage heights have been converted to sea-level elevations.' REMARKS: 'survey of 1945 at elevation 7,402.6 ft, crest of uncontrolled siphon spillway'"
+    }
+   ],
+   "caveat": "Datum statement is for the gage and its converted elevations; the 7,402.6 ft figure is read as covered by it (the 1945 survey elevation is not independently datum-labelled).",
+   "confidence": "medium",
+   "docType": "usgs-wdr-gage-datum",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Lake McConaughy|NE": {
+   "decision": "SAME_SOURCE",
+   "levelDatum": "LOCAL",
+   "referenceDatum": "LOCAL (CNPPD/Central datum)",
+   "sigmaFt": 0.0,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "USGS states conservation pool is 3,265.0 ft in the CNPPD (Central) local datum (3,266.4 ft NAVD88); level and pool figures both come from CNPPD records.",
+   "evidence": [
+    {
+     "url": "https://www.usgs.gov/publications/comparison-preconstruction-and-2003-bathymetric-and-topographic-surveys-lake",
+     "says": "conservation-pool elevation of 3,266.4 feet in NAVD 88 (3,265.0 feet in Central datum)"
+    },
+    {
+     "url": "https://www.cnppid.com/operations/lake-mcconaughy-operating-levels",
+     "says": "CNPPD operating levels table, maximum 3265.0 (no datum words)"
+    }
+   ],
+   "caveat": "Local datum, never SAME_DATUM; CNPPD labels its level 'Feet above Sea Level' but the pool is in Central datum, about 1.4 ft below NAVD88. Do not convert.",
+   "confidence": "medium",
+   "docType": "usgs-report + operator-page",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Smith Mountain Lake|VA": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "AEP's lake-levels page states Smith Mountain Lake full level is the 795-foot contour NGVD 29.",
+   "evidence": [
+    {
+     "url": "https://www.smithmtn.com/lake-levels/",
+     "says": "Smith Mountain Lake: 795-foot elevation contour National Geodetic Vertical Datum of 1929 (NGVD 29); normal range 795-793 ft NGVD 29"
+    }
+   ],
+   "caveat": "",
+   "confidence": "high",
+   "docType": "operator-page",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Lake Cushman|WA": {
+   "decision": "UNKNOWN",
+   "levelDatum": "UNKNOWN",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "Tacoma Power material gives 738 ft with no datum; no FERC or TPU document fetched states one.",
+   "evidence": [
+    {
+     "url": "https://www.mytpu.org/wp-content/uploads/1_2019-Cushman-public-presentation_-Reservoirs_FL_FINAL.pdf",
+     "says": "'738 ft' shown repeatedly, no datum words"
+    }
+   ],
+   "caveat": "",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://www.mytpu.org/community-environment-parks/parks-recreation/river-flows-lake-levels - page script-heavy, no datum text",
+    "https://www.nwrfc.noaa.gov/river/station/flowplot/flowplot.cgi?lid=HF - no datum text returned"
+   ],
+   "stillNeeds": "Tacoma Power Cushman (P-460) licence/settlement exhibit stating datum, and the NWRFC HF station datum."
+  },
+  "Kissimmee|FL": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "The 53 ft pool figure matches a CWMS zone series explicitly versioned _NGVD at location Kissimmee (NGVD29), same location family as the Kissimmee-11 level series (NGVD29).",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/catalog/TIMESERIES?office=SAJ&like=^Kissimmee\\.Elev-Zone.*",
+     "says": "Series Kissimmee.Elev-Zone.Inst.~1Day.0.ZoneB1_NGVD (also ZoneA/B/B2..C _NGVD); ZoneB1 2026 values range 51.5-53.0 ft, so 53.0 = ZoneB1 top"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Kissimmee?office=SAJ&unit=EN",
+     "says": "vertical-datum NGVD29 (Lake Kissimmee)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Kissimmee-11?office=SAJ&unit=EN",
+     "says": "vertical-datum NGVD29"
+    }
+   ],
+   "caveat": "53 ft is a regulation-schedule zone value (ZoneB1 max), not a conservation-pool 'full pool'; referencePoolSource timeseries name lacks the _NGVD version suffix in the stored URL.",
+   "confidence": "medium",
+   "docType": "cwms-level",
+   "deadEnds": [
+    "https://cwms.sec.usace.army.mil/cwms-data/timeseries?name=Kissimmee.Elev-Zone.Inst.~1Day.0 - 5-part id invalid; full id has version suffix (e.g. .ZoneB1_NGVD)"
+   ],
+   "stillNeeds": ""
+  },
+  "Lake Marion|SC": {
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "No document found stating the datum of the 75.5 ft rule-curve figure; USGS 02171000 00062 scale also unconfirmed.",
+   "evidence": [
+    {
+     "url": "https://www.santeecooper.com/community/lakes/lake-data/",
+     "says": "rule curve winter ~72.0 to 75.5 ft summer; max elevation 76.8 ft at Santee Dam; no datum word"
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/site/?sites=02171000&siteOutput=expanded&format=rdb",
+     "says": "USGS 02171000 Lake Marion near Pineville gage altitude -0.88 ft, alt datum NAVD88 (site altitude, not the 00062 scale)"
+    }
+   ],
+   "caveat": "Site altitude -0.88 ft NAVD88 is the gage land-surface altitude and does not define the 00062 scale.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://www.santeecooper.com/Community/Lakes/FERC-Relicensing/_pdfs/2007-05-24-FRSA-Final_Relicensing_Settlement_Agreement.pdf - fetched, no datum/elevation statement",
+    "https://ferc.gov/sites/default/files/2020-06/20191203170005-P-199-235.pdf - fetched, no datum for 75.5/76.8",
+    "https://www.dnr.sc.gov/water/hydro/docs/Project_FERC.pdf - fetched, no elevations",
+    "WDR search for 02171000 datum of gage - not found"
+   ],
+   "stillNeeds": "FERC P-199 license exhibit/Santee Cooper (SCPSA) or USGS SC WSC statement of datum for the 00062 Lake Marion gage and for the 75.5 ft rule curve"
+  },
+  "Kerr Reservoir (Buggs Island)|VA": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "USACE Kerr Water Control Plan states all elevations are NGVD29 and top of conservation pool is 300 ft-NGVD29; USGS 62614 is NGVD29.",
+   "evidence": [
+    {
+     "url": "https://epec.saw.usace.army.mil/KERRWCP.pdf",
+     "says": "'All elevations in this Water Control Plan are referenced to NGVD29 vertical datum'; conservation/flood pool boundary 300 ft-NGVD29; conversion to NAVD88 is -1.02 ft"
+    }
+   ],
+   "caveat": "Pool boundary 300 ft is top of conservation pool; summer guide curve is 299.5.",
+   "confidence": "high",
+   "docType": "usace-water-control-plan",
+   "deadEnds": [],
+   "stillNeeds": ""
+  },
+  "Spruce Run Reservoir|NJ": {
+   "decision": "INCOMPATIBLE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NAVD88",
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "NJWSA states 272.20 full pool is NAVD 1988 (elevations switched from NGVD29 on 2025-11-19) while the USGS 62614 series is NGVD29.",
+   "evidence": [
+    {
+     "url": "https://www.njwsa.org/uploads/1/0/8/0/108064771/data.pdf",
+     "says": "'Full pool: 272.20 (NAVD 1988)'; 'As of November 19, 2025 ... elevations are being reported in NAVD 1988 datum. Previous to this date ... NGVD 1929 ... NAVD 88 = NGVD 29 - 0.8'"
+    }
+   ],
+   "caveat": "Operator gives a -0.8 ft conversion but rule forbids converting; 272.2 could be a prior NGVD29 value re-labelled, so pool and USGS 62614 series are cross-datum.",
+   "confidence": "high",
+   "docType": "operator-page",
+   "deadEnds": [],
+   "stillNeeds": ""
+  },
+  "Rend Lake|IL": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NAVD88",
+   "referenceDatum": "NAVD88",
+   "sigmaFt": 0.15,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "The 405 ft pool figure equals pool-like CWMS levels at Rend Lk-Big Muddy (0% flood control 405.0, seasonal rule curve 405.0), a location whose vertical datum is NAVD88, same location as the level series.",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=MVS&level-id-mask=Rend%20Lk-Big%20Muddy.Elev*&unit=EN",
+     "says": "Rend Lk-Big Muddy.Elev.Inst.0.Elevation - 0 Percent Flood Control = 405.0 ft; Seasonal Rule Curve 405.0 ft"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Rend%20Lk-Big%20Muddy?office=MVS&unit=EN",
+     "says": "vertical-datum NAVD88"
+    }
+   ],
+   "caveat": "Relies on CWMS convention that stored levels are in location vertical datum; the named 'Top of Conservation (max)' level was not itself listed (other pool-like levels match 405).",
+   "confidence": "medium",
+   "docType": "cwms-level",
+   "deadEnds": [
+    "https://cwms-data.usace.army.mil/cwms-data/levels?office=MVS&level-id-mask=Rend* - also contains a Rend Lk TW Height 300 NGVD29 level (tailwater, unrelated)"
+   ],
+   "stillNeeds": ""
+  },
+  "Indian Lake|OH": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "ODNR map states pool 996.3 ft with no datum word; no document found stating its datum.",
+   "evidence": [
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/indianlake2.pdf",
+     "says": "'pool elevation of 996.3 ft' - no NGVD/NAVD/MSL/datum statement"
+    }
+   ],
+   "caveat": "Third-party lakebrief claims NGVD29 for gauge 03260500 but is not a source document and was not fetched.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "web.archive.org ohiodnr indianlake2.pdf - same map, no datum",
+    "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/parks/indian-lake/IndianLakeGeoData.pdf - not fetched"
+   ],
+   "stillNeeds": "ODNR Division of Parks/Dam Safety or Ohio dam-safety record (Indian Lake / Grand Lake St Marys-type canal reservoir) stating the datum of 996.3 ft; or USGS 03260500 WDR gage datum line"
+  },
+  "Lay|AL": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "CWMS location Lay (SAM) is NGVD29, but no document states the datum of the 396 ft full-pool figure.",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Lay?office=SAM&unit=EN",
+     "says": "Lay (APC) PROJECT vertical-datum NGVD29 elevation 0.0"
+    }
+   ],
+   "caveat": "Location elevation is 0.0 so the NGVD29 tag may be a default; no CWMS levels exist for Lay; search results describe 396 only as 'above sea level'.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://apcshorelines.com/lake/lay/ - 403 Incapsula block",
+    "https://www.sam.usace.army.mil/Portals/46/docs/planning_environmental/act/docs/ACT_EIS_Volume/3_App%20A-HN%20Henry%20WCM-Oct14.pdf - dead/empty"
+   ],
+   "stillNeeds": "Alabama Power / FERC P-2146 license exhibit stating Lay normal pool 396 ft datum (NGVD29 vs NAVD88)"
+  },
+  "Lake Monticello|SC": {
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": "NAVD88",
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "FERC notice states Monticello normal maximum 424.3 ft NAVD 88, but the datum of the USGS 02160900 00062 series is not documented.",
+   "evidence": [
+    {
+     "url": "https://www.federalregister.gov/documents/full_text/text/2019/08/08/2019-16995.txt",
+     "says": "'Monticello Reservoir ... at normal maximum elevation 424.3 feet NAVD 88'"
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/site/?stateCd=SC&siteName=Monticello&format=rdb",
+     "says": "USGS 02160900 Monticello Res alt_va 382.43 NAVD88 (gage land-surface altitude)"
+    }
+   ],
+   "caveat": "Pool datum is documented (NAVD88) but the level series scale (00062) is unconfirmed; do not equate site altitude with the 00062 datum.",
+   "confidence": "high",
+   "docType": "ferc-notice",
+   "deadEnds": [
+    "USGS WDR 'datum of gage' for 02160900 - none found (site active only from 2023)"
+   ],
+   "stillNeeds": "USGS SC Water Science Center (or USGS site datum/rating description) confirming the 00062 datum for 02160900 (NAVD88 expected but undocumented), or a 62615 series"
+  },
+  "Clinton Lake|IL": {
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "NRC document gives 690 ft only as above MSL; no vertical datum; USGS 00065 gage height series has unknown datum.",
+   "evidence": [
+    {
+     "url": "https://www.nrc.gov/docs/ML0619/ML061930264.pdf",
+     "says": "elevations 'above mean sea level (MSL)', '210 m (690 ft) above MSL along Clinton Lake'; no NGVD/NAVD"
+    }
+   ],
+   "caveat": "MSL alone is not NGVD29; the level series is gage height (00065), not elevation.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [],
+   "stillNeeds": "Constellation/Illinois DNR/ISWS statement of Clinton Lake normal pool 690 ft datum and USGS gage datum for the Clinton Lake station"
+  },
+  "Lake Hopatcong|NJ": {
+   "decision": "UNKNOWN",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "Commission pages give spillway 923.70 ft only as 'above mean sea level'; the 923.57 source PDF was not retrievable and states no datum in available copies.",
+   "evidence": [
+    {
+     "url": "http://www.lakehopatcong.org/lake_level.htm",
+     "says": "'9.00 feet on the Lake Hopatcong gage is 923.70 feet above mean sea level or the top of the spillway'"
+    },
+    {
+     "url": "https://waterservices.usgs.gov/nwis/site/?sites=01455400&siteOutput=expanded&format=rdb",
+     "says": "USGS 01455400 Lake Hopatcong at Landing altitude 914.5 NAVD88 (gage altitude)"
+    }
+   ],
+   "caveat": "923.70 vs 923.57 differ by 0.13 ft and neither has a named datum; MSL is not NGVD29.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://lakehopatcongcommission.org/wp-content/uploads/2026/03/Hopatcong-2025-WQ-Report.pdf - fetched, no elevation/datum text",
+    "https://www.lakehopatcongfoundation.org/news/lake-level-basics - 403"
+   ],
+   "stillNeeds": "NJDEP Dam Safety / Lake Hopatcong Water Level Management Plan stating spillway elevation datum, and the USGS 01455400 gage datum for 00065"
+  },
+  "Geist Reservoir|IN": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NAVD88",
+   "referenceDatum": "NAVD88",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "Indiana drought report table lists Geist normal pool 784.26 under 'All units in feet and datum NAVD88' (Citizens Energy Group reservoirs); USGS 62615 is NAVD88.",
+   "evidence": [
+    {
+     "url": "https://www.in.gov/drought/files/drought-water-soil-conditions-08072025.pdf",
+     "says": "Table 2: Geist^3 Normal Pool 784.26; footnote '3 All units in feet and datum NAVD88'"
+    }
+   ],
+   "caveat": "Datum from a state drought report footnote, not from the operator's own record.",
+   "confidence": "medium",
+   "docType": "state-report",
+   "deadEnds": [],
+   "stillNeeds": ""
+  },
+  "Buckeye Lake|OH": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "ODNR map gives normal pool 891.75 ft (chunk figure 891.6) with no datum word; other sources say only 'msl'.",
+   "evidence": [
+    {
+     "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/buckeyelake2.pdf",
+     "says": "'pool elevation of 891.75 ft' - no datum statement"
+    }
+   ],
+   "caveat": "Referenced 891.6 not found in fetched ODNR map (891.75); 1997 dam stability study snippet says 'msl' only (not fetched).",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [],
+   "stillNeeds": "ODNR Dam Safety / Buckeye Lake dam rehabilitation design documents stating pool datum (NGVD29 vs NAVD88) and exact pool value"
+  },
+  "Toledo Bend Reservoir|TX": {
+   "decision": "INCOMPATIBLE",
+   "levelDatum": "NAVD88",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "TWDB reservoir page lists vertical datum NGVD29 for its elevation attributes (conservation pool 172 ft) while the USGS 62615 series is NAVD88.",
+   "evidence": [
+    {
+     "url": "https://www.waterdatafortexas.org/reservoirs/individual/toledo-bend",
+     "says": "Reservoir info: 'Vertical datum: NGVD29'; 'ft above NGVD29' for dead pool; conservation pool elevation 172.00"
+    }
+   ],
+   "caveat": "Datum label is for the TWDB page's elevation set, which also supplies the 172 ft pool; conversion not permitted.",
+   "confidence": "high",
+   "docType": "state-report",
+   "deadEnds": [],
+   "stillNeeds": ""
+  },
+  "Berryessa|CA": {
+   "decision": "UNKNOWN",
+   "levelDatum": "LOCAL",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "Reclamation page gives 440 ft spillway crest with no datum; no document stating datum found.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/projects/index.php?id=186",
+     "says": "'When water levels rise above 440 feet ... morning glory spillway' - no datum"
+    }
+   ],
+   "caveat": "Search results show a Reclamation failure analysis using 'above MSL' only (not fetched).",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "CDEC BER station metadata - not located"
+   ],
+   "stillNeeds": "Reclamation Mid-Pacific (Monticello Dam) pertinent data / CDEC station documentation stating datum for 440 ft and the BER RES_ELE series"
+  },
+  "Round Valley Reservoir|NJ": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NAVD88",
+   "referenceDatum": "NAVD88",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "NJWSA page states Round Valley full pool 384.20 ft (NAVD 1988) in the same table as its daily elevations, reported in NAVD88 since 2025-11-19.",
+   "evidence": [
+    {
+     "url": "https://www.njwsa.org/uploads/1/0/8/0/108064771/data.pdf",
+     "says": "'Full pool: 384.20 (NAVD 1988)'; 'As of November 19, 2025 ... elevations are being reported in NAVD 1988 datum'"
+    }
+   ],
+   "caveat": "Daily series before 2025-11-19 were NGVD29 (offset ~0.8 ft); use only post-change data.",
+   "confidence": "high",
+   "docType": "operator-page",
+   "deadEnds": [],
+   "stillNeeds": ""
+  },
+  "Hoover Reservoir|OH": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "No document found that states the vertical datum of the 894 ft pool; ODNR map says only 'normal summer pool elevation of 894 ft'.",
+   "evidence": [
+    {
+     "url": "https://web.archive.org/web/20220407202839/https://ohiodnr.gov/static/documents/wildlife/maps/hooverreservoir2.pdf",
+     "says": "ODNR bathymetric map: 'Depths based on normal summer pool elevation of 894 ft.' (no vertical datum named; horizontal NAD83 only)"
+    },
+    {
+     "url": "http://www.fishandtales.net/hoover%20elevations.html",
+     "says": "Angler site: 'Normal pool elevation is 894.00'...height of the crest gates', 'FULL = 894 ABOVE SEA LEVEL' (non-authoritative, no datum)"
+    },
+    {
+     "url": "https://www.thewestervillenews.com/p/record-water-level-over-the-dam",
+     "says": "Local blog snippet: USGS records 897.53 ft 'above NGDV 1929' (about USGS reading, not the 894 pool; non-authoritative)"
+    }
+   ],
+   "caveat": "Only 'sea level' wording; USGS series is NGVD29 but pool-figure datum is not documented.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "USGS legacy/monitoring-location pages for 03228400 - no pool/spillway note, only gage datum 800 ft NGVD29",
+    "No USGS Water-Data Report entry found for 03228400 (gage began 2017)"
+   ],
+   "stillNeeds": "City of Columbus Division of Water (Hoover Dam owner) or Ohio DNR Dam Safety (as-built/inspection report) stating the crest-gate/normal-pool elevation datum; or NID record with datum note."
+  },
+  "Lake Francis Case|SD": {
+   "decision": "INCOMPATIBLE",
+   "levelDatum": "NAVD88",
+   "referenceDatum": "LOCAL/NGVD29 (project datum; not NAVD88)",
+   "sigmaFt": null,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "Master Manual says Missouri mainstem projects use local project datum / NGVD29 and have NOT been converted to NAVD88, while the level series is NAVD88 (USGS 62615).",
+   "evidence": [
+    {
+     "url": "https://www.nwd-mr.usace.army.mil/rcc/reports/mmanual/MissouriMainstemMasterManual2018.pdf",
+     "says": "Sec 1-08 Vertical Datum: 'projects were designed and constructed to a local project datum while recent hydrologic updates ... are in NGVD29 ... conversion from local datum/NGVD29 to NAVD88 has not been conducted on the System projects'"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/FTRA?office=NWDM",
+     "says": "CWMS location FTRA (Fort Randall Dam & Reservoir): vertical-datum NGVD29"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDM&level-id-mask=FTRA*&unit=EN",
+     "says": "CWMS levels: Top of Conservation 1350, Top of Multipurpose 1365, Top of Exclusive Flood 1375 ft (no level at 1355; so no direct value match)"
+    }
+   ],
+   "caveat": "1355 is the operating-range figure (1351-1355 footnote) from the Manual; Manual does not give a project-datum-to-NAVD88 offset here (individual WCM Table I-1 not in this PDF). Pool datum is local/NGVD29, level is NAVD88 so values must not be mixed without the Fort Randall WCM Table I-1 adjustment.",
+   "confidence": "medium",
+   "docType": "usace-master-manual",
+   "deadEnds": [],
+   "stillNeeds": "Fort Randall WCM Table I-1 datum adjustments (local/NGVD29 -> NAVD88) from USACE Omaha District (NWO) Water Management."
+  },
+  "East Lake Tohopekaliga|FL": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "SFWMD technical memo states East Lake Toho stage range '55-58 feet NGVD' and its schedule chart (Stage, ft NGVD) tops at 58; CWMS location E Tohopekaliga and Tohopekaliga are NGVD29.",
+   "evidence": [
+    {
+     "url": "https://www.sfwmd.gov/sites/default/files/documents/kb_app_i_lakes_final.pdf",
+     "says": "'range of stage fluctuation ... is 3 feet, 55-58 feet NGVD in East Lake Toho and 52-55 feet NGVD in Lake Toho'; Figure 2 East Lake Toho Operation Schedule axis 'Stage, ft NGVD'"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/E%20Tohopekaliga?office=SAJ",
+     "says": "CWMS location 'E Tohopekaliga' (East Lake Tohopekaliga): vertical-datum NGVD29"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Tohopekaliga?office=SAJ",
+     "says": "CWMS location 'Tohopekaliga' (Lake Tohopekaliga): vertical-datum NGVD29"
+    }
+   ],
+   "caveat": "NGVD in the SFWMD memo is read as NGVD29 (no year stated). 58 is the top of the regulation-schedule range. The listed level series name is 'Tohopekaliga.Elev...SFWMD-Raw' which is the Lake Toho (not East Toho) CWMS location; both are NGVD29 but verify the series is the East Toho gauge.",
+   "confidence": "medium",
+   "docType": "state-report",
+   "deadEnds": [
+    "https://www.saj.usace.army.mil/.../20191018 East Lake Toho - Final Version of ROD - signed.pdf - Access Denied (403) to scripted fetch",
+    "cwms.sec.usace.army.mil timeseries URL not fetched; CWMS public API used instead"
+   ],
+   "stillNeeds": null
+  },
+  "Great Sacandaga Lake|NY": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "USGS WDR NY-2005 station 01323500 states gage datum NGVD of 1929 and gives the 768.0 ft regulation-range top in the same entry.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2005/wdr-ny-05-1/wdrny051.rept.data.pdf",
+     "says": "01323500 Great Sacandaga Lake at Conklingville: 'GAGE.--Water-stage recorder. Datum of gage is NGVD of 1929, adjustment of 1912.' REMARKS: 'Usable capacity ... between elevations 735.0 ft and 768.0 ft. Between elevations 768.0 ft and 771.0 ft (spillway crest)...'"
+    }
+   ],
+   "caveat": "Datum worded 'NGVD of 1929, adjustment of 1912'; treated as NGVD29. Reservoir elevations in the REMARKS are on the same gage datum.",
+   "confidence": "medium",
+   "docType": "usgs-wdr-gage-datum",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Lake Bistineau|LA": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NAVD88 (CWMS MVK location); USGS 62614 is NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "No document states the datum of the 141 ft pool; sources say 'mean sea level' or 'spillway crest 141 ft' without a datum, and the CWMS location datum (NAVD88) differs from the USGS series datum (NGVD29).",
+   "evidence": [
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Lake%20Bistineau?office=MVK",
+     "says": "CWMS location Lake Bistineau (MVK): vertical-datum NAVD88, elevation 39.575 m"
+    },
+    {
+     "url": "https://waterdata.usgs.gov/nwis/uv?site_no=07349250&legacy=1",
+     "says": "USGS 07349250 station note: 'Spillway crest elevation is 141 ft. To view stage relative to elevation, select Elevation above NGVD'; parameter 62614 Elevation, lake/res, NGVD29 (suggestive only, datum not stated for the 141 figure)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=MVK&name=Lake%20Bistineau.Elev.Inst.30Minutes.0.DCP-rev",
+     "says": "CWMS series latest ~134.04 ft; USGS 62614 same day 133.80 ft (not a document statement)"
+    }
+   ],
+   "caveat": "CWMS location says NAVD88 while USGS says NGVD29 for the same lake; a ~0.2 ft difference in current readings is observed but is not a documented datum link. Do not assume.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://web.archive.org/web/20190829211108/http://www.wlf.louisiana.gov:80/sites/default/f... - truncated source URL, guessed full path returned 404; Wayback CDX later offline"
+   ],
+   "stillNeeds": "Louisiana Dept of Wildlife & Fisheries (Lake Bistineau dam) or USACE Vicksburg District (MVK) Water Management stating the datum of the 141.0 ft pool and the CWMS elevation series, and whether the CWMS series is converted to NAVD88."
+  },
+  "Ross Barnett Reservoir|MS": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29 (CWMS MVK location)",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "Operator news item gives 297.5 ft pool only as 'feet above sea level'; no document states NGVD29 or NAVD88 for the figure.",
+   "evidence": [
+    {
+     "url": "https://web.archive.org/web/20131115131632/http://www.therez.ms/current%20news22011.html",
+     "says": "PRVWSD: 'winter pool elevation from 296 feet above sea level to 297 feet ... The summer or recreational pool will remain 297.5' (no datum)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Ross%20Barnett?office=MVK",
+     "says": "CWMS location Ross Barnett: vertical-datum NGVD29"
+    },
+    {
+     "url": "https://rivergages.mvr.usace.army.mil/WaterControl/stationinfo2.cfm?sid=1668E72E",
+     "says": "Pearl River @ Ross Barnett Reservoir (pool) gage: 'Gage Zero: 0 Ft. NGVD29' (gage reference, not a statement about the 297.5 figure)"
+    }
+   ],
+   "caveat": "'above sea level' alone is not NGVD29. No CWMS pool-like elevation level exists at Ross Barnett.",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "CWMS levels for MVK 'Ross Barnett*' - none exist"
+   ],
+   "stillNeeds": "Pearl River Valley Water Supply District (therez.ms) or USACE Vicksburg District Water Management stating the datum of the 297.5 ft summer pool."
+  },
+  "Jordan Lake|NC": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "USGS WDR 02098197 states gage datum NGVD of 1929 with 'normal pool elevation, 216 ft' in the same entry; CWMS location CFR BEJ is NGVD29. USACE pertinent data itself says only m.s.l.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2005/wdr-nc-05/pdf/02098197.2005.sw.pdf",
+     "says": "B. Everett Jordan Lake at dam: 'GAGE.--Water-stage recorder. Datum of gage is at NGVD of 1929.' 'reached normal pool elevation, 216 ft, Feb. 4, 1982'"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/CFR%20BEJ?office=SAW",
+     "says": "CWMS location CFR BEJ (Jordan Dam): vertical-datum NGVD29"
+    },
+    {
+     "url": "https://epec.saw.usace.army.mil/BEJPERT.TXT",
+     "says": "USACE Pertinent Data: 'Top of conservation pool (elev. 216.0)', 'Elevation (ft., m.s.l.)' (msl only, no NGVD wording)"
+    }
+   ],
+   "caveat": "Datum evidence is the USGS gage-datum line plus CWMS location datum; USACE pertinent data does not name NGVD29. No CWMS elevation pool level exists (only storage levels: Top of Conservation 215,130 ac-ft).",
+   "confidence": "medium",
+   "docType": "usgs-wdr-gage-datum",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "C.J. Strike Reservoir|ID": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "USGS WDR ID-04 station entry for C.J. Strike Reservoir: 'Datum of gage is set to NGVD of 1929' with 'elevation 2,455 ft (top of spillway gates)' in the same entry.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2004/wdr-id-04-2/ID04v2-06.pdf",
+     "says": "C.J. Strike Reservoir: 'GAGE.--Water-stage recorder. Datum of gage is set to NGVD of 1929.' 'Total capacity, 250,000 acre-ft at elevation 2,455 ft (top of spillway gates)'"
+    }
+   ],
+   "caveat": "The unlabelled level-datum field was inferred from the same WDR gage datum; verify the 00065+alt_va series uses that gage datum.",
+   "confidence": "high",
+   "docType": "usgs-wdr-gage-datum",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Claytor Lake|VA": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "FERC notice (Federal Register 2009) states Claytor normal pool elevation 1,846.0 feet NGVD; CWMS location Claytor-Lake is NGVD29.",
+   "evidence": [
+    {
+     "url": "https://www.govinfo.gov/content/pkg/FR-2009-07-09/html/E9-16158.htm",
+     "says": "'storage capacity of 225,000 acre-feet at normal pool elevation 1,846.0 feet National Geodetic Vertical Datum (NGVD)'; 'Reservoir levels ... between 1,845 feet NGVD and 1,846 feet NGVD'"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Claytor-Lake?office=LRH",
+     "says": "CWMS location Claytor-Lake: vertical-datum NGVD29"
+    }
+   ],
+   "caveat": "FERC notice says 'NGVD' without year; read as NGVD29 (consistent with CWMS location datum). CWMS has no elevation level at Claytor to value-match.",
+   "confidence": "medium",
+   "docType": "ferc-order",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Coeur d'Alene|ID": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "a2w-project",
+   "offsetStats": null,
+   "summary": "Avista's licence application states the 2,128 ft summer full pool is on 'Avista datum' (a project datum); its relation to NGVD29 is not stated.",
+   "evidence": [
+    {
+     "url": "https://www.myavista.com/-/media/myavista/content-documents/our-environment/postfalls_licenseapp.pdf?la=en",
+     "says": "Post Falls licence application: 'When Coeur d'Alene Lake is below the summer level of 2,128 feet (Avista datum)...'"
+    },
+    {
+     "url": "https://www.myavista.com/about-us/celebrate-our-rivers/water-flow-information",
+     "says": "Avista page quotes lake elevations (e.g. 2126.33, 'maximum summer level') with no datum statement"
+    }
+   ],
+   "caveat": "Pool figure is on a local project datum, so it is not SAME_DATUM with an NGVD29-labelled series. NOAA COEI1 and USGS NAVD88 report values suggest an offset of a few feet exists but no document in hand gives the Avista-datum to NGVD29 relation.",
+   "confidence": "medium",
+   "docType": "ferc-order",
+   "deadEnds": [
+    "https://web.archive.org/... myavista water-flow page - Wayback offline at time of work"
+   ],
+   "stillNeeds": "Avista Hydro (FERC P-2545 licence exhibits) or USGS gage 12415500 station description giving the Avista datum offset to NGVD29/NAVD88."
+  },
+  "Wanaque Reservoir|NJ": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "USGS WDR NJ-2004 station 01386990 Wanaque Reservoir: datum of gage NGVD of 1929 (levels by NJ District Water Supply Commission); spillway-level elevation 302.4 ft in same entry.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2004/wdr-nj-04-1/pdf/wdrnj04_1.pdf",
+     "says": "01386990 WANAQUE RESERVOIR: 'GAGE, water-stage recorder. Datum of gage is National Geodetic Vertical Datum of 1929 (levels by North Jersey District Water Supply Commission).' 'Total capacity at spillway level ... elevation, 302.4 ft, prior to 1986, 300.3 ft.'"
+    }
+   ],
+   "caveat": "Elevation 302.4 is spillway level and is stated in the same station entry as the gage datum.",
+   "confidence": "high",
+   "docType": "usgs-wdr-gage-datum",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Palisades Reservoir|ID": {
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "method": "a2w-project",
+   "offsetStats": null,
+   "summary": "USACE Water Control Manual and Reclamation give 5620 only as 'msl'; no document states NGVD29 or NAVD88 for it.",
+   "evidence": [
+    {
+     "url": "https://water.usace.army.mil/cda/documents/wc/3043/REDACTED%20Jackson%20Palisades%20WCM.pdf",
+     "says": "Palisades pertinent data: 'Active Capacity (El. 5497.9 - El. 5620)'; 'Total Capacity at normal water surface El. 5620'; minimum power pool '5,497.5 msl' (msl only, no NGVD/NAVD)"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/PAL?office=NWDP",
+     "says": "CWMS location PAL (NWDP): vertical-datum NGVD29, elevation 1637.39 m (=5372 ft, streambed); no pool-like CWMS level found"
+    }
+   ],
+   "caveat": "msl alone is not NGVD29. Reclamation RISE is reported by others to list NAVD88 for the location elevation (not fetched/confirmed here).",
+   "confidence": "medium",
+   "docType": "none",
+   "deadEnds": [
+    "https://www.usbr.gov/projects/index.php?id=317 - page text not retrievable (no 5620/datum text returned)",
+    "https://water.usace.army.mil/overview/nww/locations/pal and RISE catalog pages - JS-rendered, no datum text"
+   ],
+   "stillNeeds": "Reclamation Snake River Area Office / Pacific Northwest Hydromet metadata stating the vertical datum of the PAL forebay elevation series and the 5620 normal water surface."
+  },
+  "Lake Winnipesaukee|NH": {
+   "decision": "SAME_SOURCE",
+   "levelDatum": "NHDES operating datum (same record as pool figure)",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.0,
+   "method": "operator-doc",
+   "offsetStats": null,
+   "summary": "Level and the 504.32 ft full-lake mark come from the same NHDES lake-level graph; an NHDES operating-guidance copy states all elevations are on the NGVD datum.",
+   "evidence": [
+    {
+     "url": "http://echoshores.com/lakelevelmgmt.htm",
+     "says": "Reproduced NH DES lake-level guidance: 'All elevations referenced are based upon the NGVD datum.' ... 'levels are managed between 504.32 and 502.80'; 'full pond level of 504.32'"
+    },
+    {
+     "url": "https://www.winnipesaukee.org/the-issues/lake-level/",
+     "says": "'the dam is operated to try to have the lake full, at elevation 504.32 feet' (no datum)"
+    }
+   ],
+   "caveat": "NGVD statement is on a third-party copy of NHDES guidance, not the DES site (DES PDF returned 403). NGVD read as NGVD29.",
+   "confidence": "medium",
+   "docType": "operator-page",
+   "deadEnds": [
+    "https://www.des.nh.gov/sites/g/files/ehbemt341/files/documents/winnipesaukee-graph2023.pdf and ...graph2026.PDF - Access Denied (403) to scripted fetch"
+   ],
+   "stillNeeds": null
+  },
+  "Roosevelt|AZ": {
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "method": "cwms-location",
+   "offsetStats": null,
+   "summary": "Reclamation 2013 survey report states all elevations are NGVD29 (the operation datum) and gives 2,151.0 as the conservation/flood boundary; CWMS 'Mod Roosevelt' Top of Conservation = 2151.0 ft, location NGVD29.",
+   "evidence": [
+    {
+     "url": "https://data.usbr.gov/rise/content-rise-public/rise/catalog-item/binary/Theodore%20Roosevelt%20Lake%20and%20Dam%20Bathymetric%20Survey%20Report%202013_0.pdf",
+     "says": "'Unless noted, all elevations in this report are tied to NGVD29'; 'shifted downward 2.0 feet to match the operation vertical datum of NGVD29'; '554,740 acre-feet of flood control between elevation 2,151.0 and 2,175.0'; recorded gage readings given in NGVD29"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Mod%20Roosevelt?office=SPL",
+     "says": "CWMS location Mod Roosevelt: vertical-datum NGVD29"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=SPL&level-id-mask=Mod%20Roosevelt*&unit=EN",
+     "says": "Mod Roosevelt.Elev.Inst.0.Top of Conservation = 2151.0 ft (exact value match)"
+    }
+   ],
+   "caveat": "SRP Elevation.Official.354 level datum is not stated by SRP directly; the Reclamation report says reservoir gage readings are NGVD29 and NAVD88 is ~2.0 ft higher. Confirm SRP gage is that NGVD29 gage.",
+   "confidence": "medium",
+   "docType": "cwms-level",
+   "deadEnds": [],
+   "stillNeeds": null
+  },
+  "Cheat Lake|WV": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": null,
+   "caveat": "870 is the top of the operating band (max pool).",
+   "evidence": [
+    {
+     "url": "https://www.govinfo.gov/content/pkg/FR-2023-06-16/html/2023-12943.htm",
+     "says": "reservoir ... at an elevation of 870 feet National Geodetic Vertical Datum of 1929 (NGVD 29); maintain Cheat Lake between 868 and 870 feet NGVD 29"
+    }
+   ],
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "method": "operator-doc",
+   "summary": "FERC notice (Federal Register) states Lake Lynn normal operating elevation 870 ft NGVD 29, matching USGS 62614 NGVD29.",
+   "confidence": "high",
+   "docType": "ferc-order"
+  },
+  "Lake Murray (SC)|SC": {
+   "offsetStats": null,
+   "deadEnds": [
+    "https://saludahydrorelicense.com/documents/PermittingHandbookDRAFT3.6.2009withfigures.pdf - 404"
+   ],
+   "stillNeeds": "Dominion Energy (Saluda hydro, FERC P-516) plant-datum-to-NGVD29 relationship and the datum of USGS 00062 gage; or a FERC P-516 licence/exhibit stating NGVD29 for 360 ft.",
+   "caveat": "Plant datum is LOCAL; never SAME_DATUM.",
+   "evidence": [
+    {
+     "url": "https://saludacounty.sc.gov/sites/saludacounty/files/Documents/lake-murray-permitting-guidelines-2021.pdf",
+     "says": "The 360-foot contour (\"360'\") is based on plant datum (\"PD\"), and is the normal maximum pool elevation for Lake Murray."
+    },
+    {
+     "url": "https://www.dominionenergy.com/about/lakes-and-recreation/lake-murray-sc",
+     "says": "fetched; no datum statement found"
+    }
+   ],
+   "referenceDatum": "plant datum (LOCAL)",
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "UNKNOWN (00062 site-specific)",
+   "summary": "Dominion/Saluda County document states the 360 ft contour is based on plant datum, not NGVD29/NAVD88; level series datum also not established.",
+   "confidence": "high",
+   "docType": "operator-doc (local datum)"
+  },
+  "Grand Lake St. Marys|OH": {
+   "offsetStats": null,
+   "deadEnds": [
+    "web.archive.org ohiodnr.gov/discover-and-learn/land-wate... (URL truncated in chunk; guessed full URL returned wayback error page; CDX prefix lookup empty)"
+   ],
+   "stillNeeds": "ODNR Division of Parks/Watercraft (or Ohio DNR dam safety / NID record for Grand Lake St. Marys dam) stating datum of the 870.6 ft normal pool.",
+   "caveat": "USGS gauge publishes both NGVD29 and NAVD88 (~0.5 ft apart, per search snippet), so datum of 870.6 matters.",
+   "evidence": [],
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "summary": "Could not retrieve the ODNR archived page or any document stating the datum of 870.6 ft.",
+   "confidence": "medium",
+   "docType": "none"
+  },
+  "Istokpoga|FL": {
+   "offsetStats": null,
+   "deadEnds": [
+    "https://cwms-data.usace.army.mil/cwms-data/levels?office=SAJ&level-id-mask=*Istokpoga* - zero levels",
+    "https://cwms.sec.usace.army.mil/cwms-data/timeseries?name=... - needs office param"
+   ],
+   "stillNeeds": null,
+   "caveat": "39.5 is top of seasonal regulation band.",
+   "evidence": [
+    {
+     "url": "https://www.sfwmd.gov/sites/default/files/documents/doc-fd.pdf",
+     "says": "27,809 acres at 39.5 feet NGVD; NGVD defined as 'vertical datum from 1929'"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Lake%20Istokpoga?office=SAJ",
+     "says": "vertical-datum NGVD29"
+    }
+   ],
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "method": "cwms-location",
+   "summary": "SFWMD MFL report gives lake area at 39.5 ft NGVD (defined as 1929 datum); CWMS location Lake Istokpoga is NGVD29.",
+   "confidence": "medium",
+   "docType": "state-report"
+  },
+  "Lake D'Arbonne|LA": {
+   "offsetStats": null,
+   "deadEnds": [
+    "https://www.wlf.louisiana.gov/assets/Resources/Publications/Freshwater_Inland_Fish/Inland-Waterbody-Management-Plans/DArbonne-Lake-MP-A-2026.pdf - HTTP 403",
+    "archived wlf.louisiana.gov 2016 PDF - URL truncated, not recoverable"
+   ],
+   "stillNeeds": "LDWF or Bayou D'Arbonne Lake Watershed District (or NID record) stating datum of 80 ft pool stage.",
+   "caveat": "MSL alone is not NGVD29.",
+   "evidence": [],
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "summary": "Only 'MSL' wording found for the 80 ft pool (secondary snippets); source documents not retrievable.",
+   "confidence": "medium",
+   "docType": "none"
+  },
+  "Seminole|GA": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": null,
+   "caveat": "",
+   "evidence": [
+    {
+     "url": "https://water.sam.usace.army.mil/JIM%20WOODRUFF%20Pertinent%20Data.pdf",
+     "says": "Normal operating pool elevation, feet NGVD29 77.0"
+    },
+    {
+     "url": "https://cwms-data.usace.army.mil/cwms-data/locations/JimWoodruff?office=SAM",
+     "says": "vertical-datum NGVD29"
+    }
+   ],
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "method": "cwms-location",
+   "summary": "USACE Mobile pertinent data lists normal operating pool 77.0 ft NGVD29; CWMS location JimWoodruff vertical-datum NGVD29.",
+   "confidence": "high",
+   "docType": "usace-pertinent-data"
+  },
+  "Rye Patch Reservoir|NV": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": "USBR Lahontan Basin Area Office / Reclamation dam data (data.usbr.gov) stating vertical datum of Rye Patch pool, plus datum of USGS 10334500 00062.",
+   "caveat": "",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/projects/index.php?id=268",
+     "says": "Top of Active Conservation Pool 4136.0 ft; Normal Water Surface Elevation 4136.0 ft; no datum stated (via WebFetch)"
+    }
+   ],
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "UNKNOWN (00062 site-specific)",
+   "summary": "Reclamation project page gives 4136.0 ft with no datum statement.",
+   "confidence": "high",
+   "docType": "none"
+  },
+  "Henrys Lake|ID": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": null,
+   "caveat": "6473.86 is derived (6457.16+16.7), not printed in the document; level series is gage height + alt datum.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2004/wdr-id-04-1/ID04v1-05.pdf",
+     "says": "Datum of gage is 6,457.16 ft above NGVD of 1929 (levels by USBR); capacity 90,420 ac-ft between gage heights 0.00 and 16.7 ft, top of 4.7 ft flashboards"
+    }
+   ],
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "method": "operator-doc",
+   "summary": "USGS WDR gage datum 6,457.16 ft NGVD 1929 plus 16.7 ft gage height at top of flashboards = 6473.86 ft, reproducing the pool figure exactly.",
+   "confidence": "medium",
+   "docType": "usgs-wdr-gage-datum"
+  },
+  "Lake Billy Chinook|OR": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": null,
+   "caveat": "1,945 is described as proposed upper limit of operation.",
+   "evidence": [
+    {
+     "url": "https://pubs.usgs.gov/wdr/2005/wdr-or-05/pdf/deschutes.pdf",
+     "says": "Datum of gage is NGVD of 1929 (levels by Portland General Electric Co.); total capacity 534,700 ac-ft at elevation 1,945.0 ft"
+    }
+   ],
+   "referenceDatum": "NGVD29",
+   "sigmaFt": 0.15,
+   "decision": "SAME_DATUM",
+   "levelDatum": "NGVD29",
+   "method": "operator-doc",
+   "summary": "USGS WDR for 14092100 states gage datum NGVD of 1929 and capacity at elevation 1,945.0 ft (upper limit of operation).",
+   "confidence": "high",
+   "docType": "usgs-wdr-gage-datum"
+  },
+  "Lake Taneycomo|MO": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": "Liberty/Empire District (Ozark Beach, FERC P-2221) or USACE Little Rock licence exhibit stating NGVD29 or NAVD88 for 701.1 ft.",
+   "caveat": "NAVD88 level vs msl pool: cannot convert.",
+   "evidence": [
+    {
+     "url": "https://www.ferc.gov/sites/default/files/2020-04/P-2221-039-EA.pdf",
+     "says": "normal pool elevation of 701.1 feet mean sea level (msl)"
+    }
+   ],
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "NAVD88",
+   "summary": "FERC EA gives 701.1 ft only as 'mean sea level (msl)', which is not a datum identification.",
+   "confidence": "high",
+   "docType": "ferc-order (msl only)"
+  },
+  "Eagle Creek Reservoir|IN": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": null,
+   "caveat": "Re-fetched PDF: header 'Eagle Creek3*, Geist3*, Morse3*' with footnote '3All units in feet and datum NAVD88' (footnote 1 NGVD29 applies to other reservoirs). Verified placement. Do not convert NGVD29 to NAVD88.",
+   "evidence": [
+    {
+     "url": "https://www.in.gov/drought/files/drought-water-soil-conditions-08072025.pdf",
+     "says": "Eagle Creek3* Normal Pool 790 ... 3All units in feet and datum NAVD88"
+    }
+   ],
+   "referenceDatum": "NAVD88",
+   "sigmaFt": null,
+   "decision": "INCOMPATIBLE",
+   "levelDatum": "NGVD29",
+   "method": "operator-doc",
+   "summary": "State drought report footnotes Eagle Creek normal pool 790 as NAVD88 while USGS series is NGVD29.",
+   "confidence": "high",
+   "docType": "state-report"
+  },
+  "Anderson Ranch Reservoir|ID": {
+   "offsetStats": null,
+   "deadEnds": [
+    "https://www.usbr.gov/pn//studies/boisefeasibility/deis/B22envirojustice.pdf - fetched; no 4196/datum text"
+   ],
+   "stillNeeds": "USBR Pacific Northwest Region (Snake River Area Office) dam data sheet stating datum of 4196 ft normal pool.",
+   "caveat": "Location datum is suggestive only; not accepted as covering the pool figure.",
+   "evidence": [
+    {
+     "url": "https://data.usbr.gov/location/3641",
+     "says": "Elevation 4,206 ft; Vertical Datum NGVD29 (location record, crest not pool)"
+    },
+    {
+     "url": "https://www.usbr.gov/projects/index.php?id=259",
+     "says": "fetch returned truncated content, no datum found"
+    }
+   ],
+   "referenceDatum": null,
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "summary": "No document found stating datum of 4196 ft; Reclamation location record gives NGVD29 only for the 4,206 ft crest.",
+   "confidence": "medium",
+   "docType": "none"
+  },
+  "Almanor|CA": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": "PG&E (FERC P-2105) statement of PG&E datum offset to NGVD29/NAVD88 and that CDEC ALM sensor uses PG&E datum.",
+   "caveat": "Local datum; CDEC series datum not documented as the same PG&E datum, so not SAME_SOURCE.",
+   "evidence": [
+    {
+     "url": "https://www.pge.com/assets/pge/docs/about/land-use-and-sales/Almanor-Agreement-Assignment.pdf",
+     "says": "operating high water line of the lake, which is 4,494 feet (PG&E datum)"
+    }
+   ],
+   "referenceDatum": "PG&E datum (LOCAL)",
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "LOCAL",
+   "summary": "PG&E land policy states 4,494 ft is on PG&E datum, a local datum.",
+   "confidence": "high",
+   "docType": "operator-doc (local datum)"
+  },
+  "Lake Wisconsin|WI": {
+   "offsetStats": null,
+   "deadEnds": [],
+   "stillNeeds": "Correct the reference pool figure (744.4 vs 774.4) then rerun; Alliant/FERC P-1981 can confirm.",
+   "caveat": "If referencePoolFt should be 744.4, this is SAME_DATUM-capable (NGVD29); 774.4 is not documented.",
+   "evidence": [
+    {
+     "url": "https://www.federalregister.gov/documents/full_text/text/1997/01/07/97-211.txt",
+     "says": "normal operating water surface elevation of 744.4 feet NGVD"
+    }
+   ],
+   "referenceDatum": "NGVD (document figure 744.4)",
+   "sigmaFt": null,
+   "decision": "UNKNOWN",
+   "levelDatum": "NGVD29",
+   "summary": "FERC notice for Prairie du Sac states normal operating elevation 744.4 ft NGVD, which does not match the stored 774.4 ft figure (likely transcription error).",
+   "confidence": "medium",
+   "docType": "ferc-order"
+  }
+ }
+}

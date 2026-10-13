@@ -1,0 +1,67 @@
+{
+ "lakes": {
+  "Black Hawk Lake|IA": {
+   "altDatumCd": "NAVD88",
+   "altVa": "1213.86",
+   "station": "05482315"
+  },
+  "C.J. Strike Reservoir|ID": {
+   "altDatumCd": "NAVD88",
+   "altVa": "2402.70",
+   "station": "13171500"
+  },
+  "Clear Lake|IA": {
+   "altDatumCd": "NAVD88",
+   "altVa": "1222.28",
+   "station": "05460000"
+  },
+  "Fox Lake|IL": {
+   "altDatumCd": "NAVD88",
+   "altVa": "732.77",
+   "station": "05547500"
+  },
+  "Henrys Lake|ID": {
+   "altDatumCd": "NAVD88",
+   "altVa": "6462.71",
+   "station": "13039000"
+  },
+  "Lake Hopatcong|NJ": {
+   "altDatumCd": "NAVD88",
+   "altVa": "914.5",
+   "station": "01455400"
+  },
+  "Lake Pontchartrain|LA": {
+   "altDatumCd": "NAVD88",
+   "altVa": "-0.14",
+   "station": "302144090052401"
+  },
+  "Mille Lacs Lake|MN": {
+   "altDatumCd": "NAVD88",
+   "altVa": "1240.70",
+   "station": "05284000"
+  },
+  "Payette Lake|ID": {
+   "altDatumCd": "NGVD29",
+   "altVa": "4981.73",
+   "station": "13238500"
+  },
+  "Spirit Lake|IA": {
+   "altDatumCd": "NAVD88",
+   "altVa": "1387.28",
+   "station": "06604000"
+  },
+  "Storm Lake|IA": {
+   "altDatumCd": "NAVD88",
+   "altVa": "1385.25",
+   "station": "05482140"
+  },
+  "West Okoboji|IA": {
+   "altDatumCd": "NAVD88",
+   "altVa": "1391.65",
+   "station": "06604200"
+  }
+ },
+ "note": "usgs-d level = gage height (00065) + site altitude; its datum is the site altitude datum, NOT whatever datum a document states for the gage",
+ "schema": "depth-usgs-d-site-datums-v1",
+ "source": "USGS NWIS site service (siteOutput=expanded), fetched 2026-10-14"
+}

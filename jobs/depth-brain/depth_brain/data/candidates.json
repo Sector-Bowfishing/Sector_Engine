@@ -5624,18 +5624,16 @@
    "state": "FL"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.928,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:FL",
@@ -5658,9 +5656,9 @@
    "lakeName": "East Lake Tohopekaliga",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Tohopekaliga.Elev.Inst.1Hour.0.SFWMD-Raw",
     "status": "RESEARCH_VERIFIED"
@@ -5678,9 +5676,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 58,
     "source": "https://cwms.sec.usace.army.mil/cwms-data/timeseries?name=E%20Tohopekaliga.Elev-Zone.Inst.~1Day.0.ZoneB_NGVD&office=SAJ&unit=EN&begin=2025-01-01T00:00:00Z&end=2026-01-01T00:00:00Z",
     "winterPoolFt": null
@@ -5698,8 +5696,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "FL"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "FL"
   },
   {
@@ -5857,17 +5855,16 @@
    "state": "FL"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -1.132,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:FL",
@@ -5891,7 +5888,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (SAJ:Lake Istokpoga)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev",
@@ -5910,9 +5907,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 39.5,
     "source": "https://cwms.sec.usace.army.mil/cwms-data/timeseries?name=Lake%20Istokpoga.Elev-Zone.Inst.~1Day.0.ZoneB_NGVD&office=SAJ&unit=EN&begin=2025-01-01T00:00:00Z&end=2026-01-01T00:00:00Z",
     "winterPoolFt": null
@@ -5930,8 +5927,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "FL"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "FL"
   },
   {
@@ -5993,18 +5990,16 @@
    "state": "FL"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -1.227,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:FL",
@@ -6027,9 +6022,9 @@
    "lakeName": "Kissimmee",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Kissimmee-11.Elev.Ave.~1Day.1Day.SFWMD-Computed",
     "status": "RESEARCH_VERIFIED"
@@ -6047,9 +6042,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 53,
     "source": "https://cwms.sec.usace.army.mil/cwms-data/timeseries?name=Kissimmee.Elev-Zone.Inst.~1Day.0.ZoneB1_NGVD&office=SAJ&unit=EN&begin=2025-01-01T00:00:00Z&end=2026-01-01T00:00:00Z",
     "winterPoolFt": null
@@ -6067,8 +6062,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "FL"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "FL"
   },
   {
@@ -6868,18 +6863,16 @@
    "state": "GA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.453,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -6898,9 +6891,9 @@
    "lakeName": "Seminole",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "JimWoodruff.Elev.Inst.15Minutes.0.Raw-USGS",
     "status": "RESEARCH_VERIFIED"
@@ -6913,15 +6906,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 77,
     "source": "https://water.sam.usace.army.mil/JIM%20WOODRUFF%20Pertinent%20Data.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "GA"
   },
   {
@@ -8712,17 +8705,16 @@
    "state": "ID"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "NWS",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 3.835,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -8742,7 +8734,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "A2W project vertical_datum NGVD29 (NWS:HOPI)",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "a2w",
     "series": "Elev-Lake",
@@ -8756,15 +8748,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2062.5,
     "source": "CWMS NWDP ALF (Albeni Falls Dam) Top of Normal",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ID"
   },
   {
@@ -9587,18 +9579,16 @@
    "state": "IL"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "MVS",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.312,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -9617,9 +9607,9 @@
    "lakeName": "Rend Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw",
     "status": "RESEARCH_VERIFIED"
@@ -9632,15 +9622,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 405,
     "source": "CWMS Rend Lk.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IL"
   },
   {
@@ -9980,17 +9970,16 @@
    "state": "IN"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.436,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -10010,7 +9999,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NAVD88",
-    "datumNote": "USGS parameter 62615 is defined against NAVD88",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62615",
@@ -10024,15 +10013,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 784.26,
     "source": "https://www.in.gov/drought/files/drought-water-soil-conditions-08072025.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "IN"
   },
   {
@@ -17896,18 +17885,16 @@
    "state": "MS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAM",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 0.003,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
@@ -17926,9 +17913,9 @@
    "lakeName": "Columbus Lake",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "usgs",
     "series": "72020",
     "status": "RESEARCH_VERIFIED"
@@ -17941,15 +17928,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 164,
     "source": "CWMS Stennis Top of Normal (162-164 band)",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MS"
   },
   {
@@ -19394,18 +19381,16 @@
    "state": "NC"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.804,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -19424,9 +19409,9 @@
    "lakeName": "Jordan Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "CFR BEJ.Elev.Inst.15Minutes.0.USGS-raw",
     "status": "RESEARCH_VERIFIED"
@@ -19439,29 +19424,28 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 216,
     "source": "https://epec.saw.usace.army.mil/BEJPERT.TXT",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NC"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.984,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -19481,7 +19465,7 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": "NGVD29",
-    "datumNote": "provider table: NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "cwms-saw",
     "series": "ROA JHK.Elev.Inst.5Minutes.0.USGS-raw",
@@ -19495,15 +19479,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 300,
     "source": "https://epec.saw.usace.army.mil/KERRWCP.pdf",
     "winterPoolFt": 295.5
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NC"
   },
   {
@@ -22705,17 +22689,16 @@
    "state": "NJ"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.797,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -22735,7 +22718,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NAVD88",
-    "datumNote": "provider table: NAVD88",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "njwsa",
     "series": "daily-elevation",
@@ -22749,15 +22732,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": "https://www.njwsa.org",
-    "datumVerified": false,
+    "datum": "NAVD88",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 384.2,
     "source": "https://www.njwsa.org/uploads/1/0/8/0/108064771/data.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NJ"
   },
   {
@@ -22898,17 +22881,16 @@
    "state": "NJ"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.837,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -22928,7 +22910,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "USGS parameter 62614 is defined against NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62614",
@@ -22942,15 +22924,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 302.4,
     "source": "https://pubs.usgs.gov/wdr/2004/wdr-nj-04-1/pdf/wdrnj04_1.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NJ"
   },
   {
@@ -23008,17 +22990,16 @@
    "state": "NM"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": 3.638,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -23038,7 +23019,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "USGS parameter 62614 is defined against NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62614",
@@ -23052,15 +23033,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 7402.6,
     "source": "https://pubs.usgs.gov/wdr/2005/wdr-nm-05-1/pdf/wdr-nm-05-1.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NM"
   },
   {
@@ -24555,17 +24536,16 @@
    "state": "NY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.456,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -24585,7 +24565,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "USGS parameter 62614 is defined against NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62614",
@@ -24599,15 +24579,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 768,
     "source": "https://pubs.usgs.gov/wdr/2005/wdr-ny-05-1/wdrny051.rept.data.pdf",
     "winterPoolFt": 750.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NY"
   },
   {
@@ -27146,17 +27126,16 @@
    "state": "OR"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": 3.596,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -27176,7 +27155,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "USGS parameter 62614 is defined against NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62614",
@@ -27190,15 +27169,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1945,
     "source": "https://pubs.usgs.gov/wdr/2005/wdr-or-05/pdf/deschutes.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "OR"
   },
   {
@@ -33266,18 +33245,16 @@
    "state": "VA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRH",
    "datum": {
+    "evidenceConfidence": "medium",
     "navd88MinusNgvd29Ft": -0.328,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -33296,9 +33273,9 @@
    "lakeName": "Claytor Lake",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: PER_SITE",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "cwms",
     "series": "Claytor-Lake.Elev.Inst.15Minutes.0.OBS",
     "status": "RESEARCH_VERIFIED"
@@ -33311,15 +33288,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1846,
     "source": "https://www.govinfo.gov/content/pkg/FR-2009-07-09/html/E9-16158.htm",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "VA"
   },
   {
@@ -33437,17 +33414,16 @@
    "state": "VA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAW",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.994,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -33467,7 +33443,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "USGS parameter 62614 is defined against NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62614",
@@ -33481,15 +33457,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 300,
     "source": "https://epec.saw.usace.army.mil/KERRWCP.pdf",
     "winterPoolFt": 295.5
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "VA"
   },
   {
@@ -33774,17 +33750,16 @@
    "state": "VA"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.728,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": null,
@@ -33804,7 +33779,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "provider table: NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "aep",
     "series": "forebayActual",
@@ -33818,15 +33793,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 795,
     "source": "https://www.smithmtn.com/lake-levels/",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "VA"
   },
   {
@@ -36364,17 +36339,16 @@
    "state": "WV"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "LRP",
    "datum": {
+    "evidenceConfidence": "high",
     "navd88MinusNgvd29Ft": -0.367,
     "reasons": [
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.15,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:WV",
@@ -36398,7 +36372,7 @@
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
     "datum": "NGVD29",
-    "datumNote": "USGS parameter 62614 is defined against NGVD29",
+    "datumNote": "reviewed override",
     "datumVerified": true,
     "provider": "usgs",
     "series": "62614",
@@ -36417,9 +36391,9 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 870,
     "source": "https://www.govinfo.gov/content/pkg/FR-2023-06-16/html/2023-12943.htm",
     "winterPoolFt": 857.0
@@ -36437,8 +36411,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "WV"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WV"
   },
   {
@@ -37733,12 +37707,12 @@
    "state": "WY"
   }
  ],
- "manifestVersion": "2026-10-14.3",
+ "manifestVersion": "2026-10-14.4",
  "schema": "depth-candidates-v1",
  "summary": {
   "blockedReasons": {
    "DATUM_CONVERSION_NOT_ENABLED": 1,
-   "DATUM_UNKNOWN": 226,
+   "DATUM_UNKNOWN": 207,
    "DUKE_LOCAL_SCALE_NOT_ENABLED": 8,
    "MISSING_REFERENCE_POOL": 13,
    "NO_VERIFIED_LEVEL_BINDING": 204,
@@ -37747,10 +37721,10 @@
   },
   "datumStatus": {
    "INCOMPATIBLE": 1,
-   "SAME_DATUM": 90,
+   "SAME_DATUM": 109,
    "SAME_OPERATOR_SYSTEM": 17,
    "SAME_SOURCE": 75,
-   "UNKNOWN": 438
+   "UNKNOWN": 419
   },
   "lakes": 621,
   "levelSourceStatus": {
@@ -37800,12 +37774,12 @@
    "U": 56
   },
   "rollout": {
-   "BLOCKED": 442,
-   "HIGH_CONFIDENCE": 87,
-   "MEDIUM_CONFIDENCE": 87,
+   "BLOCKED": 423,
+   "HIGH_CONFIDENCE": 91,
+   "MEDIUM_CONFIDENCE": 102,
    "PILOT_VERIFIED": 5
   },
-  "shiftPossible": 179,
+  "shiftPossible": 198,
   "tier": {
    "A": 77,
    "B": 26,

@@ -1,0 +1,219 @@
+{
+ "CT": {
+  "datum": "not stated",
+  "licence": "PUBLIC_REUSABLE (CC0)",
+  "org": "CT DEEP",
+  "survey": "DATADATE attribute (year)",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/bdb59e03b6b14b0f9c7a0f65114dc2b0?f=json"
+  ],
+  "valueType": "depth (reference level not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "DEPTH_FT contours, mixed methods (manual soundings, depth finder + GPS, digitised maps); DATADATE per feature"
+ },
+ "FL": {
+  "datum": "not stated",
+  "licence": "INTERNAL_ONLY",
+  "org": "FWC-FWRI (data by ReMetrix, processed by BioSonics)",
+  "survey": "data created 2005-2011 (item description)",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/68fbc06232164ce6b6b0d046e906b885?f=json"
+  ],
+  "valueType": "depth (reference level not stated in the item text retrieved)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "one-foot contours (DEPTHF negative)"
+ },
+ "IL": {
+  "datum": "code '2' (undefined)",
+  "licence": "UNCLEAR",
+  "org": "IDNR Office of Water Resources",
+  "survey": "Lake Springfield surv_date 2020-06-27",
+  "urls": [
+   "https://maps.dnr.illinois.gov/geoservices/rest/services/WaterResources/LakeDepthAndCapacity/MapServer"
+  ],
+  "valueType": "not stated",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "contour attribute CONTOUR is depth for most lakes but elevation-like for some; survey polygon has norm_pool, surv_date, ver_datum (code, undefined)"
+ },
+ "IN": {
+  "datum": "not stated",
+  "licence": "ATTRIBUTION_REQUIRED",
+  "org": "Indiana DNR",
+  "survey": "not stated (item updated 2019)",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/bea7752105a840afbbee1256f9b7a19b?f=json"
+  ],
+  "valueType": "depth below the surface; some lakes adjusted to the legal level (which lakes: not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "'shoreline of each lake as elevation 0 ... Contour values are feet below the surface' and 'contour values of some lakes were adjusted to coincide with the lake's legal gauge level' (item description)"
+ },
+ "KS": {
+  "datum": "not stated",
+  "licence": "ATTRIBUTION_REQUIRED",
+  "org": "Kansas Biological Survey (KARS)",
+  "survey": "PhysicalLakeData Survey_yea: Cheney 2010, Clinton 2009, El Dorado 2010, Melvern 2009, Milford 2009, Pomona 2009, Wilson 2008 (survey period 2006-2013)",
+  "urls": [
+   "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/PhysicalLakeData/MapServer",
+   "https://services.kars.geoplatform.ku.edu/arcgis/rest/services/WaterResources/BathymetryContour/MapServer/layers?f=pjson"
+  ],
+  "valueType": "depth below the listed water surface elevation",
+  "waterLevelAtSurvey": "CONTRADICTORY: the PhysicalLakeData service text says federal reservoirs use the normal operating (conservation/multi-purpose) pool; the BathymetryContour layer text says the operating water level at the time of the survey; state/local reservoirs use the level on the survey date. Six of seven federal lakes equal the directory pool exactly; Cheney differs by 0.9 ft",
+  "zeroLevel": "'They also reference depth data to the lake elevation'; areas/volumes computed at the listed water surface elevation (PhysicalLakeData Elev_ft)"
+ },
+ "MA": {
+  "datum": "not retrieved",
+  "licence": "ATTRIBUTION_REQUIRED",
+  "org": "MassWildlife (MassGIS)",
+  "survey": "not retrieved",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/dfc49081b0a641d489dd38cff0f5ef60?f=json"
+  ],
+  "valueType": "depth (reference level not retrieved)",
+  "waterLevelAtSurvey": "not retrieved",
+  "zeroLevel": "contour DEPTH ft, SHORE flag; GPS/depth sounder; full MassGIS metadata page returned HTTP 403"
+ },
+ "MI": {
+  "datum": "not stated",
+  "licence": "PUBLIC_REUSABLE",
+  "org": "MI DNR / IFR",
+  "survey": "not stated",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/2eceeac00aa74abe858f1deb268b0efb?f=json"
+  ],
+  "valueType": "depth (reference level not stated in the item text)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "contours where MinDepth == MaxDepth; band rings otherwise"
+ },
+ "MN": {
+  "datum": "not stated",
+  "licence": "UNCLEAR",
+  "note": "also serves the Gull/Leech/Winnibigoshish Corps lakes",
+  "org": "Minnesota DNR (lake mapping unit; digitised from lake maps)",
+  "survey": "metadata layer fldw_end (fetched): Winnibigoshish 1963-10-01 (TOPO MAP/DRG), Leech 1957-07-18, two 'Gull' records: DOW 11030500 1954-07-01 and DOW 04012000 1995-05-23 (which one is the Gull Lake Dam lake was not resolved here)",
+  "urls": [
+   "https://gisdata.mn.gov/dataset/water-lake-bathymetry"
+  ],
+  "valueType": "depth below the water surface on the survey map (ordinary high water not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "depth (negative ft); zero depth is a shoreline digitised from 1991-92 DOQ aerial photography (per the Commons dataset summary retrieved through a web-search extract; the Commons page itself is a script shell and the resources metadata URL returned 404)"
+ },
+ "MT": {
+  "datum": "not stated",
+  "licence": "UNCLEAR",
+  "org": "Montana FWP",
+  "survey": "not stated (publication 2022; sources include BOR, DEQ contractors, FWP)",
+  "urls": [
+   "https://fwp-gis.mt.gov/arcgis/rest/directories/arcgisoutput/webResources/metadata/refrnc/lakesBathymetry.htm"
+  ],
+  "valueType": "depth (reference level not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "'CONTOUR: Contour depth in feet'; shoreline type S, depth contours C"
+ },
+ "ND": {
+  "datum": "not stated",
+  "licence": "UNCLEAR",
+  "org": "ND Game and Fish / ND GIS Hub",
+  "survey": "not in the attributes",
+  "urls": [
+   "https://ndgishub.nd.gov/arcgis/rest/services/Applications/GNF_LakeContoursCached/MapServer/info/iteminfo?f=pjson"
+  ],
+  "valueType": "depth below an implied pool elevation",
+  "waterLevelAtSurvey": "not stated; implied pools differ from directory pools by 1.7-2.2 ft",
+  "zeroLevel": "CONTOUR (negative ft) and ELEVATION attributes; ELEVATION - CONTOUR constant per lake"
+ },
+ "NE": {
+  "datum": "not stated in the item or attributes",
+  "licence": "PUBLIC_REUSABLE",
+  "org": "Nebraska Game and Parks Commission / USBR mapping program",
+  "survey": "shape attribute SurveyDate (Box Butte 2002, Branched Oak 2003, Calamus 2003, Johnson 2008, Ogallala 2005, Merritt 2001, Sherman 2003, Swanson 2001; Harlan and McConaughy blank)",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/0f0e603f248d4a4bb79f350db3780d72?f=json"
+  ],
+  "valueType": "depth below a numeric pool elevation carried on every contour",
+  "waterLevelAtSurvey": "not stated; the carried elevation is a 'conservation' pool (shape attribute Conservati), which differs from the contour-implied pool for Merritt (2947.0 vs 2953.3), McConaughy (3266.4 vs 3265.0) and Ogallala (3126.3 vs 3126.5)",
+  "zeroLevel": "contour attributes Depth and Elevation; Elevation + Depth is constant within a lake (range 0-0.22 ft), i.e. depth below a stated pool elevation"
+ },
+ "NH": {
+  "datum": "not stated",
+  "licence": "ATTRIBUTION_REQUIRED",
+  "org": "NHDES / NH Fish and Game",
+  "survey": "dataset time period 2000-01-01 to 2019-10-11",
+  "urls": [
+   "https://ftp.granit.sr.unh.edu/GRANIT_Data/Vector_Data/Inland_Water_Resources/d-bathymetry/bathymetry_lakes_lines/bathymetry_lakes_lines.html"
+  ],
+  "valueType": "depth (reference level not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "'bathymetric depth contours in feet'; Garmin sounder points -> TIN -> raster -> contours; 'rough estimate'"
+ },
+ "NJ": {
+  "datum": "not stated",
+  "licence": "RESTRICTED (NOT FOR COMMERCIAL USE)",
+  "org": "NJDEP BFBM",
+  "survey": "DATESAMP attribute (e.g. 2021)",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/f42bc7d994c142fd8fae7af61a021a33?f=json"
+  ],
+  "valueType": "depth (reference level not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "VAL2NUM metres; DATESAMP per feature"
+ },
+ "OH": {
+  "datum": "maps print an elevation only; 'above mean sea level' appears for Mosquito Creek and Tappan; no NGVD29/NAVD88 label",
+  "licence": "UNCLEAR (licence matrix; item metadata empty)",
+  "org": "Ohio DNR Division of Wildlife",
+  "survey": "per lake map: 'Reservoir last surveyed': Alum Creek 2001, Caesar Creek 1997, Grand Lake St. Marys 2004, Hoover 2001, Lake Milton 1998, Mosquito Creek 2004, Pymatuning 2008, Salt Fork 1998, Tappan 1998; GIS DT_ADDED 2014 only",
+  "urls": [
+   "https://gis.ohiodnr.gov/arcgis/rest/services/DOW_Services/DOW_Lakes_Bathymetry/MapServer",
+   "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/maps/alumcreeklake2.pdf"
+  ],
+  "valueType": "depth below stated normal summer pool (per lake map)",
+  "waterLevelAtSurvey": "not stated (maps state the pool the depths are based on, not the level on the survey date)",
+  "zeroLevel": "DEPTH (stored negative ft) below the water surface the agency map calls the 'normal summer pool elevation' (per-lake PDF maps, fetched 9 of 10 fleet lakes; the GIS service itself has no description, licence or datum text)"
+ },
+ "OK": {
+  "datum": "stated per lake (vert_datum)",
+  "licence": "INTERNAL_ONLY (item licenseInfo 'Internal Use')",
+  "org": "Oklahoma Water Resources Board",
+  "survey": "attribute year (Fort Gibson 2012, Sardis 1999, Grand 2008, Murray 2001)",
+  "urls": [
+   "https://owrb.csa.ou.edu/server/rest/services/Surface_Water/LOK_Lakes/MapServer"
+  ],
+  "valueType": "depth below a numeric pool elevation with a stated vertical datum (NGVD29 or NAVD88 per lake)",
+  "waterLevelAtSurvey": "not stated; Grand (range 20 ft) and Murray (range 200 ft) have non-constant implied pools",
+  "zeroLevel": "contour attributes depth (negative ft), elevation, vert_datum, year: elevation = pool + depth with a constant pool within most lakes"
+ },
+ "PA": {
+  "datum": "not stated",
+  "licence": "UNCLEAR (not fetched)",
+  "org": "Harveys Lake local layer (PA)",
+  "survey": "not stated",
+  "urls": [],
+  "valueType": "depth (reference level not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "Depth_Ft"
+ },
+ "WA": {
+  "datum": "not stated",
+  "licence": "UNCLEAR",
+  "org": "WA Ecology (digitised from USGS Water-Supply Bulletin 43; Sammamish from King County 2013)",
+  "survey": "USGS/Ecology reconnaissance 1970s; Sammamish 2008 publication",
+  "urls": [
+   "https://gis.ecology.wa.gov/serverext/rest/services/Authoritative/ECY/MapServer/3/iteminfo?f=pjson"
+  ],
+  "valueType": "depth (reference level not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "'bathymetric elevation bands (derived from bathymetric contours)'; Depth attribute"
+ },
+ "WV": {
+  "datum": "not stated",
+  "licence": "PUBLIC_REUSABLE",
+  "org": "WV DNR (Wildlife Resources)",
+  "survey": "per lake in the item description: Beech Fork 2019, Bluestone 2024, Burnsville 2023, Cheat 2011, East Lynn 2021 (lists from the item text)",
+  "urls": [
+   "https://www.arcgis.com/sharing/rest/content/items/217289890c2445c7bb3f7b22d5a2b0d5?f=json"
+  ],
+  "valueType": "depth (reference level not stated)",
+  "waterLevelAtSurvey": "not stated",
+  "zeroLevel": "1-ft contours from sonar processed in ReefMaster; value is depth in ft; no reference level text"
+ }
+}

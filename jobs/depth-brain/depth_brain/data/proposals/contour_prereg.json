@@ -1,0 +1,1250 @@
+{
+ "schema": "depth-contour-prereg-v1",
+ "title": "Contour (non-TWDB) effective-zone validation against USACE CWMS stage-area curves: preregistration",
+ "purpose": "Test whether zones.reference_zones_from_shares + zones.effective_zones, fed with the manifest reference shares of the surveyed surface by depth band (candidates.json referenceZones, from rasterised state/agency contour products) predicts the share of the reference-pool surface that is dry at lower pools, against the exact stage-area (elevation-area) curve published in USACE CWMS. Also decide which sources/lakes have a documented survey reference pool (VERIFIED) for the effective-zone gate.",
+ "dataBinding": {
+  "factsFile": "docs/brains/depth/data/contour2_lake_facts.json",
+  "factsSha256": "724b4f63aa7fb736f3c78a514da94940fbadceb9b8f1d03faa71e09057b77023",
+  "curvesFile": "docs/brains/depth/data/contour2_curves.csv",
+  "curvesSha256": "390192beb0dcd22fd4cd302a8cf08666fe0e262f6fd059ef7e9b131e9d8e81cb",
+  "note": "Facts were collected before this file was frozen; no share-vs-curve comparison existed."
+ },
+ "truth": {
+  "source": "USACE CWMS Data API (https://cwms-data.usace.army.mil/cwms-data/ratings/<id>?office=<office>), Elev;Area (ft;acre) or Stage;Area ratings, fetched 2026-10-13; points in contour2_curves.csv. Stage curves (MVP Gull/Leech/Winnibigoshish): elevation = stage + CWMS location 'elevation' (gauge zero; 1100.0, 1200.0, 1200.0 ft NGVD29), an ASSUMPTION flagged on those lakes.",
+  "versionChoice": "if a rating has several effective-date versions: the version whose effective year is nearest to the contour survey year (ties: later); latest when the survey year is unknown",
+  "interpolation": "linear in elevation; below the curve's lowest elevation the area is 0 only if the first point's area is 0, otherwise UNDEFINED and that lake-level (or band) is excluded; above the highest elevation excluded",
+  "formulas": {
+   "A_ref": "A(pRef)",
+   "dryShare(d)": "1 - A(pRef-d)/A_ref",
+   "under3(d)": "(A(L)-A(L-3))/A_ref, L=pRef-d",
+   "threeToSix(d)": "(A(L-3)-A(L-6))/A_ref",
+   "sixToTen(d)": "(A(L-6)-A(L-10))/A_ref",
+   "deeper(d)": "A(L-10)/A_ref"
+  },
+  "independence": "The predictor shares come from contour products (sonar/map surveys); the truth is an operator curve (design-era or sediment-resurvey tables). They are independent products, unlike the TWDB S1 predictor, BUT lineage can overlap (e.g. a Corps curve may derive from the same survey) and the curve may predate or postdate the contour survey (sedimentation); curve effective dates and survey years are reported per lake. This is the only test; there is no circular predictor in this study."
+ },
+ "referenceVerification": {
+  "rule": "A lake is VERIFIED only if ALL hold. R1: a source statement (dataset metadata, the agency's per-lake map/sheet, or a per-contour Elevation attribute that equals pool - depth with range <= 0.5 ft inside the lake) says the contour depths are measured from a stated numeric water-surface ELEVATION (pool). R2: that elevation is within 0.25 ft (contract SIGMA_POOL['high']) of the Sector directory fullPoolFt (no rounding allowance). R3: the directory pool datum is NGVD29 or NAVD88 (recorded, not LOCAL/None) and any datum the source itself states is the same. R4: the source's documentation is not self-contradictory. Otherwise UNVERIFIED, with the missing evidence listed. 'Contours are depth at the date of survey' with no water level is UNVERIFIED.",
+  "statusIsFunctionOfFacts": true,
+  "rosterAndStatus": {
+   "Alum Creek Lake|OH": {
+    "source": "OH",
+    "intervalFt": 5.0,
+    "referenceStatus": "VERIFIED",
+    "statusReasons": [
+     "pool 888.00 ft stated by the source equals directory pool 888.00 ft (<= 0.25) in NGVD29"
+    ],
+    "pRefFt": 888.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "GRADED"
+   },
+   "Beech Fork Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 592,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Bluestone Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1410,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Bowman-Haley Reservoir|ND": {
+    "source": "ND",
+    "intervalFt": 2.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 2757.00 ft differs from directory pool 2754.80 ft by 2.20 ft (> 0.25)",
+     "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 2757.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Box Butte Reservoir|NE": {
+    "source": "NE",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 4006.8597,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Branched Oak Lake|NE": {
+    "source": "NE",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 1283.99015,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Burnsville Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 789,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Caesar Creek Lake|OH": {
+    "source": "OH",
+    "intervalFt": 10.0,
+    "referenceStatus": "VERIFIED",
+    "statusReasons": [
+     "pool 849.00 ft stated by the source equals directory pool 849.00 ft (<= 0.25) in NGVD29"
+    ],
+    "pRefFt": 849.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Calamus Reservoir|NE": {
+    "source": "NE",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 2244.0026,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Candlewood Lake|CT": {
+    "source": "CT",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 429.5,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Canyon Ferry Lake|MT": {
+    "source": "MT",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 3797,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Cheat Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 870,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Cheney Reservoir|KS": {
+    "source": "KS",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+     "R2: source pool 1420.70 ft differs from directory pool 1421.60 ft by 0.90 ft (> 0.25)"
+    ],
+    "pRefFt": 1420.7,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Clinton Lake|KS": {
+    "source": "KS",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+     "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 875.5,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Congamond Lakes|MA": {
+    "source": "CT",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 250,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "East Lake Tohopekaliga|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 58,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "East Lynn Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 662,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "El Dorado Lake|KS": {
+    "source": "KS",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)"
+    ],
+    "pRefFt": 1339.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Fort Gibson Lake|OK": {
+    "source": "OK",
+    "intervalFt": 10.0,
+    "referenceStatus": "VERIFIED",
+    "statusReasons": [
+     "pool 554.00 ft stated by the source equals directory pool 554.00 ft (<= 0.25) in NGVD29"
+    ],
+    "pRefFt": 554.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "GRADED"
+   },
+   "Georgetown Lake|MT": {
+    "source": "MT",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": null,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Grand Lake St. Marys|OH": {
+    "source": "OH",
+    "intervalFt": 2.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 871.00 ft differs from directory pool 870.60 ft by 0.40 ft (> 0.25)",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 871.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Grand Lake o' the Cherokees|OK": {
+    "source": "OK",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: implied pool (elevation + depth) is not constant within the lake (range 20.00 ft)",
+     "R2: source pool 745.00 ft differs from directory pool 744.00 ft by 1.00 ft (> 0.25)",
+     "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 744,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Griffin|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 58.21,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Gull Lake|MN": {
+    "source": "MN",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1194,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Harlan County Lake|NE": {
+    "source": "NE",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 1945.00 ft differs from directory pool 1946.00 ft by 1.00 ft (> 0.25)"
+    ],
+    "pRefFt": 1945.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Harris|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 62.21,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Harveys Lake|PA": {
+    "source": "PA",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1220,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Hebgen Lake|MT": {
+    "source": "MT",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 6534.87,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Highland Lake|CT": {
+    "source": "CT",
+    "intervalFt": 6.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 832,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Hoover Reservoir|OH": {
+    "source": "OH",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 894.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Houghton Lake|MI": {
+    "source": "MI",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1139,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Istokpoga|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 39.5,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Jennings Randolph Lake|MD": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1466,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Johnson Lake|NE": {
+    "source": "NE",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 2617.00 ft differs from directory pool 2618.00 ft by 1.00 ft (> 0.25)",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 2617.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Kissimmee|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 53,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Bemidji|MN": {
+    "source": "MN",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1352,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Cochituate|MA": {
+    "source": "MA",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 141,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake McConaughy|NE": {
+    "source": "NE",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 3265.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Milton|OH": {
+    "source": "OH",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 948.00 ft differs from directory pool 947.43 ft by 0.57 ft (> 0.25)"
+    ],
+    "pRefFt": 948.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Lake Minnetonka|MN": {
+    "source": "MN",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 929.4,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Murray (OK)|OK": {
+    "source": "OK",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: implied pool (elevation + depth) is not constant within the lake (range 200.00 ft)",
+     "R2: source pool 850.00 ft differs from directory pool 750.00 ft by 100.00 ft (> 0.25)",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 750,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Ogallala|NE": {
+    "source": "NE",
+    "intervalFt": 2.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 3126.50 ft differs from directory pool 3122.00 ft by 4.50 ft (> 0.25)",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 3126.5027,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Pepin|MN": {
+    "source": "MN",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 667,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Quinsigamond|MA": {
+    "source": "MA",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 460,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Sammamish|WA": {
+    "source": "WA",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 30,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Springfield|IL": {
+    "source": "IL",
+    "intervalFt": 2.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: attribute pool exists but the source does not say the contours are measured from it",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 560.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Vermilion|MN": {
+    "source": "MN",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1350,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Waramaug|CT": {
+    "source": "CT",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 684,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Wawasee|IN": {
+    "source": "IN",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 858,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Wentworth|NH": {
+    "source": "NH",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 534,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Lake Winnibigoshish|MN": {
+    "source": "MN",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1298.44,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Leech Lake|MN": {
+    "source": "MN",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1294.9,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Lochloosa|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 57,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Mansfield Hollow Lake|CT": {
+    "source": "CT",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 210,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Massabesic Lake|NH": {
+    "source": "NH",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 250,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Melvern Lake|KS": {
+    "source": "KS",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+     "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 1036.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Merritt Reservoir|NE": {
+    "source": "NE",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 2953.33 ft differs from directory pool 2946.00 ft by 7.33 ft (> 0.25)",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 2953.3334,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Merrymeeting Lake|NH": {
+    "source": "NH",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 610,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Milford Lake|KS": {
+    "source": "KS",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+     "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 1144.4,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Mille Lacs Lake|MN": {
+    "source": "MN",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1250,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Mosquito Creek Lake|OH": {
+    "source": "OH",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 901.00 ft differs from directory pool 900.73 ft by 0.27 ft (> 0.25)"
+    ],
+    "pRefFt": 901.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Mount Storm Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 3244,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Nelson Lake|ND": {
+    "source": "ND",
+    "intervalFt": 2.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 1926.70 ft differs from directory pool 1925.00 ft by 1.70 ft (> 0.25)",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 1926.69995,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Onota Lake|MA": {
+    "source": "MA",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1131,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Orange Lake|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 58,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Otis Reservoir|MA": {
+    "source": "MA",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": null,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Otter Tail Lake|MN": {
+    "source": "MN",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1327,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Pachaug Pond|CT": {
+    "source": "CT",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 159,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Patterson Lake|ND": {
+    "source": "ND",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: source pool 2421.80 ft differs from directory pool 2420.00 ft by 1.80 ft (> 0.25)",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 2421.80005,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Pomona Lake|KS": {
+    "source": "KS",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+     "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 974.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Pontoosuc Lake|MA": {
+    "source": "MA",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1101,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Pymatuning Reservoir|PA": {
+    "source": "OH",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 1008.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "R.D. Bailey Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1035,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Salt Fork Lake|OH": {
+    "source": "OH",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 800.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Sardis Lake|OK": {
+    "source": "OK",
+    "intervalFt": 10.0,
+    "referenceStatus": "VERIFIED",
+    "statusReasons": [
+     "pool 599.00 ft stated by the source equals directory pool 599.00 ft (<= 0.25) in NGVD29"
+    ],
+    "pRefFt": 599.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "GRADED"
+   },
+   "Senecaville Lake|OH": {
+    "source": "OH",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 832.2,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Sherman Reservoir|NE": {
+    "source": "NE",
+    "intervalFt": 3.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R2: directory has no pool elevation",
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 2162.3058,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Spruce Run Reservoir|NJ": {
+    "source": "NJ",
+    "intervalFt": 0.8202,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 272.2,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Squam Lake|NH": {
+    "source": "NH",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 561,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Squantz Pond|CT": {
+    "source": "CT",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 429.5,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Stonewall Jackson Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1072.53,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Summersville Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1652,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Sutton Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 922,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Swanson Reservoir|NE": {
+    "source": "NE",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R3: directory pool datum is None (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 2752.1129,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Tappan Lake|OH": {
+    "source": "OH",
+    "intervalFt": 3.0,
+    "referenceStatus": "VERIFIED",
+    "statusReasons": [
+     "pool 899.30 ft stated by the source equals directory pool 899.30 ft (<= 0.25) in NGVD29"
+    ],
+    "pRefFt": 899.3,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "GRADED"
+   },
+   "Tiber Reservoir (Lake Elwell)|MT": {
+    "source": "MT",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 2993,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Tohopekaliga (Toho)|FL": {
+    "source": "FL",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 55,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Tygart Lake|WV": {
+    "source": "WV",
+    "intervalFt": 1.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1093.45,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   },
+   "Umbagog Lake|NH": {
+    "source": "NH",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 1245,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Wachusett Reservoir|MA": {
+    "source": "MA",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 395,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Wallum Lake|RI": {
+    "source": "MA",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 542,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Webster Lake|MA": {
+    "source": "MA",
+    "intervalFt": 5.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 463,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "White Bear Lake|MN": {
+    "source": "MN",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R1: no source statement of the reference water-surface elevation (contours are depth below 'the water surface at survey' with no stated level)"
+    ],
+    "pRefFt": 924,
+    "pRefOrigin": "directory fullPoolFt",
+    "hasCurve": false,
+    "group": "NO_CURVE"
+   },
+   "Wilson Lake|KS": {
+    "source": "KS",
+    "intervalFt": 10.0,
+    "referenceStatus": "UNVERIFIED",
+    "statusReasons": [
+     "R4: the source's own texts contradict each other (normal operating pool vs operating level at the time of survey)",
+     "R3: directory pool datum is LOCAL (not NGVD29/NAVD88): vertical datum of the pool figure is not established"
+    ],
+    "pRefFt": 1516.0,
+    "pRefOrigin": "source-stated/implied pool",
+    "hasCurve": true,
+    "group": "INFORMATIONAL_ASSUMED_POOL"
+   }
+  },
+  "excludedFromPassFail": "UNVERIFIED lakes never enter pass/fail; they appear only in the informational 'assumed pool' runs (pRef = source-stated pool if the source has one with constant implied elevation, else directory fullPoolFt)."
+ },
+ "levels": {
+  "drawdownBelowPRefFt": [
+   1.5,
+   3.0,
+   4.5,
+   6.0,
+   8.0
+  ],
+  "rule": "pool_low = pRef - d; shift passed to effective_zones = -d. A lake-level is included only if the truth curve is defined at pRef-d (dry share) -- see truth.interpolation; a band is scored only if its lowest needed elevation is within the curve. Excluded lake-levels are listed, never imputed."
+ },
+ "sigma": {
+  "graded": "production sigma = sqrt(0.25^2 + 0.1^2 + 0.1^2) = 0.287 ft for every lake (sigma_pool 'high' 0.25, sigma_level DIRECT_OPERATOR_POOL 0.1, sigma_datum SAME_DATUM 0.1); the same value is used for assumed-pool lakes (pool uncertainty there is in truth larger; informational)",
+  "informational": "sigma = 0"
+ },
+ "predictors": {
+  "C1": {
+   "role": "GRADED (independent of the truth)",
+   "shares": "candidates.json referenceZones.cumulative (keys 3.0/6.0/10.0 -> lt3/lt6/lt10) as frozen in contour2_lake_facts.json; only supported edges exist",
+   "interval": "referenceZones.intervalFt of the lake",
+   "build": "zones.reference_zones_from_shares(shares, interval, coverage, tier, source, reference_verified=True)  (flag forced on so UNVERIFIED lakes can be computed informationally)"
+  },
+  "baseline": "informational: leave-one-lake-out mean dry share at the same d over the other lakes of the same group"
+ },
+ "metrics": {
+  "primaryQuantity": "dry share of the reference-pool surface (effective_zones()['shares']['dry'], point estimate = midpoint of (lo, hi)); if the engine WITHHOLDS dry (bound wider than contract MAX_PUBLISHED_BOUND_WIDTH = 0.25) the lake-level is 'withheld' and not scored for accuracy",
+  "M1_MAE": "mean |midpoint - truth| over PUBLISHED lake-levels",
+  "M2_maxAbsError": "max |midpoint - truth|",
+  "M3_boundsCoverage": "fraction of published lake-levels with lo-0.0005 <= truth <= hi+0.0005",
+  "M4_boundsWidth": "median and p90 of (hi-lo) over published lake-levels",
+  "M5_rank": "pooled Spearman midpoint vs truth over published graded lake-levels (reported per level across lakes, not gating)",
+  "M6_publishRate": "published lake-levels / included lake-levels",
+  "bands": "under3/threeToSix/sixToTen/deeper: same M1/M3 where published, reported, not gating",
+  "signedBias": "mean(midpoint - truth) reported"
+ },
+ "diagnostics": {
+  "D1_shareCheckAtPRef": "for each supported edge e: S_contour(e) - S_curve(e) with S_curve(e) = (A(pRef)-A(pRef-e))/A(pRef); reported, does not gate",
+  "D2_impliedPool": "grid P in pRef-6..pRef+6 step 0.1; P* minimises sum_e (S_contour(e) - S_curve_P(e))^2 over supported edges; report P*-pRef. INFORMATIONAL ONLY: it shows how far the survey level may be from the assumed pool; it never changes a status, a level or a threshold"
+ },
+ "thresholds": {
+  "T1_MAE_max": 0.03,
+  "T2_maxAbsError_max": 0.06,
+  "T3_boundsCoverage_min": 0.8,
+  "T4_medianBoundsWidth_max": 0.15,
+  "T5_pooledSpearman_min": 0.95,
+  "T6_publishRate_min": 0.6,
+  "T6_minPublishedLevelsPerLake": 3,
+  "T6_why": "Different from TWDB (where dry was always published): coarse intervals (5/10 ft) leave only the 10 ft edge so dry bounds are [0, S10] and are withheld by the engine's own 0.25 width rule. A lake that is withheld at most levels cannot be 'passed'; the withhold is the engine's correct refusal, not an accuracy failure, so accuracy metrics use published levels and T6 gates the usefulness.",
+  "perLakePass": "VERIFIED and curve exists and published levels >= 3 and own MAE <= T1, max <= T2, coverage >= T3, median width <= T4 and publishRate >= T6. validation.passed = true only then; false if VERIFIED+curve and any fails; null if UNVERIFIED or no curve (including 'insufficient published levels' = false for VERIFIED lakes).",
+  "pooledPass": "over GRADED lakes: T1..T6 all met (T5 needs >= 3 published points); reported only, not required for a lake's own passed flag",
+  "frozen": true
+ },
+ "enableRecommendationRule": "effectiveZones may be enabled for a lake only if VERIFIED and validation.passed is true; a result on assumed-pool lakes is NOT an enable recommendation.",
+ "analysisRules": [
+  "Thresholds, levels, rule, roster, predictor and metrics are frozen; nothing changes after results.",
+  "Every included lake-level is reported, withheld ones included.",
+  "The compute script (research/depth/contour2_validate.py) verifies this file's hash AND the data files' hashes and refuses to run on a mismatch.",
+  "Small n is stated; no lake is added or dropped after results."
+ ],
+ "disclosure": "Before freezing the author had read: the manifest reference shares and intervals of all 94 lakes; the source pool statements (ODNR PDFs, KARS PhysicalLakeData, NE/ND/OK contour Elevation attributes) and their comparison with directory pools (so the status outcomes above are known to the author; the R2 tolerance was kept at 0.25 ft with no rounding allowance deliberately to avoid post-hoc relaxation); the CWMS rating endpoints (minimum/maximum elevation, datum, version dates). No share-vs-curve comparison, no A(pRef), and no effective-zone prediction had been computed.",
+ "knownCaveats": [
+  "Shares are of the SURVEYED surface at the survey pool (coverage may be < 1); the curve gives whole-lake area. Partial coverage biases shares (reported in facts coverage).",
+  "Curves may predate the contour survey; sedimentation changes shallow area.",
+  "CWMS curve datum 'OTHER' (NWDM Step templates) and Stage curves (MN) carry assumed datums.",
+  "Withholding follows the engine's 0.25 bound-width rule."
+ ],
+ "freeze": {
+  "algorithm": "sha256 of json.dumps(doc without 'freeze', sort_keys=True, separators=(',',':'), ensure_ascii=True)",
+  "sha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+  "frozenAtUtc": "2026-10-13T21:23:13Z"
+ }
+}

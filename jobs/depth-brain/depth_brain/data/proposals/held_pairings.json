@@ -1,0 +1,12 @@
+{
+ "schema": "depth-held-pairings-v1",
+ "heldAt": "2026-10-14",
+ "note": "Proposals that pass the statistical/schema rules but fail lead review. They are NOT promoted. Each needs the stated evidence first.",
+ "held": {
+  "Henrys Lake|ID": "USGS site 13039000 altitude is 6462.71 ft NAVD88 (alt_datum_cd), but the pool figure is built from a WDR gage datum of 6457.16 ft NGVD29: the level (gage height + site altitude) is NAVD88-based, the pool NGVD29-based; 5.55 ft apart. Proposal's SAME_DATUM NGVD29 is wrong for the level series.",
+  "C.J. Strike Reservoir|ID": "usgs-d level = 00065 gage height + site altitude 2402.70 ft NAVD88; the proposal says NGVD29 for the level. Datum mismatch unresolved.",
+  "Lake McConaughy|NE": "Pool figure itself disagrees between CNPPID pages (3265 vs 3270 ft) and the level is labelled 'feet above sea level' while the pool is local Central datum; a few feet of doubt on the reference. Needs CNPPID confirmation.",
+  "Lake Winnipesaukee|NH": "NGVD statement is from a third-party copy (NHDES PDF 403); NHDES publishes a relative lake-level scale for this lake in other records (elevation - 500 ft); series PELV.PT1H datum not established.",
+  "Roosevelt|AZ": "Reclamation report says reservoir gage readings are NGVD29, but SRP's Elevation.Official.354 is not shown to be that gage; the worker flagged 'confirm SRP gage is that NGVD29 gage'."
+ }
+}

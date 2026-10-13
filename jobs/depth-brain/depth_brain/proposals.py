@@ -97,15 +97,29 @@ def plan(manifest: dict, proposals_dir: str | None = None) -> dict:
     d = proposals_dir or os.path.join(DATA, "proposals")
     by_id = {c["lakeId"]: c for c in manifest["candidates"]}
     accepted, rejected = {}, []
-    pp = load(os.path.join(d, "datum_pairings.json"))
-    for lid, rec in ((pp or {}).get("lakes") or {}).items():
+    pairing_files = sorted(f for f in os.listdir(d) if f.startswith("datum_pairings") and f.endswith(".json")) if os.path.isdir(d) else []
+    held = (load(os.path.join(d, "held_pairings.json")) or {}).get("held", {})
+    usgs_d = (load(os.path.join(DATA, "usgs_d_site_datums.json")) or {}).get("lakes", {})
+    merged = {}
+    for fn in pairing_files:                                  # later files override earlier ones for the same lake only if the earlier was not promotable
+        for lid, rec in ((load(os.path.join(d, fn)) or {}).get("lakes") or {}).items():
+            rec = {**rec, "_file": fn}
+            if lid not in merged or validate_pairing(lid, merged[lid], by_id)[0] is False:
+                merged[lid] = rec
+    for lid, rec in merged.items():
         ok, why = validate_pairing(lid, rec, by_id)
+        if ok and lid in held:
+            ok, why = False, "held by lead review: " + held[lid][:120]
+        if ok and lid in usgs_d:                     # usgs-d level = gage height + site altitude: its datum is the site altitude datum
+            sd, ld = usgs_d[lid].get("altDatumCd"), datum_token(rec.get("levelDatum"))
+            if normalize_datum(sd) and ld and normalize_datum(sd) != ld:
+                ok, why = False, f"usgs-d level datum is the site altitude datum {sd}, proposal says {ld}"
         if ok:
             accepted[lid] = {"status": rec["decision"], "sigmaFt": rec["sigmaFt"], "levelDatum": datum_token(rec.get("levelDatum")), "referenceDatum": datum_token(rec.get("referenceDatum")),
                              "summary": rec.get("summary", ""), "evidence": rec["evidence"], "caveat": rec.get("caveat"), "method": rec["method"], "confidence": rec.get("confidence"),
-                             "offsetStats": rec.get("offsetStats"), "promotedFrom": "proposals/datum_pairings.json", "rulesVersion": RULES_VERSION}
+                             "offsetStats": rec.get("offsetStats"), "promotedFrom": "proposals/" + rec["_file"], "rulesVersion": RULES_VERSION}
         else:
-            rejected.append({"lakeId": lid, "file": "datum_pairings.json", "reason": why})
+            rejected.append({"lakeId": lid, "file": rec["_file"], "reason": why})
     pr = load(os.path.join(d, "provider_rules.json"))
     acc = (load(os.path.join(d, "accepted_provider_rules.json")) or {}).get("accepted", [])
     for rule in (pr or {}).get("rules", []):

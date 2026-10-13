@@ -1,0 +1,1451 @@
+{
+ "prereg": {
+  "sha256": "04d16d491fa860407800f4c8c1d1bc526e4393880f4983a428f858e49212ba65",
+  "frozenAtUtc": "2026-10-13T21:23:13Z"
+ },
+ "sigmaProduction": 0.2872,
+ "perLake": {
+  "Alum Creek Lake|OH": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0,
+    "pass": {
+     "all": false,
+     "why": "fewer than 3 published lake-levels",
+     "T6": false
+    }
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "GRADED",
+   "status": "VERIFIED",
+   "intervalFt": 5.0,
+   "passed": false
+  },
+  "Bowman-Haley Reservoir|ND": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 3,
+    "publishRate": 0.6,
+    "mae": 0.03210333333333334,
+    "maxAbs": 0.03929,
+    "bias": -0.03210333333333334,
+    "coverage": 1.0,
+    "widthMedian": 0.192,
+    "widthP90": 0.204,
+    "spearmanPooled": 1.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.036413999999999995,
+    "maxAbs": 0.05599,
+    "bias": -0.036413999999999995,
+    "coverage": 0.6,
+    "widthMedian": 0.112,
+    "widthP90": 0.20099999999999998,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 2.0,
+   "passed": null
+  },
+  "Branched Oak Lake|NE": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 4,
+    "publishRate": 0.8,
+    "mae": 0.0067675,
+    "maxAbs": 0.01882,
+    "bias": 0.0026425,
+    "coverage": 1.0,
+    "widthMedian": 0.1375,
+    "widthP90": 0.19640000000000002,
+    "spearmanPooled": 1.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.004758,
+    "maxAbs": 0.01882,
+    "bias": 0.0028580000000000003,
+    "coverage": 1.0,
+    "widthMedian": 0.101,
+    "widthP90": 0.1434,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 3.0,
+   "passed": null
+  },
+  "Cheney Reservoir|KS": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "Clinton Lake|KS": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "El Dorado Lake|KS": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "Fort Gibson Lake|OK": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0,
+    "pass": {
+     "all": false,
+     "why": "fewer than 3 published lake-levels",
+     "T6": false
+    }
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "GRADED",
+   "status": "VERIFIED",
+   "intervalFt": 10.0,
+   "passed": false
+  },
+  "Gull Lake|MN": {
+   "production": {
+    "nIncluded": 3,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 3,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 10.0,
+   "passed": null
+  },
+  "Harlan County Lake|NE": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.043382,
+    "maxAbs": 0.08242,
+    "bias": -0.013689999999999997,
+    "coverage": 1.0,
+    "widthMedian": 0.217,
+    "widthP90": 0.217
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.043382,
+    "maxAbs": 0.08242,
+    "bias": -0.013689999999999997,
+    "coverage": 1.0,
+    "widthMedian": 0.217,
+    "widthP90": 0.217
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "Lake Milton|OH": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 4,
+    "publishRate": 0.8,
+    "mae": 0.016767499999999998,
+    "maxAbs": 0.043,
+    "bias": 0.016767499999999998,
+    "coverage": 1.0,
+    "widthMedian": 0.1495,
+    "widthP90": 0.1966,
+    "spearmanPooled": 1.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.014737999999999998,
+    "maxAbs": 0.043,
+    "bias": 0.014737999999999998,
+    "coverage": 0.6,
+    "widthMedian": 0.091,
+    "widthP90": 0.1578,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 3.0,
+   "passed": null
+  },
+  "Lake Winnibigoshish|MN": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.084192,
+    "maxAbs": 0.16535,
+    "bias": -0.076292,
+    "coverage": 0.6,
+    "widthMedian": 0.21,
+    "widthP90": 0.21
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.084192,
+    "maxAbs": 0.16535,
+    "bias": -0.076292,
+    "coverage": 0.6,
+    "widthMedian": 0.21,
+    "widthP90": 0.21
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "Leech Lake|MN": {
+   "production": {
+    "nIncluded": 1,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 1,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "Melvern Lake|KS": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 10.0,
+   "passed": null
+  },
+  "Milford Lake|KS": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 10.0,
+   "passed": null
+  },
+  "Mosquito Creek Lake|OH": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 3,
+    "publishRate": 0.6,
+    "mae": 0.027806666666666664,
+    "maxAbs": 0.05172,
+    "bias": 0.0167,
+    "coverage": 1.0,
+    "widthMedian": 0.178,
+    "widthP90": 0.23399999999999999,
+    "spearmanPooled": 1.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.02077,
+    "maxAbs": 0.05172,
+    "bias": 0.014106000000000002,
+    "coverage": 0.6,
+    "widthMedian": 0.148,
+    "widthP90": 0.22,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 3.0,
+   "passed": null
+  },
+  "Pomona Lake|KS": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "Sardis Lake|OK": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0,
+    "pass": {
+     "all": false,
+     "why": "fewer than 3 published lake-levels",
+     "T6": false
+    }
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "group": "GRADED",
+   "status": "VERIFIED",
+   "intervalFt": 10.0,
+   "passed": false
+  },
+  "Senecaville Lake|OH": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 2,
+    "publishRate": 0.4,
+    "mae": 0.10192000000000001,
+    "maxAbs": 0.10817,
+    "bias": 0.10192000000000001,
+    "coverage": 0.5,
+    "widthMedian": 0.137,
+    "widthP90": 0.1946
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 4,
+    "publishRate": 0.8,
+    "mae": 0.1051125,
+    "maxAbs": 0.14066,
+    "bias": 0.1051125,
+    "coverage": 0.25,
+    "widthMedian": 0.0325,
+    "widthP90": 0.1658,
+    "spearmanPooled": 1.0
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 3.0,
+   "passed": null
+  },
+  "Stonewall Jackson Lake|WV": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 4,
+    "publishRate": 0.8,
+    "mae": 0.0086475,
+    "maxAbs": 0.01564,
+    "bias": -0.0070075,
+    "coverage": 1.0,
+    "widthMedian": 0.1325,
+    "widthP90": 0.18510000000000001,
+    "spearmanPooled": 1.0
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.011148,
+    "maxAbs": 0.01564,
+    "bias": -0.011148,
+    "coverage": 0.6,
+    "widthMedian": 0.084,
+    "widthP90": 0.1356,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 1.0,
+   "passed": null
+  },
+  "Swanson Reservoir|NE": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.045052,
+    "maxAbs": 0.07809,
+    "bias": 0.0053599999999999984,
+    "coverage": 1.0,
+    "widthMedian": 0.238,
+    "widthP90": 0.238
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.045052,
+    "maxAbs": 0.07809,
+    "bias": 0.0053599999999999984,
+    "coverage": 1.0,
+    "widthMedian": 0.238,
+    "widthP90": 0.238
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 5.0,
+   "passed": null
+  },
+  "Tappan Lake|OH": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 4,
+    "publishRate": 0.8,
+    "mae": 0.046855,
+    "maxAbs": 0.06086,
+    "bias": 0.046855,
+    "coverage": 1.0,
+    "widthMedian": 0.1315,
+    "widthP90": 0.2102,
+    "spearmanPooled": 1.0,
+    "pass": {
+     "T1": false,
+     "T2": false,
+     "T3": true,
+     "T4": true,
+     "T6": true,
+     "all": false
+    }
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.045978,
+    "maxAbs": 0.06136,
+    "bias": 0.045978,
+    "coverage": 0.6,
+    "widthMedian": 0.119,
+    "widthP90": 0.1338,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "group": "GRADED",
+   "status": "VERIFIED",
+   "intervalFt": 3.0,
+   "passed": false
+  },
+  "Tiber Reservoir (Lake Elwell)|MT": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.032054,
+    "maxAbs": 0.0582,
+    "bias": -0.01207,
+    "coverage": 1.0,
+    "widthMedian": 0.124,
+    "widthP90": 0.124
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.032054,
+    "maxAbs": 0.0582,
+    "bias": -0.01207,
+    "coverage": 1.0,
+    "widthMedian": 0.124,
+    "widthP90": 0.124
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 10.0,
+   "passed": null
+  },
+  "Tygart Lake|WV": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.099976,
+    "maxAbs": 0.12815,
+    "bias": 0.099976,
+    "coverage": 0.4,
+    "widthMedian": 0.046,
+    "widthP90": 0.1732,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.11357600000000001,
+    "maxAbs": 0.12766,
+    "bias": 0.11357600000000001,
+    "coverage": 0.2,
+    "widthMedian": 0.022,
+    "widthP90": 0.10560000000000001,
+    "spearmanPooled": 0.9999999999999999
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 1.0,
+   "passed": null
+  },
+  "Wilson Lake|KS": {
+   "production": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.038276,
+    "maxAbs": 0.06222,
+    "bias": 0.012239999999999997,
+    "coverage": 1.0,
+    "widthMedian": 0.185,
+    "widthP90": 0.185
+   },
+   "zero": {
+    "nIncluded": 5,
+    "nPublished": 5,
+    "publishRate": 1.0,
+    "mae": 0.038276,
+    "maxAbs": 0.06222,
+    "bias": 0.012239999999999997,
+    "coverage": 1.0,
+    "widthMedian": 0.185,
+    "widthP90": 0.185
+   },
+   "group": "INFORMATIONAL_ASSUMED_POOL",
+   "status": "UNVERIFIED",
+   "intervalFt": 10.0,
+   "passed": null
+  }
+ },
+ "pooled": {
+  "GRADED": {
+   "production": {
+    "nIncluded": 20,
+    "nPublished": 4,
+    "publishRate": 0.2,
+    "mae": 0.046855,
+    "maxAbs": 0.06086,
+    "bias": 0.046855,
+    "coverage": 1.0,
+    "widthMedian": 0.1315,
+    "widthP90": 0.2102,
+    "spearmanPooled": 1.0,
+    "lakes": [
+     "Alum Creek Lake|OH",
+     "Fort Gibson Lake|OK",
+     "Sardis Lake|OK",
+     "Tappan Lake|OH"
+    ],
+    "pass": {
+     "T1": false,
+     "T2": false,
+     "T3": true,
+     "T4": true,
+     "T6": false,
+     "T5": true,
+     "all": false
+    }
+   },
+   "zero": {
+    "nIncluded": 20,
+    "nPublished": 5,
+    "publishRate": 0.25,
+    "mae": 0.045978,
+    "maxAbs": 0.06136,
+    "bias": 0.045978,
+    "coverage": 0.6,
+    "widthMedian": 0.119,
+    "widthP90": 0.1338,
+    "spearmanPooled": 0.9999999999999999,
+    "lakes": [
+     "Alum Creek Lake|OH",
+     "Fort Gibson Lake|OK",
+     "Sardis Lake|OK",
+     "Tappan Lake|OH"
+    ]
+   }
+  },
+  "ASSUMED_ALL": {
+   "production": {
+    "nIncluded": 94,
+    "nPublished": 50,
+    "publishRate": 0.5319148936170213,
+    "mae": 0.0445392,
+    "maxAbs": 0.16535,
+    "bias": 0.0056972,
+    "coverage": 0.88,
+    "widthMedian": 0.185,
+    "widthP90": 0.238,
+    "spearmanPooled": 0.6481366545101537,
+    "lakes": [
+     "Bowman-Haley Reservoir|ND",
+     "Branched Oak Lake|NE",
+     "Cheney Reservoir|KS",
+     "Clinton Lake|KS",
+     "El Dorado Lake|KS",
+     "Gull Lake|MN",
+     "Harlan County Lake|NE",
+     "Lake Milton|OH",
+     "Lake Winnibigoshish|MN",
+     "Leech Lake|MN",
+     "Melvern Lake|KS",
+     "Milford Lake|KS",
+     "Mosquito Creek Lake|OH",
+     "Pomona Lake|KS",
+     "Senecaville Lake|OH",
+     "Stonewall Jackson Lake|WV",
+     "Swanson Reservoir|NE",
+     "Tiber Reservoir (Lake Elwell)|MT",
+     "Tygart Lake|WV",
+     "Wilson Lake|KS"
+    ]
+   },
+   "zero": {
+    "nIncluded": 94,
+    "nPublished": 59,
+    "publishRate": 0.6276595744680851,
+    "mae": 0.044783898305084745,
+    "maxAbs": 0.16535,
+    "bias": 0.008250338983050848,
+    "coverage": 0.711864406779661,
+    "widthMedian": 0.148,
+    "widthP90": 0.22120000000000006,
+    "spearmanPooled": 0.6875629251478124,
+    "lakes": [
+     "Bowman-Haley Reservoir|ND",
+     "Branched Oak Lake|NE",
+     "Cheney Reservoir|KS",
+     "Clinton Lake|KS",
+     "El Dorado Lake|KS",
+     "Gull Lake|MN",
+     "Harlan County Lake|NE",
+     "Lake Milton|OH",
+     "Lake Winnibigoshish|MN",
+     "Leech Lake|MN",
+     "Melvern Lake|KS",
+     "Milford Lake|KS",
+     "Mosquito Creek Lake|OH",
+     "Pomona Lake|KS",
+     "Senecaville Lake|OH",
+     "Stonewall Jackson Lake|WV",
+     "Swanson Reservoir|NE",
+     "Tiber Reservoir (Lake Elwell)|MT",
+     "Tygart Lake|WV",
+     "Wilson Lake|KS"
+    ]
+   }
+  },
+  "ASSUMED_interval_le3": {
+   "production": {
+    "nIncluded": 35,
+    "nPublished": 25,
+    "publishRate": 0.7142857142857143,
+    "mae": 0.040487199999999994,
+    "maxAbs": 0.12815,
+    "bias": 0.028284800000000002,
+    "coverage": 0.84,
+    "widthMedian": 0.148,
+    "widthP90": 0.2082,
+    "spearmanPooled": 0.8346153846153845,
+    "lakes": [
+     "Bowman-Haley Reservoir|ND",
+     "Branched Oak Lake|NE",
+     "Lake Milton|OH",
+     "Mosquito Creek Lake|OH",
+     "Senecaville Lake|OH",
+     "Stonewall Jackson Lake|WV",
+     "Tygart Lake|WV"
+    ]
+   },
+   "zero": {
+    "nIncluded": 35,
+    "nPublished": 34,
+    "publishRate": 0.9714285714285714,
+    "mae": 0.04198441176470588,
+    "maxAbs": 0.14066,
+    "bias": 0.026736176470588232,
+    "coverage": 0.5588235294117647,
+    "widthMedian": 0.07450000000000001,
+    "widthP90": 0.1917,
+    "spearmanPooled": 0.8551566080977846,
+    "lakes": [
+     "Bowman-Haley Reservoir|ND",
+     "Branched Oak Lake|NE",
+     "Lake Milton|OH",
+     "Mosquito Creek Lake|OH",
+     "Senecaville Lake|OH",
+     "Stonewall Jackson Lake|WV",
+     "Tygart Lake|WV"
+    ]
+   }
+  },
+  "ASSUMED_interval_5": {
+   "production": {
+    "nIncluded": 36,
+    "nPublished": 15,
+    "publishRate": 0.4166666666666667,
+    "mae": 0.057541999999999996,
+    "maxAbs": 0.16535,
+    "bias": -0.02820733333333333,
+    "coverage": 0.8666666666666667,
+    "widthMedian": 0.217,
+    "widthP90": 0.238,
+    "spearmanPooled": -0.37796447300922714,
+    "lakes": [
+     "Cheney Reservoir|KS",
+     "Clinton Lake|KS",
+     "El Dorado Lake|KS",
+     "Harlan County Lake|NE",
+     "Lake Winnibigoshish|MN",
+     "Leech Lake|MN",
+     "Pomona Lake|KS",
+     "Swanson Reservoir|NE"
+    ]
+   },
+   "zero": {
+    "nIncluded": 36,
+    "nPublished": 15,
+    "publishRate": 0.4166666666666667,
+    "mae": 0.057541999999999996,
+    "maxAbs": 0.16535,
+    "bias": -0.02820733333333333,
+    "coverage": 0.8666666666666667,
+    "widthMedian": 0.217,
+    "widthP90": 0.238,
+    "spearmanPooled": -0.37796447300922714,
+    "lakes": [
+     "Cheney Reservoir|KS",
+     "Clinton Lake|KS",
+     "El Dorado Lake|KS",
+     "Harlan County Lake|NE",
+     "Lake Winnibigoshish|MN",
+     "Leech Lake|MN",
+     "Pomona Lake|KS",
+     "Swanson Reservoir|NE"
+    ]
+   }
+  },
+  "ASSUMED_interval_10": {
+   "production": {
+    "nIncluded": 23,
+    "nPublished": 10,
+    "publishRate": 0.43478260869565216,
+    "mae": 0.035165,
+    "maxAbs": 0.06222,
+    "bias": 8.500000000000036e-05,
+    "coverage": 1.0,
+    "widthMedian": 0.1545,
+    "widthP90": 0.185,
+    "spearmanPooled": 0.034815531191139566,
+    "lakes": [
+     "Gull Lake|MN",
+     "Melvern Lake|KS",
+     "Milford Lake|KS",
+     "Tiber Reservoir (Lake Elwell)|MT",
+     "Wilson Lake|KS"
+    ]
+   },
+   "zero": {
+    "nIncluded": 23,
+    "nPublished": 10,
+    "publishRate": 0.43478260869565216,
+    "mae": 0.035165,
+    "maxAbs": 0.06222,
+    "bias": 8.500000000000036e-05,
+    "coverage": 1.0,
+    "widthMedian": 0.1545,
+    "widthP90": 0.185,
+    "spearmanPooled": 0.034815531191139566,
+    "lakes": [
+     "Gull Lake|MN",
+     "Melvern Lake|KS",
+     "Milford Lake|KS",
+     "Tiber Reservoir (Lake Elwell)|MT",
+     "Wilson Lake|KS"
+    ]
+   }
+  }
+ },
+ "bands": {
+  "GRADED": {
+   "under3": {
+    "nIncluded": 20,
+    "nPublished": 2,
+    "publishRate": 0.1,
+    "mae": 0.018744999999999998,
+    "maxAbs": 0.01889,
+    "bias": 0.018744999999999998,
+    "coverage": 1.0,
+    "widthMedian": 0.239,
+    "widthP90": 0.239
+   },
+   "threeToSix": {
+    "nIncluded": 20,
+    "nPublished": 2,
+    "publishRate": 0.1,
+    "mae": 0.018744999999999998,
+    "maxAbs": 0.01889,
+    "bias": 0.018744999999999998,
+    "coverage": 1.0,
+    "widthMedian": 0.239,
+    "widthP90": 0.239
+   },
+   "sixToTen": {
+    "nIncluded": 20,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "deeper": {
+    "nIncluded": 20,
+    "nPublished": 0,
+    "publishRate": 0.0
+   }
+  },
+  "ASSUMED_ALL": {
+   "under3": {
+    "nIncluded": 90,
+    "nPublished": 27,
+    "publishRate": 0.3,
+    "mae": 0.03243555555555555,
+    "maxAbs": 0.07061,
+    "bias": 0.030465185185185182,
+    "coverage": 1.0,
+    "widthMedian": 0.201,
+    "widthP90": 0.238,
+    "spearmanPooled": 0.5499476920244556
+   },
+   "threeToSix": {
+    "nIncluded": 87,
+    "nPublished": 12,
+    "publishRate": 0.13793103448275862,
+    "mae": 0.03150583333333334,
+    "maxAbs": 0.05227,
+    "bias": 0.03150583333333334,
+    "coverage": 1.0,
+    "widthMedian": 0.1975,
+    "widthP90": 0.2359,
+    "spearmanPooled": 0.4955946277833521
+   },
+   "sixToTen": {
+    "nIncluded": 85,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "deeper": {
+    "nIncluded": 85,
+    "nPublished": 0,
+    "publishRate": 0.0
+   }
+  },
+  "ASSUMED_interval_le3": {
+   "under3": {
+    "nIncluded": 35,
+    "nPublished": 7,
+    "publishRate": 0.2,
+    "mae": 0.025584285714285716,
+    "maxAbs": 0.07061,
+    "bias": 0.017984285714285713,
+    "coverage": 1.0,
+    "widthMedian": 0.182,
+    "widthP90": 0.2042,
+    "spearmanPooled": 0.9908673886137246
+   },
+   "threeToSix": {
+    "nIncluded": 35,
+    "nPublished": 2,
+    "publishRate": 0.05714285714285714,
+    "mae": 0.00577,
+    "maxAbs": 0.00577,
+    "bias": 0.00577,
+    "coverage": 1.0,
+    "widthMedian": 0.046,
+    "widthP90": 0.046
+   },
+   "sixToTen": {
+    "nIncluded": 35,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "deeper": {
+    "nIncluded": 35,
+    "nPublished": 0,
+    "publishRate": 0.0
+   }
+  },
+  "ASSUMED_interval_5": {
+   "under3": {
+    "nIncluded": 34,
+    "nPublished": 12,
+    "publishRate": 0.35294117647058826,
+    "mae": 0.040634166666666666,
+    "maxAbs": 0.05227,
+    "bias": 0.040634166666666666,
+    "coverage": 1.0,
+    "widthMedian": 0.217,
+    "widthP90": 0.238,
+    "spearmanPooled": -0.4139186771923578
+   },
+   "threeToSix": {
+    "nIncluded": 32,
+    "nPublished": 6,
+    "publishRate": 0.1875,
+    "mae": 0.046086666666666665,
+    "maxAbs": 0.05227,
+    "bias": 0.046086666666666665,
+    "coverage": 1.0,
+    "widthMedian": 0.217,
+    "widthP90": 0.238,
+    "spearmanPooled": -0.4780914437337575
+   },
+   "sixToTen": {
+    "nIncluded": 30,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "deeper": {
+    "nIncluded": 30,
+    "nPublished": 0,
+    "publishRate": 0.0
+   }
+  },
+  "ASSUMED_interval_10": {
+   "under3": {
+    "nIncluded": 21,
+    "nPublished": 8,
+    "publishRate": 0.38095238095238093,
+    "mae": 0.0261325,
+    "maxAbs": 0.05221,
+    "bias": 0.0261325,
+    "coverage": 1.0,
+    "widthMedian": 0.1545,
+    "widthP90": 0.185,
+    "spearmanPooled": 0.5455447255899809
+   },
+   "threeToSix": {
+    "nIncluded": 20,
+    "nPublished": 4,
+    "publishRate": 0.2,
+    "mae": 0.0225025,
+    "maxAbs": 0.02903,
+    "bias": 0.0225025,
+    "coverage": 1.0,
+    "widthMedian": 0.1545,
+    "widthP90": 0.185,
+    "spearmanPooled": 0.8944271909999159
+   },
+   "sixToTen": {
+    "nIncluded": 20,
+    "nPublished": 0,
+    "publishRate": 0.0
+   },
+   "deeper": {
+    "nIncluded": 20,
+    "nPublished": 0,
+    "publishRate": 0.0
+   }
+  }
+ },
+ "diagnostics": {
+  "Alum Creek Lake|OH": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": 0.0168
+   },
+   "D2_impliedPoolMinusPRefFt": 2.0,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "1970-01-01",
+   "surveyYear": 2001,
+   "curveElevRange": [
+    821.0,
+    920.0
+   ]
+  },
+  "Bowman-Haley Reservoir|ND": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": -0.0561,
+    "6.0": -0.0296,
+    "10.0": -0.0136
+   },
+   "D2_impliedPoolMinusPRefFt": 1.8,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "2024-06-01",
+   "surveyYear": null,
+   "curveElevRange": [
+    2728.4,
+    2793.5
+   ]
+  },
+  "Branched Oak Lake|NE": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": -0.0007,
+    "6.0": -0.0002,
+    "10.0": 0.0059
+   },
+   "D2_impliedPoolMinusPRefFt": -0.1,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "2020-10-01",
+   "surveyYear": 2003,
+   "curveElevRange": [
+    1255.30005,
+    1317.30005
+   ]
+  },
+  "Cheney Reservoir|KS": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.0032
+   },
+   "D2_impliedPoolMinusPRefFt": 0.5,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2014-09-02",
+   "surveyYear": 2010,
+   "curveElevRange": [
+    1361.0,
+    1450.0
+   ]
+  },
+  "Clinton Lake|KS": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.0202
+   },
+   "D2_impliedPoolMinusPRefFt": 2.3,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2012-03-31",
+   "surveyYear": 2009,
+   "curveElevRange": [
+    831.0,
+    929.0
+   ]
+  },
+  "El Dorado Lake|KS": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.0649
+   },
+   "D2_impliedPoolMinusPRefFt": 3.0,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2014-11-01",
+   "surveyYear": 2010,
+   "curveElevRange": [
+    1280.0,
+    1360.0
+   ]
+  },
+  "Fort Gibson Lake|OK": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": 0.0917
+   },
+   "D2_impliedPoolMinusPRefFt": -6.0,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "1951-09-01",
+   "surveyYear": 2012,
+   "curveElevRange": [
+    508.0,
+    600.0
+   ]
+  },
+  "Gull Lake|MN": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": null
+   },
+   "D2_impliedPoolMinusPRefFt": null,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2003-01-06",
+   "surveyYear": null,
+   "curveElevRange": [
+    1188.75,
+    1195.0
+   ]
+  },
+  "Harlan County Lake|NE": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.0092
+   },
+   "D2_impliedPoolMinusPRefFt": -3.5,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "1998-05-13",
+   "surveyYear": null,
+   "curveElevRange": [
+    1895.0,
+    1986.0
+   ]
+  },
+  "Lake Milton|OH": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": 0.0024,
+    "6.0": 0.015,
+    "10.0": 0.0665
+   },
+   "D2_impliedPoolMinusPRefFt": -2.4,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "1970-01-01",
+   "surveyYear": 1998,
+   "curveElevRange": [
+    899.929993,
+    953.429993
+   ]
+  },
+  "Lake Winnibigoshish|MN": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.094
+   },
+   "D2_impliedPoolMinusPRefFt": -0.4,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2003-01-06",
+   "surveyYear": null,
+   "curveElevRange": [
+    1288.0,
+    1304.36
+   ]
+  },
+  "Leech Lake|MN": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": null
+   },
+   "D2_impliedPoolMinusPRefFt": null,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2003-01-06",
+   "surveyYear": null,
+   "curveElevRange": [
+    1292.0,
+    1299.54
+   ]
+  },
+  "Melvern Lake|KS": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.0119
+   },
+   "D2_impliedPoolMinusPRefFt": -0.9,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2019-01-01",
+   "surveyYear": 2009,
+   "curveElevRange": [
+    968.609985,
+    1080.60999
+   ]
+  },
+  "Milford Lake|KS": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": 0.0148
+   },
+   "D2_impliedPoolMinusPRefFt": 5.8,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2012-03-31",
+   "surveyYear": 2009,
+   "curveElevRange": [
+    1080.0,
+    1214.0
+   ]
+  },
+  "Mosquito Creek Lake|OH": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": 0.001,
+    "6.0": 0.0196,
+    "10.0": 0.0783
+   },
+   "D2_impliedPoolMinusPRefFt": -2.9,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "1970-01-01",
+   "surveyYear": 2004,
+   "curveElevRange": [
+    868.330017,
+    914.130005
+   ]
+  },
+  "Pomona Lake|KS": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": 0.0138
+   },
+   "D2_impliedPoolMinusPRefFt": -0.9,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "1998-05-13",
+   "surveyYear": 2009,
+   "curveElevRange": [
+    930.0,
+    1035.0
+   ]
+  },
+  "Sardis Lake|OK": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": 0.0213
+   },
+   "D2_impliedPoolMinusPRefFt": -4.1,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2010-01-01",
+   "surveyYear": 1999,
+   "curveElevRange": [
+    538.0,
+    631.0
+   ]
+  },
+  "Senecaville Lake|OH": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": 0.1408,
+    "6.0": 0.0764,
+    "10.0": 0.1173
+   },
+   "D2_impliedPoolMinusPRefFt": -6.0,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "1970-01-01",
+   "surveyYear": null,
+   "curveElevRange": [
+    803.0,
+    864.0
+   ]
+  },
+  "Stonewall Jackson Lake|WV": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": -0.0133,
+    "6.0": -0.0115,
+    "10.0": -0.0054
+   },
+   "D2_impliedPoolMinusPRefFt": 0.8,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "1970-01-01",
+   "surveyYear": null,
+   "curveElevRange": [
+    1006.33002,
+    1099.32996
+   ]
+  },
+  "Swanson Reservoir|NE": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": 0.0011
+   },
+   "D2_impliedPoolMinusPRefFt": -0.5,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "1998-05-13",
+   "surveyYear": 2001,
+   "curveElevRange": [
+    2703.0,
+    2785.0
+   ]
+  },
+  "Tappan Lake|OH": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": 0.042,
+    "6.0": 0.0618,
+    "10.0": 0.0459
+   },
+   "D2_impliedPoolMinusPRefFt": -5.3,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "1970-01-01",
+   "surveyYear": 1998,
+   "curveElevRange": [
+    868.0,
+    925.0
+   ]
+  },
+  "Tiber Reservoir (Lake Elwell)|MT": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.019
+   },
+   "D2_impliedPoolMinusPRefFt": 1.0,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2024-03-19",
+   "surveyYear": null,
+   "curveElevRange": [
+    2839.0,
+    3025.0
+   ]
+  },
+  "Tygart Lake|WV": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "3.0": 0.1258,
+    "6.0": 0.1271,
+    "10.0": 0.1284
+   },
+   "D2_impliedPoolMinusPRefFt": 4.9,
+   "supportedEdges": [
+    3.0,
+    6.0,
+    10.0
+   ],
+   "curveVersion": "1970-01-01",
+   "surveyYear": null,
+   "curveElevRange": [
+    979.450012,
+    1188.40002
+   ]
+  },
+  "Wilson Lake|KS": {
+   "D1_contourMinusCurveShareAtPRef": {
+    "10.0": -0.0189
+   },
+   "D2_impliedPoolMinusPRefFt": 0.0,
+   "supportedEdges": [
+    10.0
+   ],
+   "curveVersion": "2012-03-31",
+   "surveyYear": 2008,
+   "curveElevRange": [
+    1436.0,
+    1594.0
+   ]
+  }
+ },
+ "excluded": [
+  {
+   "lakeId": "Gull Lake|MN",
+   "d": 6.0,
+   "reason": "curve does not reach pRef-d"
+  },
+  {
+   "lakeId": "Gull Lake|MN",
+   "d": 8.0,
+   "reason": "curve does not reach pRef-d"
+  },
+  {
+   "lakeId": "Leech Lake|MN",
+   "d": 3.0,
+   "reason": "curve does not reach pRef-d"
+  },
+  {
+   "lakeId": "Leech Lake|MN",
+   "d": 4.5,
+   "reason": "curve does not reach pRef-d"
+  },
+  {
+   "lakeId": "Leech Lake|MN",
+   "d": 6.0,
+   "reason": "curve does not reach pRef-d"
+  },
+  {
+   "lakeId": "Leech Lake|MN",
+   "d": 8.0,
+   "reason": "curve does not reach pRef-d"
+  }
+ ],
+ "baseline": {
+  "GRADED": {
+   "maeLeaveOneLakeOutMean": 0.021066666666666668,
+   "n": 20
+  },
+  "ASSUMED_ALL": {
+   "maeLeaveOneLakeOutMean": 0.041996904134554154,
+   "n": 94
+  }
+ }
+}

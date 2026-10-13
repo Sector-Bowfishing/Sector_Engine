@@ -12,12 +12,12 @@ Sector standard: overall Brain score >= 8.0 **and** every critical dimension >= 
 |---|---|---|---|
 | 1 | Brain contract | **PARTIAL** | DEPTH_STATE_CONTRACT.md + 7 golden fixtures + platform ownership/vocabulary conformance; not ratified; slot `depth` reserved; no `jobs.py`/orchestrator/control-plane registration |
 | 2 | Reference pool | **PARTIAL** | 621 lakes: directory pool usable for the shift on a subset; natural surfaces and low-confidence pools are refused by design; seasonal pools (Hartwell 660 summer / 656 winter) carried as Lake Brain guide context only |
-| 3 | Datum confidence | **PARTIAL** | verified datum 162 (SAME_SOURCE + SAME_DATUM), inferred operator system 17 (TVA), plausible lakes still blocked 146; conversions disabled; RISE/NWPS/Duke held pending external confirmation |
-| 4 | Current level | **PARTIAL** | consumed from Lake Brain `states/lake` (read-only); live for 5 reviewed pilots; 174 defensible lakes await Lake Brain fleet bindings (unmerged); TVA states publish `datum: null` |
-| 5 | Effective depth (shift) | **PARTIAL** | engine + tests + live GET-only dry run on all 5 pilots; defensible for 179 of 621; no field/event validation |
+| 3 | Datum confidence | **PARTIAL** | verified datum 181 (SAME_SOURCE + SAME_DATUM), inferred operator system 17 (TVA), plausible lakes still blocked 127; conversions disabled; RISE/NWPS/Duke held pending external confirmation |
+| 4 | Current level | **PARTIAL** | consumed from Lake Brain `states/lake` (read-only); live for 5 reviewed pilots; 193 defensible lakes await Lake Brain fleet bindings (unmerged); TVA states publish `datum: null` |
+| 5 | Effective depth (shift) | **PARTIAL** | engine + tests + live GET-only dry run on all 5 pilots; defensible for 198 of 621; no field/event validation |
 | 6 | Authoritative contours | **PARTIAL** | 103 tier A/B lakes; 59 licensed for customer-derived numbers; ingest pipeline exists only as research scripts; no Southeast contours |
 | 7 | Shallow zones | **PARTIAL** | reference shares for 100 lakes; effective zones eligible for 5 (TWDB: 5 survey reference pools verified + preregistered validation passed; dry/under3 bounds only) |
-| 8 | Fleet coverage | **FAIL** | shift-defensible 179/621 (28.8%); live 5; HIGH 87, MEDIUM 87, BLOCKED 442 |
+| 8 | Fleet coverage | **FAIL** | shift-defensible 198/621 (31.9%); live 5; HIGH 91, MEDIUM 102, BLOCKED 423 |
 | 9 | Validation | **PARTIAL** | arithmetic tests; TWDB effective-zone validation preregistered (hash-frozen) and passed on 5 lakes; field validation preregistered, NOT run; `/validation/depth` = NOT_VALIDATED |
 | 10 | Field truth | **WAITING** | DEPTH_FIELD_VALIDATION_PLAN.md + hash-pinned prereg + analysis tooling ready; needs bowfishers/beta testers and sonar |
 | 11 | Confidence | **PASS** | sigma components in quadrature, labels, resolvable flag, reasons (components are research estimates, flagged) |
@@ -40,9 +40,9 @@ Sector standard: overall Brain score >= 8.0 **and** every critical dimension >= 
 | Metric | Start of phase | Now |
 |---|---|---|
 | Research maturity (research rubric) | 4.5 | 4.65 |
-| Shift-defensible lakes | 92 -> 179 | |
-| Verified datum | 76 -> 162 | |
-| High / Medium / Blocked | 65/22/529 -> 87/87/442 | |
+| Shift-defensible lakes | 92 -> 198 | |
+| Verified datum | 76 -> 181 | |
+| High / Medium / Blocked | 65/22/529 -> 91/102/423 | |
 | Effective-zone eligible | 0 -> 5 | |
 
 Customer behavior: **unchanged**. No live Depth RTDB write, deployment, schedule, customer API, app or other-Brain change.
