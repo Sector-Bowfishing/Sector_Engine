@@ -1,0 +1,2277 @@
+{
+ "schema": "lake-brain-coverage-recovery-plan/v1",
+ "runDate": "2026-10-13",
+ "note": "PROJECTION ONLY: every score assumes the tranche passes human review; the displayed value is capped at 5.0 while validation is NOT_VALIDATED. Rubric lake-brain-score-v1 is unmodified (sector_brain_platform.scoring.score_lake).",
+ "inputs": {
+  "candidates.csv": "0aff732a190f605db712823df7d49b6ea51dca5402613da8eff2d1840e14efe3",
+  "clarity_index.json": "0f0adfe0ab5c031c5bfc41b1338df4f0b46e70f4a366b0c91555532eea3e5ee9",
+  "directory_lakes_2026-10-13.json": "9af94218486df8944c5e71c480c1301dbea7f2f69ab727c42805d646d754a0a3",
+  "history_extension.csv": "d85f59819326d57bf570b2d909786fcb0879dbea87a5b0e83f8339507a8e714a",
+  "lake_features.csv": "9a25cfbc4297c662ddc99fa9026493a168c8441adfd59b84985f5acdb0402526",
+  "lake_geometry_flags.csv": "a6986e005ad3fc12bddc1c948a47c50c529b992f470e2926739af18ebd5d1b80",
+  "nid_links.csv": "3f23036f146c50ffa76f5785a8ce171a51e91eaf91ec1ad1fe2762acfa66d8f9",
+  "plan_flood_evidence.csv": "039e5e3f0987d094e1ee2c02a7f642abca5154916055af1b716d4b09065a8b1c",
+  "probe_results_v2.json": "553a70cec06bbf6f271bb27c77ffd93f9f5f11f97b1c81873490a4de9f02593f",
+  "shore_dem.json": "c40e443b97d58664540d0b8d7a2552ead5d7d211dfd23732caa3978ea468a3f9",
+  "verified_bindings.csv": "2190814877945961921225bf7b186f5ee68a67f2697974083b05fa59623c371d",
+  "verified_bindings_v2.csv": "46c5b928cf56cdbedb4c7a2962a5aa2fc28da95cbc277eab419877cd92e7f34f",
+  "verified_v2_full.csv": "85264530d578dadcf74b5eeb8793f7f02dbd61c6a18a55485d5362c390f11d87",
+  "jobs/lake-brain/data/bindings.proposed.v1.json": "9a460c72c9d03a4d150328a4843d7c6719b0fd7ac723f5a604ea619ef0b5f6a9",
+  "jobs/lake-brain/data/bindings.proposed.v1.excluded.json": "94d27967b5079f5226b6fbcc3e2f514e326e703c5a8fe06467bf074019c0cc9f",
+  "jobs/lake-brain/data/bindings.proposed.v1.recovered.json": "d5bbe8304e151d4dceecbadba0460a429c2d4cbc60f0a8b3ee313c0ef4046451",
+  "jobs/lake-brain/bindings/mismatch14_dispositions.json": "e06498453db5533dd9fada21ade2b56b4756bc1de7b8ce2b8bb3eb0fea5c565b",
+  "binding2/remaining_unbound.json": "484a9a5dc2d77753bf00c794e235b902b02262de30e7e7b1791f6b12ef8936c2",
+  "binding2/unbound_profile.json": "fe00abf9e687ebb8204b886a0b8bd22a88ee87721be45332f6d3b69ebad85c76"
+ },
+ "t1Reproduction": {
+  "profiled": 273,
+  "plan": 0.44,
+  "flood": 0.575,
+  "hist": 0.934,
+  "base": 0.989
+ },
+ "counts": {
+  "directory": 621,
+  "eligible": 196,
+  "heldResearchBound": 231,
+  "unbound": 194,
+  "byTaxonomy": {
+   "coordinate: identity risk": 7,
+   "coordinate: off water": 66,
+   "history/live mismatch": 14,
+   "no source (unbound)": 194,
+   "other evidence gap (post-hoc v1.1/R7h, flagged, stage-only)": 75,
+   "provider not on allow-list / no adapter": 34,
+   "provider terms: sjrwmd / nhdes": 12,
+   "provider terms: undocumented operator endpoint": 23
+  },
+  "byAnyBlocker": {
+   "adapter": 34,
+   "coord:identity_risk": 43,
+   "coord:no_polygon": 22,
+   "coord:off_water": 126,
+   "flag": 73,
+   "mismatch:FIXED": 8,
+   "mismatch:NEEDS HUMAN REVIEW": 5,
+   "mismatch:NO DEFENSIBLE MATCH": 1,
+   "nosource:failed_review": 116,
+   "nosource:known_source": 8,
+   "nosource:no_data": 70,
+   "posthoc": 130,
+   "stage": 10,
+   "terms:sjrwmd_nhdes": 12,
+   "terms:undocumented": 23
+  },
+  "generatorPrimaryReason": {
+   "coordinate-flag": 58,
+   "flagged": 19,
+   "flagged-wave1": 1,
+   "history-live-mismatch": 14,
+   "post-hoc": 130,
+   "undocumented-provider": 9
+  },
+  "coordinateFlagsAllLakes": {
+   "ok": 430,
+   "no_polygon": 22,
+   "identity_risk": 43,
+   "off_water": 126
+  },
+  "coordinateFlagCrossTab": {
+   "identity_risk": {
+    "unbound": 34,
+    "held": 9
+   },
+   "no_polygon": {
+    "unbound": 8,
+    "held": 14
+   },
+   "off_water": {
+    "unbound": 54,
+    "held": 72
+   },
+   "ok": {
+    "unbound": 98,
+    "eligible": 196,
+    "held": 136
+   }
+  },
+  "providerGroups": {
+   "terms:sjrwmd_nhdes": {
+    "lakes": {
+     "nhdes": 6,
+     "sjrwmd": 6
+    },
+    "onlyThisBlocker": {
+     "sjrwmd": 3,
+     "nhdes": 1
+    }
+   },
+   "terms:undocumented": {
+    "lakes": {
+     "duke": 8,
+     "srp": 4,
+     "cnppid": 2,
+     "aep": 1,
+     "alliant": 1,
+     "eccc": 1,
+     "mncsg": 1,
+     "nipsco": 1,
+     "njwsa": 1,
+     "nppd": 1,
+     "utahlake": 1,
+     "wps-hydro": 1
+    },
+    "onlyThisBlocker": {
+     "duke": 1,
+     "njwsa": 1,
+     "wps-hydro": 1
+    }
+   },
+   "adapter": {
+    "lakes": {
+     "coops": 14,
+     "usgs-d": 12,
+     "usbr-pnhm": 4,
+     "cdec": 2,
+     "cwms-nwdp": 1,
+     "nwrfc": 1
+    },
+    "onlyThisBlocker": {}
+   }
+  },
+  "unboundByResearchClass": {
+   "no public level data found": 70,
+   "live candidate failed review rules": 119,
+   "source exists but not live/stale": 3,
+   "portal/PDF/login only": 2
+  },
+  "blockerSignatures": [
+   {
+    "blockers": [
+     "nosource:failed_review"
+    ],
+    "lakes": 57
+   },
+   {
+    "blockers": [
+     "coord:off_water"
+    ],
+    "lakes": 52
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "nosource:failed_review"
+    ],
+    "lakes": 40
+   },
+   {
+    "blockers": [
+     "flag",
+     "posthoc"
+    ],
+    "lakes": 40
+   },
+   {
+    "blockers": [
+     "nosource:no_data"
+    ],
+    "lakes": 36
+   },
+   {
+    "blockers": [
+     "coord:identity_risk",
+     "nosource:failed_review"
+    ],
+    "lakes": 18
+   },
+   {
+    "blockers": [
+     "coord:identity_risk",
+     "nosource:no_data"
+    ],
+    "lakes": 15
+   },
+   {
+    "blockers": [
+     "posthoc"
+    ],
+    "lakes": 15
+   },
+   {
+    "blockers": [
+     "adapter",
+     "coord:no_polygon",
+     "posthoc"
+    ],
+    "lakes": 13
+   },
+   {
+    "blockers": [
+     "adapter",
+     "posthoc"
+    ],
+    "lakes": 13
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "nosource:no_data"
+    ],
+    "lakes": 13
+   },
+   {
+    "blockers": [
+     "flag"
+    ],
+    "lakes": 13
+   },
+   {
+    "blockers": [
+     "mismatch:FIXED"
+    ],
+    "lakes": 8
+   },
+   {
+    "blockers": [
+     "posthoc",
+     "terms:undocumented"
+    ],
+    "lakes": 8
+   },
+   {
+    "blockers": [
+     "posthoc",
+     "stage"
+    ],
+    "lakes": 7
+   },
+   {
+    "blockers": [
+     "posthoc",
+     "terms:sjrwmd_nhdes"
+    ],
+    "lakes": 7
+   },
+   {
+    "blockers": [
+     "coord:identity_risk"
+    ],
+    "lakes": 6
+   },
+   {
+    "blockers": [
+     "coord:no_polygon",
+     "nosource:no_data"
+    ],
+    "lakes": 6
+   },
+   {
+    "blockers": [
+     "flag",
+     "posthoc",
+     "terms:undocumented"
+    ],
+    "lakes": 6
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "flag",
+     "posthoc"
+    ],
+    "lakes": 5
+   },
+   {
+    "blockers": [
+     "mismatch:NEEDS HUMAN REVIEW"
+    ],
+    "lakes": 5
+   },
+   {
+    "blockers": [
+     "nosource:known_source"
+    ],
+    "lakes": 5
+   },
+   {
+    "blockers": [
+     "adapter",
+     "flag"
+    ],
+    "lakes": 4
+   },
+   {
+    "blockers": [
+     "terms:sjrwmd_nhdes"
+    ],
+    "lakes": 4
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "flag"
+    ],
+    "lakes": 3
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "posthoc"
+    ],
+    "lakes": 3
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "posthoc",
+     "stage"
+    ],
+    "lakes": 3
+   },
+   {
+    "blockers": [
+     "terms:undocumented"
+    ],
+    "lakes": 3
+   },
+   {
+    "blockers": [
+     "adapter",
+     "coord:off_water",
+     "posthoc"
+    ],
+    "lakes": 2
+   },
+   {
+    "blockers": [
+     "adapter",
+     "flag",
+     "posthoc"
+    ],
+    "lakes": 2
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "posthoc",
+     "terms:undocumented"
+    ],
+    "lakes": 2
+   },
+   {
+    "blockers": [
+     "coord:identity_risk",
+     "nosource:known_source"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:identity_risk",
+     "posthoc"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:identity_risk",
+     "posthoc",
+     "terms:undocumented"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:identity_risk",
+     "terms:undocumented"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:no_polygon",
+     "nosource:failed_review"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:no_polygon",
+     "nosource:known_source"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:no_polygon",
+     "posthoc",
+     "terms:undocumented"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "nosource:known_source"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "posthoc",
+     "terms:sjrwmd_nhdes"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "coord:off_water",
+     "terms:undocumented"
+    ],
+    "lakes": 1
+   },
+   {
+    "blockers": [
+     "mismatch:NO DEFENSIBLE MATCH"
+    ],
+    "lakes": 1
+   }
+  ]
+ },
+ "opportunities": [
+  {
+   "id": "R1",
+   "name": "Mismatch-14 FIXED lakes (Task A)",
+   "pulls": [
+    "mismatch:FIXED"
+   ],
+   "confidence": "H",
+   "effort": "S",
+   "kind": "HUMAN REVIEW",
+   "waiting": "Michael reviews the 8 newly recovered MACHINE_VERIFIED candidates (bindings.proposed.v1.recovered.json); then remove them from held_lakes.SERIES_MISMATCH and regenerate with --include-recovered",
+   "why": "strict binding-review-v1 rows; the hold was a hold-out QA artefact (or one wrong RISE item, Buffalo Bill); 3 years of date-matched agreement proven",
+   "lakes": 8,
+   "bowA": 3,
+   "bowB": 5,
+   "bowC": 0,
+   "bowScoreSum": 57,
+   "providers": {
+    "rise": 6,
+    "cwms": 2
+   },
+   "reuse": 6,
+   "rank": 1,
+   "lakeIds": [
+    "Blue Mesa Reservoir|CO",
+    "Buffalo Bill Reservoir|WY",
+    "Glendo Reservoir|WY",
+    "Jordanelle Reservoir|UT",
+    "Lake Koocanusa|MT",
+    "Lake Shelbyville|IL",
+    "Navajo Reservoir|NM",
+    "Pineview Reservoir|UT"
+   ]
+  },
+  {
+   "id": "R3",
+   "name": "Coordinate: off-water pins whose evidence is strict (only blocker)",
+   "pulls": [
+    "coord:off_water"
+   ],
+   "confidence": "H",
+   "effort": "M",
+   "kind": "HUMAN REVIEW + GEOMETRY",
+   "waiting": "Pin repair to the lake polygon (geometry/coordinates thread) and a Michael sign-off of the repaired coordinates; the binding evidence is unchanged",
+   "why": "binding-review-v1 VERIFIED; a polygon exists for every off-water lake (confidence HIGH/MEDIUM for most)",
+   "lakes": 52,
+   "bowA": 34,
+   "bowB": 15,
+   "bowC": 3,
+   "bowScoreSum": 409,
+   "providers": {
+    "a2w": 22,
+    "nwps": 9,
+    "cwms": 7,
+    "rise": 6,
+    "tva": 4,
+    "usgs": 4
+   },
+   "reuse": 22,
+   "rank": 2,
+   "lakeIds": [
+    "Allegheny Reservoir|PA",
+    "Beaver|AR",
+    "Beech Fork Lake|WV",
+    "Blackshear|GA",
+    "Blue Marsh Lake|PA",
+    "Bowman-Haley Reservoir|ND",
+    "Bull Shoals Lake|AR",
+    "Burton|GA",
+    "Caddo Lake|TX",
+    "Cagles Mill Lake|IN",
+    "Calamus Reservoir|NE",
+    "Cecil M. Harden Lake|IN",
+    "Cherokee Lake|TN",
+    "Chickamauga Lake|TN",
+    "Clearwater Lake|MO",
+    "Dardanelle|AR",
+    "Devil's Kitchen Lake|IL",
+    "Elephant Butte Reservoir|NM",
+    "Fort Peck Lake|MT",
+    "Harlan County Lake|NE",
+    "Horsetooth Reservoir|CO",
+    "Jamestown Reservoir|ND",
+    "Kentucky Lake|KY",
+    "Kentucky Lake|TN",
+    "Lake Barkley|KY",
+    "Lake D'Arbonne|LA",
+    "Lake Darling|ND",
+    "Lake Francis Case|SD",
+    "Lake Hudson|OK",
+    "Lake Petenwell|WI",
+    "Lake Powell|UT",
+    "Lake Russell (R.B. Russell)|GA",
+    "Lake Sharpe|SD",
+    "Lake Tenkiller|OK",
+    "Mark Twain Lake|MO",
+    "Millwood|AR",
+    "Mississinewa Lake|IN",
+    "Monroe Lake|IN",
+    "Nolin River Lake|KY",
+    "Oologah Lake|OK",
+    "Salamonie Lake|IN",
+    "Savage River Reservoir|MD",
+    "Shasta|CA",
+    "Sinclair|GA",
+    "Smithville Lake|MO",
+    "Stonewall Jackson Lake|WV",
+    "Toledo Bend Reservoir|TX",
+    "Tuttle Creek Lake|KS",
+    "Tygart Lake|WV",
+    "Walter F. George / Eufaula|GA",
+    "Weiss|AL",
+    "Youghiogheny River Lake|MD"
+   ]
+  },
+  {
+   "id": "R8",
+   "name": "Post-hoc v1.1 / R7h rows with no other blocker",
+   "pulls": [
+    "posthoc"
+   ],
+   "confidence": "M",
+   "effort": "S",
+   "kind": "DECISION",
+   "waiting": "Michael decides whether labelled binding-review-v1.1 / R7h promotions (rules written after wave-1 failures) may enter review as a separate, clearly labelled list",
+   "why": "evidence exists but the rule was written after seeing failures; the R7h error rate was never measured",
+   "lakes": 15,
+   "bowA": 9,
+   "bowB": 4,
+   "bowC": 2,
+   "bowScoreSum": 113,
+   "providers": {
+    "usgs": 8,
+    "cwms": 4,
+    "a2w": 1,
+    "nwps": 1,
+    "rise": 1
+   },
+   "reuse": 8,
+   "rank": 3,
+   "lakeIds": [
+    "Bay Springs Lake|MS",
+    "Clear Lake|CA",
+    "Clinton Lake|IL",
+    "Flaming Gorge Reservoir|WY",
+    "Higgins Lake|MI",
+    "Houghton Lake|MI",
+    "Lake Mendota|WI",
+    "Lake Minnetonka|MN",
+    "Lake Monona|WI",
+    "Lake Oahe|ND",
+    "Lake Sakakawea|ND",
+    "Lake Strom Thurmond (Clarks Hill)|SC",
+    "Logan Martin|AL",
+    "Longview Lake|MO",
+    "Upper Klamath Lake|OR"
+   ]
+  },
+  {
+   "id": "R2",
+   "name": "Mismatch-14 NEEDS-REVIEW lakes (Canyon, Detroit, Jackson, Rend, Taneycomo)",
+   "pulls": [
+    "mismatch:NEEDS HUMAN REVIEW"
+   ],
+   "confidence": "M",
+   "effort": "S",
+   "kind": "HUMAN REVIEW / DECISION",
+   "waiting": "Per lake: Canyon/Jackson - accept the A2W=CDA tsid identity (or log A2W for 20 days); Detroit - accept a day-key-aligned comparison (a new pre-registered criteria version); Taneycomo - supply the FERC P-2221 operating range; Rend - decide on the unexplained 0.55 ft series offset",
+   "why": "every pre-registered criterion passes except one documented gap each",
+   "lakes": 5,
+   "bowA": 3,
+   "bowB": 2,
+   "bowC": 0,
+   "bowScoreSum": 38,
+   "providers": {
+    "a2w": 3,
+    "cwms": 1,
+    "usgs": 1
+   },
+   "reuse": 3,
+   "rank": 4,
+   "lakeIds": [
+    "Canyon Lake|TX",
+    "Detroit Lake|OR",
+    "Jackson Lake|WY",
+    "Lake Taneycomo|MO",
+    "Rend Lake|IL"
+   ]
+  },
+  {
+   "id": "R9",
+   "name": "New provider adapters on the post-hoc rows (CO-OPS, USGS-d, CDEC, USBR PN, NWRFC, CWMS-NWDP)",
+   "pulls": [
+    "adapter",
+    "posthoc"
+   ],
+   "confidence": "M",
+   "effort": "L",
+   "kind": "DECISION + CODE",
+   "waiting": "The R8 decision AND a Swift adapter per provider (CO-OPS alone is 14 rows)",
+   "why": "two blockers each: no adapter and post-hoc",
+   "lakes": 28,
+   "bowA": 14,
+   "bowB": 10,
+   "bowC": 4,
+   "bowScoreSum": 203,
+   "providers": {
+    "usgs": 8,
+    "usgs-d": 7,
+    "cwms": 4,
+    "cdec": 2,
+    "usbr-pnhm": 2,
+    "a2w": 1,
+    "cwms-nwdp": 1,
+    "nwps": 1,
+    "nwrfc": 1,
+    "rise": 1
+   },
+   "reuse": 8,
+   "rank": 5,
+   "lakeIds": [
+    "Almanor|CA",
+    "Bay Springs Lake|MS",
+    "Berryessa|CA",
+    "Black Hawk Lake|IA",
+    "Clear Lake|CA",
+    "Clinton Lake|IL",
+    "Crescent Lake|OR",
+    "Flaming Gorge Reservoir|WY",
+    "Fox Lake|IL",
+    "Henrys Lake|ID",
+    "Higgins Lake|MI",
+    "Houghton Lake|MI",
+    "Lake Cushman|WA",
+    "Lake Hopatcong|NJ",
+    "Lake Mendota|WI",
+    "Lake Minnetonka|MN",
+    "Lake Monona|WI",
+    "Lake Oahe|ND",
+    "Lake Roosevelt (FDR)|WA",
+    "Lake Sakakawea|ND",
+    "Lake Strom Thurmond (Clarks Hill)|SC",
+    "Logan Martin|AL",
+    "Longview Lake|MO",
+    "Mille Lacs Lake|MN",
+    "Payette Lake|ID",
+    "Potholes Reservoir|WA",
+    "Upper Klamath Lake|OR",
+    "West Okoboji|IA"
+   ]
+  },
+  {
+   "id": "R10",
+   "name": "Flagged single-origin rows (drawdown / weak level class)",
+   "pulls": [
+    "flag",
+    "posthoc"
+   ],
+   "confidence": "L",
+   "effort": "M",
+   "kind": "EXTERNAL SOURCE",
+   "waiting": "An independent second source per lake (corroboration) or a Michael waiver of the R7 'flag' class",
+   "why": "the flag marks rows whose level class or drawdown could not be confirmed",
+   "lakes": 68,
+   "bowA": 26,
+   "bowB": 32,
+   "bowC": 10,
+   "bowScoreSum": 470,
+   "providers": {
+    "usgs": 27,
+    "rise": 12,
+    "nwps": 10,
+    "a2w": 9,
+    "cwms": 8,
+    "twdb": 2
+   },
+   "reuse": 27,
+   "rank": 6,
+   "lakeIds": [
+    "Alamo|AZ",
+    "American Falls Reservoir|ID",
+    "Amistad Reservoir|TX",
+    "Assawompset Pond|MA",
+    "Bay Springs Lake|MS",
+    "Bear Lake|UT",
+    "Bluewater Lake|NM",
+    "Caballo Lake|NM",
+    "Canandaigua Lake|NY",
+    "Catahoula Lake|LA",
+    "Cayuga Lake|NY",
+    "Cedar Bluff Reservoir|KS",
+    "Chautauqua Lake|NY",
+    "Clear Lake|CA",
+    "Clinton Lake|IL",
+    "Crater Lake|OR",
+    "Deer Creek Reservoir|UT",
+    "Diamond Lake|OR",
+    "Dworshak Reservoir|ID",
+    "Falcon Lake|TX",
+    "Flaming Gorge Reservoir|UT",
+    "Flaming Gorge Reservoir|WY",
+    "Folsom|CA",
+    "Grand Lake|CO",
+    "Heron Lake|NM",
+    "Higgins Lake|MI",
+    "Houghton Lake|MI",
+    "Isabella|CA",
+    "Keuka Lake|NY",
+    "Lahontan Reservoir|NV",
+    "Lake Champlain|VT",
+    "Lake Geneva|WI",
+    "Lake George|NY",
+    "Lake Gogebic|MI",
+    "Lake Granby|CO",
+    "Lake Mattamuskeet|NC",
+    "Lake Mead|NV",
+    "Lake Mendota|WI",
+    "Lake Minnetonka|MN",
+    "Lake Monona|WI",
+    "Lake Oahe|ND",
+    "Lake Poinsett|SD",
+    "Lake Quinault|WA",
+    "Lake Sakakawea|ND",
+    "Lake Sammamish|WA",
+    "Lake Strom Thurmond (Clarks Hill)|SC",
+    "Lake Washington|WA",
+    "Logan Martin|AL",
+    "Longview Lake|MO",
+    "Lucky Peak Lake|ID",
+    "Mullett Lake|MI",
+    "Okeechobee|FL",
+    "Oneida Lake|NY",
+    "Oroville|CA",
+    "Owasco Lake|NY",
+    "Palisades Reservoir|ID",
+    "Pathfinder Reservoir|WY",
+    "Pleasant|AZ",
+    "Rainy Lake|MN",
+    "Red Lake|MN",
+    "Sebago Lake|ME",
+    "Seminoe Reservoir|WY",
+    "Seneca Lake|NY",
+    "Starvation Reservoir|UT",
+    "Trinity|CA",
+    "Upper Klamath Lake|OR",
+    "Walker Lake|NV",
+    "Wild Horse Reservoir|NV"
+   ]
+  },
+  {
+   "id": "R4",
+   "name": "Coordinate: identity-risk lakes whose evidence is strict (only blocker)",
+   "pulls": [
+    "coord:identity_risk"
+   ],
+   "confidence": "L",
+   "effort": "M",
+   "kind": "HUMAN REVIEW",
+   "waiting": "Per-lake identity decision: is the directory pin the lake the gauge belongs to (name or namesake collision)? Michael's call, lake by lake",
+   "why": "the directory point may be a different water body; a wrong match would put another lake's level on the wrong lake",
+   "lakes": 6,
+   "bowA": 3,
+   "bowB": 2,
+   "bowC": 1,
+   "bowScoreSum": 42,
+   "providers": {
+    "cwms": 2,
+    "rise": 2,
+    "a2w": 1,
+    "tva": 1
+   },
+   "reuse": 2,
+   "rank": 7,
+   "lakeIds": [
+    "Buckhorn Lake|KY",
+    "Eagle Lake|MS",
+    "East Lynn Lake|WV",
+    "Hiwassee Lake|NC",
+    "Lake Tschida|ND",
+    "Swanson Reservoir|NE"
+   ]
+  },
+  {
+   "id": "R6",
+   "name": "Provider terms: St. Johns River WMD and NH DES",
+   "pulls": [
+    "terms:sjrwmd_nhdes"
+   ],
+   "confidence": "L",
+   "effort": "M",
+   "kind": "TERMS",
+   "waiting": "Written confirmation of acceptable use of the SJRWMD / NH DES public endpoints (or a supported feed), then one adapter per provider",
+   "why": "strict rows exist (3 + 1 in T1) but the endpoint terms are unreviewed; two adapters would unlock the group",
+   "lakes": 4,
+   "bowA": 3,
+   "bowB": 1,
+   "bowC": 0,
+   "bowScoreSum": 32,
+   "providers": {
+    "sjrwmd": 3,
+    "nhdes": 1
+   },
+   "reuse": 3,
+   "rank": 8,
+   "lakeIds": [
+    "Apopka|FL",
+    "Griffin|FL",
+    "Harris|FL",
+    "Lake Winnipesaukee|NH"
+   ]
+  },
+  {
+   "id": "R12",
+   "name": "Unbound lakes with a known but stale / portal-only / pending source",
+   "pulls": [
+    "nosource:known_source"
+   ],
+   "confidence": "L",
+   "effort": "M",
+   "kind": "EXTERNAL SOURCE",
+   "waiting": "Per lake: a live feed (stale), a machine-readable endpoint (portal/PDF/login only) or the pending corroboration / operator full-pool figure",
+   "why": "the only unbound lakes with a named source at all",
+   "lakes": 5,
+   "bowA": 1,
+   "bowB": 3,
+   "bowC": 1,
+   "bowScoreSum": 30,
+   "providers": {
+    "DNRC/NW Energy (Flint Creek)": 1,
+    "MD DNR (state park)": 1,
+    "NM State Parks (Eagle Nest Dam)": 1,
+    "Natural coastal lake": 1,
+    "—": 1
+   },
+   "reuse": 1,
+   "rank": 9,
+   "lakeIds": [
+    "Eagle Nest Lake|NM",
+    "Georgetown Lake|MT",
+    "Lake Bemidji|MN",
+    "Lake Habeeb (Rocky Gap)|MD",
+    "White Lake|LA"
+   ]
+  },
+  {
+   "id": "R11",
+   "name": "Stage-only lakes",
+   "pulls": [
+    "stage",
+    "posthoc"
+   ],
+   "confidence": "L",
+   "effort": "L",
+   "kind": "EXTERNAL SOURCE",
+   "waiting": "A documented gauge datum (USGS site altitude / operator datum record) to turn stage into elevation; never a fitted offset",
+   "why": "no absolute level to test",
+   "lakes": 22,
+   "bowA": 14,
+   "bowB": 6,
+   "bowC": 2,
+   "bowScoreSum": 167,
+   "providers": {
+    "usgs": 13,
+    "cwms": 4,
+    "nwps": 3,
+    "a2w": 1,
+    "rise": 1
+   },
+   "reuse": 13,
+   "rank": 10,
+   "lakeIds": [
+    "Bay Springs Lake|MS",
+    "Calcasieu Lake|LA",
+    "Clear Lake|CA",
+    "Clinton Lake|IL",
+    "Crescent Lake|FL",
+    "Flaming Gorge Reservoir|WY",
+    "Hamilton|AR",
+    "Henderson Lake|LA",
+    "Higgins Lake|MI",
+    "Houghton Lake|MI",
+    "Lake Maurepas|LA",
+    "Lake Mendota|WI",
+    "Lake Minnetonka|MN",
+    "Lake Monona|WI",
+    "Lake Oahe|ND",
+    "Lake Sakakawea|ND",
+    "Lake Strom Thurmond (Clarks Hill)|SC",
+    "Lake Vermilion|MN",
+    "Logan Martin|AL",
+    "Longview Lake|MO",
+    "San Carlos|AZ",
+    "Upper Klamath Lake|OR"
+   ]
+  },
+  {
+   "id": "R13",
+   "name": "Unbound lakes whose live candidate failed the review rules",
+   "pulls": [
+    "nosource:failed_review"
+   ],
+   "confidence": "L",
+   "effort": "L",
+   "kind": "EXTERNAL SOURCE",
+   "waiting": "Per lake: a different candidate series, or a decision on which failed rule is waivable (each failure was a real check: datum, freshness, identity, plausibility)",
+   "why": "a candidate exists but did not pass R1-R8; padding these would be the poor matches the rule forbids",
+   "lakes": 57,
+   "bowA": 3,
+   "bowB": 26,
+   "bowC": 28,
+   "bowScoreSum": 302,
+   "providers": {
+    "none": 6,
+    "—": 4,
+    "Natural (salt pond)": 3,
+    "Baltimore City DPW": 2,
+    "State (DEEP)": 2,
+    "Assoc. Ditch Co. (irrigation)": 1,
+    "Brookfield (Upper Dam)": 1,
+    "Brookfield (outlet dam)": 1,
+    "Brookfield Renewable": 1,
+    "Brookfield/Union Water Power (Errol)": 1,
+    "City Water Light & Power": 1,
+    "City of Syracuse (water supply)": 1,
+    "Constellation Energy": 1,
+    "DE DNREC / State Parks": 1,
+    "Denver Water": 1,
+    "Dominion Energy": 1,
+    "FirstLight Power": 1,
+    "IDNR (Illinois R backwater)": 1,
+    "IDNR (Stratton/McHenry Dam)": 1,
+    "Iowa DNR": 1,
+    "Local (Echo Lake)": 1,
+    "MDC (Metro District)": 1,
+    "Manchester Water Works": 1,
+    "NH DES / former PSNH (Murphy Dam)": 1,
+    "NIPSCO (Oakdale Dam)": 1,
+    "NJDEP (state park)": 1,
+    "NPS (natural, no dam)": 1,
+    "Natural (local)": 1,
+    "Natural (outlet dam)": 1,
+    "Natural (small outlet dam)": 1,
+    "Natural (state park)": 1,
+    "Natural estuary (tidal)": 1,
+    "PA DCNR (Moraine SP)": 1,
+    "PPL (Brookfield)": 1,
+    "Pittsfield/Lanesborough": 1,
+    "Portland General Electric": 1,
+    "SJRWMD (St. Johns R.)": 1,
+    "USACE (Ship Canal/Locks)": 1,
+    "USACE New England": 1,
+    "USACE/IaDNR (aux to Saylorville)": 1,
+    "WSSC Water": 1,
+    "WSSC Water (Duckett Dam)": 1,
+    "Woodland Pulp/Brookfield": 1,
+    "none (natural glacial)": 1,
+    "none/minor outlet": 1
+   },
+   "reuse": 6,
+   "rank": 11,
+   "lakeIds": [
+    "Bantam Lake|CT",
+    "Barkhamsted Reservoir|CT",
+    "Big Creek Lake|IA",
+    "Big Green Lake|WI",
+    "Budd Lake|NJ",
+    "Burt Lake|MI",
+    "Candlewood Lake|CT",
+    "Chain O'Lakes|IL",
+    "China Lake|ME",
+    "Conowingo Reservoir|MD",
+    "Coventry Lake (Wangumbaug)|CT",
+    "Dillon Reservoir|CO",
+    "First Connecticut Lake|NH",
+    "Fish Lake|UT",
+    "Gull Lake|MI",
+    "Harding|AK",
+    "Lake Anna|VA",
+    "Lake Arthur|PA",
+    "Lake Bomoseen|VT",
+    "Lake Carmi|VT",
+    "Lake Charlevoix|MI",
+    "Lake Freeman|IN",
+    "Lake George|FL",
+    "Lake Macbride|IA",
+    "Lake Springfield|IL",
+    "Lake St. Catherine|VT",
+    "Lake Union|WA",
+    "Lake Wallenpaupack|PA",
+    "Lake Wawasee|IN",
+    "Loch Raven Reservoir|MD",
+    "Lums Pond|DE",
+    "Mansfield Hollow Lake|CT",
+    "Massabesic Lake|NH",
+    "Moosehead Lake|ME",
+    "Mooselookmeguntic Lake|ME",
+    "Ninigret Pond|RI",
+    "Pascoag Reservoir|RI",
+    "Point Judith Pond|RI",
+    "Pontoosuc Lake|MA",
+    "Prettyboy Reservoir|MD",
+    "Rangeley Lake|ME",
+    "Redfish Lake|ID",
+    "Rice Lake|IL",
+    "Rocky Gorge Reservoir|MD",
+    "Sabine Lake|LA",
+    "Salton Sea|CA",
+    "Skaneateles Lake|NY",
+    "Swartswood Lake|NJ",
+    "Timothy Lake|OR",
+    "Torch Lake|MI",
+    "Triadelphia Reservoir|MD",
+    "Umbagog Lake|NH",
+    "Wallowa Lake|OR",
+    "Washoe Lake|NV",
+    "West Grand Lake|ME",
+    "Winnapaug Pond|RI",
+    "Yellowstone Lake|WY"
+   ]
+  },
+  {
+   "id": "R7",
+   "name": "Provider terms: other undocumented operator endpoints (Duke, SRP, CNPPID, ...)",
+   "pulls": [
+    "terms:undocumented"
+   ],
+   "confidence": "L",
+   "effort": "L",
+   "kind": "TERMS",
+   "waiting": "Operator permission / terms per endpoint (Duke Energy Lake View is the largest: 8 lakes); one adapter per operator",
+   "why": "each operator needs its own agreement and adapter; reuse is low except Duke",
+   "lakes": 3,
+   "bowA": 1,
+   "bowB": 2,
+   "bowC": 0,
+   "bowScoreSum": 22,
+   "providers": {
+    "duke": 1,
+    "njwsa": 1,
+    "wps-hydro": 1
+   },
+   "reuse": 1,
+   "rank": 12,
+   "lakeIds": [
+    "Castle Rock Lake|WI",
+    "Lake Robinson|SC",
+    "Round Valley Reservoir|NJ"
+   ]
+  },
+  {
+   "id": "R14",
+   "name": "Unbound lakes with no public level data found",
+   "pulls": [
+    "nosource:no_data"
+   ],
+   "confidence": "L",
+   "effort": "L",
+   "kind": "EXTERNAL SOURCE",
+   "waiting": "A new public data source or a state / local gauge; research logged per-lake dead ends (no gauge, discontinued, proxy only)",
+   "why": "no candidate at all",
+   "lakes": 36,
+   "bowA": 0,
+   "bowB": 12,
+   "bowC": 24,
+   "bowScoreSum": 183,
+   "providers": {
+    "none": 10,
+    "Great River Hydro (Deerfield R.)": 2,
+    "NPS (natural, no dam)": 2,
+    "Natural (glacial)": 2,
+    "USFS (natural)": 2,
+    "Brookfield (Ripogenus Dam)": 1,
+    "DE DNREC / State Parks": 1,
+    "Fall River water dept": 1,
+    "Local (small outlet dam)": 1,
+    "NC (Carolina bay, weir)": 1,
+    "Natural": 1,
+    "Natural (small outlet dam)": 1,
+    "Pyramid Lake Paiute Tribe": 1,
+    "State (Allagash; Telos/Lock)": 1,
+    "USFWS (natural)": 1,
+    "Utility (Kincaid plant)": 1,
+    "natural glacial lake": 1,
+    "natural, dam-enlarged": 1,
+    "none (LADWP diversions)": 1,
+    "none (SD GFP)": 1,
+    "none (small outlet dam)": 1,
+    "none (terminal, usually dry)": 1,
+    "—": 1
+   },
+   "reuse": 10,
+   "rank": 13,
+   "lakeIds": [
+    "Aleknagik|AK",
+    "Becharof|AK",
+    "Big Lake|AK",
+    "Chamberlain Lake|ME",
+    "Chesuncook Lake|ME",
+    "Conneaut Lake|PA",
+    "Cranberry Lake|NY",
+    "Crystal Lake|VT",
+    "Eagle Lake|CA",
+    "Elk Lake|MI",
+    "Great Pond (Belgrade)|ME",
+    "Harriman Reservoir (Whitingham)|VT",
+    "Harveys Lake|PA",
+    "Jenny Lake|WY",
+    "Lake Clark|AK",
+    "Lake Crescent|WA",
+    "Lake Dunmore|VT",
+    "Lake Metigoshe|ND",
+    "Lake Waccamaw|NC",
+    "Lake Willoughby|VT",
+    "Malheur Lake|OR",
+    "Mono|CA",
+    "Naknek|AK",
+    "Odell Lake|OR",
+    "Pyramid Lake|NV",
+    "Sangchris Lake|IL",
+    "Sevier Lake|UT",
+    "Somerset Reservoir|VT",
+    "Suttle Lake|OR",
+    "Teshekpuk|AK",
+    "Trap Pond|DE",
+    "Tustumena|AK",
+    "Waldo Lake|OR",
+    "Watuppa Ponds|MA",
+    "Waubay Lake|SD",
+    "Whitefish Lake|MT"
+   ]
+  },
+  {
+   "id": "R5",
+   "name": "Coordinate: no polygon (22 lakes) whose evidence is strict (only blocker)",
+   "pulls": [
+    "coord:no_polygon"
+   ],
+   "confidence": "M",
+   "effort": "M",
+   "kind": "EXTERNAL SOURCE",
+   "waiting": "A polygon source (NHD/OSM/GSW) accepted by the geometry contract, then the usual pin repair",
+   "why": "cannot be assessed until a polygon exists",
+   "lakes": 0,
+   "bowA": 0,
+   "bowB": 0,
+   "bowC": 0,
+   "bowScoreSum": 0,
+   "providers": {},
+   "reuse": 0,
+   "rank": 14,
+   "lakeIds": []
+  }
+ ],
+ "cumulative": [
+  {
+   "step": "T-1 today: the 5 reviewed pilot lakes",
+   "added": 5,
+   "profiled": 5,
+   "coveragePct": 0.8,
+   "shares": {
+    "src": 1.0,
+    "plan": 1.0,
+    "hist": 0.2,
+    "base": 0.2,
+    "flood": 0.2
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 3.0,
+     "uncapped": 4.3,
+     "gates": [
+      "coverage",
+      "validation"
+     ],
+     "coveragePct": 0.8,
+     "coverageDim": 1.0
+    },
+    "PARTIAL": {
+     "displayed": 3.0,
+     "uncapped": 5.0,
+     "gates": [
+      "coverage"
+     ],
+     "coveragePct": 0.8,
+     "coverageDim": 1.0
+    },
+    "VALIDATED": {
+     "displayed": 3.0,
+     "uncapped": 5.8,
+     "gates": [
+      "coverage"
+     ],
+     "coveragePct": 0.8,
+     "coverageDim": 1.0
+    }
+   }
+  },
+  {
+   "step": "T0 all 196 eligible candidates reviewed",
+   "added": 196,
+   "profiled": 196,
+   "coveragePct": 31.6,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.429,
+    "hist": 0.898,
+    "base": 0.929,
+    "flood": 0.566
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.5,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 31.6,
+     "coverageDim": 5.0
+    },
+    "PARTIAL": {
+     "displayed": 7.2,
+     "uncapped": 7.2,
+     "gates": [],
+     "coveragePct": 31.6,
+     "coverageDim": 5.0
+    },
+    "VALIDATED": {
+     "displayed": 8.0,
+     "uncapped": 8.0,
+     "gates": [],
+     "coveragePct": 31.6,
+     "coverageDim": 5.0
+    }
+   }
+  },
+  {
+   "step": "+ R1 Mismatch-14 FIXED lakes (Task A)",
+   "added": 8,
+   "profiled": 204,
+   "coveragePct": 32.9,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.426,
+    "hist": 0.902,
+    "base": 0.931,
+    "flood": 0.578
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.5,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 32.9,
+     "coverageDim": 5.0
+    },
+    "PARTIAL": {
+     "displayed": 7.2,
+     "uncapped": 7.2,
+     "gates": [],
+     "coveragePct": 32.9,
+     "coverageDim": 5.0
+    },
+    "VALIDATED": {
+     "displayed": 8.0,
+     "uncapped": 8.0,
+     "gates": [],
+     "coveragePct": 32.9,
+     "coverageDim": 5.0
+    }
+   },
+   "opportunity": "R1",
+   "addedIds": [
+    "Blue Mesa Reservoir|CO",
+    "Buffalo Bill Reservoir|WY",
+    "Glendo Reservoir|WY",
+    "Jordanelle Reservoir|UT",
+    "Lake Koocanusa|MT",
+    "Lake Shelbyville|IL",
+    "Navajo Reservoir|NM",
+    "Pineview Reservoir|UT"
+   ]
+  },
+  {
+   "step": "+ R3 Coordinate: off-water pins whose evidence is strict (only blocker)",
+   "added": 52,
+   "profiled": 256,
+   "coveragePct": 41.2,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.438,
+    "hist": 0.91,
+    "base": 0.945,
+    "flood": 0.586
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.5,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 41.2,
+     "coverageDim": 5.0
+    },
+    "PARTIAL": {
+     "displayed": 7.3,
+     "uncapped": 7.3,
+     "gates": [],
+     "coveragePct": 41.2,
+     "coverageDim": 5.0
+    },
+    "VALIDATED": {
+     "displayed": 8.1,
+     "uncapped": 8.1,
+     "gates": [],
+     "coveragePct": 41.2,
+     "coverageDim": 5.0
+    }
+   },
+   "opportunity": "R3",
+   "addedIds": [
+    "Allegheny Reservoir|PA",
+    "Beaver|AR",
+    "Beech Fork Lake|WV",
+    "Blackshear|GA",
+    "Blue Marsh Lake|PA",
+    "Bowman-Haley Reservoir|ND",
+    "Bull Shoals Lake|AR",
+    "Burton|GA",
+    "Caddo Lake|TX",
+    "Cagles Mill Lake|IN",
+    "Calamus Reservoir|NE",
+    "Cecil M. Harden Lake|IN",
+    "Cherokee Lake|TN",
+    "Chickamauga Lake|TN",
+    "Clearwater Lake|MO",
+    "Dardanelle|AR",
+    "Devil's Kitchen Lake|IL",
+    "Elephant Butte Reservoir|NM",
+    "Fort Peck Lake|MT",
+    "Harlan County Lake|NE",
+    "Horsetooth Reservoir|CO",
+    "Jamestown Reservoir|ND",
+    "Kentucky Lake|KY",
+    "Kentucky Lake|TN",
+    "Lake Barkley|KY",
+    "Lake D'Arbonne|LA",
+    "Lake Darling|ND",
+    "Lake Francis Case|SD",
+    "Lake Hudson|OK",
+    "Lake Petenwell|WI",
+    "Lake Powell|UT",
+    "Lake Russell (R.B. Russell)|GA",
+    "Lake Sharpe|SD",
+    "Lake Tenkiller|OK",
+    "Mark Twain Lake|MO",
+    "Millwood|AR",
+    "Mississinewa Lake|IN",
+    "Monroe Lake|IN",
+    "Nolin River Lake|KY",
+    "Oologah Lake|OK",
+    "Salamonie Lake|IN",
+    "Savage River Reservoir|MD",
+    "Shasta|CA",
+    "Sinclair|GA",
+    "Smithville Lake|MO",
+    "Stonewall Jackson Lake|WV",
+    "Toledo Bend Reservoir|TX",
+    "Tuttle Creek Lake|KS",
+    "Tygart Lake|WV",
+    "Walter F. George / Eufaula|GA",
+    "Weiss|AL",
+    "Youghiogheny River Lake|MD"
+   ]
+  },
+  {
+   "step": "+ R8 Post-hoc v1.1 / R7h rows with no other blocker",
+   "added": 18,
+   "profiled": 274,
+   "coveragePct": 44.1,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.409,
+    "hist": 0.916,
+    "base": 0.949,
+    "flood": 0.547
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.5,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 44.1,
+     "coverageDim": 5.0
+    },
+    "PARTIAL": {
+     "displayed": 7.3,
+     "uncapped": 7.3,
+     "gates": [],
+     "coveragePct": 44.1,
+     "coverageDim": 5.0
+    },
+    "VALIDATED": {
+     "displayed": 8.0,
+     "uncapped": 8.0,
+     "gates": [],
+     "coveragePct": 44.1,
+     "coverageDim": 5.0
+    }
+   },
+   "opportunity": "R8",
+   "addedIds": [
+    "Bay Springs Lake|MS",
+    "Clear Lake|CA",
+    "Clinton Lake|IL",
+    "Devils Lake|ND",
+    "East Lake Tohopekaliga|FL",
+    "Flaming Gorge Reservoir|WY",
+    "Greenwood Lake|NJ",
+    "Higgins Lake|MI",
+    "Houghton Lake|MI",
+    "Lake Mendota|WI",
+    "Lake Minnetonka|MN",
+    "Lake Monona|WI",
+    "Lake Oahe|ND",
+    "Lake Sakakawea|ND",
+    "Lake Strom Thurmond (Clarks Hill)|SC",
+    "Logan Martin|AL",
+    "Longview Lake|MO",
+    "Upper Klamath Lake|OR"
+   ]
+  },
+  {
+   "step": "+ R2 Mismatch-14 NEEDS-REVIEW lakes (Canyon, Detroit, Jackson, Rend, Taneycomo)",
+   "added": 5,
+   "profiled": 279,
+   "coveragePct": 44.9,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.409,
+    "hist": 0.918,
+    "base": 0.95,
+    "flood": 0.552
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.5,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 44.9,
+     "coverageDim": 5.0
+    },
+    "PARTIAL": {
+     "displayed": 7.3,
+     "uncapped": 7.3,
+     "gates": [],
+     "coveragePct": 44.9,
+     "coverageDim": 5.0
+    },
+    "VALIDATED": {
+     "displayed": 8.0,
+     "uncapped": 8.0,
+     "gates": [],
+     "coveragePct": 44.9,
+     "coverageDim": 5.0
+    }
+   },
+   "opportunity": "R2",
+   "addedIds": [
+    "Canyon Lake|TX",
+    "Detroit Lake|OR",
+    "Jackson Lake|WY",
+    "Lake Taneycomo|MO",
+    "Rend Lake|IL"
+   ]
+  },
+  {
+   "step": "+ R9 New provider adapters on the post-hoc rows (CO-OPS, USGS-d, CDEC, USBR PN, NWRFC, CWMS-NWDP)",
+   "added": 15,
+   "profiled": 294,
+   "coveragePct": 47.3,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.388,
+    "hist": 0.918,
+    "base": 0.949,
+    "flood": 0.524
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.5,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 47.3,
+     "coverageDim": 5.0
+    },
+    "PARTIAL": {
+     "displayed": 7.2,
+     "uncapped": 7.2,
+     "gates": [],
+     "coveragePct": 47.3,
+     "coverageDim": 5.0
+    },
+    "VALIDATED": {
+     "displayed": 8.0,
+     "uncapped": 8.0,
+     "gates": [],
+     "coveragePct": 47.3,
+     "coverageDim": 5.0
+    }
+   },
+   "opportunity": "R9",
+   "addedIds": [
+    "Almanor|CA",
+    "Banks Lake|WA",
+    "Berryessa|CA",
+    "Black Hawk Lake|IA",
+    "Crescent Lake|OR",
+    "Fox Lake|IL",
+    "Henrys Lake|ID",
+    "Lake Cascade|ID",
+    "Lake Cushman|WA",
+    "Lake Hopatcong|NJ",
+    "Lake Roosevelt (FDR)|WA",
+    "Mille Lacs Lake|MN",
+    "Payette Lake|ID",
+    "Potholes Reservoir|WA",
+    "West Okoboji|IA"
+   ]
+  },
+  {
+   "step": "+ R10 Flagged single-origin rows (drawdown / weak level class)",
+   "added": 67,
+   "profiled": 361,
+   "coveragePct": 58.1,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.335,
+    "hist": 0.909,
+    "base": 0.942,
+    "flood": 0.457
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.8,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 58.1,
+     "coverageDim": 7.0
+    },
+    "PARTIAL": {
+     "displayed": 7.5,
+     "uncapped": 7.5,
+     "gates": [],
+     "coveragePct": 58.1,
+     "coverageDim": 7.0
+    },
+    "VALIDATED": {
+     "displayed": 8.3,
+     "uncapped": 8.3,
+     "gates": [],
+     "coveragePct": 58.1,
+     "coverageDim": 7.0
+    }
+   },
+   "opportunity": "R10",
+   "addedIds": [
+    "Alamo|AZ",
+    "American Falls Reservoir|ID",
+    "Amistad Reservoir|TX",
+    "Anderson Ranch Reservoir|ID",
+    "Assawompset Pond|MA",
+    "Bear Lake|UT",
+    "Bluewater Lake|NM",
+    "C.J. Strike Reservoir|ID",
+    "Caballo Lake|NM",
+    "Canandaigua Lake|NY",
+    "Catahoula Lake|LA",
+    "Cayuga Lake|NY",
+    "Cedar Bluff Reservoir|KS",
+    "Chautauqua Lake|NY",
+    "Clear Lake|IA",
+    "Crater Lake|OR",
+    "Deer Creek Reservoir|UT",
+    "Diamond Lake|OR",
+    "Dworshak Reservoir|ID",
+    "Falcon Lake|TX",
+    "Flaming Gorge Reservoir|UT",
+    "Folsom|CA",
+    "Fontana Lake|NC",
+    "Garrisons Lake|DE",
+    "Grand Lake|CO",
+    "Heron Lake|NM",
+    "Isabella|CA",
+    "Keuka Lake|NY",
+    "Lahontan Reservoir|NV",
+    "Lake Champlain|VT",
+    "Lake Geneva|WI",
+    "Lake George|NY",
+    "Lake Gogebic|MI",
+    "Lake Granby|CO",
+    "Lake Mattamuskeet|NC",
+    "Lake Mead|NV",
+    "Lake Memphremagog|VT",
+    "Lake Pepin|MN",
+    "Lake Poinsett|SD",
+    "Lake Pontchartrain|LA",
+    "Lake Quinault|WA",
+    "Lake Sammamish|WA",
+    "Lake St. Clair|MI",
+    "Lake Washington|WA",
+    "Long Pond (Lakeville)|MA",
+    "Lucky Peak Lake|ID",
+    "Mullett Lake|MI",
+    "Okeechobee|FL",
+    "Oneida Lake|NY",
+    "Oroville|CA",
+    "Owasco Lake|NY",
+    "Palisades Reservoir|ID",
+    "Pathfinder Reservoir|WY",
+    "Pleasant|AZ",
+    "Rainy Lake|MN",
+    "Red Lake|MN",
+    "Ruedi Reservoir|CO",
+    "Rye Patch Reservoir|NV",
+    "Sebago Lake|ME",
+    "Seminoe Reservoir|WY",
+    "Seneca Lake|NY",
+    "Spirit Lake|IA",
+    "Starvation Reservoir|UT",
+    "Storm Lake|IA",
+    "Trinity|CA",
+    "Walker Lake|NV",
+    "Wild Horse Reservoir|NV"
+   ]
+  },
+  {
+   "step": "+ R4 Coordinate: identity-risk lakes whose evidence is strict (only blocker)",
+   "added": 7,
+   "profiled": 368,
+   "coveragePct": 59.3,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.34,
+    "hist": 0.908,
+    "base": 0.943,
+    "flood": 0.457
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.8,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 59.3,
+     "coverageDim": 7.0
+    },
+    "PARTIAL": {
+     "displayed": 7.5,
+     "uncapped": 7.5,
+     "gates": [],
+     "coveragePct": 59.3,
+     "coverageDim": 7.0
+    },
+    "VALIDATED": {
+     "displayed": 8.3,
+     "uncapped": 8.3,
+     "gates": [],
+     "coveragePct": 59.3,
+     "coverageDim": 7.0
+    }
+   },
+   "opportunity": "R4",
+   "addedIds": [
+    "Buckhorn Lake|KY",
+    "Eagle Lake|MS",
+    "East Lynn Lake|WV",
+    "Hiwassee Lake|NC",
+    "Lake Tschida|ND",
+    "Stump Lake|ND",
+    "Swanson Reservoir|NE"
+   ]
+  },
+  {
+   "step": "+ R6 Provider terms: St. Johns River WMD and NH DES",
+   "added": 12,
+   "profiled": 380,
+   "coveragePct": 61.2,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.329,
+    "hist": 0.911,
+    "base": 0.945,
+    "flood": 0.442
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.8,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 61.2,
+     "coverageDim": 7.0
+    },
+    "PARTIAL": {
+     "displayed": 7.5,
+     "uncapped": 7.5,
+     "gates": [],
+     "coveragePct": 61.2,
+     "coverageDim": 7.0
+    },
+    "VALIDATED": {
+     "displayed": 8.3,
+     "uncapped": 8.3,
+     "gates": [],
+     "coveragePct": 61.2,
+     "coverageDim": 7.0
+    }
+   },
+   "opportunity": "R6",
+   "addedIds": [
+    "Apopka|FL",
+    "Griffin|FL",
+    "Harris|FL",
+    "Jesup|FL",
+    "Lake Winnipesaukee|NH",
+    "Lake Winnisquam|NH",
+    "Lochloosa|FL",
+    "Newfound Lake|NH",
+    "Orange Lake|FL",
+    "Ossipee Lake|NH",
+    "Squam Lake|NH",
+    "Sunapee Lake|NH"
+   ]
+  },
+  {
+   "step": "+ R12 Unbound lakes with a known but stale / portal-only / pending source",
+   "added": 7,
+   "profiled": 387,
+   "coveragePct": 62.3,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.323,
+    "hist": 0.894,
+    "base": 0.928,
+    "flood": 0.434
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.7,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 62.3,
+     "coverageDim": 7.0
+    },
+    "PARTIAL": {
+     "displayed": 7.5,
+     "uncapped": 7.5,
+     "gates": [],
+     "coveragePct": 62.3,
+     "coverageDim": 7.0
+    },
+    "VALIDATED": {
+     "displayed": 8.2,
+     "uncapped": 8.2,
+     "gates": [],
+     "coveragePct": 62.3,
+     "coverageDim": 7.0
+    }
+   },
+   "opportunity": "R12",
+   "addedIds": [
+    "Eagle Nest Lake|NM",
+    "Georgetown Lake|MT",
+    "Grand Lake|LA",
+    "Lake Bemidji|MN",
+    "Lake Habeeb (Rocky Gap)|MD",
+    "Sherman Reservoir|NE",
+    "White Lake|LA"
+   ]
+  },
+  {
+   "step": "+ R11 Stage-only lakes",
+   "added": 10,
+   "profiled": 397,
+   "coveragePct": 63.9,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.315,
+    "hist": 0.874,
+    "base": 0.909,
+    "flood": 0.423
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.6,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 63.9,
+     "coverageDim": 7.0
+    },
+    "PARTIAL": {
+     "displayed": 7.4,
+     "uncapped": 7.4,
+     "gates": [],
+     "coveragePct": 63.9,
+     "coverageDim": 7.0
+    },
+    "VALIDATED": {
+     "displayed": 8.1,
+     "uncapped": 8.1,
+     "gates": [],
+     "coveragePct": 63.9,
+     "coverageDim": 7.0
+    }
+   },
+   "opportunity": "R11",
+   "addedIds": [
+    "Calcasieu Lake|LA",
+    "Catherine|AR",
+    "Crescent Lake|FL",
+    "Hamilton|AR",
+    "Henderson Lake|LA",
+    "Lake Maurepas|LA",
+    "Lake Owyhee|OR",
+    "Lake Vermilion|MN",
+    "Salt Fork Lake|OH",
+    "San Carlos|AZ"
+   ]
+  },
+  {
+   "step": "+ R13 Unbound lakes whose live candidate failed the review rules",
+   "added": 115,
+   "profiled": 512,
+   "coveragePct": 82.4,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.244,
+    "hist": 0.678,
+    "base": 0.705,
+    "flood": 0.328
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.4,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 82.4,
+     "coverageDim": 9.0
+    },
+    "PARTIAL": {
+     "displayed": 7.2,
+     "uncapped": 7.2,
+     "gates": [],
+     "coveragePct": 82.4,
+     "coverageDim": 9.0
+    },
+    "VALIDATED": {
+     "displayed": 7.9,
+     "uncapped": 7.9,
+     "gates": [],
+     "coveragePct": 82.4,
+     "coverageDim": 9.0
+    }
+   },
+   "opportunity": "R13",
+   "addedIds": [
+    "Bantam Lake|CT",
+    "Barkhamsted Reservoir|CT",
+    "Becks Pond|DE",
+    "Big Creek Lake|IA",
+    "Big Green Lake|WI",
+    "Big Stone Lake|SD",
+    "Bowdish Reservoir|RI",
+    "Budd Lake|NJ",
+    "Burt Lake|MI",
+    "Candlewood Lake|CT",
+    "Chain O'Lakes|IL",
+    "Chicot|AR",
+    "China Lake|ME",
+    "Chippewa Flowage|WI",
+    "Concord Pond|DE",
+    "Congamond Lakes|MA",
+    "Conowingo Reservoir|MD",
+    "Coventry Lake (Wangumbaug)|CT",
+    "Damariscotta Lake|ME",
+    "Dillon Reservoir|CO",
+    "East Okoboji|IA",
+    "False River|LA",
+    "First Connecticut Lake|NH",
+    "Fish Lake|UT",
+    "Flagstaff Lake|ME",
+    "Flat River Res. (Johnson's Pond)|RI",
+    "Great East Lake|NH",
+    "Griffith Lake|DE",
+    "Gull Lake|MI",
+    "Harding|AK",
+    "Highland Lake|CT",
+    "Holter Lake|MT",
+    "Kenai|AK",
+    "Killens Pond|DE",
+    "Lake Absegami|NJ",
+    "Lake Anna|VA",
+    "Lake Arthur|PA",
+    "Lake Bomoseen|VT",
+    "Lake Carmi|VT",
+    "Lake Charlevoix|MI",
+    "Lake Chesdin|VA",
+    "Lake Cochituate|MA",
+    "Lake Freeman|IN",
+    "Lake George|FL",
+    "Lake Lillinonah|CT",
+    "Lake Macbride|IA",
+    "Lake Marburg|PA",
+    "Lake Mary|AZ",
+    "Lake Nockamixon|PA",
+    "Lake Ogallala|NE",
+    "Lake Quinsigamond|MA",
+    "Lake Springfield|IL",
+    "Lake St. Catherine|VT",
+    "Lake Union|WA",
+    "Lake Wallenpaupack|PA",
+    "Lake Waramaug|CT",
+    "Lake Wawasee|IN",
+    "Lake Zoar|CT",
+    "Loch Raven Reservoir|MD",
+    "Lums Pond|DE",
+    "Manasquan Reservoir|NJ",
+    "Mansfield Hollow Lake|CT",
+    "Marion Reservoir|KS",
+    "Massabesic Lake|NH",
+    "Merrill Creek Reservoir|NJ",
+    "Monksville Reservoir|NJ",
+    "Moon Lake|MS",
+    "Moosehead Lake|ME",
+    "Mooselookmeguntic Lake|ME",
+    "Nelson Lake|ND",
+    "Ninigret Pond|RI",
+    "Onota Lake|MA",
+    "Otis Reservoir|MA",
+    "Otter Tail Lake|MN",
+    "Pachaug Pond|CT",
+    "Pascoag Reservoir|RI",
+    "Piney Run Lake|MD",
+    "Point Judith Pond|RI",
+    "Pontoosuc Lake|MA",
+    "Prettyboy Reservoir|MD",
+    "Pymatuning Reservoir|PA",
+    "Quabbin Reservoir|MA",
+    "Rangeley Lake|ME",
+    "Redfish Lake|ID",
+    "Reelfoot Lake|TN",
+    "Rice Lake|IL",
+    "Riffe Lake|WA",
+    "Rocky Gorge Reservoir|MD",
+    "Sabine Lake|LA",
+    "Salton Sea|CA",
+    "Schoodic Lake|ME",
+    "Sebec Lake|ME",
+    "Sheridan Lake|SD",
+    "Silver Lake (Dover)|DE",
+    "Skaneateles Lake|NY",
+    "Squantz Pond|CT",
+    "Stafford Pond|RI",
+    "Swartswood Lake|NJ",
+    "Timothy Lake|OR",
+    "Tiogue Lake|RI",
+    "Tippecanoe Lake|IN",
+    "Torch Lake|MI",
+    "Triadelphia Reservoir|MD",
+    "Umbagog Lake|NH",
+    "Wachusett Reservoir|MA",
+    "Wallowa Lake|OR",
+    "Wallum Lake|RI",
+    "Washoe Lake|NV",
+    "Watchaug Pond|RI",
+    "Webster Lake|MA",
+    "West Grand Lake|ME",
+    "Winnapaug Pond|RI",
+    "Worden Pond|RI",
+    "Yellow Creek Lake|PA",
+    "Yellowstone Lake|WY"
+   ]
+  },
+  {
+   "step": "+ R7 Provider terms: other undocumented operator endpoints (Duke, SRP, CNPPID, ...)",
+   "added": 22,
+   "profiled": 534,
+   "coveragePct": 86.0,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.234,
+    "hist": 0.663,
+    "base": 0.704,
+    "flood": 0.315
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.4,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 86.0,
+     "coverageDim": 9.0
+    },
+    "PARTIAL": {
+     "displayed": 7.1,
+     "uncapped": 7.1,
+     "gates": [],
+     "coveragePct": 86.0,
+     "coverageDim": 9.0
+    },
+    "VALIDATED": {
+     "displayed": 7.9,
+     "uncapped": 7.9,
+     "gates": [],
+     "coveragePct": 86.0,
+     "coverageDim": 9.0
+    }
+   },
+   "opportunity": "R7",
+   "addedIds": [
+    "Apache|AZ",
+    "Canyon|AZ",
+    "Castle Rock Lake|WI",
+    "Johnson Lake|NE",
+    "Lake Hickory|NC",
+    "Lake James|NC",
+    "Lake Jocassee|SC",
+    "Lake Keowee|SC",
+    "Lake McConaughy|NE",
+    "Lake Norman|NC",
+    "Lake Robinson|SC",
+    "Lake Shafer|IN",
+    "Lake Wateree|SC",
+    "Lake Wisconsin|WI",
+    "Lake Wylie|SC",
+    "Roosevelt|AZ",
+    "Round Valley Reservoir|NJ",
+    "Saguaro|AZ",
+    "Smith Mountain Lake|VA",
+    "Sutherland Reservoir|NE",
+    "Utah Lake|UT",
+    "White Bear Lake|MN"
+   ]
+  },
+  {
+   "step": "+ R14 Unbound lakes with no public level data found",
+   "added": 64,
+   "profiled": 598,
+   "coveragePct": 96.3,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.209,
+    "hist": 0.592,
+    "base": 0.629,
+    "flood": 0.281
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.4,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 96.3,
+     "coverageDim": 10.0
+    },
+    "PARTIAL": {
+     "displayed": 7.1,
+     "uncapped": 7.1,
+     "gates": [],
+     "coveragePct": 96.3,
+     "coverageDim": 10.0
+    },
+    "VALIDATED": {
+     "displayed": 7.9,
+     "uncapped": 7.9,
+     "gates": [],
+     "coveragePct": 96.3,
+     "coverageDim": 10.0
+    }
+   },
+   "opportunity": "R14",
+   "addedIds": [
+    "Aleknagik|AK",
+    "Andrews Lake|DE",
+    "Becharof|AK",
+    "Big Lake|AK",
+    "Bitter Lake|SD",
+    "Caspian Lake|VT",
+    "Chamberlain Lake|ME",
+    "Chesuncook Lake|ME",
+    "Conneaut Lake|PA",
+    "Cranberry Lake|NY",
+    "Crystal Lake|VT",
+    "Culvers Lake|NJ",
+    "Douthat Lake|VA",
+    "Eagle Lake|CA",
+    "Eleven Mile Reservoir|CO",
+    "Elk Lake|MI",
+    "Enemy Swim Lake|SD",
+    "Gardner Lake|CT",
+    "Great Pond (Belgrade)|ME",
+    "Halulu Lake (Niihau)|HI",
+    "Harriman Reservoir (Whitingham)|VT",
+    "Harveys Lake|PA",
+    "Jenny Lake|WY",
+    "Kvichak / Ugashik|AK",
+    "Lac Courte Oreilles|WI",
+    "Lake Clark|AK",
+    "Lake Crescent|WA",
+    "Lake Dunmore|VT",
+    "Lake Metigoshe|ND",
+    "Lake Murray (OK)|OK",
+    "Lake Seymour|VT",
+    "Lake Thompson|SD",
+    "Lake Waccamaw|NC",
+    "Lake Waiau|HI",
+    "Lake Washington|MS",
+    "Lake Wentworth|NH",
+    "Lake Willoughby|VT",
+    "Lake of Egypt|IL",
+    "Long Lake|ME",
+    "Malheur Lake|OR",
+    "Merrymeeting Lake|NH",
+    "Mono|CA",
+    "Mount Storm Lake|WV",
+    "Naknek|AK",
+    "Odell Lake|OR",
+    "Pyramid Lake|NV",
+    "Records Pond|DE",
+    "Red Mill Pond|DE",
+    "Ruby Lake|NV",
+    "Sangchris Lake|IL",
+    "Sevier Lake|UT",
+    "Skilak|AK",
+    "Somerset Reservoir|VT",
+    "Suttle Lake|OR",
+    "Teshekpuk|AK",
+    "Trap Pond|DE",
+    "Tustumena|AK",
+    "Wagamons Pond|DE",
+    "Waita Reservoir|HI",
+    "Waldo Lake|OR",
+    "Watuppa Ponds|MA",
+    "Waubay Lake|SD",
+    "Whitefish Lake|MT",
+    "Wilson Lake / Kaelepulu Pond|HI"
+   ]
+  },
+  {
+   "step": "+ R5 Coordinate: no polygon (22 lakes) whose evidence is strict (only blocker)",
+   "added": 22,
+   "profiled": 620,
+   "coveragePct": 99.8,
+   "shares": {
+    "src": 1.0,
+    "plan": 0.202,
+    "hist": 0.594,
+    "base": 0.629,
+    "flood": 0.271
+   },
+   "projection": {
+    "NOT_VALIDATED": {
+     "displayed": 5.0,
+     "uncapped": 6.3,
+     "gates": [
+      "validation"
+     ],
+     "coveragePct": 99.8,
+     "coverageDim": 10.0
+    },
+    "PARTIAL": {
+     "displayed": 7.1,
+     "uncapped": 7.1,
+     "gates": [],
+     "coveragePct": 99.8,
+     "coverageDim": 10.0
+    },
+    "VALIDATED": {
+     "displayed": 7.8,
+     "uncapped": 7.8,
+     "gates": [],
+     "coveragePct": 99.8,
+     "coverageDim": 10.0
+    }
+   },
+   "opportunity": "R5",
+   "addedIds": [
+    "Chickahominy Lake|VA",
+    "Great Salt Lake|UT",
+    "Green Bay|WI",
+    "Iliamna|AK",
+    "Koele ponds (Lanai)|HI",
+    "Lake Erie|MI",
+    "Lake Erie|NY",
+    "Lake Erie|OH",
+    "Lake Erie|PA",
+    "Lake Huron|MI",
+    "Lake Michigan|IN",
+    "Lake Michigan|MI",
+    "Lake Michigan|WI",
+    "Lake Ontario|NY",
+    "Lake Superior|MI",
+    "Lake Superior|MN",
+    "Lake Superior|WI",
+    "Lake of the Woods|MN",
+    "Nuuanu Reservoir|HI",
+    "Puu Loa Reservoir|HI",
+    "Waiakea Pond|HI",
+    "Waimaluhia Reservoir|HI"
+   ]
+  }
+ ]
+}

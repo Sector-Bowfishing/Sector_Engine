@@ -1,0 +1,1134 @@
+{
+ "schema": "lake-brain-mismatch14-dispositions/v1",
+ "criteriaVersion": "mismatch14-v1",
+ "runDate": "2026-10-13",
+ "note": "FIXED = every pre-registered criterion passed. Not REVIEWED: every FIXED lake is a newly recovered MACHINE_VERIFIED candidate that needs Michael's review and must not be added to any already-built review sample or pack. Source: jobs/lake-brain/bindings/mismatch14_probe.py + mismatch14_specs.json.",
+ "criteria": {
+  "MIN_MATCHED_DAYS": 365,
+  "WINDOW_DAYS": 1095,
+  "MEDIAN_ABS_FT": 0.5,
+  "P95_ABS_FT": 2.0,
+  "HISTORY_MAX_STALE_DAYS": 45,
+  "POOL_TOL_FT": 1.0,
+  "SHORT_MIN_DAYS": 20,
+  "SHORT_MEDIAN_FT": 0.1,
+  "SHORT_MAX_FT": 0.5
+ },
+ "counts": {
+  "FIXED": 8,
+  "CORRECTLY HELD": 0,
+  "NEEDS HUMAN REVIEW": 5,
+  "NO DEFENSIBLE MATCH": 1
+ },
+ "newlyRecovered": [
+  "Blue Mesa Reservoir|CO",
+  "Buffalo Bill Reservoir|WY",
+  "Glendo Reservoir|WY",
+  "Jordanelle Reservoir|UT",
+  "Lake Koocanusa|MT",
+  "Lake Shelbyville|IL",
+  "Navajo Reservoir|NM",
+  "Pineview Reservoir|UT"
+ ],
+ "lakes": {
+  "Bartlett|AZ": {
+   "lakeId": "Bartlett|AZ",
+   "disposition": "NO DEFENSIBLE MATCH",
+   "classifiedOn": "hads-fresh_vs_nwps",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": false,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [
+    "P2"
+   ],
+   "overlap": {
+    "window": [
+     "2023-10-15",
+     "2026-10-13"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.0,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-13",
+    "staleDays": 0
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 1798.0,
+    "operatorFullPoolFt": 1798.0,
+    "diffFt": 0.0,
+    "P2": false,
+    "liveMinFt": 289.28,
+    "liveMaxFt": 1787.95,
+    "operatorRangeFt": [
+     1610.0,
+     1821.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": true,
+    "feed": "nwps",
+    "matchedDays": 31,
+    "medianAbsFt": 0.0,
+    "maxAbsFt": 0.03
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "NWPS BRTA3 HPIRG and IEM HADS BRTA3 HPIR* are the same NWS DCP pool-elevation stream (31-day tie max 0.03 ft); no datum offset applied"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 1798.0,
+    "p1Basis": "USBR Bartlett Dam: Top of Active Conservation Pool",
+    "minFt": 1610.0,
+    "minBasis": "Top of Dead Storage Pool",
+    "maxFt": 1821.0,
+    "maxBasis": "Crest Elevation",
+    "sources": [
+     "https://www.usbr.gov/projects/index.php?id=51"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 1765.39,
+    "liveMedianLast30d": 1785.29,
+    "diffFt": 19.9
+   },
+   "reason": "The live NWPS gauge and its HADS history are the same feed and agree, so the hold-out 'mismatch' (plan composite vs live) is a QA artifact, but the HADS history itself is unusable: 7 days carry a 289.3 ft sentinel and 59% of the 2020-2026 daily values sit in constant runs of 7+ days (one 810-day run at 1726.6 ft). The only other candidate (USGS 09509502 stage) needs a fitted offset (research sd 33 ft) and is rejected. No uncorrupted history source exists in the research cache.",
+   "diagnostic": null,
+   "correction": null
+  },
+  "Blue Mesa Reservoir|CO": {
+   "lakeId": "Blue Mesa Reservoir|CO",
+   "disposition": "FIXED",
+   "classifiedOn": "rise78_vs_rise78",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-13",
+     "2026-10-11"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.0,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-11",
+    "staleDays": 2
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 7519.4,
+    "operatorFullPoolFt": 7519.4,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 7412.4,
+    "liveMaxFt": 7499.75,
+    "operatorRangeFt": [
+     7358.0,
+     7528.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same RISE catalog item 78 for live and history"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 7519.4,
+    "p1Basis": "USBR Blue Mesa Dam: Top of Joint Use Pool / Active Conservation Pool",
+    "minFt": 7358.0,
+    "minBasis": "Top of Dead Storage Pool",
+    "maxFt": 7528.0,
+    "maxBasis": "Crest Elevation",
+    "sources": [
+     "https://www.usbr.gov/projects/index.php?id=62"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 7467.47,
+    "liveMedianLast30d": 7413.19,
+    "diffFt": -54.3
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": null
+  },
+  "Glendo Reservoir|WY": {
+   "lakeId": "Glendo Reservoir|WY",
+   "disposition": "FIXED",
+   "classifiedOn": "rise374_vs_rise374",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-13",
+     "2026-10-11"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.005,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-11",
+    "staleDays": 2
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 4635.0,
+    "operatorFullPoolFt": 4635.0,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 4582.13,
+    "liveMaxFt": 4634.09,
+    "operatorRangeFt": [
+     4545.0,
+     4675.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same RISE catalog item 374"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 4635.0,
+    "p1Basis": "USBR Glendo Dam: Top of Active Conservation Pool",
+    "minFt": 4545.0,
+    "minBasis": "Top of Dead Storage Pool",
+    "maxFt": 4675.0,
+    "maxBasis": "Crest Elevation",
+    "sources": [
+     "https://www.usbr.gov/projects/index.php?id=290"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 4612.62,
+    "liveMedianLast30d": 4592.94,
+    "diffFt": -19.7
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": null
+  },
+  "Jordanelle Reservoir|UT": {
+   "lakeId": "Jordanelle Reservoir|UT",
+   "disposition": "FIXED",
+   "classifiedOn": "rise471_vs_rise471",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-12",
+     "2026-10-10"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.0,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-10",
+    "staleDays": 3
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 6166.4,
+    "operatorFullPoolFt": 6166.4,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 6114.83,
+    "liveMaxFt": 6166.57,
+    "operatorRangeFt": [
+     5902.0,
+     6185.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same RISE catalog item 471"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 6166.4,
+    "p1Basis": "USBR Jordanelle Dam: Top of Joint Use Pool (Top of Active Conservation Pool is listed separately at 6130.0 ft)",
+    "minFt": 5902.0,
+    "minBasis": "Top of Dead Storage Pool",
+    "maxFt": 6185.0,
+    "maxBasis": "Crest Elevation",
+    "sources": [
+     "https://www.usbr.gov/projects/index.php?id=176"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 6137.01,
+    "liveMedianLast30d": 6117.77,
+    "diffFt": -19.2
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": null
+  },
+  "Navajo Reservoir|NM": {
+   "lakeId": "Navajo Reservoir|NM",
+   "disposition": "FIXED",
+   "classifiedOn": "rise612_vs_rise612",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-13",
+     "2026-10-11"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.0,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-11",
+    "staleDays": 2
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 6085.0,
+    "operatorFullPoolFt": 6085.0,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 6009.65,
+    "liveMaxFt": 6053.46,
+    "operatorRangeFt": [
+     5775.0,
+     6108.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same RISE catalog item 612"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 6085.0,
+    "p1Basis": "USBR Navajo Dam: Top of Joint Use Pool (Top of Active Conservation Pool is listed separately at 5990.0 ft)",
+    "minFt": 5775.0,
+    "minBasis": "Top of Dead Storage Pool",
+    "maxFt": 6108.0,
+    "maxBasis": "Crest Elevation",
+    "sources": [
+     "https://www.usbr.gov/projects/index.php?id=310"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 6033.54,
+    "liveMedianLast30d": 6012.36,
+    "diffFt": -21.2
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": null
+  },
+  "Pineview Reservoir|UT": {
+   "lakeId": "Pineview Reservoir|UT",
+   "disposition": "FIXED",
+   "classifiedOn": "rise656_vs_rise656",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-10",
+     "2026-10-08"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.0,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-08",
+    "staleDays": 5
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 4900.0,
+    "operatorFullPoolFt": 4900.0,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 4829.0,
+    "liveMaxFt": 4900.77,
+    "operatorRangeFt": [
+     4818.0,
+     4908.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same RISE catalog item 656"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 4900.0,
+    "p1Basis": "USBR Pineview Dam: Top of Joint Use Pool",
+    "minFt": 4818.0,
+    "minBasis": "Top of Dead Storage Pool",
+    "maxFt": 4908.0,
+    "maxBasis": "Crest Elevation",
+    "sources": [
+     "https://www.usbr.gov/projects/index.php?id=218"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 4888.01,
+    "liveMedianLast30d": 4830.8,
+    "diffFt": -57.2
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": null
+  },
+  "Buffalo Bill Reservoir|WY": {
+   "lakeId": "Buffalo Bill Reservoir|WY",
+   "disposition": "FIXED",
+   "classifiedOn": "rise146_vs_rise146",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-13",
+     "2026-10-11"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.0,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-11",
+    "staleDays": 2
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 5393.5,
+    "operatorFullPoolFt": 5393.5,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 5350.28,
+    "liveMaxFt": 5389.33,
+    "operatorRangeFt": [
+     5158.0,
+     5395.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same RISE catalog item 146 for live and history"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 5393.5,
+    "p1Basis": "USBR Buffalo Bill Dam: Top of Active Conservation Pool",
+    "minFt": 5158.0,
+    "minBasis": "Top of Dead Storage Pool",
+    "maxFt": 5395.0,
+    "maxBasis": "Crest Elevation",
+    "sources": [
+     "https://www.usbr.gov/projects/index.php?id=33",
+     "https://www.usbr.gov/gp/lakes_reservoirs/wareprts/BBR26_Jun.pdf"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 5360.63,
+    "liveMedianLast30d": 5364.34,
+    "diffFt": 3.7
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "live-series-replacement",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": {
+    "kind": "live-series-replacement",
+    "replaces": {
+     "provider": "rise",
+     "station": "152",
+     "title": "South Fork Dike at Buffalo Bill Reservoir"
+    },
+    "live": {
+     "provider": "rise",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "146",
+     "series": "146",
+     "cadenceMin": 1440,
+     "lagMin": 2880,
+     "datumOffsetFt": 0.0,
+     "note": "USBR RISE daily item 146 (Buffalo Bill Reservoir Dam and Powerplants forebay); ~48 h latency, 0.0 placeholders dropped; replaces research item 152 (South Fork Dike gauge that does not track the pool)"
+    },
+    "history": {
+     "kind": "riseDaily",
+     "item": "146"
+    },
+    "evidence": "RISE 146 on 2026-05-31 = 5371.84 ft, identical to the end-of-May 2026 elevation in the Reclamation Wyoming Area Office operations report (BBR26_Jun.pdf); RISE 152 reads 5393.32 ft that day and stays within 5392.0-5394.2 ft for three years (std 0.47 ft vs 10.5 ft for item 146)",
+    "historyCompleteYears": 73,
+    "historyFirstYear": 1952,
+    "historyClass": "SUFFICIENT",
+    "historyNote": "RISE item 146 daily record 1952-03-16..2026-10-11 (73 complete years 1953-2025, >= 329 days each; 0.0 placeholders dropped)",
+    "probe": {
+     "lastObservationAt": "2026-10-12",
+     "ageHours": null,
+     "medianFt": 5364.34,
+     "lastFt": 5359.18,
+     "minFt30d": 5359.18,
+     "maxFt30d": 5369.94,
+     "samples30d": 30
+    }
+   }
+  },
+  "Canyon Lake|TX": {
+   "lakeId": "Canyon Lake|TX",
+   "disposition": "NEEDS HUMAN REVIEW",
+   "classifiedOn": "cwms-swf-1h_vs_1day",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": false
+   },
+   "failedCriteria": [
+    "S1"
+   ],
+   "overlap": {
+    "window": [
+     "2023-10-15",
+     "2026-10-13"
+    ],
+    "matchedDays": 1095,
+    "medianAbsFt": 0.007,
+    "p95AbsFt": 0.021,
+    "maxAbsFt": 5.7,
+    "medianSignedFt": -0.006
+   },
+   "history": {
+    "last": "2026-10-13",
+    "staleDays": 0
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 909.0,
+    "operatorFullPoolFt": 909.0,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 876.95,
+    "liveMaxFt": 910.19,
+    "operatorRangeFt": [
+     762.0,
+     974.0
+    ]
+   },
+   "shortFeed": {
+    "S1": false,
+    "applies": true,
+    "feed": "a2w",
+    "matchedDays": 1,
+    "singlePointDiffFt": 0.0,
+    "reason": "Access2Water serves only the latest value; the 20-day tie cannot be built in one session"
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same CWMS location SMCT2, native datum NGVD-29 for the live tsid (CDA vertical-datum-info); the daily series is the same location"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 909.0,
+    "p1Basis": "USACE A2W SWF:SMCT2 level Top of Conservation",
+    "minFt": 762.0,
+    "minBasis": "Bottom of Inactive",
+    "maxFt": 974.0,
+    "maxBasis": "Top of Dam",
+    "sources": [
+     "https://water.usace.army.mil/cda/reporting/providers/swf/locations"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 888.0,
+    "liveMedianLast30d": 908.03,
+    "diffFt": 20.0
+   },
+   "reason": "Every pre-registered criterion passes except S1(a): Access2Water serves only the latest value, so the 20-matched-day tie to the CWMS record cannot be built in one session. The single-point tie is exact (diff 0.00 ft at the same timestamp), the tsid string is the CDA series name, and the binding already carries the CWMS read as its first fallback. Closing it needs either a 20-day A2W/CDA log or a human acceptance of the identity-by-tsid argument.",
+   "diagnostic": null,
+   "correction": null
+  },
+  "Detroit Lake|OR": {
+   "lakeId": "Detroit Lake|OR",
+   "disposition": "NEEDS HUMAN REVIEW",
+   "classifiedOn": "cwms-nwdp-det_vs_usgs14180500",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": false,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": false
+   },
+   "failedCriteria": [
+    "O3",
+    "S1"
+   ],
+   "overlap": {
+    "window": [
+     "2023-10-13",
+     "2026-10-11"
+    ],
+    "matchedDays": 1094,
+    "medianAbsFt": 0.465,
+    "p95AbsFt": 3.095,
+    "maxAbsFt": 14.69,
+    "medianSignedFt": 0.23
+   },
+   "history": {
+    "last": "2026-10-11",
+    "staleDays": 2
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 1563.5,
+    "operatorFullPoolFt": 1563.5,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 1445.86,
+    "liveMaxFt": 1562.62,
+    "operatorRangeFt": [
+     1425.0,
+     1579.0
+    ]
+   },
+   "shortFeed": {
+    "S1": false,
+    "applies": true,
+    "feed": "a2w",
+    "matchedDays": 1,
+    "singlePointDiffFt": 0.0,
+    "reason": "Access2Water serves only the latest value; the 20-day tie cannot be built in one session"
+   },
+   "datum": {
+    "relation": "documented",
+    "text": "A2W NWP:DET vertical datum NGVD29; USGS 14180500 parameter 62614 is 'above NGVD 1929' (site alt datum NGVD29): same datum, no offset"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 1563.5,
+    "p1Basis": "USACE A2W NWP:DET level Top of Conservation / Top of Multi-Purpose",
+    "minFt": 1425.0,
+    "minBasis": "Bottom of Power",
+    "maxFt": 1579.0,
+    "maxBasis": "Top of Dam",
+    "sources": [
+     "https://water.usace.army.mil/cda/reporting/providers/nwp/locations"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 1531.57,
+    "liveMedianLast30d": 1509.69,
+    "diffFt": -21.9
+   },
+   "reason": "O3 fails (p95 3.10 ft > 2.0) and S1(a) is unestablished (A2W latest value only). The cause is a day-key convention, not a datum: USGS 62614 daily values are statistic 32400 'Observation at 24:00' (value dated 2026-10-10 = the 23:45 PDT reading 1497.68), while the probe reduces the CWMS series to a UTC-day median. Shifting the history one day gives median 0.08 ft / p95 0.61 ft (diagnostic only, not used to classify, no criterion changed). The CWMS daily siblings (~1Day MIXED-REV, CBT-REV) return no values from the public CDA although the catalog lists them.",
+   "diagnostic": {
+    "shiftPlus1Day": {
+     "medianAbsFt": 0.08,
+     "p95AbsFt": 0.614,
+     "maxAbsFt": 5.575
+    }
+   },
+   "correction": null
+  },
+  "Jackson Lake|WY": {
+   "lakeId": "Jackson Lake|WY",
+   "disposition": "NEEDS HUMAN REVIEW",
+   "classifiedOn": "cdanwdp_vs_cwmsfile",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": false
+   },
+   "failedCriteria": [
+    "S1"
+   ],
+   "overlap": {
+    "window": [
+     "2023-10-14",
+     "2026-10-12"
+    ],
+    "matchedDays": 1091,
+    "medianAbsFt": 0.0,
+    "p95AbsFt": 0.0,
+    "maxAbsFt": 0.0,
+    "medianSignedFt": 0.0
+   },
+   "history": {
+    "last": "2026-10-12",
+    "staleDays": 1
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 6769.0,
+    "operatorFullPoolFt": 6768.0,
+    "diffFt": 1.0,
+    "P2": true,
+    "liveMinFt": 6733.72,
+    "liveMaxFt": 6768.92,
+    "operatorRangeFt": [
+     6728.0,
+     6780.0
+    ]
+   },
+   "shortFeed": {
+    "S1": false,
+    "applies": true,
+    "feed": "a2w",
+    "matchedDays": 1,
+    "singlePointDiffFt": 0.0,
+    "reason": "Access2Water serves only the latest value; the 20-day tie cannot be built in one session"
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "A2W NWW:JCK tsid is the CDA NWDP series JCK.Elev-Forebay.Inst.~1Day.0.USBR-COMPUTED-REV; history is the same tsid"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 6768.0,
+    "p1Basis": "USACE A2W NWW:JCK level Top of Normal (directory 6769 = Max Non-Damaging)",
+    "minFt": 6728.0,
+    "minBasis": "Streambed",
+    "maxFt": 6780.0,
+    "maxBasis": "Top of Dam",
+    "sources": [
+     "https://water.usace.army.mil/cda/reporting/providers/nww/locations"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 6760.85,
+    "liveMedianLast30d": 6734.05,
+    "diffFt": -26.8
+   },
+   "reason": "Every pre-registered criterion passes except S1(a) (A2W latest value only; single-point tie exact, diff 0.00 ft). P1 passes at exactly the 1.0 ft tolerance (directory 6769 vs Top of Normal 6768; Max Non-Damaging is 6769). The directory also says hasDam False for Jackson Lake (Jackson Lake Dam exists, USBR).",
+   "diagnostic": null,
+   "correction": null
+  },
+  "Lake Koocanusa|MT": {
+   "lakeId": "Lake Koocanusa|MT",
+   "disposition": "FIXED",
+   "classifiedOn": "live-iridium_vs_cbtraw",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-15",
+     "2026-10-13"
+    ],
+    "matchedDays": 1088,
+    "medianAbsFt": 0.11,
+    "p95AbsFt": 0.708,
+    "maxAbsFt": 1.805,
+    "medianSignedFt": -0.01
+   },
+   "history": {
+    "last": "2026-10-13",
+    "staleDays": 0
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 2459.0,
+    "operatorFullPoolFt": 2459.0,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 2369.49,
+    "liveMaxFt": 2456.21,
+    "operatorRangeFt": [
+     2287.0,
+     2459.0
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same CWMS location LIB, Elev-Forebay, both read from CDA; values stay below 2459 ft NGVD29 (a NAVD88 reading would reach 2462.8)"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 2459.0,
+    "p1Basis": "USACE Libby Dam normal full pool (NGVD29)",
+    "minFt": 2287.0,
+    "minBasis": "minimum pool",
+    "maxFt": 2459.0,
+    "maxBasis": "normal full pool (crest elevation not found)",
+    "sources": [
+     "https://crohms.olav.com/dd/common/projects/www/lib.html",
+     "https://pubs.usgs.gov/sim/3485/sim3485.pdf"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 2426.86,
+    "liveMedianLast30d": 2444.28,
+    "diffFt": 17.4
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": null
+  },
+  "Lake Shelbyville|IL": {
+   "lakeId": "Lake Shelbyville|IL",
+   "disposition": "FIXED",
+   "classifiedOn": "pool30m_vs_pool-datman",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": true,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [],
+   "overlap": {
+    "window": [
+     "2023-10-05",
+     "2026-10-03"
+    ],
+    "matchedDays": 1093,
+    "medianAbsFt": 0.3,
+    "p95AbsFt": 0.33,
+    "maxAbsFt": 0.52,
+    "medianSignedFt": -0.3
+   },
+   "history": {
+    "last": "2026-10-03",
+    "staleDays": 10
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 599.7,
+    "operatorFullPoolFt": 599.7,
+    "diffFt": 0.0,
+    "P2": true,
+    "liveMinFt": 593.74,
+    "liveMaxFt": 610.04,
+    "operatorRangeFt": [
+     590.0,
+     626.5
+    ]
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same CWMS location 'Lk Shelbyville-Kaskaskia', native datum NAVD-88 for both (CDA vertical-datum-info); documented NAVD88->NGVD29 estimate +0.2692 ft is NOT applied; the unexplained constant -0.30 ft between the 30-min and the daily series is below the 0.5 ft tolerance"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 599.7,
+    "p1Basis": "USACE MVS CWMS level 'Elevation - 0 Percent Flood Control' / Summer Guide Curve (182.78856 m)",
+    "minFt": 590.0,
+    "minBasis": "Seasonal Rule Curve Production minimum (179.832 m)",
+    "maxFt": 626.5,
+    "maxBasis": "Elevation - 100 Percent Flood Control (190.9572 m)",
+    "sources": [
+     "https://cwms-data.usace.army.mil/cwms-data/levels"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 598.1,
+    "liveMedianLast30d": 599.69,
+    "diffFt": 1.6
+   },
+   "reason": null,
+   "diagnostic": null,
+   "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+   "status": "MACHINE_VERIFIED_CANDIDATE",
+   "reviewRequired": true,
+   "correction": null
+  },
+  "Rend Lake|IL": {
+   "lakeId": "Rend Lake|IL",
+   "disposition": "NEEDS HUMAN REVIEW",
+   "classifiedOn": "pool30m_vs_pool-datman-fresh",
+   "criteria": {
+    "O1": true,
+    "O2": false,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": false,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [
+    "O2",
+    "P2"
+   ],
+   "overlap": {
+    "window": [
+     "2023-10-05",
+     "2026-10-03"
+    ],
+    "matchedDays": 1092,
+    "medianAbsFt": 0.55,
+    "p95AbsFt": 0.58,
+    "maxAbsFt": 2.05,
+    "medianSignedFt": -0.55
+   },
+   "history": {
+    "last": "2026-10-03",
+    "staleDays": 10
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 405.0,
+    "operatorFullPoolFt": 405.0,
+    "diffFt": 0.0,
+    "P2": false,
+    "reason": "operator minimum or maximum pool not documented",
+    "liveMinFt": 402.84,
+    "liveMaxFt": 412.94
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "identical-by-construction",
+    "text": "same CWMS location 'Rend Lk-Big Muddy', native datum NAVD-88; documented NAVD88->NGVD29 estimate +0.3075 ft does not explain the constant -0.55 ft and is NOT applied"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 405.0,
+    "p1Basis": "USACE MVS CWMS level 'Elevation - 0 Percent Flood Control' (123.444 m)",
+    "minFt": null,
+    "minBasis": "no lower operator elevation in the CWMS level set",
+    "maxFt": 415.0,
+    "maxBasis": "Aux Spillway (126.492 m)",
+    "sources": [
+     "https://cwms-data.usace.army.mil/cwms-data/levels"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 405.61,
+    "liveMedianLast30d": 404.27,
+    "diffFt": -1.3
+   },
+   "reason": "The generator's own history (MVDhist-rev) stopped on 2024-07-23 (O4 fails, 8 matched days). The version-sibling pool series datman-rev is current but differs from the live 30-minute pool series by a tight constant -0.55 ft (p95 0.58), failing O2 (0.5 ft) by 0.05 ft; the same offset appears against the reviewed lrgsShef-rev series (diagnostic), so it is a series difference inside the MVS database, not a datum offset that the documented NAVD88->NGVD29 estimate (+0.31 ft) explains. The criterion is not relaxed. The hold-out QA's 30.9 ft figure was the Rend Lk TW (tailwater) series.",
+   "diagnostic": null,
+   "correction": null
+  },
+  "Lake Taneycomo|MO": {
+   "lakeId": "Lake Taneycomo|MO",
+   "disposition": "NEEDS HUMAN REVIEW",
+   "classifiedOn": "usgsiv_vs_usgsdv",
+   "criteria": {
+    "O1": true,
+    "O2": true,
+    "O3": true,
+    "O4": true,
+    "P1": true,
+    "P2": false,
+    "D1": true,
+    "S1": true
+   },
+   "failedCriteria": [
+    "P2"
+   ],
+   "overlap": {
+    "window": [
+     "2023-10-15",
+     "2026-10-13"
+    ],
+    "matchedDays": 1091,
+    "medianAbsFt": 0.105,
+    "p95AbsFt": 0.932,
+    "maxAbsFt": 2.75,
+    "medianSignedFt": 0.01
+   },
+   "history": {
+    "last": "2026-10-13",
+    "staleDays": 0
+   },
+   "poolCheck": {
+    "P1": true,
+    "directoryFullPoolFt": 701.1,
+    "operatorFullPoolFt": 701.35,
+    "diffFt": 0.25,
+    "P2": false,
+    "reason": "operator minimum or maximum pool not documented",
+    "liveMinFt": 700.24,
+    "liveMaxFt": 704.48
+   },
+   "shortFeed": {
+    "S1": true,
+    "applies": false
+   },
+   "datum": {
+    "relation": "documented",
+    "text": "USGS 07053600 site datum NAVD88 (alt_datum_cd); FERC P-2221 gives 701.35 ft NGVD29; difference is below the tolerance and no offset is applied"
+   },
+   "datumOffsetFt": 0.0,
+   "operator": {
+    "fullPoolFt": 701.35,
+    "p1Basis": "FERC Ozark Beach P-2221 notice: water surface 701.35 ft NGVD29",
+    "minFt": null,
+    "minBasis": "no operator minimum documented (a 700 ft figure appears only in news)",
+    "maxFt": null,
+    "maxBasis": "no operator maximum documented",
+    "sources": [
+     "https://public-inspection.federalregister.gov/2021-24231.pdf"
+    ]
+   },
+   "qaReproduction": {
+    "liveMedianSince2025": 701.33,
+    "liveMedianLast30d": 701.04,
+    "diffFt": -0.3
+   },
+   "reason": "All of O1-O4 and P1 pass and the hold-out 'mismatch' is a wrong-lake load (Table Rock Dam headwater, 213 ft off). FIXED is withheld only because P2 needs a documented operator range and the licence exhibits (FERC eLibrary P-2221) were not retrievable; the operating range 700.2-704.5 ft seen in 3 years is plausible but undocumented. Lake Taneycomo is a regulated tailwater lake of Table Rock Dam, so its band is set by Powersite Dam gate operations.",
+   "diagnostic": null,
+   "correction": null
+  }
+ }
+}
