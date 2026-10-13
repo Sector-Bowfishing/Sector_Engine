@@ -1,0 +1,46 @@
+{
+  "current": {
+    "label": "CURRENT INPUT INTELLIGENCE (what runs today)",
+    "scores": {
+      "specialistUse": [2, "Customer /conditions reads 0 Brains; Phase-9 pilot evaluation consumes 5 Brains for 5 lakes but emits no judgment (evaluation.py)"],
+      "where": [3, "Customer path scores one query coordinate; FishIntel scores 6,504 Guntersville segments (depth = one 2007 9 ft contour, 38% unknown), merged to iOS Michael-Master, unreleased"],
+      "when": [5, "tonight curve + 6 nights + hourly ribbon; hydrology, gust, pressure, fog spread persisted into later nights without labelling; no trend field"],
+      "species": [3, "Engine: species only via spawn headline; FishIntel: 5 species on Guntersville from local tables that disagree with Engine and Biological"],
+      "why": [5, "Engine factors[].why, gates, topReasons (template text from values); FishIntel axis-tagged statements + audit trail; no source Brain versions on the customer path"],
+      "confidence": [3, "Engine: 100 minus 4 conditions and 10/day, blind to staleness of wind/level/pressure; FishIntel: coverage labels, no staleness check; pilot flags degraded inputs but does not propagate"],
+      "validation": [1, "92 aggregator tests, FishIntel synthetic corpus; no outcome data (PHASE_11 handoff: 'not validated, because there is no data')"],
+      "coverage": [6, "every coordinate returns a score; most lakes use estimated clarity and modeled water temperature"],
+      "integrity": [5, "scoreVersion + engineRevision on /conditions, deterministic, tested; Remote Config overrides unversioned; pilot publisher unscheduled"]
+    }
+  },
+  "currentWithoutFishIntel": {
+    "label": "SENSITIVITY: customer path only (FishIntel unreleased, ignored)",
+    "scores": {
+      "specialistUse": [2, "as above"], "where": [2, "one number per query point"], "when": [5, "as above"], "species": [2, "spawn headline only"],
+      "why": [4, "factor text and gates only"], "confidence": [2, "flat deductions"], "validation": [1, "unit tests only"],
+      "coverage": [6, "as above"], "integrity": [5, "as above"]
+    }
+  },
+  "designAdoptedTodayInputs": {
+    "label": "DESIGN ADOPTED, TODAY'S UPSTREAM INPUTS ONLY (hypothetical; NOT a current score; no Depth/Vegetation)",
+    "scores": {
+      "specialistUse": [8, "five Brains drive the answer with degrade handling (prototype R5-R7)"],
+      "where": [4, "4 wind-pilot lakes get bank exposure; other dimensions lake-level; depth/vegetation unknown, so zone rankings are UNRANKED/unconfirmed"],
+      "when": [6, "checkpoints inside each Brain's horizon (wind 24 h, temp ~4 d); persistence labelled UNKNOWN"],
+      "species": [4, "species-first but only common carp has engine-format rules; others NOT_ASSESSED"],
+      "why": [7, "BEST/LIMITING/UNKNOWN/FRESHNESS/CONFIDENCE with source Brain versions"],
+      "confidence": [5, "weakest-link with staleness/support/horizon; uncalibrated"],
+      "validation": [1, "synthetic property tests only"],
+      "coverage": [2, "limited by Wind pilots (4 lakes) and Biological rules"],
+      "integrity": [5, "deterministic, versioned; needs scheduler"]
+    }
+  },
+  "futurePotential": {
+    "label": "FUTURE POTENTIAL (Depth + Vegetation + upstream improvements + PARTIAL prospective validation) - a ceiling, not a forecast",
+    "scores": {
+      "specialistUse": [10, "seven Brains, version pinning"], "where": [8, "validated zone ranking on pilot lakes"], "when": [8, "trend inside horizons"],
+      "species": [8, "Biological-owned profiles for principal targets"], "why": [9, "same structure, user-tested"], "confidence": [8, "calibrated on field data"],
+      "validation": [5, "small prospective blind (power: ~30-80 pairs per lift claim, see VALIDATION)"], "coverage": [7, "measured depth/veg/temp on pilot regions"], "integrity": [8, "scheduled, monitored"]
+    }
+  }
+}

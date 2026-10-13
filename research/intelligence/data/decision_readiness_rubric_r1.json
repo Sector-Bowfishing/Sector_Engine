@@ -1,0 +1,23 @@
+{
+  "rubricVersion": "intelligence-decision-readiness-r1",
+  "status": "RESEARCH (not the published rubric; does not modify sector-intelligence-score-v1)",
+  "question": "Can Sector Intelligence tell a bowfisher WHERE, WHEN, WHAT, WHY and HOW SURE, from specialist Brain truth?",
+  "scale": 10,
+  "dimensions": [
+    {"id": "specialistUse", "weight": 10, "anchors": {"0": "no Brain state used", "2": "Brains consumed only in a non-answering pilot", "5": ">=3 Brains drive a shipped answer", "8": "all 5 drive the answer with degrade/stale handling", "10": "+ version pinning and replay"}},
+    {"id": "where", "weight": 15, "anchors": {"0": "none", "2": "one number per query point", "3": "area/segment answer on one lake, unvalidated, proxy inputs", "6": "zones on >=10 lakes using real depth/vegetation/exposure", "8": "validated zone ranking", "10": "sustained validation"}},
+    {"id": "when", "weight": 10, "anchors": {"0": "none", "3": "now only", "5": "tonight and nights, some inputs persisted without saying so", "7": "tonight/trend inside each specialist's forecast horizon, persistence labelled", "10": "validated"}},
+    {"id": "species", "weight": 15, "anchors": {"0": "species-blind", "2": "species touches only spawn headline", "3": "per-species answers from locally-owned tables on one lake", "5": "per-species answers from Biological-owned knowledge for >=3 species", "7": "fleet-wide species-first", "10": "validated"}},
+    {"id": "why", "weight": 10, "anchors": {"0": "none", "3": "free-text reasons", "5": "structured per-factor reasons from input values", "7": "best/limiting/unknown/freshness with source Brain versions", "10": "validated as understood by users"}},
+    {"id": "confidence", "weight": 15, "anchors": {"0": "none", "2": "flat deductions that ignore staleness and support", "3": "coverage labels or degraded-input flags, no propagation", "5": "weakest-link per factor incl staleness, support, horizon", "8": "calibrated against outcomes", "10": "sustained calibration"}},
+    {"id": "validation", "weight": 15, "anchors": {"0": "none", "1": "unit/synthetic only", "3": "retrospective", "5": "small prospective blind", "8": "pre-registered prospective meeting power", "10": "sustained"}},
+    {"id": "coverage", "weight": 5, "anchors": {"0": "none", "2": "a handful of lakes", "6": "every coordinate answers, most with estimated inputs", "8": "most lakes with measured inputs", "10": "all"}},
+    {"id": "integrity", "weight": 5, "anchors": {"0": "none", "5": "deterministic, tested, versioned, some config unversioned", "8": "all versioned, scheduled, monitored", "10": "replayable"}}
+  ],
+  "gates": [
+    {"id": "validation<5", "when": "validation < 5", "cap": 5.0},
+    {"id": "validation<8", "when": "validation < 8", "cap": 7.0},
+    {"id": "noConfidencePropagation", "when": "confidence < 5", "cap": 6.0}
+  ],
+  "rule": "A scenario may only claim a dimension level that the evidence string demonstrates in running code (current) or that is explicitly labelled design/future. Current, design-adopted and future are scored separately and never combined."
+}

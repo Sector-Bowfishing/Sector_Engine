@@ -1,0 +1,98 @@
+{
+ "current": {
+  "label": "CURRENT INPUT INTELLIGENCE (what runs today)",
+  "uncapped": 3.2,
+  "value": 3.2,
+  "caps": [
+   [
+    "validation<5",
+    5.0
+   ],
+   [
+    "noConfidencePropagation",
+    6.0
+   ]
+  ],
+  "dims": {
+   "specialistUse": 2,
+   "where": 3,
+   "when": 5,
+   "species": 3,
+   "why": 5,
+   "confidence": 3,
+   "validation": 1,
+   "coverage": 6,
+   "integrity": 5
+  }
+ },
+ "currentWithoutFishIntel": {
+  "label": "SENSITIVITY: customer path only (FishIntel unreleased, ignored)",
+  "uncapped": 2.7,
+  "value": 2.7,
+  "caps": [
+   [
+    "validation<5",
+    5.0
+   ],
+   [
+    "noConfidencePropagation",
+    6.0
+   ]
+  ],
+  "dims": {
+   "specialistUse": 2,
+   "where": 2,
+   "when": 5,
+   "species": 2,
+   "why": 4,
+   "confidence": 2,
+   "validation": 1,
+   "coverage": 6,
+   "integrity": 5
+  }
+ },
+ "designAdoptedTodayInputs": {
+  "label": "DESIGN ADOPTED, TODAY'S UPSTREAM INPUTS ONLY (hypothetical; NOT a current score; no Depth/Vegetation)",
+  "uncapped": 4.5,
+  "value": 4.5,
+  "caps": [
+   [
+    "validation<5",
+    5.0
+   ]
+  ],
+  "dims": {
+   "specialistUse": 8,
+   "where": 4,
+   "when": 6,
+   "species": 4,
+   "why": 7,
+   "confidence": 5,
+   "validation": 1,
+   "coverage": 2,
+   "integrity": 5
+  }
+ },
+ "futurePotential": {
+  "label": "FUTURE POTENTIAL (Depth + Vegetation + upstream improvements + PARTIAL prospective validation) - a ceiling, not a forecast",
+  "uncapped": 7.8,
+  "value": 7.0,
+  "caps": [
+   [
+    "validation<8",
+    7.0
+   ]
+  ],
+  "dims": {
+   "specialistUse": 10,
+   "where": 8,
+   "when": 8,
+   "species": 8,
+   "why": 9,
+   "confidence": 8,
+   "validation": 5,
+   "coverage": 7,
+   "integrity": 8
+  }
+ }
+}

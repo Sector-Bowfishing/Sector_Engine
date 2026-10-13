@@ -1,0 +1,36 @@
+## P1  paired blind-area design: pairs needed for 80% power (one-sided sign test, alpha 0.05)
+base_sightings_per_visit,lift,dispersion_k,pairs_needed
+2 1.25 1.0 None
+2 1.25 4.0 400
+2 1.5 1.0 240
+2 1.5 4.0 120
+2 2.0 1.0 80
+2 2.0 4.0 40
+2 3.0 1.0 40
+2 3.0 4.0 15
+5 1.25 1.0 None
+5 1.25 4.0 240
+5 1.5 1.0 240
+5 1.5 4.0 60
+5 2.0 1.0 80
+5 2.0 4.0 30
+5 3.0 1.0 30
+5 3.0 4.0 15
+10 1.25 1.0 None
+10 1.25 4.0 160
+10 1.5 1.0 240
+10 1.5 4.0 60
+10 2.0 1.0 60
+10 2.0 4.0 20
+10 3.0 1.0 30
+10 3.0 4.0 15
+## P2  paired vs unpaired (uncontrolled app log), base=5, k=1, night_sd 0.6: units needed for 80% power
+lift,paired_pairs,unpaired_trips_per_arm
+1.5 240 160
+2.0 80 80
+3.0 30 20
+## P3  effort confound: ranking has NO real effect (lift = 1.0)
+raw catch per trip   followed-top=14.02  other=10.06  apparent lift=1.39
+catch per effort-hr  followed-top=4.01  other=4.00  apparent lift=1.00
+## P4  sensitivity: strong night-to-night variance (night_sd 1.2), base=5, k=1, lift=2.0
+paired_pairs 80 unpaired_trips_per_arm 160
