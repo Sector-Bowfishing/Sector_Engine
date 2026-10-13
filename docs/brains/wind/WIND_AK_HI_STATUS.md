@@ -13,7 +13,7 @@ Status words: SUPPORTED · PARTIAL · UNTESTED · BLOCKED. Evidence: `jobs/wind-
 | Percentile (P90) risk flag | not tested | not tested | **UNTESTED** | flag calibrated on CAL+H1 southeastern land stations |
 | Time zone / tonight window | America/Anchorage, Pacific/Honolulu | | **SUPPORTED** (code) | in `tonight.STATE_TZ`; Alaska summer evenings are light — "tonight" 19:00–01:00 may not be dark |
 | Polygon geometry | 11 of 12 | 4 of 9 have polygons (5 missing) | **PARTIAL** | Iliamna AK and 5 HI lakes have no engine polygon |
-| Fetch / bank exposure | 8 estimated/audited | few | **BLOCKED** | manifest blocker `nbmAKDomainNotTested`/`nbmHIDomainNotTested` withholds all bank labels (17 lakes affected including audited Aleknagik, Lake Clark, Waimaluhia) |
+| Fetch / bank exposure | 9 lakes have geometry | 2 lakes have geometry | **BLOCKED** | manifest blocker `nbmAKDomainNotTested` / `nbmHIDomainNotTested` withholds all bank labels (11 lakes affected, including audited Aleknagik, Lake Clark and Waimaluhia) |
 | Customer promotion | — | — | **BLOCKED** | needs a station-based skill check per region and the ingest wiring above |
 
 ## To lift the block (all independent of the Southeast evidence)
