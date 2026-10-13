@@ -26,7 +26,10 @@ Source table: `docs/research/lake-brain/data/verified_bindings_v2.csv` (research
 | Never used | the v1.1 extensions (`w2-v1.1`), `R7h` / `VERIFIED_ENVELOPE`, `STAGE_ONLY`, derived-stage rows | 0 |
 | = strict | | 272 |
 | Hold back | directory coordinate flagged `identity_risk` (6) or `off_water` (52) in `lake_geometry_flags.csv` (`point_flag`); listed in `held_back_coordinate_flags.csv` as "HELD - coordinate review pending"; **must not be promoted** | -58 |
-| **Eligible** | | **214** |
+| Hold back (series) | the 14 lakes whose history series differs from the live binding by more than 15 ft (datum/series mismatch), found by the rules-v2 hold-out QA (`holdout_v2_results.json`, `seriesQa.mismatchOver15ft`): Bartlett AZ, Blue Mesa CO, Buffalo Bill WY, Canyon Lake TX, Detroit Lake OR, Glendo WY, Jackson Lake WY, Jordanelle UT, Lake Koocanusa MT, Lake Shelbyville IL, Lake Taneycomo MO, Navajo NM, Pineview UT, Rend Lake IL; listed in `held_back_series_mismatch.csv` with reason code "series/datum mismatch pending resolution"; none of them overlaps the coordinate holds | -14 |
+| **Eligible** | | **200** |
+
+Hold lists live in code too: `jobs/lake-brain/review/held_lakes.py` (series list) and the generated `held_lakes.json` (coordinate and series ids), which the ingestion script always unions with the pack's held files, so a held lake can never be placed in `accepted_batch.json`.
 
 Note: the strict count the research score used (273) still contained Red Lake; the 272 here excludes it as a post-hoc promotion.
 
@@ -38,17 +41,19 @@ strata sorted by name and rows sorted by lake id, so the result does not depend 
 
 | Stratum | Eligible | Sampled |
 |---|---|---|
-| a2w \| DIRECT_OPERATOR_POOL | 78 | 20 |
-| cwms \| DIRECT_OPERATOR_POOL | 44 | 11 |
+| a2w \| DIRECT_OPERATOR_POOL | 75 | 21 |
+| cwms \| DIRECT_OPERATOR_POOL | 41 | 11 |
 | cwms-saw \| DIRECT_OPERATOR_POOL | 1 | 1 |
 | nhdes \| DIRECT_LAKE_GAUGE | 1 | 1 |
-| nwps \| DIRECT_LAKE_GAUGE | 22 | 6 |
-| rise \| DIRECT_OPERATOR_POOL | 25 | 7 |
+| nwps \| DIRECT_LAKE_GAUGE | 21 | 6 |
+| rise \| DIRECT_OPERATOR_POOL | 19 | 5 |
 | sjrwmd \| DIRECT_LAKE_GAUGE | 3 | 3 |
 | tva \| DIRECT_OPERATOR_POOL | 11 | 3 |
-| usgs \| DIRECT_LAKE_GAUGE | 28 | 7 |
+| usgs \| DIRECT_LAKE_GAUGE | 27 | 8 |
 | usgs \| DIRECT_OPERATOR_POOL | 1 | 1 |
-| **Total** | **214** | **60** |
+| **Total** | **200** | **60** |
+
+(The first draw, before the 14 series holds, had 214 eligible and a different sample that included four of the held lakes; it was discarded and the draw repeated with the same seed and method on the 200.)
 
 Reproduce: `python jobs/lake-brain/review/build_review_pack.py --research-docs <research checkout>/docs/research/lake-brain --data-dir <Sector_Research_Data/lake-brain> --out <dir> --seed 20261013`.
 `pack_manifest.json` records counts, strata, the seed and the SHA-256 of every input file.
@@ -77,8 +82,8 @@ FLAG when any hard concern holds, or two or more smaller ones:
   relay gauge; short or no history with no corroboration; level 5-10 ft from full pool with no corroboration; last reading > 24 h old (RISE excluded: documented ~2 day lag);
   directory full-pool confidence below high; no outline polygon.
 - A station name that contains every word of the lake name (after expanding abbreviations such as Fk -> Fork) is treated as a name match; the note says so.
-Single agency only is always shown as a note, never a flag by itself (159 of the 214 eligible rows have one agency).
-Result on this pack: sample 48 PASS / 12 FLAG; flagged-57 10 PASS / 47 FLAG.
+Single agency only is always shown as a note, never a flag by itself (153 of the 200 eligible rows have one agency).
+Result on this pack: sample 45 PASS / 15 FLAG; flagged-57 10 PASS / 47 FLAG.
 
 ## 4. How to review
 
@@ -112,12 +117,12 @@ different gauge that is stated. This is background only; it never makes a row ac
 - The flagged-57 export is summarised in the result (accepted / rejected / unsure / pending ids) and never enters the batch.
 - Nothing is written to a production system and nothing is marked REVIEWED by the script.
 
-Tests: `python -m pytest jobs/lake-brain/review` (synthetic pack and exports: pass, 1 reject, 2 rejects, unsure/pending, missing rows, wrong pack, unknown / held / duplicate ids, tampered population,
+Tests: `python -m pytest jobs/lake-brain/review` (synthetic pack and exports: pass, 1 reject, 2 rejects, unsure/pending, missing rows, wrong pack, unknown / held / duplicate ids, tampered population including the 14 series-mismatch lakes, a held lake inside the sample,
 flagged export, allocation rules, seed determinism, exact bound reference values).
 
 ## 7. Limits
 
 - Levels are a one-day snapshot (2026-10-13); links open live data. A reviewer judges identity and plausibility, not the exact number.
 - Machine-verified is not reviewed; 0 errors in 60 is "no error found", with a 95 % upper bound of 4.9 %, not a measured 0 %.
-- The 58 held-back lakes (52 off-water, 6 identity-risk directory points) and the 57 flagged rows are outside the batch whatever the sample says.
+- The 58 coordinate-held lakes (52 off-water, 6 identity-risk directory points), the 14 series-mismatch lakes and the 57 flagged rows are outside the batch whatever the sample says.
 - The recommendation is a triage hint written before the review; it must not be tuned after seeing decisions.

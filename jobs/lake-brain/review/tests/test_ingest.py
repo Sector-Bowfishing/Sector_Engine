@@ -204,6 +204,47 @@ def test_batch_never_contains_held_or_flagged_even_if_population_is_tampered(tmp
     assert len(batch) == 73
 
 
+def test_series_mismatch_lakes_never_in_batch_even_if_in_population(tmp_path):
+    """The 14 series/datum-mismatch lakes (held_lakes.py) are excluded from the batch even if a pack's population wrongly lists them."""
+    import held_lakes
+    pack, sample, flagged, population = make_pack(tmp_path)
+    with open(pack / "strict_population.csv", "a", newline="") as f:
+        for lid in sorted(held_lakes.SERIES_MISMATCH):
+            csv.writer(f).writerow([lid, "a2w | DIRECT_OPERATOR_POOL", "no", "a2w", "DIRECT_OPERATOR_POOL", "w1"])
+    rv = tmp_path / "rv.csv"
+    write_export(rv, SAMPLE_PACK, sample, lambda l: "ACCEPT")
+    code, out = run(tmp_path, rv, pack=pack)
+    batch = json.load(open(out / "accepted_batch.json"))
+    assert code == 0 and len(batch) == 73
+    assert not (set(batch) & held_lakes.SERIES_MISMATCH)
+    assert len(held_lakes.SERIES_MISMATCH) == 14
+
+
+def test_held_snapshot_and_pack_series_file_both_block(tmp_path):
+    pack, sample, flagged, population = make_pack(tmp_path)
+    with open(pack / "held_back_series_mismatch.csv", "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["lake_id", "reason"])
+        w.writerow(["a2w-lake-1|ST", "datum"])
+    with open(pack / "strict_population.csv", "a", newline="") as f:
+        pass
+    rv = tmp_path / "rv.csv"
+    # a1 is in the sample but held -> the pack is inconsistent and ingestion refuses it
+    write_export(rv, SAMPLE_PACK, sample, lambda l: "ACCEPT")
+    code, out = run(tmp_path, rv, pack=pack)
+    assert code == 2 and not out.exists()
+
+
+def test_held_snapshot_in_repo_has_all_series_lakes_and_no_sample_overlap():
+    import held_lakes
+    ids = held_lakes.load_snapshot()
+    assert held_lakes.SERIES_MISMATCH <= ids
+    p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "held_lakes.json")
+    if os.path.exists(p):
+        d = json.load(open(p))
+        assert set(d["seriesMismatch"]) == set(held_lakes.SERIES_MISMATCH)
+
+
 def test_flagged_csv_counts_and_never_in_batch(tmp_path):
     pack, sample, flagged, population = make_pack(tmp_path)
     rv, fv = tmp_path / "rv.csv", tmp_path / "fv.csv"

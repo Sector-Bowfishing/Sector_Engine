@@ -27,6 +27,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from review_stats import upper_bound  # noqa: E402
+import held_lakes  # noqa: E402
 
 DEFAULT_PACK = "/Users/mcather/Desktop/Sector Handoffs/Sector Engine/Lake Brain Binding Review"
 DEFAULT_OUT = os.path.normpath(os.path.join(HERE, "..", "data"))
@@ -59,18 +60,24 @@ def load_pack(pack_dir):
         population=os.path.join(pack_dir, "strict_population.csv"),
         held=os.path.join(pack_dir, "held_back_coordinate_flags.csv"),
         flagged=os.path.join(pack_dir, "binding_review_flagged57.csv"),
+        held_series=os.path.join(pack_dir, "held_back_series_mismatch.csv"),
     )
     for k, p in paths.items():
-        if not os.path.exists(p):
+        if k != "held_series" and not os.path.exists(p):
             raise IngestError(f"pack file missing: {p}")
     manifest = json.load(open(paths["manifest"]))
     sample = read_csv(paths["sample"])
     population = read_csv(paths["population"])
     held = {r["lake_id"] for r in read_csv(paths["held"])}
+    if os.path.exists(paths["held_series"]):          # series/datum-mismatch holds (older packs do not have this file)
+        held |= {r["lake_id"] for r in read_csv(paths["held_series"])}
+    held |= held_lakes.load_snapshot()                # repository copy of the hold lists: a held lake can never enter the batch
     flagged = {r["lake_id"] for r in read_csv(paths["flagged"])}
     stratum_of = {r["lake_id"]: r["stratum"] for r in population}
     in_sample = {r["lake_id"] for r in population if r["in_sample"] == "yes"}
     sample_ids = {r["lake_id"] for r in sample}
+    if sample_ids & held:
+        raise IngestError("pack inconsistent: held-back lakes appear in the sample: " + ", ".join(sorted(sample_ids & held)))
     if in_sample != sample_ids:
         raise IngestError("pack inconsistent: strict_population.csv in_sample column differs from binding_review_sample.csv")
     return dict(manifest=manifest, sample_ids=sample_ids, population=population, stratum_of=stratum_of, held=held, flagged=flagged,
@@ -143,7 +150,7 @@ def evaluate(pack, decisions, max_errors=MAX_ERRORS_DEFAULT):
 
 
 def proposed_batch(pack, ev):
-    """Lake ids eligible to become REVIEWED. Empty unless the rule is met. Excludes held-back coordinate flags, the flagged-57, rejected rows and every
+    """Lake ids eligible to become REVIEWED. Empty unless the rule is met. Excludes held-back lakes (coordinate flags, series mismatches), the flagged-57, rejected rows and every
     row of a stratum that contains a reject."""
     if not ev["rule_met"]:
         return []
@@ -180,9 +187,9 @@ def build_result(pack, ev, batch, review_csv, decisions, flagged_summary, now):
         ruleMet=ev["rule_met"], verdict=ev["verdict"], reason=ev["reason"], rejectedIds=ev["rejected"], unsureIds=ev["unsure"], pendingIds=ev["pending"],
         strata=[ev["strata"][s] for s in sorted(ev["strata"])], fullReviewStrata=ev["full_review"],
         acceptedBatchCount=len(batch), acceptedBatchFile="accepted_batch.json",
-        heldBackCoordinateFlags=sorted(pack["held"]), flagged57=flagged_summary,
+        heldBackLakes=sorted(pack["held"]), flagged57=flagged_summary,
         notes=["This script does not mark any binding REVIEWED; accepted_batch.json is a proposal for the adoption work.",
-               "Binding review is not complete until the flagged-57 review is also done and the held-back coordinate flags are resolved."],
+               "Binding review is not complete until the flagged-57 review is also done and the held-back lakes (coordinate flags, series/datum mismatches) are resolved."],
     )
 
 
