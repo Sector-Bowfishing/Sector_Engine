@@ -1,0 +1,32 @@
+# Lake Brain — next implementation plan (from the research campaign, 2026-10-13)
+
+Everything below is **implementation**, ordered by leverage. "Approval" marks what is outside this campaign's boundary (customer-serving deploy,
+Cloud Scheduler/Run changes, lifecycle, rubric). Score effects come from the unmodified rubric over the research evidence (`data/score_marginals.json`);
+they are *uncapped* effects and only show on the dashboard once validation leaves `NOT_VALIDATED` (cap 5.0).
+
+| # | Step | What it fixes | Score effect (uncapped / displayed) | Effort | Approval |
+|---|---|---|---|---|---|
+| 1 | **Deep TVA history sources**: add `LakeHistorySource` cases `nwsHadsDcp` (IEM HADS `HP` hourly 2022-10→), `nwsRvdhunArchive` (NWS Huntsville RVD, IEM AFOS, 2005–2021), `cwmsLrdTva` (Pickwick CWMS LRD 2019→); backfill the 4 TVA pilots into `gs://sector-lake-brain/history`; one-time `--backfill` run | TVA pilots 651 days → 16–18 complete years; baseline INSUFFICIENT → SUFFICIENT; `historicalState` stops being withheld | historyQuality 0.30→1.50, seasonalBaseline 0.20→1.00: **+2.0 uncapped** (4.3→6.3); displayed unchanged (coverage gate) | S–M (Swift: 3 source cases + parsers; handle 0.1 ft/06–07 h stamps vs midnight, 647-day MAE 0.001–0.003 ft) | none (job image rebuild via `brain-image-build.sh`) |
+| 2 | **Baseline & classification rules v2** (`doy15-percentile-v2`, `lake-level-rules-v2`): ≥ 10 complete years for NORMAL/UNUSUAL, ≥ 15 for VERY_UNUSUAL, 5–9 → LIMITED (no VERY_UNUSUAL); all years for natural lakes, recency weighting where operations changed; STABLE = fixed floor 0.10 ft reservoirs / 0.05 ft natural, no p50 term; RAPID = max(p95, 0.25 ft); 72 h mean-rate label | Overconfident 5-year tails (5.9 % vs 4 %, 101/237 lakes > 8 %); STABLE flags 51–58 % of days by construction | none directly; prerequisite for any honest validation | M | version bump; rubric unaffected |
+| 3 | **Generated bindings table + provider adapters** (`bindings.json` from `binding_pipeline.py`; adapters for USACE Access2Water, USBR RISE, NWS NWPS; keep TVA/CWMS/USGS) | coverage 0.8 % → 14.8 % with existing adapters (92 lakes), 41.5 % with all (258 core), 50.7 % with flagged promoted | **coverage 1→5 (ladder) = +0.8; quality shares → core scenario 5.9 uncapped; gate lifts, displayed 3.0 → 5.0** | L (adapters + review UI/CSV; reuse the probe code) | none for jobs; **sampled human review (M-B02)** |
+| 4 | **Acceptance-sampling review** of the machine-verified rows (n = 60 stratified, ≤ 1 error; flagged 57 reviewed in full) | rubric counts only REVIEWED bindings | enables #3 | S (≈ 1 h of Michael's time) | Michael |
+| 5 | **Prospective prediction ledger** (`gs://sector-lake-brain/predictions/{lake}/{yyyymm}.jsonl`) + monthly scorer | the only validation evidence that cannot be overfit | validation NOT_VALIDATED → PARTIAL after 12 months if v2 criteria pass: displayed **5.0 → 6.6** (core) | S–M | none |
+| 6 | **Operator plan/flood evidence from CWMS levels API** (per-lake `operatingPools.guideCurve / operatingZone / floodPool`, verified match) | operatorPlan share ≈ 0.20, flood share ≈ 0.30 under the conservative rule; CWMS levels matched 143 lakes (132 flood-pool bottoms, 58 guide curves) | plan 0.2→0.5 +0.3, 0.8 +0.6; flood 0.3→0.6 +0.15 (uncapped) | M | none |
+| 7 | **Canonical geometry delivery**: static versioned GeoJSON (`lakes/{id}/geometry.v1.json`, simplified 50 m ≈ 33 KB gz for Guntersville; full-resolution analysis polygon separate) in a public bucket + bucket CORS + `geometry{…}` summary on the lake registry; union NHD pieces (fixes 67 split reservoirs, Hartwell 136.7→217 km²), drop holes < 100 m², fix Devils Lake GeometryCollection and 3 degenerate polygons | Ops `Lakes → Info` shows the real boundary instead of a point; `identity.polygonStatus` is written by Engine for the first time | none (rubric has no geometry dimension) | M | bucket CORS = infra only (no serving-revision change). Adding fields to `GET /lakes` **is a customer-serving deploy → approval**; prefer the static route |
+| 8 | **Identity-risk review**: 43 directory points far from their polygon, 126 off-water (CSV `point_flag`) | wrong-identity risk for any binding built on a bad point | indirect | S (Michael scans a CSV) | Michael |
+| 9 | **Context features into the profile** (`characteristics`: regime, class, residence time, region, shoreline slope index, chain position, measured grassPct) generated from `lake_features.csv` | model transfer, Intelligence confidence, class-stratified onboarding | none | M | none |
+| 10 | **Extend the existing TVA RestApi archiver from 5 to 16 dams** (all 16 TVA directory lakes) | other 12 TVA lakes only 3.9 y of HADS (LIMITED until 2028) | small (12 lakes) | S (config change to `water-temp-tva-archive`) | Cloud Run job deploy → Michael (M-ctx-01) |
+| 11 | **Baseline artifact hygiene**: weekly recompute or content-fingerprint keys + lifecycle rule | immutable per-day artifacts: ≈ 115k objects/yr at 315 lakes | none | S | bucket lifecycle = infra |
+| 12 | **Rubric v2 proposal** (Michael's decision): applicability-aware flood share; per-dimension validation instead of one ternary; optional geometry / presence dimensions; coverage counts only lakes with real level evidence | rubric weaknesses in `LAKE_BRAIN_AUDIT.md` §4 | n/a | S (decision) + M (code) | Michael |
+| 13 | **Presence tier model** (agency survey / stocking / in-waterbody record / HUC8 / range prior / none), incl. bowfin & freshwater drum if added to the assessed species | 68 % of presence rows `unknown`; Sector Intelligence counts `historical` and range-only as present | none on the Lake score; helps Intelligence | M | species list = Michael (M-species-01) |
+
+## Suggested sequence
+1. **Now (no approvals):** #1, #2 (code + backfill; rebuild job image), #6, #9, #11, #5.
+2. **One short Michael session:** #4 (sampling), #8, M-geometry decisions, M-species-01, #12.
+3. **Then:** #3 (adapters; the largest piece), #7 (geometry delivery), #10.
+4. **After 12 months of #5:** apply the v2 hold-out criteria once; only then ask for `PARTIAL` (and `VALIDATED` after the prospective result).
+
+## What implementation alone cannot do
+- It cannot lift the validation gate (a prospective result needs elapsed time and an explicit status decision).
+- It cannot create public level data where none exists (≈ 100 natural/utility lakes; see `LAKE_BRAIN_FLEET_SCALING.md` §7).
+- It cannot make coverage-padding honest: reviewing `NO_SOURCE` lakes would raise the ladder without adding knowledge, and is not recommended.
