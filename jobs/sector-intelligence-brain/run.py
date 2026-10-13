@@ -125,7 +125,7 @@ def main(argv=None) -> int:
                                 now=now, deployment=deployment_version(), descriptor=orch.DESCRIPTOR,
                                 duration_ms=int((time.time() - t0) * 1000), published=published,
                                 event_id=bp.event_id(now, sib.BRAIN_ID, 0),
-                                evaluations=evaluations, evaluation_errors=eval_errors, inputs_fp=inputs_fp)
+                                evaluations=evaluations, evaluation_errors=eval_errors, inputs_fp=inputs_fp, fingerprint_value=fp)
     sib.check_keys(updates)
     body = json.dumps({k.lstrip("/"): v for k, v in updates.items()}, separators=(",", ":"), allow_nan=False)
     reg = updates[f"/brains/{sib.BRAIN_ID}"]

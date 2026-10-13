@@ -276,3 +276,15 @@ class Catalog(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_stored_fingerprint_is_the_planned_one():
+    """plan() compares the published fingerprint with one computed before the run; build_updates must store that one,
+    not a recomputation from the CONNECTED-upgraded dependency view (which republished every orchestrator cycle)."""
+    up = build()
+    reg = up["/brains/sector-intelligence"]
+    assert reg["fingerprint"]
+    up2 = sib.build_updates(cat=real_catalog()[0], cat_sha="sha", lakes=["Alpha Lake|AL"], fleet={}, upstream=upstream(),
+                            serving=sib.engine_serving(SERVICE, LINEAGE, NOW), now=NOW, deployment="d", descriptor=orch.DESCRIPTOR,
+                            duration_ms=1, published=None, event_id="e", fingerprint_value="planned")
+    assert up2["/brains/sector-intelligence"]["fingerprint"] == "planned"
