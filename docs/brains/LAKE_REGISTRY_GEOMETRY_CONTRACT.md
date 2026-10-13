@@ -180,6 +180,8 @@ Rules for the consumer: show `geometryConfidence.level` and the first reason, an
 
 ## 9. Known limits and what stayed null
 
+*Counts in this section and in sections 1 to 5 are as published on 2026-10-13T18:44Z (590 with geometry); the state after the 2026-10-13T20:20Z recovery is in section 10. Large and special waters: `LAKE_REGISTRY_LARGE_WATER_POLICY.md` (proposal).*
+
 | Group | Lakes | Why | Next step |
 |---|---|---|---|
 | Large water, `held-large-water` | 16: Erie x4, Huron, Michigan x3, Ontario, Superior x3, Green Bay, Lake of the Woods, Great Salt Lake, Iliamna | NHD has the shorelines (25,738 to 82,002 km2 for the Great Lakes) but the Engine never outlined them and the display-boundary policy is pending (research M-geometry-05). Nothing was simplified blindly; ids and areas are in `geometryHeld`. | Decide the policy (coarse 250 m boundary, no satellite frame), then publish as v1 additions |
@@ -191,3 +193,43 @@ Rules for the consumer: show `geometryConfidence.level` and the first reason, an
 * 40 lakes are `identity-risk` and 125 `off-water` by directory coordinate (research M-geometry-03): the geometry is a real NHD shoreline but the registry coordinate may be wrong; do not use `location` to place a marker when `pointFlag` is not `ok`; use `labelPoint`.
 * NHD vintages differ per lake (2001 to 2023); drought-era features understate the pool (Hartwell is dated 2013).
 * GSW (30 m) and HydroLAKES are validators only; no GSW or HydroLAKES geometry is published.
+
+## 10. Amendment log (additive; contract semantics unchanged)
+
+### 2026-10-13T20:20:54Z — recovery of the 4 `pending` lakes (index `generatedAt`; branch `feat/lake-fleet-geometry`)
+
+State recomputed from the bucket before and after (all 1,180 / 1,184 geometry objects re-read over HTTPS; sha256, validity, closed rings, counter-clockwise exteriors, area against the index, all checked; 0 problems):
+
+| | Before (verified) | After |
+|---|---|---|
+| Lakes in the index | 621 | 621 |
+| With geometry | 590 | **592** |
+| `geometry: null` | 31 (16 held-large-water, 11 no-nhd, 4 pending) | **29** (16 held-large-water, 13 no-nhd, 0 pending) |
+| HIGH / MEDIUM / LOW / MISSING | 404 / 142 / 44 / 31 | **404 / 144 / 44 / 29** |
+| `extentKind` | `shoreline-nhd-hr-union` x 590 | `shoreline-nhd-hr-union` x 592 |
+| Withheld (OSM, ODbL) | 3 (Conowingo, Ninigret, Point Judith) | 4 (+ East Okoboji) |
+| Objects in the bucket | 1,183 | 1,188 (+4 geometry, +1 archive of the previous index, index and manifest replaced in place) |
+
+The 590-with-geometry / 621 claim held. Area sanity of the 592: 388 lakes with an NID reference (median ratio 0.97, 295 within 0.80 to 1.25, 20 under 0.5, 28 over 2.0 — the NID unit errors the contract describes), 149 with a USACE reference (median 0.967, 119 within range, 10 under 0.5, none over 2); 184 have neither. GNIS ids are still `null` (index-only refresh pending).
+
+The four lakes:
+
+| Lake | Result | Evidence |
+|---|---|---|
+| Buckeye Lake OH | **recovered**, MEDIUM | NHD `Crane Lake` (`152133995`, 11.158 km2, FDATE 2007-01-08), seed method `point-area-fallback`, analysis area 11.200 km2 = 0.989 of NID 11.33; directory point inside the polygon; display 404 / analysis 581 vertices; sha256 display `979eb8c3fb903d45ed040df1106ee610f298e49834ace78c36d43fec36ca7c3c`, analysis `0b8195a62248e754c67e0691b62c8861ea7349f6a5025a5e9fcedc43a9a0aa9f` |
+| Wilson Lake / Kaelepulu Pond HI | **recovered**, MEDIUM | NHD `Kaʻelepulu Pond` (`32648665`, 0.331 km2, FDATE 2021-12-29), method `point-name-fallback`, 0.334 km2, directory point inside; display and analysis 40 vertices; sha256 display `78d2e2bab9dd31e5ad4b7d1d82b2e8b2679cf386e5b404ec157fc8670768168c`, analysis `f068b78fb92ace1b535aba1b39b4086d175e24029001f8cca83441962ef1d9a6`. This was **not** a transient error: the query succeeded in the original window, but `norm_name` split the Hawaiian okina into two tokens, so the pond never matched. Fixed in `lake_geometry.norm_name` (okina dropped, diacritics folded; ASCII apostrophes unchanged) |
+| Lake Shafer IN | **not recoverable from NHD waterbodies**; now `no-nhd` | The attribute and geometry queries answered (HTTP 200, 0.4 to 1.2 s). The only FTYPE 390/436 water within the search window is Lake Freeman (6.35 km2, already published). NHDArea (layer 9) holds a 5.55 km2 FTYPE 336 (CanalDitch) polygon `155353019`, 3 parts spanning lat 40.78 to 41.08 (the river), directory point 239 m outside it: a river-reach polygon, not a lake outline. Not published |
+| East Okoboji IA | **not recoverable from NHD waterbodies**; now `no-nhd`, OSM polygon withheld | HTTP 200. Nearest unnamed waterbody `132544104` (25.15 km2, the West Okoboji chain, already the source of West Okoboji) is 1,340 m from the directory point (allowance 788 m). NHDArea `132549700` is a 11.03 km2 FTYPE 460 (StreamRiver) polygon with 117 holes spanning lon -96.07 to -95.04: the Little Sioux River, point 9,130 m away. Not published |
+
+Retrieval of the 4 originally failed because the USGS NHD service returned 502/504 for spatial queries during the first build; on 2026-10-13 about 20:10 UTC all 13 requests (paced at 4 s, UA `Sector-LakeBrain/1.0 (io.sector.co; Rehtac Labs; read-only public data)`) answered HTTP 200 on the first attempt (0.3 to 20.3 s). Request log: `Sector_Research_Data/lake-brain/geometry/recovery-2026-10-13/requests.log.jsonl` (outside Git).
+
+Publication (all by `gcloud storage`, project `sector-9393c`):
+
+1. The previous index was copied byte-identically (md5 `7nLSNXQrrDaJP0QGFbfk+g==`) to `registry/archive/lakes.v1.gen1791917397611653.json` (`--no-clobber`) so it stays readable.
+2. Four objects were added with `--no-clobber`: `lakes/Buckeye_Lake_OH/` and `lakes/Wilson_Lake_Kaelepulu_Pond_HI/`, each `geometry.v1.display` and `geometry.v1.analysis` (`geojson.gz`, same headers as every other object).
+3. `registry/lakes.v1.json` replaced with `--if-generation-match=1791917397611653` (new generation `1791922998882997`, 224,905 bytes stored; sha256 of the uncompressed index `8ae465ab2e39ca78df1b3b37187bb3caba61817320408771bc6803c21132b18d`), and `registry/manifest.v1.json` regenerated with updated counts and an `amendments` record. `README.txt` unchanged.
+4. Verified: the generation list of the other 1,181 pre-existing objects is unchanged, the 617 other index entries are equal to the previous entries, the 590 previously published objects keep their sha256 (anonymous HTTPS re-read of all 1,184 objects), and `verify_upload.py` passes for the two new lakes and Guntersville (CORS, headers, sha256, area).
+
+Tooling added in `jobs/lake-geometry/`: `merge_registry.py` (merges a `build_geometry.py --only` build into the live index; refuses any change to a published lake, any sha change, any target that shares an NHD feature with another lake; stages only the new objects), `norm_name` fix, 12 new tests (22 -> 34).
+
+**Side effect to note:** the okina fix also makes **Nuuanu Reservoir HI** match NHD `Nuʻuanu Reservoir Number Four` (0.223 km2, `point-name-fallback`, MEDIUM, directory point 1,341 m off the shoreline, NID ratio 2.25, 28 vertices) in a full offline rebuild. It was **not published** (outside the four lakes) and needs a human check before any full rebuild is uploaded: use `merge_registry.py` for index changes, not `build_geometry.py --upload`.
