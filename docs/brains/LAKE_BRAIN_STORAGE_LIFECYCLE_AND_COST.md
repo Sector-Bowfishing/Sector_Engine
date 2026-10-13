@@ -159,7 +159,7 @@ Recommendation: do B now (reversible, closes the realistic failure) and C in cod
 
 ### 4.4 Scratch run result and cleanup
 
-(Section completed at the end of the session.)
+**WAITING (not yet observable).** At hand-off time (2026-10-13 about 20:45 UTC) the rule file had been applied 32 minutes earlier and a verify showed every object version intact (`LIFECYCLE HAS RUN: False`), which is the expected state: the first midnight UTC after creation had not happened. Nothing is proven about runtime behaviour yet. A watcher on the author's machine re-runs `lifecycle_scratch_test.sh verify` every 10 minutes, writes the outcome to the session scratchpad (`scratch_result.txt`) and then deletes `gs://sector-lake-brain-lifecycle-scratch-d0ed8d` (the only bucket it ever touches). If it did not run, finish by hand: `jobs/lake-brain/history/lifecycle_scratch_test.sh verify sector-lake-brain-lifecycle-scratch-d0ed8d`, read the PASS/FAIL lines, then `... teardown sector-lake-brain-lifecycle-scratch-d0ed8d`. Expected after the run: `baselines-archive/*` gone, the noncurrent generations of `baselines/Lake_A/latest.json` and `history/Lake_A/daily.csv` gone, everything else (both `predictions/` generations, `history_backup/`, `presence/`, live objects, decoy prefixes) unchanged.
 
 ## 5. One-time cleanup (not performed)
 
