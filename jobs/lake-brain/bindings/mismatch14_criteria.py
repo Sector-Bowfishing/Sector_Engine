@@ -18,9 +18,13 @@ same location, pool/forebay elevation parameter - never by fit) satisfies ALL of
   D1  datum       : the datum relationship is either IDENTICAL BY CONSTRUCTION (same provider, location, parameter; only interval/version differs)
                     or documented by the operator / USGS site record. A constant offset may ONLY be one that is documented; offsets are never fitted.
                     Where the datum is documented and equal, datumOffsetFt = 0.0.
-  S1  short feeds : a live provider that serves only a short recent window (NWPS ~30 days, Access2Water latest value) cannot meet O1 by itself. Then the
-                    same SERIES is read through the provider that does hold its record (CWMS CDA for an A2W tsid; HADS/IEM for an NWPS lid) and O1-O3
-                    apply to that; if no such record exists the lake cannot be FIXED (NEEDS HUMAN REVIEW), never FIXED on a 30-day overlap.
+  S1  short feeds : a live provider that serves only a short recent window (NWPS ~30 days, Access2Water latest value only) cannot meet O1 itself.
+                    Then (a) the live series is tied to a RECORD-HOLDING read of the same series (CWMS CDA for an A2W tsid; IEM/HADS for an NWPS
+                    lid with the same PE) by value agreement on every day both exist: >= SHORT_MIN_DAYS matched days, median |diff| <= SHORT_MEDIAN_FT
+                    and max |diff| <= SHORT_MAX_FT; and (b) O1-O3 are evaluated between that record-holding read, freshly fetched, and the history
+                    source over the WINDOW. If (a) cannot be established the lake cannot be FIXED (NEEDS HUMAN REVIEW), never FIXED on a short overlap.
+                    (When the history source IS the record-holding series, (b) tests file integrity and the day-key convention only; the
+                    semantic proof then rests on P1/P2 and D1.)
 
 CORRECTLY HELD     : the mismatch is real - the live and the best semantically-correct history series differ by a documented physical reason that
                      a constant documented offset cannot remove (different water body, tailwater vs pool, different gauge datum with no record).
@@ -33,5 +37,8 @@ MEDIAN_ABS_FT = 0.5
 P95_ABS_FT = 2.0
 HISTORY_MAX_STALE_DAYS = 45
 POOL_TOL_FT = 1.0
+SHORT_MIN_DAYS = 20
+SHORT_MEDIAN_FT = 0.1
+SHORT_MAX_FT = 0.5
 RUN_DATE = "2026-10-13"
 CRITERIA_VERSION = "mismatch14-v1"
