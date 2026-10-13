@@ -266,16 +266,38 @@ public enum WaterTemperatureBrainRunner {
         return out
     }
 
-    /// Keep ≤ 500 events and ≤ 30 days (keys are time-sortable).
+    /// Keep ≤ 80 of THIS brain's events and ≤ 30 days, decided by each event's `at`
+    /// field — never by key. The Python brains and Wind key events by millisecond
+    /// epoch ("17…"), this brain keyed them "yyyyMMdd…"; the old key comparison put
+    /// every "17…" key below the cutoff and would have deleted every other brain's
+    /// events on each run (found in the 2026-10-12 platform audit; Brain Platform
+    /// contract §7). Events without a parseable `at`, other brains' events and
+    /// brain-less legacy events are never touched.
+    static let keepOwnEvents = 80
     static func pruneActivity(store: BrainStore, now: Date) async throws {
-        let keys = try await store.shallowKeys("activity").sorted()
-        let cutoff = BrainPlatform.eventKey(now.addingTimeInterval(-30 * 86_400), suffix: "")
-        var drop = Set(keys.filter { $0 < cutoff })
-        if keys.count - drop.count > 500 { drop.formUnion(keys.filter { !drop.contains($0) }.prefix(keys.count - drop.count - 500)) }
-        guard !drop.isEmpty else { return }
+        guard let data = try await store.get("activity"),
+              let tree = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+        let keys = pruneKeys(activity: tree, now: now)
+        guard !keys.isEmpty else { return }
         var paths: [String: Data] = [:]
-        for k in drop { paths["activity/\(k)"] = Data("null".utf8) }
+        for k in keys { paths["activity/\(k)"] = Data("null".utf8) }
         try await store.update(paths)
+    }
+
+    /// Pure: which of this brain's event keys to delete.
+    static func pruneKeys(activity: [String: Any], now: Date, keep: Int = keepOwnEvents, maxAgeDays: Int = 30) -> [String] {
+        let iso = ISO8601DateFormatter()
+        var dated: [(key: String, at: Date)] = []
+        for (k, v) in activity {
+            guard let e = v as? [String: Any], (e["brainId"] as? String) == WaterTemperatureBrain.brainId,
+                  let s = e["at"] as? String, let at = iso.date(from: s) else { continue }
+            dated.append((k, at))
+        }
+        let cutoff = now.addingTimeInterval(-Double(maxAgeDays) * 86_400)
+        var drop = Set(dated.filter { $0.at < cutoff }.map(\.key))
+        let sorted = dated.sorted { $0.at < $1.at }
+        if sorted.count > keep { drop.formUnion(sorted.prefix(sorted.count - keep).map(\.key)) }
+        return drop.sorted()
     }
 
     static func writeFailure(store: BrainStore, message: String, now: Date, options: WaterTemperatureBrainRunOptions, t0: Date) async throws {
