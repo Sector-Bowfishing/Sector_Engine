@@ -27,6 +27,9 @@ public struct LakeBrainRunOptions: Sendable {
     /// Pull full operator history (decades of CWMS daily) instead of the recent tail.
     public var backfill = false
     public var processingVersion: String? = nil
+    /// DRY RUN ONLY (LakeBrainJob refuses it with --rtdb): evaluate CANDIDATE bindings as if reviewed. Writes local files only and
+    /// marks every output `dryRunCandidate`. A normal run never sets this.
+    public var includeCandidates = false
     public init() {}
 }
 
@@ -40,6 +43,8 @@ public struct LakeBrainLakeResult: Sendable {
     public var historyRows: Int
     public var historyWritten: Bool
     public var errors: [String]
+    /// The binding was a CANDIDATE evaluated as if reviewed (candidate dry run).
+    public var dryRunCandidate = false
 }
 
 public struct LakeBrainRunResult: Sendable {
@@ -102,7 +107,10 @@ public enum LakeBrainRunner {
                                     presence: LakePresenceIndex?, published: LakeLevelStateRecord?,
                                     previousProfile: LakeBrainProfileRecord?, options: LakeBrainRunOptions,
                                     now: Date) async -> LakeBrainLakeResult {
-        let binding = LakeSourceBindings.binding(for: lake.id)
+        var binding = LakeSourceBindings.binding(for: lake.id)
+        // Candidate dry run: in-memory promotion only; nothing here is published (the job refuses --rtdb with it).
+        let dryRunCandidate = options.includeCandidates && binding?.status == .candidate
+        if dryRunCandidate { binding?.status = .reviewed }
         let gen = BrainPlatform.iso(now)
         var errors: [String] = []
         var state: LakeLevelStateRecord?
@@ -110,6 +118,7 @@ public enum LakeBrainRunner {
         var historyRows = 0
         var historyWritten = false
         var plan: LakeBrainPlanDecision?
+        var lastMerged: [DailyLevel] = []
         var liveResults: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)] = []
 
         if let binding, binding.status == .reviewed {
@@ -139,14 +148,15 @@ public enum LakeBrainRunner {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
                         if let d = await feeds.daily(h, since: nil, now: now, timeZone: tz) { fresh += d } else { errors.append("history: TVA operating guide unavailable") }
-                    case .cwmsDaily:
+                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily:
                         // Backfill (or an empty archive) pulls the whole record; otherwise the last 21 days.
                         let since: String? = (options.backfill || existing.isEmpty) ? nil
                             : existing.last.map { _ in LakeLevelCalendar.dayString(now.addingTimeInterval(-21 * 86_400), timeZone: tz) }
-                        if let d = await feeds.daily(h, since: since, now: now, timeZone: tz) { fresh += d } else { errors.append("history: CWMS daily unavailable") }
+                        if let d = await feeds.daily(h, since: since, now: now, timeZone: tz) { fresh += d } else { errors.append("history: \(h.profileDescription) unavailable") }
                     }
                 }
                 let merged = LakeDailyHistory.merge(existing: existing, new: fresh)
+                lastMerged = merged
                 historyRows = merged.count
                 if let archive, !merged.isEmpty, merged != existing {
                     do { try await archive.write(LakeDailyHistory.path(lake.id), LakeDailyHistory.encode(merged), contentType: "text/csv"); historyWritten = true }
@@ -169,18 +179,42 @@ public enum LakeBrainRunner {
             }
         }
 
+        // The baseline must come from the series the live level comes from: a history more than 15 ft off the live level is a
+        // series / datum mismatch and would label the lake 'unusual' for the wrong reason.
+        if let cur = state?.currentElevationFt, state?.kind == .observed, let off = historyLiveMismatch(history: lastMerged, current: cur, now: now, timeZone: binding.map { TimeZone(identifier: $0.timeZone) ?? .gmt } ?? .gmt) {
+            let flag = String(format: "historyLiveMismatch:%+.1fft", off)
+            var flags = state?.provenance.qualityFlags ?? []
+            flags.append(flag)
+            state?.provenance.qualityFlags = flags
+            errors.append("history/live series mismatch: seeded history of the last year is \(String(format: "%+.1f", off)) ft from the live level")
+        }
+        if dryRunCandidate {
+            var flags = state?.provenance.qualityFlags ?? []
+            flags.append("dryRunCandidate")
+            state?.provenance.qualityFlags = flags
+        }
         let presenceRecords = presence?.resolveLakeSpecies(lake.id, updatedAt: gen) ?? []
         let profile = LakeBrainProfiles.build(lake: lake, binding: binding, state: state, baseline: baseline,
                                               previous: previousProfile, presence: presence, live: liveResults, now: now,
-                                              archiveURI: archive?.uri)
+                                              archiveURI: archive?.uri, dryRunCandidate: dryRunCandidate)
         return LakeBrainLakeResult(lakeId: lake.id, plan: plan, state: state, profile: profile, presence: presenceRecords,
-                                   baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors)
+                                   baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors,
+                                   dryRunCandidate: dryRunCandidate)
+    }
+
+    /// Median of the history of the last 365 days minus the live level, when it is more than 15 ft (and >= 30 days exist).
+    static func historyLiveMismatch(history: [DailyLevel], current: Double, now: Date, timeZone: TimeZone) -> Double? {
+        let cutoff = LakeLevelCalendar.dayString(now.addingTimeInterval(-365 * 86_400), timeZone: timeZone)
+        let xs = history.filter { $0.date >= cutoff }.map(\.ft).sorted()
+        guard xs.count >= 30 else { return nil }
+        let med = xs.count % 2 == 1 ? xs[xs.count / 2] : (xs[xs.count / 2 - 1] + xs[xs.count / 2]) / 2
+        return abs(med - current) > 15 ? med - current : nil
     }
 
     // MARK: fleet run
 
     static func health(_ lakes: [LakeBrainLakeResult], writeFailed: Bool) -> String {
-        let reviewed = lakes.filter { LakeSourceBindings.binding(for: $0.lakeId) != nil }
+        let reviewed = lakes.filter { LakeSourceBindings.reviewedBinding(for: $0.lakeId) != nil || $0.dryRunCandidate }
         if writeFailed || lakes.isEmpty { return "FAILED" }
         guard !reviewed.isEmpty else { return "HEALTHY" }
         let unavailable = reviewed.filter { $0.state == nil || $0.state?.kind == .unavailable }.count
@@ -202,14 +236,17 @@ public enum LakeBrainRunner {
             return result
         }
         let directory = Set(ids)
-        for b in LakeSourceBindings.reviewed where !directory.contains(b.lakeId) {
+        for b in LakeSourceBindings.all where !directory.contains(b.lakeId) {
             result.health = "FAILED"; result.writeError = "binding for non-directory lake \(b.lakeId)"
             return result
         }
 
         var lakes: [DirectoryLake]
         switch options.scope {
-        case .pilots: lakes = LakeDirectory.all.filter { LakeSourceBindings.binding(for: $0.id) != nil }
+        case .pilots:
+            // The reviewed lakes; a candidate dry run adds the candidates. A normal run never touches a CANDIDATE.
+            lakes = LakeDirectory.all.filter { options.includeCandidates ? LakeSourceBindings.binding(for: $0.id) != nil
+                                                                         : LakeSourceBindings.reviewedBinding(for: $0.id) != nil }
         case .fleet: lakes = LakeDirectory.all
         }
         if let only = options.lakeIds { lakes = lakes.filter { only.contains($0.id) } }
@@ -425,13 +462,16 @@ public enum LakeBrainRunner {
             ("tva-restapi", .tva, "TVA", "reservoir-elevation", "hourly observed reservoir elevation + 365-day operating guide (guide curve, operating zone)"),
             ("usace-cwms-pool", .cwms, "USACE CWMS", "reservoir-elevation", "pool elevation (hourly + daily since 1960 at Hartwell), guide curve, drought levels"),
             ("usgs-nwis-lake-elevation", .usgs, "USGS", "lake-surface-elevation", "on-lake surface elevation (00062/62614)"),
+            ("usace-access2water", .a2w, "USACE Access2Water", "reservoir-elevation", "latest pool elevation + 24 h change and operator levels (one listing per district)"),
+            ("usbr-rise", .rise, "USBR RISE", "reservoir-elevation", "daily lake/reservoir elevation (about 48 h latency; 0.0 placeholders dropped)"),
+            ("nws-nwps", .nwps, "NWS NWPS", "lake-surface-elevation", "hourly pool elevation of NWS gauges (HP pe codes)"),
         ]
         var out: [String: (BrainDataSourceStatus, BrainSourceHealth)] = [:]
         for d in defs {
             var used = 0, failed = 0, stale = 0
             var latest: String?
             for r in lakes {
-                guard let b = LakeSourceBindings.binding(for: r.lakeId) else { continue }
+                guard let b = r.dryRunCandidate ? LakeSourceBindings.binding(for: r.lakeId) : LakeSourceBindings.reviewedBinding(for: r.lakeId) else { continue }
                 for ref in b.live where ref.provider == d.provider {
                     used += 1
                     let flags = r.state?.provenance.qualityFlags ?? []

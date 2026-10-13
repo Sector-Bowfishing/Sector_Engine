@@ -1,0 +1,4244 @@
+{
+ "schema": "lake-brain-bindings-excluded/v1",
+ "criteriaVersion": "binding-review-v1",
+ "count": 231,
+ "byPrimaryReason": {
+  "coordinate-flag": 58,
+  "flagged": 19,
+  "flagged-wave1": 1,
+  "history-live-mismatch": 14,
+  "post-hoc": 130,
+  "undocumented-provider": 9
+ },
+ "byAnyReason": {
+  "coordinate-flag": 95,
+  "flagged": 28,
+  "flagged-wave1": 57,
+  "history-live-mismatch": 14,
+  "post-hoc": 204,
+  "provider-not-allowed": 34,
+  "stage-only": 10,
+  "undocumented-provider": 35
+ },
+ "note": "Every lake with a research binding row (verified_bindings_v2.csv) that is NOT in bindings.proposed.v1.json. Unbound lakes are not listed.",
+ "excluded": [
+  {
+   "lakeId": "Alamo|AZ",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Allegheny Reservoir|PA",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: USACE pool-area ratio 0.58"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Almanor|CA",
+   "researchProvider": "cdec",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'cdec' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "American Falls Reservoir|ID",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Amistad Reservoir|TX",
+   "researchProvider": "twdb",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Anderson Ranch Reservoir|ID",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Apache|AZ",
+   "researchProvider": "srp",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'srp' is undocumented / terms unclear (not on the allow-list)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 19186 m from polygon (allowed 3000 m); NID pool-area ratio 12.01"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Apopka|FL",
+   "researchProvider": "sjrwmd",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'sjrwmd' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Assawompset Pond|MA",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Banks Lake|WA",
+   "researchProvider": "usbr-pnhm",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usbr-pnhm' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Bartlett|AZ",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Bay Springs Lake|MS",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Bear Lake|UT",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Beaver|AR",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Beech Fork Lake|WV",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Berryessa|CA",
+   "researchProvider": "cdec",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'cdec' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Black Hawk Lake|IA",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Blackshear|GA",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Blue Marsh Lake|PA",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Blue Mesa Reservoir|CO",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Bluewater Lake|NM",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Bowman-Haley Reservoir|ND",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: USACE pool-area ratio 0.49"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Buckhorn Lake|KY",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 3284 m from polygon (allowed 3000 m)"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Buffalo Bill Reservoir|WY",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Bull Shoals Lake|AR",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NID pool-area ratio 0.10"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Burton|GA",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "C.J. Strike Reservoir|ID",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Caballo Lake|NM",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Caddo Lake|TX",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NID pool-area ratio 0.56; USACE pool-area ratio 0.62"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Cagles Mill Lake|IN",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Calamus Reservoir|NE",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Calcasieu Lake|LA",
+   "researchProvider": "usgs",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Canandaigua Lake|NY",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Canyon Lake|TX",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Canyon|AZ",
+   "researchProvider": "srp",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'srp' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Castle Rock Lake|WI",
+   "researchProvider": "wps-hydro",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'wps-hydro' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Catahoula Lake|LA",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Catherine|AR",
+   "researchProvider": "usgs",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Cayuga Lake|NY",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Cecil M. Harden Lake|IN",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Cedar Bluff Reservoir|KS",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Chautauqua Lake|NY",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Cherokee Lake|TN",
+   "researchProvider": "tva",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Chickamauga Lake|TN",
+   "researchProvider": "tva",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: source repaired:largest-nearby; NHD name differs from directory name"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Clear Lake|CA",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Clear Lake|IA",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Clearwater Lake|MO",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Clinton Lake|IL",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "Clinton Lake|IL is excluded by decision (its row relies on a v1.1 rule)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Crater Lake|OR",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Crescent Lake|FL",
+   "researchProvider": "nwps",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Crescent Lake|OR",
+   "researchProvider": "usbr-pnhm",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usbr-pnhm' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Dardanelle|AR",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Deer Creek Reservoir|UT",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Detroit Lake|OR",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Devil's Kitchen Lake|IL",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: source repaired:largest-nearby"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Devils Lake|ND",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: GeometryCollection (LineString member); unmatched adjacent NHD piece(s) 37.0 km2 (11% of polygon)"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Diamond Lake|OR",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Dworshak Reservoir|ID",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Eagle Lake|MS",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 4118 m from polygon (allowed 3000 m)"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "East Lake Tohopekaliga|FL",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "East Lynn Lake|WV",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 3535 m from polygon (allowed 3000 m); 45% of polygon water >=50% of time (GSW)"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Elephant Butte Reservoir|NM",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NID pool-area ratio 0.26"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Falcon Lake|TX",
+   "researchProvider": "twdb",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Flaming Gorge Reservoir|UT",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Flaming Gorge Reservoir|WY",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Folsom|CA",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Fontana Lake|NC",
+   "researchProvider": "tva",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Fort Peck Lake|MT",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Fox Lake|IL",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Garrisons Lake|DE",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: 28% of polygon water >=50% of time (GSW)"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Glendo Reservoir|WY",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Grand Lake|CO",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Green Bay|WI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Greenwood Lake|NJ",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Griffin|FL",
+   "researchProvider": "sjrwmd",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'sjrwmd' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Hamilton|AR",
+   "researchProvider": "usgs",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Harlan County Lake|NE",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Harris|FL",
+   "researchProvider": "sjrwmd",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'sjrwmd' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Henderson Lake|LA",
+   "researchProvider": "usgs",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Henrys Lake|ID",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Heron Lake|NM",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Higgins Lake|MI",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Hiwassee Lake|NC",
+   "researchProvider": "tva",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 8923 m from polygon (allowed 3000 m); NHD area ratio 0.88; NHD IoU 0.86; source osm; NHD name differs from directory name"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Horsetooth Reservoir|CO",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Houghton Lake|MI",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Isabella|CA",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Jackson Lake|WY",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Jamestown Reservoir|ND",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NID pool-area ratio 0.15"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Jesup|FL",
+   "researchProvider": "sjrwmd",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'sjrwmd' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Johnson Lake|NE",
+   "researchProvider": "cnppid",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'cnppid' is undocumented / terms unclear (not on the allow-list)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Jordanelle Reservoir|UT",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Kentucky Lake|KY",
+   "researchProvider": "tva",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: unmatched adjacent NHD piece(s) 92.9 km2 (19% of polygon); NID pool-area ratio 0.74"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Kentucky Lake|TN",
+   "researchProvider": "tva",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Keuka Lake|NY",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lahontan Reservoir|NV",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Barkley|KY",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: trimmed to nearest piece"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Cascade|ID",
+   "researchProvider": "usbr-pnhm",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usbr-pnhm' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Champlain|VT",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Cushman|WA",
+   "researchProvider": "nwrfc",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'nwrfc' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake D'Arbonne|LA",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Darling|ND",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Erie|MI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Erie|NY",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Erie|OH",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Erie|PA",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Francis Case|SD",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Geneva|WI",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake George|NY",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Gogebic|MI",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Granby|CO",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Hickory|NC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Hopatcong|NJ",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Hudson|OK",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NHD area ratio 0.73; NHD IoU 0.70; source osm; NHD name differs from directory name"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Huron|MI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake James|NC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Jocassee|SC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Keowee|SC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Koocanusa|MT",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Mattamuskeet|NC",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Maurepas|LA",
+   "researchProvider": "usgs",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake McConaughy|NE",
+   "researchProvider": "cnppid",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'cnppid' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Mead|NV",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Memphremagog|VT",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Mendota|WI",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Michigan|IN",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Michigan|MI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Michigan|WI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Minnetonka|MN",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Monona|WI",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Norman|NC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Oahe|ND",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Ontario|NY",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Owyhee|OR",
+   "researchProvider": "usgs",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Pepin|MN",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Petenwell|WI",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Poinsett|SD",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Pontchartrain|LA",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Powell|UT",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Quinault|WA",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Robinson|SC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Roosevelt (FDR)|WA",
+   "researchProvider": "cwms-nwdp",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'cwms-nwdp' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Russell (R.B. Russell)|GA",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Sakakawea|ND",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Sammamish|WA",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Shafer|IN",
+   "researchProvider": "nipsco",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nipsco' is undocumented / terms unclear (not on the allow-list)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: no NHD / USACE / OSM corroboration"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Sharpe|SD",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Shelbyville|IL",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake St. Clair|MI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Strom Thurmond (Clarks Hill)|SC",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Superior|MI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Superior|MN",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Superior|WI",
+   "researchProvider": "coops",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'coops' is not on the allow-list"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lake Taneycomo|MO",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Tenkiller|OK",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Lake Tschida|ND",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 5186 m from polygon (allowed 3000 m)"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Lake Vermilion|MN",
+   "researchProvider": "nwps",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Washington|WA",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Wateree|SC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Winnipesaukee|NH",
+   "researchProvider": "nhdes",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nhdes' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Winnisquam|NH",
+   "researchProvider": "nhdes",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nhdes' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake Wisconsin|WI",
+   "researchProvider": "alliant",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'alliant' is undocumented / terms unclear (not on the allow-list)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 7958 m from polygon (allowed 3241 m)"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Lake Wylie|SC",
+   "researchProvider": "duke",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'duke' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lake of the Woods|MN",
+   "researchProvider": "eccc",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'eccc' is undocumented / terms unclear (not on the allow-list)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=missing (no polygon): no Engine polygon"
+    }
+   ],
+   "coordinateFlag": ""
+  },
+  {
+   "lakeId": "Lochloosa|FL",
+   "researchProvider": "sjrwmd",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'sjrwmd' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Logan Martin|AL",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Long Pond (Lakeville)|MA",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: trimmed to nearest piece"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Longview Lake|MO",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Lucky Peak Lake|ID",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Mark Twain Lake|MO",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Mille Lacs Lake|MN",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Millwood|AR",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: source repaired:largest-nearby; NHD name differs from directory name"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Mississinewa Lake|IN",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NID pool-area ratio 0.68; USACE pool-area ratio 0.61"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Monroe Lake|IN",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Mullett Lake|MI",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Navajo Reservoir|NM",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Newfound Lake|NH",
+   "researchProvider": "nhdes",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nhdes' is undocumented / terms unclear (not on the allow-list)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NID pool-area ratio 22.24"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Nolin River Lake|KY",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Okeechobee|FL",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Oneida Lake|NY",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Oologah Lake|OK",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Orange Lake|FL",
+   "researchProvider": "sjrwmd",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'sjrwmd' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Oroville|CA",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Ossipee Lake|NH",
+   "researchProvider": "nhdes",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nhdes' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Owasco Lake|NY",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Palisades Reservoir|ID",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Pathfinder Reservoir|WY",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Payette Lake|ID",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Pineview Reservoir|UT",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Pleasant|AZ",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Potholes Reservoir|WA",
+   "researchProvider": "usbr-pnhm",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usbr-pnhm' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Rainy Lake|MN",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Red Lake|MN",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "flagged-wave1",
+   "reasons": [
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Rend Lake|IL",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "history-live-mismatch",
+   "reasons": [
+    {
+     "code": "history-live-mismatch",
+     "detail": "history/live series mismatch >15 ft - hold pending datum resolution"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Roosevelt|AZ",
+   "researchProvider": "srp",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'srp' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Round Valley Reservoir|NJ",
+   "researchProvider": "njwsa",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "undocumented-provider",
+   "reasons": [
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'njwsa' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Ruedi Reservoir|CO",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Rye Patch Reservoir|NV",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Saguaro|AZ",
+   "researchProvider": "srp",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'srp' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Salamonie Lake|IN",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Salt Fork Lake|OH",
+   "researchProvider": "cwms",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "San Carlos|AZ",
+   "researchProvider": "usgs",
+   "researchStatus": "STAGE_ONLY",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "stage-only",
+     "detail": "status STAGE_ONLY: stage-only: no absolute level to test"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Savage River Reservoir|MD",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: USACE pool-area ratio 1.64"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Sebago Lake|ME",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Seminoe Reservoir|WY",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Seneca Lake|NY",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Shasta|CA",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_CORROBORATED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Sinclair|GA",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Smith Mountain Lake|VA",
+   "researchProvider": "aep",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'aep' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Smithville Lake|MO",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: source repaired:largest-nearby; NHD name differs from directory name"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Spirit Lake|IA",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Squam Lake|NH",
+   "researchProvider": "nhdes",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nhdes' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Starvation Reservoir|UT",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Stonewall Jackson Lake|WV",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NHD IoU 0.82; 2 substantial parts; USACE pool-area ratio 0.68; source osm; NHD name differs from directory name"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Storm Lake|IA",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Stump Lake|ND",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 4614 m from polygon (allowed 3000 m); unmatched adjacent NHD piece(s) 39.5 km2 (224% of polygon)"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Sunapee Lake|NH",
+   "researchProvider": "nhdes",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nhdes' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Sutherland Reservoir|NE",
+   "researchProvider": "nppd",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'nppd' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Swanson Reservoir|NE",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=identity_risk: identity risk: directory point 26786 m from polygon (allowed 3000 m)"
+    }
+   ],
+   "coordinateFlag": "identity_risk"
+  },
+  {
+   "lakeId": "Toledo Bend Reservoir|TX",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Trinity|CA",
+   "researchProvider": "rise",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Tuttle Creek Lake|KS",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Tygart Lake|WV",
+   "researchProvider": "a2w",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: USACE pool-area ratio 0.54"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Upper Klamath Lake|OR",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Utah Lake|UT",
+   "researchProvider": "utahlake",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w2-v1.1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "wave w2-v1.1 is a post-hoc extension (rules written after seeing wave-1 failures), not binding-review-v1 as pre-registered"
+    },
+    {
+     "code": "post-hoc",
+     "detail": "row relies on a v1.1 rule (tag in checks_passed)"
+    },
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'utahlake' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Walker Lake|NV",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_FLAG",
+   "wave": "w1",
+   "primaryReason": "flagged",
+   "reasons": [
+    {
+     "code": "flagged",
+     "detail": "status VERIFIED_FLAG: flagged single-origin row (drawdown / weak level class)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Walter F. George / Eufaula|GA",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: NID pool-area ratio 7065.60"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "Weiss|AL",
+   "researchProvider": "cwms",
+   "researchStatus": "VERIFIED",
+   "wave": "w1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: unmatched adjacent NHD piece(s) 8.4 km2 (8% of polygon)"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  },
+  {
+   "lakeId": "West Okoboji|IA",
+   "researchProvider": "usgs-d",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "provider-not-allowed",
+     "detail": "source provider 'usgs-d' is not on the allow-list"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "White Bear Lake|MN",
+   "researchProvider": "mncsg",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w2-v1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "undocumented-provider",
+     "detail": "source provider 'mncsg' is undocumented / terms unclear (not on the allow-list)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Wild Horse Reservoir|NV",
+   "researchProvider": "usgs",
+   "researchStatus": "VERIFIED_ENVELOPE",
+   "wave": "w1",
+   "primaryReason": "post-hoc",
+   "reasons": [
+    {
+     "code": "post-hoc",
+     "detail": "status VERIFIED_ENVELOPE: post-hoc R7h envelope promotion (not in binding-review-v1)"
+    },
+    {
+     "code": "flagged-wave1",
+     "detail": "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"
+    }
+   ],
+   "coordinateFlag": "ok"
+  },
+  {
+   "lakeId": "Youghiogheny River Lake|MD",
+   "researchProvider": "nwps",
+   "researchStatus": "VERIFIED",
+   "wave": "w2-v1",
+   "primaryReason": "coordinate-flag",
+   "reasons": [
+    {
+     "code": "coordinate-flag",
+     "detail": "directory coordinate point_flag=off_water: USACE pool-area ratio 0.80"
+    }
+   ],
+   "coordinateFlag": "off_water"
+  }
+ ]
+}
