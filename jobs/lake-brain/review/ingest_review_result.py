@@ -10,6 +10,7 @@ enter the proposed accepted batch.
 Dry run by default. With --write it writes
     jobs/lake-brain/data/binding_review_result.json   the full result (always)
     jobs/lake-brain/data/accepted_batch.json          JSON list of lake ids eligible to become REVIEWED ([] unless the rule is met)
+Every id must also be a lake of jobs/lake-brain/data/bindings.proposed.v1.json (--bindings), otherwise the run is refused.
 It never marks anything REVIEWED itself, and the accepted batch never contains held-back coordinate-flagged lakes, the wave-1 flagged
 rows or post-hoc rows (only rows of the strict eligible population that are in a stratum without rejects).
 
@@ -31,6 +32,7 @@ import held_lakes  # noqa: E402
 
 DEFAULT_PACK = "/Users/mcather/Desktop/Sector Handoffs/Sector Engine/Lake Brain Binding Review"
 DEFAULT_OUT = os.path.normpath(os.path.join(HERE, "..", "data"))
+DEFAULT_BINDINGS = os.path.join(DEFAULT_OUT, "bindings.proposed.v1.json")
 DECISIONS = {"ACCEPT", "REJECT", "UNSURE", "PENDING"}
 REQUIRED_COLUMNS = {"pack_id", "lake_id", "decision"}
 MAX_ERRORS_DEFAULT = 1
@@ -82,6 +84,15 @@ def load_pack(pack_dir):
         raise IngestError("pack inconsistent: strict_population.csv in_sample column differs from binding_review_sample.csv")
     return dict(manifest=manifest, sample_ids=sample_ids, population=population, stratum_of=stratum_of, held=held, flagged=flagged,
                 sample_rows=sample)
+
+
+def load_bindings_ids(path):
+    """Lake ids of the generated bindings table (bindings.proposed.v1.json). Only these lakes can ever be accepted."""
+    if not os.path.exists(path):
+        raise IngestError(f"bindings table missing: {path} (pass --bindings)")
+    d = json.load(open(path))
+    rows = d["bindings"] if isinstance(d, dict) else d
+    return {(b["lakeId"] if isinstance(b, dict) else b) for b in rows}
 
 
 def validate_rows(rows, pack_id, valid_ids, label):
@@ -150,7 +161,7 @@ def evaluate(pack, decisions, max_errors=MAX_ERRORS_DEFAULT):
 
 
 def proposed_batch(pack, ev):
-    """Lake ids eligible to become REVIEWED. Empty unless the rule is met. Excludes held-back lakes (coordinate flags, series mismatches), the flagged-57, rejected rows and every
+    """Lake ids eligible to become REVIEWED. Empty unless the rule is met. Excludes held-back lakes (coordinate flags, series mismatches, provider terms), the flagged-57, rejected rows and every
     row of a stratum that contains a reject."""
     if not ev["rule_met"]:
         return []
@@ -211,6 +222,11 @@ def run(args):
     max_errors = int((pack["manifest"].get("acceptRule") or {}).get("maxErrors", MAX_ERRORS_DEFAULT))
     ev = evaluate(pack, decisions, max_errors)
     batch = proposed_batch(pack, ev)
+    allowed = load_bindings_ids(args.bindings)
+    not_allowed = sorted(set(batch) - allowed)
+    if not_allowed:
+        print(f"ERROR: refusing: {len(not_allowed)} proposed accepted id(s) are not in {args.bindings}: " + ", ".join(not_allowed[:10]) + (" ..." if len(not_allowed) > 10 else ""), file=sys.stderr)
+        return 2, None
     assert not (set(batch) & (pack["held"] | pack["flagged"])), "held/flagged ids must never be in the batch"
     now = args.now or dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     result = build_result(pack, ev, batch, args.review_csv, decisions, flagged_summary, now)
@@ -241,6 +257,7 @@ def main(argv=None):
     ap.add_argument("--flagged-csv", help="CSV exported by binding_review_flagged57.html (optional)")
     ap.add_argument("--pack-dir", default=DEFAULT_PACK, help="the review pack directory (pack_manifest.json, strict_population.csv, ...)")
     ap.add_argument("--out-dir", default=DEFAULT_OUT, help="where --write puts binding_review_result.json and accepted_batch.json")
+    ap.add_argument("--bindings", default=DEFAULT_BINDINGS, help="generated bindings table; an accepted id must be one of its lakes")
     ap.add_argument("--write", action="store_true", help="write the result and the proposed batch (default: dry run)")
     ap.add_argument("--now", help="timestamp to record (tests)")
     args = ap.parse_args(argv)

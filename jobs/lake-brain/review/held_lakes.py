@@ -17,6 +17,8 @@ SERIES_MISMATCH = frozenset({
     "Jackson Lake|WY", "Jordanelle Reservoir|UT", "Lake Koocanusa|MT", "Lake Shelbyville|IL", "Lake Taneycomo|MO", "Navajo Reservoir|NM",
     "Pineview Reservoir|UT", "Rend Lake|IL",
 })
+TERMS_PROVIDERS = frozenset({"sjrwmd", "nhdes"})
+TERMS_REASON = "provider terms unconfirmed (St. Johns River WMD / NH DES): skip unclear operator endpoints unless terms are confirmed"
 SNAPSHOT_FILE = os.path.join(HERE, "held_lakes.json")
 
 
@@ -25,5 +27,5 @@ def load_snapshot(path=SNAPSHOT_FILE):
     ids = set(SERIES_MISMATCH)
     if os.path.exists(path):
         d = json.load(open(path))
-        ids |= set(d.get("coordinateFlagged", [])) | set(d.get("seriesMismatch", []))
+        ids |= set(d.get("coordinateFlagged", [])) | set(d.get("seriesMismatch", [])) | set(d.get("providerTerms", []))
     return ids

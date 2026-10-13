@@ -78,5 +78,12 @@
   "Pineview Reservoir|UT",
   "Rend Lake|IL"
  ],
+ "providerTerms": [
+  "Apopka|FL",
+  "Griffin|FL",
+  "Harris|FL",
+  "Lake Winnipesaukee|NH"
+ ],
+ "providerTermsReason": "provider terms unconfirmed (St. Johns River WMD / NH DES): skip unclear operator endpoints unless terms are confirmed",
  "seriesMismatchReason": "history series differs from the live binding by more than 15 ft - datum/series mismatch pending resolution (found by the rules-v2 hold-out QA: holdout_v2_results.json, seriesQa.mismatchOver15ft)"
 }

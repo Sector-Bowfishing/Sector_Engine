@@ -27,7 +27,10 @@ Source table: `docs/research/lake-brain/data/verified_bindings_v2.csv` (research
 | = strict | | 272 |
 | Hold back | directory coordinate flagged `identity_risk` (6) or `off_water` (52) in `lake_geometry_flags.csv` (`point_flag`); listed in `held_back_coordinate_flags.csv` as "HELD - coordinate review pending"; **must not be promoted** | -58 |
 | Hold back (series) | the 14 lakes whose history series differs from the live binding by more than 15 ft (datum/series mismatch), found by the rules-v2 hold-out QA (`holdout_v2_results.json`, `seriesQa.mismatchOver15ft`): Bartlett AZ, Blue Mesa CO, Buffalo Bill WY, Canyon Lake TX, Detroit Lake OR, Glendo WY, Jackson Lake WY, Jordanelle UT, Lake Koocanusa MT, Lake Shelbyville IL, Lake Taneycomo MO, Navajo NM, Pineview UT, Rend Lake IL; listed in `held_back_series_mismatch.csv` with reason code "series/datum mismatch pending resolution"; none of them overlaps the coordinate holds | -14 |
-| **Eligible** | | **200** |
+| Hold back (provider terms) | the 4 lakes whose only source is SJRWMD (Apopka, Griffin, Harris FL) or NH DES (Lake Winnipesaukee NH): provider terms of use are unclear/unconfirmed, and the rule is to skip undocumented or unclear operator endpoints unless terms are confirmed (these two providers join the exclusion list in (b); they are held, not dropped from the strict count, so strict stays 272); listed in `held_back_provider_terms.csv` ("provider terms unconfirmed") | -4 |
+| **Eligible** | | **196** |
+
+The eligible set is exactly the lake set of the generated bindings table `jobs/lake-brain/data/bindings.proposed.v1.json` (196 lakes; the builder aborts and reports the symmetric difference if they ever differ, and records the check in the manifest; today the difference is empty).
 
 Hold lists live in code too: `jobs/lake-brain/review/held_lakes.py` (series list) and the generated `held_lakes.json` (coordinate and series ids), which the ingestion script always unions with the pack's held files, so a held lake can never be placed in `accepted_batch.json`.
 
@@ -41,19 +44,17 @@ strata sorted by name and rows sorted by lake id, so the result does not depend 
 
 | Stratum | Eligible | Sampled |
 |---|---|---|
-| a2w \| DIRECT_OPERATOR_POOL | 75 | 21 |
-| cwms \| DIRECT_OPERATOR_POOL | 41 | 11 |
+| a2w \| DIRECT_OPERATOR_POOL | 75 | 23 |
+| cwms \| DIRECT_OPERATOR_POOL | 41 | 12 |
 | cwms-saw \| DIRECT_OPERATOR_POOL | 1 | 1 |
-| nhdes \| DIRECT_LAKE_GAUGE | 1 | 1 |
 | nwps \| DIRECT_LAKE_GAUGE | 21 | 6 |
-| rise \| DIRECT_OPERATOR_POOL | 19 | 5 |
-| sjrwmd \| DIRECT_LAKE_GAUGE | 3 | 3 |
+| rise \| DIRECT_OPERATOR_POOL | 19 | 6 |
 | tva \| DIRECT_OPERATOR_POOL | 11 | 3 |
 | usgs \| DIRECT_LAKE_GAUGE | 27 | 8 |
 | usgs \| DIRECT_OPERATOR_POOL | 1 | 1 |
-| **Total** | **200** | **60** |
+| **Total** | **196** | **60** |
 
-(The first draw, before the 14 series holds, had 214 eligible and a different sample that included four of the held lakes; it was discarded and the draw repeated with the same seed and method on the 200.)
+(Earlier draws, on 214 and then 200 eligible lakes, were discarded; each time the draw was repeated with the same seed and method on the new population.)
 
 Reproduce: `python jobs/lake-brain/review/build_review_pack.py --research-docs <research checkout>/docs/research/lake-brain --data-dir <Sector_Research_Data/lake-brain> --out <dir> --seed 20261013`.
 `pack_manifest.json` records counts, strata, the seed and the SHA-256 of every input file.
@@ -82,8 +83,8 @@ FLAG when any hard concern holds, or two or more smaller ones:
   relay gauge; short or no history with no corroboration; level 5-10 ft from full pool with no corroboration; last reading > 24 h old (RISE excluded: documented ~2 day lag);
   directory full-pool confidence below high; no outline polygon.
 - A station name that contains every word of the lake name (after expanding abbreviations such as Fk -> Fork) is treated as a name match; the note says so.
-Single agency only is always shown as a note, never a flag by itself (153 of the 200 eligible rows have one agency).
-Result on this pack: sample 45 PASS / 15 FLAG; flagged-57 10 PASS / 47 FLAG.
+Single agency only is always shown as a note, never a flag by itself (149 of the 196 eligible rows have one agency).
+Result on this pack: sample 44 PASS / 16 FLAG; flagged-57 10 PASS / 47 FLAG.
 
 ## 4. How to review
 
@@ -113,16 +114,17 @@ different gauge that is stated. This is background only; it never makes a row ac
 - Computes reviewed count (accept + reject), rejects, the exact upper bound, the verdict (`ACCEPT_BATCH`, `REJECT_BATCH`, `INCOMPLETE`) and the per-stratum table with full-review flags.
 - With `--write`: `jobs/lake-brain/data/binding_review_result.json` (always) and `jobs/lake-brain/data/accepted_batch.json` (a JSON list of lake ids: **empty unless the rule is met**). When met, the list is the
   eligible strict population in strata without a reject, minus rejected rows; it never contains held-back coordinate-flagged lakes, the flagged-57, or any post-hoc row (enforced in code and tested).
+- Every id in the batch must also be a lake of `bindings.proposed.v1.json` (`--bindings`); otherwise the run is refused (exit 2). A missing bindings table is refused too.
 - `accepted_batch.json` must not be committed with ids until the review is actually done; the repository currently has none.
 - The flagged-57 export is summarised in the result (accepted / rejected / unsure / pending ids) and never enters the batch.
 - Nothing is written to a production system and nothing is marked REVIEWED by the script.
 
-Tests: `python -m pytest jobs/lake-brain/review` (synthetic pack and exports: pass, 1 reject, 2 rejects, unsure/pending, missing rows, wrong pack, unknown / held / duplicate ids, tampered population including the 14 series-mismatch lakes, a held lake inside the sample,
+Tests: `python -m pytest jobs/lake-brain/review` (synthetic pack and exports: pass, 1 reject, 2 rejects, unsure/pending, missing rows, wrong pack, unknown / held / duplicate ids, tampered population including the 14 series-mismatch lakes, the provider-terms class, an id outside the bindings table, a held lake inside the sample,
 flagged export, allocation rules, seed determinism, exact bound reference values).
 
 ## 7. Limits
 
 - Levels are a one-day snapshot (2026-10-13); links open live data. A reviewer judges identity and plausibility, not the exact number.
 - Machine-verified is not reviewed; 0 errors in 60 is "no error found", with a 95 % upper bound of 4.9 %, not a measured 0 %.
-- The 58 coordinate-held lakes (52 off-water, 6 identity-risk directory points), the 14 series-mismatch lakes and the 57 flagged rows are outside the batch whatever the sample says.
+- The 58 coordinate-held lakes (52 off-water, 6 identity-risk directory points), the 14 series-mismatch lakes, the 4 provider-terms lakes and the 57 flagged rows are outside the batch whatever the sample says.
 - The recommendation is a triage hint written before the review; it must not be tuned after seeing decisions.

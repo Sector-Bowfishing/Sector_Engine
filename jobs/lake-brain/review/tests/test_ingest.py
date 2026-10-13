@@ -62,9 +62,18 @@ def write_export(path, pack_id, ids, decision_of, extra_rows=()):
             w.writerow(r)
 
 
-def run(tmp_path, review, flagged=None, write=True, pack=None):
+def make_bindings(tmp_path, pack, extra_missing=()):
+    """Synthetic bindings table containing every lake of the pack's population (minus extra_missing)."""
+    ids = [r["lake_id"] for r in I.read_csv(pack / "strict_population.csv") if r["lake_id"] not in extra_missing]
+    p = tmp_path / "bindings.json"
+    json.dump(dict(bindings=[dict(lakeId=i) for i in ids]), open(p, "w"))
+    return p
+
+
+def run(tmp_path, review, flagged=None, write=True, pack=None, bindings=None):
     out = tmp_path / "out"
-    argv = ["--review-csv", str(review), "--pack-dir", str(pack), "--out-dir", str(out), "--now", "2026-10-14T12:00:00Z"]
+    bindings = bindings or make_bindings(tmp_path, pack)
+    argv = ["--review-csv", str(review), "--pack-dir", str(pack), "--out-dir", str(out), "--bindings", str(bindings), "--now", "2026-10-14T12:00:00Z"]
     if flagged:
         argv += ["--flagged-csv", str(flagged)]
     if write:
@@ -243,6 +252,37 @@ def test_held_snapshot_in_repo_has_all_series_lakes_and_no_sample_overlap():
     if os.path.exists(p):
         d = json.load(open(p))
         assert set(d["seriesMismatch"]) == set(held_lakes.SERIES_MISMATCH)
+
+
+def test_batch_refuses_ids_not_in_bindings_table(tmp_path, capsys):
+    pack, sample, flagged, population = make_pack(tmp_path)
+    rv = tmp_path / "rv.csv"
+    write_export(rv, SAMPLE_PACK, sample, lambda l: "ACCEPT")
+    b = make_bindings(tmp_path, pack, extra_missing={"tva-lake-1|ST"})
+    code, out = run(tmp_path, rv, pack=pack, bindings=b)
+    assert code == 2 and not out.exists()
+    assert "tva-lake-1|ST" in capsys.readouterr().err
+    code, out = run(tmp_path, rv, pack=pack, bindings=tmp_path / "nope.json")      # a missing bindings table is also refused
+    assert code == 2
+
+
+def test_provider_terms_lakes_are_held(tmp_path):
+    """sjrwmd / nhdes lakes (terms unconfirmed) are a held class: never in a batch even if a tampered population lists them."""
+    import held_lakes
+    assert held_lakes.TERMS_PROVIDERS == {"sjrwmd", "nhdes"}
+    pack, sample, flagged, population = make_pack(tmp_path)
+    json.dump(dict(coordinateFlagged=[], seriesMismatch=[], providerTerms=["Apopka|FL"]), open(tmp_path / "snap.json", "w"))
+    assert "Apopka|FL" in held_lakes.load_snapshot(str(tmp_path / "snap.json"))
+    real = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "held_lakes.json")))
+    assert len(real["providerTerms"]) == 4 and "Apopka|FL" in real["providerTerms"]
+    with open(pack / "strict_population.csv", "a", newline="") as f:
+        for lid in real["providerTerms"]:
+            csv.writer(f).writerow([lid, "sjrwmd | DIRECT_LAKE_GAUGE", "no", "sjrwmd", "DIRECT_LAKE_GAUGE", "w2-v1"])
+    rv = tmp_path / "rv.csv"
+    write_export(rv, SAMPLE_PACK, sample, lambda l: "ACCEPT")
+    code, out = run(tmp_path, rv, pack=pack)       # bindings table includes them (tampered), the repo hold snapshot still blocks them
+    batch = json.load(open(out / "accepted_batch.json"))
+    assert code == 0 and not (set(batch) & set(real["providerTerms"])) and len(batch) == 73
 
 
 def test_flagged_csv_counts_and_never_in_batch(tmp_path):
