@@ -25,6 +25,7 @@ live job file-for-file (checked by matching the Cloud Run build-source zip to gi
 | `biological-brain` | in-process in `brain-orchestrator` when its `plan()` says PUBLISH (VERSION) | INTERNAL | `jobs/biological-brain` | **yes** | staged into the orchestrator image | Brain RTDB `/species`, `/brains/biological-state` | no | Biological |
 | `sector-intelligence-brain` | in-process in `brain-orchestrator` when its `plan()` says PUBLISH (FINGERPRINT; pilot only) | INTERNAL | `jobs/sector-intelligence-brain` | **yes** | staged into the orchestrator image | Brain RTDB `/brains/sector-intelligence`, pilot states | no | Sector Intelligence |
 | `brain-scores` | in-process in `brain-orchestrator` after a state change (`--if-changed`); also manual | INTERNAL | `jobs/brain-scores` | **yes** | staged into the orchestrator image | Brain RTDB `/scores/*`, `/control/*` | no (Ops displays) | Brain Platform |
+| `vegetation-brain` | **NOT DEPLOYED** — shadow foundation (offline CLI only; no scheduler, no Cloud Run job, not in the `/jobs` manifest, **no live writer exists**) | SHADOW | `jobs/vegetation-brain` (see `jobs/vegetation-brain/BRAIN.md`) | n/a (branch `feat/vegetation-brain-foundation`) | none | none (dry-run store only) | no | Vegetation |
 
 The `/jobs/{jobId}` records (`docs/brains/JOBS_CONTRACT.md`) are the live version of this table: Cloud
 Scheduler is authoritative for enabled / cron / next run, and the classification column above is the manifest
@@ -48,6 +49,7 @@ python3 -m venv .venv && .venv/bin/pip install pytest requests google-cloud-stor
 (cd jobs/brain_platform && ../../.venv/bin/python -m pytest -q)              # platform incl. the /jobs contract
 (cd jobs/lake-surface-dispatch && ../../.venv/bin/python -m pytest -q)       # satellite dispatcher
 (cd jobs/brain-orchestrator && ../../.venv/bin/python -m pytest -q)          # orchestrator executor
+(cd jobs/vegetation-brain && ../../.venv/bin/python -m pytest -q)            # Vegetation Brain shadow foundation (offline; needs numpy)
 ```
 `.github/workflows/python-jobs-tests.yml` runs the same offline suites on GitHub (no credentials).
 `shapely` and `pyproj` are needed only by the Stage 3A field-ops tests, not by the job image.

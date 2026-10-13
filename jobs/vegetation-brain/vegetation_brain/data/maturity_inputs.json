@@ -1,0 +1,25 @@
+{
+  "rubricVersion": "vegetation-research-rubric-v1",
+  "note": "RESEARCH maturity, NOT an official Engine score. Judgment dimensions must cite evidence files; an increase without new evidence is refused.",
+  "dimensions": {
+    "coverage":    {"label": "Coverage (lakes with a current usable vegetation output)", "weight": 10, "critical": false, "basis": "computed"},
+    "authority":   {"label": "Source authority", "weight": 10, "critical": true, "basis": "judgment", "score": 3.5,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_DATA_SOURCE_MATRIX.md"]},
+    "spatial":     {"label": "Spatial accuracy", "weight": 10, "critical": true, "basis": "judgment", "score": 2.0,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_BRAIN_RESEARCH_SUMMARY.md"]},
+    "presence":    {"label": "Presence accuracy", "weight": 15, "critical": true, "basis": "judgment", "score": 3.0,
+                    "evidence": ["docs/research/vegetation-brain/notes/04_empirical_sentinel2_test.md", "docs/research/vegetation-brain/notes/05_biovolume_and_cell_level_test.md"]},
+    "density":     {"label": "Density usefulness", "weight": 10, "critical": false, "criticalIfExposed": true, "basis": "judgment", "score": 1.0,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_VALIDATION_STRATEGY.md"]},
+    "seasonality": {"label": "Seasonality", "weight": 10, "critical": false, "criticalIfExposed": true, "basis": "judgment", "score": 2.0,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_SEASONAL_MODEL.md"]},
+    "submerged":   {"label": "Submerged detection (scored as built: not observable)", "weight": 10, "critical": false, "criticalIfExposed": true, "basis": "judgment", "score": 1.0,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_SUBMERGED_RESEARCH.md"]},
+    "validation":  {"label": "Validation", "weight": 15, "critical": true, "basis": "judgment", "score": 3.0,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_VALIDATION_STRATEGY.md"]},
+    "provenance":  {"label": "Confidence and provenance", "weight": 10, "critical": true, "basis": "judgment", "score": 3.0,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_BRAIN_ARCHITECTURE_PROPOSAL.md"]},
+    "scalability": {"label": "Fleet scalability", "weight": 10, "critical": false, "basis": "judgment", "score": 4.0,
+                    "evidence": ["docs/research/vegetation-brain/VEGETATION_FLEET_COVERAGE.md"]}
+  }
+}

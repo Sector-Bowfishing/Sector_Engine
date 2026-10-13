@@ -1,0 +1,119 @@
+import json
+import os
+from datetime import datetime, timezone
+
+import pytest
+
+from helpers import REF, patch, scene
+from vegetation_brain import contract as C
+from vegetation_brain import fleet as F
+from vegetation_brain import maturity as M
+from vegetation_brain import observer as O
+from vegetation_brain import ops_summary as OPS
+from vegetation_brain.publish import publish
+from vegetation_brain.writer import DryRunWriter, WriteError
+
+NOW = datetime(2025, 7, 22, 12, tzinfo=timezone.utc)
+HERE = os.path.dirname(__file__)
+REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+
+
+def reg():
+    def e(lid, area, conf="HIGH", geom=True):
+        return {"lakeId": lid, "name": lid, "state": "AL", "lakeKey": lid.replace("|", "_"), "areaKm2": area if geom else None,
+                "geometry": {"x": 1} if geom else None, "geometryConfidence": {"level": conf if geom else "MISSING"},
+                "classification": {"region": "SE", "lakeClass": "R1"}, "geometryVersion": "v1"}
+    return {"generatedAt": "t", "geometryVersion": "v1", "lakes": [e("Big|AL", 100), e("Small|AL", 0.2), e("None|AL", None, geom=False)]}
+
+
+def test_dry_run_writes_only_vegetation_owned_paths_and_blocked_states():
+    m = F.build_manifest(reg(), version="t")
+    w = DryRunWriter()
+    rep = publish(m, w, now=NOW)
+    assert rep["ok"], rep["errors"]
+    tree = w.tree
+    assert tree["brains"]["vegetation"]["status"] == "PROFILED"
+    assert tree["validation"]["vegetation"]["status"] == "NOT_VALIDATED"
+    assert tree["brains"]["vegetation"]["scoreStatus"] == "NOT_ESTABLISHED"
+    assert tree["brains"]["vegetation"]["research"]["official"] is False
+    assert "scores" not in tree                                      # never writes /scores
+    assert tree["lakeFleet"]["Small_AL"]["readiness"]["vegetation"] == "BLOCKED"
+    assert tree["lakeFleet"]["Big_AL"]["readiness"]["vegetation"] == "PROFILED"   # observable but nothing run: no state written
+    assert "Big_AL" not in tree.get("lakes", {})
+
+
+def test_observed_lake_gets_a_state_and_calibration_readiness():
+    m = F.build_manifest(reg(), version="t")
+    bed = patch((30, 60), (30, 60))
+    obs = O.observe([scene("a", REF, plant=bed), scene("b", REF, plant=bed), scene("c", REF, plant=bed)], REF, mode="P")
+    w = DryRunWriter()
+    rep = publish(m, w, observations={"Big|AL": obs}, now=datetime(2025, 7, 22, tzinfo=timezone.utc))
+    st = w.tree["lakes"]["Big_AL"]["states"]["vegetation"]
+    assert st["surfaceVegetation"]["status"] == "PRESENT" and st["submergedVegetation"]["observed"] is False
+    assert w.tree["lakeFleet"]["Big_AL"]["readiness"]["vegetation"] == "CALIBRATION"
+    assert rep["observed"] == 1
+    assert w.tree["brains"]["vegetation"]["fleet"]["observedLakes"] == 1
+
+
+def test_ownership_refuses_other_brains_paths():
+    w = DryRunWriter()
+    with pytest.raises(WriteError):
+        w.patch({"lakes/Big_AL/states/depth": {"x": 1}})
+    with pytest.raises(WriteError):
+        w.patch({"scores/vegetation": {"value": 9}})
+
+
+def test_no_live_writer_exists():
+    import vegetation_brain.writer as W
+    assert not hasattr(W, "RtdbWriter")
+    src = open(os.path.join(HERE, "..", "vegetation_brain", "publish.py")).read() + open(os.path.join(HERE, "..", "vegetation_brain", "__main__.py")).read()
+    assert "--rtdb" not in src and "yes-write" not in src
+
+
+def test_registry_extras_computed_not_hardcoded():
+    m = F.build_manifest(reg(), version="t")
+    a = OPS.registry_extras(m, 0)
+    m2 = F.build_manifest({"lakes": reg()["lakes"][:1]}, version="t")
+    b = OPS.registry_extras(m2, 0)
+    assert a["fleet"]["totalLakes"] == 3 and b["fleet"]["totalLakes"] == 1
+    assert a["scoreStatus"] == "NOT_ESTABLISHED" and a["scope"]["submergedObserved"] is False
+    assert a["breakdowns"]["observability"] == {"HIGH": 1, "LOW": 1, "UNKNOWN": 1}
+
+
+# ---------------------------------------------------------------- maturity
+def test_maturity_is_research_only_and_far_below_the_gate():
+    m = F.build_manifest(reg(), version="t")
+    ev = M.evaluate(m)
+    assert ev["official"] is False and ev["meetsProductionPolicy"] is False
+    assert {"authority", "spatial", "presence", "validation", "provenance"} <= set(ev["criticalBelowThreshold"])
+
+
+def test_density_becomes_critical_only_when_exposed():
+    m = F.build_manifest(reg(), version="t")
+    assert "density" not in M.evaluate(m)["criticalBelowThreshold"]
+    assert "density" in M.evaluate(m, exposed=("density",))["criticalBelowThreshold"]
+
+
+def test_coverage_is_computed_from_observed_lakes():
+    m = F.build_manifest(reg(), version="t")
+    assert M.evaluate(m, observed_lakes=0)["dimensions"]["coverage"]["score"] == 0
+    assert M.evaluate(m, observed_lakes=3)["dimensions"]["coverage"]["score"] == 10
+
+
+def test_unsupported_score_increase_is_refused():
+    prev = M.load_inputs()
+    new = json.loads(json.dumps(prev))
+    new["dimensions"]["presence"]["score"] = 6.0
+    assert M.check_increase(prev, new, REPO)                                     # no new evidence
+    new["dimensions"]["presence"]["evidence"] = prev["dimensions"]["presence"]["evidence"] + ["docs/does/not/exist.md"]
+    assert any("missing" in v for v in M.check_increase(prev, new, REPO))
+    new["dimensions"]["presence"]["evidence"] = prev["dimensions"]["presence"]["evidence"] + ["docs/brains/vegetation/VEGETATION_VALIDATION_PREREGISTRATION.md"]
+    assert not M.check_increase(prev, new, REPO)
+    new["dimensions"]["presence"]["score"] = 2.0
+    assert not M.check_increase(prev, new, REPO)                                 # decreases never need justification
+
+
+def test_every_judgment_dimension_cites_evidence():
+    for k, d in M.load_inputs()["dimensions"].items():
+        if d["basis"] == "judgment":
+            assert d["evidence"], k
