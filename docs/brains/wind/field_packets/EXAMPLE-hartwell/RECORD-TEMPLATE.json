@@ -1,0 +1,140 @@
+[
+ {
+  "bankId": "E-0334",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P1-X",
+  "lakeId": "Lake Hartwell|SC",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P1",
+  "pairRole": "A",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "E-0348",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P1-Y",
+  "lakeId": "Lake Hartwell|SC",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P1",
+  "pairRole": "B",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "E-0226",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P2-X",
+  "lakeId": "Lake Hartwell|SC",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P2",
+  "pairRole": "B",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "E-0205",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P2-Y",
+  "lakeId": "Lake Hartwell|SC",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P2",
+  "pairRole": "A",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "E-0169",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P3-X",
+  "lakeId": "Lake Hartwell|SC",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P3",
+  "pairRole": "B",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "E-0175",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P3-Y",
+  "lakeId": "Lake Hartwell|SC",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Lake Hartwell|SC|YYYY-MM-DD|<observer>|P3",
+  "pairRole": "A",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ }
+]

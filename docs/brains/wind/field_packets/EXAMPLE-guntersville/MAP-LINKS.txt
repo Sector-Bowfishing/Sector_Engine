@@ -1,0 +1,6 @@
+P1-X: https://maps.apple.com/?ll=34.53457,-86.12168&q=P1-X
+P1-Y: https://maps.apple.com/?ll=34.49061,-86.17067&q=P1-Y
+P2-X: https://maps.apple.com/?ll=34.47935,-86.20353&q=P2-X
+P2-Y: https://maps.apple.com/?ll=34.52617,-86.15044&q=P2-Y
+P3-X: https://maps.apple.com/?ll=34.53279,-86.14728&q=P3-X
+P3-Y: https://maps.apple.com/?ll=34.52770,-86.14587&q=P3-Y

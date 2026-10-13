@@ -1,0 +1,107 @@
+{
+ "SEALED": "Scorer only. The observer must not open this file before submitting every record.",
+ "banks": [
+  {
+   "axis": "SW-NE",
+   "bank": "X",
+   "bankId": "E-0334",
+   "effectiveFetchM": 2284,
+   "highFetch": false,
+   "pairId": "P1",
+   "predictedHm0In": 4.8,
+   "predictedLabel": "DIRECT",
+   "role": "A",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "Y",
+   "bankId": "E-0348",
+   "effectiveFetchM": 20,
+   "highFetch": false,
+   "pairId": "P1",
+   "predictedHm0In": 0.4,
+   "predictedLabel": "PROTECTED",
+   "role": "B",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "X",
+   "bankId": "E-0226",
+   "effectiveFetchM": 20,
+   "highFetch": false,
+   "pairId": "P2",
+   "predictedHm0In": 0.4,
+   "predictedLabel": "PROTECTED",
+   "role": "B",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "Y",
+   "bankId": "E-0205",
+   "effectiveFetchM": 3440,
+   "highFetch": false,
+   "pairId": "P2",
+   "predictedHm0In": 5.9,
+   "predictedLabel": "DIRECT",
+   "role": "A",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "X",
+   "bankId": "E-0169",
+   "effectiveFetchM": 20,
+   "highFetch": false,
+   "pairId": "P3",
+   "predictedHm0In": 0.4,
+   "predictedLabel": "PROTECTED",
+   "role": "B",
+   "type": "COVE_vs_POINT"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "Y",
+   "bankId": "E-0175",
+   "effectiveFetchM": 3238,
+   "highFetch": false,
+   "pairId": "P3",
+   "predictedHm0In": 5.7,
+   "predictedLabel": "CROSS",
+   "role": "A",
+   "type": "COVE_vs_POINT"
+  }
+ ],
+ "geometryConfidence": "HIGH",
+ "geometryTier": "ESTIMATED",
+ "lake": "Lake Hartwell|SC",
+ "pairs": [
+  {
+   "axis": "SW-NE",
+   "distanceM": 2769,
+   "pairId": "P1",
+   "type": "MIRROR",
+   "windFromDegForAExposed": 225
+  },
+  {
+   "axis": "SW-NE",
+   "distanceM": 3772,
+   "pairId": "P2",
+   "type": "MIRROR",
+   "windFromDegForAExposed": 225
+  },
+  {
+   "axis": "SW-NE",
+   "distanceM": 585,
+   "pairId": "P3",
+   "type": "COVE_vs_POINT",
+   "windFromDegForAExposed": 225
+  }
+ ],
+ "planningWind": null,
+ "practice": true,
+ "schema": "sector-wind-field-packet-v1",
+ "sessionId": "Lake Hartwell|SC|YYYY-MM-DD|<observer>"
+}
