@@ -1,5 +1,8 @@
 # Biological Brain Score Ladder (biological-state-score-v1)
 
+> **CORRECTION (2026-10-13, adoption pass).** The baseline in this document is wrong. The live canonical score (`/scores/biological-state`) is **4.0**, not 3.46: the local recomputation omitted the `productionIntegration` dimension (+0.5; Intelligence's dependency on the Biological Brain is CONNECTED). Corrected figures: published **4.0** (State-NOT_STARTED gate cap 4.0 not reducing it); research-supported rows would add +0.3 but stay hidden behind that gate until a Biological State exists. Also: "four independent silver-carp flow datasets" is **three** (the Illinois 2004-05 and Swan Lake papers share one tagged program), and the channel-catfish production-temperature concern was overstated (only the 85 F upper bound is above agency spawning figures). See `docs/brains/biological-adoption/` on `feat/biological-brain-adoption`.
+
+
 Score = Σ(weight × dimension value 0-10) / 100. Gates: State NOT_STARTED caps at 4.0; no species VALIDATED caps at 6.0. Starting point **3.46**. Contributions below are in score points.
 
 | Dimension | Weight | Now (value → pts) | Max pts | What moves it | Who can move it |
