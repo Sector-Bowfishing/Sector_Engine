@@ -86,7 +86,10 @@ public enum WhereToLookEngine {
             return WhereToLookCard(kind: .clarity, title: "Muddy water — hunt the clear edges",
                 body: "You can only shoot what you can see. Find the clearest water on the lake: wind-sheltered lee pockets, the clean side of a mud line, and creek or spring mouths still running clear. Skip the chocolate-milk backs of the coves.")
         }
-        if vis > 12, input.windMph <= 3 {
+        // The gin-clear rule is ConditionsConfig.Clarity's (ginClearFt / ginClearMaxWindMph), not a
+        // second copy: same defaults (12 ft, 3 mph) the ClarityFactor penalty uses.
+        let gin = ConditionsConfig.default.clarity
+        if vis > gin.ginClearFt, input.windMph <= gin.ginClearMaxWindMph {
             return WhereToLookCard(kind: .clarity, title: "Gin-clear — ease in slow",
                 body: "Fish see you coming in water this clean. Drift instead of running the motor, keep the big lights off until you're set, and work shade lines, lightly stained edges and any surface chop that breaks the glare.")
         }

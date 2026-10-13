@@ -18,6 +18,8 @@ from .. import DECODER_VERSION
 from ..sample import parse_iso
 from . import contract as C
 from .lakes import ENGINE_URL, WIND_LAKE_IDS, check_keys, fetch_directory, national_profiled, verify_wind_lakes
+from .writer import PLATFORM
+from sector_brain_platform import event_id as _event_id, is_promotion as _is_promotion, prune_activity as _prune_own
 from .profile import build_profile, geometry_facts
 from .state import build_state
 
@@ -99,16 +101,10 @@ def _validation_payloads(ev: dict, now_iso: str) -> tuple[dict, dict]:
 
 
 def prune_activity(writer, now):
-    """Keep /activity at <= 500 events and <= 30 days (BRAIN RTDB schema §8). Best effort."""
-    cutoff = C.iso(now - timedelta(days=ACTIVITY_DAYS))
-    old = writer.get("activity", {"orderBy": '"at"', "endAt": json.dumps(cutoff)}) or {}
-    if old:
-        writer.patch({f"activity/{k}": None for k in old})
-    keys = writer.get("activity", {"shallow": "true"}) or {}
-    extra = len(keys) - ACTIVITY_MAX
-    if extra > 0:
-        first = writer.get("activity", {"orderBy": '"at"', "limitToFirst": str(extra)}) or {}
-        writer.patch({f"activity/{k}": None for k in first})
+    """Delete only THIS brain's old activity, decided by `at` (Brain Platform contract §7). Best effort."""
+    dels = _prune_own(writer.get("activity") or {}, C.BRAIN_ID, now)
+    if dels:
+        writer.patch(dels)
 
 
 def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict | None = None,
@@ -156,7 +152,6 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
             writer.patch({f"lakes/{k}/states/{C.SLOT}": state, f"lakes/{k}/profiles/{C.SLOT}": profile,
                           f"lakes/{k}/validation/{C.BRAIN_ID}": val_lakes.get(lid),
                           f"snapshots/{k}/latest/{C.SNAPSHOT_FIELD}": state, f"snapshots/{k}/latest/lakeId": lid,
-                          f"snapshots/{k}/latest/snapshotVersion": 1, f"snapshots/{k}/latest/generatedAt": now_iso,
                           f"snapshots/{k}/latest/brainVersions/{C.BRAIN_ID}": C.BRAIN_VERSION})
             rep["writes"] += 1
             if rows:
@@ -206,10 +201,9 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
         fleet[f"lakeFleet/{k}/readiness/{C.SLOT}"] = r
         if lid in WIND_LAKE_IDS.values():
             fleet[f"lakeFleet/{k}/modelVersions/{C.SLOT}"] = C.CANDIDATE_MODEL
-            fleet[f"lakeFleet/{k}/lastUpdatedAt"] = now_iso
             m = rep["lakes"].get(lid) or {}
             # Per-brain fleet record (same shape the Water Clarity brain writes): wind staleness without touching lake aggregates.
-            fleet[f"lakeFleet/{k}/slots/{C.SLOT}"] = {"readiness": r, "stale": bool(m.get("stale", True)), "stateType": m.get("kind", "unavailable"),
+            fleet[f"lakeFleet/{k}/slots/{C.SLOT}"] = {"readiness": r, "stale": bool(m.get("stale", True)), "stateType": m.get("kind", "unavailable"), "kind": m.get("kind", "unavailable"),
                                                        "issueCount": 0 if r == "CALIBRATION" else 1, "lastUpdatedAt": now_iso}
     writer.patch(fleet); rep["writes"] += 1
 
@@ -233,6 +227,7 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     health = _health_status(errors_now, stale_lakes, live)
     registry = {
         "brainId": C.BRAIN_ID, "displayName": C.DISPLAY_NAME, "domain": C.DOMAIN, "question": C.QUESTION,
+        "platform": PLATFORM,
         "version": C.BRAIN_VERSION, "schemaVersion": C.SCHEMA_VERSION, "enabled": True, "health": health,
         "status": "CALIBRATION", "supportedLakeCount": live, "profiledLakeCount": live + len(national),
         "readinessCounts": counts, "staleLakeCount": stale_lakes, "staleAfterHours": C.STALE_AFTER_HOURS,
@@ -262,7 +257,7 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     for sid, s in srcs.items():
         f24 = s["failures24h"]
         st = "UNKNOWN" if f24 is None else ("HEALTHY" if f24 == 0 else ("WARNING" if f24 < 6 else "DEGRADED"))
-        src_updates[f"sources/{sid}"] = {"sourceId": sid, **s, "brains": [C.BRAIN_ID], "lakeCount": live, "health": st,
+        src_updates[f"sources/{sid}"] = {"sourceId": sid, **s, "ownerBrainId": C.BRAIN_ID, "brains": {C.BRAIN_ID: True}, "lakeCount": live, "health": st,
                                          "lastFetchAt": (run_last or {}).get("runAt"), "latencyMs": None,
                                          "notes": "wind-hourly ledger, last 24 h: failures24h = never completed; recoveredRetries24h = completed by catch-up"}
         src_updates[f"health/sources/{sid}"] = {"status": st, "lastFetchAt": (run_last or {}).get("runAt"), "failures24h": s["failures24h"],
@@ -287,17 +282,18 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     # ── 5. activity (only on change) ──────────────────────────────────────────────────────────
     events = []
     if last.get("version") != C.BRAIN_VERSION:
-        events.append(("version", "success", f"WindBrain {C.BRAIN_VERSION} publishing ({live} lakes live, {len(national)} profiled)", None))
+        events.append(("brain.version" if last.get("version") else "brain.registered", "success",
+                       f"WindBrain {C.BRAIN_VERSION} publishing ({live} lakes live, {len(national)} profiled)", None))
     for lid in WIND_LAKE_IDS.values():
         before = (last.get("readiness") or {}).get(lid)
         if before and before != readiness.get(lid):
             sev = "warning" if readiness.get(lid) == "DEGRADED" else "success"
-            events.append(("readiness", sev, f"Wind readiness {before} -> {readiness.get(lid)}", lid))
+            events.append(("readiness.promoted" if _is_promotion(before, readiness.get(lid)) else "readiness.changed", sev,
+                           f"Wind readiness {before} -> {readiness.get(lid)}", lid))
     if errors_now and not last.get("errors"):
-        events.append(("runFailure", "critical", f"WindBrain run error: {errors_now[0][:120]}", None))
+        events.append(("run.failed", "critical", f"WindBrain run error: {errors_now[0][:120]}", None))
     if events:
-        ms = int(now.timestamp() * 1000)
-        writer.patch({f"activity/{ms:013d}_wind_{i}": {"id": f"{ms:013d}_wind_{i}", "at": now_iso, "kind": kind, "title": title,
+        writer.patch({f"activity/{_event_id(now, C.BRAIN_ID, i)}": {"id": _event_id(now, C.BRAIN_ID, i), "at": now_iso, "kind": kind, "title": title,
                                                        "brainId": C.BRAIN_ID, **({"lakeId": lid} if lid else {}), "severity": sev}
                       for i, (kind, sev, title, lid) in enumerate(events)})
         try:

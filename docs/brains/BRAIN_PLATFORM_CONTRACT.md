@@ -198,6 +198,6 @@ A brain lands on `main` only when its publisher passes the suite (or is listed b
 | Water Clarity | Python `sector_brain_platform` (vendored) | **yes** (on main) | `kind` + freshness beside `stateType`; no rollup-field writes; `failures24h` absent when unknown |
 | Biological | Python `sector_brain_platform` | **yes** (on main) | event kinds `brain.registered`/`brain.version` |
 | Sector Intelligence | Python `sector_brain_platform` | **yes** (on main) | states carry `kind: not_evaluated` |
-| Wind | **temporary adapter**: its own `sector_wind/brain/writer.py` | NO (documented) | live job; event ids `{ms}_wind_{n}`, global pruning by `at`, no retries, `sources.brains` array. Migrates to `sector_brain_platform` in the Wind reconciliation (Phase 8 ownership work); until then it must not prune other brains' events (it prunes by `at` globally — Orchestrator sweep will replace this). |
+| Wind | Python `sector_brain_platform` (vendored; `sector_wind/brain/writer.py` is a thin wrapper keeping the `patch/get/delete` API) | **yes** (on main, Phase 8) | contract event ids/kinds, own-brain pruning by `at`, no rollup-field writes, `sources.brains` map + `ownerBrainId`, `platform` ref. **The live `wind-hourly` job still runs the pre-migration code until it is redeployed** (not done here) |
 
-Each conforming registry entry publishes `platform{implementation, contract, conformant}`.
+Each conforming registry entry publishes `platform{implementation, contract, conformant}`. All six Brains conform on `main`; Engine Score's platformHealth becomes measurable as each one next publishes.

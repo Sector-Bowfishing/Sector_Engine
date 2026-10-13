@@ -1,3 +1,5 @@
 archive/
 __pycache__/
 .pytest_cache/
+# vendored at deploy time by deploy-job.sh from jobs/brain_platform
+sector_brain_platform/

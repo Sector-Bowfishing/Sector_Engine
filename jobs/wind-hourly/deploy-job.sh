@@ -8,6 +8,8 @@
 #   job       $JOB — one task, hourly at :$MINUTE (NBM posts ~57 min after the cycle)
 #
 set -euo pipefail
+# The shared Brain Platform (docs/brains/BRAIN_PLATFORM_CONTRACT.md): vendored into the image.
+cd "$(dirname "$0")" && rm -rf sector_brain_platform && cp -R ../brain_platform/sector_brain_platform .
 if [[ "${MICHAEL_APPROVED_WIND_DEPLOY:-}" != "yes" ]]; then
   echo "Refusing: set MICHAEL_APPROVED_WIND_DEPLOY=yes only after Michael approves the wind-hourly deploy." >&2
   exit 2

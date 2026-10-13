@@ -124,13 +124,13 @@ ALLOWED = ("brains/wind", "validation/wind", "health/brains/wind", "health/jobs/
 def _allowed(path):
     p = path.split("/")
     if path.startswith(ALLOWED):
-        return path.startswith("activity/") is False or "_wind_" in path
+        return path.startswith("activity/") is False or "-wind-" in path
     if p[0] == "lakes" and len(p) >= 4:
         return p[2:4] in (["states", "wind"], ["profiles", "wind"], ["validation", "wind"])
     if p[0] == "snapshots":
-        return p[2] == "latest" and (p[3] in ("wind", "lakeId", "snapshotVersion", "generatedAt") or p[3:5] == ["brainVersions", "wind"])
+        return p[2] == "latest" and (p[3] in ("wind", "lakeId") or p[3:5] == ["brainVersions", "wind"])
     if p[0] == "lakeFleet":
-        return p[2] in ("lakeId", "lastUpdatedAt") or p[2:4] in (["readiness", "wind"], ["modelVersions", "wind"], ["slots", "wind"])
+        return p[2] == "lakeId" or p[2:4] in (["readiness", "wind"], ["modelVersions", "wind"], ["slots", "wind"])
     return False
 
 
@@ -150,7 +150,10 @@ def test_publish_writes_only_wind_owned_paths(tmp_path):
     snap = w.get("snapshots/Pickwick_Lake_TN/latest")
     assert snap["lakeId"] == "Pickwick Lake|TN" and snap["wind"]["provenance"]["brainId"] == "wind" and snap["brainVersions"] == {"wind": C.BRAIN_VERSION}
     assert w.get("validation/wind")["liveValidation"].startswith("SEALED")
-    assert w.get("lakeFleet/Wheeler_AL/slots/wind") == {"readiness": "CALIBRATION", "stale": False, "stateType": "analysis", "issueCount": 0, "lastUpdatedAt": C.iso(NOW)}
+    assert w.get("lakeFleet/Wheeler_AL/slots/wind") == {"readiness": "CALIBRATION", "stale": False, "stateType": "analysis", "kind": "analysis", "issueCount": 0, "lastUpdatedAt": C.iso(NOW)}
+    assert reg["platform"]["conformant"] is True and w.get("sources/noaa-nbm-v5")["brains"] == {"wind": True}
+    ev = [p for p in paths if p.startswith("activity/")]
+    assert ev and all("-wind-" in p for p in ev) and w.get(ev[0])["kind"] in ("brain.registered", "brain.version")
     assert w.get("health/brains/wind")["status"] == "HEALTHY"
     assert w.get("sources/noaa-rtma-ru")["failures24h"] == 1 and w.get("sources/noaa-rtma-ru")["health"] == "WARNING"   # never completed
     assert w.get("sources/noaa-nbm-v5")["recoveredRetries24h"] == 1                                                     # partial, then completed

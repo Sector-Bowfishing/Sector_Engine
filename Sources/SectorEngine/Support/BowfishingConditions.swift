@@ -66,20 +66,7 @@ enum BowfishingConditions {
             moonDetail: moonDetail, moonFavorable: favorable)
     }
 
-    // MARK: Helpers still used by the forecast curve
-
-    /// Wind score for bowfishing (0…1). Kept for ConditionsForecast's hourly /
-    /// 7-night curve, which scores per-hour rather than through the aggregator.
-    static func windScore(_ mph: Double) -> Double {
-        switch mph {
-        case ..<1:     return 0.80
-        case 1..<4:    return 0.90
-        case 4..<9:    return 1.00
-        case 9..<13:   return 0.80
-        case 13..<18:  return 0.55
-        default:       return 0.30
-        }
-    }
+    // MARK: Helpers
 
     /// Fraction through the synodic cycle (0 = new … 0.5 = full). Delegates to the
     /// engine ephemeris so moon math has a single source.

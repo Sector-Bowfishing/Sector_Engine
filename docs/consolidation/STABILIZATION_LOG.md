@@ -282,3 +282,35 @@ or `feat/clarity-candidate-shadow` entered main (merge was the public-safe branc
 this phase). **Full Swift suite 216/216**; Python 23 + 29 + 26 + 35.
 
 **Rollback:** `git reset --hard ddb34c4b` (Phase 6) on main.
+
+---
+
+## Phase 8 — Brain ownership / boundary cleanup — PASS (HIGH client-side duplicates as explicit exceptions)
+
+**Goal:** one canonical owner per important fact/model/rule; no silent customer-semantics change.
+Matrix: `docs/brains/OWNERSHIP_MATRIX.md` (status per asset; 7 HIGH exceptions named with owners).
+
+**Changed on main (all behavior-preserving or additive):**
+- **Wind off its adapter:** `sector_wind/brain/writer.py` is now a thin wrapper over
+  `sector_brain_platform` (contract retries, refusal, key/ownership checks); contract event ids and
+  kinds; own-brain pruning by `at`; no `lakeFleet.lastUpdatedAt` / snapshot `generatedAt` /
+  `snapshotVersion`; `sources.brains` map + `ownerBrainId`; `platform` ref; vendoring in
+  Dockerfile/deploy-job.sh. Tests 55/55. **All six Brains now conform.** The live `wind-hourly` job
+  keeps running the pre-migration code until redeployed (not done).
+- **Lake-key divergence fixed:** `ClarityStateLoader.slug` → the one `BrainPlatform.lakeKey`
+  algorithm (was `|`→`_` only; diverged for 565/621 lakes; only ever worked for Guntersville). Test
+  pins all 621 directory ids. Customer impact: none (`/clarity/state` is not called by iOS).
+- **Dead code removed:** `BowfishingConditions.windScore` (no callers; contradicted `WindFactor`).
+- **Conditions Score versioned:** additive `scoreVersion = conditions-score-v1` and
+  `engineRevision` on `/conditions` (`ConditionsScoreVersion.swift`); clients ignore unknown keys.
+- **Gin-clear rule de-duplicated:** `WhereToLookEngine` reads `ConditionsConfig.Clarity` constants
+  (same defaults 12 ft / 3 mph) instead of its own literals.
+
+**Deliberately not changed (documented exceptions):** client water-temp `k = 0.20` (iOS/Android),
+Android directory copy, Engine-vs-iOS spawn temperatures, iOS presence models, the production TVA
+midnight parser (decision D8 — customer-visible timing), the Swift/Python wind-physics mirror and
+iOS-generated fetch geometry, the L7 conservation gate (D5). Threshold centralization beyond
+gin-clear is OPEN (values unchanged, now versioned).
+
+**Tests:** Swift **217/217**; Python platform 23, Biological 29, Intelligence 26, Clarity 35, Wind 55.
+**Rollback:** `git reset --hard a03ac84f` (Phase 7).

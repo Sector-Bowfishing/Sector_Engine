@@ -93,6 +93,10 @@ public struct ConditionsResponse: Codable, Equatable {
     public let resolvedLake: ResolvedLakeDTO?
 
     public let generatedAt: Date
+    /// Scoring semantics this response was produced with (`ConditionsScoreVersion.current`). Additive.
+    public var scoreVersion: String? = nil
+    /// Serving revision (Cloud Run `K_REVISION`) when known. Additive.
+    public var engineRevision: String? = nil
 }
 
 /// Canonical lake identity from the engine's directory — the authority the two
@@ -476,6 +480,8 @@ public enum SectorEngineAPI {
                                                                mrms: snap.mrms, config: config)
         response.waterTempState = Self.waterTempStateDTO(waterTempState, model: snap.waterTempModel,
                                                          scoredValueF: input.waterTempF)
+        response.scoreVersion = ConditionsScoreVersion.current
+        response.engineRevision = ConditionsScoreVersion.engineRevision
         return response
     }
 

@@ -1,105 +1,98 @@
-"""Brain RTDB writers. Engine writes with a server credential (bypasses rules); Ops only reads.
+"""Brain RTDB writers for the WindBrain — thin wrappers over the shared Sector Brain Platform
+(jobs/brain_platform/sector_brain_platform; docs/brains/BRAIN_PLATFORM_CONTRACT.md).
 
-RtdbWriter: Firebase RTDB REST with an OAuth2 access token. `patch()` is ONE multi-path update at the root, which RTDB
-applies atomically, so a reader never sees half a snapshot. Every request has a hard timeout.
-DryRunWriter: applies the same updates to an in-memory tree (and can dump it) — used locally and in tests."""
+RtdbWriter: the contract's REST client (4 attempts, 1.5·2^n backoff, retry only on transport/5xx/429,
+app-database refusal, illegal-key walk, ownership check for `wind`). `patch()` is ONE multi-path update at
+the root, applied atomically. DryRunWriter: the same checks over an in-memory tree (tests, `--dry-run`).
+
+The package is vendored next to main.py by deploy-job.sh; in the repo it is resolved from jobs/brain_platform.
+"""
 from __future__ import annotations
 
-import json
-import subprocess
-import urllib.error
-import urllib.parse
-import urllib.request
+import os as _os
+import sys as _sys
 
-SCOPES = ["https://www.googleapis.com/auth/firebase.database", "https://www.googleapis.com/auth/userinfo.email"]
-APP_INSTANCES = ("sector-9393c-default-rtdb", "sector-dev-1f4d0")     # the Sector app databases: never written here
+_job_root = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+if not _os.path.isdir(_os.path.join(_job_root, "sector_brain_platform")):
+    _sys.path.insert(0, _os.path.join(_job_root, "..", "brain_platform"))
+
+from sector_brain_platform import BrainRtdb, BrainRtdbError, DryRunStore, TokenProvider  # noqa: E402
+from sector_brain_platform.ownership import OwnershipError  # noqa: E402
+from sector_brain_platform.keys import IllegalKey  # noqa: E402
+
+BRAIN_ID = "wind"
+PLATFORM = {"implementation": "sector_brain_platform", "contract": "docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0", "conformant": True}
 
 
 class WriteError(RuntimeError):
     pass
 
 
+class _StaticToken:
+    def __init__(self, token: str):
+        self._t = token
+
+    def token(self) -> str:
+        return self._t
+
+
 def default_token() -> str:
-    """Cloud Run: the job's service account via google-auth. Local: the gcloud user (admin) token."""
-    try:
-        import google.auth
-        import google.auth.transport.requests
-        creds, _ = google.auth.default(scopes=SCOPES)
-        creds.refresh(google.auth.transport.requests.Request())
-        if creds.token:
-            return creds.token
-    except Exception:
-        pass
-    r = subprocess.run(["gcloud", "auth", "print-access-token"], capture_output=True, text=True, timeout=30)
-    if r.returncode or not r.stdout.strip():
-        raise WriteError("no credential for the Brain RTDB (google-auth default and gcloud both failed)")
-    return r.stdout.strip()
+    """Kept for callers that want a bare token (Cloud Run metadata, else gcloud)."""
+    return TokenProvider().token()
 
 
 class RtdbWriter:
     def __init__(self, base_url: str, token: str | None = None, timeout: float = 20.0):
-        if any(x in base_url for x in APP_INSTANCES):
-            raise WriteError(f"refusing to write a Sector APP database: {base_url}")
-        if "sector-brain" not in base_url:
-            raise WriteError(f"not the dedicated Brain RTDB: {base_url}")
-        self.base = base_url.rstrip("/"); self.timeout = timeout; self._token = token
-
-    def _req(self, method: str, path: str, body=None, query: dict | None = None):
-        self._token = self._token or default_token()
-        q = {"access_token": self._token, **(query or {})}
-        url = f"{self.base}/{path.strip('/')}.json?{urllib.parse.urlencode(q)}" if path.strip("/") else f"{self.base}/.json?{urllib.parse.urlencode(q)}"
-        data = None if body is None else json.dumps(body, separators=(",", ":"), allow_nan=False).encode()
-        req = urllib.request.Request(url, data=data, method=method, headers={"Content-Type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as r:
-                txt = r.read().decode()
-        except urllib.error.HTTPError as e:
-            raise WriteError(f"{method} /{path} -> HTTP {e.code}: {e.read().decode()[:200]}") from None
-        return json.loads(txt) if txt else None
+            self._db = BrainRtdb(base_url, tokens=_StaticToken(token) if token else None, brain_id=BRAIN_ID, timeout_s=timeout)
+        except ValueError as e:                       # app database or not the dedicated sector-brain instance
+            raise WriteError(str(e)) from None
+        self.base = self._db.url
 
     def patch(self, updates: dict) -> None:
         """Atomic multi-path update at the root. Keys are absolute paths without a leading slash."""
-        if updates:
-            self._req("PATCH", "", updates)
+        if not updates:
+            return
+        try:
+            self._db.update(updates)
+        except (BrainRtdbError, OwnershipError, IllegalKey, ValueError) as e:
+            raise WriteError(str(e)) from None
 
     def get(self, path: str, query: dict | None = None):
-        return self._req("GET", path, query=query)
+        try:
+            return self._db.get(path, shallow=bool((query or {}).get("shallow")))
+        except BrainRtdbError as e:
+            raise WriteError(str(e)) from None
 
     def delete(self, path: str) -> None:
-        self._req("DELETE", path)
+        self.patch({path: None})
 
 
 class DryRunWriter:
     def __init__(self, tree: dict | None = None):
-        self.tree = tree if tree is not None else {}
-        self.patches: list[dict] = []
+        self._store = DryRunStore(tree if tree is not None else {}, brain_id=BRAIN_ID)
+
+    @property
+    def tree(self) -> dict:
+        return self._store.tree
+
+    @property
+    def patches(self) -> list:
+        return self._store.patches
 
     def patch(self, updates: dict) -> None:
-        json.dumps(updates, allow_nan=False)      # same serialisation guard as the live writer (no NaN/Infinity)
-        self.patches.append(updates)
-        for path, val in updates.items():
-            parts = [p for p in path.split("/") if p]
-            node = self.tree
-            for p in parts[:-1]:
-                if not isinstance(node.get(p), dict):
-                    node[p] = {}
-                node = node[p]
-            if val is None:
-                node.pop(parts[-1], None)
-            else:
-                node[parts[-1]] = val
+        if not updates:
+            return
+        try:
+            self._store.update(updates)
+        except (OwnershipError, IllegalKey, ValueError) as e:
+            raise WriteError(str(e)) from None
 
     def get(self, path: str, query: dict | None = None):
-        node = self.tree
-        for p in [p for p in path.split("/") if p]:
-            if not isinstance(node, dict) or p not in node:
-                return None
-            node = node[p]
-        return node
+        return self._store.get(path, shallow=bool((query or {}).get("shallow")))
 
     def delete(self, path: str) -> None:
         self.patch({path: None})
 
     def dump(self, out_path: str) -> None:
-        with open(out_path, "w") as f:
-            json.dump(self.tree, f, indent=1, sort_keys=True)
+        self._store.dump(out_path)

@@ -24,7 +24,11 @@ public enum LakeSurfaceBucket {
             ?? "https://storage.googleapis.com/sector-lake-surface"
     }
     static func url(_ path: String) -> URL? { URL(string: "\(base)/\(path)") }
-    static func slug(_ lakeId: String) -> String { lakeId.replacingOccurrences(of: "|", with: "_") }
+    /// The bucket's lake slug — the ONE lake-key algorithm (`BrainPlatform.lakeKey`, every run of
+    /// non-alphanumerics → "_"), the same one jobs/lake-surface/daily.py uses to write the objects.
+    /// The previous `|`→`_` replacement diverged for 565 of 621 directory lakes (e.g. "Big Lake|AK"
+    /// → "Big Lake_AK" vs the written "Big_Lake_AK"); it only ever worked for Guntersville.
+    static func slug(_ lakeId: String) -> String { BrainPlatform.lakeKey(lakeId) }
 }
 
 enum ClarityTime {
