@@ -10,7 +10,7 @@
 | **NBM v5.0** (NODD) | Brain forecast | night MAE 0.82–0.84 m/s, bias −0.04…+0.14; best direction of those tested; probabilities (qmd P10/50/90) | Yes (baseline) | **Keep** |
 | **HRRR** (via Open-Meteo Best Match) | Production | night MAE 1.38, bias +1.13, direction 0.62 | No: worse speed and direction | Move production off (Michael) |
 | **GFS / ICON / ECMWF via Open-Meteo** | not used | look better only in the windy tail because they over-forecast everywhere; 1 km chop correct on calm nights 0.59 vs NBM 0.78 | No | Skip |
-| **Open-Meteo `ncep_nbm_conus`** | transport option | numerically the same NBM (mean abs diff 0.067 m/s, direction identical) | Transport/licence only | Option |
+| **Open-Meteo `ncep_nbm_conus`** | transport option | numerically the same NBM (mean abs diff 0.067 m/s, direction identical) | Transport/terms only | Option |
 | **RTMA-RU** (15-min analysis) | Brain "now" | typed `analysis`; anchoring forecasts to it at +1/+3 h with no on-lake sensor: no gain | "Now" yes; nowcast no | Keep |
 | **METAR / AWOS / ASOS** (8 frozen) | truth | land only | Truth, not product | Keep |
 | **MADIS mesonet** | possible truth | 33 usable stations near 4 lakes (23 ASOS/AWOS + 10 RAWS), none over water; 110 rejected, mostly citizen | Marginal | Validation breadth only |

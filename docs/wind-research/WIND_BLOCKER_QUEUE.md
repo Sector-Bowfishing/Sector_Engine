@@ -2,7 +2,7 @@
 
 | # | Blocker | Bowfishing impact | Unblocked by | Owner |
 |---|---|---|---|---|
-| 1 | **Production wind ≠ Brain wind.** Customers see Open-Meteo Best Match (HRRR→GFS, direction 0.62, night bias +1.13) from a single point; Brain NBM is shadow. | Everything built here is invisible | Michael's decision: Engine serves NBM wind (or `ncep_nbm_conus` on paid plan); also fixes the non-commercial licence | Michael |
+| 1 | **Production wind ≠ Brain wind.** Customers see Open-Meteo Best Match (HRRR→GFS, direction 0.62, night bias +1.13) from a single point; Brain NBM is shadow. | Everything built here is invisible | Michael's decision: Engine serves NBM wind (or `ncep_nbm_conus` on paid plan); also removes dependence on the free tier | Michael |
 | 2 | **Windy nights are under-forecast** (obs 10–15 mph read 4.6–6 mph low; 0 of 20 windy nights called) | Misses exactly the nights that wreck boat control | Ship the P90 breezy-risk flag; re-test on sealed H2 after 2027-01-01 | Wind research |
 | 3 | **No over-water wind** (all stations land) | Unknown speed bias over a big reservoir; caps certification at 7 | One on-lake anemometer (also the only proven nowcast gain, −16% at +1 h) | Michael (hardware) |
 | 4 | **No bank-pair truth** (BWIS B3+D2 = 17 pts) | "Bank A calmer than B" never confirmed in the field | Two-lake bank network (≈ 2–4 months after install) | Michael |
