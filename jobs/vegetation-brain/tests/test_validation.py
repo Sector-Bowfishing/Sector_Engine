@@ -71,3 +71,11 @@ def test_gate_constants_match_the_frozen_preregistration():
         assert needle in txt, needle
     assert (V.PARTIAL_MIN_PRECISION, V.PARTIAL_MIN_RECALL, V.PARTIAL_MAX_FPR, V.PARTIAL_NLA_MIN_AUC, V.PARTIAL_NLA_MIN_SPEARMAN) == (0.8, 0.7, 0.02, 0.8, 0.5)
     assert (V.DENSITY_MIN_KAPPA, V.DENSITY_MIN_WITHIN_ONE, V.SEASONAL_MIN_GAIN_POINTS, V.SEASONAL_MIN_WITHIN_ONE) == (0.4, 0.9, 10.0, 0.85)
+
+
+def test_seasonal_gate_must_beat_every_baseline_amendment_a2():
+    ok = {"calendar": 30, "most_common_state": 12, "persistence_le_30d": 11}
+    assert V.seasonal_gate(5, ok, 0.9)
+    assert not V.seasonal_gate(5, {**ok, "most_common_state": 6}, 0.9)          # the real back-test: +6 over the mode guess
+    assert not V.seasonal_gate(5, {"calendar": 40}, 0.9)                        # missing baselines never pass
+    assert not V.seasonal_gate(5, ok, 0.9, max_belt_share=0.003)                # no measurable signal => UNKNOWN

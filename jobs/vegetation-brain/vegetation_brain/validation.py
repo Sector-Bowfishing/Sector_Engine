@@ -28,6 +28,8 @@ DENSITY_MIN_WITHIN_ONE = 0.90
 SEASONAL_MIN_YEARS = 4
 SEASONAL_MIN_GAIN_POINTS = 10.0
 SEASONAL_MIN_WITHIN_ONE = 0.85
+SEASONAL_BASELINES = ("calendar", "most_common_state", "persistence_le_30d")   # amendment A2: the climatology must beat ALL of them
+SEASONAL_NO_SIGNAL_MAX_BELT_SHARE = 0.05
 CALIBRATION_MIN_LAKES = 10
 
 
@@ -92,5 +94,13 @@ def density_gate(lakes: int | None, weighted_kappa: float | None, within_one: fl
     return bool((lakes or 0) >= DENSITY_MIN_LAKES and _ge(weighted_kappa, DENSITY_MIN_KAPPA) and _ge(within_one, DENSITY_MIN_WITHIN_ONE))
 
 
-def seasonal_gate(years: int | None, gain_points: float | None, within_one: float | None) -> bool:
+def seasonal_gate(years: int | None, gain_points, within_one: float | None, max_belt_share: float | None = None) -> bool:
+    """gain_points: exact-agreement gain over the BEST baseline, or a dict {baseline: gain} (all of SEASONAL_BASELINES required).
+    max_belt_share: lake's climatology maximum surface share; below the no-signal limit the lake publishes UNKNOWN."""
+    if max_belt_share is not None and max_belt_share < SEASONAL_NO_SIGNAL_MAX_BELT_SHARE:
+        return False
+    if isinstance(gain_points, dict):
+        if not all(b in gain_points for b in SEASONAL_BASELINES):
+            return False
+        gain_points = min(gain_points[b] for b in SEASONAL_BASELINES)
     return bool((years or 0) >= SEASONAL_MIN_YEARS and _ge(gain_points, SEASONAL_MIN_GAIN_POINTS) and _ge(within_one, SEASONAL_MIN_WITHIN_ONE))
