@@ -254,3 +254,31 @@ Existing scores keep their original semantics (not rescored). Ops computes nothi
 - Engine Score, Brain scores, lifecycle, health, coverage and beta readiness are separate nodes.
 
 **Rollback:** delete `/engine/score`; `git reset --hard 7b3fc88a`.
+
+---
+
+## Phase 7 — Land Brain implementations on main — PASS
+
+**Goal:** every active Brain on canonical `main`, publishing through the shared platform; customer
+path unchanged; no private research.
+
+| Brain | How it landed | Adaptations | Tests |
+|---|---|---|---|
+| Biological | merge `brain/biological` @ 99c18f78 (clean) | shim over `sector_brain_platform`; event kinds `brain.registered`/`brain.version`; ownership-checked store; `platform` ref | 29/29 (+ conformance test) |
+| Sector Intelligence | merge `brain/sector-intelligence` @ df138c49 (clean) | shim; `kind: not_evaluated`; `platform` ref | 26/26 |
+| Water Clarity (public-safe) | merge `brain/water-clarity` @ 6220491b (clean) | shim + vendoring in deploy; no `lastUpdatedAt`/snapshot `generatedAt`/`snapshotVersion`; `kind` + freshness envelope; `sources.brains` map + `ownerBrainId`; `failures24h` absent when unknown | 35/35 |
+| Lake | merge `sector/lake-brain` @ eda56c90 (platform files kept from main) | throwing ownership-checked stores; contract event ids/kinds; `platform` ref; own-brain pruning; `brains` map | 19/19 |
+| Water Temp | **replayed by file** from `brain/water-temp` @ ec0ae0fa (its Clarity-Stage-5 base left behind); `WaterTempBrainJob` product/target; Dockerfile builds the job binary into the serving image (request path untouched) | readiness → ladder (`CALIBRATION`), evidence → `evidenceClass`; contract event ids/kinds; shared pruner; no rollup-field writes; `brains` map; `platform` ref | 17/17 |
+| Wind | already on main (Phase 3) | **temporary adapter** (contract §13); migrates in Phase 8 | 55 |
+
+Platform fixes made while landing: `BrainStoreError(description:)` compatibility init; `BrainPlatformRef`
+shared conformance ref; `BrainRtdb` accepts the pre-contract `retries`/`backoff_s`/`timeout_s`
+kwargs so existing brain tests keep their meaning; the contract's source-owner table now lists the
+ids the Brains actually write.
+
+**Private boundary:** nothing from `research/clarity-candidate`, the private `brain/water-clarity`
+or `feat/clarity-candidate-shadow` entered main (merge was the public-safe branch only).
+**Conditions Score path:** unchanged (no file under `Engine/`, `Forecast/` or `API/` touched in
+this phase). **Full Swift suite 216/216**; Python 23 + 29 + 26 + 35.
+
+**Rollback:** `git reset --hard ddb34c4b` (Phase 6) on main.
