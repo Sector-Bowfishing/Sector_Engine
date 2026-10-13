@@ -206,24 +206,34 @@ def n_holes(g) -> int:
 # ------------------------------------------------------------------ variants
 
 
+TOL_SIZE_FRACTION = 0.025   # a tolerance never exceeds 2.5 % of sqrt(area): a 0.1 km2 pond is not simplified to a 50 m blob
+TOL_MIN_M = 2.0
+
+
+def effective_tolerance(tol_m, area_m2):
+    """Nominal tolerance, capped for very small lakes (applies below ~4 km2 for 50 m and ~1 km2 for 25 m)."""
+    return round(min(tol_m, max(TOL_MIN_M, TOL_SIZE_FRACTION * math.sqrt(max(area_m2, 0.0)))), 2)
+
+
 def make_variant(union_deg, tol_m, center=None):
     """Canonical variant of a lake shoreline.
 
     union_deg  the unioned NHD waterbody pieces, degrees.
-    tol_m      Douglas-Peucker tolerance in metres (ANALYSIS_TOL_M or DISPLAY_TOL_M).
-    Returns (geometry_deg, area_km2) or (None, 0.0). The area is the equal-area area of the variant before the 5-decimal
-    snap (the snap moves vertices by < 0.6 m)."""
+    tol_m      nominal Douglas-Peucker tolerance in metres (ANALYSIS_TOL_M or DISPLAY_TOL_M), capped for tiny lakes.
+    Returns (geometry_deg, area_km2, effective_tol_m) or (None, 0.0, tol). The area is the equal-area area of the variant
+    before the 5-decimal snap (the snap moves vertices by < 0.6 m)."""
     center = center or center_of(union_deg)
     to_m, to_deg = transformers(*center)
     gm = clean_metric(project(union_deg, to_m))
     if gm is None:
-        return None, 0.0
-    gm = simplify_metric(gm, tol_m)
+        return None, 0.0, tol_m
+    eff = effective_tolerance(tol_m, gm.area)
+    gm = simplify_metric(gm, eff)
     if gm is None:
-        return None, 0.0
+        return None, 0.0, eff
     area = gm.area / 1e6
     gd = finalize_degrees(project(gm, to_deg))
-    return gd, area
+    return gd, area, eff
 
 
 def area_km2(g_deg, center=None) -> float:

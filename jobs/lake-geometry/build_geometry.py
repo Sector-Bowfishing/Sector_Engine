@@ -364,11 +364,12 @@ def make_geometry(lake, plan):
     if union_deg is None:
         return None
     center = lg.center_of(union_deg)
-    ana, ana_a = lg.make_variant(union_deg, lg.ANALYSIS_TOL_M, center)
-    dis, dis_a = lg.make_variant(union_deg, lg.DISPLAY_TOL_M, center)
+    ana, ana_a, ana_t = lg.make_variant(union_deg, lg.ANALYSIS_TOL_M, center)
+    dis, dis_a, dis_t = lg.make_variant(union_deg, lg.DISPLAY_TOL_M, center)
     if ana is None or dis is None:
         return None
-    return {"union_deg": union_deg, "analysis": ana, "display": dis, "analysis_km2": ana_a, "display_km2": dis_a, "center": center}
+    return {"union_deg": union_deg, "analysis": ana, "display": dis, "analysis_km2": ana_a, "display_km2": dis_a, "center": center,
+            "analysis_tol": ana_t, "display_tol": dis_t}
 
 
 # ------------------------------------------------------------------ registry entry
@@ -609,7 +610,7 @@ def registry_entry(lake, flag, plan, geom, fr, gsw, built_at, out, files):
     seed_ids = [r["attrs"].get("PERMANENT_IDENTIFIER") for r in sorted(plan["seed"], key=lambda r: -r["area"])]
     paths = {}
     ginfo = {}
-    for variant, g, tol, ar in (("display", dis, lg.DISPLAY_TOL_M, geom["display_km2"]), ("analysis", ana, lg.ANALYSIS_TOL_M, geom["analysis_km2"])):
+    for variant, g, tol, ar in (("display", dis, geom["display_tol"], geom["display_km2"]), ("analysis", ana, geom["analysis_tol"], geom["analysis_km2"])):
         raw = lg.feature_bytes(g, dict(props, variant=variant, toleranceM=tol, areaKm2=round(ar, 3)))
         gz = lg.gzip_bytes(raw)
         rel = f"lakes/{key}/geometry.{GEOM_V}.{variant}.geojson.gz"
@@ -628,6 +629,7 @@ def registry_entry(lake, flag, plan, geom, fr, gsw, built_at, out, files):
         "islands": paths["analysis"]["holes"], "areaKm2": round(area, 3),
         "sourceAreaKm2": round(sum(r["attrs"].get("AREASQKM") or 0 for r in members), 3), "areaDisplayKm2": paths["display"]["areaKm2"],
         "displayToleranceM": lg.DISPLAY_TOL_M, "analysisToleranceM": lg.ANALYSIS_TOL_M,
+        "displayToleranceEffectiveM": paths["display"]["tol"], "analysisToleranceEffectiveM": paths["analysis"]["tol"],
         "displayVertices": paths["display"]["vertices"], "analysisVertices": paths["analysis"]["vertices"],
         "displayUrl": paths["display"]["url"], "analysisUrl": paths["analysis"]["url"],
         "bytes": {"displayGzip": paths["display"]["gz"], "displayRaw": paths["display"]["raw"],
@@ -703,7 +705,8 @@ def make_manifest(index, files, inputs, commit, dirty, built_at, cache):
                   "python": platform.python_version(), "shapely": shapely.__version__, "geos": shapely.geos_version_string,
                   "pyproj": pyproj.__version__, "proj": pyproj.proj_version_str, "numpy": np.__version__},
         "parameters": {"displayToleranceM": lg.DISPLAY_TOL_M, "analysisToleranceM": lg.ANALYSIS_TOL_M, "minHoleM2": lg.MIN_HOLE_M2,
-                       "minPartM2": lg.MIN_PART_M2, "coordDecimals": lg.COORD_DECIMALS, "adjacentDistM": lg.ADJ_DIST_M,
+                       "minPartM2": lg.MIN_PART_M2, "toleranceSizeFraction": lg.TOL_SIZE_FRACTION, "toleranceMinM": lg.TOL_MIN_M,
+                       "coordDecimals": lg.COORD_DECIMALS, "adjacentDistM": lg.ADJ_DIST_M,
                        "adjacentMinShare": lg.ADJ_MIN_SHARE, "coverMin": lg.COVER_MIN, "largeWaterHeldKm2": LARGE_WATER_KM2,
                        "gzip": "level 9, mtime 0", "crs": "EPSG:4326"},
         "counts": {"lakes": len(index), "withGeometry": len(disp), "geometryNull": len(index) - len(disp),

@@ -159,8 +159,9 @@ def test_adjacent_pieces_rule():
 
 def test_display_and_analysis_variants_are_valid_ordered_and_shrink():
     g = lake_shape(islands=[(0, 0, 40), (1.5, 0.2, 12), (-2, 0.1, 5), (-1, -0.3, 80)])    # 5 m island is < 100 m2: dropped
-    ana, a_area = lg.make_variant(g, lg.ANALYSIS_TOL_M)
-    dis, d_area = lg.make_variant(g, lg.DISPLAY_TOL_M)
+    ana, a_area, a_tol = lg.make_variant(g, lg.ANALYSIS_TOL_M)
+    dis, d_area, d_tol = lg.make_variant(g, lg.DISPLAY_TOL_M)
+    assert (a_tol, d_tol) == (25.0, 50.0)
     for v in (ana, dis):
         assert v.is_valid and v.geom_type in ("Polygon", "MultiPolygon")
         for p in lg.parts_of(v):
@@ -177,15 +178,15 @@ def test_simplification_is_deterministic_to_the_byte():
     props = {"lakeId": "T|AL", "variant": "display"}
     outs = []
     for _ in range(3):
-        v, _a = lg.make_variant(g, lg.DISPLAY_TOL_M)
+        v, _a, _t = lg.make_variant(g, lg.DISPLAY_TOL_M)
         outs.append(lg.gzip_bytes(lg.feature_bytes(v, props)))
     assert outs[0] == outs[1] == outs[2]
     assert lg.sha256(outs[0]) == lg.sha256(outs[1])
     # order of input rings/parts does not change the result
     mp = MultiPolygon([lake_shape(lon0=-86.0), lake_shape(lon0=-85.9, w_km=3)])
     mp2 = MultiPolygon(list(reversed(list(mp.geoms))))
-    a, _ = lg.make_variant(mp, 25.0, center=(-85.95, 34.5))
-    b, _ = lg.make_variant(mp2, 25.0, center=(-85.95, 34.5))
+    a, _, _t = lg.make_variant(mp, 25.0, center=(-85.95, 34.5))
+    b, _, _t = lg.make_variant(mp2, 25.0, center=(-85.95, 34.5))
     assert a.equals(b)
     raw = gzip.decompress(outs[0])
     f = json.loads(raw)
@@ -193,9 +194,19 @@ def test_simplification_is_deterministic_to_the_byte():
     assert outs[0][4:8] == b"\x00\x00\x00\x00"                                           # gzip mtime 0
 
 
+def test_tolerance_is_capped_for_tiny_lakes():
+    assert lg.effective_tolerance(50.0, 266e6) == 50.0                    # Guntersville
+    assert lg.effective_tolerance(25.0, 266e6) == 25.0
+    assert lg.effective_tolerance(50.0, 0.1e6) == pytest.approx(7.91, abs=0.01)   # a 0.1 km2 pond
+    assert lg.effective_tolerance(50.0, 100.0) == lg.TOL_MIN_M            # never below 2 m
+    pond = lake_shape(w_km=0.4, h_km=0.25)
+    v, a, tol = lg.make_variant(pond, lg.DISPLAY_TOL_M)
+    assert tol < 10 and abs(a - metric(pond).area / 1e6) / a < 0.03
+
+
 def test_simplified_shape_stays_close_to_the_source():
     g = lake_shape()
-    v, _ = lg.make_variant(g, lg.DISPLAY_TOL_M)
+    v, _, _t = lg.make_variant(g, lg.DISPLAY_TOL_M)
     ga, va = metric(g), metric(v)
     assert shapely.hausdorff_distance(ga.boundary, va.boundary) < 3 * lg.DISPLAY_TOL_M
     assert ga.symmetric_difference(va).area / ga.area < 0.05
