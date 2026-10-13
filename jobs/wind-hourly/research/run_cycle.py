@@ -25,11 +25,19 @@ LM.build(META, R + "/live-meta-mirror")
 sh(f"{sys.executable} {HERE}/canonical_rescore.py {R}/live-meta-mirror {out}/rescore.json", cwd=ROOT)
 rescore = json.load(open(f"{out}/rescore.json"))
 from sector_wind.brain import ops_summary as OS
-frozen = json.load(open(os.path.join(ROOT, "..", "..", "docs", "brains", "scoring", "frozen-scores.json")))
-fw = frozen.get("wind") or frozen.get("scores", {}).get("wind") or {}
+# what is PUBLISHED right now (read-only GET of /scores/wind); falls back to the repo file only if the read fails
+import urllib.request
+try:
+    tok = sh("gcloud auth print-access-token").stdout.strip()
+    fw = json.load(urllib.request.urlopen(urllib.request.Request("https://sector-brain.firebaseio.com/scores/wind.json", headers={"Authorization": "Bearer " + tok}), timeout=30)) or {}
+    published_from = "live /scores/wind"
+except Exception:
+    frozen = json.load(open(os.path.join(ROOT, "..", "..", "docs", "brains", "scoring", "frozen-scores.json")))
+    fw = frozen.get("wind") or {}; published_from = "repo frozen-scores.json (live read failed)"
 cov = OS.coverage_from_manifest()
 summ = OS.build(now, rescore=rescore, reliability=rel, frozen_score={"value": fw.get("value"), "basis": fw.get("basis", "FROZEN"), "updatedAt": fw.get("scoreUpdatedAt") or fw.get("updatedAt")}, coverage=cov,
                 prerequisite_branch={"name": "feat/cost-efficient-scheduling", "merged": subprocess.run("git merge-base --is-ancestor origin/feat/cost-efficient-scheduling origin/main", shell=True, cwd=ROOT).returncode == 0})
+summ["publishedScore"]["source"] = published_from if isinstance(summ.get("publishedScore"), dict) else None
 json.dump(summ, open(f"{out}/ops_summary.json", "w"), indent=1)
 s = rel["summary"]
 print(f"cycle {now:%Y-%m-%d %H:%MZ}: valid archive days {s['validArchiveDays']}, brain days {s['validBrainPublishDays']}, failed executions {s['failedExecutions']}, stale {s['staleStatesLogged']}, "

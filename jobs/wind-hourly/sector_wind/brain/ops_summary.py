@@ -50,7 +50,7 @@ def build(now: datetime, *, rescore: dict | None, reliability: dict | None, froz
     if frozen_score:
         published = {"value": frozen_score.get("value"), "basis": frozen_score.get("basis"), "updatedAt": frozen_score.get("updatedAt"),
                      "differsFromComputed": bool(cert and frozen_score.get("value") is not None and abs(cert["value"] - frozen_score["value"]) > 1e-9),
-                     "explanation": "the Engine's published score is a FROZEN block; the scorer result is computed from the same frozen rubric and moves with live days. Refreshing the published block needs an explicit decision."}
+                     "explanation": "the published block can differ from the canonical scorer: the scorer result moves with valid live days, while the published value comes from the frozen-scores.json baked into the deployed brain-orchestrator image. The refresh is approved and the generated file is committed on feat/wind-brain-adoption; it becomes durable only once the orchestrator lineage carries it."}
     rel = _unknown("no reliability audit supplied")
     if reliability:
         s = reliability["summary"] if "summary" in reliability else reliability

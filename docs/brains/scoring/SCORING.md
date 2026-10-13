@@ -41,6 +41,8 @@ Ops displays scores; it never computes them.
 | Wind | **3.1 / 10** (certification) | FROZEN | `jobs/wind-hourly/sector_wind/brain/validation_evidence.json`, frozen 2026-10-12T06:16Z: `windCertificationScore` 3.1 (frozen Stage 1/2 rubric v1) and `bowfishingWindIntelligenceScore` 5.4 (BWIS v1, definition sha256 recorded). Production wind (Open-Meteo) is unscored. |
 
 These are published verbatim with `basis: FROZEN`; re-scoring them "for consistency" is forbidden.
+> **Wind score block (2026-10-13):** `frozen-scores.json` → `wind` is now *generated* from the canonical Wind scorer (`jobs/wind-hourly/research/wind_score_entry.py`; basis COMPUTED, never hand-edited) and moves with valid live days. It is durable only after the brain-orchestrator image is rebuilt with this file — see `docs/brains/wind/WIND_SCORE_PUBLICATION_HANDOFF.md`.
+
 
 ## Computed rubrics
 
