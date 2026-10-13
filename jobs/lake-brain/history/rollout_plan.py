@@ -32,7 +32,7 @@ DIRECTORY_LAKES = 621
 PILOT_FLOOD_KNOWN = {"Lake Hartwell|SC"}            # only Hartwell publishes a flood-pool bottom among the pilots (state flood NORMAL; TVA pilots UNKNOWN)
 # Pre-declared batch rules (constants; the batch sizes are an OUTPUT of these rules applied to the bindings table):
 B_MIN_COMPLETE_YEARS = 15           # "well seeded"
-B_MAX_PROBE_AGE_H = 6.0             # live source fresh at the research probe
+B_PROBE_AGE_SLACK_H = 6.0           # live source fresh at the research probe: age <= the binding's own declared lag + 6 h (RISE declares ~48 h)
 B_MAX_EST_SECONDS = 120.0           # one lake's pre-seed must be cheap
 C_MIN_CWMS_CALLS = 60               # heavy sub-daily CWMS pulls are "slower history"
 
@@ -119,7 +119,7 @@ def select_batches(rows, pilots, now, cat, spc):
         composite = d["nHistory"] != 1 or bool(b.get("historyNotes"))
         sub_daily_heavy = d["host"] == "cwms" and d["callsByHost"].get("cwms", 0) > C_MIN_CWMS_CALLS
         slow = d["host"] == "hads" or (d["host"] == "usgs" and d["historyStat"] == "iv") or sub_daily_heavy or d["estSeconds"] > B_MAX_EST_SECONDS
-        fresh = d["probeAgeH"] is not None and d["probeAgeH"] <= B_MAX_PROBE_AGE_H
+        fresh = d["probeAgeH"] is not None and d["probeAgeH"] <= (b["live"][0].get("lagMin") or 0) / 60.0 + B_PROBE_AGE_SLACK_H
         seeded_ok = d["baseline"] == "SUFFICIENT" and not composite and d["host"] in ("cwms", "usgs", "rise", "hads")
         if seeded_ok and not slow and fresh and d["years"] >= B_MIN_COMPLETE_YEARS:
             ok_b.append(lid)

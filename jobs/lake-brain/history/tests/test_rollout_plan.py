@@ -84,7 +84,7 @@ def test_batches_partition_and_follow_the_declared_rules():
     flat = [l for v in batches.values() for l in v]
     assert len(flat) == len(set(flat)) == 30 and "P1 Lake|ZZ" not in flat
     for l in batches["B"]:
-        assert info[l]["years"] >= R.B_MIN_COMPLETE_YEARS and info[l]["host"] in ("cwms", "usgs", "rise") and info[l]["probeAgeH"] <= R.B_MAX_PROBE_AGE_H
+        assert info[l]["years"] >= R.B_MIN_COMPLETE_YEARS and info[l]["host"] in ("cwms", "usgs", "rise") and info[l]["probeAgeH"] <= rows[l]["live"][0].get("lagMin", 0) / 60.0 + R.B_PROBE_AGE_SLACK_H
     for l in batches["C"]:
         assert info[l]["host"] == "hads" or info[l]["estSeconds"] > R.B_MAX_EST_SECONDS or info[l]["historyStat"] == "iv"
     for l in batches["D"]:
