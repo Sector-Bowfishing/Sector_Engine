@@ -1,0 +1,123 @@
+{
+ "rows": 4716,
+ "obs>=10": {
+  "rows": 166,
+  "flagged": 81,
+  "missRate": 0.512,
+  "silentMiss(no flag and category calm/light)": 85,
+  "silentMissRate": 0.512,
+  "p90CoversObserved": 0.319,
+  "meanP90MinusObs": -2.22,
+  "categoryFloorWrongBy>=1": 0.861
+ },
+ "obs>=15": {
+  "rows": 20,
+  "flagged": 6,
+  "missRate": 0.7,
+  "silentMiss(no flag and category calm/light)": 14,
+  "silentMissRate": 0.7,
+  "p90CoversObserved": 0.25,
+  "meanP90MinusObs": -7.35,
+  "categoryFloorWrongBy>=1": 1.0
+ },
+ "rowLevel": {
+  "flagShare": 0.0479,
+  "falseAlarmShareOfFlags(obs<8)": 0.389,
+  "P90CoverageOverall": 0.778
+ },
+ "confidenceLabel_P(obs>=10)": {
+  "HIGH": {
+   "rows": 501,
+   "rate": 0.0719
+  },
+  "LOW": {
+   "rows": 2965,
+   "rate": 0.0094
+  },
+  "MEDIUM": {
+   "rows": 1250,
+   "rate": 0.0816
+  }
+ },
+ "nightLevel": {
+  "stationNights": 1200,
+  "breezyNights(obs>=10 any hour)": 75,
+  "flaggedNights": 114,
+  "POD": 0.507,
+  "FAR": 0.667,
+  "P(breezy|flagged night)": 0.333,
+  "P(breezy|unflagged night)": 0.0341
+ },
+ "byStationNight": {
+  "15M": {
+   "nights": 154,
+   "breezy": 1,
+   "flagged": 8,
+   "hit": 1
+  },
+  "4A6": {
+   "nights": 153,
+   "breezy": 4,
+   "flagged": 7,
+   "hit": 1
+  },
+  "8A1": {
+   "nights": 140,
+   "breezy": 7,
+   "flagged": 2,
+   "hit": 1
+  },
+  "9A4": {
+   "nights": 154,
+   "breezy": 8,
+   "flagged": 19,
+   "hit": 5
+  },
+  "DCU": {
+   "nights": 139,
+   "breezy": 17,
+   "flagged": 23,
+   "hit": 10
+  },
+  "HSV": {
+   "nights": 154,
+   "breezy": 22,
+   "flagged": 21,
+   "hit": 10
+  },
+  "MSL": {
+   "nights": 154,
+   "breezy": 10,
+   "flagged": 25,
+   "hit": 6
+  },
+  "SNH": {
+   "nights": 152,
+   "breezy": 6,
+   "flagged": 9,
+   "hit": 4
+  }
+ },
+ "thresholdSensitivity(info only; product threshold stays 10)": {
+  "8": {
+   "flagShare": 0.1378,
+   "POD": 0.699,
+   "FAR": 0.822
+  },
+  "9": {
+   "flagShare": 0.0816,
+   "POD": 0.59,
+   "FAR": 0.745
+  },
+  "10": {
+   "flagShare": 0.0479,
+   "POD": 0.488,
+   "FAR": 0.642
+  },
+  "12": {
+   "flagShare": 0.0157,
+   "POD": 0.235,
+   "FAR": 0.473
+  }
+ }
+}

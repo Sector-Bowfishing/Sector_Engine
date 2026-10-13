@@ -14,7 +14,7 @@
 | Accuracy, night speed MAE | 1.38 m/s | 0.82–0.84 m/s | Brain |
 | Night bias | +1.13 m/s (over-forecasts calm nights) | +0.14 … −0.04 m/s | Brain |
 | Direction within 22.5° | 0.62 | 0.72–0.76 all hours; **0.81 / 0.97** at night when forecast 5–10 / ≥ 10 mph | Brain |
-| Windy-night speed | looks better only because global models over-forecast everywhere; costs calm-night accuracy (1 km chop right 0.59 vs 0.78) | under-forecasts: observed 10–15 mph read 4.6–6 mph low | Neither; Brain adds a P90 breezy-risk flag (19× lift) |
+| Windy-night speed | HRRR point value is less low-biased on windy nights (−3.6 vs −5.7 mph at observed ≥ 10 mph; detects 43% of ≥ 10 mph hours, FAR 0.68) — but over-forecasts calm nights by +2.9 mph | NBM point value under-forecasts (detects 15%, FAR 0.22); the P90 risk flag restores parity (POD 0.49, FAR 0.64) | **Current for the point value; Brain only with the risk flag** (`WIND_PROVIDER_SHADOW_COMPARISON.md`) |
 | Gust | HRRR gust: ≥ 20 kt POD 0.19, FAR 0.93, conditional bias −1.6 m/s | NBM gust: POD 0.04, FAR 0.88, bias −1.9 m/s | Neither is usable; keep gust penalty conservative |
 | Tonight usefulness | hourly speed only in the 7-night outlook (no direction, no gust) | tonight block: direction ≥ 5 mph, category, easing, breezy-risk, confidence | Brain |
 | Freshness | on request, 30 min cache; the fallback host is a different product | hourly cycle at :05; RTMA 15 min; stale flags and `retrievedAt` | Brain (provenance) |
@@ -35,6 +35,7 @@ The accuracy gap (MAE −40%, night bias from +1.1 to ≈ 0, direction +0.10–0
 4. Gust penalty and wind gate (`windCurve`, gust excess) re-reviewed: they were tuned on HRRR gusts; NBM gusts are not better and tend lower.
 5. A side-by-side shadow period where the Engine logs both winds (no customer change) and Michael reviews disagreements.
 6. H2 outcome recorded (sealed until 2027-01-01). The decision does not need H2 to *start* shadowing; customer promotion of any new claim does.
+8. **Windy-night handling (new, from the shadow comparison):** the wind gate / gauge must be driven by the risk-aware value (P90 / `ifItBlows` or the flag), not the NBM mean alone, otherwise windy nights would look calmer to customers than they do today.
 7. Provider-terms review for whatever remains on Open-Meteo (other fields stay there regardless).
 
 ## What would change the recommendation

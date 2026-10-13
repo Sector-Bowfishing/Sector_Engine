@@ -141,7 +141,8 @@ def build_tonight(steps: list[dict], p90_steps: list[dict] | None, init: datetim
     flag = breezy_flag(p90max)
     block["speed"] = {"meanMph": mean, "minMph": min(mph), "maxMph": max(mph), "category": category(mean),
                       "ifItBlowsMph": p90max, "ifItBlowsCategory": category(p90max),
-                      "note": "Point forecast. Observed wind above 10 mph ran 4.6-6 mph higher than forecast in research; treat the category as a floor, not a ceiling."}
+                      "note": "Point forecast. Observed wind above 10 mph ran 4.6-6 mph higher than forecast in research; treat the category as a floor, not a ceiling. "
+                              "ifItBlows (NBM P90) is an elevated case, NOT a maximum: observed wind exceeded it on 22% of hours and on 68% of hours at or above 10 mph."}
     # direction (shown only when the mean forecast is >= 5 mph)
     dirs = [(s["dirDeg"], s["mph"]) for s in inwin if s.get("dirDeg") is not None and s["mph"] >= 1.0]
     dmean = circ_mean_deg([d for d, _ in dirs], [w for _, w in dirs]) if dirs else None
@@ -168,7 +169,8 @@ def build_tonight(steps: list[dict], p90_steps: list[dict] | None, init: datetim
     block["breezyRisk"] = {"flag": flag, "p90MaxMph": p90max, "thresholdMph": BREEZY_P90_MPH,
                            "basis": "NBM P90 sustained wind at any hour of the window",
                            "meaning": None if flag is None else ("could turn breezy" if flag else None),
-                           "evidence": "about 1 in 3 flagged nights reached 10 mph versus 1 in 50 unflagged (CAL+H1, land stations); a risk flag, not a prediction",
+                           "evidence": "about 1 in 3 flagged nights reached 10 mph versus 1 in 30 unflagged (CAL+H1 night level, land stations); a risk flag, not a prediction. "
+                                       "No flag is NOT 'low risk': about half of 10 mph+ hours carried no flag.",
                            "unavailableReason": None if flag is not None else "noRecentPercentileCycle"}
     lab, reasons = confidence(mean, flag, stale)
     block["confidence"] = {"label": lab, "reasons": reasons, "basis": "frozen rule: WIND_H2_PREREG.md"}
