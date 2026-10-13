@@ -62,10 +62,12 @@ def build():
                         o = obs.get((sid, vt))
                         ns, nd = blend_wind(stp["speedMS"], stp["dirFromDeg"], w)
                         p90 = blend(stp["speedP90"], w) if stp.get("speedP90") else None
+                        p50 = blend(stp["speedP50"], w) if stp.get("speedP50") else None
+                        p10 = blend(stp["speedP10"], w) if stp.get("speedP10") else None
                         hv = hs.get(L)
                         hsp, hdr = (hrrr_point(hv, wh[lake][sid]) if (hv and lake in wh) else (None, None))
                         rows.append({"lake": lake, "station": sid, "init": t, "valid": vt, "lead": L,
-                                     "nbmMph": None if ns is None else ns / MPH, "nbmDir": nd, "nbmP90Mph": None if p90 is None else p90 / MPH,
+                                     "nbmMph": None if ns is None else ns / MPH, "nbmDir": nd, "nbmP90Mph": None if p90 is None else p90 / MPH, "nbmP50Mph": None if p50 is None else p50 / MPH, "nbmP10Mph": None if p10 is None else p10 / MPH,
                                      "omMph": None if hsp is None else hsp / MPH, "omDir": hdr,
                                      "obsMph": None if not o else o["speedMS"] / MPH, "obsDir": None if not o else o["dirFromDeg"],
                                      "initAgeNote": "archived cycle"})

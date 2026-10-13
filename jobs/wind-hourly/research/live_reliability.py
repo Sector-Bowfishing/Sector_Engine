@@ -98,7 +98,57 @@ def audit(meta, now=None):
                      "brainStaleStates": sum(1 for b in bday for s in b["lakeStates"].values() if s.get("stale")),
                      "valid": closed and not why, "reasons": why if closed else (["day still open"] + why)})
         d += timedelta(days=1)
-    return {"asOf": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "days": days, "executionsTotal": len(exs), "executionsFailed": sum(1 for e in exs if not e["ok"] and e["completed"]),
+    # Brain-publish days: >= 23 successful hourly publishes, none failed, no gap > 90 min between successes, no stale state
+    bdays, d = [], datetime(2026, 10, 12, tzinfo=timezone.utc).date()
+    while d <= now.date():
+        day0 = datetime(d.year, d.month, d.day, tzinfo=timezone.utc); day1 = day0 + timedelta(days=1)
+        closed = now >= day1 + timedelta(hours=3)
+        ok = sorted(P(b["at"]) for b in brain if b["ok"] and day0 <= P(b["at"]) < day1)
+        bad = [b for b in brain if not b["ok"] and day0 <= P(b["at"]) < day1]
+        stale = sum(1 for b in brain if day0 <= P(b["at"]) < day1 for v in b["lakeStates"].values() if v.get("stale"))
+        gaps = [(y - x).total_seconds() / 60 for x, y in zip(ok, ok[1:])]
+        why = []
+        if len(ok) < 23: why.append(f"{len(ok)}/24 successful publishes" + (f" (chain started {ok[0]:%H:%MZ})" if ok and ok[0].hour >= 1 and len(ok) < 23 and d.day == 12 else ""))
+        if bad: why.append(f"{len(bad)} failed publish(es)")
+        if gaps and max(gaps) > 90: why.append(f"publish gap {max(gaps):.0f} min")
+        if stale: why.append(f"{stale} stale state(s)")
+        bdays.append({"date": f"{d}", "closed": closed, "okPublishes": len(ok), "failedPublishes": len(bad), "maxGapMin": round(max(gaps), 1) if gaps else None, "staleStates": stale,
+                      "valid": closed and not why, "reasons": why if closed else ["day still open"] + why})
+        d += timedelta(days=1)
+    # summary + projected gates
+    import statistics
+    first = {}
+    for r in led:
+        if r["product"] == "NBM" and r["status"] == "complete":
+            k = (r["cycle"], r["lake"])
+            if k not in first or r["at"] < first[k]:
+                first[k] = r["at"]
+    lat = sorted((P(v) - P(k[0])).total_seconds() / 3600 for k, v in first.items() if k[0] >= "2026-10-07T05")
+    partial_keys = {(r["cycle"], r["lake"]) for r in led if r["product"] == "NBM" and r["status"] == "partial"}
+    rtma_fail = [r for r in led if r["product"] == "RTMA-RU" and r["status"] == "failed"]
+    nvalid = sum(1 for x in days if x["valid"]); bvalid = sum(1 for x in bdays if x["valid"])
+    def gate(valid_days, rows, need=30):
+        remaining = need - valid_days
+        if remaining <= 0:
+            return "reached"
+        last = datetime.strptime(rows[-1]["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        open_today = not rows[-1]["closed"]
+        # the next days (open day counts if it ends valid) are assumed valid: 30th valid day ends at midnight, verified +3h
+        start = last if open_today else last + timedelta(days=1)
+        thirtieth = start + timedelta(days=remaining - 1)
+        return (thirtieth + timedelta(days=1, hours=3)).strftime("%Y-%m-%dT%H:%MZ")
+    summary = {"asOf": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "calendarDate": f"{now.date()}", "validArchiveDays": nvalid, "validBrainPublishDays": bvalid,
+               "invalidArchiveDays": [{"date": x["date"], "reasons": x["reasons"]} for x in days if x["closed"] and not x["valid"]],
+               "invalidBrainDays": [{"date": x["date"], "reasons": x["reasons"]} for x in bdays if x["closed"] and not x["valid"]],
+               "executions": len(exs), "failedExecutions": sum(1 for e in exs if not e["ok"] and e["completed"]),
+               "nbmPartialLakeCycles": len(partial_keys), "nbmPartialRecovered": sum(1 for k in partial_keys if k in first),
+               "staleStatesLogged": sum(1 for b in brain for v in b["lakeStates"].values() if v.get("stale")), "lakeStatesLogged": sum(len(b["lakeStates"]) for b in brain),
+               "freshnessHoursAfterInit": {"n": len(lat), "median": round(statistics.median(lat), 2) if lat else None, "p95": round(lat[int(0.95 * (len(lat) - 1))], 2) if lat else None, "max": round(lat[-1], 2) if lat else None},
+               "sourceOutages": {"rtmaFailedAttempts": len(rtma_fail), "nbmFailedAttempts": sum(1 for r in led if r["product"] == "NBM" and r["status"] == "failed"),
+                                 "rtmaFailedCycles": sorted({r["cycle"] for r in rtma_fail})},
+               "projectedArchiveGate": gate(nvalid, days), "projectedBrainPublishGate": gate(bvalid, bdays),
+               "projectionAssumption": "every remaining day (including today) is valid; each invalid day moves the date one day later"}
+    return {"asOf": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary, "brainDays": bdays, "days": days, "executionsTotal": len(exs), "executionsFailed": sum(1 for e in exs if not e["ok"] and e["completed"]),
             "brainFailures": [b for b in brain if not b["ok"]], "brainOk": sum(b["ok"] for b in brain), "brainFirstOk": next((b["at"] for b in brain if b["ok"]), None)}
 
 
@@ -107,3 +157,6 @@ if __name__ == "__main__":
     for x in res["days"]:
         print(x["date"], "closed" if x["closed"] else "open", f"nbm {x['nbmPct']:.1%} rtma {x['rtmaPct']:.1%} metar {x['metarObsCount']} maxgap {x['maxStateGapMin']} valid={x['valid']}", x["reasons"])
     print({k: res[k] for k in ("executionsTotal", "executionsFailed", "brainOk", "brainFirstOk")}, len(res["brainFailures"]))
+    for b in res["brainDays"]:
+        print("brain", b["date"], b["okPublishes"], "valid=" + str(b["valid"]), b["reasons"])
+    print(json.dumps(res["summary"], indent=1))

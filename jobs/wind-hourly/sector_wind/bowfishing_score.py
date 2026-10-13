@@ -122,7 +122,9 @@ def dim_e(now):
     from sector_wind.store import LocalStore
     from sector_wind.ingest import load_config
     from sector_wind import monitor
-    st = LocalStore(f"{H}/live-mirror"); cfg = load_config()
+    # H2 safety: reliability needs only cycle status/timestamps. Point SECTOR_WIND_LIVE_MIRROR at the ledger-derived metadata mirror
+    # (research/live_metadata_mirror.py) so no live forecast/observation value is opened.
+    st = LocalStore(os.environ.get("SECTOR_WIND_LIVE_MIRROR", f"{H}/live-mirror")); cfg = load_config()
     d = datetime(2026, 10, 8, tzinfo=timezone.utc); end = now.replace(hour=0, minute=0, second=0, microsecond=0); days = 0; log = []
     while d < end:
         m = monitor.milestone(st, cfg, d, d + timedelta(hours=23))
