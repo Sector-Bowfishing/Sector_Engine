@@ -153,7 +153,7 @@ def http_json(url, params, timeout=150, retries=3, post=False):
     raise RuntimeError(f"{url}: {err}")
 
 
-def nhd_candidates(lake, engine_feat, cache):
+def nhd_candidates(lake, engine_feat, cache, half=0.08):
     """Candidate NHD HR lake/reservoir polygons around a lake. Same request + cache key as research/geometry_audit.py::ref_query,
     so the research cache is reused. engine_feat=None -> a +-0.08 degree window around the directory point."""
     if engine_feat is not None:
@@ -161,8 +161,8 @@ def nhd_candidates(lake, engine_feat, cache):
         eng = engine_feat["properties"].get("areaKm2") or 1.0
         minarea = max(0.02, 0.03 * eng)
     else:
-        w, s, e, n = lake["lon"] - 0.08, lake["lat"] - 0.08, lake["lon"] + 0.08, lake["lat"] + 0.08
-        minarea = 0.01
+        w, s, e, n = lake["lon"] - half, lake["lat"] - half, lake["lon"] + half, lake["lat"] + half
+        minarea = 0.01 if half >= 0.08 else 0.02
     env = f"{w - 0.002},{s - 0.002},{e + 0.002},{n + 0.002}"
     key = f"nhd|{lake['id']}|{env}|{minarea}"
 
@@ -267,8 +267,17 @@ def plan_lake(lake, flag, engine_feat, cache, notes):
         if usable:
             engine_m = lg.repair(lg.project(g, t))
     plan = {"id": lake["id"], "engine_source": (flag.get("source") or "") if engine_feat is not None else "", "engine_usable": usable}
+    def search(feat):
+        """Wide window first (the research cache key); if the heavy query fails or is not cached, a narrower 3 km one."""
+        try:
+            return nhd_candidates(lake, feat, cache)
+        except Exception:  # noqa: BLE001
+            if feat is not None:
+                raise
+            return nhd_candidates(lake, None, cache, half=0.03)
+
     try:
-        res = nhd_candidates(lake, engine_feat if usable else None, cache)
+        res = search(engine_feat if usable else None)
         if res.get("error"):
             plan.update(status="query-error", reason="NHD service error: " + res["error"][:80])
             return plan
@@ -281,7 +290,7 @@ def plan_lake(lake, flag, engine_feat, cache, notes):
         refs = [num(flag, "nid_surface_km2"), num(flag, "usace_area_km2")]
         seed, method = lg.match_seed(rows, usable, refs)
         if not seed and usable:       # the Engine polygon sits somewhere else (Skilak): look around the directory point instead
-            res = nhd_candidates(lake, None, cache)
+            res = search(None)
             rows = build_rows(lake, res["cands"], None, t)
             seed, method = lg.match_seed(rows, False, refs)
             usable = False
@@ -583,8 +592,8 @@ def registry_entry(lake, flag, plan, geom, fr, gsw, built_at, out, files):
         reason = plan.get("reason") or "no usable polygon"
         e["geometryMissingReason"] = reason
         e["geometryMissingStatus"] = {"query-missing": "pending", "query-error": "pending"}.get(plan.get("status"), plan.get("status") or "no-nhd")
-        if plan.get("engine_polygon"):
-            e["geometryWithheld"] = {"engineSource": plan["engine_polygon"]}
+        if plan.get("engine_polygon") == "osm":
+            e["geometryWithheld"] = {"engineSource": "osm", "license": "ODbL", "note": "OSM-derived polygon exists in the research set; not published"}
         if plan.get("status") == "held-large-water":
             e["geometryHeld"] = {"nhdIds": plan.get("nhd_ids"), "nhdAreaKm2": plan.get("seed_area_km2")}
         facts["missing_reason"] = reason
