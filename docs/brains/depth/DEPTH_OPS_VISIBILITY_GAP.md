@@ -1,5 +1,7 @@
 # Depth Brain - Ops visibility gap (Engine truth vs what Sector Ops can show)
 
+> **UPDATE 2026-10-14:** Michael approved a pilot-only shadow write and a control-plane shadow Brain. Live now: `/brains/depth`, `/validation/depth`, `/health/brains/depth`, and Depth states for the 5 pilots. Control-plane code (`SHADOW_BRAINS`) is committed but the control job is not redeployed, so `/control/overview.brains.depth` is not live. The precise Ops change list is `DEPTH_OPS_FOLLOWUP.md`. The table below is the original 2026-10-14 audit; its statuses for rows 1-17 are now ENGINE PUBLISHES (live) except the control-plane entries (code ready, deploy pending).
+
 Rule: **the Engine owns truth, Ops owns presentation.** Audited 2026-10-14 against: the Engine platform on this branch (`jobs/brain_platform`, `jobs/depth-brain`), the live Brain RTDB (GET-only), and the Sector Ops source (`/Users/mcather/Desktop/Development/Web/Sector-Ops`, `main` @ `562966c`, read-only). Ops was **not modified**; nothing was written to RTDB.
 
 ## 1. Bottom line - why Ops shows nothing about Depth today

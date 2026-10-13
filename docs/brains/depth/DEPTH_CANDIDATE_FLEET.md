@@ -40,6 +40,7 @@ Verified datum (SAME_SOURCE + SAME_DATUM): **181**; inferred operator system: **
 | 2-datum-pairing-82 | 4.65 | 171 | 155 | 5/84/82/450 | 5 |
 | 3-provider-rules | 4.65 | 179 | 162 | 5/87/87/442 | 5 |
 | 4-pool-datum-document-sweep | 4.65 | 198 | 181 | 5/91/102/423 | 5 |
+| 5-shadow-control-plane | 4.65 | 198 | 181 | 5/91/102/423 | 5 |
 
 Only the 5 pilots can publish today: Lake Brain publishes `states/lake` for exactly those lakes. The rest become live when Lake Brain adopts fleet bindings; Depth then needs no change.
 

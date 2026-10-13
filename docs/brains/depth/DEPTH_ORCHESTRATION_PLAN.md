@@ -1,4 +1,6 @@
-# Depth Brain internal job integration plan (PLAN ONLY - nothing registered, scheduled or deployed)
+# Depth Brain internal job integration plan (PREPARED - disabled; not registered, scheduled or deployed)
+
+> **Status 2026-10-14 (Michael: approved to PREPARE, not to schedule).** Implemented and tested but OFF: `jobs/depth-brain/run.py` (`--plan` / `--dry-run` / `--write`; `--write` refuses without `DEPTH_SHADOW_WRITE_APPROVED=1`), the in-process executor entry in `jobs/brain-orchestrator/orchestrate.py` (`build_executors`: present **only** when `DEPTH_ORCHESTRATION_ENABLED=1`, which is set nowhere), the orchestrator image staging of `jobs/depth-brain` (`deploy-job.sh`), and the brain-level `plan()` (`state.brain_plan`). With no executor a registered Depth is only ever SKIPped by the planner (test). A pilot-scope shadow write was performed manually once (`publish --yes-write-shadow --scope pilots`); the live `run.py --plan` now answers SKIP ("inputs unchanged"). Turning orchestration on needs a separate approval: set the env var in the orchestrator job, add the `/jobs` manifest row, and redeploy.
 
 Approval gate: none of the steps below may happen without Michael's explicit approval. Today Depth is a CLI (`python -m depth_brain ...`) that works against a dry-run store; the only live interaction is GET-only reads of Lake Brain states.
 

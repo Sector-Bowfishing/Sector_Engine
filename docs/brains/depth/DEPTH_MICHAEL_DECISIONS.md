@@ -1,33 +1,37 @@
 # Decisions and actions for Michael (Depth Brain) - generated 2026-10-13
 
-Everything below is blocked on a human or external party, not on more Depth analysis. Current state: 198 of 621 lakes have a defensible shift (181 verified datum, 17 TVA inferred); only 5 can publish because Lake Brain publishes 5 states; 91 HIGH / 102 MEDIUM / 423 BLOCKED. Research maturity is a research number, not a score.
+Current: 198 of 621 lakes shift-defensible (181 verified datum, 17 TVA inferred); 91 HIGH / 102 MEDIUM / 423 BLOCKED; 5 live (pilot shadow state written 2026-10-14). Research maturity 4.65 (research rubric; **not** an official score; official Depth score NOT_ESTABLISHED).
 
-## A. Decisions (yes/no)
+## Decided (2026-10-14)
+| Decision | Outcome |
+|---|---|
+| Pilot-only shadow write | **Approved and done** (5 lakes; verified by read-back) |
+| Control-plane shadow Brain | **Approved**; Engine code committed and verified against live data in dry run; **live `/control/overview` entry needs the control job redeployed (not authorised yet)** |
+| `depth-brain-score-v1` | **Not ratified** (proposal only) |
+| Orchestration | **Approved to prepare, not to schedule** (prepared, gated off) |
+| Lake datum interface | **Approved** (`DEPTH_LAKE_DATUM_DEPENDENCY.md`) |
+| MN DNR licence reclassification | **Stays proposed** (dedicated licensing decision later) |
+| GLOBathy | Closed |
 
-| # | Decision | Recommendation | What it unlocks | Doc |
-|---|---|---|---|---|
-| 1 | Approve a **shadow write** of Depth for the 5 pilots (`--yes-write-shadow`; creates `/brains/depth` and `/lakes/*/states/depth`) | Yes, after #2 below, pilots only, watch two cycles | Depth appears in the Brain RTDB (still invisible in Ops until #3) | DEPTH_ORCHESTRATION_PLAN.md |
-| 2 | Add `depth` to the platform control plane as a **shadow Brain** that cannot move health/conformance roll-ups | Yes | Depth in `/control/overview` | DEPTH_OPS_VISIBILITY_GAP.md |
-| 3 | Ops catalog: flip `future:false` for Depth **and rewrite its question/outputs** (shift, datum, reference, tier; not bathymetry/channels/ledges) | Yes, with the rewrite | Ops can show Depth | DEPTH_OPS_VISIBILITY_GAP.md |
-| 4 | Ratify `depth-brain-score-v1` (denominator, inferred-datum weight 0.5, critical dimensions: datumCorrectness, effectiveDepthCorrectness, fleetCoverage, validation) | Review first; no score until live coverage exists | an official score path | DEPTH_SCORE_V1_PROPOSAL.md |
-| 5 | **Minnesota DNR**: accept the licence reading (derived numbers allowed, no raw geometry/map layer) | Yes after a courtesy note to MN DNR | 10 tier A/B lakes incl. Mille Lacs, Leech, Winnibigoshish, Vermilion | DEPTH_LICENSING_UNLOCK_QUEUE.md |
-| 6 | Orchestration: register Depth as an in-process Brain in `brain-orchestrator` | After #1 succeeds | automatic hourly shadow runs | DEPTH_ORCHESTRATION_PLAN.md |
-| 7 | Merge order: `feat/cost-efficient-scheduling` (Depth's base) is still unmerged | Merge it before any Depth branch | Depth can go to main | git |
-
-## B. Actions (people / outbound)
-
-| # | Action | Detail | Unlocks |
-|---|---|---|---|
-| 1 | Send the **source requests** (TVA first) | 12 ready drafts; none sent | Southeast bathymetry; TVA datum name |
-| 2 | Send **datum confirmations** (Reclamation first) | 11 asks, one-line replies suffice | 19 RISE lakes, 7 Duke, McConaughy, TVA verified |
-| 3 | **Field validation**: 5-10 lakes with beta testers + sonar | preregistered, hash-frozen thresholds; tooling ready | `validation` and `effectiveDepthCorrectness` can finally be scored; removes the 5.0/6.0 caps |
-| 4 | Ask the survey owners for the **water level on the survey date** | MN, OH, NE, ND, OK, KS contours | effective zones for the non-Texas contour lakes (currently all withheld; validation failed or ungradable) | 
-| 5 | iOS owner: fix the Guntersville IENC numbers (62% / 2,445 -> 67.2% / 2,133) | exact lines listed | correct customer-visible coverage | 
-
-## C. Lake Brain (separate Brain, separate session)
-
-| # | Item | Why Depth cares |
+## Still open - decisions
+| # | Decision | Recommendation |
 |---|---|---|
-| 1 | Adopt fleet bindings (`feat/lake-brain-adoption`) | 193 defensible Depth lakes have no live Lake state |
-| 2 | Publish `datum` / `datumAuthority` / `datumConfidence` on `states/lake` (TVA publishes null today) | moves TVA from inferred to verified without manifest edits |
-| 3 | Rebind 7 NWPS lakes to the CWMS/USGS series | 7 lakes resolve (numerically identical series) |
+| 1 | Redeploy the brain-scores/orchestrator control job from `feat/depth-brain-foundation` so `/control/overview.brains.depth` goes live | after the unmerged base `feat/cost-efficient-scheduling` is dispositioned; it is the prerequisite for any Depth deploy |
+| 2 | Ops catalog/page change (Depth active shadow, new scope text) | `DEPTH_OPS_FOLLOWUP.md` |
+| 3 | Enable orchestration (`DEPTH_ORCHESTRATION_ENABLED=1`, `/jobs` row) | after 1 and after two clean manual cycles |
+| 4 | Dedicated licensing decision (MN first) | `DEPTH_LICENSING_UNLOCK_QUEUE.md` |
+| 5 | Merge sequencing for `feat/cost-efficient-scheduling` | before any Depth merge |
+
+## Still open - actions (people / outbound; NOTHING SENT)
+| # | Action | Doc |
+|---|---|---|
+| 1 | Send the **Reclamation** datum confirmation (19 RISE rows) | `DEPTH_RECLAMATION_DATUM_REQUEST.md` |
+| 2 | Send the **TVA** datum + bathymetry request | `DEPTH_TVA_DATUM_REQUEST.md` + `DEPTH_SOURCE_REQUEST_QUEUE.md` row 1 |
+| 3 | Other datum confirmations (Duke 7, CNPPID, NHDES, SRP, USGS ID, USACE St. Louis/Tulsa) | `DEPTH_DATUM_CONFIRMATION_REQUESTS.md` |
+| 4 | Southeast bathymetry requests | `DEPTH_SOURCE_REQUEST_QUEUE.md` |
+| 5 | Recruit beta testers for field validation | `DEPTH_FIELD_VALIDATION_PACKETS.md` (Hartwell, Guntersville, Wheeler, Wilson, Pickwick, Fork, Cedar Creek, Gull Lake MN) |
+| 6 | Survey-date water levels from contour owners (MN, OH, NE, ND, OK, KS) | `DEPTH_CONTOUR_SOURCE_REFERENCE_POOLS.md` |
+| 7 | iOS owner: Guntersville IENC numbers (62% / 2,445 -> 67.2% / 2,133) | `DEPTH_IOS_IENC_CORRECTION.md` |
+
+## Lake Brain (separate session)
+193 defensible Depth lakes have no live Lake state; Lake datum stamping (TVA publishes null); 7 NWPS lakes need a Lake-side rebind (preserved in `DEPTH_LAKE_DATUM_DEPENDENCY.md`).

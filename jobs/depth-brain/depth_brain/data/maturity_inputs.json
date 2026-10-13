@@ -63,7 +63,8 @@
    "score": 6,
    "evidence": [
     "shift engine + contract + 106 tests + live GET-only dry run on 5 pilots",
-    "no event/field validation"
+    "no event/field validation",
+    "pilot-only shadow state live in the Brain RTDB (5 lakes), read-back verified; fingerprint no-op verified live; still no field/event validation"
    ],
    "changeEvidence": []
   },
@@ -102,7 +103,8 @@
     "unlock path is data-only",
     "233 lakes lack datum evidence",
     "23 states lack contours",
-    "CWMS location-level matching generalises: 82 of 180 blocked lakes resolved by one method; 98 remain with named resolvers"
+    "CWMS location-level matching generalises: 82 of 180 blocked lakes resolved by one method; 98 remain with named resolvers",
+    "orchestration prepared and gated off (run.py, executor entry, staging); cleanup of 17 GB of rebuildable research data with evidence preserved"
    ],
    "changeEvidence": []
   }

@@ -25,15 +25,16 @@ Sector standard: overall Brain score >= 8.0 **and** every critical dimension >= 
 | 13 | Licensing | **PARTIAL** | 59 of 103 tier A/B lakes licensed; MN reclassification proposed (needs Michael sign-off); see DEPTH_LICENSING_UNLOCK_QUEUE.md |
 | 14 | Freshness | **PASS** | FINGERPRINT plan(); evidenceStale 6 h, refusal 48 h, future refused |
 | 15 | Cost | **PASS** | full-fleet dry run 2.7 s incl. reads, compute 0.02 s, 43 MB; no new feed (DEPTH_ORCHESTRATION_PLAN.md) |
-| 16 | Orchestration | **FAIL** | not started: plan only; `brain_plan` implemented and tested but unregistered |
-| 17 | Ops visibility | **PARTIAL** | registry summary computed by the Engine (dry-run shape); control plane excludes depth and Ops catalog futures it (DEPTH_OPS_VISIBILITY_GAP.md) |
-| 18 | Official score | **WAITING** | none; `depth-brain-score-v1` is a PROPOSAL (would show 3.0 capped / 3.6 uncapped today); needs Michael to ratify |
-| 19 | Intelligence contract | **PARTIAL** | documented + fixtures + reference consumer; Intelligence branch not changed |
-| 20 | Temp contract | **PARTIAL** | documented |
-| 21 | Clarity contract | **PARTIAL** | documented; no modeled depth permitted |
-| 22 | Vegetation contract | **PARTIAL** | documented |
-| 23 | Biological contract | **NOT_REQUIRED** | Intelligence matches preferences to Depth |
-| 24 | Rollback | **PASS** | nothing live; dry-run default; live write needs --yes-write-shadow; depth-owned paths deletable |
+| 16 | Shadow publication | **PASS** | pilot-only (5 lakes) Depth state live in the Brain RTDB since 2026-10-14, read-back verified; /validation/depth NOT_VALIDATED; no score node; fingerprint plan() answers SKIP when inputs are unchanged |
+| 17 | Orchestration | **PARTIAL** | prepared but DISABLED (not approved for scheduling): run.py --plan/--write, gated in-process executor (DEPTH_ORCHESTRATION_ENABLED=1, set nowhere), brain_plan, image staging; no /jobs row, no schedule |
+| 18 | Ops visibility | **PARTIAL** | live /brains/depth carries the Engine-computed summary; control-plane SHADOW_BRAINS code verified against live data in dry run (no roll-up changes) but NOT redeployed; Ops catalog still marks Depth future (DEPTH_OPS_FOLLOWUP.md) |
+| 19 | Official score | **WAITING** | none; `depth-brain-score-v1` is a PROPOSAL (would show 3.0 capped / 3.6 uncapped today); needs Michael to ratify |
+| 20 | Intelligence contract | **PARTIAL** | documented + fixtures + reference consumer; Intelligence branch not changed |
+| 21 | Temp contract | **PARTIAL** | documented |
+| 22 | Clarity contract | **PARTIAL** | documented; no modeled depth permitted |
+| 23 | Vegetation contract | **PARTIAL** | documented |
+| 24 | Biological contract | **NOT_REQUIRED** | Intelligence matches preferences to Depth |
+| 25 | Rollback | **PASS** | nothing live; dry-run default; live write needs --yes-write-shadow; depth-owned paths deletable |
 
 ## What changed this phase
 

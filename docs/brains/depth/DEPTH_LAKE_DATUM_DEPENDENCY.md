@@ -1,4 +1,6 @@
-# Depth -> Lake Brain: datum stamping dependency (request; Lake Brain NOT edited)
+# Depth -> Lake Brain: datum stamping dependency (APPROVED interface; Lake Brain NOT edited)
+
+> **2026-10-14:** Michael approved this as the desired Lake interface (datum, datumAuthority, datumConfidence, referencePoolDatum, datumRelationship). Depth does not edit Lake Brain from this branch. Lake-side work is a separate Lake session; Depth re-runs its fleet analysis the moment Lake publishes more reviewed states.
 
 Lake Brain owns the lake level and (eventually) the canonical statement of what vertical reference that level is in. Depth only consumes `lakes/{k}/states/lake`. Today (live read 2026-10-13/14):
 

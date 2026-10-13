@@ -1,3 +1,5 @@
+> **2026-10-14 decision (Michael): do NOT apply the proposed MN DNR reclassification automatically.** It stays PROPOSED (`proposals/licence_changes.csv`) until a dedicated licensing decision reviews the exact basis. No licensing assumption may leak into customer eligibility; `source_licences.csv` and the manifest gate are unchanged (MN = UNCLEAR, derived numbers not allowed).
+
 # Depth Brain: Licensing Unlock Queue
 
 Prepared 2026-10-13. **Research and documentation only. Nothing here was sent to anyone, no production code or the matrix/CSV was edited.** This is licence triage by an engineering assistant, **not legal advice**. Anything unclear stays NOT permitted. Placeholders in the draft texts: `[YOUR NAME]`, `[CONTACT]`, `[COMPANY/PROJECT NAME]`.
