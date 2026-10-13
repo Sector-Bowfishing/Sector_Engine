@@ -1,0 +1,35 @@
+id,n_charts,src_dates,geom_src,name,state1,area_km2,operator_family
+Bankhead|AL,1,20020906,polygon,Bankhead,AL,16.796,OTHER
+Bay Springs Lake|MS,1,20040831,polygon,Bay Springs Lake,MS,24.643,USACE
+Cheat Lake|WV,1,20210210,polygon,Cheat Lake,WV,5.488,OTHER
+Chickamauga Lake|TN,2,20210210;20230321,polygon,Chickamauga Lake,TN,110.848,TVA
+Chicot|AR,1,20020831,polygon,Chicot,AR,15.516,USACE
+Columbus Lake|MS,1,20040831,polygon,Columbus Lake,MS,10.113,USACE
+Dardanelle|AR,2,20060711,polygon,Dardanelle,AR,138.272,USACE
+Devil's Kitchen Lake|IL,1,20010505,polygon,Devil's Kitchen Lake,IL,2.921,OTHER
+Eagle Lake|MS,1,20020815,polygon,Eagle Lake,MS,19.547,USACE
+False River|LA,1,20050815,polygon,False River,LA,12.699,NONE
+Fort Gibson Lake|OK,1,20060906,polygon,Fort Gibson Lake,OK,72.629,USACE
+Fort Loudoun Lake|TN,3,20210210;20230420;20230725,polygon,Fort Loudoun Lake,TN,56.251,TVA
+Guntersville|AL,3,20210210;20230321,polygon,Guntersville,AL,266.224,TVA
+Henderson Lake|LA,1,20140101,polygon,Henderson Lake,LA,18.973,NONE
+Kentucky Lake|KY,5,20210210;20230725;20230726,polygon,Kentucky Lake,KY,479.092,OTHER
+Kentucky Lake|TN,6,20210210;20230725;20230726;20230809,polygon,Kentucky Lake,TN,584.353,TVA
+Lake Barkley|KY,4,20210210;20230725;20230726,polygon,Lake Barkley,KY,200.82,USACE
+Lake Bistineau|LA,1,20020901,polygon,Lake Bistineau,LA,53.002,OTHER
+Lake Hudson|OK,1,20060906,polygon,Lake Hudson,OK,28.557,OTHER
+Lake Minnetonka|MN,1,20090319,polygon,Lake Minnetonka,MN,55.641,OTHER
+Lake Pepin|MN,2,20090319,polygon,Lake Pepin,MN,103.121,NONE
+Lake Tenkiller|OK,1,20250122,polygon,Lake Tenkiller,OK,52.455,USACE
+Lake Washington|MS,1,20020815,polygon,Lake Washington,MS,12.41,NONE
+Moon Lake|MS,1,20020715,polygon,Moon Lake,MS,10.139,NONE
+Nickajack Lake|TN,2,20230321,polygon,Nickajack Lake,TN,28.073,TVA
+Old Hickory Lake|TN,3,20210210;20230725,polygon,Old Hickory Lake,TN,82.599,USACE
+Percy Priest Lake|TN,1,20210210,polygon,Percy Priest Lake,TN,57.036,USACE
+Pickwick Lake|TN,3,20040831;20210210;20230809,polygon,Pickwick Lake,TN,139.932,TVA
+Reelfoot Lake|TN,1,20020723,polygon,Reelfoot Lake,TN,0.75,OTHER
+Rice Lake|IL,2,20040825,polygon,Rice Lake,IL,5.346,OTHER
+Watts Bar Lake|TN,2,20210210,polygon,Watts Bar Lake,TN,136.122,TVA
+Wheeler|AL,2,20210210;20230321,polygon,Wheeler,AL,212.496,TVA
+White Bear Lake|MN,1,20090319,polygon,White Bear Lake,MN,9.744,NONE
+Wilson|AL,2,20210210;20230321,polygon,Wilson,AL,63.174,TVA
