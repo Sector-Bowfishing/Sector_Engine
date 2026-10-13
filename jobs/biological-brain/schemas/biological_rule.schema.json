@@ -1,0 +1,316 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "properties": {
+  "applicability": {
+   "properties": {
+    "months": {
+     "items": {
+      "maximum": 12,
+      "minimum": 1,
+      "type": "integer"
+     },
+     "type": "array"
+    },
+    "regions": {
+     "items": {
+      "enum": [
+       "south",
+       "lowerMid",
+       "north",
+       "west",
+       "any"
+      ]
+     },
+     "type": "array"
+    },
+    "waterbodyTypes": {
+     "items": {
+      "enum": [
+       "run_of_river",
+       "storage_reservoir",
+       "natural_lake",
+       "river",
+       "any"
+      ]
+     },
+     "type": "array"
+    }
+   },
+   "type": "object"
+  },
+  "behavior": {
+   "type": "string"
+  },
+  "confidence": {
+   "enum": [
+    "LOW",
+    "MEDIUM",
+    "HIGH"
+   ]
+  },
+  "conflicts": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array"
+  },
+  "evidence": {
+   "items": {
+    "properties": {
+     "counts": {
+      "type": "boolean"
+     },
+     "directness": {
+      "enum": [
+       "DIRECT",
+       "INFERRED"
+      ]
+     },
+     "evidenceId": {
+      "type": "string"
+     },
+     "note": {
+      "type": "string"
+     },
+     "packet": {
+      "description": "private packet file stem; never the packet text",
+      "type": "string"
+     },
+     "readStatus": {
+      "enum": [
+       "READ-FULL",
+       "READ-ABSTRACT",
+       "SNIPPET-ONLY",
+       "LEAD-NOT-OPENED",
+       "PROFILE-CARRIED",
+       "PROFILE-REVIEWED"
+      ]
+     },
+     "region": {
+      "type": "string"
+     },
+     "sample": {
+      "type": "string"
+     },
+     "sourceNo": {
+      "type": "string"
+     },
+     "southeast": {
+      "type": "boolean"
+     },
+     "streamId": {
+      "type": "string"
+     },
+     "strength": {
+      "enum": [
+       "weak",
+       "moderate",
+       "strong"
+      ]
+     },
+     "studyType": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "evidenceId",
+     "packet",
+     "sourceNo",
+     "readStatus",
+     "streamId",
+     "directness",
+     "counts"
+    ],
+    "type": "object"
+   },
+   "minItems": 1,
+   "type": "array"
+  },
+  "feature": {
+   "properties": {
+    "featureId": {
+     "enum": [
+      "waterTempBand",
+      "temperatureTrend",
+      "temperatureCrossing15C",
+      "temperatureCrossing18C",
+      "temperatureCrossing20C",
+      "stageTrend",
+      "risingStage",
+      "fallingStage",
+      "warmRise",
+      "coldRise",
+      "rapidDischargeIncrease",
+      "clarityBand",
+      "daypart"
+     ]
+    },
+    "states": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    }
+   },
+   "type": "object"
+  },
+  "habitat": {
+   "properties": {
+    "depthClass": {
+     "enum": [
+      "LT_0_5M",
+      "M0_5_1_5",
+      "M1_5_3",
+      "GT_3M"
+     ]
+    },
+    "direction": {
+     "enum": [
+      "FAVOR",
+      "AVOID"
+     ]
+    },
+    "habitatClass": {
+     "enum": [
+      "shallowVegetatedHabitat",
+      "floodedVegetation",
+      "backwaterHabitat",
+      "tributaryAccess",
+      "tributaryMouth",
+      "tailwaterHabitat",
+      "channelBorder",
+      "deepChannelPool",
+      "openWaterBasin",
+      "woodyCover"
+     ]
+    }
+   },
+   "type": "object"
+  },
+  "kind": {
+   "enum": [
+    "RESPONSE",
+    "HABITAT",
+    "PHENOLOGY"
+   ]
+  },
+  "lifeStage": {
+   "enum": [
+    "ADULT",
+    "JUVENILE",
+    "ANY"
+   ]
+  },
+  "phenology": {
+   "properties": {
+    "event": {
+     "const": "spawn"
+    },
+    "tempC": {
+     "properties": {
+      "max": {
+       "type": "number"
+      },
+      "min": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "min",
+      "max"
+     ],
+     "type": "object"
+    }
+   },
+   "type": "object"
+  },
+  "requires": {
+   "items": {
+    "properties": {
+     "featureId": {
+      "type": "string"
+     },
+     "states": {
+      "type": "array"
+     }
+    },
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "response": {
+   "enum": [
+    "FAVORABLE",
+    "WORKABLE",
+    "LIMITING",
+    "BLOCKING"
+   ]
+  },
+  "review": {
+   "properties": {
+    "date": {
+     "type": "string"
+    },
+    "reviewer": {
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
+  "ruleId": {
+   "pattern": "^[A-Z]{2,4}-[A-Z]{2,5}-\\d{2}[A-Za-z]?$",
+   "type": "string"
+  },
+  "ruleVersion": {
+   "minimum": 1,
+   "type": "integer"
+  },
+  "schemaVersion": {
+   "const": 1
+  },
+  "speciesId": {
+   "pattern": "^[a-z][a-z0-9_]{1,63}$",
+   "type": "string"
+  },
+  "statement": {
+   "type": "string"
+  },
+  "status": {
+   "enum": [
+    "DRAFT",
+    "RECONCILED",
+    "APPROVED",
+    "RETIRED"
+   ]
+  },
+  "transferability": {
+   "properties": {
+    "southeastReservoir": {
+     "enum": [
+      "UNTESTED",
+      "PARTIAL",
+      "TRANSFERS"
+     ]
+    }
+   },
+   "required": [
+    "southeastReservoir"
+   ],
+   "type": "object"
+  }
+ },
+ "required": [
+  "schemaVersion",
+  "ruleId",
+  "ruleVersion",
+  "speciesId",
+  "kind",
+  "status",
+  "confidence",
+  "transferability",
+  "applicability",
+  "evidence"
+ ],
+ "title": "Biological machine rule (biological-rule-v1)",
+ "type": "object"
+}

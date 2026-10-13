@@ -1,0 +1,147 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "properties": {
+  "clarityBand": {
+   "enum": [
+    "TURBID",
+    "MODERATE",
+    "CLEAR"
+   ]
+  },
+  "count": {
+   "minimum": 0,
+   "type": "integer"
+  },
+  "depthClass": {
+   "enum": [
+    "LT_0_5M",
+    "M0_5_1_5",
+    "M1_5_3",
+    "GT_3M"
+   ]
+  },
+  "effortMinutes": {
+   "maximum": 720,
+   "minimum": 1,
+   "type": "number"
+  },
+  "encountered": {
+   "type": "boolean"
+  },
+  "lakeId": {
+   "type": "string"
+  },
+  "levelContext": {
+   "enum": [
+    "RISING",
+    "STABLE",
+    "FALLING",
+    "UNKNOWN"
+   ]
+  },
+  "notes": {
+   "maxLength": 280,
+   "type": "string"
+  },
+  "observationId": {
+   "type": "string"
+  },
+  "observedAt": {
+   "type": "string"
+  },
+  "observerConfidence": {
+   "enum": [
+    "HIGH",
+    "MEDIUM",
+    "LOW"
+   ]
+  },
+  "observerId": {
+   "description": "pseudonymous; no contact details",
+   "type": "string"
+  },
+  "spawnBehaviorObserved": {
+   "enum": [
+    true,
+    false,
+    "UNKNOWN"
+   ]
+  },
+  "speciesGroup": {
+   "enum": [
+    "buffalo",
+    "gar",
+    "carp_asian",
+    "carpsucker",
+    "other"
+   ]
+  },
+  "speciesId": {
+   "type": "string"
+  },
+  "speciesIdConfidence": {
+   "enum": [
+    "CONFIRMED",
+    "LIKELY",
+    "GROUP_ONLY",
+    "UNCERTAIN"
+   ]
+  },
+  "tripId": {
+   "description": "observations of one trip are ONE evidence stream",
+   "type": "string"
+  },
+  "vegetation": {
+   "enum": [
+    "NONE",
+    "SUBMERGED",
+    "EMERGENT",
+    "FLOODED",
+    "UNKNOWN"
+   ]
+  },
+  "waterTempF": {
+   "type": "number"
+  },
+  "windBand": {
+   "enum": [
+    "CALM",
+    "LIGHT",
+    "MODERATE",
+    "STRONG",
+    "UNKNOWN"
+   ]
+  },
+  "zone": {
+   "enum": [
+    "shallowVegetatedHabitat",
+    "floodedVegetation",
+    "backwaterHabitat",
+    "tributaryAccess",
+    "tributaryMouth",
+    "tailwaterHabitat",
+    "channelBorder",
+    "deepChannelPool",
+    "openWaterBasin",
+    "woodyCover",
+    "openWater",
+    "unknown"
+   ]
+  }
+ },
+ "required": [
+  "observationId",
+  "tripId",
+  "observerId",
+  "lakeId",
+  "observedAt",
+  "speciesId",
+  "speciesIdConfidence",
+  "encountered",
+  "effortMinutes",
+  "zone",
+  "observerConfidence"
+ ],
+ "title": "Structured Sector biological observation",
+ "type": "object"
+}

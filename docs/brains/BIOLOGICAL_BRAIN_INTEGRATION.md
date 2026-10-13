@@ -15,6 +15,8 @@
 
 The Biological Brain interprets fish biology. It never makes the final bowfishing recommendation; that belongs to Sector Intelligence. It never reproduces water-temperature, clarity or wind science; it will consume those brains' normalized states.
 
+> **Update (adoption branch):** machine rules, condition features, response bands, the internal Guntersville Biological State pilot and the validation foundation are specified in [`biological-adoption/BIOLOGICAL_RULES_AND_STATE_CONTRACT.md`](biological-adoption/BIOLOGICAL_RULES_AND_STATE_CONTRACT.md). The "not started" statements below are superseded only where that document says so; `/lakes/{k}/states/biology` is still not written.
+
 ## 2. Where the knowledge lives
 
 | Layer | Location | Visibility |
