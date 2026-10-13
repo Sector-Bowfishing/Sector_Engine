@@ -5,7 +5,7 @@
 #
 # Least privilege: its own service account `lake-surface-dispatch` with
 #   roles/run.invoker            on job lake-surface-daily only (job-level, not project-level)
-#   roles/storage.objectCreator  on gs://$BUCKET (dispatch/<date>.json summaries; latest.json is read publicly)
+#   roles/storage.objectUser     on gs://$BUCKET (dispatch/<date>.json summaries + the attempted-pass ledger, overwritten daily; latest.json is read publicly)
 # It never redeploys lake-surface-daily (live source is feat/clarity-algal-warning @ 03937913 — LINEAGE.md).
 #
 # The schedule MOVES from lake-surface-daily to this job: the old scheduler is PAUSED (not deleted) and a new
@@ -34,7 +34,7 @@ if ! gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/nu
 fi
 run gcloud run jobs add-iam-policy-binding "$HEAVY_JOB" --project "$PROJECT_ID" --region "$REGION" \
   --member "serviceAccount:$SA" --role roles/run.invoker
-run gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" --member "serviceAccount:$SA" --role roles/storage.objectCreator
+run gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" --member "serviceAccount:$SA" --role roles/storage.objectUser
 
 echo "▶ job $JOB (commit $COMMIT)"
 cp ../lake-surface/polygons.geojson.gz .

@@ -39,6 +39,21 @@ def test_cloudy_or_old_passes_are_not_work():
     assert d["work"] is False and d["why"] == "up to date"
 
 
+def test_already_dispatched_pass_is_not_work_until_a_newer_one():
+    att = {"Guntersville|AL": {"pass": "2026-10-12", "dispatchedAt": "t"}}
+    d = dispatch.decide("Guntersville|AL", GEOM, UNTIL, stac([("2026-10-12", 12.0)]), published("2026-10-07"), att)
+    assert d["work"] is False and d["why"] == "already dispatched for this pass"
+    d = dispatch.decide("Guntersville|AL", GEOM, UNTIL, stac([("2026-10-13", 12.0), ("2026-10-12", 12.0)]), published("2026-10-07"), att)
+    assert d["work"] is True and d["newestPass"] == "2026-10-13"
+
+
+def test_geometry_collections_and_multipolygons():
+    mp = {"type": "MultiPolygon", "coordinates": [GEOM["coordinates"], [[[-90, 40], [-89, 40], [-89, 41], [-90, 41], [-90, 40]]]]}
+    assert dispatch.bbox_of(mp) == [-90, 34.3, -85.6, 41]
+    gc = {"type": "GeometryCollection", "geometries": [GEOM, mp]}
+    assert dispatch.bbox_of(gc) == [-90, 34.3, -85.6, 41]
+
+
 def test_unpublished_lake_with_a_pass_is_work():
     d = dispatch.decide("New|XX", GEOM, UNTIL, stac([("2026-10-11", 20.0)]), published(None))
     assert d["work"] is True and d["why"] == "nothing published yet"
@@ -75,8 +90,12 @@ def test_live_run_starts_the_heavy_job_for_the_work_set_only(monkeypatch):
     started = []
     monkeypatch.setattr(dispatch, "run_job", lambda tokens, job, args=None, task_count=None: started.append((job, args, task_count)) or {"metadata": {"name": "ex-1"}})
     monkeypatch.setattr(dispatch, "TokenProvider", lambda: None)
-    assert dispatch.main(["--until", "2026-10-13T08:00:00", "--no-summary"]) == 0
+    puts = []
+    monkeypatch.setattr(dispatch, "_put_json", lambda name, obj: puts.append((name, obj)))
+    assert dispatch.main(["--until", "2026-10-13T08:00:00"]) == 0
     assert started == [("lake-surface-daily", ["--lakes", "A|XX,C|XX"], 1)]
+    ledger = dict(puts)["dispatch/attempted.json"]
+    assert set(ledger) == {"A|XX", "C|XX"} and ledger["A|XX"]["pass"] == "2026-10-12"
 
 
 def test_no_work_starts_nothing(monkeypatch):

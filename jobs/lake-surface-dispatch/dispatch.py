@@ -58,8 +58,19 @@ def slug(lake_id: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", lake_id).strip("_")
 
 
+def _rings(geometry: dict) -> list:
+    t = geometry.get("type")
+    if t == "Polygon":
+        return list(geometry["coordinates"])
+    if t == "MultiPolygon":
+        return [r for poly in geometry["coordinates"] for r in poly]
+    if t == "GeometryCollection":
+        return [r for g in geometry.get("geometries") or [] for r in _rings(g)]
+    raise ValueError(f"unsupported geometry {t}")
+
+
 def bbox_of(geometry: dict) -> list[float]:
-    rings = geometry["coordinates"] if geometry["type"] == "Polygon" else [r for poly in geometry["coordinates"] for r in poly]
+    rings = _rings(geometry)
     xs = [c[0] for r in rings for c in r]
     ys = [c[1] for r in rings for c in r]
     return [min(xs), min(ys), max(xs), max(ys)]
@@ -108,20 +119,35 @@ def published_date(lake_id: str, get=None) -> str | None:
     return (latest.get("summary") or {}).get("date")
 
 
-def decide(lake_id: str, geometry: dict, until: dt.datetime, post=None, get=None) -> dict:
+ATTEMPTED_KEY = "dispatch/attempted.json"
+
+
+def attempted_ledger(get=None) -> dict:
+    """{lakeId: {"pass": date, "dispatchedAt": ts}} — the newest pass each lake was already dispatched for. The heavy job
+    rejects most tile-level "clear" passes once it reads the lake (clouds over the water, too little open water read),
+    and latest.json then does not advance; without this ledger the same rejected pass would be re-read every day
+    until the next pass. A new pass date clears the entry's effect."""
+    get = get or _get_json
+    return get(f"{PUBLIC}/{ATTEMPTED_KEY}") or {}
+
+
+def decide(lake_id: str, geometry: dict, until: dt.datetime, post=None, get=None, attempted: dict | None = None) -> dict:
     newest = newest_pass_date(bbox_of(geometry), until, post)
     held = published_date(lake_id, get)
     if newest is None:
         return {"lakeId": lake_id, "work": False, "why": "no usable pass in the window", "published": held}
     if held and held >= newest:
         return {"lakeId": lake_id, "work": False, "why": "up to date", "published": held, "newestPass": newest}
+    tried = ((attempted or {}).get(lake_id) or {}).get("pass")
+    if tried and tried >= newest:
+        return {"lakeId": lake_id, "work": False, "why": "already dispatched for this pass", "published": held, "newestPass": newest, "attempted": tried}
     return {"lakeId": lake_id, "work": True, "why": "newer pass" if held else "nothing published yet", "published": held, "newestPass": newest}
 
 
-def discover(polys: dict[str, dict], until: dt.datetime, workers: int = WORKERS, post=None, get=None) -> dict:
+def discover(polys: dict[str, dict], until: dt.datetime, workers: int = WORKERS, post=None, get=None, attempted: dict | None = None) -> dict:
     out, errors = {}, {}
     with cf.ThreadPoolExecutor(workers) as ex:
-        futs = {ex.submit(decide, lid, g, until, post, get): lid for lid, g in polys.items()}
+        futs = {ex.submit(decide, lid, g, until, post, get, attempted): lid for lid, g in polys.items()}
         for f in cf.as_completed(futs):
             lid = futs[f]
             try:
@@ -141,6 +167,7 @@ def main(argv=None) -> int:
     ap.add_argument("--lakes", default=None, help="comma-separated lake ids to consider (default: every outline)")
     ap.add_argument("--until", default=None, help="ISO date/time (default: now, UTC)")
     ap.add_argument("--no-summary", action="store_true", help="do not write dispatch/<date>.json to the bucket")
+    ap.add_argument("--retry-attempted", action="store_true", help="ignore the attempted-pass ledger (e.g. after a failed heavy run)")
     a = ap.parse_args(argv)
     until = dt.datetime.fromisoformat(a.until).replace(tzinfo=None) if a.until else dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     polys = load_polygons()
@@ -148,7 +175,8 @@ def main(argv=None) -> int:
         want = set(a.lakes.split(","))
         polys = {k: v for k, v in polys.items() if k in want}
     t0 = time.time()
-    res = discover(polys, until)
+    attempted = {} if a.retry_attempted else attempted_ledger()
+    res = discover(polys, until, attempted=attempted)
     work = sorted(l for l, d in res["decisions"].items() if d["work"])
     why = {}
     for d in res["decisions"].values():
@@ -163,18 +191,22 @@ def main(argv=None) -> int:
         op = run_job(TokenProvider(), HEAVY_JOB, args=["--lakes", ",".join(work)], task_count=tasks)
         started = {"execution": (op.get("metadata") or {}).get("name"), "tasks": tasks, "lakes": len(work)}
         print(f"started {HEAVY_JOB}: {started}", flush=True)
+        now_iso = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        for lid in work:
+            attempted[lid] = {"pass": res["decisions"][lid]["newestPass"], "dispatchedAt": now_iso}
+        if not a.no_summary:
+            _put_json(ATTEMPTED_KEY, attempted)
     summary["started"] = started
     if not a.no_summary and (os.environ.get("CLOUD_RUN_JOB") or os.environ.get("DISPATCH_WRITE_SUMMARY")):
-        _write_summary(summary, until)
+        _put_json(f"dispatch/{until.date().isoformat()}.json", summary)
     return 0
 
 
-def _write_summary(summary: dict, until: dt.datetime) -> None:
-    """dispatch/<date>.json in the bucket (public bucket; the summary holds lake ids and counts only)."""
+def _put_json(name: str, obj: dict) -> None:
+    """Authenticated upload to the (public) bucket: dispatch summaries and the attempted-pass ledger — lake ids, dates, counts only."""
     tokens = TokenProvider()
-    name = f"dispatch/{until.date().isoformat()}.json"
     url = f"https://storage.googleapis.com/upload/storage/v1/b/{BUCKET}/o?uploadType=media&name={urllib.parse.quote(name, safe='')}"
-    req = urllib.request.Request(url, data=json.dumps(summary, separators=(",", ":")).encode(), method="POST",
+    req = urllib.request.Request(url, data=json.dumps(obj, separators=(",", ":")).encode(), method="POST",
                                  headers={"Authorization": f"Bearer {tokens.token()}", "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=60) as r:
         r.read()
