@@ -49,11 +49,14 @@ public enum LakeBrainProfiles {
     static func build(lake: DirectoryLake, binding: LakeSourceBinding?, state: LakeLevelStateRecord?,
                              baseline: LakeLevelBaseline?, previous: LakeBrainProfileRecord?, presence: LakePresenceIndex?,
                              live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)], now: Date,
-                             archiveURI: String?) -> LakeBrainProfileRecord {
+                             archiveURI: String?, dryRunCandidate: Bool = false) -> LakeBrainProfileRecord {
         let gen = BrainPlatform.iso(now)
         let reviewed = binding?.status == .reviewed ? binding : nil
 
-        let identity = LakeBrainProfileRecord.Identity(riverSystem: reviewed?.riverSystem, basin: nil, lakeType: nil)
+        // A pointer to the shoreline registry (another service owns the polygons); never the polygon itself.
+        let identity = LakeBrainProfileRecord.Identity(
+            riverSystem: reviewed?.riverSystem, basin: nil, lakeType: nil,
+            geometry: LakeGeometryRef(registryRef: LakeGeometryRef.registryURL, lakeKey: BrainPlatform.lakeKey(lake.id)))
         var hydrology: LakeBrainProfileRecord.Hydrology?
         var characteristics: LakeBrainProfileRecord.Characteristics?
         var pools: LakeBrainProfileRecord.OperatingPools?
@@ -63,17 +66,20 @@ public enum LakeBrainProfiles {
             let op = b.live.first.map { "\($0.providerName) \($0.station)" } ?? "reviewed binding"
             if let dam = b.damName { hydrology = .init(dam: KnownValue(dam, source: op, quality: "operator"), operation: nil) }
             characteristics = .init(
-                floodControl: b.floodControl.map { KnownValue($0, source: "cwms levels (Bottom of Flood Control)", quality: "operator") },
-                hydropower: b.hydropower.map { KnownValue($0, source: "tva:locations DamType", quality: "operator") },
+                floodControl: b.floodControl.map { KnownValue($0, source: b.factsSource ?? "cwms levels (Bottom of Flood Control)", quality: b.factsSource == nil ? "operator" : "NID purposes") },
+                hydropower: b.hydropower.map { KnownValue($0, source: b.factsSource ?? "tva:locations DamType", quality: b.factsSource == nil ? "operator" : "NID purposes") },
                 navigation: nil, runOfRiver: nil,
                 controlled: b.capability == .directOperatorPool ? KnownValue(true, source: op, quality: "operator pool published") : nil,
-                naturalLake: nil)
+                naturalLake: nil, context: b.context)
             let guideRef: LakeBrainProfileRecord.GuideCurveRef
             switch b.guide {
             case .tvaOperatingGuide(let loc)?:
                 guideRef = .init(available: true, source: "TVA operating guide", ref: "https://www.tva.com/RestApi/operating-guide/\(loc)")
             case .cwms(let office, let g, _, _, _)?:
                 guideRef = .init(available: true, source: "USACE CWMS guide curve", ref: "cwms:\(office):\(g)")
+            case .operatorLevels(let o)?:
+                if let g = o.guide { guideRef = .init(available: true, source: "Operator guide curve (\(g.name))", ref: g.source) }
+                else { guideRef = .init(available: false, source: nil, ref: nil) }
             case nil:
                 guideRef = .init(available: false, source: nil, ref: nil)
             }
@@ -81,6 +87,9 @@ public enum LakeBrainProfiles {
                 switch b.guide {
                 case .tvaOperatingGuide?: return "TVA BtmOpZone–TopOpZone (daily)"
                 case .cwms(_, _, _, let label, _)?: return "CWMS \(label) to top of conservation (daily)"
+                case .operatorLevels(let o)?:
+                    guard o.hasZone, let t = o.zoneTop, let bt = o.zoneBottom else { return nil }
+                    return "Operator \(bt.name) to \(t.name) (\(t.seasonal || bt.seasonal ? "daily" : "constant"))"
                 case nil: return nil
                 }
             }()
@@ -88,18 +97,20 @@ public enum LakeBrainProfiles {
                           topOfGatesFt: b.topOfGatesFt.map { KnownValue($0, source: "tva:locations TopOfGatesFt", quality: "operator") },
                           guideCurve: guideRef, operatingZoneSource: zoneSource,
                           datum: b.datum.map { KnownValue($0, source: op, quality: "operator") })
+            if case .operatorLevels(let o)? = b.guide {
+                if let f = o.floodPoolBottom {
+                    pools?.floodPoolBottom = FloodPoolBottomRef(available: true, name: f.name, source: f.source, seasonal: f.seasonal, valueFt: f.ft)
+                }
+                pools?.planEvidence = PlanEvidenceRef(matchedProject: o.matchedProject, matchBasis: o.matchBasis, verifiedMatch: o.verifiedMatch,
+                                                      criteria: "binding-review-v1 operator plan / flood-pool join, strict columns")
+            }
             let refs = b.live.map { LakeBrainProfileRecord.SourceRef(sourceId: $0.sourceId, provider: $0.providerName, capability: $0.capability,
                                                                      cadenceMin: $0.cadenceMin, lagMin: $0.lagMin, note: $0.note) }
-            let hist: [String] = b.history.map {
-                switch $0 {
-                case .tvaOperatingGuide(let l): return "tva:operating-guide:\(l) (current + previous year, daily midnight)"
-                case .sharedTVAArchive(let bucket, let prefix, let l): return "gs://\(bucket)/\(prefix)/\(l) (hourly, shared archive, read-only)"
-                case .cwmsDaily(let o, let s): return "cwms:\(o):\(s) (daily)"
-                }
-            }
-            capability = .init(level: b.capability, bindingStatus: .reviewed, bindingVersion: LakeSourceBindings.version,
+            let hist: [String] = b.history.map(\.profileDescription)
+            capability = .init(level: b.capability, bindingStatus: dryRunCandidate ? .candidate : .reviewed, bindingVersion: LakeSourceBindings.version,
                                primary: refs.first, fallbacks: refs.count > 1 ? Array(refs.dropFirst()) : nil, history: hist,
-                               proxyOnly: b.live.allSatisfy { $0.capability == .nearbyGaugeProxy }, reviewedAt: b.reviewedAt, note: b.note)
+                               proxyOnly: b.live.allSatisfy { $0.capability == .nearbyGaugeProxy }, reviewedAt: b.reviewedAt,
+                               note: dryRunCandidate ? "dryRunCandidate: CANDIDATE binding evaluated as if reviewed (local dry run, never published). " + (b.note ?? "") : b.note)
         } else {
             capability = .init(level: LakeSourceBindings.candidateCapability(for: lake), bindingStatus: .candidate,
                                bindingVersion: LakeSourceBindings.version, primary: nil, fallbacks: nil, history: nil,

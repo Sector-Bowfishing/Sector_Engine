@@ -64,6 +64,8 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
     let usgsBase = "https://waterservices.usgs.gov/nwis/iv/"
     /// Read-only access to the shared TVA archive (another lane's bucket).
     let sharedArchive: (String) -> LakeBrainArchive?
+    /// Access2Water / RISE / NWPS / HADS / USGS-history clients (LakeLevelFeedsFleet.swift).
+    let fleet = LakeFleetClients()
     private var guideCache: [String: [TVAGuideRow]] = [:]
     private let lock = NSLock()
 
@@ -80,7 +82,12 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
                               begin: now.addingTimeInterval(-Double(hours) * 3600), end: now.addingTimeInterval(3600))
         case .usgs:
             guard let p = ref.series else { return .failed("usgs parameter missing") }
+            // 00065 is a gage height in a local datum, not an elevation: never a lake level.
+            guard LakeFleetClients.usgsElevationParams.contains(p) else { return .failed("USGS \(p) is not a lake elevation parameter (gage height is not an elevation)") }
             return await usgs(site: ref.station, parameter: p, hours: hours)
+        case .a2w: return await fleet.a2wRecent(ref)
+        case .rise: return await fleet.riseRecent(ref, hours: hours, now: now)
+        case .nwps: return await fleet.nwpsRecent(ref, since: now.addingTimeInterval(-Double(hours) * 3600))
         }
     }
 
@@ -120,6 +127,8 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             }
             return LakeGuideForDay(guideFt: gc, zone: zone, levels: levels.sorted { $0.ft > $1.ft }, topOfGatesFt: nil,
                                    floodPoolBottomFt: gc, source: "\(src):\(guideSeries)")
+        case .operatorLevels(let o):
+            return await guide(operator: o, day: day, timeZone: timeZone)
         }
     }
 
@@ -134,19 +143,19 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
                 ?? LakeLevelCalendar.date(year: 1950, month: 1, day: 1)
             var out: [DailyLevel] = []
             var chunkStart = begin
-            // Five-year windows keep each request well inside the shared 8 s fetch cap.
+            // Windows sized to the series interval keep each request inside the page budget (daily: 5 y; hourly: 5 y; 15 min: 1 y).
+            let window = Self.cwmsWindowSeconds(series)
             while chunkStart < now {
-                let chunkEnd = min(chunkStart.addingTimeInterval(5 * 365.25 * 86_400), now.addingTimeInterval(86_400))
+                let chunkEnd = min(chunkStart.addingTimeInterval(window), now.addingTimeInterval(86_400))
                 let r = await cwms(office: office, name: series, begin: chunkStart, end: chunkEnd)
                 // A failed window would leave a silent hole in the history: fail the whole pull.
                 if r.error != nil { return nil }
-                for o in r.observations {
-                    out.append(DailyLevel(date: LakeLevelCalendar.dayString(o.at, timeZone: timeZone), ft: o.ft,
-                                          sourceId: "cwms:\(office):\(series)"))
-                }
+                out += Self.dailyMedians(r.observations, timeZone: timeZone, sourceId: "cwms:\(office):\(series)")
                 chunkStart = chunkEnd
             }
             return LakeDailyHistory.dedupe(out)
+        case .usgsDaily, .riseDaily, .hadsDaily:
+            return await fleetDaily(source, since: since, now: now, timeZone: timeZone)
         case .sharedTVAArchive:
             return nil
         }
@@ -161,6 +170,25 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             out += Self.parseSharedTVAArchiveDay(d)
         }
         return LakeLevelSeries.merge(out)
+    }
+
+    /// Request window for a CWMS series: ~5 years for coarse series, shrinking for sub-hourly ones (5 000 points per page, 20 pages).
+    static func cwmsWindowSeconds(_ series: String) -> TimeInterval {
+        let parts = series.split(separator: ".").map(String.init)
+        var minutes = 1440
+        if parts.count >= 6 {
+            let iv = parts[3].trimmingCharacters(in: CharacterSet(charactersIn: "~"))
+            if let r = iv.range(of: #"^\d+"#, options: .regularExpression), let n = Int(iv[r]) {
+                if iv.contains("Minute") { minutes = n } else if iv.contains("Hour") { minutes = n * 60 } else { minutes = n * 1440 }
+            }
+        }
+        let years = max(0.25, min(5.0, 60_000.0 / (525_960.0 / Double(max(1, minutes)))))
+        return years * 365.25 * 86_400
+    }
+
+    /// One value per lake-local day: the median of the day's readings (identical to the reading itself for a daily series).
+    static func dailyMedians(_ obs: [LevelObservation], timeZone: TimeZone, sourceId: String) -> [DailyLevel] {
+        LakeFleetClients.dailyMedians(obs, timeZone: timeZone, offsetFt: 0, src: sourceId)
     }
 
     // MARK: TVA
@@ -271,7 +299,7 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         f.formatOptions = [.withInternetDateTime]
         var out: [LevelObservation] = []
         var page: String? = nil
-        for _ in 0..<20 {
+        for attempt in 0..<20 {
             var c = URLComponents(string: "\(cwmsBase)/timeseries")
             var q: [URLQueryItem] = [
                 .init(name: "office", value: office), .init(name: "name", value: name), .init(name: "unit", value: "EN"),
@@ -284,12 +312,15 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
                 return out.isEmpty ? .failed("CWMS \(office) \(name) unreachable") : FeedResult(observations: out, error: "CWMS page fetch failed")
             }
             guard let raw = CWMSObservedService.parseJSON(data) as? [String: Any] else { return .failed("CWMS \(name): unreadable JSON") }
+            // Asked in English units; if a feed still answers in metres, convert.
+            let k = ((raw["units"] as? String) ?? "ft").lowercased() == "m" ? LakeFeedHTTP.feetPerMetre : 1.0
             for row in (raw["values"] as? [[Any?]]) ?? [] {
                 guard row.count >= 2, let ms = row[0] as? Double, let v = row[1] as? Double else { continue }
-                out.append(LevelObservation(at: Date(timeIntervalSince1970: ms / 1000), ft: v))
+                out.append(LevelObservation(at: Date(timeIntervalSince1970: ms / 1000), ft: v * k))
             }
             guard let next = raw["next-page"] as? String, !next.isEmpty else { break }
             page = next
+            if attempt == 19 { return FeedResult(observations: out, error: "CWMS \(name): page limit reached (series too dense for the window)") }
         }
         return FeedResult(observations: LakeLevelSeries.merge(out), error: nil)
     }

@@ -250,6 +250,8 @@ public struct LakeBrainProfileRecord: Codable, Equatable, Sendable {
         public var riverSystem: String?
         public var basin: String?
         public var lakeType: String?
+        /// Pointer to the shoreline registry (LakeBindingTypes.swift); no polygon is stored here.
+        public var geometry: LakeGeometryRef? = nil
     }
     public struct Hydrology: Codable, Equatable, Sendable {
         public var dam: KnownValue<String>?
@@ -262,6 +264,8 @@ public struct LakeBrainProfileRecord: Codable, Equatable, Sendable {
         public var runOfRiver: KnownValue<Bool>?
         public var controlled: KnownValue<Bool>?
         public var naturalLake: KnownValue<Bool>?
+        /// Research-derived context (class, regime, region, residence time, chain, ...), each value with source and quality.
+        public var context: LakeContextFeatures? = nil
     }
     public struct GuideCurveRef: Codable, Equatable, Sendable {
         public var available: Bool
@@ -275,6 +279,9 @@ public struct LakeBrainProfileRecord: Codable, Equatable, Sendable {
         public var guideCurve: GuideCurveRef
         public var operatingZoneSource: String?
         public var datum: KnownValue<String>?
+        /// Operator flood-pool bottom with its source (verified plan / flood evidence only).
+        public var floodPoolBottom: FloodPoolBottomRef? = nil
+        public var planEvidence: PlanEvidenceRef? = nil
     }
     public struct SourceRef: Codable, Equatable, Sendable {
         public var sourceId: String
