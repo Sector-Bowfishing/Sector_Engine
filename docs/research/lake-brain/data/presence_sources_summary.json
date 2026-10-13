@@ -1,0 +1,1018 @@
+{
+ "generated": "2026-10-13",
+ "thread": "species",
+ "disclaimer": "aggregates and method only; no presence rows",
+ "privatePresenceRelease": {
+  "release": "lake-presence-2026-10-12.1",
+  "rows": 7452,
+  "lakes": 621,
+  "byState": {
+   "unknown": 5103,
+   "historical": 433,
+   "inRangeUnconfirmed": 1381,
+   "established": 424,
+   "reported": 79,
+   "stocked": 22,
+   "failed/eradicated": 10
+  },
+  "byConfidence": {
+   "none": 5103,
+   "medium": 626,
+   "low": 1426,
+   "high": 297
+  },
+  "byTier": {
+   "None": 5103,
+   "T2": 897,
+   "T5": 1381,
+   "T4": 44,
+   "T3": 27
+  },
+  "byNative": {
+   "unknown": 2758,
+   "introduced": 3139,
+   "native-state": 1020,
+   "extirpated-state": 66,
+   "native": 469
+  },
+  "lakesWithObsGrade": 287,
+  "lakesAllUnknown": 92,
+  "lakesWithAnyNonUnknown": 529,
+  "lakesWithEstablished": 237,
+  "lakesWithOnlyRange": 153,
+  "latestRecordYear": {
+   "n": 941,
+   "min": 1905,
+   "median": 2010,
+   "max": 2026,
+   "ge2015": 373,
+   "lt1990": 205
+  },
+  "dataGapPhrases": {
+   "no abundance": 2349,
+   "single or no independent source": 1894,
+   "species ID unverified": 1557,
+   "no lake-level species record": 1122,
+   "needs agency survey/Sector observation": 1122,
+   "range is state-level only": 1030,
+   "no lake-level record": 259,
+   "needs survey/agency/Sector observation": 259
+  },
+  "speciesByState": {
+   "alligator_gar": {
+    "unknown": 466,
+    "inRangeUnconfirmed": 138,
+    "historical": 9,
+    "established": 7,
+    "failed/eradicated": 1
+   },
+   "bighead_carp": {
+    "unknown": 549,
+    "reported": 7,
+    "inRangeUnconfirmed": 20,
+    "established": 25,
+    "historical": 18,
+    "failed/eradicated": 2
+   },
+   "bigmouth_buffalo": {
+    "unknown": 445,
+    "inRangeUnconfirmed": 101,
+    "historical": 55,
+    "reported": 4,
+    "established": 16
+   },
+   "black_buffalo": {
+    "unknown": 488,
+    "inRangeUnconfirmed": 95,
+    "historical": 31,
+    "established": 6,
+    "failed/eradicated": 1
+   },
+   "black_carp": {
+    "unknown": 606,
+    "established": 6,
+    "inRangeUnconfirmed": 6,
+    "historical": 2,
+    "reported": 1
+   },
+   "common_carp": {
+    "historical": 87,
+    "established": 213,
+    "unknown": 162,
+    "inRangeUnconfirmed": 133,
+    "reported": 25,
+    "failed/eradicated": 1
+   },
+   "grass_carp": {
+    "unknown": 440,
+    "inRangeUnconfirmed": 77,
+    "reported": 19,
+    "historical": 29,
+    "established": 30,
+    "stocked": 22,
+    "failed/eradicated": 4
+   },
+   "longnose_gar": {
+    "inRangeUnconfirmed": 283,
+    "unknown": 217,
+    "established": 44,
+    "historical": 72,
+    "reported": 5
+   },
+   "shortnose_gar": {
+    "unknown": 374,
+    "inRangeUnconfirmed": 211,
+    "historical": 26,
+    "established": 9,
+    "reported": 1
+   },
+   "silver_carp": {
+    "unknown": 556,
+    "inRangeUnconfirmed": 23,
+    "reported": 13,
+    "established": 17,
+    "historical": 12
+   },
+   "smallmouth_buffalo": {
+    "unknown": 403,
+    "inRangeUnconfirmed": 140,
+    "historical": 56,
+    "established": 19,
+    "failed/eradicated": 1,
+    "reported": 2
+   },
+   "spotted_gar": {
+    "unknown": 397,
+    "inRangeUnconfirmed": 154,
+    "established": 32,
+    "historical": 36,
+    "reported": 2
+   }
+  },
+  "pilot": {
+   "Guntersville|AL": {
+    "inRangeUnconfirmed": 1,
+    "reported": 2,
+    "historical": 4,
+    "established": 3
+   },
+   "Wheeler|AL": {
+    "inRangeUnconfirmed": 1,
+    "historical": 3,
+    "established": 4,
+    "stocked": 1
+   },
+   "Wilson|AL": {
+    "inRangeUnconfirmed": 3,
+    "established": 1,
+    "historical": 4,
+    "reported": 2
+   },
+   "Pickwick Lake|TN": {
+    "inRangeUnconfirmed": 3,
+    "established": 3,
+    "historical": 4,
+    "reported": 1
+   },
+   "Lake Hartwell|SC": {
+    "established": 2,
+    "inRangeUnconfirmed": 1
+   }
+  }
+ },
+ "apiTests": {
+  "NAS_recordsDownloaded": {
+   "common_carp": 62026,
+   "grass_carp": 6168,
+   "bighead_carp": 3448,
+   "silver_carp": 11155,
+   "black_carp": 1474,
+   "smallmouth_buffalo": 590,
+   "bigmouth_buffalo": 362,
+   "black_buffalo": 13,
+   "alligator_gar": 17,
+   "longnose_gar": 0,
+   "shortnose_gar": 44,
+   "spotted_gar": 21,
+   "bowfin": 118,
+   "freshwater_drum": 303
+  },
+  "GBIF_US_hasCoordinate_counts": {
+   "common_carp": 109058,
+   "grass_carp": 7151,
+   "bighead_carp": 3197,
+   "silver_carp": 11296,
+   "black_carp": 302,
+   "smallmouth_buffalo": 14479,
+   "bigmouth_buffalo": 3789,
+   "black_buffalo": 714,
+   "alligator_gar": 46706,
+   "longnose_gar": 19022,
+   "shortnose_gar": 1887,
+   "spotted_gar": 83710,
+   "bowfin": 12430,
+   "freshwater_drum": 16643
+  },
+  "GBIF_records_in_lake_bbox_after_filters_note": "26,120 bbox records over 621 lakes (cap 6,000/lake not hit); datasets: iNaturalist RG, USGS NAS, MARIS fish, FoTX, UMMZ and other museums",
+  "WQP_lakeSites": {
+   "common_carp": 824,
+   "smallmouth_buffalo": 99,
+   "bigmouth_buffalo": 30,
+   "freshwater_drum": 75,
+   "bowfin": 30,
+   "spotted_gar": 5,
+   "longnose_gar": 4,
+   "grass_carp": 5,
+   "silver_carp": 2
+  },
+  "USGS_coarse_range_HUC8": "257 species; covers buffalo x3, grass/bighead/silver carp only (no common/black carp, gars, bowfin, drum)",
+  "MidFish": "7 states (IA IL IN MI MN SD WI); full species only IA IN MN SD WI; IL and MI hold 8 gamefish only; 74 directory lakes coordinate-matched to a surveyed lake"
+ },
+ "coverage": {
+  "lakes": 621,
+  "polygonLakes": 599,
+  "lakesWithInWaterbodyRecord_12species": 387,
+  "lakesWithInWaterbodyRecord2010plus_12species": 297,
+  "lakesHucOnly_12species": 126,
+  "lakesNoEvidence_12species": 108,
+  "lakesWithInWaterbodyRecord_bowfinDrum": 193,
+  "lakesWithInWaterbodyRecord2010plus_bowfinDrum": 146,
+  "lakesHucOnly_bowfinDrum": 48,
+  "lakesNoEvidence_bowfinDrum": 380,
+  "lakesWithInWaterbodyRecord_all14": 398,
+  "lakesWithInWaterbodyRecord2010plus_all14": 315,
+  "lakesHucOnly_all14": 118,
+  "lakesNoEvidence_all14": 105,
+  "lakesWithInWaterbodyRecord_carp5": 363,
+  "lakesWithInWaterbodyRecord2010plus_carp5": 257,
+  "lakesHucOnly_carp5": 142,
+  "lakesNoEvidence_carp5": 116,
+  "lakesWithInWaterbodyRecord_buffalo3": 118,
+  "lakesWithInWaterbodyRecord2010plus_buffalo3": 76,
+  "lakesHucOnly_buffalo3": 118,
+  "lakesNoEvidence_buffalo3": 385,
+  "lakesWithInWaterbodyRecord_gar4": 162,
+  "lakesWithInWaterbodyRecord2010plus_gar4": 129,
+  "lakesHucOnly_gar4": 5,
+  "lakesNoEvidence_gar4": 454,
+  "bySpecies": {
+   "common_carp": {
+    "inWaterbody": 347,
+    "hucOnly": 139,
+    "sources": {
+     "NAS": 267,
+     "MUSEUM": 111,
+     "INAT": 197,
+     "MARIS": 70,
+     "WQP": 100,
+     "MIDFISH": 43,
+     "GBIF_OTHER": 5,
+     "TPWD_SABINE": 1
+    }
+   },
+   "grass_carp": {
+    "inWaterbody": 79,
+    "hucOnly": 172,
+    "sources": {
+     "NAS": 72,
+     "NAS_failed": 11,
+     "INAT": 19,
+     "MUSEUM": 27
+    }
+   },
+   "bighead_carp": {
+    "inWaterbody": 37,
+    "hucOnly": 36,
+    "sources": {
+     "NAS": 36,
+     "NAS_failed": 4,
+     "MUSEUM": 6,
+     "INAT": 7,
+     "GBIF_OTHER": 1
+    }
+   },
+   "silver_carp": {
+    "inWaterbody": 35,
+    "hucOnly": 44,
+    "sources": {
+     "NAS": 34,
+     "INAT": 12,
+     "MUSEUM": 5,
+     "GBIF_OTHER": 1
+    }
+   },
+   "black_carp": {
+    "inWaterbody": 5,
+    "hucOnly": 9,
+    "sources": {
+     "NAS": 5
+    }
+   },
+   "smallmouth_buffalo": {
+    "inWaterbody": 89,
+    "hucOnly": 126,
+    "sources": {
+     "MUSEUM": 59,
+     "INAT": 37,
+     "NAS": 10,
+     "MARIS": 4,
+     "MIDFISH": 11,
+     "WQP": 12,
+     "GBIF_OTHER": 4,
+     "NAS_failed": 1
+    }
+   },
+   "bigmouth_buffalo": {
+    "inWaterbody": 79,
+    "hucOnly": 99,
+    "sources": {
+     "INAT": 28,
+     "MUSEUM": 41,
+     "NAS": 9,
+     "MARIS": 11,
+     "MIDFISH": 23,
+     "WQP": 6,
+     "GBIF_OTHER": 1
+    }
+   },
+   "black_buffalo": {
+    "inWaterbody": 33,
+    "hucOnly": 93,
+    "sources": {
+     "MUSEUM": 22,
+     "INAT": 8,
+     "NAS": 3,
+     "NAS_failed": 1,
+     "MIDFISH": 2,
+     "GBIF_OTHER": 1
+    }
+   },
+   "alligator_gar": {
+    "inWaterbody": 13,
+    "hucOnly": 0,
+    "sources": {
+     "MUSEUM": 11,
+     "INAT": 6,
+     "TPWD_SABINE": 1,
+     "GBIF_OTHER": 1,
+     "NAS_failed": 1
+    }
+   },
+   "longnose_gar": {
+    "inWaterbody": 129,
+    "hucOnly": 0,
+    "sources": {
+     "INAT": 85,
+     "MARIS": 22,
+     "MUSEUM": 69,
+     "GBIF_OTHER": 8,
+     "MIDFISH": 12,
+     "WQP": 1
+    }
+   },
+   "shortnose_gar": {
+    "inWaterbody": 41,
+    "hucOnly": 7,
+    "sources": {
+     "INAT": 21,
+     "MUSEUM": 20,
+     "MIDFISH": 11,
+     "MARIS": 4,
+     "GBIF_OTHER": 1,
+     "NAS_failed": 1
+    }
+   },
+   "spotted_gar": {
+    "inWaterbody": 69,
+    "hucOnly": 0,
+    "sources": {
+     "MUSEUM": 43,
+     "INAT": 40,
+     "MARIS": 8,
+     "MIDFISH": 2,
+     "TPWD_SABINE": 1,
+     "GBIF_OTHER": 1,
+     "WQP": 2
+    }
+   },
+   "bowfin": {
+    "inWaterbody": 79,
+    "hucOnly": 38,
+    "sources": {
+     "MARIS": 21,
+     "INAT": 30,
+     "MUSEUM": 36,
+     "GBIF_OTHER": 12,
+     "WQP": 7,
+     "MIDFISH": 17,
+     "NAS_failed": 2,
+     "NAS": 4
+    }
+   },
+   "freshwater_drum": {
+    "inWaterbody": 146,
+    "hucOnly": 20,
+    "sources": {
+     "MUSEUM": 69,
+     "INAT": 108,
+     "NAS": 5,
+     "WQP": 16,
+     "MARIS": 12,
+     "MIDFISH": 26,
+     "GBIF_OTHER": 6
+    }
+   }
+  },
+  "lakesPerSource_anyTargetSpecies": {
+   "MUSEUM": 181,
+   "NAS": 300,
+   "MARIS": 73,
+   "INAT": 282,
+   "WQP": 122,
+   "GBIF_OTHER": 21,
+   "MIDFISH": 50,
+   "TPWD_SABINE": 1
+  },
+  "lakesByDistinctSourceFamilies_0_1_2_3plus": {
+   "0": 223,
+   "1": 80,
+   "2": 112,
+   "3": 206
+  }
+ },
+ "validation": {
+  "release": "lake-presence-2026-10-12.1",
+  "totals": {
+   "pairs12": 7452,
+   "indepPos": 956
+  },
+  "privateStateGivenIndependentRecord": {
+   "historical": 347,
+   "established": 332,
+   "inRangeUnconfirmed": 158,
+   "reported": 56,
+   "unknown": 43,
+   "stocked": 20
+  },
+  "independentRecordGivenPrivateState": {
+   "unknown": {
+    "total": 5103,
+    "indep": 43
+   },
+   "historical": {
+    "total": 433,
+    "indep": 347
+   },
+   "inRangeUnconfirmed": {
+    "total": 1381,
+    "indep": 158
+   },
+   "established": {
+    "total": 424,
+    "indep": 332
+   },
+   "reported": {
+    "total": 79,
+    "indep": 56
+   },
+   "stocked": {
+    "total": 22,
+    "indep": 20
+   },
+   "failed/eradicated": {
+    "total": 10
+   }
+  },
+  "unknownButIndependentRecordBySpecies": {
+   "common_carp": 18,
+   "smallmouth_buffalo": 5,
+   "bigmouth_buffalo": 5,
+   "grass_carp": 5,
+   "black_buffalo": 6,
+   "shortnose_gar": 1,
+   "silver_carp": 1,
+   "spotted_gar": 1,
+   "bighead_carp": 1
+  },
+  "historicalFlags": {
+   "historical_total_with_indep": 347,
+   "historical_but_independent_record_2015plus": 113
+  },
+  "staleness": {
+   "indep_newer_than_private_latestRecord": 256
+  },
+  "observedStatesCorroboratedByTier": {
+   "T2": {
+    "n": 471,
+    "corroborated": 361
+   },
+   "T4": {
+    "n": 28,
+    "corroborated": 22
+   },
+   "T3": {
+    "n": 26,
+    "corroborated": 25
+   }
+  },
+  "perSpecies": {
+   "common_carp": {
+    "independentPositivePairs": 347,
+    "privateHadEvidenceState": 290,
+    "privateInRangeOnly": 39,
+    "privateUnknown": 18,
+    "recallOfIndependent": 0.836,
+    "privateObservedPairs": 238,
+    "corroboratedByIndependent": 215
+   },
+   "grass_carp": {
+    "independentPositivePairs": 79,
+    "privateHadEvidenceState": 73,
+    "privateInRangeOnly": 1,
+    "privateUnknown": 5,
+    "recallOfIndependent": 0.924,
+    "privateObservedPairs": 71,
+    "corroboratedByIndependent": 48
+   },
+   "bighead_carp": {
+    "independentPositivePairs": 37,
+    "privateHadEvidenceState": 33,
+    "privateInRangeOnly": 3,
+    "privateUnknown": 1,
+    "recallOfIndependent": 0.892,
+    "privateObservedPairs": 32,
+    "corroboratedByIndependent": 24
+   },
+   "silver_carp": {
+    "independentPositivePairs": 35,
+    "privateHadEvidenceState": 33,
+    "privateInRangeOnly": 1,
+    "privateUnknown": 1,
+    "recallOfIndependent": 0.943,
+    "privateObservedPairs": 30,
+    "corroboratedByIndependent": 22
+   },
+   "black_carp": {
+    "independentPositivePairs": 5,
+    "privateHadEvidenceState": 5,
+    "privateInRangeOnly": 0,
+    "privateUnknown": 0,
+    "recallOfIndependent": 1.0,
+    "privateObservedPairs": 7,
+    "corroboratedByIndependent": 4
+   },
+   "smallmouth_buffalo": {
+    "independentPositivePairs": 89,
+    "privateHadEvidenceState": 58,
+    "privateInRangeOnly": 26,
+    "privateUnknown": 5,
+    "recallOfIndependent": 0.652,
+    "privateObservedPairs": 21,
+    "corroboratedByIndependent": 11
+   },
+   "bigmouth_buffalo": {
+    "independentPositivePairs": 79,
+    "privateHadEvidenceState": 60,
+    "privateInRangeOnly": 14,
+    "privateUnknown": 5,
+    "recallOfIndependent": 0.759,
+    "privateObservedPairs": 20,
+    "corroboratedByIndependent": 11
+   },
+   "black_buffalo": {
+    "independentPositivePairs": 33,
+    "privateHadEvidenceState": 22,
+    "privateInRangeOnly": 5,
+    "privateUnknown": 6,
+    "recallOfIndependent": 0.667,
+    "privateObservedPairs": 6,
+    "corroboratedByIndependent": 1
+   },
+   "alligator_gar": {
+    "independentPositivePairs": 13,
+    "privateHadEvidenceState": 10,
+    "privateInRangeOnly": 3,
+    "privateUnknown": 0,
+    "recallOfIndependent": 0.769,
+    "privateObservedPairs": 7,
+    "corroboratedByIndependent": 6
+   },
+   "longnose_gar": {
+    "independentPositivePairs": 129,
+    "privateHadEvidenceState": 96,
+    "privateInRangeOnly": 33,
+    "privateUnknown": 0,
+    "recallOfIndependent": 0.744,
+    "privateObservedPairs": 49,
+    "corroboratedByIndependent": 37
+   },
+   "shortnose_gar": {
+    "independentPositivePairs": 41,
+    "privateHadEvidenceState": 26,
+    "privateInRangeOnly": 14,
+    "privateUnknown": 1,
+    "recallOfIndependent": 0.634,
+    "privateObservedPairs": 10,
+    "corroboratedByIndependent": 6
+   },
+   "spotted_gar": {
+    "independentPositivePairs": 69,
+    "privateHadEvidenceState": 49,
+    "privateInRangeOnly": 19,
+    "privateUnknown": 1,
+    "recallOfIndependent": 0.71,
+    "privateObservedPairs": 34,
+    "corroboratedByIndependent": 23
+   }
+  },
+  "currentStateByProposedPublicTier": {
+   "unknown": {
+    "none": 4933,
+    "E4_hucOccurrence": 127,
+    "E3_inWaterbodyRecord_2015plus": 23,
+    "E3_inWaterbodyRecord_older_or_undated": 20
+   },
+   "historical": {
+    "E3_inWaterbodyRecord_older_or_undated": 234,
+    "none": 55,
+    "E3_inWaterbodyRecord_2015plus": 113,
+    "E4_hucOccurrence": 31
+   },
+   "inRangeUnconfirmed": {
+    "none": 734,
+    "E4_hucOccurrence": 489,
+    "E3_inWaterbodyRecord_2015plus": 119,
+    "E3_inWaterbodyRecord_older_or_undated": 39
+   },
+   "established": {
+    "E3_inWaterbodyRecord_older_or_undated": 80,
+    "E3_inWaterbodyRecord_2015plus": 252,
+    "E4_hucOccurrence": 60,
+    "none": 32
+   },
+   "reported": {
+    "E3_inWaterbodyRecord_2015plus": 56,
+    "E4_hucOccurrence": 12,
+    "none": 11
+   },
+   "stocked": {
+    "E3_inWaterbodyRecord_2015plus": 4,
+    "E3_inWaterbodyRecord_older_or_undated": 16,
+    "E4_hucOccurrence": 2
+   },
+   "failed/eradicated": {
+    "E4_hucOccurrence": 4,
+    "none": 6
+   }
+  },
+  "pairsWithIndependentRecord2015plusBySpecies": {
+   "longnose_gar": 91,
+   "common_carp": 224,
+   "smallmouth_buffalo": 48,
+   "silver_carp": 22,
+   "grass_carp": 33,
+   "bigmouth_buffalo": 43,
+   "spotted_gar": 42,
+   "bighead_carp": 19,
+   "shortnose_gar": 26,
+   "black_buffalo": 9,
+   "alligator_gar": 6,
+   "black_carp": 4
+  },
+  "pilot": {
+   "Guntersville|AL": {
+    "speciesWithIndependentRecord": 7,
+    "indep_priv_established": 3,
+    "indep_priv_historical": 2,
+    "indep_priv_reported": 2
+   },
+   "Wheeler|AL": {
+    "speciesWithIndependentRecord": 8,
+    "indep_priv_established": 4,
+    "indep_priv_stocked": 1,
+    "indep_priv_historical": 3
+   },
+   "Wilson|AL": {
+    "speciesWithIndependentRecord": 7,
+    "indep_priv_reported": 2,
+    "indep_priv_established": 1,
+    "indep_priv_historical": 4
+   },
+   "Pickwick Lake|TN": {
+    "speciesWithIndependentRecord": 8,
+    "indep_priv_established": 3,
+    "indep_priv_reported": 1,
+    "indep_priv_historical": 3,
+    "indep_priv_inRangeUnconfirmed": 1
+   },
+   "Lake Hartwell|SC": {
+    "speciesWithIndependentRecord": 2,
+    "indep_priv_established": 2
+   }
+  },
+  "notAssessedButIndependentRecord": {
+   "bowfin": 79,
+   "freshwater_drum": 146
+  }
+ },
+ "stateProbes": {
+  "MN": {
+   "lakesInDirectory": 14,
+   "lakesResolved": 11,
+   "lakesWithSpeciesList": 9,
+   "speciesLakeCounts": {
+    "bowfin": 7,
+    "common_carp": 4
+   },
+   "commonCarpAgencyVsPrivate": {
+    "agency_present|private_established": 4,
+    "agency_not_listed|private_unknown": 2,
+    "agency_not_listed|private_inRangeUnconfirmed": 3
+   }
+  },
+  "IN": {
+   "lakesInDirectory": 14,
+   "lakesWithBatchSpeciesRows": 4,
+   "lakesWithBowfishTarget": 1,
+   "surveysTotal": 961,
+   "waterbodiesWithSurveys": 373
+  }
+ },
+ "perStateInWaterbodyRecord12": {
+  "AK": {
+   "lakes": 12,
+   "inWaterbody12": 0
+  },
+  "AL": {
+   "lakes": 12,
+   "inWaterbody12": 12
+  },
+  "AR": {
+   "lakes": 12,
+   "inWaterbody12": 11
+  },
+  "AZ": {
+   "lakes": 10,
+   "inWaterbody12": 9
+  },
+  "CA": {
+   "lakes": 12,
+   "inWaterbody12": 9
+  },
+  "CO": {
+   "lakes": 12,
+   "inWaterbody12": 6
+  },
+  "CT": {
+   "lakes": 12,
+   "inWaterbody12": 4
+  },
+  "DE": {
+   "lakes": 12,
+   "inWaterbody12": 7
+  },
+  "FL": {
+   "lakes": 13,
+   "inWaterbody12": 11
+  },
+  "GA": {
+   "lakes": 12,
+   "inWaterbody12": 12
+  },
+  "HI": {
+   "lakes": 9,
+   "inWaterbody12": 1
+  },
+  "IA": {
+   "lakes": 12,
+   "inWaterbody12": 12
+  },
+  "ID": {
+   "lakes": 13,
+   "inWaterbody12": 3
+  },
+  "IL": {
+   "lakes": 12,
+   "inWaterbody12": 11
+  },
+  "IN": {
+   "lakes": 14,
+   "inWaterbody12": 13
+  },
+  "KS": {
+   "lakes": 14,
+   "inWaterbody12": 10
+  },
+  "KY": {
+   "lakes": 12,
+   "inWaterbody12": 11
+  },
+  "LA": {
+   "lakes": 12,
+   "inWaterbody12": 10
+  },
+  "MA": {
+   "lakes": 12,
+   "inWaterbody12": 2
+  },
+  "MD": {
+   "lakes": 12,
+   "inWaterbody12": 9
+  },
+  "ME": {
+   "lakes": 14,
+   "inWaterbody12": 0
+  },
+  "MI": {
+   "lakes": 14,
+   "inWaterbody12": 8
+  },
+  "MN": {
+   "lakes": 14,
+   "inWaterbody12": 8
+  },
+  "MO": {
+   "lakes": 11,
+   "inWaterbody12": 9
+  },
+  "MS": {
+   "lakes": 11,
+   "inWaterbody12": 9
+  },
+  "MT": {
+   "lakes": 11,
+   "inWaterbody12": 2
+  },
+  "NC": {
+   "lakes": 12,
+   "inWaterbody12": 10
+  },
+  "ND": {
+   "lakes": 12,
+   "inWaterbody12": 5
+  },
+  "NE": {
+   "lakes": 11,
+   "inWaterbody12": 8
+  },
+  "NH": {
+   "lakes": 12,
+   "inWaterbody12": 0
+  },
+  "NJ": {
+   "lakes": 12,
+   "inWaterbody12": 5
+  },
+  "NM": {
+   "lakes": 13,
+   "inWaterbody12": 9
+  },
+  "NV": {
+   "lakes": 11,
+   "inWaterbody12": 6
+  },
+  "NY": {
+   "lakes": 14,
+   "inWaterbody12": 8
+  },
+  "OH": {
+   "lakes": 13,
+   "inWaterbody12": 10
+  },
+  "OK": {
+   "lakes": 13,
+   "inWaterbody12": 12
+  },
+  "OR": {
+   "lakes": 14,
+   "inWaterbody12": 3
+  },
+  "PA": {
+   "lakes": 14,
+   "inWaterbody12": 13
+  },
+  "RI": {
+   "lakes": 12,
+   "inWaterbody12": 0
+  },
+  "SC": {
+   "lakes": 12,
+   "inWaterbody12": 10
+  },
+  "SD": {
+   "lakes": 13,
+   "inWaterbody12": 11
+  },
+  "TN": {
+   "lakes": 15,
+   "inWaterbody12": 14
+  },
+  "TX": {
+   "lakes": 15,
+   "inWaterbody12": 15
+  },
+  "UT": {
+   "lakes": 13,
+   "inWaterbody12": 9
+  },
+  "VA": {
+   "lakes": 12,
+   "inWaterbody12": 4
+  },
+  "VT": {
+   "lakes": 12,
+   "inWaterbody12": 2
+  },
+  "WA": {
+   "lakes": 13,
+   "inWaterbody12": 7
+  },
+  "WI": {
+   "lakes": 13,
+   "inWaterbody12": 10
+  },
+  "WV": {
+   "lakes": 11,
+   "inWaterbody12": 8
+  },
+  "WY": {
+   "lakes": 13,
+   "inWaterbody12": 9
+  }
+ },
+ "bowfishingStates17": {
+  "lakes": 214,
+  "withInWaterbodyRecord12": 189,
+  "share": 0.883
+ },
+ "stateVerdicts": {
+  "MN": {
+   "verdict": "ACCEPTED",
+   "note": "LakeFinder by_id/by_point JSON per-lake fishSpecies (undocumented public API); DOW list via env_lakes_surveyed_by_mndnr (4,383 polygons)"
+  },
+  "IN": {
+   "verdict": "ACCEPTED",
+   "note": "Indiana Data Hub CKAN CSVs: Fish_Surveys + Batch_Fish_Records (373 waterbodies, 48 with species rows) + Fish_Records (aged fish only); license blank"
+  },
+  "TX": {
+   "verdict": "LEAD",
+   "note": "stocking HTML per waterbody (grass/bighead/common carp tracked); alligator gar harvest FeatureServer by waterbody; survey PDFs"
+  },
+  "IL": {
+   "verdict": "LEAD",
+   "note": "iFish Illinois lake pages (469, sitemap, robots allows) narrative HTML; no data feed"
+  },
+  "WI": {
+   "verdict": "LEAD",
+   "note": "no species layer; MARIS (via GBIF) is the only bulk lake fish source; gamefish-only lake pages"
+  },
+  "OK": {
+   "verdict": "LEAD",
+   "note": "ODWC lake record-fish layer (sparse); survey PDFs"
+  },
+  "KY": {
+   "verdict": "LEAD",
+   "note": "annual survey PDFs only; lake layer has no species"
+  },
+  "MO": {
+   "verdict": "LEAD",
+   "note": "HTML fishing-prospects narratives; polygons only"
+  },
+  "IA": {
+   "verdict": "DEAD_END",
+   "note": "Power BI dashboard only"
+  },
+  "MS": {
+   "verdict": "DEAD_END",
+   "note": "geometry only"
+  },
+  "LA": {
+   "verdict": "DEAD_END",
+   "note": "gamefish narrative only"
+  },
+  "GA": {
+   "verdict": "DEAD_END",
+   "note": "geometry/gamefish only"
+  },
+  "SC": {
+   "verdict": "DEAD_END",
+   "note": "geometry only"
+  },
+  "NC": {
+   "verdict": "DEAD_END",
+   "note": "geometry only"
+  },
+  "AR": {
+   "verdict": "DEAD_END",
+   "note": "geometry only"
+  },
+  "AL": {
+   "verdict": "DEAD_END",
+   "note": "ArcGIS host dead; PDFs"
+  },
+  "TN": {
+   "verdict": "DEAD_END",
+   "note": "stocking PDFs moved/404"
+  }
+ }
+}
