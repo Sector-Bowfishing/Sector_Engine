@@ -33,6 +33,8 @@ NIR_TAIL_EDGE_PX = 10                  # >= 100 m from the lake edge
 NIR_TAIL_MIN_PIXELS = 1000
 NIR_AMBIGUOUS_CAP = 0.10               # open-water NIR tail above this = bloom / turbid / ice-edge scene: the whole scene is BLOOM_AMBIGUOUS
 DARK_ARTIFACT_CELL_SHARE = 0.25        # cell with this share of NDVI-crossing-but-dark pixels is flagged DARK_WATER if borderline
+HAZE_SWIR_DEFAULT = 0.10                # v0.2 evaluated pair (frozen by amendment A4); the dev set could not discriminate settings, so this effectively disables the haze guard
+HAZE_STANDOFF_DEFAULT = 0
 DISTURBED_SWIR = 0.010                 # production HAZE_EDGE_SWIR: the water-at-a-haze-fringe limit, applied when the surface is disturbed
 HAZE_STANDOFF_PX = 10                  # 100 m, as production S2_HAZE_STANDOFF_M (v0.2: tunable on the dev lakes only, amendment A4)
 MIN_PLANT_CELLS = 3                    # presence needs >= 3 plant cells after dropping isolated singletons
@@ -112,10 +114,12 @@ class SceneFields:
     floor_diag: dict = field(default_factory=dict)
 
 
-def scene_nir_floor(scl, ndvi, nir, lake_mask) -> tuple[float, bool, dict]:
+def scene_nir_floor(scl, ndvi, nir, lake_mask, exclude=None) -> tuple[float, bool, dict]:
     """-> (floor, ambiguous, diag). The floor is max(NIR_PLANT_MIN, the scene's own open-water NIR tail); a tail above
     NIR_AMBIGUOUS_CAP marks the scene bloom/turbid/ice-edge ambiguous (every cell BLOOM_AMBIGUOUS), never 'no vegetation'."""
     open_w = erode(lake_mask, NIR_TAIL_EDGE_PX) & (scl == C.SCL_WATER) & np.isfinite(ndvi) & (ndvi < NIR_TAIL_NDVI_MAX) & np.isfinite(nir)
+    if exclude is not None:
+        open_w &= ~exclude          # v0.3: cloud / cirrus / shadow / snow zones never feed the tail (note 12: the tail was reading cloud and smoke as bloom)
     n = int(open_w.sum())
     if n < NIR_TAIL_MIN_PIXELS:
         return NIR_PLANT_MIN, False, {"openWaterPixels": n, "tail": None}
@@ -124,7 +128,7 @@ def scene_nir_floor(scl, ndvi, nir, lake_mask) -> tuple[float, bool, dict]:
 
 
 def scene_fields(scl: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.ndarray, lake_mask: np.ndarray, *,
-                 nir_floor: float | None = None, haze_swir: float = C.HAZE_SWIR, haze_standoff_px: int | None = None,
+                 nir_floor: float | None = None, haze_swir: float | None = None, haze_standoff_px: int | None = None,
                  adaptive_floor: bool = True) -> SceneFields:
     """All inputs on one 10 m grid (20 m bands already repeated to 10 m). red/nir/swir are reflectances (NaN = no data).
     nir_floor overrides the adaptive floor (evaluation sensitivity only)."""
@@ -133,17 +137,6 @@ def scene_fields(scl: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.nda
     finite = np.isfinite(red) & np.isfinite(nir) & np.isfinite(swir)
     valid_scl = scl > 0
     water = scl == C.SCL_WATER
-    ambiguous = False
-    if nir_floor is not None:
-        floor, diag = nir_floor, {"override": True}
-    elif adaptive_floor:
-        floor, ambiguous, diag = scene_nir_floor(scl, ndvi, nir, lake_mask)
-    else:
-        floor, diag = NIR_PLANT_MIN, {"fixed": True}
-    plant_spec = np.isfinite(ndvi) & (ndvi >= C.PLANT_NDVI_MIN)
-    plant_px = plant_spec & (nir >= floor)
-    dark_artifact = plant_spec & (nir < floor)
-
     cloud_cls = np.isin(scl, (1, 8, 9, 10))
     shadow_cls = scl == C.SCL_SHADOW
     snow_cls = scl == C.SCL_SNOW
@@ -152,9 +145,21 @@ def scene_fields(scl: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.nda
         "SHADOW": grow(shadow_cls, C.CLOUD_STANDOFF_PX // 3),
         "ICE_OR_SNOW": grow(snow_cls, C.CLOUD_STANDOFF_PX // 3),
     }
+    sky = blocked["CLOUD"] | blocked["SHADOW"] | blocked["ICE_OR_SNOW"]
+    ambiguous = False
+    if nir_floor is not None:
+        floor, diag = nir_floor, {"override": True}
+    elif adaptive_floor:
+        floor, ambiguous, diag = scene_nir_floor(scl, ndvi, nir, lake_mask, exclude=sky)
+    else:
+        floor, diag = NIR_PLANT_MIN, {"fixed": True}
+    plant_spec = np.isfinite(ndvi) & (ndvi >= C.PLANT_NDVI_MIN)
+    plant_px = plant_spec & (nir >= floor)
+    dark_artifact = plant_spec & (nir < floor)
+
     with np.errstate(invalid="ignore"):
-        haze_px = water & (swir > haze_swir) & ~plant_px
-    blocked["HAZE"] = grow(haze_px, HAZE_STANDOFF_PX if haze_standoff_px is None else haze_standoff_px)
+        haze_px = water & (swir > (HAZE_SWIR_DEFAULT if haze_swir is None else haze_swir)) & ~plant_px
+    blocked["HAZE"] = grow(haze_px, HAZE_STANDOFF_DEFAULT if haze_standoff_px is None else haze_standoff_px)
     blocked["BLOOM_AMBIGUOUS"] = lake_mask.copy() if ambiguous else np.zeros_like(haze_px)
     blocked["GLARE"] = np.zeros_like(haze_px)      # reserved: set by `apply_surface_disturbance` from the Wind Brain, never inferred here
     any_block = np.zeros_like(haze_px)

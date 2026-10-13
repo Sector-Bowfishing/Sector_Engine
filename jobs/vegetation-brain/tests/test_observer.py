@@ -76,7 +76,8 @@ def test_cloud_makes_unknown_not_no_plant():
 def test_shadow_haze_and_dark_have_distinct_reasons():
     sh = cells_for(shadow=patch((20, 40), (20, 40)))
     assert O.REASON_CODES["SHADOW"] in set(sh.reason[sh.interior & (sh.state == O.UNKNOWN)])
-    hz = cells_for(haze=patch((20, 40), (20, 40)))
+    scl, red, nir, swir = scene_arrays(haze=patch((20, 40), (20, 40)))
+    hz = O.to_cells(O.scene_fields(scl, red, nir, swir, lake_mask(), haze_swir=0.02, haze_standoff_px=10))
     unk = hz.interior & (hz.state == O.UNKNOWN)
     assert unk.sum() > 0 and O.REASON_CODES["HAZE"] in set(hz.reason[unk])
 
@@ -233,6 +234,20 @@ def test_plant_bed_survives_the_adaptive_floor_on_clean_water():
 
 def test_haze_parameters_are_explicit_and_change_the_refusal():
     scl, red, nir, swir = scene_arrays(haze=patch((20, 40), (20, 40)))
-    wide = O.to_cells(O.scene_fields(scl, red, nir, swir, lake_mask(), haze_standoff_px=10))
-    none = O.to_cells(O.scene_fields(scl, red, nir, swir, lake_mask(), haze_standoff_px=0))
+    wide = O.to_cells(O.scene_fields(scl, red, nir, swir, lake_mask(), haze_swir=0.02, haze_standoff_px=10))
+    none = O.to_cells(O.scene_fields(scl, red, nir, swir, lake_mask(), haze_swir=0.02, haze_standoff_px=0))
     assert (none.state == O.UNKNOWN).sum() < (wide.state == O.UNKNOWN).sum()
+
+
+def test_cloud_pixels_never_feed_the_bloom_tail_v03():
+    # a bright cloud patch (NIR 0.4, NDVI ~0) that SCL flags as cloud must not make the whole lake BLOOM_AMBIGUOUS
+    scl, red, nir, swir = scene_arrays()
+    cl = patch((20, 60), (20, 60))
+    scl[cl] = 9
+    nir[cl], red[cl] = 0.40, 0.39
+    f = O.scene_fields(scl, red, nir, swir, lake_mask())
+    assert not f.blocked["BLOOM_AMBIGUOUS"].any() and f.nir_floor == O.NIR_PLANT_MIN
+
+
+def test_default_haze_pair_is_the_evaluated_v02_pair():
+    assert (O.HAZE_SWIR_DEFAULT, O.HAZE_STANDOFF_DEFAULT) == (0.10, 0)

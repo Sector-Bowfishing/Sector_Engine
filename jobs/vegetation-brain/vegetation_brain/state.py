@@ -42,6 +42,7 @@ LIMITATIONS = [
     "Where truth is presence-only (e.g. Florida point surveys) recall has been low (< 0.35); treat PRESENT/NOT_OBSERVED there as unvalidated evidence, not a map.",
     "Density is not calibrated; only presence and counts are published.",
     "Algal blooms and floating plant mats can share a spectrum; ambiguity is not yet resolved.",
+    "Observer v0.3 is NOT validated: on held-out lakes v0.2 failed the lake-level NLA gates, recovered few Florida/Minnesota surface points, and its haze guard is effectively off (no validated haze rule).",
 ]
 
 
