@@ -24,7 +24,7 @@ jobs:
         run: |
           set -e
           for d in jobs/brain_platform jobs/lake-surface-dispatch jobs/brain-orchestrator jobs/water-clarity-brain \
-                   jobs/biological-brain jobs/sector-intelligence-brain jobs/water-temp-tva-archive; do
+                   jobs/biological-brain jobs/sector-intelligence-brain jobs/water-temp-tva-archive jobs/depth-brain; do
             echo "== $d"; (cd "$d" && python -m pytest -q)
           done
           (cd jobs/brain-scores && python -m pytest -q test_changed_control.py)
