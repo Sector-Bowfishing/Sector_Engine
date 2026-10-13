@@ -141,3 +141,14 @@ def test_engine_score_is_not_an_average_of_brain_scores():
 def test_engine_score_unknown_specialist_leaves_maturity_unknown():
     e = score_engine(_engine_facts(), {"lake-brain": {"value": 3.0}}, NOW)
     assert e["dimensions"]["specialistBrainMaturity"]["status"] == "UNKNOWN" and e["brainScores"]["wind"] is None
+
+
+def test_biological_next_opportunity_follows_the_published_state_without_changing_the_score():
+    reg = {"responsibilities": {"speciesKnowledge": {"speciesCount": 1, "assessedCount": 1, "notAssessedCount": 0}, "biologicalState": {"status": "NOT_STARTED"}}}
+    sp = {"a": {"assessment": "ASSESSED", "researchMaturity": "RESEARCH", "knowledge": {"overallRounded": 3.0}}}
+    before = score_biological({"registry": reg, "species": sp, "intelligenceRegistry": {}}, NOW)
+    assert "gate 4.0" in before["nextScoreOpportunity"]
+    reg2 = {"responsibilities": {**reg["responsibilities"], "biologicalState": {"status": "IN_PROGRESS", "validation": "NOT_STARTED"}}}
+    after = score_biological({"registry": reg2, "species": sp, "intelligenceRegistry": {}}, NOW)
+    assert "gate 6.0" in after["nextScoreOpportunity"] and "gate 4.0" not in after["nextScoreOpportunity"]
+    assert after["value"] > before["value"]                       # only the published state moved the number; wording never does
