@@ -1,0 +1,80 @@
+{
+ "lakes": [
+  "Alum Creek Lake|OH",
+  "Bankhead|AL",
+  "Box Butte Reservoir|NE",
+  "Branched Oak Lake|NE",
+  "Buckeye Lake|OH",
+  "Cave Run Lake|KY",
+  "Eagle Creek Reservoir|IN",
+  "Guntersville|AL",
+  "Lake Hartwell|SC",
+  "Lewis and Clark Lake|SD"
+ ],
+ "measuredAtUtc": "2026-10-13T20:30Z..20:55Z",
+ "perHost": {
+  "a2w": {
+   "bytes": 589198,
+   "bytesPerCall": 294599,
+   "calls": 2,
+   "netSeconds": 1.24,
+   "secondsPerCall": 0.619
+  },
+  "cwms": {
+   "bytes": 24318131,
+   "bytesPerCall": 47496,
+   "calls": 512,
+   "netSeconds": 291.75,
+   "secondsPerCall": 0.57
+  },
+  "hads": {
+   "bytes": 4997805,
+   "bytesPerCall": 1249451,
+   "calls": 4,
+   "netSeconds": 87.55,
+   "secondsPerCall": 21.889
+  },
+  "nwps": {
+   "bytes": 107392,
+   "bytesPerCall": 107392,
+   "calls": 1,
+   "netSeconds": 0.4,
+   "secondsPerCall": 0.402
+  },
+  "rise": {
+   "bytes": 4419007,
+   "bytesPerCall": 631287,
+   "calls": 7,
+   "netSeconds": 19.61,
+   "secondsPerCall": 2.801
+  },
+  "tva": {
+   "bytes": 54055,
+   "bytesPerCall": 27028,
+   "calls": 2,
+   "netSeconds": 1.15,
+   "secondsPerCall": 0.576
+  },
+  "usgs": {
+   "bytes": 22899158,
+   "bytesPerCall": 1635654,
+   "calls": 14,
+   "netSeconds": 20.19,
+   "secondsPerCall": 1.442
+  }
+ },
+ "schema": "lake-brain-preseed-throughput/v1",
+ "shapes": {
+  "Alum Creek Lake|OH": "cwms 15-min 2020-",
+  "Bankhead|AL": "cwms daily 1963-",
+  "Box Butte Reservoir|NE": "rise 1991-",
+  "Branched Oak Lake|NE": "cwms hourly 1984-",
+  "Buckeye Lake|OH": "usgs iv 2019-",
+  "Cave Run Lake|KY": "cwms irregular(0) 2002- (0.25 y windows)",
+  "Eagle Creek Reservoir|IN": "usgs dv 1989-",
+  "Guntersville|AL": "tva guide",
+  "Lake Hartwell|SC": "cwms daily 1962-",
+  "Lewis and Clark Lake|SD": "hads 2019-"
+ },
+ "source": "preseed_fleet.py --smoke (2 REVIEWED pilots) and --measure (8 more lakes, one provider/shape each), live read-only GETs, local files only, User-Agent Sector-LakeBrain/1.0 without contact; netSeconds is time inside the HTTP call, the per-host gap is added by the plan"
+}

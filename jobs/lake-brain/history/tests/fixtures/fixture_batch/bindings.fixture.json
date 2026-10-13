@@ -1,0 +1,323 @@
+{
+ "bindingStatus": "MACHINE_VERIFIED",
+ "bindings": [
+  {
+   "capability": "DIRECT_OPERATOR_POOL",
+   "history": [
+    {
+     "kind": "cwmsDaily",
+     "office": "SPA",
+     "series": "Alpha.Elev.Inst.~1Day.0.MRS"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 6,
+   "historyFirstYear": 2019,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Alpha Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "a2w",
+     "series": "Alpha.Elev.Inst.15Minutes.0.DCP-rev",
+     "station": "SPA:Alpha"
+    }
+   ],
+   "provider": "a2w",
+   "researchProvider": "a2w",
+   "series": "Alpha.Elev.Inst.15Minutes.0.DCP-rev",
+   "station": "SPA:Alpha",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/Denver",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  },
+  {
+   "capability": "DIRECT_OPERATOR_POOL",
+   "history": [
+    {
+     "kind": "cwmsDaily",
+     "office": "LRN",
+     "series": "Bravo-Lake.Elev.Inst.1Hour.0.Raw"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 1,
+   "historyFirstYear": 2024,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Bravo Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "cwms",
+     "series": "Bravo-Lake.Elev.Inst.1Hour.0.Raw",
+     "station": "LRN"
+    }
+   ],
+   "provider": "cwms",
+   "researchProvider": "cwms",
+   "series": "Bravo-Lake.Elev.Inst.1Hour.0.Raw",
+   "station": "LRN",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/Chicago",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  },
+  {
+   "capability": "DIRECT_LAKE_GAUGE",
+   "history": [
+    {
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "param": "62615",
+     "site": "00000001",
+     "stat": "dv"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 5,
+   "historyFirstYear": 2020,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Charlie Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "usgs",
+     "series": "62615",
+     "station": "00000001"
+    }
+   ],
+   "provider": "usgs",
+   "researchProvider": "usgs",
+   "series": "62615",
+   "station": "00000001",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/New_York",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  },
+  {
+   "capability": "DIRECT_LAKE_GAUGE",
+   "history": [
+    {
+     "kind": "usgsDaily",
+     "offsetFt": 743.91,
+     "param": "00065",
+     "site": "00000002",
+     "stat": "iv"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 3,
+   "historyFirstYear": 2022,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Delta Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "usgs",
+     "series": "62615",
+     "station": "00000002"
+    }
+   ],
+   "provider": "usgs",
+   "researchProvider": "usgs",
+   "series": "62615",
+   "station": "00000002",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/Chicago",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  },
+  {
+   "capability": "DIRECT_LAKE_GAUGE",
+   "history": [
+    {
+     "kind": "hadsDaily",
+     "lid": "ECHO1",
+     "offsetFt": 0.0,
+     "pe": "HP"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 6,
+   "historyFirstYear": 2019,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Echo Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "nwps",
+     "series": "HPIRG",
+     "station": "ECHO1"
+    }
+   ],
+   "provider": "nwps",
+   "researchProvider": "nwps",
+   "series": "HPIRG",
+   "station": "ECHO1",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/Chicago",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  },
+  {
+   "capability": "DIRECT_OPERATOR_POOL",
+   "history": [
+    {
+     "item": "9001",
+     "kind": "riseDaily"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 2,
+   "historyFirstYear": 2023,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Foxtrot Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "rise",
+     "series": null,
+     "station": "9001"
+    }
+   ],
+   "provider": "rise",
+   "researchProvider": "rise",
+   "series": null,
+   "station": "9001",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/Denver",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  },
+  {
+   "capability": "DIRECT_OPERATOR_POOL",
+   "history": [
+    {
+     "kind": "tvaOperatingGuide",
+     "locationId": "GLFT1"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 0,
+   "historyFirstYear": 2025,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Golf Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "tva",
+     "series": null,
+     "station": "GLFT1"
+    }
+   ],
+   "provider": "tva",
+   "researchProvider": "tva",
+   "series": null,
+   "station": "GLFT1",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/Chicago",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  },
+  {
+   "capability": "DIRECT_OPERATOR_POOL",
+   "history": [
+    {
+     "kind": "cwmsDaily",
+     "office": "LRH",
+     "series": "Hotel-Lake.Elev.Inst.~1Day.0.RUL"
+    }
+   ],
+   "historyBasis": "base",
+   "historyClass": "SUFFICIENT",
+   "historyCompleteYears": 4,
+   "historyFirstYear": 2021,
+   "historyNotes": [],
+   "lakeId": "FIXTURE Hotel Lake|ZZ",
+   "live": [
+    {
+     "cadenceMin": 60,
+     "capability": "DIRECT_OPERATOR_POOL",
+     "datumOffsetFt": 0.0,
+     "lagMin": 120,
+     "note": "FIXTURE",
+     "provider": "cwms",
+     "series": "Hotel-Lake.Elev.Inst.15Minutes.0.DCP-live",
+     "station": "LRH"
+    }
+   ],
+   "provider": "cwms",
+   "researchProvider": "cwms",
+   "series": "Hotel-Lake.Elev.Inst.15Minutes.0.DCP-live",
+   "station": "LRH",
+   "status": "MACHINE_VERIFIED",
+   "timeZone": "America/Chicago",
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1"
+   }
+  }
+ ],
+ "note": "FIXTURE ONLY - fake lakes for the pre-seed tests. Not a bindings table.",
+ "pilotReproduction": [],
+ "schema": "lake-brain-bindings-proposed-FIXTURE/v1"
+}
