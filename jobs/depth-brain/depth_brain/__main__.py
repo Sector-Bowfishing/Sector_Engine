@@ -25,13 +25,16 @@ def load_lake_states(spec: str, manifest: dict) -> dict:
     if kind == "file":
         return json.load(open(val))
     if kind == "rtdb":
-        from sector_brain_platform import BrainRtdb, TokenProvider, lake_key
+        from sector_brain_platform import BrainRtdb, lake_key
         db = BrainRtdb(val, brain_id="depth")
+        fleet = db.get("lakeFleet") or {}                                   # one read: which lakes have a published Lake Brain slot
+        has_lake = {k for k, v in fleet.items() if isinstance(v, dict) and (v.get("readiness") or {}).get("lake")}
         out = {}
         for c in manifest["candidates"]:
-            if not c.get("shiftPossible"):
+            k = lake_key(c["lakeId"])
+            if not c.get("shiftPossible") or (has_lake and k not in has_lake):
                 continue
-            s = db.get(f"lakes/{lake_key(c['lakeId'])}/states/lake")
+            s = db.get(f"lakes/{k}/states/lake")
             if s:
                 out[c["lakeId"]] = s
         return out
