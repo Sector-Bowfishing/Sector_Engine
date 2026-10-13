@@ -29,7 +29,9 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 DATA = os.path.join(ROOT, "jobs", "lake-brain", "data")
 PROPOSED = os.path.join(DATA, "bindings.proposed.v1.json")
 EXCLUDED = os.path.join(DATA, "bindings.proposed.v1.excluded.json")
-ACCEPTED = os.path.join(DATA, "accepted_batch.json")
+# LAKE_ACCEPTED_BATCH lets a STAGED rollout point the generator at a derived cumulative subset of the real accepted batch
+# (jobs/lake-brain/history/rollout_plan.py --emit-stage). Unset (the default and the production path) it reads the real file.
+ACCEPTED = os.environ.get("LAKE_ACCEPTED_BATCH") or os.path.join(DATA, "accepted_batch.json")
 OUT = os.path.join(ROOT, "Sources", "SectorEngine", "LakeBrain", "LakeSourceBindingsGenerated.swift")
 
 ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps", "twdb"}
