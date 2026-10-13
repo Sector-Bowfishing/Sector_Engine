@@ -72,7 +72,14 @@ no private Clarity exposure; nothing deleted (schedulers paused, not removed).
    because the Lake Brain registry publishes `schedule.running` as the **string** `"false"` → fixed in the planning
    core (`_truthy`), test added. `score_brains --if-changed` dry run afterwards: **5 of 628 control paths differ**
    (the 5 pilot Intelligence states) — the diff gate works; cycle 2's 627 writes were real (fleet-wide Water Temp).
-4. Cycle 4 (after the fix, below): Lake / Water Temp SKIP "published state is current"; nothing started.
+4. Cycle 4 (05:47): Lake / Water Temp WAIT on the 15-min start lock from cycle 2 (expected; the lock is now released
+   as soon as its execution has completed). Intelligence published **again** although nothing upstream changed:
+   `build_updates` recomputed the stored fingerprint from the CONNECTED-upgraded dependency view while `--plan`
+   computes it from the pre-run view, so every plan said "changed" (a pre-existing Intelligence bug that would have
+   republished ~950 KB every hour). Fixed: the registry stores the planned fingerprint (test added).
+5. Cycles 5–6 (after redeploy): one more Intelligence publish (the stored fingerprint switches to the planned
+   formula), then **SKIP for every brain** — the quiet-hour cost of the orchestrator is the `/jobs` sync + two
+   `--plan` subprocesses (≈ 30 s).
 
 ## Phase 20 — self-audit (25 checks, re-verified at close)
 
