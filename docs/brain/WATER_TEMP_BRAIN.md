@@ -4,7 +4,7 @@
 
 The brain does **not** judge fish activity, species behaviour, fishing quality or the Sector Intelligence score.
 
-**Status:** built on branch `brain/water-temp` (from production commit `79b966cc`, revision `sector-engine-00072-way`). **Not deployed.**
+**Status:** built on branch `brain/water-temp`, based on `intelligence/water-temp` @ `79b966cc`. **Not deployed.** (See *Closeout status* at the end: production is actually `bc9e09fb`.)
 
 Contracts: Sector_Ops `docs/BRAIN_INTEGRATION_REQUIREMENTS.md` §3, `docs/SECTOR_BRAIN_RTDB_SCHEMA.md` and `src/types/brain.ts`. This file ratifies the Engine-owned vocabularies for `water-temp`.
 
@@ -131,3 +131,30 @@ swift build --product WaterTempBrainJob
 .build/debug/WaterTempBrainJob --dry-run /tmp/brain --lake "Guntersville|AL"
 I_HAVE_MICHAELS_APPROVAL=yes ./jobs/water-temp-brain/deploy-job.sh   # after an engine image containing the job is deployed
 ```
+
+## Closeout status (2026-10-12)
+
+**Connected once, not scheduled.** On 2026-10-12 06:40 UTC, a one-time run from Michael's Mac (gcloud user token) wrote all 621 lakes to `sector-brain`:
+- `HEALTHY`;
+- 32 measured, 589 modelled;
+- `PRODUCTION` 29 / `BETA` 592.
+
+No job and no scheduler is deployed. Michael will schedule it from the portal. The data stays a snapshot until then.
+
+**Base correction.** Production's code is `bc9e09fb` (`fix/water-temp-shown-scored`, git tag `deployed/sector-engine-00072-way`). Since 2026-10-12 the live revision is `00080-wes`: the same image, right-sized to 2 vCPU / 1 GiB.
+
+This branch's base, `79b966cc`, has a **byte-identical water-temperature path**:
+- `WaterTemp/`, `Fetchers/`, `Forecast/`, `LakeDirectory`, `Deadline`.
+
+So the Brain publishes exactly production's numbers. **But** the base also carries about 2,400 lines of Clarity Stage 5 code that production does not have:
+- `CurrentClarityAPI`, `Clarity/*`, `ClarityPrecompute`, and `SectorEngineServer/main.swift` routes.
+
+**Do not serve traffic from an image built off this branch** unless that Clarity code is meant to ship: the live env flags `SECTOR_CURRENT_CLARITY_ROUTES` / `SECTOR_CLARITY_CANDIDATE_ROUTES` would turn its routes on. For the job alone, build the image with no traffic, or cherry-pick the two Brain commits onto the production line.
+
+**Tests at closeout:** `swift test` (filter water-temp + Brain) passes 41/41. The full suite passed 206/0 earlier on this branch.
+
+**Open:**
+- the scheduler (Michael);
+- the service-account IAM breadth (`roles/firebasedatabase.admin` is project-wide);
+- lake-level fleet fields owned by the Lake Brain;
+- the `water-temperature` vs `water-temp` id (the Ops contract uses `water-temp`).
