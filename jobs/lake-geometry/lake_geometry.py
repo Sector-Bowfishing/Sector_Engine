@@ -17,6 +17,7 @@ import io
 import json
 import math
 import re
+import unicodedata
 
 import numpy as np
 import pyproj
@@ -48,8 +49,15 @@ def lake_key(lake_id: str) -> str:
 _STOP = {"lake", "lakes", "reservoir", "res", "pond", "the", "of", "dam", "river", "impoundment", "bay", "flowage"}
 
 
+_OKINA = dict.fromkeys(map(ord, "\u02bb\u02bc\u2018"), None)   # Hawaiian okina and its look-alikes: part of the word, not a separator
+
+
 def norm_name(s):
-    s = (s or "").lower()
+    """Lower-cased significant tokens. Diacritics are folded and the okina is dropped, so NHD 'Ka\u02bbelepulu Pond' and the
+    directory's 'Kaelepulu Pond' share the token 'kaelepulu' (before this, the okina split it into 'ka' + 'elepulu' and the
+    pond was never matched). An ASCII apostrophe still separates tokens (unchanged)."""
+    s = unicodedata.normalize("NFKD", (s or "").lower()).translate(_OKINA)
+    s = "".join(c for c in s if not unicodedata.combining(c))
     s = re.sub(r"\(.*?\)", " ", s)
     s = re.sub(r"[^a-z0-9 ]", " ", s)
     return {w for w in s.split() if w not in _STOP}
