@@ -41,6 +41,9 @@ public struct LakeLevelBaseline: Codable, Equatable, Sendable {
     public static let fullYears = 15
     /// A rate threshold needs at least this many |Δ24h| samples in the window.
     public static let minRateSamples = 20
+    /// History rows whose `sourceId` starts with this are low-resolution (0.1 ft, non-midnight) archive values: used for the level
+    /// climatology, never for the |Δ24h| rate climatology.
+    public static let lowResolutionSourcePrefix = "nws:rvd"
     public static let grid: [Double] = [0, 2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 98, 100]
 
     public var lakeId: String
@@ -138,13 +141,18 @@ public enum LakeBaselineBuilder {
             }
         }
         // |Δ24h| samples by doy, every year in the last 30.
-        let byDate = Dictionary(daily.map { ($0.date, $0.ft) }, uniquingKeysWith: { _, b in b })
+        // Day pairs where either day came from a low-resolution archive (`LakeLevelBaseline.lowResolutionSourcePrefix`: NWS RVD text
+        // products, 0.1 ft and a 06-07 h stamp rather than midnight) are skipped: their quantisation inflates the p50/p95 of |Δ24h|
+        // (Wilson, Jun 15: p95 0.64 ft with them, 0.48 ft without). The LEVEL climatology keeps those days (the shift is 0.03-0.10 ft).
+        let byDate = Dictionary(daily.map { ($0.date, $0) }, uniquingKeysWith: { _, b in b })
         var rateByDoy: [Int: [Double]] = [:]
         for d in daily {
             guard let y = Int(d.date.prefix(4)), y > currentYear - LakeLevelBaseline.maxBasisYears,
                   let prev = LakeLevelCalendar.previousDay(d.date), let pv = byDate[prev],
+                  !d.sourceId.hasPrefix(LakeLevelBaseline.lowResolutionSourcePrefix),
+                  !pv.sourceId.hasPrefix(LakeLevelBaseline.lowResolutionSourcePrefix),
                   let doy = LakeLevelCalendar.doy365(d.date) else { continue }
-            rateByDoy[doy, default: []].append(abs(d.ft - pv))
+            rateByDoy[doy, default: []].append(abs(d.ft - pv.ft))
         }
 
         var days: [LakeBaselineDay] = []
