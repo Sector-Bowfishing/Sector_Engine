@@ -44,6 +44,7 @@ Verified datum (SAME_SOURCE + SAME_DATUM): **208**; inferred operator system: **
 | 6-provenance-reproducibility-input-verification | 4.75 | 198 | 181 | 5/91/102/423 | 5 |
 | 7-brain-model-conformity | 4.75 | 198 | 181 | 5/91/102/423 | 5 |
 | unnamed | 5.05 | 225 | 208 | 5/103/117/396 | 5 |
+| unnamed | 5.05 | 225 | 208 | 5/103/117/396 | 5 |
 
 Only the 5 pilots can publish today: Lake Brain publishes `states/lake` for exactly those lakes. The rest become live when Lake Brain adopts fleet bindings; Depth then needs no change.
 

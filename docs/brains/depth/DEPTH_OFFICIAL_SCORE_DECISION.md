@@ -10,8 +10,8 @@ The running Brain, on the claims Depth actually makes (known depth evidence, lev
 | referencePool | 6 |  | 10.0 | 387 of 414 pool-basis lakes have a high/medium reference pool |
 | datumCorrectness | 16 | yes | 10.0 | 208 verified + 17 inferred (half weight) of 225 shift-defensible lakes (quality of the datum evidence behind each shift; coverage is scored apart) |
 | fleetCoverage | 14 | yes | 7.0 | 225 of 414 pool-basis lakes have a defensible profiled shift path |
-| depthShareEvidence | 8 |  | 7.0 | 114 of 225 shift-defensible lakes have authoritative depth-share evidence (tier A/B contours or an operator elevation-area rating) |
-| shallowZoneActivation | 8 |  | 9.0 | 89 of 114 evidence lakes have effective zones activated (verified reference + passed validation or exact rating) |
+| depthShareEvidence | 8 |  | 7.0 | 133 of 225 shift-defensible lakes have authoritative depth-share evidence (tier A/B contours or an operator elevation-area rating) |
+| shallowZoneActivation | 8 |  | 9.0 | 112 of 133 evidence lakes have effective zones activated (verified reference + passed validation or exact rating) |
 | derivationValidity | 14 | yes | 8.6 | 6 of 7 published Level-2 claims are VERIFIED / DESK_VALIDATED (claim_levels.json) |
 | interpretationValidity | 14 | yes | UNKNOWN | field validation NOT_STARTED; interpretation classes published: False |
 | provenance | 5 |  | 10.0 | every state carries tier, datum assessment, sources, fingerprint, limitations (tested) |
