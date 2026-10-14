@@ -65,6 +65,8 @@ def executions_from_cloud_run(manifest: dict, executions: dict, jobs_records: di
     simple UTC crons and otherwise stays UNKNOWN; cost is an ESTIMATE from manifest resources and measured duration."""
     out = []
     for jid, mj in manifest["jobs"].items():
+        if not mj.get("brainId"):          # the orchestrator's own wake-ups are the control plane, not a Brain execution: summary.lastCycle carries the evaluation
+            continue
         for e in (executions.get(jid) or []):
             st = e.get("status") or {}
             start, end = parse_time(st.get("startTime")), parse_time(st.get("completionTime"))

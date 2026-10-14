@@ -44,7 +44,7 @@
       "dependencies": [],
       "schedule": {"class": "VALIDATION_EXCEPTION", "owner": "LEGACY_SCHEDULER", "scheduler": "lake-brain-ledger-daily", "cron": "0 12 * * *", "tz": "UTC",
                    "exception": {"gate": "Lake prospective prediction ledger (90 days for PARTIAL, 12 months for VALIDATED)", "notReconstructable": "predictions must be recorded before outcomes occur", "maxMonthlyUsd": 1, "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete", "approvedAt": "2026-10-14 (pending confirmation C-2)"}},
-      "freshness": {"staleAfterHours": 3}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "modelVersion", "bindingVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
+      "freshness": {"staleAfterHours": 26, "note": "pre-production MAINTENANCE cadence: one ledger run per day (the Brain's own registry rule is 3 h)"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "modelVersion", "bindingVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}, "timeoutSeconds": 900, "scopes": ["pilots"], "customerPublication": false
     },
     "water-temp": {

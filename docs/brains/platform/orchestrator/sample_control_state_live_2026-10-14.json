@@ -14,33 +14,38 @@
    "customerPublication": false,
    "decisions": {
     "DEPENDENCY_CHANGED": {
-     "decision": "SKIP_UNKNOWN_CHANGE",
-     "reason": "whether lake-brain,water-clarity,water-temp,wind changed is UNKNOWN (no fingerprint): not cascading",
-     "reasonCode": "CHANGE_UNKNOWN",
-     "since": "2026-10-14T18:55:09Z"
+     "decision": "SKIP_UNCHANGED",
+     "reason": "NO_MATERIAL_CHANGE in lake-brain,water-clarity,water-temp,wind",
+     "reasonCode": "NO_MATERIAL_CHANGE",
+     "since": "2026-10-14T19:31:53Z"
     },
     "SCHEDULE": {
      "decision": "SKIP_NOT_DUE",
      "reason": "no recurring schedule intent (INPUT_DRIVEN): runs only on manual, input or dependency triggers",
      "reasonCode": "NO_SCHEDULE_INTENT",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Biological",
    "executionMode": "INPUT_DRIVEN",
    "freshness": {
-    "ageHours": 21.45
+    "ageHours": 22.16
    },
    "group": "BIOLOGICAL",
    "health": "HEALTHY",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "53f1d185df97fdb3",
    "lastResult": "HEALTHY",
    "lastRun": "2026-10-13T21:28:02Z",
    "legacyStatus": "PROFILED",
    "lifecycle": "PROFILED",
-   "outputChanged": "UNKNOWN",
+   "outputChanged": "UNCHANGED",
    "outputFingerprint": "0d61c4315d29ac92",
    "outputFingerprintBasis": "REGISTRY_PROJECTION",
    "scheduleClass": "INPUT_DRIVEN",
+   "scopes": [
+    "guntersville"
+   ],
    "scoreRef": {
     "canonicalScore": 4.6,
     "path": "/scores/biological-state",
@@ -64,27 +69,29 @@
      "decision": "SKIP_NOT_DUE",
      "reason": "depth does not accept DEPENDENCY_CHANGED",
      "reasonCode": "TRIGGER_NOT_ENABLED",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     },
     "SCHEDULE": {
      "decision": "SKIP_NOT_DUE",
      "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
      "reasonCode": "NO_SCHEDULE_INTENT",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Depth",
    "executionMode": "MANUAL",
    "freshness": {
-    "ageHours": 14.49
+    "ageHours": 15.2
    },
    "group": "ENVIRONMENT",
    "health": "HEALTHY",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "eee966a2634216ab",
    "lastResult": "HEALTHY",
    "lastRun": "2026-10-14T04:25:33Z",
    "legacyStatus": "PROFILED",
    "lifecycle": "PROFILED",
-   "outputChanged": "UNKNOWN",
+   "outputChanged": "UNCHANGED",
    "outputFingerprint": "d21254edced89600",
    "outputFingerprintBasis": "REGISTRY_PROJECTION",
    "scheduleClass": "MANUAL"
@@ -107,28 +114,38 @@
      "decision": "SKIP_LEGACY_OWNED",
      "reason": "scheduled by legacy scheduler lake-brain-ledger-daily (VALIDATION_EXCEPTION); the orchestrator does not start it",
      "reasonCode": "LEGACY_OWNED",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Lake Brain",
-   "exception": "Lake prospective prediction ledger (90 days for PARTIAL, 12 months for VALIDATED)",
+   "exception": {
+    "approvedAt": "2026-10-14 (pending confirmation C-2)",
+    "gate": "Lake prospective prediction ledger (90 days for PARTIAL, 12 months for VALIDATED)",
+    "maxMonthlyUsd": 1,
+    "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete"
+   },
    "executionMode": "VALIDATION_EXCEPTION",
    "freshness": {
-    "ageHours": 6.88,
-    "stale": true,
-    "staleAfterHours": 3
+    "ageHours": 7.59,
+    "stale": false,
+    "staleAfterHours": 26
    },
    "group": "FOUNDATION",
    "health": "WARNING",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "44136fa355b3678a",
    "lastResult": "SUCCEEDED",
    "lastRun": "2026-10-14T12:02:04Z",
    "legacyStatus": "CALIBRATION",
    "lifecycle": "CALIBRATION",
    "nextDue": "2026-10-15T12:00:02.943460Z",
-   "outputChanged": "UNKNOWN",
+   "outputChanged": "UNCHANGED",
    "outputFingerprint": "7735d55e6c42b758",
    "outputFingerprintBasis": "REGISTRY_PROJECTION",
    "scheduleClass": "VALIDATION_EXCEPTION",
+   "scopes": [
+    "pilots"
+   ],
    "scoreRef": {
     "canonicalScore": 3.0,
     "path": "/scores/lake-brain",
@@ -152,30 +169,35 @@
      "decision": "SKIP_PARKED",
      "reason": "Brain is PARKED: does not execute automatically (existing state remains readable)",
      "reasonCode": "PARKED",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     },
     "SCHEDULE": {
      "decision": "SKIP_NOT_DUE",
      "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
      "reasonCode": "NO_SCHEDULE_INTENT",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Sector Intelligence",
    "executionMode": "MANUAL",
    "freshness": {
-    "ageHours": 14.06
+    "ageHours": 14.77
    },
    "group": "SYNTHESIS",
    "health": "HEALTHY",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "64834000ed00efde",
    "lastResult": "HEALTHY",
    "lastRun": "2026-10-14T04:51:36Z",
    "legacyStatus": "CALIBRATION",
    "lifecycle": "CALIBRATION",
-   "outputChanged": "UNKNOWN",
+   "outputChanged": "UNCHANGED",
    "outputFingerprint": "9b8a26aa7170b04d",
    "outputFingerprintBasis": "BRAIN_OWNED",
    "scheduleClass": "MANUAL",
+   "scopes": [
+    "pilots"
+   ],
    "scoreRef": {
     "canonicalScore": 4.8,
     "path": "/scores/sector-intelligence",
@@ -199,18 +221,20 @@
      "decision": "SKIP_NOT_DUE",
      "reason": "vegetation does not accept DEPENDENCY_CHANGED",
      "reasonCode": "TRIGGER_NOT_ENABLED",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     },
     "SCHEDULE": {
      "decision": "SKIP_NOT_DUE",
      "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
      "reasonCode": "NO_SCHEDULE_INTENT",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Vegetation",
    "executionMode": "MANUAL",
    "group": "ENVIRONMENT",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "eee966a2634216ab",
    "lifecycle": "SHADOW",
    "outputChanged": "UNKNOWN",
    "outputFingerprintBasis": "UNKNOWN",
@@ -233,26 +257,32 @@
      "decision": "SKIP_NOT_DUE",
      "reason": "no recurring schedule intent (PAUSED): runs only on manual, input or dependency triggers",
      "reasonCode": "NO_SCHEDULE_INTENT",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Water Clarity",
-   "executionMode": "PAUSED",
+   "executionMode": "MANUAL",
    "freshness": {
-    "ageHours": 60.05,
+    "ageHours": 60.76,
     "stale": true,
     "staleAfterHours": 26
    },
    "group": "ENVIRONMENT",
    "health": "HEALTHY",
-   "lastResult": "HEALTHY",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "44136fa355b3678a",
+   "lastResult": "SUCCEEDED",
    "lastRun": "2026-10-12T06:52:07Z",
    "legacyStatus": "BETA",
    "lifecycle": "CALIBRATION",
-   "outputChanged": "UNKNOWN",
+   "outputChanged": "UNCHANGED",
    "outputFingerprint": "54e2435485b89412",
    "outputFingerprintBasis": "REGISTRY_PROJECTION",
    "scheduleClass": "PAUSED",
+   "scopes": [
+    "guntersville",
+    "lake-hartwell"
+   ],
    "scoreRef": {
     "canonicalScore": 8.0,
     "path": "/scores/water-clarity",
@@ -277,26 +307,31 @@
      "decision": "SKIP_NOT_DUE",
      "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
      "reasonCode": "NO_SCHEDULE_INTENT",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Water Temperature",
    "executionMode": "MANUAL",
    "freshness": {
-    "ageHours": 16.96,
+    "ageHours": 17.67,
     "stale": true,
     "staleAfterHours": 6
    },
    "group": "CURRENT_CONDITIONS",
    "health": "HEALTHY",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "44136fa355b3678a",
    "lastResult": "SUCCEEDED",
    "lastRun": "2026-10-14T01:57:32Z",
    "legacyStatus": "CALIBRATION",
    "lifecycle": "CALIBRATION",
-   "outputChanged": "UNKNOWN",
+   "outputChanged": "UNCHANGED",
    "outputFingerprint": "a20ea5c751ee0a1a",
    "outputFingerprintBasis": "REGISTRY_PROJECTION",
    "scheduleClass": "MANUAL",
+   "scopes": [
+    "fleet"
+   ],
    "scoreRef": {
     "canonicalScore": 3.0,
     "path": "/scores/water-temp",
@@ -310,10 +345,10 @@
    "costToday": {
     "basis": "ESTIMATED",
     "day": "2026-10-14",
-    "executions": 19,
+    "executions": 20,
     "lowerBound": false,
     "unknownExecutions": 0,
-    "usd": 0.105
+    "usd": 0.1116
    },
    "customerPublication": false,
    "decisions": {
@@ -321,28 +356,38 @@
      "decision": "SKIP_LEGACY_OWNED",
      "reason": "scheduled by legacy scheduler wind-hourly (VALIDATION_EXCEPTION); the orchestrator does not start it",
      "reasonCode": "LEGACY_OWNED",
-     "since": "2026-10-14T18:55:09Z"
+     "since": "2026-10-14T19:30:40Z"
     }
    },
    "displayName": "Wind",
-   "exception": "Wind live-reliability gate (30 valid live archive days; 5 of 30 on 2026-10-13) and the timed provider-forecast archive",
+   "exception": {
+    "approvedAt": "2026-10-14",
+    "gate": "Wind live-reliability gate (30 valid live archive days; 5 of 30 on 2026-10-13) and the timed provider-forecast archive",
+    "maxMonthlyUsd": 5,
+    "stop": "reliability gate satisfied (about 2026-11-08), then re-decide"
+   },
    "executionMode": "VALIDATION_EXCEPTION",
    "freshness": {
-    "ageHours": 0.8,
+    "ageHours": 0.51,
     "stale": false,
     "staleAfterHours": 1.5
    },
    "group": "CURRENT_CONDITIONS",
    "health": "HEALTHY",
+   "inputChanged": "UNCHANGED",
+   "inputFingerprint": "44136fa355b3678a",
    "lastResult": "SUCCEEDED",
-   "lastRun": "2026-10-14T18:06:56Z",
+   "lastRun": "2026-10-14T19:07:11Z",
    "legacyStatus": "CALIBRATION",
    "lifecycle": "CALIBRATION",
-   "nextDue": "2026-10-14T19:05:01.469618Z",
-   "outputChanged": "UNKNOWN",
+   "nextDue": "2026-10-14T20:05:01.469618Z",
+   "outputChanged": "UNCHANGED",
    "outputFingerprint": "afdb642c2410a30f",
    "outputFingerprintBasis": "REGISTRY_PROJECTION",
    "scheduleClass": "VALIDATION_EXCEPTION",
+   "scopes": [
+    "current-live-lakes"
+   ],
    "scoreRef": {
     "canonicalScore": 3.3,
     "path": "/scores/wind",
@@ -357,19 +402,19 @@
   "today": {
    "basis": "ESTIMATED",
    "day": "2026-10-14",
-   "executions": 35,
+   "executions": 30,
    "lowerBound": false,
    "unknownExecutions": 0,
-   "usd": 0.1493
+   "usd": 0.1444
   }
  },
  "decisions": {
-  "d-20261014T185509Z-biological-state-DEPENDENCY_CHANGED": {
+  "d-20261014T193040Z-biological-state-DEPENDENCY_CHANGED": {
    "activityState": "ACTIVE",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "biological-state",
    "decision": "SKIP_UNKNOWN_CHANGE",
-   "decisionId": "d-20261014T185509Z-biological-state-DEPENDENCY_CHANGED",
+   "decisionId": "d-20261014T193040Z-biological-state-DEPENDENCY_CHANGED",
    "inputFingerprint": "53f1d185df97fdb3",
    "publish": false,
    "reason": "whether lake-brain,water-clarity,water-temp,wind changed is UNKNOWN (no fingerprint): not cascading",
@@ -380,12 +425,12 @@
    },
    "trigger": "DEPENDENCY_CHANGED"
   },
-  "d-20261014T185509Z-biological-state-SCHEDULE": {
+  "d-20261014T193040Z-biological-state-SCHEDULE": {
    "activityState": "ACTIVE",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "biological-state",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-biological-state-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-biological-state-SCHEDULE",
    "publish": false,
    "reason": "no recurring schedule intent (INPUT_DRIVEN): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
@@ -395,12 +440,12 @@
    },
    "trigger": "SCHEDULE"
   },
-  "d-20261014T185509Z-depth-DEPENDENCY_CHANGED": {
+  "d-20261014T193040Z-depth-DEPENDENCY_CHANGED": {
    "activityState": "PARKED",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "depth",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-depth-DEPENDENCY_CHANGED",
+   "decisionId": "d-20261014T193040Z-depth-DEPENDENCY_CHANGED",
    "publish": false,
    "reason": "depth does not accept DEPENDENCY_CHANGED",
    "reasonCode": "TRIGGER_NOT_ENABLED",
@@ -410,12 +455,12 @@
    },
    "trigger": "DEPENDENCY_CHANGED"
   },
-  "d-20261014T185509Z-depth-SCHEDULE": {
+  "d-20261014T193040Z-depth-SCHEDULE": {
    "activityState": "PARKED",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "depth",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-depth-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-depth-SCHEDULE",
    "publish": false,
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
@@ -425,12 +470,12 @@
    },
    "trigger": "SCHEDULE"
   },
-  "d-20261014T185509Z-lake-brain-SCHEDULE": {
+  "d-20261014T193040Z-lake-brain-SCHEDULE": {
    "activityState": "MAINTENANCE",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "lake-brain",
    "decision": "SKIP_LEGACY_OWNED",
-   "decisionId": "d-20261014T185509Z-lake-brain-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-lake-brain-SCHEDULE",
    "publish": false,
    "reason": "scheduled by legacy scheduler lake-brain-ledger-daily (VALIDATION_EXCEPTION); the orchestrator does not start it",
    "reasonCode": "LEGACY_OWNED",
@@ -440,12 +485,12 @@
    },
    "trigger": "SCHEDULE"
   },
-  "d-20261014T185509Z-sector-intelligence-DEPENDENCY_CHANGED": {
+  "d-20261014T193040Z-sector-intelligence-DEPENDENCY_CHANGED": {
    "activityState": "PARKED",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "sector-intelligence",
    "decision": "SKIP_PARKED",
-   "decisionId": "d-20261014T185509Z-sector-intelligence-DEPENDENCY_CHANGED",
+   "decisionId": "d-20261014T193040Z-sector-intelligence-DEPENDENCY_CHANGED",
    "publish": false,
    "reason": "Brain is PARKED: does not execute automatically (existing state remains readable)",
    "reasonCode": "PARKED",
@@ -455,12 +500,12 @@
    },
    "trigger": "DEPENDENCY_CHANGED"
   },
-  "d-20261014T185509Z-sector-intelligence-SCHEDULE": {
+  "d-20261014T193040Z-sector-intelligence-SCHEDULE": {
    "activityState": "PARKED",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "sector-intelligence",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-sector-intelligence-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-sector-intelligence-SCHEDULE",
    "publish": false,
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
@@ -470,12 +515,12 @@
    },
    "trigger": "SCHEDULE"
   },
-  "d-20261014T185509Z-vegetation-DEPENDENCY_CHANGED": {
+  "d-20261014T193040Z-vegetation-DEPENDENCY_CHANGED": {
    "activityState": "PARKED",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "vegetation",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-vegetation-DEPENDENCY_CHANGED",
+   "decisionId": "d-20261014T193040Z-vegetation-DEPENDENCY_CHANGED",
    "publish": false,
    "reason": "vegetation does not accept DEPENDENCY_CHANGED",
    "reasonCode": "TRIGGER_NOT_ENABLED",
@@ -485,12 +530,12 @@
    },
    "trigger": "DEPENDENCY_CHANGED"
   },
-  "d-20261014T185509Z-vegetation-SCHEDULE": {
+  "d-20261014T193040Z-vegetation-SCHEDULE": {
    "activityState": "PARKED",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "vegetation",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-vegetation-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-vegetation-SCHEDULE",
    "publish": false,
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
@@ -500,12 +545,12 @@
    },
    "trigger": "SCHEDULE"
   },
-  "d-20261014T185509Z-water-clarity-SCHEDULE": {
+  "d-20261014T193040Z-water-clarity-SCHEDULE": {
    "activityState": "ACTIVE",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "water-clarity",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-water-clarity-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-water-clarity-SCHEDULE",
    "publish": false,
    "reason": "no recurring schedule intent (PAUSED): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
@@ -515,12 +560,12 @@
    },
    "trigger": "SCHEDULE"
   },
-  "d-20261014T185509Z-water-temp-SCHEDULE": {
+  "d-20261014T193040Z-water-temp-SCHEDULE": {
    "activityState": "PARKED",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "water-temp",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-water-temp-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-water-temp-SCHEDULE",
    "publish": false,
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
@@ -530,12 +575,12 @@
    },
    "trigger": "SCHEDULE"
   },
-  "d-20261014T185509Z-wind-SCHEDULE": {
+  "d-20261014T193040Z-wind-SCHEDULE": {
    "activityState": "ACTIVE",
-   "at": "2026-10-14T18:55:09Z",
+   "at": "2026-10-14T19:30:40Z",
    "brainId": "wind",
    "decision": "SKIP_LEGACY_OWNED",
-   "decisionId": "d-20261014T185509Z-wind-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-wind-SCHEDULE",
    "publish": false,
    "reason": "scheduled by legacy scheduler wind-hourly (VALIDATION_EXCEPTION); the orchestrator does not start it",
    "reasonCode": "LEGACY_OWNED",
@@ -544,387 +589,212 @@
     "owner": "LEGACY_SCHEDULER"
    },
    "trigger": "SCHEDULE"
+  },
+  "d-20261014T193153Z-biological-state-DEPENDENCY_CHANGED": {
+   "activityState": "ACTIVE",
+   "at": "2026-10-14T19:31:53Z",
+   "brainId": "biological-state",
+   "decision": "SKIP_UNCHANGED",
+   "decisionId": "d-20261014T193153Z-biological-state-DEPENDENCY_CHANGED",
+   "inputFingerprint": "53f1d185df97fdb3",
+   "publish": false,
+   "reason": "NO_MATERIAL_CHANGE in lake-brain,water-clarity,water-temp,wind",
+   "reasonCode": "NO_MATERIAL_CHANGE",
+   "scheduleState": {
+    "class": "INPUT_DRIVEN",
+    "owner": "ORCHESTRATOR"
+   },
+   "trigger": "DEPENDENCY_CHANGED"
   }
  },
  "edges": {
   "biological-state__sector-intelligence": {
+   "action": "READ_EXISTING",
    "from": "biological-state",
    "kind": "SOFT",
    "maxAgeHours": 168,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "sector-intelligence"
+   "status": "FRESH",
+   "to": "sector-intelligence",
+   "upstreamActivity": "ACTIVE"
   },
   "lake-brain__biological-state": {
+   "action": "READ_EXISTING",
    "from": "lake-brain",
    "kind": "SOFT",
    "maxAgeHours": 24,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "biological-state"
+   "status": "FRESH",
+   "to": "biological-state",
+   "upstreamActivity": "MAINTENANCE"
   },
   "lake-brain__depth": {
+   "action": "READ_EXISTING",
    "from": "lake-brain",
    "kind": "HARD",
    "maxAgeHours": 168,
    "onStale": "MANUAL_APPROVAL",
    "provisional": true,
-   "to": "depth"
+   "status": "FRESH",
+   "to": "depth",
+   "upstreamActivity": "MAINTENANCE"
   },
   "lake-brain__sector-intelligence": {
+   "action": "READ_EXISTING",
    "from": "lake-brain",
    "kind": "SOFT",
    "maxAgeHours": 24,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "sector-intelligence"
+   "status": "FRESH",
+   "to": "sector-intelligence",
+   "upstreamActivity": "MAINTENANCE"
   },
   "lake-brain__vegetation": {
+   "action": "READ_EXISTING",
    "from": "lake-brain",
    "kind": "SOFT",
    "maxAgeHours": 168,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "vegetation"
+   "status": "FRESH",
+   "to": "vegetation",
+   "upstreamActivity": "MAINTENANCE"
   },
   "water-clarity__biological-state": {
+   "action": "READ_EXISTING",
    "from": "water-clarity",
    "kind": "SOFT",
    "maxAgeHours": 72,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "biological-state"
+   "status": "FRESH",
+   "to": "biological-state",
+   "upstreamActivity": "ACTIVE"
   },
   "water-clarity__sector-intelligence": {
+   "action": "READ_EXISTING",
    "from": "water-clarity",
    "kind": "SOFT",
    "maxAgeHours": 72,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "sector-intelligence"
+   "status": "FRESH",
+   "to": "sector-intelligence",
+   "upstreamActivity": "ACTIVE"
   },
   "water-temp__biological-state": {
+   "action": "READ_EXISTING",
    "from": "water-temp",
    "kind": "SOFT",
    "maxAgeHours": 48,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "biological-state"
+   "status": "FRESH",
+   "to": "biological-state",
+   "upstreamActivity": "PARKED"
   },
   "water-temp__sector-intelligence": {
+   "action": "READ_EXISTING",
    "from": "water-temp",
    "kind": "SOFT",
    "maxAgeHours": 48,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "sector-intelligence"
+   "status": "FRESH",
+   "to": "sector-intelligence",
+   "upstreamActivity": "PARKED"
   },
   "wind__biological-state": {
+   "action": "READ_EXISTING",
    "from": "wind",
    "kind": "SOFT",
    "maxAgeHours": 6,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "biological-state"
+   "status": "FRESH",
+   "to": "biological-state",
+   "upstreamActivity": "ACTIVE"
   },
   "wind__sector-intelligence": {
+   "action": "READ_EXISTING",
    "from": "wind",
    "kind": "SOFT",
    "maxAgeHours": 6,
    "onStale": "DEPENDENCY_STALE",
    "provisional": true,
-   "to": "sector-intelligence"
+   "status": "FRESH",
+   "to": "sector-intelligence",
+   "upstreamActivity": "ACTIVE"
   }
  },
  "executions": {
-  "brain-orchestrator-29xzk": {
-   "brainId": "platform",
+  "clarity-current-hourly-rfrqj": {
+   "brainId": "water-clarity",
    "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.002
+    "basis": "UNKNOWN"
    },
-   "durationSeconds": 77.7,
-   "endedAt": "2026-10-13T18:52:02Z",
-   "executionId": "brain-orchestrator-29xzk",
-   "jobId": "brain-orchestrator",
+   "durationSeconds": 74.9,
+   "endedAt": "2026-10-13T03:41:36Z",
+   "executionId": "clarity-current-hourly-rfrqj",
+   "jobId": "clarity-current-hourly",
    "outputChanged": "UNKNOWN",
    "reason": "legacy scheduler fire",
    "source": "cloud-run",
-   "startedAt": "2026-10-13T18:50:44Z",
+   "startedAt": "2026-10-13T03:40:21Z",
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
-  "brain-orchestrator-454k8": {
-   "brainId": "platform",
+  "clarity-current-hourly-tzn2t": {
+   "brainId": "water-clarity",
    "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0017
+    "basis": "UNKNOWN"
    },
-   "durationSeconds": 65.6,
-   "endedAt": "2026-10-14T02:51:32Z",
-   "executionId": "brain-orchestrator-454k8",
-   "jobId": "brain-orchestrator",
+   "durationSeconds": 75.4,
+   "endedAt": "2026-10-13T04:41:35Z",
+   "executionId": "clarity-current-hourly-tzn2t",
+   "jobId": "clarity-current-hourly",
    "outputChanged": "UNKNOWN",
    "reason": "legacy scheduler fire",
    "source": "cloud-run",
-   "startedAt": "2026-10-14T02:50:26Z",
+   "startedAt": "2026-10-13T04:40:19Z",
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
-  "brain-orchestrator-89xxf": {
-   "brainId": "platform",
+  "hydrology-hourly-9qksr": {
+   "brainId": "water-clarity",
    "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0022
+    "basis": "UNKNOWN"
    },
-   "durationSeconds": 85.7,
-   "endedAt": "2026-10-13T17:51:40Z",
-   "executionId": "brain-orchestrator-89xxf",
-   "jobId": "brain-orchestrator",
+   "durationSeconds": 117.2,
+   "endedAt": "2026-10-13T04:17:17Z",
+   "executionId": "hydrology-hourly-9qksr",
+   "jobId": "hydrology-hourly",
    "outputChanged": "UNKNOWN",
    "reason": "legacy scheduler fire",
    "source": "cloud-run",
-   "startedAt": "2026-10-13T17:50:14Z",
+   "startedAt": "2026-10-13T04:15:19Z",
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
-  "brain-orchestrator-8qv6h": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0025
-   },
-   "durationSeconds": 99.3,
-   "endedAt": "2026-10-13T21:51:53Z",
-   "executionId": "brain-orchestrator-8qv6h",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T21:50:14Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-925x7": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0021
-   },
-   "durationSeconds": 82.0,
-   "endedAt": "2026-10-14T00:51:32Z",
-   "executionId": "brain-orchestrator-925x7",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-14T00:50:10Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-9l2c6": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0023
-   },
-   "durationSeconds": 89.2,
-   "endedAt": "2026-10-13T22:51:41Z",
-   "executionId": "brain-orchestrator-9l2c6",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T22:50:12Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-d6ggk": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0025
-   },
-   "durationSeconds": 100.1,
-   "endedAt": "2026-10-13T16:52:08Z",
-   "executionId": "brain-orchestrator-d6ggk",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T16:50:28Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-fvvlv": {
-   "brainId": "platform",
+  "lake-brain-47lvs": {
+   "brainId": "lake-brain",
    "cost": {
     "basis": "ESTIMATED",
     "usd": 0.0019
    },
-   "durationSeconds": 76.9,
-   "endedAt": "2026-10-14T04:30:01Z",
-   "executionId": "brain-orchestrator-fvvlv",
-   "jobId": "brain-orchestrator",
+   "durationSeconds": 70.3,
+   "endedAt": "2026-10-13T05:35:02Z",
+   "executionId": "lake-brain-47lvs",
+   "jobId": "lake-brain",
    "outputChanged": "UNKNOWN",
    "reason": "started outside the orchestrator (trigger not recorded)",
    "source": "cloud-run",
-   "startedAt": "2026-10-14T04:28:44Z",
+   "startedAt": "2026-10-13T05:33:51Z",
    "status": "SUCCEEDED",
    "trigger": "UNKNOWN"
-  },
-  "brain-orchestrator-jsztk": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0029
-   },
-   "durationSeconds": 114.0,
-   "endedAt": "2026-10-13T15:52:14Z",
-   "executionId": "brain-orchestrator-jsztk",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T15:50:20Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-mgx2f": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0024
-   },
-   "durationSeconds": 95.2,
-   "endedAt": "2026-10-13T19:51:51Z",
-   "executionId": "brain-orchestrator-mgx2f",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T19:50:16Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-p44nh": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0023
-   },
-   "durationSeconds": 91.7,
-   "endedAt": "2026-10-13T23:51:52Z",
-   "executionId": "brain-orchestrator-p44nh",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T23:50:20Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-pxjwq": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0018
-   },
-   "durationSeconds": 70.3,
-   "endedAt": "2026-10-14T03:51:43Z",
-   "executionId": "brain-orchestrator-pxjwq",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-14T03:50:32Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-rxr5n": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0017
-   },
-   "durationSeconds": 66.2,
-   "endedAt": "2026-10-14T01:51:31Z",
-   "executionId": "brain-orchestrator-rxr5n",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-14T01:50:24Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-tdvn2": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0026
-   },
-   "durationSeconds": 104.2,
-   "endedAt": "2026-10-13T14:52:18Z",
-   "executionId": "brain-orchestrator-tdvn2",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T14:50:34Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-wzsct": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0023
-   },
-   "durationSeconds": 91.3,
-   "endedAt": "2026-10-14T04:51:44Z",
-   "executionId": "brain-orchestrator-wzsct",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-14T04:50:13Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-xwzl9": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0019
-   },
-   "durationSeconds": 75.4,
-   "endedAt": "2026-10-13T20:51:46Z",
-   "executionId": "brain-orchestrator-xwzl9",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T20:50:30Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
-  },
-  "brain-orchestrator-zd7rj": {
-   "brainId": "platform",
-   "cost": {
-    "basis": "ESTIMATED",
-    "usd": 0.0019
-   },
-   "durationSeconds": 74.2,
-   "endedAt": "2026-10-13T18:58:24Z",
-   "executionId": "brain-orchestrator-zd7rj",
-   "jobId": "brain-orchestrator",
-   "outputChanged": "UNKNOWN",
-   "reason": "legacy scheduler fire",
-   "source": "cloud-run",
-   "startedAt": "2026-10-13T18:57:10Z",
-   "status": "SUCCEEDED",
-   "trigger": "SCHEDULE"
   },
   "lake-brain-8bnwt": {
    "brainId": "lake-brain",
@@ -940,6 +810,40 @@
    "reason": "started outside the orchestrator (trigger not recorded)",
    "source": "cloud-run",
    "startedAt": "2026-10-14T02:51:36Z",
+   "status": "SUCCEEDED",
+   "trigger": "UNKNOWN"
+  },
+  "lake-brain-8kq9r": {
+   "brainId": "lake-brain",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0029
+   },
+   "durationSeconds": 108.4,
+   "endedAt": "2026-10-13T12:53:46Z",
+   "executionId": "lake-brain-8kq9r",
+   "jobId": "lake-brain",
+   "outputChanged": "UNKNOWN",
+   "reason": "started outside the orchestrator (trigger not recorded)",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T12:51:58Z",
+   "status": "SUCCEEDED",
+   "trigger": "UNKNOWN"
+  },
+  "lake-brain-gb9jd": {
+   "brainId": "lake-brain",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0039
+   },
+   "durationSeconds": 148.0,
+   "endedAt": "2026-10-13T08:54:16Z",
+   "executionId": "lake-brain-gb9jd",
+   "jobId": "lake-brain",
+   "outputChanged": "UNKNOWN",
+   "reason": "started outside the orchestrator (trigger not recorded)",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T08:51:48Z",
    "status": "SUCCEEDED",
    "trigger": "UNKNOWN"
   },
@@ -1045,6 +949,74 @@
    "status": "SUCCEEDED",
    "trigger": "UNKNOWN"
   },
+  "lake-surface-daily-rbhs2": {
+   "brainId": "water-clarity",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 3.3629
+   },
+   "durationSeconds": 3090.9,
+   "endedAt": "2026-10-13T08:53:20Z",
+   "executionId": "lake-surface-daily-rbhs2",
+   "jobId": "lake-surface-daily",
+   "outputChanged": "UNKNOWN",
+   "reason": "started outside the orchestrator (trigger not recorded)",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T08:01:50Z",
+   "status": "SUCCEEDED",
+   "trigger": "UNKNOWN"
+  },
+  "lake-surface-dispatch-fqd5g": {
+   "brainId": "water-clarity",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0026
+   },
+   "durationSeconds": 102.8,
+   "endedAt": "2026-10-13T08:01:52Z",
+   "executionId": "lake-surface-dispatch-fqd5g",
+   "jobId": "lake-surface-dispatch",
+   "outputChanged": "UNKNOWN",
+   "reason": "started outside the orchestrator (trigger not recorded)",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T08:00:10Z",
+   "status": "SUCCEEDED",
+   "trigger": "UNKNOWN"
+  },
+  "lake-surface-dispatch-s2fb5": {
+   "brainId": "water-clarity",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0041
+   },
+   "durationSeconds": 162.9,
+   "endedAt": "2026-10-13T05:02:16Z",
+   "executionId": "lake-surface-dispatch-s2fb5",
+   "jobId": "lake-surface-dispatch",
+   "outputChanged": "UNKNOWN",
+   "reason": "started outside the orchestrator (trigger not recorded)",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T04:59:33Z",
+   "status": "SUCCEEDED",
+   "trigger": "UNKNOWN"
+  },
+  "water-temp-brain-bkmlf": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0099
+   },
+   "durationSeconds": 373.5,
+   "endedAt": "2026-10-13T11:58:21Z",
+   "executionId": "water-temp-brain-bkmlf",
+   "jobId": "water-temp-brain",
+   "outputChanged": "UNKNOWN",
+   "reason": "started outside the orchestrator (trigger not recorded)",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T11:52:08Z",
+   "status": "SUCCEEDED",
+   "trigger": "UNKNOWN"
+  },
   "water-temp-brain-h6v2b": {
    "brainId": "water-temp",
    "cost": {
@@ -1059,6 +1031,23 @@
    "reason": "started outside the orchestrator (trigger not recorded)",
    "source": "cloud-run",
    "startedAt": "2026-10-14T01:51:34Z",
+   "status": "SUCCEEDED",
+   "trigger": "UNKNOWN"
+  },
+  "water-temp-brain-p2g5c": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0089
+   },
+   "durationSeconds": 336.6,
+   "endedAt": "2026-10-13T05:39:28Z",
+   "executionId": "water-temp-brain-p2g5c",
+   "jobId": "water-temp-brain",
+   "outputChanged": "UNKNOWN",
+   "reason": "started outside the orchestrator (trigger not recorded)",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T05:33:51Z",
    "status": "SUCCEEDED",
    "trigger": "UNKNOWN"
   },
@@ -1164,6 +1153,23 @@
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
+  "water-temp-tva-archive-82rmn": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0022
+   },
+   "durationSeconds": 87.6,
+   "endedAt": "2026-10-13T09:21:37Z",
+   "executionId": "water-temp-tva-archive-82rmn",
+   "jobId": "water-temp-tva-archive",
+   "outputChanged": "UNKNOWN",
+   "reason": "legacy scheduler fire",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T09:20:10Z",
+   "status": "SUCCEEDED",
+   "trigger": "SCHEDULE"
+  },
   "water-temp-tva-archive-cbw7b": {
    "brainId": "water-temp",
    "cost": {
@@ -1178,6 +1184,23 @@
    "reason": "legacy scheduler fire",
    "source": "cloud-run",
    "startedAt": "2026-10-13T16:20:30Z",
+   "status": "SUCCEEDED",
+   "trigger": "SCHEDULE"
+  },
+  "water-temp-tva-archive-csq9r": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.003
+   },
+   "durationSeconds": 119.3,
+   "endedAt": "2026-10-13T11:22:09Z",
+   "executionId": "water-temp-tva-archive-csq9r",
+   "jobId": "water-temp-tva-archive",
+   "outputChanged": "UNKNOWN",
+   "reason": "legacy scheduler fire",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T11:20:10Z",
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
@@ -1232,6 +1255,23 @@
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
+  "water-temp-tva-archive-j9ldn": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0023
+   },
+   "durationSeconds": 92.1,
+   "endedAt": "2026-10-13T13:22:06Z",
+   "executionId": "water-temp-tva-archive-j9ldn",
+   "jobId": "water-temp-tva-archive",
+   "outputChanged": "UNKNOWN",
+   "reason": "legacy scheduler fire",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T13:20:34Z",
+   "status": "SUCCEEDED",
+   "trigger": "SCHEDULE"
+  },
   "water-temp-tva-archive-jt8l5": {
    "brainId": "water-temp",
    "cost": {
@@ -1249,6 +1289,23 @@
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
+  "water-temp-tva-archive-mv2hc": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.002
+   },
+   "durationSeconds": 80.9,
+   "endedAt": "2026-10-13T14:21:41Z",
+   "executionId": "water-temp-tva-archive-mv2hc",
+   "jobId": "water-temp-tva-archive",
+   "outputChanged": "UNKNOWN",
+   "reason": "legacy scheduler fire",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T14:20:20Z",
+   "status": "SUCCEEDED",
+   "trigger": "SCHEDULE"
+  },
   "water-temp-tva-archive-q9jxq": {
    "brainId": "water-temp",
    "cost": {
@@ -1263,6 +1320,23 @@
    "reason": "legacy scheduler fire",
    "source": "cloud-run",
    "startedAt": "2026-10-13T18:20:24Z",
+   "status": "SUCCEEDED",
+   "trigger": "SCHEDULE"
+  },
+  "water-temp-tva-archive-thdqb": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0024
+   },
+   "durationSeconds": 94.4,
+   "endedAt": "2026-10-13T10:21:48Z",
+   "executionId": "water-temp-tva-archive-thdqb",
+   "jobId": "water-temp-tva-archive",
+   "outputChanged": "UNKNOWN",
+   "reason": "legacy scheduler fire",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T10:20:14Z",
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
@@ -1300,6 +1374,23 @@
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
+  "water-temp-tva-archive-z4svk": {
+   "brainId": "water-temp",
+   "cost": {
+    "basis": "ESTIMATED",
+    "usd": 0.0021
+   },
+   "durationSeconds": 84.8,
+   "endedAt": "2026-10-13T12:21:57Z",
+   "executionId": "water-temp-tva-archive-z4svk",
+   "jobId": "water-temp-tva-archive",
+   "outputChanged": "UNKNOWN",
+   "reason": "legacy scheduler fire",
+   "source": "cloud-run",
+   "startedAt": "2026-10-13T12:20:32Z",
+   "status": "SUCCEEDED",
+   "trigger": "SCHEDULE"
+  },
   "water-temp-tva-archive-zftks": {
    "brainId": "water-temp",
    "cost": {
@@ -1317,20 +1408,20 @@
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
-  "wind-hourly-2dqc5": {
+  "wind-hourly-4jt62": {
    "brainId": "wind",
    "cost": {
     "basis": "ESTIMATED",
-    "usd": 0.0062
+    "usd": 0.0066
    },
-   "durationSeconds": 213.7,
-   "endedAt": "2026-10-13T23:09:56Z",
-   "executionId": "wind-hourly-2dqc5",
+   "durationSeconds": 228.1,
+   "endedAt": "2026-10-14T19:09:13Z",
+   "executionId": "wind-hourly-4jt62",
    "jobId": "wind-hourly",
    "outputChanged": "UNKNOWN",
    "reason": "legacy scheduler fire",
    "source": "cloud-run",
-   "startedAt": "2026-10-13T23:06:22Z",
+   "startedAt": "2026-10-14T19:05:24Z",
    "status": "SUCCEEDED",
    "trigger": "SCHEDULE"
   },
@@ -1694,7 +1785,6 @@
    "executionTarget": "brain-orchestrator",
    "jobId": "brain-orchestrator",
    "lastCompletedAt": "2026-10-14T04:51:44.264849Z",
-   "lastExecutionId": "brain-orchestrator-wzsct",
    "lastResult": "PAUSED",
    "lastStartedAt": "2026-10-14T04:50:13.000572Z",
    "purpose": "control plane: decisions, control state, score publication",
@@ -1730,6 +1820,7 @@
    "executionTarget": "clarity-current-hourly",
    "jobId": "clarity-current-hourly",
    "lastCompletedAt": "2026-10-13T04:41:35.306042Z",
+   "lastExecutionId": "clarity-current-hourly-tzn2t",
    "lastResult": "PAUSED",
    "lastStartedAt": "2026-10-13T04:40:19.928135Z",
    "purpose": "current clarity hourly",
@@ -1748,6 +1839,7 @@
    "executionTarget": "hydrology-hourly",
    "jobId": "hydrology-hourly",
    "lastCompletedAt": "2026-10-13T04:17:17.111518Z",
+   "lastExecutionId": "hydrology-hourly-9qksr",
    "lastResult": "PAUSED",
    "lastStartedAt": "2026-10-13T04:15:19.908321Z",
    "purpose": "hydrology inputs for Clarity",
@@ -1801,6 +1893,7 @@
    "executionTarget": "lake-surface-daily",
    "jobId": "lake-surface-daily",
    "lastCompletedAt": "2026-10-13T08:53:20.998136Z",
+   "lastExecutionId": "lake-surface-daily-rbhs2",
    "lastResult": "HEALTHY",
    "lastStartedAt": "2026-10-13T08:01:50.070852Z",
    "purpose": "heavy scene processing (started by dispatch)",
@@ -1820,6 +1913,7 @@
    "executionTarget": "lake-surface-dispatch",
    "jobId": "lake-surface-dispatch",
    "lastCompletedAt": "2026-10-13T08:01:52.851695Z",
+   "lastExecutionId": "lake-surface-dispatch-fqd5g",
    "lastResult": "PAUSED",
    "lastStartedAt": "2026-10-13T08:00:10.057830Z",
    "purpose": "daily Sentinel-2 scene discovery; starts the heavy job",
@@ -1872,15 +1966,15 @@
     "monthlyUsdWhenEnabled": 4.1
    },
    "customerImpact": false,
-   "durationMs": 202332,
+   "durationMs": 228146,
    "enabled": true,
    "executionTarget": "wind-hourly",
    "jobId": "wind-hourly",
-   "lastCompletedAt": "2026-10-14T18:08:47.200459Z",
-   "lastExecutionId": "wind-hourly-cjrwx",
+   "lastCompletedAt": "2026-10-14T19:09:13.137801Z",
+   "lastExecutionId": "wind-hourly-4jt62",
    "lastResult": "HEALTHY",
-   "lastStartedAt": "2026-10-14T18:05:24.868209Z",
-   "nextDue": "2026-10-14T19:05:01.469618Z",
+   "lastStartedAt": "2026-10-14T19:05:24.991046Z",
+   "nextDue": "2026-10-14T20:05:01.469618Z",
    "purpose": "prospective reliability + provider-forecast archive (4 lakes)",
    "schedule": "5 * * * * UTC",
    "validationOnly": true
@@ -1889,110 +1983,110 @@
  "latestDecisions": {
   "biological-state__DEPENDENCY_CHANGED": {
    "brainId": "biological-state",
-   "decision": "SKIP_UNKNOWN_CHANGE",
-   "decisionId": "d-20261014T185509Z-biological-state-DEPENDENCY_CHANGED",
-   "reason": "whether lake-brain,water-clarity,water-temp,wind changed is UNKNOWN (no fingerprint): not cascading",
-   "reasonCode": "CHANGE_UNKNOWN",
-   "since": "2026-10-14T18:55:09Z",
+   "decision": "SKIP_UNCHANGED",
+   "decisionId": "d-20261014T193153Z-biological-state-DEPENDENCY_CHANGED",
+   "reason": "NO_MATERIAL_CHANGE in lake-brain,water-clarity,water-temp,wind",
+   "reasonCode": "NO_MATERIAL_CHANGE",
+   "since": "2026-10-14T19:31:53Z",
    "trigger": "DEPENDENCY_CHANGED"
   },
   "biological-state__SCHEDULE": {
    "brainId": "biological-state",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-biological-state-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-biological-state-SCHEDULE",
    "reason": "no recurring schedule intent (INPUT_DRIVEN): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   },
   "depth__DEPENDENCY_CHANGED": {
    "brainId": "depth",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-depth-DEPENDENCY_CHANGED",
+   "decisionId": "d-20261014T193040Z-depth-DEPENDENCY_CHANGED",
    "reason": "depth does not accept DEPENDENCY_CHANGED",
    "reasonCode": "TRIGGER_NOT_ENABLED",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "DEPENDENCY_CHANGED"
   },
   "depth__SCHEDULE": {
    "brainId": "depth",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-depth-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-depth-SCHEDULE",
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   },
   "lake-brain__SCHEDULE": {
    "brainId": "lake-brain",
    "decision": "SKIP_LEGACY_OWNED",
-   "decisionId": "d-20261014T185509Z-lake-brain-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-lake-brain-SCHEDULE",
    "reason": "scheduled by legacy scheduler lake-brain-ledger-daily (VALIDATION_EXCEPTION); the orchestrator does not start it",
    "reasonCode": "LEGACY_OWNED",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   },
   "sector-intelligence__DEPENDENCY_CHANGED": {
    "brainId": "sector-intelligence",
    "decision": "SKIP_PARKED",
-   "decisionId": "d-20261014T185509Z-sector-intelligence-DEPENDENCY_CHANGED",
+   "decisionId": "d-20261014T193040Z-sector-intelligence-DEPENDENCY_CHANGED",
    "reason": "Brain is PARKED: does not execute automatically (existing state remains readable)",
    "reasonCode": "PARKED",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "DEPENDENCY_CHANGED"
   },
   "sector-intelligence__SCHEDULE": {
    "brainId": "sector-intelligence",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-sector-intelligence-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-sector-intelligence-SCHEDULE",
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   },
   "vegetation__DEPENDENCY_CHANGED": {
    "brainId": "vegetation",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-vegetation-DEPENDENCY_CHANGED",
+   "decisionId": "d-20261014T193040Z-vegetation-DEPENDENCY_CHANGED",
    "reason": "vegetation does not accept DEPENDENCY_CHANGED",
    "reasonCode": "TRIGGER_NOT_ENABLED",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "DEPENDENCY_CHANGED"
   },
   "vegetation__SCHEDULE": {
    "brainId": "vegetation",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-vegetation-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-vegetation-SCHEDULE",
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   },
   "water-clarity__SCHEDULE": {
    "brainId": "water-clarity",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-water-clarity-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-water-clarity-SCHEDULE",
    "reason": "no recurring schedule intent (PAUSED): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   },
   "water-temp__SCHEDULE": {
    "brainId": "water-temp",
    "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-water-temp-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-water-temp-SCHEDULE",
    "reason": "no recurring schedule intent (MANUAL): runs only on manual, input or dependency triggers",
    "reasonCode": "NO_SCHEDULE_INTENT",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   },
   "wind__SCHEDULE": {
    "brainId": "wind",
    "decision": "SKIP_LEGACY_OWNED",
-   "decisionId": "d-20261014T185509Z-wind-SCHEDULE",
+   "decisionId": "d-20261014T193040Z-wind-SCHEDULE",
    "reason": "scheduled by legacy scheduler wind-hourly (VALIDATION_EXCEPTION); the orchestrator does not start it",
    "reasonCode": "LEGACY_OWNED",
-   "since": "2026-10-14T18:55:09Z",
+   "since": "2026-10-14T19:30:40Z",
    "trigger": "SCHEDULE"
   }
  },
@@ -2073,7 +2167,7 @@
    "cron": "5 * * * *",
    "enabled": true,
    "jobId": "wind-hourly",
-   "nextDue": "2026-10-14T19:05:01.469618Z",
+   "nextDue": "2026-10-14T20:05:01.469618Z",
    "owner": "LEGACY_SCHEDULER",
    "scheduler": "wind-hourly",
    "timezone": "UTC"
@@ -2088,10 +2182,10 @@
   "costToday": {
    "basis": "ESTIMATED",
    "day": "2026-10-14",
-   "executions": 35,
+   "executions": 30,
    "lowerBound": false,
    "unknownExecutions": 0,
-   "usd": 0.1493
+   "usd": 0.1444
   },
   "customerPublication": false,
   "engineMode": "PRE_PRODUCTION",
@@ -2101,16 +2195,16 @@
     "SKIP_LEGACY_OWNED": 2,
     "SKIP_NOT_DUE": 8,
     "SKIP_PARKED": 1,
-    "SKIP_UNKNOWN_CHANGE": 1
+    "SKIP_UNCHANGED": 1
    },
-   "durationMs": 8745,
-   "lastEvaluatedAt": "2026-10-14T18:55:09Z",
-   "trigger": "SCHEDULE"
+   "durationMs": 9459,
+   "lastEvaluatedAt": "2026-10-14T19:37:44Z",
+   "trigger": "MANUAL"
   },
   "maintenanceBrains": [
    "lake-brain"
   ],
-  "nextDue": "2026-10-14T19:05:01.469618Z",
+  "nextDue": "2026-10-14T20:05:01.469618Z",
   "parkedBrains": [
    "depth",
    "sector-intelligence",
@@ -2119,12 +2213,16 @@
   ],
   "policy": "PRE_PRODUCTION: recurring compute OFF by default; customer publication disabled; only approved validation exceptions run on a schedule",
   "recentDecision": {
-   "at": "2026-10-14T18:55:09Z",
-   "brainId": "vegetation",
-   "decision": "SKIP_NOT_DUE",
-   "decisionId": "d-20261014T185509Z-vegetation-DEPENDENCY_CHANGED",
-   "reasonCode": "TRIGGER_NOT_ENABLED",
+   "at": "2026-10-14T19:31:53Z",
+   "brainId": "biological-state",
+   "decision": "SKIP_UNCHANGED",
+   "decisionId": "d-20261014T193153Z-biological-state-DEPENDENCY_CHANGED",
+   "reasonCode": "NO_MATERIAL_CHANGE",
    "trigger": "DEPENDENCY_CHANGED"
+  },
+  "scheduler": {
+   "cron": "50 * * * *",
+   "state": "PAUSED"
   },
   "status": "IDLE",
   "version": "orchestrator-control-v1"

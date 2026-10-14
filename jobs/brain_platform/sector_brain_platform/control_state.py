@@ -36,7 +36,7 @@ def execution_mode(brain: dict, enabled: bool | None) -> str:
     if cls == "INPUT_DRIVEN":
         return "INPUT_DRIVEN"
     if cls == "PAUSED":
-        return "PAUSED"
+        return "MANUAL"            # the Brain's recurring schedule is paused, so it runs only on manual / targeted / validation triggers
     if cls in ("ORCHESTRATOR_OWNED", "LEGACY"):
         return "SCHEDULED" if enabled else "PAUSED"
     return "MANUAL"
@@ -97,7 +97,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
     prev = prev or {}
     graph = O.validate_graph(manifest)
     activity = O.effective_activity(manifest, overrides)
-    by_id = {e["executionId"]: e for e in (prev.get("executions") or {}).values()}
+    by_id = {e["executionId"]: e for e in (prev.get("executions") or {}).values() if e.get("brainId") != "platform"}   # the orchestrator's own wake-ups are not Brain executions
     by_id.update({e["executionId"]: e for e in (new_executions or [])})          # a re-observed execution (now finished) replaces its earlier record
     execs = sorted(by_id.values(), key=lambda x: x.get("startedAt", ""), reverse=True)[:O.EXECUTION_LEDGER_MAX]
     latest, recent = merge_decisions(prev.get("latestDecisions"), prev.get("decisions"), evaluation["decisions"])
@@ -146,7 +146,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
             "currentBlocker": (bl[0]["reason"] if bl else None),
             "decisions": {d["trigger"]: {"decision": d["decision"], "reasonCode": d["reasonCode"], "reason": d["reason"], "since": d.get("since")}
                           for d in latest.values() if d["brainId"] == bid},
-            "customerPublication": O.publish_allowed(mode, b), "costClass": b["costClass"],
+            "customerPublication": O.publish_allowed(mode, b), "costClass": b["costClass"], "scopes": b.get("scopes"),
             "retry": {"failureClass": (lastx or {}).get("failureClass")} if (lastx or {}).get("failureClass") else None,
         })
     runs = sorted(evaluation.get("runs") or [])
