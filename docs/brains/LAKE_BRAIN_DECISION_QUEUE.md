@@ -28,6 +28,7 @@ Last updated 2026-10-14 ~04:45 UTC. Nothing here is applied until decided.
 | 19 | Raise lake-brain task timeout to 1800 s (or shard) before the 122+ lake batches | MICHAEL AUTHORIZATION | 196 lakes may exceed 900 s | raise | rollout batch C |
 | 20 | Merge `feat/cost-efficient-scheduling` and the Lake branches to main | PREREQUISITE BRANCH / MICHAEL AUTHORIZATION | everything is still on feature branches | when ready | – |
 | 21 | Ledger day 90 (2027-01-11) and day 365 (2027-10-13) | TIME / SEASON | PARTIAL / VALIDATED evidence | wait | validation |
+| 22 | `brain-orchestrator` Cloud Scheduler job is **PAUSED** (paused 2026-10-14T05:11:32Z via the owner account; not by this Lake session). Resume it, or leave paused? While paused no hourly cycle runs, so Lake is only started manually and scores/control publish only on manual orchestrator runs | MICHAEL AUTHORIZATION | shared infrastructure; a deliberate pause by another lane is possible | do NOT resume from Lake; whoever paused it should resume | orchestrated runs, score publication |
 
 ## Independent work continuing meanwhile (no decision needed)
 Consolidated review packet build; quantitative rubric analysis; control-plane / Ops contract checks after each orchestrator cycle; fingerprint / no-op verification; claim-maturity publication
