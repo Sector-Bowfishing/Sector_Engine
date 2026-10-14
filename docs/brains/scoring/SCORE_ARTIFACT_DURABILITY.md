@@ -47,3 +47,6 @@ Fix (documented, not applied — it needs the blocked Wind deployment):
 1. *Wind (follow-up deploy, after the prerequisite branch resolves):* stop publishing `scores.windCertificationScore` (and the BWIS number) from `validation_evidence.json`; publish `scores.canonicalRef: "/scores/wind"` instead. BWIS is already in the canonical block (`secondary`).
 2. *Ops (separate lane, no edit here):* `src/lib/brainScore.ts` (`windCertificationScore` first) and `src/components/windBrain.tsx` (lines ~208–215) should read the canonical block (`control.brains[id].score`, `/scores/{id}`), keeping the registry field only as a labelled fallback. The Overview tile already prefers `control.brains.wind.score`.
 3. Until then the Wind page card shows the registry's 3.1 next to the canonical 3.3 (documented in the Wind handoff).
+
+## 7. Superseded in part by the runtime guard (2026-10-14)
+The recommended Option C is realised more simply: `/scores/{id}` in RTDB is the durable store and `publication.apply_guard` (wired into `score_brains.py`) holds any candidate older than what is published. The deploy-time guard above stays as the second layer. See `docs/brains/platform/SCORING_SEMANTICS.md` section 6.

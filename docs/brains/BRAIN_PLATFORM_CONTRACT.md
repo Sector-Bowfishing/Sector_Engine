@@ -201,3 +201,8 @@ A brain lands on `main` only when its publisher passes the suite (or is listed b
 | Wind | Python `sector_brain_platform` (vendored; `sector_wind/brain/writer.py` is a thin wrapper keeping the `patch/get/delete` API) | **yes** (on main, Phase 8) | contract event ids/kinds, own-brain pruning by `at`, no rollup-field writes, `sources.brains` map + `ownerBrainId`, `platform` ref. **The live `wind-hourly` job still runs the pre-migration code until it is redeployed** (not done here) |
 
 Each conforming registry entry publishes `platform{implementation, contract, conformant}`. All six Brains conform on `main`; Engine Score's platformHealth becomes measurable as each one next publishes.
+
+---
+
+## Model v1 (2026-10-14, draft)
+Shared vocabulary for claims, lifecycle, execution, scoring and safe publication is in `docs/brains/platform/` (start at `SECTOR_BRAIN_MODEL_V1.md`). It is additive; the sections above remain authoritative for keys, envelopes and ownership.

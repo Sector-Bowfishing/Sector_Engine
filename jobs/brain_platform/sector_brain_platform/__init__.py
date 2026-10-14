@@ -32,4 +32,8 @@ from .control import overview, brain_summary, fleet_rollup, fleet_summary, brain
 from .jobs import MANIFEST as JOB_MANIFEST, JOBS_CONTRACT_VERSION, job_record, build_records, changed_paths as jobs_changed_paths, cron_runs_per_day
 from .scoring import score_lake, score_biological, score_intelligence, frozen_score, ladder, finish, dim, score_engine
 
+from . import model_v1, fingerprint as fingerprints, publication, dependencies, field_validation, control_contract
+from .model_v1 import ModelError, validate_claim, bounded_workers
+from .publication import judge as judge_score, apply_guard as guard_scores, score_content
+
 __all__ = [n for n in dir() if not n.startswith("_")]

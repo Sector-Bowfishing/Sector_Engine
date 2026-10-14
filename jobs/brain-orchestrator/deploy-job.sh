@@ -45,6 +45,11 @@ for j in lake-brain water-temp-brain; do
   fi
 done
 
+echo "▶ lineage preflight (the deployed commit must be an ancestor of HEAD; no durability protection may be removed)"
+if ! python3 "$ROOT/jobs/brain-orchestrator/preflight_lineage.py" --job "$JOB"; then
+  echo "  refusing to deploy: rebase/merge onto the deployed shared lineage first (docs/brains/platform/BRAIN_MIGRATION_CHECKLIST.md section 6); override only with a recorded decision: ALLOW_BACKWARD_LINEAGE=1"; exit 1
+fi
+
 echo "▶ stale-score guard (generated Brain score blocks must not be older than their Brain's branch)"
 if ! python3 "$ROOT/jobs/brain-scores/check_score_artifacts.py"; then
   if [[ "${ALLOW_STALE_SCORES:-0}" == "1" ]]; then echo "  !! ALLOW_STALE_SCORES=1: deploying with a stale score artifact (record the decision)"; else echo "  refusing to deploy: carry the newer generated score block first (docs/brains/scoring/SCORE_ARTIFACT_DURABILITY.md)"; exit 1; fi

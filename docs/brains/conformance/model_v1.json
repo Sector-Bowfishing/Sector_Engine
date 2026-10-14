@@ -1,0 +1,147 @@
+{
+ "version": "sector-brain-model-v1",
+ "claimLevels": [
+  1,
+  2,
+  3
+ ],
+ "claimLevelNames": {
+  "1": "PROVIDER_OBSERVED",
+  "2": "DETERMINISTIC_DERIVATION",
+  "3": "SECTOR_DERIVED_PREDICTIVE"
+ },
+ "claimMaturity": [
+  "NOT_ASSESSED",
+  "UNAVAILABLE",
+  "NOT_OBSERVABLE",
+  "PROVIDER_VERIFIED",
+  "DETERMINISTIC_VERIFIED",
+  "DESK_VALIDATED",
+  "PROPOSED",
+  "CALIBRATION",
+  "NOT_VALIDATED",
+  "VALIDATED",
+  "WITHHELD"
+ ],
+ "maturityByLevel": {
+  "1": [
+   "NOT_ASSESSED",
+   "UNAVAILABLE",
+   "NOT_OBSERVABLE",
+   "WITHHELD",
+   "PROVIDER_VERIFIED"
+  ],
+  "2": [
+   "NOT_ASSESSED",
+   "UNAVAILABLE",
+   "NOT_OBSERVABLE",
+   "WITHHELD",
+   "DETERMINISTIC_VERIFIED",
+   "DESK_VALIDATED",
+   "VALIDATED"
+  ],
+  "3": [
+   "NOT_ASSESSED",
+   "UNAVAILABLE",
+   "NOT_OBSERVABLE",
+   "WITHHELD",
+   "DESK_VALIDATED",
+   "PROPOSED",
+   "CALIBRATION",
+   "NOT_VALIDATED",
+   "VALIDATED"
+  ]
+ },
+ "lifecycle": [
+  "RESEARCH",
+  "PROFILED",
+  "SHADOW",
+  "CALIBRATION",
+  "PRODUCTION_READY",
+  "PRODUCTION"
+ ],
+ "lifecycleConditions": [
+  "BLOCKED",
+  "DEGRADED",
+  "RETIRED"
+ ],
+ "legacyLifecycleMap": {
+  "DISCOVERED": "RESEARCH",
+  "IN_PROGRESS": "RESEARCH",
+  "RESEARCH": "RESEARCH",
+  "RESEARCH_CANDIDATE": "RESEARCH",
+  "PROFILED": "PROFILED",
+  "SHADOW": "SHADOW",
+  "CANDIDATE": "SHADOW",
+  "CALIBRATION": "CALIBRATION",
+  "BETA": "CALIBRATION",
+  "REVIEW": "CALIBRATION",
+  "VALIDATED": "PRODUCTION_READY",
+  "PRODUCTION_READY": "PRODUCTION_READY",
+  "PRODUCTION": "PRODUCTION",
+  "ACTIVE_PRODUCTION": "PRODUCTION",
+  "PRODUCTION_EVIDENCE": "PRODUCTION"
+ },
+ "legacyLifecycleAmbiguous": [
+  "BETA",
+  "REVIEW",
+  "IN_PROGRESS",
+  "VALIDATED",
+  "PRODUCTION_EVIDENCE"
+ ],
+ "executionTypes": [
+  "PROVIDER_INGESTION",
+  "DEPENDENCY_DRIVEN",
+  "PROSPECTIVE_VALIDATION",
+  "MAINTENANCE",
+  "MANUAL_SHADOW"
+ ],
+ "jobExecutionModes": [
+  "SCHEDULED",
+  "MANUAL",
+  "EVENT_DRIVEN",
+  "DISABLED"
+ ],
+ "unknownKinds": [
+  "UNKNOWN",
+  "NOT_ASSESSED",
+  "UNAVAILABLE",
+  "NOT_OBSERVABLE",
+  "WITHHELD"
+ ],
+ "scoreStatus": [
+  "COMPUTED",
+  "FROZEN",
+  "UNSCORED",
+  "WITHHELD"
+ ],
+ "customerReadiness": [
+  "NONE",
+  "INTERNAL",
+  "PILOT",
+  "CUSTOMER"
+ ],
+ "dependencyRequirement": [
+  "REQUIRED",
+  "OPTIONAL"
+ ],
+ "dependencyFallback": [
+  "DEGRADE",
+  "WITHHOLD",
+  "SKIP",
+  "USE_LAST_GOOD"
+ ],
+ "production": {
+  "overallMin": 8.0,
+  "criticalMin": 7.5
+ },
+ "validationStatus": [
+  "NOT_STARTED",
+  "NOT_VALIDATED",
+  "CALIBRATION",
+  "DESK_VALIDATED",
+  "VALIDATED",
+  "FAILED",
+  "WITHHELD"
+ ]
+}

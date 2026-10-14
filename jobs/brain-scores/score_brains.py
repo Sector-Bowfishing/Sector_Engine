@@ -23,7 +23,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
-                                   prune_activity, score_biological, score_engine, score_intelligence, score_lake)
+                                   prune_activity, guard_scores, score_biological, score_engine, score_intelligence, score_lake)
 
 WRITER = "brain-platform"
 FROZEN = os.environ.get("FROZEN_SCORES", os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json"))
@@ -167,9 +167,12 @@ def main() -> int:
     db = BrainRtdb(a.db, brain_id=WRITER) if a.db else BrainRtdb(brain_id=WRITER)
     check_schema(db)
     facts = fetch_facts(db)
-    scores = compute(facts, now)
-    engine = score_engine(facts["engine"], scores, now)
     old_scores = db.get("scores") or {}
+    # Stale-score protection (platform docs SCORING_SEMANTICS.md section 6): /scores/{id} is the durable canonical store; a candidate that is OLDER than
+    # (or ambiguous against) what is published is HELD and the published block is used, so one Brain's stale artifact cannot move any score, the Engine
+    # score or the control overview. Deliberate regression needs a recorded decision: SCORE_GUARD_ALLOW=<brainId>[,<brainId>].
+    scores, held = guard_scores(compute(facts, now), old_scores, allow=[x for x in os.environ.get("SCORE_GUARD_ALLOW", "").split(",") if x])
+    engine = score_engine(facts["engine"], scores, now)
     updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores)   # canonical: /scores/engine
     # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.
     control = overview(brains=facts["brains"], health=facts["health"], validation=facts["validation"], scores=scores, engine=engine,
@@ -199,6 +202,11 @@ def main() -> int:
     print(f"{'ENGINE':22s} {engine['engineScore']:>4} / 10  COMPUTED {engine['engineScoreVersion']}  completeness {engine['completenessPct']} %  strongest {engine['strongestArea']}  weakest {engine['weakestArea']}")
     for g in engine["blockers"]:
         print(f"    - {g.get('gate') or g.get('dimension')}: {g.get('why')}" + (f" (cap {g['cap']})" if "cap" in g else ""))
+    for h in held:
+        tag = "OVERRIDDEN" if h.get("overridden") else "HELD"
+        print(f"{tag:22s} {h['brainId']}: {h['verdict']} - {h['why']} (published {h.get('publishedValue')}, candidate {h.get('candidateValue')})"
+              + ("; SCORE_GUARD_ALLOW applied" if h.get("overridden") else "; published block kept"))
+    changed.extend(f"{h['brainId']}: {'OVERRIDDEN' if h.get('overridden') else 'HELD'} ({h['verdict']}) {h['why']}" for h in held)
     print(f"\n{len(changed)} change(s): " + ("; ".join(changed) if changed else "none"))
     if a.report:
         json.dump(report, open(a.report, "w"), indent=1)
