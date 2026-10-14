@@ -1,0 +1,101 @@
+{
+  "scoreVersion": "biological-state-score-v2",
+  "brainId": "biological-state",
+  "scale": 10,
+  "status": "PROPOSED (isolated branch; not wired to any publisher; needs ratification)",
+  "scope": "TARGET-scoped bowfisher readiness. Non-target species (protected, policy-held, saltwater, look-alikes) are knowledge only and cannot move this score. Not an average of species scores.",
+  "supersedes": "biological-state-score-v1 / v1.1 (kept unchanged for history)",
+  "dimensions": [
+    {
+      "id": "targetKnowledge",
+      "label": "How well we understand where and when the target species move",
+      "weight": 25,
+      "fact": "registry.targetSet.targets + /species/{id}.knowledge.overallExact",
+      "scale": "mean species-v2 overallExact over target species; an unassessed target counts 0 (measured)",
+      "bowfisherValue": "directly sets how good the search advice can be"
+    },
+    {
+      "id": "conditionCoverage",
+      "label": "Condition families the target rules respond to",
+      "weight": 15,
+      "fact": "registry.targetReadiness.perSpecies[*].conditionFamilies",
+      "scale": "mean over targets of families covered (temperature, trend/crossing, stage/hydrology, clarity, daypart) / 5 x 10",
+      "bowfisherValue": "more covered conditions = fewer conditions where the Brain has nothing to say"
+    },
+    {
+      "id": "evidenceStrength",
+      "label": "Independent inspected evidence behind target rules",
+      "weight": 10,
+      "fact": "registry.targetReadiness.perSpecies[*].meanCountingStreams",
+      "scale": "mean counting streams per usable rule, capped at 3, /3 x 10",
+      "bowfisherValue": "how likely the advice is right"
+    },
+    {
+      "id": "humanReview",
+      "label": "Target rules approved by an independent reviewer",
+      "weight": 5,
+      "fact": "registry.targetReadiness.perSpecies[*].approvedRules",
+      "scale": "approved / usable x 10",
+      "bowfisherValue": "catches mistakes the author cannot see"
+    },
+    {
+      "id": "regionalApplicability",
+      "label": "Target rules that apply to Southeast reservoirs",
+      "weight": 10,
+      "fact": "registry.targetReadiness.perSpecies[*].transfer",
+      "scale": "(TRANSFERS + 0.5 x PARTIAL) / usable x 10; general behaviour is never erased by low regional confidence, this only measures applicability",
+      "bowfisherValue": "whether the advice fits the lake being fished"
+    },
+    {
+      "id": "stateImplementation",
+      "label": "Per-lake Biological State exists",
+      "weight": 15,
+      "fact": "responsibilities.biologicalState.status",
+      "scale": {
+        "NOT_STARTED": 0,
+        "IN_PROGRESS": 4,
+        "LIVE": 8,
+        "VALIDATED": 10
+      },
+      "bowfisherValue": "advice for a specific lake right now"
+    },
+    {
+      "id": "fieldValidation",
+      "label": "Predictions checked against real trips",
+      "weight": 10,
+      "fact": "responsibilities.biologicalState.validation",
+      "scale": {
+        "NOT_STARTED": 0,
+        "PARTIAL": 5,
+        "VALIDATED": 10
+      },
+      "bowfisherValue": "proof the advice finds fish"
+    },
+    {
+      "id": "customerUsefulness",
+      "label": "Consumed by Sector Intelligence or a customer path",
+      "weight": 10,
+      "fact": "/brains/sector-intelligence.dependencies[biological-state].connectionStatus",
+      "scale": "CONNECTED/CONNECTED_DEGRADED 10, else 0",
+      "bowfisherValue": "the advice reaches the bowfisher"
+    }
+  ],
+  "gates": [
+    {
+      "gate": "biologicalState",
+      "cap": 4.0,
+      "when": "Biological State NOT_STARTED"
+    },
+    {
+      "gate": "targetValidation",
+      "cap": 6.0,
+      "when": "no target species VALIDATED"
+    }
+  ],
+  "reportedNotScored": [
+    "registry completeness (every species assessed or explicitly NOT_ASSESSED)",
+    "contradiction/gap counts",
+    "knowledge of non-target species"
+  ],
+  "honestyUnknown": "enforced by tests and gates (no fabricated inputs, UNKNOWN stays UNKNOWN, snippet-only never counts), not by points"
+}

@@ -187,6 +187,56 @@ def score_biological(facts: dict, now: dt.datetime) -> dict:
     return finish("biological-state-score-v1.1", "docs/brains/scoring/biological-state-score-v1.1.json", dims, gates, now, nxt)
 
 
+# ---------------------------------------------------------------- Biological Brain, rubric v2 (PROPOSED: not wired to any publisher)
+def score_biological_v2(facts: dict, now: dt.datetime) -> dict:
+    """Target-scoped Biological readiness. Reads only published facts: the registry's `targetSet` and `targetReadiness` (raw per-target counts) and the target
+    species' `/species` rows. Non-target species (protected, policy-held, saltwater, look-alikes) are KNOWLEDGE ONLY: they never move this score.
+    Every dimension answers a bowfisher question; hygiene counts (registry completeness, contradictions) are reported, not scored."""
+    reg = facts.get("registry") or {}
+    species = facts.get("species") or {}
+    targets = list(((reg.get("targetSet") or {}).get("targets")) or [])
+    per = ((reg.get("targetReadiness") or {}).get("perSpecies")) or {}
+    have_ready = bool(per) and bool(targets)
+    bs = ((reg.get("responsibilities") or {}).get("biologicalState")) or {}
+    rows = [species.get(t) or {} for t in targets]
+    know = [((r.get("knowledge") or {}).get("overallExact", (r.get("knowledge") or {}).get("overallRounded"))) for r in rows if r.get("assessment") == "ASSESSED"]
+    know = [k for k in know if isinstance(k, (int, float))]
+    target_knowledge = (sum(know) / len(targets)) if targets and know else (0.0 if targets else None)   # a target with no assessed row is a measured zero
+    fam = [min(5, int((per.get(t) or {}).get("conditionFamilies", 0))) / 5 * 10 for t in targets] if have_ready else []
+    streams = [min(3.0, float((per.get(t) or {}).get("meanCountingStreams", 0))) / 3 * 10 for t in targets] if have_ready else []
+    usable = sum(int((per.get(t) or {}).get("usableRules", 0)) for t in targets) if have_ready else 0
+    approved = sum(int((per.get(t) or {}).get("approvedRules", 0)) for t in targets) if have_ready else 0
+    tally = {k: sum(int(((per.get(t) or {}).get("transfer") or {}).get(k, 0)) for t in targets) for k in ("TRANSFERS", "PARTIAL", "UNTESTED")} if have_ready else {}
+    coverage = statistics.fmean(fam) if fam else None
+    strength = statistics.fmean(streams) if streams else None
+    review = None if not have_ready or not usable else 10.0 * approved / usable
+    regional = None if not have_ready or not usable else 10.0 * (tally["TRANSFERS"] + 0.5 * tally["PARTIAL"]) / usable
+    impl = {"NOT_STARTED": 0, "IN_PROGRESS": 4, "LIVE": 8, "VALIDATED": 10}.get(bs.get("status"))
+    bval = {"NOT_STARTED": 0, "PARTIAL": 5, "VALIDATED": 10}.get(bs.get("validation") or ("NOT_STARTED" if bs.get("status") == "NOT_STARTED" else None))
+    ireg = facts.get("intelligenceRegistry") or {}
+    conn = (((ireg.get("dependencies") or {}).get("biological-state")) or {}).get("connectionStatus")
+    cust = None if not ireg else (10 if conn in ("CONNECTED", "CONNECTED_DEGRADED") else 0)
+    n = len(targets)
+    dims = [
+        dim("targetKnowledge", 25, target_knowledge, f"mean species-v2 knowledge over {n} target species ({len(know)} assessed): how well we understand where and when they move"),
+        dim("conditionCoverage", 15, coverage, f"condition families (temperature, trend, stage/hydrology, clarity, daypart) covered by usable rules, averaged over {n} targets"),
+        dim("evidenceStrength", 10, strength, "mean independent counting streams per usable target rule (capped at 3); inspected sources only"),
+        dim("humanReview", 5, review, f"{approved} of {usable} usable target rules approved by a reviewer who did not author them"),
+        dim("regionalApplicability", 10, regional, f"target rules by Southeast-transfer status: {tally or 'not published'} (partial counts half)"),
+        dim("stateImplementation", 15, impl, f"biologicalState.status = {bs.get('status') or 'absent'}"),
+        dim("fieldValidation", 10, bval, f"biologicalState validation = {bs.get('validation') or bs.get('status') or 'absent'}"),
+        dim("customerUsefulness", 10, cust, f"sector-intelligence dependency connectionStatus = {conn or 'absent'}"),
+    ]
+    gates = []
+    if bs.get("status") in (None, "NOT_STARTED"):
+        gates.append({"gate": "biologicalState", "cap": 4.0, "why": "per-lake Biological State NOT_STARTED"})
+    if not any((r.get("researchMaturity") == "VALIDATED") for r in rows):
+        gates.append({"gate": "targetValidation", "cap": 6.0, "why": "no target species at researchMaturity VALIDATED"})
+    nxt = "human review of target rules, then field validation of a few high-value predictions; per-lake state and Intelligence consumption lift implementation and usefulness"
+    hygiene = {"registrySpecies": len(species), "targets": n, "knowledgeOnlySpecies": max(0, len(species) - n)}
+    return finish("biological-state-score-v2", "docs/brains/scoring/biological-state-score-v2.json", dims, gates, now, nxt, extra={"hygiene": hygiene, "proposal": True})
+
+
 # ---------------------------------------------------------------- Sector Intelligence
 def score_intelligence(facts: dict, now: dt.datetime) -> dict:
     """facts: registry, validation, health, directoryLakeCount, sampledStates[list]."""

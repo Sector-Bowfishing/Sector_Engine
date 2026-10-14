@@ -27,6 +27,6 @@ from .failure import failure_writes
 from .orchestrator import plan as orchestrate, decide as orchestrator_decide, descriptor_gaps
 from .beta import beta_readiness, BETA_VERSION
 from .control import overview, brain_summary, fleet_rollup, brain_stale, CONTROL_VERSION
-from .scoring import score_lake, score_biological, score_intelligence, frozen_score, ladder, finish, dim, score_engine
+from .scoring import score_lake, score_biological, score_biological_v2, score_intelligence, frozen_score, ladder, finish, dim, score_engine
 
 __all__ = [n for n in dir() if not n.startswith("_")]

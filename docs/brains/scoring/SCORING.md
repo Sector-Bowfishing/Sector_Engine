@@ -133,3 +133,6 @@ degraded Intelligence input; species-knowledge median < 5; no species presence; 
 NOT_VALIDATED; a stale owning source. READY needs neither. Every item names the slot and the fact.
 Rubric: `beta-readiness-v1.json`; module `sector_brain_platform/beta.py`; published by the platform
 publisher for the pilot lakes only. Not a customer rollout decision.
+
+### Biological Brain — `biological-state-score-v2` (PROPOSED; isolated branch; not wired)
+Target-scoped. Applying the bowfisher-value test, v1's registryCompleteness (10), assessedCoverage (15), knowledgeDepth over ALL rows (20) and contradictionsGaps (10) do not change what a bowfisher does, so v2 scores the CURRENT_FRESHWATER_BOWFISHING_TARGET_SET instead (knowledge 25, condition coverage 15, evidence strength 10, human review 5, regional applicability 10) plus state implementation 15, field validation 10 and customer usefulness 10. Gates: State NOT_STARTED <= 4.0; no VALIDATED target <= 6.0. Registry completeness and contradictions are reported, not scored. See `biological-state-score-v2.json`.

@@ -169,3 +169,52 @@ def test_regional_transfer_malformed_is_unknown_never_guessed():
     for bad in ({"usableRules": 0, "byTransferability": {}}, {"usableRules": 4, "byTransferability": {"TRANSFERS": 9}},
                 {"usableRules": "4", "byTransferability": {"TRANSFERS": 1}}, {"usableRules": 4, "byTransferability": {"TRANSFERS": -1}}, "x"):
         assert _bio_with_transfer(bad)["scoreBreakdown"]["regionalTransfer"]["status"] == "UNKNOWN", bad
+
+
+from sector_brain_platform import score_biological_v2
+
+
+def _v2_facts(extra_species=None, state="IN_PROGRESS", approved=0, validated=False):
+    sp = {"common_carp": species(7.0), "spotted_gar": species(5.0)}
+    if validated:
+        sp["common_carp"]["researchMaturity"] = "VALIDATED"
+    sp |= extra_species or {}
+    reg = {"responsibilities": {"biologicalState": {"status": state, "validation": "NOT_STARTED"}}, "targetSet": {"targets": ["common_carp", "spotted_gar"]},
+           "targetReadiness": {"perSpecies": {"common_carp": {"usableRules": 10, "conditionFamilies": 5, "meanCountingStreams": 3.0, "approvedRules": approved, "transfer": {"TRANSFERS": 0, "PARTIAL": 10, "UNTESTED": 0}},
+                                              "spotted_gar": {"usableRules": 5, "conditionFamilies": 2, "meanCountingStreams": 1.5, "approvedRules": 0, "transfer": {"TRANSFERS": 0, "PARTIAL": 0, "UNTESTED": 5}}}}}
+    return {"registry": reg, "species": sp, "intelligenceRegistry": {"dependencies": {"biological-state": {"connectionStatus": "NOT_CONNECTED"}}}}
+
+
+def test_v2_scores_targets_only_and_ignores_non_target_rows():
+    base = score_biological_v2(_v2_facts(), NOW)
+    junk = score_biological_v2(_v2_facts({f"x{i}": species(0.0) for i in range(20)} | {"paddlefish": species(0.0)}), NOW)
+    assert base["value"] == junk["value"] and base["scoreVersion"] == "biological-state-score-v2"
+    b = base["scoreBreakdown"]
+    assert b["targetKnowledge"]["value"] == 6.0                      # mean(7.0, 5.0)
+    assert b["conditionCoverage"]["value"] == 7.0                    # mean(10, 4)
+    assert b["evidenceStrength"]["value"] == 7.5                     # mean(10, 5)
+    assert b["regionalApplicability"]["value"] == 3.3                # 5 partial-equivalents of 15
+    assert b["humanReview"]["value"] == 0.0 and b["fieldValidation"]["value"] == 0
+    assert b["stateImplementation"]["value"] == 4 and b["customerUsefulness"]["value"] == 0
+
+
+def test_v2_gates_and_unknowns():
+    s = score_biological_v2(_v2_facts(validated=True, approved=10), NOW)
+    assert not any(g.get("gate") == "targetValidation" for g in s["scoreBlockers"])
+    assert score_biological_v2(_v2_facts(), NOW)["value"] <= 6.0
+    assert score_biological_v2(_v2_facts(state="NOT_STARTED"), NOW)["value"] <= 4.0
+    empty = score_biological_v2({"registry": {}, "species": {}, "intelligenceRegistry": {}}, NOW)
+    assert empty["scoreBreakdown"]["targetKnowledge"]["status"] == "UNKNOWN" and empty["scoreBreakdown"]["conditionCoverage"]["status"] == "UNKNOWN"
+
+
+def test_v2_unassessed_target_is_a_measured_zero_and_review_is_visible():
+    f = _v2_facts()
+    del f["species"]["spotted_gar"]
+    assert score_biological_v2(f, NOW)["scoreBreakdown"]["targetKnowledge"]["value"] == 3.5
+    assert score_biological_v2(_v2_facts(approved=10), NOW)["scoreBreakdown"]["humanReview"]["value"] == 6.7
+
+
+def test_v1_and_v1_1_are_unchanged_by_v2():
+    sp = {"a": species(4.0)}
+    reg = {"responsibilities": {"speciesKnowledge": {"speciesCount": 1, "assessedCount": 1, "notAssessedCount": 0}, "biologicalState": {"status": "NOT_STARTED"}}}
+    assert score_biological({"registry": reg, "species": sp, "intelligenceRegistry": {}}, NOW)["scoreVersion"] == "biological-state-score-v1"
