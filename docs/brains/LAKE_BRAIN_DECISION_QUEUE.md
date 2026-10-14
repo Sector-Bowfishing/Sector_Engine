@@ -9,9 +9,9 @@ Last updated 2026-10-14 ~04:45 UTC. Nothing here is applied until decided.
 |---|---|---|---|---|---|
 | 1 | **Consolidated binding review packet** (Section A easy, about 64 rows; Section B flagged, later). Return the CSV export. | HUMAN REVIEW | 5 + 58 accepted = 63 profiled lakes lifts the coverage gate: displayed 3.0 → 5.0 | do Section A only first | coverage, displayed score |
 | 2 | Approve running the pre-seed + staged rollout after (1) | MICHAEL AUTHORIZATION | accepted lakes must have history before they publish | approve after review lands | coverage, historyQuality at fleet scale |
-| 3 | Rubric proposal A: floodDroughtContext denominator = lakes where a flood pool exists | MICHAEL AUTHORIZATION | rubric measures "has a flood pool" not "knows its flood pool" | quantified in `LAKE_BRAIN_RUBRIC_PROPOSALS.md` | floodDroughtContext |
-| 4 | Rubric proposal B: per-claim validation (provider / deterministic / historical state / rapid) | MICHAEL AUTHORIZATION | one failed Level-3 claim holds the whole Brain at NOT_VALIDATED | quantified in the same doc | validation, the 5.0 gate |
-| 5 | Rubric proposal C: operatorPlan availability denominator | MICHAEL AUTHORIZATION | pilots score 10 only because they are the best-documented lakes | same doc | operatorPlan |
+| 3 | Rubric proposal A: floodDroughtContext denominator = lakes where a flood pool exists | MICHAEL AUTHORIZATION | rubric measures "has a flood pool" not "knows its flood pool" | **YES, form C** (unknown-because-unpublished stays in the denominator; only not-applicable lakes leave). On the 196: dimension 5.7 → 7.4, uncapped 6.5 → 6.6, displayed unchanged while NOT_VALIDATED (`LAKE_BRAIN_RUBRIC_PROPOSALS.md`) | floodDroughtContext |
+| 4 | Rubric proposal B: per-claim validation (provider / deterministic / historical state / rapid) | MICHAEL AUTHORIZATION | one failed Level-3 claim holds the whole Brain at NOT_VALIDATED | **YES, with the MINIMUM rule** across claim families (never average: averaging is a loophole that makes the target look met). With RAPID withheld, a PARTIAL-equivalent state displays 7.3 on the 196 at the ledger clock; VALIDATED is unchanged (needs 12 months) | validation, the 5.0 gate |
+| 5 | Rubric proposal C: operatorPlan availability denominator | MICHAEL AUTHORIZATION | pilots score 10 only because they are the best-documented lakes | **NO, in either form.** Excluding unknowns is circular (measures how much Sector ingested, not availability) and would let a best-first 63-lake fleet reach 8.0; counting them moves plan only 4.3 → 4.4 | operatorPlan |
 | 6 | Withhold the RAPID flag from publication until H-C passes prospectively | MICHAEL AUTHORIZATION | H-C failed (66.8 % vs 70 %); still published for the pilots | withhold (internal only, no customer exposure today) | a clean PARTIAL path |
 | 7 | Route for a revised H-C: pre-register before reading any ledger month, score once on ledger data dated after the commit | MICHAEL AUTHORIZATION | only honest route to re-test RAPID | approve the route; the text is then drafted | validation |
 | 8 | Create the monthly ledger scorer schedule (commands prepared, not run) | MICHAEL AUTHORIZATION | first monthly output 2026-11-01 | approve before 2026-11-01 | validation evidence |
@@ -32,3 +32,11 @@ Last updated 2026-10-14 ~04:45 UTC. Nothing here is applied until decided.
 ## Independent work continuing meanwhile (no decision needed)
 Consolidated review packet build; quantitative rubric analysis; control-plane / Ops contract checks after each orchestrator cycle; fingerprint / no-op verification; claim-maturity publication
 design; consolidation of Lake branches on the safe lineage; ledger health audit each day.
+
+
+## Can the target be reached? (quantified — `LAKE_BRAIN_RUBRIC_PROPOSALS.md` §7)
+Target: overall >= 8.0 AND every critical dimension >= 7.5.
+- Under the CURRENT rubric, 8.0 overall is reachable on evidence in hand only at **VALIDATED** and only with >= 156 lakes (the 25 % coverage rung). The 196-lake table gives 8.045 (six history lakes of margin). 63 or 123 lakes never reach 8.0 in 100 random orderings.
+- At PARTIAL the validation dimension is 5.0, so the 7.5 critical floor fails under every proposal and every fleet size. The other four proposed critical dimensions are 8.6–10.0 at 63 / 196 / 427 lakes.
+- Validation reaches 7.5 only at 10, which needs 12 months of fleet predictions scored once: earliest = the fleet's first ledger day + 365. No combination of the three rubric proposals moves that date; they only add margin or move the PARTIAL date.
+- Therefore the target is **externally blocked by TIME (prospective validation)**, after coverage (HUMAN REVIEW) and the displayed 5.0 step (63 lakes) are done. Everything before that point is independent work and continues.
