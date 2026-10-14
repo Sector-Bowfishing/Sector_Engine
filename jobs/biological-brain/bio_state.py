@@ -15,6 +15,10 @@ import features as ft
 import rules as rl
 
 STATE_VERSION = "biological-state-v0.1-pilot"
+# Claim level (WHO made the claim) and validation maturity (HOW MUCH it is trusted) are separate axes. Level 3 stays Level 3 when it is validated.
+CLAIMS = {"inputs": {"level": 1, "kind": "PROVIDER_OBSERVED", "maturity": "PROVIDER_VERIFIED", "owner": "owning Brain; Biological only sanity-checks"},
+          "features": {"level": 2, "kind": "DETERMINISTIC_DERIVATION", "maturity": "VERIFIED"},
+          "speciesResponses": {"level": 3, "kind": "SECTOR_DERIVED_PREDICTIVE", "maturity": "NOT_VALIDATED"}}
 DEFAULT_STALE_AFTER_H = 36
 # Which Lake Brain presence states make a species "relevant" is an OPEN decision (integration contract section 10). This is the
 # conservative default; species outside it are reported as evaluated=false, never silently dropped.
@@ -157,6 +161,7 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
                     "speciesWithAnyResponseBand": sum(1 for s in evaluated if any(r["response"] != "UNKNOWN" for r in s.get("responses", [])))},
         "provenance": {"brainId": "biological-state", "featuresVersion": ft.FEATURES_VERSION, "rulesVersion": ruleset.rules_version,
                        "stateVersion": STATE_VERSION},
+        "claims": CLAIMS,
         "validation": {"status": "NOT_VALIDATED", "note": "Rules are research-derived; no prediction has been compared with outcomes."},
         "customerPath": {"consumed": False},
     }

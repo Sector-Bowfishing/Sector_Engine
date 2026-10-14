@@ -1,12 +1,13 @@
 """Reviewer workflow for Biological machine rules (nothing is approved automatically; nothing is self-promoted).
 
   python3 tools/review.py packet  RULES_DIR OUT.md [--species ID ...]     # concise review packet (contains rule text: keep it PRIVATE)
+  python3 tools/review.py template RULES_DIR OUT.json [--species ID ...]  # blank answer sheet (decision left empty), common carp first
   python3 tools/review.py apply   RULES_DIR DECISIONS.json OUT_DIR         # write a NEW rules directory with the accepted rules re-issued as APPROVED
 
-DECISIONS.json = [{"ruleId", "ruleVersion", "decision": "ACCEPT"|"REJECT"|"CHANGES", "reviewer", "reviewerRole": "EXTERNAL"|"OWNER", "date", "note"}]
+DECISIONS.json = [{"ruleId", "ruleVersion", "decision": "ACCEPT"|"REJECT"|"NEEDS_MORE_EVIDENCE", "reviewer", "reviewerRole": "EXTERNAL"|"OWNER", "date", "note"}]
 
 Acceptance never edits a frozen rule. An ACCEPT re-issues the rule as ruleVersion+1 with status APPROVED and a `review` block, retires the old version through
-`supersededBy`, and bumps the rules version; the new identity must then be frozen before any prediction uses it. REJECT/CHANGES leave the rule as is and are
+`supersededBy`, and bumps the rules version; the new identity must then be frozen before any prediction uses it. REJECT/NEEDS_MORE_EVIDENCE leave the rule as is and are
 recorded in a review ledger. The code refuses: approving a DRAFT or retired rule, a reviewer who authored the rule, a missing reviewer, a decision for a rule
 that does not exist, or a rule whose evidence does not trace to at least one counting, read source.
 """
@@ -24,7 +25,9 @@ sys.path.insert(0, ROOT)
 import rules as rl   # noqa: E402
 
 AUTHORS = ("claude", "claude-adoption", "claude-adoption-2026-10-13", "claude-adoption-2026-10-14")     # reviewers may not be rule authors
-DECISIONS = ("ACCEPT", "REJECT", "CHANGES")
+DECISIONS = ("ACCEPT", "REJECT", "NEEDS_MORE_EVIDENCE")
+LEGACY = {"CHANGES": "NEEDS_MORE_EVIDENCE", "NEEDS MORE EVIDENCE": "NEEDS_MORE_EVIDENCE"}       # accepted spellings, normalised on read
+FOCUS_ORDER = ("common_carp", "spotted_gar", "silver_carp", "longnose_gar")                      # review order: common carp first
 ROLES = ("EXTERNAL", "OWNER")
 
 CHECKLIST = ("Every cited source exists and says what the evidence note says (open the link or the packet)",
@@ -35,6 +38,17 @@ CHECKLIST = ("Every cited source exists and says what the evidence note says (op
              "Limitations/conflicts are stated; unknown is left unknown")
 
 
+def species_order(rs: rl.RuleSet, species: list[str] | None = None) -> list[str]:
+    ids = [s for s in rs.by_species if not species or s in species]
+    return sorted(ids, key=lambda s: (FOCUS_ORDER.index(s) if s in FOCUS_ORDER else len(FOCUS_ORDER), s))
+
+
+def build_template(rs: rl.RuleSet, species: list[str] | None = None) -> list[dict]:
+    """Blank answer sheet: one entry per usable RECONCILED rule, decision deliberately empty (apply refuses blanks)."""
+    return [{"ruleId": r["ruleId"], "ruleVersion": r["ruleVersion"], "decision": "", "reviewer": "", "reviewerRole": "", "date": "", "note": ""}
+            for sid in species_order(rs, species) for r in sorted(rs.for_species(sid), key=lambda x: x["ruleId"]) if r["status"] == "RECONCILED"]
+
+
 def load(rules_dir: str) -> rl.RuleSet:
     return rl.load_rules_dir(rules_dir)
 
@@ -43,12 +57,11 @@ def build_packet(rs: rl.RuleSet, species: list[str] | None = None) -> str:
     out = ["# Biological rule review packet (PRIVATE: contains rule text and evidence notes)", "",
            f"Rules version `{rs.rules_version}`. Review only RECONCILED rules; DRAFT rules are shown as excluded. Accepting a rule re-issues it as a new APPROVED version; it never edits the frozen original.", "",
            "## Acceptance standard", *[f"- [ ] {c}" for c in CHECKLIST], "",
+           "## How to answer", "Fill `decision` in the answer sheet (`review.py template`) with **ACCEPT**, **REJECT** or **NEEDS_MORE_EVIDENCE** (say what in `note`), plus reviewer, reviewerRole (EXTERNAL|OWNER), date. Blank rows are ignored; the author may not review. Common carp is first.", "",
            "## What acceptance does / does not do",
            "* A species reaches REVIEWED only when at least 80% of its usable rules are APPROVED by a reviewer who did not author them; promotion is a separate, recorded decision.",
            "* APPROVED is **not** VALIDATED. No rule is validated until preregistered field criteria are met.", ""]
-    for sid in sorted(rs.by_species):
-        if species and sid not in species:
-            continue
+    for sid in species_order(rs, species):
         use = rs.for_species(sid)
         draft = [r for r in rs.by_species[sid] if r["status"] == "DRAFT" and rs.is_active(r)]
         out += [f"## {sid}  ({len(use)} usable, {len(draft)} draft)", ""]
@@ -65,7 +78,7 @@ def build_packet(rs: rl.RuleSet, species: list[str] | None = None) -> str:
                 out.append(f"  - {'✔' if e['counts'] else '✘ not counted'} `{e['packet']}` {e['sourceNo']} · {e['readStatus']} · stream `{e['streamId']}` · {e.get('studyType', '')} · {e.get('region', '')} {e.get('sample', '')}" + (f" · {e['note']}" if e.get("note") else ""))
             if r.get("conflicts"):
                 out.append("* **Documented conflicts:** " + "; ".join(r["conflicts"]))
-            out += ["* **Decision:** ACCEPT / REJECT / CHANGES  ·  reviewer ____  ·  date ____  ·  note ____", ""]
+            out += ["* **Decision:** ACCEPT / REJECT / NEEDS_MORE_EVIDENCE  ·  reviewer ____  ·  date ____  ·  note ____", ""]
         if draft:
             out += ["**Excluded DRAFT rules (shown for completeness, not for approval):** " + ", ".join(sorted(r["ruleId"] for r in draft)), ""]
     return "\n".join(out)
@@ -83,6 +96,7 @@ def apply_decisions(rs: rl.RuleSet, decisions: list[dict], now: dt.datetime) -> 
         errs = []
         if r is None:
             errs.append("rule does not exist")
+        d = {**d, "decision": LEGACY.get(str(d.get("decision", "")).strip().upper(), str(d.get("decision", "")).strip().upper())}
         if d.get("decision") not in DECISIONS:
             errs.append(f"decision must be one of {DECISIONS}")
         if not d.get("reviewer") or not str(d["reviewer"]).strip():
@@ -142,9 +156,15 @@ def main(argv):
         open(argv[3], "w").write(build_packet(load(argv[2]), sp))
         print("wrote", argv[3])
         return 0
+    if len(argv) >= 4 and argv[1] == "template":
+        sp = argv[argv.index("--species") + 1:] if "--species" in argv else None
+        json.dump(build_template(load(argv[2]), sp), open(argv[3], "w"), indent=1)
+        print("wrote", argv[3])
+        return 0
     if len(argv) == 5 and argv[1] == "apply":
         rs = load(argv[2])
-        rules, retired, ledger, ver = apply_decisions(rs, json.load(open(argv[3])), dt.datetime.now(dt.timezone.utc))
+        answered = [d for d in json.load(open(argv[3])) if str(d.get("decision", "")).strip()]       # blank rows are unanswered, not errors
+        rules, retired, ledger, ver = apply_decisions(rs, answered, dt.datetime.now(dt.timezone.utc))
         write_dir(rules, retired, ledger, ver, argv[4])
         rl.load_rules_dir(argv[4])                       # the written directory must itself validate
         print(f"wrote {argv[4]}: version {ver}; {sum(1 for e in ledger if e['decision'] == 'ACCEPT')} accepted of {len(ledger)} decisions")

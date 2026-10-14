@@ -71,3 +71,14 @@ No evidence-backed Biological wind response is currently encoded (one common-car
 | zoned depth shares | no species depth-preference match; spawn-depth rules stay knowledge, not matched bands |
 | observed vegetation | no vegetation-association match for grass carp, gars, bowfin, snakehead |
 | pool operations (spillway, release) | smallmouth buffalo / longnose gar / silver carp tailwater rules cannot activate |
+
+## Consumption readiness (2026-10-14)
+All three pending inputs are already validated and tested on the Biological side (`contracts_in.py`, `tests/test_contracts_in.py`); nothing else is needed from Biological when an owner publishes. Absent, stale or unrecognised input → the dependent feature is UNKNOWN; Biological never substitutes a proxy (the Lake pool trend never populates the discharge feature).
+
+| Input | Owner | Accepted shape | Biological switch-on when published | Until then |
+|---|---|---|---|---|
+| Tributary discharge change | Lake Brain (tributary hydrology) | `lake.tributaryDischargeTrend` ∈ the stage-trend vocabulary; `RISING_RAPIDLY` ⇒ `rapidDischargeIncrease` TRUE | read the published field in `normalize_inputs` (already wired) | UNKNOWN |
+| Depth zone shares | Depth Brain | shares within the 3/6/10 ft edges, valid only when level is not resolvably different | map the owner's canonical path in `normalize_inputs` | area-level habitat UNKNOWN |
+| Observed vegetation | Vegetation Brain | observed tier only, age ≤ 45 days | map the owner's canonical path in `normalize_inputs` | UNKNOWN |
+
+Biological does not recreate any owner's science and does not read their private internals.

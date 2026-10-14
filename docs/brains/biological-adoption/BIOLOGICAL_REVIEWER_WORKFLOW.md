@@ -15,7 +15,7 @@ Every RECONCILED rule that should become APPROVED. DRAFT rules are excluded by c
 4. The Southeast transfer tag is fair (PARTIAL/UNTESTED unless a Southeast stream counts).
 5. Confidence is not above what the evidence supports (one stream = LOW).
 6. Limitations and conflicts are stated; unknown is left unknown.
-Decisions: **ACCEPT**, **REJECT**, or **CHANGES** (a requested edit; the author makes it as a new version and it is reviewed again).
+Decisions: **ACCEPT**, **REJECT**, or **NEEDS_MORE_EVIDENCE** (legacy spelling `CHANGES` is still read; the author makes it as a new version and it is reviewed again).
 
 ## 4. Who may review
 * **EXTERNAL**: a fisheries professional who did not author the rules (preferred, and the only kind that should support a species being called independently reviewed).
@@ -26,7 +26,7 @@ Decisions: **ACCEPT**, **REJECT**, or **CHANGES** (a requested edit; the author 
 `tools/review.py apply RULES_DIR DECISIONS.json OUT_DIR`:
 * writes a **new** rules directory; the original rule is never edited;
 * each ACCEPT is re-issued as `ruleVersion + 1`, status `APPROVED`, with `review{reviewer, reviewerRole, date, supersedes}`; the old version is retired through `supersededBy`;
-* REJECT/CHANGES leave rules as they are and are recorded in `review_ledger.jsonl` (decision, reviewer, role, date, note, hash of the rule reviewed);
+* REJECT/NEEDS_MORE_EVIDENCE leave rules as they are and are recorded in `review_ledger.jsonl` (decision, reviewer, role, date, note, hash of the rule reviewed);
 * the rules version is bumped (`…+review.YYYYMMDD-rules`);
 * each new APPROVED version must then be **frozen in the register** before a prediction may use it (the prediction log refuses an unfrozen hash);
 * predictions already logged keep referencing the older frozen version; nothing is rewritten.
@@ -36,5 +36,5 @@ A species is eligible for `researchMaturity = REVIEWED` when **at least 80% of i
 
 ## 7. Concise path if Michael reviews first
 1. Open the packet for one species (start with common carp: 11 rules).
-2. Tick the checklist per rule and mark ACCEPT/REJECT/CHANGES; write one line for anything not accepted.
+2. Tick the checklist per rule and mark ACCEPT/REJECT/NEEDS_MORE_EVIDENCE; write one line for anything not accepted.
 3. Hand back the decisions as JSON (a spreadsheet works; the author converts it). Nothing else is needed.

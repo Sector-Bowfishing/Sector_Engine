@@ -58,11 +58,24 @@ class ReviewTests(unittest.TestCase):
                 review.apply_decisions(self.rs, [bad], NOW)
 
     def test_reject_and_changes_do_not_alter_any_rule_but_are_recorded(self):
-        rules, retired, ledger, ver = review.apply_decisions(self.rs, [dec(decision="REJECT", note="overclaims"), dec("EX-SPN-01", decision="CHANGES")], NOW)
+        rules, retired, ledger, ver = review.apply_decisions(self.rs, [dec(decision="REJECT", note="overclaims"), dec("EX-SPN-01", decision="CHANGES")], NOW)      # legacy spelling still accepted
         self.assertEqual(len(rules), len(self.rs.rules))
         self.assertEqual(ver, self.rs.rules_version)
-        self.assertEqual([e["decision"] for e in ledger], ["REJECT", "CHANGES"])
+        self.assertEqual([e["decision"] for e in ledger], ["REJECT", "NEEDS_MORE_EVIDENCE"])
         self.assertTrue(all(r["status"] != "APPROVED" for r in rules))
+
+    def test_needs_more_evidence_spelling_and_common_carp_first(self):
+        _, _, ledger, _ = review.apply_decisions(self.rs, [dec(decision="needs more evidence")], NOW)
+        self.assertEqual(ledger[0]["decision"], "NEEDS_MORE_EVIDENCE")
+
+        class Fake:
+            by_species = {"bighead_carp": [], "spotted_gar": [], "common_carp": [], "zander": []}
+        self.assertEqual(review.species_order(Fake)[:2], ["common_carp", "spotted_gar"])
+
+    def test_template_is_blank_and_covers_only_reconciled_rules(self):
+        tpl = review.build_template(self.rs)
+        self.assertTrue(tpl and all(x["decision"] == "" for x in tpl))
+        self.assertTrue(all(self.rs.by_species[next(s for s in self.rs.by_species if any(r["ruleId"] == x["ruleId"] for r in self.rs.by_species[s]))] for x in tpl))
 
     def test_a_retired_or_already_superseded_rule_cannot_be_accepted_twice(self):
         rules, retired, _, ver = review.apply_decisions(self.rs, [dec()], NOW)
