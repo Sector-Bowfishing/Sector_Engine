@@ -80,6 +80,9 @@ def _health_status(errors: list, stale_lakes: int, live_lakes: int) -> str:
     return "HEALTHY"
 
 
+FLEET_FULL_REFRESH_H = 24
+
+
 def canonical_scores_ref(ev: dict) -> dict:
     """Registry/validation `scores` block WITHOUT the baked certification number.
 
@@ -215,8 +218,15 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     for l in directory:
         readiness.setdefault(l["id"], "DISCOVERED")
     fleet = {}
+    # Only the live lakes (heartbeat fields) and lakes whose readiness CHANGED are rewritten; the other ~600 rows are unchanged hour to hour.
+    # A full refresh every FLEET_FULL_REFRESH_H hours repairs any drift (a deleted node, a first run) without a per-run fleet-wide write.
+    prev_fleet = last.get("fleetReadiness") or {}
+    full_due = (not prev_fleet) or (not last.get("fleetFullAt")) or \
+        (now - datetime.strptime(last["fleetFullAt"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)).total_seconds() >= FLEET_FULL_REFRESH_H * 3600
     for lid, r in readiness.items():
         k = keys[lid]
+        if not (full_due or lid in WIND_LAKE_IDS.values() or prev_fleet.get(lid) != r):
+            continue
         fleet[f"lakeFleet/{k}/lakeId"] = lid
         fleet[f"lakeFleet/{k}/readiness/{C.SLOT}"] = r
         if lid in WIND_LAKE_IDS.values():
@@ -225,7 +235,9 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
             # Per-brain fleet record (same shape the Water Clarity brain writes): wind staleness without touching lake aggregates.
             fleet[f"lakeFleet/{k}/slots/{C.SLOT}"] = {"readiness": r, "stale": bool(m.get("stale", True)), "stateType": m.get("kind", "unavailable"), "kind": m.get("kind", "unavailable"),
                                                        "issueCount": 0 if r == "CALIBRATION" else 1, "lastUpdatedAt": now_iso}
-    writer.patch(fleet); rep["writes"] += 1
+    if fleet:
+        writer.patch(fleet); rep["writes"] += 1
+    rep["fleetPathsWritten"] = len(fleet)
 
     # ── 3. registry + validation + sources ────────────────────────────────────────────────────
     counts: dict[str, int] = {}
@@ -331,6 +343,7 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     try:
         store.put_json("brain/wind/last_publish.json", {"at": now_iso, "version": C.BRAIN_VERSION,
                                                         "readiness": {l: readiness[l] for l in WIND_LAKE_IDS.values()},
+                                                        "fleetReadiness": dict(readiness), "fleetFullAt": now_iso if full_due else last.get("fleetFullAt"),
                                                         "fingerprints": {**(last.get("fingerprints") or {}), **{l: f for l, f in new_fps.items() if f}},
                                                         "profileShas": {**last.get("profileShas", {}), **{lid: m["tableSha256"] for lid, m in national.items()}},
                                                         "lastSuccessfulRun": registry["lastSuccessfulRun"], "errors": errors_now[:3]})

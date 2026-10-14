@@ -197,3 +197,15 @@ def test_second_publish_with_unchanged_inputs_skips_bank_detail_rewrite(tmp_path
     assert not r1.get("fingerprintSkips")
     assert r2.get("fingerprintSkips", 0) >= 1                      # same NBM cycle / RTMA / METAR / rules / geometry -> byte-identical detail, not rewritten
     assert r2["writes"] >= r1["writes"] - 0 and not r2["errors"]    # the RTDB state heartbeat is still written every run (generatedAt freshness contract)
+
+
+def test_fleet_rows_are_not_rewritten_every_hour_but_changes_and_daily_refresh_are():
+    st = make_store(__import__("pathlib").Path(__import__("tempfile").mkdtemp()))
+    kw = dict(run_summary={"runAt": C.iso(NOW), "errors": [], "seconds": 90}, directory=DIRECTORY)
+    r1 = publish(st, CFG, DryRunWriter(), now=NOW, **kw)
+    r2 = publish(st, CFG, DryRunWriter(), now=NOW + timedelta(hours=1), **kw)
+    r3 = publish(st, CFG, DryRunWriter(), now=NOW + timedelta(hours=25), **kw)
+    assert r1["fleetPathsWritten"] >= len(DIRECTORY) * 2                       # first run writes everything
+    live_paths = len(WIND_LAKE_IDS) * 4                                        # lakeId, readiness, modelVersions, slots per live lake
+    assert r2["fleetPathsWritten"] == live_paths and r2["fleetPathsWritten"] < r1["fleetPathsWritten"]
+    assert r3["fleetPathsWritten"] >= len(DIRECTORY) * 2                       # daily full refresh
