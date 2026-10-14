@@ -40,6 +40,26 @@ def audit(jobs: list[dict], policy: dict) -> tuple[list[str], list[str]]:
     return bad, ok
 
 
+def drift(jobs: list[dict], manifest: dict) -> list[str]:
+    """Compare live Cloud Scheduler with the orchestrator's execution manifest (the single schedule model). Reports: a job the manifest says is
+    PAUSED/MANUAL but is ENABLED; a VALIDATION_EXCEPTION that is not ENABLED (evidence capture silently off); a live scheduler the manifest does not know."""
+    live = {(j.get("name") or "").rsplit("/", 1)[-1]: j for j in jobs}
+    known = {mj.get("scheduler"): (jid, mj) for jid, mj in manifest["jobs"].items() if mj.get("scheduler")}
+    out = []
+    for sch, (jid, mj) in sorted(known.items()):
+        st = (live.get(sch) or {}).get("state")
+        if st is None:
+            if mj["classification"] in ("VALIDATION_EXCEPTION", "ORCHESTRATOR_OWNED"):
+                out.append(f"DRIFT {sch}: manifest says {mj['classification']} but no such scheduler exists")
+        elif st == "ENABLED" and mj["classification"] in ("PAUSED", "MANUAL", "INPUT_DRIVEN"):
+            out.append(f"DRIFT {sch}: ENABLED but the manifest classifies it {mj['classification']}")
+        elif st != "ENABLED" and mj["classification"] == "VALIDATION_EXCEPTION":
+            out.append(f"DRIFT {sch}: validation exception is {st}: prospective evidence capture is not running")
+    for name in sorted(set(live) - set(known) - {"unrelated"}):
+        out.append(f"UNMANAGED {name}: live scheduler not in the execution manifest (hidden cron) - classify it or confirm it is not Brain-related")
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", default=None)
@@ -52,7 +72,13 @@ def main() -> int:
             print(r.stderr, file=sys.stderr); return 2
         jobs = json.loads(r.stdout)
     bad, ok = audit(jobs, json.load(open(POLICY)))
+    sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
+    from sector_brain_platform import orchestration as O
+    notes = drift(jobs, O.load_manifest())
     print("enabled Brain schedulers with a gate:", ", ".join(ok) or "none")
+    for n in notes:
+        print(n, file=sys.stderr)
+    bad += [n for n in notes if n.startswith(("DRIFT", "UNMANAGED"))]
     for b in bad:
         print("VIOLATION:", b, file=sys.stderr)
     return 1 if bad else 0

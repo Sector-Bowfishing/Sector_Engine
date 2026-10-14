@@ -1,0 +1,11 @@
+{
+  "_comment": "Control requests (Ops -> Engine). Ops never executes anything: it submits one of these and reads the stored result at /control/orchestratorV1/requests/{requestId}.",
+  "runNow": {"requestId": "req-2026-10-14-001", "requestedBy": "michael", "action": "RUN_NOW", "brainId": "biological-state", "scope": "guntersville"},
+  "runNowResult": {"requestId": "req-2026-10-14-001", "requestedBy": "michael", "action": "RUN_NOW", "brainId": "biological-state", "scope": "guntersville", "at": "2026-10-14T19:02:11Z", "decision": "ACCEPTED", "reasons": ["queued for the next orchestrator cycle (scoped manual run)"], "decisionId": "d-20261014T190211Z-biological-state-MANUAL"},
+  "clarityTargeted": {"requestId": "req-2026-10-14-002", "requestedBy": "michael", "action": "RUN_NOW", "brainId": "water-clarity", "scope": "guntersville"},
+  "clarityTargetedResult": {"decision": "ACCEPTED", "reasons": ["accepted; the executor cannot pass a scope to this target, so run it manually"], "manualCommand": "gcloud run jobs execute lake-surface-dispatch --region us-central1 --wait  # scope guntersville: roles/run.developer (jobs.run with args override)"},
+  "fleetRejected": {"requestId": "req-2026-10-14-003", "requestedBy": "ops", "action": "RUN_NOW", "brainId": "water-clarity", "scope": "fleet", "decision": "REJECTED", "reasons": ["RUN_NOW needs an explicit scope; allowed for water-clarity: ['guntersville', 'lake-hartwell']"]},
+  "protectedPause": {"requestId": "req-2026-10-14-004", "requestedBy": "ops", "action": "PAUSE", "brainId": "wind", "decision": "NEEDS_CONFIRMATION", "protected": true, "reasons": ["pausing a Brain with a validation exception disables evidence capture: protected action DISABLE_VALIDATION_CAPTURE"]},
+  "protectedConfirm": {"requestId": "req-2026-10-14-005", "requestedBy": "michael", "action": "DISABLE_VALIDATION_CAPTURE", "brainId": "wind", "confirm": {"by": "michael", "phrase": "CONFIRM DISABLE_VALIDATION_CAPTURE wind"}},
+  "engineMode": {"requestId": "req-2026-10-14-006", "requestedBy": "michael", "action": "SET_ENGINE_MODE", "brainId": null, "decision": "NEEDS_CONFIRMATION", "reasons": ["protected action; resubmit with confirm.by = requester and confirm.phrase = 'CONFIRM SET_ENGINE_MODE ENGINE'"]}
+}

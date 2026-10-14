@@ -66,3 +66,6 @@ Identity: service account `brain-writer` (shared with the two Brain jobs): `fire
 `run.viewer`, `cloudscheduler.viewer`, `run.invoker` on `lake-brain` and `water-temp-brain` only,
 `storage.objectViewer` on the biology bundle bucket. Per-brain crons for Lake / Water Temp were never created;
 `wind-hourly` stays until the executor has proven itself across a few days (then it is the next candidate).
+
+---
+**2026-10-14:** superseded in execution authority by `docs/brains/platform/orchestrator/ORCHESTRATOR_CONTROL_V1.md` (PRE_PRODUCTION decision model, active/parked, material-change propagation, `/control/orchestratorV1`). The planning core above remains the legacy staleness description.

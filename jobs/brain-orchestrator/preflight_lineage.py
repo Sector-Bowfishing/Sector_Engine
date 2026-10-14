@@ -28,6 +28,8 @@ PROTECTIONS = (
     ("jobs/brain-scores/score_brains.py", "guard_scores"),                  # runtime stale-score guard (Model v1)
     ("jobs/brain-orchestrator/deploy-job.sh", "check_score_artifacts.py"),  # guard wired into the deploy
     ("jobs/brain-orchestrator/orchestrate.py", "--if-changed"),             # score publish only after a state change
+    ("jobs/brain-orchestrator/orchestrate.py", "control_plane"),            # PRE_PRODUCTION decision model gates execution
+    ("jobs/brain_platform/sector_brain_platform/orchestration.py", "schedule_policy"),   # recurring-compute policy is code, not only docs
 )
 
 

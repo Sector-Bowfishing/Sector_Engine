@@ -16,5 +16,15 @@ Items that need Michael (authorisation) or a specialist owner. Everything else w
 | **D-8** | Water Temp (Swift runner) zero-concurrency audit. | Water Temp owner session | owner runs the §4 audit | none |
 | **D-9** | Publish `held[]` from the score publisher into `control/orchestrator.scores` so Ops can show "score held: stale artifact". | needs D-1 deploy; small | bundle with D-1 | visibility only |
 
+## Orchestrator control plane (2026-10-14)
+| ID | Decision | Recommendation |
+|---|---|---|
+| **O-1** | Deploy the orchestrator with the control plane (`feat/brain-platform-model-v1`). Its scheduler stays PAUSED, so a deploy changes no recurring behaviour; verify with `--dry-run` then one real manual cycle. Rollback in `orchestrator/ORCHESTRATOR_CONTROL_V1.md` §12. | Approve (supersedes D-1; same branch). |
+| **O-2** | Ops integration: render `/control/orchestratorV1/*` (Ops lane). | Ops session. |
+| **O-3** | Control-request channel: Ops cannot write `/controlRequests/pending` under today's rules. Options: (a) narrow rules write for opsUsers with `.validate` on the request shape, (b) an authenticated callable. With the orchestrator paused, requests wait for a manual cycle. | (a) when Ops builds the buttons; keep orchestrator manual until then. |
+| **O-4** | Confirm provisional dependency freshness tolerances in the manifest (e.g. Biological ← water-temp 48 h) with each Brain owner. | Owners, when they next touch their Brain. |
+| **O-5** | Clarity scoped `RUN_NOW` needs `roles/run.developer` for `brain-writer` (args override). Until granted the request returns the manual command. | Do not grant until a Clarity validation window is approved. |
+| **O-6** | Stage 3 (orchestrator takes over a schedule): only after an approved recurring exception; Wind last, with overlap and a no-missing-hour proof. | Not now. |
+
 ## Resolved
 _None yet._

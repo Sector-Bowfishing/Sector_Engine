@@ -68,6 +68,7 @@ The durable canonical score store is **already** RTDB `/scores/{brainId}`. A fro
 - **Orchestrator:** coordinates freshness checks, dependency changes, safe publication, recovery, stale detection and control updates. It does not run every Brain because an hour passed; the existing cheap hourly backstop stays.
 
 ## 7. Document map
+`orchestrator/ORCHESTRATOR_CONTROL_V1.md` (the traffic-cop control plane, execution manifest, decision model, Ops contract) · `cost-freeze/` (pre-production recurring-job policy) ·
 `BRAIN_SPEC_TEMPLATE` · `CLAIM_LEVEL_MODEL` · `CLAIM_MATURITY_MODEL` · `LIFECYCLE_MODEL` · `EXECUTION_MODEL` (incl. fingerprints, hot paths, cost, zero-concurrency lesson) · `FRESHNESS_MODEL` · `SCORING_SEMANTICS` · `VALIDATION_MODEL` · `FIELD_VALIDATION_MODEL` · `OPS_CONTROL_CONTRACT` · `BRAIN_MIGRATION_CHECKLIST` (per-Brain plan) · `NEW_BRAIN_ONBOARDING_CHECKLIST` · `HANDOFF_GOVERNANCE` · `PLATFORM_CURRENT_STATE` · `DECISION_QUEUE`.
 
 ## 8. What is deliberately NOT here

@@ -38,6 +38,9 @@ sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_records, check_schema, iso,            # noqa: E402
                                    jobs_changed_paths, orchestrate)
 from sector_brain_platform import gcp                                                                                 # noqa: E402
+from sector_brain_platform import orchestration as O, control_state as CS                                             # noqa: E402
+sys.path.insert(0, HERE)
+import control_plane as CP                                                                                            # noqa: E402
 
 WRITER = "brain-platform"
 JOB_NAME = "brain-orchestrator"
@@ -167,6 +170,12 @@ def main(argv=None) -> int:
     ap.add_argument("--no-execute", action="store_true", help="sync + plan + record, start nothing")
     ap.add_argument("--sync-jobs-only", action="store_true")
     ap.add_argument("--force-scores", action="store_true", help="publish scores/control even when nothing changed")
+    ap.add_argument("--trigger", default="SCHEDULE", choices=("SCHEDULE", "MANUAL", "ADMIN"), help="why this cycle runs (recorded in the control state; default SCHEDULE)")
+    ap.add_argument("--run-now", default=None, metavar="BRAIN", help="scoped manual run of one Brain (needs --scope); validated by orchestrator policy")
+    ap.add_argument("--scope", default=None, help="scope for --run-now, e.g. guntersville, pilots")
+    ap.add_argument("--requested-by", default="cli", help="who asked, recorded with the decision")
+    ap.add_argument("--emit-control-state", default=None, metavar="FILE", help="write the computed control state JSON here (sample payloads, review)")
+    ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
     a = ap.parse_args(argv)
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
@@ -182,49 +191,78 @@ def main(argv=None) -> int:
     if a.sync_jobs_only:
         return 0
 
-    # 2. plan
+    # 2. plan: the decision model (engine mode, active/parked, dependencies, material change) says what MAY run; the legacy TIME/plan logic only
+    #    describes what is stale. Parked Brains are not even asked for a plan (a plan can cost provider/Engine calls).
     brains = live.get("brains") or {}
     health = live.get("health/brains") or {}
     state = live.get("control/orchestrator") or {}
-    brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items() if ex["kind"] == "in-process" and b in brains}
-    plan = orchestrate(with_single_flight(brains, executions, state.get("locks") or {}, now), health, now, brain_plans)
+    world = CP.load_world(live, now)
+    activity = O.effective_activity(world["manifest"], world["overrides"])
+    brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
+                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE")}
+    locks_now = state.get("locks") or {}
+    run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
+    ctx, evaluation = CP.evaluate(world, now, {f"{b}|*": l for b, l in locks_now.items()}, brain_plans, run_now)
+    allowed = set(evaluation["runs"])
+    plan = orchestrate(with_single_flight(brains, executions, locks_now, now), health, now, brain_plans)
+    for d in evaluation["decisions"]:
+        if d["decision"] in ("RUN", "BLOCKED_DEPENDENCY", "BLOCKED_POLICY", "MANUAL_APPROVAL", "WAITING") and d["trigger"] != "SCHEDULE" or d["decision"] == "RUN":
+            print(f"DECIDE {d['brainId']:20s} {d['trigger']:18s} {d['decision']:18s} {d['reason']}")
     for r in plan["runs"]:
-        print(f"RUN  {r['brainId']:20s} {'; '.join(r['reasons'])}" + (f" (after {r['after']})" if r.get("after") else ""))
+        print(f"STALE {r['brainId']:20s} {'; '.join(r['reasons'])}" + (f" (after {r['after']})" if r.get("after") else "") + ("" if r["brainId"] in allowed or a.legacy_execution else "  -> not started: decision model says no"))
     for w in plan["waiting"]:
         print(f"WAIT {w['brainId']:20s} {'; '.join(w['reasons'])}")
-    for s in plan["skipped"]:
-        print(f"SKIP {s['brainId']:20s} {'; '.join(s['reasons'])}")
 
-    # 3. execute
-    executed, deferred, locks = [], [], {}
+    # 3. execute — only what the decision model allowed (RUN), in dependency waves; legacy TIME/plan logic only with --legacy-execution
+    executed, deferred, locks, exec_records = [], [], {}, []
     started_async = set()
-    for r in plan["runs"]:
-        b = r["brainId"]
-        if b in NOT_STARTED_HERE:
-            deferred.append({"brainId": b, "why": NOT_STARTED_HERE[b]})
-            continue
-        ex = EXECUTORS.get(b)
-        if not ex:
-            deferred.append({"brainId": b, "why": "no executor"})
-            continue
-        if any(x in started_async for x in r.get("after") or []):
-            deferred.append({"brainId": b, "why": f"upstream started this cycle ({[x for x in r['after'] if x in started_async]}); next wake-up"})
-            continue
-        if a.dry_run or a.no_execute:
-            deferred.append({"brainId": b, "why": "not executed (--dry-run/--no-execute)"})
-            continue
-        try:
-            if ex["kind"] == "cloud-run-job":
-                res = start_job(b, tokens)
-                started_async.add(b)
-                locks[b] = {"execution": res.get("execution"), "startedAt": res["startedAt"],
-                            "lockedUntil": iso(now + dt.timedelta(minutes=LOCK_MINUTES))}
-            else:
-                res = run_in_process(b)
-        except Exception as e:                                   # one brain's failure never stops the cycle
-            res = {"brainId": b, "ok": False, "error": repr(e)[:300]}
-        executed.append(res)
-        print(f"{'✓' if res.get('ok') else '✗'} {b}: {res.get('execution') or res.get('tail', res.get('error', ''))[-200:]}", flush=True)
+    manifest = world["manifest"]
+    todo = set(allowed) | ({r["brainId"] for r in plan["runs"]} if a.legacy_execution else set())
+    for r in plan["runs"]:                       # stale by the legacy TIME/plan logic, but not allowed to run by the decision model: say why
+        if r["brainId"] not in todo:
+            why = next((d["reason"] for d in evaluation["decisions"] if d["brainId"] == r["brainId"] and d["trigger"] == "SCHEDULE"), "no RUN decision")
+            deferred.append({"brainId": r["brainId"], "why": f"PRE_PRODUCTION decision model: {why}"})
+    for d in evaluation["decisions"]:
+        if d["brainId"] not in todo and d["decision"] in ("MANUAL_APPROVAL", "WAITING", "BLOCKED_DEPENDENCY") and d["trigger"] != "SCHEDULE":
+            deferred.append({"brainId": d["brainId"], "why": f"{d['decision']}: {d['reason']}"})
+    for wave in O.plan_waves(sorted(todo), manifest) if todo else []:
+        for b in wave:
+            dec = next((d for d in evaluation["decisions"] if d["brainId"] == b and d["decision"] == "RUN"), None)
+            trigger = dec["trigger"] if dec else "SCHEDULE"
+            why = dec["reason"] if dec else "legacy TIME/plan logic (--legacy-execution)"
+            tgt = (manifest["brains"][b].get("executionTarget") or {})
+            ex = EXECUTORS.get(b)
+            if b in NOT_STARTED_HERE or not ex or not tgt.get("startedByOrchestrator", False):
+                cmd = f"gcloud run jobs execute {tgt.get('job')} --region us-central1 --wait" if tgt.get("job") else "run locally from the Brain's branch"
+                deferred.append({"brainId": b, "why": f"RUN allowed but not startable by the orchestrator ({NOT_STARTED_HERE.get(b, tgt.get('note') or 'legacy/manual target')}); manual: {cmd}"})
+                continue
+            if any(d["id"] in started_async for d in manifest["brains"][b].get("dependencies", [])):
+                deferred.append({"brainId": b, "why": "an upstream was started this cycle; evaluated again next cycle"})
+                continue
+            if a.dry_run or a.no_execute:
+                deferred.append({"brainId": b, "why": "not executed (--dry-run/--no-execute)"})
+                continue
+            started = dt.datetime.now(dt.timezone.utc)
+            eid = f"{b}-{started:%Y%m%dT%H%M%SZ}"
+            try:
+                if ex["kind"] == "cloud-run-job":
+                    res = start_job(b, tokens)
+                    started_async.add(b)
+                    eid = (res.get("execution") or eid).rsplit("/", 1)[-1]
+                    locks[b] = {"execution": res.get("execution"), "startedAt": res["startedAt"], "lockedUntil": iso(now + dt.timedelta(minutes=LOCK_MINUTES))}
+                else:
+                    res = run_in_process(b)
+            except Exception as e:                                   # one brain's failure never stops the cycle
+                res = {"brainId": b, "ok": False, "error": repr(e)[:300]}
+            ended = None if res.get("how") == "cloud-run-job" and res.get("ok") else dt.datetime.now(dt.timezone.utc)
+            fc = None if res.get("ok") else O.classify_failure(res.get("error") or res.get("tail"))
+            rec = O.execution_record(eid, b, trigger, why, started, ended, "STARTED" if ended is None else ("SUCCEEDED" if res.get("ok") else "FAILED"),
+                                     scope=a.scope if a.run_now == b else None, input_fp=(dec or {}).get("inputFingerprint"),
+                                     resources=manifest["brains"][b].get("resources"), failure_class=fc)
+            rec["jobId"] = tgt.get("job") or ex.get("jobId")
+            exec_records.append(rec)
+            executed.append(res)
+            print(f"{'✓' if res.get('ok') else '✗'} {b} [{trigger}] {res.get('execution') or res.get('tail', res.get('error', ''))[-200:]}", flush=True)
 
     # 4. scores / control — only after a state change
     seen = {b: (brains.get(b) or {}).get("lastSuccessfulRun") for b in brains}
@@ -242,7 +280,30 @@ def main(argv=None) -> int:
     else:
         print(f"scores: skipped ({scores['why']})")
 
-    # 5. record
+    # 5. control plane: the compact read-only state Sector Ops renders (content-aware: unchanged sections are not rewritten)
+    try:
+        world2 = CP.load_world(live, dt.datetime.now(dt.timezone.utc)) if (executed and write) else world
+        ctx2, ev2 = CP.evaluate(world2, now, {f"{b}|*": l for b, l in {**locks_now, **locks}.items()}, brain_plans, run_now)
+        rq = CP.process_requests(live, world2, ctx2, write)
+        cloud_execs = CP.executions_from_cloud_run(manifest, executions, records, now)
+        for r in exec_records:                                   # downstream decisions of a Brain that just ran
+            r["downstream"] = [{"brainId": d["brainId"], "decision": d["decision"]} for d in ev2["decisions"]
+                               if d["trigger"] == "DEPENDENCY_CHANGED" and r["brainId"] in [c["id"] for c in manifest["brains"][d["brainId"]].get("dependencies", [])]]
+        state_cp = CS.build_control_state(manifest, ctx2["mode"], now, registries=world2["registries"], health=world2["health"], scores=live.get("scores") or {},
+                                          jobs=records, evaluation=ev2, prev=world["prev"], new_executions=exec_records + cloud_execs,
+                                          locks={**locks_now, **locks}, trigger=a.trigger, duration_ms=int((time.time() - t0) * 1000),
+                                          overrides=rq["overrides"], requests=rq["requests"])
+        if a.emit_control_state:
+            json.dump(state_cp, open(a.emit_control_state, "w"), indent=1, sort_keys=True)
+        cp_paths = CS.changed_paths(state_cp, world["prev"])
+        if cp_paths and (write or a.dry_run):
+            db.update(cp_paths)
+        print(f"control plane: {len(cp_paths)} section(s) changed of {len(CS.SECTIONS)}; mode {state_cp['summary']['engineMode']}; "
+              f"active {state_cp['summary'].get('activeBrains')}; queued {state_cp['summary'].get('queued', [])}")
+    except Exception as e:                                       # the control plane must never break the cycle or the score publication
+        print(f"control plane: FAILED {e!r}", file=sys.stderr)
+
+    # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),
               "mode": "dry-run" if a.dry_run else ("no-execute" if a.no_execute else "cycle"),
               "plan": plan, "brainPlans": brain_plans, "executed": executed, "deferred": deferred,

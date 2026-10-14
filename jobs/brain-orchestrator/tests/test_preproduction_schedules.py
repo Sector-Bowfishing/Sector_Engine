@@ -31,3 +31,17 @@ def test_allowlist_entries_need_gate_cost_stop_and_date():
     pol = {"brainSchedulers": ["x"], "allowEnabled": {"x": {"gate": "g"}}}
     bad, _ = C.audit([], pol)
     assert bad and "lacks" in bad[0]
+
+
+def test_drift_between_live_schedulers_and_the_execution_manifest():
+    from sector_brain_platform import orchestration as O
+    m = O.load_manifest()
+    live = [job("wind-hourly", "ENABLED"), job("lake-brain-ledger-daily", "ENABLED"), job("brain-orchestrator", "PAUSED"), job("water-temp-tva-archive", "PAUSED"),
+            job("lake-surface-dispatch", "PAUSED"), job("lake-surface-daily", "PAUSED"), job("hydrology-hourly", "PAUSED"), job("clarity-current-hourly", "PAUSED"),
+            job("clarity-candidate-shadow", "PAUSED")]
+    assert C.drift(live, m) == []                                              # the live freeze state IS the manifest
+    live2 = [j if not j["name"].endswith("tva-archive") else job("water-temp-tva-archive", "ENABLED") for j in live]
+    assert any("water-temp-tva-archive" in d and "ENABLED" in d for d in C.drift(live2, m))
+    live3 = [j if not j["name"].endswith("wind-hourly") else job("wind-hourly", "PAUSED") for j in live]
+    assert any("wind-hourly" in d and "evidence capture is not running" in d for d in C.drift(live3, m))
+    assert any("UNMANAGED hidden-cron" in d for d in C.drift(live + [job("hidden-cron", "ENABLED")], m))
