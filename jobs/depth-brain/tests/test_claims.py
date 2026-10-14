@@ -50,3 +50,17 @@ def test_registry_publishes_lifecycle_claims_and_execution_model():
     ex = reg["execution"]
     assert ex["type"] == "DEPENDENCY_DRIVEN" and ex["clock"] is False and ex["maxStateAgeHours"]["unavailable"] == 48.0
     assert "score" not in reg and reg["scoreStatus"] == "NOT_ESTABLISHED"
+
+
+def test_mission_lock_and_wake_conditions_are_in_the_spec():
+    spec = open(os.path.join(HERE, "BRAIN_SPEC.md")).read()
+    assert "MISSION LOCK" in spec and "NOT a hydrographic survey" in spec and "without product approval" in spec
+    assert "WAIT STATE" in spec and "point-in-time" in spec
+    for w in ("Reclamation", "TVA", "Duke", "Lake publishes", "NWPS", "field/sonar", "control job", "rubric mismatch", "licensing"):
+        assert w in spec, w
+
+
+def test_no_cron_and_no_official_score_anywhere_in_depth_runtime():
+    reg_src = open(os.path.join(HERE, "depth_brain", "ops_summary.py")).read()
+    assert '"clock": False' in reg_src and "NOT_ESTABLISHED" in reg_src
+    assert "cron" not in open(os.path.join(HERE, "run.py")).read().lower().replace("no cron", "")

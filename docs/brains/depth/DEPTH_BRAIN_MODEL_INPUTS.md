@@ -1,0 +1,13 @@
+# Depth: inputs to Sector Brain Model v1 (not implemented here)
+
+Depth supplies these to the shared model/scoring review. The global model is **not** implemented from this branch.
+
+1. **BRAIN_SPEC shape** - `jobs/depth-brain/BRAIN_SPEC.md` (owns / does not own / upstream / downstream / claims / state / confidence / refusal / freshness / execution / fingerprint / dimensions / critical dimensions / lifecycle / production requirements / storage / stop conditions / Ops / cost).
+2. **Claim-level maturity** - `depth_brain/data/claim_levels.json`; closed status vocabulary (PROVIDER_VERIFIED, VERIFIED, DESK_VALIDATED, ESTIMATED, CALIBRATION, NOT_VALIDATED, WITHHELD, NOT_CLAIMED); a Level-3 failure cannot downgrade Level-1/2 claims (tested). Published as `claims` in the registry and the control summary.
+3. **Execution model** - dependency-driven, fingerprint-first, no clock, per-lake no-op; published as `execution`.
+4. **Freshness-authority rule candidate (platform rule)** - **The owning Brain should be the primary authority for input freshness. A downstream Brain may impose a stricter requirement only when the specific derived claim requires it.** Evidence: Hartwell's USGS-sourced level was 6.0 h old; Depth's local 6 h window set it DEGRADED while Lake Brain still called it fresh. Depth did not change its window or add a competing policy, and Lake Brain was not touched. Suggested model text: downstream consumers copy the owner's `freshness.stale` as their default, may add a documented claim-specific limit, and keep only a hard upper bound for refusing to compute.
+5. **Mission boundary lock** - see BRAIN_SPEC "MISSION LOCK".
+6. **Scoring-rubric mismatches** - `DEPTH_RUBRIC_MISMATCH_PROPOSAL.md` (absolute depth accuracy, relative morphology, validation as a mixed dimension). Rubric unchanged; `depth-brain-score-v1` unratified; no 3.0/3.2 published as a score.
+7. **Field-framework compatibility** - Depth contributes one per-zone block to the shared trip envelope: `tripId, lakeId, zoneId, timestamp, predictedEffectiveDepthFt, predictedClass, observedSonarDepthFt, dryWet, shootabilityObservation, waterLevelContext` (+ photo, operator pool elevation, Depth `inputFingerprint`). No separate Depth field app. Hash-pinned preregistration stays as is.
+8. **Shadow Brains in the control plane** - `SHADOW_BRAINS` currently hardcodes `depth` in `control.py`; the model should let a Brain declare shadow status in its registry so a new Brain needs no platform code edit.
+9. **Point-in-time snapshots** - a dependency-driven Brain with no clock shows an aging `generatedAt`; Ops should present `generatedAt` and "inputs changed since" rather than imply continuous refresh.

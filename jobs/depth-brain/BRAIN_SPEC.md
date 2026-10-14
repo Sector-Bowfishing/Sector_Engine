@@ -13,6 +13,12 @@ Canonical specification in the Sector Brain Model v1 shape. Status 2026-10-14. C
 | **Upstream** | Lake Brain `states/lake` (level, datum, observation time, source capability, freshness); engine directory (reference pool, basis, confidence); operator/agency documents (datum, survey pool) via the committed manifest; authoritative contours (derived shares only) |
 | **Downstream** | Sector Intelligence (restates, never recomputes: `DEPTH_INTELLIGENCE_CONTRACT.md`); Water Temp / Clarity / Vegetation interface contracts (`DEPTH_CROSS_BRAIN_CONTRACTS.md`); Ops (cached control state) |
 
+## MISSION LOCK (product approval required to change)
+Depth = **known depth evidence + current water-level shift + effective shallow-water implications + dry/flooded bounds + confidence/provenance.** Depth is NOT a hydrographic survey, complete bathymetry, a channel mapper, a ledge mapper or a structure finder. A later session may not widen this scope without product approval (the claim `absoluteDepthFlatsChannels` stays NOT_CLAIMED; GLOBathy and slope-derived depth stay forbidden).
+
+## WAIT STATE and wake conditions (2026-10-14)
+Depth is SHADOW, dependency-driven, field-ready. Pilot states are a **point-in-time snapshot** (see `freshness.generatedAt`): with no cron by design they refresh only on a manual pilot-scope run, or by the shared orchestrator once approved. Do nothing while waiting. Resume only on: (A) Reclamation reply, (B) TVA reply, (C) Duke or other datum confirmation, (D) Lake publishes more fleet states, (E) Lake fixes NWPS bindings, (F) field/sonar observations, (G) authorization to deploy the control job, (H) a shared Brain Model/scoring decision on the rubric mismatch, (I) a licensing decision that unlocks contour sources. On a wake: promote confirmed rules through `proposals`, `refresh`, `report --log`, regenerate docs, re-run tests, push. Details: `docs/brains/depth/DEPTH_BRAIN_MODEL_INPUTS.md`.
+
 ## Claims (Level 1 / 2 / 3) and claim-level maturity
 Machine-readable: `depth_brain/data/claim_levels.json` (published as `claims` in `/brains/depth`).
 
