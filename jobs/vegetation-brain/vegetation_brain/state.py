@@ -218,6 +218,7 @@ def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = Non
                             "seasonalState": sst["state"], "observationAgeDays": age_days, "evidenceKind": kind_ev,
                             "confidence": conf["level"], "stale": stale, "limitationsRef": "limitations",
                             "separation": "Vegetation publishes plant state only. Habitat value vs shootability/obstruction is Intelligence's synthesis."},
+        "claimMaturity": {k: dict(v) for k, v in C.CLAIMS.items()},
         "limitations": list(LIMITATIONS),
         "freshness": _freshness(now, observed_on, stale, pres),
     }
@@ -271,3 +272,15 @@ def _freshness(now: datetime, observed_on, stale: bool, pres: str) -> dict:
     if rs:
         out["staleReasons"] = rs
     return out
+
+
+def plan(published: dict | None, cand: dict, obs, ctx: dict | None, manifest_version: str) -> dict:
+    """Fingerprint first: PUBLISH only when a material input changed; page views and clocks never trigger recompute.
+    Material inputs: the observation (scene ids / evidence kind / plant cells), registry geometry tier and version, wind flag, Clarity
+    Secchi, Depth tier, manifest and Brain versions. Unchanged => SKIP (no work)."""
+    fp = input_fingerprint(cand, obs, ctx or {}, manifest_version)
+    if not published:
+        return {"action": "PUBLISH", "reasons": ["no published Vegetation state"], "fingerprint": fp}
+    if (published.get("provenance") or {}).get("inputFingerprint") != fp:
+        return {"action": "PUBLISH", "reasons": ["input fingerprint changed"], "fingerprint": fp}
+    return {"action": "SKIP", "reasons": ["inputs unchanged"], "fingerprint": fp}

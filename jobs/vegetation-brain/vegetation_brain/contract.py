@@ -53,6 +53,22 @@ REFUSAL_DOC = {
     "PASS_NOT_ACCEPTED": "no scene passed the pass-acceptance rule", "BOTTOM_REFLECTANCE": "shallow bright bottom can mimic a plant spectrum",
 }
 
+# ---------------------------------------------------------------- claim-level maturity (Sector Brain Model v1, directive 2026-10-14)
+# One experimental claim must not poison the apparent maturity of the others. Level 1 provider truth, Level 2 deterministic
+# derivation, Level 3 Sector-derived intelligence. Values are claim states, not scores.
+CLAIM_STATES = ("PROVIDER_VERIFIED", "VERIFIED", "SHADOW", "CALIBRATION", "NOT_VALIDATED", "NOT_ASSESSED", "NOT_OBSERVABLE", "UNAVAILABLE")
+CLAIMS = {
+    "geometryTier":            {"level": 2, "state": "VERIFIED", "basis": "area/confidence arithmetic over the canonical Lake Registry; unit-tested"},
+    "observationAge":          {"level": 2, "state": "VERIFIED", "basis": "date arithmetic; unit-tested"},
+    "agencyVegetationObservation": {"level": 1, "state": "NOT_ASSESSED", "basis": "no provider ingestion built; needs Michael's product-slice decision and source terms"},
+    "surfaceVegetationPresence": {"level": 3, "state": "NOT_VALIDATED", "basis": "shadow observer; failed lake-level gates on held-out lakes (notes 11, 12)"},
+    "surfaceVegetationType":   {"level": 3, "state": "NOT_ASSESSED", "basis": "no validated classifier; broadType is SURFACE_REACHING_MIXED with typeBasis NOT_CLASSIFIED"},
+    "coverageDensity":         {"level": 3, "state": "NOT_ASSESSED", "basis": "density gate not passed; counts only"},
+    "seasonalState":           {"level": 3, "state": "NOT_VALIDATED", "basis": "back-test did not beat the strengthened baselines (A2)"},
+    "potentialHabitat":        {"level": 3, "state": "NOT_ASSESSED", "basis": "needs live Depth (tier A/B/C) and Clarity Secchi; potentialOnly"},
+    "submergedVegetation":     {"level": 3, "state": "NOT_OBSERVABLE", "basis": "not observable with Sentinel-2 at fleet scale (research)"},
+}
+
 # ---------------------------------------------------------------- readiness (platform ladder + Vegetation meaning)
 READINESS_DEFINITIONS = {
     "DISCOVERED": "In the canonical lake directory; no geometry or observation evaluated for Vegetation.",

@@ -117,3 +117,34 @@ def test_every_judgment_dimension_cites_evidence():
     for k, d in M.load_inputs()["dimensions"].items():
         if d["basis"] == "judgment":
             assert d["evidence"], k
+
+
+# ---------------------------------------------------------------- Sector Brain Model v1: fingerprint-first and claim maturity
+def test_unchanged_inputs_skip_and_changed_inputs_publish():
+    m = F.build_manifest(reg(), version="t")
+    bed = patch((30, 60), (30, 60))
+    obs = O.observe([scene("a", REF, plant=bed), scene("b", REF, plant=bed), scene("c", REF, plant=bed)], REF, mode="P")
+    w = DryRunWriter()
+    r1 = publish(m, w, observations={"Big|AL": obs}, now=NOW)
+    n1 = len(w.patches)
+    r2 = publish(m, w, observations={"Big|AL": obs}, now=NOW)
+    assert r1["skippedUnchanged"] == 0 and r2["skippedUnchanged"] == 3     # Big + the two BLOCKED lakes: nothing changed
+    st1 = [p for p in w.patches if any(k.startswith("lakes/Big_AL/states") for k in p)]
+    assert len(st1) == 1                                          # the second run wrote no new lake state
+    obs2 = O.observe([scene("z", REF, plant=bed)] * 3, REF, mode="P")
+    obs2.scene_ids = ["z1", "z2", "z3"]
+    r3 = publish(m, w, observations={"Big|AL": obs2}, now=NOW)
+    assert r3["skippedUnchanged"] == 2 and w.get("lakes/Big_AL/states/vegetation/provenance/inputFingerprint")   # only the changed lake rewrote
+
+
+def test_claim_maturity_separates_levels_and_never_marks_submerged_observable():
+    from vegetation_brain import state as S
+    st, _ = S.build_state({"lakeId": "Big|AL", "tier": "HIGH", "readiness": "PROFILED", "reasons": [], "areaKm2": 40.0,
+                           "geometryConfidence": "HIGH", "geometryVersion": "v1"}, None, NOW)
+    cm = st["claimMaturity"]
+    assert cm["geometryTier"]["level"] == 2 and cm["geometryTier"]["state"] == "VERIFIED"
+    assert cm["agencyVegetationObservation"]["level"] == 1 and cm["agencyVegetationObservation"]["state"] == "NOT_ASSESSED"
+    assert cm["surfaceVegetationPresence"]["level"] == 3 and cm["surfaceVegetationPresence"]["state"] == "NOT_VALIDATED"
+    assert cm["submergedVegetation"]["state"] == "NOT_OBSERVABLE"
+    assert all(v["state"] in C.CLAIM_STATES for v in cm.values())
+    assert not any(v["state"] in ("VALIDATED", "PROVIDER_VERIFIED") for k, v in cm.items() if v["level"] == 3)

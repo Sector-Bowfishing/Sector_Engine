@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 
 from . import contract as C
 from . import ops_summary
-from .state import build_state
+from .state import build_state, plan
 from .writer import PLATFORM  # noqa: E402  (also puts the shared platform package on sys.path)
 
 from sector_brain_platform import lake_key, key_collisions  # noqa: E402
@@ -48,7 +48,7 @@ def publish(manifest: dict, writer, observations: dict | None = None, contexts: 
         mv = manifest.get("manifestVersion", "unversioned")
         readiness: dict[str, str] = {}
         kinds = Counter()
-        stale_lakes = evaluated = unavailable = observed = 0
+        stale_lakes = evaluated = unavailable = observed = skipped = 0
         for cand in cands:
             lid = cand["lakeId"]
             k = lake_key(lid)
@@ -57,6 +57,7 @@ def publish(manifest: dict, writer, observations: dict | None = None, contexts: 
                 readiness[lid] = "PROFILED"            # could be observed; nothing has been run: no state is written
                 continue
             try:
+                pl = plan(writer.get(f"lakes/{k}/states/{C.SLOT}"), cand, obs, contexts.get(lid), mv)
                 state, meta = build_state(cand, obs, now, validation=validation, context=contexts.get(lid), manifest_version=mv)
                 evaluated += 1
                 readiness[lid] = meta["readiness"]
@@ -64,7 +65,10 @@ def publish(manifest: dict, writer, observations: dict | None = None, contexts: 
                 unavailable += meta["kind"] == "unavailable"
                 stale_lakes += bool(meta["stale"])
                 observed += obs is not None and meta["presence"] != "UNKNOWN"
-                rep["lakes"][lid] = meta
+                rep["lakes"][lid] = {**meta, "plan": pl["action"]}
+                if pl["action"] == "SKIP":
+                    skipped += 1
+                    continue
                 writer.patch({f"lakes/{k}/states/{C.SLOT}": state, f"snapshots/{k}/latest/{C.SNAPSHOT_FIELD}": state,
                               f"snapshots/{k}/latest/lakeId": lid, f"snapshots/{k}/latest/brainVersions/{C.BRAIN_ID}": C.BRAIN_VERSION})
                 rep["writes"] += 1
@@ -117,7 +121,7 @@ def publish(manifest: dict, writer, observations: dict | None = None, contexts: 
                                                       "deployedVersion": None, "publishMode": reg["publishMode"]}})
         rep["writes"] += 1
         rep.update({"ok": not rep["errors"], "health": health, "readinessCounts": counts, "evaluated": evaluated, "observed": observed,
-                    "unavailable": unavailable, "kinds": dict(kinds)})
+                    "unavailable": unavailable, "skippedUnchanged": skipped, "kinds": dict(kinds)})
     except Exception as e:
         rep["errors"].append(f"publish crashed: {e!r} {traceback.format_exc()[-400:]}")
     return rep
