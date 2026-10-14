@@ -79,5 +79,5 @@ def test_claim_scopes_are_computed_from_the_manifest_not_hardcoded():
 def test_rated_lake_claims_never_exceed_what_the_evidence_supports():
     by = {c["id"]: c for c in CL}
     assert by["ratingZoneShares"]["level"] == 2 and by["ratingZoneShares"]["status"] == "VERIFIED"
-    assert "never where" in by["ratingZoneShares"]["scope"] and "0.104" in by["ratingZoneShares"]["evidence"]
+    assert "never where" in by["ratingZoneShares"]["scope"] and "0.127" in by["ratingZoneShares"]["evidence"]
     assert by["knownFlatClass"]["status"] == "NOT_VALIDATED"          # no field truth, so no Level-3 class is claimed because shares exist

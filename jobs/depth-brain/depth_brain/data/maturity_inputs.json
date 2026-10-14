@@ -52,10 +52,10 @@
     "no scalable flats/drop-off method (policy codified; flats, drop-offs and channels are out of the Depth mission)",
     "contour shares exist for the contour lakes; effective zones validated only for 5 TWDB lakes (preregistered, S2 independent MAE 0.016, bounds coverage 1.0)",
     "NEGATIVE: non-TWDB contour lakes failed the preregistered effective-zone validation (Tappan MAE 0.047 fails 0.03); contour zones stay withheld there",
-    "NEW 2026-10-14: depth-share (dry / under 3 / 3-6 / 6-10 ft) from operator elevation-area ratings and Reclamation survey tables for 91 lakes (frame/range/cross-check rules passed; 84 shift-defensible), exact by construction, cross-checked against independent contour surveys on 20 lakes (median |diff| 0.036, p90 0.104, max 0.141); NOT validated against the physical lake, vintage published; shares only, never where"
+    "NEW 2026-10-14: depth-share (dry / under 3 / 3-6 / 6-10 ft) and flooded-margin shares from operator elevation-area ratings, storage-rating derivatives and Reclamation survey tables for 117 lakes (107 shift-defensible), exact by construction, cross-checked against independent contour surveys on 27 lakes (median |diff| 0.044, p90 0.127, max 0.299: the disagreeing lakes are withheld by rule R6); NOT validated against the physical lake, vintage published; shares only, never where"
    ],
    "changeEvidence": [
-    "stage-area-rating-shares-91-lakes-2026-10-14"
+    "stage-area-rating-shares-117-lakes-2026-10-14"
    ]
   },
   "effective": {

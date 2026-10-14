@@ -72,7 +72,8 @@ def test_shipped_curves_are_monotone_and_hold_the_pool():
     for lid, c in CURVES.items():
         e, a = c["elevFt"], c["areaAc"]
         assert e == sorted(e) and all(x >= -1e-9 for x in a) and e[0] <= c["poolFt"] - 3.0 <= c["poolFt"] <= e[-1], lid
-        assert all(a[i + 1] >= a[i] - 0.01 * max(a) for i in range(len(a) - 1)), lid
+        tol = 0.03 if c.get("derivedFrom") else 0.01                      # storage-derived areas are finite differences: 3% of the maximum (rule amendment), 1% for ratings
+        assert all(a[i + 1] >= a[i] - tol * max(a) for i in range(len(a) - 1)), lid
         assert c["ratingId"] and c["url"].startswith(("https://cwms-data.usace.army.mil/", "https://www.usbr.gov/tsc/")), lid
 
 
@@ -117,7 +118,7 @@ def test_a_manifest_rating_without_its_curve_yields_no_zones(monkeypatch):
 def test_rating_shares_carry_their_reported_tolerance_and_contours_do_not():
     rz, _ = R.rating_reference_zones(SYN, 100.0, "NGVD29", True, "SAME_SOURCE")
     z = Z.ReferenceZones({float(k): v for k, v in rz["cumulative"].items()}, None, 1.0, "C", rz["source"], None, 100.0, "NGVD29", "VERIFIED", [], curve=SYN, kind=rz["kind"])
-    assert Z.effective_zones(z, -1.0, 0.1)["shareToleranceAbs"] == R.RATING_SHARE_TOLERANCE_ABS == 0.11
+    assert Z.effective_zones(z, -1.0, 0.1)["shareToleranceAbs"] == R.RATING_SHARE_TOLERANCE_ABS == 0.13
     zc = Z.ReferenceZones({3.0: 0.3, 6.0: 0.6, 10.0: 1.0}, 1.0, 1.0, "A", "TWDB", 2010, 100.0, "NGVD29", "VERIFIED", [])
     assert "shareToleranceAbs" not in Z.effective_zones(zc, -1.0, 0.1)
 
@@ -137,7 +138,7 @@ def test_reported_tolerance_covers_the_ninetieth_percentile_of_the_independent_c
         cum = R.cumulative_at(CURVES[lid], CURVES[lid]["poolFt"])
         diffs += [abs(cum[k] - ct[k]) for k in cum]
     diffs.sort()
-    assert len(diffs) >= 55 and R.RATING_SHARE_TOLERANCE_ABS >= diffs[int(0.9 * len(diffs))] - 1e-9
+    assert len(diffs) >= 75 and R.RATING_SHARE_TOLERANCE_ABS >= diffs[int(0.9 * len(diffs))] - 1e-9
 
 
 def test_local_project_stage_equals_a_rating_datum_only_with_a_per_lake_paired_series_proof():

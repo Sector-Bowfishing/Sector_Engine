@@ -780,6 +780,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1975-04-01",
      "elevRangeFt": [
       180.0,
@@ -1048,6 +1049,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1926-01-01",
      "elevRangeFt": [
       425.0,
@@ -1198,6 +1200,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1964-07-01",
      "elevRangeFt": [
       400.0,
@@ -1347,6 +1350,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1967-03-01",
      "elevRangeFt": [
       250.0,
@@ -1439,6 +1443,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1961-06-01",
      "elevRangeFt": [
       520.0,
@@ -1647,6 +1652,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2024-02-01",
      "elevRangeFt": [
       918.0,
@@ -1741,6 +1747,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1988-08-03",
      "elevRangeFt": [
       452.0,
@@ -1951,6 +1958,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1989-11-20",
      "elevRangeFt": [
       287.0,
@@ -2101,6 +2109,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1988-08-05",
      "elevRangeFt": [
       272.0,
@@ -2250,6 +2259,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2019-10-17",
      "elevRangeFt": [
       213.0,
@@ -2342,6 +2352,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2004-06-04",
      "elevRangeFt": [
       300.0,
@@ -2434,6 +2445,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2024-02-01",
      "elevRangeFt": [
       390.0,
@@ -2532,12 +2544,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -2556,8 +2570,13 @@
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Los Angeles",
    "reference": {
@@ -2569,6 +2588,34 @@
     "poolFt": 1160.4,
     "source": "CWMS Alamo Top of Conservation (= bottom of flood control)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1129,
+     "3.0": 0.0379,
+     "6.0": 0.0706
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2017-10-02",
+     "elevRangeFt": [
+      990.5,
+      1166.5
+     ],
+     "id": "Alamo.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "SPL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Alamo.Elev%3BStor.Standard.Production?office=SPL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1160.4,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Alamo.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -3517,6 +3564,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1977-08-01",
      "elevRangeFt": [
       2460.0,
@@ -3960,6 +4008,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2024-04-01",
      "elevRangeFt": [
       5362.97,
@@ -4054,6 +4103,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2023-04-01",
      "elevRangeFt": [
       5521.0,
@@ -4378,6 +4428,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2019-11-01",
      "elevRangeFt": [
       3769.0,
@@ -4527,6 +4578,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2026-10-01",
      "elevRangeFt": [
       4750.0,
@@ -7224,6 +7276,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1962-08-01",
      "elevRangeFt": [
       695.0,
@@ -7430,6 +7483,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1979-07-01",
      "elevRangeFt": [
       665.0,
@@ -7638,6 +7692,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1959-12-01",
      "elevRangeFt": [
       919.0,
@@ -7789,6 +7844,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1958-02-01",
      "elevRangeFt": [
       44.0,
@@ -7940,6 +7996,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1965-04-01",
      "elevRangeFt": [
       100.0,
@@ -8032,6 +8089,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1975-06-01",
      "elevRangeFt": [
       560.0,
@@ -9082,6 +9140,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1998-05-13",
      "elevRangeFt": [
       855.0,
@@ -10449,12 +10508,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -10473,8 +10534,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE St. Louis (MVS)",
    "reference": {
@@ -10486,6 +10552,34 @@
     "poolFt": 599.7,
     "source": "CWMS Lk Shelbyville-Kaskaskia.Elev.Inst.0.Summer Guide Curve (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3441,
+     "3.0": 0.1111,
+     "6.0": 0.2154
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2015-04-29",
+     "elevRangeFt": [
+      540.5,
+      606.5
+     ],
+     "id": "Lk Shelbyville-Kaskaskia.Elev;Stor.SEDIMENT1985.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "MVS",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Lk%20Shelbyville-Kaskaskia.Elev%3BStor.SEDIMENT1985.Production?office=MVS",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 599.7,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Lk Shelbyville-Kaskaskia.Elev;Stor.SEDIMENT1985.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -10701,6 +10795,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2015-04-29",
      "elevRangeFt": [
       385.0,
@@ -10853,10 +10948,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -10877,8 +10974,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -10890,6 +10992,34 @@
     "poolFt": 748,
     "source": "CWMS Brookville.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1784,
+     "3.0": 0.054,
+     "6.0": 0.108
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      629.0,
+      754.5
+     ],
+     "id": "Brookville.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Brookville.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 748.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Brookville.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -10973,10 +11103,12 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -10997,8 +11129,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -11010,6 +11147,34 @@
     "poolFt": 662,
     "source": "CWMS CMHarden Top of Conservation (summer)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2218,
+     "3.0": 0.0692,
+     "6.0": 0.1358
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      597.5,
+      668.5
+     ],
+     "id": "CMHarden.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CMHarden.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 662.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CMHarden.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -11401,10 +11566,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -11425,8 +11592,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -11438,6 +11610,34 @@
     "poolFt": 737,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=LRL&level-id-mask=Mississinewa.Elev*&unit=EN",
     "winterPoolFt": 712.0
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.309,
+     "3.0": 0.116,
+     "6.0": 0.21
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      665.5,
+      743.5
+     ],
+     "id": "Mississinewa-Pool.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "LRC",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Mississinewa-Pool.Elev%3BStor.Standard.Production?office=LRC",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 737.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Mississinewa-Pool.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -11459,10 +11659,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -11483,8 +11685,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -11496,6 +11703,34 @@
     "poolFt": 538,
     "source": "CWMS Monroe.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3164,
+     "3.0": 0.1022,
+     "6.0": 0.1991
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      515.5,
+      544.5
+     ],
+     "id": "Monroe.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Monroe.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 538.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Monroe.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -11517,10 +11752,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -11541,8 +11778,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -11554,6 +11796,34 @@
     "poolFt": 536,
     "source": "CWMS Patoka.Elev.Inst.0.Top of Normal (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2063,
+     "3.0": 0.0637,
+     "6.0": 0.1243
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      481.0,
+      542.5
+     ],
+     "id": "Patoka.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Patoka.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 536.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Patoka.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -11577,10 +11847,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -11601,8 +11873,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -11614,6 +11891,34 @@
     "poolFt": 755,
     "source": "CWMS Salamonie Top of Conservation (summer)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2924,
+     "3.0": 0.1274,
+     "6.0": 0.1969
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      681.0,
+      761.5
+     ],
+     "id": "Salamonie-Pool.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "LRC",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Salamonie-Pool.Elev%3BStor.Standard.Production?office=LRC",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 755.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Salamonie-Pool.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -11759,6 +12064,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1998-05-13",
      "elevRangeFt": [
       2094.0,
@@ -11858,6 +12164,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2016-12-13",
      "elevRangeFt": [
       1367.0,
@@ -11965,6 +12272,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-03-31",
      "elevRangeFt": [
       831.0,
@@ -12062,6 +12370,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2026-04-01",
      "elevRangeFt": [
       1280.0,
@@ -12155,6 +12464,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2023-11-01",
      "elevRangeFt": [
       1010.0,
@@ -12260,6 +12570,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-03-31",
      "elevRangeFt": [
       1432.0,
@@ -12350,6 +12661,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2025-02-01",
      "elevRangeFt": [
       1317.0,
@@ -12457,6 +12769,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2019-01-01",
      "elevRangeFt": [
       968.61,
@@ -12564,6 +12877,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-03-31",
      "elevRangeFt": [
       1080.0,
@@ -12661,6 +12975,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-03-31",
      "elevRangeFt": [
       838.0,
@@ -12768,6 +13083,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1998-05-13",
      "elevRangeFt": [
       930.0,
@@ -12873,6 +13189,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-03-31",
      "elevRangeFt": [
       1015.0,
@@ -13037,6 +13354,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-03-31",
      "elevRangeFt": [
       1436.0,
@@ -13131,12 +13449,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -13155,8 +13475,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -13168,6 +13493,34 @@
     "poolFt": 782,
     "source": "CWMS Buckhorn.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2769,
+     "3.0": 0.0541,
+     "6.0": 0.1281
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2024-05-14",
+     "elevRangeFt": [
+      724.5,
+      788.5
+     ],
+     "id": "Buckhorn.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Buckhorn.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 782.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Buckhorn.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -13189,10 +13542,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -13213,8 +13568,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Huntington (LRH)",
    "reference": {
@@ -13226,6 +13586,34 @@
     "poolFt": 730,
     "source": "CWMS CaveRun.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.179,
+     "3.0": 0.0537,
+     "6.0": 0.1066
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      657.0,
+      736.5
+     ],
+     "id": "CaveRun.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CaveRun.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 730.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CaveRun.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -13247,12 +13635,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -13271,8 +13661,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Louisville (LRL)",
    "reference": {
@@ -13284,6 +13679,34 @@
     "poolFt": 675,
     "source": "CWMS Green.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1725,
+     "3.0": 0.0548,
+     "6.0": 0.1056
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      637.5,
+      681.5
+     ],
+     "id": "Green.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Green.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 675.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Green.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -15466,7 +15889,8 @@
    "evidence": {
     "bestSource": "contour:WV",
     "contourSources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ],
     "coverage": 0.9984,
     "hypsometryOnly": false,
@@ -15493,11 +15917,13 @@
    },
    "licence": {
     "classes": [
-     "PUBLIC_REUSABLE"
+     "PUBLIC_REUSABLE",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Baltimore (NAB)",
@@ -15512,17 +15938,32 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9984,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.0139,
-     "3.0": 0.0016,
-     "6.0": 0.0066
+     "10.0": 0.0556,
+     "3.0": 0.0186,
+     "6.0": 0.0349
     },
-    "intervalFt": 1.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "WV"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2013-12-01",
+     "elevRangeFt": [
+      1237.5,
+      1472.5
+     ],
+     "id": "Randolph.Elev;Stor.Linear.Step;USACE (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "NAB",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Randolph.Elev%3BStor.Linear.Step%3BUSACE?office=NAB",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 1466.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Randolph.Elev;Stor.Linear.Step;USACE (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -16002,12 +16443,14 @@
     "status": "UNKNOWN"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 14,
@@ -16026,8 +16469,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Pittsburgh (LRP)",
    "reference": {
@@ -16039,6 +16487,34 @@
     "poolFt": 1438.35,
     "source": "CWMS Youghiogheny.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.0872,
+     "3.0": 0.0232,
+     "6.0": 0.0508
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      1328.35,
+      1444.85
+     ],
+     "id": "Youghiogheny.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRP",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Youghiogheny.Elev%3BStor.Standard.Production?office=LRP",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 1438.35,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Youghiogheny.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -18863,6 +19339,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       456.0,
@@ -19197,6 +19674,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2019-01-01",
      "elevRangeFt": [
       751.43,
@@ -19299,6 +19777,7 @@
     },
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1998-05-13",
      "elevRangeFt": [
       809.0,
@@ -19393,6 +19872,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2020-01-01",
      "elevRangeFt": [
       768.37,
@@ -19429,12 +19909,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -19453,8 +19935,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock (SWL)",
    "reference": {
@@ -19466,6 +19953,34 @@
     "poolFt": 915,
     "source": "CWMS Table_Rock_Dam.Elev-Pool.Inst.0.Top of Conservation (min)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1163,
+     "3.0": 0.0349,
+     "6.0": 0.0698
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "1987-02-23",
+     "elevRangeFt": [
+      856.5,
+      921.5
+     ],
+     "id": "Table_Rock_Dam-Headwater.Elev;Stor-Res.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Table_Rock_Dam-Headwater.Elev%3BStor-Res.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 915.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Table_Rock_Dam-Headwater.Elev;Stor-Res.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -19545,6 +20060,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1998-05-13",
      "elevRangeFt": [
       685.0,
@@ -19581,12 +20097,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -19605,8 +20123,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE St. Louis (MVS)",
    "reference": {
@@ -19618,6 +20141,34 @@
     "poolFt": 359.7,
     "source": "CWMS Wappapello Lk-St Francis.Elev.Inst.0.Summer Guide Curve (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.7689,
+     "3.0": 0.1988,
+     "6.0": 0.6099
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2015-04-29",
+     "elevRangeFt": [
+      320.5,
+      366.5
+     ],
+     "id": "Wappapello Lk-St Francis.Elev;Stor.SEDIMENT2012.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "MVS",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Wappapello%20Lk-St%20Francis.Elev%3BStor.SEDIMENT2012.Production?office=MVS",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 359.7,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Wappapello Lk-St Francis.Elev;Stor.SEDIMENT2012.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -19695,6 +20246,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       189.3,
@@ -19789,6 +20341,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1985-09-01",
      "elevRangeFt": [
       330.0,
@@ -19883,6 +20436,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1983-01-01",
      "elevRangeFt": [
       126.0,
@@ -20032,6 +20586,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       194.0,
@@ -20124,6 +20679,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       160.0,
@@ -20336,6 +20892,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2011-01-02",
      "elevRangeFt": [
       310.0,
@@ -20485,6 +21042,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       204.0,
@@ -20584,6 +21142,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2020-10-01",
      "elevRangeFt": [
       3614.0,
@@ -20745,6 +21304,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2013-06-28",
      "elevRangeFt": [
       2030.0,
@@ -21238,6 +21798,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2024-03-19",
      "elevRangeFt": [
       2839.0,
@@ -21632,12 +22193,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 30,
@@ -21656,8 +22219,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Wilmington",
    "reference": {
@@ -21669,6 +22237,34 @@
     "poolFt": 216,
     "source": "https://epec.saw.usace.army.mil/BEJPERT.TXT",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3999,
+     "3.0": 0.1288,
+     "6.0": 0.2529
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2024-10-08",
+     "elevRangeFt": [
+      170.5,
+      222.5
+     ],
+     "id": "CFR BEJ.Elev;Stor.DSS.Production (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "SAW",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CFR%20BEJ.Elev%3BStor.DSS.Production?office=SAW",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 216.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CFR BEJ.Elev;Stor.DSS.Production (area = dS/dz)"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -22115,6 +22711,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2024-06-01",
      "elevRangeFt": [
       2728.4,
@@ -22503,6 +23100,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2013-06-28",
      "elevRangeFt": [
       1410.0,
@@ -22597,6 +23195,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2013-06-28",
      "elevRangeFt": [
       1660.0,
@@ -22691,6 +23290,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2013-01-01",
      "elevRangeFt": [
       2008.0,
@@ -23169,6 +23769,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-01-01",
      "elevRangeFt": [
       2181.0,
@@ -23268,6 +23869,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1998-05-13",
      "elevRangeFt": [
       1895.0,
@@ -23820,6 +24422,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2011-01-01",
      "elevRangeFt": [
       2700.0,
@@ -25493,6 +26096,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2022-01-01",
      "elevRangeFt": [
       6080.0,
@@ -25703,6 +26307,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2020-01-01",
      "elevRangeFt": [
       5254.0,
@@ -25795,6 +26400,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2017-01-01",
      "elevRangeFt": [
       4085.0,
@@ -25949,6 +26555,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2018-01-01",
      "elevRangeFt": [
       6770.0,
@@ -26043,6 +26650,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2019-01-01",
      "elevRangeFt": [
       4234.0,
@@ -26197,6 +26805,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2019-01-01",
      "elevRangeFt": [
       5775.0,
@@ -26349,6 +26958,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2026-01-01",
      "elevRangeFt": [
       4100.0,
@@ -27955,6 +28565,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       821.0,
@@ -28050,6 +28661,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       948.31,
@@ -28144,7 +28756,8 @@
    "evidence": {
     "bestSource": "contour:OH",
     "contourSources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ],
     "coverage": 0.997,
     "hypsometryOnly": false,
@@ -28171,11 +28784,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Louisville",
@@ -28190,15 +28805,32 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.997,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.14350000000000002
+     "10.0": 0.1299,
+     "3.0": 0.0385,
+     "6.0": 0.0768
     },
-    "intervalFt": 10.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OH"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2001-01-01",
+     "elevRangeFt": [
+      737.0,
+      855.5
+     ],
+     "id": "CaesarCreek.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CaesarCreek.Elev%3BStor.Standard.Production?office=LRL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 849.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CaesarCreek.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -28558,6 +29190,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       899.93,
@@ -28655,6 +29288,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       868.33,
@@ -28914,6 +29548,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       868.0,
@@ -28952,12 +29587,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 8,
@@ -28976,8 +29613,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -28989,6 +29631,34 @@
     "poolFt": 602.5,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=SWT&level-id-mask=BROK.Elev*&unit=EN",
     "winterPoolFt": 599.5
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.0937,
+     "3.0": 0.0301,
+     "6.0": 0.0575
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "1990-06-13",
+     "elevRangeFt": [
+      558.5,
+      609.5
+     ],
+     "id": "Broken_Bow_Dam-Headwater.Elev;Stor-Res.Standard.Production (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Broken_Bow_Dam-Headwater.Elev%3BStor-Res.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 602.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Broken_Bow_Dam-Headwater.Elev;Stor-Res.Standard.Production (area = dS/dz)"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -29064,6 +29734,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2016-08-01",
      "elevRangeFt": [
       1583.0,
@@ -29161,6 +29832,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1951-09-01",
      "elevRangeFt": [
       508.0,
@@ -29260,6 +29932,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2022-01-31",
      "elevRangeFt": [
       611.0,
@@ -29350,6 +30023,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2020-05-09",
      "elevRangeFt": [
       937.0,
@@ -29442,6 +30116,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2020-08-01",
      "elevRangeFt": [
       655.0,
@@ -29534,6 +30209,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2016-05-01",
      "elevRangeFt": [
       487.0,
@@ -29629,6 +30305,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2012-01-31",
      "elevRangeFt": [
       558.0,
@@ -29796,6 +30473,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2015-03-01",
      "elevRangeFt": [
       486.0,
@@ -29888,6 +30566,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2020-08-24",
      "elevRangeFt": [
       569.0,
@@ -29985,6 +30664,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2019-09-01",
      "elevRangeFt": [
       535.0,
@@ -30075,6 +30755,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2011-10-19",
      "elevRangeFt": [
       657.0,
@@ -30987,6 +31668,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       1195.53,
@@ -31644,12 +32326,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -31668,8 +32352,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Baltimore",
    "reference": {
@@ -31681,6 +32370,34 @@
     "poolFt": 786,
     "source": "CWMS Raystown.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1381,
+     "3.0": 0.0672,
+     "6.0": 0.0972
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "1996-01-01",
+     "elevRangeFt": [
+      600.5,
+      792.5
+     ],
+     "id": "Raystown.Elev;Stor.Linear.Step;USACE (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "NAB",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Raystown.Elev%3BStor.Linear.Step%3BUSACE?office=NAB",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 786.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Raystown.Elev;Stor.Linear.Step;USACE (area = dS/dz)"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -31760,6 +32477,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       864.67,
@@ -33644,6 +34362,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2013-06-28",
      "elevRangeFt": [
       1410.0,
@@ -35137,6 +35856,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2014-11-03",
      "elevRangeFt": [
       762.0,
@@ -35372,6 +36092,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1999-09-22",
      "elevRangeFt": [
       912.0,
@@ -35801,6 +36522,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2017-09-11",
      "elevRangeFt": [
       522.0,
@@ -35953,6 +36675,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2017-10-01",
      "elevRangeFt": [
       895.0,
@@ -36045,6 +36768,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2014-06-27",
      "elevRangeFt": [
       85.0,
@@ -37071,12 +37795,14 @@
     "status": "UNKNOWN"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 13,
@@ -37095,8 +37821,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Huntington",
    "reference": {
@@ -37108,6 +37839,34 @@
     "poolFt": 1396,
     "source": "CWMS JWFlannagan.Elev.Inst.0.Top of Normal (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1254,
+     "3.0": 0.0373,
+     "6.0": 0.0741
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2007-05-08",
+     "elevRangeFt": [
+      1310.5,
+      1402.5
+     ],
+     "id": "JWFlannagan-Lake.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRH",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/JWFlannagan-Lake.Elev%3BStor.Standard.Production?office=LRH",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1396.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating JWFlannagan-Lake.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -37413,6 +38172,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1992-08-04",
      "elevRangeFt": [
       1440.0,
@@ -37449,12 +38209,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 0,
@@ -37473,8 +38235,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Wilmington",
    "reference": {
@@ -37486,6 +38253,34 @@
     "poolFt": 974,
     "source": "CWMS ROA PLP.Elev.Inst.0.Top of Power (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1222,
+     "3.0": 0.0361,
+     "6.0": 0.0723
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2015-09-18",
+     "elevRangeFt": [
+      940.05,
+      980.05
+     ],
+     "id": "ROA PLP.Elev;Stor.DSS.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "SAW",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/ROA%20PLP.Elev%3BStor.DSS.Production?office=SAW",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 974.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating ROA PLP.Elev;Stor.DSS.Production (area = dS/dz)"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -39917,6 +40712,7 @@
     ]
    },
    "operator": "USACE Huntington",
+   "ratingZoneWithheld": "R6_RATING_CONTOUR_DISAGREE",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -40046,7 +40842,8 @@
    "evidence": {
     "bestSource": "contour:WV",
     "contourSources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ],
     "coverage": 0.9963,
     "hypsometryOnly": false,
@@ -40073,11 +40870,13 @@
    },
    "licence": {
     "classes": [
-     "PUBLIC_REUSABLE"
+     "PUBLIC_REUSABLE",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Huntington",
@@ -40092,17 +40891,32 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9963,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.3188,
-     "3.0": 0.0911,
-     "6.0": 0.1629
+     "10.0": 0.3092,
+     "3.0": 0.0862,
+     "6.0": 0.1728
     },
-    "intervalFt": 1.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "WV"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2015-02-24",
+     "elevRangeFt": [
+      768.5,
+      795.5
+     ],
+     "id": "Burnsville-Lake.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "series-location",
+     "office": "LRH",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Burnsville-Lake.Elev%3BStor.Standard.Production?office=LRH",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 789.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Burnsville-Lake.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -40244,6 +41058,7 @@
     ]
    },
    "operator": "USACE Huntington",
+   "ratingZoneWithheld": "R6_RATING_CONTOUR_DISAGREE",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -40405,6 +41220,7 @@
     ]
    },
    "operator": "USACE Huntington",
+   "ratingZoneWithheld": "R6_RATING_CONTOUR_DISAGREE",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -40509,6 +41325,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "1970-01-01",
      "elevRangeFt": [
       1006.33,
@@ -40547,7 +41364,8 @@
    "evidence": {
     "bestSource": "contour:WV",
     "contourSources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ],
     "coverage": 0.9991,
     "hypsometryOnly": false,
@@ -40574,11 +41392,13 @@
    },
    "licence": {
     "classes": [
-     "PUBLIC_REUSABLE"
+     "PUBLIC_REUSABLE",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Huntington",
@@ -40593,17 +41413,32 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9991,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.19479999999999997,
-     "3.0": 0.1152,
-     "6.0": 0.145
+     "10.0": 0.1123,
+     "3.0": 0.0328,
+     "6.0": 0.0684
     },
-    "intervalFt": 1.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "WV"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "derivedFrom": "Elev;Stor",
+     "effectiveDate": "2011-08-11",
+     "elevRangeFt": [
+      1510.5,
+      1658.5
+     ],
+     "id": "Summersville-Lake.Elev;Stor.Standard.Production (area = dS/dz)",
+     "matchedBy": "pool-location",
+     "office": "LRH",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Summersville-Lake.Elev%3BStor.Standard.Production?office=LRH",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1652.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Summersville-Lake.Elev;Stor.Standard.Production (area = dS/dz)"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -40746,6 +41581,7 @@
     ]
    },
    "operator": "USACE Pittsburgh",
+   "ratingZoneWithheld": "R6_RATING_CONTOUR_DISAGREE",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -40907,6 +41743,7 @@
     "kind": "stage-area-rating",
     "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
     "rating": {
+     "derivedFrom": null,
      "effectiveDate": "2017-01-01",
      "elevRangeFt": [
       3195.0,
@@ -41642,10 +42479,10 @@
   "tier": {
    "A": 77,
    "B": 26,
-   "C": 143,
-   "D": 319,
+   "C": 155,
+   "D": 307,
    "UNKNOWN": 56
   },
-  "zonesAvailableForReference": 172
+  "zonesAvailableForReference": 191
  }
 }

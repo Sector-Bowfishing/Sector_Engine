@@ -1,0 +1,389 @@
+{
+"schema": "depth-stor-only-inventory-v1",
+"lakes": {
+"DeGray|AR": [
+[
+"MVK",
+"Degray Lake.Elev;Stor.Linear.Distributed"
+]
+],
+"Ouachita (L. Ouachita)|AR": [
+[
+"MVK",
+"Blakely.Elev;Stor.Linear.Distributed"
+]
+],
+"Alamo|AZ": [
+[
+"SPL",
+"Alamo.Elev;Stor.Standard.Production"
+]
+],
+"Lake Red Rock|IA": [
+[
+"MVR",
+"PELI4.Elev;Stor.Linear.Production"
+]
+],
+"Carlyle Lake|IL": [
+[
+"MVS",
+"Carlyle Lk-Kaskaskia.Elev;Stor.COE.Production"
+],
+[
+"MVS",
+"Carlyle Lk-Kaskaskia.Elev;Stor.SEDIMENT2000.Production"
+],
+[
+"MVS",
+"Carlyle Lk.Elev;Stor.Standard.Production"
+]
+],
+"Lake Shelbyville|IL": [
+[
+"MVS",
+"Lk Shelbyville-Kaskaskia.Elev;Stor.COE.Production"
+],
+[
+"MVS",
+"Lk Shelbyville-Kaskaskia.Elev;Stor.SEDIMENT1985.Production"
+],
+[
+"MVS",
+"Lk Shelbyville.Elev;Stor.Standard.Production"
+]
+],
+"Brookville Lake|IN": [
+[
+"LRD",
+"Brookville-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"Brookville.Elev;Stor.Standard.Production"
+]
+],
+"Cagles Mill Lake|IN": [
+[
+"LRD",
+"CaglesMill-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"CaglesMill.Elev;Stor.Standard.Production"
+]
+],
+"Cecil M. Harden Lake|IN": [
+[
+"LRL",
+"CMHarden.Elev;Stor.Standard.Production"
+]
+],
+"Mississinewa Lake|IN": [
+[
+"LRD",
+"Mississinewa-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRC",
+"Mississinewa-Pool.Elev;Stor.Standard.Production"
+],
+[
+"LRL",
+"Mississinewa.Elev;Stor.Standard.Production"
+]
+],
+"Monroe Lake|IN": [
+[
+"LRD",
+"Monroe-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"Monroe.Elev;Stor.Standard.Production"
+]
+],
+"Patoka Lake|IN": [
+[
+"LRD",
+"Patoka-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"Patoka.Elev;Stor.Standard.Production"
+]
+],
+"Salamonie Lake|IN": [
+[
+"LRD",
+"Salamonie-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRC",
+"Salamonie-Pool.Elev;Stor.Standard.Production"
+],
+[
+"LRL",
+"Salamonie.Elev;Stor.Standard.Production"
+]
+],
+"Barren River Lake|KY": [
+[
+"LRL",
+"Barren.Elev;Stor.Standard.Production"
+]
+],
+"Buckhorn Lake|KY": [
+[
+"LRD",
+"Buckhorn-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"Buckhorn.Elev;Stor.Standard.Production"
+]
+],
+"Cave Run Lake|KY": [
+[
+"LRD",
+"CaveRun-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"CaveRun.Elev;Stor.Standard.Production"
+]
+],
+"Green River Lake|KY": [
+[
+"LRL",
+"Green.Elev;Stor.Standard.Production"
+]
+],
+"Laurel River Lake|KY": [
+[
+"LRD",
+"Laurel-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRN",
+"LAUREL.Elev;Stor.Standard.Production"
+]
+],
+"Nolin River Lake|KY": [
+[
+"LRL",
+"Nolin.Elev;Stor.Standard.Production"
+]
+],
+"Rough River Lake|KY": [
+[
+"LRL",
+"Rough.Elev;Stor.Standard.Production"
+]
+],
+"Taylorsville Lake|KY": [
+[
+"LRD",
+"Taylorsville-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"Taylorsville.Elev;Stor.Standard.Production"
+]
+],
+"Jennings Randolph Lake|MD": [
+[
+"NAB",
+"Randolph.Elev;Stor.Linear.Step;USACE"
+]
+],
+"Youghiogheny River Lake|MD": [
+[
+"LRD",
+"Youghiogheny-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRP",
+"Youghiogheny.Elev;Stor.Standard.Production"
+]
+],
+"Gull Lake|MN": [
+[
+"MVP",
+"MissHW_Gull.Elev;Stor.Standard.Production"
+]
+],
+"Lake Winnibigoshish|MN": [
+[
+"MVP",
+"MissHW_Winni.Elev;Stor.Standard.Production"
+]
+],
+"Leech Lake|MN": [
+[
+"MVP",
+"MissHW_Leech.Elev;Stor.Standard.Production"
+]
+],
+"Table Rock Lake|MO": [
+[
+"SWL",
+"Table_Rock_Dam-Headwater.Elev;Stor-Res.Standard.Production"
+]
+],
+"Wappapello Lake|MO": [
+[
+"MVS",
+"Wappapello Lk-St Francis.Elev;Stor.COE.Production"
+],
+[
+"MVS",
+"Wappapello Lk-St Francis.Elev;Stor.SEDIMENT2012.Production"
+]
+],
+"Falls Lake|NC": [
+[
+"SAW",
+"NEU FLP.Elev;Stor.DSS.Production"
+]
+],
+"Jordan Lake|NC": [
+[
+"SAW",
+"CFR BEJ.Elev;Stor.DSS.Production"
+]
+],
+"Santa Rosa Lake|NM": [
+[
+"SPA",
+"Santa Rosa.Elev;Stor.Linear.Step;USACE"
+]
+],
+"Caesar Creek Lake|OH": [
+[
+"LRD",
+"CaesarCreek-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRL",
+"CaesarCreek.Elev;Stor.Standard.Production"
+]
+],
+"Broken Bow Lake|OK": [
+[
+"SWL",
+"Broken_Bow_Dam-Headwater.Elev;Stor-Res.Standard.Production"
+]
+],
+"Blue Marsh Lake|PA": [
+[
+"NAP",
+"BlueMarsh.Elev;Stor.Linear.Step;USACE"
+]
+],
+"Raystown Lake|PA": [
+[
+"NAB",
+"Raystown.Elev;Stor.Linear.Step;USACE"
+]
+],
+"Claytor Lake|VA": [
+[
+"LRH",
+"Claytor-Lake.Elev;Stor.Standard.Production"
+]
+],
+"Flannagan Reservoir|VA": [
+[
+"LRH",
+"JWFlannagan-Lake.Elev;Stor.Standard.Production"
+]
+],
+"Philpott Lake|VA": [
+[
+"SAW",
+"ROA PLP.Elev;Stor.DSS.Production"
+]
+],
+"Beech Fork Lake|WV": [
+[
+"LRH",
+"BeechFk-Lake.Elev;Stor.Standard.Production"
+]
+],
+"Bluestone Lake|WV": [
+[
+"LRD",
+"Bluestone-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRH",
+"Bluestone-Lake.Elev;Stor.Standard.Production"
+],
+[
+"LRH",
+"Bluestone-Lake1977.Elev;Stor.Standard.Production"
+]
+],
+"Burnsville Lake|WV": [
+[
+"LRD",
+"Burnsville-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRH",
+"Burnsville-Lake.Elev;Stor.Standard.Production"
+]
+],
+"East Lynn Lake|WV": [
+[
+"LRD",
+"EastLynn-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRH",
+"EastLynn-Lake.Elev;Stor.Standard.Production"
+]
+],
+"R.D. Bailey Lake|WV": [
+[
+"LRD",
+"RDBailey-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRH",
+"RDBailey-Lake.Elev;Stor.Standard.Production"
+]
+],
+"Summersville Lake|WV": [
+[
+"LRD",
+"Summersville-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRH",
+"Summersville-Lake.Elev;Stor.Standard.Production"
+]
+],
+"Sutton Lake|WV": [
+[
+"LRD",
+"Sutton-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRH",
+"Sutton-Lake.Elev;Stor.Standard.Production"
+]
+],
+"Tygart Lake|WV": [
+[
+"LRD",
+"Tygart-Lake.Elev;Stor.Linear.Step"
+],
+[
+"LRP",
+"Tygart.Elev;Stor.Standard.Production"
+]
+]
+}
+}

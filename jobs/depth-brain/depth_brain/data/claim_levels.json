@@ -89,7 +89,7 @@
    "level": 2,
    "status": "VERIFIED",
    "scope": "{ratingZoneLakes} lakes ({ratingZoneEligible} with a defensible shift); shares only, never where",
-   "evidence": "docs/brains/depth/DEPTH_STAGE_AREA_RATING_RULES.md (RATING-ZONE-RULES-1: frame, range, monotone, cross-check rules; exact function of provider-published tables; cross-checked against independent contour surveys on 20 lakes: median |difference| 0.036, 90th percentile 0.104, reported as shareToleranceAbs; vintage published; not validated against the physical lake)",
+   "evidence": "docs/brains/depth/DEPTH_STAGE_AREA_RATING_RULES.md (RATING-ZONE-RULES-1: frame, range, monotone and cross-check rules; exact function of provider-published tables, with area derived from a storage rating where no area rating exists (validated on 89 lakes with both: median |difference| 0.0016, p90 0.020); cross-checked against independent contour surveys on 27 lakes: median |difference| 0.044, 90th percentile 0.127, reported as shareToleranceAbs; vintage published; not validated against the physical lake)",
    "customerExposure": "NONE"
   },
   {

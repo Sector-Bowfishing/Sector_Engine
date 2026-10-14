@@ -123,6 +123,43 @@ def main():
         lakes[lid] = {"office": off, "ratingId": rid, "effectiveDate": eff[:10], "versions": versions, "ratingNativeDatum": vd, "seriesLocation": loc, "matchedBy": by, "url": url,
                       "elevMinFt": round(emin, 2), "elevMaxFt": round(emax, 2), "nPointsTotal": int(len(e)), "poolFt": P,
                       "resampledStepFt": step, "elevFt": [round(float(x), 3) for x in keep_e], "areaAc": [round(float(x), 2) for x in keep_a]}
+    # third source: lakes with no Elev;Area rating but an Elev;Stor rating -> area = dS/dz (validated against lakes that have both: 89 lakes, median |share difference| 0.0016, p90 0.020,
+    # max 0.14; docs/brains/depth/data/stor_derived_validation.json). RATING-ZONE-RULES-1 amendment: median step <= 1 ft, units ac-ft, derived area may fall by at most 3% of its maximum.
+    stor = json.load(open(os.path.join(HERE, "../../docs/brains/depth/data/stor_only_inventory.json")))["lakes"] if os.path.exists(os.path.join(HERE, "../../docs/brains/depth/data/stor_only_inventory.json")) else {}
+    for lid, hits in stor.items():
+        if lid in lakes or lid not in cands:
+            continue
+        c = cands[lid]; P = c["reference"]["poolFt"]
+        ok = []
+        for off, rid in hits:
+            d, url = rating(off, rid)
+            if d:
+                e, a, eff, vd, units, versions = parse(d)
+                ok.append((rid, off, eff, vd, units, e, a, url, versions))
+        if not ok:
+            rejected[lid] = "storage rating fetch failed"; continue
+        rdn = re.sub(r"[- ]", "", str(c["reference"].get("datum") or "")).upper() or None
+        compat = [t for t in ok if not t[3] or not rdn or re.sub(r"[- ]", "", str(t[3])).upper() == rdn]
+        rid, off, eff, vd, units, e, st, url, versions = max(compat or ok, key=lambda t: (t[2], t[5].max() - t[5].min()))
+        u = (units or "").lower().replace(" ", "").replace("acre-ft", "ac-ft").replace("acre-feet", "ac-ft")
+        if u not in ("ft;ac-ft",):
+            rejected[lid] = f"storage units {units}"; continue
+        de = np.diff(e); keep = de > 1e-9
+        mid = ((e[1:] + e[:-1]) / 2)[keep]; ar = (np.diff(st)[keep] / de[keep])
+        sel = (mid >= P - 20) & (mid <= P + WINDOW_ABOVE + 1)
+        if sel.sum() < 6 or float(np.median(np.diff(mid[sel]))) > 1.0 + 1e-9:
+            rejected[lid] = "storage rating step coarser than 1 ft near the pool"; continue
+        if not (mid[0] <= P - EDGES[0] and P <= mid[-1]) or float(np.interp(P, mid, ar)) <= 0:
+            rejected[lid] = "pool not inside the derived area range"; continue
+        top = int(np.searchsorted(mid, P + WINDOW_ABOVE, side="right")) + 1
+        mid, ar = mid[:top], ar[:top]
+        if np.any(np.diff(ar) < -0.03 * max(ar.max(), 1.0)):
+            rejected[lid] = "derived area falls with elevation by more than 3% of its maximum"; continue
+        ser = ((pairs.get(lid) or {}).get("series") or {}).get("tsid", "").split(".")[0]
+        by = "series-location" if ser and tok(ser.split("-")[0]) == tok(rid.split(".Elev")[0].split("-")[0]) else "pool-location"
+        lakes[lid] = {"office": off, "ratingId": rid + " (area = dS/dz)", "effectiveDate": eff[:10], "versions": versions, "ratingNativeDatum": vd, "seriesLocation": ser or None, "matchedBy": by, "derivedFrom": "Elev;Stor",
+                      "url": url, "elevMinFt": round(float(mid[0]), 2), "elevMaxFt": round(float(mid[-1]), 2), "nPointsTotal": int(len(mid)), "poolFt": P, "resampledStepFt": None,
+                      "elevFt": [round(float(x), 3) for x in mid], "areaAc": [round(float(x), 2) for x in ar]}
     tabs, eqs = json.load(open(D5 + "/tsc_tables.json")), json.load(open(D5 + "/tsc_equations.json"))
     for lid, spec in TSC_LAKES.items():
         if not spec or lid in lakes:

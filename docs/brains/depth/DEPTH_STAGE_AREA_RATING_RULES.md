@@ -19,7 +19,7 @@ It says **how much, never where.** No polygon, flat, drop-off, channel or point 
 | R5 vintage | The rating's CWMS effective date is shown, never described as a survey year; `1970-01-01` is CWMS' default and is shown as vintage unknown. |
 | R6 cross-check | If the lake also has a contour survey with shares, the rating is used only if every common edge agrees within 0.10 of the surface; otherwise zones are withheld (`R6_RATING_CONTOUR_DISAGREE`). A validated contour reference (TWDB) keeps priority. |
 | R7 claims | Shares of the reference-pool surface (dry, under 3, 3-6, 6-10, deeper) with bounds from the shift uncertainty, plus the reported tolerance below. Evidence tier C (A/B contour lakes keep their tier), kind `stage-area-rating`, licence `USACE_CWMS`. |
-| R8 tolerance | Every rating-derived share carries `shareToleranceAbs = 0.11`: the 90th-percentile disagreement with independent contour surveys (section 5). It is a reported accuracy, not a bound. |
+| R8 tolerance | Every rating-derived share carries `shareToleranceAbs = 0.13`: the 90th-percentile disagreement with independent contour surveys (section 5). It is a reported accuracy, not a bound. |
 
 ## 3. Amendments made after seeing results (disclosed)
 
@@ -28,24 +28,28 @@ It says **how much, never where.** No polygon, flat, drop-off, channel or point 
 3. A `ft;ft2` rating (Alamo) was tried with a unit conversion and dropped: the converted area at pool was about 0.1 acre, so the unit label is unreliable.
 4. The monotone check was moved to the stored region (below pool + 6 ft) so noise above the pool cannot reject a lake (Truman and Allegheny then qualified and Smithville reached R2; Tygart, Youghiogheny and Table Rock are still refused).
 6. R2 gained the LOCAL == NGVD29 equivalence clause (section 4) after the refusals were read; it needs a per-lake paired-series proof and never applies generally.
+7. A third source was added after the first pass: lakes with an `Elev;Stor` rating but no `Elev;Area` rating get area = dS/dz (median step <= 1 ft, ac-ft units, derived area may fall by at most 3% of its maximum). It was validated first on the lakes that have both ratings (section 5b) and is marked `derivedFrom` on every state.
 5. Ratings with more than 400 points at under 0.1 ft spacing are resampled to a 0.1 ft grid (linear between points) to keep the committed file at about 260 KB.
 
 ## 4. Result
 
-* Source mix of accepted curves: {'series-location': 45, 'pool-location': 47, 'tsc-table': 8}.
-* Ratings fetched and accepted by the builder: **100**; refused by the builder: 5 (Alamo|AZ: units ft;ft2, Tygart Lake|WV: area decreases with elevation (below pool + 6 ft), Youghiogheny River Lake|MD: area decreases with elevation (below pool + 6 ft), Table Rock Lake|MO: area decreases with elevation (below pool + 6 ft), Heron Lake|NM: TSC table does not cover the pool / not monotone).
-* Lakes whose manifest now carries rating-derived reference shares (R1-R6 passed): **91**, of which **84** have a defensible shift today (zones become effective-zone output as soon as Lake Brain publishes a level).
-* Evidence tier of those lakes: {'C': 68, 'A': 17, 'B': 6}. Rating vintage: {'before 1990': 18, '1990 or later': 60, 'unknown (CWMS default 1970-01-01)': 13}.
-* Withheld after the builder, with the rule that withheld them: R2_RATING_DATUM_DIFFERS (4): Longview Lake|MO, Pomme de Terre Lake|MO, Rathbun Lake|IA, Smithville Lake|MO; R2_SERIES_POOL_RELATIONSHIP_NOT_ESTABLISHED (3): Jordan|AL, Lay|AL, Mark Twain Lake|MO; R6_RATING_CONTOUR_DISAGREE (2): Patterson Lake|ND, Senecaville Lake|OH.
+* Source mix of accepted curves: {'series-location': 57, 'pool-location': 62, 'tsc-table': 8}.
+* Ratings fetched and accepted by the builder: **127**; refused by the builder: 24 (Alamo|AZ: units ft;ft2, Tygart Lake|WV: area decreases with elevation (below pool + 6 ft), Youghiogheny River Lake|MD: area decreases with elevation (below pool + 6 ft), Table Rock Lake|MO: area decreases with elevation (below pool + 6 ft), DeGray|AR: storage rating step coarser than 1 ft near the pool, Ouachita (L. Ouachita)|AR: storage rating step coarser than 1 ft near the pool, Lake Red Rock|IA: pool not inside the derived area range, Carlyle Lake|IL: derived area falls with elevation by more than 3% of its maximum, Cagles Mill Lake|IN: derived area falls with elevation by more than 3% of its maximum, Barren River Lake|KY: storage rating step coarser than 1 ft near the pool, Laurel River Lake|KY: storage rating step coarser than 1 ft near the pool, Nolin River Lake|KY: storage rating step coarser than 1 ft near the pool, Rough River Lake|KY: derived area falls with elevation by more than 3% of its maximum, Taylorsville Lake|KY: storage rating step coarser than 1 ft near the pool, Gull Lake|MN: pool not inside the derived area range, Lake Winnibigoshish|MN: derived area falls with elevation by more than 3% of its maximum, Leech Lake|MN: pool not inside the derived area range, Falls Lake|NC: derived area falls with elevation by more than 3% of its maximum, Santa Rosa Lake|NM: derived area falls with elevation by more than 3% of its maximum, Blue Marsh Lake|PA: derived area falls with elevation by more than 3% of its maximum, Claytor Lake|VA: storage rating step coarser than 1 ft near the pool, Bluestone Lake|WV: derived area falls with elevation by more than 3% of its maximum, Sutton Lake|WV: derived area falls with elevation by more than 3% of its maximum, Heron Lake|NM: TSC table does not cover the pool / not monotone).
+* Lakes whose manifest now carries rating-derived reference shares (R1-R6 passed): **117**, of which **107** have a defensible shift today (zones become effective-zone output as soon as Lake Brain publishes a level).
+* Evidence tier of those lakes: {'C': 90, 'A': 20, 'B': 7}. Rating vintage: {'before 1990': 19, '1990 or later': 84, 'unknown (CWMS default 1970-01-01)': 14}.
+* Withheld after the builder, with the rule that withheld them: R2_RATING_DATUM_DIFFERS (1): Longview Lake|MO; R2_SERIES_POOL_RELATIONSHIP_NOT_ESTABLISHED (3): Jordan|AL, Lay|AL, Mark Twain Lake|MO; R6_RATING_CONTOUR_DISAGREE (6): Beech Fork Lake|WV, East Lynn Lake|WV, Patterson Lake|ND, R.D. Bailey Lake|WV, Senecaville Lake|OH, Tygart Lake|WV.
   * `R2_RATING_DATUM_DIFFERS` lakes have an NGVD29 rating but a LOCAL A2W series/pool. Where a paired USGS series proves LOCAL equals NGVD29 numerically (`local_datum_equivalence.json`, from `research/depth/local_equivalence.py`: n >= 20, |mean| <= 0.10 ft, SD <= 0.25 ft, not circular) R2 accepts it: Clinton, Kanopolis, Melvern, Milford, Perry, Pomona, Tuttle Creek and Wilson. The remaining ones (no USGS lake-elevation series near the dam) wait for an operator statement or a gauge.
 
 ## 5. Independent cross-check (the evidence behind R6 and R8)
 
-Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose contour interval is 5 ft or finer: **20 lakes, 60 edges, median |difference| 0.036, 75th percentile 0.076, 90th percentile 0.104, maximum 0.141.** The two sources are independent (a survey of the water body vs the operator's published rating) and each has its own error, so these differences are an upper bound on the rating's error only if the contours were exact, which they are not. Largest per-lake maxima: Senecaville Lake|OH (0.141), Lake Hudson|OK (0.138), Patterson Lake|ND (0.134), Kanopolis Lake|KS (0.116), John Redmond Reservoir|KS (0.104), El Dorado Lake|KS (0.084).
+Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose contour interval is 5 ft or finer: **27 lakes, 81 edges, median |difference| 0.044, 75th percentile 0.082, 90th percentile 0.127, maximum 0.299.** The two sources are independent (a survey of the water body vs the operator's published rating) and each has its own error, so these differences are an upper bound on the rating's error only if the contours were exact, which they are not. Largest per-lake maxima: East Lynn Lake|WV (0.299), Senecaville Lake|OH (0.141), Lake Hudson|OK (0.138), Patterson Lake|ND (0.134), Tygart Lake|WV (0.129), Beech Fork Lake|WV (0.127).
+
+### 5b. Storage-derived areas against area ratings (89 lakes that have both)
+Shares from `dS/dz` versus shares from the area rating at 3, 6 and 10 ft: 266 edges, median |difference| 0.0016, 90th percentile 0.0197, 95th 0.0346, maximum 0.1409 (`data/stor_derived_validation.json`). Differences larger than 0.04 are survey-vintage differences between the two CWMS ratings of one lake (Sardis OK 0.14, Canton OK 0.08, Pomona KS 0.09, Rend IL 0.06, Rathbun IA 0.05, Harlan NE 0.04).
 
 ## 6. What remains unvalidated
 
-* The physical lake. A rating can be old or pre-impoundment: 18 of the 91 accepted ratings have an effective date before 1990 and 13 have an unknown one. Vintage is published beside every share.
+* The physical lake. A rating can be old or pre-impoundment: 19 of the 117 accepted ratings have an effective date before 1990 and 14 have an unknown one. Vintage is published beside every share.
 * Level-3 interpretation (does "12% under 3 ft" match what a bowfisher sees): field validation, same as every other Depth claim.
 * Licence: the USACE terms page returned HTTP 403 to automated fetch; `USACE_CWMS` is recorded as an assumed federal-work classification and is in the Michael decision list.
 
@@ -54,6 +58,7 @@ Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose 
 | Lake | Rating | Effective | Tier | Shift now | Pool ft | Under 3 / 6 / 10 ft share at pool |
 |---|---|---|---|---|---|---|
 | Abiquiu Lake / NM | Abiquiu.Elev;Area.Linear.Step;USACE | 2022-01-01 | C | yes | 6220.0 | 0.0384 / 0.0787 / 0.1288 |
+| Alamo / AZ | Alamo.Elev;Stor.Standard.Production (area = dS/dz) | 2017-10-02 | C | no | 1160.4 | 0.0379 / 0.0706 / 0.1129 |
 | Allatoona / GA | Allatoona.Elev;Area.Standard.Production | 1962-08-01 | C | yes | 840.0 | 0.067 / 0.1318 / 0.2166 |
 | Allegheny Reservoir / PA | Kinzua.Elev;Area.Standard.Production | 1970-01-01 (default) | C | yes | 1327.53 | 0.0468 / 0.0897 / 0.1402 |
 | Alum Creek Lake / OH | AlumCr.Elev;Area.Standard.Production | 1970-01-01 (default) | A | yes | 888.0 | 0.0833 / 0.1602 / 0.2496 |
@@ -64,12 +69,19 @@ Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose 
 | Berlin Lake / OH | Berlin.Elev;Area.Standard.Production | 1970-01-01 (default) | C | yes | 1024.01 | 0.1664 / 0.2744 / 0.4205 |
 | Bighorn Lake / WY | TSC BighornReservoirAreaCapacityTables2017_Final508 (ACAP equations) | 2017-01-01 | C | yes | 3640.0 | 0.096 / 0.191 / 0.3153 |
 | Bowman-Haley Reservoir / ND | BOHA.Elev;Area.Linear.Step | 2024-06-01 | A | yes | 2754.8 | 0.1796 / 0.3803 / 0.5434 |
+| Broken Bow Lake / OK | Broken_Bow_Dam-Headwater.Elev;Stor-Res.Standard.Production (area = dS/dz) | 1990-06-13 | C | yes | 602.5 | 0.0301 / 0.0575 / 0.0937 |
+| Brookville Lake / IN | Brookville.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 748.0 | 0.054 / 0.108 / 0.1784 |
+| Buckhorn Lake / KY | Buckhorn.Elev;Stor.Standard.Production (area = dS/dz) | 2024-05-14 | C | yes | 782.0 | 0.0541 / 0.1281 / 0.2769 |
 | Bull Shoals Lake / AR | Bull_Shoals_Dam-Headwater.Elev;Area-Reservoir.Standard.Production | 1988-08-03 | C | yes | 659.0 | 0.0322 / 0.0641 / 0.1064 |
+| Burnsville Lake / WV | Burnsville-Lake.Elev;Stor.Standard.Production (area = dS/dz) | 2015-02-24 | A | yes | 789.0 | 0.0862 / 0.1728 / 0.3092 |
+| Caesar Creek Lake / OH | CaesarCreek.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | B | yes | 849.0 | 0.0385 / 0.0768 / 0.1299 |
 | Calamus Reservoir / NE | TSC Calamus_2012_Area-Capacity_table_final (ACAP equations) | 2012-01-01 | A | yes | 2244.0 | 0.0968 / 0.1765 / 0.2573 |
 | Canton Lake / OK | CANT.Elev;Area.Linear.Production | 2016-08-01 | C | no | 1615.4 | 0.1516 / 0.2502 / 0.366 |
 | Canyon Ferry Lake / MT | CAFE.Elev;Area.Linear.Step | 2020-10-01 | A | yes | 3797.0 | 0.0329 / 0.0764 / 0.1104 |
 | Canyon Lake / TX | SMCT2.Elev;Area.Standard.Production | 2014-11-03 | C | yes | 909.0 | 0.0504 / 0.0941 / 0.1483 |
 | Carters / GA | Carters.Elev;Area.Standard.Production | 1979-07-01 | C | yes | 1074.0 | 0.0215 / 0.0438 / 0.0716 |
+| Cave Run Lake / KY | CaveRun.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 730.0 | 0.0537 / 0.1066 / 0.179 |
+| Cecil M. Harden Lake / IN | CMHarden.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 662.0 | 0.0692 / 0.1358 / 0.2218 |
 | Cedar Bluff Reservoir / KS | CEBL-Cedar_Bluff_Res-Smoky_Hill.Elev;Area.Area_Curves.Production | 1998-05-13 | C | yes | 2144.0 | 0.0696 / 0.1421 / 0.2467 |
 | Chatfield Reservoir / CO | CHFI.Elev;Area.Linear.Step | 2024-04-01 | C | yes | 5444.0 | 0.0619 / 0.1303 / 0.223 |
 | Cheney Reservoir / KS | CHEN.Elev;Area.Linear.Production | 2016-12-13 | A | yes | 1421.6 | 0.1089 / 0.2142 / 0.3446 |
@@ -84,15 +96,19 @@ Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose 
 | El Vado Lake / NM | TSC ElVado2018_tables (ACAP equations) | 2018-01-01 | C | yes | 6902.0 | 0.0262 / 0.0564 / 0.1001 |
 | Elephant Butte Reservoir / NM | TSC Elephant_Butte_Reservoir_2017_&_2019_Area_and_Capacity_Tables (ACAP equations) | 2019-01-01 | C | yes | 4407.0 | 0.0472 / 0.086 / 0.1355 |
 | Enid Lake / MS | Enid Lake.Elev;Area.Standard.Production | 1970-01-01 (default) | C | yes | 250.0 | 0.1181 / 0.2281 / 0.3664 |
+| Flannagan Reservoir / VA | JWFlannagan-Lake.Elev;Stor.Standard.Production (area = dS/dz) | 2007-05-08 | C | no | 1396.0 | 0.0373 / 0.0741 / 0.1254 |
 | Fort Gibson Lake / OK | FGIB.Elev;Area.Linear.Production | 1951-09-01 | B | yes | 554.0 | 0.1093 / 0.2131 / 0.3415 |
 | Fort Peck Lake / MT | FTPK.Elev;Area.Linear.Step | 2013-06-28 | C | yes | 2234.0 | 0.0335 / 0.0708 / 0.1133 |
 | Grand Lake o' the Cherokees / OK | PENS.Elev;Area.Linear.Production | 2022-01-31 | A | yes | 744.0 | 0.0936 / 0.1744 / 0.2605 |
+| Green River Lake / KY | Green.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 675.0 | 0.0548 / 0.1056 / 0.1725 |
 | Greers Ferry / AR | GreersFerry_Dam-Headwater.Elev;Area-Reservoir.Standard.Production | 1988-08-05 | C | yes | 462.04 | 0.0301 / 0.0592 / 0.097 |
 | Grenada Lake / MS | Grenada Lake.Elev;Area.Standard.Production | 1970-01-01 (default) | C | yes | 215.0 | 0.1265 / 0.2478 / 0.3954 |
 | Harlan County Lake / NE | HACO-Harlan_Co_Lake-Republican.Elev;Area.Area_Curves.Production | 1998-05-13 | A | yes | 1946.0 | 0.0956 / 0.1634 / 0.2361 |
 | Isabella / CA | Lake Isabella-Pool West.Elev;Area.Standard.Production | 1977-08-01 | C | yes | 2585.5 | 0.0391 / 0.0791 / 0.1339 |
+| Jennings Randolph Lake / MD | Randolph.Elev;Stor.Linear.Step;USACE (area = dS/dz) | 2013-12-01 | A | yes | 1466.0 | 0.0186 / 0.0349 / 0.0556 |
 | John Martin Reservoir / CO | John Martin.Elev;Area.Linear.Step;USACE | 2019-11-01 | C | yes | 3851.9 | 0.0648 / 0.1281 / 0.2142 |
 | John Redmond Reservoir / KS | JOHN.Elev;Area.Linear.Production | 2023-11-01 | C | no | 1041.0 | 0.0747 / 0.2963 / 0.9549 |
+| Jordan Lake / NC | CFR BEJ.Elev;Stor.DSS.Production (area = dS/dz) | 2024-10-08 | C | yes | 216.0 | 0.1288 / 0.2529 / 0.3999 |
 | Kanopolis Lake / KS | KANS-Kanopolis_Lake-Smoky_Hill.Elev;Area.Area_Curves.Production | 2012-03-31 | A | yes | 1463.0 | 0.0629 / 0.1684 / 0.3042 |
 | Kaw Lake / OK | KAWL.Elev;Area.Linear.Production | 2020-05-09 | C | no | 1010.0 | 0.1125 / 0.1946 / 0.2717 |
 | Keystone Lake / OK | KEYS.Elev;Area.Linear.Production | 2020-08-01 | C | yes | 723.0 | 0.0784 / 0.1508 / 0.224 |
@@ -105,6 +121,7 @@ Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose 
 | Lake Oahe / ND | OAHE.Elev;Area.Linear.Step | 2013-06-28 | C | yes | 1607.5 | 0.0477 / 0.0855 / 0.1382 |
 | Lake Oahe / SD | OAHE.Elev;Area.Linear.Step | 2013-06-28 | C | yes | 1607.5 | 0.0477 / 0.0855 / 0.1382 |
 | Lake Sakakawea / ND | GARR.Elev;Area.Linear.Step | 2013-06-28 | C | yes | 1837.5 | 0.0416 / 0.0743 / 0.1175 |
+| Lake Shelbyville / IL | Lk Shelbyville-Kaskaskia.Elev;Stor.SEDIMENT1985.Production (area = dS/dz) | 2015-04-29 | C | yes | 599.7 | 0.1111 / 0.2154 / 0.3441 |
 | Lake Tenkiller / OK | TENK.Elev;Area.Linear.Production | 2015-03-01 | C | no | 632.0 | 0.0533 / 0.0976 / 0.1479 |
 | Lake Texoma / TX | DENI.Elev;Area.Linear.Production | 2017-09-11 | A | yes | 617.0 | 0.112 / 0.1802 / 0.2512 |
 | Lake Tschida / ND | TSC Lake_Tschida_2013_Capacity_Tables (ACAP equations) | 2013-01-01 | C | yes | 2064.5 | 0.0869 / 0.157 / 0.2742 |
@@ -114,17 +131,25 @@ Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose 
 | Melvern Lake / KS | MELN-Melvern_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production | 2019-01-01 | B | yes | 1036.0 | 0.1434 / 0.2261 / 0.3033 |
 | Milford Lake / KS | MILD-Milford_Lake-Republican.Elev;Area.Area_Curves.Production | 2012-03-31 | B | yes | 1144.4 | 0.0925 / 0.2022 / 0.2818 |
 | Millwood / AR | Millwood_Dam-Headwater.Elev;Area-Reservoir.Standard.Production | 2019-10-17 | C | yes | 259.2 | 0.1868 / 0.3979 / 0.8492 |
+| Mississinewa Lake / IN | Mississinewa-Pool.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 737.0 | 0.116 / 0.21 / 0.309 |
+| Monroe Lake / IN | Monroe.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 538.0 | 0.1022 / 0.1991 / 0.3164 |
 | Mosquito Creek Lake / OH | Mosquito.Elev;Area.Standard.Production | 1970-01-01 (default) | A | yes | 900.73 | 0.1764 / 0.3108 / 0.5044 |
 | Navajo Reservoir / NM | TSC NavajoReservoir2019AreaCapacityTables_final508VI (ACAP equations) | 2019-01-01 | C | yes | 6085.0 | 0.0224 / 0.0458 / 0.0792 |
 | Nimrod / AR | Nimrod_Dam-Headwater.Elev;Area-Reservoir.Standard.Production | 2004-06-04 | C | yes | 342.0 | 0.2676 / 0.5014 / 0.7239 |
 | Norfork / AR | Norfork_Dam-Headwater.Elev;Area-Reservoir.Standard.Production | 2024-02-01 | C | yes | 553.75 | 0.0445 / 0.0862 / 0.1352 |
 | Okatibbee Lake / MS | Okatibbee.Elev;Area.Standard.Production | 2011-01-02 | C | yes | 344.0 | 0.2146 / 0.386 / 0.5772 |
 | Oologah Lake / OK | OOLO.Elev;Area.Linear.Production | 2020-08-24 | C | yes | 638.0 | 0.1319 / 0.2342 / 0.3611 |
+| Patoka Lake / IN | Patoka.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 536.0 | 0.0637 / 0.1243 / 0.2063 |
 | Perry Lake / KS | PERY-Perry_Lake-Delaware.Elev;Area.Area_Curves.Production | 2012-03-31 | C | yes | 891.5 | 0.0834 / 0.1921 / 0.2809 |
+| Philpott Lake / VA | ROA PLP.Elev;Stor.DSS.Production (area = dS/dz) | 2015-09-18 | C | yes | 974.0 | 0.0361 / 0.0723 / 0.1222 |
+| Pomme de Terre Lake / MO | PODT-Pomme_De_Terre_Lake-Pomme_De_Ter.Elev;Area.Area_Curves.Production | 2019-01-01 | C | yes | 839.0 | 0.0979 / 0.1666 / 0.2403 |
 | Pomona Lake / KS | POMA-Pomona_Lake-110-Quenemo.Elev;Area.Area_Curves.Production | 1998-05-13 | A | yes | 974.0 | 0.0986 / 0.1852 / 0.3504 |
 | Possum Kingdom Lake / TX | PSMT2.Elev;Area.Standard.Production | 2017-10-01 | C | yes | 999.0 | 0.0786 / 0.1864 / 0.3049 |
 | Pueblo Reservoir / CO | Pueblo.Elev;Area.Linear.Step;USBR | 2026-10-01 | C | yes | 4880.38 | 0.0547 / 0.098 / 0.1577 |
+| Rathbun Lake / IA | RATN-Rathbun_Lake-Chariton.Elev;Area.Area_Curves.Production | 1998-05-13 | C | yes | 904.0 | 0.1003 / 0.1992 / 0.3155 |
+| Raystown Lake / PA | Raystown.Elev;Stor.Linear.Step;USACE (area = dS/dz) | 1996-01-01 | C | yes | 786.0 | 0.0672 / 0.0972 / 0.1381 |
 | Rend Lake / IL | Rend Lk-Big Muddy.Elev;Area.COE.Production | 2015-04-29 | C | yes | 405.0 | 0.1325 / 0.27 / 0.4836 |
+| Salamonie Lake / IN | Salamonie-Pool.Elev;Stor.Standard.Production (area = dS/dz) | 2001-01-01 | C | yes | 755.0 | 0.1274 / 0.1969 / 0.2924 |
 | Sam Rayburn Reservoir / TX | JSPT2.Elev;Area.Standard.Production | 2014-06-27 | C | yes | 164.4 | 0.0685 / 0.1393 / 0.2488 |
 | Sardis Lake / MS | Sardis Lake.Elev;Area.Standard.Production | 1970-01-01 (default) | C | yes | 260.0 | 0.094 / 0.187 / 0.309 |
 | Sardis Lake / OK | SARD.Elev;Area.Linear.Production | 2019-09-01 | B | yes | 599.0 | 0.1054 / 0.1907 / 0.2861 |
@@ -132,15 +157,20 @@ Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose 
 | Shenango River Lake / PA | Shenango.Elev;Area.Standard.Production | 1970-01-01 (default) | C | yes | 894.67 | 0.127 / 0.2591 / 0.4218 |
 | Skiatook Lake / OK | SKIA.Elev;Area.Linear.Production | 2011-10-19 | C | no | 714.0 | 0.035 / 0.0782 / 0.1578 |
 | Smith (Lewis Smith) / AL | Smith.Elev;Area.Standard.Production | 1967-03-01 | C | yes | 510.0 | 0.0469 / 0.0913 / 0.1466 |
+| Smithville Lake / MO | SMIE-Smithville_Lake-Little_Platte.Elev;Area.Area_Curves.Production | 1998-05-13 | C | yes | 864.2 | 0.0947 / 0.1917 / 0.3041 |
 | Stockton Lake / MO | STON.Elev;Area.Linear.Step | 2020-01-01 | C | yes | 867.0 | 0.0633 / 0.1222 / 0.1914 |
 | Stonewall Jackson Lake / WV | StonewallJackson.Elev;Area.Standard.Production | 1970-01-01 (default) | A | yes | 1072.53 | 0.0972 / 0.2122 / 0.3546 |
+| Summersville Lake / WV | Summersville-Lake.Elev;Stor.Standard.Production (area = dS/dz) | 2011-08-11 | A | yes | 1652.0 | 0.0328 / 0.0684 / 0.1123 |
 | Sumner Lake / NM | Sumner.Elev;Area.Linear.Step;USBR | 2026-01-01 | C | yes | 4260.9 | 0.1349 / 0.2797 / 0.4582 |
 | Swanson Reservoir / NE | TSC Swanson_Reservoir_2011_Capacity_Tables (1-ft area table) | 2011-01-01 | A | yes | 2752.0 | 0.0868 / 0.1735 / 0.2454 |
+| Table Rock Lake / MO | Table_Rock_Dam-Headwater.Elev;Stor-Res.Standard.Production (area = dS/dz) | 1987-02-23 | C | yes | 915.0 | 0.0349 / 0.0698 / 0.1163 |
 | Tappan Lake / OH | Tappan.Elev;Area.Standard.Production | 1970-01-01 (default) | A | yes | 899.3 | 0.101 / 0.2016 / 0.3362 |
 | Tiber Reservoir (Lake Elwell) / MT | TIBR.Elev;Area.Linear.Step | 2024-03-19 | B | yes | 2993.0 | 0.0513 / 0.0971 / 0.1429 |
 | Truman Lake / MO | HAST-Truman_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production | 1998-05-13 | C | yes | 706.02 | 0.1236 / 0.207 / 0.3102 |
 | Tuttle Creek Lake / KS | TUCR-Tuttle_Creek_Lake-Big_Blue.Elev;Area.Area_Curves.Production | 2012-03-31 | C | yes | 1075.0 | 0.1006 / 0.1594 / 0.2242 |
 | Walter F. George / Eufaula / GA | WalterFGeorge.Elev;Area.Standard.Production | 1965-04-01 | C | yes | 190.0 | 0.0984 / 0.1949 / 0.3237 |
+| Wappapello Lake / MO | Wappapello Lk-St Francis.Elev;Stor.SEDIMENT2012.Production (area = dS/dz) | 2015-04-29 | C | yes | 359.7 | 0.1988 / 0.6099 / 0.7689 |
 | Weiss / AL | Weiss.Elev;Area.Standard.Production | 1961-06-01 | C | yes | 564.0 | 0.1777 / 0.3472 / 0.5547 |
 | West Point / GA | WestPoint.Elev;Area.Standard.Production | 1975-06-01 | C | yes | 635.0 | 0.0906 / 0.1758 / 0.2811 |
 | Wilson Lake / KS | WILN-Wilson_Lake-Saline.Elev;Area.Area_Curves.Production | 2012-03-31 | B | yes | 1516.0 | 0.0504 / 0.098 / 0.2039 |
+| Youghiogheny River Lake / MD | Youghiogheny.Elev;Stor.Standard.Production (area = dS/dz) | 1970-01-01 (default) | C | no | 1438.35 | 0.0232 / 0.0508 / 0.0872 |

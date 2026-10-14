@@ -1,0 +1,903 @@
+{
+ "schema": "depth-stor-derived-validation-v1",
+ "lakes": {
+  "Jordan|AL": {
+   "storRating": "Jordan.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1926-06-01",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": -0.0058,
+    "10.0": -0.0151
+   }
+  },
+  "Lay|AL": {
+   "storRating": "Lay.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1914-04-01",
+   "diff": {
+    "3.0": 0.004,
+    "6.0": 0.0056,
+    "10.0": 0.0166
+   }
+  },
+  "Bull Shoals Lake|AR": {
+   "storRating": "Bull_Shoals_Dam-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1987-02-23",
+   "diff": {
+    "3.0": 0.0043,
+    "6.0": -0.0016,
+    "10.0": -0.0023
+   }
+  },
+  "Dardanelle|AR": {
+   "storRating": "LD10_Dardanelle-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1987-02-23",
+   "diff": {
+    "3.0": 0.0021,
+    "6.0": 0.0014
+   }
+  },
+  "Isabella|CA": {
+   "storRating": "Lake Isabella-Pool West.Elev;Stor.Standard.Production",
+   "stepFt": 0.01,
+   "effective": "1975-09-01",
+   "diff": {
+    "3.0": -0.0011,
+    "6.0": 0.0024,
+    "10.0": -0.0034
+   }
+  },
+  "Chatfield Reservoir|CO": {
+   "storRating": "CHFI.Elev;Stor.Linear.Step",
+   "stepFt": 0.1,
+   "effective": "2023-04-01",
+   "diff": {
+    "3.0": -0.0026,
+    "6.0": -0.0031,
+    "10.0": 0.0003
+   }
+  },
+  "Cherry Creek Reservoir|CO": {
+   "storRating": "CHCR.Elev;Stor.Linear.Step",
+   "stepFt": 0.1,
+   "effective": "2023-04-01",
+   "diff": {
+    "3.0": 0.001,
+    "6.0": -0.0047,
+    "10.0": 0.0013
+   }
+  },
+  "John Martin Reservoir|CO": {
+   "storRating": "John Martin.Elev;Stor.Linear.Step;USACE",
+   "stepFt": 0.01,
+   "effective": "2019-11-01",
+   "diff": {
+    "3.0": 0.0016,
+    "6.0": 0.0005,
+    "10.0": -0.0026
+   }
+  },
+  "Seminole|GA": {
+   "storRating": "JimWoodruff.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1958-02-01",
+   "diff": {
+    "3.0": -0.0006,
+    "6.0": 0.0128,
+    "10.0": -0.0003
+   }
+  },
+  "Rathbun Lake|IA": {
+   "storRating": "RATN-Rathbun_Lake-Chariton.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 5.0,
+   "effective": "2015-10-06",
+   "diff": {
+    "3.0": 0.0003,
+    "6.0": -0.027,
+    "10.0": -0.0506
+   }
+  },
+  "Rend Lake|IL": {
+   "storRating": "Rend Lk-Big Muddy.Elev;Stor.COE.Production",
+   "stepFt": 1.0,
+   "effective": "1989-01-02",
+   "diff": {
+    "3.0": 0.0346,
+    "6.0": 0.0586,
+    "10.0": 0.0473
+   }
+  },
+  "Cedar Bluff Reservoir|KS": {
+   "storRating": "CEBL-Cedar_Bluff_Res-Smoky_Hill.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 5.0,
+   "effective": "2002-01-01",
+   "diff": {
+    "3.0": 0.0036,
+    "6.0": 0.0121,
+    "10.0": 0.0145
+   }
+  },
+  "Clinton Lake|KS": {
+   "storRating": "CLIN-Clinton_Lake-Wakarusa.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2012-03-31",
+   "diff": {
+    "3.0": 0.0017,
+    "6.0": 0.0013,
+    "10.0": 0.0019
+   }
+  },
+  "Kanopolis Lake|KS": {
+   "storRating": "KANS-Kanopolis_Lake-Smoky_Hill.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2012-03-31",
+   "diff": {
+    "3.0": 0.0002,
+    "6.0": -0.0015,
+    "10.0": -0.0013
+   }
+  },
+  "Melvern Lake|KS": {
+   "storRating": "MELN-Melvern_Lake-Marais_Des_Cygnes.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2019-01-01",
+   "diff": {
+    "3.0": -0.0002,
+    "6.0": 0.0012,
+    "10.0": 0.001
+   }
+  },
+  "Milford Lake|KS": {
+   "storRating": "MILD-Milford_Lake-Republican.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2012-03-31",
+   "diff": {
+    "3.0": 0.0234,
+    "6.0": 0.0204,
+    "10.0": 0.0187
+   }
+  },
+  "Perry Lake|KS": {
+   "storRating": "PERY-Perry_Lake-Delaware.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2012-03-01",
+   "diff": {
+    "3.0": 0.0003,
+    "6.0": 0.0003,
+    "10.0": 0.0001
+   }
+  },
+  "Pomona Lake|KS": {
+   "storRating": "POMA-Pomona_Lake-110-Quenemo.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2012-03-01",
+   "diff": {
+    "3.0": 0.082,
+    "6.0": 0.0887,
+    "10.0": 0.0512
+   }
+  },
+  "Tuttle Creek Lake|KS": {
+   "storRating": "TUCR-Tuttle_Creek_Lake-Big_Blue.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2012-03-01",
+   "diff": {
+    "3.0": 0.0013,
+    "6.0": 0.0016,
+    "10.0": 0.0009
+   }
+  },
+  "Wilson Lake|KS": {
+   "storRating": "WILN-Wilson_Lake-Saline.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2012-03-01",
+   "diff": {
+    "3.0": 0.0089,
+    "6.0": 0.0102,
+    "10.0": 0.0067
+   }
+  },
+  "Longview Lake|MO": {
+   "storRating": "LGVM-Longview_Lake-Little_Blue.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 4.0,
+   "effective": "1985-09-16",
+   "diff": {
+    "3.0": 0.0101,
+    "6.0": 0.0163,
+    "10.0": 0.0164
+   }
+  },
+  "Mark Twain Lake|MO": {
+   "storRating": "Mark Twain Lk-Salt.Elev;Stor.COE.Production",
+   "stepFt": 0.1,
+   "effective": "1989-01-01",
+   "diff": {
+    "3.0": -0.0076,
+    "6.0": -0.0102,
+    "10.0": -0.0066
+   }
+  },
+  "Pomme de Terre Lake|MO": {
+   "storRating": "PODT-Pomme_De_Terre_Lake-Pomme_De_Ter.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2019-01-01",
+   "diff": {
+    "3.0": -0.0025,
+    "6.0": -0.0024,
+    "10.0": -0.0024
+   }
+  },
+  "Smithville Lake|MO": {
+   "storRating": "SMIE-Smithville_Lake-Little_Platte.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 2.0,
+   "effective": "1998-05-13",
+   "diff": {
+    "3.0": 0.0001,
+    "6.0": 0.0023,
+    "10.0": -0.0002
+   }
+  },
+  "Stockton Lake|MO": {
+   "storRating": "STON-Stockton_Lake-Sac.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 2.0,
+   "effective": "2012-03-01",
+   "diff": {
+    "3.0": -0.0139,
+    "6.0": -0.0247,
+    "10.0": -0.0327
+   }
+  },
+  "Truman Lake|MO": {
+   "storRating": "HAST-Truman_Lake-Marais_Des_Cygnes.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 2.0,
+   "effective": "2012-03-01",
+   "diff": {
+    "3.0": -0.0071,
+    "6.0": 0.0047,
+    "10.0": 0.0012
+   }
+  },
+  "Bay Springs Lake|MS": {
+   "storRating": "Whitten.Elev;Stor.Standard.Production",
+   "stepFt": 10.0,
+   "effective": "1985-09-01",
+   "diff": {
+    "3.0": 0.0106,
+    "6.0": 0.0357,
+    "10.0": -0.0039
+   }
+  },
+  "Okatibbee Lake|MS": {
+   "storRating": "Okatibbee.Elev;Stor.Standard.Production",
+   "stepFt": 0.1,
+   "effective": "2011-01-02",
+   "diff": {
+    "3.0": -0.0053,
+    "6.0": -0.0059,
+    "10.0": -0.0034
+   }
+  },
+  "Canyon Ferry Lake|MT": {
+   "storRating": "CAFE.Elev;Stor.Linear.Step",
+   "stepFt": 1.0,
+   "effective": "2020-10-01",
+   "diff": {
+    "3.0": 0.0004,
+    "6.0": -0.0,
+    "10.0": -0.0
+   }
+  },
+  "Fort Peck Lake|MT": {
+   "storRating": "FTPK-Fort_Peck_Dam-Missouri.Elev;Stor.USGS-EXSA.Production",
+   "stepFt": 0.01,
+   "effective": "2013-06-22",
+   "diff": {
+    "3.0": -0.0,
+    "6.0": 0.0001,
+    "10.0": -0.0001
+   }
+  },
+  "Tiber Reservoir (Lake Elwell)|MT": {
+   "storRating": "TIBR.Elev;Stor.Linear.Step",
+   "stepFt": 0.1,
+   "effective": "2023-10-01",
+   "diff": {
+    "3.0": -0.0001,
+    "6.0": 0.0001,
+    "10.0": 0.0002
+   }
+  },
+  "Bowman-Haley Reservoir|ND": {
+   "storRating": "BOHA.Elev;Stor.Linear.Step",
+   "stepFt": 0.01,
+   "effective": "2024-06-01",
+   "diff": {
+    "3.0": 0.0204,
+    "6.0": 0.0197,
+    "10.0": 0.0066
+   }
+  },
+  "Lake Oahe|ND": {
+   "storRating": "OAHE-Oahe_Dam-Missouri.Elev;Stor.USGS-EXSA.Production",
+   "stepFt": 0.01,
+   "effective": "2013-06-22",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": -0.0001,
+    "10.0": -0.0001
+   }
+  },
+  "Lake Sakakawea|ND": {
+   "storRating": "GARR-Garrison_Dam-Missouri.Elev;Stor.USGS-EXSA.Production",
+   "stepFt": 0.01,
+   "effective": "2013-06-22",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": 0.0001,
+    "10.0": -0.0001
+   }
+  },
+  "Harlan County Lake|NE": {
+   "storRating": "HACO-Harlan_Co_Lake-Republican.Elev;Stor.Storage_Curves.Production",
+   "stepFt": 1.0,
+   "effective": "2001-01-01",
+   "diff": {
+    "3.0": -0.0338,
+    "6.0": -0.0423,
+    "10.0": -0.0184
+   }
+  },
+  "Cochiti Lake|NM": {
+   "storRating": "Cochiti.Elev;Stor.Linear.Step;USACE",
+   "stepFt": 0.01,
+   "effective": "2020-01-01",
+   "diff": {
+    "3.0": -0.0176,
+    "6.0": 0.0011,
+    "10.0": 0.0138
+   }
+  },
+  "Sumner Lake|NM": {
+   "storRating": "Sumner.Elev;Stor.Linear.Step;USBR",
+   "stepFt": 0.01,
+   "effective": "2026-01-01",
+   "diff": {
+    "3.0": -0.0149,
+    "6.0": 0.0003,
+    "10.0": 0.0018
+   }
+  },
+  "Lake Milton|OH": {
+   "storRating": "Milton.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": 0.0,
+    "10.0": 0.0158
+   }
+  },
+  "Senecaville Lake|OH": {
+   "storRating": "Senecaville-Lake.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1983-09-16",
+   "diff": {
+    "3.0": 0.0099,
+    "6.0": -0.0068,
+    "10.0": -0.0053
+   }
+  },
+  "Tappan Lake|OH": {
+   "storRating": "Tappan-Lake.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2016-02-26",
+   "diff": {
+    "3.0": 0.0166,
+    "6.0": 0.0,
+    "10.0": -0.0001
+   }
+  },
+  "Grand Lake o' the Cherokees|OK": {
+   "storRating": "PENS.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2022-01-31",
+   "diff": {
+    "3.0": -0.0013,
+    "6.0": 0.0,
+    "10.0": 0.0001
+   }
+  },
+  "Shenango River Lake|PA": {
+   "storRating": "Shenango.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": 0.0013,
+    "6.0": -0.0006,
+    "10.0": 0.0103
+   }
+  },
+  "Lake Oahe|SD": {
+   "storRating": "OAHE-Oahe_Dam-Missouri.Elev;Stor.USGS-EXSA.Production",
+   "stepFt": 0.01,
+   "effective": "2013-06-22",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": -0.0001,
+    "10.0": -0.0001
+   }
+  },
+  "Lake Buchanan|TX": {
+   "storRating": "BUDT2.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1999-09-21",
+   "diff": {
+    "3.0": 0.0004,
+    "6.0": 0.0005,
+    "10.0": 0.0004
+   }
+  },
+  "Possum Kingdom Lake|TX": {
+   "storRating": "PSMT2.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2017-10-01",
+   "diff": {
+    "3.0": 0.0022,
+    "6.0": 0.0025,
+    "10.0": 0.0009
+   }
+  },
+  "Bankhead|AL": {
+   "storRating": "Bankhead.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1975-04-01",
+   "diff": {
+    "3.0": -0.0003,
+    "6.0": -0.0073,
+    "10.0": -0.0009
+   }
+  },
+  "Lake Martin|AL": {
+   "storRating": "Martin.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1926-01-01",
+   "diff": {
+    "3.0": -0.0047,
+    "6.0": -0.0,
+    "10.0": 0.0
+   }
+  },
+  "Logan Martin|AL": {
+   "storRating": "LoganMartin.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1964-07-01",
+   "diff": {
+    "3.0": 0.0001,
+    "6.0": -0.0001,
+    "10.0": -0.0001
+   }
+  },
+  "Smith (Lewis Smith)|AL": {
+   "storRating": "Smith.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2015-05-19",
+   "diff": {
+    "3.0": 0.0003,
+    "6.0": -0.0017,
+    "10.0": -0.0004
+   }
+  },
+  "Weiss|AL": {
+   "storRating": "Weiss.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1961-06-01",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": 0.0,
+    "10.0": 0.0084
+   }
+  },
+  "Beaver|AR": {
+   "storRating": "Beaver_Dam-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2024-02-01",
+   "diff": {
+    "3.0": -0.0079,
+    "6.0": -0.015,
+    "10.0": 0.0008
+   }
+  },
+  "Greers Ferry|AR": {
+   "storRating": "GreersFerry_Dam-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1987-02-23",
+   "diff": {
+    "3.0": -0.0059,
+    "6.0": -0.0035,
+    "10.0": 0.0047
+   }
+  },
+  "Millwood|AR": {
+   "storRating": "Millwood_Dam-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2019-10-17",
+   "diff": {
+    "3.0": -0.0023,
+    "6.0": 0.0003,
+    "10.0": -0.0057
+   }
+  },
+  "Nimrod|AR": {
+   "storRating": "Nimrod_Dam-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2012-07-12",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": 0.0,
+    "10.0": 0.019
+   }
+  },
+  "Norfork|AR": {
+   "storRating": "Norfork_Dam-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2024-02-01",
+   "diff": {
+    "3.0": -0.0002,
+    "6.0": 0.0,
+    "10.0": 0.0
+   }
+  },
+  "Pueblo Reservoir|CO": {
+   "storRating": "Pueblo.Elev;Stor.Linear.Step;USBR",
+   "stepFt": 1.0,
+   "effective": "2026-10-01",
+   "diff": {
+    "3.0": 0.0002,
+    "6.0": 0.0005,
+    "10.0": 0.0
+   }
+  },
+  "Allatoona|GA": {
+   "skip": "pool not inside storage rating"
+  },
+  "Carters|GA": {
+   "storRating": "Carters.Elev;Stor.Standard.Production",
+   "stepFt": 10.0,
+   "effective": "1979-07-01",
+   "diff": {
+    "3.0": -0.0008,
+    "6.0": -0.003,
+    "10.0": -0.0041
+   }
+  },
+  "Lanier (Sidney Lanier)|GA": {
+   "storRating": "Buford.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1959-12-01",
+   "diff": {
+    "3.0": 0.0018,
+    "6.0": 0.0015,
+    "10.0": -0.0002
+   }
+  },
+  "Walter F. George / Eufaula|GA": {
+   "storRating": "WalterFGeorge.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1965-04-01",
+   "diff": {
+    "3.0": 0.001,
+    "6.0": 0.0018,
+    "10.0": -0.0012
+   }
+  },
+  "West Point|GA": {
+   "storRating": "WestPoint.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1975-06-01",
+   "diff": {
+    "3.0": -0.0,
+    "6.0": -0.0,
+    "10.0": -0.0
+   }
+  },
+  "Cheney Reservoir|KS": {
+   "storRating": "CHEN.Elev;Stor.Linear.Production",
+   "stepFt": 0.1,
+   "effective": "2016-12-13",
+   "diff": {
+    "3.0": 0.001,
+    "6.0": 0.0011,
+    "10.0": 0.0011
+   }
+  },
+  "El Dorado Lake|KS": {
+   "storRating": "ELDR.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2026-04-01",
+   "diff": {
+    "3.0": 0.0007,
+    "6.0": -0.0007,
+    "10.0": -0.0004
+   }
+  },
+  "John Redmond Reservoir|KS": {
+   "storRating": "JOHN.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2023-11-01",
+   "diff": {
+    "3.0": 0.0103,
+    "6.0": 0.011,
+    "10.0": -0.004
+   }
+  },
+  "Marion Reservoir|KS": {
+   "storRating": "MARI.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2025-02-01",
+   "diff": {
+    "3.0": -0.0003,
+    "6.0": 0.0006,
+    "10.0": -0.0006
+   }
+  },
+  "Clearwater Lake|MO": {
+   "storRating": "Clearwater_Dam-Headwater.Elev;Stor-Res.Standard.Production",
+   "stepFt": 2.0,
+   "effective": "2022-01-01",
+   "diff": {
+    "3.0": 0.0299,
+    "6.0": 0.0038,
+    "10.0": 0.0041
+   }
+  },
+  "Arkabutla Lake|MS": {
+   "storRating": "Arkabutla Lake.Elev;Stor.Linear.Distributed",
+   "stepFt": 2.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": -0.0004,
+    "6.0": -0.0051,
+    "10.0": -0.0155
+   }
+  },
+  "Columbus Lake|MS": {
+   "skip": "pool not inside storage rating"
+  },
+  "Enid Lake|MS": {
+   "storRating": "Enid Lake.Elev;Stor.Linear.Distributed",
+   "stepFt": 2.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": 0.0026,
+    "6.0": 0.0025,
+    "10.0": -0.0042
+   }
+  },
+  "Grenada Lake|MS": {
+   "storRating": "Grenada Lake.Elev;Stor.Linear.Distributed",
+   "stepFt": 2.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": 0.0011,
+    "6.0": 0.0005,
+    "10.0": 0.002
+   }
+  },
+  "Sardis Lake|MS": {
+   "storRating": "Sardis Lake.Elev;Stor.Linear.Distributed",
+   "stepFt": 2.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": 0.0004,
+    "6.0": -0.0036,
+    "10.0": -0.0051
+   }
+  },
+  "Abiquiu Lake|NM": {
+   "storRating": "Abiquiu.Elev;Stor.Linear.Step;USACE",
+   "stepFt": 0.01,
+   "effective": "2022-01-01",
+   "diff": {
+    "3.0": 0.0001,
+    "6.0": -0.0003,
+    "10.0": 0.0002
+   }
+  },
+  "Conchas Lake|NM": {
+   "storRating": "Conchas.Elev;Stor.Linear.Step;USACE",
+   "stepFt": 0.01,
+   "effective": "2017-01-01",
+   "diff": {
+    "3.0": 0.0055,
+    "6.0": 0.0035,
+    "10.0": -0.0012
+   }
+  },
+  "Alum Creek Lake|OH": {
+   "storRating": "AlumCr-Lake.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1999-11-30",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": -0.0001,
+    "10.0": 0.0148
+   }
+  },
+  "Berlin Lake|OH": {
+   "skip": "pool not inside storage rating"
+  },
+  "Mosquito Creek Lake|OH": {
+   "storRating": "Mosquito.Elev;Stor.Standard.Production",
+   "stepFt": 0.5,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": -0.0,
+    "10.0": -0.001
+   }
+  },
+  "Canton Lake|OK": {
+   "storRating": "CANT.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2016-08-01",
+   "diff": {
+    "3.0": 0.0764,
+    "6.0": 0.0293,
+    "10.0": -0.0037
+   }
+  },
+  "Fort Gibson Lake|OK": {
+   "storRating": "FGIB.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "1949-09-01",
+   "diff": {
+    "3.0": -0.0014,
+    "6.0": -0.0079,
+    "10.0": -0.0107
+   }
+  },
+  "Kaw Lake|OK": {
+   "storRating": "KAWL.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2020-05-09",
+   "diff": {
+    "3.0": -0.0016,
+    "6.0": -0.0006,
+    "10.0": 0.0
+   }
+  },
+  "Keystone Lake|OK": {
+   "storRating": "KEYS.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2020-08-01",
+   "diff": {
+    "3.0": 0.0013,
+    "6.0": 0.0005,
+    "10.0": 0.0011
+   }
+  },
+  "Lake Eufaula|OK": {
+   "storRating": "EUFA.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2016-05-01",
+   "diff": {
+    "3.0": 0.0007,
+    "6.0": -0.0007,
+    "10.0": -0.0003
+   }
+  },
+  "Lake Hudson|OK": {
+   "storRating": "HUDS.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2012-01-31",
+   "diff": {
+    "3.0": -0.0056,
+    "6.0": -0.006,
+    "10.0": -0.0029
+   }
+  },
+  "Lake Tenkiller|OK": {
+   "storRating": "TENK.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2019-06-10",
+   "diff": {
+    "3.0": 0.0224,
+    "6.0": 0.0208,
+    "10.0": 0.0197
+   }
+  },
+  "Oologah Lake|OK": {
+   "storRating": "OOLO.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2020-08-24",
+   "diff": {
+    "3.0": -0.0015,
+    "6.0": -0.0023,
+    "10.0": -0.0012
+   }
+  },
+  "Sardis Lake|OK": {
+   "storRating": "SARD.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2019-09-01",
+   "diff": {
+    "3.0": 0.1409,
+    "6.0": 0.0859,
+    "10.0": 0.073
+   }
+  },
+  "Skiatook Lake|OK": {
+   "storRating": "SKIA.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2011-10-19",
+   "diff": {
+    "3.0": 0.0005,
+    "6.0": 0.0198,
+    "10.0": 0.0398
+   }
+  },
+  "Allegheny Reservoir|PA": {
+   "storRating": "Kinzua.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": 0.0,
+    "10.0": 0.0
+   }
+  },
+  "Canyon Lake|TX": {
+   "storRating": "SMCT2.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2014-11-03",
+   "diff": {
+    "3.0": -0.0073,
+    "6.0": -0.0072,
+    "10.0": -0.0066
+   }
+  },
+  "Lake Texoma|TX": {
+   "storRating": "DENI.Elev;Stor.Linear.Production",
+   "stepFt": 1.0,
+   "effective": "2017-09-11",
+   "diff": {
+    "3.0": -0.0047,
+    "6.0": -0.0015,
+    "10.0": -0.0011
+   }
+  },
+  "Sam Rayburn Reservoir|TX": {
+   "storRating": "JSPT2.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "2014-06-27",
+   "diff": {
+    "3.0": 0.0113,
+    "6.0": 0.01,
+    "10.0": 0.0092
+   }
+  },
+  "Lake Moomaw|VA": {
+   "storRating": "Moomaw.Elev;Stor.Linear.Step;USACE",
+   "stepFt": 1.0,
+   "effective": "1992-08-04",
+   "diff": {
+    "3.0": 0.0,
+    "6.0": -0.0002,
+    "10.0": 0.0
+   }
+  },
+  "Stonewall Jackson Lake|WV": {
+   "storRating": "StonewallJackson.Elev;Stor.Standard.Production",
+   "stepFt": 1.0,
+   "effective": "1970-01-01",
+   "diff": {
+    "3.0": -0.0002,
+    "6.0": -0.0,
+    "10.0": 0.0003
+   }
+  }
+ }
+}

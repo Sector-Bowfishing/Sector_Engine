@@ -28,6 +28,9 @@ for r in rows:
     cum = R.cumulative_at(cur[lid], cur[lid]["poolFt"])
     dd = [abs(cum[k] - ct[k]) for k in cum]
     diffs += dd; per.append((lid, r["interval_ft"], round(max(dd), 3)))
+SV = json.load(open(os.path.join(ROOT, 'docs/brains/depth/data/stor_derived_validation.json')))['lakes']
+_sv = sorted(abs(x) for v in SV.values() if 'diff' in v for x in v['diff'].values())
+sd_n, sd_med, sd_p90, sd_p95, sd_max = len(_sv), _sv[len(_sv)//2], _sv[int(.9*len(_sv))], _sv[int(.95*len(_sv))], _sv[-1]
 a = sorted(diffs); q = lambda p: a[min(len(a) - 1, int(p * len(a)))]
 vint = Counter("unknown (CWMS default 1970-01-01)" if v["effectiveDate"].startswith("1970") else ("before 1990" if v["effectiveDate"] < "1990" else "1990 or later") for v in (cur[k] for k in rated))
 tier = Counter(rated[k]["evidence"]["tier"] for k in rated)
@@ -65,6 +68,7 @@ It says **how much, never where.** No polygon, flat, drop-off, channel or point 
 3. A `ft;ft2` rating (Alamo) was tried with a unit conversion and dropped: the converted area at pool was about 0.1 acre, so the unit label is unreliable.
 4. The monotone check was moved to the stored region (below pool + 6 ft) so noise above the pool cannot reject a lake (Truman and Allegheny then qualified and Smithville reached R2; Tygart, Youghiogheny and Table Rock are still refused).
 6. R2 gained the LOCAL == NGVD29 equivalence clause (section 4) after the refusals were read; it needs a per-lake paired-series proof and never applies generally.
+7. A third source was added after the first pass: lakes with an `Elev;Stor` rating but no `Elev;Area` rating get area = dS/dz (median step <= 1 ft, ac-ft units, derived area may fall by at most 3% of its maximum). It was validated first on the lakes that have both ratings (section 5b) and is marked `derivedFrom` on every state.
 5. Ratings with more than 400 points at under 0.1 ft spacing are resampled to a 0.1 ft grid (linear between points) to keep the committed file at about 260 KB.
 
 ## 4. Result
@@ -79,6 +83,9 @@ It says **how much, never where.** No polygon, flat, drop-off, channel or point 
 ## 5. Independent cross-check (the evidence behind R6 and R8)
 
 Rating shares vs contour-survey shares at the 3, 6 and 10 ft edges, lakes whose contour interval is 5 ft or finer: **{len(per)} lakes, {len(a)} edges, median |difference| {q(.5):.3f}, 75th percentile {q(.75):.3f}, 90th percentile {q(.9):.3f}, maximum {a[-1]:.3f}.** The two sources are independent (a survey of the water body vs the operator's published rating) and each has its own error, so these differences are an upper bound on the rating's error only if the contours were exact, which they are not. Largest per-lake maxima: {', '.join(f'{l} ({d})' for l, i, d in sorted(per, key=lambda x: -x[2])[:6])}.
+
+### 5b. Storage-derived areas against area ratings (89 lakes that have both)
+Shares from `dS/dz` versus shares from the area rating at 3, 6 and 10 ft: {sd_n} edges, median |difference| {sd_med:.4f}, 90th percentile {sd_p90:.4f}, 95th {sd_p95:.4f}, maximum {sd_max:.4f} (`data/stor_derived_validation.json`). Differences larger than 0.04 are survey-vintage differences between the two CWMS ratings of one lake (Sardis OK 0.14, Canton OK 0.08, Pomona KS 0.09, Rend IL 0.06, Rathbun IA 0.05, Harlan NE 0.04).
 
 ## 6. What remains unvalidated
 

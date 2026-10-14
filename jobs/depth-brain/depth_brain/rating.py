@@ -81,10 +81,10 @@ def _norm_datum(v):
     return normalize_datum(str(v).replace("-", "")) if v else None
 
 
-# Cross-check of rating-derived shares against INDEPENDENT contour surveys (20 lakes, 60 edges, contour interval <= 5 ft; research/depth/stage_area_doc.py):
-# median |difference| 0.036, 90th percentile 0.104, max 0.141. The rating is exact as published; whether it still describes the lake (age, sedimentation) is not
+# Cross-check of rating-derived shares against INDEPENDENT contour surveys (27 lakes, 81 edges, contour interval <= 5 ft, INCLUDING the lakes R6 later withheld, so the figure is not flattered by the gate; research/depth/stage_area_doc.py):
+# median |difference| 0.044, 90th percentile 0.127, max 0.299. The rating is exact as published; whether it still describes the lake (age, sedimentation) is not
 # knowable here, so every rating-derived share carries this tolerance beside its bounds. It is a reported accuracy, not a bound.
-RATING_SHARE_TOLERANCE_ABS = 0.11
+RATING_SHARE_TOLERANCE_ABS = 0.13
 CONTOUR_DISAGREE_MAX = 0.10      # RATING-ZONE-RULES-1 R6: a rating and a contour survey of the same lake must agree within 0.10 of the surface at every common edge
 
 
@@ -120,6 +120,6 @@ def rating_reference_zones(curve: dict | None, pool_ft, ref_datum, ref_datum_ver
     return {"cumulative": {str(k): v for k, v in cum.items()}, "intervalFt": None, "coverage": 1.0, "source": f"USACE CWMS rating {curve['ratingId']}",
             "referenceStatus": "VERIFIED", "referencePoolFt": float(pool_ft), "referencePoolDatum": rd or nd, "kind": "stage-area-rating",
             "rating": {"id": curve["ratingId"], "office": curve["office"], "effectiveDate": eff, "vintageKnown": not eff.startswith("1970-01-01"), "url": curve.get("url"),
-                       "matchedBy": curve.get("matchedBy"), "elevRangeFt": [curve["elevMinFt"], curve["elevMaxFt"]]},
+                       "matchedBy": curve.get("matchedBy"), "derivedFrom": curve.get("derivedFrom"), "elevRangeFt": [curve["elevMinFt"], curve["elevMaxFt"]]},
             **({"localDatumEquivalence": {k: equiv[k] for k in ("localEquals", "usgsSite", "usgsParam", "n", "meanFt", "sdFt")}} if equiv else {}),
             "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)"}, "ok"
