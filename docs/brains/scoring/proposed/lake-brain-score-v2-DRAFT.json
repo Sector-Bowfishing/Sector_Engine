@@ -1,0 +1,149 @@
+{
+  "scoreVersion": "lake-brain-score-v2-DRAFT",
+  "brainId": "lake-brain",
+  "scale": 10,
+  "scope": "quality dimensions over PROFILED lakes (published /lakes/{k}/brain); coverage and validation fleet-wide",
+  "dimensions": [
+    {
+      "id": "sourceAuthority",
+      "label": "Level source is the operator pool or the lake's own gauge",
+      "weight": 15,
+      "fact": "profiles[*].sourceCapability.level in {DIRECT_OPERATOR_POOL, DIRECT_LAKE_GAUGE}",
+      "scale": "share x 10"
+    },
+    {
+      "id": "operatorPlan",
+      "label": "Operating guide or zone captured, where the operator publishes one",
+      "weight": 10,
+      "fact": "profiles[*].operatingPools.guideCurve.available or operatingZoneSource, over lakes with profiles[*].operatingPools.planPublication in {CAPTURED, PUBLISHED_NOT_CAPTURED}",
+      "scale": "share x 10",
+      "publication": {
+        "field": "profiles[*].operatingPools.planPublication",
+        "CAPTURED": "strict guide curve, or a zone with BOTH a top and a bottom, documented",
+        "PUBLISHED_NOT_CAPTURED": "the operator publishes plan-type levels (a lower-pool level beside Top of Conservation; a TWDB conservation + dead pool pair) that do not meet the strict rule",
+        "OPERATOR_READ_NO_PLAN": "a verified operator project was read and publishes no plan-type level (not applicable)",
+        "UNKNOWN": "no verified operator record",
+        "denominator": "CAPTURED and PUBLISHED_NOT_CAPTURED (UNKNOWN excluded)"
+      }
+    },
+    {
+      "id": "historyQuality",
+      "label": ">= 5 complete years of daily history",
+      "weight": 15,
+      "fact": "profiles[*].historicalCoverage.baselineStatus == SUFFICIENT",
+      "scale": "share x 10"
+    },
+    {
+      "id": "seasonalBaseline",
+      "label": "A day-of-year baseline exists",
+      "weight": 10,
+      "fact": "baselineStatus in {SUFFICIENT, LIMITED}",
+      "scale": "share x 10"
+    },
+    {
+      "id": "trendQuality",
+      "label": "Last state is observed, not a proxy",
+      "weight": 10,
+      "fact": "states[*].kind == observed",
+      "scale": "share x 10"
+    },
+    {
+      "id": "floodDroughtContext",
+      "label": "Flood-pool state known, where a flood pool exists",
+      "weight": 5,
+      "fact": "states[*].floodPoolState != UNKNOWN, over lakes with profiles[*].operatingPools.floodPoolApplicability == EXISTS",
+      "scale": "share x 10",
+      "applicability": {
+        "field": "profiles[*].operatingPools.floodPoolApplicability",
+        "EXISTS": "an operator or TWDB flood-pool level is documented, OR the linked NID dam record lists 'Flood Risk Reduction' among its purposes",
+        "NOT_APPLICABLE": "an NID dam record with purposes is linked, none of them is flood control, and no flood-pool level is documented",
+        "UNDETERMINED": "no NID dam record or no purposes, and no flood-pool level is documented",
+        "denominator": "EXISTS only (UNDETERMINED excluded)",
+        "EXISTS_but_unpublished": "stays in the denominator as UNKNOWN: a pool that exists but whose level is not published is a real gap, not a non-applicability"
+      }
+    },
+    {
+      "id": "validation",
+      "label": "Claim validation (weakest published claim family)",
+      "weight": 15,
+      "fact": "min over COUNTED claim families of /validation/lake-brain/claims/{family}.status",
+      "scale": {
+        "NOT_VALIDATED": 0,
+        "PARTIAL": 5,
+        "VALIDATED": 10
+      },
+      "families": [
+        {
+          "id": "providerDisplay",
+          "level": 1,
+          "claims": "current pool elevation, operator guide / normal pool / flood-pool bottom as published, source id, freshness"
+        },
+        {
+          "id": "deterministicDerivation",
+          "level": 2,
+          "claims": "difference from guide or normal pool, operator zone, 72 h mean rate, trend direction arithmetic"
+        },
+        {
+          "id": "historicalState",
+          "level": 3,
+          "claims": "NORMAL / UNUSUAL / VERY_UNUSUAL against the lake's own history; trend label stability"
+        },
+        {
+          "id": "rapidChange",
+          "level": 3,
+          "claims": "RISING_RAPIDLY / FALLING_RAPIDLY flag"
+        }
+      ],
+      "counted": "a family counts while at least one of its claims is published; a family withheld from publication (status WITHHELD) is not counted and its claims are not shown",
+      "aggregate": "min",
+      "familyMaturity": {
+        "NOT_VALIDATED": "no family-specific acceptance evidence recorded",
+        "PARTIAL": "binding acceptance recorded (n >= 60, <= 1 error, flagged tier in full); plus per family: derivation = conformance fixtures and level-meaning review; historicalState = pre-registered hold-out PASS and ledger >= 90 days; rapidChange = a pre-registered criterion PASS on ledger data dated after its commit",
+        "VALIDATED": "PARTIAL plus per family: provider display and derivation = continuous freshness record >= 90 days; historicalState and rapidChange = >= 12 months of logged predictions scored once under the pre-registered criteria"
+      }
+    },
+    {
+      "id": "coverage",
+      "label": "Lakes profiled",
+      "weight": 20,
+      "fact": "profiled / directoryLakeCount",
+      "scale": "coverage ladder"
+    }
+  ],
+  "gates": [
+    {
+      "id": "coverage",
+      "when": "profiled share < 10%",
+      "cap": 3.0
+    },
+    {
+      "id": "validation",
+      "when": "any COUNTED claim family is NOT_VALIDATED",
+      "cap": 5.0
+    },
+    {
+      "id": "health",
+      "when": "brain health FAILED or UNKNOWN",
+      "cap": 2.0
+    }
+  ],
+  "movesUp": [
+    "reviewed bindings for more lakes",
+    "history backfill to >= 5 complete years",
+    "a validation run against operator truth"
+  ],
+  "cannotCount": [
+    "the 621-lake directory itself",
+    "Ops pages",
+    "unreviewed CANDIDATE bindings"
+  ],
+  "status": "DRAFT PROPOSAL - NOT LOADED BY ANY SCORER - NOT ADOPTED (docs/brains/LAKE_BRAIN_RUBRIC_PROPOSALS.md)",
+  "derivedFrom": "lake-brain-score-v1 + JSON patches P1-X, P2, P3-X (docs/brains/scoring/proposed/lake-brain-score-v1-to-v2-DRAFT.patch.json)",
+  "proposedCriticalDimensions": [
+    "sourceAuthority",
+    "historyQuality",
+    "seasonalBaseline",
+    "trendQuality",
+    "validation"
+  ]
+}
