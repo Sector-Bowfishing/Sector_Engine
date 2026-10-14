@@ -176,5 +176,6 @@
  "notes": [
   "This script does not mark any binding REVIEWED; accepted_batch.json is a proposal for the adoption work.",
   "Binding review is not complete until the flagged-57 review is also done and the held-back lakes (coordinate flags, series/datum mismatches) are resolved."
- ]
+ ],
+ "acceptedBatchSha256": "437111085bfc5f2d053362165f8bc7dea930830ee4c000ed5042f122b603aada"
 }
