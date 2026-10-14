@@ -161,6 +161,7 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--dry-run", action="store_true", help="write the payloads to --out instead of the Brain RTDB")
     ap.add_argument("--out", default=None, help="folder for the run report (and the payloads in --dry-run)")
+    ap.add_argument("--force", action="store_true", help="rewrite every lake even when its input fingerprint is unchanged")
     ap.add_argument("--engine-concurrency", type=int, default=2)
     ap.add_argument("--batch", type=int, default=25, help="lakes per atomic RTDB update")
     ap.add_argument("--rtdb-url", default=os.environ.get("BRAIN_RTDB_URL", bp.BRAIN_RTDB_URL))
@@ -258,9 +259,15 @@ def main() -> int:
                     results[lid] = {"state": None, "error": err}
                 else:
                     state = cb.build_state(lid, est, sat, layers, geo, t_lake, rev)
-                    profile = cb.build_profile(lake, est, sat, lid in polys, t_lake)
-                    pending[lid] = cb.lake_writes(lid, profile, state, t_lake)
-                    results[lid] = {"state": state, "profile": profile, "error": err}
+                    if (prev_slot or {}).get("inputFingerprint") == state["inputFingerprint"] and not a.force:
+                        # nothing material changed: stamp verification + freshness only (state stays as published)
+                        pending[lid] = cb.noop_writes(lid, state["inputFingerprint"], t_lake)
+                        results[lid] = {"state": state, "profile": None, "error": err, "noop": True}
+                        report["noop"] = report.get("noop", 0) + 1
+                    else:
+                        profile = cb.build_profile(lake, est, sat, lid in polys, t_lake)
+                        pending[lid] = cb.lake_writes(lid, profile, state, t_lake)
+                        results[lid] = {"state": state, "profile": profile, "error": err}
             except Exception as e:              # one lake's bad data never stops the others
                 report["errors"].append(f"build {lid}: {type(e).__name__}: {str(e)[:160]}")
                 traceback.print_exc()

@@ -23,6 +23,7 @@ Every function in this module is pure (no network); run.py does the I/O.
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import math
 import os
@@ -180,8 +181,16 @@ def satellite_evidence(latest: dict | None, meta: dict | None, has_polygon: bool
         return {"status": "NONE", "inCustomerEstimate": False, "reasonCode": "NO_PUBLISHED_PASS", "processingPathId": SAT_PATH}
     obs_at = s.get("time") or (s.get("date") + "T00:00:00Z" if s.get("date") else None)
     age = age_hours(obs_at, now)
-    status = "FRESH" if age is not None and age <= SAT_FRESH_DAYS * 24 else "STALE"
+    # A pass observed after "now" (clock or metadata error) must never read as fresh: refuse it.
+    if age is None or age < -1.0:
+        return {"status": "INVALID", "inCustomerEstimate": False, "processingPathId": SAT_PATH, "date": s.get("date"),
+                "reasonCode": "UNPARSEABLE_OBSERVATION_TIME" if age is None else "OBSERVATION_IN_FUTURE"}
+    status = "FRESH" if age <= SAT_FRESH_DAYS * 24 else "STALE"
     p50 = s.get("fnuP50")
+    # turbidity must be a finite, non-negative FNU value; anything else is a unit/provider error, not a clarity answer
+    if p50 is not None and not (isinstance(p50, (int, float)) and not isinstance(p50, bool) and math.isfinite(p50) and 0 <= p50 <= 5000):
+        return {"status": "INVALID", "inCustomerEstimate": False, "processingPathId": SAT_PATH, "date": s.get("date"),
+                "observedAt": obs_at, "reasonCode": "TURBIDITY_OUT_OF_RANGE"}
     vis = None
     if p50 is not None:
         c = SECCHI_A * max(float(p50), 0.1) ** SECCHI_B
@@ -217,6 +226,41 @@ def map_layers(latest: dict | None, meta: dict | None) -> tuple[list, dict | Non
     return out, geo
 
 
+# ---------------------------------------------------------------- fingerprint (no-op execution)
+def input_fingerprint(est: dict, sat: dict, layers: list | None, engine_revision: str | None = None) -> str:
+    """Hash of every input that can change a published clarity state, and nothing that merely ages.
+
+    Time-derived fields (ageHours, generatedAt, freshness) are excluded; the satellite *status*
+    (FRESH/STALE/NONE) is included because it is a decision, not a clock. A change of Brain version,
+    model catalog or engine revision changes the fingerprint on purpose (rules changed -> recompute)."""
+    eng = est.get("engine") or {}
+    material = {
+        "brain": BRAIN_VERSION, "catalog": [m["modelId"] for m in CATALOG["models"]], "engineRevision": engine_revision,
+        "stateType": est.get("stateType"), "ft": [est.get("clarityFt"), est.get("lowFt"), est.get("highFt")],
+        "trend": est.get("trend"), "rain": [est.get("recentRainfallIn72h"), est.get("rainfallSource")],
+        "model": [eng.get("model"), eng.get("source"), eng.get("confidenceLabel")],
+        "gauges": sorted((g.get("siteCode"), g.get("role"), g.get("trend"), g.get("driving")) for g in est.get("gauges") or []),
+        "resolved": [est.get("resolvedLakeMismatch"), est.get("resolvedLakeMissing")],
+        "sat": [sat.get("status"), sat.get("date"), sat.get("platform"), sat.get("sceneIds"), sat.get("coveragePct"),
+                (sat.get("fnu") or {}).get("p50"), sat.get("passCount"), sat.get("reasonCode")],
+        "layers": [l.get("url") for l in layers or []],
+    }
+    return hashlib.sha256(json.dumps(material, sort_keys=True, default=str).encode()).hexdigest()[:16]
+
+
+def noop_writes(lake_id: str, fingerprint: str, now: dt.datetime) -> dict:
+    """Input unchanged since the last publish: write only the verification stamp and the freshness clock.
+    The (large) state, snapshot copy and profile are left exactly as published."""
+    k = lake_key(lake_id)
+    fr = freshness(now, now, STALE_AFTER_H, "TIME", refresh_reason="unchanged-input")
+    return {
+        f"/lakes/{k}/states/{SLOT}/checkedAt": iso(now), f"/lakes/{k}/states/{SLOT}/freshness": fr,
+        f"/snapshots/{k}/latest/{CATALOG['snapshotField']}/checkedAt": iso(now),
+        f"/snapshots/{k}/latest/{CATALOG['snapshotField']}/freshness": fr,
+        f"/lakeFleet/{k}/slots/{SLOT}/lastUpdatedAt": iso(now), f"/lakeFleet/{k}/slots/{SLOT}/stale": False,
+    }
+
+
 # ---------------------------------------------------------------- per-lake results
 def quality_flags(est: dict, sat: dict) -> list[str]:
     f = []
@@ -237,6 +281,8 @@ def quality_flags(est: dict, sat: dict) -> list[str]:
         f.append(f"satelliteStale:{(sat.get('ageHours') or 0) / 24:.0f}d>{SAT_FRESH_DAYS}d")
     elif sat["status"] in ("NONE", "UNSUPPORTED"):
         f.append(f"satellite{sat['status'].title()}")
+    elif sat["status"] == "INVALID":
+        f.append(f"satelliteInvalid:{sat.get('reasonCode')}")
     return f
 
 
@@ -309,6 +355,8 @@ def build_state(lake_id: str, est: dict, sat: dict, layers: list, layer_geo: dic
                       "satelliteProcessingPathId": SAT_PATH},
         "sensorAuthorityRef": f"/brains/{BRAIN_ID}/sensorAuthority",
         "stale": False,
+        "inputFingerprint": input_fingerprint(est, sat, layers, engine_revision),
+        "checkedAt": iso(now),
         "provenance": provenance,
     }
 
@@ -373,7 +421,8 @@ def lake_writes(lake_id: str, profile: dict | None, state: dict | None, now: dt.
         w[f"/lakeFleet/{k}/slots/{SLOT}"] = {
             "readiness": state["provenance"]["readiness"], "stateType": state["stateType"], "kind": state["kind"], "stale": False,
             "issueCount": sum(1 for f in state["provenance"]["qualityFlags"] if not f.startswith("uncalibratedModel")),
-            "lastUpdatedAt": iso(now), "lastErrorAt": None, "satellite": state["satellite"]["status"]}
+            "lastUpdatedAt": iso(now), "lastErrorAt": None, "satellite": state["satellite"]["status"],
+            "inputFingerprint": state["inputFingerprint"]}
     if profile is not None:
         w[f"/lakes/{k}/profiles/{SLOT}"] = profile
     if error is not None and state is None:

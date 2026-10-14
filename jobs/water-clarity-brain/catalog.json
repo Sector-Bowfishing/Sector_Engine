@@ -73,7 +73,8 @@
    "FRESH",
    "STALE",
    "NONE",
-   "UNSUPPORTED"
+   "UNSUPPORTED",
+   "INVALID"
   ],
   "trend": [
    "IMPROVING",
