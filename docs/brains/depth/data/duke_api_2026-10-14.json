@@ -1,0 +1,82 @@
+{
+ "Lake Hickory|NC": {
+  "LakeDisplayName": "Lake Hickory",
+  "Actual": "98.30",
+  "Target": "97.00",
+  "Min": "92.00",
+  "Max": "100.00",
+  "Date": "2026-10-14T00:27:32",
+  "Elevation": "935.0 ft (AMSL, NGVD 29 datum)",
+  "LocationId": 21
+ },
+ "Lake James|NC": {
+  "LakeDisplayName": "Lake James",
+  "Actual": "100.00",
+  "Target": "98.50",
+  "Min": "91.16",
+  "Max": "100.00",
+  "Date": "2026-10-14T00:27:00",
+  "Elevation": "1200.0 ft (AMSL, NGVD 29 datum)",
+  "LocationId": 12
+ },
+ "Lake Norman|NC": {
+  "LakeDisplayName": "Lake Norman",
+  "Actual": "99.28",
+  "Target": "98.50",
+  "Min": "90.58",
+  "Max": "100.00",
+  "Date": "2026-10-14T00:29:58",
+  "Elevation": "760.0 ft (AMSL, NGVD 29 datum)",
+  "LocationId": 14
+ },
+ "Lake Wylie|SC": {
+  "LakeDisplayName": "Lake Wylie",
+  "Actual": "97.80",
+  "Target": "97.50",
+  "Min": "92.60",
+  "Max": "100.00",
+  "Date": "2026-10-14T00:31:04",
+  "Elevation": "569.4 ft (AMSL, NGVD 29 datum)",
+  "LocationId": 25
+ },
+ "Lake Wateree|SC": {
+  "LakeDisplayName": "Lake Wateree",
+  "Actual": "98.70",
+  "Target": "97.00",
+  "Min": "92.50",
+  "Max": "100.00",
+  "Date": "2026-10-14T00:31:02",
+  "Elevation": "225.5 ft (AMSL, NGVD 29 datum",
+  "LocationId": 24
+ },
+ "Lake Jocassee|SC": {
+  "LakeDisplayName": "Lake Jocassee",
+  "Actual": "83.40",
+  "Target": "99.50",
+  "Min": "77.00",
+  "Max": "100.00",
+  "Date": "2026-10-14T00:31:00",
+  "Elevation": "1110.0 ft (AMSL, NGVD 29 datum)",
+  "LocationId": 17
+ },
+ "Lake Keowee|SC": {
+  "LakeDisplayName": "Lake Keowee",
+  "Actual": "96.80",
+  "Target": "NA",
+  "Min": "93.00",
+  "Max": "100.00",
+  "Date": "2026-10-14T00:29:12",
+  "Elevation": "800.0 ft (AMSL, NGVD 29 datum)",
+  "LocationId": 18
+ },
+ "Lake Robinson|SC": {
+  "LakeDisplayName": "Lake Robinson",
+  "Actual": "220.90",
+  "Target": "NA",
+  "Min": "220.50",
+  "Max": "221.65",
+  "Date": "2026-10-14T00:30:58",
+  "Elevation": "221.6 ft (AMSL, NGVD 29 datum) ",
+  "LocationId": 38
+ }
+}

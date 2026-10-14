@@ -95,8 +95,8 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None)
         if d in ("NGVD29", "NAVD88"):                                  # LOCAL project tags are unresolved, never trusted as equal
             ld, ld_ver, ld_note = d, True, f"A2W project vertical_datum {a2w[lid]['verticalDatum']} ({a2w[lid]['office']}:{a2w[lid]['code']})"
     blocked = []
-    if prov == "duke":
-        blocked.append("DUKE_LOCAL_SCALE_NOT_ENABLED")      # series is a 100-based local scale; shift = scale - 100 (unverified, API now 403)
+    if prov == "duke" and not (overrides.get(lid) or {}).get("levelScale"):
+        blocked.append("DUKE_LOCAL_SCALE_NOT_ENABLED")      # series is a 100-based local scale (shift = scale - 100) until a reviewed override documents the frame
     same_src = bool(b and prov.startswith("cwms") and src_str and cwms_project(src_str) and cwms_project(src_str) == cwms_project(b.get("series_or_param")))
     same_sys = bool(prov == "tva" and (src_str or "").startswith("TVA"))
     ov = overrides.get(lid)
@@ -148,7 +148,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         b = bind.get(lid)
         p = pool.get(lid)
         m = matrix.get(lid, {})
-        ref_conf = lk.get("poolConfidence")
+        ref_conf = C.norm_pool_conf(lk.get("poolConfidence"))
         src_str = p["source"] if p else None
         blocked: list[str] = []
         # level side
@@ -221,9 +221,11 @@ def build(paths: dict, manifest_version: str) -> dict:
         rec = {
             "lakeId": lid, "lakeName": lk.get("name"), "state": lk.get("state"), "operator": lk.get("operatorName"), "cwmsOffice": lk.get("cwmsOffice"),
             "reference": {"poolFt": lk.get("fullPoolFt"), "basis": lk.get("poolBasis"), "confidence": ref_conf, "source": src_str or "engine-directory:fullPoolFt",
-                          "datum": rd, "datumVerified": rd_ver, "datumRule": rd_pat, "winterPoolFt": (float(p["winterPoolFt"]) if p and p.get("winterPoolFt") else None)},
+                          "datum": rd, "datumVerified": rd_ver, "datumRule": rd_pat, "winterPoolFt": (float(p["winterPoolFt"]) if p and p.get("winterPoolFt") else None),
+                          **({"relativeScalePoolFt": float(sc["fullPondScaleValue"])} if (sc := ((overrides.get(lid) or {}).get("levelScale") or {})).get("kind") == "DUKE_RELATIVE_100" else {})},
             "levelSource": {"status": lstat, "provider": b.get("provider") if b else None, "series": b.get("series_or_param") if b else None,
-                            "capability": cap, "datum": ld, "datumVerified": ld_ver, "datumNote": ld_note},
+                            "capability": cap, "datum": ld, "datumVerified": ld_ver, "datumNote": ld_note,
+                            **({"scale": sc["kind"]} if sc.get("kind") else {})},
             "datum": {**a.as_dict(), "navd88MinusNgvd29Ft": conv_ft},
             "history": {"completeYears": hyears, "rangeClass": rclass, "p05p95RangeFt": float(hr["p05_p95_range_ft"]) if hr and hr.get("p05_p95_range_ft") else None},
             "shiftPossible": shift_possible, "blockedReasons": blocked, "rollout": rollout, "evidence": ev, "licence": licence,

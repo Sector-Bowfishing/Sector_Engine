@@ -1523,7 +1523,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -1567,7 +1566,7 @@
    "operator": "Entergy (Remmel Dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -1816,7 +1815,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -1860,7 +1858,7 @@
    "operator": "Entergy (Carpenter Dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -3036,9 +3034,7 @@
    "state": "CA"
   },
   {
-   "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPK",
    "datum": {
     "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
@@ -3085,7 +3081,7 @@
    "operator": "USACE Sacramento",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": "NGVD29",
     "datumRule": "override",
     "datumVerified": true,
@@ -3093,8 +3089,8 @@
     "source": "CWMS Isabella Dam Top of Conservation max",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "CA"
   },
   {
@@ -4211,7 +4207,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -4264,7 +4259,7 @@
    "operator": "FirstLight Power",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -4500,7 +4495,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -4551,7 +4545,7 @@
    "operator": "FirstLight Power (Shepaug)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -4644,7 +4638,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -4695,7 +4688,7 @@
    "operator": "FirstLight Power (Stevenson)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -4869,7 +4862,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -4922,7 +4914,7 @@
    "operator": "State / FirstLight-linked",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -7814,7 +7806,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -7858,7 +7849,7 @@
    "operator": "USACE/IaDNR (aux to Saylorville)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -9098,7 +9089,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -9142,7 +9132,7 @@
    "operator": "Local (McCall outlet dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -9756,7 +9746,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -9800,7 +9789,7 @@
    "operator": "So. IL Power Cooperative",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -10897,17 +10886,21 @@
    "state": "KS"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SWT",
    "datum": {
+    "basis": "reviewed-override:hartwell-pairing:proposals/datum_pairings_3.json",
+    "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=07144790&parameterCd=62614&startDT=2025-10-14&endDT=2026-01-22",
+     "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=07144790&parameterCd=62614&startDT=2026-01-22&endDT=2026-05-02"
+    ],
     "navd88MinusNgvd29Ft": 0.479,
     "reasons": [
-     "level datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.25,
+    "status": "SAME_DATUM"
    },
    "evidence": {
     "bestSource": "contour:KS",
@@ -10930,9 +10923,9 @@
    "lakeName": "Cheney Reservoir",
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
-    "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "133978",
     "status": "RESEARCH_VERIFIED"
@@ -10951,7 +10944,7 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": "NGVD29",
-    "datumRule": "CWMS API vertical-datum SWT/CHEN",
+    "datumRule": "override",
     "datumVerified": true,
     "poolFt": 1421.6,
     "source": "CWMS CHEN.Elev.Inst.0.Top of Conservation (max)",
@@ -10968,8 +10961,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "KS"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "KS"
   },
   {
@@ -12648,7 +12641,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": "MVK",
@@ -12692,7 +12684,7 @@
    "operator": "City of Shreveport",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -13889,7 +13881,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -13942,7 +13933,7 @@
    "operator": "MWRA / DCR",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -14163,7 +14154,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -14207,7 +14197,7 @@
    "operator": "Brookfield Renewable",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -14589,7 +14579,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -14633,7 +14622,7 @@
    "operator": "WSSC Water (Duckett Dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -14707,7 +14696,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -14751,7 +14739,7 @@
    "operator": "WSSC Water",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -18390,7 +18378,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": "MVK",
@@ -18434,7 +18421,7 @@
    "operator": "USACE Vicksburg (control struct.)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -20009,18 +19996,21 @@
    "state": "NC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.584,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20039,10 +20029,11 @@
    "lakeName": "Lake Hickory",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "DUKE_RELATIVE_100",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
@@ -20054,30 +20045,34 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 935,
+    "relativeScalePoolFt": 100.0,
     "source": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
     "winterPoolFt": 931.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.312,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20096,10 +20091,11 @@
    "lakeName": "Lake James",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "DUKE_RELATIVE_100",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
@@ -20111,15 +20107,16 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1200,
+    "relativeScalePoolFt": 100.0,
     "source": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
     "winterPoolFt": 1196.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NC"
   },
   {
@@ -20181,18 +20178,21 @@
    "state": "NC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.84,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20211,10 +20211,11 @@
    "lakeName": "Lake Norman",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "DUKE_RELATIVE_100",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
@@ -20226,15 +20227,16 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 760,
+    "relativeScalePoolFt": 100.0,
     "source": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
     "winterPoolFt": 756.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NC"
   },
   {
@@ -20851,7 +20853,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -20904,7 +20905,7 @@
    "operator": "Minnkota Power (cooling reservoir)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -21386,7 +21387,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -21439,7 +21439,7 @@
    "operator": "CNPPID (supply canal)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -21780,7 +21780,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -21824,7 +21823,7 @@
    "operator": "NPPD (Sutherland Dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -21915,7 +21914,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -21966,7 +21964,7 @@
    "operator": "NH DES / former PSNH (Murphy Dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -24134,9 +24132,7 @@
    "state": "NM"
   },
   {
-   "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
     "basis": "reviewed-override:cwms-location:proposals/datum_pairings.json",
@@ -24183,7 +24179,7 @@
    "operator": "USBR (Alamogordo Dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": "NAVD88",
     "datumRule": "override",
     "datumVerified": true,
@@ -24191,8 +24187,8 @@
     "source": "CWMS Sumner Top of Conservation",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NM"
   },
   {
@@ -24254,7 +24250,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -24297,7 +24292,7 @@
    "operator": "USBR / TCID (Newlands)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -27556,7 +27551,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -27600,7 +27594,7 @@
    "operator": "Tumalo Irrigation",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -28085,7 +28079,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -28129,7 +28122,7 @@
    "operator": "Portland General Electric",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -28747,7 +28740,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -28791,7 +28783,7 @@
    "operator": "Codorus SP (Glatfelter dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -28862,7 +28854,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -28906,7 +28897,7 @@
    "operator": "PPL (Brookfield)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -30014,18 +30005,20 @@
    "state": "SC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAS",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level"
+    ],
     "navd88MinusNgvd29Ft": -0.135,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -30044,10 +30037,11 @@
    "lakeName": "Lake Jocassee",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "DUKE_RELATIVE_100",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
@@ -30059,30 +30053,33 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 1110,
+    "relativeScalePoolFt": 100.0,
     "source": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
     "winterPoolFt": 1106.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SAS",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level"
+    ],
     "navd88MinusNgvd29Ft": -0.174,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -30101,10 +30098,11 @@
    "lakeName": "Lake Keowee",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "DUKE_RELATIVE_100",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
@@ -30116,15 +30114,16 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 800,
+    "relativeScalePoolFt": 100.0,
     "source": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SC"
   },
   {
@@ -30243,7 +30242,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -30287,7 +30285,7 @@
    "operator": "Santee Cooper",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -30357,18 +30355,20 @@
    "state": "SC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level"
+    ],
     "navd88MinusNgvd29Ft": -0.866,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -30387,10 +30387,11 @@
    "lakeName": "Lake Robinson",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "ABSOLUTE_FT",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED"
    },
@@ -30402,15 +30403,15 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 221.6,
     "source": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SC"
   },
   {
@@ -30474,18 +30475,21 @@
    "state": "SC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.771,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -30504,10 +30508,11 @@
    "lakeName": "Lake Wateree",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "DUKE_RELATIVE_100",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
@@ -30519,30 +30524,34 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 225.5,
+    "relativeScalePoolFt": 100.0,
     "source": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
     "winterPoolFt": 220.0
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SC"
   },
   {
-   "blockedReasons": [
-    "DUKE_LOCAL_SCALE_NOT_ENABLED"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_4.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf"
+    ],
     "navd88MinusNgvd29Ft": -0.787,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -30561,10 +30570,11 @@
    "lakeName": "Lake Wylie",
    "levelSource": {
     "capability": "DIRECT_LAKE_GAUGE",
-    "datum": "LOCAL",
-    "datumNote": "provider table: LOCAL",
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "duke",
+    "scale": "DUKE_RELATIVE_100",
     "series": "lake-level-Actual",
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
@@ -30576,15 +30586,16 @@
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
-    "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datum": "NGVD29",
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 569.4,
+    "relativeScalePoolFt": 100.0,
     "source": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SC"
   },
   {
@@ -31121,7 +31132,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -31165,7 +31175,7 @@
    "operator": "USACE (Missouri mainstem)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -31236,7 +31246,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -31280,7 +31289,7 @@
    "operator": "USFS (Black Hills NF)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -34818,7 +34827,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -34862,7 +34870,7 @@
    "operator": "Great River Hydro (Deerfield R.)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -36084,7 +36092,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -36128,7 +36135,7 @@
    "operator": "Tacoma Power (Mossyrock Dam)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -36261,7 +36268,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -36305,7 +36311,7 @@
    "operator": "Wisconsin River Power Co",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -36847,7 +36853,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "DATUM_UNKNOWN"
    ],
    "cwmsOffice": null,
@@ -36890,7 +36895,7 @@
    "operator": "USACE (Menasha/Neenah outlet dams)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -37367,7 +37372,6 @@
   },
   {
    "blockedReasons": [
-    "REFERENCE_POOL_CONFIDENCE_LOW",
     "NO_VERIFIED_LEVEL_BINDING"
    ],
    "cwmsOffice": null,
@@ -37420,7 +37424,7 @@
    "operator": "Dominion (power-plant cooling)",
    "reference": {
     "basis": "fullPool",
-    "confidence": "med",
+    "confidence": "medium",
     "datum": null,
     "datumRule": null,
     "datumVerified": false,
@@ -38608,19 +38612,18 @@
  "summary": {
   "blockedReasons": {
    "DATUM_CONVERSION_NOT_ENABLED": 1,
-   "DATUM_UNKNOWN": 207,
-   "DUKE_LOCAL_SCALE_NOT_ENABLED": 8,
+   "DATUM_UNKNOWN": 206,
    "MISSING_REFERENCE_POOL": 13,
    "NO_VERIFIED_LEVEL_BINDING": 204,
    "REFERENCE_NOT_A_POOL_ELEVATION": 207,
-   "REFERENCE_POOL_CONFIDENCE_LOW": 268
+   "REFERENCE_POOL_CONFIDENCE_LOW": 234
   },
   "datumStatus": {
    "INCOMPATIBLE": 1,
-   "SAME_DATUM": 109,
+   "SAME_DATUM": 110,
    "SAME_OPERATOR_SYSTEM": 17,
-   "SAME_SOURCE": 75,
-   "UNKNOWN": 419
+   "SAME_SOURCE": 83,
+   "UNKNOWN": 410
   },
   "lakes": 621,
   "levelSourceStatus": {
@@ -38670,12 +38673,12 @@
    "U": 56
   },
   "rollout": {
-   "BLOCKED": 423,
+   "BLOCKED": 412,
    "HIGH_CONFIDENCE": 91,
-   "MEDIUM_CONFIDENCE": 102,
+   "MEDIUM_CONFIDENCE": 113,
    "PILOT_VERIFIED": 5
   },
-  "shiftPossible": 198,
+  "shiftPossible": 209,
   "tier": {
    "A": 77,
    "B": 26,

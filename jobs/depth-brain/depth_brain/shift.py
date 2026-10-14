@@ -24,6 +24,7 @@ class ReferencePool:
     datum_verified: bool = False
     source: str | None = None
     assessment: DatumAssessment | None = None
+    relative_scale_pool: float | None = None   # Duke publishes some lakes on a 100-based scale (100.0 = full pond); the same pool in that frame
 
 
 @dataclass
@@ -109,13 +110,19 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
                         flags=list(a.reasons) if a else ["datum not assessed"], age=age)
 
     level_in_ref = level.elevation_ft + (a.conversion_ft if a.status == "CONVERTED" else 0.0)
-    shift = level_in_ref - ref.pool_ft
+    pool_in_frame, frame_flags = ref.pool_ft, []
+    if ref.relative_scale_pool is not None:          # two documented frames for one lake; the frames are far apart (hundreds of ft vs ~100), never ambiguous
+        if abs(level_in_ref - ref.relative_scale_pool) <= C.MAX_PLAUSIBLE_SHIFT_FT and abs(level_in_ref - ref.pool_ft) > C.MAX_PLAUSIBLE_SHIFT_FT:
+            pool_in_frame, frame_flags = ref.relative_scale_pool, ["levelFrame:relativeScale100"]
+        elif abs(level_in_ref - ref.relative_scale_pool) <= C.MAX_PLAUSIBLE_SHIFT_FT:
+            return _unknown("LEVEL_FRAME_AMBIGUOUS", age=age)
+    shift = level_in_ref - pool_in_frame
     if abs(shift) > C.MAX_PLAUSIBLE_SHIFT_FT:
         return _unknown("IMPLAUSIBLE_SHIFT", flags=[f"shift:{shift:.1f}ft"], age=age)
 
     parts = {"pool": C.SIGMA_POOL[ref.confidence], "level": C.SIGMA_LEVEL[level.capability], "datum": a.sigma_ft}
     sigma = math.sqrt(sum(v * v for v in parts.values()))
-    flags = list(a.reasons) if a.status != "SAME_SOURCE" else []
+    flags = (list(a.reasons) if a.status != "SAME_SOURCE" else []) + frame_flags
     if level.lake_difference_ft is not None and a.status != "CONVERTED":
         if abs(level.lake_difference_ft - shift) > C.LAKE_DELTA_DISAGREE_FT:
             flags.append(f"lakeBrainDeltaDisagrees:{level.lake_difference_ft:+.2f} vs {shift:+.2f}")

@@ -1,0 +1,194 @@
+{
+ "schema": "depth-datum-proposals-v1",
+ "generatedAt": "2026-10-13",
+ "sigmaRule": "SAME_SOURCE 0.1 (provider rule precedent)",
+ "lakes": {
+  "Lake Hickory|NC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "DUKE_RELATIVE_100",
+    "fullPondScaleValue": 100.0
+   },
+   "summary": "Duke's own lake-levels row carries the live level (Actual 98.30, Max 100.00: 100-based scale, 100.00 = full pond) and the full-pond elevation with its datum (935.0 ft (AMSL, NGVD 29 datum)); directory pool 935 equals it. shift = Actual - 100.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake Hickory: Actual 98.30, Target 97.00, Min 92.00, Max 100.00, Elevation '935.0 ft (AMSL, NGVD 29 datum)', observed 2026-10-14T00:27:32 (fetched 2026-10-13)"
+    },
+    {
+     "url": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
+     "says": "Catawba-Wateree Low Inflow Protocol: licensee refers to the full pond elevation of all its reservoirs as 100.0 ft relative; tabulates full pond in ft above mean sea level"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  },
+  "Lake James|NC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "DUKE_RELATIVE_100",
+    "fullPondScaleValue": 100.0
+   },
+   "summary": "Duke's own lake-levels row carries the live level (Actual 100.00, Max 100.00: 100-based scale, 100.00 = full pond) and the full-pond elevation with its datum (1200.0 ft (AMSL, NGVD 29 datum)); directory pool 1200 equals it. shift = Actual - 100.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake James: Actual 100.00, Target 98.50, Min 91.16, Max 100.00, Elevation '1200.0 ft (AMSL, NGVD 29 datum)', observed 2026-10-14T00:27:00 (fetched 2026-10-13)"
+    },
+    {
+     "url": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
+     "says": "Catawba-Wateree Low Inflow Protocol: licensee refers to the full pond elevation of all its reservoirs as 100.0 ft relative; tabulates full pond in ft above mean sea level"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  },
+  "Lake Norman|NC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "DUKE_RELATIVE_100",
+    "fullPondScaleValue": 100.0
+   },
+   "summary": "Duke's own lake-levels row carries the live level (Actual 99.28, Max 100.00: 100-based scale, 100.00 = full pond) and the full-pond elevation with its datum (760.0 ft (AMSL, NGVD 29 datum)); directory pool 760 equals it. shift = Actual - 100.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake Norman: Actual 99.28, Target 98.50, Min 90.58, Max 100.00, Elevation '760.0 ft (AMSL, NGVD 29 datum)', observed 2026-10-14T00:29:58 (fetched 2026-10-13)"
+    },
+    {
+     "url": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
+     "says": "Catawba-Wateree Low Inflow Protocol: licensee refers to the full pond elevation of all its reservoirs as 100.0 ft relative; tabulates full pond in ft above mean sea level"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  },
+  "Lake Wylie|SC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "DUKE_RELATIVE_100",
+    "fullPondScaleValue": 100.0
+   },
+   "summary": "Duke's own lake-levels row carries the live level (Actual 97.80, Max 100.00: 100-based scale, 100.00 = full pond) and the full-pond elevation with its datum (569.4 ft (AMSL, NGVD 29 datum)); directory pool 569.4 equals it. shift = Actual - 100.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake Wylie: Actual 97.80, Target 97.50, Min 92.60, Max 100.00, Elevation '569.4 ft (AMSL, NGVD 29 datum)', observed 2026-10-14T00:31:04 (fetched 2026-10-13)"
+    },
+    {
+     "url": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
+     "says": "Catawba-Wateree Low Inflow Protocol: licensee refers to the full pond elevation of all its reservoirs as 100.0 ft relative; tabulates full pond in ft above mean sea level"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  },
+  "Lake Wateree|SC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "DUKE_RELATIVE_100",
+    "fullPondScaleValue": 100.0
+   },
+   "summary": "Duke's own lake-levels row carries the live level (Actual 98.70, Max 100.00: 100-based scale, 100.00 = full pond) and the full-pond elevation with its datum (225.5 ft (AMSL, NGVD 29 datum); directory pool 225.5 equals it. shift = Actual - 100.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake Wateree: Actual 98.70, Target 97.00, Min 92.50, Max 100.00, Elevation '225.5 ft (AMSL, NGVD 29 datum', observed 2026-10-14T00:31:02 (fetched 2026-10-13)"
+    },
+    {
+     "url": "https://files.nc.gov/ncdeq/Water%20Resources/files/ibt/Concord/09Final_Environmental_Impact_Statement_May_2006/FEIS_Appendices/Appendix-D_%20Low_Inflow_Protocol_Catawba.pdf",
+     "says": "Catawba-Wateree Low Inflow Protocol: licensee refers to the full pond elevation of all its reservoirs as 100.0 ft relative; tabulates full pond in ft above mean sea level"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  },
+  "Lake Jocassee|SC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "DUKE_RELATIVE_100",
+    "fullPondScaleValue": 100.0
+   },
+   "summary": "Duke's own lake-levels row carries the live level (Actual 83.40, Max 100.00: 100-based scale, 100.00 = full pond) and the full-pond elevation with its datum (1110.0 ft (AMSL, NGVD 29 datum)); directory pool 1110 equals it. shift = Actual - 100.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake Jocassee: Actual 83.40, Target 99.50, Min 77.00, Max 100.00, Elevation '1110.0 ft (AMSL, NGVD 29 datum)', observed 2026-10-14T00:31:00 (fetched 2026-10-13)"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  },
+  "Lake Keowee|SC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "DUKE_RELATIVE_100",
+    "fullPondScaleValue": 100.0
+   },
+   "summary": "Duke's own lake-levels row carries the live level (Actual 96.80, Max 100.00: 100-based scale, 100.00 = full pond) and the full-pond elevation with its datum (800.0 ft (AMSL, NGVD 29 datum)); directory pool 800 equals it. shift = Actual - 100.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake Keowee: Actual 96.80, Target NA, Min 93.00, Max 100.00, Elevation '800.0 ft (AMSL, NGVD 29 datum)', observed 2026-10-14T00:29:12 (fetched 2026-10-13)"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  },
+  "Lake Robinson|SC": {
+   "decision": "SAME_SOURCE",
+   "group": "DUKE",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "levelScale": {
+    "kind": "ABSOLUTE_FT"
+   },
+   "summary": "Duke's own lake-levels row carries the live level in absolute feet (Actual 220.90, Max 221.65) and the full-pond elevation with its datum (221.6 ft (AMSL, NGVD 29 datum) ); directory pool 221.6 equals it.",
+   "evidence": [
+    {
+     "url": "https://api.hydro-derived.duke-energy.app/lakes/current-level",
+     "says": "row Lake Robinson: Actual 220.90, Target NA, Min 220.50, Max 221.65, Elevation '221.6 ft (AMSL, NGVD 29 datum) ', observed 2026-10-14T00:30:58 (fetched 2026-10-13)"
+    }
+   ],
+   "caveat": "The endpoint is the public JSON behind Duke's lake-levels web page, not a documented API contract; an earlier probe of a different path returned 403/Missing Authentication Token."
+  }
+ }
+}

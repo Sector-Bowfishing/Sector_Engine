@@ -66,6 +66,13 @@ LEVEL_FRESH_HOURS = 6.0               # observation older than this -> evidenceS
 LEVEL_MAX_AGE_HOURS = 48.0            # older than this -> no shift (unavailable)
 MAX_PLAUSIBLE_SHIFT_FT = 80.0         # |shift| above this means a datum/unit/reference error, never a real drawdown
 LAKE_DELTA_DISAGREE_FT = 0.15         # Depth vs Lake Brain differenceFromNormalPoolFt, same reference
+POOL_CONF_ALIASES = {"med": "medium"}   # the Lake directory vocabulary is high/med/low (LakePoolConfidence); `.med` = a secondary source. Depth's vocabulary spells it out.
+
+
+def norm_pool_conf(v):
+    return POOL_CONF_ALIASES.get(v, v)
+
+
 REFERENCE_CONF_ALLOWED = ("high", "medium")   # `low` references (natural-lake surfaces, shorthand) never yield a shift
 
 # ── Uncertainty (ft). Components add in quadrature. Values come from the research sigma propagation

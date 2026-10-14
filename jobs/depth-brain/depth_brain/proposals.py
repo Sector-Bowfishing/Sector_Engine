@@ -117,7 +117,7 @@ def plan(manifest: dict, proposals_dir: str | None = None) -> dict:
         if ok:
             accepted[lid] = {"status": rec["decision"], "sigmaFt": rec["sigmaFt"], "levelDatum": datum_token(rec.get("levelDatum")), "referenceDatum": datum_token(rec.get("referenceDatum")),
                              "summary": rec.get("summary", ""), "evidence": rec["evidence"], "caveat": rec.get("caveat"), "method": rec["method"], "confidence": rec.get("confidence"),
-                             "offsetStats": rec.get("offsetStats"), "promotedFrom": "proposals/" + rec["_file"], "rulesVersion": RULES_VERSION}
+                             "offsetStats": rec.get("offsetStats"), "levelScale": rec.get("levelScale"), "promotedFrom": "proposals/" + rec["_file"], "rulesVersion": RULES_VERSION}
         else:
             rejected.append({"lakeId": lid, "file": rec["_file"], "reason": why})
     pr = load(os.path.join(d, "provider_rules.json"))

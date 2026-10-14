@@ -1,0 +1,416 @@
+{
+ "schema": "depth-rise-link-test-v1",
+ "generatedAt": "2026-10-14T04:38Z",
+ "maxKm": 6.0,
+ "results": {
+  "6128": {
+   "lake": "Havasu|AZ",
+   "riseItem": "6128",
+   "riseLocation": "Lake Havasu Parker Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "10863": {
+   "lake": "Shasta|CA",
+   "riseItem": "10863",
+   "riseLocation": "Shasta Lake Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "10853": {
+   "lake": "Trinity|CA",
+   "riseItem": "10853",
+   "riseLocation": "Trinity Lake Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "78": {
+   "lake": "Blue Mesa Reservoir|CO",
+   "riseItem": "78",
+   "riseLocation": "Blue Mesa Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "372": {
+   "lake": "Grand Lake|CO",
+   "riseItem": "372",
+   "riseLocation": "Grand Lake",
+   "candidates": [],
+   "pairs": []
+  },
+  "87": {
+   "lake": "Horsetooth Reservoir|CO",
+   "riseItem": "87",
+   "riseLocation": "Horsetooth Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "384": {
+   "lake": "Lake Granby|CO",
+   "riseItem": "384",
+   "riseLocation": "Lake Granby and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "712": {
+   "lake": "Ruedi Reservoir|CO",
+   "riseItem": "712",
+   "riseLocation": "Ruedi Reservoir and Dam ",
+   "candidates": [],
+   "pairs": []
+  },
+  "738": {
+   "lake": "Shadow Mountain Reservoir|CO",
+   "riseItem": "738",
+   "riseLocation": "Shadow Mountain Lake and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "133978": {
+   "lake": "Cheney Reservoir|KS",
+   "riseItem": "133978",
+   "riseLocation": "Cheney Reservoir and Dam",
+   "candidates": [
+    {
+     "site": "07144790",
+     "name": "CHENEY RE NR CHENEY, KS",
+     "param": "62614",
+     "km": 0.31,
+     "step": "daily",
+     "end": "2026-10-11"
+    },
+    {
+     "site": "07144790",
+     "name": "CHENEY RE NR CHENEY, KS",
+     "param": "62614",
+     "km": 0.31,
+     "step": "iv",
+     "end": "2026-10-13"
+    }
+   ],
+   "pairs": [
+    {
+     "site": "07144790",
+     "name": "CHENEY RE NR CHENEY, KS",
+     "param": "62614",
+     "paramDatum": "NGVD29",
+     "km": 0.31,
+     "usgsMinusRise": {
+      "n": 344,
+      "meanFt": -0.025,
+      "sdFt": 0.123,
+      "minFt": -1.24,
+      "maxFt": 0.26,
+      "medianFt": -0.03,
+      "window": "2025-10-14..2026-10-12",
+      "firstHalfMeanFt": -0.054,
+      "secondHalfMeanFt": 0.004,
+      "quarterMeanRangeFt": [
+       -0.072,
+       0.06
+      ],
+      "nQuarters": 5
+     },
+     "urls": [
+      "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=07144790&parameterCd=62614&startDT=2025-10-14&endDT=2026-01-22",
+      "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=07144790&parameterCd=62614&startDT=2026-01-22&endDT=2026-05-02"
+     ]
+    }
+   ],
+   "riseRows": 364
+  },
+  "841": {
+   "lake": "Waconda Lake|KS",
+   "riseItem": "841",
+   "riseLocation": "Waconda Lake and Glen Elder Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "355": {
+   "lake": "Fresno Reservoir|MT",
+   "riseItem": "355",
+   "riseLocation": "Fresno Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "451": {
+   "lake": "Jamestown Reservoir|ND",
+   "riseItem": "451",
+   "riseLocation": "Jamestown Dam and Reservoir",
+   "candidates": [],
+   "pairs": []
+  },
+  "550": {
+   "lake": "Lake Tschida|ND",
+   "riseItem": "550",
+   "riseLocation": "Lake Tschida and Heart Butte Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "305": {
+   "lake": "Patterson Lake|ND",
+   "riseItem": "305",
+   "riseLocation": "Edward Arthur Patterson Lake",
+   "candidates": [],
+   "pairs": []
+  },
+  "142": {
+   "lake": "Box Butte Reservoir|NE",
+   "riseItem": "142",
+   "riseLocation": "Box Butte Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "215": {
+   "lake": "Calamus Reservoir|NE",
+   "riseItem": "215",
+   "riseLocation": "Calamus Reservoir and Virginia Smith Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "599": {
+   "lake": "Merritt Reservoir|NE",
+   "riseItem": "599",
+   "riseLocation": "Merritt Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "134012": {
+   "lake": "Swanson Reservoir|NE",
+   "riseItem": "134012",
+   "riseLocation": "Swanson Lake and Trenton Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "212": {
+   "lake": "Caballo Lake|NM",
+   "riseItem": "212",
+   "riseLocation": "Caballo Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "336": {
+   "lake": "El Vado Lake|NM",
+   "riseItem": "336",
+   "riseLocation": "El Vado Lake and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "332": {
+   "lake": "Elephant Butte Reservoir|NM",
+   "riseItem": "332",
+   "riseLocation": "Elephant Butte Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "421": {
+   "lake": "Heron Lake|NM",
+   "riseItem": "421",
+   "riseLocation": "Heron Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "612": {
+   "lake": "Navajo Reservoir|NM",
+   "riseItem": "612",
+   "riseLocation": "Navajo Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "6123": {
+   "lake": "Lake Mead|NV",
+   "riseItem": "6123",
+   "riseLocation": "Lake Mead Hoover Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "6133": {
+   "lake": "Lake Mohave|NV",
+   "riseItem": "6133",
+   "riseLocation": "Lake Mohave Davis Dam and Powerplant",
+   "candidates": [
+    {
+     "site": "09422500",
+     "name": "LAKE MOHAVE AT DAVIS DAM, AZ-NV",
+     "param": "62614",
+     "km": 0.19,
+     "step": "daily",
+     "end": "2026-10-12"
+    }
+   ],
+   "pairs": [],
+   "riseRows": 364
+  },
+  "106": {
+   "lake": "Angostura Reservoir|SD",
+   "riseItem": "106",
+   "riseLocation": "Angostura Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "675": {
+   "lake": "Pactola Reservoir|SD",
+   "riseItem": "675",
+   "riseLocation": "Pactola Reservoir and Dam",
+   "candidates": [
+    {
+     "site": "06411000",
+     "name": "PACTOLA RESERVOIR NEAR SILVER CITY SD",
+     "param": "62614",
+     "km": 0.03,
+     "step": "iv",
+     "end": "2026-10-12"
+    }
+   ],
+   "pairs": [
+    {
+     "site": "06411000",
+     "name": "PACTOLA RESERVOIR NEAR SILVER CITY SD",
+     "param": "62614",
+     "paramDatum": "NGVD29",
+     "km": 0.03,
+     "usgsMinusRise": {
+      "n": 490,
+      "meanFt": -4499.975,
+      "sdFt": 0.058,
+      "minFt": -4500.16,
+      "maxFt": -4499.76,
+      "medianFt": -4499.99,
+      "window": "2025-10-14..2026-10-12",
+      "firstHalfMeanFt": -4499.993,
+      "secondHalfMeanFt": -4499.958,
+      "quarterMeanRangeFt": [
+       -4500.034,
+       -4499.905
+      ],
+      "nQuarters": 5
+     },
+     "urls": [
+      "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06411000&parameterCd=62614&startDT=2025-10-14&endDT=2026-01-22",
+      "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06411000&parameterCd=62614&startDT=2026-01-22&endDT=2026-05-02"
+     ]
+    }
+   ],
+   "riseRows": 490
+  },
+  "293": {
+   "lake": "Deer Creek Reservoir|UT",
+   "riseItem": "293",
+   "riseLocation": "Deer Creek Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "341": {
+   "lake": "Flaming Gorge Reservoir|WY",
+   "riseItem": "341",
+   "riseLocation": "Flaming Gorge Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "471": {
+   "lake": "Jordanelle Reservoir|UT",
+   "riseItem": "471",
+   "riseLocation": "Jordanelle Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "508": {
+   "lake": "Lake Powell|UT",
+   "riseItem": "508",
+   "riseLocation": "Lake Powell Glen Canyon Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "656": {
+   "lake": "Pineview Reservoir|UT",
+   "riseItem": "656",
+   "riseLocation": "Pineview Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "767": {
+   "lake": "Starvation Reservoir|UT",
+   "riseItem": "767",
+   "riseLocation": "Starvation Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "782": {
+   "lake": "Strawberry Reservoir|UT",
+   "riseItem": "782",
+   "riseLocation": "Strawberry Reservoir and Soldier Creek Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "869": {
+   "lake": "Willard Bay Reservoir|UT",
+   "riseItem": "869",
+   "riseLocation": "Willard Bay Reservoir and Arthur V Watkins Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "114": {
+   "lake": "Alcova Reservoir|WY",
+   "riseItem": "114",
+   "riseLocation": "Alcova Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "164": {
+   "lake": "Bighorn Lake|WY",
+   "riseItem": "164",
+   "riseLocation": "Bighorn Lake Yellowtail Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "196": {
+   "lake": "Boysen Reservoir|WY",
+   "riseItem": "196",
+   "riseLocation": "Boysen Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "152": {
+   "lake": "Buffalo Bill Reservoir|WY",
+   "riseItem": "152",
+   "riseLocation": "South Fork Dike at Buffalo Bill Reservoir",
+   "candidates": [],
+   "pairs": []
+  },
+  "349": {
+   "lake": "Fontenelle Reservoir|WY",
+   "riseItem": "349",
+   "riseLocation": "Fontenelle Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "374": {
+   "lake": "Glendo Reservoir|WY",
+   "riseItem": "374",
+   "riseLocation": "Glendo Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  },
+  "478": {
+   "lake": "Keyhole Reservoir|WY",
+   "riseItem": "478",
+   "riseLocation": "Keyhole Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "645": {
+   "lake": "Pathfinder Reservoir|WY",
+   "riseItem": "645",
+   "riseLocation": "Pathfinder Reservoir and Dam",
+   "candidates": [],
+   "pairs": []
+  },
+  "733": {
+   "lake": "Seminoe Reservoir|WY",
+   "riseItem": "733",
+   "riseLocation": "Seminoe Reservoir Dam and Powerplant",
+   "candidates": [],
+   "pairs": []
+  }
+ }
+}

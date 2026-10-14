@@ -1,0 +1,52 @@
+{
+ "schema": "depth-datum-proposals-v1",
+ "generatedAt": "2026-10-14",
+ "sigmaRule": "max(0.15, |mean|, min(2*SD, 1.0))",
+ "lakes": {
+  "Cheney Reservoir|KS": {
+   "decision": "SAME_DATUM",
+   "group": "RISE-link",
+   "levelDatum": "NGVD29",
+   "referenceDatum": "NGVD29",
+   "method": "hartwell-pairing",
+   "confidence": "medium",
+   "sigmaFt": 0.25,
+   "offsetStats": {
+    "n": 344,
+    "meanFt": -0.025,
+    "sdFt": 0.123,
+    "minFt": -1.24,
+    "maxFt": 0.26,
+    "medianFt": -0.03,
+    "window": "2025-10-14..2026-10-12",
+    "firstHalfMeanFt": -0.054,
+    "secondHalfMeanFt": 0.004,
+    "quarterMeanRangeFt": [
+     -0.072,
+     0.06
+    ],
+    "nQuarters": 5
+   },
+   "summary": "RISE item 133978 equals USGS 07144790 62614 (NGVD29 by USGS parameter definition) to -0.025 ft (SD 0.123, n 344, quarters [-0.072, 0.06]); the pool is verified NGVD29 (CWMS API vertical-datum SWT/CHEN).",
+   "evidence": [
+    {
+     "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=07144790&parameterCd=62614&startDT=2025-10-14&endDT=2026-01-22",
+     "says": "USGS iv series used in the pairing"
+    },
+    {
+     "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=07144790&parameterCd=62614&startDT=2026-01-22&endDT=2026-05-02",
+     "says": "USGS iv series used in the pairing"
+    },
+    {
+     "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/parameter-codes/items/62614",
+     "says": "USGS parameter definition names the datum of this series"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/result?itemId=133978",
+     "says": "RISE daily elevation series compared with the USGS series at the RISE timestamps"
+    }
+   ],
+   "caveat": "Independence of the USGS gauge from Reclamation's own sensor is not documented; agreement SD 0.12 ft with outliers to -1.2 ft indicates separate processing. Only one RISE lake has a lake-elevation gauge within 6 km."
+  }
+ }
+}

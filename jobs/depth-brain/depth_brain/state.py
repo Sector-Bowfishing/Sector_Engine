@@ -31,8 +31,8 @@ def level_from_lake_state(ls: dict | None) -> LevelObservation | None:
 
 def reference_from_candidate(rec: dict) -> ReferencePool:
     r = rec.get("reference") or {}
-    return ReferencePool(pool_ft=r.get("poolFt"), basis=r.get("basis"), confidence=r.get("confidence"), datum=r.get("datum"),
-                         datum_verified=bool(r.get("datumVerified")), source=r.get("source"), assessment=_assessment_from_manifest(rec))
+    return ReferencePool(pool_ft=r.get("poolFt"), basis=r.get("basis"), confidence=C.norm_pool_conf(r.get("confidence")), datum=r.get("datum"),
+                         datum_verified=bool(r.get("datumVerified")), source=r.get("source"), assessment=_assessment_from_manifest(rec), relative_scale_pool=r.get("relativeScalePoolFt"))
 
 
 def input_fingerprint(rec: dict, ls: dict | None, manifest_version: str) -> str:
