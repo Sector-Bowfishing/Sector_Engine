@@ -102,6 +102,11 @@
  ],
  "planningWind": null,
  "practice": true,
+ "predictionVersion": {
+  "rulesFingerprint": "221a36470bbd58a54122bdeb65ee570e8c60e7898fcd8310c15300405d75f03c",
+  "rulesVersion": "wind-exposure-rules-v2"
+ },
  "schema": "sector-wind-field-packet-v1",
- "sessionId": "Guntersville|AL|YYYY-MM-DD|<observer>"
+ "sessionId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+ "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>"
 }

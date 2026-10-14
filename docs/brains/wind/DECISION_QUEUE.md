@@ -8,4 +8,5 @@ Updated 2026-10-14.
 | D3 | Wind deployment (carries registry `canonicalRef` fix + fingerprint skip, both prepared and tested, not deployed) | Deploy only with the Ops change that prefers the canonical score (so the Wind Brain page never goes blank) | commit on `feat/wind-brain-adoption` | Registry 3.1 duplicate disappears only after deploy | OPEN (PREREQUISITE BRANCH) |
 | D4 | Critical-dimension list for the production gate | See `WIND_CRITICAL_DIMENSIONS_PROPOSAL.md` | proposal | Production readiness | OPEN |
 | D5 | Dual-wind logging wiring | Wire once D3's prerequisite resolves | `WIND_DUAL_LOGGING_PREP.md` | Provider decision evidence | WAITING |
+| D6 | Freeze surface/chop acceptance lines BEFORE the first field session (so they are not tuned after outcomes) | Suggest: exact >= 0.60, within-one >= 0.90, observed-ROUGH called CALM <= 5%, UNKNOWN share reported (not penalised) | `surface_product.agreement()` (prepared, tested) | Surface (20 pts) scoring | OPEN |
 Time-gated (not decisions): reliability 30 valid days (projected 2026-11-08); H2 sealed until 2027-01-01.
