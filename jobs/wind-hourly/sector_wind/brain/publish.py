@@ -80,6 +80,22 @@ def _health_status(errors: list, stale_lakes: int, live_lakes: int) -> str:
     return "HEALTHY"
 
 
+def canonical_scores_ref(ev: dict) -> dict:
+    """Registry/validation `scores` block WITHOUT the baked certification number.
+
+    The canonical Wind score is owned by the scorer and published by the shared brain-orchestrator at /scores/wind. This job image bakes
+    validation_evidence.json at build time, so republishing its certification number hourly kept re-writing a stale value (3.1) next to the
+    canonical 3.3. Publish a reference instead; keep BWIS (not published elsewhere) clearly dated."""
+    sc = ev.get("scores") or {}
+    out = {"canonicalRef": "/scores/wind", "canonicalField": "value",
+           "note": "certification score is NOT published here: read /scores/wind (shared orchestrator) or /control/overview/brains/wind/score"}
+    for k in ("windCertificationRubric", "bowfishingWindIntelligenceScore", "bwisDefinitionSha256"):
+        if k in sc:
+            out[k] = sc[k]
+    out["bwisAsOf"] = ev.get("frozenAt")
+    return out
+
+
 def _validation_payloads(ev: dict, now_iso: str) -> tuple[dict, dict]:
     units = {"speedMaeMph": "mph", "speedBiasMph": "mph", "nightSpeedMaeMph": "mph", "nightSpeedBiasMph": "mph", "windyHourSpeedMaeMph": "mph",
              "directionMaeDeg": "deg", "directionWithin22_5Pct": "%", "gustMaeMph": "mph", "gustConditionalBiasMph": "mph",
@@ -92,7 +108,7 @@ def _validation_payloads(ev: dict, now_iso: str) -> tuple[dict, dict]:
                                      if v["metrics"]["speedMaeMph"] > ev["metrics"]["speedMaeMph"]], key=lambda x: -x["value"]),
              "modelHistory": [{"version": C.PRODUCTION_MODEL["modelId"], "date": None, "status": "ACTIVE_PRODUCTION"},
                               {"version": ev["candidateModel"], "date": "2026-10-06", "status": "RESEARCH_CANDIDATE (not promoted)"}],
-             "productionProxy": ev["productionProxy"], "surfacePhysics": ev["surfacePhysics"], "scores": ev["scores"],
+             "productionProxy": ev["productionProxy"], "surfacePhysics": ev["surfacePhysics"], "scores": canonical_scores_ref(ev),
              "liveValidation": ev["liveValidation"], "artifactRefs": ev["artifactRefs"], "publishedAt": now_iso,
              "separation": "MODEL/SCIENCE validation only. Lake readiness lives in /lakeFleet and profiles; runtime health in /health."}
     per_lake = {lid: {**shell, "lakeId": lid, "sampleCount": v["sampleCount"], "lakeCount": 1, "metrics": v["metrics"],
@@ -131,6 +147,7 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     national = national_profiled(manifest, directory)
 
     # ── 1. per-lake state + snapshot (one atomic update each) ─────────────────────────────────
+    new_fps: dict[str, str | None] = {}
     readiness: dict[str, str] = {}; kinds = {"analysis": 0, "forecast": 0, "unavailable": 0}; stale_lakes = 0
     ev = json.load(open(EVIDENCE))
     val_fleet, val_lakes = _validation_payloads(ev, now_iso)
@@ -154,7 +171,10 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
                           f"snapshots/{k}/latest/{C.SNAPSHOT_FIELD}": state, f"snapshots/{k}/latest/lakeId": lid,
                           f"snapshots/{k}/latest/brainVersions/{C.BRAIN_ID}": C.BRAIN_VERSION})
             rep["writes"] += 1
-            if rows:
+            fp = meta.get("inputFingerprint"); new_fps[lid] = fp
+            if fp and (last.get("fingerprints") or {}).get(lid) == fp:
+                rep["fingerprintSkips"] = rep.get("fingerprintSkips", 0) + 1     # inputs unchanged: bank detail would be byte-identical
+            elif rows:
                 try:
                     store.put_json(f"brain/wind/latest/{k}.json.gz", {"lakeId": lid, "generatedAt": now_iso, "model": C.CANDIDATE_MODEL,
                                                                        "wind": {kk: state[kk] for kk in ("kind", "sustainedMph", "directionDeg")},
@@ -246,7 +266,7 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
         "versions": [{"version": C.PRODUCTION_MODEL["modelId"], "date": None, "note": "Active production wind in Engine /conditions (Open-Meteo Best Match = HRRR then GFS)", "status": "CURRENT"},
                      {"version": C.CANDIDATE_MODEL, "date": "2026-10-06", "note": "Research candidate: NBM v5.0 + RTMA-RU + frozen CEM. Shadow only; NOT promoted", "status": "SHADOW"}],
         "activeProductionModel": C.PRODUCTION_MODEL, "researchCandidate": C.RESEARCH_CANDIDATE,
-        "scores": ev["scores"], "readinessDefinitions": C.READINESS_DEFINITIONS, "stateKinds": C.STATE_KINDS,
+        "scores": canonical_scores_ref(ev), "readinessDefinitions": C.READINESS_DEFINITIONS, "stateKinds": C.STATE_KINDS,
         "runsPerMinute": round(1 / 60, 4), "updatedAt": now_iso,
         "publishMode": mode if mode == "scheduled" else "manual operator run: no scheduled publisher is deployed yet, so this data does not refresh on its own",
     }
@@ -311,6 +331,7 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
     try:
         store.put_json("brain/wind/last_publish.json", {"at": now_iso, "version": C.BRAIN_VERSION,
                                                         "readiness": {l: readiness[l] for l in WIND_LAKE_IDS.values()},
+                                                        "fingerprints": {**(last.get("fingerprints") or {}), **{l: f for l, f in new_fps.items() if f}},
                                                         "profileShas": {**last.get("profileShas", {}), **{lid: m["tableSha256"] for lid, m in national.items()}},
                                                         "lastSuccessfulRun": registry["lastSuccessfulRun"], "errors": errors_now[:3]})
     except Exception as e:

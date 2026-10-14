@@ -6,6 +6,8 @@ analysis is never presented as an observation. Unknown stays null. No confidence
 from __future__ import annotations
 
 import base64
+import hashlib
+import json
 import math
 import struct
 from datetime import datetime, timedelta, timezone
@@ -200,6 +202,13 @@ def tonight_exposure(banks, table, dir_deg, mean_mph, blow_mph, tier="AUDITED", 
     return out
 
 
+def input_fingerprint(lake, nbm_init, analysis_time, p90_init, observation_at, rules_version, geometry_sha, brain_version) -> str:
+    """Hash of every material input of a lake's state. Same fingerprint -> the derived per-bank detail cannot differ."""
+    payload = {"lake": lake, "nbmInit": nbm_init, "rtma": analysis_time, "p90Init": p90_init, "metar": observation_at, "rules": rules_version,
+               "geometry": geometry_sha, "brain": brain_version}
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()[:16]
+
+
 def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processing_version=None, geometry_tier="AUDITED"):
     """Returns (state, bank_rows | None, meta). Never raises for missing data: unknown stays null with a quality flag."""
     lk = C.lake_key(lake_id); flags: list[str] = []; stale_reasons: list[str] = []
@@ -369,5 +378,8 @@ def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processi
     }
     meta = {"kind": kind, "stale": stale, "readiness": readiness, "nbmInit": cyc["initTime"] if cyc else None,
             "analysisTime": analysis["analysisTime"] if analysis else None, "observationAt": observation["observedAt"] if observation else None,
-            "durationH": dur_h}
+            "durationH": dur_h,
+            "inputFingerprint": input_fingerprint(lake_id, cyc["initTime"] if cyc else None, analysis["analysisTime"] if analysis else None,
+                                                  C.iso(p90_init) if p90_init else None, observation["observedAt"] if observation else None,
+                                                  EX.RULES_VERSION, (fetch_obj or {}).get("tableSha256"), C.BRAIN_VERSION)}
     return state, bank_rows, meta

@@ -531,3 +531,15 @@ def test_bank_validation_v2_clarification_is_frozen_and_changes_no_threshold():
     assert hashlib.sha256(open(os.path.join(d, fz["file"]), "rb").read()).hexdigest() == fz["sha256"], "clarification changed after freeze"
     txt = open(os.path.join(d, fz["file"])).read()
     assert "changes **no** threshold" in txt and "Lake Registry v1" in txt
+
+
+def test_registry_and_validation_never_republish_the_baked_certification_number():
+    """Incident: the hourly job republished validation_evidence.json's baked 3.1 next to the canonical 3.3. The canonical score is read from
+    /scores/wind; the registry carries only a reference (and the dated BWIS)."""
+    import json as _json
+    from sector_wind.brain import publish as PB
+    ev = _json.load(open(PB.EVIDENCE))
+    ref = PB.canonical_scores_ref(ev)
+    assert "windCertificationScore" not in ref and ref["canonicalRef"] == "/scores/wind" and ref["bwisAsOf"] == ev["frozenAt"]
+    fleet, _per = PB._validation_payloads(ev, "2026-10-14T00:00:00Z")
+    assert fleet["scores"] == ref and "windCertificationScore" not in _json.dumps(fleet)
