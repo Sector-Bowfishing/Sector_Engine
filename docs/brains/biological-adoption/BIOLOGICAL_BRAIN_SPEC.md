@@ -30,6 +30,8 @@ Vocabulary: PROVIDER_VERIFIED · VERIFIED (deterministic, tested) · CALIBRATION
 | "Rule says favorable → more shootable fish per effort-hour" | 3 | **NOT_VALIDATED**; preregistered test frozen | `…PREREGISTRATION_v1` |
 A failure of a Level-3 claim does not invalidate the Level-1/2 rows above.
 
+**Taxonomy invariant:** claim level and validation maturity are separate axes. Level says who created the claim (1 provider/observed, 2 deterministic derivation, 3 Sector-derived intelligence); maturity says how far it is trusted. Species response bands, habitat, night support and spawn-response interpretation are Level 3 even while NOT_VALIDATED, and stay Level 3 through CALIBRATION and VALIDATED. Deterministic environmental transforms are Level 2.
+
 ## 4. Canonical runtime state
 Per lake: `kind biological-state · stateVersion · status PILOT_INTERNAL · context{region, waterbodyType, month, daypart} · inputs{brain, status, generatedAt, brainVersion} · features{state, reason} · species[{presence, evaluated, knowledge{state}, seasonState, responses[], habitat[], spawnWindow, nightMovementSupported, unknowns[]}] · unknowns[] · provenance{rulesVersion, featuresVersion} · validation NOT_VALIDATED · customerPath{consumed:false}`. Each band carries `confidence, evidenceBasis, region/season applicability, transferability, behavior, reason`. Species-level static `responseBands` (PROPOSED) are published on the species node. Compact: a pilot state is ≈ tens of KB; the largest species node is 13 KB.
 
