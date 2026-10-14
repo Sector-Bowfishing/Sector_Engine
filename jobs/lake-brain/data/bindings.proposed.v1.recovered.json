@@ -1,0 +1,1261 @@
+{
+ "schema": "lake-brain-bindings-recovered/v1",
+ "bindingStatus": "MACHINE_VERIFIED",
+ "criteriaVersion": "binding-review-v1",
+ "note": "NEWLY RECOVERED, NOT REVIEWED. MACHINE_VERIFIED candidates whose history/live mismatch hold was lifted by a FIXED disposition (jobs/lake-brain/bindings/mismatch14_dispositions.json). They are NOT in bindings.proposed.v1.json, NOT in any review sample or pack, and cannot be accepted until Michael reviews this list, removes the lakes from held_lakes.SERIES_MISMATCH and regenerates with --include-recovered.",
+ "dispositions": {
+  "sha256": "e06498453db5533dd9fada21ade2b56b4756bc1de7b8ce2b8bb3eb0fea5c565b"
+ },
+ "count": 8,
+ "bindings": [
+  {
+   "lakeId": "Blue Mesa Reservoir|CO",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "rise",
+   "researchProvider": "rise",
+   "station": "78",
+   "series": "78",
+   "live": [
+    {
+     "provider": "rise",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "78",
+     "series": "78",
+     "cadenceMin": 1440,
+     "lagMin": 2880,
+     "datumOffsetFt": 0.0,
+     "note": "USBR RISE daily item 78 (Blue Mesa Reservoir Dam and Powerplant); ~48 h latency, 0.0 placeholders dropped"
+    }
+   ],
+   "history": [
+    {
+     "kind": "riseDaily",
+     "item": "78"
+    }
+   ],
+   "historyCompleteYears": 59,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1965,
+   "historyBasis": "base",
+   "historyNotes": [],
+   "plan": {
+    "matchedProject": "SPK:Blue Mesa | Blue Mesa Dam & Res",
+    "matchBasis": "nid,name,geo<=5km",
+    "matchTier": "strong",
+    "distKm": 0.0,
+    "planSource": "a2w+cwms",
+    "verifiedMatch": true,
+    "planStrict": false,
+    "floodStrict": true,
+    "levels": [
+     {
+      "role": "floodPoolBottom",
+      "name": "Top of Conservation",
+      "kind": "a2w",
+      "office": "SPK",
+      "location": "Blue Mesa",
+      "id": "Blue Mesa.Elev.Inst.0.Top of Conservation",
+      "source": "a2w:SPK:Blue Mesa:Blue Mesa.Elev.Inst.0.Top of Conservation",
+      "seasonal": true,
+      "researchTodayFt": 7519.4
+     }
+    ]
+   },
+   "timeZone": "America/Denver",
+   "timeZoneRule": "state CO",
+   "dam": {
+    "nidId": "CO01675",
+    "damName": "Blue Mesa Dam",
+    "operatorName": "Bureau of Reclamation",
+    "hydropower": true,
+    "floodControl": true,
+    "nidPurposes": "Flood Risk Reduction, Hydroelectric, Irrigation, Recreation",
+    "nidMatchScore": 99.9,
+    "nidDistM": 0.0,
+    "source": "NID CO01675 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R4_open_basin_storage",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "W",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 303.6,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+     "quality": "derived"
+    },
+    "chainPosition": {
+     "upLakes": 0,
+     "downLakes": 0,
+     "nearestDown": null,
+     "chainId": null,
+     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+     "quality": "derived"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED_CORROBORATED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=drawdown"
+    ],
+    "corroboratedBy": "usace",
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-11T07:00Z",
+     "ageHours": 47.5,
+     "medianFt": 7413.86,
+     "lastFt": 7412.4,
+     "minFt30d": 7412.4,
+     "maxFt30d": 7423.08,
+     "samples30d": 44
+    },
+    "directoryFullPoolFt": 7519.4,
+    "deltaFullPoolFt": -105.54,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-13",
+      "2026-10-11"
+     ],
+     "matchedDays": 1095,
+     "medianAbsFt": 0.0,
+     "p95AbsFt": 0.0,
+     "maxAbsFt": 0.0,
+     "medianSignedFt": 0.0
+    },
+    "operatorFullPoolFt": 7519.4,
+    "datumOffsetFt": 0.0,
+    "correction": null
+   }
+  },
+  {
+   "lakeId": "Buffalo Bill Reservoir|WY",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "rise",
+   "researchProvider": "rise",
+   "station": "146",
+   "series": "146",
+   "live": [
+    {
+     "provider": "rise",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "146",
+     "series": "146",
+     "cadenceMin": 1440,
+     "lagMin": 2880,
+     "datumOffsetFt": 0.0,
+     "note": "USBR RISE daily item 146 (Buffalo Bill Reservoir Dam and Powerplants forebay); ~48 h latency, 0.0 placeholders dropped; replaces research item 152 (South Fork Dike gauge that does not track the pool)"
+    }
+   ],
+   "history": [
+    {
+     "kind": "riseDaily",
+     "item": "146"
+    }
+   ],
+   "historyCompleteYears": 73,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1952,
+   "historyBasis": "mismatch14-correction",
+   "historyNotes": [
+    "RISE item 146 daily record 1952-03-16..2026-10-11 (73 complete years 1953-2025, >= 329 days each; 0.0 placeholders dropped)"
+   ],
+   "plan": null,
+   "timeZone": "America/Denver",
+   "timeZoneRule": "state WY",
+   "dam": {
+    "nidId": "WY01300",
+    "damName": "Buffalo Bill Dam",
+    "operatorName": "Bureau of Reclamation",
+    "hydropower": true,
+    "floodControl": false,
+    "nidPurposes": "Fish and Wildlife Pond, Hydroelectric, Irrigation, Recreation, Water Supply",
+    "nidMatchScore": 99.5,
+    "nidDistM": 0.0,
+    "source": "NID WY01300 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R4_open_basin_storage",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "W",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 383.4,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qama)",
+     "quality": "derived"
+    },
+    "chainPosition": {
+     "upLakes": 0,
+     "downLakes": 1,
+     "nearestDown": "Bighorn Lake|WY",
+     "chainId": "chain-BighornLake",
+     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+     "quality": "derived"
+    },
+    "grassPct": {
+     "value": 0.7,
+     "asOf": "2026-10-08",
+     "source": "Sector Water Clarity sentinel-2c pass 2026-10-08 (consume-only snapshot)",
+     "quality": "measured, single pass; refresh by regenerating"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=strong"
+    ],
+    "corroboratedBy": null,
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-12",
+     "ageHours": null,
+     "medianFt": 5364.34,
+     "lastFt": 5359.18,
+     "minFt30d": 5359.18,
+     "maxFt30d": 5369.94,
+     "samples30d": 30
+    },
+    "directoryFullPoolFt": 5393.5,
+    "deltaFullPoolFt": -0.44,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "live-series-replacement",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-13",
+      "2026-10-11"
+     ],
+     "matchedDays": 1095,
+     "medianAbsFt": 0.0,
+     "p95AbsFt": 0.0,
+     "maxAbsFt": 0.0,
+     "medianSignedFt": 0.0
+    },
+    "operatorFullPoolFt": 5393.5,
+    "datumOffsetFt": 0.0,
+    "correction": "RISE 146 on 2026-05-31 = 5371.84 ft, identical to the end-of-May 2026 elevation in the Reclamation Wyoming Area Office operations report (BBR26_Jun.pdf); RISE 152 reads 5393.32 ft that day and stays within 5392.0-5394.2 ft for three years (std 0.47 ft vs 10.5 ft for item 146)"
+   }
+  },
+  {
+   "lakeId": "Glendo Reservoir|WY",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "rise",
+   "researchProvider": "rise",
+   "station": "374",
+   "series": "374",
+   "live": [
+    {
+     "provider": "rise",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "374",
+     "series": "374",
+     "cadenceMin": 1440,
+     "lagMin": 2880,
+     "datumOffsetFt": 0.0,
+     "note": "USBR RISE daily item 374 (Glendo Reservoir Dam and Powerplant); ~48 h latency, 0.0 placeholders dropped"
+    }
+   ],
+   "history": [
+    {
+     "kind": "riseDaily",
+     "item": "374"
+    }
+   ],
+   "historyCompleteYears": 68,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1957,
+   "historyBasis": "base",
+   "historyNotes": [],
+   "plan": {
+    "matchedProject": "NWO:GLEN | Glendo Dam & Reservoir",
+    "matchBasis": "nid,name,geo<=5km",
+    "matchTier": "strong",
+    "distKm": 0.06,
+    "planSource": "a2w",
+    "verifiedMatch": true,
+    "planStrict": false,
+    "floodStrict": true,
+    "levels": [
+     {
+      "role": "floodPoolBottom",
+      "name": "Top of Conservation",
+      "kind": "static",
+      "valueFt": 4635.0,
+      "source": "a2w:NWO:GLEN:GLEN.Elev.Inst.0.Top of Conservation",
+      "seasonal": false
+     }
+    ]
+   },
+   "timeZone": "America/Denver",
+   "timeZoneRule": "state WY",
+   "dam": {
+    "nidId": "WY01291",
+    "damName": "Glendo Dam",
+    "operatorName": "Bureau of Reclamation",
+    "hydropower": true,
+    "floodControl": true,
+    "nidPurposes": "Fish and Wildlife Pond, Flood Risk Reduction, Hydroelectric, Irrigation, Recreation",
+    "nidMatchScore": 95.0,
+    "nidDistM": 80.0,
+    "source": "NID WY01291 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R2_flow_through_reservoir",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "W",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 105.4,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+     "quality": "derived"
+    },
+    "chainPosition": {
+     "upLakes": null,
+     "downLakes": null,
+     "nearestDown": null,
+     "chainId": "chain-AlcovaReservoi",
+     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+     "quality": "derived"
+    },
+    "grassPct": {
+     "value": 40.2,
+     "asOf": "2026-10-02",
+     "source": "Sector Water Clarity sentinel-2c pass 2026-10-02 (consume-only snapshot)",
+     "quality": "measured, single pass; refresh by regenerating"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED_CORROBORATED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=drawdown"
+    ],
+    "corroboratedBy": "usace",
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-11T06:00Z",
+     "ageHours": 48.5,
+     "medianFt": 4591.38,
+     "lastFt": 4595.31,
+     "minFt30d": 4587.92,
+     "maxFt30d": 4595.31,
+     "samples30d": 44
+    },
+    "directoryFullPoolFt": 4635.0,
+    "deltaFullPoolFt": -43.62,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-13",
+      "2026-10-11"
+     ],
+     "matchedDays": 1095,
+     "medianAbsFt": 0.0,
+     "p95AbsFt": 0.0,
+     "maxAbsFt": 0.005,
+     "medianSignedFt": 0.0
+    },
+    "operatorFullPoolFt": 4635.0,
+    "datumOffsetFt": 0.0,
+    "correction": null
+   }
+  },
+  {
+   "lakeId": "Jordanelle Reservoir|UT",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "rise",
+   "researchProvider": "rise",
+   "station": "471",
+   "series": "471",
+   "live": [
+    {
+     "provider": "rise",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "471",
+     "series": "471",
+     "cadenceMin": 1440,
+     "lagMin": 2880,
+     "datumOffsetFt": 0.0,
+     "note": "USBR RISE daily item 471 (Jordanelle Reservoir Dam and Powerplant); ~48 h latency, 0.0 placeholders dropped"
+    }
+   ],
+   "history": [
+    {
+     "kind": "riseDaily",
+     "item": "471"
+    }
+   ],
+   "historyCompleteYears": 33,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1993,
+   "historyBasis": "base",
+   "historyNotes": [],
+   "plan": {
+    "matchedProject": "SPK:Jordanelle | Jordanelle Dam & Reservoir",
+    "matchBasis": "nid,name,geo<=5km",
+    "matchTier": "strong",
+    "distKm": 0.12,
+    "planSource": "a2w+cwms",
+    "verifiedMatch": true,
+    "planStrict": false,
+    "floodStrict": true,
+    "levels": [
+     {
+      "role": "floodPoolBottom",
+      "name": "Top of Conservation",
+      "kind": "a2w",
+      "office": "SPK",
+      "location": "Jordanelle",
+      "id": "Jordanelle.Elev.Inst.0.Top of Conservation",
+      "source": "a2w:SPK:Jordanelle:Jordanelle.Elev.Inst.0.Top of Conservation",
+      "seasonal": true,
+      "researchTodayFt": 6166.4
+     }
+    ]
+   },
+   "timeZone": "America/Denver",
+   "timeZoneRule": "state UT",
+   "dam": {
+    "nidId": "UT10204",
+    "damName": "Jordanelle Dam",
+    "operatorName": "Bureau of Reclamation",
+    "hydropower": false,
+    "floodControl": false,
+    "nidPurposes": "Water Supply",
+    "nidMatchScore": 93.9,
+    "nidDistM": 115.0,
+    "source": "NID UT10204 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R4_open_basin_storage",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "W",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 641.1,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+     "quality": "derived"
+    },
+    "grassPct": {
+     "value": 10.6,
+     "asOf": "2026-10-08",
+     "source": "Sector Water Clarity sentinel-2c pass 2026-10-08 (consume-only snapshot)",
+     "quality": "measured, single pass; refresh by regenerating"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED_CORROBORATED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=drawdown"
+    ],
+    "corroboratedBy": "usace",
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-10T07:00Z",
+     "ageHours": 71.5,
+     "medianFt": 6119.37,
+     "lastFt": 6114.83,
+     "minFt30d": 6114.83,
+     "maxFt30d": 6123.96,
+     "samples30d": 43
+    },
+    "directoryFullPoolFt": 6166.4,
+    "deltaFullPoolFt": -47.03,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-12",
+      "2026-10-10"
+     ],
+     "matchedDays": 1095,
+     "medianAbsFt": 0.0,
+     "p95AbsFt": 0.0,
+     "maxAbsFt": 0.0,
+     "medianSignedFt": 0.0
+    },
+    "operatorFullPoolFt": 6166.4,
+    "datumOffsetFt": 0.0,
+    "correction": null
+   }
+  },
+  {
+   "lakeId": "Lake Koocanusa|MT",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "cwms",
+   "researchProvider": "cwms",
+   "station": "NWDP",
+   "series": "LIB.Elev-Forebay.Inst.1Hour.0.IRIDIUM-REV",
+   "live": [
+    {
+     "provider": "cwms",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "NWDP",
+     "series": "LIB.Elev-Forebay.Inst.1Hour.0.IRIDIUM-REV",
+     "cadenceMin": 60,
+     "lagMin": 120,
+     "datumOffsetFt": 0.0,
+     "note": "USACE CWMS NWDP (unit=EN)"
+    },
+    {
+     "provider": "nwps",
+     "capability": "DIRECT_LAKE_GAUGE",
+     "station": "LYDM8",
+     "series": "HPIRG",
+     "cadenceMin": 60,
+     "lagMin": 120,
+     "datumOffsetFt": 0.0,
+     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:00:00Z age 1.4 h"
+    }
+   ],
+   "history": [
+    {
+     "kind": "cwmsDaily",
+     "office": "NWDP",
+     "series": "LIB.Elev-Forebay.Ave.~1Day.1Day.CBT-RAW"
+    }
+   ],
+   "historyCompleteYears": 50,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1975,
+   "historyBasis": "base",
+   "historyNotes": [],
+   "plan": {
+    "matchedProject": "NWS:LIB | LIBBY DAM",
+    "matchBasis": "nid,geo<=5km",
+    "matchTier": "strong",
+    "distKm": 0.0,
+    "planSource": "a2w",
+    "verifiedMatch": true,
+    "planStrict": true,
+    "floodStrict": true,
+    "levels": [
+     {
+      "role": "zoneTop",
+      "name": "Top of Normal",
+      "kind": "static",
+      "valueFt": 2459.0,
+      "source": "a2w:NWS:LIB:LIB.Elev.Const.1Hour.Top of Normal",
+      "seasonal": false
+     },
+     {
+      "role": "zoneBottom",
+      "name": "Bottom of Normal",
+      "kind": "static",
+      "valueFt": 2287.0,
+      "source": "a2w:NWS:LIB:LIB.Elev.Const.1Hour.Bottom of Normal",
+      "seasonal": false
+     },
+     {
+      "role": "floodPoolBottom",
+      "name": "Bottom of Flood Control",
+      "kind": "static",
+      "valueFt": 2287.0,
+      "source": "a2w:NWS:LIB:LIB.Elev.Const.1Hour.Bottom of Flood Control",
+      "seasonal": false
+     }
+    ]
+   },
+   "timeZone": "America/Denver",
+   "timeZoneRule": "state MT",
+   "dam": {
+    "nidId": "MT00652",
+    "damName": "Libby Dam",
+    "operatorName": "Forest Service, US Army Corps of Engineers",
+    "hydropower": true,
+    "floodControl": true,
+    "nidPurposes": "Flood Risk Reduction, Hydroelectric, Recreation",
+    "nidMatchScore": 95.0,
+    "nidDistM": 24.0,
+    "source": "NID MT00652 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R4_open_basin_storage",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "W",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 276.6,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+     "quality": "derived"
+    },
+    "chainPosition": {
+     "upLakes": 0,
+     "downLakes": 1,
+     "nearestDown": "Lake Roosevelt (FDR)|WA",
+     "chainId": "chain-LakeKoocanusa",
+     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+     "quality": "derived"
+    },
+    "grassPct": {
+     "value": 11.2,
+     "asOf": "2026-10-07",
+     "source": "Sector Water Clarity sentinel-2c pass 2026-10-07 (consume-only snapshot)",
+     "quality": "measured, single pass; refresh by regenerating"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=strong"
+    ],
+    "corroboratedBy": null,
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-13T06:00Z",
+     "ageHours": 0.7,
+     "medianFt": 2444.32,
+     "lastFt": 2444.14,
+     "minFt30d": 2444.07,
+     "maxFt30d": 2445.34,
+     "samples30d": 720
+    },
+    "directoryFullPoolFt": 2459.0,
+    "deltaFullPoolFt": -14.68,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-15",
+      "2026-10-13"
+     ],
+     "matchedDays": 1088,
+     "medianAbsFt": 0.11,
+     "p95AbsFt": 0.708,
+     "maxAbsFt": 1.805,
+     "medianSignedFt": -0.01
+    },
+    "operatorFullPoolFt": 2459.0,
+    "datumOffsetFt": 0.0,
+    "correction": null
+   }
+  },
+  {
+   "lakeId": "Lake Shelbyville|IL",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "cwms",
+   "researchProvider": "cwms",
+   "station": "MVS",
+   "series": "Lk Shelbyville-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-rev",
+   "live": [
+    {
+     "provider": "cwms",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "MVS",
+     "series": "Lk Shelbyville-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-rev",
+     "cadenceMin": 60,
+     "lagMin": 120,
+     "datumOffsetFt": 0.0,
+     "note": "USACE CWMS MVS (unit=EN)"
+    }
+   ],
+   "history": [
+    {
+     "kind": "cwmsDaily",
+     "office": "MVS",
+     "series": "Lk Shelbyville-Kaskaskia.Elev.Inst.~1Day.0.datman-rev"
+    }
+   ],
+   "historyCompleteYears": 54,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1971,
+   "historyBasis": "base",
+   "historyNotes": [],
+   "plan": {
+    "matchedProject": "MVS:Lk Shelbyville | Shelbyville Lake Project",
+    "matchBasis": "nid,sameStation,name,geo<=5km",
+    "matchTier": "strong",
+    "distKm": 0.01,
+    "planSource": "a2w+cwms",
+    "verifiedMatch": true,
+    "planStrict": true,
+    "floodStrict": true,
+    "levels": [
+     {
+      "role": "guideCurve",
+      "name": "Seasonal Rule Curve",
+      "kind": "a2w",
+      "office": "MVS",
+      "location": "Lk Shelbyville",
+      "id": "Lk Shelbyville.Elev.Inst.0.Seasonal Rule Curve",
+      "source": "a2w:MVS:Lk Shelbyville:Lk Shelbyville.Elev.Inst.0.Seasonal Rule Curve",
+      "seasonal": true,
+      "researchTodayFt": 599.7
+     },
+     {
+      "role": "zoneTop",
+      "name": "Top of Conservation",
+      "kind": "static",
+      "valueFt": 599.7,
+      "source": "a2w:MVS:Lk Shelbyville:Lk Shelbyville.Elev.Inst.0.Top of Conservation",
+      "seasonal": false
+     },
+     {
+      "role": "zoneBottom",
+      "name": "Bottom of Conservation",
+      "kind": "static",
+      "valueFt": 573.0,
+      "source": "a2w:MVS:Lk Shelbyville:Lk Shelbyville.Elev.Inst.0.Bottom of Conservation",
+      "seasonal": false
+     },
+     {
+      "role": "floodPoolBottom",
+      "name": "Top of Conservation",
+      "kind": "static",
+      "valueFt": 599.7,
+      "source": "a2w:MVS:Lk Shelbyville:Lk Shelbyville.Elev.Inst.0.Top of Conservation",
+      "seasonal": false
+     }
+    ]
+   },
+   "timeZone": "America/Chicago",
+   "timeZoneRule": "state IL",
+   "dam": {
+    "nidId": "IL00118",
+    "damName": "Shelbyville Dam",
+    "operatorName": "US Army Corps of Engineers",
+    "hydropower": false,
+    "floodControl": true,
+    "nidPurposes": "Fish and Wildlife Pond, Flood Risk Reduction, Navigation, Other, Recreation, Water Supply",
+    "nidMatchScore": 100.0,
+    "nidDistM": 4.0,
+    "source": "NID IL00118 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R3_dendritic_storage",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "MW",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 554.5,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+     "quality": "derived"
+    },
+    "chainPosition": {
+     "upLakes": 0,
+     "downLakes": 1,
+     "nearestDown": "Carlyle Lake|IL",
+     "chainId": "chain-CarlyleLake",
+     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+     "quality": "derived"
+    },
+    "grassPct": {
+     "value": 0.9,
+     "asOf": "2026-10-11",
+     "source": "Sector Water Clarity sentinel-2c pass 2026-10-11 (consume-only snapshot)",
+     "quality": "measured, single pass; refresh by regenerating"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=strong"
+    ],
+    "corroboratedBy": null,
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-10T08:00Z",
+     "ageHours": 70.5,
+     "medianFt": 599.62,
+     "lastFt": 599.34,
+     "minFt30d": 599.3,
+     "maxFt30d": 599.82,
+     "samples30d": 1298
+    },
+    "directoryFullPoolFt": 599.7,
+    "deltaFullPoolFt": -0.08,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-05",
+      "2026-10-03"
+     ],
+     "matchedDays": 1093,
+     "medianAbsFt": 0.3,
+     "p95AbsFt": 0.33,
+     "maxAbsFt": 0.52,
+     "medianSignedFt": -0.3
+    },
+    "operatorFullPoolFt": 599.7,
+    "datumOffsetFt": 0.0,
+    "correction": null
+   }
+  },
+  {
+   "lakeId": "Navajo Reservoir|NM",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "rise",
+   "researchProvider": "rise",
+   "station": "612",
+   "series": "612",
+   "live": [
+    {
+     "provider": "rise",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "612",
+     "series": "612",
+     "cadenceMin": 1440,
+     "lagMin": 2880,
+     "datumOffsetFt": 0.0,
+     "note": "USBR RISE daily item 612 (Navajo Reservoir and Dam); ~48 h latency, 0.0 placeholders dropped"
+    }
+   ],
+   "history": [
+    {
+     "kind": "riseDaily",
+     "item": "612"
+    }
+   ],
+   "historyCompleteYears": 63,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1962,
+   "historyBasis": "base",
+   "historyNotes": [],
+   "plan": {
+    "matchedProject": "SPA:Navajo | Navajo Reservoir",
+    "matchBasis": "nid,name,geo<=5km",
+    "matchTier": "strong",
+    "distKm": 0.16,
+    "planSource": "a2w+cwms",
+    "verifiedMatch": true,
+    "planStrict": true,
+    "floodStrict": true,
+    "levels": [
+     {
+      "role": "zoneTop",
+      "name": "Top of Normal",
+      "kind": "static",
+      "valueFt": 6084.99,
+      "source": "a2w:SPA:Navajo:Navajo.Elev.Inst.0.Top of Normal",
+      "seasonal": false
+     },
+     {
+      "role": "zoneBottom",
+      "name": "Bottom of Normal",
+      "kind": "static",
+      "valueFt": 5990.0,
+      "source": "a2w:SPA:Navajo:Navajo.Elev.Inst.0.Bottom of Normal",
+      "seasonal": false
+     },
+     {
+      "role": "floodPoolBottom",
+      "name": "Top of Conservation",
+      "kind": "static",
+      "valueFt": 6084.99,
+      "source": "a2w:SPA:Navajo:Navajo.Elev.Inst.0.Top of Conservation",
+      "seasonal": false
+     }
+    ]
+   },
+   "timeZone": "America/Denver",
+   "timeZoneRule": "state NM",
+   "dam": {
+    "nidId": "NM00120",
+    "damName": "Navajo Dam",
+    "operatorName": "Bureau of Reclamation",
+    "hydropower": false,
+    "floodControl": true,
+    "nidPurposes": "Flood Risk Reduction, Irrigation, Recreation",
+    "nidMatchScore": 100.0,
+    "nidDistM": 56.0,
+    "source": "NID NM00120 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R3_dendritic_storage",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "W",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 336.6,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / HL)",
+     "quality": "derived"
+    },
+    "chainPosition": {
+     "upLakes": 0,
+     "downLakes": 0,
+     "nearestDown": null,
+     "chainId": null,
+     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+     "quality": "derived"
+    },
+    "grassPct": {
+     "value": 20.3,
+     "asOf": "2026-10-07",
+     "source": "Sector Water Clarity sentinel-2b pass 2026-10-07 (consume-only snapshot)",
+     "quality": "measured, single pass; refresh by regenerating"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED_CORROBORATED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=drawdown"
+    ],
+    "corroboratedBy": "usace",
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-11T07:00Z",
+     "ageHours": 47.5,
+     "medianFt": 6012.015,
+     "lastFt": 6017.07,
+     "minFt30d": 6009.65,
+     "maxFt30d": 6017.07,
+     "samples30d": 44
+    },
+    "directoryFullPoolFt": 6085.0,
+    "deltaFullPoolFt": -72.98,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-13",
+      "2026-10-11"
+     ],
+     "matchedDays": 1095,
+     "medianAbsFt": 0.0,
+     "p95AbsFt": 0.0,
+     "maxAbsFt": 0.0,
+     "medianSignedFt": 0.0
+    },
+    "operatorFullPoolFt": 6085.0,
+    "datumOffsetFt": 0.0,
+    "correction": null
+   }
+  },
+  {
+   "lakeId": "Pineview Reservoir|UT",
+   "status": "MACHINE_VERIFIED",
+   "capability": "DIRECT_OPERATOR_POOL",
+   "provider": "rise",
+   "researchProvider": "rise",
+   "station": "656",
+   "series": "656",
+   "live": [
+    {
+     "provider": "rise",
+     "capability": "DIRECT_OPERATOR_POOL",
+     "station": "656",
+     "series": "656",
+     "cadenceMin": 1440,
+     "lagMin": 2880,
+     "datumOffsetFt": 0.0,
+     "note": "USBR RISE daily item 656 (Pineview Reservoir Dam and Powerplant); ~48 h latency, 0.0 placeholders dropped"
+    }
+   ],
+   "history": [
+    {
+     "kind": "riseDaily",
+     "item": "656"
+    }
+   ],
+   "historyCompleteYears": 47,
+   "historyClass": "SUFFICIENT",
+   "historyFirstYear": 1977,
+   "historyBasis": "base",
+   "historyNotes": [],
+   "plan": {
+    "matchedProject": "SPK:Pineview | Pineview Dam & Reservoir",
+    "matchBasis": "nid,name,geo<=5km",
+    "matchTier": "strong",
+    "distKm": 0.01,
+    "planSource": "a2w+cwms",
+    "verifiedMatch": true,
+    "planStrict": false,
+    "floodStrict": true,
+    "levels": [
+     {
+      "role": "floodPoolBottom",
+      "name": "Top of Conservation",
+      "kind": "a2w",
+      "office": "SPK",
+      "location": "Pineview",
+      "id": "Pineview.Elev.Inst.0.Top of Conservation",
+      "source": "a2w:SPK:Pineview:Pineview.Elev.Inst.0.Top of Conservation",
+      "seasonal": true,
+      "researchTodayFt": 4897.05
+     }
+    ]
+   },
+   "timeZone": "America/Denver",
+   "timeZoneRule": "state UT",
+   "dam": {
+    "nidId": "UT10132",
+    "damName": "Pineview Dam",
+    "operatorName": "Bureau of Reclamation",
+    "hydropower": false,
+    "floodControl": false,
+    "nidPurposes": "Irrigation",
+    "nidMatchScore": 92.7,
+    "nidDistM": 13.0,
+    "source": "NID UT10132 purposes (nid_links.csv)"
+   },
+   "context": {
+    "lakeClass": {
+     "value": "R4_open_basin_storage",
+     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+     "quality": "derived"
+    },
+    "regime": {
+     "value": "reservoir",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "region": {
+     "value": "W",
+     "source": "research lake_features.csv (2026-10-13)",
+     "quality": "derived"
+    },
+    "residenceTimeDays": {
+     "value": 196.8,
+     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+     "quality": "derived"
+    },
+    "grassPct": {
+     "value": 32.0,
+     "asOf": "2026-09-03",
+     "source": "Sector Water Clarity sentinel-2b pass 2026-09-03 (consume-only snapshot)",
+     "quality": "measured, single pass; refresh by regenerating"
+    }
+   },
+   "verification": {
+    "criteriaVersion": "binding-review-v1",
+    "researchStatus": "VERIFIED_CORROBORATED",
+    "wave": "w1",
+    "checksPassed": [
+     "R1",
+     "R2",
+     "R3",
+     "R4",
+     "R5",
+     "R6",
+     "R8",
+     "R7=drawdown"
+    ],
+    "corroboratedBy": "usace",
+    "probedAt": "2026-10-13",
+    "probe": {
+     "lastObservationAt": "2026-10-08T07:00Z",
+     "ageHours": 119.5,
+     "medianFt": 4831.8,
+     "lastFt": 4830.8,
+     "minFt30d": 4829.0,
+     "maxFt30d": 4853.5,
+     "samples30d": 41
+    },
+    "directoryFullPoolFt": 4900.0,
+    "deltaFullPoolFt": -68.2,
+    "coordinateFlag": "ok"
+   },
+   "recovery": {
+    "source": "jobs/lake-brain/bindings/mismatch14_dispositions.json",
+    "disposition": "FIXED",
+    "fixType": "no-series-change (hold-out QA artifact; the generator's own series pass)",
+    "criteriaVersion": "mismatch14-v1",
+    "reviewRequired": true,
+    "overlap": {
+     "window": [
+      "2023-10-10",
+      "2026-10-08"
+     ],
+     "matchedDays": 1095,
+     "medianAbsFt": 0.0,
+     "p95AbsFt": 0.0,
+     "maxAbsFt": 0.0,
+     "medianSignedFt": 0.0
+    },
+    "operatorFullPoolFt": 4900.0,
+    "datumOffsetFt": 0.0,
+    "correction": null
+   }
+  }
+ ]
+}
