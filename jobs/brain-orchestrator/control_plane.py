@@ -101,3 +101,12 @@ def process_requests(live, world: dict, ctx: dict, write: bool) -> dict:
             overrides[r["brainId"]] = {"activityState": r["effect"]["activityState"], "by": r["requestedBy"], "requestId": rid, "at": r["at"]}
     keep = dict(sorted(results.items(), key=lambda kv: kv[1].get("at", ""), reverse=True)[:MAX_REQUESTS])
     return {"requests": keep, "overrides": overrides}
+
+
+def scheduler_states(tokens) -> dict:
+    """{schedulerName: ENABLED|PAUSED} straight from Cloud Scheduler (one read-only list call). Any failure -> {} (unknown stays unknown)."""
+    try:
+        from sector_brain_platform import gcp
+        return {(j.get("name") or "").rsplit("/", 1)[-1]: j.get("state") for j in gcp.list_scheduler_jobs(tokens) if j.get("name")}
+    except Exception:
+        return {}

@@ -295,7 +295,7 @@ def main(argv=None) -> int:
         state_cp = CS.build_control_state(manifest, ctx2["mode"], now, registries=world2["registries"], health=world2["health"], scores=live.get("scores") or {},
                                           jobs=records, evaluation=ev2, prev=world["prev"], new_executions=exec_records + cloud_execs,
                                           locks={**locks_now, **locks}, trigger=a.trigger, duration_ms=int((time.time() - t0) * 1000),
-                                          overrides=rq["overrides"], requests=rq["requests"])
+                                          overrides=rq["overrides"], requests=rq["requests"], scheduler_states=CP.scheduler_states(tokens))
         if a.emit_control_state:
             json.dump(state_cp, open(a.emit_control_state, "w"), indent=1, sort_keys=True)
         cp_paths = CS.changed_paths(state_cp, world["prev"])

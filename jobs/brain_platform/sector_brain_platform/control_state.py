@@ -11,8 +11,9 @@ from . import orchestration as O
 from .timeutil import age_hours, iso, parse_time
 
 SECTIONS = ("summary", "brains", "edges", "jobs", "schedules", "executions", "decisions", "latestDecisions", "health", "cost", "blockers", "graph", "overrides", "requests")
-VOLATILE = ("lastEvaluatedAt", "asOf", "syncedAt")
+VOLATILE = ("lastEvaluatedAt", "asOf", "syncedAt", "ageHours", "durationMs")   # ageHours moves every evaluation; `stale` carries the decision
 NODE = "control/orchestratorV1"
+HEARTBEAT_HOURS = 6        # an unchanged control plane refreshes only its summary timestamp this often
 
 
 def _strip(o):
@@ -42,23 +43,25 @@ def execution_mode(brain: dict, enabled: bool | None) -> str:
     return "MANUAL"
 
 
-def _job_enabled(jobs: dict, scheduler: str | None) -> bool | None:
+def _job_enabled(jobs: dict, scheduler: str | None, live: dict | None = None) -> bool | None:
+    """Scheduler truth. Cloud Scheduler's own state (`live`, read this evaluation) wins; otherwise the /jobs record's schedulerState; never the record's
+    `enabled` (an event-driven job is 'enabled' as a job while its own scheduler can be paused). Unknown stays None."""
     if not scheduler:
         return None
+    if live and scheduler in live:
+        return live[scheduler] == "ENABLED"
     j = (jobs or {}).get(scheduler)
-    if not j:
-        return None
-    st = j.get("schedulerState")
-    return True if st == "ENABLED" else (False if st else j.get("enabled"))
+    st = (j or {}).get("schedulerState")
+    return None if not st else st == "ENABLED"
 
 
-def build_jobs(manifest: dict, jobs: dict, executions: list[dict]) -> tuple[dict, dict]:
+def build_jobs(manifest: dict, jobs: dict, executions: list[dict], states: dict | None = None) -> tuple[dict, dict]:
     """-> (jobs, schedules). One authoritative schedule model: every known job with its classification, whether it is actually enabled, and the
     last/next execution from the /jobs sync (Scheduler authoritative for enabled/cron/next)."""
     out, sched = {}, {}
     for jid, mj in sorted(manifest["jobs"].items()):
         live = (jobs or {}).get(jid) or (jobs or {}).get(mj.get("scheduler") or "") or {}
-        enabled = _job_enabled(jobs, mj.get("scheduler")) if mj.get("scheduler") else None
+        enabled = _job_enabled(jobs, mj.get("scheduler"), states) if mj.get("scheduler") else None
         last = next((e for e in executions if e.get("jobId") == jid), None)
         rec = {"jobId": jid, "brainId": mj.get("brainId"), "purpose": mj.get("purpose"), "executionTarget": mj.get("target") or jid, "classification": mj["classification"],
                "schedule": live.get("schedule") or (mj.get("cron")), "enabled": enabled, "validationOnly": mj.get("validationOnly", False),
@@ -93,7 +96,8 @@ def merge_decisions(prev_latest: dict, prev_recent: dict, decisions: list[dict],
 
 def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registries: dict, health: dict, scores: dict, jobs: dict, evaluation: dict,
                         prev: dict | None = None, new_executions: list[dict] | None = None, locks: dict | None = None, trigger: str = "SCHEDULE",
-                        duration_ms: int | None = None, overrides: dict | None = None, out_fps: dict | None = None, requests: dict | None = None) -> dict:
+                        duration_ms: int | None = None, overrides: dict | None = None, out_fps: dict | None = None, requests: dict | None = None,
+                        scheduler_states: dict | None = None) -> dict:
     prev = prev or {}
     graph = O.validate_graph(manifest)
     activity = O.effective_activity(manifest, overrides)
@@ -101,7 +105,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
     by_id.update({e["executionId"]: e for e in (new_executions or [])})          # a re-observed execution (now finished) replaces its earlier record
     execs = sorted(by_id.values(), key=lambda x: x.get("startedAt", ""), reverse=True)[:O.EXECUTION_LEDGER_MAX]
     latest, recent = merge_decisions(prev.get("latestDecisions"), prev.get("decisions"), evaluation["decisions"])
-    jobs_out, scheds = build_jobs(manifest, jobs, execs)
+    jobs_out, scheds = build_jobs(manifest, jobs, execs, scheduler_states)
     changes = evaluation["changes"]
     day = f"{now:%Y-%m-%d}"
     fps = out_fps if out_fps is not None else {bid: O.output_fingerprint(b, registries.get(bid))[0] for bid, b in manifest["brains"].items()}
@@ -115,7 +119,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
         h = (health.get(bid) or {})
         sc = (scores or {}).get(bid) or {}
         mj = [mj for mj in manifest["jobs"].values() if mj.get("brainId") == bid and mj["classification"] == "VALIDATION_EXCEPTION"]
-        enabled = _job_enabled(jobs, (b.get("schedule") or {}).get("scheduler"))
+        enabled = _job_enabled(jobs, (b.get("schedule") or {}).get("scheduler"), scheduler_states)
         bl = [d for d in latest.values() if d["brainId"] == bid and d["decision"] in ("BLOCKED_DEPENDENCY", "BLOCKED_POLICY", "MANUAL_APPROVAL", "WAITING")]
         # BLOCKED_POLICY on the SCHEDULE trigger is the intended steady state of a manual Brain; it is a blocker only if someone asked for a run
         bl = [d for d in bl if d["decision"] != "BLOCKED_POLICY" or d["trigger"] != "SCHEDULE"]
@@ -164,7 +168,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
         "running": sorted(k.split("|")[0] for k in (locks or {}) if (parse_time((locks[k] or {}).get("lockedUntil")) or now) > now),
         "queued": runs, "blocked": sorted({b["brainId"] for b in blockers}), "nextDue": min(next_dues) if next_dues else None,
         "costToday": cost_day, "recentDecision": ({k: latest_ev[k] for k in ("decisionId", "brainId", "trigger", "decision", "reasonCode", "at") if k in latest_ev} if latest_ev else None),
-        "scheduler": _strip({"state": "ENABLED" if _job_enabled(jobs, "brain-orchestrator") else ("PAUSED" if _job_enabled(jobs, "brain-orchestrator") is False else None),
+        "scheduler": _strip({"state": "ENABLED" if _job_enabled(jobs, "brain-orchestrator", scheduler_states) else ("PAUSED" if _job_enabled(jobs, "brain-orchestrator", scheduler_states) is False else None),
                              "cron": ((jobs or {}).get("brain-orchestrator") or {}).get("cron")}),
         "graphValid": not graph["errors"], "customerPublication": False if mode == "PRE_PRODUCTION" else None,
     })
@@ -178,7 +182,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
              "health": {"graphErrors": graph["errors"], "graphWarnings": graph["warnings"],
                         "brains": {_key(b): (health.get(b) or {}).get("status") for b in manifest["brains"] if (health.get(b) or {}).get("status")}},
              "cost": _strip({"today": cost_day, "enabledMonthlyEstimateUsd": round(sum(mj.get("estMonthlyUsdWhenEnabled") or 0 for jid, mj in manifest["jobs"].items()
-                                                                                      if _job_enabled(jobs, mj.get("scheduler")) is True), 2),
+                                                                                      if _job_enabled(jobs, mj.get("scheduler"), scheduler_states) is True), 2),
                              "basis": "ESTIMATED", "note": "list-price estimate from job resources and runtime; not a bill"}),
              "blockers": blockers, "graph": {"order": graph["order"], "errors": graph["errors"], "warnings": graph["warnings"]},
              "overrides": overrides or {}, "requests": requests if requests is not None else (prev.get("requests") or {})}
@@ -210,4 +214,10 @@ def changed_paths(state: dict, published: dict | None) -> dict:
             out[f"{NODE}/{s}"] = None
     if out and "summary" in state:
         out[f"{NODE}/summary"] = state["summary"]
+    elif not out and "summary" in state:
+        # Heartbeat: an unchanged control plane is not rewritten, but `lastEvaluatedAt` must not go stale forever.
+        new_t = parse_time((state["summary"].get("lastCycle") or {}).get("lastEvaluatedAt"))
+        old_t = parse_time(((published.get("summary") or {}).get("lastCycle") or {}).get("lastEvaluatedAt"))
+        if new_t and (old_t is None or (new_t - old_t).total_seconds() >= HEARTBEAT_HOURS * 3600):
+            out[f"{NODE}/summary"] = state["summary"]
     return out

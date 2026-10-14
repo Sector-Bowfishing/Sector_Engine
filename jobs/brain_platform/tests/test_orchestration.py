@@ -502,6 +502,12 @@ def test_publication_is_content_aware_and_ignores_evaluation_timestamps():
                                      evaluation=O.evaluate_world(dict(ctx(), now=NOW + dt.timedelta(hours=h))), prev=prev, trigger="SCHEDULE")
     baseline = at(1, st)                                   # the second evaluation establishes input-fingerprint baselines once
     assert C.changed_paths(at(2, baseline), baseline) == {}                                  # nothing material changed: nothing written (no hourly churn)
+    def early(hour, prev):
+        t = dt.datetime(2026, 10, 14, hour, 0, tzinfo=dt.timezone.utc)
+        return C.build_control_state(manifest(), "PRE_PRODUCTION", t, registries={}, health={}, scores={}, jobs={}, evaluation=O.evaluate_world(dict(ctx(), now=t)), prev=prev)
+    b1 = early(1, st); b2 = early(2, b1)
+    assert C.changed_paths(early(3, b2), b2) == {}                                            # same day, 1 h later, nothing changed
+    assert list(C.changed_paths(early(9, b2), b2)) == [f"{C.NODE}/summary"]                  # heartbeat: only the summary timestamp, only every 6 h
     changed = C.build_control_state(manifest(), "PRE_PRODUCTION", NOW, registries={}, health={}, scores={}, jobs={}, evaluation=O.evaluate_world(ctx()),
                                     prev=st, overrides={"depth": {"activityState": "ACTIVE"}})
     paths = C.changed_paths(changed, st)
@@ -561,3 +567,15 @@ def test_sample_payloads_validate_against_the_contract():
     assert all(e["kind"] in ("HARD", "SOFT") for e in st["edges"].values())
     rq = json.load(open(os.path.join(d, "sample_control_request.json")))
     assert rq["runNowResult"]["decision"] in O.REQUEST_DECISIONS and rq["fleetRejected"]["decision"] == "REJECTED"
+
+
+def test_scheduler_truth_comes_from_cloud_scheduler_not_the_job_record():
+    """An event-driven job record says enabled=True while its own Cloud Scheduler job is PAUSED (lake-surface-daily): the scheduler state wins."""
+    m = manifest()
+    jobs = {"lake-surface-daily": {"enabled": True, "executionMode": "EVENT_DRIVEN"}, "wind-hourly": {"schedulerState": "PAUSED"}}
+    states = {"lake-surface-daily": "PAUSED", "wind-hourly": "ENABLED"}
+    j, s = C.build_jobs(m, jobs, [], states)
+    assert s["lake-surface-daily"]["enabled"] is False and s["wind-hourly"]["enabled"] is True        # live Scheduler beats the stale /jobs record
+    j2, s2 = C.build_jobs(m, jobs, [], None)
+    assert "enabled" not in s2["lake-surface-daily"]                                                   # no scheduler state at all: unknown, not "enabled"
+    assert s2["wind-hourly"]["enabled"] is False                                                       # record's schedulerState is used when no live state

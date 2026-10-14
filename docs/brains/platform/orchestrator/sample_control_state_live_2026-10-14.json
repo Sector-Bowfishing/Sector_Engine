@@ -1889,7 +1889,7 @@
    },
    "customerImpact": false,
    "durationMs": 3090927,
-   "enabled": true,
+   "enabled": false,
    "executionTarget": "lake-surface-daily",
    "jobId": "lake-surface-daily",
    "lastCompletedAt": "2026-10-13T08:53:20.998136Z",
@@ -2139,7 +2139,7 @@
   },
   "lake-surface-daily": {
    "classification": "PAUSED",
-   "enabled": true,
+   "enabled": false,
    "jobId": "lake-surface-daily",
    "owner": "LEGACY_SCHEDULER",
    "scheduler": "lake-surface-daily"
@@ -2197,8 +2197,8 @@
     "SKIP_PARKED": 1,
     "SKIP_UNCHANGED": 1
    },
-   "durationMs": 9459,
-   "lastEvaluatedAt": "2026-10-14T19:37:44Z",
+   "durationMs": 7738,
+   "lastEvaluatedAt": "2026-10-14T19:42:18Z",
    "trigger": "MANUAL"
   },
   "maintenanceBrains": [
