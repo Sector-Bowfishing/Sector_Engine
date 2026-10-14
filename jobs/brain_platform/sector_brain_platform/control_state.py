@@ -135,7 +135,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
             "scoreRef": {"path": f"/scores/{bid}", "canonicalScore": sc.get("value"), "scoreStatus": sc.get("basis")} if sc else None,
             "productReadiness": reg.get("productReadiness"),
             "executionMode": execution_mode(b, enabled), "scheduleClass": (b.get("schedule") or {}).get("class"),
-            "exception": ((b.get("schedule") or {}).get("exception") or {}).get("gate"),
+            "exception": {k: v for k, v in ((b.get("schedule") or {}).get("exception") or {}).items() if k in ("gate", "stop", "maxMonthlyUsd", "approvedAt")},
             "lastRun": last_run, "lastResult": (lastx or {}).get("status") or h.get("status"), "nextDue": nd,
             "freshness": {"staleAfterHours": sh, "ageHours": ageh, "stale": (ageh > sh) if (ageh is not None and sh is not None) else None},
             "inputFingerprint": O.input_fingerprint(bid, b, fps),

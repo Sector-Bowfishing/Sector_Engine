@@ -441,6 +441,7 @@ def test_control_state_answers_the_product_questions():
     assert s["nextDue"] == "2026-10-14T19:05:00Z" and s["lastCycle"]["decisionCounts"]
     w = st["brains"]["wind"]
     assert w["executionMode"] == "VALIDATION_EXCEPTION" and w["scoreRef"] == {"path": "/scores/wind", "canonicalScore": 3.3, "scoreStatus": "COMPUTED"}
+    assert w["exception"]["stop"] and w["exception"]["maxMonthlyUsd"] == 5 and "gate" in w["exception"]
     assert w["nextDue"] == "2026-10-14T19:05:00Z" and w["customerPublication"] is False and w["decisions"]["SCHEDULE"]["decision"] == "SKIP_LEGACY_OWNED"
     assert st["brains"]["biological-state"]["executionMode"] == "INPUT_DRIVEN" and "nextDue" not in st["brains"]["biological-state"]
     assert st["jobs"]["wind-hourly"]["enabled"] is True and st["jobs"]["lake-surface-dispatch"]["classification"] == "PAUSED"
