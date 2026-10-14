@@ -1,5 +1,7 @@
 # Is the research rubric measuring the right thing? (proposal only; the rubric is NOT changed)
 
+> **UPDATE 2026-10-14 (long-run campaign): folded into the full official-score design in `DEPTH_OFFICIAL_SCORE_DECISION.md` (v2). The research rubric was not changed; its out-of-mission dimensions are replaced there by depthShareEvidence and shallowZoneActivation.**
+
 The research rubric (`docs/depth-brain-research`, `DEPTH_BRAIN_RUBRIC_PROPOSAL.md`) was written before the product scope was settled. Product scope now (Michael, 2026-10-14): authoritative depth evidence where available; current water-level shift from a known reference pool; effective current depth for known depth evidence; shallow-zone shifts and dry/flooded bounds; confidence, provenance, uncertainty. **Not** full-lake hydrography, absolute depth for every spot, flats/structure maps. Three dimensions measure something Depth should not do, so they hold the maturity down regardless of how good the product is.
 
 | Rubric dimension (weight) | Today | What it measures | What the product needs | Mismatch |

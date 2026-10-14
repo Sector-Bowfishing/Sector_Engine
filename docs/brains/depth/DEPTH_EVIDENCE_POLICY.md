@@ -1,5 +1,7 @@
 # Depth Evidence Policy (codified research decisions)
 
+> **UPDATE 2026-10-14 (long-run campaign): tier C 'measured hypsometry' is now implemented for operator elevation-area ratings and Reclamation survey tables, as SHARES only (dry / under 3 / 3-6 / 6-10 ft of the reference-pool surface), never where.** Rules: `DEPTH_STAGE_AREA_RATING_RULES.md` (RATING-ZONE-RULES-1). DEM/GLOBathy hypsometry stays forbidden.
+
 Implemented in `jobs/depth-brain/depth_brain/evidence.py`, `zones.py`, `shift.py`; enforced by tests (`tests/test_zones_evidence.py`, `tests/test_state_publish.py`).
 
 ## 1. Tiers and precedence

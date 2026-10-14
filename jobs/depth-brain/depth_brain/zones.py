@@ -146,7 +146,17 @@ def effective_zones(z: ReferenceZones, shift_ft: float, sigma_ft: float) -> dict
         out["shareToleranceAbs"] = R.RATING_SHARE_TOLERANCE_ABS
         out["toleranceBasis"] = "typical disagreement (90th percentile) between operator-rating shares and independent contour surveys; the bounds above reflect only the level shift uncertainty"
     if shift_ft > 0:
-        out["floodedMarginUnquantified"] = True
+        fm = None
+        if z.curve is not None:
+            from . import rating as R
+            ends = [R.flooded_margin(z.curve, z.reference_pool_ft, max(0.0, shift_ft + sigma_ft * k)) for k in (-1.0, 0.0, 1.0)]
+            if all(e is not None for e in ends):
+                fm = {"lo": round(min(e[0] for e in ends), 3), "hi": round(max(e[1] for e in ends), 3)}
+        if fm is not None:
+            out["floodedMarginShare"] = fm
+            out["floodedMarginBasis"] = "extra surface flooded above the reference pool as a share of the reference-pool surface (operator elevation-area rating)"
+        else:
+            out["floodedMarginUnquantified"] = True
     return out
 
 

@@ -1,5 +1,7 @@
 # `depth-brain-score-v1` - PROPOSAL ONLY (Depth has no official score; none is published)
 
+> **SUPERSEDED 2026-10-14 by `DEPTH_OFFICIAL_SCORE_DECISION.md` (`depth-brain-score-v2`, also unratified).**
+
 > **2026-10-14 decision (Michael): NOT ratified.** Reasons: validation NOT_VALIDATED, no field truth, 198/621 shift-defensible and only 5 live, orchestration not live, licensing incomplete. Research maturity continues to be reported separately and recomputed after every material change.
 
 Implementation of the proposal (not wired, tested): `jobs/depth-brain/depth_brain/score_v1_proposal.py`, `tests/test_score_proposal.py`. It reuses the platform scorer primitives (`dim`, `finish`, `ladder`: weights sum to 100, UNKNOWN excluded, gates cap and never add). **It is not imported by the publisher, not registered with the scorer, and cannot write `/scores/depth`.** Ratifying it, naming critical dimensions and adding `depth` to the platform scorer are Michael's decisions.

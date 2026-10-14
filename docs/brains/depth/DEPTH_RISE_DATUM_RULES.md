@@ -1,5 +1,7 @@
 # Depth Brain: USBR RISE datum rules
 
+> **UPDATE 2026-10-14 (long-run campaign): the residual link (RISE value = the dam gage record the survey describes) was tested with Reclamation's own data.** RISE daily elevation reproduces RISE daily storage through the TSC survey tables (offset 0.00 ft, relative RMS <= 0.0002 for Cheney, Bighorn, El Vado, Elephant Butte, Heron, Navajo, Patterson, Tschida, Calamus) and the Great Plains allocation diagrams (pool figure printed on the diagram; Angostura, Boysen, Fresno, Keyhole, Merritt, Pactola, Pathfinder at <= 0.036 ft). 16 lakes are now `SAME_SOURCE` (project frame, never converted); see `DEPTH_RECLAMATION_DATUM_CHAIN.md`. Section 7's request is narrowed in `DEPTH_RECLAMATION_DATUM_REQUEST.md`.
+
 Date 2026-10-14. Research only: nothing deployed, written to RTDB, sent or committed. Raw downloads are outside git in `~/Desktop/Development/Sector_Research_Data/depth-brain/datum3/{rise,tsc,pdf}`. Machine-readable twin: `jobs/depth-brain/depth_brain/data/proposals/provider_rules.json` (schema `depth-provider-proposals-v1`). Extends section 3.4 of `DEPTH_DATUM_AUDIT.md`.
 
 Evidence labels: **[fetched]** I fetched it on 2026-10-13/14 and it says this. **[computed]** derived from fetched live data. **UNKNOWN** is not established. Document statements are paraphrased, with the file named so they can be re-read.

@@ -150,3 +150,16 @@ def test_local_project_stage_equals_a_rating_datum_only_with_a_per_lake_paired_s
     rz, why = R.rating_reference_zones(local, 100.0, "LOCAL", True, "SAME_SOURCE", None, {"localEquals": "NGVD29", "usgsSite": "x", "usgsParam": "62614", "n": 100, "meanFt": 0.0, "sdFt": 0.03})
     assert why == "ok" and rz["localDatumEquivalence"]["localEquals"] == "NGVD29"
     assert R.rating_reference_zones(local, 100.0, "LOCAL", True, "SAME_SOURCE", None, {"localEquals": "NAVD88"})[1] == "R2_RATING_DATUM_DIFFERS"   # equality to the wrong datum proves nothing
+
+
+def test_flooded_margin_from_a_rating_is_exact_and_never_extrapolated():
+    assert R.flooded_margin(SYN, 100.0, 3.0) == (0.3, 0.3)                       # (A(103) - A(100)) / A(100) = (1300 - 1000) / 1000
+    assert R.flooded_margin(SYN, 100.0, 0.0) == (0.0, 0.0)
+    assert R.flooded_margin(SYN, 100.0, 11.0) is None                            # P + 11 is above the highest rated elevation (110)
+    rz, _ = R.rating_reference_zones(SYN, 100.0, "NGVD29", True, "SAME_SOURCE")
+    z = Z.ReferenceZones({float(k): v for k, v in rz["cumulative"].items()}, None, 1.0, "C", rz["source"], None, 100.0, "NGVD29", "VERIFIED", [], curve=SYN, kind=rz["kind"])
+    out = Z.effective_zones(z, 2.0, 0.0)
+    assert out["floodedMarginShare"] == {"lo": 0.2, "hi": 0.2} and "floodedMarginUnquantified" not in out
+    assert Z.effective_zones(z, 12.0, 0.0)["floodedMarginUnquantified"] is True
+    zc = Z.ReferenceZones({3.0: 0.3, 6.0: 0.6, 10.0: 1.0}, 1.0, 1.0, "A", "TWDB", 2010, 100.0, "NGVD29", "VERIFIED", [])
+    assert Z.effective_zones(zc, 2.0, 0.0)["floodedMarginUnquantified"] is True   # contour lakes keep the honest 'unquantified'

@@ -1,5 +1,7 @@
 # Depth Brain: Duke Energy lake-level scale evidence
 
+> **UPDATE 2026-10-14 (long-run campaign): the Duke datum question is settled from Duke's own public data.** The 403 reported below came from a wrong route (`/lakes/current-levels`, plural). The route the Duke Lake View web app uses, `GET https://api.hydro-derived.duke-energy.app/lakes/current-level`, returns HTTP 200 without a key. Each row carries the live level (`Actual`, the 100-based scale with `Max` 100.00 for the Catawba-Wateree and Keowee-Toxaway lakes; absolute feet for Lake Robinson) and the full-pond elevation WITH its datum in one record (`Elevation`: "760.0 ft (AMSL, NGVD 29 datum)"), equal to the directory pool for all 8 lakes. Depth now accepts the 8 lakes as `SAME_SOURCE` (sigma 0.1) with an explicit frame (`levelScale`), and the shift engine handles both frames (`shift = Actual - 100`, or absolute level - pool; a level in neither frame is refused). Evidence snapshot: `data/duke_api_2026-10-14.json`; generator `research/depth/duke_api_proposals.py`. The endpoint is the public JSON behind Duke's web page, not a documented API contract; section 5 requests 1-4 below are no longer needed except a courtesy note about reliance on the endpoint.
+
 Date 2026-10-14. Research only; nothing sent to Duke. Raw data: `~/Desktop/Development/Sector_Research_Data/depth-brain/datum3/duke/`. Extends section 3.3 of `DEPTH_DATUM_AUDIT.md`. Machine twin: `proposals/provider_rules.json`.
 
 Question: is `shift = scale - 100` for Duke's "100 = full pond" lake-level scale documented, and for which lakes?

@@ -35,6 +35,21 @@ def _interp(elev: list, area: list, z: float) -> float:
     return float(area[lo] + f * (area[hi] - area[lo]))
 
 
+def flooded_margin(curve: dict, pool_ft: float, rise_ft: float) -> tuple[float, float] | None:
+    """Extra surface (share of the reference-pool surface) flooded when the level stands `rise_ft` above the pool: (A(P+rise) - A(P)) / A(P), exact inside the stored rating,
+    None when P+rise is above the highest stored elevation (never extrapolated)."""
+    e, a = curve["elevFt"], curve["areaAc"]
+    if rise_ft <= 0:
+        return 0.0, 0.0
+    if pool_ft + rise_ft > e[-1] + 1e-9:
+        return None
+    aP = _interp(e, a, pool_ft)
+    if aP <= 0:
+        return None
+    m = (_interp(e, a, pool_ft + rise_ft) - aP) / aP
+    return m, m
+
+
 def share_bounds(curve: dict, pool_ft: float, x: float) -> tuple[float, float]:
     """Bounds on S(x). Exact (lo == hi) inside the rating; [S(floor), 1] when P - x is below the rating's lowest elevation."""
     if x <= 0:

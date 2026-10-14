@@ -14,7 +14,7 @@ Current: {fm['shiftPossible']} of {fm['totalLakes']} lakes shift-defensible ({fm
 |---|---|
 | Pilot-only shadow write | **Approved and done** (5 lakes; verified by read-back) |
 | Control-plane shadow Brain | **Approved**; Engine code committed and verified against live data in dry run; **live `/control/overview` entry needs the control job redeployed (not authorised yet)** |
-| `depth-brain-score-v1` | **Not ratified** (proposal only) |
+| `depth-brain-score-v1` | **Not ratified**; superseded by the v2 proposal below |
 | Orchestration | **Approved to prepare, not to schedule** (prepared, gated off) |
 | Lake datum interface | **Approved** (`DEPTH_LAKE_DATUM_DEPENDENCY.md`) |
 | MN DNR licence reclassification | **Stays proposed** (dedicated licensing decision later) |
@@ -28,13 +28,16 @@ Current: {fm['shiftPossible']} of {fm['totalLakes']} lakes shift-defensible ({fm
 | 3 | Enable orchestration (`DEPTH_ORCHESTRATION_ENABLED=1`, `/jobs` row) | after 1 and after two clean manual cycles |
 | 4 | Dedicated licensing decision (MN first) | `DEPTH_LICENSING_UNLOCK_QUEUE.md` |
 | 5 | Merge sequencing for `feat/cost-efficient-scheduling` | before any Depth merge |
+| 6 | **Official score:** ratify `depth-brain-score-v2` (coverage = defensible profiled lakes, validation split into derivation / interpretation, out-of-mission dimensions replaced) and register Depth with the platform scorer in shadow | **yes**; one consolidated decision with indicative numbers and six sub-choices in `DEPTH_OFFICIAL_SCORE_DECISION.md` |
+| 7 | **Licence classification** for `USACE_CWMS` and `USBR_TSC` (federal works; terms pages could not be fetched, classification is ASSUMED) | confirm; until then rating-derived shares (`DEPTH_STAGE_AREA_RATING_RULES.md`) stay internal/shadow anyway |
+| 8 | Reliance on Duke's public lake-levels JSON (not a documented API) for the 8 Duke lakes | accept, with the endpoint recorded as the provider; a courtesy note to Duke is optional |
 
 ## Still open - actions (people / outbound; NOTHING SENT)
 | # | Action | Doc |
 |---|---|---|
-| 1 | Send the **Reclamation** datum confirmation (19 RISE rows) | `DEPTH_RECLAMATION_DATUM_REQUEST.md` |
+| 1 | Send the **Reclamation** datum confirmation (NARROWED to the reservoirs public data could not settle; 17 RISE lakes are already defensible) | `DEPTH_RECLAMATION_DATUM_REQUEST.md` |
 | 2 | Send the **TVA** datum + bathymetry request | `DEPTH_TVA_DATUM_REQUEST.md` + `DEPTH_SOURCE_REQUEST_QUEUE.md` row 1 |
-| 3 | Other datum confirmations (Duke 7, CNPPID, NHDES, SRP, USGS ID, USACE St. Louis/Tulsa) | `DEPTH_DATUM_CONFIRMATION_REQUESTS.md` |
+| 3 | Other datum confirmations (CNPPID, NHDES, SRP, USGS ID, USACE St. Louis/Tulsa; **Duke resolved**) | `DEPTH_DATUM_CONFIRMATION_REQUESTS.md` |
 | 4 | Southeast bathymetry requests | `DEPTH_SOURCE_REQUEST_QUEUE.md` |
 | 5 | Recruit beta testers for field validation | `DEPTH_FIELD_VALIDATION_PACKETS.md` (Hartwell, Guntersville, Wheeler, Wilson, Pickwick, Fork, Cedar Creek, Gull Lake MN) |
 | 6 | Survey-date water levels from contour owners (MN, OH, NE, ND, OK, KS) | `DEPTH_CONTOUR_SOURCE_REFERENCE_POOLS.md` |
