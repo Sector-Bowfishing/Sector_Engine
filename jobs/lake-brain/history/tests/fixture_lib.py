@@ -124,6 +124,40 @@ def make_fixture_batch(out_dir, work_dir, decision=lambda lid: "ACCEPT"):
     return os.path.join(out_dir, "accepted_batch.json"), os.path.join(out_dir, "binding_review_result.json"), bpath
 
 
+def make_fixture_individual_batch(out_dir, work_dir, decision=lambda lid: "ACCEPT", sample_dir=None, label="consolidated", only=None):
+    """Run the REAL individual ingest (ingest_batch_review.main) on a synthetic consolidated packet of the FIXTURE lakes (all Section A).
+    `only` (name fragments) limits the packet to some lakes. Returns (batch_path, result_path, bindings_path). out_dir is the data dir the ingest writes accepted_batch.json, binding_review_result.json and
+    review_batches/ into; sample_dir (optional) is a sample-based accepted_batch.json + binding_review_result.json to union in."""
+    import ingest_batch_review as IB
+    os.makedirs(work_dir, exist_ok=True)
+    os.makedirs(out_dir, exist_ok=True)
+    pack_id = "LBR-CONSOLIDATED-FIXTURE0001"
+    rows = []
+    for i, l in enumerate([l for l in LAKES if only is None or any(k in l["id"] for k in only)], 1):
+        rows.append(dict(section="A", id=l["id"], seq=i, digest=("%064x" % (i * 7919)), name=l["id"].split("|")[0], state="ZZ", provider=l["provider"],
+                         identifier=f"{l['provider']}: {l['live'][0]['station']}", recommendation="PASS", inBindingsTable=True))
+    manifest = dict(schema="lake-brain-consolidated-review-pack/v1", packId=pack_id, decisions=["ACCEPT", "REJECT", "NEEDS REVIEW"], pilots=[], held=[], rows=rows,
+                    inputs=dict(bindingsTableSha256=None))
+    mp = os.path.join(work_dir, "pack_manifest.json")
+    json.dump(manifest, open(mp, "w"), indent=1)
+    ep = os.path.join(work_dir, "fixture_consolidated_review.csv")
+    cols = ["pack_id", "section", "lake_id", "lake_name", "state", "provider", "provider_identifier", "computer_recommendation", "row_digest", "decision", "notes",
+            "decided_at_utc", "reviewer", "exported_at_utc"]
+    with open(ep, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f)
+        w.writerow(cols)
+        for r in rows:
+            w.writerow([pack_id, "A", r["id"], r["name"], r["state"], r["provider"], r["identifier"], r["recommendation"], r["digest"], decision(r["id"]), "",
+                        "2026-10-14T10:00:00Z", "FIXTURE", "2026-10-14T11:00:00Z"])
+    bpath = os.path.join(work_dir, "bindings.fixture.json")
+    json.dump(bindings_doc(), open(bpath, "w"), indent=1, sort_keys=True)
+    argv = ["--export", ep, "--manifest", mp, "--bindings", bpath, "--data-dir", out_dir, "--label", label, "--write"]
+    if sample_dir:
+        argv += ["--sample-dir", sample_dir]
+    assert IB.main(argv) == 0
+    return os.path.join(out_dir, "accepted_batch.json"), os.path.join(out_dir, "binding_review_result.json"), bpath
+
+
 # ---- synthetic provider server ----------------------------------------------------------------------------------------------------
 class R:
     def __init__(self, status, body=b""):

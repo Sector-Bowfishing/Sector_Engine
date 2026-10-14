@@ -30,9 +30,16 @@ REFUSES to run on anything that is not a legitimately formed accepted batch (see
   criteriaVersion binding-review-v1, ruleMet true, verdict ACCEPT_BATCH, rejected <= acceptRule.maxErrors, reviewed == sampleSize,
   unsure == pending == 0, acceptedBatchCount == len(batch), 64-hex reviewCsvSha256, packId LBR-SAMPLE-*; no id of the result's
   heldBackLakes / rejectedIds / flagged57 / the repository hold lists (held_lakes.py); no id in a stratum listed in fullReviewStrata;
-  every id a MACHINE_VERIFIED lake of the bindings table. The ingest writes NO hash of the batch into the result, so a batch edited
-  by hand to another subset of the same size cannot be told from a real one by content alone; the run records sha256 of both files
-  in its state and manifest, and a write to GCS additionally needs `--confirm-batch-sha` (first 12 hex of the batch file's sha256).
+  every id a MACHINE_VERIFIED lake of the bindings table. When the result carries acceptedBatchSha256 (ingest_review_result.py and
+  ingest_batch_review.py both write it) it must match the batch file; the run records sha256 of both files in its state and manifest,
+  and a write to GCS additionally needs `--confirm-batch-sha` (first 12 hex of the batch file's sha256).
+
+  SECOND LEGITIMATE FORM (individually reviewed, jobs/lake-brain/review/ingest_batch_review.py): a result with reviewKind
+  'individual-cumulative', verdict ACCEPTED_INDIVIDUALLY and a MANDATORY acceptedBatchSha256. The batch is then the cumulative union of
+  per-packet results under review_batches/ next to the batch file: every component file must exist with its recorded sha256, and
+  the batch must equal exactly  (individually accepted ids) UNION (sample accepted batch MINUS lakes individually rejected / NEEDS REVIEW).
+  An id that is in no component result, an edited batch, a wrong sha or a changed component file is refused. The held-lake, rejected-id,
+  bindings-table and MACHINE_VERIFIED checks apply to both forms; the sample-only checks (acceptRule, sampleSize, strata) apply to the first.
 
 SAFETY
   * Default = dry run: nothing but the work dir (state, step cache, staged files, logs) is written. `--write-dir DIR` additionally
@@ -1149,23 +1156,8 @@ def load_bindings(path):
     return d, rows
 
 
-def validate_batch(batch_path, result_path, bindings_path, allow_fixture=False, gcs=False):
-    """Refuse anything that is not a batch as ingest_review_result.py writes it. Returns a dict describing the validated inputs."""
-    if not os.path.isfile(batch_path):
-        raise PreseedError(f"accepted batch not found: {batch_path}")
-    batch = load_json(batch_path, "accepted batch")
-    if not isinstance(batch, list) or not batch or not all(isinstance(x, str) and x.strip() and x == x.strip() for x in batch):
-        raise PreseedError("accepted batch must be a non-empty JSON list of lake id strings (ingest_review_result.py writes exactly that)")
-    if len(set(batch)) != len(batch):
-        raise PreseedError("accepted batch contains duplicate lake ids")
-    if batch != sorted(batch):
-        raise PreseedError("accepted batch is not sorted (ingest writes sorted(...)); it was edited or is not the ingest's output")
-    result_path = result_path or os.path.join(os.path.dirname(os.path.abspath(batch_path)), "binding_review_result.json")
-    if not os.path.isfile(result_path):
-        raise PreseedError(f"binding_review_result.json not found next to the batch: {result_path}")
-    res = load_json(result_path, "binding review result")
-    if not isinstance(res, dict):
-        raise PreseedError("binding_review_result.json is not an object")
+def sample_form_problems(batch, batch_path, res):
+    """The checks of the sample-based result (ingest_review_result.py)."""
     missing = [k for k in REQUIRED_RESULT_FIELDS if k not in res]
     if missing:
         raise PreseedError(f"binding_review_result.json lacks field(s) written by the ingest: {missing}")
@@ -1191,7 +1183,132 @@ def validate_batch(batch_path, result_path, bindings_path, allow_fixture=False, 
         problems.append(f"packId {res['packId']!r} is not an LBR-SAMPLE pack")
     if "acceptedBatchSha256" in res and res["acceptedBatchSha256"] != sha256_file(batch_path):
         problems.append("acceptedBatchSha256 in the result does not match the batch file")
-    fixture = FIXTURE_MARK in str(res["packId"]).upper()
+    return problems
+
+
+INDIVIDUAL_KIND = "individual-cumulative"
+INDIVIDUAL_PACK_PREFIX = "LBR-CONSOLIDATED-"
+INDIVIDUAL_RESULT_SCHEMA = "lake-brain-individual-review-result/v1"
+
+
+def _component_file(base_dir, rel, what):
+    """A component file must live under <batch dir>/review_batches/ (no path games) and exist."""
+    norm = os.path.normpath(rel)
+    if os.path.isabs(norm) or norm.startswith("..") or os.path.dirname(norm) != "review_batches":
+        raise PreseedError(f"{what}: component path {rel!r} is not review_batches/<file>")
+    path = os.path.join(base_dir, norm)
+    if not os.path.isfile(path):
+        raise PreseedError(f"{what}: component file not found: {path}")
+    return path
+
+
+def individual_cumulative_problems(batch, batch_path, res):
+    """The individually reviewed form (ingest_batch_review.py): batch == individually accepted UNION (sample batch MINUS individually
+    rejected / NEEDS REVIEW), every component file present with its recorded sha256, acceptedBatchSha256 mandatory."""
+    need = ("criteriaVersion", "verdict", "acceptedBatchCount", "acceptedBatchFile", "acceptedBatchSha256", "components", "rejectedIds", "heldBackLakes")
+    missing = [k for k in need if k not in res]
+    if missing:
+        raise PreseedError(f"binding_review_result.json (individual-cumulative) lacks field(s): {missing}")
+    problems = []
+    if res["criteriaVersion"] != "binding-review-v1":
+        problems.append(f"criteriaVersion {res['criteriaVersion']!r} != 'binding-review-v1'")
+    if res["verdict"] != "ACCEPTED_INDIVIDUALLY":
+        problems.append(f"review verdict is {res['verdict']!r}, not ACCEPTED_INDIVIDUALLY")
+    if res["acceptedBatchCount"] != len(batch):
+        problems.append(f"acceptedBatchCount {res['acceptedBatchCount']} != {len(batch)} ids in the batch file")
+    if res["acceptedBatchFile"] != "accepted_batch.json" or os.path.basename(batch_path) != "accepted_batch.json":
+        problems.append("acceptedBatchFile / file name is not accepted_batch.json")
+    if not re.fullmatch(r"[0-9a-f]{64}", str(res["acceptedBatchSha256"])):
+        problems.append("acceptedBatchSha256 is missing or not a sha256 (mandatory for an individually reviewed batch)")
+    elif res["acceptedBatchSha256"] != sha256_file(batch_path):
+        problems.append("acceptedBatchSha256 in the result does not match the batch file (the batch was edited)")
+    comps = res["components"]
+    if not isinstance(comps, list) or not comps:
+        raise PreseedError("individual-cumulative result has no components")
+    base = os.path.dirname(os.path.abspath(batch_path))
+    indiv, nonaccept, sample_ids, sample_rejected = set(), set(), set(), set()
+    n_indiv = 0
+    for c in comps:
+        kind = c.get("kind")
+        if kind == "individual":
+            n_indiv += 1
+            f = _component_file(base, c.get("resultFile", ""), "individual component")
+            if sha256_file(f) != c.get("resultSha256"):
+                problems.append(f"{c['resultFile']}: sha256 differs from the recorded one (the batch result file was changed)")
+                continue
+            d = load_json(f, "individual batch result")
+            if d.get("schema") != INDIVIDUAL_RESULT_SCHEMA or d.get("reviewKind") != "individual" or d.get("criteriaVersion") != "binding-review-v1":
+                problems.append(f"{c['resultFile']}: not an individual batch result of binding-review-v1")
+            if not str(d.get("packId", "")).startswith(INDIVIDUAL_PACK_PREFIX) or d.get("packId") != c.get("packId"):
+                problems.append(f"{c['resultFile']}: packId {d.get('packId')!r} is not the component's {INDIVIDUAL_PACK_PREFIX}* pack")
+            if not re.fullmatch(r"[0-9a-f]{64}", str(d.get("reviewCsvSha256"))):
+                problems.append(f"{c['resultFile']}: reviewCsvSha256 is not a sha256")
+            ids = d.get("acceptedIds")
+            if not isinstance(ids, list) or ids != sorted(set(ids)) or ids != c.get("acceptedIds"):
+                problems.append(f"{c['resultFile']}: acceptedIds are not a sorted unique list equal to the component's")
+                continue
+            indiv |= set(ids)
+            nonaccept |= set(d.get("rejectedIds") or []) | set(d.get("needsReviewIds") or [])
+        elif kind == "sample":
+            rf = _component_file(base, c.get("resultFile", ""), "sample component")
+            bf = _component_file(base, c.get("batchFile", ""), "sample component")
+            if sha256_file(rf) != c.get("resultSha256") or sha256_file(bf) != c.get("batchSha256"):
+                problems.append("sample component: a file differs from its recorded sha256")
+                continue
+            sr, sb = load_json(rf, "sample review result"), load_json(bf, "sample accepted batch")
+            mx = (sr.get("acceptRule") or {}).get("maxErrors")
+            if sr.get("verdict") != "ACCEPT_BATCH" or sr.get("ruleMet") is not True or sr.get("criteriaVersion") != "binding-review-v1":
+                problems.append("sample component is not an accepted binding-review-v1 sample batch")
+            if not isinstance(mx, int) or not isinstance(sr.get("rejected"), int) or sr["rejected"] > mx or sr.get("unsure") != 0 or sr.get("pending") != 0:
+                problems.append("sample component: rejects exceed the rule or rows are undecided")
+            if not str(sr.get("packId", "")).startswith("LBR-SAMPLE-"):
+                problems.append("sample component: packId is not an LBR-SAMPLE pack")
+            if not isinstance(sb, list) or sb != sorted(set(sb)) or sb != c.get("ids"):
+                problems.append("sample component: accepted batch is not a sorted unique list equal to the component's ids")
+                continue
+            sample_ids |= set(sb)
+            sample_rejected |= set(sr.get("rejectedIds") or [])
+        else:
+            problems.append(f"unknown component kind {kind!r}")
+    if n_indiv == 0:
+        problems.append("no individual component (this form exists for individually reviewed lakes)")
+    if indiv & nonaccept:
+        problems.append(f"lake(s) both accepted and rejected / needs-review in the component results: {sorted(indiv & nonaccept)[:5]}")
+    if indiv & sample_rejected:
+        problems.append(f"lake(s) individually accepted but rejected in the sample: {sorted(indiv & sample_rejected)[:5]}")
+    expected = indiv | (sample_ids - nonaccept)
+    stray = sorted(set(batch) - expected)
+    if stray:
+        problems.append(f"{len(stray)} id(s) are in no batch result (not individually accepted, not an accepted sample lake): {stray[:5]}")
+    lost = sorted(expected - set(batch))
+    if lost:
+        problems.append(f"{len(lost)} id(s) accepted in the batch results are missing from the batch file: {lost[:5]}")
+    return problems
+
+
+def validate_batch(batch_path, result_path, bindings_path, allow_fixture=False, gcs=False):
+    """Refuse anything that is not a batch as ingest_review_result.py writes it. Returns a dict describing the validated inputs."""
+    if not os.path.isfile(batch_path):
+        raise PreseedError(f"accepted batch not found: {batch_path}")
+    batch = load_json(batch_path, "accepted batch")
+    if not isinstance(batch, list) or not batch or not all(isinstance(x, str) and x.strip() and x == x.strip() for x in batch):
+        raise PreseedError("accepted batch must be a non-empty JSON list of lake id strings (ingest_review_result.py writes exactly that)")
+    if len(set(batch)) != len(batch):
+        raise PreseedError("accepted batch contains duplicate lake ids")
+    if batch != sorted(batch):
+        raise PreseedError("accepted batch is not sorted (ingest writes sorted(...)); it was edited or is not the ingest's output")
+    result_path = result_path or os.path.join(os.path.dirname(os.path.abspath(batch_path)), "binding_review_result.json")
+    if not os.path.isfile(result_path):
+        raise PreseedError(f"binding_review_result.json not found next to the batch: {result_path}")
+    res = load_json(result_path, "binding review result")
+    if not isinstance(res, dict):
+        raise PreseedError("binding_review_result.json is not an object")
+    individual = res.get("reviewKind") == INDIVIDUAL_KIND
+    if individual:
+        problems = individual_cumulative_problems(batch, batch_path, res)
+    else:
+        problems = sample_form_problems(batch, batch_path, res)
+    fixture = any(FIXTURE_MARK in str(x).upper() for x in [res.get("packId", "")] + [c.get("packId", "") for c in res.get("components", []) if isinstance(c, dict)])
     bdoc, brows = load_bindings(bindings_path)
     fixture = fixture or FIXTURE_MARK in str(bdoc.get("schema", "")).upper()
     if fixture and (not allow_fixture or gcs or os.path.abspath(bindings_path) == os.path.abspath(DEFAULT_BINDINGS)):
@@ -1216,7 +1333,7 @@ def validate_batch(batch_path, result_path, bindings_path, allow_fixture=False, 
     not_mv = sorted(l for l in batch if l in brows and brows[l].get("status") != "MACHINE_VERIFIED")
     if not_mv:
         problems.append(f"{len(not_mv)} id(s) are not MACHINE_VERIFIED in the bindings table: {not_mv[:5]}")
-    bad_strata = set(res["fullReviewStrata"])
+    bad_strata = set(res.get("fullReviewStrata") or [])
     in_bad = sorted(l for l in batch if l in brows and stratum_of(brows[l]) in bad_strata)
     if in_bad:
         problems.append(f"{len(in_bad)} id(s) are in a stratum that needs full review: {in_bad[:5]}")
