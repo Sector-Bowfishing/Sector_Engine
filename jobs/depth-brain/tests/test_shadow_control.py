@@ -207,3 +207,11 @@ def test_ops_read_path_has_no_depth_compute_entry_point():
                 if f.endswith((".swift", ".py")) and "depth_brain" in open(os.path.join(dp, f), errors="ignore").read():
                     hits.append(os.path.join(dp, f))
     assert hits == []
+
+
+def test_control_summary_carries_lifecycle_claims_and_execution():
+    w, _ = published_tree()
+    d = control(w)[0]["brains"]["depth"]
+    assert d["lifecycle"] == "SHADOW" and d["execution"]["type"] == "DEPENDENCY_DRIVEN" and d["execution"]["clock"] is False
+    assert {c["id"] for c in d["claims"]["claims"]} >= {"levelShift", "knownFlatClass", "effectiveZoneBounds"}
+    assert "score" not in d and d["scoreStatus"] == "NOT_ESTABLISHED"

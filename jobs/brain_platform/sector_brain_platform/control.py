@@ -117,7 +117,8 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
                          "research": reg.get("research"), "fleet": reg.get("fleet"), "lakeDependency": reg.get("lakeDependency"),
                          "orchestration": reg.get("orchestration"), "fieldValidation": reg.get("fieldValidation"),
                          "primaryBlocker": reg.get("primaryBlocker"), "statusBasis": reg.get("statusBasis"), "contractVersion": reg.get("contractVersion"),
-                         "breakdowns": reg.get("breakdowns"), "scope": reg.get("scope")}
+                         "breakdowns": reg.get("breakdowns"), "scope": reg.get("scope"),
+                         "lifecycle": reg.get("lifecycle"), "claims": reg.get("claims"), "execution": reg.get("execution")}
     return _strip({**shadow_fields,
         "brainId": brain_id, "slot": slot, "displayName": reg.get("displayName") or display,
         "status": reg.get("status"), "health": (health or {}).get("status") or reg.get("health"),

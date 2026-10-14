@@ -9,12 +9,24 @@ from __future__ import annotations
 from collections import Counter
 
 from . import contract as C
+import json
+import os
+
 from . import maturity as M
 
 
 def primary_blocker(fm: dict) -> str:
     return (f"datum coverage: {fm['plausibleBlockedByDatum']} lakes with an acceptable pool and a verified level binding lack a provable "
             f"datum relationship; only {fm['shiftPossible']} of {fm['totalLakes']} lakes have a defensible shift")
+
+
+def claim_summary() -> dict:
+    d = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "claim_levels.json")))
+    by_status: dict = {}
+    for c in d["claims"]:
+        by_status[c["status"]] = by_status.get(c["status"], 0) + 1
+    return {"modelVersion": d["modelVersion"], "byStatus": by_status,
+            "claims": [{"id": c["id"], "level": c["level"], "status": c["status"], "scope": c["scope"]} for c in d["claims"]]}
 
 
 def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = None, inputs: dict | None = None) -> dict:
@@ -46,6 +58,11 @@ def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = No
                      "note": "research-only rubric; Depth has no official score and no /scores/depth node"},
         "scoreStatus": "NOT_ESTABLISHED",
         "shadow": True,
+        "lifecycle": "SHADOW",                                    # Sector Brain Model v1 lifecycle (RESEARCH>PROFILED>SHADOW>CALIBRATION>PRODUCTION_READY>PRODUCTION)
+        "claims": claim_summary(),
+        "execution": {"type": "DEPENDENCY_DRIVEN", "clock": False, "trigger": "Lake Brain observation/reference/datum, manifest or Depth version fingerprint changed",
+                      "skipWhen": "input fingerprint unchanged", "maxStateAgeHours": {"evidenceStale": C.LEVEL_FRESH_HOURS, "unavailable": C.LEVEL_MAX_AGE_HOURS},
+                      "status": "manual shadow runs only; orchestration prepared and gated off"},
         "primaryBlocker": primary_blocker(fm),
         "lakeDependency": {"liveLakeStates": live_lake_states, "defensibleShiftLakes": fm["shiftPossible"], "awaitingLakeBrain": awaiting,
                            "note": "Lake Brain owns the level; Depth consumes states/lake"},
