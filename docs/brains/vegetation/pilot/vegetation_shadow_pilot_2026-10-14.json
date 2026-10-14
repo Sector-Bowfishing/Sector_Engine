@@ -1,0 +1,740 @@
+{
+ "bytesFetched": 2238892,
+ "cpuSeconds": 1.85,
+ "generatedAt": "2026-10-14T12:00:00+00:00",
+ "lakes": [
+  {
+   "areaKm2": 266.822,
+   "bytes": 1236337,
+   "lakeId": "Guntersville|AL",
+   "passes": [
+    {
+     "accepted": true,
+     "date": "2026-08-21",
+     "grassPct": 16.8,
+     "knownPct": 50.6,
+     "observedGrassPct": 10.3,
+     "toBankPct": 6.5
+    },
+    {
+     "accepted": true,
+     "date": "2026-08-28",
+     "grassPct": 22.9,
+     "knownPct": 64.5,
+     "observedGrassPct": 14.7,
+     "toBankPct": 8.2
+    },
+    {
+     "accepted": true,
+     "date": "2026-08-31",
+     "grassPct": 21.9,
+     "knownPct": 52.7,
+     "observedGrassPct": 14.2,
+     "toBankPct": 7.7
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-03",
+     "grassPct": 22.6,
+     "knownPct": 60.9,
+     "observedGrassPct": 14.7,
+     "toBankPct": 7.9
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-05",
+     "grassPct": 25.5,
+     "knownPct": 73.3,
+     "observedGrassPct": 16.7,
+     "toBankPct": 8.8
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-10",
+     "grassPct": 23.0,
+     "knownPct": 56.8,
+     "observedGrassPct": 14.9,
+     "toBankPct": 8.1
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-13",
+     "grassPct": 22.8,
+     "knownPct": 62.1,
+     "observedGrassPct": 14.8,
+     "toBankPct": 8.0
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-15",
+     "grassPct": 25.0,
+     "knownPct": 69.3,
+     "observedGrassPct": 16.3,
+     "toBankPct": 8.7
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-17",
+     "grassPct": 25.4,
+     "knownPct": 72.8,
+     "observedGrassPct": 16.6,
+     "toBankPct": 8.8
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-18",
+     "grassPct": 23.9,
+     "knownPct": 64.3,
+     "observedGrassPct": 15.6,
+     "toBankPct": 8.3
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-20",
+     "grassPct": 23.9,
+     "knownPct": 54.9,
+     "observedGrassPct": 15.3,
+     "toBankPct": 8.6
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-28",
+     "grassPct": 23.6,
+     "knownPct": 62.3,
+     "observedGrassPct": 15.3,
+     "toBankPct": 8.3
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-30",
+     "grassPct": 22.7,
+     "knownPct": 53.4,
+     "observedGrassPct": 14.6,
+     "toBankPct": 8.1
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-05",
+     "grassPct": 22.9,
+     "knownPct": 50.2,
+     "observedGrassPct": 14.6,
+     "toBankPct": 8.3
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-07",
+     "grassPct": 25.0,
+     "knownPct": 74.1,
+     "observedGrassPct": 16.3,
+     "toBankPct": 8.7
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-08",
+     "grassPct": 23.1,
+     "knownPct": 68.3,
+     "observedGrassPct": 15.0,
+     "toBankPct": 8.1
+    }
+   ],
+   "passesFetched": 16
+  },
+  {
+   "areaKm2": 96.636,
+   "bytes": 13227,
+   "lakeId": "Istokpoga|FL",
+   "passes": [
+    {
+     "accepted": true,
+     "date": "2026-09-14",
+     "grassPct": 8.1,
+     "knownPct": 68.5,
+     "observedGrassPct": 6.1,
+     "toBankPct": 2.0
+    }
+   ],
+   "passesFetched": 1
+  },
+  {
+   "areaKm2": 218.708,
+   "bytes": 155327,
+   "lakeId": "Lake Hartwell|SC",
+   "passes": [
+    {
+     "accepted": false,
+     "date": "2026-09-17",
+     "grassPct": 5.4,
+     "knownPct": 32.0,
+     "observedGrassPct": 2.4,
+     "toBankPct": 3.0
+    },
+    {
+     "accepted": false,
+     "date": "2026-09-27",
+     "grassPct": 6.4,
+     "knownPct": 34.1,
+     "observedGrassPct": 3.0,
+     "toBankPct": 3.4
+    },
+    {
+     "accepted": false,
+     "date": "2026-10-07",
+     "grassPct": 6.5,
+     "knownPct": 34.0,
+     "observedGrassPct": 3.2,
+     "toBankPct": 3.3
+    },
+    {
+     "accepted": false,
+     "date": "2026-10-12",
+     "grassPct": 6.5,
+     "knownPct": 34.2,
+     "observedGrassPct": 3.2,
+     "toBankPct": 3.3
+    }
+   ],
+   "passesFetched": 4
+  },
+  {
+   "areaKm2": 103.086,
+   "bytes": 62032,
+   "lakeId": "Lake Pepin|MN",
+   "passes": [
+    {
+     "accepted": true,
+     "date": "2026-09-09",
+     "grassPct": 5.6,
+     "knownPct": 83.7,
+     "observedGrassPct": 3.7,
+     "toBankPct": 1.9
+    },
+    {
+     "accepted": false,
+     "date": "2026-09-22",
+     "grassPct": 3.9,
+     "knownPct": 27.7,
+     "observedGrassPct": 2.6,
+     "toBankPct": 1.3
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-02",
+     "grassPct": 4.4,
+     "knownPct": 83.9,
+     "observedGrassPct": 2.7,
+     "toBankPct": 1.7
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-07",
+     "grassPct": 4.4,
+     "knownPct": 82.9,
+     "observedGrassPct": 2.8,
+     "toBankPct": 1.6
+    }
+   ],
+   "passesFetched": 4
+  },
+  {
+   "areaKm2": 418.095,
+   "bytes": 176829,
+   "lakeId": "Leech Lake|MN",
+   "passes": [
+    {
+     "accepted": true,
+     "date": "2026-09-22",
+     "grassPct": 3.0,
+     "knownPct": 89.7,
+     "observedGrassPct": 2.1,
+     "toBankPct": 0.9
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-30",
+     "grassPct": 3.6,
+     "knownPct": 88.8,
+     "observedGrassPct": 2.5,
+     "toBankPct": 1.1
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-05",
+     "grassPct": 2.5,
+     "knownPct": 58.9,
+     "observedGrassPct": 1.6,
+     "toBankPct": 0.9
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-10",
+     "grassPct": 2.2,
+     "knownPct": 86.3,
+     "observedGrassPct": 1.4,
+     "toBankPct": 0.8
+    }
+   ],
+   "passesFetched": 4
+  },
+  {
+   "areaKm2": 1376.08,
+   "bytes": 103889,
+   "lakeId": "Okeechobee|FL",
+   "passes": [
+    {
+     "accepted": true,
+     "date": "2026-09-26",
+     "grassPct": 2.6,
+     "knownPct": 96.3,
+     "observedGrassPct": 2.0,
+     "toBankPct": 0.6
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-04",
+     "grassPct": 2.2,
+     "knownPct": 63.3,
+     "observedGrassPct": 1.7,
+     "toBankPct": 0.5
+    }
+   ],
+   "passesFetched": 2
+  },
+  {
+   "areaKm2": 453.731,
+   "bytes": 210742,
+   "lakeId": "Sam Rayburn Reservoir|TX",
+   "passes": [
+    {
+     "accepted": true,
+     "date": "2026-09-19",
+     "grassPct": 16.6,
+     "knownPct": 69.3,
+     "observedGrassPct": 11.4,
+     "toBankPct": 5.2
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-29",
+     "grassPct": 17.8,
+     "knownPct": 56.7,
+     "observedGrassPct": 12.3,
+     "toBankPct": 5.5
+    },
+    {
+     "accepted": true,
+     "date": "2026-10-06",
+     "grassPct": 21.1,
+     "knownPct": 76.4,
+     "observedGrassPct": 15.0,
+     "toBankPct": 6.1
+    }
+   ],
+   "passesFetched": 3
+  },
+  {
+   "areaKm2": 671.678,
+   "bytes": 280509,
+   "lakeId": "Toledo Bend Reservoir|TX",
+   "passes": [
+    {
+     "accepted": true,
+     "date": "2026-09-19",
+     "grassPct": 8.4,
+     "knownPct": 74.7,
+     "observedGrassPct": 5.0,
+     "toBankPct": 3.4
+    },
+    {
+     "accepted": true,
+     "date": "2026-09-29",
+     "grassPct": 7.1,
+     "knownPct": 64.5,
+     "observedGrassPct": 4.1,
+     "toBankPct": 3.0
+    },
+    {
+     "accepted": false,
+     "date": "2026-10-06",
+     "grassPct": 7.9,
+     "knownPct": 41.9,
+     "observedGrassPct": 4.7,
+     "toBankPct": 3.2
+    }
+   ],
+   "passesFetched": 3
+  }
+ ],
+ "patchesAfterRun1": 11,
+ "patchesAfterRun2": 14,
+ "run1": {
+  "evaluated": 8,
+  "health": "HEALTHY",
+  "observed": 8,
+  "skippedUnchanged": 0,
+  "writes": 11
+ },
+ "run2": {
+  "evaluated": 8,
+  "health": "HEALTHY",
+  "observed": 8,
+  "skippedUnchanged": 8,
+  "writes": 3
+ },
+ "stateBytesTotal": 54050,
+ "states": {
+  "Guntersville|AL": {
+   "acceptedScenes": 8,
+   "ageDays": 14,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.45,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_PERSISTENCE",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "b0c8d18351153a7c",
+   "lowCoverageFallback": false,
+   "notes": [
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 40.824,
+   "observedAt": "2026-09-30",
+   "persistence": "MEDIAN_OF_ACCEPTED",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.1,
+    "UNREADABLE_WATER": 0.275
+   },
+   "sceneIds": [
+    "S2C_T16SEC_20261008T163310_L2A",
+    "S2C_T16SED_20261008T163310_L2A",
+    "S2C_T16SFD_20261008T163310_L2A",
+    "S2A_T16SEC_20261007T163036_L2A",
+    "S2A_T16SFC_20261007T163036_L2A",
+    "S2A_T16SED_20261007T163036_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 7392,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  },
+  "Istokpoga|FL": {
+   "acceptedScenes": 1,
+   "ageDays": 30,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.42,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_ACCEPTED_PASS",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "16d8ffda7e583390",
+   "lowCoverageFallback": false,
+   "notes": [
+    "only 1 accepted pass(es); persistence needs 3",
+    "burst check needs >= 3 accepted passes; this pass could not be checked against its neighbours",
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 5.895,
+   "observedAt": "2026-09-14",
+   "persistence": "INSUFFICIENT",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.259,
+    "UNREADABLE_WATER": 0.056
+   },
+   "sceneIds": [
+    "S2B_T17RML_20260914T161328_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 6573,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  },
+  "Lake Hartwell|SC": {
+   "acceptedScenes": 1,
+   "ageDays": 2,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.27,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_ACCEPTED_PASS",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "be0cd8b80e402638",
+   "lowCoverageFallback": true,
+   "notes": [
+    "fallback pass: known share between 25 % and 50 %; presence may be understated",
+    "only 1 accepted pass(es); persistence needs 3",
+    "burst check needs >= 3 accepted passes; this pass could not be checked against its neighbours",
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 6.999,
+   "observedAt": "2026-10-12",
+   "persistence": "INSUFFICIENT",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.002,
+    "UNREADABLE_WATER": 0.656
+   },
+   "sceneIds": [
+    "S2C_T17SKU_20261012T161216_L2A",
+    "S2C_T17SLU_20261012T161216_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 6711,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  },
+  "Lake Pepin|MN": {
+   "acceptedScenes": 2,
+   "ageDays": 7,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.45,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_ACCEPTED_PASS",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "25f1827f30ecdb35",
+   "lowCoverageFallback": false,
+   "notes": [
+    "only 2 accepted pass(es); persistence needs 3",
+    "burst check needs >= 3 accepted passes; this pass could not be checked against its neighbours",
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 2.886,
+   "observedAt": "2026-10-07",
+   "persistence": "INSUFFICIENT",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.006,
+    "UNREADABLE_WATER": 0.165
+   },
+   "sceneIds": [
+    "S2C_T15TWK_20261007T170710_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 6615,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  },
+  "Leech Lake|MN": {
+   "acceptedScenes": 4,
+   "ageDays": 9,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.45,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_PERSISTENCE",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "6a2b6261dae4f614",
+   "lowCoverageFallback": false,
+   "notes": [
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 8.78,
+   "observedAt": "2026-10-05",
+   "persistence": "MEDIAN_OF_ACCEPTED",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.085,
+    "UNREADABLE_WATER": 0.105
+   },
+   "sceneIds": [
+    "S2C_T15TUN_20261010T171726_L2A",
+    "S2C_T15TVN_20261010T171726_L2A",
+    "S2A_T15TUN_20261005T172719_L2A",
+    "S2A_T15TVN_20261005T172719_L2A",
+    "S2C_T15TUN_20260930T171530_L2A",
+    "S2C_T15TVN_20260930T171530_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 6708,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  },
+  "Okeechobee|FL": {
+   "acceptedScenes": 2,
+   "ageDays": 10,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.37,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_ACCEPTED_PASS",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "cde0f68eadf0e6c1",
+   "lowCoverageFallback": false,
+   "notes": [
+    "only 2 accepted pass(es); persistence needs 3",
+    "burst check needs >= 3 accepted passes; this pass could not be checked against its neighbours",
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 23.393,
+   "observedAt": "2026-10-04",
+   "persistence": "INSUFFICIENT",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.344,
+    "UNREADABLE_WATER": 0.024
+   },
+   "sceneIds": [
+    "S2B_T17RMK_20261004T161038_L2A",
+    "S2B_T17RNK_20261004T161038_L2A",
+    "S2B_T17RML_20261004T161038_L2A",
+    "S2B_T17RNL_20261004T161038_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 6708,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  },
+  "Sam Rayburn Reservoir|TX": {
+   "acceptedScenes": 3,
+   "ageDays": 15,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.45,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_PERSISTENCE",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "6349019a094fef10",
+   "lowCoverageFallback": false,
+   "notes": [
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 55.809,
+   "observedAt": "2026-09-29",
+   "persistence": "MEDIAN_OF_ACCEPTED",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.148,
+    "UNREADABLE_WATER": 0.178
+   },
+   "sceneIds": [
+    "S2A_T15RUQ_20261006T170433_L2A",
+    "S2A_T15RVQ_20261006T170433_L2A",
+    "S2B_T15RUQ_20260929T170401_L2A",
+    "S2B_T15RVQ_20260929T170401_L2A",
+    "S2B_T15RUQ_20260919T165749_L2A",
+    "S2B_T15RVQ_20260919T165749_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 6655,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  },
+  "Toledo Bend Reservoir|TX": {
+   "acceptedScenes": 2,
+   "ageDays": 15,
+   "claimMaturity": {
+    "agencyVegetationObservation": "NOT_ASSESSED",
+    "coverageDensity": "NOT_ASSESSED",
+    "geometryTier": "VERIFIED",
+    "observationAge": "VERIFIED",
+    "potentialHabitat": "NOT_ASSESSED",
+    "seasonalState": "NOT_VALIDATED",
+    "submergedVegetation": "NOT_OBSERVABLE",
+    "surfaceVegetationPresence": "NOT_VALIDATED",
+    "surfaceVegetationType": "NOT_ASSESSED"
+   },
+   "confidence": "LOW",
+   "confidenceScore": 0.41,
+   "coverageClass": "NOT_CALIBRATED",
+   "evidenceKind": "SATELLITE_ACCEPTED_PASS",
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "headline": "Likely surface vegetation",
+   "inputFingerprint": "1eff0479002f4914",
+   "lowCoverageFallback": false,
+   "notes": [
+    "only 2 accepted pass(es); persistence needs 3",
+    "burst check needs >= 3 accepted passes; this pass could not be checked against its neighbours",
+    "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+   ],
+   "observedAreaKm2": 27.539,
+   "observedAt": "2026-09-29",
+   "persistence": "INSUFFICIENT",
+   "refusalShares": {
+    "CLOUD_OR_HAZE": 0.145,
+    "UNREADABLE_WATER": 0.21
+   },
+   "sceneIds": [
+    "S2B_T15RUQ_20260929T170401_L2A",
+    "S2B_T15RVQ_20260929T170401_L2A",
+    "S2B_T15SUR_20260929T170401_L2A",
+    "S2B_T15SVR_20260929T170401_L2A"
+   ],
+   "source": "clarity-shared-pass",
+   "stateBytes": 6688,
+   "status": "PRESENT",
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+  }
+ },
+ "wallSeconds": 194.1
+}

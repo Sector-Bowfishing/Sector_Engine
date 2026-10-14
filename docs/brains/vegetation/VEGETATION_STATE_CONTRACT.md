@@ -40,7 +40,7 @@ Schema id `sector-brain-vegetation-state-v1` · slot `vegetation` (`/lakes/{k}/s
 `kind` is a platform state kind (`observed` / `unavailable`). `broadType` never takes `FLOATING_LEAF` / `FLOATING_MAT` / `EMERGENT` in V1 because no validated type classifier exists; the closed vocabulary reserves them for later.
 
 ## 3. Refusal / quality reasons (UNKNOWN, never "no vegetation")
-`CLOUD, SHADOW, HAZE, GLARE, DARK_WATER, SHORE_ADJACENT, INSUFFICIENT_VALID_PIXELS, SCENE_TOO_OLD, NO_SCENE, ICE_OR_SNOW, NO_GEOMETRY, GEOMETRY_LOW, TOO_NARROW, BLOOM_AMBIGUOUS, PASS_NOT_ACCEPTED, BOTTOM_REFLECTANCE`. Definitions: `contract.REFUSAL_DOC`. `BLOOM_AMBIGUOUS` and `BOTTOM_REFLECTANCE` are reserved (no detector yet) and listed as limitations.
+`CLOUD, SHADOW, HAZE, GLARE, DARK_WATER, SHORE_ADJACENT, INSUFFICIENT_VALID_PIXELS, SCENE_TOO_OLD, NO_SCENE, ICE_OR_SNOW, NO_GEOMETRY, GEOMETRY_LOW, TOO_NARROW, BLOOM_AMBIGUOUS, PASS_NOT_ACCEPTED, BOTTOM_REFLECTANCE`. Definitions: `contract.REFUSAL_DOC`. `BLOOM_AMBIGUOUS` and `BOTTOM_REFLECTANCE` are reserved (no detector yet) and listed as limitations. `CLOUD_OR_HAZE` and `UNREADABLE_WATER` are the shared-Clarity-pass refusals (Clarity bundles cloud+haze, PNG code 2; bank band/docks/narrow creeks, code 1). A shared-evidence state names its source (`surfaceVegetation.source.sourceId = clarity-shared-pass`, provenance `sourceType: sharedEvidence`) and reports `observedAreaKm2` (bed-to-bank strip removed).
 
 ## 4. Product language (closed set; `language.headline`)
 | Situation | Words |

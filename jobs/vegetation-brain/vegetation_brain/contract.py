@@ -39,7 +39,7 @@ VALIDATION_STATES = ("NOT_VALIDATED", "RESEARCH", "CALIBRATION", "PARTIAL", "VAL
 # Reasons a cell/lake is UNKNOWN rather than "no vegetation". Never silently dropped.
 REFUSALS = ("CLOUD", "SHADOW", "HAZE", "GLARE", "DARK_WATER", "SHORE_ADJACENT", "INSUFFICIENT_VALID_PIXELS",
             "SCENE_TOO_OLD", "NO_SCENE", "ICE_OR_SNOW", "NO_GEOMETRY", "GEOMETRY_LOW", "TOO_NARROW", "BLOOM_AMBIGUOUS",
-            "PASS_NOT_ACCEPTED", "BOTTOM_REFLECTANCE")
+            "PASS_NOT_ACCEPTED", "BOTTOM_REFLECTANCE", "CLOUD_OR_HAZE", "UNREADABLE_WATER")
 REFUSAL_DOC = {
     "CLOUD": "cloud or cirrus within the cloud standoff", "SHADOW": "cloud shadow",
     "HAZE": "bright open water (SWIR > HAZE_SWIR) that is not a plant spectrum: haze / thin cloud",
@@ -51,6 +51,8 @@ REFUSAL_DOC = {
     "ICE_OR_SNOW": "ice/snow class", "NO_GEOMETRY": "registry geometry is null", "GEOMETRY_LOW": "registry geometry confidence LOW",
     "TOO_NARROW": "arm narrower than the observer can resolve", "BLOOM_AMBIGUOUS": "plant spectrum cannot be separated from an algal bloom",
     "PASS_NOT_ACCEPTED": "no scene passed the pass-acceptance rule", "BOTTOM_REFLECTANCE": "shallow bright bottom can mimic a plant spectrum",
+    "CLOUD_OR_HAZE": "shared Clarity pass: cloud or haze hid the water (Clarity bundles the two; code 2)",
+    "UNREADABLE_WATER": "shared Clarity pass: bank band, beside bridges/docks, or narrow creek (code 1)",
 }
 
 # ---------------------------------------------------------------- claim-level maturity (Sector Brain Model v1, directive 2026-10-14)
@@ -109,6 +111,12 @@ OBSERVATION_FRESH_DAYS = 14
 OBSERVATION_MAX_AGE_DAYS = 45
 FORBIDDEN_COMPOSITES = ("max", "second_highest", "votes_ge_2")   # research: precision 0.21 - 0.40; max composites are forbidden in V1
 MIN_LAKE_AREA_KM2 = 0.5
+
+# Shared-evidence consumption (one provider ingestion path, many specialist consumers)
+SHARED_SOURCE_ID = "clarity-shared-pass"
+SHARED_MIN_AREA_KM2 = 0.01              # >= 1 ha of observed grass (after removing the bed-to-bank strip) before a lake is PRESENT
+SHARED_BURST_FACTOR = 5.0
+SHARED_BURST_MIN_PCT = 5.0
 
 # Observability tiers recomputed from the canonical registry (docs/brains/vegetation/VEGETATION_FLEET_OBSERVABILITY.md)
 AREA_HIGH_KM2 = 5.0

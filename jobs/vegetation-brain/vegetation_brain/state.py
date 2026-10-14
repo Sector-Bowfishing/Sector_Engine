@@ -122,6 +122,7 @@ def confidence(kind: str, validation_state: str, *, coverage: float, geometry_co
 def input_fingerprint(cand: dict, obs, ctx: dict, manifest_version: str) -> str:
     key = [cand.get("lakeId"), cand.get("tier"), cand.get("geometryConfidence"), manifest_version, C.BRAIN_VERSION,
            getattr(obs, "scene_ids", None), getattr(obs, "evidence_kind", None), getattr(obs, "plant_cells", None),
+           getattr(obs, "observed_share_pct", None), str(getattr(obs, "observed_on", None)),
            sorted(((ctx or {}).get("wind") or {}).items()), ((ctx or {}).get("clarity") or {}).get("secchiM"),
            ((ctx or {}).get("depth") or {}).get("tier")]
     return hashlib.sha256(json.dumps(key, sort_keys=True, default=str).encode()).hexdigest()[:16]
@@ -182,7 +183,9 @@ def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = Non
         "interiorCells": getattr(obs, "interior_cells", None) if obs is not None else None,
         "broadType": "SURFACE_REACHING_MIXED" if pres == "PRESENT" else "UNKNOWN", "typeBasis": "NOT_CLASSIFIED",
         "observedAt": f"{observed_on.isoformat()}" if observed_on else None, "ageDays": age_days,
-        "source": {"collection": (ctx.get("collection") or "sentinel-2-c1-l2a"), "sceneIds": list(getattr(obs, "scene_ids", []) or [])},
+        "source": {"collection": (ctx.get("collection") or "sentinel-2-c1-l2a"), "sceneIds": list(getattr(obs, "scene_ids", []) or []),
+                   "sourceId": getattr(obs, "source_id", "vegetation-observer")},
+        "observedAreaKm2": (round(obs.observed_area_km2, 3) if getattr(obs, "observed_area_km2", None) is not None else None),
         "confidence": conf,
     }
     surface = {k: v for k, v in surface.items() if v is not None or k in ("observedAt", "ageDays")}
@@ -224,7 +227,9 @@ def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = Non
     }
     fp = input_fingerprint(cand, obs, ctx, manifest_version)
     state["provenance"] = {"brainId": C.BRAIN_ID, "brainVersion": brain_version, "modelVersion": C.MODEL_ID, "generatedAt": now_iso,
-                           "sources": [{"sourceType": "satellite", "sourceId": "sentinel-2-l2a", "lastObservationAt": surface.get("observedAt")},
+                           "sources": [{"sourceType": ("sharedEvidence" if getattr(obs, "source_id", None) == C.SHARED_SOURCE_ID else "satellite"),
+                                        "sourceId": (C.SHARED_SOURCE_ID if getattr(obs, "source_id", None) == C.SHARED_SOURCE_ID else "sentinel-2-l2a"),
+                                        "lastObservationAt": surface.get("observedAt")},
                                        {"sourceType": "geometry", "sourceId": "sector-lake-registry", "version": cand.get("geometryVersion")}],
                            "qualityFlags": sorted(set((cand.get("reasons") or []) + ([] if pres != "UNKNOWN" else ["noReliableObservation"]))),
                            "validationRef": "/validation/vegetation", "inputFingerprint": fp, "readiness": None}

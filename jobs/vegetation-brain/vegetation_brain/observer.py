@@ -458,6 +458,8 @@ def _from_persistence(acc: list) -> LakeObservation:
 # ------------------------------------------------------------------------------------- lake-level presence
 def presence(obs: LakeObservation) -> tuple[str, str]:
     """-> (PRESENT | NOT_OBSERVED | UNKNOWN, reason). NOT_OBSERVED requires a genuine look, never a refusal."""
+    if getattr(obs, "shared_presence", None):
+        return obs.shared_presence                    # shared Clarity-pass evidence decides its own presence (shared.observe_shared)
     if obs.evidence_kind == "NONE" or obs.cells is None:
         return "UNKNOWN", next(iter(obs.refusal_shares), "NO_SCENE")
     if obs.plant_cells >= MIN_PLANT_CELLS:
