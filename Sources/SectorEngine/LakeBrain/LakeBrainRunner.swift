@@ -21,13 +21,17 @@ public struct LakeBrainRunOptions: Sendable {
     public var scope: Scope = .pilots
     /// A subset of lakes: per-lake nodes only (registry/health/sources are left to full runs).
     public var lakeIds: [String]? = nil
+    /// Lakes evaluated at once. Clamped to 1...`BrainPlatform.maxConcurrency` when used (0 or a negative value used to
+    /// spin the batch loop forever); read `LakeBrainRunResult.concurrency` for the value that was applied.
     public var concurrency: Int = 3
     /// Ignore plan() and recompute every lake in scope.
     public var force = false
     /// Pull full operator history (decades of CWMS daily) instead of the recent tail.
     public var backfill = false
     public var processingVersion: String? = nil
-    /// Prospective prediction ledger (docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md). On by default; never affects the publish.
+    /// Prospective prediction ledger (docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md). ON BY DEFAULT and in every production
+    /// path; never affects the publish. Only the explicit `--no-ledger` job flag (dry runs, debug, replay, local tests) turns it off,
+    /// and the run then records `ledger: disabled` (`LakeBrainRunResult.ledgerStatus`).
     public var ledgerEnabled = true
     /// Where the ledger object goes. Default: a live run writes to the history archive; a dry run (local RTDB store)
     /// writes under `<dry-run dir>/_ledger` and never to GCS.
@@ -65,6 +69,10 @@ public struct LakeBrainRunResult: Sendable {
     public var ledgerObject: String? = nil
     public var ledgerRecords = 0
     public var ledgerWarning: String? = nil
+    /// "enabled" or "disabled" (only `--no-ledger` / `ledgerEnabled = false` disables). Printed by the job as `ledger: …`.
+    public var ledgerStatus = "enabled"
+    /// The lake concurrency actually applied (after clamping).
+    public var concurrency = 0
     public var ok: Bool { writeError == nil && health != "FAILED" }
 }
 
@@ -104,6 +112,26 @@ public struct LakeBrainRegistryEntry: Codable, Equatable, Sendable {
     public var healthRule: String
     public var orchestration: LakeBrainDescriptor
     public var fleetScope: String
+    /// Prospective prediction-ledger status (Ops-visible validation clock). `startedAt` is the fixed start of the prospective clock.
+    public var predictionLedger: PredictionLedgerStatus? = nil
+}
+
+/// The prospective prediction ledger as Sector Ops should see it. Validation stays NOT_VALIDATED regardless of this.
+public struct PredictionLedgerStatus: Codable, Equatable, Sendable {
+    public var status: String
+    public var startedAt: String
+    public var lastObject: String?
+    public var lastRecords: Int?
+    public var warning: String?
+    public var rulesVersion: String
+    public var note: String
+    /// 2026-10-13T18:53:14Z: first object `predictions/2026/10/13/185314Z-740761e4e50a.jsonl` (docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md).
+    public static let startedAt = "2026-10-13T18:53:14Z"
+    public static func make(status: String, lastObject: String?, lastRecords: Int, warning: String?) -> PredictionLedgerStatus {
+        PredictionLedgerStatus(status: status, startedAt: startedAt, lastObject: lastObject, lastRecords: lastObject == nil ? nil : lastRecords,
+                               warning: warning, rulesVersion: LakeBrainSpec.modelVersion,
+                               note: "Prospective evidence only. Validation stays NOT_VALIDATED until pre-registered scoring of logged predictions supports a change.")
+    }
 }
 
 public enum LakeBrainRunner {
@@ -159,7 +187,7 @@ public enum LakeBrainRunner {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
                         if let d = await feeds.daily(h, since: nil, now: now, timeZone: tz) { fresh += d } else { errors.append("history: TVA operating guide unavailable") }
-                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily:
+                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily, .twdbDaily:
                         // Backfill (or an empty archive) pulls the whole record; otherwise the last 21 days.
                         let since: String? = (options.backfill || existing.isEmpty) ? nil
                             : existing.last.map { _ in LakeLevelCalendar.dayString(now.addingTimeInterval(-21 * 86_400), timeZone: tz) }
@@ -173,12 +201,14 @@ public enum LakeBrainRunner {
                     do { try await archive.write(LakeDailyHistory.path(lake.id), LakeDailyHistory.encode(merged), contentType: "text/csv"); historyWritten = true }
                     catch { errors.append("history write: \(error)") }
                 }
-                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today, poolBasisIsFullPool: lake.poolBasis == .fullPool)
+                // Baseline: the stored artifact named by baselines/{key}/latest.json, recomputed at most weekly or when an input changes
+                // (LakeBaselineStore). No archive, or a missing/corrupt pointer: build from the merged history, as before.
+                let ensured = await LakeBaselineStore.ensure(lakeId: lake.id, merged: merged, today: today,
+                                                              poolBasisIsFullPool: lake.poolBasis == .fullPool, archive: archive,
+                                                              now: now, forceRecompute: options.backfill)
+                let b = ensured.baseline
                 baseline = b
-                if let archive, b.status != .none, (try? await archive.read(LakeBaselineBuilder.path(b))) == nil {
-                    do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }
-                    catch { errors.append("baseline write: \(error)") }
-                }
+                errors += ensured.errors
                 state = LakeLevelClassifier.evaluate(LakeLevelInputs(
                     lakeId: lake.id, binding: binding, capabilityIfUnbound: binding.capability,
                     fullPoolFt: lake.fullPoolFt, poolBasisIsFullPool: lake.poolBasis == .fullPool,
@@ -240,6 +270,9 @@ public enum LakeBrainRunner {
                            now: Date = Date()) async -> LakeBrainRunResult {
         let t0 = Date()
         var result = LakeBrainRunResult()
+        result.ledgerStatus = options.ledgerEnabled ? "enabled" : "disabled"
+        let width = BrainPlatform.clampConcurrency(options.concurrency)
+        result.concurrency = width
         let ids = LakeDirectory.all.map(\.id)
         let collisions = BrainPlatform.keyCollisions(ids)
         guard collisions.isEmpty else {
@@ -278,7 +311,7 @@ public enum LakeBrainRunner {
         var out: [LakeBrainLakeResult] = []
         var i = 0
         while i < lakes.count {
-            let batch = lakes[i..<min(i + max(1, options.concurrency), lakes.count)]
+            let batch = lakes[i..<min(i + width, lakes.count)]
             await withTaskGroup(of: LakeBrainLakeResult.self) { g in
                 for lake in batch {
                     g.addTask {
@@ -297,7 +330,7 @@ public enum LakeBrainRunner {
                 }
                 for await x in g { out.append(x) }
             }
-            i += options.concurrency
+            i += width
         }
         out.sort { $0.lakeId < $1.lakeId }
         result.lakes = out
@@ -472,6 +505,8 @@ public enum LakeBrainRunner {
             orchestration: .current,
             fleetScope: options.scope.rawValue + (presence == nil ? " (no presence bundle)" : ""))
         entry.platform = BrainPlatformRef.current
+        entry.predictionLedger = PredictionLedgerStatus.make(status: result.ledgerStatus, lastObject: result.ledgerObject,
+                                                              lastRecords: result.ledgerRecords, warning: result.ledgerWarning)
         entry.stalenessModel = "TIME"
         entry.dependsOn = []
         entry.schedule = ["cadence": "manual (on demand; no Lake-specific cron — the Orchestrator will own cadence)", "running": "false"]
@@ -507,6 +542,7 @@ public enum LakeBrainRunner {
             ("usace-access2water", .a2w, "USACE Access2Water", "reservoir-elevation", "latest pool elevation + 24 h change and operator levels (one listing per district)"),
             ("usbr-rise", .rise, "USBR RISE", "reservoir-elevation", "daily lake/reservoir elevation (about 48 h latency; 0.0 placeholders dropped)"),
             ("nws-nwps", .nwps, "NWS NWPS", "lake-surface-elevation", "hourly pool elevation of NWS gauges (HP pe codes)"),
+            ("twdb-water-data-texas", .twdb, "TWDB Water Data for Texas", "reservoir-elevation", "estimated daily average reservoir elevation of Texas lakes (a relay of USGS / USACE / USBR / IBWC / LCRA gauges; the file declares its datum)"),
         ]
         var out: [String: (BrainDataSourceStatus, BrainSourceHealth)] = [:]
         for d in defs {

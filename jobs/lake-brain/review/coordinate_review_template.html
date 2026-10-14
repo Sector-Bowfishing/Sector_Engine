@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  :root { --bg:#f4f6f8; --card:#fff; --ink:#1b2430; --mute:#5b6675; --line:#d9dfe6; --blue:#1d5fbf;
+          --green:#157a3a; --greenbg:#e3f5ea; --red:#b3261e; --redbg:#fde8e6; --amber:#9a6200; --amberbg:#fff3d6; --grey:#6b7480; --greybg:#eceff3; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  header.top { position:sticky; top:0; z-index:20; background:#fff; border-bottom:2px solid var(--line); box-shadow:0 2px 6px rgba(0,0,0,.06); }
+  .bar { max-width:1180px; margin:0 auto; padding:10px 16px; }
+  .bar h1 { font-size:17px; margin:0 0 6px; }
+  .progress { height:12px; background:var(--greybg); border-radius:6px; overflow:hidden; display:flex; }
+  .progress .a { background:#2e9e5b; } .progress .k { background:#5b7fb8; } .progress .u { background:#e0a400; }
+  .stats { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:center; margin-top:6px; font-size:14px; }
+  .stats b { font-size:16px; }
+  .verdict { margin-top:8px; padding:8px 12px; border-radius:8px; font-weight:600; }
+  .verdict.green { background:var(--greenbg); color:var(--green); border:1px solid #9bd5b1; }
+  .verdict.amber { background:var(--amberbg); color:var(--amber); border:1px solid #ecce85; }
+  .controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:8px; }
+  .controls label { font-size:13px; color:var(--mute); }
+  select, input[type=text], textarea { font:inherit; padding:5px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  button { font:inherit; cursor:pointer; }
+  .btn { padding:6px 12px; border-radius:6px; border:1px solid var(--line); background:#fff; }
+  .btn.primary { background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600; }
+  .btn.small { padding:3px 8px; font-size:13px; }
+  main { max-width:1180px; margin:0 auto; padding:14px 16px 80px; }
+  .what { background:#fff; border:1px solid var(--line); border-left:5px solid var(--blue); border-radius:8px; padding:12px 16px; margin-bottom:14px; }
+  .what h2 { margin:0 0 6px; font-size:16px; }
+  .what ul { margin:6px 0 6px 18px; padding:0; }
+  .warn { background:var(--amberbg); border:1px solid #ecce85; color:var(--amber); padding:8px 12px; border-radius:8px; margin-bottom:12px; font-weight:600; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; margin-bottom:16px; overflow:hidden; border-left:6px solid var(--line); }
+  .card.d-ACCEPT_PROPOSED { border-left-color:#2e9e5b; } .card.d-KEEP_CURRENT { border-left-color:#5b7fb8; } .card.d-NEEDS_INFO { border-left-color:#e0a400; }
+  .card h3 { margin:0; font-size:18px; }
+  .card .head { padding:12px 16px; display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; border-bottom:1px solid var(--line); background:#fafbfc; }
+  .badge { display:inline-block; padding:2px 9px; border-radius:12px; font-size:12px; font-weight:700; letter-spacing:.3px; }
+  .b-PASS { background:var(--greenbg); color:var(--green); } .b-FLAG { background:var(--amberbg); color:var(--amber); }
+  .tag { background:var(--greybg); color:var(--mute); font-size:12px; padding:2px 8px; border-radius:10px; }
+  .tag.warn2 { background:var(--redbg); color:var(--red); }
+  .why { padding:8px 16px 0; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:0 24px; padding:8px 16px 4px; }
+  @media (max-width:980px) { .grid { grid-template-columns:1fr; } }
+  .grid h4, .sec h4 { margin:10px 0 4px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--mute); }
+  .sec { padding:0 16px; }
+  dl { margin:0; } dl div { display:flex; gap:8px; padding:4px 0; border-bottom:1px dotted var(--line); }
+  dt { flex:0 0 150px; color:var(--mute); } dd { margin:0; flex:1; word-break:break-word; }
+  .links a { display:inline-block; margin:2px 10px 2px 0; color:var(--blue); }
+  table.alts { width:100%; border-collapse:collapse; margin:4px 0; font-size:13.5px; }
+  table.alts th { text-align:left; font-weight:600; color:var(--mute); padding:3px 6px; }
+  table.alts td { padding:4px 6px; border-top:1px solid var(--line); vertical-align:top; }
+  .rec { margin:8px 16px; padding:8px 12px; border-radius:8px; font-size:14px; } .rec.PASS { background:var(--greenbg); } .rec.FLAG { background:var(--amberbg); }
+  .rec ul { margin:4px 0 0 18px; padding:0; }
+  .bind { margin:6px 0; padding:6px 10px; border-radius:6px; background:var(--greybg); font-size:14px; }
+  .bind.risk { background:var(--redbg); }
+  .decide { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; padding:12px 16px 16px; background:#fafbfc; border-top:1px solid var(--line); margin-top:8px; }
+  .decide .btns { display:flex; gap:10px; flex-wrap:wrap; }
+  .big { font-size:16px; font-weight:700; padding:11px 20px; border-radius:9px; border:2px solid; background:#fff; min-width:140px; }
+  .big.acc { color:var(--green); border-color:#2e9e5b; } .big.kee { color:#2b4e8a; border-color:#5b7fb8; } .big.inf { color:var(--amber); border-color:#e0a400; }
+  .big.acc.on { background:#2e9e5b; color:#fff; } .big.kee.on { background:#5b7fb8; color:#fff; } .big.inf.on { background:#e0a400; color:#fff; }
+  .big[disabled] { opacity:.35; cursor:not-allowed; }
+  .decide textarea { flex:1; min-width:240px; min-height:60px; resize:vertical; }
+  .when { font-size:12px; color:var(--mute); width:100%; }
+  footer { color:var(--mute); font-size:13px; margin-top:20px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+  <h1 id="title"></h1>
+  <div class="progress"><div class="a" id="pa"></div><div class="k" id="pk"></div><div class="u" id="pu"></div></div>
+  <div class="stats" id="stats"></div>
+  <div class="verdict amber" id="verdict"></div>
+  <div class="controls">
+    <label>Show <select id="filter">
+      <option value="all">All cards</option><option value="pending">Not yet decided</option><option value="flag">Computer says FLAG</option>
+      <option value="pass">Computer says PASS</option><option value="info">My Needs-more-info cards</option><option value="keep">My Keep-current cards</option><option value="accepted">My Accept-proposed cards</option>
+      <option value="binding">Gauge binding needs a second look</option></select></label>
+    <label>Sort by <select id="sort">
+      <option value="order">State, then lake</option><option value="rec">FLAG first</option><option value="move">Biggest move first</option><option value="name">Lake name</option><option value="decision">My decision</option></select></label>
+    <label>Reviewer <input type="text" id="reviewer" placeholder="your name" size="14"></label>
+    <button class="btn primary" id="dl">Download my review (CSV)</button>
+    <button class="btn small" id="passall" title="Fills in only cards you have not touched yet">Mark every untouched PASS card as Accept proposed</button>
+    <button class="btn small" id="reset" title="Erase all decisions in this browser">Start over</button>
+  </div>
+</div></header>
+<main>
+  <div id="nostore" class="warn" style="display:none">This browser is not letting the page save your progress. Your choices stay on screen, but press "Download my review (CSV)" often so nothing is lost.</div>
+  <section class="what" id="what"></section>
+  <div id="cards"></div>
+  <footer id="foot"></footer>
+</main>
+<script id="data" type="application/json">__DATA_JSON__</script>
+<script>
+(function () {
+  "use strict";
+  var PACK = JSON.parse(document.getElementById("data").textContent);
+  var ROWS = PACK.rows, META = PACK.meta, PACK_ID = PACK.packId;
+  var KEY = "lbc:" + PACK_ID;
+  var N = ROWS.length;
+  var state = { decisions: {}, reviewer: "" };
+  var canStore = true;
+  var cardEls = {};
+  var LABEL = { ACCEPT_PROPOSED: "Accept proposed", KEEP_CURRENT: "Keep current", NEEDS_INFO: "Needs more info", PENDING: "Not decided" };
+
+  function load() {
+    try { var s = window.localStorage.getItem(KEY); if (s) { var o = JSON.parse(s); if (o && o.decisions) { state = o; } } }
+    catch (e) { canStore = false; }
+    try { window.localStorage.setItem("lbc:probe", "1"); window.localStorage.removeItem("lbc:probe"); } catch (e2) { canStore = false; }
+  }
+  function save() {
+    if (!canStore) return;
+    try { window.localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { canStore = false; document.getElementById("nostore").style.display = "block"; }
+  }
+
+  function h(tag, attrs, kids) {
+    var el = document.createElement(tag), k;
+    if (attrs) for (k in attrs) { if (k === "class") el.className = attrs[k]; else if (k === "text") el.textContent = attrs[k]; else el.setAttribute(k, attrs[k]); }
+    if (kids) kids.forEach(function (c) { if (c == null) return; el.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return el;
+  }
+  function num(v, nd) { return (v === null || v === undefined || v === "") ? "n/a" : Number(v).toLocaleString("en-US", { minimumFractionDigits: nd, maximumFractionDigits: nd }); }
+  function row(label, value) { var dd = h("dd"); if (typeof value === "string") dd.textContent = value; else if (value) dd.appendChild(value); return h("div", null, [h("dt", { text: label }), dd]); }
+  function link(text, url) { return h("a", { href: url, target: "_blank", rel: "noopener noreferrer", text: text }); }
+  function km(m) { return m === null || m === undefined ? "n/a" : (m >= 1000 ? num(m / 1000, 1) + " km" : num(m, 0) + " m"); }
+  function mapLinks(l) { var d = h("div", { class: "links" }); if (l) { d.appendChild(link("Open on map", l.osm)); d.appendChild(link("Satellite view", l.sat)); } return d; }
+
+  function buildWhat() {
+    var w = document.getElementById("what");
+    w.appendChild(h("h2", { text: "What am I checking?" }));
+    w.appendChild(h("p", { text: "Each card is a lake whose map pin in our directory does not sit on the lake's real outline. The computer found the lake's outline on the national water map and worked out where the pin should go. You say whether to move the pin." }));
+    w.appendChild(h("ul", null, [
+      h("li", { text: "Accept proposed: move the pin to the proposed point (always on the water)." }),
+      h("li", { text: "Keep current: leave the pin where it is (the pin is fine, or the lake outline is wrong)." }),
+      h("li", { text: "Needs more info: you cannot tell. Add a note. Nothing is changed for this lake." }),
+      h("li", { text: "The computer's PASS / FLAG is only a hint. FLAG means look closely, especially when two lakes could be meant. Nothing you press here changes the app; it is a recorded decision only." })
+    ]));
+    w.appendChild(h("p", { text: N + " cards. Your answers are saved in this browser as you go." }));
+  }
+
+  function buildCard(r) {
+    var card = h("section", { class: "card", id: "c-" + r.seq });
+    var tagText = r.cls === "IN_POLYGON" ? "pin is on the water now" : r.cls === "NO_GEOMETRY" ? "no outline available" : "pin " + km(r.distanceM) + " from the water";
+    var bad = r.bindings.some(function (b) { return b.code === "AT_RISK" || b.changes; });
+    card.appendChild(h("div", { class: "head" }, [
+      h("h3", { text: r.seq + ". " + r.name + ", " + r.state }),
+      h("span", { class: "badge b-" + r.rec, text: "Computer says " + r.rec }),
+      h("span", { class: "tag", text: tagText }),
+      h("span", { class: "tag", text: r.sourceFlag.replace("research:", "audit: ").replace("registry:", "registry: ") }),
+      r.bindings.some(function (b) { return b.held; }) ? h("span", { class: "tag", text: "gauge binding on hold" }) : null,
+      bad ? h("span", { class: "tag warn2", text: "gauge binding needs a second look" }) : null
+    ]));
+    card.appendChild(h("div", { class: "why", text: r.why }));
+
+    var left = h("div"), right = h("div");
+    left.appendChild(h("h4", { text: "Where the pin is now" }));
+    var d1 = h("dl");
+    d1.appendChild(row("Directory pin", r.cur.lat + ", " + r.cur.lon));
+    d1.appendChild(row("Look at it", mapLinks(r.cur.links)));
+    d1.appendChild(row("On the lake's outline?", r.inPolygon === null ? "No outline in the registry" : (r.inPolygon ? "Yes, inside" : "No, " + km(r.distanceM) + " from the nearest shore (allowed before it counts as a different place: " + km(r.allowedM) + ")")));
+    d1.appendChild(row("Canonical lake", (r.geom.name || r.name) + (r.geom.areaKm2 ? ", " + num(r.geom.areaKm2, 1) + " km2" : "") + (r.geom.gnisId ? ", GNIS " + r.geom.gnisId : "")));
+    d1.appendChild(row("Outline confidence", (r.geom.level || "n/a") + (r.geom.reasons.length ? ": " + r.geom.reasons.join("; ") : "")));
+    if (r.geom.members && r.geom.members.length > 1) d1.appendChild(row("Same water as", r.geom.members.filter(function (m) { return m !== r.id; }).join(", ")));
+    left.appendChild(d1);
+
+    right.appendChild(h("h4", { text: "Proposed correction" }));
+    var d2 = h("dl");
+    if (r.prop) {
+      d2.appendChild(row("Proposed pin", r.prop.lat + ", " + r.prop.lon));
+      d2.appendChild(row("Look at it", mapLinks(r.prop.links)));
+      d2.appendChild(row("Basis", r.prop.basis + (r.prop.moveM ? "; a move of " + km(r.prop.moveM) : "; no move")));
+    } else d2.appendChild(row("Proposed pin", "none: no safe point could be placed on the water (a person has to decide)"));
+    if (r.alsoNearest) d2.appendChild(row("Alternative", "the nearest water to the old pin is at " + r.alsoNearest.lat + ", " + r.alsoNearest.lon + " (" + km(r.alsoNearest.moveM) + " from the pin)"));
+    if (r.labelPoint && r.labelPoint.fromPinM > 1500) {
+      var lbl = h("div"); lbl.appendChild(document.createTextNode(r.labelPoint.lat + ", " + r.labelPoint.lon + " (" + km(r.labelPoint.fromPinM) + " from the pin) "));
+      lbl.appendChild(link("map", r.labelPoint.links.osm));
+      d2.appendChild(row("Middle of the lake", lbl));
+    }
+    right.appendChild(d2);
+    card.appendChild(h("div", { class: "grid" }, [left, right]));
+
+    var sec = h("div", { class: "sec" });
+    sec.appendChild(h("h4", { text: "Other waters near the pin" }));
+    if (!r.scanAvailable) sec.appendChild(h("div", { text: "The national water map could not be queried for this lake; no neighbours are shown." }));
+    else if (!r.alts.length) sec.appendChild(h("div", { text: "No other lakes or ponds of note within about 6 km." }));
+    else {
+      var t = h("table", { class: "alts" });
+      t.appendChild(h("tr", null, [h("th", { text: "Name" }), h("th", { text: "Size" }), h("th", { text: "From the pin" }), h("th", { text: "Name matches?" }), h("th", { text: "Source" }), h("th", { text: "Look" })]));
+      r.alts.forEach(function (a) {
+        t.appendChild(h("tr", null, [h("td", { text: (a.name || "(unnamed)") + (a.pinInside ? "  [the pin is inside it]" : "") }), h("td", { text: num(a.areaKm2, 2) + " km2" }), h("td", { text: km(a.distanceM) }),
+          h("td", { text: num(a.nameMatch, 2) }), h("td", { text: a.source + " " + a.id }), h("td", null, [a.links ? link("map", a.links.osm) : null])]));
+      });
+      sec.appendChild(t);
+    }
+    if (r.competitor) sec.appendChild(h("div", { class: "bind risk", text: "Could be a different lake: " + (r.competitor.name || "an unnamed water") + " (" + r.competitor.why + "). Compare it before you accept." }));
+
+    sec.appendChild(h("h4", { text: "Evidence for this being the right lake" }));
+    var d3 = h("dl");
+    d3.appendChild(row("Names", r.names.length ? r.names.map(function (n) { return n.source + " '" + n.name + "' (match " + num(n.match, 2) + ")"; }).join("; ") : "no outside name found"));
+    d3.appendChild(row("Pool area", r.areaRatios.length ? r.areaRatios.map(function (a) { return a.source + ": outline is " + num(a.ratio, 2) + " x the reported area"; }).join("; ") : "no reported area to compare"));
+    if (r.dam) d3.appendChild(row("Dam (National Inventory)", r.dam.id + " " + (r.dam.name || "") + ": " + (r.dam.toWaterM === null ? "n/a" : km(r.dam.toWaterM)) + " from the outline, " + km(r.dam.toPinM) + " from the pin"));
+    else d3.appendChild(row("Dam (National Inventory)", "none linked"));
+    if (r.nidNear && r.nidNear.length) d3.appendChild(row("Dams near the pin", r.nidNear.map(function (n) { return n.name + " (" + n.id + ", " + km(n.toPinM) + ")"; }).join("; ")));
+    d3.appendChild(row("Operator", r.operator && r.operator !== "none" ? r.operator + (r.usace ? " (USACE project: " + r.usace + ")" : "") : (r.usace ? "USACE project: " + r.usace : "none known")));
+    d3.appendChild(row("Signals for", r.pos.length ? r.pos.join(", ") : "none"));
+    d3.appendChild(row("Concerns", r.concerns.length ? r.concerns.join(" | ") : "none"));
+    sec.appendChild(d3);
+
+    sec.appendChild(h("h4", { text: "Effect on the candidate gauge binding" }));
+    if (!r.bindings.length) sec.appendChild(h("div", { class: "bind", text: "No gauge is matched to this lake yet, so nothing else is affected." }));
+    r.bindings.forEach(function (b) {
+      sec.appendChild(h("div", { class: "bind" + ((b.code === "AT_RISK" || b.changes) ? " risk" : ""), text: b.provider + " " + b.station + (b.stationName ? " (" + b.stationName + ")" : "") + " [" + b.status + (b.held ? ", on hold" : "") + "]: " + b.text }));
+    });
+    card.appendChild(sec);
+
+    var notes = h("textarea", { placeholder: "Notes (optional)" });
+    notes.addEventListener("input", function () { setNotes(r.id, notes.value); });
+    var when = h("div", { class: "when" });
+    var bA = h("button", { class: "big acc", text: "Accept proposed" }), bK = h("button", { class: "big kee", text: "Keep current" }), bI = h("button", { class: "big inf", text: "Needs more info" });
+    if (!r.prop) bA.setAttribute("disabled", "disabled");
+    bA.addEventListener("click", function () { decide(r.id, "ACCEPT_PROPOSED"); });
+    bK.addEventListener("click", function () { decide(r.id, "KEEP_CURRENT"); });
+    bI.addEventListener("click", function () { decide(r.id, "NEEDS_INFO"); });
+    card.appendChild(h("div", { class: "decide" }, [h("div", { class: "btns" }, [bA, bK, bI]), notes, when]));
+    cardEls[r.id] = { card: card, bA: bA, bK: bK, bI: bI, notes: notes, when: when, row: r, bad: bad };
+    return card;
+  }
+
+  function get(id) { return state.decisions[id] || { d: "PENDING", n: "", t: "" }; }
+  function decide(id, d) {
+    var cur = get(id);
+    if (cur.d === d) { d = "PENDING"; }
+    state.decisions[id] = { d: d, n: cur.n, t: d === "PENDING" ? "" : new Date().toISOString() };
+    save(); paintCard(id); summary(); applyView();
+  }
+  function setNotes(id, text) { var cur = get(id); state.decisions[id] = { d: cur.d, n: text, t: cur.t }; save(); }
+  function paintCard(id) {
+    var e = cardEls[id], d = get(id);
+    e.card.className = "card" + (d.d !== "PENDING" ? " d-" + d.d : "");
+    e.bA.className = "big acc" + (d.d === "ACCEPT_PROPOSED" ? " on" : ""); e.bK.className = "big kee" + (d.d === "KEEP_CURRENT" ? " on" : ""); e.bI.className = "big inf" + (d.d === "NEEDS_INFO" ? " on" : "");
+    e.when.textContent = d.t ? "Decided " + new Date(d.t).toLocaleString() + " - " + LABEL[d.d] : "Not decided yet";
+    if (e.notes.value !== d.n) e.notes.value = d.n;
+  }
+
+  function counts() {
+    var c = { ACCEPT_PROPOSED: 0, KEEP_CURRENT: 0, NEEDS_INFO: 0, PENDING: 0 };
+    ROWS.forEach(function (r) { c[get(r.id).d]++; });
+    return c;
+  }
+  function summary() {
+    var c = counts(), done = c.ACCEPT_PROPOSED + c.KEEP_CURRENT + c.NEEDS_INFO;
+    document.getElementById("pa").style.width = (100 * c.ACCEPT_PROPOSED / N) + "%";
+    document.getElementById("pk").style.width = (100 * c.KEEP_CURRENT / N) + "%";
+    document.getElementById("pu").style.width = (100 * c.NEEDS_INFO / N) + "%";
+    var st = document.getElementById("stats"); st.textContent = "";
+    var bar = function (t) { st.appendChild(h("span", null, t)); };
+    bar([h("b", { text: done + " of " + N }), " decided"]);
+    bar([h("b", { text: String(c.ACCEPT_PROPOSED), style: "color:#157a3a" }), " accept proposed"]);
+    bar([h("b", { text: String(c.KEEP_CURRENT), style: "color:#2b4e8a" }), " keep current"]);
+    bar([h("b", { text: String(c.NEEDS_INFO), style: "color:#9a6200" }), " need more info"]);
+    bar([h("b", { text: String(c.PENDING) }), " not yet looked at"]);
+    var v = document.getElementById("verdict");
+    v.className = "verdict " + (c.PENDING === 0 ? "green" : "amber");
+    v.textContent = c.PENDING === 0 ? "All " + N + " cards decided. Press \"Download my review (CSV)\" and send the file back." + (c.NEEDS_INFO ? " (" + c.NEEDS_INFO + " marked Needs more info will be followed up.)" : "") : (N - done) + " cards still to decide. The export is only accepted when every card has a decision.";
+  }
+
+  function applyView() {
+    var f = document.getElementById("filter").value, s = document.getElementById("sort").value;
+    var list = ROWS.slice();
+    var o = { ACCEPT_PROPOSED: 3, KEEP_CURRENT: 2, NEEDS_INFO: 0, PENDING: 1 };
+    var cmp = {
+      order: function (a, b) { return a.seq - b.seq; },
+      rec: function (a, b) { return (a.rec === "FLAG" ? 0 : 1) - (b.rec === "FLAG" ? 0 : 1) || a.seq - b.seq; },
+      move: function (a, b) { return ((b.prop && b.prop.moveM) || 0) - ((a.prop && a.prop.moveM) || 0); },
+      name: function (a, b) { return a.name.localeCompare(b.name) || a.seq - b.seq; },
+      decision: function (a, b) { return o[get(a.id).d] - o[get(b.id).d] || a.seq - b.seq; }
+    }[s];
+    list.sort(cmp);
+    var host = document.getElementById("cards"), shown = 0;
+    list.forEach(function (r) {
+      var e = cardEls[r.id], d = get(r.id).d, ok = true;
+      if (f === "pending") ok = d === "PENDING"; else if (f === "flag") ok = r.rec === "FLAG"; else if (f === "pass") ok = r.rec === "PASS";
+      else if (f === "info") ok = d === "NEEDS_INFO"; else if (f === "keep") ok = d === "KEEP_CURRENT"; else if (f === "accepted") ok = d === "ACCEPT_PROPOSED"; else if (f === "binding") ok = e.bad;
+      e.card.style.display = ok ? "" : "none"; if (ok) shown++;
+      host.appendChild(e.card);
+    });
+    document.getElementById("foot").textContent = "Showing " + shown + " of " + N + " cards. Pack " + PACK_ID + ".";
+  }
+
+  function q(s) { s = (s === null || s === undefined) ? "" : String(s); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+  function exportCsv() {
+    var now = new Date().toISOString(), reviewer = state.reviewer || "";
+    var lines = [["pack_id", "lake_id", "lake_name", "state", "computer_recommendation", "current_lat", "current_lon", "proposed_lat", "proposed_lon", "row_digest", "decision", "notes", "decided_at_utc", "reviewer", "exported_at_utc"].join(",")];
+    ROWS.forEach(function (r) {
+      var d = get(r.id);
+      lines.push([PACK_ID, r.id, r.name, r.state, r.rec, r.cur.lat, r.cur.lon, r.prop ? r.prop.lat : "", r.prop ? r.prop.lon : "", r.digest, d.d, d.n, d.t, reviewer, now].map(q).join(","));
+    });
+    var blob = new Blob(["﻿" + lines.join("\r\n") + "\r\n"], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "lake_brain_coordinate_review_" + now.slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  }
+
+  load();
+  if (!canStore) document.getElementById("nostore").style.display = "block";
+  document.getElementById("title").textContent = document.title + " (" + N + " lakes)";
+  buildWhat();
+  ROWS.forEach(function (r) { document.getElementById("cards").appendChild(buildCard(r)); paintCard(r.id); });
+  document.getElementById("reviewer").value = state.reviewer || "";
+  document.getElementById("reviewer").addEventListener("input", function () { state.reviewer = this.value; save(); });
+  document.getElementById("filter").addEventListener("change", applyView);
+  document.getElementById("sort").addEventListener("change", applyView);
+  document.getElementById("dl").addEventListener("click", exportCsv);
+  document.getElementById("passall").addEventListener("click", function () {
+    var todo = ROWS.filter(function (r) { return r.rec === "PASS" && r.prop && get(r.id).d === "PENDING"; });
+    if (!todo.length) { window.alert("Every PASS card already has a decision."); return; }
+    if (window.confirm("Mark " + todo.length + " untouched PASS cards as 'Accept proposed'? You can still change any of them afterwards.")) {
+      todo.forEach(function (r) { state.decisions[r.id] = { d: "ACCEPT_PROPOSED", n: get(r.id).n, t: new Date().toISOString() }; paintCard(r.id); });
+      save(); summary(); applyView();
+    }
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    if (window.confirm("Erase every decision and note on this page?")) { state = { decisions: {}, reviewer: state.reviewer }; save(); ROWS.forEach(function (r) { paintCard(r.id); }); summary(); applyView(); }
+  });
+  summary(); applyView();
+  window.__lbc = { counts: counts, state: function () { return state; }, decide: decide, exportCsv: exportCsv };
+})();
+</script>
+</body>
+</html>

@@ -2,11 +2,15 @@
   "rule": [
     {
       "action": {"type": "Delete"},
-      "condition": {"age": 30, "matchesPrefix": ["baselines-archive/"]}
+      "condition": {"age": 90, "matchesPrefix": ["baselines-archive/"]}
     },
     {
       "action": {"type": "Delete"},
       "condition": {"isLive": false, "daysSinceNoncurrentTime": 7, "matchesPrefix": ["baselines/", "baselines-archive/"]}
+    },
+    {
+      "action": {"type": "Delete"},
+      "condition": {"isLive": false, "daysSinceNoncurrentTime": 30, "matchesPrefix": ["history/"]}
     }
   ]
 }

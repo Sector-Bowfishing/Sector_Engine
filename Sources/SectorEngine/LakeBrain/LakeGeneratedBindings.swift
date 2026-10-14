@@ -40,6 +40,8 @@ public enum LakeGeneratedBindings {
             var item: String?
             var lid: String?
             var pe: String?
+            var slug: String?
+            var datum: String?
         }
         struct Level: Decodable {
             var role: String
@@ -151,6 +153,9 @@ public enum LakeGeneratedBindings {
         case "hadsDaily":
             guard let l = h.lid, let pe = h.pe else { return nil }
             return .hadsDaily(lid: l, pe: pe, offsetFt: h.offsetFt ?? 0)
+        case "twdbDaily":
+            guard let s = h.slug, let d = h.datum else { return nil }
+            return .twdbDaily(slug: s, datum: d, offsetFt: h.offsetFt ?? 0)
         default: return nil
         }
     }

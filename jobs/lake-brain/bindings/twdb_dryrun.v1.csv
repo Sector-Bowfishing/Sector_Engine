@@ -1,0 +1,17 @@
+lakeId,twdbName,slug,matchDistKm,datumLabel,liveDate,liveFt,conservationPoolFt,directoryFullPoolFt,levelMinusConservationFt,referenceOrigin,refMedianAbsDiffFt,histOverlapMedianAbsFt,median365Ft,median365MinusLiveFt,firstDate,completeYears,glitchDaysDropped,tableState,tableDetail,role,currentHistoryYears,twdbBasisYears,checksFailed
+Elephant Butte Reservoir|NM,Elephant Butte Lake,elephant-butte,10.7,NGVD29 -43.3,2026-10-13,4295.62,4406.297704,4407,-110.68,cwms:SPA,0.026,,4305.64,10.02,1915-03-21,109,3,excluded,rise VERIFIED_CORROBORATED: coordinate-flag,none-today,,,datumNGVD29
+Amistad Reservoir|TX,Amistad Reservoir,amistad,10.7,NGVD29,2026-10-13,1059.79,1117.0,1117,-57.21,nwps:AMIT2,0.049,,1053.32,-6.47,1968-06-01,57,2,excluded,twdb VERIFIED_ENVELOPE: post-hoc+flagged-wave1,none-today,,,
+Caddo Lake|TX,Caddo Lake,caddo,17.4,NGVD29,2026-10-13,167.48,168.5,168.5,-1.02,nwps:LCOL1,0.05,,168.83,1.35,2012-06-17,9,1,excluded,a2w VERIFIED: coordinate-flag,none-today,,,
+Canyon Lake|TX,Canyon Lake,canyon,4.9,NGVD29,2026-10-13,907.88,909.0,909,-1.12,usgs:08167700,0.002,,888.48,-19.4,1988-10-01,35,0,excluded,a2w VERIFIED: history-live-mismatch,none-today,,,historyContinuity
+Cedar Creek Reservoir|TX,Cedar Creek Reservoir,cedar-creek,9.7,NGVD29,2026-10-13,316.45,322.0,322,-5.55,usgs:08063010,0.002,,318.6,2.15,1996-10-02,29,0,proposed,a2w; hist 29y,backup-and-history,29,29,
+Falcon Lake|TX,Falcon Reservoir,falcon,23.2,NGVD29,2026-10-13,261.42,301.2,301.2,-39.78,nwps:FALT2,0.002,,257.55,-3.87,1953-08-23,72,0,excluded,twdb VERIFIED_ENVELOPE: post-hoc+flagged-wave1,none-today,,,
+Lake Buchanan|TX,Lake Buchanan,buchanan,5.4,NAVD88 +0.26,2026-10-13,1018.52,1020.0,1020,-1.48,usgs:08148000,0.004,0.023,1018.58,0.06,1937-06-30,83,0,proposed,cwms; hist 8y,backup-and-history,8,30,datumNGVD29
+Lake Conroe|TX,Lake Conroe,conroe,7.8,NGVD29,2026-10-13,199.72,201.0,201,-1.28,usgs:08067600,0.002,,199.98,0.26,1996-10-02,29,0,proposed,usgs; hist 29y,backup-and-history,29,29,
+Lake Fork Reservoir|TX,Lake Fork Reservoir,fork,2.8,NGVD29,2026-10-13,398.37,403.0,403,-4.63,usgs:08018800,0.002,,400.22,1.85,1988-10-02,35,0,proposed,usgs; hist 35y,backup-and-history,35,30,
+Lake Livingston|TX,Livingston Reservoir,livingston,15.5,NGVD29,2026-10-13,129.55,131.0,131,-1.45,usgs:08066190,0.006,,130.99,1.44,1996-10-03,20,0,proposed,usgs; hist 27y,backup-and-history,27,20,
+Lake Tawakoni|TX,Lake Tawakoni,tawakoni,8.4,NGVD29,2026-10-13,435.3,437.5,437.5,-2.2,usgs:08017400,0.004,,436.24,0.94,1995-10-02,30,0,proposed,usgs; hist 30y,backup-and-history,30,30,
+Lake Texoma|TX,Lake Texoma,texoma,9.5,NGVD29,2026-10-13,614.97,617.0,617,-2.03,nwps:DSNT2,0.003,0.01,616.79,1.82,1994-12-01,30,0,proposed,a2w; hist 8y,backup-and-history,8,30,
+Lake Travis|TX,Lake Travis,travis,3.4,NAVD88 +0.6,2026-10-13,677.86,681.0,681,-3.14,usgs:08154500,0.002,0.012,668.38,-9.49,1940-09-30,83,3,proposed,a2w; hist 8y,backup-and-history,8,30,datumNGVD29
+Possum Kingdom Lake|TX,Possum Kingdom Lake,possum-kingdom,11.6,NGVD29,2026-10-13,994.31,999.0,999,-4.69,usgs:08088500,0.003,,996.6,2.29,1947-01-01,76,0,proposed,cwms; hist 35y,backup-and-history,35,30,
+Sam Rayburn Reservoir|TX,Sam Rayburn Reservoir,sam-rayburn,4.4,NGVD29,2026-10-12,153.68,164.4,164.4,-10.72,usgs:08039300,0.006,,155.67,1.99,1988-06-19,37,0,proposed,a2w; hist 60y,backup-and-history,60,30,
+Toledo Bend Reservoir|TX,Toledo Bend Reservoir,toledo-bend,24.0,NGVD29,2026-10-13,167.99,172.0,172,-4.01,usgs:312914093422701,0.171,,168.62,0.63,1986-10-02,39,0,excluded,usgs VERIFIED: coordinate-flag,none-today,,,

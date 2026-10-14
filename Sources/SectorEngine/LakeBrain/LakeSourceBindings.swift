@@ -26,12 +26,14 @@ import Foundation
 
 /// One named water-level series.
 public struct LevelSeriesRef: Codable, Equatable, Sendable {
-    public enum Provider: String, Codable, Sendable { case tva, cwms, usgs, a2w, rise, nwps }
+    public enum Provider: String, Codable, Sendable { case tva, cwms, usgs, a2w, rise, nwps, twdb }
     public var provider: Provider
     public var capability: LevelSourceCapability
-    /// TVA LocationID, CWMS office, USGS site number, Access2Water `DISTRICT:LocationCode`, RISE item id or NWS location id.
+    /// TVA LocationID, CWMS office, USGS site number, Access2Water `DISTRICT:LocationCode`, RISE item id, NWS location id or the
+    /// TWDB reservoir slug (`cedar-creek`, the file name under waterdatafortexas.org/reservoirs/individual/).
     public var station: String
-    /// CWMS / Access2Water time-series id, USGS parameter code, NWPS observed pedts (e.g. `HPIRZ`); nil for TVA and RISE.
+    /// CWMS / Access2Water time-series id, USGS parameter code, NWPS observed pedts (e.g. `HPIRZ`), TWDB `water_level@<datum label>`
+    /// (the datum the file must declare, e.g. `water_level@NGVD29`); nil for TVA and RISE.
     public var series: String?
     public var cadenceMin: Int
     public var lagMin: Int
@@ -48,6 +50,7 @@ public struct LevelSeriesRef: Codable, Equatable, Sendable {
         case .a2w: return "a2w:\(station):\(series ?? "")"
         case .rise: return "rise:\(station)"
         case .nwps: return "nwps:\(station):\(series ?? "")"
+        case .twdb: return "twdb:\(station):\(series ?? "")"
         }
     }
 
@@ -55,6 +58,7 @@ public struct LevelSeriesRef: Codable, Equatable, Sendable {
         switch provider {
         case .tva: return "TVA"; case .cwms: return "USACE CWMS"; case .usgs: return "USGS"
         case .a2w: return "USACE Access2Water"; case .rise: return "USBR RISE"; case .nwps: return "NWS NWPS"
+        case .twdb: return "TWDB Water Data for Texas"
         }
     }
 }
@@ -90,6 +94,9 @@ public enum LakeHistorySource: Codable, Equatable, Sendable {
     case riseDaily(item: String)
     /// IEM HADS archive of an NWS location id (pool elevation `HP…`), daily median of each lake-local day.
     case hadsDaily(lid: String, pe: String, offsetFt: Double)
+    /// TWDB Water Data for Texas daily record (`individual/{slug}.csv`): estimated daily average, 1953+ for the longest. `datum` is the
+    /// label the file must declare; `offsetFt` is added to put it on the binding's datum (0 unless a verified offset exists).
+    case twdbDaily(slug: String, datum: String, offsetFt: Double)
 }
 
 public struct LakeSourceBinding: Codable, Equatable, Sendable {

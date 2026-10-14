@@ -46,6 +46,8 @@ DATA = os.environ.get("LB_DATA", "/Users/mcather/Desktop/Development/Sector_Rese
 OUT_DIR = os.path.join(REPO, "jobs", "lake-brain", "data")
 OUT = os.path.join(OUT_DIR, "bindings.proposed.v1.json")
 OUT_EXCLUDED = os.path.join(OUT_DIR, "bindings.proposed.v1.excluded.json")
+OUT_RECOVERED = os.path.join(OUT_DIR, "bindings.proposed.v1.recovered.json")
+DISPOSITIONS = os.path.join(HERE, "mismatch14_dispositions.json")
 DIRECTORY_SWIFT = os.path.join(REPO, "Sources", "SectorEngine", "Support", "LakeDirectory.swift")
 
 CRITERIA_VERSION = "binding-review-v1"
@@ -73,6 +75,7 @@ HISTORY_LIVE_MISMATCH = {
     "Pineview Reservoir|UT", "Rend Lake|IL",
 }
 HISTORY_MISMATCH_REASON = "history/live series mismatch >15 ft - hold pending datum resolution"
+RECOVERED_SCHEMA = "lake-brain-bindings-recovered/v1"
 
 PILOTS = {  # the 5 hand-written bindings; their time zones are kept
     "Guntersville|AL": "America/Chicago", "Wheeler|AL": "America/Chicago", "Wilson|AL": "America/Chicago",
@@ -80,7 +83,7 @@ PILOTS = {  # the 5 hand-written bindings; their time zones are kept
 }
 
 # Providers that have a Swift adapter in LakeLevelFeeds*.swift (live series). Keep in sync with LevelSeriesRef.Provider.
-ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps"}
+ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps", "twdb"}
 
 ELEV_USGS_PARAMS = {"62614", "62615", "62616", "00062", "72020", "72022"}   # 00065 gage height is NOT an elevation
 
@@ -265,8 +268,11 @@ class Inputs:
 
 
 # ---------------------------------------------------------------------------------------------------------------- eligibility
-def classify_lakes(inp: Inputs):
-    """-> (eligible rows, excluded list). Every research-bound lake (a row in verified_bindings_v2.csv) lands in exactly one."""
+def classify_lakes(inp: Inputs, recovered: frozenset = frozenset()):
+    """-> (eligible rows, excluded list). Every research-bound lake (a row in verified_bindings_v2.csv) lands in exactly one.
+
+    `recovered` = lakes whose history/live mismatch hold was lifted by a FIXED disposition (mismatch14_dispositions.json). It is EMPTY unless the
+    caller asks for it (--include-recovered), so the default table, the review pack and the Swift generator never see a recovered lake."""
     flag57 = {k for k, r in inp.v1.items() if r["binding_status"] == "VERIFIED_FLAG"}
     eligible, excluded = [], []
     for r in inp.v2:
@@ -290,7 +296,7 @@ def classify_lakes(inp: Inputs):
             reasons.append(("provider-not-allowed", f"source provider '{prov}' is not on the allow-list"))
         if lake in flag57:
             reasons.append(("flagged-wave1", "one of the 57 wave-1 flagged rows (verified_bindings.csv VERIFIED_FLAG)"))
-        if lake in HISTORY_LIVE_MISMATCH:
+        if lake in HISTORY_LIVE_MISMATCH and lake not in recovered:
             reasons.append(("history-live-mismatch", HISTORY_MISMATCH_REASON))
         g = inp.geom.get(lake, {})
         pf = g.get("point_flag", "")
@@ -332,6 +338,17 @@ def a2w_resolve_tsid(inp: Inputs, station: str, probe: dict | None) -> tuple[str
     return None, f"{len(ok)} candidate tsids"
 
 
+TWDB_DRYRUN = os.path.join(HERE, "twdb_dryrun.v1.json")
+
+
+def twdb_catalog() -> dict[str, tuple[str, str]]:
+    """TWDB research station key (recent-conditions key, e.g. `CedarCreek`) -> (file slug, datum label the file declares), from the
+    committed dry run. Empty when the dry run is absent: a twdb row then has no adapter series and is not built."""
+    if not os.path.exists(TWDB_DRYRUN):
+        return {}
+    return {x["twdbKey"]: (x["slug"], x["datumLabel"]) for x in json.load(open(TWDB_DRYRUN))["lakes"]}
+
+
 def live_ref_for(inp: Inputs, row: dict, full: dict) -> dict | None:
     """The primary live series of a research row, in the Swift LevelSeriesRef shape."""
     prov, st, ser = row["provider"], row["station"], row["series_or_param"]
@@ -360,6 +377,12 @@ def live_ref_for(inp: Inputs, row: dict, full: dict) -> dict | None:
         ref.update(cadenceMin=1440, lagMin=2880, note=f"USBR RISE daily item {ser} ({full.get('stationName', '')}); ~48 h latency, 0.0 placeholders dropped")
     elif prov == "nwps":
         ref.update(cadenceMin=60, lagMin=120, note=f"NWS NWPS gauge {st} observed {ser}")
+    elif prov == "twdb":
+        hit = twdb_catalog().get(st)
+        if not hit:
+            return None
+        ref.update(station=hit[0], series=f"water_level@{hit[1]}", cadenceMin=1440, lagMin=1440,
+                   note="TWDB Water Data for Texas estimated daily average (relay of the lake's gauge; not independent corroboration)")
     else:
         return None
     return ref
@@ -427,6 +450,11 @@ def parse_hist_series(inp: Inputs, hs: str, row: dict, full: dict) -> tuple[dict
         return {"kind": "cwmsDaily", "office": office, "series": tsid}, None
     if prov == "rise":
         return {"kind": "riseDaily", "item": hs.split(":")[1]}, None
+    if prov == "twdb":
+        hit = twdb_catalog().get(hs.split(":")[1]) or next((v for k, v in twdb_catalog().items() if v[0] == hs.split(":")[1]), None)
+        if not hit:
+            return None, f"{hs}: no TWDB file slug / datum label in the committed dry run"
+        return {"kind": "twdbDaily", "slug": hit[0], "datum": hit[1], "offsetFt": 0.0}, None
     if prov == "hads":
         _, lid, pe = hs.split(":", 2)
         return {"kind": "hadsDaily", "lid": lid, "pe": pe[:2], "offsetFt": 0.0}, None
@@ -801,6 +829,62 @@ def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
     return rec, warnings
 
 
+# ---------------------------------------------------------------------------------------------------------------- recovered (mismatch14)
+def load_fixed_dispositions(path: str = DISPOSITIONS) -> dict[str, dict]:
+    """lakeId -> FIXED disposition record. Only lakes of the 14-lake hold list can ever be recovered; anything else is a hard error."""
+    if not os.path.exists(path):
+        return {}
+    doc = json.load(open(path))
+    out = {}
+    for lake, v in doc.get("lakes", {}).items():
+        if v.get("disposition") != "FIXED":
+            continue
+        assert lake in HISTORY_LIVE_MISMATCH, f"{lake}: a FIXED disposition for a lake outside the 14-lake mismatch hold list"
+        assert v.get("reviewRequired") is True and v.get("status") == "MACHINE_VERIFIED_CANDIDATE", f"{lake}: a FIXED lake must stay a review-required candidate"
+        out[lake] = v
+    return out
+
+
+def apply_recovery(rec: dict, disp: dict) -> dict:
+    """Overlay a FIXED disposition on the machine record. Status stays MACHINE_VERIFIED (never REVIEWED); a series correction replaces the live
+    primary and the history source with the documented ones. No datum offset is ever introduced (datumOffsetFt stays 0.0)."""
+    assert rec["status"] == STATUS
+    corr = disp.get("correction")
+    if corr:
+        old = corr["replaces"]
+        new_live = dict(corr["live"])
+        rest = [l for l in rec["live"][1:] if not (l["provider"] == old["provider"] and l["station"] == old["station"])]
+        rec["live"] = [new_live] + rest
+        rec["provider"], rec["researchProvider"], rec["station"], rec["series"] = new_live["provider"], new_live["provider"], new_live["station"], new_live.get("series")
+        rec["history"] = [dict(corr["history"])]
+        rec["historyCompleteYears"], rec["historyClass"], rec["historyFirstYear"] = corr["historyCompleteYears"], corr["historyClass"], corr["historyFirstYear"]
+        rec["historyBasis"], rec["historyNotes"] = "mismatch14-correction", [corr["historyNote"]]
+        rec["verification"]["probe"] = dict(corr["probe"])
+    for l in rec["live"]:
+        assert l.get("datumOffsetFt", 0.0) == 0.0
+    rec["recovery"] = {"source": "jobs/lake-brain/bindings/mismatch14_dispositions.json", "disposition": "FIXED", "fixType": disp["fixType"],
+                       "criteriaVersion": "mismatch14-v1", "reviewRequired": True,
+                       "overlap": disp["overlap"], "operatorFullPoolFt": disp["operator"]["fullPoolFt"], "datumOffsetFt": 0.0,
+                       "correction": (corr or {}).get("evidence")}
+    return rec
+
+
+def build_recovered(inp: Inputs, fixed: dict[str, dict]) -> dict[str, dict]:
+    """MACHINE_VERIFIED candidate records for the FIXED lakes. Every other gate (strict wave/status, provider allow-list, no v1.1, coordinate ok)
+    is still enforced here: a lake that fails one is not recovered."""
+    rows = {r["lake_id"]: r for r in inp.v2}
+    out = {}
+    for lake, disp in sorted(fixed.items()):
+        r = rows[lake]
+        assert r["wave"] in STRICT_WAVES and r["binding_status"] in STRICT_STATUSES and "v1.1" not in r["checks_passed"], lake
+        assert r["provider"] in ALLOW_PROVIDERS and r["provider"] not in UNDOCUMENTED, lake
+        assert inp.geom[lake]["point_flag"] == "ok", lake
+        rec, _ = build_record(inp, r)
+        assert rec is not None, lake
+        out[lake] = apply_recovery(rec, disp)
+    return out
+
+
 # ---------------------------------------------------------------------------------------------------------------- pilots
 def pilot_reproduction(records: dict[str, dict]) -> list[dict]:
     """Assert that the 5 hand-written bindings are reproduced by the machine table (key fields). Mirrors LakeSourceBindings.swift."""
@@ -844,10 +928,15 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="build in memory and fail if the committed files differ")
     ap.add_argument("--stdout", action="store_true")
+    ap.add_argument("--include-recovered", action="store_true",
+                    help="ALSO put the FIXED mismatch14 lakes (mismatch14_dispositions.json) into the main table as MACHINE_VERIFIED candidates. "
+                         "Off by default: the committed table, the review pack and the Swift generator stay at the 196-lake population until a human accepts the recovered list.")
     args = ap.parse_args(argv)
 
     inp = Inputs()
-    eligible, excluded_rows = classify_lakes(inp)
+    fixed = load_fixed_dispositions()
+    recovered_records = build_recovered(inp, fixed) if fixed else {}
+    eligible, excluded_rows = classify_lakes(inp, frozenset(recovered_records) if args.include_recovered else frozenset())
     records, warnings, dropped = {}, [], []
     for row in eligible:
         rec, w = build_record(inp, row)
@@ -855,6 +944,8 @@ def main(argv=None) -> int:
         if rec is None:
             dropped.append((row, [("no-adapter-series", w[0])]))
             continue
+        if args.include_recovered and row["lake_id"] in recovered_records:
+            rec = recovered_records[row["lake_id"]]
         records[row["lake_id"]] = rec
 
     # Pilots are asserted on the machine records computed BEFORE eligibility (a pilot held back for a coordinate flag still has a record).
@@ -910,11 +1001,22 @@ def main(argv=None) -> int:
 
     text = json.dumps(doc, indent=1, sort_keys=False, ensure_ascii=False) + "\n"
     ex_text = json.dumps(ex_doc, indent=1, sort_keys=False, ensure_ascii=False) + "\n"
+    rec_text = None
+    if fixed:
+        rec_doc = {"schema": RECOVERED_SCHEMA, "bindingStatus": STATUS, "criteriaVersion": CRITERIA_VERSION,
+                   "note": "NEWLY RECOVERED, NOT REVIEWED. MACHINE_VERIFIED candidates whose history/live mismatch hold was lifted by a FIXED disposition "
+                           "(jobs/lake-brain/bindings/mismatch14_dispositions.json). They are NOT in bindings.proposed.v1.json, NOT in any review sample or pack, and "
+                           "cannot be accepted until Michael reviews this list, removes the lakes from held_lakes.SERIES_MISMATCH and regenerates with --include-recovered.",
+                   "dispositions": {"sha256": sha256(DISPOSITIONS)}, "count": len(recovered_records),
+                   "bindings": [recovered_records[k] for k in sorted(recovered_records)]}
+        rec_text = json.dumps(rec_doc, indent=1, sort_keys=False, ensure_ascii=False) + "\n"
     if args.stdout:
         sys.stdout.write(text)
         return 0
     if args.check:
         ok = os.path.exists(OUT) and open(OUT).read() == text and os.path.exists(OUT_EXCLUDED) and open(OUT_EXCLUDED).read() == ex_text
+        if rec_text is not None:
+            ok = ok and os.path.exists(OUT_RECOVERED) and open(OUT_RECOVERED).read() == rec_text
         print("bindings tables up to date" if ok else "bindings tables differ from a fresh build")
         return 0 if ok else 1
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -922,6 +1024,10 @@ def main(argv=None) -> int:
         f.write(text)
     with open(OUT_EXCLUDED, "w") as f:
         f.write(ex_text)
+    if rec_text is not None:
+        with open(OUT_RECOVERED, "w") as f:
+            f.write(rec_text)
+        print(f"recovered (FIXED, review required) {len(recovered_records)} -> {os.path.relpath(OUT_RECOVERED, REPO)}")
     print(f"eligible {len(ordered)} -> {os.path.relpath(OUT, REPO)}")
     print("  by provider:", dict(sorted(by_provider.items())))
     print("  history:", dict(sorted(hist_counts.items())), " plan:", dict(plan_counts))

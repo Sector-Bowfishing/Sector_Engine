@@ -5,7 +5,8 @@
 //  History never goes in the Brain RTDB. It lives in the private, versioned
 //  bucket gs://sector-lake-brain:
 //    history/{lakeKey}/daily.csv              date,elevationFt,sourceId (one row per lake-local day)
-//    baselines/{lakeKey}/{baselineVersion}.json
+//    baselines/{lakeKey}/latest.json                 pointer to the current immutable artifact (LakeBaselineStore)
+//    baselines-archive/{lakeKey}/{method}_{end}_{fp}.json   immutable baseline artifacts (legacy: baselines/{lakeKey}/{baselineVersion}.json)
 //    presence/latest.json → presence/releases/{researchVersion}/presence.json   (private research data)
 //
 //  The Water Temp lane's TVA archive (gs://sector-water-temp-archive) is read,
@@ -21,6 +22,18 @@ public protocol LakeBrainArchive: Sendable {
     var uri: String { get }
     func read(_ path: String) async throws -> Data?
     func write(_ path: String, _ data: Data, contentType: String) async throws
+    /// Create-only write for immutable objects (the prediction ledger). Returns false, writing nothing, when the object already exists.
+    /// The GCS archive enforces this server-side (`ifGenerationMatch=0`), closing the read-then-write race; the default
+    /// (read, then write) is for local/dry-run archives and fakes.
+    func writeIfAbsent(_ path: String, _ data: Data, contentType: String) async throws -> Bool
+}
+
+public extension LakeBrainArchive {
+    func writeIfAbsent(_ path: String, _ data: Data, contentType: String) async throws -> Bool {
+        if try await read(path) != nil { return false }
+        try await write(path, data, contentType: contentType)
+        return true
+    }
 }
 
 /// Dry run / tests: a directory on disk.
@@ -48,6 +61,9 @@ public final class LayeredLakeBrainArchive: LakeBrainArchive, @unchecked Sendabl
     }
     public func write(_ path: String, _ data: Data, contentType: String) async throws {
         try await primary.write(path, data, contentType: contentType)
+    }
+    public func writeIfAbsent(_ path: String, _ data: Data, contentType: String) async throws -> Bool {
+        try await primary.writeIfAbsent(path, data, contentType: contentType)
     }
 }
 
@@ -99,17 +115,32 @@ public final class GCSLakeBrainArchive: LakeBrainArchive, @unchecked Sendable {
     }
 
     public func write(_ path: String, _ data: Data, contentType: String) async throws {
+        _ = try await upload(path, data, contentType: contentType, createOnly: false)
+    }
+
+    /// `ifGenerationMatch=0`: GCS itself refuses (412) to replace an existing object.
+    public func writeIfAbsent(_ path: String, _ data: Data, contentType: String) async throws -> Bool {
+        try await upload(path, data, contentType: contentType, createOnly: true)
+    }
+
+    static func uploadURL(bucket: String, path: String, createOnly: Bool) -> String {
+        "https://storage.googleapis.com/upload/storage/v1/b/\(bucket)/o?uploadType=media&name=\(encodeObject(path))" + (createOnly ? "&ifGenerationMatch=0" : "")
+    }
+
+    private func upload(_ path: String, _ data: Data, contentType: String, createOnly: Bool) async throws -> Bool {
         guard !readOnly else { throw BrainStoreError(description: "gs://\(bucket) is read-only for the Lake Brain") }
-        var r = HTTPClientRequest(url: "https://storage.googleapis.com/upload/storage/v1/b/\(bucket)/o?uploadType=media&name=\(Self.encodeObject(path))")
+        var r = HTTPClientRequest(url: Self.uploadURL(bucket: bucket, path: path, createOnly: createOnly))
         r.method = .POST
         r.headers.add(name: "Authorization", value: "Bearer \(try await token())")
         r.headers.add(name: "Content-Type", value: contentType)
         r.body = .bytes(ByteBuffer(bytes: data))
         let resp = try await client.execute(r, timeout: .seconds(30))
         let body = try await resp.body.collect(upTo: 1 << 20)
+        if createOnly && resp.status.code == 412 { return false }
         guard (200..<300).contains(Int(resp.status.code)) else {
             throw BrainStoreError(description: "GCS PUT gs://\(bucket)/\(path) → \(resp.status.code): \(String(decoding: Data(body.readableBytesView).prefix(200), as: UTF8.self))")
         }
+        return true
     }
 }
 

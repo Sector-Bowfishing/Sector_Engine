@@ -242,8 +242,12 @@ def run(args):
     if args.write:
         os.makedirs(args.out_dir, exist_ok=True)
         rp, bp = os.path.join(args.out_dir, "binding_review_result.json"), os.path.join(args.out_dir, "accepted_batch.json")
-        json.dump(result, open(rp, "w"), indent=1)
-        json.dump(batch, open(bp, "w"), indent=1)
+        with open(bp, "w") as fh:
+            json.dump(batch, fh, indent=1)
+        # Link the two files: any later hand-edit of the batch is detectable (history/preseed_fleet.py verifies this hash).
+        result["acceptedBatchSha256"] = sha256_file(bp)
+        with open(rp, "w") as fh:
+            json.dump(result, fh, indent=1)
         print("wrote", rp)
         print("wrote", bp)
     else:

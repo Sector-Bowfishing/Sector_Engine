@@ -1,0 +1,440 @@
+[
+{
+"metadata": {
+"name": "baselines/Guntersville_AL/doy15_percentile_v1_2026_10_12_f0e2cadb.json",
+"size": "49518",
+"timeCreated": "2026-10-12T23:15:14.983000+00:00",
+"generation": "1791846914976792",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Guntersville_AL/doy15_percentile_v1_2026_10_13_0d416a51.json",
+"size": "49645",
+"timeCreated": "2026-10-13T05:34:56.309000+00:00",
+"generation": "1791869696302011",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Guntersville_AL/doy15_percentile_v1_2026_10_13_b6ab068b.json",
+"size": "103620",
+"timeCreated": "2026-10-13T16:53:22.124000+00:00",
+"generation": "1791910402115677",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Guntersville_AL/doy15_percentile_v2_2026_10_13_b6ab068b.json",
+"size": "114360",
+"timeCreated": "2026-10-13T18:53:17.425000+00:00",
+"generation": "1791917597417954",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Lake_Hartwell_SC/doy15_percentile_v1_2026_10_06_426cac19.json",
+"size": "122519",
+"timeCreated": "2026-10-12T23:15:25.603000+00:00",
+"generation": "1791846925596246",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Lake_Hartwell_SC/doy15_percentile_v1_2026_10_07_24121858.json",
+"size": "122505",
+"timeCreated": "2026-10-13T12:53:41.971000+00:00",
+"generation": "1791896021964851",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Lake_Hartwell_SC/doy15_percentile_v1_2026_10_12_9bfba66b.json",
+"size": "122493",
+"timeCreated": "2026-10-13T16:53:34.216000+00:00",
+"generation": "1791910414209603",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Lake_Hartwell_SC/doy15_percentile_v2_2026_10_12_9bfba66b.json",
+"size": "122517",
+"timeCreated": "2026-10-13T18:53:19.509000+00:00",
+"generation": "1791917599499794",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Pickwick_Lake_TN/doy15_percentile_v1_2026_10_12_7bfd0b70.json",
+"size": "50169",
+"timeCreated": "2026-10-12T23:15:18.595000+00:00",
+"generation": "1791846918588113",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Pickwick_Lake_TN/doy15_percentile_v1_2026_10_13_35ea339a.json",
+"size": "111279",
+"timeCreated": "2026-10-13T16:53:25.322000+00:00",
+"generation": "1791910405314873",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Pickwick_Lake_TN/doy15_percentile_v1_2026_10_13_8cc6809f.json",
+"size": "50297",
+"timeCreated": "2026-10-13T05:34:57.945000+00:00",
+"generation": "1791869697939326",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Pickwick_Lake_TN/doy15_percentile_v2_2026_10_13_35ea339a.json",
+"size": "118817",
+"timeCreated": "2026-10-13T18:53:19.504000+00:00",
+"generation": "1791917599498722",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wheeler_AL/doy15_percentile_v1_2026_10_12_a9fe738b.json",
+"size": "49793",
+"timeCreated": "2026-10-12T23:15:16.226000+00:00",
+"generation": "1791846916221002",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wheeler_AL/doy15_percentile_v1_2026_10_13_367f669f.json",
+"size": "104340",
+"timeCreated": "2026-10-13T16:53:21.583000+00:00",
+"generation": "1791910401576904",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wheeler_AL/doy15_percentile_v1_2026_10_13_3a48b5ad.json",
+"size": "49924",
+"timeCreated": "2026-10-13T05:34:56.371000+00:00",
+"generation": "1791869696365356",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wheeler_AL/doy15_percentile_v2_2026_10_13_367f669f.json",
+"size": "115111",
+"timeCreated": "2026-10-13T18:53:17.333000+00:00",
+"generation": "1791917597324967",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wilson_AL/doy15_percentile_v1_2026_10_12_eba4bcae.json",
+"size": "50762",
+"timeCreated": "2026-10-12T23:15:16.238000+00:00",
+"generation": "1791846916231791",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wilson_AL/doy15_percentile_v1_2026_10_13_80dd72fd.json",
+"size": "104739",
+"timeCreated": "2026-10-13T16:53:23.350000+00:00",
+"generation": "1791910403344779",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wilson_AL/doy15_percentile_v1_2026_10_13_f26eb2d7.json",
+"size": "50906",
+"timeCreated": "2026-10-13T05:34:56.322000+00:00",
+"generation": "1791869696315048",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "baselines/Wilson_AL/doy15_percentile_v2_2026_10_13_80dd72fd.json",
+"size": "116474",
+"timeCreated": "2026-10-13T18:53:17.519000+00:00",
+"generation": "1791917597512853",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Guntersville_AL/daily.csv",
+"size": "28626",
+"timeCreated": "2026-10-12T23:15:14.710000+00:00",
+"timeDeleted": "2026-10-13T05:34:56.190000+00:00",
+"generation": "1791846914704101",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Guntersville_AL/daily.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T05:34:56.190000+00:00",
+"timeDeleted": "2026-10-13T16:04:42.049000+00:00",
+"generation": "1791869696171324",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Guntersville_AL/daily.csv",
+"size": "265958",
+"timeCreated": "2026-10-13T16:04:42.049000+00:00",
+"generation": "1791907482025579",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1679602",
+"timeCreated": "2026-10-12T23:15:24.089000+00:00",
+"timeDeleted": "2026-10-12T23:20:44.731000+00:00",
+"generation": "1791846924081508",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1679602",
+"timeCreated": "2026-10-12T23:20:44.731000+00:00",
+"timeDeleted": "2026-10-12T23:21:17.719000+00:00",
+"generation": "1791847244706753",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1679602",
+"timeCreated": "2026-10-12T23:21:17.719000+00:00",
+"timeDeleted": "2026-10-12T23:46:52.782000+00:00",
+"generation": "1791847277698714",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1679602",
+"timeCreated": "2026-10-12T23:46:52.782000+00:00",
+"timeDeleted": "2026-10-13T05:34:57.794000+00:00",
+"generation": "1791848812762717",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1679602",
+"timeCreated": "2026-10-13T05:34:57.794000+00:00",
+"timeDeleted": "2026-10-13T12:53:41.592000+00:00",
+"generation": "1791869697776152",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1679673",
+"timeCreated": "2026-10-13T12:53:41.592000+00:00",
+"timeDeleted": "2026-10-13T16:53:33.882000+00:00",
+"generation": "1791896021568864",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1680028",
+"timeCreated": "2026-10-13T16:53:33.882000+00:00",
+"timeDeleted": "2026-10-13T18:53:19.053000+00:00",
+"generation": "1791910413859551",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Lake_Hartwell_SC/daily.csv",
+"size": "1680028",
+"timeCreated": "2026-10-13T18:53:19.053000+00:00",
+"generation": "1791917599032049",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Pickwick_Lake_TN/daily.csv",
+"size": "28626",
+"timeCreated": "2026-10-12T23:15:18.274000+00:00",
+"timeDeleted": "2026-10-13T05:34:57.834000+00:00",
+"generation": "1791846918268568",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Pickwick_Lake_TN/daily.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T05:34:57.834000+00:00",
+"timeDeleted": "2026-10-13T16:05:11.393000+00:00",
+"generation": "1791869697821108",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Pickwick_Lake_TN/daily.csv",
+"size": "257145",
+"timeCreated": "2026-10-13T16:05:11.393000+00:00",
+"generation": "1791907511369161",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Wheeler_AL/daily.csv",
+"size": "28626",
+"timeCreated": "2026-10-12T23:15:16.023000+00:00",
+"timeDeleted": "2026-10-13T05:34:56.255000+00:00",
+"generation": "1791846916015279",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Wheeler_AL/daily.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T05:34:56.255000+00:00",
+"timeDeleted": "2026-10-13T16:04:50.807000+00:00",
+"generation": "1791869696239933",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Wheeler_AL/daily.csv",
+"size": "256578",
+"timeCreated": "2026-10-13T16:04:50.807000+00:00",
+"generation": "1791907490790297",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Wilson_AL/daily.csv",
+"size": "28626",
+"timeCreated": "2026-10-12T23:15:16.018000+00:00",
+"timeDeleted": "2026-10-13T05:34:56.196000+00:00",
+"generation": "1791846916013029",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Wilson_AL/daily.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T05:34:56.196000+00:00",
+"timeDeleted": "2026-10-13T16:05:02.350000+00:00",
+"generation": "1791869696175545",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history/Wilson_AL/daily.csv",
+"size": "266028",
+"timeCreated": "2026-10-13T16:05:02.350000+00:00",
+"generation": "1791907502333160",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history_backup/Guntersville_AL/daily.20261013T160437Z.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T16:04:39.275000+00:00",
+"generation": "1791907479264004",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history_backup/Pickwick_Lake_TN/daily.20261013T160506Z.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T16:05:08.587000+00:00",
+"generation": "1791907508580274",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history_backup/Wheeler_AL/daily.20261013T160446Z.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T16:04:47.912000+00:00",
+"generation": "1791907487904586",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "history_backup/Wilson_AL/daily.20261013T160457Z.csv",
+"size": "28670",
+"timeCreated": "2026-10-13T16:04:59.045000+00:00",
+"generation": "1791907499034139",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "predictions/2026/10/13/185314Z-740761e4e50a.jsonl",
+"size": "6620",
+"timeCreated": "2026-10-13T18:53:19.876000+00:00",
+"generation": "1791917599867864",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "presence/latest.json",
+"size": "179",
+"timeCreated": "2026-10-12T23:15:10.290000+00:00",
+"generation": "1791846910285283",
+"storageClass": "STANDARD"
+}
+},
+{
+"metadata": {
+"name": "presence/releases/lake-presence-2026-10-12.1/presence.json",
+"size": "2650508",
+"timeCreated": "2026-10-12T23:15:08.162000+00:00",
+"generation": "1791846908156977",
+"storageClass": "STANDARD"
+}
+}
+]

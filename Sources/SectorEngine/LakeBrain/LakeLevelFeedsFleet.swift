@@ -22,7 +22,19 @@ import NIOHTTP1
 // MARK: - HTTP
 
 enum LakeFeedHTTP {
-    static let userAgent = "Sector-LakeBrain/1.0 (io.sector.co; read-only public data; contact mgcather07@gmail.com)"
+    /// The identity every Lake Brain request carries. No personal mailbox: a role contact is added only when the operator sets
+    /// `SECTOR_CONTACT` (an email or URL) in the job environment. See `userAgent(contact:)`.
+    static let baseUserAgent = "Sector-LakeBrain/1.0 (io.sector.co; Rehtac Labs; read-only public data)"
+
+    /// `baseUserAgent`, plus `; contact <value>` when `SECTOR_CONTACT` is set to a non-empty, printable, <= 120 character value.
+    static func userAgent(contact: String?) -> String {
+        guard let raw = contact?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty, raw.count <= 120,
+              raw.unicodeScalars.allSatisfy({ $0.value >= 0x20 && $0.value < 0x7F && $0 != "(" && $0 != ")" })
+        else { return baseUserAgent }
+        return String(baseUserAgent.dropLast()) + "; contact \(raw))"
+    }
+
+    static let userAgent = userAgent(contact: ProcessInfo.processInfo.environment["SECTOR_CONTACT"])
 
     /// Process-lifetime client with a long read timeout (a HADS chunk or an Access2Water listing can take well over the
     /// engine's 8 s cap). Never shut down, like `HTTP.client`.
@@ -127,6 +139,8 @@ actor HADSGate {
 final class LakeFleetClients: @unchecked Sendable {
     let a2w = A2WDistrictCache()
     let hads = HADSGate()
+    /// TWDB pacing gate + transport (LakeLevelFeedsTWDB.swift).
+    let twdbTransport = TWDBTransport.live()
     static let a2wBase = "https://water.usace.army.mil/cda/reporting"
     static let nwpsBase = "https://api.water.noaa.gov/nwps/v1"
     static let riseBase = "https://data.usbr.gov/rise/api"
@@ -467,6 +481,8 @@ extension PublicLakeLevelFeeds {
             return await fleet.riseDaily(item: item, since: since)
         case .hadsDaily(let lid, let pe, let offset):
             return await fleet.hadsDaily(lid: lid, pe: pe, offsetFt: offset, since: since, now: now, timeZone: timeZone)
+        case .twdbDaily(let slug, let datum, let offset):
+            return await fleet.twdbDaily(slug: slug, datum: datum, offsetFt: offset, since: since, now: now)
         default:
             return nil
         }
@@ -487,6 +503,8 @@ extension LakeHistorySource {
         case .riseDaily(let item): return "rise:\(item) (daily)"
         case .hadsDaily(let lid, let pe, let off):
             return "hads:\(lid):\(pe) (IEM HADS archive, daily median)" + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
+        case .twdbDaily(let slug, let datum, let off):
+            return "twdb:\(slug) (TWDB Water Data for Texas, estimated daily average, file datum \(datum))" + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
         }
     }
 }

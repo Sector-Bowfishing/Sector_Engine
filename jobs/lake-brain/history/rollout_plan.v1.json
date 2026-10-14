@@ -1,0 +1,605 @@
+{
+ "now": "2026-10-13T20:00:00Z",
+ "pilots": [
+  "Guntersville|AL",
+  "Lake Hartwell|SC",
+  "Pickwick Lake|TN",
+  "Wheeler|AL",
+  "Wilson|AL"
+ ],
+ "assumptions": {
+  "directory": 621,
+  "validation": "NOT_VALIDATED",
+  "observedShare": 1.0
+ },
+ "secondsPerCall": {
+  "a2w": 0.619,
+  "cwms": 0.57,
+  "hads": 21.889,
+  "nwps": 0.402,
+  "rise": 2.801,
+  "tva": 0.576,
+  "usgs": 1.442
+ },
+ "batches": {
+  "A": {
+   "summary": {
+    "lakes": 9,
+    "callsByHost": {
+     "a2w": 3,
+     "cwms": 35,
+     "hads": 7,
+     "nwps": 1,
+     "rise": 33,
+     "usgs": 4
+    },
+    "totalCalls": 83,
+    "secondsByHost": {
+     "a2w": 6,
+     "cwms": 35,
+     "hads": 153,
+     "nwps": 1,
+     "rise": 92,
+     "usgs": 6
+    },
+    "wallSecondsParallelByHost": 153,
+    "wallSecondsSerial": 293,
+    "providers": {
+     "a2w": 3,
+     "cwms": 3,
+     "nwps": 1,
+     "rise": 1,
+     "usgs": 1
+    },
+    "historyHosts": {
+     "cwms": 2,
+     "hads": 1,
+     "rise": 3,
+     "usgs": 3
+    }
+   },
+   "lakes": [
+    "Abiquiu Lake|NM",
+    "Allatoona|GA",
+    "Arkabutla Lake|MS",
+    "Canton Lake|OK",
+    "Cheney Reservoir|KS",
+    "Clarks Hill / J.S. Thurmond|GA",
+    "Hungry Horse Reservoir|MT",
+    "Possum Kingdom Lake|TX",
+    "Pueblo Reservoir|CO"
+   ]
+  },
+  "B": {
+   "summary": {
+    "lakes": 59,
+    "callsByHost": {
+     "a2w": 19,
+     "cwms": 282,
+     "rise": 244,
+     "usgs": 39
+    },
+    "totalCalls": 584,
+    "secondsByHost": {
+     "a2w": 38,
+     "cwms": 282,
+     "rise": 683,
+     "usgs": 56
+    },
+    "wallSecondsParallelByHost": 683,
+    "wallSecondsSerial": 1060,
+    "providers": {
+     "a2w": 19,
+     "cwms": 10,
+     "rise": 16,
+     "usgs": 14
+    },
+    "historyHosts": {
+     "cwms": 17,
+     "rise": 17,
+     "usgs": 25
+    }
+   },
+   "lakes": [
+    "Alcova Reservoir|WY",
+    "Angostura Reservoir|SD",
+    "Bankhead|AL",
+    "Bighorn Lake|WY",
+    "Box Butte Reservoir|NE",
+    "Boysen Reservoir|WY",
+    "Canyon Ferry Lake|MT",
+    "Carters|GA",
+    "Cedar Creek Reservoir|TX",
+    "Cochiti Lake|NM",
+    "Conchas Lake|NM",
+    "DeGray|AR",
+    "Don Pedro|CA",
+    "Eagle Creek Reservoir|IN",
+    "El Vado Lake|NM",
+    "Enid Lake|MS",
+    "Falls Lake|NC",
+    "Fern Ridge Reservoir|OR",
+    "Fontenelle Reservoir|WY",
+    "Fresno Reservoir|MT",
+    "Great Sacandaga Lake|NY",
+    "Greers Ferry|AR",
+    "Grenada Lake|MS",
+    "Havasu|AZ",
+    "John Martin Reservoir|CO",
+    "Jordan Lake|NC",
+    "Kerr Reservoir (Buggs Island)|VA",
+    "Keyhole Reservoir|WY",
+    "Lake Ashtabula|ND",
+    "Lake Billy Chinook|OR",
+    "Lake Conroe|TX",
+    "Lake Fork Reservoir|TX",
+    "Lake Greenwood|SC",
+    "Lake Livingston|TX",
+    "Lake Marion|SC",
+    "Lake Mohave|NV",
+    "Lake Moultrie|SC",
+    "Lake Murray (SC)|SC",
+    "Lake Tawakoni|TX",
+    "Lake Winnebago|WI",
+    "Lanier (Sidney Lanier)|GA",
+    "Merritt Reservoir|NE",
+    "Moses Lake|WA",
+    "Nimrod|AR",
+    "Norfork|AR",
+    "Ouachita (L. Ouachita)|AR",
+    "Pactola Reservoir|SD",
+    "Patterson Lake|ND",
+    "Philpott Lake|VA",
+    "Santa Rosa Lake|NM",
+    "Sardis Lake|MS",
+    "Seminole|GA",
+    "Shadow Mountain Reservoir|CO",
+    "Sumner Lake|NM",
+    "Table Rock Lake|MO",
+    "Tiber Reservoir (Lake Elwell)|MT",
+    "Wanaque Reservoir|NJ",
+    "West Point|GA",
+    "Willard Bay Reservoir|UT"
+   ]
+  },
+  "C": {
+   "summary": {
+    "lakes": 49,
+    "callsByHost": {
+     "a2w": 28,
+     "cwms": 8113,
+     "hads": 95,
+     "nwps": 13,
+     "usgs": 22
+    },
+    "totalCalls": 8271,
+    "secondsByHost": {
+     "a2w": 56,
+     "cwms": 8113,
+     "hads": 2079,
+     "nwps": 13,
+     "usgs": 32
+    },
+    "wallSecondsParallelByHost": 8113,
+    "wallSecondsSerial": 10293,
+    "providers": {
+     "a2w": 28,
+     "cwms": 5,
+     "nwps": 13,
+     "usgs": 3
+    },
+    "historyHosts": {
+     "cwms": 33,
+     "hads": 14,
+     "usgs": 2
+    }
+   },
+   "lakes": [
+    "Alum Creek Lake|OH",
+    "Badin Lake|NC",
+    "Barren River Lake|KY",
+    "Beltzville Lake|PA",
+    "Brookville Lake|IN",
+    "Buckeye Lake|OH",
+    "Caesar Creek Lake|OH",
+    "Cave Run Lake|KY",
+    "Center Hill Lake|TN",
+    "Chatfield Reservoir|CO",
+    "Claytor Lake|VA",
+    "Coeur d'Alene|ID",
+    "Coralville Lake|IA",
+    "Crab Orchard Lake|IL",
+    "Cross Lake|LA",
+    "Dale Hollow Lake|TN",
+    "Geist Reservoir|IN",
+    "Green River Lake|KY",
+    "Gull Lake|MN",
+    "High Rock Lake|NC",
+    "Hoover Reservoir|OH",
+    "Jennings Randolph Lake|MD",
+    "John Redmond Reservoir|KS",
+    "Kaw Lake|OK",
+    "Kerr Lake (John H. Kerr)|NC",
+    "Lake Cumberland|KY",
+    "Lake Moomaw|VA",
+    "Lake Red Rock|IA",
+    "Lake Winnibigoshish|MN",
+    "Lake of the Ozarks|MO",
+    "Laurel River Lake|KY",
+    "Leech Lake|MN",
+    "Lewis and Clark Lake|SD",
+    "Liberty Reservoir|MD",
+    "Mosquito Creek Lake|OH",
+    "Neely Henry|AL",
+    "Oconee|GA",
+    "Okatibbee Lake|MS",
+    "Old Hickory Lake|TN",
+    "Patoka Lake|IN",
+    "Percy Priest Lake|TN",
+    "Raystown Lake|PA",
+    "Rough River Lake|KY",
+    "Saylorville Lake|IA",
+    "Scituate Reservoir|RI",
+    "Shenango River Lake|PA",
+    "Skiatook Lake|OK",
+    "Summersville Lake|WV",
+    "Taylorsville Lake|KY"
+   ]
+  },
+  "D": {
+   "summary": {
+    "lakes": 74,
+    "callsByHost": {
+     "a2w": 25,
+     "cwms": 1552,
+     "hads": 35,
+     "nwps": 7,
+     "rise": 25,
+     "tva": 14,
+     "usgs": 47
+    },
+    "totalCalls": 1705,
+    "secondsByHost": {
+     "a2w": 50,
+     "cwms": 1552,
+     "hads": 766,
+     "nwps": 7,
+     "rise": 70,
+     "tva": 28,
+     "usgs": 68
+    },
+    "wallSecondsParallelByHost": 1552,
+    "wallSecondsSerial": 2541,
+    "providers": {
+     "a2w": 25,
+     "cwms": 24,
+     "nwps": 7,
+     "rise": 2,
+     "tva": 7,
+     "usgs": 9
+    },
+    "historyHosts": {
+     "cwms": 46,
+     "none": 3,
+     "rise": 2,
+     "tva": 7,
+     "usgs": 16
+    }
+   },
+   "lakes": [
+    "Berlin Lake|OH",
+    "Bluestone Lake|WV",
+    "Branched Oak Lake|NE",
+    "Broken Bow Lake|OK",
+    "Burnsville Lake|WV",
+    "Carlyle Lake|IL",
+    "Cheat Lake|WV",
+    "Cherry Creek Reservoir|CO",
+    "Clinton Lake|KS",
+    "Columbus Lake|MS",
+    "Deep Creek Lake|MD",
+    "Douglas Lake|TN",
+    "El Dorado Lake|KS",
+    "Eufaula / W.F. George|AL",
+    "Flannagan Reservoir|VA",
+    "Flathead Lake|MT",
+    "Fort Gibson Lake|OK",
+    "Fort Loudoun Lake|TN",
+    "Grand Lake St. Marys|OH",
+    "Grand Lake o' the Cherokees|OK",
+    "Hebgen Lake|MT",
+    "Herrington Lake|KY",
+    "Indian Lake|NY",
+    "Indian Lake|OH",
+    "Istokpoga|FL",
+    "Jordan|AL",
+    "Kanopolis Lake|KS",
+    "Keystone Lake|OK",
+    "Kissimmee|FL",
+    "Lake Bistineau|LA",
+    "Lake Buchanan|TX",
+    "Lake Chelan|WA",
+    "Lake Eufaula|OK",
+    "Lake Gaston|VA",
+    "Lake Martin|AL",
+    "Lake Milton|OH",
+    "Lake Monticello|SC",
+    "Lake Oahe|SD",
+    "Lake Pend Oreille|ID",
+    "Lake Tahoe|NV",
+    "Lake Texoma|TX",
+    "Lake Travis|TX",
+    "Lay|AL",
+    "Melvern Lake|KS",
+    "Milford Lake|KS",
+    "Nickajack Lake|TN",
+    "Norris Lake|TN",
+    "Perry Lake|KS",
+    "Pomme de Terre Lake|MO",
+    "Pomona Lake|KS",
+    "Priest Lake|ID",
+    "R.D. Bailey Lake|WV",
+    "Rathbun Lake|IA",
+    "Ross Barnett Reservoir|MS",
+    "Ross Lake|WA",
+    "Sam Rayburn Reservoir|TX",
+    "Sardis Lake|OK",
+    "Senecaville Lake|OH",
+    "Smith (Lewis Smith)|AL",
+    "South Holston Lake|VA",
+    "Spruce Run Reservoir|NJ",
+    "Stockton Lake|MO",
+    "Strawberry Reservoir|UT",
+    "Sutton Lake|WV",
+    "Tappan Lake|OH",
+    "Tims Ford Lake|TN",
+    "Tohopekaliga (Toho)|FL",
+    "Topaz Lake|NV",
+    "Truman Lake|MO",
+    "Ute Lake|NM",
+    "Waconda Lake|KS",
+    "Wappapello Lake|MO",
+    "Watts Bar Lake|TN",
+    "Wilson Lake|KS"
+   ]
+  }
+ },
+ "projection": [
+  {
+   "step": "today (5 pilots)",
+   "profiled": 5,
+   "displayed": 3.0,
+   "uncapped": 6.3,
+   "gates": [
+    "coverage",
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 10.0,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 10.0,
+    "floodDroughtContext": 2.0,
+    "validation": 0.0,
+    "coverage": 1.0
+   }
+  },
+  {
+   "step": "after batch A",
+   "profiled": 14,
+   "displayed": 3.0,
+   "uncapped": 6.3,
+   "gates": [
+    "coverage",
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 7.9,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 10.0,
+    "floodDroughtContext": 6.4,
+    "validation": 0.0,
+    "coverage": 1.0
+   }
+  },
+  {
+   "step": "after batch B",
+   "profiled": 73,
+   "displayed": 5.0,
+   "uncapped": 6.3,
+   "gates": [
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 4.0,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 10.0,
+    "floodDroughtContext": 5.1,
+    "validation": 0.0,
+    "coverage": 3.0
+   }
+  },
+  {
+   "step": "after batch C",
+   "profiled": 122,
+   "displayed": 5.0,
+   "uncapped": 6.3,
+   "gates": [
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 3.7,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 10.0,
+    "floodDroughtContext": 5.8,
+    "validation": 0.0,
+    "coverage": 3.0
+   }
+  },
+  {
+   "step": "after batch D",
+   "profiled": 196,
+   "displayed": 5.0,
+   "uncapped": 6.5,
+   "gates": [
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 4.3,
+    "historyQuality": 9.2,
+    "seasonalBaseline": 9.5,
+    "trendQuality": 10.0,
+    "floodDroughtContext": 5.7,
+    "validation": 0.0,
+    "coverage": 5.0
+   }
+  }
+ ],
+ "projectionObserved90": [
+  {
+   "step": "today (5 pilots)",
+   "profiled": 5,
+   "displayed": 3.0,
+   "uncapped": 6.3,
+   "gates": [
+    "coverage",
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 10.0,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 10.0,
+    "floodDroughtContext": 2.0,
+    "validation": 0.0,
+    "coverage": 1.0
+   }
+  },
+  {
+   "step": "after batch A",
+   "profiled": 14,
+   "displayed": 3.0,
+   "uncapped": 6.2,
+   "gates": [
+    "coverage",
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 7.9,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 9.3,
+    "floodDroughtContext": 5.7,
+    "validation": 0.0,
+    "coverage": 1.0
+   }
+  },
+  {
+   "step": "after batch B",
+   "profiled": 73,
+   "displayed": 5.0,
+   "uncapped": 6.1,
+   "gates": [
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 4.0,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 9.0,
+    "floodDroughtContext": 4.8,
+    "validation": 0.0,
+    "coverage": 3.0
+   }
+  },
+  {
+   "step": "after batch C",
+   "profiled": 122,
+   "displayed": 5.0,
+   "uncapped": 6.1,
+   "gates": [
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 3.7,
+    "historyQuality": 10.0,
+    "seasonalBaseline": 10.0,
+    "trendQuality": 9.0,
+    "floodDroughtContext": 5.5,
+    "validation": 0.0,
+    "coverage": 3.0
+   }
+  },
+  {
+   "step": "after batch D",
+   "profiled": 196,
+   "displayed": 5.0,
+   "uncapped": 6.4,
+   "gates": [
+    "validation"
+   ],
+   "breakdown": {
+    "sourceAuthority": 10.0,
+    "operatorPlan": 4.3,
+    "historyQuality": 9.2,
+    "seasonalBaseline": 9.5,
+    "trendQuality": 9.0,
+    "floodDroughtContext": 5.3,
+    "validation": 0.0,
+    "coverage": 5.0
+   }
+  }
+ ],
+ "fleet": {
+  "lakes": 191,
+  "callsByHost": {
+   "a2w": 75,
+   "cwms": 9982,
+   "hads": 137,
+   "nwps": 21,
+   "rise": 302,
+   "tva": 14,
+   "usgs": 112
+  },
+  "totalCalls": 10643,
+  "secondsByHost": {
+   "a2w": 150,
+   "cwms": 9982,
+   "hads": 2999,
+   "nwps": 21,
+   "rise": 846,
+   "tva": 28,
+   "usgs": 162
+  },
+  "wallSecondsParallelByHost": 9982,
+  "wallSecondsSerial": 14187,
+  "providers": {
+   "a2w": 75,
+   "cwms": 42,
+   "nwps": 21,
+   "rise": 19,
+   "tva": 7,
+   "usgs": 27
+  },
+  "historyHosts": {
+   "cwms": 98,
+   "hads": 15,
+   "none": 3,
+   "rise": 22,
+   "tva": 7,
+   "usgs": 46
+  }
+ }
+}

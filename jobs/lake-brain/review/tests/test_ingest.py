@@ -336,3 +336,15 @@ def test_draw_is_deterministic_for_a_seed():
     b = B.draw_sample(list(reversed(eligible)), 7, 60)[3]
     c = B.draw_sample(eligible, 8, 60)[3]
     assert a == b and a != c and len(a) == 60
+
+
+def test_result_carries_the_sha256_of_the_batch_file(tmp_path):
+    """A hand-edited accepted_batch.json must be detectable: the result records the batch file's sha256 (verified by the pre-seed)."""
+    import hashlib
+    pack, sample, flagged, population = make_pack(tmp_path)
+    rv = tmp_path / "rv.csv"
+    write_export(rv, SAMPLE_PACK, sample, lambda l: "ACCEPT")
+    code, out = run(tmp_path, rv, pack=pack)
+    assert code == 0
+    res = json.load(open(out / "binding_review_result.json"))
+    assert res["acceptedBatchSha256"] == hashlib.sha256(open(out / "accepted_batch.json", "rb").read()).hexdigest()
