@@ -1,0 +1,102 @@
+{
+ "Guntersville_AL": {
+  "profile": {
+   "historicalCoverage": {
+    "baselineStatus": "SUFFICIENT"
+   },
+   "operatingPools": {
+    "guideCurve": {
+     "available": true
+    },
+    "operatingZoneSource": "TVA BtmOpZone\u2013TopOpZone (daily)"
+   },
+   "sourceCapability": {
+    "level": "DIRECT_OPERATOR_POOL"
+   }
+  },
+  "state": {
+   "floodPoolState": "UNKNOWN",
+   "kind": "OBSERVED"
+  }
+ },
+ "Lake_Hartwell_SC": {
+  "profile": {
+   "historicalCoverage": {
+    "baselineStatus": "SUFFICIENT"
+   },
+   "operatingPools": {
+    "guideCurve": {
+     "available": true
+    },
+    "operatingZoneSource": "CWMS Drought Level 1 to top of conservation (daily)"
+   },
+   "sourceCapability": {
+    "level": "DIRECT_OPERATOR_POOL"
+   }
+  },
+  "state": {
+   "floodPoolState": "NORMAL",
+   "kind": "OBSERVED"
+  }
+ },
+ "Pickwick_Lake_TN": {
+  "profile": {
+   "historicalCoverage": {
+    "baselineStatus": "SUFFICIENT"
+   },
+   "operatingPools": {
+    "guideCurve": {
+     "available": true
+    },
+    "operatingZoneSource": "TVA BtmOpZone\u2013TopOpZone (daily)"
+   },
+   "sourceCapability": {
+    "level": "DIRECT_OPERATOR_POOL"
+   }
+  },
+  "state": {
+   "floodPoolState": "UNKNOWN",
+   "kind": "OBSERVED"
+  }
+ },
+ "Wheeler_AL": {
+  "profile": {
+   "historicalCoverage": {
+    "baselineStatus": "SUFFICIENT"
+   },
+   "operatingPools": {
+    "guideCurve": {
+     "available": true
+    },
+    "operatingZoneSource": "TVA BtmOpZone\u2013TopOpZone (daily)"
+   },
+   "sourceCapability": {
+    "level": "DIRECT_OPERATOR_POOL"
+   }
+  },
+  "state": {
+   "floodPoolState": "UNKNOWN",
+   "kind": "OBSERVED"
+  }
+ },
+ "Wilson_AL": {
+  "profile": {
+   "historicalCoverage": {
+    "baselineStatus": "SUFFICIENT"
+   },
+   "operatingPools": {
+    "guideCurve": {
+     "available": true
+    },
+    "operatingZoneSource": "TVA BtmOpZone\u2013TopOpZone (daily)"
+   },
+   "sourceCapability": {
+    "level": "DIRECT_OPERATOR_POOL"
+   }
+  },
+  "state": {
+   "floodPoolState": "UNKNOWN",
+   "kind": "OBSERVED"
+  }
+ }
+}

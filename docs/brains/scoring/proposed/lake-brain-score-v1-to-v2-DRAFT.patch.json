@@ -1,0 +1,165 @@
+{
+  "status": "DRAFT PROPOSAL - NOT LOADED BY ANY SCORER - NOT ADOPTED",
+  "base": "docs/brains/scoring/lake-brain-score-v1.json",
+  "format": "RFC 6902 subset (add, replace)",
+  "note": "P1-X/P1-C and P3-X/P3-C are alternatives (UNKNOWN excluded / counted). P2 changes only the validation dimension and its gate; withholding RAPID is a publishing decision, not a rubric edit.",
+  "patches": {
+    "P1-X": [
+      {
+        "op": "replace",
+        "path": "/dimensions/5/label",
+        "value": "Flood-pool state known, where a flood pool exists"
+      },
+      {
+        "op": "replace",
+        "path": "/dimensions/5/fact",
+        "value": "states[*].floodPoolState != UNKNOWN, over lakes with profiles[*].operatingPools.floodPoolApplicability == EXISTS"
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/5/applicability",
+        "value": {
+          "field": "profiles[*].operatingPools.floodPoolApplicability",
+          "EXISTS": "an operator or TWDB flood-pool level is documented, OR the linked NID dam record lists 'Flood Risk Reduction' among its purposes",
+          "NOT_APPLICABLE": "an NID dam record with purposes is linked, none of them is flood control, and no flood-pool level is documented",
+          "UNDETERMINED": "no NID dam record or no purposes, and no flood-pool level is documented",
+          "denominator": "EXISTS only (UNDETERMINED excluded)",
+          "EXISTS_but_unpublished": "stays in the denominator as UNKNOWN: a pool that exists but whose level is not published is a real gap, not a non-applicability"
+        }
+      }
+    ],
+    "P1-C": [
+      {
+        "op": "replace",
+        "path": "/dimensions/5/label",
+        "value": "Flood-pool state known, where a flood pool exists or cannot be ruled out"
+      },
+      {
+        "op": "replace",
+        "path": "/dimensions/5/fact",
+        "value": "states[*].floodPoolState != UNKNOWN, over lakes with profiles[*].operatingPools.floodPoolApplicability in {EXISTS, UNDETERMINED}"
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/5/applicability",
+        "value": {
+          "field": "profiles[*].operatingPools.floodPoolApplicability",
+          "EXISTS": "an operator or TWDB flood-pool level is documented, OR the linked NID dam record lists 'Flood Risk Reduction' among its purposes",
+          "NOT_APPLICABLE": "an NID dam record with purposes is linked, none of them is flood control, and no flood-pool level is documented",
+          "UNDETERMINED": "no NID dam record or no purposes, and no flood-pool level is documented",
+          "denominator": "EXISTS and UNDETERMINED (only a positive NOT_APPLICABLE finding is excluded)"
+        }
+      }
+    ],
+    "P2": [
+      {
+        "op": "replace",
+        "path": "/dimensions/6/label",
+        "value": "Claim validation (weakest published claim family)"
+      },
+      {
+        "op": "replace",
+        "path": "/dimensions/6/fact",
+        "value": "min over COUNTED claim families of /validation/lake-brain/claims/{family}.status"
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/6/families",
+        "value": [
+          {
+            "id": "providerDisplay",
+            "level": 1,
+            "claims": "current pool elevation, operator guide / normal pool / flood-pool bottom as published, source id, freshness"
+          },
+          {
+            "id": "deterministicDerivation",
+            "level": 2,
+            "claims": "difference from guide or normal pool, operator zone, 72 h mean rate, trend direction arithmetic"
+          },
+          {
+            "id": "historicalState",
+            "level": 3,
+            "claims": "NORMAL / UNUSUAL / VERY_UNUSUAL against the lake's own history; trend label stability"
+          },
+          {
+            "id": "rapidChange",
+            "level": 3,
+            "claims": "RISING_RAPIDLY / FALLING_RAPIDLY flag"
+          }
+        ]
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/6/counted",
+        "value": "a family counts while at least one of its claims is published; a family withheld from publication (status WITHHELD) is not counted and its claims are not shown"
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/6/aggregate",
+        "value": "min"
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/6/familyMaturity",
+        "value": {
+          "NOT_VALIDATED": "no family-specific acceptance evidence recorded",
+          "PARTIAL": "binding acceptance recorded (n >= 60, <= 1 error, flagged tier in full); plus per family: derivation = conformance fixtures and level-meaning review; historicalState = pre-registered hold-out PASS and ledger >= 90 days; rapidChange = a pre-registered criterion PASS on ledger data dated after its commit",
+          "VALIDATED": "PARTIAL plus per family: provider display and derivation = continuous freshness record >= 90 days; historicalState and rapidChange = >= 12 months of logged predictions scored once under the pre-registered criteria"
+        }
+      },
+      {
+        "op": "replace",
+        "path": "/gates/1/when",
+        "value": "any COUNTED claim family is NOT_VALIDATED"
+      }
+    ],
+    "P3-X": [
+      {
+        "op": "replace",
+        "path": "/dimensions/1/label",
+        "value": "Operating guide or zone captured, where the operator publishes one"
+      },
+      {
+        "op": "replace",
+        "path": "/dimensions/1/fact",
+        "value": "profiles[*].operatingPools.guideCurve.available or operatingZoneSource, over lakes with profiles[*].operatingPools.planPublication in {CAPTURED, PUBLISHED_NOT_CAPTURED}"
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/1/publication",
+        "value": {
+          "field": "profiles[*].operatingPools.planPublication",
+          "CAPTURED": "strict guide curve, or a zone with BOTH a top and a bottom, documented",
+          "PUBLISHED_NOT_CAPTURED": "the operator publishes plan-type levels (a lower-pool level beside Top of Conservation; a TWDB conservation + dead pool pair) that do not meet the strict rule",
+          "OPERATOR_READ_NO_PLAN": "a verified operator project was read and publishes no plan-type level (not applicable)",
+          "UNKNOWN": "no verified operator record",
+          "denominator": "CAPTURED and PUBLISHED_NOT_CAPTURED (UNKNOWN excluded)"
+        }
+      }
+    ],
+    "P3-C": [
+      {
+        "op": "replace",
+        "path": "/dimensions/1/label",
+        "value": "Operating guide or zone captured, where the operator publishes one or is unknown"
+      },
+      {
+        "op": "replace",
+        "path": "/dimensions/1/fact",
+        "value": "profiles[*].operatingPools.guideCurve.available or operatingZoneSource, over lakes with profiles[*].operatingPools.planPublication in {CAPTURED, PUBLISHED_NOT_CAPTURED, UNKNOWN}"
+      },
+      {
+        "op": "add",
+        "path": "/dimensions/1/publication",
+        "value": {
+          "field": "profiles[*].operatingPools.planPublication",
+          "CAPTURED": "strict guide curve, or a zone with BOTH a top and a bottom, documented",
+          "PUBLISHED_NOT_CAPTURED": "the operator publishes plan-type levels that do not meet the strict rule",
+          "OPERATOR_READ_NO_PLAN": "a verified operator project was read and publishes no plan-type level (not applicable)",
+          "UNKNOWN": "no verified operator record",
+          "denominator": "CAPTURED, PUBLISHED_NOT_CAPTURED and UNKNOWN (only OPERATOR_READ_NO_PLAN excluded)"
+        }
+      }
+    ]
+  }
+}
