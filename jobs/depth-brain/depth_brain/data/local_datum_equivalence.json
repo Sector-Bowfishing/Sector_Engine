@@ -1,0 +1,126 @@
+{
+ "schema": "depth-local-datum-equivalence-v1",
+ "gate": "n>=20, |mean|<=0.10 ft, SD<=0.25 ft, not circular",
+ "lakes": {
+  "Clinton Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06891478",
+   "usgsParam": "62614",
+   "km": 0.72,
+   "n": 8754,
+   "meanFt": -0.003,
+   "sdFt": 0.027,
+   "quarterMeanRangeFt": [
+    -0.027,
+    0.03
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06891478&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  },
+  "Kanopolis Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06865000",
+   "usgsParam": "62614",
+   "km": 0.99,
+   "n": 8218,
+   "meanFt": -0.013,
+   "sdFt": 0.02,
+   "quarterMeanRangeFt": [
+    -0.037,
+    0.006
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06865000&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  },
+  "Melvern Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06910997",
+   "usgsParam": "62614",
+   "km": 0.18,
+   "n": 8423,
+   "meanFt": 0.017,
+   "sdFt": 0.044,
+   "quarterMeanRangeFt": [
+    -0.016,
+    0.063
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06910997&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  },
+  "Milford Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06857050",
+   "usgsParam": "62614",
+   "km": 1.04,
+   "n": 8723,
+   "meanFt": 0.0,
+   "sdFt": 0.007,
+   "quarterMeanRangeFt": [
+    -0.0,
+    0.001
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06857050&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  },
+  "Perry Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06890898",
+   "usgsParam": "62614",
+   "km": 0.09,
+   "n": 8605,
+   "meanFt": -0.001,
+   "sdFt": 0.017,
+   "quarterMeanRangeFt": [
+    -0.015,
+    0.012
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06890898&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  },
+  "Pomona Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06912490",
+   "usgsParam": "62614",
+   "km": 0.67,
+   "n": 8649,
+   "meanFt": 0.001,
+   "sdFt": 0.006,
+   "quarterMeanRangeFt": [
+    0.0,
+    0.001
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06912490&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  },
+  "Tuttle Creek Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06886900",
+   "usgsParam": "62614",
+   "km": 1.02,
+   "n": 8657,
+   "meanFt": 0.027,
+   "sdFt": 0.044,
+   "quarterMeanRangeFt": [
+    -0.006,
+    0.076
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06886900&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  },
+  "Wilson Lake|KS": {
+   "localEquals": "NGVD29",
+   "usgsSite": "06868100",
+   "usgsParam": "62614",
+   "km": 0.3,
+   "n": 8312,
+   "meanFt": -0.0,
+   "sdFt": 0.003,
+   "quarterMeanRangeFt": [
+    -0.0,
+    0.0
+   ],
+   "window": "2025-10-13..2026-10-13",
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06868100&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+  }
+ }
+}

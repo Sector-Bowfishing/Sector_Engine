@@ -11857,7 +11857,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "coverage": 0.9984,
     "hypsometryOnly": false,
@@ -11884,15 +11885,16 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -11904,15 +11906,39 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9984,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.3082
+     "10.0": 0.3284,
+     "3.0": 0.0885,
+     "6.0": 0.1764
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "KS"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": -0.003,
+     "n": 8754,
+     "sdFt": 0.027,
+     "usgsParam": "62614",
+     "usgsSite": "06891478"
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-03-31",
+     "elevRangeFt": [
+      831.0,
+      929.0
+     ],
+     "id": "CLIN-Clinton_Lake-Wakarusa.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CLIN-Clinton_Lake-Wakarusa.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 875.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CLIN-Clinton_Lake-Wakarusa.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -12128,7 +12154,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "hypsometryOnly": false,
     "kind": "contour",
@@ -12153,15 +12180,16 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -12171,6 +12199,41 @@
     "poolFt": 1463,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDM&level-id-mask=KANS.Elev*&unit=EN",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3042,
+     "3.0": 0.0629,
+     "6.0": 0.1684
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": -0.013,
+     "n": 8218,
+     "sdFt": 0.02,
+     "usgsParam": "62614",
+     "usgsSite": "06865000"
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-03-31",
+     "elevRangeFt": [
+      1432.0,
+      1540.0
+     ],
+     "id": "KANS-Kanopolis_Lake-Smoky_Hill.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/KANS-Kanopolis_Lake-Smoky_Hill.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1463.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating KANS-Kanopolis_Lake-Smoky_Hill.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -12286,7 +12349,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "coverage": 0.9996,
     "hypsometryOnly": false,
@@ -12313,15 +12377,16 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -12333,15 +12398,39 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9996,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2914
+     "10.0": 0.3033,
+     "3.0": 0.1434,
+     "6.0": 0.2261
     },
-    "intervalFt": 10.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "KS"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": 0.017,
+     "n": 8423,
+     "sdFt": 0.044,
+     "usgsParam": "62614",
+     "usgsSite": "06910997"
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2019-01-01",
+     "elevRangeFt": [
+      968.61,
+      1080.61
+     ],
+     "id": "MELN-Melvern_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MELN-Melvern_Lake-Marais_Des_Cygnes.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1036.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating MELN-Melvern_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -12367,7 +12456,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "coverage": 0.999,
     "hypsometryOnly": false,
@@ -12394,15 +12484,16 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -12414,15 +12505,39 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.999,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2966
+     "10.0": 0.2818,
+     "3.0": 0.0925,
+     "6.0": 0.2022
     },
-    "intervalFt": 10.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "KS"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": 0.0,
+     "n": 8723,
+     "sdFt": 0.007,
+     "usgsParam": "62614",
+     "usgsSite": "06857050"
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-03-31",
+     "elevRangeFt": [
+      1080.0,
+      1214.0
+     ],
+     "id": "MILD-Milford_Lake-Republican.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MILD-Milford_Lake-Republican.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1144.4,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating MILD-Milford_Lake-Republican.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -12545,7 +12660,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "coverage": 0.9989,
     "hypsometryOnly": false,
@@ -12572,15 +12688,16 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -12592,15 +12709,39 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9989,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.36419999999999997
+     "10.0": 0.3504,
+     "3.0": 0.0986,
+     "6.0": 0.1852
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "KS"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": 0.001,
+     "n": 8649,
+     "sdFt": 0.006,
+     "usgsParam": "62614",
+     "usgsSite": "06912490"
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1998-05-13",
+     "elevRangeFt": [
+      930.0,
+      1035.0
+     ],
+     "id": "POMA-Pomona_Lake-110-Quenemo.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/POMA-Pomona_Lake-110-Quenemo.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 974.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating POMA-Pomona_Lake-110-Quenemo.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -12626,7 +12767,8 @@
    "evidence": {
     "bestSource": "contour(partial/coarse):KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "hypsometryOnly": false,
     "kind": "contour",
@@ -12651,15 +12793,16 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -12669,6 +12812,41 @@
     "poolFt": 1075,
     "source": "CWMS NWDM TUCR Top of Multi-Purpose",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2242,
+     "3.0": 0.1006,
+     "6.0": 0.1594
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": 0.027,
+     "n": 8657,
+     "sdFt": 0.044,
+     "usgsParam": "62614",
+     "usgsSite": "06886900"
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-03-31",
+     "elevRangeFt": [
+      1015.0,
+      1161.0
+     ],
+     "id": "TUCR-Tuttle_Creek_Lake-Big_Blue.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/TUCR-Tuttle_Creek_Lake-Big_Blue.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1075.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TUCR-Tuttle_Creek_Lake-Big_Blue.Elev;Area.Area_Curves.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -12751,7 +12929,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "coverage": 0.9973,
     "hypsometryOnly": false,
@@ -12778,15 +12957,16 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -12798,15 +12978,39 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9973,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.185
+     "10.0": 0.2039,
+     "3.0": 0.0504,
+     "6.0": 0.098
     },
-    "intervalFt": 10.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "KS"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": -0.0,
+     "n": 8312,
+     "sdFt": 0.003,
+     "usgsParam": "62614",
+     "usgsSite": "06868100"
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-03-31",
+     "elevRangeFt": [
+      1436.0,
+      1594.0
+     ],
+     "id": "WILN-Wilson_Lake-Saline.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/WILN-Wilson_Lake-Saline.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1516.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating WILN-Wilson_Lake-Saline.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -41319,6 +41523,6 @@
    "D": 322,
    "UNKNOWN": 56
   },
-  "zonesAvailableForReference": 167
+  "zonesAvailableForReference": 169
  }
 }

@@ -140,6 +140,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     cwms_locs = json.load(open(paths["cwms_locations"]))["lakes"] if paths.get("cwms_locations") and os.path.exists(paths["cwms_locations"]) else {}
     a2w = json.load(open(paths["a2w_datums"]))["lakes"] if paths.get("a2w_datums") and os.path.exists(paths["a2w_datums"]) else {}
     overrides = json.load(open(paths["overrides"])) if paths.get("overrides") and os.path.exists(paths["overrides"]) else {}
+    equiv_all = (json.load(open(paths["local_equivalence"])) if paths.get("local_equivalence") and os.path.exists(paths["local_equivalence"]) else {}).get("lakes", {})
     curves = R.load_curves(paths["stage_area"]) if paths.get("stage_area") and os.path.exists(paths["stage_area"]) else {}
     twdb_ver = proposals.twdb_updates(paths.get("twdb_reference_pools")) if paths.get("twdb_reference_pools") else {}
     twdb_all = (proposals.load(paths["twdb_reference_pools"]) or {}).get("lakes", {}) if paths.get("twdb_reference_pools") else {}
@@ -221,7 +222,7 @@ def build(paths: dict, manifest_version: str) -> dict:
             ev["surveyYear"] = tw.get("surveyYear")
         rating_withheld = None
         if lid in curves and not (zr and zr.get("referenceStatus") == "VERIFIED"):                     # a validated contour reference (TWDB) keeps priority
-            rz, why_r = R.rating_reference_zones(curves[lid], lk.get("fullPoolFt"), rd, rd_ver, a.status, {float(k): v for k, v in (zr or {}).get("cumulative", {}).items()} or None)
+            rz, why_r = R.rating_reference_zones(curves[lid], lk.get("fullPoolFt"), rd, rd_ver, a.status, {float(k): v for k, v in (zr or {}).get("cumulative", {}).items()} or None, equiv_all.get(lid))
             if rz:
                 zr = rz
                 ev["contourSources"] = list(ev["contourSources"]) + ["USBR_TSC" if curves[lid].get("office") == "USBR-TSC" else "USACE_CWMS"]

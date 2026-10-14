@@ -60,10 +60,11 @@ It says **how much, never where.** No polygon, flat, drop-off, channel or point 
 
 ## 3. Amendments made after seeing results (disclosed)
 
-1. The first pass picked the latest rating regardless of datum; 10 Kansas/Iowa/Missouri lakes were refused as `R2_RATING_DATUM_DIFFERS` (11 after amendment 4 admitted Smithville to the rating list). The selector now prefers a rating in the pool's datum; it changed nothing for those lakes: their only rating is NGVD29 while the A2W series/pool is LOCAL (see section 4).
+1. The first pass picked the latest rating regardless of datum; 10 Kansas/Iowa/Missouri lakes were refused as `R2_RATING_DATUM_DIFFERS` (11 after amendment 4 admitted Smithville to the rating list). The selector now prefers a rating in the pool's datum; it changed nothing for those lakes: their only rating is NGVD29 while the A2W series/pool is LOCAL. Eight of them were later admitted through the LOCAL == NGVD29 equivalence evidence (amendment 6).
 2. R6 was added after three lakes (Senecaville, Tygart, Canyon Ferry) showed large contour/rating differences. It only withholds; it never publishes. (Canyon Ferry then passed at the 0.10 gate; Tygart was later refused by R4 instead; Senecaville is withheld by R6.)
 3. A `ft;ft2` rating (Alamo) was tried with a unit conversion and dropped: the converted area at pool was about 0.1 acre, so the unit label is unreliable.
 4. The monotone check was moved to the stored region (below pool + 6 ft) so noise above the pool cannot reject a lake (Truman and Allegheny then qualified and Smithville reached R2; Tygart, Youghiogheny and Table Rock are still refused).
+6. R2 gained the LOCAL == NGVD29 equivalence clause (section 4) after the refusals were read; it needs a per-lake paired-series proof and never applies generally.
 5. Ratings with more than 400 points at under 0.1 ft spacing are resampled to a 0.1 ft grid (linear between points) to keep the committed file at about 260 KB.
 
 ## 4. Result
@@ -73,7 +74,7 @@ It says **how much, never where.** No polygon, flat, drop-off, channel or point 
 * Lakes whose manifest now carries rating-derived reference shares (R1-R6 passed): **{len(rated)}**, of which **{len(sp)}** have a defensible shift today (zones become effective-zone output as soon as Lake Brain publishes a level).
 * Evidence tier of those lakes: {dict(tier)}. Rating vintage: {dict(vint)}.
 * Withheld after the builder, with the rule that withheld them: {'; '.join(f"{r} ({len(v)}): {', '.join(sorted(v))}" for r, v in sorted(by_reason.items()))}.
-  * `R2_RATING_DATUM_DIFFERS` lakes have an NGVD29 rating but a LOCAL A2W series/pool: the equality of LOCAL and NGVD29 is established only where a paired USGS series proves it (Kanopolis, Harlan). Each is a one-lake follow-up, not a rule change.
+  * `R2_RATING_DATUM_DIFFERS` lakes have an NGVD29 rating but a LOCAL A2W series/pool. Where a paired USGS series proves LOCAL equals NGVD29 numerically (`local_datum_equivalence.json`, from `research/depth/local_equivalence.py`: n >= 20, |mean| <= 0.10 ft, SD <= 0.25 ft, not circular) R2 accepts it: Clinton, Kanopolis, Melvern, Milford, Perry, Pomona, Tuttle Creek and Wilson. The remaining ones (no USGS lake-elevation series near the dam) wait for an operator statement or a gauge.
 
 ## 5. Independent cross-check (the evidence behind R6 and R8)
 

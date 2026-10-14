@@ -16,13 +16,15 @@
   "a2w_datums": "a2w_project_datums.json",
   "twdb_reference_pools": "proposals/twdb_reference_pools.json",
   "reviewed_swift": "@repo/Sources/SectorEngine/LakeBrain/LakeSourceBindings.swift",
-  "stage_area": "stage_area_curves.json"
+  "stage_area": "stage_area_curves.json",
+  "local_equivalence": "local_datum_equivalence.json"
  },
  "origin": {
   "directory": "GET <engine>/lakes snapshot 2026-10-13 (via Lake Brain research data)",
   "bindings": "docs/research/lake-brain/data/verified_bindings_v2.csv (Lake Brain research branch)",
   "full_pool": "docs/data/full_pool.csv (main)",
   "matrix, contour_truth, operating_range, datum_shift": "docs/research/depth-brain/data/*.csv (branch docs/depth-brain-research)",
-  "stage_area": "research/depth/stage_area_build.py: USACE CWMS Elev;Area ratings fetched 2026-10-14 (RATING-ZONE-RULES-1); committed small snapshot"
+  "stage_area": "research/depth/stage_area_build.py: USACE CWMS Elev;Area ratings fetched 2026-10-14 (RATING-ZONE-RULES-1); committed small snapshot",
+  "local_equivalence": "research/depth/local_equivalence.py from the paired-series results (datum_pairings.json inputs); committed small snapshot"
  }
 }

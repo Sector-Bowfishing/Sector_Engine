@@ -138,3 +138,15 @@ def test_reported_tolerance_covers_the_ninetieth_percentile_of_the_independent_c
         diffs += [abs(cum[k] - ct[k]) for k in cum]
     diffs.sort()
     assert len(diffs) >= 55 and R.RATING_SHARE_TOLERANCE_ABS >= diffs[int(0.9 * len(diffs))] - 1e-9
+
+
+def test_local_project_stage_equals_a_rating_datum_only_with_a_per_lake_paired_series_proof():
+    eq = json.load(open(os.path.join(HERE, "depth_brain", "data", "local_datum_equivalence.json")))["lakes"]
+    assert len(eq) >= 8
+    for lid, e in eq.items():
+        assert e["n"] >= 20 and abs(e["meanFt"]) <= 0.10 and e["sdFt"] <= 0.25 and e["localEquals"] in ("NGVD29", "NAVD88"), lid
+    local = {**SYN, "matchedBy": "series-location", "ratingNativeDatum": "NGVD-29"}
+    assert R.rating_reference_zones(local, 100.0, "LOCAL", True, "SAME_SOURCE")[1] == "R2_RATING_DATUM_DIFFERS"                      # no proof, no zones
+    rz, why = R.rating_reference_zones(local, 100.0, "LOCAL", True, "SAME_SOURCE", None, {"localEquals": "NGVD29", "usgsSite": "x", "usgsParam": "62614", "n": 100, "meanFt": 0.0, "sdFt": 0.03})
+    assert why == "ok" and rz["localDatumEquivalence"]["localEquals"] == "NGVD29"
+    assert R.rating_reference_zones(local, 100.0, "LOCAL", True, "SAME_SOURCE", None, {"localEquals": "NAVD88"})[1] == "R2_RATING_DATUM_DIFFERS"   # equality to the wrong datum proves nothing
