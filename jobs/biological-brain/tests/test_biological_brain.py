@@ -243,9 +243,13 @@ class PlanTests(unittest.TestCase):
         pub = {"researchVersion": "v2", "manifestSha256": "zzz", "version": "b1", "health": "HEALTHY"}
         self.assertEqual(orch.plan(pub, self.P, "b1")["action"], "PUBLISH")
 
-    def test_descriptor_has_no_schedule_and_state_not_started(self):
+    def test_descriptor_has_no_schedule_and_state_in_progress(self):
         self.assertTrue(orch.DESCRIPTOR["schedule"].startswith("none"))
-        self.assertEqual(orch.DESCRIPTOR["components"]["biologicalState"]["status"], "NOT_STARTED")
+        self.assertEqual(orch.DESCRIPTOR["components"]["biologicalState"]["status"], "IN_PROGRESS")
+        self.assertIn("no cron", orch.DESCRIPTOR["components"]["biologicalState"]["needsClock"])
+        self.assertEqual(orch.plan_state(None, "a")["action"], "WRITE")
+        self.assertEqual(orch.plan_state("a", "a")["action"], "SKIP")
+        self.assertEqual(orch.plan_state("a", "b")["action"], "WRITE")
 
 
 class PlatformTests(unittest.TestCase):
