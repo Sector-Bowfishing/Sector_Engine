@@ -1,0 +1,312 @@
+{
+ "schema": "depth-datum-proposals-v1",
+ "generatedAt": "2026-10-14",
+ "sigmaRule": "0.1 ft (provider rule precedent for project datums)",
+ "lakes": {
+  "Bighorn Lake|WY": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum by the TSC survey report.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/BighornReservoirAreaCapacityTables2017_Final508.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 0.0, n 399, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/164",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/163",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/BighornReservoirSedimentationSurvey2017_Final508Rev1.pdf",
+     "says": "Bighorn Lake: pool top of joint-use operations pool 3640.00 ft stated in RPVD; gage vertical datum is the Yellowtail Dam water-surface gage, referenced to RPVD; datum RPVD assumed equivalent to NGVD29; NAVD88 minus NGVD29 = 2.63 sft at Yellowtail Dam (2017 tables)"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "El Vado Lake|NM": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum by the TSC survey report.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/ElVadoReservoir2018AreaAndCapacityTables_Final%28508%29.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 0.00012, n 399, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/336",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/335",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/El_Vado_Reservoir_2007_Sedimentation_Survey.pdf",
+     "says": "El Vado Lake: pool top of active conservation 6902 ft used as a project-datum elevation (6,902 listed as converted to project vertical elevation); gage gage readings are in the project datum (survey reports the gage-to-NGVD29 shift); datum project datum ~7.8 ft below NGVD29 and 12.0 ft below NAVD88 (2007 survey; add 7.8 ft to reach NGVD29)"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "Elephant Butte Reservoir|NM": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum by the TSC survey report.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Elephant%20Butte%20Reservoir%202017%20%26%202019%20Area%20and%20Capacity%20Tables.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 0.00016, n 398, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/332",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/329",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Elephant_Butte_Reservoir_2017_&_2019_Sedimentation_Survey.pdf",
+     "says": "Elephant Butte Reservoir: pool top of active storage 4407 ft stated in project vertical datum; gage dam gage records converted to RPVD; datum project datum ~43.3 ft below NGVD29 and 45.5 ft below NAVD88 (2007 survey); 2017/2019 tables: RPVD 45.0 ft below NAVD88, NGVD29 2.1 ft below NAVD88 (the two reports differ by 0.5 ft)"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "Heron Lake|NM": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum by the TSC survey report.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Heron%20Reservoir%202010%20Capacity%20Tables.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 1e-05, n 399, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/421",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/420",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Heron_Reservoir_2010_Bathymetric_Survey.pdf",
+     "says": "Heron Lake: pool active conservation pool 7186.1 ft in the project-datum report; gage water surface recorded by a Reclamation gage at the dam used for NGVD29 elevations; datum project datum tied to NGVD29; 4.278 ft below NAVD88 (2010 survey)"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "Navajo Reservoir|NM": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum by the TSC survey report.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/NavajoReservoir2019AreaCapacityTables_final508VI.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 0.0, n 399, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/612",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/613",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/NavajoReservoir2019SedimentationSurvey_final508VI.pdf",
+     "says": "Navajo Reservoir: pool spillway/top of active 6085 ft stated in project vertical datum; report header lists Vertical Datum RPVD; gage dam gage records converted to RPVD; datum RPVD is 2.97 ft below NAVD88 (2019 area-capacity tables)"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "Swanson Reservoir|NE": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "medium",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum and equals a capacity-matched allocation-diagram elevation.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Swanson%20Reservoir%202011%20Capacity%20Tables.pdf",
+     "says": "Reclamation TSC area-capacity tables (1-ft table) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 0.00099, n 396, 2025-09-09..2026-10-09)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/134012",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/134011",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/swanson_lake.pdf",
+     "says": "allocation diagram elevation/capacity pairs equal the table's capacity at those elevations (2720.0 ft = 10329 af, 2773.0 ft = 244362 af, 2752.0 ft = 110175 af, 2710.0 ft = 1027 af, 2785.0 ft = 352018 af): the pool figure is in the table's frame"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "Patterson Lake|ND": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum and equals a capacity-matched allocation-diagram elevation.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Edward_Arthur_Patterson%20CapacityTable%202013.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 4e-05, n 398, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/305",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/304",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Edward_Arthur_Patterson_Lake_Sedimentation_Survey_2013.pdf",
+     "says": "Patterson Lake: pool conservation pool 2,420.0 ft in the project-datum report (but the same report digitizes a 2,420 contour as NAVD88: see caveat); gage gage records tied to project vertical elevation; datum project datum 0.1 ft below NGVD29 and 1.9 ft below NAVD88 (2013 survey; capacity table: gage datum = NAVD88 - 1.9)"
+    },
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/dickinson.pdf",
+     "says": "allocation diagram elevation/capacity pairs equal the table's capacity at those elevations (2420.0 ft = 8479 af, 2404.0 ft = 349 af, 2405.0 ft = 438 af): the pool figure is in the table's frame"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "Lake Tschida|ND": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum and equals a capacity-matched allocation-diagram elevation.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Lake%20Tschida%202013%20Capacity%20Tables.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 1e-05, n 399, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/550",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/549",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Lake_Tschida_(Heart_Butte_Reservoir)_Sedimentation_Survey_2013.pdf",
+     "says": "Lake Tschida: pool top of conservation pool 2,064.5 ft in the project-datum report; gage gage records tied to the project vertical datum; datum project datum 0.2 ft below NGVD29 and 1.7 ft below NAVD88 (2013 survey; capacity table: gage datum = NAVD88 - 1.7)"
+    },
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/lake_tschida.pdf",
+     "says": "allocation diagram elevation/capacity pairs equal the table's capacity at those elevations (2064.5 ft = 65091 af, 2030.0 ft = 4328 af, 2094.5 ft = 212696 af): the pool figure is in the table's frame"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  },
+  "Calamus Reservoir|NE": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-storage-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "medium",
+   "sigmaFt": 0.1,
+   "summary": "RISE elevation, the survey table and the pool figure are one Reclamation project vertical datum: the RISE elevation reproduces RISE storage through the survey table with offset -0.00 ft; the pool figure is stated in that datum and equals a capacity-matched allocation-diagram elevation.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Calamus%202012%20Area-Capacity%20table_final.pdf",
+     "says": "Reclamation TSC area-capacity tables (equations) in the project vertical datum; RISE daily elevation reproduces RISE daily storage through this table (best datum offset -0.00 ft, relative RMS 3e-05, n 399, 2025-09-09..2026-10-12)"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_storage_link.json",
+     "says": "storage-consistency fit for this lake (research/depth/rise_storage_link.py)"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/215",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/214",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/calamus.pdf",
+     "says": "allocation diagram elevation/capacity pairs equal the table's capacity at those elevations (2185.0 ft = 35 af, 2213.3 ft = 20150 af, 2244.0 ft = 119469 af): the pool figure is in the table's frame"
+    }
+   ],
+   "caveat": "Project vertical datum: shift only, never converted to NGVD29/NAVD88. Fit tolerance |offset| <= 0.10 ft and relative RMS <= 0.005 was fixed after the first six fits were read."
+  }
+ }
+}

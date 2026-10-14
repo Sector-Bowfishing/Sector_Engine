@@ -73,7 +73,7 @@ def test_shipped_curves_are_monotone_and_hold_the_pool():
         e, a = c["elevFt"], c["areaAc"]
         assert e == sorted(e) and all(x >= -1e-9 for x in a) and e[0] <= c["poolFt"] - 3.0 <= c["poolFt"] <= e[-1], lid
         assert all(a[i + 1] >= a[i] - 0.01 * max(a) for i in range(len(a) - 1)), lid
-        assert c["ratingId"] and c["url"].startswith("https://cwms-data.usace.army.mil/"), lid
+        assert c["ratingId"] and c["url"].startswith(("https://cwms-data.usace.army.mil/", "https://www.usbr.gov/tsc/")), lid
 
 
 def test_every_rating_zone_in_the_manifest_is_backed_by_a_shipped_curve_at_the_same_pool():
@@ -82,7 +82,7 @@ def test_every_rating_zone_in_the_manifest_is_backed_by_a_shipped_curve_at_the_s
     for c in rated:
         z, cv = c["referenceZones"], CURVES[c["lakeId"]]
         assert cv["poolFt"] == z["referencePoolFt"] == c["reference"]["poolFt"]
-        assert "USACE_CWMS" in c["evidence"]["contourSources"] and c["evidence"]["tier"] in ("A", "B", "C")
+        assert set(c["evidence"]["contourSources"]) & {"USACE_CWMS", "USBR_TSC"} and c["evidence"]["tier"] in ("A", "B", "C")
         for k, v in z["cumulative"].items():
             lo, hi = R.share_bounds(cv, cv["poolFt"], float(k))
             assert lo == hi and abs(lo - v) < 5e-4
@@ -117,7 +117,7 @@ def test_a_manifest_rating_without_its_curve_yields_no_zones(monkeypatch):
 def test_rating_shares_carry_their_reported_tolerance_and_contours_do_not():
     rz, _ = R.rating_reference_zones(SYN, 100.0, "NGVD29", True, "SAME_SOURCE")
     z = Z.ReferenceZones({float(k): v for k, v in rz["cumulative"].items()}, None, 1.0, "C", rz["source"], None, 100.0, "NGVD29", "VERIFIED", [], curve=SYN, kind=rz["kind"])
-    assert Z.effective_zones(z, -1.0, 0.1)["shareToleranceAbs"] == R.RATING_SHARE_TOLERANCE_ABS == 0.09
+    assert Z.effective_zones(z, -1.0, 0.1)["shareToleranceAbs"] == R.RATING_SHARE_TOLERANCE_ABS == 0.11
     zc = Z.ReferenceZones({3.0: 0.3, 6.0: 0.6, 10.0: 1.0}, 1.0, 1.0, "A", "TWDB", 2010, 100.0, "NGVD29", "VERIFIED", [])
     assert "shareToleranceAbs" not in Z.effective_zones(zc, -1.0, 0.1)
 
@@ -137,4 +137,4 @@ def test_reported_tolerance_covers_the_ninetieth_percentile_of_the_independent_c
         cum = R.cumulative_at(CURVES[lid], CURVES[lid]["poolFt"])
         diffs += [abs(cum[k] - ct[k]) for k in cum]
     diffs.sort()
-    assert len(diffs) >= 40 and R.RATING_SHARE_TOLERANCE_ABS >= diffs[int(0.9 * len(diffs))] - 1e-9
+    assert len(diffs) >= 55 and R.RATING_SHARE_TOLERANCE_ABS >= diffs[int(0.9 * len(diffs))] - 1e-9

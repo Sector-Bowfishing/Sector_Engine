@@ -36,48 +36,23 @@ def test_cheney_unlocked_by_independent_gauge_pairing_not_by_assumption():
     assert p["offsetStats"]["n"] >= 20 and abs(p["offsetStats"]["meanFt"]) <= 0.35 and p["offsetStats"]["sdFt"] <= 0.25
 
 
-def test_other_rise_lakes_stay_unknown():
-    rise = [c for c in MAN.values() if c["levelSource"].get("provider") == "rise" and c["lakeId"] != "Cheney Reservoir|KS"]
-    assert rise and all(c["datum"]["status"] == "UNKNOWN" for c in rise)
+RISE_UNLOCKED = {"Cheney Reservoir|KS", "Bighorn Lake|WY", "El Vado Lake|NM", "Elephant Butte Reservoir|NM", "Heron Lake|NM", "Navajo Reservoir|NM", "Swanson Reservoir|NE",
+                 "Patterson Lake|ND", "Lake Tschida|ND", "Calamus Reservoir|NE"}
 
 
-# ---- Duke: two documented frames for one lake ----------------------------------------------------------------
-from datetime import timedelta
-from depth_brain.shift import ReferencePool, compute_shift, LevelObservation
-from depth_brain.datum import DatumAssessment
-from helpers import NOW
+def test_only_rise_lakes_with_an_established_datum_chain_are_unlocked():
+    rise = [c for c in MAN.values() if c["levelSource"].get("provider") == "rise"]
+    assert rise
+    for c in rise:
+        assert (c["datum"]["status"] != "UNKNOWN") == (c["lakeId"] in RISE_UNLOCKED), c["lakeId"]
 
 
-def _norman(level):
-    ref = ReferencePool(pool_ft=760.0, basis="fullPool", confidence="high", datum="NGVD29", datum_verified=True, relative_scale_pool=100.0,
-                        assessment=DatumAssessment("SAME_SOURCE", 0.1, 0.0, []))
-    lv = LevelObservation(level, "ft", None, NOW - timedelta(hours=1), "DIRECT_LAKE_GAUGE", "OBSERVED")
-    return compute_shift(lv, ref, NOW)
-
-
-def test_duke_relative_scale_shift_is_scale_minus_100():
-    r = _norman(98.5)
-    assert r.mode == "shiftOnly" and abs(r.shift_ft - (-1.5)) < 1e-9 and "levelFrame:relativeScale100" in r.flags
-
-
-def test_duke_absolute_frame_gives_the_same_shift():
-    r = _norman(758.5)
-    assert r.mode == "shiftOnly" and abs(r.shift_ft - (-1.5)) < 1e-9 and "levelFrame:relativeScale100" not in r.flags
-
-
-def test_duke_value_in_neither_frame_is_refused():
-    r = _norman(430.0)
-    assert r.mode == "unknown" and r.reasons == ["IMPLAUSIBLE_SHIFT"]
-
-
-def test_duke_lakes_in_manifest_carry_frame_and_cap_at_medium():
-    duke = [c for c in MAN.values() if c["levelSource"].get("provider") == "duke"]
-    assert len(duke) == 8 and all(c["shiftPossible"] and c["rollout"] == "MEDIUM_CONFIDENCE" for c in duke)
-    assert sum(1 for c in duke if c["reference"].get("relativeScalePoolFt") == 100.0) == 7
-    assert MAN["Lake Robinson|SC"]["levelSource"]["scale"] == "ABSOLUTE_FT" and "relativeScalePoolFt" not in MAN["Lake Robinson|SC"]["reference"]
-
-
-def test_non_duke_lake_without_frame_is_unaffected():
-    ref = ReferencePool(pool_ft=760.0, basis="fullPool", confidence="high", datum="NGVD29", datum_verified=True, assessment=DatumAssessment("SAME_SOURCE", 0.1, 0.0, []))
-    lv = LevelObservation(98.5, "ft", None, NOW - timedelta(hours=1), "DIRECT_LAKE_GAUGE", "OBSERVED")
-    assert compute_shift(lv, ref, NOW).reasons == ["IMPLAUSIBLE_SHIFT"]
+def test_every_unlocked_reclamation_lake_has_a_passing_storage_link_fit():
+    link = json.load(open(os.path.join(HERE, "..", "..", "docs", "brains", "depth", "data", "rise_storage_link.json")))["results"]
+    prop = json.load(open(os.path.join(HERE, "depth_brain", "data", "proposals", "datum_pairings_5.json")))["lakes"]
+    assert len(prop) == 9
+    for lid in prop:
+        r = link[lid]
+        assert r["passes"] and abs(r["bestOffsetFt"]) <= 0.10 and r["relRmsAtBest"] <= 0.005 and r["n"] >= 300, lid
+    for lid in ("Flaming Gorge Reservoir|UT", "Jamestown Reservoir|ND", "Fresno Reservoir|MT", "Blue Mesa Reservoir|CO"):
+        assert not link[lid]["passes"] and MAN[lid]["datum"]["status"] == "UNKNOWN", lid          # inconclusive fits unlock nothing

@@ -22288,26 +22288,31 @@
    "state": "ND"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/Lake%20Tschida%202013%20Capacity%20Tables.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/550"
+    ],
     "navd88MinusNgvd29Ft": 1.394,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USBR_TSC"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 76,
@@ -22319,29 +22324,61 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "550",
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USBR_TSC"
+    ]
    },
    "operator": "USBR (Heart Butte Dam)",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2064.5,
     "source": "https://www.usbr.gov/gp/aop/resaloc/lake_tschida.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2742,
+     "3.0": 0.0869,
+     "6.0": 0.157
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2013-01-01",
+     "elevRangeFt": [
+      2008.0,
+      2070.75
+     ],
+     "id": "TSC Lake_Tschida_2013_Capacity_Tables (ACAP equations)",
+     "matchedBy": "tsc-table",
+     "office": "USBR-TSC",
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Lake%20Tschida%202013%20Capacity%20Tables.pdf",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": null,
+    "referencePoolFt": 2064.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TSC Lake_Tschida_2013_Capacity_Tables (ACAP equations)"
+   },
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ND"
   },
   {
@@ -22424,18 +22461,21 @@
    "state": "ND"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/Edward_Arthur_Patterson%20CapacityTable%202013.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/305"
+    ],
     "navd88MinusNgvd29Ft": 1.772,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:ND",
@@ -22459,8 +22499,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "305",
     "status": "RESEARCH_VERIFIED"
@@ -22475,12 +22515,13 @@
     ]
    },
    "operator": "USBR (Dickinson Dam)",
+   "ratingZoneWithheld": "R6_RATING_CONTOUR_DISAGREE",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2420,
     "source": "https://www.usbr.gov/gp/aop/resaloc/dickinson.pdf",
     "winterPoolFt": null
@@ -22498,8 +22539,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "ND"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "ND"
   },
   {
@@ -22720,23 +22761,27 @@
    "state": "NE"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/Calamus%202012%20Area-Capacity%20table_final.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/215"
+    ],
     "navd88MinusNgvd29Ft": 0.85,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:NE",
     "contourSources": [
-     "NE"
+     "NE",
+     "USBR_TSC"
     ],
     "coverage": 0.9993,
     "hypsometryOnly": false,
@@ -22755,19 +22800,21 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "215",
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
     "classes": [
-     "PUBLIC_REUSABLE"
+     "PUBLIC_REUSABLE",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "NE"
+     "NE",
+     "USBR_TSC"
     ]
    },
    "operator": "USBR (Virginia Smith Dam)",
@@ -22775,27 +22822,41 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2244,
     "source": "https://www.usbr.gov/gp/aop/resaloc/calamus.pdf",
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9993,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2429,
-     "3.0": 0.0531,
-     "6.0": 0.1252
+     "10.0": 0.2573,
+     "3.0": 0.0968,
+     "6.0": 0.1765
     },
-    "intervalFt": 3.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "NE"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-01-01",
+     "elevRangeFt": [
+      2181.0,
+      2244.75
+     ],
+     "id": "TSC Calamus_2012_Area-Capacity_table_final (ACAP equations)",
+     "matchedBy": "tsc-table",
+     "office": "USBR-TSC",
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Calamus%202012%20Area-Capacity%20table_final.pdf",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": null,
+    "referencePoolFt": 2244.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TSC Calamus_2012_Area-Capacity_table_final (ACAP equations)"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NE"
   },
   {
@@ -23348,23 +23409,27 @@
    "state": "NE"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "medium",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/Swanson%20Reservoir%202011%20Capacity%20Tables.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/134012"
+    ],
     "navd88MinusNgvd29Ft": 1.053,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:NE",
     "contourSources": [
-     "NE"
+     "NE",
+     "USBR_TSC"
     ],
     "coverage": 1.0,
     "hypsometryOnly": false,
@@ -23383,19 +23448,21 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "134012",
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
     "classes": [
-     "PUBLIC_REUSABLE"
+     "PUBLIC_REUSABLE",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "NE"
+     "NE",
+     "USBR_TSC"
     ]
    },
    "operator": "USBR (Trenton Dam)",
@@ -23403,8 +23470,8 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2752,
     "source": "https://www.usbr.gov/gp/aop/resaloc/swanson_lake.pdf",
     "winterPoolFt": null
@@ -23412,16 +23479,32 @@
    "referenceZones": {
     "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2385
+     "10.0": 0.2454,
+     "3.0": 0.0868,
+     "6.0": 0.1735
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "NE"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2011-01-01",
+     "elevRangeFt": [
+      2700.0,
+      2759.0
+     ],
+     "id": "TSC Swanson_Reservoir_2011_Capacity_Tables (1-ft area table)",
+     "matchedBy": "tsc-table",
+     "office": "USBR-TSC",
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Swanson%20Reservoir%202011%20Capacity%20Tables.pdf",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": null,
+    "referencePoolFt": 2752.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TSC Swanson_Reservoir_2011_Capacity_Tables (1-ft area table)"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NE"
   },
   {
@@ -25460,26 +25543,31 @@
    "state": "NM"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/ElVadoReservoir2018AreaAndCapacityTables_Final%28508%29.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/336"
+    ],
     "navd88MinusNgvd29Ft": 4.072,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USBR_TSC"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 51,
@@ -25491,52 +25579,89 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "336",
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USBR_TSC"
+    ]
    },
    "operator": "USBR",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 6902,
     "source": "https://www.usbr.gov/projects/index.php?id=96",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1001,
+     "3.0": 0.0262,
+     "6.0": 0.0564
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2018-01-01",
+     "elevRangeFt": [
+      6770.0,
+      6905.75
+     ],
+     "id": "TSC ElVado2018_tables (ACAP equations)",
+     "matchedBy": "tsc-table",
+     "office": "USBR-TSC",
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/ElVadoReservoir2018AreaAndCapacityTables_Final%28508%29.pdf",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": null,
+    "referencePoolFt": 6902.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TSC ElVado2018_tables (ACAP equations)"
+   },
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NM"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/Elephant%20Butte%20Reservoir%202017%20%26%202019%20Area%20and%20Capacity%20Tables.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/332"
+    ],
     "navd88MinusNgvd29Ft": 2.178,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USBR_TSC"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 109,
@@ -25548,44 +25673,79 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "332",
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USBR_TSC"
+    ]
    },
    "operator": "USBR (Rio Grande Project)",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 4407,
     "source": "https://www.usbr.gov/projects/index.php?id=94",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1355,
+     "3.0": 0.0472,
+     "6.0": 0.086
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2019-01-01",
+     "elevRangeFt": [
+      4234.0,
+      4410.75
+     ],
+     "id": "TSC Elephant_Butte_Reservoir_2017_&_2019_Area_and_Capacity_Tables (ACAP equations)",
+     "matchedBy": "tsc-table",
+     "office": "USBR-TSC",
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/Elephant%20Butte%20Reservoir%202017%20%26%202019%20Area%20and%20Capacity%20Tables.pdf",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": null,
+    "referencePoolFt": 4407.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TSC Elephant_Butte_Reservoir_2017_&_2019_Area_and_Capacity_Tables (ACAP equations)"
+   },
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NM"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": "SPA",
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/Heron%20Reservoir%202010%20Capacity%20Tables.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/421"
+    ],
     "navd88MinusNgvd29Ft": 4.334,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -25605,8 +25765,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "421",
     "status": "RESEARCH_VERIFIED_LABELLED"
@@ -25620,37 +25780,42 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 7186.1,
     "source": "https://www.usbr.gov/projects/index.php?id=118",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NM"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/NavajoReservoir2019AreaCapacityTables_final508VI.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/612"
+    ],
     "navd88MinusNgvd29Ft": 3.609,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USBR_TSC"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 63,
@@ -25662,29 +25827,61 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "612",
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USBR_TSC"
+    ]
    },
    "operator": "USBR",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 6085,
     "source": "https://www.usbr.gov/projects/index.php?id=310",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.0792,
+     "3.0": 0.0224,
+     "6.0": 0.0458
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2019-01-01",
+     "elevRangeFt": [
+      5775.0,
+      6091.25
+     ],
+     "id": "TSC NavajoReservoir2019AreaCapacityTables_final508VI (ACAP equations)",
+     "matchedBy": "tsc-table",
+     "office": "USBR-TSC",
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/NavajoReservoir2019AreaCapacityTables_final508VI.pdf",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": null,
+    "referencePoolFt": 6085.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TSC NavajoReservoir2019AreaCapacityTables_final508VI (ACAP equations)"
+   },
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NM"
   },
   {
@@ -40295,23 +40492,27 @@
    "state": "WY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_5.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/tsc/techreferences/reservoir/BighornReservoirAreaCapacityTables2017_Final508.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/164"
+    ],
     "navd88MinusNgvd29Ft": 2.602,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour(partial/coarse):MT",
     "contourSources": [
-     "MT"
+     "MT",
+     "USBR_TSC"
     ],
     "hypsometryOnly": false,
     "kind": "contour",
@@ -40328,19 +40529,21 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "164",
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "MT"
+     "MT",
+     "USBR_TSC"
     ]
    },
    "operator": "USBR (Yellowtail Dam)",
@@ -40348,14 +40551,41 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 3640,
     "source": "https://www.usbr.gov/gp/aop/resaloc/bighorn_lake.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3153,
+     "3.0": 0.096,
+     "6.0": 0.191
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2017-01-01",
+     "elevRangeFt": [
+      3195.0,
+      3646.25
+     ],
+     "id": "TSC BighornReservoirAreaCapacityTables2017_Final508 (ACAP equations)",
+     "matchedBy": "tsc-table",
+     "office": "USBR-TSC",
+     "url": "https://www.usbr.gov/tsc/techreferences/reservoir/BighornReservoirAreaCapacityTables2017_Final508.pdf",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": null,
+    "referencePoolFt": 3640.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TSC BighornReservoirAreaCapacityTables2017_Final508 (ACAP equations)"
+   },
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WY"
   },
   {
@@ -40994,7 +41224,7 @@
  "summary": {
   "blockedReasons": {
    "DATUM_CONVERSION_NOT_ENABLED": 1,
-   "DATUM_UNKNOWN": 206,
+   "DATUM_UNKNOWN": 197,
    "MISSING_REFERENCE_POOL": 13,
    "NO_VERIFIED_LEVEL_BINDING": 204,
    "REFERENCE_NOT_A_POOL_ELEVATION": 207,
@@ -41004,8 +41234,8 @@
    "INCOMPATIBLE": 1,
    "SAME_DATUM": 110,
    "SAME_OPERATOR_SYSTEM": 17,
-   "SAME_SOURCE": 83,
-   "UNKNOWN": 410
+   "SAME_SOURCE": 92,
+   "UNKNOWN": 401
   },
   "lakes": 621,
   "levelSourceStatus": {
@@ -41055,19 +41285,19 @@
    "U": 56
   },
   "rollout": {
-   "BLOCKED": 412,
-   "HIGH_CONFIDENCE": 91,
-   "MEDIUM_CONFIDENCE": 113,
+   "BLOCKED": 403,
+   "HIGH_CONFIDENCE": 97,
+   "MEDIUM_CONFIDENCE": 116,
    "PILOT_VERIFIED": 5
   },
-  "shiftPossible": 209,
+  "shiftPossible": 218,
   "tier": {
    "A": 77,
    "B": 26,
-   "C": 136,
-   "D": 326,
+   "C": 140,
+   "D": 322,
    "UNKNOWN": 56
   },
-  "zonesAvailableForReference": 162
+  "zonesAvailableForReference": 167
  }
 }

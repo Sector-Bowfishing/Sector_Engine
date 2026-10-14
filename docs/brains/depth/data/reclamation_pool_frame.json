@@ -1,0 +1,133 @@
+{
+ "schema": "depth-reclamation-pool-frame-v1",
+ "results": {
+  "Calamus Reservoir|NE": {
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_calamus_pdf.pdf",
+   "table": "Calamus_2012_Area-Capacity_table_final.pdf",
+   "poolFt": 2244.0,
+   "pairs": [
+    {
+     "elevFt": 2185.0,
+     "diagramAf": 35.0,
+     "tableAf": 35,
+     "relDiff": 0.01143
+    },
+    {
+     "elevFt": 2213.3,
+     "diagramAf": 20150.0,
+     "tableAf": 20150,
+     "relDiff": -0.0
+    },
+    {
+     "elevFt": 2244.0,
+     "diagramAf": 119469.0,
+     "tableAf": 119469,
+     "relDiff": 0.0
+    }
+   ],
+   "poolPairMatches": true,
+   "maxAbsRelDiff": 0.01143
+  },
+  "Swanson Reservoir|NE": {
+   "diagram": "swanson_resaloc.pdf",
+   "table": "Swanson_Reservoir_2011_Capacity_Tables.pdf",
+   "poolFt": 2752.0,
+   "pairs": [
+    {
+     "elevFt": 2720.0,
+     "diagramAf": 10329.0,
+     "tableAf": 10329,
+     "relDiff": 0.0
+    },
+    {
+     "elevFt": 2773.0,
+     "diagramAf": 244362.0,
+     "tableAf": 244362,
+     "relDiff": 0.0
+    },
+    {
+     "elevFt": 2752.0,
+     "diagramAf": 110175.0,
+     "tableAf": 110175,
+     "relDiff": 0.0
+    },
+    {
+     "elevFt": 2710.0,
+     "diagramAf": 1027.0,
+     "tableAf": 1027,
+     "relDiff": 0.0
+    },
+    {
+     "elevFt": 2785.0,
+     "diagramAf": 352018.0,
+     "tableAf": 352018,
+     "relDiff": 0.0
+    }
+   ],
+   "poolPairMatches": true,
+   "maxAbsRelDiff": 0.0
+  },
+  "Bighorn Lake|WY": {
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_bighorn_lake_pdf.pdf",
+   "table": "BighornReservoirAreaCapacityTables2017_Final508.pdf",
+   "poolFt": 3640.0,
+   "pairs": [],
+   "poolPairMatches": false,
+   "maxAbsRelDiff": null
+  },
+  "Lake Tschida|ND": {
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_lake_tschida_pdf.pdf",
+   "table": "Lake_Tschida_2013_Capacity_Tables.pdf",
+   "poolFt": 2064.5,
+   "pairs": [
+    {
+     "elevFt": 2064.5,
+     "diagramAf": 65091.0,
+     "tableAf": 65091,
+     "relDiff": -0.0
+    },
+    {
+     "elevFt": 2030.0,
+     "diagramAf": 4328.0,
+     "tableAf": 4328,
+     "relDiff": 5e-05
+    },
+    {
+     "elevFt": 2094.5,
+     "diagramAf": 212696.0,
+     "tableAf": 212696,
+     "relDiff": 0.0
+    }
+   ],
+   "poolPairMatches": true,
+   "maxAbsRelDiff": 5e-05
+  },
+  "Patterson Lake|ND": {
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_dickinson_pdf.pdf",
+   "table": "Edward_Arthur_Patterson_CapacityTable_2013.pdf",
+   "poolFt": 2420.0,
+   "pairs": [
+    {
+     "elevFt": 2420.0,
+     "diagramAf": 8479.0,
+     "tableAf": 8479,
+     "relDiff": -1e-05
+    },
+    {
+     "elevFt": 2404.0,
+     "diagramAf": 349.0,
+     "tableAf": 349,
+     "relDiff": -0.00129
+    },
+    {
+     "elevFt": 2405.0,
+     "diagramAf": 438.0,
+     "tableAf": 438,
+     "relDiff": -0.00011
+    }
+   ],
+   "poolPairMatches": true,
+   "maxAbsRelDiff": 0.00129
+  }
+ }
+}

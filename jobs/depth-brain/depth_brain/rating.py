@@ -66,10 +66,10 @@ def _norm_datum(v):
     return normalize_datum(str(v).replace("-", "")) if v else None
 
 
-# Cross-check of rating-derived shares against INDEPENDENT contour surveys (17 lakes, 51 edges, contour interval <= 5 ft; research/depth/stage_area_doc.py):
-# median |difference| 0.032, 90th percentile 0.086, max 0.141. The rating is exact as published; whether it still describes the lake (age, sedimentation) is not
+# Cross-check of rating-derived shares against INDEPENDENT contour surveys (20 lakes, 60 edges, contour interval <= 5 ft; research/depth/stage_area_doc.py):
+# median |difference| 0.036, 90th percentile 0.104, max 0.141. The rating is exact as published; whether it still describes the lake (age, sedimentation) is not
 # knowable here, so every rating-derived share carries this tolerance beside its bounds. It is a reported accuracy, not a bound.
-RATING_SHARE_TOLERANCE_ABS = 0.09
+RATING_SHARE_TOLERANCE_ABS = 0.11
 CONTOUR_DISAGREE_MAX = 0.10      # RATING-ZONE-RULES-1 R6: a rating and a contour survey of the same lake must agree within 0.10 of the surface at every common edge
 
 
@@ -85,7 +85,7 @@ def rating_reference_zones(curve: dict | None, pool_ft, ref_datum, ref_datum_ver
         return None, "R2_RATING_DATUM_DIFFERS"
     # R2: the rating must be in the pool's elevation frame. Either the rating sits at the CWMS location that holds the level SERIES and the pool/series relationship is
     # SAME_SOURCE (one CWMS record: the frame needs no name) or SAME_DATUM (both stamped), or the rating sits at the location of the verified, NAMED pool datum.
-    if curve.get("matchedBy") == "series-location":
+    if curve.get("matchedBy") in ("series-location", "tsc-table"):                  # tsc-table: survey-derived Reclamation table in the project datum; the lake's datum status itself rests on the RISE storage-consistency fit
         if datum_status not in ("SAME_SOURCE", "SAME_DATUM"):
             return None, "R2_SERIES_POOL_RELATIONSHIP_NOT_ESTABLISHED"
     elif not ref_datum_verified or rd not in ("NGVD29", "NAVD88"):

@@ -32,6 +32,36 @@ def parse(d):
     return e[o], a[o], best["effective-date"], (best.get("vertical-datum-info") or {}).get("native-datum"), best.get("units-id"), [x["effective-date"][:10] for x in sr]
 
 
+D5 = os.path.expanduser("~/Desktop/Development/Sector_Research_Data/depth-brain/datum5")
+TSC_LAKES = {   # lake -> (table file, survey year, public URL): lakes whose RISE elevation passed the storage-consistency fit and whose pool is in the table's frame (datum_pairings_5.json)
+    "Bighorn Lake|WY": ("BighornReservoirAreaCapacityTables2017_Final508.pdf", 2017, "BighornReservoirAreaCapacityTables2017_Final508.pdf"),
+    "El Vado Lake|NM": ("ElVado2018_tables.pdf", 2018, "ElVadoReservoir2018AreaAndCapacityTables_Final(508).pdf"),
+    "Elephant Butte Reservoir|NM": ("Elephant_Butte_Reservoir_2017_&_2019_Area_and_Capacity_Tables.pdf", 2019, "Elephant Butte Reservoir 2017 & 2019 Area and Capacity Tables.pdf"),
+    "Heron Lake|NM": ("Heron_Reservoir_2010_Capacity_Tables.pdf", 2010, "Heron Reservoir 2010 Capacity Tables.pdf"),
+    "Navajo Reservoir|NM": ("NavajoReservoir2019AreaCapacityTables_final508VI.pdf", 2019, "NavajoReservoir2019AreaCapacityTables_final508VI.pdf"),
+    "Swanson Reservoir|NE": ("Swanson_Reservoir_2011_Capacity_Tables.pdf", 2011, "Swanson Reservoir 2011 Capacity Tables.pdf"),
+    "Patterson Lake|ND": ("Edward_Arthur_Patterson_CapacityTable_2013.pdf", 2013, "Edward_Arthur_Patterson CapacityTable 2013.pdf"),
+    "Lake Tschida|ND": ("Lake_Tschida_2013_Capacity_Tables.pdf", 2013, "Lake Tschida 2013 Capacity Tables.pdf"),
+    "Calamus Reservoir|NE": ("Calamus_2012_Area-Capacity_table_final.pdf", 2012, "Calamus 2012 Area-Capacity table_final.pdf"),
+    "Cheney Reservoir|KS": None,        # keeps its CWMS rating
+}
+
+
+def tsc_curve(pdf, tabs, eqs, pool):
+    """Area-versus-elevation from a Reclamation TSC table (survey-derived, project vertical datum): ACAP equations (area = A2 + 2*A3*x) or the printed 1-ft area table."""
+    if pdf in eqs:
+        rows = eqs[pdf]["rows"]
+        bases = np.array([r[1] for r in rows])
+        grid = np.arange(bases[0], bases[-1] + 1.0, 0.25)
+        idx = np.clip(np.searchsorted(bases, grid, side="right") - 1, 0, len(rows) - 1)
+        x = grid - bases[idx]
+        a2, a3 = (np.array([r[k] for r in rows])[idx] for k in (4, 5))
+        return grid, a2 + 2 * a3 * x, "ACAP equations"
+    t = tabs[pdf]["area"]
+    e = np.array(sorted(float(k) for k in t))
+    return e, np.array([t[str(int(k))] for k in e]), "1-ft area table"
+
+
 def main():
     inv = json.load(open(INV))["ratings"]
     pairs = json.load(open(PAIRS))
@@ -93,6 +123,20 @@ def main():
         lakes[lid] = {"office": off, "ratingId": rid, "effectiveDate": eff[:10], "versions": versions, "ratingNativeDatum": vd, "seriesLocation": loc, "matchedBy": by, "url": url,
                       "elevMinFt": round(emin, 2), "elevMaxFt": round(emax, 2), "nPointsTotal": int(len(e)), "poolFt": P,
                       "resampledStepFt": step, "elevFt": [round(float(x), 3) for x in keep_e], "areaAc": [round(float(x), 2) for x in keep_a]}
+    tabs, eqs = json.load(open(D5 + "/tsc_tables.json")), json.load(open(D5 + "/tsc_equations.json"))
+    for lid, spec in TSC_LAKES.items():
+        if not spec or lid in lakes:
+            continue
+        pdf, year, fname = spec
+        c = cands[lid]; P = c["reference"]["poolFt"]
+        e, a, form = tsc_curve(pdf, tabs, eqs, P)
+        if not (e[0] <= P - EDGES[0] and P <= e[-1]) or np.any(np.diff(a) < -0.01 * max(a.max(), 1.0)) or float(np.interp(P, e, a)) <= 0:
+            rejected[lid] = "TSC table does not cover the pool / not monotone"; continue
+        top = int(np.searchsorted(e, P + WINDOW_ABOVE, side="right")) + 1
+        e, a = e[:top], a[:top]
+        lakes[lid] = {"office": "USBR-TSC", "ratingId": f"TSC {pdf.rsplit('.', 1)[0]} ({form})", "effectiveDate": f"{year}-01-01", "versions": [str(year)], "ratingNativeDatum": None, "seriesLocation": None, "matchedBy": "tsc-table",
+                      "url": "https://www.usbr.gov/tsc/techreferences/reservoir/" + urllib.parse.quote(fname), "elevMinFt": round(float(e[0]), 2), "elevMaxFt": round(float(e[-1]), 2), "nPointsTotal": int(len(e)),
+                      "poolFt": P, "resampledStepFt": None, "elevFt": [round(float(x), 3) for x in e], "areaAc": [round(float(x), 2) for x in a]}
     json.dump({"schema": "depth-stage-area-curves-v1", "rules": "RATING-ZONE-RULES-1", "lakes": lakes, "rejected": rejected}, open(OUT, "w"), separators=(",", ":"))
     print(len(lakes), "accepted;", len(rejected), "rejected", rejected)
 

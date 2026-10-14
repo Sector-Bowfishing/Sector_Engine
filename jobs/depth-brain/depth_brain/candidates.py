@@ -224,7 +224,7 @@ def build(paths: dict, manifest_version: str) -> dict:
             rz, why_r = R.rating_reference_zones(curves[lid], lk.get("fullPoolFt"), rd, rd_ver, a.status, {float(k): v for k, v in (zr or {}).get("cumulative", {}).items()} or None)
             if rz:
                 zr = rz
-                ev["contourSources"] = list(ev["contourSources"]) + ["USACE_CWMS"]
+                ev["contourSources"] = list(ev["contourSources"]) + ["USBR_TSC" if curves[lid].get("office") == "USBR-TSC" else "USACE_CWMS"]
                 if ev["kind"] in ("unknown", "proxy"):                                  # no measured contours: the rating is the depth-share evidence, at tier C (shares only)
                     tier, ev["tier"], ev["kind"] = "C", "C", "stage-area-rating"
                     ev["bestSource"] = "USACE CWMS elevation-area rating (shares only)"

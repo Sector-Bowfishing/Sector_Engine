@@ -1,0 +1,356 @@
+{
+ "schema": "depth-rise-storage-link-v1",
+ "generatedAt": "2026-10-14T05:08Z",
+ "results": {
+  "Cheney Reservoir|KS": {
+   "table": "CheneyReservoir2015AreaCapacityTables_Final508.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "133978",
+   "riseStorageItem": 133977,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    1420.08,
+    1425.68
+   ],
+   "meanStorageAf": 184595.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 0.5,
+   "rmsAtZeroAf": 0.5,
+   "relRmsAtZero": 0.0,
+   "relRmsAtBest": 0.0,
+   "rmsAtMinusOneFt": 10394.8,
+   "rmsAtPlusOneFt": 10774.2,
+   "passes": true
+  },
+  "Bighorn Lake|WY": {
+   "table": "BighornReservoirAreaCapacityTables2017_Final508.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "164",
+   "riseStorageItem": 163,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    3613.78,
+    3633.38
+   ],
+   "meanStorageAf": 847040.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 0.7,
+   "rmsAtZeroAf": 0.7,
+   "relRmsAtZero": 0.0,
+   "relRmsAtBest": 0.0,
+   "rmsAtMinusOneFt": 7849.1,
+   "rmsAtPlusOneFt": 8106.3,
+   "passes": true
+  },
+  "El Vado Lake|NM": {
+   "table": "ElVado2018_tables.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "336",
+   "riseStorageItem": 335,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    6809.65,
+    6820.55
+   ],
+   "meanStorageAf": 23086.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 2.8,
+   "rmsAtZeroAf": 2.8,
+   "relRmsAtZero": 0.00012,
+   "relRmsAtBest": 0.00012,
+   "rmsAtMinusOneFt": 933.2,
+   "rmsAtPlusOneFt": 950.9,
+   "passes": true
+  },
+  "Elephant Butte Reservoir|NM": {
+   "table": "Elephant_Butte_Reservoir_2017_&_2019_Area_and_Capacity_Tables.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "332",
+   "riseStorageItem": 329,
+   "storageUnit": "af",
+   "n": 398,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    4275.13,
+    4319.27
+   ],
+   "meanStorageAf": 136278.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 22.4,
+   "rmsAtZeroAf": 22.4,
+   "relRmsAtZero": 0.00016,
+   "relRmsAtBest": 0.00016,
+   "rmsAtMinusOneFt": 6106.3,
+   "rmsAtPlusOneFt": 6267.8,
+   "passes": true
+  },
+  "Flaming Gorge Reservoir|UT": {
+   "table": "FlamingGorgeRes2019AreaCapacityTables_final508.pdf",
+   "tableForm": "1-ft table",
+   "riseElevationItem": "341",
+   "riseStorageItem": 337,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    6006.11,
+    6023.7
+   ],
+   "meanStorageAf": 2871125.0,
+   "bestOffsetFt": -1.2,
+   "rmsAtBestAf": 1607.5,
+   "rmsAtZeroAf": 40191.5,
+   "relRmsAtZero": 0.014,
+   "relRmsAtBest": 0.00056,
+   "rmsAtMinusOneFt": 6870.6,
+   "rmsAtPlusOneFt": 73911.5,
+   "passes": false
+  },
+  "Heron Lake|NM": {
+   "table": "Heron_Reservoir_2010_Capacity_Tables.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "421",
+   "riseStorageItem": 420,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    7063.04,
+    7089.73
+   ],
+   "meanStorageAf": 38854.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 0.3,
+   "rmsAtZeroAf": 0.3,
+   "relRmsAtZero": 1e-05,
+   "relRmsAtBest": 1e-05,
+   "rmsAtMinusOneFt": 1067.0,
+   "rmsAtPlusOneFt": 1088.5,
+   "passes": true
+  },
+  "Jamestown Reservoir|ND": {
+   "table": "Jamestown_Reservoir_2009_Capacity_Tables.pdf",
+   "tableForm": "1-ft table",
+   "riseElevationItem": "451",
+   "riseStorageItem": 450,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    1429.31,
+    1433.21
+   ],
+   "meanStorageAf": 29540.0,
+   "bestOffsetFt": 0.04,
+   "rmsAtBestAf": 200.1,
+   "rmsAtZeroAf": 215.0,
+   "relRmsAtZero": 0.00728,
+   "relRmsAtBest": 0.00678,
+   "rmsAtMinusOneFt": 2265.1,
+   "rmsAtPlusOneFt": 2281.1,
+   "passes": false
+  },
+  "Navajo Reservoir|NM": {
+   "table": "NavajoReservoir2019AreaCapacityTables_final508VI.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "612",
+   "riseStorageItem": 613,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    6009.65,
+    6037.19
+   ],
+   "meanStorageAf": 952130.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 1.3,
+   "rmsAtZeroAf": 1.3,
+   "relRmsAtZero": 0.0,
+   "relRmsAtBest": 0.0,
+   "rmsAtMinusOneFt": 9621.3,
+   "rmsAtPlusOneFt": 9698.7,
+   "passes": true
+  },
+  "Fresno Reservoir|MT": {
+   "table": "Fresno_Reservoir_2010_Area_and_Capatity_Tables.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "355",
+   "riseStorageItem": 354,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    2554.47,
+    2570.7
+   ],
+   "meanStorageAf": 38141.0,
+   "bestOffsetFt": -0.27,
+   "rmsAtBestAf": 573.3,
+   "rmsAtZeroAf": 876.2,
+   "relRmsAtZero": 0.02297,
+   "relRmsAtBest": 0.01503,
+   "rmsAtMinusOneFt": 1819.5,
+   "rmsAtPlusOneFt": 3218.1,
+   "passes": false
+  },
+  "Swanson Reservoir|NE": {
+   "table": "Swanson_Reservoir_2011_Capacity_Tables.pdf",
+   "tableForm": "1-ft table",
+   "riseElevationItem": "134012",
+   "riseStorageItem": 134011,
+   "storageUnit": "af",
+   "n": 396,
+   "window": [
+    "2025-09-09",
+    "2026-10-09"
+   ],
+   "elevRangeFt": [
+    2734.18,
+    2739.64
+   ],
+   "meanStorageAf": 50115.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 49.5,
+   "rmsAtZeroAf": 49.5,
+   "relRmsAtZero": 0.00099,
+   "relRmsAtBest": 0.00099,
+   "rmsAtMinusOneFt": 3132.0,
+   "rmsAtPlusOneFt": 3244.5,
+   "passes": true
+  },
+  "Blue Mesa Reservoir|CO": {
+   "table": "BlueMesaReservoir2019AreaAndCapacityTables_Final508.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "78",
+   "riseStorageItem": 76,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    7412.21,
+    7471.93
+   ],
+   "meanStorageAf": 343050.0,
+   "bestOffsetFt": -3.0,
+   "rmsAtBestAf": 93061.5,
+   "rmsAtZeroAf": 110195.9,
+   "relRmsAtZero": 0.32122,
+   "relRmsAtBest": 0.27128,
+   "rmsAtMinusOneFt": 104413.0,
+   "rmsAtPlusOneFt": 116049.3,
+   "passes": false
+  },
+  "Patterson Lake|ND": {
+   "table": "Edward_Arthur_Patterson_CapacityTable_2013.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "305",
+   "riseStorageItem": 304,
+   "storageUnit": "af",
+   "n": 398,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    2417.38,
+    2420.04
+   ],
+   "meanStorageAf": 6712.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 0.3,
+   "rmsAtZeroAf": 0.3,
+   "relRmsAtZero": 4e-05,
+   "relRmsAtBest": 4e-05,
+   "rmsAtMinusOneFt": 972.8,
+   "rmsAtPlusOneFt": 1075.9,
+   "passes": true
+  },
+  "Lake Tschida|ND": {
+   "table": "Lake_Tschida_2013_Capacity_Tables.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "550",
+   "riseStorageItem": 549,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    2057.51,
+    2064.68
+   ],
+   "meanStorageAf": 56890.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 0.4,
+   "rmsAtZeroAf": 0.4,
+   "relRmsAtZero": 1e-05,
+   "relRmsAtBest": 1e-05,
+   "rmsAtMinusOneFt": 2849.2,
+   "rmsAtPlusOneFt": 2942.0,
+   "passes": true
+  },
+  "Calamus Reservoir|NE": {
+   "table": "Calamus_2012_Area-Capacity_table_final.pdf",
+   "tableForm": "equations",
+   "riseElevationItem": "215",
+   "riseStorageItem": 214,
+   "storageUnit": "af",
+   "n": 399,
+   "window": [
+    "2025-09-09",
+    "2026-10-12"
+   ],
+   "elevRangeFt": [
+    2233.14,
+    2244.33
+   ],
+   "meanStorageAf": 101700.0,
+   "bestOffsetFt": -0.0,
+   "rmsAtBestAf": 3.1,
+   "rmsAtZeroAf": 3.1,
+   "relRmsAtZero": 3e-05,
+   "relRmsAtBest": 3e-05,
+   "rmsAtMinusOneFt": 4466.4,
+   "rmsAtPlusOneFt": 4283.5,
+   "passes": true
+  }
+ }
+}
