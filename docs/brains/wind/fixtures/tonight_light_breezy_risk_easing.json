@@ -1,0 +1,80 @@
+{
+ "available": true,
+ "basis": "NOAA NBM v5.0 point forecast (land-referenced; not an over-water observation)",
+ "breezyRisk": {
+  "basis": "NBM P90 sustained wind at any hour of the window",
+  "evidence": "about 1 in 3 flagged nights reached 10 mph versus 1 in 30 unflagged (CAL+H1 night level, land stations); a risk flag, not a prediction. No flag is NOT 'low risk': about half of 10 mph+ hours carried no flag.",
+  "flag": true,
+  "meaning": "could turn breezy",
+  "p90MaxMph": 11,
+  "thresholdMph": 10.0,
+  "unavailableReason": null
+ },
+ "confidence": {
+  "basis": "frozen rule: WIND_H2_PREREG.md",
+  "label": "MEDIUM",
+  "reasons": [
+   "breezyRisk"
+  ]
+ },
+ "current": {
+  "directionDeg": 225,
+  "gustMph": null,
+  "kind": "analysis",
+  "note": "analysis/forecast value, not an observation",
+  "sustainedMph": 6.0
+ },
+ "direction": {
+  "convention": "meteorological: the bearing the wind blows FROM",
+  "fromCardinal": "SW",
+  "fromDeg": 225,
+  "maxSpreadDeg": 0,
+  "reason": null,
+  "shown": true
+ },
+ "evidence": {
+  "detail": "validated on 5 months of land METAR at 4 lakes (CAL+H1); live holdout sealed until 2027-01-01; over-water unvalidated",
+  "kind": "MODELED_FORECAST",
+  "validationTier": "HISTORICAL_LAND_STATIONS_ONLY"
+ },
+ "forecastHorizonHours": 11.7,
+ "freshness": {
+  "forecastAgeHours": 1.33,
+  "forecastInit": "2026-10-12T17:00:00Z",
+  "generatedAt": "2026-10-12T18:20:00Z",
+  "percentileAgeHours": 1.33,
+  "percentileInit": "2026-10-12T17:00:00Z",
+  "stale": false
+ },
+ "kind": "forecast",
+ "schema": "sector-wind-tonight-v1",
+ "speed": {
+  "category": "light",
+  "ifItBlowsCategory": "breezy",
+  "ifItBlowsMph": 11,
+  "maxMph": 9,
+  "meanMph": 6.9,
+  "minMph": 4,
+  "note": "Point forecast. Observed wind above 10 mph ran 4.6-6 mph higher than forecast in research; treat the category as a floor, not a ceiling. ifItBlows (NBM P90) is an elevated case, NOT a maximum: observed wind exceeded it on 22% of hours and on 68% of hours at or above 10 mph."
+ },
+ "trend": {
+  "basis": "forecast speed at the end of the evening is at least 2 mph below the start",
+  "deltaMph": -5,
+  "label": "easing",
+  "validation": "easing precision 0.65 (CAL+H1); lay-down and rising have no validated skill"
+ },
+ "unavailableReason": null,
+ "window": {
+  "endUtc": "2026-10-13T06:00:00Z",
+  "localHours": "19:00-01:00",
+  "startUtc": "2026-10-13T00:00:00Z",
+  "timeZone": "America/Chicago"
+ },
+ "withheld": {
+  "directionBelow5mph": "unreliable (0.65 within 22.5\u00b0 at 3-5 mph)",
+  "gust": "forecast gusts unvalidated (NBM \u226520 kt POD 0)",
+  "layDown": "no validated skill (POD 0.07)",
+  "overWaterSpeed": "no over-water reference",
+  "rising": "no validated skill"
+ }
+}

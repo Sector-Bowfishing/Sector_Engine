@@ -1,0 +1,57 @@
+{
+ "AUDITED_direct_high_fetch": {
+  "bankRow": {
+   "bankId": "GT-000001",
+   "bankImpact": "DIRECT",
+   "chopClass": 4,
+   "confidence": "firm",
+   "effectiveFetchM": 8522,
+   "exposureRank": "HIGH_EXPOSURE",
+   "geometryTier": "AUDITED",
+   "highFetch": true,
+   "windAngleDeg": 10
+  },
+  "publicWord": "DIRECT",
+  "simple": {
+   "bank": "DIRECT",
+   "caveats": [
+    "modeled forecast; land-referenced",
+    "not an over-water measurement"
+   ],
+   "confidence": "MEDIUM",
+   "fetch": "HIGH",
+   "risk": "COULD TURN BREEZY",
+   "tonight": "LIGHT",
+   "trend": "EASING",
+   "wind": "SW 4-9 mph"
+  }
+ },
+ "ESTIMATED_exposed": {
+  "bankRow": {
+   "bankId": "E-0042",
+   "bankImpact": "CROSS",
+   "chopClass": 3,
+   "confidence": "boundary",
+   "effectiveFetchM": 2100,
+   "exposureRank": "MODERATE_EXPOSURE",
+   "geometryTier": "ESTIMATED",
+   "highFetch": false,
+   "windAngleDeg": 70
+  },
+  "publicWord": "EXPOSED",
+  "simple": {
+   "bank": "EXPOSED",
+   "caveats": [
+    "modeled forecast; land-referenced",
+    "not an over-water measurement",
+    "bank exposure is an estimate"
+   ],
+   "confidence": "MEDIUM",
+   "fetch": "MODERATE",
+   "risk": "COULD TURN BREEZY",
+   "tonight": "LIGHT",
+   "trend": "EASING",
+   "wind": "SW 4-9 mph"
+  }
+ }
+}

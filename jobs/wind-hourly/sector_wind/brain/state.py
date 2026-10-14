@@ -6,6 +6,8 @@ analysis is never presented as an observation. Unknown stays null. No confidence
 from __future__ import annotations
 
 import base64
+import hashlib
+import json
 import math
 import struct
 from datetime import datetime, timedelta, timezone
@@ -16,6 +18,8 @@ from ..interp import CutoutIndex, blend, blend_wind
 from ..sample import parse_iso
 from .. import bowfishing as BF
 from . import contract as C
+from . import exposure as EX
+from . import tonight as TN
 
 DUR_TOL_DEG, DUR_BAND, DUR_MIN_MS, DUR_MIN_H, DUR_MAX_H = 22.5, (0.7, 1.3), 1.0, 0.5, 12.0
 
@@ -70,6 +74,19 @@ def newest_nbm(store, wl, now, back_h=6):
     return partial
 
 
+def newest_percentile_cycle(store, wl, now, back_h=int(TN.PERCENTILE_MAX_AGE_H)):
+    """NBM publishes qmd percentiles only for 00/06/12/18Z inits. Newest such cycle within back_h, else None."""
+    t = now.replace(minute=0, second=0, microsecond=0)
+    for b in range(0, back_h + 1):
+        ti = t - timedelta(hours=b)
+        if ti.hour % 6:
+            continue
+        c = store.get_json(f"nbm/{wl}/{ti:%Y%m%d%H}.json.gz")
+        if c and c.get("steps") and c.get("hasPercentiles"):
+            return c
+    return None
+
+
 def rtma_series(store, wl, now, hours=13):
     """Newest RTMA-RU quarter-hour within ANALYSIS_MAX_AGE_H, plus the hourly (:00) analyses of the previous 12 h."""
     a0 = now.replace(second=0, microsecond=0); a0 = a0.replace(minute=(a0.minute // 15) * 15)
@@ -113,19 +130,29 @@ def latest_metar(store, stations, lat, lon, now):
     return best
 
 
-def surface_summary(u, d, dur_h, banks, table):
+def _label(tier, d, mph, bank, chop, eff, u, t_s):
+    fac = EX.facing_deg(bank)
+    if tier == "AUDITED":
+        return EX.label_bank(d, mph, fac, chop, bank.get("belowResolution", False))
+    return EX.label_bank_estimated(d, mph, fac, chop, BF.chop_class(BF.cem(u, eff * EX.ESTIMATED_FETCH_MARGIN, t_s)), bank.get("belowResolution", False))
+
+
+def surface_summary(u, d, dur_h, banks, table, tier="AUDITED"):
     """Frozen CEM over every resolvable bank for the CURRENT wind. Lake-level physical description only;
     per-bank rows go to storage (never RTDB) for downstream consumers."""
     ok = [i for i, b in enumerate(banks) if not b.get("belowResolution")]
     t_s = dur_h * 3600 if dur_h is not None else None
-    rows, chop, surf = [], [], []
+    rows, chop, surf, labels = [], [], [], []
     for i in ok:
         eff = BF.nine_ray(table[i], d)
         h = BF.cem(u, eff, t_s)
         lo = BF.cem(max(0.0, u - 1.0), eff * 0.7, t_s); hi = BF.cem(u + 1.0, eff * 1.3, t_s)
         c = BF.chop_class(h); p = BF.surface_p(h, u); chop.append(c); surf.append(p)
+        lab = _label(tier, d, C.mph(u), banks[i], c, eff, u, t_s)
+        labels.append(lab)
         rows.append({"bankId": banks[i]["id"], "effectiveFetchM": round(eff, 1), "hm0In": round(h / 0.0254, 2), "chopClass": c,
-                     "surfaceClass": p, "exposureRank": BF.RANK[c], "confidence": "firm" if BF.chop_class(lo) == BF.chop_class(hi) else "boundary"})
+                     "surfaceClass": p, "exposureRank": BF.RANK[c], "confidence": "firm" if BF.chop_class(lo) == BF.chop_class(hi) else "boundary",
+                     "bankImpact": lab["label"], "highFetch": lab["highFetch"], "windAngleDeg": lab["alphaDeg"], "geometryTier": tier})
     n = len(ok)
     if not n:
         return None, None
@@ -147,11 +174,42 @@ def surface_summary(u, d, dur_h, banks, table):
     }
     exposure = {"protectedPct": pct(chop, 1), "exposedPct": round(100.0 * sum(1 for x in chop if x >= 4) / n, 1),
                 "basis": "share of resolvable bank segments with modeled Hm0 < 1 in (protected) and >= 6 in (exposed) for the current wind; "
-                         "physical description only, not a fishing recommendation"}
+                         "physical description only, not a fishing recommendation",
+                "bankImpact": EX.label_shares(labels) | {"convention": "alpha = angle between wind-FROM bearing and the bank's facing bearing; DIRECT <=45, CROSS <=90, else PROTECTED; modeled, not field-validated"},
+                "geometryTier": tier, "estimated": tier != "AUDITED", "validated": False, "evidenceKind": "MODELED",
+                "validationTier": "AUDITED_GEOMETRY_NO_FIELD_TRUTH" if tier == "AUDITED" else "ESTIMATED_GEOMETRY_NO_FIELD_TRUTH",
+                "publicVocabulary": "DIRECT/CROSS/PROTECTED + HIGH FETCH" if tier == "AUDITED" else "EXPOSED/PROTECTED + HIGH FETCH"}
+    summary["geometryTier"] = tier
     return {"summary": summary, "exposure": exposure}, rows
 
 
-def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processing_version=None):
+def tonight_exposure(banks, table, dir_deg, mean_mph, blow_mph, tier="AUDITED", dur_h=BF.STEADY_H):
+    """Share of resolvable banks by bank-impact label for tonight's mean speed and for 'if it blows' (P90). Lake-level only."""
+    if dir_deg is None or mean_mph is None:
+        return None
+    out = {"geometryTier": tier, "estimated": tier != "AUDITED", "validated": False, "evidenceKind": "MODELED", "direction": round(dir_deg), "durationH": dur_h}
+    for key, mph in (("atMean", mean_mph), ("ifItBlows", blow_mph)):
+        if mph is None:
+            out[key] = None
+            continue
+        u = mph * 0.44704; labels = []
+        for i, b in enumerate(banks):
+            if b.get("belowResolution"):
+                labels.append(EX.label_bank(dir_deg, mph, None, None, True)); continue
+            eff = BF.nine_ray(table[i], dir_deg)
+            labels.append(_label(tier, dir_deg, mph, b, BF.chop_class(BF.cem(u, eff, dur_h * 3600)), eff, u, dur_h * 3600))
+        out[key] = {"speedMph": mph} | EX.label_shares(labels)
+    return out
+
+
+def input_fingerprint(lake, nbm_init, analysis_time, p90_init, observation_at, rules_version, geometry_sha, brain_version) -> str:
+    """Hash of every material input of a lake's state. Same fingerprint -> the derived per-bank detail cannot differ."""
+    payload = {"lake": lake, "nbmInit": nbm_init, "rtma": analysis_time, "p90Init": p90_init, "metar": observation_at, "rules": rules_version,
+               "geometry": geometry_sha, "brain": brain_version}
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()[:16]
+
+
+def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processing_version=None, geometry_tier="AUDITED"):
     """Returns (state, bank_rows | None, meta). Never raises for missing data: unknown stays null with a quality flag."""
     lk = C.lake_key(lake_id); flags: list[str] = []; stale_reasons: list[str] = []
     lat, lon = dir_lake["lat"], dir_lake["lon"]
@@ -159,6 +217,7 @@ def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processi
 
     cyc = newest_nbm(store, wl, now)
     hourly, fc_now, fc_plus3 = [], None, None
+    steps_pt, p90_steps, p90_cyc = [], None, None
     init = None
     if cyc:
         init = parse_iso(cyc["initTime"])
@@ -177,6 +236,7 @@ def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processi
                 if sp is None:
                     continue
                 e = {"at": s["validTime"], "mph": C.mph(sp), "gustMph": C.mph(g), "dirDeg": None if dr is None else round(dr), "leadHours": s["leadHours"]}
+                steps_pt.append({"at": s["validTime"], "mph": C.mph(sp), "dirDeg": None if dr is None else round(dr), "gustMph": C.mph(g)})
                 if vt == h0:
                     fc_now = (sp, dr, g)
                 if vt == h0 + timedelta(hours=3):
@@ -235,6 +295,24 @@ def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processi
 
     observation = latest_metar(store, stations, lat, lon, now)
 
+    # P90 (NBM qmd) from the newest percentile cycle: the breezy-risk flag. Bilinear to the same point.
+    p90_cyc = newest_percentile_cycle(store, wl, now)
+    p90_init = None
+    if p90_cyc:
+        wt90 = _weights(store, p90_cyc.get("grid") or f"grids/nbm/{wl}.json", lat, lon)
+        if wt90 is not None:
+            p90_init = parse_iso(p90_cyc["initTime"])
+            p90_steps = []
+            for s90 in p90_cyc["steps"]:
+                if s90.get("speedP90") is not None:
+                    v = blend(s90["speedP90"], wt90)
+                    p90_steps.append({"at": s90["validTime"], "p90Mph": C.mph(v)})
+    tzname = TN.tz_for(dir_lake.get("state"), lon)
+    current_pt = {"kind": kind, "sustainedMph": C.mph(cur_s), "gustMph": C.mph(cur_g),
+                  "directionDeg": None if cur_d is None else round(cur_d),
+                  "note": "analysis/forecast value, not an observation"} if kind != "unavailable" else None
+    tonight = TN.build_tonight(steps_pt, p90_steps, init, p90_init, now, tzname, current_pt)
+
     surface_state = exposure = None; bank_rows = None; dur_h = None
     surf_dir = cur_d
     if cur_s is not None and cur_d is None and cur_s < 0.5:
@@ -251,7 +329,10 @@ def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processi
             ser.append((sp, dr))
         dur_h = frozen_duration_h(ser) if kind == "analysis" else None
         banks, table = decode_fetch_table(fetch_obj)
-        res, bank_rows = surface_summary(cur_s, surf_dir, dur_h, banks, table)
+        res, bank_rows = surface_summary(cur_s, surf_dir, dur_h, banks, table, geometry_tier)
+        if tonight.get("available") and tonight["direction"]["shown"]:
+            tonight["exposure"] = tonight_exposure(banks, table, tonight["direction"]["fromDeg"], tonight["speed"]["meanMph"],
+                                                   tonight["speed"]["ifItBlowsMph"], geometry_tier)
         if res:
             surface_state, exposure = res["summary"], res["exposure"]
         flags.append("surfaceModelNotFieldValidated")
@@ -285,6 +366,7 @@ def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processi
         "analysis": analysis, "observation": observation,
         "observationTime": observation["observedAt"] if observation and not observation["stale"] else None,
         "representativePoint": {"lat": lat, "lon": lon, "basis": "canonical Sector lake directory coordinate"},
+        "tonight": tonight,
         "stale": stale, "staleReasons": stale_reasons, "units": {"speed": "mph", "direction": "degrees FROM, true north"},
         "bankDetailRef": f"brain/wind/latest/{lk}.json.gz" if bank_rows else None,
         "provenance": {
@@ -296,5 +378,8 @@ def build_state(store, cfg, wl, lake_id, dir_lake, now, fetch_obj=None, processi
     }
     meta = {"kind": kind, "stale": stale, "readiness": readiness, "nbmInit": cyc["initTime"] if cyc else None,
             "analysisTime": analysis["analysisTime"] if analysis else None, "observationAt": observation["observedAt"] if observation else None,
-            "durationH": dur_h}
+            "durationH": dur_h,
+            "inputFingerprint": input_fingerprint(lake_id, cyc["initTime"] if cyc else None, analysis["analysisTime"] if analysis else None,
+                                                  C.iso(p90_init) if p90_init else None, observation["observedAt"] if observation else None,
+                                                  EX.RULES_VERSION, (fetch_obj or {}).get("tableSha256"), C.BRAIN_VERSION)}
     return state, bank_rows, meta

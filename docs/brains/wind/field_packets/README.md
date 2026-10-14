@@ -1,0 +1,1 @@
+EXAMPLE packets only (practice tag, placeholder date/observer). Real sessions: generate with `sector_wind.brain.field_packet.build(...)` into a PRIVATE folder (the SEALED-KEY.json carries the predictions and must never sit next to the observer's copy or in a public repo).

@@ -1,0 +1,112 @@
+{
+ "SEALED": "Scorer only. The observer must not open this file before submitting every record.",
+ "banks": [
+  {
+   "axis": "SW-NE",
+   "bank": "X",
+   "bankId": "GT-005719",
+   "effectiveFetchM": 7800,
+   "highFetch": true,
+   "pairId": "P1",
+   "predictedHm0In": 8.8,
+   "predictedLabel": "DIRECT",
+   "role": "A",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "Y",
+   "bankId": "GT-001172",
+   "effectiveFetchM": 31,
+   "highFetch": false,
+   "pairId": "P1",
+   "predictedHm0In": 0.6,
+   "predictedLabel": "PROTECTED",
+   "role": "B",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "X",
+   "bankId": "GT-004782",
+   "effectiveFetchM": 31,
+   "highFetch": false,
+   "pairId": "P2",
+   "predictedHm0In": 0.6,
+   "predictedLabel": "PROTECTED",
+   "role": "B",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "Y",
+   "bankId": "GT-004656",
+   "effectiveFetchM": 7289,
+   "highFetch": true,
+   "pairId": "P2",
+   "predictedHm0In": 8.5,
+   "predictedLabel": "DIRECT",
+   "role": "A",
+   "type": "MIRROR"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "X",
+   "bankId": "GT-004651",
+   "effectiveFetchM": 31,
+   "highFetch": false,
+   "pairId": "P3",
+   "predictedHm0In": 0.6,
+   "predictedLabel": "PROTECTED",
+   "role": "B",
+   "type": "COVE_vs_POINT"
+  },
+  {
+   "axis": "SW-NE",
+   "bank": "Y",
+   "bankId": "GT-005626",
+   "effectiveFetchM": 6624,
+   "highFetch": true,
+   "pairId": "P3",
+   "predictedHm0In": 8.1,
+   "predictedLabel": "CROSS",
+   "role": "A",
+   "type": "COVE_vs_POINT"
+  }
+ ],
+ "geometryConfidence": "HIGH",
+ "geometryTier": "AUDITED",
+ "lake": "Guntersville|AL",
+ "pairs": [
+  {
+   "axis": "SW-NE",
+   "distanceM": 6636,
+   "pairId": "P1",
+   "type": "MIRROR",
+   "windFromDegForAExposed": 225
+  },
+  {
+   "axis": "SW-NE",
+   "distanceM": 7125,
+   "pairId": "P2",
+   "type": "MIRROR",
+   "windFromDegForAExposed": 225
+  },
+  {
+   "axis": "SW-NE",
+   "distanceM": 580,
+   "pairId": "P3",
+   "type": "COVE_vs_POINT",
+   "windFromDegForAExposed": 225
+  }
+ ],
+ "planningWind": null,
+ "practice": true,
+ "predictionVersion": {
+  "rulesFingerprint": "221a36470bbd58a54122bdeb65ee570e8c60e7898fcd8310c15300405d75f03c",
+  "rulesVersion": "wind-exposure-rules-v2"
+ },
+ "schema": "sector-wind-field-packet-v1",
+ "sessionId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+ "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>"
+}

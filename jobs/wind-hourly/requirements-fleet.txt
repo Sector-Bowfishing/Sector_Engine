@@ -1,0 +1,4 @@
+# Offline build tools only (sector_wind.brain.estimate / fleet). NOT installed in the hourly job image.
+shapely>=2.0
+Pillow>=10
+scipy>=1.11

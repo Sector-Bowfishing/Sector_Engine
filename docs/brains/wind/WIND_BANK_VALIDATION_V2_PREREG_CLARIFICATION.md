@@ -1,0 +1,10 @@
+# Clarification to the independent bank-validation v2 pre-registration (committed before any outcome exists)
+
+`WIND_BANK_VALIDATION_V2_PREREG.md` (frozen, hash-pinned) says Part A uses "the estimated pipeline ... its own facing and the shipped v2 policy" without naming the polygon source. This clarification fixes it; it changes **no** threshold, lake, pair or metric, and it was written before any Part A or Part B result was computed or read.
+
+1. **Polygon source for every ESTIMATED computation under v2 = the published Lake Registry v1 analysis polygon** (`gs://sector-lake-registry/lakes/{lakeKey}/geometry.v1.analysis.geojson.gz`, index `registry/lakes.v1.json` generated 2026-10-13T20:20:54Z, sha256 prefix 8ae465ab2e39). The earlier matched validation (v1 sample) used older engine polygons; that sample remains consumed and is not evidence for v2.
+2. **Estimator:** `sector_wind.brain.estimate.build_estimated_table` at rule set `wind-exposure-rules-v2` (fingerprint in the frozen file). Fetch rays are cast from the audited standoff coordinates for the Part A comparison.
+3. **Lake draw eligibility** was checked against Registry v1: all 12 drawn lakes are ESTIMATED, confidence HIGH, no blocker. A drawn lake that Registry v2 (or any later version) downgrades is replaced by the next in its frozen stratum order, with the replacement logged.
+4. Part B lake status was checked against Registry v1: Lake Guntersville (AUDITED, HIGH, unblocked) and Lake Hartwell (ESTIMATED, HIGH, unblocked) are eligible.
+5. Same-water directory IDs (registry `memberIds`) count as **one** lake for independence and volume.
+6. **Pair candidates for the ESTIMATED lakes (Hartwell, Toledo Bend) were regenerated from the Registry v1 polygons** before any session (the first draft, built from older engine polygons, put most banks > 300 m from the registry shoreline). `data/field_pairs_candidates.json` is the regenerated file; its sha256 is pinned in the pre-registration freeze (`revision` note). No outcome existed when this was done.

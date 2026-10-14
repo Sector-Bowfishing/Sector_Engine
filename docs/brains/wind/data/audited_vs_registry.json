@@ -1,0 +1,989 @@
+[
+ {
+  "lakeId": "Aleknagik|AK",
+  "tableGnis": "Lake Aleknagik",
+  "tableNhdAreaKm2": 84.377,
+  "registryAreaKm2": 84.373,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Aleknagik|AK"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Anderson Ranch Reservoir|ID",
+  "tableGnis": "Anderson Ranch Reservoir",
+  "tableNhdAreaKm2": 18.274,
+  "registryAreaKm2": 18.339,
+  "areaRatio": 1.004,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Anderson Ranch Reservoir|ID"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Andrews Lake|DE",
+  "tableGnis": "McColley Pond",
+  "tableNhdAreaKm2": 0.232,
+  "registryAreaKm2": 0.084,
+  "areaRatio": 0.362,
+  "registryConfidence": "LOW",
+  "registryPointFlag": "identity-risk",
+  "registryMemberIds": [
+   "Andrews Lake|DE"
+  ],
+  "flags": [
+   "area ratio 0.362 outside 0.8-1.25",
+   "audited table GNIS name != directory name",
+   "registry pointFlag identity-risk",
+   "registry confidence LOW"
+  ]
+ },
+ {
+  "lakeId": "Angostura Reservoir|SD",
+  "tableGnis": "Angostura Reservoir",
+  "tableNhdAreaKm2": 19.234,
+  "registryAreaKm2": 19.399,
+  "areaRatio": 1.009,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Angostura Reservoir|SD"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Bluestone Lake|WV",
+  "tableGnis": "Bluestone Lake",
+  "tableNhdAreaKm2": 4.55,
+  "registryAreaKm2": 4.605,
+  "areaRatio": 1.012,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Bluestone Lake|WV"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Bowdish Reservoir|RI",
+  "tableGnis": "Pascoag Reservoir",
+  "tableNhdAreaKm2": 1.369,
+  "registryAreaKm2": 0.93,
+  "areaRatio": 0.679,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Bowdish Reservoir|RI"
+  ],
+  "flags": [
+   "area ratio 0.679 outside 0.8-1.25",
+   "audited table GNIS name != directory name"
+  ]
+ },
+ {
+  "lakeId": "Buckeye Lake|OH",
+  "tableGnis": "Crane Lake",
+  "tableNhdAreaKm2": 11.158,
+  "registryAreaKm2": 11.2,
+  "areaRatio": 1.004,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Buckeye Lake|OH"
+  ],
+  "flags": [
+   "audited table GNIS name != directory name"
+  ]
+ },
+ {
+  "lakeId": "C.J. Strike Reservoir|ID",
+  "tableGnis": "C J Strike Reservoir",
+  "tableNhdAreaKm2": 25.123,
+  "registryAreaKm2": 30.363,
+  "areaRatio": 1.209,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "C.J. Strike Reservoir|ID"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Caddo Lake|TX",
+  "tableGnis": "Caddo Lake",
+  "tableNhdAreaKm2": 60.904,
+  "registryAreaKm2": 60.99,
+  "areaRatio": 1.001,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Caddo Lake|TX"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Chesuncook Lake|ME",
+  "tableGnis": "Chesuncook Lake",
+  "tableNhdAreaKm2": 76.492,
+  "registryAreaKm2": 76.441,
+  "areaRatio": 0.999,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Chesuncook Lake|ME"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Clear Lake|IA",
+  "tableGnis": "Clear Lake",
+  "tableNhdAreaKm2": 14.698,
+  "registryAreaKm2": 15.62,
+  "areaRatio": 1.063,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Clear Lake|IA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Coventry Lake (Wangumbaug)|CT",
+  "tableGnis": "Wangumbaug Lake",
+  "tableNhdAreaKm2": 1.515,
+  "registryAreaKm2": 1.521,
+  "areaRatio": 1.004,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Coventry Lake (Wangumbaug)|CT"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Dardanelle|AR",
+  "tableGnis": "Lake Dardanelle",
+  "tableNhdAreaKm2": 137.866,
+  "registryAreaKm2": 138.748,
+  "areaRatio": 1.006,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Dardanelle|AR"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "DeGray|AR",
+  "tableGnis": "De Gray Lake",
+  "tableNhdAreaKm2": 46.66,
+  "registryAreaKm2": 47.115,
+  "areaRatio": 1.01,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "DeGray|AR"
+  ],
+  "flags": [
+   "audited table GNIS name != directory name"
+  ]
+ },
+ {
+  "lakeId": "Douglas Lake|TN",
+  "tableGnis": "Douglas Lake",
+  "tableNhdAreaKm2": 120.033,
+  "registryAreaKm2": 119.924,
+  "areaRatio": 0.999,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Douglas Lake|TN"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Eagle Lake|MS",
+  "tableGnis": "Eagle Lake",
+  "tableNhdAreaKm2": 19.549,
+  "registryAreaKm2": 19.554,
+  "areaRatio": 1.0,
+  "registryConfidence": "LOW",
+  "registryPointFlag": "identity-risk",
+  "registryMemberIds": [
+   "Eagle Lake|MS"
+  ],
+  "flags": [
+   "registry pointFlag identity-risk",
+   "registry confidence LOW"
+  ]
+ },
+ {
+  "lakeId": "Flathead Lake|MT",
+  "tableGnis": "Flathead Lake",
+  "tableNhdAreaKm2": 494.734,
+  "registryAreaKm2": 494.617,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Flathead Lake|MT"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Folsom|CA",
+  "tableGnis": "Folsom Lake",
+  "tableNhdAreaKm2": 44.308,
+  "registryAreaKm2": 44.505,
+  "areaRatio": 1.004,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Folsom|CA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Glendo Reservoir|WY",
+  "tableGnis": "Glendo Reservoir",
+  "tableNhdAreaKm2": 48.803,
+  "registryAreaKm2": 49.072,
+  "areaRatio": 1.006,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Glendo Reservoir|WY"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Grand Lake|CO",
+  "tableGnis": "Grand Lake",
+  "tableNhdAreaKm2": 1.953,
+  "registryAreaKm2": 1.94,
+  "areaRatio": 0.993,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Grand Lake|CO"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Green River Lake|KY",
+  "tableGnis": "Green River Lake",
+  "tableNhdAreaKm2": 34.152,
+  "registryAreaKm2": 34.393,
+  "areaRatio": 1.007,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Green River Lake|KY"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Griffith Lake|DE",
+  "tableGnis": "Killen Pond",
+  "tableNhdAreaKm2": 0.319,
+  "registryAreaKm2": 0.158,
+  "areaRatio": 0.495,
+  "registryConfidence": "LOW",
+  "registryPointFlag": "identity-risk",
+  "registryMemberIds": [
+   "Griffith Lake|DE"
+  ],
+  "flags": [
+   "area ratio 0.495 outside 0.8-1.25",
+   "audited table GNIS name != directory name",
+   "registry pointFlag identity-risk",
+   "registry confidence LOW"
+  ]
+ },
+ {
+  "lakeId": "Heron Lake|NM",
+  "tableGnis": "Heron Reservoir",
+  "tableNhdAreaKm2": 18.199,
+  "registryAreaKm2": 18.271,
+  "areaRatio": 1.004,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Heron Lake|NM"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Hiwassee Lake|NC",
+  "tableGnis": "Persimmon Lake",
+  "tableNhdAreaKm2": 23.935,
+  "registryAreaKm2": 24.324,
+  "areaRatio": 1.016,
+  "registryConfidence": "LOW",
+  "registryPointFlag": "identity-risk",
+  "registryMemberIds": [
+   "Hiwassee Lake|NC"
+  ],
+  "flags": [
+   "audited table GNIS name != directory name",
+   "registry pointFlag identity-risk",
+   "registry confidence LOW"
+  ]
+ },
+ {
+  "lakeId": "Istokpoga|FL",
+  "tableGnis": "Lake Istokpoga",
+  "tableNhdAreaKm2": 96.575,
+  "registryAreaKm2": 96.636,
+  "areaRatio": 1.001,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Istokpoga|FL"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Jackson Lake|WY",
+  "tableGnis": "Jackson Lake",
+  "tableNhdAreaKm2": 108.671,
+  "registryAreaKm2": 108.82,
+  "areaRatio": 1.001,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Jackson Lake|WY"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Bomoseen|VT",
+  "tableGnis": "Lake Bomoseen",
+  "tableNhdAreaKm2": 9.773,
+  "registryAreaKm2": 9.78,
+  "areaRatio": 1.001,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Bomoseen|VT"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Chelan|WA",
+  "tableGnis": "Lake Chelan",
+  "tableNhdAreaKm2": 132.241,
+  "registryAreaKm2": 132.221,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Chelan|WA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Clark|AK",
+  "tableGnis": "Lake Clark",
+  "tableNhdAreaKm2": 326.26,
+  "registryAreaKm2": 342.955,
+  "areaRatio": 1.051,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Clark|AK"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Eufaula|OK",
+  "tableGnis": "Eufaula Lake",
+  "tableNhdAreaKm2": 407.657,
+  "registryAreaKm2": 410.152,
+  "areaRatio": 1.006,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Eufaula|OK"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Gogebic|MI",
+  "tableGnis": "Lake Gogebic",
+  "tableNhdAreaKm2": 52.921,
+  "registryAreaKm2": 52.943,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Gogebic|MI"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Marion|SC",
+  "tableGnis": "Lake Marion",
+  "tableNhdAreaKm2": 323.925,
+  "registryAreaKm2": 324.548,
+  "areaRatio": 1.002,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Marion|SC"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Maurepas|LA",
+  "tableGnis": "Lake Maurepas",
+  "tableNhdAreaKm2": 235.966,
+  "registryAreaKm2": 235.974,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Maurepas|LA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake McConaughy|NE",
+  "tableGnis": "Lake McConaughy",
+  "tableNhdAreaKm2": 100.706,
+  "registryAreaKm2": 100.703,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake McConaughy|NE"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Mead|NV",
+  "tableGnis": "Lake Mead",
+  "tableNhdAreaKm2": 549.168,
+  "registryAreaKm2": 543.538,
+  "areaRatio": 0.99,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Mead|NV"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake of Egypt|IL",
+  "tableGnis": "Lake of Egypt",
+  "tableNhdAreaKm2": 8.616,
+  "registryAreaKm2": 8.759,
+  "areaRatio": 1.017,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Lake of Egypt|IL"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake of the Ozarks|MO",
+  "tableGnis": "Lake of the Ozarks",
+  "tableNhdAreaKm2": 207.085,
+  "registryAreaKm2": 210.597,
+  "areaRatio": 1.017,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake of the Ozarks|MO"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Robinson|SC",
+  "tableGnis": "Lake Robinson",
+  "tableNhdAreaKm2": 8.494,
+  "registryAreaKm2": 8.478,
+  "areaRatio": 0.998,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Robinson|SC"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Shelbyville|IL",
+  "tableGnis": "Lake Shelbyville",
+  "tableNhdAreaKm2": 41.42,
+  "registryAreaKm2": 41.752,
+  "areaRatio": 1.008,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Shelbyville|IL"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Lake Texoma|TX",
+  "tableGnis": "Lake Texoma",
+  "tableNhdAreaKm2": 240.44,
+  "registryAreaKm2": 348.928,
+  "areaRatio": 1.451,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Texoma|TX"
+  ],
+  "flags": [
+   "area ratio 1.451 outside 0.8-1.25"
+  ]
+ },
+ {
+  "lakeId": "Lake Wawasee|IN",
+  "tableGnis": "Lake Wawasee",
+  "tableNhdAreaKm2": 13.866,
+  "registryAreaKm2": 13.82,
+  "areaRatio": 0.997,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Lake Wawasee|IN"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Leech Lake|MN",
+  "tableGnis": "Leech Lake",
+  "tableNhdAreaKm2": 418.244,
+  "registryAreaKm2": 418.095,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Leech Lake|MN"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Logan Martin|AL",
+  "tableGnis": "Logan Martin Lake",
+  "tableNhdAreaKm2": 67.527,
+  "registryAreaKm2": 67.967,
+  "areaRatio": 1.007,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Logan Martin|AL"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Long Lake|ME",
+  "tableGnis": "Long Lake",
+  "tableNhdAreaKm2": 24.43,
+  "registryAreaKm2": 24.463,
+  "areaRatio": 1.001,
+  "registryConfidence": "LOW",
+  "registryPointFlag": "identity-risk",
+  "registryMemberIds": [
+   "Long Lake|ME"
+  ],
+  "flags": [
+   "registry pointFlag identity-risk",
+   "registry confidence LOW"
+  ]
+ },
+ {
+  "lakeId": "Massabesic Lake|NH",
+  "tableGnis": "Massabesic Lake",
+  "tableNhdAreaKm2": 10.362,
+  "registryAreaKm2": 10.317,
+  "areaRatio": 0.996,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Massabesic Lake|NH"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Melvern Lake|KS",
+  "tableGnis": "Melvern Lake",
+  "tableNhdAreaKm2": 25.453,
+  "registryAreaKm2": 25.593,
+  "areaRatio": 1.006,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Melvern Lake|KS"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Mille Lacs Lake|MN",
+  "tableGnis": "Mille Lacs Lake",
+  "tableNhdAreaKm2": 518.672,
+  "registryAreaKm2": 518.501,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Mille Lacs Lake|MN"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Mosquito Creek Lake|OH",
+  "tableGnis": "Mosquito Creek Lake",
+  "tableNhdAreaKm2": 28.392,
+  "registryAreaKm2": 28.399,
+  "areaRatio": 1.0,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Mosquito Creek Lake|OH"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Navajo Reservoir|NM",
+  "tableGnis": "Navajo Reservoir",
+  "tableNhdAreaKm2": 62.173,
+  "registryAreaKm2": 62.403,
+  "areaRatio": 1.004,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Navajo Reservoir|NM"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Neely Henry|AL",
+  "tableGnis": "H Neely Henry Lake",
+  "tableNhdAreaKm2": 35.522,
+  "registryAreaKm2": 44.434,
+  "areaRatio": 1.251,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Neely Henry|AL"
+  ],
+  "flags": [
+   "area ratio 1.251 outside 0.8-1.25"
+  ]
+ },
+ {
+  "lakeId": "Norris Lake|TN",
+  "tableGnis": "Norris Lake",
+  "tableNhdAreaKm2": 95.483,
+  "registryAreaKm2": 133.423,
+  "areaRatio": 1.397,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Norris Lake|TN"
+  ],
+  "flags": [
+   "area ratio 1.397 outside 0.8-1.25"
+  ]
+ },
+ {
+  "lakeId": "Oneida Lake|NY",
+  "tableGnis": "Oneida Lake",
+  "tableNhdAreaKm2": 207.703,
+  "registryAreaKm2": 207.649,
+  "areaRatio": 1.0,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Oneida Lake|NY"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Pontoosuc Lake|MA",
+  "tableGnis": "Pontoosuc Lake",
+  "tableNhdAreaKm2": 2.025,
+  "registryAreaKm2": 2.045,
+  "areaRatio": 1.01,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Pontoosuc Lake|MA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Prettyboy Reservoir|MD",
+  "tableGnis": "Prettyboy Reservoir",
+  "tableNhdAreaKm2": 6.101,
+  "registryAreaKm2": 6.153,
+  "areaRatio": 1.009,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Prettyboy Reservoir|MD"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Roosevelt|AZ",
+  "tableGnis": "Theodore Roosevelt Lake",
+  "tableNhdAreaKm2": 39.609,
+  "registryAreaKm2": 60.509,
+  "areaRatio": 1.528,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Roosevelt|AZ"
+  ],
+  "flags": [
+   "area ratio 1.528 outside 0.8-1.25"
+  ]
+ },
+ {
+  "lakeId": "Salton Sea|CA",
+  "tableGnis": "Salton Sea",
+  "tableNhdAreaKm2": 943.307,
+  "registryAreaKm2": 942.93,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Salton Sea|CA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Sardis Lake|OK",
+  "tableGnis": "Sardis Lake",
+  "tableNhdAreaKm2": 54.286,
+  "registryAreaKm2": 54.342,
+  "areaRatio": 1.001,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Sardis Lake|OK"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Sevier Lake|UT",
+  "tableGnis": "Sevier Lake",
+  "tableNhdAreaKm2": 495.853,
+  "registryAreaKm2": 495.771,
+  "areaRatio": 1.0,
+  "registryConfidence": "LOW",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Sevier Lake|UT"
+  ],
+  "flags": [
+   "registry confidence LOW"
+  ]
+ },
+ {
+  "lakeId": "Shenango River Lake|PA",
+  "tableGnis": "Shenango River Lake",
+  "tableNhdAreaKm2": 14.105,
+  "registryAreaKm2": 14.143,
+  "areaRatio": 1.003,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Shenango River Lake|PA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Sherman Reservoir|NE",
+  "tableGnis": "Sherman Reservoir",
+  "tableNhdAreaKm2": 9.852,
+  "registryAreaKm2": 9.88,
+  "areaRatio": 1.003,
+  "registryConfidence": "LOW",
+  "registryPointFlag": "identity-risk",
+  "registryMemberIds": [
+   "Sherman Reservoir|NE"
+  ],
+  "flags": [
+   "registry pointFlag identity-risk",
+   "registry confidence LOW"
+  ]
+ },
+ {
+  "lakeId": "Smith Mountain Lake|VA",
+  "tableGnis": "Smith Mountain Lake",
+  "tableNhdAreaKm2": 79.627,
+  "registryAreaKm2": 81.096,
+  "areaRatio": 1.018,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Smith Mountain Lake|VA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Sutton Lake|WV",
+  "tableGnis": "Sutton Lake",
+  "tableNhdAreaKm2": 6.622,
+  "registryAreaKm2": 7.072,
+  "areaRatio": 1.068,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Sutton Lake|WV"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Swartswood Lake|NJ",
+  "tableGnis": "Swartswood Lake",
+  "tableNhdAreaKm2": 2.109,
+  "registryAreaKm2": 2.108,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Swartswood Lake|NJ"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Tohopekaliga (Toho)|FL",
+  "tableGnis": "Lake Tohopekaliga",
+  "tableNhdAreaKm2": 75.383,
+  "registryAreaKm2": 75.393,
+  "areaRatio": 1.0,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "East Lake Tohopekaliga|FL",
+   "Tohopekaliga (Toho)|FL"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Torch Lake|MI",
+  "tableGnis": "Torch Lake",
+  "tableNhdAreaKm2": 75.79,
+  "registryAreaKm2": 75.717,
+  "areaRatio": 0.999,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Torch Lake|MI"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Waimaluhia Reservoir|HI",
+  "tableGnis": "Nu\u02bbupia Pond",
+  "tableNhdAreaKm2": 0.364,
+  "registryAreaKm2": null,
+  "areaRatio": null,
+  "registryConfidence": "MISSING",
+  "registryPointFlag": null,
+  "registryMemberIds": [
+   "Waimaluhia Reservoir|HI"
+  ],
+  "flags": [
+   "registry geometry null",
+   "audited table GNIS name != directory name",
+   "registry confidence MISSING"
+  ]
+ },
+ {
+  "lakeId": "Wallowa Lake|OR",
+  "tableGnis": "Wallowa Lake",
+  "tableNhdAreaKm2": 6.443,
+  "registryAreaKm2": 6.436,
+  "areaRatio": 0.999,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "Wallowa Lake|OR"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Walter F. George / Eufaula|GA",
+  "tableGnis": "Walter F George Reservoir",
+  "tableNhdAreaKm2": 141.312,
+  "registryAreaKm2": 141.706,
+  "areaRatio": 1.003,
+  "registryConfidence": "MEDIUM",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Eufaula / W.F. George|AL",
+   "Walter F. George / Eufaula|GA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Watchaug Pond|RI",
+  "tableGnis": "Green Hill Pond",
+  "tableNhdAreaKm2": 1.71,
+  "registryAreaKm2": 2.322,
+  "areaRatio": 1.358,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "off-water",
+  "registryMemberIds": [
+   "Watchaug Pond|RI"
+  ],
+  "flags": [
+   "area ratio 1.358 outside 0.8-1.25",
+   "audited table GNIS name != directory name"
+  ]
+ },
+ {
+  "lakeId": "West Point|GA",
+  "tableGnis": "West Point Lake",
+  "tableNhdAreaKm2": 90.297,
+  "registryAreaKm2": 90.872,
+  "areaRatio": 1.006,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok",
+  "registryMemberIds": [
+   "West Point|GA"
+  ],
+  "flags": []
+ },
+ {
+  "lakeId": "Guntersville|AL",
+  "dev": true,
+  "registryAreaKm2": 266.822,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok"
+ },
+ {
+  "lakeId": "Wheeler|AL",
+  "dev": true,
+  "registryAreaKm2": 232.379,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok"
+ },
+ {
+  "lakeId": "Wilson|AL",
+  "dev": true,
+  "registryAreaKm2": 63.276,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok"
+ },
+ {
+  "lakeId": "Pickwick Lake|TN",
+  "dev": true,
+  "registryAreaKm2": 169.367,
+  "registryConfidence": "HIGH",
+  "registryPointFlag": "ok"
+ }
+]

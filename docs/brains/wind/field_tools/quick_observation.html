@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sector Wind quick observation</title>
+<style>
+:root{--bg:#fff;--fg:#111;--mut:#666;--br:#bbb;--sel:#0a5;--on:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#111;--fg:#eee;--mut:#999;--br:#555}}
+body{margin:0;padding:16px;background:var(--bg);color:var(--fg);font:16px system-ui,sans-serif;max-width:480px}
+h1{font-size:18px;margin:0 0 12px}label{display:block;margin:12px 0 4px;color:var(--mut);font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap}button,select,input{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--br);border-radius:8px;padding:12px}
+.opt{flex:1;min-width:30%}.opt.sel{background:var(--sel);color:var(--on);border-color:var(--sel)}
+#save{width:100%;margin-top:16px;background:var(--sel);color:var(--on);border-color:var(--sel);font-weight:600}
+pre{white-space:pre-wrap;word-break:break-all;font-size:12px;border:1px solid var(--br);border-radius:8px;padding:8px}
+.note{color:var(--mut);font-size:12px}
+</style></head><body>
+<h1>Sector wind: quick observation</h1>
+<p class="note">Fill this in from the water BEFORE you look at any Sector wind prediction. 3 taps.</p>
+<label>Lake</label><select id="lake"><option>Guntersville|AL</option><option>Lake Hartwell|SC</option><option>other</option></select>
+<label>Bank / zone (name or id, or use your location)</label>
+<div class="row"><input id="bank" placeholder="e.g. E-0042 or 'north shore'" style="flex:2"><button id="loc" type="button">Use GPS</button></div>
+<label>Is the wind reaching this bank?</label><div class="row" data-k="exposure"><button class="opt" data-v="PROTECTED">Protected</button><button class="opt" data-v="PARTIAL">Partial</button><button class="opt" data-v="EXPOSED">Exposed</button><button class="opt" data-v="UNKNOWN">Not sure</button></div>
+<label>Water surface here</label><div class="row" data-k="surface"><button class="opt" data-v="CALM">Calm: easy shooting</button><button class="opt" data-v="MODERATE">Moderate: noticeable chop</button><button class="opt" data-v="ROUGH">Rough: shooting / boat control degraded</button><button class="opt" data-v="UNKNOWN">Not sure</button></div>
+<label>Did you see a Sector wind prediction for this bank before answering?</label><div class="row" data-k="saw"><button class="opt" data-v="false">No</button><button class="opt" data-v="true">Yes</button></div>
+<label>Optional: wind mph / from degrees / notes</label><div class="row"><input id="mph" type="number" placeholder="mph" style="width:90px"><input id="deg" type="number" placeholder="from deg" style="width:100px"><input id="notes" placeholder="notes" style="flex:1"></div>
+<label>Your name / initials</label><input id="who" placeholder="initials">
+<button id="save" type="button">Save observation</button>
+<p class="note" id="msg"></p><pre id="out"></pre>
+<div class="row"><button id="copy" type="button">Copy all</button><button id="dl" type="button">Download</button><button id="clr" type="button">Clear saved</button></div>
+<script>
+var sel={},pos=null,KEY="sector-wind-quick-v1",saved=[];
+function store(op,v){try{if(op==="get")return JSON.parse(localStorage.getItem(KEY)||"[]");localStorage.setItem(KEY,JSON.stringify(v))}catch(e){return op==="get"?saved:null}}
+saved=store("get");
+document.querySelectorAll(".row[data-k]").forEach(function(r){r.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;r.querySelectorAll("button").forEach(function(x){x.classList.remove("sel")});b.classList.add("sel");sel[r.dataset.k]=b.dataset.v})});
+document.getElementById("loc").onclick=function(){navigator.geolocation&&navigator.geolocation.getCurrentPosition(function(p){pos={lat:+p.coords.latitude.toFixed(5),lon:+p.coords.longitude.toFixed(5)};document.getElementById("msg").textContent="Location captured."},function(){document.getElementById("msg").textContent="Location unavailable; type the bank or zone."})};
+function show(){document.getElementById("out").textContent=saved.map(function(r){return JSON.stringify(r)}).join("\n")}
+document.getElementById("save").onclick=function(){
+  var m=document.getElementById("msg"),who=document.getElementById("who").value.trim(),bank=document.getElementById("bank").value.trim();
+  if(!sel.exposure||!sel.surface||sel.saw===undefined||!who||!(bank||pos)){m.textContent="Pick exposure, surface, the prediction question, your initials, and a bank or GPS.";return}
+  var now=new Date(),iso=now.toISOString().replace(/\.\d+Z$/,"Z"),lake=document.getElementById("lake").value;
+  var r={schema:"sector-wind-quick-v1",tripId:lake+"|"+iso.slice(0,10)+"|"+who,lakeId:lake,observedAtUtc:iso,observer:who,exposureObserved:sel.exposure,surfaceObserved:sel.surface,sawPrediction:sel.saw==="true"};
+  if(bank)r.zoneId=bank;if(pos){r.lat=pos.lat;r.lon=pos.lon}
+  var mph=document.getElementById("mph").value,deg=document.getElementById("deg").value,n=document.getElementById("notes").value.trim();
+  if(mph!=="")r.windMph=+mph;if(deg!=="")r.windFromDeg=+deg;if(n)r.notes=n;
+  saved.push(r);store("set",saved);show();m.textContent="Saved ("+saved.length+"). Tap again for the next bank.";
+  document.querySelectorAll(".row[data-k] button").forEach(function(x){x.classList.remove("sel")});sel={};pos=null;document.getElementById("bank").value="";
+};
+document.getElementById("copy").onclick=function(){var t=saved.map(function(r){return JSON.stringify(r)}).join("\n");navigator.clipboard&&navigator.clipboard.writeText(t)};
+document.getElementById("dl").onclick=function(){var a=document.createElement("a");a.href="data:application/json;charset=utf-8,"+encodeURIComponent(saved.map(function(r){return JSON.stringify(r)}).join("\n"));a.download="sector-wind-quick.jsonl";a.click()};
+document.getElementById("clr").onclick=function(){if(confirm("Clear saved observations from this device? Export first."))saved=[],store("set",saved),show()};
+show();
+</script></body></html>

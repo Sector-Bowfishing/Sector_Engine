@@ -1,0 +1,7 @@
+pairId,bank,bankRef,latitude,longitude,mapLink,waterSurface(calm|light|choppy|rough),bankExposure(EXPOSED|PROTECTED|UNSURE),boatControl(easy|noticeable|difficult),confidence(1-3),windFromDeg,windSpeedMph,observedAtUtc,photo
+P1,X,E-0334,34.43414,-82.84234,"https://maps.apple.com/?ll=34.43414,-82.84234&q=P1-X",,,,,,,,
+P1,Y,E-0348,34.41409,-82.86024,"https://maps.apple.com/?ll=34.41409,-82.86024&q=P1-Y",,,,,,,,
+P2,X,E-0226,34.49810,-82.84273,"https://maps.apple.com/?ll=34.49810,-82.84273&q=P2-X",,,,,,,,
+P2,Y,E-0205,34.51459,-82.80675,"https://maps.apple.com/?ll=34.51459,-82.80675&q=P2-Y",,,,,,,,
+P3,X,E-0169,34.54611,-82.77544,"https://maps.apple.com/?ll=34.54611,-82.77544&q=P3-X",,,,,,,,
+P3,Y,E-0175,34.54087,-82.77501,"https://maps.apple.com/?ll=34.54087,-82.77501&q=P3-Y",,,,,,,,

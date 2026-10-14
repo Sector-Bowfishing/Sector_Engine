@@ -1,0 +1,83 @@
+{
+ "tonight_light_breezy_risk_easing.json": {
+  "bank": null,
+  "caveats": [
+   "modeled forecast; land-referenced",
+   "not an over-water measurement"
+  ],
+  "confidence": "MEDIUM",
+  "fetch": null,
+  "risk": "COULD TURN BREEZY",
+  "tonight": "LIGHT",
+  "trend": "EASING",
+  "wind": "SW 4-9 mph"
+ },
+ "tonight_light_no_flag_steady.json": {
+  "bank": null,
+  "caveats": [
+   "modeled forecast; land-referenced",
+   "not an over-water measurement"
+  ],
+  "confidence": "HIGH",
+  "fetch": null,
+  "risk": null,
+  "tonight": "LIGHT",
+  "trend": "STEADY",
+  "wind": "SW about 6 mph"
+ },
+ "tonight_no_percentile_unknown_risk.json": {
+  "bank": null,
+  "caveats": [
+   "modeled forecast; land-referenced",
+   "not an over-water measurement"
+  ],
+  "confidence": "MEDIUM",
+  "fetch": null,
+  "risk": null,
+  "tonight": "LIGHT",
+  "trend": "STEADY",
+  "wind": "SW about 6 mph"
+ },
+ "tonight_stale_forecast.json": {
+  "bank": null,
+  "caveats": [
+   "modeled forecast; land-referenced",
+   "not an over-water measurement",
+   "forecast is stale"
+  ],
+  "confidence": "LOW",
+  "fetch": null,
+  "risk": null,
+  "tonight": "LIGHT",
+  "trend": "STEADY",
+  "wind": "SW about 6 mph"
+ },
+ "tonight_unavailable.json": {
+  "bank": null,
+  "caveats": [
+   "modeled forecast; land-referenced",
+   "not an over-water measurement",
+   "forecastDoesNotCoverTonight"
+  ],
+  "confidence": "LOW",
+  "fetch": null,
+  "risk": null,
+  "tonight": null,
+  "trend": null,
+  "wind": null
+ },
+ "tonight_weak_wind_direction_withheld.json": {
+  "bank": null,
+  "caveats": [
+   "modeled forecast; land-referenced",
+   "not an over-water measurement",
+   "direction not shown below 5 mph"
+  ],
+  "confidence": "MEDIUM",
+  "fetch": null,
+  "risk": null,
+  "tonight": "CALM",
+  "trend": "STEADY",
+  "wind": "light and variable, about 3 mph"
+ }
+}

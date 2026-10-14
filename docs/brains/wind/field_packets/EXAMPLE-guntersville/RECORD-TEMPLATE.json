@@ -1,0 +1,146 @@
+[
+ {
+  "bankId": "GT-005719",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Guntersville|AL|YYYY-MM-DD|<observer>|P1-X",
+  "lakeId": "Guntersville|AL",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Guntersville|AL|YYYY-MM-DD|<observer>|P1",
+  "pairRole": "A",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "GT-001172",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Guntersville|AL|YYYY-MM-DD|<observer>|P1-Y",
+  "lakeId": "Guntersville|AL",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Guntersville|AL|YYYY-MM-DD|<observer>|P1",
+  "pairRole": "B",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "GT-004782",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Guntersville|AL|YYYY-MM-DD|<observer>|P2-X",
+  "lakeId": "Guntersville|AL",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Guntersville|AL|YYYY-MM-DD|<observer>|P2",
+  "pairRole": "B",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "GT-004656",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Guntersville|AL|YYYY-MM-DD|<observer>|P2-Y",
+  "lakeId": "Guntersville|AL",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Guntersville|AL|YYYY-MM-DD|<observer>|P2",
+  "pairRole": "A",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "GT-004651",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Guntersville|AL|YYYY-MM-DD|<observer>|P3-X",
+  "lakeId": "Guntersville|AL",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Guntersville|AL|YYYY-MM-DD|<observer>|P3",
+  "pairRole": "B",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ },
+ {
+  "bankId": "GT-005626",
+  "bankImpactObserved": null,
+  "boatability": null,
+  "id": "Guntersville|AL|YYYY-MM-DD|<observer>|P3-Y",
+  "lakeId": "Guntersville|AL",
+  "observedAtUtc": null,
+  "observer": "<observer>",
+  "observerConfidence": null,
+  "observerSawPrediction": false,
+  "pairId": "Guntersville|AL|YYYY-MM-DD|<observer>|P3",
+  "pairRole": "A",
+  "roughnessObserved": null,
+  "schema": "sector-wind-field-v2",
+  "tags": [
+   "practice"
+  ],
+  "tripId": "Guntersville|AL|YYYY-MM-DD|<observer>",
+  "wind": {
+   "directionFromDeg": null,
+   "source": "visualEstimate",
+   "speedMph": null
+  }
+ }
+]

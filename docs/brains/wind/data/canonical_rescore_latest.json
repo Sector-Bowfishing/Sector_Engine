@@ -1,0 +1,159 @@
+{
+ "computedAt": "2026-10-13T20:48:10Z",
+ "asOf": "metadata mirror (ledger-derived); H2 values not opened",
+ "certification": {
+  "previous": 3.1,
+  "previousRaw": 3.13,
+  "new": 3.3,
+  "newRaw": 3.27,
+  "rawPoints": 32.65,
+  "caps": [
+   {
+    "cap": 6.0,
+    "rule": "Exposure or surface never field-validated"
+   },
+   {
+    "cap": 7.0,
+    "rule": "Land-only wind validation, no over-water reference"
+   }
+  ],
+  "dimensionsChanged": {
+   "8": {
+    "before": 0.0,
+    "after": 1.33,
+    "why": "5/30 complete days, worst completeness 1.0000, median age 68.26666666666667 min, catch-up runs 20"
+   }
+  },
+  "dimensionsUnchanged": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   9,
+   10
+  ],
+  "dimensions": {
+   "1": {
+    "name": "Wind speed",
+    "weight": 12,
+    "points": 0.0,
+    "credit": 0.0,
+    "why": "night pooled MAE 0.837, bias -0.042; 49 observed events; POD [0.0, 0.0, 0.0, 0.0, 0.0] FAR [None, None, None, None, None]"
+   },
+   "2": {
+    "name": "Direction",
+    "weight": 8,
+    "points": 4.32,
+    "credit": 0.54,
+    "why": "within 22.5\u00b0 0.758, circular MAE 18.3\u00b0"
+   },
+   "3": {
+    "name": "Gust",
+    "weight": 5,
+    "points": 0.0,
+    "credit": 0.0,
+    "why": "conditional gust bias -1.91 m/s; >= 20 kt POD [0.06796116504854369, 0.05365853658536585, 0.0392156862745098, 0.03076923076923077, 0.020833333333333332] FAR [0.8444444444444444, 0.8589743589743589, 0.8709677419354839, 0.9032258064516129, 0.9333333333333333]"
+   },
+   "4": {
+    "name": "Lead time",
+    "weight": 5,
+    "points": 5.0,
+    "credit": 1.0,
+    "why": "+18 h MAE +2.8% vs +1 h; persistence compared at ['3', '6', '12', '18']"
+   },
+   "5": {
+    "name": "Fetch method",
+    "weight": 10,
+    "points": 10.0,
+    "credit": 1.0,
+    "why": "independent exact-geometry median relative difference 0.05"
+   },
+   "6": {
+    "name": "Exposure (field)",
+    "weight": 20,
+    "points": 0.0,
+    "credit": 0.0,
+    "why": "no field data: 0 real observations; holdout sealed; no certification run"
+   },
+   "7": {
+    "name": "Surface (field)",
+    "weight": 20,
+    "points": 0.0,
+    "credit": 0.0,
+    "why": "no field data: 0 real observations; holdout sealed; no certification run"
+   },
+   "8": {
+    "name": "Freshness/reliability",
+    "weight": 8,
+    "points": 1.33,
+    "credit": 0.167,
+    "why": "5/30 complete days, worst completeness 1.0000, median age 68.26666666666667 min, catch-up runs 20"
+   },
+   "9": {
+    "name": "Coverage",
+    "weight": 4,
+    "points": 4.0,
+    "credit": 1.0,
+    "why": "4/4 development lakes, 50 directory lakes passing national QA"
+   },
+   "10": {
+    "name": "Provenance/Unknown",
+    "weight": 8,
+    "points": 8.0,
+    "credit": 1.0,
+    "why": "kindEverywhere=True; unknownIsGrey=True; explanationOnEveryResult=True"
+   }
+  }
+ },
+ "bwis": {
+  "previous": 5.4,
+  "previousTotal": 54.06,
+  "new": 5.4,
+  "newTotal": 54.16,
+  "dimensionsChanged": {
+   "E Operational Integrity": {
+    "before": 2.4,
+    "after": 2.5
+   }
+  },
+  "E": {
+   "E1items": {
+    "source": true,
+    "model": true,
+    "init": true,
+    "validTime": true,
+    "lead": true,
+    "retrievedAt": true,
+    "unknownPreserved": true,
+    "noFabricatedCalmGust": true
+   },
+   "completeDays": 5,
+   "days": [
+    [
+     "2026-10-08",
+     1.0
+    ],
+    [
+     "2026-10-09",
+     1.0
+    ],
+    [
+     "2026-10-10",
+     1.0
+    ],
+    [
+     "2026-10-11",
+     1.0
+    ],
+    [
+     "2026-10-12",
+     1.0
+    ]
+   ]
+  }
+ },
+ "engineFrozenBlock": "docs/brains/scoring/frozen-scores.json (Wind 3.1 FROZEN 2026-10-12T06:16Z) is NOT updated by this script"
+}

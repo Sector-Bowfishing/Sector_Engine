@@ -1,0 +1,9 @@
+{
+ "file": "WIND_BANK_VALIDATION_V2_PREREG.md",
+ "sha256": "daab8d0c8e3739f2b72cbd11faa9346aa17dce706f098665b7ddba429a26d4ee",
+ "lakeDrawSha256": "bbe1fc6787c283f8459a964f2e223d0da2fe2c13e613fb7f3d8d78c48140f298",
+ "pairCandidatesSha256": "00b7af2d759a131ff958e485e3a1341adccc3a26b1be7d40ee86cd227bb49bff",
+ "rulesFingerprint": "221a36470bbd58a54122bdeb65ee570e8c60e7898fcd8310c15300405d75f03c",
+ "frozenAt": "2026-10-13",
+ "revision": "candidates regenerated from Lake Registry v1 polygons for the two ESTIMATED lakes on 2026-10-13, before any session or outcome"
+}

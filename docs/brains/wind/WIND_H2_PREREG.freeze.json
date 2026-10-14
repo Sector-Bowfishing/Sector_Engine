@@ -1,0 +1,7 @@
+{
+ "file": "WIND_H2_PREREG.md",
+ "sha256": "be8f2465f3db1dfa589d37ddbfe8b135f7fca397b6930cc59f3efaa6d9bdd585",
+ "frozenAt": "2026-10-13",
+ "sealedUntil": "2027-01-01T00:00:00Z",
+ "note": "edit => new file + new freeze; test_h2_prereg_immutable fails on mismatch"
+}

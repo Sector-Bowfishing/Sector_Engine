@@ -1,0 +1,101 @@
+{
+ "publishedAtPlanned": null,
+ "scorerComputedAt": "2026-10-13T21:13:49Z",
+ "oldPublished": {
+  "value": 3.1,
+  "basis": "FROZEN",
+  "scoreUpdatedAt": "2026-10-12T06:16:16Z"
+ },
+ "new": {
+  "value": 3.3,
+  "raw": 3.27,
+  "rawPoints": 32.65,
+  "basis": "COMPUTED",
+  "scoreVersion": "wind-certification-rubric-v1"
+ },
+ "bwis": {
+  "previous": 5.4,
+  "new": 5.4,
+  "total": 54.16
+ },
+ "dimensionChanges": {
+  "8": {
+   "before": 0.0,
+   "after": 1.33,
+   "why": "5/30 complete days, worst completeness 1.0000, median age 68.26666666666667 min, catch-up runs 20"
+  }
+ },
+ "dimensionsUnchanged": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  9,
+  10
+ ],
+ "caps": [
+  {
+   "cap": 6.0,
+   "rule": "Exposure or surface never field-validated"
+  },
+  {
+   "cap": 7.0,
+   "rule": "Land-only wind validation, no over-water reference"
+  }
+ ],
+ "evidence": {
+  "metadataThrough": "2026-10-13T21:13:35Z",
+  "validArchiveDays": 5,
+  "evidenceFileSha": "675253437d3a6d78",
+  "scorerCode": "45961cee"
+ },
+ "reliability": {
+  "asOf": "2026-10-13T21:13:35Z",
+  "calendarDate": "2026-10-13",
+  "validArchiveDays": 5,
+  "validBrainPublishDays": 0,
+  "invalidArchiveDays": [
+   {
+    "date": "2026-10-07",
+    "reasons": [
+     "clock started 04:59Z: only 19 hourly cycles possible",
+     "RTMA-RU quarter-hours 89/96 on the worst lake (92.7% < 95%)"
+    ]
+   }
+  ],
+  "invalidBrainDays": [
+   {
+    "date": "2026-10-12",
+    "reasons": [
+     "18/24 successful publishes (chain started 06:55Z)",
+     "2 failed publish(es)"
+    ]
+   }
+  ],
+  "executions": 166,
+  "failedExecutions": 0,
+  "nbmPartialLakeCycles": 24,
+  "nbmPartialRecovered": 24,
+  "staleStatesLogged": 0,
+  "lakeStatesLogged": 164,
+  "freshnessHoursAfterInit": {
+   "n": 640,
+   "median": 1.14,
+   "p95": 2.15,
+   "max": 2.17
+  },
+  "sourceOutages": {
+   "rtmaFailedAttempts": 4,
+   "nbmFailedAttempts": 0,
+   "rtmaFailedCycles": [
+    "2026-10-11T21:45:00Z"
+   ]
+  },
+  "projectedArchiveGate": "2026-11-07T03:00Z",
+  "projectedBrainPublishGate": "2026-11-12T03:00Z",
+  "projectionAssumption": "every remaining day (including today) is valid; each invalid day moves the date one day later"
+ }
+}

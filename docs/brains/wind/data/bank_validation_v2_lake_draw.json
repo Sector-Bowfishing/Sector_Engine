@@ -1,0 +1,77 @@
+{
+ "S1 sheltered/dendritic (max p90 fetch < 1.5 km)": {
+  "poolSize": 92,
+  "lakes": [
+   {
+    "id": "Sinclair|GA",
+    "areaKm2": 53.3,
+    "maxP90FetchM": 755
+   },
+   {
+    "id": "Cheat Lake|WV",
+    "areaKm2": 5.5,
+    "maxP90FetchM": 1235
+   },
+   {
+    "id": "Spruce Run Reservoir|NJ",
+    "areaKm2": 5.5,
+    "maxP90FetchM": 1349
+   },
+   {
+    "id": "Lake Owyhee|OR",
+    "areaKm2": 45.0,
+    "maxP90FetchM": 1242
+   }
+  ]
+ },
+ "S2 medium (1.5-4 km)": {
+  "poolSize": 98,
+  "lakes": [
+   {
+    "id": "Rye Patch Reservoir|NV",
+    "areaKm2": 46.4,
+    "maxP90FetchM": 1998
+   },
+   {
+    "id": "Cranberry Lake|NY",
+    "areaKm2": 28.0,
+    "maxP90FetchM": 1686
+   },
+   {
+    "id": "Oologah Lake|OK",
+    "areaKm2": 120.3,
+    "maxP90FetchM": 3032
+   },
+   {
+    "id": "Alcova Reservoir|WY",
+    "areaKm2": 9.2,
+    "maxP90FetchM": 1714
+   }
+  ]
+ },
+ "S3 open (>= 4 km)": {
+  "poolSize": 66,
+  "lakes": [
+   {
+    "id": "Upper Klamath Lake|OR",
+    "areaKm2": 251.3,
+    "maxP90FetchM": 7743
+   },
+   {
+    "id": "Mullett Lake|MI",
+    "areaKm2": 67.6,
+    "maxP90FetchM": 7410
+   },
+   {
+    "id": "Lake George|FL",
+    "areaKm2": 175.9,
+    "maxP90FetchM": 15852
+   },
+   {
+    "id": "Lake Waccamaw|NC",
+    "areaKm2": 35.8,
+    "maxP90FetchM": 7296
+   }
+  ]
+ }
+}

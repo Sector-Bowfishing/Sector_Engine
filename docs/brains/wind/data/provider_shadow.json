@@ -1,0 +1,655 @@
+{
+ "window": "CAL+H1 only, inits 2026-05-06..2026-10-06; H2 not read",
+ "rows": 4928,
+ "missing": {
+  "noObservation(=PROVIDER DISAGREEMENT only)": 204
+ },
+ "overall": {
+  "label": "all tonight rows",
+  "n": 4724,
+  "nbm": {
+   "biasMph": -0.38,
+   "maeMph": 2.05,
+   "catExact": 0.792
+  },
+  "openMeteoProxy": {
+   "biasMph": 2.01,
+   "maeMph": 3.03,
+   "catExact": 0.64
+  },
+  "speedWinner": {
+   "nbm": 2694,
+   "openMeteoProxy": 1351,
+   "tie": 679
+  },
+  "direction(both>=5mph,obs>=2.6m/s)": {
+   "n": 316,
+   "nbmWithin22_5": 0.782,
+   "omWithin22_5": 0.703,
+   "nbmCircMAE": 18.3,
+   "omCircMAE": 21.4
+  },
+  "disagreementMeanAbsMph": 2.65
+ },
+ "byLake": {
+  "guntersville": {
+   "label": "guntersville",
+   "n": 1144,
+   "nbm": {
+    "biasMph": -1.38,
+    "maeMph": 1.95,
+    "catExact": 0.824
+   },
+   "openMeteoProxy": {
+    "biasMph": 1.88,
+    "maeMph": 2.91,
+    "catExact": 0.679
+   },
+   "speedWinner": {
+    "nbm": 648,
+    "openMeteoProxy": 386,
+    "tie": 110
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 21,
+    "nbmWithin22_5": 0.667,
+    "omWithin22_5": 0.619,
+    "nbmCircMAE": 22.6,
+    "omCircMAE": 25.4
+   },
+   "disagreementMeanAbsMph": 3.31
+  },
+  "pickwick": {
+   "label": "pickwick",
+   "n": 1206,
+   "nbm": {
+    "biasMph": 0.53,
+    "maeMph": 2.0,
+    "catExact": 0.851
+   },
+   "openMeteoProxy": {
+    "biasMph": 3.21,
+    "maeMph": 3.6,
+    "catExact": 0.612
+   },
+   "speedWinner": {
+    "nbm": 853,
+    "openMeteoProxy": 229,
+    "tie": 124
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 52,
+    "nbmWithin22_5": 0.827,
+    "omWithin22_5": 0.865,
+    "nbmCircMAE": 12.5,
+    "omCircMAE": 11.8
+   },
+   "disagreementMeanAbsMph": 2.77
+  },
+  "wheeler": {
+   "label": "wheeler",
+   "n": 1764,
+   "nbm": {
+    "biasMph": -0.57,
+    "maeMph": 2.25,
+    "catExact": 0.743
+   },
+   "openMeteoProxy": {
+    "biasMph": 1.34,
+    "maeMph": 2.77,
+    "catExact": 0.64
+   },
+   "speedWinner": {
+    "nbm": 848,
+    "openMeteoProxy": 600,
+    "tie": 316
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 177,
+    "nbmWithin22_5": 0.751,
+    "omWithin22_5": 0.65,
+    "nbmCircMAE": 20.8,
+    "omCircMAE": 25.2
+   },
+   "disagreementMeanAbsMph": 2.3
+  },
+  "wilson": {
+   "label": "wilson",
+   "n": 610,
+   "nbm": {
+    "biasMph": 0.27,
+    "maeMph": 1.77,
+    "catExact": 0.759
+   },
+   "openMeteoProxy": {
+    "biasMph": 1.85,
+    "maeMph": 2.85,
+    "catExact": 0.621
+   },
+   "speedWinner": {
+    "nbm": 345,
+    "openMeteoProxy": 136,
+    "tie": 129
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 66,
+    "nbmWithin22_5": 0.864,
+    "omWithin22_5": 0.742,
+    "nbmCircMAE": 14.7,
+    "omCircMAE": 17.7
+   },
+   "disagreementMeanAbsMph": 2.23
+  }
+ },
+ "byLead": {
+  "+6h": {
+   "label": "+6h",
+   "n": 1188,
+   "nbm": {
+    "biasMph": -0.61,
+    "maeMph": 2.35,
+    "catExact": 0.705
+   },
+   "openMeteoProxy": {
+    "biasMph": 1.65,
+    "maeMph": 3.01,
+    "catExact": 0.553
+   },
+   "speedWinner": {
+    "nbm": 592,
+    "openMeteoProxy": 393,
+    "tie": 203
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 128,
+    "nbmWithin22_5": 0.75,
+    "omWithin22_5": 0.648,
+    "nbmCircMAE": 18.6,
+    "omCircMAE": 21.3
+   },
+   "disagreementMeanAbsMph": 2.64
+  },
+  "+12h": {
+   "label": "+12h",
+   "n": 2362,
+   "nbm": {
+    "biasMph": -0.37,
+    "maeMph": 2.04,
+    "catExact": 0.793
+   },
+   "openMeteoProxy": {
+    "biasMph": 2.06,
+    "maeMph": 3.07,
+    "catExact": 0.635
+   },
+   "speedWinner": {
+    "nbm": 1363,
+    "openMeteoProxy": 659,
+    "tie": 340
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 158,
+    "nbmWithin22_5": 0.785,
+    "omWithin22_5": 0.715,
+    "nbmCircMAE": 19.3,
+    "omCircMAE": 22.6
+   },
+   "disagreementMeanAbsMph": 2.69
+  },
+  "+18h": {
+   "label": "+18h",
+   "n": 1174,
+   "nbm": {
+    "biasMph": -0.16,
+    "maeMph": 1.77,
+    "catExact": 0.879
+   },
+   "openMeteoProxy": {
+    "biasMph": 2.29,
+    "maeMph": 2.95,
+    "catExact": 0.738
+   },
+   "speedWinner": {
+    "nbm": 739,
+    "openMeteoProxy": 299,
+    "tie": 136
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 30,
+    "nbmWithin22_5": 0.9,
+    "omWithin22_5": 0.867,
+    "nbmCircMAE": 11.4,
+    "omCircMAE": 15.9
+   },
+   "disagreementMeanAbsMph": 2.6
+  }
+ },
+ "byObservedClass": {
+  "obs<5": {
+   "label": "obs<5",
+   "n": 3658,
+   "nbm": {
+    "biasMph": 0.42,
+    "maeMph": 1.67,
+    "catExact": 0.927
+   },
+   "openMeteoProxy": {
+    "biasMph": 2.89,
+    "maeMph": 3.21,
+    "catExact": 0.657
+   },
+   "speedWinner": {
+    "nbm": 2436,
+    "openMeteoProxy": 745,
+    "tie": 477
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 0,
+    "nbmWithin22_5": null,
+    "omWithin22_5": null,
+    "nbmCircMAE": null,
+    "omCircMAE": null
+   },
+   "disagreementMeanAbsMph": 2.66
+  },
+  "obs5-10": {
+   "label": "obs5-10",
+   "n": 900,
+   "nbm": {
+    "biasMph": -2.66,
+    "maeMph": 2.9,
+    "catExact": 0.364
+   },
+   "openMeteoProxy": {
+    "biasMph": -0.52,
+    "maeMph": 2.07,
+    "catExact": 0.613
+   },
+   "speedWinner": {
+    "nbm": 222,
+    "openMeteoProxy": 500,
+    "tie": 178
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 207,
+    "nbmWithin22_5": 0.768,
+    "omWithin22_5": 0.686,
+    "nbmCircMAE": 17.5,
+    "omCircMAE": 20.9
+   },
+   "disagreementMeanAbsMph": 2.62
+  },
+  "obs>=10": {
+   "label": "obs>=10",
+   "n": 166,
+   "nbm": {
+    "biasMph": -5.65,
+    "maeMph": 5.89,
+    "catExact": 0.139
+   },
+   "openMeteoProxy": {
+    "biasMph": -3.62,
+    "maeMph": 4.24,
+    "catExact": 0.404
+   },
+   "speedWinner": {
+    "nbm": 36,
+    "openMeteoProxy": 106,
+    "tie": 24
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 109,
+    "nbmWithin22_5": 0.807,
+    "omWithin22_5": 0.734,
+    "nbmCircMAE": 19.7,
+    "omCircMAE": 22.4
+   },
+   "disagreementMeanAbsMph": 2.76
+  }
+ },
+ "byForecastClassNbm": {
+  "obs<5": {
+   "label": "nbm obs<5",
+   "n": 4012,
+   "nbm": {
+    "biasMph": -0.5,
+    "maeMph": 2.0,
+    "catExact": 0.845
+   },
+   "openMeteoProxy": {
+    "biasMph": 2.16,
+    "maeMph": 3.08,
+    "catExact": 0.661
+   },
+   "speedWinner": {
+    "nbm": 2384,
+    "openMeteoProxy": 1124,
+    "tie": 504
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 0,
+    "nbmWithin22_5": null,
+    "omWithin22_5": null,
+    "nbmCircMAE": null,
+    "omCircMAE": null
+   },
+   "disagreementMeanAbsMph": 2.8
+  },
+  "obs5-10": {
+   "label": "nbm obs5-10",
+   "n": 680,
+   "nbm": {
+    "biasMph": 0.26,
+    "maeMph": 2.37,
+    "catExact": 0.482
+   },
+   "openMeteoProxy": {
+    "biasMph": 1.14,
+    "maeMph": 2.74,
+    "catExact": 0.515
+   },
+   "speedWinner": {
+    "nbm": 299,
+    "openMeteoProxy": 216,
+    "tie": 165
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 288,
+    "nbmWithin22_5": 0.764,
+    "omWithin22_5": 0.677,
+    "nbmCircMAE": 19.1,
+    "omCircMAE": 22.7
+   },
+   "disagreementMeanAbsMph": 1.87
+  },
+  "obs>=10": {
+   "label": "nbm obs>=10",
+   "n": 32,
+   "nbm": {
+    "biasMph": 1.25,
+    "maeMph": 2.44,
+    "catExact": 0.719
+   },
+   "openMeteoProxy": {
+    "biasMph": 1.86,
+    "maeMph": 2.46,
+    "catExact": 0.625
+   },
+   "speedWinner": {
+    "nbm": 11,
+    "openMeteoProxy": 11,
+    "tie": 10
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 28,
+    "nbmWithin22_5": 0.964,
+    "omWithin22_5": 0.964,
+    "nbmCircMAE": 9.8,
+    "omCircMAE": 8.4
+   },
+   "disagreementMeanAbsMph": 1.54
+  }
+ },
+ "byObservedDirectionSector": {
+  "N": {
+   "label": "N",
+   "n": 120,
+   "nbm": {
+    "biasMph": -3.68,
+    "maeMph": 3.82,
+    "catExact": 0.325
+   },
+   "openMeteoProxy": {
+    "biasMph": -1.69,
+    "maeMph": 2.48,
+    "catExact": 0.633
+   },
+   "speedWinner": {
+    "nbm": 24,
+    "openMeteoProxy": 85,
+    "tie": 11
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 51,
+    "nbmWithin22_5": 0.745,
+    "omWithin22_5": 0.686,
+    "nbmCircMAE": 23.4,
+    "omCircMAE": 24.3
+   },
+   "disagreementMeanAbsMph": 2.79
+  },
+  "NE": {
+   "label": "NE",
+   "n": 56,
+   "nbm": {
+    "biasMph": -2.9,
+    "maeMph": 3.13,
+    "catExact": 0.536
+   },
+   "openMeteoProxy": {
+    "biasMph": -1.12,
+    "maeMph": 2.19,
+    "catExact": 0.625
+   },
+   "speedWinner": {
+    "nbm": 15,
+    "openMeteoProxy": 29,
+    "tie": 12
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 32,
+    "nbmWithin22_5": 0.812,
+    "omWithin22_5": 0.625,
+    "nbmCircMAE": 24.2,
+    "omCircMAE": 29.0
+   },
+   "disagreementMeanAbsMph": 2.16
+  },
+  "E": {
+   "label": "E",
+   "n": 46,
+   "nbm": {
+    "biasMph": -4.4,
+    "maeMph": 4.46,
+    "catExact": 0.261
+   },
+   "openMeteoProxy": {
+    "biasMph": -2.16,
+    "maeMph": 3.0,
+    "catExact": 0.457
+   },
+   "speedWinner": {
+    "nbm": 7,
+    "openMeteoProxy": 30,
+    "tie": 9
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 12,
+    "nbmWithin22_5": 0.667,
+    "omWithin22_5": 0.5,
+    "nbmCircMAE": 22.0,
+    "omCircMAE": 33.9
+   },
+   "disagreementMeanAbsMph": 2.87
+  },
+  "SE": {
+   "label": "SE",
+   "n": 58,
+   "nbm": {
+    "biasMph": -3.56,
+    "maeMph": 3.77,
+    "catExact": 0.345
+   },
+   "openMeteoProxy": {
+    "biasMph": -2.25,
+    "maeMph": 2.95,
+    "catExact": 0.569
+   },
+   "speedWinner": {
+    "nbm": 14,
+    "openMeteoProxy": 29,
+    "tie": 15
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 16,
+    "nbmWithin22_5": 0.75,
+    "omWithin22_5": 0.625,
+    "nbmCircMAE": 14.3,
+    "omCircMAE": 19.5
+   },
+   "disagreementMeanAbsMph": 2.45
+  },
+  "S": {
+   "label": "S",
+   "n": 202,
+   "nbm": {
+    "biasMph": -3.29,
+    "maeMph": 3.46,
+    "catExact": 0.436
+   },
+   "openMeteoProxy": {
+    "biasMph": -1.12,
+    "maeMph": 2.51,
+    "catExact": 0.634
+   },
+   "speedWinner": {
+    "nbm": 48,
+    "openMeteoProxy": 114,
+    "tie": 40
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 118,
+    "nbmWithin22_5": 0.864,
+    "omWithin22_5": 0.805,
+    "nbmCircMAE": 13.1,
+    "omCircMAE": 16.2
+   },
+   "disagreementMeanAbsMph": 2.46
+  },
+  "SW": {
+   "label": "SW",
+   "n": 118,
+   "nbm": {
+    "biasMph": -4.56,
+    "maeMph": 4.7,
+    "catExact": 0.28
+   },
+   "openMeteoProxy": {
+    "biasMph": -1.72,
+    "maeMph": 2.84,
+    "catExact": 0.619
+   },
+   "speedWinner": {
+    "nbm": 21,
+    "openMeteoProxy": 84,
+    "tie": 13
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 48,
+    "nbmWithin22_5": 0.771,
+    "omWithin22_5": 0.604,
+    "nbmCircMAE": 15.3,
+    "omCircMAE": 19.4
+   },
+   "disagreementMeanAbsMph": 3.23
+  },
+  "W": {
+   "label": "W",
+   "n": 46,
+   "nbm": {
+    "biasMph": -5.01,
+    "maeMph": 5.01,
+    "catExact": 0.196
+   },
+   "openMeteoProxy": {
+    "biasMph": -2.26,
+    "maeMph": 3.24,
+    "catExact": 0.5
+   },
+   "speedWinner": {
+    "nbm": 8,
+    "openMeteoProxy": 34,
+    "tie": 4
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 18,
+    "nbmWithin22_5": 0.5,
+    "omWithin22_5": 0.667,
+    "nbmCircMAE": 33.7,
+    "omCircMAE": 34.1
+   },
+   "disagreementMeanAbsMph": 3.3
+  },
+  "NW": {
+   "label": "NW",
+   "n": 52,
+   "nbm": {
+    "biasMph": -2.89,
+    "maeMph": 3.51,
+    "catExact": 0.269
+   },
+   "openMeteoProxy": {
+    "biasMph": -0.65,
+    "maeMph": 2.56,
+    "catExact": 0.442
+   },
+   "speedWinner": {
+    "nbm": 15,
+    "openMeteoProxy": 25,
+    "tie": 12
+   },
+   "direction(both>=5mph,obs>=2.6m/s)": {
+    "n": 21,
+    "nbmWithin22_5": 0.714,
+    "omWithin22_5": 0.714,
+    "nbmCircMAE": 20.5,
+    "omCircMAE": 20.7
+   },
+   "disagreementMeanAbsMph": 3.02
+  }
+ },
+ "strongerWindDetection(obs>=10mph, tonight rows)": {
+  "events": 166,
+  "nbmPointGE10": {
+   "flagged": 32,
+   "POD": 0.151,
+   "FAR": 0.219
+  },
+  "openMeteoProxyPointGE10": {
+   "flagged": 222,
+   "POD": 0.428,
+   "FAR": 0.68
+  },
+  "nbmP90GE10(riskFlag)": {
+   "flagged": 226,
+   "POD": 0.488,
+   "FAR": 0.642
+  },
+  "openMeteoProxyGE8": {
+   "flagged": 536,
+   "POD": 0.56,
+   "FAR": 0.826
+  },
+  "nbmP90GE8": {
+   "flagged": 650,
+   "POD": 0.699,
+   "FAR": 0.822
+  }
+ },
+ "trendEasing_00Zto06Z": {
+  "nbm": {
+   "pairs": 2324,
+   "accuracy": 0.554,
+   "alwaysSteady": 0.417,
+   "easingForecasts": 849,
+   "easingPrecision": 0.653
+  },
+  "openMeteoProxy": {
+   "pairs": 2324,
+   "accuracy": 0.479,
+   "alwaysSteady": 0.417,
+   "easingForecasts": 902,
+   "easingPrecision": 0.571
+  }
+ }
+}

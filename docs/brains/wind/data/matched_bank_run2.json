@@ -1,0 +1,7074 @@
+{
+ "M1": {
+  "set": "M1 same NHD polygon",
+  "lakes": 7,
+  "cells": 88544,
+  "unknownEstimateCells": 32,
+  "labelAgreement_median": 0.9542921686746988,
+  "labelAgreement_pooled": 0.9531758221900976,
+  "labelAgreementConservative_median": 0.9192018072289156,
+  "labelAgreementEstFacing_median": 0.8185946462715105,
+  "highFetchPrecision_median": 0.8919943572562159,
+  "highFetchRecall_median": 0.9361614348695464,
+  "spearman_median": 0.9280266556351582,
+  "dominantWithin22_5_share": 0.8571428571428571,
+  "facingErrMedianDeg": 18.694816854014306,
+  "facingWithin45_median": 0.8135755258126195,
+  "falseProtected_pooled": 0.01762196253014283,
+  "falseProtectedConservative_pooled": 0.012567241699128177,
+  "falseProtected_median": 0.019154030327214685,
+  "falseProtectedConservative_median": 0.016227720138334664,
+  "falseProtected_vsDirectCross_pooled": 0.023614443856159194,
+  "falseProtectedConservative_vsDirectCross_pooled": 0.014940600817317157,
+  "labelAgreementShippedPipeline_median": 0.7976656626506025,
+  "falseProtectedShippedPipeline_pooled": 0.012149879428677426,
+  "falseProtectedShippedPipeline_vsDirectCross_pooled": 0.06897420105150581,
+  "exposedCells": 21564,
+  "logRatioMedianFetch_median": 0.3210034802965926,
+  "confusion_rows_audited_cols_estimated": [
+   [
+    18229,
+    0,
+    244
+   ],
+   [
+    0,
+    20131,
+    656
+   ],
+   [
+    1146,
+    2100,
+    46038
+   ]
+  ],
+  "perClass_rows_audited_cols_estimated": {
+   "DIRECT": {
+    "recall": 0.9867915335895632,
+    "precision": 0.9408516129032258,
+    "auditedCells": 18473
+   },
+   "CROSS": {
+    "recall": 0.9684418145956607,
+    "precision": 0.9055373127614592,
+    "auditedCells": 20787
+   },
+   "PROTECTED": {
+    "recall": 0.9341368395422449,
+    "precision": 0.9808257701648984,
+    "auditedCells": 49284
+   }
+  },
+  "confusion_rows_audited_cols_estimatedConservative": [
+   [
+    18229,
+    109,
+    135
+   ],
+   [
+    0,
+    20353,
+    434
+   ],
+   [
+    1146,
+    5363,
+    42775
+   ]
+  ],
+  "perClass_rows_audited_cols_estimatedConservative": {
+   "DIRECT": {
+    "recall": 0.9867915335895632,
+    "precision": 0.9408516129032258,
+    "auditedCells": 18473
+   },
+   "CROSS": {
+    "recall": 0.9791215663635926,
+    "precision": 0.7881122942884802,
+    "auditedCells": 20787
+   },
+   "PROTECTED": {
+    "recall": 0.8679287395503612,
+    "precision": 0.9868724621631598,
+    "auditedCells": 49284
+   }
+  }
+ },
+ "M2": {
+  "set": "M2 engine polygon",
+  "lakes": 73,
+  "cells": 713264,
+  "unknownEstimateCells": 10928,
+  "labelAgreement_median": 0.9575460271317829,
+  "labelAgreement_pooled": 0.9580421835393347,
+  "labelAgreementConservative_median": 0.9212860310421286,
+  "labelAgreementEstFacing_median": 0.813627730294397,
+  "highFetchPrecision_median": 0.8896551724137931,
+  "highFetchRecall_median": 0.9478155339805825,
+  "spearman_median": 0.931839872502435,
+  "dominantWithin22_5_share": 0.5797101449275363,
+  "facingErrMedianDeg": 18.318646074186347,
+  "facingWithin45_median": 0.8295454545454546,
+  "falseProtected_pooled": 0.01486684973497669,
+  "falseProtectedConservative_pooled": 0.009764352768376014,
+  "falseProtected_median": 0.015218261914297157,
+  "falseProtectedConservative_median": 0.008127539856205065,
+  "falseProtected_vsDirectCross_pooled": 0.01847557873555967,
+  "falseProtectedConservative_vsDirectCross_pooled": 0.010156901415305638,
+  "labelAgreementShippedPipeline_median": 0.7816133720930233,
+  "falseProtectedShippedPipeline_pooled": 0.009202375630627754,
+  "falseProtectedShippedPipeline_vsDirectCross_pooled": 0.06078711208766723,
+  "exposedCells": 156590,
+  "logRatioMedianFetch_median": 0.2663948271719758,
+  "confusion_rows_audited_cols_estimated": [
+   [
+    147785,
+    0,
+    1244
+   ],
+   [
+    0,
+    157431,
+    4384
+   ],
+   [
+    8857,
+    15442,
+    378121
+   ]
+  ],
+  "perClass_rows_audited_cols_estimated": {
+   "DIRECT": {
+    "recall": 0.9916526313670494,
+    "precision": 0.9434570549405651,
+    "auditedCells": 149029
+   },
+   "CROSS": {
+    "recall": 0.9729073324475481,
+    "precision": 0.9106743100426324,
+    "auditedCells": 161815
+   },
+   "PROTECTED": {
+    "recall": 0.9396178122359724,
+    "precision": 0.9853341637372345,
+    "auditedCells": 402420
+   }
+  },
+  "confusion_rows_audited_cols_estimatedConservative": [
+   [
+    147785,
+    658,
+    586
+   ],
+   [
+    0,
+    159282,
+    2533
+   ],
+   [
+    8857,
+    44099,
+    349464
+   ]
+  ],
+  "perClass_rows_audited_cols_estimatedConservative": {
+   "DIRECT": {
+    "recall": 0.9916526313670494,
+    "precision": 0.9434570549405651,
+    "auditedCells": 149029
+   },
+   "CROSS": {
+    "recall": 0.9843463214164323,
+    "precision": 0.7806448767147457,
+    "auditedCells": 161815
+   },
+   "PROTECTED": {
+    "recall": 0.8684061428358432,
+    "precision": 0.9911538559715017,
+    "auditedCells": 402420
+   }
+  }
+ },
+ "perLake": {
+  "M1|Aleknagik|AK": {
+   "lake": "Aleknagik|AK",
+   "banksAudited": 742,
+   "banksSampled": 738,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 11808,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9711212737127372,
+   "labelAgreementConservative": 0.9475779132791328,
+   "labelAgreementEstFacing": 0.8347730352303523,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8216463414634146,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.017025804735301943,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.051548145627764545,
+   "confusionShippedPipeline": [
+    [
+     2223,
+     535,
+     11
+    ],
+    [
+     607,
+     2210,
+     292
+    ],
+    [
+     68,
+     593,
+     5269
+    ]
+   ],
+   "highFetchPrecision": 0.9314079422382672,
+   "highFetchRecall": 0.9393203883495146,
+   "highFetchAuditedCells": 824,
+   "falseProtected(audited chop>=3)": 0.019154030327214685,
+   "falseProtectedConservative": 0.016227720138334664,
+   "falseProtected_vsAuditedDirectCross": 0.01837359646138142,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.012249064307587616,
+   "exposedCells": 3759,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5022018970189702,
+    "est": 0.4916158536585366,
+    "estC": 0.46214430894308944
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2763,
+     0,
+     6
+    ],
+    [
+     0,
+     3007,
+     102
+    ],
+    [
+     68,
+     165,
+     5697
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2763,
+     2,
+     4
+    ],
+    [
+     0,
+     3041,
+     68
+    ],
+    [
+     68,
+     477,
+     5385
+    ]
+   ],
+   "spearmanMedian": 0.9458669440651781,
+   "dominantDirAudited": 135.0,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 15.013592554923306,
+   "facingWithin45": 0.9173441734417345,
+   "logRatioMedianFetch": 0.09681689957222667
+  },
+  "M2|Aleknagik|AK": {
+   "lake": "Aleknagik|AK",
+   "banksAudited": 742,
+   "banksSampled": 738,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 11808,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9722222222222222,
+   "labelAgreementConservative": 0.948509485094851,
+   "labelAgreementEstFacing": 0.8360433604336044,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8254573170731707,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.013833466347432828,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04848587955086764,
+   "confusionShippedPipeline": [
+    [
+     2229,
+     529,
+     11
+    ],
+    [
+     603,
+     2232,
+     274
+    ],
+    [
+     75,
+     569,
+     5286
+    ]
+   ],
+   "highFetchPrecision": 0.9364508393285371,
+   "highFetchRecall": 0.9478155339805825,
+   "highFetchAuditedCells": 824,
+   "falseProtected(audited chop>=3)": 0.01782388933226922,
+   "falseProtectedConservative": 0.013833466347432828,
+   "falseProtected_vsAuditedDirectCross": 0.016332085743450152,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010888057162300102,
+   "exposedCells": 3759,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5022018970189702,
+    "est": 0.4906842818428184,
+    "estC": 0.4616361788617886
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2763,
+     0,
+     6
+    ],
+    [
+     0,
+     3019,
+     90
+    ],
+    [
+     67,
+     165,
+     5698
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2763,
+     1,
+     5
+    ],
+    [
+     0,
+     3050,
+     59
+    ],
+    [
+     67,
+     476,
+     5387
+    ]
+   ],
+   "spearmanMedian": 0.945708856140623,
+   "dominantDirAudited": 135.0,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 15.228467735660445,
+   "facingWithin45": 0.9132791327913279,
+   "logRatioMedianFetch": 0.1112819541010031
+  },
+  "M2|Anderson Ranch Reservoir|ID": {
+   "lake": "Anderson Ranch Reservoir|ID",
+   "banksAudited": 365,
+   "banksSampled": 362,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 5792,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9770372928176796,
+   "labelAgreementConservative": 0.9442334254143646,
+   "labelAgreementEstFacing": 0.8339088397790055,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8154350828729282,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00494641384995878,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04201680672268908,
+   "confusionShippedPipeline": [
+    [
+     1063,
+     275,
+     4
+    ],
+    [
+     309,
+     975,
+     111
+    ],
+    [
+     42,
+     328,
+     2685
+    ]
+   ],
+   "highFetchPrecision": 0.6666666666666666,
+   "highFetchRecall": 0.8888888888888888,
+   "highFetchAuditedCells": 9,
+   "falseProtected(audited chop>=3)": 0.008244023083264633,
+   "falseProtectedConservative": 0.006595218466611707,
+   "falseProtected_vsAuditedDirectCross": 0.007307270734380708,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.005480453050785532,
+   "exposedCells": 1213,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5274516574585635,
+    "est": 0.5113950276243094,
+    "estC": 0.47703729281767954
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1339,
+     0,
+     3
+    ],
+    [
+     0,
+     1378,
+     17
+    ],
+    [
+     27,
+     86,
+     2942
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1339,
+     1,
+     2
+    ],
+    [
+     0,
+     1382,
+     13
+    ],
+    [
+     27,
+     280,
+     2748
+    ]
+   ],
+   "spearmanMedian": 0.949179666185056,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 15.52442668891851,
+   "facingWithin45": 0.9033149171270718,
+   "logRatioMedianFetch": 0.2168779467745281
+  },
+  "M2|Andrews Lake|DE": {
+   "lake": "Andrews Lake|DE",
+   "banksAudited": 27,
+   "banksSampled": 27,
+   "rasterM": 20.0,
+   "standoffNotWater": 27,
+   "cellsCompared": 0,
+   "cellsUnknownEstimate": 432,
+   "labelAgreement": null,
+   "labelAgreementConservative": null,
+   "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": null,
+   "falseProtectedConservative": null,
+   "falseProtected_vsAuditedDirectCross": 0.0,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 0,
+   "conservativeSharePROTECTED": {
+    "audited": NaN,
+    "est": NaN,
+    "estC": NaN
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "spearmanMedian": null,
+   "dominantDirAudited": null,
+   "dominantDirEstimated": null,
+   "dominantWithin22_5": null,
+   "facingErrMedianDeg": null,
+   "facingWithin45": null,
+   "logRatioMedianFetch": null
+  },
+  "M2|Angostura Reservoir|SD": {
+   "lake": "Angostura Reservoir|SD",
+   "banksAudited": 484,
+   "banksSampled": 450,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 7200,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9525,
+   "labelAgreementConservative": 0.9056944444444445,
+   "labelAgreementEstFacing": 0.8008333333333333,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7688888888888888,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006255585344057194,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05330564209068882,
+   "confusionShippedPipeline": [
+    [
+     1049,
+     336,
+     18
+    ],
+    [
+     404,
+     946,
+     136
+    ],
+    [
+     145,
+     625,
+     3541
+    ]
+   ],
+   "highFetchPrecision": 0.8414634146341463,
+   "highFetchRecall": 0.971830985915493,
+   "highFetchAuditedCells": 71,
+   "falseProtected(audited chop>=3)": 0.01876675603217158,
+   "falseProtectedConservative": 0.00804289544235925,
+   "falseProtected_vsAuditedDirectCross": 0.021114572516441676,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.007268951194184839,
+   "exposedCells": 1119,
+   "conservativeSharePROTECTED": {
+    "audited": 0.59875,
+    "est": 0.5681944444444444,
+    "estC": 0.5125
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1377,
+     0,
+     26
+    ],
+    [
+     0,
+     1451,
+     35
+    ],
+    [
+     111,
+     170,
+     4030
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1377,
+     16,
+     10
+    ],
+    [
+     0,
+     1475,
+     11
+    ],
+    [
+     111,
+     531,
+     3669
+    ]
+   ],
+   "spearmanMedian": 0.9329901000470433,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 21.72689448936245,
+   "facingWithin45": 0.8133333333333334,
+   "logRatioMedianFetch": 0.31443657138154946
+  },
+  "M2|Bluestone Lake|WV": {
+   "lake": "Bluestone Lake|WV",
+   "banksAudited": 145,
+   "banksSampled": 145,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 2320,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9806034482758621,
+   "labelAgreementConservative": 0.9478448275862069,
+   "labelAgreementEstFacing": 0.8392241379310345,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8224137931034483,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004651162790697674,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06329113924050633,
+   "confusionShippedPipeline": [
+    [
+     426,
+     94,
+     2
+    ],
+    [
+     96,
+     420,
+     68
+    ],
+    [
+     24,
+     128,
+     1062
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.023255813953488372,
+   "falseProtectedConservative": 0.009302325581395349,
+   "falseProtected_vsAuditedDirectCross": 0.0108499095840868,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.003616636528028933,
+   "exposedCells": 215,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5232758620689655,
+    "est": 0.5142241379310345,
+    "estC": 0.475
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     521,
+     0,
+     1
+    ],
+    [
+     0,
+     573,
+     11
+    ],
+    [
+     10,
+     23,
+     1181
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     521,
+     1,
+     0
+    ],
+    [
+     0,
+     580,
+     4
+    ],
+    [
+     10,
+     106,
+     1098
+    ]
+   ],
+   "spearmanMedian": 0.9491339609988123,
+   "dominantDirAudited": 135.0,
+   "dominantDirEstimated": 135.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 13.30786617015616,
+   "facingWithin45": 0.9448275862068966,
+   "logRatioMedianFetch": 0.10013918438591865
+  },
+  "M2|Bowdish Reservoir|RI": {
+   "lake": "Bowdish Reservoir|RI",
+   "banksAudited": 76,
+   "banksSampled": 74,
+   "rasterM": 20.0,
+   "standoffNotWater": 74,
+   "cellsCompared": 0,
+   "cellsUnknownEstimate": 1184,
+   "labelAgreement": null,
+   "labelAgreementConservative": null,
+   "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": null,
+   "falseProtectedConservative": null,
+   "falseProtected_vsAuditedDirectCross": 0.0,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 0,
+   "conservativeSharePROTECTED": {
+    "audited": NaN,
+    "est": NaN,
+    "estC": NaN
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "spearmanMedian": null,
+   "dominantDirAudited": null,
+   "dominantDirEstimated": null,
+   "dominantWithin22_5": null,
+   "facingErrMedianDeg": null,
+   "facingWithin45": null,
+   "logRatioMedianFetch": null
+  },
+  "M2|Buckeye Lake|OH": {
+   "lake": "Buckeye Lake|OH",
+   "banksAudited": 330,
+   "banksSampled": 324,
+   "rasterM": 20.0,
+   "standoffNotWater": 323,
+   "cellsCompared": 16,
+   "cellsUnknownEstimate": 5168,
+   "labelAgreement": 0.5,
+   "labelAgreementConservative": 0.5,
+   "labelAgreementEstFacing": 0.5,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.5,
+   "falseProtectedShippedPipeline(audited chop>=3)": 1.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 1.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     8
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 1.0,
+   "falseProtectedConservative": 1.0,
+   "falseProtected_vsAuditedDirectCross": 1.0,
+   "falseProtectedConservative_vsAuditedDirectCross": 1.0,
+   "exposedCells": 7,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5,
+    "est": 1.0,
+    "estC": 1.0
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     8
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     4
+    ],
+    [
+     0,
+     0,
+     8
+    ]
+   ],
+   "spearmanMedian": null,
+   "dominantDirAudited": 225.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 94.39630882403173,
+   "facingWithin45": 0.0,
+   "logRatioMedianFetch": -3.3096543476863323
+  },
+  "M2|C.J. Strike Reservoir|ID": {
+   "lake": "C.J. Strike Reservoir|ID",
+   "banksAudited": 701,
+   "banksSampled": 696,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 11136,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9652478448275862,
+   "labelAgreementConservative": 0.9268139367816092,
+   "labelAgreementEstFacing": 0.8188757183908046,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7948994252873564,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008683068017366137,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0751311647429171,
+   "confusionShippedPipeline": [
+    [
+     1762,
+     468,
+     42
+    ],
+    [
+     507,
+     1670,
+     316
+    ],
+    [
+     176,
+     775,
+     5420
+    ]
+   ],
+   "highFetchPrecision": 0.5,
+   "highFetchRecall": 1.0,
+   "highFetchAuditedCells": 1,
+   "falseProtected(audited chop>=3)": 0.02170767004341534,
+   "falseProtectedConservative": 0.007959479015918957,
+   "falseProtected_vsAuditedDirectCross": 0.02497376705141658,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.011962224554039873,
+   "exposedCells": 1382,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5721084770114943,
+    "est": 0.5587284482758621,
+    "estC": 0.5106860632183908
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2240,
+     0,
+     32
+    ],
+    [
+     0,
+     2406,
+     87
+    ],
+    [
+     106,
+     162,
+     6103
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2240,
+     17,
+     15
+    ],
+    [
+     0,
+     2451,
+     42
+    ],
+    [
+     106,
+     635,
+     5630
+    ]
+   ],
+   "spearmanMedian": 0.9224744727530303,
+   "dominantDirAudited": 270.0,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 15.780499362799688,
+   "facingWithin45": 0.8477011494252874,
+   "logRatioMedianFetch": 0.15427609526606306
+  },
+  "M2|Caddo Lake|TX": {
+   "lake": "Caddo Lake|TX",
+   "banksAudited": 869,
+   "banksSampled": 845,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 13520,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9538461538461539,
+   "labelAgreementConservative": 0.914792899408284,
+   "labelAgreementEstFacing": 0.8144970414201184,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7887573964497041,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.013280212483399735,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05338384708110901,
+   "confusionShippedPipeline": [
+    [
+     2191,
+     595,
+     29
+    ],
+    [
+     697,
+     2014,
+     281
+    ],
+    [
+     258,
+     996,
+     6459
+    ]
+   ],
+   "highFetchPrecision": 0.9382716049382716,
+   "highFetchRecall": 0.9574803149606299,
+   "highFetchAuditedCells": 635,
+   "falseProtected(audited chop>=3)": 0.01693227091633466,
+   "falseProtectedConservative": 0.012948207171314742,
+   "falseProtected_vsAuditedDirectCross": 0.01980368520750818,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.011537799207852592,
+   "exposedCells": 3012,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5704881656804733,
+    "est": 0.5413461538461538,
+    "estC": 0.4965976331360947
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2786,
+     0,
+     29
+    ],
+    [
+     0,
+     2906,
+     86
+    ],
+    [
+     164,
+     345,
+     7204
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2786,
+     19,
+     10
+    ],
+    [
+     0,
+     2935,
+     57
+    ],
+    [
+     164,
+     902,
+     6647
+    ]
+   ],
+   "spearmanMedian": 0.9159350340413002,
+   "dominantDirAudited": 67.5,
+   "dominantDirEstimated": 22.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 18.318646074186347,
+   "facingWithin45": 0.821301775147929,
+   "logRatioMedianFetch": 0.28032443428718795
+  },
+  "M2|Chesuncook Lake|ME": {
+   "lake": "Chesuncook Lake|ME",
+   "banksAudited": 735,
+   "banksSampled": 731,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 11696,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9712722298221614,
+   "labelAgreementConservative": 0.9455369357045144,
+   "labelAgreementEstFacing": 0.8315663474692202,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8177154582763337,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0071301247771836,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0467028161623229,
+   "confusionShippedPipeline": [
+    [
+     2095,
+     578,
+     22
+    ],
+    [
+     643,
+     2134,
+     245
+    ],
+    [
+     81,
+     563,
+     5335
+    ]
+   ],
+   "highFetchPrecision": 0.9024725274725275,
+   "highFetchRecall": 0.95355587808418,
+   "highFetchAuditedCells": 689,
+   "falseProtected(audited chop>=3)": 0.011968423733129615,
+   "falseProtectedConservative": 0.006620830150241915,
+   "falseProtected_vsAuditedDirectCross": 0.013818436242784678,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.006996676578625153,
+   "exposedCells": 3927,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5112004103967168,
+    "est": 0.4959815321477428,
+    "estC": 0.4640047879616963
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2683,
+     0,
+     12
+    ],
+    [
+     0,
+     2955,
+     67
+    ],
+    [
+     68,
+     189,
+     5722
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2683,
+     5,
+     7
+    ],
+    [
+     0,
+     2989,
+     33
+    ],
+    [
+     68,
+     524,
+     5387
+    ]
+   ],
+   "spearmanMedian": 0.9430440044353143,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 157.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 17.6542512123562,
+   "facingWithin45": 0.8974008207934336,
+   "logRatioMedianFetch": 0.17054448960293467
+  },
+  "M2|Clear Lake|IA": {
+   "lake": "Clear Lake|IA",
+   "banksAudited": 117,
+   "banksSampled": 117,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 1872,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9887820512820513,
+   "labelAgreementConservative": 0.9780982905982906,
+   "labelAgreementEstFacing": 0.8643162393162394,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8595085470085471,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0027137042062415195,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04880581516095535,
+   "confusionShippedPipeline": [
+    [
+     392,
+     75,
+     0
+    ],
+    [
+     75,
+     374,
+     47
+    ],
+    [
+     0,
+     66,
+     843
+    ]
+   ],
+   "highFetchPrecision": 0.8313253012048193,
+   "highFetchRecall": 0.9452054794520548,
+   "highFetchAuditedCells": 73,
+   "falseProtected(audited chop>=3)": 0.004070556309362279,
+   "falseProtectedConservative": 0.004070556309362279,
+   "falseProtected_vsAuditedDirectCross": 0.008307372793354102,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.003115264797507788,
+   "exposedCells": 737,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4855769230769231,
+    "est": 0.4829059829059829,
+    "estC": 0.4668803418803419
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     467,
+     0,
+     0
+    ],
+    [
+     0,
+     488,
+     8
+    ],
+    [
+     0,
+     13,
+     896
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     467,
+     0,
+     0
+    ],
+    [
+     0,
+     493,
+     3
+    ],
+    [
+     0,
+     38,
+     871
+    ]
+   ],
+   "spearmanMedian": 0.9632312312851752,
+   "dominantDirAudited": 90.0,
+   "dominantDirEstimated": 90.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 11.891924826965067,
+   "facingWithin45": 0.9743589743589743,
+   "logRatioMedianFetch": 0.10312065495608143
+  },
+  "M1|Coventry Lake (Wangumbaug)|CT": {
+   "lake": "Coventry Lake (Wangumbaug)|CT",
+   "banksAudited": 42,
+   "banksSampled": 42,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 672,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.96875,
+   "labelAgreementConservative": 0.9449404761904762,
+   "labelAgreementEstFacing": 0.8125,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7991071428571429,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05844155844155844,
+   "confusionShippedPipeline": [
+    [
+     122,
+     32,
+     0
+    ],
+    [
+     39,
+     97,
+     18
+    ],
+    [
+     5,
+     41,
+     318
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.015873015873015872,
+   "falseProtectedConservative": 0.0,
+   "falseProtected_vsAuditedDirectCross": 0.006493506493506494,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 63,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5416666666666666,
+    "est": 0.5163690476190477,
+    "estC": 0.4880952380952381
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     153,
+     0,
+     1
+    ],
+    [
+     0,
+     153,
+     1
+    ],
+    [
+     5,
+     14,
+     345
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     153,
+     1,
+     0
+    ],
+    [
+     0,
+     154,
+     0
+    ],
+    [
+     5,
+     31,
+     328
+    ]
+   ],
+   "spearmanMedian": 0.9503179262842592,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 18.694816854014306,
+   "facingWithin45": 0.9285714285714286,
+   "logRatioMedianFetch": 0.19131711970253248
+  },
+  "M2|Coventry Lake (Wangumbaug)|CT": {
+   "lake": "Coventry Lake (Wangumbaug)|CT",
+   "banksAudited": 42,
+   "banksSampled": 42,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 672,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9717261904761905,
+   "labelAgreementConservative": 0.9419642857142857,
+   "labelAgreementEstFacing": 0.8139880952380952,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8020833333333334,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.048701298701298704,
+   "confusionShippedPipeline": [
+    [
+     121,
+     33,
+     0
+    ],
+    [
+     38,
+     101,
+     15
+    ],
+    [
+     6,
+     41,
+     317
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.031746031746031744,
+   "falseProtectedConservative": 0.0,
+   "falseProtected_vsAuditedDirectCross": 0.00974025974025974,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 63,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5416666666666666,
+    "est": 0.5223214285714286,
+    "estC": 0.4851190476190476
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     153,
+     0,
+     1
+    ],
+    [
+     0,
+     152,
+     2
+    ],
+    [
+     5,
+     11,
+     348
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     153,
+     1,
+     0
+    ],
+    [
+     0,
+     154,
+     0
+    ],
+    [
+     5,
+     33,
+     326
+    ]
+   ],
+   "spearmanMedian": 0.95574428911008,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 18.3904046527268,
+   "facingWithin45": 0.9285714285714286,
+   "logRatioMedianFetch": 0.16328837904479554
+  },
+  "M2|Dardanelle|AR": {
+   "lake": "Dardanelle|AR",
+   "banksAudited": 3362,
+   "banksSampled": 818,
+   "rasterM": 20.7,
+   "standoffNotWater": 0,
+   "cellsCompared": 13088,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9523991442542787,
+   "labelAgreementConservative": 0.9118276283618582,
+   "labelAgreementEstFacing": 0.8111246943765281,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7786522004889975,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01383508577753182,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07049306625577811,
+   "confusionShippedPipeline": [
+    [
+     1844,
+     517,
+     61
+    ],
+    [
+     626,
+     1839,
+     305
+    ],
+    [
+     326,
+     1062,
+     6508
+    ]
+   ],
+   "highFetchPrecision": 0.9121338912133892,
+   "highFetchRecall": 0.9316239316239316,
+   "highFetchAuditedCells": 234,
+   "falseProtected(audited chop>=3)": 0.02158273381294964,
+   "falseProtectedConservative": 0.014388489208633094,
+   "falseProtected_vsAuditedDirectCross": 0.022919876733436057,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.012326656394453005,
+   "exposedCells": 1807,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6033007334963325,
+    "est": 0.5738844743276283,
+    "estC": 0.5262836185819071
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2386,
+     0,
+     36
+    ],
+    [
+     0,
+     2687,
+     83
+    ],
+    [
+     237,
+     267,
+     7392
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2386,
+     18,
+     18
+    ],
+    [
+     0,
+     2724,
+     46
+    ],
+    [
+     237,
+     835,
+     6824
+    ]
+   ],
+   "spearmanMedian": 0.9108381672612486,
+   "dominantDirAudited": 90.0,
+   "dominantDirEstimated": 270.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 18.1395806849615,
+   "facingWithin45": 0.7726161369193154,
+   "logRatioMedianFetch": 0.24577334930895656
+  },
+  "M2|DeGray|AR": {
+   "lake": "DeGray|AR",
+   "banksAudited": 1494,
+   "banksSampled": 1421,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 22736,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9516185784658691,
+   "labelAgreementConservative": 0.9044686840253343,
+   "labelAgreementEstFacing": 0.7949947220267417,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.761039760731879,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01717699775952203,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06671917191719172,
+   "confusionShippedPipeline": [
+    [
+     3250,
+     973,
+     74
+    ],
+    [
+     1287,
+     2785,
+     519
+    ],
+    [
+     569,
+     2011,
+     11268
+    ]
+   ],
+   "highFetchPrecision": 0.7565217391304347,
+   "highFetchRecall": 0.8055555555555556,
+   "highFetchAuditedCells": 108,
+   "falseProtected(audited chop>=3)": 0.027632561613144136,
+   "falseProtectedConservative": 0.018670649738610903,
+   "falseProtected_vsAuditedDirectCross": 0.022164716471647163,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.01338883888388839,
+   "exposedCells": 2678,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6090781140042224,
+    "est": 0.5780260380014075,
+    "estC": 0.5246745249824067
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     4261,
+     0,
+     36
+    ],
+    [
+     0,
+     4430,
+     161
+    ],
+    [
+     405,
+     498,
+     12945
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     4261,
+     15,
+     21
+    ],
+    [
+     0,
+     4493,
+     98
+    ],
+    [
+     405,
+     1633,
+     11810
+    ]
+   ],
+   "spearmanMedian": 0.8989381561776115,
+   "dominantDirAudited": 90.0,
+   "dominantDirEstimated": 270.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 22.859321824026097,
+   "facingWithin45": 0.7677691766361717,
+   "logRatioMedianFetch": 0.3081350394878131
+  },
+  "M2|Douglas Lake|TN": {
+   "lake": "Douglas Lake|TN",
+   "banksAudited": 3840,
+   "banksSampled": 933,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 14928,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9385718113612004,
+   "labelAgreementConservative": 0.8861200428724545,
+   "labelAgreementEstFacing": 0.7822883172561629,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7397508038585209,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01251303441084463,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07275454715919745,
+   "confusionShippedPipeline": [
+    [
+     1897,
+     639,
+     58
+    ],
+    [
+     866,
+     1543,
+     330
+    ],
+    [
+     486,
+     1506,
+     7603
+    ]
+   ],
+   "highFetchPrecision": 0.8488372093023255,
+   "highFetchRecall": 0.8795180722891566,
+   "highFetchAuditedCells": 83,
+   "falseProtected(audited chop>=3)": 0.021897810218978103,
+   "falseProtectedConservative": 0.01564129301355579,
+   "falseProtected_vsAuditedDirectCross": 0.025689105569098068,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.012938308644290268,
+   "exposedCells": 1918,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6427518756698821,
+    "est": 0.5996784565916399,
+    "estC": 0.539857984994641
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2553,
+     0,
+     41
+    ],
+    [
+     0,
+     2643,
+     96
+    ],
+    [
+     342,
+     438,
+     8815
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2553,
+     26,
+     15
+    ],
+    [
+     0,
+     2685,
+     54
+    ],
+    [
+     342,
+     1263,
+     7990
+    ]
+   ],
+   "spearmanMedian": 0.8864535018583026,
+   "dominantDirAudited": 180.0,
+   "dominantDirEstimated": 247.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 27.423725685988813,
+   "facingWithin45": 0.7106109324758842,
+   "logRatioMedianFetch": 0.3446690038253914
+  },
+  "M2|Eagle Lake|MS": {
+   "lake": "Eagle Lake|MS",
+   "banksAudited": 206,
+   "banksSampled": 203,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 3248,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9830665024630542,
+   "labelAgreementConservative": 0.9645935960591133,
+   "labelAgreementEstFacing": 0.8839285714285714,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8740763546798029,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004827031375703942,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.032391048292108364,
+   "confusionShippedPipeline": [
+    [
+     668,
+     119,
+     1
+    ],
+    [
+     133,
+     723,
+     54
+    ],
+    [
+     3,
+     99,
+     1448
+    ]
+   ],
+   "highFetchPrecision": 0.8536585365853658,
+   "highFetchRecall": 0.875,
+   "highFetchAuditedCells": 80,
+   "falseProtected(audited chop>=3)": 0.008849557522123894,
+   "falseProtectedConservative": 0.004827031375703942,
+   "falseProtected_vsAuditedDirectCross": 0.01060070671378092,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.00530035335689046,
+   "exposedCells": 1243,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4772167487684729,
+    "est": 0.4713669950738916,
+    "estC": 0.44735221674876846
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     788,
+     0,
+     0
+    ],
+    [
+     0,
+     892,
+     18
+    ],
+    [
+     3,
+     34,
+     1513
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     788,
+     0,
+     0
+    ],
+    [
+     0,
+     901,
+     9
+    ],
+    [
+     3,
+     103,
+     1444
+    ]
+   ],
+   "spearmanMedian": 0.964621504421955,
+   "dominantDirAudited": 112.5,
+   "dominantDirEstimated": 112.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 12.797178737469523,
+   "facingWithin45": 0.9605911330049262,
+   "logRatioMedianFetch": 0.0011774403809377797
+  },
+  "M2|Flathead Lake|MT": {
+   "lake": "Flathead Lake|MT",
+   "banksAudited": 1378,
+   "banksSampled": 1376,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 22016,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9708393895348837,
+   "labelAgreementConservative": 0.9533066860465116,
+   "labelAgreementEstFacing": 0.8428869912790697,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8359829215116279,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.012865365082947748,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04694055944055944,
+   "confusionShippedPipeline": [
+    [
+     4198,
+     1040,
+     32
+    ],
+    [
+     1132,
+     4533,
+     505
+    ],
+    [
+     97,
+     805,
+     9674
+    ]
+   ],
+   "highFetchPrecision": 0.9543285616905249,
+   "highFetchRecall": 0.9630266552020637,
+   "highFetchAuditedCells": 5815,
+   "falseProtected(audited chop>=3)": 0.01783094458864688,
+   "falseProtectedConservative": 0.01342963548132265,
+   "falseProtected_vsAuditedDirectCross": 0.019405594405594407,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0125,
+   "exposedCells": 8861,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4803779069767442,
+    "est": 0.4713844476744186,
+    "estC": 0.44712936046511625
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     5255,
+     0,
+     15
+    ],
+    [
+     0,
+     5963,
+     207
+    ],
+    [
+     71,
+     349,
+     10156
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     5255,
+     10,
+     5
+    ],
+    [
+     0,
+     6032,
+     138
+    ],
+    [
+     71,
+     804,
+     9701
+    ]
+   ],
+   "spearmanMedian": 0.9451708321759369,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 15.276972100465656,
+   "facingWithin45": 0.9244186046511628,
+   "logRatioMedianFetch": 0.13725501040538085
+  },
+  "M2|Folsom|CA": {
+   "lake": "Folsom|CA",
+   "banksAudited": 760,
+   "banksSampled": 754,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 12064,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9573110079575596,
+   "labelAgreementConservative": 0.9146220159151194,
+   "labelAgreementEstFacing": 0.7475132625994695,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7224801061007957,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005206247496996396,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.055534779356768885,
+   "confusionShippedPipeline": [
+    [
+     1705,
+     538,
+     48
+    ],
+    [
+     731,
+     1444,
+     249
+    ],
+    [
+     201,
+     941,
+     5567
+    ]
+   ],
+   "highFetchPrecision": 0.922316384180791,
+   "highFetchRecall": 0.9659763313609467,
+   "highFetchAuditedCells": 676,
+   "falseProtected(audited chop>=3)": 0.015218261914297157,
+   "falseProtectedConservative": 0.006407689227072487,
+   "falseProtected_vsAuditedDirectCross": 0.016454749439042633,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.008040388930441287,
+   "exposedCells": 2497,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5566976127320955,
+    "est": 0.5285974801061007,
+    "estC": 0.4791114058355438
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2430,
+     0,
+     21
+    ],
+    [
+     0,
+     2830,
+     67
+    ],
+    [
+     161,
+     266,
+     6289
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2430,
+     8,
+     13
+    ],
+    [
+     0,
+     2867,
+     30
+    ],
+    [
+     161,
+     818,
+     5737
+    ]
+   ],
+   "spearmanMedian": 0.9358966449138415,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 22.074433190184976,
+   "facingWithin45": 0.7647058823529411,
+   "logRatioMedianFetch": 0.24568989832512161
+  },
+  "M2|Glendo Reservoir|WY": {
+   "lake": "Glendo Reservoir|WY",
+   "banksAudited": 839,
+   "banksSampled": 831,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 13296,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9560018050541517,
+   "labelAgreementConservative": 0.9093712394705175,
+   "labelAgreementEstFacing": 0.8083634175691937,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7769253910950662,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008342401160681901,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05365680892509297,
+   "confusionShippedPipeline": [
+    [
+     2096,
+     608,
+     18
+    ],
+    [
+     784,
+     1856,
+     285
+    ],
+    [
+     199,
+     1072,
+     6378
+    ]
+   ],
+   "highFetchPrecision": 0.8960244648318043,
+   "highFetchRecall": 0.9421221864951769,
+   "highFetchAuditedCells": 311,
+   "falseProtected(audited chop>=3)": 0.012694958287994197,
+   "falseProtectedConservative": 0.008342401160681901,
+   "falseProtected_vsAuditedDirectCross": 0.012218877279971667,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0058438108730299275,
+   "exposedCells": 2757,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5752858002406739,
+    "est": 0.5416666666666666,
+    "estC": 0.4904482551143201
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2707,
+     0,
+     15
+    ],
+    [
+     0,
+     2871,
+     54
+    ],
+    [
+     166,
+     350,
+     7133
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2707,
+     11,
+     4
+    ],
+    [
+     0,
+     2896,
+     29
+    ],
+    [
+     166,
+     995,
+     6488
+    ]
+   ],
+   "spearmanMedian": 0.9330749418269435,
+   "dominantDirAudited": 112.5,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 20.601191442004506,
+   "facingWithin45": 0.8363417569193743,
+   "logRatioMedianFetch": 0.3216099672999721
+  },
+  "M2|Grand Lake|CO": {
+   "lake": "Grand Lake|CO",
+   "banksAudited": 31,
+   "banksSampled": 31,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 496,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9939516129032258,
+   "labelAgreementConservative": 0.969758064516129,
+   "labelAgreementEstFacing": 0.8991935483870968,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8870967741935484,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.032520325203252036,
+   "confusionShippedPipeline": [
+    [
+     109,
+     15,
+     0
+    ],
+    [
+     15,
+     99,
+     8
+    ],
+    [
+     0,
+     18,
+     232
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.0,
+   "falseProtectedConservative": 0.0,
+   "falseProtected_vsAuditedDirectCross": 0.0,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 130,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5040322580645161,
+    "est": 0.49798387096774194,
+    "estC": 0.4737903225806452
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     124,
+     0,
+     0
+    ],
+    [
+     0,
+     122,
+     0
+    ],
+    [
+     0,
+     3,
+     247
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     124,
+     0,
+     0
+    ],
+    [
+     0,
+     122,
+     0
+    ],
+    [
+     0,
+     15,
+     235
+    ]
+   ],
+   "spearmanMedian": 0.9737078188630077,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 10.347419035087455,
+   "facingWithin45": 1.0,
+   "logRatioMedianFetch": 0.05447712033837072
+  },
+  "M2|Green River Lake|KY": {
+   "lake": "Green River Lake|KY",
+   "banksAudited": 1110,
+   "banksSampled": 1032,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 16512,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9575460271317829,
+   "labelAgreementConservative": 0.9098837209302325,
+   "labelAgreementEstFacing": 0.8179505813953488,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7816133720930233,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00563014291901256,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06397204072329433,
+   "confusionShippedPipeline": [
+    [
+     2495,
+     668,
+     29
+    ],
+    [
+     760,
+     2237,
+     392
+    ],
+    [
+     356,
+     1401,
+     8174
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.01429190125595496,
+   "falseProtectedConservative": 0.006063230835859679,
+   "falseProtected_vsAuditedDirectCross": 0.015043306488375627,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.008053487311958669,
+   "exposedCells": 2309,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6014413759689923,
+    "est": 0.5709786821705426,
+    "estC": 0.5184108527131783
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3170,
+     0,
+     22
+    ],
+    [
+     0,
+     3312,
+     77
+    ],
+    [
+     252,
+     350,
+     9329
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3170,
+     11,
+     11
+    ],
+    [
+     0,
+     3347,
+     42
+    ],
+    [
+     252,
+     1172,
+     8507
+    ]
+   ],
+   "spearmanMedian": 0.9269176706804254,
+   "dominantDirAudited": 270.0,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 16.263852744884446,
+   "facingWithin45": 0.8449612403100775,
+   "logRatioMedianFetch": 0.3486571902235756
+  },
+  "M2|Griffith Lake|DE": {
+   "lake": "Griffith Lake|DE",
+   "banksAudited": 26,
+   "banksSampled": 23,
+   "rasterM": 20.0,
+   "standoffNotWater": 23,
+   "cellsCompared": 0,
+   "cellsUnknownEstimate": 368,
+   "labelAgreement": null,
+   "labelAgreementConservative": null,
+   "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": null,
+   "falseProtectedConservative": null,
+   "falseProtected_vsAuditedDirectCross": 0.0,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 0,
+   "conservativeSharePROTECTED": {
+    "audited": NaN,
+    "est": NaN,
+    "estC": NaN
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "spearmanMedian": null,
+   "dominantDirAudited": null,
+   "dominantDirEstimated": null,
+   "dominantWithin22_5": null,
+   "facingErrMedianDeg": null,
+   "facingWithin45": null,
+   "logRatioMedianFetch": null
+  },
+  "M1|Guntersville|AL": {
+   "lake": "Guntersville|AL",
+   "banksAudited": 6504,
+   "banksSampled": 889,
+   "rasterM": 27.7,
+   "standoffNotWater": 0,
+   "cellsCompared": 14224,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.937570303712036,
+   "labelAgreementConservative": 0.9017857142857143,
+   "labelAgreementEstFacing": 0.780441507311586,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7579443194600675,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.023576512455516015,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.09012244897959183,
+   "confusionShippedPipeline": [
+    [
+     2164,
+     671,
+     145
+    ],
+    [
+     772,
+     1966,
+     407
+    ],
+    [
+     349,
+     1099,
+     6651
+    ]
+   ],
+   "highFetchPrecision": 0.8583333333333333,
+   "highFetchRecall": 0.8583333333333333,
+   "highFetchAuditedCells": 240,
+   "falseProtected(audited chop>=3)": 0.03825622775800712,
+   "falseProtectedConservative": 0.026245551601423486,
+   "falseProtected_vsAuditedDirectCross": 0.03493877551020408,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.024489795918367346,
+   "exposedCells": 2248,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5693897637795275,
+    "est": 0.5370500562429696,
+    "estC": 0.4938835770528684
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2911,
+     0,
+     69
+    ],
+    [
+     0,
+     3000,
+     145
+    ],
+    [
+     220,
+     454,
+     7425
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2911,
+     23,
+     46
+    ],
+    [
+     0,
+     3041,
+     104
+    ],
+    [
+     220,
+     1004,
+     6875
+    ]
+   ],
+   "spearmanMedian": 0.872423395774083,
+   "dominantDirAudited": 225.0,
+   "dominantDirEstimated": 225.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 21.820750265655136,
+   "facingWithin45": 0.7694038245219348,
+   "logRatioMedianFetch": 0.3628944863015242
+  },
+  "M2|Guntersville|AL": {
+   "lake": "Guntersville|AL",
+   "banksAudited": 6504,
+   "banksSampled": 889,
+   "rasterM": 27.7,
+   "standoffNotWater": 0,
+   "cellsCompared": 14224,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9446006749156356,
+   "labelAgreementConservative": 0.9073397075365579,
+   "labelAgreementEstFacing": 0.7827615298087739,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7594910011248593,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.018683274021352312,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0886530612244898,
+   "confusionShippedPipeline": [
+    [
+     2148,
+     684,
+     148
+    ],
+    [
+     786,
+     1964,
+     395
+    ],
+    [
+     328,
+     1080,
+     6691
+    ]
+   ],
+   "highFetchPrecision": 0.8448979591836735,
+   "highFetchRecall": 0.8625,
+   "highFetchAuditedCells": 240,
+   "falseProtected(audited chop>=3)": 0.03291814946619217,
+   "falseProtectedConservative": 0.02224199288256228,
+   "falseProtected_vsAuditedDirectCross": 0.031183673469387756,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.018938775510204082,
+   "exposedCells": 2248,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5693897637795275,
+    "est": 0.5408464566929134,
+    "estC": 0.4951490438695163
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2916,
+     0,
+     64
+    ],
+    [
+     0,
+     3018,
+     127
+    ],
+    [
+     203,
+     394,
+     7502
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2916,
+     30,
+     34
+    ],
+    [
+     0,
+     3063,
+     82
+    ],
+    [
+     203,
+     969,
+     6927
+    ]
+   ],
+   "spearmanMedian": 0.8898739441315602,
+   "dominantDirAudited": 225.0,
+   "dominantDirEstimated": 225.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 21.91497526874855,
+   "facingWithin45": 0.7649043869516311,
+   "logRatioMedianFetch": 0.3246361727894829
+  },
+  "M2|Heron Lake|NM": {
+   "lake": "Heron Lake|NM",
+   "banksAudited": 280,
+   "banksSampled": 277,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 4432,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9564530685920578,
+   "labelAgreementConservative": 0.9221570397111913,
+   "labelAgreementEstFacing": 0.7942238267148014,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7723375451263538,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.007352941176470588,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05787278415015641,
+   "confusionShippedPipeline": [
+    [
+     710,
+     221,
+     20
+    ],
+    [
+     294,
+     582,
+     91
+    ],
+    [
+     64,
+     319,
+     2131
+    ]
+   ],
+   "highFetchPrecision": 0.852112676056338,
+   "highFetchRecall": 0.9166666666666666,
+   "highFetchAuditedCells": 132,
+   "falseProtected(audited chop>=3)": 0.015756302521008403,
+   "falseProtectedConservative": 0.007352941176470588,
+   "falseProtected_vsAuditedDirectCross": 0.016684045881126174,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.008342022940563087,
+   "exposedCells": 952,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5672382671480144,
+    "est": 0.5381317689530686,
+    "estC": 0.4972924187725632
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     944,
+     0,
+     7
+    ],
+    [
+     0,
+     942,
+     25
+    ],
+    [
+     50,
+     111,
+     2353
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     944,
+     3,
+     4
+    ],
+    [
+     0,
+     955,
+     12
+    ],
+    [
+     50,
+     276,
+     2188
+    ]
+   ],
+   "spearmanMedian": 0.9257848361039351,
+   "dominantDirAudited": 67.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 21.567602341298368,
+   "facingWithin45": 0.7906137184115524,
+   "logRatioMedianFetch": 0.3051208049348399
+  },
+  "M2|Hiwassee Lake|NC": {
+   "lake": "Hiwassee Lake|NC",
+   "banksAudited": 1240,
+   "banksSampled": 1220,
+   "rasterM": 20.0,
+   "standoffNotWater": 159,
+   "cellsCompared": 16976,
+   "cellsUnknownEstimate": 2544,
+   "labelAgreement": 0.9541116870876531,
+   "labelAgreementConservative": 0.8986215834118756,
+   "labelAgreementEstFacing": 0.786227615457116,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7514137606032045,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0038910505836575876,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06996587030716724,
+   "confusionShippedPipeline": [
+    [
+     2481,
+     748,
+     57
+    ],
+    [
+     941,
+     1825,
+     394
+    ],
+    [
+     430,
+     1650,
+     8450
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.029182879377431907,
+   "falseProtectedConservative": 0.005836575875486381,
+   "falseProtected_vsAuditedDirectCross": 0.018461061123177164,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.008377288240769469,
+   "exposedCells": 514,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6202874646559849,
+    "est": 0.588418944392083,
+    "estC": 0.5265080113100848
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3240,
+     0,
+     46
+    ],
+    [
+     0,
+     3087,
+     73
+    ],
+    [
+     297,
+     363,
+     9870
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3240,
+     21,
+     25
+    ],
+    [
+     0,
+     3131,
+     29
+    ],
+    [
+     297,
+     1349,
+     8884
+    ]
+   ],
+   "spearmanMedian": 0.9291308518090986,
+   "dominantDirAudited": 202.5,
+   "dominantDirEstimated": 225.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 20.419427527227356,
+   "facingWithin45": 0.7879359095193214,
+   "logRatioMedianFetch": 0.28511906378689134
+  },
+  "M2|Istokpoga|FL": {
+   "lake": "Istokpoga|FL",
+   "banksAudited": 467,
+   "banksSampled": 461,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 7376,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9783080260303688,
+   "labelAgreementConservative": 0.9651572668112798,
+   "labelAgreementEstFacing": 0.8724240780911063,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.86808568329718,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01615315584804068,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04061944656004062,
+   "confusionShippedPipeline": [
+    [
+     1525,
+     296,
+     4
+    ],
+    [
+     307,
+     1651,
+     156
+    ],
+    [
+     3,
+     207,
+     3227
+    ]
+   ],
+   "highFetchPrecision": 0.973839110529758,
+   "highFetchRecall": 0.962508080155139,
+   "highFetchAuditedCells": 1547,
+   "falseProtected(audited chop>=3)": 0.019144481005085253,
+   "falseProtectedConservative": 0.01615315584804068,
+   "falseProtected_vsAuditedDirectCross": 0.019548108657019548,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.01624777862401625,
+   "exposedCells": 3343,
+   "conservativeSharePROTECTED": {
+    "audited": 0.465970715835141,
+    "est": 0.46515726681127983,
+    "estC": 0.44861713665943603
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1822,
+     0,
+     3
+    ],
+    [
+     0,
+     2040,
+     74
+    ],
+    [
+     10,
+     73,
+     3354
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1822,
+     1,
+     2
+    ],
+    [
+     0,
+     2052,
+     62
+    ],
+    [
+     10,
+     182,
+     3245
+    ]
+   ],
+   "spearmanMedian": 0.9529772541652572,
+   "dominantDirAudited": 180.0,
+   "dominantDirEstimated": 180.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 11.677798482633477,
+   "facingWithin45": 0.9739696312364425,
+   "logRatioMedianFetch": -0.047194097224286476
+  },
+  "M2|Jackson Lake|WY": {
+   "lake": "Jackson Lake|WY",
+   "banksAudited": 716,
+   "banksSampled": 716,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 11456,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9663058659217877,
+   "labelAgreementConservative": 0.94518156424581,
+   "labelAgreementEstFacing": 0.8278631284916201,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8171263966480447,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.012074913750616067,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04983388704318937,
+   "confusionShippedPipeline": [
+    [
+     2082,
+     566,
+     32
+    ],
+    [
+     642,
+     2144,
+     253
+    ],
+    [
+     70,
+     532,
+     5135
+    ]
+   ],
+   "highFetchPrecision": 0.951518691588785,
+   "highFetchRecall": 0.9324556382369776,
+   "highFetchAuditedCells": 1747,
+   "falseProtected(audited chop>=3)": 0.016510596352883194,
+   "falseProtectedConservative": 0.012074913750616067,
+   "falseProtected_vsAuditedDirectCross": 0.023780381185521945,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.012764469312816926,
+   "exposedCells": 4058,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5007856145251397,
+    "est": 0.4908344972067039,
+    "estC": 0.4601082402234637
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2652,
+     0,
+     28
+    ],
+    [
+     0,
+     2931,
+     108
+    ],
+    [
+     56,
+     194,
+     5487
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2652,
+     16,
+     12
+    ],
+    [
+     0,
+     2978,
+     61
+    ],
+    [
+     56,
+     483,
+     5198
+    ]
+   ],
+   "spearmanMedian": 0.927556241663775,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 157.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 16.27566522865945,
+   "facingWithin45": 0.8659217877094972,
+   "logRatioMedianFetch": 0.12457766284360468
+  },
+  "M2|Lake Bomoseen|VT": {
+   "lake": "Lake Bomoseen|VT",
+   "banksAudited": 183,
+   "banksSampled": 181,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 2896,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9637430939226519,
+   "labelAgreementConservative": 0.9312845303867403,
+   "labelAgreementEstFacing": 0.8152624309392266,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.799378453038674,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0030959752321981426,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04637247569184742,
+   "confusionShippedPipeline": [
+    [
+     521,
+     137,
+     4
+    ],
+    [
+     151,
+     466,
+     58
+    ],
+    [
+     21,
+     210,
+     1328
+    ]
+   ],
+   "highFetchPrecision": 1.0,
+   "highFetchRecall": 1.0,
+   "highFetchAuditedCells": 4,
+   "falseProtected(audited chop>=3)": 0.006191950464396285,
+   "falseProtectedConservative": 0.0015479876160990713,
+   "falseProtected_vsAuditedDirectCross": 0.008975317875841436,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0037397157816005983,
+   "exposedCells": 646,
+   "conservativeSharePROTECTED": {
+    "audited": 0.538328729281768,
+    "est": 0.5103591160220995,
+    "estC": 0.47375690607734805
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     660,
+     0,
+     2
+    ],
+    [
+     0,
+     665,
+     10
+    ],
+    [
+     22,
+     71,
+     1466
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     660,
+     2,
+     0
+    ],
+    [
+     0,
+     670,
+     5
+    ],
+    [
+     22,
+     170,
+     1367
+    ]
+   ],
+   "spearmanMedian": 0.9391504859241397,
+   "dominantDirAudited": 202.5,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 17.29265839191271,
+   "facingWithin45": 0.8950276243093923,
+   "logRatioMedianFetch": 0.33450588248096574
+  },
+  "M2|Lake Chelan|WA": {
+   "lake": "Lake Chelan|WA",
+   "banksAudited": 977,
+   "banksSampled": 976,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 15616,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9757300204918032,
+   "labelAgreementConservative": 0.9622822745901639,
+   "labelAgreementEstFacing": 0.8543801229508197,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8506659836065574,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.003600609333887273,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03682028773469885,
+   "confusionShippedPipeline": [
+    [
+     3060,
+     750,
+     17
+    ],
+    [
+     792,
+     3298,
+     285
+    ],
+    [
+     23,
+     465,
+     6926
+    ]
+   ],
+   "highFetchPrecision": 0.8827160493827161,
+   "highFetchRecall": 0.9192857142857143,
+   "highFetchAuditedCells": 1400,
+   "falseProtected(audited chop>=3)": 0.0065087937958731475,
+   "falseProtectedConservative": 0.0033236393851267137,
+   "falseProtected_vsAuditedDirectCross": 0.008656425262131187,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.004145330407217752,
+   "exposedCells": 7221,
+   "conservativeSharePROTECTED": {
+    "audited": 0.47476946721311475,
+    "est": 0.4595927254098361,
+    "estC": 0.4415343237704918
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3822,
+     0,
+     5
+    ],
+    [
+     0,
+     4309,
+     66
+    ],
+    [
+     25,
+     283,
+     7106
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3822,
+     2,
+     3
+    ],
+    [
+     0,
+     4344,
+     31
+    ],
+    [
+     25,
+     528,
+     6861
+    ]
+   ],
+   "spearmanMedian": 0.959021333402263,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 15.036805261879636,
+   "facingWithin45": 0.9375,
+   "logRatioMedianFetch": 0.19630012009859293
+  },
+  "M2|Lake Clark|AK": {
+   "lake": "Lake Clark|AK",
+   "banksAudited": 1444,
+   "banksSampled": 1439,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 23024,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9742008339124392,
+   "labelAgreementConservative": 0.9587821403752605,
+   "labelAgreementEstFacing": 0.8570187630298819,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8508078526754691,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008704061895551257,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.040344136318075506,
+   "confusionShippedPipeline": [
+    [
+     4544,
+     984,
+     23
+    ],
+    [
+     1080,
+     4881,
+     460
+    ],
+    [
+     76,
+     812,
+     10164
+    ]
+   ],
+   "highFetchPrecision": 0.9562600321027287,
+   "highFetchRecall": 0.9726530612244898,
+   "highFetchAuditedCells": 4900,
+   "falseProtected(audited chop>=3)": 0.013432194283258113,
+   "falseProtectedConservative": 0.008918977004083386,
+   "falseProtected_vsAuditedDirectCross": 0.016120948880721683,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.009271633812228534,
+   "exposedCells": 9306,
+   "conservativeSharePROTECTED": {
+    "audited": 0.48002084781097987,
+    "est": 0.4709867963863794,
+    "estC": 0.4489662960389159
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     5532,
+     0,
+     19
+    ],
+    [
+     0,
+     6247,
+     174
+    ],
+    [
+     64,
+     337,
+     10651
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     5532,
+     12,
+     7
+    ],
+    [
+     0,
+     6317,
+     104
+    ],
+    [
+     64,
+     762,
+     10226
+    ]
+   ],
+   "spearmanMedian": 0.9480499853928124,
+   "dominantDirAudited": 225.0,
+   "dominantDirEstimated": 45.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 13.552366115039263,
+   "facingWithin45": 0.9444058373870744,
+   "logRatioMedianFetch": 0.11324303587009599
+  },
+  "M2|Lake Eufaula|OK": {
+   "lake": "Lake Eufaula|OK",
+   "banksAudited": 7935,
+   "banksSampled": 831,
+   "rasterM": 23.1,
+   "standoffNotWater": 0,
+   "cellsCompared": 13296,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9462996389891697,
+   "labelAgreementConservative": 0.8880866425992779,
+   "labelAgreementEstFacing": 0.7913658243080626,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7489470517448856,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.009918068132815868,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06631198935968079,
+   "confusionShippedPipeline": [
+    [
+     1925,
+     595,
+     53
+    ],
+    [
+     782,
+     1612,
+     296
+    ],
+    [
+     331,
+     1281,
+     6421
+    ]
+   ],
+   "highFetchPrecision": 0.8891089108910891,
+   "highFetchRecall": 0.9373695198329853,
+   "highFetchAuditedCells": 479,
+   "falseProtected(audited chop>=3)": 0.018542475204829666,
+   "falseProtectedConservative": 0.01207416990081932,
+   "falseProtected_vsAuditedDirectCross": 0.021660649819494584,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.011590347710431314,
+   "exposedCells": 2319,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6041666666666666,
+    "est": 0.5676143200962696,
+    "estC": 0.5028580024067388
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2538,
+     0,
+     35
+    ],
+    [
+     0,
+     2611,
+     79
+    ],
+    [
+     214,
+     386,
+     7433
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2538,
+     19,
+     16
+    ],
+    [
+     0,
+     2645,
+     45
+    ],
+    [
+     214,
+     1194,
+     6625
+    ]
+   ],
+   "spearmanMedian": 0.9010053789162513,
+   "dominantDirAudited": 22.5,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 23.445958610248454,
+   "facingWithin45": 0.7436823104693141,
+   "logRatioMedianFetch": 0.3709634565904729
+  },
+  "M2|Lake Gogebic|MI": {
+   "lake": "Lake Gogebic|MI",
+   "banksAudited": 307,
+   "banksSampled": 306,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 4896,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9771241830065359,
+   "labelAgreementConservative": 0.9581290849673203,
+   "labelAgreementEstFacing": 0.8660130718954249,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8578431372549019,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0037071362372567192,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.036667995217218016,
+   "confusionShippedPipeline": [
+    [
+     950,
+     200,
+     5
+    ],
+    [
+     215,
+     1052,
+     87
+    ],
+    [
+     36,
+     153,
+     2198
+    ]
+   ],
+   "highFetchPrecision": 0.9382239382239382,
+   "highFetchRecall": 0.96684350132626,
+   "highFetchAuditedCells": 754,
+   "falseProtected(audited chop>=3)": 0.006950880444856348,
+   "falseProtectedConservative": 0.003243744207599629,
+   "falseProtected_vsAuditedDirectCross": 0.00876843363889996,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0039856516540454365,
+   "exposedCells": 2158,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4875408496732026,
+    "est": 0.4736519607843137,
+    "estC": 0.4499591503267974
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1154,
+     0,
+     1
+    ],
+    [
+     0,
+     1333,
+     21
+    ],
+    [
+     22,
+     68,
+     2297
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1154,
+     1,
+     0
+    ],
+    [
+     0,
+     1344,
+     10
+    ],
+    [
+     22,
+     172,
+     2193
+    ]
+   ],
+   "spearmanMedian": 0.9562692856332891,
+   "dominantDirAudited": 337.5,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 14.496273626710234,
+   "facingWithin45": 0.934640522875817,
+   "logRatioMedianFetch": 0.2501348351037272
+  },
+  "M2|Lake Marion|SC": {
+   "lake": "Lake Marion|SC",
+   "banksAudited": 3828,
+   "banksSampled": 948,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 15168,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9450817510548524,
+   "labelAgreementConservative": 0.8981408227848101,
+   "labelAgreementEstFacing": 0.7822389240506329,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7480221518987342,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.021244309559939303,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.08751213199611776,
+   "confusionShippedPipeline": [
+    [
+     2087,
+     694,
+     98
+    ],
+    [
+     827,
+     2033,
+     443
+    ],
+    [
+     428,
+     1332,
+     7226
+    ]
+   ],
+   "highFetchPrecision": 0.9402697495183044,
+   "highFetchRecall": 0.9402697495183044,
+   "highFetchAuditedCells": 1038,
+   "falseProtected(audited chop>=3)": 0.03186646433990895,
+   "falseProtectedConservative": 0.02503793626707132,
+   "falseProtected_vsAuditedDirectCross": 0.036557748301520546,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.021028793270786154,
+   "exposedCells": 2636,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5924314345991561,
+    "est": 0.5673127637130801,
+    "estC": 0.5093618143459916
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2834,
+     0,
+     45
+    ],
+    [
+     0,
+     3122,
+     181
+    ],
+    [
+     249,
+     358,
+     8379
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2834,
+     25,
+     20
+    ],
+    [
+     0,
+     3193,
+     110
+    ],
+    [
+     249,
+     1141,
+     7596
+    ]
+   ],
+   "spearmanMedian": 0.8774555028439959,
+   "dominantDirAudited": 315.0,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 22.14939098710117,
+   "facingWithin45": 0.7647679324894515,
+   "logRatioMedianFetch": 0.20183179864049278
+  },
+  "M2|Lake Maurepas|LA": {
+   "lake": "Lake Maurepas|LA",
+   "banksAudited": 372,
+   "banksSampled": 355,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 5680,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.986443661971831,
+   "labelAgreementConservative": 0.9721830985915493,
+   "labelAgreementEstFacing": 0.8734154929577465,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8684859154929577,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.003683241252302026,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03416557161629435,
+   "confusionShippedPipeline": [
+    [
+     1152,
+     251,
+     2
+    ],
+    [
+     261,
+     1276,
+     102
+    ],
+    [
+     2,
+     129,
+     2505
+    ]
+   ],
+   "highFetchPrecision": 0.9860788863109049,
+   "highFetchRecall": 0.9906759906759907,
+   "highFetchAuditedCells": 2145,
+   "falseProtected(audited chop>=3)": 0.006261510128913444,
+   "falseProtectedConservative": 0.003683241252302026,
+   "falseProtected_vsAuditedDirectCross": 0.0075558475689881735,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.00492772667542707,
+   "exposedCells": 2715,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4640845070422535,
+    "est": 0.4586267605633803,
+    "estC": 0.4415492957746479
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1405,
+     0,
+     0
+    ],
+    [
+     0,
+     1616,
+     23
+    ],
+    [
+     3,
+     51,
+     2582
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1405,
+     0,
+     0
+    ],
+    [
+     0,
+     1624,
+     15
+    ],
+    [
+     3,
+     140,
+     2493
+    ]
+   ],
+   "spearmanMedian": 0.9686892992721288,
+   "dominantDirAudited": 270.0,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 13.676009900763177,
+   "facingWithin45": 0.9633802816901409,
+   "logRatioMedianFetch": 0.06079560582984615
+  },
+  "M2|Lake McConaughy|NE": {
+   "lake": "Lake McConaughy|NE",
+   "banksAudited": 473,
+   "banksSampled": 471,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 7536,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9778397027600849,
+   "labelAgreementConservative": 0.9585987261146497,
+   "labelAgreementEstFacing": 0.8718152866242038,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8581475583864119,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0017568517217146872,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03412073490813648,
+   "confusionShippedPipeline": [
+    [
+     1486,
+     280,
+     1
+    ],
+    [
+     330,
+     1584,
+     129
+    ],
+    [
+     36,
+     293,
+     3397
+    ]
+   ],
+   "highFetchPrecision": 0.9512453630100689,
+   "highFetchRecall": 0.9819474835886215,
+   "highFetchAuditedCells": 1828,
+   "falseProtected(audited chop>=3)": 0.003865073787772312,
+   "falseProtectedConservative": 0.0017568517217146872,
+   "falseProtected_vsAuditedDirectCross": 0.006299212598425197,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0015748031496062992,
+   "exposedCells": 2846,
+   "conservativeSharePROTECTED": {
+    "audited": 0.49442675159235666,
+    "est": 0.478635881104034,
+    "estC": 0.45475053078556266
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1766,
+     0,
+     1
+    ],
+    [
+     0,
+     2020,
+     23
+    ],
+    [
+     42,
+     101,
+     3583
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1766,
+     1,
+     0
+    ],
+    [
+     0,
+     2037,
+     6
+    ],
+    [
+     42,
+     263,
+     3421
+    ]
+   ],
+   "spearmanMedian": 0.9571204380356029,
+   "dominantDirAudited": 112.5,
+   "dominantDirEstimated": 112.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 12.637686625139622,
+   "facingWithin45": 0.9363057324840764,
+   "logRatioMedianFetch": 0.21128209837788328
+  },
+  "M2|Lake Mead|NV": {
+   "lake": "Lake Mead|NV",
+   "banksAudited": 6325,
+   "banksSampled": 897,
+   "rasterM": 32.8,
+   "standoffNotWater": 0,
+   "cellsCompared": 14352,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9284420289855072,
+   "labelAgreementConservative": 0.8967391304347826,
+   "labelAgreementEstFacing": 0.7437290969899666,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7258221850613155,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.018368617683686177,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.09525352340839138,
+   "confusionShippedPipeline": [
+    [
+     2071,
+     824,
+     144
+    ],
+    [
+     1092,
+     1598,
+     444
+    ],
+    [
+     305,
+     1126,
+     6748
+    ]
+   ],
+   "highFetchPrecision": 0.8593155893536122,
+   "highFetchRecall": 0.9362054681027341,
+   "highFetchAuditedCells": 1207,
+   "falseProtected(audited chop>=3)": 0.02459526774595268,
+   "falseProtectedConservative": 0.019302615193026153,
+   "falseProtected_vsAuditedDirectCross": 0.027863275554835573,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.020087477725579134,
+   "exposedCells": 3212,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5698857302118172,
+    "est": 0.5222965440356745,
+    "estC": 0.48501950947603123
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2997,
+     0,
+     42
+    ],
+    [
+     0,
+     3004,
+     130
+    ],
+    [
+     258,
+     597,
+     7324
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2997,
+     16,
+     26
+    ],
+    [
+     0,
+     3036,
+     98
+    ],
+    [
+     258,
+     1084,
+     6837
+    ]
+   ],
+   "spearmanMedian": 0.8647491470540003,
+   "dominantDirAudited": 202.5,
+   "dominantDirEstimated": 270.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 29.106269403010515,
+   "facingWithin45": 0.6867335562987736,
+   "logRatioMedianFetch": 0.479971858021678
+  },
+  "M2|Lake Robinson|SC": {
+   "lake": "Lake Robinson|SC",
+   "banksAudited": 182,
+   "banksSampled": 182,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 2912,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9721840659340659,
+   "labelAgreementConservative": 0.9361263736263736,
+   "labelAgreementEstFacing": 0.8145604395604396,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7984203296703297,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.003766478342749529,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0572289156626506,
+   "confusionShippedPipeline": [
+    [
+     513,
+     141,
+     6
+    ],
+    [
+     165,
+     433,
+     70
+    ],
+    [
+     24,
+     181,
+     1379
+    ]
+   ],
+   "highFetchPrecision": 0.5,
+   "highFetchRecall": 1.0,
+   "highFetchAuditedCells": 3,
+   "falseProtected(audited chop>=3)": 0.013182674199623353,
+   "falseProtectedConservative": 0.007532956685499058,
+   "falseProtected_vsAuditedDirectCross": 0.011295180722891566,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.006024096385542169,
+   "exposedCells": 531,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5439560439560439,
+    "est": 0.5264423076923077,
+    "estC": 0.48626373626373626
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     655,
+     0,
+     5
+    ],
+    [
+     0,
+     658,
+     10
+    ],
+    [
+     21,
+     45,
+     1518
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     655,
+     2,
+     3
+    ],
+    [
+     0,
+     663,
+     5
+    ],
+    [
+     21,
+     155,
+     1408
+    ]
+   ],
+   "spearmanMedian": 0.9394197458861173,
+   "dominantDirAudited": 315.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 18.914916205068607,
+   "facingWithin45": 0.8516483516483516,
+   "logRatioMedianFetch": 0.24529511294803594
+  },
+  "M2|Lake Shelbyville|IL": {
+   "lake": "Lake Shelbyville|IL",
+   "banksAudited": 1662,
+   "banksSampled": 1559,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 24944,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9533755612572161,
+   "labelAgreementConservative": 0.9047065426555484,
+   "labelAgreementEstFacing": 0.8000320718409236,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7664368184733804,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00498960498960499,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06726551075830374,
+   "confusionShippedPipeline": [
+    [
+     3630,
+     1081,
+     63
+    ],
+    [
+     1238,
+     2981,
+     581
+    ],
+    [
+     634,
+     2229,
+     12507
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.012058212058212059,
+   "falseProtectedConservative": 0.0058212058212058215,
+   "falseProtected_vsAuditedDirectCross": 0.014622937121370378,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.007938165865886776,
+   "exposedCells": 2405,
+   "conservativeSharePROTECTED": {
+    "audited": 0.616180243745991,
+    "est": 0.5807809493264914,
+    "estC": 0.5274615137908916
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     4747,
+     0,
+     27
+    ],
+    [
+     0,
+     4687,
+     113
+    ],
+    [
+     411,
+     612,
+     14347
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     4747,
+     12,
+     15
+    ],
+    [
+     0,
+     4739,
+     61
+    ],
+    [
+     411,
+     1878,
+     13081
+    ]
+   ],
+   "spearmanMedian": 0.9152154775492212,
+   "dominantDirAudited": 337.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 20.904187139994292,
+   "facingWithin45": 0.7870429762668377,
+   "logRatioMedianFetch": 0.355819877618999
+  },
+  "M2|Lake Texoma|TX": {
+   "lake": "Lake Texoma|TX",
+   "banksAudited": 3463,
+   "banksSampled": 1053,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 16848,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9540004748338081,
+   "labelAgreementConservative": 0.9128679962013295,
+   "labelAgreementEstFacing": 0.813627730294397,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7793803418803419,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.009190631485324638,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0565983665281559,
+   "confusionShippedPipeline": [
+    [
+     2564,
+     704,
+     36
+    ],
+    [
+     881,
+     2435,
+     359
+    ],
+    [
+     376,
+     1361,
+     8132
+    ]
+   ],
+   "highFetchPrecision": 0.9124236252545825,
+   "highFetchRecall": 0.9728555917480999,
+   "highFetchAuditedCells": 921,
+   "falseProtected(audited chop>=3)": 0.014230655203083309,
+   "falseProtectedConservative": 0.009190631485324638,
+   "falseProtected_vsAuditedDirectCross": 0.018197449491331136,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.008453933228256197,
+   "exposedCells": 3373,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5857668566001899,
+    "est": 0.5548433048433048,
+    "estC": 0.5070037986704653
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3271,
+     0,
+     33
+    ],
+    [
+     0,
+     3581,
+     94
+    ],
+    [
+     280,
+     368,
+     9221
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3271,
+     23,
+     10
+    ],
+    [
+     0,
+     3626,
+     49
+    ],
+    [
+     280,
+     1106,
+     8483
+    ]
+   ],
+   "spearmanMedian": 0.926470077871568,
+   "dominantDirAudited": 22.5,
+   "dominantDirEstimated": 22.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 18.320502529307703,
+   "facingWithin45": 0.8281101614434948,
+   "logRatioMedianFetch": 0.33020572534940074
+  },
+  "M2|Lake Wawasee|IN": {
+   "lake": "Lake Wawasee|IN",
+   "banksAudited": 318,
+   "banksSampled": 299,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 4784,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9607023411371237,
+   "labelAgreementConservative": 0.9199414715719063,
+   "labelAgreementEstFacing": 0.832566889632107,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7989130434782609,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0021810250817884407,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0472972972972973,
+   "confusionShippedPipeline": [
+    [
+     778,
+     195,
+     15
+    ],
+    [
+     219,
+     641,
+     76
+    ],
+    [
+     74,
+     383,
+     2403
+    ]
+   ],
+   "highFetchPrecision": 0.9298245614035088,
+   "highFetchRecall": 0.8833333333333333,
+   "highFetchAuditedCells": 60,
+   "falseProtected(audited chop>=3)": 0.004362050163576881,
+   "falseProtectedConservative": 0.0021810250817884407,
+   "falseProtected_vsAuditedDirectCross": 0.02079002079002079,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.011954261954261955,
+   "exposedCells": 917,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5978260869565217,
+    "est": 0.5752508361204013,
+    "estC": 0.5294732441471572
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     972,
+     0,
+     16
+    ],
+    [
+     0,
+     912,
+     24
+    ],
+    [
+     50,
+     98,
+     2712
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     972,
+     10,
+     6
+    ],
+    [
+     0,
+     919,
+     17
+    ],
+    [
+     50,
+     300,
+     2510
+    ]
+   ],
+   "spearmanMedian": 0.9093705205068663,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 180.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 17.58808698316585,
+   "facingWithin45": 0.842809364548495,
+   "logRatioMedianFetch": 0.2663948271719758
+  },
+  "M2|Lake of Egypt|IL": {
+   "lake": "Lake of Egypt|IL",
+   "banksAudited": 553,
+   "banksSampled": 547,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 8752,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9477833638025595,
+   "labelAgreementConservative": 0.8885968921389397,
+   "labelAgreementEstFacing": 0.7651965265082267,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7254341864716636,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005555555555555556,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.08042294136494713,
+   "confusionShippedPipeline": [
+    [
+     1179,
+     412,
+     44
+    ],
+    [
+     517,
+     762,
+     207
+    ],
+    [
+     305,
+     918,
+     4408
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.016666666666666666,
+   "falseProtectedConservative": 0.011111111111111112,
+   "falseProtected_vsAuditedDirectCross": 0.016661326497917333,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.007049022749118872,
+   "exposedCells": 180,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6433957952468007,
+    "est": 0.6030621572212066,
+    "estC": 0.5389625228519196
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1614,
+     0,
+     21
+    ],
+    [
+     0,
+     1455,
+     31
+    ],
+    [
+     179,
+     226,
+     5226
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1614,
+     17,
+     4
+    ],
+    [
+     0,
+     1468,
+     18
+    ],
+    [
+     179,
+     757,
+     4695
+    ]
+   ],
+   "spearmanMedian": 0.8837430885818436,
+   "dominantDirAudited": 202.5,
+   "dominantDirEstimated": 22.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 26.230895259349836,
+   "facingWithin45": 0.7257769652650823,
+   "logRatioMedianFetch": 0.38341697088640175
+  },
+  "M2|Lake of the Ozarks|MO": {
+   "lake": "Lake of the Ozarks|MO",
+   "banksAudited": 7478,
+   "banksSampled": 811,
+   "rasterM": 25.7,
+   "standoffNotWater": 0,
+   "cellsCompared": 12976,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9452836004932182,
+   "labelAgreementConservative": 0.8918002466091245,
+   "labelAgreementEstFacing": 0.781827990135635,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7466091245376079,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004518072289156626,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0701483908267489,
+   "confusionShippedPipeline": [
+    [
+     1912,
+     582,
+     45
+    ],
+    [
+     786,
+     1545,
+     319
+    ],
+    [
+     355,
+     1201,
+     6231
+    ]
+   ],
+   "highFetchPrecision": 0.4,
+   "highFetchRecall": 1.0,
+   "highFetchAuditedCells": 6,
+   "falseProtected(audited chop>=3)": 0.01581325301204819,
+   "falseProtectedConservative": 0.007530120481927711,
+   "falseProtected_vsAuditedDirectCross": 0.01599537483137406,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.007901329735979958,
+   "exposedCells": 1328,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6001078914919852,
+    "est": 0.5581843403205918,
+    "estC": 0.49907521578298397
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2516,
+     0,
+     23
+    ],
+    [
+     0,
+     2590,
+     60
+    ],
+    [
+     264,
+     363,
+     7160
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2516,
+     11,
+     12
+    ],
+    [
+     0,
+     2621,
+     29
+    ],
+    [
+     264,
+     1088,
+     6435
+    ]
+   ],
+   "spearmanMedian": 0.917888895120673,
+   "dominantDirAudited": 67.5,
+   "dominantDirEstimated": 22.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 22.885101844305836,
+   "facingWithin45": 0.7558569667077681,
+   "logRatioMedianFetch": 0.3424171587952931
+  },
+  "M2|Leech Lake|MN": {
+   "lake": "Leech Lake|MN",
+   "banksAudited": 1717,
+   "banksSampled": 855,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 13680,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9715643274853801,
+   "labelAgreementConservative": 0.9543859649122807,
+   "labelAgreementEstFacing": 0.8433479532163742,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8373538011695907,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.007884880741178789,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.043453070683661645,
+   "confusionShippedPipeline": [
+    [
+     2621,
+     635,
+     21
+    ],
+    [
+     695,
+     2653,
+     279
+    ],
+    [
+     62,
+     533,
+     6181
+    ]
+   ],
+   "highFetchPrecision": 0.9533227848101266,
+   "highFetchRecall": 0.9655448717948718,
+   "highFetchAuditedCells": 2496,
+   "falseProtected(audited chop>=3)": 0.013995663315592351,
+   "falseProtectedConservative": 0.009067612852355609,
+   "falseProtected_vsAuditedDirectCross": 0.018105446118192352,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.00999420625724218,
+   "exposedCells": 5073,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4953216374269006,
+    "est": 0.4851608187134503,
+    "estC": 0.4598684210526316
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3275,
+     0,
+     2
+    ],
+    [
+     0,
+     3504,
+     123
+    ],
+    [
+     48,
+     216,
+     6512
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3275,
+     1,
+     1
+    ],
+    [
+     0,
+     3559,
+     68
+    ],
+    [
+     48,
+     506,
+     6222
+    ]
+   ],
+   "spearmanMedian": 0.9441719602452063,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 14.926265254378563,
+   "facingWithin45": 0.9192982456140351,
+   "logRatioMedianFetch": 0.1782278128254096
+  },
+  "M2|Logan Martin|AL": {
+   "lake": "Logan Martin|AL",
+   "banksAudited": 2712,
+   "banksSampled": 890,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 14240,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9531601123595506,
+   "labelAgreementConservative": 0.8968398876404494,
+   "labelAgreementEstFacing": 0.7897471910112359,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7537921348314607,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.011009174311926606,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06471550627158698,
+   "confusionShippedPipeline": [
+    [
+     2044,
+     647,
+     59
+    ],
+    [
+     784,
+     1670,
+     297
+    ],
+    [
+     364,
+     1355,
+     7020
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.022018348623853212,
+   "falseProtectedConservative": 0.011926605504587157,
+   "falseProtected_vsAuditedDirectCross": 0.019269223777495,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010179967278676604,
+   "exposedCells": 1090,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6136938202247191,
+    "est": 0.5817415730337079,
+    "estC": 0.5195926966292135
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2717,
+     0,
+     33
+    ],
+    [
+     0,
+     2678,
+     73
+    ],
+    [
+     243,
+     318,
+     8178
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2717,
+     17,
+     16
+    ],
+    [
+     0,
+     2711,
+     40
+    ],
+    [
+     243,
+     1153,
+     7343
+    ]
+   ],
+   "spearmanMedian": 0.9101238003659667,
+   "dominantDirAudited": 270.0,
+   "dominantDirEstimated": 270.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 22.537992794928613,
+   "facingWithin45": 0.7786516853932585,
+   "logRatioMedianFetch": 0.3316932550048622
+  },
+  "M2|Long Lake|ME": {
+   "lake": "Long Lake|ME",
+   "banksAudited": 356,
+   "banksSampled": 349,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 5584,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9650787965616046,
+   "labelAgreementConservative": 0.936067335243553,
+   "labelAgreementEstFacing": 0.8159025787965616,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8060530085959885,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006972690296339338,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.046781437125748504,
+   "confusionShippedPipeline": [
+    [
+     1012,
+     292,
+     9
+    ],
+    [
+     327,
+     916,
+     116
+    ],
+    [
+     35,
+     304,
+     2573
+    ]
+   ],
+   "highFetchPrecision": 0.7678571428571429,
+   "highFetchRecall": 0.7818181818181819,
+   "highFetchAuditedCells": 55,
+   "falseProtected(audited chop>=3)": 0.011621150493898896,
+   "falseProtectedConservative": 0.006972690296339338,
+   "falseProtected_vsAuditedDirectCross": 0.009730538922155689,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.005239520958083832,
+   "exposedCells": 1721,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5214899713467048,
+    "est": 0.4958810888252149,
+    "estC": 0.46275071633237824
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1311,
+     0,
+     2
+    ],
+    [
+     0,
+     1335,
+     24
+    ],
+    [
+     33,
+     136,
+     2743
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1311,
+     1,
+     1
+    ],
+    [
+     0,
+     1346,
+     13
+    ],
+    [
+     33,
+     309,
+     2570
+    ]
+   ],
+   "spearmanMedian": 0.9328985562810633,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 18.313425485990535,
+   "facingWithin45": 0.8624641833810889,
+   "logRatioMedianFetch": 0.2374540078159386
+  },
+  "M2|Massabesic Lake|NH": {
+   "lake": "Massabesic Lake|NH",
+   "banksAudited": 262,
+   "banksSampled": 262,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 4192,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.955868320610687,
+   "labelAgreementConservative": 0.9150763358778626,
+   "labelAgreementEstFacing": 0.7927003816793893,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7721851145038168,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01935483870967742,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07671673819742489,
+   "confusionShippedPipeline": [
+    [
+     686,
+     209,
+     25
+    ],
+    [
+     226,
+     600,
+     118
+    ],
+    [
+     72,
+     305,
+     1951
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.03225806451612903,
+   "falseProtectedConservative": 0.020967741935483872,
+   "falseProtected_vsAuditedDirectCross": 0.03487124463519313,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.018776824034334765,
+   "exposedCells": 620,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5553435114503816,
+    "est": 0.5422232824427481,
+    "estC": 0.4887881679389313
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     903,
+     0,
+     17
+    ],
+    [
+     0,
+     896,
+     48
+    ],
+    [
+     37,
+     83,
+     2208
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     903,
+     7,
+     10
+    ],
+    [
+     0,
+     919,
+     25
+    ],
+    [
+     37,
+     277,
+     2014
+    ]
+   ],
+   "spearmanMedian": 0.9083877985389172,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 17.845574327001827,
+   "facingWithin45": 0.8091603053435115,
+   "logRatioMedianFetch": 0.15535044001916223
+  },
+  "M2|Melvern Lake|KS": {
+   "lake": "Melvern Lake|KS",
+   "banksAudited": 535,
+   "banksSampled": 528,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 8448,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9532433712121212,
+   "labelAgreementConservative": 0.9135890151515151,
+   "labelAgreementEstFacing": 0.8057528409090909,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7762784090909091,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00578368999421631,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04897050639955482,
+   "confusionShippedPipeline": [
+    [
+     1333,
+     378,
+     18
+    ],
+    [
+     477,
+     1230,
+     158
+    ],
+    [
+     198,
+     661,
+     3995
+    ]
+   ],
+   "highFetchPrecision": 0.6818181818181818,
+   "highFetchRecall": 0.7894736842105263,
+   "highFetchAuditedCells": 57,
+   "falseProtected(audited chop>=3)": 0.009832272990167727,
+   "falseProtectedConservative": 0.005205320994794679,
+   "falseProtected_vsAuditedDirectCross": 0.011964385086254869,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0047301057317751805,
+   "exposedCells": 1729,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5745738636363636,
+    "est": 0.5379971590909091,
+    "estC": 0.4931344696969697
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1718,
+     0,
+     11
+    ],
+    [
+     0,
+     1833,
+     32
+    ],
+    [
+     137,
+     215,
+     4502
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1718,
+     8,
+     3
+    ],
+    [
+     0,
+     1851,
+     14
+    ],
+    [
+     137,
+     568,
+     4149
+    ]
+   ],
+   "spearmanMedian": 0.9312914581014478,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 18.93091059847586,
+   "facingWithin45": 0.8295454545454546,
+   "logRatioMedianFetch": 0.3308542443169896
+  },
+  "M2|Mille Lacs Lake|MN": {
+   "lake": "Mille Lacs Lake|MN",
+   "banksAudited": 754,
+   "banksSampled": 741,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 11856,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9776484480431848,
+   "labelAgreementConservative": 0.9621288798920378,
+   "labelAgreementEstFacing": 0.8571187584345479,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8510458839406208,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006375772066148635,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.042170644001307614,
+   "confusionShippedPipeline": [
+    [
+     2332,
+     510,
+     9
+    ],
+    [
+     540,
+     2478,
+     249
+    ],
+    [
+     57,
+     401,
+     5280
+    ]
+   ],
+   "highFetchPrecision": 0.9764799154334038,
+   "highFetchRecall": 0.9890256959314775,
+   "highFetchAuditedCells": 3736,
+   "falseProtected(audited chop>=3)": 0.009165172345088663,
+   "falseProtectedConservative": 0.00617652918908149,
+   "falseProtected_vsAuditedDirectCross": 0.011932003922850605,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.006701536449820203,
+   "exposedCells": 5019,
+   "conservativeSharePROTECTED": {
+    "audited": 0.483974358974359,
+    "est": 0.47393724696356276,
+    "estC": 0.4533569500674764
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2846,
+     0,
+     5
+    ],
+    [
+     0,
+     3199,
+     68
+    ],
+    [
+     42,
+     150,
+     5546
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2846,
+     4,
+     1
+    ],
+    [
+     0,
+     3227,
+     40
+    ],
+    [
+     42,
+     362,
+     5334
+    ]
+   ],
+   "spearmanMedian": 0.9579340317619404,
+   "dominantDirAudited": 247.5,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 12.446453821357238,
+   "facingWithin45": 0.9298245614035088,
+   "logRatioMedianFetch": 0.1609352825930295
+  },
+  "M2|Mosquito Creek Lake|OH": {
+   "lake": "Mosquito Creek Lake|OH",
+   "banksAudited": 351,
+   "banksSampled": 351,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 5616,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9414173789173789,
+   "labelAgreementConservative": 0.9022435897435898,
+   "labelAgreementEstFacing": 0.7872150997150997,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7662037037037037,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.02121390689451974,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0768012668250198,
+   "confusionShippedPipeline": [
+    [
+     836,
+     274,
+     37
+    ],
+    [
+     397,
+     825,
+     157
+    ],
+    [
+     90,
+     358,
+     2642
+    ]
+   ],
+   "highFetchPrecision": 0.8394495412844036,
+   "highFetchRecall": 0.9195979899497487,
+   "highFetchAuditedCells": 199,
+   "falseProtected(audited chop>=3)": 0.032999410724808484,
+   "falseProtectedConservative": 0.02357100766057749,
+   "falseProtected_vsAuditedDirectCross": 0.03167062549485352,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.022565320665083134,
+   "exposedCells": 1697,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5502136752136753,
+    "est": 0.5201210826210826,
+    "estC": 0.4738247863247863
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1133,
+     0,
+     14
+    ],
+    [
+     0,
+     1313,
+     66
+    ],
+    [
+     95,
+     154,
+     2841
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1133,
+     6,
+     8
+    ],
+    [
+     0,
+     1330,
+     49
+    ],
+    [
+     95,
+     391,
+     2604
+    ]
+   ],
+   "spearmanMedian": 0.9068676734215513,
+   "dominantDirAudited": 90.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 23.251566395762097,
+   "facingWithin45": 0.7464387464387464,
+   "logRatioMedianFetch": 0.2999966069202942
+  },
+  "M2|Navajo Reservoir|NM": {
+   "lake": "Navajo Reservoir|NM",
+   "banksAudited": 1489,
+   "banksSampled": 1447,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 23152,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9612992398064962,
+   "labelAgreementConservative": 0.9238078783690394,
+   "labelAgreementEstFacing": 0.8134934346924672,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7906444367657222,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0034638955502264853,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05098896729947321,
+   "confusionShippedPipeline": [
+    [
+     3869,
+     1038,
+     48
+    ],
+    [
+     1240,
+     3401,
+     465
+    ],
+    [
+     348,
+     1708,
+     11035
+    ]
+   ],
+   "highFetchPrecision": 0.8235294117647058,
+   "highFetchRecall": 0.875,
+   "highFetchAuditedCells": 128,
+   "falseProtected(audited chop>=3)": 0.007993605115907274,
+   "falseProtectedConservative": 0.0045297095656807885,
+   "falseProtected_vsAuditedDirectCross": 0.009939369843951893,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.004870291223536428,
+   "exposedCells": 3753,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5654371112646855,
+    "est": 0.5353749136143746,
+    "estC": 0.493996199032481
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     4932,
+     0,
+     23
+    ],
+    [
+     0,
+     5029,
+     77
+    ],
+    [
+     262,
+     534,
+     12295
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     4932,
+     12,
+     11
+    ],
+    [
+     0,
+     5068,
+     38
+    ],
+    [
+     262,
+     1441,
+     11388
+    ]
+   ],
+   "spearmanMedian": 0.9361948612218904,
+   "dominantDirAudited": 180.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 18.017643879828256,
+   "facingWithin45": 0.8514167242570836,
+   "logRatioMedianFetch": 0.3041500312956371
+  },
+  "M2|Neely Henry|AL": {
+   "lake": "Neely Henry|AL",
+   "banksAudited": 1861,
+   "banksSampled": 893,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 14288,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9454787234042553,
+   "labelAgreementConservative": 0.8927071668533034,
+   "labelAgreementEstFacing": 0.7906634938409854,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7516097424412094,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.011001100110011002,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.08625073342460395,
+   "confusionShippedPipeline": [
+    [
+     1836,
+     570,
+     85
+    ],
+    [
+     660,
+     1606,
+     356
+    ],
+    [
+     461,
+     1417,
+     7297
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.030803080308030802,
+   "falseProtectedConservative": 0.014301430143014302,
+   "falseProtected_vsAuditedDirectCross": 0.031488362996283985,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.015450811656561706,
+   "exposedCells": 909,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6421472564389697,
+    "est": 0.6101623740201568,
+    "estC": 0.5485022396416573
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2432,
+     0,
+     59
+    ],
+    [
+     0,
+     2520,
+     102
+    ],
+    [
+     276,
+     342,
+     8557
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2432,
+     37,
+     22
+    ],
+    [
+     0,
+     2565,
+     57
+    ],
+    [
+     276,
+     1141,
+     7758
+    ]
+   ],
+   "spearmanMedian": 0.8812791765408229,
+   "dominantDirAudited": 135.0,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 22.567673266645357,
+   "facingWithin45": 0.7334826427771557,
+   "logRatioMedianFetch": 0.31760375231683
+  },
+  "M2|Norris Lake|TN": {
+   "lake": "Norris Lake|TN",
+   "banksAudited": 4269,
+   "banksSampled": 827,
+   "rasterM": 22.9,
+   "standoffNotWater": 0,
+   "cellsCompared": 13232,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9459643288996372,
+   "labelAgreementConservative": 0.8870918984280532,
+   "labelAgreementEstFacing": 0.7823458282950423,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7367744860943168,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.014304291287386216,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07598235765838011,
+   "confusionShippedPipeline": [
+    [
+     1835,
+     580,
+     48
+    ],
+    [
+     729,
+     1465,
+     331
+    ],
+    [
+     414,
+     1381,
+     6449
+    ]
+   ],
+   "highFetchPrecision": 0.5,
+   "highFetchRecall": 0.5,
+   "highFetchAuditedCells": 6,
+   "falseProtected(audited chop>=3)": 0.036410923276983094,
+   "falseProtectedConservative": 0.016905071521456438,
+   "falseProtected_vsAuditedDirectCross": 0.02285485164394547,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010625501202886928,
+   "exposedCells": 769,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6230350665054414,
+    "est": 0.5862303506650545,
+    "estC": 0.5201027811366384
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2423,
+     0,
+     40
+    ],
+    [
+     0,
+     2451,
+     74
+    ],
+    [
+     289,
+     312,
+     7643
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2423,
+     26,
+     14
+    ],
+    [
+     0,
+     2486,
+     39
+    ],
+    [
+     289,
+     1126,
+     6829
+    ]
+   ],
+   "spearmanMedian": 0.9023111729457198,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 247.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 22.200196933691984,
+   "facingWithin45": 0.7557436517533253,
+   "logRatioMedianFetch": 0.3626906784867671
+  },
+  "M2|Oneida Lake|NY": {
+   "lake": "Oneida Lake|NY",
+   "banksAudited": 634,
+   "banksSampled": 621,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 9936,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9671900161030595,
+   "labelAgreementConservative": 0.9490740740740741,
+   "labelAgreementEstFacing": 0.8329307568438004,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8265901771336553,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.011023244668104481,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04533020711215319,
+   "confusionShippedPipeline": [
+    [
+     1884,
+     493,
+     15
+    ],
+    [
+     539,
+     1970,
+     217
+    ],
+    [
+     38,
+     421,
+     4359
+    ]
+   ],
+   "highFetchPrecision": 0.946207818242566,
+   "highFetchRecall": 0.9768885822697482,
+   "highFetchAuditedCells": 2899,
+   "falseProtected(audited chop>=3)": 0.012221423436376708,
+   "falseProtectedConservative": 0.009345794392523364,
+   "falseProtected_vsAuditedDirectCross": 0.0123094958968347,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.008206330597889801,
+   "exposedCells": 4173,
+   "conservativeSharePROTECTED": {
+    "audited": 0.48490338164251207,
+    "est": 0.4647745571658615,
+    "estC": 0.44253220611916266
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2391,
+     0,
+     1
+    ],
+    [
+     0,
+     2664,
+     62
+    ],
+    [
+     37,
+     226,
+     4555
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2391,
+     1,
+     0
+    ],
+    [
+     0,
+     2684,
+     42
+    ],
+    [
+     37,
+     426,
+     4355
+    ]
+   ],
+   "spearmanMedian": 0.9365741763848596,
+   "dominantDirAudited": 112.5,
+   "dominantDirEstimated": 112.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 14.817564438428064,
+   "facingWithin45": 0.8969404186795491,
+   "logRatioMedianFetch": 0.37242928747899035
+  },
+  "M1|Pickwick Lake|TN": {
+   "lake": "Pickwick Lake|TN",
+   "banksAudited": 2591,
+   "banksSampled": 830,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 13280,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9542921686746988,
+   "labelAgreementConservative": 0.9192018072289156,
+   "labelAgreementEstFacing": 0.8238704819277108,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7976656626506025,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.01625207296849088,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06346153846153846,
+   "confusionShippedPipeline": [
+    [
+     2007,
+     559,
+     51
+    ],
+    [
+     655,
+     2136,
+     312
+    ],
+    [
+     262,
+     848,
+     6450
+    ]
+   ],
+   "highFetchPrecision": 0.897196261682243,
+   "highFetchRecall": 0.9035294117647059,
+   "highFetchAuditedCells": 425,
+   "falseProtected(audited chop>=3)": 0.028192371475953566,
+   "falseProtectedConservative": 0.01824212271973466,
+   "falseProtected_vsAuditedDirectCross": 0.033566433566433566,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.019405594405594407,
+   "exposedCells": 3015,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5692771084337349,
+    "est": 0.5524849397590361,
+    "estC": 0.5070030120481928
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2571,
+     0,
+     46
+    ],
+    [
+     0,
+     2957,
+     146
+    ],
+    [
+     167,
+     248,
+     7145
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2571,
+     24,
+     22
+    ],
+    [
+     0,
+     3014,
+     89
+    ],
+    [
+     167,
+     771,
+     6622
+    ]
+   ],
+   "spearmanMedian": 0.9170184817072885,
+   "dominantDirAudited": 247.5,
+   "dominantDirEstimated": 247.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 18.11298589611812,
+   "facingWithin45": 0.8048192771084337,
+   "logRatioMedianFetch": 0.19079407196623926
+  },
+  "M2|Pickwick Lake|TN": {
+   "lake": "Pickwick Lake|TN",
+   "banksAudited": 2591,
+   "banksSampled": 830,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 13280,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9564006024096385,
+   "labelAgreementConservative": 0.9215361445783132,
+   "labelAgreementEstFacing": 0.8256024096385542,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7990963855421687,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.014593698175787729,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06293706293706294,
+   "confusionShippedPipeline": [
+    [
+     2006,
+     556,
+     55
+    ],
+    [
+     645,
+     2153,
+     305
+    ],
+    [
+     267,
+     840,
+     6453
+    ]
+   ],
+   "highFetchPrecision": 0.8896551724137931,
+   "highFetchRecall": 0.9105882352941177,
+   "highFetchAuditedCells": 425,
+   "falseProtected(audited chop>=3)": 0.023880597014925373,
+   "falseProtectedConservative": 0.014593698175787729,
+   "falseProtected_vsAuditedDirectCross": 0.02937062937062937,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.015909090909090907,
+   "exposedCells": 3015,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5692771084337349,
+    "est": 0.5509789156626506,
+    "estC": 0.5060993975903615
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2575,
+     0,
+     42
+    ],
+    [
+     0,
+     2977,
+     126
+    ],
+    [
+     164,
+     247,
+     7149
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2575,
+     21,
+     21
+    ],
+    [
+     0,
+     3033,
+     70
+    ],
+    [
+     164,
+     766,
+     6630
+    ]
+   ],
+   "spearmanMedian": 0.9186231480093625,
+   "dominantDirAudited": 247.5,
+   "dominantDirEstimated": 247.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 17.860121770048465,
+   "facingWithin45": 0.8048192771084337,
+   "logRatioMedianFetch": 0.22334373147702408
+  },
+  "M2|Pontoosuc Lake|MA": {
+   "lake": "Pontoosuc Lake|MA",
+   "banksAudited": 50,
+   "banksSampled": 49,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 784,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9757653061224489,
+   "labelAgreementConservative": 0.9272959183673469,
+   "labelAgreementEstFacing": 0.8443877551020408,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8073979591836735,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0425531914893617,
+   "confusionShippedPipeline": [
+    [
+     141,
+     31,
+     1
+    ],
+    [
+     37,
+     106,
+     13
+    ],
+    [
+     7,
+     62,
+     386
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.008264462809917356,
+   "falseProtectedConservative": 0.0,
+   "falseProtected_vsAuditedDirectCross": 0.00911854103343465,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.00303951367781155,
+   "exposedCells": 121,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5803571428571429,
+    "est": 0.5637755102040817,
+    "estC": 0.5114795918367347
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     172,
+     0,
+     1
+    ],
+    [
+     0,
+     154,
+     2
+    ],
+    [
+     4,
+     12,
+     439
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     172,
+     1,
+     0
+    ],
+    [
+     0,
+     155,
+     1
+    ],
+    [
+     4,
+     51,
+     400
+    ]
+   ],
+   "spearmanMedian": 0.9493112027587713,
+   "dominantDirAudited": 202.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 16.908881972597612,
+   "facingWithin45": 0.9387755102040817,
+   "logRatioMedianFetch": 0.3062132043292594
+  },
+  "M2|Prettyboy Reservoir|MD": {
+   "lake": "Prettyboy Reservoir|MD",
+   "banksAudited": 367,
+   "banksSampled": 364,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 5824,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9534684065934066,
+   "labelAgreementConservative": 0.8976648351648352,
+   "labelAgreementEstFacing": 0.7834821428571429,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7379807692307693,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07807953443258972,
+   "confusionShippedPipeline": [
+    [
+     777,
+     239,
+     13
+    ],
+    [
+     303,
+     582,
+     148
+    ],
+    [
+     193,
+     630,
+     2939
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.01639344262295082,
+   "falseProtectedConservative": 0.0,
+   "falseProtected_vsAuditedDirectCross": 0.011639185257032008,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.004849660523763337,
+   "exposedCells": 61,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6459478021978022,
+    "est": 0.607657967032967,
+    "estC": 0.5482486263736264
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1017,
+     0,
+     12
+    ],
+    [
+     0,
+     1021,
+     12
+    ],
+    [
+     136,
+     111,
+     3515
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1017,
+     7,
+     5
+    ],
+    [
+     0,
+     1028,
+     5
+    ],
+    [
+     136,
+     443,
+     3183
+    ]
+   ],
+   "spearmanMedian": 0.9199847427338693,
+   "dominantDirAudited": 135.0,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 22.702645408424615,
+   "facingWithin45": 0.7802197802197802,
+   "logRatioMedianFetch": 0.34792415342731653
+  },
+  "M2|Roosevelt|AZ": {
+   "lake": "Roosevelt|AZ",
+   "banksAudited": 551,
+   "banksSampled": 548,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 8768,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9563184306569343,
+   "labelAgreementConservative": 0.9168567518248175,
+   "labelAgreementEstFacing": 0.8125,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.781478102189781,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008064516129032258,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.05645805592543276,
+   "confusionShippedPipeline": [
+    [
+     1399,
+     394,
+     29
+    ],
+    [
+     512,
+     1238,
+     183
+    ],
+    [
+     131,
+     667,
+     4215
+    ]
+   ],
+   "highFetchPrecision": 0.8780487804878049,
+   "highFetchRecall": 0.9204545454545454,
+   "highFetchAuditedCells": 352,
+   "falseProtected(audited chop>=3)": 0.013757115749525617,
+   "falseProtectedConservative": 0.009013282732447819,
+   "falseProtected_vsAuditedDirectCross": 0.01837549933422104,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010918774966711052,
+   "exposedCells": 2108,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5717381386861314,
+    "est": 0.5437956204379562,
+    "estC": 0.4989735401459854
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1801,
+     0,
+     21
+    ],
+    [
+     0,
+     1885,
+     48
+    ],
+    [
+     116,
+     198,
+     4699
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1801,
+     9,
+     12
+    ],
+    [
+     0,
+     1904,
+     29
+    ],
+    [
+     116,
+     563,
+     4334
+    ]
+   ],
+   "spearmanMedian": 0.9227029188805416,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 20.961250729399737,
+   "facingWithin45": 0.8102189781021898,
+   "logRatioMedianFetch": 0.2750903604086771
+  },
+  "M1|Salton Sea|CA": {
+   "lake": "Salton Sea|CA",
+   "banksAudited": 1104,
+   "banksSampled": 1098,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 17568,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9685792349726776,
+   "labelAgreementConservative": 0.9486566484517304,
+   "labelAgreementEstFacing": 0.8499544626593807,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8401070127504554,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.004532967032967033,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04186467526589726,
+   "confusionShippedPipeline": [
+    [
+     3293,
+     750,
+     38
+    ],
+    [
+     830,
+     3595,
+     332
+    ],
+    [
+     134,
+     725,
+     7871
+    ]
+   ],
+   "highFetchPrecision": 0.9585283201549136,
+   "highFetchRecall": 0.9931449590369503,
+   "highFetchAuditedCells": 5981,
+   "falseProtected(audited chop>=3)": 0.006181318681318681,
+   "falseProtectedConservative": 0.0038461538461538464,
+   "falseProtected_vsAuditedDirectCross": 0.007015161801312514,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.00373387644263408,
+   "exposedCells": 7280,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4969262295081967,
+    "est": 0.47256375227686703,
+    "estC": 0.4494535519125683
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     4073,
+     0,
+     8
+    ],
+    [
+     0,
+     4703,
+     54
+    ],
+    [
+     94,
+     396,
+     8240
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     4073,
+     2,
+     6
+    ],
+    [
+     0,
+     4730,
+     27
+    ],
+    [
+     94,
+     773,
+     7863
+    ]
+   ],
+   "spearmanMedian": 0.9545241748803466,
+   "dominantDirAudited": 135.0,
+   "dominantDirEstimated": 135.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 14.570206583370265,
+   "facingWithin45": 0.9089253187613844,
+   "logRatioMedianFetch": 0.36086021087040554
+  },
+  "M2|Salton Sea|CA": {
+   "lake": "Salton Sea|CA",
+   "banksAudited": 1104,
+   "banksSampled": 1098,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 17568,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9750113843351548,
+   "labelAgreementConservative": 0.9567964480874317,
+   "labelAgreementEstFacing": 0.8567281420765027,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8465960837887068,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005082417582417583,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04231726634985291,
+   "confusionShippedPipeline": [
+    [
+     3314,
+     745,
+     22
+    ],
+    [
+     831,
+     3574,
+     352
+    ],
+    [
+     112,
+     633,
+     7985
+    ]
+   ],
+   "highFetchPrecision": 0.9702176403207331,
+   "highFetchRecall": 0.9913058017054004,
+   "highFetchAuditedCells": 5981,
+   "falseProtected(audited chop>=3)": 0.007005494505494506,
+   "falseProtectedConservative": 0.004807692307692308,
+   "falseProtected_vsAuditedDirectCross": 0.00961756053405748,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.00520479746548993,
+   "exposedCells": 7280,
+   "conservativeSharePROTECTED": {
+    "audited": 0.4969262295081967,
+    "est": 0.4816142987249545,
+    "estC": 0.45918715846994534
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     4073,
+     0,
+     8
+    ],
+    [
+     0,
+     4680,
+     77
+    ],
+    [
+     77,
+     277,
+     8376
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     4073,
+     4,
+     4
+    ],
+    [
+     0,
+     4715,
+     42
+    ],
+    [
+     77,
+     632,
+     8021
+    ]
+   ],
+   "spearmanMedian": 0.9540124806301795,
+   "dominantDirAudited": 135.0,
+   "dominantDirEstimated": 135.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 14.155465038418157,
+   "facingWithin45": 0.9162112932604736,
+   "logRatioMedianFetch": 0.2130881113496019
+  },
+  "M2|Sardis Lake|OK": {
+   "lake": "Sardis Lake|OK",
+   "banksAudited": 793,
+   "banksSampled": 786,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 12576,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9495865139949109,
+   "labelAgreementConservative": 0.9076017811704835,
+   "labelAgreementEstFacing": 0.7868161577608143,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7611323155216285,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.015163002274450341,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.060797034291010195,
+   "confusionShippedPipeline": [
+    [
+     1953,
+     613,
+     43
+    ],
+    [
+     777,
+     1691,
+     285
+    ],
+    [
+     218,
+     1004,
+     5928
+    ]
+   ],
+   "highFetchPrecision": 0.8342541436464088,
+   "highFetchRecall": 0.9226069246435845,
+   "highFetchAuditedCells": 491,
+   "falseProtected(audited chop>=3)": 0.02047005307050796,
+   "falseProtectedConservative": 0.015163002274450341,
+   "falseProtected_vsAuditedDirectCross": 0.018721037998146433,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.01241890639481001,
+   "exposedCells": 2638,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5710082697201018,
+    "est": 0.5366571246819338,
+    "estC": 0.48982188295165396
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2607,
+     0,
+     18
+    ],
+    [
+     0,
+     2687,
+     83
+    ],
+    [
+     164,
+     369,
+     6648
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2607,
+     7,
+     11
+    ],
+    [
+     0,
+     2714,
+     56
+    ],
+    [
+     164,
+     924,
+     6093
+    ]
+   ],
+   "spearmanMedian": 0.8949974455661226,
+   "dominantDirAudited": 270.0,
+   "dominantDirEstimated": 270.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 22.545727810851616,
+   "facingWithin45": 0.7749360613810742,
+   "logRatioMedianFetch": 0.3353041827579386
+  },
+  "M2|Sevier Lake|UT": {
+   "lake": "Sevier Lake|UT",
+   "banksAudited": 836,
+   "banksSampled": 835,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 13360,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9738023952095808,
+   "labelAgreementConservative": 0.9607784431137725,
+   "labelAgreementEstFacing": 0.8410179640718562,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.837874251497006,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00904977375565611,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.04558445270077165,
+   "confusionShippedPipeline": [
+    [
+     2575,
+     678,
+     19
+    ],
+    [
+     731,
+     2695,
+     300
+    ],
+    [
+     22,
+     416,
+     5924
+    ]
+   ],
+   "highFetchPrecision": 0.9660020986358867,
+   "highFetchRecall": 0.9776975361087511,
+   "highFetchAuditedCells": 4708,
+   "falseProtected(audited chop>=3)": 0.010222892575833753,
+   "falseProtectedConservative": 0.008882185352773589,
+   "falseProtected_vsAuditedDirectCross": 0.014575593026579023,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010002857959416977,
+   "exposedCells": 5967,
+   "conservativeSharePROTECTED": {
+    "audited": 0.47619760479041917,
+    "est": 0.46526946107784434,
+    "estC": 0.4475299401197605
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3268,
+     0,
+     4
+    ],
+    [
+     0,
+     3628,
+     98
+    ],
+    [
+     20,
+     228,
+     6114
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3268,
+     1,
+     3
+    ],
+    [
+     0,
+     3659,
+     67
+    ],
+    [
+     20,
+     433,
+     5909
+    ]
+   ],
+   "spearmanMedian": 0.9550056051887716,
+   "dominantDirAudited": 247.5,
+   "dominantDirEstimated": 247.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 14.943325554087892,
+   "facingWithin45": 0.9245508982035928,
+   "logRatioMedianFetch": 0.1610698107912446
+  },
+  "M2|Shenango River Lake|PA": {
+   "lake": "Shenango River Lake|PA",
+   "banksAudited": 453,
+   "banksSampled": 451,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 7216,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9624445676274944,
+   "labelAgreementConservative": 0.9212860310421286,
+   "labelAgreementEstFacing": 0.7940687361419069,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7720343680709535,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.008547008547008548,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06443215099251545,
+   "confusionShippedPipeline": [
+    [
+     1178,
+     345,
+     24
+    ],
+    [
+     419,
+     933,
+     174
+    ],
+    [
+     121,
+     562,
+     3460
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.017094017094017096,
+   "falseProtectedConservative": 0.009768009768009768,
+   "falseProtected_vsAuditedDirectCross": 0.015294500488122356,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.009762447120078099,
+   "exposedCells": 819,
+   "conservativeSharePROTECTED": {
+    "audited": 0.574140798226164,
+    "est": 0.5496119733924612,
+    "estC": 0.5040188470066519
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1537,
+     0,
+     10
+    ],
+    [
+     0,
+     1489,
+     37
+    ],
+    [
+     88,
+     136,
+     3919
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1537,
+     2,
+     8
+    ],
+    [
+     0,
+     1504,
+     22
+    ],
+    [
+     88,
+     448,
+     3607
+    ]
+   ],
+   "spearmanMedian": 0.9166126501661945,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 21.04689007688262,
+   "facingWithin45": 0.8159645232815964,
+   "logRatioMedianFetch": 0.24616806761401783
+  },
+  "M2|Sherman Reservoir|NE": {
+   "lake": "Sherman Reservoir|NE",
+   "banksAudited": 286,
+   "banksSampled": 277,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 4432,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9512635379061372,
+   "labelAgreementConservative": 0.891245487364621,
+   "labelAgreementEstFacing": 0.8009927797833934,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7454873646209387,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0016778523489932886,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07609384908053266,
+   "confusionShippedPipeline": [
+    [
+     550,
+     177,
+     18
+    ],
+    [
+     207,
+     523,
+     102
+    ],
+    [
+     160,
+     464,
+     2231
+    ]
+   ],
+   "highFetchPrecision": 0.8666666666666667,
+   "highFetchRecall": 1.0,
+   "highFetchAuditedCells": 13,
+   "falseProtected(audited chop>=3)": 0.0016778523489932886,
+   "falseProtectedConservative": 0.0016778523489932886,
+   "falseProtected_vsAuditedDirectCross": 0.012682308180088777,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0050729232720355105,
+   "exposedCells": 596,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6441787003610109,
+    "est": 0.6044675090252708,
+    "estC": 0.5403880866425993
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     737,
+     0,
+     8
+    ],
+    [
+     0,
+     820,
+     12
+    ],
+    [
+     83,
+     113,
+     2659
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     737,
+     6,
+     2
+    ],
+    [
+     0,
+     826,
+     6
+    ],
+    [
+     83,
+     385,
+     2387
+    ]
+   ],
+   "spearmanMedian": 0.9323882869034223,
+   "dominantDirAudited": 157.5,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 22.974453063238514,
+   "facingWithin45": 0.7256317689530686,
+   "logRatioMedianFetch": 0.37607320406401595
+  },
+  "M2|Smith Mountain Lake|VA": {
+   "lake": "Smith Mountain Lake|VA",
+   "banksAudited": 3645,
+   "banksSampled": 900,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 14400,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9402083333333333,
+   "labelAgreementConservative": 0.8830555555555556,
+   "labelAgreementEstFacing": 0.7708333333333334,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7283333333333334,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006688963210702341,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07008244994110718,
+   "confusionShippedPipeline": [
+    [
+     1893,
+     639,
+     42
+    ],
+    [
+     860,
+     1345,
+     315
+    ],
+    [
+     495,
+     1561,
+     7250
+    ]
+   ],
+   "highFetchPrecision": 0.3333333333333333,
+   "highFetchRecall": 1.0,
+   "highFetchAuditedCells": 1,
+   "falseProtected(audited chop>=3)": 0.014492753623188406,
+   "falseProtectedConservative": 0.006688963210702341,
+   "falseProtected_vsAuditedDirectCross": 0.014330585001963094,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.006085590891244602,
+   "exposedCells": 897,
+   "conservativeSharePROTECTED": {
+    "audited": 0.64625,
+    "est": 0.5965972222222222,
+    "estC": 0.5344444444444445
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2555,
+     0,
+     19
+    ],
+    [
+     0,
+     2466,
+     54
+    ],
+    [
+     353,
+     435,
+     8518
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2555,
+     12,
+     7
+    ],
+    [
+     0,
+     2496,
+     24
+    ],
+    [
+     353,
+     1288,
+     7665
+    ]
+   ],
+   "spearmanMedian": 0.9034185930122713,
+   "dominantDirAudited": 202.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 25.28402299464335,
+   "facingWithin45": 0.7266666666666667,
+   "logRatioMedianFetch": 0.3691809900768434
+  },
+  "M2|Sutton Lake|WV": {
+   "lake": "Sutton Lake|WV",
+   "banksAudited": 474,
+   "banksSampled": 362,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 5792,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9670234806629834,
+   "labelAgreementConservative": 0.9242058011049724,
+   "labelAgreementEstFacing": 0.8254488950276243,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7916091160220995,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0581039755351682,
+   "confusionShippedPipeline": [
+    [
+     899,
+     216,
+     3
+    ],
+    [
+     224,
+     817,
+     130
+    ],
+    [
+     116,
+     518,
+     2869
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.0,
+   "falseProtectedConservative": 0.0,
+   "falseProtected_vsAuditedDirectCross": 0.007426823940585408,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0030581039755351682,
+   "exposedCells": 42,
+   "conservativeSharePROTECTED": {
+    "audited": 0.604799723756906,
+    "est": 0.5776933701657458,
+    "estC": 0.5319406077348067
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1115,
+     0,
+     3
+    ],
+    [
+     0,
+     1157,
+     14
+    ],
+    [
+     87,
+     87,
+     3329
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1115,
+     3,
+     0
+    ],
+    [
+     0,
+     1164,
+     7
+    ],
+    [
+     87,
+     342,
+     3074
+    ]
+   ],
+   "spearmanMedian": 0.9495531440984399,
+   "dominantDirAudited": 202.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 15.418128150117894,
+   "facingWithin45": 0.8674033149171271,
+   "logRatioMedianFetch": 0.27468971151564975
+  },
+  "M2|Swartswood Lake|NJ": {
+   "lake": "Swartswood Lake|NJ",
+   "banksAudited": 57,
+   "banksSampled": 56,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 896,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.96875,
+   "labelAgreementConservative": 0.9330357142857143,
+   "labelAgreementEstFacing": 0.7979910714285714,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7678571428571429,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.009009009009009009,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07828282828282829,
+   "confusionShippedPipeline": [
+    [
+     148,
+     48,
+     5
+    ],
+    [
+     52,
+     117,
+     26
+    ],
+    [
+     12,
+     65,
+     423
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": 0.02702702702702703,
+   "falseProtectedConservative": 0.009009009009009009,
+   "falseProtected_vsAuditedDirectCross": 0.025252525252525252,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010101010101010102,
+   "exposedCells": 111,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5580357142857143,
+    "est": 0.5491071428571429,
+    "estC": 0.5011160714285714
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     198,
+     0,
+     3
+    ],
+    [
+     0,
+     188,
+     7
+    ],
+    [
+     3,
+     15,
+     482
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     198,
+     1,
+     2
+    ],
+    [
+     0,
+     193,
+     2
+    ],
+    [
+     3,
+     52,
+     445
+    ]
+   ],
+   "spearmanMedian": 0.9402957886045542,
+   "dominantDirAudited": 45.0,
+   "dominantDirEstimated": 67.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 19.14071980424808,
+   "facingWithin45": 0.7857142857142857,
+   "logRatioMedianFetch": 0.1655712179461326
+  },
+  "M2|Tohopekaliga (Toho)|FL": {
+   "lake": "Tohopekaliga (Toho)|FL",
+   "banksAudited": 406,
+   "banksSampled": 406,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 6496,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9776785714285714,
+   "labelAgreementConservative": 0.9547413793103449,
+   "labelAgreementEstFacing": 0.8466748768472906,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.834051724137931,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.005248284214775939,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0425531914893617,
+   "confusionShippedPipeline": [
+    [
+     1242,
+     299,
+     11
+    ],
+    [
+     333,
+     1276,
+     129
+    ],
+    [
+     24,
+     282,
+     2900
+    ]
+   ],
+   "highFetchPrecision": 0.9682819383259912,
+   "highFetchRecall": 0.9856502242152466,
+   "highFetchAuditedCells": 1115,
+   "falseProtected(audited chop>=3)": 0.0072668550666128385,
+   "falseProtectedConservative": 0.005248284214775939,
+   "falseProtected_vsAuditedDirectCross": 0.010638297872340425,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.007598784194528876,
+   "exposedCells": 2477,
+   "conservativeSharePROTECTED": {
+    "audited": 0.49353448275862066,
+    "est": 0.48198891625615764,
+    "estC": 0.4562807881773399
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1548,
+     0,
+     4
+    ],
+    [
+     0,
+     1707,
+     31
+    ],
+    [
+     12,
+     98,
+     3096
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1548,
+     2,
+     2
+    ],
+    [
+     0,
+     1715,
+     23
+    ],
+    [
+     12,
+     255,
+     2939
+    ]
+   ],
+   "spearmanMedian": 0.9531283601389087,
+   "dominantDirAudited": 22.5,
+   "dominantDirEstimated": 22.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 14.706259623850315,
+   "facingWithin45": 0.8990147783251231,
+   "logRatioMedianFetch": 0.14665298772145743
+  },
+  "M2|Torch Lake|MI": {
+   "lake": "Torch Lake|MI",
+   "banksAudited": 336,
+   "banksSampled": 336,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 5376,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9862351190476191,
+   "labelAgreementConservative": 0.9754464285714286,
+   "labelAgreementEstFacing": 0.8768601190476191,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.875,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0011737089201877935,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.03262013328656612,
+   "confusionShippedPipeline": [
+    [
+     1122,
+     220,
+     2
+    ],
+    [
+     224,
+     1192,
+     91
+    ],
+    [
+     0,
+     135,
+     2390
+    ]
+   ],
+   "highFetchPrecision": 0.9504289799809342,
+   "highFetchRecall": 0.9707887049659202,
+   "highFetchAuditedCells": 1027,
+   "falseProtected(audited chop>=3)": 0.0019561815336463224,
+   "falseProtectedConservative": 0.000782472613458529,
+   "falseProtected_vsAuditedDirectCross": 0.003858295334970186,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0014030164854437039,
+   "exposedCells": 2556,
+   "conservativeSharePROTECTED": {
+    "audited": 0.46968005952380953,
+    "est": 0.46000744047619047,
+    "estC": 0.4466145833333333
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     1343,
+     0,
+     1
+    ],
+    [
+     0,
+     1497,
+     10
+    ],
+    [
+     0,
+     63,
+     2462
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     1343,
+     0,
+     1
+    ],
+    [
+     0,
+     1504,
+     3
+    ],
+    [
+     0,
+     128,
+     2397
+    ]
+   ],
+   "spearmanMedian": 0.9615965069276363,
+   "dominantDirAudited": 270.0,
+   "dominantDirEstimated": 157.5,
+   "dominantWithin22_5": false,
+   "facingErrMedianDeg": 11.533340341254842,
+   "facingWithin45": 0.9851190476190477,
+   "logRatioMedianFetch": 0.1667179280987362
+  },
+  "M2|Wallowa Lake|OR": {
+   "lake": "Wallowa Lake|OR",
+   "banksAudited": 72,
+   "banksSampled": 71,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 1136,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9823943661971831,
+   "labelAgreementConservative": 0.9665492957746479,
+   "labelAgreementEstFacing": 0.8785211267605634,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.8732394366197183,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.031141868512110725,
+   "confusionShippedPipeline": [
+    [
+     237,
+     42,
+     0
+    ],
+    [
+     46,
+     235,
+     18
+    ],
+    [
+     2,
+     36,
+     520
+    ]
+   ],
+   "highFetchPrecision": 0.8636363636363636,
+   "highFetchRecall": 0.95,
+   "highFetchAuditedCells": 20,
+   "falseProtected(audited chop>=3)": 0.002136752136752137,
+   "falseProtectedConservative": 0.0,
+   "falseProtected_vsAuditedDirectCross": 0.0034602076124567475,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 468,
+   "conservativeSharePROTECTED": {
+    "audited": 0.49119718309859156,
+    "est": 0.477112676056338,
+    "estC": 0.45774647887323944
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     279,
+     0,
+     0
+    ],
+    [
+     0,
+     297,
+     2
+    ],
+    [
+     3,
+     15,
+     540
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     279,
+     0,
+     0
+    ],
+    [
+     0,
+     299,
+     0
+    ],
+    [
+     3,
+     35,
+     520
+    ]
+   ],
+   "spearmanMedian": 0.9603791912611335,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 8.386506187837313,
+   "facingWithin45": 0.9577464788732394,
+   "logRatioMedianFetch": 0.10871705991017919
+  },
+  "M2|Walter F. George / Eufaula|GA": {
+   "lake": "Walter F. George / Eufaula|GA",
+   "banksAudited": 2710,
+   "banksSampled": 840,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 13440,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9399553571428572,
+   "labelAgreementConservative": 0.8940476190476191,
+   "labelAgreementEstFacing": 0.7873511904761905,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7510416666666667,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.014768937589328252,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07991567650440783,
+   "confusionShippedPipeline": [
+    [
+     1815,
+     593,
+     86
+    ],
+    [
+     686,
+     1707,
+     331
+    ],
+    [
+     430,
+     1220,
+     6572
+    ]
+   ],
+   "highFetchPrecision": 0.8830935251798561,
+   "highFetchRecall": 0.9424184261036468,
+   "highFetchAuditedCells": 521,
+   "falseProtected(audited chop>=3)": 0.027155788470700333,
+   "falseProtectedConservative": 0.01810385898046689,
+   "falseProtected_vsAuditedDirectCross": 0.029704867765427367,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.015714833269451896,
+   "exposedCells": 2099,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6117559523809524,
+    "est": 0.5747767857142857,
+    "estC": 0.5194196428571428
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2458,
+     0,
+     36
+    ],
+    [
+     0,
+     2605,
+     119
+    ],
+    [
+     279,
+     373,
+     7570
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2458,
+     19,
+     17
+    ],
+    [
+     0,
+     2659,
+     65
+    ],
+    [
+     279,
+     1044,
+     6899
+    ]
+   ],
+   "spearmanMedian": 0.889807148922686,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 0.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 22.84787590246151,
+   "facingWithin45": 0.7428571428571429,
+   "logRatioMedianFetch": 0.3508483607902641
+  },
+  "M2|Watchaug Pond|RI": {
+   "lake": "Watchaug Pond|RI",
+   "banksAudited": 77,
+   "banksSampled": 77,
+   "rasterM": 20.0,
+   "standoffNotWater": 77,
+   "cellsCompared": 0,
+   "cellsUnknownEstimate": 1232,
+   "labelAgreement": null,
+   "labelAgreementConservative": null,
+   "labelAgreementEstFacing": null,
+   "labelAgreementShippedPipeline(est facing + conservative)": null,
+   "falseProtectedShippedPipeline(audited chop>=3)": null,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.0,
+   "confusionShippedPipeline": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "highFetchPrecision": null,
+   "highFetchRecall": null,
+   "highFetchAuditedCells": 0,
+   "falseProtected(audited chop>=3)": null,
+   "falseProtectedConservative": null,
+   "falseProtected_vsAuditedDirectCross": 0.0,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.0,
+   "exposedCells": 0,
+   "conservativeSharePROTECTED": {
+    "audited": NaN,
+    "est": NaN,
+    "estC": NaN
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "spearmanMedian": null,
+   "dominantDirAudited": null,
+   "dominantDirEstimated": null,
+   "dominantWithin22_5": null,
+   "facingErrMedianDeg": null,
+   "facingWithin45": null,
+   "logRatioMedianFetch": null
+  },
+  "M2|West Point|GA": {
+   "lake": "West Point|GA",
+   "banksAudited": 3572,
+   "banksSampled": 882,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 14112,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.949546485260771,
+   "labelAgreementConservative": 0.8941326530612245,
+   "labelAgreementEstFacing": 0.7816751700680272,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7436933106575964,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.007684918347742555,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.07027958636537725,
+   "confusionShippedPipeline": [
+    [
+     1983,
+     586,
+     41
+    ],
+    [
+     843,
+     1443,
+     326
+    ],
+    [
+     407,
+     1414,
+     7069
+    ]
+   ],
+   "highFetchPrecision": 0.6923076923076923,
+   "highFetchRecall": 0.9,
+   "highFetchAuditedCells": 10,
+   "falseProtected(audited chop>=3)": 0.023054755043227664,
+   "falseProtectedConservative": 0.011527377521613832,
+   "falseProtected_vsAuditedDirectCross": 0.016660283416315588,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.007085407889697434,
+   "exposedCells": 1041,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6299603174603174,
+    "est": 0.5918367346938775,
+    "estC": 0.5302579365079365
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2589,
+     0,
+     21
+    ],
+    [
+     0,
+     2546,
+     66
+    ],
+    [
+     254,
+     371,
+     8265
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2589,
+     13,
+     8
+    ],
+    [
+     0,
+     2583,
+     29
+    ],
+    [
+     254,
+     1190,
+     7446
+    ]
+   ],
+   "spearmanMedian": 0.914187060461565,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 292.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 24.16620488441714,
+   "facingWithin45": 0.7687074829931972,
+   "logRatioMedianFetch": 0.3394882949706957
+  },
+  "M1|Wheeler|AL": {
+   "lake": "Wheeler|AL",
+   "banksAudited": 4932,
+   "banksSampled": 893,
+   "rasterM": 30.3,
+   "standoffNotWater": 2,
+   "cellsCompared": 14256,
+   "cellsUnknownEstimate": 32,
+   "labelAgreement": 0.9359567901234568,
+   "labelAgreementConservative": 0.8887485970819304,
+   "labelAgreementEstFacing": 0.7676767676767676,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7376543209876543,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.02,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.11033641275928185,
+   "confusionShippedPipeline": [
+    [
+     1936,
+     654,
+     174
+    ],
+    [
+     735,
+     1779,
+     459
+    ],
+    [
+     452,
+     1266,
+     6801
+    ]
+   ],
+   "highFetchPrecision": 0.8867924528301887,
+   "highFetchRecall": 0.9330024813895782,
+   "highFetchAuditedCells": 403,
+   "falseProtected(audited chop>=3)": 0.0255,
+   "falseProtectedConservative": 0.0205,
+   "falseProtected_vsAuditedDirectCross": 0.03608157573644762,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.022834233920167334,
+   "exposedCells": 2000,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5975729517396184,
+    "est": 0.5625701459034792,
+    "estC": 0.5075056116722784
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2682,
+     0,
+     82
+    ],
+    [
+     0,
+     2848,
+     125
+    ],
+    [
+     274,
+     432,
+     7813
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2682,
+     40,
+     42
+    ],
+    [
+     0,
+     2884,
+     89
+    ],
+    [
+     274,
+     1141,
+     7104
+    ]
+   ],
+   "spearmanMedian": 0.8571059574206734,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 23.783859324098444,
+   "facingWithin45": 0.7081930415263749,
+   "logRatioMedianFetch": 0.4120960444224654
+  },
+  "M2|Wheeler|AL": {
+   "lake": "Wheeler|AL",
+   "banksAudited": 4932,
+   "banksSampled": 893,
+   "rasterM": 30.3,
+   "standoffNotWater": 0,
+   "cellsCompared": 14288,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9384798432250839,
+   "labelAgreementConservative": 0.8965565509518477,
+   "labelAgreementEstFacing": 0.7765257558790594,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7474104143337066,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.0135,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.10485978052604077,
+   "confusionShippedPipeline": [
+    [
+     1968,
+     645,
+     154
+    ],
+    [
+     731,
+     1795,
+     448
+    ],
+    [
+     413,
+     1218,
+     6916
+    ]
+   ],
+   "highFetchPrecision": 0.8909952606635071,
+   "highFetchRecall": 0.9330024813895782,
+   "highFetchAuditedCells": 403,
+   "falseProtected(audited chop>=3)": 0.0255,
+   "falseProtectedConservative": 0.016,
+   "falseProtected_vsAuditedDirectCross": 0.03710155025256924,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.021947395924055042,
+   "exposedCells": 2000,
+   "conservativeSharePROTECTED": {
+    "audited": 0.5981942889137738,
+    "est": 0.5664893617021277,
+    "estC": 0.5145576707726763
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     2693,
+     0,
+     74
+    ],
+    [
+     0,
+     2835,
+     139
+    ],
+    [
+     275,
+     391,
+     7881
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     2693,
+     31,
+     43
+    ],
+    [
+     0,
+     2891,
+     83
+    ],
+    [
+     275,
+     1046,
+     7226
+    ]
+   ],
+   "spearmanMedian": 0.8609809507356107,
+   "dominantDirAudited": 292.5,
+   "dominantDirEstimated": 315.0,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 22.701378208153074,
+   "facingWithin45": 0.748040313549832,
+   "logRatioMedianFetch": 0.3763752751706933
+  },
+  "M1|Wilson|AL": {
+   "lake": "Wilson|AL",
+   "banksAudited": 1147,
+   "banksSampled": 1046,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 16736,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.9507648183556405,
+   "labelAgreementConservative": 0.9060109942638623,
+   "labelAgreementEstFacing": 0.8185946462715105,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7835803059273423,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.00718974679587371,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.061316501352569885,
+   "confusionShippedPipeline": [
+    [
+     2398,
+     672,
+     38
+    ],
+    [
+     805,
+     2371,
+     370
+    ],
+    [
+     424,
+     1313,
+     8345
+    ]
+   ],
+   "highFetchPrecision": 0.884,
+   "highFetchRecall": 0.9553314121037464,
+   "highFetchAuditedCells": 694,
+   "falseProtected(audited chop>=3)": 0.012503907471084715,
+   "falseProtectedConservative": 0.008440137542982182,
+   "falseProtected_vsAuditedDirectCross": 0.01728283739104298,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010820559062218215,
+   "exposedCells": 3199,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6024139579349904,
+    "est": 0.5669216061185468,
+    "estC": 0.5180449330783938
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3076,
+     0,
+     32
+    ],
+    [
+     0,
+     3463,
+     83
+    ],
+    [
+     318,
+     391,
+     9373
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3076,
+     17,
+     15
+    ],
+    [
+     0,
+     3489,
+     57
+    ],
+    [
+     318,
+     1166,
+     8598
+    ]
+   ],
+   "spearmanMedian": 0.9280266556351582,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 19.23711565265515,
+   "facingWithin45": 0.8135755258126195,
+   "logRatioMedianFetch": 0.3210034802965926
+  },
+  "M2|Wilson|AL": {
+   "lake": "Wilson|AL",
+   "banksAudited": 1147,
+   "banksSampled": 1046,
+   "rasterM": 20.0,
+   "standoffNotWater": 0,
+   "cellsCompared": 16736,
+   "cellsUnknownEstimate": 0,
+   "labelAgreement": 0.950107552581262,
+   "labelAgreementConservative": 0.9031429254302104,
+   "labelAgreementEstFacing": 0.8123804971319312,
+   "labelAgreementShippedPipeline(est facing + conservative)": 0.7740798279158699,
+   "falseProtectedShippedPipeline(audited chop>=3)": 0.006564551422319475,
+   "falseProtectedShippedPipeline_vsAuditedDirectCross": 0.06387135557559363,
+   "confusionShippedPipeline": [
+    [
+     2386,
+     681,
+     41
+    ],
+    [
+     822,
+     2340,
+     384
+    ],
+    [
+     441,
+     1412,
+     8229
+    ]
+   ],
+   "highFetchPrecision": 0.8920377867746289,
+   "highFetchRecall": 0.952449567723343,
+   "highFetchAuditedCells": 694,
+   "falseProtected(audited chop>=3)": 0.011253516723976243,
+   "falseProtectedConservative": 0.008127539856205065,
+   "falseProtected_vsAuditedDirectCross": 0.016681695220919748,
+   "falseProtectedConservative_vsAuditedDirectCross": 0.010069131349564171,
+   "exposedCells": 3199,
+   "conservativeSharePROTECTED": {
+    "audited": 0.6024139579349904,
+    "est": 0.565786328871893,
+    "estC": 0.5144598470363289
+   },
+   "confusion_rows_audited_cols_estimated": [
+    [
+     3079,
+     0,
+     29
+    ],
+    [
+     0,
+     3464,
+     82
+    ],
+    [
+     325,
+     399,
+     9358
+    ]
+   ],
+   "confusion_rows_audited_cols_estimatedConservative": [
+    [
+     3079,
+     15,
+     14
+    ],
+    [
+     0,
+     3493,
+     53
+    ],
+    [
+     325,
+     1214,
+     8543
+    ]
+   ],
+   "spearmanMedian": 0.9253286941874298,
+   "dominantDirAudited": 0.0,
+   "dominantDirEstimated": 337.5,
+   "dominantWithin22_5": true,
+   "facingErrMedianDeg": 20.215130224018992,
+   "facingWithin45": 0.8135755258126195,
+   "logRatioMedianFetch": 0.33856319399568635
+  }
+ }
+}

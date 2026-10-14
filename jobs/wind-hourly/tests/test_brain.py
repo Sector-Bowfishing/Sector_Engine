@@ -179,3 +179,33 @@ def test_writer_refuses_app_databases():
         with pytest.raises(WriteError):
             RtdbWriter(url, token="x")
     RtdbWriter("https://sector-brain.firebaseio.com", token="x")
+
+
+def test_input_fingerprint_changes_with_every_material_input_and_only_those():
+    from sector_wind.brain.state import input_fingerprint as F
+    base = ("L", "2026-10-14T00:00:00Z", "2026-10-14T00:15:00Z", "2026-10-13T18:00:00Z", "2026-10-14T00:10:00Z", "wind-exposure-rules-v2", "abc", "wind-brain-1.0.0")
+    assert F(*base) == F(*base)
+    for i in range(len(base)):
+        changed = list(base); changed[i] = "x"
+        assert F(*changed) != F(*base), i
+
+
+def test_second_publish_with_unchanged_inputs_skips_bank_detail_rewrite(tmp_path):
+    st = make_store(tmp_path); w = DryRunWriter()
+    r1 = publish(st, CFG, w, now=NOW, run_summary={"runAt": C.iso(NOW), "errors": [], "seconds": 90}, directory=DIRECTORY)
+    r2 = publish(st, CFG, DryRunWriter(), now=NOW + timedelta(minutes=20), run_summary={"runAt": C.iso(NOW), "errors": [], "seconds": 90}, directory=DIRECTORY)
+    assert not r1.get("fingerprintSkips")
+    assert r2.get("fingerprintSkips", 0) >= 1                      # same NBM cycle / RTMA / METAR / rules / geometry -> byte-identical detail, not rewritten
+    assert r2["writes"] >= r1["writes"] - 0 and not r2["errors"]    # the RTDB state heartbeat is still written every run (generatedAt freshness contract)
+
+
+def test_fleet_rows_are_not_rewritten_every_hour_but_changes_and_daily_refresh_are():
+    st = make_store(__import__("pathlib").Path(__import__("tempfile").mkdtemp()))
+    kw = dict(run_summary={"runAt": C.iso(NOW), "errors": [], "seconds": 90}, directory=DIRECTORY)
+    r1 = publish(st, CFG, DryRunWriter(), now=NOW, **kw)
+    r2 = publish(st, CFG, DryRunWriter(), now=NOW + timedelta(hours=1), **kw)
+    r3 = publish(st, CFG, DryRunWriter(), now=NOW + timedelta(hours=25), **kw)
+    assert r1["fleetPathsWritten"] >= len(DIRECTORY) * 2                       # first run writes everything
+    live_paths = len(WIND_LAKE_IDS) * 4                                        # lakeId, readiness, modelVersions, slots per live lake
+    assert r2["fleetPathsWritten"] == live_paths and r2["fleetPathsWritten"] < r1["fleetPathsWritten"]
+    assert r3["fleetPathsWritten"] >= len(DIRECTORY) * 2                       # daily full refresh

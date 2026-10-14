@@ -1,0 +1,78 @@
+{
+ "inputs": {
+  "skillEvidence": "v50_corpus_validation.json",
+  "forecastKeyed": "bowfishing_validation.json"
+ },
+ "components": {
+  "speedA_credit": 1.0,
+  "speedB_credit": 0.0,
+  "gustA_credit": 0.5443,
+  "gustB_credit": 0.0
+ },
+ "directionSlices": {
+  "A all hours, both winds >= 2.6 m/s (v1 rule)": {
+   "n": 15539,
+   "within22_5": 0.7580281871420297,
+   "circMAE": 18.328120752086413,
+   "credit": 0.5401,
+   "points_of_8": 4.32
+  },
+  "B night, both winds >= 2.6 m/s (observed-conditioned)": {
+   "n": 1379,
+   "within22_5": 0.8781725888324873,
+   "circMAE": 12.10980492441476,
+   "credit": 1.0,
+   "points_of_8": 8.0
+  },
+  "C night, FORECAST >= 5 mph (forecast-keyed: what the customer sees)": {
+   "n": 4004,
+   "within22_5": 0.8066478521478522,
+   "circMAE": 15.986763236763236,
+   "credit": 0.7832,
+   "points_of_8": 6.27
+  }
+ },
+ "currentV1": {
+  "rawPoints": 32.92,
+  "raw10": 3.29,
+  "displayed": 3.3
+ },
+ "simulations": [
+  {
+   "name": "V2-primary: speed 8/4, gust 2.5/2.5, direction slice C (forecast-keyed night)",
+   "speedPts": 8.0,
+   "gustPts": 1.36,
+   "directionPts": 6.27,
+   "rawPoints": 44.23,
+   "raw10": 4.42,
+   "displayed": 4.4
+  },
+  {
+   "name": "V2-alt weights: speed 6/6, gust 2.5/2.5, direction slice C",
+   "speedPts": 6.0,
+   "gustPts": 1.36,
+   "directionPts": 6.27,
+   "rawPoints": 42.23,
+   "raw10": 4.22,
+   "displayed": 4.2
+  },
+  {
+   "name": "V2 with direction slice B (observed-conditioned; NOT recommended)",
+   "speedPts": 8.0,
+   "gustPts": 1.36,
+   "directionPts": 8.0,
+   "rawPoints": 45.96,
+   "raw10": 4.6,
+   "displayed": 4.6
+  },
+  {
+   "name": "V2 with direction slice A (v1 all-hours; speed+gust split only)",
+   "speedPts": 8.0,
+   "gustPts": 1.36,
+   "directionPts": 4.32,
+   "rawPoints": 42.28,
+   "raw10": 4.23,
+   "displayed": 4.2
+  }
+ ]
+}

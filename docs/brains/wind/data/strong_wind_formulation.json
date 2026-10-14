@@ -1,0 +1,210 @@
+{
+ "rows": 4716,
+ "note": "EXPLORATORY on consumed CAL+H1 data; the shipped rule stays frozen; candidates need a new pre-registration + new data",
+ "events": 166,
+ "candidates": {
+  "shipped: P90>=10": {
+   "hourLevel": {
+    "flagShare": 0.0479,
+    "POD": 0.488,
+    "precision": 0.358,
+    "lift": 18.9
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 114,
+    "POD": 0.507,
+    "precision": 0.333,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0341
+   }
+  },
+  "P90>=9": {
+   "hourLevel": {
+    "flagShare": 0.0816,
+    "POD": 0.59,
+    "precision": 0.255,
+    "lift": 16.2
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 192,
+    "POD": 0.613,
+    "precision": 0.24,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0288
+   }
+  },
+  "P90>=12 (high tier)": {
+   "hourLevel": {
+    "flagShare": 0.0157,
+    "POD": 0.235,
+    "precision": 0.527,
+    "lift": 19.3
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 37,
+    "POD": 0.253,
+    "precision": 0.514,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0482
+   }
+  },
+  "mean>=8": {
+   "hourLevel": {
+    "flagShare": 0.0284,
+    "POD": 0.367,
+    "precision": 0.455,
+    "lift": 19.9
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 66,
+    "POD": 0.387,
+    "precision": 0.439,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0406
+   }
+  },
+  "P50>=8": {
+   "hourLevel": {
+    "flagShare": 0.0218,
+    "POD": 0.349,
+    "precision": 0.563,
+    "lift": 24.1
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 51,
+    "POD": 0.36,
+    "precision": 0.529,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0418
+   }
+  },
+  "spread(P90-P10)>=6 and P90>=8": {
+   "hourLevel": {
+    "flagShare": 0.0613,
+    "POD": 0.313,
+    "precision": 0.18,
+    "lift": 7.0
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 181,
+    "POD": 0.427,
+    "precision": 0.177,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0422
+   }
+  },
+  "P90>=10 OR mean>=8": {
+   "hourLevel": {
+    "flagShare": 0.05,
+    "POD": 0.506,
+    "precision": 0.356,
+    "lift": 19.4
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 118,
+    "POD": 0.533,
+    "precision": 0.339,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0323
+   }
+  },
+  "P90>=10 OR HRRR proxy>=10": {
+   "hourLevel": {
+    "flagShare": 0.0742,
+    "POD": 0.572,
+    "precision": 0.271,
+    "lift": 16.7
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 213,
+    "POD": 0.653,
+    "precision": 0.23,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.0263
+   }
+  },
+  "P90>=10 AND HRRR proxy>=8": {
+   "hourLevel": {
+    "flagShare": 0.0324,
+    "POD": 0.416,
+    "precision": 0.451,
+    "lift": 21.2
+   },
+   "nightLevel": {
+    "nights": 1200,
+    "breezyNights": 75,
+    "flaggedNights": 87,
+    "POD": 0.48,
+    "precision": 0.414,
+    "baseRate": 0.062,
+    "P(breezy|unflagged)": 0.035
+   }
+  }
+ },
+ "twoTier(hour)": {
+  "NONE": {
+   "rows": 4490,
+   "P(obs>=10)": 0.019
+  },
+  "ELEVATED": {
+   "rows": 152,
+   "P(obs>=10)": 0.276
+  },
+  "HIGH": {
+   "rows": 74,
+   "P(obs>=10)": 0.527
+  }
+ },
+ "confidenceXflag(hour) P(obs>=10)": {
+  "HIGH|noflag": {
+   "rows": 501,
+   "rate": 0.0719
+  },
+  "LOW|flag": {
+   "rows": 2,
+   "rate": 0.5
+  },
+  "LOW|noflag": {
+   "rows": 2963,
+   "rate": 0.0091
+  },
+  "MEDIUM|flag": {
+   "rows": 224,
+   "rate": 0.3571
+  },
+  "MEDIUM|noflag": {
+   "rows": 1026,
+   "rate": 0.0214
+  }
+ },
+ "directionWithin22_5ByLabel": {
+  "HIGH": {
+   "n": 184,
+   "rate": 0.766
+  },
+  "LOW": {
+   "n": 137,
+   "rate": 0.533
+  },
+  "MEDIUM": {
+   "n": 343,
+   "rate": 0.706
+  }
+ }
+}
