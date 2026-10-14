@@ -51,3 +51,11 @@ Rules Depth would apply to the new fields (tests already cover the guards): stam
 | Youghiogheny River Lake (MD) | NWPS | USGS 62615 or the CWMS series | NWPS pool identical to USGS 62615 (NAVD88); pool is a CWMS location tagged NAVD88 | SAME_DATUM (NAVD88) |
 
 The NWPS datum tables for these gauges are empty or contradictory (Canton lists NAVD88 0.6 while the feed equals the NGVD29 CWMS series), so Depth will not accept the NWPS-bound series on its own. `accepted_provider_rules.json` lists them under `heldWithReason`. Source detail: `DEPTH_NWPS_DATUM_AUDIT.md`.
+
+
+## Update 2026-10-14 (long-run campaign): what Lake Brain still owns, and two findings
+
+* **Duke**: 8 lakes are now defensible. Depth accepts a level in either documented frame (the 100-based scale, `shift = scale - 100`, or absolute feet against the full-pond elevation) and refuses one that is in neither. Lake Brain should publish whichever Duke returns and stamp NGVD29 (Duke's `Elevation` field says NGVD 29); Depth needs no change when it does.
+* **New defensible lakes without a live Lake state** (the Depth side is ready; Lake owns the level): Reclamation and Duke lakes in `candidates.json` with `shiftPossible` and `rollout` not PILOT_VERIFIED. A new Lake state triggers a publish by fingerprint change; nothing else is needed from Depth.
+* **Finding (Lake Brain, not changed here): Hartwell's `observationTime` runs about one hour ahead of reality.** On 2026-10-14 at 05:26 UTC Lake published Hartwell with `observationTime` 06:00Z while `generatedAt` was 05:24Z (Guntersville/Wheeler/Wilson/Pickwick show 05:00Z). The pattern fits a fixed EST (-5 h) offset applied during EDT. Depth refuses an observation more than 0.25 h in the future (`OBSERVATION_IN_FUTURE`), so Hartwell flaps to `unavailable`/DEGRADED for about the first 45 minutes of every hour. Depth does not widen its tolerance (the owning Brain should fix the timestamp; see the freshness-authority rule candidate in `DEPTH_BRAIN_MODEL_INPUTS.md`).
+* **Finding (Lake Brain): 7 NWPS rebinds** remain exactly as listed above; they are Lake-side.

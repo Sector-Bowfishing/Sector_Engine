@@ -17,6 +17,8 @@ Canonical specification in the Sector Brain Model v1 shape. Status 2026-10-14. C
 Depth = **known depth evidence + current water-level shift + effective shallow-water implications + dry/flooded bounds + confidence/provenance.** Depth is NOT a hydrographic survey, complete bathymetry, a channel mapper, a ledge mapper or a structure finder. A later session may not widen this scope without product approval (the claim `absoluteDepthFlatsChannels` stays NOT_CLAIMED; GLOBathy and slope-derived depth stay forbidden).
 
 ## WAIT STATE and wake conditions (2026-10-14)
+> **Update 2026-10-14 (long-run campaign):** the wait state was interrupted by a capability campaign (Duke, Reclamation, Cheney, rating-derived shares, score v2 design; `docs/brains/depth/DEPTH_CAMPAIGN_FINDINGS.md`). Wake conditions A (Reclamation) and C (Duke) are largely answered from public data; the remaining Reclamation list is narrowed in `DEPTH_RECLAMATION_DATUM_REQUEST.md`.
+
 Depth is SHADOW, dependency-driven, field-ready. Pilot states are a **point-in-time snapshot** (see `freshness.generatedAt`): with no cron by design they refresh only on a manual pilot-scope run, or by the shared orchestrator once approved. Do nothing while waiting. Resume only on: (A) Reclamation reply, (B) TVA reply, (C) Duke or other datum confirmation, (D) Lake publishes more fleet states, (E) Lake fixes NWPS bindings, (F) field/sonar observations, (G) authorization to deploy the control job, (H) a shared Brain Model/scoring decision on the rubric mismatch, (I) a licensing decision that unlocks contour sources. On a wake: promote confirmed rules through `proposals`, `refresh`, `report --log`, regenerate docs, re-run tests, push. Details: `docs/brains/depth/DEPTH_BRAIN_MODEL_INPUTS.md`.
 
 ## Claims (Level 1 / 2 / 3) and claim-level maturity
@@ -26,11 +28,12 @@ Machine-readable: `depth_brain/data/claim_levels.json` (published as `claims` in
 |---|---|---|
 | Current lake level (from Lake) | 1 | PROVIDER_VERIFIED (5 pilots equal operator feeds) |
 | Reference pool figure | 1 | PROVIDER_VERIFIED (353 lakes with high/medium pool) |
-| Datum relationship | 2 | VERIFIED (181), inferred operator system (17 TVA), else UNKNOWN |
+| Datum relationship | 2 | VERIFIED (counts computed in the registry, e.g. 208 at 2026-10-14), inferred operator system (17 TVA), else UNKNOWN |
 | Level shift | 2 | VERIFIED (formula, sign, edges, inputs) |
 | Shift uncertainty | 2 | ESTIMATED (research estimates, flagged) |
 | Contour shallow-band shares | 2 | VERIFIED (vs exact TWDB tables) |
-| Effective dry/shallow bounds | 2 | DESK_VALIDATED on 5 TWDB lakes; WITHHELD elsewhere (preregistered validation failed) |
+| Effective dry/shallow bounds | 2 | DESK_VALIDATED on 5 TWDB lakes; WITHHELD for other contour lakes (preregistered validation failed) |
+| Depth shares from an operator elevation-area rating / survey table (+ flooded-margin share) | 2 | VERIFIED as a derivation (RATING-ZONE-RULES-1); 91 lakes; shares only, never where; reported share tolerance 0.11 |
 | A known flat is DRY/TOO_SHALLOW/SHOOTABLE/GOOD/DEEP | 3 | NOT_VALIDATED (field preregistered, no data) |
 | Absolute depth / flats / channels | 3 | NOT_CLAIMED |
 A failed Level-3 claim never downgrades Level-1/2 claims (tested).
@@ -51,10 +54,10 @@ Sigma in quadrature (pool 0.25/1.0/3.0, level 0.1/0.15, datum 0/0.1/0.3 ft); lab
 | Max acceptable state age | evidenceStale 6 h, unavailable 48 h (of the Lake observation) |
 | Fleet recompute? | No: pilot scope, only affected lakes; the manifest is rebuilt offline when evidence changes |
 | Input fingerprint | Lake observationTime + elevation + kind + capability, reference pool, datum status, manifest version, Depth version |
-Orchestration is PREPARED and gated off (`DEPTH_ORCHESTRATION_ENABLED=1`, set nowhere); not approved for scheduling.
+Frames: Duke publishes some lakes on a 100-based scale (`reference.relativeScalePoolFt`), the engine accepts either frame and refuses a level that is in neither. Orchestration is PREPARED and gated off (`DEPTH_ORCHESTRATION_ENABLED=1`, set nowhere); not approved for scheduling.
 
 ## Score dimensions (research rubric; NOT an official score)
-authority, coverage (computed), absolute*, relative*, effective, validation*, provenance, scalability. `*` = rubric mismatch documented in `DEPTH_RUBRIC_MISMATCH_PROPOSAL.md` (rubric unchanged, awaiting Michael). Proposed critical dimensions for a future `depth-brain-score-v1` (unratified): datumCorrectness, effectiveDepthCorrectness, fleetCoverage, validation. Official score: NOT_ESTABLISHED. Production gate (unchanged): overall >= 8.0 and every critical >= 7.5.
+authority, coverage (computed), absolute*, relative*, effective, validation*, provenance, scalability. `*` = rubric mismatch documented in `DEPTH_RUBRIC_MISMATCH_PROPOSAL.md` (rubric unchanged, awaiting Michael). Proposed official design: `depth-brain-score-v2` (unratified; `DEPTH_OFFICIAL_SCORE_DECISION.md`); critical dimensions datumCorrectness, fleetCoverage, derivationValidity, interpretationValidity. Official score: NOT_ESTABLISHED. Production gate (unchanged): overall >= 8.0 and every critical >= 7.5.
 
 ## Validation requirements by claim level
 L1: source/freshness/units/provenance (done for the pilots). L2: formula/inputs/uncertainty/edge cases/determinism (done; preregistered desk validation for zone bounds on 5 lakes). L3: independent/field/prospective (preregistered thresholds `field_validation_prereg.json`, sha256 pinned; not run).
