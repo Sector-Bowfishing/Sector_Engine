@@ -1,0 +1,662 @@
+{
+ "schema": "depth-rise-diagram-link-v1",
+ "generatedAt": "2026-10-14T05:16Z",
+ "results": {
+  "Angostura Reservoir|SD": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_angostura_pdf.pdf",
+   "revised": "10/04/2012",
+   "afterDate": "2012-11-03",
+   "riseStorageItem": 105,
+   "days": 5092,
+   "pairs": [
+    {
+     "printedElevFt": 3139.75,
+     "printedAf": 5658.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 3163.0,
+     "printedAf": 42205.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 3187.2,
+     "printedAf": 123048.0,
+     "n": 52,
+     "window": [
+      "2014-03-12",
+      "2024-05-16"
+     ],
+     "riseElevAtCapacityFt": 3187.199,
+     "dEFt": -0.001
+    },
+    {
+     "printedElevFt": 3198.1,
+     "printedAf": 180356.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Box Butte Reservoir|NE": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_box_butte_pdf.pdf",
+   "revised": "10/16/2012",
+   "afterDate": "2012-11-15",
+   "riseStorageItem": 141,
+   "days": 5078,
+   "pairs": [
+    {
+     "printedElevFt": 3969.0,
+     "printedAf": 188.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 3979.0,
+     "printedAf": 2392.0,
+     "status": "only 2 nearby days"
+    },
+    {
+     "printedElevFt": 4007.0,
+     "printedAf": 29161.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4016.0,
+     "printedAf": 45901.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Boysen Reservoir|WY": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_boysen_pdf.pdf",
+   "revised": null,
+   "afterDate": "2023-10-10",
+   "riseStorageItem": 195,
+   "days": 1099,
+   "pairs": [
+    {
+     "printedElevFt": 4657.0,
+     "printedAf": 40084.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4685.0,
+     "printedAf": 219181.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4717.0,
+     "printedAf": 597365.0,
+     "n": 59,
+     "window": [
+      "2024-04-10",
+      "2025-08-02"
+     ],
+     "riseElevAtCapacityFt": 4716.997,
+     "dEFt": -0.003
+    },
+    {
+     "printedElevFt": 4725.0,
+     "printedAf": 741594.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4732.2,
+     "printedAf": 892226.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4752.0,
+     "printedAf": 1412905.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Buffalo Bill Reservoir|WY": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_buffalo_bill_pdf.pdf",
+   "revised": null,
+   "afterDate": "2023-10-10",
+   "riseStorageItem": 151,
+   "days": 1098,
+   "pairs": [
+    {
+     "printedElevFt": 5259.6,
+     "printedAf": 41748.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 5393.5,
+     "printedAf": 646565.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Fresno Reservoir|MT": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_fresno_pdf.pdf",
+   "revised": "6/28/2016",
+   "afterDate": "2016-07-28",
+   "riseStorageItem": 354,
+   "days": 3729,
+   "pairs": [
+    {
+     "printedElevFt": 2530.0,
+     "printedAf": 158.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2567.0,
+     "printedAf": 57905.0,
+     "n": 60,
+     "window": [
+      "2016-12-18",
+      "2026-07-25"
+     ],
+     "riseElevAtCapacityFt": 2567.036,
+     "dEFt": 0.036
+    },
+    {
+     "printedElevFt": 2575.0,
+     "printedAf": 91746.0,
+     "n": 60,
+     "window": [
+      "2020-05-08",
+      "2024-05-25"
+     ],
+     "riseElevAtCapacityFt": 2574.999,
+     "dEFt": -0.001
+    },
+    {
+     "printedElevFt": 2591.0,
+     "printedAf": 204010.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Glendo Reservoir|WY": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_glendo_pdf.pdf",
+   "revised": null,
+   "afterDate": "2023-10-10",
+   "riseStorageItem": 373,
+   "days": 1099,
+   "pairs": [
+    {
+     "printedElevFt": 4545.0,
+     "printedAf": 7010.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4570.0,
+     "printedAf": 51573.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4635.0,
+     "printedAf": 492022.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4653.0,
+     "printedAf": 763039.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4669.0,
+     "printedAf": 1092290.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Horsetooth Reservoir|CO": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_horsetooth_pdf.pdf",
+   "revised": "10/04/2012",
+   "afterDate": "2012-11-03",
+   "riseStorageItem": 86,
+   "days": 5086,
+   "pairs": [
+    {
+     "printedElevFt": 5320.0,
+     "printedAf": 7003.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 5325.0,
+     "printedAf": 17600.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 5430.0,
+     "printedAf": 156735.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 5439.6,
+     "printedAf": 176997.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Jamestown Reservoir|ND": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_jamestown_pdf.pdf",
+   "revised": "4/10/2015",
+   "afterDate": "2015-05-10",
+   "riseStorageItem": 450,
+   "days": 4174,
+   "pairs": [
+    {
+     "printedElevFt": 1400.0,
+     "printedAf": 292.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 1428.0,
+     "printedAf": 24226.0,
+     "n": 18,
+     "window": [
+      "2020-03-03",
+      "2022-03-28"
+     ],
+     "riseElevAtCapacityFt": 1427.999,
+     "dEFt": -0.001
+    },
+    {
+     "printedElevFt": 1431.0,
+     "printedAf": 30488.0,
+     "n": 60,
+     "window": [
+      "2026-05-25",
+      "2026-10-01"
+     ],
+     "riseElevAtCapacityFt": 1430.855,
+     "dEFt": -0.145
+    },
+    {
+     "printedElevFt": 1454.0,
+     "printedAf": 220990.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 1464.4,
+     "printedAf": 379907.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Keyhole Reservoir|WY": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_keyhole_pdf.pdf",
+   "revised": "10/04/2012",
+   "afterDate": "2012-11-03",
+   "riseStorageItem": 477,
+   "days": 5092,
+   "pairs": [
+    {
+     "printedElevFt": 4036.0,
+     "printedAf": 287.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4051.0,
+     "printedAf": 6592.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4099.3,
+     "printedAf": 188671.0,
+     "n": 60,
+     "window": [
+      "2015-07-16",
+      "2020-04-05"
+     ],
+     "riseElevAtCapacityFt": 4099.299,
+     "dEFt": -0.001
+    },
+    {
+     "printedElevFt": 4111.5,
+     "printedAf": 329134.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4128.73,
+     "printedAf": 623943.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Lake Granby|CO": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_lake_granby_pdf.pdf",
+   "revised": "10/04/2012",
+   "afterDate": "2012-11-03",
+   "riseStorageItem": 383,
+   "days": 5090,
+   "pairs": [
+    {
+     "printedElevFt": 8174.63,
+     "printedAf": 49467.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 8186.0,
+     "printedAf": 74190.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 8280.0,
+     "printedAf": 539758.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Merritt Reservoir|NE": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_merritt_pdf.pdf",
+   "revised": "10/16/2012",
+   "afterDate": "2012-11-15",
+   "riseStorageItem": 598,
+   "days": 5059,
+   "pairs": [
+    {
+     "printedElevFt": 2875.0,
+     "printedAf": 774.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2896.0,
+     "printedAf": 4662.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2946.0,
+     "printedAf": 66726.0,
+     "n": 60,
+     "window": [
+      "2025-06-27",
+      "2026-07-06"
+     ],
+     "riseElevAtCapacityFt": 2946.001,
+     "dEFt": 0.001
+    },
+    {
+     "printedElevFt": 2949.8,
+     "printedAf": 78375.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Pactola Reservoir|SD": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_pactola_pdf.pdf",
+   "revised": "10/04/2012",
+   "afterDate": "2012-11-03",
+   "riseStorageItem": 674,
+   "days": 5092,
+   "pairs": [
+    {
+     "printedElevFt": 4440.0,
+     "printedAf": 122.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4456.1,
+     "printedAf": 1017.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4580.2,
+     "printedAf": 55972.0,
+     "n": 60,
+     "window": [
+      "2023-08-26",
+      "2024-07-16"
+     ],
+     "riseElevAtCapacityFt": 4580.2,
+     "dEFt": 0.0
+    },
+    {
+     "printedElevFt": 4621.5,
+     "printedAf": 99029.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 4651.7,
+     "printedAf": 140921.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Pathfinder Reservoir|WY": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_pathfinder_pdf.pdf",
+   "revised": "5/19/16",
+   "afterDate": "2016-06-18",
+   "riseStorageItem": 644,
+   "days": 3769,
+   "pairs": [
+    {
+     "printedElevFt": 5693.2,
+     "printedAf": 7.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 5746.0,
+     "printedAf": 31405.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 5852.49,
+     "printedAf": 1070185.0,
+     "n": 19,
+     "window": [
+      "2016-06-18",
+      "2019-07-15"
+     ],
+     "riseElevAtCapacityFt": 5852.487,
+     "dEFt": -0.003
+    },
+    {
+     "printedElevFt": 5858.1,
+     "printedAf": 1205185.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Ruedi Reservoir|CO": {
+   "control": false,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_ruedi_pdf.pdf",
+   "revised": "10/04/2012",
+   "afterDate": "2012-11-03",
+   "riseStorageItem": 711,
+   "days": 5085,
+   "pairs": [
+    {
+     "printedElevFt": 7540.0,
+     "printedAf": 63.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 7566.0,
+     "printedAf": 1095.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 7766.0,
+     "printedAf": 102373.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 7781.8,
+     "printedAf": 119010.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Calamus Reservoir|NE": {
+   "control": true,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_calamus_pdf.pdf",
+   "revised": "6/23/2015",
+   "afterDate": "2015-07-23",
+   "riseStorageItem": 214,
+   "days": 4062,
+   "pairs": [
+    {
+     "printedElevFt": 2185.0,
+     "printedAf": 35.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2213.3,
+     "printedAf": 20150.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2244.0,
+     "printedAf": 119469.0,
+     "n": 60,
+     "window": [
+      "2026-05-08",
+      "2026-07-06"
+     ],
+     "riseElevAtCapacityFt": 2243.999,
+     "dEFt": -0.001
+    },
+    {
+     "printedElevFt": 2252.8,
+     "printedAf": 169530.0,
+     "status": "only 0 nearby days"
+    }
+   ],
+   "passes": true
+  },
+  "Swanson Reservoir|NE": {
+   "control": true,
+   "diagram": "swanson_resaloc.pdf",
+   "revised": "10/19/2012",
+   "afterDate": "2012-11-18",
+   "riseStorageItem": 134011,
+   "days": 5074,
+   "pairs": [
+    {
+     "printedElevFt": 2710.0,
+     "printedAf": 1027.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2720.0,
+     "printedAf": 10329.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2752.0,
+     "printedAf": 110175.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2773.0,
+     "printedAf": 244362.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2785.0,
+     "printedAf": 352018.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": false
+  },
+  "Lake Tschida|ND": {
+   "control": true,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_lake_tschida_pdf.pdf",
+   "revised": "8/28/2015",
+   "afterDate": "2015-09-27",
+   "riseStorageItem": 549,
+   "days": 4029,
+   "pairs": [
+    {
+     "printedElevFt": 2030.0,
+     "printedAf": 4328.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2064.5,
+     "printedAf": 65091.0,
+     "n": 60,
+     "window": [
+      "2024-05-05",
+      "2026-03-23"
+     ],
+     "riseElevAtCapacityFt": 2064.498,
+     "dEFt": -0.002
+    },
+    {
+     "printedElevFt": 2094.5,
+     "printedAf": 212696.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2119.5,
+     "printedAf": 435123.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  },
+  "Patterson Lake|ND": {
+   "control": true,
+   "diagram": "https___www_usbr_gov_gp_aop_resaloc_dickinson_pdf.pdf",
+   "revised": "7/28/2015",
+   "afterDate": "2015-08-27",
+   "riseStorageItem": 304,
+   "days": 4064,
+   "pairs": [
+    {
+     "printedElevFt": 2404.0,
+     "printedAf": 349.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2405.0,
+     "printedAf": 438.0,
+     "status": "outside observed range"
+    },
+    {
+     "printedElevFt": 2420.0,
+     "printedAf": 8479.0,
+     "n": 60,
+     "window": [
+      "2023-06-12",
+      "2026-02-19"
+     ],
+     "riseElevAtCapacityFt": 2420.0,
+     "dEFt": -0.0
+    },
+    {
+     "printedElevFt": 2430.6,
+     "printedAf": 26462.0,
+     "status": "outside observed range"
+    }
+   ],
+   "passes": true
+  }
+ }
+}

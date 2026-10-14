@@ -37,7 +37,8 @@ def test_cheney_unlocked_by_independent_gauge_pairing_not_by_assumption():
 
 
 RISE_UNLOCKED = {"Cheney Reservoir|KS", "Bighorn Lake|WY", "El Vado Lake|NM", "Elephant Butte Reservoir|NM", "Heron Lake|NM", "Navajo Reservoir|NM", "Swanson Reservoir|NE",
-                 "Patterson Lake|ND", "Lake Tschida|ND", "Calamus Reservoir|NE"}
+                 "Patterson Lake|ND", "Lake Tschida|ND", "Calamus Reservoir|NE",
+                 "Angostura Reservoir|SD", "Boysen Reservoir|WY", "Fresno Reservoir|MT", "Keyhole Reservoir|WY", "Merritt Reservoir|NE", "Pactola Reservoir|SD", "Pathfinder Reservoir|WY"}
 
 
 def test_only_rise_lakes_with_an_established_datum_chain_are_unlocked():
@@ -54,5 +55,20 @@ def test_every_unlocked_reclamation_lake_has_a_passing_storage_link_fit():
     for lid in prop:
         r = link[lid]
         assert r["passes"] and abs(r["bestOffsetFt"]) <= 0.10 and r["relRmsAtBest"] <= 0.005 and r["n"] >= 300, lid
-    for lid in ("Flaming Gorge Reservoir|UT", "Jamestown Reservoir|ND", "Fresno Reservoir|MT", "Blue Mesa Reservoir|CO"):
+    for lid in ("Flaming Gorge Reservoir|UT", "Jamestown Reservoir|ND", "Blue Mesa Reservoir|CO"):
         assert not link[lid]["passes"] and MAN[lid]["datum"]["status"] == "UNKNOWN", lid          # inconclusive fits unlock nothing
+
+
+def test_every_diagram_unlocked_reclamation_lake_has_its_pool_on_the_diagram_and_a_passing_fit():
+    link = json.load(open(os.path.join(HERE, "..", "..", "docs", "brains", "depth", "data", "rise_diagram_link.json")))["results"]
+    prop = json.load(open(os.path.join(HERE, "depth_brain", "data", "proposals", "datum_pairings_6.json")))["lakes"]
+    assert len(prop) == 7
+    for lid in prop:
+        r = link[lid]
+        used = [p for p in r["pairs"] if "dEFt" in p]
+        assert r["passes"] and used and all(abs(p["dEFt"]) <= 0.10 for p in used), lid
+        assert MAN[lid]["reference"]["source"].startswith("https://www.usbr.gov/gp/aop/resaloc/"), lid
+    for lid, r in link.items():                                    # the method must reproduce the lakes whose frame the survey tables already settled
+        if r["control"]:
+            assert r["passes"] or not any("dEFt" in p for p in r["pairs"]), lid
+    assert link["Jamestown Reservoir|ND"]["passes"] is False       # a recent 0.145 ft disagreement is not waved through

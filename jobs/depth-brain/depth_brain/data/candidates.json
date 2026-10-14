@@ -20439,18 +20439,21 @@
    "state": "MT"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_6.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/gp/aop/resaloc/fresno.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/355"
+    ],
     "navd88MinusNgvd29Ft": 2.789,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -20470,8 +20473,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "355",
     "status": "RESEARCH_VERIFIED"
@@ -20485,14 +20488,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2575,
     "source": "https://www.usbr.gov/gp/aop/resaloc/fresno.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "MT"
   },
   {
@@ -23193,18 +23196,21 @@
    "state": "NE"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_6.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/gp/aop/resaloc/merritt.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/599"
+    ],
     "navd88MinusNgvd29Ft": 1.004,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": "contour:NE",
@@ -23228,8 +23234,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "599",
     "status": "RESEARCH_VERIFIED"
@@ -23248,8 +23254,8 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 2946,
     "source": "https://www.usbr.gov/gp/aop/resaloc/merritt.pdf",
     "winterPoolFt": null
@@ -23265,8 +23271,8 @@
     "referenceStatus": "UNVERIFIED",
     "source": "NE"
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "NE"
   },
   {
@@ -32938,18 +32944,21 @@
    "state": "SC"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_6.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/gp/aop/resaloc/angostura.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/106"
+    ],
     "navd88MinusNgvd29Ft": 1.673,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -32969,8 +32978,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "106",
     "status": "RESEARCH_VERIFIED"
@@ -32984,14 +32993,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 3187.2,
     "source": "https://www.usbr.gov/gp/aop/resaloc/angostura.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SD"
   },
   {
@@ -33561,18 +33570,21 @@
    "state": "SD"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_6.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/gp/aop/resaloc/pactola.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/675"
+    ],
     "navd88MinusNgvd29Ft": 1.89,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -33592,8 +33604,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "675",
     "status": "RESEARCH_VERIFIED"
@@ -33607,14 +33619,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 4580.2,
     "source": "https://www.usbr.gov/gp/aop/resaloc/pactola.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "SD"
   },
   {
@@ -40589,18 +40601,21 @@
    "state": "WY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_6.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/gp/aop/resaloc/boysen.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/196"
+    ],
     "navd88MinusNgvd29Ft": 2.963,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -40620,8 +40635,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "196",
     "status": "RESEARCH_VERIFIED"
@@ -40635,14 +40650,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 4725,
     "source": "https://www.usbr.gov/gp/aop/resaloc/boysen.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WY"
   },
   {
@@ -40989,18 +41004,21 @@
    "state": "WY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_6.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/gp/aop/resaloc/keyhole.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/478"
+    ],
     "navd88MinusNgvd29Ft": 1.877,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -41020,8 +41038,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "478",
     "status": "RESEARCH_VERIFIED"
@@ -41035,29 +41053,32 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 4099.3,
     "source": "https://www.usbr.gov/gp/aop/resaloc/keyhole.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "HIGH_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WY"
   },
   {
-   "blockedReasons": [
-    "DATUM_UNKNOWN"
-   ],
+   "blockedReasons": [],
    "cwmsOffice": null,
    "datum": {
+    "basis": "reviewed-override:operator-doc:proposals/datum_pairings_6.json",
+    "evidenceConfidence": "high",
+    "evidenceUrls": [
+     "https://www.usbr.gov/gp/aop/resaloc/pathfinder.pdf",
+     "https://data.usbr.gov/rise/api/catalog-item/645"
+    ],
     "navd88MinusNgvd29Ft": 3.081,
     "reasons": [
-     "level datum unknown or unverified",
-     "reference-pool datum unknown or unverified"
+     "reviewed per-lake datum override (evidence in datum_lake_overrides.json)"
     ],
-    "sigmaFt": 0.0,
-    "status": "UNKNOWN"
+    "sigmaFt": 0.1,
+    "status": "SAME_SOURCE"
    },
    "evidence": {
     "bestSource": null,
@@ -41077,8 +41098,8 @@
    "levelSource": {
     "capability": "DIRECT_OPERATOR_POOL",
     "datum": null,
-    "datumNote": "provider table: UNKNOWN",
-    "datumVerified": false,
+    "datumNote": "reviewed override",
+    "datumVerified": true,
     "provider": "rise",
     "series": "645",
     "status": "RESEARCH_VERIFIED_LABELLED"
@@ -41092,14 +41113,14 @@
     "basis": "fullPool",
     "confidence": "high",
     "datum": null,
-    "datumRule": null,
-    "datumVerified": false,
+    "datumRule": "override",
+    "datumVerified": true,
     "poolFt": 5852.49,
     "source": "https://www.usbr.gov/gp/aop/resaloc/pathfinder.pdf",
     "winterPoolFt": null
    },
-   "rollout": "BLOCKED",
-   "shiftPossible": false,
+   "rollout": "MEDIUM_CONFIDENCE",
+   "shiftPossible": true,
    "state": "WY"
   },
   {
@@ -41224,7 +41245,7 @@
  "summary": {
   "blockedReasons": {
    "DATUM_CONVERSION_NOT_ENABLED": 1,
-   "DATUM_UNKNOWN": 197,
+   "DATUM_UNKNOWN": 190,
    "MISSING_REFERENCE_POOL": 13,
    "NO_VERIFIED_LEVEL_BINDING": 204,
    "REFERENCE_NOT_A_POOL_ELEVATION": 207,
@@ -41234,8 +41255,8 @@
    "INCOMPATIBLE": 1,
    "SAME_DATUM": 110,
    "SAME_OPERATOR_SYSTEM": 17,
-   "SAME_SOURCE": 92,
-   "UNKNOWN": 401
+   "SAME_SOURCE": 99,
+   "UNKNOWN": 394
   },
   "lakes": 621,
   "levelSourceStatus": {
@@ -41285,12 +41306,12 @@
    "U": 56
   },
   "rollout": {
-   "BLOCKED": 403,
-   "HIGH_CONFIDENCE": 97,
-   "MEDIUM_CONFIDENCE": 116,
+   "BLOCKED": 396,
+   "HIGH_CONFIDENCE": 103,
+   "MEDIUM_CONFIDENCE": 117,
    "PILOT_VERIFIED": 5
   },
-  "shiftPossible": 218,
+  "shiftPossible": 225,
   "tier": {
    "A": 77,
    "B": 26,

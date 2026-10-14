@@ -1,0 +1,210 @@
+{
+ "schema": "depth-datum-proposals-v1",
+ "generatedAt": "2026-10-14",
+ "sigmaRule": "0.1 ft (provider rule precedent for project datums)",
+ "lakes": {
+  "Angostura Reservoir|SD": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-diagram-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "Pool figure is a printed elevation of Reclamation's allocation diagram; RISE daily elevation reproduces RISE daily storage at the diagram's printed capacity (3187.2 ft = 123,048 af: -0.001 ft), so RISE and the pool are in one Reclamation vertical frame.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/angostura.pdf",
+     "says": "allocation diagram (revised 10/04/2012) prints pool 3187.2 ft and its capacity; the Depth reference pool IS this diagram's elevation"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/106",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/105",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_diagram_link.json",
+     "says": "fit of RISE elevation at the printed capacity (research/depth/rise_diagram_link.py); controls Calamus, Tschida and Patterson reproduce their survey-table frame at <= 0.003 ft"
+    }
+   ],
+   "caveat": "Project vertical frame: shift only, never converted. The test shows RISE elevation and the diagram share a frame, not the frame's name. "
+  },
+  "Boysen Reservoir|WY": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-diagram-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "Pool figure is a printed elevation of Reclamation's allocation diagram; RISE daily elevation reproduces RISE daily storage at the diagram's printed capacity (4717.0 ft = 597,365 af: -0.003 ft), so RISE and the pool are in one Reclamation vertical frame.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/boysen.pdf",
+     "says": "allocation diagram (revised None) prints pool 4725 ft and its capacity; the Depth reference pool IS this diagram's elevation"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/196",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/195",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_diagram_link.json",
+     "says": "fit of RISE elevation at the printed capacity (research/depth/rise_diagram_link.py); controls Calamus, Tschida and Patterson reproduce their survey-table frame at <= 0.003 ft"
+    }
+   ],
+   "caveat": "Project vertical frame: shift only, never converted. The test shows RISE elevation and the diagram share a frame, not the frame's name. "
+  },
+  "Fresno Reservoir|MT": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-diagram-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "Pool figure is a printed elevation of Reclamation's allocation diagram; RISE daily elevation reproduces RISE daily storage at the diagram's printed capacity (2567.0 ft = 57,905 af: +0.036 ft, 2575.0 ft = 91,746 af: -0.001 ft), so RISE and the pool are in one Reclamation vertical frame.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/fresno.pdf",
+     "says": "allocation diagram (revised 6/28/2016) prints pool 2575 ft and its capacity; the Depth reference pool IS this diagram's elevation"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/355",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/354",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_diagram_link.json",
+     "says": "fit of RISE elevation at the printed capacity (research/depth/rise_diagram_link.py); controls Calamus, Tschida and Patterson reproduce their survey-table frame at <= 0.003 ft"
+    }
+   ],
+   "caveat": "Project vertical frame: shift only, never converted. The test shows RISE elevation and the diagram share a frame, not the frame's name. The 2010 TSC table for Fresno does not reproduce RISE storage (-0.27 ft, 1.5% RMS), so the table behind the diagram/RISE is a later one."
+  },
+  "Keyhole Reservoir|WY": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-diagram-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "Pool figure is a printed elevation of Reclamation's allocation diagram; RISE daily elevation reproduces RISE daily storage at the diagram's printed capacity (4099.3 ft = 188,671 af: -0.001 ft), so RISE and the pool are in one Reclamation vertical frame.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/keyhole.pdf",
+     "says": "allocation diagram (revised 10/04/2012) prints pool 4099.3 ft and its capacity; the Depth reference pool IS this diagram's elevation"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/478",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/477",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_diagram_link.json",
+     "says": "fit of RISE elevation at the printed capacity (research/depth/rise_diagram_link.py); controls Calamus, Tschida and Patterson reproduce their survey-table frame at <= 0.003 ft"
+    }
+   ],
+   "caveat": "Project vertical frame: shift only, never converted. The test shows RISE elevation and the diagram share a frame, not the frame's name. "
+  },
+  "Merritt Reservoir|NE": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-diagram-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "Pool figure is a printed elevation of Reclamation's allocation diagram; RISE daily elevation reproduces RISE daily storage at the diagram's printed capacity (2946.0 ft = 66,726 af: +0.001 ft), so RISE and the pool are in one Reclamation vertical frame.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/merritt.pdf",
+     "says": "allocation diagram (revised 10/16/2012) prints pool 2946 ft and its capacity; the Depth reference pool IS this diagram's elevation"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/599",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/598",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_diagram_link.json",
+     "says": "fit of RISE elevation at the printed capacity (research/depth/rise_diagram_link.py); controls Calamus, Tschida and Patterson reproduce their survey-table frame at <= 0.003 ft"
+    }
+   ],
+   "caveat": "Project vertical frame: shift only, never converted. The test shows RISE elevation and the diagram share a frame, not the frame's name. "
+  },
+  "Pactola Reservoir|SD": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-diagram-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "Pool figure is a printed elevation of Reclamation's allocation diagram; RISE daily elevation reproduces RISE daily storage at the diagram's printed capacity (4580.2 ft = 55,972 af: +0.000 ft), so RISE and the pool are in one Reclamation vertical frame.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/pactola.pdf",
+     "says": "allocation diagram (revised 10/04/2012) prints pool 4580.2 ft and its capacity; the Depth reference pool IS this diagram's elevation"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/675",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/674",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_diagram_link.json",
+     "says": "fit of RISE elevation at the printed capacity (research/depth/rise_diagram_link.py); controls Calamus, Tschida and Patterson reproduce their survey-table frame at <= 0.003 ft"
+    }
+   ],
+   "caveat": "Project vertical frame: shift only, never converted. The test shows RISE elevation and the diagram share a frame, not the frame's name. "
+  },
+  "Pathfinder Reservoir|WY": {
+   "decision": "SAME_SOURCE",
+   "group": "RISE-diagram-link",
+   "levelDatum": null,
+   "referenceDatum": null,
+   "method": "operator-doc",
+   "confidence": "high",
+   "sigmaFt": 0.1,
+   "summary": "Pool figure is a printed elevation of Reclamation's allocation diagram; RISE daily elevation reproduces RISE daily storage at the diagram's printed capacity (5852.49 ft = 1,070,185 af: -0.003 ft), so RISE and the pool are in one Reclamation vertical frame.",
+   "evidence": [
+    {
+     "url": "https://www.usbr.gov/gp/aop/resaloc/pathfinder.pdf",
+     "says": "allocation diagram (revised 5/19/16) prints pool 5852.49 ft and its capacity; the Depth reference pool IS this diagram's elevation"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/645",
+     "says": "RISE daily Lake/Reservoir Elevation item bound by Lake Brain"
+    },
+    {
+     "url": "https://data.usbr.gov/rise/api/catalog-item/644",
+     "says": "RISE daily Lake/Reservoir Storage item at the same location"
+    },
+    {
+     "url": "docs/brains/depth/data/rise_diagram_link.json",
+     "says": "fit of RISE elevation at the printed capacity (research/depth/rise_diagram_link.py); controls Calamus, Tschida and Patterson reproduce their survey-table frame at <= 0.003 ft"
+    }
+   ],
+   "caveat": "Project vertical frame: shift only, never converted. The test shows RISE elevation and the diagram share a frame, not the frame's name. "
+  }
+ }
+}
