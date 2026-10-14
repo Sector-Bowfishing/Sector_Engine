@@ -45,7 +45,7 @@ Status (updated 2026-10-14): the control-plane mirror, `fleetBindingStatus` and 
 | 18 | Last score evaluation | `…score.scoreUpdatedAt` | 2026-10-13T19:51:44Z | yes | yes ("scored x ago") | SUPPORTED | – |
 | 19 | Last score *change* | none (`scoreUpdatedAt` is the evaluation time, not the time the value changed) | – | no | no | **ENGINE GAP** (score events exist in `/activity`; not summarised per Brain) | Low |
 | 20 | Geometry registry state | public static `gs://sector-lake-registry/registry/lakes.v1.json` | see `LAKE_REGISTRY_GEOMETRY_CONTRACT.md` | Ops does not read the registry | no | **OPS GAP** (consumption designed in the contract) | Medium |
-| 22 | Claim-level maturity | `/brains/lake-brain.claimMaturity{claim: {level, maturity, note}}` (**new**, ships with the next Lake image) | – | no | no | **FIXED-PENDING-DEPLOY** (Engine) + **OPS GAP** | Medium |
+| 22 | Claim-level maturity | `/brains/lake-brain.claimMaturity{claim: {level, maturity, note}}` (**new**) | 7 claims: currentLevel L1 PROVIDER_VERIFIED … rapidChange L3 NOT_VALIDATED | no | no | **LIVE 2026-10-14T05:25Z** (Engine) + **OPS GAP** | Medium |
 | 21 | Production-readiness (≥ 8.0 overall, every critical dimension ≥ 7.5) | Ops uses its own `src/lib/productionPolicy.ts`; Engine publishes no `productionPolicy` and no `requiredDimensions` | – | the evaluator is wired but starves for `requiredDimensions` | shows a policy chip without critical-dimension detail | **ENGINE GAP** (needs Michael to ratify which dimensions are critical — a proposal is in `LAKE_BRAIN_PRODUCTION_READINESS_MATRIX.md`) | Medium |
 
 ## 3. What the Engine changed (this campaign, on `feat/lake-fleet-opsvis`; live after the next brain-jobs image deploy + score publish)
