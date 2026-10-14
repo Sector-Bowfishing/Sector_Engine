@@ -15,6 +15,7 @@ import json
 import os
 from datetime import datetime
 
+from . import exposure as EX
 from . import field_schema as FS
 
 PACKET_SCHEMA = "sector-wind-field-packet-v1"
@@ -47,8 +48,9 @@ def build(lake_entry: dict, pairs: list[dict], session_date: str, observer: str,
                         "effectiveFetchM": side["effectiveFetchM"], "predictedHm0In": side["predictedHm0In"], "type": p["type"], "axis": p["axis"]})
             template.append({"schema": FS.SCHEMA, "id": f"{sid}|{bid}", "lakeId": lake, "bankId": side["bankId"], "observedAtUtc": None, "observer": observer,
                              "roughnessObserved": None, "bankImpactObserved": None, "boatability": None, "observerConfidence": None, "observerSawPrediction": False,
-                             "wind": {"source": "visualEstimate", "speedMph": None, "directionFromDeg": None}, "pairId": f"{sid}|{pid}", "pairRole": role, "tags": ["practice"] if practice else []})
+                             "wind": {"source": "visualEstimate", "speedMph": None, "directionFromDeg": None}, "pairId": f"{sid}|{pid}", "pairRole": role, "tripId": sid, "tags": ["practice"] if practice else []})
     sealed = {"SEALED": "Scorer only. The observer must not open this file before submitting every record.", "schema": PACKET_SCHEMA, "sessionId": sid, "lake": lake,
+              "tripId": sid, "predictionVersion": {"rulesVersion": EX.RULES_VERSION, "rulesFingerprint": EX.rules_fingerprint()},
               "geometryTier": lake_entry["tier"], "geometryConfidence": lake_entry["geometryConfidence"], "planningWind": planning_wind,
               "pairs": [{"pairId": f"P{i}", "type": p["type"], "axis": p["axis"], "windFromDegForAExposed": p["windFromDeg_forAasExposed"], "distanceM": p["distanceM"]} for i, p in enumerate(pairs, 1)],
               "banks": key, "practice": practice}

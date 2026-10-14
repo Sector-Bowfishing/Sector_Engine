@@ -62,3 +62,15 @@ def test_every_candidate_lake_can_be_packaged(tmp_path):
         if c["pairs"]:
             r = FP.build(c, c["pairs"][:2], "2026-10-20", "t", str(tmp_path / f"l{i}"))
             assert r["banks"] == 4
+
+
+def test_packet_stamps_trip_id_and_prediction_version_without_leaking_it_to_the_observer(tmp_path):
+    """Shared-trip compatibility: tripId on every record; the sealed key preserves the rules version/fingerprint the predictions were made under."""
+    from sector_wind.brain import exposure as EX
+    out = tmp_path / "t"
+    r = FP.build(CAND["Guntersville|AL"], pairs_for("Guntersville|AL", 2), "2026-10-20", "mc", str(out))
+    key = json.load(open(out / "SEALED-KEY.json")); tpl = json.load(open(out / "RECORD-TEMPLATE.json"))
+    assert key["tripId"] == r["sessionId"] and key["predictionVersion"] == {"rulesVersion": EX.RULES_VERSION, "rulesFingerprint": EX.rules_fingerprint()}
+    assert all(x["tripId"] == r["sessionId"] for x in tpl)
+    for f in ("OBSERVER-SHEET.csv", "MAP-LINKS.txt", "SESSION-README.txt", "RECORD-TEMPLATE.json"):
+        assert EX.rules_fingerprint() not in read(out, f)
