@@ -1,6 +1,6 @@
 {
  "schema": "depth-local-datum-equivalence-v1",
- "gate": "n>=20, |mean|<=0.10 ft, SD<=0.25 ft, not circular",
+ "gate": "paired-usgs-series: n>=20, |mean|<=0.10 ft, SD<=0.25 ft, not circular; cwms-storage-fit: |best offset|<=0.10 ft, relative RMS<=0.005 through the rating's stated native datum",
  "lakes": {
   "Clinton Lake|KS": {
    "localEquals": "NGVD29",
@@ -15,7 +15,8 @@
     0.03
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06891478&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06891478&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
   },
   "Kanopolis Lake|KS": {
    "localEquals": "NGVD29",
@@ -30,7 +31,8 @@
     0.006
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06865000&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06865000&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
   },
   "Melvern Lake|KS": {
    "localEquals": "NGVD29",
@@ -45,7 +47,8 @@
     0.063
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06910997&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06910997&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
   },
   "Milford Lake|KS": {
    "localEquals": "NGVD29",
@@ -60,7 +63,8 @@
     0.001
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06857050&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06857050&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
   },
   "Perry Lake|KS": {
    "localEquals": "NGVD29",
@@ -75,7 +79,8 @@
     0.012
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06890898&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06890898&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
   },
   "Pomona Lake|KS": {
    "localEquals": "NGVD29",
@@ -90,7 +95,8 @@
     0.001
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06912490&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06912490&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
   },
   "Tuttle Creek Lake|KS": {
    "localEquals": "NGVD29",
@@ -105,7 +111,8 @@
     0.076
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06886900&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06886900&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
   },
   "Wilson Lake|KS": {
    "localEquals": "NGVD29",
@@ -120,7 +127,44 @@
     0.0
    ],
    "window": "2025-10-13..2026-10-13",
-   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06868100&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21"
+   "url": "https://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=06868100&parameterCd=62614&startDT=2025-10-13&endDT=2026-01-21",
+   "method": "paired-usgs-series"
+  },
+  "Rathbun Lake|IA": {
+   "method": "cwms-storage-fit",
+   "localEquals": "NGVD29",
+   "usgsSite": null,
+   "usgsParam": null,
+   "n": 8662,
+   "meanFt": -0.0,
+   "sdFt": 0.0,
+   "ratingId": "RATN-Rathbun_Lake-Chariton.Elev;Stor.Storage_Curves.Production",
+   "storTsid": "RATN.Stor.Inst.1Hour.0.Best-NWK",
+   "url": null
+  },
+  "Pomme de Terre Lake|MO": {
+   "method": "cwms-storage-fit",
+   "localEquals": "NGVD29",
+   "usgsSite": null,
+   "usgsParam": null,
+   "n": 8662,
+   "meanFt": -0.0,
+   "sdFt": 2e-05,
+   "ratingId": "PODT-Pomme_De_Terre_Lake-Pomme_De_Ter.Elev;Stor.Storage_Curves.Production",
+   "storTsid": "PODT.Stor.Inst.1Hour.0.Best-NWK",
+   "url": null
+  },
+  "Smithville Lake|MO": {
+   "method": "cwms-storage-fit",
+   "localEquals": "NGVD29",
+   "usgsSite": null,
+   "usgsParam": null,
+   "n": 8661,
+   "meanFt": -0.0,
+   "sdFt": 0.0,
+   "ratingId": "SMIE-Smithville_Lake-Little_Platte.Elev;Stor.Storage_Curves.Production",
+   "storTsid": "SMIE.Stor.Inst.1Hour.0.Best-NWK",
+   "url": null
   }
  }
 }

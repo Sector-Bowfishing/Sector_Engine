@@ -9018,12 +9018,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 8,
@@ -9042,11 +9044,15 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Rock Island (MVR)",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -9056,6 +9062,41 @@
     "poolFt": 904,
     "source": "https://cwms-data.usace.army.mil/cwms-data/levels?office=NWDM&level-id-mask=RATN.Elev.Inst.0.Top%20of%20Conservation&unit=EN",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3155,
+     "3.0": 0.1003,
+     "6.0": 0.1992
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": -0.0,
+     "n": 8662,
+     "sdFt": 0.0,
+     "usgsParam": null,
+     "usgsSite": null
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1998-05-13",
+     "elevRangeFt": [
+      855.0,
+      946.0
+     ],
+     "id": "RATN-Rathbun_Lake-Chariton.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/RATN-Rathbun_Lake-Chariton.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 904.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating RATN-Rathbun_Lake-Chariton.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -19092,12 +19133,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 8,
@@ -19116,11 +19159,15 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Kansas City",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -19130,6 +19177,41 @@
     "poolFt": 839,
     "source": "CWMS NWDM PODT Top of Multi-Purpose",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2403,
+     "3.0": 0.0979,
+     "6.0": 0.1666
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": -0.0,
+     "n": 8662,
+     "sdFt": 2e-05,
+     "usgsParam": null,
+     "usgsSite": null
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2019-01-01",
+     "elevRangeFt": [
+      751.43,
+      907.43
+     ],
+     "id": "PODT-Pomme_De_Terre_Lake-Pomme_De_Ter.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/PODT-Pomme_De_Terre_Lake-Pomme_De_Ter.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 839.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating PODT-Pomme_De_Terre_Lake-Pomme_De_Ter.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -19153,12 +19235,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 8,
@@ -19177,11 +19261,15 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Kansas City",
-   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -19191,6 +19279,41 @@
     "poolFt": 864.2,
     "source": "CWMS NWDM SMIE Top of Multi-Purpose",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3041,
+     "3.0": 0.0947,
+     "6.0": 0.1917
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "localDatumEquivalence": {
+     "localEquals": "NGVD29",
+     "meanFt": -0.0,
+     "n": 8661,
+     "sdFt": 0.0,
+     "usgsParam": null,
+     "usgsSite": null
+    },
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1998-05-13",
+     "elevRangeFt": [
+      809.0,
+      899.0
+     ],
+     "id": "SMIE-Smithville_Lake-Little_Platte.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/SMIE-Smithville_Lake-Little_Platte.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 864.2,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating SMIE-Smithville_Lake-Little_Platte.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -41519,10 +41642,10 @@
   "tier": {
    "A": 77,
    "B": 26,
-   "C": 140,
-   "D": 322,
+   "C": 143,
+   "D": 319,
    "UNKNOWN": 56
   },
-  "zonesAvailableForReference": 169
+  "zonesAvailableForReference": 172
  }
 }
