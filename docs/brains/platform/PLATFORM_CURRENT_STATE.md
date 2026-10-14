@@ -1,5 +1,7 @@
 # Platform Current State (verified 2026-10-14, read-only)
 
+> **Update 05:15Z — COST FREEZE applied.** `brain-orchestrator`, `water-temp-tva-archive`, `lake-surface-dispatch` are now **PAUSED**; enabled Brain schedulers are only `wind-hourly` and the new `lake-brain-ledger-daily`. The scheduler table below is the *pre-freeze* state. See `cost-freeze/`.
+
 Method: `git fetch --all --prune`; `gcloud run jobs/scheduler describe/list` (read-only); live RTDB GETs through the platform client; read-only dry runs of the real publisher. Older handoffs were **not** assumed to describe the present.
 
 ## Deployed orchestrator

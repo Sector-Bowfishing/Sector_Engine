@@ -1,0 +1,98 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "b6a699c1-478a-48ca-9a81-2267b93d7c65"
+    },
+    "creationTimestamp": "2026-10-13T05:25:47.363774Z",
+    "generation": 3,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "commit": "a9d1af8f749b",
+      "run.googleapis.com/lastUpdatedTime": "2026-10-14T04:30:43.915022Z"
+    },
+    "name": "lake-brain",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZdxW7hNhs",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/lake-brain",
+    "uid": "dff51bcc-66c7-4e04-9454-24d370e31909"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "duc_det_jef",
+          "commit": "a9d1af8f749b"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "--rtdb",
+                  "https://sector-brain.firebaseio.com",
+                  "--archive",
+                  "gs://sector-lake-brain",
+                  "--scope",
+                  "pilots"
+                ],
+                "command": [
+                  "/app/LakeBrainJob"
+                ],
+                "env": [
+                  {
+                    "name": "SECTOR_BRAIN_RTDB_URL",
+                    "value": "https://sector-brain.firebaseio.com"
+                  },
+                  {
+                    "name": "SECTOR_ENGINE_COMMIT",
+                    "value": "a9d1af8f749b"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/brain-jobs:a9d1af8f749b",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "1Gi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 0,
+            "serviceAccountName": "brain-writer@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "900"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 8,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-14T04:33:28.666208Z",
+      "creationTimestamp": "2026-10-14T04:30:57.577433Z",
+      "name": "lake-brain-nsv8j"
+    },
+    "observedGeneration": 3
+  }
+}

@@ -87,4 +87,10 @@ else
   run gcloud scheduler jobs create http "$JOB" --project "$PROJECT_ID" --location "$REGION" \
     --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SA"
 fi
+# Cost freeze (2026-10-14): pre-production Brains are OFF by default. The scheduler is left PAUSED unless SCHEDULE_STATE=enabled is given,
+# and enabling needs a recorded gate (docs/brains/platform/cost-freeze/PREPRODUCTION_PAUSED_JOBS.md section 3).
+if [[ "${SCHEDULE_STATE:-paused}" != "enabled" ]]; then
+  run gcloud scheduler jobs pause "$JOB" --project "$PROJECT_ID" --location "$REGION"
+  echo "  scheduler left PAUSED (cost freeze). Run manually: gcloud run jobs execute $JOB --region $REGION --wait"
+fi
 echo "✅ $JOB deployed. Dry cycle: gcloud run jobs execute $JOB --region $REGION --args=--dry-run"

@@ -29,6 +29,8 @@ Otherwise the Brain is fingerprint/dependency driven and the orchestrator decide
 `fingerprint.decide(material, previous)` → `RUN` (first run or material change) or `SKIP` ("no material input changed"). A Brain stores the **planned** fingerprint (the one computed *before* any upgrade of its own view), never a recomputation after (the Intelligence republish-every-cycle bug, fixed in `7a563c18`).
 
 ## 5. The orchestrator's role
+> **Cost freeze (2026-10-14): the hourly orchestrator schedule is PAUSED.** Pre-production Brains run manually; the job stays deployable and manually runnable (`cost-freeze/PREPRODUCTION_MANUAL_RUNBOOK.md`). The description below is the design and the behaviour when it is run.
+
 Coordinates: freshness checks, dependency changes, safe publication, recovery, stale detection, control-plane updates. It does not run a Brain because an hour passed. Today (deployed, gen 8, `5fd727ef`): hourly `50 * * * *` UTC wake-up → sync `/jobs` → plan (TIME Brains from `staleAfterHours`, VERSION/FINGERPRINT Brains from their own `--plan`) → start only what the plan says → publish scores/control only if a Brain's `lastSuccessfulRun` changed → record `/control/orchestrator`. That backstop is kept. Wind (`wind-hourly` :05) and Clarity (manual) are reported, not started.
 
 ## 6. Customer hot-path rule (hard)
@@ -37,7 +39,9 @@ A customer page view must not trigger heavy Brain compute. Runtime = *read compa
 ## 7. Ops hot-path rule
 Opening Sector Ops is not an Engine event: it consumes cached control state, registry state and durable scores. Load/reload/navigation/multi-tab/focus/reconnect → RTDB reads only. Ops has no credentials that can start a job (rules deny client writes; `run.invoker` is held only by the `brain-writer` service account).
 
-## 8. Cost model (reviewed 2026-10-14, live state)
+## 8. Cost model (reviewed 2026-10-14; superseded by the cost freeze — see `cost-freeze/PREPRODUCTION_RECURRING_JOB_INVENTORY.md` §4)
+_The table below describes the state before the freeze._
+
 | Surface | Today | Assessment |
 |---|---|---|
 | Cloud Run | `brain-orchestrator` 1 vCPU/512 Mi, ≤30 min cap, ~8 s typical, scale-to-zero | ok |

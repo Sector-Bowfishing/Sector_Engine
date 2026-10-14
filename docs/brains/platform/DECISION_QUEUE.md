@@ -1,5 +1,7 @@
 # Decision Queue (Brain Platform campaign)
 
+Cost-freeze items (C-1…C-5) are in `cost-freeze/COST_FREEZE_DECISION_QUEUE.md`. Note for **D-1**: a redeploy now leaves the orchestrator scheduler PAUSED by default (`SCHEDULE_STATE=enabled` to override).
+
 Items that need Michael (authorisation) or a specialist owner. Everything else was done. Newest decisions last; resolved items move to the bottom with the outcome.
 
 | ID | Decision | Why it is queued | Recommendation | Blocks |

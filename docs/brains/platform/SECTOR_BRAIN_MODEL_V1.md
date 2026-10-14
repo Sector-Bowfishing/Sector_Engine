@@ -5,6 +5,11 @@
 
 Builds on, and does not replace, `BRAIN_PLATFORM_CONTRACT.md` (RTDB keys, envelopes, ownership) and `OPS_CONTROL_PLANE_CONTRACT.md`. Model v1 adds the *shared language* those contracts lack: what a claim is, how mature it is, where a Brain is in its life, why it runs, what "score" means, and how a score is published safely.
 
+> ## RESEARCH DOES NOT REQUIRE A RUNNING PRODUCTION SYSTEM.
+> We pay for **information we need, when we need it.** We do **not** pay to keep **unfinished Brains, idle research, internal dashboards or static scores artificially fresh.**
+> Pre-production Brains are **OFF by default**. A capability score does not decay hourly; if code, evidence, validation and coverage are unchanged, the score is unchanged and nothing needs to run.
+
+
 > **Specialist Brains own the science. The platform owns the rules that let the science operate safely.**
 > Engine owns truth · Ops owns presentation · specialists own domain science · platform owns shared mechanics.
 
@@ -67,3 +72,14 @@ The durable canonical score store is **already** RTDB `/scores/{brainId}`. A fro
 
 ## 8. What is deliberately NOT here
 Kafka, an event bus, Pub/Sub topology, a workflow engine, a persistent queue, a distributed scheduler, a handoff database, a second field framework. Fingerprints + the existing jobs + the one orchestrator are sufficient; add machinery only when a measured failure demands it.
+
+## 9. PRE-PRODUCTION COST POLICY (effective 2026-10-14)
+A Brain may spend **recurring** cloud money before Production only when **all** hold: (1) it advances a **named readiness gate**; (2) the evidence **cannot reasonably be reconstructed later**; (3) the cost is **bounded**; (4) a **stop condition** is defined; (5) **cheaper alternatives were considered** (manual, on-demand, lighter capture). Everything else is manual, on-demand, dependency-driven, paused, or local.
+- Valid exceptions: **A** irreplaceable prospective validation; **B** external provider ingestion needed for an active readiness gate; **C** minimal platform health function a required active system depends on; **D** current customer production (no Brain has one yet).
+- Per-job financial gate (answer all or **pause**): job; production gate advanced; irreplaceable data lost if paused; why not manual; estimated monthly cost; customer depends (Y/N); stop date/condition; verdict KEEP TEMPORARILY / PAUSE / MANUAL ONLY.
+- Ops and scores are not reasons to run: an internal dashboard showing old timestamps honestly is acceptable; a score is published after a legitimate capability/evidence change or an approved development cycle, never because an hour passed. Stale-score protections stay.
+- **Production activation gate:** before a Brain moves toward `PRODUCTION_READY` its owner files an activation proposal — required jobs, cadence and why, expected monthly cost, freshness target, dependency triggers, failure behaviour, rollback, scale behaviour. Only then do recurring operations come back on.
+- **Reactivation** needs a recorded form (Brain, readiness gate, why recurring is necessary, expected cost, expected duration, stop condition) — a specialist asking to "turn my hourly job back on" is not sufficient.
+- Pause, never destroy: previous state, schedule, target, image and reason are recorded (`cost-freeze/PREPRODUCTION_PAUSED_JOBS.md`); restore is one command. Enforced by `jobs/brain-orchestrator/check_preproduction_schedules.py` against `cost-freeze/schedule-policy.json`.
+- Cloud Run: pre-production services default `min instances = 0`; jobs have no compute between invocations.
+- Current application (2026-10-14): enabled = `wind-hourly` (Wind reliability gate, ≈ $4/mo) and `lake-brain-ledger-daily` (Lake prediction ledger, ≈ $0.08/mo); everything else paused. See `cost-freeze/`.
