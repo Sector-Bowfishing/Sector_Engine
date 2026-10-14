@@ -309,8 +309,9 @@ PLATFORM = {"implementation": "sector_brain_platform", "contract": "docs/brains/
 
 
 def build_updates(b: Bundle, *, now: dt.datetime, uri_root: str, deployment: str, descriptor: dict, duration_ms: int,
-                  published: dict | None, existing_species: set[str] | None, event_id: str | None) -> dict:
-    """The complete multi-path update for one publish (applied atomically)."""
+                  published: dict | None, existing_species: set[str] | None, event_id: str | None, include_profiles: bool = False) -> dict:
+    """The complete multi-path update for one publish (applied atomically). `include_profiles` (default OFF: nothing changes for the current publisher) adds each species'
+    `biological-species-profile-v1` as `/species/{id}/profile` and a compact `coverageMatrix` on the registry."""
     ts = now.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifest_uri = f"{uri_root}/{b.manifest_ref}"
     up = {}
@@ -320,6 +321,12 @@ def build_updates(b: Bundle, *, now: dt.datetime, uri_root: str, deployment: str
     for gone in sorted((existing_species or set()) - set(b.profiles)):
         up[f"/species/{gone}"] = None                       # retired from the registry: remove its summary
     up[f"/brains/{BRAIN_ID}"] = registry_entry(b, ts, "HEALTHY", deployment, manifest_uri, descriptor)
+    if include_profiles:
+        import profile_bundle as _pb
+        profs = _pb.profiles_from_bundle(b)
+        for sid, prof in profs.items():
+            up[f"/species/{sid}"]["profile"] = _clean(prof)
+        up[f"/brains/{BRAIN_ID}"]["coverageMatrix"] = _clean(_pb.coverage_matrix(profs))
     up[f"/validation/{BRAIN_ID}"] = _clean(validation_summary(ts, b.capability))
     up[f"/health/brains/{BRAIN_ID}"] = health_record(ts, duration_ms, deployment)
     prev = (published or {}).get("researchVersion")

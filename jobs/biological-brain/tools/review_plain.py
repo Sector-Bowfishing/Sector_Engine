@@ -16,7 +16,7 @@ MEANING = {
     ("fallingStage", "LIMITING"): "The margins are emptying; move to channels, backwaters and holes.", ("warmRise", "FAVORABLE"): "Warm water plus a rising lake pushes fish onto flooded edges.",
     ("coldRise", "LIMITING"): "A rise in cold water does little; do not expect a push into the shallows.", ("daypart", "FAVORABLE"): "Work the shallows after dark.",
     ("daypart", "WORKABLE"): "Night trips are worth it in this condition.", ("clarityBand", "WORKABLE"): "Muddy water does not keep them away.", ("clarityBand", "LIMITING"): "Dirty water makes them hard to see or find.",
-    ("waterTempBand", "LIMITING"): "Cold water: slow fish, few in the shallows.", ("waterTempBand", "BLOCKING"): "Too cold: expect almost none.", ("waterTempBand", "WORKABLE"): "Workable water temperature.",
+    ("waterTempBand", "LIMITING"): "Cold water: slow fish, few in the shallows.", ("waterTempBand", "BLOCKING"): "Too cold: expect almost none.", ("waterTempBand", "WORKABLE"): "Workable water temperature.", ("daypart", "LIMITING"): "Night is a poor time for this fish in this condition.", ("daypart", "BLOCKING"): "Do not expect fish at this time.",
     ("waterTempBand", "FAVORABLE"): "Water in the sweet spot: fish move shallow.", ("stageTrend", "LIMITING"): "Fast-falling water strands or pulls fish out of the shallows.",
 }
 HAB_MEANING = {"FAVOR": "Look in ", "AVOID": "Skip "}

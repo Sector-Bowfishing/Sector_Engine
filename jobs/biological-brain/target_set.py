@@ -67,3 +67,10 @@ def check_disjoint() -> list[str]:
         if both:
             e.append(f"{n}: {sorted(both)}")
     return e
+
+# Species where new research is not worth commissioning (protected, policy-held, not a Sector target). Used only to label research priority DO_NOT_RESEARCH; knowledge stays displayed.
+DO_NOT_RESEARCH = {
+    "paddlefish": "protected; not a target", "american_shad": "managed gamefish; not legal by default", "channel_catfish": "not sight-shootable by Sector policy",
+    "black_buffalo": "policy REFUSE; field identification unreliable", "black_carp": "injurious; reporting only", "blue_sucker": "protected/concern; not a realistic bow target",
+    "striped_mullet": "saltwater-primary: future phase", "highfin_carpsucker": "conservation concern; not a target",
+}

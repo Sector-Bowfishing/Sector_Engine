@@ -276,7 +276,8 @@ def fixture_ruleset():
     night = rule("EX-NGT-01", feature={"featureId": "daypart", "states": ["NIGHT"]}, response="FAVORABLE",
                  applicability={"regions": ["south"]})
     draft = rule("ED-FLW-01", sid="draft_fish", status="DRAFT", evidence=[ev(1, "s", counts=False, read="SNIPPET-ONLY")])
-    return rl.RuleSet([rule(), spn, night, draft], "t.1")
+    rules_ = [rule(), spn, night, draft]
+    return rl.RuleSet(rules_, "t.1", season_assertions={r["ruleId"]: "YEAR_ROUND" for r in rules_ if r["kind"] != "PHENOLOGY" and not (r.get("applicability") or {}).get("months")})
 
 
 class BiologicalStateTests(unittest.TestCase):

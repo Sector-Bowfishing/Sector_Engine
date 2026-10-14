@@ -53,7 +53,7 @@ def _net(rows) -> str | None:
     return "FAVORABLE" if g else ("LIMITING" if b else "WORKABLE")
 
 
-def species_outlook(sp: dict) -> dict:
+def species_outlook(sp: dict, month: int | None = None, rule_text: dict | None = None) -> dict:
     base = {"speciesId": sp["speciesId"], "claim": {"level": 3}}
     if not sp.get("evaluated"):
         return base | {"state": "UNKNOWN", "movement": "UNKNOWN", "activity": "UNKNOWN", "why": [], "cautions": [], "where": [], "confidence": None,
@@ -91,15 +91,27 @@ def species_outlook(sp: dict) -> dict:
         if w and w not in where:
             where.append(w)
     conf = _min_conf([r.get("confidence") for r in shallow + act] + [h.get("confidence") for h in habitats])
+    rule_ids = sorted({i for r in shallow + act for i in (r.get("evidenceBasis") or {}).get("ruleIds", [])} | {h["ruleId"] for h in habitats if h.get("ruleId")})
     return base | {"state": state, "movement": movement, "activity": activity, "why": why, "cautions": cautions, "where": where, "confidence": conf,
-                   "unknownFeatures": sorted({r["featureId"] for r in sp.get("responses") or [] if r["response"] == "UNKNOWN"})}
+                   "unknownFeatures": sorted({r["featureId"] for r in sp.get("responses") or [] if r["response"] == "UNKNOWN"}),
+                   "trace": explain(sp, month, rule_ids, rule_text)}
 
 
-def lake_outlook(state: dict, roles: dict | None = None) -> dict:
+def explain(sp: dict, month: int | None, rule_ids: list, rule_text: dict | None = None) -> dict:
+    """The WHY? panel: current inputs -> matched knowledge -> season check -> result. Internal/Ops debugging only (carries rule ids); the Intelligence view never includes it."""
+    inputs = [{"feature": r["featureId"], "state": r["featureState"], "band": r["response"]} for r in sp.get("responses") or []]
+    sw = (sp.get("spawnWindow") or {})
+    gated = (sp.get("knowledge") or {}).get("rules", {}).get("seasonGated", 0)
+    return {"inputs": inputs, "matchedKnowledge": [{"ruleId": i, "plain": (rule_text or {}).get(i)} for i in rule_ids],
+            "seasonCheck": {"month": month, "spawnWindow": sw.get("state") or "UNKNOWN", "spawnRuleApplies": sw.get("state") == "IN_WINDOW", "rulesNotEvaluatedForSeason": gated},
+            "result": "no rule applies" if not rule_ids else f"{len(rule_ids)} rule(s) applied"}
+
+
+def lake_outlook(state: dict, roles: dict | None = None, rule_text: dict | None = None) -> dict:
     """roles = {speciesId: TARGET|SECONDARY|KNOWLEDGE_ONLY}; targets first, knowledge-only species are returned but flagged."""
     out = []
     for sp in state.get("species") or []:
-        o = species_outlook(sp)
+        o = species_outlook(sp, state.get("context", {}).get("month"), rule_text)
         o["role"] = (roles or {}).get(sp["speciesId"], "KNOWLEDGE_ONLY" if roles else None)
         out.append(o)
     order = {"TARGET": 0, "SECONDARY": 1, "KNOWLEDGE_ONLY": 2, None: 3}

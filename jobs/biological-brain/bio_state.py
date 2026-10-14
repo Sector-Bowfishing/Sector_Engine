@@ -117,7 +117,8 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
             species_out.append(rec)
             continue
         all_rules = [r for r in ruleset.by_species.get(sid, []) if ruleset.is_active(r)]
-        use = ruleset.for_species(sid)
+        use = ruleset.evaluable(sid)
+        gated = ruleset.season_gated(sid)
         rec["knowledge"]["rules"] = ruleset.counts(sid)
         rec["seasonState"] = {"calendarSeason": SEASONS[month]}
         unknowns = []
@@ -141,6 +142,9 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
                     unknowns.append(f"{r['featureId']}: {r['reason']}")
             if not [r for r in responses if r["response"] != "UNKNOWN"]:
                 unknowns.append("no response band could be evaluated from current inputs")
+        if gated:
+            rec["knowledge"]["rules"]["seasonGated"] = len(gated)
+            unknowns.append(f"{len(gated)} rule(s) not evaluated: no season established for them (a reviewer must bound or assert YEAR_ROUND)")
         rec["unknowns"] = unknowns
         species_out.append(rec)
 

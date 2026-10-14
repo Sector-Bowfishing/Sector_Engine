@@ -37,7 +37,7 @@ def assess(files: dict[str, bytes]) -> dict:
         rules = []
         for f in man["files"]:
             rules += json.loads(files[f"rules/{f['path']}"])["rules"]
-        rs = rl.RuleSet(rules, man["rulesVersion"], source="bundle", retired=man.get("retired"))
+        rs = rl.RuleSet(rules, man["rulesVersion"], source="bundle", retired=man.get("retired"), season_assertions=man.get("seasonAssertions"))
     except (KeyError, ValueError, rl.RuleError) as e:
         return {"status": "NOT_STARTED", "validation": "NOT_STARTED", "blockers": [f"rules invalid: {e}"], "facts": {}}
     usable = [r for r in rs.active_rules() if r["status"] in rl.USABLE_STATUSES]

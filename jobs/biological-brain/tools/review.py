@@ -134,7 +134,7 @@ def apply_decisions(rs: rl.RuleSet, decisions: list[dict], now: dt.datetime) -> 
     return rules, retired, ledger, ver
 
 
-def write_dir(rules: list[dict], retired: list[dict], ledger: list[dict], version: str, out_dir: str) -> None:
+def write_dir(rules: list[dict], retired: list[dict], ledger: list[dict], version: str, out_dir: str, season_assertions: dict | None = None) -> None:
     os.makedirs(out_dir, exist_ok=True)
     by: dict[str, list] = {}
     for r in rules:
@@ -144,7 +144,7 @@ def write_dir(rules: list[dict], retired: list[dict], ledger: list[dict], versio
         body = json.dumps({"speciesId": sid, "rules": rr}, indent=1, sort_keys=True).encode()
         open(os.path.join(out_dir, f"{sid}.json"), "wb").write(body)
         files.append({"path": f"{sid}.json", "sha256": hashlib.sha256(body).hexdigest(), "bytes": len(body)})
-    json.dump({"schemaVersion": 1, "rulesVersion": version, "files": files, "retired": retired}, open(os.path.join(out_dir, "rules_manifest.json"), "w"), indent=1)
+    json.dump({"schemaVersion": 1, "rulesVersion": version, "files": files, "retired": retired, **({"seasonAssertions": season_assertions} if season_assertions else {})}, open(os.path.join(out_dir, "rules_manifest.json"), "w"), indent=1)
     with open(os.path.join(out_dir, "review_ledger.jsonl"), "a") as fh:
         for e in ledger:
             fh.write(json.dumps(e, sort_keys=True) + "\n")

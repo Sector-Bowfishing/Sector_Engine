@@ -27,6 +27,7 @@ RESPONSE_OR_UNKNOWN = RESPONSES + ("UNKNOWN",)
 KINDS = ("RESPONSE", "HABITAT", "PHENOLOGY")
 STATUSES = ("DRAFT", "RECONCILED", "APPROVED", "RETIRED")
 USABLE_STATUSES = ("RECONCILED", "APPROVED")
+SEASON_ASSERTIONS = ("YEAR_ROUND", "NEEDS_REVIEW")      # reviewer-assigned for rules with no month bound; absent = not established = does not fire
 CONFIDENCE = ("LOW", "MEDIUM", "HIGH")
 TRANSFER = ("UNTESTED", "PARTIAL", "TRANSFERS")           # worst -> best
 REGIONS = ("south", "lowerMid", "north", "west", "any")      # Engine Region vocabulary
@@ -182,7 +183,7 @@ class RuleSet:
     A retired (ruleId, version) stays in `rules` (and in the frozen register, for audit) but is never active, so a revised rule gets a new
     version and a new frozen identity instead of being edited after it was frozen."""
 
-    def __init__(self, rules: list[dict], rules_version: str, source: str = "memory", retired: list[dict] | None = None):
+    def __init__(self, rules: list[dict], rules_version: str, source: str = "memory", retired: list[dict] | None = None, season_assertions: dict | None = None):
         errs = validate_rule_set(rules)
         keys = {(r["ruleId"], r["ruleVersion"]): r for r in rules}
         self.retired: dict[tuple, dict] = {}
@@ -201,6 +202,10 @@ class RuleSet:
         if errs:
             raise RuleError("; ".join(errs[:8]) + (f" (+{len(errs) - 8} more)" if len(errs) > 8 else ""))
         self.rules_version, self.source = rules_version, source
+        self.season_assertions = dict(season_assertions or {})
+        bad = {k: v for k, v in self.season_assertions.items() if v not in SEASON_ASSERTIONS}
+        if bad:
+            raise RuleError(f"seasonAssertions: unknown value(s) {sorted(set(bad.values()))}")
         self.rules = list(rules)
         self.by_species: dict[str, list[dict]] = {}
         for r in rules:
@@ -214,6 +219,19 @@ class RuleSet:
 
     def for_species(self, sid: str, statuses=USABLE_STATUSES) -> list[dict]:
         return [r for r in self.by_species.get(sid, []) if r["status"] in statuses and self.is_active(r)]
+
+    def season_ok(self, r: dict) -> bool:
+        """Seasonal safety: a rule fires only when its season is established. Month-bounded rules and spawn windows are; an UNBOUNDED rule needs an explicit
+        YEAR_ROUND assertion (reviewed against the evidence). Anything else fails closed: it does not fire, and the state says so."""
+        if r["kind"] == "PHENOLOGY" or (r.get("applicability") or {}).get("months"):
+            return True
+        return self.season_assertions.get(r["ruleId"]) == "YEAR_ROUND"
+
+    def evaluable(self, sid: str) -> list[dict]:
+        return [r for r in self.for_species(sid) if self.season_ok(r)]
+
+    def season_gated(self, sid: str) -> list[dict]:
+        return [r for r in self.for_species(sid) if not self.season_ok(r)]
 
     def counts(self, sid: str) -> dict:
         rs = [r for r in self.by_species.get(sid, []) if self.is_active(r)]
@@ -232,7 +250,7 @@ def load_rules_dir(root: str) -> RuleSet:
             raise RuleError(f"rules file hash/size mismatch: {f['path']}")
         doc = json.loads(raw)
         rules += doc["rules"]
-    return RuleSet(rules, man["rulesVersion"], source=root, retired=man.get("retired"))
+    return RuleSet(rules, man["rulesVersion"], source=root, retired=man.get("retired"), season_assertions=man.get("seasonAssertions"))
 
 
 # ---------------------------------------------------------------- applicability
