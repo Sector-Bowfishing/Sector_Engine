@@ -1,5 +1,7 @@
 # Depth Brain: TVA datum confirmation
 
+> **UPDATE 2026-10-14 (long-run campaign): one more public route tried, nothing found.** `research/depth/tva_link_test.py` looked for an independent USGS lake-elevation series (62614 NGVD29 / 62615 NAVD88 / 72020 NGVD29) within 12 km of each of the 16 TVA dams in the USGS series catalog and found **none** (`data/tva_link_test.json`), so the Hartwell-style pairing that settled Kentucky-line datums elsewhere cannot be run for TVA. TVA publishes no storage series, so the storage-consistency check used for Reclamation does not apply either. The datum NAME stays `inferred`; the shift (one TVA system) is unaffected. The TVA request stays the only route.
+
 Date 2026-10-14. Research only; nothing sent to TVA. Raw data: `~/Desktop/Development/Sector_Research_Data/depth-brain/datum3/tva/`. Extends section 3.1 of `DEPTH_DATUM_AUDIT.md`. Machine twin: `proposals/provider_rules.json`.
 
 Two different questions, kept apart:
