@@ -11,6 +11,7 @@ from datetime import datetime
 
 from . import contract as C
 from . import zones as Z
+from . import rating as R
 from .datum import DatumAssessment, assess, normalize_datum
 from .shift import LevelObservation, ReferencePool, ShiftResult, compute_shift
 
@@ -73,6 +74,10 @@ def _effective_zones(z, res, ref) -> dict:
     re-based (`shift_survey = shift + refPool - surveyPool`) - valid only if the survey pool is in the same datum as the Depth reference."""
     if z.reference_status != "VERIFIED" or z.reference_pool_ft is None:
         return Z.effective_zones(z, res.shift_ft, res.sigma_ft)            # withheld by zones.py (SURVEY_REFERENCE_POOL_UNVERIFIED)
+    if z.kind == "stage-area-rating":                                      # built at the Depth reference pool itself: no re-basing, the datum relationship was settled when the manifest was built
+        if abs(z.reference_pool_ft - ref.pool_ft) > 1e-6:
+            return {"available": False, "reason": "RATING_POOL_IS_NOT_THE_REFERENCE_POOL"}
+        return Z.effective_zones(z, res.shift_ft, res.sigma_ft)
     sd, rd = normalize_datum(z.reference_pool_datum), normalize_datum(ref.datum)
     if sd is None or rd is None or sd != rd:
         return {"available": False, "reason": "SURVEY_REFERENCE_DATUM_NOT_COMPATIBLE"}
@@ -120,11 +125,20 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
     # Contour zones: only for tier A/B/C lakes whose manifest carries supported cumulative shares.
     zr = rec.get("referenceZones")
     if zr and ok and tier in ("A", "B", "C"):
+        kind_z = zr.get("kind", "contour")
+        curve = R.load_curves().get(lid) if kind_z == "stage-area-rating" else None
+        if kind_z == "stage-area-rating" and (curve is None or curve.get("poolFt") != zr.get("referencePoolFt")):
+            zr = None                                                       # the manifest names a rating this build does not carry: no zones, never a guess
+    if zr and ok and tier in ("A", "B", "C"):
         z = Z.ReferenceZones({float(k): v for k, v in zr["cumulative"].items()}, zr.get("intervalFt"), zr.get("coverage"), tier, zr.get("source", "?"),
-                             zr.get("surveyYear"), zr.get("referencePoolFt"), zr.get("referencePoolDatum"), zr.get("referenceStatus", "UNVERIFIED"), zr.get("flags") or [])
-        state["referenceZones"] = {"evidenceKind": "contour", "tier": tier, "source": z.source, **Z.reference_state(z),
-                                   "support": {"contourIntervalFt": z.interval_ft, "coverage": z.coverage, "surveyYear": z.survey_year},
-                                   "basis": "share of the surveyed surface at the survey reference pool"}
+                             zr.get("surveyYear"), zr.get("referencePoolFt"), zr.get("referencePoolDatum"), zr.get("referenceStatus", "UNVERIFIED"), zr.get("flags") or [],
+                             curve=curve, kind=kind_z)
+        state["referenceZones"] = {"evidenceKind": kind_z, "tier": tier, "source": z.source, **Z.reference_state(z),
+                                   "support": ({"contourIntervalFt": z.interval_ft, "coverage": z.coverage, "surveyYear": z.survey_year} if kind_z == "contour" else
+                                               {"ratingEffectiveDate": (zr.get("rating") or {}).get("effectiveDate"), "ratingVintageKnown": (zr.get("rating") or {}).get("vintageKnown"),
+                                                "ratingId": (zr.get("rating") or {}).get("id")}),
+                                   "basis": ("share of the surveyed surface at the survey reference pool" if kind_z == "contour" else
+                                             "share of the reference-pool surface from the operator's elevation-area rating (how much, never where)")}
         eff_z = _effective_zones(z, res, ref)
         state["effectiveZones"] = eff_z
         if eff_z.get("available"):

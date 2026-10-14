@@ -1,0 +1,118 @@
+{
+ "schema": "depth-tva-link-test-v1",
+ "generatedAt": "2026-10-14T04:43Z",
+ "results": {
+  "Guntersville": {
+   "lake": "Guntersville",
+   "tvaLocation": "GVDA1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Wheeler": {
+   "lake": "Wheeler",
+   "tvaLocation": "WHLA1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Wilson": {
+   "lake": "Wilson",
+   "tvaLocation": "WLSA1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Pickwick": {
+   "lake": "Pickwick",
+   "tvaLocation": "PICT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Chickamauga": {
+   "lake": "Chickamauga",
+   "tvaLocation": "CKDT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Fort Loudoun": {
+   "lake": "Fort Loudoun",
+   "tvaLocation": "FLDT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Nickajack": {
+   "lake": "Nickajack",
+   "tvaLocation": "NKJT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Watts Bar": {
+   "lake": "Watts Bar",
+   "tvaLocation": "WBOT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Kentucky": {
+   "lake": "Kentucky",
+   "tvaLocation": "KYDK2",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Fontana": {
+   "lake": "Fontana",
+   "tvaLocation": "FONN7",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Hiwassee": {
+   "lake": "Hiwassee",
+   "tvaLocation": "HIWN7",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Cherokee": {
+   "lake": "Cherokee",
+   "tvaLocation": "CRKT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Douglas": {
+   "lake": "Douglas",
+   "tvaLocation": "DUGT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Norris": {
+   "lake": "Norris",
+   "tvaLocation": "NRST1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "Tims Ford": {
+   "lake": "Tims Ford",
+   "tvaLocation": "TMFT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  },
+  "South Holston": {
+   "lake": "South Holston",
+   "tvaLocation": "SHDT1",
+   "tvaRows": 48,
+   "candidates": [],
+   "pairs": []
+  }
+ }
+}

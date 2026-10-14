@@ -20,6 +20,7 @@ from . import contract as C
 from . import zones as Z
 from .datum import DATA_DIR, DatumAssessment, assess, load_provider_table, normalize_datum, provider_level_datum
 from . import proposals
+from . import rating as R
 from .evidence import depth_tier_from_research
 
 USGS_PARAM_DATUM = {"62614": "NGVD29", "62615": "NAVD88"}       # USGS parameter definitions: surface elevation above NGVD 1929 / NAVD 1988
@@ -139,6 +140,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     cwms_locs = json.load(open(paths["cwms_locations"]))["lakes"] if paths.get("cwms_locations") and os.path.exists(paths["cwms_locations"]) else {}
     a2w = json.load(open(paths["a2w_datums"]))["lakes"] if paths.get("a2w_datums") and os.path.exists(paths["a2w_datums"]) else {}
     overrides = json.load(open(paths["overrides"])) if paths.get("overrides") and os.path.exists(paths["overrides"]) else {}
+    curves = R.load_curves(paths["stage_area"]) if paths.get("stage_area") and os.path.exists(paths["stage_area"]) else {}
     twdb_ver = proposals.twdb_updates(paths.get("twdb_reference_pools")) if paths.get("twdb_reference_pools") else {}
     twdb_all = (proposals.load(paths["twdb_reference_pools"]) or {}).get("lakes", {}) if paths.get("twdb_reference_pools") else {}
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
@@ -217,6 +219,18 @@ def build(paths: dict, manifest_version: str) -> dict:
             zr.update({"referenceStatus": "VERIFIED", "referencePoolFt": tw["referencePoolFt"], "referencePoolDatum": tw["referencePoolDatum"],
                        "surveyYear": tw.get("surveyYear"), "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)"})
             ev["surveyYear"] = tw.get("surveyYear")
+        rating_withheld = None
+        if lid in curves and not (zr and zr.get("referenceStatus") == "VERIFIED"):                     # a validated contour reference (TWDB) keeps priority
+            rz, why_r = R.rating_reference_zones(curves[lid], lk.get("fullPoolFt"), rd, rd_ver, a.status, {float(k): v for k, v in (zr or {}).get("cumulative", {}).items()} or None)
+            if rz:
+                zr = rz
+                ev["contourSources"] = list(ev["contourSources"]) + ["USACE_CWMS"]
+                if ev["kind"] in ("unknown", "proxy"):                                  # no measured contours: the rating is the depth-share evidence, at tier C (shares only)
+                    tier, ev["tier"], ev["kind"] = "C", "C", "stage-area-rating"
+                    ev["bestSource"] = "USACE CWMS elevation-area rating (shares only)"
+                    ev["hypsometryOnly"] = False
+            else:
+                rating_withheld = why_r
         licence = licence_for(ev["contourSources"], lic)
         rec = {
             "lakeId": lid, "lakeName": lk.get("name"), "state": lk.get("state"), "operator": lk.get("operatorName"), "cwmsOffice": lk.get("cwmsOffice"),
@@ -232,6 +246,8 @@ def build(paths: dict, manifest_version: str) -> dict:
         }
         if zr:
             rec["referenceZones"] = zr
+        if rating_withheld:
+            rec["ratingZoneWithheld"] = rating_withheld
         out.append(rec)
     summary = {
         "lakes": len(out), "shiftPossible": sum(r["shiftPossible"] for r in out),

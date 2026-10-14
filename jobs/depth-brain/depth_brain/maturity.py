@@ -61,8 +61,11 @@ def fleet_metrics(manifest: dict) -> dict:
         "plausibleBlockedByDatum": sum(1 for x in c if _g(x, "reference", "basis") == "fullPool" and _g(x, "reference", "confidence") in ("high", "medium")
                                        and _g(x, "levelSource", "status", default="NONE") != "NONE" and not _g(x, "shiftPossible", default=False)),
         "tierAB": len(tier_ab),
-        "referenceZoneLakes": sum(1 for x in c if "referenceZones" in x),
-        "effectiveZoneEligible": sum(1 for x in c if _g(x, "referenceZones", "referenceStatus") == "VERIFIED" and _g(x, "shiftPossible", default=False)),
+        "referenceZoneLakes": sum(1 for x in c if "referenceZones" in x and _g(x, "referenceZones", "kind", default="contour") == "contour"),
+        "effectiveZoneEligible": sum(1 for x in c if _g(x, "referenceZones", "kind", default="contour") == "contour" and _g(x, "referenceZones", "referenceStatus") == "VERIFIED" and _g(x, "shiftPossible", default=False)),
+        # operator elevation-area ratings (RATING-ZONE-RULES-1): exact shares by construction, NOT validated against an independent table; counted apart from the contour lakes
+        "ratingZoneLakes": sum(1 for x in c if _g(x, "referenceZones", "kind") == "stage-area-rating"),
+        "ratingZoneEligible": sum(1 for x in c if _g(x, "referenceZones", "kind") == "stage-area-rating" and _g(x, "shiftPossible", default=False)),
         "licenceAllowedAB": sum(1 for x in tier_ab if _g(x, "licence", "customerDerivedMetricsAllowed") == "true"),
         "manifestVersion": manifest.get("manifestVersion"),
     }
@@ -103,7 +106,7 @@ def check_increase(prev: dict | None, inputs: dict) -> list[str]:
 
 def diff(prev: dict | None, cur: dict) -> dict:
     keys = ("shiftPossible", "verifiedDatum", "highConfidence", "mediumConfidence", "blocked", "pilotVerified", "inferredOperatorSystem",
-            "referenceZoneLakes", "effectiveZoneEligible", "licenceAllowedAB")
+            "referenceZoneLakes", "effectiveZoneEligible", "ratingZoneLakes", "ratingZoneEligible", "licenceAllowedAB")
     pf = (prev or {}).get("fleet") or {}
     out = {k: {"previous": pf.get(k), "new": cur["fleet"][k]} for k in keys}
     out["researchMaturity"] = {"previous": (prev or {}).get("overall"), "new": cur["overall"]}

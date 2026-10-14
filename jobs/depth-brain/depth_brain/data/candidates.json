@@ -725,7 +725,9 @@
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
-    "contourSources": [],
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
     "kind": "contour",
     "researchTier": "B-binary",
@@ -748,8 +750,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "Alabama Power",
    "reference": {
@@ -761,6 +768,33 @@
     "poolFt": 255,
     "source": "CWMS Bankhead.Elev.Inst.0.Top of Normal (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1725,
+     "3.0": 0.0557,
+     "6.0": 0.1076
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1975-04-01",
+     "elevRangeFt": [
+      180.0,
+      280.0
+     ],
+     "id": "Bankhead.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Bankhead.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 255.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Bankhead.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -927,6 +961,7 @@
     "customerDerivedMetricsAllowed": "n/a"
    },
    "operator": "Alabama Power",
+   "ratingZoneWithheld": "R2_SERIES_POOL_RELATIONSHIP_NOT_ESTABLISHED",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -957,12 +992,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -981,8 +1018,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "Alabama Power",
    "reference": {
@@ -994,6 +1036,33 @@
     "poolFt": 490,
     "source": "CWMS Martin.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1499,
+     "3.0": 0.0455,
+     "6.0": 0.0906
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1926-01-01",
+     "elevRangeFt": [
+      425.0,
+      503.0
+     ],
+     "id": "Martin.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Martin.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 490.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Martin.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -1042,6 +1111,7 @@
     "customerDerivedMetricsAllowed": "n/a"
    },
    "operator": "Alabama Power",
+   "ratingZoneWithheld": "R2_SERIES_POOL_RELATIONSHIP_NOT_ESTABLISHED",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -1072,12 +1142,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 1,
@@ -1096,8 +1168,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "Alabama Power",
    "reference": {
@@ -1109,6 +1186,33 @@
     "poolFt": 465,
     "source": "CWMS LoganMartin.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3952,
+     "3.0": 0.1383,
+     "6.0": 0.2597
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1964-07-01",
+     "elevRangeFt": [
+      400.0,
+      490.0
+     ],
+     "id": "LoganMartin.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/LoganMartin.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 465.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating LoganMartin.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -1187,12 +1291,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 1,
@@ -1211,8 +1317,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "Alabama Power",
    "reference": {
@@ -1224,6 +1335,33 @@
     "poolFt": 510,
     "source": "CWMS Smith.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1466,
+     "3.0": 0.0469,
+     "6.0": 0.0913
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1967-03-01",
+     "elevRangeFt": [
+      250.0,
+      550.0
+     ],
+     "id": "Smith.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Smith.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 510.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Smith.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -1245,12 +1383,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 1,
@@ -1269,8 +1409,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "Alabama Power",
    "reference": {
@@ -1282,6 +1427,33 @@
     "poolFt": 564,
     "source": "CWMS Weiss.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.5547,
+     "3.0": 0.1777,
+     "6.0": 0.3472
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1961-06-01",
+     "elevRangeFt": [
+      520.0,
+      593.7
+     ],
+     "id": "Weiss.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Weiss.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 564.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Weiss.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -1419,12 +1591,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -1443,8 +1617,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -1456,6 +1635,33 @@
     "poolFt": 1120.43,
     "source": "CWMS Beaver_Dam.Elev-Pool.Inst.0.Top of Conservation (min)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1212,
+     "3.0": 0.0363,
+     "6.0": 0.0727
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2024-02-01",
+     "elevRangeFt": [
+      918.0,
+      1149.0
+     ],
+     "id": "Beaver_Dam-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Beaver_Dam-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1120.43,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Beaver_Dam-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -1479,12 +1685,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -1503,8 +1711,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -1516,6 +1729,33 @@
     "poolFt": 659,
     "source": "CWMS Bull_Shoals_Dam Top of Conservation (base of 659-662 seasonal pool)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1064,
+     "3.0": 0.0322,
+     "6.0": 0.0641
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1988-08-03",
+     "elevRangeFt": [
+      452.0,
+      710.0
+     ],
+     "id": "Bull_Shoals_Dam-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Bull_Shoals_Dam-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 659.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Bull_Shoals_Dam-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -1656,7 +1896,9 @@
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
-    "contourSources": [],
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
     "kind": "contour",
     "researchTier": "B-binary",
@@ -1679,8 +1921,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -1692,6 +1939,33 @@
     "poolFt": 338,
     "source": "CWMS LD10_Dardanelle.Elev-Pool.Inst.0.Top of Normal (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.4362,
+     "3.0": 0.1391,
+     "6.0": 0.2679
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1989-11-20",
+     "elevRangeFt": [
+      287.0,
+      354.0
+     ],
+     "id": "LD10_Dardanelle-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/LD10_Dardanelle-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 338.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating LD10_Dardanelle-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -1771,12 +2045,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -1795,8 +2071,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -1808,6 +2089,33 @@
     "poolFt": 462.04,
     "source": "CWMS GreersFerry_Dam.Elev-Pool.Inst.0.Top of Conservation (min)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.097,
+     "3.0": 0.0301,
+     "6.0": 0.0592
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1988-08-05",
+     "elevRangeFt": [
+      272.0,
+      520.0
+     ],
+     "id": "GreersFerry_Dam-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/GreersFerry_Dam-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 462.04,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating GreersFerry_Dam-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -1886,12 +2194,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -1910,8 +2220,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -1923,6 +2238,33 @@
     "poolFt": 259.2,
     "source": "CWMS Millwood_Dam.Elev-Pool.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.8492,
+     "3.0": 0.1868,
+     "6.0": 0.3979
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2019-10-17",
+     "elevRangeFt": [
+      213.0,
+      309.0
+     ],
+     "id": "Millwood_Dam-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Millwood_Dam-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 259.2,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Millwood_Dam-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -1944,12 +2286,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -1968,8 +2312,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -1981,6 +2330,33 @@
     "poolFt": 342,
     "source": "CWMS Nimrod_Dam.Elev-Pool.Inst.0.Top of Conservation (min)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.7239,
+     "3.0": 0.2676,
+     "6.0": 0.5014
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2004-06-04",
+     "elevRangeFt": [
+      300.0,
+      420.0
+     ],
+     "id": "Nimrod_Dam-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Nimrod_Dam-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 342.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Nimrod_Dam-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -2002,12 +2378,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -2026,8 +2404,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -2039,6 +2422,33 @@
     "poolFt": 553.75,
     "source": "CWMS Norfork_Dam.Elev-Pool.Inst.0.Top of Conservation (min)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1352,
+     "3.0": 0.0445,
+     "6.0": 0.0862
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2024-02-01",
+     "elevRangeFt": [
+      390.0,
+      616.0
+     ],
+     "id": "Norfork_Dam-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Norfork_Dam-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 553.75,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Norfork_Dam-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -3051,10 +3461,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -3075,8 +3487,13 @@
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Sacramento",
    "reference": {
@@ -3088,6 +3505,33 @@
     "poolFt": 2585.5,
     "source": "CWMS Isabella Dam Top of Conservation max",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1339,
+     "3.0": 0.0391,
+     "6.0": 0.0791
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1977-08-01",
+     "elevRangeFt": [
+      2460.0,
+      2629.99
+     ],
+     "id": "Lake Isabella-Pool West.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SPK",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Lake%20Isabella-Pool%20West.Elev%3BArea.Standard.Production?office=SPK",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 2585.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Lake Isabella-Pool West.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -3460,12 +3904,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -3484,8 +3930,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Omaha",
    "reference": {
@@ -3497,6 +3948,33 @@
     "poolFt": 5444,
     "source": "CWMS NWDM CHFI Top of Conservation",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.223,
+     "3.0": 0.0619,
+     "6.0": 0.1303
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2024-04-01",
+     "elevRangeFt": [
+      5362.97,
+      5526.97
+     ],
+     "id": "CHFI.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CHFI.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 5444.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CHFI.Elev;Area.Linear.Step"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -3520,12 +3998,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 8,
@@ -3544,8 +4024,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Omaha",
    "reference": {
@@ -3557,6 +4042,33 @@
     "poolFt": 5550,
     "source": "CWMS NWDM CHCR Top of Multipurpose",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3122,
+     "3.0": 0.1019,
+     "6.0": 0.2038
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2023-04-01",
+     "elevRangeFt": [
+      5521.0,
+      5653.6
+     ],
+     "id": "CHCR.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CHCR.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 5550.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CHCR.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -3810,12 +4322,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -3834,8 +4348,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Albuquerque",
    "reference": {
@@ -3847,6 +4366,33 @@
     "poolFt": 3851.9,
     "source": "CWMS John Martin Top of Conservation",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2142,
+     "3.0": 0.0648,
+     "6.0": 0.1281
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2019-11-01",
+     "elevRangeFt": [
+      3769.0,
+      3880.0
+     ],
+     "id": "John Martin.Elev;Area.Linear.Step;USACE",
+     "matchedBy": "series-location",
+     "office": "SPA",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/John%20Martin.Elev%3BArea.Linear.Step%3BUSACE?office=SPA",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 3851.9,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating John Martin.Elev;Area.Linear.Step;USACE"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -3925,12 +4471,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -3949,8 +4497,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USBR (Fry-Ark)",
    "reference": {
@@ -3962,6 +4515,33 @@
     "poolFt": 4880.38,
     "source": "CWMS Pueblo.Elev.Inst.0.Top of Conservation (min)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1577,
+     "3.0": 0.0547,
+     "6.0": 0.098
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2026-10-01",
+     "elevRangeFt": [
+      4750.0,
+      4926.0
+     ],
+     "id": "Pueblo.Elev;Area.Linear.Step;USBR",
+     "matchedBy": "pool-location",
+     "office": "SPA",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Pueblo.Elev%3BArea.Linear.Step%3BUSBR?office=SPA",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 4880.38,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Pueblo.Elev;Area.Linear.Step;USBR"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -6588,12 +7168,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -6612,8 +7194,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile",
    "reference": {
@@ -6625,6 +7212,33 @@
     "poolFt": 840,
     "source": "CWMS Allatoona.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2166,
+     "3.0": 0.067,
+     "6.0": 0.1318
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1962-08-01",
+     "elevRangeFt": [
+      695.0,
+      870.0
+     ],
+     "id": "Allatoona.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Allatoona.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 840.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Allatoona.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -6760,12 +7374,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -6784,8 +7400,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile",
    "reference": {
@@ -6797,6 +7418,33 @@
     "poolFt": 1074,
     "source": "CWMS Carters.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.0716,
+     "3.0": 0.0215,
+     "6.0": 0.0438
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1979-07-01",
+     "elevRangeFt": [
+      665.0,
+      1182.0
+     ],
+     "id": "Carters.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Carters.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1074.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Carters.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -6934,12 +7582,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -6958,8 +7608,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile (Buford)",
    "reference": {
@@ -6971,6 +7626,33 @@
     "poolFt": 1071,
     "source": "CWMS Buford.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1259,
+     "3.0": 0.0396,
+     "6.0": 0.0775
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1959-12-01",
+     "elevRangeFt": [
+      919.0,
+      1110.0
+     ],
+     "id": "Buford.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Buford.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1071.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Buford.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -7051,12 +7733,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -7075,8 +7759,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile (Jim Woodruff)",
    "reference": {
@@ -7088,6 +7777,33 @@
     "poolFt": 77,
     "source": "https://water.sam.usace.army.mil/JIM%20WOODRUFF%20Pertinent%20Data.pdf",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.5799,
+     "3.0": 0.2112,
+     "6.0": 0.3968
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1958-02-01",
+     "elevRangeFt": [
+      44.0,
+      90.0
+     ],
+     "id": "JimWoodruff.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/JimWoodruff.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 77.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating JimWoodruff.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -7168,12 +7884,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -7192,8 +7910,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile",
    "reference": {
@@ -7205,6 +7928,33 @@
     "poolFt": 190,
     "source": "CWMS WalterFGeorge.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3237,
+     "3.0": 0.0984,
+     "6.0": 0.1949
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1965-04-01",
+     "elevRangeFt": [
+      100.0,
+      215.0
+     ],
+     "id": "WalterFGeorge.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/WalterFGeorge.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 190.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating WalterFGeorge.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -7226,12 +7976,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -7250,8 +8002,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile",
    "reference": {
@@ -7263,6 +8020,33 @@
     "poolFt": 635,
     "source": "CWMS WestPoint.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2811,
+     "3.0": 0.0906,
+     "6.0": 0.1758
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1975-06-01",
+     "elevRangeFt": [
+      560.0,
+      652.0
+     ],
+     "id": "WestPoint.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/WestPoint.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 635.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating WestPoint.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -8262,6 +9046,7 @@
     "customerDerivedMetricsAllowed": "n/a"
    },
    "operator": "USACE Rock Island (MVR)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -9819,12 +10604,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -9843,8 +10630,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE St. Louis (MVS)",
    "reference": {
@@ -9856,6 +10648,33 @@
     "poolFt": 405,
     "source": "CWMS Rend Lk.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.4836,
+     "3.0": 0.1325,
+     "6.0": 0.27
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2015-04-29",
+     "elevRangeFt": [
+      385.0,
+      424.0
+     ],
+     "id": "Rend Lk-Big Muddy.Elev;Area.COE.Production",
+     "matchedBy": "series-location",
+     "office": "MVS",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Rend%20Lk-Big%20Muddy.Elev%3BArea.COE.Production?office=MVS",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 405.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Rend Lk-Big Muddy.Elev;Area.COE.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -10843,12 +11662,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 75,
@@ -10867,8 +11688,13 @@
     "status": "RESEARCH_VERIFIED_LABELLED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USBR",
    "reference": {
@@ -10880,6 +11706,33 @@
     "poolFt": 2144,
     "source": "https://www.usbr.gov/gp/aop/resaloc/cedar_bluff.pdf",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2467,
+     "3.0": 0.0696,
+     "6.0": 0.1421
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1998-05-13",
+     "elevRangeFt": [
+      2094.0,
+      2194.0
+     ],
+     "id": "CEBL-Cedar_Bluff_Res-Smoky_Hill.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CEBL-Cedar_Bluff_Res-Smoky_Hill.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 2144.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CEBL-Cedar_Bluff_Res-Smoky_Hill.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -10905,7 +11758,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "coverage": 0.9986,
     "hypsometryOnly": false,
@@ -10932,11 +11786,13 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USBR (Wichita supply)",
@@ -10951,15 +11807,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9986,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.3473
+     "10.0": 0.3446,
+     "3.0": 0.1089,
+     "6.0": 0.2142
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "KS"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2016-12-13",
+     "elevRangeFt": [
+      1367.0,
+      1450.0
+     ],
+     "id": "CHEN.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CHEN.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1421.6,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CHEN.Elev;Area.Linear.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -11020,6 +11892,7 @@
     ]
    },
    "operator": "USACE Kansas City (NWK)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -11063,7 +11936,8 @@
    "evidence": {
     "bestSource": "contour:KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "coverage": 0.9988,
     "hypsometryOnly": false,
@@ -11090,11 +11964,13 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Tulsa (SWT)",
@@ -11109,15 +11985,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9988,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2559
+     "10.0": 0.3401,
+     "3.0": 0.1052,
+     "6.0": 0.2214
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "KS"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2026-04-01",
+     "elevRangeFt": [
+      1280.0,
+      1371.0
+     ],
+     "id": "ELDR.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/ELDR.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1339.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating ELDR.Elev;Area.Linear.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -11139,7 +12031,8 @@
    "evidence": {
     "bestSource": "contour(partial/coarse):KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "hypsometryOnly": false,
     "kind": "contour",
@@ -11164,11 +12057,13 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Tulsa (SWT)",
@@ -11181,6 +12076,33 @@
     "poolFt": 1041,
     "source": "CWMS JOHN.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.9549,
+     "3.0": 0.0747,
+     "6.0": 0.2963
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2023-11-01",
+     "elevRangeFt": [
+      1010.0,
+      1090.0
+     ],
+     "id": "JOHN.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/JOHN.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1041.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating JOHN.Elev;Area.Linear.Production"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -11239,6 +12161,7 @@
     ]
    },
    "operator": "USACE Kansas City (NWK)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -11267,12 +12190,14 @@
     "status": "UNKNOWN"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": null,
@@ -11291,8 +12216,13 @@
     "status": "NONE"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa (SWT)",
    "reference": {
@@ -11304,6 +12234,33 @@
     "poolFt": 1350.5,
     "source": "CWMS MARI.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.4497,
+     "3.0": 0.1242,
+     "6.0": 0.2773
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2025-02-01",
+     "elevRangeFt": [
+      1317.0,
+      1368.0
+     ],
+     "id": "MARI.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/MARI.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 1350.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating MARI.Elev;Area.Linear.Production"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -11364,6 +12321,7 @@
     ]
    },
    "operator": "USACE Kansas City (NWK)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -11444,6 +12402,7 @@
     ]
    },
    "operator": "USACE Kansas City (NWK)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -11489,7 +12448,8 @@
    "evidence": {
     "bestSource": "contour(partial/coarse):KS",
     "contourSources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ],
     "hypsometryOnly": false,
     "kind": "contour",
@@ -11514,11 +12474,13 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "KS"
+     "KS",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Kansas City (NWK)",
@@ -11531,6 +12493,33 @@
     "poolFt": 891.5,
     "source": "CWMS NWDM PERY Top of Multi-Purpose",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2809,
+     "3.0": 0.0834,
+     "6.0": 0.1921
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-03-31",
+     "elevRangeFt": [
+      838.0,
+      947.0
+     ],
+     "id": "PERY-Perry_Lake-Delaware.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/PERY-Perry_Lake-Delaware.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 891.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating PERY-Perry_Lake-Delaware.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -11591,6 +12580,7 @@
     ]
    },
    "operator": "USACE Kansas City (NWK)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -11669,6 +12659,7 @@
     ]
    },
    "operator": "USACE Kansas City (NWK)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -11795,6 +12786,7 @@
     ]
    },
    "operator": "USACE Kansas City (NWK)",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -17570,12 +18562,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -17594,8 +18588,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Little Rock",
    "reference": {
@@ -17607,6 +18606,33 @@
     "poolFt": 498,
     "source": "CWMS Clearwater_Dam.Elev-Pool.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3523,
+     "3.0": 0.125,
+     "6.0": 0.2216
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      456.0,
+      620.0
+     ],
+     "id": "Clearwater_Dam-Headwater.Elev;Area-Reservoir.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWL",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Clearwater_Dam-Headwater.Elev%3BArea-Reservoir.Standard.Production?office=SWL",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 498.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Clearwater_Dam-Headwater.Elev;Area-Reservoir.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -17771,6 +18797,7 @@
     "customerDerivedMetricsAllowed": "n/a"
    },
    "operator": "USACE Kansas City",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -17828,6 +18855,7 @@
     "customerDerivedMetricsAllowed": "n/a"
    },
    "operator": "USACE St. Louis (MVS)",
+   "ratingZoneWithheld": "R2_SERIES_POOL_RELATIONSHIP_NOT_ESTABLISHED",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -17888,6 +18916,7 @@
     "customerDerivedMetricsAllowed": "n/a"
    },
    "operator": "USACE Kansas City",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -17948,6 +18977,7 @@
     "customerDerivedMetricsAllowed": "n/a"
    },
    "operator": "USACE Kansas City",
+   "ratingZoneWithheld": "R2_RATING_DATUM_DIFFERS",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -17980,12 +19010,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 8,
@@ -18004,8 +19036,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Kansas City",
    "reference": {
@@ -18017,6 +19054,33 @@
     "poolFt": 867,
     "source": "CWMS NWDM STON Top of Multi-Purpose",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1914,
+     "3.0": 0.0633,
+     "6.0": 0.1222
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2020-01-01",
+     "elevRangeFt": [
+      768.37,
+      911.97
+     ],
+     "id": "STON.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/STON.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 867.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating STON.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -18098,12 +19162,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 8,
@@ -18122,8 +19188,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Kansas City (NWK)",
    "reference": {
@@ -18135,6 +19206,33 @@
     "poolFt": 706.02,
     "source": "CWMS NWDM HAST Top of Multi-Purpose",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3102,
+     "3.0": 0.1236,
+     "6.0": 0.207
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1998-05-13",
+     "elevRangeFt": [
+      685.0,
+      755.0
+     ],
+     "id": "HAST-Truman_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/HAST-Truman_Lake-Marais_Des_Cygnes.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 706.02,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating HAST-Truman_Lake-Marais_Des_Cygnes.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -18214,10 +19312,12 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -18238,8 +19338,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Vicksburg",
    "reference": {
@@ -18251,6 +19356,33 @@
     "poolFt": 220,
     "source": "CWMS Arkabutla Lake.Elev.Inst.0.Top of Guide Curve (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.5608,
+     "3.0": 0.194,
+     "6.0": 0.3784
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      189.3,
+      264.3
+     ],
+     "id": "Arkabutla Lake.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "MVK",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Arkabutla%20Lake.Elev%3BArea.Standard.Production?office=MVK",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 220.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Arkabutla Lake.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -18275,7 +19407,9 @@
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
-    "contourSources": [],
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
     "kind": "contour",
     "researchTier": "B-binary",
@@ -18298,8 +19432,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile (Tenn-Tom)",
    "reference": {
@@ -18311,6 +19450,33 @@
     "poolFt": 414,
     "source": "CWMS Whitten Top of Normal (408-414 band)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2284,
+     "3.0": 0.0739,
+     "6.0": 0.1433
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1985-09-01",
+     "elevRangeFt": [
+      330.0,
+      449.0
+     ],
+     "id": "Whitten.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Whitten.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 414.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Whitten.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -18335,7 +19501,9 @@
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
-    "contourSources": [],
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
     "kind": "contour",
     "researchTier": "B-binary",
@@ -18358,8 +19526,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile (Tenn-Tom)",
    "reference": {
@@ -18371,6 +19544,33 @@
     "poolFt": 164,
     "source": "CWMS Stennis Top of Normal (162-164 band)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.7576,
+     "3.0": 0.288,
+     "6.0": 0.5222
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1983-01-01",
+     "elevRangeFt": [
+      126.0,
+      188.6
+     ],
+     "id": "Stennis.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Stennis.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 164.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Stennis.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -18449,10 +19649,12 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -18473,8 +19675,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Vicksburg",
    "reference": {
@@ -18486,6 +19693,33 @@
     "poolFt": 250,
     "source": "CWMS Enid Lake.Elev.Inst.0.Top of Guide Curve (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3664,
+     "3.0": 0.1181,
+     "6.0": 0.2281
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      194.0,
+      293.0
+     ],
+     "id": "Enid Lake.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "MVK",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Enid%20Lake.Elev%3BArea.Standard.Production?office=MVK",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 250.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Enid Lake.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -18507,10 +19741,12 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -18531,8 +19767,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Vicksburg",
    "reference": {
@@ -18544,6 +19785,33 @@
     "poolFt": 215,
     "source": "CWMS Grenada Lake.Elev.Inst.0.Top of Guide Curve (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3954,
+     "3.0": 0.1265,
+     "6.0": 0.2478
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      160.0,
+      256.0
+     ],
+     "id": "Grenada Lake.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "MVK",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Grenada%20Lake.Elev%3BArea.Standard.Production?office=MVK",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 215.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Grenada Lake.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -18685,12 +19953,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -18709,8 +19979,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Mobile",
    "reference": {
@@ -18722,6 +19997,33 @@
     "poolFt": 344,
     "source": "CWMS Okatibbee Top of Conservation max (summer)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.5772,
+     "3.0": 0.2146,
+     "6.0": 0.386
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2011-01-02",
+     "elevRangeFt": [
+      310.0,
+      369.8
+     ],
+     "id": "Okatibbee.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SAM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Okatibbee.Elev%3BArea.Standard.Production?office=SAM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 344.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Okatibbee.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -18800,10 +20102,12 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -18824,8 +20128,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Vicksburg (MVK)",
    "reference": {
@@ -18837,6 +20146,33 @@
     "poolFt": 260,
     "source": "CWMS Sardis Lake.Elev.Inst.0.Top of Guide Curve (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.309,
+     "3.0": 0.094,
+     "6.0": 0.187
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      204.0,
+      311.4
+     ],
+     "id": "Sardis Lake.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "MVK",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Sardis%20Lake.Elev%3BArea.Standard.Production?office=MVK",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 260.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Sardis Lake.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -18862,7 +20198,8 @@
    "evidence": {
     "bestSource": "contour:MT",
     "contourSources": [
-     "MT"
+     "MT",
+     "USACE_CWMS"
     ],
     "coverage": 0.9966,
     "hypsometryOnly": false,
@@ -18889,11 +20226,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "MT"
+     "MT",
+     "USACE_CWMS"
     ]
    },
    "operator": "USBR (Great Plains)",
@@ -18908,15 +20247,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9966,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.0342
+     "10.0": 0.1104,
+     "3.0": 0.0329,
+     "6.0": 0.0764
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "MT"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2020-10-01",
+     "elevRangeFt": [
+      3614.0,
+      3800.0
+     ],
+     "id": "CAFE.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CAFE.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 3797.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CAFE.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -19007,12 +20362,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -19031,8 +20388,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE (NWD/Omaha)",
    "reference": {
@@ -19044,6 +20406,33 @@
     "poolFt": 2234,
     "source": "CWMS NWDM FTPK Top of Conservation (= base of flood control; USACE AOP full-reservoir shoreline)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1133,
+     "3.0": 0.0335,
+     "6.0": 0.0708
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2013-06-28",
+     "elevRangeFt": [
+      2030.0,
+      2260.0
+     ],
+     "id": "FTPK.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/FTPK.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 2234.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating FTPK.Elev;Area.Linear.Step"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -19460,7 +20849,8 @@
    "evidence": {
     "bestSource": "contour:MT",
     "contourSources": [
-     "MT"
+     "MT",
+     "USACE_CWMS"
     ],
     "coverage": 0.935,
     "hypsometryOnly": false,
@@ -19487,11 +20877,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "MT"
+     "MT",
+     "USACE_CWMS"
     ]
    },
    "operator": "USBR",
@@ -19506,15 +20898,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.935,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.12390000000000001
+     "10.0": 0.1429,
+     "3.0": 0.0513,
+     "6.0": 0.0971
     },
-    "intervalFt": 10.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "MT"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2024-03-19",
+     "elevRangeFt": [
+      2839.0,
+      3025.0
+     ],
+     "id": "TIBR.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/TIBR.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 2993.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TIBR.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -20318,7 +21726,8 @@
    "evidence": {
     "bestSource": "contour:ND",
     "contourSources": [
-     "ND"
+     "ND",
+     "USACE_CWMS"
     ],
     "coverage": 0.8651,
     "hypsometryOnly": false,
@@ -20345,11 +21754,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "ND"
+     "ND",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE (Bowman-Haley Dam)",
@@ -20364,17 +21775,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.8651,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.511,
-     "3.0": 0.1119,
-     "6.0": 0.3042
+     "10.0": 0.5434,
+     "3.0": 0.1796,
+     "6.0": 0.3803
     },
-    "intervalFt": 2.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "ND"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2024-06-01",
+     "elevRangeFt": [
+      2728.4,
+      2793.5
+     ],
+     "id": "BOHA.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/BOHA.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 2754.8,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating BOHA.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -20692,12 +22117,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -20716,8 +22143,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE (Oahe Dam)",
    "reference": {
@@ -20729,6 +22161,33 @@
     "poolFt": 1607.5,
     "source": "https://www.nwd-mr.usace.army.mil/rcc/reports/pdfs/finalAOP2025-2026.pdf",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1382,
+     "3.0": 0.0477,
+     "6.0": 0.0855
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2013-06-28",
+     "elevRangeFt": [
+      1410.0,
+      1619.0
+     ],
+     "id": "OAHE.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/OAHE.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1607.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating OAHE.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -20752,12 +22211,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -20776,8 +22237,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE (Garrison Dam)",
    "reference": {
@@ -20789,6 +22255,33 @@
     "poolFt": 1837.5,
     "source": "https://www.nwd-mr.usace.army.mil/rcc/reports/pdfs/finalAOP2025-2026.pdf",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1175,
+     "3.0": 0.0416,
+     "6.0": 0.0743
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2013-06-28",
+     "elevRangeFt": [
+      1660.0,
+      1859.0
+     ],
+     "id": "GARR.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/GARR.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1837.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating GARR.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -21325,7 +22818,8 @@
    "evidence": {
     "bestSource": "contour:NE",
     "contourSources": [
-     "NE"
+     "NE",
+     "USACE_CWMS"
     ],
     "coverage": 0.9908,
     "hypsometryOnly": false,
@@ -21352,11 +22846,13 @@
    },
    "licence": {
     "classes": [
-     "PUBLIC_REUSABLE"
+     "PUBLIC_REUSABLE",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "NE"
+     "NE",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE (Kansas City Dist)",
@@ -21371,15 +22867,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9908,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2168
+     "10.0": 0.2361,
+     "3.0": 0.0956,
+     "6.0": 0.1634
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "NE"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1998-05-13",
+     "elevRangeFt": [
+      1895.0,
+      1986.0
+     ],
+     "id": "HACO-Harlan_Co_Lake-Republican.Elev;Area.Area_Curves.Production",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/HACO-Harlan_Co_Lake-Republican.Elev%3BArea.Area_Curves.Production?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1946.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating HACO-Harlan_Co_Lake-Republican.Elev;Area.Area_Curves.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -23509,12 +25021,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -23533,8 +25047,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Albuquerque",
    "reference": {
@@ -23546,6 +25065,33 @@
     "poolFt": 6220,
     "source": "CWMS Abiquiu.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1288,
+     "3.0": 0.0384,
+     "6.0": 0.0787
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2022-01-01",
+     "elevRangeFt": [
+      6080.0,
+      6381.0
+     ],
+     "id": "Abiquiu.Elev;Area.Linear.Step;USACE",
+     "matchedBy": "pool-location",
+     "office": "SPA",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Abiquiu.Elev%3BArea.Linear.Step%3BUSACE?office=SPA",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 6220.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Abiquiu.Elev;Area.Linear.Step;USACE"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -23685,12 +25231,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -23709,8 +25257,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Albuquerque",
    "reference": {
@@ -23722,6 +25275,33 @@
     "poolFt": 5345.5,
     "source": "CWMS Cochiti Top of Conservation (permanent pool)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2906,
+     "3.0": 0.1915,
+     "6.0": 0.2598
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2020-01-01",
+     "elevRangeFt": [
+      5254.0,
+      5479.0
+     ],
+     "id": "Cochiti.Elev;Area.Linear.Step;USACE",
+     "matchedBy": "series-location",
+     "office": "SPA",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Cochiti.Elev%3BArea.Linear.Step%3BUSACE?office=SPA",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 5345.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Cochiti.Elev;Area.Linear.Step;USACE"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -23743,12 +25323,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -23767,8 +25349,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Albuquerque",
    "reference": {
@@ -23780,6 +25367,33 @@
     "poolFt": 4201,
     "source": "CWMS Conchas.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2433,
+     "3.0": 0.0682,
+     "6.0": 0.1438
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2017-01-01",
+     "elevRangeFt": [
+      4085.0,
+      4235.0
+     ],
+     "id": "Conchas.Elev;Area.Linear.Step;USACE",
+     "matchedBy": "pool-location",
+     "office": "SPA",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Conchas.Elev%3BArea.Linear.Step%3BUSACE?office=SPA",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 4201.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Conchas.Elev;Area.Linear.Step;USACE"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -24149,12 +25763,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -24173,8 +25789,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USBR (Alamogordo Dam)",
    "reference": {
@@ -24186,6 +25807,33 @@
     "poolFt": 4260.9,
     "source": "CWMS Sumner Top of Conservation",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.4582,
+     "3.0": 0.1349,
+     "6.0": 0.2797
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2026-01-01",
+     "elevRangeFt": [
+      4100.0,
+      4299.0
+     ],
+     "id": "Sumner.Elev;Area.Linear.Step;USBR",
+     "matchedBy": "series-location",
+     "office": "SPA",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Sumner.Elev%3BArea.Linear.Step%3BUSBR?office=SPA",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 4260.9,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Sumner.Elev;Area.Linear.Step;USBR"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -25718,7 +27366,8 @@
    "evidence": {
     "bestSource": "contour:OH",
     "contourSources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ],
     "coverage": 0.9968,
     "hypsometryOnly": false,
@@ -25745,11 +27394,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Huntington",
@@ -25764,15 +27415,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9968,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.26639999999999997
+     "10.0": 0.2496,
+     "3.0": 0.0833,
+     "6.0": 0.1602
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OH"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      821.0,
+      920.0
+     ],
+     "id": "AlumCr.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "LRH",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/AlumCr.Elev%3BArea.Standard.Production?office=LRH",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 888.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating AlumCr.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -25796,7 +27463,8 @@
    "evidence": {
     "bestSource": "contour(partial/coarse):OH",
     "contourSources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ],
     "hypsometryOnly": false,
     "kind": "contour",
@@ -25821,11 +27489,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Pittsburgh",
@@ -25838,6 +27508,33 @@
     "poolFt": 1024.01,
     "source": "CWMS Berlin.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.4205,
+     "3.0": 0.1664,
+     "6.0": 0.2744
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      948.31,
+      1036.31
+     ],
+     "id": "Berlin.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "LRP",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Berlin.Elev%3BArea.Standard.Production?office=LRP",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 1024.01,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Berlin.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -26272,7 +27969,8 @@
    "evidence": {
     "bestSource": "contour:OH",
     "contourSources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ],
     "coverage": 0.9874,
     "hypsometryOnly": false,
@@ -26299,11 +27997,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ]
    },
    "operator": "ODNR (Lake Milton Dam)",
@@ -26318,17 +28018,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9874,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.39,
-     "3.0": 0.091,
-     "6.0": 0.1989
+     "10.0": 0.3324,
+     "3.0": 0.0901,
+     "6.0": 0.1887
     },
-    "intervalFt": 3.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OH"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      899.93,
+      953.43
+     ],
+     "id": "Milton.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "LRP",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Milton.Elev%3BArea.Standard.Production?office=LRP",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 947.43,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Milton.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -26352,7 +28066,8 @@
    "evidence": {
     "bestSource": "contour:OH",
     "contourSources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ],
     "coverage": 0.998,
     "hypsometryOnly": false,
@@ -26379,11 +28094,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Pittsburgh",
@@ -26398,17 +28115,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.998,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.5738,
-     "3.0": 0.1785,
-     "6.0": 0.3257
+     "10.0": 0.5044,
+     "3.0": 0.1764,
+     "6.0": 0.3108
     },
-    "intervalFt": 3.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OH"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      868.33,
+      914.13
+     ],
+     "id": "Mosquito.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "LRP",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Mosquito.Elev%3BArea.Standard.Production?office=LRP",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 900.73,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Mosquito.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -26546,6 +28277,7 @@
     ]
    },
    "operator": "MWCD / USACE Huntington",
+   "ratingZoneWithheld": "R6_RATING_CONTOUR_DISAGREE",
    "reference": {
     "basis": "fullPool",
     "confidence": "high",
@@ -26593,7 +28325,8 @@
    "evidence": {
     "bestSource": "contour:OH",
     "contourSources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ],
     "coverage": 0.9996,
     "hypsometryOnly": false,
@@ -26620,11 +28353,13 @@
    },
    "licence": {
     "classes": [
-     "UNCLEAR"
+     "UNCLEAR",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OH"
+     "OH",
+     "USACE_CWMS"
     ]
    },
    "operator": "MWCD / USACE Huntington",
@@ -26639,17 +28374,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9996,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.3821,
-     "3.0": 0.143,
-     "6.0": 0.26339999999999997
+     "10.0": 0.3362,
+     "3.0": 0.101,
+     "6.0": 0.2016
     },
-    "intervalFt": 3.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OH"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      868.0,
+      925.0
+     ],
+     "id": "Tappan.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "LRH",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Tappan.Elev%3BArea.Standard.Production?office=LRH",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 899.3,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Tappan.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -26729,12 +28478,14 @@
     "status": "UNKNOWN"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -26753,8 +28504,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -26766,6 +28522,33 @@
     "poolFt": 1615.4,
     "source": "CWMS CANT.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.366,
+     "3.0": 0.1516,
+     "6.0": 0.2502
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2016-08-01",
+     "elevRangeFt": [
+      1583.0,
+      1648.0
+     ],
+     "id": "CANT.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/CANT.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1615.4,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating CANT.Elev;Area.Linear.Production"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -26789,7 +28572,8 @@
    "evidence": {
     "bestSource": "contour:OK",
     "contourSources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ],
     "coverage": 0.9878,
     "hypsometryOnly": false,
@@ -26816,11 +28600,13 @@
    },
    "licence": {
     "classes": [
-     "INTERNAL_ONLY"
+     "INTERNAL_ONLY",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Tulsa",
@@ -26835,15 +28621,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9878,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.43320000000000003
+     "10.0": 0.3415,
+     "3.0": 0.1093,
+     "6.0": 0.2131
     },
-    "intervalFt": 10.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OK"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1951-09-01",
+     "elevRangeFt": [
+      508.0,
+      600.0
+     ],
+     "id": "FGIB.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/FGIB.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 554.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating FGIB.Elev;Area.Linear.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -26869,7 +28671,8 @@
    "evidence": {
     "bestSource": "contour:OK",
     "contourSources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ],
     "coverage": 0.9939,
     "hypsometryOnly": false,
@@ -26896,11 +28699,13 @@
    },
    "licence": {
     "classes": [
-     "INTERNAL_ONLY"
+     "INTERNAL_ONLY",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ]
    },
    "operator": "Grand River Dam Authority",
@@ -26915,15 +28720,31 @@
     "winterPoolFt": 742.0
    },
    "referenceZones": {
-    "coverage": 0.9939,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2091
+     "10.0": 0.2605,
+     "3.0": 0.0936,
+     "6.0": 0.1744
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OK"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2022-01-31",
+     "elevRangeFt": [
+      611.0,
+      757.0
+     ],
+     "id": "PENS.Elev;Area.Linear.Production",
+     "matchedBy": "series-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/PENS.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "LOCAL",
+    "referencePoolFt": 744.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating PENS.Elev;Area.Linear.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -26943,12 +28764,14 @@
     "status": "UNKNOWN"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -26967,8 +28790,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -26980,6 +28808,33 @@
     "poolFt": 1010,
     "source": "CWMS KAWL.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2717,
+     "3.0": 0.1125,
+     "6.0": 0.1946
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2020-05-09",
+     "elevRangeFt": [
+      937.0,
+      1056.0
+     ],
+     "id": "KAWL.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/KAWL.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1010.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating KAWL.Elev;Area.Linear.Production"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -27001,10 +28856,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -27025,8 +28882,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -27038,6 +28900,33 @@
     "poolFt": 723,
     "source": "CWMS KEYS.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.224,
+     "3.0": 0.0784,
+     "6.0": 0.1508
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2020-08-01",
+     "elevRangeFt": [
+      655.0,
+      778.0
+     ],
+     "id": "KEYS.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/KEYS.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 723.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating KEYS.Elev;Area.Linear.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -27059,10 +28948,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -27083,8 +28974,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -27096,6 +28992,33 @@
     "poolFt": 585,
     "source": "CWMS EUFA.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.288,
+     "3.0": 0.0858,
+     "6.0": 0.1766
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2016-05-01",
+     "elevRangeFt": [
+      487.0,
+      612.0
+     ],
+     "id": "EUFA.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/EUFA.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 585.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating EUFA.Elev;Area.Linear.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -27119,7 +29042,8 @@
    "evidence": {
     "bestSource": "contour(partial/coarse):OK",
     "contourSources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ],
     "hypsometryOnly": false,
     "kind": "contour",
@@ -27144,11 +29068,13 @@
    },
    "licence": {
     "classes": [
-     "INTERNAL_ONLY"
+     "INTERNAL_ONLY",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ]
    },
    "operator": "Grand River Dam Authority",
@@ -27161,6 +29087,33 @@
     "poolFt": 619,
     "source": "CWMS HUDS.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3003,
+     "3.0": 0.0955,
+     "6.0": 0.1926
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2012-01-31",
+     "elevRangeFt": [
+      558.0,
+      650.0
+     ],
+     "id": "HUDS.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/HUDS.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 619.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating HUDS.Elev;Area.Linear.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -27258,7 +29211,9 @@
    },
    "evidence": {
     "bestSource": "USACE IENC 9ft contour (intersects footprint; interior coverage unverified)",
-    "contourSources": [],
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
     "kind": "contour",
     "researchTier": "B-binary",
@@ -27281,8 +29236,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -27294,6 +29254,33 @@
     "poolFt": 632,
     "source": "CWMS TENK.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1479,
+     "3.0": 0.0533,
+     "6.0": 0.0976
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2015-03-01",
+     "elevRangeFt": [
+      486.0,
+      677.0
+     ],
+     "id": "TENK.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/TENK.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 632.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating TENK.Elev;Area.Linear.Production"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -27315,10 +29302,12 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": "measured hypsometry (CWMS)",
-    "contourSources": [],
-    "hypsometryOnly": true,
-    "kind": "unknown",
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
+    "hypsometryOnly": false,
+    "kind": "stage-area-rating",
     "researchTier": "C",
     "tier": "C"
    },
@@ -27339,8 +29328,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -27352,6 +29346,33 @@
     "poolFt": 638,
     "source": "CWMS OOLO.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3611,
+     "3.0": 0.1319,
+     "6.0": 0.2342
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2020-08-24",
+     "elevRangeFt": [
+      569.0,
+      687.0
+     ],
+     "id": "OOLO.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/OOLO.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 638.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating OOLO.Elev;Area.Linear.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -27375,7 +29396,8 @@
    "evidence": {
     "bestSource": "contour:OK",
     "contourSources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ],
     "coverage": 0.9668,
     "hypsometryOnly": false,
@@ -27402,11 +29424,13 @@
    },
    "licence": {
     "classes": [
-     "INTERNAL_ONLY"
+     "INTERNAL_ONLY",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "false",
     "sources": [
-     "OK"
+     "OK",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Tulsa / OWRB",
@@ -27421,15 +29445,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9668,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.3027
+     "10.0": 0.2861,
+     "3.0": 0.1054,
+     "6.0": 0.1907
     },
-    "intervalFt": 10.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "OK"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2019-09-01",
+     "elevRangeFt": [
+      535.0,
+      630.0
+     ],
+     "id": "SARD.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/SARD.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 599.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating SARD.Elev;Area.Linear.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -27449,12 +29489,14 @@
     "status": "UNKNOWN"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -27473,8 +29515,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Tulsa",
    "reference": {
@@ -27486,6 +29533,33 @@
     "poolFt": 714,
     "source": "CWMS SKIA.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1578,
+     "3.0": 0.035,
+     "6.0": 0.0782
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2011-10-19",
+     "elevRangeFt": [
+      657.0,
+      755.0
+     ],
+     "id": "SKIA.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/SKIA.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 714.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating SKIA.Elev;Area.Linear.Production"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -28327,12 +30401,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -28351,8 +30427,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Pittsburgh",
    "reference": {
@@ -28364,6 +30445,33 @@
     "poolFt": 1327.53,
     "source": "CWMS Kinzua.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1402,
+     "3.0": 0.0468,
+     "6.0": 0.0897
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      1195.53,
+      1399.53
+     ],
+     "id": "Kinzua.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "LRP",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Kinzua.Elev%3BArea.Standard.Production?office=LRP",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 1327.53,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Kinzua.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -29066,12 +31174,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -29090,8 +31200,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Pittsburgh",
    "reference": {
@@ -29103,6 +31218,33 @@
     "poolFt": 894.67,
     "source": "CWMS Shenango Top of Conservation max (summer)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.4218,
+     "3.0": 0.127,
+     "6.0": 0.2591
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      864.67,
+      918.67
+     ],
+     "id": "Shenango.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "LRP",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Shenango.Elev%3BArea.Standard.Production?office=LRP",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 894.67,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Shenango.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -30913,12 +33055,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -30937,8 +33081,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE (Missouri mainstem)",
    "reference": {
@@ -30950,6 +33099,33 @@
     "poolFt": 1607.5,
     "source": "https://www.nwd-mr.usace.army.mil/rcc/reports/pdfs/finalAOP2025-2026.pdf",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1382,
+     "3.0": 0.0477,
+     "6.0": 0.0855
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2013-06-28",
+     "elevRangeFt": [
+      1410.0,
+      1619.0
+     ],
+     "id": "OAHE.Elev;Area.Linear.Step",
+     "matchedBy": "series-location",
+     "office": "NWDM",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/OAHE.Elev%3BArea.Linear.Step?office=NWDM",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1607.5,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating OAHE.Elev;Area.Linear.Step"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -32369,12 +34545,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -32393,8 +34571,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Fort Worth / GBRA",
    "reference": {
@@ -32406,6 +34589,33 @@
     "poolFt": 909,
     "source": "CWMS SMCT2.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1483,
+     "3.0": 0.0504,
+     "6.0": 0.0941
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2014-11-03",
+     "elevRangeFt": [
+      762.0,
+      980.0
+     ],
+     "id": "SMCT2.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWF",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/SMCT2.Elev%3BArea.Standard.Production?office=SWF",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 909.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating SMCT2.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -32570,12 +34780,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -32594,8 +34806,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "LCRA",
    "reference": {
@@ -32607,6 +34824,33 @@
     "poolFt": 1020,
     "source": "https://www.waterdatafortexas.org/reservoirs/individual/buchanan",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1225,
+     "3.0": 0.0359,
+     "6.0": 0.0675
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1999-09-22",
+     "elevRangeFt": [
+      912.0,
+      1126.0
+     ],
+     "id": "BUDT2.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SWF",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/BUDT2.Elev%3BArea.Standard.Production?office=SWF",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1020.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating BUDT2.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -32962,7 +35206,8 @@
    "evidence": {
     "bestSource": "contour:TWDB",
     "contourSources": [
-     "TWDB"
+     "TWDB",
+     "USACE_CWMS"
     ],
     "coverage": 1.0,
     "hypsometryOnly": false,
@@ -32989,11 +35234,13 @@
    },
    "licence": {
     "classes": [
+     "ATTRIBUTION_REQUIRED",
      "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "TWDB"
+     "TWDB",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Tulsa",
@@ -33010,13 +35257,29 @@
    "referenceZones": {
     "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.2377
+     "10.0": 0.2512,
+     "3.0": 0.112,
+     "6.0": 0.1802
     },
-    "intervalFt": 5.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "TWDB"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2017-09-11",
+     "elevRangeFt": [
+      522.0,
+      655.0
+     ],
+     "id": "DENI.Elev;Area.Linear.Production",
+     "matchedBy": "pool-location",
+     "office": "SWT",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/DENI.Elev%3BArea.Linear.Production?office=SWT",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 617.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating DENI.Elev;Area.Linear.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -33098,12 +35361,14 @@
     "status": "SAME_SOURCE"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -33122,8 +35387,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "Brazos River Authority",
    "reference": {
@@ -33135,6 +35405,33 @@
     "poolFt": 999,
     "source": "https://www.twdb.texas.gov/surfacewater/surveys/completed/files/PossumKingdom/2016-12/PossumKingdom2016_FinalReport.pdf",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.3049,
+     "3.0": 0.0786,
+     "6.0": 0.1864
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2017-10-01",
+     "elevRangeFt": [
+      895.0,
+      1006.0
+     ],
+     "id": "PSMT2.Elev;Area.Standard.Production",
+     "matchedBy": "series-location",
+     "office": "SWF",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/PSMT2.Elev%3BArea.Standard.Production?office=SWF",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 999.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating PSMT2.Elev;Area.Standard.Production"
    },
    "rollout": "MEDIUM_CONFIDENCE",
    "shiftPossible": true,
@@ -33156,12 +35453,14 @@
     "status": "SAME_DATUM"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -33180,8 +35479,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Fort Worth",
    "reference": {
@@ -33193,6 +35497,33 @@
     "poolFt": 164.4,
     "source": "CWMS JSPT2.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.2488,
+     "3.0": 0.0685,
+     "6.0": 0.1393
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "2014-06-27",
+     "elevRangeFt": [
+      85.0,
+      183.0
+     ],
+     "id": "JSPT2.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "SWF",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/JSPT2.Elev%3BArea.Standard.Production?office=SWF",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 164.4,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating JSPT2.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -34490,12 +36821,14 @@
     "status": "UNKNOWN"
    },
    "evidence": {
-    "bestSource": null,
-    "contourSources": [],
+    "bestSource": "USACE CWMS elevation-area rating (shares only)",
+    "contourSources": [
+     "USACE_CWMS"
+    ],
     "hypsometryOnly": false,
-    "kind": "proxy",
+    "kind": "stage-area-rating",
     "researchTier": "D",
-    "tier": "D"
+    "tier": "C"
    },
    "history": {
     "completeYears": 10,
@@ -34514,8 +36847,13 @@
     "status": "RESEARCH_VERIFIED"
    },
    "licence": {
-    "classes": [],
-    "customerDerivedMetricsAllowed": "n/a"
+    "classes": [
+     "ATTRIBUTION_REQUIRED"
+    ],
+    "customerDerivedMetricsAllowed": "true",
+    "sources": [
+     "USACE_CWMS"
+    ]
    },
    "operator": "USACE Norfolk (Gathright Dam)",
    "reference": {
@@ -34527,6 +36865,33 @@
     "poolFt": 1582,
     "source": "CWMS Moomaw.Elev.Inst.0.Top of Conservation (max)",
     "winterPoolFt": null
+   },
+   "referenceZones": {
+    "coverage": 1.0,
+    "cumulative": {
+     "10.0": 0.1023,
+     "3.0": 0.0292,
+     "6.0": 0.0604
+    },
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1992-08-04",
+     "elevRangeFt": [
+      1440.0,
+      1684.0
+     ],
+     "id": "Moomaw.Elev;Area.Linear.Step;USACE",
+     "matchedBy": "pool-location",
+     "office": "NAO",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/Moomaw.Elev%3BArea.Linear.Step%3BUSACE?office=NAO",
+     "vintageKnown": true
+    },
+    "referencePoolDatum": "NGVD29",
+    "referencePoolFt": 1582.0,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating Moomaw.Elev;Area.Linear.Step;USACE"
    },
    "rollout": "BLOCKED",
    "shiftPossible": false,
@@ -37549,7 +39914,8 @@
    "evidence": {
     "bestSource": "contour:WV",
     "contourSources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ],
     "coverage": 0.9975,
     "hypsometryOnly": false,
@@ -37576,11 +39942,13 @@
    },
    "licence": {
     "classes": [
-     "PUBLIC_REUSABLE"
+     "PUBLIC_REUSABLE",
+     "ATTRIBUTION_REQUIRED"
     ],
     "customerDerivedMetricsAllowed": "true",
     "sources": [
-     "WV"
+     "WV",
+     "USACE_CWMS"
     ]
    },
    "operator": "USACE Pittsburgh",
@@ -37595,17 +39963,31 @@
     "winterPoolFt": null
    },
    "referenceZones": {
-    "coverage": 0.9975,
+    "coverage": 1.0,
     "cumulative": {
-     "10.0": 0.34919999999999995,
-     "3.0": 0.0839,
-     "6.0": 0.2007
+     "10.0": 0.3546,
+     "3.0": 0.0972,
+     "6.0": 0.2122
     },
-    "intervalFt": 1.0,
-    "note": "survey reference pool not verified for this lake: effective zones are withheld until it is",
-    "referencePoolFt": null,
-    "referenceStatus": "UNVERIFIED",
-    "source": "WV"
+    "intervalFt": null,
+    "kind": "stage-area-rating",
+    "note": "shares of the reference-pool surface from the operator's published elevation-area rating (how much, never where)",
+    "rating": {
+     "effectiveDate": "1970-01-01",
+     "elevRangeFt": [
+      1006.33,
+      1099.33
+     ],
+     "id": "StonewallJackson.Elev;Area.Standard.Production",
+     "matchedBy": "pool-location",
+     "office": "LRP",
+     "url": "https://cwms-data.usace.army.mil/cwms-data/ratings/StonewallJackson.Elev%3BArea.Standard.Production?office=LRP",
+     "vintageKnown": false
+    },
+    "referencePoolDatum": "NAVD88",
+    "referencePoolFt": 1072.53,
+    "referenceStatus": "VERIFIED",
+    "source": "USACE CWMS rating StonewallJackson.Elev;Area.Standard.Production"
    },
    "rollout": "HIGH_CONFIDENCE",
    "shiftPossible": true,
@@ -38682,10 +41064,10 @@
   "tier": {
    "A": 77,
    "B": 26,
-   "C": 91,
-   "D": 371,
+   "C": 136,
+   "D": 326,
    "UNKNOWN": 56
   },
-  "zonesAvailableForReference": 100
+  "zonesAvailableForReference": 162
  }
 }

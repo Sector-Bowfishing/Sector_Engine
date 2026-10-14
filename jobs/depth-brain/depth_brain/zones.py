@@ -32,6 +32,8 @@ class ReferenceZones:
     reference_pool_datum: str | None = None
     reference_status: str = "UNVERIFIED"            # VERIFIED | UNVERIFIED (is the survey reference pool known and datum-compatible?)
     flags: list = field(default_factory=list)
+    curve: dict | None = None                       # operator elevation-area rating (rating.py): exact S(x) instead of bounds between contour edges
+    kind: str = "contour"                           # contour | stage-area-rating
 
 
 def supported_edges(interval_ft: float | None, edges=C.EDGES_FT) -> list[float]:
@@ -107,6 +109,11 @@ def effective_zones(z: ReferenceZones, shift_ft: float, sigma_ft: float) -> dict
     if z.reference_status != "VERIFIED":
         return {"available": False, "reason": "SURVEY_REFERENCE_POOL_UNVERIFIED"}
     c = z.cumulative
+    if z.curve is not None:
+        from . import rating as R
+        bounds = lambda x: R.share_bounds(z.curve, z.reference_pool_ft, x)        # noqa: E731 - exact inside the rating, never extrapolated below it
+    else:
+        bounds = lambda x: _bounds(c, x)                                          # noqa: E731
     grid = [shift_ft + sigma_ft * (i / 4.0) for i in range(-4, 5)]
     edges = [e for e in C.EDGES_FT]
     bands = [("under3", 0.0, 3.0), ("threeToSix", 3.0, 6.0), ("sixToTen", 6.0, 10.0)]
@@ -118,22 +125,26 @@ def effective_zones(z: ReferenceZones, shift_ft: float, sigma_ft: float) -> dict
         agg[key] = (lo, hi) if cur is None else (min(cur[0], lo), max(cur[1], hi))
 
     for s in grid:
-        dry_lo, dry_hi = _bounds(c, -s) if s < 0 else (0.0, 0.0)
+        dry_lo, dry_hi = bounds(-s) if s < 0 else (0.0, 0.0)
         upd("dry", dry_lo, dry_hi)
         for name, a, b in bands:                 # wet share with effective depth in [a, b): S(b - s) - S(a - s); the dry part cancels
-            a_lo, a_hi = _bounds(c, a - s)
-            b_lo, b_hi = _bounds(c, b - s)
+            a_lo, a_hi = bounds(a - s)
+            b_lo, b_hi = bounds(b - s)
             upd(name, b_lo - a_hi, b_hi - a_lo)
-        lo10, hi10 = _bounds(c, 10.0 - s)
+        lo10, hi10 = bounds(10.0 - s)
         d_lo, d_hi = (1.0 - hi10, 1.0 - lo10)
         upd("deeper", d_lo, d_hi)
     keep = {k: v for k, v in agg.items() if round(v[1] - v[0], 6) <= C.MAX_PUBLISHED_BOUND_WIDTH}
     withheld = sorted(k for k in agg if k not in keep)
-    out = {"available": True, "basis": "share of the reference-pool surveyed surface", "shiftFt": round(shift_ft, 1),
+    out = {"available": True, "basis": ("share of the reference-pool surveyed surface" if z.curve is None else "share of the reference-pool surface (operator elevation-area rating)"), "shiftFt": round(shift_ft, 1),
            "shares": {k: {"lo": round(v[0], 3), "hi": round(v[1], 3)} for k, v in keep.items()},
-           **({"withheldBands": withheld, "withheldWhy": f"bound wider than {C.MAX_PUBLISHED_BOUND_WIDTH} of the surface: the contours cannot resolve it"} if withheld else {}),
-           "resolution": "bounds: the shifted edge falls between supported contour levels" if any(
+           **({"withheldBands": withheld, "withheldWhy": f"bound wider than {C.MAX_PUBLISHED_BOUND_WIDTH} of the surface: the {'contours' if z.curve is None else 'rating'} cannot resolve it"} if withheld else {}),
+           "resolution": ("bounds: the shifted edge falls between supported contour levels" if z.curve is None else "bounds: part of the band lies below the rating's lowest elevation") if any(
                round(v[1] - v[0], 3) > 0.02 for v in keep.values()) else "point-like"}
+    if z.curve is not None:
+        from . import rating as R
+        out["shareToleranceAbs"] = R.RATING_SHARE_TOLERANCE_ABS
+        out["toleranceBasis"] = "typical disagreement (90th percentile) between operator-rating shares and independent contour surveys; the bounds above reflect only the level shift uncertainty"
     if shift_ft > 0:
         out["floodedMarginUnquantified"] = True
     return out

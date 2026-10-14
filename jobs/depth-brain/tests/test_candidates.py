@@ -130,16 +130,20 @@ def test_partial_binary_and_hypsometry_are_never_promoted_to_ab():
         rt, tier = c["evidence"]["researchTier"], c["evidence"]["tier"]
         if rt in ("B-partial", "B-binary", "C"):
             assert tier == "C", c["lakeId"]
-        if rt == "C":
+        rated = c["evidence"]["kind"] == "stage-area-rating"                       # RATING-ZONE-RULES-1: an operator elevation-area rating supports SHARES at tier C, nothing more
+        if rt == "C" and not rated:
             assert c["evidence"]["kind"] == "unknown" and c["evidence"]["hypsometryOnly"]
-        assert rt != "D" or tier == "D"
+        assert rt != "D" or tier == "D" or (rated and tier == "C")
 
 
 def test_modeled_evidence_never_carries_zones_and_zones_need_contour_tiers():
     for c in CANDS.values():
         if "referenceZones" in c:
-            assert c["evidence"]["tier"] in ("A", "B") and c["evidence"]["kind"] == "contour"
             rz = c["referenceZones"]
+            if rz.get("kind") == "stage-area-rating":                                  # exact shares from an operator rating; tier A/B contour lakes keep their tier, others are C
+                assert c["evidence"]["tier"] in ("A", "B", "C") and rz["referenceStatus"] == "VERIFIED" and rz["rating"]["id"]
+                continue
+            assert c["evidence"]["tier"] in ("A", "B") and c["evidence"]["kind"] == "contour"
             if rz["referenceStatus"] == "VERIFIED":                               # only with a verified pool + datum (TWDB, preregistered validation passed)
                 assert rz["referencePoolFt"] and rz["referencePoolDatum"] and "TWDB" in c["evidence"]["contourSources"]
             else:
@@ -179,7 +183,8 @@ def test_five_twdb_lakes_have_verified_survey_pools_and_texoma_does_not():
         assert z["referenceStatus"] == "VERIFIED" and z["referencePoolFt"] and z["referencePoolDatum"] == "NGVD29"
         assert set(z["cumulative"]) == {"3.0", "6.0", "10.0"}                       # 1-2 ft contours / area-capacity table support all edges
     tx = CANDS["Lake Texoma|TX"]["referenceZones"]
-    assert tx["referenceStatus"] == "UNVERIFIED" and tx["referencePoolFt"] is None and list(tx["cumulative"]) == ["10.0"]     # 5 ft interval: only the 10 ft edge
+    # Texoma's 5 ft contour survey has no verified reference pool (contour zones stay unvalidated); its CWMS DENI rating supplies exact shares instead, and only because it agrees with the contour at 10 ft
+    assert tx["kind"] == "stage-area-rating" and tx["referenceStatus"] == "VERIFIED" and "DENI" in tx["rating"]["id"]
 
 
 def test_livingston_survey_pool_differs_from_the_directory_pool_and_is_rebased():
@@ -206,7 +211,7 @@ def test_uninformative_bands_are_withheld_not_published_as_wide_ranges():
 def test_effective_zone_eligible_count_is_the_five_verified_lakes():
     from depth_brain import maturity as M
     f = M.fleet_metrics(MANIFEST)
-    assert f["effectiveZoneEligible"] == 5 and f["referenceZoneLakes"] >= 100
+    assert f["effectiveZoneEligible"] == 5 and f["referenceZoneLakes"] >= 60        # contour lakes only; rating lakes are counted apart (ratingZoneEligible)
 
 
 def test_twdb_prereg_hash_in_proposal_matches_the_frozen_file():

@@ -161,4 +161,4 @@ def test_non_twdb_contour_proposals_cannot_enable_effective_zones_until_validati
     assert any(v.get("referenceStatus") == "VERIFIED" for v in d["lakes"].values())                # reference pools exist for some lakes ...
     assert P.twdb_updates(path) == {}                                                                # ... but none passed the preregistered validation
     assert all((v.get("validation") or {}).get("passed") is not True for v in d["lakes"].values())
-    assert not any(c.get("referenceZones", {}).get("referenceStatus") == "VERIFIED" and "TWDB" not in c["evidence"]["contourSources"] for c in MAN["candidates"])
+    assert not any(c.get("referenceZones", {}).get("kind", "contour") == "contour" and c.get("referenceZones", {}).get("referenceStatus") == "VERIFIED" and "TWDB" not in c["evidence"]["contourSources"] for c in MAN["candidates"])
