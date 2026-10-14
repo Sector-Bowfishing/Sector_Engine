@@ -496,9 +496,11 @@ def test_publication_is_content_aware_and_ignores_evaluation_timestamps():
     st = build()
     first = C.changed_paths(st, None)
     assert f"{C.NODE}/summary" in first and len(first) >= 8
-    later = C.build_control_state(manifest(), "PRE_PRODUCTION", NOW + dt.timedelta(hours=1), registries={}, health={}, scores={}, jobs={},
-                                  evaluation=O.evaluate_world(dict(ctx(), now=NOW + dt.timedelta(hours=1))), prev=st, trigger="SCHEDULE")
-    assert C.changed_paths(later, st) == {}                                         # nothing material changed: nothing written (no hourly churn)
+    def at(h, prev):
+        return C.build_control_state(manifest(), "PRE_PRODUCTION", NOW + dt.timedelta(hours=h), registries={}, health={}, scores={}, jobs={},
+                                     evaluation=O.evaluate_world(dict(ctx(), now=NOW + dt.timedelta(hours=h))), prev=prev, trigger="SCHEDULE")
+    baseline = at(1, st)                                   # the second evaluation establishes input-fingerprint baselines once
+    assert C.changed_paths(at(2, baseline), baseline) == {}                                  # nothing material changed: nothing written (no hourly churn)
     changed = C.build_control_state(manifest(), "PRE_PRODUCTION", NOW, registries={}, health={}, scores={}, jobs={}, evaluation=O.evaluate_world(ctx()),
                                     prev=st, overrides={"depth": {"activityState": "ACTIVE"}})
     paths = C.changed_paths(changed, st)

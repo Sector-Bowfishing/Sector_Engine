@@ -174,11 +174,14 @@ def main(argv=None) -> int:
     ap.add_argument("--run-now", default=None, metavar="BRAIN", help="scoped manual run of one Brain (needs --scope); validated by orchestrator policy")
     ap.add_argument("--scope", default=None, help="scope for --run-now, e.g. guntersville, pilots")
     ap.add_argument("--requested-by", default="cli", help="who asked, recorded with the decision")
+    ap.add_argument("--control-only", action="store_true", help="evaluate and publish ONLY /control/orchestratorV1: no /jobs write, no execution, no score publication, no legacy record (a deliberate, side-effect-free evaluation)")
     ap.add_argument("--emit-control-state", default=None, metavar="FILE", help="write the computed control state JSON here (sample payloads, review)")
     ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
     a = ap.parse_args(argv)
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
+    if a.control_only:
+        a.no_execute = True
     write = not a.dry_run
     tokens = TokenProvider()
     live = BrainRtdb(RTDB_URL, tokens, brain_id=WRITER)
@@ -186,7 +189,7 @@ def main(argv=None) -> int:
     db = live if write else _ReadThrough(live)
 
     # 1. /jobs
-    records, executions, n_changed = sync_jobs(db, tokens, now, write)
+    records, executions, n_changed = sync_jobs(db, tokens, now, write and not a.control_only)
     print(f"jobs: {len(records)} records, {n_changed} changed", flush=True)
     if a.sync_jobs_only:
         return 0
@@ -272,7 +275,7 @@ def main(argv=None) -> int:
              ("published this cycle: " + ", ".join(ran_in_process)) if ran_in_process else \
              (f"{n_changed} job record(s) changed" if n_changed else ("forced" if a.force_scores else None))
     scores = {"published": False, "why": reason or "nothing changed since the last cycle"}
-    if reason and write:
+    if reason and write and not a.control_only:
         cmd = [PYTHON, os.path.join(HERE, "..", "brain-scores", "score_brains.py"), "--write", "--if-changed"]
         out = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
         scores.update({"published": out.returncode == 0, "tail": (out.stdout if out.returncode == 0 else (out.stderr or out.stdout)).strip()[-500:]})
@@ -310,7 +313,7 @@ def main(argv=None) -> int:
               "locks": {**{b: l for b, l in (state.get("locks") or {}).items() if l.get("lockedUntil", "") > iso(now) and b not in locks}, **locks},
               "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
               "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores}
-    if write:
+    if write and not a.control_only:
         live.update({"control/orchestrator": record})
     print(json.dumps({k: record[k] for k in ("mode", "durationMs", "jobsChanged", "scores")}, indent=None))
     print(f"executed {len(executed)}, deferred {len(deferred)}, waiting {len(plan['waiting'])}, skipped {len(plan['skipped'])}")

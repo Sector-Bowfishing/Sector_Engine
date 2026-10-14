@@ -104,6 +104,9 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
     jobs_out, scheds = build_jobs(manifest, jobs, execs)
     changes = evaluation["changes"]
     day = f"{now:%Y-%m-%d}"
+    fps = out_fps if out_fps is not None else {bid: O.output_fingerprint(b, registries.get(bid))[0] for bid, b in manifest["brains"].items()}
+    dctx = {"manifest": manifest, "mode": mode, "now": now, "states": registries, "activity": activity, "running": {}, "out_fps": fps}
+    dep_rows = {bid: {r["id"]: r for r in O.eval_dependencies(b, dctx)[0]} for bid, b in manifest["brains"].items()}
     cost_day = O.cost_rollup(execs, day)
 
     brains, blockers, next_dues = {}, [], []
@@ -135,7 +138,10 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
             "exception": ((b.get("schedule") or {}).get("exception") or {}).get("gate"),
             "lastRun": last_run, "lastResult": (lastx or {}).get("status") or h.get("status"), "nextDue": nd,
             "freshness": {"staleAfterHours": sh, "ageHours": ageh, "stale": (ageh > sh) if (ageh is not None and sh is not None) else None},
-            "inputChanged": None, "outputChanged": changes.get(bid), "outputFingerprint": fpv, "outputFingerprintBasis": basis,
+            "inputFingerprint": O.input_fingerprint(bid, b, fps),
+            "inputChanged": (None if not (prev.get("brains") or {}).get(_key(bid), {}).get("inputFingerprint") else
+                             ("UNCHANGED" if prev["brains"][_key(bid)]["inputFingerprint"] == O.input_fingerprint(bid, b, fps) else "CHANGED")),
+            "outputChanged": changes.get(bid), "outputFingerprint": fpv, "outputFingerprintBasis": basis,
             "costToday": O.cost_rollup([e for e in execs if e.get("brainId") == bid], day),
             "currentBlocker": (bl[0]["reason"] if bl else None),
             "decisions": {d["trigger"]: {"decision": d["decision"], "reasonCode": d["reasonCode"], "reason": d["reason"], "since": d.get("since")}
@@ -158,9 +164,15 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
         "running": sorted(k.split("|")[0] for k in (locks or {}) if (parse_time((locks[k] or {}).get("lockedUntil")) or now) > now),
         "queued": runs, "blocked": sorted({b["brainId"] for b in blockers}), "nextDue": min(next_dues) if next_dues else None,
         "costToday": cost_day, "recentDecision": ({k: latest_ev[k] for k in ("decisionId", "brainId", "trigger", "decision", "reasonCode", "at") if k in latest_ev} if latest_ev else None),
+        "scheduler": _strip({"state": "ENABLED" if _job_enabled(jobs, "brain-orchestrator") else ("PAUSED" if _job_enabled(jobs, "brain-orchestrator") is False else None),
+                             "cron": ((jobs or {}).get("brain-orchestrator") or {}).get("cron")}),
         "graphValid": not graph["errors"], "customerPublication": False if mode == "PRE_PRODUCTION" else None,
     })
-    edge_out = {_key(e["from"], e["to"]): _strip(e) for e in O.edges(manifest)}
+    edge_out = {}
+    for e in O.edges(manifest):
+        r = dep_rows.get(e["to"], {}).get(e["from"], {})
+        # Read vs run, per edge: the consumer's view of the upstream's EXISTING state and what the orchestrator does about it (READ_EXISTING = no execution).
+        edge_out[_key(e["from"], e["to"])] = _strip({**e, "status": r.get("status"), "action": r.get("action"), "upstreamActivity": activity.get(e["from"])})
     state = {"summary": summary, "brains": brains, "edges": edge_out, "jobs": jobs_out, "schedules": scheds,
              "executions": {e["executionId"]: _strip(e) for e in execs}, "decisions": recent, "latestDecisions": latest,
              "health": {"graphErrors": graph["errors"], "graphWarnings": graph["warnings"],

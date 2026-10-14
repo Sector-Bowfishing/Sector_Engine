@@ -172,3 +172,13 @@ def test_control_plane_failure_never_breaks_the_cycle_or_scores(cycle, monkeypat
     monkeypatch.setattr(CS, "build_control_state", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
     assert OR.main([]) == 0
     assert calls["score"] >= 1 and "orchestrator" in db.tree["control"]
+
+
+def test_control_only_publishes_only_the_v1_namespace(cycle):
+    setup, calls = cycle
+    db = setup(tree())
+    assert OR.main(["--control-only", "--trigger", "MANUAL"]) == 0
+    paths = {p for w in db.writes for p in w}
+    assert paths and all(p.startswith("control/orchestratorV1") for p in paths)            # no /jobs, no scores, no legacy /control/orchestrator
+    assert calls["start"] == [] and calls["inproc"] == [] and calls["score"] == 0
+    assert db.tree["control"]["orchestratorV1"]["summary"]["lastCycle"]["trigger"] == "MANUAL"
