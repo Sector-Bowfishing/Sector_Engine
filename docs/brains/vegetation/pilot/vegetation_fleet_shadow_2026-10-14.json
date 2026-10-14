@@ -1,0 +1,62 @@
+{
+ "ageDaysQuantiles": [
+  9,
+  17
+ ],
+ "agencyLakes": 9,
+ "bytesStreamed": 7181622,
+ "cpuSeconds": 21.68,
+ "evidence": {
+  "NONE": 1,
+  "SATELLITE_ACCEPTED_PASS": 334,
+  "SATELLITE_PERSISTENCE": 212
+ },
+ "fallbackOnly": 81,
+ "generatedAt": "2026-10-14T12:00:00+00:00",
+ "lakesInRegistry": 621,
+ "lakesObserved": 547,
+ "lakesWithPasses": 561,
+ "observedSharePctQuantiles": {
+  "max": 85.8,
+  "p10": 0.1,
+  "p50": 2.1,
+  "p90": 19.3
+ },
+ "passDocs": 1795,
+ "patchesAfterRun1": 592,
+ "patchesAfterRun2": 595,
+ "persistenceReachable": 212,
+ "run1": {
+  "evaluated": 589,
+  "health": "HEALTHY",
+  "observed": 392,
+  "skippedUnchanged": 0,
+  "writes": 592
+ },
+ "run2": {
+  "evaluated": 589,
+  "health": "HEALTHY",
+  "observed": 392,
+  "skippedUnchanged": 589,
+  "writes": 3
+ },
+ "since": "2026-09-14",
+ "stateBytes": {
+  "max": 8652,
+  "total": 3811853
+ },
+ "status": {
+  "NOT_OBSERVED": 117,
+  "PRESENT": 275,
+  "UNKNOWN": 155
+ },
+ "wallSeconds": 1000.7,
+ "zones": {
+  "lakesWithZones": 275,
+  "notOk": {
+   "FRAME_MISMATCH": 1
+  },
+  "pngBytes": 12529773,
+  "zonesReported": 487
+ }
+}

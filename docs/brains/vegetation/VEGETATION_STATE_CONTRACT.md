@@ -19,7 +19,8 @@ Schema id `sector-brain-vegetation-state-v1` · slot `vegetation` (`/lakes/{k}/s
   "surfaceVegetation": {
     "status": "PRESENT | NOT_OBSERVED | UNKNOWN", "statusReason",
     "coverageClass": "SPARSE|MODERATE|DENSE|UNKNOWN|NOT_CALIBRATED",   // NOT_CALIBRATED until the density gate passes
-    "observedPlantCells", "readInteriorCells", "interiorCells",          // counts, never percentages
+    "observedPlantCells", "readInteriorCells", "interiorCells",          // pixel observer: counts, never percentages
+    "observedAreaKm2", "zones": {"zones[{areaKm2,centroid,persistence,looks}]", "zoneCountAboveMin", "status", "note"},   // shared-evidence observer: where (top 5 persistent zones)
     "broadType": "SURFACE_REACHING_MIXED | UNKNOWN", "typeBasis": "NOT_CLASSIFIED",
     "observedAt", "ageDays", "source": {"collection", "sceneIds"},
     "confidence": {"level": "NONE|LOW|MEDIUM|HIGH", "score", "basis": "RULE_BASED_NOT_CALIBRATED", "reasons", "validationState"}
@@ -29,6 +30,7 @@ Schema id `sector-brain-vegetation-state-v1` · slot `vegetation` (`/lakes/{k}/s
   "observation": {"evidenceKind": "SATELLITE_SINGLE_PASS|SATELLITE_ACCEPTED_PASS|SATELLITE_PERSISTENCE|SURVEY|NONE",
                   "persistence": "MEDIAN_OF_ACCEPTED|INSUFFICIENT|NOT_APPLICABLE", "acceptedScenes", "cloudState", "refusalShares",
                   "isolatedCellsDropped", "lowCoverageFallback", "notes"},
+  "agencyObservation": {"status": "PROVIDER_VERIFIED|NOT_ASSESSED", "level": 1, "sourceId", "agency", "surveyYear", "datePrecision", "ageYears", "historical", "values[{pac,pvi}]", "units", "scope", "licence", "internalOnly", "summary", "additional[...]"},   // Level 1, shown as-is; see VEGETATION_LEVEL1_AGENCY_SLICE.md
   "potentialHabitat": {"potentialOnly": true, "observed": false, "status": "EVALUATED|NOT_EVALUATED", "reasons", "basis",
                        "maxColonizationDepthFt": {"model": "canfield-1985-*", "centralFt", "lowFt", "highFt", "ciNote"}, "headline": "Potential vegetation habitat"},
   "context": {"consumed": {"lake","depth","clarity","temp","wind"}},   // which upstream states were read; values are not republished
@@ -67,3 +69,6 @@ Forbidden in any Brain output or derived copy (enforced by test): "grass is here
 
 ## 7. Freshness
 Staleness model `TIME`; observation fresh ≤ 14 days, stale > 45 days (`evidenceStale`); state generated hourly-capable but meaningful at satellite cadence (`staleAfterHours` 72).
+
+## 8. Shared-evidence observer and presence ladder (amendment A6)
+Presence on the shared Clarity pass evidence: `PRESENT` = observed grass share (bed-to-bank strip removed) **> 2 %** (the pre-registered FPR tolerance) and ≥ 1 ha; `NOT_OBSERVED` = a non-fallback accepted look with share **≤ 0.5 %**; between them `UNKNOWN / BELOW_NOISE_TOLERANCE`. Persistent **zones** (grass in ≥ 50 % of ≥ 2 looks, ≥ 0.05 km², top 5) give the location. The lake-level share is a coarse summary only; density stays `NOT_CALIBRATED`.

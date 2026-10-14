@@ -44,12 +44,51 @@ def stream(pattern: str) -> tuple[list, int]:
     return out, len(txt.encode())
 
 
+def add_zones(observations: dict, by: dict, reg: dict) -> dict:
+    import shutil
+    import tempfile
+
+    import numpy as np
+    from PIL import Image
+    keys = {e["lakeId"]: e["lakeKey"] for e in reg["lakes"]}
+    tmp = tempfile.mkdtemp(prefix="veg_zones_")
+    nbytes = nlakes = nzones = 0
+    skipped = {}
+    try:
+        for lid, ob in observations.items():
+            if not ob.shared_presence or ob.shared_presence[0] != "PRESENT" or not ob.used_dates:
+                continue
+            dates = ob.used_dates[-4:]
+            d = os.path.join(tmp, keys[lid])
+            os.makedirs(d, exist_ok=True)
+            urls = [f"{BUCKET}/{keys[lid]}/clarity/{x.isoformat()}.measured.png" for x in dates]
+            r = subprocess.run(["gcloud", "storage", "cp", "-q", *urls, d], capture_output=True, text=True)
+            arrs = []
+            for x in dates:
+                fp = os.path.join(d, f"{x.isoformat()}.measured.png")
+                if os.path.exists(fp):
+                    nbytes += os.path.getsize(fp)
+                    arrs.append(np.array(Image.open(fp)))
+            sp = by[lid][dates[-1]]
+            if arrs and sp.corners and sp.cell_m:
+                ob.zones = SH.zones_from_codes(arrs, sp.corners, sp.cell_m)
+                nlakes += 1
+                nzones += len(ob.zones.get("zones") or [])
+                if ob.zones["status"] != "OK":
+                    skipped[ob.zones["status"]] = skipped.get(ob.zones["status"], 0) + 1
+            shutil.rmtree(d, ignore_errors=True)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return {"lakesWithZones": nlakes, "zonesReported": nzones, "pngBytes": nbytes, "notOk": skipped}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--registry", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--since", default="2026-09-14")
     ap.add_argument("--now", default=None)
+    ap.add_argument("--zones", action="store_true", help="fetch the measured PNGs of the accepted passes ONLY for PRESENT lakes (about 70 KB each) and add persistent zones")
     ap.add_argument("--agency", default=os.path.join(HERE, "..", "vegetation_brain", "data", "agency_fwc_pacpvi.json"))
     a = ap.parse_args()
     now = datetime.fromisoformat(a.now) if a.now else datetime.now(timezone.utc)
@@ -78,11 +117,15 @@ def main():
             continue
         passes = sorted(ps.values(), key=lambda p: p.when)
         observations[lid] = SH.observe_shared(passes, passes[-1].when, areas.get(lid))
+    zone_stats = None
+    if a.zones:
+        zone_stats = add_zones(observations, by, reg)
     agency = json.load(open(a.agency))["records"]
+    littoral = json.load(open(os.path.join(os.path.dirname(a.agency), "agency_sfwmd_okeechobee.json")))["records"]
     w = DryRunWriter()
-    r1 = publish(manifest, w, observations=observations, agency=agency, now=now)
+    r1 = publish(manifest, w, observations=observations, agency=agency, littoral=littoral, now=now)
     n1 = len(w.patches)
-    r2 = publish(manifest, w, observations=observations, agency=agency, now=now)
+    r2 = publish(manifest, w, observations=observations, agency=agency, littoral=littoral, now=now)
     cpu = time.process_time() - t0
     from sector_brain_platform import lake_key
     rows = []
@@ -104,7 +147,7 @@ def main():
            "run2": {k: r2.get(k) for k in ("evaluated", "observed", "skippedUnchanged", "writes", "health")},
            "patchesAfterRun1": n1, "patchesAfterRun2": len(w.patches), "bytesStreamed": nbytes, "cpuSeconds": round(cpu, 2),
            "wallSeconds": round(time.time() - wall0, 1), "stateBytes": {"total": sum(r["bytes"] for r in rows), "max": max((r["bytes"] for r in rows), default=0)},
-           "agencyLakes": sum(1 for lid in agency if lid in cands)}
+           "agencyLakes": sum(1 for lid in agency if lid in cands), "zones": zone_stats}
     json.dump(out, open(a.out, "w"), indent=1, sort_keys=True)
     print(json.dumps(out, indent=1))
 

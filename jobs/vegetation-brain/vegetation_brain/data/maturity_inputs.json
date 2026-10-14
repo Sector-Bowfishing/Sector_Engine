@@ -13,11 +13,12 @@
       "weight": 10,
       "critical": true,
       "basis": "judgment",
-      "score": 4.0,
+      "score": 4.5,
       "evidence": [
         "docs/research/vegetation-brain/VEGETATION_DATA_SOURCE_MATRIX.md",
         "docs/brains/vegetation/validation/09_umr_umn_requests_scouting.md",
-        "docs/brains/vegetation/validation/10_umn_sfwmd_scoring.md"
+        "docs/brains/vegetation/validation/10_umn_sfwmd_scoring.md",
+        "docs/brains/vegetation/VEGETATION_LEVEL1_AGENCY_SLICE.md"
       ]
     },
     "spatial": {
@@ -107,9 +108,10 @@
       "weight": 10,
       "critical": false,
       "basis": "judgment",
-      "score": 4.0,
+      "score": 5.0,
       "evidence": [
-        "docs/research/vegetation-brain/VEGETATION_FLEET_COVERAGE.md"
+        "docs/research/vegetation-brain/VEGETATION_FLEET_COVERAGE.md",
+        "docs/brains/vegetation/pilot/VEGETATION_FLEET_SHADOW_RESULTS.md"
       ]
     }
   }

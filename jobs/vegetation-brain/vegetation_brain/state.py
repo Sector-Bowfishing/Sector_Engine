@@ -120,18 +120,19 @@ def confidence(kind: str, validation_state: str, *, coverage: float, geometry_co
 
 
 # ------------------------------------------------------------------------------------- state
-def input_fingerprint(cand: dict, obs, ctx: dict, manifest_version: str, agency: dict | None = None) -> str:
+def input_fingerprint(cand: dict, obs, ctx: dict, manifest_version: str, agency: dict | None = None, littoral: dict | None = None) -> str:
     key = [cand.get("lakeId"), cand.get("tier"), cand.get("geometryConfidence"), manifest_version, C.BRAIN_VERSION,
            getattr(obs, "scene_ids", None), getattr(obs, "evidence_kind", None), getattr(obs, "plant_cells", None),
            getattr(obs, "observed_share_pct", None), str(getattr(obs, "observed_on", None)), [(z["areaKm2"], z["centroid"]) for z in ((getattr(obs, "zones", None) or {}).get("zones") or [])],
            sorted(((ctx or {}).get("wind") or {}).items()), ((ctx or {}).get("clarity") or {}).get("secchiM"),
            ((ctx or {}).get("depth") or {}).get("tier"),
-           [(r["year"], r["pac"], r["pvi"]) for r in ((agency or {}).get("rows") or [])]]
+           [(r["year"], r["pac"], r["pvi"]) for r in ((agency or {}).get("rows") or [])],
+           (littoral or {}).get("mappedKm2"), [(c["code"], c["cells"]) for c in ((littoral or {}).get("classes") or [])]]
     return hashlib.sha256(json.dumps(key, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
 
 def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = None, context: dict | None = None,
-                manifest_version: str = "unversioned", brain_version: str = C.BRAIN_VERSION, agency: dict | None = None) -> tuple[dict, dict]:
+                manifest_version: str = "unversioned", brain_version: str = C.BRAIN_VERSION, agency: dict | None = None, littoral: dict | None = None) -> tuple[dict, dict]:
     """cand: fleet candidate (fleet.observability row). obs: observer.LakeObservation or None (never observed).
     context: {lake, depth, clarity, temp, wind, seasonal, density}. validation: {state, ...}."""
     ctx = context or {}
@@ -202,7 +203,7 @@ def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = Non
         "notes": list(getattr(obs, "notes", []) or []),
     }
 
-    ag = AG.agency_block(agency, now.year)
+    ag = AG.agency_block(agency, now.year, [AG.littoral_block(littoral, now.year)])
     claims = {k: dict(v) for k, v in C.CLAIMS.items()}
     if ag["status"] == "PROVIDER_VERIFIED":
         claims["agencyVegetationObservation"] = {"level": 1, "state": "PROVIDER_VERIFIED",
@@ -234,7 +235,7 @@ def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = Non
         "limitations": list(LIMITATIONS),
         "freshness": _freshness(now, observed_on, stale, pres),
     }
-    fp = input_fingerprint(cand, obs, ctx, manifest_version, agency)
+    fp = input_fingerprint(cand, obs, ctx, manifest_version, agency, littoral)
     state["provenance"] = {"brainId": C.BRAIN_ID, "brainVersion": brain_version, "modelVersion": C.MODEL_ID, "generatedAt": now_iso,
                            "sources": [{"sourceType": ("sharedEvidence" if getattr(obs, "source_id", None) == C.SHARED_SOURCE_ID else "satellite"),
                                         "sourceId": (C.SHARED_SOURCE_ID if getattr(obs, "source_id", None) == C.SHARED_SOURCE_ID else "sentinel-2-l2a"),
@@ -288,11 +289,11 @@ def _freshness(now: datetime, observed_on, stale: bool, pres: str) -> dict:
     return out
 
 
-def plan(published: dict | None, cand: dict, obs, ctx: dict | None, manifest_version: str, agency: dict | None = None) -> dict:
+def plan(published: dict | None, cand: dict, obs, ctx: dict | None, manifest_version: str, agency: dict | None = None, littoral: dict | None = None) -> dict:
     """Fingerprint first: PUBLISH only when a material input changed; page views and clocks never trigger recompute.
     Material inputs: the observation (scene ids / evidence kind / plant cells), registry geometry tier and version, wind flag, Clarity
     Secchi, Depth tier, manifest and Brain versions. Unchanged => SKIP (no work)."""
-    fp = input_fingerprint(cand, obs, ctx or {}, manifest_version, agency)
+    fp = input_fingerprint(cand, obs, ctx or {}, manifest_version, agency, littoral)
     if not published:
         return {"action": "PUBLISH", "reasons": ["no published Vegetation state"], "fingerprint": fp}
     if (published.get("provenance") or {}).get("inputFingerprint") != fp:

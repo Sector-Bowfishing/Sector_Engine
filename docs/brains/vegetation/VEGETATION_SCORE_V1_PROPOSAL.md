@@ -43,3 +43,13 @@ authority 3.5 · spatial 2.0 · presence 3.0 · validation 3.0 · provenance 3.0
 
 ## 6. Adoption steps (none taken)
 1. Michael ratifies dimensions, weights and the critical set. 2. Add `score_vegetation()` to `scoring.py` and `vegetation` to `ALL_BRAINS` behind a shadow flag that keeps it out of Engine roll-ups (same follow-up as Depth). 3. Publish `/scores/vegetation` only after the Brain is registered with Michael's approval. 4. Re-baseline after the first fleet shadow run.
+
+
+## 7. V1-scope claim-weighted variant (added 2026-10-14; PROPOSAL — rubric decision queued for Michael)
+Why: the 10-dimension research rubric scores density, seasonality and submerged — capabilities V1 **refuses by design** — as if mandatory (they sit at 1.0–2.5). Dropping them is a rubric change, so it is **not applied**; the variant below only shows what the number would be, with the same evidence.
+`maturity.evaluate_v1_scope`: authority 12 · spatial 12 · presence 20 · validation 20 · provenance 12 · coverage 8 · freshness 8 · scalability 8 (sum 100). **Coverage and freshness are truth-backed** (a Level-1 agency observation, or a satellite observation in a validated regime); raw shadow observations earn nothing.
+| | Research rubric (10 dims) | V1-scope variant |
+|---|---:|---:|
+| Computed 2026-10-14 | **2.93** | **3.22** |
+Both fail the policy for the same reason: critical dimensions authority 4.5, spatial 2.5, presence 2.5, validation 4.0, provenance 5.0 are < 7.5. The variant therefore does **not** make Vegetation look better in the way that matters; it only stops penalising it for refusing claims it should not make. Rubric decision (adopt / adjust weights / keep) is queued; work continues under the existing rubric.
+**Level-1 agency claims** would be scored by claim maturity (`PROVIDER_VERIFIED` for 9 lakes) rather than by a validation gate; they are the only part of V1 that can be customer-trustworthy today, but they are historical (2016, 2023) and licence-unconfirmed.

@@ -94,10 +94,12 @@ def test_density_becomes_critical_only_when_exposed():
     assert "density" in M.evaluate(m, exposed=("density",))["criticalBelowThreshold"]
 
 
-def test_coverage_is_computed_from_observed_lakes():
+def test_coverage_is_truth_backed_not_raw_shadow_observations():
     m = F.build_manifest(reg(), version="t")
     assert M.evaluate(m, observed_lakes=0)["dimensions"]["coverage"]["score"] == 0
-    assert M.evaluate(m, observed_lakes=3)["dimensions"]["coverage"]["score"] == 10
+    assert M.evaluate(m, observed_lakes=3, truth_backed_lakes=0)["dimensions"]["coverage"]["score"] == 0     # 3 unvalidated observations earn nothing
+    assert M.evaluate(m, observed_lakes=3, truth_backed_lakes=3)["dimensions"]["coverage"]["score"] == 10
+    assert M.evaluate(m, observed_lakes=3, truth_backed_lakes=1)["dimensions"]["coverage"]["score"] == 5
 
 
 def test_unsupported_score_increase_is_refused():
@@ -148,3 +150,15 @@ def test_claim_maturity_separates_levels_and_never_marks_submerged_observable():
     assert cm["submergedVegetation"]["state"] == "NOT_OBSERVABLE"
     assert all(v["state"] in C.CLAIM_STATES for v in cm.values())
     assert not any(v["state"] in ("VALIDATED", "PROVIDER_VERIFIED") for k, v in cm.items() if v["level"] == 3)
+
+
+def test_v1_scope_variant_is_a_proposal_that_cannot_reach_the_policy_by_dropping_refused_dimensions():
+    m = F.build_manifest(reg(), version="t")
+    full = M.evaluate(m)
+    v1 = M.evaluate_v1_scope(m)
+    assert v1["proposal"] is True and v1["official"] is False and set(v1["refusedByDesign"]) == {"density", "seasonality", "submerged"}
+    assert sum(v1["weights"].values()) == 100
+    assert v1["meetsProductionPolicy"] is False and {"presence", "validation"} <= set(v1["criticalBelowThreshold"])
+    # truth-backed coverage/freshness: unvalidated observations earn nothing
+    assert v1["scores"]["coverage"] == 0 and v1["scores"]["freshness"] == 0
+    assert M.evaluate_v1_scope(m, truth_backed_lakes=3, truth_backed_fresh_lakes=3)["scores"]["coverage"] == 10

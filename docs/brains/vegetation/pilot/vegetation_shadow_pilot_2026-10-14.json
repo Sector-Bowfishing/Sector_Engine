@@ -1,6 +1,6 @@
 {
  "bytesFetched": 2238892,
- "cpuSeconds": 1.85,
+ "cpuSeconds": 3.96,
  "generatedAt": "2026-10-14T12:00:00+00:00",
  "lakes": [
   {
@@ -380,7 +380,7 @@
   "skippedUnchanged": 8,
   "writes": 3
  },
- "stateBytesTotal": 54050,
+ "stateBytesTotal": 59257,
  "states": {
   "Guntersville|AL": {
    "acceptedScenes": 8,
@@ -402,7 +402,7 @@
    "evidenceKind": "SATELLITE_PERSISTENCE",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "b0c8d18351153a7c",
+   "inputFingerprint": "57ad1aed9ef1adbf",
    "lowCoverageFallback": false,
    "notes": [
     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
@@ -423,9 +423,57 @@
     "S2A_T16SED_20261007T163036_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 7392,
+   "stateBytes": 8183,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": 137,
+   "zones": [
+    {
+     "areaKm2": 17.08,
+     "centroid": [
+      -85.90787,
+      34.75008
+     ],
+     "looks": 8,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 8.105,
+     "centroid": [
+      -86.11836,
+      34.61984
+     ],
+     "looks": 7,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 7.346,
+     "centroid": [
+      -85.83883,
+      34.84224
+     ],
+     "looks": 8,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 6.086,
+     "centroid": [
+      -85.83948,
+      34.75308
+     ],
+     "looks": 4,
+     "persistence": 0.97
+    },
+    {
+     "areaKm2": 6.033,
+     "centroid": [
+      -86.07852,
+      34.57917
+     ],
+     "looks": 8,
+     "persistence": 0.97
+    }
+   ]
   },
   "Istokpoga|FL": {
    "acceptedScenes": 1,
@@ -447,7 +495,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "16d8ffda7e583390",
+   "inputFingerprint": "2cf484dae4800221",
    "lowCoverageFallback": false,
    "notes": [
     "only 1 accepted pass(es); persistence needs 3",
@@ -465,9 +513,11 @@
     "S2B_T17RML_20260914T161328_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6573,
+   "stateBytes": 6925,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": 0,
+   "zones": []
   },
   "Lake Hartwell|SC": {
    "acceptedScenes": 1,
@@ -489,7 +539,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "be0cd8b80e402638",
+   "inputFingerprint": "4dd0d35701117968",
    "lowCoverageFallback": true,
    "notes": [
     "fallback pass: known share between 25 % and 50 %; presence may be understated",
@@ -509,9 +559,11 @@
     "S2C_T17SLU_20261012T161216_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6711,
+   "stateBytes": 6836,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": null,
+   "zones": null
   },
   "Lake Pepin|MN": {
    "acceptedScenes": 2,
@@ -533,7 +585,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "25f1827f30ecdb35",
+   "inputFingerprint": "1f0675d033e9eda7",
    "lowCoverageFallback": false,
    "notes": [
     "only 2 accepted pass(es); persistence needs 3",
@@ -551,9 +603,57 @@
     "S2C_T15TWK_20261007T170710_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6615,
+   "stateBytes": 7401,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": 18,
+   "zones": [
+    {
+     "areaKm2": 1.03,
+     "centroid": [
+      -92.4692,
+      44.57865
+     ],
+     "looks": 2,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 1.007,
+     "centroid": [
+      -92.43509,
+      44.56354
+     ],
+     "looks": 2,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 0.924,
+     "centroid": [
+      -92.31904,
+      44.56223
+     ],
+     "looks": 2,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 0.663,
+     "centroid": [
+      -92.44063,
+      44.58139
+     ],
+     "looks": 2,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 0.622,
+     "centroid": [
+      -92.44104,
+      44.55792
+     ],
+     "looks": 2,
+     "persistence": 0.98
+    }
+   ]
   },
   "Leech Lake|MN": {
    "acceptedScenes": 4,
@@ -575,7 +675,7 @@
    "evidenceKind": "SATELLITE_PERSISTENCE",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "6a2b6261dae4f614",
+   "inputFingerprint": "04a09cd2b1faa5a7",
    "lowCoverageFallback": false,
    "notes": [
     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
@@ -596,9 +696,57 @@
     "S2C_T15TVN_20260930T171530_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6708,
+   "stateBytes": 7497,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": 66,
+   "zones": [
+    {
+     "areaKm2": 2.038,
+     "centroid": [
+      -94.27792,
+      47.30484
+     ],
+     "looks": 3,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 1.846,
+     "centroid": [
+      -94.59553,
+      47.21688
+     ],
+     "looks": 4,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 1.746,
+     "centroid": [
+      -94.23648,
+      47.25353
+     ],
+     "looks": 4,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 1.158,
+     "centroid": [
+      -94.21963,
+      47.18548
+     ],
+     "looks": 4,
+     "persistence": 0.96
+    },
+    {
+     "areaKm2": 1.127,
+     "centroid": [
+      -94.26459,
+      47.17121
+     ],
+     "looks": 4,
+     "persistence": 1.0
+    }
+   ]
   },
   "Okeechobee|FL": {
    "acceptedScenes": 2,
@@ -620,7 +768,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "cde0f68eadf0e6c1",
+   "inputFingerprint": "c4790a00f6e1bacf",
    "lowCoverageFallback": false,
    "notes": [
     "only 2 accepted pass(es); persistence needs 3",
@@ -641,9 +789,57 @@
     "S2B_T17RNL_20261004T161038_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6708,
+   "stateBytes": 7497,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": 74,
+   "zones": [
+    {
+     "areaKm2": 7.293,
+     "centroid": [
+      -80.94033,
+      27.02623
+     ],
+     "looks": 2,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 6.929,
+     "centroid": [
+      -80.97433,
+      26.90492
+     ],
+     "looks": 2,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 3.429,
+     "centroid": [
+      -80.9348,
+      26.79676
+     ],
+     "looks": 2,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 3.156,
+     "centroid": [
+      -80.79247,
+      27.19631
+     ],
+     "looks": 2,
+     "persistence": 0.95
+    },
+    {
+     "areaKm2": 3.135,
+     "centroid": [
+      -80.87317,
+      27.07697
+     ],
+     "looks": 2,
+     "persistence": 0.98
+    }
+   ]
   },
   "Sam Rayburn Reservoir|TX": {
    "acceptedScenes": 3,
@@ -665,7 +861,7 @@
    "evidenceKind": "SATELLITE_PERSISTENCE",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "6349019a094fef10",
+   "inputFingerprint": "ef63a83e33f84d62",
    "lowCoverageFallback": false,
    "notes": [
     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
@@ -686,9 +882,57 @@
     "S2B_T15RVQ_20260919T165749_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6655,
+   "stateBytes": 7441,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": 147,
+   "zones": [
+    {
+     "areaKm2": 32.963,
+     "centroid": [
+      -94.55351,
+      31.42456
+     ],
+     "looks": 3,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 12.56,
+     "centroid": [
+      -94.31823,
+      31.36603
+     ],
+     "looks": 3,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 5.985,
+     "centroid": [
+      -93.9912,
+      31.18228
+     ],
+     "looks": 3,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 5.037,
+     "centroid": [
+      -94.25768,
+      31.26016
+     ],
+     "looks": 3,
+     "persistence": 1.0
+    },
+    {
+     "areaKm2": 4.395,
+     "centroid": [
+      -94.4367,
+      31.29274
+     ],
+     "looks": 3,
+     "persistence": 1.0
+    }
+   ]
   },
   "Toledo Bend Reservoir|TX": {
    "acceptedScenes": 2,
@@ -710,7 +954,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "1eff0479002f4914",
+   "inputFingerprint": "63c9f3e9335a1f38",
    "lowCoverageFallback": false,
    "notes": [
     "only 2 accepted pass(es); persistence needs 3",
@@ -731,10 +975,58 @@
     "S2B_T15SVR_20260929T170401_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6688,
+   "stateBytes": 7477,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip"
+   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "zoneCountAboveMin": 178,
+   "zones": [
+    {
+     "areaKm2": 9.603,
+     "centroid": [
+      -93.76649,
+      31.60232
+     ],
+     "looks": 2,
+     "persistence": 0.99
+    },
+    {
+     "areaKm2": 6.105,
+     "centroid": [
+      -93.91625,
+      31.88726
+     ],
+     "looks": 2,
+     "persistence": 0.98
+    },
+    {
+     "areaKm2": 6.03,
+     "centroid": [
+      -93.74596,
+      31.29742
+     ],
+     "looks": 2,
+     "persistence": 0.98
+    },
+    {
+     "areaKm2": 4.944,
+     "centroid": [
+      -93.74496,
+      31.6585
+     ],
+     "looks": 2,
+     "persistence": 0.98
+    },
+    {
+     "areaKm2": 2.702,
+     "centroid": [
+      -93.93425,
+      31.84511
+     ],
+     "looks": 2,
+     "persistence": 1.0
+    }
+   ]
   }
  },
- "wallSeconds": 194.1
+ "wallSeconds": 201.9
 }

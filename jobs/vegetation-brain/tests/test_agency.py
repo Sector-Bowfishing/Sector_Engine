@@ -74,3 +74,44 @@ def test_shipped_fwc_data_is_clean_sourced_and_matches_the_map():
         assert r["source"]["internalOnly"] is True and r["source"]["datePrecision"] == "YEAR"
     assert d["records"]["Okeechobee|FL"]["multipleRowsPerYear"] is True
     assert "/Users/" not in open(DATA).read()
+
+
+# ---------------------------------------------------------------- source 2: SFWMD Okeechobee littoral map (Level 1, as-is)
+LIT = os.path.join(os.path.dirname(__file__), "..", "vegetation_brain", "data", "agency_sfwmd_okeechobee.json")
+
+
+def lit_rec():
+    return AG.build_sfwmd_record("Okeechobee|FL", [{"code": "OW", "desc": "OW: Open Water", "n": 14000}, {"code": "MFGtD", "desc": "MFGtD : Dominant Cattail", "n": 7500},
+                                                   {"code": "MFF", "desc": "MFF: Floating Emergent Marsh", "n": 5000}, {"code": "CSs", "desc": "CSs: Willow Scrub", "n": 3900}], "2026-10-14")
+
+
+def test_area_comes_from_cell_counts_and_open_water_is_not_vegetation():
+    r = lit_rec()
+    assert r["openWaterKm2"] == 140.0 and r["classes"][0]["code"] == "MFGtD" and r["classes"][0]["areaKm2"] == 75.0
+    assert all(c["code"] != "OW" for c in r["classes"]) and AG.validate_sfwmd(r) == []
+
+
+def test_littoral_block_is_scoped_dated_historical_and_internal_only():
+    b = AG.littoral_block(lit_rec(), 2026)
+    assert b["status"] == "PROVIDER_VERIFIED" and b["surveyYear"] == 2016 and b["surveyMonth"] == 6 and b["historical"] is True
+    assert "Moore Haven" in b["scope"] and b["internalOnly"] is True and "km2" in b["units"]["areaKm2"]
+    bad = lit_rec()
+    bad["classes"][0]["areaKm2"] = 10_000
+    assert AG.littoral_block(bad, 2026) is None                           # class areas exceeding the mapped area are refused, not repaired
+
+
+def test_state_can_carry_both_agency_sources_and_still_makes_no_satellite_claim():
+    st, _ = S.build_state({**CAND, "lakeId": "Okeechobee|FL"}, None, NOW, agency=rec([(2023, 38, 8)]), littoral=lit_rec())
+    ag = st["agencyObservation"]
+    assert ag["sourceId"] == "fwc-ltm-pac-pvi" and ag["additional"][0]["sourceId"] == "sfwmd-okeechobee-littoral"
+    only, _ = S.build_state({**CAND, "lakeId": "Okeechobee|FL"}, None, NOW, littoral=lit_rec())
+    assert only["agencyObservation"]["sourceId"] == "sfwmd-okeechobee-littoral" and only["claimMaturity"]["agencyVegetationObservation"]["state"] == "PROVIDER_VERIFIED"
+    assert st["surfaceVegetation"]["status"] == "UNKNOWN" and st["submergedVegetation"]["observed"] is False
+
+
+def test_shipped_sfwmd_data_cross_checks_against_geometry():
+    d = json.load(open(LIT))
+    r = d["records"]["Okeechobee|FL"]
+    assert d["problems"] == [] and AG.validate_sfwmd(r) == []
+    assert 0.95 <= r["mercatorAreaCheck"]["ratio"] <= 1.05                # cell-count area agrees with the polygon geometry at the lake's latitude
+    assert "/Users/" not in open(LIT).read()

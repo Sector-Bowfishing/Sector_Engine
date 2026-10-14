@@ -18,9 +18,9 @@ def primary_blocker(fm: dict, validation_state: str) -> str:
 
 
 def registry_extras(manifest: dict, observed_lakes: int, rep: dict | None = None, validation: dict | None = None,
-                    inputs: dict | None = None) -> dict:
+                    inputs: dict | None = None, truth_backed_lakes: int = 0, shadow: dict | None = None) -> dict:
     cands = manifest["candidates"]
-    ev = M.evaluate(manifest, inputs, observed_lakes=observed_lakes)
+    ev = M.evaluate(manifest, inputs, observed_lakes=observed_lakes, truth_backed_lakes=truth_backed_lakes)
     fm = ev["fleet"]
     vstate = (validation or {}).get("state", "NOT_VALIDATED")
     blockers = [
@@ -32,7 +32,7 @@ def registry_extras(manifest: dict, observed_lakes: int, rep: dict | None = None
     ]
     return {
         "directoryLakeCount": fm["totalLakes"],
-        "fleet": {"totalLakes": fm["totalLakes"], "observableLakes": fm["observableLakes"], "observedLakes": observed_lakes,
+        "fleet": {"totalLakes": fm["totalLakes"], "observableLakes": fm["observableLakes"], "observedLakes": observed_lakes, "truthBackedLakes": truth_backed_lakes,
                   "withIndependentTruth": fm["withIndependentTruth"], "geometrySource": "lake-registry (canonical)"},
         "breakdowns": {"observability": dict(Counter(x["tier"] for x in cands)),
                        "readiness": dict(Counter(x["readiness"] for x in cands)),
@@ -40,6 +40,8 @@ def registry_extras(manifest: dict, observed_lakes: int, rep: dict | None = None
         "research": {"maturity": ev["overall"], "official": False, "rubricVersion": ev["rubricVersion"],
                      "criticalBelowThreshold": ev["criticalBelowThreshold"], "meetsProductionPolicy": ev["meetsProductionPolicy"],
                      "note": "research-only rubric; Vegetation has no official score and no /scores/vegetation node"},
+        "shadow": shadow,
+        "level1": {"agencyLakes": truth_backed_lakes, "sources": ["fwc-ltm-pac-pvi", "sfwmd-okeechobee-littoral"], "internalOnly": True, "note": "agency observations shown as-is; licence for customer use unconfirmed"},
         "scoreStatus": "NOT_ESTABLISHED",
         "validationLadder": {"state": vstate, "gates": "docs/brains/vegetation/VEGETATION_VALIDATION_PREREGISTRATION.md"},
         "primaryBlocker": primary_blocker(fm, vstate),

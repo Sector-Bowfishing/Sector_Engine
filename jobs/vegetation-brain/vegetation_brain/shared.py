@@ -84,6 +84,7 @@ class SharedObservation:
     notes: list = field(default_factory=list)
     source_id: str = C.SHARED_SOURCE_ID
     zones: dict | None = None
+    used_dates: list = field(default_factory=list)
     # duck-typed fields the state builder reads
     plant_cells: int | None = None
     read_cells: int | None = None
@@ -166,7 +167,9 @@ def observe_shared(passes: list, reference: date, lake_area_km2: float | None, *
     else:
         pres = ("UNKNOWN", "too little of the lake was looked at to say none")
     notes.append("shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share")
-    return SharedObservation(kind, pers, ids, when, len(use), known / 100.0, area, round(share, 2), pres, _refusals(used), fallback, notes)
+    ob = SharedObservation(kind, pers, ids, when, len(use), known / 100.0, area, round(share, 2), pres, _refusals(used), fallback, notes)
+    ob.used_dates = sorted(p.when for p in used)
+    return ob
 
 
 # ---------------------------------------------------------------------------------------------- where: persistent zones

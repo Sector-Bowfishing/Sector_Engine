@@ -30,6 +30,8 @@ Rule: **the Engine owns truth, Ops owns presentation.** Audited 2026-10-14 again
 | 12 | Blockers | `blockers[]`, `primaryBlocker` | ENGINE READY | `blockers` typed (string[]) — would render once visible |
 | 13 | Rules / model version | `version`, `contractVersion`, `models.candidates` | ENGINE READY | `version` typed |
 | 14 | Orchestration | `orchestration {NOT_STARTED}` | ENGINE READY | `/jobs` has no vegetation row (correct: nothing deployed) |
+| 16 | Level-1 agency lakes / sources | `level1 {agencyLakes, sources[], internalOnly}` + per-lake `agencyObservation` | ENGINE READY | OPS GAP (untyped) |
+| 17 | Shadow presence counts, lakes with zones | `shadow {presence{PRESENT,NOT_OBSERVED,UNKNOWN}, lakesWithZones, evaluated}` | ENGINE READY | OPS GAP (untyped) |
 | 15 | Dependencies | `dependsOn`, `context.consumed` per lake | ENGINE READY | OPS GAP for counts |
 
 Every ENGINE READY number is computed from the fleet manifest, the maturity inputs and the run — **none is hardcoded for Ops to echo** (test: `test_registry_extras_computed_not_hardcoded`).

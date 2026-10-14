@@ -35,10 +35,10 @@ def _health(errors: list, evaluated: int, unavailable: int) -> str:
 
 
 def publish(manifest: dict, writer, observations: dict | None = None, contexts: dict | None = None, validation: dict | None = None,
-            now: datetime | None = None, agency: dict | None = None) -> dict:
+            now: datetime | None = None, agency: dict | None = None, littoral: dict | None = None) -> dict:
     now = (now or datetime.now(timezone.utc)).replace(microsecond=0)
     now_iso = C.iso(now)
-    observations, contexts, agency = observations or {}, contexts or {}, agency or {}
+    observations, contexts, agency, littoral = observations or {}, contexts or {}, agency or {}, littoral or {}
     rep: dict = {"ok": False, "errors": [], "writes": 0, "lakes": {}}
     try:
         cands = manifest["candidates"]
@@ -48,23 +48,27 @@ def publish(manifest: dict, writer, observations: dict | None = None, contexts: 
         mv = manifest.get("manifestVersion", "unversioned")
         readiness: dict[str, str] = {}
         kinds = Counter()
+        presence_counts = Counter()
+        zone_lakes = 0
         stale_lakes = evaluated = unavailable = observed = skipped = 0
         for cand in cands:
             lid = cand["lakeId"]
             k = lake_key(lid)
             obs = observations.get(lid)
-            if obs is None and cand["readiness"] != "BLOCKED" and lid not in agency:
+            if obs is None and cand["readiness"] != "BLOCKED" and lid not in agency and lid not in littoral:
                 readiness[lid] = "PROFILED"            # could be observed; nothing has been run: no state is written
                 continue
             try:
-                pl = plan(writer.get(f"lakes/{k}/states/{C.SLOT}"), cand, obs, contexts.get(lid), mv, agency.get(lid))
-                state, meta = build_state(cand, obs, now, validation=validation, context=contexts.get(lid), manifest_version=mv, agency=agency.get(lid))
+                pl = plan(writer.get(f"lakes/{k}/states/{C.SLOT}"), cand, obs, contexts.get(lid), mv, agency.get(lid), littoral.get(lid))
+                state, meta = build_state(cand, obs, now, validation=validation, context=contexts.get(lid), manifest_version=mv, agency=agency.get(lid), littoral=littoral.get(lid))
                 evaluated += 1
                 readiness[lid] = meta["readiness"]
                 kinds[meta["kind"]] += 1
                 unavailable += meta["kind"] == "unavailable"
                 stale_lakes += bool(meta["stale"])
                 observed += obs is not None and meta["presence"] != "UNKNOWN"
+                presence_counts[meta["presence"]] += 1
+                zone_lakes += bool(((getattr(obs, "zones", None) or {}).get("zones")))
                 rep["lakes"][lid] = {**meta, "plan": pl["action"]}
                 if pl["action"] == "SKIP":
                     skipped += 1
@@ -109,7 +113,9 @@ def publish(manifest: dict, writer, observations: dict | None = None, contexts: 
             "scoreNote": C.SCORE_NOTE,
         }
         try:
-            reg.update(ops_summary.registry_extras(manifest, observed, {"evaluated": evaluated, "unavailable": unavailable}, validation))
+            reg.update(ops_summary.registry_extras(manifest, observed, {"evaluated": evaluated, "unavailable": unavailable}, validation,
+                                                   truth_backed_lakes=len({lid for lid in list(agency) + list(littoral) if lid in {c["lakeId"] for c in cands}}),
+                                                   shadow={"presence": dict(presence_counts), "lakesWithZones": zone_lakes, "evaluated": evaluated}))
         except Exception as e:
             rep["errors"].append(f"ops summary: {e!r}")
             reg["blockers"] = ["Ops summary unavailable this run"]
