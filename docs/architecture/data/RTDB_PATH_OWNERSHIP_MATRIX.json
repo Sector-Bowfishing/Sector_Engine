@@ -1,0 +1,545 @@
+{
+  "contract": "sector-data-architecture-v1",
+  "status": "PROPOSED",
+  "asOf": "2026-10-14",
+  "baseCommit": "f6cec529",
+  "doc": "docs/architecture/data/",
+  "instance": "sector-brain",
+  "measuredTotalBytes": 10110000,
+  "paths": [
+    {
+      "path": "/access/opsUsers/{uid}",
+      "classification": "ACL",
+      "currentOwner": "michael",
+      "currentWriters": [
+        "manual-console"
+      ],
+      "currentReaders": [
+        "rules",
+        "ops-auth"
+      ],
+      "measuredBytes": 86,
+      "problem": "not reproducible from repo; platform writer permitted to replace",
+      "targetOwner": "michael",
+      "targetPath": "/access/opsUsers/{uid}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/activity/{key}",
+      "classification": "HIST",
+      "currentOwner": "each-writer",
+      "currentWriters": [
+        "all-brains",
+        "brain-platform"
+      ],
+      "currentReaders": [
+        "ops",
+        "water-clarity",
+        "lake-brain",
+        "water-temp",
+        "wind"
+      ],
+      "measuredBytes": 12726,
+      "problem": "bio+intel never prune; two key formats; whole-node reads to prune",
+      "targetOwner": "platform",
+      "targetPath": "/activity/{epochMs}-{brainId}-{seq}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/brains/{brainId}",
+      "classification": "REG",
+      "currentOwner": "that-brain",
+      "currentWriters": [
+        "that-brain"
+      ],
+      "currentReaders": [
+        "ops",
+        "orchestrator",
+        "brain-scores",
+        "sector-intelligence"
+      ],
+      "measuredBytes": 57958,
+      "problem": "whole-node writes; research decision text in biological-state; wind carries scores",
+      "targetOwner": "that-brain",
+      "targetPath": "/brains/{brainId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/brains/{brainId}/score",
+      "classification": "DUP",
+      "currentOwner": null,
+      "currentWriters": [
+        "brain-scores(delete, ownership off)"
+      ],
+      "currentReaders": [
+        "ops(legacy)"
+      ],
+      "measuredBytes": 0,
+      "problem": "cross-owner delete with ownership disabled",
+      "targetOwner": null,
+      "targetPath": null,
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/control/overview",
+      "classification": "CTRL",
+      "currentOwner": "platform",
+      "currentWriters": [
+        "brain-scores"
+      ],
+      "currentReaders": [
+        "ops"
+      ],
+      "measuredBytes": 16024,
+      "problem": "drifts while orchestrator paused",
+      "targetOwner": "platform",
+      "targetPath": "/control/overview",
+      "migrationNeeded": false,
+      "risk": "NONE"
+    },
+    {
+      "path": "/control/beta/{lakeKey}",
+      "classification": "CTRL",
+      "currentOwner": "platform",
+      "currentWriters": [
+        "brain-scores"
+      ],
+      "currentReaders": [
+        "ops"
+      ],
+      "measuredBytes": 10969,
+      "problem": "orphans",
+      "targetOwner": "platform",
+      "targetPath": "/control/beta/{lakeKey}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/control/fleet/{lakeKey}",
+      "classification": "DUP",
+      "currentOwner": "platform",
+      "currentWriters": [
+        "brain-scores"
+      ],
+      "currentReaders": [
+        "ops(whole)"
+      ],
+      "measuredBytes": 172799,
+      "problem": "duplicates /lakeFleet rollups",
+      "targetOwner": "platform",
+      "targetPath": "/lakeFleet/{lakeKey}/rollup",
+      "migrationNeeded": true,
+      "risk": "MEDIUM"
+    },
+    {
+      "path": "/control/orchestrator",
+      "classification": "CTRL",
+      "currentOwner": "orchestrator",
+      "currentWriters": [
+        "orchestrator"
+      ],
+      "currentReaders": [
+        "ops(legacy)",
+        "orchestrator"
+      ],
+      "measuredBytes": 3151,
+      "problem": "legacy; superseded by orchestratorV1",
+      "targetOwner": "orchestrator",
+      "targetPath": null,
+      "migrationNeeded": true,
+      "risk": "LOW"
+    },
+    {
+      "path": "/control/orchestratorV1/*",
+      "classification": "CTRL",
+      "currentOwner": "orchestrator",
+      "currentWriters": [
+        "orchestrator"
+      ],
+      "currentReaders": [
+        "ops"
+      ],
+      "measuredBytes": 53035,
+      "problem": null,
+      "targetOwner": "orchestrator",
+      "targetPath": "/control/orchestratorV1/*",
+      "migrationNeeded": false,
+      "risk": "NONE"
+    },
+    {
+      "path": "/controlRequests/pending/{id}",
+      "classification": "CTRL",
+      "currentOwner": null,
+      "currentWriters": [],
+      "currentReaders": [
+        "orchestrator"
+      ],
+      "measuredBytes": 0,
+      "problem": "dead: nothing can write it",
+      "targetOwner": "orchestrator(consumer)",
+      "targetPath": "/requests/control/{requestId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/engine/score",
+      "classification": "DUP",
+      "currentOwner": "platform",
+      "currentWriters": [
+        "brain-scores"
+      ],
+      "currentReaders": [
+        "ops"
+      ],
+      "measuredBytes": 1581,
+      "problem": "alias of /scores/engine",
+      "targetOwner": "platform",
+      "targetPath": "/scores/engine",
+      "migrationNeeded": true,
+      "risk": "LOW"
+    },
+    {
+      "path": "/health/brains/{brainId}",
+      "classification": "SERVE",
+      "currentOwner": "that-brain",
+      "currentWriters": [
+        "that-brain"
+      ],
+      "currentReaders": [
+        "ops",
+        "orchestrator",
+        "brain-scores"
+      ],
+      "measuredBytes": 2091,
+      "problem": "duplicates /brains/{id}.health",
+      "targetOwner": "that-brain",
+      "targetPath": "/health/brains/{brainId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/health/jobs/{jobId}",
+      "classification": "DUP",
+      "currentOwner": "ambiguous",
+      "currentWriters": [
+        "lake-brain",
+        "water-temp",
+        "water-clarity",
+        "wind"
+      ],
+      "currentReaders": [
+        "brain-scores",
+        "ops"
+      ],
+      "measuredBytes": 2231,
+      "problem": "overlaps /jobs; any brain may write any job",
+      "targetOwner": "orchestrator",
+      "targetPath": "/jobs/{jobId}",
+      "migrationNeeded": true,
+      "risk": "LOW"
+    },
+    {
+      "path": "/health/sources/{sourceId}",
+      "classification": "SERVE",
+      "currentOwner": "owning-brain",
+      "currentWriters": [
+        "lake-brain",
+        "water-temp",
+        "water-clarity",
+        "wind"
+      ],
+      "currentReaders": [
+        "ops",
+        "brain-scores"
+      ],
+      "measuredBytes": 1168,
+      "problem": "unowned ids last-writer-wins",
+      "targetOwner": "owning-brain",
+      "targetPath": "/health/sources/{sourceId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/jobs/{jobId}",
+      "classification": "CTRL",
+      "currentOwner": "orchestrator",
+      "currentWriters": [
+        "orchestrator"
+      ],
+      "currentReaders": [
+        "ops",
+        "orchestrator",
+        "brain-scores"
+      ],
+      "measuredBytes": 29427,
+      "problem": "never pruned; includes non-brain functions",
+      "targetOwner": "orchestrator",
+      "targetPath": "/jobs/{jobId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/lakeFleet/{lakeKey}",
+      "classification": "SERVE",
+      "currentOwner": "per-slot-owner",
+      "currentWriters": [
+        "lake-brain",
+        "water-temp",
+        "water-clarity",
+        "wind",
+        "sector-intelligence",
+        "depth(branch)"
+      ],
+      "currentReaders": [
+        "ops(whole)",
+        "sector-intelligence",
+        "water-clarity",
+        "depth",
+        "brain-scores"
+      ],
+      "measuredBytes": 483885,
+      "problem": "wind writes slot separately from state",
+      "targetOwner": "per-slot-owner+platform(rollup)",
+      "targetPath": "/lakeFleet/{lakeKey}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/lakes/{lakeKey}/states/{slot}",
+      "classification": "SERVE",
+      "currentOwner": "slot-owner",
+      "currentWriters": [
+        "slot-owner"
+      ],
+      "currentReaders": [
+        "ops(per-lake)",
+        "sector-intelligence",
+        "depth",
+        "brain-scores"
+      ],
+      "measuredBytes": null,
+      "problem": "clarity state carries ~1.17 MB map-layer metadata fleet-wide",
+      "targetOwner": "slot-owner",
+      "targetPath": "/lakes/{lakeKey}/states/{slot}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/lakes/{lakeKey}/profiles/{slot}",
+      "classification": "SERVE",
+      "currentOwner": "slot-owner",
+      "currentWriters": [
+        "slot-owner"
+      ],
+      "currentReaders": [
+        "ops"
+      ],
+      "measuredBytes": null,
+      "problem": null,
+      "targetOwner": "slot-owner",
+      "targetPath": "/lakes/{lakeKey}/profiles/{slot}",
+      "migrationNeeded": false,
+      "risk": "NONE"
+    },
+    {
+      "path": "/lakes/{lakeKey}/validation/{brainId}",
+      "classification": "OBS-SUM",
+      "currentOwner": "that-brain",
+      "currentWriters": [
+        "that-brain"
+      ],
+      "currentReaders": [
+        "ops"
+      ],
+      "measuredBytes": null,
+      "problem": "wind null-deletes on lookup miss",
+      "targetOwner": "that-brain",
+      "targetPath": "/lakes/{lakeKey}/validation/{brainId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/lakes/{lakeKey}/brain",
+      "classification": "SERVE",
+      "currentOwner": "lake-brain",
+      "currentWriters": [
+        "lake-brain"
+      ],
+      "currentReaders": [
+        "ops",
+        "brain-scores"
+      ],
+      "measuredBytes": null,
+      "problem": null,
+      "targetOwner": "lake-brain",
+      "targetPath": "/lakes/{lakeKey}/brain",
+      "migrationNeeded": false,
+      "risk": "NONE"
+    },
+    {
+      "path": "/lakes/{lakeKey}/speciesPresence",
+      "classification": "SERVE",
+      "currentOwner": "lake-brain(unratified)",
+      "currentWriters": [
+        "lake-brain"
+      ],
+      "currentReaders": [
+        "ops",
+        "sector-intelligence",
+        "biological-state"
+      ],
+      "measuredBytes": null,
+      "problem": "ownership unratified; null when empty",
+      "targetOwner": "lake-brain",
+      "targetPath": "/lakes/{lakeKey}/speciesPresence",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/scores/{brainId}",
+      "classification": "SERVE",
+      "currentOwner": "platform",
+      "currentWriters": [
+        "brain-scores"
+      ],
+      "currentReaders": [
+        "ops",
+        "orchestrator"
+      ],
+      "measuredBytes": 11350,
+      "problem": "docs disagree (/brains/{id}/score)",
+      "targetOwner": "platform",
+      "targetPath": "/scores/{brainId}",
+      "migrationNeeded": false,
+      "risk": "NONE"
+    },
+    {
+      "path": "/snapshots/{lakeKey}/latest",
+      "classification": "DUP",
+      "currentOwner": "copies",
+      "currentWriters": [
+        "lake-brain",
+        "water-temp",
+        "water-clarity",
+        "wind",
+        "sector-intelligence"
+      ],
+      "currentReaders": [
+        "ops(per-lake)",
+        "sector-intelligence",
+        "biological-state(pilot)"
+      ],
+      "measuredBytes": 3403154,
+      "problem": "byte-identical copy of /lakes/{k}/states; misleading generatedAt",
+      "targetOwner": null,
+      "targetPath": "/lakes/{lakeKey}/states",
+      "migrationNeeded": true,
+      "risk": "MEDIUM"
+    },
+    {
+      "path": "/sources/{sourceId}",
+      "classification": "REG",
+      "currentOwner": "owning-brain",
+      "currentWriters": [
+        "lake-brain",
+        "water-temp",
+        "water-clarity",
+        "wind"
+      ],
+      "currentReaders": [
+        "ops",
+        "brain-scores"
+      ],
+      "measuredBytes": 6013,
+      "problem": "unowned ids; whole-record write resets membership",
+      "targetOwner": "owning-brain",
+      "targetPath": "/sources/{sourceId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/species/{speciesId}",
+      "classification": "REG+RES",
+      "currentOwner": "biological-state",
+      "currentWriters": [
+        "biological-state"
+      ],
+      "currentReaders": [
+        "ops(whole)",
+        "sector-intelligence(whole)",
+        "brain-scores"
+      ],
+      "measuredBytes": 117165,
+      "problem": "identity mixed with knowledge, responseBands, research workflow metadata and per-lake text; read wholesale",
+      "targetOwner": "biological-state",
+      "targetPath": "/species/{speciesId} (slim) + /speciesProfiles/{speciesId}",
+      "migrationNeeded": true,
+      "risk": "MEDIUM"
+    },
+    {
+      "path": "/validation/{brainId}",
+      "classification": "OBS-SUM",
+      "currentOwner": "that-brain",
+      "currentWriters": [
+        "that-brain"
+      ],
+      "currentReaders": [
+        "ops",
+        "brain-scores"
+      ],
+      "measuredBytes": 12473,
+      "problem": "wind carries scores",
+      "targetOwner": "that-brain",
+      "targetPath": "/validation/{brainId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/opsPreferences/{uid}",
+      "classification": "ACL",
+      "currentOwner": "ops-user",
+      "currentWriters": [],
+      "currentReaders": [],
+      "measuredBytes": 0,
+      "problem": "unused",
+      "targetOwner": "ops-user",
+      "targetPath": "/opsPreferences/{uid}",
+      "migrationNeeded": false,
+      "risk": "NONE"
+    },
+    {
+      "path": "/schemaVersion",
+      "classification": "CTRL",
+      "currentOwner": null,
+      "currentWriters": [],
+      "currentReaders": [
+        "all-writers(schema gate)"
+      ],
+      "measuredBytes": 0,
+      "problem": "absent, so gate never fires",
+      "targetOwner": "platform",
+      "targetPath": "/schemaVersion",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/validationOps",
+      "classification": "CTRL",
+      "currentOwner": null,
+      "currentWriters": [],
+      "currentReaders": [
+        "ops"
+      ],
+      "measuredBytes": 0,
+      "problem": "rules-only, no data",
+      "targetOwner": null,
+      "targetPath": null,
+      "migrationNeeded": false,
+      "risk": "LOW"
+    }
+  ]
+}

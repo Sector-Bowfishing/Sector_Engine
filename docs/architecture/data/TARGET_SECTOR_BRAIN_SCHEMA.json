@@ -1,0 +1,499 @@
+{
+  "contract": "sector-data-architecture-v1",
+  "status": "PROPOSED",
+  "asOf": "2026-10-14",
+  "baseCommit": "f6cec529",
+  "doc": "docs/architecture/data/",
+  "instance": "sector-brain",
+  "role": "PRODUCTION_SERVING_AND_CONTROL (internal; customers via Engine API)",
+  "paths": [
+    {
+      "path": "/access/opsUsers/{uid}",
+      "owner": "michael",
+      "writers": [
+        "michael(scripted)"
+      ],
+      "readers": [
+        "rules"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": 16,
+      "status": "UNCHANGED",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/opsPreferences/{uid}",
+      "owner": "ops-user",
+      "writers": [
+        "ops-user"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": 4096,
+      "status": "UNCHANGED",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/brains/{brainId}",
+      "owner": "that-brain",
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator",
+        "brain-scores",
+        "sector-intelligence"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 20000,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/brains/{brainId}/publication",
+      "owner": "that-brain",
+      "writers": [
+        "that-brain(publish())"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator",
+        "sector-intelligence"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 2048,
+      "status": "NEW",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/species/{speciesId}",
+      "owner": "biological-state",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence",
+        "brain-scores"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 2048,
+      "status": "SLIMMED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/species/{speciesId}/policy",
+      "owner": "policy-layer",
+      "writers": [
+        "policy-publisher"
+      ],
+      "readers": [
+        "sector-intelligence",
+        "ops"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 1024,
+      "status": "FUTURE",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/speciesIndexes/{environment}/{speciesId}",
+      "owner": "biological-state",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 16,
+      "status": "NEW",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/speciesProfiles/{speciesId}",
+      "owner": "biological-state",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "ops(per-species)",
+        "sector-intelligence(per-species)"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": 65536,
+      "status": "NEW",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/lakes/{lakeKey}/brain",
+      "owner": "lake-brain",
+      "writers": [
+        "lake-brain"
+      ],
+      "readers": [
+        "ops",
+        "brain-scores"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": null,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/lakes/{lakeKey}/states/{slot}",
+      "owner": "slot-owner",
+      "writers": [
+        "slot-owner"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence",
+        "depth",
+        "biological-state"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": null,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/lakes/{lakeKey}/profiles/{slot}",
+      "owner": "slot-owner",
+      "writers": [
+        "slot-owner"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": null,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/lakes/{lakeKey}/validation/{brainId}",
+      "owner": "that-brain",
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": null,
+      "status": "UNCHANGED",
+      "plane": "OBSERVATION_SUMMARY"
+    },
+    {
+      "path": "/lakes/{lakeKey}/speciesPresence",
+      "owner": "lake-brain",
+      "writers": [
+        "lake-brain"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence",
+        "biological-state"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": null,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/lakes/{lakeKey}/states/biology",
+      "owner": "biological-state",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "sector-intelligence",
+        "ops"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": null,
+      "status": "FUTURE",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/lakeFleet/{lakeKey}",
+      "owner": "per-slot-owner",
+      "writers": [
+        "lake-scoped brains"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence",
+        "water-clarity",
+        "depth",
+        "brain-scores"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 1200,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/lakeFleet/{lakeKey}/rollup",
+      "owner": "platform",
+      "writers": [
+        "brain-scores"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 400,
+      "status": "NEW",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/scores/{brainId}",
+      "owner": "platform",
+      "writers": [
+        "brain-scores"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 4096,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/validation/{brainId}",
+      "owner": "that-brain",
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "ops",
+        "brain-scores"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 8192,
+      "status": "UNCHANGED",
+      "plane": "OBSERVATION_SUMMARY"
+    },
+    {
+      "path": "/sources/{sourceId}",
+      "owner": "owning-brain",
+      "writers": [
+        "owning-brain"
+      ],
+      "readers": [
+        "ops",
+        "brain-scores"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 1024,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/health/brains/{brainId}",
+      "owner": "that-brain",
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 1024,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/health/sources/{sourceId}",
+      "owner": "owning-brain",
+      "writers": [
+        "owning-brain"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 512,
+      "status": "UNCHANGED",
+      "plane": "SERVING"
+    },
+    {
+      "path": "/control/overview",
+      "owner": "platform",
+      "writers": [
+        "brain-scores"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 32768,
+      "status": "UNCHANGED",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/control/beta/{lakeKey}",
+      "owner": "platform",
+      "writers": [
+        "brain-scores"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 512,
+      "status": "UNCHANGED",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/control/orchestratorV1/{section}",
+      "owner": "orchestrator",
+      "writers": [
+        "orchestrator"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": null,
+      "status": "UNCHANGED",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/jobs/{jobId}",
+      "owner": "orchestrator",
+      "writers": [
+        "orchestrator"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator",
+        "brain-scores"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 2048,
+      "status": "UNCHANGED",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/requests/control/{requestId}",
+      "owner": "ops(create-only)",
+      "writers": [
+        "ops"
+      ],
+      "readers": [
+        "orchestrator"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 2048,
+      "status": "NEW",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/requests/review/{requestId}",
+      "owner": "ops(create-only)",
+      "writers": [
+        "ops"
+      ],
+      "readers": [
+        "review-tool"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 4096,
+      "status": "NEW",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/requests/research/{requestId}",
+      "owner": "ops(create-only)",
+      "writers": [
+        "ops"
+      ],
+      "readers": [
+        "research-queue"
+      ],
+      "readPattern": "COLLECTION_OK",
+      "maxBytes": 4096,
+      "status": "NEW",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/requests/{kind}/{requestId}/outcome",
+      "owner": "engine-consumer",
+      "writers": [
+        "orchestrator",
+        "review-tool",
+        "research-queue"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": 2048,
+      "status": "NEW",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/activity/{epochMs}-{brainId}-{seq}",
+      "owner": "platform(retention)",
+      "writers": [
+        "all-writers(own events)"
+      ],
+      "readers": [
+        "ops(last 50 by at)"
+      ],
+      "readPattern": "QUERY_ONLY",
+      "maxBytes": 512,
+      "status": "UNCHANGED",
+      "plane": "CONTROL"
+    },
+    {
+      "path": "/schemaVersion",
+      "owner": "platform",
+      "writers": [
+        "brain-platform"
+      ],
+      "readers": [
+        "all-writers"
+      ],
+      "readPattern": "LEAF_ONLY",
+      "maxBytes": 64,
+      "status": "POPULATE",
+      "plane": "CONTROL"
+    }
+  ],
+  "retireAfterReadersMove": [
+    "/snapshots",
+    "/control/fleet",
+    "/engine",
+    "/control/orchestrator",
+    "/health/jobs",
+    "/controlRequests",
+    "/validationOps",
+    "/brains/{brainId}/score"
+  ],
+  "neverStoreHere": [
+    "raw source text",
+    "research workflow metadata",
+    "rejected claims",
+    "discrepancy decision prose",
+    "private bucket paths",
+    "prediction ledgers",
+    "raw field observations",
+    "history of prior values",
+    "licensed material",
+    "secrets",
+    "user PII"
+  ],
+  "writerModel": "'writers' = producing Brain; physical production writer = Orchestrator Publisher (Brain Certification V1)",
+  "supersededInPartBy": "docs/architecture/certification/"
+}

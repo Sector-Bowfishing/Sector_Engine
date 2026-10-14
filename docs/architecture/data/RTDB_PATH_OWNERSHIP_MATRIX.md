@@ -1,0 +1,36 @@
+# RTDB Path Ownership Matrix (`sector-brain`, current → target)
+
+Machine-readable: `RTDB_PATH_OWNERSHIP_MATRIX.json`. Classification: **SERVE** (runtime serving) · **REG** (registry/identity) · **CTRL** (control plane) · **OBS-SUM** (validation summary) · **HIST** (history) · **RES** (research/workflow — should not be here) · **DUP** (duplicate of another path) · **ACL** (access).
+Risk = risk of the *migration*, not of the current state.
+
+| Current path | Current owner | Current writers | Current readers | Class | Problem | Target owner | Target path | Migration? | Risk |
+|---|---|---|---|---|---|---|---|---|---|
+| `/access/opsUsers/{uid}` | Michael (manual) | none in code (console) | rules, Ops auth gate | ACL | Not reproducible from any repo; platform writer is *permitted* to replace it (`ownership.py:24`) | Ops admin (Michael) | unchanged | No (remove platform permission; document a script) | Low |
+| `/activity/{key}` | each writer (own events) | all Brains, score publisher | Ops (last 50 by `at`), Clarity/Lake/WT/Wind (whole, to prune) | HIST | Biological & Intelligence never prune; two key formats; whole-node reads to prune | Platform (retention), each Brain (own events) | unchanged, one key format `{epochMs}-{brainId}-{seq}` | Code only | Low |
+| `/brains/{brainId}` | that Brain | that Brain (whole-node write) | Ops, orchestrator, scorer, Intelligence | REG | Whole-node write drops omitted fields; `biological-state.discrepancies` carries research decision text; Wind carries `scores{}` | that Brain | unchanged + new `publication` child (§ publish manifest) | Additive; move discrepancies out | Low |
+| `/brains/{brainId}/score` | — | score publisher **deletes** it (`score_brains.py:226`, ownership off) | legacy Ops | DUP | Cross-owner delete with ownership check disabled | — | retired (already empty) | Fix the writer to use its own identity / a declared exception | Low |
+| `/control/overview` | Platform | `score_brains.py` | Ops (every page) | CTRL | Drifts while orchestrator paused | Platform | unchanged | No | — |
+| `/control/beta/{k}` | Platform | `score_brains.py` | Ops | CTRL | orphans when lake leaves fleet | Platform | unchanged | prune code | Low |
+| `/control/fleet/{k}` | Platform | `score_brains.py` | Ops (whole, 173 KB) | DUP | Duplicates `/lakeFleet` rollups; second whole-fleet listener | Platform | `/lakeFleet/{k}/rollup` | Yes (Stage 3–5) | Medium |
+| `/control/orchestrator` | Orchestrator | orchestrator (every live cycle) | Ops (legacy), orchestrator | CTRL / DUP | Legacy record superseded by `orchestratorV1`; churns | Orchestrator | retired | Yes (after Ops main reads V1 only) | Low |
+| `/control/orchestratorV1/*` | Orchestrator | orchestrator (content-aware, heartbeat 6 h) | Ops | CTRL | `overrides` and `requests` empty; fine | Orchestrator | unchanged | No | — |
+| `/controlRequests/pending/{id}` | — | nothing (Ops cannot write) | orchestrator | CTRL | Designed but dead; RUN_NOW accepted but never executed | Orchestrator (consumer) | `/requests/control/{id}` | New path, no data to move | Low |
+| `/engine/score` | Platform | `score_brains.py` | Ops (some) | DUP | Alias of `/scores/engine` | Platform | retired → `/scores/engine` | Yes | Low |
+| `/health/brains/{id}` | that Brain | that Brain | Ops, orchestrator, scorer | DUP | Same as `/brains/{id}.health` | that Brain | unchanged (keep; it is the compact health read) — stop duplicating inside registry later | Optional | Low |
+| `/health/jobs/{jobId}` | ambiguous | 4 Brains (any Brain may write any job) | scorer, Ops | DUP | Overlaps `/jobs`, which JOBS_CONTRACT calls canonical | Orchestrator | `/jobs/{jobId}` | Yes | Low |
+| `/health/sources/{id}` | owning Brain | Lake, WT, Clarity, Wind | Ops, scorer | SERVE | Unowned ids last-writer-wins | owning Brain (declare owner for every id) | unchanged | Ownership table only | Low |
+| `/jobs/{jobId}` | Orchestrator | orchestrator | Ops, orchestrator, scorer | CTRL | Includes non-Brain functions; never pruned | Orchestrator | unchanged | Prune retired jobs | Low |
+| `/lakeFleet/{k}` | per-slot: each Brain; `riverSystem`: Lake | lake-scoped Brains | Ops (whole, persistent), Intelligence, Clarity, Depth, scorer | SERVE (index) | Wind writes slot in a separate PATCH from state | per-slot owners + Platform `rollup` | unchanged + `rollup` | Additive | Low |
+| `/lakes/{k}/states/{slot}` | slot's Brain | slot's Brain | Ops (per lake), Intelligence, Depth, scorer | SERVE | Clarity state carries ≈1.17 MB map-layer metadata | slot's Brain | unchanged; heavy layer metadata → `profiles/waterClarity` | Optional (P3) | Low |
+| `/lakes/{k}/profiles/{slot}` | slot's Brain | slot's Brain | Ops | SERVE | — | slot's Brain | unchanged | No | — |
+| `/lakes/{k}/validation/{brainId}` | Brain | Brain (Wind null-deletes on lookup miss) | Ops | OBS-SUM | Null-delete on a miss loses data | Brain | unchanged; never null on miss | Code | Low |
+| `/lakes/{k}/brain` | Lake | Lake | Ops, scorer | SERVE | — | Lake | unchanged | No | — |
+| `/lakes/{k}/speciesPresence` | Lake (unratified, O-24) | Lake (null when empty) | Ops, Intelligence, Biological | SERVE | Ownership unratified; null-when-empty erases "checked, none" | **Lake Brain** (ratify) | unchanged | Ratify; write explicit empty marker | Low |
+| `/scores/{brainId}` | Platform | `score_brains.py` | Ops, orchestrator | SERVE | Docs say `/brains/{id}/score`; frozen scores come from git | Platform | unchanged | Doc fix | — |
+| `/snapshots/{k}/latest` | each Brain (copies) | Lake, WT, Clarity, Wind, Intelligence | Ops (per lake), Intelligence, Biological pilot | DUP | 3.4 MB byte-identical copy of `/lakes/{k}/states`; misleading `generatedAt` | — | retired → read `/lakes/{k}/states` | Yes (Stage 4–6) | Medium |
+| `/sources/{sourceId}` | owning Brain | Lake, WT, Clarity, Wind | Ops, scorer | REG | Data-feed registry; unowned ids; whole-record write resets `brains{}` membership | owning Brain (every id has one owner) | unchanged | Ownership table | Low |
+| `/species/{id}` (identity + score) | Biological | Biological (whole root allowed; deletes absent species) | Ops (whole), Intelligence (whole), Biological, scorer | REG + RES | Mixes identity, knowledge score, `responseBands`, research workflow metadata and a per-lake note; read wholesale | Biological (identity + summary), Policy (later, own child) | `/species/{id}` **slim**: identity + environments + compact `knowledge` summary (≤ 2 KB/species); `responseBands` → `/speciesProfiles/{id}`; research workflow metadata and per-lake text → private release only | Yes (Stage 3–5) | Medium |
+| `/species/{id}/profile` | — | proposed on `feat/biological-brain-adoption` | — | — | Would grow the wholesale `/species` read 117 KB → ≈1.2 MB | — | **`/speciesProfiles/{id}`** | New path, nothing to move | Low |
+| `/validation/{brainId}` | Brain | Brain | Ops, scorer | OBS-SUM | Wind carries scores | Brain | unchanged (summary only) | Minor | Low |
+| `/opsPreferences/{uid}` | Ops user | none (rules allow) | none | ACL | unused | Ops | unchanged | No | — |
+| `/schemaVersion`, `/validationOps` | — | none | writers' schema gate (never fires), Ops (empty view) | — | dead | Platform | `/schemaVersion` populate once **or** delete gate | Decision | Low |
