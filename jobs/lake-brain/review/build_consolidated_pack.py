@@ -4,40 +4,50 @@
 ONE packet, two sections:
 
   Section A  "easy / high confidence": up to 64 rows from the generated bindings table (jobs/lake-brain/data/bindings.proposed.v1.json), chosen by the
-             FIXED rule below. 5 REVIEWED pilots + 58 individually accepted lakes = 63 profiled lakes = the next coverage threshold (10 % of 621).
+             FIXED rule below and shown best-first. 5 REVIEWED pilots + 58 individually accepted lakes = 63 profiled lakes = the next coverage threshold
+             (10 % of 621), so Michael can stop after about 58 ACCEPTs.
   Section B  "flagged / ambiguous - later, optional": <= 20 rows (recovered mismatch-14 lakes, wave-1 flagged lakes, coordinate-held lakes), clearly
              marked 'do after Section A'. A Section B ACCEPT only counts when the lake is already in the bindings table; the other rows are recorded as
              'accepted for later table inclusion' and never reach accepted_batch.json.
 
 Nothing here accepts anything. Acceptance state is WAITING FOR MICHAEL. The packet is public-derived data only.
 
-SELECTION RULE (selection-rule id consolidated-selection-v1; fixed before any lake was looked at - the thresholds below are the only knobs and
-they are changed here, in code review, never after seeing which lakes pass):
+SELECTION RULE (selection-rule id consolidated-selection-v2; stated here BEFORE it was run; the thresholds are the only knobs and they are changed
+here, in code review, never after seeing which lakes pass).
 
-  Universe: the 196 rows of the bindings table.
-    1  not one of the 5 REVIEWED pilots (the packet never contains a pilot)
-    2  not in a hold list (held_lakes.py snapshot, held_back_coordinate_flags.csv, any hold file given)
-    3  the existing pack recommendation is PASS and every rule R1..R9 is PASS or n-a
-    4  spatial match: the lake has an outline and the gauge is within THRESH.max_dist_m (150 m, the 'at the outline' tolerance of rule_results) of it
-    5  live registry: geometry confidence HIGH and point flag 'ok'
-    6  not in the coordinate-review pack (coordinate_review_pack.csv) and not in held_back_coordinate_flags.csv
-    7  independent confirmation: an independent second source whose latest level differs <= THRESH.second_diff_ft (1.0 ft), OR an operator-published full
-       pool (directory basis fullPool, confidence high, operator known) that the latest level AND the 30-day median match within THRESH.pool_tol_ft (3.0 ft)
-    8  lake-name vs station-name similarity >= THRESH.name_sim (0.7; 'all lake-name words appear in the station name' counts as 0.7, as in recommend())
-    9  history: >= THRESH.hist_years (15) complete years from a repeatable public series (historyBasis base / history_extension, no 'not a repeatable' note)
-   10  latest observation age <= THRESH.obs_age_h (48 h)
-   11  no attention warning (every recNotes entry except the two purely informational ones, 'single agency only' and 'all lake-name words appear')
-   12  no datum ambiguity: R8 PASS, R7 'strong', zero datum offset on every live source, no history merge/composite caveat
-  Lakes of the existing 60-row stratified sample are allowed, but non-sample qualifying rows are taken first; the sample rows used are reported.
+  THIS IS A REVIEW-CANDIDATE SELECTION, NOT A VALIDATION THRESHOLD. It decides which lakes Michael is asked about first and in what order. It
+  does not decide that a binding is good, it lowers no rubric or validation bar, and every lake still needs Michael's personal ACCEPT.
 
-  Size: target 64. If >= 64 qualify: take 64. If 60..63 qualify: take all of them and report the shortfall (never padded with weak rows). If fewer
-  than 60 qualify: relax ONE criterion at a time, CUMULATIVELY, in the pre-stated order RELAX_ORDER until >= 60 qualify, and report exactly what was
-  relaxed and how many rows pass only because of the relaxation.
+  HARD SAFETY GATES (binding correctness and identity; a row failing any gate is never in Section A). Universe: the 196 rows of the bindings table.
+     1  not one of the 5 REVIEWED pilots
+     2  not in a hold list (held_lakes.py snapshot, held_back_coordinate_flags.csv)
+     3  not in the coordinate-review pack (coordinate_review_pack.csv)
+     4  the existing pack recommendation is PASS and every rule R1..R9 is PASS or n-a
+     5  spatial match: the lake has an outline and the gauge is inside it or within THRESH.max_dist_m (150 m) of it
+     6  registry geometry gate: the live registry has an outline of confidence HIGH or MEDIUM, the map point is not 'identity-risk', and the point is 'ok' or
+        within 150 m of the registry shoreline (location.distanceToShorelineM). Geometry TIER is not a gate beyond this: HIGH vs MEDIUM only ranks.
+     7  independent confirmation: an independent second source whose latest level differs <= THRESH.second_diff_ft (2.0 ft, the R9 rule), OR an
+        operator-published full pool (directory basis fullPool, confidence high, operator known) that the latest level AND the 30-day median match within
+        THRESH.pool_tol_ft (5.0 ft)
+     8  lake-name vs station-name similarity >= THRESH.name_sim (0.6; 'all lake-name words appear in the station name' counts as 0.7, as in recommend())
+     9  history: >= THRESH.hist_years (5) complete years = the rubric's own SUFFICIENT floor. Below 5 the lake could not reach baselineStatus SUFFICIENT.
+        5-9 years publish historicalTier PROVISIONAL (never VERY_UNUSUAL), 10-14 STANDARD, >= 15 FULL; the expected tier is shown on every card.
+    10  latest observation age <= THRESH.obs_age_h (72 h, the R6 live rule's own limit)
+    11  no unresolved attention warning. Purely informational notes never block ('single agency only', 'all lake-name words appear', the reading age
+        which gate 10 already bounds, 'short history' which gate 9 already bounds). Notes about the level-vs-full-pool gap, the directory full-pool
+        confidence, a river-like station name and a partial name match do not block ONLY when an independent second source agrees (gate 7 'second').
+        Anything else (for example a relayed NOAA/NWS number, an unknown note) blocks. Every non-silent note is listed on the card.
+    12  no datum ambiguity: R8 PASS, R7 'strong', zero datum offset on every live source, no history merge/composite caveat
 
-  Ranking inside the qualifying set (RANK_WEIGHTS, 100 points): provider identity 20, coordinate confidence 15, operator confidence 15, geometry
-  confidence 10, duplicate-lake ambiguity 10 (lower ambiguity is better), datum/reference ambiguity 10, independent confirmation 10, production
-  usefulness 10 (the bowfishing size/region proxy of coverage_recovery_plan.json). Diversity: greedy selection with a penalty per lake already
-  chosen from the same provider, state, source kind and region (DIVERSITY_PENALTY); ties broken by sha256(seed|lake id), so the result is deterministic.
+  RANKING FACTORS (order only, never exclude; RANK_WEIGHTS, 100 points): provider identity 16, coordinate confidence 12, operator confidence 12,
+  geometry confidence 12 (HIGH > MEDIUM), duplicate-lake ambiguity 10 (lower is better), datum/reference ambiguity 8, history years 15 (more is better,
+  full marks at 20), production usefulness 15 (the bowfishing size/region proxy of coverage_recovery_plan.json). Diversity: greedy best-first selection
+  with a small penalty per lake already chosen from the same provider, state, source kind and region (DIVERSITY_PENALTY); ties broken by
+  sha256(seed|lake id), so the result is deterministic. The cards are shown in the order chosen: best first.
+
+  Size: the top 64 of the lakes that pass every gate. If fewer than 64 pass, all of them are shown and the shortfall is reported; a row that fails a
+  gate is never added. Lakes of the existing 60-row stratified sample are allowed, but gate-passing rows outside the sample are taken first; the number
+  of sample rows used is reported.
 
 SECTION B RULE: SECTION_B_QUOTA rows per source, ordered by the bowfishing proxy (highest first), then lake id: the recovered mismatch-14 lakes
 (bindings.proposed.v1.recovered.json), the mismatch-14 lakes still marked NEEDS HUMAN REVIEW, coordinate-held lakes whose live registry says geometry
@@ -61,24 +71,20 @@ import build_review_pack as BRP  # noqa: E402
 import consolidated_common as CC  # noqa: E402
 import held_lakes  # noqa: E402
 
-SELECTION_RULE_ID = "consolidated-selection-v1"
+SELECTION_RULE_ID = "consolidated-selection-v2"
 SEED = 20261014
 TARGET_A = 64
-MIN_A = 60
 MAX_B = 20
 SECTION_B_QUOTA = (("recovered", 8), ("mismatch", 5), ("held", 2), ("flagged", 5))      # spare quota flows to the next source
-THRESH = dict(max_dist_m=150.0, second_diff_ft=1.0, pool_tol_ft=3.0, name_sim=0.7, hist_years=15, obs_age_h=48.0)
-# One criterion at a time, cumulative, only if fewer than MIN_A rows qualify under THRESH.
-RELAX_ORDER = (
-    ("obs_age_h", {"obs_age_h": 72.0}, "latest observation age 48 h -> 72 h (the R6 live rule's own limit)"),
-    ("hist_years", {"hist_years": 10}, "history 15 -> 10 complete years"),
-    ("independent_tolerance", {"second_diff_ft": 2.0, "pool_tol_ft": 5.0}, "second-source difference 1 -> 2 ft (the R9 rule) and operator-pool tolerance 3 -> 5 ft"),
-    ("name_sim", {"name_sim": 0.6}, "name similarity 0.7 -> 0.6"),
-)
-INFO_NOTE_PREFIXES = ("single agency only", "the station name contains every word of the lake name")
-RANK_WEIGHTS = dict(identity=20, coordinate=15, operator=15, geometry=10, duplicate=10, datum=10, independent=10, usefulness=10)
-DIVERSITY_PENALTY = dict(provider=2.0, state=1.5, kind=1.0, region=1.0)
-HISTORY_BASES_OK = ("base", "history_extension")
+THRESH = dict(max_dist_m=150.0, second_diff_ft=2.0, pool_tol_ft=5.0, name_sim=0.6, hist_years=5, obs_age_h=72.0)
+# Notes (build_review_pack.recommend recNotes) by how the gate treats them; matched by prefix.
+INFO_NOTE_PREFIXES = ("single agency only", "the station name contains every word of the lake name")                     # never shown as a warning
+INFO_LISTED_PREFIXES = ("last reading is", "short or no public history")                                                  # shown, never block (gates 9 and 10 bound them)
+INFO_IF_SECOND_PREFIXES = ("level is", "directory full-pool confidence", "station name sounds like", "only a partial name match", "gauge is ")
+RANK_WEIGHTS = dict(identity=16, coordinate=12, operator=12, geometry=12, duplicate=10, datum=8, history=15, usefulness=15)
+DIVERSITY_PENALTY = dict(provider=0.6, state=0.8, kind=0.3, region=0.3)
+GEOMETRY_LEVEL_POINTS = {"HIGH": 1.0, "MEDIUM": 0.6}
+TIER_PROVISIONAL, TIER_STANDARD, TIER_FULL = "PROVISIONAL", "STANDARD", "FULL"
 SUPPORTED_PROVIDERS = ("a2w", "cwms", "usgs", "rise", "tva", "nwps")
 
 DEFAULT_REGISTRY = "https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json"
@@ -133,7 +139,37 @@ def effective_sim(row):
 
 
 def attention_warnings(row):
+    """Every note the card must LIST (all except the two silent informational ones)."""
     return [n for n in row["recNotes"] if not n.startswith(INFO_NOTE_PREFIXES)]
+
+
+def blocking_warnings(row, thr=THRESH):
+    """Notes that block Section A (gate 11): not silent, not listed-informational, and not 'informational when a second source agrees'."""
+    second_ok = independent_basis(row, thr) in ("second", "second+pool")
+    out = []
+    for n in attention_warnings(row):
+        if n.startswith(INFO_LISTED_PREFIXES) or (second_ok and n.startswith(INFO_IF_SECOND_PREFIXES)):
+            continue
+        out.append(n)
+    return out
+
+
+def history_tier(years):
+    """Expected historicalTier of the Lake Brain rubric for this many complete years (None below the SUFFICIENT floor of 5)."""
+    y = int(years or 0)
+    return None if y < 5 else TIER_PROVISIONAL if y < 10 else TIER_STANDARD if y < 15 else TIER_FULL
+
+
+def geometry_gate(reg, thr=THRESH):
+    """Gate 6: a usable registry outline (HIGH or MEDIUM) and a map point that is not an identity risk and is ok or on the shoreline."""
+    lvl = (reg.get("geometryConfidence") or {}).get("level")
+    flag = reg.get("pointFlag")
+    if lvl not in GEOMETRY_LEVEL_POINTS or flag == "identity-risk":
+        return False
+    if flag == "ok":
+        return True
+    d = (reg.get("location") or {}).get("distanceToShorelineM")
+    return d is not None and d <= thr["max_dist_m"]
 
 
 def independent_basis(row, thr):
@@ -163,8 +199,7 @@ def datum_ambiguity(row, binding):
 
 
 def history_ok(binding, thr):
-    return (int(binding.get("historyCompleteYears") or 0) >= thr["hist_years"] and binding.get("historyBasis") in HISTORY_BASES_OK
-            and not any("not a repeatable" in n for n in binding.get("historyNotes", [])))
+    return int(binding.get("historyCompleteYears") or 0) >= thr["hist_years"]
 
 
 def evaluate(row, ctx, thr=THRESH):
@@ -172,24 +207,23 @@ def evaluate(row, ctx, thr=THRESH):
     lid = row["id"]
     b = ctx.table[lid]
     reg = ctx.registry.get(lid) or {}
-    gc = (reg.get("geometryConfidence") or {}).get("level")
     out = []
     out.append(("not_pilot", lid not in ctx.pilots))
     out.append(("not_held", lid not in ctx.held))
+    out.append(("not_in_coordinate_review", lid not in ctx.coord_pack))
     out.append(("recommendation_pass_rules_clear", row["rec"] == "PASS" and all(r["res"] in ("PASS", "n-a") for r in row["rules"])))
     out.append(("spatial_match", bool(row["dist"]["outline"]) and row["dist"]["m"] <= thr["max_dist_m"]))
-    out.append(("registry_geometry_high_point_ok", gc == "HIGH" and reg.get("pointFlag") == "ok"))
-    out.append(("not_in_coordinate_review", lid not in ctx.coord_pack))
+    out.append(("registry_geometry_usable", geometry_gate(reg, thr)))
     out.append(("independent_confirmation", independent_basis(row, thr) is not None))
     out.append(("name_similarity", effective_sim(row) >= thr["name_sim"]))
     out.append(("history", history_ok(b, thr)))
     out.append(("observation_age", row["level"]["ageH"] is not None and row["level"]["ageH"] <= thr["obs_age_h"]))
-    out.append(("no_attention_warning", not attention_warnings(row)))
+    out.append(("no_attention_warning", not blocking_warnings(row, thr)))
     out.append(("no_datum_ambiguity", not datum_ambiguity(row, b)))
     return out
 
 
-CRITERIA_ORDER = ("not_pilot", "not_held", "recommendation_pass_rules_clear", "spatial_match", "registry_geometry_high_point_ok", "not_in_coordinate_review",
+CRITERIA_ORDER = ("not_pilot", "not_held", "not_in_coordinate_review", "recommendation_pass_rules_clear", "spatial_match", "registry_geometry_usable",
                   "independent_confirmation", "name_similarity", "history", "observation_age", "no_attention_warning", "no_datum_ambiguity")
 
 
@@ -201,7 +235,7 @@ def funnel(rows, ctx, thr=THRESH):
         before = len(alive)
         alive = {l for l in alive if ev[l][c]}
         steps.append(dict(criterion=c, remaining=len(alive), removed=before - len(alive), failedAlone=sum(1 for l in rows if not ev[l][c])))
-    # rows that fail EXACTLY ONE criterion (what a single further relaxation would add; information for the lead, never applied here)
+    # rows that fail EXACTLY ONE gate (information only: nothing is ever added for failing a gate)
     only = collections.defaultdict(list)
     for l in rows:
         bad = [c for c in CRITERIA_ORDER if not ev[l][c]]
@@ -212,20 +246,9 @@ def funnel(rows, ctx, thr=THRESH):
 
 
 def qualify(rows, ctx):
-    """Apply THRESH, then (only if fewer than MIN_A qualify) RELAX_ORDER one criterion at a time. Returns (qualifying ids, funnel of the final
-    thresholds, relaxation report)."""
-    thr = dict(THRESH)
-    f = funnel(rows, ctx, thr)
-    relax = dict(applied=[], strictQualifying=len(f["qualifying"]), strictIds=list(f["qualifying"]), strictSteps=[[x["criterion"], x["remaining"]] for x in f["steps"]],
-                 strictBlockedOnlyBy={c: len(v) for c, v in f["blockedOnlyBy"].items()})
-    for name, change, text in RELAX_ORDER:
-        if len(f["qualifying"]) >= MIN_A:
-            break
-        thr.update(change)
-        f = funnel(rows, ctx, thr)
-        relax["applied"].append(dict(criterion=name, change=change, text=text, qualifyingAfter=len(f["qualifying"])))
-    relax["relaxedOnlyIds"] = sorted(set(f["qualifying"]) - set(relax["strictIds"]))
-    return f["qualifying"], f, relax
+    """Apply the hard gates. Returns (qualifying ids, funnel). There is no relaxation: a row failing a gate is never selected."""
+    f = funnel(rows, ctx, dict(THRESH))
+    return f["qualifying"], f
 
 
 # ---------------------------------------------------------------------------------------------------------------- ranking / selection
@@ -239,23 +262,24 @@ def rank_components(row, ctx, thr=THRESH):
     reg = ctx.registry.get(lid) or {}
     W = RANK_WEIGHTS
     nid = row.get("nid") or {}
+    gc = reg.get("geometryConfidence") or {}
+    gscore = clamp(float(gc.get("score") or 0))
+    glevel = GEOMETRY_LEVEL_POINTS.get(gc.get("level"), 0.0)
     identity = W["identity"] * (0.6 * clamp(effective_sim(row)) + 0.2 * (1.0 if nid.get("linked") and (nid.get("score") or 0) >= 90 else 0.0)
                                 + 0.2 * (0.0 if BRP.RIVERISH.search(row.get("stationName") or "") else 1.0))
-    coord = W["coordinate"] * (0.55 * (1.0 - clamp(row["dist"]["m"] / thr["max_dist_m"])) + 0.45 * clamp(float((reg.get("geometryConfidence") or {}).get("score") or 0)))
+    coord = W["coordinate"] * (0.5 * (1.0 - clamp(row["dist"]["m"] / thr["max_dist_m"])) + 0.3 * (1.0 if reg.get("pointFlag") == "ok" else 0.0) + 0.2 * gscore)
     pool = row["pool"]
     operator = W["operator"] * (0.5 * (1.0 if row["capability"] == "DIRECT_OPERATOR_POOL" else 0.0) + 0.3 * (1.0 if pool.get("conf") == "high" else 0.0)
                                 + 0.2 * (0.0 if (row.get("operator") or "none") in ("none", "") else 1.0))
-    geometry = W["geometry"] * clamp(float((reg.get("geometryConfidence") or {}).get("score") or 0))
+    geometry = W["geometry"] * (0.7 * glevel + 0.3 * gscore)
     same_name = max(0, ctx.dir_names.get(norm_name(row["name"]), 1) - 1)
     members = max(0, len(reg.get("memberIds") or [lid]) - 1)
     shared_station = max(0, ctx.station_use[(b["provider"], str(b["station"]))] - 1)
     duplicate = W["duplicate"] * clamp(1.0 - 0.5 * min(1, same_name) - 0.3 * min(1, members) - 0.2 * min(1, shared_station))
     datum = W["datum"] * clamp(1.0 - 0.34 * len(datum_ambiguity(row, b)))
-    kind = independent_basis(row, thr)
-    sd = row["second"]["diff"] if row["second"] and row["second"].get("diff") is not None else None
-    ind = W["independent"] * (1.0 if kind == "second+pool" else (0.6 + 0.4 * (1.0 - clamp((sd or 0.0) / max(thr["second_diff_ft"], 1e-9)))) if kind == "second" else 0.5 if kind == "pool" else 0.0)
+    history = W["history"] * clamp(int(b.get("historyCompleteYears") or 0) / 20.0)
     use = W["usefulness"] * clamp(float(ctx.bow.get(lid, 0)) / 9.0)
-    comp = dict(identity=identity, coordinate=coord, operator=operator, geometry=geometry, duplicate=duplicate, datum=datum, independent=ind, usefulness=use)
+    comp = dict(identity=identity, coordinate=coord, operator=operator, geometry=geometry, duplicate=duplicate, datum=datum, history=history, usefulness=use)
     return {k: round(v, 3) for k, v in comp.items()}
 
 
@@ -296,21 +320,19 @@ def pick_diverse(candidates, rows, ctx, n, seed, forced=(), thr=THRESH):
 
 
 def select_section_a(rows, ctx, seed=SEED, target=TARGET_A):
-    ids, f, relax = qualify(rows, ctx)
+    ids, f = qualify(rows, ctx)
     non_sample = [l for l in ids if l not in ctx.sample]
     in_sample = [l for l in ids if l in ctx.sample]
-    thr = dict(THRESH)
-    for a in relax["applied"]:
-        thr.update(a["change"])
-    # non-sample rows first (all of them are forced in when fewer than `target`), then the best sample rows fill the remainder
+    # gate-passing rows outside the 60-row sample first (all forced in when fewer than `target`), then the best sample rows fill the remainder
     if len(non_sample) >= target:
-        chosen, comp = pick_diverse(non_sample, rows, ctx, target, seed, thr=thr)
+        chosen, comp = pick_diverse(non_sample, rows, ctx, target, seed)
     else:
-        chosen, comp = pick_diverse(ids, rows, ctx, target, seed, forced=non_sample, thr=thr)
-    chosen = chosen[:target]
+        chosen, comp = pick_diverse(ids, rows, ctx, target, seed, forced=non_sample)
+    # best-first display order: greedy order over the chosen set itself (forced rows no longer jump ahead of better sample rows)
+    chosen, comp = pick_diverse(chosen, rows, ctx, len(chosen), seed)
     sample_used = [l for l in chosen if l in ctx.sample]
     report = dict(qualifying=len(ids), qualifyingNonSample=len(non_sample), qualifyingSample=len(in_sample), target=target, selected=len(chosen),
-                  shortfall=max(0, target - len(chosen)), sampleRowsUsed=len(sample_used), sampleRowIds=sorted(sample_used), relaxation=relax,
+                  shortfall=max(0, target - len(chosen)), sampleRowsUsed=len(sample_used), sampleRowIds=sorted(sample_used),
                   funnel=f, rankComponents={l: comp[l] for l in chosen}, rankScore={l: round(sum(comp[l].values()), 3) for l in chosen})
     return chosen, report
 
@@ -354,7 +376,12 @@ def section_row(row, section, seq, ctx, extra=None):
         spatial=dict(text=row["dist"]["text"], m=row["dist"]["m"], outline=row["dist"]["outline"]),
         nameMatch=row["nameMatch"], nameSimEffective=round(effective_sim(row), 3),
         geometry=dict(level=gc.get("level"), score=gc.get("score"), pointFlag=reg.get("pointFlag"), areaKm2=reg.get("areaKm2"),
-                      text=(f"outline confidence {gc.get('level')}, map point '{reg.get('pointFlag')}'" if gc else "not in the live registry")),
+                      shorelineM=(reg.get("location") or {}).get("distanceToShorelineM"),
+                      text=(f"outline confidence {gc.get('level')}, map point '{reg.get('pointFlag')}'"
+                            + (f" ({(reg.get('location') or {}).get('distanceToShorelineM')} m from the registry shoreline)" if (reg.get("location") or {}).get("distanceToShorelineM") is not None else "")
+                            if gc else "not in the live registry")),
+        historyYears=(ctx.table[lid].get("historyCompleteYears") if lid in ctx.table else row["history"]["years"]),
+        historyTier=history_tier(ctx.table[lid].get("historyCompleteYears") if lid in ctx.table else row["history"]["years"]),
         warnings=third_w + ([] if row["pointFlag"] in ("none", "ok") else [f"directory coordinate flagged '{row['pointFlag']}'"]),
         level=row["level"], pool=row["pool"], second=row["second"], alsoAgrees=row["alsoAgrees"],
         history=row["history"], recommendation=row["rec"], recReasons=row["recReasons"], recNotes=row["recNotes"],
@@ -393,7 +420,7 @@ def overlay_recovered(row, binding, inp):
 
 # ---------------------------------------------------------------------------------------------------------------- html / csv
 PACKET_CSV_FIELDS = ["section", "seq", "lake_id", "lake_name", "state", "provider", "provider_identifier", "operator", "station_name", "spatial_match",
-                     "distance_to_outline_km", "name_similarity", "geometry_status", "warnings", "current_level_ft", "observed_at_utc", "observation_age_hours",
+                     "distance_to_outline_km", "name_similarity", "geometry_status", "geometry_confidence", "history_tier", "warnings", "current_level_ft", "observed_at_utc", "observation_age_hours",
                      "full_pool_ft", "level_minus_full_pool_ft", "second_source", "second_source_level_ft", "second_source_difference_ft", "history_years",
                      "computer_recommendation", "recommendation_reason", "why_flagged", "counts_if_accepted", "gauge_page", "lake_map_link", "gauge_map_link", "row_digest"]
 
@@ -403,7 +430,7 @@ def packet_csv_row(r):
     return {
         "section": r["section"], "seq": r["seq"], "lake_id": r["id"], "lake_name": r["name"], "state": r["state"], "provider": r["provider"],
         "provider_identifier": r["identifier"], "operator": r.get("operator") or "", "station_name": r["stationName"], "spatial_match": r["spatial"]["text"],
-        "distance_to_outline_km": round(r["spatial"]["m"] / 1000.0, 3), "name_similarity": f"{r['nameMatch']['sim']:.3f}", "geometry_status": r["geometry"]["text"],
+        "distance_to_outline_km": round(r["spatial"]["m"] / 1000.0, 3), "name_similarity": f"{r['nameMatch']['sim']:.3f}", "geometry_status": r["geometry"]["text"], "geometry_confidence": r["geometry"]["level"] or "", "history_tier": r.get("historyTier") or "",
         "warnings": " | ".join(r["warnings"]), "current_level_ft": r["level"]["lastFt"], "observed_at_utc": r["level"]["obsUtc"], "observation_age_hours": r["level"]["ageH"],
         "full_pool_ft": r["pool"]["ft"], "level_minus_full_pool_ft": r["pool"]["diffNow"],
         "second_source": f"{s['label']} ({s['name']})" if s else "none (single agency)", "second_source_level_ft": s["lastFt"] if s else "",
@@ -427,8 +454,7 @@ def build(inp, ctx, rows_all, out_dir, registry_sha, seed=SEED, extra_inputs=Non
     recovered: the recovered-bindings document. held_kind: {lakeId: 'coordinate' | 'series' | 'terms'} (why a held lake is held). Returns (manifest, a_rows, b_rows)."""
     held_kind = held_kind or {}
     chosen, rep = select_section_a(rows_all, ctx, seed)
-    # presentation order: provider, state, name
-    chosen = sorted(chosen, key=lambda l: (rows_all[l]["provider"], rows_all[l]["state"], rows_all[l]["name"], l))
+    # presentation order = selection order = best first (select_section_a)
     a_rows = []
     for i, l in enumerate(chosen, 1):
         r = rows_all[l]
@@ -468,6 +494,9 @@ def build(inp, ctx, rows_all, out_dir, registry_sha, seed=SEED, extra_inputs=Non
             cands["held"][lid] = row
             why_b[lid] = ("Held lake: its directory coordinate was flagged in research, but the live registry now shows geometry HIGH and map point 'ok'; the coordinate hold may be stale. "
                           "Decide the coordinate-review pack first. It is NOT in the bindings table.")
+    for grp in cands.values():                                           # Section B never repeats a Section A lake
+        for lid in [l for l in grp if l in set(chosen)]:
+            del grp[lid]
     picked = select_section_b(cands, ctx)
     b_rows = []
     for i, (src, lid) in enumerate(picked, 1):
@@ -484,19 +513,23 @@ def build(inp, ctx, rows_all, out_dir, registry_sha, seed=SEED, extra_inputs=Non
         schema=CC.SCHEMA_PACK, packId=pack_id, generatedBy="jobs/lake-brain/review/build_consolidated_pack.py", selectionRule=SELECTION_RULE_ID, seed=seed,
         snapshotDate=BRP.SNAPSHOT_DATE, criteriaVersion=CC.CRITERIA_VERSION, status="WAITING FOR MICHAEL (nothing in this packet is accepted)",
         decisions=list(CC.DECISIONS), pilots=sorted(ctx.pilots), pilotCount=CC.PILOT_COUNT, threshold=CC.COVERAGE_THRESHOLD, neededAccepts=CC.NEEDED_ACCEPTS,
-        thresholds=THRESH, relaxOrder=[dict(criterion=n, change=c, text=t) for n, c, t in RELAX_ORDER], rankWeights=RANK_WEIGHTS, diversityPenalty=DIVERSITY_PENALTY,
+        thresholds=THRESH, rankWeights=RANK_WEIGHTS, diversityPenalty=DIVERSITY_PENALTY,
         sectionBQuota=[list(q) for q in SECTION_B_QUOTA],
         counts=dict(tableLakes=len(ctx.table), sectionA=len(a_rows), sectionB=len(b_rows), sampleRowsUsed=rep["sampleRowsUsed"], shortfall=rep["shortfall"],
                     qualifying=rep["qualifying"], qualifyingNonSample=rep["qualifyingNonSample"], qualifyingSample=rep["qualifyingSample"],
                     sectionAByProvider=dict(sorted(prov_counts.items())), sectionAByState=dict(sorted(collections.Counter(r["state"] for r in a_rows).items())),
                     sectionAByKind=dict(sorted(collections.Counter(r["kindPlain"] for r in a_rows).items())),
+                    sectionAByHistoryTier=dict(sorted(collections.Counter(r["historyTier"] for r in a_rows).items())),
+                    sectionAByGeometry=dict(sorted(collections.Counter(str(r["geometry"]["level"]) for r in a_rows).items())),
+                    sectionAByProviderAndTier={p: dict(sorted(collections.Counter(r["historyTier"] for r in a_rows if r["provider"] == p).items())) for p in sorted(prov_counts)},
                     sectionBBySource=dict(sorted(collections.Counter(r["sourceGroup"] for r in b_rows).items()))),
-        funnel=rep["funnel"], relaxation=rep["relaxation"], sampleRowIds=rep["sampleRowIds"],
+        funnel=rep["funnel"], sampleRowIds=rep["sampleRowIds"],
         held=sorted(ctx.held), coordinatePack=sorted(ctx.coord_pack),
         inputs=dict(bindingsTableSha256=CC.sha256_file(CC.BINDINGS) if os.path.exists(CC.BINDINGS) else None, registrySha256=registry_sha, **(extra_inputs or {})),
         rows=[dict(section=r["section"], id=r["id"], seq=r["seq"], digest=r["digest"], name=r["name"], state=r["state"], provider=r["provider"],
                    identifier=r["identifier"], recommendation=r["recommendation"], inBindingsTable=r["inBindingsTable"],
-                   **({"rankScore": r.get("rankScore")} if r["section"] == "A" else {"sourceGroup": r.get("sourceGroup")})) for r in all_rows],
+                   **({"rankScore": r.get("rankScore"), "historyTier": r["historyTier"], "historyYears": r["historyYears"], "geometryLevel": r["geometry"]["level"]}
+                      if r["section"] == "A" else {"sourceGroup": r.get("sourceGroup")})) for r in all_rows],
         rankComponents=rep["rankComponents"],
         note="Acceptance is individual: only a lake Michael marks ACCEPT can ever count. Nothing is extrapolated to lakes he did not decide.",
     )
@@ -526,15 +559,19 @@ def write_readme(out, m, a_rows, b_rows):
     A("")
     A("## What this is")
     A(f"The computer matched lakes to public water-level gauges. Today **{m['pilotCount']}** lakes are REVIEWED. The next coverage step needs **{m['threshold']}** profiled lakes, "
-      f"so **{m['neededAccepts']}** more lakes have to be accepted. Section A has **{c['sectionA']}** lakes the computer is most sure about"
+      f"so **{m['neededAccepts']}** more lakes have to be accepted. Section A has **{c['sectionA']}** lakes the computer is most sure about, listed **best first**"
       + (f", so you can reach {m['threshold']} even if you say no to a few." if c['sectionA'] >= m['neededAccepts'] + 6 else " (see the note on size below)."))
     A("")
     A("**Every ACCEPT is you personally accepting that one lake. Nothing is extrapolated: a lake you did not accept does not count, and no lake is accepted because other lakes were.**")
+    A("")
+    A(f"**If you only want to do part of it:** the first {m['neededAccepts']} accepted lakes already cross the {m['threshold']} threshold ({m['pilotCount']} reviewed + {m['neededAccepts']} = {m['threshold']}). "
+      f"The cards are in best-first order, so you can stop after about {m['neededAccepts']} ACCEPTs; the header tells you how many more are needed.")
     if c["shortfall"] > 0:
         A("")
-        A(f"**Honest note on size.** Only **{c['sectionA']}** lakes meet every hard criterion (target {TARGET_A}; shortfall {c['shortfall']}), and nothing weaker was added to make up the number. "
-          f"Section A alone can therefore reach at most {m['pilotCount']} + {c['sectionA']} = {m['pilotCount'] + c['sectionA']} profiled lakes, short of {m['threshold']}. "
-          "The rest has to come from Path A below, from a later and wider packet (the manifest lists, per criterion, how many lakes miss only that one criterion), or from the Section B lakes once they are in the bindings table.")
+        A(f"**Honest note on size.** Only **{c['sectionA']}** lakes pass every safety gate (target {TARGET_A}; shortfall {c['shortfall']}), and no lake that fails a gate was added to make up the number. "
+          f"Section A alone can therefore reach at most {m['pilotCount']} + {c['sectionA']} = {m['pilotCount'] + c['sectionA']} profiled lakes"
+          + (f", short of {m['threshold']}." if m['pilotCount'] + c['sectionA'] < m['threshold'] else ".")
+          + " The rest has to come from Path A below or from the Section B lakes once they are in the bindings table.")
     A("")
     A("## How long")
     A(f"About 20 to 30 minutes for Section A if you trust the computer's evidence on each card and open the gauge link only when something looks odd (about 20 seconds a card). "
@@ -544,7 +581,7 @@ def write_readme(out, m, a_rows, b_rows):
     A("1. Double-click `binding_review_consolidated.html` (opens in Safari or Chrome; nothing is uploaded).")
     A("2. Work down **Section A**. Each card shows the lake, the gauge, where the gauge sits against the lake outline, the name match, the current level against the lake's full pool, the independent second source (when there is one), any warning, and the computer's recommendation.")
     A("3. Press **Accept** (this gauge is this lake's water level), **Reject** (wrong gauge, wrong lake or a nonsense level) or **Needs review** (you cannot tell; it is set aside and not counted). Add a note if you like. Press the same button again to undo.")
-    A("4. The header counts `Section A: accepted N of {n}` and `N more needed to reach 63 profiled lakes`. Your answers are saved in your browser as you go (same browser, same file).".replace("{n}", str(c["sectionA"])))
+    A("4. The cards are best-first. The header counts `Section A: accepted N of {n}` and `N more needed to reach 63 profiled lakes`. Your answers are saved in your browser as you go (same browser, same file).".replace("{n}", str(c["sectionA"])))
     A("5. Press **Download my review (CSV)**. Give that file to Claude. A partial export is fine: only the lakes you accepted count; run it again later with the rest.")
     A("6. **Section B** is a separate short list of flagged or ambiguous lakes (each card says why). Do it after Section A, or not at all.")
     A("")
@@ -555,25 +592,47 @@ def write_readme(out, m, a_rows, b_rows):
     A("")
     A("## Two ways to get lakes accepted - you choose")
     A("- **Path A: the 60-row random sample** (`Lake Brain Binding Review/binding_review_sample.html`, ~1 hour). If at most 1 of the 60 is rejected, the whole eligible population (every strict, unheld lake in the bindings table) is accepted at once through the statistical rule. It is the fastest way to a large number of lakes, but you are accepting lakes you never opened on the strength of the sample, and a second reject sends whole groups to full review.")
-    A("- **Path B: this packet** (individual). Each accepted lake counts only because you personally accepted it, so nothing rests on extrapolation, but it only grows by the lakes you open. These are chosen to be the easiest ones, so it is also fast per lake.")
+    A("- **Path B: this packet** (individual). Each accepted lake counts only because you personally accepted it, so nothing rests on extrapolation, but it only grows by the lakes you open. These are the easiest ones, best first, so it is also fast per lake.")
     A("The two do not conflict: the cumulative list is the union of both (a lake you reject here is never accepted through the sample). Section A rows overlap the 60-row sample only where noted in the manifest.")
     A("")
-    A("## Section A: how the lakes were chosen (fixed before looking)")
-    A("From the 196 generated bindings, all of these must hold: not one of the 5 reviewed pilots; not on a hold list; the computer's recommendation PASS with every rule R1 to R9 PASS or n/a; the gauge within 150 m of the lake outline; "
-      "the live lake registry says outline confidence HIGH and map point 'ok'; the lake is not in the coordinate-review pack; an independent second source agrees within 1 ft **or** the dam operator's published full pool matches the level (latest and 30-day median) within 3 ft; "
-      "lake and station names clearly similar (0.7 or more); at least 15 complete years of history from a repeatable public series; last observation within 48 h; no warning; no datum ambiguity. "
-      "From the lakes that pass, the ones to show are picked by a fixed score (identity, coordinate, operator, geometry, duplicate-lake ambiguity, datum, independent confirmation, bowfishing usefulness proxy) with a penalty for repeating a provider, state, source kind or region, so the list is spread across the fleet.")
+    A("## Section A: how the lakes were chosen (stated in the code before it was run)")
+    A("**This is a review-candidate selection, not a validation threshold.** It decides which lakes you are asked about first and in what order. It does not lower any validation or rubric bar, "
+      "and it does not say a binding is good: every lake still needs your personal Accept. The gates below are about whether a match is correct and identifiable; things that only describe how rich a lake's data is "
+      "(history length, outline quality) are used to order the cards, not to throw a lake out, except for the one floor named in gate 9.")
     A("")
-    rx = m["relaxation"]
-    strict = dict(rx["strictSteps"])
-    A("| Step (cumulative, in this order) | Lakes left, strict criteria | Lakes left, after the relaxations below |")
-    A("|---|---|---|")
-    A(f"| Bindings table | {fn['start']} | {fn['start']} |")
+    A("**Safety gates (a lake failing any one is not in Section A), applied to the 196 generated bindings:**")
+    A("1. not one of the 5 reviewed pilots; 2. not on a hold list; 3. not in the coordinate-review pack;")
+    A("4. the computer's recommendation is PASS with every rule R1 to R9 PASS or n/a;")
+    A("5. the gauge is inside the lake outline or within 150 m of it;")
+    A("6. the live lake registry has a usable outline (confidence HIGH or MEDIUM) and the map point is not an identity risk and is either 'ok' or within 150 m of the registry shoreline;")
+    A("7. independent confirmation: a second agency's level within 2 ft, **or** the dam operator's published full pool within 5 ft of both the latest level and the 30-day median;")
+    A("8. lake and station names similar (0.6 or more);")
+    A("9. at least **5** complete years of history. That is the rubric's own floor for a SUFFICIENT baseline; a lake below it could not reach it. Lakes with 5 to 9 years get the PROVISIONAL historical tier (the app never calls their conditions 'very unusual'), 10 to 14 years STANDARD, 15 or more FULL; the expected tier is on every card;")
+    A("10. last reading no more than 72 hours old;")
+    A("11. no unresolved warning about identity or measurement. Purely informational notes (single agency, a stale-by-hours reading that gate 10 already bounds, short history that gate 9 already bounds) do not block; a gap from full pool, low full-pool confidence, a river-like station name or a partial name match block unless the independent second source agrees. Every warning that is left is printed on the card;")
+    A("12. no datum ambiguity (datum identified, level class 'strong', zero offset, no history merge caveat).")
+    A("")
+    A("**Order (ranking only, nothing is excluded by it):** provider identity, coordinate confidence, operator confidence, geometry confidence (HIGH before MEDIUM), duplicate-lake ambiguity, datum ambiguity, years of history (more is better), and the bowfishing usefulness proxy, "
+      "with a small penalty for repeating a provider, state, source kind or region so the list is spread across the fleet. The top 64 are shown, best first.")
+    A("")
+    A("| Step (cumulative, in this order) | Lakes left |")
+    A("|---|---|")
+    A(f"| Bindings table | {fn['start']} |")
     for st in fn["steps"]:
-        A(f"| after: {st['criterion'].replace('_', ' ')} | {strict[st['criterion']]} | {st['remaining']} |")
+        A(f"| after: {st['criterion'].replace('_', ' ')} | {st['remaining']} |")
     A("")
-    A(f"**Criteria relaxed: {'none' if not rx['applied'] else '; '.join(a['text'] + ' (qualifying ' + str(a['qualifyingAfter']) + ')' for a in rx['applied'])}.** Strictly, {rx['strictQualifying']} lakes qualify; {len(rx['relaxedOnlyIds'])} more qualify only because of the relaxations (cumulative, one criterion at a time, in the order shown, only because fewer than {MIN_A} qualified strictly). Qualifying lakes: {c['qualifying']} ({c['qualifyingNonSample']} outside the 60-row sample, {c['qualifyingSample']} inside it). "
+    A(f"**{c['qualifying']} lakes pass every gate** ({c['qualifyingNonSample']} outside the 60-row sample, {c['qualifyingSample']} inside it); lakes outside the sample are taken first. "
       f"Shown in Section A: **{c['sectionA']}** (target {TARGET_A}; shortfall {c['shortfall']}; {c['sampleRowsUsed']} of them are rows of the 60-row sample).")
+    A("")
+    A("| Expected historical tier | Section A lakes |")
+    A("|---|---|")
+    for t, n in [(t, c["sectionAByHistoryTier"].get(t, 0)) for t in (TIER_FULL, TIER_STANDARD, TIER_PROVISIONAL)]:
+        A(f"| {t} | {n} |")
+    A("")
+    A("| Registry outline confidence | Section A lakes |")
+    A("|---|---|")
+    for t, n in c["sectionAByGeometry"].items():
+        A(f"| {t} | {n} |")
     A("")
     A("| Provider | Section A lakes |")
     A("|---|---|")
@@ -653,7 +712,7 @@ def main(argv=None):
     extra_inputs = dict(sampleCsvSha256=CC.sha256_file(args.sample_csv), heldCsvSha256=CC.sha256_file(args.held_csv), coordinatePackSha256=CC.sha256_file(args.coordinate_pack),
                         recoveredSha256=CC.sha256_file(args.recovered) if os.path.exists(args.recovered) else None, researchInputSha256=inp.hashes())
     manifest, a_rows, b_rows = build(inp, ctx, rows_all, args.out, reg_sha, args.seed, extra_inputs, recovered, dispositions, flagged_rows, held_strict, write=not args.dry_run, held_kind=held_kind)
-    print(json.dumps(dict(packId=manifest["packId"], counts=manifest["counts"], relaxation=[a["text"] for a in manifest["relaxation"]["applied"]],
+    print(json.dumps(dict(packId=manifest["packId"], counts=manifest["counts"],
                           funnel=[(s["criterion"], s["remaining"]) for s in manifest["funnel"]["steps"]]), indent=1))
     return manifest
 

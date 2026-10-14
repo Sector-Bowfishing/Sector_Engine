@@ -128,6 +128,7 @@
     w.appendChild(h("p", { text: "On every card: is this gauge really THIS lake's water level? Section A holds the lakes the computer is most sure about. Press Accept, Reject or Needs review (cannot tell; set aside and not counted). Only an Accept counts." }));
     w.appendChild(h("ul", null, [
       h("li", { text: "Most cards can be decided from the evidence shown (position, names, level against full pool, the second source). Open the gauge link when something looks odd." }),
+      h("li", { text: "Section A is in best-first order: the first " + META.neededAccepts + " ACCEPTs already take the fleet to " + META.threshold + " profiled lakes, so you can stop there; the header counts it for you." }),
       h("li", { text: "Section B (at the bottom) is optional and for later: flagged or ambiguous lakes, each with the reason. Do it after Section A." }),
       h("li", { text: "Your answers are saved in this browser as you go. Press Download my review (CSV) and give the file to Claude; a partial export is fine." })]));
   }
@@ -179,6 +180,7 @@
     } else d2.appendChild(row("Second source", "None (one agency backs this gauge)."));
     if (r.alsoAgrees && r.alsoAgrees.length) d2.appendChild(row("Same number relayed", r.alsoAgrees.join("; ")));
     d2.appendChild(row("History", r.history.years > 0 ? r.history.years + " complete years" + (r.history.first ? " (since " + r.history.first + ")" : "") : "none found"));
+    if (r.historyTier) d2.appendChild(row("Expected history tier", r.historyTier + (r.historyTier === "PROVISIONAL" ? " (5 to 9 years: the app never calls conditions 'very unusual' for this lake yet)" : r.historyTier === "STANDARD" ? " (10 to 14 years)" : " (15 or more years)")));
     d2.appendChild(row("Computer checks", r.rulesSummary));
     right.appendChild(d2);
     card.appendChild(h("div", { class: "grid" }, [left, right]));
@@ -287,7 +289,7 @@
   if (!canStore) document.getElementById("nostore").style.display = "block";
   buildWhat();
   var host = document.getElementById("cards");
-  secEls.A = h("div", { class: "secthead A" }, [document.createTextNode("Section A - easy / high confidence (" + A_ROWS.length + " lakes)"), h("small", { text: "Start here. These are the lakes the computer is surest about; every one needs your personal Accept to count." })]);
+  secEls.A = h("div", { class: "secthead A" }, [document.createTextNode("Section A - easy / high confidence (" + A_ROWS.length + " lakes)"), h("small", { text: "Start here, best first. Every lake passed the safety gates; every one still needs your personal Accept to count." })]);
   secEls.B = h("div", { class: "secthead B" }, [document.createTextNode("Section B - flagged / ambiguous, LATER and OPTIONAL (" + B_ROWS.length + " lakes)"), h("small", { text: "Do this after Section A. Each card says why it is flagged. Only an Accept on a lake already in the bindings table counts; the others are recorded for later." })]);
   ROWS.forEach(function (r) { host.appendChild(buildCard(r)); paintCard(r); });
   document.getElementById("reviewer").value = state.reviewer || "";
