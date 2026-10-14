@@ -86,3 +86,88 @@ def test_fingerprint_changes_when_a_new_pass_arrives_and_not_otherwise():
     b = SH.observe_shared([P("2026-10-01", grass=18), P("2026-10-05", grass=22), P("2026-10-08", grass=21), P("2026-10-09", grass=40, measured=60)], REF, 266.8)
     fa = S.input_fingerprint(CAND, a, {}, "t")
     assert fa == S.input_fingerprint(CAND, a2, {}, "t") and fa != S.input_fingerprint(CAND, b, {}, "t")
+
+
+# ---------------------------------------------------------------- zones: where the persistent surface vegetation is
+import numpy as np  # noqa: E402
+
+CORNERS = {"west": -86.0, "east": -85.9, "north": 34.6, "south": 34.5}
+
+
+def codes(h=120, w=120, grass=((20, 40, 20, 50),), cloud=None):
+    a = np.full((h, w), 255, "uint8")
+    for r0, r1, c0, c1 in grass:
+        a[r0:r1, c0:c1] = 3
+    if cloud:
+        r0, r1, c0, c1 = cloud
+        a[r0:r1, c0:c1] = 2
+    return a
+
+
+def test_persistent_bed_becomes_a_zone_with_area_and_centroid_inside_the_extent():
+    stack = [codes(), codes(), codes()]
+    z = SH.zones_from_codes(stack, CORNERS, 36.0, min_km2=0.0001)
+    assert z["status"] == "OK" and len(z["zones"]) == 1
+    zone = z["zones"][0]
+    assert zone["persistence"] == pytest.approx(1.0, abs=0.06) and zone["looks"] == 3
+    assert CORNERS["west"] < zone["centroid"][0] < CORNERS["east"] and CORNERS["south"] < zone["centroid"][1] < CORNERS["north"]
+    import math
+    expect = 20 * 30 * (36.0 * math.cos(math.radians(34.55))) ** 2 / 1e6
+    assert zone["areaKm2"] == pytest.approx(expect, rel=0.15)
+
+
+def test_a_one_pass_blob_is_not_persistent_and_cloud_is_not_a_look():
+    stack = [codes(grass=()), codes(grass=()), codes(grass=((70, 90, 70, 90),))]
+    assert SH.zones_from_codes(stack, CORNERS, 36.0, min_km2=0.0001)["zones"] == []
+    cloudy = [codes(cloud=(20, 40, 20, 50)), codes(cloud=(20, 40, 20, 50)), codes()]
+    # only one pass looked at the bed: fewer than ZONE_MIN_KNOWN looks => no zone
+    assert SH.zones_from_codes(cloudy, CORNERS, 36.0, min_km2=0.0001)["zones"] == []
+
+
+def test_two_beds_are_ranked_by_area_and_limited_to_top_five():
+    stack = [codes(grass=((10, 30, 10, 30), (60, 100, 60, 110))) for _ in range(3)]
+    zs = SH.zones_from_codes(stack, CORNERS, 36.0, min_km2=0.0001)["zones"]
+    assert len(zs) == 2 and zs[0]["areaKm2"] > zs[1]["areaKm2"]
+    many = [codes(h=300, w=300, grass=tuple((r, r + 6, c, c + 6) for r in range(10, 280, 24) for c in range(10, 280, 24))) for _ in range(3)]
+    assert len(SH.zones_from_codes(many, CORNERS, 36.0, min_km2=0.0001)["zones"]) == 5
+
+
+def test_frame_mismatch_and_empty_input_are_refused_honestly():
+    assert SH.zones_from_codes([], CORNERS, 36.0)["status"] == "NO_PASSES"
+    assert SH.zones_from_codes([codes(), codes(h=60, w=60)], CORNERS, 36.0)["status"] == "FRAME_MISMATCH"
+
+
+def test_zones_in_the_state_stay_compact_and_change_the_fingerprint():
+    passes = [P("2026-10-01", grass=18), P("2026-10-05", grass=22), P("2026-10-08", grass=21)]
+    o1 = SH.observe_shared(passes, REF, 266.8)
+    o2 = SH.observe_shared(passes, REF, 266.8)
+    o2.zones = SH.zones_from_codes([codes()] * 3, CORNERS, 36.0, min_km2=0.0001)
+    s1, _ = S.build_state(CAND, o1, NOW)
+    s2, _ = S.build_state(CAND, o2, NOW)
+    assert s2["surfaceVegetation"]["zones"]["zones"] and len(__import__("json").dumps(s2)) < 14000
+    assert s1["provenance"]["inputFingerprint"] != s2["provenance"]["inputFingerprint"]
+
+
+# ---------------------------------------------------------------- amendment A6: presence ladder tied to the pre-registered tolerance
+def _obs(grass, bank=0.0, measured=60.0):
+    return SH.observe_shared([P("2026-10-08", grass=grass, measured=measured, bank=bank)], REF, 200.0)
+
+
+def test_presence_ladder_present_unknown_not_observed():
+    assert _obs(8.0).shared_presence[0] == "PRESENT"                       # 8 % > 2 % tolerance
+    assert _obs(1.5).shared_presence == ("UNKNOWN", "BELOW_NOISE_TOLERANCE")   # between 0.5 and 2 %: not separable from noise, not 'none'
+    assert _obs(0.3).shared_presence[0] == "NOT_OBSERVED"                  # <= 0.5 % on a real look
+    assert _obs(2.0).shared_presence[0] == "UNKNOWN"                       # exactly the tolerance is not above it
+
+
+def test_bank_strip_cannot_create_presence_and_fallback_cannot_assert_none():
+    assert _obs(9.0, bank=8.5).shared_presence[0] != "PRESENT"             # 0.5 % observed after removing the painted strip
+    fb = SH.observe_shared([P("2026-10-08", grass=0.0, measured=30.0, bank=0.0)], REF, 200.0)
+    assert fb.low_coverage_fallback and fb.shared_presence[0] == "UNKNOWN"
+
+
+def test_threshold_constants_come_from_the_preregistered_tolerance():
+    from vegetation_brain import validation as V
+    assert C.SHARED_PRESENT_MIN_SHARE_PCT == V.PARTIAL_MAX_FPR * 100
+    assert C.SHARED_NOT_OBSERVED_MAX_SHARE_PCT < C.SHARED_PRESENT_MIN_SHARE_PCT
+    assert "BELOW_NOISE_TOLERANCE" in C.REFUSALS and "BELOW_NOISE_TOLERANCE" in C.REFUSAL_DOC

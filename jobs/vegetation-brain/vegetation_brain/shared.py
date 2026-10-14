@@ -30,6 +30,9 @@ class SharedPass:
     grass_to_bank_pct: float | None       # the painted strip behind beds (not an observation)
     grass_under_cloud_pct: float | None
     code_shares: dict | None = None       # {255,3,2,1} shares of ON-LAKE cells (from the PNG) when available
+    corners: dict | None = None           # {'west','east','north','south'} degrees of the PNG extent
+    cell_m: float | None = None           # web-mercator metres per PNG pixel
+    lake_id: str | None = None
 
     @property
     def known_pct(self) -> float:
@@ -56,8 +59,13 @@ def pass_from_clarity_json(d: dict, code_counts: dict | None = None) -> SharedPa
         if on > 0:
             shares = {int(k): v / on for k, v in code_counts.items() if int(k) != CODE_OFF}
     fill = d.get("fill") or {}
+    corners = None
+    co = d.get("coordinates")
+    if co and len(co) == 4:
+        corners = {"west": co[0][0], "east": co[1][0], "north": co[0][1], "south": co[3][1]}
     return SharedPass(_d(p["date"]), p.get("platform"), list(p.get("sceneIds") or []), float(d.get("grassPct") or 0.0),
-                      d.get("measuredPct"), fill.get("grassToBankPct"), fill.get("grassUnderCloudPct"), shares)
+                      d.get("measuredPct"), fill.get("grassToBankPct"), fill.get("grassUnderCloudPct"), shares, corners,
+                      d.get("cellMetresMercator"), d.get("lakeId"))
 
 
 @dataclass
@@ -75,6 +83,7 @@ class SharedObservation:
     low_coverage_fallback: bool = False
     notes: list = field(default_factory=list)
     source_id: str = C.SHARED_SOURCE_ID
+    zones: dict | None = None
     # duck-typed fields the state builder reads
     plant_cells: int | None = None
     read_cells: int | None = None
@@ -146,11 +155,103 @@ def observe_shared(passes: list, reference: date, lake_area_km2: float | None, *
         if len(use) < 3:
             notes.append("burst check needs >= 3 accepted passes; this pass could not be checked against its neighbours")
     area = None if lake_area_km2 is None else share / 100.0 * lake_area_km2
-    if area is not None and area >= C.SHARED_MIN_AREA_KM2:
-        pres = ("PRESENT", f"observed grass >= {C.SHARED_MIN_AREA_KM2} km2 after removing the bed-to-bank strip")
-    elif known >= PASS_MIN_KNOWN_PCT and not fallback and area is not None:
-        pres = ("NOT_OBSERVED", "lake looked at; observed grass below the minimum area")
+    if area is None:
+        pres = ("UNKNOWN", "lake area unknown")
+    elif share > C.SHARED_PRESENT_MIN_SHARE_PCT and area >= C.SHARED_MIN_AREA_KM2:
+        pres = ("PRESENT", f"observed grass share {share:.1f} % > the {C.SHARED_PRESENT_MIN_SHARE_PCT} % tolerance (bed-to-bank strip removed)")
+    elif known >= PASS_MIN_KNOWN_PCT and not fallback and share <= C.SHARED_NOT_OBSERVED_MAX_SHARE_PCT:
+        pres = ("NOT_OBSERVED", "lake looked at; observed grass at or below the not-observed ceiling")
+    elif known >= PASS_MIN_KNOWN_PCT and not fallback:
+        pres = ("UNKNOWN", "BELOW_NOISE_TOLERANCE")
     else:
-        pres = ("UNKNOWN", "too little of the lake was looked at to say none" if area is not None else "lake area unknown")
+        pres = ("UNKNOWN", "too little of the lake was looked at to say none")
     notes.append("shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share")
     return SharedObservation(kind, pers, ids, when, len(use), known / 100.0, area, round(share, 2), pres, _refusals(used), fallback, notes)
+
+
+# ---------------------------------------------------------------------------------------------- where: persistent zones
+import math  # noqa: E402
+
+import numpy as np  # noqa: E402
+
+ZONE_BLOCK = 3                 # pixels per block edge (36 m pixels -> ~108 m blocks)
+ZONE_MIN_KM2 = 0.05
+ZONE_TOP = 5
+ZONE_MIN_KNOWN = 2             # a block needs >= 2 looks (accepted passes where the cell was measured water or grass)
+ZONE_PERSIST_MIN = 0.5
+
+
+def _merc_to_lat(y: float) -> float:
+    return math.degrees(2 * math.atan(math.exp(y)) - math.pi / 2)
+
+
+def _lat_to_merc(lat: float) -> float:
+    return math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))
+
+
+def pixel_to_lonlat(col: float, row: float, shape: tuple, corners: dict) -> tuple:
+    """corners: {'west','east','north','south'} in degrees of the web-mercator PNG extent. Linear in mercator x/y."""
+    h, w = shape
+    lon = corners["west"] + (col / w) * (corners["east"] - corners["west"])
+    yn, ys = _lat_to_merc(corners["north"]), _lat_to_merc(corners["south"])
+    return lon, _merc_to_lat(yn + (row / h) * (ys - yn))
+
+
+def zones_from_codes(code_stack: list, corners: dict, cell_m: float, *, block: int = ZONE_BLOCK, min_km2: float = ZONE_MIN_KM2,
+                     top: int = ZONE_TOP, min_known: int = ZONE_MIN_KNOWN) -> dict:
+    """Persistent surface-vegetation ZONES from the shared PNG class arrays of accepted passes (same frame).
+
+    A block is persistent grass when, over the passes that LOOKED at it (code 255 measured water or 3 grass bed), at least half say grass,
+    and at least `min_known` passes looked. Connected persistent blocks (8-connectivity) form zones; the largest few are reported with an
+    area (ground km2), a centroid and how persistent they are. The shared grass class includes Clarity's painted bed-to-bank margin, so a
+    zone's area is an upper bound near shore; that is stated, not corrected."""
+    if not code_stack:
+        return {"zones": [], "status": "NO_PASSES", "note": "no accepted pass with a class raster"}
+    shape = code_stack[0].shape
+    if any(a.shape != shape for a in code_stack):
+        return {"zones": [], "status": "FRAME_MISMATCH", "note": "class rasters are not on one frame; zones not computed"}
+    grass = np.stack([a == CODE_GRASS for a in code_stack])
+    known = np.stack([(a == CODE_MEASURED) | (a == CODE_GRASS) for a in code_stack])
+    H, W = (shape[0] // block) * block, (shape[1] // block) * block
+
+    def blocks(m):  # sum over passes then over blocks
+        s = m.sum(axis=0).astype("int32")[:H, :W]
+        return s.reshape(H // block, block, W // block, block).sum(axis=(1, 3))
+    g, k = blocks(grass), blocks(known)
+    per_block_px = block * block
+    looks = np.stack([known_i[:H, :W].reshape(H // block, block, W // block, block).sum(axis=(1, 3)) >= per_block_px / 2 for known_i in known]).sum(axis=0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ratio = np.where(k > 0, g / np.maximum(k, 1), 0.0)
+    persistent = (ratio >= ZONE_PERSIST_MIN) & (looks >= min_known) & (g > 0)
+    lab = np.zeros(persistent.shape, np.int32)
+    n = 0
+    ys, xs = np.nonzero(persistent)
+    stack_ = []
+    for y0, x0 in zip(ys.tolist(), xs.tolist()):
+        if lab[y0, x0]:
+            continue
+        n += 1
+        lab[y0, x0] = n
+        stack_.append((y0, x0))
+        while stack_:
+            y, x = stack_.pop()
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    yy, xx = y + dy, x + dx
+                    if 0 <= yy < lab.shape[0] and 0 <= xx < lab.shape[1] and persistent[yy, xx] and not lab[yy, xx]:
+                        lab[yy, xx] = n
+                        stack_.append((yy, xx))
+    out = []
+    mid_lat = (corners["north"] + corners["south"]) / 2
+    for i in range(1, n + 1):
+        yy, xx = np.nonzero(lab == i)
+        cy, cx = (yy.mean() + 0.5) * block, (xx.mean() + 0.5) * block
+        lon, lat = pixel_to_lonlat(cx, cy, shape, corners)
+        ground_m = cell_m * block * math.cos(math.radians(lat))
+        area = len(yy) * ground_m * ground_m / 1e6
+        if area >= min_km2:
+            out.append({"areaKm2": round(area, 3), "centroid": [round(lon, 5), round(lat, 5)],
+                        "persistence": round(float(ratio[lab == i].mean()), 2), "looks": int(np.median(looks[lab == i]))})
+    out.sort(key=lambda z: -z["areaKm2"])
+    return {"zones": out[:top], "zoneCountAboveMin": len(out), "status": "OK", "blockPx": block, "minZoneKm2": min_km2,
+            "note": "zones are persistent shared-pass grass cells; area is an upper bound near shore (Clarity paints a bed-to-bank margin)"}

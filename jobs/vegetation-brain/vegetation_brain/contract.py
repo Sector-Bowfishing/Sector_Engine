@@ -39,7 +39,7 @@ VALIDATION_STATES = ("NOT_VALIDATED", "RESEARCH", "CALIBRATION", "PARTIAL", "VAL
 # Reasons a cell/lake is UNKNOWN rather than "no vegetation". Never silently dropped.
 REFUSALS = ("CLOUD", "SHADOW", "HAZE", "GLARE", "DARK_WATER", "SHORE_ADJACENT", "INSUFFICIENT_VALID_PIXELS",
             "SCENE_TOO_OLD", "NO_SCENE", "ICE_OR_SNOW", "NO_GEOMETRY", "GEOMETRY_LOW", "TOO_NARROW", "BLOOM_AMBIGUOUS",
-            "PASS_NOT_ACCEPTED", "BOTTOM_REFLECTANCE", "CLOUD_OR_HAZE", "UNREADABLE_WATER")
+            "PASS_NOT_ACCEPTED", "BOTTOM_REFLECTANCE", "CLOUD_OR_HAZE", "UNREADABLE_WATER", "BELOW_NOISE_TOLERANCE")
 REFUSAL_DOC = {
     "CLOUD": "cloud or cirrus within the cloud standoff", "SHADOW": "cloud shadow",
     "HAZE": "bright open water (SWIR > HAZE_SWIR) that is not a plant spectrum: haze / thin cloud",
@@ -53,6 +53,7 @@ REFUSAL_DOC = {
     "PASS_NOT_ACCEPTED": "no scene passed the pass-acceptance rule", "BOTTOM_REFLECTANCE": "shallow bright bottom can mimic a plant spectrum",
     "CLOUD_OR_HAZE": "shared Clarity pass: cloud or haze hid the water (Clarity bundles the two; code 2)",
     "UNREADABLE_WATER": "shared Clarity pass: bank band, beside bridges/docks, or narrow creek (code 1)",
+    "BELOW_NOISE_TOLERANCE": "observed share is between the NOT_OBSERVED ceiling and the 2 % false-positive tolerance: not separable from observer noise (amendment A6)",
 }
 
 # ---------------------------------------------------------------- claim-level maturity (Sector Brain Model v1, directive 2026-10-14)
@@ -114,6 +115,8 @@ MIN_LAKE_AREA_KM2 = 0.5
 
 # Shared-evidence consumption (one provider ingestion path, many specialist consumers)
 SHARED_SOURCE_ID = "clarity-shared-pass"
+SHARED_PRESENT_MIN_SHARE_PCT = 2.0      # = the pre-registered open-water FPR tolerance (prereg 5(b)); amendment A6
+SHARED_NOT_OBSERVED_MAX_SHARE_PCT = 0.5 # a quarter of the tolerance (convention)
 SHARED_MIN_AREA_KM2 = 0.01              # >= 1 ha of observed grass (after removing the bed-to-bank strip) before a lake is PRESENT
 SHARED_BURST_FACTOR = 5.0
 SHARED_BURST_MIN_PCT = 5.0

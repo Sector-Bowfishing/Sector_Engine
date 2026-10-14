@@ -123,7 +123,7 @@ def confidence(kind: str, validation_state: str, *, coverage: float, geometry_co
 def input_fingerprint(cand: dict, obs, ctx: dict, manifest_version: str, agency: dict | None = None) -> str:
     key = [cand.get("lakeId"), cand.get("tier"), cand.get("geometryConfidence"), manifest_version, C.BRAIN_VERSION,
            getattr(obs, "scene_ids", None), getattr(obs, "evidence_kind", None), getattr(obs, "plant_cells", None),
-           getattr(obs, "observed_share_pct", None), str(getattr(obs, "observed_on", None)),
+           getattr(obs, "observed_share_pct", None), str(getattr(obs, "observed_on", None)), [(z["areaKm2"], z["centroid"]) for z in ((getattr(obs, "zones", None) or {}).get("zones") or [])],
            sorted(((ctx or {}).get("wind") or {}).items()), ((ctx or {}).get("clarity") or {}).get("secchiM"),
            ((ctx or {}).get("depth") or {}).get("tier"),
            [(r["year"], r["pac"], r["pvi"]) for r in ((agency or {}).get("rows") or [])]]
@@ -188,6 +188,7 @@ def build_state(cand: dict, obs, now: datetime, *, validation: dict | None = Non
         "source": {"collection": (ctx.get("collection") or "sentinel-2-c1-l2a"), "sceneIds": list(getattr(obs, "scene_ids", []) or []),
                    "sourceId": getattr(obs, "source_id", "vegetation-observer")},
         "observedAreaKm2": (round(obs.observed_area_km2, 3) if getattr(obs, "observed_area_km2", None) is not None else None),
+        "zones": getattr(obs, "zones", None),
         "confidence": conf,
     }
     surface = {k: v for k, v in surface.items() if v is not None or k in ("observedAt", "ageDays")}

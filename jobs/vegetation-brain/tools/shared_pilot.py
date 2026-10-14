@@ -20,6 +20,7 @@ from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, ".."))
+from vegetation_brain import contract as C  # noqa: E402
 from vegetation_brain import fleet as F  # noqa: E402
 from vegetation_brain import shared as SH  # noqa: E402
 from vegetation_brain.publish import publish  # noqa: E402
@@ -45,12 +46,14 @@ def fetch(lake_key: str, tmp: str, since: date) -> tuple[list, int]:
         has_png = f"{d}.measured.png" in names
         if has_png:
             subprocess.run(["gcloud", "storage", "cp", "-q", f"{BUCKET}/{lake_key}/clarity/{d}.measured.png", pp], check=True, capture_output=True)
-        counts = None
+        counts, arr = None, None
         if has_png:
-            a = np.array(Image.open(pp))
-            counts = {int(k): int(v) for k, v in zip(*np.unique(a, return_counts=True)) if int(k) in (255, 3, 2, 1, 0)}
+            arr = np.array(Image.open(pp))
+            counts = {int(k): int(v) for k, v in zip(*np.unique(arr, return_counts=True)) if int(k) in (255, 3, 2, 1, 0)}
         nbytes += os.path.getsize(jp) + (os.path.getsize(pp) if has_png else 0)
-        passes.append(SH.pass_from_clarity_json(json.load(open(jp)), counts))
+        sp = SH.pass_from_clarity_json(json.load(open(jp)), counts)
+        sp.codes = arr
+        passes.append(sp)
     return passes, nbytes
 
 
@@ -80,7 +83,12 @@ def main():
                                "toBankPct": p.grass_to_bank_pct, "observedGrassPct": round(p.observed_grass_pct, 1),
                                "accepted": p.known_pct >= SH.PASS_MIN_KNOWN_PCT} for p in passes]}
             if ref is not None and cand["readiness"] != "BLOCKED":
-                observations[e["lakeId"]] = SH.observe_shared(passes, ref, e.get("areaKm2"))
+                ob = SH.observe_shared(passes, ref, e.get("areaKm2"))
+                used = [p for p in passes if p.known_pct >= SH.PASS_MIN_KNOWN_PCT and abs((p.when - ref).days) <= C.PERSISTENCE_WINDOW_DAYS
+                        and getattr(p, "codes", None) is not None and p.corners]
+                if used and ob.evidence_kind != "NONE":
+                    ob.zones = SH.zones_from_codes([p.codes for p in used], used[0].corners, used[0].cell_m)
+                observations[e["lakeId"]] = ob
             report.append(row)
         w = DryRunWriter()
         r1 = publish(manifest, w, observations=observations, now=now)
@@ -99,7 +107,8 @@ def main():
                            "refusalShares": ob["refusalShares"], "lowCoverageFallback": ob["lowCoverageFallback"], "notes": ob["notes"],
                            "claimMaturity": {k: v["state"] for k, v in st["claimMaturity"].items()},
                            "inputFingerprint": st["provenance"]["inputFingerprint"], "stateBytes": len(json.dumps(st)),
-                           "sceneIds": sv["source"]["sceneIds"][:6], "source": sv["source"]["sourceId"]}
+                           "sceneIds": sv["source"]["sceneIds"][:6], "source": sv["source"]["sourceId"],
+                           "zones": (sv.get("zones") or {}).get("zones"), "zoneCountAboveMin": (sv.get("zones") or {}).get("zoneCountAboveMin")}
         out = {"generatedAt": now.isoformat(), "lakes": report, "states": states,
                "run1": {k: r1.get(k) for k in ("evaluated", "observed", "skippedUnchanged", "writes", "health")},
                "run2": {k: r2.get(k) for k in ("evaluated", "observed", "skippedUnchanged", "writes", "health")},
