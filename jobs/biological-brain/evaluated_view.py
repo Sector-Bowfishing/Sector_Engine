@@ -1,4 +1,4 @@
-"""The Intelligence-facing view of one Biological State: flat, no research internals, no free text, no rule text.
+"""The Intelligence-facing view (v2 adds movementOutlook, freshness and validation) of one Biological State: flat, no research internals, no free text, no rule text.
 
 Intelligence consumes THIS (or the identical `species[].responses[]` it is derived from); it never re-evaluates rules and never reads evidence.
 Every band is Level 3 (Sector-derived predictive intelligence) with maturity NOT_VALIDATED until the validation record says otherwise.
@@ -9,15 +9,20 @@ from __future__ import annotations
 
 import bands as bd
 import bio_state as bs
+import movement_outlook as mo
+import target_set as ts
 
-VIEW_VERSION = "biological-evaluated-view-v1"
+VIEW_VERSION = "biological-evaluated-view-v2"
 SPECIES_STATUS = ("EVALUATED", "NOT_EVALUATED")
 
 
 def intelligence_view(state: dict) -> dict:
     species = []
     for sp in state.get("species") or []:
-        row = {"speciesId": sp["speciesId"], "status": "EVALUATED" if sp.get("evaluated") else "NOT_EVALUATED",
+        o = mo.species_outlook(sp)
+        row = {"speciesId": sp["speciesId"], "role": ts.role(sp["speciesId"]),
+               "movementOutlook": {"state": o["state"], "movement": o["movement"], "activity": o["activity"], "where": o["where"], "why": o["why"], "confidence": o["confidence"]},
+               "status": "EVALUATED" if sp.get("evaluated") else "NOT_EVALUATED",
                "presenceState": (sp.get("presence") or {}).get("presenceState"), "knowledgeState": (sp.get("knowledge") or {}).get("state")}
         if not sp.get("evaluated"):
             row["bands"] = []
@@ -34,7 +39,9 @@ def intelligence_view(state: dict) -> dict:
             "stateFingerprint": bs.state_fingerprint(state), "rulesVersion": (state.get("provenance") or {}).get("rulesVersion"),
             "status": state["status"], "consumable": state["status"] != "PILOT_INTERNAL",
             "claim": {"level": 3, "maturity": (state.get("validation") or {}).get("status", "NOT_VALIDATED")},
-            "inputStatus": {k: v.get("status") for k, v in (state.get("inputs") or {}).items()}, "species": species}
+            "inputStatus": {k: v.get("status") for k, v in (state.get("inputs") or {}).items()},
+            "freshness": {k: {"status": v.get("status"), "ageHours": v.get("ageHours")} for k, v in (state.get("inputs") or {}).items()},
+            "validation": {"status": (state.get("validation") or {}).get("status", "NOT_VALIDATED")}, "species": species}
 
 
 def validate_view(v: dict) -> list[str]:
@@ -51,6 +58,13 @@ def validate_view(v: dict) -> list[str]:
             e.append(f"{sp.get('speciesId')}: status")
         if sp.get("status") == "NOT_EVALUATED" and sp.get("bands"):
             e.append(f"{sp.get('speciesId')}: a not-evaluated species carries no bands")
+        mo_ = sp.get("movementOutlook") or {}
+        if mo_.get("state") not in mo.STATES:
+            e.append(f"{sp.get('speciesId')}: movementOutlook.state")
+        if sp.get("status") == "NOT_EVALUATED" and mo_.get("state") != "UNKNOWN":
+            e.append(f"{sp.get('speciesId')}: a not-evaluated species has an UNKNOWN outlook")
+        if mo_.get("state") == "UNKNOWN" and mo_.get("confidence") is not None:
+            e.append(f"{sp.get('speciesId')}: an UNKNOWN outlook carries no confidence")
         for b in sp.get("bands") or []:
             if b.get("band") not in bd.BAND_VALUES or b.get("band") == "UNKNOWN":
                 e.append(f"{sp.get('speciesId')}.{b.get('featureId')}: band")

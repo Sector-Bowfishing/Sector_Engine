@@ -48,6 +48,8 @@ def assess(files: dict[str, bytes]) -> dict:
         tally[r["transferability"]["southeastReservoir"]] += 1
     facts["transferSummary"] = {"usableRules": len(usable), "byTransferability": tally,
                                 "note": "TRANSFERS needs a counting evidence stream from a Southeast reservoir; every other rule is a northern/foreign/other-system finding applied by analogy."}
+    import target_readiness as _tr      # raw per-target counts for a scorer; no score is computed here
+    facts["targetReadiness"] = _tr.build(rs)
     facts["ruleCountsBySpecies"] = {sid: {"usable": rs.counts(sid)["usable"], "draft": rs.counts(sid)["draft"]} for sid in sorted(rs.by_species) if rs.counts(sid)["total"]}
     if not usable:
         blockers.append("no RECONCILED/APPROVED rule")

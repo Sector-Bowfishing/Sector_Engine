@@ -20,6 +20,7 @@ import re
 
 from capability import IN_PROGRESS_NOTE, NOT_STARTED_NOTE  # noqa: E402  (stdlib-only sibling module)
 import bands as _bands  # noqa: E402
+import target_set as _targets  # noqa: E402
 
 BRAIN_ID = "biological-state"
 DISPLAY_NAME = "Biological Brain"
@@ -211,6 +212,8 @@ def species_summary(p: dict, b: Bundle, profile_uri: str, now: str) -> dict:
         openDiscrepancies=disc,
         policyNote=_short(p.get("policyNote")),
         separateAssessments=p.get("separateAssessments"),
+        movement=({k: v for k, v in (p.get("movement") or {}).items() if k in ("passLevel", "generalConfidence", "regionalConfidence", "bowfisherTakeaway", "bowfisherKnowledge", "sourcesInspected", "sourcesTotal", "cardVersion")} or None),
+        productRole=_targets.role(p["speciesId"]),
         history=hist,
         profileRef=profile_uri, profileSha256=next((f["sha256"] for f in b.manifest["files"] if f["path"] == f"species/{p['speciesId']}.json"), None),
         updatedAt=now))
@@ -251,7 +254,8 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
         by_a[p["assessment"]] = by_a.get(p["assessment"], 0) + 1
     open_disc = [d for d in b.discrepancies if d.get("status") == "OPEN"]
     return _clean(dict(
-        platform=PLATFORM, facts=_facts(b, by_m), transferSummary=(b.capability["facts"].get("transferSummary") or None),
+        platform=PLATFORM, facts=_facts(b, by_m), targetReadiness=(b.capability["facts"].get("targetReadiness") or None), targetSet=dict(version=_targets.TARGET_SET_VERSION, targets=sorted(_targets.TARGET), secondary=sorted(_targets.SECONDARY),
+                                                              knowledgeOnlyCount=len([s for s in b.profiles if _targets.role(s) == "KNOWLEDGE_ONLY"])), transferSummary=(b.capability["facts"].get("transferSummary") or None),
         stalenessModel="VERSION", dependsOn=[],
         schedule=dict(cadence="manual (version-driven: runs when the canonical bundle changes)", running=False),
         brainId=BRAIN_ID, displayName=DISPLAY_NAME, domain="biology",

@@ -20,6 +20,9 @@ import rules as rl         # noqa: E402
 
 PILOT_LAKES = {
     "Guntersville|AL": {"key": "Guntersville_AL", "region": "south", "waterbodyType": "run_of_river", "lat": 34.4, "lon": -86.3},
+    "Wheeler|AL": {"key": "Wheeler_AL", "region": "south", "waterbodyType": "run_of_river", "lat": 34.63, "lon": -87.03},
+    "Wilson|AL": {"key": "Wilson_AL", "region": "south", "waterbodyType": "run_of_river", "lat": 34.77, "lon": -87.45},
+    "Pickwick Lake|TN": {"key": "Pickwick_Lake_TN", "region": "south", "waterbodyType": "run_of_river", "lat": 35.05, "lon": -88.2},
     # second independent system for transfer testing (Savannah basin, Corps storage reservoir). Internal dry runs only; not part of any bundle yet.
     "Lake Hartwell|SC": {"key": "Lake_Hartwell_SC", "region": "south", "waterbodyType": "storage_reservoir", "lat": 34.5, "lon": -82.9},
 }
