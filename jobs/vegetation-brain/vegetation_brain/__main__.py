@@ -43,7 +43,8 @@ def main(argv=None) -> int:
         print(json.dumps(M.evaluate(m), indent=1))
         return 0
     w = DryRunWriter()
-    rep = publish(m, w)
+    ag = json.load(open(os.path.join(HERE, "data", "agency_fwc_pacpvi.json")))["records"]
+    rep = publish(m, w, agency=ag)
     w.dump(a.dry_run)
     rep["dryRunFile"], rep["patches"] = a.dry_run, len(w.patches)
     print(json.dumps(rep, indent=1, default=str)[:4000])

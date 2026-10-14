@@ -35,10 +35,10 @@ def _health(errors: list, evaluated: int, unavailable: int) -> str:
 
 
 def publish(manifest: dict, writer, observations: dict | None = None, contexts: dict | None = None, validation: dict | None = None,
-            now: datetime | None = None) -> dict:
+            now: datetime | None = None, agency: dict | None = None) -> dict:
     now = (now or datetime.now(timezone.utc)).replace(microsecond=0)
     now_iso = C.iso(now)
-    observations, contexts = observations or {}, contexts or {}
+    observations, contexts, agency = observations or {}, contexts or {}, agency or {}
     rep: dict = {"ok": False, "errors": [], "writes": 0, "lakes": {}}
     try:
         cands = manifest["candidates"]
@@ -53,12 +53,12 @@ def publish(manifest: dict, writer, observations: dict | None = None, contexts: 
             lid = cand["lakeId"]
             k = lake_key(lid)
             obs = observations.get(lid)
-            if obs is None and cand["readiness"] != "BLOCKED":
+            if obs is None and cand["readiness"] != "BLOCKED" and lid not in agency:
                 readiness[lid] = "PROFILED"            # could be observed; nothing has been run: no state is written
                 continue
             try:
-                pl = plan(writer.get(f"lakes/{k}/states/{C.SLOT}"), cand, obs, contexts.get(lid), mv)
-                state, meta = build_state(cand, obs, now, validation=validation, context=contexts.get(lid), manifest_version=mv)
+                pl = plan(writer.get(f"lakes/{k}/states/{C.SLOT}"), cand, obs, contexts.get(lid), mv, agency.get(lid))
+                state, meta = build_state(cand, obs, now, validation=validation, context=contexts.get(lid), manifest_version=mv, agency=agency.get(lid))
                 evaluated += 1
                 readiness[lid] = meta["readiness"]
                 kinds[meta["kind"]] += 1
