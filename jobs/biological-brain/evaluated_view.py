@@ -21,7 +21,7 @@ def intelligence_view(state: dict) -> dict:
     for sp in state.get("species") or []:
         o = mo.species_outlook(sp)
         row = {"speciesId": sp["speciesId"], "role": ts.role(sp["speciesId"]),
-               "movementOutlook": {"state": o["state"], "movement": o["movement"], "activity": o["activity"], "where": o["where"], "why": o["why"], "confidence": o["confidence"]},
+               "movementOutlook": {"state": o["state"], "movement": o["movement"], "activity": o["activity"], "where": o["where"], "why": o["why"], "cautions": o["cautions"], "confidence": o["confidence"]},
                "status": "EVALUATED" if sp.get("evaluated") else "NOT_EVALUATED",
                "presenceState": (sp.get("presence") or {}).get("presenceState"), "knowledgeState": (sp.get("knowledge") or {}).get("state")}
         if not sp.get("evaluated"):

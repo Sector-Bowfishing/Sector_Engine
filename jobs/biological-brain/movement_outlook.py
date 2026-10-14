@@ -27,7 +27,8 @@ TEMP_PHRASE = {"LT_10C": "water is under 50 F", "C10_15": "water is about 50-59 
 WHERE = {"shallowVegetatedHabitat": "shallow vegetated coves and weedy shallows", "floodedVegetation": "newly flooded vegetation and margins", "backwaterHabitat": "backwaters, sloughs and oxbows",
          "tributaryMouth": "creek and tributary mouths", "tributaryAccess": "tributary runs", "tailwaterHabitat": "tailwaters below dams", "channelBorder": "channel borders",
          "deepChannelPool": "deep channel pools (not shootable)", "woodyCover": "woody cover and brush", "openWaterBasin": "open-water basins"}
-SPAWN_PHRASE = {"IN_WINDOW": "it is inside the spawning window", "TEMP_ONLY": "water is in spawning range but the month is outside the window", "MONTH_ONLY": "the month fits spawning but water is outside the temperature range"}
+SPAWN_PHRASE = {"IN_WINDOW": "it is inside the spawning window"}
+SPAWN_CAUTION = {"TEMP_ONLY": "water is in spawning range but the month is outside the spawning window", "MONTH_ONLY": "the month fits spawning but the water is outside the spawning temperature range"}
 
 
 def _why(r: dict) -> str:
@@ -55,7 +56,7 @@ def _net(rows) -> str | None:
 def species_outlook(sp: dict) -> dict:
     base = {"speciesId": sp["speciesId"], "claim": {"level": 3}}
     if not sp.get("evaluated"):
-        return base | {"state": "UNKNOWN", "movement": "UNKNOWN", "activity": "UNKNOWN", "why": [], "where": [], "confidence": None,
+        return base | {"state": "UNKNOWN", "movement": "UNKNOWN", "activity": "UNKNOWN", "why": [], "cautions": [], "where": [], "confidence": None,
                        "note": sp.get("notEvaluatedReason") or "not evaluated for this lake"}
     known = [r for r in sp.get("responses") or [] if r["response"] != "UNKNOWN"]
     shallow = [r for r in known if r["featureId"] in SHALLOW_FEATURES]
@@ -83,13 +84,14 @@ def species_outlook(sp: dict) -> dict:
     why = [_why(r) for r in shallow + act][:6]
     if sw in SPAWN_PHRASE:
         why.append(SPAWN_PHRASE[sw])
+    cautions = [SPAWN_CAUTION[sw]] if sw in SPAWN_CAUTION else []
     where = []
     for h in habitats:
         w = WHERE.get(h["habitatClass"])
         if w and w not in where:
             where.append(w)
     conf = _min_conf([r.get("confidence") for r in shallow + act] + [h.get("confidence") for h in habitats])
-    return base | {"state": state, "movement": movement, "activity": activity, "why": why, "where": where, "confidence": conf,
+    return base | {"state": state, "movement": movement, "activity": activity, "why": why, "cautions": cautions, "where": where, "confidence": conf,
                    "unknownFeatures": sorted({r["featureId"] for r in sp.get("responses") or [] if r["response"] == "UNKNOWN"})}
 
 

@@ -154,10 +154,12 @@ def validate_dispositions(candidates: list[dict], disp: dict) -> list[str]:
     return e
 
 
-def domain_scores(card: dict, verification: dict, existing: dict | None = None) -> dict:
+def domain_scores(card: dict, verification: dict, existing: dict | None = None, partial: dict | None = None) -> dict:
     """Species-v2 domains from a movement card. Whole points 0-10; score 0 is the bundle's UNKNOWN. Never lowers an existing evidence-based score.
     score = min(card component score, source cap); source cap = 0 with no inspected credible source supporting the domain, 6 with one, 8 with two or more
-    (distinct streams). A domain the card does not research (food/feeding) keeps its existing score."""
+    (distinct streams). A domain the card does not research (food/feeding) keeps its existing score.
+    `partial` = {"<species>:<S#>": [tags the verifier's note actually affirms]} for sources flagged NOT_SUPPORTED because extra detail was missing but the core topic is supported:
+    such a source counts only for the domains matching those tags."""
     sp = card["speciesId"]
     ks = mc.knowledge_score(card)["components"]
     out = {}
@@ -169,13 +171,17 @@ def domain_scores(card: dict, verification: dict, existing: dict | None = None) 
         tags = DOMAIN_TAGS[dom]
         good, anecdotal, unread = set(), 0, 0
         for s in card["sources"]:
-            if not set(s.get("supports") or []) & set(tags):
+            key = f"{sp}:{s['id']}"
+            sup = set(s.get("supports") or [])
+            if verification.get(key) == "NOT_SUPPORTED" and partial and key in partial:
+                sup &= set(partial[key])
+            if not sup & set(tags):
                 continue
             if s["type"] == "ANECDOTAL":
                 anecdotal += 1
                 continue
-            v = verification.get(f"{sp}:{s['id']}")
-            if (s["type"] == "PACKET" and v != "NOT_SUPPORTED") or v in ("READ-FULL", "READ-ABSTRACT"):      # packet sources were inspected by the original campaign
+            v = verification.get(key)
+            if (s["type"] == "PACKET" and v != "NOT_SUPPORTED") or v in ("READ-FULL", "READ-ABSTRACT") or (v == "NOT_SUPPORTED" and partial and partial.get(key)):      # packet sources were inspected by the original campaign
                 good.add(stream_key(s))
             else:
                 unread += 1
@@ -242,13 +248,13 @@ def _known(v) -> bool:
     return mc._known(v)
 
 
-def encode_profile(profile: dict, card: dict, verification: dict, today: str) -> tuple[dict, dict]:
+def encode_profile(profile: dict, card: dict, verification: dict, today: str, partial: dict | None = None) -> tuple[dict, dict]:
     """Return (updated species-v2 profile, per-domain diff). Pure: the input profile is not mutated. Domain scores are whole points; score 0 is UNKNOWN."""
     import copy
     p = copy.deepcopy(profile)
     k = p["knowledge"]
     old = {d: dict(v) for d, v in k["domains"].items()}
-    new = domain_scores(card, verification, old)
+    new = domain_scores(card, verification, old, partial)
     diff, total = {}, 0
     for dom in DOMAIN_ORDER:
         d = k["domains"][dom]

@@ -59,3 +59,12 @@ IN_PROGRESS = 4, LIVE = 8 (+0.6). Needs per-lake publication, which is OFF and d
 | E B + C + D | 4.9 | 2.5 | 1.0 | 2.9 |
 
 **Ceiling without field data is about 5.0.** Reaching 8.0 needs VALIDATED species (field trips, first confirmatory comparison realistically spring 2027), Southeast evidence streams, and LIVE state. No desk work remains that moves the score honestly.
+
+## Queue additions (2026-10-14, bowfisher knowledge adoption)
+* **D7. Practical species-v2 source standard** (Michael): one inspected credible source up to 6, two independent up to 8; amend the private SPECIES_SCORING_STANDARD anchors. Applied in tooling only until ratified.
+* **D8. Next private bundle 2026-10-14.6** (Michael): species knowledge, 77 usable rules (41 RECONCILED from the sweep, 29 of them on registered species), target set and readiness facts, movement summaries. Publishing it moves the canonical score from 4.6 to about 5.2-5.3 on the current rubric.
+* **D9. Scorer v1.1 / v2** (platform owner): v1.1 consumes transferSummary; v2 is the target-scoped rubric (reads 4.3 today).
+* **D10. Target set v1** (Michael): 8 targets, 5 secondary, rest knowledge-only.
+* **D11. Registry splits**: quillback, river carpsucker, blue tilapia (see BIOLOGICAL_REGISTRY_SPLIT_PROPOSAL.md).
+* **D12. Reviewer queue**: plain-English package of 77 usable rules (private) plus 15 REVIEW_REQUIRED candidates; includes three flagged rules: the month-agnostic common-carp rising-stage rule (the sweep says spring and early summer), retire the DRAFT alligator-gar night rule (telemetry shows no day/night difference), retire the DRAFT bigmouth spawn range (better-sourced range exists).
+* **D13. Upstream**: presence for bowfin and the other non-policy-12 target fish (Lake Brain) so they can be evaluated on a lake.

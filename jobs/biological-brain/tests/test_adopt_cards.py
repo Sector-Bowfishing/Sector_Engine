@@ -120,6 +120,16 @@ class Domains(unittest.TestCase):
         self.assertLessEqual(two["seasonalLocationReproduction"]["score"], 8)
         self.assertEqual(two["seasonalLocationReproduction"]["anecdotalIgnored"], 1)
 
+    def test_partially_supported_source_counts_only_for_the_topics_its_note_affirms(self):
+        c = card(("AGENCY",))
+        c["sources"][0]["supports"] = ["spawn", "temperature"]
+        v = {"example_fish:S1": "NOT_SUPPORTED"}
+        self.assertEqual(ac.domain_scores(c, v)["seasonalLocationReproduction"]["score"], 0)
+        d = ac.domain_scores(c, v, None, {"example_fish:S1": ["spawn"]})
+        self.assertGreater(d["seasonalLocationReproduction"]["score"], 0)      # the spawn topic is affirmed
+        self.assertEqual(d["temperatureOxygen"]["score"], 0)                    # the temperature topic is not
+        self.assertEqual(d["seasonalLocationReproduction"]["independentInspectedStreams"], 1)
+
     def test_never_lowers_an_existing_score_and_food_is_kept(self):
         existing = {"seasonalLocationReproduction": {"score": 9}, "foodFeedingLocation": {"score": 4}}
         d = ac.domain_scores(card(), READ, existing)

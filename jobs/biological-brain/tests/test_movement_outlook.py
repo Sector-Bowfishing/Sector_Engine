@@ -38,6 +38,12 @@ class Outlook(unittest.TestCase):
         self.assertNotIn("ruleIds", str(o))
         self.assertEqual(o["claim"], {"level": 3})
 
+    def test_spawn_mismatch_is_a_caution_not_a_reason(self):
+        o = mo.species_outlook(sp([resp("risingStage", "TRUE", "FAVORABLE")], window="TEMP_ONLY"))
+        self.assertNotIn("spawning", " ".join(o["why"]))
+        self.assertTrue(o["cautions"])
+        self.assertIn("inside the spawning window", " ".join(mo.species_outlook(sp([resp("risingStage", "TRUE", "FAVORABLE")], window="IN_WINDOW"))["why"]))
+
     def test_limiting_mixed_and_workable(self):
         self.assertEqual(mo.species_outlook(sp([resp("waterTempBand", "LT_10C", "LIMITING")]))["state"], "LIMITING")
         self.assertEqual(mo.species_outlook(sp([resp("waterTempBand", "LT_10C", "LIMITING"), resp("risingStage", "TRUE", "FAVORABLE")]))["state"], "MIXED")
