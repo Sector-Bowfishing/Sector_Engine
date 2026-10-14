@@ -19,6 +19,7 @@ from ..sample import parse_iso
 from . import contract as C
 from .lakes import ENGINE_URL, WIND_LAKE_IDS, check_keys, fetch_directory, national_profiled, verify_wind_lakes
 from .writer import PLATFORM
+from . import reliability_gate as RG
 from sector_brain_platform import event_id as _event_id, is_promotion as _is_promotion, prune_activity as _prune_own
 from .profile import build_profile, geometry_facts
 from .state import build_state
@@ -328,6 +329,13 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
             sev = "warning" if readiness.get(lid) == "DEGRADED" else "success"
             events.append(("readiness.promoted" if _is_promotion(before, readiness.get(lid)) else "readiness.changed", sev,
                            f"Wind readiness {before} -> {readiness.get(lid)}", lid))
+    try:
+        gate, gate_new = RG.record_once(store, cfg, now)
+        if gate_new:
+            events.append(("reliability.gate", "success" if gate["verdict"] == "PASS" else "warning",
+                           f"Wind 30-day prospective reliability gate: {gate['verdict']} ({gate['why']})"[:200], None))
+    except Exception as e:
+        rep["errors"].append(f"reliability gate: {e!r}")
     if errors_now and not last.get("errors"):
         events.append(("run.failed", "critical", f"WindBrain run error: {errors_now[0][:120]}", None))
     if events:

@@ -1,0 +1,91 @@
+{
+ "schema": "bowfisher-wind-readiness-v1",
+ "isCanonical": false,
+ "wouldUseToChooseSide": "PARTIALLY",
+ "because": "Trust the wind (speed, direction, gust display) and the shoreline geometry; treat bank calls as advisory until validated. Not yet done: Forecast reliability (prospective); Bank exposure (protected / partial / exposed).",
+ "capabilities": [
+  {
+   "key": "providerSpeed",
+   "capability": "Provider wind speed",
+   "claimLevel": 1,
+   "layer": 1,
+   "maturity": "VERIFIED",
+   "note": null
+  },
+  {
+   "key": "providerDirection",
+   "capability": "Provider wind direction",
+   "claimLevel": 1,
+   "layer": 1,
+   "maturity": "VERIFIED",
+   "note": null
+  },
+  {
+   "key": "providerGust",
+   "capability": "Provider gust (display)",
+   "claimLevel": 1,
+   "layer": 1,
+   "maturity": "VERIFIED",
+   "note": "forecast runs low in strong wind; display only"
+  },
+  {
+   "key": "forecastReliability",
+   "capability": "Forecast reliability (prospective)",
+   "claimLevel": 2,
+   "layer": 2,
+   "maturity": "IN_PROGRESS",
+   "note": "6/30 prospective days"
+  },
+  {
+   "key": "fetch",
+   "capability": "Fetch / direction relative to bank",
+   "claimLevel": 2,
+   "layer": 3,
+   "maturity": "VALIDATED",
+   "note": null
+  },
+  {
+   "key": "bankExposure",
+   "capability": "Bank exposure (protected / partial / exposed)",
+   "claimLevel": 3,
+   "layer": 3,
+   "maturity": "CALIBRATION",
+   "note": "v2 rules frozen; field truth pending"
+  },
+  {
+   "key": "surfaceChop",
+   "capability": "Surface / chop (calm / moderate / rough)",
+   "claimLevel": 3,
+   "layer": 4,
+   "maturity": "NOT_VALIDATED",
+   "note": "classes defined; field truth pending"
+  },
+  {
+   "key": "tonight",
+   "capability": "Tonight recommendation",
+   "claimLevel": 3,
+   "layer": 5,
+   "maturity": "CALIBRATION",
+   "note": "internal only"
+  },
+  {
+   "key": "confidenceRefusal",
+   "capability": "Confidence and refusal (UNKNOWN works)",
+   "claimLevel": 2,
+   "layer": 5,
+   "maturity": "VERIFIED",
+   "note": "UNKNOWN for point-only / below-resolution / light wind / boundary banks"
+  }
+ ],
+ "canonicalScore": {
+  "displayed": 3.3,
+  "raw": 3.29,
+  "v2SimulationNonOfficial": 4.42
+ },
+ "reliability": {
+  "validDays": 6,
+  "target": 30,
+  "projectedGate": "2026-11-07"
+ },
+ "separation": "canonical score = official value; readiness = practical capability; claim maturity = per capability. Never substitute one for another."
+}

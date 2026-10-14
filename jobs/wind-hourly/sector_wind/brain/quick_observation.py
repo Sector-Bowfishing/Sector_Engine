@@ -21,8 +21,10 @@ _BOAT = {"CALM": "easy", "MODERATE": "noticeable", "ROUGH": "difficult"}   # der
 _MODEL = {"DIRECT": "EXPOSED", "CROSS": "PARTIAL", "PROTECTED": "PROTECTED", "EXPOSED": "EXPOSED"}
 
 
-def model_to_product(label: str) -> str:
-    return _MODEL.get(label, "UNKNOWN")
+def model_to_product(label: str, tier: str = "AUDITED") -> str:
+    """ESTIMATED geometry only supports EXPOSED / PROTECTED publicly, so a CROSS call collapses to EXPOSED there."""
+    out = _MODEL.get(label, "UNKNOWN")
+    return "EXPOSED" if tier == "ESTIMATED" and out == "PARTIAL" else out
 
 
 def validate_quick(r: dict, now: datetime | None = None) -> list[str]:
