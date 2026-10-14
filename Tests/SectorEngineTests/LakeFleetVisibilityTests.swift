@@ -22,4 +22,18 @@ final class LakeFleetVisibilityTests: XCTestCase {
         let json = String(data: try JSONEncoder().encode(on), encoding: .utf8) ?? ""
         XCTAssertTrue(json.contains("\"startedAt\""))
     }
+
+    func testClaimMaturityIsPerClaimAndRapidStaysNotValidated() throws {
+        let m = LakeClaimMaturity.current
+        XCTAssertEqual(m["currentLevel"]?.level, 1); XCTAssertEqual(m["currentLevel"]?.maturity, "PROVIDER_VERIFIED")
+        XCTAssertEqual(m["trend72h"]?.level, 2); XCTAssertEqual(m["levelDifference"]?.maturity, "DETERMINISTIC_VERIFIED")
+        XCTAssertEqual(m["historicalState"]?.maturity, "CALIBRATION")
+        // The failed pre-registered H-C check is preserved: RAPID is Level 3 and NOT_VALIDATED, and nothing else is VALIDATED by this table.
+        XCTAssertEqual(m["rapidChange"]?.level, 3); XCTAssertEqual(m["rapidChange"]?.maturity, "NOT_VALIDATED")
+        XCTAssertFalse(m.values.contains { $0.maturity == "VALIDATED" }, "no claim is claimed VALIDATED")
+        // a failed Level-3 claim must not drag Level-1/2 claims down
+        XCTAssertTrue(m.values.filter { $0.level < 3 }.allSatisfy { $0.maturity != "NOT_VALIDATED" })
+        let json = String(data: try JSONEncoder().encode(m), encoding: .utf8) ?? ""
+        XCTAssertTrue(json.contains("rapidChange"))
+    }
 }

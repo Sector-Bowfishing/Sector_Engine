@@ -114,6 +114,26 @@ public struct LakeBrainRegistryEntry: Codable, Equatable, Sendable {
     public var fleetScope: String
     /// Prospective prediction-ledger status (Ops-visible validation clock). `startedAt` is the fixed start of the prospective clock.
     public var predictionLedger: PredictionLedgerStatus? = nil
+    /// Maturity PER CLAIM (Sector Brain Model v1): one experimental claim must not make the other claims look immature.
+    public var claimMaturity: [String: LakeClaimMaturity]? = nil
+}
+
+/// One Lake claim, its level of truth (1 provider/observed, 2 deterministic, 3 Sector-derived) and how far it has been verified.
+public struct LakeClaimMaturity: Codable, Equatable, Sendable {
+    public var level: Int
+    public var maturity: String
+    public var note: String
+    /// Maturities are facts about evidence, fixed here until the evidence changes (docs/brains/LAKE_BRAIN_SPEC.md). RAPID stays NOT_VALIDATED:
+    /// the pre-registered H-C check failed (66.8 % of lakes vs 70 %) and is preserved.
+    public static let current: [String: LakeClaimMaturity] = [
+        "currentLevel": .init(level: 1, maturity: "PROVIDER_VERIFIED", note: "Operator pool or on-lake gauge; source, units, datum and freshness checked."),
+        "operatorGuide": .init(level: 1, maturity: "VERIFIED_WHERE_AVAILABLE", note: "Only where the operator publishes a guide curve, normal pool or flood pool; UNKNOWN otherwise."),
+        "levelDifference": .init(level: 2, maturity: "DETERMINISTIC_VERIFIED", note: "Current level minus reference pool; formula and sign tested."),
+        "operatorZone": .init(level: 2, maturity: "DETERMINISTIC_VERIFIED", note: "Zone from the operator's own pool bounds."),
+        "trend72h": .init(level: 2, maturity: "DETERMINISTIC_VERIFIED", note: "72 h mean rate with fixed floors; label stability check passed."),
+        "historicalState": .init(level: 3, maturity: "CALIBRATION", note: "Position against the lake's own history; calibration and tail checks passed, prospective ledger running."),
+        "rapidChange": .init(level: 3, maturity: "NOT_VALIDATED", note: "Pre-registered check failed and is preserved; internal pilots only, no customer exposure."),
+    ]
 }
 
 /// The prospective prediction ledger as Sector Ops should see it. Validation stays NOT_VALIDATED regardless of this.
@@ -505,6 +525,7 @@ public enum LakeBrainRunner {
             orchestration: .current,
             fleetScope: options.scope.rawValue + (presence == nil ? " (no presence bundle)" : ""))
         entry.platform = BrainPlatformRef.current
+        entry.claimMaturity = LakeClaimMaturity.current
         entry.predictionLedger = PredictionLedgerStatus.make(status: result.ledgerStatus, lastObject: result.ledgerObject,
                                                               lastRecords: result.ledgerRecords, warning: result.ledgerWarning)
         entry.stalenessModel = "TIME"
