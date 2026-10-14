@@ -64,3 +64,20 @@ def test_no_cron_and_no_official_score_anywhere_in_depth_runtime():
     reg_src = open(os.path.join(HERE, "depth_brain", "ops_summary.py")).read()
     assert '"clock": False' in reg_src and "NOT_ESTABLISHED" in reg_src
     assert "cron" not in open(os.path.join(HERE, "run.py")).read().lower().replace("no cron", "")
+
+
+def test_claim_scopes_are_computed_from_the_manifest_not_hardcoded():
+    from depth_brain import maturity as M
+    fm = M.fleet_metrics(MAN)
+    cs = {c["id"]: c["scope"] for c in ops_summary.claim_summary(fm)["claims"]}
+    assert cs["levelShift"].startswith(f"{fm['shiftPossible']} lakes defensible")
+    assert str(fm["ratingZoneLakes"]) in cs["ratingZoneShares"] and "{" not in "".join(cs.values())
+    raw = {c["id"]: c["scope"] for c in CL}
+    assert not any(ch.isdigit() for ch in raw["levelShift"].replace("{shiftPossible}", "").replace("{pilotVerified}", ""))
+
+
+def test_rated_lake_claims_never_exceed_what_the_evidence_supports():
+    by = {c["id"]: c for c in CL}
+    assert by["ratingZoneShares"]["level"] == 2 and by["ratingZoneShares"]["status"] == "VERIFIED"
+    assert "never where" in by["ratingZoneShares"]["scope"] and "0.104" in by["ratingZoneShares"]["evidence"]
+    assert by["knownFlatClass"]["status"] == "NOT_VALIDATED"          # no field truth, so no Level-3 class is claimed because shares exist

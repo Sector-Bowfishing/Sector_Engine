@@ -14,7 +14,8 @@
     "103 tier A/B lakes (17%) with instrument-survey contours/tables",
     "0 TVA lakes",
     "datum audit adds provenance not surveys",
-    "82 more lakes carry CWMS-location datum evidence (location vertical-datum fetched; 10-lake random audit re-fetched live)"
+    "82 more lakes carry CWMS-location datum evidence (location vertical-datum fetched; 10-lake random audit re-fetched live)",
+    "NEW 2026-10-14: Reclamation TSC multibeam/LiDAR survey tables (2010-2019) now back datum chains and shares for 9 lakes; USACE CWMS ratings for 70; no change to the count of A/B contour lakes, so the score is not moved"
    ],
    "changeEvidence": []
   },
@@ -46,14 +47,16 @@
    "weight": 15,
    "critical": true,
    "basis": "judgment",
-   "score": 3,
+   "score": 4,
    "evidence": [
-    "no scalable flats method (policy codified)",
-    "contour shares exist for 94 lakes, effective zones withheld",
-    "5 TWDB lakes: effective-zone dry/under3 bounds validated against exact elevation-area tables (preregistered, S2 independent MAE 0.016, bounds coverage 1.0) - one regional family; deeper bands withheld as uninformative",
-    "NEGATIVE: non-TWDB contour lakes (4 graded with CWMS stage-area curves) did not pass the preregistered effective-zone validation (Tappan MAE 0.047 fails 0.03; 3 lakes withheld at 5/10 ft intervals; publish rate 0.20); effective zones remain withheld for all of them"
+    "no scalable flats/drop-off method (policy codified; flats, drop-offs and channels are out of the Depth mission)",
+    "contour shares exist for the contour lakes; effective zones validated only for 5 TWDB lakes (preregistered, S2 independent MAE 0.016, bounds coverage 1.0)",
+    "NEGATIVE: non-TWDB contour lakes failed the preregistered effective-zone validation (Tappan MAE 0.047 fails 0.03); contour zones stay withheld there",
+    "NEW 2026-10-14: depth-share (dry / under 3 / 3-6 / 6-10 ft) from operator elevation-area ratings and Reclamation survey tables for 84 lakes (77 pass the frame/range/cross-check rules, 70 shift-defensible), exact by construction, cross-checked against independent contour surveys on 20 lakes (median |diff| 0.036, p90 0.104, max 0.141); NOT validated against the physical lake, vintage published; shares only, never where"
    ],
-   "changeEvidence": []
+   "changeEvidence": [
+    "stage-area-rating-shares-77-lakes-2026-10-14"
+   ]
   },
   "effective": {
    "label": "Effective-depth capability",
@@ -111,7 +114,8 @@
     "CWMS location-level matching generalises: 82 of 180 blocked lakes resolved by one method; 98 remain with named resolvers",
     "orchestration prepared and gated off (run.py, executor entry, staging); cleanup of 17 GB of rebuildable research data with evidence preserved",
     "manifest reproducible from 632 KB of committed input snapshots (`refresh --check` is a test); no dependency on research worktrees or cleaned scratch",
-    "BRAIN_SPEC.md, claim-level maturity (claim_levels.json, published), lifecycle label and execution model published on /brains/depth (Sector Brain Model v1 conformity)"
+    "BRAIN_SPEC.md, claim-level maturity (claim_levels.json, published), lifecycle label and execution model published on /brains/depth (Sector Brain Model v1 conformity)",
+    "NEW 2026-10-14: the RISE datum-chain checks (storage consistency, allocation-diagram frame) and the CWMS rating builder are generic and re-runnable offline; not enough to move the score"
    ],
    "changeEvidence": []
   }

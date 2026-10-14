@@ -20,13 +20,20 @@ def primary_blocker(fm: dict) -> str:
             f"datum relationship; only {fm['shiftPossible']} of {fm['totalLakes']} lakes have a defensible shift")
 
 
-def claim_summary() -> dict:
+class _Fm(dict):
+    def __missing__(self, k):
+        return "?"
+
+
+def claim_summary(fm: dict | None = None) -> dict:
+    """Claim levels with every scope number computed from the manifest's fleet metrics (`{shiftPossible}` placeholders), never hardcoded."""
     d = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "claim_levels.json")))
     by_status: dict = {}
     for c in d["claims"]:
         by_status[c["status"]] = by_status.get(c["status"], 0) + 1
+    scope = (lambda s: s.format_map(_Fm(fm))) if fm else (lambda s: s)
     return {"modelVersion": d["modelVersion"], "byStatus": by_status,
-            "claims": [{"id": c["id"], "level": c["level"], "status": c["status"], "scope": c["scope"]} for c in d["claims"]]}
+            "claims": [{"id": c["id"], "level": c["level"], "status": c["status"], "scope": scope(c["scope"])} for c in d["claims"]]}
 
 
 def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = None, inputs: dict | None = None) -> dict:
@@ -40,13 +47,15 @@ def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = No
         f"Lake fleet-state expansion: {awaiting} defensible-shift lakes await a live Lake Brain state ({live_lake_states} live)",
         "Field validation not started (preregistered, tooling ready); validation NOT_VALIDATED",
         f"Licensing: {fm['tierAB'] - fm['licenceAllowedAB']} of {fm['tierAB']} tier A/B contour lakes lack customer-derived-use permission",
-        f"Survey reference pools unverified or unvalidated: effective zones withheld for {fm['referenceZoneLakes'] - fm['effectiveZoneEligible']} contour lakes",
+        f"Survey reference pools unverified or unvalidated: effective zones withheld for {fm['referenceZoneLakes'] - fm['effectiveZoneEligible']} contour lakes; "
+        f"{fm['ratingZoneEligible']} lakes get exact shares from an operator elevation-area rating or survey table",
         "Orchestration not started (not approved for scheduling); no official score (shadow)",
     ]
     return {
         "directoryLakeCount": fm["totalLakes"],
         "fleet": {k: fm[k] for k in ("totalLakes", "shiftPossible", "pilotVerified", "highConfidence", "mediumConfidence", "blocked", "verifiedDatum",
-                                      "inferredOperatorSystem", "plausibleBlockedByDatum", "tierAB", "referenceZoneLakes", "effectiveZoneEligible")},
+                                      "inferredOperatorSystem", "plausibleBlockedByDatum", "tierAB", "referenceZoneLakes", "effectiveZoneEligible",
+                                      "ratingZoneLakes", "ratingZoneEligible")},
         "breakdowns": {
             "rollout": dict(Counter(x["rollout"] for x in cands)),
             "datumStatus": dict(Counter(x["datum"]["status"] for x in cands)),
@@ -59,7 +68,7 @@ def registry_extras(manifest: dict, live_lake_states: int, rep: dict | None = No
         "scoreStatus": "NOT_ESTABLISHED",
         "shadow": True,
         "lifecycle": "SHADOW",                                    # Sector Brain Model v1 lifecycle (RESEARCH>PROFILED>SHADOW>CALIBRATION>PRODUCTION_READY>PRODUCTION)
-        "claims": claim_summary(),
+        "claims": claim_summary(fm),
         "execution": {"type": "DEPENDENCY_DRIVEN", "clock": False, "trigger": "Lake Brain observation/reference/datum, manifest or Depth version fingerprint changed",
                       "skipWhen": "input fingerprint unchanged", "maxStateAgeHours": {"evidenceStale": C.LEVEL_FRESH_HOURS, "unavailable": C.LEVEL_MAX_AGE_HOURS},
                       "status": "manual shadow runs only; orchestration prepared and gated off"},
