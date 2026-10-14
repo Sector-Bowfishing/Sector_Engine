@@ -123,7 +123,7 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
     parts = {"pool": C.SIGMA_POOL[ref.confidence], "level": C.SIGMA_LEVEL[level.capability], "datum": a.sigma_ft}
     sigma = math.sqrt(sum(v * v for v in parts.values()))
     flags = (list(a.reasons) if a.status != "SAME_SOURCE" else []) + frame_flags
-    if level.lake_difference_ft is not None and a.status != "CONVERTED":
+    if level.lake_difference_ft is not None and a.status != "CONVERTED" and not frame_flags:          # Lake's difference-from-pool is in the absolute frame; skip the cross-check on a relative-scale level
         if abs(level.lake_difference_ft - shift) > C.LAKE_DELTA_DISAGREE_FT:
             flags.append(f"lakeBrainDeltaDisagrees:{level.lake_difference_ft:+.2f} vs {shift:+.2f}")
     stale = age > C.LEVEL_FRESH_HOURS

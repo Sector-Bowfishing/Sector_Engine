@@ -72,3 +72,53 @@ def test_every_diagram_unlocked_reclamation_lake_has_its_pool_on_the_diagram_and
         if r["control"]:
             assert r["passes"] or not any("dEFt" in p for p in r["pairs"]), lid
     assert link["Jamestown Reservoir|ND"]["passes"] is False       # a recent 0.145 ft disagreement is not waved through
+
+
+# ---- Duke: two documented frames for one lake ----------------------------------------------------------------
+from datetime import timedelta
+from depth_brain.shift import ReferencePool, compute_shift, LevelObservation
+from depth_brain.datum import DatumAssessment
+from helpers import NOW
+
+
+def _norman(level):
+    ref = ReferencePool(pool_ft=760.0, basis="fullPool", confidence="high", datum="NGVD29", datum_verified=True, relative_scale_pool=100.0,
+                        assessment=DatumAssessment("SAME_SOURCE", 0.1, 0.0, []))
+    lv = LevelObservation(level, "ft", None, NOW - timedelta(hours=1), "DIRECT_LAKE_GAUGE", "OBSERVED")
+    return compute_shift(lv, ref, NOW)
+
+
+def test_duke_relative_scale_shift_is_scale_minus_100():
+    r = _norman(98.5)
+    assert r.mode == "shiftOnly" and abs(r.shift_ft - (-1.5)) < 1e-9 and "levelFrame:relativeScale100" in r.flags
+
+
+def test_duke_absolute_frame_gives_the_same_shift():
+    r = _norman(758.5)
+    assert r.mode == "shiftOnly" and abs(r.shift_ft - (-1.5)) < 1e-9 and "levelFrame:relativeScale100" not in r.flags
+
+
+def test_duke_value_in_neither_frame_is_refused():
+    r = _norman(430.0)
+    assert r.mode == "unknown" and r.reasons == ["IMPLAUSIBLE_SHIFT"]
+
+
+def test_duke_lakes_in_manifest_carry_frame_and_cap_at_medium():
+    duke = [c for c in MAN.values() if c["levelSource"].get("provider") == "duke"]
+    assert len(duke) == 8 and all(c["shiftPossible"] and c["rollout"] == "MEDIUM_CONFIDENCE" for c in duke)
+    assert sum(1 for c in duke if c["reference"].get("relativeScalePoolFt") == 100.0) == 7
+    assert MAN["Lake Robinson|SC"]["levelSource"]["scale"] == "ABSOLUTE_FT" and "relativeScalePoolFt" not in MAN["Lake Robinson|SC"]["reference"]
+
+
+def test_non_duke_lake_without_frame_is_unaffected():
+    ref = ReferencePool(pool_ft=760.0, basis="fullPool", confidence="high", datum="NGVD29", datum_verified=True, assessment=DatumAssessment("SAME_SOURCE", 0.1, 0.0, []))
+    lv = LevelObservation(98.5, "ft", None, NOW - timedelta(hours=1), "DIRECT_LAKE_GAUGE", "OBSERVED")
+    assert compute_shift(lv, ref, NOW).reasons == ["IMPLAUSIBLE_SHIFT"]
+
+
+def test_lake_delta_cross_check_is_skipped_on_the_relative_scale_but_kept_on_absolute_levels():
+    ref = ReferencePool(pool_ft=760.0, basis="fullPool", confidence="high", datum="NGVD29", datum_verified=True, relative_scale_pool=100.0, assessment=DatumAssessment("SAME_SOURCE", 0.1, 0.0, []))
+    rel = LevelObservation(98.5, "ft", None, NOW - timedelta(hours=1), "DIRECT_LAKE_GAUGE", "OBSERVED", lake_difference_ft=-661.5)      # Lake's number is against the absolute pool
+    assert not any(f.startswith("lakeBrainDeltaDisagrees") for f in compute_shift(rel, ref, NOW).flags)
+    ab = LevelObservation(758.5, "ft", None, NOW - timedelta(hours=1), "DIRECT_LAKE_GAUGE", "OBSERVED", lake_difference_ft=-5.0)
+    assert any(f.startswith("lakeBrainDeltaDisagrees") for f in compute_shift(ab, ref, NOW).flags)
