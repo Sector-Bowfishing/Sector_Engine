@@ -141,3 +141,31 @@ def test_engine_score_is_not_an_average_of_brain_scores():
 def test_engine_score_unknown_specialist_leaves_maturity_unknown():
     e = score_engine(_engine_facts(), {"lake-brain": {"value": 3.0}}, NOW)
     assert e["dimensions"]["specialistBrainMaturity"]["status"] == "UNKNOWN" and e["brainScores"]["wind"] is None
+
+
+def _bio_with_transfer(ts):
+    sp = {f"s{i}": species(4.0) for i in range(4)}
+    reg = {"responsibilities": {"speciesKnowledge": {"speciesCount": 4, "assessedCount": 4, "notAssessedCount": 0},
+                                "biologicalState": {"status": "IN_PROGRESS"}}}
+    if ts is not None:
+        reg["transferSummary"] = ts
+    return score_biological({"registry": reg, "species": sp, "intelligenceRegistry": {}}, NOW)
+
+
+def test_regional_transfer_unknown_without_summary_keeps_v1():
+    s = _bio_with_transfer(None)
+    assert s["scoreBreakdown"]["regionalTransfer"]["status"] == "UNKNOWN" and s["scoreVersion"] == "biological-state-score-v1"
+
+
+def test_regional_transfer_scored_from_summary():
+    s = _bio_with_transfer({"usableRules": 48, "byTransferability": {"TRANSFERS": 0, "PARTIAL": 28, "UNTESTED": 20}})
+    d = s["scoreBreakdown"]["regionalTransfer"]
+    assert d["status"] == "SCORED" and d["value"] == 2.9 and s["scoreVersion"] == "biological-state-score-v1.1"
+    full = _bio_with_transfer({"usableRules": 4, "byTransferability": {"TRANSFERS": 4, "PARTIAL": 0, "UNTESTED": 0}})
+    assert full["scoreBreakdown"]["regionalTransfer"]["value"] == 10.0
+
+
+def test_regional_transfer_malformed_is_unknown_never_guessed():
+    for bad in ({"usableRules": 0, "byTransferability": {}}, {"usableRules": 4, "byTransferability": {"TRANSFERS": 9}},
+                {"usableRules": "4", "byTransferability": {"TRANSFERS": 1}}, {"usableRules": 4, "byTransferability": {"TRANSFERS": -1}}, "x"):
+        assert _bio_with_transfer(bad)["scoreBreakdown"]["regionalTransfer"]["status"] == "UNKNOWN", bad

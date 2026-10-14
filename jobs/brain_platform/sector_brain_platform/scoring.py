@@ -111,6 +111,22 @@ def score_lake(facts: dict, now: dt.datetime) -> dict:
 
 
 # ---------------------------------------------------------------- Biological Brain
+def _regional_transfer(ts) -> tuple[float | None, str]:
+    """Share of usable rules whose evidence transfers to Southeast reservoirs: (TRANSFERS + 0.5 x PARTIAL) / usable x 10.
+    UNKNOWN (None) unless the Brain publishes a well-formed transferSummary with at least one usable rule."""
+    absent = "not published by the Biological Brain (no transferSummary)"
+    if not isinstance(ts, dict):
+        return None, absent
+    tally, n = ts.get("byTransferability"), ts.get("usableRules")
+    if not isinstance(tally, dict) or not isinstance(n, int) or isinstance(n, bool) or n <= 0:
+        return None, absent
+    counts = {k: tally.get(k, 0) for k in ("TRANSFERS", "PARTIAL", "UNTESTED")}
+    if any(not isinstance(v, int) or isinstance(v, bool) or v < 0 for v in counts.values()) or sum(counts.values()) > n:
+        return None, "transferSummary is malformed (counts inconsistent): treated as not published"
+    value = 10.0 * (counts["TRANSFERS"] + 0.5 * counts["PARTIAL"]) / n
+    return value, f"{counts['TRANSFERS']} transfer + {counts['PARTIAL']} partial of {n} usable rules (partial counts half)"
+
+
 def score_biological(facts: dict, now: dt.datetime) -> dict:
     """facts: registry, validation, species{id: node}, intelligenceRegistry."""
     reg = facts.get("registry") or {}
@@ -147,6 +163,7 @@ def score_biological(facts: dict, now: dt.datetime) -> dict:
     ireg = facts.get("intelligenceRegistry") or {}
     conn = (((ireg.get("dependencies") or {}).get("biological-state")) or {}).get("connectionStatus")
     integ = None if not ireg else (10 if conn in ("CONNECTED", "CONNECTED_DEGRADED") else 0)
+    transfer, transfer_ev = _regional_transfer(reg.get("transferSummary"))
 
     dims = [
         dim("registryCompleteness", 10, complete, f"{total or 0} species: {assessed_n or 0} assessed + {not_assessed_n or 0} not assessed"),
@@ -154,7 +171,7 @@ def score_biological(facts: dict, now: dt.datetime) -> dict:
         dim("knowledgeDepth", 20, depth, f"median species-v2 overallRounded over {len(depth_vals)} assessed species = {depth}"),
         dim("evidenceQuality", 10, evidence_q, f"research maturity of assessed species: {sorted(set(mats)) if mats else 'none'}"),
         dim("contradictionsGaps", 10, contradictions, f"mean normalized contradiction load over {len(contr)} species"),
-        dim("regionalTransfer", 5, None, "not published by the Biological Brain yet"),
+        dim("regionalTransfer", 5, transfer, transfer_ev),
         dim("biologicalStateImpl", 15, impl, f"biologicalState.status = {bs.get('status') or 'absent'}"),
         dim("biologicalStateValidation", 10, bval, f"biologicalState validation = {bs.get('validation') or bs.get('status') or 'absent'}"),
         dim("productionIntegration", 5, integ, f"sector-intelligence dependency connectionStatus = {conn or 'absent'}"),
@@ -164,8 +181,10 @@ def score_biological(facts: dict, now: dt.datetime) -> dict:
         gates.append({"gate": "biologicalState", "cap": 4.0, "why": "per-lake Biological State NOT_STARTED"})
     if not mats or "VALIDATED" not in mats:
         gates.append({"gate": "speciesValidation", "cap": 6.0, "why": "no species at researchMaturity VALIDATED"})
-    return finish("biological-state-score-v1", "docs/brains/scoring/biological-state-score-v1.json", dims, gates, now,
-                  "start per-lake Biological State (gate 4.0); independent review of assessed species")
+    nxt = "start per-lake Biological State (gate 4.0); independent review of assessed species"
+    if transfer is None:        # v1 behaviour exactly: the dimension stays UNKNOWN when the Brain publishes no transferSummary
+        return finish("biological-state-score-v1", "docs/brains/scoring/biological-state-score-v1.json", dims, gates, now, nxt)
+    return finish("biological-state-score-v1.1", "docs/brains/scoring/biological-state-score-v1.1.json", dims, gates, now, nxt)
 
 
 # ---------------------------------------------------------------- Sector Intelligence

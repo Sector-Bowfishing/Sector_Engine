@@ -78,6 +78,8 @@ Not an average of species scores. Knowledge depth is **one** dimension.
 | biologicalStateValidation | per-lake state validated | 10 | same node, `validation` | NOT_STARTED 0 · PARTIAL 5 · VALIDATED 10 |
 | productionIntegration | consumed by Intelligence or a customer path | 5 | `/brains/sector-intelligence.dependencies[biological-state].status == CONSUMED` | 10 / 0 |
 
+**`biological-state-score-v1.1` (proposed, needs ratification before any canonical write):** identical to v1 except `regionalTransfer` is scored from the registry's `transferSummary`: (TRANSFERS + 0.5 × PARTIAL) / usableRules × 10, UNKNOWN when the summary is absent or malformed (a Brain that does not publish it still scores as v1). Rubric file: `biological-state-score-v1.1.json`.
+
 Gates: Biological State NOT_STARTED → cap **4.0**; no species VALIDATED → cap **6.0**.
 
 ### Sector Intelligence — `sector-intelligence-score-v1`
