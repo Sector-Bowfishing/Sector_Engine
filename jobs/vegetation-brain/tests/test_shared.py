@@ -171,3 +171,20 @@ def test_threshold_constants_come_from_the_preregistered_tolerance():
     assert C.SHARED_PRESENT_MIN_SHARE_PCT == V.PARTIAL_MAX_FPR * 100
     assert C.SHARED_NOT_OBSERVED_MAX_SHARE_PCT < C.SHARED_PRESENT_MIN_SHARE_PCT
     assert "BELOW_NOISE_TOLERANCE" in C.REFUSALS and "BELOW_NOISE_TOLERANCE" in C.REFUSAL_DOC
+
+
+def test_anchor_lies_on_the_zone_even_when_the_centroid_does_not():
+    ring = codes(h=120, w=120, grass=((20, 100, 20, 100),))
+    ring[35:85, 35:85] = 255                                   # a hollow bed: the centroid falls in the hole
+    z = SH.zones_from_codes([ring] * 3, CORNERS, 36.0, min_km2=0.0001)["zones"][0]
+    h = w = 120
+
+    def back(lon, lat):                                         # lon/lat -> pixel (inverse of pixel_to_lonlat)
+        col = (lon - CORNERS["west"]) / (CORNERS["east"] - CORNERS["west"]) * w
+        yn, ys = SH._lat_to_merc(CORNERS["north"]), SH._lat_to_merc(CORNERS["south"])
+        row = (SH._lat_to_merc(lat) - yn) / (ys - yn) * h
+        return int(row), int(col)
+    r, c = back(*z["anchor"])
+    assert ring[r, c] == 3                                      # the anchor is on grass
+    r0, c0 = back(*z["centroid"])
+    assert ring[r0, c0] == 255                                  # the centroid is in the hole

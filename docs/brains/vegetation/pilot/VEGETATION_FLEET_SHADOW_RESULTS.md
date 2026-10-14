@@ -27,3 +27,6 @@ Before A6 the same data gave 492 / 45 / 10 — the first rule (≥ 1 ha) did not
 * Zones inherit Clarity's painted bed-to-bank margin, so area near shore is an upper bound.
 * No truth lake exists for these numbers; nothing here is validation. `UNKNOWN` (155 lakes) is a legitimate output.
 * Coverage maturity is credited only for **truth-backed** lakes (9 with a Level-1 FWC record), not for the 392 determinate shadow lakes.
+
+## Zone georeferencing check (Level 2, deterministic)
+The pixel → lon/lat conversion was checked against the canonical registry geometry for the 8 pilot lakes (30 reported zones): each zone's **anchor** (the zone block nearest its centroid, always on the zone) lies **inside the registry polygon for 20 of 30 zones and within 100 m (max 97 m) for the other 10**. No georeferencing error exists (an error would be kilometres). The edge misses are what the evidence predicts: persistent grass sits at the shoreline and Clarity paints a bed-to-bank margin, while the NHD polygon carries a 25 m tolerance. Centroids of large concave zones can fall off the vegetation (11 of 30 outside the polygon, up to 402 m), which is why the state also carries `anchor`.

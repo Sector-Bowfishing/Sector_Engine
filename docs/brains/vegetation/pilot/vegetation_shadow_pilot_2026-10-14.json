@@ -1,6 +1,6 @@
 {
  "bytesFetched": 2238892,
- "cpuSeconds": 3.96,
+ "cpuSeconds": 3.81,
  "generatedAt": "2026-10-14T12:00:00+00:00",
  "lakes": [
   {
@@ -369,18 +369,18 @@
  "run1": {
   "evaluated": 8,
   "health": "HEALTHY",
-  "observed": 8,
+  "observed": 7,
   "skippedUnchanged": 0,
   "writes": 11
  },
  "run2": {
   "evaluated": 8,
   "health": "HEALTHY",
-  "observed": 8,
+  "observed": 7,
   "skippedUnchanged": 8,
   "writes": 3
  },
- "stateBytesTotal": 59257,
+ "stateBytesTotal": 60344,
  "states": {
   "Guntersville|AL": {
    "acceptedScenes": 8,
@@ -402,7 +402,7 @@
    "evidenceKind": "SATELLITE_PERSISTENCE",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "57ad1aed9ef1adbf",
+   "inputFingerprint": "7847b4e8cbc22977",
    "lowCoverageFallback": false,
    "notes": [
     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
@@ -423,12 +423,16 @@
     "S2A_T16SED_20261007T163036_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 8183,
+   "stateBytes": 8359,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "statusReason": "observed grass share 15.3 % > the 2.0 % tolerance (bed-to-bank strip removed)",
    "zoneCountAboveMin": 137,
    "zones": [
     {
+     "anchor": [
+      -85.90447,
+      34.74958
+     ],
      "areaKm2": 17.08,
      "centroid": [
       -85.90787,
@@ -438,6 +442,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -86.11791,
+      34.61954
+     ],
      "areaKm2": 8.105,
      "centroid": [
       -86.11836,
@@ -447,6 +455,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -85.8385,
+      34.842
+     ],
      "areaKm2": 7.346,
      "centroid": [
       -85.83883,
@@ -456,6 +468,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -85.83947,
+      34.75277
+     ],
      "areaKm2": 6.086,
      "centroid": [
       -85.83948,
@@ -465,6 +481,10 @@
      "persistence": 0.97
     },
     {
+     "anchor": [
+      -86.07716,
+      34.57881
+     ],
      "areaKm2": 6.033,
      "centroid": [
       -86.07852,
@@ -495,7 +515,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "2cf484dae4800221",
+   "inputFingerprint": "62a07d6acc679665",
    "lowCoverageFallback": false,
    "notes": [
     "only 1 accepted pass(es); persistence needs 3",
@@ -513,9 +533,9 @@
     "S2B_T17RML_20260914T161328_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6925,
+   "stateBytes": 6938,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "statusReason": "observed grass share 6.1 % > the 2.0 % tolerance (bed-to-bank strip removed)",
    "zoneCountAboveMin": 0,
    "zones": []
   },
@@ -539,7 +559,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "4dd0d35701117968",
+   "inputFingerprint": "d289e6e7a0bd071d",
    "lowCoverageFallback": true,
    "notes": [
     "fallback pass: known share between 25 % and 50 %; presence may be understated",
@@ -559,9 +579,9 @@
     "S2C_T17SLU_20261012T161216_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 6836,
+   "stateBytes": 6849,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "statusReason": "observed grass share 3.2 % > the 2.0 % tolerance (bed-to-bank strip removed)",
    "zoneCountAboveMin": null,
    "zones": null
   },
@@ -585,7 +605,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "1f0675d033e9eda7",
+   "inputFingerprint": "15ef24f25eb9d23f",
    "lowCoverageFallback": false,
    "notes": [
     "only 2 accepted pass(es); persistence needs 3",
@@ -603,12 +623,16 @@
     "S2C_T15TWK_20261007T170710_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 7401,
+   "stateBytes": 7577,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "statusReason": "observed grass share 2.8 % > the 2.0 % tolerance (bed-to-bank strip removed)",
    "zoneCountAboveMin": 18,
    "zones": [
     {
+     "anchor": [
+      -92.46904,
+      44.57865
+     ],
      "areaKm2": 1.03,
      "centroid": [
       -92.4692,
@@ -618,6 +642,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -92.43508,
+      44.56413
+     ],
      "areaKm2": 1.007,
      "centroid": [
       -92.43509,
@@ -627,6 +655,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -92.31866,
+      44.56206
+     ],
      "areaKm2": 0.924,
      "centroid": [
       -92.31904,
@@ -636,6 +668,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -92.4409,
+      44.58141
+     ],
      "areaKm2": 0.663,
      "centroid": [
       -92.44063,
@@ -645,6 +681,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -92.44187,
+      44.5586
+     ],
      "areaKm2": 0.622,
      "centroid": [
       -92.44104,
@@ -675,7 +715,7 @@
    "evidenceKind": "SATELLITE_PERSISTENCE",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "04a09cd2b1faa5a7",
+   "inputFingerprint": "e2cfb20801287e0e",
    "lowCoverageFallback": false,
    "notes": [
     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
@@ -696,12 +736,16 @@
     "S2C_T15TVN_20260930T171530_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 7497,
+   "stateBytes": 7674,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "statusReason": "observed grass share 2.1 % > the 2.0 % tolerance (bed-to-bank strip removed)",
    "zoneCountAboveMin": 66,
    "zones": [
     {
+     "anchor": [
+      -94.27745,
+      47.30457
+     ],
      "areaKm2": 2.038,
      "centroid": [
       -94.27792,
@@ -711,6 +755,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -94.59567,
+      47.21634
+     ],
      "areaKm2": 1.846,
      "centroid": [
       -94.59553,
@@ -720,6 +768,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -94.2367,
+      47.25323
+     ],
      "areaKm2": 1.746,
      "centroid": [
       -94.23648,
@@ -729,6 +781,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -94.22021,
+      47.18536
+     ],
      "areaKm2": 1.158,
      "centroid": [
       -94.21963,
@@ -738,6 +794,10 @@
      "persistence": 0.96
     },
     {
+     "anchor": [
+      -94.26484,
+      47.17151
+     ],
      "areaKm2": 1.127,
      "centroid": [
       -94.26459,
@@ -762,13 +822,13 @@
     "surfaceVegetationPresence": "NOT_VALIDATED",
     "surfaceVegetationType": "NOT_ASSESSED"
    },
-   "confidence": "LOW",
-   "confidenceScore": 0.37,
+   "confidence": "NONE",
+   "confidenceScore": 0.0,
    "coverageClass": "NOT_CALIBRATED",
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
-   "headline": "Likely surface vegetation",
-   "inputFingerprint": "c4790a00f6e1bacf",
+   "headline": "No reliable vegetation observation",
+   "inputFingerprint": "1747c0c542bbef4b",
    "lowCoverageFallback": false,
    "notes": [
     "only 2 accepted pass(es); persistence needs 3",
@@ -789,12 +849,16 @@
     "S2B_T17RNL_20261004T161038_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 7497,
-   "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "stateBytes": 7674,
+   "status": "UNKNOWN",
+   "statusReason": "BELOW_NOISE_TOLERANCE",
    "zoneCountAboveMin": 74,
    "zones": [
     {
+     "anchor": [
+      -80.9407,
+      27.02662
+     ],
      "areaKm2": 7.293,
      "centroid": [
       -80.94033,
@@ -804,6 +868,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -80.97272,
+      26.9047
+     ],
      "areaKm2": 6.929,
      "centroid": [
       -80.97433,
@@ -813,6 +881,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -80.93488,
+      26.7965
+     ],
      "areaKm2": 3.429,
      "centroid": [
       -80.9348,
@@ -822,6 +894,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -80.79906,
+      27.20192
+     ],
      "areaKm2": 3.156,
      "centroid": [
       -80.79247,
@@ -831,6 +907,10 @@
      "persistence": 0.95
     },
     {
+     "anchor": [
+      -80.87279,
+      27.07587
+     ],
      "areaKm2": 3.135,
      "centroid": [
       -80.87317,
@@ -861,7 +941,7 @@
    "evidenceKind": "SATELLITE_PERSISTENCE",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "ef63a83e33f84d62",
+   "inputFingerprint": "f814ebb75a45df8a",
    "lowCoverageFallback": false,
    "notes": [
     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
@@ -882,12 +962,16 @@
     "S2B_T15RVQ_20260919T165749_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 7441,
+   "stateBytes": 7619,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "statusReason": "observed grass share 12.3 % > the 2.0 % tolerance (bed-to-bank strip removed)",
    "zoneCountAboveMin": 147,
    "zones": [
     {
+     "anchor": [
+      -94.55363,
+      31.42505
+     ],
      "areaKm2": 32.963,
      "centroid": [
       -94.55351,
@@ -897,6 +981,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -94.31788,
+      31.36625
+     ],
      "areaKm2": 12.56,
      "centroid": [
       -94.31823,
@@ -906,6 +994,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -93.98996,
+      31.18217
+     ],
      "areaKm2": 5.985,
      "centroid": [
       -93.9912,
@@ -915,6 +1007,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -94.25773,
+      31.26016
+     ],
      "areaKm2": 5.037,
      "centroid": [
       -94.25768,
@@ -924,6 +1020,10 @@
      "persistence": 1.0
     },
     {
+     "anchor": [
+      -94.43624,
+      31.2925
+     ],
      "areaKm2": 4.395,
      "centroid": [
       -94.4367,
@@ -954,7 +1054,7 @@
    "evidenceKind": "SATELLITE_ACCEPTED_PASS",
    "generatedAt": "2026-10-14T12:00:00Z",
    "headline": "Likely surface vegetation",
-   "inputFingerprint": "63c9f3e9335a1f38",
+   "inputFingerprint": "545cfa35ab82dcf6",
    "lowCoverageFallback": false,
    "notes": [
     "only 2 accepted pass(es); persistence needs 3",
@@ -975,12 +1075,16 @@
     "S2B_T15SVR_20260929T170401_L2A"
    ],
    "source": "clarity-shared-pass",
-   "stateBytes": 7477,
+   "stateBytes": 7654,
    "status": "PRESENT",
-   "statusReason": "observed grass >= 0.01 km2 after removing the bed-to-bank strip",
+   "statusReason": "observed grass share 4.1 % > the 2.0 % tolerance (bed-to-bank strip removed)",
    "zoneCountAboveMin": 178,
    "zones": [
     {
+     "anchor": [
+      -93.76681,
+      31.60205
+     ],
      "areaKm2": 9.603,
      "centroid": [
       -93.76649,
@@ -990,6 +1094,10 @@
      "persistence": 0.99
     },
     {
+     "anchor": [
+      -93.91622,
+      31.88751
+     ],
      "areaKm2": 6.105,
      "centroid": [
       -93.91625,
@@ -999,6 +1107,10 @@
      "persistence": 0.98
     },
     {
+     "anchor": [
+      -93.74644,
+      31.29747
+     ],
      "areaKm2": 6.03,
      "centroid": [
       -93.74596,
@@ -1008,6 +1120,10 @@
      "persistence": 0.98
     },
     {
+     "anchor": [
+      -93.7445,
+      31.65822
+     ],
      "areaKm2": 4.944,
      "centroid": [
       -93.74496,
@@ -1017,6 +1133,10 @@
      "persistence": 0.98
     },
     {
+     "anchor": [
+      -93.93466,
+      31.84549
+     ],
      "areaKm2": 2.702,
      "centroid": [
       -93.93425,
@@ -1028,5 +1148,5 @@
    ]
   }
  },
- "wallSeconds": 201.9
+ "wallSeconds": 183.1
 }

@@ -250,10 +250,13 @@ def zones_from_codes(code_stack: list, corners: dict, cell_m: float, *, block: i
         yy, xx = np.nonzero(lab == i)
         cy, cx = (yy.mean() + 0.5) * block, (xx.mean() + 0.5) * block
         lon, lat = pixel_to_lonlat(cx, cy, shape, corners)
+        # anchor: the zone block nearest the centroid, so the point is ON the zone even when the zone is concave (a ring's centroid is its hole)
+        k = int(np.argmin((yy - yy.mean()) ** 2 + (xx - xx.mean()) ** 2))
+        alon, alat = pixel_to_lonlat((xx[k] + 0.5) * block, (yy[k] + 0.5) * block, shape, corners)
         ground_m = cell_m * block * math.cos(math.radians(lat))
         area = len(yy) * ground_m * ground_m / 1e6
         if area >= min_km2:
-            out.append({"areaKm2": round(area, 3), "centroid": [round(lon, 5), round(lat, 5)],
+            out.append({"areaKm2": round(area, 3), "centroid": [round(lon, 5), round(lat, 5)], "anchor": [round(alon, 5), round(alat, 5)],
                         "persistence": round(float(ratio[lab == i].mean()), 2), "looks": int(np.median(looks[lab == i]))})
     out.sort(key=lambda z: -z["areaKm2"])
     return {"zones": out[:top], "zoneCountAboveMin": len(out), "status": "OK", "blockPx": block, "minZoneKm2": min_km2,
