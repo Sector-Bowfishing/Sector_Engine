@@ -68,7 +68,7 @@ Distinct clocks, never merged:
 3. **State generated/checked** (`generatedAt` = content changed; `checkedAt` = inputs re-verified).
 4. **Valid-until** (`freshness.freshUntil`, state TTL 26 h after the last check).
 
-Satellite evidence is `FRESH` ≤ 14 days, otherwise `STALE`. A 14-day-old scene does **not** describe tonight after rain; consumers must show age and must not present it as current. Clarity moves with rain/runoff, so a scene older than the latest significant rain event is flagged `evidenceStale` once the R3.1 path ships (design item; not yet implemented).
+Satellite evidence is `FRESH` ≤ 14 days, otherwise `STALE`. A 14-day-old scene does **not** describe tonight after rain; consumers must show age and must not present it as current. Clarity moves with rain/runoff, so a FRESH scene with ≥ 0.5 in of rain in day-buckets after the observation is downgraded to `DEGRADED` (`RAIN_SINCE_SCENE`, quality flag `satelliteDegraded:rain<N>in`); unknown rain is stated (`rainCheck: UNKNOWN`). **Implemented; the 0.5 in threshold is a conservative placeholder, not validated** (the available southern sample could not test it).
 
 ## 9. Execution model
 Input-driven, not hourly-forever.

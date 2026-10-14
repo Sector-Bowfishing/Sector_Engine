@@ -53,3 +53,9 @@ Distinguishes current observation vs inference, age, confidence, limitations. `b
 - **Force rewrite:** `python3 run.py --force` rewrites every lake regardless of fingerprint.
 - **Remove Brain paths:** delete `/lakes/*/states/waterClarity`, `/lakes/*/profiles/waterClarity`, `/lakeFleet/*/slots/waterClarity`, `/brains/water-clarity` (writer-owned; customer paths untouched — the Brain only *reads* production).
 - Customer behaviour is unaffected by any of the above (the Brain mirrors `/conditions`; no client reads it).
+
+## 7. Product decision needed: clarity bands (not invented here)
+The Engine already words visibility in `ClarityFactor.why`: <1 ft "Blown out", 1–2 "Murky", 2–3 "Workable", 3–4 "Good", ≥4 "Clear".
+Those are score-curve wording, not customer bands, and production estimates never exceed 4.0 ft (rain-decay cap). A customer band
+set (names and cut-points, e.g. POOR / WORKABLE / GOOD / VERY GOOD) is a Michael product decision (D8). Southern Secchi truth
+sits mostly ≥ 3 ft (Guntersville median ≈ 4.9, Hartwell ≈ 8.5), so cut-points above 4 ft are where decisions would differ.

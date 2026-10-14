@@ -114,3 +114,34 @@ class Fingerprint(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RainSinceScene(unittest.TestCase):
+    DAILY = [{"date": f"2026-10-{d:02d}T05:00:00Z", "inches": i} for d, i in
+             ((6, 0.0), (7, 0.0), (8, 0.3), (9, 0.06), (10, 1.16), (11, 0.0))]
+
+    def test_counts_only_buckets_after_the_scene(self):
+        # scene 2026-10-08 16:43Z: the 10-08 bucket (starts 05:00Z) is excluded, 10-09 and later count
+        self.assertEqual(cb.rain_since_scene(self.DAILY, "2026-10-08T16:43:56Z"), 1.22)
+
+    def test_unknown_when_no_series_or_time(self):
+        self.assertIsNone(cb.rain_since_scene(None, "2026-10-08T16:43:56Z"))
+        self.assertIsNone(cb.rain_since_scene(self.DAILY, None))
+        self.assertIsNone(cb.rain_since_scene([{"date": "x", "inches": "bad"}], "2026-10-08T16:43:56Z"))
+
+    def test_heavy_rain_degrades_a_fresh_scene(self):
+        sat = {"status": "FRESH", "observedAt": "2026-10-08T16:43:56Z"}
+        out = cb.apply_rain_invalidation(sat, self.DAILY)
+        self.assertEqual(out["status"], "DEGRADED")
+        self.assertEqual(out["reasonCode"], "RAIN_SINCE_SCENE")
+        self.assertIn("satelliteDegraded:rain1.22in", cb.quality_flags(cb.engine_estimate(GUNT, "x"), out))
+
+    def test_dry_since_scene_stays_fresh_and_unknown_rain_is_said(self):
+        sat = {"status": "FRESH", "observedAt": "2026-10-11T16:43:56Z"}
+        self.assertEqual(cb.apply_rain_invalidation(sat, self.DAILY)["status"], "FRESH")
+        self.assertEqual(cb.apply_rain_invalidation(sat, None)["rainCheck"], "UNKNOWN")
+
+    def test_non_fresh_scenes_are_untouched(self):
+        for status in ("STALE", "NONE", "INVALID"):
+            sat = {"status": status, "observedAt": "2026-10-08T16:43:56Z"}
+            self.assertEqual(cb.apply_rain_invalidation(sat, self.DAILY), sat)

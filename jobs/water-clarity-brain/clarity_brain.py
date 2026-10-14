@@ -160,6 +160,7 @@ def engine_estimate(cond: dict | None, lake_id: str) -> dict:
         "clarityFt": _r(v.get("centralFt")), "lowFt": _r(v.get("lowFt")), "highFt": _r(v.get("highFt")),
         "trend": trend, "trendBasis": trend_basis,
         "recentRainfallIn72h": _r(rain72), "rainfallSource": rain_src, "rainfallWindowHours": window,
+        "rainDaily": rain.get("daily") or None,
         "rainfallLatestDay": ((rain.get("daily") or [{}])[-1] or {}).get("date"),
         "engine": {"model": v.get("model"), "source": v.get("source"), "confidenceLabel": v.get("confidence"),
                    "provenance": v.get("provenance"), "limitations": list(v.get("limitations") or []),
@@ -207,6 +208,49 @@ def satellite_evidence(latest: dict | None, meta: dict | None, has_polygon: bool
         "productId": "lake-surface-daily", "modelId": "lake-surface-s2-fnu", "processingPathId": SAT_PATH,
         "authority": SAT_AUTHORITY.get(PLATFORM_SENSOR.get(s.get("platform"))),
     }
+
+
+RAIN_INVALIDATES_IN = CATALOG.get("rainInvalidation", {}).get("sinceSceneInches", 0.5)   # PROPOSED threshold; set from the two-lake test
+
+
+def rain_since_scene(rain_daily: list | None, observed_at: str | None) -> float | None:
+    """Inches of rain in day buckets that START after the scene was observed (MRMS daily totals from /conditions).
+    None = unknown (no rain series or no scene time). The scene's own day bucket is excluded: rain before the
+    overpass is already in the picture the satellite saw."""
+    t0 = parse_time(observed_at)
+    if t0 is None or not rain_daily:
+        return None
+    tot, seen = 0.0, 0
+    for d in rain_daily:
+        t = parse_time(d.get("date"))
+        try:
+            inch = float(d.get("inches"))
+        except (TypeError, ValueError):
+            continue
+        if t is None or not math.isfinite(inch):
+            continue
+        seen += 1
+        if t > t0:
+            tot += max(inch, 0.0)
+    return round(tot, 2) if seen else None
+
+
+def apply_rain_invalidation(sat: dict, rain_daily: list | None) -> dict:
+    """Attach rain-since-scene to the satellite evidence; heavy rain since the scene makes the scene
+    DEGRADED evidence (not current), never fresh. Unknown rain keeps the scene but says so."""
+    if sat.get("status") != "FRESH":
+        return sat
+    r = rain_since_scene(rain_daily, sat.get("observedAt"))
+    out = dict(sat, rainSinceSceneIn=r)
+    if r is None:
+        out["rainCheck"] = "UNKNOWN"
+    elif r >= RAIN_INVALIDATES_IN:
+        out["status"] = "DEGRADED"
+        out["reasonCode"] = "RAIN_SINCE_SCENE"
+        out["rainCheck"] = "RAIN_SINCE_SCENE"
+    else:
+        out["rainCheck"] = "CLEAR"
+    return out
 
 
 def map_layers(latest: dict | None, meta: dict | None) -> tuple[list, dict | None]:
@@ -281,6 +325,8 @@ def quality_flags(est: dict, sat: dict) -> list[str]:
         f.append(f"satelliteStale:{(sat.get('ageHours') or 0) / 24:.0f}d>{SAT_FRESH_DAYS}d")
     elif sat["status"] in ("NONE", "UNSUPPORTED"):
         f.append(f"satellite{sat['status'].title()}")
+    elif sat["status"] == "DEGRADED":
+        f.append(f"satelliteDegraded:rain{sat.get('rainSinceSceneIn')}in")
     elif sat["status"] == "INVALID":
         f.append(f"satelliteInvalid:{sat.get('reasonCode')}")
     return f
@@ -376,7 +422,7 @@ def build_profile(lake: dict, est: dict, sat: dict, has_polygon: bool, now: dt.d
         codes.append("UNCALIBRATED_MODEL")
     if st != "UNAVAILABLE":
         codes.append("SINGLE_POINT_ESTIMATE")
-    if sat["status"] in ("FRESH", "STALE"):
+    if sat["status"] in ("FRESH", "STALE", "DEGRADED"):
         codes.append("SATELLITE_NOT_IN_CUSTOMER_ESTIMATE")
     return {
         "lakeId": lake["id"], "brainId": BRAIN_ID, "schemaVersion": SCHEMA_VERSION, "profileVersion": 1, "updatedAt": iso(now),
@@ -385,7 +431,7 @@ def build_profile(lake: dict, est: dict, sat: dict, has_polygon: bool, now: dt.d
         "lakeClarityClass": None, "hydrologicClass": None,
         "geometryReady": has_polygon,
         "satelliteSupported": has_polygon, "sentinel2Supported": has_polygon, "landsatSupported": False,
-        "satelliteAvailable": sat["status"] in ("FRESH", "STALE"),
+        "satelliteAvailable": sat["status"] in ("FRESH", "STALE", "DEGRADED"),
         "weatherRunoffInputs": rain_in or None,
         "precipitationInputsAvailable": bool(est.get("rainfallSource")),
         "runoffInputsAvailable": bool(disch),
@@ -394,8 +440,8 @@ def build_profile(lake: dict, est: dict, sat: dict, has_polygon: bool, now: dt.d
         "historicalObservationCount": {"satellitePasses": sat.get("passCount"), "inSituSecchi": None},
         "sourceCoverage": {"inSituTurbidity": any(g["driving"] for g in turb), "rainfall": est.get("rainfallSource"),
                            "satellite": sat["status"]},
-        "spatialModelSupported": sat["status"] in ("FRESH", "STALE"),
-        "mapLayerSupported": sat["status"] in ("FRESH", "STALE"),
+        "spatialModelSupported": sat["status"] in ("FRESH", "STALE", "DEGRADED"),
+        "mapLayerSupported": sat["status"] in ("FRESH", "STALE", "DEGRADED"),
         "validationStatus": validation,
         "readiness": READINESS_BY_STATE[st],
         "candidateModel": {**CANDIDATE_REF, "perLakeOutput": None},

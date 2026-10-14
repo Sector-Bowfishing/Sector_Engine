@@ -249,6 +249,7 @@ def main() -> int:
                 b = bucket.get(lid) or {}
                 est = cb.engine_estimate(cond, lid)
                 sat = cb.satellite_evidence(b.get("latest"), b.get("meta"), lid in polys, b.get("passCount"), t_lake)
+                sat = cb.apply_rain_invalidation(sat, est.get("rainDaily"))
                 layers, geo = cb.map_layers(b.get("latest"), b.get("meta"))
                 prev_slot = ((prev_fleet.get(keys[lid]) or {}).get("slots") or {}).get(cb.SLOT)
                 if est["stateType"] == "UNAVAILABLE":
