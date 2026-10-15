@@ -14,8 +14,7 @@ from .model import ENVELOPE_ID, FRESHNESS_STATUSES, LINEAGE_ID, OPS, REVIEW_STAT
 from .paths import PathError, foreign_owner, normalize_path, touches_reserved
 from .registry import ALL_LIFECYCLES, PRODUCTION_LIFECYCLES, VALIDATION_WORDS, Registry, SchemaSpec
 
-UUID4 = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")
-SHA = re.compile(r"sha256:[0-9a-f]{64}")
+from .refs import SHA, UUID4
 ISO_UTC = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z")
 SCOPE = re.compile(r"[A-Za-z0-9_][A-Za-z0-9._-]{0,63}")
 ENVELOPE_KEYS = {"envelope", "lineage", "mutations", "scope", "freshness", "approvalRef"}
@@ -99,7 +98,9 @@ def check_paths(mutations: list[dict], brain: str, spec: SchemaSpec, registry: R
             bad.append(Violation("INVALID_PATH", str(e)))
             continue
         delete = m["op"] == "DELETE"
-        if touches_reserved(p):
+        if p.split("/")[1] == "brains" and p.count("/") <= 2:
+            bad.append(Violation("BRAIN_NODE_REPLACEMENT", "a specialist artifact may not replace /brains or a whole /brains/{brainId} node; publish approved CHILD paths", p))
+        elif touches_reserved(p):
             bad.append(Violation("RESERVED_PATH", "Publisher-owned (or its ancestor); no artifact may write it", p))
         elif registry.authorizing_family(spec, p, delete=delete) is None:
             if delete and registry.authorizing_family(spec, p) is not None:

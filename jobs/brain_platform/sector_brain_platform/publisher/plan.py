@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..keys import check_update
 from .canonical import canonical_bytes, sha256_ref
 from .paths import to_rtdb_key
 
@@ -43,12 +44,16 @@ def path_fingerprints(mutations: list[dict]) -> dict:
             for m in sorted(mutations, key=lambda m: m["path"])}
 
 
-def rtdb_record(record: dict):
-    """The record as RTDB would keep it: None and empty containers dropped (they would be implicit deletes / vanish on write)."""
+#: History-only fields: the per-path hashes are keyed by full paths (not legal RTDB node keys) and violations are history-only (REJECTED is never in RTDB).
+HISTORY_ONLY = frozenset({"pathSha256", "violations", "headGeneration"})
+
+
+def rtdb_record(record: dict, top: bool = True):
+    """The record as RTDB would keep it: history-only fields omitted, None and empty containers dropped (they would be implicit deletes / vanish on write)."""
     if isinstance(record, dict):
-        return {k: v2 for k, v in record.items() if (v2 := rtdb_record(v)) not in (None, {}, [])}
+        return {k: v2 for k, v in record.items() if not (top and k in HISTORY_ONLY) and (v2 := rtdb_record(v, False)) not in (None, {}, [])}
     if isinstance(record, list):
-        return [x for x in (rtdb_record(v) for v in record) if x not in (None, {}, [])]
+        return [x for x in (rtdb_record(v, False) for v in record) if x not in (None, {}, [])]
     return record
 
 
@@ -62,5 +67,6 @@ def build_update_plan(brain_id: str, mutations: list[dict], record: dict) -> Upd
     if pub_key in patch or any(k.startswith(pub_key + "/") or pub_key.startswith(k + "/") for k in patch):
         raise PlanInvariantError("artifact patch collides with the Publisher-owned publication record")
     updates = dict(sorted({**patch, pub_key: rtdb_record(record)}.items()))
+    check_update(updates)          # every path segment and every node key inside every value is a legal RTDB key, or the plan is not built
     return UpdatePlan(brain_id, updates, tuple(sorted(explicit)), sha256_ref(canonical_bytes(patch)), sha256_ref(canonical_bytes(updates)),
                       len(patch), len(canonical_bytes(patch)), pub_key)

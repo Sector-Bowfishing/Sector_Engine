@@ -85,6 +85,18 @@ def _wind_sources() -> frozenset:
     return frozenset(sid for sid, owner in SOURCE_OWNERS.items() if owner == WIND)      # only sources Wind is the acquisition owner of
 
 
+#: /brains/wind CHILD ownership (follows the current registry contract in jobs/wind-hourly; grouped by what each child is). Every child here is owned by
+#: Wind and replaced as a unit (child level). `publication` and `certification` are NOT listed and are reserved: owned by the Publisher/Orchestrator.
+WIND_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "descriptor", "versions", "activeProductionModel", "researchCandidate",
+              "scores", "readinessDefinitions", "stateKinds"),
+    "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "profiledLakeCount", "readinessCounts", "staleLakeCount",
+               "staleAfterHours", "staleRule", "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "runsPerMinute", "updatedAt", "publishMode"),
+}
+BRAIN_NODE_OWNERS = {"publication": "publisher", "certification": "publisher"}      # reserved children of every /brains/{brainId}
+
+
 def wind_specs() -> list[SchemaSpec]:
     k = {"k": lake_key_check}
     lake_state = SchemaSpec(
@@ -100,8 +112,8 @@ def wind_specs() -> list[SchemaSpec]:
         value_types={f"/lakes/{{k}}/states/{WIND_SLOT}": dict, f"/lakes/{{k}}/profiles/{WIND_SLOT}": dict}, require_freshness=True)
     registry = SchemaSpec(
         "wind-registry-v1", WIND,
-        (PathFamily(f"/brains/{WIND}/{{child}}", {"child": not_in(RESERVED_BRAIN_CHILDREN)},
-                    note="children only: a whole-node SET of /brains/wind would erase the Publisher-owned publication/certification children"),
+        (PathFamily(f"/brains/{WIND}/{{child}}", {"child": one_of(c for group in WIND_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only (WIND_REGISTRY_CHILDREN); never the whole node, never publication/certification"),
          PathFamily(f"/validation/{WIND}"),
          PathFamily(f"/health/brains/{WIND}"),
          PathFamily("/activity/{event}", {"event": contains(f"-{WIND}-")}, note="own events only")),

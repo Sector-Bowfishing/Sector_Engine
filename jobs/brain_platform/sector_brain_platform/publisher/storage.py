@@ -7,8 +7,8 @@ approval (see PUBLISHER_V1_CUTOVER_REQUIREMENTS.md). The ObjectStore contract mi
   - `if_generation_match=N` is an optimistic-concurrency overwrite (the per-scope head pointer).
 
 Layout
-  artifacts/{brainId}/{artifactId}.json                       immutable   the artifact as the Brain produced it (rollback source)
-  publishes/{brainId}/{publishId}.json                        immutable   one publication record (also SKIP / REJECTED outcomes)
+  artifacts/{brainId}/{artifactId}/artifact.json              immutable   the artifact as the Brain produced it (rollback source)
+  publishes/{brainId}/{publishId}/record.json                 immutable   one publication record (also SKIP / REJECTED outcomes)
   publishes/{brainId}/_heads/{artifactSchema}/{scope}.json    versioned   pointer to the latest baseline record for that scope
   scores/ , exports/                                          reserved prefixes (score history, RTDB exports); not written by Publisher V1
 """
@@ -20,6 +20,7 @@ from pathlib import Path
 
 from .canonical import canonical_bytes
 from .model import DEFAULT_SCOPE
+from .refs import artifact_location
 
 PREFIXES = ("artifacts/", "publishes/", "scores/", "exports/")
 _SEG = re.compile(r"[A-Za-z0-9_][A-Za-z0-9._@-]*")
@@ -104,11 +105,12 @@ def _seg(v: str, what: str) -> str:
 
 
 def artifact_key(brain_id: str, artifact_id: str) -> str:
-    return f"artifacts/{_seg(brain_id, 'brainId')}/{_seg(artifact_id.replace(':', '-'), 'artifactId')}.json"
+    _seg(brain_id, "brainId"), _seg(artifact_id.replace(":", "-"), "artifactId")
+    return artifact_location(brain_id, artifact_id)
 
 
 def publish_key(brain_id: str, publish_id: str) -> str:
-    return f"publishes/{_seg(brain_id, 'brainId')}/{_seg(publish_id, 'publishId')}.json"
+    return f"publishes/{_seg(brain_id, 'brainId')}/{_seg(publish_id, 'publishId')}/record.json"
 
 
 def head_key(brain_id: str, schema: str, scope: str = DEFAULT_SCOPE) -> str:
@@ -135,6 +137,9 @@ class PublishHistory:
         cur = self.store.get(artifact_key(brain_id, artifact_id))
         return cur is not None and cur != canonical_bytes(artifact)
 
+    def read_artifact_bytes(self, brain_id: str, artifact_id: str) -> bytes | None:
+        return self.store.get(artifact_key(brain_id, artifact_id))
+
     def get_artifact(self, brain_id: str, artifact_id: str) -> dict | None:
         b = self.store.get(artifact_key(brain_id, artifact_id))
         return json.loads(b) if b else None
@@ -151,7 +156,7 @@ class PublishHistory:
 
     def records(self, brain_id: str) -> list[dict]:
         pre = f"publishes/{_seg(brain_id, 'brainId')}/"
-        recs = [json.loads(self.store.get(k)) for k in self.store.list(pre) if "/_heads/" not in k]
+        recs = [json.loads(self.store.get(k)) for k in self.store.list(pre) if k.endswith("/record.json")]
         return sorted(recs, key=lambda r: (r.get("evaluatedAt", ""), r["publishId"]))
 
     # head pointer (versioned; optimistic concurrency)
@@ -186,3 +191,55 @@ class PublishHistory:
         return {"restorePublishId": prev["publishId"], "artifactId": prev["artifactId"], "artifactKey": artifact_key(brain_id, prev["artifactId"]),
                 "artifactStored": self.store.get(artifact_key(brain_id, prev["artifactId"])) is not None,
                 "outputFingerprint": prev["outputFingerprint"], "fromPublishId": publish_id}
+
+
+class AccessDenied(StorageError):
+    pass
+
+
+class ScopedObjectStore:
+    """A view of an ObjectStore with the TARGET access model applied in code (IAM enforces the same later; this is defence in depth, not the control).
+
+    There is no delete method at all: immutable history cannot be removed through this interface. `create` prefixes allow create-only puts
+    (`if_generation_match=0`); `overwrite` prefixes additionally allow generation-matched overwrites (the versioned head pointer)."""
+
+    def __init__(self, store, *, read=(), create=(), overwrite=()):
+        self._s, self._read, self._create, self._over = store, tuple(read), tuple(create), tuple(overwrite)
+
+    def _ok(self, key, prefixes, what):
+        check_key(key)
+        if not key.startswith(prefixes):
+            raise AccessDenied(f"{what} denied on {key}")
+
+    def put(self, key, data, *, if_generation_match=None):
+        if if_generation_match == 0:
+            self._ok(key, self._create, "create")
+        else:
+            self._ok(key, self._over, "overwrite")
+        return self._s.put(key, data, if_generation_match=if_generation_match)
+
+    def get(self, key, generation=None):
+        self._ok(key, self._read, "read")
+        return self._s.get(key, generation)
+
+    def generation(self, key):
+        self._ok(key, self._read, "read")
+        return self._s.generation(key)
+
+    def list(self, prefix):
+        if not prefix.startswith(self._read):
+            raise AccessDenied(f"list denied on {prefix!r}")
+        return self._s.list(prefix)
+
+
+def brain_view(store, brain_id: str) -> ScopedObjectStore:
+    """A specialist Brain: create-only under its OWN artifact prefix, read only that prefix. Nothing else."""
+    pre = f"artifacts/{_seg(brain_id, 'brainId')}/"
+    return ScopedObjectStore(store, read=(pre,), create=(pre,))
+
+
+def publisher_view(store, *, may_store_artifacts: bool = False) -> ScopedObjectStore:
+    """The Publisher: read artifacts and history, create publication/history records and move the versioned heads. It does not write artifacts/
+    (the Brain did) unless `may_store_artifacts` is set for the local direct-evaluate convenience path."""
+    return ScopedObjectStore(store, read=("artifacts/", "publishes/"), create=("publishes/",) + (("artifacts/",) if may_store_artifacts else ()),
+                             overwrite=("publishes/",))

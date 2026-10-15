@@ -28,6 +28,9 @@ class Recorder:
     def research(self, r):
         self.calls.append(("research", r)); return {}
 
+    def artifact(self, r):
+        self.calls.append(("artifact", r)); return {}
+
 
 GRANTS = {"ops-user-1": {"CONTROL": {"RUN_NOW", "PAUSE", "RESUME", "SET_MANUAL", "CHANGE_PROTECTED_SCHEDULE"}, "REVIEW": {"SUBMIT_REVIEW", "ACCEPT_RULE"},
                          "RESEARCH": {"RESEARCH_GAP"}}, "ops-user-2": {"RESEARCH": {"RESEARCH_GAP"}}}
@@ -141,3 +144,112 @@ def test_validate_request_returns_an_immutable_record_without_database_fields():
     with pytest.raises(Exception):
         r.action = "OTHER"
     assert set(vars(r)) == {"request_id", "kind", "brain_id", "action", "params", "requested_by", "confirmed"}
+
+
+# ---- SUBMIT_ARTIFACT: the API signal identifies an artifact; it never carries content or a path -----------------------------------------------
+import datetime as _dt
+import itertools as _it
+
+from publisher_fixtures import T0, wind_artifact
+from sector_brain_platform.publisher import local_shadow_stack, sha256_ref
+
+
+def art_api(grants=None):
+    ids = _it.count(1)
+    st = local_shadow_stack(clock=lambda: T0 + _dt.timedelta(hours=1), id_factory=lambda: uuid4(next(ids) + 50000))
+    authz = AllowlistAuthorizer(grants or {"brain-wind": {"ARTIFACT": {"SUBMIT_ARTIFACT@wind"}}, "orchestrator": {"ARTIFACT": {"SUBMIT_ARTIFACT"}}})
+    authn = type("A", (), {"authenticate": lambda s, c: {"w": Caller("brain-wind"), "o": Caller("orchestrator")}.get(c)})()
+    return OrchestratorApi(authn, authz, st.dispatcher), st
+
+
+def sub_body(ref, n=900, **over):
+    b = {"apiVersion": "orchestrator-api-v1", "requestId": uuid4(n), "requestKind": "ARTIFACT", "brainId": ref.brain_id, "action": "SUBMIT_ARTIFACT",
+         "params": {"artifactId": ref.artifact_id, "artifactRef": ref.location, "artifactSha256": ref.sha256, "executionId": ref.execution_id, "expectedSchema": ref.expected_schema}}
+    b.update(over)
+    return b
+
+
+def test_submit_artifact_runs_the_publisher_in_shadow_and_returns_only_a_summary():
+    api, st = art_api()
+    ref = st.writer("wind").write(wind_artifact(n=1))
+    r = api.handle("w", sub_body(ref))
+    assert r.status == 200 and r.outcome == "ACCEPTED" and r.result["result"] == "SHADOW_READY" and r.result["live"] is False and r.result["mode"] == "SHADOW"
+    assert set(r.result) == {"result", "publishId", "codes", "live", "mode"}                  # no plan, no paths, no values leave the Publisher via the API
+    assert st.history.get_record("wind", r.result["publishId"])["requestId"] == uuid4(900)
+    assert api.handle("w", sub_body(ref, n=901)).result["result"] == "SKIP"
+
+
+def test_submit_artifact_rejections_come_from_the_publisher_not_the_caller():
+    api, st = art_api()
+    art = wind_artifact(n=1); art["mutations"].append({"op": "SET", "path": "/speciesProfiles/common_carp", "value": {"a": 1}})
+    ref = st.writer("wind").write(art)
+    r = api.handle("w", sub_body(ref))
+    assert r.status == 200 and r.result["result"] == "REJECTED" and r.result["codes"] == ["CROSS_DOMAIN_PATH"] and st.sink.submitted == []
+
+
+@pytest.mark.parametrize("extra", [{"path": "/lakes/x/states/wind"}, {"artifact": {"mutations": []}}, {"mutations": [{"op": "SET", "path": "/a", "value": 1}]},
+                                   {"updates": {"/a": 1}}, {"value": {"a": 1}}, {"rtdbPath": "/x"}, {"plan": {}}])
+def test_api_rejects_arbitrary_paths_and_mutation_json_on_artifact_submission(extra):
+    api, st = art_api()
+    ref = st.writer("wind").write(wind_artifact(n=1))
+    r = api.handle("w", {**sub_body(ref), **extra})
+    assert r.status == 400 and r.code == "UNKNOWN_FIELD" and st.sink.submitted == [] and st.history.records("wind") == []
+
+
+@pytest.mark.parametrize("param", ["path", "artifact", "content", "mutations", "updates", "payload", "json", "location"])
+def test_artifact_params_cannot_smuggle_content_or_paths(param):
+    api, st = art_api()
+    ref = st.writer("wind").write(wind_artifact(n=1))
+    b = sub_body(ref); b["params"][param] = "/lakes/x/states/wind"
+    r = api.handle("w", b)
+    assert r.status == 400 and r.code == "UNKNOWN_PARAM" and st.history.records("wind") == []
+
+
+def test_wind_cannot_submit_a_fish_artifact_namespace():
+    api, st = art_api()
+    fish = st.writer("biological-state").write(wind_artifact(n=5, brainId="biological-state", artifactSchema="biological-species-profile-v1"))
+    # 1: Wind names itself but points at Fish's namespace
+    r = api.handle("w", sub_body(fish, brainId="wind"))
+    assert r.status == 400 and r.code == "NAMESPACE_VIOLATION"
+    # 2: Wind submits as Fish: not granted for that Brain
+    r = api.handle("w", sub_body(fish))
+    assert r.status == 403 and r.code == "ACTION_NOT_GRANTED"
+    # 3: an unscoped Orchestrator grant may name any Brain, but still only that Brain's own namespace
+    assert api.handle("o", sub_body(fish, brainId="wind")).code == "NAMESPACE_VIOLATION"
+    assert st.sink.submitted == [] and st.history.records("wind") == [] and st.history.records("biological-state") == []
+
+
+@pytest.mark.parametrize("field,val,code", [("artifactSha256", "abc", "ARTIFACT_REF_INVALID"), ("artifactId", "nope", "ARTIFACT_REF_INVALID"),
+                                            ("artifactRef", "artifacts/wind/../../x", "NAMESPACE_VIOLATION" if False else "ARTIFACT_REF_INVALID"),
+                                            ("artifactRef", "lakes/x/states/wind", "NAMESPACE_VIOLATION"), ("executionId", "x", "ARTIFACT_REF_INVALID"),
+                                            ("expectedSchema", "Not A Schema", "ARTIFACT_REF_INVALID"), ("artifactRef", "a" * 500, "PARAM_BOUNDS")])
+def test_artifact_reference_is_bounded_and_canonical(field, val, code):
+    api, st = art_api()
+    ref = st.writer("wind").write(wind_artifact(n=1))
+    b = sub_body(ref); b["params"][field] = val
+    r = api.handle("w", b)
+    assert r.status == 400 and r.code == code, (field, r.code)
+
+
+def test_hash_mismatch_is_caught_when_the_publisher_loads_the_artifact():
+    api, st = art_api()
+    ref = st.writer("wind").write(wind_artifact(n=1))
+    b = sub_body(ref); b["params"]["artifactSha256"] = sha256_ref(b"other")
+    r = api.handle("w", b)
+    assert r.status == 200 and r.result["result"] == "REJECTED" and r.result["codes"] == ["ARTIFACT_HASH_MISMATCH"]
+
+
+def test_artifact_grants_are_per_brain_and_validated():
+    with pytest.raises(ValueError):
+        AllowlistAuthorizer({"c": {"ARTIFACT": {"SUBMIT_ARTIFACT@not-a-brain"}}})
+    with pytest.raises(ValueError):
+        AllowlistAuthorizer({"c": {"ARTIFACT": {"WRITE_PATH"}}})
+    api, st = art_api({"brain-wind": {"CONTROL": {"RUN_NOW"}}})
+    ref = st.writer("wind").write(wind_artifact(n=1))
+    assert api.handle("w", sub_body(ref)).status == 403
+
+
+def test_other_workflows_are_not_wired_in_shadow_and_say_so():
+    api, st = art_api({"brain-wind": {"CONTROL": {"RUN_NOW"}}, "orchestrator": {}})
+    r = api.handle("w", body())
+    assert r.status == 200 and r.result == {"accepted": False, "reason": "workflow not wired in Publisher V1 shadow"}

@@ -1,6 +1,7 @@
 """Orchestrator API contract (CERT-1; BRAIN_READ_WRITE_SECURITY_V1 section 4). Contract + shadow handler only; nothing is deployed.
 
-Flow: authenticated caller -> coarse authorization -> request schema validation -> fine authorization -> Orchestrator workflow.
+Flow: authenticated caller -> coarse authorization -> request schema validation -> fine authorization (incl. per-Brain grants) -> Orchestrator workflow.
+SUBMIT_ARTIFACT carries an artifact REFERENCE (id, location, hash, executionId, expected schema), never content: the Publisher loads and validates the artifact itself.
 There is NO request field that carries a database path, a value, an update map or a mutation, and the handler holds no database client:
 the only thing it can do with an accepted request is hand a validated record to an injected workflow. "Write this JSON to this path" has
 no representation in this contract, so it cannot be expressed, let alone authorised.
@@ -12,10 +13,12 @@ from dataclasses import dataclass, field
 from typing import Protocol
 
 from ..keys import BRAINS
+from . import refs
+from .model import Rejected
 from .validate import UUID4
 
 API_VERSION = "orchestrator-api-v1"
-KINDS = ("CONTROL", "REVIEW", "RESEARCH")
+KINDS = ("CONTROL", "REVIEW", "RESEARCH", "ARTIFACT")
 MAX_REQUEST_BYTES = 16 * 1024
 MAX_PARAMS = 8
 #: Mirrors orchestration.REQUEST_ACTIONS / PROTECTED_ACTIONS (kept literal so this module needs no import of orchestration).
@@ -25,7 +28,10 @@ PROTECTED_CONTROL_ACTIONS = ("CHANGE_PROTECTED_SCHEDULE", "DISABLE_VALIDATION_CA
 NOT_GRANTABLE = ("SET_ENGINE_MODE", "ACTIVATE_PRODUCTION", "PUBLISH_CUSTOMER", "PROMOTE_LIFECYCLE")
 REVIEW_ACTIONS = ("SUBMIT_REVIEW", "ACCEPT_RULE", "REJECT_RULE")
 RESEARCH_ACTIONS = ("RESEARCH_GAP",)
-ACTIONS = {"CONTROL": CONTROL_ACTIONS + PROTECTED_CONTROL_ACTIONS, "REVIEW": REVIEW_ACTIONS, "RESEARCH": RESEARCH_ACTIONS}
+ARTIFACT_ACTIONS = ("SUBMIT_ARTIFACT",)
+ACTIONS = {"CONTROL": CONTROL_ACTIONS + PROTECTED_CONTROL_ACTIONS, "REVIEW": REVIEW_ACTIONS, "RESEARCH": RESEARCH_ACTIONS,
+           "ARTIFACT": ARTIFACT_ACTIONS}
+# RUN_BRAIN in the design vocabulary is CONTROL/RUN_NOW (the existing orchestration action name is kept; there is no second spelling).
 TOP_KEYS = {"apiVersion", "requestId", "requestKind", "brainId", "action", "params", "confirm"}
 ID_TEXT = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.:-]{0,79}")
 
@@ -48,6 +54,8 @@ PARAMS = {
     "SUBMIT_REVIEW": {"itemId": Field(str, True, 80, ID_TEXT), "verdict": Field(str, True, 20, enum=("APPROVE", "REJECT", "NEEDS_WORK")), "note": Field(str, False, 2000)},
     "ACCEPT_RULE": {"ruleId": Field(str, True, 80, ID_TEXT), "note": Field(str, False, 2000)},
     "REJECT_RULE": {"ruleId": Field(str, True, 80, ID_TEXT), "note": Field(str, True, 2000)},
+    "SUBMIT_ARTIFACT": {"artifactId": Field(str, True, 80), "artifactRef": Field(str, True, refs.MAX_LOCATION), "artifactSha256": Field(str, True, 71),
+                        "executionId": Field(str, True, 36), "expectedSchema": Field(str, True, 80)},
     "RESEARCH_GAP": {"topic": Field(str, True, 200), "detail": Field(str, False, 4000), "priority": Field(int, False, enum=(1, 2, 3)),
                      "speciesId": Field(str, False, 80, re.compile(r"[a-z][a-z0-9_]{1,79}")), "lakeKey": Field(str, False, 120, re.compile(r"[A-Za-z0-9_]{1,120}"))},
 }
@@ -80,24 +88,27 @@ class Dispatcher(Protocol):
     def control(self, request: ApiRequest) -> dict: ...
     def review(self, request: ApiRequest) -> dict: ...
     def research(self, request: ApiRequest) -> dict: ...
+    def artifact(self, request: ApiRequest) -> dict: ...
 
 
 class AllowlistAuthorizer:
-    """caller_id -> {kind: set(actions)}. Deny by default. NOT_GRANTABLE actions never reach this table (rejected at validation)."""
+    """caller_id -> {kind: set(entries)}. An entry is `ACTION` (any Brain) or `ACTION@brainId` (that Brain only). Deny by default.
+    NOT_GRANTABLE actions never reach this table (rejected at validation, and a grant naming one cannot be constructed)."""
 
     def __init__(self, grants: dict):
         self._g = {c: {k: frozenset(a) for k, a in kinds.items()} for c, kinds in grants.items()}
         for c, kinds in self._g.items():
             for k, acts in kinds.items():
-                bad = acts - set(ACTIONS.get(k, ()))
+                bad = {a for a in acts if a.split("@")[0] not in ACTIONS.get(k, ()) or ("@" in a and a.split("@")[1] not in BRAINS)}
                 if bad:
-                    raise ValueError(f"grant for {c}/{k} lists actions the API does not define: {sorted(bad)}")
+                    raise ValueError(f"grant for {c}/{k} lists actions or Brains the API does not define: {sorted(bad)}")
 
     def may_use_api(self, caller: Caller) -> bool:
         return caller.caller_id in self._g
 
     def may(self, caller: Caller, kind: str, action: str, brain_id: str) -> bool:
-        return action in self._g.get(caller.caller_id, {}).get(kind, ())
+        have = self._g.get(caller.caller_id, {}).get(kind, ())
+        return action in have or f"{action}@{brain_id}" in have
 
 
 @dataclass
@@ -158,6 +169,11 @@ def validate_request(body, caller: Caller) -> ApiRequest:
             bad("PARAM_FORMAT", f"{name} has an invalid format")
         if f.enum is not None and v not in f.enum:
             bad("PARAM_ENUM", f"{name} must be one of {f.enum}")
+    if action == "SUBMIT_ARTIFACT":
+        try:       # the signal identifies an artifact in the caller's OWN namespace; it carries no content and no database path
+            refs.ArtifactRef(brain, params["artifactId"], params["artifactRef"], params["artifactSha256"], params["executionId"], params["expectedSchema"], rid).validate()
+        except Rejected as e:
+            bad(e.violations[0]["code"], e.violations[0]["detail"])
     confirmed = False
     if action in PROTECTED_CONTROL_ACTIONS:
         c = body.get("confirm")
@@ -187,5 +203,6 @@ class OrchestratorApi:
         if req.action in PROTECTED_CONTROL_ACTIONS and not req.confirmed:
             return ApiResponse(200, "NEEDS_CONFIRMATION", "CONFIRM_REQUIRED", f"resubmit with confirm = {{by: <caller>, phrase: {confirm_phrase(req.action, req.brain_id)!r}}}",
                                req.request_id)
-        out = {"CONTROL": self._dispatch.control, "REVIEW": self._dispatch.review, "RESEARCH": self._dispatch.research}[req.kind](req)
+        out = {"CONTROL": self._dispatch.control, "REVIEW": self._dispatch.review, "RESEARCH": self._dispatch.research,
+               "ARTIFACT": self._dispatch.artifact}[req.kind](req)
         return ApiResponse(200, "ACCEPTED", "", "", req.request_id, out if isinstance(out, dict) else {})

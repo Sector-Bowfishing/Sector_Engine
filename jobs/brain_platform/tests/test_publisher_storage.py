@@ -27,8 +27,8 @@ def test_keys_are_confined_to_the_four_approved_prefixes(key):
 
 def test_layout_matches_cert_3():
     assert PREFIXES == ("artifacts/", "publishes/", "scores/", "exports/")
-    assert artifact_key("wind", "sha256:ab12") == "artifacts/wind/sha256-ab12.json"
-    assert publish_key("wind", uuid4(1)).startswith("publishes/wind/") and head_key("wind", "wind-lake-state-v1") == "publishes/wind/_heads/wind-lake-state-v1/default.json"
+    assert artifact_key("wind", "sha256:ab12") == "artifacts/wind/sha256-ab12/artifact.json"
+    assert publish_key("wind", uuid4(1)) == f"publishes/wind/{uuid4(1)}/record.json" and head_key("wind", "wind-lake-state-v1") == "publishes/wind/_heads/wind-lake-state-v1/default.json"
 
 
 def test_publisher_writes_only_artifacts_and_publishes_prefixes():

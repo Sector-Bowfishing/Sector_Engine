@@ -169,9 +169,9 @@ def test_registered_wind_families_agree_with_the_live_ownership_table():
 def test_reserved_publisher_children_are_never_writable_even_if_a_schema_declares_them():
     greedy = SchemaSpec("wind-greedy-v1", "wind", (PathFamily("/brains/wind/{child}"), PathFamily("/brains/wind")))
     pub, *_ = make(registry=Registry([greedy]))
-    for p in ("/brains/wind/publication", "/brains/wind/certification", "/brains/wind"):
+    for p, code in (("/brains/wind/publication", "RESERVED_PATH"), ("/brains/wind/certification", "RESERVED_PATH"), ("/brains/wind", "BRAIN_NODE_REPLACEMENT")):
         a = wind_artifact(artifactSchema="wind-greedy-v1", mutations=[{"op": "SET", "path": p, "value": {"x": 1}}])
-        assert pub.evaluate(a, producer="wind").codes == ["RESERVED_PATH"], p
+        assert pub.evaluate(a, producer="wind").codes == [code], p
 
 
 def test_overlapping_paths_are_rejected():
@@ -445,15 +445,6 @@ def test_dry_run_evaluates_but_persists_nothing_and_never_calls_the_sink():
     assert pub.evaluate(wind_artifact(), producer="wind").result is Result.SHADOW_READY   # still no baseline, so still changed
 
 
-def test_evaluate_stored_reads_the_brains_own_artifact_from_the_store():
-    pub, hist, _ = make()
-    art = wind_artifact(n=4)
-    hist.put_artifact("wind", art["lineage"]["artifactId"], art)
-    assert pub.evaluate_stored("wind", art["lineage"]["artifactId"]).result is Result.SHADOW_READY
-    with pytest.raises(KeyError):
-        pub.evaluate_stored("wind", uuid4(1))
-
-
 def test_artifact_ids_are_immutable():
     pub, *_ = make()
     pub.evaluate(wind_artifact(n=1, speed=1.0), producer="wind")
@@ -465,3 +456,15 @@ def test_input_artifact_is_not_mutated_by_evaluation():
     a = wind_artifact(); before = canonical_bytes(a)
     make()[0].evaluate(a, producer="wind")
     assert canonical_bytes(a) == before
+
+
+def test_every_rendered_plan_is_a_legal_rtdb_multi_path_update_and_applies_cleanly():
+    """Regression: the embedded publication record once carried path-keyed hashes ('/' is not a legal node key). Apply plans to the platform's store double."""
+    from sector_brain_platform import DryRunStore
+    from sector_brain_platform.keys import check_update
+    r, *_ = run(wind_artifact())
+    check_update(r.plan.updates)
+    store = DryRunStore({"lakes": {LAKE_A: {"states": {"wind": {"old": 1}}}}})
+    store.update(r.plan.updates)
+    assert store.get(f"lakes/{LAKE_A}/states/wind")["windMS"] == 4.2 and store.get("brains/wind/publication/publishId") == r.publish_id
+    assert store.get("brains/wind/publication/pathSha256") is None and "pathSha256" in r.record          # per-path hashes stay in history only

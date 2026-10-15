@@ -1,14 +1,16 @@
 # Publisher V1 shadow: test report
 
 **Run:** `cd jobs/brain_platform && python -m pytest -q` (pytest in a throw-away virtualenv outside the repo; Python 3.14.8, stdlib-only code).
-**Result:** `306 passed` for the whole platform suite = 130 pre-existing (unchanged, still passing) + **176 new**. `jobs/brain-orchestrator`: 24 passed (unchanged). No live system, network, credential or cloud resource was used; tests refuse them.
+**Result (after the design-closeout follow-up):** `381 passed` for the whole platform suite = 130 pre-existing (unchanged, still passing) + **251 Publisher tests** (176 from the first round, adjusted where the locked decisions changed behaviour, plus 75 added). First-round result was 306 passed. `jobs/brain-orchestrator`: 24 passed (unchanged). No live system, network, credential or cloud resource was used; tests refuse them.
 
 | File | Tests | Covers |
 |---|---|---|
-| `tests/test_publisher_shadow.py` | 121 | validation, authorization, fingerprints, SKIP / SHADOW_READY, plan, null/delete, records |
-| `tests/test_publisher_storage.py` | 17 | versioned history, immutability, head pointer, linkage, rollback metadata, local-dir persistence |
+| `tests/test_publisher_shadow.py` | 121 | validation, authorization, fingerprints, SKIP / SHADOW_READY, plan, null/delete, records, plan-applies-to-store regression |
+| `tests/test_publisher_storage.py` | 17 | versioned history, immutability, head pointer, linkage, rollback metadata, local-dir persistence, new key layout |
 | `tests/test_publisher_boundary.py` | 9 | shadow-only guarantee |
-| `tests/test_publisher_api.py` | 29 | API contract bounds, authorization, no arbitrary mutation |
+| `tests/test_publisher_api.py` | 57 | API contract bounds, authorization, no arbitrary mutation; `SUBMIT_ARTIFACT` reference contract and per-Brain grants |
+| `tests/test_publisher_handoff.py` | 37 | artifact handoff by reference, namespace/hash/binding checks, private-namespace access model, ordering rule, `/brains/{id}` child ownership |
+| `tests/test_publisher_wind_integration.py` | 10 | the Wind shadow-integration contract through the full handoff + API |
 | `tests/publisher_fixtures.py` | n/a | synthetic lakes/ids only; no real data |
 
 ## Required-test mapping
@@ -44,3 +46,23 @@ Extra coverage: lifecycle (`PRODUCTION*` refused for Wind; needs schema permissi
 * A GCS `ObjectStore` adapter (does not exist; bucket needs approval). Versioning semantics are tested against the in-memory/local implementations that mirror GCS generations.
 * Reconciliation of the shadow baseline with live state, rollback *execution*, manifest-last chunking: future work (see cutover requirements).
 * Wind-hourly's real output: Publisher V1 was not wired into it. Wind artifacts here are synthetic.
+
+## Design-closeout tests (follow-up session): mapping to the 14 requirements
+| # | Requirement | Test(s) |
+|---|---|---|
+| 1 | whole-node `/brains/wind` replacement rejected | `test_whole_node_brains_replacement_is_rejected` (`BRAIN_NODE_REPLACEMENT`), `test_reserved_publisher_children_are_never_writable_even_if_a_schema_declares_them`, Wind integration `/brains/wind` case |
+| 2 | allowed Wind child updates accepted | `test_approved_wind_child_updates_are_accepted_one_per_registry_group`, `test_wind_may_target_its_own_registry_sources_health_and_activity_via_their_schemas` |
+| 3 | `/brains/wind/publication` cannot be supplied/overwritten | `test_wind_cannot_supply_or_overwrite_publisher_owned_or_foreign_brain_children` (publication, nested publication, certification, unapproved child, nested child, foreign Brain), Wind integration |
+| 4 | Publisher adds its own publication metadata | `test_publisher_adds_its_own_publication_metadata_and_it_merges_without_touching_siblings` (plan applied to a store double: siblings and `certification` untouched) |
+| 5 | older-than-baseline rejected/diagnosed | `test_older_artifact_is_rejected_with_a_diagnostic_naming_the_baseline`, `…equal_generated_at…`, `…sub_second_precision…`, `…unestablishable_order_fails_closed` (`BASELINE_ORDER_UNKNOWN`), `…future_dated…` (`ARTIFACT_FROM_FUTURE`), `…equal_content_skips_even_when…`, `…ordering_is_per_scope` |
+| 6 | artifact reference/hash mismatch rejected | `test_artifact_hash_mismatch_is_rejected_and_nothing_advances`, `…hash_is_over_the_exact_stored_bytes…`, `test_missing_artifact_and_malformed_references`, `test_binding_mismatches_…`, API `test_hash_mismatch_is_caught_when_the_publisher_loads_the_artifact` |
+| 7 | API cannot accept arbitrary RTDB paths | `test_arbitrary_database_writes_are_not_expressible`, `test_api_rejects_arbitrary_paths_and_mutation_json_on_artifact_submission`, `test_artifact_params_cannot_smuggle_content_or_paths`, `test_artifact_reference_is_bounded_and_canonical` |
+| 8 | API cannot accept arbitrary mutation JSON | same (`mutations`, `updates`, `value`, `plan`, `artifact` rejected) + `test_every_defined_action_has_a_param_schema_and_no_schema_field_looks_like_a_path_or_payload` |
+| 9 | Brain may reference only its own namespace | `test_a_brain_may_reference_only_its_own_artifact_namespace`, `test_specialist_access_is_create_only_in_its_own_prefix`, `test_artifact_writer_refuses_other_brains_and_conflicting_rewrites`, `test_publisher_access_reads_artifacts_and_creates_history_only` |
+| 10 | Wind cannot submit Fish artifact namespace | `test_wind_cannot_submit_a_fish_artifact_namespace` (three variants: foreign location → `NAMESPACE_VIOLATION`; submitting as Fish → 403; unscoped grant still bound to namespace) |
+| 11 | retrieval feeds the same validation path | `test_artifact_retrieval_feeds_the_same_validation_path` (cross-domain, lifecycle, fingerprint, lineage, schema, null), `test_reference_flow_*` |
+| 12 | shadow remains incapable of live write | all of `test_publisher_boundary.py` (now also lints `refs.py`, `handoff.py`), `test_shadow_reference_flow_has_no_live_capability`, `test_dry_run_reference_flow_persists_nothing` |
+| 13 | atomic patch deterministic | `test_atomic_patch_remains_deterministic_through_the_reference_flow`, `test_wind_plan_is_deterministic_across_independent_runs`, `test_patch_generation_is_deterministic` |
+| 14 | existing tests keep passing | whole suite: 130 pre-existing + first-round tests (3 first-round tests were deliberately changed: new storage key layout, `/brains/wind` now `BRAIN_NODE_REPLACEMENT`, `evaluate_stored` replaced by `evaluate_reference`) |
+
+**Defect found by the new tests and fixed:** the plan's embedded publication record contained `pathSha256`, a map keyed by full paths. `/` is not a legal RTDB node key, so a live write would have failed. First-round tests did not apply a plan to a store. Fixed in `plan.py` (history-only fields omitted from the RTDB node; `check_update` run on every plan) with a regression test.
