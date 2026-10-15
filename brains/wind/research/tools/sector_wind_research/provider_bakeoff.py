@@ -1,10 +1,10 @@
 """Prospective live provider bake-off (Stage 3D.1 §C, rebuilt for Stage 3D.2 §21–25). Research only: never read by the
 Candidate, never written to the authoritative archive (the Candidate bucket is only READ, for the NBM/RTMA/METAR control).
 
-  python -m sector_wind.provider_bakeoff collect     # one pass (run hourly)
-  python -m sector_wind.provider_bakeoff status      # health per provider; skill only outside sealed windows
-  python -m sector_wind.provider_bakeoff parity      # Open-Meteo NBM vs direct NOAA NBM on identical point/valid (not skill)
-  python -m sector_wind.provider_bakeoff loop        # local interim scheduler: collect at :20 every hour
+  python -m sector_wind_research.provider_bakeoff collect     # one pass (run hourly)
+  python -m sector_wind_research.provider_bakeoff status      # health per provider; skill only outside sealed windows
+  python -m sector_wind_research.provider_bakeoff parity      # Open-Meteo NBM vs direct NOAA NBM on identical point/valid (not skill)
+  python -m sector_wind_research.provider_bakeoff loop        # local interim scheduler: collect at :20 every hour
 
 Providers (Stage 3D.2 §4 list only; Michael + ChatGPT reopen anything else):
   noaa_nbm            direct NOAA NBM v5.0 — the CONTROL (Candidate archive cut-outs, bilinear; issue = NBM init)
@@ -452,7 +452,7 @@ def loop():
         except Exception as e:
             print("collect failed", repr(e), flush=True)
         try:   # RRFS/REFS prospective archive (research only); a no-op until NOAA publishes operational cycles
-            from sector_wind import rrfs
+            from sector_wind_research import rrfs
             for s in rrfs.collect():
                 if s["status"] != "not published":
                     print("  RRFS", s, flush=True)

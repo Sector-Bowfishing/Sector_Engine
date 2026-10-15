@@ -8,8 +8,8 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from sector_wind import evidence, field_qa, fieldops, overwater, scoreboard
-from sector_wind import field_run as FR
+from sector_wind_research import evidence, field_qa, fieldops, overwater, scoreboard
+from sector_wind_research import field_run as FR
 from sector_wind.sample import iso
 from sector_wind.store import LocalStore
 
@@ -219,7 +219,7 @@ def test_synthetic_never_reaches_comparison_by_default(tmp_path):
     p = overwater.parse(open(os.path.join(HERE, "fixtures/overwater_SYNTHETIC.jsonl")).read(), "fixture")
     overwater.store_import(st, p)
     assert st.list("synthetic/overwater/") and not st.list("overwater/")
-    cfg = json.load(open(os.path.join(os.path.dirname(HERE), "runtime", "lakes.json")))
+    cfg = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(HERE))), "runtime", "lakes.json")))
     t0 = datetime(2026, 10, 7, tzinfo=timezone.utc)
     assert overwater.compare(st, cfg, "SYN-WI1", t0, t0)["n"] == 0          # synthetic is invisible unless allowed
 
@@ -230,7 +230,7 @@ def test_synthetic_comparison_is_stamped_when_explicitly_allowed(tmp_path):
         pytest.skip("needs the iOS fetch table for the fake archive")
     p = overwater.parse(open(os.path.join(HERE, "fixtures/overwater_SYNTHETIC.jsonl")).read(), "fixture")
     overwater.store_import(st, p)
-    cfg = json.load(open(os.path.join(os.path.dirname(HERE), "runtime", "lakes.json")))
+    cfg = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(HERE))), "runtime", "lakes.json")))
     st.put_json("grids/rtma/wilson.json", st.get_json("grids/nbm/wilson.json"))
     r = overwater.compare(st, cfg, "SYN-WI1", init.replace(hour=0), init.replace(hour=0), allow_synthetic=True)
     assert "NOT SCIENTIFIC EVIDENCE" in r["BANNER"] and r["sources"]["NBM +3h"]["n"] >= 1
@@ -265,7 +265,7 @@ def test_addendum_hash_guard(tmp_path):
 
 
 def test_concordance_counts_lakes_and_quadrants_on_eligible_pairs_only():
-    from sector_wind import field as F
+    from sector_wind_research import field as F
     pairs = [{"session": "s1", "hm0_A": 0.2, "hm0_B": 0.05, "obs_A": 3, "obs_B": 1, "lake": "wilson", "dirFromDeg": 10},
              {"session": "s2", "hm0_A": 0.2, "hm0_B": 0.19, "obs_A": 3, "obs_B": 1, "lake": "wheeler", "dirFromDeg": 180}]
     c = F.concordance(pairs)
@@ -273,7 +273,7 @@ def test_concordance_counts_lakes_and_quadrants_on_eligible_pairs_only():
 
 
 def test_exemplar_disagreement_requires_explicit_resolution(tmp_path, monkeypatch):
-    from sector_wind import exemplars as X
+    from sector_wind_research import exemplars as X
     monkeypatch.setattr(X, "ROOT", str(tmp_path)); monkeypatch.setattr(X, "CSV", str(tmp_path / "exemplars.csv"))
     photos = []
     for i in range(11):

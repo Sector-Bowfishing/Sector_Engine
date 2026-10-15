@@ -15,7 +15,7 @@ from sector_wind.ingest import load_config
 from sector_wind.interp import CutoutIndex, blend, blend_wind
 from sector_wind.validate import load_obs, _metrics, _night, MPH, KT
 from sector_wind.sample import circular_error, iso
-from sector_wind import scoreboard as SB
+from sector_wind_research import scoreboard as SB
 
 ROOT = os.path.expanduser("~/Library/Caches/sector-wind/historical/v50")
 OUT = os.path.expanduser("~/Library/Caches/sector-wind/wind-validation/derived/stage3d")
@@ -324,7 +324,7 @@ def skill_json(R, arch, F, obs_all):
         return out
     night = [r for r in R if r["night"]]
     win = [min(r["valid"] for r in R).isoformat(), max(r["valid"] for r in R).isoformat()]
-    from sector_wind.evidence import persistence_recs
+    from sector_wind_research.evidence import persistence_recs
     pers = {str(L): _metrics(persistence_recs(obs_all, min(r["valid"] for r in R), max(r["valid"] for r in R), L, True)) for L in LEADS}
     return {"nbm": {"window": win, "night": per(night), "allHours": per(R), "persistenceNight": pers}}
 

@@ -14,7 +14,7 @@ from sector_wind.store import LocalStore
 from sector_wind.ingest import load_config
 from sector_wind.interp import CutoutIndex, blend
 from sector_wind.validate import skill, collect, load_obs, _metrics, _night, KT
-from sector_wind import evidence
+from sector_wind_research import evidence
 from sector_wind.sample import iso
 
 ROOT = os.path.expanduser("~/Library/Caches/sector-wind/historical/v50")

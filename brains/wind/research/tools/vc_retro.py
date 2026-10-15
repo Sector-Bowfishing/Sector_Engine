@@ -11,7 +11,7 @@ import json, os, pickle, sys, time, urllib.request
 from datetime import datetime, timedelta, timezone
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "runtime"))  # brains/wind/runtime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from sector_wind.provider_bakeoff import visual_crossing_request, _strip, UA, POINTS
+from sector_wind_research.provider_bakeoff import visual_crossing_request, _strip, UA, POINTS
 import hashlib
 
 RAW = os.path.expanduser("~/Library/Caches/sector-wind/historical/v50/visualcrossing")

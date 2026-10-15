@@ -1,7 +1,7 @@
 """Field operations (Stage 3A Track C): where and when to collect, and the blind session packet.
 
-  python -m sector_wind.fieldops opportunities --store local:$MIRROR [--predictions field/evaluated/*.jsonl] [--nights 2]
-  python -m sector_wind.fieldops packet --store local:$MIRROR --lake guntersville --night 2026-10-09 [--block 01] [--pairs 6] [--practice]
+  python -m sector_wind_research.fieldops opportunities --store local:$MIRROR [--predictions field/evaluated/*.jsonl] [--nights 2]
+  python -m sector_wind_research.fieldops packet --store local:$MIRROR --lake guntersville --night 2026-10-09 [--block 01] [--pairs 6] [--practice]
 
 Nothing here changes the Candidate. The planner's per-bank numbers are a PLANNING ESTIMATE from the
 frozen formulas (NBM wind at the bank, 9-ray ±12° fetch, steady-state CEM Hm0, frozen class and
@@ -29,8 +29,8 @@ from datetime import datetime, timedelta, timezone
 
 import numpy as np
 
-from .interp import CutoutIndex, blend, blend_wind
-from .sample import circular_error, iso, parse_iso
+from sector_wind.interp import CutoutIndex, blend, blend_wind
+from sector_wind.sample import circular_error, iso, parse_iso
 
 CANDIDATE = "wind-candidate-2026.10.stage2-baseline"
 IOS = os.environ.get("SECTOR_WIND_IOS", os.path.expanduser("~/Desktop/Development/iOS/sector-wind"))
@@ -448,7 +448,7 @@ note "skipped: conditions". A skipped bank is better than a bad night.
 
 
 def main(argv=None):
-    from .store import open_store
+    from sector_wind.store import open_store
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["opportunities", "packet"])
     ap.add_argument("--store", required=True)

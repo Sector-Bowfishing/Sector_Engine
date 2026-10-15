@@ -1,12 +1,12 @@
 """Score field data (Stage 3). Input: predictions.jsonl from `wind-eval` (the app's Candidate code,
 evaluated as of each record's time). Practice records never count.
 
-  python -m sector_wind.field_run calibration predictions.jsonl         # calibration share ONLY
-  python -m sector_wind.field_run coverage predictions.jsonl            # stratification + blinding (no accuracy)
-  python -m sector_wind.field_run certify predictions.jsonl FREEZE.json # holdout, once; refuses without a freeze
-  python -m sector_wind.field_run gaps predictions.jsonl [--qa evaluated/*.qa.jsonl]   # what do we still need? (counts only)
-  python -m sector_wind.field_run calstatus predictions.jsonl [--qa ...]              # may calibration run yet?
-  python -m sector_wind.field_run diagnostics predictions.jsonl --raw raw/*/records.jsonl  # geometry/shelter misses, CALIBRATION share only
+  python -m sector_wind_research.field_run calibration predictions.jsonl         # calibration share ONLY
+  python -m sector_wind_research.field_run coverage predictions.jsonl            # stratification + blinding (no accuracy)
+  python -m sector_wind_research.field_run certify predictions.jsonl FREEZE.json # holdout, once; refuses without a freeze
+  python -m sector_wind_research.field_run gaps predictions.jsonl [--qa evaluated/*.qa.jsonl]   # what do we still need? (counts only)
+  python -m sector_wind_research.field_run calstatus predictions.jsonl [--qa ...]              # may calibration run yet?
+  python -m sector_wind_research.field_run diagnostics predictions.jsonl --raw raw/*/records.jsonl  # geometry/shelter misses, CALIBRATION share only
 
 Holdout accuracy is never computed by `calibration` or `coverage` (pre-registration §6, Stage 3 §26)."""
 import json, math, sys

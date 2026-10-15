@@ -1,7 +1,7 @@
 """Wind evidence dashboard (Stage 3A Track A). Read-only over the archive (local mirror or GCS).
 
-  python -m sector_wind.evidence status   --store local:$MIRROR [--start 2026-10-08] [--end ...] [--json out.json]
-  python -m sector_wind.evidence harvest  --store local:$MIRROR [--json out.json]
+  python -m sector_wind_research.evidence status   --store local:$MIRROR [--start 2026-10-08] [--end ...] [--json out.json]
+  python -m sector_wind_research.evidence harvest  --store local:$MIRROR [--json out.json]
 
 `status` reports archive health, forecast skill by lead (+1/+3/+6/+12/+18 h, night = rubric window
 and all hours), event contingency counts, and the gust and direction diagnostics. Event metrics are
@@ -23,9 +23,9 @@ from datetime import datetime, timedelta, timezone
 
 import numpy as np
 
-from . import monitor
-from .sample import circular_error, iso, parse_iso
-from .validate import KT, MPH, _metrics, _night, collect, load_obs
+from sector_wind import monitor
+from sector_wind.sample import circular_error, iso, parse_iso
+from sector_wind.validate import KT, MPH, _metrics, _night, collect, load_obs
 
 LEADS = (1, 3, 6, 12, 18)
 CLOCK_START = datetime(2026, 10, 7, 4, 59, tzinfo=timezone.utc)   # live shadow deployed (never reset)
@@ -37,7 +37,7 @@ SPEED_REGIMES = [(0, 2.6, "<2.6 (excluded from direction metric)"), (2.6, 4, "2.
 
 
 def _store(spec):
-    from .store import open_store
+    from sector_wind.store import open_store
     return open_store(spec)
 
 

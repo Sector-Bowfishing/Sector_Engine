@@ -12,8 +12,8 @@ The file MUST declare `evidenceClass`: either `measured` or `SYNTHETIC — NOT S
   - Synthetic files are stored under synthetic/ and are refused by `compare` unless the caller passes
     allow_synthetic=True (tests only); their output is stamped and can never reach `scoreboard`.
 
-  python -m sector_wind.overwater import FILE --store local:$DIR
-  python -m sector_wind.overwater compare --store local:$MIRROR --station ID --start 2026-11-01 --end 2026-11-30
+  python -m sector_wind_research.overwater import FILE --store local:$DIR
+  python -m sector_wind_research.overwater compare --store local:$MIRROR --station ID --start 2026-11-01 --end 2026-11-30
 
 Comparison: station observed vs RTMA-RU vs NBM +1/+3/+6/+12/+18 h, with bias, MAE, RMSE, circular direction
 error, gust metrics, and stability splits when air and water temperatures exist. The station is compared
@@ -29,9 +29,9 @@ import math
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 
-from .interp import CutoutIndex, blend, blend_wind
-from .sample import Observed, iso, make_sample, parse_iso
-from .validate import _metrics
+from sector_wind.interp import CutoutIndex, blend, blend_wind
+from sector_wind.sample import Observed, iso, make_sample, parse_iso
+from sector_wind.validate import _metrics
 
 SYNTHETIC = "SYNTHETIC — NOT SCIENTIFIC EVIDENCE"
 MEASURED = "measured"
@@ -208,7 +208,7 @@ def compare(store, cfg, sid, start, end, allow_synthetic=False) -> dict:
 
 
 def main(argv=None):
-    from .store import open_store
+    from sector_wind.store import open_store
     import os
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["import", "compare"])

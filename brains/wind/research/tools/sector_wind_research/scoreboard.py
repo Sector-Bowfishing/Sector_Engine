@@ -1,6 +1,6 @@
 """Wind Candidate scoreboard, derived by code from the FROZEN rubric v1 (pre-registration §1) and evidence.
 
-  python -m sector_wind.scoreboard --store local:$MIRROR --evidence-dir <docs/intelligence/wind/stage3a/evidence> \
+  python -m sector_wind_research.scoreboard --store local:$MIRROR --evidence-dir <docs/intelligence/wind/stage3a/evidence> \
       [--log docs/intelligence/wind/WIND_SCORE_CHANGE_LOG.jsonl] [--json out.json]
 
 Nobody types a score. Each dimension states its evidence source, sample size, date range and why it
@@ -22,8 +22,8 @@ import os
 import statistics
 from datetime import datetime, timedelta, timezone
 
-from . import monitor
-from .sample import iso
+from sector_wind import monitor
+from sector_wind.sample import iso
 
 RUBRIC = "frozen rubric v1 (WIND_STAGE2_PREREGISTRATION.md §1)"
 CANDIDATE = "wind-candidate-2026.10.stage2-baseline"
@@ -261,7 +261,7 @@ def append_log(log_path, s, reason) -> dict | None:
 
 
 def main(argv=None):
-    from .store import open_store
+    from sector_wind.store import open_store
     ap = argparse.ArgumentParser()
     ap.add_argument("--store", required=True); ap.add_argument("--evidence-dir", required=True)
     ap.add_argument("--log", default=None); ap.add_argument("--reason", default="scoreboard recompute")

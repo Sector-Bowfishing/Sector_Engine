@@ -23,7 +23,6 @@ TEXTURE = {1: "Glassy", 2: "Rippled", 3: "Textured", 4: "Broken"}
 TEX_FLOOR = {1: 1, 2: 2, 3: 2, 4: 3}
 RANK = {1: "PROTECTED", 2: "LOW_EXPOSURE", 3: "MODERATE_EXPOSURE", 4: "HIGH_EXPOSURE", 5: "EXTREME_EXPOSURE"}
 LAKES = {"guntersville": "Guntersville", "wheeler": "Wheeler", "wilson": "Wilson", "pickwick": "Pickwick"}
-ASSETS = os.path.expanduser("~/Desktop/Development/iOS/sector-wind/Sector/Assets.xcassets/FishIntel/Wind")
 DIRS8 = {"N": 0, "NE": 45, "E": 90, "SE": 135, "S": 180, "SW": 225, "W": 270, "NW": 315}
 SPEEDS_MPH = (5, 10, 15, 20)
 STEADY_H = 6.0
@@ -86,14 +85,7 @@ def decision_class(u, fetch_m, duration_h=STEADY_H):
 
 # ── geometry ─────────────────────────────────────────────────────────────────────────────────
 
-def load_lake(lake):
-    p = os.path.join(ASSETS, f"{LAKES[lake]}WindFetch.dataset/{lake}.windfetch.json.gz")
-    raw = open(p, "rb").read(); d = json.loads(gzip.decompress(raw))
-    banks = d["banks"]
-    t = base64.b64decode(d["tableBase64"]); n = len(t) // 2
-    table = np.array(struct.unpack(f"<{n}H", t), dtype=float).reshape(len(banks), NB) * 10.0
-    return {"lake": lake, "banks": banks, "table": table, "tableSha256": d.get("tableSha256"), "assetSha256": __import__("hashlib").sha256(raw).hexdigest(),
-            "geometry": d.get("geometry"), "params": d.get("params")}
+# load_lake() (reads the app's fetch-table assets) is research-only: sector_wind_research.bowfishing_assets.
 
 
 def km(a, b):

@@ -1,7 +1,7 @@
 import json, os
 import pytest
 from sector_wind.store import GcsStore, LocalStore, open_store
-from sector_wind import field as F
+from sector_wind_research import field as F
 
 def test_gcs_refuses_without_approval(monkeypatch):
     monkeypatch.delenv("SECTOR_WIND_GCS_APPROVED", raising=False)

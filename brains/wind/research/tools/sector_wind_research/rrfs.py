@@ -1,8 +1,8 @@
 """RRFS / REFS prospective archive (Score Acceleration §15–19). RESEARCH ONLY: never read by the Candidate or production.
 
-  python -m sector_wind.rrfs discover          # where (if anywhere) operational RRFS/REFS cycles are published right now
-  python -m sector_wind.rrfs collect           # archive any new synoptic cycle (00/06/12/18Z) found; no-op until published
-  python -m sector_wind.rrfs selftest URL      # decode one prslev conus GRIB2 (e.g. a retro file) at the 12 points
+  python -m sector_wind_research.rrfs discover          # where (if anywhere) operational RRFS/REFS cycles are published right now
+  python -m sector_wind_research.rrfs collect           # archive any new synoptic cycle (00/06/12/18Z) found; no-op until published
+  python -m sector_wind_research.rrfs selftest URL      # decode one prslev conus GRIB2 (e.g. a retro file) at the 12 points
 
 Forecasts are stored as issued (init, valid, lead, retrievedAt, decoder); nothing is reconstructed retrospectively.
 Deterministic RRFS: the 10 m U/V and surface GUST GRIB2 messages are kept raw (immutable, sha256) + point samples.
@@ -16,7 +16,7 @@ from datetime import datetime, timedelta, timezone
 import numpy as np
 
 from sector_wind.grib import decode, fetch, read_idx, find, grid, rotate_to_earth, speed_dir_from_uv
-from sector_wind.provider_bakeoff import POINTS, ROOT, iso, sample, sealed
+from sector_wind_research.provider_bakeoff import POINTS, ROOT, iso, sample, sealed
 
 DECODER = "rrfs 1.0.0"
 LEADS = (1, 3, 6, 12, 18)

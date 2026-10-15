@@ -1,8 +1,8 @@
 """Field record intake, immutability and QA (Stage 3A Track C/D).
 
-  python -m sector_wind.field_qa ingest <export folder> --observer mc --date 2026-10-12   # raw/, read-only, hashed
-  python -m sector_wind.field_qa verify                                                   # raw/ unchanged since intake?
-  python -m sector_wind.field_qa qa <raw folder>                                          # ELIGIBLE / INELIGIBLE with reasons
+  python -m sector_wind_research.field_qa ingest <export folder> --observer mc --date 2026-10-12   # raw/, read-only, hashed
+  python -m sector_wind_research.field_qa verify                                                   # raw/ unchanged since intake?
+  python -m sector_wind_research.field_qa qa <raw folder>                                          # ELIGIBLE / INELIGIBLE with reasons
 
 Raw exports are never edited: intake copies them once into field/raw/<date>-<observer>/, writes a
 SHA-256 manifest and makes every file read-only. QA never repairs a record; it only says whether a
@@ -20,7 +20,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 
 from .fieldops import CANDIDATE, FIELD, NAMES, load_table
-from .sample import parse_iso
+from sector_wind.sample import parse_iso
 
 PROTOCOL_START = datetime(2026, 10, 6, tzinfo=timezone.utc)
 FIELD_SCHEMA = "sector-wind-field-v1"

@@ -1,8 +1,8 @@
 """Photo exemplar kit (pre-registration §5.4; Stage 3A §20-21). Human labels only.
 
-  python -m sector_wind.exemplars add PHOTO --class 3 --texture T3 --lake guntersville --utc 2026-10-12T02:10:00Z --observer mc [--notes ...]
-  python -m sector_wind.exemplars review FILE --observer-b jd --class-b 3 [--texture-b T3]
-  python -m sector_wind.exemplars status
+  python -m sector_wind_research.exemplars add PHOTO --class 3 --texture T3 --lake guntersville --utc 2026-10-12T02:10:00Z --observer mc [--notes ...]
+  python -m sector_wind_research.exemplars review FILE --observer-b jd --class-b 3 [--texture-b T3]
+  python -m sector_wind_research.exemplars status
 
 Rules:
   - Real photographs taken on the water only. No synthetic, generated or stock images. The tool cannot

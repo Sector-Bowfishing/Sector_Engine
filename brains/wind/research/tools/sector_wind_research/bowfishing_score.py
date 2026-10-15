@@ -1,7 +1,7 @@
 """Bowfishing Wind Intelligence Score (BWIS) v1 calculator — definition frozen in
 docs/intelligence/wind/bowfishing/WIND_BOWFISHING_SCORE_V1.md (sha 21e2a326…). Separate from the Wind Certification Score.
 
-  python -m sector_wind.bowfishing_score [--forcing NBM|GLMP|LEAD] [--surface M0|M4] [--json OUT]
+  python -m sector_wind_research.bowfishing_score [--forcing NBM|GLMP|LEAD] [--surface M0|M4] [--json OUT]
 
 Inputs (all produced by pre-registered steps; nothing is tuned here):
   rows.pkl (NBM v5.0 corpus, CAL+H1), historical/v50/glmp/*.json, derived/bowfishing/m4_fresh.json + m4_swan.json,
@@ -15,6 +15,7 @@ import numpy as np
 
 from sector_wind import bowfishing as BF
 from sector_wind.sample import circular_error
+from sector_wind_research.bowfishing_assets import ASSETS, load_lake
 
 H = os.path.expanduser("~/Library/Caches/sector-wind")
 ROWS = f"{H}/wind-validation/derived/stage3d/rows.pkl"
@@ -69,7 +70,7 @@ def dim_b():
     checks = {}
     ok = True
     for lk in BF.LAKES:
-        p = os.path.join(BF.ASSETS, f"{BF.LAKES[lk]}WindFetch.dataset/{lk}.windfetch.json.gz"); d = json.loads(gzip.decompress(open(p, "rb").read()))
+        p = os.path.join(ASSETS, f"{BF.LAKES[lk]}WindFetch.dataset/{lk}.windfetch.json.gz"); d = json.loads(gzip.decompress(open(p, "rb").read()))
         ok &= d["tableSha256"] == hashlib.sha256(base64.b64decode(d["tableBase64"])).hexdigest()
     checks["tableHashes"] = ok
     checks["method9RayIslandsFirstLand"] = True    # code: bowfishing.nine_ray = frozen ±12° 9-ray mean; build_fetch_tables.py islands-as-land, first-land march (unchanged files)
@@ -79,7 +80,7 @@ def dim_b():
     cases = json.load(open(f"{DOCS}/stage2/fetch_regression_cases.json"))["cases"]; passed = 0; cres = []
     Ls = {}
     for c in cases:
-        L = Ls.setdefault(c["lake"], BF.load_lake(c["lake"])); i = next(k for k, b in enumerate(L["banks"]) if b["id"] == c["bankId"])
+        L = Ls.setdefault(c["lake"], load_lake(c["lake"])); i = next(k for k, b in enumerate(L["banks"]) if b["id"] == c["bankId"])
         eff = BF.nine_ray(L["table"][i], c["windFromDeg"]); direct = L["table"][i][int(round(c["windFromDeg"] / 3)) % BF.NB]; q = c["qualitative"]
         good = abs(eff - c["expectedMean12M"]) <= max(0.02 * c["expectedMean12M"], 20)
         good &= eff >= q.get("min", -1) and eff <= q.get("max", 1e12) and eff >= q.get("meanMin", -1) and direct <= q.get("radialMax", 1e12)

@@ -11,6 +11,7 @@ from collections import Counter
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "runtime"))  # brains/wind/runtime
 import numpy as np
 from sector_wind import bowfishing as BF
+from sector_wind_research.bowfishing_assets import load_lake
 
 OUT = os.path.expanduser("~/Library/Caches/sector-wind/wind-validation/derived/bowfishing")
 PAIRS = os.path.expanduser("~/Library/Caches/sector-wind/wind-validation/derived/score-acceleration/network_pairs.json")
@@ -19,7 +20,7 @@ PAIRS = os.path.expanduser("~/Library/Caches/sector-wind/wind-validation/derived
 def atlas():
     os.makedirs(OUT, exist_ok=True); summary = {}
     for lake in BF.LAKES:
-        L = BF.load_lake(lake); recs = []; summ = {}
+        L = load_lake(lake); recs = []; summ = {}
         for dname, deg in BF.DIRS8.items():
             pct = BF.lake_percentiles(L, deg)
             for mph in BF.SPEEDS_MPH:
@@ -51,7 +52,7 @@ def qa():
     res = {}
     mono_fail = 0; mono_n = 0; fetch_flags = 0; fetch_n = 0
     for lake in BF.LAKES:
-        L = BF.load_lake(lake)
+        L = load_lake(lake)
         ok = [i for i, b in enumerate(L["banks"]) if not b.get("belowResolution")]
         for deg in BF.DIRS8.values():
             for i in ok:
@@ -74,7 +75,7 @@ def qa():
     # direction flips: network pairs (canonical) + seeded random pairs with >=20% Hm0 contrast in both of a reversed direction pair
     net = json.load(open(PAIRS)); flip = {"canonical": [0, 0], "random": [0, 0]}; detail = []
     for lake in BF.LAKES:
-        L = BF.load_lake(lake); idx = {b["id"]: i for i, b in enumerate(L["banks"])}
+        L = load_lake(lake); idx = {b["id"]: i for i, b in enumerate(L["banks"])}
         cands = [(c["a"], c["b"]) for c in net[lake]["top"]]
         ok = [i for i, b in enumerate(L["banks"]) if not b.get("belowResolution")]
         rnd = random.Random(11); extra = []
@@ -117,7 +118,7 @@ def sector_of(L, ids):
 def examples():
     out = {}
     for lake in BF.LAKES:
-        L = BF.load_lake(lake); idx = {b["id"]: i for i, b in enumerate(L["banks"])}; lk = {}
+        L = load_lake(lake); idx = {b["id"]: i for i, b in enumerate(L["banks"])}; lk = {}
         for dname in ("SW", "N"):
             deg = BF.DIRS8[dname]
             for mph in BF.SPEEDS_MPH:
