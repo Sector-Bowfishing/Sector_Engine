@@ -162,8 +162,13 @@ class TableTests(unittest.TestCase):
         self.assertEqual(open(swift).read(), G.render(), "run python3 scripts/generate-lake-bindings.py")
 
     def test_table_is_reproducible(self):
-        if not os.path.exists(B.Inputs().files["verified_bindings_v2.csv"]):
-            self.skipTest("research inputs not present")
+        # External research inputs (LAKE_BRAIN_RESEARCH / LB_DATA) are not in the repo. Check their paths directly:
+        # constructing Inputs() raises SystemExit when one is missing, so it cannot be the skip guard.
+        v2 = os.path.join(B.RESEARCH, "verified_bindings_v2.csv")
+        if not os.path.exists(v2):
+            self.skipTest(f"BLOCKED_DEPENDENCY: external research input unavailable: verified_bindings_v2.csv (LAKE_BRAIN_RESEARCH={B.RESEARCH})")
+        if not os.path.isdir(B.DATA):
+            self.skipTest(f"BLOCKED_DEPENDENCY: external research data directory unavailable (LB_DATA={B.DATA})")
         self.assertEqual(B.main(["--check"]), 0, "run python3 jobs/lake-brain/bindings/build_bindings_table.py")
 
 
