@@ -9,8 +9,19 @@ Usage:
 
 --legacy additionally scans the pre-migration roots (jobs/, Sources/) for the
 repo-wide invariants (8, 9, 15, 16) so baseline debt is visible.
+
+Baseline comparison (Phase 1B, still report-only):
+  --baseline FILE        compare against a recorded legacy baseline; every finding is
+                         labelled KNOWN (in the baseline), NEW (not in it) and baseline
+                         entries no longer found are RESOLVED. The baseline never hides
+                         new debt. Default file: tools/architecture/baseline/legacy_violations.json
+  --write-baseline FILE  record the current --legacy findings as the baseline
+  --fail-on-new          exit 1 if any NEW finding exists (opt-in; CI does not use it yet)
+
+Output prints paths and counts only, never file content.
 """
 import argparse
+import ast
 import json
 import os
 import re
@@ -46,6 +57,7 @@ INVARIANTS = {
     15: "tracked files >= 1 MB require a policy exception",
     16: "no raw research data in Brain research metadata directories",
 }
+DEFAULT_BASELINE = os.path.join("tools", "architecture", "baseline", "legacy_violations.json")
 LARGE_BYTES = 1024 * 1024
 RESEARCH_ALLOWED = {"GAPS.json", "MANIFEST.json", "README.md"}
 RESEARCH_DATA_EXT = {".csv", ".parquet", ".gz", ".zip", ".nc", ".grib", ".grib2", ".tif",
@@ -55,6 +67,31 @@ CODE_EXT = {".py", ".swift", ".sh"}
 WRITER_PATTERN = re.compile(r"BrainRTDBStore|firebasedatabase|sector-brain\b|RTDB_URL|\.firebaseio\.com")
 CUSTOMER_PATTERN = re.compile(r"import\s+SectorEngine\b|from\s+engine[.\s]|['\"]/conditions|['\"]/lakes")
 ABS_PATH = re.compile(r"/Users/[A-Za-z0-9._-]+/")
+
+
+def _py_string_constants(text):
+    """String constants of a Python module excluding docstrings; None if it does not parse."""
+    try:
+        tree = ast.parse(text)
+    except (SyntaxError, ValueError):
+        return None
+    docs = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            body = getattr(node, "body", [])
+            if body and isinstance(body[0], ast.Expr) and isinstance(getattr(body[0], "value", None), ast.Constant):
+                docs.add(id(body[0].value))
+    return [n.value for n in ast.walk(tree)
+            if isinstance(n, ast.Constant) and isinstance(n.value, str) and id(n) not in docs]
+
+
+def _code_text(path, text):
+    """Text to scan for path references: Python string constants (no docstrings/comments); raw text otherwise."""
+    if path.endswith(".py"):
+        consts = _py_string_constants(text)
+        if consts is not None:
+            return "\n".join(consts)
+    return text
 
 
 def _load(path):
@@ -111,6 +148,7 @@ def _is_test(rel):
 
 def check(root, legacy=False):
     findings = []
+    excepted, stale = [], []
 
     def add(inv, subject, msg):
         findings.append({"invariant": inv, "subject": subject, "message": msg})
@@ -216,9 +254,10 @@ def check(root, legacy=False):
                 elif brains[odir]["brainId"] not in declared:
                     add(13, frel, f"uses brains/{odir}/contracts without a declared consumes edge")
             if "runtime" in frel.split(os.sep):
-                if re.search(r"docs/", text):
+                scan = _code_text(frel, text)
+                if re.search(r"docs/", scan):
                     add(8, frel, "runtime references docs/")
-                if ABS_PATH.search(text):
+                if ABS_PATH.search(scan):
                     add(9, frel, "absolute user path in runtime code")
             if data["publisherRequired"]["cutoverStatus"] == "CUTOVER_COMPLETE" and WRITER_PATTERN.search(text):
                 add(10, frel, "direct sector-brain writer in a Brain already cut over to the Publisher")
@@ -242,15 +281,19 @@ def check(root, legacy=False):
                 frel = os.path.relpath(f, root)
                 if _is_test(frel):
                     continue
-                text = _read(f)
-                if re.search(r"docs/", text):
+                scan = _code_text(frel, _read(f))
+                if re.search(r"docs/", scan):
                     add(8, frel, "runtime references docs/")
-                if ABS_PATH.search(text):
+                if ABS_PATH.search(scan):
                     add(9, frel, "absolute user path in runtime code")
 
     # 15 / 16 / legacy 8,9
-    exceptions = {e["path"] for e in _load(os.path.join(HERE, "large_file_exceptions.json"))["exceptions"]}
+    exc_doc = _load(os.path.join(HERE, "large_file_exceptions.json"))
+    for e in validate(exc_doc, _load(os.path.join(schemas, "large-file-exceptions.schema.json"))):
+        add(15, "tools/architecture/large_file_exceptions.json", e)
+    exceptions = {e["path"]: e for e in exc_doc["exceptions"] if isinstance(e, dict) and "path" in e}
     tracked = _tracked_files(root)
+    tracked_set = set(tracked)
     for rel in tracked:
         full = os.path.join(root, rel)
         try:
@@ -258,7 +301,11 @@ def check(root, legacy=False):
         except OSError:
             continue
         if size >= LARGE_BYTES and rel not in exceptions:
-            add(15, rel, f"{size} bytes >= 1 MB without recorded policy exception")
+            add(15, rel, "tracked file >= 1 MB without a recorded policy exception")
+        elif size >= LARGE_BYTES:
+            excepted.append({"path": rel, "status": exceptions[rel].get("status"), "reviewPhase": exceptions[rel].get("reviewPhase")})
+        elif rel in exceptions:
+            stale.append(rel)
         parts = rel.split("/")
         if parts[0] == "brains" and len(parts) >= 4 and parts[2] == "research" and not parts[1].startswith("_"):
             name = parts[-1]
@@ -270,12 +317,53 @@ def check(root, legacy=False):
         for rel in tracked:
             if not rel.startswith(("jobs/", "Sources/")) or os.path.splitext(rel)[1] not in CODE_EXT or _is_test(rel):
                 continue
-            text = _read(os.path.join(root, rel))
-            if ABS_PATH.search(text):
+            scan = _code_text(rel, _read(os.path.join(root, rel)))
+            if ABS_PATH.search(scan):
                 add(9, rel, "absolute user path in legacy runtime code (baseline debt)")
-            if rel.endswith(".py") and re.search(r"['\"][^'\"]*docs/(brains|data)/", text):
-                add(8, rel, "legacy runtime reads docs/ (baseline debt)")
+            if rel.endswith(".py") and re.search(r"docs/(brains|data)/", scan):
+                add(8, rel, "legacy runtime references a docs/ path (baseline debt)")
+    for path in exceptions:
+        if path not in tracked_set:
+            stale.append(path)
+    check.last_excepted = excepted      # large files covered by a recorded exception (not violations)
+    check.last_stale = sorted(set(stale))   # exceptions whose file is gone or shrank below 1 MB
     return findings
+
+
+def finding_key(f):
+    return f"{f['invariant']}|{f['subject']}|{f['message']}"
+
+
+def compare_to_baseline(findings, baseline):
+    """-> (known, new, resolved) as lists of keys-with-findings. Never hides new debt."""
+    base = {e["key"]: e for e in baseline.get("entries", [])}
+    cur = {finding_key(f): f for f in findings}
+    known = [cur[k] for k in cur if k in base]
+    new = [cur[k] for k in cur if k not in base]
+    resolved = [base[k] for k in base if k not in cur]
+    return known, new, resolved
+
+
+def build_baseline(findings, root):
+    omap = _load(os.path.join(HERE, "ownership_map.json"))["prefixes"]
+    reasons = {
+        8: "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+        9: "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
+        15: "tracked file >= 1 MB without an exception",
+    }
+    entries = []
+    for f in sorted(findings, key=lambda x: (x["invariant"], x["subject"])):
+        owner, phase = "unassigned", "Phase 6/7"
+        for m in omap:
+            if f["subject"].startswith(m["prefix"]):
+                owner, phase = m["owner"], m["phase"]
+                break
+        entries.append({"key": finding_key(f), "invariant": f["invariant"], "path": f["subject"], "owner": owner,
+                        "reason": reasons.get(f["invariant"], f["message"]), "plannedMigrationPhase": phase,
+                        "status": "LEGACY_BASELINE"})
+    return {"schemaVersion": "1.0.0", "createdBy": "Phase 1B baseline", "mode": "REPORT_ONLY",
+            "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates.",
+            "entries": entries}
 
 
 def main(argv=None):
@@ -284,8 +372,36 @@ def main(argv=None):
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--strict", action="store_true", help="exit 1 when findings exist (NOT used in Phase 1A)")
     ap.add_argument("--legacy", action="store_true", help="also scan pre-migration jobs/ and Sources/")
+    ap.add_argument("--baseline", nargs="?", const=DEFAULT_BASELINE, default=None, help="compare to a recorded baseline (default file if no value)")
+    ap.add_argument("--write-baseline", metavar="FILE", help="write the current findings as the legacy baseline")
+    ap.add_argument("--fail-on-new", action="store_true", help="exit 1 if any NEW finding (opt-in)")
     args = ap.parse_args(argv)
     findings = check(args.root, legacy=args.legacy)
+    if args.write_baseline:
+        with open(args.write_baseline, "w", encoding="utf-8") as fh:
+            json.dump(build_baseline(findings, args.root), fh, indent=2)
+            fh.write("\n")
+        print(f"baseline written: {len(findings)} entries -> {args.write_baseline}")
+        return 0
+    if args.baseline:
+        bpath = args.baseline if os.path.isabs(args.baseline) else os.path.join(args.root, args.baseline)
+        known, new, resolved = compare_to_baseline(findings, _load(bpath))
+        if args.json:
+            print(json.dumps({"mode": "REPORT_ONLY", "known": len(known), "new": new, "resolved": resolved,
+                              "largeFilesCoveredByException": check.last_excepted, "staleExceptions": check.last_stale}, indent=2))
+        else:
+            print("ARCHITECTURE BASELINE COMPARISON (REPORT-ONLY)")
+            print(f"  KNOWN legacy findings (in baseline): {len(known)}")
+            print(f"  NEW findings (not in baseline):      {len(new)}")
+            print(f"  RESOLVED baseline entries:           {len(resolved)}")
+            print(f"  large files covered by exception:    {len(check.last_excepted)}; stale exceptions: {len(check.last_stale)}")
+            for f in new:
+                print(f"    NEW  inv {f['invariant']}: {f['subject']}: {f['message']}")
+            for e in resolved:
+                print(f"    RESOLVED inv {e['invariant']}: {e['path']}")
+            for p in check.last_stale:
+                print(f"    STALE EXCEPTION: {p}")
+        return 1 if (args.fail_on_new and new) else 0
     if args.json:
         print(json.dumps({"mode": "REPORT_ONLY", "findings": findings}, indent=2))
     else:

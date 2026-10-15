@@ -1,4 +1,4 @@
-"""Runs the shared conformance fixture docs/brains/conformance/lake_rules_v2.json against the Python mirror of the Lake Brain rules v2.
+"""Runs the shared conformance fixture contracts/conformance/lake_rules_v2.json against the Python mirror of the Lake Brain rules v2.
 The Swift rules run the very same file (Tests/SectorEngineTests/LakeRulesV2Tests.swift). Run:  python -m pytest jobs/lake-brain/validation -q"""
 import datetime as dt
 import json
@@ -12,7 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import rules_v2 as R  # noqa: E402
 
-FIX = os.path.join(HERE, "..", "..", "..", "docs", "brains", "conformance", "lake_rules_v2.json")
+FIX = os.path.join(HERE, "..", "..", "..", "contracts", "conformance", "lake_rules_v2.json")
 with open(FIX) as f:
     FX = json.load(f)
 

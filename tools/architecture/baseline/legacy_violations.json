@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0.0",
+  "createdBy": "Phase 1B baseline",
+  "mode": "REPORT_ONLY",
+  "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates.",
+  "entries": [
+    {
+      "key": "8|jobs/biological-brain/biological_brain.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/biological-brain/biological_brain.py",
+      "owner": "Fish Brain (biological-state)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 4 (Fish migration)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/biological-brain/brain_platform.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/biological-brain/brain_platform.py",
+      "owner": "Fish Brain (biological-state)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 4 (Fish migration)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/brain-orchestrator/orchestrate.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/brain-orchestrator/orchestrate.py",
+      "owner": "Platform (orchestrator)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6/7 (orchestrator reads Brains via the generated Brain Registry)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/brain-orchestrator/preflight_lineage.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/brain-orchestrator/preflight_lineage.py",
+      "owner": "Platform (orchestrator)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6/7 (orchestrator reads Brains via the generated Brain Registry)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/brain_platform/sector_brain_platform/beta.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/brain_platform/sector_brain_platform/beta.py",
+      "owner": "Platform (python)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 2-3 (platform package adopted with the first migrated Brain; Phase 7 retires the legacy copy)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/brain_platform/sector_brain_platform/jobs.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/brain_platform/sector_brain_platform/jobs.py",
+      "owner": "Platform (python)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 2-3 (platform package adopted with the first migrated Brain; Phase 7 retires the legacy copy)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/brain_platform/sector_brain_platform/scoring.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/brain_platform/sector_brain_platform/scoring.py",
+      "owner": "Platform (python)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 2-3 (platform package adopted with the first migrated Brain; Phase 7 retires the legacy copy)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/lake-brain/validation/holdout_v2.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/lake-brain/validation/holdout_v2.py",
+      "owner": "Lake Brain",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6 (Lake migration)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/lake-geometry/build_geometry.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/lake-geometry/build_geometry.py",
+      "owner": "Lake Registry (platform)",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6 (Lake Registry established first)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/sector-intelligence-brain/brain_platform.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/sector-intelligence-brain/brain_platform.py",
+      "owner": "Sector Intelligence Brain",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6 (last)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/sector-intelligence-brain/sector_intelligence_brain.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/sector-intelligence-brain/sector_intelligence_brain.py",
+      "owner": "Sector Intelligence Brain",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6 (last)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/water-clarity-brain/brain_platform.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/water-clarity-brain/brain_platform.py",
+      "owner": "Water Clarity Brain",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6 (BLOCKED by D4)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/water-clarity-brain/clarity_brain.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/water-clarity-brain/clarity_brain.py",
+      "owner": "Water Clarity Brain",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 6 (BLOCKED by D4)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|jobs/wind-hourly/sector_wind/brain/writer.py|legacy runtime references a docs/ path (baseline debt)",
+      "invariant": 8,
+      "path": "jobs/wind-hourly/sector_wind/brain/writer.py",
+      "owner": "Wind Brain",
+      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
+      "plannedMigrationPhase": "Phase 2 (Wind migration; blocked on Gate P)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "9|jobs/lake-brain/bindings/build_bindings_table.py|absolute user path in legacy runtime code (baseline debt)",
+      "invariant": 9,
+      "path": "jobs/lake-brain/bindings/build_bindings_table.py",
+      "owner": "Lake Brain",
+      "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
+      "plannedMigrationPhase": "Phase 6 (Lake migration)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "9|jobs/lake-brain/review/build_review_pack.py|absolute user path in legacy runtime code (baseline debt)",
+      "invariant": 9,
+      "path": "jobs/lake-brain/review/build_review_pack.py",
+      "owner": "Lake Brain",
+      "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
+      "plannedMigrationPhase": "Phase 6 (Lake migration)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "9|jobs/lake-brain/review/ingest_review_result.py|absolute user path in legacy runtime code (baseline debt)",
+      "invariant": 9,
+      "path": "jobs/lake-brain/review/ingest_review_result.py",
+      "owner": "Lake Brain",
+      "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
+      "plannedMigrationPhase": "Phase 6 (Lake migration)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "9|jobs/lake-brain/validation/holdout_data.py|absolute user path in legacy runtime code (baseline debt)",
+      "invariant": 9,
+      "path": "jobs/lake-brain/validation/holdout_data.py",
+      "owner": "Lake Brain",
+      "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
+      "plannedMigrationPhase": "Phase 6 (Lake migration)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "9|jobs/lake-geometry/build_geometry.py|absolute user path in legacy runtime code (baseline debt)",
+      "invariant": 9,
+      "path": "jobs/lake-geometry/build_geometry.py",
+      "owner": "Lake Registry (platform)",
+      "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
+      "plannedMigrationPhase": "Phase 6 (Lake Registry established first)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "9|jobs/lake-geometry/gsw_recheck.py|absolute user path in legacy runtime code (baseline debt)",
+      "invariant": 9,
+      "path": "jobs/lake-geometry/gsw_recheck.py",
+      "owner": "Lake Registry (platform)",
+      "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
+      "plannedMigrationPhase": "Phase 6 (Lake Registry established first)",
+      "status": "LEGACY_BASELINE"
+    }
+  ]
+}

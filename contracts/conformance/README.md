@@ -1,12 +1,10 @@
 # contracts/conformance/
 
-**Owner:** Platform
-**Purpose:** DESTINATION for cross-language conformance fixtures.
+**Owner:** Platform (change-controlled)
+**Purpose:** the single canonical home of the cross-language conformance fixtures. Python (`jobs/brain_platform/tests`, `jobs/lake-brain/validation`) and Swift (`Tests/SectorEngineTests/BrainPlatformConformanceTests.swift`, `LakeRulesV2Tests.swift`) run the very same files and must agree.
 
-**Belongs here (eventually):** Fixtures proving Python and Swift agree.
+**Belongs here:** conformance fixtures only (`*.json`). **Does NOT belong here:** a second copy of anything; Brain-private fixtures; golden customer-response baselines (those are in `verification/fixtures/`).
 
-**Does NOT belong here:** A second copy of fixtures.
+**Import / dependency rules:** read-only inputs to tests; no runtime code may read them. Changing a fixture changes the contract: both language implementations must be updated in the same commit.
 
-**Import / dependency rules:** The relocation `docs/brains/conformance` → here is Phase 1B (RA-11). Until then there is exactly ONE source of truth: the old path. Do not copy fixtures here in Phase 1A.
-
-**Migration status:** Phase 1A: structure only. Nothing has been moved here; current implementation remains at docs/brains/conformance (still authoritative; existing CI and tests reference it). Governing docs: `docs/architecture/repository-audit-v1/` (`REPOSITORY_ARCHITECTURE_V1_DECISION_LOCK.md`, `TARGET_REPOSITORY_ARCHITECTURE_V1.md`).
+**Migration status:** relocated from `docs/brains/conformance/` in Phase 1B. Content is byte-identical (SHA-256 manifest in `docs/architecture/repository-foundation-v1/PHASE_1B_IMPLEMENTATION.md`); a pointer README remains at the old path. `tools/architecture` and `verification/integration/test_conformance_home.py` fail if a duplicate live copy reappears.

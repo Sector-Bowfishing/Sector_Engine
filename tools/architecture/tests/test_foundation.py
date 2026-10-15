@@ -311,3 +311,88 @@ def test_report_is_report_only_by_default():
 
 def test_real_repo_has_no_registered_brains_yet():
     assert report._brain_dirs(ROOT) == []
+
+
+# ---- Phase 1B: large-file exceptions, baseline comparison --------------------------------------
+def test_large_file_exceptions_file_validates_and_has_exact_paths_only():
+    doc = load(ROOT, "tools", "architecture", "large_file_exceptions.json")
+    assert validate(doc, schema("large-file-exceptions.schema.json")) == []
+    assert len(doc["exceptions"]) == 5
+    for e in doc["exceptions"]:
+        assert e["status"] == "LEGACY_BASELINE" and e["createdBy"] == "Phase 1B baseline"
+        assert not any(c in e["path"] for c in "*?[]")
+
+
+@pytest.mark.parametrize("bad_path", ["docs/data/*.json", "/abs/file.bin", "dir/[ab].csv"])
+def test_wildcard_or_absolute_exception_paths_rejected(bad_path):
+    doc = {"schemaVersion": "1.0.0", "exceptions": [{"path": bad_path, "component": "c", "reason": "r", "status": "LEGACY_BASELINE", "reviewPhase": "p", "createdBy": "x"}]}
+    assert validate(doc, schema("large-file-exceptions.schema.json"))
+
+
+def test_real_repo_large_files_are_all_covered_by_legacy_exceptions():
+    findings = report.check(ROOT)
+    assert [f for f in findings if f["invariant"] == 15] == []
+    assert len(report.check.last_excepted) == 5
+    assert report.check.last_stale == []
+
+
+def test_new_large_file_is_a_new_violation_known_exception_is_not(synth):
+    (synth / "tools" / "architecture").mkdir(parents=True)
+    (synth / "known.bin").write_bytes(b"0" * (1024 * 1024))
+    exc = load(ROOT, "tools", "architecture", "large_file_exceptions.json")
+    exc["exceptions"] = [dict(exc["exceptions"][0], path="known.bin")]
+    # check() reads exceptions from the tool dir; emulate by pointing report.HERE-based loader at a temp copy
+    orig = report.HERE
+    shutil.copytree(os.path.join(ROOT, "tools", "architecture"), synth / "tools" / "architecture", dirs_exist_ok=True,
+                    ignore=shutil.ignore_patterns("tests", "__pycache__"))
+    (synth / "tools" / "architecture" / "large_file_exceptions.json").write_text(json.dumps(exc))
+    report.HERE = str(synth / "tools" / "architecture")
+    try:
+        assert [f for f in report.check(str(synth)) if f["invariant"] == 15] == []
+        (synth / "new.bin").write_bytes(b"0" * (1024 * 1024 + 1))
+        assert [f["subject"] for f in report.check(str(synth)) if f["invariant"] == 15] == ["new.bin"]
+        (synth / "known.bin").write_bytes(b"0")
+        report.check(str(synth))
+        assert report.check.last_stale == ["known.bin"]
+    finally:
+        report.HERE = orig
+
+
+def test_baseline_known_new_resolved():
+    base = {"entries": [{"key": "8|a.py|m", "invariant": 8, "path": "a.py"}, {"key": "9|gone.py|m", "invariant": 9, "path": "gone.py"}]}
+    findings = [{"invariant": 8, "subject": "a.py", "message": "m"}, {"invariant": 9, "subject": "new.py", "message": "m"}]
+    known, new, resolved = report.compare_to_baseline(findings, base)
+    assert [f["subject"] for f in known] == ["a.py"]
+    assert [f["subject"] for f in new] == ["new.py"]
+    assert [e["path"] for e in resolved] == ["gone.py"]
+
+
+def test_committed_baseline_matches_current_legacy_findings_and_has_owner_phase():
+    base = load(ROOT, "tools", "architecture", "baseline", "legacy_violations.json")
+    known, new, resolved = report.compare_to_baseline(report.check(ROOT, legacy=True), base)
+    assert new == [] and resolved == []
+    assert len(known) == len(base["entries"]) == 20
+    for e in base["entries"]:
+        assert e["owner"] != "unassigned" and e["plannedMigrationPhase"] and e["reason"] and e["status"] == "LEGACY_BASELINE"
+
+
+def test_baseline_cli_is_report_only_and_fail_on_new_is_opt_in(tmp_path, capsys):
+    empty = tmp_path / "b.json"
+    empty.write_text(json.dumps({"entries": []}))
+    assert report.main(["--root", ROOT, "--legacy", "--baseline", str(empty)]) == 0     # NEW findings, still exit 0
+    assert "NEW findings (not in baseline):      20" in capsys.readouterr().out
+    assert report.main(["--root", ROOT, "--legacy", "--baseline", str(empty), "--fail-on-new"]) == 1
+
+
+def test_python_scan_ignores_docstrings_and_comments_but_flags_string_literals(tmp_path):
+    src = '"""See docs/brains/X.md and /Users/me/Desktop/y"""\n# docs/brains/c.md\nP = "docs/brains/real.json"\n'
+    assert "docs/brains/real.json" in report._code_text("m.py", src)
+    assert "X.md" not in report._code_text("m.py", src) and "c.md" not in report._code_text("m.py", src)
+
+
+def test_report_output_contains_paths_not_content(synth, capsys):
+    d = make_brain(synth, "alpha")
+    (d / "runtime" / "main.py").write_text("SECRET_TOKEN='abc123'\nq='/Users/someone/Desktop/x'\n")
+    report.main(["--root", str(synth)])
+    out = capsys.readouterr().out
+    assert "abc123" not in out and "SECRET_TOKEN" not in out

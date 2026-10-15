@@ -59,10 +59,12 @@ Sector_Engine/
 │   ├── vegetation/
 │   └── sector-intelligence/
 │
-├── tests/                           CROSS-CUTTING ONLY
-│   ├── architecture/                import-lint, "no runtime input in docs", brain.json schema, PROVIDERS consumer check
-│   ├── integration/                 Publisher + Brain handoff, orchestrator + brain.json
-│   └── e2e/                         shadow/conformance runs (offline)
+├── verification/                    CROSS-DOMAIN integration + end-to-end verification (AMENDED in Phase 1B: replaces root `tests/`)
+│   ├── integration/                 Publisher + Brain handoff, orchestrator + brain.json, conformance home, score baseline, clean-copy gate
+│   ├── e2e/                         shadow/conformance runs (offline)            [created only when it holds real tests]
+│   └── fixtures/                    golden/baseline fixtures (/conditions, /lakes, scores, conformance manifest)
+│                                    (SwiftPM `Tests/` stays until the approved Swift migration; tooling unit tests live in `tools/*/tests/`;
+│                                     architecture invariants live in `tools/architecture/`)
 │
 ├── tools/                           repo-wide dev tooling (generators, linters); no domain logic
 ├── deploy/                          per-deploy-unit Dockerfiles/scripts that don't belong to one Brain (brain-jobs image, orchestrator)
@@ -83,7 +85,7 @@ Sector_Engine/
 | `platform/` | Platform | `contracts`, `providers` (health/IO only) | any Brain's logic or data; sibling Brain imports |
 | `contracts/` | Platform, change-controlled | — | Brain-private schemas |
 | `brains/<id>/` | that Brain | `providers`, `platform`, other Brains' `contracts/` | other Brains' internals; customer Engine code; raw research data; secrets |
-| `tests/` | Platform | everything (read) | unit tests owned by one domain |
+| `verification/` | Platform | everything (read) | unit tests owned by one domain; a lowercase root `tests/` (collides with SwiftPM `Tests/` on case-insensitive filesystems) |
 | `docs/` | governance | — | runtime inputs, per-Brain operating docs (those live with the Brain) |
 
 ## 4. Boundaries
@@ -167,7 +169,7 @@ Exact thresholds and the final cut are fixed in the Lake phase; Phase 1A creates
 
 ## 7. Test strategy
 
-* Tests live with their owner: `engine/Tests`, `providers/*/tests`, `platform/*/tests`, `brains/<id>/tests`. Cross-cutting in `tests/`.
+* Tests live with their owner: `engine/Tests`, `providers/*/tests`, `platform/*/tests`, `brains/<id>/tests`. Cross-cutting integration/e2e in `verification/` (NOT a root `tests/`, which collides with SwiftPM `Tests/` on case-insensitive filesystems); tooling unit tests in `tools/*/tests/`; current SwiftPM tests stay in `Tests/` until the approved Swift migration.
 * Swift: split the single `SectorEngineTests` into per-target test targets (`EngineTests`, `ProvidersTests`, `PlatformSwiftTests`, `LakeBrainTests`, `WaterTempBrainTests`, `ClarityTests`); Python: every dir has `pytest.ini`, **no loose `test_*.py` beside scripts**.
 * `brain.json` declares `tests: [paths]` and CI **derives Brain coverage from the Brain Registry** (replacing the hand-written directory list). Non-Brain infrastructure (platform, providers, customer Engine, cross-cutting integration) is enrolled **explicitly** and never depends on `brain.json` to run; an unregistered test dir is reported by an architecture test.
 * Add Swift build+test to CI (or a scheduled workflow) so the Brain Swift targets are covered.

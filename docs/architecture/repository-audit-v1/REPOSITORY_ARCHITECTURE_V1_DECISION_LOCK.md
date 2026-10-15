@@ -23,7 +23,7 @@ Detail lives in: `REPOSITORY_AUDIT_DECISIONS.md` (RA-1…RA-23), `TARGET_REPOSIT
 | 12 | Wind/Publisher shadow findings F-1…F-9 and the Publisher production-security gate recorded as **prerequisites owned by other lanes**. | Migration plan §Gate P, Decisions |
 
 ## 2. Rules that must not drift
-1. Directory expresses ownership. Roots: `engine/ providers/ platform/ contracts/ brains/ tests/ tools/ deploy/ docs/` + root build/bootstrap files.
+1. Directory expresses ownership. Roots: `engine/ providers/ platform/ contracts/ brains/ verification/ tools/ deploy/ docs/` (amended in Phase 1B, §6) + root build/bootstrap files.
 2. `brain.json` = structured identity and edges only, JSON, never prose/reasoning, never a physical Desktop path; research workspace is a **logical id** (e.g. `wind-brain`); `SECTOR_RESEARCH_ROOT`/config resolves the physical root. `BRAIN_OPERATING_CONTRACT.md` is authoritative for behavior and research instructions. `brain.json` must not become a seventh hand-synchronized registry; generated registries derive from it; old copies retire only after proven equivalence.
 3. Machine ids never change (`biological-state` stays; directory is `fish`).
 4. Unknown is not zero; research is bounded by a named gap and a stop condition; a Brain is not a university.
@@ -42,3 +42,16 @@ None are hard blockers. Confirmations Michael may want to make while Phase 1A is
 
 ## 5. Implementation status
 Phase 1A (additive skeleton + schemas + report-only architecture tooling) is implemented: see `docs/architecture/repository-foundation-v1/PHASE_1A_IMPLEMENTATION.md` (`REPOSITORY_FOUNDATION_PHASE_1A_COMPLETE`). Phase 1B not started.
+
+## 6. Amendment (Phase 1B, approved by Michael): `verification/` replaces root `tests/`
+A lowercase root `tests/` collides with SwiftPM's `Tests/` on case-insensitive filesystems (macOS default). This is a permanent refinement, not a workaround. Ownership of test code:
+
+| Location | Owns |
+|---|---|
+| `Tests/` | the current SwiftPM test tree, until the approved Swift migration splits/moves it deliberately (SwiftPM is **not** moved to free a name) |
+| `tools/*/tests/` | unit tests for repository tooling (e.g. `tools/architecture/tests/`) |
+| `brains/<brain>/tests/` | Brain-owned tests, once that Brain is migrated |
+| `verification/` | cross-domain / cross-component integration and end-to-end verification, plus golden fixtures (`integration/`, `e2e/`, `fixtures/`: created only when they hold real files) |
+
+The Phase 1B implementation record is `docs/architecture/repository-foundation-v1/PHASE_1B_IMPLEMENTATION.md`.
+

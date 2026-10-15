@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lake Brain rules v2 — pre-registered hold-out protocol (section 2 of docs/brains/LAKE_BRAIN_RULES_V2_PREREGISTRATION.md), implemented literally.
 
-Rules under test: the Python mirror rules_v2.py (verified against the Swift rules on docs/brains/conformance/lake_rules_v2.json BEFORE use).
+Rules under test: the Python mirror rules_v2.py (verified against the Swift rules on contracts/conformance/lake_rules_v2.json BEFORE use).
 Thresholds are fixed by the pre-registration and are NOT parameters of this script. Failed criteria are reported as failures.
 
 Test years  : each lake's last 5 complete years (>= 329 daily values, < 2026).   Training for year Y: complete years < Y, basis cap per R1 (30 / 60).

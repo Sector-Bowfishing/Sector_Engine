@@ -1,4 +1,4 @@
-"""The shared conformance suite (docs/brains/conformance/*.json) run against the Python platform."""
+"""The shared conformance suite (contracts/conformance/*.json) run against the Python platform."""
 import datetime as dt
 import json
 import os
@@ -14,7 +14,7 @@ from sector_brain_platform import (
     prune_activity, run_health, should_retry, slot_for, snapshot_field_for, source_owner,
 )
 
-FIX = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "brains", "conformance")
+FIX = os.path.join(os.path.dirname(__file__), "..", "..", "..", "contracts", "conformance")
 
 
 def fixture(name):

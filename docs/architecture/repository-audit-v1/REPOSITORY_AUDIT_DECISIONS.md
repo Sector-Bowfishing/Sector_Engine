@@ -5,7 +5,7 @@ Approval authorizes **additive Phase 1A/1B work only**, each phase still startin
 
 | ID | Decision | Result | Locked text (summary) | Applies in |
 |---|---|---|---|---|
-| RA-1 | Top-level ownership tree | **APPROVED** | `engine/ providers/ platform/ contracts/ brains/ tests/ tools/ deploy/ docs/`; root build/bootstrap files stay; directory expresses ownership | 1A |
+| RA-1 | Top-level ownership tree | **APPROVED** | `engine/ providers/ platform/ contracts/ brains/ verification/ tools/ deploy/ docs/` (amended Phase 1B: `verification/` replaces root `tests/`, see decision lock §6)`; root build/bootstrap files stay; directory expresses ownership | 1A |
 | RA-2 | `brains/<dir>/brain.json` | **APPROVED WITH GUARDRAILS** | JSON; machine-authoritative for structured identity and edges only; no prose/research reasoning; no absolute Desktop path (logical workspace id e.g. `wind-brain`, env/config resolves root); not a seventh manual registry; generated registries derive from it and old copies retire only after proven equivalence; the operating contract stays authoritative for behavior | 1A schema; 2+ per Brain |
 | RA-3 | Operating contract `brains/<dir>/BRAIN_OPERATING_CONTRACT.md`, 19 sections | **APPROVED** | mandatory for final certification; no `ARCHITECTURE_CERTIFIED_V1` without README + contract + `brain.json` + required contracts/runtime/tests correctly represented | 2+ |
 | RA-4 | Directory names | **APPROVED** | `wind fish lake water-temperature water-clarity depth vegetation sector-intelligence`; machine ids unchanged (`fish` ↔ `biological-state`) | 2+ |

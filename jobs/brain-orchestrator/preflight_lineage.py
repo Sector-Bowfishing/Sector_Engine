@@ -18,7 +18,8 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-SHARED_PATHS = ("jobs/brain-orchestrator", "jobs/brain-scores", "jobs/brain_platform", "docs/brains/scoring", "docs/brains/conformance")
+SHARED_PATHS = ("jobs/brain-orchestrator", "jobs/brain-scores", "jobs/brain_platform", "docs/brains/scoring",
+                "contracts/conformance", "docs/brains/conformance")   # fixtures moved in Phase 1B; the old path stays so a deployed commit that predates the move still diffs
 # (path, substring that must still be present at HEAD if it was present at the deployed commit). Each is a durability safeguard.
 PROTECTIONS = (
     ("jobs/brain-scores/score_brains.py", "def rtdb_safe"),                 # RTDB-illegal key sanitising (Wind 'Freshness/reliability' incident)

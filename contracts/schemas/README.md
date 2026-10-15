@@ -3,7 +3,7 @@
 **Owner:** Platform
 **Purpose:** JSON Schemas (2020-12) for `brain.json`, `PROVIDERS.json`, research GAPS/MANIFEST, and the Brain/Lake/Species registries.
 
-**Belongs here (eventually):** Schemas validated by `tools/architecture`.
+**Belongs here (eventually):** Schemas validated by `tools/architecture` (incl. `large-file-exceptions.schema.json`, added in Phase 1B).
 
 **Does NOT belong here:** Brain-private schemas.
 

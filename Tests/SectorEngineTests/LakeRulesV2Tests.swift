@@ -2,7 +2,7 @@
 //  LakeRulesV2Tests.swift
 //  Lake Brain rules v2 (`lake-level-rules-v2`, `doy15-percentile-v2`): history tiers, trend labels, versions.
 //  Pre-registered in docs/brains/LAKE_BRAIN_RULES_V2_PREREGISTRATION.md. The conformance cases are the shared file
-//  docs/brains/conformance/lake_rules_v2.json, which jobs/lake-brain/validation/test_rules_v2.py runs against the Python mirror.
+//  contracts/conformance/lake_rules_v2.json, which jobs/lake-brain/validation/test_rules_v2.py runs against the Python mirror.
 //
 
 import XCTest
@@ -17,7 +17,7 @@ final class LakeRulesV2Tests: XCTestCase {
 
     private static let fixtureURL = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        .appendingPathComponent("docs/brains/conformance/lake_rules_v2.json")
+        .appendingPathComponent("contracts/conformance/lake_rules_v2.json")
 
     private func fixture() throws -> [String: Any] {
         try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: Self.fixtureURL)) as? [String: Any])

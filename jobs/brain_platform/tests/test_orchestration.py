@@ -548,7 +548,7 @@ def test_manifest_job_classification_matches_the_live_freeze():
 
 def test_conformance_fixture_matches_code_for_ops():
     import os
-    fx = json.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "brains", "conformance", "orchestrator_control_v1.json")))
+    fx = json.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "..", "contracts", "conformance", "orchestrator_control_v1.json")))
     assert fx["version"] == O.CONTROL_VERSION == "orchestrator-control-v1"
     for key, val in (("engineModes", O.ENGINE_MODES), ("activityStates", O.ACTIVITY_STATES), ("triggers", O.TRIGGERS), ("decisions", O.DECISIONS),
                      ("scheduleClasses", O.SCHEDULE_CLASSES), ("failureClasses", O.FAILURE_CLASSES), ("requestActions", O.REQUEST_ACTIONS),

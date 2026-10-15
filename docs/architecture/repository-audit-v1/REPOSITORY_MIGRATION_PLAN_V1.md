@@ -4,7 +4,7 @@
 
 ## Global rules
 * **Moves are `git mv` + compatibility shim**, never copy-then-delete; history is preserved. Old paths keep working until Phase 7.
-* **Behavior-neutral gates on every phase after 1B:** (1) golden `/conditions` and `/lakes` responses byte-compare, (2) all Python suites, (3) Swift tests, (4) Swift+Python conformance fixtures, (5) score before/after identical, (6) effective Cloud Run job definitions unchanged, (7) image `commit` labels preserved.
+* **Behavior-neutral gates on every phase after 1B:** (1) golden gates for `/conditions` (deterministic scoring-core golden over frozen inputs + response-contract round trip; live values are NOT byte-compared) and `/lakes` (deterministic: version, count, ordered ids, field set, body hash), (2) all Python suites, (3) Swift tests, (4) Swift+Python conformance fixtures, (5) score before/after identical, (6) effective Cloud Run job definitions unchanged, (7) image `commit` labels preserved.
 * **No deploy** unless a phase says so; deploys follow the lineage rule (verify deployed SHA and safe lineage before any shared deploy; only additive specialist commits).
 * **No branch/worktree deletion** in any phase (RA-23). No product-behavior fixes to make migration green: pre-existing failures are recorded as baseline.
 * Hand-synchronized registries are replaced by generated ones only after generated output is proven equivalent (diff test).
@@ -17,7 +17,7 @@ Locked by `REPOSITORY_ARCHITECTURE_V1_DECISION_LOCK.md`. No files besides docs.
 ## Phase 1A: Additive skeleton and machine schemas (NO runtime moves)
 | | |
 |---|---|
-| Files affected | **create only**: `engine/`, `providers/`, `platform/` (incl. `platform/registries/{brains,lakes,species}/`), `contracts/`, `brains/_template/`, `tools/`, `deploy/`, `tests/architecture/`, root-level `docs/{platform,history}/` index READMEs. Machine schemas: `contracts/schemas/brain.schema.json`, `providers.schema.json`, registry schemas for Brain/Lake/Species, `customerIntegrationMode` enum. Operating-contract template + checklist in `brains/_template/`. **No empty ceremonial directories**: each new directory holds a README or schema stating its purpose and import rules. `pyproject.toml` stub for `sector_brain_platform` allowed only if it does not change how existing jobs import it. |
+| Files affected | **create only**: `engine/`, `providers/`, `platform/` (incl. `platform/registries/{brains,lakes,species}/`), `contracts/`, `brains/_template/`, `tools/`, `deploy/`, `tools/architecture/` (amended: not a root `tests/`), root-level `docs/{platform,history}/` index READMEs. Machine schemas: `contracts/schemas/brain.schema.json`, `providers.schema.json`, registry schemas for Brain/Lake/Species, `customerIntegrationMode` enum. Operating-contract template + checklist in `brains/_template/`. **No empty ceremonial directories**: each new directory holds a README or schema stating its purpose and import rules. `pyproject.toml` stub for `sector_brain_platform` allowed only if it does not change how existing jobs import it. |
 | Tests | schema self-tests (valid/invalid examples); architecture tests exist but are **report-only** |
 | Compatibility | nothing existing is touched or re-pointed; existing jobs and Swift build identical |
 | Rollback | revert the commit(s) |

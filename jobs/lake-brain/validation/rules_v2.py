@@ -1,7 +1,7 @@
 """Lake Brain rules v2 — pure-Python mirror of the Swift rules (`lake-level-rules-v2`, `doy15-percentile-v2`).
 
 Mirrors Sources/SectorEngine/LakeBrain/{LakeLevelBaseline,LakeLevelClassifier}.swift. It is checked against the Swift rules on the shared
-fixture docs/brains/conformance/lake_rules_v2.json (test_rules_v2.py here; LakeRulesV2Tests.swift there) BEFORE it is used for the hold-out
+fixture contracts/conformance/lake_rules_v2.json (test_rules_v2.py here; LakeRulesV2Tests.swift there) BEFORE it is used for the hold-out
 protocol (holdout_v2.py). Specification: docs/brains/LAKE_BRAIN_RULES_V2_PREREGISTRATION.md section 1. Nothing here may be tuned to results.
 """
 from __future__ import annotations

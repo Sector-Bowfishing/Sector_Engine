@@ -1,6 +1,6 @@
 //
 //  BrainPlatformConformanceTests.swift
-//  The shared conformance suite (docs/brains/conformance/*.json) run against the Swift platform.
+//  The shared conformance suite (contracts/conformance/*.json) run against the Swift platform.
 //  The Python package jobs/brain_platform/ runs the very same fixtures.
 //
 
@@ -11,7 +11,7 @@ final class BrainPlatformConformanceTests: XCTestCase {
 
     private static let fixtures = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        .appendingPathComponent("docs/brains/conformance")
+        .appendingPathComponent("contracts/conformance")
 
     private func fixture(_ name: String) throws -> [String: Any] {
         let data = try Data(contentsOf: Self.fixtures.appendingPathComponent(name))

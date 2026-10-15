@@ -62,7 +62,7 @@ def test_every_legacy_lifecycle_value_maps_into_v1_and_ambiguity_is_flagged():
 
 
 def test_conformance_fixture_matches_code():
-    fx = json.load(open(os.path.join(REPO, "docs", "brains", "conformance", "model_v1.json")))
+    fx = json.load(open(os.path.join(REPO, "contracts", "conformance", "model_v1.json")))
     assert tuple(fx["claimLevels"]) == M.CLAIM_LEVELS and tuple(fx["claimMaturity"]) == M.CLAIM_MATURITY
     assert tuple(fx["lifecycle"]) == M.LIFECYCLE and tuple(fx["executionTypes"]) == M.EXECUTION_TYPES
     assert fx["legacyLifecycleMap"] == M.LEGACY_LIFECYCLE_MAP and tuple(fx["unknownKinds"]) == M.UNKNOWN_KINDS
