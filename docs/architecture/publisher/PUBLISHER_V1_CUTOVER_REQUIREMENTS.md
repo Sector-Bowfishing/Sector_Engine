@@ -35,6 +35,7 @@
 | P9 | Schema registrations | One reviewed registration per Brain schema (Fish, Lake, Water Temp, …). Each Brain's volatile fields (`volatile_extra`), lifecycle policy and freshness requirement are declared there, by that Brain's certification. |
 | P10 | Certification record write | `/brains/{id}/certification` is reserved and Publisher/Orchestrator-owned; writing it is a later feature. |
 | P11 | Monitoring and cost | Metrics for SKIP rate, rejects by code, plan bytes; confirm no recurring-cost regression (Publisher runs inside the existing hourly Orchestrator wake-up; no new scheduler is required by this design, none was created). |
+| P12 | Transactional baseline | Replace sequential per-section head advancement by one transactional baseline index per artifact so a lost race cannot leave a mixed baseline (shadow behaviour documented in architecture §12.11) |
 
 ## 2. Wind-specific cutover items (Wind certification)
 1. Wind's real output must be re-expressed as `wind-lake-state-v1` / `wind-registry-v1` / `wind-source-registry-v1` artifacts: **the `brains/wind` registry as the approved child nodes** (architecture §4a; whole-node writes are rejected), no nulls/empty containers, UNKNOWN as a value. Known today from reading the writer (not run): the registry object contains `None` values (`lastError`, version `date`) and the writer sets `brains/wind` as one node, so both must change in the Wind artifact builder.

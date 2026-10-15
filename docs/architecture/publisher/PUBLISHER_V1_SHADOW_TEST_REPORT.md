@@ -102,4 +102,4 @@ Run: `cd jobs/brain_platform && python -m pytest -q` → **452 passed**; `cd job
 **Not tested (by design):** anything live; the GCS adapter; the Orchestrator-side compatibility writers (design only); Wind's own builder (a different worktree; it must be re-pointed at the v2 contract).
 
 ## Documentation closeout (post Gate P)
-Documentation/contract-text only (lineage standard §7, architecture §12.10, cutover G1/G2/G5/G6); no code or test changed. Re-run: platform suite 452 passed, `jobs/brain-orchestrator` 24 passed.
+Documentation/contract-text only (lineage standard §7, architecture §12.10-§12.11 incl. the verified lost-race behaviour, architecture §12.10, cutover G1/G2/G5/G6); no code or test changed. Re-run: platform suite 452 passed, `jobs/brain-orchestrator` 24 passed.
