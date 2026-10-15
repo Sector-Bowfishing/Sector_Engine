@@ -1,48 +1,43 @@
-# Wind Brain: publish artifact V1 (IMPLEMENTED as a builder; proven in Publisher V1 SHADOW only)
+# Wind Brain: publish artifact contract (now `publish-artifact-v2`, bundle `wind-publication-v1`)
 
-**Status:** builder `jobs/wind-hourly/sector_wind/brain/artifact.py`, tests `jobs/wind-hourly/tests/test_publish_artifact.py` (32 tests). It is **not wired into `wind-hourly`**; the deployed job is unchanged. Conforms to Publisher V1 Shadow at `d090c428` (`docs/architecture/publisher/`). Supersedes the design-only draft from the first certification pass.
+**Status:** implemented as a builder, proven in Publisher **Gate P shadow** only. Code: `jobs/wind-hourly/sector_wind/brain/artifact.py`; tests `jobs/wind-hourly/tests/test_publish_artifact.py` (47). **Not wired into `wind-hourly`**; the deployed job is unchanged. This file keeps its original name; it supersedes the Publisher-V1 (five-artifact) version. Adoption result and equivalence: `WIND_PUBLISHER_V2_ADOPTION_REPORT.md`.
 
-## 1. How the artifact is produced
-Wind's existing `publish()` computes every payload. Run against a recording writer, it yields the exact PATCH dictionaries it would send today; the builder re-expresses them as `publish-artifact-v1` envelopes. Consequences: **no scientific value is recomputed or reshaped**, `publish.py` is unmodified, and equivalence with today's live output is a testable property (tested: every value in the artifact equals what the writer stores, modulo RTDB-dropped nulls/empties).
+## 1. Shape
+```
+ONE Wind execution (executionId)
+  -> ONE publish-artifact-v2  { envelope, lineage(brain-lineage-v1), sections[] }      lineage.artifactSchema = wind-publication-v1
+       sections (each: artifactSchema, scope?, freshness?, mutations[SET|DELETE])
+         wind-lake-state-v1 : lake-live        states, slots                      (hourly)
+         wind-lake-state-v1 : lake-static      profiles, lake validation, modelVersions
+         wind-lake-state-v1 : fleet-readiness  readiness (621 lakes)
+         wind-registry-v1                      /brains/wind/{approved child}, /validation/wind, /health/brains/wind/{status,staleLakeCount}, own events, lastError DELETE
+         wind-source-registry-v1               sources + source health (Wind is acquisition owner)
+  -> Publisher validates the WHOLE artifact -> ONE deterministic atomic plan (+ Publisher-derived compatibility copies + ONE publication record) -> SHADOW, SKIP, or REJECT-all
+```
+Built by running the **unchanged** `publish()` against a recording writer and re-expressing its PATCHes; no scientific value is recomputed. The bundle is sealed with the Publisher's `seal_bundle`; Wind has no fingerprint, volatile or ownership logic of its own (a test asserts this). `artifactId` = `sha256` of the sealed envelope (unique per run, byte-stable for identical inputs).
 
-One run yields **five artifacts** (the Publisher's three Wind schemas; the lake-state schema is split into three baseline **scopes** by rate of change, which the envelope's optional `scope` supports; each (schema, scope) has its own baseline and SKIPs independently):
-| Artifact (schema : scope) | Carries | Mutations (live-shaped run) | Bytes | Changes |
-|---|---|---:|---:|---|
-| `wind-lake-state-v1 : lake-live` | `/lakes/{k}/states/wind`, `/lakeFleet/{k}/slots/wind`, `/snapshots/{k}/latest/wind` (compatibility copy, same atomic plan as its source) | 12 | 41,806 | hourly |
-| `wind-lake-state-v1 : lake-static` | `/lakes/{k}/profiles/wind` (74), `/lakes/{k}/validation/wind`, `/lakeFleet/{k}/modelVersions/wind` | 82 | 323,828 | rarely |
-| `wind-lake-state-v1 : fleet-readiness` | `/lakeFleet/{k}/readiness/wind` (621 lakes) | 621 | 54,573 | only on a readiness change |
-| `wind-registry-v1` | approved `/brains/wind/{child}` children, `/validation/wind`, `/health/brains/wind`, own `/activity/{event}` | 33 | 11,029 | hourly |
-| `wind-source-registry-v1` | `/sources/{id}`, `/health/sources/{id}` for the three Wind-acquired sources | 6 | 2,812 | hourly |
+## 2. Lineage and freshness
+`brainId wind`; `codeVersion` = Wind's own commit; one `executionId`; `inputFingerprint` = digest of evidence times per lake + validation-evidence digest + model/Brain version; `outputFingerprint` computed by the Publisher algorithm `sector-semantic-fingerprint-v2` (bundle fingerprint over section fingerprints) and recomputed by the Publisher; `knowledgeRelease/manifestRef/manifestSha256` = `NONE` until a Wind release manifest exists; `lifecycle CALIBRATION`, `reviewStatus UNREVIEWED`, `validationStatus NOT_VALIDATED`.
+Freshness (lake-state sections): `evidenceObservedAt` = newest `observationTime` (else forecast cycle time); `staleAfter` = earliest of `generatedAt + 90 min` and `NBM cycle + 3 h` (**existing thresholds, unchanged**); `freshnessStatus` FRESH / STALE / UNAVAILABLE / UNKNOWN. `expiresAt` omitted (no existing Wind expiry rule; open decision). A successful run with old evidence publishes STALE.
 
-Effect: a normal hour changes ~13 + ~34 + ~7 paths (not today's unconditional ~1,260), and a fully unchanged run is SKIP. Cost of the split: atomicity is per artifact (integration report F-2).
+## 3. Authorised paths (decided by the Publisher registry)
+`/lakes/{k}/states|profiles/wind`, `/lakes/{k}/validation/wind`, `/lakeFleet/{k}/slots|readiness|modelVersions/wind` (DERIVED_PROJECTION), `/brains/wind/{child}` for the approved children (identity, model, status groups), `/validation/wind`, `/health/brains/wind/status`, `/health/brains/wind/staleLakeCount`, `/activity/{event}` containing `-wind-`, `/sources/{id}` and `/health/sources/{id}` for Wind-acquired sources. `/scores/wind` is Platform's and is not a Wind family. Everything else is rejected: foreign domains (`CROSS_DOMAIN_PATH`), `publication`/`certification` (`RESERVED_PATH`), whole `/brains/wind` (`BRAIN_NODE_REPLACEMENT`), Publisher-derived targets (`PLATFORM_DERIVED_PATH`), unauthorised children (`PATH_NOT_AUTHORIZED`).
 
-## 2. Envelope and lineage (as run)
-`envelope: publish-artifact-v1`; `lineage` (`brain-lineage-v1`): `brainId=wind`, `artifactSchema`, `knowledgeRelease/manifestRef/manifestSha256 = NONE ×3` (no canonical Wind release exists yet: declared, not invented; the Publisher requires all three NONE or all declared), `codeVersion` = Wind's own commit sha12, `executionId` (UUIDv4 of the wind-hourly run, supplied by the caller), `inputFingerprint` = sha256 of the evidence times per lake (observation and forecast cycle), the frozen validation-evidence digest and the model/Brain versions, `outputFingerprint` computed with the **Publisher's own function** (Wind never re-implements it; tests also verify it with an independent re-hash), `artifactId` = content address `sha256:<canonical bytes>` (unique per run, identical for identical inputs), `generatedAt`, `lifecycle=CALIBRATION`, `reviewStatus=UNREVIEWED`, `validationStatus=NOT_VALIDATED`. `scope` is set for the lake-state artifacts (`lake-live`, `lake-static`, `fleet-readiness`); the registry and source artifacts use the default scope.
+## 4. No longer authored by Wind (from `compat.LEGACY_PATH_TABLE`; reported by the builder as `dropped` with the row id)
+| Path | Class | Mechanism / target owner |
+|---|---|---|
+| `/lakeFleet/{k}/lakeId`, `/snapshots/{k}/latest/lakeId` | PLATFORM_OWNED | STOP_WRITING / Platform Lake Registry |
+| `/snapshots/{k}/latest/wind`, `/snapshots/{k}/latest/brainVersions/wind` | DERIVED_COMPATIBILITY_PROJECTION | PUBLISHER_DERIVED (copy of the state; value of `/brains/wind/version`), same plan, retirement gate = snapshot migration plan |
+| `/health/jobs/wind-hourly` | PLATFORM_OWNED | ORCHESTRATOR_DERIVED |
+| `/health/brains/wind/{lastRun,lastSuccess,durationMs,errorCount,latestError,deployedVersion,publishMode}` | LEGACY_READER_DEPENDENCY | ORCHESTRATOR_DERIVED |
+| `/activity` pruning | PLATFORM_OWNED | STOP_WRITING / platform retention |
+Transitional, still Wind-authored and volatile: `/brains/wind/updatedAt`, `/brains/wind/lastSuccessfulRun` (retire when Ops and the Orchestrator read the publication record / execution records). `/brains/wind/lastError`: Wind-authored, cleared by typed DELETE.
 
-## 3. Freshness (lake-state artifact; required by its schema)
-`evidenceObservedAt` = newest of `observationTime` (analysis) else `forecastGeneratedAt`; `staleAfter` = earliest of `generatedAt + 90 min` and `NBM cycle + 3 h` (**Wind's existing thresholds, unchanged**); `freshnessStatus` = `UNAVAILABLE` if every state is `unavailable`, `STALE` if any state is stale, else `FRESH`; empty input = `UNKNOWN`. `expiresAt` is omitted (open decision: Wind has no existing expiry rule). `inputGeneratedAt` is not applicable (Wind acquires its own primary data). A successful run with an old NBM cycle therefore publishes `STALE`.
+## 5. Null / unknown / delete
+Null keys and empty containers are omitted (RTDB would drop them anyway; the stored node is unchanged) and **never** become a delete; a null inside a list is refused at build time. Deletes are typed and bounded: `lastError` (`OPTIONAL_CHILD_CLEARED`); lake nodes (`LAKE_LEFT_FLEET`, `EVIDENCE_REMOVED`) only from an explicit caller removal list. No other delete authority exists.
 
-## 4. Null, unknown and delete semantics
-- The artifact contains **only `SET` mutations; no `DELETE` anywhere** (Wind's schemas permit none, and the builder never emits one).
-- Null keys and empty containers are omitted. RTDB itself drops them on write, so the stored node is identical to today's. This is "absence semantics": a missing value never deletes anything else.
-- A null **inside a list** cannot be omitted without shifting indices, so the builder refuses it (`ArtifactBuildError`); it must be encoded as an explicit value.
-- A value the Publisher rejects (null, nested null, empty, NaN, wrong type) fails validation as a whole; nothing is published.
+## 6. Volatile and SKIP
+`wind-volatile-v1` is the Publisher's. Unchanged semantic content (all sections) ⇒ `SKIP`: no plan, no sink call, no head move, no heartbeat (`NO_REPUBLISH_HEARTBEAT`). A changed section publishes only itself (plus its derived copies and the one publication record); an older-than-baseline changed section rejects the whole artifact.
 
-## 5. `/brains/wind` registry: child-level, ownership
-Wind supplies only these children (identical to the Publisher's list; a test asserts equality): identity `brainId displayName domain question platform`; model `version schemaVersion stalenessModel dependsOn descriptor versions activeProductionModel researchCandidate scores readinessDefinitions stateKinds`; status `schedule enabled health status supportedLakeCount profiledLakeCount readinessCounts staleLakeCount staleAfterHours staleRule lastSuccessfulRun lastError deploymentVersion breakdowns runsPerMinute updatedAt publishMode`. Each child is replaced as a unit. **Never** the whole node; **never** `/brains/wind/publication` or `certification` (Publisher-owned; rejected in tests). Any child not on the list is reported as unsupported, not published.
-
-**Ambiguous ownership flagged (not widened):** `scores` (the registry copy of 3.1/BWIS, a score mirror: see score reconciliation); `lastError` (today `None` → omitted; a *stale* `lastError` can persist after recovery because Wind may not delete; see integration report F-4); `deploymentVersion` (label drift: `main@<sha>`).
-
-## 6. Authorized path families (anything else rejected by the Publisher)
-`/lakes/{k}/states/wind`, `/lakes/{k}/profiles/wind`, `/lakes/{k}/validation/wind`, `/lakeFleet/{k}/{slots,readiness,modelVersions}/wind` (DERIVED_PROJECTION), `/snapshots/{k}/latest/wind` (**LEGACY_READER_PRESENT**, same atomic plan as its source), `/brains/wind/{approved child}`, `/validation/wind`, `/health/brains/wind`, `/activity/{event}` containing `-wind-`, `/sources/{noaa-nbm-v5|noaa-rtma-ru|iem-metar-wind}`, `/health/sources/{same}`. `/scores/wind` is **not** a Wind family (Platform-owned).
-
-**Paths `wind-hourly` writes today that no Publisher Wind schema authorises** (the builder reports them in `dropped` and does not publish them): `/lakeFleet/{k}/lakeId`, `/snapshots/{k}/latest/lakeId`, `/snapshots/{k}/latest/brainVersions/wind`, `/health/jobs/wind-hourly`. Also unsupported: failure-path leaf writes under `/health/brains/wind/*`, and activity pruning (a delete). Each needs a decision (integration report F-5..F-7).
-
-## 7. Volatile fields (excluded from `outputFingerprint`)
-Shared defaults (`generatedAt publishedAt checkedAt ageHours durationMs`) plus Wind's: `inputAgeHours lastUpdatedAt updatedAt lastRun lastSuccess lastSuccessfulRun lastFetchAt latencyMs`. Evidence times (`observationTime`, `forecastGeneratedAt`, `latestObservationAt`, `latestIssuedAt`) are **material**: a new observation is a change. These must be registered in the Publisher's Wind registration at cutover (the tests inject them into a copy of the registry; the Publisher worktree is untouched).
-
-## 8. Determinism
-Same patches + same context ⇒ byte-identical canonical artifacts and identical deterministic plans (tested across two independent runs and two independent Publisher stacks).
-
-## 9. Not claimed
-No production behaviour changed. `knowledgeRelease` remains `NONE` until a Wind release manifest exists. The Publisher's shadow baseline is the last `SHADOW_READY`, not live state.
+## 7. Open items
+`expiresAt` decision; Wind release manifest; wiring into the job and the artifact store (cutover steps 2-5); Orchestrator compatibility for execution health and freshness (G1/G2); evidence digest is baked into the image (changes only on redeploy).

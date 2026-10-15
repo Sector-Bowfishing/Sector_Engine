@@ -1,9 +1,17 @@
 # Wind Brain: Architecture Certification V1 status
 
-**Status (2026-10-15, Phase 2): `SHADOW_INTEGRATION_READY`, i.e. `PARTIAL — LIVE CUTOVER PENDING`.** Not `ARCHITECTURE_CERTIFIED_V1`. Phase 1 status was `BLOCKED: PUBLISHER`; that blocker is now lifted for **shadow** integration only (Publisher V1 Shadow `d090c428` exists and Wind's artifacts pass it), but the live Publisher, backup resources, security enforcement and cutover do not exist and need separate approvals.
-Standard: `brain-certification-v1`. Local branch `cert/wind-architecture-v1` (not pushed). Nothing live was changed in either phase.
+**Status (2026-10-15, Phase 3): `WIND_PUBLISHER_V2_ADOPTION_READY`** (Wind-side contract adoption + equivalence gate). Certification status remains **PARTIAL — LIVE CUTOVER PENDING**; **not** `ARCHITECTURE_CERTIFIED_V1`. History: Phase 1 `BLOCKED: PUBLISHER`; Phase 2 `SHADOW_INTEGRATION_READY`.
+Standard: `brain-certification-v1`. Local branch `cert/wind-architecture-v1` (not pushed). Nothing live was changed in any phase.
+Architecture readiness and scientific maturity are separate axes: Wind is ARCHITECTURALLY ready for the repository's physical Phase 2 move (once the Repository Foundation's real GitHub Actions run succeeds) while remaining SHADOW / CALIBRATION / `NOT_VALIDATED` scientifically.
 
-## 0. Phase 2 summary
+## Phase 3 summary (Publisher V2 adoption)
+- Publisher lineage integrated: `d090c428` -> `7ebfca1c` (linear, history-preserving merge; Publisher package diff vs `7ebfca1c` empty).
+- ONE run -> ONE `publish-artifact-v2` bundle (`wind-publication-v1`, 5 sections) -> ONE plan; Wind no longer authors lake identity, snapshot copies, generic job/process health or activity pruning; typed explicit deletes; Publisher-owned volatile contract and fingerprint.
+- Equivalence (private real-state capture): `EQUIVALENT_WITH_EXPECTED_DIFFS` (MATCH 8,444; EXPECTED 1,299; LEGACY_ONLY 13; VOLATILE_ONLY 2; SEMANTIC_MISMATCH 0; UNKNOWN 0; TARGET_ONLY 0). Producer-level fixture equivalence is in the test suite.
+- Tests: Wind 105 passed (+16 network-marked NOT_RUN); brain_platform 452; brain-scores 21; brain-orchestrator 24.
+- Production write security gate remains OPEN; P12, P1-P11, G1/G2/G4 and the `lastSuccessfulRun` freshness change are cutover prerequisites (see `WIND_PUBLISHER_V2_ADOPTION_REPORT.md` §9).
+
+## Phase 2 summary (kept for history)
 - **Research preservation:** plan and draft manifest complete; **nothing moved**. The provider bake-off collector is **still running** (not touched); no backup destination exists; ≈ 1.01 GB local + 50.8 MB bucket must get a private versioned copy. Approvals needed: `WIND_RESEARCH_PRESERVATION_PLAN.md` §5.
 - **Publisher shadow integration:** Wind's artifact builder (5 artifacts: 3 baseline scopes of the lake-state schema + registry + sources) passes all 20 required proofs; 90 Wind tests and 251 Publisher tests pass. Findings F-1..F-9 for the platform lane: `WIND_PUBLISHER_SHADOW_INTEGRATION_REPORT.md`.
 - **Snapshot duplicate:** migration plan written; `/snapshots/{k}/latest/wind` stays (`LEGACY_READER_PRESENT`).

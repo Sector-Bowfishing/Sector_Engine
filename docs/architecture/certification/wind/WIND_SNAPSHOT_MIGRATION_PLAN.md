@@ -1,5 +1,7 @@
 # Wind Brain: snapshot duplicate migration plan (Part G)
 
+> **Update (Publisher V2):** Wind no longer authors `/snapshots/{k}/latest/wind` or `brainVersions/wind`. The Publisher derives them as `DERIVED_COMPATIBILITY_PROJECTION`s (`wind-snapshot-copy-v1`, `wind-snapshot-brainversion-v1`) from the authorised `/lakes/{k}/states/wind` and `/brains/wind/version` in the same atomic plan, with this plan's S2-S7 as the retirement gate. The reader-migration steps below are unchanged.
+
 **Nothing is retired. `/snapshots/{k}/latest/wind` keeps being written until its readers have moved and the 14-step procedure completes.**
 
 ## 1. Facts (verified)

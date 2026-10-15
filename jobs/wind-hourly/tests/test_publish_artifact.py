@@ -1,12 +1,12 @@
-"""Wind artifact builder through Publisher V1 SHADOW (local, no live system, no network). Covers the 20 required shadow proofs.
+"""Wind -> Publisher V2 SHADOW (publish-artifact-v2, bundle wind-publication-v1). Local only: in-memory/tmp stores, no network, no live system.
 
-Real Wind output is produced by the unchanged publish() against a DryRunWriter; its PATCHes are re-expressed as artifacts and sent through the
-Publisher's own handoff (ArtifactWriter -> authenticated API signal -> evaluate_reference). The Publisher code is imported, never re-implemented."""
+Real Wind output comes from the UNCHANGED publish() against a DryRunWriter; its PATCHes are re-expressed as ONE sealed bundle and sent through the
+Publisher's own handoff (ArtifactWriter -> authenticated API signal -> evaluate_reference). Publisher code is imported, never re-implemented; the
+registry is the Publisher's own (no Wind-side volatile or ownership list is injected)."""
 import copy
 import dataclasses
-import hashlib
 import itertools
-import json
+import socket
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -17,20 +17,19 @@ from sector_wind.brain.publish import publish
 from sector_wind.brain.writer import DryRunWriter
 from test_brain import CFG, DIRECTORY, NOW, make_store
 
-from sector_brain_platform.publisher import Result, default_registry, local_shadow_stack, output_fingerprint
+from sector_brain_platform.publisher import default_registry, local_shadow_stack
 from sector_brain_platform.publisher.api import AllowlistAuthorizer, Caller, OrchestratorApi
-from sector_brain_platform.publisher.registry import WIND_REGISTRY_CHILDREN, Registry
+from sector_brain_platform.publisher.artifact import section_fingerprint
+from sector_brain_platform.publisher.canonical import bundle_fingerprint
+from sector_brain_platform.publisher.compat import LEGACY_PATH_TABLE
+from sector_brain_platform.publisher.registry import WIND_BUNDLE, WIND_HEALTH_DOMAIN_CHILDREN, WIND_REGISTRY_CHILDREN
 
 T = datetime(2026, 10, 15, 3, 0, tzinfo=timezone.utc)
-LIVE = "wind-lake-state-v1:lake-live"
 iso = lambda t: t.strftime("%Y-%m-%dT%H:%M:%SZ")
 uuid4 = lambda n: f"{n:08x}-0000-4000-8000-{n:012x}"
-
-
-def wind_registry():
-    """The Publisher's Wind registration plus Wind's volatile fields (what the platform registry must carry at cutover)."""
-    base = default_registry()
-    return Registry([dataclasses.replace(base.spec(s), volatile_extra=A.WIND_VOLATILE_EXTRA) for s in base.schemas_for("wind")])
+LAKE = "Guntersville_AL"
+LIVE_SEC = ("wind-lake-state-v1", "lake-live")
+REG_SEC = ("wind-registry-v1", "default")
 
 
 class Authn:
@@ -41,7 +40,7 @@ class Authn:
 class Rig:
     def __init__(self, tmp_path=None):
         self.ids = itertools.count(1)
-        self.st = local_shadow_stack(tmp_path, registry=wind_registry(), clock=lambda: T + timedelta(hours=2), id_factory=lambda: uuid4(next(self.ids) + 50000))
+        self.st = local_shadow_stack(tmp_path, registry=default_registry(), clock=lambda: T + timedelta(hours=2), id_factory=lambda: uuid4(next(self.ids) + 50000))
         self.api = OrchestratorApi(Authn(), AllowlistAuthorizer({"wind-brain-identity": {"ARTIFACT": {"SUBMIT_ARTIFACT@wind"}}}), self.st.dispatcher)
         self.n = itertools.count(900)
 
@@ -51,9 +50,6 @@ class Rig:
                 "params": {"artifactId": ref.artifact_id, "artifactRef": ref.location, "artifactSha256": ref.sha256, "executionId": ref.execution_id,
                            "expectedSchema": ref.expected_schema}}
         return self.api.handle("wind-token", body), ref
-
-    def submit_all(self, arts):
-        return {key_of(a): self.submit(a)[0].result for a in arts}
 
 
 @pytest.fixture(scope="module")
@@ -65,319 +61,378 @@ def patches(tmp_path_factory):
     return w.patches
 
 
-def ctx(minutes=0, n=1, **kw):
-    return A.BuildContext(generated_at=iso(T + timedelta(minutes=minutes)), execution_id=uuid4(1000 + n), code_version="abc123def456", **kw)
+def ctx(minutes=0, n=1):
+    return A.BuildContext(generated_at=iso(T + timedelta(minutes=minutes)), execution_id=uuid4(1000 + n), code_version="abc123def456")
 
 
-def build(patches, minutes=0, n=1, mutate=None, **kw):
+def build(patches, minutes=0, n=1, removals=(), mutate=None):
     pp = copy.deepcopy(patches)
     if mutate:
-        mutate(A.merge_patches(pp) if False else pp)
-    res = A.build_artifacts(pp, ctx(minutes, n, **kw))
-    A.seal(res.artifacts, output_fingerprint)
-    return res
+        mutate(pp)
+    return A.build_artifacts(pp, ctx(minutes, n), removals=removals)
 
 
-def key_of(a):
-    return a["lineage"]["artifactSchema"] + (":" + a["scope"] if a.get("scope") else "")
+def sections(art):
+    return {(s["artifactSchema"], s.get("scope", "default")): s for s in art["sections"]}
 
 
-def by_schema(res):
-    """keyed 'schema' or 'schema:scope' (the lake-state schema is split into baseline scopes)."""
-    return {key_of(a): a for a in res.artifacts}
+def reseal(art):
+    """Recompute the sealed identity of a hand-modified artifact exactly the way the Publisher does (tests only)."""
+    reg = default_registry()
+    fps = [(s["artifactSchema"], s.get("scope", "default"), section_fingerprint(reg.spec(s["artifactSchema"]), "wind", s["mutations"])) for s in art["sections"]]
+    art["lineage"]["outputFingerprint"] = bundle_fingerprint("wind", art["lineage"]["artifactSchema"], fps)
+    art["lineage"].pop("artifactId", None)
+    art["lineage"]["artifactId"] = A.sha(art)
+    return art
 
 
-# 1-4, 9 ---- valid Wind artifacts accepted, identity, schema, hash/reference, authorised child paths --------------------------------------------
-def test_real_wind_output_is_accepted_by_publisher_shadow(patches, tmp_path):
+def mut(art, key, path):
+    return next(m for m in sections(art)[key]["mutations"] if m["path"] == path)
+
+
+def _paths(art):
+    return {m["path"] for s in art["sections"] for m in s["mutations"]}
+
+
+# 1, 2, 3 ---- ONE run -> ONE v2 bundle, correct sections, stable identity ------------------------------------------------------------------------
+def test_one_run_produces_one_v2_bundle_and_one_publisher_plan(patches, tmp_path):
     res = build(patches)
-    assert set(by_schema(res)) == {LIVE, "wind-lake-state-v1:lake-static", "wind-lake-state-v1:fleet-readiness", "wind-registry-v1", "wind-source-registry-v1"}
+    art = res.artifact
+    assert len(res.artifacts) == 1 and art["envelope"] == "publish-artifact-v2" and art["lineage"]["artifactSchema"] == WIND_BUNDLE      # 1
+    assert set(sections(art)) == {LIVE_SEC, ("wind-lake-state-v1", "lake-static"), ("wind-lake-state-v1", "fleet-readiness"), REG_SEC,
+                                  ("wind-source-registry-v1", "default")}                                                                  # 2
+    assert "mutations" not in art
     rig = Rig(tmp_path)
-    out = rig.submit_all(res.artifacts)
-    assert all(r["result"] == "SHADOW_READY" and r["live"] is False and r["mode"] == "SHADOW" for r in out.values()), out
-    for sid, r in out.items():
-        rec = rig.st.history.get_record("wind", r["publishId"])
-        assert rec["status"] == "SHADOW" and rec["artifactSchema"] == sid.split(":")[0] and "publishedAt" not in rec          # 18 publication record, no live claim
-        assert rec["outputFingerprint"] == by_schema(res)[sid]["lineage"]["outputFingerprint"] and rec["scope"] == (sid.split(":")[1] if ":" in sid else "default")
-    assert len(rig.st.sink.submitted) == 5 and rig.st.sink.live_mutations == 0                                  # 17 no live mutation
+    r, _ = rig.submit(art)
+    assert r.status == 200 and r.result["result"] == "SHADOW_READY" and r.result["live"] is False and r.result["mode"] == "SHADOW"
+    assert len(rig.st.sink.submitted) == 1 and rig.st.sink.live_mutations == 0                                                              # ONE sink call, ONE plan
+    plan = rig.st.sink.submitted[0][0]
+    assert [k for k in plan.updates if k.endswith("/publication")] == ["brains/wind/publication"]                                           # ONE publication record
+    rec = rig.st.history.get_record("wind", r.result["publishId"])
+    assert len(rig.st.history.records("wind")) == 1 and rec["status"] == "SHADOW" and "publishedAt" not in rec
+    assert {(s["artifactSchema"], s["scope"]) for s in rec["sections"]} == set(sections(art))
 
 
-def test_reference_hash_is_verified_and_tampering_is_caught(patches):
-    rig = Rig()
-    art = by_schema(build(patches))["wind-registry-v1"]
-    ref = rig.st.writer("wind").write(art)
-    bad = dataclasses.replace(ref, sha256="sha256:" + "ee" * 32)
-    r = rig.st.publisher.evaluate_reference(bad)
-    assert r.result == Result.REJECTED and "ARTIFACT_HASH_MISMATCH" in r.codes                                   # 4
-    fake = dataclasses.replace(ref, brain_id="biological-state", location=ref.location.replace("/wind/", "/biological-state/"))
-    assert rig.st.publisher.evaluate_reference(fake).result == Result.REJECTED
-
-
-def test_plan_paths_are_exactly_the_authorised_wind_families(patches):
-    rig = Rig()
-    rig.submit_all(build(patches).artifacts)
-    paths = {k for plan, _ in rig.st.sink.submitted for k in plan.updates}
-    allowed = (r"lakes/[^/]+/(states|profiles|validation)/wind", r"lakeFleet/[^/]+/(slots|readiness|modelVersions)/wind", r"snapshots/[^/]+/latest/wind",
-               r"brains/wind/[A-Za-z]+", r"validation/wind", r"health/brains/wind", r"activity/[^/]+-wind-[^/]+", r"sources/[a-z0-9-]+", r"health/sources/[a-z0-9-]+")
-    import re
-    stray = [p for p in paths if not any(re.fullmatch(a, p) for a in allowed)]
-    assert stray == [] and "brains/wind/publication" in paths, stray                                              # 9 + Publisher-owned record
-    kids = {p.split("/")[2] for p in paths if p.startswith("brains/wind/")} - {"publication"}
-    assert kids <= {c for g in WIND_REGISTRY_CHILDREN.values() for c in g}
-    assert "brains/wind" not in paths                                                                            # whole node never written
-
-
-# 5-6, 16 ---- lineage + independently verified fingerprint, deterministic plan --------------------------------------------------------------
-def _indep_fp(art):
-    vol = {"generatedAt", "publishedAt", "checkedAt", "ageHours", "durationMs"} | set(A.WIND_VOLATILE_EXTRA)
-
-    def strip(o):
-        if isinstance(o, dict):
-            return {k: strip(v) for k, v in sorted(o.items()) if k not in vol}
-        if isinstance(o, list):
-            return [strip(v) for v in o]
-        return round(o, 9) if isinstance(o, float) else o
-    ms = [{"op": m["op"], "path": m["path"], "value": strip(m["value"])} for m in sorted(art["mutations"], key=lambda m: m["path"])]
-    body = {"brainId": art["lineage"]["brainId"], "artifactSchema": art["lineage"]["artifactSchema"], "mutations": ms}
-    return "sha256:" + hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
-
-
-def test_output_fingerprint_independently_verified(patches):
-    for a in build(patches).artifacts:
-        assert a["lineage"]["outputFingerprint"] == _indep_fp(a)
-
-
-def test_builder_is_deterministic(patches):
+def test_execution_and_lineage_identity_is_stable(patches):
     a, b = build(patches), build(copy.deepcopy(patches))
-    assert [A.canonical(x) for x in a.artifacts] == [A.canonical(x) for x in b.artifacts]
-    p1, p2 = Rig(), Rig()
-    p1.submit_all(a.artifacts); p2.submit_all(b.artifacts)
-    assert [pl.canonical() for pl, _ in p1.st.sink.submitted] == [pl.canonical() for pl, _ in p2.st.sink.submitted]       # 16
-
-
-def test_lineage_is_complete_and_honest(patches):
-    for a in build(patches).artifacts:
-        lin = a["lineage"]
-        assert lin["brainId"] == "wind" and lin["lifecycle"] == "CALIBRATION" and lin["reviewStatus"] == "UNREVIEWED" and lin["validationStatus"] == "NOT_VALIDATED"
-        assert lin["knowledgeRelease"] == lin["manifestRef"] == lin["manifestSha256"] == "NONE"                          # no canonical Wind release yet (declared, not invented)
-        assert lin["artifactId"].startswith("sha256:") and lin["codeVersion"] == "abc123def456"
-    fr = by_schema(build(patches))[LIVE]["freshness"]
+    assert A.canonical(a.artifact) == A.canonical(b.artifact)                                                                                # 3
+    lin = a.artifact["lineage"]
+    assert lin["executionId"] == uuid4(1001) and lin["brainId"] == "wind" and lin["artifactId"].startswith("sha256:") and lin["codeVersion"] == "abc123def456"
+    assert lin["knowledgeRelease"] == lin["manifestRef"] == lin["manifestSha256"] == "NONE"
+    assert (lin["lifecycle"], lin["reviewStatus"], lin["validationStatus"]) == ("CALIBRATION", "UNREVIEWED", "NOT_VALIDATED")
+    c = build(patches, minutes=5, n=2).artifact["lineage"]
+    assert c["executionId"] != lin["executionId"] and c["outputFingerprint"] == lin["outputFingerprint"] and c["artifactId"] != lin["artifactId"]
+    fr = sections(a.artifact)[LIVE_SEC]["freshness"]
     assert fr["freshnessStatus"] == "FRESH" and "evidenceObservedAt" in fr and "staleAfter" in fr and "expiresAt" not in fr
 
 
-# 7-8 ---- SKIP / SHADOW semantics -------------------------------------------------------------------------------------------------------
-def test_unchanged_is_skip_changed_is_shadow_and_volatile_fields_do_not_count(patches):
+def test_integrity_hash_semantic_fingerprint_and_publication_metadata_are_distinct(patches):
     rig = Rig()
-    first = rig.submit_all(build(patches, minutes=0, n=1).artifacts)
-    assert {r["result"] for r in first.values()} == {"SHADOW_READY"}
-    again = build(patches, minutes=60, n=2)                                                                         # new run, same material
-    # volatile-only drift: timestamps that change every run
-    for a in again.artifacts:
-        for m in a["mutations"]:
-            v = m["value"]
-            if isinstance(v, dict):
-                for k in ("updatedAt", "lastUpdatedAt", "lastRun", "lastSuccess", "lastFetchAt", "durationMs"):
-                    if k in v:
-                        v[k] = "2026-10-15T04:00:00Z" if k != "durationMs" else 99999
-            # NOTE: scalar CHILD mutations (/brains/wind/updatedAt, /brains/wind/lastSuccessfulRun) are deliberately NOT drifted here: Publisher V1
-            # strips volatile keys inside dict values only, so these two always count as material (see test_scalar_volatile_children_are_material).
-    A.seal(again.artifacts, output_fingerprint)
-    assert {r["result"] for r in rig.submit_all(again.artifacts).values()} == {"SKIP"}                               # 7
-    assert len(rig.st.sink.submitted) == 5
-
-    changed = build(patches, minutes=120, n=3)
-    for m in by_schema(changed)[LIVE]["mutations"]:
-        if m["path"].endswith("/states/wind"):
-            m["value"]["sustainedMph"] = (m["value"].get("sustainedMph") or 0) + 3.5
-            break
-    A.seal(changed.artifacts, output_fingerprint)
-    out = rig.submit_all(changed.artifacts)
-    assert out[LIVE]["result"] == "SHADOW_READY" and out["wind-registry-v1"]["result"] == "SKIP"                       # 8
-    assert {k: v["result"] for k, v in out.items() if k != LIVE} == {k: "SKIP" for k in out if k != LIVE}            # slow scopes do not rewrite
-    assert len(rig.st.sink.submitted) == 6 and rig.st.sink.live_mutations == 0
-    assert len(rig.st.sink.submitted[-1][0].updates) < 40                                                          # only live state paths + publication, not ~700
+    art = build(patches).artifact
+    r, ref = rig.submit(art)
+    rec = rig.st.history.get_record("wind", r.result["publishId"])
+    assert ref.sha256 != art["lineage"]["outputFingerprint"] and rec["outputFingerprint"] == art["lineage"]["outputFingerprint"]
+    assert rec["publishId"] not in A.canonical(art).decode()
 
 
-# 19-20 ---- baseline comparison and ordering ------------------------------------------------------------------------------------------
-def test_older_artifact_than_baseline_is_rejected(patches):
+# 4, 5, 6, 7 ---- Wind no longer authors retired paths --------------------------------------------------------------------------------------
+def test_wind_no_longer_authors_snapshot_identity_or_job_health_paths(patches):
+    res = build(patches)
+    p = _paths(res.artifact)
+    assert not any(x.startswith("/snapshots") for x in p)                                                                                    # 4
+    assert not any(x.endswith("/lakeId") for x in p)                                                                                         # 5
+    assert not any(x.startswith("/health/jobs") for x in p)                                                                                  # 6
+    assert not any(x.startswith("/health/brains/wind/") and x.rsplit("/", 1)[-1] not in WIND_HEALTH_DOMAIN_CHILDREN for x in p)
+    assert {"/health/brains/wind/status", "/health/brains/wind/staleLakeCount"} <= p                                                         # 7
+    by = {d["row"]: d for d in res.dropped}
+    assert {"snapshot-wind", "snapshot-brainversions-wind", "lakefleet-lakeid", "snapshot-lakeid", "health-jobs-wind-hourly", "health-brains-wind-process"} <= set(by)
+    assert res.unsupported == []
+    assert by["snapshot-wind"]["mechanism"] == "PUBLISHER_DERIVED" and by["lakefleet-lakeid"]["mechanism"] == "STOP_WRITING"
+    assert by["health-jobs-wind-hourly"]["targetOwner"] == "Orchestrator"
+
+
+def test_publisher_derives_the_snapshot_compatibility_copy_from_authorised_source(patches):
     rig = Rig()
-    rig.submit_all(build(patches, minutes=60, n=1).artifacts)
-    older = build(patches, minutes=0, n=2)
-    for m in by_schema(older)[LIVE]["mutations"]:
-        if m["path"].endswith("/states/wind"):
-            m["value"]["sustainedMph"] = 77.7
-            break
-    A.seal(older.artifacts, output_fingerprint)
-    r, _ = rig.submit(by_schema(older)[LIVE])
-    assert r.result["result"] == "REJECTED" and "ARTIFACT_OLDER_THAN_BASELINE" in r.result["codes"]                         # 20
-    head = rig.st.history.head("wind", "wind-lake-state-v1", "lake-live")
-    assert head is not None                                                                                          # 19 baseline exists and was not moved
-    assert len(rig.st.sink.submitted) == 5
+    rig.submit(build(patches).artifact)
+    plan = rig.st.sink.submitted[0][0]
+    assert plan.derived_keys and all(k.endswith("/latest/wind") or k.endswith("/brainVersions/wind") for k in plan.derived_keys)
+    for k in (c for c in plan.derived_keys if c.endswith("/latest/wind")):
+        lake = k.split("/")[1]
+        assert plan.updates[k] == plan.updates[f"lakes/{lake}/states/wind"]
 
 
-# 10-14 ---- forbidden paths are rejected through the full handoff ---------------------------------------------------------------------
-LAKE = "Guntersville_AL"
-LIVE = "wind-lake-state-v1:lake-live"
-
-
-@pytest.mark.parametrize("schema,path,code", [
-    ("wind-registry-v1", "/brains/wind", "BRAIN_NODE_REPLACEMENT"),                                                  # 10
-    ("wind-registry-v1", "/brains/wind/publication", "RESERVED_PATH"),                                               # 11
-    ("wind-lake-state-v1", "/speciesProfiles/common_carp", "CROSS_DOMAIN_PATH"),                                     # 12
-    ("wind-lake-state-v1", "/species/common_carp", "CROSS_DOMAIN_PATH"),
-    ("wind-lake-state-v1", f"/lakes/{LAKE}/speciesPresence", "CROSS_DOMAIN_PATH"),                                   # 13
-    ("wind-lake-state-v1", f"/lakes/{LAKE}/states/waterTemp", "CROSS_DOMAIN_PATH"),                                  # 14
-    ("wind-lake-state-v1", f"/lakes/{LAKE}/states/waterTemperature", "PATH_NOT_AUTHORIZED"),                        # snapshot-field spelling: still rejected
-    ("wind-lake-state-v1", f"/lakes/{LAKE}/states/waterClarity", "CROSS_DOMAIN_PATH"),
-    ("wind-lake-state-v1", f"/lakes/{LAKE}/states/depth", "CROSS_DOMAIN_PATH"),
-    ("wind-lake-state-v1", f"/lakes/{LAKE}/states/lake", "CROSS_DOMAIN_PATH"),
-    ("wind-lake-state-v1", "/brains/biological-state/status", "CROSS_DOMAIN_PATH"),
-    ("wind-lake-state-v1", "/scores/wind", "CROSS_DOMAIN_PATH"),
-    ("wind-lake-state-v1", "/control/overview", "CROSS_DOMAIN_PATH"),
-    ("wind-registry-v1", "/health/jobs/wind-hourly", None),                                                          # not authorised by any Wind schema
-    ("wind-registry-v1", "/brains/wind/someUnapprovedChild", "PATH_NOT_AUTHORIZED"),
-])
-def test_forbidden_paths_rejected_through_full_handoff(patches, schema, path, code):
+@pytest.mark.parametrize("path,code", [
+    (f"/snapshots/{LAKE}/latest/wind", "PLATFORM_DERIVED_PATH"), (f"/snapshots/{LAKE}/latest/brainVersions/wind", "PLATFORM_DERIVED_PATH"),
+    (f"/snapshots/{LAKE}/latest/lakeId", None), (f"/lakeFleet/{LAKE}/lakeId", None), ("/health/jobs/wind-hourly", None),
+    ("/health/brains/wind/lastRun", None), ("/health/brains/wind/durationMs", None), ("/health/brains/wind/deployedVersion", None),
+    ("/brains/wind/publication", "RESERVED_PATH"), ("/brains/wind", "BRAIN_NODE_REPLACEMENT"), ("/brains/wind/someUnapprovedChild", "PATH_NOT_AUTHORIZED"),
+    ("/speciesProfiles/common_carp", "CROSS_DOMAIN_PATH"), ("/species/common_carp", "CROSS_DOMAIN_PATH"), (f"/lakes/{LAKE}/speciesPresence", "CROSS_DOMAIN_PATH"),
+    (f"/lakes/{LAKE}/states/waterTemp", "CROSS_DOMAIN_PATH"), (f"/lakes/{LAKE}/states/waterClarity", "CROSS_DOMAIN_PATH"),
+    (f"/lakes/{LAKE}/states/depth", "CROSS_DOMAIN_PATH"), (f"/lakes/{LAKE}/states/lake", "CROSS_DOMAIN_PATH"),
+    ("/brains/biological-state/status", "CROSS_DOMAIN_PATH"), ("/scores/wind", "CROSS_DOMAIN_PATH"), ("/control/overview", "CROSS_DOMAIN_PATH")])
+def test_wind_cannot_author_retired_or_foreign_paths_and_the_whole_bundle_rejects(patches, path, code):
     rig = Rig()
-    art = by_schema(build(patches))[LIVE if schema == "wind-lake-state-v1" else schema]
-    art["mutations"].append({"op": "SET", "path": path, "value": {"x": 1}})
-    A.seal([art], output_fingerprint)
+    art = build(patches).artifact
+    sections(art)[REG_SEC]["mutations"].append({"op": "SET", "path": path, "value": {"x": 1}})
+    reseal(art)
     r, _ = rig.submit(art)
-    assert r.result["result"] == "REJECTED" and rig.st.sink.submitted == []
+    assert r.result["result"] == "REJECTED" and r.result["live"] is False                                                                    # 15
     if code:
         assert code in r.result["codes"]
-    # the legitimate mutations in the same artifact are NOT published either (all-or-nothing)
-    assert rig.st.sink.live_mutations == 0
+    assert rig.st.sink.submitted == [] and rig.st.history.head("wind", "wind-lake-state-v1", "lake-live") is None
 
 
-# 15 ---- null / missing cannot delete -----------------------------------------------------------------------------------------------
-def test_null_or_empty_values_cannot_delete(patches):
+# 8, 9, 10 ---- SKIP, volatility, material evidence -----------------------------------------------------------------------------------------
+def test_unchanged_semantic_bundle_skips_and_volatile_execution_metadata_never_forces_publication(patches):
     rig = Rig()
-    assert {r["result"] for r in rig.submit_all(build(patches).artifacts).values()} == {"SHADOW_READY"}
+    assert rig.submit(build(patches, 0, 1).artifact)[0].result["result"] == "SHADOW_READY"
+    same = build(patches, 60, 2).artifact
+    r, _ = rig.submit(same)
+    assert r.result["result"] == "SKIP" and len(rig.st.sink.submitted) == 1                                                                   # 8
+    heads = {s: rig.st.history.head("wind", *s) for s in sections(same)}
+    drift = build(patches, 120, 3).artifact
+    for s in drift["sections"]:
+        for m in s["mutations"]:
+            v = m["value"] if m["op"] == "SET" else None
+            if isinstance(v, dict):
+                for k, nv in (("inputAgeHours", 9.9), ("lastFetchAt", "2026-10-15T09:00:00Z"), ("latencyMs", 12345), ("generatedAt", "2026-10-15T09:00:00Z"),
+                              ("durationMs", 77), ("checkedAt", "2026-10-15T09:00:00Z")):
+                    if k in v:
+                        v[k] = nv
+                if "inputAgeHours" in (v.get("provenance") or {}):
+                    v["provenance"]["inputAgeHours"] = 9.9
+            if m["path"] in ("/brains/wind/updatedAt", "/brains/wind/lastSuccessfulRun"):
+                m["value"] = "2026-10-15T09:00:00Z"
+    reseal(drift)
+    r, _ = rig.submit(drift)
+    assert r.result["result"] == "SKIP" and len(rig.st.sink.submitted) == 1                                                                   # 9
+    assert {s: rig.st.history.head("wind", *s) for s in sections(same)} == heads
+
+
+def test_material_evidence_time_change_publishes_and_only_the_changed_section_is_in_the_plan(patches):
+    rig = Rig()
+    rig.submit(build(patches, 0, 1).artifact)
+    ch = build(patches, 60, 2).artifact
+    next(m for m in sections(ch)[LIVE_SEC]["mutations"] if m["path"].endswith("/states/wind"))["value"]["observationTime"] = "2026-10-15T03:10:00Z"
+    reseal(ch)
+    r, _ = rig.submit(ch)
+    assert r.result["result"] == "SHADOW_READY" and len(rig.st.sink.submitted) == 2                                                          # 10
+    plan = rig.st.sink.submitted[-1][0]
+    rec = rig.st.history.get_record("wind", r.result["publishId"])
+    res = {(s["artifactSchema"], s["scope"]): s["result"] for s in rec["sections"]}
+    assert res[LIVE_SEC] == "SHADOW" and [v for k, v in res.items() if k != LIVE_SEC] == ["SKIP"] * 4
+    assert not any(k.startswith("sources/") or k == "brains/wind/version" for k in plan.updates)
+
+
+# 11, 12, 13 ---- explicit typed DELETE; null/missing never deletes -------------------------------------------------------------------------
+def _err_patches(patches, on):
+    pp = copy.deepcopy(patches)
+    for p in pp:
+        if "brains/wind" in p:
+            p["brains/wind"]["lastError"] = {"at": "2026-10-12T06:20:00Z", "message": "boom"} if on else None
+    return pp
+
+
+def test_last_error_cleared_is_an_explicit_typed_delete_and_idempotent(patches):
+    rig = Rig()
+    healthy = A.build_artifacts(patches, ctx(0, 1))
+    assert healthy.deletes == [{"path": "/brains/wind/lastError", "reason": "OPTIONAL_CHILD_CLEARED"}]                                        # 11
+    assert mut(healthy.artifact, REG_SEC, "/brains/wind/lastError") == {"op": "DELETE", "path": "/brains/wind/lastError", "reason": "OPTIONAL_CHILD_CLEARED"}
+    err = A.build_artifacts(_err_patches(patches, True), ctx(30, 2))
+    assert err.deletes == [] and mut(err.artifact, REG_SEC, "/brains/wind/lastError")["op"] == "SET"
+    assert rig.submit(err.artifact)[0].result["result"] == "SHADOW_READY"
+    r, _ = rig.submit(A.build_artifacts(_err_patches(patches, False), ctx(60, 3)).artifact)
+    assert r.result["result"] == "SHADOW_READY"
+    plan = rig.st.sink.submitted[-1][0]
+    assert plan.updates["brains/wind/lastError"] is None and plan.deletes == ("brains/wind/lastError",)
+    assert rig.submit(A.build_artifacts(_err_patches(patches, False), ctx(90, 4)).artifact)[0].result["result"] == "SKIP"
+
+
+def test_lake_removals_use_the_closed_reasons_and_derive_the_snapshot_delete(patches):
+    rig = Rig()
+    rig.submit(build(patches, 0, 1).artifact)
+    rem = [{"path": f"/lakes/{LAKE}/states/wind", "reason": "LAKE_LEFT_FLEET"}, {"path": f"/lakeFleet/{LAKE}/slots/wind", "reason": "LAKE_LEFT_FLEET"},
+           {"path": f"/lakes/{LAKE}/validation/wind", "reason": "EVIDENCE_REMOVED"}]
+
+    def drop_lake(pp):
+        for p in pp:
+            for k in [k for k in p if LAKE in k and (k.startswith("lakes/") and k.endswith(("states/wind", "validation/wind")) or k.endswith("slots/wind"))]:
+                del p[k]
+    res = build(patches, 60, 2, removals=rem, mutate=drop_lake)
+    assert len(res.deletes) == 4 - 1 + 0 or len(res.deletes) >= 3
+    r, _ = rig.submit(res.artifact)
+    assert r.result["result"] == "SHADOW_READY"
+    plan = rig.st.sink.submitted[-1][0]
+    assert {f"lakes/{LAKE}/states/wind", f"lakeFleet/{LAKE}/slots/wind", f"lakes/{LAKE}/validation/wind"} <= set(plan.deletes)
+    assert plan.updates[f"snapshots/{LAKE}/latest/wind"] is None                                                                              # derived target deleted with its source
+
+
+def test_missing_or_null_never_becomes_a_delete(patches):
+    base = A.merge_patches(copy.deepcopy(patches))
+    base[f"lakes/{LAKE}/validation/wind"] = None                                                                                              # legacy "null-on-miss"
+    base[f"lakes/{LAKE}/profiles/wind"] = {"a": None, "b": []}
+    del base["brains/wind"]["lastError"]                                                                                                      # key absent: nothing happens
+    res = A.build_artifacts([base], ctx())
+    assert res.deletes == []                                                                                                                  # 12
+    assert f"/lakes/{LAKE}/validation/wind" not in _paths(res.artifact) and f"/lakes/{LAKE}/profiles/wind" not in _paths(res.artifact)
+    assert res.omitted_unknown >= 2
+    rig = Rig()
+    assert rig.submit(res.artifact)[0].result["result"] == "SHADOW_READY" and rig.st.sink.submitted[0][0].deletes == ()
     for bad in (None, {"a": None}, {}, []):
-        art = by_schema(build(patches, minutes=30, n=5))[LIVE]
-        art["mutations"][0]["value"] = bad
-        A.seal([art], output_fingerprint)
-        r, _ = rig.submit(art)
-        assert r.result["result"] == "FAILED_VALIDATION" and r.result["codes"][0] in ("NULL_VALUE", "NULL_IN_VALUE", "EMPTY_VALUE"), r.result
-    assert len(rig.st.sink.submitted) == 5
-    assert not any(m["op"] == "DELETE" for a in build(patches).artifacts for m in a["mutations"])
-
-
-def test_builder_never_emits_null_or_empty_and_refuses_nulls_in_lists(patches):
-    def walk(o):
-        if o is None or o == {} or o == []:
-            return False
-        if isinstance(o, dict):
-            return all(walk(v) for v in o.values())
-        if isinstance(o, list):
-            return all(walk(v) for v in o)
-        return True
-    for a in build(patches).artifacts:
-        assert all(walk(m["value"]) for m in a["mutations"])
+        art = build(patches, 5, 9).artifact
+        sections(art)[LIVE_SEC]["mutations"][0]["value"] = bad
+        reseal(art)
+        rr, _ = Rig().submit(art)
+        assert rr.result["result"] == "FAILED_VALIDATION" and rr.result["codes"][0] in ("NULL_VALUE", "NULL_IN_VALUE", "EMPTY_VALUE")
     with pytest.raises(A.ArtifactBuildError):
-        A.build_artifacts([{"lakes/Guntersville_AL/states/wind": {"hourly": [None, 1]}}], ctx())
+        A.build_artifacts([{f"lakes/{LAKE}/states/wind": {"hourly": [None, 1]}}], ctx())
 
 
-# registry ownership -------------------------------------------------------------------------------------------------------------------
-def test_registry_is_published_as_approved_children_only(patches):
-    reg = by_schema(build(patches))["wind-registry-v1"]
-    kids = {m["path"].split("/")[3] for m in reg["mutations"] if m["path"].startswith("/brains/wind/")}
-    approved = {c for g in WIND_REGISTRY_CHILDREN.values() for c in g}
-    assert kids and kids <= approved and A.REGISTRY_CHILDREN == approved                                              # builder list == Publisher list
-    assert "publication" not in kids and "certification" not in kids
-    paths = [m["path"] for m in reg["mutations"]]
-    assert "/brains/wind" not in paths
-    assert "lastError" not in kids                                                                                   # None today -> omitted, never null
+@pytest.mark.parametrize("rem,why", [
+    ([{"path": f"/lakes/{LAKE}/states/wind", "reason": "BECAUSE"}], "reason not in vocabulary"),
+    ([{"path": f"/lakes/{LAKE}/states/wind", "reason": "OPTIONAL_CHILD_CLEARED"}], "registry reason on a lake path"),
+    ([{"path": f"/lakes/{LAKE}/states", "reason": "LAKE_LEFT_FLEET"}], "parent node, not an exact child"),
+    ([{"path": f"/lakes/{LAKE}", "reason": "LAKE_LEFT_FLEET"}], "whole lake"),
+    ([{"path": "/brains/wind", "reason": "OPTIONAL_CHILD_CLEARED"}], "whole registry"),
+    ([{"path": "/brains/wind/publication", "reason": "OPTIONAL_CHILD_CLEARED"}], "Publisher-owned"),
+    ([{"path": "/sources/noaa-nbm-v5", "reason": "EVIDENCE_REMOVED"}], "no delete family on sources"),
+    ([{"path": "/speciesProfiles/common_carp", "reason": "LAKE_LEFT_FLEET"}], "foreign domain"),
+    ([{"path": f"/snapshots/{LAKE}/latest/wind", "reason": "LAKE_LEFT_FLEET"}], "derived target is the Publisher's")])
+def test_invalid_delete_is_rejected_by_the_builder_and_by_the_publisher(patches, rem, why):
+    with pytest.raises(A.ArtifactBuildError):
+        build(patches, removals=rem)
+    art = build(patches).artifact                                                                                                             # bypass the builder: the Publisher still refuses
+    sections(art)[REG_SEC]["mutations"] += [{"op": "DELETE", "path": r["path"], "reason": r["reason"]} for r in rem]
+    reseal(art)
+    r, _ = Rig().submit(art)
+    assert r.result["result"] in ("REJECTED", "FAILED_VALIDATION"), why
 
 
-def test_unauthorised_paths_are_reported_not_smuggled(patches):
-    res = build(patches)
-    d = {x["path"].split("/")[-1] if "lakeId" in x["path"] else x["path"] for x in res.dropped}
-    assert "/health/jobs/wind-hourly" in {x["path"] for x in res.dropped}
-    assert any(x["path"].endswith("/lakeId") for x in res.dropped) and any("brainVersions" in x["path"] for x in res.dropped)
-    published = {m["path"] for a in res.artifacts for m in a["mutations"]}
-    assert not any(p.endswith("/lakeId") or "brainVersions" in p or p.startswith("/health/jobs") for p in published)
-    assert res.unsupported == []
+# 14 ---- publication metadata is not Brain-authored ----------------------------------------------------------------------------------------
+def test_publication_metadata_is_publisher_owned(patches):
+    assert not any("publication" in p or "certification" in p for p in _paths(build(patches).artifact))
+    for op in ({"op": "SET", "path": "/brains/wind/publication", "value": {"publishId": "forged"}},
+               {"op": "DELETE", "path": "/brains/wind/publication", "reason": "OPTIONAL_CHILD_CLEARED"},
+               {"op": "SET", "path": "/brains/wind/publication/publishId", "value": "forged"}, {"op": "SET", "path": "/brains/wind/certification", "value": {"s": 1}}):
+        art = build(patches).artifact
+        sections(art)[REG_SEC]["mutations"].append(op)
+        reseal(art)
+        r, _ = Rig().submit(art)
+        assert r.result["result"] == "REJECTED" and "RESERVED_PATH" in r.result["codes"]
 
 
-def test_equivalence_with_current_live_writer(patches):
-    """Every value the existing writer stores is in the artifact (modulo RTDB-dropped nulls/empties and the reported unauthorised paths)."""
+# 16 ---- ordering: an older changed section rejects the whole artifact ---------------------------------------------------------------------------
+def test_older_changed_section_rejects_the_whole_artifact(patches):
+    rig = Rig()
+    rig.submit(build(patches, 60, 1).artifact)
+    older = build(patches, 0, 2).artifact
+    next(m for m in sections(older)[LIVE_SEC]["mutations"] if m["path"].endswith("/states/wind"))["value"]["sustainedMph"] = 77.7
+    mut(older, REG_SEC, "/brains/wind/status")["value"] = "DEGRADED"
+    reseal(older)
+    r, _ = rig.submit(older)
+    assert r.result["result"] == "REJECTED" and "ARTIFACT_OLDER_THAN_BASELINE" in r.result["codes"]
+    assert len(rig.st.sink.submitted) == 1                                                                                                     # the changed registry section did NOT publish either
+    assert rig.st.history.head("wind", "wind-registry-v1", "default")["generatedAt"] == iso(T + timedelta(minutes=60))
+
+
+# identity / reference / hash ------------------------------------------------------------------------------------------------------------
+def test_identity_schema_lineage_hash_and_fingerprint_are_verified(patches):
+    rig = Rig()
+    art = build(patches).artifact
+    foreign = copy.deepcopy(art)
+    foreign["lineage"]["brainId"] = "biological-state"
+    with pytest.raises(Exception):
+        rig.st.writer("wind").write(foreign)
+    unknown = copy.deepcopy(art)
+    unknown["lineage"]["artifactSchema"] = "wind-secret-v9"; unknown["lineage"]["artifactId"] = "sha256:" + "01" * 32
+    assert rig.submit(unknown)[0].result["codes"] == ["UNKNOWN_SCHEMA"]
+    broken = copy.deepcopy(art)
+    del broken["lineage"]["codeVersion"]; broken["lineage"]["artifactId"] = "sha256:" + "02" * 32
+    assert "LINEAGE_INCOMPLETE" in rig.submit(broken)[0].result["codes"]
+    tampered = copy.deepcopy(art)
+    sections(tampered)[LIVE_SEC]["mutations"][0]["value"] = {"x": 1}; tampered["lineage"]["artifactId"] = "sha256:" + "03" * 32
+    assert "FINGERPRINT_MISMATCH" in rig.submit(tampered)[0].result["codes"]
+    ref = rig.st.writer("wind").write(art)
+    assert "ARTIFACT_HASH_MISMATCH" in rig.st.publisher.evaluate_reference(dataclasses.replace(ref, sha256="sha256:" + "ee" * 32)).codes
+    assert rig.st.sink.submitted == []
+
+
+# 17 ---- zero live write -------------------------------------------------------------------------------------------------------------------
+def test_full_flow_is_zero_live_write_and_opens_no_socket(patches, monkeypatch):
+    def no_net(*a, **k):
+        raise AssertionError("network used")
+    monkeypatch.setattr(socket, "socket", no_net)
+    monkeypatch.setattr(socket, "create_connection", no_net)
+    rig = Rig()
+    assert rig.submit(build(patches).artifact)[0].result["result"] == "SHADOW_READY" and rig.st.sink.live_mutations == 0
+
+
+# ownership / equivalence at the builder level ---------------------------------------------------------------------------------------------
+def test_ownership_and_fingerprint_logic_come_from_the_publisher_not_from_wind(patches):
+    kids = {m["path"].split("/")[3] for m in sections(build(patches).artifact)[REG_SEC]["mutations"] if m["path"].startswith("/brains/wind/")}
+    assert kids <= {c for g in WIND_REGISTRY_CHILDREN.values() for c in g}
+    src = open(A.__file__).read()
+    assert "REGISTRY_CHILDREN" not in src and "WIND_VOLATILE" not in src and "output_fingerprint" not in src and "bundle_fingerprint" not in src
+    assert len({r.id for r in LEGACY_PATH_TABLE}) == len(LEGACY_PATH_TABLE)
+
+
+def test_authored_values_equal_what_the_legacy_writer_stores(patches):
     flat = A.merge_patches(patches)
     res = build(patches)
-    pub = {m["path"].lstrip("/"): m["value"] for a in res.artifacts for m in a["mutations"]}
-    dropped = {x["path"].lstrip("/") for x in res.dropped}
+    pub = {m["path"]: m["value"] for s in res.artifact["sections"] for m in s["mutations"] if m["op"] == "SET"}
+    dropped = {d["path"] for d in res.dropped}
     for key, val in flat.items():
-        if key in dropped or key == "brains/wind":
-            continue
-        norm = A.normalize(val)
-        if norm is A._ABSENT:
-            assert key not in pub
-        else:
-            assert pub[key] == norm, key
-    reg = flat["brains/wind"]
-    for child, val in reg.items():
-        norm = A.normalize(val)
-        if norm is not A._ABSENT:
-            assert pub[f"brains/wind/{child}"] == norm
-    assert res.omitted_unknown > 0
+        items = [(f"/{key}/{c}", v) for c, v in val.items()] if key in ("brains/wind", "health/brains/wind") else [("/" + key, val)]
+        for p, v in items:
+            n = A.normalize(v)
+            if p in dropped:
+                continue
+            if n is A._ABSENT:
+                assert p not in pub, p
+            else:
+                assert pub[p] == n, p
 
 
 def test_no_score_is_changed_by_the_builder(patches):
-    res = build(patches)
-    reg = {m["path"]: m["value"] for m in by_schema(res)["wind-registry-v1"]["mutations"]}
+    art = build(patches).artifact
+    reg = {m["path"]: m["value"] for m in sections(art)[REG_SEC]["mutations"] if m["op"] == "SET"}
     assert reg["/brains/wind/scores"] == A.merge_patches(patches)["brains/wind"]["scores"]
-    assert all(not m["path"].startswith("/scores") for a in res.artifacts for m in a["mutations"])
+    assert not any(p.startswith("/scores") for p in _paths(art))
 
 
-def test_scalar_volatile_children_are_material(patches):
-    """PUBLISHER FINDING (not changed here): volatile_extra strips dict KEYS inside a value, but child-level publication makes `lastSuccessfulRun` and
-    `updatedAt` scalar mutations addressed by path, which are never stripped. Between two runs with identical science the registry artifact therefore
-    still reads as changed (SHADOW_READY, never SKIP) while lake-state and sources SKIP. Needs a Publisher-side rule (platform lane)."""
-    rig = Rig()
-    rig.submit_all(build(patches, minutes=0, n=1).artifacts)
-    later = build(patches, minutes=60, n=2)
-    for m in by_schema(later)["wind-registry-v1"]["mutations"]:
-        if m["path"] in ("/brains/wind/lastSuccessfulRun", "/brains/wind/updatedAt"):
-            m["value"] = "2026-10-15T04:00:00Z"
-    A.seal(later.artifacts, output_fingerprint)
-    out = rig.submit_all(later.artifacts)
-    assert out["wind-registry-v1"]["result"] == "SHADOW_READY" and {v["result"] for k, v in out.items() if k != "wind-registry-v1"} == {"SKIP"}
+# equivalence (Publisher F-9 evaluator) against the legacy writer's own output --------------------------------------------------------------
+def _rtdb_view(v):
+    """The tree as RTDB stores it (null keys and empty containers vanish); DryRunStore keeps raw Nones."""
+    if isinstance(v, dict):
+        return {k: x for k, x in ((k, _rtdb_view(x)) for k, x in v.items()) if x not in (None, {}, [])}
+    if isinstance(v, list):
+        return [x for x in (_rtdb_view(i) for i in v) if x not in (None, {}, [])]
+    return v
 
 
-def test_five_artifacts_are_five_independent_atomic_plans(patches):
-    """PUBLISHER FINDING: atomicity is per artifact. One wind-hourly run yields three schemas, hence three plans: lake state/fleet/snapshot, registry/health,
-    sources. Cross-schema atomicity (readiness counts vs fleet rows) needs a Publisher-side artifact group or a single Wind schema."""
-    rig = Rig()
-    rig.submit_all(build(patches).artifacts)
-    plans = [pl for pl, _ in rig.st.sink.submitted]
-    body = [{k for k in pl.updates if k != "brains/wind/publication"} for pl in plans]
-    assert len(plans) == 5 and sum(len(b) for b in body) == len(set().union(*body))                      # disjoint payloads
-    assert all("brains/wind/publication" in pl.updates for pl in plans)                                  # ...but each plan overwrites the ONE publication node: last wins
-
-
-# 2, 3, 5 ---- identity, schema and lineage are verified, not assumed ------------------------------------------------------------------
-def test_identity_schema_and_lineage_are_verified(patches):
-    rig = Rig()
-    art = by_schema(build(patches))["wind-registry-v1"]
-
-    other = copy.deepcopy(art)
-    other["lineage"]["brainId"] = "biological-state"                                  # Wind identity submitting as Fish
-    A.seal([other], output_fingerprint)
-    with pytest.raises(Exception):                                                    # the Wind-scoped writer refuses to store another Brain's artifact
-        rig.st.writer("wind").write(other)
-
-    unknown = copy.deepcopy(art)
-    unknown["lineage"]["artifactSchema"] = "wind-secret-v9"; unknown["lineage"]["artifactId"] = "sha256:" + "01" * 32
-    r, _ = rig.submit(unknown)
-    assert r.result["result"] == "REJECTED" and r.result["codes"] == ["UNKNOWN_SCHEMA"]
-
-    broken = copy.deepcopy(art)
-    del broken["lineage"]["codeVersion"]; broken["lineage"]["artifactId"] = "sha256:" + "02" * 32
-    r, _ = rig.submit(broken)
-    assert r.result["result"] == "FAILED_VALIDATION" and "LINEAGE_INCOMPLETE" in r.result["codes"]
-
-    tampered = copy.deepcopy(art)
-    tampered["mutations"][0]["value"] = "TAMPERED"; tampered["lineage"]["artifactId"] = "sha256:" + "03" * 32     # declared fingerprint no longer matches
-    r, _ = rig.submit(tampered)
-    assert r.result["result"] == "FAILED_VALIDATION" and "FINGERPRINT_MISMATCH" in r.result["codes"]
-    assert rig.st.sink.submitted == []
+def test_equivalence_with_the_legacy_writer_output_has_only_expected_differences():
+    from sector_brain_platform.publisher.equivalence import evaluate_equivalence, render_target
+    import tempfile
+    w = DryRunWriter()
+    publish(make_store(tempfile.mkdtemp()), CFG, w, now=NOW, run_summary={"runAt": C.iso(NOW), "errors": [], "seconds": 90}, directory=DIRECTORY)
+    reg = default_registry()
+    art = A.build_artifacts(w.patches, ctx()).artifact
+    tgt = render_target(art, reg)
+    assert tgt["result"] == "SHADOW_READY" and tgt["derivedKeys"]
+    ev = evaluate_equivalence(_rtdb_view(w.tree), tgt["updates"], registry=reg, derived_keys=tgt["derivedKeys"])
+    assert ev["verdict"] == "EQUIVALENT_WITH_EXPECTED_DIFFS" and ev["blocking"] == []
+    s = ev["summary"]
+    assert s["SEMANTIC_MISMATCH"] == 0 and s["UNKNOWN"] == 0 and s["TARGET_ONLY"] == 0 and s["MATCH"] > 1000
+    assert set(ev["openCompatibilityRules"]) == {"health-jobs-wind-hourly", "health-brains-wind-process"}                  # what the Orchestrator must still provide at cutover
+    rules = {(d["class"], d["rule"]) for d in ev["differences"]}
+    assert rules <= {("EXPECTED_MIGRATION_DIFF", "PUBLISHER_METADATA"), ("EXPECTED_MIGRATION_DIFF", "lakefleet-lakeid"), ("EXPECTED_MIGRATION_DIFF", "snapshot-lakeid"),
+                     ("LEGACY_ONLY", "health-jobs-wind-hourly"), ("LEGACY_ONLY", "health-brains-wind-process"), ("VOLATILE_ONLY", "volatile-contract")}
+    # negative controls: the evaluator is not vacuous
+    bad = dict(tgt["updates"])
+    k = next(x for x in bad if x.endswith("/states/wind"))
+    bad[k] = {**bad[k], "sustainedMph": 99.9}
+    assert evaluate_equivalence(_rtdb_view(w.tree), bad, registry=reg, derived_keys=tgt["derivedKeys"])["verdict"] == "NOT_EQUIVALENT"
+    tree = _rtdb_view(w.tree)
+    tree["brains"]["wind"]["mysteryField"] = 1
+    ev2 = evaluate_equivalence(tree, tgt["updates"], registry=reg, derived_keys=tgt["derivedKeys"])
+    assert ev2["verdict"] == "NOT_EQUIVALENT" and ev2["summary"]["UNKNOWN"] + ev2["summary"]["SEMANTIC_MISMATCH"] >= 1

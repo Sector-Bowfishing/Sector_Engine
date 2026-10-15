@@ -1,5 +1,7 @@
 # Wind Brain × Publisher V1 Shadow: integration report
 
+> **Historical (Phase 2).** Publisher Gate P (`7ebfca1c`) resolved F-1..F-9 at the shadow-contract level and Wind now publishes ONE v2 bundle; see `WIND_PUBLISHER_V2_ADOPTION_REPORT.md`. Findings below are kept as the record of what drove Gate P (the five-artifact design and the dropped-path list are superseded).
+
 **Result: Wind's artifact builder passes Publisher V1 Shadow. No live system was touched.** Publisher commit `d090c428` (worktree clean, never modified). Not a cutover; not certification.
 
 ## 1. Integration strategy

@@ -1,5 +1,7 @@
 # Wind Brain: live cutover plan (PREPARED, NOT EXECUTED)
 
+> **Update (Publisher V2):** step 4 now produces ONE `publish-artifact-v2` bundle per run (not five artifacts). Step 6's parallel run is what supplies the time-aligned equivalence; the real-state structural equivalence is already `EQUIVALENT_WITH_EXPECTED_DIFFS` (`WIND_PUBLISHER_V2_ADOPTION_REPORT.md` §8). Added gates before step 8: Orchestrator execution/job health compatibility (13 `LEGACY_ONLY` rows) and the Orchestrator reading its own execution records instead of `/brains/wind/lastSuccessfulRun`. Production write security (`PRODUCTION_WRITE_SECURITY_GATE_OPEN`) and Publisher P1-P12 still gate steps 3 and 9.
+
 Each live step needs Michael's explicit approval. **This session performed none of them.** Exact identities, bindings and commands are private (IAM delta in the private handoff). Public version states targets and gates only.
 
 | # | Step | Prerequisite / approval | Evidence required | Rollback |
