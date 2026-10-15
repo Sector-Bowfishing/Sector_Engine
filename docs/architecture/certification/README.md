@@ -49,3 +49,5 @@ Status **`WIND_PUBLISHER_V2_ADOPTION_READY`** (Phase 3, 2026-10-15; PARTIAL — 
 Phase 2 adds `wind/WIND_RESEARCH_PRESERVATION_PLAN.md`, `WIND_RESEARCH_MANIFEST_PLAN.md`, `WIND_PUBLISHER_SHADOW_INTEGRATION_REPORT.md`, `WIND_SNAPSHOT_MIGRATION_PLAN.md`, `WIND_CUTOVER_PLAN.md` and the Wind artifact builder (`jobs/wind-hourly/sector_wind/brain/artifact.py`, shadow-only, not wired into the job).
 
 Phase 3 adds `wind/WIND_PUBLISHER_V2_ADOPTION_REPORT.md` (Publisher Gate P adoption, one-artifact v2 bundle, equivalence result) and rewrites `wind/WIND_PUBLISH_ARTIFACT_V1.md` for `publish-artifact-v2`.
+
+Preservation pass (2026-10-15): `wind/WIND_RESEARCH_PRESERVATION_PLAN.md` §6 records the verified local snapshot and the pending storage approval (`WIND_RESEARCH_PRESERVATION_BLOCKED_ON_STORAGE_APPROVAL`).

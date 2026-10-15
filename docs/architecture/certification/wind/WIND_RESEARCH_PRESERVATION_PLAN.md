@@ -45,3 +45,23 @@ A directory with a running writer must not be moved. Options:
 3. Collector decision: A, B or C above.
 4. Approve adopting research into the workspace (moves) after the backup is verified.
 5. Approve repointing the hard-coded script paths (cache directory, legacy research directory, the iOS evidence directory).
+
+## 6. Execution record: durability pass (2026-10-15) — status `WIND_RESEARCH_PRESERVATION_BLOCKED_ON_STORAGE_APPROVAL`
+**What was done (all read-only on sources; collector untouched):** a verified, byte-identical, point-in-time **snapshot** of every preservable high-priority Wind artifact was written to a read-only staging directory on the same machine (outside any Brain workspace; no move, no copy-and-forget, no relocation into the workspace). **It is SNAPSHOTTED, not BACKED_UP: it is not durable against loss of the Mac.**
+| Item | Result |
+|---|---|
+| Method | per file: stat → stream copy while hashing (SHA-256) → stat; identical stat = STABLE. Active collector files copied in the quiet window between hourly collections (earliest :31, latest :19); append-only logs would have been kept as prefix snapshots and anything else unstable as `ACTIVE_NOT_SNAPSHOTTED` (none occurred) |
+| Research trees | 15,326 files, 1,177,294,300 B, all STABLE; destination re-hashed and source re-hashed afterwards: **0 destination mismatches, 0 source mismatches, 0 source changes, 0 missing, 0 errors** |
+| Active provider bake-off | 2,281 files, 1,019,971,312 B, all STABLE (snapshot taken in a 3 s window); files written after the snapshot are intentionally not in it |
+| Candidate bucket (private archive) | 4,673 objects, 53,253,890 B downloaded; every object's MD5 and size equal to the listing taken before; none changed during the download; no new objects appeared |
+| Whole staging set | 20,013 files, 1,233,751,656 B; an independent full re-hash of the staging tree equals the per-file records (0 differences); made read-only |
+| Pickles | treated as opaque bytes (never loaded); provenance `UNKNOWN/UNVERIFIED` recorded |
+| Private equivalence evidence | preserved in the same staging set (SNAPSHOTTED); digests: capture `8d4f8b16…`, result `8a552258…` (evaluator `wind-shadow-equivalence-v1`, captured 2026-10-15T13:55:20Z, class OBSERVATION_VALIDATION/HISTORY, retention: never delete). Not committed |
+| Git-held research | Engine wind branches and the private iOS branch: local HEAD equals the hosted ref (`git ls-remote`): REMOTE_VERIFIED; no copy needed; do not delete branches |
+| Not snapshotted (by policy) | public re-downloadable NOAA corpora (365 MB), rebuildable derived join tables (166 MB), NHD inputs, the local Python environment in use by the collector, docker images |
+
+**Why it stops here — storage:** no approved remote destination exists. The only existing Wind store (`sector-wind-candidate`) is **not appropriate** as the backup: versioning is off; soft delete (7 days) is not archival; the producing job's identity holds object-admin there (it could overwrite or delete a backup); it also carries overwritten runtime objects. Enabling versioning on it would be a bucket configuration change (separate approval) and still would not stop deletion by that identity. The approved design (CERT-4: one private, versioned research-backup bucket, prefix per Brain) requires an explicit creation approval, which has not been given. **No bucket was created and nothing was uploaded.**
+
+**Exact creation plan (prepared, not executed; `NOT-EXECUTED` script is in the private handoff folder):** private bucket in the project's region, uniform access, public-access prevention, object versioning on, soft delete 30 days, **no lifecycle delete rule** on these classes, no grant to the Wind job identity; upload create-only (`--no-clobber`) under `wind-brain/snapshots/2026-10-15/`; verify every remote object's MD5 against the pre-computed list, then re-run the SHA-256 comparison; only then do manifest statuses move SNAPSHOTTED → BACKED_UP → VERIFIED. Estimated size 1.23 GB (negligible storage cost).
+
+**Approvals still needed:** (1) create the CERT-4 research-backup bucket and upload the staged snapshot; (2) separately: enable versioning on the candidate archive bucket (recommended defence-in-depth, not a substitute); (3) collector decision for continuing preservation of new bake-off data (stop / repoint / periodic snapshot); (4) later: the research relocation into the workspace.

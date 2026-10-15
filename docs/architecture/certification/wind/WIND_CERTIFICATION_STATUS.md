@@ -4,6 +4,8 @@
 Standard: `brain-certification-v1`. Local branch `cert/wind-architecture-v1` (not pushed). Nothing live was changed in any phase.
 Architecture readiness and scientific maturity are separate axes: Wind is ARCHITECTURALLY ready for the repository's physical Phase 2 move (once the Repository Foundation's real GitHub Actions run succeeds) while remaining SHADOW / CALIBRATION / `NOT_VALIDATED` scientifically.
 
+**Preservation pass (2026-10-15): `WIND_RESEARCH_PRESERVATION_BLOCKED_ON_STORAGE_APPROVAL`.** Verified point-in-time snapshot (20,013 files, 1.23 GB, 0 hash mismatches) exists on the local machine only (SNAPSHOTTED, not durable); no approved remote backup bucket exists and creation is still gated. Details: `WIND_RESEARCH_PRESERVATION_PLAN.md` §6. Wind's V2 adoption status is unchanged.
+
 ## Phase 3 summary (Publisher V2 adoption)
 - Publisher lineage integrated: `d090c428` -> `7ebfca1c` (linear, history-preserving merge; Publisher package diff vs `7ebfca1c` empty).
 - ONE run -> ONE `publish-artifact-v2` bundle (`wind-publication-v1`, 5 sections) -> ONE plan; Wind no longer authors lake identity, snapshot copies, generic job/process health or activity pruning; typed explicit deletes; Publisher-owned volatile contract and fingerprint.
