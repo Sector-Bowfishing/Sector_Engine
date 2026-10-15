@@ -1,5 +1,7 @@
 # Provider and Customer-Serving Inventory
 
+> Locked refinements (RA-8, RA-10): PROVIDERS.json carries `acquisitionOwner`, `healthOwner`, `authorizedConsumers`, `costClass`, `licenseRef`; domain interpretation is declared by consumers. Single-consumer Brain-exclusive clients may stay with the Brain while registered. Section 5 below is superseded in detail by `TARGET_REPOSITORY_ARCHITECTURE_V1.md` §4a.
+
 Base `fab115e9`. Everything here is **CURRENT** unless headed TARGET.
 
 ## 1. Four classes that must stay distinct

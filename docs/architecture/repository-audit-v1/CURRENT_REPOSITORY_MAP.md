@@ -1,5 +1,7 @@
 # Current Repository Map
 
+> Current-state inventory (fact at `fab115e9`). Action labels remain planning labels; the locked target is in `TARGET_REPOSITORY_ARCHITECTURE_V1.md`. In the target, the Lake registry rows below land in `platform/registries/lakes/` (Platform-owned identity), not in Lake Brain.
+
 Base `fab115e9`. **Action labels are planning labels only; nothing is executed.**
 Labels: `KEEP` `MOVE_LATER` `MERGE_LATER` `RENAME_LATER` `DEPRECATE_LATER` `REFERENCE` `REVIEW` `UNKNOWN`.
 Categories: **E** customer Engine · **P** provider/acquisition · **PL** Brain Platform · **B:<id>** specialist Brain · **C** shared contract · **T** tests · **G** governance docs · **H** historical · **R** research · **D** data · **X** build/deploy/CI.

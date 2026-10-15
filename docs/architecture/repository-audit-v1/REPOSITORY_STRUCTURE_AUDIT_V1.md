@@ -1,6 +1,6 @@
 # Repository Structure Audit V1: current-state audit
 
-**Status:** `REPOSITORY_ARCHITECTURE_PROPOSED_V1` (proposal only: not migrated, not certified, not deployed).
+**Status:** original audit status `REPOSITORY_ARCHITECTURE_PROPOSED_V1`; now **superseded by the decision lock: `REPOSITORY_ARCHITECTURE_V1_APPROVED_FOR_PHASE_1`** (see `REPOSITORY_ARCHITECTURE_V1_DECISION_LOCK.md`). Findings below are the unchanged current-state audit; not migrated, not certified, not deployed.
 **Audited:** base commit `fab115e9` (branch `audit/repository-structure-v1`, local). **Method:** read-only inspection of the tracked tree plus `git` provenance of the Brain branches. No file was moved, renamed, deleted, rewritten, built or deployed.
 **Public repo:** this document names no per-lake species data, credentials, live dumps or user identifiers.
 

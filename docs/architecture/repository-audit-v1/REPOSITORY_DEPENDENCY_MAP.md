@@ -1,5 +1,7 @@
 # Repository Dependency Map
 
+**Status:** `REPOSITORY_ARCHITECTURE_V1_APPROVED_FOR_PHASE_1`. Section 1 is CURRENT fact. Section 2 is the LOCKED TARGET (not implemented). Locked refinements: entity identity comes from the **platform Lake and Species Registries**, not from Lake or Fish Brain; `customerIntegrationMode` direction is Customer Engine → approved Brain contract/library; Clarity's customer-API dependency is a defect to remove in the Clarity phase (blocked by D4 for migration).
+
 Legend: **→** "depends on / consumes". **Evidence** cites a file or doc at base `fab115e9`. **CURRENT** is observed; **TARGET** is the proposed rule and is *not* implemented.
 
 ## 1. CURRENT dependencies
@@ -23,7 +25,7 @@ Legend: **→** "depends on / consumes". **Evidence** cites a file or doc at bas
 | Edge | Evidence |
 |---|---|
 | Lake registry → Engine (`/lakes`, lake keys) | `Support/LakeDirectory.swift`, `API/LakeDirectoryAPI.swift` |
-| Lake registry → Wind | **copy**: `jobs/wind-hourly/lakes.json` |
+| Lake registry (de facto) → Wind | **copy**: `jobs/wind-hourly/lakes.json` (no registry contract exists yet) |
 | Lake registry → Clarity | HTTP `GET {ENGINE}/lakes` in `water-clarity-brain/run.py` (via the *customer* API) |
 | Lake registry/bindings → Water Temp | lake gauges (`fix/water-temp-lake-gauges`, bindings tables) |
 | Lake Brain state → Sector Intelligence | RTDB state read, `DEPENDENCY_ORDER` in `sector_intelligence_brain.py` |
@@ -91,24 +93,34 @@ providers ───────────────────────�
 | TARGET rule | Replaces |
 |---|---|
 | `providers` import nothing domain-specific; every provider has an owner and authorized consumers (`PROVIDERS.json`) | per-job and per-Brain clients |
-| `engine/serving` → `providers`, `platform/contracts`; **no** `brains/*/runtime`. Exception only via declared *embedded adapter* libraries (Water Temp, Clarity science) listed in `brain.json` `customerDirect` and reviewed | Lake↔Engine parser import, `Hydrology` in Engine |
+| `engine/serving` → `providers`, `platform/contracts`; **no** `brains/*/runtime`. Exception only via declared *embedded adapter* libraries (Water Temp, Clarity science) declared as `customerIntegrationMode: embedded` in `brain.json` and reviewed | Lake↔Engine parser import, `Hydrology` in Engine |
 | `brains/X` → `providers`, `platform`, and **other Brains' `contracts/` only** | Clarity→`/conditions`, Wind `lakes.json`, Lake→`TVAGenerationService` |
 | `platform` → no Brain imports; Brains register through `brain.json` | orchestrator in-process dirs |
-| Lake is a dependency via `brains/lake/contracts/` (registry, bindings, presence); consumers do not copy Lake-owned data | `lakes.json`, Clarity `/lakes` HTTP |
+| **Lake Registry** (`platform/registries/lakes`, Platform-owned) is the dependency for lake **identity**; Lake Brain contracts (`brains/lake/contracts/`: hydrology, level, bindings, presence) are the dependency for lake **intelligence**. Consumers neither copy registry data nor depend on Lake Brain to resolve a lake | `lakes.json`, Clarity `/lakes` HTTP |
 | Sector Intelligence dependencies derive from each Brain's `brain.json` (`publishes`, `consumes`) | `DEPENDENCY_ORDER` constants |
-| Fish provides species intelligence; Species Registry (platform) provides identity; Lake provides presence; Policy provides legality (ownership model preserved) | `SpeciesDatabase`/`SpeciesLegality` copies in Engine |
+| Fish provides species intelligence; **Species Registry (`platform/registries/species`) provides identity**; Lake provides presence; Policy provides legality (ownership model preserved) | `SpeciesDatabase`/`SpeciesLegality` copies in Engine |
 | Brain → Publisher only | direct writes (steady state) |
 | `docs/` holds no runtime input | rubrics, fixtures, xlsx, evidence under `docs/` |
 
 ### Target dependency table (consumer → provider-of-contract; illustrative, each Brain's certification confirms its own list)
 | Consumer | Consumes (published contract) |
 |---|---|
-| Wind | Lake (registry, geometry, fetch tables) |
+| Wind | Lake Registry (identity, geometry reference); Lake Brain only if Wind needs lake intelligence |
 | Fish | Species Registry; Lake (presence, environment) ; Water Temp (temperature state) — as available |
-| Water Temp | Lake (gauge bindings, registry); providers (USGS, CWMS, Open-Meteo, TVA archive) |
-| Water Clarity | Lake (registry, geometry); Water Temp / Wind optionally (context); providers (MRMS, Sentinel, USGS) |
-| Depth | Lake (registry, level/pool); providers (CWMS, USGS) |
-| Vegetation | Lake (registry, geometry, level); Clarity (light/clarity context) ; providers (satellite) |
+| Water Temp | Lake Registry (identity); Lake Brain (gauge bindings); providers (USGS, CWMS, Open-Meteo, TVA archive) |
+| Water Clarity | Lake Registry (identity, geometry reference); **no customer `/conditions` or `/lakes`**; Water Temp / Wind optionally (context); providers (MRMS, Sentinel, USGS) |
+| Depth | Lake Registry (identity); Lake Brain (level/pool); providers (CWMS, USGS) |
+| Vegetation | Lake Registry (identity, geometry reference); Lake Brain (level); Clarity (light/clarity context) ; providers (satellite) |
 | Sector Intelligence | every other Brain's published state, last in sequence |
 | Engine/serving | providers; platform contracts; later Brain contracts per approved cutover |
 | Ops | `sector-brain` read-only; Orchestrator API for requests |
+
+### Target ownership of the three registry concepts
+| Concept | Path | Generated from | Consumers |
+|---|---|---|---|
+| Brain Registry | `platform/registries/brains/` | `brains/*/brain.json` | Orchestrator, Publisher (path ownership), CI, Sector Intelligence dependency order |
+| Lake Registry | `platform/registries/lakes/` | canonical lake source (Git identity table + released geometry) | Engine (`/lakes`), Lake Brain, Wind, Clarity, Water Temp, Fish, Depth, Vegetation |
+| Species Registry | `platform/registries/species/` | canonical species release (CERT-8) | Fish Brain, Engine adapter, Lake presence validator |
+
+### Publisher-related edges (TARGET, gated)
+Brain → artifact → Publisher → `sector-brain` is gated by Gate P (findings F-1…F-9) and by the Publisher production-security question (certification/security lane; no private detail here). Legacy Wind paths without authorization under the new ownership model are classified **platform-owned / derived compatibility projection / legacy reader dependency** (F-5); Ops legacy health/job reads are preserved until a replacement contract exists (F-6).

@@ -1,6 +1,6 @@
-# Standard Brain Package V1 (PROPOSED)
+# Standard Brain Package V1 (LOCKED FOR PHASE 1)
 
-**Status:** `REPOSITORY_ARCHITECTURE_PROPOSED_V1`. Defines what a Brain's permanent GitHub home contains. Consistency without bureaucracy: **six mandatory items, the rest optional**. No Brain-specific contract is written by this audit.
+**Status:** `REPOSITORY_ARCHITECTURE_V1_APPROVED_FOR_PHASE_1` (RA-2, RA-3, RA-4, RA-7, RA-16, RA-17 locked 2026-10-14). Defines what a Brain's permanent GitHub home contains. Consistency without bureaucracy: **six mandatory items, the rest become mandatory only when their trigger occurs.** No Brain-specific contract is written by the audit.
 
 ## 1. Layout
 
@@ -21,7 +21,11 @@ brains/<dir>/                      dir = human-friendly (fish, lake, wind…); b
 └── deploy/                        optional: Dockerfile/deploy script if this Brain owns a deploy unit
 ```
 
-Do not create empty directories. A directory exists only when it holds a file with a purpose.
+**No empty ceremonial directories.** A directory exists only when it holds a file with a purpose. If a mandatory category genuinely has no files yet (e.g. `contracts/` for an unpublished Brain), the requirement is represented in the package checklist/`brain.json` (`contracts: []`, `publishes: []` with reason) until the category becomes relevant.
+
+**Triggers that make optional directories mandatory:** `artifact/` once the Brain participates in Publisher artifact publication; `scoring/` once it owns an explicit rubric/score definition; `validation/` where architecture or scientific certification requires a durable validation protocol/code. `research/` in Git is **metadata and reproducibility tooling only, never raw datasets.**
+
+**Certification gate (RA-3):** a Brain cannot receive final `ARCHITECTURE_CERTIFIED_V1` without `README.md`, `BRAIN_OPERATING_CONTRACT.md` and `brain.json`, and its required `contracts/`, `runtime/` and `tests/` correctly represented.
 
 ## 2. Component table
 
@@ -30,7 +34,7 @@ Do not create empty directories. A directory exists only when it holds a file wi
 | `README.md` | orientation for humans and agents | yes | identity, bowfisher decision, map of this directory, how to run tests, links | duplicated contract text; status history |
 | `BRAIN_OPERATING_CONTRACT.md` | the rules a Brain session obeys; discoverable, versioned | yes | all §3 sections | evidence, findings, handoffs, run logs |
 | `brain.json` | one machine-authoritative declaration used by registry, Publisher, Orchestrator, CI | yes | §4 fields | prose, thresholds, scientific parameters |
-| `contracts/` | published interface other Brains/Publisher/Engine rely on | yes (even if "none published yet": a stub declaring `UNPUBLISHED`) | JSON Schemas, version, consumer note, example payload | private schemas, research formats |
+| `contracts/` | published interface other Brains/Publisher/Engine rely on | yes once the Brain publishes or consumes a contract; until then represented by `brain.json` (`publishes: []`, with reason) and the package checklist, not an empty directory | JSON Schemas, version, consumer note, example payload | private schemas, research formats |
 | `runtime/` | computation + state builder | yes | package code, entrypoint implementing the platform Runner interface | research scripts, one-off analyses, hard-coded paths, provider clients (use `providers/`) |
 | `artifact/` | converts state to a versioned Publisher artifact (envelope, lineage, hash) | required at Publisher cutover | builder, artifact tests | any direct `sector-brain` write after cutover |
 | `scoring/` | defines the Brain's readiness score | required once a rubric exists | `rubric.json`, notes on what moves each dimension | candidate/science scores, UI work as evidence |
@@ -75,6 +79,17 @@ Do not create empty directories. A directory exists only when it holds a file wi
 ### Research gap record (`research/GAPS.json`)
 Each entry: `id`, `type` (product|confidence|readiness|validation|evidence), `title`, `whyItMatters`, `bowfisherDecision`, `currentEvidence` (pointers into the workspace manifest), `stopCondition`, `expectedOutput`, `humanOrFieldValidationRequired` (bool + what), `status`, `owner`. A session may only start research that references an `OPEN` gap id. This is how GitHub holds the *rules and metadata* of research without holding artifacts.
 
+### 3a. Research classification rule (RA-16, RA-17)
+Research artifacts are not bulk-moved. At the Brain's certification/migration each meaningful artifact (including those on `docs/*-research` branches) is classified once:
+
+| Destination | Holds |
+|---|---|
+| **GitHub** (`brains/<dir>/`) | operating rules; durable Brain specification; canonical decision records; preregistration/protocols; accepted validation methodology; schemas; small fixtures; research-gap metadata; reproducibility tooling needed to support published claims |
+| **External research workspace** (logical id, e.g. `wind-brain`) | raw evidence; exploratory research; large datasets; provider dumps; working analyses; private observations; bulky derived outputs; notes not part of the permanent contract |
+| **Canonical versioned storage** | accepted durable releases; publication artifacts; validation/history that must be durable but is unsuitable for public Git |
+
+Do not copy-and-forget and do not duplicate evidence because a branch exists; use `MANIFEST.json` references/hashes. Core rule: **a Brain is not a university**; research is triggered by a named gap with a stop condition.
+
 ### Research manifest (`research/MANIFEST.json`)
 `workspaceId`, per-collection: logical name, class (RESEARCH/CANONICAL/OBSERVATION_VALIDATION/DERIVED/…), content hash or version, backup location id, producing tool + commit. Hashes make the claim "this canonical release came from this evidence" checkable without storing the evidence.
 
@@ -98,7 +113,14 @@ Each entry: `id`, `type` (product|confidence|readiness|validation|evidence), `ti
 | Schema drift | `contracts/schemas/brain.schema.json`, validated by an architecture test |
 | Over-specification | ≤ ~25 fields; everything optional except identity/lifecycle/runtime/publish |
 
-**Machine-authoritative fields:** `schemaVersion`, `brainId`, `displayName`, `humanName`, `domain`, `lifecycle` (platform lifecycle vocabulary), `contractVersion`, `runtime` (`kind: job|in-process|service`, language, entrypoint, trigger kind/stale hours), `publishes[]` (artifact schema ids, path families, family names), `consumes[]` (brainId + contract id + min version; provider ids), `providers[]` (ids used), `researchWorkspace` (logical id), `score` (type, path, rubric path), `customerDirect` (`none` | `embedded:<lib>`), `publisherRequired` (bool + cutover status), `authorizedConsumers[]`, `tests[]`, `dataBudget`, `docs` pointers.
+**Guardrails (RA-2).**
+* JSON, never YAML; **structured identity and edges only**; no prose, reasoning, thresholds or scientific parameters.
+* No absolute local path: the research workspace is a **logical id** (e.g. `wind-brain`); `SECTOR_RESEARCH_ROOT`/config resolves the physical root.
+* `brain.json` is **not a seventh hand-synchronized registry**: the Brain Registry (`platform/registries/brains/`) and the existing job/ownership/dependency registries are **generated** from it; the old copies retire only after a diff test proves equivalence.
+* `BRAIN_OPERATING_CONTRACT.md` remains authoritative for behavior and human/research instructions.
+
+**Machine-authoritative fields:** `schemaVersion`, `brainId`, `displayName`, `humanName`, `domain`, `lifecycle` (platform vocabulary), `contractVersion`, `runtime` (`kind: job|in-process|service`, language, entrypoint, trigger kind/stale hours), `publishes[]` (artifact schema refs, path families), `consumes[]` (brainId + contract id + min version; **lake and species identity come from `registries.lakes` / `registries.species` contracts, not from the Lake or Fish Brain**), `providers[]` (ids used; with the consumer's `domainInterpreter` role), `researchWorkspace` (logical id), `score` (type, path, rubric ref), **`customerIntegrationMode`** (`none` | `embedded` | `published`), `publisherRequired` (bool + cutover status), `authorizedConsumers[]`, `tests[]`, `dataBudget` (bounded runtime metadata, exceptions).
+**`customerIntegrationMode` semantics.** `none`: no customer path. `embedded`: the **customer Engine imports/executes a Brain-owned contract/library**; NOT "Brain writes the customer database", NOT "Brain calls customer internals". `published`: the customer Engine consumes the Brain's approved published contract. The dependency direction is **Customer Engine → approved Brain contract/library, never Brain → customer Engine**. (If the shorthand `customerDirect` is ever kept, it must carry exactly these semantics.)
 **Human-only (contract Markdown):** mission, bowfisher decision wording, evidence hierarchy, research initiation/stop rules, canonicalization procedure, cost rationale, security rationale, closeout format.
 
 ## 5. What Wind would move / reference / adopt (design only; not performed)
@@ -113,9 +135,9 @@ Wind is the first Brain conformed. Mapping from base:
 | `sector_wind/brain/validation_evidence.json` | `brains/wind/validation/` | MOVE |
 | `jobs/wind-hourly/main.py`, `Dockerfile`, `deploy-job.sh`, `requirements.txt`, `check-live.sh`, `pytest.ini` | `brains/wind/deploy/` + `runtime/main.py` | MOVE |
 | `jobs/wind-hourly/read_service/` | `brains/wind/deploy/read_service/` | MOVE (separate Cloud Run service; internal) |
-| `jobs/wind-hourly/lakes.json` | **delete as copy** → consume Lake registry contract (`brains/lake/contracts`) | REFERENCE (interim: keep file, marked as derived) |
+| `jobs/wind-hourly/lakes.json` | **retire as a copy** → consume the **Lake Registry** contract (`platform/registries/lakes`; not Lake Brain). Lake Registry geometry found under Wind is Lake Registry-owned reference, not Wind truth | REFERENCE (interim: keep file, marked derived) |
 | `jobs/wind-hourly/tests/` (8) + fixtures | `brains/wind/tests/` | MOVE |
-| `jobs/wind-hourly/research/` (28 scripts) | classify each: reproducible-and-needed-for-published-validation → `brains/wind/research/tools/`; exploratory → workspace `wind-brain` + `MANIFEST.json` entry | SPLIT |
+| `jobs/wind-hourly/research/` (28 scripts) | classify each per §3a: reproducible-and-needed-for-published-claims → `brains/wind/research/tools/`; exploratory → workspace `wind-brain` + `MANIFEST.json` entry (time-sensitive Wind evidence needs durable backup first; nothing moves until approved) | SPLIT |
 | `BRAIN.md`, `README.md`, `SESSION_CLOSEOUT.md` | `README.md`; `BRAIN.md` content → operating contract; `SESSION_CLOSEOUT.md` → `docs/history/` | ADOPT/MOVE |
 | `feat/wind-brain-adoption` `docs/brains/wind/*` (91) | specs/prereg/rubric → `brains/wind/validation/` & `docs/`; decisions → `docs/history`; data & field packets → workspace | ADOPT selectively (needs Wind certification session's triage) |
 | Wind rubric (does not exist; `frozen-scores.json` row) | `brains/wind/scoring/rubric.json` | CREATE at certification |
@@ -124,7 +146,7 @@ Wind is the first Brain conformed. Mapping from base:
 | Platform import via `sys.path` | `pip install` platform package | ADOPT |
 | Open-Meteo baseline label in `contract.py` | unchanged (identity of the *production baseline*), not a provider client | REFERENCE |
 
-The current Wind certification session consumes this mapping after Michael approves the target.
+The Wind migration (Phase 2) additionally requires Gate P (Publisher/Wind shadow findings F-1…F-9 addressed or explicitly resolved by their owning lanes); see `REPOSITORY_MIGRATION_PLAN_V1.md`. Wind-side changes to ownership of legacy paths (F-5) follow the platform-owned / derived-compatibility / legacy-reader classification, never a broadened Wind ownership.
 
-## 6. Conformance check (what an architecture test asserts per Brain)
+## 6. Conformance check (what an architecture test asserts per Brain; REPORT-ONLY in Phase 1B, see Target §7a for the full 16 invariants)
 1. mandatory items exist; 2. `brain.json` validates; 3. `consumes` ⊆ other Brains' declared `publishes`; 4. no imports across `runtime/` boundaries; 5. no absolute user paths; 6. no file > budget without an exception; 7. every test dir registered; 8. `contracts/` has a version; 9. operating contract contains all 19 headings; 10. every research entry points to an `OPEN` gap.

@@ -17,7 +17,7 @@ Human names: `biological-state` = **Fish Brain** (machine id unchanged).
 | Runtime jobs | `wind-hourly` (Scheduler, NBM early exit), `wind-candidate-read` (service) |
 | Providers | NOAA NBM (NODD), RTMA-RU, HRRR, RRFS (nomads), MADIS, METAR, ICESat-2/ATL13 research; Open-Meteo only as bake-off/benchmark and as the *production-wind baseline label* in `contract.py` |
 | External deps | `gs://sector-wind-candidate`; Brain RTDB wind slot; iOS-repo assets (`FishIntel/Wind` tables, `scripts/wind`) read from Desktop paths |
-| Cross-Brain deps | Lake (via `lakes.json`, a **copy** of lake ids/coords); Lake geometry fetch tables generated in the iOS repo and copied to GCS (OWNERSHIP exception) |
+| Cross-Brain deps | Lake Registry identity (today via `lakes.json`, a **copy** of lake ids/coords; target: consume the Lake Registry contract); Lake geometry fetch tables generated in the iOS repo and copied to GCS (OWNERSHIP exception) |
 | Branch-only | `feat/wind-brain-adoption` ⊂ `deploy/wind-internal-validation`: `docs/brains/wind/` (91–92 files: spec, preregs, rubric v2, field packs, decisions), +17 `sector_wind` modules, +18 research scripts, +12 tests, `data/`, `field_packets/`, `field_tools/`; `cert/wind-architecture-v1`: `sector_wind/brain/artifact.py`, `test_publish_artifact.py`, 13 certification docs, Publisher shadow (also on `feat/publisher-v1-shadow`); `docs/wind-brain-research` (`docs/wind-research`, `research/wind-brain`); `brain/wind`, `intelligence/wind` = older lineage |
 | Research workspace | `wind-brain` |
 | Published/runtime paths | RTDB wind slot (`/lakes/{k}/states/wind`, registry, profile); `gs://sector-wind-candidate/wind/v1/*` |
@@ -56,8 +56,8 @@ Human names: `biological-state` = **Fish Brain** (machine id unchanged).
 | Branch-only | `feat/lake-consolidated` (superset of ~14 slice branches: readiness, +20 history files, +17 review files, +17 docs, fixtures); `docs/lake-brain-research` (55 research docs + ~100 `research/lake-brain` tool files); `feat/lake-brain-ledger`, `-rules-v2`, `-bindings`, `-fleet-*`, `-surface-job`, `-environment-snapshot` (slices) |
 | Research workspace | `lake-brain` |
 | Published paths | `/lakes/{k}/states/lake`, `/lakes/{k}/speciesPresence/{speciesId}`, lake fleet; `gs://sector-lake-brain` |
-| Problems | code in 3 languages-places; **registry has no home** (lives in `Support/` + xlsx in `docs/data`); customer `/lakes` and Lake Brain registry are the same data with different owners on paper; hard-coded legacy research paths (≈12 sites); generated bindings checked in as 425 KB Swift; Python tooling under `jobs/` is not CI-tested; reads customer parser |
-| **Recommended home** | `brains/lake/` with `runtime` (Swift, `path:` target), `registry/` (source xlsx → versioned `lake-registry` contract), `tools/` (Python), `validation/`, `ledger/`; geometry under `brains/lake/geometry/` |
+| Problems | code in 3 languages-places; **the registry has no home and is conflated with Lake Brain** (lives in `Support/` + xlsx in `docs/data`); customer `/lakes` and Lake Brain registry are the same data with different owners on paper; hard-coded legacy research paths (≈12 sites); generated bindings checked in as 425 KB Swift; Python tooling under `jobs/` is not CI-tested; reads customer parser |
+| **Recommended home (LOCKED, RA-5)** | **Identity** → Platform-owned **Lake Registry** at `platform/registries/lakes/` (lakeId, names, aliases, classification, basic geographic identity, geometry reference; geometry polygons in released storage). **Intelligence** → `brains/lake/` with `runtime` (Swift, `path:` target), `tools/` (Python), `validation/`, `ledger/`, source bindings and species presence. Lake Brain consumes the Registry like every other Brain |
 
 ## water-temp
 | | |

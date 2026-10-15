@@ -1,95 +1,91 @@
-# Repository Migration Plan V1 (PROPOSED; NO EXECUTION)
+# Repository Migration Plan V1 (LOCKED SEQUENCE; NO EXECUTION)
 
-**Status:** plan only. Nothing is moved by this audit. Each phase needs its own approval, its own branch, and a green gate before the next starts.
+**Status:** `REPOSITORY_ARCHITECTURE_V1_APPROVED_FOR_PHASE_1`. Plan only. Nothing is moved by the audit. Each phase starts on its own go-ahead, on its own branch, and the next phase starts only after the previous gate is green.
 
 ## Global rules
-* **Moves are `git mv` + compatibility shim**, never copy-then-delete; history is preserved. Old paths keep working (shim or symlink-free re-export) until the Phase 7 retirement.
-* **Behavior-neutral gates on every phase:** (1) golden `/conditions` + `/lakes` response byte-compare (Swift build), (2) all Python suites, (3) conformance fixtures Swift+Python, (4) score before/after identical, (5) rendered Cloud Run job definitions unchanged (diff of `deploy-job.sh` effective args), (6) image labels still carry `commit`.
-* **No deploy** unless a phase says so; deploys follow the existing lineage rule (verify deployed SHA + safe lineage before any shared deploy; only additive specialist commits).
-* **No branch/worktree deletion** in any phase before Phase 7, and only for branches proven fully contained.
-* Hand-synchronized registries are **replaced by generated ones only after** the generated output is byte-identical to the hand copy (diff test).
-* The three parallel workstreams (data-architecture, Publisher V1 shadow, Wind certification) are not touched; their commits are adopted, not re-implemented.
+* **Moves are `git mv` + compatibility shim**, never copy-then-delete; history is preserved. Old paths keep working until Phase 7.
+* **Behavior-neutral gates on every phase after 1B:** (1) golden `/conditions` and `/lakes` responses byte-compare, (2) all Python suites, (3) Swift tests, (4) Swift+Python conformance fixtures, (5) score before/after identical, (6) effective Cloud Run job definitions unchanged, (7) image `commit` labels preserved.
+* **No deploy** unless a phase says so; deploys follow the lineage rule (verify deployed SHA and safe lineage before any shared deploy; only additive specialist commits).
+* **No branch/worktree deletion** in any phase (RA-23). No product-behavior fixes to make migration green: pre-existing failures are recorded as baseline.
+* Hand-synchronized registries are replaced by generated ones only after generated output is proven equivalent (diff test).
+* Parallel lanes (data-architecture, Publisher V1 shadow, Wind certification) are not modified; their commits are adopted, not re-implemented.
+* `docs/` historical relocation waits for the RA-14 read-only private-content review.
 
-## Phase 0: Approve structure
+## Phase 0: Repository Architecture V1 approval / lock: **DONE**
+Locked by `REPOSITORY_ARCHITECTURE_V1_DECISION_LOCK.md`. No files besides docs.
+
+## Phase 1A: Additive skeleton and machine schemas (NO runtime moves)
 | | |
 |---|---|
-| Files affected | none (decisions in `REPOSITORY_AUDIT_DECISIONS.md`) |
-| Tests | none |
-| Compatibility | none |
-| Rollback | n/a |
-| Runtime change / deploy | no / no |
-| Stop condition | Michael approves RA-1…RA-6 (tree, `brain.json` format, Lake registry home, embedded-adapter rule, CI plan, Wind-first) |
-
-## Phase 1: Platform/shared skeleton (additive)
-| | |
-|---|---|
-| Files affected | **create** `platform/`, `contracts/`, `providers/`, `engine/`, `brains/_template/`, `tools/`, `tests/architecture/`; add `pyproject.toml` for `sector_brain_platform`; add `contracts/schemas/brain.schema.json`; add architecture tests (report-only mode). **Move** `docs/brains/conformance/*` → `contracts/conformance/` with CI path update and a pointer README at the old path. No source file other than conformance fixtures moves. |
-| Tests | conformance (Python + Swift) reading the new path; architecture tests in report-only (warn) mode; CI path filter updated; add Swift build/test to CI or scheduled run |
-| Compatibility | old conformance path keeps a stub README only; tests read via one constant |
-| Rollback | revert the commit (additive + one fixture move) |
+| Files affected | **create only**: `engine/`, `providers/`, `platform/` (incl. `platform/registries/{brains,lakes,species}/`), `contracts/`, `brains/_template/`, `tools/`, `deploy/`, `tests/architecture/`, root-level `docs/{platform,history}/` index READMEs. Machine schemas: `contracts/schemas/brain.schema.json`, `providers.schema.json`, registry schemas for Brain/Lake/Species, `customerIntegrationMode` enum. Operating-contract template + checklist in `brains/_template/`. **No empty ceremonial directories**: each new directory holds a README or schema stating its purpose and import rules. `pyproject.toml` stub for `sector_brain_platform` allowed only if it does not change how existing jobs import it. |
+| Tests | schema self-tests (valid/invalid examples); architecture tests exist but are **report-only** |
+| Compatibility | nothing existing is touched or re-pointed; existing jobs and Swift build identical |
+| Rollback | revert the commit(s) |
 | Runtime change / deploy | none / none |
-| Stop condition | CI green on both languages; architecture report lists current violations as the baseline (the violation list *is* the migration backlog) |
+| Stop condition | skeleton + schemas reviewed; `swift build` and all current suites unchanged |
 
-## Phase 2: Wind as first certified example
-Depends on Publisher V1 shadow (approved HEAD `d090c428`) and the Wind certification session.
+## Phase 1B: Baseline CI, conformance and golden behavior gates
 | | |
 |---|---|
-| Files affected | `jobs/wind-hourly/**` → `brains/wind/**` per `STANDARD_BRAIN_PACKAGE_V1` §5; adopt `artifact.py`; write `BRAIN_OPERATING_CONTRACT.md`, `brain.json`, `contracts/`, `research/GAPS.json` + `MANIFEST.json`; triage `feat/wind-brain-adoption` docs; replace hard-coded paths with env config; platform becomes `pip`-installed (Wind stops using `sys.path`); `wind-hourly` deploy script moved; `jobs/wind-hourly` left as thin stub (README → new location) |
-| Tests | Wind suite (8 files) unchanged results; `test_publish_artifact`; Publisher shadow integration; new `brain.json` schema test; no-absolute-path test for `brains/wind`; **golden Wind RTDB write plan identical** (shadow compare) |
-| Compatibility | `sector_wind` import path preserved; deploy script path alias; Cloud Run job names/SA/schedule unchanged; image still labeled with commit; image `COPY` list updated and verified to still exclude research |
-| Rollback | revert merge; `jobs/wind-hourly` stub restored from history; deployed job unaffected because no redeploy |
-| Runtime / deploy | **No behavior change.** A redeploy of `wind-hourly` is optional and separate (lineage rule); not required to validate the move |
-| Stop condition | architecture tests for `brains/wind` pass in enforce mode; BEFORE/AFTER shadow output identical; Michael accepts Wind as the reference Brain |
+| Files affected | `.github/workflows` (Swift build+test enters CI, or a scheduled/path-filtered workflow if the 20-minute cost demands it; missing Python suites: `jobs/lake-brain/**` tests, `jobs/lake-geometry`, all `jobs/brain-scores` tests, `scripts`/tools where practical); non-Brain infrastructure enrolled **explicitly** (platform, providers, customer Engine, cross-cutting integration); Brain coverage additionally derivable from `brain.json` once Brains declare it. **Move `docs/brains/conformance/*` → `contracts/conformance/`** (RA-11) with one path constant and a pointer README at the old path (the only relocation in Phase 1). Golden fixtures for `/conditions` and `/lakes` and the score baseline recorded. |
+| Tests required | Swift tests; existing Python suites; missing Python suites; architecture + conformance checks (report-only); **clean-clone install/import checks** (fresh venv, install platform, import each registered package); golden `/conditions`, golden `/lakes`, score baseline |
+| Baseline policy | **record existing failures as baseline; do not fix unrelated product behavior.** The architecture report's violation list is the migration backlog. |
+| Compatibility | old conformance path retained as stub; CI path filters updated |
+| Rollback | revert; workflows are additive |
+| Runtime change / deploy | none / none |
+| Stop condition | CI green or baseline-recorded; golden artifacts committed; report-only architecture output reviewed |
 
-## Phase 3: Validate build / tests / import compatibility
+## Gate P: Publisher / Wind shadow prerequisites (owned by the Publisher and Wind lanes; NOT performed by repository sessions)
+Run in parallel with, or immediately after, Phase 1. The latest Wind certification pass consumed Publisher V1 Shadow `d090c4283fbbc2d95ef0a815c650ae5789294799`; nothing live changed. Findings to be addressed or explicitly resolved before Wind's final Publisher/cutover certification and before Phase 2 (RA-6 D):
+
+| ID | Finding | Owner lane |
+|---|---|---|
+| F-1 | volatile scalar children not fully stripped from comparison, so SKIP is not reliable | Publisher |
+| F-2 | one logical Wind run yields multiple publication plans; the model is one Brain artifact / one deterministic atomic publication boundary where appropriate | Publisher + Wind |
+| F-3 | publication metadata overwritten per plan instead of being Publisher-owned publication state | Publisher |
+| F-4 | no DELETE semantic, so stale optional children persist; deletion must be explicit and safe; missing/null never implies delete | Publisher |
+| F-5 | several legacy Wind paths unauthorized under the new ownership model (legacy `lakeFleet` identity projection, snapshot identity/version projections, health/jobs legacy state). Do not broaden Wind ownership to keep legacy layout; classify each as **platform-owned**, **derived compatibility projection**, or **legacy reader dependency**, and migrate intentionally | Publisher + Platform + Wind |
+| F-6 | Ops depends on some legacy health/job representation; preserve Ops behavior until the replacement contract exists | Platform/Ops |
+| F-7 | legacy activity pruning / failure-health behavior must be reassigned or retired, not blindly copied into Wind's package | Platform |
+| F-8 | Wind's volatile-comparison contract needs a finalized registered definition | Wind + Publisher |
+| F-9 | shadow baseline representation ≠ live state; an intentional equivalence/migration comparison is required before cutover | Publisher + Wind |
+
+**Wind research-preservation facts incorporated:** Wind evidence is scattered across Git branches, local research directories, caches, iOS Git and private storage; the standardized research workspace is intentionally still empty; a research manifest/hash catalog exists as a planning artifact; significant time-sensitive Wind evidence needs durable backup (CERT-4); Lake Registry geometry found under Wind is **Lake Registry-owned reference material, not Wind truth**; no research data moves until approved.
+
+**Publisher security gate (high level; details stay private):** specialist Brain production write permission must eventually be removed and the Publisher becomes the production door, **but the Publisher itself needs an acceptably bounded production write model**; moving an excessively broad production role from Wind to the Publisher does not fix the architecture. This is a **live-cutover blocker** governed by certification/security (CERT-9), not a repository migration task, and no private detail goes in this repo.
+
+## Phase 2: Wind repository migration
+**Entry requirements (all):** A Architecture V1 locked ✔; B additive skeleton (1A) ✔; C baseline CI/conformance/golden gates (1B) ✔; D Gate P findings addressed or explicitly resolved to the point the Publisher shadow contract is stable enough for Wind's artifact home; and no live behavior change.
 | | |
 |---|---|
-| Files affected | none new; fixes only |
-| Tests | full Python + Swift suites; clean-clone install (`pip install platform`, build Wind image locally/Cloud Build dry-run); orchestrator image staging test (no sibling-dir imports for Wind); import-lint in enforce mode for `engine/`, `providers/`, `platform/`, `brains/wind` |
-| Compatibility | confirm Dockerfile `.dockerignore` (`docs/`, `jobs/` excluded from the Swift build context) still works as `Sources/` start moving later |
-| Rollback | revert fixes |
-| Runtime / deploy | none / none |
-| Stop condition | a developer or AI session can onboard to Wind using only `brains/wind/README` + contract; zero open violations for Wind |
+| Files affected | `jobs/wind-hourly/**` → `brains/wind/**` per `STANDARD_BRAIN_PACKAGE_V1` §5; adopt `artifact.py` from the cert branch; write `BRAIN_OPERATING_CONTRACT.md`, `brain.json`, `contracts/`, `research/GAPS.json` + manifest metadata; classify research artifacts (Standard §3a); consume **Lake Registry** contract instead of `lakes.json` once the registry contract exists (until then `lakes.json` kept, marked derived); replace hard-coded paths with env/config; platform installed rather than `sys.path`; keep a thin `jobs/wind-hourly` stub |
+| Tests | Wind suite (8 files) unchanged results; `test_publish_artifact`; Publisher shadow integration; `brain.json` schema test; no-absolute-path test; golden Wind write-plan compare (shadow) |
+| Compatibility | `sector_wind` import path preserved; Cloud Run job names/SA/schedules unchanged; image `COPY` list re-verified to exclude research |
+| Rollback | revert merge; stub restored; deployed job unaffected (no redeploy required) |
+| Runtime / deploy | no behavior change; optional separate lineage-safe redeploy |
+| Stop condition | architecture tests enforce for `brains/wind`; shadow output identical; Wind accepted as the reference Brain |
 
-## Phase 4: Migrate Fish (`biological-state`)
-| | |
-|---|---|
-| Files affected | `jobs/biological-brain/**` → `brains/fish/**` (brainId unchanged); adopt `feat/biological-brain-adoption` content (rules, features, movement, 11 schemas, tools, 16 tests) after Fish certification triage; delete the 3 `brain_platform.py` shims *only for Fish*; Species Registry skeleton → `platform/species-registry/` (CERT-8); `docs/brains/scoring/biological-state-score-v1.json` → `brains/fish/scoring/rubric.json`; the orchestrator stage list reads Fish via `brain.json` |
-| Tests | Fish suite; orchestrator test using registry-derived Runner; score identical; `SpeciesDatabase` adapter parity test (Engine unchanged) |
-| Compatibility | orchestrator keeps an alias for the old `dir`; scoring publisher reads the rubric from either path via one resolver |
-| Rollback | revert; resolver falls back |
-| Runtime / deploy | no behavior change; orchestrator redeploy needed only when its staging changes (separate approval) |
-| Stop condition | Fish at standard; **Phase 5 audit may begin** |
+## Phase 3: Validate Wind structure / build / import / conformance
+Full Python + Swift suites; clean-clone install; Wind image build (dry run); orchestrator staging without sibling-directory imports for Wind; import-lint enforce mode for `engine/`, `providers/`, `platform/`, `brains/wind`. Stop: a new session can onboard to Wind from `brains/wind/README.md` + contract only; zero open Wind violations.
+
+## Phase 4: Fish migration (`brains/fish`, brainId `biological-state`)
+`jobs/biological-brain/**` → `brains/fish/**`; adopt `feat/biological-brain-adoption` content after Fish certification triage (classify each artifact per Standard §3a); remove the three `brain_platform.py` shims **for Fish only**; Species Registry skeleton content under `platform/registries/species/` (CERT-8); rubric → `brains/fish/scoring/`; orchestrator reads Fish through the Brain Registry. Tests: Fish suite; registry-derived Runner; score identical; `SpeciesDatabase` adapter parity. Stop: Fish at standard; Phase 5 may begin.
 
 ## Phase 5: Architecture Audit #1
-Re-run this audit's scans against `brains/wind` + `brains/fish` + platform skeleton. Compare the Phase-1 baseline violation list with reality; adjust the standard (the process in `BRAIN_CERTIFICATION_V1` already schedules it). Outputs: revised `STANDARD_BRAIN_PACKAGE`, any reordering of Lake → Temperature → Clarity → Depth → Vegetation → Intelligence. No file moves except standard corrections. Stop: Michael signs the revised standard.
+Re-run the audit scans on Wind + Fish + skeleton; compare against the 1B baseline; amend the standard and Brain order if warranted. Stop: Michael signs the revised standard.
 
-## Phase 6: Migrate remaining Brains sequentially
-Order proposed (reorderable by Audit #1): **Lake** (foundation; registry first), **Water Temperature**, **Water Clarity**, **Depth**, **Vegetation**, **Sector Intelligence** last.
-
+## Phase 6: Remaining Brains (order reorderable by Audit #1)
 | Brain | Special steps |
 |---|---|
-| Lake | create `brains/lake/registry` (xlsx + generators → versioned registry contract); Swift `LakeBrain` target `path:` re-pointed (no source edit); split `Support/LakeDirectory` out; move `jobs/lake-brain/*` tooling (fix ≈12 legacy paths; add to CI); `jobs/lake-geometry`; adopt `feat/lake-consolidated` content after triage; Wind/Clarity switch from `lakes.json` / `/lakes` HTTP to Lake contract (small behavior-preserving commits, each compared byte-for-byte) |
-| Water Temperature | library target for the embedded adapter; move `Brain/WaterTemperature*` + `WaterTemp/`; `jobs/water-temp-brain/` one-file dir folded in; TVA archive → `providers`/Water Temp; research from `docs/water-temp-brain-research` → workspace + manifest |
-| Water Clarity | **first resolve D4** (live `lake-surface-daily`/`clarity-current-hourly` source off-main); `Hydrology/` → Clarity science library; `scripts/hydrology/*` → `research/tools`; 12 MB evidence + 7.5 MB polygons → release artifact or exception; stop reading the customer `/conditions` API (consume providers + Lake contract) |
-| Depth, Vegetation | adopt branch code as the reference copy; no base code exists to move; preserve branches |
-| Sector Intelligence | derive dependencies from `brain.json`; leave pilot scope; evidence-layer contracts adopted |
-| Each | tests: Brain suite + before/after score + golden customer response for touched Swift; one PR per Brain; `jobs/<dir>` stub README until Phase 7 |
-
-Gate per Brain: contract written, `brain.json` valid, architecture tests enforce, score unchanged, deployed jobs untouched or redeployed through lineage-safe process.
+| Lake | **Lake Registry** (platform-owned) established first: identity, aliases, classification, basic geographic identity, stable metadata, geometry/boundary **reference**; split-by-storage per Target §6a; `Support/LakeDirectory` split out; then Lake Brain proper (hydrology, pool/level interpretation, source bindings, presence, validation) in `brains/lake/`; consumers (Wind, Clarity, Temperature, Fish) switch from copies/HTTP to the Registry contract in small behavior-preserving commits |
+| Water Temperature | `customerIntegrationMode: embedded` library; `jobs/water-temp-brain` one-file dir folded in; TVA archive ownership via PROVIDERS.json (no TVA consolidation before D8) |
+| Water Clarity | **BLOCKED by D4** until separately resolved; then `Hydrology/` science library (`embedded`), stop calling customer `/conditions` and `/lakes` (RA-20), `scripts/hydrology/*` classified, large evidence/polygons per policy |
+| Depth, Vegetation | adopt foundation branches at their turn; branches preserved |
+| Sector Intelligence | dependencies derived from `brain.json`; last |
+Gate per Brain: contract + `brain.json` valid; required contracts/runtime/tests represented; score unchanged; golden customer responses unchanged for touched Swift.
 
 ## Phase 7: Retire proven legacy structures
-| | |
-|---|---|
-| Files affected | remove empty stubs under `jobs/`; remove per-Brain `brain_platform.py` shims; remove `docs/brains/conformance`/`scoring` pointers; split `docs/brains/` leftovers into `docs/platform` and `docs/history`; engine move (`Sources/SectorEngine/Engine…` → `engine/`) and provider extraction (`Fetchers`, `Adapters` → `providers/swift`) executed here or earlier as separate PRs with golden-response gates; replace hand-synced registries by generated; delete `.pyc`; retire `writer.py` direct-write code only per the 14-step retirement after Publisher cutover |
-| Tests | full suite + golden customer responses + score identity + Publisher-only write test |
-| Compatibility | 2-cycle deprecation notice (README redirects) for old paths |
-| Rollback | revert per-PR; branches still exist |
-| Runtime / deploy | none by themselves; customer redeploy only if `Sources` moves change the build (rebuild produces identical binary behavior; verify via golden test), through `deploy.sh` with explicit approval |
-| Stop condition | architecture tests enforce for all Brains; zero baseline violations; Michael approves branch hygiene as a *separate* task |
+Remove empty stubs, per-Brain shims, pointer READMEs; split `docs/brains/` leftovers into `docs/platform` and `docs/history` (after RA-14 review); move `Sources` into `engine/`, `providers/`, `platform/`, `brains/` using the Swift order (split tests → platform target → providers target → Brain library targets → physical move) with golden gates; generated registries replace hand copies after equivalence proof; `writer.py` direct-write code retired only per the 14-step retirement after Publisher cutover; update root `README.md` (RA-21). **Branch/worktree deletion remains a separate task.**
 
-## Suggested ordering of the Swift moves
-SwiftPM `path:` lets targets move without edits to source. Do it in this order to minimize risk: (1) tests split into per-target test targets while sources stay; (2) `SectorBrainPlatform` target; (3) `SectorProviders`; (4) Lake / Water Temp / Clarity library targets; (5) physically move `Sources` into `engine/`, `providers/`, `platform/`, `brains/`. Each step compiles with `swift build` and passes the golden test before the next.
-
-## What is deliberately not in this plan
-Deleting branches/worktrees, rewriting history, changing Cloud Run/IAM/Firebase/RTDB rules, changing any score or customer response, Publisher cutover (separate, CERT-2), research migration out of branches (separate, per-Brain certification), renaming `biological-state`.
+## What is not in this plan
+Publisher implementation or fixes (Gate P lanes), Publisher security design, live cutover, deleting branches/worktrees, history rewrite, Cloud Run/IAM/Firebase/RTDB rule changes, score or customer-response changes, TVA consolidation, Clarity D4 decision, renaming `biological-state`.
