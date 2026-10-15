@@ -16,7 +16,9 @@ from dataclasses import dataclass
 
 from .api import ApiRequest
 from .canonical import canonical_bytes, output_fingerprint, sha256_ref
-from .model import DEFAULT_SCOPE, ENVELOPE_ID, LINEAGE_ID, PublisherMode
+from .artifact import section_fingerprint
+from .canonical import bundle_fingerprint
+from .model import DEFAULT_SCOPE, ENVELOPE_ID, ENVELOPE_V2, LINEAGE_ID, PublisherMode
 from .publisher import ShadowPublisher
 from .refs import ArtifactRef, artifact_location
 from .registry import Registry, default_registry
@@ -30,10 +32,10 @@ def seal_artifact(*, brain_id: str, artifact_schema: str, mutations: list, lifec
                   artifact_id: str | None = None, registry: Registry | None = None) -> dict:
     """Envelope with a correct `outputFingerprint`. `registry` supplies the schema's volatile_extra; without it only the shared defaults apply."""
     spec = (registry or default_registry()).spec(artifact_schema)
-    extra = spec.volatile_extra if spec else ()
+    fp = section_fingerprint(spec, brain_id, mutations) if spec else output_fingerprint(brain_id, artifact_schema, mutations)
     lin = {"schema": LINEAGE_ID, "brainId": brain_id, "artifactSchema": artifact_schema, "knowledgeRelease": knowledge_release, "manifestRef": manifest_ref,
            "manifestSha256": manifest_sha256, "codeVersion": code_version, "executionId": execution_id, "inputFingerprint": input_fingerprint,
-           "outputFingerprint": output_fingerprint(brain_id, artifact_schema, mutations, extra), "generatedAt": generated_at, "lifecycle": lifecycle,
+           "outputFingerprint": fp, "generatedAt": generated_at, "lifecycle": lifecycle,
            "reviewStatus": review_status, "validationStatus": validation_status}
     if artifact_id:
         lin["artifactId"] = artifact_id
@@ -41,6 +43,28 @@ def seal_artifact(*, brain_id: str, artifact_schema: str, mutations: list, lifec
     for k, v in (("freshness", freshness), ("scope", scope), ("approvalRef", approval_ref)):
         if v is not None:
             art[k] = copy.deepcopy(v)
+    return art
+
+
+def seal_bundle(*, brain_id: str, bundle_id: str, sections: list, lifecycle: str, review_status: str, validation_status: str, generated_at: str,
+                execution_id: str, code_version: str, input_fingerprint: str, knowledge_release: str = "NONE", manifest_ref: str = "NONE",
+                manifest_sha256: str = "NONE", approval_ref: str | None = None, artifact_id: str | None = None, registry: Registry | None = None) -> dict:
+    """ONE logical artifact (envelope v2) with several sections -> ONE publication plan. `sections`: [{artifactSchema, scope?, freshness?, mutations}].
+    The artifact-level outputFingerprint is computed from the sections' semantic fingerprints exactly as the Publisher recomputes it."""
+    reg = registry or default_registry()
+    fps = []
+    for sec in sections:
+        spec = reg.spec(sec["artifactSchema"])
+        fps.append((sec["artifactSchema"], sec.get("scope", DEFAULT_SCOPE), section_fingerprint(spec, brain_id, sec["mutations"]) if spec else "sha256:" + "00" * 32))
+    lin = {"schema": LINEAGE_ID, "brainId": brain_id, "artifactSchema": bundle_id, "knowledgeRelease": knowledge_release, "manifestRef": manifest_ref,
+           "manifestSha256": manifest_sha256, "codeVersion": code_version, "executionId": execution_id, "inputFingerprint": input_fingerprint,
+           "outputFingerprint": bundle_fingerprint(brain_id, bundle_id, fps), "generatedAt": generated_at, "lifecycle": lifecycle,
+           "reviewStatus": review_status, "validationStatus": validation_status}
+    if artifact_id:
+        lin["artifactId"] = artifact_id
+    art = {"envelope": ENVELOPE_V2, "lineage": lin, "sections": copy.deepcopy(sections)}
+    if approval_ref is not None:
+        art["approvalRef"] = approval_ref
     return art
 
 

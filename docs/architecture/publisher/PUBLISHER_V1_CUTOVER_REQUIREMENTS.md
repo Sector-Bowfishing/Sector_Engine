@@ -2,13 +2,32 @@
 
 **Status:** requirements only. Publisher V1 exists in SHADOW mode. The P7/P8 design questions were **closed** in the design-closeout follow-up (below); closing a design question deploys nothing. **Nothing below is authorised or done.** Each item needs its own explicit approval from Michael (`../certification/README.md`: "Approval of these decisions authorizes no implementation by itself"). Public-safe: target shapes only; concrete service-account names, IAM bindings and current-state security findings are kept in the private handoff.
 
+## 0. Gate P status (Wind / Publisher contract hardening)
+**`PUBLISHER_GATE_P_SHADOW_READY`** (F-1..F-9 resolved at the shadow-contract level; matrix in architecture §12). **`PRODUCTION_WRITE_SECURITY_GATE_OPEN`**: production cutover remains blocked on a bounded Publisher write model (detail private). Not production deployed; no IAM approved; Wind not cut over; no specialist write removed; no live change; Wind architecture not certified; customer publication not enabled.
+
+### Changes the Wind artifact builder must make to meet the hardened contract (Wind lane, not done here)
+1. Emit ONE `publish-artifact-v2` artifact per run (bundle `wind-publication-v1`, sections = the three Wind schemas, lake-state split into scopes if desired) instead of five artifacts. `seal_bundle` builds it; fingerprints use `artifact.section_fingerprint` (schema volatile contract applied).
+2. Stop authoring `/snapshots/{k}/latest/wind` and `brainVersions/wind` (Publisher-derived), `/lakeFleet/{k}/lakeId`, `/snapshots/{k}/latest/lakeId`, `/health/jobs/*`, and the health process fields; author only `/health/brains/wind/{status,staleLakeCount}` child-level.
+3. Unchanged by this pass and still governed by the Wind certification: the registry `scores` mirror, the freshness inputs and the `lastError` content. For stale optional children use an explicit `DELETE` with a declared reason (never null).
+4. Re-run the equivalence evaluator (§12.8) against a PRIVATE read-only live capture and keep the JSON as certification evidence.
+
+### Platform items created by Gate P (not Wind, not Publisher)
+| # | Item | Owner | Needed before |
+|---|---|---|---|
+| G1 | Orchestrator-written compatibility records for `/health/jobs/wind-hourly` and the `/health/brains/wind` process fields (from `/jobs` + execution ledger) | Orchestrator | Wind cutover (Ops would otherwise lose them) |
+| G2 | Orchestrator dependency freshness from its own execution records (replaces reading `/brains/wind/lastSuccessfulRun`) | Orchestrator | removing the transitional child; until then a SKIP leaves it stale |
+| G3 | Activity retention job (bounded ring over `/activity`) | Platform maintenance | Wind cutover (Wind artifacts never prune) |
+| G4 | Platform Lake Registry publisher for `lakeId` identity fields | Platform | a new lake appears after Wind stops writing them |
+| G5 | Decide whether a generic republish heartbeat is wanted (a SKIP does not refresh volatile fields) | Michael | Wind cutover |
+| G6 | Lineage doc: record `SHADOW` status, ordering rule and the semantic-fingerprint algorithm id | certification docs lane | next doc pass |
+
 ## 1. Remaining before a production Publisher
 | # | Work | Notes |
 |---|---|---|
 | P1 | Live sink + live mode | A new `LiveSink`/mode in a **separate module** that only the Publisher service imports; the shadow package must keep passing its import lint. Requires a new reviewed change; there is no flag to flip. |
 | P2 | Artifact/history bucket adapter | GCS `ObjectStore` implementing the existing contract (`if_generation_match`, generations). **Bucket creation needs approval (CERT-3 approved the design only).** Versioning on; no delete rights for the Publisher identity; lifecycle rules only on classes named in `BRAIN_DATA_CLASSIFICATION_V1` rule 5. |
 | P3 | Atomic live update + manifest-last | Send `UpdatePlan.updates` as ONE multi-location update including `brains/{id}/publication`; implement `PARTIAL → COMPLETE` manifest-last for artifacts above `max_bytes` (Wind fleet-scale artifacts). Record `COMPLETE` / `PARTIAL` (the shadow-only status `SHADOW` goes away in live). |
-| P4 | Baseline reconciliation | The shadow baseline is the last `SHADOW_READY`, not live. Before the first live publish per scope, read live (GET only), compute the fingerprint of what is live, seed the head, and diff; the first publish after that must be a *deliberate* change, never an accidental full rewrite. |
+| P4 | Baseline reconciliation (the Gate P equivalence evaluator is the comparison tool; reconcile heads from a PRIVATE live capture) | The shadow baseline is the last `SHADOW_READY`, not live. Before the first live publish per scope, read live (GET only), compute the fingerprint of what is live, seed the head, and diff; the first publish after that must be a *deliberate* change, never an accidental full rewrite. |
 | P5 | Rollback execution | `rollback_reference` identifies the previous artifact; add a reviewed, request-driven rollback that republishes it (needs an explicit "rollback" path through the validator, since older artifacts are otherwise rejected). Test end to end (exit evidence G). |
 | P6 | Release resolver | Implement `release_resolver` against private release storage so `knowledgeRelease`/`manifestRef`/`manifestSha256` are verified, not just well-formed. |
 | P7 | Orchestrator API service | **Design CLOSED:** Orchestrator platform library + small authenticated API service + dedicated Publisher identity (all future; nothing deployed). Remaining (implementation, needs approval): Firebase ID-token verification behind `Authenticator`, the real allowlist (no user identifiers in the public repo), real `Dispatcher` onto `orchestration.evaluate_request` and the review/research queues, request/outcome records written through the Publisher, deployment. Only after the API exists may Ops stop writing control state directly. |

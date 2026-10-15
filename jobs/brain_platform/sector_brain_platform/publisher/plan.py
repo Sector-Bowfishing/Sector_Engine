@@ -6,6 +6,7 @@ mutation; the builder asserts this invariant itself rather than trusting the val
 """
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass
 
 from ..keys import check_update
@@ -27,6 +28,7 @@ class UpdatePlan:
     path_count: int                   # artifact paths (excludes the publication record)
     patch_bytes: int
     publication_key: str
+    derived_keys: tuple = ()          # keys produced by Publisher-owned compatibility projections (a subset of `updates`, never Brain-authored)
 
     def canonical(self) -> bytes:
         return canonical_bytes(self.updates)
@@ -45,7 +47,7 @@ def path_fingerprints(mutations: list[dict]) -> dict:
 
 
 #: History-only fields: the per-path hashes are keyed by full paths (not legal RTDB node keys) and violations are history-only (REJECTED is never in RTDB).
-HISTORY_ONLY = frozenset({"pathSha256", "violations", "headGeneration"})
+HISTORY_ONLY = frozenset({"pathSha256", "violations", "headGeneration", "headGenerations"})
 
 
 def rtdb_record(record: dict, top: bool = True):
@@ -57,7 +59,31 @@ def rtdb_record(record: dict, top: bool = True):
     return record
 
 
-def build_update_plan(brain_id: str, mutations: list[dict], record: dict) -> UpdatePlan:
+def derive_projections(changed_sections, all_sections) -> list[dict]:
+    """Platform-owned derived mutations for the CHANGED sections, from each schema's declared CompatibilityProjection rules. Deterministic (sorted by path),
+    deep-copied, and tagged with the rule id. A source DELETE derives a target DELETE. A VALUE_FROM rule needs its value_from SET in the same artifact."""
+    sets = {m["path"]: m["value"] for sec in all_sections for m in sec.mutations if m["op"] == "SET"}
+    out = {}
+    for sec in changed_sections:
+        for pr in sec.spec.projections:
+            for m in sec.mutations:
+                params = pr.match_source(m["path"])
+                if params is None:
+                    continue
+                target = pr.fill(pr.target, params)
+                if m["op"] == "DELETE":
+                    out[target] = {"op": "DELETE", "path": target, "rule": pr.id}
+                elif pr.kind == "COPY":
+                    out[target] = {"op": "SET", "path": target, "value": copy.deepcopy(m["value"]), "rule": pr.id}
+                elif pr.value_from in sets:
+                    out[target] = {"op": "SET", "path": target, "value": copy.deepcopy(sets[pr.value_from]), "rule": pr.id}
+    return [out[k] for k in sorted(out)]
+
+
+def build_update_plan(brain_id: str, mutations: list[dict], record: dict, derived: list[dict] = ()) -> UpdatePlan:
+    """ONE plan for ONE accepted artifact: authored mutations (all sections) + derived projections + the single publication record."""
+    mutations = list(mutations) + list(derived)
+    derived_keys = tuple(to_rtdb_key(m["path"]) for m in derived)
     patch = artifact_patch(mutations)
     explicit = {to_rtdb_key(m["path"]) for m in mutations if m["op"] == "DELETE"}
     stray = sorted(k for k, v in patch.items() if v is None and k not in explicit)
@@ -69,4 +95,4 @@ def build_update_plan(brain_id: str, mutations: list[dict], record: dict) -> Upd
     updates = dict(sorted({**patch, pub_key: rtdb_record(record)}.items()))
     check_update(updates)          # every path segment and every node key inside every value is a legal RTDB key, or the plan is not built
     return UpdatePlan(brain_id, updates, tuple(sorted(explicit)), sha256_ref(canonical_bytes(patch)), sha256_ref(canonical_bytes(updates)),
-                      len(patch), len(canonical_bytes(patch)), pub_key)
+                      len(patch), len(canonical_bytes(patch)), pub_key, derived_keys)

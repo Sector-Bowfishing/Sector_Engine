@@ -9,8 +9,8 @@ import math
 import re
 
 from ..keys import IllegalKey, check_keys
-from .canonical import canonical_bytes, output_fingerprint
-from .model import ENVELOPE_ID, FRESHNESS_STATUSES, LINEAGE_ID, OPS, REVIEW_STATUSES, Rejected, Violation
+from .canonical import canonical_bytes
+from .model import ENVELOPE_ID, ENVELOPE_V2, FRESHNESS_STATUSES, LINEAGE_ID, OPS, REVIEW_STATUSES, Rejected, Violation
 from .paths import PathError, foreign_owner, normalize_path, touches_reserved
 from .registry import ALL_LIFECYCLES, PRODUCTION_LIFECYCLES, VALIDATION_WORDS, Registry, SchemaSpec
 
@@ -18,6 +18,8 @@ from .refs import SHA, UUID4
 ISO_UTC = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z")
 SCOPE = re.compile(r"[A-Za-z0-9_][A-Za-z0-9._-]{0,63}")
 ENVELOPE_KEYS = {"envelope", "lineage", "mutations", "scope", "freshness", "approvalRef"}
+V2_KEYS = {"envelope", "lineage", "sections", "approvalRef"}
+SECTION_KEYS = {"artifactSchema", "scope", "freshness", "mutations"}
 LINEAGE_REQUIRED = ("schema", "brainId", "artifactSchema", "knowledgeRelease", "manifestRef", "manifestSha256", "codeVersion", "executionId",
                     "inputFingerprint", "outputFingerprint", "generatedAt", "lifecycle", "reviewStatus", "validationStatus")
 LINEAGE_OPTIONAL = ("artifactId",)
@@ -38,7 +40,16 @@ def _one(code, detail, path=None):
 
 
 # ---- stage 0: shape ------------------------------------------------------------------------------------------------------------------------
-def check_shape(raw) -> None:
+def _check_mutation_shapes(ms, label="mutations"):
+    if not isinstance(ms, list) or not ms:
+        _one("MALFORMED", f"{label} must be a non-empty list")
+    for i, m in enumerate(ms):
+        if not isinstance(m, dict) or set(m) - {"op", "path", "value", "reason"} or m.get("op") not in OPS or "path" not in m:
+            _one("MALFORMED", f"{label} #{i} must be {{op: SET|DELETE, path, value|reason}}")
+
+
+def check_shape(raw) -> str:
+    """-> 'v1' (one section: top-level mutations/scope/freshness) or 'v2' (several sections). Mixed shapes are rejected."""
     if not isinstance(raw, dict):
         _one("MALFORMED", "artifact must be a JSON object")
     try:
@@ -47,21 +58,30 @@ def check_shape(raw) -> None:
         _one("NON_FINITE", f"NaN/Infinity is not representable: {e}")
     except TypeError as e:
         _one("MALFORMED", f"artifact is not JSON serialisable: {e}")
-    unknown = sorted(set(raw) - ENVELOPE_KEYS)
+    env = raw.get("envelope")
+    if env not in (ENVELOPE_ID, ENVELOPE_V2):
+        _one("MALFORMED", f"envelope must be {ENVELOPE_ID!r} or {ENVELOPE_V2!r}")
+    allowed = ENVELOPE_KEYS if env == ENVELOPE_ID else V2_KEYS
+    unknown = sorted(set(raw) - allowed)
     if unknown:
-        _one("MALFORMED", f"unknown envelope keys {unknown}")
-    if raw.get("envelope") != ENVELOPE_ID:
-        _one("MALFORMED", f"envelope must be {ENVELOPE_ID!r}")
+        _one("MALFORMED", f"unknown envelope keys {unknown} for {env}")
     if not isinstance(raw.get("lineage"), dict) or not raw["lineage"]:
         _one("LINEAGE_MISSING", "artifact has no lineage block")
-    ms = raw.get("mutations")
-    if not isinstance(ms, list) or not ms:
-        _one("MALFORMED", "mutations must be a non-empty list")
-    for i, m in enumerate(ms):
-        if not isinstance(m, dict) or set(m) - {"op", "path", "value", "reason"} or m.get("op") not in OPS or "path" not in m:
-            _one("MALFORMED", f"mutation #{i} must be {{op: SET|DELETE, path, value|reason}}")
-    if "scope" in raw and not (isinstance(raw["scope"], str) and SCOPE.fullmatch(raw["scope"])):
-        _one("MALFORMED", "scope must match [A-Za-z0-9_][A-Za-z0-9._-]{0,63}")
+    if env == ENVELOPE_ID:
+        _check_mutation_shapes(raw.get("mutations"))
+        if "scope" in raw and not (isinstance(raw["scope"], str) and SCOPE.fullmatch(raw["scope"])):
+            _one("MALFORMED", "scope must match [A-Za-z0-9_][A-Za-z0-9._-]{0,63}")
+        return "v1"
+    secs = raw.get("sections")
+    if not isinstance(secs, list) or not secs:
+        _one("MALFORMED", "sections must be a non-empty list")
+    for i, sec in enumerate(secs):
+        if not isinstance(sec, dict) or set(sec) - SECTION_KEYS or not isinstance(sec.get("artifactSchema"), str):
+            _one("MALFORMED", f"section #{i} must be {{artifactSchema, scope?, freshness?, mutations}}")
+        if "scope" in sec and not (isinstance(sec["scope"], str) and SCOPE.fullmatch(sec["scope"])):
+            _one("MALFORMED", f"section #{i} scope must match [A-Za-z0-9_][A-Za-z0-9._-]{{0,63}}")
+        _check_mutation_shapes(sec.get("mutations"), f"section #{i} mutations")
+    return "v2"
 
 
 # ---- stage 1: brain identity ---------------------------------------------------------------------------------------------------------------
@@ -98,7 +118,10 @@ def check_paths(mutations: list[dict], brain: str, spec: SchemaSpec, registry: R
             bad.append(Violation("INVALID_PATH", str(e)))
             continue
         delete = m["op"] == "DELETE"
-        if p.split("/")[1] == "brains" and p.count("/") <= 2:
+        pr = registry.derived_target(brain, p)
+        if pr is not None:
+            bad.append(Violation("PLATFORM_DERIVED_PATH", f"published by the Publisher as compatibility projection {pr.id!r} ({pr.owner}-owned); do not author it", p))
+        elif p.split("/")[1] == "brains" and p.count("/") <= 2:
             bad.append(Violation("BRAIN_NODE_REPLACEMENT", "a specialist artifact may not replace /brains or a whole /brains/{brainId} node; publish approved CHILD paths", p))
         elif touches_reserved(p):
             bad.append(Violation("RESERVED_PATH", "Publisher-owned (or its ancestor); no artifact may write it", p))
@@ -114,15 +137,28 @@ def check_paths(mutations: list[dict], brain: str, spec: SchemaSpec, registry: R
         out.append({**m, "path": p})
     if bad:
         raise Rejected(bad)
-    paths = sorted(m["path"] for m in out)
-    dup = [b for a, b in zip(paths, paths[1:]) if a == b or b.startswith(a + "/")]
-    if dup:
-        raise Rejected([Violation("OVERLAPPING_PATHS", "paths overlap (a multi-location update cannot write a path and its descendant)", d) for d in dup])
     return out
 
 
+def check_overlaps(tagged: list[tuple]) -> None:
+    """tagged: [(origin, mutation)]. Across ALL sections of one artifact (and derived mutations): a path may appear once and may not be an ancestor of another.
+    SET vs DELETE on overlapping paths is a distinct, explicit conflict."""
+    items = sorted(((m["path"], m["op"], o) for o, m in tagged))
+    bad = []
+    for n, (a, aop, ao) in enumerate(items):
+        for b, bop, bo in items[n + 1:]:
+            if not (a == b or b.startswith(a + "/")):
+                break
+            if aop != bop:
+                bad.append(Violation("SET_DELETE_CONFLICT", f"{aop} {a} ({ao}) conflicts with {bop} {b} ({bo}) in one artifact", b))
+            else:
+                bad.append(Violation("OVERLAPPING_PATHS", f"paths overlap ({ao} / {bo}): a multi-location update cannot write a path and its descendant", b))
+    if bad:
+        raise Rejected(bad)
+
+
 # ---- stage 4: lineage ----------------------------------------------------------------------------------------------------------------------
-def check_lineage(lineage: dict, spec: SchemaSpec, release_resolver=None) -> None:
+def check_lineage(lineage: dict, require_release: bool = False, release_resolver=None) -> None:
     missing = [k for k in LINEAGE_REQUIRED if lineage.get(k) in (None, "")]
     if missing:
         _one("LINEAGE_INCOMPLETE", f"missing lineage fields {missing}")
@@ -152,8 +188,8 @@ def check_lineage(lineage: dict, spec: SchemaSpec, release_resolver=None) -> Non
         none = [lineage[k] == "NONE" for k in ("knowledgeRelease", "manifestRef", "manifestSha256")]
         if any(none) and not all(none):
             v.append(Violation("LINEAGE_INCOMPLETE", "knowledgeRelease, manifestRef and manifestSha256 must be all 'NONE' or all declared"))
-        elif all(none) and spec.require_release:
-            v.append(Violation("LINEAGE_INCOMPLETE", f"schema {spec.schema_id} requires a canonical release"))
+        elif all(none) and require_release:
+            v.append(Violation("LINEAGE_INCOMPLETE", "a schema in this artifact requires a canonical release"))
         elif not any(none) and release_resolver is not None:
             if not release_resolver(lineage["knowledgeRelease"], lineage["manifestRef"], lineage["manifestSha256"]):
                 v.append(Violation("RELEASE_UNRESOLVED", "knowledgeRelease/manifestRef did not resolve to the declared manifestSha256"))
@@ -162,13 +198,17 @@ def check_lineage(lineage: dict, spec: SchemaSpec, release_resolver=None) -> Non
 
 
 # ---- stage 5: lifecycle, review/validation semantics, freshness -------------------------------------------------------------------------------
-def check_semantics(raw: dict, spec: SchemaSpec) -> None:
+def check_lifecycle_and_status(raw: dict, specs: list, extra_allowed=None) -> None:
+    """Lifecycle must be authorised by EVERY schema in the artifact (and the bundle); status words and their consistency are checked once."""
     lin = raw["lineage"]
     lc = lin["lifecycle"]
     if lc not in ALL_LIFECYCLES:
         _one("INVALID_LIFECYCLE", f"lifecycle {lc!r} not in the Brain Model v1 vocabulary")
-    if lc not in spec.allowed_lifecycles:
-        _one("LIFECYCLE_NOT_AUTHORIZED", f"schema {spec.schema_id} may not publish lifecycle {lc!r}")
+    for sp in specs:
+        if lc not in sp.allowed_lifecycles:
+            _one("LIFECYCLE_NOT_AUTHORIZED", f"schema {sp.schema_id} may not publish lifecycle {lc!r}")
+    if extra_allowed is not None and lc not in extra_allowed:
+        _one("LIFECYCLE_NOT_AUTHORIZED", f"bundle may not publish lifecycle {lc!r}")
     if lc in PRODUCTION_LIFECYCLES and not (isinstance(raw.get("approvalRef"), str) and raw["approvalRef"]):
         _one("LIFECYCLE_NOT_AUTHORIZED", f"lifecycle {lc!r} requires an approvalRef")
     rs, vs = lin["reviewStatus"], lin["validationStatus"]
@@ -176,11 +216,13 @@ def check_semantics(raw: dict, spec: SchemaSpec) -> None:
         _one("INVALID_STATUS", f"reviewStatus {rs!r} not in {REVIEW_STATUSES}")
     if vs not in VALIDATION_WORDS:
         _one("INVALID_STATUS", f"validationStatus {vs!r} not in the validation/claim-maturity vocabulary")
-    if spec.require_review_status and rs == "NOT_APPLICABLE":
-        _one("INVALID_STATUS", f"schema {spec.schema_id} requires a real reviewStatus (not NOT_APPLICABLE)")
+    if any(sp.require_review_status for sp in specs) and rs == "NOT_APPLICABLE":
+        _one("INVALID_STATUS", "a schema in this artifact requires a real reviewStatus (not NOT_APPLICABLE)")
     if vs == "VALIDATED" and rs != "REVIEWED":
         _one("STATUS_INCONSISTENT", "validationStatus VALIDATED requires reviewStatus REVIEWED")
-    fr = raw.get("freshness")
+
+
+def check_freshness(fr, spec: SchemaSpec) -> None:
     if fr is None:
         if spec.require_freshness:
             _one("FRESHNESS_MISSING", f"schema {spec.schema_id} requires a freshness block")
@@ -218,6 +260,8 @@ def check_values(mutations: list[dict], spec: SchemaSpec, registry: Registry) ->
         if m["op"] == "DELETE":
             if "value" in m or not (isinstance(m.get("reason"), str) and m["reason"].strip()):
                 bad.append(Violation("INVALID_DELETE", "DELETE takes no value and needs a non-empty reason", p))
+            elif m["reason"] not in spec.delete_reasons:
+                bad.append(Violation("DELETE_REASON_INVALID", f"DELETE reason must be one of {list(spec.delete_reasons)}", p))
             continue
         if "reason" in m:
             bad.append(Violation("MALFORMED", "SET takes no reason", p))
@@ -249,11 +293,3 @@ def check_size(mutations: list[dict], spec: SchemaSpec) -> None:
     n = len(canonical_bytes(mutations))
     if n > spec.max_bytes:
         _one("OVERSIZE", f"{n} bytes exceeds {spec.max_bytes} for {spec.schema_id}")
-
-
-# ---- stage 6: fingerprint ------------------------------------------------------------------------------------------------------------------
-def verify_fingerprint(lineage: dict, brain: str, spec: SchemaSpec, mutations: list[dict]) -> str:
-    fp = output_fingerprint(brain, spec.schema_id, mutations, spec.volatile_extra)
-    if lineage["outputFingerprint"] != fp:
-        _one("FINGERPRINT_MISMATCH", f"declared {lineage['outputFingerprint']} but the canonical content hashes to {fp}")
-    return fp

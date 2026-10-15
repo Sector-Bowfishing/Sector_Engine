@@ -164,12 +164,9 @@ class PublishHistory:
         b = self.store.get(head_key(brain_id, schema, scope))
         return json.loads(b) if b else None
 
-    def advance_head(self, record: dict) -> int:
-        """Point the scope's head at `record` (a SHADOW_READY record). Fails if another writer advanced it since `record` was planned."""
-        key = head_key(record["brainId"], record["artifactSchema"], record["scope"])
-        expect = record["headGeneration"]
-        ptr = {k: record[k] for k in ("publishId", "artifactId", "outputFingerprint", "generatedAt", "evaluatedAt", "previousPublishId") if k in record}
-        return self.store.put(key, canonical_bytes(ptr), if_generation_match=expect)
+    def advance_head(self, brain_id: str, schema: str, scope: str, pointer: dict, expect_generation: int) -> int:
+        """Point the (schema, scope) baseline at `pointer`. Fails (PreconditionFailed) if another writer advanced it since `expect_generation` was read."""
+        return self.store.put(head_key(brain_id, schema, scope), canonical_bytes(pointer), if_generation_match=expect_generation)
 
     def head_generation(self, brain_id: str, schema: str, scope: str = DEFAULT_SCOPE) -> int:
         return self.store.generation(head_key(brain_id, schema, scope))
@@ -189,6 +186,7 @@ class PublishHistory:
         if prev is None:
             return None
         return {"restorePublishId": prev["publishId"], "artifactId": prev["artifactId"], "artifactKey": artifact_key(brain_id, prev["artifactId"]),
+                "sectionPrevious": [{"artifactSchema": x["artifactSchema"], "scope": x["scope"], "previousPublishId": x.get("previousPublishId")} for x in rec.get("sections", ())],
                 "artifactStored": self.store.get(artifact_key(brain_id, prev["artifactId"])) is not None,
                 "outputFingerprint": prev["outputFingerprint"], "fromPublishId": publish_id}
 

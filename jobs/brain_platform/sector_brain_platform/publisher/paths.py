@@ -109,6 +109,10 @@ def foreign_owner(path: str, submitter: str) -> str | None:
     s = segments(path)
     if s[0] in PROTECTED_ROOTS:
         return PROTECTED_ROOTS[s[0]]
+    if (len(s) == 3 and s[0] == "lakeFleet" and s[2] == "lakeId") or (len(s) == 4 and s[0] == "snapshots" and s[2:] == ["latest", "lakeId"]):
+        return "platform-lake-registry"                      # lake identity is Platform Lake Registry-owned
+    if len(s) >= 2 and s[0] == "health" and s[1] == "jobs":
+        return "orchestrator"                                # execution / job health is Orchestrator-owned
     if len(s) >= 3 and s[0] == "lakes" and s[2] == "speciesPresence":
         return "lake-brain"
     for other in list(BRAINS) + [PLATFORM_WRITER]:
