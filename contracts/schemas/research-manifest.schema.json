@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/research-manifest.schema.json",
+  "title": "brains/<dir>/research/MANIFEST.json v1",
+  "description": "Metadata-only index of a Brain's research workspace (logical id). References by name/hash/version; never embeds data and never records a physical path. Makes 'this canonical release came from this evidence' checkable without storing the evidence in Git.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "workspaceId", "collections"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "workspaceId": {"type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"},
+    "collections": {"type": "array", "items": {"$ref": "#/$defs/collection"}}
+  },
+  "$defs": {
+    "collection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "class", "contentHash", "backupLocationId", "producedBy"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "class": {"enum": ["RESEARCH", "CANONICAL", "OBSERVATION_VALIDATION", "DERIVED", "PROVIDER_DUMP"]},
+        "contentHash": {"type": "string", "pattern": "^(sha256:[0-9a-f]{64}|version:[A-Za-z0-9._-]+)$"},
+        "backupLocationId": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "Logical backup location id, not a path."},
+        "producedBy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tool", "commit"],
+          "properties": {"tool": {"type": "string", "minLength": 1}, "commit": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"}}
+        },
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

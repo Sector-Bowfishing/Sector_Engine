@@ -39,3 +39,6 @@ None are hard blockers. Confirmations Michael may want to make while Phase 1A is
 * the exact names `platform/registries/{brains,lakes,species}/` (chosen to satisfy "obviously different"; rename is cheap before Phase 1A);
 * Phase 1B baseline: which pre-existing failures (if any) are recorded rather than fixed (decided by the 1B run, not in advance);
 * the RA-14 read-only private-content review is **not** a Phase 1A/1B blocker (those phases relocate no historical docs or snapshots; only conformance fixtures move, in 1B) but **is** a blocker for any later relocation of `docs/brains/platform/cost-freeze/**` or other historical/lineage docs.
+
+## 5. Implementation status
+Phase 1A (additive skeleton + schemas + report-only architecture tooling) is implemented: see `docs/architecture/repository-foundation-v1/PHASE_1A_IMPLEMENTATION.md` (`REPOSITORY_FOUNDATION_PHASE_1A_COMPLETE`). Phase 1B not started.

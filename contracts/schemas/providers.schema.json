@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/providers.schema.json",
+  "title": "providers/PROVIDERS.json catalog v1",
+  "description": "Provider CATALOG (not an entity registry). Ownership semantics are deliberately separate: acquisitionOwner (client/parser code), healthOwner (source-health record), authorizedConsumers (who may import). Domain interpretation is declared by the CONSUMER in brain.json (domainInterpreter), never by the provider.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "providers"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/provider"
+      }
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "ownerId": {
+      "type": "string",
+      "pattern": "^(platform|engine|[a-z][a-z0-9]*(-[a-z0-9]+)*)$"
+    },
+    "consumerId": {
+      "type": "string",
+      "pattern": "^(engine|[a-z][a-z0-9]*(-[a-z0-9]+)*)$"
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerId",
+        "acquisitionOwner",
+        "healthOwner",
+        "authorizedConsumers",
+        "costClass",
+        "licenseRef"
+      ],
+      "properties": {
+        "providerId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acquisitionOwner": {
+          "$ref": "#/$defs/ownerId"
+        },
+        "healthOwner": {
+          "$ref": "#/$defs/ownerId"
+        },
+        "authorizedConsumers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/consumerId"
+          }
+        },
+        "costClass": {
+          "enum": [
+            "free",
+            "metered",
+            "paid"
+          ]
+        },
+        "costNote": {
+          "type": "string"
+        },
+        "licenseRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rawCachePolicy": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

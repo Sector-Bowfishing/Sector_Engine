@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/registry-species.schema.json",
+  "title": "Species Registry entry v1 (canonical species IDENTITY)",
+  "description": "SPECIES REGISTRY (Platform-owned, CERT-8): canonical species identity only. Fish Brain (brainId biological-state) owns intelligence ABOUT fish. Legality and per-lake presence are NOT identity; per-lake presence never goes in public Git. Phase 1A defines the shape only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "species"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "species": {"type": "array", "items": {"$ref": "#/$defs/species"}}
+  },
+  "$defs": {
+    "species": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speciesId", "commonName", "scientificName"],
+      "properties": {
+        "speciesId": {"type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"},
+        "commonName": {"type": "string", "minLength": 1},
+        "scientificName": {"type": "string", "minLength": 1},
+        "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    }
+  }
+}

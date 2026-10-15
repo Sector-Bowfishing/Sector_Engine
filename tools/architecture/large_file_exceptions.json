@@ -1,0 +1,5 @@
+{
+  "description": "Policy exceptions for tracked files >= 1 MB (invariant 15). Each entry records a reason and, for generated data, source/generator/version/rebuild. Phase 1A records NO exceptions: existing large files are reported as baseline debt and are neither moved nor deleted.",
+  "schemaVersion": "1.0.0",
+  "exceptions": []
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/registry-lakes.schema.json",
+  "title": "Lake Registry entry v1 (canonical lake IDENTITY)",
+  "description": "LAKE REGISTRY (Platform-owned): canonical lake identity only. Lake Brain owns intelligence ABOUT lakes (hydrology, bindings, condition interpretation, species presence). Per-lake species presence and private observations never belong here or in public Git. Phase 1A defines the shape only; no registry data is migrated.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "lakes"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "geometryManifestRef": {"type": "string", "description": "Pointer (URI/version/hash) to released geometry; geometry itself is not embedded."},
+    "lakes": {"type": "array", "items": {"$ref": "#/$defs/lake"}}
+  },
+  "$defs": {
+    "lake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lakeId", "displayName", "state", "waterbodyClass"],
+      "properties": {
+        "lakeId": {"type": "string", "minLength": 1},
+        "lakeKey": {"type": "string", "minLength": 1, "description": "Stable derived key (lake_key); derivation owned by the registry and covered by conformance fixtures."},
+        "displayName": {"type": "string", "minLength": 1},
+        "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "state": {"type": "string", "minLength": 2},
+        "waterbodyClass": {"enum": ["reservoir", "natural-lake", "river-impoundment", "pond", "other", "UNKNOWN"]},
+        "centroid": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lat", "lon"],
+          "properties": {"lat": {"type": "number", "minimum": -90, "maximum": 90}, "lon": {"type": "number", "minimum": -180, "maximum": 180}}
+        },
+        "geometryRef": {"type": "string"}
+      }
+    }
+  }
+}
