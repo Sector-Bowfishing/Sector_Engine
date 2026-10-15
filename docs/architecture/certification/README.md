@@ -1,6 +1,6 @@
 # Brain Certification V1: shared foundation
 
-**Status:** PROPOSED, for Michael's approval (2026-10-14). Architecture and planning only; nothing live has changed.
+**Status:** **APPROVED by Michael, 2026-10-14** (foundation + CERT decisions below). Architecture and planning only; nothing has been implemented or changed live. Next: Wind Brain Architecture Certification V1.
 **Plan:** certify **Wind** → **Fish Brain** (`biological-state`) → STOP → **Architecture Audit #1** → continue Brain by Brain (Lake → Water Temperature → Water Clarity → Depth → Vegetation → Sector Intelligence, reorderable by the audit, with Intelligence last).
 
 | Document | Defines |
@@ -15,7 +15,7 @@
 
 Background inventory and matrices: `../data/` (partly superseded; see the header notes there).
 
-## Locked by this foundation (subject to Michael's approval of the foundation as a whole)
+## Locked by this foundation (approved 2026-10-14)
 1. The specialist Brain owns domain truth; the **Orchestrator Publisher is the only steady-state writer** to `sector-brain`. This is the **target**, not current fact.
 2. Specialist Brains read published contracts and produce artifacts; they never read another Brain's private research.
 3. Ops is read-only on `sector-brain`; its actions go through an authenticated Engine/Orchestrator API.
@@ -28,15 +28,17 @@ Background inventory and matrices: `../data/` (partly superseded; see the header
 10. Research root `/Users/mcather/Desktop/Development/Sector Research` with `shared/` and per-Brain folders; Wind's canonical local workspace is `Sector Research/wind-brain`.
 11. Certification never moves a score; BEFORE/AFTER under the same definition.
 
-## Unresolved (need Michael's decision; recommendation given)
-| ID | Question | Recommendation |
-|---|---|---|
-| CERT-1 | Where does the Publisher run? (The Orchestrator is a scheduled Cloud Run job today; Ops requests need an always-available API) | Publisher as a shared library used by the Orchestrator job, plus a small authenticated Orchestrator API service that shares the Publisher identity |
-| CERT-2 | Build the Publisher before Wind, or inside Wind certification? | A separate **platform** task, "Publisher V1 (shadow only)", on the shared lineage. Wind certification steps 1–7 can run before it; the Wind cutover (step 8+) waits for it |
-| CERT-3 | Artifact store and history store: one private bucket or two; names | One private versioned bucket with prefixes `artifacts/`, `publishes/`, `scores/`, `exports/` |
-| CERT-4 | Private versioned backup location for research workspaces | One private versioned research bucket, prefix per Brain workspace; chosen and approved during Wind certification |
-| CERT-5 | Fish profile serving path (`/speciesProfiles/{id}` vs nested) | Decide in Fish certification; the earlier audit recommends `/speciesProfiles/{id}` (wholesale `/species` reads) |
-| CERT-6 | Overall Engine score definition (included Brains, type, version, lifecycle eligibility, missing/stale handling) | Defer; label the aggregate provisional; not recomputed during certification |
-| CERT-7 | Ops per-user UI preferences | Allowed as a client-writable per-user node outside all domain paths, or browser-local; never domain truth |
-| CERT-8 | Where canonical species identity is authored and released (Species Registry is platform-owned, but its release mechanics are undefined) | A small platform-owned registry release (same release pattern), published by the Publisher; settle before Fish certification step 6 |
-| CERT-9 | Writer-identity hardening approach | Assessed privately; decided per Brain at step 9 |
+## CERT decisions (Michael, 2026-10-14)
+| ID | Question | Decision | Status |
+|---|---|---|---|
+| CERT-1 | Where the Publisher runs | The Publisher lives in the Orchestrator platform, with a small authenticated Orchestrator API sharing the Publisher identity | **APPROVED** |
+| CERT-2 | When the Publisher is built | **Publisher V1** is built as a **separate, shadow-only platform task** before Wind can complete certification. Wind may proceed through its read-only/inventory steps first | **APPROVED** |
+| CERT-3 | Artifact/history storage | One private, versioned artifact/history bucket with prefixes `artifacts/`, `publishes/`, `scores/`, `exports/` | **APPROVED** |
+| CERT-4 | Research backup location | One private, versioned research-backup bucket with a prefix per Brain workspace | **APPROVED** |
+| CERT-5 | Fish profile serving path | Decided during Fish certification; the preferred direction remains `/speciesProfiles/{id}` | **DEFERRED to Fish certification** |
+| CERT-6 | Overall Engine score definition | Remains provisional; not redefined during current certification work | **DEFERRED** |
+| CERT-7 | Ops per-user preferences | Must stay outside domain truth; exact storage chosen during Ops implementation | **APPROVED IN PRINCIPLE** |
+| CERT-8 | Species Registry | Platform-owned; exact release mechanics settled before Fish publishing work | **APPROVED IN PRINCIPLE** |
+| CERT-9 | Writer-identity hardening | Required; exact IAM/service-account implementation decided privately during each Brain certification | **APPROVED IN PRINCIPLE** |
+
+Approval of these decisions authorizes **no implementation by itself**. Bucket creation, Publisher build/deploy, rules/IAM changes, scheduler changes, research moves and path changes each still need their own session-level approval.

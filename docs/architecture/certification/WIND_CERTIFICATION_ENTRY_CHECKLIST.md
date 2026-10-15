@@ -3,7 +3,7 @@
 For the next session: **WIND BRAIN — ARCHITECTURE CERTIFICATION V1**. Start only after Michael approves the foundation (`BRAIN_CERTIFICATION_V1.md`). Complete §A–§L **read-only** before proposing any change. Record results in `docs/architecture/certification/records/wind.md` (public-safe). Security evidence goes in the private Wind handoff folder (`Sector Handoffs/Sector Engine/Wind Brain/`).
 
 ## 0. Session entry gates
-- [ ] Foundation approved by Michael (name the approval in the record).
+- [x] Foundation approved by Michael on 2026-10-14, with CERT-1 to CERT-9 (see `README.md`). Cite this in the record.
 - [ ] `git fetch`; identify the newest safe shared lineage (currently `feat/brain-platform-model-v1` or successor). Confirm it contains the deployed orchestrator commit and the Wind durability commit (`f7b6b066`). Create the certification branch from it. Specialist work is **additive only**: no edits to shared platform files without a platform-lane decision.
 - [ ] Read the newest Wind handoff in `Sector Handoffs/Sector Engine/Wind Brain/` and the Wind decision queue (D7–D9).
 
@@ -66,7 +66,7 @@ For each path, record owner, writer, readers, classification, canonical/duplicat
 - [ ] Authorized path families (`BRAIN_PATH_OWNERSHIP_V1.md` §1, `wind` row).
 
 ## I. Publisher migration plan (step 8; Wind is the first Brain, so the Publisher may not exist yet)
-- [ ] Decide whether the Publisher is built as part of Wind certification or first as a separate platform task (decision queue CERT-2). If it does not exist yet, Wind certification's best possible outcome is `PARTIAL` or `BLOCKED: publisher`.
+- [ ] Per **CERT-2 (approved)**, Publisher V1 is a **separate shadow-only platform task**, not part of this session. Wind runs steps 1–7 (read-only inventory through artifact-contract design). Until Publisher V1 exists, the best possible Wind status is `PARTIAL` or `BLOCKED: publisher`.
 - [ ] Shadow plan: Wind produces artifacts; the Publisher runs in dry-run and diffs against what `wind-hourly` actually wrote; zero diff required before cutover.
 - [ ] Cutover plan: one atomic publish per run; `/snapshots/{k}/latest/wind` still written in the same atomic publish while readers remain; `wind-hourly`'s direct write is removed only after the Publisher path is proven; a rollback package exists.
 

@@ -1,6 +1,6 @@
 # Brain Certification V1 (`brain-certification-v1`)
 
-**Status:** PROPOSED FOUNDATION, awaiting Michael's approval, 2026-10-14. Documentation only: nothing live has changed.
+**Status:** **APPROVED FOUNDATION** (Michael, 2026-10-14; CERT decisions in `README.md`). Documentation only: nothing has been implemented or changed live.
 **Companion standards:** `BRAIN_IDENTITY_AND_LINEAGE_V1.md`, `BRAIN_DATA_CLASSIFICATION_V1.md`, `BRAIN_READ_WRITE_SECURITY_V1.md`, `BRAIN_PATH_OWNERSHIP_V1.md`, `BRAIN_RESEARCH_WORKSPACE_V1.md`, `WIND_CERTIFICATION_ENTRY_CHECKLIST.md`.
 **Background evidence:** `docs/architecture/data/` (the read-only inventory and matrices). Where the earlier proposal differs, this standard wins.
 
