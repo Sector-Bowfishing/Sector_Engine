@@ -1,0 +1,4 @@
+# local store default for `main.py ... --store local:./archive`
+archive/
+__pycache__/
+.pytest_cache/
