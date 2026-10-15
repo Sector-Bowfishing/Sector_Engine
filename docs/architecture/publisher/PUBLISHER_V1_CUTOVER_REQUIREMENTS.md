@@ -14,12 +14,12 @@
 ### Platform items created by Gate P (not Wind, not Publisher)
 | # | Item | Owner | Needed before |
 |---|---|---|---|
-| G1 | Orchestrator-written compatibility records for `/health/jobs/wind-hourly` and the `/health/brains/wind` process fields (from `/jobs` + execution ledger) | Orchestrator | Wind cutover (Ops would otherwise lose them) |
-| G2 | Orchestrator dependency freshness from its own execution records (replaces reading `/brains/wind/lastSuccessfulRun`) | Orchestrator | removing the transitional child; until then a SKIP leaves it stale |
+| G1 | Orchestrator-owned execution/job health representation (compatibility records for `/health/jobs/wind-hourly` and the `/health/brains/wind` process fields, from `/jobs` + execution ledger). **Future Orchestrator/platform work; not a blocker for Wind Repository Phase 2** | Orchestrator | live cutover review item (Ops would otherwise lose them) |
+| G2 | Dependency / execution freshness from Orchestrator records instead of forcing a Brain republish (replaces reading `/brains/wind/lastSuccessfulRun`). **Future Orchestrator/platform work; not a blocker for Wind Repository Phase 2** | Orchestrator | live cutover review item; until then a SKIP leaves the transitional child stale |
 | G3 | Activity retention job (bounded ring over `/activity`) | Platform maintenance | Wind cutover (Wind artifacts never prune) |
 | G4 | Platform Lake Registry publisher for `lakeId` identity fields | Platform | a new lake appears after Wind stops writing them |
-| G5 | Decide whether a generic republish heartbeat is wanted (a SKIP does not refresh volatile fields) | Michael | Wind cutover |
-| G6 | Lineage doc: record `SHADOW` status, ordering rule and the semantic-fingerprint algorithm id | certification docs lane | next doc pass |
+| G5 | **CLOSED (Michael): `NO_REPUBLISH_HEARTBEAT — PLATFORM_EXECUTION_FRESHNESS_SEPARATE`.** Unchanged domain truth stays SKIP; execution freshness is advanced separately by the Orchestrator/platform (future task, see G1/G2) | closed | n/a |
+| G6 | **CLOSED:** lineage doc §7 records `SHADOW`, the implemented ordering rule and algorithm id `sector-semantic-fingerprint-v2` | closed | n/a |
 
 ## 1. Remaining before a production Publisher
 | # | Work | Notes |

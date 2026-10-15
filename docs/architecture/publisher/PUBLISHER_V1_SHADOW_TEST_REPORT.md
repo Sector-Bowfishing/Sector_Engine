@@ -100,3 +100,6 @@ Run: `cd jobs/brain_platform && python -m pytest -q` → **452 passed**; `cd job
 
 **Deliberately changed first-round tests (contract changes, not regressions):** `/health/brains/wind` is child-level (domain children only); `/snapshots/{k}/latest/wind` is Publisher-derived, so plans now carry derived snapshot keys and `paths.count` includes them; deletes need a closed reason vocabulary; `advance_head` takes `(brain, schema, scope, pointer, expected generation)`; `output_fingerprint` carries an algorithm id; test fixtures compute fingerprints through the schema's volatile contract.
 **Not tested (by design):** anything live; the GCS adapter; the Orchestrator-side compatibility writers (design only); Wind's own builder (a different worktree; it must be re-pointed at the v2 contract).
+
+## Documentation closeout (post Gate P)
+Documentation/contract-text only (lineage standard §7, architecture §12.10, cutover G1/G2/G5/G6); no code or test changed. Re-run: platform suite 452 passed, `jobs/brain-orchestrator` 24 passed.
