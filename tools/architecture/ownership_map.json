@@ -2,20 +2,80 @@
   "description": "Maps legacy (pre-migration) paths to the component that owns any baseline architecture debt in them and the migration phase that retires it (REPOSITORY_MIGRATION_PLAN_V1.md). First matching prefix wins. Used only to annotate the legacy baseline; it grants no approval.",
   "schemaVersion": "1.0.0",
   "prefixes": [
-    {"prefix": "jobs/brain_platform", "owner": "Platform (python)", "phase": "Phase 2-3 (platform package adopted with the first migrated Brain; Phase 7 retires the legacy copy)"},
-    {"prefix": "jobs/brain-orchestrator", "owner": "Platform (orchestrator)", "phase": "Phase 6/7 (orchestrator reads Brains via the generated Brain Registry)"},
-    {"prefix": "jobs/brain-scores", "owner": "Platform (scoring)", "phase": "Phase 7 (platform/scoring; per-Brain rubrics as Brains migrate)"},
-    {"prefix": "jobs/wind-hourly", "owner": "Wind Brain", "phase": "Phase 2 (Wind migration; blocked on Gate P)"},
-    {"prefix": "jobs/biological-brain", "owner": "Fish Brain (biological-state)", "phase": "Phase 4 (Fish migration)"},
-    {"prefix": "jobs/lake-brain", "owner": "Lake Brain", "phase": "Phase 6 (Lake migration)"},
-    {"prefix": "jobs/lake-geometry", "owner": "Lake Registry (platform)", "phase": "Phase 6 (Lake Registry established first)"},
-    {"prefix": "jobs/lake-surface", "owner": "Lake Registry / Water Clarity", "phase": "Phase 6 (Lake Registry; Clarity after D4)"},
-    {"prefix": "jobs/water-clarity-brain", "owner": "Water Clarity Brain", "phase": "Phase 6 (BLOCKED by D4)"},
-    {"prefix": "jobs/hydrology-hourly", "owner": "Water Clarity Brain", "phase": "Phase 6 (BLOCKED by D4)"},
-    {"prefix": "jobs/water-temp", "owner": "Water Temperature Brain", "phase": "Phase 6 (Water Temperature migration; TVA after D8)"},
-    {"prefix": "jobs/sector-intelligence-brain", "owner": "Sector Intelligence Brain", "phase": "Phase 6 (last)"},
-    {"prefix": "docs/data/hydrology", "owner": "Water Clarity Brain", "phase": "Phase 6 (Clarity evidence classification per RA-17; BLOCKED by D4)"},
-    {"prefix": "Sources/", "owner": "Engine / shared Swift", "phase": "Phase 7 (Swift split order: tests, platform, providers, Brain targets)"},
-    {"prefix": "jobs/", "owner": "unassigned legacy job", "phase": "Phase 6/7"}
+    {
+      "prefix": "brains/wind",
+      "owner": "Wind Brain",
+      "phase": "Wind certification (ARCHITECTURE_CERTIFIED_V1 evidence; output-changing cleanups need approval)"
+    },
+    {
+      "prefix": "jobs/brain_platform",
+      "owner": "Platform (python)",
+      "phase": "Phase 2-3 (platform package adopted with the first migrated Brain; Phase 7 retires the legacy copy)"
+    },
+    {
+      "prefix": "jobs/brain-orchestrator",
+      "owner": "Platform (orchestrator)",
+      "phase": "Phase 6/7 (orchestrator reads Brains via the generated Brain Registry)"
+    },
+    {
+      "prefix": "jobs/brain-scores",
+      "owner": "Platform (scoring)",
+      "phase": "Phase 7 (platform/scoring; per-Brain rubrics as Brains migrate)"
+    },
+    {
+      "prefix": "jobs/biological-brain",
+      "owner": "Fish Brain (biological-state)",
+      "phase": "Phase 4 (Fish migration)"
+    },
+    {
+      "prefix": "jobs/lake-brain",
+      "owner": "Lake Brain",
+      "phase": "Phase 6 (Lake migration)"
+    },
+    {
+      "prefix": "jobs/lake-geometry",
+      "owner": "Lake Registry (platform)",
+      "phase": "Phase 6 (Lake Registry established first)"
+    },
+    {
+      "prefix": "jobs/lake-surface",
+      "owner": "Lake Registry / Water Clarity",
+      "phase": "Phase 6 (Lake Registry; Clarity after D4)"
+    },
+    {
+      "prefix": "jobs/water-clarity-brain",
+      "owner": "Water Clarity Brain",
+      "phase": "Phase 6 (BLOCKED by D4)"
+    },
+    {
+      "prefix": "jobs/hydrology-hourly",
+      "owner": "Water Clarity Brain",
+      "phase": "Phase 6 (BLOCKED by D4)"
+    },
+    {
+      "prefix": "jobs/water-temp",
+      "owner": "Water Temperature Brain",
+      "phase": "Phase 6 (Water Temperature migration; TVA after D8)"
+    },
+    {
+      "prefix": "jobs/sector-intelligence-brain",
+      "owner": "Sector Intelligence Brain",
+      "phase": "Phase 6 (last)"
+    },
+    {
+      "prefix": "docs/data/hydrology",
+      "owner": "Water Clarity Brain",
+      "phase": "Phase 6 (Clarity evidence classification per RA-17; BLOCKED by D4)"
+    },
+    {
+      "prefix": "Sources/",
+      "owner": "Engine / shared Swift",
+      "phase": "Phase 7 (Swift split order: tests, platform, providers, Brain targets)"
+    },
+    {
+      "prefix": "jobs/",
+      "owner": "unassigned legacy job",
+      "phase": "Phase 6/7"
+    }
   ]
 }

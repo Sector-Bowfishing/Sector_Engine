@@ -65,7 +65,10 @@ RESEARCH_DATA_EXT = {".csv", ".parquet", ".gz", ".zip", ".nc", ".grib", ".grib2"
 RESEARCH_MAX_BYTES = 256 * 1024
 CODE_EXT = {".py", ".swift", ".sh"}
 WRITER_PATTERN = re.compile(r"BrainRTDBStore|firebasedatabase|sector-brain\b|RTDB_URL|\.firebaseio\.com")
-CUSTOMER_PATTERN = re.compile(r"import\s+SectorEngine\b|from\s+engine[.\s]|['\"]/conditions|['\"]/lakes")
+# Customer Engine dependency: importing the Engine, or calling the customer endpoints GET /conditions | /lakes (the whole
+# path, optionally after a URL host, followed by end-of-string or a query). RTDB paths such as "/lakes/{k}/states/wind" are
+# Brain-state paths, not the customer endpoint, and do not match (Wind Phase 2 refinement).
+CUSTOMER_PATTERN = re.compile(r"import\s+SectorEngine\b|from\s+engine[.\s]|['\"](?:https?://[^'\"/]+)?/(?:conditions|lakes)(?:\?[^'\"]*)?['\"]")
 ABS_PATH = re.compile(r"/Users/[A-Za-z0-9._-]+/")
 
 
@@ -344,7 +347,9 @@ def compare_to_baseline(findings, baseline):
     return known, new, resolved
 
 
-def build_baseline(findings, root):
+def build_baseline(findings, root, previous=None):
+    """Annotated baseline. Entries whose key is already in `previous` keep their curated owner/reason/phase/note."""
+    prev = {e["key"]: e for e in (previous or {}).get("entries", [])}
     omap = _load(os.path.join(HERE, "ownership_map.json"))["prefixes"]
     reasons = {
         8: "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
@@ -358,9 +363,12 @@ def build_baseline(findings, root):
             if f["subject"].startswith(m["prefix"]):
                 owner, phase = m["owner"], m["phase"]
                 break
-        entries.append({"key": finding_key(f), "invariant": f["invariant"], "path": f["subject"], "owner": owner,
-                        "reason": reasons.get(f["invariant"], f["message"]), "plannedMigrationPhase": phase,
-                        "status": "LEGACY_BASELINE"})
+        e = {"key": finding_key(f), "invariant": f["invariant"], "path": f["subject"], "owner": owner,
+             "reason": reasons.get(f["invariant"], f["message"]), "plannedMigrationPhase": phase, "status": "LEGACY_BASELINE"}
+        old = prev.get(e["key"])
+        if old:
+            e.update({k: old[k] for k in ("owner", "reason", "plannedMigrationPhase", "note", "carriedFrom") if k in old})
+        entries.append(e)
     return {"schemaVersion": "1.0.0", "createdBy": "Phase 1B baseline", "mode": "REPORT_ONLY",
             "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates.",
             "entries": entries}
@@ -378,8 +386,9 @@ def main(argv=None):
     args = ap.parse_args(argv)
     findings = check(args.root, legacy=args.legacy)
     if args.write_baseline:
+        previous = _load(args.write_baseline) if os.path.exists(args.write_baseline) else None
         with open(args.write_baseline, "w", encoding="utf-8") as fh:
-            json.dump(build_baseline(findings, args.root), fh, indent=2)
+            json.dump(build_baseline(findings, args.root, previous), fh, indent=2)
             fh.write("\n")
         print(f"baseline written: {len(findings)} entries -> {args.write_baseline}")
         return 0
@@ -409,7 +418,8 @@ def main(argv=None):
         for f in findings:
             counts[f["invariant"]] += 1
         print("ARCHITECTURE INVARIANT REPORT (REPORT-ONLY)")
-        print(f"  registered Brains scanned: {len(_brain_dirs(args.root))} (PASS on 0 Brains is vacuous)")
+        n_brains = len(_brain_dirs(args.root))
+        print(f"  registered Brains scanned: {n_brains}" + (" (PASS on 0 Brains is vacuous)" if n_brains == 0 else ""))
         for i, label in INVARIANTS.items():
             print(f"  [{i:>2}] {'PASS' if not counts[i] else str(counts[i]) + ' finding(s)':<14} {label}")
         for f in findings:
