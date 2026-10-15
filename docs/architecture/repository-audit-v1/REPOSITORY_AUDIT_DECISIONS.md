@@ -1,0 +1,32 @@
+# Repository Audit Decisions (for Michael)
+
+Nothing in this package is implemented. Each decision lists my recommendation. **Approving a decision authorizes no implementation by itself**; each migration phase still needs its own go-ahead (same rule as Brain Certification V1).
+
+| ID | Decision | Recommendation | Why / evidence | Needed before |
+|---|---|---|---|---|
+| **RA-1** | Adopt the target top-level tree: `engine/ providers/ platform/ contracts/ brains/ tests/ tools/ deploy/ docs/` | **Approve** | Directory = ownership; fixes the five-places-per-Brain problem (`TARGET_REPOSITORY_ARCHITECTURE_V1`) | Phase 1 |
+| **RA-2** | Machine-readable declaration: adopt `brain.json` (minimal; identifiers/edges only), generate existing registries from it | **Approve JSON, not YAML** | Orchestrator image is stdlib-only, Swift has no YAML; six hand-synced registries today | Phase 1 |
+| **RA-3** | Operating contract location `brains/<dir>/BRAIN_OPERATING_CONTRACT.md` + 19-section template | **Approve** | Versioned with code; workspace gets a pointer only | Phase 2 |
+| **RA-4** | Brain directory names: `fish` (brainId `biological-state`), `lake`, `water-temperature`, `water-clarity`; machine ids unchanged (`water-temp` stays `water-temp`) | **Approve** | Human-friendly dirs; machine ids unchanged (locked) | Phase 2 |
+| **RA-5** | Lake Registry home: `brains/lake/registry/` as the source of truth, published as a versioned contract; Engine consumes the generated artifact | **Decide**: (a) Lake-owned [recommended], (b) platform `registry/` | Prompt says Lake owns identity; `OWNERSHIP_MATRIX` says Engine directory. Customer `/lakes` is served from it either way. Requires reconciling the two statements | Phase 6 (Lake) |
+| **RA-6** | Wind is the first Brain conformed (after Publisher V1 shadow) | **Approve** | Already agreed; mapping in `STANDARD_BRAIN_PACKAGE_V1` §5 | Phase 2 |
+| **RA-7** | Embedded-adapter rule: Engine may link a Brain's library target only when declared `customerDirect: embedded` | **Approve** | Water Temp "one implementation"; Clarity visibility model in `/conditions`; makes today's coupling explicit without changing behavior | Phase 6 |
+| **RA-8** | Provider layer with `PROVIDERS.json`, single owner + authorized consumers; Swift and Python trees share fixtures | **Approve** | TVA ×4–6, USGS ×3+; Open-Meteo has one production client | Phase 7 (extraction) |
+| **RA-9** | Do **not** consolidate TVA until decision D8 (production "Midnight" timing) is settled | **Approve** | Consolidation would silently change customer generation timing | before provider extraction |
+| **RA-10** | Source ownership vs acquisition ownership: change `ownership.py` semantics (it assigns `open-meteo-forecast` to `water-temp`) to "source-health record owner", acquisition owner in `PROVIDERS.json` | **Approve** | Avoids implying Water Temp owns the Open-Meteo client | Phase 1 |
+| **RA-11** | Rubrics and runtime JSON leave `docs/` (scoring rubrics, `frozen-scores.json`, conformance, xlsx source, hydrology evidence) | **Approve** | Docs are staged into the orchestrator image today | Phase 1/4 |
+| **RA-12** | CI plan: matrix derived from `brain.json`; add the missing Python dirs (`lake-brain` tests, `lake-geometry`, rest of `brain-scores`); add Swift build/test (scheduled if 20-min cost is the concern) | **Approve** | CI covers 7 dirs + wind + 1 file; Swift not covered | Phase 1 |
+| **RA-13** | Split Swift `SectorEngineTests` into per-target test targets | **Approve** | 26 mixed-owner tests | Phase 6 |
+| **RA-14** | Private-content review of `docs/` and snapshots **before** any move: service-account identities, personal email, live Cloud Run job snapshots (`docs/brains/platform/cost-freeze/snapshots`), IAM topology in lineage docs | **Approve a read-only review session**; decide scrub vs accept for the public repo | Public repo; no secrets found by pattern scan, but identities and job configs are present | before Phase 1 doc moves |
+| **RA-15** | Size/generated-data policy: ≥ 1 MB file needs an exception; build-embedded data must have a recorded generator recipe; hydrology evidence (12 MB), `polygons.geojson.gz` (7.5 MB), bindings proposals (760 KB) move to release artifacts or get exceptions | **Approve policy; decide each blob in its Brain phase** | Public repo hygiene and clone size | Phase 6 |
+| **RA-16** | Research metadata in repo (`research/GAPS.json`, `MANIFEST.json`); research scripts classified per Brain: reproducible-for-published-validation stay as small tools, exploratory go to workspace | **Approve** | Enforces "do not become a university"; removes ≈25 hard-coded path sites | Phase 2 |
+| **RA-17** | Research now parked on `docs/*-research` branches: ingest into the workspace + manifest at each Brain's turn; branches preserved | **Approve** | 178+165+99+60+55+32+28 files on research branches | per Brain |
+| **RA-18** | Clarity live-source off-main (jobs README D4) must be resolved before Clarity migration | **Needs your decision** (land job-only on main / keep job-only branch / retire `clarity-current-hourly`) | `lake-surface-daily` live source is `feat/clarity-algal-warning`; main's copy is older | Phase 6 (Clarity) |
+| **RA-19** | Depth and Vegetation: adopt the foundation branches as reference copies at their turn; no earlier merge | **Approve** | Only copies of that code; preserve | Phase 6 |
+| **RA-20** | Clarity Brain stops calling the customer `/conditions` API; consumes providers + Lake contract | **Approve as a Clarity-phase goal** | Brain availability and numbers depend on the customer serving revision | Phase 6 (Clarity) |
+| **RA-21** | Customer `README.md` and root map updated to describe the whole repo | **Approve** | README describes only the Engine | Phase 1 |
+| **RA-22** | Swift moves ordered: split tests → platform target → providers target → Brain library targets → physical move (golden-response gate each) | **Approve** | Lowest-risk with SwiftPM `path:` | Phase 6/7 |
+| **RA-23** | Branch/worktree hygiene is a separate later task, not part of the migration | **Approve** | 149 branches / 55 worktrees; several are the only copies | after Phase 7 |
+
+## Not decided here (already governed elsewhere)
+Publisher build/deploy (CERT-1/2), storage buckets (CERT-3/4), Fish profile path (CERT-5), Engine score definition (CERT-6), species registry mechanics (CERT-8), writer identity hardening (CERT-9), policy gate D5, TVA D8.
