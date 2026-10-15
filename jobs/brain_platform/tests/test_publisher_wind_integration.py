@@ -44,7 +44,7 @@ def test_wind_shadow_contract_end_to_end(tmp_path):
     assert changed.result["result"] == "SHADOW_READY"
     plan = st.sink.submitted[-1][0]
     assert set(plan.updates) == {f"lakes/{LAKE_A}/states/wind", f"lakes/{LAKE_A}/profiles/wind", f"lakeFleet/{LAKE_A}/slots/wind", f"lakes/{LAKE_B}/states/wind",
-                                 "brains/wind/publication"}                                          # authorized Wind paths + the Publisher's own record, one plan
+                                 f"snapshots/{LAKE_A}/latest/wind", f"snapshots/{LAKE_B}/latest/wind", "brains/wind/publication"}                                          # authorized Wind paths + the Publisher's own record, one plan
     assert len(st.sink.submitted) == 2 and st.sink.live_mutations == 0
 
 

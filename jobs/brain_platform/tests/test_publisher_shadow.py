@@ -142,7 +142,7 @@ def test_paths_outside_the_wind_families_fail_closed(path):
 def test_wind_may_target_its_own_registry_sources_health_and_activity_via_their_schemas():
     pub, *_ = make()
     reg = [{"op": "SET", "path": "/brains/wind/lastSuccessfulRun", "value": "2026-10-15T03:00:00Z"}, {"op": "SET", "path": "/validation/wind", "value": {"s": 1}},
-           {"op": "SET", "path": "/health/brains/wind", "value": {"status": "HEALTHY"}}, {"op": "SET", "path": "/activity/2026-10-15T03-wind-run", "value": {"k": 1}}]
+           {"op": "SET", "path": "/health/brains/wind/status", "value": "HEALTHY"}, {"op": "SET", "path": "/activity/2026-10-15T03-wind-run", "value": {"k": 1}}]
     a = wind_artifact(artifactSchema="wind-registry-v1", mutations=reg)
     assert pub.evaluate(a, producer="wind").result is Result.SHADOW_READY
     src = [{"op": "SET", "path": "/sources/noaa-nbm-v5", "value": {"s": 1}}, {"op": "SET", "path": "/health/sources/iem-metar-wind", "value": {"s": 1}}]
@@ -150,17 +150,19 @@ def test_wind_may_target_its_own_registry_sources_health_and_activity_via_their_
 
 
 def test_a_schema_cannot_borrow_another_schemas_paths():
-    a = wind_artifact(mutations=[{"op": "SET", "path": "/health/brains/wind", "value": {"status": "HEALTHY"}}])      # lake-state schema
+    a = wind_artifact(mutations=[{"op": "SET", "path": "/health/brains/wind/status", "value": "HEALTHY"}])      # lake-state schema
     assert run(a)[0].codes == ["PATH_NOT_AUTHORIZED"]
 
 
 def test_registered_wind_families_agree_with_the_live_ownership_table():
     """Defence in depth: nothing the Publisher authorises for Wind may be refused by the existing writer-side ownership check."""
     samples = [f"/lakes/{LAKE_A}/states/wind", f"/lakes/{LAKE_A}/profiles/wind", f"/lakes/{LAKE_A}/validation/wind", f"/lakeFleet/{LAKE_A}/slots/wind",
-               f"/lakeFleet/{LAKE_A}/readiness/wind", f"/lakeFleet/{LAKE_A}/modelVersions/wind", f"/snapshots/{LAKE_A}/latest/wind",
-               "/brains/wind/lastSuccessfulRun", "/validation/wind", "/health/brains/wind", "/activity/2026-10-15T03-wind-run", "/sources/noaa-nbm-v5",
+               f"/lakeFleet/{LAKE_A}/readiness/wind", f"/lakeFleet/{LAKE_A}/modelVersions/wind",
+               "/brains/wind/lastSuccessfulRun", "/validation/wind", "/health/brains/wind/status", "/activity/2026-10-15T03-wind-run", "/sources/noaa-nbm-v5",
                "/health/sources/noaa-rtma-ru"]
     reg = default_registry()
+    for derived in (f"/snapshots/{LAKE_A}/latest/wind", f"/snapshots/{LAKE_A}/latest/brainVersions/wind"):          # Publisher-derived, not authored: still within what the live table allows
+        assert path_allowed("wind", derived.lstrip("/")) and reg.derived_target("wind", derived)
     for p in samples:
         authorised = any(reg.authorizing_family(s, p) for s in map(reg.spec, reg.schemas_for("wind")))
         assert authorised and path_allowed("wind", p.lstrip("/")), p
@@ -268,7 +270,8 @@ def test_multi_path_update_is_one_atomic_plan_with_exactly_the_intended_paths():
     r, _, _, sink = run(wind_artifact())
     plan = r.plan
     want = {f"lakes/{LAKE_A}/states/wind", f"lakes/{LAKE_A}/profiles/wind", f"lakeFleet/{LAKE_A}/slots/wind", f"lakes/{LAKE_B}/states/wind"}
-    assert set(plan.updates) == want | {"brains/wind/publication"} and plan.path_count == 4 and plan.deletes == ()
+    derived = {f"snapshots/{LAKE_A}/latest/wind", f"snapshots/{LAKE_B}/latest/wind"}                   # Publisher-derived compatibility copies, same plan
+    assert set(plan.updates) == want | derived | {"brains/wind/publication"} and plan.path_count == 6 and plan.deletes == () and set(plan.derived_keys) == derived
     assert len(sink.submitted) == 1 and sink.submitted[0][0] is plan                       # a single hand-off, not one write per path
     assert not [k for k in plan.updates if k.startswith(("speciesProfiles", "scores", "control", "access"))]
     assert all(k and not k.startswith("/") for k in plan.updates)
@@ -325,17 +328,17 @@ def test_absent_data_does_not_delete_what_was_published_before():
     fewer = wind_artifact(n=2, minutes=60, speed=5.5, mutations=[{"op": "SET", "path": WIND_LAKE, "value": wind_state(5.5)}])
     r = pub.evaluate(fewer, producer="wind")
     assert r.result is Result.SHADOW_READY and None not in r.plan.updates.values() and r.plan.deletes == ()
-    assert set(r.plan.updates) == {WIND_LAKE[1:], "brains/wind/publication"}
+    assert set(r.plan.updates) == {WIND_LAKE[1:], f"snapshots/{LAKE_A}/latest/wind", "brains/wind/publication"}
 
 
 def test_explicit_delete_fails_unless_the_schema_permits_it():
-    a = wind_artifact(mutations=[{"op": "DELETE", "path": WIND_LAKE, "reason": "retire"}])
+    a = wind_artifact(artifactSchema="wind-registry-v1", mutations=[{"op": "DELETE", "path": "/brains/wind/version", "reason": "OPTIONAL_CHILD_CLEARED"}])
     r, *_ = run(a)
-    assert r.result is Result.REJECTED and r.codes == ["DELETE_NOT_PERMITTED"] and r.plan is None
+    assert r.result is Result.REJECTED and r.codes == ["DELETE_NOT_PERMITTED"] and r.plan is None             # a registry child that is not a declared optional child
 
 
 def test_explicit_delete_is_rendered_only_when_permitted_and_only_for_that_path():
-    spec = SchemaSpec("wind-deletable-v1", "wind", (PathFamily("/lakes/{k}/states/wind"),), delete_families=(PathFamily("/lakes/{k}/states/wind"),))
+    spec = SchemaSpec("wind-deletable-v1", "wind", (PathFamily("/lakes/{k}/states/wind"),), delete_families=(PathFamily("/lakes/{k}/states/wind"),), delete_reasons=("lake retired",))
     pub, hist, sink = make(registry=Registry([spec]))
     muts = [{"op": "SET", "path": f"/lakes/{LAKE_A}/states/wind", "value": wind_state()}, {"op": "DELETE", "path": f"/lakes/{LAKE_B}/states/wind", "reason": "lake retired"}]
     r = pub.evaluate(wind_artifact(artifactSchema="wind-deletable-v1", mutations=muts), producer="wind")
@@ -346,7 +349,7 @@ def test_explicit_delete_is_rendered_only_when_permitted_and_only_for_that_path(
 @pytest.mark.parametrize("mut", [{"op": "DELETE", "path": "/lakes/test_lake_alpha/states/wind"}, {"op": "DELETE", "path": "/lakes/test_lake_alpha/states/wind", "reason": " "},
                                  {"op": "DELETE", "path": "/lakes/test_lake_alpha/states/wind", "reason": "x", "value": {"a": 1}}])
 def test_delete_needs_a_reason_and_no_value(mut):
-    spec = SchemaSpec("wind-deletable-v1", "wind", (PathFamily("/lakes/{k}/states/wind"),), delete_families=(PathFamily("/lakes/{k}/states/wind"),))
+    spec = SchemaSpec("wind-deletable-v1", "wind", (PathFamily("/lakes/{k}/states/wind"),), delete_families=(PathFamily("/lakes/{k}/states/wind"),), delete_reasons=("lake retired",))
     pub, *_ = make(registry=Registry([spec]))
     r = pub.evaluate(wind_artifact(artifactSchema="wind-deletable-v1", mutations=[mut]), producer="wind")
     assert r.is_rejection and r.plan is None
@@ -354,7 +357,7 @@ def test_delete_needs_a_reason_and_no_value(mut):
 
 def test_delete_permission_is_per_family_not_global():
     spec = SchemaSpec("wind-deletable-v1", "wind", (PathFamily("/lakes/{k}/states/wind"), PathFamily("/lakes/{k}/profiles/wind")),
-                      delete_families=(PathFamily("/lakes/{k}/states/wind"),))
+                      delete_families=(PathFamily("/lakes/{k}/states/wind"),), delete_reasons=("lake retired",))
     pub, *_ = make(registry=Registry([spec]))
     a = wind_artifact(artifactSchema="wind-deletable-v1", mutations=[{"op": "DELETE", "path": f"/lakes/{LAKE_A}/profiles/wind", "reason": "x"}])
     assert pub.evaluate(a, producer="wind").codes == ["DELETE_NOT_PERMITTED"]
@@ -420,7 +423,7 @@ def test_publication_record_is_generated_correctly():
     assert rec["result"] == "SHADOW_READY" and rec["publisher"] == "orchestrator-publisher" and rec["mode"] == "SHADOW"
     assert rec["trigger"] == "MANUAL_REQUEST" and rec["requestId"] == uuid4(777)
     assert rec["outputFingerprint"] == output_fingerprint("wind", "wind-lake-state-v1", wind_artifact(n=7)["mutations"])
-    assert rec["paths"] == {"count": 4, "bytes": r.plan.patch_bytes} and rec["artifactPatchSha256"] == r.plan.artifact_patch_sha256
+    assert rec["paths"] == {"count": 6, "bytes": r.plan.patch_bytes} and rec["artifactPatchSha256"] == r.plan.artifact_patch_sha256
     assert set(rec["pathSha256"]) == {k for k in r.plan.updates if k != "brains/wind/publication"}
     assert hist.get_record("wind", r.publish_id)["updateSha256"] == r.plan.update_sha256
     assert "PUBLISHED" not in json.dumps(rec) and "COMPLETE" not in json.dumps(rec)

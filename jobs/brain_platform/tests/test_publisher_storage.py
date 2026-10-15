@@ -74,9 +74,8 @@ def test_rollback_metadata_identifies_the_previous_publish_and_artifact():
 def test_concurrent_head_advance_is_detected():
     pub, hist, _ = make()
     r = pub.evaluate(wind_artifact(n=1), producer="wind")
-    stale = dict(r.record, publishId=uuid4(9), headGeneration=0)                  # a second writer that planned against the empty head
-    with pytest.raises(PreconditionFailed):
-        hist.advance_head(stale)
+    with pytest.raises(PreconditionFailed):                                          # a second writer that planned against the empty head
+        hist.advance_head("wind", "wind-lake-state-v1", "default", {"publishId": uuid4(9)}, 0)
 
 
 def test_rejected_artifact_is_kept_with_its_rejection_record():

@@ -1,7 +1,8 @@
 # Publisher V1 shadow: test report
 
 **Run:** `cd jobs/brain_platform && python -m pytest -q` (pytest in a throw-away virtualenv outside the repo; Python 3.14.8, stdlib-only code).
-**Result (after the design-closeout follow-up):** `381 passed` for the whole platform suite = 130 pre-existing (unchanged, still passing) + **251 Publisher tests** (176 from the first round, adjusted where the locked decisions changed behaviour, plus 75 added). First-round result was 306 passed. `jobs/brain-orchestrator`: 24 passed (unchanged). No live system, network, credential or cloud resource was used; tests refuse them.
+**Result (after Gate P): `452 passed`** = 130 pre-existing + 322 Publisher tests (251 before Gate P; 3 files changed behaviour deliberately, see below; 71 added). `jobs/brain-orchestrator`: 24 passed. Earlier: 381 after the design closeout, 306 after the first round.
+**Result (after the design-closeout follow-up, kept for history):** `381 passed` for the whole platform suite = 130 pre-existing (unchanged, still passing) + **251 Publisher tests** (176 from the first round, adjusted where the locked decisions changed behaviour, plus 75 added). First-round result was 306 passed. `jobs/brain-orchestrator`: 24 passed (unchanged). No live system, network, credential or cloud resource was used; tests refuse them.
 
 | File | Tests | Covers |
 |---|---|---|
@@ -11,6 +12,9 @@
 | `tests/test_publisher_api.py` | 57 | API contract bounds, authorization, no arbitrary mutation; `SUBMIT_ARTIFACT` reference contract and per-Brain grants |
 | `tests/test_publisher_handoff.py` | 37 | artifact handoff by reference, namespace/hash/binding checks, private-namespace access model, ordering rule, `/brains/{id}` child ownership |
 | `tests/test_publisher_wind_integration.py` | 10 | the Wind shadow-integration contract through the full handoff + API |
+| `tests/test_publisher_gatep.py` | 58 | Gate P: multi-section atomic artifact, semantic/volatile fingerprint, publication metadata, explicit deletes, derived projections, API end to end |
+| `tests/test_publisher_equivalence.py` | 13 | Wind equivalence evaluator + legacy path table |
+| `tests/gatep_fixtures.py` | n/a | synthetic multi-section Wind artifact builder |
 | `tests/publisher_fixtures.py` | n/a | synthetic lakes/ids only; no real data |
 
 ## Required-test mapping
@@ -66,3 +70,36 @@ Extra coverage: lifecycle (`PRODUCTION*` refused for Wind; needs schema permissi
 | 14 | existing tests keep passing | whole suite: 130 pre-existing + first-round tests (3 first-round tests were deliberately changed: new storage key layout, `/brains/wind` now `BRAIN_NODE_REPLACEMENT`, `evaluate_stored` replaced by `evaluate_reference`) |
 
 **Defect found by the new tests and fixed:** the plan's embedded publication record contained `pathSha256`, a map keyed by full paths. `/` is not a legal RTDB node key, so a live write would have failed. First-round tests did not apply a plan to a store. Fixed in `plan.py` (history-only fields omitted from the RTDB node; `check_update` run on every plan) with a regression test.
+
+## Gate P tests (Wind / Publisher contract hardening): mapping to the 22 requirements
+Run: `cd jobs/brain_platform && python -m pytest -q` → **452 passed**; `cd jobs/brain-orchestrator && python -m pytest -q` → **24 passed**. No network, credential, live database or cloud resource was used.
+| # | Requirement | Test(s) |
+|---|---|---|
+| 1 | valid Wind artifact accepted in shadow | `test_one_multi_section_artifact_yields_one_plan…`, `test_valid_wind_artifact_is_accepted_and_shadow_ready`, Wind integration end to end |
+| 2 | unchanged semantic artifact → SKIP | `test_unchanged_output_is_skip…`, `test_volatile_scalar_children_do_not_force_a_republish`, `test_multi_section_artifact_through_the_api_handoff_is_one_transaction` |
+| 3 | volatile timestamps do not cause publish | `test_volatile_scalar_children_do_not_force_a_republish` (registry `updatedAt`/`lastSuccessfulRun` paths + source `lastFetchAt` key), `test_lineage_freshness_ids_and_publication_metadata_do_not_enter_the_semantic_fingerprint` |
+| 4 | material Wind state change → SHADOW | `test_a_material_change_next_to_volatile_changes_is_not_hidden` (state value, registry status, evidence time), `…unchanged_sections_are_not_republished_but_the_changed_one_is_one_coherent_plan` |
+| 5 | one artifact → one atomic plan | `test_one_multi_section_artifact_yields_one_plan_one_record_one_sink_call` |
+| 6 | mutation order deterministic | `test_plan_and_record_are_independent_of_section_and_mutation_order`, `test_patch_generation_is_deterministic` |
+| 7 | unauthorized path rejects whole artifact | `test_one_bad_mutation_in_any_section_rejects_the_whole_artifact_and_leaves_no_partial_state` (7 cases: no plan, no sink call, no head moved, only a rejection record) |
+| 8 | foreign Brain path rejected | same + `test_wind_cannot_target_other_domains` |
+| 9 | whole `/brains/wind` mutation rejected | `BRAIN_NODE_REPLACEMENT` cases (SET and DELETE), `test_whole_node_brains_replacement_is_rejected` |
+| 10 | Brain publication-child mutation rejected | `test_a_specialist_cannot_author_or_delete_publication_state_in_any_section` (SET, nested SET, DELETE, certification) |
+| 11 | explicit allowed delete works | `test_allowed_optional_child_delete_is_explicit_atomic_and_deterministic`, `test_delete_of_a_stale_lake_child_also_deletes_its_derived_snapshot_copy` |
+| 12 | missing / null does not implicitly delete | `test_missing_field_is_not_a_delete_and_null_is_never_a_delete`, `test_null_and_empty_values_never_become_implicit_deletes` |
+| 13 | unauthorized delete rejected | `test_unauthorized_deletes_are_rejected_including_subtrees_foreign_and_whole_node` (12 paths), `test_delete_reasons_are_a_closed_vocabulary`, `test_delete_permission_is_per_family_not_global` |
+| 14 | conflicting set/delete rejected | `test_set_and_delete_of_the_same_path_conflict_even_across_sections` (`SET_DELETE_CONFLICT`) |
+| 15 | artifact older than baseline fails closed | `test_older_artifact_is_rejected_with_a_diagnostic…`, `…unestablishable_order_fails_closed`, `…future_dated…`, `test_an_artifact_older_than_any_changed_section_baseline_rejects_the_whole_artifact` |
+| 16 | semantic fingerprint deterministic | `test_semantic_fingerprint_is_deterministic_and_algorithm_versioned`, `test_fingerprint_ignores_volatile_fields_key_order_and_mutation_order`, `test_volatile_paths_never_hide_a_delete` |
+| 17 | publication metadata exactly once | `test_publication_metadata_is_written_once_by_the_publisher_and_is_stable_within_the_transaction`, `test_skip_does_not_fabricate_a_publication` |
+| 18 | zero live RTDB mutation | all of `test_publisher_boundary.py` (import + source lint, I/O monkeypatched to fail) over the extended package (`artifact.py compat.py equivalence.py` included), `sink.live_mutations == 0` in every gate-P flow |
+| 19 | shadow sink cannot invoke write-shaped methods | `test_live_capable_objects_cannot_be_injected_as_a_sink` |
+| 20 | Wind equivalence evaluator classifies known differences | `test_known_differences_are_classified_and_the_verdict_is_equivalent`, `…changed_domain_value_is_a_semantic_mismatch…`, `…unknown_live_content_is_never_normalised_away`, `…target_only…`, `…unit_replacement…`, `…explicit_delete…`, `…machine_readable_deterministic_and_carries_no_raw_values` |
+| 21 | Publisher platform tests remain green | whole platform suite 452 passed |
+| 22 | existing orchestrator tests remain green | `jobs/brain-orchestrator` 24 passed |
+
+**Deliberately changed first-round tests (contract changes, not regressions):** `/health/brains/wind` is child-level (domain children only); `/snapshots/{k}/latest/wind` is Publisher-derived, so plans now carry derived snapshot keys and `paths.count` includes them; deletes need a closed reason vocabulary; `advance_head` takes `(brain, schema, scope, pointer, expected generation)`; `output_fingerprint` carries an algorithm id; test fixtures compute fingerprints through the schema's volatile contract.
+**Not tested (by design):** anything live; the GCS adapter; the Orchestrator-side compatibility writers (design only); Wind's own builder (a different worktree; it must be re-pointed at the v2 contract).
+
+## Documentation closeout (post Gate P)
+Documentation/contract-text only (lineage standard §7, architecture §12.10-§12.11 incl. the verified lost-race behaviour, architecture §12.10, cutover G1/G2/G5/G6); no code or test changed. Re-run: platform suite 452 passed, `jobs/brain-orchestrator` 24 passed.

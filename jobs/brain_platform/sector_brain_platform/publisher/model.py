@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from enum import Enum
 
-ENVELOPE_ID = "publish-artifact-v1"
+ENVELOPE_ID = "publish-artifact-v1"            # one section (one schema, one scope)
+ENVELOPE_V2 = "publish-artifact-v2"            # one logical artifact with several sections: ONE plan, ONE publication record
 LINEAGE_ID = "brain-lineage-v1"
 PUBLISHER_IDENTITY = "orchestrator-publisher"      # an identity CLASS, never a credential or account name
 DEFAULT_SCOPE = "default"
@@ -47,6 +48,8 @@ CODES = {
     "ARTIFACT_OLDER_THAN_BASELINE": Result.REJECTED, "BASELINE_ORDER_UNKNOWN": Result.REJECTED, "ARTIFACT_FROM_FUTURE": Result.REJECTED,
     "BRAIN_NODE_REPLACEMENT": Result.REJECTED, "NAMESPACE_VIOLATION": Result.REJECTED, "ARTIFACT_NOT_FOUND": Result.REJECTED,
     "ARTIFACT_HASH_MISMATCH": Result.REJECTED, "ARTIFACT_BINDING_MISMATCH": Result.REJECTED,
+    "PLATFORM_DERIVED_PATH": Result.REJECTED, "SET_DELETE_CONFLICT": Result.REJECTED, "DELETE_REASON_INVALID": Result.REJECTED,
+    "SECTION_NOT_ALLOWED": Result.REJECTED, "DUPLICATE_SECTION": Result.FAILED_VALIDATION, "PROJECTION_CONFLICT": Result.REJECTED,
 }
 
 

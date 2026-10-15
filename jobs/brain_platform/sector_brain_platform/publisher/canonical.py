@@ -32,17 +32,34 @@ def sha256_ref(data: bytes) -> str:
     return "sha256:" + hashlib.sha256(data).hexdigest()
 
 
-def material(brain_id: str, artifact_schema: str, mutations: list[dict], extra_volatile=()) -> dict:
-    """The material content of an artifact: identity of the scope plus its mutations (order-independent), volatile fields removed."""
+#: Version of the semantic-fingerprint algorithm. A baseline made under a different algorithm is never treated as "equal" (it compares as changed).
+ALGORITHM = "sector-semantic-fingerprint-v2"
+
+
+def material(brain_id: str, artifact_schema: str, mutations: list[dict], extra_volatile=(), volatile_paths=()) -> dict:
+    """The SEMANTIC material of one section: its identity plus its mutations (order-independent), with
+      * volatile KEYS removed at any depth inside values (shared defaults + the schema's volatile contract), and
+      * SET mutations whose path matches a volatile PATH family left out entirely (a volatile scalar child addressed by path).
+    DELETE operations are always material: a volatile contract can never hide a deletion.
+    Excluded by construction: lineage (generatedAt, executionId, artifactId, codeVersion, ...), freshness, the artifact hash, and all Publisher metadata."""
     volatile = DEFAULT_VOLATILE | frozenset(extra_volatile)
     ms = []
     for m in sorted(mutations, key=lambda m: m["path"]):
+        if m["op"] == "SET" and any(f.match(m["path"]) for f in volatile_paths):
+            continue
         e = {"op": m["op"], "path": m["path"]}
         if m["op"] == "SET":
             e["value"] = _strip(m.get("value"), volatile)
         ms.append(e)
-    return {"brainId": brain_id, "artifactSchema": artifact_schema, "mutations": ms}
+    return {"algorithm": ALGORITHM, "brainId": brain_id, "artifactSchema": artifact_schema, "mutations": ms}
 
 
-def output_fingerprint(brain_id: str, artifact_schema: str, mutations: list[dict], extra_volatile=()) -> str:
-    return sha256_ref(canonical_bytes(material(brain_id, artifact_schema, mutations, extra_volatile)))
+def output_fingerprint(brain_id: str, artifact_schema: str, mutations: list[dict], extra_volatile=(), volatile_paths=()) -> str:
+    return sha256_ref(canonical_bytes(material(brain_id, artifact_schema, mutations, extra_volatile, volatile_paths)))
+
+
+def bundle_fingerprint(brain_id: str, bundle_schema: str, sections: list[tuple]) -> str:
+    """Fingerprint of a multi-section artifact: the section fingerprints (schema, scope, fp) in canonical order. Same sections + same section content = same hash."""
+    body = {"algorithm": ALGORITHM, "brainId": brain_id, "artifactSchema": bundle_schema,
+            "sections": [{"artifactSchema": sc, "scope": scope, "outputFingerprint": fp} for sc, scope, fp in sorted(sections)]}
+    return sha256_ref(canonical_bytes(body))

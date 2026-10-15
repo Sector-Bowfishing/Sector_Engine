@@ -3,6 +3,7 @@ import copy
 import datetime as dt
 import itertools
 
+from sector_brain_platform.publisher.artifact import section_fingerprint
 from sector_brain_platform.publisher import (LocalDirObjectStore, MemoryObjectStore, PublishHistory, PublisherMode, ShadowPublisher, ShadowSink,
                                              default_registry, output_fingerprint)
 
@@ -22,7 +23,8 @@ def iso(t) -> str:
 def rebuild(art: dict) -> dict:
     """Recompute and set the declared outputFingerprint (what an honest Brain does)."""
     lin = art["lineage"]
-    lin["outputFingerprint"] = output_fingerprint(lin["brainId"], lin["artifactSchema"], art["mutations"])
+    spec = default_registry().spec(lin["artifactSchema"])
+    lin["outputFingerprint"] = section_fingerprint(spec, lin["brainId"], art["mutations"]) if spec else output_fingerprint(lin["brainId"], lin["artifactSchema"], art["mutations"])
     return art
 
 
