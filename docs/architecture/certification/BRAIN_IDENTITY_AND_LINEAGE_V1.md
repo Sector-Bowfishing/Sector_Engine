@@ -112,3 +112,31 @@ The current aggregate includes candidate/research maturity from Brains that are 
 - stale-score handling (HELD Brains excluded or flagged).
 
 Until then it is displayed as **provisional**. `/engine/score` and `/scores/engine` are the same value (duplicate); do not treat either as certification.
+
+## 7. Amendments from Publisher V1 (Gate P documentation closeout; implemented in `jobs/brain_platform/sector_brain_platform/publisher/`, shadow only)
+These record what the shadow implementation actually does. Details and tests: `docs/architecture/publisher/PUBLISHER_V1_SHADOW_ARCHITECTURE.md` §5, §8, §12.
+
+### 7.1 Publication result and record status: `SHADOW`
+The Publisher's results are `SKIP`, `SHADOW_READY`, `REJECTED`, `FAILED_VALIDATION` (there is no `PUBLISHED` result in shadow). The §3 record `status` gains one value, **`SHADOW`**: "validated, changed, and the atomic plan was rendered to an in-memory sink; nothing was written to a live database". A `SHADOW` record carries `live: false`, `mode: SHADOW`, `evaluatedAt`, and **no `publishedAt`**; `COMPLETE` / `PARTIAL` are reserved for live publication and are unreachable until a live mode is separately approved. Statuses used today: `SHADOW`, `SKIPPED_UNCHANGED`, `REJECTED` (both rejection results). SKIP and REJECTED remain history-only.
+
+### 7.2 Artifact / baseline ordering rule (as implemented)
+A **baseline** is the history head pointer for one `(brainId, artifactSchema, scope)` section; it advances only on `SHADOW_READY` and stores that publication's `outputFingerprint`, `fingerprintAlgorithm` and `generatedAt`. For each section of an incoming artifact, in this order:
+1. **Same semantic state → SKIP.** The recomputed section fingerprint equals the baseline's AND the baseline was produced under the same `fingerprintAlgorithm`. Nothing is ordered, planned or published. A baseline from a different algorithm id is never "same".
+2. **Otherwise the artifact differs, and ordering decides.** Compared: the artifact's `lineage.generatedAt` (the Brain's own validated generation time) against the baseline's recorded `generatedAt`, both ISO-8601 UTC at full sub-second precision.
+   * artifact `generatedAt` **>** baseline → newer / acceptable;
+   * artifact `generatedAt` **≤** baseline → `REJECTED ARTIFACT_OLDER_THAN_BASELINE` (an equal timestamp with different content is ambiguous order and is rejected too);
+   * either value missing or unparsable → `REJECTED BASELINE_ORDER_UNKNOWN` (fail closed; never guess).
+3. **Future guard.** `generatedAt` more than 5 minutes after the Publisher's clock → `REJECTED ARTIFACT_FROM_FUTURE`. The Publisher's wall clock is used for this one guard only; it is never used to order artifacts against each other, and arrival order is never used.
+For a multi-section artifact each changed section is checked against its own baseline; one failure rejects the whole artifact. A rejection never moves any baseline. After acceptance the Publisher makes one sink call, appends one record, then advances each changed section's baseline with a generation-matched write; a lost race raises instead of overwriting, and because advancement is not a single transaction some sections may already have advanced (safe direction: the rest re-plan on the next run; see Publisher architecture §12.11). An older artifact is republished only by an explicit rollback mechanism (not built).
+
+### 7.3 Fingerprint algorithm id and the three hashes
+The implemented semantic fingerprint scheme has the stable id **`sector-semantic-fingerprint-v2`** (`canonical.ALGORITHM`). It is recorded in every publication record and baseline pointer (`fingerprintAlgorithm`), and it is part of the hashed material, so a future reader can tell exactly which semantics produced a recorded fingerprint. Section records also name the volatile contract used (`volatileContract`, e.g. `wind-volatile-v1`). The algorithm id is a Publisher/record attribute; a Brain's lineage block does not carry it (the Brain's declared `outputFingerprint` is only checked against the Publisher's recomputation). The scheme: sha256 of canonical JSON (sorted keys, UTF-8, floats rounded to 9 places) of `{algorithm, brainId, artifactSchema, mutations}`, volatile keys removed at any depth, SET mutations at volatile paths omitted, DELETE operations never omitted; multi-section artifacts hash their sections' fingerprints (`bundle_fingerprint`). Any change to these semantics requires a new algorithm id.
+| Hash | What it proves | Covers | Not covered |
+|---|---|---|---|
+| **Input integrity hash** (`artifactSha256`, in the API reference) | the Publisher loaded exactly the bytes the Brain stored | the entire stored artifact | n/a |
+| **Semantic output fingerprint** (`lineage.outputFingerprint`) | whether the domain content changed | mutations (op, path, value) minus volatile contract | lineage, freshness, ids, times, Publisher metadata |
+| **Publication metadata** (`/brains/{id}/publication`, history record) | who/when/what the Publisher did | publishId, evaluatedAt, results, fingerprints, algorithm id | part of no fingerprint; never Brain-authored |
+Replaces the earlier §2 wording where it conflicts ("volatile fields excluded" now means keys *and* contract-declared paths).
+
+### 7.4 Freshness is not republished (decision G5)
+Unchanged domain truth is `SKIP`; the Publisher never republishes it to refresh a timestamp. Execution / job freshness is Orchestrator-owned operational state (see the Publisher cutover requirements, G1/G2). This refines §4 rule 1 (`lastSuccessfulRun` is process health, not evidence freshness): process health is not carried by Brain publications at all.
