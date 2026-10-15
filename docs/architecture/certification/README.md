@@ -44,4 +44,6 @@ Background inventory and matrices: `../data/` (partly superseded; see the header
 Approval of these decisions authorizes **no implementation by itself**. Bucket creation, Publisher build/deploy, rules/IAM changes, scheduler changes, research moves and path changes each still need their own session-level approval.
 
 ## Wind certification record (2026-10-15)
-Status **`BLOCKED: PUBLISHER`** (PARTIAL evidence); see `wind/WIND_CERTIFICATION_STATUS.md` and the baseline, inventory, ownership matrix, reader/writer trace, score reconciliation, publish artifact and migration plan in `wind/`. Public-safe only; security and private-location detail is in the private Wind handoff.
+Status **`SHADOW_INTEGRATION_READY` / PARTIAL — LIVE CUTOVER PENDING** (Phase 2, 2026-10-15; Phase 1 was `BLOCKED: PUBLISHER`); see `wind/WIND_CERTIFICATION_STATUS.md` and the baseline, inventory, ownership matrix, reader/writer trace, score reconciliation, publish artifact and migration plan in `wind/`. Public-safe only; security and private-location detail is in the private Wind handoff.
+
+Phase 2 adds `wind/WIND_RESEARCH_PRESERVATION_PLAN.md`, `WIND_RESEARCH_MANIFEST_PLAN.md`, `WIND_PUBLISHER_SHADOW_INTEGRATION_REPORT.md`, `WIND_SNAPSHOT_MIGRATION_PLAN.md`, `WIND_CUTOVER_PLAN.md` and the Wind artifact builder (`jobs/wind-hourly/sector_wind/brain/artifact.py`, shadow-only, not wired into the job).

@@ -1,5 +1,7 @@
 # Wind Brain: migration plan
 
+> Phase 1 outline. The exact, gated cutover sequence is `WIND_CUTOVER_PLAN.md`; snapshot retirement is `WIND_SNAPSHOT_MIGRATION_PLAN.md`; research protection is `WIND_RESEARCH_PRESERVATION_PLAN.md`.
+
 Each step needs its own session-level approval where it changes anything live. **Steps 0-1 are done or doc-only; nothing from step 2 on is authorized yet.**
 
 | # | Step | Changes | Gate / approval | Rollback |

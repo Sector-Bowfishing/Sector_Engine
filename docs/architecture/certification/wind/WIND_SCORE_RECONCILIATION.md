@@ -28,3 +28,14 @@ Fixing these is a **separate approved change** (relabel/move, not recompute): Wi
 
 ## 5. BEFORE / AFTER protocol
 BEFORE = `ENGINE_READINESS_SCORE` 3.3, `wind-certification-rubric-v1`, `brain:wind` (above). AFTER must show the same type, version and scope. Expected drift to explain, not suppress: the value will move as live reliability days accumulate (dim 8 grows toward +8 at 30 days; gate ~2026-11-07). That is a scientific/evidence change, independent of architecture work, and must be separated from certification evidence by timestamp and `scoreUpdatedAt`.
+
+## 6. Phase 2 check (2026-10-15, after the artifact builder and the Publisher shadow run)
+| | BEFORE (recorded 2026-10-15 ~02:30Z) | Re-read 2026-10-15 ~03:10Z | Expected AFTER architecture-only |
+|---|---|---|---|
+| `ENGINE_READINESS_SCORE` `/scores/wind` | 3.3 (`wind-certification-rubric-v1`, `scoreUpdatedAt` 2026-10-13T21:13:49Z, 5 valid archive days) | unchanged | **3.3**, same type/version/scope |
+| 3.1 registry mirror | 3.1 | unchanged | unchanged (a stale duplicate; relabel/removal is a separate approved change) |
+| BWIS | 5.4 (54.16/100) | unchanged | unchanged |
+| Engine overall (provisional) | 7.1 | unchanged | not recomputed |
+
+Why the builder cannot move a score: it never touches `/scores/*` (a Publisher-rejected, Platform-owned path), contains no scoring code, and a test (`test_no_score_is_changed_by_the_builder`) asserts that the registry `scores` child it carries equals what `wind-hourly` writes today and that no `/scores` mutation exists. The score also changes for non-architecture reasons (live reliability days accumulate toward the 30-day gate, ~2026-11-07); any AFTER value must be compared at the same `scoreUpdatedAt`/evidence, and a change that cannot be explained by evidence is a defect.
+Architecture-caused score movement is treated as a defect until explained; none is expected or observed.
