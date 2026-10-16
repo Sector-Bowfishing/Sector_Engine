@@ -1,5 +1,7 @@
 # Wind Brain: Architecture Certification V1 status
 
+**Research collector (2026-10-16): `WIND_RESEARCH_COLLECTOR_CUTOVER_SUCCESSFUL`** — second and pre-cutover snapshots remotely verified by SHA-256 (0 mismatches); the provider bake-off collector now runs from the merged `brains/wind/research/tools` in a dedicated research environment and writes to the private research workspace; first scheduled cycle verified; legacy collector assets on `ROLLBACK_HOLD_48_CYCLES`; production unchanged (`WIND_RESEARCH_COLLECTOR_TRANSITION_PLAN.md`).
+
 **Repository Phase 2 (2026-10-16): `WIND_REPOSITORY_PHASE_2_COMPLETE`** — Wind is structurally migrated to `brains/wind/` (Brain package, `brain.json`, operating contract v1.0.0, production/research split, `jobs/wind-hourly` RETIRED to a pointer); see `WIND_REPOSITORY_MIGRATION_V1.md`. Certification status below is unchanged: not `ARCHITECTURE_CERTIFIED_V1`; `PRODUCTION_WRITE_SECURITY_GATE_OPEN`; no cutover.
 
 **Status (2026-10-15, Phase 3): `WIND_PUBLISHER_V2_ADOPTION_READY`** (Wind-side contract adoption + equivalence gate). Certification status remains **PARTIAL — LIVE CUTOVER PENDING**; **not** `ARCHITECTURE_CERTIFIED_V1`. History: Phase 1 `BLOCKED: PUBLISHER`; Phase 2 `SHADOW_INTEGRATION_READY`.
