@@ -1,6 +1,6 @@
 # Wind Brain: publish artifact contract (now `publish-artifact-v2`, bundle `wind-publication-v1`)
 
-**Status:** implemented as a builder, proven in Publisher **Gate P shadow** only. Code: `jobs/wind-hourly/sector_wind/brain/artifact.py`; tests `jobs/wind-hourly/tests/test_publish_artifact.py` (47). **Not wired into `wind-hourly`**; the deployed job is unchanged. This file keeps its original name; it supersedes the Publisher-V1 (five-artifact) version. Adoption result and equivalence: `WIND_PUBLISHER_V2_ADOPTION_REPORT.md`.
+**Status:** implemented as a builder, proven in Publisher **Gate P shadow** only. Code: `brains/wind/runtime/sector_wind/brain/artifact.py`; tests `brains/wind/tests/test_publish_artifact.py` (moved from `jobs/wind-hourly/` in Repository Phase 2; declaration `brains/wind/contracts/wind-publication-v1.json`). **Not wired into `wind-hourly`**; the deployed job is unchanged. This file keeps its original name; it supersedes the Publisher-V1 (five-artifact) version. Adoption result and equivalence: `WIND_PUBLISHER_V2_ADOPTION_REPORT.md`.
 
 ## 1. Shape
 ```

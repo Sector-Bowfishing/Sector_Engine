@@ -53,3 +53,5 @@ Phase 3 adds `wind/WIND_PUBLISHER_V2_ADOPTION_REPORT.md` (Publisher Gate P adopt
 Preservation pass (2026-10-15): `wind/WIND_RESEARCH_PRESERVATION_PLAN.md` §6 records the verified local snapshot and the pending storage approval (`WIND_RESEARCH_PRESERVATION_BLOCKED_ON_STORAGE_APPROVAL`, since resolved: CERT-4 research backup bucket created, snapshot uploaded and SHA-256 verified; `WIND_RESEARCH_PRESERVATION_READY_FOR_REPO_MIGRATION`, plan §7).
 
 Research workspace adoption (2026-10-15): `wind/WIND_RESEARCH_PRESERVATION_PLAN.md` §8 (`WIND_RESEARCH_WORKSPACE_ADOPTED`).
+
+Repository Phase 2 (2026-10-16): Wind's permanent home is `brains/wind/`; record `wind/WIND_REPOSITORY_MIGRATION_V1.md` (`WIND_REPOSITORY_PHASE_2_COMPLETE`, structural only). Code paths named in the earlier Wind records under `jobs/wind-hourly/` now live under `brains/wind/` (map in that record §3).

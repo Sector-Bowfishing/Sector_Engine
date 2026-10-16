@@ -1,5 +1,7 @@
 # Wind Brain: Architecture Certification V1 status
 
+**Repository Phase 2 (2026-10-16): `WIND_REPOSITORY_PHASE_2_COMPLETE`** — Wind is structurally migrated to `brains/wind/` (Brain package, `brain.json`, operating contract v1.0.0, production/research split, `jobs/wind-hourly` RETIRED to a pointer); see `WIND_REPOSITORY_MIGRATION_V1.md`. Certification status below is unchanged: not `ARCHITECTURE_CERTIFIED_V1`; `PRODUCTION_WRITE_SECURITY_GATE_OPEN`; no cutover.
+
 **Status (2026-10-15, Phase 3): `WIND_PUBLISHER_V2_ADOPTION_READY`** (Wind-side contract adoption + equivalence gate). Certification status remains **PARTIAL — LIVE CUTOVER PENDING**; **not** `ARCHITECTURE_CERTIFIED_V1`. History: Phase 1 `BLOCKED: PUBLISHER`; Phase 2 `SHADOW_INTEGRATION_READY`.
 Standard: `brain-certification-v1`. Local branch `cert/wind-architecture-v1` (not pushed). Nothing live was changed in any phase.
 Architecture readiness and scientific maturity are separate axes: Wind is ARCHITECTURALLY ready for the repository's physical Phase 2 move (once the Repository Foundation's real GitHub Actions run succeeds) while remaining SHADOW / CALIBRATION / `NOT_VALIDATED` scientifically.
