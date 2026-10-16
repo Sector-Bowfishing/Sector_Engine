@@ -3,10 +3,10 @@
 ## 1. Locked paths
 | Purpose | Path |
 |---|---|
-| Development root | `/Users/mcather/Desktop/Development` |
-| **Standard Brain research root** | `/Users/mcather/Desktop/Development/Sector Research` |
-| Shared research/reference (exists; keep the name `shared`, not `_shared`) | `/Users/mcather/Desktop/Development/Sector Research/shared` |
-| **Wind canonical LOCAL research workspace, going forward** | `/Users/mcather/Desktop/Development/Sector Research/wind-brain` |
+| Development root | `<development root>` (the research operator's local development directory; resolved locally, never recorded in this public repo) |
+| **Standard Brain research root** | `<development root>/Sector Research` (resolved via `SECTOR_RESEARCH_ROOT`/local config) |
+| Shared research/reference (exists; keep the name `shared`, not `_shared`) | `Sector Research/shared` |
+| **Wind canonical LOCAL research workspace, going forward** | `Sector Research/wind-brain` (logical workspace id `wind-brain`) |
 
 Brain folders under the root (all exist and were **empty** as of 2026-10-14):
 
