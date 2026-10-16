@@ -1,0 +1,26 @@
+# Swift build + test for the current Package.swift (customer Engine, platform, Brain targets).
+# Phase 1B only enrolls what exists; it does not split or move Swift targets. Includes the
+# /conditions and /lakes migration gates (Tests/SectorEngineTests/MigrationGoldenTests.swift).
+# macOS because Package.swift declares .macOS(.v14) and the suite is exercised on macOS by its authors.
+name: swift-tests
+on:
+  push:
+    branches: [main]
+    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", ".github/workflows/swift-tests.yml"]
+  pull_request:
+    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", ".github/workflows/swift-tests.yml"]
+permissions:
+  contents: read
+jobs:
+  swift:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: .build
+          key: swift-${{ runner.os }}-${{ hashFiles('Package.resolved') }}
+      - run: swift --version
+      - run: swift build
+      - run: swift test

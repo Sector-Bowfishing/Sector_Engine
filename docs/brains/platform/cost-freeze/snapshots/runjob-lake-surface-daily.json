@@ -1,0 +1,87 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "c8062ff5-4e38-4054-a1ab-8740f9dc53e5"
+    },
+    "creationTimestamp": "2026-09-27T18:11:49.830349Z",
+    "generation": 7,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-29T15:35:32.756588Z"
+    },
+    "name": "lake-surface-daily",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZdtVsWVTY",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/lake-surface-daily",
+    "uid": "19a62148-71f1-460d-8090-0f34b60fd793"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        }
+      },
+      "spec": {
+        "parallelism": 8,
+        "taskCount": 8,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "BUCKET",
+                    "value": "sector-lake-surface"
+                  },
+                  {
+                    "name": "LAKE_WORKERS",
+                    "value": "6"
+                  },
+                  {
+                    "name": "MEM_BUDGET_GB",
+                    "value": "14"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/lake-surface-daily@sha256:3d056d3eb83046caaaef65eb30420dc6d1f9bb7ff26860a521b0dff44c6e6af4",
+                "resources": {
+                  "limits": {
+                    "cpu": "4",
+                    "memory": "16Gi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 1,
+            "serviceAccountName": "lake-surface-job@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "10800"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 22,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-13T08:53:20.998136Z",
+      "creationTimestamp": "2026-10-13T08:01:42.701208Z",
+      "name": "lake-surface-daily-rbhs2"
+    },
+    "observedGeneration": 7
+  }
+}

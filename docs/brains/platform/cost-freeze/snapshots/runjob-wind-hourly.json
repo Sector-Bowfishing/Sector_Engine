@@ -1,0 +1,95 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "7c76195a-735c-4a88-a548-c13362eb651d"
+    },
+    "creationTimestamp": "2026-10-07T04:59:03.017972Z",
+    "generation": 4,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "commit": "e6a5026f5d0f",
+      "run.googleapis.com/lastUpdatedTime": "2026-10-13T04:57:51.084452Z"
+    },
+    "name": "wind-hourly",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZdxexQ/aM",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/wind-hourly",
+    "uid": "540263fe-6b5c-47bf-8c16-ee49b97cded6"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "commit": "e6a5026f5d0f"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "hourly",
+                  "--store",
+                  "gs://sector-wind-candidate/wind/v1"
+                ],
+                "env": [
+                  {
+                    "name": "SECTOR_WIND_GCS_APPROVED",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "SECTOR_WIND_BRAIN_RTDB_URL",
+                    "value": "https://sector-brain.firebaseio.com"
+                  },
+                  {
+                    "name": "SECTOR_WIND_BUILD",
+                    "value": "main@e6a5026f5d0f"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/wind-hourly@sha256:410e7c46c57b98f3f8ce9a2a3bee1f8694587d9122020ba375dd7126854a2746",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "2Gi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 1,
+            "serviceAccountName": "wind-hourly-job@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "900"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 174,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-14T05:08:23.314560Z",
+      "creationTimestamp": "2026-10-14T05:05:04.446588Z",
+      "name": "wind-hourly-wj8c9"
+    },
+    "observedGeneration": 4
+  }
+}

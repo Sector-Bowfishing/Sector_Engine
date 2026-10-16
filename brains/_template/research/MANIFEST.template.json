@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "workspaceId": "example-brain",
+  "collections": [
+    {
+      "name": "example-collection",
+      "class": "RESEARCH",
+      "contentHash": "version:2026-01-01",
+      "backupLocationId": "primary-backup",
+      "producedBy": {"tool": "example-tool", "commit": "0000000"},
+      "note": "Template entry. References evidence by name/hash; embeds nothing."
+    }
+  ]
+}

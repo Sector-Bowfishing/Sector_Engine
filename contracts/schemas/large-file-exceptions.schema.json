@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/large-file-exceptions.schema.json",
+  "title": "Large-file policy exceptions v1",
+  "description": "Exact-path exceptions for tracked files >= 1 MB. No wildcards. LEGACY_BASELINE means 'known before migration', not 'approved forever'.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "exceptions"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "description": {"type": "string"},
+    "exceptions": {"type": "array", "items": {"$ref": "#/$defs/exception"}}
+  },
+  "$defs": {
+    "exception": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "component", "reason", "status", "reviewPhase", "createdBy"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^[^*?\\[\\]/][^*?\\[\\]]*$"},
+        "component": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1},
+        "status": {"enum": ["LEGACY_BASELINE", "APPROVED"]},
+        "reviewPhase": {"type": "string", "minLength": 1},
+        "createdBy": {"type": "string", "minLength": 1},
+        "source": {"type": "string"},
+        "generator": {"type": "string"},
+        "version": {"type": "string"},
+        "rebuild": {"type": "string"}
+      }
+    }
+  }
+}

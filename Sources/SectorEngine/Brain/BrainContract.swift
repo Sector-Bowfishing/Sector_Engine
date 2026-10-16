@@ -136,7 +136,7 @@ public enum BrainOwnership {
     static let rollupFleet: Set<String> = ["lastUpdatedAt", "stale", "issueCount", "hasObservations"]
     static let rollupSnapshot: Set<String> = ["generatedAt", "snapshotVersion", "evaluationTime"]
     static let lakeBrainOnlyFleet: Set<String> = ["riverSystem", "lakeType"]
-    static let platformOnly: Set<String> = ["schemaVersion", "access", "validationOps", "engine", "control", "scores"]
+    static let platformOnly: Set<String> = ["schemaVersion", "access", "validationOps", "engine", "control", "scores", "jobs"]
     /// The Engine's own publisher (scores, engine health); not a brain.
     public static let platformWriter = "brain-platform"
 

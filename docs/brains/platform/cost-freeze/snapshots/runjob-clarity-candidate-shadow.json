@@ -1,0 +1,87 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "b4028ceb-b984-4a4b-bfc3-4aa020360467"
+    },
+    "creationTimestamp": "2026-10-02T05:46:12.287644Z",
+    "generation": 1,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-10-02T05:46:12.287644Z"
+    },
+    "name": "clarity-candidate-shadow",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZc1TmD5SI",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/clarity-candidate-shadow",
+    "uid": "ee3c4f18-e799-4f3c-b534-4573323fc1c2"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        }
+      },
+      "spec": {
+        "parallelism": 9,
+        "taskCount": 17,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "BUCKET",
+                    "value": "sector-clarity-candidate"
+                  },
+                  {
+                    "name": "LOOKBACK_DAYS",
+                    "value": "10"
+                  },
+                  {
+                    "name": "JOB_COMMIT",
+                    "value": "6855cb3d657e0965446ce5012e1da3a6fdf05b2c"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/clarity-candidate-shadow@sha256:f2058df68870cb7d31a370f2ff32267c31c0c3747979ef82a0a7ac64a7e3f799",
+                "resources": {
+                  "limits": {
+                    "cpu": "2",
+                    "memory": "8Gi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 1,
+            "serviceAccountName": "clarity-candidate-job@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "21600"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 1,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_FAILED",
+      "completionTimestamp": "2026-10-02T05:58:36.589486Z",
+      "creationTimestamp": "2026-10-02T05:46:37.345916Z",
+      "name": "clarity-candidate-shadow-l54fr"
+    },
+    "observedGeneration": 1
+  }
+}

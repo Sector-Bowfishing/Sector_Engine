@@ -87,3 +87,13 @@ def test_descriptor_gaps_name_what_is_missing():
     gaps = descriptor_gaps({"wind": {"staleAfterHours": 1.5, "lastSuccessfulRun": ISO(1)},
                             "biological-state": {"stalenessModel": "VERSION", "schedule": {}, "dependsOn": [], "lastSuccessfulRun": ISO(1), "orchestration": {"components": {}}}})
     assert gaps == {"wind": ["schedule", "stalenessModel", "dependsOn", "descriptor"]}
+
+
+def test_string_false_running_is_not_running():
+    from sector_brain_platform import orchestrate
+    import datetime as dt
+    now = dt.datetime(2026, 10, 13, 6, 0, tzinfo=dt.timezone.utc)
+    reg = {"staleAfterHours": 3, "lastSuccessfulRun": "2026-10-12T23:00:00Z", "schedule": {"running": "false", "cadence": "manual"}}
+    assert orchestrate({"lake-brain": reg}, {}, now)["runs"][0]["brainId"] == "lake-brain"
+    reg["schedule"]["running"] = "true"
+    assert orchestrate({"lake-brain": reg}, {}, now)["waiting"][0]["brainId"] == "lake-brain"

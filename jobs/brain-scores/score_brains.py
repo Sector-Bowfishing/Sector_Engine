@@ -14,17 +14,21 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
-                                   prune_activity, score_biological, score_engine, score_intelligence, score_lake)
+                                   prune_activity, guard_scores, score_biological, score_engine, score_intelligence, score_lake)
 
 WRITER = "brain-platform"
-FROZEN = os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json")
+FROZEN = os.environ.get("FROZEN_SCORES", os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json"))
+MAX_LAKE_PROFILES = 1000     # > the 621-lake directory; a guard, not a sample size
+LAKE_READ_WORKERS = 8
 UPSTREAM = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")
 
 
@@ -38,13 +42,19 @@ def fetch_facts(db) -> dict:
     directory = lake_reg.get("directoryLakeCount") or (len(fleet) if fleet else None)
     profiled = [k for k, row in fleet.items() if ((row or {}).get("slots") or {}).get("lake") or ((row or {}).get("readiness") or {}).get("lake")]
     profiles, states = {}, {}
-    for k in sorted(profiled)[:200]:
-        p = db.get(f"lakes/{k}/brain")
-        if p:
-            profiles[k] = p
-        s = db.get(f"lakes/{k}/states/lake")
-        if s:
-            states[k] = s
+    # Read EVERY profiled lake (bounded for safety): the coverage dimension counts profiles, so a silent first-200 cap would
+    # misreport coverage once the reviewed fleet exceeds 200. Reads are small documents, fetched concurrently.
+    keys = sorted(profiled)[:MAX_LAKE_PROFILES]
+
+    def _read(k):
+        return k, db.get(f"lakes/{k}/brain"), db.get(f"lakes/{k}/states/lake")
+
+    with ThreadPoolExecutor(max_workers=LAKE_READ_WORKERS) as pool:
+        for k, p, s in pool.map(_read, keys):
+            if p:
+                profiles[k] = p
+            if s:
+                states[k] = s
     species = db.get("species") or {}
     intel_reg = brains.get("sector-intelligence") or {}
     sampled, intel_states = [], {}
@@ -57,7 +67,8 @@ def fetch_facts(db) -> dict:
     fleet_readiness = {k: ((row or {}).get("readiness") or {}) for k, row in fleet.items()}
     return {
         "brains": brains, "health": health, "validation": validation, "fleet": fleet,
-        "sources": db.get("sources") or {}, "healthSources": db.get("health/sources") or {}, "jobs": db.get("health/jobs") or {},
+        "sources": db.get("sources") or {}, "healthSources": db.get("health/sources") or {},
+        "jobs": db.get("jobs") or {},                     # the Engine's /jobs contract (jobs-v1), not the brains' /health/jobs
         "intelStates": intel_states,
         "engine": {"intelligenceRegistry": intel_reg, "validation": validation, "healthBrains": health,
                    "healthJobs": db.get("health/jobs") or {}, "fleetReadiness": fleet_readiness,
@@ -66,7 +77,8 @@ def fetch_facts(db) -> dict:
                    "platformConformant": ({b: bool(((brains.get(b) or {}).get("platform") or {}).get("conformant"))
                                            for b in UPSTREAM} if any((brains.get(b) or {}).get("platform") for b in UPSTREAM) else {})},
         "lake": {"registry": lake_reg, "validation": validation.get("lake-brain"), "health": health.get("lake-brain"),
-                 "profiles": profiles, "states": states, "directoryLakeCount": directory},
+                 "profiles": profiles, "states": states, "directoryLakeCount": directory,
+                 "profiledCount": len(profiled)},
         "biological": {"registry": brains.get("biological-state") or {}, "validation": validation.get("biological-state"),
                        "species": species, "intelligenceRegistry": intel_reg},
         "intelligence": {"registry": intel_reg, "validation": validation.get("sector-intelligence"),
@@ -74,8 +86,16 @@ def fetch_facts(db) -> dict:
     }
 
 
+def rtdb_safe(o):
+    """Frozen blocks come from generators on other branches and may name dimensions with RTDB-illegal key characters (the Wind block has
+    'Freshness/reliability'); one illegal key fails the whole multi-path update. Replace them in KEYS only (values untouched)."""
+    if isinstance(o, dict):
+        return {re.sub(r"[.$#\[\]/\x00-\x1f\x7f]", "-", k): rtdb_safe(v) for k, v in o.items()}
+    return [rtdb_safe(v) for v in o] if isinstance(o, list) else o
+
+
 def compute(facts: dict, now: dt.datetime) -> dict:
-    frozen = json.load(open(FROZEN))
+    frozen = rtdb_safe(json.load(open(FROZEN)))
     return {
         "lake-brain": score_lake(facts["lake"], now),
         "water-temp": frozen_score(frozen["water-temp"]),
@@ -86,37 +106,53 @@ def compute(facts: dict, now: dt.datetime) -> dict:
     }
 
 
+def _content(score: dict | None) -> dict:
+    """A score block without its refresh timestamp, for comparing substance."""
+    # RTDB does not store empty objects/arrays, so a block computed with `scoreBreakdown: {}` reads back WITHOUT the key; treating {} / [] / None as
+    # absent keeps the comparison stable (otherwise every frozen block and the Engine block were rewritten every cycle with no change in content).
+    return {k: v for k, v in (score or {}).items() if k not in ("scoreUpdatedAt", "updatedAt") and v not in (None, {}, [])}
+
+
 def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None,
                 old_scores: dict | None = None) -> tuple[dict, list[str]]:
-    """Writes for scores whose value/version changed, plus a score.changed event per change.
+    """Writes for score blocks whose CONTENT changed (value, uncapped, breakdown, blockers, version), plus a score.changed
+    event only when the displayed value / version / basis changed.
+    Why content, not just value (2026-10-13): the displayed value can sit at a gate cap (3.0) while the breakdown underneath
+    improves (uncapped 4.3 -> 6.3 after the deep TVA history); comparing only the value left /scores/{id} stale for hours.
     Canonical nodes are /scores/{id} (platform-only root): a registry is written whole by its brain and
     would clobber a sub-node there (seen 2026-10-12 on the Biological republish)."""
     updates, changed, n = {}, [], 0
     old_scores = old_scores or {}
     if engine is not None:
         old = old_engine or {}
-        if old.get("engineScore") != engine["engineScore"] or old.get("engineScoreVersion") != engine["engineScoreVersion"]:
+        if _content(old) != _content(engine):
             updates["scores/engine"] = engine
             updates["engine/score"] = engine                    # alias kept for readers of the first publish
-            n += 1
-            ev = event(now, WRITER, n, "score.changed",
-                       f"Sector Engine score {old.get('engineScore', '—')} → {engine['engineScore']} / 10 ({engine['engineScoreVersion']})", "info")
-            updates[f"activity/{ev['id']}"] = ev
-            changed.append(f"engine: {old.get('engineScore', '—')} → {engine['engineScore']}")
+            if old.get("engineScore") != engine["engineScore"] or old.get("engineScoreVersion") != engine["engineScoreVersion"]:
+                n += 1
+                ev = event(now, WRITER, n, "score.changed",
+                           f"Sector Engine score {old.get('engineScore', '—')} → {engine['engineScore']} / 10 ({engine['engineScoreVersion']})", "info")
+                updates[f"activity/{ev['id']}"] = ev
+                changed.append(f"engine: {old.get('engineScore', '—')} → {engine['engineScore']}")
+            else:
+                changed.append(f"engine: breakdown refreshed (score unchanged {engine['engineScore']})")
     for bid in UPSTREAM:
         new = scores[bid]
         old = old_scores.get(bid) or {}
         if bid not in brains:
             changed.append(f"{bid}: brain not registered yet — score written anyway (registry absent)")
-        if old.get("value") == new["value"] and old.get("scoreVersion") == new["scoreVersion"] and old.get("basis") == new["basis"]:
+        if _content(old) == _content(new):
             continue
         updates[f"scores/{bid}"] = new
-        n += 1
-        ev = event(now, WRITER, n, "score.changed",
-                   f"{bid} score {old.get('value', '—')} → {new['value']} / 10 ({new['basis'].lower()}, {new['scoreVersion']})",
-                   "info")
-        updates[f"activity/{ev['id']}"] = ev
-        changed.append(f"{bid}: {old.get('value', '—')} → {new['value']}")
+        if not (old.get("value") == new["value"] and old.get("scoreVersion") == new["scoreVersion"] and old.get("basis") == new["basis"]):
+            n += 1
+            ev = event(now, WRITER, n, "score.changed",
+                       f"{bid} score {old.get('value', '—')} → {new['value']} / 10 ({new['basis'].lower()}, {new['scoreVersion']})",
+                       "info")
+            updates[f"activity/{ev['id']}"] = ev
+            changed.append(f"{bid}: {old.get('value', '—')} → {new['value']}")
+        else:
+            changed.append(f"{bid}: breakdown refreshed (displayed {new['value']} unchanged; uncapped {old.get('uncapped', '—')} → {new.get('uncapped', '—')})")
     return updates, changed
 
 
@@ -125,14 +161,18 @@ def main() -> int:
     ap.add_argument("--write", action="store_true", help="publish to the Brain RTDB (default: dry run)")
     ap.add_argument("--db", default=None, help="Brain RTDB URL (default: the contract's)")
     ap.add_argument("--report", default=None, help="write the full report JSON here")
+    ap.add_argument("--if-changed", action="store_true", help="write a control node only when its content (minus timestamps) differs from what is published")
     a = ap.parse_args()
     now = dt.datetime.now(dt.timezone.utc)
     db = BrainRtdb(a.db, brain_id=WRITER) if a.db else BrainRtdb(brain_id=WRITER)
     check_schema(db)
     facts = fetch_facts(db)
-    scores = compute(facts, now)
-    engine = score_engine(facts["engine"], scores, now)
     old_scores = db.get("scores") or {}
+    # Stale-score protection (platform docs SCORING_SEMANTICS.md section 6): /scores/{id} is the durable canonical store; a candidate that is OLDER than
+    # (or ambiguous against) what is published is HELD and the published block is used, so one Brain's stale artifact cannot move any score, the Engine
+    # score or the control overview. Deliberate regression needs a recorded decision: SCORE_GUARD_ALLOW=<brainId>[,<brainId>].
+    scores, held = guard_scores(compute(facts, now), old_scores, allow=[x for x in os.environ.get("SCORE_GUARD_ALLOW", "").split(",") if x])
+    engine = score_engine(facts["engine"], scores, now)
     updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores)   # canonical: /scores/engine
     # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.
     control = overview(brains=facts["brains"], health=facts["health"], validation=facts["validation"], scores=scores, engine=engine,
@@ -162,6 +202,11 @@ def main() -> int:
     print(f"{'ENGINE':22s} {engine['engineScore']:>4} / 10  COMPUTED {engine['engineScoreVersion']}  completeness {engine['completenessPct']} %  strongest {engine['strongestArea']}  weakest {engine['weakestArea']}")
     for g in engine["blockers"]:
         print(f"    - {g.get('gate') or g.get('dimension')}: {g.get('why')}" + (f" (cap {g['cap']})" if "cap" in g else ""))
+    for h in held:
+        tag = "OVERRIDDEN" if h.get("overridden") else "HELD"
+        print(f"{tag:22s} {h['brainId']}: {h['verdict']} - {h['why']} (published {h.get('publishedValue')}, candidate {h.get('candidateValue')})"
+              + ("; SCORE_GUARD_ALLOW applied" if h.get("overridden") else "; published block kept"))
+    changed.extend(f"{h['brainId']}: {'OVERRIDDEN' if h.get('overridden') else 'HELD'} ({h['verdict']}) {h['why']}" for h in held)
     print(f"\n{len(changed)} change(s): " + ("; ".join(changed) if changed else "none"))
     if a.report:
         json.dump(report, open(a.report, "w"), indent=1)
@@ -169,18 +214,50 @@ def main() -> int:
           + ", ".join(f"{w['brainId']} ({w.get('score')})" for w in control.get("workNext", [])[:3]))
     for k, b in betas.items():
         print(f"{'BETA':22s} {b['lakeId']:18s} {b['betaReadiness']:10s} blockers {[x['code'] + ':' + str(x.get('slot')) for x in b['blockers']]} warnings {len(b['warnings'])}")
+    if a.if_changed:                                          # publish only after a change (cost work 2026-10-13, Phase 14)
+        before = len(control_updates)
+        control_updates = changed_control(control_updates, db.get("control") or {})
+        print(f"{'IF-CHANGED':22s} {len(control_updates)} of {before} control path(s) differ from what is published")
     if a.write:
         if updates:
             db.update(updates)
         stale_mirrors = {f"brains/{b}/score": None for b in UPSTREAM if (facts["brains"].get(b) or {}).get("score") is not None}
         if stale_mirrors:                                     # retire the clobber-prone sub-nodes the first publish wrote
             BrainRtdb(brain_id=None).update(stale_mirrors)
-        db.update(control_updates)
+        if control_updates:
+            db.update(control_updates)
         pruned = prune_activity(db.get("activity"), WRITER, now)
         if pruned:
             db.update(pruned)
         print(f"published {len(updates)} score path(s) + {len(control_updates)} control path(s); pruned {len(pruned)} old platform event(s)")
     return 0
+
+
+VOLATILE = ("updatedAt", "rolledUpAt", "summarizedAt", "syncedAt", "evaluatedAt")
+
+
+def _stable(v):
+    if isinstance(v, dict):
+        return {k: _stable(x) for k, x in v.items() if k not in VOLATILE}
+    if isinstance(v, list):
+        return [_stable(x) for x in v]
+    return v
+
+
+def changed_control(control_updates: dict, published: dict) -> dict:
+    """Only the control paths whose content differs from what is published, ignoring the timestamps every publish refreshes.
+    The overview is always rewritten when any sibling changed (its updatedAt then means something)."""
+    def at(path):
+        node = {"control": published}
+        for p in path.split("/"):
+            node = node.get(p) if isinstance(node, dict) else None
+            if node is None:
+                return None
+        return node
+    out = {p: v for p, v in control_updates.items() if _stable(v) != _stable(at(p))}
+    if out and "control/overview" in control_updates:
+        out["control/overview"] = control_updates["control/overview"]
+    return out
 
 
 if __name__ == "__main__":

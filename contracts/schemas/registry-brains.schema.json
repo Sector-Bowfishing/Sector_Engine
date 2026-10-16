@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/registry-brains.schema.json",
+  "title": "Brain Registry (generated) v1",
+  "description": "BRAIN REGISTRY: generated from brains/*/brain.json. Never hand-edited. Distinct from the Lake Registry and Species Registry (entity identity) and from providers/PROVIDERS.json (provider catalog).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedFrom", "brains", "edges"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "generatedFrom": {"type": "array", "items": {"type": "string", "pattern": "^brains/[a-z][a-z0-9-]*/brain\\.json$"}},
+    "brains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["brainId", "directory", "lifecycle", "contractVersion", "customerIntegrationMode"],
+        "properties": {
+          "brainId": {"type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"},
+          "directory": {"type": "string", "pattern": "^brains/[a-z][a-z0-9-]*$"},
+          "lifecycle": {"type": "string"},
+          "contractVersion": {"type": "string"},
+          "customerIntegrationMode": {"enum": ["none", "embedded", "published"]}
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to", "contractId"],
+        "properties": {"from": {"type": "string"}, "to": {"type": "string"}, "contractId": {"type": "string"}}
+      }
+    },
+    "dependencyOrder": {"type": "array", "items": {"type": "string"}}
+  }
+}

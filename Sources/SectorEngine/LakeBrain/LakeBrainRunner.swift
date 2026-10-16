@@ -27,6 +27,16 @@ public struct LakeBrainRunOptions: Sendable {
     /// Pull full operator history (decades of CWMS daily) instead of the recent tail.
     public var backfill = false
     public var processingVersion: String? = nil
+    /// Prospective prediction ledger (docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md). On by default; never affects the publish.
+    public var ledgerEnabled = true
+    /// Where the ledger object goes. Default: a live run writes to the history archive; a dry run (local RTDB store)
+    /// writes under `<dry-run dir>/_ledger` and never to GCS.
+    public var ledgerArchive: LakeBrainArchive? = nil
+    /// Run id in the ledger object name; default is a short random id.
+    public var runId: String? = nil
+    /// DRY RUN ONLY (LakeBrainJob refuses it with --rtdb): evaluate CANDIDATE bindings as if reviewed. Writes local files only and
+    /// marks every output `dryRunCandidate`. A normal run never sets this.
+    public var includeCandidates = false
     public init() {}
 }
 
@@ -40,6 +50,8 @@ public struct LakeBrainLakeResult: Sendable {
     public var historyRows: Int
     public var historyWritten: Bool
     public var errors: [String]
+    /// The binding was a CANDIDATE evaluated as if reviewed (candidate dry run).
+    public var dryRunCandidate = false
 }
 
 public struct LakeBrainRunResult: Sendable {
@@ -49,6 +61,10 @@ public struct LakeBrainRunResult: Sendable {
     public var writeError: String? = nil
     public var archiveErrors: [String] = []
     public var presenceError: String? = nil
+    /// Prediction ledger outcome: object path (nil when nothing was written), record count, and a warning if the write failed.
+    public var ledgerObject: String? = nil
+    public var ledgerRecords = 0
+    public var ledgerWarning: String? = nil
     public var ok: Bool { writeError == nil && health != "FAILED" }
 }
 
@@ -102,7 +118,10 @@ public enum LakeBrainRunner {
                                     presence: LakePresenceIndex?, published: LakeLevelStateRecord?,
                                     previousProfile: LakeBrainProfileRecord?, options: LakeBrainRunOptions,
                                     now: Date) async -> LakeBrainLakeResult {
-        let binding = LakeSourceBindings.binding(for: lake.id)
+        var binding = LakeSourceBindings.binding(for: lake.id)
+        // Candidate dry run: in-memory promotion only; nothing here is published (the job refuses --rtdb with it).
+        let dryRunCandidate = options.includeCandidates && binding?.status == .candidate
+        if dryRunCandidate { binding?.status = .reviewed }
         let gen = BrainPlatform.iso(now)
         var errors: [String] = []
         var state: LakeLevelStateRecord?
@@ -110,6 +129,7 @@ public enum LakeBrainRunner {
         var historyRows = 0
         var historyWritten = false
         var plan: LakeBrainPlanDecision?
+        var lastMerged: [DailyLevel] = []
         var liveResults: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)] = []
 
         if let binding, binding.status == .reviewed {
@@ -139,20 +159,21 @@ public enum LakeBrainRunner {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
                         if let d = await feeds.daily(h, since: nil, now: now, timeZone: tz) { fresh += d } else { errors.append("history: TVA operating guide unavailable") }
-                    case .cwmsDaily:
+                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily:
                         // Backfill (or an empty archive) pulls the whole record; otherwise the last 21 days.
                         let since: String? = (options.backfill || existing.isEmpty) ? nil
                             : existing.last.map { _ in LakeLevelCalendar.dayString(now.addingTimeInterval(-21 * 86_400), timeZone: tz) }
-                        if let d = await feeds.daily(h, since: since, now: now, timeZone: tz) { fresh += d } else { errors.append("history: CWMS daily unavailable") }
+                        if let d = await feeds.daily(h, since: since, now: now, timeZone: tz) { fresh += d } else { errors.append("history: \(h.profileDescription) unavailable") }
                     }
                 }
                 let merged = LakeDailyHistory.merge(existing: existing, new: fresh)
+                lastMerged = merged
                 historyRows = merged.count
                 if let archive, !merged.isEmpty, merged != existing {
                     do { try await archive.write(LakeDailyHistory.path(lake.id), LakeDailyHistory.encode(merged), contentType: "text/csv"); historyWritten = true }
                     catch { errors.append("history write: \(error)") }
                 }
-                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today)
+                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today, poolBasisIsFullPool: lake.poolBasis == .fullPool)
                 baseline = b
                 if let archive, b.status != .none, (try? await archive.read(LakeBaselineBuilder.path(b))) == nil {
                     do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }
@@ -169,18 +190,42 @@ public enum LakeBrainRunner {
             }
         }
 
+        // The baseline must come from the series the live level comes from: a history more than 15 ft off the live level is a
+        // series / datum mismatch and would label the lake 'unusual' for the wrong reason.
+        if let cur = state?.currentElevationFt, state?.kind == .observed, let off = historyLiveMismatch(history: lastMerged, current: cur, now: now, timeZone: binding.map { TimeZone(identifier: $0.timeZone) ?? .gmt } ?? .gmt) {
+            let flag = String(format: "historyLiveMismatch:%+.1fft", off)
+            var flags = state?.provenance.qualityFlags ?? []
+            flags.append(flag)
+            state?.provenance.qualityFlags = flags
+            errors.append("history/live series mismatch: seeded history of the last year is \(String(format: "%+.1f", off)) ft from the live level")
+        }
+        if dryRunCandidate {
+            var flags = state?.provenance.qualityFlags ?? []
+            flags.append("dryRunCandidate")
+            state?.provenance.qualityFlags = flags
+        }
         let presenceRecords = presence?.resolveLakeSpecies(lake.id, updatedAt: gen) ?? []
         let profile = LakeBrainProfiles.build(lake: lake, binding: binding, state: state, baseline: baseline,
                                               previous: previousProfile, presence: presence, live: liveResults, now: now,
-                                              archiveURI: archive?.uri)
+                                              archiveURI: archive?.uri, dryRunCandidate: dryRunCandidate)
         return LakeBrainLakeResult(lakeId: lake.id, plan: plan, state: state, profile: profile, presence: presenceRecords,
-                                   baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors)
+                                   baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors,
+                                   dryRunCandidate: dryRunCandidate)
+    }
+
+    /// Median of the history of the last 365 days minus the live level, when it is more than 15 ft (and >= 30 days exist).
+    static func historyLiveMismatch(history: [DailyLevel], current: Double, now: Date, timeZone: TimeZone) -> Double? {
+        let cutoff = LakeLevelCalendar.dayString(now.addingTimeInterval(-365 * 86_400), timeZone: timeZone)
+        let xs = history.filter { $0.date >= cutoff }.map(\.ft).sorted()
+        guard xs.count >= 30 else { return nil }
+        let med = xs.count % 2 == 1 ? xs[xs.count / 2] : (xs[xs.count / 2 - 1] + xs[xs.count / 2]) / 2
+        return abs(med - current) > 15 ? med - current : nil
     }
 
     // MARK: fleet run
 
     static func health(_ lakes: [LakeBrainLakeResult], writeFailed: Bool) -> String {
-        let reviewed = lakes.filter { LakeSourceBindings.binding(for: $0.lakeId) != nil }
+        let reviewed = lakes.filter { LakeSourceBindings.reviewedBinding(for: $0.lakeId) != nil || $0.dryRunCandidate }
         if writeFailed || lakes.isEmpty { return "FAILED" }
         guard !reviewed.isEmpty else { return "HEALTHY" }
         let unavailable = reviewed.filter { $0.state == nil || $0.state?.kind == .unavailable }.count
@@ -202,14 +247,17 @@ public enum LakeBrainRunner {
             return result
         }
         let directory = Set(ids)
-        for b in LakeSourceBindings.reviewed where !directory.contains(b.lakeId) {
+        for b in LakeSourceBindings.all where !directory.contains(b.lakeId) {
             result.health = "FAILED"; result.writeError = "binding for non-directory lake \(b.lakeId)"
             return result
         }
 
         var lakes: [DirectoryLake]
         switch options.scope {
-        case .pilots: lakes = LakeDirectory.all.filter { LakeSourceBindings.binding(for: $0.id) != nil }
+        case .pilots:
+            // The reviewed lakes; a candidate dry run adds the candidates. A normal run never touches a CANDIDATE.
+            lakes = LakeDirectory.all.filter { options.includeCandidates ? LakeSourceBindings.binding(for: $0.id) != nil
+                                                                         : LakeSourceBindings.reviewedBinding(for: $0.id) != nil }
         case .fleet: lakes = LakeDirectory.all
         }
         if let only = options.lakeIds { lakes = lakes.filter { only.contains($0.id) } }
@@ -262,7 +310,7 @@ public enum LakeBrainRunner {
             for r in out { try await store.update(try lakePaths(r, presence: presence)) }
             let finished = Date()
             result.durationMs = Int(finished.timeIntervalSince(t0) * 1000)
-            guard options.lakeIds == nil else { return result }
+            guard options.lakeIds == nil else { await appendLedger(&result, lakes: lakes, store: store, archive: archive, options: options, now: now); return result }
             let registry = registryEntry(result: result, options: options, now: finished, presence: presence)
             var tail: [String: Data] = [
                 "brains/\(LakeBrainSpec.brainId)": try BrainJSON.encode(registry),
@@ -284,6 +332,7 @@ public enum LakeBrainRunner {
             for e in activity(previous: previousRegistry, current: registry, now: finished) { tail["activity/\(e.id)"] = try BrainJSON.encode(e) }
             try await store.update(tail)
             _ = try? await BrainActivity.prune(store: store, brainId: LakeBrainSpec.brainId, now: finished)
+            await appendLedger(&result, lakes: lakes, store: store, archive: archive, options: options, now: now)
         } catch {
             result.writeError = "\(error)"; result.health = "FAILED"
             let at = BrainPlatform.iso(Date())
@@ -294,6 +343,27 @@ public enum LakeBrainRunner {
             ])
         }
         return result
+    }
+
+    // MARK: prediction ledger
+
+    /// After the RTDB writes succeeded: append the run's prediction object. Cannot throw and cannot change `ok`/`health`:
+    /// a failure is only `ledgerWarning` (and a line in `archiveErrors` so the job prints it).
+    static func appendLedger(_ result: inout LakeBrainRunResult, lakes: [DirectoryLake], store: BrainStore,
+                             archive: LakeBrainArchive?, options: LakeBrainRunOptions, now: Date) async {
+        guard options.ledgerEnabled else { return }
+        let target: LakeBrainArchive?
+        if let explicit = options.ledgerArchive { target = explicit }
+        else if let local = store as? LocalDirectoryStore { target = LocalLakeBrainArchive(directory: local.dir.appendingPathComponent("_ledger").path) }
+        else if let rt = store as? ReadThroughDryRunStore { target = LocalLakeBrainArchive(directory: rt.writer.dir.appendingPathComponent("_ledger").path) }
+        else { target = archive }
+        guard let target else { return }
+        var pool: [String: (Bool?, String?)] = [:]
+        for l in lakes { pool[l.id] = (l.poolBasis.map { $0 == .fullPool }, l.poolBasis?.rawValue) }
+        let runId = options.runId ?? String(UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "").prefix(12))
+        let o = await LakePredictionLedger.append(results: result.lakes, regulated: pool, archive: target, runId: runId, now: now)
+        result.ledgerObject = o.path; result.ledgerRecords = o.records; result.ledgerWarning = o.warning
+        if let w = o.warning { result.archiveErrors.append(w) }
     }
 
     // MARK: paths
@@ -358,6 +428,15 @@ public enum LakeBrainRunner {
         "UNAVAILABLE": "No reading from any reviewed source.",
     ]
 
+    /// Fleet-wide binding gate, independent of what this run evaluated: how many directory lakes have a REVIEWED binding (published)
+    /// and how many only a CANDIDATE (machine-verified, awaiting human acceptance, never published). `bindingStatus` above counts only
+    /// the lakes this run published, so on its own it hides the candidate fleet from Sector Ops.
+    static func fleetBindingBreakdown() -> [String: Int] {
+        var m: [String: Int] = [:]
+        for b in LakeSourceBindings.all { m[b.status.rawValue, default: 0] += 1 }
+        return m
+    }
+
     static func registryEntry(result: LakeBrainRunResult, options: LakeBrainRunOptions, now: Date,
                               presence: LakePresenceIndex?) -> LakeBrainRegistryEntry {
         var readiness: [String: Int] = [:], cap: [String: Int] = [:], base: [String: Int] = [:]
@@ -383,10 +462,10 @@ public enum LakeBrainRunner {
             staleAfterHours: LakeBrainSpec.staleAfterHours, lastSuccessfulRun: BrainPlatform.iso(now), lastError: nil,
             deploymentVersion: options.processingVersion, modelVersion: LakeBrainSpec.modelVersion,
             baselineMethod: LakeBrainSpec.baselineMethod, bindingVersion: LakeSourceBindings.version,
-            breakdowns: ["readiness": readiness, "sourceCapability": cap, "bindingStatus": binding, "baselineStatus": base,
+            breakdowns: ["readiness": readiness, "sourceCapability": cap, "bindingStatus": binding, "fleetBindingStatus": fleetBindingBreakdown(), "baselineStatus": base,
                          "levelState": level, "trendState": trend, "historicalState": hist],
-            versions: [.init(version: "\(LakeBrainSpec.brainVersion) · \(LakeBrainSpec.modelVersion)", date: "2026-10-12",
-                             note: "v1 pilot: Guntersville, Wheeler, Wilson, Pickwick (TVA) + Lake Hartwell (CWMS). Operator zone first, p10/p90 + p02/p98, rapid = seasonal p95 |Δ24h|, ≥ 5 years SUFFICIENT.",
+            versions: [.init(version: "\(LakeBrainSpec.brainVersion) · \(LakeBrainSpec.modelVersion)", date: "2026-10-13",
+                             note: "Rules v2 (pre-registered): history tiers gate VERY_UNUSUAL (≥ 15 years), trend from the 72 h mean (floors 0.10 / 0.05 ft), RAPID = max(seasonal p95 |Δ24h|, 0.25 ft). baselineStatus (≥ 5 years SUFFICIENT) and NOT_VALIDATED unchanged.",
                              status: "CURRENT")],
             readinessDefinitions: readinessDefinitions, stateKindDefinitions: stateKindDefinitions,
             healthRule: "FAILED: write failed or no lakes. DEGRADED: > 25 % of reviewed lakes unavailable. WARNING: any reviewed lake stale, unavailable or on a fallback source. HEALTHY otherwise.",
@@ -425,13 +504,16 @@ public enum LakeBrainRunner {
             ("tva-restapi", .tva, "TVA", "reservoir-elevation", "hourly observed reservoir elevation + 365-day operating guide (guide curve, operating zone)"),
             ("usace-cwms-pool", .cwms, "USACE CWMS", "reservoir-elevation", "pool elevation (hourly + daily since 1960 at Hartwell), guide curve, drought levels"),
             ("usgs-nwis-lake-elevation", .usgs, "USGS", "lake-surface-elevation", "on-lake surface elevation (00062/62614)"),
+            ("usace-access2water", .a2w, "USACE Access2Water", "reservoir-elevation", "latest pool elevation + 24 h change and operator levels (one listing per district)"),
+            ("usbr-rise", .rise, "USBR RISE", "reservoir-elevation", "daily lake/reservoir elevation (about 48 h latency; 0.0 placeholders dropped)"),
+            ("nws-nwps", .nwps, "NWS NWPS", "lake-surface-elevation", "hourly pool elevation of NWS gauges (HP pe codes)"),
         ]
         var out: [String: (BrainDataSourceStatus, BrainSourceHealth)] = [:]
         for d in defs {
             var used = 0, failed = 0, stale = 0
             var latest: String?
             for r in lakes {
-                guard let b = LakeSourceBindings.binding(for: r.lakeId) else { continue }
+                guard let b = r.dryRunCandidate ? LakeSourceBindings.binding(for: r.lakeId) : LakeSourceBindings.reviewedBinding(for: r.lakeId) else { continue }
                 for ref in b.live where ref.provider == d.provider {
                     used += 1
                     let flags = r.state?.provenance.qualityFlags ?? []

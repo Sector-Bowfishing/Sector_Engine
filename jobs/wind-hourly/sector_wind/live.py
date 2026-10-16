@@ -40,17 +40,24 @@ def run_hourly(store, cfg: dict, now: datetime | None = None, leads=DEFAULT_LEAD
     lakes = list(cfg["lakes"])
     summary = {"schema": SCHEMA, "runAt": iso(now), "decoderVersion": DECODER_VERSION, "nbm": {}, "rtma": {}, "metar": {}, "errors": []}
     # NBM: newest published cycle, plus any of the previous hours not yet archived for every lake.
+    # Early exit (cost work 2026-10-13): a cycle whose archive object is `complete` for every lake — the
+    # newest included — is never re-read. One small GET per lake replaces ~3 min of GRIB reads when the
+    # scheduler fires before NBM has posted a new cycle. Partial cycles are still finished by catch-up,
+    # and RTMA-RU / METAR / the bundles below run regardless.
     newest = latest_nbm_cycle(now)
     summary["newestNbmCycle"] = iso(newest) if newest else None
+    summary["nbmSkipped"] = []
     if newest:
         for back in range(0, NBM_CATCHUP_H + 1):
             c = newest - timedelta(hours=back)
-            if back and all(_complete(store, _nbm_key(l, c)) for l in lakes):
+            if all(_complete(store, _nbm_key(l, c)) for l in lakes):
+                summary["nbmSkipped"].append(iso(c))
                 continue
             try:
                 summary["nbm"][iso(c)] = ingest_nbm_cycle(store, cfg, c, leads, True)
             except Exception as e:
                 summary["errors"].append(f"NBM {iso(c)}: {e!r}")
+        summary["newestNbmAlreadyArchived"] = iso(newest) in summary["nbmSkipped"]
     else:
         summary["errors"].append("no NBM cycle published in the last 4 h")
     # RTMA-RU: every quarter-hour of the last few hours that is published and missing.

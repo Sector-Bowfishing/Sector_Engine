@@ -322,7 +322,7 @@ def fingerprint(cat_sha: str, serving: dict, deps: dict, inputs_fp: str | None =
 def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, upstream: dict, serving: dict,
                   now: dt.datetime, deployment: str, descriptor: dict, duration_ms: int, published: dict | None,
                   event_id: str, evaluations: dict | None = None, evaluation_errors: dict | None = None,
-                  inputs_fp: str | None = None) -> dict:
+                  inputs_fp: str | None = None, fingerprint_value: str | None = None) -> dict:
     """upstream: {brainId: {"registry": dict|None, "health": dict|None, "validationStatus": str|None}}.
     evaluations: {lakeId: normalized evaluation (evaluation.evaluate)} for the pilot lakes that evaluated."""
     evaluations = evaluations or {}
@@ -368,7 +368,10 @@ def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, ups
             slot["lastErrorAt"], slot["lastError"] = now_iso, evaluation_errors[lid][:200]
         updates[f"/lakeFleet/{k}/slots/{SLOT}"] = slot
 
-    fp = fingerprint(cat_sha, serving, deps, inputs_fp)
+    # The stored fingerprint must be the one plan() compares against next time: main() computes it from the
+    # dependency view BEFORE this run upgrades connections to CONNECTED (pilot_ran). Recomputing it here from the
+    # upgraded view made every --plan say "changed" and republish hourly (orchestrator cycles, 2026-10-13).
+    fp = fingerprint_value or fingerprint(cat_sha, serving, deps, inputs_fp)
     blockers = list(cat.get("declaredBlockers", [])) + derived_blockers(deps, serving)
     today = now.date().isoformat()
     lin = cat["codeLineage"]

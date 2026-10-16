@@ -1,0 +1,88 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "1f4588dc-bad7-49e9-8060-6bf986fd47d6"
+    },
+    "creationTimestamp": "2026-09-28T21:37:54.480263Z",
+    "generation": 3,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-29T15:59:58.668276Z"
+    },
+    "name": "clarity-current-hourly",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZdsW5EZeo",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/clarity-current-hourly",
+    "uid": "7adb4828-641e-40a2-be1a-0884909b2c7d"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "duw_yoq_kaf"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "/app/ClarityPrecompute"
+                ],
+                "env": [
+                  {
+                    "name": "SECTOR_CLARITY_BUCKET",
+                    "value": "sector-lake-surface"
+                  },
+                  {
+                    "name": "SECTOR_ENGINE_COMMIT",
+                    "value": "03937913cd9c207c5f73a3dbbaaa430d74e7a903"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/sector-engine@sha256:62e1553390b3f3b7658d3e45443e3c932c32181e6e133a11ce1df24f9d1ec0d1",
+                "resources": {
+                  "limits": {
+                    "cpu": "2",
+                    "memory": "2Gi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 1,
+            "serviceAccountName": "lake-surface-job@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "900"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 346,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-13T04:41:35.306042Z",
+      "creationTimestamp": "2026-10-13T04:40:09.780863Z",
+      "name": "clarity-current-hourly-tzn2t"
+    },
+    "observedGeneration": 3
+  }
+}

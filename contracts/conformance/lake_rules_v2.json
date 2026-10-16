@@ -1,0 +1,1228 @@
+{
+ "description": "Shared conformance fixture for Lake Brain rules v2 (lake-level-rules-v2 / doy15-percentile-v2). Run by BOTH Tests/SectorEngineTests/LakeRulesV2Tests.swift and jobs/lake-brain/validation/test_rules_v2.py. Pure-rule cases were written by hand from LAKE_BRAIN_RULES_V2_PREREGISTRATION.md section 1; baseline cases use the integer-valued synthetic series level = 100 + ((year*7 + dayOfYear*3) % 11) * 0.1 + (year - 2000) * 0.01 and their expected values were produced by the Python mirror and are asserted against the Swift builder.",
+ "tier": [
+  {
+   "basisYears": 0,
+   "expect": "NONE"
+  },
+  {
+   "basisYears": 1,
+   "expect": "NONE"
+  },
+  {
+   "basisYears": 4,
+   "expect": "NONE"
+  },
+  {
+   "basisYears": 5,
+   "expect": "PROVISIONAL"
+  },
+  {
+   "basisYears": 9,
+   "expect": "PROVISIONAL"
+  },
+  {
+   "basisYears": 10,
+   "expect": "STANDARD"
+  },
+  {
+   "basisYears": 14,
+   "expect": "STANDARD"
+  },
+  {
+   "basisYears": 15,
+   "expect": "FULL"
+  },
+  {
+   "basisYears": 30,
+   "expect": "FULL"
+  },
+  {
+   "basisYears": 60,
+   "expect": "FULL"
+  }
+ ],
+ "historical": [
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 15.0,
+   "expect": {
+    "state": "NORMAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 11.0,
+   "expect": {
+    "state": "NORMAL",
+    "flags": []
+   },
+   "note": "exactly p10 is inside"
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 19.0,
+   "expect": {
+    "state": "NORMAL",
+    "flags": []
+   },
+   "note": "exactly p90 is inside"
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 10.5,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 19.5,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 10.0,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": []
+   },
+   "note": "exactly p02 is not outside p02-p98"
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 20.0,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 9.99,
+   "expect": {
+    "state": "VERY_UNUSUAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "FULL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 20.01,
+   "expect": {
+    "state": "VERY_UNUSUAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "STANDARD",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 15.0,
+   "expect": {
+    "state": "NORMAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "STANDARD",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 10.5,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "STANDARD",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 9.0,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": []
+   },
+   "note": "never VERY_UNUSUAL below FULL"
+  },
+  {
+   "tier": "STANDARD",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 25.0,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "PROVISIONAL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 15.0,
+   "expect": {
+    "state": "NORMAL",
+    "flags": [
+     "historicalProvisional"
+    ]
+   },
+   "note": ""
+  },
+  {
+   "tier": "PROVISIONAL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 10.5,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": [
+     "historicalProvisional"
+    ]
+   },
+   "note": ""
+  },
+  {
+   "tier": "PROVISIONAL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 9.0,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": [
+     "historicalProvisional"
+    ]
+   },
+   "note": "outside p02-p98 is reported UNUSUAL"
+  },
+  {
+   "tier": "PROVISIONAL",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 25.0,
+   "expect": {
+    "state": "UNUSUAL",
+    "flags": [
+     "historicalProvisional"
+    ]
+   },
+   "note": ""
+  },
+  {
+   "tier": "NONE",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 15.0,
+   "expect": {
+    "state": "INSUFFICIENT_HISTORY",
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "tier": "NONE",
+   "p02": 10.0,
+   "p10": 11.0,
+   "p90": 19.0,
+   "p98": 20.0,
+   "current": 5.0,
+   "expect": {
+    "state": "INSUFFICIENT_HISTORY",
+    "flags": []
+   },
+   "note": ""
+  }
+ ],
+ "trend": [
+  {
+   "delta24h": 0.05,
+   "delta72h": 0.15,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "STABLE",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "regulated: |mean72| 0.05 <= 0.10"
+  },
+  {
+   "delta24h": 0.1,
+   "delta72h": 0.3,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "STABLE",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "72 h change 0.30 -> 0.10 ft/day equals the regulated floor"
+  },
+  {
+   "delta24h": 0.1,
+   "delta72h": 0.31,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "just above the floor"
+  },
+  {
+   "delta24h": -0.1,
+   "delta72h": -0.31,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "FALLING",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "delta24h": 0.05,
+   "delta72h": 0.12,
+   "rateP95": 0.5,
+   "regulated": false,
+   "expect": {
+    "state": "STABLE",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "natural: 0.04 ft/day <= 0.05"
+  },
+  {
+   "delta24h": 0.05,
+   "delta72h": 0.18,
+   "rateP95": 0.5,
+   "regulated": false,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "natural: 0.06 ft/day > 0.05"
+  },
+  {
+   "delta24h": -0.05,
+   "delta72h": -0.18,
+   "rateP95": 0.5,
+   "regulated": false,
+   "expect": {
+    "state": "FALLING",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "delta24h": 0.05,
+   "delta72h": 0.18,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "STABLE",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "the same 0.06 ft/day is STABLE for a regulated reservoir"
+  },
+  {
+   "delta24h": 0.4,
+   "delta72h": 0.6,
+   "rateP95": 0.3,
+   "regulated": true,
+   "expect": {
+    "state": "RISING_RAPIDLY",
+    "rapidThresholdFt": 0.3,
+    "flags": []
+   },
+   "note": "24 h change above the seasonal p95"
+  },
+  {
+   "delta24h": -0.4,
+   "delta72h": -0.6,
+   "rateP95": 0.3,
+   "regulated": true,
+   "expect": {
+    "state": "FALLING_RAPIDLY",
+    "rapidThresholdFt": 0.3,
+    "flags": []
+   },
+   "note": ""
+  },
+  {
+   "delta24h": 0.3,
+   "delta72h": 0.45,
+   "rateP95": 0.3,
+   "regulated": true,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.3,
+    "flags": []
+   },
+   "note": "equal to the threshold is not rapid"
+  },
+  {
+   "delta24h": 0.26,
+   "delta72h": 0.3,
+   "rateP95": 0.1,
+   "regulated": true,
+   "expect": {
+    "state": "RISING_RAPIDLY",
+    "rapidThresholdFt": 0.25,
+    "flags": []
+   },
+   "note": "p95 below the floor: threshold is 0.25 ft"
+  },
+  {
+   "delta24h": 0.24,
+   "delta72h": 0.45,
+   "rateP95": 0.1,
+   "regulated": true,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.25,
+    "flags": []
+   },
+   "note": "0.24 ft is under the 0.25 ft RAPID floor"
+  },
+  {
+   "delta24h": 0.3,
+   "delta72h": 0.45,
+   "rateP95": null,
+   "regulated": true,
+   "expect": {
+    "state": "RISING_RAPIDLY",
+    "rapidThresholdFt": 0.25,
+    "flags": [
+     "rateBaselineLimited"
+    ]
+   },
+   "note": "no rate baseline: floor alone"
+  },
+  {
+   "delta24h": -0.3,
+   "delta72h": -0.45,
+   "rateP95": null,
+   "regulated": false,
+   "expect": {
+    "state": "FALLING_RAPIDLY",
+    "rapidThresholdFt": 0.25,
+    "flags": [
+     "rateBaselineLimited"
+    ]
+   },
+   "note": ""
+  },
+  {
+   "delta24h": 0.2,
+   "delta72h": 0.45,
+   "rateP95": null,
+   "regulated": true,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.25,
+    "flags": [
+     "rateBaselineLimited"
+    ]
+   },
+   "note": ""
+  },
+  {
+   "delta24h": 0.12,
+   "delta72h": null,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.5,
+    "flags": [
+     "trend24hFallback"
+    ]
+   },
+   "note": "no 72 h change: 24 h change against the floor"
+  },
+  {
+   "delta24h": 0.08,
+   "delta72h": null,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "STABLE",
+    "rapidThresholdFt": 0.5,
+    "flags": [
+     "trend24hFallback"
+    ]
+   },
+   "note": ""
+  },
+  {
+   "delta24h": 0.06,
+   "delta72h": null,
+   "rateP95": 0.5,
+   "regulated": false,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.5,
+    "flags": [
+     "trend24hFallback"
+    ]
+   },
+   "note": "natural floor on the 24 h fallback"
+  },
+  {
+   "delta24h": 0.3,
+   "delta72h": null,
+   "rateP95": null,
+   "regulated": true,
+   "expect": {
+    "state": "RISING_RAPIDLY",
+    "rapidThresholdFt": 0.25,
+    "flags": [
+     "rateBaselineLimited"
+    ]
+   },
+   "note": "RAPID needs no 72 h change"
+  },
+  {
+   "delta24h": 0.15,
+   "delta72h": 0.45,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "v1 seasonal-p50 term removed: a high p50 no longer widens STABLE",
+   "rateP50": 0.2
+  },
+  {
+   "delta24h": -0.05,
+   "delta72h": 0.6,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "RISING",
+    "rapidThresholdFt": 0.5,
+    "flags": []
+   },
+   "note": "direction comes from the 72 h mean, not the last day"
+  },
+  {
+   "delta24h": null,
+   "delta72h": 0.6,
+   "rateP95": 0.5,
+   "regulated": true,
+   "expect": {
+    "state": "UNKNOWN",
+    "rapidThresholdFt": null,
+    "flags": []
+   },
+   "note": "no 24 h change: unknown"
+  },
+  {
+   "delta24h": null,
+   "delta72h": null,
+   "rateP95": null,
+   "regulated": true,
+   "expect": {
+    "state": "UNKNOWN",
+    "rapidThresholdFt": null,
+    "flags": []
+   },
+   "note": ""
+  }
+ ],
+ "baseline": [
+  {
+   "name": "regulated, 20 complete years (one incomplete year), partial current year absent",
+   "series": {
+    "years": [
+     2005,
+     2025
+    ],
+    "gapYears": [
+     2015
+    ]
+   },
+   "poolBasisIsFullPool": true,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 20,
+    "basisYears": 20,
+    "firstBasisYear": 2005,
+    "status": "SUFFICIENT",
+    "tier": "FULL",
+    "doy": {
+     "1": {
+      "levelN": 300,
+      "level": [
+       100.09,
+       100.2,
+       100.645,
+       101.091,
+       101.22
+      ],
+      "rateN": 306,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 305,
+      "level": [
+       100.091,
+       100.214,
+       100.65,
+       101.09,
+       101.2
+      ],
+      "rateN": 320,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 300,
+      "level": [
+       100.09,
+       100.21,
+       100.645,
+       101.09,
+       101.21
+      ],
+      "rateN": 315,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 300,
+      "level": [
+       100.1,
+       100.21,
+       100.645,
+       101.081,
+       101.22
+      ],
+      "rateN": 305,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "natural, 76 years: basis capped at 60",
+   "series": {
+    "years": [
+     1950,
+     2025
+    ]
+   },
+   "poolBasisIsFullPool": false,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 76,
+    "basisYears": 60,
+    "firstBasisYear": 1966,
+    "status": "SUFFICIENT",
+    "tier": "FULL",
+    "doy": {
+     "1": {
+      "levelN": 900,
+      "level": [
+       99.77,
+       99.97,
+       100.46,
+       100.94,
+       101.14
+      ],
+      "rateN": 435,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 915,
+      "level": [
+       99.773,
+       99.97,
+       100.46,
+       100.94,
+       101.137
+      ],
+      "rateN": 442,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 900,
+      "level": [
+       99.77,
+       99.97,
+       100.45,
+       100.94,
+       101.14
+      ],
+      "rateN": 435,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 900,
+      "level": [
+       99.78,
+       99.97,
+       100.46,
+       100.94,
+       101.14
+      ],
+      "rateN": 435,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "regulated, 76 years: basis capped at 30",
+   "series": {
+    "years": [
+     1950,
+     2025
+    ]
+   },
+   "poolBasisIsFullPool": true,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 76,
+    "basisYears": 30,
+    "firstBasisYear": 1996,
+    "status": "SUFFICIENT",
+    "tier": "FULL",
+    "doy": {
+     "1": {
+      "levelN": 450,
+      "level": [
+       100.0,
+       100.16,
+       100.6,
+       101.04,
+       101.19
+      ],
+      "rateN": 435,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 458,
+      "level": [
+       100.021,
+       100.167,
+       100.605,
+       101.04,
+       101.18
+      ],
+      "rateN": 442,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 450,
+      "level": [
+       100.03,
+       100.16,
+       100.6,
+       101.041,
+       101.19
+      ],
+      "rateN": 435,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 450,
+      "level": [
+       100.01,
+       100.16,
+       100.6,
+       101.041,
+       101.19
+      ],
+      "rateN": 435,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "regulated, 7 complete years + partial current year",
+   "series": {
+    "years": [
+     2019,
+     2025
+    ],
+    "partialYear": {
+     "year": 2026,
+     "through": "2026-05-31"
+    }
+   },
+   "poolBasisIsFullPool": true,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 7,
+    "basisYears": 7,
+    "firstBasisYear": 2019,
+    "status": "SUFFICIENT",
+    "tier": "PROVISIONAL",
+    "doy": {
+     "1": {
+      "levelN": 105,
+      "level": [
+       100.2,
+       100.266,
+       100.72,
+       101.15,
+       101.239
+      ],
+      "rateN": 112,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 107,
+      "level": [
+       100.201,
+       100.306,
+       100.72,
+       101.144,
+       101.229
+      ],
+      "rateN": 122,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 105,
+      "level": [
+       100.211,
+       100.304,
+       100.73,
+       101.146,
+       101.23
+      ],
+      "rateN": 112,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 105,
+      "level": [
+       100.201,
+       100.266,
+       100.7,
+       101.146,
+       101.24
+      ],
+      "rateN": 111,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "regulated, 13 years -> STANDARD",
+   "series": {
+    "years": [
+     2013,
+     2025
+    ]
+   },
+   "poolBasisIsFullPool": true,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 13,
+    "basisYears": 13,
+    "firstBasisYear": 2013,
+    "status": "SUFFICIENT",
+    "tier": "STANDARD",
+    "doy": {
+     "1": {
+      "levelN": 195,
+      "level": [
+       100.169,
+       100.254,
+       100.68,
+       101.136,
+       101.23
+      ],
+      "rateN": 194,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 198,
+      "level": [
+       100.15,
+       100.247,
+       100.685,
+       101.13,
+       101.22
+      ],
+      "rateN": 198,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 195,
+      "level": [
+       100.159,
+       100.25,
+       100.7,
+       101.13,
+       101.221
+      ],
+      "rateN": 195,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 195,
+      "level": [
+       100.169,
+       100.254,
+       100.69,
+       101.136,
+       101.231
+      ],
+      "rateN": 194,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "regulated, 3 years -> LIMITED / tier NONE",
+   "series": {
+    "years": [
+     2023,
+     2025
+    ]
+   },
+   "poolBasisIsFullPool": true,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 3,
+    "basisYears": 3,
+    "firstBasisYear": 2023,
+    "status": "LIMITED",
+    "tier": "NONE",
+    "doy": {
+     "1": {
+      "levelN": 45,
+      "level": [
+       100.239,
+       100.344,
+       100.83,
+       101.198,
+       101.25
+      ],
+      "rateN": 44,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 46,
+      "level": [
+       100.239,
+       100.33,
+       100.735,
+       101.145,
+       101.241
+      ],
+      "rateN": 46,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 45,
+      "level": [
+       100.239,
+       100.334,
+       100.74,
+       101.146,
+       101.241
+      ],
+      "rateN": 45,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 45,
+      "level": [
+       100.23,
+       100.334,
+       100.75,
+       101.23,
+       101.25
+      ],
+      "rateN": 44,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "natural, 15 years -> FULL at the boundary",
+   "series": {
+    "years": [
+     2011,
+     2025
+    ]
+   },
+   "poolBasisIsFullPool": false,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 15,
+    "basisYears": 15,
+    "firstBasisYear": 2011,
+    "status": "SUFFICIENT",
+    "tier": "FULL",
+    "doy": {
+     "1": {
+      "levelN": 225,
+      "level": [
+       100.145,
+       100.244,
+       100.68,
+       101.126,
+       101.225
+      ],
+      "rateN": 224,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 229,
+      "level": [
+       100.146,
+       100.24,
+       100.68,
+       101.12,
+       101.214
+      ],
+      "rateN": 229,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 225,
+      "level": [
+       100.14,
+       100.24,
+       100.68,
+       101.12,
+       101.215
+      ],
+      "rateN": 225,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 225,
+      "level": [
+       100.145,
+       100.244,
+       100.68,
+       101.126,
+       101.23
+      ],
+      "rateN": 224,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "regulated, 10 years -> STANDARD at the boundary",
+   "series": {
+    "years": [
+     2016,
+     2025
+    ]
+   },
+   "poolBasisIsFullPool": true,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 10,
+    "basisYears": 10,
+    "firstBasisYear": 2016,
+    "status": "SUFFICIENT",
+    "tier": "STANDARD",
+    "doy": {
+     "1": {
+      "levelN": 150,
+      "level": [
+       100.19,
+       100.26,
+       100.685,
+       101.141,
+       101.23
+      ],
+      "rateN": 149,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 153,
+      "level": [
+       100.18,
+       100.272,
+       100.71,
+       101.148,
+       101.22
+      ],
+      "rateN": 153,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 150,
+      "level": [
+       100.18,
+       100.27,
+       100.715,
+       101.141,
+       101.23
+      ],
+      "rateN": 150,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 150,
+      "level": [
+       100.19,
+       100.269,
+       100.685,
+       101.14,
+       101.24
+      ],
+      "rateN": 149,
+      "rateP95": 0.8
+     }
+    }
+   }
+  },
+  {
+   "name": "regulated, 9 years -> PROVISIONAL",
+   "series": {
+    "years": [
+     2017,
+     2025
+    ]
+   },
+   "poolBasisIsFullPool": true,
+   "today": "2026-06-01",
+   "expect": {
+    "completeYears": 9,
+    "basisYears": 9,
+    "firstBasisYear": 2017,
+    "status": "SUFFICIENT",
+    "tier": "PROVISIONAL",
+    "doy": {
+     "1": {
+      "levelN": 135,
+      "level": [
+       100.19,
+       100.27,
+       100.7,
+       101.146,
+       101.233
+      ],
+      "rateN": 134,
+      "rateP95": 0.8
+     },
+     "59": {
+      "levelN": 137,
+      "level": [
+       100.187,
+       100.286,
+       100.72,
+       101.144,
+       101.223
+      ],
+      "rateN": 137,
+      "rateP95": 0.8
+     },
+     "152": {
+      "levelN": 135,
+      "level": [
+       100.187,
+       100.284,
+       100.72,
+       101.146,
+       101.23
+      ],
+      "rateN": 135,
+      "rateP95": 0.8
+     },
+     "365": {
+      "levelN": 135,
+      "level": [
+       100.197,
+       100.27,
+       100.69,
+       101.14,
+       101.24
+      ],
+      "rateN": 134,
+      "rateP95": 0.8
+     }
+    }
+   }
+  }
+ ]
+}

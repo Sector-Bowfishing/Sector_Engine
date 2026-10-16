@@ -8,7 +8,7 @@
 //  stored null) — unknown stays unknown, never a default.
 //
 //  ADDITIVE: nothing in the request path (/conditions, /lakes, …) imports this.
-//  The conformance fixtures in docs/brains/conformance/ are run against this file
+//  The conformance fixtures in contracts/conformance/ are run against this file
 //  by BrainPlatformConformanceTests; the Python package jobs/brain_platform/
 //  runs the same fixtures.
 //

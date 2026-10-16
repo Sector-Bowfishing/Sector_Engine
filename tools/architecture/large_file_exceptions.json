@@ -1,0 +1,46 @@
+{
+  "description": "Policy exceptions for tracked files >= 1 MB (invariant 15). LEGACY_BASELINE = known before the migration and not introduced by it; it is NOT a permanent approval. Exact paths only: wildcards are rejected. A new >= 1 MB file without an entry here is reported as a NEW violation. For generated runtime data an entry should also record source, generator, version, rebuild (RA-15), to be completed at the owning review phase.",
+  "schemaVersion": "1.0.0",
+  "exceptions": [
+    {
+      "path": "jobs/lake-surface/polygons.geojson.gz",
+      "component": "Lake Registry (platform) / lake-surface job",
+      "reason": "Bundled lake boundary polygons read by the lake-surface job; regenerable reference geometry (RA-5: belongs in canonical versioned release storage with a Git manifest).",
+      "status": "LEGACY_BASELINE",
+      "reviewPhase": "Phase 6 (Lake Registry established first)",
+      "createdBy": "Phase 1B baseline"
+    },
+    {
+      "path": "docs/data/hydrology/guntersville/guntersville.clarity_evidence.2026-09-20.json",
+      "component": "Water Clarity Brain",
+      "reason": "Guntersville hydrology evidence snapshot used by Clarity Fusion Stage 2 work.",
+      "status": "LEGACY_BASELINE",
+      "reviewPhase": "Phase 6 (Clarity; RA-17 classification, blocked by D4)",
+      "createdBy": "Phase 1B baseline"
+    },
+    {
+      "path": "docs/data/hydrology/guntersville/membership_diff.csv",
+      "component": "Water Clarity Brain",
+      "reason": "Guntersville hydrology arm-membership diff evidence.",
+      "status": "LEGACY_BASELINE",
+      "reviewPhase": "Phase 6 (Clarity; RA-17 classification, blocked by D4)",
+      "createdBy": "Phase 1B baseline"
+    },
+    {
+      "path": "docs/data/hydrology/guntersville/stage2/pass_pairs.json",
+      "component": "Water Clarity Brain",
+      "reason": "Clarity Stage 2 satellite pass-pair evidence for the Guntersville replay.",
+      "status": "LEGACY_BASELINE",
+      "reviewPhase": "Phase 6 (Clarity; RA-17 classification, blocked by D4)",
+      "createdBy": "Phase 1B baseline"
+    },
+    {
+      "path": "docs/data/hydrology/guntersville/stage2/replay.json",
+      "component": "Water Clarity Brain",
+      "reason": "Clarity Stage 2 replay output kept as evidence for the Guntersville review.",
+      "status": "LEGACY_BASELINE",
+      "reviewPhase": "Phase 6 (Clarity; RA-17 classification, blocked by D4)",
+      "createdBy": "Phase 1B baseline"
+    }
+  ]
+}

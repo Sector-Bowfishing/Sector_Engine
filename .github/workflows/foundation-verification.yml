@@ -1,0 +1,31 @@
+# Repository Foundation V1 gates (Phase 1B): architecture foundation tests, REPORT-ONLY architecture report,
+# conformance home + score baseline + clean-copy gates. Stdlib-only tools; pytest is the only install.
+# The architecture report never fails this workflow (legacy violations are baseline debt).
+name: foundation-verification
+on:
+  push:
+    branches: [main]
+    paths: ["tools/**", "contracts/**", "brains/**", "providers/**", "platform/**", "engine/**", "deploy/**", "verification/**", "docs/brains/scoring/**", ".github/workflows/foundation-verification.yml"]
+  pull_request:
+    paths: ["tools/**", "contracts/**", "brains/**", "providers/**", "platform/**", "engine/**", "deploy/**", "verification/**", "docs/brains/scoring/**", ".github/workflows/foundation-verification.yml"]
+permissions:
+  contents: read
+jobs:
+  foundation:
+    name: foundation / architecture / verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - name: Foundation tests (schemas, templates, invariants)
+        run: python -m pytest -q tools/architecture
+      - name: Verification gates (conformance home, score baseline, clean copy)
+        run: python -m pytest -q verification
+      - name: Architecture report (REPORT-ONLY; known vs new vs resolved against the legacy baseline)
+        run: |
+          python tools/architecture/report.py
+          python tools/architecture/report.py --legacy --baseline

@@ -1,0 +1,1657 @@
+{
+  "_meta" : {
+    "config" : "ConditionsConfig.default",
+    "scenarioCount" : 14,
+    "scoreVersion" : "conditions-score-v1"
+  },
+  "01_clear_calm_baseline" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "spawn",
+    "score" : 100,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Held back by clarity — ~4.0 ft of sightline",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "02_blown_out_gate" : {
+    "band" : "Poor",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : -8.1553400000000007,
+        "key" : "clarity",
+        "label" : "0.5 ft viz",
+        "score" : 8,
+        "weightPct" : 19,
+        "why" : "Blown out — 0.5 ft visibility"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+      {
+        "cap" : 25,
+        "reason" : "Water blown out — 0.5 ft visibility"
+      }
+    ],
+    "regime" : "spawn",
+    "score" : 25,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Capped: Water blown out — 0.5 ft visibility",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "You can only shoot what you can see. Find the clearest water on the lake: wind-sheltered lee pockets, the clean side of a mud line, and creek or spring mouths still running clear. Skip the chocolate-milk backs of the coves.",
+        "kind" : "clarity",
+        "title" : "Muddy water — hunt the clear edges"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "03_spawn_night" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Common carp spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak common carp spawn — flooded & submerged grass and weedy 1–3 ft flats — look/listen for thrashing pods"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 1.941748,
+        "key" : "waterTemp",
+        "label" : "65°F",
+        "score" : 70,
+        "weightPct" : 10,
+        "why" : "Warming — fish starting to use the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "spawn",
+    "score" : 100,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Common carp",
+    "topReasons" : [
+      "Held back by clarity — ~4.0 ft of sightline",
+      "Peak common carp spawn — flooded & submerged grass and weedy 1–3 ft flats — look/listen for thrashing pods",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Flooded & submerged grass and weedy 1–3 ft flats — look/listen for thrashing pods.",
+        "kind" : "spawn",
+        "title" : "Common carp spawn on"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "04_cold_march_no_spawn" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 10.601941999999999,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 25,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : -1.941748,
+        "key" : "spawn",
+        "label" : "No active spawn run",
+        "score" : 0,
+        "weightPct" : 4,
+        "why" : "No active spawn run for the season & temperature"
+      },
+      {
+        "contribution" : 8.7378640000000001,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 17,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 8.7378640000000001,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 17,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : -1.747573,
+        "key" : "waterTemp",
+        "label" : "55°F",
+        "score" : 35,
+        "weightPct" : 12,
+        "why" : "Cool — fish slow to move shallow"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 2.3300969999999999,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 6,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 1.941748,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 4,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "normal",
+    "score" : 84,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : null,
+    "topReasons" : [
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline",
+      "No active spawn run for the season & temperature"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Rough fish have pulled off the shallow flats. Work the first drop, channel edges and heat-holding riprap — and check any warm-water discharge, spring or creek mouth, where they'll stack in the warmest water they can find.",
+        "kind" : "temp",
+        "title" : "Cold water — drop to the edges"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "05_full_moon_in_spawn" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Common carp spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak common carp spawn — flooded & submerged grass and weedy 1–3 ft flats — look/listen for thrashing pods"
+      },
+      {
+        "contribution" : -2.7184469999999998,
+        "key" : "darkness",
+        "label" : "100% moon · bright — moon up",
+        "score" : 15,
+        "weightPct" : 8,
+        "why" : "Bright moon up across the window — moonlight competing with your lights"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 1.941748,
+        "key" : "waterTemp",
+        "label" : "65°F",
+        "score" : 70,
+        "weightPct" : 10,
+        "why" : "Warming — fish starting to use the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "spawn",
+    "score" : 99,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Common carp",
+    "topReasons" : [
+      "Peak common carp spawn — flooded & submerged grass and weedy 1–3 ft flats — look/listen for thrashing pods",
+      "Slick calm — clean sightline",
+      "Clear sky",
+      "Bright moon up across the window — moonlight competing with your lights"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Flooded & submerged grass and weedy 1–3 ft flats — look/listen for thrashing pods.",
+        "kind" : "spawn",
+        "title" : "Common carp spawn on"
+      },
+      {
+        "body" : "Moonlight makes fish jumpy in the open. Stay tight to shade — bank lines, under docks, overhanging timber and the dark side of points — where your lights, not the moon, light the water.",
+        "kind" : "darkness",
+        "title" : "Bright moon — work the shade"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "06_tailwater_high_generation" : {
+    "band" : "Poor",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : -0.97087400000000001,
+        "key" : "current",
+        "label" : "High / rising",
+        "score" : 25,
+        "weightPct" : 4,
+        "why" : "Heavy generation — muddy, fast, hard to see"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+      {
+        "cap" : 30,
+        "reason" : "Heavy dam generation across the window"
+      }
+    ],
+    "regime" : "spawn",
+    "score" : 30,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Capped: Heavy dam generation across the window",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "Current is pushing — fish pin to current seams, eddies behind structure and slack pockets. Shoot the slick edge where smooth water meets the ripple.",
+        "kind" : "current",
+        "title" : "Generators running — fish on the seams"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "07_tailwater_low_generation" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Low / steady",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Settled flow — clear water, fish roaming shallow"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "spawn",
+    "score" : 100,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Held back by clarity — ~4.0 ft of sightline",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "Little current — fish roam the shallows. Hunt food and warmth, not current: mud flats, grass lines, coves, riprap and scum lines.",
+        "kind" : "current",
+        "title" : "Settled water — fish roaming"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "08_severe_warning" : {
+    "band" : "Poor",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+      {
+        "cap" : 25,
+        "reason" : "Severe Thunderstorm Warning — stay off the water"
+      }
+    ],
+    "regime" : "spawn",
+    "score" : 25,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Capped: Severe Thunderstorm Warning — stay off the water",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "09_water_temp_unknown" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 85,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 12.551724,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 30,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 10.344828,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 21,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 10.344828,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 21,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 3.218391,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 9,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.83908,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 5,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 2.7586210000000002,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 7,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 2.298851,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 4,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.7241379999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "normal",
+    "score" : 95,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : null,
+    "topReasons" : [
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "10_no_turbidity_gauge" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 90,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "clarity",
+        "label" : "~4.0 ft",
+        "score" : 70,
+        "weightPct" : 19,
+        "why" : "Clear water — full sightline"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "spawn",
+    "score" : 85,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Held back by clarity — ~4.0 ft of sightline",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "11_high_wind" : {
+    "band" : "Poor",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : -5.8252430000000004,
+        "key" : "wind",
+        "label" : "22 mph",
+        "score" : 0,
+        "weightPct" : 11,
+        "why" : "Blowing hard — visibility wrecked"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+      {
+        "cap" : 30,
+        "reason" : "High wind — 22 mph"
+      }
+    ],
+    "regime" : "spawn",
+    "score" : 30,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Capped: High wind — 22 mph",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Prime warmth — fish up in the shallows"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "Wind is wrecking the sightline. Fish only the calm, upwind shorelines, behind islands and short-fetch pockets where the surface still lays down flat enough to shoot through.",
+        "kind" : "wind",
+        "title" : "Get protected (S wind)"
+      }
+    ]
+  },
+  "12_recent_heavy_rain" : {
+    "band" : "Poor",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : -6.4077669999999998,
+        "key" : "clarity",
+        "label" : "1.1 ft viz",
+        "score" : 17,
+        "weightPct" : 19,
+        "why" : "Murky — only 1.1 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.77669900000000003,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 0.97087400000000001,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "spawn",
+    "score" : 46,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Held back by clarity — ~1.1 ft of sightline",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "You can only shoot what you can see. Find the clearest water on the lake: wind-sheltered lee pockets, the clean side of a mud line, and creek or spring mouths still running clear. Skip the chocolate-milk backs of the coves.",
+        "kind" : "clarity",
+        "title" : "Muddy water — hunt the clear edges"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "13_storm_code_falling_pressure" : {
+    "band" : "Poor",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.1553400000000007,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 19,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 16.504854000000002,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 33,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 3.8834949999999999,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 5.8252430000000004,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 4.8543690000000002,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 10,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 2.7184469999999998,
+        "key" : "level",
+        "label" : "+0.0 ft/12h",
+        "score" : 85,
+        "weightPct" : 8,
+        "why" : "Stable level — patternable shallow fish"
+      },
+      {
+        "contribution" : 1.5533980000000001,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0,
+        "key" : "pressure",
+        "label" : "29.50 inHg",
+        "score" : 50,
+        "weightPct" : 2,
+        "why" : "Very low pressure — unsettled, weather moving in"
+      },
+      {
+        "contribution" : -0.77669900000000003,
+        "key" : "sky",
+        "label" : "Storms",
+        "score" : 10,
+        "weightPct" : 2,
+        "why" : "Storms — stay home"
+      },
+      {
+        "contribution" : 1.4563109999999999,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+      {
+        "cap" : 30,
+        "reason" : "Thunderstorms"
+      },
+      {
+        "cap" : 40,
+        "reason" : "Rain falling now — 0.30\""
+      }
+    ],
+    "regime" : "spawn",
+    "score" : 30,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Capped: Thunderstorms",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  },
+  "14_no_discharge_no_stage_trend" : {
+    "band" : "Prime",
+    "baseline" : 50,
+    "closingLine" : "Look for shad flickers, gar rolling, rising bubbles and mud puffs — then stay on that life.",
+    "confidence" : 100,
+    "confidenceBand" : "High",
+    "dormantFactors" : [
+
+    ],
+    "factors" : [
+      {
+        "contribution" : 8.8421050000000001,
+        "key" : "clarity",
+        "label" : "4.0 ft viz",
+        "score" : 92,
+        "weightPct" : 21,
+        "why" : "Good clarity — see ~4 ft down"
+      },
+      {
+        "contribution" : 17.894736999999999,
+        "key" : "spawn",
+        "label" : "Longnose gar spawn",
+        "score" : 100,
+        "weightPct" : 36,
+        "why" : "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface"
+      },
+      {
+        "contribution" : 4.2105259999999998,
+        "key" : "darkness",
+        "label" : "0% moon · moon down",
+        "score" : 100,
+        "weightPct" : 8,
+        "why" : "Dark water — little moonlight in the window"
+      },
+      {
+        "contribution" : 6.3157889999999997,
+        "key" : "wind",
+        "label" : "2 mph",
+        "score" : 100,
+        "weightPct" : 13,
+        "why" : "Slick calm — clean sightline"
+      },
+      {
+        "contribution" : 5.2631579999999998,
+        "key" : "waterTemp",
+        "label" : "72°F",
+        "score" : 100,
+        "weightPct" : 11,
+        "why" : "Prime warmth — fish up in the shallows"
+      },
+      {
+        "contribution" : 1.6842109999999999,
+        "key" : "current",
+        "label" : "Lake / pond",
+        "score" : 90,
+        "weightPct" : 4,
+        "why" : "Not a tailwater — current rarely limits sight-shooting"
+      },
+      {
+        "contribution" : 0.84210499999999999,
+        "key" : "pressure",
+        "label" : "30.10 inHg",
+        "score" : 90,
+        "weightPct" : 2,
+        "why" : "Steady high pressure — calm, clear nights"
+      },
+      {
+        "contribution" : 1.052632,
+        "key" : "sky",
+        "label" : "Clear",
+        "score" : 100,
+        "weightPct" : 2,
+        "why" : "Clear sky"
+      },
+      {
+        "contribution" : 1.5789470000000001,
+        "key" : "humidity",
+        "label" : "60%",
+        "score" : 100,
+        "weightPct" : 3,
+        "why" : "Humidity is comfortable — no fog concern for tonight."
+      }
+    ],
+    "gates" : [
+
+    ],
+    "regime" : "spawn",
+    "score" : 100,
+    "spawnNeedsDisclaimer" : false,
+    "spawnSpeciesName" : "Longnose gar",
+    "topReasons" : [
+      "Held back by clarity — ~4.0 ft of sightline",
+      "Peak longnose gar spawn — shallow gravel riffles and weedy shallows; gar roll on the surface",
+      "Dark water — little moonlight in the window",
+      "Slick calm — clean sightline"
+    ],
+    "whereToLook" : [
+      {
+        "body" : "Shallow gravel riffles and weedy shallows; gar roll on the surface.",
+        "kind" : "spawn",
+        "title" : "Longnose gar spawn on"
+      },
+      {
+        "body" : "No wind to break the glare or move shad — fish scattered, and slick water gives you no cover on the approach. Cover water and watch for surface life.",
+        "kind" : "wind",
+        "title" : "Slick calm — cover water"
+      }
+    ]
+  }
+}

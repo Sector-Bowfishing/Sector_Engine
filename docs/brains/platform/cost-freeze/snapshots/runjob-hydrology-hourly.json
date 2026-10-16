@@ -1,0 +1,86 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "5761cdab-1f9e-45ec-8a9f-36d3f7cbec64"
+    },
+    "creationTimestamp": "2026-09-27T21:46:38.296752Z",
+    "generation": 3,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-27T22:38:30.128101Z"
+    },
+    "name": "hydrology-hourly",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZdsRcUaHs",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/hydrology-hourly",
+    "uid": "ab003fed-49f8-4f93-9f33-6a9b6e3ae890"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "BUCKET",
+                    "value": "sector-lake-surface"
+                  },
+                  {
+                    "name": "LAKE_SLUG",
+                    "value": "Guntersville_AL"
+                  },
+                  {
+                    "name": "BACKFILL_HOURS",
+                    "value": "720"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/hydrology-hourly@sha256:05e4f5b4f1ec4d304bbcbc8ceabef7788c4efd46e1cc0e3391fdc0ae8067772e",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "2Gi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 1,
+            "serviceAccountName": "lake-surface-job@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "5400"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 370,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-13T04:17:17.111518Z",
+      "creationTimestamp": "2026-10-13T04:15:07.216032Z",
+      "name": "hydrology-hourly-9qksr"
+    },
+    "observedGeneration": 3
+  }
+}

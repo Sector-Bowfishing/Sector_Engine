@@ -1,0 +1,5 @@
+__pycache__/
+.pytest_cache/
+# copied in at deploy time by deploy-job.sh
+polygons.geojson.gz
+sector_brain_platform/

@@ -1,0 +1,69 @@
+# Offline unit tests for the Python jobs and the Brain Platform package. No credentials, no cloud access:
+# Brain writer credentials never live in GitHub (docs/brains/JOBS_CONTRACT.md).
+# Swift is a separate workflow (swift-tests.yml); the repository foundation / architecture / verification
+# gates are in foundation-verification.yml.
+#
+# Phase 1B: the suite list below is EXPLICIT because the Brains are not migrated yet (no brain.json exists).
+# It becomes derived from the Brain Registry as each Brain migrates; do not "fix" it by inventing brain.json files.
+name: python-jobs-tests
+on:
+  push:
+    branches: [main]
+    paths: ["jobs/**", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+  pull_request:
+    paths: ["jobs/**", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+permissions:
+  contents: read
+jobs:
+  platform:
+    name: python-platform (brain_platform, orchestrator, scores)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest numpy requests google-cloud-storage
+      - name: Platform suites (offline)
+        run: |
+          set -e
+          for d in jobs/brain_platform jobs/brain-orchestrator jobs/brain-scores; do
+            echo "== $d"; (cd "$d" && python -m pytest -q)
+          done
+
+  brains:
+    name: python-jobs (legacy Brain/job suites, explicit list)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest numpy requests google-cloud-storage
+      - name: Brain and job suites (offline)
+        run: |
+          set -e
+          for d in jobs/lake-surface-dispatch jobs/water-clarity-brain jobs/biological-brain \
+                   jobs/sector-intelligence-brain jobs/water-temp-tva-archive \
+                   jobs/lake-brain/bindings jobs/lake-brain/ledger jobs/lake-brain/validation jobs/lake-brain/review; do
+            echo "== $d"; (cd "$d" && python -m pytest -q)
+          done
+      - name: wind-hourly (network tests deselected by pytest.ini; eccodes/shapely/pyproj only for Stage 3A tests)
+        run: |
+          pip install eccodes shapely pyproj || true
+          (cd jobs/wind-hourly && python -m pytest -q)
+
+  lake-geometry:
+    name: lake-geometry (declared requirements.txt)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # shapely/pyproj/numpy/pytest are declared in jobs/lake-geometry/requirements.txt: that file is the canonical source.
+      - run: pip install -r jobs/lake-geometry/requirements.txt
+      - run: cd jobs/lake-geometry && python -m pytest -q

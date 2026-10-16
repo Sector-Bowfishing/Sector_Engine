@@ -28,6 +28,7 @@
 # Usage:
 #   ./deploy.sh                       deploy HEAD (must be a clean checkout of main)
 #   ./deploy.sh --rollback REVISION   put 100% of traffic back on REVISION
+#   ./deploy.sh --check-warm-tags     report tagged 0 %-traffic revisions with minScale >= 1 (ops/check_warm_tags.sh)
 #   SKIP_SMOKE=1 ./deploy.sh          deploy without the smoke test (emergencies only)
 #   ALLOW_BRANCH_DEPLOY=1 ./deploy.sh deploy from a non-main branch (emergencies only;
 #                                     the revision is still labeled with its commit)
@@ -149,6 +150,11 @@ t = json.load(sys.stdin)["status"]["traffic"]
 print(max(t, key=lambda e: e.get("percent", 0)).get("revisionName", ""))'
 }
 
+# ── Warm-tag check (read-only) ─────────────────────────────────────────────────
+if [[ "${1:-}" == "--check-warm-tags" ]]; then
+  exec "$(dirname "$0")/ops/check_warm_tags.sh" "$SERVICE"
+fi
+
 # ── Rollback ───────────────────────────────────────────────────────────────────
 if [[ "${1:-}" == "--rollback" ]]; then
   [[ -n "${2:-}" ]] || { echo "usage: ./deploy.sh --rollback REVISION"; exit 2; }
@@ -240,6 +246,14 @@ if ! smoke_test "$URL" "prod"; then
     echo "✗ Prod failed after promotion and there is no previous revision to roll back to."
   fi
   exit 1
+fi
+
+# ── 5. Warm-tag cost guard ─────────────────────────────────────────────────────
+# Every revision this script creates inherits minScale $MIN_INSTANCES. A revision that keeps a traffic tag at 0 %
+# bills one warm instance around the clock (cost audit 2026-10-13: fusion/clarity tags). Report it; never remove
+# a public tag automatically.
+if ! "$(dirname "$0")/ops/check_warm_tags.sh" "$SERVICE"; then
+  echo "⚠ warm tagged revisions above keep billing — decide: remove the tag, or re-tag a minScale-0 revision."
 fi
 
 echo

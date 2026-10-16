@@ -30,9 +30,13 @@ gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>
   gcloud iam service-accounts create "$SA_NAME" --project "$PROJECT_ID" --display-name "Wind hourly candidate job"
 gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" --member "serviceAccount:$SA" \
   --role roles/storage.objectAdmin >/dev/null
+# --set-env-vars REPLACES the job's env: keep the Brain RTDB URL (the Wind Brain publish) and label the build.
+COMMIT="$(git rev-parse --short=12 HEAD 2>/dev/null || echo unknown)"
+BRAIN_RTDB_URL="${BRAIN_RTDB_URL:-https://sector-brain.firebaseio.com}"
 gcloud run jobs deploy "$JOB" --source . --project "$PROJECT_ID" --region "$REGION" \
   --service-account "$SA" --tasks 1 --max-retries 1 --task-timeout 900 --memory 2Gi --cpu 1 \
-  --set-env-vars "SECTOR_WIND_GCS_APPROVED=yes" \
+  --labels "commit=$COMMIT" \
+  --set-env-vars "SECTOR_WIND_GCS_APPROVED=yes,SECTOR_WIND_BRAIN_RTDB_URL=$BRAIN_RTDB_URL,SECTOR_WIND_BUILD=main@$COMMIT" \
   --args="hourly,--store,gs://$BUCKET/wind/v1"
 gcloud run jobs add-iam-policy-binding "$JOB" --region "$REGION" --project "$PROJECT_ID" \
   --member "serviceAccount:$SA" --role roles/run.invoker >/dev/null

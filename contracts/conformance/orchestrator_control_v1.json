@@ -1,0 +1,125 @@
+{
+ "version": "orchestrator-control-v1",
+ "engineModes": [
+  "PRE_PRODUCTION",
+  "PRODUCTION"
+ ],
+ "activityStates": [
+  "ACTIVE",
+  "PARKED",
+  "MAINTENANCE"
+ ],
+ "triggers": [
+  "SCHEDULE",
+  "MANUAL",
+  "INPUT_CHANGED",
+  "DEPENDENCY_CHANGED",
+  "VALIDATION",
+  "RECOVERY",
+  "ADMIN"
+ ],
+ "decisions": [
+  "RUN",
+  "SKIP_UNCHANGED",
+  "SKIP_PARKED",
+  "SKIP_NOT_DUE",
+  "SKIP_LEGACY_OWNED",
+  "SKIP_UNKNOWN_CHANGE",
+  "BLOCKED_DEPENDENCY",
+  "BLOCKED_POLICY",
+  "WAITING",
+  "MANUAL_APPROVAL"
+ ],
+ "scheduleClasses": [
+  "ORCHESTRATOR_OWNED",
+  "LEGACY",
+  "VALIDATION_EXCEPTION",
+  "MANUAL",
+  "INPUT_DRIVEN",
+  "PAUSED"
+ ],
+ "costClasses": [
+  "NONE",
+  "LOW",
+  "MEDIUM",
+  "HEAVY"
+ ],
+ "groups": [
+  "FOUNDATION",
+  "CURRENT_CONDITIONS",
+  "ENVIRONMENT",
+  "BIOLOGICAL",
+  "SYNTHESIS"
+ ],
+ "edgeKinds": [
+  "HARD",
+  "SOFT"
+ ],
+ "onStale": [
+  "DEPENDENCY_STALE",
+  "MANUAL_APPROVAL",
+  "RUN_DEPENDENCY"
+ ],
+ "changeValues": [
+  "CHANGED",
+  "UNCHANGED",
+  "UNKNOWN"
+ ],
+ "failureClasses": [
+  "TRANSIENT_PROVIDER",
+  "TRANSIENT_RUNTIME",
+  "INVALID_INPUT",
+  "DEPENDENCY_BLOCKED",
+  "PERMANENT_CONFIG"
+ ],
+ "retryable": [
+  "TRANSIENT_PROVIDER",
+  "TRANSIENT_RUNTIME"
+ ],
+ "requestActions": [
+  "RUN_NOW",
+  "PAUSE",
+  "RESUME",
+  "SET_MANUAL"
+ ],
+ "protectedActions": [
+  "SET_ENGINE_MODE",
+  "ACTIVATE_PRODUCTION",
+  "PUBLISH_CUSTOMER",
+  "CHANGE_PROTECTED_SCHEDULE",
+  "PROMOTE_LIFECYCLE",
+  "DISABLE_VALIDATION_CAPTURE"
+ ],
+ "requestDecisions": [
+  "ACCEPTED",
+  "REJECTED",
+  "NEEDS_CONFIRMATION"
+ ],
+ "costBasis": [
+  "MEASURED",
+  "ESTIMATED",
+  "UNKNOWN"
+ ],
+ "sections": [
+  "summary",
+  "brains",
+  "edges",
+  "jobs",
+  "schedules",
+  "executions",
+  "decisions",
+  "latestDecisions",
+  "health",
+  "cost",
+  "blockers",
+  "graph",
+  "overrides",
+  "requests"
+ ],
+ "path": "control/orchestratorV1",
+ "retention": {
+  "executions": 60,
+  "decisions": 120,
+  "requests": 30
+ }
+}

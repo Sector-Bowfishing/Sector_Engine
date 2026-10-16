@@ -2,15 +2,20 @@
 //  LakeLevelClassifier.swift
 //  Sector — Lake Brain: current level → LakeState (pure; no I/O)
 //
-//  v1 rules (`lake-level-rules-v1`, approved 2026-10-12; spec §7):
+//  v2 rules (`lake-level-rules-v2`; pre-registered in
+//  docs/brains/LAKE_BRAIN_RULES_V2_PREREGISTRATION.md, spec §7):
 //    levelState       operator zone / guide FIRST. Above the top of conservation
 //                     (CWMS guide curve) = FLOOD_POOL. Outside the zone =
 //                     BELOW_ZONE / ABOVE_ZONE. No operator zone → UNKNOWN.
-//    historicalState  SUFFICIENT baseline only (≥ 5 complete years): inside
-//                     p10–p90 NORMAL; outside UNUSUAL; outside p02–p98 VERY_UNUSUAL.
-//    trendState       Δ24h. RAPID above this lake's seasonal p95 |Δ24h| (needs
-//                     ≥ 20 window samples). STABLE at or below max(0.10 ft,
-//                     seasonal p50 |Δ24h|); otherwise RISING / FALLING.
+//    historicalState  gated by the history tier (≥ 5 complete years): inside
+//                     p10–p90 NORMAL; outside UNUSUAL; outside p02–p98
+//                     VERY_UNUSUAL only at tier FULL (≥ 15 years). PROVISIONAL
+//                     (5–9 y) carries the flag `historicalProvisional`.
+//    trendState       RAPID when |Δ24h| > max(seasonal p95 |Δ24h|, 0.25 ft);
+//                     otherwise the 72 h mean rate against a floor (0.10 ft/day
+//                     regulated, 0.05 ft/day natural): STABLE / RISING / FALLING.
+//                     No 72 h change → the 24 h change, flag `trend24hFallback`.
+//                     The v1 seasonal-p50 term is removed.
 //    floodPoolState   only where the operator publishes a flood-pool bottom.
 //    PROXY            (a nearby gage) gets a trend and nothing else.
 //  Each classification is a separate field; none is folded into another.
@@ -38,7 +43,12 @@ public struct LakeLevelInputs: Sendable {
 
 public enum LakeLevelClassifier {
 
-    public static let stableFloorFt = 0.10
+    /// STABLE floor, ft/day, regulated reservoirs (`poolBasis == fullPool`).
+    public static let stableFloorRegulatedFt = 0.10
+    /// STABLE floor, ft/day, natural lakes.
+    public static let stableFloorNaturalFt = 0.05
+    /// RAPID never triggers below this 24 h change, with or without a rate baseline.
+    public static let rapidFloorFt = 0.25
 
     struct Selected {
         var ref: LevelSeriesRef
@@ -88,34 +98,51 @@ public enum LakeLevelClassifier {
         return current > fp ? .inFloodPool : .normal
     }
 
-    public static func trend(delta24h: Double?, day: LakeBaselineDay?) -> (LakeTrendState, rapidThreshold: Double?, ratePct: Double?) {
-        guard let d = delta24h else { return (.unknown, nil, nil) }
-        let a = abs(d)
-        var stableAt = stableFloorFt
-        var rapid: Double?
+    /// Rules v2 R2. `delta24h` / `delta72h` are the level changes over 24 h / 72 h (nil = unavailable).
+    /// Returns the label, the effective RAPID threshold, the rate percentile and the quality flags it raised.
+    public static func trend(delta24h: Double?, delta72h: Double? = nil, day: LakeBaselineDay?, regulated: Bool = true)
+        -> (LakeTrendState, rapidThreshold: Double?, ratePct: Double?, flags: [String]) {
+        guard let d24 = delta24h else { return (.unknown, nil, nil, []) }
+        var flags: [String] = []
+        let a = abs(d24)
+        var rapid = rapidFloorFt
         var pct: Double?
-        if let q = day?.rateQ {
-            rapid = LakeBaselineBuilder.at(95, q)
-            if let p50 = LakeBaselineBuilder.at(50, q) { stableAt = max(stableFloorFt, p50) }
+        if let q = day?.rateQ, let p95 = LakeBaselineBuilder.at(95, q) {
+            rapid = max(p95, rapidFloorFt)
             pct = r1(LakeBaselineBuilder.percentile(of: a, grid: q))
+        } else {
+            flags.append("rateBaselineLimited")
         }
-        if a <= stableAt { return (.stable, rapid, pct) }
-        if let r = rapid, a > r { return (d > 0 ? .risingRapidly : .fallingRapidly, rapid, pct) }
-        return (d > 0 ? .rising : .falling, rapid, pct)
+        if a > rapid { return (d24 > 0 ? .risingRapidly : .fallingRapidly, rapid, pct, flags) }
+        let mean: Double
+        if let d72 = delta72h { mean = d72 / 3 } else { mean = d24; flags.append("trend24hFallback") }
+        let floor = regulated ? stableFloorRegulatedFt : stableFloorNaturalFt
+        if abs(mean) <= floor { return (.stable, rapid, pct, flags) }
+        return (mean > 0 ? .rising : .falling, rapid, pct, flags)
+    }
+
+    /// R1 gating on the band edges: VERY_UNUSUAL is published only at tier FULL (below it the value is reported UNUSUAL);
+    /// PROVISIONAL carries the quality flag `historicalProvisional`; tier NONE is INSUFFICIENT_HISTORY.
+    public static func historicalState(current: Double, p02: Double, p10: Double, p90: Double, p98: Double,
+                                       tier: LakeHistoricalTier) -> (LakeHistoricalState, flags: [String]) {
+        if tier == .none { return (.insufficientHistory, []) }
+        var s: LakeHistoricalState = (current < p02 || current > p98) ? .veryUnusual
+            : (current < p10 || current > p90) ? .unusual : .normal
+        if s == .veryUnusual, tier != .full { s = .unusual }
+        return (s, tier == .provisional ? ["historicalProvisional"] : [])
     }
 
     public static func historical(current: Double, baseline: LakeLevelBaseline?, doy: Int)
-        -> (LakeHistoricalState, percentile: Double?, band: LakeSeasonalBand?) {
-        guard let b = baseline, b.status == .sufficient, let day = b.day(doy), let q = day.levelQ,
+        -> (LakeHistoricalState, percentile: Double?, band: LakeSeasonalBand?, flags: [String]) {
+        guard let b = baseline, b.historicalTier != .none, let day = b.day(doy), let q = day.levelQ,
               let p02 = LakeBaselineBuilder.at(2, q), let p10 = LakeBaselineBuilder.at(10, q),
               let p50 = LakeBaselineBuilder.at(50, q), let p90 = LakeBaselineBuilder.at(90, q),
-              let p98 = LakeBaselineBuilder.at(98, q) else { return (.insufficientHistory, nil, nil) }
+              let p98 = LakeBaselineBuilder.at(98, q) else { return (.insufficientHistory, nil, nil, []) }
         let band = LakeSeasonalBand(p02: r2(p02), p10: r2(p10), p50: r2(p50), p90: r2(p90), p98: r2(p98), basisYears: b.basisYears.count,
                                     windowDays: b.windowDays, sampleCount: day.n)
         let pct = r1(LakeBaselineBuilder.percentile(of: current, grid: q))
-        let state: LakeHistoricalState = (current < p02 || current > p98) ? .veryUnusual
-            : (current < p10 || current > p90) ? .unusual : .normal
-        return (state, pct, band)
+        let (state, flags) = historicalState(current: current, p02: p02, p10: p10, p90: p90, p98: p98, tier: b.historicalTier)
+        return (state, pct, band, flags)
     }
 
     static func readiness(binding: LakeSourceBinding?, kind: LakeStateKind, stale: Bool,
@@ -171,7 +198,7 @@ public enum LakeLevelClassifier {
                 lakeId: x.lakeId, schemaVersion: LakeBrainSpec.stateSchemaVersion, kind: .unavailable,
                 sourceCapability: capability, unit: nil, levelState: .unknown, trendState: .unknown,
                 historicalState: .insufficientHistory, floodPoolState: .unknown,
-                baselineStatus: x.baseline?.status ?? .none, facts: nil,
+                baselineStatus: x.baseline?.status ?? .none, historicalTier: x.baseline?.historicalTier ?? LakeHistoricalTier.none, facts: nil,
                 freshness: LakeStateFreshness(generatedAt: gen, sourceObservationAt: nil, freshUntil: nil,
                                               nextCheckAt: BrainPlatform.iso(now.addingTimeInterval(3600)), stale: true,
                                               refreshReason: x.binding?.status == .reviewed ? "no reading from any bound source" : "no reviewed source binding"),
@@ -205,9 +232,10 @@ public enum LakeLevelClassifier {
         let delta24 = change.h24
         let doy = LakeLevelCalendar.doy365(LakeLevelCalendar.dayString(now, timeZone: tz)) ?? 1
         let day = x.baseline?.day(doy)
-        var (trendState, rapidAt, ratePct) = trend(delta24h: delta24, day: day)
-        if delta24 != nil, day?.rateQ == nil { flags.append("rateBaselineUnavailable") }
-        else if delta24 != nil, x.baseline?.status != .sufficient { flags.append("rateBaselineLimited") }
+        var (trendState, rapidAt, ratePct, trendFlags) = trend(delta24h: delta24, delta72h: change.d3, day: day,
+                                                               regulated: x.poolBasisIsFullPool)
+        if delta24 != nil, day?.rateQ != nil, x.baseline?.status != .sufficient { trendFlags.append("rateBaselineLimited") }
+        flags += trendFlags
 
         let src = sel.ref
         var level: LakeLevelState = .unknown
@@ -231,7 +259,9 @@ public enum LakeLevelClassifier {
         } else {
             level = levelState(current: current, guide: x.guide)
             flood = floodPoolState(current: current, guide: x.guide)
-            (hist, pct, band) = historical(current: current, baseline: x.baseline, doy: doy)
+            let h = historical(current: current, baseline: x.baseline, doy: doy)
+            (hist, pct, band) = (h.0, h.percentile, h.band)
+            flags += h.flags
             if let fp = x.fullPoolFt, x.poolBasisIsFullPool, !x.poolConfidenceLow {
                 poolDiff = r2(current - fp)
                 poolRef = "engine-directory:fullPoolFt"
@@ -286,7 +316,7 @@ public enum LakeLevelClassifier {
             operatorLevels: kind == .proxy || (x.guide?.levels.isEmpty ?? true) ? nil : x.guide?.levels,
             change: change, levelState: level, trendState: trendState, historicalState: hist, floodPoolState: flood,
             seasonalPercentile: pct, rateOfChangePercentile: ratePct, rapidChangeThresholdFt: rapidAt.map(r2),
-            seasonalBand: band, baselineStatus: baselineStatus, facts: facts,
+            seasonalBand: band, baselineStatus: baselineStatus, historicalTier: x.baseline?.historicalTier ?? LakeHistoricalTier.none, facts: facts,
             freshness: LakeStateFreshness(generatedAt: gen, sourceObservationAt: BrainPlatform.iso(sel.latest.at),
                                           freshUntil: BrainPlatform.iso(freshUntil), nextCheckAt: BrainPlatform.iso(next),
                                           stale: stale, refreshReason: reason),

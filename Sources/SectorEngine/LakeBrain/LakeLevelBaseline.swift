@@ -2,9 +2,10 @@
 //  LakeLevelBaseline.swift
 //  Sector — Lake Brain: explainable day-of-year baselines (no ML)
 //
-//  From a lake's daily history:
+//  From a lake's daily history (`doy15-percentile-v2`):
 //    • level climatology — for each day of year, the levels on that day ± 7 days
-//      in the basis years (the most recent 30 complete years);
+//      in the basis years (the most recent 30 complete years for regulated
+//      `fullPool` lakes; all complete years, capped at 60, for `naturalSurface` lakes);
 //    • rate climatology  — the same window over |Δ24h| between consecutive days,
 //      from every year in the last 30 (partial years included).
 //  Stored as a quantile grid so a value's percentile can be read back without
@@ -26,13 +27,23 @@ public struct LakeBaselineDay: Codable, Equatable, Sendable {
 
 public struct LakeLevelBaseline: Codable, Equatable, Sendable {
     public static let windowDays = 7
+    /// Regulated (`poolBasis == fullPool`) lakes: the most recent 30 complete years.
     public static let maxBasisYears = 30
+    /// `naturalSurface` lakes: every complete year, capped here (rules v2 R1).
+    public static let maxBasisYearsNatural = 60
     /// A calendar year counts as complete with ≥ 90 % of its days (329).
     public static let completeYearDays = 329
     public static let sufficientYears = 5
     public static let limitedYears = 2
+    /// Rules v2 R1 history tiers, by complete basis years (`baselineStatus` keeps its v1 meaning).
+    public static let provisionalYears = 5
+    public static let standardYears = 10
+    public static let fullYears = 15
     /// A rate threshold needs at least this many |Δ24h| samples in the window.
     public static let minRateSamples = 20
+    /// History rows whose `sourceId` starts with this are low-resolution (0.1 ft, non-midnight) archive values: used for the level
+    /// climatology, never for the |Δ24h| rate climatology.
+    public static let lowResolutionSourcePrefix = "nws:rvd"
     public static let grid: [Double] = [0, 2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 98, 100]
 
     public var lakeId: String
@@ -45,10 +56,17 @@ public struct LakeLevelBaseline: Codable, Equatable, Sendable {
     public var completeYears: [Int]
     public var basisYears: [Int]
     public var status: LakeBaselineStatus
+    /// What the history may be used for (rules v2 R1). Separate from `status`.
+    public var historicalTier: LakeHistoricalTier
     public var windowDays: Int
     public var days: [LakeBaselineDay]
 
     public func day(_ doy: Int) -> LakeBaselineDay? { days.first { $0.doy == doy } }
+
+    /// R1: NONE < 5, PROVISIONAL 5–9, STANDARD 10–14, FULL ≥ 15 complete basis years.
+    public static func tier(basisYears n: Int) -> LakeHistoricalTier {
+        n >= fullYears ? .full : n >= standardYears ? .standard : n >= provisionalYears ? .provisional : .none
+    }
 }
 
 public enum LakeBaselineBuilder {
@@ -99,13 +117,17 @@ public enum LakeBaselineBuilder {
         return String(format: "%016llx", h)
     }
 
-    public static func build(lakeId: String, daily raw: [DailyLevel], today: String) -> LakeLevelBaseline {
+    /// `poolBasisIsFullPool`: regulated lakes use the 30 most recent complete years; anything else
+    /// (`naturalSurface`) uses all complete years up to 60. The rate climatology keeps the last-30-years rule.
+    public static func build(lakeId: String, daily raw: [DailyLevel], today: String,
+                             poolBasisIsFullPool: Bool = true) -> LakeLevelBaseline {
         let daily = LakeDailyHistory.dedupe(raw).filter { $0.date <= today }
         let currentYear = Int(today.prefix(4)) ?? 0
         var perYear: [Int: Int] = [:]
         for d in daily { if let y = Int(d.date.prefix(4)) { perYear[y, default: 0] += 1 } }
         let complete = perYear.filter { $0.key < currentYear && $0.value >= LakeLevelBaseline.completeYearDays }.keys.sorted()
-        let basis = Array(complete.suffix(LakeLevelBaseline.maxBasisYears))
+        let cap = poolBasisIsFullPool ? LakeLevelBaseline.maxBasisYears : LakeLevelBaseline.maxBasisYearsNatural
+        let basis = Array(complete.suffix(cap))
         let status: LakeBaselineStatus = basis.count >= LakeLevelBaseline.sufficientYears ? .sufficient
             : basis.count >= LakeLevelBaseline.limitedYears ? .limited : (daily.isEmpty ? .none : .insufficient)
 
@@ -119,13 +141,18 @@ public enum LakeBaselineBuilder {
             }
         }
         // |Δ24h| samples by doy, every year in the last 30.
-        let byDate = Dictionary(daily.map { ($0.date, $0.ft) }, uniquingKeysWith: { _, b in b })
+        // Day pairs where either day came from a low-resolution archive (`LakeLevelBaseline.lowResolutionSourcePrefix`: NWS RVD text
+        // products, 0.1 ft and a 06-07 h stamp rather than midnight) are skipped: their quantisation inflates the p50/p95 of |Δ24h|
+        // (Wilson, Jun 15: p95 0.64 ft with them, 0.48 ft without). The LEVEL climatology keeps those days (the shift is 0.03-0.10 ft).
+        let byDate = Dictionary(daily.map { ($0.date, $0) }, uniquingKeysWith: { _, b in b })
         var rateByDoy: [Int: [Double]] = [:]
         for d in daily {
             guard let y = Int(d.date.prefix(4)), y > currentYear - LakeLevelBaseline.maxBasisYears,
                   let prev = LakeLevelCalendar.previousDay(d.date), let pv = byDate[prev],
+                  !d.sourceId.hasPrefix(LakeLevelBaseline.lowResolutionSourcePrefix),
+                  !pv.sourceId.hasPrefix(LakeLevelBaseline.lowResolutionSourcePrefix),
                   let doy = LakeLevelCalendar.doy365(d.date) else { continue }
-            rateByDoy[doy, default: []].append(abs(d.ft - pv))
+            rateByDoy[doy, default: []].append(abs(d.ft - pv.ft))
         }
 
         var days: [LakeBaselineDay] = []
@@ -153,7 +180,7 @@ public enum LakeBaselineBuilder {
         return LakeLevelBaseline(lakeId: lakeId, method: LakeBrainSpec.baselineMethod, baselineVersion: version,
                                  historyStart: daily.first?.date, historyEnd: daily.last?.date, observationCount: daily.count,
                                  coveragePct: coverage, completeYears: complete, basisYears: basis, status: status,
-                                 windowDays: w, days: days)
+                                 historicalTier: LakeLevelBaseline.tier(basisYears: basis.count), windowDays: w, days: days)
     }
 
     public static func path(_ b: LakeLevelBaseline) -> String {

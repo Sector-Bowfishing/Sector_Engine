@@ -1,0 +1,5 @@
+{
+  "schemaVersion": "1.0.0",
+  "description": "Provider catalog (format only). Phase 1A deliberately registers no providers: populating it is provider-inventory work done per provider in its migration phase (TVA consolidation blocked on D8; Open-Meteo behavior unchanged). Each entry needs providerId, acquisitionOwner, healthOwner, authorizedConsumers, costClass, licenseRef; domainInterpreter is declared by the consumer in brain.json.",
+  "providers": []
+}

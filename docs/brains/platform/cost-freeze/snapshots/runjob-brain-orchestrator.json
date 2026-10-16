@@ -1,0 +1,110 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "0bd139e7-39cb-430e-ad05-742ed02aeec3"
+    },
+    "creationTimestamp": "2026-10-13T04:57:37.966725Z",
+    "generation": 8,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "commit": "5fd727effa4a",
+      "run.googleapis.com/lastUpdatedTime": "2026-10-14T04:28:18.766491Z"
+    },
+    "name": "brain-orchestrator",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZdxbAeIhc",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/brain-orchestrator",
+    "uid": "7020395e-560d-4cfe-9cea-6899da2a3579"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "commit": "5fd727effa4a"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "BRAIN_TOKEN_MODE",
+                    "value": "metadata"
+                  },
+                  {
+                    "name": "BRAIN_RTDB_URL",
+                    "value": "https://sector-brain.firebaseio.com"
+                  },
+                  {
+                    "name": "ENGINE_URL",
+                    "value": "https://sector-engine-e43utajroa-uc.a.run.app"
+                  },
+                  {
+                    "name": "LAKE_BRAIN_ARCHIVE",
+                    "value": "gs://sector-lake-brain"
+                  },
+                  {
+                    "name": "BIOLOGY_BUCKET",
+                    "value": "sector-biology-private"
+                  },
+                  {
+                    "name": "DEPLOYMENT_VERSION",
+                    "value": "brain-orchestrator@5fd727effa4a"
+                  },
+                  {
+                    "name": "ORCHESTRATOR_SCOPE",
+                    "value": "pilots"
+                  },
+                  {
+                    "name": "WATER_TEMP_SCOPE",
+                    "value": "fleet"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/brain-orchestrator@sha256:23ceb4d91d200acabf8b555ba410cf66b45e51038492619c2585c5f4f5b0a18f",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "512Mi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 0,
+            "serviceAccountName": "brain-writer@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "1800"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 33,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-14T04:51:44.264849Z",
+      "creationTimestamp": "2026-10-14T04:50:00.964747Z",
+      "name": "brain-orchestrator-wzsct"
+    },
+    "observedGeneration": 8
+  }
+}

@@ -435,3 +435,34 @@ REMOVE-CANDIDATE / BLOCKED from a fresh containment check against `main`. **Noth
   only `slots.stale` was read).
 
 **Handoff:** `docs/consolidation/HANDOFF_2026-10-12.md` (also placed in the Desktop handoff folder).
+
+
+---
+
+# Cost-efficient jobs, scheduling & orchestration — 2026-10-13 (branch `feat/cost-efficient-scheduling`)
+
+Full record: `docs/consolidation/COST_EFFICIENT_SCHEDULING_2026-10-13.md`. Audit it implements:
+`JOBS_SCHEDULES_COST_AUDIT_2026-10-13.md`. Customer boundary: no `sector-engine` revision / traffic / tag /
+minScale change, no promotion, no 5A, no app change, no private exposure, nothing deleted.
+
+| Phase | Result |
+|---|---|
+| 1 `/jobs` contract | PASS — `sector_brain_platform.jobs` + `gcp`; `docs/brains/JOBS_CONTRACT.md`; platform-only root (Python / Swift / fixture); 21 records live |
+| 2 Ops read access | PASS — rules for `jobs`, `control`, `scores`, `engine` already committed + deployed in the Ops repo (verified live); `/control/overview` is the Engine summary (decision recorded) |
+| 3 fleet summary | PASS — `/control/overview/fleet` + `/jobs` rollup in the overview |
+| 4 classification | PASS — matrix in `JOBS_CONTRACT.md`, manifest in code |
+| 5 pauses | PASS — `hydrology-hourly`, `clarity-current-hourly` PAUSED; `clarity-candidate-shadow` stays PAUSED |
+| 6 wind | PASS — NBM early exit + redeploy from main; measured (ingest 72 s of a 3.8-min execution; 110 s when the guard fires) |
+| 7 TVA archive | PASS — unchanged hourly, full record |
+| 8 satellite | PASS — `lake-surface-dispatch` (17 s discovery, attempted-pass ledger), scheduler moved, heavy job untouched |
+| 9 Clarity Brain | PASS — MANUAL; `WATER_CLARITY_BRAIN_SCHEDULING.md`; no foreign job records |
+| 10 Lake Brain job | PASS — scale-to-zero, pilots, orchestrator-triggered; first run 5 lakes / 4.5 s |
+| 11 Water Temp job | PASS — scale-to-zero, fleet, 6-h rule, no cron; first run 621 lakes / 270 s |
+| 12–13 Biological / Intelligence | PASS — in-process, version / fingerprint driven, pilot only |
+| 14 scores after change | PASS — `--if-changed`; 5 of 628 paths on a quiet cycle |
+| 15 orchestrator | PASS — `brain-orchestrator` hourly at :50, `brain-writer` SA |
+| 16 warm-tag guard | PASS — `ops/check_warm_tags.sh`, `deploy.sh --check-warm-tags`; current state clean |
+| 17 one sync path | PASS — orchestrator only; Clarity Brain's job snapshots removed |
+| 18 cost metadata | PASS — runs/day × runtime × resources, no dollars |
+| 19 CI | PASS — optional offline workflow, no credentials |
+| 20 self-audit | see the record doc |

@@ -1,0 +1,338 @@
+#!/usr/bin/env python3
+"""brain-orchestrator — the low-cost executor of docs/brains/ORCHESTRATOR_DESIGN.md (cost work 2026-10-13, Phase 15).
+
+One hourly wake-up (Cloud Scheduler → this scale-to-zero Cloud Run job, 1 vCPU / 512 Mi, usually < 1 min):
+
+  1. SYNC  /jobs/{jobId} from Cloud Scheduler + Cloud Run (the one canonical path; sector_brain_platform.jobs).
+  2. PLAN  with sector_brain_platform.orchestrator.plan(): TIME brains (Lake, Water Temp) from their published
+           staleAfterHours / lastSuccessfulRun; VERSION / FINGERPRINT brains (Biological, Intelligence) from their own
+           `run.py --plan`. Single-flight from running Cloud Run executions + the lock this job wrote last time.
+  3. RUN   only what the plan says: lake-brain / water-temp-brain as Cloud Run jobs (Jobs API `:run`, pilot lakes
+           for Lake, fleet for Water Temp); biological-brain / sector-intelligence-brain in-process (`run.py --write`).
+           Wind stays on its own cron; Water Clarity stays MANUAL — both are reported, never started here.
+  4. SCORE publish /scores + /control (score_brains.py --write --if-changed) only when a Brain state changed since the
+           last cycle, a job record changed, or something ran now.
+  5. RECORD /control/orchestrator (plan, executed, lastSeen) as the platform writer.
+
+  python3 orchestrate.py --dry-run            plan + report, write nothing, start nothing
+  python3 orchestrate.py --sync-jobs-only     publish /jobs and stop
+  python3 orchestrate.py --no-execute         sync + plan + record, but start no brain
+  python3 orchestrate.py                      the hourly cycle
+
+env: BRAIN_RTDB_URL, ORCHESTRATOR_SCOPE (pilots|fleet, Lake Brain; default pilots), WATER_TEMP_SCOPE (fleet|pilots; default
+     fleet — a per-lake Water Temp run leaves the registry's fleet counts empty), LAKE_BRAIN_ARCHIVE (gs:// bucket name
+     for the Lake Brain history; passed through as a job arg), ENGINE_URL (Intelligence reads GET /lakes).
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import os
+import subprocess
+import sys
+import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
+from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_records, check_schema, iso,            # noqa: E402
+                                   jobs_changed_paths, orchestrate)
+from sector_brain_platform import gcp                                                                                 # noqa: E402
+from sector_brain_platform import orchestration as O, control_state as CS                                             # noqa: E402
+sys.path.insert(0, HERE)
+import control_plane as CP                                                                                            # noqa: E402
+
+WRITER = "brain-platform"
+JOB_NAME = "brain-orchestrator"
+RTDB_URL = os.environ.get("BRAIN_RTDB_URL", "https://sector-brain.firebaseio.com")
+PILOT_LAKES = ("Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Lake Hartwell|SC")
+LOCK_MINUTES = 15                       # covers the gap between `:run` and the execution showing up in the API
+PYTHON = sys.executable
+
+# Executors: how each brain is started. Anything absent here is never started by the orchestrator.
+EXECUTORS = {
+    "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
+    "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
+    "biological-state": {"kind": "in-process", "dir": os.path.join(HERE, "..", "biological-brain"), "jobId": "biological-brain"},
+    "sector-intelligence": {"kind": "in-process", "dir": os.path.join(HERE, "..", "sector-intelligence-brain"), "jobId": "sector-intelligence-brain"},
+}
+NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)", "water-clarity": "MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md)"}
+
+
+def job_args(brain_id: str) -> list[str] | None:
+    """Container-arg overrides for a brain's job. By default NONE: the jobs are deployed with their arguments baked in
+    (jobs/lake-brain, jobs/water-temp-brain deploy scripts) so `roles/run.invoker` is enough — `jobs.run` with overrides
+    needs `run.jobs.runWithOverrides` (run.developer). Set ORCHESTRATOR_OVERRIDE_ARGS=1 to pass scope overrides instead."""
+    if os.environ.get("ORCHESTRATOR_OVERRIDE_ARGS") != "1":
+        return None
+    if brain_id == "lake-brain":
+        args = ["--rtdb", RTDB_URL, "--scope", os.environ.get("ORCHESTRATOR_SCOPE", "pilots")]
+        if os.environ.get("LAKE_BRAIN_ARCHIVE"):
+            args += ["--archive", os.environ["LAKE_BRAIN_ARCHIVE"]]
+        return args
+    if brain_id == "water-temp":
+        args = ["--rtdb", RTDB_URL]
+        if os.environ.get("WATER_TEMP_SCOPE", "fleet") == "pilots":
+            for lid in PILOT_LAKES:
+                args += ["--lake", lid]
+        return args
+    return []
+
+
+def brain_plan(brain_id: str, timeout: int = 600) -> dict:
+    """`run.py --plan` of an in-process brain → its plan() verdict (PUBLISH / SKIP + reasons). Failure = SKIP with the error."""
+    ex = EXECUTORS[brain_id]
+    try:
+        out = subprocess.run([PYTHON, "run.py", "--plan"], cwd=ex["dir"], capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return {"action": "SKIP", "reasons": [f"--plan timed out after {timeout}s"]}
+    if out.returncode != 0:
+        return {"action": "SKIP", "reasons": [f"--plan failed: {(out.stderr or out.stdout).strip()[-300:]}"]}
+    try:
+        return json.loads(out.stdout.strip().splitlines()[-1] if "\n" in out.stdout.strip() else out.stdout)
+    except ValueError:
+        try:
+            return json.loads(out.stdout[out.stdout.index("{"):])
+        except ValueError:
+            return {"action": "SKIP", "reasons": ["--plan output unreadable"]}
+
+
+def run_in_process(brain_id: str, timeout: int = 1800) -> dict:
+    ex = EXECUTORS[brain_id]
+    t0 = time.time()
+    out = subprocess.run([PYTHON, "run.py", "--write"], cwd=ex["dir"], capture_output=True, text=True, timeout=timeout)
+    ok = out.returncode == 0
+    return {"brainId": brain_id, "how": "in-process", "ok": ok, "seconds": round(time.time() - t0, 1),
+            "tail": (out.stdout if ok else (out.stderr or out.stdout)).strip()[-600:]}
+
+
+def start_job(brain_id: str, tokens: TokenProvider) -> dict:
+    ex = EXECUTORS[brain_id]
+    op = gcp.run_job(tokens, ex["job"], args=job_args(brain_id))
+    return {"brainId": brain_id, "how": "cloud-run-job", "job": ex["job"], "ok": True,
+            "execution": (op.get("metadata") or {}).get("name"), "startedAt": iso(dt.datetime.now(dt.timezone.utc))}
+
+
+def with_single_flight(brains: dict, executions: dict[str, list[dict]], locks: dict, now: dt.datetime) -> dict:
+    """A copy of the registries with `schedule.running` / `schedule.lockedUntil` from the real world: a running
+    Cloud Run execution of the brain's job, or the lock this orchestrator wrote when it started one."""
+    out = {}
+    for b, reg in brains.items():
+        reg = dict(reg or {})
+        sched = dict(reg.get("schedule") or {}) if isinstance(reg.get("schedule"), dict) else {}
+        ex = EXECUTORS.get(b) or {}
+        if ex.get("kind") == "cloud-run-job" and gcp.running_executions(executions.get(ex["job"]) or []):
+            sched["running"] = True
+        lock = (locks or {}).get(b) or {}
+        if lock.get("lockedUntil") and lock["lockedUntil"] > iso(now):
+            # the lock only bridges the gap until the started execution is visible; once that execution has
+            # completed the real world says so and the lock is spent
+            done = any((e.get("metadata") or {}).get("name") == (lock.get("execution") or "").rsplit("/", 1)[-1]
+                       and (e.get("status") or {}).get("completionTime") for e in executions.get((ex or {}).get("job") or "") or [])
+            if not done:
+                sched["lockedUntil"] = lock["lockedUntil"]
+        reg["schedule"] = sched
+        out[b] = reg
+    return out
+
+
+def sync_jobs(db, tokens: TokenProvider, now: dt.datetime, write: bool) -> tuple[dict, dict, int]:
+    scheduler = gcp.list_scheduler_jobs(tokens)
+    run_jobs = gcp.list_run_jobs(tokens)
+    executions = {}
+    for j in run_jobs:
+        name = (j.get("metadata") or {}).get("name")
+        if name:
+            try:
+                executions[name] = gcp.list_executions(tokens, name, limit=20)
+            except gcp.GcpError as e:
+                print(f"warning: executions of {name} unreadable: {e}", file=sys.stderr)
+    services = {}
+    for s in ("sector-engine", "wind-candidate-read"):
+        try:
+            svc = gcp.get_service(tokens, s)
+            if svc:
+                services[s] = svc
+        except gcp.GcpError as e:
+            print(f"warning: service {s} unreadable: {e}", file=sys.stderr)
+    health = db.get("health/brains") or {}
+    records = build_records(scheduler_jobs=scheduler, run_jobs=run_jobs, executions=executions, now=now, synced_by=JOB_NAME,
+                            brain_health=health, services=services)
+    changed = jobs_changed_paths(records, db.get("jobs") or {})
+    if write and changed:
+        db.update(changed)
+    return records, executions, len(changed)
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dry-run", action="store_true", help="write nothing, start nothing")
+    ap.add_argument("--no-execute", action="store_true", help="sync + plan + record, start nothing")
+    ap.add_argument("--sync-jobs-only", action="store_true")
+    ap.add_argument("--force-scores", action="store_true", help="publish scores/control even when nothing changed")
+    ap.add_argument("--trigger", default="SCHEDULE", choices=("SCHEDULE", "MANUAL", "ADMIN"), help="why this cycle runs (recorded in the control state; default SCHEDULE)")
+    ap.add_argument("--run-now", default=None, metavar="BRAIN", help="scoped manual run of one Brain (needs --scope); validated by orchestrator policy")
+    ap.add_argument("--scope", default=None, help="scope for --run-now, e.g. guntersville, pilots")
+    ap.add_argument("--requested-by", default="cli", help="who asked, recorded with the decision")
+    ap.add_argument("--control-only", action="store_true", help="evaluate and publish ONLY /control/orchestratorV1: no /jobs write, no execution, no score publication, no legacy record (a deliberate, side-effect-free evaluation)")
+    ap.add_argument("--emit-control-state", default=None, metavar="FILE", help="write the computed control state JSON here (sample payloads, review)")
+    ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
+    a = ap.parse_args(argv)
+    t0 = time.time()
+    now = dt.datetime.now(dt.timezone.utc)
+    if a.control_only:
+        a.no_execute = True
+    write = not a.dry_run
+    tokens = TokenProvider()
+    live = BrainRtdb(RTDB_URL, tokens, brain_id=WRITER)
+    check_schema(live)
+    db = live if write else _ReadThrough(live)
+
+    # 1. /jobs
+    records, executions, n_changed = sync_jobs(db, tokens, now, write and not a.control_only)
+    print(f"jobs: {len(records)} records, {n_changed} changed", flush=True)
+    if a.sync_jobs_only:
+        return 0
+
+    # 2. plan: the decision model (engine mode, active/parked, dependencies, material change) says what MAY run; the legacy TIME/plan logic only
+    #    describes what is stale. Parked Brains are not even asked for a plan (a plan can cost provider/Engine calls).
+    brains = live.get("brains") or {}
+    health = live.get("health/brains") or {}
+    state = live.get("control/orchestrator") or {}
+    world = CP.load_world(live, now)
+    activity = O.effective_activity(world["manifest"], world["overrides"])
+    brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
+                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE")}
+    locks_now = state.get("locks") or {}
+    run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
+    ctx, evaluation = CP.evaluate(world, now, {f"{b}|*": l for b, l in locks_now.items()}, brain_plans, run_now)
+    allowed = set(evaluation["runs"])
+    plan = orchestrate(with_single_flight(brains, executions, locks_now, now), health, now, brain_plans)
+    for d in evaluation["decisions"]:
+        if d["decision"] in ("RUN", "BLOCKED_DEPENDENCY", "BLOCKED_POLICY", "MANUAL_APPROVAL", "WAITING") and d["trigger"] != "SCHEDULE" or d["decision"] == "RUN":
+            print(f"DECIDE {d['brainId']:20s} {d['trigger']:18s} {d['decision']:18s} {d['reason']}")
+    for r in plan["runs"]:
+        print(f"STALE {r['brainId']:20s} {'; '.join(r['reasons'])}" + (f" (after {r['after']})" if r.get("after") else "") + ("" if r["brainId"] in allowed or a.legacy_execution else "  -> not started: decision model says no"))
+    for w in plan["waiting"]:
+        print(f"WAIT {w['brainId']:20s} {'; '.join(w['reasons'])}")
+
+    # 3. execute — only what the decision model allowed (RUN), in dependency waves; legacy TIME/plan logic only with --legacy-execution
+    executed, deferred, locks, exec_records = [], [], {}, []
+    started_async = set()
+    manifest = world["manifest"]
+    todo = set(allowed) | ({r["brainId"] for r in plan["runs"]} if a.legacy_execution else set())
+    for r in plan["runs"]:                       # stale by the legacy TIME/plan logic, but not allowed to run by the decision model: say why
+        if r["brainId"] not in todo:
+            why = next((d["reason"] for d in evaluation["decisions"] if d["brainId"] == r["brainId"] and d["trigger"] == "SCHEDULE"), "no RUN decision")
+            deferred.append({"brainId": r["brainId"], "why": f"PRE_PRODUCTION decision model: {why}"})
+    for d in evaluation["decisions"]:
+        if d["brainId"] not in todo and d["decision"] in ("MANUAL_APPROVAL", "WAITING", "BLOCKED_DEPENDENCY") and d["trigger"] != "SCHEDULE":
+            deferred.append({"brainId": d["brainId"], "why": f"{d['decision']}: {d['reason']}"})
+    for wave in O.plan_waves(sorted(todo), manifest) if todo else []:
+        for b in wave:
+            dec = next((d for d in evaluation["decisions"] if d["brainId"] == b and d["decision"] == "RUN"), None)
+            trigger = dec["trigger"] if dec else "SCHEDULE"
+            why = dec["reason"] if dec else "legacy TIME/plan logic (--legacy-execution)"
+            tgt = (manifest["brains"][b].get("executionTarget") or {})
+            ex = EXECUTORS.get(b)
+            if b in NOT_STARTED_HERE or not ex or not tgt.get("startedByOrchestrator", False):
+                cmd = f"gcloud run jobs execute {tgt.get('job')} --region us-central1 --wait" if tgt.get("job") else "run locally from the Brain's branch"
+                deferred.append({"brainId": b, "why": f"RUN allowed but not startable by the orchestrator ({NOT_STARTED_HERE.get(b, tgt.get('note') or 'legacy/manual target')}); manual: {cmd}"})
+                continue
+            if any(d["id"] in started_async for d in manifest["brains"][b].get("dependencies", [])):
+                deferred.append({"brainId": b, "why": "an upstream was started this cycle; evaluated again next cycle"})
+                continue
+            if a.dry_run or a.no_execute:
+                deferred.append({"brainId": b, "why": "not executed (--dry-run/--no-execute)"})
+                continue
+            started = dt.datetime.now(dt.timezone.utc)
+            eid = f"{b}-{started:%Y%m%dT%H%M%SZ}"
+            try:
+                if ex["kind"] == "cloud-run-job":
+                    res = start_job(b, tokens)
+                    started_async.add(b)
+                    eid = (res.get("execution") or eid).rsplit("/", 1)[-1]
+                    locks[b] = {"execution": res.get("execution"), "startedAt": res["startedAt"], "lockedUntil": iso(now + dt.timedelta(minutes=LOCK_MINUTES))}
+                else:
+                    res = run_in_process(b)
+            except Exception as e:                                   # one brain's failure never stops the cycle
+                res = {"brainId": b, "ok": False, "error": repr(e)[:300]}
+            ended = None if res.get("how") == "cloud-run-job" and res.get("ok") else dt.datetime.now(dt.timezone.utc)
+            fc = None if res.get("ok") else O.classify_failure(res.get("error") or res.get("tail"))
+            rec = O.execution_record(eid, b, trigger, why, started, ended, "STARTED" if ended is None else ("SUCCEEDED" if res.get("ok") else "FAILED"),
+                                     scope=a.scope if a.run_now == b else None, input_fp=(dec or {}).get("inputFingerprint"),
+                                     resources=manifest["brains"][b].get("resources"), failure_class=fc)
+            rec["jobId"] = tgt.get("job") or ex.get("jobId")
+            exec_records.append(rec)
+            executed.append(res)
+            print(f"{'✓' if res.get('ok') else '✗'} {b} [{trigger}] {res.get('execution') or res.get('tail', res.get('error', ''))[-200:]}", flush=True)
+
+    # 4. scores / control — only after a state change
+    seen = {b: (brains.get(b) or {}).get("lastSuccessfulRun") for b in brains}
+    changed_brains = sorted(b for b in seen if seen[b] != (state.get("lastSeen") or {}).get(b))
+    ran_in_process = [e["brainId"] for e in executed if e.get("how") == "in-process" and e.get("ok")]
+    reason = ("brain state changed: " + ", ".join(changed_brains)) if changed_brains else \
+             ("published this cycle: " + ", ".join(ran_in_process)) if ran_in_process else \
+             (f"{n_changed} job record(s) changed" if n_changed else ("forced" if a.force_scores else None))
+    scores = {"published": False, "why": reason or "nothing changed since the last cycle"}
+    if reason and write and not a.control_only:
+        cmd = [PYTHON, os.path.join(HERE, "..", "brain-scores", "score_brains.py"), "--write", "--if-changed"]
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
+        scores.update({"published": out.returncode == 0, "tail": (out.stdout if out.returncode == 0 else (out.stderr or out.stdout)).strip()[-500:]})
+        print(f"scores: {'published' if out.returncode == 0 else 'FAILED'} ({reason})", flush=True)
+    else:
+        print(f"scores: skipped ({scores['why']})")
+
+    # 5. control plane: the compact read-only state Sector Ops renders (content-aware: unchanged sections are not rewritten)
+    try:
+        world2 = CP.load_world(live, dt.datetime.now(dt.timezone.utc)) if (executed and write) else world
+        ctx2, ev2 = CP.evaluate(world2, now, {f"{b}|*": l for b, l in {**locks_now, **locks}.items()}, brain_plans, run_now)
+        rq = CP.process_requests(live, world2, ctx2, write)
+        cloud_execs = CP.executions_from_cloud_run(manifest, executions, records, now)
+        for r in exec_records:                                   # downstream decisions of a Brain that just ran
+            r["downstream"] = [{"brainId": d["brainId"], "decision": d["decision"]} for d in ev2["decisions"]
+                               if d["trigger"] == "DEPENDENCY_CHANGED" and r["brainId"] in [c["id"] for c in manifest["brains"][d["brainId"]].get("dependencies", [])]]
+        state_cp = CS.build_control_state(manifest, ctx2["mode"], now, registries=world2["registries"], health=world2["health"], scores=live.get("scores") or {},
+                                          jobs=records, evaluation=ev2, prev=world["prev"], new_executions=exec_records + cloud_execs,
+                                          locks={**locks_now, **locks}, trigger=a.trigger, duration_ms=int((time.time() - t0) * 1000),
+                                          overrides=rq["overrides"], requests=rq["requests"], scheduler_states=CP.scheduler_states(tokens))
+        if a.emit_control_state:
+            json.dump(state_cp, open(a.emit_control_state, "w"), indent=1, sort_keys=True)
+        cp_paths = CS.changed_paths(state_cp, world["prev"])
+        if cp_paths and (write or a.dry_run):
+            db.update(cp_paths)
+        print(f"control plane: {len(cp_paths)} section(s) changed of {len(CS.SECTIONS)}; mode {state_cp['summary']['engineMode']}; "
+              f"active {state_cp['summary'].get('activeBrains')}; queued {state_cp['summary'].get('queued', [])}")
+    except Exception as e:                                       # the control plane must never break the cycle or the score publication
+        print(f"control plane: FAILED {e!r}", file=sys.stderr)
+
+    # 6. record
+    record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),
+              "mode": "dry-run" if a.dry_run else ("no-execute" if a.no_execute else "cycle"),
+              "plan": plan, "brainPlans": brain_plans, "executed": executed, "deferred": deferred,
+              "locks": {**{b: l for b, l in (state.get("locks") or {}).items() if l.get("lockedUntil", "") > iso(now) and b not in locks}, **locks},
+              "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
+              "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores}
+    if write and not a.control_only:
+        live.update({"control/orchestrator": record})
+    print(json.dumps({k: record[k] for k in ("mode", "durationMs", "jobsChanged", "scores")}, indent=None))
+    print(f"executed {len(executed)}, deferred {len(deferred)}, waiting {len(plan['waiting'])}, skipped {len(plan['skipped'])}")
+    return 0 if all(e.get("ok") for e in executed) else 1
+
+
+class _ReadThrough:
+    """Dry run: GETs go to the live database, every update is kept in memory and printed."""
+
+    def __init__(self, live):
+        self.live, self.mem = live, DryRunStore(brain_id=WRITER)
+
+    def get(self, path, shallow=False):
+        return self.live.get(path, shallow)
+
+    def update(self, updates):
+        self.mem.update(updates)
+        print(f"(dry run) would write {len(updates)} path(s): {sorted(updates)[:8]}{' …' if len(updates) > 8 else ''}")
+
+
+if __name__ == "__main__":
+    sys.exit(main())

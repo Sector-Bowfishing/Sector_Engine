@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/research-gaps.schema.json",
+  "title": "brains/<dir>/research/GAPS.json v1",
+  "description": "Research Gap records. A Brain is not a university: research may start only from an OPEN gap and must have a stop condition. Metadata only: no raw data, no absolute paths.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "brainId", "gaps"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "brainId": {"type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}}
+  },
+  "$defs": {
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "whyItMatters", "bowfisherDecision", "currentEvidence", "stopCondition", "expectedOutput", "humanOrFieldValidationRequired", "status", "owner"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9]*-[A-Z0-9-]+$"},
+        "type": {"enum": ["product", "confidence", "readiness", "validation", "evidence"]},
+        "title": {"type": "string", "minLength": 1},
+        "whyItMatters": {"type": "string", "minLength": 1},
+        "bowfisherDecision": {"type": "string", "minLength": 1},
+        "currentEvidence": {"type": "array", "items": {"type": "string", "minLength": 1}, "description": "Pointers (manifest collection names / hashes), never data."},
+        "stopCondition": {"type": "string", "minLength": 1},
+        "expectedOutput": {"type": "string", "minLength": 1},
+        "humanOrFieldValidationRequired": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required"],
+          "properties": {"required": {"type": "boolean"}, "what": {"type": "string"}}
+        },
+        "status": {"enum": ["OPEN", "IN_PROGRESS", "CLOSED", "BLOCKED", "WITHDRAWN"]},
+        "owner": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -19,6 +19,10 @@ RETRY_BACKOFF_MIN = (5, 15, 45)          # minutes after the 1st, 2nd, 3rd failu
 DEFAULT_ORDER = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")
 
 
+def _truthy(v) -> bool:
+    return v is True or (isinstance(v, str) and v.strip().lower() in ("true", "yes", "1"))
+
+
 def _topo(brains: dict[str, dict]) -> list[str]:
     """Dependency order: a brain runs after everything in its dependsOn. Stable for unrelated brains."""
     deps = {b: [d for d in ((brains[b].get("dependsOn") or [])) if d in brains] for b in brains}
@@ -49,8 +53,9 @@ def decide(brain_id: str, reg: dict, health: dict | None, brain_plan: dict | Non
     hstat = (health or {}).get("status") or reg.get("health")
     reasons, action = [], "SKIP"
 
-    # single-flight: a running or locked brain is never started twice
-    if sched.get("running"):
+    # single-flight: a running or locked brain is never started twice ("false"/"no" strings are not running:
+    # the Lake Brain registry publishes schedule.running as a string)
+    if _truthy(sched.get("running")):
         return {"brainId": brain_id, "action": "WAIT", "reasons": ["already running (single-flight)"]}
     lock = parse_time(sched.get("lockedUntil"))
     if lock and lock > now:

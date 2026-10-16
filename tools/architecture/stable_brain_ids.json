@@ -1,0 +1,12 @@
+{
+  "description": "Machine brainIds that are LIVE today and must never be renamed (invariant 3). Directory names are human-friendly and may differ (brains/fish -> biological-state). depth and vegetation are added at their certification/migration turn once their ids are confirmed.",
+  "schemaVersion": "1.0.0",
+  "directoryToBrainId": {
+    "wind": "wind",
+    "fish": "biological-state",
+    "lake": "lake-brain",
+    "water-temperature": "water-temp",
+    "water-clarity": "water-clarity",
+    "sector-intelligence": "sector-intelligence"
+  }
+}

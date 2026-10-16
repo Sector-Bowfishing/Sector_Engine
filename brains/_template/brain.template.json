@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "example-brain",
+  "displayName": "Example Brain",
+  "humanName": "Example",
+  "domain": "example-domain",
+  "lifecycle": "RESEARCH",
+  "contractVersion": "0.1.0",
+  "runtime": {
+    "kind": "job",
+    "language": "python",
+    "entrypoint": "brains/example/runtime/main.py",
+    "trigger": {"kind": "schedule", "staleHours": 6}
+  },
+  "publishes": [],
+  "publishesReason": "Template: nothing published until the Brain has a certified contract.",
+  "consumes": [
+    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0"}
+  ],
+  "providers": [],
+  "researchWorkspace": {"workspaceId": "example-brain"},
+  "score": {"type": "ENGINE_READINESS_SCORE", "path": "/scores/example-brain"},
+  "customerIntegrationMode": "none",
+  "publisherRequired": {"required": true, "cutoverStatus": "NOT_STARTED"},
+  "authorizedConsumers": ["ops"],
+  "tests": ["brains/example/tests"],
+  "dataBudget": {"maxTrackedFileBytes": 262144, "exceptions": []}
+}

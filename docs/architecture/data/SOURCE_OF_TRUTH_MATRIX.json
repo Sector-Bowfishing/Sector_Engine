@@ -1,0 +1,668 @@
+{
+  "contract": "sector-data-architecture-v1",
+  "status": "PROPOSED",
+  "asOf": "2026-10-14",
+  "baseCommit": "f6cec529",
+  "doc": "docs/architecture/data/",
+  "sourceOfTruth": [
+    {
+      "dataType": "raw-research",
+      "plane": "RESEARCH",
+      "canonicalOwner": "researching-brain",
+      "canonicalStorage": "Sector_Research (private git) + gs://sector-research-private",
+      "servingPath": null,
+      "writers": [
+        "research-session"
+      ],
+      "readers": [
+        "research-session"
+      ],
+      "mutability": "IMMUTABLE",
+      "retention": "FOREVER",
+      "versioned": "git+object-versioning",
+      "rollback": "n/a",
+      "customerVisible": false,
+      "notes": "licensed text never leaves"
+    },
+    {
+      "dataType": "research-workflow-and-rejected-claims",
+      "plane": "RESEARCH",
+      "canonicalOwner": "brain",
+      "canonicalStorage": "Sector_Research (private git)",
+      "servingPath": null,
+      "writers": [
+        "research-session"
+      ],
+      "readers": [
+        "adoption-session"
+      ],
+      "mutability": "APPEND_ONLY",
+      "retention": "FOREVER",
+      "versioned": "git",
+      "rollback": "git",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "candidate-knowledge",
+      "plane": "RESEARCH->KNOWLEDGE",
+      "canonicalOwner": "brain",
+      "canonicalStorage": "Sector_Research authoring dir",
+      "servingPath": null,
+      "writers": [
+        "adoption-session"
+      ],
+      "readers": [
+        "review-tool",
+        "builder(shadow)"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "FOREVER",
+      "versioned": "git",
+      "rollback": "git",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "review-decisions",
+      "plane": "KNOWLEDGE",
+      "canonicalOwner": "brain",
+      "canonicalStorage": "release rules/review_ledger.jsonl",
+      "servingPath": null,
+      "writers": [
+        "review-tool(from /requests/review)"
+      ],
+      "readers": [
+        "builder",
+        "ops(counts)"
+      ],
+      "mutability": "APPEND_ONLY",
+      "retention": "FOREVER",
+      "versioned": "release-manifest",
+      "rollback": "supersede",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "canonical-domain-knowledge",
+      "plane": "KNOWLEDGE",
+      "canonicalOwner": "brain",
+      "canonicalStorage": "release bucket latest.json -> releases/{id}/manifest.json",
+      "servingPath": "derived only",
+      "writers": [
+        "release-step(michael)"
+      ],
+      "readers": [
+        "builder"
+      ],
+      "mutability": "IMMUTABLE_PER_RELEASE",
+      "retention": "ALL_RELEASES",
+      "versioned": "releaseId+sha256",
+      "rollback": "REPUBLISH_FROM_RELEASE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "lake-registry",
+      "plane": "KNOWLEDGE",
+      "canonicalOwner": "lake-brain",
+      "canonicalStorage": "gs://sector-lake-registry",
+      "servingPath": "Engine GET /lakes",
+      "writers": [
+        "build_geometry --upload"
+      ],
+      "readers": [
+        "all"
+      ],
+      "mutability": "IMMUTABLE_OBJECTS+MUTABLE_INDEX",
+      "retention": "FOREVER",
+      "versioned": "object-generations",
+      "rollback": "restore-index-generation",
+      "customerVisible": true,
+      "notes": null
+    },
+    {
+      "dataType": "lake-state",
+      "plane": "SERVING",
+      "canonicalOwner": "lake-brain",
+      "canonicalStorage": "gs://sector-lake-brain + providers",
+      "servingPath": "/lakes/{k}/{brain,states/lake}",
+      "writers": [
+        "lake-brain"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence",
+        "depth",
+        "biological-state"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT",
+      "versioned": "lineage",
+      "rollback": "REDEPLOY_PRIOR_IMAGE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "lake-species-presence",
+      "plane": "SERVING",
+      "canonicalOwner": "lake-brain",
+      "canonicalStorage": "gs://sector-lake-brain/presence",
+      "servingPath": "/lakes/{k}/speciesPresence",
+      "writers": [
+        "lake-brain"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence",
+        "biological-state"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT+bucket-history",
+      "versioned": "lineage",
+      "rollback": "REPUBLISH",
+      "customerVisible": false,
+      "notes": "never in public repo or /species"
+    },
+    {
+      "dataType": "species-identity",
+      "plane": "SERVING",
+      "canonicalOwner": "biological-state",
+      "canonicalStorage": "release registry.json",
+      "servingPath": "/species/{id}, /speciesIndexes/{env}/{id}",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "ops",
+        "sector-intelligence",
+        "lake-brain"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "IN_RELEASES",
+      "versioned": "releaseId",
+      "rollback": "REPUBLISH_FROM_RELEASE",
+      "customerVisible": true,
+      "notes": null
+    },
+    {
+      "dataType": "species-knowledge-summary",
+      "plane": "SERVING",
+      "canonicalOwner": "biological-state",
+      "canonicalStorage": "derived from release",
+      "servingPath": "/species/{id}/knowledge",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "mutability": "DERIVED",
+      "retention": "CURRENT",
+      "versioned": "lineage",
+      "rollback": "REPUBLISH_FROM_RELEASE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "species-profile",
+      "plane": "SERVING",
+      "canonicalOwner": "biological-state",
+      "canonicalStorage": "derived from release",
+      "servingPath": "/speciesProfiles/{id}",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "ops(per-species)",
+        "sector-intelligence"
+      ],
+      "mutability": "DERIVED",
+      "retention": "CURRENT",
+      "versioned": "profileFingerprint+lineage",
+      "rollback": "REPUBLISH_FROM_RELEASE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "species-movement-outlook",
+      "plane": "SERVING",
+      "canonicalOwner": "biological-state",
+      "canonicalStorage": "derived (release x current conditions)",
+      "servingPath": "/lakes/{k}/states/biology (future)",
+      "writers": [
+        "biological-state"
+      ],
+      "readers": [
+        "sector-intelligence",
+        "ops"
+      ],
+      "mutability": "DERIVED",
+      "retention": "CURRENT",
+      "versioned": "lineage",
+      "rollback": "RERUN",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "species-policy",
+      "plane": "KNOWLEDGE",
+      "canonicalOwner": "policy-layer",
+      "canonicalStorage": "Engine Config/ -> Policy/",
+      "servingPath": "/species/{id}/policy",
+      "writers": [
+        "policy-publisher"
+      ],
+      "readers": [
+        "sector-intelligence",
+        "engine-api"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "git",
+      "versioned": "git",
+      "rollback": "git",
+      "customerVisible": true,
+      "notes": null
+    },
+    {
+      "dataType": "water-temperature",
+      "plane": "SERVING",
+      "canonicalOwner": "water-temp",
+      "canonicalStorage": "providers + code + archive",
+      "servingPath": "/lakes/{k}/{states,profiles}/waterTemp",
+      "writers": [
+        "water-temp"
+      ],
+      "readers": [
+        "biological-state",
+        "sector-intelligence",
+        "ops"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT",
+      "versioned": "lineage",
+      "rollback": "REDEPLOY_PRIOR_IMAGE",
+      "customerVisible": true,
+      "notes": null
+    },
+    {
+      "dataType": "water-clarity",
+      "plane": "SERVING",
+      "canonicalOwner": "water-clarity",
+      "canonicalStorage": "providers + code + candidate bucket",
+      "servingPath": "/lakes/{k}/{states,profiles}/waterClarity",
+      "writers": [
+        "water-clarity"
+      ],
+      "readers": [
+        "biological-state",
+        "sector-intelligence",
+        "ops"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT",
+      "versioned": "lineage",
+      "rollback": "REDEPLOY_PRIOR_IMAGE",
+      "customerVisible": true,
+      "notes": null
+    },
+    {
+      "dataType": "wind",
+      "plane": "SERVING",
+      "canonicalOwner": "wind",
+      "canonicalStorage": "gs://sector-wind-candidate + providers",
+      "servingPath": "/lakes/{k}/{states,profiles}/wind",
+      "writers": [
+        "wind"
+      ],
+      "readers": [
+        "sector-intelligence",
+        "ops"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT",
+      "versioned": "lineage",
+      "rollback": "REDEPLOY_PRIOR_IMAGE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "depth",
+      "plane": "KNOWLEDGE+SERVING",
+      "canonicalOwner": "depth",
+      "canonicalStorage": "release bucket (to create)",
+      "servingPath": "/lakes/{k}/states/depth",
+      "writers": [
+        "depth"
+      ],
+      "readers": [
+        "sector-intelligence",
+        "ops"
+      ],
+      "mutability": "DERIVED",
+      "retention": "RELEASES",
+      "versioned": "lineage",
+      "rollback": "REPUBLISH_FROM_RELEASE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "vegetation",
+      "plane": "KNOWLEDGE+SERVING",
+      "canonicalOwner": "vegetation",
+      "canonicalStorage": "release bucket (to create)",
+      "servingPath": "/lakes/{k}/states/vegetation",
+      "writers": [
+        "vegetation"
+      ],
+      "readers": [
+        "sector-intelligence"
+      ],
+      "mutability": "DERIVED",
+      "retention": "RELEASES",
+      "versioned": "lineage",
+      "rollback": "REPUBLISH_FROM_RELEASE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "synthesis",
+      "plane": "SERVING",
+      "canonicalOwner": "sector-intelligence",
+      "canonicalStorage": "code + evidence catalog",
+      "servingPath": "/lakes/{k}/states/intelligence",
+      "writers": [
+        "sector-intelligence"
+      ],
+      "readers": [
+        "ops",
+        "engine-api(later)"
+      ],
+      "mutability": "DERIVED",
+      "retention": "CURRENT",
+      "versioned": "fingerprint+lineage",
+      "rollback": "RERUN",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "brain-registry",
+      "plane": "CONTROL",
+      "canonicalOwner": "that-brain",
+      "canonicalStorage": "code",
+      "servingPath": "/brains/{id}",
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator",
+        "brain-scores"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT+versions[]",
+      "versioned": "deploymentVersion",
+      "rollback": "REDEPLOY",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "publish-manifest",
+      "plane": "CONTROL",
+      "canonicalOwner": "that-brain(platform mechanics)",
+      "canonicalStorage": "gs://sector-brain-history/{brainId}/publishes/",
+      "servingPath": "/brains/{id}/publication",
+      "writers": [
+        "that-brain via publish()"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator",
+        "sector-intelligence"
+      ],
+      "mutability": "APPEND_ONLY",
+      "retention": "FOREVER",
+      "versioned": "is-the-version-record",
+      "rollback": "REPUBLISH_PRIOR_RELEASE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "brain-scores",
+      "plane": "CONTROL",
+      "canonicalOwner": "platform",
+      "canonicalStorage": "computed + frozen-scores.json",
+      "servingPath": "/scores/{id}",
+      "writers": [
+        "brain-scores"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator"
+      ],
+      "mutability": "DERIVED",
+      "retention": "CURRENT + history bucket",
+      "versioned": "scoreVersion",
+      "rollback": "REPUBLISH_FROM_HISTORY",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "execution-policy",
+      "plane": "CONTROL",
+      "canonicalOwner": "orchestrator",
+      "canonicalStorage": "control manifest + Cloud Scheduler",
+      "servingPath": "/control/orchestratorV1/*, /jobs/*",
+      "writers": [
+        "orchestrator"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "mutability": "MUTABLE+CAPPED",
+      "retention": "CAPPED 60/120/30",
+      "versioned": "DEPLOYMENT_VERSION",
+      "rollback": "REDEPLOY",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "requests",
+      "plane": "CONTROL",
+      "canonicalOwner": "requester(submission)/consumer(outcome)",
+      "canonicalStorage": "sector-brain",
+      "servingPath": "/requests/{control,review,research}/{id}",
+      "writers": [
+        "ops(create-only)",
+        "engine(outcome)"
+      ],
+      "readers": [
+        "orchestrator",
+        "review-tool",
+        "research-queue"
+      ],
+      "mutability": "IMMUTABLE_SUBMISSION",
+      "retention": "90 DAYS then archive",
+      "versioned": "requestId",
+      "rollback": "n/a",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "health",
+      "plane": "SERVING",
+      "canonicalOwner": "that-brain",
+      "canonicalStorage": "runtime",
+      "servingPath": "/health/{brains,sources}",
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "ops",
+        "orchestrator"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT",
+      "versioned": null,
+      "rollback": "SELF_HEALS",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "activity",
+      "plane": "CONTROL",
+      "canonicalOwner": "platform(retention)/writer(events)",
+      "canonicalStorage": "sector-brain",
+      "servingPath": "/activity",
+      "writers": [
+        "all-writers"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "mutability": "APPEND_ONLY_BOUNDED",
+      "retention": "80 per brain, 30 days",
+      "versioned": null,
+      "rollback": "n/a",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "field-observations",
+      "plane": "OBSERVATION",
+      "canonicalOwner": "observation-owner",
+      "canonicalStorage": "gs://sector-observations (append-only)",
+      "servingPath": null,
+      "writers": [
+        "field-tooling"
+      ],
+      "readers": [
+        "validators"
+      ],
+      "mutability": "IMMUTABLE",
+      "retention": "FOREVER",
+      "versioned": "object-versioning",
+      "rollback": "never deleted",
+      "customerVisible": false,
+      "notes": "PII risk"
+    },
+    {
+      "dataType": "prediction-ledgers",
+      "plane": "OBSERVATION",
+      "canonicalOwner": "predicting-brain",
+      "canonicalStorage": "brain bucket predictions/ or release validation/",
+      "servingPath": null,
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "validator"
+      ],
+      "mutability": "IMMUTABLE",
+      "retention": "FOREVER",
+      "versioned": "generation/hash",
+      "rollback": "n/a",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "validation-summaries",
+      "plane": "OBSERVATION->SERVING",
+      "canonicalOwner": "that-brain",
+      "canonicalStorage": "derived",
+      "servingPath": "/validation/{id}, /lakes/{k}/validation/{id}",
+      "writers": [
+        "that-brain"
+      ],
+      "readers": [
+        "ops",
+        "brain-scores"
+      ],
+      "mutability": "DERIVED",
+      "retention": "CURRENT",
+      "versioned": "lineage",
+      "rollback": "RECOMPUTE",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "data-feed-sources",
+      "plane": "SERVING",
+      "canonicalOwner": "owning-brain(one per id)",
+      "canonicalStorage": "code",
+      "servingPath": "/sources/{id}, /health/sources/{id}",
+      "writers": [
+        "owner"
+      ],
+      "readers": [
+        "ops",
+        "brain-scores"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT",
+      "versioned": null,
+      "rollback": "SELF_HEALS",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "literature-sources",
+      "plane": "KNOWLEDGE",
+      "canonicalOwner": "brain",
+      "canonicalStorage": "release sources.json",
+      "servingPath": "/speciesProfiles/{id}.evidenceSummary only",
+      "writers": [
+        "builder"
+      ],
+      "readers": [
+        "ops"
+      ],
+      "mutability": "IMMUTABLE_PER_RELEASE",
+      "retention": "RELEASES",
+      "versioned": "releaseId",
+      "rollback": "REPUBLISH",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "ops-access",
+      "plane": "CONTROL",
+      "canonicalOwner": "michael",
+      "canonicalStorage": "/access",
+      "servingPath": "/access",
+      "writers": [
+        "manual(scripted)"
+      ],
+      "readers": [
+        "rules"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "CURRENT",
+      "versioned": null,
+      "rollback": "manual",
+      "customerVisible": false,
+      "notes": null
+    },
+    {
+      "dataType": "customer-app-data",
+      "plane": "OUT_OF_SCOPE",
+      "canonicalOwner": "app-platform",
+      "canonicalStorage": "sector-9393c-default-rtdb",
+      "servingPath": "same",
+      "writers": [
+        "apps"
+      ],
+      "readers": [
+        "apps"
+      ],
+      "mutability": "MUTABLE",
+      "retention": "app-policy",
+      "versioned": null,
+      "rollback": "app-backups",
+      "customerVisible": true,
+      "notes": "regulations/species catalog should reference Engine ids"
+    }
+  ],
+  "writerModel": "'writers' = producing Brain; physical production writer = Orchestrator Publisher (Brain Certification V1)",
+  "supersededInPartBy": "docs/architecture/certification/"
+}

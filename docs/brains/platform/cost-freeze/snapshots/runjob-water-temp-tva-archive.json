@@ -1,0 +1,82 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "584.0.0",
+      "run.googleapis.com/creator": "mgcather07@gmail.com",
+      "run.googleapis.com/lastModifier": "mgcather07@gmail.com",
+      "run.googleapis.com/operation-id": "70a9a924-4bfe-47e2-a0c9-ddc4a261b82c"
+    },
+    "creationTimestamp": "2026-10-07T05:44:42.128991Z",
+    "generation": 2,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-10-07T05:49:57.619630Z"
+    },
+    "name": "water-temp-tva-archive",
+    "namespace": "1021938854392",
+    "resourceVersion": "AAZdxUXbtGM",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/1021938854392/jobs/water-temp-tva-archive",
+    "uid": "3b1cf926-ba7b-4a4d-b109-391c7c7c36fe"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "584.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "WT_ARCHIVE_BUCKET",
+                    "value": "sector-water-temp-archive"
+                  },
+                  {
+                    "name": "WT_ARCHIVE_PREFIX",
+                    "value": "water-temp/tva"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/sector-9393c/cloud-run-source-deploy/water-temp-tva-archive@sha256:f2e45516f318fd68c45510f137bfe1a1c78b1f988cd1b89eee1c4a8a6dd22788",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "512Mi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 1,
+            "serviceAccountName": "water-temp-archive-job@sector-9393c.iam.gserviceaccount.com",
+            "timeoutSeconds": "600"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 170,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-14T04:22:01.610668Z",
+      "creationTimestamp": "2026-10-14T04:20:08.406478Z",
+      "name": "water-temp-tva-archive-tqmkw"
+    },
+    "observedGeneration": 2
+  }
+}

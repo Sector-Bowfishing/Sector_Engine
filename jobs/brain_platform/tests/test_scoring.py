@@ -92,10 +92,17 @@ def test_intelligence_today_is_one():
 
 def test_frozen_scores_pass_through_verbatim():
     fz = json.load(open(os.path.join(FIX, "frozen-scores.json")))
-    for bid, expect in (("water-temp", 3.0), ("water-clarity", 8.0), ("wind", 3.1)):
+    for bid, expect in (("water-temp", 3.0), ("water-clarity", 8.0)):
         s = frozen_score(fz[bid])
         assert s["value"] == expect and s["basis"] == "FROZEN" and s["scale"] == 10
         assert s["scoreVersion"] and s["scoreRubric"] and s["scoreUpdatedAt"] and s["scoreBlockers"]
+    # Wind's block is GENERATED from the canonical Wind scorer (jobs/wind-hourly/research/wind_score_entry.py), not typed: it moves with live days,
+    # so the test pins the contract (published verbatim, complete, sourced) rather than a number.
+    w = frozen_score(fz["wind"])
+    assert w["value"] == fz["wind"]["value"] and w["basis"] in ("FROZEN", "COMPUTED") and w["scale"] == 10 and 0 < w["value"] <= 10
+    assert w["scoreVersion"] == "wind-certification-rubric-v1" and w["scoreRubric"] and w["scoreUpdatedAt"] and w["scoreBlockers"]
+    if w["basis"] == "COMPUTED":
+        assert w["scoreBreakdown"] and w["uncapped"] is not None and w["evidence"]["scorerCode"]
 
 
 from sector_brain_platform import score_engine
@@ -141,3 +148,12 @@ def test_engine_score_is_not_an_average_of_brain_scores():
 def test_engine_score_unknown_specialist_leaves_maturity_unknown():
     e = score_engine(_engine_facts(), {"lake-brain": {"value": 3.0}}, NOW)
     assert e["dimensions"]["specialistBrainMaturity"]["status"] == "UNKNOWN" and e["brainScores"]["wind"] is None
+
+
+def test_lake_coverage_counts_all_profiled_lakes_even_when_fewer_profiles_were_read():
+    profiles = {f"L{i}": pilot_profile(sufficient=True) for i in range(200)}
+    s = score_lake({"registry": {"health": "HEALTHY", "directoryLakeCount": 621}, "validation": {"status": "NOT_VALIDATED"},
+                    "health": {"status": "HEALTHY"}, "profiles": profiles, "states": {}, "profiledCount": 320}, NOW)
+    assert "320 of 621" in s["scoreBreakdown"]["coverage"]["evidence"]
+    gated = {g.get("gate") for g in s["scoreBlockers"] if "gate" in g}
+    assert "coverage" not in gated, "320/621 = 51 % clears the 10 % coverage gate"

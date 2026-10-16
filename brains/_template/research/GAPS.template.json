@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "example-brain",
+  "gaps": [
+    {
+      "id": "EX-001",
+      "type": "validation",
+      "title": "Example gap: no prospective validation of the primary output",
+      "whyItMatters": "Without it the output cannot be claimed beyond candidate level.",
+      "bowfisherDecision": "Whether a bowfisher can rely on this output when choosing where to go.",
+      "currentEvidence": ["example-collection"],
+      "stopCondition": "Stop when the preregistered holdout is scored or field validation is required.",
+      "expectedOutput": "A scored holdout report and an accept/reject recommendation.",
+      "humanOrFieldValidationRequired": {"required": true, "what": "Field confirmation by bowfishers."},
+      "status": "OPEN",
+      "owner": "brain-owner"
+    }
+  ]
+}

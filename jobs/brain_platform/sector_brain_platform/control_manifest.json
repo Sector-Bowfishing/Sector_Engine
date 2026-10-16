@@ -1,0 +1,106 @@
+{
+  "manifestVersion": "brain-execution-manifest-v1",
+  "engineMode": "PRE_PRODUCTION",
+  "note": "Execution intent only. No science lives here. activityState is configuration (edit here, or override via an accepted control request); it is not hard-coded in code. Freshness tolerances marked provisional are pre-production defaults the Brain owner confirms.",
+  "defaults": {"timeoutSeconds": 900, "retry": {"maxAttempts": 3, "backoffMinutes": [5, 15, 45]}, "customerPublication": false},
+  "brains": {
+    "wind": {
+      "displayName": "Wind", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "ACTIVE",
+      "executionTarget": {"kind": "cloud-run-job", "job": "wind-hourly", "startedByOrchestrator": false, "scoped": false},
+      "allowedTriggers": ["SCHEDULE", "MANUAL", "VALIDATION", "ADMIN"],
+      "dependencies": [],
+      "schedule": {"class": "VALIDATION_EXCEPTION", "owner": "LEGACY_SCHEDULER", "scheduler": "wind-hourly", "cron": "5 * * * *", "tz": "UTC",
+                   "exception": {"gate": "Wind live-reliability gate (30 valid live archive days; 5 of 30 on 2026-10-13) and the timed provider-forecast archive", "notReconstructable": "valid-live-day clock and retrieval-time provenance cannot be recreated after the fact", "maxMonthlyUsd": 5, "stop": "reliability gate satisfied (about 2026-11-08), then re-decide", "approvedAt": "2026-10-14"}},
+      "freshness": {"staleAfterHours": 1.5}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "deploymentVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount", "profiledLakeCount"]},
+      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 2, "tasks": 1}, "timeoutSeconds": 900, "scopes": ["current-live-lakes"], "customerPublication": false
+    },
+    "biological-state": {
+      "displayName": "Biological", "group": "BIOLOGICAL", "lifecycle": "PROFILED", "activityState": "ACTIVE",
+      "executionTarget": {"kind": "in-process", "dir": "jobs/biological-brain", "startedByOrchestrator": true, "scoped": true},
+      "allowedTriggers": ["MANUAL", "INPUT_CHANGED", "DEPENDENCY_CHANGED", "ADMIN", "RECOVERY"],
+      "dependencies": [
+        {"id": "wind", "requirement": "OPTIONAL", "maxAgeHours": 6, "onStale": "DEPENDENCY_STALE", "provisional": true},
+        {"id": "water-temp", "requirement": "OPTIONAL", "maxAgeHours": 48, "onStale": "DEPENDENCY_STALE", "provisional": true},
+        {"id": "water-clarity", "requirement": "OPTIONAL", "maxAgeHours": 72, "onStale": "DEPENDENCY_STALE", "provisional": true},
+        {"id": "lake-brain", "requirement": "OPTIONAL", "maxAgeHours": 24, "onStale": "DEPENDENCY_STALE", "provisional": true}
+      ],
+      "schedule": {"class": "INPUT_DRIVEN", "owner": "ORCHESTRATOR"},
+      "freshness": {"stalenessModel": "VERSION"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "researchVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
+      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["guntersville"], "customerPublication": false
+    },
+    "water-clarity": {
+      "displayName": "Water Clarity", "group": "ENVIRONMENT", "lifecycle": "CALIBRATION", "activityState": "ACTIVE",
+      "executionTarget": {"kind": "cloud-run-job", "job": "lake-surface-dispatch", "heavyJob": "lake-surface-daily", "startedByOrchestrator": false, "scoped": false, "scopedViaArgs": "--lakes", "needsIam": "roles/run.developer (jobs.run with args override)"},
+      "allowedTriggers": ["MANUAL", "VALIDATION", "ADMIN"],
+      "dependencies": [],
+      "schedule": {"class": "PAUSED", "owner": "LEGACY_SCHEDULER", "scheduler": "lake-surface-dispatch", "cron": "0 3 * * *", "tz": "America/Chicago", "pausedReason": "cost freeze 2026-10-14: no approved validation window; heavy fleet processing stays OFF"},
+      "freshness": {"staleAfterHours": 26}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
+      "costClass": "HEAVY", "resources": {"cpu": 4, "memoryGiB": 16, "tasks": 8}, "timeoutSeconds": 10800, "scopes": ["guntersville", "lake-hartwell"], "allowFleetRunNow": false, "customerPublication": false
+    },
+    "lake-brain": {
+      "displayName": "Lake Brain", "group": "FOUNDATION", "lifecycle": "CALIBRATION", "activityState": "MAINTENANCE",
+      "executionTarget": {"kind": "cloud-run-job", "job": "lake-brain", "startedByOrchestrator": true, "scoped": false},
+      "allowedTriggers": ["SCHEDULE", "MANUAL", "VALIDATION", "ADMIN", "RECOVERY"],
+      "dependencies": [],
+      "schedule": {"class": "VALIDATION_EXCEPTION", "owner": "LEGACY_SCHEDULER", "scheduler": "lake-brain-ledger-daily", "cron": "0 12 * * *", "tz": "UTC",
+                   "exception": {"gate": "Lake prospective prediction ledger (90 days for PARTIAL, 12 months for VALIDATED)", "notReconstructable": "predictions must be recorded before outcomes occur", "maxMonthlyUsd": 1, "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete", "approvedAt": "2026-10-14 (pending confirmation C-2)"}},
+      "freshness": {"staleAfterHours": 26, "note": "pre-production MAINTENANCE cadence: one ledger run per day (the Brain's own registry rule is 3 h)"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "modelVersion", "bindingVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
+      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}, "timeoutSeconds": 900, "scopes": ["pilots"], "customerPublication": false
+    },
+    "water-temp": {
+      "displayName": "Water Temperature", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
+      "executionTarget": {"kind": "cloud-run-job", "job": "water-temp-brain", "startedByOrchestrator": true, "scoped": false},
+      "allowedTriggers": ["MANUAL", "ADMIN"],
+      "dependencies": [],
+      "schedule": {"class": "MANUAL", "owner": "NONE", "relatedPaused": "water-temp-tva-archive"},
+      "freshness": {"staleAfterHours": 6}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
+      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}, "timeoutSeconds": 1200, "scopes": ["fleet"], "allowFleetRunNow": true, "customerPublication": false
+    },
+    "depth": {
+      "displayName": "Depth", "group": "ENVIRONMENT", "lifecycle": "PROFILED", "activityState": "PARKED",
+      "executionTarget": {"kind": "none", "note": "no cloud job; run locally from the Depth branch", "startedByOrchestrator": false, "scoped": false},
+      "allowedTriggers": ["MANUAL", "ADMIN"],
+      "dependencies": [{"id": "lake-brain", "requirement": "REQUIRED", "maxAgeHours": 168, "onStale": "MANUAL_APPROVAL", "provisional": true}],
+      "schedule": {"class": "MANUAL", "owner": "NONE"},
+      "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "supportedLakeCount"]},
+      "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false
+    },
+    "vegetation": {
+      "displayName": "Vegetation", "group": "ENVIRONMENT", "lifecycle": "SHADOW", "activityState": "PARKED",
+      "executionTarget": {"kind": "none", "note": "manual pilot runs only; do not create a second Sentinel schedule", "startedByOrchestrator": false, "scoped": false},
+      "allowedTriggers": ["MANUAL", "ADMIN"],
+      "dependencies": [{"id": "lake-brain", "requirement": "OPTIONAL", "maxAgeHours": 168, "onStale": "DEPENDENCY_STALE", "provisional": true}],
+      "schedule": {"class": "MANUAL", "owner": "NONE"},
+      "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version"]},
+      "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false
+    },
+    "sector-intelligence": {
+      "displayName": "Sector Intelligence", "group": "SYNTHESIS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
+      "executionTarget": {"kind": "in-process", "dir": "jobs/sector-intelligence-brain", "startedByOrchestrator": true, "scoped": true},
+      "allowedTriggers": ["MANUAL", "DEPENDENCY_CHANGED", "ADMIN"],
+      "dependencies": [
+        {"id": "wind", "requirement": "OPTIONAL", "maxAgeHours": 6, "onStale": "DEPENDENCY_STALE", "provisional": true},
+        {"id": "biological-state", "requirement": "OPTIONAL", "maxAgeHours": 168, "onStale": "DEPENDENCY_STALE", "provisional": true},
+        {"id": "water-clarity", "requirement": "OPTIONAL", "maxAgeHours": 72, "onStale": "DEPENDENCY_STALE", "provisional": true},
+        {"id": "water-temp", "requirement": "OPTIONAL", "maxAgeHours": 48, "onStale": "DEPENDENCY_STALE", "provisional": true},
+        {"id": "lake-brain", "requirement": "OPTIONAL", "maxAgeHours": 24, "onStale": "DEPENDENCY_STALE", "provisional": true}
+      ],
+      "schedule": {"class": "MANUAL", "owner": "NONE"},
+      "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registry:fingerprint"},
+      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["pilots"], "customerPublication": false
+    }
+  },
+  "jobs": {
+    "brain-orchestrator": {"brainId": null, "purpose": "control plane: decisions, control state, score publication", "kind": "cloud-run-job", "scheduler": "brain-orchestrator", "classification": "PAUSED", "validationOnly": false, "customerImpact": false, "estMonthlyUsdWhenEnabled": 1.7, "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}},
+    "wind-hourly": {"brainId": "wind", "purpose": "prospective reliability + provider-forecast archive (4 lakes)", "kind": "cloud-run-job", "scheduler": "wind-hourly", "classification": "VALIDATION_EXCEPTION", "validationOnly": true, "customerImpact": false, "estMonthlyUsdWhenEnabled": 4.1, "resources": {"cpu": 1, "memoryGiB": 2, "tasks": 1}},
+    "lake-brain-ledger-daily": {"brainId": "lake-brain", "purpose": "daily Lake pilot run for the prospective prediction ledger", "kind": "scheduler-only", "scheduler": "lake-brain-ledger-daily", "target": "lake-brain", "classification": "VALIDATION_EXCEPTION", "validationOnly": true, "customerImpact": false, "estMonthlyUsdWhenEnabled": 0.08, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
+    "lake-brain": {"brainId": "lake-brain", "purpose": "Lake Brain pilot run", "kind": "cloud-run-job", "scheduler": null, "classification": "MANUAL", "validationOnly": false, "customerImpact": false, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
+    "water-temp-brain": {"brainId": "water-temp", "purpose": "Water Temp fleet run", "kind": "cloud-run-job", "scheduler": null, "classification": "MANUAL", "validationOnly": false, "customerImpact": false, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
+    "water-temp-tva-archive": {"brainId": "water-temp", "purpose": "hourly TVA discharge/level archive", "kind": "cloud-run-job", "scheduler": "water-temp-tva-archive", "classification": "PAUSED", "validationOnly": false, "customerImpact": false, "estMonthlyUsdWhenEnabled": 1.6, "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}},
+    "lake-surface-dispatch": {"brainId": "water-clarity", "purpose": "daily Sentinel-2 scene discovery; starts the heavy job", "kind": "cloud-run-job", "scheduler": "lake-surface-dispatch", "classification": "PAUSED", "validationOnly": false, "customerImpact": false, "estMonthlyUsdWhenEnabled": 100, "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}},
+    "lake-surface-daily": {"brainId": "water-clarity", "purpose": "heavy scene processing (started by dispatch)", "kind": "cloud-run-job", "scheduler": "lake-surface-daily", "classification": "PAUSED", "validationOnly": false, "customerImpact": false, "resources": {"cpu": 4, "memoryGiB": 16, "tasks": 8}},
+    "hydrology-hourly": {"brainId": "water-clarity", "purpose": "hydrology inputs for Clarity", "kind": "cloud-run-job", "scheduler": "hydrology-hourly", "classification": "PAUSED", "validationOnly": false, "customerImpact": false},
+    "clarity-current-hourly": {"brainId": "water-clarity", "purpose": "current clarity hourly", "kind": "cloud-run-job", "scheduler": "clarity-current-hourly", "classification": "PAUSED", "validationOnly": false, "customerImpact": false},
+    "clarity-candidate-shadow": {"brainId": "water-clarity", "purpose": "candidate clarity shadow", "kind": "cloud-run-job", "scheduler": "clarity-candidate-shadow", "classification": "PAUSED", "validationOnly": false, "customerImpact": false}
+  }
+}

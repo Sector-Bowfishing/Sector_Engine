@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  :root { --bg:#f4f6f8; --card:#fff; --ink:#1b2430; --mute:#5b6675; --line:#d9dfe6; --blue:#1d5fbf;
+          --green:#157a3a; --greenbg:#e3f5ea; --red:#b3261e; --redbg:#fde8e6; --amber:#9a6200; --amberbg:#fff3d6; --grey:#6b7480; --greybg:#eceff3; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  header.top { position:sticky; top:0; z-index:20; background:#fff; border-bottom:2px solid var(--line); box-shadow:0 2px 6px rgba(0,0,0,.06); }
+  .bar { max-width:1180px; margin:0 auto; padding:10px 16px; }
+  .bar h1 { font-size:17px; margin:0 0 6px; }
+  .progress { height:12px; background:var(--greybg); border-radius:6px; overflow:hidden; display:flex; }
+  .progress .a { background:#2e9e5b; } .progress .r { background:#d4483f; } .progress .u { background:#e0a400; }
+  .stats { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:center; margin-top:6px; font-size:14px; }
+  .stats b { font-size:16px; }
+  .verdict { margin-top:8px; padding:8px 12px; border-radius:8px; font-weight:600; }
+  .verdict.green { background:var(--greenbg); color:var(--green); border:1px solid #9bd5b1; }
+  .verdict.red { background:var(--redbg); color:var(--red); border:1px solid #f0aaa5; }
+  .verdict.amber { background:var(--amberbg); color:var(--amber); border:1px solid #ecce85; }
+  .controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:8px; }
+  .controls label { font-size:13px; color:var(--mute); }
+  select, input[type=text], textarea { font:inherit; padding:5px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  button { font:inherit; cursor:pointer; }
+  .btn { padding:6px 12px; border-radius:6px; border:1px solid var(--line); background:#fff; }
+  .btn.primary { background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600; }
+  .btn.small { padding:3px 8px; font-size:13px; }
+  main { max-width:1180px; margin:0 auto; padding:14px 16px 80px; }
+  .what { background:#fff; border:1px solid var(--line); border-left:5px solid var(--blue); border-radius:8px; padding:12px 16px; margin-bottom:14px; }
+  .what h2 { margin:0 0 6px; font-size:16px; }
+  .what ul { margin:6px 0 6px 18px; padding:0; }
+  details.gloss summary { cursor:pointer; color:var(--blue); }
+  .warn { background:var(--amberbg); border:1px solid #ecce85; color:var(--amber); padding:8px 12px; border-radius:8px; margin-bottom:12px; font-weight:600; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; margin-bottom:16px; overflow:hidden; border-left:6px solid var(--line); }
+  .card.d-ACCEPT { border-left-color:#2e9e5b; } .card.d-REJECT { border-left-color:#d4483f; } .card.d-UNSURE { border-left-color:#e0a400; }
+  .card h3 { margin:0; font-size:18px; }
+  .card .head { padding:12px 16px; display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; border-bottom:1px solid var(--line); background:#fafbfc; }
+  .badge { display:inline-block; padding:2px 9px; border-radius:12px; font-size:12px; font-weight:700; letter-spacing:.3px; }
+  .b-PASS, .c-PASS { background:var(--greenbg); color:var(--green); } .b-FLAG, .c-FLAG { background:var(--amberbg); color:var(--amber); }
+  .c-FAIL { background:var(--redbg); color:var(--red); } .c-n-a { background:var(--greybg); color:var(--grey); }
+  .tag { background:var(--greybg); color:var(--mute); font-size:12px; padding:2px 8px; border-radius:10px; }
+  .q { padding:8px 16px 0; color:var(--mute); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:0 24px; padding:8px 16px 4px; }
+  @media (max-width:980px) { .grid { grid-template-columns:1fr; } }
+  .grid h4 { margin:10px 0 4px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--mute); }
+  dl { margin:0; } dl div { display:flex; gap:8px; padding:4px 0; border-bottom:1px dotted var(--line); }
+  dt { flex:0 0 140px; color:var(--mute); } dd { margin:0; flex:1; word-break:break-word; }
+  .names { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:4px 0; }
+  .names div { background:var(--greybg); border-radius:6px; padding:5px 8px; font-size:14px; }
+  .names small { display:block; color:var(--mute); font-size:11px; text-transform:uppercase; }
+  .sim { height:7px; background:var(--greybg); border-radius:4px; margin-top:4px; overflow:hidden; } .sim i { display:block; height:100%; background:var(--blue); }
+  .links a { display:inline-block; margin:2px 8px 2px 0; color:var(--blue); }
+  table.rules { width:100%; border-collapse:collapse; margin:6px 0; font-size:13.5px; }
+  table.rules td { padding:4px 8px; border-top:1px solid var(--line); vertical-align:top; }
+  table.rules td.id { width:150px; white-space:nowrap; font-weight:600; } table.rules td.res { width:66px; }
+  .chip { display:inline-block; min-width:48px; text-align:center; padding:1px 6px; border-radius:5px; font-weight:700; font-size:12px; }
+  .rec { margin:8px 16px; padding:8px 12px; border-radius:8px; font-size:14px; } .rec.PASS { background:var(--greenbg); } .rec.FLAG { background:var(--amberbg); }
+  .rec ul { margin:4px 0 0 18px; padding:0; }
+  .posthoc { margin:8px 16px; padding:8px 12px; border:1px dashed #aab2bd; background:#f1f3f6; border-radius:8px; color:#444; font-size:14px; }
+  .posthoc .lab { font-weight:700; color:var(--grey); text-transform:uppercase; font-size:12px; letter-spacing:.4px; }
+  .pf { margin:8px 16px; padding:8px 12px; background:var(--redbg); border:1px solid #f0aaa5; border-radius:8px; color:var(--red); }
+  .decide { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; padding:12px 16px 16px; background:#fafbfc; border-top:1px solid var(--line); }
+  .decide .btns { display:flex; gap:10px; }
+  .big { font-size:17px; font-weight:700; padding:12px 26px; border-radius:9px; border:2px solid; background:#fff; min-width:120px; }
+  .big.acc { color:var(--green); border-color:#2e9e5b; } .big.rej { color:var(--red); border-color:#d4483f; } .big.uns { color:var(--amber); border-color:#e0a400; }
+  .big.acc.on { background:#2e9e5b; color:#fff; } .big.rej.on { background:#d4483f; color:#fff; } .big.uns.on { background:#e0a400; color:#fff; }
+  .decide textarea { flex:1; min-width:240px; min-height:60px; resize:vertical; }
+  .when { font-size:12px; color:var(--mute); width:100%; }
+  footer { color:var(--mute); font-size:13px; margin-top:20px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+  <h1 id="title"></h1>
+  <div class="progress"><div class="a" id="pa"></div><div class="r" id="pr"></div><div class="u" id="pu"></div></div>
+  <div class="stats" id="stats"></div>
+  <div class="verdict amber" id="verdict"></div>
+  <div class="controls">
+    <label>Show <select id="filter">
+      <option value="all">All rows</option><option value="pending">Not yet decided</option><option value="flag">Computer says FLAG</option>
+      <option value="pass">Computer says PASS</option><option value="unsure">My Unsure rows</option><option value="rejected">My Rejects</option><option value="accepted">My Accepts</option></select></label>
+    <label>Sort by <select id="sort">
+      <option value="order">Group, then lake</option><option value="rec">FLAG first</option><option value="name">Lake name</option><option value="state">State</option>
+      <option value="decision">My decision</option><option value="gap">Biggest gap from full pool</option></select></label>
+    <label>Reviewer <input type="text" id="reviewer" placeholder="your name" size="14"></label>
+    <button class="btn primary" id="dl">Download my review (CSV)</button>
+    <button class="btn small" id="reset" title="Erase all decisions in this browser">Start over</button>
+  </div>
+</div></header>
+<main>
+  <div id="nostore" class="warn" style="display:none">This browser is not letting the page save your progress. Your choices stay on screen, but press "Download my review (CSV)" often so nothing is lost.</div>
+  <section class="what" id="what"></section>
+  <div id="cards"></div>
+  <footer id="foot"></footer>
+</main>
+<script id="data" type="application/json">__DATA_JSON__</script>
+<script>
+(function () {
+  "use strict";
+  var PACK = JSON.parse(document.getElementById("data").textContent);
+  var MODE = PACK.mode, ROWS = PACK.rows, META = PACK.meta, PACK_ID = PACK.packId;
+  var KEY = "lbr:" + PACK_ID;
+  var N = ROWS.length;
+  var state = { decisions: {}, reviewer: "" };
+  var canStore = true;
+  var cardEls = {};
+
+  /* ---------- storage ---------- */
+  function load() {
+    try { var s = window.localStorage.getItem(KEY); if (s) { var o = JSON.parse(s); if (o && o.decisions) { state = o; } } }
+    catch (e) { canStore = false; }
+    try { window.localStorage.setItem("lbr:probe", "1"); window.localStorage.removeItem("lbr:probe"); } catch (e2) { canStore = false; }
+  }
+  function save() {
+    if (!canStore) return;
+    try { window.localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { canStore = false; document.getElementById("nostore").style.display = "block"; }
+  }
+
+  /* ---------- exact binomial upper bound (Clopper-Pearson, one-sided) ---------- */
+  function logChoose(n, k) { return lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1); }
+  function lgamma(x) {
+    var c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+    var y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+    var s = 1.000000000190015; for (var j = 0; j < 6; j++) { y += 1; s += c[j] / y; }
+    return -t + Math.log(2.5066282746310005 * s / x);
+  }
+  function binomCdf(k, n, p) {
+    if (k >= n) return 1; if (p <= 0) return 1; if (p >= 1) return 0;
+    var lp = Math.log(p), lq = Math.log(1 - p), terms = [], m = -Infinity, i, t;
+    for (i = 0; i <= k; i++) { t = logChoose(n, i) + i * lp + (n - i) * lq; terms.push(t); if (t > m) m = t; }
+    var s = 0; for (i = 0; i < terms.length; i++) s += Math.exp(terms[i] - m);
+    return Math.min(1, Math.exp(m) * s);
+  }
+  function upperBound(k, n) {
+    if (n <= 0) return null; if (k >= n) return 1;
+    var lo = 0, hi = 1, mid;
+    for (var it = 0; it < 200; it++) { mid = (lo + hi) / 2; if (binomCdf(k, n, mid) > 0.05) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+  window.__upperBound = upperBound; /* exposed for the self-test in the build verification */
+  function pct(x) { return (100 * x).toFixed(1) + "%"; }
+
+  /* ---------- small DOM helper ---------- */
+  function h(tag, attrs, kids) {
+    var el = document.createElement(tag), k;
+    if (attrs) for (k in attrs) { if (k === "class") el.className = attrs[k]; else if (k === "text") el.textContent = attrs[k]; else el.setAttribute(k, attrs[k]); }
+    if (kids) kids.forEach(function (c) { if (c == null) return; el.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return el;
+  }
+  function num(v, nd) { return (v === null || v === undefined || v === "") ? "n/a" : Number(v).toLocaleString("en-US", { minimumFractionDigits: nd, maximumFractionDigits: nd }); }
+  function row(label, value) { var dd = h("dd"); if (typeof value === "string") dd.textContent = value; else if (value) dd.appendChild(value); return h("div", null, [h("dt", { text: label }), dd]); }
+  function link(text, url) { return h("a", { href: url, target: "_blank", rel: "noopener noreferrer", text: text }); }
+
+  /* ---------- the "what am I checking" box ---------- */
+  function buildWhat() {
+    var w = document.getElementById("what");
+    w.appendChild(h("h2", { text: "What am I checking?" }));
+    w.appendChild(h("p", { text: "Is this gauge really THIS lake's water level? " + (MODE === "sample"
+      ? "The computer matched each lake below to a gauge on the internet. You are checking a random sample of those matches. If almost all are right, the whole batch can be trusted."
+      : "These 57 matches are the ones the computer was least sure about (the lake level is far from the lake's normal full level, or the lake's 'normal' figure is uncertain, and only one agency backs the gauge). Every one is reviewed by hand.") }));
+    var ul = h("ul", null, [
+      h("li", { text: "Click the gauge link on the card (it opens the real public page). Is it on this lake, not on the river below the dam and not on a different lake?" }),
+      h("li", { text: "Does the level look right for this lake? The card compares it with the lake's normal 'full' level. Lakes are often lower than full; a few feet is normal, tens of feet needs an explanation." }),
+      h("li", { text: "Press Accept (right gauge, right lake), Reject (wrong gauge / wrong lake / nonsense) or Unsure (cannot tell). The computer's PASS/FLAG is only a hint." })
+    ]);
+    w.appendChild(ul);
+    if (MODE === "sample") w.appendChild(h("p", { text: "Accept rule: accept the whole batch when there is at most 1 reject in the sample of " + N + ". The bar above does the arithmetic as you go. The 95% upper bound is the highest true error rate that is still plausible given what you found: with " + N + " rows reviewed it is " + [0, 1, 2].map(function (k) { return pct(upperBound(k, N)) + " for " + k + " reject" + (k === 1 ? "" : "s"); }).join(", ") + "." }));
+    else w.appendChild(h("p", { text: "Rows marked 'post-hoc, not counted' show what later research waves did with the same lake. It is background only and does not make a row acceptable." }));
+    var d = h("details", { class: "gloss" }, [h("summary", { text: "Words used on the cards" }),
+      h("ul", null, [
+        h("li", { text: "Full pool: the elevation (feet above sea level) of the lake when it is full or at its normal level. Gauges report the same kind of number." }),
+        h("li", { text: "Tailwater: the river just below a dam. A tailwater gauge is the wrong gauge for the lake." }),
+        h("li", { text: "Datum: what 'zero' means for a gauge. We need feet above sea level." }),
+        h("li", { text: "Lake outline: the lake's shape on the map. 'Distance to outline' says how far the gauge is from the water." }),
+        h("li", { text: "Independent second source: a different agency measuring the same lake. Many lakes have only one agency; that is normal." }),
+        h("li", { text: "R1 to R9: the nine automatic checks the computer ran (position, identity, not a trap, state, unique, live, level, datum, agreement). Each card explains its own results in plain words." })])]);
+    w.appendChild(d);
+  }
+
+  /* ---------- cards ---------- */
+  function buildCard(r) {
+    var card = h("section", { class: "card", id: "c-" + r.seq });
+    var head = h("div", { class: "head" }, [
+      h("h3", { text: r.seq + ". " + r.name + ", " + r.state }),
+      h("span", { class: "badge b-" + r.rec, text: "Computer says " + r.rec }),
+      h("span", { class: "tag", text: r.stratum }),
+      h("span", { class: "tag", text: "found in wave " + r.wave })
+    ]);
+    card.appendChild(head);
+    card.appendChild(h("div", { class: "q", text: "Question: is “" + r.stationName + "” (" + r.sourceId + ") really the water level of " + r.name + ", " + r.state + "?" }));
+
+    var left = h("div"), right = h("div");
+    left.appendChild(h("h4", { text: "The gauge being proposed" }));
+    var dl1 = h("dl");
+    dl1.appendChild(row("Proposed source", r.sourceLabel));
+    dl1.appendChild(row("Kind of source", r.capPlain));
+    dl1.appendChild(row("Source id", r.sourceId));
+    var names = h("div", null, [h("div", { class: "names" }, [
+      h("div", null, [h("small", { text: "Lake name" }), document.createTextNode(r.nameMatch.lake)]),
+      h("div", null, [h("small", { text: "Gauge / station name" }), document.createTextNode(r.nameMatch.station)])]),
+      h("div", { text: "Name similarity " + num(r.nameMatch.sim, 2) + " (1.00 = same words, 0 = nothing in common)", style: "font-size:13px;color:#5b6675" }),
+      h("div", { class: "sim" }, [h("i", { style: "width:" + Math.round(r.nameMatch.sim * 100) + "%" })])]);
+    dl1.appendChild(row("Where the gauge is", r.dist.text));
+    var lv = r.level;
+    dl1.appendChild(row("Level when probed", num(lv.lastFt, 2) + " ft" + (lv.medFt !== null && lv.medFt !== undefined ? "  (30-day median " + num(lv.medFt, 2) + " ft)" : "")));
+    dl1.appendChild(row("Observed at", (lv.obsUtc || "n/a") + " UTC" + (lv.ageH !== null && lv.ageH !== undefined ? ", " + num(lv.ageH, 1) + " h before the " + lv.snapshot + " snapshot" : "")));
+    var lk = h("div", { class: "links" });
+    r.links.forEach(function (l) { lk.appendChild(link(l.l, l.u)); });
+    dl1.appendChild(row("See the real gauge", lk));
+    left.appendChild(names);
+    left.appendChild(dl1);
+
+    right.appendChild(h("h4", { text: "Sanity checks" }));
+    var dl2 = h("dl");
+    dl2.appendChild(row("Lake's full pool", num(r.pool.ft, 2) + " ft  (directory confidence: " + (r.pool.conf || "n/a") + "; basis: " + (r.pool.basis || "n/a") + ")"));
+    var sg = function (v) { return v === null || v === undefined ? "n/a" : (v > 0 ? "+" : "") + num(v, 2) + " ft"; };
+    dl2.appendChild(row("Level now minus full pool", sg(r.pool.diffNow) + "   (30-day median minus full pool: " + sg(r.pool.diff) + "; the computer's rule R7 tested the median)"));
+    if (r.second) {
+      var s = r.second, sd = h("div");
+      sd.appendChild(document.createTextNode(s.label + " — " + (s.name || "") + ": " + num(s.lastFt, 2) + " ft (observed " + (s.lastObs || "n/a") + "). "));
+      sd.appendChild(h("b", { text: "Difference from the proposed gauge: " + num(s.diff, 2) + " ft" }));
+      if (s.links && s.links.length) { var sl = h("div", { class: "links" }); s.links.forEach(function (l) { sl.appendChild(link(l.l, l.u)); }); sd.appendChild(sl); }
+      dl2.appendChild(row("Independent second source", sd));
+    } else dl2.appendChild(row("Independent second source", "None. Only one agency backs this gauge."));
+    if (r.alsoAgrees && r.alsoAgrees.length) dl2.appendChild(row("Other copies that agree", r.alsoAgrees.join("; ")));
+    dl2.appendChild(row("Years of history", r.history.years > 0 ? (r.history.years + " complete years" + (r.history.first ? " (since " + r.history.first + ")" : "")) : "None found in public data"));
+    if (r.nid) dl2.appendChild(row("Dam (National Inventory)", r.nid.id + (r.nid.name ? " — " + r.nid.name : "") + (r.nid.linked ? "" : "  [weak candidate only, match score " + num(r.nid.score, 0) + "; not used]")));
+    else dl2.appendChild(row("Dam (National Inventory)", "none linked"));
+    var loc = h("div");
+    loc.appendChild(document.createTextNode(r.lake.lat + ", " + r.lake.lon + "  "));
+    if (r.lake.map) loc.appendChild(link(r.lake.map.l, r.lake.map.u));
+    if (r.gauge.map) { loc.appendChild(document.createTextNode("  ")); loc.appendChild(link(r.gauge.map.l, r.gauge.map.u)); }
+    dl2.appendChild(row("Lake location", loc));
+    right.appendChild(dl2);
+
+    card.appendChild(h("div", { class: "grid" }, [left, right]));
+    if (r.pointFlag && r.pointFlag !== "none" && r.pointFlag !== "ok") {
+      card.appendChild(h("div", { class: "pf", text: "Map-point warning: the lake's coordinate in our directory is flagged '" + r.pointFlag + "'. The lake pin may not sit on the water; use the gauge link and lake name, not the pin." }));
+    }
+
+    var tb = h("table", { class: "rules" });
+    r.rules.forEach(function (x) {
+      tb.appendChild(h("tr", null, [h("td", { class: "id", text: x.id + " " + x.name }), h("td", { class: "res" }, [h("span", { class: "chip c-" + x.res, text: x.res })]), h("td", { text: x.meaning })]));
+    });
+    var tw = h("div", { style: "padding:0 16px" }, [h("h4", { style: "margin:10px 0 0;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:#5b6675", text: "The computer's nine checks (R1 to R9)" }), tb]);
+    card.appendChild(tw);
+
+    var rec = h("div", { class: "rec " + r.rec });
+    rec.appendChild(h("b", { text: "Computer's recommendation: " + r.rec }));
+    var ul = h("ul");
+    r.recReasons.forEach(function (t) { ul.appendChild(h("li", { text: t })); });
+    r.recNotes.forEach(function (t) { ul.appendChild(h("li", { text: "Note: " + t })); });
+    rec.appendChild(ul);
+    card.appendChild(rec);
+
+    if (r.postHoc) {
+      card.appendChild(h("div", { class: "posthoc" }, [h("div", { class: "lab", text: "Post-hoc, not counted (information only)" }),
+        h("div", { text: r.postHoc.outcome + ". " + r.postHoc.detail })]));
+    }
+
+    var notes = h("textarea", { placeholder: "Notes (optional): what you saw, why you were unsure" });
+    notes.addEventListener("input", function () { setNotes(r.id, notes.value); });
+    var when = h("div", { class: "when", id: "w-" + r.seq });
+    var bA = h("button", { class: "big acc", text: "Accept" }), bR = h("button", { class: "big rej", text: "Reject" }), bU = h("button", { class: "big uns", text: "Unsure" });
+    bA.addEventListener("click", function () { decide(r.id, "ACCEPT"); });
+    bR.addEventListener("click", function () { decide(r.id, "REJECT"); });
+    bU.addEventListener("click", function () { decide(r.id, "UNSURE"); });
+    card.appendChild(h("div", { class: "decide" }, [h("div", { class: "btns" }, [bA, bR, bU]), notes, when]));
+    cardEls[r.id] = { card: card, bA: bA, bR: bR, bU: bU, notes: notes, when: when, row: r };
+    return card;
+  }
+
+  /* ---------- decisions ---------- */
+  function get(id) { return state.decisions[id] || { d: "PENDING", n: "", t: "" }; }
+  function decide(id, d) {
+    var cur = get(id);
+    if (cur.d === d) { d = "PENDING"; }
+    state.decisions[id] = { d: d, n: cur.n, t: d === "PENDING" ? "" : new Date().toISOString() };
+    save(); paintCard(id); summary(); applyView();
+  }
+  function setNotes(id, text) {
+    var cur = get(id);
+    state.decisions[id] = { d: cur.d, n: text, t: cur.t };
+    save();
+  }
+  function paintCard(id) {
+    var e = cardEls[id], d = get(id);
+    e.card.className = "card" + (d.d !== "PENDING" ? " d-" + d.d : "");
+    e.bA.className = "big acc" + (d.d === "ACCEPT" ? " on" : ""); e.bR.className = "big rej" + (d.d === "REJECT" ? " on" : ""); e.bU.className = "big uns" + (d.d === "UNSURE" ? " on" : "");
+    e.when.textContent = d.t ? "Decided " + new Date(d.t).toLocaleString() + " — " + d.d : "Not decided yet";
+    if (e.notes.value !== d.n) e.notes.value = d.n;
+  }
+
+  /* ---------- summary ---------- */
+  function counts() {
+    var c = { ACCEPT: 0, REJECT: 0, UNSURE: 0, PENDING: 0 };
+    ROWS.forEach(function (r) { c[get(r.id).d]++; });
+    return c;
+  }
+  function summary() {
+    var c = counts(), reviewed = c.ACCEPT + c.REJECT;
+    document.getElementById("pa").style.width = (100 * c.ACCEPT / N) + "%";
+    document.getElementById("pr").style.width = (100 * c.REJECT / N) + "%";
+    document.getElementById("pu").style.width = (100 * c.UNSURE / N) + "%";
+    var st = document.getElementById("stats"); st.textContent = "";
+    var bar = function (t) { st.appendChild(h("span", null, t)); };
+    bar([h("b", { text: reviewed + " of " + N }), " reviewed"]);
+    bar([h("b", { text: String(c.ACCEPT), style: "color:#157a3a" }), " accepted"]);
+    bar([h("b", { text: String(c.REJECT), style: "color:#b3261e" }), " rejected"]);
+    bar([h("b", { text: String(c.UNSURE), style: "color:#9a6200" }), " unsure"]);
+    bar([h("b", { text: String(c.PENDING) }), " not yet looked at"]);
+    var v = document.getElementById("verdict");
+    if (MODE === "sample") {
+      var ub = upperBound(c.REJECT, reviewed);
+      bar([h("b", { text: c.REJECT + " reject" + (c.REJECT === 1 ? "" : "s") + " out of " + reviewed + " reviewed" })]);
+      bar([h("span", { text: "95% upper bound on the error rate: " }), h("b", { text: ub === null ? "n/a yet" : pct(ub) })]);
+      var bad = {}; ROWS.forEach(function (r) { if (get(r.id).d === "REJECT") bad[r.stratum] = (bad[r.stratum] || 0) + 1; });
+      var badList = Object.keys(bad);
+      var msg, cls;
+      if (c.REJECT >= 2) { cls = "red"; msg = "STOP: " + c.REJECT + " rejects. The rule (at most 1 error in " + N + ") is broken. Do not accept the batch; the groups with rejects are reviewed in full."; }
+      else if (reviewed === N) { cls = "green"; msg = "BATCH ACCEPTED: all " + N + " reviewed with " + c.REJECT + " reject" + (c.REJECT === 1 ? "" : "s") + " (rule: at most 1). " + (c.REJECT === 1 ? "The group with the reject still gets a full review." : "Download the CSV and hand it back."); }
+      else { cls = "amber"; msg = "In progress: " + (N - reviewed) + " still to decide" + (c.UNSURE ? " (" + c.UNSURE + " marked Unsure must be settled)" : "") + ". Accept the batch when there is at most 1 error in " + N + ". " + (c.REJECT === 1 ? "One reject so far (allowed, but its group gets a full review). " : ""); }
+      v.className = "verdict " + cls;
+      v.textContent = msg + (badList.length ? "  Groups with a reject: " + badList.join("; ") + "." : "");
+    } else {
+      v.className = "verdict " + (c.PENDING + c.UNSURE === 0 ? "green" : "amber");
+      v.textContent = (c.PENDING + c.UNSURE === 0) ? "All " + N + " flagged rows decided: " + c.ACCEPT + " accepted, " + c.REJECT + " rejected. Download the CSV and hand it back." :
+        "Full review of every flagged row: " + (c.PENDING + c.UNSURE) + " still to decide. Accepted " + c.ACCEPT + ", rejected " + c.REJECT + " so far.";
+    }
+  }
+
+  /* ---------- view: filter + sort ---------- */
+  function recRank(r) { return r.rec === "FLAG" ? 0 : 1; }
+  function applyView() {
+    var f = document.getElementById("filter").value, s = document.getElementById("sort").value;
+    var list = ROWS.slice();
+    var cmp = {
+      order: function (a, b) { return a.seq - b.seq; },
+      rec: function (a, b) { return recRank(a) - recRank(b) || a.seq - b.seq; },
+      name: function (a, b) { return a.name.localeCompare(b.name) || a.seq - b.seq; },
+      state: function (a, b) { return a.state.localeCompare(b.state) || a.name.localeCompare(b.name); },
+      decision: function (a, b) { var o = { REJECT: 0, UNSURE: 1, PENDING: 2, ACCEPT: 3 }; return o[get(a.id).d] - o[get(b.id).d] || a.seq - b.seq; },
+      gap: function (a, b) { return Math.abs(b.pool.diffNow || 0) - Math.abs(a.pool.diffNow || 0); }
+    }[s];
+    list.sort(cmp);
+    var host = document.getElementById("cards"), shown = 0;
+    list.forEach(function (r) {
+      var e = cardEls[r.id], d = get(r.id).d, ok = true;
+      if (f === "pending") ok = d === "PENDING"; else if (f === "flag") ok = r.rec === "FLAG"; else if (f === "pass") ok = r.rec === "PASS";
+      else if (f === "unsure") ok = d === "UNSURE"; else if (f === "rejected") ok = d === "REJECT"; else if (f === "accepted") ok = d === "ACCEPT";
+      e.card.style.display = ok ? "" : "none"; if (ok) shown++;
+      host.appendChild(e.card);
+    });
+    document.getElementById("foot").textContent = "Showing " + shown + " of " + N + " rows. Pack " + PACK_ID + ".";
+  }
+
+  /* ---------- CSV export ---------- */
+  function q(s) { s = (s === null || s === undefined) ? "" : String(s); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+  function exportCsv() {
+    var now = new Date().toISOString(), reviewer = state.reviewer || "";
+    var lines = [["pack_id", "lake_id", "lake_name", "stratum", "computer_recommendation", "decision", "notes", "decided_at_utc", "reviewer", "exported_at_utc"].join(",")];
+    ROWS.forEach(function (r) {
+      var d = get(r.id);
+      lines.push([PACK_ID, r.id, r.name, r.stratum, r.rec, d.d, d.n, d.t, reviewer, now].map(q).join(","));
+    });
+    var blob = new Blob(["﻿" + lines.join("\r\n") + "\r\n"], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "lake_brain_" + MODE + "_review_" + now.slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  }
+
+  /* ---------- init ---------- */
+  load();
+  if (!canStore) document.getElementById("nostore").style.display = "block";
+  document.getElementById("title").textContent = document.title + (MODE === "sample" ? " (" + N + " rows)" : "");
+  buildWhat();
+  ROWS.forEach(function (r) { document.getElementById("cards").appendChild(buildCard(r)); paintCard(r.id); });
+  document.getElementById("reviewer").value = state.reviewer || "";
+  document.getElementById("reviewer").addEventListener("input", function () { state.reviewer = this.value; save(); });
+  document.getElementById("filter").addEventListener("change", applyView);
+  document.getElementById("sort").addEventListener("change", applyView);
+  document.getElementById("dl").addEventListener("click", exportCsv);
+  document.getElementById("reset").addEventListener("click", function () {
+    if (window.confirm("Erase every decision and note on this page?")) { state = { decisions: {}, reviewer: state.reviewer }; save(); ROWS.forEach(function (r) { paintCard(r.id); }); summary(); applyView(); }
+  });
+  summary(); applyView();
+  window.__lbr = { counts: counts, state: function () { return state; }, decide: decide, exportCsv: exportCsv };
+})();
+</script>
+</body>
+</html>

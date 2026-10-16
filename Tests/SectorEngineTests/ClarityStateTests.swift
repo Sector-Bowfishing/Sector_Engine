@@ -341,7 +341,7 @@ final class ClarityStateTests: XCTestCase {
 
     func testASceneThatCaughtRunoffIsMarkedClearerNowOnceFlowFalls() {
         // 1.2 in fell in the 72 h before a 2-day-old scene; flow was 60 cfs at the scene, 10 now, dry since
-        let r = rain(storms: [(4 * 24, 3 * 24, 1.2 / 24)])
+        let r = rain(storms: [(4.0 * 24.0, 3.0 * 24.0, 1.2 / 24.0)])
         let f = flow(.measuredUSGS, base: 10, rise: (40..<60).map { (Double($0), 60) })
         let s = state(anchor(daysAgo: 2), r, measured: f)
         XCTAssertEqual(s.runoff.state, .recovering)
