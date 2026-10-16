@@ -151,10 +151,7 @@ python -m sector_wind.brain publish --store gs://sector-wind-candidate/wind/v1 -
 ## Deployment (DONE 2026-10-12, approved by Michael)
 
 1. **Fetch tables:** the 4 frozen development fetch tables were copied to `gs://sector-wind-candidate/wind/v1/fetch/dev/<lake>.windfetch.json.gz`. Each table SHA-256 was verified before upload.
-2. **IAM:** `wind-hourly-job@sector-9393c.iam.gserviceaccount.com` was granted `roles/firebasedatabase.admin` on `sector-9393c`.
-   - An instance-scoped IAM condition (`resource.name.endsWith("/instances/sector-brain")`) was tried first. RTDB returned 401 for 15 min, so **RTDB does not honour it**, and the plain grant replaced it.
-   - The role is project-wide, so it also reaches the app databases. `RtdbWriter` refuses any URL other than `sector-brain` (code guard).
-   - A stricter option for later is an Admin SDK identity with `databaseAuthVariableOverride` plus Brain rules that allow only that uid to write the wind paths. That rules change belongs in Sector_Ops.
+2. **Identity:** Wind uses a dedicated runtime identity with the minimum required approved permissions. Identity, grant and hardening details are recorded privately (CERT-9) and are not part of this public document. In code, `RtdbWriter` refuses any database URL other than `sector-brain`. Server-side write restriction is tracked by the production write security gate (`PRODUCTION_WRITE_SECURITY_GATE_OPEN`; see `docs/architecture/certification/wind/WIND_CUTOVER_PLAN.md` steps 13-14).
 3. **Job:** `wind-hourly` was redeployed from `brain/wind` (generation 3). All existing settings were kept; env added: `SECTOR_WIND_BRAIN_RTDB_URL=https://sector-brain.firebaseio.com`, `SECTOR_WIND_BUILD=brain/wind@<sha>`.
    - Verified by execution `wind-hourly-b67j6`: archive OK, `windbrain ok`, `publishMode: scheduled`.
    - The earlier 401 runs also proved the isolation: the archive still succeeded.

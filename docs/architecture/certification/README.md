@@ -25,7 +25,7 @@ Background inventory and matrices: `../data/` (partly superseded; see the header
 7. The seven data classes; irreplaceable classes require a private versioned backup that is not the local Mac.
 8. Path ownership enforced as `brainId → schema → path family`; cross-domain writes are rejected; 14-step retirement; duplication never justifies deletion.
 9. Species identity is owned by the Species Registry (Engine Platform); Fish Brain owns species intelligence; Lake Brain owns lake species presence and waterbody environment; Policy owns legality and conservation.
-10. Research root `/Users/mcather/Desktop/Development/Sector Research` with `shared/` and per-Brain folders; Wind's canonical local workspace is `Sector Research/wind-brain`.
+10. Research root `Sector Research/` (physical location resolved locally by the research operator, never recorded in this repository) with `shared/` and per-Brain folders; Wind's canonical local workspace is `Sector Research/wind-brain`.
 11. Certification never moves a score; BEFORE/AFTER under the same definition.
 
 ## CERT decisions (Michael, 2026-10-14)

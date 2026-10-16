@@ -20,8 +20,8 @@ For the next session: **WIND BRAIN — ARCHITECTURE CERTIFICATION V1**. Start on
 
 ## C. Local research inventory (step 2)
 Search the whole development root, then compare with the new workspace:
-- [ ] `/Users/mcather/Desktop/Development/Sector Research/wind-brain` (canonical LOCAL Wind workspace going forward; **empty** at 2026-10-14).
-- [ ] `/Users/mcather/Desktop/Development/Sector Research/shared` (empty at 2026-10-14). Note anything Wind-owned that should live there (e.g. provider docs), but do not move yet.
+- [ ] `Sector Research/wind-brain` (canonical LOCAL Wind workspace going forward; **empty** at 2026-10-14).
+- [ ] `Sector Research/shared` (empty at 2026-10-14). Note anything Wind-owned that should live there (e.g. provider docs), but do not move yet.
 - [ ] `Development/Sector_Research_Data/wind-brain` (≈ 52 MB: `cycles/`, `live-meta/`, `live-meta-mirror/`, `out/`, `registry/`, pickled row sets, ATL13 raw manifest).
 - [ ] Engine worktrees: `Sector_Engine-wind`, `Sector_Engine-wind-adoption`, `Sector_Engine-wind-research`, `Sector_Engine-wind-deploy` (untracked/ignored artifacts included).
 - [ ] Engine branches: `docs/wind-brain-research`, `feat/wind-brain-adoption` (`c6f6232e`), `deploy/wind-internal-validation` (`413bbbae`), `brain/wind`, `feat/orchestrator-wind-score-durability`, `intelligence/wind`; repo dirs `research/wind-brain`, `jobs/wind-hourly/research`, `jobs/wind-hourly/sector_wind`.

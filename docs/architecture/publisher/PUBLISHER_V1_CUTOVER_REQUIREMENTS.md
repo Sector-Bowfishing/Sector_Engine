@@ -52,7 +52,7 @@ Live rules were **not** inspected or changed; the rules file is not in this repo
 Each change is applied one tested step at a time, with Ops regression checks, only after the Ops write calls are removed (P7).
 
 ## 4. IAM / service identity changes required later
-Described **privately** (`~/Desktop/Sector Handoffs/…`), per CERT-9. Public summary of the target only: specialist identities hold no database write capability; only the Publisher identity holds database write; Ops has none; Brain identities cannot reach customer app databases; the Publisher identity has no delete on the history bucket; local development runs default to dry-run. Verified per Brain against the identity actually used, never assumed.
+Described **privately** (in the private handoff folder, not in this repository), per CERT-9. Public summary of the target only: specialist identities hold no database write capability; only the Publisher identity holds database write; Ops has none; Brain identities cannot reach customer app databases; the Publisher identity has no delete on the history bucket; local development runs default to dry-run. Verified per Brain against the identity actually used, never assumed.
 
 ## 5. Resources still needing Michael's approval (none created)
 GCS artifact/history bucket (CERT-3) · research-backup bucket (CERT-4; separate task, not Publisher) · Publisher/API Cloud Run service · Publisher service account and any IAM binding · RTDB rules deploy · any Scheduler entry · secrets · customer-facing changes.

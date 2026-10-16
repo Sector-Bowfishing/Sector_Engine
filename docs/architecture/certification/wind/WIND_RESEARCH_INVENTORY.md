@@ -33,7 +33,7 @@ Read-only. **Nothing was moved, copied or deleted.** `OBSOLETE_CANDIDATE` never 
 | cache dir: `live-mirror/`, `archive/` (copies of the bucket archive, includes sealed-H2 values) | 54 MB | HISTORY / sealed OBSERVATION_VALIDATION | bucket | bucket | KEEP; verify bucket completeness before treating as redundant. H2 stays sealed |
 | cache dir: `windninja/`, `swan/` (negative results) | 55 MB | RESEARCH | no | none | ADOPT or KEEP (low priority) |
 | cache dir: `venv/` | ~535 MB | RUNTIME, `OBSOLETE_CANDIDATE` | n/a | n/a | never delete without approval |
-| Handoffs (`Sector Handoffs/Sector Engine/Wind Brain/`, 3 files + 1 orchestrator durability handoff) | 24 KB | HISTORY | local only | none | KEEP, never delete |
+| Handoffs (the private Wind handoff folder, 3 files + 1 orchestrator durability handoff) | 24 KB | HISTORY | local only | none | KEEP, never delete |
 | Ops `windBrain.tsx` (consumer, 2 identical copies) | 15 KB | RUNTIME consumer | yes | origin | not research |
 | ~35 sibling worktrees carrying `jobs/wind-hourly` | — | duplicates | yes | — | no action |
 
