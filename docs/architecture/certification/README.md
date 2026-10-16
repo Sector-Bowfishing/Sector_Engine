@@ -42,3 +42,16 @@ Background inventory and matrices: `../data/` (partly superseded; see the header
 | CERT-9 | Writer-identity hardening | Required; exact IAM/service-account implementation decided privately during each Brain certification | **APPROVED IN PRINCIPLE** |
 
 Approval of these decisions authorizes **no implementation by itself**. Bucket creation, Publisher build/deploy, rules/IAM changes, scheduler changes, research moves and path changes each still need their own session-level approval.
+
+## Wind certification record (2026-10-15)
+Status **`WIND_PUBLISHER_V2_ADOPTION_READY`** (Phase 3, 2026-10-15; PARTIAL — LIVE CUTOVER PENDING; Phase 2 `SHADOW_INTEGRATION_READY`; Phase 1 `BLOCKED: PUBLISHER`); see `wind/WIND_CERTIFICATION_STATUS.md` and the baseline, inventory, ownership matrix, reader/writer trace, score reconciliation, publish artifact and migration plan in `wind/`. Public-safe only; security and private-location detail is in the private Wind handoff.
+
+Phase 2 adds `wind/WIND_RESEARCH_PRESERVATION_PLAN.md`, `WIND_RESEARCH_MANIFEST_PLAN.md`, `WIND_PUBLISHER_SHADOW_INTEGRATION_REPORT.md`, `WIND_SNAPSHOT_MIGRATION_PLAN.md`, `WIND_CUTOVER_PLAN.md` and the Wind artifact builder (`jobs/wind-hourly/sector_wind/brain/artifact.py`, shadow-only, not wired into the job).
+
+Phase 3 adds `wind/WIND_PUBLISHER_V2_ADOPTION_REPORT.md` (Publisher Gate P adoption, one-artifact v2 bundle, equivalence result) and rewrites `wind/WIND_PUBLISH_ARTIFACT_V1.md` for `publish-artifact-v2`.
+
+Preservation pass (2026-10-15): `wind/WIND_RESEARCH_PRESERVATION_PLAN.md` §6 records the verified local snapshot and the pending storage approval (`WIND_RESEARCH_PRESERVATION_BLOCKED_ON_STORAGE_APPROVAL`, since resolved: CERT-4 research backup bucket created, snapshot uploaded and SHA-256 verified; `WIND_RESEARCH_PRESERVATION_READY_FOR_REPO_MIGRATION`, plan §7).
+
+Research workspace adoption (2026-10-15): `wind/WIND_RESEARCH_PRESERVATION_PLAN.md` §8 (`WIND_RESEARCH_WORKSPACE_ADOPTED`).
+
+Repository Phase 2 (2026-10-16): Wind's permanent home is `brains/wind/`; record `wind/WIND_REPOSITORY_MIGRATION_V1.md` (`WIND_REPOSITORY_PHASE_2_COMPLETE`, structural only). Code paths named in the earlier Wind records under `jobs/wind-hourly/` now live under `brains/wind/` (map in that record §3).

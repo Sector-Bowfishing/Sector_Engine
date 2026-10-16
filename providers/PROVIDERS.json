@@ -1,5 +1,42 @@
 {
   "schemaVersion": "1.0.0",
-  "description": "Provider catalog (format only). Phase 1A deliberately registers no providers: populating it is provider-inventory work done per provider in its migration phase (TVA consolidation blocked on D8; Open-Meteo behavior unchanged). Each entry needs providerId, acquisitionOwner, healthOwner, authorizedConsumers, costClass, licenseRef; domainInterpreter is declared by the consumer in brain.json.",
-  "providers": []
+  "description": "Provider catalog. Entries are added only when a migrated Brain needs them (Repository Phase 2: Wind's three Brain-exclusive sources). Each entry: providerId, acquisitionOwner, healthOwner, authorizedConsumers, costClass, licenseRef; domainInterpreter is declared by the consumer in brain.json. Not yet registered: every other provider (inventory adoption is deliberate; TVA consolidation blocked on D8; Open-Meteo behavior unchanged).",
+  "providers": [
+    {
+      "providerId": "noaa-nbm-v5",
+      "displayName": "NOAA National Blend of Models v5 (forecast)",
+      "acquisitionOwner": "wind",
+      "healthOwner": "wind",
+      "authorizedConsumers": [
+        "wind"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive single-consumer acquisition inside brains/wind/runtime (sector_wind.ingest); may stay with Wind (Target architecture \u00a74a).",
+      "licenseRef": "Public NOAA/IEM data per brains/wind/research/README.md (licence notes); recorded in WIND_RESEARCH_PRESERVATION_PLAN.md \u00a74"
+    },
+    {
+      "providerId": "noaa-rtma-ru",
+      "displayName": "NOAA RTMA Rapid Update (analysis)",
+      "acquisitionOwner": "wind",
+      "healthOwner": "wind",
+      "authorizedConsumers": [
+        "wind"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive single-consumer acquisition inside brains/wind/runtime (sector_wind.ingest); may stay with Wind (Target architecture \u00a74a).",
+      "licenseRef": "Public NOAA/IEM data per brains/wind/research/README.md (licence notes); recorded in WIND_RESEARCH_PRESERVATION_PLAN.md \u00a74"
+    },
+    {
+      "providerId": "iem-metar-wind",
+      "displayName": "Iowa Environmental Mesonet METAR/AWOS (observed wind)",
+      "acquisitionOwner": "wind",
+      "healthOwner": "wind",
+      "authorizedConsumers": [
+        "wind"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive single-consumer acquisition inside brains/wind/runtime (sector_wind.ingest); may stay with Wind (Target architecture \u00a74a).",
+      "licenseRef": "Public NOAA/IEM data per brains/wind/research/README.md (licence notes); recorded in WIND_RESEARCH_PRESERVATION_PLAN.md \u00a74"
+    }
+  ]
 }

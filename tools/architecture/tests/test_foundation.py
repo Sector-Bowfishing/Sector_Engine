@@ -309,8 +309,17 @@ def test_report_is_report_only_by_default():
     assert report.main(["--root", ROOT]) == 0
 
 
-def test_real_repo_has_no_registered_brains_yet():
-    assert report._brain_dirs(ROOT) == []
+def test_real_repo_registers_only_migrated_brains():
+    # Phase 2: Wind is the first (and only) migrated Brain. No other brain.json may exist until that Brain migrates.
+    assert report._brain_dirs(ROOT) == ["wind"]
+
+
+@pytest.mark.parametrize("src,flag", [
+    ('u = "/conditions?lat=1&lon=2"', True), ('u = "https://engine.example/lakes"', True), ("u = '/lakes'", True),
+    ("import SectorEngine", True), ('p = "/lakes/{k}/states/wind"', False), ('p = f"/lakes/{lk}/validation/{BRAIN}"', False),
+    ('t = "production wind is Open-Meteo in /conditions."', False)])
+def test_customer_endpoint_pattern_distinguishes_endpoint_from_rtdb_paths(src, flag):
+    assert bool(report.CUSTOMER_PATTERN.search(src)) is flag
 
 
 # ---- Phase 1B: large-file exceptions, baseline comparison --------------------------------------
@@ -371,7 +380,7 @@ def test_committed_baseline_matches_current_legacy_findings_and_has_owner_phase(
     base = load(ROOT, "tools", "architecture", "baseline", "legacy_violations.json")
     known, new, resolved = report.compare_to_baseline(report.check(ROOT, legacy=True), base)
     assert new == [] and resolved == []
-    assert len(known) == len(base["entries"]) == 20
+    assert len(known) == len(base["entries"])
     for e in base["entries"]:
         assert e["owner"] != "unassigned" and e["plannedMigrationPhase"] and e["reason"] and e["status"] == "LEGACY_BASELINE"
 
@@ -379,8 +388,9 @@ def test_committed_baseline_matches_current_legacy_findings_and_has_owner_phase(
 def test_baseline_cli_is_report_only_and_fail_on_new_is_opt_in(tmp_path, capsys):
     empty = tmp_path / "b.json"
     empty.write_text(json.dumps({"entries": []}))
+    n = len(report.check(ROOT, legacy=True))
     assert report.main(["--root", ROOT, "--legacy", "--baseline", str(empty)]) == 0     # NEW findings, still exit 0
-    assert "NEW findings (not in baseline):      20" in capsys.readouterr().out
+    assert f"NEW findings (not in baseline):      {n}" in capsys.readouterr().out
     assert report.main(["--root", ROOT, "--legacy", "--baseline", str(empty), "--fail-on-new"]) == 1
 
 

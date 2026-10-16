@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "wind",
+  "displayName": "Wind Brain",
+  "humanName": "Wind",
+  "domain": "condition",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "job",
+    "language": "python",
+    "entrypoint": "brains/wind/runtime/main.py",
+    "trigger": {"kind": "schedule", "staleHours": 6}
+  },
+  "publishes": [
+    {
+      "contractId": "wind-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/wind/contracts/wind-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/wind", "/lakes/{k}/profiles/wind", "/lakes/{k}/validation/wind",
+        "/lakeFleet/{k}/slots/wind", "/lakeFleet/{k}/readiness/wind", "/lakeFleet/{k}/modelVersions/wind",
+        "/brains/wind/{child}", "/validation/wind", "/health/brains/wind/{child}", "/activity/{event}",
+        "/sources/{id}", "/health/sources/{id}"
+      ]
+    }
+  ],
+  "consumes": [
+    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0"}
+  ],
+  "providers": [
+    {"providerId": "noaa-nbm-v5", "domainInterpreter": true},
+    {"providerId": "noaa-rtma-ru", "domainInterpreter": true},
+    {"providerId": "iem-metar-wind", "domainInterpreter": true}
+  ],
+  "researchWorkspace": {"workspaceId": "wind-brain"},
+  "score": {"type": "ENGINE_READINESS_SCORE", "path": "/scores/wind"},
+  "customerIntegrationMode": "none",
+  "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
+  "authorizedConsumers": ["ops", "sector-intelligence", "biological-state"],
+  "tests": ["brains/wind/tests", "brains/wind/research/tools/tests"],
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+}

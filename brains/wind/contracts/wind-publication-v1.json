@@ -1,0 +1,167 @@
+{
+  "baselineScopes": {
+    "wind-lake-state-v1": [
+      "lake-live",
+      "lake-static",
+      "fleet-readiness"
+    ]
+  },
+  "brainId": "wind",
+  "builder": "brains/wind/runtime/sector_wind/brain/artifact.py",
+  "compatibilityProjections": [
+    {
+      "id": "wind-snapshot-copy-v1",
+      "source": "/lakes/{k}/states/wind",
+      "target": "/snapshots/{k}/latest/wind"
+    },
+    {
+      "id": "wind-snapshot-brainversion-v1",
+      "source": "/lakes/{k}/states/wind",
+      "target": "/snapshots/{k}/latest/brainVersions/wind"
+    }
+  ],
+  "contractId": "wind-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (wind_specs, wind_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "descriptor",
+      "versions",
+      "activeProductionModel",
+      "researchCandidate",
+      "scores",
+      "readinessDefinitions",
+      "stateKinds"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "supportedLakeCount",
+      "profiledLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "staleRule",
+      "lastSuccessfulRun",
+      "lastError",
+      "deploymentVersion",
+      "breakdowns",
+      "runsPerMinute",
+      "updatedAt",
+      "publishMode"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "deleteFamilies": [
+        "/lakes/{k}/states/wind",
+        "/lakes/{k}/profiles/wind",
+        "/lakes/{k}/validation/wind",
+        "/lakeFleet/{k}/slots/wind",
+        "/lakeFleet/{k}/readiness/wind",
+        "/lakeFleet/{k}/modelVersions/wind"
+      ],
+      "deleteReasons": [
+        "LAKE_LEFT_FLEET",
+        "EVIDENCE_REMOVED"
+      ],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/wind",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakes/{k}/profiles/wind",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakes/{k}/validation/wind",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/wind",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/wind",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/wind",
+          "status": "DERIVED_PROJECTION"
+        }
+      ],
+      "schemaId": "wind-lake-state-v1",
+      "volatileContract": "wind-volatile-v1"
+    },
+    {
+      "deleteFamilies": [
+        "/brains/wind/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/wind/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/wind",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/wind/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "schemaId": "wind-registry-v1",
+      "volatileContract": "wind-volatile-v1"
+    },
+    {
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/sources/{id}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/sources/{id}",
+          "status": "CANONICAL"
+        }
+      ],
+      "schemaId": "wind-source-registry-v1",
+      "volatileContract": "wind-volatile-v1"
+    }
+  ],
+  "sourcesAcquired": [
+    "iem-metar-wind",
+    "noaa-nbm-v5",
+    "noaa-rtma-ru"
+  ],
+  "status": "SHADOW (Publisher Gate P); not wired into the wind-hourly job; not a production contract until cutover",
+  "version": "1.0.0"
+}

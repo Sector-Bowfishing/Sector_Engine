@@ -3,15 +3,15 @@
 # Swift is a separate workflow (swift-tests.yml); the repository foundation / architecture / verification
 # gates are in foundation-verification.yml.
 #
-# Phase 1B: the suite list below is EXPLICIT because the Brains are not migrated yet (no brain.json exists).
-# It becomes derived from the Brain Registry as each Brain migrates; do not "fix" it by inventing brain.json files.
+# Legacy job suites are listed EXPLICITLY (those Brains are not migrated; no brain.json). Migrated Brains (brains/*/brain.json:
+# Wind since Repository Phase 2) run in the `registered-brains` job from their canonical location. Do not invent brain.json files.
 name: python-jobs-tests
 on:
   push:
     branches: [main]
-    paths: ["jobs/**", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
   pull_request:
-    paths: ["jobs/**", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
 permissions:
   contents: read
 jobs:
@@ -50,10 +50,37 @@ jobs:
                    jobs/lake-brain/bindings jobs/lake-brain/ledger jobs/lake-brain/validation jobs/lake-brain/review; do
             echo "== $d"; (cd "$d" && python -m pytest -q)
           done
-      - name: wind-hourly (network tests deselected by pytest.ini; eccodes/shapely/pyproj only for Stage 3A tests)
+
+  registered-brains:
+    name: registered Brains (brains/*/brain.json; Wind)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Declared dependency sources: each Brain's runtime/requirements.txt (production image deps) and
+      # research/tools/requirements.txt (research-tool extras). pytest.ini in each Brain declares its import roots.
+      - name: Install declared Brain dependencies
         run: |
-          pip install eccodes shapely pyproj || true
-          (cd jobs/wind-hourly && python -m pytest -q)
+          pip install pytest
+          for b in brains/*/; do
+            [ -f "$b/brain.json" ] || continue
+            [ -f "$b/runtime/requirements.txt" ] && pip install -r "$b/runtime/requirements.txt"
+            [ -f "$b/research/tools/requirements.txt" ] && pip install -r "$b/research/tools/requirements.txt"
+          done
+      - name: Brain suites from their canonical location (network tests deselected by each pytest.ini)
+        run: |
+          set -e
+          for b in brains/*/; do
+            [ -f "$b/brain.json" ] || continue
+            echo "== $b"; (cd "$b" && python -m pytest -q)
+          done
+      - name: Wind package gates (staging, import boundary, clean copy; dependency gates mandatory here)
+        env:
+          SECTOR_REQUIRE_WIND_DEPS: "1"
+        run: python -m pytest -q verification/integration/test_wind_package.py
 
   lake-geometry:
     name: lake-geometry (declared requirements.txt)
