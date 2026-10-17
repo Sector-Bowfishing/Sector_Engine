@@ -200,7 +200,9 @@ def load_health_world(live) -> dict:
 def build_health_state(world: dict, control_state: dict, jobs_records: dict, now: dt.datetime, *, scheduler_states: dict | None = None,
                        sources: dict | None = None, source_health: dict | None = None, root: str | None = None, code_version: str | None = None,
                        registered: dict | None = None) -> dict:
-    """The whole control/healthV1 node from the published world + the platform registries. Pure given its inputs."""
+    """The whole control/healthV1 node from the published world + the platform registries. Pure given its inputs. `code_version` is the
+    Orchestrator image evaluating now: it identifies the SNAPSHOT (summary.codeVersion), never a Brain's run (a health-record run carries the
+    record's own deployedVersion or nothing)."""
     m, regs, health = world["manifest"], world["registries"], world["health"]
     registered = DD.load_registered_brains(root) if registered is None else registered
     signals_registry = SG.load() if os.path.exists(SG.DEFAULT_PATH) else None
@@ -210,6 +212,9 @@ def build_health_state(world: dict, control_state: dict, jobs_records: dict, now
     for e in (control_state.get("executions") or {}).values():
         if isinstance(e, dict) and e.get("brainId"):
             execs.setdefault(e["brainId"], []).append(e)
+    all_execs = [e for es in execs.values() for e in es]
+    source = {"controlState": C.NODE, "executions": len(all_execs),
+              "newestExecutionStartedAt": max((e.get("startedAt") or "" for e in all_execs), default=None) or None}
     brains = {}
     for bid, g in graph["brains"].items():
         b = (m.get("brains") or {}).get(bid) or {}
@@ -219,5 +224,5 @@ def build_health_state(world: dict, control_state: dict, jobs_records: dict, now
                                       now=now, expected_interval_hours=expected_interval_hours(b, jobs_records, scheduler_states),
                                       brain_health_record=(health or {}).get(bid) if isinstance((health or {}).get(bid), dict) else None,
                                       registry=regs.get(bid) if isinstance(regs.get(bid), dict) else None,
-                                      runtime_configured=(tgt.get("kind") != "none") if tgt else True, code_version=code_version)
-    return BH.health_state(brains, graph, signals_registry, now, engine_mode=m.get("engineMode"))
+                                      runtime_configured=(tgt.get("kind") != "none") if tgt else True)
+    return BH.health_state(brains, graph, signals_registry, now, engine_mode=m.get("engineMode"), code_version=code_version, source=source)
