@@ -17,8 +17,8 @@ from .registry import ALL_LIFECYCLES, PRODUCTION_LIFECYCLES, VALIDATION_WORDS, R
 from .refs import SHA, UUID4
 ISO_UTC = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z")
 SCOPE = re.compile(r"[A-Za-z0-9_][A-Za-z0-9._-]{0,63}")
-ENVELOPE_KEYS = {"envelope", "lineage", "mutations", "scope", "freshness", "approvalRef"}
-V2_KEYS = {"envelope", "lineage", "sections", "approvalRef"}
+ENVELOPE_KEYS = {"envelope", "lineage", "mutations", "scope", "freshness", "approvalRef", "consumed"}
+V2_KEYS = {"envelope", "lineage", "sections", "approvalRef", "consumed"}      # consumed: ACTUAL consumption lineage (consumption-lineage-v1), optional
 SECTION_KEYS = {"artifactSchema", "scope", "freshness", "mutations"}
 LINEAGE_REQUIRED = ("schema", "brainId", "artifactSchema", "knowledgeRelease", "manifestRef", "manifestSha256", "codeVersion", "executionId",
                     "inputFingerprint", "outputFingerprint", "generatedAt", "lifecycle", "reviewStatus", "validationStatus")
@@ -195,6 +195,20 @@ def check_lineage(lineage: dict, require_release: bool = False, release_resolver
                 v.append(Violation("RELEASE_UNRESOLVED", "knowledgeRelease/manifestRef did not resolve to the declared manifestSha256"))
     if v:
         raise Rejected(v)
+
+
+# ---- stage 5c: actual consumption lineage (optional envelope slot) -----------------------------------------------------------------------------
+def check_consumed(raw: dict) -> list | None:
+    """`consumed` is OPTIONAL. Present -> every entry must be valid consumption-lineage-v1 (consumption.validate_consumed): a declared
+    consumer list copied into it would still validate structurally; whether it is TRUE is the producer's accountability, reconciled by
+    dependency_health against the declarations. It is excluded from the semantic fingerprint by construction (canonical.material)."""
+    if "consumed" not in raw:
+        return None
+    from ..consumption import finalize
+    try:
+        return finalize(raw["consumed"])
+    except ValueError as e:
+        _one("CONSUMED_INVALID", str(e)[:300])
 
 
 # ---- stage 5: lifecycle, review/validation semantics, freshness -------------------------------------------------------------------------------

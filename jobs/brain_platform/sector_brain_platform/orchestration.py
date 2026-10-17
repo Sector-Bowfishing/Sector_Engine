@@ -464,6 +464,9 @@ def execution_record(execution_id: str, brain_id: str, trigger: str, reason: str
            "outputChanged": output_changed, "cost": estimate_cost(resources, secs)}
     if ended:
         rec.update({"endedAt": iso(ended), "durationSeconds": round(secs, 1)})
+    if consumed is not None:
+        from .execution_health import normalize_consumed
+        consumed = normalize_consumed(consumed)                     # canonical: contract keys only, type from the id prefix, sorted by dependencyId
     for k, v in (("scope", scope), ("inputFingerprint", input_fp), ("downstream", [{"brainId": d["brainId"], "decision": d["decision"]} for d in downstream] if downstream else None),
                  ("failureClass", failure_class), ("codeVersion", code_version), ("consumed", consumed), ("jobId", job_id)):
         if v is not None:

@@ -1,0 +1,1381 @@
+{
+ "brains": {
+  "biological-state": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "DEGRADED",
+     "freshness": "UNKNOWN",
+     "process": "HEALTHY",
+     "publish": "UNKNOWN"
+    },
+    "status": "DEGRADED",
+    "unknownComponents": [
+     "freshness",
+     "publish"
+    ],
+    "worstComponent": "dependencies"
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "biological-state",
+   "dependencies": {
+    "basis": "RECORDED_CONSUMPTION",
+    "counts": {
+     "byFreshness": {
+      "FRESH": 1,
+      "UNAVAILABLE": 1,
+      "UNKNOWN": 2
+     },
+     "byStatus": {
+      "DEGRADED": 1,
+      "SATISFIED": 1,
+      "UNKNOWN": 2
+     },
+     "byType": {
+      "BRAIN": 4
+     }
+    },
+    "declared": 4,
+    "declaredVsActual": {
+     "consumptionRecorded": true,
+     "declaredAndConsumed": [
+      "brain:wind"
+     ],
+     "declaredNotConsumed": [
+      "brain:lake-brain",
+      "brain:water-clarity",
+      "brain:water-temp"
+     ]
+    },
+    "dependencyHealth": "DEGRADED",
+    "freshnessBasis": "no REQUIRED dependency declared (optional dependencies do not bound freshness): not assessable",
+    "freshnessHealth": "UNKNOWN",
+    "reasons": [
+     "brain:lake-brain: UNKNOWN / UNKNOWN",
+     "brain:water-clarity: DEGRADED / UNAVAILABLE",
+     "brain:water-temp: UNKNOWN / UNKNOWN"
+    ],
+    "rows": [
+     {
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 24.0,
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:lake-brain",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/lake-brain",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "only lastSuccessfulRun is published: process history, not evidence freshness",
+       "owner publishes no freshness verdict or rule",
+       "consumer rule maxAgeHours 24.0 cannot be applied: no evidence age",
+       "freshness unknown: not assumed fresh"
+      ],
+      "requirement": "OPTIONAL",
+      "staleAfterHours": 3.0
+     },
+     {
+      "availability": "MISSING",
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:water-clarity",
+      "dependencyStatus": "DEGRADED",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNAVAILABLE",
+      "legacy": true,
+      "reasons": [
+       "dependency state not published / not found"
+      ],
+      "requirement": "OPTIONAL"
+     },
+     {
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 48.0,
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:water-temp",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/water-temp",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "only lastSuccessfulRun is published: process history, not evidence freshness",
+       "owner publishes no freshness verdict or rule",
+       "consumer rule maxAgeHours 48.0 cannot be applied: no evidence age",
+       "freshness unknown: not assumed fresh"
+      ],
+      "requirement": "OPTIONAL",
+      "staleAfterHours": 6.0
+     },
+     {
+      "ageBasis": "EVIDENCE_OBSERVED",
+      "ageHoursAtConsumption": 0.58,
+      "availability": "AVAILABLE",
+      "consumedAt": "2026-10-16T18:19:00Z",
+      "consumerMaxAgeHours": 6.0,
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:wind",
+      "dependencyStatus": "SATISFIED",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:19:00Z",
+      "evaluationBasis": "RECORDED_CONSUMPTION",
+      "evidenceObservedAt": "2026-10-16T17:44:00Z",
+      "freshnessAuthority": "OWNER_VERDICT",
+      "freshnessStatus": "FRESH",
+      "generatedAt": "2026-10-16T17:54:48Z",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/wind",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "owner reports FRESH"
+      ],
+      "requirement": "OPTIONAL",
+      "staleAfter": "2026-10-16T19:20:00Z"
+     }
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "no REQUIRED dependency declared (optional dependencies do not bound freshness): not assessable",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNKNOWN"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "cadence": {
+     "lastSuccessAgeHours": 0.0,
+     "reason": "no recurring cadence declared (manual / event-driven)",
+     "status": "NOT_EXPECTED"
+    },
+    "codeVersions": [
+     "brain-orchestrator@synthetic"
+    ],
+    "consecutiveFailures": 0,
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 1,
+    "lastExecution": {
+     "codeVersion": "brain-orchestrator@synthetic",
+     "endedAt": "2026-10-16T18:20:00Z",
+     "executionId": "biological-state-20261016T181900Z",
+     "executionStatus": "SUCCEEDED",
+     "startedAt": "2026-10-16T18:19:00Z",
+     "trigger": "INPUT_CHANGED"
+    },
+    "lastSuccessful": {
+     "codeVersion": "brain-orchestrator@synthetic",
+     "endedAt": "2026-10-16T18:20:00Z",
+     "executionId": "biological-state-20261016T181900Z",
+     "executionStatus": "SUCCEEDED",
+     "startedAt": "2026-10-16T18:19:00Z",
+     "trigger": "INPUT_CHANGED"
+    },
+    "lastSuccessfulAt": "2026-10-16T18:20:00Z",
+    "processHealth": "HEALTHY",
+    "running": false,
+    "subjectId": "biological-state",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  },
+  "depth": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "UNKNOWN",
+     "freshness": "UNKNOWN",
+     "process": "NOT_CONFIGURED",
+     "publish": "UNKNOWN"
+    },
+    "notConfigured": true,
+    "reason": "no component is known",
+    "status": "UNKNOWN",
+    "unknownComponents": [
+     "process",
+     "dependencies",
+     "freshness",
+     "publish"
+    ]
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "depth",
+   "dependencies": {
+    "basis": "CURRENT_STATE",
+    "counts": {
+     "byFreshness": {
+      "UNKNOWN": 1
+     },
+     "byStatus": {
+      "UNKNOWN": 1
+     },
+     "byType": {
+      "BRAIN": 1
+     }
+    },
+    "declared": 1,
+    "declaredVsActual": {
+     "consumptionRecorded": false,
+     "note": "the producer recorded no consumed-dependency lineage for this execution"
+    },
+    "dependencyHealth": "UNKNOWN",
+    "freshnessBasis": "worst REQUIRED dependency",
+    "freshnessHealth": "UNKNOWN",
+    "reasons": [
+     "brain:lake-brain: UNKNOWN / UNKNOWN"
+    ],
+    "rows": [
+     {
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 168.0,
+      "declaringBrain": "depth",
+      "dependencyId": "brain:lake-brain",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/lake-brain",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "only lastSuccessfulRun is published: process history, not evidence freshness",
+       "owner publishes no freshness verdict or rule",
+       "consumer rule maxAgeHours 168.0 cannot be applied: no evidence age",
+       "freshness unknown: not assumed fresh"
+      ],
+      "requirement": "REQUIRED",
+      "staleAfterHours": 3.0
+     }
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "worst REQUIRED dependency",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNKNOWN"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "cadence": {
+     "reason": "no recurring cadence declared (manual / event-driven)",
+     "status": "NOT_EXPECTED"
+    },
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 0,
+    "processHealth": "NOT_CONFIGURED",
+    "processHealthReasons": [
+     "registered Brain without a runtime"
+    ],
+    "subjectId": "depth",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  },
+  "lake-brain": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "SATISFIED",
+     "freshness": "UNKNOWN",
+     "process": "UNKNOWN",
+     "publish": "UNKNOWN"
+    },
+    "reason": "process health unknown: an execution outcome is the floor of operational health",
+    "status": "UNKNOWN",
+    "unknownComponents": [
+     "process",
+     "freshness",
+     "publish"
+    ]
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "lake-brain",
+   "dependencies": {
+    "basis": "CURRENT_STATE",
+    "declared": 0,
+    "declaredVsActual": {
+     "consumptionRecorded": false,
+     "note": "the producer recorded no consumed-dependency lineage for this execution"
+    },
+    "dependencyHealth": "SATISFIED",
+    "freshnessBasis": "no declared dependency carries evidence",
+    "freshnessHealth": "UNKNOWN",
+    "reasons": [
+     "no declared dependencies: nothing to require; evidence freshness is not assessable from declarations"
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "no declared dependency carries evidence",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNKNOWN"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "cadence": {
+     "reason": "no recurring cadence declared (manual / event-driven)",
+     "status": "NOT_EXPECTED"
+    },
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 0,
+    "processHealth": "UNKNOWN",
+    "processHealthReasons": [
+     "no execution on record"
+    ],
+    "subjectId": "lake-brain",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  },
+  "sector-intelligence": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "DEGRADED",
+     "freshness": "UNKNOWN",
+     "process": "UNKNOWN",
+     "publish": "UNKNOWN"
+    },
+    "reason": "process health unknown: an execution outcome is the floor of operational health",
+    "status": "UNKNOWN",
+    "unknownComponents": [
+     "process",
+     "freshness",
+     "publish"
+    ]
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "sector-intelligence",
+   "dependencies": {
+    "basis": "CURRENT_STATE",
+    "counts": {
+     "byFreshness": {
+      "FRESH": 1,
+      "UNAVAILABLE": 1,
+      "UNKNOWN": 3
+     },
+     "byStatus": {
+      "DEGRADED": 1,
+      "SATISFIED": 1,
+      "UNKNOWN": 3
+     },
+     "byType": {
+      "BRAIN": 5
+     }
+    },
+    "declared": 5,
+    "declaredVsActual": {
+     "consumptionRecorded": false,
+     "note": "the producer recorded no consumed-dependency lineage for this execution"
+    },
+    "dependencyHealth": "DEGRADED",
+    "freshnessBasis": "no REQUIRED dependency declared (optional dependencies do not bound freshness): not assessable",
+    "freshnessHealth": "UNKNOWN",
+    "reasons": [
+     "brain:biological-state: UNKNOWN / UNKNOWN",
+     "brain:lake-brain: UNKNOWN / UNKNOWN",
+     "brain:water-clarity: DEGRADED / UNAVAILABLE",
+     "brain:water-temp: UNKNOWN / UNKNOWN"
+    ],
+    "rows": [
+     {
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 168.0,
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:biological-state",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/biological-state",
+       "stateVersion": "b1"
+      },
+      "reasons": [
+       "only lastSuccessfulRun is published: process history, not evidence freshness",
+       "owner publishes no freshness verdict or rule",
+       "consumer rule maxAgeHours 168.0 cannot be applied: no evidence age",
+       "freshness unknown: not assumed fresh"
+      ],
+      "requirement": "OPTIONAL"
+     },
+     {
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 24.0,
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:lake-brain",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/lake-brain",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "only lastSuccessfulRun is published: process history, not evidence freshness",
+       "owner publishes no freshness verdict or rule",
+       "consumer rule maxAgeHours 24.0 cannot be applied: no evidence age",
+       "freshness unknown: not assumed fresh"
+      ],
+      "requirement": "OPTIONAL",
+      "staleAfterHours": 3.0
+     },
+     {
+      "availability": "MISSING",
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:water-clarity",
+      "dependencyStatus": "DEGRADED",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNAVAILABLE",
+      "legacy": true,
+      "reasons": [
+       "dependency state not published / not found"
+      ],
+      "requirement": "OPTIONAL"
+     },
+     {
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 48.0,
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:water-temp",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/water-temp",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "only lastSuccessfulRun is published: process history, not evidence freshness",
+       "owner publishes no freshness verdict or rule",
+       "consumer rule maxAgeHours 48.0 cannot be applied: no evidence age",
+       "freshness unknown: not assumed fresh"
+      ],
+      "requirement": "OPTIONAL",
+      "staleAfterHours": 6.0
+     },
+     {
+      "ageBasis": "EVIDENCE_OBSERVED",
+      "ageHoursAtConsumption": 0.6,
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 6.0,
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:wind",
+      "dependencyStatus": "SATISFIED",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "evidenceObservedAt": "2026-10-16T17:44:00Z",
+      "freshnessAuthority": "OWNER_VERDICT",
+      "freshnessStatus": "FRESH",
+      "generatedAt": "2026-10-16T17:54:48Z",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/wind",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "owner reports fresh (state envelope)"
+      ],
+      "requirement": "OPTIONAL",
+      "staleAfterHours": 1.5
+     }
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "no REQUIRED dependency declared (optional dependencies do not bound freshness): not assessable",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNKNOWN"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "cadence": {
+     "reason": "no recurring cadence declared (manual / event-driven)",
+     "status": "NOT_EXPECTED"
+    },
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 0,
+    "processHealth": "UNKNOWN",
+    "processHealthReasons": [
+     "no execution on record"
+    ],
+    "subjectId": "sector-intelligence",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  },
+  "vegetation": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "UNKNOWN",
+     "freshness": "UNKNOWN",
+     "process": "NOT_CONFIGURED",
+     "publish": "UNKNOWN"
+    },
+    "notConfigured": true,
+    "reason": "no component is known",
+    "status": "UNKNOWN",
+    "unknownComponents": [
+     "process",
+     "dependencies",
+     "freshness",
+     "publish"
+    ]
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "vegetation",
+   "dependencies": {
+    "basis": "CURRENT_STATE",
+    "counts": {
+     "byFreshness": {
+      "UNKNOWN": 1
+     },
+     "byStatus": {
+      "UNKNOWN": 1
+     },
+     "byType": {
+      "BRAIN": 1
+     }
+    },
+    "declared": 1,
+    "declaredVsActual": {
+     "consumptionRecorded": false,
+     "note": "the producer recorded no consumed-dependency lineage for this execution"
+    },
+    "dependencyHealth": "UNKNOWN",
+    "freshnessBasis": "no REQUIRED dependency declared (optional dependencies do not bound freshness): not assessable",
+    "freshnessHealth": "UNKNOWN",
+    "reasons": [
+     "brain:lake-brain: UNKNOWN / UNKNOWN"
+    ],
+    "rows": [
+     {
+      "availability": "AVAILABLE",
+      "consumerMaxAgeHours": 168.0,
+      "declaringBrain": "vegetation",
+      "dependencyId": "brain:lake-brain",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "BRAIN",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "legacy": true,
+      "lineageRef": {
+       "ref": "/brains/lake-brain",
+       "stateVersion": "1"
+      },
+      "reasons": [
+       "only lastSuccessfulRun is published: process history, not evidence freshness",
+       "owner publishes no freshness verdict or rule",
+       "consumer rule maxAgeHours 168.0 cannot be applied: no evidence age",
+       "freshness unknown: not assumed fresh"
+      ],
+      "requirement": "OPTIONAL",
+      "staleAfterHours": 3.0
+     }
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "no REQUIRED dependency declared (optional dependencies do not bound freshness): not assessable",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNKNOWN"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "cadence": {
+     "reason": "no recurring cadence declared (manual / event-driven)",
+     "status": "NOT_EXPECTED"
+    },
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 0,
+    "processHealth": "NOT_CONFIGURED",
+    "processHealthReasons": [
+     "registered Brain without a runtime"
+    ],
+    "subjectId": "vegetation",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  },
+  "water-clarity": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "SATISFIED",
+     "freshness": "UNKNOWN",
+     "process": "UNKNOWN",
+     "publish": "UNKNOWN"
+    },
+    "reason": "process health unknown: an execution outcome is the floor of operational health",
+    "status": "UNKNOWN",
+    "unknownComponents": [
+     "process",
+     "freshness",
+     "publish"
+    ]
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "water-clarity",
+   "dependencies": {
+    "basis": "CURRENT_STATE",
+    "declared": 0,
+    "declaredVsActual": {
+     "consumptionRecorded": false,
+     "note": "the producer recorded no consumed-dependency lineage for this execution"
+    },
+    "dependencyHealth": "SATISFIED",
+    "freshnessBasis": "no declared dependency carries evidence",
+    "freshnessHealth": "UNKNOWN",
+    "reasons": [
+     "no declared dependencies: nothing to require; evidence freshness is not assessable from declarations"
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "no declared dependency carries evidence",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNKNOWN"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "cadence": {
+     "reason": "no recurring cadence declared (manual / event-driven)",
+     "status": "NOT_EXPECTED"
+    },
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 0,
+    "processHealth": "UNKNOWN",
+    "processHealthReasons": [
+     "no execution on record"
+    ],
+    "subjectId": "water-clarity",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  },
+  "water-temp": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "SATISFIED",
+     "freshness": "UNKNOWN",
+     "process": "UNKNOWN",
+     "publish": "UNKNOWN"
+    },
+    "reason": "process health unknown: an execution outcome is the floor of operational health",
+    "status": "UNKNOWN",
+    "unknownComponents": [
+     "process",
+     "freshness",
+     "publish"
+    ]
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "water-temp",
+   "dependencies": {
+    "basis": "CURRENT_STATE",
+    "declared": 0,
+    "declaredVsActual": {
+     "consumptionRecorded": false,
+     "note": "the producer recorded no consumed-dependency lineage for this execution"
+    },
+    "dependencyHealth": "SATISFIED",
+    "freshnessBasis": "no declared dependency carries evidence",
+    "freshnessHealth": "UNKNOWN",
+    "reasons": [
+     "no declared dependencies: nothing to require; evidence freshness is not assessable from declarations"
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "no declared dependency carries evidence",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNKNOWN"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "cadence": {
+     "reason": "no recurring cadence declared (manual / event-driven)",
+     "status": "NOT_EXPECTED"
+    },
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 0,
+    "processHealth": "UNKNOWN",
+    "processHealthReasons": [
+     "no execution on record"
+    ],
+    "subjectId": "water-temp",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  },
+  "wind": {
+   "aggregate": {
+    "inputs": {
+     "dependencies": "UNSATISFIED",
+     "freshness": "UNAVAILABLE",
+     "process": "HEALTHY",
+     "publish": "UNKNOWN"
+    },
+    "status": "FAILED",
+    "unknownComponents": [
+     "publish"
+    ],
+    "worstComponent": "dependencies"
+   },
+   "asOf": "2026-10-16T18:20:00Z",
+   "brainId": "wind",
+   "dependencies": {
+    "basis": "CURRENT_STATE",
+    "counts": {
+     "byFreshness": {
+      "FRESH": 1,
+      "UNAVAILABLE": 2,
+      "UNKNOWN": 1
+     },
+     "byStatus": {
+      "SATISFIED": 1,
+      "UNKNOWN": 1,
+      "UNSATISFIED": 2
+     },
+     "byType": {
+      "PLATFORM_REGISTRY": 1,
+      "PROVIDER_DATA": 3
+     }
+    },
+    "declared": 4,
+    "declaredVsActual": {
+     "consumptionRecorded": false,
+     "note": "the producer recorded no consumed-dependency lineage for this execution"
+    },
+    "dependencyHealth": "UNSATISFIED",
+    "freshnessBasis": "worst REQUIRED dependency",
+    "freshnessHealth": "UNAVAILABLE",
+    "reasons": [
+     "provider:iem-metar-wind: UNSATISFIED / UNAVAILABLE",
+     "provider:noaa-rtma-ru: UNSATISFIED / UNAVAILABLE",
+     "registry:lakes: UNKNOWN / UNKNOWN"
+    ],
+    "rows": [
+     {
+      "availability": "MISSING",
+      "declaringBrain": "wind",
+      "dependencyId": "provider:iem-metar-wind",
+      "dependencyStatus": "UNSATISFIED",
+      "dependencyType": "PROVIDER_DATA",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNAVAILABLE",
+      "reasons": [
+       "requirement not declared: treated as REQUIRED (fail closed)",
+       "dependency state not published / not found"
+      ],
+      "requirement": "REQUIRED"
+     },
+     {
+      "ageBasis": "EVIDENCE_OBSERVED",
+      "ageHoursAtConsumption": 1.2,
+      "availability": "AVAILABLE",
+      "declaringBrain": "wind",
+      "dependencyId": "provider:noaa-nbm-v5",
+      "dependencyStatus": "SATISFIED",
+      "dependencyType": "PROVIDER_DATA",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "evidenceObservedAt": "2026-10-16T17:08:00Z",
+      "freshnessAuthority": "OWNER_RULE",
+      "freshnessStatus": "FRESH",
+      "lineageRef": {
+       "ref": "/sources/noaa-nbm-v5"
+      },
+      "reasons": [
+       "requirement not declared: treated as REQUIRED (fail closed)",
+       "source health HEALTHY (owner-reported)",
+       "owner rule staleAfterHours 3.0: age 1.2 h"
+      ],
+      "requirement": "REQUIRED",
+      "staleAfterHours": 3.0
+     },
+     {
+      "availability": "MISSING",
+      "declaringBrain": "wind",
+      "dependencyId": "provider:noaa-rtma-ru",
+      "dependencyStatus": "UNSATISFIED",
+      "dependencyType": "PROVIDER_DATA",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNAVAILABLE",
+      "reasons": [
+       "requirement not declared: treated as REQUIRED (fail closed)",
+       "dependency state not published / not found"
+      ],
+      "requirement": "REQUIRED"
+     },
+     {
+      "availability": "UNKNOWN",
+      "declaringBrain": "wind",
+      "dependencyId": "registry:lakes",
+      "dependencyStatus": "UNKNOWN",
+      "dependencyType": "PLATFORM_REGISTRY",
+      "evaluatedAt": "2026-10-16T18:20:00Z",
+      "evaluationBasis": "CURRENT_STATE",
+      "freshnessAuthority": "UNKNOWN",
+      "freshnessStatus": "UNKNOWN",
+      "reasons": [
+       "platform registry 'lakes' publishes no contract version yet (structure only)"
+      ],
+      "requirement": "REQUIRED"
+     }
+    ],
+    "version": "dependency-health-v1"
+   },
+   "domainValidation": {
+    "reason": "the Brain publishes no validation verdict",
+    "source": "none",
+    "status": "UNKNOWN"
+   },
+   "freshness": {
+    "basis": "worst REQUIRED dependency",
+    "note": "evidence freshness of the REQUIRED dependencies; independent of process.lastSuccessfulAt",
+    "status": "UNAVAILABLE"
+   },
+   "healthModel": "brain-health-v1",
+   "process": {
+    "brainReportedHealth": "HEALTHY",
+    "cadence": {
+     "expectedIntervalHours": 1.0,
+     "lastSuccessAgeHours": 0.53,
+     "overdueAfterHours": 1.5,
+     "reason": "last success 0.53 h ago within 1.5 h",
+     "status": "ON_CADENCE"
+    },
+    "codeVersions": [
+     "synthetic-commit"
+    ],
+    "consecutiveFailures": 0,
+    "evaluatedAt": "2026-10-16T18:20:00Z",
+    "executionCount": 1,
+    "lastExecution": {
+     "codeVersion": "synthetic-commit",
+     "endedAt": "2026-10-16T17:48:00Z",
+     "executionId": "wind-hourly-synthetic-1",
+     "executionStatus": "SUCCEEDED",
+     "startedAt": "2026-10-16T17:45:00Z",
+     "trigger": "SCHEDULE"
+    },
+    "lastSuccessful": {
+     "codeVersion": "synthetic-commit",
+     "endedAt": "2026-10-16T17:48:00Z",
+     "executionId": "wind-hourly-synthetic-1",
+     "executionStatus": "SUCCEEDED",
+     "startedAt": "2026-10-16T17:45:00Z",
+     "trigger": "SCHEDULE"
+    },
+    "lastSuccessfulAt": "2026-10-16T17:48:00Z",
+    "processHealth": "HEALTHY",
+    "running": false,
+    "subjectId": "wind",
+    "version": "execution-health-v1"
+   },
+   "publish": {
+    "reason": "no Publisher publication record (Publisher not wired for this Brain)",
+    "status": "UNKNOWN"
+   }
+  }
+ },
+ "dependencies": {
+  "brains": {
+   "biological-state": {
+    "declarationsKnown": true,
+    "legacy": true,
+    "rows": [
+     {
+      "declaredIn": "control_manifest.json#brains.biological-state.dependencies[3]",
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:lake-brain",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 24.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "lake-brain"
+     },
+     {
+      "declaredIn": "control_manifest.json#brains.biological-state.dependencies[2]",
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:water-clarity",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 72.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "water-clarity"
+     },
+     {
+      "declaredIn": "control_manifest.json#brains.biological-state.dependencies[1]",
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:water-temp",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 48.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "water-temp"
+     },
+     {
+      "declaredIn": "control_manifest.json#brains.biological-state.dependencies[0]",
+      "declaringBrain": "biological-state",
+      "dependencyId": "brain:wind",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 6.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "wind"
+     }
+    ],
+    "source": "control_manifest.json (legacy, platform-authored)"
+   },
+   "depth": {
+    "declarationsKnown": true,
+    "legacy": true,
+    "rows": [
+     {
+      "declaredIn": "control_manifest.json#brains.depth.dependencies[0]",
+      "declaringBrain": "depth",
+      "dependencyId": "brain:lake-brain",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 168.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "REQUIRED",
+      "requirementDeclared": true,
+      "target": "lake-brain"
+     }
+    ],
+    "source": "control_manifest.json (legacy, platform-authored)"
+   },
+   "lake-brain": {
+    "declarationsKnown": true,
+    "legacy": true,
+    "source": "control_manifest.json (legacy, platform-authored)"
+   },
+   "sector-intelligence": {
+    "declarationsKnown": true,
+    "legacy": true,
+    "rows": [
+     {
+      "declaredIn": "control_manifest.json#brains.sector-intelligence.dependencies[1]",
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:biological-state",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 168.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "biological-state"
+     },
+     {
+      "declaredIn": "control_manifest.json#brains.sector-intelligence.dependencies[4]",
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:lake-brain",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 24.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "lake-brain"
+     },
+     {
+      "declaredIn": "control_manifest.json#brains.sector-intelligence.dependencies[2]",
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:water-clarity",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 72.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "water-clarity"
+     },
+     {
+      "declaredIn": "control_manifest.json#brains.sector-intelligence.dependencies[3]",
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:water-temp",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 48.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "water-temp"
+     },
+     {
+      "declaredIn": "control_manifest.json#brains.sector-intelligence.dependencies[0]",
+      "declaringBrain": "sector-intelligence",
+      "dependencyId": "brain:wind",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 6.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "wind"
+     }
+    ],
+    "source": "control_manifest.json (legacy, platform-authored)"
+   },
+   "vegetation": {
+    "declarationsKnown": true,
+    "legacy": true,
+    "rows": [
+     {
+      "declaredIn": "control_manifest.json#brains.vegetation.dependencies[0]",
+      "declaringBrain": "vegetation",
+      "dependencyId": "brain:lake-brain",
+      "dependencyType": "BRAIN",
+      "freshnessPolicy": {
+       "maxAgeHours": 168.0,
+       "reason": "platform execution manifest tolerance (provisional)"
+      },
+      "legacy": true,
+      "requirement": "OPTIONAL",
+      "requirementDeclared": true,
+      "target": "lake-brain"
+     }
+    ],
+    "source": "control_manifest.json (legacy, platform-authored)"
+   },
+   "water-clarity": {
+    "declarationsKnown": true,
+    "legacy": true,
+    "source": "control_manifest.json (legacy, platform-authored)"
+   },
+   "water-temp": {
+    "declarationsKnown": true,
+    "legacy": true,
+    "source": "control_manifest.json (legacy, platform-authored)"
+   },
+   "wind": {
+    "declarationsKnown": true,
+    "rows": [
+     {
+      "contractId": "registry.lakes",
+      "declaredIn": "brain.json#consumes[0]",
+      "declaringBrain": "wind",
+      "dependencyId": "registry:lakes",
+      "dependencyType": "PLATFORM_REGISTRY",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED",
+      "requirementDeclared": true,
+      "resolved": true,
+      "target": "lakes"
+     },
+     {
+      "declaredIn": "brain.json#providers[2]",
+      "declaringBrain": "wind",
+      "dependencyId": "provider:iem-metar-wind",
+      "dependencyType": "PROVIDER_DATA",
+      "domainInterpreter": true,
+      "requirementDeclared": false,
+      "resolved": true,
+      "target": "iem-metar-wind"
+     },
+     {
+      "declaredIn": "brain.json#providers[0]",
+      "declaringBrain": "wind",
+      "dependencyId": "provider:noaa-nbm-v5",
+      "dependencyType": "PROVIDER_DATA",
+      "domainInterpreter": true,
+      "requirementDeclared": false,
+      "resolved": true,
+      "target": "noaa-nbm-v5"
+     },
+     {
+      "declaredIn": "brain.json#providers[1]",
+      "declaringBrain": "wind",
+      "dependencyId": "provider:noaa-rtma-ru",
+      "dependencyType": "PROVIDER_DATA",
+      "domainInterpreter": true,
+      "requirementDeclared": false,
+      "resolved": true,
+      "target": "noaa-rtma-ru"
+     }
+    ],
+    "source": "brain.json"
+   }
+  },
+  "edges": [
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:lake-brain",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "biological-state"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:water-clarity",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "biological-state"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:water-temp",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "biological-state"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:wind",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "biological-state"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:lake-brain",
+    "legacy": true,
+    "requirement": "REQUIRED",
+    "to": "depth"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:biological-state",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "sector-intelligence"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:lake-brain",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "sector-intelligence"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:water-clarity",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "sector-intelligence"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:water-temp",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "sector-intelligence"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:wind",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "sector-intelligence"
+   },
+   {
+    "dependencyType": "BRAIN",
+    "from": "brain:lake-brain",
+    "legacy": true,
+    "requirement": "OPTIONAL",
+    "to": "vegetation"
+   },
+   {
+    "dependencyType": "PROVIDER_DATA",
+    "from": "provider:iem-metar-wind",
+    "to": "wind"
+   },
+   {
+    "dependencyType": "PROVIDER_DATA",
+    "from": "provider:noaa-nbm-v5",
+    "to": "wind"
+   },
+   {
+    "dependencyType": "PROVIDER_DATA",
+    "from": "provider:noaa-rtma-ru",
+    "to": "wind"
+   },
+   {
+    "dependencyType": "PLATFORM_REGISTRY",
+    "from": "registry:lakes",
+    "requirement": "REQUIRED",
+    "to": "wind"
+   }
+  ],
+  "version": "dependency-declarations-v1"
+ },
+ "signals": {
+  "air-temperature": {
+   "displayName": "Air temperature",
+   "signalId": "air-temperature",
+   "status": "DECLARED",
+   "unit": "degC"
+  },
+  "barometric-pressure": {
+   "displayName": "Barometric pressure",
+   "signalId": "barometric-pressure",
+   "status": "DECLARED",
+   "unit": "hPa"
+  },
+  "cloud-cover": {
+   "displayName": "Cloud cover / sky condition",
+   "signalId": "cloud-cover",
+   "status": "DECLARED",
+   "unit": "%"
+  },
+  "humidity": {
+   "displayName": "Relative humidity",
+   "signalId": "humidity",
+   "status": "DECLARED",
+   "unit": "%"
+  },
+  "moon-phase": {
+   "displayName": "Moon phase",
+   "signalId": "moon-phase",
+   "status": "DECLARED",
+   "unit": "fraction"
+  },
+  "precipitation": {
+   "displayName": "Precipitation",
+   "signalId": "precipitation",
+   "status": "DECLARED",
+   "unit": "mm"
+  },
+  "pressure-trend": {
+   "displayName": "Pressure trend",
+   "signalId": "pressure-trend",
+   "status": "DECLARED",
+   "unit": "hPa/h"
+  }
+ },
+ "summary": {
+  "aggregateCounts": {
+   "DEGRADED": 1,
+   "FAILED": 1,
+   "UNKNOWN": 6
+  },
+  "asOf": "2026-10-16T18:20:00Z",
+  "brainCount": 8,
+  "engineMode": "PRE_PRODUCTION",
+  "note": "five health concepts published separately per Brain: process, dependencies, freshness, domainValidation, publish; aggregate is operational only (domain validation is never folded in); UNKNOWN is a value, render it as a dash",
+  "sample": "SYNTHETIC dry-run evidence (consumption-lineage-v1): biological-state's execution carries consumed[] recorded by its platform client (RECORDED_CONSUMPTION, declaredAndConsumed/declaredNotConsumed real); wind's Cloud Run execution carries no lineage (CURRENT_STATE). Built from an in-memory test world, not live RTDB.",
+  "version": "brain-health-v1"
+ }
+}

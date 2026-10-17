@@ -160,6 +160,44 @@ def _freshness(states: dict) -> dict:
     return fr
 
 
+#: Which registered provider each Wind source record comes from (Wind's own declaration; the same ids Wind publishes under /sources/{id}).
+#: Thresholds are Wind's EXISTING ones (contract.py), the same values publish() publishes as each source's staleThresholdHours. No science here.
+SOURCE_PROVIDERS = {"nbmForecast": ("noaa-nbm-v5", C.STALE_FORECAST_CYCLE_H), "rtmaAnalysis": ("noaa-rtma-ru", C.ANALYSIS_MAX_AGE_H),
+                    "metarObservation": ("iem-metar-wind", C.OBSERVATION_MAX_AGE_H)}
+
+
+def consumed_from_states(states: dict, consumed_at: str) -> list[dict]:
+    """ACTUAL provider consumption of one run, read from the `sources[]` every lake state already records (sourceType, issuedAt, lastObservationAt).
+    An entry exists only for a provider some state really used; nothing is derived from Wind's declared providers. Across lakes: newest evidence,
+    earliest staleAfter (the same aggregation as `_freshness`). consumption-lineage-v1 names only; absent stays absent."""
+    acc: dict[str, dict] = {}
+    for s in states.values():
+        prov = (s.get("provenance") or {}) if isinstance(s, dict) else {}
+        for src in (prov.get("sources") or s.get("sources") or []) if isinstance(s, dict) else []:
+            prov = SOURCE_PROVIDERS.get((src or {}).get("sourceType"))
+            if not prov:
+                continue
+            pid, threshold_h = prov
+            e = acc.setdefault(pid, {"dependencyId": f"provider:{pid}", "dependencyType": "PROVIDER_DATA", "ref": f"/sources/{pid}", "consumedAt": consumed_at})
+            obs, issued = _parse(src.get("lastObservationAt")), _parse(src.get("issuedAt"))
+            if obs:
+                e["evidenceObservedAt"] = max(e.get("evidenceObservedAt", ""), _iso(obs))
+            if issued:
+                e["generatedAt"] = max(e.get("generatedAt", ""), _iso(issued))
+            ref_t = obs or issued
+            if ref_t:
+                sa = _iso(ref_t + dt.timedelta(hours=threshold_h))
+                e["staleAfter"] = min(e["staleAfter"], sa) if "staleAfter" in e else sa
+    return [acc[k] for k in sorted(acc)]
+
+
+def consumed_lake_directory(directory: list, consumed_at: str) -> dict:
+    """The Lake Registry contract as ACTUALLY consumed: the Engine lake directory this run verified against (lakes.fetch_directory). The registry
+    publishes no contract version yet, so only a content fingerprint of the consumed ids is recorded (never an invented version)."""
+    ids = sorted(str(l.get("id")) for l in (directory or []) if isinstance(l, dict) and l.get("id"))
+    return {"dependencyId": "registry:lakes", "dependencyType": "PLATFORM_REGISTRY", "ref": "engine-lake-directory", "fingerprint": sha(ids), "consumedAt": consumed_at}
+
+
 class _Router:
     def __init__(self, registry):
         self.reg = registry
@@ -209,9 +247,10 @@ def _last_error(flat):
     return isinstance(node, dict) and "lastError" in node and node["lastError"] is None
 
 
-def build_artifacts(patches, ctx: BuildContext, registry=None, removals=()) -> BuildResult:
+def build_artifacts(patches, ctx: BuildContext, registry=None, removals=(), consumed=()) -> BuildResult:
     """patches: the list of {flat-rtdb-key: value} dicts one wind-hourly publish() run would PATCH (e.g. DryRunWriter.patches).
-    removals: explicit [{path, reason}] the PRODUCER decided (e.g. a lake left the fleet): validated here and again by the Publisher."""
+    removals: explicit [{path, reason}] the PRODUCER decided (e.g. a lake left the fleet): validated here and again by the Publisher.
+    consumed: extra ACTUAL consumption entries the caller can attest to (e.g. consumed_lake_directory); provider consumption is read from the states."""
     reg = registry or default_registry()
     router = _Router(reg)
     res = BuildResult()
@@ -267,10 +306,11 @@ def build_artifacts(patches, ctx: BuildContext, registry=None, removals=()) -> B
         sections.append(s)
     in_fp = sha({"states": {k: {"obs": s.get("observationTime"), "fcst": s.get("forecastGeneratedAt")} for k, s in sorted(states.items())},
                  "evidence": ctx.evidence_sha256, "model": C.CANDIDATE_MODEL, "brainVersion": C.BRAIN_VERSION})
+    lineage_consumed = consumed_from_states(states, ctx.generated_at) + [dict(c) for c in consumed]
     art = seal_bundle(brain_id=WIND, bundle_id=WIND_BUNDLE, sections=sections, lifecycle=ctx.lifecycle, review_status=ctx.review_status,
                       validation_status=ctx.validation_status, generated_at=ctx.generated_at, execution_id=ctx.execution_id, code_version=ctx.code_version,
                       input_fingerprint=in_fp, knowledge_release=ctx.knowledge_release, manifest_ref=ctx.manifest_ref, manifest_sha256=ctx.manifest_sha256,
-                      registry=reg)
+                      registry=reg, consumed=lineage_consumed or None)
     art["lineage"]["artifactId"] = sha(art)           # artifact integrity identity: content address of the sealed envelope (unique per run, stable for the same inputs)
     res.artifact = art
     return res

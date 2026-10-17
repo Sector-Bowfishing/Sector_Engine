@@ -148,6 +148,8 @@ class ShadowPublisher:
                     outputFingerprint=parsed.fingerprint, fingerprintAlgorithm=ALGORITHM, lifecycle=lineage["lifecycle"], reviewStatus=lineage["reviewStatus"],
                     validationStatus=lineage["validationStatus"])
         base.pop("scope", None) if parsed.envelope == "v2" else None
+        if parsed.consumed is not None:
+            base["consumed"] = [dict(c) for c in parsed.consumed]       # the publication record carries what the execution ACTUALLY consumed (history + /brains/{id}/publication)
         # baselines, per section
         heads = {(s.schema_id, s.scope): self.history.head(producer, s.schema_id, s.scope) for s in parsed.sections}
         gens = {k: self.history.head_generation(producer, k[0], k[1]) for k in heads}

@@ -20,6 +20,7 @@ Modules
   execution_health         G1: generic execution / job / cadence health (process only)
   dependency_health        G2: dependency availability + evidence freshness (never from lastSuccessfulRun)
   brain_health             brain-health-v1 read model for Ops/Canvas (control/healthV1)
+  consumption              ACTUAL consumption lineage recorded at the RTDB client (consumed[] on execution records / artifacts)
 """
 from .keys import lake_key, lake_keys, key_collisions, check_keys, check_update, IllegalKey, BRAINS, slot_for, snapshot_field_for
 from .timeutil import iso, parse_time, age_hours
@@ -39,6 +40,8 @@ from .scoring import score_lake, score_biological, score_intelligence, frozen_sc
 
 from . import model_v1, fingerprint as fingerprints, publication, dependencies, field_validation, control_contract
 from . import signals, dependency_declarations, execution_health, dependency_health, brain_health   # G1/G2 health + freshness (brain-health-v1)
+from . import consumption                                                                        # actual consumption lineage (consumption-lineage-v1)
+from .consumption import ConsumptionRecorder
 from .model_v1 import ModelError, validate_claim, bounded_workers
 from .publication import judge as judge_score, apply_guard as guard_scores, score_content
 

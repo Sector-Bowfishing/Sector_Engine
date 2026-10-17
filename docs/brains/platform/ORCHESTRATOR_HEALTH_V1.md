@@ -75,3 +75,6 @@ No new service, no new scheduler, no provider. The health plane is computed only
 - `test_no_brain_or_signal_or_provider_id_is_hardcoded_in_the_health_modules` (platform), `test_jobs_manifest_brain_dependencies_are_legacy_and_consistent_with_declarations`, `test_legacy_manifest_rows_only_for_unregistered_brains_and_drift_fails_closed`.
 - `test_package_is_not_imported_by_the_platform_package…` still holds: the health modules import nothing from the Publisher; `enums.FRESHNESS_STATUS` is tested equal to `publisher.model.FRESHNESS_STATUSES`.
 - Conformance: `contracts/conformance/health_v1.json` (vocabularies + cases) mirrored by `test_brain_health.py`; hash pinned in `verification/fixtures/conformance/manifest.json`.
+
+## 9. Update 2026-10-16 — actual consumption lineage (consumption-lineage-v1)
+Gap 1 of §7 is closed for in-process Brains (platform RTDB client recorder → `run.py` summary → orchestrator execution record) and for Wind's shadow artifact (`provenance.sources[]` → `consumed[]` on the Publisher envelope). Rows evaluate `RECORDED_CONSUMPTION` where lineage exists, `CURRENT_STATE` elsewhere; recorded lineage is immutable in the ledger. Contract: `ACTUAL_CONSUMPTION_LINEAGE_V1.md`.

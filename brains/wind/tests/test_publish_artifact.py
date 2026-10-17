@@ -436,3 +436,58 @@ def test_equivalence_with_the_legacy_writer_output_has_only_expected_differences
     tree["brains"]["wind"]["mysteryField"] = 1
     ev2 = evaluate_equivalence(tree, tgt["updates"], registry=reg, derived_keys=tgt["derivedKeys"])
     assert ev2["verdict"] == "NOT_EQUIVALENT" and ev2["summary"]["UNKNOWN"] + ev2["summary"]["SEMANTIC_MISMATCH"] >= 1
+
+
+# consumption-lineage-v1 ---- Wind as the reference producer: ACTUAL inputs from the states' own source records; science and fingerprint untouched -------
+def test_consumed_lineage_comes_from_the_states_actual_sources_not_from_declarations(patches):
+    from sector_brain_platform import consumption as CN
+    res = build(patches)
+    art = res.artifact
+    assert CN.validate_consumed(art["consumed"]) == []
+    by = {c["dependencyId"]: c for c in art["consumed"]}
+    states = {m["path"]: m["value"] for s in art["sections"] for m in s["mutations"] if m["op"] == "SET" and m["path"].endswith("/states/wind")}
+    srcs = lambda st: (st.get("provenance") or {}).get("sources") or []   # noqa: E731  — the state keeps its source records in provenance (contract section 4)
+    used = {A.SOURCE_PROVIDERS[src["sourceType"]][0] for st in states.values() for src in srcs(st) if src.get("sourceType") in A.SOURCE_PROVIDERS}
+    assert set(by) == {f"provider:{p}" for p in used} and used                                      # exactly the providers some state really used
+    assert "registry:lakes" not in by                                                               # the directory is only recorded when the caller attests to it
+    for c in by.values():
+        assert c["consumedAt"] == art["lineage"]["generatedAt"] and c["ref"].startswith("/sources/") and "staleAfter" in c
+    nbm = by["provider:noaa-nbm-v5"]
+    issued = max(src["issuedAt"] for st in states.values() for src in srcs(st) if src.get("sourceType") == "nbmForecast")
+    assert nbm["generatedAt"] == issued and "evidenceObservedAt" not in nbm                          # a forecast has an issue time, not an observation
+    # no sources recorded -> no provider consumption invented, even though Wind declares three providers
+    assert A.consumed_from_states({"/x": {"sources": []}}, iso(T)) == [] and A.consumed_from_states({}, iso(T)) == []
+    assert A.consumed_from_states({"/x": {"sources": [{"sourceType": "somethingElse", "lastObservationAt": iso(T)}]}}, iso(T)) == []
+
+
+def test_lake_directory_consumption_is_a_content_fingerprint_never_an_invented_version(patches):
+    d = A.consumed_lake_directory(DIRECTORY, iso(T))
+    assert d["dependencyId"] == "registry:lakes" and d["fingerprint"].startswith("sha256:") and "stateVersion" not in d
+    assert d == A.consumed_lake_directory(list(reversed(DIRECTORY)), iso(T))                           # order independent
+    art = A.build_artifacts(copy.deepcopy(patches), ctx(), consumed=[d]).artifact
+    assert any(c["dependencyId"] == "registry:lakes" for c in art["consumed"])
+    rig = Rig()
+    r, _ = rig.submit(art)
+    assert r.result["result"] == "SHADOW_READY"
+    rec = rig.st.history.get_record("wind", r.result["publishId"])
+    assert {c["dependencyId"] for c in rec["consumed"]} >= {"registry:lakes", "provider:noaa-nbm-v5"}
+
+
+def test_wind_semantic_state_and_fingerprint_are_unchanged_by_lineage_and_ephemeral_metadata_never_republishes(patches):
+    a = build(patches, 0, 1).artifact
+    stripped = copy.deepcopy(a); stripped.pop("consumed")
+    assert a["lineage"]["outputFingerprint"] == reseal(stripped)["lineage"]["outputFingerprint"]        # fingerprint is mutations-only
+    assert [s["mutations"] for s in a["sections"]] == [s["mutations"] for s in stripped["sections"]]   # the domain output is byte-identical
+    assert [s.get("freshness") for s in a["sections"]] == [s.get("freshness") for s in stripped["sections"]]
+    rig = Rig()
+    assert rig.submit(a)[0].result["result"] == "SHADOW_READY"
+    later = build(patches, 60, 2).artifact                                                              # one hour later: new consumedAt, new executionId, same state
+    assert later["consumed"][0]["consumedAt"] != a["consumed"][0]["consumedAt"]
+    r, _ = rig.submit(later)
+    assert r.result["result"] == "SKIP" and len(rig.st.sink.submitted) == 1
+    assert rig.st.history.get_record("wind", r.result["publishId"])["consumed"][0]["consumedAt"] == later["consumed"][0]["consumedAt"]
+
+
+def test_builder_has_no_mac_path_and_wind_runtime_untouched_except_the_shadow_builder():
+    src = open(A.__file__).read()
+    assert "/Users/" not in src and "docs/" not in src

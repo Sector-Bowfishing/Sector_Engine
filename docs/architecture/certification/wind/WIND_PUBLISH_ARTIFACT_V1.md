@@ -41,3 +41,6 @@ Null keys and empty containers are omitted (RTDB would drop them anyway; the sto
 
 ## 7. Open items
 `expiresAt` decision; Wind release manifest; wiring into the job and the artifact store (cutover steps 2-5); Orchestrator compatibility for execution health and freshness (G1/G2); evidence digest is baked into the image (changes only on redeploy).
+
+## Addendum 2026-10-16 — consumed[] lineage (shadow builder only)
+`build_artifacts` now attaches `consumed[]`: provider entries translated from each state's existing `provenance.sources[]` (NBM `issuedAt`, RTMA `analysisTime`, METAR `observedAt`; Wind's existing thresholds as `staleAfter`), plus `consumed_lake_directory(directory)` when the caller passes it. No science, no threshold and no section content changed; semantic fingerprints are unchanged (tested). Not wired into `wind-hourly`.

@@ -90,7 +90,7 @@ def main(argv=None) -> int:
         raw = fh.read()
     cat, cat_sha = sib.load_catalog(raw), sib.catalog_sha(raw)
 
-    rtdb = bp.BrainRtdb(RTDB_URL, tokens, brain_id=sib.BRAIN_ID)   # ownership-checked; --plan/--dry-run only GET
+    rtdb = bp.BrainRtdb(RTDB_URL, tokens, brain_id=sib.BRAIN_ID, recorder=bp.ConsumptionRecorder(sib.BRAIN_ID))   # ownership-checked; --plan/--dry-run only GET; every read is recorded as ACTUAL consumption
     published = rtdb.get(f"brains/{sib.BRAIN_ID}")
     upstream = read_upstream(rtdb)
     serving = sib.engine_serving(cloud_run_service(tokens, cat["codeLineage"]), cat["codeLineage"], now)
@@ -134,7 +134,8 @@ def main(argv=None) -> int:
                    pilot={lid: {"inputsFresh": e["synthesis"]["inputsFresh"], "degraded": e.get("degradedInputs"), "drivers": [d["fact"] for d in e.get("drivers", [])]}
                           for lid, e in evaluations.items()},
                    engineServing=serving, dependencySummary=reg["dependencySummary"],
-                   connection={b: d["connectionStatus"] for b, d in reg["dependencies"].items()})
+                   connection={b: d["connectionStatus"] for b, d in reg["dependencies"].items()},
+                   consumed=rtdb.consumed())                      # consumption-lineage-v1: what this run actually read (the orchestrator stores it on the execution)
 
     if a.dry_run:
         os.makedirs(a.out, exist_ok=True)
