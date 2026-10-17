@@ -77,6 +77,20 @@ def build_jobs(manifest: dict, jobs: dict, executions: list[dict], states: dict 
     return out, sched
 
 
+def merge_execution(prev: dict | None, new: dict) -> dict:
+    """Execution records are re-observed (RUNNING -> SUCCEEDED, Cloud Run re-listing). A `consumed[]` once recorded is immutable: a later
+    observation without lineage keeps it; a later observation with DIFFERENT lineage keeps the first and flags `lineageConflict` (never silent)."""
+    if not prev or "consumed" not in prev:
+        return new
+    out = dict(new)
+    if "consumed" not in new:
+        out["consumed"] = prev["consumed"]
+    elif new["consumed"] != prev["consumed"]:
+        out["consumed"] = prev["consumed"]
+        out["lineageConflict"] = True
+    return out
+
+
 def merge_decisions(prev_latest: dict, prev_recent: dict, decisions: list[dict], limit: int = O.DECISION_LEDGER_MAX) -> tuple[dict, dict]:
     """latestDecisions holds the CURRENT verdict per (Brain, trigger) with `since` (stable until it changes, so an unchanged verdict does not rewrite the node).
     `recent` is a bounded, newest-first log of verdict CHANGES (plus every RUN). Answers 'why did/didn't this run' without an unbounded log."""
@@ -102,7 +116,8 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
     graph = O.validate_graph(manifest)
     activity = O.effective_activity(manifest, overrides)
     by_id = {e["executionId"]: e for e in (prev.get("executions") or {}).values() if e.get("brainId") != "platform"}   # the orchestrator's own wake-ups are not Brain executions
-    by_id.update({e["executionId"]: e for e in (new_executions or [])})          # a re-observed execution (now finished) replaces its earlier record
+    for e in (new_executions or []):                                              # a re-observed execution (now finished) replaces its earlier record ...
+        by_id[e["executionId"]] = merge_execution(by_id.get(e["executionId"]), e)   # ... but recorded consumption lineage is historical truth: never dropped, never rewritten
     execs = sorted(by_id.values(), key=lambda x: x.get("startedAt", ""), reverse=True)[:O.EXECUTION_LEDGER_MAX]
     latest, recent = merge_decisions(prev.get("latestDecisions"), prev.get("decisions"), evaluation["decisions"])
     jobs_out, scheds = build_jobs(manifest, jobs, execs, scheduler_states)

@@ -29,8 +29,9 @@ from .storage import AccessDenied, ArtifactConflict, LocalDirObjectStore, Memory
 def seal_artifact(*, brain_id: str, artifact_schema: str, mutations: list, lifecycle: str, review_status: str, validation_status: str, generated_at: str,
                   execution_id: str, code_version: str, input_fingerprint: str, knowledge_release: str = "NONE", manifest_ref: str = "NONE",
                   manifest_sha256: str = "NONE", freshness: dict | None = None, scope: str | None = None, approval_ref: str | None = None,
-                  artifact_id: str | None = None, registry: Registry | None = None) -> dict:
-    """Envelope with a correct `outputFingerprint`. `registry` supplies the schema's volatile_extra; without it only the shared defaults apply."""
+                  artifact_id: str | None = None, registry: Registry | None = None, consumed: list | None = None) -> dict:
+    """Envelope with a correct `outputFingerprint`. `registry` supplies the schema's volatile_extra; without it only the shared defaults apply.
+    `consumed`: ACTUAL consumption lineage (consumption-lineage-v1); outside the fingerprint by construction."""
     spec = (registry or default_registry()).spec(artifact_schema)
     fp = section_fingerprint(spec, brain_id, mutations) if spec else output_fingerprint(brain_id, artifact_schema, mutations)
     lin = {"schema": LINEAGE_ID, "brainId": brain_id, "artifactSchema": artifact_schema, "knowledgeRelease": knowledge_release, "manifestRef": manifest_ref,
@@ -40,7 +41,7 @@ def seal_artifact(*, brain_id: str, artifact_schema: str, mutations: list, lifec
     if artifact_id:
         lin["artifactId"] = artifact_id
     art = {"envelope": ENVELOPE_ID, "lineage": lin, "mutations": copy.deepcopy(mutations)}
-    for k, v in (("freshness", freshness), ("scope", scope), ("approvalRef", approval_ref)):
+    for k, v in (("freshness", freshness), ("scope", scope), ("approvalRef", approval_ref), ("consumed", consumed)):
         if v is not None:
             art[k] = copy.deepcopy(v)
     return art
@@ -48,9 +49,11 @@ def seal_artifact(*, brain_id: str, artifact_schema: str, mutations: list, lifec
 
 def seal_bundle(*, brain_id: str, bundle_id: str, sections: list, lifecycle: str, review_status: str, validation_status: str, generated_at: str,
                 execution_id: str, code_version: str, input_fingerprint: str, knowledge_release: str = "NONE", manifest_ref: str = "NONE",
-                manifest_sha256: str = "NONE", approval_ref: str | None = None, artifact_id: str | None = None, registry: Registry | None = None) -> dict:
+                manifest_sha256: str = "NONE", approval_ref: str | None = None, artifact_id: str | None = None, registry: Registry | None = None,
+                consumed: list | None = None) -> dict:
     """ONE logical artifact (envelope v2) with several sections -> ONE publication plan. `sections`: [{artifactSchema, scope?, freshness?, mutations}].
-    The artifact-level outputFingerprint is computed from the sections' semantic fingerprints exactly as the Publisher recomputes it."""
+    The artifact-level outputFingerprint is computed from the sections' semantic fingerprints exactly as the Publisher recomputes it.
+    `consumed`: ACTUAL consumption lineage (consumption-lineage-v1); outside the fingerprint by construction."""
     reg = registry or default_registry()
     fps = []
     for sec in sections:
@@ -65,6 +68,8 @@ def seal_bundle(*, brain_id: str, bundle_id: str, sections: list, lifecycle: str
     art = {"envelope": ENVELOPE_V2, "lineage": lin, "sections": copy.deepcopy(sections)}
     if approval_ref is not None:
         art["approvalRef"] = approval_ref
+    if consumed is not None:
+        art["consumed"] = copy.deepcopy(consumed)
     return art
 
 

@@ -45,9 +45,14 @@ def normalize_consumed(items) -> list[dict] | None:
         return None
     out = []
     for c in items:
-        if not isinstance(c, dict) or not c.get("dependencyId"):
+        if not isinstance(c, dict) or not isinstance(c.get("dependencyId"), str) or ":" not in c["dependencyId"]:
             continue
-        out.append({k: c[k] for k in CONSUMED_KEYS if c.get(k) is not None})
+        e = {k: c[k] for k in CONSUMED_KEYS if c.get(k) is not None}
+        prefix = e["dependencyId"].split(":", 1)[0]
+        e.setdefault("dependencyType", {"brain": "BRAIN", "signal": "ENVIRONMENTAL_SIGNAL", "provider": "PROVIDER_DATA", "registry": "PLATFORM_REGISTRY"}.get(prefix, e.get("dependencyType")))
+        if e.get("dependencyType") is None:
+            del e["dependencyType"]
+        out.append(e)
     return sorted(out, key=lambda c: c["dependencyId"])
 
 

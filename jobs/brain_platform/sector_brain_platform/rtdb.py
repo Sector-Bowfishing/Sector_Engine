@@ -73,7 +73,7 @@ class BrainRtdb:
     def __init__(self, url: str = BRAIN_RTDB_URL, tokens: TokenProvider | None = None, transport=None,
                  brain_id: str | None = None, sleep=time.sleep, attempts: int = ATTEMPTS,
                  backoff_base_s: float = BACKOFF_BASE_S, retries: int | None = None, backoff_s: float | None = None,
-                 timeout_s: float | None = None):
+                 timeout_s: float | None = None, recorder=None):
         """`attempts`/`backoff_base_s` default to the contract's policy. `retries`/`backoff_s`/`timeout_s` are the
         pre-contract names (retries = attempts - 1) kept so existing brain tests can run without the backoff."""
         if retries is not None:
@@ -88,6 +88,7 @@ class BrainRtdb:
         self.tokens = tokens or TokenProvider()
         self.transport = transport or self._urllib
         self.brain_id = brain_id            # when set, every update is ownership-checked
+        self.recorder = recorder            # consumption.ConsumptionRecorder: when set, every successful GET is recorded as ACTUAL consumption
         self._sleep = sleep
         self.writes = 0
         self.bytes_written = 0
@@ -123,7 +124,14 @@ class BrainRtdb:
         raise BrainRtdbError(last)
 
     def get(self, path: str, shallow: bool = False):
-        return self._request("GET", path, query={"shallow": "true"} if shallow else None)
+        value = self._request("GET", path, query={"shallow": "true"} if shallow else None)
+        if self.recorder is not None:
+            self.recorder.observe(path, value, shallow)
+        return value
+
+    def consumed(self) -> list[dict] | None:
+        """The execution's ACTUAL consumption so far (consumption-lineage-v1), or None when nothing is being recorded."""
+        return self.recorder.entries() if self.recorder is not None else None
 
     def update(self, updates: dict):
         """One atomic multi-location update ({"a/b": v, ...}); None deletes. Keys and ownership are checked first."""
@@ -142,10 +150,11 @@ class BrainRtdb:
 class DryRunStore:
     """Same interface as BrainRtdb, applied to an in-memory tree. Used by tests and `--dry-run`."""
 
-    def __init__(self, tree: dict | None = None, brain_id: str | None = None):
+    def __init__(self, tree: dict | None = None, brain_id: str | None = None, recorder=None):
         self.tree = tree if tree is not None else {}
         self.patches: list[dict] = []
         self.brain_id = brain_id
+        self.recorder = recorder
         self.writes = 0
         self.bytes_written = 0
 
@@ -153,11 +162,16 @@ class DryRunStore:
         node = self.tree
         for p in [p for p in path.split("/") if p]:
             if not isinstance(node, dict) or p not in node:
-                return None
+                node = None
+                break
             node = node[p]
-        if shallow and isinstance(node, dict):
-            return {k: True for k in node}
-        return node
+        value = {k: True for k in node} if (shallow and isinstance(node, dict)) else node
+        if self.recorder is not None:
+            self.recorder.observe(path, value, shallow)
+        return value
+
+    def consumed(self) -> list[dict] | None:
+        return self.recorder.entries() if self.recorder is not None else None
 
     def update(self, updates: dict):
         if not updates:

@@ -34,6 +34,7 @@ class Parsed:
     sections: tuple               # canonical order: (schema, scope)
     fingerprint: str              # artifact-level semantic fingerprint (== the section fingerprint for v1)
     bundle: BundleSpec | None = None
+    consumed: tuple | None = None # ACTUAL consumption lineage (consumption-lineage-v1), validated; None when the producer recorded none
 
     def all_mutations(self) -> list:
         return [m for s in self.sections for m in s.mutations]
@@ -90,6 +91,7 @@ def parse(raw, producer: str, registry: Registry, release_resolver=None) -> Pars
     # stage 4-5
     V.check_lineage(lineage, any(sp.require_release for sp in specs), release_resolver)
     V.check_lifecycle_and_status(raw, specs, bundle.allowed_lifecycles if bundle else None)
+    consumed = V.check_consumed(raw)
     for spec, scope, ms, fr in normalised:
         V.check_freshness(fr, spec)
     # stage 5b / 6: values and sizes
@@ -107,4 +109,4 @@ def parse(raw, producer: str, registry: Registry, release_resolver=None) -> Pars
     fp = sections[0].fingerprint if kind == "v1" else bundle_fingerprint(brain, bundle.bundle_id, [(s.schema_id, s.scope, s.fingerprint) for s in sections])
     if lineage["outputFingerprint"] != fp:
         raise Rejected([Violation("FINGERPRINT_MISMATCH", f"declared {lineage['outputFingerprint']} but the canonical content hashes to {fp}")])
-    return Parsed(kind, brain, lineage, sections, fp, bundle)
+    return Parsed(kind, brain, lineage, sections, fp, bundle, tuple(consumed) if consumed is not None else None)
