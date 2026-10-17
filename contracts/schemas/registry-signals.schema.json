@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/registry-signals.schema.json",
+  "title": "Shared Signal Registry v1",
+  "description": "SIGNAL REGISTRY: platform-owned DEFINITIONS of shared environmental signals (what a signal is). It never says which Brain consumes a signal: a Brain declares that itself in brain.json (consumes[].kind = signal). No domain interpretation lives here. A signal without a producer is DECLARED only; consuming it evaluates UNAVAILABLE until a producer registers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "signals"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "description": {
+      "type": "string"
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/signal"
+      }
+    }
+  },
+  "$defs": {
+    "signalId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signalId",
+        "displayName",
+        "description",
+        "status"
+      ],
+      "properties": {
+        "signalId": {
+          "$ref": "#/$defs/signalId"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the signal IS. Never how a Brain should interpret it."
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "DECLARED",
+            "AVAILABLE",
+            "RETIRED"
+          ],
+          "description": "DECLARED = definition only, no producer yet. AVAILABLE = a producer publishes it. RETIRED = must not be consumed."
+        },
+        "producer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id"
+          ],
+          "description": "Who publishes the signal (platform-owned fact). Absent while DECLARED.",
+          "properties": {
+            "kind": {
+              "enum": [
+                "brain",
+                "provider",
+                "platform"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+            }
+          }
+        },
+        "stalenessModel": {
+          "enum": [
+            "TIME",
+            "VERSION",
+            "FINGERPRINT"
+          ],
+          "description": "How the published signal goes stale, if a producer exists."
+        }
+      }
+    }
+  }
+}

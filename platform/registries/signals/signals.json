@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0.0",
+  "description": "Shared environmental signals: platform-owned DEFINITIONS only. Which Brain consumes a signal is declared by that Brain in brains/<dir>/brain.json (consumes[].kind = signal). Every entry below is DECLARED: no producer publishes it yet, so any declared consumption evaluates UNAVAILABLE (never FRESH, never zero). Registering a producer is a reviewed change to this file.",
+  "signals": [
+    {"signalId": "barometric-pressure", "displayName": "Barometric pressure", "description": "Surface atmospheric pressure at or near the waterbody.", "unit": "hPa", "status": "DECLARED"},
+    {"signalId": "pressure-trend", "displayName": "Pressure trend", "description": "Change of barometric pressure over a defined window (rising / falling / steady with rate).", "unit": "hPa/h", "status": "DECLARED"},
+    {"signalId": "precipitation", "displayName": "Precipitation", "description": "Liquid-equivalent precipitation over a defined window.", "unit": "mm", "status": "DECLARED"},
+    {"signalId": "air-temperature", "displayName": "Air temperature", "description": "Near-surface air temperature at or near the waterbody.", "unit": "degC", "status": "DECLARED"},
+    {"signalId": "humidity", "displayName": "Relative humidity", "description": "Near-surface relative humidity.", "unit": "%", "status": "DECLARED"},
+    {"signalId": "cloud-cover", "displayName": "Cloud cover / sky condition", "description": "Fraction of sky covered by cloud, with sky-condition category where available.", "unit": "%", "status": "DECLARED"},
+    {"signalId": "moon-phase", "displayName": "Moon phase", "description": "Lunar illumination fraction and phase name for the local night.", "unit": "fraction", "status": "DECLARED"}
+  ]
+}

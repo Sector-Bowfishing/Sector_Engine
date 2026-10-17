@@ -177,6 +177,8 @@ def main(argv=None) -> int:
     ap.add_argument("--control-only", action="store_true", help="evaluate and publish ONLY /control/orchestratorV1: no /jobs write, no execution, no score publication, no legacy record (a deliberate, side-effect-free evaluation)")
     ap.add_argument("--emit-control-state", default=None, metavar="FILE", help="write the computed control state JSON here (sample payloads, review)")
     ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
+    ap.add_argument("--emit-health-state", default=None, metavar="FILE", help="write the computed brain-health-v1 state (control/healthV1) JSON here (review, samples)")
+    ap.add_argument("--publish-health", action="store_true", help="also publish control/healthV1 (brain-health-v1). OFF by default: enabling it is a recorded decision")
     a = ap.parse_args(argv)
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
@@ -261,8 +263,10 @@ def main(argv=None) -> int:
             fc = None if res.get("ok") else O.classify_failure(res.get("error") or res.get("tail"))
             rec = O.execution_record(eid, b, trigger, why, started, ended, "STARTED" if ended is None else ("SUCCEEDED" if res.get("ok") else "FAILED"),
                                      scope=a.scope if a.run_now == b else None, input_fp=(dec or {}).get("inputFingerprint"),
-                                     resources=manifest["brains"][b].get("resources"), failure_class=fc)
-            rec["jobId"] = tgt.get("job") or ex.get("jobId")
+                                     resources=manifest["brains"][b].get("resources"), failure_class=fc,
+                                     # an in-process run executes THIS image's code; a Cloud Run job's version is read from its own `commit` label later
+                                     code_version=os.environ.get("DEPLOYMENT_VERSION") if ex["kind"] == "in-process" else None,
+                                     job_id=tgt.get("job") or ex.get("jobId"))
             exec_records.append(rec)
             executed.append(res)
             print(f"{'✓' if res.get('ok') else '✗'} {b} [{trigger}] {res.get('execution') or res.get('tail', res.get('error', ''))[-200:]}", flush=True)
@@ -303,6 +307,19 @@ def main(argv=None) -> int:
             db.update(cp_paths)
         print(f"control plane: {len(cp_paths)} section(s) changed of {len(CS.SECTIONS)}; mode {state_cp['summary']['engineMode']}; "
               f"active {state_cp['summary'].get('activeBrains')}; queued {state_cp['summary'].get('queued', [])}")
+        # 5b. brain-health-v1 (control/healthV1): five health concepts side by side (G1 execution, G2 dependency + freshness). Computed only
+        #     when asked for, published only with --publish-health (a recorded decision); it never changes what runs.
+        if a.emit_health_state or a.publish_health:
+            hw = CP.load_health_world(live)
+            health_cp = CP.build_health_state(world2, state_cp, records, now, scheduler_states=CP.scheduler_states(tokens),
+                                              sources=hw["sources"], source_health=hw["sourceHealth"], code_version=os.environ.get("DEPLOYMENT_VERSION"))
+            if a.emit_health_state:
+                json.dump(health_cp, open(a.emit_health_state, "w"), indent=1, sort_keys=True)
+            if a.publish_health:
+                h_paths = CP.BH.changed_paths(health_cp, live.get(CP.HEALTH_NODE) or {})
+                if h_paths and (write or a.dry_run):
+                    db.update(h_paths)
+                print(f"health plane: {len(h_paths)} section(s) changed of {len(CP.BH.SECTIONS)}; aggregate {health_cp['summary'].get('aggregateCounts')}")
     except Exception as e:                                       # the control plane must never break the cycle or the score publication
         print(f"control plane: FAILED {e!r}", file=sys.stderr)
 

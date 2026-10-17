@@ -9,6 +9,8 @@ MODEL_LIFECYCLE = ("RESEARCH", "CANDIDATE", "SHADOW", "REVIEW", "PRODUCTION", "R
 VERSION_STATUS = ("CURRENT", "SHADOW", "CANDIDATE", "RETIRED")
 STATE_KIND = ("measured", "modeled", "observed", "proxy", "analysis", "forecast", "evaluated", "not_evaluated", "unavailable")
 STALENESS_MODEL = ("TIME", "VERSION", "FINGERPRINT")
+# Evidence freshness verdict (BRAIN_IDENTITY_AND_LINEAGE_V1 section 4; the Publisher's artifact freshness uses the same words — tested equal).
+FRESHNESS_STATUS = ("FRESH", "STALE", "EXPIRED", "UNAVAILABLE", "UNKNOWN")
 SEVERITY = ("info", "success", "warning", "critical")
 ACTIVITY_KIND = ("brain.registered", "brain.version", "brain.updated", "run.failed", "run.degraded", "health.changed",
                  "readiness.promoted", "readiness.changed", "model.changed", "source.changed", "score.changed")

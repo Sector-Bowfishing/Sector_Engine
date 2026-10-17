@@ -300,6 +300,83 @@ def test_large_file_policy(synth):
     assert any(f["subject"] == "big.bin" for f in report.check(str(synth)) if f["invariant"] == 15)
 
 
+# ---- G1/G2: dependency declarations, Signal Registry, invariant 17 ------------------------------
+def test_signal_registry_validates_and_defines_no_consumers():
+    reg = load(ROOT, "platform", "registries", "signals", "signals.json")
+    assert validate(reg, schema("registry-signals.schema.json")) == []
+    assert reg["signals"] and all(s["status"] == "DECLARED" and "producer" not in s for s in reg["signals"])
+    assert "consumer" not in json.dumps(reg["signals"]).lower()
+    bad = copy.deepcopy(reg); bad["signals"][0]["consumers"] = ["fish"]
+    assert validate(bad, schema("registry-signals.schema.json"))                         # the registry can never say who consumes a signal
+    bad = copy.deepcopy(reg); bad["signals"][0]["status"] = "LIVE"
+    assert validate(bad, schema("registry-signals.schema.json"))
+
+
+@pytest.mark.parametrize("entry,ok", [
+    ({"kind": "signal", "signalId": "pressure-trend"}, True),
+    ({"kind": "signal", "signalId": "pressure-trend", "requirement": "OPTIONAL", "freshness": {"maxAgeHours": 3, "reason": "needs a current trend"}}, True),
+    ({"kind": "brain", "brainId": "beta", "contractId": "beta.state", "minVersion": "1.0.0", "requirement": "REQUIRED"}, True),
+    ({"kind": "signal"}, False),
+    ({"kind": "brain", "brainId": "beta"}, False),                                        # a Brain edge still needs contractId + minVersion
+    ({"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "SOMETIMES"}, False),
+    ({"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "freshness": {"maxAgeHours": 3}}, False),
+    ({"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "freshness": {"maxAgeHours": 0, "reason": "x"}}, False),
+])
+def test_brain_json_dependency_declaration_fields(entry, ok):
+    b = brain(); b["consumes"].append(entry)
+    assert (validate(b, schema("brain.schema.json")) == []) is ok
+
+
+def test_provider_entries_accept_requirement_and_freshness():
+    b = brain(); b["providers"] = [{"providerId": "open-meteo", "requirement": "OPTIONAL", "freshness": {"maxAgeHours": 6, "reason": "r"}}]
+    assert validate(b, schema("brain.schema.json")) == []
+    b["providers"][0]["requirement"] = "NICE_TO_HAVE"
+    assert validate(b, schema("brain.schema.json"))
+
+
+def _with_signals(root):
+    (root / "platform" / "registries" / "signals").mkdir(parents=True, exist_ok=True)
+    shutil.copy(os.path.join(ROOT, "platform", "registries", "signals", "signals.json"), root / "platform" / "registries" / "signals" / "signals.json")
+
+
+def test_invariant_17_signal_must_exist_in_the_registry(synth):
+    _with_signals(synth)
+    make_brain(synth, "alpha", consumes=[{"kind": "signal", "signalId": "pressure-trend"}])
+    assert 17 not in invs(synth)
+    shutil.rmtree(synth / "brains" / "alpha")
+    make_brain(synth, "alpha", consumes=[{"kind": "signal", "signalId": "unicorn-index"}])
+    msgs = [f["message"] for f in report.check(str(synth)) if f["invariant"] == 17]
+    assert msgs and "not defined in the Signal Registry" in msgs[0]
+
+
+def test_invariant_17_signal_without_any_registry_is_reported(synth):
+    make_brain(synth, "alpha", consumes=[{"kind": "signal", "signalId": "pressure-trend"}])
+    assert any("no Signal Registry" in f["message"] for f in report.check(str(synth)) if f["invariant"] == 17)
+
+
+def test_invariant_17_platform_manifest_cannot_claim_an_undeclared_edge(synth):
+    make_brain(synth, "alpha")
+    make_brain(synth, "beta", publishes=[{"contractId": "beta.state", "version": "1.0.0", "pathFamilies": ["/b"]}], authorizedConsumers=["ops", "alpha"])
+    man = synth / "jobs" / "brain_platform" / "sector_brain_platform"
+    man.mkdir(parents=True)
+    (man / "control_manifest.json").write_text(json.dumps({"engineMode": "PRE_PRODUCTION", "brains": {"alpha": {"dependencies": [{"id": "beta", "requirement": "OPTIONAL", "onStale": "DEPENDENCY_STALE"}]}}, "jobs": {}}))
+    msgs = [f["message"] for f in report.check(str(synth)) if f["invariant"] == 17]
+    assert msgs and "claims alpha -> beta" in msgs[0]
+    shutil.rmtree(synth / "brains" / "alpha")
+    make_brain(synth, "alpha", consumes=[{"kind": "brain", "brainId": "beta", "contractId": "beta.state", "minVersion": "1.0.0", "requirement": "OPTIONAL"}])
+    assert 17 not in invs(synth)                                                            # the Brain declares it itself: the manifest may mirror it
+
+
+def test_invariant_17_consumer_must_be_authorized_by_the_producer(synth):
+    make_brain(synth, "beta", publishes=[{"contractId": "beta.state", "version": "1.0.0", "pathFamilies": ["/b"]}], authorizedConsumers=["ops"])
+    make_brain(synth, "alpha", consumes=[{"kind": "brain", "brainId": "beta", "contractId": "beta.state", "minVersion": "1.0.0"}])
+    assert any("authorizedConsumers" in f["message"] for f in report.check(str(synth)) if f["invariant"] == 17)
+
+
+def test_real_repo_has_no_invariant_17_findings():
+    assert [f for f in report.check(ROOT) if f["invariant"] == 17] == []
+
+
 def test_template_directory_is_not_a_registered_brain(synth):
     shutil.copytree(TEMPLATE, synth / "brains" / "_template")
     assert report.check(str(synth)) == []

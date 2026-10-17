@@ -26,7 +26,7 @@
     }
   ],
   "consumes": [
-    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0"}
+    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "REQUIRED"}
   ],
   "providers": [
     {"providerId": "noaa-nbm-v5", "domainInterpreter": true},

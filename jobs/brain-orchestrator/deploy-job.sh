@@ -65,6 +65,15 @@ for d in biological-brain sector-intelligence-brain brain-scores brain-orchestra
   cp -R "$ROOT/jobs/$d/schemas" "stage/jobs/$d/" 2>/dev/null || true
 done
 cp "$ROOT/docs/brains/scoring/frozen-scores.json" stage/docs/brains/scoring/
+# brain-health-v1 (control/healthV1) discovers declared dependencies from brains/*/brain.json and the platform registries / provider
+# catalog (read-only inputs; no Brain runtime is staged). Without them the health plane reports declarations UNKNOWN, never invented.
+for b in "$ROOT"/brains/*/; do
+  [[ -f "$b/brain.json" ]] || continue
+  mkdir -p "stage/brains/$(basename "$b")" && cp "$b/brain.json" "stage/brains/$(basename "$b")/"
+done
+mkdir -p stage/platform/registries/signals stage/providers
+cp "$ROOT/platform/registries/signals/signals.json" stage/platform/registries/signals/
+cp "$ROOT/providers/PROVIDERS.json" stage/providers/
 find stage -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'tests' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'test_*.py' -delete

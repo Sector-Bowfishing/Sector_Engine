@@ -20,3 +20,6 @@ VERSION/FINGERPRINT Brains write `stale:false` and omit `freshUntil`.
 3. Unknown freshness is absent, not `false`. An unpublished upstream is `UNSATISFIED/DEGRADED` per the dependency's fallback, not "stale".
 4. Ops shows `control.updatedAt`; an old overview is itself stale (display rule).
 5. Client-clock staleness is display only (`timeAgo`), never a classification.
+
+## Dependency freshness at execution time (added 2026-10-16, Orchestrator G1/G2)
+`sector_brain_platform.dependency_health` applies the authority rule generically for every dependency type (Brain, environmental signal, provider data, platform registry): owner verdict → owner rule (`expiresAt`, `staleAfter`, `staleAfterHours` × evidence/generated time) → `UNKNOWN`; a consumer's declared `freshness {maxAgeHours, reason}` (brain.json) can only be stricter. A record that offers only `lastSuccessfulRun` is `UNKNOWN` ("process history, not evidence freshness"). Vocabulary: `enums.FRESHNESS_STATUS` = the Publisher's `FRESH STALE EXPIRED UNAVAILABLE UNKNOWN`. Contract: `ORCHESTRATOR_HEALTH_V1.md`.

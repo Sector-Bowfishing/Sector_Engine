@@ -454,14 +454,18 @@ def append_bounded(items: list[dict], rec: dict, limit: int, key: str = "decisio
 
 def execution_record(execution_id: str, brain_id: str, trigger: str, reason: str, started: dt.datetime, ended: dt.datetime | None, status: str,
                      scope: str | None = None, input_fp: str | None = None, output_changed: str = "UNKNOWN", resources: dict | None = None,
-                     downstream: list[dict] | None = None, failure_class: str | None = None, source: str = "orchestrator") -> dict:
+                     downstream: list[dict] | None = None, failure_class: str | None = None, source: str = "orchestrator",
+                     code_version: str | None = None, consumed: list[dict] | None = None, job_id: str | None = None) -> dict:
+    """Additive lineage (execution-health-v1): `code_version` = the code that produced the execution when KNOWN (image commit label,
+    DEPLOYMENT_VERSION); `consumed` = the dependencies the execution ACTUALLY consumed, as recorded by the producer
+    (execution_health.CONSUMED_KEYS). Both are absent when unknown: the orchestrator never invents lineage."""
     secs = (ended - started).total_seconds() if ended else None
     rec = {"executionId": execution_id, "brainId": brain_id, "trigger": trigger, "reason": reason, "startedAt": iso(started), "status": status, "source": source,
            "outputChanged": output_changed, "cost": estimate_cost(resources, secs)}
     if ended:
         rec.update({"endedAt": iso(ended), "durationSeconds": round(secs, 1)})
     for k, v in (("scope", scope), ("inputFingerprint", input_fp), ("downstream", [{"brainId": d["brainId"], "decision": d["decision"]} for d in downstream] if downstream else None),
-                 ("failureClass", failure_class)):
+                 ("failureClass", failure_class), ("codeVersion", code_version), ("consumed", consumed), ("jobId", job_id)):
         if v is not None:
             rec[k] = v
     return rec

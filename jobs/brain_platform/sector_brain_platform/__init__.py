@@ -15,6 +15,11 @@ Modules
   failure     the standard failure write path (section 10)
   jobs        the Engine-owned /jobs/{jobId} contract (jobs-v1) and its one sync path
   gcp         Cloud Scheduler / Cloud Run reads and the single job-start write (stdlib)
+  signals     the Shared Signal Registry (definitions only; consumers declare themselves in brain.json)
+  dependency_declarations  declared dependencies discovered from brains/*/brain.json (the one Brain-owned source)
+  execution_health         G1: generic execution / job / cadence health (process only)
+  dependency_health        G2: dependency availability + evidence freshness (never from lastSuccessfulRun)
+  brain_health             brain-health-v1 read model for Ops/Canvas (control/healthV1)
 """
 from .keys import lake_key, lake_keys, key_collisions, check_keys, check_update, IllegalKey, BRAINS, slot_for, snapshot_field_for
 from .timeutil import iso, parse_time, age_hours
@@ -33,6 +38,7 @@ from .jobs import MANIFEST as JOB_MANIFEST, JOBS_CONTRACT_VERSION, job_record, b
 from .scoring import score_lake, score_biological, score_intelligence, frozen_score, ladder, finish, dim, score_engine
 
 from . import model_v1, fingerprint as fingerprints, publication, dependencies, field_validation, control_contract
+from . import signals, dependency_declarations, execution_health, dependency_health, brain_health   # G1/G2 health + freshness (brain-health-v1)
 from .model_v1 import ModelError, validate_claim, bounded_workers
 from .publication import judge as judge_score, apply_guard as guard_scores, score_content
 
