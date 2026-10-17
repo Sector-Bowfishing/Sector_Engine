@@ -1,0 +1,70 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "description": "optional context fields are frozen with the prediction so it can be judged without hindsight",
+ "properties": {
+  "confidence": {
+   "enum": [
+    "LOW",
+    "MEDIUM",
+    "HIGH",
+    "UNKNOWN"
+   ]
+  },
+  "environment": {},
+  "evidenceBasis": {
+   "type": "object"
+  },
+  "expected": {
+   "additionalProperties": false,
+   "properties": {
+    "depthClass": {},
+    "habitat": {},
+    "movementState": {},
+    "spawnState": {},
+    "temperatureAlignment": {},
+    "vegetationAssociation": {}
+   },
+   "type": "object"
+  },
+  "expectedResponses": {},
+  "featuresVersion": {},
+  "inputs": {},
+  "lakeId": {
+   "type": "string"
+  },
+  "predictedAt": {
+   "type": "string"
+  },
+  "ruleRefs": {
+   "items": {
+    "required": [
+     "ruleId",
+     "ruleVersion",
+     "ruleSha256"
+    ],
+    "type": "object"
+   },
+   "minItems": 1,
+   "type": "array"
+  },
+  "seasonState": {
+   "type": "object"
+  },
+  "speciesId": {
+   "type": "string"
+  },
+  "zone": {}
+ },
+ "required": [
+  "lakeId",
+  "speciesId",
+  "predictedAt",
+  "ruleRefs",
+  "seasonState",
+  "expected",
+  "confidence",
+  "evidenceBasis"
+ ],
+ "title": "Biological prediction (append-only log entry)",
+ "type": "object"
+}

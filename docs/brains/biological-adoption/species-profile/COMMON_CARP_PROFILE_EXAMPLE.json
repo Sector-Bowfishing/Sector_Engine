@@ -1,0 +1,2239 @@
+{
+ "contract": "biological-species-profile-v1",
+ "generatedFrom": {
+  "researchVersion": "2026-10-14.7",
+  "rulesVersion": "2026-10-14.7-rules",
+  "featuresVersion": "biological-features-v1",
+  "bundleCreatedAt": "2026-10-14T19:21:36Z",
+  "cardVersion": "movement-sweep-2026-10-14"
+ },
+ "identity": {
+  "speciesId": "common_carp",
+  "sectorLabel": "Common carp",
+  "scientificName": "Cyprinus carpio",
+  "role": "TARGET",
+  "targetTier": "TARGET",
+  "habitatClass": "FRESHWATER",
+  "habitatFlag": "FRESHWATER_ONLY",
+  "canonical": true
+ },
+ "summary": {
+  "knowledgeStatus": "PROFILED",
+  "bowfisherKnowledge": 7.5,
+  "speciesV2Score": 7.15,
+  "generalConfidence": "HIGH",
+  "regionalConfidence": "MEDIUM",
+  "reviewStatus": "UNREVIEWED",
+  "fieldValidationStatus": "NOT_VALIDATED",
+  "ruleCount": {
+   "usable": 11,
+   "draft": 1
+  },
+  "lastUpdated": "2026-10-14.7",
+  "profileFreshness": "CURRENT_WITH_BUNDLE",
+  "passLevel": "DEEP",
+  "strongest": [
+   "spawn",
+   "temperature",
+   "vegetation"
+  ],
+  "weakest": [
+   "seasonal",
+   "night",
+   "clarity",
+   "current"
+  ]
+ },
+ "yearlyMovement": {
+  "precisionNote": "A month is only as precise as its evidence: MONTH = a month-bounded rule or named months; SEASONAL = a season-level statement shown across its months; INFERRED = adjacent to a known window; UNKNOWN stays unknown.",
+  "spawnWindowMonths": [
+   "APR",
+   "MAY",
+   "JUN",
+   "JUL",
+   "AUG"
+  ],
+  "spawnWindowBasis": "RULE",
+  "months": [
+   {
+    "month": "JAN",
+    "season": "WINTER",
+    "movementStates": [
+     "DEEPER_HOLDING",
+     "WINTER_HOLDING"
+    ],
+    "shallowLikelihood": "LOW",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [],
+    "spawnState": "OUTSIDE_WINDOW",
+    "temperatureContext": "if water is under 50 F: Fewer shootable fish",
+    "hydrologyContext": "UNKNOWN",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "Cold water: slow fish, few in the shallows.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-01",
+     "card:seasonalMovement:winter"
+    ]
+   },
+   {
+    "month": "FEB",
+    "season": "WINTER",
+    "movementStates": [
+     "DEEPER_HOLDING",
+     "WINTER_HOLDING"
+    ],
+    "shallowLikelihood": "LOW",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [],
+    "spawnState": "OUTSIDE_WINDOW",
+    "temperatureContext": "if water is under 50 F: Fewer shootable fish",
+    "hydrologyContext": "UNKNOWN",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "Cold water: slow fish, few in the shallows.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-01",
+     "card:seasonalMovement:winter"
+    ]
+   },
+   {
+    "month": "MAR",
+    "season": "SPRING",
+    "movementStates": [
+     "PRE_SPAWN"
+    ],
+    "shallowLikelihood": "CONDITIONAL",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [],
+    "spawnState": "OUTSIDE_WINDOW",
+    "temperatureContext": "if water is under 50 F: Fewer shootable fish; if water is about 50-59 F or water is about 59-64 F: Strong increase in shallow / active likelihood",
+    "hydrologyContext": "Strong increase in shallow / active likelihood: the lake level is rising",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "Check newly flooded margins, creek mouths and backwaters. Look in newly flooded vegetation and margins.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "precision": "INFERRED",
+    "claimIds": [
+     "card:seasonalMovement:preSpawn"
+    ]
+   },
+   {
+    "month": "APR",
+    "season": "SPRING",
+    "movementStates": [
+     "SPAWN",
+     "SHALLOW_ACTIVE"
+    ],
+    "shallowLikelihood": "HIGH",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [
+     "shallowVegetatedHabitat"
+    ],
+    "spawnState": "ACTIVE_WINDOW",
+    "temperatureContext": "spawns when water is about 59-82 F; if water is about 50-59 F or water is about 59-64 F: Strong increase in shallow / active likelihood",
+    "hydrologyContext": "Strong increase in shallow / active likelihood: the lake level is rising",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "Concentrate on the spawning habitat (shallow cover, flooded margins, creek mouths) while water is in this range. Check newly flooded margins, creek mouths and backwaters. Look in newly flooded vegetation and margins.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-03",
+     "CC-SEA-03H"
+    ]
+   },
+   {
+    "month": "MAY",
+    "season": "SPRING",
+    "movementStates": [
+     "SPAWN",
+     "SHALLOW_ACTIVE"
+    ],
+    "shallowLikelihood": "HIGH",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [
+     "shallowVegetatedHabitat"
+    ],
+    "spawnState": "ACTIVE_WINDOW",
+    "temperatureContext": "spawns when water is about 59-82 F; if water is about 50-59 F or water is about 59-64 F: Strong increase in shallow / active likelihood",
+    "hydrologyContext": "Strong increase in shallow / active likelihood: the lake level is rising",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "Concentrate on the spawning habitat (shallow cover, flooded margins, creek mouths) while water is in this range. Check newly flooded margins, creek mouths and backwaters. Look in newly flooded vegetation and margins.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-03",
+     "CC-SEA-03H"
+    ]
+   },
+   {
+    "month": "JUN",
+    "season": "SUMMER",
+    "movementStates": [
+     "SPAWN",
+     "SHALLOW_ACTIVE"
+    ],
+    "shallowLikelihood": "HIGH",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [
+     "shallowVegetatedHabitat"
+    ],
+    "spawnState": "ACTIVE_WINDOW",
+    "temperatureContext": "spawns when water is about 59-82 F; if water is about 50-59 F or water is about 59-64 F: Strong increase in shallow / active likelihood; if water is about 79-86 F: Fish still workable",
+    "hydrologyContext": "Strong increase in shallow / active likelihood: the lake level is rising",
+    "dayNightContext": "CONFLICTING EVIDENCE: night effect unresolved (see conditionModifiers)",
+    "bowfisherMeaning": "Concentrate on the spawning habitat (shallow cover, flooded margins, creek mouths) while water is in this range. Check newly flooded margins, creek mouths and backwaters. Look in newly flooded vegetation and margins.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-03",
+     "CC-SEA-03H"
+    ]
+   },
+   {
+    "month": "JUL",
+    "season": "SUMMER",
+    "movementStates": [
+     "SPAWN",
+     "SHALLOW_ACTIVE"
+    ],
+    "shallowLikelihood": "HIGH",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [
+     "shallowVegetatedHabitat"
+    ],
+    "spawnState": "ACTIVE_WINDOW",
+    "temperatureContext": "spawns when water is about 59-82 F; if water is about 79-86 F: Fish still workable",
+    "hydrologyContext": "Strong increase in shallow / active likelihood: the lake level is rising",
+    "dayNightContext": "CONFLICTING EVIDENCE: night effect unresolved (see conditionModifiers)",
+    "bowfisherMeaning": "Concentrate on the spawning habitat (shallow cover, flooded margins, creek mouths) while water is in this range. Check newly flooded margins, creek mouths and backwaters. Look in newly flooded vegetation and margins.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-03",
+     "CC-SEA-03H"
+    ]
+   },
+   {
+    "month": "AUG",
+    "season": "SUMMER",
+    "movementStates": [
+     "SPAWN",
+     "SHALLOW_ACTIVE"
+    ],
+    "shallowLikelihood": "HIGH",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [
+     "shallowVegetatedHabitat"
+    ],
+    "spawnState": "ACTIVE_WINDOW",
+    "temperatureContext": "spawns when water is about 59-82 F; if water is about 79-86 F: Fish still workable",
+    "hydrologyContext": "UNKNOWN",
+    "dayNightContext": "CONFLICTING EVIDENCE: night effect unresolved (see conditionModifiers)",
+    "bowfisherMeaning": "Concentrate on the spawning habitat (shallow cover, flooded margins, creek mouths) while water is in this range. Look in shallow vegetated coves and weedy shallows. Workable water temperature.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-03",
+     "CC-SEA-03H"
+    ]
+   },
+   {
+    "month": "SEP",
+    "season": "FALL",
+    "movementStates": [
+     "POST_SPAWN",
+     "FALL_TRANSITION"
+    ],
+    "shallowLikelihood": "CONDITIONAL",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [],
+    "spawnState": "OUTSIDE_WINDOW",
+    "temperatureContext": "if water is about 79-86 F: Fish still workable",
+    "hydrologyContext": "UNKNOWN",
+    "dayNightContext": "CONFLICTING EVIDENCE: night effect unresolved (see conditionModifiers)",
+    "bowfisherMeaning": "Workable water temperature.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "precision": "SEASONAL",
+    "claimIds": [
+     "card:seasonalMovement:fall",
+     "card:seasonalMovement:postSpawn"
+    ]
+   },
+   {
+    "month": "OCT",
+    "season": "FALL",
+    "movementStates": [
+     "FALL_TRANSITION"
+    ],
+    "shallowLikelihood": "UNKNOWN",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [],
+    "spawnState": "OUTSIDE_WINDOW",
+    "temperatureContext": "UNKNOWN",
+    "hydrologyContext": "UNKNOWN",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "UNKNOWN",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "precision": "SEASONAL",
+    "claimIds": [
+     "card:seasonalMovement:fall"
+    ]
+   },
+   {
+    "month": "NOV",
+    "season": "FALL",
+    "movementStates": [
+     "FALL_TRANSITION"
+    ],
+    "shallowLikelihood": "UNKNOWN",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [],
+    "spawnState": "OUTSIDE_WINDOW",
+    "temperatureContext": "if water is under 50 F: Fewer shootable fish",
+    "hydrologyContext": "UNKNOWN",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "Cold water: slow fish, few in the shallows.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "precision": "SEASONAL",
+    "claimIds": [
+     "card:seasonalMovement:fall"
+    ]
+   },
+   {
+    "month": "DEC",
+    "season": "WINTER",
+    "movementStates": [
+     "DEEPER_HOLDING",
+     "WINTER_HOLDING"
+    ],
+    "shallowLikelihood": "LOW",
+    "typicalDepthBehavior": "UNKNOWN",
+    "favoredHabitat": [],
+    "spawnState": "OUTSIDE_WINDOW",
+    "temperatureContext": "if water is under 50 F: Fewer shootable fish",
+    "hydrologyContext": "UNKNOWN",
+    "dayNightContext": "UNKNOWN",
+    "bowfisherMeaning": "Cold water: slow fish, few in the shallows.",
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "precision": "MONTH",
+    "claimIds": [
+     "CC-SEA-01",
+     "card:seasonalMovement:winter"
+    ]
+   }
+  ],
+  "conditionModifiers": [
+   {
+    "id": "CC-CLR-01",
+    "category": "clarity",
+    "when": "any time of year; the water is turbid",
+    "effect": "Fish still workable",
+    "bowfisherMeaning": "Muddy water does not keep them away.",
+    "seasonality": "UNBOUNDED",
+    "seasonReview": "YEAR_ROUND",
+    "firesNow": true,
+    "conflict": false,
+    "months": null,
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-CLR-01"
+    ]
+   },
+   {
+    "id": "CC-DIEL-02",
+    "category": "night",
+    "when": "Jun-Sep; it is night",
+    "effect": "Fewer shootable fish",
+    "bowfisherMeaning": "Night is a poor time for this fish in this condition.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": true,
+    "months": [
+     6,
+     7,
+     8,
+     9
+    ],
+    "confidence": "LOW",
+    "regionalConfidence": "LOW",
+    "claimIds": [
+     "CC-DIEL-02"
+    ]
+   },
+   {
+    "id": "CC-DIEL-05",
+    "category": "night",
+    "when": "Jun-Sep; it is night",
+    "effect": "Fish still workable",
+    "bowfisherMeaning": "Night trips are worth it in this condition.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": true,
+    "months": [
+     6,
+     7,
+     8,
+     9
+    ],
+    "confidence": "LOW",
+    "regionalConfidence": "LOW",
+    "claimIds": [
+     "CC-DIEL-05"
+    ]
+   },
+   {
+    "id": "CC-HYD-01",
+    "category": "hydrology",
+    "when": "Mar-Jul; the lake level is rising",
+    "effect": "Strong increase in shallow / active likelihood",
+    "bowfisherMeaning": "Check newly flooded margins, creek mouths and backwaters.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": false,
+    "months": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-HYD-01"
+    ]
+   },
+   {
+    "id": "CC-HYD-01H",
+    "category": "vegetation",
+    "when": "Mar-Jul; the lake level is rising",
+    "effect": "More fish expected here",
+    "bowfisherMeaning": "Look in newly flooded vegetation and margins.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": false,
+    "months": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-HYD-01H"
+    ]
+   },
+   {
+    "id": "CC-SEA-01",
+    "category": "temperature",
+    "when": "Nov-Mar; water is under 50 F",
+    "effect": "Fewer shootable fish",
+    "bowfisherMeaning": "Cold water: slow fish, few in the shallows.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": false,
+    "months": [
+     11,
+     12,
+     1,
+     2,
+     3
+    ],
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-SEA-01"
+    ]
+   },
+   {
+    "id": "CC-SEA-02",
+    "category": "temperature",
+    "when": "Mar-Jun; water is about 50-59 F or water is about 59-64 F",
+    "effect": "Strong increase in shallow / active likelihood",
+    "bowfisherMeaning": "Water in the sweet spot: fish move shallow.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": false,
+    "months": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-SEA-02"
+    ]
+   },
+   {
+    "id": "CC-SEA-02H",
+    "category": "current",
+    "when": "Mar-Jun; water is about 50-59 F or water is about 59-64 F",
+    "effect": "More fish expected here",
+    "bowfisherMeaning": "Look in creek and tributary mouths.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": false,
+    "months": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-SEA-02H"
+    ]
+   },
+   {
+    "id": "CC-SEA-03H",
+    "category": "vegetation",
+    "when": "Apr-Aug",
+    "effect": "More fish expected here",
+    "bowfisherMeaning": "Look in shallow vegetated coves and weedy shallows.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": false,
+    "months": [
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-SEA-03H"
+    ]
+   },
+   {
+    "id": "CC-TMP-04",
+    "category": "temperature",
+    "when": "Jun-Sep; water is about 79-86 F",
+    "effect": "Fish still workable",
+    "bowfisherMeaning": "Workable water temperature.",
+    "seasonality": "BOUNDED",
+    "seasonReview": "BOUNDED",
+    "firesNow": true,
+    "conflict": false,
+    "months": [
+     6,
+     7,
+     8,
+     9
+    ],
+    "confidence": "MEDIUM",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "CC-TMP-04"
+    ]
+   }
+  ],
+  "unboundedSeasonalModifiers": [],
+  "evidenceConflicts": [
+   "CC-DIEL-02",
+   "CC-DIEL-05"
+  ]
+ },
+ "seasonalGuide": {
+  "winter": {
+   "look": [
+    {
+     "phase": "Winter",
+     "text": "Fish are sluggish and often loosely aggregated in deeper basins or at inflow mouths; in shallow southern impoundments they can sit at creek-inflow confluences (Oklahoma observation). In mild southern lakes may not form shoals at all."
+    }
+   ],
+   "why": [
+    "Nov-Mar; water is under 50 F: Cold water: slow fish, few in the shallows."
+   ],
+   "precision": "SEASONAL",
+   "claimIds": [
+    "card:seasonalMovement:winter",
+    "CC-SEA-01"
+   ]
+  },
+  "spring": {
+   "look": [
+    {
+     "phase": "Pre-spawn",
+     "text": "As water nears about 15-16 C (60 F) fish stage and move toward warming shallow bays, backwaters and tributary mouths; smaller males arrive first, larger females later."
+    },
+    {
+     "phase": "Spawn",
+     "text": "Mass spawning in shallow, warm, vegetated or flooded-grass areas, typically mid-April to late June in the Southeast/Midwest (about mid-May to late June in northern Ohio-type water). Fish crowd water so shallow backs break the surface;"
+    },
+    {
+     "phase": "Post-spawn",
+     "text": "Fish disperse back to main lake/river habitat; may keep feeding in shallows into late summer. Falling water after a flood pulse draws fish off newly flooded margins."
+    }
+   ],
+   "why": [
+    "Mar-Jul; the lake level is rising: Check newly flooded margins, creek mouths and backwaters.",
+    "Mar-Jul; the lake level is rising: Look in newly flooded vegetation and margins.",
+    "Nov-Mar; water is under 50 F: Cold water: slow fish, few in the shallows."
+   ],
+   "precision": "SEASONAL",
+   "claimIds": [
+    "card:seasonalMovement:preSpawn",
+    "card:seasonalMovement:spawn",
+    "card:seasonalMovement:postSpawn",
+    "CC-HYD-01",
+    "CC-HYD-01H",
+    "CC-SEA-01"
+   ]
+  },
+  "summer": {
+   "look": [
+    {
+     "phase": "Summer",
+     "text": "Warm-tolerant; use shallow muddy coves and flats, with activity strongest dusk through early morning; will use 29-33 C water. In small shallow waters upper 0.5-1 m is used."
+    }
+   ],
+   "why": [
+    "Jun-Sep; it is night: Night is a poor time for this fish in this condition.",
+    "Jun-Sep; it is night: Night trips are worth it in this condition.",
+    "Mar-Jul; the lake level is rising: Check newly flooded margins, creek mouths and backwaters."
+   ],
+   "precision": "SEASONAL",
+   "claimIds": [
+    "card:seasonalMovement:summer",
+    "CC-DIEL-02",
+    "CC-DIEL-05",
+    "CC-HYD-01"
+   ]
+  },
+  "fall": {
+   "look": [
+    {
+     "phase": "Fall",
+     "text": "Continued shallow feeding into late summer/early fall, then drift toward deeper or inflow wintering areas as water cools below roughly 10 C."
+    }
+   ],
+   "why": [
+    "Jun-Sep; it is night: Night is a poor time for this fish in this condition.",
+    "Jun-Sep; it is night: Night trips are worth it in this condition.",
+    "Nov-Mar; water is under 50 F: Cold water: slow fish, few in the shallows."
+   ],
+   "precision": "SEASONAL",
+   "claimIds": [
+    "card:seasonalMovement:fall",
+    "CC-DIEL-02",
+    "CC-DIEL-05",
+    "CC-SEA-01"
+   ]
+  }
+ },
+ "spawn": {
+  "coverage": "STRONG",
+  "completeness": 8.0,
+  "statements": [
+   {
+    "label": "Timing",
+    "text": "Spring when water warms; roughly April-June in the Southeast; later and shorter farther north; warm or heated water can see a long or second (August) spawn.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:spawn:timing"
+    ]
+   },
+   {
+    "label": "Temperature",
+    "text": "59-75 F; peak about 65 F; Science ranges 15-24 C (59-75 F); 18-22 C (64-72 F) optimum (FAO); bowfisher reports: moving shallow at ~60 F, spawning from ~62 F, peak 65-68 F, over by ~80 F\u2026",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:spawn:temperatureF"
+    ]
+   },
+   {
+    "label": "Habitat",
+    "text": "Shallow, warm, slow or still water with submerged or flooded vegetation; eggs are sticky and adhere to plants. Rising water that floods grass, fields and bank vegetation triggers and supports spawning.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:spawn:habitat"
+    ]
+   },
+   {
+    "label": "Shallow movement",
+    "text": "Adults move into water often less than 1 m (sometimes backs exposed) in coves, backwaters, flooded margins; males arrive first.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:spawn:shallowMovement"
+    ]
+   },
+   {
+    "label": "Pre-spawn",
+    "text": "As water nears about 15-16 C (60 F) fish stage and move toward warming shallow bays, backwaters and tributary mouths; smaller males arrive first, larger females later.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:seasonalMovement:preSpawn"
+    ]
+   },
+   {
+    "label": "Post-spawn",
+    "text": "Fish disperse back to main lake/river habitat; may keep feeding in shallows into late summer. Falling water after a flood pulse draws fish off newly flooded margins.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:seasonalMovement:postSpawn"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": [
+   "CC-SEA-03"
+  ]
+ },
+ "temperature": {
+  "coverage": "STRONG",
+  "completeness": 8.0,
+  "statements": [
+   {
+    "label": "What triggers movement",
+    "text": "Warming toward 15-16 C (about 60 F) with longer days starts shallow movement; rising water plus warming is the strongest combined cue.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:temperatureResponse:triggers"
+    ]
+   },
+   {
+    "label": "Pre-spawn",
+    "text": "Staging and shallow movement from about 55-62 F.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:temperatureResponse:preSpawn"
+    ]
+   },
+   {
+    "label": "Spawn",
+    "text": "About 62-72 F with peak near 65-68 F by bowfisher accounts; science range 15-24 C.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:temperatureResponse:spawn"
+    ]
+   },
+   {
+    "label": "Summer",
+    "text": "Tolerates and uses 28-33 C; not pushed out of shallows by heat alone; oxygen below about 3 mg/L reduces feeding and growth.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:temperatureResponse:summer"
+    ]
+   },
+   {
+    "label": "Cold-water slowdown",
+    "text": "Sluggish and aggregated below roughly 10 C; low shootable-shallow use in deep winter except at warm inflows/discharges.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:temperatureResponse:coldSlowdown"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": [
+   "CC-SEA-01",
+   "CC-SEA-02",
+   "CC-TMP-04"
+  ]
+ },
+ "depth": {
+  "coverage": "MODERATE",
+  "completeness": 6.0,
+  "statements": [
+   {
+    "label": "Shallow when",
+    "text": "Spring spawn run, over flooded vegetation, warm sunny afternoons in spring, and dusk-to-dawn in summer in small or shallow waters.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:depthBehavior:shallowWhen"
+    ]
+   },
+   {
+    "label": "Deeper when",
+    "text": "Winter cold; possibly summer nights in at least one run-of-river reservoir; after spawn when fish disperse.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:depthBehavior:deepWhen"
+    ]
+   },
+   {
+    "label": "Useful depth and habitat",
+    "text": "Roughly 0-1.5 m in shallow coves and flats; spawning depth in southern accounts up to about 6 ft (1.8 m). In shallow southern lakes (mean depth about 1 m) carp are present lake-wide.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:depthBehavior:usefulDepthHabitat"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": []
+ },
+ "hydrology": {
+  "coverage": "MODERATE",
+  "completeness": 6.0,
+  "statements": [
+   {
+    "label": "Rising water",
+    "text": "Rising water that floods vegetated shore strongly pulls carp into the new shallows to spawn and feed; floodplain studies show most fish move onto flooded areas.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:hydrologyResponse:rising"
+    ]
+   },
+   {
+    "label": "Falling water",
+    "text": "Fish withdraw from flooded margins within days-weeks as water falls; many return to a prior home site.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:hydrologyResponse:falling"
+    ]
+   },
+   {
+    "label": "Flooded shoreline",
+    "text": "Prime: flooded grass, fields, brush are used for spawning and feeding.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:hydrologyResponse:floodedShoreline"
+    ]
+   },
+   {
+    "label": "Current",
+    "text": "Prefer slack or slow water; tailraces hold early-season fish weeks before lake fish peak.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:hydrologyResponse:current"
+    ]
+   },
+   {
+    "label": "River discharge",
+    "text": "Moderate rises help; strong flood current pushes fish to slack margins and backwaters.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:hydrologyResponse:discharge"
+    ]
+   },
+   {
+    "label": "Backwater connection",
+    "text": "Connected backwaters and sloughs are major spawning and feeding sites; barriers can cut off spawning access.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:hydrologyResponse:backwaterConnectivity"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": [
+   "CC-HYD-01"
+  ]
+ },
+ "habitat": {
+  "coverage": "STRONG",
+  "completeness": 8.0,
+  "statements": [
+   {
+    "label": "vegetationAssociation",
+    "text": "Spawning is tied to submerged/flooded vegetation (egg attachment). Adults occur without vegetation in turbid lakes, so vegetation matters for spawning more than for adult presence.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:vegetationAssociation"
+    ]
+   },
+   {
+    "label": "coverAndSubstrate",
+    "text": "Soft mud/silt bottoms in shallow muddy coves with fallen branches, trees, reeds; also dike fields, sand disposal areas, rocky outcrops and steep or gentle banks. No stable substrate rule.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:coverAndSubstrate"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": [
+   "CC-HYD-01H",
+   "CC-SEA-03H"
+  ]
+ },
+ "dayNight": {
+  "coverage": "WEAK",
+  "completeness": 3.0,
+  "statements": [
+   {
+    "label": "Day",
+    "text": "Spawn and basking in shallows on warm spring days; wary in clear water.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:dayNightBehavior:day"
+    ]
+   },
+   {
+    "label": "Dusk",
+    "text": "Activity rises, move to feeding shallows.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:dayNightBehavior:dusk"
+    ]
+   },
+   {
+    "label": "Night",
+    "text": "Active, often shallower in lakes/ponds; one run-of-river reservoir study found them deeper and less active at night (conflict).",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:dayNightBehavior:night"
+    ]
+   },
+   {
+    "label": "Dawn",
+    "text": "Second activity peak around early morning.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:dayNightBehavior:dawn"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": [
+   "CC-DIEL-02",
+   "CC-DIEL-05"
+  ]
+ },
+ "clarityLight": {
+  "coverage": "WEAK",
+  "completeness": 3.0,
+  "statements": [
+   {
+    "label": "Bright sun",
+    "text": "Warm bright days in spring bring spawners into shallow muddy bays and make surface activity visible.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:clarityLightResponse:brightSun"
+    ]
+   },
+   {
+    "label": "Low light",
+    "text": "Activity peaks near midnight and early morning in pond telemetry; dusk-dawn feeding.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:clarityLightResponse:lowLight"
+    ]
+   },
+   {
+    "label": "Turbid water",
+    "text": "Carp thrive in very turbid water (Secchi 0.1-0.35 m); presence does not drop, but shootability does.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:clarityLightResponse:turbid"
+    ]
+   },
+   {
+    "label": "Clear water",
+    "text": "Fish are spookier in clear water; large fish over about 10 lb are wary of boats.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:clarityLightResponse:clear"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": [
+   "CC-CLR-01"
+  ]
+ },
+ "currentWaterbody": {
+  "coverage": "WEAK",
+  "completeness": 3.0,
+  "statements": [
+   {
+    "label": "Main river",
+    "text": "Slack edges, eddies, backwater mouths, wing-dam/dike pockets; tailrace pools early spring.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:currentPreference:mainRiver"
+    ]
+   },
+   {
+    "label": "Reservoir",
+    "text": "Shallow muddy coves and flats, embayment heads.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:currentPreference:reservoir"
+    ]
+   },
+   {
+    "label": "Creek / tributary",
+    "text": "Creek mouths and lower tributaries on rises; inflow confluences in winter.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:currentPreference:creekTributary"
+    ]
+   },
+   {
+    "label": "Backwater / slough",
+    "text": "Key spawn and feed habitat when connected.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:currentPreference:backwaterSlough"
+    ]
+   },
+   {
+    "label": "Shoreline / flat",
+    "text": "Flooded grass flats in spring; primary shooting habitat.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:currentPreference:shorelineFlat"
+    ]
+   },
+   {
+    "label": "Channel edge",
+    "text": "Staging/transit and deeper summer-day holding.",
+    "confidence": "HIGH",
+    "regionalConfidence": "MEDIUM",
+    "claimIds": [
+     "card:currentPreference:channelEdge"
+    ]
+   }
+  ],
+  "openQuestions": [],
+  "rules": [
+   "CC-SEA-02H"
+  ]
+ },
+ "bowfisherGuide": {
+  "takeaway": "A bowfisher looking for common carp should concentrate on shallow, muddy, vegetated or newly flooded coves, backwaters and creek mouths when water reaches about 60-72 F in spring (especially on a rising or just-stable stage after rain), then on dusk-to-early-morning shallow flats through summer, and should treat cold winter water and strongly falling stages as low-odds.",
+  "seasons": {
+   "spring": {
+    "look": [
+     {
+      "phase": "Pre-spawn",
+      "text": "As water nears about 15-16 C (60 F) fish stage and move toward warming shallow bays, backwaters and tributary mouths; smaller males arrive first, larger females later."
+     },
+     {
+      "phase": "Spawn",
+      "text": "Mass spawning in shallow, warm, vegetated or flooded-grass areas, typically mid-April to late June in the Southeast/Midwest (about mid-May to late June in northern Ohio-type water). Fish crowd water so shallow backs break the surface;"
+     },
+     {
+      "phase": "Post-spawn",
+      "text": "Fish disperse back to main lake/river habitat; may keep feeding in shallows into late summer. Falling water after a flood pulse draws fish off newly flooded margins."
+     }
+    ],
+    "why": [
+     "Mar-Jul; the lake level is rising: Check newly flooded margins, creek mouths and backwaters.",
+     "Mar-Jul; the lake level is rising: Look in newly flooded vegetation and margins.",
+     "Nov-Mar; water is under 50 F: Cold water: slow fish, few in the shallows."
+    ],
+    "precision": "SEASONAL",
+    "claimIds": [
+     "card:seasonalMovement:preSpawn",
+     "card:seasonalMovement:spawn",
+     "card:seasonalMovement:postSpawn",
+     "CC-HYD-01",
+     "CC-HYD-01H",
+     "CC-SEA-01"
+    ]
+   },
+   "summer": {
+    "look": [
+     {
+      "phase": "Summer",
+      "text": "Warm-tolerant; use shallow muddy coves and flats, with activity strongest dusk through early morning; will use 29-33 C water. In small shallow waters upper 0.5-1 m is used."
+     }
+    ],
+    "why": [
+     "Jun-Sep; it is night: Night is a poor time for this fish in this condition.",
+     "Jun-Sep; it is night: Night trips are worth it in this condition.",
+     "Mar-Jul; the lake level is rising: Check newly flooded margins, creek mouths and backwaters."
+    ],
+    "precision": "SEASONAL",
+    "claimIds": [
+     "card:seasonalMovement:summer",
+     "CC-DIEL-02",
+     "CC-DIEL-05",
+     "CC-HYD-01"
+    ]
+   },
+   "fall": {
+    "look": [
+     {
+      "phase": "Fall",
+      "text": "Continued shallow feeding into late summer/early fall, then drift toward deeper or inflow wintering areas as water cools below roughly 10 C."
+     }
+    ],
+    "why": [
+     "Jun-Sep; it is night: Night is a poor time for this fish in this condition.",
+     "Jun-Sep; it is night: Night trips are worth it in this condition.",
+     "Nov-Mar; water is under 50 F: Cold water: slow fish, few in the shallows."
+    ],
+    "precision": "SEASONAL",
+    "claimIds": [
+     "card:seasonalMovement:fall",
+     "CC-DIEL-02",
+     "CC-DIEL-05",
+     "CC-SEA-01"
+    ]
+   },
+   "winter": {
+    "look": [
+     {
+      "phase": "Winter",
+      "text": "Fish are sluggish and often loosely aggregated in deeper basins or at inflow mouths; in shallow southern impoundments they can sit at creek-inflow confluences (Oklahoma observation). In mild southern lakes may not form shoals at all."
+     }
+    ],
+    "why": [
+     "Nov-Mar; water is under 50 F: Cold water: slow fish, few in the shallows."
+    ],
+    "precision": "SEASONAL",
+    "claimIds": [
+     "card:seasonalMovement:winter",
+     "CC-SEA-01"
+    ]
+   }
+  },
+  "night": {
+   "look": "Active, often shallower in lakes/ponds; one run-of-river reservoir study found them deeper and less active at night (conflict).",
+   "rules": [
+    "CC-DIEL-02",
+    "CC-DIEL-05"
+   ],
+   "coverage": "WEAK"
+  },
+  "bestShallowWindow": {
+   "text": "Apr-Aug when water is about 59-82 F; Look in shallow vegetated coves and weedy shallows.; stronger when the lake level is rising",
+   "precision": "MONTH",
+   "claimIds": [
+    "CC-SEA-03"
+   ]
+  }
+ },
+ "knowledgeCoverage": {
+  "seasonal": {
+   "label": "Seasonal movement",
+   "status": "WEAK",
+   "completeness": 3.0,
+   "evidence": "UNVERIFIED",
+   "note": "6 of 6 sub-questions answered; 0 inspected independent source(s), 1 unverified"
+  },
+  "spawn": {
+   "label": "Spawn",
+   "status": "STRONG",
+   "completeness": 8.0,
+   "evidence": "MULTI_SOURCE",
+   "note": "4 of 4 sub-questions answered; 3 inspected independent source(s), 1 unverified"
+  },
+  "temperature": {
+   "label": "Temperature",
+   "status": "STRONG",
+   "completeness": 8.0,
+   "evidence": "MULTI_SOURCE",
+   "note": "5 of 5 sub-questions answered; 2 inspected independent source(s), 1 unverified"
+  },
+  "depth": {
+   "label": "Depth / shallow behavior",
+   "status": "MODERATE",
+   "completeness": 6.0,
+   "evidence": "MULTI_SOURCE",
+   "note": "3 of 3 sub-questions answered; 2 inspected independent source(s), 1 unverified"
+  },
+  "hydrology": {
+   "label": "Water level / hydrology",
+   "status": "MODERATE",
+   "completeness": 6.0,
+   "evidence": "SINGLE_SOURCE",
+   "note": "6 of 6 sub-questions answered; 1 inspected independent source(s), 1 unverified"
+  },
+  "vegetation": {
+   "label": "Vegetation / habitat",
+   "status": "STRONG",
+   "completeness": 8.0,
+   "evidence": "MULTI_SOURCE",
+   "note": "2 of 2 sub-questions answered; 3 inspected independent source(s), 1 unverified"
+  },
+  "night": {
+   "label": "Day / night",
+   "status": "WEAK",
+   "completeness": 3.0,
+   "evidence": "UNVERIFIED",
+   "note": "4 of 4 sub-questions answered; 0 inspected independent source(s)"
+  },
+  "clarity": {
+   "label": "Clarity / light",
+   "status": "WEAK",
+   "completeness": 3.0,
+   "evidence": "UNVERIFIED",
+   "note": "4 of 4 sub-questions answered; 0 inspected independent source(s), 1 unverified"
+  },
+  "current": {
+   "label": "Current / waterbody use",
+   "status": "WEAK",
+   "completeness": 3.0,
+   "evidence": "UNVERIFIED",
+   "note": "6 of 6 sub-questions answered; 0 inspected independent source(s)"
+  },
+  "regional": {
+   "label": "Southeast / regional",
+   "status": "MODERATE",
+   "completeness": 4.1,
+   "evidence": "RULE_TRANSFER",
+   "note": "0 Southeast-supported, 9 partly, 2 untested of 11 usable rules"
+  }
+ },
+ "knowledgeGapMatrix": {
+  "seasonal": {
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.8,
+   "researchPriority": "HIGH",
+   "gapExplanation": "6 of 6 sub-questions answered; 0 inspected independent source(s), 1 unverified"
+  },
+  "spawn": {
+   "coverage": "STRONG",
+   "completeness": 8.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.8,
+   "researchPriority": "LOW",
+   "gapExplanation": "4 of 4 sub-questions answered; 3 inspected independent source(s), 1 unverified"
+  },
+  "temperature": {
+   "coverage": "STRONG",
+   "completeness": 8.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.7,
+   "researchPriority": "LOW",
+   "gapExplanation": "5 of 5 sub-questions answered; 2 inspected independent source(s), 1 unverified"
+  },
+  "depth": {
+   "coverage": "MODERATE",
+   "completeness": 6.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 1.0,
+   "researchPriority": "MEDIUM",
+   "gapExplanation": "3 of 3 sub-questions answered; 2 inspected independent source(s), 1 unverified"
+  },
+  "hydrology": {
+   "coverage": "MODERATE",
+   "completeness": 6.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.8,
+   "researchPriority": "MEDIUM",
+   "gapExplanation": "6 of 6 sub-questions answered; 1 inspected independent source(s), 1 unverified"
+  },
+  "vegetation": {
+   "coverage": "STRONG",
+   "completeness": 8.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.6,
+   "researchPriority": "LOW",
+   "gapExplanation": "2 of 2 sub-questions answered; 3 inspected independent source(s), 1 unverified"
+  },
+  "night": {
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 1.0,
+   "researchPriority": "HIGH",
+   "gapExplanation": "4 of 4 sub-questions answered; 0 inspected independent source(s)"
+  },
+  "clarity": {
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.4,
+   "researchPriority": "LOW",
+   "gapExplanation": "4 of 4 sub-questions answered; 0 inspected independent source(s), 1 unverified"
+  },
+  "current": {
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.6,
+   "researchPriority": "MEDIUM",
+   "gapExplanation": "6 of 6 sub-questions answered; 0 inspected independent source(s)"
+  },
+  "regional": {
+   "coverage": "MODERATE",
+   "completeness": 4.1,
+   "confidence": "MEDIUM",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.9,
+   "researchPriority": "HIGH",
+   "gapExplanation": "0 Southeast-supported, 9 partly, 2 untested of 11 usable rules"
+  }
+ },
+ "knowledgeGaps": [
+  {
+   "category": "seasonal",
+   "label": "Seasonal movement",
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.8,
+   "researchPriority": "HIGH",
+   "priorityScore": 0.56,
+   "changesRecommendation": true,
+   "evidence": "UNVERIFIED",
+   "gapExplanation": "6 of 6 sub-questions answered; 0 inspected independent source(s), 1 unverified",
+   "openQuestions": [],
+   "ifWeLearnThis": "Would show when this fish is in the shallows through the year, changing which months to fish it.",
+   "researchStatus": "RESEARCH_NOT_AUTHORIZED"
+  },
+  {
+   "category": "depth",
+   "label": "Depth / shallow behavior",
+   "coverage": "MODERATE",
+   "completeness": 6.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 1.0,
+   "researchPriority": "MEDIUM",
+   "priorityScore": 0.4,
+   "changesRecommendation": true,
+   "evidence": "MULTI_SOURCE",
+   "gapExplanation": "3 of 3 sub-questions answered; 2 inspected independent source(s), 1 unverified",
+   "openQuestions": [],
+   "ifWeLearnThis": "Would change whether Sector points a bowfisher at shallow flats or deeper edges.",
+   "researchStatus": "RESEARCH_NOT_AUTHORIZED"
+  },
+  {
+   "category": "hydrology",
+   "label": "Water level / hydrology",
+   "coverage": "MODERATE",
+   "completeness": 6.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.8,
+   "researchPriority": "MEDIUM",
+   "priorityScore": 0.32,
+   "changesRecommendation": true,
+   "evidence": "SINGLE_SOURCE",
+   "gapExplanation": "6 of 6 sub-questions answered; 1 inspected independent source(s), 1 unverified",
+   "openQuestions": [],
+   "ifWeLearnThis": "Would show what rising, falling and flooded water do to where the fish sits.",
+   "researchStatus": "RESEARCH_NOT_AUTHORIZED"
+  },
+  {
+   "category": "night",
+   "label": "Day / night",
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 1.0,
+   "researchPriority": "HIGH",
+   "priorityScore": 0.7,
+   "changesRecommendation": true,
+   "evidence": "UNVERIFIED",
+   "gapExplanation": "4 of 4 sub-questions answered; 0 inspected independent source(s)",
+   "openQuestions": [],
+   "ifWeLearnThis": "Would change whether Sector recommends shallow flats or deeper edges after dark, when most bowfishing happens.",
+   "researchStatus": "RESEARCH_NOT_AUTHORIZED"
+  },
+  {
+   "category": "clarity",
+   "label": "Clarity / light",
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.4,
+   "researchPriority": "LOW",
+   "priorityScore": 0.14,
+   "changesRecommendation": false,
+   "evidence": "UNVERIFIED",
+   "gapExplanation": "4 of 4 sub-questions answered; 0 inspected independent source(s), 1 unverified",
+   "openQuestions": [],
+   "ifWeLearnThis": "Would only refine how clear or muddy water changes the fish's response; unlikely to change where to look.",
+   "researchStatus": "RESEARCH_NOT_AUTHORIZED"
+  },
+  {
+   "category": "current",
+   "label": "Current / waterbody use",
+   "coverage": "WEAK",
+   "completeness": 3.0,
+   "confidence": "HIGH",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.6,
+   "researchPriority": "MEDIUM",
+   "priorityScore": 0.42,
+   "changesRecommendation": true,
+   "evidence": "UNVERIFIED",
+   "gapExplanation": "6 of 6 sub-questions answered; 0 inspected independent source(s)",
+   "openQuestions": [],
+   "ifWeLearnThis": "Would change where in a lake or river system (creek, tailwater, backwater, channel edge) to look.",
+   "researchStatus": "RESEARCH_NOT_AUTHORIZED"
+  },
+  {
+   "category": "regional",
+   "label": "Southeast / regional",
+   "coverage": "MODERATE",
+   "completeness": 4.1,
+   "confidence": "MEDIUM",
+   "reviewed": false,
+   "validated": false,
+   "bowfisherImportance": 0.9,
+   "researchPriority": "HIGH",
+   "priorityScore": 0.531,
+   "changesRecommendation": true,
+   "evidence": "RULE_TRANSFER",
+   "gapExplanation": "0 Southeast-supported, 9 partly, 2 untested of 11 usable rules",
+   "openQuestions": [],
+   "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there.",
+   "researchStatus": "RESEARCH_NOT_AUTHORIZED"
+  }
+ ],
+ "researchPriorities": {
+  "top": [
+   {
+    "category": "night",
+    "label": "Day / night",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would change whether Sector recommends shallow flats or deeper edges after dark, when most bowfishing happens."
+   },
+   {
+    "category": "seasonal",
+    "label": "Seasonal movement",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show when this fish is in the shallows through the year, changing which months to fish it."
+   },
+   {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   },
+   {
+    "category": "current",
+    "label": "Current / waterbody use",
+    "priority": "MEDIUM",
+    "ifWeLearnThis": "Would change where in a lake or river system (creek, tailwater, backwater, channel edge) to look."
+   },
+   {
+    "category": "depth",
+    "label": "Depth / shallow behavior",
+    "priority": "MEDIUM",
+    "ifWeLearnThis": "Would change whether Sector points a bowfisher at shallow flats or deeper edges."
+   }
+  ],
+  "speciesNote": "No carp telemetry in a TVA/southeastern run-of-river reservoir; summer-night shallow vs deep position there is unresolved, and managed-pool drawdown response is untested.",
+  "policy": "RESEARCH_NOT_AUTHORIZED: a gap is exposed, never researched automatically"
+ },
+ "rulesSummary": [
+  {
+   "ruleId": "CC-CLR-01",
+   "ruleVersion": 1,
+   "kind": "RESPONSE",
+   "category": "clarity",
+   "when": "any time of year; the water is turbid",
+   "expects": "Fish still workable",
+   "bowfisherMeaning": "Muddy water does not keep them away.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "UNBOUNDED",
+   "seasonReview": "YEAR_ROUND",
+   "fires": true,
+   "months": null,
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-CLR-01"
+   ]
+  },
+  {
+   "ruleId": "CC-DIEL-02",
+   "ruleVersion": 1,
+   "kind": "RESPONSE",
+   "category": "night",
+   "when": "Jun-Sep; it is night",
+   "expects": "Fewer shootable fish",
+   "bowfisherMeaning": "Night is a poor time for this fish in this condition.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    6,
+    7,
+    8,
+    9
+   ],
+   "confidence": "LOW",
+   "regionalConfidence": "LOW",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-DIEL-02"
+   ]
+  },
+  {
+   "ruleId": "CC-DIEL-05",
+   "ruleVersion": 1,
+   "kind": "RESPONSE",
+   "category": "night",
+   "when": "Jun-Sep; it is night",
+   "expects": "Fish still workable",
+   "bowfisherMeaning": "Night trips are worth it in this condition.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    6,
+    7,
+    8,
+    9
+   ],
+   "confidence": "LOW",
+   "regionalConfidence": "LOW",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-DIEL-05"
+   ]
+  },
+  {
+   "ruleId": "CC-HYD-01",
+   "ruleVersion": 2,
+   "kind": "RESPONSE",
+   "category": "hydrology",
+   "when": "Mar-Jul; the lake level is rising",
+   "expects": "Strong increase in shallow / active likelihood",
+   "bowfisherMeaning": "Check newly flooded margins, creek mouths and backwaters.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-HYD-01"
+   ]
+  },
+  {
+   "ruleId": "CC-HYD-01H",
+   "ruleVersion": 2,
+   "kind": "HABITAT",
+   "category": "vegetation",
+   "when": "Mar-Jul; the lake level is rising",
+   "expects": "More fish expected here",
+   "bowfisherMeaning": "Look in newly flooded vegetation and margins.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-HYD-01H"
+   ]
+  },
+  {
+   "ruleId": "CC-SEA-01",
+   "ruleVersion": 1,
+   "kind": "RESPONSE",
+   "category": "temperature",
+   "when": "Nov-Mar; water is under 50 F",
+   "expects": "Fewer shootable fish",
+   "bowfisherMeaning": "Cold water: slow fish, few in the shallows.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    11,
+    12,
+    1,
+    2,
+    3
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-SEA-01"
+   ]
+  },
+  {
+   "ruleId": "CC-SEA-02",
+   "ruleVersion": 1,
+   "kind": "RESPONSE",
+   "category": "temperature",
+   "when": "Mar-Jun; water is about 50-59 F or water is about 59-64 F",
+   "expects": "Strong increase in shallow / active likelihood",
+   "bowfisherMeaning": "Water in the sweet spot: fish move shallow.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-SEA-02"
+   ]
+  },
+  {
+   "ruleId": "CC-SEA-02H",
+   "ruleVersion": 1,
+   "kind": "HABITAT",
+   "category": "current",
+   "when": "Mar-Jun; water is about 50-59 F or water is about 59-64 F",
+   "expects": "More fish expected here",
+   "bowfisherMeaning": "Look in creek and tributary mouths.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-SEA-02H"
+   ]
+  },
+  {
+   "ruleId": "CC-SEA-03",
+   "ruleVersion": 1,
+   "kind": "PHENOLOGY",
+   "category": "spawn",
+   "when": "Apr-Aug; water about 59-82 F",
+   "expects": "Spawning window: fish are in spawning habitat and easier to find",
+   "bowfisherMeaning": "Concentrate on the spawning habitat (shallow cover, flooded margins, creek mouths) while water is in this range.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-SEA-03"
+   ]
+  },
+  {
+   "ruleId": "CC-SEA-03H",
+   "ruleVersion": 1,
+   "kind": "HABITAT",
+   "category": "vegetation",
+   "when": "Apr-Aug",
+   "expects": "More fish expected here",
+   "bowfisherMeaning": "Look in shallow vegetated coves and weedy shallows.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-SEA-03H"
+   ]
+  },
+  {
+   "ruleId": "CC-TMP-04",
+   "ruleVersion": 1,
+   "kind": "RESPONSE",
+   "category": "temperature",
+   "when": "Jun-Sep; water is about 79-86 F",
+   "expects": "Fish still workable",
+   "bowfisherMeaning": "Workable water temperature.",
+   "status": "RECONCILED",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": true,
+   "months": [
+    6,
+    7,
+    8,
+    9
+   ],
+   "confidence": "MEDIUM",
+   "regionalConfidence": "MEDIUM",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-TMP-04"
+   ]
+  },
+  {
+   "ruleId": "CC-MV-01",
+   "ruleVersion": 1,
+   "kind": "RESPONSE",
+   "category": "hydrology",
+   "when": "Mar-Jul; the lake level is falling",
+   "expects": "Fewer shootable fish",
+   "bowfisherMeaning": "The margins are emptying; move to channels, backwaters and holes.",
+   "status": "DRAFT",
+   "review": "UNREVIEWED",
+   "field": "NOT_VALIDATED",
+   "seasonality": "BOUNDED",
+   "seasonReview": "BOUNDED",
+   "fires": false,
+   "months": [
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "confidence": "LOW",
+   "regionalConfidence": "LOW",
+   "predictionsLogged": 3,
+   "claimIds": [
+    "CC-MV-01"
+   ]
+  }
+ ],
+ "evidenceSummary": {
+  "sourceCount": 7,
+  "byType": {
+   "AGENCY": 3,
+   "REFERENCE": 2,
+   "PACKET": 1,
+   "PEER_REVIEWED": 1
+  },
+  "inspected": 1,
+  "unreachableOrUnsupported": 6,
+  "anecdotalIgnored": 1,
+  "strongestSource": {
+   "id": "S1",
+   "title": "Common carp",
+   "publisher": "Florida FWC",
+   "type": "AGENCY",
+   "verification": "READ-FULL"
+  },
+  "claimMaturity": {
+   "RECONCILED": 11,
+   "APPROVED": 0,
+   "DRAFT": 1
+  },
+  "sources": [
+   {
+    "id": "S1",
+    "title": "Common carp",
+    "publisher": "Florida FWC",
+    "url": "https://myfwc.com/wildlifehabitats/profiles/freshwater/common-carp/",
+    "type": "AGENCY",
+    "verification": "READ-FULL",
+    "supports": [
+     "spawn",
+     "temperature",
+     "habitat"
+    ]
+   },
+   {
+    "id": "S2",
+    "title": "Impacts of carp in wetlands fact sheet 4",
+    "publisher": "Victoria DEECA (Australia)",
+    "url": "https://www.water.vic.gov.au/__data/assets/pdf_file/0032/671684/impacts-of-carp-in-wetlands-fact-sheet-4.pdf",
+    "type": "AGENCY",
+    "verification": "UNREACHABLE",
+    "supports": [
+     "spawn",
+     "temperature",
+     "hydrology",
+     "vegetationHabitat"
+    ]
+   },
+   {
+    "id": "S3",
+    "title": "Biology of reproduction (common carp)",
+    "publisher": "FAO",
+    "url": "https://www.fao.org/4/X5085E/X5085E03.htm",
+    "type": "REFERENCE",
+    "verification": "NOT_SUPPORTED",
+    "supports": [
+     "spawn",
+     "temperature",
+     "vegetationHabitat"
+    ]
+   },
+   {
+    "id": "S4",
+    "title": "common_carp_extension packet (Mattamuskeet USFWS, Carl Etling OK, Maddux SD, Riha pond preprint)",
+    "publisher": "Sector private packet",
+    "url": null,
+    "type": "PACKET",
+    "verification": "NOT_SUPPORTED",
+    "supports": [
+     "seasonal",
+     "temperature",
+     "depth",
+     "nightLight",
+     "current"
+    ]
+   },
+   {
+    "id": "S5",
+    "title": "Gunbower Forest carp acoustic telemetry / PestSmart summary of Jones & Stuart 2009",
+    "publisher": "ASFB / PestSmart",
+    "url": "https://asfb-2018.p.asnevents.com.au/days/2018-10-09/abstract/53508",
+    "type": "PEER_REVIEWED",
+    "verification": "NOT_SUPPORTED",
+    "supports": [
+     "hydrology"
+    ]
+   },
+   {
+    "id": "S6",
+    "title": "Fishes of Texas: Cyprinus carpio account",
+    "publisher": "Fishes of Texas",
+    "url": "https://fishesoftexas.org/taxa/cyprinus-carpio",
+    "type": "REFERENCE",
+    "verification": "NOT_SUPPORTED",
+    "supports": [
+     "spawn",
+     "temperature",
+     "habitat"
+    ]
+   },
+   {
+    "id": "S7",
+    "title": "Carson et al. 2026 Mattamuskeet carp report; Snow et al. 2020 Lake Carl Etling",
+    "publisher": "USFWS / Okla. Acad. Sci.",
+    "url": "https://www.fws.gov/sites/default/files/documents/2026-05/mattamuskeet-carp-technical-report_final.pdf",
+    "type": "AGENCY",
+    "verification": "UNREACHABLE",
+    "supports": [
+     "seasonal",
+     "clarity",
+     "depth"
+    ]
+   }
+  ],
+  "claims": {
+   "CC-CLR-01": {
+    "type": "RULE",
+    "summary": "any time of year; the water is turbid -> Fish still workable",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 3
+   },
+   "CC-DIEL-02": {
+    "type": "RULE",
+    "summary": "Jun-Sep; it is night -> Fewer shootable fish",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "SINGLE_SOURCE",
+    "inspected": true,
+    "sourceCount": 1
+   },
+   "CC-DIEL-05": {
+    "type": "RULE",
+    "summary": "Jun-Sep; it is night -> Fish still workable",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "SINGLE_SOURCE",
+    "inspected": true,
+    "sourceCount": 1
+   },
+   "CC-HYD-01": {
+    "type": "RULE",
+    "summary": "Mar-Jul; the lake level is rising -> Strong increase in shallow / active likelihood",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 3
+   },
+   "CC-HYD-01H": {
+    "type": "RULE",
+    "summary": "Mar-Jul; the lake level is rising -> More fish expected here",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 2
+   },
+   "CC-MV-01": {
+    "type": "RULE",
+    "summary": "Mar-Jul; the lake level is falling -> Fewer shootable fish",
+    "maturity": "DRAFT",
+    "evidenceStrength": "NONE",
+    "inspected": false,
+    "sourceCount": 0
+   },
+   "CC-SEA-01": {
+    "type": "RULE",
+    "summary": "Nov-Mar; water is under 50 F -> Fewer shootable fish",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 4
+   },
+   "CC-SEA-02": {
+    "type": "RULE",
+    "summary": "Mar-Jun; water is about 50-59 F or water is about 59-64 F -> Strong increase in shallow / active likelihood",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 4
+   },
+   "CC-SEA-02H": {
+    "type": "RULE",
+    "summary": "Mar-Jun; water is about 50-59 F or water is about 59-64 F -> More fish expected here",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 2
+   },
+   "CC-SEA-03": {
+    "type": "RULE",
+    "summary": "Apr-Aug; water about 59-82 F -> Spawning window: fish are in spawning habitat and easier to find",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 3
+   },
+   "CC-SEA-03H": {
+    "type": "RULE",
+    "summary": "Apr-Aug -> More fish expected here",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 2
+   },
+   "CC-TMP-04": {
+    "type": "RULE",
+    "summary": "Jun-Sep; water is about 79-86 F -> Fish still workable",
+    "maturity": "RECONCILED",
+    "evidenceStrength": "MULTI_SOURCE",
+    "inspected": true,
+    "sourceCount": 2
+   },
+   "card:clarityLightResponse:brightSun": {
+    "type": "CARD",
+    "summary": "Bright sun: Warm bright days in spring bring spawners into shallow muddy bays and make surface activity visible."
+   },
+   "card:clarityLightResponse:clear": {
+    "type": "CARD",
+    "summary": "Clear water: Fish are spookier in clear water; large fish over about 10 lb are wary of boats."
+   },
+   "card:clarityLightResponse:lowLight": {
+    "type": "CARD",
+    "summary": "Low light: Activity peaks near midnight and early morning in pond telemetry; dusk-dawn feeding."
+   },
+   "card:clarityLightResponse:turbid": {
+    "type": "CARD",
+    "summary": "Turbid water: Carp thrive in very turbid water (Secchi 0.1-0.35 m); presence does not drop, but shootability does."
+   },
+   "card:coverAndSubstrate": {
+    "type": "CARD",
+    "summary": "coverAndSubstrate: Soft mud/silt bottoms in shallow muddy coves with fallen branches, trees, reeds; also dike fields, sand disposal areas,\u2026"
+   },
+   "card:currentPreference:backwaterSlough": {
+    "type": "CARD",
+    "summary": "Backwater / slough: Key spawn and feed habitat when connected."
+   },
+   "card:currentPreference:channelEdge": {
+    "type": "CARD",
+    "summary": "Channel edge: Staging/transit and deeper summer-day holding."
+   },
+   "card:currentPreference:creekTributary": {
+    "type": "CARD",
+    "summary": "Creek / tributary: Creek mouths and lower tributaries on rises; inflow confluences in winter."
+   },
+   "card:currentPreference:mainRiver": {
+    "type": "CARD",
+    "summary": "Main river: Slack edges, eddies, backwater mouths, wing-dam/dike pockets; tailrace pools early spring."
+   },
+   "card:currentPreference:reservoir": {
+    "type": "CARD",
+    "summary": "Reservoir: Shallow muddy coves and flats, embayment heads."
+   },
+   "card:currentPreference:shorelineFlat": {
+    "type": "CARD",
+    "summary": "Shoreline / flat: Flooded grass flats in spring; primary shooting habitat."
+   },
+   "card:dayNightBehavior:dawn": {
+    "type": "CARD",
+    "summary": "Dawn: Second activity peak around early morning."
+   },
+   "card:dayNightBehavior:day": {
+    "type": "CARD",
+    "summary": "Day: Spawn and basking in shallows on warm spring days; wary in clear water."
+   },
+   "card:dayNightBehavior:dusk": {
+    "type": "CARD",
+    "summary": "Dusk: Activity rises, move to feeding shallows."
+   },
+   "card:dayNightBehavior:night": {
+    "type": "CARD",
+    "summary": "Night: Active, often shallower in lakes/ponds; one run-of-river reservoir study found them deeper and less active at night (co\u2026"
+   },
+   "card:depthBehavior:deepWhen": {
+    "type": "CARD",
+    "summary": "Deeper when: Winter cold; possibly summer nights in at least one run-of-river reservoir; after spawn when fish disperse."
+   },
+   "card:depthBehavior:shallowWhen": {
+    "type": "CARD",
+    "summary": "Shallow when: Spring spawn run, over flooded vegetation, warm sunny afternoons in spring, and dusk-to-dawn in summer in small or shal\u2026"
+   },
+   "card:depthBehavior:usefulDepthHabitat": {
+    "type": "CARD",
+    "summary": "Useful depth and habitat: Roughly 0-1.5 m in shallow coves and flats; spawning depth in southern accounts up to about 6 ft (1.8 m)."
+   },
+   "card:hydrologyResponse:backwaterConnectivity": {
+    "type": "CARD",
+    "summary": "Backwater connection: Connected backwaters and sloughs are major spawning and feeding sites; barriers can cut off spawning access."
+   },
+   "card:hydrologyResponse:current": {
+    "type": "CARD",
+    "summary": "Current: Prefer slack or slow water; tailraces hold early-season fish weeks before lake fish peak."
+   },
+   "card:hydrologyResponse:discharge": {
+    "type": "CARD",
+    "summary": "River discharge: Moderate rises help; strong flood current pushes fish to slack margins and backwaters."
+   },
+   "card:hydrologyResponse:falling": {
+    "type": "CARD",
+    "summary": "Falling water: Fish withdraw from flooded margins within days-weeks as water falls; many return to a prior home site."
+   },
+   "card:hydrologyResponse:floodedShoreline": {
+    "type": "CARD",
+    "summary": "Flooded shoreline: Prime: flooded grass, fields, brush are used for spawning and feeding."
+   },
+   "card:hydrologyResponse:rising": {
+    "type": "CARD",
+    "summary": "Rising water: Rising water that floods vegetated shore strongly pulls carp into the new shallows to spawn and feed;"
+   },
+   "card:seasonalMovement:fall": {
+    "type": "CARD",
+    "summary": "Fall: Continued shallow feeding into late summer/early fall, then drift toward deeper or inflow wintering areas as water cool\u2026"
+   },
+   "card:seasonalMovement:postSpawn": {
+    "type": "CARD",
+    "summary": "Post-spawn: Fish disperse back to main lake/river habitat; may keep feeding in shallows into late summer."
+   },
+   "card:seasonalMovement:preSpawn": {
+    "type": "CARD",
+    "summary": "Pre-spawn: As water nears about 15-16 C (60 F) fish stage and move toward warming shallow bays, backwaters and tributary mouths;"
+   },
+   "card:seasonalMovement:spawn": {
+    "type": "CARD",
+    "summary": "Spawn: Mass spawning in shallow, warm, vegetated or flooded-grass areas, typically mid-April to late June in the Southeast/Mid\u2026"
+   },
+   "card:seasonalMovement:summer": {
+    "type": "CARD",
+    "summary": "Summer: Warm-tolerant; use shallow muddy coves and flats, with activity strongest dusk through early morning;"
+   },
+   "card:seasonalMovement:winter": {
+    "type": "CARD",
+    "summary": "Winter: Fish are sluggish and often loosely aggregated in deeper basins or at inflow mouths;"
+   },
+   "card:spawn:habitat": {
+    "type": "CARD",
+    "summary": "Habitat: Shallow, warm, slow or still water with submerged or flooded vegetation; eggs are sticky and adhere to plants."
+   },
+   "card:spawn:shallowMovement": {
+    "type": "CARD",
+    "summary": "Shallow movement: Adults move into water often less than 1 m (sometimes backs exposed) in coves, backwaters, flooded margins;"
+   },
+   "card:spawn:temperatureF": {
+    "type": "CARD",
+    "summary": "Temperature: 59-75 F; peak about 65 F; Science ranges 15-24 C (59-75 F); 18-22 C (64-72 F) optimum (FAO);"
+   },
+   "card:spawn:timing": {
+    "type": "CARD",
+    "summary": "Timing: Spring when water warms; roughly April-June in the Southeast; later and shorter farther north;"
+   },
+   "card:temperatureResponse:coldSlowdown": {
+    "type": "CARD",
+    "summary": "Cold-water slowdown: Sluggish and aggregated below roughly 10 C; low shootable-shallow use in deep winter except at warm inflows/discharges."
+   },
+   "card:temperatureResponse:preSpawn": {
+    "type": "CARD",
+    "summary": "Pre-spawn: Staging and shallow movement from about 55-62 F."
+   },
+   "card:temperatureResponse:spawn": {
+    "type": "CARD",
+    "summary": "Spawn: About 62-72 F with peak near 65-68 F by bowfisher accounts; science range 15-24 C."
+   },
+   "card:temperatureResponse:summer": {
+    "type": "CARD",
+    "summary": "Summer: Tolerates and uses 28-33 C; not pushed out of shallows by heat alone; oxygen below about 3 mg/L reduces feeding and gro\u2026"
+   },
+   "card:temperatureResponse:triggers": {
+    "type": "CARD",
+    "summary": "What triggers movement: Warming toward 15-16 C (about 60 F) with longer days starts shallow movement; rising water plus warming is the stronges\u2026"
+   },
+   "card:vegetationAssociation": {
+    "type": "CARD",
+    "summary": "vegetationAssociation: Spawning is tied to submerged/flooded vegetation (egg attachment). Adults occur without vegetation in turbid lakes, so\u2026"
+   }
+  }
+ },
+ "reviewSummary": {
+  "status": "UNREVIEWED",
+  "rules": {
+   "UNREVIEWED": 11,
+   "ACCEPTED": 0,
+   "REJECTED": 0,
+   "NEEDS_MORE_EVIDENCE": 0
+  },
+  "usableRules": 11,
+  "awaitingReview": [
+   "CC-CLR-01",
+   "CC-DIEL-02",
+   "CC-DIEL-05",
+   "CC-HYD-01",
+   "CC-HYD-01H",
+   "CC-SEA-01",
+   "CC-SEA-02",
+   "CC-SEA-02H",
+   "CC-SEA-03",
+   "CC-SEA-03H",
+   "CC-TMP-04"
+  ]
+ },
+ "validationSummary": {
+  "status": "NOT_VALIDATED",
+  "observations": 0,
+  "trips": 0,
+  "lastObservation": null,
+  "predictionsLogged": 3,
+  "fieldCandidate": true,
+  "note": "Field validation never alters the knowledge shown above."
+ }
+}

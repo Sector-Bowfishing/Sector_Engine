@@ -7,6 +7,7 @@ failure isolation. This module only answers the brain-side questions the orchest
   * given what is published now and what is upstream, is a run warranted (and why)?
 
 Species knowledge is version-driven, not time-driven: it never goes stale by age.
+The per-lake state is fingerprint-driven (`bio_state.state_fingerprint`): no change in material inputs means no work.
 """
 from __future__ import annotations
 
@@ -21,13 +22,18 @@ DESCRIPTOR = {
             "recomputeWhen": ["latest.json researchVersion changed", "latest.json manifestSha256 changed", "brain code version changed"],
         },
         "biologicalState": {
-            "status": "NOT_STARTED",
-            "plannedInputs": ["water-temp state", "water-clarity state", "wind state", "canonical lake directory / lake-brain", "calendar / season",
-                              "species knowledge researchVersion"],
-            "plannedRecomputeWhen": ["an upstream condition state changes materially (thresholds defined with the state model)",
-                                     "an upstream state becomes stale or degraded", "the date crosses a species phase boundary",
-                                     "species knowledge researchVersion changes"],
-            "note": "Not built; requires separate approval. Must never be recomputed per user page-load.",
+            "status": "IN_PROGRESS",
+            "scope": "internal pilot (Guntersville; Hartwell dry runs); nothing is written per lake and no customer path reads it",
+            "inputs": ["lake-brain state (trendState, species presence)", "water-temp state (currentTempF, trend24hF)", "water-clarity state (clarityFt)",
+                       "calendar (month, daypart)", "rules bundle (rulesVersion, featuresVersion)"],
+            "futureInputs": ["tributary discharge trend (no Brain publishes it)", "depth zone shares (Depth Brain)", "observed vegetation (Vegetation Brain)"],
+            "recomputeWhen": ["a feature state changes (temperature band, temperature trend, 24 h crossing, lake trend, clarity band, daypart)",
+                              "species presence changes (Lake Brain)", "rulesVersion or featuresVersion changes", "an input becomes stale (> 36 h) or recovers"],
+            "skipWhen": "state_fingerprint(new state) equals the last one: write nothing, log nothing",
+            "needsClock": "no cron. The state depends on daypart and month, so it can change with elapsed time; it is evaluated on demand for a pilot lake before a trip "
+                          "(prospective validation needs a timed snapshot BEFORE the outing), never because a customer opened a page",
+            "maxInputAgeHours": 36,
+            "note": "Must never be recomputed per user page-load. Per-lake publication to the Brain RTDB is OFF (needs approval).",
         },
     },
 }
@@ -49,3 +55,12 @@ def plan(published: dict | None, pointer: dict, brain_version: str) -> dict:
             reasons.append(f"last publish health {published.get('health')}")
     return {"component": "speciesKnowledge", "action": "PUBLISH" if reasons else "SKIP",
             "reasons": reasons or ["published state matches upstream; nothing to do"]}
+
+
+def plan_state(last_fingerprint: str | None, new_fingerprint: str) -> dict:
+    """Decide whether a freshly evaluated Biological State needs to be written/logged. Pure. Compute because INPUT TRUTH CHANGED."""
+    if last_fingerprint is None:
+        return {"component": "biologicalState", "action": "WRITE", "reasons": ["no previous state"]}
+    if last_fingerprint == new_fingerprint:
+        return {"component": "biologicalState", "action": "SKIP", "reasons": ["material inputs unchanged (fingerprint equal)"]}
+    return {"component": "biologicalState", "action": "WRITE", "reasons": ["fingerprint changed"]}

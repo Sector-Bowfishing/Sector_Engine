@@ -1,0 +1,2132 @@
+{
+ "contract": "biological-species-profile-v1",
+ "categories": [
+  "seasonal",
+  "spawn",
+  "temperature",
+  "depth",
+  "hydrology",
+  "vegetation",
+  "night",
+  "clarity",
+  "current",
+  "regional"
+ ],
+ "coverageVocabulary": [
+  "STRONG",
+  "MODERATE",
+  "WEAK",
+  "UNKNOWN"
+ ],
+ "species": [
+  {
+   "speciesId": "bigmouth_buffalo",
+   "sectorLabel": "Bigmouth buffalo",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.9,
+   "speciesV2Score": 4.55,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "HIGH"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "HIGH"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 1.0,
+     "evidence": "UNVERIFIED",
+     "priority": "HIGH"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 1.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "night",
+    "label": "Day / night",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would change whether Sector recommends shallow flats or deeper edges after dark, when most bowfishing happens."
+   }
+  },
+  {
+   "speciesId": "bowfin",
+   "sectorLabel": "Bowfin",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.8,
+   "speciesV2Score": 4.75,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "HIGH"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "HIGH"
+    },
+    "vegetation": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "HIGH"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   }
+  },
+  {
+   "speciesId": "common_carp",
+   "sectorLabel": "Common carp",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 7.5,
+   "speciesV2Score": 7.15,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "HIGH"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "vegetation": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "HIGH"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "regional": {
+     "coverage": "MODERATE",
+     "completeness": 4.1,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "night",
+    "label": "Day / night",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would change whether Sector recommends shallow flats or deeper edges after dark, when most bowfishing happens."
+   }
+  },
+  {
+   "speciesId": "grass_carp",
+   "sectorLabel": "Grass carp",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 6.2,
+   "speciesV2Score": 6.2,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "vegetation": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "HIGH"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.7,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   }
+  },
+  {
+   "speciesId": "longnose_gar",
+   "sectorLabel": "Longnose gar",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.7,
+   "speciesV2Score": 5.25,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "HIGH"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 1.2,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   }
+  },
+  {
+   "speciesId": "silver_carp",
+   "sectorLabel": "Silver carp",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 6.0,
+   "speciesV2Score": 5.65,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "HIGH"
+    },
+    "hydrology": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "HIGH"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "MODERATE",
+     "completeness": 3.3,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   }
+  },
+  {
+   "speciesId": "smallmouth_buffalo",
+   "sectorLabel": "Smallmouth buffalo",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.0,
+   "speciesV2Score": 4.75,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "HIGH"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "HIGH"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "regional": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "MEDIUM"
+    }
+   },
+   "topGap": {
+    "category": "night",
+    "label": "Day / night",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would change whether Sector recommends shallow flats or deeper edges after dark, when most bowfishing happens."
+   }
+  },
+  {
+   "speciesId": "spotted_gar",
+   "sectorLabel": "Spotted gar",
+   "role": "TARGET",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 6.2,
+   "speciesV2Score": 5.8,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "vegetation": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "regional": {
+     "coverage": "MODERATE",
+     "completeness": 3.8,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   }
+  },
+  {
+   "speciesId": "bighead_carp",
+   "sectorLabel": "Bighead carp",
+   "role": "SECONDARY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 4.1,
+   "speciesV2Score": 3.8,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "MEDIUM"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   }
+  },
+  {
+   "speciesId": "northern_snakehead",
+   "sectorLabel": "Northern snakehead",
+   "role": "SECONDARY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 6.2,
+   "speciesV2Score": 5.15,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "vegetation": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "MEDIUM"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "HIGH"
+    }
+   },
+   "topGap": {
+    "category": "regional",
+    "label": "Southeast / regional",
+    "priority": "HIGH",
+    "ifWeLearnThis": "Would show whether the general behaviour holds on Southeast reservoirs, changing how much to trust advice there."
+   }
+  },
+  {
+   "speciesId": "alligator_gar",
+   "sectorLabel": "Alligator gar",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 6.3,
+   "speciesV2Score": 5.55,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "STRONG",
+     "completeness": 8.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "american_shad",
+   "sectorLabel": "American shad",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 6.0,
+   "speciesV2Score": 5.2,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "temperature": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "black_buffalo",
+   "sectorLabel": "Black buffalo",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 3.0,
+   "speciesV2Score": 2.25,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "temperature": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "black_carp",
+   "sectorLabel": "Black carp",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 3.2,
+   "speciesV2Score": 3.15,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "temperature": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "clarity": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "blue_sucker",
+   "sectorLabel": "Blue sucker",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 4.2,
+   "speciesV2Score": 3.65,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "DO_NOT_RESEARCH"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "carpsuckers_group",
+   "sectorLabel": "River carpsucker / quillback / other carpsuckers",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "THIN",
+   "bowfisherKnowledge": null,
+   "speciesV2Score": 0.05,
+   "categories": {
+    "seasonal": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "channel_catfish",
+   "sectorLabel": "Channel catfish",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 4.8,
+   "speciesV2Score": 3.9,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "freshwater_drum",
+   "sectorLabel": "Freshwater drum",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.2,
+   "speciesV2Score": 4.5,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 2.5,
+     "evidence": "RULE_TRANSFER",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "gizzard_shad",
+   "sectorLabel": "Gizzard shad",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.5,
+   "speciesV2Score": 3.5,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "STRONG",
+     "completeness": 7.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "golden_redhorse",
+   "sectorLabel": "Golden redhorse",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 3.5,
+   "speciesV2Score": 2.05,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 1.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "goldfish",
+   "sectorLabel": "Goldfish",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.2,
+   "speciesV2Score": 3.45,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "paddlefish",
+   "sectorLabel": "Paddlefish",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 5.2,
+   "speciesV2Score": 4.3,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "hydrology": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "night": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "clarity": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "river_redhorse",
+   "sectorLabel": "River redhorse",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 2.8,
+   "speciesV2Score": 1.2,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "WEAK",
+     "completeness": 1.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "shorthead_redhorse",
+   "sectorLabel": "Shorthead redhorse",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 4.9,
+   "speciesV2Score": 4.0,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "shortnose_gar",
+   "sectorLabel": "Shortnose gar",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 3.3,
+   "speciesV2Score": 2.8,
+   "categories": {
+    "seasonal": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "MODERATE",
+     "completeness": 4.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "WEAK",
+     "completeness": 0.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "silver_redhorse",
+   "sectorLabel": "Silver redhorse",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "PROFILED",
+   "bowfisherKnowledge": 3.6,
+   "speciesV2Score": 2.8,
+   "categories": {
+    "seasonal": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "MODERATE",
+     "completeness": 6.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "WEAK",
+     "completeness": 2.0,
+     "evidence": "UNVERIFIED",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "MULTI_SOURCE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "WEAK",
+     "completeness": 3.0,
+     "evidence": "SINGLE_SOURCE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "MODERATE",
+     "completeness": 5.0,
+     "evidence": "RULE_TRANSFER",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "striped_mullet",
+   "sectorLabel": "Striped mullet",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "THIN",
+   "bowfisherKnowledge": null,
+   "speciesV2Score": 0.2,
+   "categories": {
+    "seasonal": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "spawn": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "temperature": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "depth": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "hydrology": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "vegetation": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "clarity": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "current": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "DO_NOT_RESEARCH"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "suckers_redhorse_carpsuckers_group",
+   "sectorLabel": "Suckers / redhorse / carpsuckers (grouped row)",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "NOT_ASSESSED",
+   "bowfisherKnowledge": null,
+   "speciesV2Score": null,
+   "categories": {
+    "seasonal": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  },
+  {
+   "speciesId": "tilapia_unresolved",
+   "sectorLabel": "Tilapia (generic row)",
+   "role": "KNOWLEDGE_ONLY",
+   "knowledgeStatus": "NOT_ASSESSED",
+   "bowfisherKnowledge": null,
+   "speciesV2Score": null,
+   "categories": {
+    "seasonal": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "spawn": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "temperature": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "depth": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "hydrology": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "vegetation": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "night": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "clarity": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "current": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    },
+    "regional": {
+     "coverage": "UNKNOWN",
+     "completeness": null,
+     "evidence": "NONE",
+     "priority": "LOW"
+    }
+   },
+   "topGap": null
+  }
+ ]
+}
