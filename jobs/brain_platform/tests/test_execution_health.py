@@ -116,7 +116,7 @@ def test_backward_compatible_with_execution_record_and_cloud_run_shapes():
                              consumed=[{"dependencyId": "brain:beta", "stateVersion": "7", "consumedAt": "2026-10-16T11:59:00Z", "secret": "no"}])
     n2 = EH.normalize_execution(new)
     assert n2["codeVersion"] == "c1" and n2["jobId"] == "alpha-job" and n2["consumptionRecorded"] is True
-    assert n2["consumed"] == [{"dependencyId": "brain:beta", "stateVersion": "7", "consumedAt": "2026-10-16T11:59:00Z"}]   # key set is closed
+    assert n2["consumed"] == [{"dependencyId": "brain:beta", "dependencyType": "BRAIN", "stateVersion": "7", "consumedAt": "2026-10-16T11:59:00Z"}]   # key set is closed; type from the prefix
     started = O.execution_record("x3", "alpha", "SCHEDULE", "due", NOW, None, "STARTED")
     assert EH.normalize_execution(started)["executionStatus"] == "RUNNING"
 
@@ -135,7 +135,7 @@ def test_no_brain_or_signal_or_provider_id_is_hardcoded_in_the_health_modules():
     from sector_brain_platform import keys, signals as SG, dependency_declarations as DD
     ids = set(keys.BRAINS) | set(O.load_manifest()["brains"]) | set(SG.load()) | set(DD.load_providers() or {})
     pkg = os.path.dirname(EH.__file__)
-    for mod in ("execution_health", "dependency_health", "dependency_declarations", "brain_health", "signals"):
+    for mod in ("execution_health", "dependency_health", "dependency_declarations", "brain_health", "signals", "consumption"):
         tree = ast.parse(open(os.path.join(pkg, mod + ".py")).read())
         consts = {n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str)}
         hard = sorted(c for c in consts if c in ids or any(c.startswith(p) and c[len(p):] in ids for p in ("brain:", "signal:", "provider:")))
