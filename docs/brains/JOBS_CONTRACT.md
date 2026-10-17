@@ -64,3 +64,6 @@ secrets, private research. Outputs are named logically (`archive:wind-candidate 
   `/jobs`, `/control`, `/scores`, `/engine`; root `.read/.write: false`. Never public.
 - Ops shows `syncedAt`; a record older than ~2 h means the orchestrator wake-up is not running (its own record is
   `jobs/brain-orchestrator`).
+
+## `brainDependencies` is a legacy mirror (added 2026-10-16, Orchestrator G1/G2)
+The manifest field `brainDependencies` is a hand-maintained copy of what a Brain declares itself in `brains/<dir>/brain.json` (`consumes[kind=brain]`). The Engine-owned dependency graph now comes from those declarations (`sector_brain_platform.dependency_declarations`) and is published, when enabled, at `control/healthV1/dependencies`. `/jobs` records are unchanged; `jobs/brain_platform/tests/test_dependency_declarations.py` asserts the two agree for every registered Brain. Removal gate: every job owner registered **and** Sector Ops reading the health plane instead of this field (`docs/brains/platform/ORCHESTRATOR_HEALTH_V1.md` §5).
