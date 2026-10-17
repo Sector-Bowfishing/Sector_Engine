@@ -38,7 +38,7 @@ sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_records, check_schema, iso,            # noqa: E402
                                    jobs_changed_paths, orchestrate)
 from sector_brain_platform import gcp                                                                                 # noqa: E402
-from sector_brain_platform import orchestration as O, control_state as CS                                             # noqa: E402
+from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN                          # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -79,6 +79,22 @@ def job_args(brain_id: str) -> list[str] | None:
     return []
 
 
+def json_output(stdout: str) -> dict | None:
+    """The JSON object a Brain's run.py prints (its summary / plan): the last line if it is JSON, else the first '{' to the end. None if unreadable."""
+    s = (stdout or "").strip()
+    if not s:
+        return None
+    try:
+        v = json.loads(s.splitlines()[-1] if "\n" in s else s)
+        return v if isinstance(v, dict) else None
+    except ValueError:
+        try:
+            v = json.loads(s[s.index("{"):])
+            return v if isinstance(v, dict) else None
+        except ValueError:
+            return None
+
+
 def brain_plan(brain_id: str, timeout: int = 600) -> dict:
     """`run.py --plan` of an in-process brain → its plan() verdict (PUBLISH / SKIP + reasons). Failure = SKIP with the error."""
     ex = EXECUTORS[brain_id]
@@ -88,22 +104,29 @@ def brain_plan(brain_id: str, timeout: int = 600) -> dict:
         return {"action": "SKIP", "reasons": [f"--plan timed out after {timeout}s"]}
     if out.returncode != 0:
         return {"action": "SKIP", "reasons": [f"--plan failed: {(out.stderr or out.stdout).strip()[-300:]}"]}
-    try:
-        return json.loads(out.stdout.strip().splitlines()[-1] if "\n" in out.stdout.strip() else out.stdout)
-    except ValueError:
-        try:
-            return json.loads(out.stdout[out.stdout.index("{"):])
-        except ValueError:
-            return {"action": "SKIP", "reasons": ["--plan output unreadable"]}
+    return json_output(out.stdout) or {"action": "SKIP", "reasons": ["--plan output unreadable"]}
 
 
 def run_in_process(brain_id: str, timeout: int = 1800) -> dict:
+    """`run.py --write`. The Brain's printed summary may carry `consumed` (consumption-lineage-v1: what its RTDB client ACTUALLY read, recorded by
+    the platform ConsumptionRecorder). It is passed through when valid; an invalid list is reported, never repaired; absence stays absence."""
     ex = EXECUTORS[brain_id]
     t0 = time.time()
     out = subprocess.run([PYTHON, "run.py", "--write"], cwd=ex["dir"], capture_output=True, text=True, timeout=timeout)
     ok = out.returncode == 0
-    return {"brainId": brain_id, "how": "in-process", "ok": ok, "seconds": round(time.time() - t0, 1),
-            "tail": (out.stdout if ok else (out.stderr or out.stdout)).strip()[-600:]}
+    res = {"brainId": brain_id, "how": "in-process", "ok": ok, "seconds": round(time.time() - t0, 1),
+           "tail": (out.stdout if ok else (out.stderr or out.stdout)).strip()[-600:]}
+    summary = json_output(out.stdout) if ok else None
+    if summary is not None:
+        if "consumed" in summary:
+            errs = CN.validate_consumed(summary["consumed"])
+            if errs:
+                res["consumptionIssue"] = "; ".join(errs)[:300]
+            else:
+                res["consumed"] = CN.finalize(summary["consumed"])
+        if summary.get("published") is False:
+            res["skipped"] = True
+    return res
 
 
 def start_job(brain_id: str, tokens: TokenProvider) -> dict:
@@ -266,7 +289,11 @@ def main(argv=None) -> int:
                                      resources=manifest["brains"][b].get("resources"), failure_class=fc,
                                      # an in-process run executes THIS image's code; a Cloud Run job's version is read from its own `commit` label later
                                      code_version=os.environ.get("DEPLOYMENT_VERSION") if ex["kind"] == "in-process" else None,
-                                     job_id=tgt.get("job") or ex.get("jobId"))
+                                     job_id=tgt.get("job") or ex.get("jobId"), consumed=res.get("consumed"))
+            if res.get("consumptionIssue"):
+                rec["consumptionIssue"] = res["consumptionIssue"]
+            if res.get("skipped"):
+                rec["status"], rec["statusDetail"] = "SKIPPED", "the Brain's own plan said SKIP (nothing published)"
             exec_records.append(rec)
             executed.append(res)
             print(f"{'✓' if res.get('ok') else '✗'} {b} [{trigger}] {res.get('execution') or res.get('tail', res.get('error', ''))[-200:]}", flush=True)

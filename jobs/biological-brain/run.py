@@ -88,7 +88,7 @@ def main(argv=None) -> int:
     uri_root = f"gs://{BUCKET}/{PREFIX}" if not a.bundle else "local:" + os.path.abspath(a.bundle)
     deployment = deployment_version()
 
-    rtdb = None if a.offline else bp.BrainRtdb(RTDB_URL, tokens, brain_id=bb.BRAIN_ID)   # ownership-checked; --plan/--dry-run only GET
+    rtdb = None if a.offline else bp.BrainRtdb(RTDB_URL, tokens, brain_id=bb.BRAIN_ID, recorder=bp.ConsumptionRecorder(bb.BRAIN_ID))   # ownership-checked; --plan/--dry-run only GET; reads recorded as ACTUAL consumption
     published = rtdb.get(f"brains/{bb.BRAIN_ID}") if rtdb else None
     pointer = json.loads(read("latest.json"))
     decision = orch.plan(published, pointer, bb.BRAIN_VERSION)
@@ -105,6 +105,8 @@ def main(argv=None) -> int:
     body = json.dumps({k.lstrip("/"): v for k, v in updates.items()}, separators=(",", ":"), allow_nan=False)
     summary = dict(decision=decision, researchVersion=bundle.research_version, species=len(bundle.profiles),
                    paths=len(updates), bytes=len(body), speciesPayloadMaxBytes=max(len(json.dumps(v)) for k, v in updates.items() if k.startswith("/species/") and v))
+    if rtdb is not None:
+        summary["consumed"] = rtdb.consumed()                     # consumption-lineage-v1: what this run actually read from the Brain RTDB (own nodes excluded)
 
     if a.write and rtdb is None:
         raise SystemExit("--write needs the Brain RTDB; drop --offline")
