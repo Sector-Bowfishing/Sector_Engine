@@ -1,0 +1,164 @@
+{
+  "brainId": "biological-state",
+  "builder": "brains/fish/runtime/publish_artifact.py",
+  "contractId": "fish-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (fish_specs, fish_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "consumed": "ACTUAL reads recorded by the platform client when available; absent = unknown",
+    "freshness": "not supplied: species knowledge is version-driven; evidence freshness stays UNKNOWN",
+    "knowledgeRelease": "researchVersion of the verified canonical bundle",
+    "manifestRef": "bundle manifest location (runtime value, private)",
+    "manifestSha256": "sha256 of the verified manifest"
+  },
+  "optionalRegistryChildren": [
+    "facts",
+    "targetReadiness",
+    "transferSummary",
+    "coverageMatrix",
+    "speciesGroups",
+    "knownLimitations",
+    "discrepancies",
+    "targetSet"
+  ],
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "knowledge": [
+      "researchVersion",
+      "manifestRef",
+      "manifestSha256",
+      "responsibilities",
+      "breakdowns",
+      "speciesGroups",
+      "discrepancies",
+      "knownLimitations",
+      "facts",
+      "targetReadiness",
+      "transferSummary",
+      "coverageMatrix"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "orchestration",
+      "versions",
+      "rubric",
+      "researchMaturityDefinitions",
+      "scoringVersion",
+      "targetSet"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "statusBasis",
+      "supportedLakeCount",
+      "staleLakeCount",
+      "lastSuccessfulRun",
+      "deploymentVersion",
+      "publishMode"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/biological-state/{child}"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/biological-state/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/biological-state",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/biological-state/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": true,
+      "schemaId": "fish-registry-v1",
+      "volatileContract": "fish-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/species/{id}"
+      ],
+      "deleteReasons": [
+        "SPECIES_REMOVED_FROM_REGISTRY"
+      ],
+      "families": [
+        {
+          "pattern": "/species/{id}",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": true,
+      "schemaId": "fish-species-v1",
+      "volatileContract": "fish-volatile-v1"
+    }
+  ],
+  "status": "SHADOW (Publisher Gate P); not wired into the in-process job; not a production contract until cutover",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "fish-volatile-v1",
+    "keys": [
+      "lastRunAt",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:lastRunAt": "run timestamp inside /validation/biological-state; the validation STATUS stays material",
+      "key:updatedAt": "per-run publication stamp inside species summaries; no domain meaning",
+      "path:/activity/{event}": "a version event exists only because other material children changed in the same artifact; an event alone is never a domain change (a re-run after the baseline emits none)",
+      "path:/brains/biological-state/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+      "path:/brains/biological-state/versions": "carries the publication date; implied by researchVersion + species counts (separate material children); retire with the legacy registry shape"
+    },
+    "paths": [
+      "/activity/{event}",
+      "/brains/biological-state/lastSuccessfulRun",
+      "/brains/biological-state/versions"
+    ],
+    "version": 1
+  }
+}

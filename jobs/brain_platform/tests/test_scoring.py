@@ -157,3 +157,14 @@ def test_lake_coverage_counts_all_profiled_lakes_even_when_fewer_profiles_were_r
     assert "320 of 621" in s["scoreBreakdown"]["coverage"]["evidence"]
     gated = {g.get("gate") for g in s["scoreBlockers"] if "gate" in g}
     assert "coverage" not in gated, "320/621 = 51 % clears the 10 % coverage gate"
+
+
+def test_biological_next_opportunity_follows_the_published_state_without_changing_the_score():
+    reg = {"responsibilities": {"speciesKnowledge": {"speciesCount": 1, "assessedCount": 1, "notAssessedCount": 0}, "biologicalState": {"status": "NOT_STARTED"}}}
+    sp = {"a": {"assessment": "ASSESSED", "researchMaturity": "RESEARCH", "knowledge": {"overallRounded": 3.0}}}
+    before = score_biological({"registry": reg, "species": sp, "intelligenceRegistry": {}}, NOW)
+    assert "gate 4.0" in before["nextScoreOpportunity"]
+    reg2 = {"responsibilities": {**reg["responsibilities"], "biologicalState": {"status": "IN_PROGRESS", "validation": "NOT_STARTED"}}}
+    after = score_biological({"registry": reg2, "species": sp, "intelligenceRegistry": {}}, NOW)
+    assert "gate 6.0" in after["nextScoreOpportunity"] and "gate 4.0" not in after["nextScoreOpportunity"]
+    assert after["value"] > before["value"]                       # only the published state moved the number; wording never does

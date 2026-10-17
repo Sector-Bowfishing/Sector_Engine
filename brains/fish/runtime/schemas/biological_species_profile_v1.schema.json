@@ -1,0 +1,1565 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "description": "RTDB drops null and empty values: an absent field means UNKNOWN / not applicable. Per-lake species presence never appears here (Lake Brain owns it); current conditions are a separate payload (biological-movement-outlook-v1).",
+ "properties": {
+  "bowfisherGuide": {
+   "type": "object"
+  },
+  "clarityLight": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "contract": {
+   "const": "biological-species-profile-v1"
+  },
+  "currentWaterbody": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "dayNight": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "depth": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "evidenceSummary": {
+   "required": [
+    "sourceCount",
+    "inspected",
+    "claims",
+    "sources"
+   ],
+   "type": "object"
+  },
+  "generatedFrom": {
+   "type": "object"
+  },
+  "habitat": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "hydrology": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "identity": {
+   "properties": {
+    "canonical": {
+     "type": "boolean"
+    },
+    "doNotResearch": {
+     "type": "string"
+    },
+    "habitatClass": {
+     "enum": [
+      "FRESHWATER",
+      "SALTWATER"
+     ]
+    },
+    "habitatFlag": {
+     "enum": [
+      "FRESHWATER_ONLY",
+      "SALTWATER_ONLY",
+      "BRACKISH_ESTUARINE",
+      "ANADROMOUS",
+      "CATADROMOUS",
+      "CROSS_HABITAT"
+     ]
+    },
+    "role": {
+     "enum": [
+      "TARGET",
+      "SECONDARY",
+      "KNOWLEDGE_ONLY"
+     ]
+    },
+    "scientificName": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "sectorLabel": {
+     "description": "the existing customer label; never renamed",
+     "type": "string"
+    },
+    "speciesId": {
+     "type": "string"
+    },
+    "targetTier": {
+     "enum": [
+      "TARGET",
+      "SECONDARY",
+      "KNOWLEDGE_ONLY"
+     ]
+    }
+   },
+   "required": [
+    "speciesId",
+    "sectorLabel",
+    "role",
+    "habitatClass",
+    "canonical"
+   ],
+   "type": "object"
+  },
+  "knowledgeCoverage": {
+   "properties": {
+    "clarity": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "current": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "depth": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "hydrology": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "night": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "regional": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "seasonal": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "spawn": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "temperature": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    },
+    "vegetation": {
+     "properties": {
+      "completeness": {
+       "description": "internal 0-10; null (or absent in RTDB) when status is UNKNOWN: UNKNOWN is never shown as 0",
+       "maximum": 10,
+       "minimum": 0,
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "evidence": {
+       "enum": [
+        "NONE",
+        "UNVERIFIED",
+        "SINGLE_SOURCE",
+        "MULTI_SOURCE",
+        "RULE_TRANSFER"
+       ]
+      },
+      "note": {
+       "type": "string"
+      },
+      "status": {
+       "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "status",
+      "completeness",
+      "evidence",
+      "note"
+     ],
+     "type": "object"
+    }
+   },
+   "required": [
+    "seasonal",
+    "spawn",
+    "temperature",
+    "depth",
+    "hydrology",
+    "vegetation",
+    "night",
+    "clarity",
+    "current",
+    "regional"
+   ],
+   "type": "object"
+  },
+  "knowledgeGapMatrix": {
+   "required": [
+    "seasonal",
+    "spawn",
+    "temperature",
+    "depth",
+    "hydrology",
+    "vegetation",
+    "night",
+    "clarity",
+    "current",
+    "regional"
+   ],
+   "type": "object"
+  },
+  "knowledgeGaps": {
+   "items": {
+    "properties": {
+     "researchPriority": {
+      "enum": [
+       "HIGH",
+       "MEDIUM",
+       "LOW",
+       "DO_NOT_RESEARCH"
+      ]
+     },
+     "researchStatus": {
+      "const": "RESEARCH_NOT_AUTHORIZED"
+     }
+    },
+    "required": [
+     "category",
+     "coverage",
+     "researchPriority",
+     "ifWeLearnThis",
+     "researchStatus"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "researchPriorities": {
+   "type": "object"
+  },
+  "reviewSummary": {
+   "type": "object"
+  },
+  "rulesSummary": {
+   "items": {
+    "properties": {
+     "field": {
+      "enum": [
+       "NOT_VALIDATED",
+       "FIELD_PLANNED",
+       "OBSERVATIONS_IN_PROGRESS",
+       "VALIDATED",
+       "FAILED"
+      ]
+     },
+     "review": {
+      "enum": [
+       "UNREVIEWED",
+       "ACCEPTED",
+       "REJECTED",
+       "NEEDS_MORE_EVIDENCE"
+      ]
+     },
+     "seasonReview": {
+      "enum": [
+       "BOUNDED",
+       "YEAR_ROUND",
+       "NEEDS_REVIEW",
+       "NOT_ESTABLISHED"
+      ]
+     },
+     "seasonality": {
+      "enum": [
+       "BOUNDED",
+       "UNBOUNDED"
+      ]
+     },
+     "status": {
+      "enum": [
+       "DRAFT",
+       "RECONCILED",
+       "APPROVED",
+       "RETIRED"
+      ]
+     }
+    },
+    "required": [
+     "ruleId",
+     "when",
+     "expects",
+     "bowfisherMeaning",
+     "status",
+     "review",
+     "field",
+     "seasonality",
+     "seasonReview",
+     "fires"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "seasonalGuide": {
+   "type": "object"
+  },
+  "spawn": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "summary": {
+   "properties": {
+    "bowfisherKnowledge": {
+     "description": "read-only diagnostic 0-10, NOT field validation",
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "fieldValidationStatus": {
+     "enum": [
+      "NOT_VALIDATED",
+      "FIELD_PLANNED",
+      "OBSERVATIONS_IN_PROGRESS",
+      "VALIDATED",
+      "FAILED"
+     ]
+    },
+    "generalConfidence": {
+     "enum": [
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "UNKNOWN"
+     ]
+    },
+    "knowledgeStatus": {
+     "enum": [
+      "PROFILED",
+      "THIN",
+      "NOT_ASSESSED",
+      "PROPOSED"
+     ]
+    },
+    "lastUpdated": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "profileFreshness": {
+     "enum": [
+      "CURRENT_WITH_BUNDLE"
+     ]
+    },
+    "regionalConfidence": {
+     "enum": [
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "UNKNOWN"
+     ]
+    },
+    "reviewStatus": {
+     "enum": [
+      "UNREVIEWED",
+      "ACCEPTED",
+      "IN_PROGRESS"
+     ]
+    },
+    "ruleCount": {
+     "type": "object"
+    },
+    "speciesV2Score": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "strongest": {
+     "type": "array"
+    },
+    "weakest": {
+     "type": "array"
+    }
+   },
+   "required": [
+    "knowledgeStatus",
+    "generalConfidence",
+    "regionalConfidence",
+    "reviewStatus",
+    "fieldValidationStatus",
+    "ruleCount",
+    "lastUpdated",
+    "profileFreshness"
+   ],
+   "type": "object"
+  },
+  "temperature": {
+   "properties": {
+    "completeness": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "coverage": {
+     "enum": [
+      "STRONG",
+      "MODERATE",
+      "WEAK",
+      "UNKNOWN"
+     ]
+    },
+    "openQuestions": {
+     "description": "sub-questions with no recorded answer: shown as UNKNOWN, never filled",
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "rules": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "statements": {
+     "items": {
+      "properties": {
+       "claimIds": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "label": {
+        "type": "string"
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "label",
+       "text",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "coverage",
+    "statements",
+    "openQuestions"
+   ],
+   "type": "object"
+  },
+  "validationSummary": {
+   "properties": {
+    "status": {
+     "enum": [
+      "NOT_VALIDATED",
+      "FIELD_PLANNED",
+      "OBSERVATIONS_IN_PROGRESS",
+      "VALIDATED",
+      "FAILED"
+     ]
+    }
+   },
+   "type": "object"
+  },
+  "yearlyMovement": {
+   "properties": {
+    "conditionModifiers": {
+     "description": "base pattern vs modifiers: these change location WITHIN the base pattern; seasonality UNBOUNDED rules that are not YEAR_ROUND do not fire",
+     "type": "array"
+    },
+    "evidenceConflicts": {
+     "type": [
+      "array",
+      "null"
+     ]
+    },
+    "months": {
+     "items": {
+      "properties": {
+       "bowfisherMeaning": {
+        "type": "string"
+       },
+       "claimIds": {
+        "description": "keys of evidenceSummary.claims",
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "confidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "dayNightContext": {
+        "type": "string"
+       },
+       "favoredHabitat": {
+        "items": {
+         "enum": [
+          "shallowVegetatedHabitat",
+          "floodedVegetation",
+          "backwaterHabitat",
+          "tributaryAccess",
+          "tributaryMouth",
+          "tailwaterHabitat",
+          "channelBorder",
+          "deepChannelPool",
+          "openWaterBasin",
+          "woodyCover"
+         ]
+        },
+        "type": "array"
+       },
+       "hydrologyContext": {
+        "type": "string"
+       },
+       "month": {
+        "enum": [
+         "JAN",
+         "FEB",
+         "MAR",
+         "APR",
+         "MAY",
+         "JUN",
+         "JUL",
+         "AUG",
+         "SEP",
+         "OCT",
+         "NOV",
+         "DEC"
+        ]
+       },
+       "movementStates": {
+        "items": {
+         "enum": [
+          "WINTER_HOLDING",
+          "PRE_SPAWN",
+          "SPAWN",
+          "POST_SPAWN",
+          "SUMMER_PATTERN",
+          "FALL_TRANSITION",
+          "SHALLOW_ACTIVE",
+          "DEEPER_HOLDING",
+          "TRIBUTARY_MOVEMENT",
+          "BACKWATER_USE",
+          "UNKNOWN"
+         ]
+        },
+        "minItems": 1,
+        "type": "array"
+       },
+       "precision": {
+        "description": "MONTH = month-bounded evidence; SEASONAL = season-level statement shown across its months; INFERRED = adjacent to a known window; UNKNOWN stays unknown",
+        "enum": [
+         "MONTH",
+         "SEASONAL",
+         "INFERRED",
+         "UNKNOWN"
+        ]
+       },
+       "regionalConfidence": {
+        "enum": [
+         "HIGH",
+         "MEDIUM",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "season": {
+        "enum": [
+         "WINTER",
+         "SPRING",
+         "SUMMER",
+         "FALL"
+        ]
+       },
+       "shallowLikelihood": {
+        "enum": [
+         "HIGH",
+         "MODERATE",
+         "CONDITIONAL",
+         "LOW",
+         "UNKNOWN"
+        ]
+       },
+       "spawnState": {
+        "enum": [
+         "ACTIVE_WINDOW",
+         "OUTSIDE_WINDOW",
+         "UNKNOWN"
+        ]
+       },
+       "temperatureContext": {
+        "type": "string"
+       },
+       "typicalDepthBehavior": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "month",
+       "season",
+       "movementStates",
+       "shallowLikelihood",
+       "spawnState",
+       "precision",
+       "confidence",
+       "regionalConfidence",
+       "claimIds"
+      ],
+      "type": "object"
+     },
+     "maxItems": 12,
+     "minItems": 12,
+     "type": "array"
+    },
+    "precisionNote": {
+     "type": "string"
+    },
+    "spawnWindowBasis": {
+     "enum": [
+      "RULE",
+      "CARD_TEXT",
+      null
+     ]
+    },
+    "spawnWindowMonths": {
+     "items": {
+      "enum": [
+       "JAN",
+       "FEB",
+       "MAR",
+       "APR",
+       "MAY",
+       "JUN",
+       "JUL",
+       "AUG",
+       "SEP",
+       "OCT",
+       "NOV",
+       "DEC"
+      ]
+     },
+     "type": [
+      "array",
+      "null"
+     ]
+    },
+    "unboundedSeasonalModifiers": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "months",
+    "conditionModifiers"
+   ],
+   "type": "object"
+  }
+ },
+ "required": [
+  "contract",
+  "generatedFrom",
+  "identity",
+  "summary",
+  "yearlyMovement",
+  "seasonalGuide",
+  "spawn",
+  "temperature",
+  "depth",
+  "hydrology",
+  "habitat",
+  "dayNight",
+  "clarityLight",
+  "currentWaterbody",
+  "bowfisherGuide",
+  "knowledgeCoverage",
+  "knowledgeGapMatrix",
+  "knowledgeGaps",
+  "researchPriorities",
+  "rulesSummary",
+  "evidenceSummary",
+  "reviewSummary",
+  "validationSummary"
+ ],
+ "title": "biological-species-profile-v1: a deterministic, self-describing species study guide (Ops renders it; Biological owns the interpretation)",
+ "type": "object"
+}

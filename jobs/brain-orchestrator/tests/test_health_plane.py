@@ -86,7 +86,10 @@ def test_health_state_from_the_published_world(monkeypatch):
     assert "domainValidation" in w and w["domainValidation"]["status"] == "UNKNOWN"
     bio = st["brains"]["biological-state"]
     assert bio["process"]["processHealth"] == "UNKNOWN" and bio["aggregate"]["status"] == "UNKNOWN"
-    assert all(r.get("legacy") for r in bio["dependencies"]["rows"])
+    # Fish is a REGISTERED Brain (brains/fish/brain.json) that consumes no other Brain: zero declared rows, nothing legacy, freshness stays UNKNOWN
+    assert bio["dependencies"]["declared"] == 0 and "rows" not in bio["dependencies"] and bio["dependencies"]["freshnessHealth"] == "UNKNOWN"
+    assert st["dependencies"]["brains"]["biological-state"]["source"] == "brain.json" and not st["dependencies"]["brains"]["biological-state"].get("rows")
+    assert st["dependencies"]["brains"]["sector-intelligence"].get("legacy") is True                          # a not-yet-migrated Brain is still legacy, labelled
     assert st["brains"]["depth"]["process"]["processHealth"] == "NOT_CONFIGURED"                       # executionTarget kind none
     assert st["dependencies"]["edges"] and all("signalId" in s for s in st["signals"].values())
     assert "wind" in st["dependencies"]["brains"] and st["dependencies"]["brains"]["wind"]["source"] == "brain.json"

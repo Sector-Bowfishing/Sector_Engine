@@ -1,0 +1,389 @@
+{
+ "clarityBandsFt": [
+  {
+   "id": "TURBID",
+   "maxExclusive": 1.3,
+   "minInclusive": 0.0
+  },
+  {
+   "id": "MODERATE",
+   "maxExclusive": 3.3,
+   "minInclusive": 1.3
+  },
+  {
+   "id": "CLEAR",
+   "maxExclusive": null,
+   "minInclusive": 3.3
+  }
+ ],
+ "contractVersion": "biological-features-v1",
+ "depthClasses": [
+  "LT_0_5M",
+  "M0_5_1_5",
+  "M1_5_3",
+  "GT_3M"
+ ],
+ "features": {
+  "backwaterHabitat": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "channelBorder": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "clarityBand": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "waterClarity.clarityFt"
+   ],
+   "meaning": "Coarse engineering bands (feet), not biological thresholds.",
+   "owner": "water-clarity",
+   "states": [
+    "TURBID",
+    "MODERATE",
+    "CLEAR"
+   ]
+  },
+  "coldRise": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "lake.trendState",
+    "waterTemp.currentTempF"
+   ],
+   "meaning": "risingStage AND water below 15 C.",
+   "owner": "biological (inputs: lake-brain + water-temp)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "daypart": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "calendar.daypart"
+   ],
+   "meaning": "Lake-local day / twilight / night.",
+   "owner": "engine-calendar",
+   "states": [
+    "DAY",
+    "TWILIGHT",
+    "NIGHT"
+   ]
+  },
+  "deepChannelPool": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "fallingStage": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "lake.trendState"
+   ],
+   "meaning": "stageTrend is FALLING or FALLING_RAPIDLY.",
+   "owner": "lake-brain",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "floodedVegetation": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "openWaterBasin": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "rapidDischargeIncrease": {
+   "availability": "NOT_PUBLISHED",
+   "inputs": [
+    "lake.tributaryDischargeTrend"
+   ],
+   "meaning": "A tributary/inflow discharge increase classified RISING_RAPIDLY. Strongest cross-species signal in the research; no Brain publishes the input yet, so this is always UNKNOWN today.",
+   "owner": "lake-brain (tributary hydrology)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "risingStage": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "lake.trendState"
+   ],
+   "meaning": "stageTrend is RISING or RISING_RAPIDLY.",
+   "owner": "lake-brain",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "shallowVegetatedHabitat": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "spawnWindow": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "calendar.month",
+    "waterTemp.currentTempF"
+   ],
+   "meaning": "Species-specific. IN_WINDOW: month in the species window AND water within its spawn temperature range.",
+   "owner": "biological (species-evaluated)",
+   "states": [
+    "IN_WINDOW",
+    "MONTH_ONLY",
+    "TEMP_ONLY",
+    "OUTSIDE"
+   ]
+  },
+  "stageTrend": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "lake.trendState"
+   ],
+   "meaning": "Pool/lake level trend over 24 h as classified by the Lake Brain. A PROXY for river/tributary stage: in pool-controlled rivers stage and discharge decouple, so rules that cite it carry that caveat.",
+   "owner": "lake-brain",
+   "states": [
+    "RISING_RAPIDLY",
+    "RISING",
+    "STABLE",
+    "FALLING",
+    "FALLING_RAPIDLY"
+   ]
+  },
+  "tailwaterHabitat": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "temperatureCrossing15C": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "waterTemp.currentTempF",
+    "waterTemp.trend24hF"
+   ],
+   "meaning": "The 15 C line was crossed within the last 24 h (only 24 h is knowable from the published trend).",
+   "owner": "water-temp",
+   "states": [
+    "UP_24H",
+    "DOWN_24H",
+    "NONE_24H"
+   ]
+  },
+  "temperatureCrossing18C": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "waterTemp.currentTempF",
+    "waterTemp.trend24hF"
+   ],
+   "meaning": "The 18 C line was crossed within the last 24 h.",
+   "owner": "water-temp",
+   "states": [
+    "UP_24H",
+    "DOWN_24H",
+    "NONE_24H"
+   ]
+  },
+  "temperatureCrossing20C": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "waterTemp.currentTempF",
+    "waterTemp.trend24hF"
+   ],
+   "meaning": "The 20 C line was crossed within the last 24 h.",
+   "owner": "water-temp",
+   "states": [
+    "UP_24H",
+    "DOWN_24H",
+    "NONE_24H"
+   ]
+  },
+  "temperatureTrend": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "waterTemp.trend24hF"
+   ],
+   "meaning": "24 h change at or beyond +/-1.0 F is warming/cooling.",
+   "owner": "water-temp",
+   "states": [
+    "WARMING",
+    "STEADY",
+    "COOLING"
+   ]
+  },
+  "tributaryAccess": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "tributaryMouth": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "warmRise": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "lake.trendState",
+    "waterTemp.currentTempF"
+   ],
+   "meaning": "risingStage AND water at or above 15 C. Evidence: gars and grass carp respond to a rise when the water is warm.",
+   "owner": "biological (inputs: lake-brain + water-temp)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  },
+  "waterTempBand": {
+   "availability": "PUBLISHED",
+   "inputs": [
+    "waterTemp.currentTempF"
+   ],
+   "meaning": "Coarse class of the current lake water temperature (C, lower bound inclusive).",
+   "owner": "water-temp",
+   "states": [
+    "LT_10C",
+    "C10_15",
+    "C15_18",
+    "C18_21",
+    "C21_26",
+    "C26_30",
+    "GE_30C"
+   ]
+  },
+  "woodyCover": {
+   "availability": "AREA",
+   "inputs": [
+    "area map layer"
+   ],
+   "meaning": "Per-area habitat class; evaluated by Intelligence against map layers, not at lake level.",
+   "owner": "lake-brain / depth / vegetation (area-level)",
+   "states": [
+    "TRUE",
+    "FALSE"
+   ]
+  }
+ },
+ "habitatClasses": [
+  "shallowVegetatedHabitat",
+  "floodedVegetation",
+  "backwaterHabitat",
+  "tributaryAccess",
+  "tributaryMouth",
+  "tailwaterHabitat",
+  "channelBorder",
+  "deepChannelPool",
+  "openWaterBasin",
+  "woodyCover"
+ ],
+ "temperatureBandsC": [
+  {
+   "id": "LT_10C",
+   "maxExclusive": 10.0,
+   "minInclusive": null
+  },
+  {
+   "id": "C10_15",
+   "maxExclusive": 15.0,
+   "minInclusive": 10.0
+  },
+  {
+   "id": "C15_18",
+   "maxExclusive": 18.0,
+   "minInclusive": 15.0
+  },
+  {
+   "id": "C18_21",
+   "maxExclusive": 21.0,
+   "minInclusive": 18.0
+  },
+  {
+   "id": "C21_26",
+   "maxExclusive": 26.0,
+   "minInclusive": 21.0
+  },
+  {
+   "id": "C26_30",
+   "maxExclusive": 30.0,
+   "minInclusive": 26.0
+  },
+  {
+   "id": "GE_30C",
+   "maxExclusive": null,
+   "minInclusive": 30.0
+  }
+ ],
+ "trendNoiseF": 1.0,
+ "warmRiseMinC": 15.0
+}

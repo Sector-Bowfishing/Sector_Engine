@@ -1,0 +1,24 @@
+--- a/Sources/SectorEngine/Engine/Config/SpeciesDatabase.swift	2026-10-13 15:25:36
++++ b/Sources/SectorEngine/Engine/Config/SpeciesDatabase.swift	2026-10-13 15:25:47
+@@ -179,18 +179,18 @@
+                      habitat: "overbank flooded terrestrial grass by deep backwaters and oxbows",
+                      floodDependence: .full, tier: .tier1, legalByDefault: .check,   // seasonal closures
+                      regions: [.south, .lowerMid, .north], presenceMaxLatitude: 37),  // Deep South / lower Mississippi — not the upper Midwest/NE
+-        SpawnSpecies(name: "Spotted gar", spawnMinF: 70, spawnPeakF: 75, spawnMaxF: 79,
++        SpawnSpecies(name: "Spotted gar", spawnMinF: 68, spawnPeakF: 75, spawnMaxF: 86,
+                      southWindow: MonthRange(4, 5), midNorthWindow: MonthRange(5, 6), westWindow: MonthRange(4, 6),
+                      habitat: "heavily vegetated shallow sloughs and flooded backwaters",
+                      floodDependence: .partial, tier: .tier1, legalByDefault: .yes,
+                      regions: [.south, .lowerMid, .north], presenceMaxLatitude: 38),  // spotted gar are a southern/central fish
+-        SpawnSpecies(name: "Longnose gar", spawnMinF: 68, spawnPeakF: 72, spawnMaxF: 77,
++        SpawnSpecies(name: "Longnose gar", spawnMinF: 64, spawnPeakF: 67, spawnMaxF: 77,
+                      southWindow: MonthRange(4, 5), midNorthWindow: MonthRange(5, 6), westWindow: MonthRange(4, 6),
+                      habitat: "shallow gravel riffles and weedy shallows; gar roll on the surface",
+                      floodDependence: .none, tier: .tier1, legalByDefault: .yes,
+                      regions: [.south, .lowerMid, .north]),
+         SpawnSpecies(name: "Bowfin", spawnMinF: 61, spawnPeakF: 64, spawnMaxF: 66,
+-                     southWindow: MonthRange(3, 5), midNorthWindow: MonthRange(4, 6), westWindow: MonthRange(4, 6),
++                     southWindow: MonthRange(2, 5), midNorthWindow: MonthRange(4, 6), westWindow: MonthRange(4, 6),
+                      habitat: "weedy shallow nests near cover",
+                      floodDependence: .none, tier: .tier1, legalByDefault: .yes,
+                      regions: [.south, .lowerMid, .north]),

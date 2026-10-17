@@ -1,0 +1,51 @@
+--- a/Sources/SectorEngine/Engine/Config/SpeciesDatabase.swift	2026-10-13 15:25:36
++++ b/Sources/SectorEngine/Engine/Config/SpeciesDatabase.swift	2026-10-13 15:25:47
+@@ -166,7 +166,7 @@
+                      regions: [.south, .lowerMid, .north]),
+         SpawnSpecies(name: "Smallmouth buffalo", spawnMinF: 57, spawnPeakF: 63, spawnMaxF: 70,
+                      southWindow: MonthRange(3, 5), midNorthWindow: MonthRange(4, 6), westWindow: MonthRange(4, 6),
+-                     habitat: "submerged vegetation in slightly faster water",
++                     habitat: "tailrace and slack pockets below dams, creek and tributary mouths, and shallow backwaters during the spring run",
+                      floodDependence: .partial, tier: .tier1, legalByDefault: .yes,
+                      regions: [.south, .lowerMid, .north]),
+         SpawnSpecies(name: "Black buffalo", spawnMinF: 64, spawnPeakF: 70, spawnMaxF: 75,
+@@ -200,7 +200,7 @@
+                      floodDependence: .none, tier: .tier1, legalByDefault: .yes,
+                      regions: [.south, .west],
+                      presenceMaxLatitude: 30),   // deep South / heated waters only — no AL freshwater
+-        SpawnSpecies(name: "Channel catfish", spawnMinF: 75, spawnPeakF: 80, spawnMaxF: 85,
++        SpawnSpecies(name: "Channel catfish", spawnMinF: 70, spawnPeakF: 77, spawnMaxF: 80,
+                      southWindow: MonthRange(5, 7), midNorthWindow: MonthRange(6, 8), westWindow: MonthRange(6, 8),
+                      habitat: "cavities — undercut banks, logs, riprap, debris",
+                      floodDependence: .none, tier: .tier1, legalByDefault: .check,
+@@ -213,16 +213,16 @@
+         // ── Tier 2 — river/flood spawners: target STAGING fish, not the act ──────
+         SpawnSpecies(name: "Grass carp", spawnMinF: 56, spawnPeakF: 73, spawnMaxF: 86,
+                      southWindow: MonthRange(4, 9), midNorthWindow: MonthRange(5, 7), westWindow: MonthRange(5, 8),
+-                     habitat: "warm (>70°F) slow backwaters and side channels where they stage",
++                     habitat: "submerged vegetation in coves, shoals and creek arms; tributary mouths on rising water from about 60°F in spring",
+                      floodDependence: .river, tier: .tier2, legalByDefault: .yes),
+         SpawnSpecies(name: "Silver carp", spawnMinF: 64, spawnPeakF: 72, spawnMaxF: 86,
+                      southWindow: MonthRange(4, 7), midNorthWindow: MonthRange(5, 7), westWindow: MonthRange(5, 8),
+-                     habitat: "warm slow backwaters where they surface-school",
++                     habitat: "river mouths, tributary approaches and tailwater edges on rising warm water; backwaters when the water is high",
+                      floodDependence: .river, tier: .tier2, legalByDefault: .yes,
+                      regions: [.south, .lowerMid, .north], mississippiBasinOnly: true),   // not FL/Atlantic/arid West
+         SpawnSpecies(name: "Bighead carp", spawnMinF: 64, spawnPeakF: 77, spawnMaxF: 86,
+                      southWindow: MonthRange(4, 7), midNorthWindow: MonthRange(5, 7), westWindow: MonthRange(5, 8),
+-                     habitat: "warm slow backwaters and side channels where they stage",
++                     habitat: "river mouths, tributary approaches and tailwater edges on rising warm water; backwaters when the water is high",
+                      floodDependence: .river, tier: .tier2, legalByDefault: .yes,
+                      regions: [.south, .lowerMid, .north], mississippiBasinOnly: true),   // not FL/Atlantic/arid West
+ 
+--- a/Sources/SectorEngine/Engine/Factors/SpawnFactor.swift	2026-10-13 15:26:10
++++ b/Sources/SectorEngine/Engine/Factors/SpawnFactor.swift	2026-10-13 15:26:10
+@@ -159,7 +159,7 @@
+ 
+     private static func whyText(_ s: SpawnSpecies, intensity: Double, staging: Bool) -> String {
+         if staging {
+-            return "\(s.name) staging in warm backwaters — \(s.habitat)"
++            return "\(s.name) staging — \(s.habitat)"
+         }
+         let strength = intensity >= 80 ? "Peak" : (intensity >= 60 ? "Active" : "Early")
+         return "\(strength) \(s.name.lowercased()) spawn — \(s.habitat)"

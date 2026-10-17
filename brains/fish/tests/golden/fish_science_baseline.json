@@ -1,0 +1,75 @@
+{
+ "three_species": {
+  "descriptor": "9fc37a92a3141688c44589054a79f3eb3d5060871d55bad160ab554a6ce5f392",
+  "health": "c3ebcd31beb72cbe198e1bdca85faf1ea24b792d2709e47d1063cd523719f57a",
+  "paths": [
+   "/activity/1760292000000-biological-state-0",
+   "/brains/biological-state",
+   "/health/brains/biological-state",
+   "/species/alpha_fish",
+   "/species/beta_fish",
+   "/species/gamma_group",
+   "/species/gone_fish",
+   "/validation/biological-state"
+  ],
+  "plan": {
+   "action": "PUBLISH",
+   "component": "speciesKnowledge",
+   "reasons": [
+    "nothing published yet"
+   ]
+  },
+  "registry": "ce8848a4eed110c7b32b1349a062f85ee1767299a599595e159685e887419bf2",
+  "species": {
+   "/species/alpha_fish": "d8948987e0b3f25eed3f068fc27eb164774f5d8706e5dd8ab260eec979fd86ce",
+   "/species/beta_fish": "cf55e66589280fc2341ab7fd66b117125b74c5d81141ab1a3579ab9cd65244a4",
+   "/species/gamma_group": "164b34d3152007f1357032df268ca914182fa518884aa2ba74b5a3a2f0f55ae8"
+  },
+  "updates": "0748f3fcc52da3d4aad59d1ed7633c0905e7b30abf80f0081a8b531f0bcaf552",
+  "validation": "2d716ac79cc3232432b03da8c6dbec947912c1ea89eab07f408bf12972f6d6a0",
+  "withProfiles": {
+   "coverage": "7f271e9eb0a86c5a90b16a7806b763f673ee31f6d69b73aa28809d7c469beea6",
+   "profiles": {
+    "/species/alpha_fish": "6c9e8ca8f116584d5072f1a2be4471bb8154d35e8ac7b3d0fdffa2bf02e1cf3a",
+    "/species/beta_fish": "17911845257adc225ac1eb5c6f1ebf0679f83efda6eddd694150345011d4d039",
+    "/species/gamma_group": "658d620168e7ef7d8798aa0b9ffa8d1ec7c61443b2c071da2561cfa1ec45cec3"
+   },
+   "updates": "0d06894e34ae048c2e247b9227160f4e61b577101c46af85a27c511c808db8a5"
+  }
+ },
+ "two_species": {
+  "descriptor": "9fc37a92a3141688c44589054a79f3eb3d5060871d55bad160ab554a6ce5f392",
+  "health": "c3ebcd31beb72cbe198e1bdca85faf1ea24b792d2709e47d1063cd523719f57a",
+  "paths": [
+   "/activity/1760292000000-biological-state-0",
+   "/brains/biological-state",
+   "/health/brains/biological-state",
+   "/species/example_fish",
+   "/species/example_group",
+   "/species/gone_fish",
+   "/validation/biological-state"
+  ],
+  "plan": {
+   "action": "PUBLISH",
+   "component": "speciesKnowledge",
+   "reasons": [
+    "nothing published yet"
+   ]
+  },
+  "registry": "0c950ee3d30cfe13dd90be58015b661a59bbe200531708a9099f4413c187b1c6",
+  "species": {
+   "/species/example_fish": "6e35ba45f5cccc7415fae927a416c15145d2b333d2b57c0896b1985f5702bd4b",
+   "/species/example_group": "f8d6314eb6661e91ef894bcb2e62fed439d199e0d6a9120f674506dac3f7b865"
+  },
+  "updates": "7042462b7abd2f7f9cffd602a11bd3c3f522597820fb6902e566b298749a3009",
+  "validation": "2d716ac79cc3232432b03da8c6dbec947912c1ea89eab07f408bf12972f6d6a0",
+  "withProfiles": {
+   "coverage": "5f5329ab9ddcb9b58606d8d87e454f57dff6245725137960c32ad6685aebe0af",
+   "profiles": {
+    "/species/example_fish": "760bac0d840e1568f3fa6d35b9387f31334161fc734b3e3e53df1dc228f5ad47",
+    "/species/example_group": "06392b981edb4fd3a7bddf9be3420b3fd342fcc2175b621e6dce3bbc164f98ef"
+   },
+   "updates": "6a092d141d4570f7af8a1c0fbdcf888654403245d236fd1ecaa9862a1e9db6b1"
+  }
+ }
+}

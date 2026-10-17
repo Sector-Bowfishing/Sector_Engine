@@ -23,9 +23,14 @@
       "phase": "Phase 7 (platform/scoring; per-Brain rubrics as Brains migrate)"
     },
     {
+      "prefix": "brains/fish",
+      "owner": "Fish Brain (biological-state)",
+      "phase": "Fish certification (ARCHITECTURE_CERTIFIED_V1 evidence; output-changing cleanups need approval)"
+    },
+    {
       "prefix": "jobs/biological-brain",
       "owner": "Fish Brain (biological-state)",
-      "phase": "Phase 4 (Fish migration)"
+      "phase": "RETIRED to brains/fish (Fish Structural Certification V1); pointer README only"
     },
     {
       "prefix": "jobs/lake-brain",

@@ -1,23 +1,10 @@
-# Biological Brain (`biological-state`, display name "Biological Brain")
+# Moved: `jobs/biological-brain` → `brains/fish/`
 
-Publishes **species knowledge**, i.e. "What does Sector know about this fish?", from the private canonical bundle (`gs://sector-biology-private/biology/v1`) to the Brain RTDB (`sector-brain`) as lightweight summaries.
+**Status: RETIRED (Fish Structural Certification V1).** The Fish Brain's (`brainId: biological-state`) permanent home is [`brains/fish/`](../../brains/fish/README.md). Nothing here is code, an entrypoint or a deploy unit; there is no second Fish implementation.
 
-**Not built yet:** per-lake **Biological State** ("What is this fish likely doing on this lake right now?"). That needs separate approval.
-
-The contract is in [`docs/brains/BIOLOGICAL_BRAIN_INTEGRATION.md`](../../docs/brains/BIOLOGICAL_BRAIN_INTEGRATION.md).
-
-| File | Role |
+| Was | Now |
 |---|---|
-| `biological_brain.py` | Bundle loading, hash verification, fail-closed validation against the v2 rubric, and RTDB payload builders (no scoring) |
-| `orchestration.py` | Dependencies, staleness and `plan()` for the future Brain Orchestrator (no scheduler) |
-| `run.py` | CLI: `--plan`, `--dry-run`, `--write`, plus `--bundle DIR` and `--offline` |
-| `brain_platform.py` | Shared Brain RTDB client, copied verbatim from the Water Clarity Brain |
-| `schemas/` | JSON Schemas for the canonical bundle shapes (documentation and tooling) |
-| `tests/` | stdlib unittest; synthetic species only |
+| `*.py` (bundle loader, publisher runner, rules, features, bands, Biological State pilot, Species Intelligence Profile generator, …), `schemas/`, `tools/` | `brains/fish/runtime/` |
+| `tests/` | `brains/fish/tests/` |
 
-```
-python3 -m unittest discover -s tests -v
-python3 run.py --dry-run --out out/
-```
-
-**Never commit proprietary biology here.** This repository is public. Detailed profiles, rules, evidence and history live only in the private bucket and Sector's private research repository.
+The in-process executor id `biological-brain` (job record, orchestrator) is not a repository path and is unchanged. The orchestrator image still stages the runtime as `jobs/biological-brain/` (`jobs/brain-orchestrator/deploy-job.sh` copies it from `brains/fish/runtime`), so a deployed image sees the same layout it always has. This pointer retires with the other pointer READMEs in Repository Phase 7.

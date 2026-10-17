@@ -14,8 +14,26 @@ def iso(h_ago):
     return (NOW - dt.timedelta(hours=h_ago)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def manifest():
+#: Orchestration-ALGORITHM scenario edges for the Biological Brain as a downstream consumer (wake-on-change, waves, optional-stale handling).
+#: The COMMITTED manifest declares none for Fish: the Fish runtime consumes no other Brain's state, and the platform must not claim
+#: relationships a registered Brain does not declare (dependency_declarations.drift; Fish Structural Certification V1). These scenarios
+#: test the decision model, not Fish's contract, so they re-attach the former provisional edges to a COPY of the committed manifest.
+SCENARIO_FISH_EDGES = [
+    {"id": "wind", "requirement": "OPTIONAL", "maxAgeHours": 6, "onStale": "DEPENDENCY_STALE", "provisional": True},
+    {"id": "water-temp", "requirement": "OPTIONAL", "maxAgeHours": 48, "onStale": "DEPENDENCY_STALE", "provisional": True},
+    {"id": "water-clarity", "requirement": "OPTIONAL", "maxAgeHours": 72, "onStale": "DEPENDENCY_STALE", "provisional": True},
+    {"id": "lake-brain", "requirement": "OPTIONAL", "maxAgeHours": 24, "onStale": "DEPENDENCY_STALE", "provisional": True},
+]
+
+
+def committed_manifest():
     return O.load_manifest()
+
+
+def manifest():
+    m = O.load_manifest()
+    m["brains"]["biological-state"]["dependencies"] = copy.deepcopy(SCENARIO_FISH_EDGES)
+    return m
 
 
 def ctx(m=None, states=None, activity=None, running=None, out_fps=None, last_in_fps=None, mode="PRE_PRODUCTION"):
@@ -40,11 +58,20 @@ def tiny(**brains):
 
 # ------------------------------------------------------------------------------------------------ manifest, mode, graph
 def test_committed_manifest_is_valid_and_graph_is_acyclic():
-    m = manifest()
+    m = committed_manifest()
     assert O.validate_manifest(m) == []
     g = O.validate_graph(m)
     assert g["errors"] == [] and g["warnings"] == [] and set(g["order"]) == set(m["brains"])
-    assert g["order"].index("lake-brain") < g["order"].index("depth") and g["order"].index("wind") < g["order"].index("biological-state") < g["order"].index("sector-intelligence")
+    assert g["order"].index("lake-brain") < g["order"].index("depth") and g["order"].index("biological-state") < g["order"].index("sector-intelligence")
+    assert m["brains"]["biological-state"]["dependencies"] == []        # Fish consumes no other Brain; brains/fish/brain.json declares none
+
+
+def test_scenario_manifest_with_fish_as_downstream_consumer_is_valid_and_acyclic():
+    m = manifest()
+    assert O.validate_manifest(m) == []
+    g = O.validate_graph(m)
+    assert g["errors"] == [] and g["warnings"] == []
+    assert g["order"].index("wind") < g["order"].index("biological-state") < g["order"].index("sector-intelligence")
 
 
 def test_current_board_is_configuration_not_code():

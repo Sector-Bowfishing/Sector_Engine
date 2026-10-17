@@ -26,7 +26,7 @@ Related finding in the same incident: the deployed lineage could not simply take
 1. `git fetch`; record `origin/main`, the shared branch tip, and the deployed `commit` label of `brain-orchestrator`.
 2. Build from the **deployed lineage** (the branch containing the deployed commit), not an older base: `git merge-base --is-ancestor <deployed-commit> HEAD` must hold, and `git diff <deployed-commit> HEAD -- jobs/brain-orchestrator jobs/brain-scores jobs/brain_platform docs/brains/scoring` must show only what you intend.
 3. Run `python3 jobs/brain-scores/check_score_artifacts.py` (the deploy script does too). For every STALE source, regenerate on the Brain's branch with its generator, then carry **only** the generated block: `git show <ref>:docs/brains/scoring/frozen-scores.json` → splice that key; assert every other key is byte-identical.
-4. Run the tests: `jobs/brain_platform`, `jobs/brain-scores`, `jobs/brain-orchestrator`, `jobs/sector-intelligence-brain`, `jobs/biological-brain`.
+4. Run the tests: `jobs/brain_platform`, `jobs/brain-scores`, `jobs/brain-orchestrator`, `jobs/sector-intelligence-brain`, `brains/fish`.
 5. Dry-run the real publisher (`score_brains.py --if-changed`, no `--write`): the change list must contain only the intended Brain(s). Unrelated displayed-value changes ⇒ stop and investigate.
 6. Deploy; confirm the scheduler is unchanged (`50 * * * *`, UTC, ENABLED) and the job's cpu/memory/timeout/env equal the previous revision.
 7. Verify publication **across at least one full orchestrator cycle** (the next :50/:51 run), not just immediately after deploy.

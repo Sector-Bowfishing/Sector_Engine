@@ -51,11 +51,17 @@ PILOT_LAKES = ("Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN",
 LOCK_MINUTES = 15                       # covers the gap between `:run` and the execution showing up in the API
 PYTHON = sys.executable
 
+def _fish_runtime_dir() -> str:
+    """Fish Brain runtime: brains/fish/runtime in the repository; ../biological-brain in the staged orchestrator image (deploy-job.sh stages it there)."""
+    repo = os.path.normpath(os.path.join(HERE, "..", "..", "brains", "fish", "runtime"))
+    return repo if os.path.isdir(repo) else os.path.join(HERE, "..", "biological-brain")
+
+
 # Executors: how each brain is started. Anything absent here is never started by the orchestrator.
 EXECUTORS = {
     "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
     "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
-    "biological-state": {"kind": "in-process", "dir": os.path.join(HERE, "..", "biological-brain"), "jobId": "biological-brain"},
+    "biological-state": {"kind": "in-process", "dir": _fish_runtime_dir(), "jobId": "biological-brain"},
     "sector-intelligence": {"kind": "in-process", "dir": os.path.join(HERE, "..", "sector-intelligence-brain"), "jobId": "sector-intelligence-brain"},
 }
 NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)", "water-clarity": "MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md)"}

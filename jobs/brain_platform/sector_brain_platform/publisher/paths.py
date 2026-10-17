@@ -107,7 +107,7 @@ def foreign_owner(path: str, submitter: str) -> str | None:
     """Who else would legitimately own `path`? Reuses the live ownership table (ownership.path_allowed) plus the protected roots.
     None = nobody known (unauthorised, but not provably cross-domain). Only used to give the right rejection code."""
     s = segments(path)
-    if s[0] in PROTECTED_ROOTS:
+    if s[0] in PROTECTED_ROOTS and not path_allowed(submitter, "/" + s[0] + "/probe"):         # a root the submitter itself owns is not "foreign" to it
         return PROTECTED_ROOTS[s[0]]
     if (len(s) == 3 and s[0] == "lakeFleet" and s[2] == "lakeId") or (len(s) == 4 and s[0] == "snapshots" and s[2:] == ["latest", "lakeId"]):
         return "platform-lake-registry"                      # lake identity is Platform Lake Registry-owned

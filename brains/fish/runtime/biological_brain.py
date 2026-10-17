@@ -18,6 +18,10 @@ import json
 import math
 import re
 
+from capability import IN_PROGRESS_NOTE, NOT_STARTED_NOTE  # noqa: E402  (stdlib-only sibling module)
+import bands as _bands  # noqa: E402
+import target_set as _targets  # noqa: E402
+
 BRAIN_ID = "biological-state"
 DISPLAY_NAME = "Biological Brain"
 BRAIN_VERSION = "biological-brain-0.1.0"
@@ -95,6 +99,10 @@ class Bundle:
         self.registry = json.loads(files["registry.json"])
         self.discrepancies = json.loads(files["discrepancies.json"]).get("discrepancies", []) if "discrepancies.json" in files else []
         self.profiles = {e["speciesId"]: json.loads(files[e["profile"]]) for e in self.registry["species"]}
+        import capability                      # local import: capability reads rules/validation artifacts; absent artifacts -> NOT_STARTED
+        self.capability = capability.assess(files)
+        self.rule_counts = self.capability["facts"].get("ruleCountsBySpecies", {})
+        self.ruleset = self.capability.get("ruleset")        # a validated RuleSet or None; bands are compiled only from validated rules
 
     @property
     def research_version(self) -> str:
@@ -196,14 +204,46 @@ def species_summary(p: dict, b: Bundle, profile_uri: str, now: str) -> dict:
         topGaps=[_short(g) for g in (p.get("gaps") or [])[:3]],
         contradictionCount=contradictions or None,
         ruleCount=len(p.get("rules") or []) or None,
+        machineRules=(b.rule_counts.get(p["speciesId"]) if getattr(b, "rule_counts", None) else None),
+        responseBands=(_bands.compile_species_bands(p["speciesId"], b.ruleset.active_rules(), generated_at=now, rules_version=b.ruleset.rules_version)
+                       if getattr(b, "ruleset", None) else None),
         evidence=dict(relationshipRecordCount=ev.get("relationshipRecordCount"),
                       sourcesByVerification=ev.get("sourcesByVerification2026_10_12")),
         openDiscrepancies=disc,
         policyNote=_short(p.get("policyNote")),
         separateAssessments=p.get("separateAssessments"),
+        movement=({k: v for k, v in (p.get("movement") or {}).items() if k in ("passLevel", "generalConfidence", "regionalConfidence", "bowfisherTakeaway", "bowfisherKnowledge", "sourcesInspected", "sourcesTotal", "cardVersion")} or None),
+        productRole=_targets.role(p["speciesId"]),
         history=hist,
         profileRef=profile_uri, profileSha256=next((f["sha256"] for f in b.manifest["files"] if f["path"] == f"species/{p['speciesId']}.json"), None),
         updatedAt=now))
+
+
+def _state_responsibility(b: Bundle) -> dict:
+    """Lifecycle comes from VERIFIED capability (capability.assess), never from a flag. Never LIVE/VALIDATED here."""
+    c = b.capability
+    q = "What is this fish likely doing on this lake right now?"
+    if c["status"] == "IN_PROGRESS":
+        f = c["facts"]
+        return dict(status="IN_PROGRESS", validation=c["validation"], question=q, note=IN_PROGRESS_NOTE, pilotLakes=f.get("pilotLakes"),
+                    rulesVersion=f.get("rulesVersion"), speciesWithUsableRules=f.get("speciesWithUsableRules"), usableRules=f.get("usableRules"),
+                    draftRules=f.get("draftRules"), retiredRules=f.get("retiredRules"), frozenRules=f.get("frozenRules"), predictionsLogged=f.get("predictionsLogged", 0), observationsLogged=f.get("observationsLogged", 0), independentTrips=f.get("independentTrips", 0))
+    return dict(status="NOT_STARTED", question=q, note=NOT_STARTED_NOTE + (f" Capability blockers: {'; '.join(c['blockers'][:3])}" if b.capability["facts"] else ""))
+
+
+def _facts(b: Bundle, by_m: dict) -> list:
+    """Generic, Engine-computed maturity facts [{label, value}] that an Ops renderer can show verbatim without per-Brain code."""
+    f = b.capability["facts"]
+    if not f:
+        return []
+    ts = f.get("transferSummary") or {}
+    tr = ts.get("byTransferability") or {}
+    rows = [("Species with usable rules", f.get("speciesWithUsableRules")), ("Usable rules", f.get("usableRules")), ("Draft rules", f.get("draftRules")),
+            ("Retired rules", f.get("retiredRules")), ("Frozen rules", f.get("frozenRules")), ("Predictions logged", f.get("predictionsLogged", 0)),
+            ("Observations logged", f.get("observationsLogged", 0)), ("Independent trips", f.get("independentTrips", 0)),
+            ("Rules with Southeast-transferable evidence", f"{tr.get('TRANSFERS', 0)} of {ts.get('usableRules', 0)}" if ts else None),
+            ("Validated species", by_m.get("VALIDATED", 0)), ("Pilot lakes", ", ".join(f.get("pilotLakes") or []) or None), ("Rules version", f.get("rulesVersion"))]
+    return [dict(label=k, value=v) for k, v in rows if v is not None]
 
 
 def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_uri: str, descriptor: dict) -> dict:
@@ -214,22 +254,25 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
         by_a[p["assessment"]] = by_a.get(p["assessment"], 0) + 1
     open_disc = [d for d in b.discrepancies if d.get("status") == "OPEN"]
     return _clean(dict(
-        platform=PLATFORM,
+        platform=PLATFORM, facts=_facts(b, by_m), targetReadiness=(b.capability["facts"].get("targetReadiness") or None), targetSet=dict(version=_targets.TARGET_SET_VERSION, targets=sorted(_targets.TARGET), secondary=sorted(_targets.SECONDARY),
+                                                              knowledgeOnlyCount=len([s for s in b.profiles if _targets.role(s) == "KNOWLEDGE_ONLY"])), transferSummary=(b.capability["facts"].get("transferSummary") or None),
         stalenessModel="VERSION", dependsOn=[],
         schedule=dict(cadence="manual (version-driven: runs when the canonical bundle changes)", running=False),
         brainId=BRAIN_ID, displayName=DISPLAY_NAME, domain="biology",
         question="What does Sector know about each fish, and what is it likely doing?",
         version=BRAIN_VERSION, schemaVersion=SCHEMA_VERSION, enabled=True, health=health,
         status="PROFILED",
-        statusBasis="Species knowledge is compiled and scored (research only). No per-lake Biological State is published, so no lake readiness exists.",
+        statusBasis=("Species knowledge is compiled and scored (research only). "
+                     + ("An internal pilot Biological State is being built from verified rules; nothing is published per lake, so no lake readiness exists."
+                        if b.capability["status"] == "IN_PROGRESS" else
+                        "No per-lake Biological State is published, so no lake readiness exists.")),
         supportedLakeCount=0, staleLakeCount=0, lastSuccessfulRun=now, deploymentVersion=deployment, publishMode="manual",
         researchVersion=b.research_version, scoringVersion=b.manifest.get("scoringVersion"),
         manifestRef=manifest_uri, manifestSha256=b.pointer.get("manifestSha256"),
         responsibilities=dict(
             speciesKnowledge=dict(status="PUBLISHED", question="What does Sector know about this fish?",
                                   speciesCount=len(profiles), assessedCount=by_a.get("ASSESSED", 0), notAssessedCount=by_a.get("NOT_ASSESSED", 0)),
-            biologicalState=dict(status="NOT_STARTED", question="What is this fish likely doing on this lake right now?",
-                                 note="Per-lake Biological State is not built; it requires separate approval.")),
+            biologicalState=_state_responsibility(b)),
         breakdowns=dict(researchMaturity=by_m, assessment=by_a),
         researchMaturityDefinitions=RESEARCH_MATURITY,
         rubric=dict(id=SCORING_VERSION, dimensions={did: dict(label=label, weight=w) for did, label, w in DOMAINS},
@@ -246,10 +289,14 @@ def registry_entry(b: Bundle, now: str, health: str, deployment: str, manifest_u
                        note=f"Species knowledge {b.research_version} ({len(profiles)} species, {SCORING_VERSION}); Biological State not started")]))
 
 
-def validation_summary(now: str) -> dict:
-    return dict(brainId=BRAIN_ID, modelVersion=SCORING_VERSION, status="NOT_VALIDATED", lastRunAt=now, lakeCount=0,
+def validation_summary(now: str, capability: dict | None = None) -> dict:
+    f = (capability or {}).get("facts") or {}
+    foundation = dict(frozenRules=f.get("frozenRules"), predictionsLogged=f.get("predictionsLogged", 0)) if f.get("frozenRules") else None
+    return dict(brainId=BRAIN_ID, modelVersion=SCORING_VERSION, status="NOT_VALIDATED", lastRunAt=now, lakeCount=0, validationFoundation=foundation,
                 statusNote=("Species knowledge scores measure evidence completeness, not predictive accuracy. No species rule has been "
-                            "checked against field observations and no per-lake Biological State model exists yet."))
+                            "checked against field observations. "
+                            + ("An internal pilot Biological State exists and its predictions are logged, but no prediction has been compared with an outcome."
+                               if (capability or {}).get("status") == "IN_PROGRESS" else "No per-lake Biological State model exists yet.")))
 
 
 def health_record(now: str, duration_ms: int, deployment: str, status: str = "HEALTHY", error: str | None = None) -> dict:
@@ -262,8 +309,9 @@ PLATFORM = {"implementation": "sector_brain_platform", "contract": "docs/brains/
 
 
 def build_updates(b: Bundle, *, now: dt.datetime, uri_root: str, deployment: str, descriptor: dict, duration_ms: int,
-                  published: dict | None, existing_species: set[str] | None, event_id: str | None) -> dict:
-    """The complete multi-path update for one publish (applied atomically)."""
+                  published: dict | None, existing_species: set[str] | None, event_id: str | None, include_profiles: bool = False) -> dict:
+    """The complete multi-path update for one publish (applied atomically). `include_profiles` (default OFF: nothing changes for the current publisher) adds each species'
+    `biological-species-profile-v1` as `/species/{id}/profile` and a compact `coverageMatrix` on the registry."""
     ts = now.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifest_uri = f"{uri_root}/{b.manifest_ref}"
     up = {}
@@ -273,7 +321,13 @@ def build_updates(b: Bundle, *, now: dt.datetime, uri_root: str, deployment: str
     for gone in sorted((existing_species or set()) - set(b.profiles)):
         up[f"/species/{gone}"] = None                       # retired from the registry: remove its summary
     up[f"/brains/{BRAIN_ID}"] = registry_entry(b, ts, "HEALTHY", deployment, manifest_uri, descriptor)
-    up[f"/validation/{BRAIN_ID}"] = validation_summary(ts)
+    if include_profiles:
+        import profile_bundle as _pb
+        profs = _pb.profiles_from_bundle(b)
+        for sid, prof in profs.items():
+            up[f"/species/{sid}"]["profile"] = _clean(prof)
+        up[f"/brains/{BRAIN_ID}"]["coverageMatrix"] = _clean(_pb.coverage_matrix(profs))
+    up[f"/validation/{BRAIN_ID}"] = _clean(validation_summary(ts, b.capability))
     up[f"/health/brains/{BRAIN_ID}"] = health_record(ts, duration_ms, deployment)
     prev = (published or {}).get("researchVersion")
     if event_id and prev != b.research_version:

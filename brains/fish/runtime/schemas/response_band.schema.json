@@ -1,0 +1,90 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "description": "Support for the fish being present and findable in shootable habitat under the feature state. Never a fishing score.",
+ "properties": {
+  "behavior": {
+   "type": "array"
+  },
+  "confidence": {
+   "enum": [
+    "LOW",
+    "MEDIUM",
+    "HIGH"
+   ]
+  },
+  "conflict": {
+   "type": "boolean"
+  },
+  "evidenceBasis": {
+   "properties": {
+    "directness": {
+     "type": "array"
+    },
+    "independentStreams": {
+     "type": "integer"
+    },
+    "ruleIds": {
+     "type": "array"
+    }
+   },
+   "type": "object"
+  },
+  "featureId": {
+   "type": "string"
+  },
+  "featureState": {
+   "type": "string"
+  },
+  "reason": {
+   "type": "string"
+  },
+  "regionApplicability": {
+   "type": "object"
+  },
+  "response": {
+   "enum": [
+    "FAVORABLE",
+    "WORKABLE",
+    "LIMITING",
+    "BLOCKING",
+    "UNKNOWN"
+   ]
+  },
+  "seasonApplicability": {
+   "type": "object"
+  },
+  "sourceVersion": {
+   "properties": {
+    "featuresVersion": {
+     "type": "string"
+    },
+    "rulesVersion": {
+     "type": "string"
+    },
+    "stateVersion": {
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
+  "speciesId": {
+   "type": "string"
+  },
+  "transferability": {
+   "enum": [
+    "UNTESTED",
+    "PARTIAL",
+    "TRANSFERS"
+   ]
+  }
+ },
+ "required": [
+  "speciesId",
+  "featureId",
+  "featureState",
+  "response",
+  "sourceVersion"
+ ],
+ "title": "Biological response band (Biological -> Intelligence)",
+ "type": "object"
+}

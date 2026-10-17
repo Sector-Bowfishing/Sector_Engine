@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "biological-state",
+  "gaps": [
+    {
+      "id": "FISH-VAL-001",
+      "type": "validation",
+      "title": "No species rule has been compared with a field outcome",
+      "whyItMatters": "Every response band, spawn window and night-movement claim is Level 3 (Sector-derived) and NOT_VALIDATED; nothing can be promoted without prospective comparison.",
+      "bowfisherDecision": "Whether a bowfisher can rely on a species 'favorable / limiting' reading when choosing where and when to look.",
+      "currentEvidence": ["fish-validation-foundation"],
+      "stopCondition": "Stop when the preregistered criterion has enough independent trips to be scored, or when field observation is required.",
+      "expectedOutput": "A scored preregistered evaluation and an accept / reject / keep-in-calibration recommendation per rule.",
+      "humanOrFieldValidationRequired": {"required": true, "what": "Structured field observations, including non-encounters, from independent trips."},
+      "status": "OPEN",
+      "owner": "fish-brain-lane"
+    },
+    {
+      "id": "FISH-EVI-001",
+      "type": "evidence",
+      "title": "All assessed species are at research maturity RESEARCH (none independently reviewed)",
+      "whyItMatters": "REVIEWED and VALIDATED are refused by the runtime until a separate promotion decision; the score gate 'speciesValidation' caps the Fish score until at least one species is VALIDATED.",
+      "bowfisherDecision": "How much weight a species' knowledge summary deserves.",
+      "currentEvidence": ["fish-species-bundle"],
+      "stopCondition": "Stop when each reviewed species has a recorded independent review or the review needs a human the lane does not have.",
+      "expectedOutput": "Reviewer sign-offs recorded in the review ledger; a promotion proposal for Michael.",
+      "humanOrFieldValidationRequired": {"required": true, "what": "Independent reviewer; promotion approval by Michael."},
+      "status": "OPEN",
+      "owner": "fish-brain-lane"
+    },
+    {
+      "id": "FISH-PRD-001",
+      "type": "product",
+      "title": "Per-lake Biological State is an internal pilot; Depth and Vegetation inputs are unpublished",
+      "whyItMatters": "Without published upstream states the dependent features are UNKNOWN fleet-wide; the product question 'what is this fish doing on this lake now?' cannot be answered.",
+      "bowfisherDecision": "Where on a lake and under which conditions to look for a given species tonight.",
+      "currentEvidence": ["fish-input-contracts"],
+      "stopCondition": "Stop when the upstream Brains publish the needed states or the pilot's graduation needs a decision by Michael.",
+      "expectedOutput": "A graduation decision for the Biological State component and, if approved, its input declarations (brain.json consumes) with recorder instrumentation.",
+      "humanOrFieldValidationRequired": {"required": true, "what": "Michael's decision to graduate the pilot into an orchestrated component."},
+      "status": "OPEN",
+      "owner": "fish-brain-lane"
+    }
+  ]
+}

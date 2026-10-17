@@ -165,8 +165,10 @@ def score_biological(facts: dict, now: dt.datetime) -> dict:
         gates.append({"gate": "biologicalState", "cap": 4.0, "why": "per-lake Biological State NOT_STARTED"})
     if not mats or "VALIDATED" not in mats:
         gates.append({"gate": "speciesValidation", "cap": 6.0, "why": "no species at researchMaturity VALIDATED"})
-    return finish("biological-state-score-v1", "docs/brains/scoring/biological-state-score-v1.json", dims, gates, now,
-                  "start per-lake Biological State (gate 4.0); independent review of assessed species")
+    started = bs.get("status") not in (None, "NOT_STARTED")
+    nxt = ("independent review of assessed species, then real field validation toward the first VALIDATED species (gate 6.0)" if started
+           else "start per-lake Biological State (gate 4.0); independent review of assessed species")
+    return finish("biological-state-score-v1", "docs/brains/scoring/biological-state-score-v1.json", dims, gates, now, nxt)
 
 
 # ---------------------------------------------------------------- Sector Intelligence

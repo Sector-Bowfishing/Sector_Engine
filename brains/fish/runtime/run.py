@@ -8,7 +8,8 @@ Engine /conditions, the app databases and every other brain are unaffected by an
 usage:
   python run.py --plan                                  # orchestrator question: is a publish warranted?
   python run.py --dry-run --out out/                    # verify + build everything against the live RTDB (GET only), write JSON files, no writes
-  python run.py --write                                 # verify + publish (one atomic multi-path update)
+  python run.py --write                                 # LEGACY direct publish (one atomic multi-path update). Target: the Publisher is the only production write door
+                                                        # (fish-publication-v1, publish_artifact.py); this path retires at the Publisher cutover (not started).
   python run.py --bundle /path/to/biology/v1 ...        # read a local bundle copy instead of the bucket
 env:
   BIOLOGY_BUCKET (sector-biology-private), BIOLOGY_PREFIX (biology/v1), BRAIN_RTDB_URL (sector-brain),
@@ -26,11 +27,13 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import biological_brain as bb      # noqa: E402
 import brain_platform as bp        # noqa: E402
 import orchestration as orch       # noqa: E402
+import publish_artifact as pa      # noqa: E402
 
 BUCKET = os.environ.get("BIOLOGY_BUCKET", "sector-biology-private")
 PREFIX = os.environ.get("BIOLOGY_PREFIX", "biology/v1")
@@ -114,6 +117,17 @@ def main(argv=None) -> int:
         os.makedirs(a.out, exist_ok=True)
         with open(os.path.join(a.out, "updates.json"), "w") as fh:
             json.dump(updates, fh, indent=1, ensure_ascii=False)
+        # The Publisher-bound view of the SAME update: one sealed fish-publication-v1 artifact, evaluated by the SHADOW Publisher in memory.
+        # Nothing is sent anywhere; no production path is touched.
+        built = pa.build_artifact(updates, bundle, pa.BuildContext(str(uuid.uuid4()), now.strftime("%Y-%m-%dT%H:%M:%SZ"), deployment),
+                                  published=published, consumed=summary.get("consumed"))
+        with open(os.path.join(a.out, "artifact.json"), "w") as fh:
+            json.dump(built.artifact, fh, indent=1, ensure_ascii=False, sort_keys=True)
+        from sector_brain_platform.publisher import local_shadow_stack
+        stack = local_shadow_stack()                                    # in-memory: the Brain may only create its own artifact; the Publisher only reads it
+        ev = stack.publisher.evaluate_reference(stack.writer(bb.BRAIN_ID).write(built.artifact))
+        summary["publisher"] = dict(mode=ev.mode.value, result=ev.result.value, codes=ev.codes, live=False, artifactSchema=pa.FISH_BUNDLE,
+                                    outputFingerprint=built.artifact["lineage"]["outputFingerprint"], mutations=built.counts, droppedLegacyPaths=len(built.dropped))
         print(json.dumps(summary, indent=1))
         return 0
 

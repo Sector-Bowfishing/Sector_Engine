@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "biological-state",
+  "displayName": "Fish Brain",
+  "humanName": "Fish",
+  "domain": "biology",
+  "lifecycle": "PROFILED",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "in-process",
+    "language": "python",
+    "entrypoint": "brains/fish/runtime/run.py",
+    "trigger": {"kind": "manual"}
+  },
+  "publishes": [
+    {
+      "contractId": "fish-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/fish/contracts/fish-publication-v1.json",
+      "pathFamilies": [
+        "/species/{id}",
+        "/brains/biological-state/{child}",
+        "/validation/biological-state",
+        "/health/brains/biological-state/{child}",
+        "/activity/{event}"
+      ]
+    }
+  ],
+  "consumes": [],
+  "providers": [],
+  "researchWorkspace": {"workspaceId": "fish-brain"},
+  "score": {"type": "ENGINE_READINESS_SCORE", "path": "/scores/biological-state", "rubricRef": "docs/brains/scoring/biological-state-score-v1.json"},
+  "customerIntegrationMode": "none",
+  "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
+  "authorizedConsumers": ["ops", "sector-intelligence"],
+  "tests": ["brains/fish/tests"],
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+}

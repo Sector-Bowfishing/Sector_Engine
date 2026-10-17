@@ -9,7 +9,7 @@ Nothing here needs a schedule. Run, test, publish if needed, and the cloud goes 
 | Lake Brain (pilots) | `gcloud run jobs execute lake-brain --region us-central1 --wait` |
 | Water Temp Brain (fleet) | `gcloud run jobs execute water-temp-brain --region us-central1 --wait` |
 | Scores / control only, from a checkout | dry run: `python3 jobs/brain-scores/score_brains.py --if-changed`; publish: add `--write` (stale-score guard applies; override only `SCORE_GUARD_ALLOW=<brainId>`) |
-| Biological | `cd jobs/biological-brain && python3 run.py --plan` then `--write` |
+| Biological | `cd brains/fish/runtime && python3 run.py --plan` then `--write` |
 | Sector Intelligence | `cd jobs/sector-intelligence-brain && python3 run.py --plan` then `--write` |
 | Satellite scene discovery (Clarity/Vegetation) | `gcloud run jobs execute lake-surface-dispatch --region us-central1 --args=--dry-run --wait` first; a real run starts the heavy 8×4 vCPU job for lakes with new passes (≈ $3–5/run) |
 | TVA archive snapshot | `gcloud run jobs execute water-temp-tva-archive --region us-central1 --wait` (only captures what TVA currently serves) |

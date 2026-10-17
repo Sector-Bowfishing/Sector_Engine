@@ -10,7 +10,7 @@ from .paths import PathFamily
 from .plan import UpdatePlan, build_update_plan
 from .publisher import PublishResult, ShadowPublisher, UnknownProducer
 from .refs import ArtifactRef
-from .registry import Registry, SchemaSpec, default_registry, wind_specs
+from .registry import Registry, SchemaSpec, default_registry, fish_specs, wind_specs
 from .sinks import ShadowSink
 from .storage import LocalDirObjectStore, MemoryObjectStore, PublishHistory, ScopedObjectStore, brain_view, publisher_view
 

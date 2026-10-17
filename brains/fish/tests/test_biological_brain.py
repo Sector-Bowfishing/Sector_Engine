@@ -49,7 +49,7 @@ def not_assessed(sid="example_group"):
                 rules=[], evidence={}, gaps=[], history=[])
 
 
-def write_bundle(root, profiles, research_version="0000-00-00.1", tamper=None):
+def write_bundle(root, profiles, research_version="0000-00-00.1", tamper=None, extra=None):
     rel = f"releases/{research_version}"
     base = os.path.join(root, rel)
     os.makedirs(os.path.join(base, "species"), exist_ok=True)
@@ -63,6 +63,10 @@ def write_bundle(root, profiles, research_version="0000-00-00.1", tamper=None):
         put(f"species/{p['speciesId']}.json", p)
     put("registry.json", dict(schemaVersion=1, researchVersion=research_version, species=[dict(speciesId=p["speciesId"], profile=f"species/{p['speciesId']}.json") for p in profiles],
                               speciesGroups={"example": dict(label="Example Group", members=[profiles[0]["speciesId"]])}))
+    for path, raw in (extra or {}).items():
+        os.makedirs(os.path.dirname(os.path.join(base, path)), exist_ok=True)
+        open(os.path.join(base, path), "wb").write(raw)
+        files.append(dict(path=path, sha256=hashlib.sha256(raw).hexdigest(), bytes=len(raw), visibility="private"))
     put("discrepancies.json", dict(discrepancies=[dict(id="DISC-X", status="OPEN", species=[profiles[0]["speciesId"]], title="synthetic discrepancy", decision="none", **{"class": "TEST"})]))
     manifest = dict(schemaVersion=1, brainId="biological-state", researchVersion=research_version, scoringVersion="species-v2", files=files,
                     knownLimitations=["synthetic"])
@@ -239,9 +243,13 @@ class PlanTests(unittest.TestCase):
         pub = {"researchVersion": "v2", "manifestSha256": "zzz", "version": "b1", "health": "HEALTHY"}
         self.assertEqual(orch.plan(pub, self.P, "b1")["action"], "PUBLISH")
 
-    def test_descriptor_has_no_schedule_and_state_not_started(self):
+    def test_descriptor_has_no_schedule_and_state_in_progress(self):
         self.assertTrue(orch.DESCRIPTOR["schedule"].startswith("none"))
-        self.assertEqual(orch.DESCRIPTOR["components"]["biologicalState"]["status"], "NOT_STARTED")
+        self.assertEqual(orch.DESCRIPTOR["components"]["biologicalState"]["status"], "IN_PROGRESS")
+        self.assertIn("no cron", orch.DESCRIPTOR["components"]["biologicalState"]["needsClock"])
+        self.assertEqual(orch.plan_state(None, "a")["action"], "WRITE")
+        self.assertEqual(orch.plan_state("a", "a")["action"], "SKIP")
+        self.assertEqual(orch.plan_state("a", "b")["action"], "WRITE")
 
 
 class PlatformTests(unittest.TestCase):
