@@ -36,7 +36,7 @@ Prohibited and tested: `for d in manifest.consumes: consumed.append(d)`.
 ## 7. Known gaps / deferred producers
 1. Wind's **running** job does not emit lineage: the Publisher V2 builder is shadow-only (not wired into `wind-hourly`), so Wind lineage exists in tests and the artifact path only. Wiring is the Publisher cutover's job.
 2. Cloud Run executions observed from the API carry no lineage (no producer record).
-3. Sector Intelligence's `GET /lakes` (Engine HTTP) and Biological's private research bundle are read outside the platform client → not recorded (would need a producer-side `consumed` entry; not invented).
+3. Sector Intelligence's `GET /lakes` (Engine HTTP) is read outside the platform client → not recorded (would need a producer-side `consumed` entry; not invented). **Fish (resolved, Fish Structural Certification V1):** the private knowledge bundle is Fish's OWN release, not another party's state, so it is not a `consumed[]` dependency; its identity (`knowledgeRelease`, `manifestRef`, `manifestSha256`) travels in artifact lineage. The Biological State pilot runner now records its platform reads (`run_state.py`); Fish's orchestrated run reads only its own nodes, so its recorded `consumed` is `[]` ("read nothing that is a dependency"), while an offline run records nothing (absent = unknown).
 4. Signals remain DECLARED-only; platform registries publish no version (`registry:lakes` carries a content fingerprint from Wind only).
 5. In-process runner `main()`s are not exercised end to end in CI (they need tokens/network); the recorder and the orchestrator parsing are.
 6. Consumption of a whole `brains` node by a Brain is recorded per Brain present (registry read), which can be many entries; acceptable, bounded by the Brain count.

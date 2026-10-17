@@ -2,7 +2,7 @@
 
 **Status:** RATIFIED by Sector Engine, 2026-10-12 (v1, species-knowledge side). It amends Sector_Ops `docs/BRAIN_INTEGRATION_REQUIREMENTS.md` §7 and `docs/SECTOR_BRAIN_RTDB_SCHEMA.md`, and Sector Ops adapts to it.
 
-**Implementation:** `jobs/biological-brain/` (Python, stdlib only).
+**Implementation:** `brains/fish/runtime/` (Python, stdlib only; moved from `jobs/biological-brain/` by Fish Structural Certification V1 — package overview: `brains/fish/README.md`; operating contract: `brains/fish/BRAIN_OPERATING_CONTRACT.md`).
 
 **Display name:** **Biological Brain**. The machine ID stays `biological-state`; slot `biology`; snapshot field `biologicalState`.
 
@@ -23,7 +23,7 @@ The Biological Brain interprets fish biology. It never makes the final bowfishin
 |---|---|---|
 | **Canonical detailed knowledge:** profiles, rules, evidence, full history, discrepancies, lake-specific biological metadata | `gs://sector-biology-private/biology/v1/` (`latest.json` → `releases/{researchVersion}/manifest.json` → hashed files) | **Private.** Project members only; public access prevention enforced; object versioning on |
 | Authoring and git history of that knowledge | Sector's private research repository | Private |
-| Code, schemas, contract, publisher | This repository (`jobs/biological-brain/`, this document) | Public |
+| Code, schemas, contract, publisher | This repository (`brains/fish/`, this document) | Public |
 | Lightweight summaries | Brain RTDB `sector-brain` | Ops allowlist only |
 
 This public repository contains **no** proprietary species profiles, rules, evidence catalogues, papers or third-party data. Its tests use synthetic species.
@@ -163,11 +163,11 @@ A Biological Brain failure is isolated. It writes only its own paths, so it cann
 ## 9. Running
 
 ```
-cd jobs/biological-brain
-python3 -m unittest discover -s tests -v                 # synthetic fixtures, no network
+cd brains/fish && python3 -m pytest -q                      # synthetic fixtures, no network
+cd runtime
 python3 run.py --plan                                    # PUBLISH | SKIP with reasons
-python3 run.py --dry-run --out out/                      # verify + build; reads the live RTDB (GET only); writes nothing
-python3 run.py --write                                   # one atomic publish
+python3 run.py --dry-run --out out/                      # verify + build; reads the live RTDB (GET only); writes nothing; also builds artifact.json and has the SHADOW Publisher evaluate it
+python3 run.py --write                                   # one atomic publish (LEGACY direct path; the Publisher artifact path is shadow-only)
 ```
 Credentials: on Cloud Run, the job's service account (metadata server); locally, the gcloud user. No key files. The run refuses the Sector app databases.
 

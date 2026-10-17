@@ -15,7 +15,7 @@ Biological never fetches live environmental data. `bio_state.normalize_inputs` a
 | Artifact | Location | Visibility |
 |---|---|---|
 | Rule **content** for real species, evidence trace, source ledgers | private bundle (`gs://sector-biology-private/...`) and the private research store | private |
-| Rule schema, feature registry, evaluator, state builder, validation log code, schemas, synthetic fixtures, tests | `jobs/biological-brain/` | public |
+| Rule schema, feature registry, evaluator, state builder, validation log code, schemas, synthetic fixtures, tests | `brains/fish/runtime/` + `brains/fish/tests/` (moved from `jobs/biological-brain/`) | public |
 | Counts only (usable/draft rules per species, frozen rules, predictions logged) | Brain RTDB species/registry summaries | Ops allowlist |
 
 A repository test fails if a rule JSON, a private path or a private release path appears in the public tree.
