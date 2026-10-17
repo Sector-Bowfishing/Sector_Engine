@@ -15,7 +15,7 @@
   "publishes": [],
   "publishesReason": "Template: nothing published until the Brain has a certified contract.",
   "consumes": [
-    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0"}
+    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "REQUIRED"}
   ],
   "providers": [],
   "researchWorkspace": {"workspaceId": "example-brain"},

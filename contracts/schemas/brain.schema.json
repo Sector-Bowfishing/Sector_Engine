@@ -146,20 +146,19 @@
     },
     "consumes": {
       "type": "array",
-      "description": "Other Brains' published contracts, or platform registry contracts. Consumed ONLY through a declared contract (never private runtime).",
+      "description": "DECLARED dependencies: other Brains' published contracts, platform registry contracts, or shared environmental signals (Signal Registry). Consumed ONLY through a declared contract (never private runtime). This list is the ONE Brain-owned source of the Brain's dependency graph; the platform discovers edges here and never hardcodes them. `requirement` and `freshness` are optional (absent = not declared, reported as such, never defaulted silently).",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "kind",
-          "contractId",
-          "minVersion"
+          "kind"
         ],
         "properties": {
           "kind": {
             "enum": [
               "brain",
-              "registry"
+              "registry",
+              "signal"
             ]
           },
           "brainId": {
@@ -172,14 +171,55 @@
               "brains"
             ]
           },
+          "signalId": {
+            "$ref": "#/$defs/signalId"
+          },
           "contractId": {
             "$ref": "#/$defs/contractId"
           },
           "minVersion": {
             "$ref": "#/$defs/semver"
+          },
+          "requirement": {
+            "$ref": "#/$defs/requirement"
+          },
+          "freshness": {
+            "$ref": "#/$defs/freshnessPolicy"
           }
         },
         "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "brain",
+                    "registry"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "contractId",
+                "minVersion"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "signal"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "signalId"
+              ]
+            }
+          },
           {
             "if": {
               "properties": {
@@ -226,6 +266,12 @@
           "domainInterpreter": {
             "type": "boolean",
             "description": "true when THIS Brain is the domain interpreter of this provider's data. Providers never interpret."
+          },
+          "requirement": {
+            "$ref": "#/$defs/requirement"
+          },
+          "freshness": {
+            "$ref": "#/$defs/freshnessPolicy"
           }
         }
       }
@@ -329,6 +375,37 @@
     "providerId": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "signalId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "description": "A signal defined in the Shared Signal Registry (platform/registries/signals, contracts/schemas/registry-signals.schema.json)."
+    },
+    "requirement": {
+      "enum": [
+        "REQUIRED",
+        "OPTIONAL"
+      ],
+      "description": "Whether the Brain can produce its state without this dependency. Absent = not declared (the platform reports it undeclared and treats it as REQUIRED, fail closed)."
+    },
+    "freshnessPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxAgeHours",
+        "reason"
+      ],
+      "description": "The CONSUMER's own freshness need for this dependency. The owner of the dependency stays the primary freshness authority (docs/brains/platform/FRESHNESS_MODEL.md); a consumer may only be stricter, and only with a documented reason.",
+      "properties": {
+        "maxAgeHours": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     },
     "contractId": {
       "type": "string",

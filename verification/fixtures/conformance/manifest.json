@@ -1,11 +1,12 @@
 {
-  "description": "SHA-256 of every conformance fixture as it was at docs/brains/conformance/ BEFORE the Phase 1B relocation. The files must stay byte-identical unless a contract change is intended (then update this manifest in the same commit).",
+  "description": "SHA-256 of every conformance fixture as it was at docs/brains/conformance/ BEFORE the Phase 1B relocation. The files must stay byte-identical unless a contract change is intended (then update this manifest in the same commit). health_v1.json was ADDED by Orchestrator G1/G2 (2026-10-16); it was never at the old path.",
   "relocatedFrom": "docs/brains/conformance",
   "relocatedTo": "contracts/conformance",
   "sha256": {
     "event_ids.json": "1d5e0f6ddaf3e459cab48a8cf80a3256d636434d67ecf6aff144d279585f3614",
     "freshness.json": "10a08d87bcbd87b8bc2711477327dfa64e0b21f1ea096bec46a263971e2c96b4",
     "health.json": "68eeeaabca85d265e410e61ab5573cd3dd304e08db420a9bfe0f3da7f421ad5c",
+    "health_v1.json": "d523d841ffa9bfbffa3cf4a34521f86003302e358b858096de60593dae93d5aa",
     "lake_keys.json": "3b65dcdfd2e5e96b2b3c86b9d43ef581160ff3e042b4d1888a241964db6f4b1e",
     "lake_rules_v2.json": "8be2ce3982719f44c0ca4cc64555f34b7ad80cb8190cbe4835608495a96556c8",
     "model_v1.json": "ce7daa9528bb535b1d6870adf8553fbad9afb4bc9dc7c2df6f33a6a84b6ab649",
