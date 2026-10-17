@@ -116,7 +116,8 @@ def test_clean_copy_schemas_load_and_templates_validate(clean_copy):
                  (("brains", "_template", "research", "GAPS.template.json"), "research-gaps.schema.json"),
                  (("brains", "_template", "research", "MANIFEST.template.json"), "research-manifest.schema.json"),
                  (("providers", "PROVIDERS.json"), "providers.schema.json"),
-                 (("tools", "architecture", "large_file_exceptions.json"), "large-file-exceptions.schema.json")]
+                 (("tools", "architecture", "large_file_exceptions.json"), "large-file-exceptions.schema.json"),
+                 (("platform", "registries", "signals", "signals.json"), "registry-signals.schema.json")]
         for doc, schema in pairs:
             assert jl.validate(load(*doc), load("contracts", "schemas", schema)) == [], doc
         for name in os.listdir(os.path.join(str(clean_copy), "contracts", "schemas")):

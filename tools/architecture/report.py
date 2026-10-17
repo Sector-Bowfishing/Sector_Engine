@@ -56,7 +56,10 @@ INVARIANTS = {
     14: "Platform never imports a specialist Brain implementation",
     15: "tracked files >= 1 MB require a policy exception",
     16: "no raw research data in Brain research metadata directories",
+    17: "declared dependencies resolve (Signal Registry, provider catalog, published contract) and no platform manifest claims an edge a registered Brain does not declare",
 }
+SIGNAL_REGISTRY = os.path.join("platform", "registries", "signals", "signals.json")
+EXECUTION_MANIFEST = os.path.join("jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")
 DEFAULT_BASELINE = os.path.join("tools", "architecture", "baseline", "legacy_violations.json")
 LARGE_BYTES = 1024 * 1024
 RESEARCH_ALLOWED = {"GAPS.json", "MANIFEST.json", "README.md"}
@@ -266,6 +269,51 @@ def check(root, legacy=False):
                 add(10, frel, "direct sector-brain writer in a Brain already cut over to the Publisher")
             if data["customerIntegrationMode"] == "none" and CUSTOMER_PATTERN.search(text):
                 add(11, frel, "customer Engine/API dependency but customerIntegrationMode is 'none'")
+
+    # 17: declared dependencies (brain.json consumes[] / providers[]) resolve against the platform registries, and no platform-authored
+    #     manifest declares a Brain -> Brain edge for a REGISTERED Brain that the Brain does not declare itself (the Engine never invents a graph)
+    sig_path = os.path.join(root, SIGNAL_REGISTRY)
+    signals = None
+    if os.path.exists(sig_path):
+        try:
+            sdoc = _load(sig_path)
+            for e in validate(sdoc, _load(os.path.join(schemas, "registry-signals.schema.json"))):
+                add(17, SIGNAL_REGISTRY, e)
+            signals = {s["signalId"]: s for s in sdoc.get("signals", []) if isinstance(s, dict) and "signalId" in s}
+        except ValueError as exc:
+            add(17, SIGNAL_REGISTRY, f"unparseable: {exc}")
+    by_id = {b["brainId"]: b for b in brains.values()}
+    declared_edges = {}
+    for d, data in brains.items():
+        rel = f"brains/{d}"
+        declared_edges[data["brainId"]] = set()
+        for i, c in enumerate(data["consumes"]):
+            if c["kind"] == "signal":
+                if signals is None:
+                    add(17, rel, f"consumes signal {c.get('signalId')!r} but no Signal Registry exists at {SIGNAL_REGISTRY}")
+                elif c.get("signalId") not in signals:
+                    add(17, rel, f"consumes signal {c.get('signalId')!r} not defined in the Signal Registry")
+                elif signals[c["signalId"]].get("status") == "RETIRED":
+                    add(17, rel, f"consumes RETIRED signal {c['signalId']!r}")
+            elif c["kind"] == "brain":
+                declared_edges[data["brainId"]].add(c.get("brainId"))
+                tgt = by_id.get(c.get("brainId"))
+                if tgt is not None and tgt.get("authorizedConsumers") is not None and data["brainId"] not in tgt["authorizedConsumers"]:
+                    add(17, rel, f"{data['brainId']!r} consumes {c.get('brainId')!r} but is not one of its authorizedConsumers")
+            if c.get("freshness") and not (c["freshness"].get("maxAgeHours") and c["freshness"].get("reason")):
+                add(17, rel, f"consumes[{i}] freshness needs maxAgeHours and reason")
+    man_path = os.path.join(root, EXECUTION_MANIFEST)
+    if os.path.exists(man_path) and declared_edges:
+        try:
+            man = _load(man_path)
+            for bid, b in (man.get("brains") or {}).items():
+                if bid not in declared_edges:
+                    continue
+                for dep in b.get("dependencies") or []:
+                    if dep.get("id") not in declared_edges[bid]:
+                        add(17, EXECUTION_MANIFEST, f"claims {bid} -> {dep.get('id')} but brains/*/brain.json does not declare it (consumes kind=brain)")
+        except ValueError as exc:
+            add(17, EXECUTION_MANIFEST, f"unparseable: {exc}")
 
     # 14: platform must not import a specialist Brain implementation
     if os.path.isdir(os.path.join(root, "platform")):
