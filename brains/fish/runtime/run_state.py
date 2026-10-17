@@ -44,10 +44,11 @@ def main(argv=None) -> int:
         raise SystemExit(f"{a.lake!r} is not a pilot lake; the pilot is limited to {sorted(PILOT_LAKES)}")
     now = dt.datetime.fromisoformat(a.now.replace("Z", "+00:00")) if a.now else dt.datetime.now(dt.timezone.utc)
     ruleset = rl.load_rules_dir(a.rules)
-    species_info = {}
+    species_info, recorder = {}, None
     if a.live:
         import brain_platform as bp
-        r = bp.BrainRtdb(bp.BRAIN_RTDB_URL, bp.TokenProvider(), brain_id="biological-state")      # ownership-checked; only GET is used here
+        recorder = bp.ConsumptionRecorder("biological-state")                                       # consumption-lineage-v1: what this pilot run really read
+        r = bp.BrainRtdb(bp.BRAIN_RTDB_URL, bp.TokenProvider(), brain_id="biological-state", recorder=recorder)      # ownership-checked; only GET is used here
         snap = r.get(f"snapshots/{meta['key']}/latest")
         presence = r.get(f"lakes/{meta['key']}/speciesPresence") or {}
         for sid in presence:
@@ -70,7 +71,10 @@ def main(argv=None) -> int:
         except (ValueError, KeyError):
             pass
     json.dump(state, open(path, "w"), indent=1, ensure_ascii=False)
-    print(json.dumps({"written": path, "fingerprint": fp[:16], "status": state["status"], "rulesVersion": state["provenance"]["rulesVersion"], **state["summary"]}, indent=1))
+    out = {"written": path, "fingerprint": fp[:16], "status": state["status"], "rulesVersion": state["provenance"]["rulesVersion"], **state["summary"]}
+    if recorder is not None:
+        out["consumed"] = r.consumed()                    # ACTUAL reads (live runs only); absent for --snapshot runs, where nothing was read from the platform
+    print(json.dumps(out, indent=1))
     return 0
 
 

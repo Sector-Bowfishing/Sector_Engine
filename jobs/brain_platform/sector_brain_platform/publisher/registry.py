@@ -255,7 +255,62 @@ def wind_bundles() -> list[BundleSpec]:
     return [BundleSpec(WIND_BUNDLE, WIND, WIND_SCHEMAS)]
 
 
+# ---- Fish Brain: the second concrete registration (Fish Structural Certification V1). Same shape as Wind; nothing in the framework changed ----------------
+FISH = "biological-state"
+FISH_SLOT = BRAINS[FISH][0]
+FISH_SCHEMAS = ("fish-species-v1", "fish-registry-v1")
+FISH_BUNDLE = "fish-publication-v1"
+FISH_SPECIES_ID = re.compile(r"[a-z][a-z0-9_]{1,63}")       # == biological_brain.SPECIES_ID (the Brain validates it first; the Publisher re-checks)
+
+#: /brains/biological-state CHILD ownership: every child the Fish registry entry carries, grouped by what it is. Replaced as a unit (child level).
+#: `publication` and `certification` are NOT listed and are reserved (Publisher/Orchestrator).
+FISH_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "orchestration", "versions", "rubric", "researchMaturityDefinitions", "scoringVersion", "targetSet"),
+    "status": ("schedule", "enabled", "health", "status", "statusBasis", "supportedLakeCount", "staleLakeCount", "lastSuccessfulRun", "deploymentVersion", "publishMode"),
+    "knowledge": ("researchVersion", "manifestRef", "manifestSha256", "responsibilities", "breakdowns", "speciesGroups", "discrepancies", "knownLimitations",
+                  "facts", "targetReadiness", "transferSummary", "coverageMatrix"),
+}
+#: Registry children the Brain may legitimately stop emitting (a later release without them); clearing one is an explicit typed DELETE, never a null.
+FISH_OPTIONAL_CHILDREN = ("facts", "targetReadiness", "transferSummary", "coverageMatrix", "speciesGroups", "knownLimitations", "discrepancies", "targetSet")
+FISH_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")       # domain health facts only; process/execution fields are Orchestrator-owned (same split as Wind)
+
+#: Fish's volatile contract. Deliberately minimal (a wrongly-included entry could hide a domain change): `updatedAt` is the per-run stamp inside every species
+#: summary and activity event; `lastSuccessfulRun` is the execution fact; `versions` embeds the publication date (its content is fully implied by researchVersion /
+#: species counts, which are separate material children). Shared defaults apply on top. Changing this list is a versioned change reviewed with Fish certification.
+FISH_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "fish-volatile-v1", 1,
+    keys=frozenset({"updatedAt"}),
+    paths=(PathFamily(f"/brains/{FISH}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{FISH}/versions", note="transitional")),
+    notes={"key:updatedAt": "per-run publication stamp inside species summaries and activity events; no domain meaning",
+           "path:/brains/biological-state/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+           "path:/brains/biological-state/versions": "carries the publication date; implied by researchVersion + species counts (separate material children); retire with the legacy registry shape"})
+
+
+def fish_specs() -> list[SchemaSpec]:
+    sid = {"id": lambda s: FISH_SPECIES_ID.fullmatch(s) is not None}
+    species = SchemaSpec(
+        "fish-species-v1", FISH,
+        (PathFamily("/species/{id}", sid, note="species knowledge summary (Fish-owned summary; species IDENTITY is Species Registry-owned, see FISH_GAP_AUDIT_V1 G-1)"),),
+        delete_families=(PathFamily("/species/{id}", sid),), delete_reasons=("SPECIES_REMOVED_FROM_REGISTRY",),
+        value_types={"/species/{id}": dict}, require_release=True, volatile=FISH_VOLATILE_CONTRACT_V1)
+    registry = SchemaSpec(
+        "fish-registry-v1", FISH,
+        (PathFamily(f"/brains/{FISH}/{{child}}", {"child": one_of(c for group in FISH_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only (FISH_REGISTRY_CHILDREN); never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{FISH}"),
+         PathFamily(f"/health/brains/{FISH}/{{child}}", {"child": one_of(FISH_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only; execution/job health is Orchestrator-owned"),
+         PathFamily("/activity/{event}", {"event": contains(f"-{FISH}-")}, note="own domain events only; retention/pruning is a platform concern")),
+        delete_families=(PathFamily(f"/brains/{FISH}/{{child}}", {"child": one_of(FISH_OPTIONAL_CHILDREN)}),), delete_reasons=("OPTIONAL_CHILD_CLEARED",),
+        require_release=True, volatile=FISH_VOLATILE_CONTRACT_V1)
+    return [species, registry]
+
+
+def fish_bundles() -> list[BundleSpec]:
+    return [BundleSpec(FISH_BUNDLE, FISH, FISH_SCHEMAS)]
+
+
 def default_registry() -> Registry:
-    """Wind only. Every other Brain is registered as an identity (so an unknown id is distinguishable from an unmigrated one) but has no schema:
+    """Wind and Fish. Every other Brain is registered as an identity (so an unknown id is distinguishable from an unmigrated one) but has no schema:
     anything submitted for them is rejected UNKNOWN_SCHEMA until their own certification registers one."""
-    return Registry(wind_specs(), wind_bundles())
+    return Registry(wind_specs() + fish_specs(), wind_bundles() + fish_bundles())
