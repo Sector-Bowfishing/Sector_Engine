@@ -74,11 +74,11 @@ def test_execution_with_lineage_is_recorded_and_evaluated_as_recorded_consumptio
     st = json.load(open(out))
     bio = st["brains"]["biological-state"]
     assert bio["dependencies"]["basis"] == "RECORDED_CONSUMPTION" and bio["dependencies"]["declaredVsActual"]["consumptionRecorded"] is True
-    assert bio["dependencies"]["declaredVsActual"]["declaredAndConsumed"] == ["brain:wind"]
-    assert set(bio["dependencies"]["declaredVsActual"]["declaredNotConsumed"]) == {"brain:lake-brain", "brain:water-clarity", "brain:water-temp"}   # declared (legacy manifest), never read
-    rows = {r["dependencyId"]: r for r in bio["dependencies"]["rows"]}
-    assert rows["brain:wind"]["evaluationBasis"] == "RECORDED_CONSUMPTION" and rows["brain:wind"]["freshnessStatus"] == "FRESH" and rows["brain:wind"]["lineageRef"] == {"ref": "/brains/wind", "stateVersion": "1"}
-    assert rows["brain:water-temp"]["evaluationBasis"] == "CURRENT_STATE"
+    # Fish (registered) declares NO Brain dependency: a recorded read of brain:wind is CONSUMED-BUT-NOT-DECLARED (contract drift), never suppressed.
+    # (empty lists are stripped from the record, so absence == empty)
+    dva = bio["dependencies"]["declaredVsActual"]
+    assert not dva.get("declaredAndConsumed") and not dva.get("declaredNotConsumed") and dva["consumedNotDeclared"] == ["brain:wind"]
+    assert bio["dependencies"]["declared"] == 0 and "rows" not in bio["dependencies"]            # no declared row exists to judge; the undeclared read is the finding
     # the health plane also still contains a legacy, lineage-free view for Brains with no recorded execution
     wind = st["brains"]["wind"]
     assert wind["dependencies"]["basis"] == "CURRENT_STATE" and wind["dependencies"]["declaredVsActual"]["consumptionRecorded"] is False

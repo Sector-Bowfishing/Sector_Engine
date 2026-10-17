@@ -16,14 +16,9 @@
     },
     "biological-state": {
       "displayName": "Biological", "group": "BIOLOGICAL", "lifecycle": "PROFILED", "activityState": "ACTIVE",
-      "executionTarget": {"kind": "in-process", "dir": "jobs/biological-brain", "startedByOrchestrator": true, "scoped": true},
+      "executionTarget": {"kind": "in-process", "dir": "brains/fish/runtime", "startedByOrchestrator": true, "scoped": true},
       "allowedTriggers": ["MANUAL", "INPUT_CHANGED", "DEPENDENCY_CHANGED", "ADMIN", "RECOVERY"],
-      "dependencies": [
-        {"id": "wind", "requirement": "OPTIONAL", "maxAgeHours": 6, "onStale": "DEPENDENCY_STALE", "provisional": true},
-        {"id": "water-temp", "requirement": "OPTIONAL", "maxAgeHours": 48, "onStale": "DEPENDENCY_STALE", "provisional": true},
-        {"id": "water-clarity", "requirement": "OPTIONAL", "maxAgeHours": 72, "onStale": "DEPENDENCY_STALE", "provisional": true},
-        {"id": "lake-brain", "requirement": "OPTIONAL", "maxAgeHours": 24, "onStale": "DEPENDENCY_STALE", "provisional": true}
-      ],
+      "dependencies": [],
       "schedule": {"class": "INPUT_DRIVEN", "owner": "ORCHESTRATOR"},
       "freshness": {"stalenessModel": "VERSION"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "researchVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["guntersville"], "customerPublication": false

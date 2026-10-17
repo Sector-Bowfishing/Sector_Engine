@@ -387,8 +387,8 @@ def test_report_is_report_only_by_default():
 
 
 def test_real_repo_registers_only_migrated_brains():
-    # Phase 2: Wind is the first (and only) migrated Brain. No other brain.json may exist until that Brain migrates.
-    assert report._brain_dirs(ROOT) == ["wind"]
+    # Wind (Phase 2) and Fish (Phase 4, Fish Structural Certification V1) are the migrated Brains. No other brain.json may exist until that Brain migrates.
+    assert report._brain_dirs(ROOT) == ["fish", "wind"]
 
 
 @pytest.mark.parametrize("src,flag", [

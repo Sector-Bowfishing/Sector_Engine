@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "createdBy": "Phase 1B baseline",
   "mode": "REPORT_ONLY",
-  "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates. Phase 2 (Wind): the jobs/wind-hourly entry RESOLVED by the move; two Wind published-label entries carried with an explicit retirement condition.",
+  "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates. Phase 2 (Wind): the jobs/wind-hourly entry RESOLVED by the move; two Wind published-label entries carried with an explicit retirement condition. Fish Structural Certification V1: the two jobs/biological-brain entries are carried to brains/fish/runtime (same published labels, same retirement condition).",
   "entries": [
     {
       "key": "8|brains/wind/runtime/sector_wind/brain/profile.py|runtime references docs/",
@@ -24,22 +24,24 @@
       "carriedFrom": "jobs/wind-hourly/sector_wind/brain/writer.py"
     },
     {
-      "key": "8|jobs/biological-brain/biological_brain.py|legacy runtime references a docs/ path (baseline debt)",
+      "key": "8|brains/fish/runtime/biological_brain.py|runtime references docs/",
       "invariant": 8,
-      "path": "jobs/biological-brain/biological_brain.py",
+      "path": "brains/fish/runtime/biological_brain.py",
       "owner": "Fish Brain (biological-state)",
-      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
-      "plannedMigrationPhase": "Phase 4 (Fish migration)",
-      "status": "LEGACY_BASELINE"
+      "reason": "published label PLATFORM.contract = 'docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0' (a string in the published /brains/biological-state registry entry, never opened as a file); changing it changes published output. Pre-existing; carried unchanged by the Fish move (Fish Structural Certification V1).",
+      "plannedMigrationPhase": "Fish: replace with a contract/release id at the Publisher cutover (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "jobs/biological-brain/biological_brain.py"
     },
     {
-      "key": "8|jobs/biological-brain/brain_platform.py|legacy runtime references a docs/ path (baseline debt)",
+      "key": "8|brains/fish/runtime/brain_platform.py|runtime references docs/",
       "invariant": 8,
-      "path": "jobs/biological-brain/brain_platform.py",
+      "path": "brains/fish/runtime/brain_platform.py",
       "owner": "Fish Brain (biological-state)",
-      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
-      "plannedMigrationPhase": "Phase 4 (Fish migration)",
-      "status": "LEGACY_BASELINE"
+      "reason": "published label PLATFORM.contract = 'docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0' (a string in the published /brains/biological-state registry entry, never opened as a file); changing it changes published output. Also present in the platform shim. Pre-existing; carried unchanged by the Fish move (Fish Structural Certification V1).",
+      "plannedMigrationPhase": "Fish: replace with a contract/release id at the Publisher cutover (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "jobs/biological-brain/brain_platform.py"
     },
     {
       "key": "8|jobs/brain-orchestrator/orchestrate.py|legacy runtime references a docs/ path (baseline debt)",

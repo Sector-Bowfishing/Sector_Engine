@@ -1,32 +1,22 @@
-# Biological Brain (`biological-state`, display name "Biological Brain")
+# Fish Brain (`brainId: biological-state`)
 
-Publishes **species knowledge**, i.e. "What does Sector know about this fish?", from the private canonical bundle (`gs://sector-biology-private/biology/v1`) to the Brain RTDB (`sector-brain`) as lightweight summaries.
+**What it is.** The Fish Brain answers: *what does Sector know about this fish, and what is it likely doing?* Today it publishes **Species Intelligence** (evidence-completeness scores, Knowledge Coverage, Research Gaps, machine rules, response bands, movement knowledge) from the private canonical bundle (`gs://sector-biology-private/biology/v1`) as lightweight species summaries. The per-lake Biological State is an **internal pilot** (nothing published per lake). Lifecycle `PROFILED`, science `NOT_VALIDATED`; no customer path reads it.
 
-**Internal pilot (not published, not LIVE):** per-lake **Biological State** ("What is this fish likely doing on this lake right now?") on Guntersville, built from researched machine rules and published specialist Brain states. The lifecycle is *derived* from verified capability (`capability.py`), never set by hand. See [`docs/brains/biological-adoption/BIOLOGICAL_RULES_AND_STATE_CONTRACT.md`](../../docs/brains/biological-adoption/BIOLOGICAL_RULES_AND_STATE_CONTRACT.md).
+Rules for every session: **[`BRAIN_OPERATING_CONTRACT.md`](BRAIN_OPERATING_CONTRACT.md)**. Identity and edges: [`brain.json`](brain.json). Published contract: [`contracts/fish-publication-v1.json`](contracts/fish-publication-v1.json). Certification record: `docs/architecture/certification/fish/`. Species-intelligence specs and decisions: `docs/brains/biological-adoption/`, `docs/brains/BIOLOGICAL_BRAIN_INTEGRATION.md`.
 
-The contract is in [`docs/brains/BIOLOGICAL_BRAIN_INTEGRATION.md`](../../docs/brains/BIOLOGICAL_BRAIN_INTEGRATION.md).
-
-| File | Role |
+| Path | Holds |
 |---|---|
-| `biological_brain.py` | Bundle loading, hash verification, fail-closed validation against the v2 rubric, and RTDB payload builders (no scoring) |
-| `orchestration.py` | Dependencies, staleness and `plan()` for the future Brain Orchestrator (no scheduler) |
-| `run.py` | CLI: `--plan`, `--dry-run`, `--write`, plus `--bundle DIR` and `--offline` |
-| `features.py` | Condition-feature registry and evaluator (Biological meaning of `warmRise`, temperature bands, ...); missing input -> UNKNOWN |
-| `rules.py` | Machine rule schema, evidence-discipline validator, applicability, response-band and habitat evaluation |
-| `bio_state.py` | Internal pilot Biological State builder (pure; no live reads) |
-| `capability.py` | Derives State lifecycle from verified rules / frozen register / pilot state; never LIVE or VALIDATED |
-| `validation_log.py` | Frozen rule register, append-only prediction log, observation store and honest evaluation |
-| `run_state.py` | Pilot runner: reads a **private** rules dir and live published inputs (GET only); writes local files only |
-| `tools/` | `gen_schemas.py` (schemas generated from code) and `stage_bundle.py` (stage a private release locally, never uploads) |
-| `brain_platform.py` | Shared Brain RTDB client, copied verbatim from the Water Clarity Brain |
-| `schemas/` | JSON Schemas for the canonical bundle shapes (documentation and tooling) |
-| `tests/` | stdlib unittest; synthetic species only |
+| `runtime/` | production package (flat modules, stdlib only): `biological_brain.py` (bundle load + hash verify + fail-closed validation + RTDB payload builders), `publish_artifact.py` (Publisher `fish-publication-v1` builder, **shadow only**), `run.py` (`--plan/--dry-run/--write`), `orchestration.py` (descriptor + `plan()`), rules / features / bands / bio_state / movement_outlook / capability / validation_log / species_profile (Species Intelligence Profile) modules, `run_state.py` (internal pilot runner), `brain_platform.py` (platform shim), `schemas/`, `tools/` (bundle tooling that runs against the private workspace) |
+| `contracts/` | `fish-publication-v1.json` (derived from the Publisher registry by `describe_contract.py --check`) |
+| `tests/` | stdlib/pytest, **synthetic species only** (this repository is public) |
+| `research/` | research rules (README) and `GAPS.json`. Never data |
 
-```
-python3 -m unittest discover -s tests -v
-python3 run.py --dry-run --out out/
+```bash
+cd brains/fish && python3 -m pytest -q                       # Fish suite (pytest.ini sets import roots)
+cd brains/fish/runtime && python3 run.py --dry-run --offline --bundle /path/to/biology/v1 --out out/   # artifact.json + SHADOW Publisher verdict; writes nothing remote
+PYTHONPATH=jobs/brain_platform python3 brains/fish/contracts/describe_contract.py --check
 ```
 
-Rule **content** for real species is private and is never read from this repository; tests use synthetic species and a test fails if a rule file or private path appears here.
+The Cloud Run / in-process job id `biological-brain` is unchanged; the orchestrator image stages `brains/fish/runtime` under the legacy `jobs/biological-brain/` layout (`jobs/brain-orchestrator/deploy-job.sh`). `jobs/biological-brain/` is a retirement pointer only. Nothing here is deployed by the repository migration; nothing publishes to a customer.
 
-**Never commit proprietary biology here.** This repository is public. Detailed profiles, rules, evidence and history live only in the private bucket and Sector's private research repository.
+**Never commit proprietary biology here.** Detailed profiles, rules, evidence, packets and per-lake species presence live only in the private bucket and the private research workspace.
