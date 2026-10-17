@@ -2,6 +2,7 @@
 backward compatibility with the existing execution_record / Cloud Run / health-record shapes. Synthetic fixtures only."""
 import datetime as dt
 import json
+import re
 
 import pytest
 
@@ -93,14 +94,21 @@ def test_cadence_is_process_timing_not_freshness():
     assert EH.cadence(None, NOW, 6)["status"] == "UNKNOWN"
     s = EH.execution_summary("alpha", [rec("e1", "SUCCEEDED", 20, 19.9)], NOW, expected_interval_hours=6)
     assert s["processHealth"] == "WARNING" and any(r.startswith("cadence:") for r in s["processHealthReasons"])
+    # reasons never embed the (volatile) age: the same world evaluated an hour later must serialise identically apart from the age fields
+    a, b = EH.cadence(iso(8), NOW, 6), EH.cadence(iso(8), NOW + dt.timedelta(minutes=20), 6)      # same success, evaluated 20 minutes apart
+    assert a["reason"] == b["reason"] and a["lastSuccessAgeHours"] == 8 and b["lastSuccessAgeHours"] == 8.33
+    assert not re.search(r"\d+\.\d+ h ago|age \d", a["reason"] + c["reason"])
     assert not any(k for k in json.dumps(s) .split('"') if k in ("fresh", "stale", "freshnessStatus"))          # G1 never utters a freshness verdict
 
 
 def test_health_record_is_the_run_for_in_process_brains():
-    h = {"status": "HEALTHY", "lastRun": iso(3), "lastSuccess": iso(3), "durationMs": 1500, "errorCount": 0}
+    h = {"status": "HEALTHY", "lastRun": iso(3), "lastSuccess": iso(3), "durationMs": 1500, "errorCount": 0, "deployedVersion": "brain/beta@76732025"}
     s = EH.execution_summary("beta", [], NOW, brain_health=h, code_version="orch@deadbeef")
     assert s["executionCount"] == 1 and s["processHealth"] == "HEALTHY" and s["brainReportedHealth"] == "HEALTHY"
-    assert s["lastExecution"]["trigger"] == "UNKNOWN" and s["lastSuccessfulAt"] == iso(3) and s["codeVersions"] == ["orch@deadbeef"]
+    assert s["lastExecution"]["trigger"] == "UNKNOWN" and s["lastSuccessfulAt"] == iso(3)
+    assert s["codeVersions"] == ["brain/beta@76732025"]                                        # the record's OWN deployedVersion ...
+    no_own = EH.execution_summary("beta", [], NOW, brain_health={k: v for k, v in h.items() if k != "deployedVersion"}, code_version="orch@deadbeef")
+    assert "codeVersions" not in no_own and "codeVersion" not in no_own["lastExecution"]         # ... never the evaluating orchestrator's version (the record may predate it)
     f = EH.execution_summary("beta", [], NOW, brain_health={"status": "FAILED", "lastRun": iso(1), "latestError": "boom"})
     assert f["processHealth"] == "FAILED" and f["lastError"] == "boom"
     assert EH.from_health_record("beta", {"status": "HEALTHY"}) is None                        # no lastRun: no run invented

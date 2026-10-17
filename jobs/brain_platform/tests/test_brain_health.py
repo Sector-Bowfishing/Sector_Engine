@@ -145,3 +145,45 @@ def test_conformance_fixture_mirrors_the_code_vocabularies():
         assert (got["availability"], got["freshnessStatus"], got["dependencyStatus"]) == (c["availability"], c["freshnessStatus"], c["dependencyStatus"]), c
     for c in fx["cases"]["aggregate"]:
         assert BH.aggregate(c["process"], c["dependencies"], c["freshness"], c["publish"], c.get("cadence"))["status"] == c["status"], c
+
+
+def test_snapshot_identity_and_no_rewrite_when_only_time_moves():
+    """health-plane-publication-v1: cadence ON_CADENCE, an owner staleAfterHours rule and a consumer rule all carry ages, yet an unchanged world
+    evaluated later must produce an identical content fingerprint and NO write (the live dry-run of 2026-10-17 rewrote `brains` every time
+    because reasons embedded the age). summary carries the snapshot identity: asOf, codeVersion, source, contentFingerprint."""
+    declared = [dep("brain:beta"), {**dep("provider:p", "PROVIDER_DATA"), "freshnessPolicy": {"maxAgeHours": 1.0, "reason": "tight"}}]
+    def graph(rows):
+        return {"version": "dependency-declarations-v1", "brains": {"alpha": {"source": "brain.json", "declarationsKnown": True, "rows": rows}},
+                "edges": [{"from": d["dependencyId"], "to": "alpha", "dependencyType": d["dependencyType"], "requirement": "REQUIRED"} for d in rows], "warnings": []}
+    def world(now):
+        # evidence 1.5 h old at NOW: owner rule (staleAfterHours 2/3) says FRESH, the provider's consumer rule (1 h) says STALE; cadence ON_CADENCE
+        obs = {"brain:beta": {"available": True, "evidenceObservedAt": iso(1.5), "staleAfterHours": 3},
+               "provider:p": {"available": True, "evidenceObservedAt": iso(1.5), "staleAfterHours": 2}}
+        b = BH.brain_health("alpha", declared=declared, declarations_known=True, executions=[ex("e1", "SUCCEEDED", 0.3, 0.2, codeVersion="c9")],
+                            observations=obs, now=now, expected_interval_hours=1.0)
+        return BH.health_state({"alpha": b}, graph(declared), SG.load(), now, engine_mode="PRE_PRODUCTION", code_version="brain-orchestrator@abc123",
+                               source={"controlState": "control/orchestratorV1", "executions": 1, "newestExecutionStartedAt": iso(0.3)})
+    first, later = world(NOW), world(NOW + dt.timedelta(minutes=20))
+    a = first["brains"]["alpha"]
+    rows = {r["dependencyId"]: r for r in a["dependencies"]["rows"]}
+    assert a["process"]["cadence"]["status"] == "ON_CADENCE" and rows["brain:beta"]["freshnessAuthority"] == "OWNER_RULE" and rows["brain:beta"]["freshnessStatus"] == "FRESH"
+    assert rows["provider:p"]["freshnessAuthority"] == "CONSUMER_RULE" and rows["provider:p"]["freshnessStatus"] == "STALE" and any("consumer rule" in r for r in rows["provider:p"]["reasons"])
+    assert first["summary"]["contentFingerprint"] == later["summary"]["contentFingerprint"] == BH.content_fingerprint(first)
+    assert BH.changed_paths(later, first) == {}                                                   # 20 minutes later: nothing to write
+    assert first["summary"]["codeVersion"] == "brain-orchestrator@abc123" and first["summary"]["source"]["executions"] == 1 and first["summary"]["asOf"] == iso(0)
+    assert not re.search(r"\d+\.\d+ h ago|age \d", json.dumps(first["brains"]))                 # ages live in lastSuccessAgeHours / ageHoursAtConsumption only
+    # heartbeat: a plane whose verdicts do not move with time (owner VERDICT, no cadence expectation) refreshes only summary.asOf after HEARTBEAT_HOURS
+    def steady(now):
+        b = BH.brain_health("alpha", declared=[dep("brain:beta")], declarations_known=True, executions=[ex("e1", "SUCCEEDED", 0.3, 0.2)],
+                            observations={"brain:beta": {"available": True, "freshnessStatus": "FRESH"}}, now=now)
+        return BH.health_state({"alpha": b}, graph([dep("brain:beta")]), SG.load(), now, engine_mode="PRE_PRODUCTION")
+    s0 = steady(NOW)
+    assert BH.changed_paths(steady(NOW + dt.timedelta(hours=1)), s0) == {}
+    assert set(BH.changed_paths(steady(NOW + dt.timedelta(hours=BH.HEARTBEAT_HOURS)), s0)) == {f"{BH.NODE}/summary"}
+    # a real change (the execution failed) changes the fingerprint and rewrites brains + summary
+    changed = dict(first); changed["brains"] = {"alpha": BH.brain_health("alpha", declared=declared, declarations_known=True, executions=[ex("e2", "FAILED", 0.1, 0.05)],
+                                                                            observations={}, now=NOW)}
+    assert BH.content_fingerprint(changed) != first["summary"]["contentFingerprint"]
+    # unknown generator / source stay absent, never invented
+    bare = BH.health_state({}, {"version": "v", "brains": {}, "edges": [], "warnings": []}, None, NOW)
+    assert "codeVersion" not in bare["summary"] and "source" not in bare["summary"] and bare["summary"]["contentFingerprint"]

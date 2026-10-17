@@ -15,6 +15,8 @@ dependency_declarations (brain.json), the Signal Registry and runtime lineage.
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
+import json
 
 from . import dependency_declarations as DD, dependency_health as DH, execution_health as EH, signals as SG
 from .model_v1 import VALIDATION_STATUS
@@ -29,6 +31,8 @@ DOMAIN_VALIDATION = VALIDATION_STATUS + ("UNKNOWN",)                         # m
 PUBLISH_STATUS = ("REJECTED", "SHADOW", "SKIPPED_UNCHANGED", "PUBLISHED", "NOT_APPLICABLE", "UNKNOWN")
 AGGREGATE = ("HEALTHY", "WARNING", "DEGRADED", "FAILED", "UNKNOWN")
 VOLATILE = ("evaluatedAt", "asOf", "lastSuccessAgeHours", "ageHoursAtConsumption")   # move every evaluation; the verdict words carry the decision
+HEARTBEAT_HOURS = 6        # an unchanged health plane refreshes only summary.asOf this often (same convention as control_state)
+CONTENT_SECTIONS = ("brains", "dependencies", "signals")                     # what contentFingerprint covers (summary describes them)
 _SEV = {"HEALTHY": 0, "WARNING": 1, "DEGRADED": 2, "FAILED": 3}
 _PROCESS = {"HEALTHY": "HEALTHY", "WARNING": "WARNING", "DEGRADED": "DEGRADED", "FAILED": "FAILED"}
 _DEPS = {"SATISFIED": "HEALTHY", "DEGRADED": "DEGRADED", "UNSATISFIED": "FAILED"}
@@ -130,23 +134,36 @@ def brain_health(brain_id: str, *, declared: list[dict], declarations_known: boo
     })
 
 
-def health_state(brains: dict[str, dict], graph: dict, signals_registry: dict | None, now: dt.datetime, *, engine_mode: str | None = None) -> dict:
-    """The whole `control/healthV1` node: summary, brains/{id}, dependencies (the declared graph), signals (definitions)."""
+def content_fingerprint(state: dict) -> str:
+    """Stable 16-hex digest of the CONTENT sections with the volatile evaluation fields removed: the snapshot's identity for change detection
+    and read-back comparison. Same world -> same fingerprint whenever it is evaluated; it never includes the summary (which describes it)."""
+    body = {s: _stable(state.get(s)) for s in CONTENT_SECTIONS}
+    return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()[:16]
+
+
+def health_state(brains: dict[str, dict], graph: dict, signals_registry: dict | None, now: dt.datetime, *, engine_mode: str | None = None,
+                 code_version: str | None = None, source: dict | None = None) -> dict:
+    """The whole `control/healthV1` node: summary, brains/{id}, dependencies (the declared graph), signals (definitions).
+    Snapshot identity (health-plane-publication-v1): `summary.asOf` = when it was generated, `summary.codeVersion` = the Orchestrator image that
+    generated it (DEPLOYMENT_VERSION; absent when unknown), `summary.source` = the execution/control state it was built from (caller-described,
+    e.g. {controlState, executions, newestExecutionStartedAt}), `summary.contentFingerprint` = content_fingerprint() of the three content sections."""
     counts: dict[str, int] = {}
     for b in brains.values():
         s = b["aggregate"]["status"]
         counts[s] = counts.get(s, 0) + 1
+    state = {"brains": {_key(b): v for b, v in sorted(brains.items())},
+             "dependencies": {"version": graph["version"], "brains": {_key(b): g for b, g in sorted(graph["brains"].items())},
+                              "edges": graph["edges"], "warnings": graph.get("warnings") or []},
+             "signals": SG.summary(signals_registry) if signals_registry is not None else {"note": "signal registry not available at runtime"}}
+    state = _strip(state)
     summary = {"version": HEALTH_MODEL_VERSION, "asOf": iso(now), "engineMode": engine_mode, "brainCount": len(brains),
                "aggregateCounts": dict(sorted(counts.items())),
                "unknownDeclarations": sorted(bid for bid, g in graph["brains"].items() if not g.get("declarationsKnown")),
                "graphWarnings": graph.get("warnings") or [],
+               "codeVersion": code_version, "source": source, "contentFingerprint": content_fingerprint(state),
                "note": "five health concepts published separately per Brain: process, dependencies, freshness, domainValidation, publish; "
                        "aggregate is operational only (domain validation is never folded in); UNKNOWN is a value, render it as a dash"}
-    state = {"summary": summary, "brains": {_key(b): v for b, v in sorted(brains.items())},
-             "dependencies": {"version": graph["version"], "brains": {_key(b): g for b, g in sorted(graph["brains"].items())},
-                              "edges": graph["edges"], "warnings": graph.get("warnings") or []},
-             "signals": SG.summary(signals_registry) if signals_registry is not None else {"note": "signal registry not available at runtime"}}
-    return _strip(state)
+    return _strip({"summary": summary, **state})
 
 
 def _stable(v):
@@ -158,7 +175,9 @@ def _stable(v):
 
 
 def changed_paths(state: dict, published: dict | None) -> dict:
-    """RTDB multi-path update of the sections whose content changed (evaluation timestamps ignored), plus the summary whenever anything did."""
+    """RTDB multi-path update of the sections whose content changed (evaluation timestamps ignored), plus the summary whenever anything did.
+    One PATCH = one atomic multi-location update: readers see the old snapshot or the new one, never a half-updated graph. An unchanged plane
+    writes nothing, except a summary-only heartbeat every HEARTBEAT_HOURS so `summary.asOf` says when the world was last evaluated."""
     published = published or {}
     out = {f"{NODE}/{s}": state[s] for s in SECTIONS if s in state and _stable(state[s]) != _stable(published.get(s))}
     for s in SECTIONS:
@@ -166,4 +185,9 @@ def changed_paths(state: dict, published: dict | None) -> dict:
             out[f"{NODE}/{s}"] = None
     if out and "summary" in state:
         out[f"{NODE}/summary"] = state["summary"]
+    elif not out and "summary" in state:
+        from .timeutil import parse_time
+        new_t, old_t = parse_time(state["summary"].get("asOf")), parse_time((published.get("summary") or {}).get("asOf"))
+        if new_t and (old_t is None or (new_t - old_t).total_seconds() >= HEARTBEAT_HOURS * 3600):
+            out[f"{NODE}/summary"] = state["summary"]
     return out

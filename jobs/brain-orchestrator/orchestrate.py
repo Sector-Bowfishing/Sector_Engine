@@ -18,6 +18,8 @@ One hourly wake-up (Cloud Scheduler → this scale-to-zero Cloud Run job, 1 vCPU
   python3 orchestrate.py --sync-jobs-only     publish /jobs and stop
   python3 orchestrate.py --no-execute         sync + plan + record, but start no brain
   python3 orchestrate.py                      the hourly cycle
+  python3 orchestrate.py --health-only        evaluate and publish ONLY control/healthV1 (brain-health-v1); no /jobs write, no execution,
+                                              no scores, no control/orchestratorV1 write, no legacy record (health-plane-publication-v1)
 
 env: BRAIN_RTDB_URL, ORCHESTRATOR_SCOPE (pilots|fleet, Lake Brain; default pilots), WATER_TEMP_SCOPE (fleet|pilots; default
      fleet — a per-lake Water Temp run leaves the registry's fleet counts empty), LAKE_BRAIN_ARCHIVE (gs:// bucket name
@@ -202,7 +204,11 @@ def main(argv=None) -> int:
     ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
     ap.add_argument("--emit-health-state", default=None, metavar="FILE", help="write the computed brain-health-v1 state (control/healthV1) JSON here (review, samples)")
     ap.add_argument("--publish-health", action="store_true", help="also publish control/healthV1 (brain-health-v1). OFF by default: enabling it is a recorded decision")
+    ap.add_argument("--health-only", action="store_true", help="publish ONLY control/healthV1: implies --control-only and --publish-health, and additionally writes no control/orchestratorV1 "
+                                                               "and asks no Brain for a plan (the exact write set is control/healthV1/* and nothing else)")
     a = ap.parse_args(argv)
+    if a.health_only:
+        a.control_only, a.publish_health = True, True
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
     if a.control_only:
@@ -227,7 +233,7 @@ def main(argv=None) -> int:
     world = CP.load_world(live, now)
     activity = O.effective_activity(world["manifest"], world["overrides"])
     brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
-                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE")}
+                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only}
     locks_now = state.get("locks") or {}
     run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
     ctx, evaluation = CP.evaluate(world, now, {f"{b}|*": l for b, l in locks_now.items()}, brain_plans, run_now)
@@ -330,10 +336,13 @@ def main(argv=None) -> int:
         if a.emit_control_state:
             json.dump(state_cp, open(a.emit_control_state, "w"), indent=1, sort_keys=True)
         cp_paths = CS.changed_paths(state_cp, world["prev"])
-        if cp_paths and (write or a.dry_run):
+        if a.health_only:
+            print(f"control plane: evaluated in memory only (--health-only): {len(cp_paths)} section(s) would differ; control/orchestratorV1 NOT written")
+        elif cp_paths and (write or a.dry_run):
             db.update(cp_paths)
-        print(f"control plane: {len(cp_paths)} section(s) changed of {len(CS.SECTIONS)}; mode {state_cp['summary']['engineMode']}; "
-              f"active {state_cp['summary'].get('activeBrains')}; queued {state_cp['summary'].get('queued', [])}")
+        if not a.health_only:
+            print(f"control plane: {len(cp_paths)} section(s) changed of {len(CS.SECTIONS)}; mode {state_cp['summary']['engineMode']}; "
+                  f"active {state_cp['summary'].get('activeBrains')}; queued {state_cp['summary'].get('queued', [])}")
         # 5b. brain-health-v1 (control/healthV1): five health concepts side by side (G1 execution, G2 dependency + freshness). Computed only
         #     when asked for, published only with --publish-health (a recorded decision); it never changes what runs.
         if a.emit_health_state or a.publish_health:
@@ -345,8 +354,11 @@ def main(argv=None) -> int:
             if a.publish_health:
                 h_paths = CP.BH.changed_paths(health_cp, live.get(CP.HEALTH_NODE) or {})
                 if h_paths and (write or a.dry_run):
-                    db.update(h_paths)
-                print(f"health plane: {len(h_paths)} section(s) changed of {len(CP.BH.SECTIONS)}; aggregate {health_cp['summary'].get('aggregateCounts')}")
+                    db.update(h_paths)                                   # ONE atomic multi-location PATCH: old snapshot or new snapshot, never half
+                body = json.dumps(h_paths, separators=(",", ":"), sort_keys=True) if h_paths else ""
+                print(f"health plane: {len(h_paths)} section(s) changed of {len(CP.BH.SECTIONS)}; aggregate {health_cp['summary'].get('aggregateCounts')}; "
+                      f"paths {sorted(h_paths)}; bytes {len(body)}; contentFingerprint {health_cp['summary'].get('contentFingerprint')}; "
+                      f"codeVersion {health_cp['summary'].get('codeVersion')}")
     except Exception as e:                                       # the control plane must never break the cycle or the score publication
         print(f"control plane: FAILED {e!r}", file=sys.stderr)
 

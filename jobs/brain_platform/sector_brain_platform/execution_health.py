@@ -93,7 +93,10 @@ def normalize_execution(rec: dict) -> dict:
 def from_health_record(brain_id: str, health: dict | None, code_version: str | None = None) -> dict | None:
     """A synthetic last execution for a Brain that publishes only `/health/brains/{id}` (in-process Brains: the publish IS the run).
     None when there is no record. Status comes from the Brain's own health word (FAILED -> FAILED, HEALTHY -> SUCCEEDED,
-    WARNING/DEGRADED -> DEGRADED, UNKNOWN/NOT_CONFIGURED -> UNKNOWN); the run time is lastRun; errors are carried verbatim."""
+    WARNING/DEGRADED -> DEGRADED, UNKNOWN/NOT_CONFIGURED -> UNKNOWN); the run time is lastRun; errors are carried verbatim.
+    `codeVersion` is the record's OWN `deployedVersion` (the code that wrote the record) or absent. `code_version` (the caller's, i.e. the
+    orchestrator image evaluating now) is accepted for compatibility and never applied: the record may predate the evaluating image
+    (health-plane-publication-v1 fix; the live dry-run stamped 2026-10-13 runs with the 2026-10-16 orchestrator version)."""
     if not health or not health.get("lastRun"):
         return None
     h = health.get("status")
@@ -105,8 +108,9 @@ def from_health_record(brain_id: str, health: dict | None, code_version: str | N
         rec["durationSeconds"] = round(float(health["durationMs"]) / 1000, 1)
     if health.get("latestError") and h == "FAILED":
         rec["error"] = str(health["latestError"])[:300]
-    if code_version:
-        rec["codeVersion"] = code_version
+    own = health.get("deployedVersion")
+    if isinstance(own, str) and own:
+        rec["codeVersion"] = own
     return rec
 
 
@@ -128,10 +132,11 @@ def cadence(last_success_at: str | None, now: dt.datetime, expected_interval_hou
         out.update(status="NOT_EXPECTED", reason="no recurring cadence declared (manual / event-driven)")
     elif age is None:
         out.update(status="UNKNOWN", reason="no successful execution on record")
+    # reasons carry no volatile number (the age is `lastSuccessAgeHours`): an unchanged world must serialise identically between evaluations
     elif age > out["overdueAfterHours"]:
-        out.update(status="OVERDUE", reason=f"last success {age} h ago > {out['overdueAfterHours']} h (expected every {expected_interval_hours} h)")
+        out.update(status="OVERDUE", reason=f"last success older than {out['overdueAfterHours']} h (expected every {expected_interval_hours} h); see lastSuccessAgeHours")
     else:
-        out.update(status="ON_CADENCE", reason=f"last success {age} h ago within {out['overdueAfterHours']} h")
+        out.update(status="ON_CADENCE", reason=f"last success within {out['overdueAfterHours']} h (expected every {expected_interval_hours} h)")
     return out
 
 
