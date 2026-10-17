@@ -65,7 +65,7 @@ def _freshness(observed: dict, at: dt.datetime, reasons: list[str]) -> tuple[str
         return ("STALE" if at > sa else "FRESH"), "OWNER_RULE", facts
     if facts.get("staleAfterHours") is not None and ref is not None:
         stale = facts["ageHoursAtConsumption"] > facts["staleAfterHours"]
-        reasons.append(f"owner rule staleAfterHours {facts['staleAfterHours']}: age {facts['ageHoursAtConsumption']} h")
+        reasons.append(f"owner rule staleAfterHours {facts['staleAfterHours']} applied to {facts['ageBasis']} (age: ageHoursAtConsumption)")
         return ("STALE" if stale else "FRESH"), "OWNER_RULE", facts
     if observed.get("lastSuccessfulRun") and ref is None:
         reasons.append("only lastSuccessfulRun is published: process history, not evidence freshness")
@@ -126,7 +126,7 @@ def evaluate_dependency(declared: dict, observed: dict | None, now: dt.datetime,
             elif age > pol["maxAgeHours"] and fs in ("FRESH", "UNKNOWN"):
                 row["ownerFreshnessStatus"] = fs
                 fs, authority = "STALE", "CONSUMER_RULE"
-                reasons.append(f"consumer rule: age {age} h > {pol['maxAgeHours']} h ({pol['reason']})")
+                reasons.append(f"consumer rule: evidence older than {pol['maxAgeHours']} h ({pol['reason']}); age: ageHoursAtConsumption")
     elif avail == "MISSING":
         fs, authority = "UNAVAILABLE", "UNKNOWN"
     else:
