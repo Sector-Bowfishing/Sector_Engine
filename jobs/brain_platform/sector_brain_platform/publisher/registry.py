@@ -276,15 +276,18 @@ FISH_OPTIONAL_CHILDREN = ("facts", "targetReadiness", "transferSummary", "covera
 FISH_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")       # domain health facts only; process/execution fields are Orchestrator-owned (same split as Wind)
 
 #: Fish's volatile contract. Deliberately minimal (a wrongly-included entry could hide a domain change): `updatedAt` is the per-run stamp inside every species
-#: summary and activity event; `lastSuccessfulRun` is the execution fact; `versions` embeds the publication date (its content is fully implied by researchVersion /
+#: summary and `lastRunAt` the run stamp of the validation record; `lastSuccessfulRun` is the execution fact; `versions` embeds the publication date (its content is fully implied by researchVersion /
 #: species counts, which are separate material children). Shared defaults apply on top. Changing this list is a versioned change reviewed with Fish certification.
 FISH_VOLATILE_CONTRACT_V1 = VolatileContract(
     "fish-volatile-v1", 1,
-    keys=frozenset({"updatedAt"}),
-    paths=(PathFamily(f"/brains/{FISH}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{FISH}/versions", note="transitional")),
-    notes={"key:updatedAt": "per-run publication stamp inside species summaries and activity events; no domain meaning",
+    keys=frozenset({"updatedAt", "lastRunAt"}),
+    paths=(PathFamily(f"/brains/{FISH}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{FISH}/versions", note="transitional"),
+           PathFamily("/activity/{event}", {"event": contains(f"-{FISH}-")}, note="log entry, a consequence of a change not state")),
+    notes={"key:updatedAt": "per-run publication stamp inside species summaries; no domain meaning",
+           "key:lastRunAt": "run timestamp inside /validation/biological-state; the validation STATUS stays material",
            "path:/brains/biological-state/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
-           "path:/brains/biological-state/versions": "carries the publication date; implied by researchVersion + species counts (separate material children); retire with the legacy registry shape"})
+           "path:/brains/biological-state/versions": "carries the publication date; implied by researchVersion + species counts (separate material children); retire with the legacy registry shape",
+           "path:/activity/{event}": "a version event exists only because other material children changed in the same artifact; an event alone is never a domain change (a re-run after the baseline emits none)"})
 
 
 def fish_specs() -> list[SchemaSpec]:

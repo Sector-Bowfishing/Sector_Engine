@@ -144,14 +144,18 @@
   "volatileContract": {
     "id": "fish-volatile-v1",
     "keys": [
+      "lastRunAt",
       "updatedAt"
     ],
     "notes": {
-      "key:updatedAt": "per-run publication stamp inside species summaries and activity events; no domain meaning",
+      "key:lastRunAt": "run timestamp inside /validation/biological-state; the validation STATUS stays material",
+      "key:updatedAt": "per-run publication stamp inside species summaries; no domain meaning",
+      "path:/activity/{event}": "a version event exists only because other material children changed in the same artifact; an event alone is never a domain change (a re-run after the baseline emits none)",
       "path:/brains/biological-state/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
       "path:/brains/biological-state/versions": "carries the publication date; implied by researchVersion + species counts (separate material children); retire with the legacy registry shape"
     },
     "paths": [
+      "/activity/{event}",
       "/brains/biological-state/lastSuccessfulRun",
       "/brains/biological-state/versions"
     ],
