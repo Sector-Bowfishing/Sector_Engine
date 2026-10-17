@@ -6,11 +6,11 @@ import sys
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+ROOT = os.path.join(os.path.dirname(HERE), "runtime")      # brains/fish/runtime (the production package)
 sys.path.insert(0, ROOT)
 import prereg_analysis as pa   # noqa: E402
 
-DOC_DIR = os.path.join(os.path.dirname(os.path.dirname(ROOT)), "docs", "brains", "biological-adoption")
+DOC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(ROOT))), "docs", "brains", "biological-adoption")
 DOC = os.path.join(DOC_DIR, "BIOLOGICAL_VALIDATION_PREREGISTRATION_v1.md")
 
 

@@ -45,7 +45,7 @@ jobs:
       - name: Brain and job suites (offline)
         run: |
           set -e
-          for d in jobs/lake-surface-dispatch jobs/water-clarity-brain jobs/biological-brain \
+          for d in jobs/lake-surface-dispatch jobs/water-clarity-brain \
                    jobs/sector-intelligence-brain jobs/water-temp-tva-archive \
                    jobs/lake-brain/bindings jobs/lake-brain/ledger jobs/lake-brain/validation jobs/lake-brain/review; do
             echo "== $d"; (cd "$d" && python -m pytest -q)

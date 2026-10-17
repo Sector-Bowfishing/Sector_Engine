@@ -60,9 +60,12 @@ rm -rf stage && mkdir -p stage/jobs stage/docs/brains/scoring
 cp -R "$ROOT/jobs/brain_platform" stage/jobs/brain_platform
 for d in biological-brain sector-intelligence-brain brain-scores brain-orchestrator; do
   mkdir -p "stage/jobs/$d"
-  cp "$ROOT/jobs/$d"/*.py "stage/jobs/$d/" 2>/dev/null || true
-  [[ -f "$ROOT/jobs/$d/catalog.json" ]] && cp "$ROOT/jobs/$d/catalog.json" "stage/jobs/$d/"
-  cp -R "$ROOT/jobs/$d/schemas" "stage/jobs/$d/" 2>/dev/null || true
+  src="$ROOT/jobs/$d"
+  [[ "$d" == "biological-brain" ]] && src="$ROOT/brains/fish/runtime"     # Fish Brain canonical home; staged under the legacy job layout the image expects
+  cp "$src"/*.py "stage/jobs/$d/" 2>/dev/null || true
+  [[ -f "$src/catalog.json" ]] && cp "$src/catalog.json" "stage/jobs/$d/"
+  cp -R "$src/schemas" "stage/jobs/$d/" 2>/dev/null || true
+  [[ "$d" == "biological-brain" && -d "$src/tools" ]] && cp -R "$src/tools" "stage/jobs/$d/" || true
 done
 cp "$ROOT/docs/brains/scoring/frozen-scores.json" stage/docs/brains/scoring/
 # brain-health-v1 (control/healthV1) discovers declared dependencies from brains/*/brain.json and the platform registries / provider

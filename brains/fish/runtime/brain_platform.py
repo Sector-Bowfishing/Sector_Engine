@@ -2,7 +2,8 @@
 (jobs/brain_platform/sector_brain_platform, contract docs/brains/BRAIN_PLATFORM_CONTRACT.md).
 
 A deployed job carries a vendored copy of the package next to this file (deploy-job.sh copies it);
-in the repo the package is resolved from jobs/brain_platform. Nothing brain-specific lives here.
+in the repo the package is resolved from jobs/brain_platform (this file lives at brains/fish/runtime; the orchestrator image
+stages the runtime as jobs/biological-brain, where jobs/brain_platform is a sibling). Nothing brain-specific lives here.
 """
 from __future__ import annotations
 
@@ -11,7 +12,12 @@ import sys as _sys
 
 _here = _os.path.dirname(_os.path.abspath(__file__))
 if not _os.path.isdir(_os.path.join(_here, "sector_brain_platform")):
-    _sys.path.insert(0, _os.path.join(_here, "..", "brain_platform"))
+    for _rel in (("..", "..", "..", "jobs", "brain_platform"),      # repo layout: brains/fish/runtime
+                 ("..", "brain_platform")):                         # staged orchestrator image: jobs/biological-brain
+        _cand = _os.path.normpath(_os.path.join(_here, *_rel))
+        if _os.path.isdir(_os.path.join(_cand, "sector_brain_platform")):
+            _sys.path.insert(0, _cand)
+            break
 
 from sector_brain_platform import *                      # noqa: E402,F401,F403
 from sector_brain_platform import rtdb as _rtdb          # noqa: E402

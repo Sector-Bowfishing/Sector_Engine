@@ -14,7 +14,7 @@ import tempfile
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+ROOT = os.path.join(os.path.dirname(HERE), "runtime")      # brains/fish/runtime (the production package)
 sys.path.insert(0, ROOT)
 import bio_state as bs          # noqa: E402
 import features as ft           # noqa: E402
@@ -609,7 +609,7 @@ class SchemaAndLeakTests(unittest.TestCase):
         """Lake Brain presence per lake is private research. A public doc/code line may not name a pilot lake together with a presence state."""
         lakes = ("guntersville", "wheeler", "wilson", "pickwick", "hartwell")
         states = ("historical", "established", "inrangeunconfirmed", "stocked", "reported")
-        repo = os.path.dirname(os.path.dirname(ROOT))
+        repo = os.path.dirname(os.path.dirname(os.path.dirname(ROOT)))
         scan = [os.path.join(repo, "docs", "brains", "biological-adoption"), ROOT]
         bad = []
         for base in scan:

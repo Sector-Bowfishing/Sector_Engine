@@ -144,7 +144,7 @@ class PublisherReflectsCapabilityTests(unittest.TestCase):
         facts = {f["label"]: f["value"] for f in up["/brains/biological-state"]["facts"]}
         self.assertEqual(facts["Rules with Southeast-transferable evidence"], "0 of 3")
         # the scorer ignores it today: publishing the fact cannot move the score
-        sys.path.insert(0, os.path.join(HERE, "..", "..", "brain_platform"))
+        sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "jobs", "brain_platform"))
         from sector_brain_platform import scoring
         s = scoring.score_biological({"registry": up["/brains/biological-state"], "species": {k.split("/")[-1]: v for k, v in up.items() if k.startswith("/species/") and v}}, NOW)
         self.assertEqual(s["scoreBreakdown"]["regionalTransfer"]["status"], "UNKNOWN")
@@ -176,7 +176,7 @@ class PublisherReflectsCapabilityTests(unittest.TestCase):
         self.assertLess(len(sp), 16000)
 
     def test_canonical_scorer_moves_only_because_capability_exists(self):
-        sys.path.insert(0, os.path.join(HERE, "..", "..", "brain_platform"))
+        sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "jobs", "brain_platform"))
         from sector_brain_platform import scoring
         for extra, expect_status in (({}, "NOT_STARTED"), (capability_files(), "IN_PROGRESS")):
             _, up = self.updates(extra)
