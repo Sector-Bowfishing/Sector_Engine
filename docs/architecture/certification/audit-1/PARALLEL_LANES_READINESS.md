@@ -1,6 +1,6 @@
 # Parallel lanes readiness
 
-**Decision: YES_WITH_CONDITIONS** — Lane A (Fish Brain Research) and Lane B (Water Clarity Structural Certification V1) may run in parallel. Neither was started by this audit.
+**Decision: YES_WITH_CONDITIONS — `PARALLEL_LANES_AUTHORIZED` by Michael, 2026-10-17** (condition 2 approved: push the three Clarity refs at the start of Lane B after re-verifying them; condition 1: D4 is a hard *adoption* blocker, not a discovery blocker; Fish structure is locked at `STRUCTURALLY_CERTIFIED_V1`) — Lane A (Fish Brain Research) and Lane B (Water Clarity Structural Certification V1) may run in parallel. Neither was started by this audit.
 
 ## Why parallel is safe
 - Lane A changes **content** (workspace, private bundle/release, `research/GAPS.json`); Lane B changes **structure** of a different Brain (`brains/water-clarity`, its Publisher registration, its tests). Their file sets are disjoint except for five shared platform files (below) that Lane A has no reason to touch.

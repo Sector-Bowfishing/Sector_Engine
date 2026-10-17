@@ -1,10 +1,17 @@
 # Architecture Audit #1 — Wind + Fish Reusable Brain Factory
 
-**Status: `ARCHITECTURE_AUDIT_1_PASS_WITH_NON_BLOCKING_DEBT`** · verdict word: **PASS_WITH_NON_BLOCKING_DEBT** · parallel lanes: **YES_WITH_CONDITIONS** (`PARALLEL_LANES_READINESS.md`).
+**Status: `ARCHITECTURE_AUDIT_1_PASS_WITH_NON_BLOCKING_DEBT`** (accepted by Michael 2026-10-17) · verdict word: **PASS_WITH_NON_BLOCKING_DEBT** · parallel lanes: **YES_WITH_CONDITIONS** (`PARALLEL_LANES_READINESS.md`).
 **Audit of:** `origin/main` `8c2e22ae698fbcbdea0a8e78a593fe2f2fd78885` (verified by `git fetch`; equals the expected SHA). **Branch:** `audit/brain-factory-v1`. **Date:** 2026-10-17.
 Companions: `BRAIN_FACTORY_V1.md` (the definition), `BRAIN_FACTORY_CHECKLIST_V1.md` (the procedure), `TECHNICAL_DEBT_AFTER_AUDIT_1.md`, `PARALLEL_LANES_READINESS.md`.
 
 This is an audit. No Brain, platform code, scheduler, Orchestrator, Publisher mode, production node, Sector Ops or customer surface was changed. Evidence is the repository plus local test runs (§9). Where a claim rests on a prior session's handoff rather than on something re-verified here (the deployed Orchestrator image, live score values), it says so.
+
+## Michael's decisions (2026-10-17) — recorded at merge
+1. **Verdict accepted:** `ARCHITECTURE_AUDIT_1_PASS_WITH_NON_BLOCKING_DEBT`; Wind + Fish are accepted as proving Brain Factory V1 sufficiently to begin parallel lanes.
+2. **D-12 APPROVED:** Wind and Fish are **`STRUCTURALLY_CERTIFIED_V1`**. Neither is `ARCHITECTURE_CERTIFIED_V1`; that name stays reserved until the live Publisher and exit evidence F exist. The distinction is intentional.
+3. **Clarity local-only branches:** pushing `feat/clarity-candidate-shadow`, `research/clarity-candidate` and `campaign/clarity-readiness` to `origin` as durability refs is **approved**, to happen at the *start of Lane B* after the refs are re-verified. No merge, rewrite, rebase, force push or content change. Not done by this audit.
+4. **D4 recorded as a hard Water Clarity ADOPTION blocker** (live Clarity job source is off-main). It does not block discovery, inventory, branch preservation, source comparison or the structural gap audit; it blocks declaring Clarity canonical/adopted until the real source is reconciled. Not solved here.
+5. **Parallel lanes authorized** under the seven conditions in `PARALLEL_LANES_READINESS.md`: `PARALLEL_LANES_AUTHORIZED`. Only Lane B may change shared platform architecture; Lane A escalates structural needs.
 
 ## 1. Answer
 
