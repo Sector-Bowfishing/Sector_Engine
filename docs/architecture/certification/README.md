@@ -57,3 +57,6 @@ Research workspace adoption (2026-10-15): `wind/WIND_RESEARCH_PRESERVATION_PLAN.
 Repository Phase 2 (2026-10-16): Wind's permanent home is `brains/wind/`; record `wind/WIND_REPOSITORY_MIGRATION_V1.md` (`WIND_REPOSITORY_PHASE_2_COMPLETE`, structural only). Code paths named in the earlier Wind records under `jobs/wind-hourly/` now live under `brains/wind/` (map in that record §3).
 
 Research collector (2026-10-16): `wind/WIND_RESEARCH_COLLECTOR_TRANSITION_PLAN.md` — second snapshot, transition plan and executed cutover (`WIND_RESEARCH_COLLECTOR_CUTOVER_SUCCESSFUL`; legacy assets on `ROLLBACK_HOLD_48_CYCLES`).
+
+## Architecture Audit #1 (2026-10-17)
+`audit-1/ARCHITECTURE_AUDIT_1_REPORT.md` — Wind + Fish reusable Brain factory audit: **`ARCHITECTURE_AUDIT_1_PASS_WITH_NON_BLOCKING_DEBT`**, parallel lanes `YES_WITH_CONDITIONS`. Defines `audit-1/BRAIN_FACTORY_V1.md` and `audit-1/BRAIN_FACTORY_CHECKLIST_V1.md` (the procedure for Brain #3 onward), with `audit-1/TECHNICAL_DEBT_AFTER_AUDIT_1.md` and `audit-1/PARALLEL_LANES_READINESS.md`. Audit only: no code, template, deploy or production change.
