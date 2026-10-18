@@ -348,4 +348,60 @@ final class ClarityStateTests: XCTestCase {
         XCTAssertEqual(s.runoff.expectedDirection, "clearerThanPass")
         XCTAssertEqual(s.satelliteAuthority.level, .low)
     }
+
+    // MARK: live anchor selection (Stage 3A hardening)
+
+    func sceneFile(_ date: String, _ time: String, armObserved: Int, armNear: Int,
+                   mainObserved: Int = 900) throws -> ArmAnchorFile {
+        let json = """
+        {"sceneDate":"\(date)","sceneTime":"\(time)","platform":"sentinel-2b","source":"test \(date)",
+         "arms":{"a":{"waterCells":1000,"observedCells":\(armObserved),"filledCells":\(1000 - armObserved),
+                      "filledWithin500mCells":\(armNear),"medianFillDistanceM":400,
+                      "observedFNU":{"n":\(max(armObserved, 1)),"p25":3,"p50":3.5,"p75":4},
+                      "allFNU":{"n":1000,"p25":3,"p50":3.5,"p75":4}}},
+         "mainStem":{"waterCells":1000,"observedCells":\(mainObserved),"filledCells":\(1000 - mainObserved),
+                     "filledWithin500mCells":0,"medianFillDistanceM":null,
+                     "observedFNU":{"n":\(max(mainObserved, 1)),"p25":3,"p50":3.5,"p75":4},"allFNU":null}}
+        """
+        return try JSONDecoder().decode(ArmAnchorFile.self, from: Data(json.utf8))
+    }
+
+    /// A cloudy newest pass does not displace a clear one before it, and the
+    /// divergence runs from the scene actually used.
+    func testLiveSelectionKeepsAClearOlderSceneOverACloudyNewOne() throws {
+        let f = ISO8601DateFormatter()
+        let old = try sceneFile("old", f.string(from: hours(10 * 24)), armObserved: 800, armNear: 0)
+        let new = try sceneFile("new", f.string(from: hours(2 * 24)), armObserved: 20, armNear: 0, mainObserved: 30)
+        let pick = ClarityStateLoader.selectAnchors([old, new], arms: ["a"], now: now)
+        XCTAssertEqual(pick["a"]?.anchor?.sceneDate, "old")
+        XCTAssertEqual(pick["a"]?.note?.contains("new"), true)
+        XCTAssertEqual(pick[ClarityStateLoader.mainStemKey]?.anchor?.sceneDate, "old", "the main stem is chosen the same way")
+        // 1.5 in fell between the two scenes, ending 5 days ago: measured from
+        // the scene used it counts in full (the storm is over, so it recedes)
+        let r = rain(storms: [(6 * 24, 5 * 24, 1.5 / 24)])
+        let x = ArmClarityInputs(lakeId: "L", armId: "a", armName: "a", anchor: pick["a"]!.anchor, anchorNote: pick["a"]!.note,
+                                 rain: r, flow: .none, baseline: baseline)
+        let st = ClarityStateEngine.armState(x, now: now)
+        XCTAssertEqual(st.satelliteSceneDate, "old")
+        XCTAssertEqual(st.divergence.rainSincePassIn ?? 0, 1.5, accuracy: 0.01)
+        XCTAssertEqual(st.runoff.state, .recovering)
+        XCTAssertTrue(st.runoff.evidence.contains { $0.contains("1.50 in on the drainage since the pass → majorRunoff") })
+        XCTAssertTrue(st.limitations.contains { $0.contains("newest scene (new)") })
+    }
+
+    func testANewSceneThatAnchorsWellDisplacesTheOlderOne() throws {
+        let f = ISO8601DateFormatter()
+        let old = try sceneFile("old", f.string(from: hours(10 * 24)), armObserved: 900, armNear: 0)
+        let new = try sceneFile("new", f.string(from: hours(2 * 24)), armObserved: 200, armNear: 400)   // moderate
+        let pick = ClarityStateLoader.selectAnchors([old, new], arms: ["a"], now: now)
+        XCTAssertEqual(pick["a"]?.anchor?.sceneDate, "new")
+        XCTAssertNil(pick["a"]?.note)
+        // a scene after `now` is never read
+        let future = try sceneFile("future", f.string(from: now.addingTimeInterval(3600)), armObserved: 950, armNear: 0)
+        XCTAssertEqual(ClarityStateLoader.selectAnchors([old, future], arms: ["a"], now: now)["a"]?.anchor?.sceneDate, "old")
+        // with only weak scenes, the newest weak one stands
+        let w1 = try sceneFile("w1", f.string(from: hours(9 * 24)), armObserved: 20, armNear: 0)
+        let w2 = try sceneFile("w2", f.string(from: hours(3 * 24)), armObserved: 20, armNear: 0)
+        XCTAssertEqual(ClarityStateLoader.selectAnchors([w1, w2], arms: ["a"], now: now)["a"]?.anchor?.sceneDate, "w2")
+    }
 }
