@@ -378,7 +378,7 @@ final class ClarityStateTests: XCTestCase {
         XCTAssertEqual(pick[ClarityStateLoader.mainStemKey]?.anchor?.sceneDate, "old", "the main stem is chosen the same way")
         // 1.5 in fell between the two scenes, ending 5 days ago: measured from
         // the scene used it counts in full (the storm is over, so it recedes)
-        let r = rain(storms: [(6 * 24, 5 * 24, 1.5 / 24)])
+        let r = rain(storms: [(6.0 * 24, 5.0 * 24, 1.5 / 24)])
         let x = ArmClarityInputs(lakeId: "L", armId: "a", armName: "a", anchor: pick["a"]!.anchor, anchorNote: pick["a"]!.note,
                                  rain: r, flow: .none, baseline: baseline)
         let st = ClarityStateEngine.armState(x, now: now)
