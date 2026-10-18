@@ -4,6 +4,15 @@
 **Status:** `CLARITY_DISCOVERY_AND_D4_RECONCILIATION_READY` — **no implementation written; D4 not crossed; nothing deployed or written to production.**
 Evidence: git (all branches/worktrees), read-only `gcloud run jobs/scheduler describe|list`, read-only shallow GETs of `sector-brain` (`brains/`, `health/brains/`, `scores/` for `water-clarity`), repository docs. No lake-level data was read.
 
+
+> ## PASS 2 CORRECTIONS AND DECISIONS (2026-10-17, after Michael's D4 decisions) — read before §1–§9
+> **Correction (my error in pass 1):** `main` does **not** hold a reduced "v1.0" publisher. `6220491b` is titled "Water Clarity Brain **v1.1.0** … (public-safe)": the same `brainVersion 1.1.0` code as the raw local branch `d206e01c`, minus the detailed R3.1 research content, plus a private-overlay mechanism (`CLARITY_PRIVATE_CATALOG`), later evolved by the shared Brain Platform shim and the `/jobs` contract. Raw-vs-main differences: catalog detail (bars, thresholds, populations, research-branch evidence refs), 3 docs, one test file, the overlay code. Statements in §1.3, §2, §3 (C1), §4, §8 Option 3 that call main's publisher "v1.0/older/reduced" are superseded. **C1 baseline = `jobs/water-clarity-brain` on main (sanitized v1.1.0) + a private catalog overlay**; the raw catalog is preserved privately.
+> **Decisions recorded:** Option 1 Brain-first approved; split certification (C2/C3/C4 stay registered transitional/legacy); v1.1.0 → sanitize (option B); D4 plan approved, not by wholesale merge.
+> **Exposure finding:** the repo is PUBLIC. The pass-1 push of `feat/clarity-candidate-shadow` (15,458 files, ~334 MB, 306 PDF/log/CSV files, 10 files with R3.1 certification-bar markers) and `campaign/clarity-readiness` (3 marker files) made that content public. `research/clarity-candidate` (17,793 files, ~472 MB, 13 marker files) was therefore **not pushed**; held for Michael. Raw `brain/water-clarity` history was scanned: both unique commits (`d206e01c`, `3c1d9736`) contain the detail, so the raw branch is not pushed either; private bundles + raw catalog are in `Sector Research/water-clarity/_private-preservation/2026-10-17/`.
+> **D4 PR:** #26 (`feat/clarity-d4-runtime-source-v1`, draft) — runtime-source merge of `03937913`; provenance table in `D4_RUNTIME_SOURCE_RECONCILIATION.md` (on that branch).
+> **Platform decision/debt (new):** consumption lineage covers RTDB reads only. GCS/HTTP reads (Clarity's real inputs) have no supported-read model; Clarity must NOT fake `stateVersion`/fingerprints. Record as a platform supported-read decision before Clarity lineage can be called complete.
+> **Engine `/conditions`:** not to be declared a legitimate long-term dependency until the ownership problem (RA-20) is resolved.
+
 ## 1. Headline findings
 1. **"Water Clarity" is five things, not one**, and only one of them is a Brain-shaped package (see §3). They live on different branches and none except the v0 publisher is on `main`.
 2. **D4 is confirmed and is wider than "the job source is off-main".** Every Clarity Cloud Run job that exists was built off-main (§4). `jobs/lake-surface/LINEAGE.md` on main already says so.
