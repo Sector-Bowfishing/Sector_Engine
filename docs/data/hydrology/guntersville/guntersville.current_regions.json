@@ -1,0 +1,1356 @@
+{
+ "lakeId": "Guntersville|AL",
+ "schema": "current-clarity-regions-v1",
+ "width": 2468,
+ "height": 2886,
+ "cells": 415214,
+ "indexHash": 2259672100,
+ "cornersLonLat": [
+  [
+   -86.40750987500218,
+   35.04519013544567
+  ],
+  [
+   -85.60937471136765,
+   35.04519013544567
+  ],
+  [
+   -85.60937471136765,
+   34.277524948714294
+  ],
+  [
+   -86.40750987500218,
+   34.277524948714294
+  ]
+ ],
+ "cellGroundM": 29.61,
+ "regions": [
+  {
+   "index": 0,
+   "kind": "mainStem",
+   "id": "_mainStem",
+   "cells": 193821
+  },
+  {
+   "index": 1,
+   "kind": "arm",
+   "id": "archie-creek",
+   "cells": 1282
+  },
+  {
+   "index": 2,
+   "kind": "arm",
+   "id": "aspel-branch",
+   "cells": 1378
+  },
+  {
+   "index": 3,
+   "kind": "arm",
+   "id": "baker-spring-branch",
+   "cells": 2366
+  },
+  {
+   "index": 4,
+   "kind": "arm",
+   "id": "battle-creek",
+   "cells": 0
+  },
+  {
+   "index": 5,
+   "kind": "arm",
+   "id": "beech-creek",
+   "cells": 2071
+  },
+  {
+   "index": 6,
+   "kind": "arm",
+   "id": "bengis-creek",
+   "cells": 561
+  },
+  {
+   "index": 7,
+   "kind": "arm",
+   "id": "berry-branch",
+   "cells": 147
+  },
+  {
+   "index": 8,
+   "kind": "arm",
+   "id": "big-culvert-creek",
+   "cells": 200
+  },
+  {
+   "index": 9,
+   "kind": "arm",
+   "id": "big-spring-creek",
+   "cells": 12354
+  },
+  {
+   "index": 10,
+   "kind": "arm",
+   "id": "black-oak-creek",
+   "cells": 10
+  },
+  {
+   "index": 11,
+   "kind": "arm",
+   "id": "blue-spring-brook",
+   "cells": 1461
+  },
+  {
+   "index": 12,
+   "kind": "arm",
+   "id": "blue-spring-creek",
+   "cells": 0
+  },
+  {
+   "index": 13,
+   "kind": "arm",
+   "id": "boshart-creek",
+   "cells": 4457
+  },
+  {
+   "index": 14,
+   "kind": "arm",
+   "id": "brogue-branch",
+   "cells": 1432
+  },
+  {
+   "index": 15,
+   "kind": "arm",
+   "id": "browns-creek",
+   "cells": 26196
+  },
+  {
+   "index": 16,
+   "kind": "arm",
+   "id": "chandler-branch",
+   "cells": 3667
+  },
+  {
+   "index": 17,
+   "kind": "arm",
+   "id": "cooks-branch",
+   "cells": 0
+  },
+  {
+   "index": 18,
+   "kind": "arm",
+   "id": "coon-creek",
+   "cells": 4687
+  },
+  {
+   "index": 19,
+   "kind": "arm",
+   "id": "crooked-branch",
+   "cells": 63
+  },
+  {
+   "index": 20,
+   "kind": "arm",
+   "id": "crow-creek",
+   "cells": 7355
+  },
+  {
+   "index": 21,
+   "kind": "arm",
+   "id": "deal-creek",
+   "cells": 1128
+  },
+  {
+   "index": 22,
+   "kind": "arm",
+   "id": "dripping-spring-branch",
+   "cells": 1033
+  },
+  {
+   "index": 23,
+   "kind": "arm",
+   "id": "dry-creek-jackson-into-coon-creek",
+   "cells": 32
+  },
+  {
+   "index": 24,
+   "kind": "arm",
+   "id": "dry-creek-jackson-into-roseberry-creek",
+   "cells": 6094
+  },
+  {
+   "index": 25,
+   "kind": "arm",
+   "id": "dry-creek-jackson-into-south-sauty-creek",
+   "cells": 263
+  },
+  {
+   "index": 26,
+   "kind": "arm",
+   "id": "dry-creek-marshall",
+   "cells": 80
+  },
+  {
+   "index": 27,
+   "kind": "arm",
+   "id": "duvall-branch",
+   "cells": 38
+  },
+  {
+   "index": 28,
+   "kind": "arm",
+   "id": "glover-branch",
+   "cells": 0
+  },
+  {
+   "index": 29,
+   "kind": "arm",
+   "id": "glover-creek",
+   "cells": 122
+  },
+  {
+   "index": 30,
+   "kind": "arm",
+   "id": "graham-branch",
+   "cells": 0
+  },
+  {
+   "index": 31,
+   "kind": "arm",
+   "id": "gross-branch",
+   "cells": 140
+  },
+  {
+   "index": 32,
+   "kind": "arm",
+   "id": "hayes-branch",
+   "cells": 200
+  },
+  {
+   "index": 33,
+   "kind": "arm",
+   "id": "honeycomb-creek",
+   "cells": 9155
+  },
+  {
+   "index": 34,
+   "kind": "arm",
+   "id": "horn-branch",
+   "cells": 56
+  },
+  {
+   "index": 35,
+   "kind": "arm",
+   "id": "hurricane-branch",
+   "cells": 504
+  },
+  {
+   "index": 36,
+   "kind": "arm",
+   "id": "jagger-branch",
+   "cells": 1898
+  },
+  {
+   "index": 37,
+   "kind": "arm",
+   "id": "jones-creek-jackson-jones-creek-tennessee-river",
+   "cells": 0
+  },
+  {
+   "index": 38,
+   "kind": "arm",
+   "id": "jones-creek-jackson-rorex-creek-jones-creek",
+   "cells": 4433
+  },
+  {
+   "index": 39,
+   "kind": "arm",
+   "id": "kizzort-branch",
+   "cells": 469
+  },
+  {
+   "index": 40,
+   "kind": "arm",
+   "id": "long-hollow-branch",
+   "cells": 42
+  },
+  {
+   "index": 41,
+   "kind": "arm",
+   "id": "long-island-creek",
+   "cells": 2277
+  },
+  {
+   "index": 42,
+   "kind": "arm",
+   "id": "marshall-branch",
+   "cells": 723
+  },
+  {
+   "index": 43,
+   "kind": "arm",
+   "id": "mccorkle-branch",
+   "cells": 317
+  },
+  {
+   "index": 44,
+   "kind": "arm",
+   "id": "mink-creek-jackson",
+   "cells": 5294
+  },
+  {
+   "index": 45,
+   "kind": "arm",
+   "id": "mink-creek-marshall",
+   "cells": 1205
+  },
+  {
+   "index": 46,
+   "kind": "arm",
+   "id": "minky-creek",
+   "cells": 2428
+  },
+  {
+   "index": 47,
+   "kind": "arm",
+   "id": "mormon-hole-branch",
+   "cells": 154
+  },
+  {
+   "index": 48,
+   "kind": "arm",
+   "id": "mud-creek",
+   "cells": 17110
+  },
+  {
+   "index": 49,
+   "kind": "arm",
+   "id": "nichols-branch",
+   "cells": 3020
+  },
+  {
+   "index": 50,
+   "kind": "arm",
+   "id": "north-sauty-creek",
+   "cells": 21426
+  },
+  {
+   "index": 51,
+   "kind": "arm",
+   "id": "owen-branch",
+   "cells": 1647
+  },
+  {
+   "index": 52,
+   "kind": "arm",
+   "id": "parton-branch",
+   "cells": 267
+  },
+  {
+   "index": 53,
+   "kind": "arm",
+   "id": "polecat-branch",
+   "cells": 2322
+  },
+  {
+   "index": 54,
+   "kind": "arm",
+   "id": "poplar-spring-branch",
+   "cells": 0
+  },
+  {
+   "index": 55,
+   "kind": "arm",
+   "id": "pump-spring-branch",
+   "cells": 0
+  },
+  {
+   "index": 56,
+   "kind": "arm",
+   "id": "rocky-branch-jackson",
+   "cells": 69
+  },
+  {
+   "index": 57,
+   "kind": "arm",
+   "id": "rocky-branch-marshall",
+   "cells": 315
+  },
+  {
+   "index": 58,
+   "kind": "arm",
+   "id": "roseberry-creek",
+   "cells": 12039
+  },
+  {
+   "index": 59,
+   "kind": "arm",
+   "id": "seibold-branch",
+   "cells": 4918
+  },
+  {
+   "index": 60,
+   "kind": "arm",
+   "id": "sequatchie-river",
+   "cells": 0
+  },
+  {
+   "index": 61,
+   "kind": "arm",
+   "id": "short-creek",
+   "cells": 4060
+  },
+  {
+   "index": 62,
+   "kind": "arm",
+   "id": "slaton-branch",
+   "cells": 3403
+  },
+  {
+   "index": 63,
+   "kind": "arm",
+   "id": "south-sauty-creek",
+   "cells": 17927
+  },
+  {
+   "index": 64,
+   "kind": "arm",
+   "id": "sterne-branch",
+   "cells": 424
+  },
+  {
+   "index": 65,
+   "kind": "arm",
+   "id": "town-creek-jackson",
+   "cells": 8568
+  },
+  {
+   "index": 66,
+   "kind": "arm",
+   "id": "town-creek-marshall",
+   "cells": 12835
+  },
+  {
+   "index": 67,
+   "kind": "arm",
+   "id": "widows-creek",
+   "cells": 1684
+  },
+  {
+   "index": 68,
+   "kind": "arm",
+   "id": "yellow-creek",
+   "cells": 1587
+  }
+ ],
+ "zones": [
+  {
+   "zone": 0,
+   "arm": "archie-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 1,
+   "arm": "aspel-branch",
+   "name": "head",
+   "index": 0,
+   "of": 2
+  },
+  {
+   "zone": 2,
+   "arm": "aspel-branch",
+   "name": "mouth",
+   "index": 1,
+   "of": 2
+  },
+  {
+   "zone": 3,
+   "arm": "baker-spring-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 4,
+   "arm": "beech-creek",
+   "name": "head",
+   "index": 0,
+   "of": 2
+  },
+  {
+   "zone": 5,
+   "arm": "beech-creek",
+   "name": "mouth",
+   "index": 1,
+   "of": 2
+  },
+  {
+   "zone": 6,
+   "arm": "bengis-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 7,
+   "arm": "berry-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 8,
+   "arm": "big-culvert-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 9,
+   "arm": "big-spring-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 10,
+   "arm": "big-spring-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 11,
+   "arm": "big-spring-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 12,
+   "arm": "big-spring-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 13,
+   "arm": "big-spring-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 14,
+   "arm": "black-oak-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 15,
+   "arm": "blue-spring-brook",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 16,
+   "arm": "boshart-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 17,
+   "arm": "brogue-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 18,
+   "arm": "browns-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 19,
+   "arm": "browns-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 20,
+   "arm": "browns-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 21,
+   "arm": "browns-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 22,
+   "arm": "browns-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 23,
+   "arm": "chandler-branch",
+   "name": "head",
+   "index": 0,
+   "of": 2
+  },
+  {
+   "zone": 24,
+   "arm": "chandler-branch",
+   "name": "mouth",
+   "index": 1,
+   "of": 2
+  },
+  {
+   "zone": 25,
+   "arm": "coon-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 26,
+   "arm": "coon-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 27,
+   "arm": "coon-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 28,
+   "arm": "coon-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 29,
+   "arm": "coon-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 30,
+   "arm": "crooked-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 31,
+   "arm": "crow-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 32,
+   "arm": "crow-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 33,
+   "arm": "crow-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 34,
+   "arm": "crow-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 35,
+   "arm": "crow-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 36,
+   "arm": "deal-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 37,
+   "arm": "dripping-spring-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 38,
+   "arm": "dry-creek-jackson-into-coon-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 39,
+   "arm": "dry-creek-jackson-into-roseberry-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 40,
+   "arm": "dry-creek-jackson-into-roseberry-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 41,
+   "arm": "dry-creek-jackson-into-roseberry-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 42,
+   "arm": "dry-creek-jackson-into-roseberry-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 43,
+   "arm": "dry-creek-jackson-into-roseberry-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 44,
+   "arm": "dry-creek-jackson-into-south-sauty-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 45,
+   "arm": "dry-creek-marshall",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 46,
+   "arm": "duvall-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 47,
+   "arm": "glover-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 48,
+   "arm": "gross-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 49,
+   "arm": "hayes-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 50,
+   "arm": "honeycomb-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 51,
+   "arm": "honeycomb-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 52,
+   "arm": "honeycomb-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 53,
+   "arm": "honeycomb-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 54,
+   "arm": "honeycomb-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 55,
+   "arm": "horn-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 56,
+   "arm": "hurricane-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 57,
+   "arm": "jagger-branch",
+   "name": "head",
+   "index": 0,
+   "of": 2
+  },
+  {
+   "zone": 58,
+   "arm": "jagger-branch",
+   "name": "mouth",
+   "index": 1,
+   "of": 2
+  },
+  {
+   "zone": 59,
+   "arm": "jones-creek-jackson-rorex-creek-jones-creek",
+   "name": "head",
+   "index": 0,
+   "of": 3
+  },
+  {
+   "zone": 60,
+   "arm": "jones-creek-jackson-rorex-creek-jones-creek",
+   "name": "middle",
+   "index": 1,
+   "of": 3
+  },
+  {
+   "zone": 61,
+   "arm": "jones-creek-jackson-rorex-creek-jones-creek",
+   "name": "mouth",
+   "index": 2,
+   "of": 3
+  },
+  {
+   "zone": 62,
+   "arm": "kizzort-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 63,
+   "arm": "long-hollow-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 64,
+   "arm": "long-island-creek",
+   "name": "head",
+   "index": 0,
+   "of": 2
+  },
+  {
+   "zone": 65,
+   "arm": "long-island-creek",
+   "name": "mouth",
+   "index": 1,
+   "of": 2
+  },
+  {
+   "zone": 66,
+   "arm": "marshall-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 67,
+   "arm": "mccorkle-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 68,
+   "arm": "mink-creek-jackson",
+   "name": "head",
+   "index": 0,
+   "of": 3
+  },
+  {
+   "zone": 69,
+   "arm": "mink-creek-jackson",
+   "name": "middle",
+   "index": 1,
+   "of": 3
+  },
+  {
+   "zone": 70,
+   "arm": "mink-creek-jackson",
+   "name": "mouth",
+   "index": 2,
+   "of": 3
+  },
+  {
+   "zone": 71,
+   "arm": "mink-creek-marshall",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 72,
+   "arm": "minky-creek",
+   "name": "head",
+   "index": 0,
+   "of": 3
+  },
+  {
+   "zone": 73,
+   "arm": "minky-creek",
+   "name": "middle",
+   "index": 1,
+   "of": 3
+  },
+  {
+   "zone": 74,
+   "arm": "minky-creek",
+   "name": "mouth",
+   "index": 2,
+   "of": 3
+  },
+  {
+   "zone": 75,
+   "arm": "mormon-hole-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 76,
+   "arm": "mud-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 77,
+   "arm": "mud-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 78,
+   "arm": "mud-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 79,
+   "arm": "mud-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 80,
+   "arm": "mud-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 81,
+   "arm": "nichols-branch",
+   "name": "head",
+   "index": 0,
+   "of": 3
+  },
+  {
+   "zone": 82,
+   "arm": "nichols-branch",
+   "name": "middle",
+   "index": 1,
+   "of": 3
+  },
+  {
+   "zone": 83,
+   "arm": "nichols-branch",
+   "name": "mouth",
+   "index": 2,
+   "of": 3
+  },
+  {
+   "zone": 84,
+   "arm": "north-sauty-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 85,
+   "arm": "north-sauty-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 86,
+   "arm": "north-sauty-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 87,
+   "arm": "north-sauty-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 88,
+   "arm": "north-sauty-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 89,
+   "arm": "owen-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 90,
+   "arm": "parton-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 91,
+   "arm": "polecat-branch",
+   "name": "head",
+   "index": 0,
+   "of": 3
+  },
+  {
+   "zone": 92,
+   "arm": "polecat-branch",
+   "name": "middle",
+   "index": 1,
+   "of": 3
+  },
+  {
+   "zone": 93,
+   "arm": "polecat-branch",
+   "name": "mouth",
+   "index": 2,
+   "of": 3
+  },
+  {
+   "zone": 94,
+   "arm": "rocky-branch-jackson",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 95,
+   "arm": "rocky-branch-marshall",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 96,
+   "arm": "roseberry-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 97,
+   "arm": "roseberry-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 98,
+   "arm": "roseberry-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 99,
+   "arm": "roseberry-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 100,
+   "arm": "roseberry-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 101,
+   "arm": "seibold-branch",
+   "name": "head",
+   "index": 0,
+   "of": 2
+  },
+  {
+   "zone": 102,
+   "arm": "seibold-branch",
+   "name": "mouth",
+   "index": 1,
+   "of": 2
+  },
+  {
+   "zone": 103,
+   "arm": "short-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 104,
+   "arm": "short-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 105,
+   "arm": "short-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 106,
+   "arm": "short-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 107,
+   "arm": "short-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 108,
+   "arm": "slaton-branch",
+   "name": "head",
+   "index": 0,
+   "of": 3
+  },
+  {
+   "zone": 109,
+   "arm": "slaton-branch",
+   "name": "middle",
+   "index": 1,
+   "of": 3
+  },
+  {
+   "zone": 110,
+   "arm": "slaton-branch",
+   "name": "mouth",
+   "index": 2,
+   "of": 3
+  },
+  {
+   "zone": 111,
+   "arm": "south-sauty-creek",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 112,
+   "arm": "south-sauty-creek",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 113,
+   "arm": "south-sauty-creek",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 114,
+   "arm": "south-sauty-creek",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 115,
+   "arm": "south-sauty-creek",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 116,
+   "arm": "sterne-branch",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 117,
+   "arm": "town-creek-jackson",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 118,
+   "arm": "town-creek-jackson",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 119,
+   "arm": "town-creek-jackson",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 120,
+   "arm": "town-creek-jackson",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 121,
+   "arm": "town-creek-jackson",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 122,
+   "arm": "town-creek-marshall",
+   "name": "head",
+   "index": 0,
+   "of": 5
+  },
+  {
+   "zone": 123,
+   "arm": "town-creek-marshall",
+   "name": "upper",
+   "index": 1,
+   "of": 5
+  },
+  {
+   "zone": 124,
+   "arm": "town-creek-marshall",
+   "name": "middle",
+   "index": 2,
+   "of": 5
+  },
+  {
+   "zone": 125,
+   "arm": "town-creek-marshall",
+   "name": "lower",
+   "index": 3,
+   "of": 5
+  },
+  {
+   "zone": 126,
+   "arm": "town-creek-marshall",
+   "name": "mouth",
+   "index": 4,
+   "of": 5
+  },
+  {
+   "zone": 127,
+   "arm": "widows-creek",
+   "name": "whole",
+   "index": 0,
+   "of": 1
+  },
+  {
+   "zone": 128,
+   "arm": "yellow-creek",
+   "name": "head",
+   "index": 0,
+   "of": 2
+  },
+  {
+   "zone": 129,
+   "arm": "yellow-creek",
+   "name": "mouth",
+   "index": 1,
+   "of": 2
+  }
+ ],
+ "rule": "index = masks['reach'] | lake (the cells the layer colours), row-major; band cells take the nearest lake cell's region and zone"
+}

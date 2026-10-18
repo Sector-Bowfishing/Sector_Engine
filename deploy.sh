@@ -60,6 +60,14 @@ CONCURRENCY="${CONCURRENCY:-1}"
 MIN_INSTANCES="${MIN_INSTANCES:-1}"
 MAX_INSTANCES="${MAX_INSTANCES:-30}"
 
+# The Linux image has to answer every route before it ships: three revisions
+# that built and tested clean on macOS aborted the Linux Swift runtime on
+# their first request (2026-09-27, 00041-00043). See scripts/linux-smoke.sh.
+if [[ "${SKIP_LINUX_SMOKE:-0}" != "1" ]]; then
+  "$(dirname "$0")/scripts/linux-smoke.sh" || { echo "✗ not deploying: the Linux smoke test failed"; exit 1; }
+fi
+
+
 # Health probes. Startup: HTTP /health (the default is a bare TCP check, which
 # passes before the server can answer). Liveness: a frozen instance is restarted
 # after ~1 minute — in the outage one stayed in rotation for 35+ minutes. Probes go
