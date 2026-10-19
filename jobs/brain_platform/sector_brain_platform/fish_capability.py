@@ -89,12 +89,18 @@ def validate_evidence(ev: dict, rubric: dict, cohorts: dict) -> list[str]:
     roster = set()
     for c in cohorts["cohorts"].values():
         roster |= set(c["species"])
-    for sid in sorted(roster | set(cohorts.get("notAssessedByPolicy") or [])):
+    not_individual = set((cohorts.get("notIndividuallyAssessable") or {}).keys())
+    if roster & not_individual:
+        e.append(f"cohorts: {sorted(roster & not_individual)} are both rostered and not individually assessable")
+    for sid in sorted(roster | set(cohorts.get("notAssessedByPolicy") or []) | not_individual):
         if sid not in sp:
             e.append(f"{sid}: rostered species missing from the evidence (never silently dropped)")
     for sid in cohorts.get("notAssessedByPolicy") or []:
         if sid in sp and sp[sid].get("evaluationStatus") != "NOT_ASSESSED":
             e.append(f"{sid}: NOT_ASSESSED by policy must stay NOT_ASSESSED")
+    for sid in not_individual:
+        if sid in sp and sp[sid].get("evaluationStatus") != "INSUFFICIENT_EVIDENCE":
+            e.append(f"{sid}: a grouped/unresolved taxon is INSUFFICIENT_EVIDENCE (unscored)")
     for sid, s in sp.items():
         st = s.get("evaluationStatus")
         if st not in (SCORED,) + UNSCORED:
@@ -195,7 +201,7 @@ def research_backlog(species: dict, rubric: dict, target_roster=()) -> list[dict
     for sid, s in species.items():
         if s.get("evaluationStatus") != SCORED:
             rows.append({"speciesId": sid, "role": s.get("role"), "evaluationStatus": s.get("evaluationStatus"), "currentScore": None,
-                         "recommendedNextAction": "POLICY_HOLD" if s.get("evaluationStatus") == "NOT_ASSESSED" else "FIX_EVALUATION",
+                         "recommendedNextAction": {"NOT_ASSESSED": "POLICY_HOLD", "INSUFFICIENT_EVIDENCE": "RESOLVE_TAXONOMY"}.get(s.get("evaluationStatus"), "FIX_EVALUATION"),
                          "policyBlocked": s.get("evaluationStatus") == "NOT_ASSESSED", "reason": s.get("reason")})
             continue
         kc = s.get("knowledgeContext") or {}

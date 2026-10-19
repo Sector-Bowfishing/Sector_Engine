@@ -125,3 +125,18 @@ def test_legacy_maturity_scorer_is_independent():
     src = open(fc.__file__).read()
     assert "score_biological" not in src.replace("Separate from `score_biological`", "")
     assert "fish_capability" not in open(scoring.__file__).read()
+
+
+def test_cohorts_v2_treats_grouped_taxa_consistently_and_keeps_v1():
+    c2 = fc.load_json(os.path.join(DOCS, "fish-capability-cohorts-v2.json"))
+    assert COHORTS["cohortsVersion"] == "fish-capability-cohorts-v1" and len(COHORTS["cohorts"]["ALL_ASSESSED"]["species"]) == 27     # history kept
+    assert len(c2["cohorts"]["ALL_ASSESSED"]["species"]) == 26 and c2["cohorts"]["TARGET"] == COHORTS["cohorts"]["TARGET"]
+    assert set(c2["notIndividuallyAssessable"]) == {"carpsuckers_group"}
+    assert set(COHORTS["cohorts"]["ALL_ASSESSED"]["species"]) - set(c2["cohorts"]["ALL_ASSESSED"]["species"]) == {"carpsuckers_group"}
+    assert c2["notAssessedByPolicy"] == COHORTS["notAssessedByPolicy"]
+    assert "RAISES" in c2["treatmentRule"]["denominatorChange"]          # the effect on the number is declared, not hidden
+
+
+def test_rubric_2_1_revision_is_recorded_and_weights_unchanged():
+    assert RUBRIC["rubricVersion"] == "2.1.0-candidate"
+    assert [h["version"] for h in RUBRIC["revisionHistory"]] == ["2.0.0-candidate", "2.1.0-candidate"]

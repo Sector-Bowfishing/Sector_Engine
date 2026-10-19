@@ -271,7 +271,8 @@
        "RESOLVE_CONTRADICTION",
        "POLICY_HOLD",
        "MAINTAIN",
-       "FIX_EVALUATION"
+       "FIX_EVALUATION",
+       "RESOLVE_TAXONOMY"
       ]
      }
     }

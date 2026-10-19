@@ -32,7 +32,7 @@ from sector_brain_platform import fish_capability as fc      # noqa: E402
 
 REPO = os.path.normpath(os.path.join(HERE, "..", "..", ".."))
 DEFAULT_RUBRIC = os.path.join(REPO, "docs", "brains", "scoring", "fish-biological-capability-v2.json")
-DEFAULT_COHORTS = os.path.join(REPO, "docs", "brains", "scoring", "fish-capability-cohorts-v1.json")
+DEFAULT_COHORTS = os.path.join(REPO, "docs", "brains", "scoring", "fish-capability-cohorts-v2.json")
 BRAIN_JSON = os.path.join(REPO, "brains", "fish", "brain.json")
 OVERLAY_STATUS = "HYPOTHETICAL_CANDIDATE"
 

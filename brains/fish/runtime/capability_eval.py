@@ -30,7 +30,7 @@ import movement_outlook as mo
 import rules as rl
 import target_set as ts
 
-EVALUATOR_VERSION = "fish-capability-evaluator-2.0.0"
+EVALUATOR_VERSION = "fish-capability-evaluator-2.1.0"
 EVIDENCE_SCHEMA = "fish-biological-capability-evidence-v2"
 RUBRIC_ID = "FISH_BIOLOGICAL_CAPABILITY_V2"
 EVALUATION_STATUS = ("ASSESSED", "NOT_ASSESSED", "INSUFFICIENT_EVIDENCE", "EVALUATION_FAILED")
@@ -432,6 +432,15 @@ def _res(fraction: float, detail: dict, kc: dict | None = None, cid: str | None 
     return r
 
 
+def _scaled(r: dict, factor: float, why: str, kc: dict, cid: str) -> dict:
+    """Abstention/safety credit is proportional to how much executable knowledge it protects (rubric 2.1 abstentionPolicy)."""
+    if r.get("result") == "NOT_APPLICABLE" or r.get("fraction") is None or factor >= 1.0:
+        return r
+    d = dict(r.get("detail") or {})
+    d |= {"unscaledFraction": r["fraction"], "breadthScale": round(factor, 6), "scaleWhy": why}
+    return _res(r["fraction"] * factor, d, kc, cid)
+
+
 def _ladder(t: dict) -> float:
     """A RESPONSE rule test: fired + condition-sensitive + outlook direction = 1.0; fired + sensitive = 0.75; fired = 0.5; conflict surfaced = 0.25."""
     if t["fired"]:
@@ -476,6 +485,9 @@ def evaluate_species(h: Harness, sid: str, kc: dict, signatures: dict, coverage:
         crit["BIO-4"] = _res(sum(checks.values()) / len(checks), {"checks": checks} | ({"runtimeDefect": "uncertainty check failed: " + ", ".join(k for k, v in checks.items() if not v)} if not all(checks.values()) else {}), kc, "BIO-4")
     else:
         crit["BIO-4"] = _res(0.0, {"dependsOnExecutable": True}, kc, "BIO-4")
+    breadth = len(fams) / len(CORE_BEHAVIOUR_FAMILIES)
+    breadth_why = f"executable knowledge in {len(fams)} of {len(CORE_BEHAVIOUR_FAMILIES)} core behaviour families"
+    crit["BIO-4"] = _scaled(crit["BIO-4"], breadth, breadth_why, kc, "BIO-4")
     tagged = [t for t in executed if t.get("behavior")]
     crit["BIO-5"] = _res(len(tagged) / len(executed) if executed else 0.0, {"executedRules": len(executed), "withBehaviorDescriptor": len(tagged)}, kc, "BIO-5")
 
@@ -502,7 +514,7 @@ def evaluate_species(h: Harness, sid: str, kc: dict, signatures: dict, coverage:
                                 "shallowTendencyObserved": shallow_seen,
                                 "depthKnowledge": "KNOWS_DEPTH_PREFERENCE" if depth_fired else ("SHALLOW_DEEP_TENDENCY_ONLY" if hab3 else "HAS_NO_DEPTH_RULE")}, kc, "HAB-3")
     crit["HAB-4"] = _supplied_depth(h, sid, depth_fired, kc)
-    crit["HAB-5"] = _depth_abstention(h, sid, depth_fired, kc) if exec_ok else _res(0.0, {"dependsOnExecutable": True}, kc, "HAB-5")
+    crit["HAB-5"] = _scaled(_depth_abstention(h, sid, depth_fired, kc), breadth, breadth_why, kc, "HAB-5") if exec_ok else _res(0.0, {"dependsOnExecutable": True}, kc, "HAB-5")
 
     # ---- Category 3: environmental responses
     for cid, fam, fname in (("ENV-1", TEMPERATURE, "TEMPERATURE"), ("ENV-2", HYDROLOGY, "HYDROLOGY"), ("ENV-3", CLARITY, "CLARITY")):
@@ -512,12 +524,19 @@ def evaluate_species(h: Harness, sid: str, kc: dict, signatures: dict, coverage:
                                                                           "conflict", "scenario", "observedOutlook")} for t in ts_],
                                 "conflict": bool(ts_) and all(t["conflict"] for t in ts_)}, kc, cid)
     env_fired = [t for t in resp_t if t["fired"] and t["feature"] in ENVIRONMENTAL]
-    crit["ENV-4"] = _env_safety(h, sid, env_fired, ev, kc) if env_fired else _res(0.0, {"note": "no executable environmental rule: nothing to keep safe"}, kc, "ENV-4")
+    env_fams = {f for t in env_fired for f in t["family"]} & {"TEMPERATURE", "HYDROLOGY", "CLARITY"}
+    crit["ENV-4"] = (_scaled(_env_safety(h, sid, env_fired, ev, kc), min(1.0, len(env_fams) / 2.0), f"executable rules in {len(env_fams)} environmental famil(ies); full safety credit needs 2",
+                             kc, "ENV-4") if env_fired else _res(0.0, {"note": "no executable environmental rule: nothing to keep safe"}, kc, "ENV-4"))
 
     # ---- Category 4: spawning & seasonality
     if phen_t:
         a = [phen_t["inWindow"]["ok"]] + ([phen_t["outside"]["ok"]] if "outside" in phen_t else [])
-        crit["SPN-1"] = _res(sum(a) / len(a) if a else 0.0, {"phenology": {k: phen_t.get(k) for k in ("ruleId", "inWindow", "outside")}}, kc, "SPN-1")
+        isc = dict(phen_t["inWindow"]["scenario"])
+        spawn_out = h.outlook(sid, isc.pop("month"), **isc)
+        behaviour = spawn_out["state"] != "UNKNOWN"          # Fish says what the fish DOES in its spawn window, not only when the window is
+        crit["SPN-1"] = _res(0.5 * (sum(a) / len(a) if a else 0.0) + 0.5 * behaviour,
+                             {"phenology": {k: phen_t.get(k) for k in ("ruleId", "inWindow", "outside")},
+                              "spawnPeriodBehaviour": {"state": spawn_out["state"], "movement": spawn_out["movement"], "where": spawn_out.get("where"), "known": behaviour}}, kc, "SPN-1")
         b = [phen_t["monthOnly"]["ok"]] + ([phen_t["tempOnly"]["ok"]] if "tempOnly" in phen_t else [])
         crit["SPN-2"] = _res(sum(b) / len(b), {"phenology": {k: phen_t.get(k) for k in ("monthOnly", "tempOnly")}}, kc, "SPN-2")
         checks = {"spawnOutputCarriesConfidenceAndTransfer": phen_t["inWindow"]["carriesConfidence"]}
@@ -534,9 +553,14 @@ def evaluate_species(h: Harness, sid: str, kc: dict, signatures: dict, coverage:
     for i, s in enumerate(my):
         seasons.setdefault(SEASON_OF[grid[i]["month"]], set()).add(s)
     season_sigs = {k: frozenset(v) for k, v in seasons.items()}
-    known_seasons = [k for k, v in season_sigs.items() if any(x[0] != "UNKNOWN" or x[4] not in (None, "UNKNOWN") for x in v)]
-    varies = len(set(season_sigs.values())) >= 2 and bool(known_seasons)
-    crit["SPN-3"] = _res(1.0 if varies else 0.0, {"seasonsWithKnownOutput": sorted(known_seasons), "distinctSeasonalPatterns": len(set(season_sigs.values()))}, kc, "SPN-3")
+    # Seasonal breadth = seasons in which Fish says what the fish is doing (outlook known), NOT counting the spawn-window state alone;
+    # full credit needs that behaviour to differ between seasons (a year-round constant is half credit per season).
+    behaviour_sigs = {k: frozenset(x[:4] for x in v) for k, v in seasons.items()}
+    known_seasons = sorted(k for k, v in seasons.items() if any(x[0] != "UNKNOWN" for x in v))
+    varies = len(set(behaviour_sigs.values())) >= 2
+    spn3 = (len(known_seasons) / 4.0) * (1.0 if varies else 0.5)
+    crit["SPN-3"] = _res(spn3, {"seasonsWithKnownBehaviour": known_seasons, "behaviourDiffersBetweenSeasons": varies,
+                                "distinctSeasonalPatterns": len(set(behaviour_sigs.values())), "note": "spawn-window state alone does not count"}, kc, "SPN-3")
 
     # ---- Category 5: day / night
     dn_rules = [t for t in resp_t if t["feature"] == "daypart"]
@@ -560,7 +584,7 @@ def evaluate_species(h: Harness, sid: str, kc: dict, signatures: dict, coverage:
         crit["DN-2"] = _res(frac, det, kc, "DN-2")
     else:
         crit["DN-2"] = _res(0.0, {"evidenceKind": kind or "NONE", "conflict": conflict}, kc, "DN-2")
-    crit["DN-3"] = _daypart_abstention(h, sid, dn_rules, kc) if exec_ok else _res(0.0, {"dependsOnExecutable": True}, kc, "DN-3")
+    crit["DN-3"] = _scaled(_daypart_abstention(h, sid, dn_rules, kc), breadth, breadth_why, kc, "DN-3") if exec_ok else _res(0.0, {"dependsOnExecutable": True}, kc, "DN-3")
 
     # ---- Category 6: knowledge application (full pipeline)
     crit["APP-1"] = _application(h, sid, ev, phen_t, kc)
@@ -728,7 +752,10 @@ def _application(h: Harness, sid: str, ev: list[dict], phen_t: dict | None, kc: 
               "evidenceReferences": bool(s.get("evidenceReferences")),
               "boundaryAndContract": not ba.validate_assessment(a)}
     frac = sum(checks.values()) / len(checks) if checks["biologicalAssessment"] else 0.0
-    det = {"scenario": sc, "checks": checks, "output": {"state": s["biologicalState"], "reasons": s.get("supportingReasons"), "spawn": s.get("spawningAssessment", {}).get("state"),
+    spawn_only = s["biologicalState"]["state"] == "UNKNOWN"
+    if spawn_only:
+        frac *= 0.5          # only a spawn-window state: Fish cannot say what the fish is doing under these conditions
+    det = {"scenario": sc, "checks": checks, "spawnStateOnly": spawn_only, "output": {"state": s["biologicalState"], "reasons": s.get("supportingReasons"), "spawn": s.get("spawningAssessment", {}).get("state"),
                                                        "habitatPreferences": [x.get("label") or x["habitatClass"] for x in s.get("habitatPreferences") or [] if x.get("state") == "ACTIVE"]}}
     if checks["biologicalAssessment"] and not all(checks.values()):
         det["runtimeDefect"] = "application output incomplete: " + ", ".join(k for k, v in checks.items() if not v)
@@ -811,6 +838,7 @@ def evaluate(*, ruleset: rl.RuleSet, profiles: dict, cohorts: dict, knowledge: d
     rosters = cohorts["cohorts"]
     evaluate_ids = sorted(set(rosters["TARGET"]["species"]) | set(rosters["ALL_ASSESSED"]["species"]))
     policy_na = sorted(cohorts.get("notAssessedByPolicy") or [])
+    not_individual = dict(cohorts.get("notIndividuallyAssessable") or {})          # grouped / unresolved taxa: no species-level biology to evaluate
     species_info = {s: {"assessment": (profiles.get(s) or {}).get("assessment"), "researchMaturity": (profiles.get(s) or {}).get("researchMaturity")}
                     for s in set(evaluate_ids) | set(policy_na)}
     kv = knowledge["researchVersion"] + (f"+{knowledge['overlay']['id']}" if knowledge.get("overlay") else "")
@@ -828,7 +856,12 @@ def evaluate(*, ruleset: rl.RuleSet, profiles: dict, cohorts: dict, knowledge: d
         except Exception as ex:      # a broken case is reported, never scored
             case_results.append({"caseId": c.get("caseId"), "speciesId": c.get("speciesId"), "error": str(ex), "passed": False, "reviewStatus": c.get("reviewStatus")})
     out_species = {}
+    for sid, why in sorted(not_individual.items()):
+        out_species[sid] = {"evaluationStatus": "INSUFFICIENT_EVIDENCE", "role": ts.role(sid),
+                            "reason": f"not an individual species ({(profiles.get(sid) or {}).get('taxonomyStatus', 'unresolved')}): {why}. Explicitly unscored; outside both rosters"}
     for sid in evaluate_ids:
+        if sid in not_individual:
+            continue
         prof = profiles.get(sid)
         if prof is None:
             out_species[sid] = {"evaluationStatus": "EVALUATION_FAILED", "reason": "species is in the frozen roster but absent from the knowledge release",

@@ -7,6 +7,7 @@
   gated_fish   one usable rule that cannot fire until a reviewer asserts its season (REVIEW_BLOCKED)
   draft_fish   only a DRAFT rule (knowledge not in runtime)
   conflict_fish  night evidence that disagrees (FAVORABLE vs LIMITING)
+  spawn_fish   a spawn window and nothing else (narrow knowledge must not earn broad credit)
   na_fish      NOT_ASSESSED by policy
 """
 import copy
@@ -68,6 +69,7 @@ def base_rules():
         resp("CF-NGT-01", "conflict_fish", "daypart", ["NIGHT"], "FAVORABLE", months=[6, 7, 8]),
         resp("CF-NGT-02", "conflict_fish", "daypart", ["NIGHT"], "LIMITING", months=[6, 7, 8]),
         habitat("CF-HAB-01", "conflict_fish", "woodyCover", months=[6, 7, 8]),
+        phenology("SP-SPN-01", "spawn_fish", [4, 5, 6], 15.0, 20.0),          # spawn window only (narrow knowledge)
     ]
     return rs
 
@@ -85,7 +87,7 @@ def profile(sid, assessment="ASSESSED", domains=None):
                           "domains": {k: {"score": v, "contradictions": []} for k, v in d.items() if not k.startswith("_")}} if assessment == "ASSESSED" else {}}
 
 
-ASSESSED = ["alpha_fish", "beta_fish", "twin_fish", "gamma_fish", "gated_fish", "draft_fish", "conflict_fish"]
+ASSESSED = ["alpha_fish", "beta_fish", "twin_fish", "gamma_fish", "gated_fish", "draft_fish", "conflict_fish", "spawn_fish"]
 
 
 def profiles():

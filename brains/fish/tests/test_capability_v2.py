@@ -98,7 +98,28 @@ class SpeciesCapability(Base):
         for sid in ("gamma_fish", "gated_fish", "draft_fish"):
             for cid in ce.ABSTENTION_CRITERIA:
                 self.assertEqual(self.ev["species"][sid]["criteria"][cid]["fraction"], 0.0, (sid, cid))
-        self.assertEqual(self.crit("beta_fish", "DN-3")["fraction"], 1.0)                   # a species with real knowledge does earn correct abstention
+        self.assertEqual(self.crit("alpha_fish", "DN-3")["fraction"], 1.0)                  # broad knowledge: full credit for correct abstention
+        b = self.crit("beta_fish", "DN-3")                                                   # one core family of five: abstention credit scales to 1/5
+        self.assertAlmostEqual(b["fraction"], 0.2, places=6)
+        self.assertEqual(b["detail"]["unscaledFraction"], 1.0)
+
+    def test_narrow_spawn_only_knowledge_earns_narrow_credit(self):          # rubric 2.1 corrections A + B
+        c = self.ev["species"]["spawn_fish"]["criteria"]
+        self.assertEqual(c["SPN-2"]["fraction"], 1.0)                                       # the window and its temperature trigger are real
+        self.assertEqual(c["SPN-1"]["fraction"], 0.5)                                       # ...but Fish cannot say what the fish does while spawning
+        self.assertEqual(c["SPN-3"]["fraction"], 0.0)                                       # spawn state alone is not seasonal behaviour
+        self.assertAlmostEqual(c["APP-1"]["fraction"], 0.5, places=6)                       # spawn-state-only application is halved
+        for cid in ce.ABSTENTION_CRITERIA:
+            self.assertLessEqual(c[cid]["fraction"], 0.2 + 1e-9, cid)
+        sp = self.res["species"]["spawn_fish"]
+        self.assertLess(sp["categoryScores"]["spawnSeason"]["earned"], 2.0)
+        self.assertLess(sp["capabilityScore"], 4.0)
+        for cid in ("SPN-1", "SPN-3"):                                                     # a species with behaviour around its window keeps full credit
+            self.assertEqual(self.crit("alpha_fish", cid)["fraction"], 1.0, cid)
+
+    def test_input_safety_scales_with_environmental_breadth(self):
+        self.assertEqual(self.crit("alpha_fish", "ENV-4")["fraction"], 1.0)                # temperature + hydrology + clarity executed
+        self.assertNotIn("breadthScale", self.crit("alpha_fish", "ENV-4")["detail"])
 
     def test_knowledge_application_runs_the_full_pipeline(self):          # 13 (application)
         d = self.crit("alpha_fish", "APP-1")
@@ -167,6 +188,21 @@ class Scoring(Base):
         self.assertTrue(fc.validate_evidence(ev, F.rubric(), F.cohorts()))
         with self.assertRaises(ValueError):
             score(ev)
+
+    def test_grouped_or_unresolved_taxa_are_unscored_outside_the_rosters(self):          # cohort v2 rule
+        coh = F.cohorts()
+        coh["cohorts"]["ALL_ASSESSED"]["species"] = [s for s in F.ASSESSED if s != "gamma_fish"]
+        coh["cohorts"]["TARGET"]["species"] = ["alpha_fish", "beta_fish"]
+        coh["notIndividuallyAssessable"] = {"gamma_fish": "synthetic grouped row"}
+        ev = evaluate(cohorts=coh)
+        self.assertEqual(ev["species"]["gamma_fish"]["evaluationStatus"], "INSUFFICIENT_EVIDENCE")
+        res = score(ev, cohorts=coh)
+        self.assertIsNone(res["species"]["gamma_fish"]["capabilityScore"])
+        self.assertEqual(res["aggregates"]["ALL_ASSESSED"]["eligibleSpecies"], len(F.ASSESSED) - 1)
+        self.assertEqual(next(b for b in res["researchBacklog"] if b["speciesId"] == "gamma_fish")["recommendedNextAction"], "RESOLVE_TAXONOMY")
+        bad = copy.deepcopy(coh)
+        bad["cohorts"]["ALL_ASSESSED"]["species"].append("gamma_fish")
+        self.assertTrue(any("not individually assessable" in e for e in fc.validate_evidence(ev, F.rubric(), bad)))
 
     def test_knowledge_version_must_be_uniform_inside_an_aggregate(self):          # 29
         sp = self.res["species"]
