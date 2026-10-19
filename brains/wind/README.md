@@ -6,8 +6,8 @@ Rules for every session: **[`BRAIN_OPERATING_CONTRACT.md`](BRAIN_OPERATING_CONTR
 
 | Path | Holds |
 |---|---|
-| `runtime/` | production: `main.py` (job entrypoint), `sector_wind/` (ingest, decoder, store, sample/interp, validate, monitor, bowfishing physics, `brain/` adapter + Publisher V2 artifact builder), `lakes.json` (interim Lake Registry reference copy), `requirements.txt` |
-| `contracts/` | `wind-publication-v1.json` (derived from the Publisher registry by `describe_contract.py --check`) |
+| `runtime/` | production: `main.py` (job entrypoint), `sector_wind/` (ingest, decoder, store, sample/interp, validate, monitor, bowfishing physics, `brain/` adapter + Publisher V2 artifact builder, `decision/` Bowfishing Decision layer V2: bank ranking, alternatives, semantics, trip timeline, scenarios; not wired into the job), `lakes.json` (interim Lake Registry reference copy), `requirements.txt` |
+| `contracts/` | `wind-publication-v1.json` (derived from the Publisher registry by `describe_contract.py --check`); `wind-bowfishing-decision-v1.json` (V2 decision contract, SHADOW); `wind-validation-entrypoints-v1.json` (machine-readable validation entry points) |
 | `tests/` | production tests (offline; network tests marked `network`) |
 | `research/` | research rules (README) and `tools/`: research scripts and the research-only package `sector_wind_research` (+ its tests). Never in the image |
 | `deploy/` | `deploy-job.sh` (stages the image context; refuses without approval), `Dockerfile`, `read_service/` (internal candidate read service) |
@@ -15,6 +15,8 @@ Rules for every session: **[`BRAIN_OPERATING_CONTRACT.md`](BRAIN_OPERATING_CONTR
 
 ```bash
 cd brains/wind
+# V2 decision layer, nonproduction (SYNTHETIC wind on the committed real-geometry subset):
+#   PYTHONPATH=runtime venv/bin/python -m sector_wind.decision decide --fetch tests/fixtures/guntersville_decision_subset.json.gz --lake 'Guntersville|AL' --mph 12 --dir 225
 python -m venv venv && venv/bin/pip install -r runtime/requirements.txt -r research/tools/requirements.txt pytest
 venv/bin/python -m pytest                         # production + research-tool tests (pytest.ini sets import roots)
 venv/bin/python -m pytest -m network              # golden cells vs Open-Meteo (needs network)

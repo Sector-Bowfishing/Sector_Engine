@@ -22,6 +22,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
+from sector_brain_platform import wind_measurements  # noqa: E402
 from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
                                    prune_activity, guard_scores, score_biological, score_engine, score_intelligence, score_lake)
 
@@ -106,6 +107,17 @@ def compute(facts: dict, now: dt.datetime) -> dict:
     }
 
 
+def attach_wind_measurements(scores: dict, facts: dict, now: dt.datetime) -> dict:
+    """Additive: the certification value, version and breakdown are untouched; the evaluation is HELD (not attached) if inconsistent."""
+    rubric, ev, brain = wind_measurements.load_all()
+    m = wind_measurements.measurements(scores["wind"], ev, rubric, brain, now, health=(facts.get("health") or {}).get("wind"))
+    if m["consistency"]:
+        print(f"wind measurements HELD: {m['consistency']}")
+        return scores
+    scores["wind"] = {**scores["wind"], "measurements": m}
+    return scores
+
+
 def _content(score: dict | None) -> dict:
     """A score block without its refresh timestamp, for comparing substance."""
     # RTDB does not store empty objects/arrays, so a block computed with `scoreBreakdown: {}` reads back WITHOUT the key; treating {} / [] / None as
@@ -162,6 +174,9 @@ def main() -> int:
     ap.add_argument("--db", default=None, help="Brain RTDB URL (default: the contract's)")
     ap.add_argument("--report", default=None, help="write the full report JSON here")
     ap.add_argument("--if-changed", action="store_true", help="write a control node only when its content (minus timestamps) differs from what is published")
+    ap.add_argument("--wind-measurements", action="store_true",
+                    help="attach Wind's three measurements (BI v2 PROPOSED, Scientific Confidence, Production Readiness) to /scores/wind as "
+                         "`measurements`; OFF by default until the owner adopts BI v2 (wind_measurements.py)")
     a = ap.parse_args()
     now = dt.datetime.now(dt.timezone.utc)
     db = BrainRtdb(a.db, brain_id=WRITER) if a.db else BrainRtdb(brain_id=WRITER)
@@ -172,6 +187,8 @@ def main() -> int:
     # (or ambiguous against) what is published is HELD and the published block is used, so one Brain's stale artifact cannot move any score, the Engine
     # score or the control overview. Deliberate regression needs a recorded decision: SCORE_GUARD_ALLOW=<brainId>[,<brainId>].
     scores, held = guard_scores(compute(facts, now), old_scores, allow=[x for x in os.environ.get("SCORE_GUARD_ALLOW", "").split(",") if x])
+    if a.wind_measurements:
+        attach_wind_measurements(scores, facts, now)
     engine = score_engine(facts["engine"], scores, now)
     updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores)   # canonical: /scores/engine
     # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.

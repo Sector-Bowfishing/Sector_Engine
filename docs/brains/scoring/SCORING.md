@@ -43,6 +43,8 @@ Ops displays scores; it never computes them.
 These are published verbatim with `basis: FROZEN`; re-scoring them "for consistency" is forbidden.
 > **Wind score block (2026-10-13):** `frozen-scores.json` → `wind` is now *generated* from the canonical Wind scorer (`jobs/wind-hourly/research/wind_score_entry.py`; basis COMPUTED, never hand-edited) and moves with valid live days. It is durable only after the brain-orchestrator image is rebuilt with this file — see `docs/brains/wind/WIND_SCORE_PUBLICATION_HANDOFF.md`.
 
+> **Wind three measurements (2026-10-19, V2, not active):** the certification block above is unchanged. `sector_brain_platform.wind_measurements` evaluates Bowfishing Intelligence `wind-bowfishing-intelligence-v2` (rubric `wind-bowfishing-intelligence-v2.json`, **PROPOSED** pending owner review), Scientific Confidence (statuses only) and Production Readiness (gates only), from `evidence/wind-measurements-evidence.json`. `score_brains.py --wind-measurements` attaches them to `/scores/wind` as `measurements` (additive, no `score.changed` event); the flag is off by default. A newer certification block enters only through `wind_score_refresh.py` (`jobs/brain-scores/refresh_wind_score.py`): live reliability refreshes automatically, and any other movement is HELD for review. Design: `brains/wind/docs/WIND_BOWFISHING_FIRST_V2.md` §9.
+
 
 ## Computed rubrics
 

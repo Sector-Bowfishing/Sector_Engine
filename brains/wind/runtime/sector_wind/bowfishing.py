@@ -126,6 +126,7 @@ def evaluate_bank(L, i, speed_ms, dir_from, duration_h=STEADY_H, hist_hm0=None):
             "predictedHm0M": round(h, 4), "predictedHm0In": round(h / 0.0254, 2), "chopClass": chop_class(h), "predictedSurfaceClass": p,
             "predictedSurfaceLabel": CHOP[p], "predictedTextureClass": texture_class(speed_ms),
             "exposureRank": RANK[chop_class(h)], "memoryContributionM": round(h - h_static, 4),
+            "predictedHm0RangeIn": [round(lo / 0.0254, 2), round(hi / 0.0254, 2)],     # the ±1 m/s × 0.7-1.3 fetch range behind `confidence`
             "confidence": "firm" if chop_class(lo) == chop_class(hi) else "boundary",
             "reason": geometry_reason(r9, eff)}
 

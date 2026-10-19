@@ -1,0 +1,312 @@
+{
+ "schema": "wind-measurements-evidence-v1",
+ "brainId": "wind",
+ "generatedAt": "2026-10-19T19:44:18Z",
+ "codeCommit": "ac0fcbe597ed",
+ "knowledgeVersion": "wind-bowfishing-decision-1.0.0",
+ "decisionSchema": "sector-wind-bowfishing-decision-v1",
+ "inputs": {
+  "atmosphericRowsSha": "84074d9a890ab3af",
+  "bwisV1DefinitionSha256": "21e2a3268f36643284036f74d576a9515c3189f5ee7fc60dda2444de6de233c1",
+  "h2": "SEALED until 2027-01-01 (not read)"
+ },
+ "atmospheric": {
+  "rows": "NBM v5.0 (all corpus inits, CAL+H1, 8 stations)",
+  "nRows": 140462,
+  "nNight": 46864,
+  "nightSpeedMaeMS": 0.8396,
+  "nightSpeedBiasMS": -0.0415,
+  "directionWithin22_5": 0.7583,
+  "directionCircMaeDeg": 18.32,
+  "windyHourMaeMS": 1.9559,
+  "nWindy": 8254,
+  "decisionAccuracy": {
+   "symmetricNight5mph": 0.6143,
+   "nSymmetric": 9468,
+   "perFetchSymmetric": [
+    0.7098,
+    0.7098,
+    0.7098,
+    0.6938,
+    0.6185,
+    0.244
+   ],
+   "v1ObservedNight5mph": 0.6172,
+   "nV1": 7149,
+   "observedNight10mph": 0.4166,
+   "nObserved10": 727,
+   "allNight": 0.6479,
+   "nAllNight": 46864,
+   "fetchesM": [
+    100,
+    250,
+    500,
+    1000,
+    2000,
+    5000
+   ],
+   "definition": "share of night rows where surface class P from the forecast wind equals P from the observed wind (frozen CEM, 6 h steady), equal weight per fetch; symmetric = observed OR forecast >= 5 mph (BWIS v1 D1 note)"
+  },
+  "h2Read": false
+ },
+ "strongWind": {
+  "source": "NBM v5.0 historical corpus 2026-05-06 -> 2026-10-06, all hourly cycles, leads 1/3/6/12/18, 8 frozen stations (pre-registered stage3c/WIND_HISTORICAL_CORPUS_PREREG.md, sha256 76f97e5c\u2026)",
+  "skillFileSha": "675253437d3a6d78",
+  "observedNight15mphEvents": 49,
+  "pod15mphByLead": {
+   "1": 0.0,
+   "3": 0.0,
+   "6": 0.0,
+   "12": 0.0,
+   "18": 0.0
+  },
+  "far15mphByLead": {
+   "1": null,
+   "3": null,
+   "6": null,
+   "12": null,
+   "18": null
+  },
+  "gust20ktPodByLead": {
+   "1": 0.068,
+   "3": 0.0537,
+   "6": 0.0392,
+   "12": 0.0308,
+   "18": 0.0208
+  },
+  "gust20ktFarByLead": {
+   "1": 0.8444,
+   "3": 0.859,
+   "6": 0.871,
+   "12": 0.9032,
+   "18": 0.9333
+  },
+  "certificationDim1Why": "night pooled MAE 0.837, bias -0.042; 49 observed events; POD [0.0, 0.0, 0.0, 0.0, 0.0] FAR [None, None, None, None, None]",
+  "certificationDim3Why": "conditional gust bias -1.91 m/s; >= 20 kt POD [0.06796116504854369, 0.05365853658536585, 0.0392156862745098, 0.03076923076923077, 0.020833333333333332] FAR [0.8444444444444444, 0.8589743589743589, 0.8709677419354839, 0.9032258064516129, 0.9333333333333333]",
+  "leadDim4Credit": 1.0,
+  "probabilisticFlag": {
+   "status": "EXPLORATORY",
+   "data": "CAL+H1 (consumed); recalibration test waits for H2 (2027-01-01)",
+   "eventThreshold": "observed >= 10 mph",
+   "pod": 0.488,
+   "far": 0.642,
+   "nEvents": 166,
+   "n": 4716,
+   "fileSha": "a15463a7b571ae6b"
+  }
+ },
+ "geometry": {
+  "qaChecks": {
+   "tableHashes": true,
+   "method9RayIslandsFirstLand": true,
+   "exactShapelyMedianLE5pct": true,
+   "nationalQA50": true
+  },
+  "canonicalCases": [
+   {
+    "case": "1 open main-lake bank",
+    "effM": 7090.0,
+    "expected": 7090.0,
+    "pass": true
+   },
+   {
+    "case": "2 protected cove",
+    "effM": 376.7,
+    "expected": 376.7,
+    "pass": true
+   },
+   {
+    "case": "3 behind a point",
+    "effM": 872.2,
+    "expected": 872.2,
+    "pass": true
+   },
+   {
+    "case": "4 island shielding",
+    "effM": 515.6,
+    "expected": 515.6,
+    "pass": true
+   },
+   {
+    "case": "5 creek arm, wind along it",
+    "effM": 7988.9,
+    "expected": 7988.9,
+    "pass": true
+   },
+   {
+    "case": "6 same arm, crosswind",
+    "effM": 153.3,
+    "expected": 153.3,
+    "pass": true
+   }
+  ],
+  "canonicalCasesPassed": 6,
+  "canonicalCasesTotal": 6
+ },
+ "surface": {
+  "model": "M0",
+  "buoyRows": 48572,
+  "hm0MaeM": 0.1414,
+  "exact": 0.4054,
+  "within1": 0.7789,
+  "severe": 0.0489,
+  "transient": {
+   "m4Promoted": false,
+   "why": "frozen M0 chosen (M4 failed its promotion rule) -> 0 by definition"
+  }
+ },
+ "field": {
+  "certificationLedgerFiles": 0,
+  "observations": 0,
+  "exposurePairs": 0,
+  "surfaceObservations": 0,
+  "requirement": "exposure >= 24 holdout pairs (40 full), >= 2 lakes, >= 3 quadrants; surface >= 36 observations (60 full) under Evidence Addendum v1"
+ },
+ "overwater": {
+  "measuredStationComparisons": 0
+ },
+ "coverage": {
+  "developmentLakesComplete": 4,
+  "directoryLakesPassed": 50
+ },
+ "provenance": {
+  "kindEverywhere": true,
+  "unknownIsGrey": true,
+  "explanationOnEveryResult": true
+ },
+ "scenarios": {
+  "suite": "wind-bowfishing-scenarios-v1",
+  "capabilityMap": {
+   "S01": "GI3",
+   "S02": "GI3",
+   "S06": "GI3",
+   "S03": "SI3",
+   "S10": "SI3",
+   "S17": "SI3",
+   "S16": "DI2",
+   "S18": "DI2",
+   "S11": "DI3",
+   "S05": "TI1",
+   "S04": "TI2",
+   "S14": "TI2",
+   "S07": "UM1",
+   "S08": "UM1",
+   "S09": "UM1",
+   "S15": "UM1",
+   "S12": "UM2",
+   "S13": "UM2"
+  },
+  "lakes": {
+   "Guntersville|AL": {
+    "banks": 6504,
+    "tableSha256": "e8b3ebd866640abd414eaeae5d4100152fdd89616cedfde926ff261273fb6d27",
+    "passed": 18,
+    "total": 18,
+    "results": {
+     "S01": true,
+     "S02": true,
+     "S03": true,
+     "S04": true,
+     "S05": true,
+     "S06": true,
+     "S07": true,
+     "S08": true,
+     "S09": true,
+     "S10": true,
+     "S11": true,
+     "S12": true,
+     "S13": true,
+     "S14": true,
+     "S15": true,
+     "S16": true,
+     "S17": true,
+     "S18": true
+    },
+    "failedChecks": {}
+   },
+   "Wheeler|AL": {
+    "banks": 4932,
+    "tableSha256": "a6effc367b0af30d6a8a94a5a588dec4c874d2b706e31da440de7b6ef9cd6301",
+    "passed": 18,
+    "total": 18,
+    "results": {
+     "S01": true,
+     "S02": true,
+     "S03": true,
+     "S04": true,
+     "S05": true,
+     "S06": true,
+     "S07": true,
+     "S08": true,
+     "S09": true,
+     "S10": true,
+     "S11": true,
+     "S12": true,
+     "S13": true,
+     "S14": true,
+     "S15": true,
+     "S16": true,
+     "S17": true,
+     "S18": true
+    },
+    "failedChecks": {}
+   },
+   "Wilson|AL": {
+    "banks": 1147,
+    "tableSha256": "bd2aa00b1c559e4eefa7f6064a076eff8e9a2514e1df26b92e956ebe92dfcec9",
+    "passed": 18,
+    "total": 18,
+    "results": {
+     "S01": true,
+     "S02": true,
+     "S03": true,
+     "S04": true,
+     "S05": true,
+     "S06": true,
+     "S07": true,
+     "S08": true,
+     "S09": true,
+     "S10": true,
+     "S11": true,
+     "S12": true,
+     "S13": true,
+     "S14": true,
+     "S15": true,
+     "S16": true,
+     "S17": true,
+     "S18": true
+    },
+    "failedChecks": {}
+   },
+   "Pickwick Lake|TN": {
+    "banks": 2591,
+    "tableSha256": "efad135ca55c400e2e668154256b863df06187b6fff54aa59a42a9bbb7d881fb",
+    "passed": 18,
+    "total": 18,
+    "results": {
+     "S01": true,
+     "S02": true,
+     "S03": true,
+     "S04": true,
+     "S05": true,
+     "S06": true,
+     "S07": true,
+     "S08": true,
+     "S09": true,
+     "S10": true,
+     "S11": true,
+     "S12": true,
+     "S13": true,
+     "S14": true,
+     "S15": true,
+     "S16": true,
+     "S17": true,
+     "S18": true
+    },
+    "failedChecks": {}
+   }
+  },
+  "inputClass": "SYNTHETIC wind on the full frozen fetch tables",
+  "evidenceClass": "MODEL_CAPABILITY"
+ }
+}
