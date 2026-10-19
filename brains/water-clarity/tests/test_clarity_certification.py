@@ -569,8 +569,9 @@ with m.patch.object(run, 'load_directory', return_value=[{{'id':'Guntersville|AL
 def test_research_is_separate_from_the_production_package():
     odd = [os.path.relpath(p, CLARITY) for p in walk_files(os.path.join(CLARITY, "runtime")) if os.path.splitext(p)[1] not in {".py", ".json"}]
     assert not odd, odd
-    assert sorted(os.listdir(os.path.join(CLARITY, "runtime"))) == ["brain_platform.py", "catalog.json", "clarity_brain.py", "publish_artifact.py", "run.py"]
-    assert sorted(os.listdir(os.path.join(CLARITY, "research"))) == ["GAPS.json", "README.md"]
+    ls = lambda d: sorted(n for n in os.listdir(os.path.join(CLARITY, d)) if n != "__pycache__")      # noqa: E731
+    assert ls("runtime") == ["brain_platform.py", "catalog.json", "clarity_brain.py", "publish_artifact.py", "run.py"]
+    assert ls("research") == ["GAPS.json", "README.md"]
     gaps = load("brains", "water-clarity", "research", "GAPS.json")
     assert jsonschema_lite.validate(gaps, load("contracts", "schemas", "research-gaps.schema.json")) == []
     assert BRAIN["researchWorkspace"] == {"workspaceId": "water-clarity"}                                     # a LOGICAL id; never a physical path
