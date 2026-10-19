@@ -1,20 +1,11 @@
-# water-clarity-brain
+# Moved: `jobs/water-clarity-brain` → `brains/water-clarity/`
 
-Publishes production Water Clarity into the Brain RTDB (`sector-brain`) for Sector Ops.
-It **reads** production (Engine `/lakes` and `/conditions`, `gs://sector-lake-surface`, Cloud Run status)
-and writes only Water Clarity's Brain paths. Design, schemas and paths: `docs/brains/WATER_CLARITY_BRAIN_INTEGRATION.md`;
-field mapping: `docs/brains/WATER_CLARITY_BRAIN_MAPPING.md`.
+**Status: RETIRED (Water Clarity Structural Certification V1).** The Water Clarity Brain's (`brainId: water-clarity`) permanent home is [`brains/water-clarity/`](../../brains/water-clarity/README.md). Nothing here is code, an entrypoint or a deploy unit; there is no second Clarity implementation.
 
-```bash
-python3 -m unittest discover -s tests -v          # 35 tests, no network
-python3 run.py --dry-run --out /tmp/wcb --lakes "Guntersville|AL"
-python3 run.py --lakes "Guntersville|AL"           # publish (gcloud credentials)
-python3 run.py                                     # whole directory (~40 min at --engine-concurrency 2)
-```
+| Was | Now |
+|---|---|
+| `clarity_brain.py`, `run.py`, `brain_platform.py`, `catalog.json` | `brains/water-clarity/runtime/` |
+| `tests/` | `brains/water-clarity/tests/` |
+| `deploy-job.sh`, `Dockerfile` | `brains/water-clarity/deploy/` |
 
-`deploy-job.sh` creates the scheduled Cloud Run job; it has **not** been run.
-
-**Private overlay.** `catalog.json` is public, so it holds status-level facts only.
-- Detailed candidate-research results come from a private overlay: `catalog.private.json` beside this file (gitignored), or `CLARITY_PRIVATE_CATALOG=<path|gs://…>`.
-- Without the overlay, the Brain publishes status-level facts and reports `catalogDetail: PUBLIC_ONLY`.
-- Never commit the overlay.
+The Cloud Run job id `water-clarity-brain` (job manifest, never deployed) is not a repository path and is unchanged. This pointer retires with the other pointer READMEs in Repository Phase 7.

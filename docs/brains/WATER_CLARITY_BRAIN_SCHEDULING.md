@@ -1,8 +1,8 @@
 # Water Clarity Brain — scheduling decision (2026-10-13)
 
 **Decision: the Water Clarity Brain stays MANUAL.** The `30 4 * * *` America/Chicago cron that
-`jobs/water-clarity-brain/deploy-job.sh` would create was **not** created, and the job was not deployed.
-`/jobs/water-clarity-brain` says `executionMode: MANUAL`, `deploymentStatus: NOT_DEPLOYED`.
+`brains/water-clarity/deploy/deploy-job.sh` would create was **not** created, and the job was not deployed.
+`/brains/water-clarity` says `executionMode: MANUAL`, `deploymentStatus: NOT_DEPLOYED`.
 
 ## Why a daily cron is the wrong shape
 - One fleet run reads `/conditions` for 621 lakes (27 min, `durationMs 1,640,062` on 2026-10-12) and every
@@ -23,8 +23,8 @@
    `lastSuccessfulRun`, or when the Engine serving revision changed (the `/conditions` clarity path), else SKIP.
    This needs the Brain to publish `stalenessModel: "VERSION"` with a `fingerprint` (lake-surface run id +
    serving revision) instead of the 26-h TIME rule.
-3. **Deploy as a scale-to-zero job** with `jobs/water-clarity-brain/deploy-job.sh` **minus** the scheduler block
+3. **Deploy as a scale-to-zero job** with `brains/water-clarity/deploy/deploy-job.sh` **minus** the scheduler block
    (delete the `gcloud scheduler jobs create` branch before running it), service account `water-clarity-brain`
    with `roles/firebasedatabase.admin` only (drop `run.viewer`/`cloudscheduler.viewer`, no longer needed).
 
-Until then: `python3 jobs/water-clarity-brain/run.py --write` by hand after a satellite update worth publishing.
+Until then: `python3 brains/water-clarity/runtime/run.py --write` by hand after a satellite update worth publishing.

@@ -1,0 +1,6 @@
+__pycache__/
+out/
+polygons.geojson.gz
+catalog.private.json
+# vendored at deploy time by deploy-job.sh --stage-only from jobs/brain_platform
+sector_brain_platform/

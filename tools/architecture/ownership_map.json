@@ -48,9 +48,14 @@
       "phase": "Phase 6 (Lake Registry; Clarity after D4)"
     },
     {
+      "prefix": "brains/water-clarity",
+      "owner": "Water Clarity Brain",
+      "phase": "Clarity certification (STRUCTURALLY_CERTIFIED_V1 evidence; output-changing cleanups need approval)"
+    },
+    {
       "prefix": "jobs/water-clarity-brain",
       "owner": "Water Clarity Brain",
-      "phase": "Phase 6 (BLOCKED by D4)"
+      "phase": "RETIRED to brains/water-clarity (Water Clarity Structural Certification V1); pointer README only"
     },
     {
       "prefix": "jobs/hydrology-hourly",

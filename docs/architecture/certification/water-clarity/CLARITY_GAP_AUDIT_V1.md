@@ -2,6 +2,7 @@
 
 **Date:** 2026-10-17 · **Branch:** `cert/water-clarity-architecture-v1` off `origin/main` `1b17fbdc` · **Procedure:** `audit-1/BRAIN_FACTORY_CHECKLIST_V1.md` Phase 0.
 **Status:** `CLARITY_DISCOVERY_AND_D4_RECONCILIATION_READY` — **no implementation written; D4 not crossed; nothing deployed or written to production.**
+> **Update 2026-10-18:** every gap in this audit was closed or recorded by the structural certification — see `CLARITY_STRUCTURAL_CERTIFICATION_REPORT.md` (status `WATER_CLARITY_STRUCTURALLY_CERTIFIED_V1_READY_FOR_REVIEW`). This audit is kept as the historical Phase 0 record.
 Evidence: git (all branches/worktrees), read-only `gcloud run jobs/scheduler describe|list`, read-only shallow GETs of `sector-brain` (`brains/`, `health/brains/`, `scores/` for `water-clarity`), repository docs. No lake-level data was read.
 
 

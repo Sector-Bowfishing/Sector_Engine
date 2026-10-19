@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "water-clarity",
+  "displayName": "Water Clarity Brain",
+  "humanName": "Water Clarity",
+  "domain": "condition",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "job",
+    "language": "python",
+    "entrypoint": "brains/water-clarity/runtime/run.py",
+    "trigger": {"kind": "manual"}
+  },
+  "publishes": [
+    {
+      "contractId": "clarity-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/water-clarity/contracts/clarity-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/waterClarity", "/lakes/{k}/profiles/waterClarity",
+        "/lakeFleet/{k}/slots/waterClarity", "/lakeFleet/{k}/slots/waterClarity/{child}",
+        "/lakeFleet/{k}/readiness/waterClarity", "/lakeFleet/{k}/modelVersions/waterClarity",
+        "/brains/water-clarity/{child}", "/validation/water-clarity", "/health/brains/water-clarity/{child}", "/activity/{event}",
+        "/sources/{id}", "/health/sources/{id}"
+      ]
+    }
+  ],
+  "consumes": [
+    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "REQUIRED"}
+  ],
+  "providers": [],
+  "researchWorkspace": {"workspaceId": "water-clarity"},
+  "score": {"type": "ENGINE_READINESS_SCORE", "path": "/scores/water-clarity", "rubricRef": "docs/brains/scoring/frozen-scores.json"},
+  "customerIntegrationMode": "none",
+  "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
+  "authorizedConsumers": ["ops", "sector-intelligence"],
+  "tests": ["brains/water-clarity/tests"],
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+}

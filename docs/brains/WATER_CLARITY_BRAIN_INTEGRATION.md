@@ -2,7 +2,7 @@
 
 **Branch** `brain/water-clarity` (worktree `Sector_Engine-clarity-brain`), based on the deployed tag `deployed/sector-engine-00072-way`.
 
-**Code** `jobs/water-clarity-brain/`
+**Code** `brains/water-clarity/`
 
 **Status (2026-10-12):** **Brain v1.1.0** (semantic contract). Built, tested (32/32), and run manually from the developer Mac to publish the full fleet into the Brain RTDB `sector-brain`.
 - **Not deployed** as a job.
@@ -65,7 +65,7 @@ Sector Engine / WaterClarityBrain is the authoritative source for every item bel
 ```
 Engine /lakes ──────────────┐
 Engine /conditions (prod) ──┤
-gs://sector-lake-surface ───┼──► WaterClarityBrain (jobs/water-clarity-brain) ──► sector-brain RTDB ──► Sector Ops (read-only)
+gs://sector-lake-surface ───┼──► WaterClarityBrain (brains/water-clarity) ──► sector-brain RTDB ──► Sector Ops (read-only)
 Cloud Run / Scheduler API ──┘        reads only; separate process
 ```
 
@@ -267,7 +267,7 @@ Rasters stay in Cloud Storage; RTDB holds only references (about 4 KB per state)
 
 ## 12. Production compatibility
 
-- **No production code changed.** The branch adds only `jobs/water-clarity-brain/` and `docs/brains/`.
+- **No production code changed.** The branch adds only `brains/water-clarity/` and `docs/brains/`.
 - **No deploy:** engine, jobs, rules and clients are unchanged.
 - **The publisher only reads production:**
   - one `/conditions` call per lake, bounded to 2 at a time (the engine runs at concurrency 1 per instance, max 30);
@@ -309,8 +309,8 @@ Rasters stay in Cloud Storage; RTDB holds only references (about 4 KB per state)
    - `roles/cloudscheduler.viewer`.
 
    `deploy-job.sh` does this.
-4. `jobs/water-clarity-brain/deploy-job.sh` creates the Cloud Run job (1 task, 1 vCPU / 1 GiB, 2 h timeout) and the Scheduler `30 4 * * *` America/Chicago, after lake-surface-daily.
-5. First execution: `gcloud run jobs execute water-clarity-brain --region us-central1`. Then check `/health/brains/water-clarity` and `/health/jobs/water-clarity-brain`.
+4. `brains/water-clarity/deploy/deploy-job.sh` creates the Cloud Run job (1 task, 1 vCPU / 1 GiB, 2 h timeout) and the Scheduler `30 4 * * *` America/Chicago, after lake-surface-daily.
+5. First execution: `gcloud run jobs execute water-clarity-brain --region us-central1`. Then check `/health/brains/water-clarity` and `/health/brains/water-clarity`.
 6. Optional: the Ops allowlist (`/access/opsUsers`) already lists Michael; nothing else is needed for reading.
 
 ## 15. Open items

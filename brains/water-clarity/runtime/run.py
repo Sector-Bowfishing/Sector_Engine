@@ -39,7 +39,9 @@ PROJECT = os.environ.get("GCP_PROJECT", "sector-9393c")
 REGION = os.environ.get("GCP_REGION", "us-central1")
 _HERE = os.path.dirname(os.path.abspath(__file__))
 POLYGONS = os.environ.get("POLYGONS") or next(       # in the image: copied beside run.py; in the repo: the lake-surface job's copy
-    (p for p in (os.path.join(_HERE, "polygons.geojson.gz"), os.path.join(_HERE, "..", "lake-surface", "polygons.geojson.gz")) if os.path.exists(p)),
+    (p for p in (os.path.join(_HERE, "polygons.geojson.gz"),
+                 os.path.join(_HERE, "..", "..", "..", "jobs", "lake-surface", "polygons.geojson.gz"),      # repo layout: brains/water-clarity/runtime
+                 os.path.join(_HERE, "..", "lake-surface", "polygons.geojson.gz")) if os.path.exists(p)),   # legacy flat layout
     os.path.join(_HERE, "polygons.geojson.gz"))
 STORAGE_API = "https://storage.googleapis.com/storage/v1/b/sector-lake-surface/o"
 
@@ -154,6 +156,17 @@ def job_health(job_id: str, meta: dict, tokens: bp.TokenProvider) -> dict:
     return base
 
 
+def deployment_version() -> str:
+    if os.environ.get("DEPLOYMENT_VERSION"):
+        return os.environ["DEPLOYMENT_VERSION"]
+    try:
+        import subprocess
+        sha = subprocess.run(["git", "rev-parse", "--short=12", "HEAD"], cwd=_HERE, capture_output=True, text=True, timeout=10).stdout.strip()
+        return f"brain/water-clarity@{sha}" if sha else "brain/water-clarity@unknown"
+    except Exception:
+        return "brain/water-clarity@unknown"
+
+
 # ---------------------------------------------------------------- run
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -169,7 +182,7 @@ def main() -> int:
     t0 = time.time()
     report = {"startedAt": bp.iso(now), "dryRun": a.dry_run, "published": 0, "engineFailures": [], "publishFailures": [], "errors": []}
     tokens = bp.TokenProvider()
-    rtdb = None if a.dry_run else bp.BrainRtdb(a.rtdb_url, tokens, brain_id=cb.BRAIN_ID)
+    rtdb = None if a.dry_run else bp.BrainRtdb(a.rtdb_url, tokens, brain_id=cb.BRAIN_ID, recorder=bp.ConsumptionRecorder(cb.BRAIN_ID))   # reads recorded as ACTUAL RTDB consumption (GCS/HTTP reads are NOT recorded: platform debt)
     payload = {}                     # dry-run: everything that would be written
 
     def write(updates: dict, what: str) -> bool:
@@ -323,12 +336,26 @@ def main() -> int:
     write(glob, "fleet records")
     report.update({"status": status, "durationMs": duration_ms, "lakes": len(lakes), "engineOk": n_ok,
                    "readinessCounts": registry["readinessCounts"], "breakdowns": registry["breakdowns"],
-                   "rtdbWrites": rtdb.writes if rtdb else 0, "rtdbBytes": rtdb.bytes_written if rtdb else 0})
+                   "rtdbWrites": rtdb.writes if rtdb else 0, "rtdbBytes": rtdb.bytes_written if rtdb else 0,
+                   "consumedRtdbReads": rtdb.consumed() if rtdb else None})      # consumption-lineage-v1: RTDB reads only; None = not recorded (dry run); HTTP/GCS reads are never in it
     if a.out:
         os.makedirs(a.out, exist_ok=True)
         json.dump(report, open(os.path.join(a.out, "run_report.json"), "w"), indent=1)
         if a.dry_run:
             json.dump(payload, open(os.path.join(a.out, "payload.json"), "w"), indent=1)
+            # The Publisher-bound view of the SAME update: one sealed clarity-publication-v1 artifact, evaluated by the SHADOW Publisher in memory.
+            # Nothing is sent anywhere; no production path is touched. consumed is None: a dry run reads no RTDB, and GCS/HTTP reads are not recorded.
+            import uuid
+            import publish_artifact as pa
+            built = pa.build_artifact(payload, pa.BuildContext(bp.iso(now), str(uuid.uuid4()), deployment_version(), pa.catalog_digest()), consumed=None)
+            if built.artifact:
+                json.dump(built.artifact, open(os.path.join(a.out, "artifact.json"), "w"), indent=1, sort_keys=True)
+                from sector_brain_platform.publisher import local_shadow_stack
+                stack = local_shadow_stack()
+                ev = stack.publisher.evaluate_reference(stack.writer(cb.BRAIN_ID).write(built.artifact))
+                json.dump({"mode": ev.mode.value, "result": ev.result.value, "codes": ev.codes, "live": False, "artifactSchema": pa.CLARITY_BUNDLE,
+                           "outputFingerprint": built.artifact["lineage"]["outputFingerprint"], "droppedLegacyPaths": len(built.dropped), "deletes": len(built.deletes)},
+                          open(os.path.join(a.out, "shadow_verdict.json"), "w"), indent=1)
     print(json.dumps({k: report[k] for k in ("status", "lakes", "engineOk", "published", "durationMs", "readinessCounts")}, indent=1))
     return 0 if status in ("HEALTHY", "WARNING") else 2
 

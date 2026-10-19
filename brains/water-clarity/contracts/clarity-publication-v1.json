@@ -1,0 +1,234 @@
+{
+  "brainId": "water-clarity",
+  "builder": "brains/water-clarity/runtime/publish_artifact.py",
+  "contractId": "clarity-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (clarity_specs, clarity_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "freshness": {
+    "brainGeneratedAt": "lineage.generatedAt (this run); publication time is the Publisher's",
+    "evidenceObservedAt": "newest satellite SCENE observation time across lakes; gauge reading times are UNKNOWN in the Engine payload and never substituted",
+    "inputGeneratedAt": "newest Engine /conditions evaluation time (the input product's generation time)",
+    "model": "TIME",
+    "neverUsed": "lastSuccessfulRun / lastSuccess (process history, not evidence freshness)",
+    "threshold": "staleAfterHours (26) applied to the Engine evaluation time the estimate restates"
+  },
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "consumed": "ACTUAL RTDB reads recorded by the platform client when available; GCS/HTTP reads are NOT recorded (platform debt); absent = unknown, never []",
+    "knowledgeRelease": "NONE (no canonical versioned release or manifest; the catalog digest is part of inputFingerprint)",
+    "manifestRef": "NONE",
+    "manifestSha256": "NONE"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "descriptor",
+      "versions",
+      "activeModel",
+      "candidateModel",
+      "modelRoster",
+      "certifications",
+      "processingPaths",
+      "sensorAuthority",
+      "strongPolicy",
+      "readinessRule",
+      "stateTypes",
+      "vocabularies",
+      "layerCatalog",
+      "catalogDetail"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "statusReasons",
+      "supportedLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "satelliteFreshDays",
+      "lastSuccessfulRun",
+      "lastError",
+      "deploymentVersion",
+      "breakdowns",
+      "runsPerMinute",
+      "updatedAt"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/waterClarity",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakes/{k}/profiles/waterClarity",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/waterClarity",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/waterClarity/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/waterClarity",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/waterClarity",
+          "status": "DERIVED_PROJECTION"
+        }
+      ],
+      "projections": [
+        {
+          "id": "clarity-snapshot-copy-v1",
+          "kind": "COPY",
+          "owner": "publisher",
+          "source": "/lakes/{k}/states/waterClarity",
+          "target": "/snapshots/{k}/latest/waterClarity",
+          "valueFrom": null
+        },
+        {
+          "id": "clarity-snapshot-brainversion-v1",
+          "kind": "VALUE_FROM",
+          "owner": "publisher",
+          "source": "/lakes/{k}/states/waterClarity",
+          "target": "/snapshots/{k}/latest/brainVersions/water-clarity",
+          "valueFrom": "/brains/water-clarity/version"
+        }
+      ],
+      "requiresFreshness": true,
+      "requiresRelease": false,
+      "schemaId": "clarity-lake-state-v1",
+      "volatileContract": "clarity-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/water-clarity/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/water-clarity/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/water-clarity",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/water-clarity/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "projections": [],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "clarity-registry-v1",
+      "volatileContract": "clarity-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/sources/{id}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/sources/{id}",
+          "status": "CANONICAL"
+        }
+      ],
+      "projections": [],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "clarity-source-registry-v1",
+      "volatileContract": "clarity-volatile-v1"
+    }
+  ],
+  "slotErrorChildren": [
+    "stale",
+    "lastError",
+    "lastErrorAt"
+  ],
+  "status": "SHADOW (Publisher Gate P); not wired into the job write path; not a production contract until cutover",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "clarity-volatile-v1",
+    "keys": [
+      "freshUntil",
+      "inputAgeHours",
+      "lastFetchAt",
+      "lastUpdatedAt",
+      "nextCheckAt",
+      "satelliteAgeHours",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:freshUntil": "run time + staleAfterHours (freshness block)",
+      "key:inputAgeHours": "age of the Engine evaluation at run time; moves every run (state provenance)",
+      "key:lastFetchAt": "per-source fetch time in /sources/{id} and /health/sources/{id}; moves every run",
+      "key:lastUpdatedAt": "slot write time; the Orchestrator-era freshness is derived from evidence, never from this",
+      "key:nextCheckAt": "run time + the existing recheck interval (freshness block)",
+      "key:satelliteAgeHours": "age of the newest scene at run time; the scene time itself (observedAt) is NOT volatile",
+      "key:updatedAt": "profile write time (a nested key of /lakes/{k}/profiles/waterClarity); no domain meaning",
+      "path:/brains/water-clarity/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+      "path:/brains/water-clarity/updatedAt": "run timestamp == Publisher metadata (publication.evaluatedAt); retire when Ops reads publication"
+    },
+    "paths": [
+      "/brains/water-clarity/lastSuccessfulRun",
+      "/brains/water-clarity/updatedAt"
+    ],
+    "version": 1
+  }
+}

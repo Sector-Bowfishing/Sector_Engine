@@ -313,7 +313,86 @@ def fish_bundles() -> list[BundleSpec]:
     return [BundleSpec(FISH_BUNDLE, FISH, FISH_SCHEMAS)]
 
 
+# ---- Water Clarity Brain (C1): the third concrete registration (Water Clarity Structural Certification V1). DATA ONLY: no validator/planner/path code changed ------
+CLARITY = "water-clarity"
+CLARITY_SLOT = BRAINS[CLARITY][0]
+CLARITY_SCHEMAS = ("clarity-lake-state-v1", "clarity-registry-v1", "clarity-source-registry-v1")
+CLARITY_BUNDLE = "clarity-publication-v1"
+
+
+def _clarity_sources() -> frozenset:
+    return frozenset(sid for sid, owner in SOURCE_OWNERS.items() if owner == CLARITY)      # only sources Clarity is the acquisition owner of
+
+
+#: /brains/water-clarity CHILD ownership: exactly the children `clarity_brain.registry_entry` builds today (grouped by what each child is). Every child is replaced
+#: as a unit (child level, never the whole node). `publication` and `certification` are reserved (Publisher/Orchestrator).
+CLARITY_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "descriptor", "versions", "activeModel", "candidateModel", "modelRoster", "certifications",
+              "processingPaths", "sensorAuthority", "strongPolicy", "readinessRule", "stateTypes", "vocabularies", "layerCatalog", "catalogDetail"),
+    "status": ("schedule", "enabled", "health", "status", "statusReasons", "supportedLakeCount", "readinessCounts", "staleLakeCount", "staleAfterHours",
+               "satelliteFreshDays", "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "runsPerMinute", "updatedAt"),
+}
+CLARITY_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")        # /health/brains/water-clarity: domain health FACTS only; process/execution fields are Orchestrator-owned
+CLARITY_SLOT_ERROR_CHILDREN = ("stale", "lastError", "lastErrorAt")  # children of /lakeFleet/{k}/slots/waterClarity written when the Engine missed a lake (the last good slot is kept)
+
+#: Clarity's volatile contract. Minimal on purpose (same rule as Wind): only fields that are run-clock or fetch-clock values and carry no change of domain meaning.
+#: The Engine's own evaluation time (`evaluationTime`, `sources[].lastObservationAt`) is deliberately NOT volatile: a new Engine evaluation IS a new input.
+#: Shared defaults (generatedAt publishedAt checkedAt ageHours durationMs) apply on top. Changing this list is a versioned change.
+CLARITY_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "clarity-volatile-v1", 1,
+    keys=frozenset({"inputAgeHours", "satelliteAgeHours", "nextCheckAt", "freshUntil", "lastUpdatedAt", "lastFetchAt", "updatedAt"}),
+    paths=(PathFamily(f"/brains/{CLARITY}/updatedAt", note="transitional"), PathFamily(f"/brains/{CLARITY}/lastSuccessfulRun", note="transitional")),
+    notes={"key:inputAgeHours": "age of the Engine evaluation at run time; moves every run (state provenance)",
+           "key:satelliteAgeHours": "age of the newest scene at run time; the scene time itself (observedAt) is NOT volatile",
+           "key:nextCheckAt": "run time + the existing recheck interval (freshness block)", "key:freshUntil": "run time + staleAfterHours (freshness block)",
+           "key:lastUpdatedAt": "slot write time; the Orchestrator-era freshness is derived from evidence, never from this",
+           "key:lastFetchAt": "per-source fetch time in /sources/{id} and /health/sources/{id}; moves every run",
+           "key:updatedAt": "profile write time (a nested key of /lakes/{k}/profiles/waterClarity); no domain meaning",
+           "path:/brains/water-clarity/updatedAt": "run timestamp == Publisher metadata (publication.evaluatedAt); retire when Ops reads publication",
+           "path:/brains/water-clarity/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"})
+CLARITY_PROJECTIONS = (
+    CompatibilityProjection("clarity-snapshot-copy-v1", f"/lakes/{{k}}/states/{CLARITY_SLOT}", f"/snapshots/{{k}}/latest/{CLARITY_SLOT}", "COPY",
+                            retirement_gate="same Ops/Sector Intelligence snapshot-reader migration program as Wind (reader inventory for the waterClarity field NOT yet verified): readers moved, window elapsed, zero readers proven, rollback export, Michael approval"),
+    CompatibilityProjection("clarity-snapshot-brainversion-v1", f"/lakes/{{k}}/states/{CLARITY_SLOT}", f"/snapshots/{{k}}/latest/brainVersions/{CLARITY}", "VALUE_FROM",
+                            f"/brains/{CLARITY}/version", retirement_gate="retires with clarity-snapshot-copy-v1 (the whole legacy snapshot row for Clarity retires together)"),
+)
+
+
+def clarity_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    node = lambda tmpl: PathFamily(tmpl.format(slot=CLARITY_SLOT), k)      # noqa: E731
+    lake_state = SchemaSpec(
+        "clarity-lake-state-v1", CLARITY,
+        (node("/lakes/{{k}}/states/{slot}"), node("/lakes/{{k}}/profiles/{slot}"),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{CLARITY_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{CLARITY_SLOT}/{{child}}", {**k, "child": one_of(CLARITY_SLOT_ERROR_CHILDREN)},
+                    note="engine-miss facts: the last good slot is kept and only these children change"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{CLARITY_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{CLARITY_SLOT}", k, "DERIVED_PROJECTION")),
+        value_types={f"/lakes/{{k}}/states/{CLARITY_SLOT}": dict, f"/lakes/{{k}}/profiles/{CLARITY_SLOT}": dict}, require_freshness=True,
+        volatile=CLARITY_VOLATILE_CONTRACT_V1, projections=CLARITY_PROJECTIONS)                      # no delete family: Clarity never deletes a lake state
+    registry = SchemaSpec(
+        "clarity-registry-v1", CLARITY,
+        (PathFamily(f"/brains/{CLARITY}/{{child}}", {"child": one_of(c for group in CLARITY_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only (CLARITY_REGISTRY_CHILDREN); never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{CLARITY}"),
+         PathFamily(f"/health/brains/{CLARITY}/{{child}}", {"child": one_of(CLARITY_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only; execution/job health is Orchestrator-owned"),
+         PathFamily("/activity/{event}", {"event": contains(f"-{CLARITY}-")}, note="own domain events only; retention/pruning is a platform concern")),
+        delete_families=(PathFamily(f"/brains/{CLARITY}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",),
+        volatile=CLARITY_VOLATILE_CONTRACT_V1)
+    sources = SchemaSpec(
+        "clarity-source-registry-v1", CLARITY,
+        (PathFamily("/sources/{id}", {"id": one_of(_clarity_sources())}), PathFamily("/health/sources/{id}", {"id": one_of(_clarity_sources())})),
+        volatile=CLARITY_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry, sources]
+
+
+def clarity_bundles() -> list[BundleSpec]:
+    return [BundleSpec(CLARITY_BUNDLE, CLARITY, CLARITY_SCHEMAS)]
+
+
 def default_registry() -> Registry:
-    """Wind and Fish. Every other Brain is registered as an identity (so an unknown id is distinguishable from an unmigrated one) but has no schema:
+    """Wind, Fish and Water Clarity. Every other Brain is registered as an identity (so an unknown id is distinguishable from an unmigrated one) but has no schema:
     anything submitted for them is rejected UNKNOWN_SCHEMA until their own certification registers one."""
-    return Registry(wind_specs() + fish_specs(), wind_bundles() + fish_bundles())
+    return Registry(wind_specs() + fish_specs() + clarity_specs(), wind_bundles() + fish_bundles() + clarity_bundles())

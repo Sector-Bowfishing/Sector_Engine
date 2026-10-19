@@ -2,27 +2,8 @@
   "schemaVersion": "1.0.0",
   "createdBy": "Phase 1B baseline",
   "mode": "REPORT_ONLY",
-  "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates. Phase 2 (Wind): the jobs/wind-hourly entry RESOLVED by the move; two Wind published-label entries carried with an explicit retirement condition. Fish Structural Certification V1: the two jobs/biological-brain entries are carried to brains/fish/runtime (same published labels, same retirement condition).",
+  "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates. Phase 2 (Wind): the jobs/wind-hourly entry RESOLVED by the move; two Wind published-label entries carried with an explicit retirement condition. Fish Structural Certification V1: the two jobs/biological-brain entries are carried to brains/fish/runtime (same published labels, same retirement condition). Water Clarity Structural Certification V1: the jobs/water-clarity-brain/clarity_brain.py entry is carried to brains/water-clarity/runtime (same published label, same retirement condition); the jobs/water-clarity-brain/brain_platform.py entry is RETIRED because the registered-Brain scan reads string constants only and the relocated platform shim has none (the docs/ text was in its docstring).",
   "entries": [
-    {
-      "key": "8|brains/wind/runtime/sector_wind/brain/profile.py|runtime references docs/",
-      "invariant": 8,
-      "path": "brains/wind/runtime/sector_wind/brain/profile.py",
-      "owner": "Wind Brain",
-      "reason": "published provenance label definitionRef = 'docs/intelligence/wind/bowfishing/WIND_BOWFISHING_SCORE_V1.md (frozen)' (a pointer into the private app repo, in published profile state, never opened); changing it changes published output. Pre-existing; first detected by the stricter brains/*/runtime scan in Phase 2.",
-      "plannedMigrationPhase": "Wind certification: replace with a release/contract id when the Wind release manifest exists (output change; needs Michael's approval)",
-      "status": "LEGACY_BASELINE"
-    },
-    {
-      "key": "8|brains/wind/runtime/sector_wind/brain/writer.py|runtime references docs/",
-      "invariant": 8,
-      "path": "brains/wind/runtime/sector_wind/brain/writer.py",
-      "owner": "Wind Brain",
-      "reason": "published provenance label PLATFORM.contract = 'docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0' (a string in published /brains/wind state, never opened as a file); changing it changes published output. Pre-existing; carried by the Phase 2 move.",
-      "plannedMigrationPhase": "Wind certification: replace with a release/contract id when the Wind release manifest exists (output change; needs Michael's approval)",
-      "status": "LEGACY_BASELINE",
-      "carriedFrom": "jobs/wind-hourly/sector_wind/brain/writer.py"
-    },
     {
       "key": "8|brains/fish/runtime/biological_brain.py|runtime references docs/",
       "invariant": 8,
@@ -42,6 +23,35 @@
       "plannedMigrationPhase": "Fish: replace with a contract/release id at the Publisher cutover (output change; needs Michael's approval)",
       "status": "LEGACY_BASELINE",
       "carriedFrom": "jobs/biological-brain/brain_platform.py"
+    },
+    {
+      "key": "8|brains/water-clarity/runtime/clarity_brain.py|runtime references docs/",
+      "invariant": 8,
+      "path": "brains/water-clarity/runtime/clarity_brain.py",
+      "owner": "Water Clarity Brain",
+      "reason": "published label PLATFORM.contract = 'docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0' (a string in the published /brains/water-clarity registry entry, never opened as a file); changing it changes published output. Pre-existing; carried unchanged by the Clarity move (Water Clarity Structural Certification V1).",
+      "plannedMigrationPhase": "Clarity: replace with a contract/release id at the Publisher cutover (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "jobs/water-clarity-brain/clarity_brain.py"
+    },
+    {
+      "key": "8|brains/wind/runtime/sector_wind/brain/profile.py|runtime references docs/",
+      "invariant": 8,
+      "path": "brains/wind/runtime/sector_wind/brain/profile.py",
+      "owner": "Wind Brain",
+      "reason": "published provenance label definitionRef = 'docs/intelligence/wind/bowfishing/WIND_BOWFISHING_SCORE_V1.md (frozen)' (a pointer into the private app repo, in published profile state, never opened); changing it changes published output. Pre-existing; first detected by the stricter brains/*/runtime scan in Phase 2.",
+      "plannedMigrationPhase": "Wind certification: replace with a release/contract id when the Wind release manifest exists (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "8|brains/wind/runtime/sector_wind/brain/writer.py|runtime references docs/",
+      "invariant": 8,
+      "path": "brains/wind/runtime/sector_wind/brain/writer.py",
+      "owner": "Wind Brain",
+      "reason": "published provenance label PLATFORM.contract = 'docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0' (a string in published /brains/wind state, never opened as a file); changing it changes published output. Pre-existing; carried by the Phase 2 move.",
+      "plannedMigrationPhase": "Wind certification: replace with a release/contract id when the Wind release manifest exists (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "jobs/wind-hourly/sector_wind/brain/writer.py"
     },
     {
       "key": "8|jobs/brain-orchestrator/orchestrate.py|legacy runtime references a docs/ path (baseline debt)",
@@ -122,24 +132,6 @@
       "owner": "Sector Intelligence Brain",
       "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
       "plannedMigrationPhase": "Phase 6 (last)",
-      "status": "LEGACY_BASELINE"
-    },
-    {
-      "key": "8|jobs/water-clarity-brain/brain_platform.py|legacy runtime references a docs/ path (baseline debt)",
-      "invariant": 8,
-      "path": "jobs/water-clarity-brain/brain_platform.py",
-      "owner": "Water Clarity Brain",
-      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
-      "plannedMigrationPhase": "Phase 6 (BLOCKED by D4)",
-      "status": "LEGACY_BASELINE"
-    },
-    {
-      "key": "8|jobs/water-clarity-brain/clarity_brain.py|legacy runtime references a docs/ path (baseline debt)",
-      "invariant": 8,
-      "path": "jobs/water-clarity-brain/clarity_brain.py",
-      "owner": "Water Clarity Brain",
-      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
-      "plannedMigrationPhase": "Phase 6 (BLOCKED by D4)",
       "status": "LEGACY_BASELINE"
     },
     {
