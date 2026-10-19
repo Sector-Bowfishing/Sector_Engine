@@ -53,6 +53,6 @@ def score_biological_v1_2_candidate(facts: dict, now: dt.datetime) -> dict:
         else:
             dims.append(dict(d, id=k) if d["status"] == "SCORED" else {"id": k, "weight": d["weight"], "status": "UNKNOWN", "evidence": d.get("evidence")})
     gates = [{"gate": b["gate"], "cap": b["cap"], "why": b["why"]} for b in v1["scoreBlockers"] if "gate" in b]
-    out = finish(CANDIDATE_VERSION, "docs/brains/scoring/BIOLOGICAL_STATE_SCORE_V1_DEFECTS.md", dims, gates, now, v1["nextScoreOpportunity"])
+    out = finish(CANDIDATE_VERSION, CANDIDATE_VERSION, dims, gates, now, v1["nextScoreOpportunity"])      # documented in BIOLOGICAL_STATE_SCORE_V1_DEFECTS.md
     out["candidate"] = {"status": "CANDIDATE_INACTIVE", "fixes": ["B", "D"], "baseline": {"scoreVersion": v1["scoreVersion"], "value": v1["value"], "uncapped": v1["uncapped"]}}
     return out
