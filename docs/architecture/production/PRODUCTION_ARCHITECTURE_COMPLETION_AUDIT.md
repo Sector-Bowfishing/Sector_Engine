@@ -115,7 +115,7 @@ G1 Orchestrator job/execution health compat records; G2 execution freshness from
 | CLAR-3 | Snapshot-projection reader inventory unverified | **NON_BLOCKING_DEBT** (gates only projection retirement) |
 | CLAR-4 | No dedicated platform-side Clarity Publisher test | **NON_BLOCKING_DEBT** |
 | LIN-1 | GCS/HTTP actual-consumption capture | **SHARED_PLATFORM_DEBT** (see 6.6) |
-| RA-20 | Clarity reads Engine `/lakes`, `/conditions` through the customer API | **SHARED_PLATFORM_DEBT** (see 6.7) |
+| RA-20 | Clarity reads Engine `/lakes`, `/conditions` through the customer API | **SHARED_PLATFORM_DEBT**, WAIVED until Clarity leaves CALIBRATION (see 6.7) |
 | GCS-1 | Clarity C2-C4 GCS artifact writes | **PARKED_BY_DESIGN** (see 6.8) |
 | VER-1 | Shadow baseline is last SHADOW_READY, not live (P4) | folded into PUB-1 |
 | ENV-1 | `pytest` not installed on the developer machine | **NON_BLOCKING_DEBT** (CI installs it) |
@@ -127,7 +127,7 @@ G1 Orchestrator job/execution health compat records; G2 execution freshness from
 4. **Score ownership:** separate; add publication-triggered scoring (S1); section 5.1.
 5. **Health ownership:** healthV1 is authoritative; legacy Brain health is LEGACY_TRANSITIONAL; section 5.2.
 6. **GCS/HTTP actual-consumption lineage: does NOT block production architecture** (SHARED_PLATFORM_DEBT). The Publisher excludes `consumed` from the fingerprint; Wind already runs without it; absent/`NOT_RECORDED`/`UNKNOWN` are honest states. **Standing rule: never publish `consumed: []` alongside HTTP/GCS inputs** (empty means "nothing consumed", absent means "unknown"); Clarity passes `None`. It is a precondition for claiming *actual* lineage complete, not for cutover.
-7. **RA-20:** A) does NOT block Water Clarity production Publisher cutover (not in P1-P12; the Brain stays CALIBRATION). B) is **not part of exit evidence A-J**, so it does not formally block `ARCHITECTURE_CERTIFIED_V1`; it is a recorded ownership violation, so **Michael must decide: waive with an expiry, or require removal first**. C) Non-blocking shared debt in class terms. D) **Not required before Brain #4**; required before Clarity leaves CALIBRATION or serves anything customer-adjacent. Not implemented here.
+7. **RA-20:** A) does NOT block Water Clarity production Publisher cutover (not in P1-P12; the Brain stays CALIBRATION). B) is **not part of exit evidence A-J**, so it does not formally block `ARCHITECTURE_CERTIFIED_V1`; it is a recorded ownership violation, so **DECIDED (Michael, 2026-10-19): WAIVED with an event-based expiry.** It is not required before `ARCHITECTURE_CERTIFIED_V1`, and the waiver EXPIRES when Water Clarity leaves CALIBRATION: RA-20 (remove the Engine `/lakes` + `/conditions` customer-API reads) must be complete before that lifecycle change. C) Non-blocking shared debt in class terms. D) **Not required before Brain #4**; required before Clarity leaves CALIBRATION or serves anything customer-adjacent. Not implemented here.
 8. **GCS write semantics:** C2-C4 are legitimate specialist-pipeline storage (Brain-owned classes). **Keep them outside the RTDB Publisher** (PARKED_BY_DESIGN). They need Publisher *metadata only*: a reference/fingerprint of the evidence restated in the artifact lineage, and `/jobs` records. An RTDB rollback does not roll GCS back; the exit-gate rollback check is therefore scoped to Publisher-owned RTDB paths. (C3/C4 source is not on this branch; their internals are DOC-CLAIM.)
 
 ## 7. `ARCHITECTURE_CERTIFIED_V1` (existing definition; nothing invented)
