@@ -1,8 +1,8 @@
 {
  "schema": "wind-measurements-evidence-v1",
  "brainId": "wind",
- "generatedAt": "2026-10-19T19:44:18Z",
- "codeCommit": "ac0fcbe597ed",
+ "generatedAt": "2026-10-19T19:57:04Z",
+ "codeCommit": "c0ccf6601f1e",
  "knowledgeVersion": "wind-bowfishing-decision-1.0.0",
  "decisionSchema": "sector-wind-bowfishing-decision-v1",
  "inputs": {
