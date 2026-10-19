@@ -37,16 +37,23 @@ SHELTERED = ("PROTECTED", "LOW_EXPOSURE")
 EXPOSED = ("HIGH_EXPOSURE", "EXTREME_EXPOSURE")
 SURFACE_LABEL = {1: "Flat", 2: "Ripple", 3: "Light chop", 4: "Moderate chop", 5: "Rough"}   # frozen classes; class 1 renamed from "Protected"
 
-# How the modeled surface may affect SEEING and SHOOTING fish. Interpretation of the surface class only.
-FISHING_IMPACT = {
-    1: ("SURFACE_NOT_LIMITING", "Surface disturbance is unlikely to limit seeing fish."),
-    2: ("MINOR", "Light ripple: a small effect on seeing into the water."),
-    3: ("REDUCED", "Light chop is likely to make fish below the surface harder to spot."),
-    4: ("POOR", "Moderate chop is likely to make spotting and shooting fish difficult."),
-    5: ("VERY_POOR", "Rough water: spotting fish is very difficult; boat handling and safety need their own judgment."),
+# Wind-driven surface disturbance, one level per frozen surface class P. A WIND-DOMAIN statement only: it says how much the
+# wind disturbs the surface, never whether a place is good for bowfishing (that synthesis belongs to Sector Intelligence).
+DISTURBANCE = {
+    1: ("NONE", "No wind-driven surface disturbance expected"),
+    2: ("LOW", "Low wind-driven surface disturbance expected"),
+    3: ("MODERATE", "Moderate wind-driven surface disturbance expected"),
+    4: ("HIGH", "High wind-driven surface disturbance expected"),
+    5: ("VERY_HIGH", "Very high wind-driven surface disturbance expected"),
 }
-FISHING_IMPACT_CAVEAT = ("Wind only changes the surface. Water clarity, light, fish presence, access and safety are not assessed by "
-                         "Wind Brain. Surface classes are modeled and not field-validated.")
+DISTURBANCE_BASIS = "surface class P = max(modeled wave class, wind-texture floor); modeled, not field-validated"
+
+
+def disturbance(p: int, drv: str, wave_in: float) -> dict:
+    lvl, txt = DISTURBANCE[p]
+    how = (f"{SURFACE_LABEL[p].lower()} from wind texture; waves stay small ({_in(wave_in):g} in)" if drv == "WIND_TEXTURE"
+           else f"{SURFACE_LABEL[p].lower()}, modeled waves about {_in(wave_in):g} in")
+    return {"level": lvl, "surfaceClass": p, "mechanism": drv, "text": f"{txt} ({how}).", "basis": DISTURBANCE_BASIS, "modeled": True}
 
 
 def _in(x: float) -> float:
@@ -64,12 +71,11 @@ def describe(r: dict, lake_id: str, speed_ms: float, duration_h: float) -> dict:
     base = {"bankId": r["bankId"], "lakeId": lake_id, "anchor": r.get("anchor"), "region": r.get("region"),
             "windExposure": {"code": code, "label": EXPOSURE_LABEL[code], "meaning": EXPOSURE_MEANING[code]}}
     if code == "UNKNOWN":
-        return {**base, "relativeExposure": None, "predictedSurface": None, "fishingImpact": None, "fetch": None,
+        return {**base, "relativeExposure": None, "predictedSurface": None, "windSurfaceDisturbance": None, "fetch": None,
                 "confidence": "unknown", "explanation": "Fetch is unknown at this bank (below the fetch-raster resolution), so its "
                                                         "exposure is unknown. Wind Brain never treats an unknown bank as sheltered."}
     p, chop = r["predictedSurfaceClass"], r["chopClass"]
     drv = surface_driver(chop, p)
-    imp = FISHING_IMPACT[p]
     lo, hi = r["predictedHm0RangeIn"]
     pct = r.get("relativeLakePercentile")
     return {**base,
@@ -78,7 +84,7 @@ def describe(r: dict, lake_id: str, speed_ms: float, duration_h: float) -> dict:
             "predictedSurface": {"class": p, "label": SURFACE_LABEL[p], "driver": drv, "waveHeightIn": _in(r["predictedHm0In"]),
                                  "waveHeightRangeIn": [_in(min(lo, r["predictedHm0In"])), _in(max(hi, r["predictedHm0In"]))],
                                  "windTexture": BF.TEXTURE[r["predictedTextureClass"]], "modeled": True},
-            "fishingImpact": {"code": imp[0], "text": imp[1]},
+            "windSurfaceDisturbance": disturbance(p, drv, r["predictedHm0In"]),
             "fetch": {"effectiveM": r["effectiveFetchM"], "directM": r["directFetchM"], "raysM": r["effectiveFetchRays"]},
             "confidence": r["confidence"],
             "explanation": explain(r, code, p, drv, speed_ms, duration_h)}

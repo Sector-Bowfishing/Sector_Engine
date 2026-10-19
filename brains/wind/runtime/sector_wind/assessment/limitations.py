@@ -1,4 +1,4 @@
-"""Known limitations attached to every decision, with the evidence behind each number (no number is typed here).
+"""Known limitations attached to every assessment, with the evidence behind each number (no number is typed here).
 
 Numbers are read from the frozen validation evidence that the Brain already publishes (`brain/validation_evidence.json`:
 NBM v5.0 vs METAR, CAL+H1 2026-05-06 -> 10-06; buoy surface physics 2020-2023). H2 (2026-10-07 -> 12-31) is sealed until
@@ -70,8 +70,8 @@ def catalogue() -> dict:
 
 
 def applicable(kind: str, speed_mph: float | None, gust_mph: float | None, lead_h: float | None, subset: bool) -> list[dict]:
-    """Limitations for one decision, most severe first. STRONG_WIND_UNDERFORECAST is ALWAYS present: the failure mode is a
-    missed event, so a light forecast cannot exempt a decision from it."""
+    """Limitations for one assessment, most severe first. STRONG_WIND_UNDERFORECAST is ALWAYS present: the failure mode is a
+    missed event, so a light forecast cannot exempt a assessment from it."""
     ids = ["STRONG_WIND_UNDERFORECAST", "SURFACE_NOT_FIELD_VALIDATED", "NO_WAVE_MEMORY", "LAND_ONLY_WIND_VALIDATION",
            "DIRECTION_ERROR", "WIND_ONLY_SCOPE", "PROBABILISTIC_FLAG_EXPLORATORY"]
     if speed_mph is not None and (speed_mph >= WINDY_MPH or (gust_mph or 0) >= STRONG_WIND_MPH):

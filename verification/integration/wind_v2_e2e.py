@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Wind Bowfishing-First V2: end-to-end NONPRODUCTION demonstration with the real runtime and the real platform scorer.
+"""Wind V2 (specialist-aligned): end-to-end NONPRODUCTION demonstration with the real runtime and the real platform scorer.
 
-  python verification/integration/wind_bowfishing_v2_e2e.py [--fetch FULL_FETCH.json.gz] [--out REPORT.json]
+  python verification/integration/wind_v2_e2e.py [--fetch FULL_FETCH.json.gz] [--out REPORT.json]
 
 Network sockets are DISABLED for the whole run (any connect raises), so nothing can reach the Brain RTDB, the archive bucket,
 NOAA or a customer surface. Every wind value is SYNTHETIC (a physically reasonable evening blow: SW 8 mph building to 16 mph and
 veering to NW, then easing), written to a temporary local Wind archive in the exact layout the hourly job writes. The lake
 geometry is REAL: the committed Guntersville subset by default, or a full frozen fetch table with --fetch.
 
-Steps: archive -> brain.state.build_state (Layer 1) -> decision.build (Layer 2: ranking, alternatives, surface, timeline,
-explanations, uncertainty) -> schema + invariants -> capability scenarios (Layer 3) -> platform measurements (BI v2 / Scientific
+Steps: archive -> brain.state.build_state (Layer 1) -> assessment.build (Layer 2: ranking, alternatives, surface, timeline,
+explanations, uncertainty) -> schema + invariants -> capability scenarios (Layer 3) -> platform measurements (Wind Capability v2 / Scientific
 Confidence / Production Readiness) -> certification preserved -> refresh gate on a temp copy -> score_brains attach (offline)
 -> repository and production untouched.
 """
@@ -93,9 +93,9 @@ def synthetic_archive(store, iso):
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--fetch", default=os.path.join(WIND, "tests", "fixtures", "guntersville_decision_subset.json.gz"))
+    ap.add_argument("--fetch", default=os.path.join(WIND, "tests", "fixtures", "guntersville_fetch_subset.json.gz"))
     ap.add_argument("--out", default=None)
-    ap.add_argument("--samples", default=None, help="directory for sample decision JSON files")
+    ap.add_argument("--samples", default=None, help="directory for sample assessment JSON files")
     a = ap.parse_args(argv)
 
     frozen_path = os.path.join(ROOT, "docs", "brains", "scoring", "frozen-scores.json")
@@ -106,12 +106,12 @@ def main(argv=None):
     from sector_wind.ingest import load_config
     from sector_wind.brain import contract as C
     from sector_wind.brain.state import build_state
-    from sector_wind.decision import build as B, ranking as R, scenarios as SCN, schema as SC
+    from sector_wind.assessment import build as B, ranking as R, scenarios as SCN, schema as SC
     from sector_brain_platform import wind_measurements as W, wind_score_refresh as RF, frozen_score
     from jsonschema_lite import iter_errors
     import score_brains
 
-    out, ok = {"demo": "wind-bowfishing-first-v2-e2e", "inputs": "SYNTHETIC wind; real Guntersville geometry", "steps": []}, True
+    out, ok = {"demo": "wind-v2-specialist-e2e", "inputs": "SYNTHETIC wind; real Guntersville geometry", "steps": []}, True
 
     def step(name, cond, detail):
         nonlocal ok
@@ -136,7 +136,7 @@ def main(argv=None):
     trip = wind["hourly"][:len(TRIP)]
     prior = [{"at": C.iso(NOW - timedelta(hours=k)), "speedMS": 8 * MPH, "dirFromDeg": 225.0, "kind": "analysis"} for k in range(12, 0, -1)]
     pair = SCN.pair(L)
-    dec = B.build(LAKE, wind, L, NOW, bank_ids=pair, trip_hours=trip, prior_hours=prior, processing_version="e2e-demo")
+    dec = B.build(LAKE, wind, L, NOW, bank_ids=pair, window_hours=trip, prior_hours=prior, processing_version="e2e-demo")
     sh = dec["shorelines"]
     step("3-4 exposure evaluated, banks ranked", dec["status"] == "READY" and sh["sheltered"] and sh["requested"],
          f"{dec['lakeSummary']['resolvableBanks']} banks: {dec['lakeSummary']['shelteredPct']}% sheltered/low, {dec['lakeSummary']['exposedPct']}% highly exposed, "
@@ -154,12 +154,12 @@ def main(argv=None):
     step("8 uncertainty preserved", dec["confidence"]["level"] in ("LOW", "MODERATE") and dec["limitations"][0]["severity"] == "WARNING"
          and dec["validation"]["validated"] is False,
          f"confidence {dec['confidence']['level']} ({'; '.join(dec['confidence']['reasons'])}); {len(dec['limitations'])} limitations, first {dec['limitations'][0]['id']}")
-    tb = {x["bankId"]: x for x in dec["trip"]["banks"]}
-    step("   trip timeline", dec["trip"]["events"] and any(e["type"] == "DIRECTION_SHIFT" for e in dec["trip"]["events"]),
-         "; ".join(e["at"][11:16] + "Z " + e["text"] for e in dec["trip"]["events"][:4]) + f" | {tb[pair[0]]['summary']}")
-    errs = list(iter_errors(dec, json.load(open(os.path.join(WIND, "contracts", "wind-bowfishing-decision-v1.json")))))
-    step("9 canonical decision output", errs == [] and SC.check(dec) == [] and dec["decisionSchema"] == SC.DECISION_SCHEMA,
-         f"{SC.DECISION_SCHEMA} {SC.KNOWLEDGE_VERSION}, {len(json.dumps(dec)) // 1024} KB, schema errors {len(errs)}")
+    tb = {x["bankId"]: x for x in dec["timeline"]["banks"]}
+    step("   hourly wind timeline", dec["timeline"]["events"] and any(e["type"] == "DIRECTION_SHIFT" for e in dec["timeline"]["events"]),
+         "; ".join(e["at"][11:16] + "Z " + e["text"] for e in dec["timeline"]["events"][:4]) + f" | {tb[pair[0]]['summary']}")
+    errs = list(iter_errors(dec, json.load(open(os.path.join(WIND, "contracts", "wind-exposure-assessment-v1.json")))))
+    step("9 canonical assessment output", errs == [] and SC.check(dec) == [] and dec["assessmentSchema"] == SC.ASSESSMENT_SCHEMA,
+         f"{SC.ASSESSMENT_SCHEMA} {SC.KNOWLEDGE_VERSION}, {len(json.dumps(dec)) // 1024} KB, schema errors {len(errs)}")
     stale = copy.deepcopy(state); stale["stale"] = True; stale["staleReasons"] = ["forecastCycleStale:4.2h>3h"]
     sd = B.build(LAKE, B.wind_from_state(stale), L, NOW)
     step("   stale input refused", sd["status"] == "INPUT_STALE" and sd["shorelines"] is None, sd["explanation"][:90])
@@ -170,13 +170,13 @@ def main(argv=None):
     rubric, ev, brain = W.load_all()
     cert = json.load(open(frozen_path))["wind"]
     m = W.measurements(copy.deepcopy(cert), ev, rubric, brain, NOW)
-    bi, sc, pr = m["bowfishingIntelligence"], m["scientificConfidence"], m["productionReadiness"]
+    bi, sc, pr = m["windCapability"], m["scientificConfidence"], m["productionReadiness"]
     step("11 scoring/reporting evaluation", bi["basis"] == "COMPUTED" and m["consistency"] == [],
-         f"BI {bi['value']} ({bi['scoreVersion']}, {bi['rubricStatus']}; measured {bi['split']['measuredSkill']['points']}/{bi['split']['measuredSkill']['max']}, "
+         f"Wind Capability {bi['value']} ({bi['scoreVersion']}, {bi['rubricStatus']}; measured {bi['split']['measuredSkill']['points']}/{bi['split']['measuredSkill']['max']}, "
          f"capability {bi['split']['modelCapability']['points']}/{bi['split']['modelCapability']['max']})")
     step("12 intelligence / confidence / readiness separated", sc["value"] is None and pr["value"] is None and len({bi["scoreVersion"], sc["version"], pr["version"], cert["scoreVersion"]}) == 4,
          f"Scientific Confidence {sc['overall']} (statuses), Production Readiness {pr['overall']} (gates)")
-    step("13 certification preserved", m["certification"]["value"] == 3.3 and m["bowfishingIntelligenceV1"]["value"] == 5.4 and _sha(frozen_path) == before["frozen"],
+    step("13 certification preserved", m["certification"]["value"] == 3.3 and m["bwisV1"]["value"] == 5.4 and _sha(frozen_path) == before["frozen"],
          "certification 3.3 wind-certification-rubric-v1, BWIS v1 5.4, frozen-scores.json byte-identical")
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -213,6 +213,9 @@ def main(argv=None):
         blocked = True
     step("15 no production state changes", blocked and _sha(frozen_path) == before["frozen"] and _tracked_state() == before["git"],
          "network blocked for the whole run; repository tracked files unchanged; no RTDB/bucket client created")
+    leaks = SC.boundary_problems(dec) + SC.boundary_problems(strong) + SC.boundary_problems(sd)
+    step("   specialist boundary", not leaks and dec["scope"]["synthesisOwner"] == "sector-intelligence",
+         "no fish/recommendation/opportunity fields or fishing language; synthesis owner sector-intelligence")
     consumer = {"lake": dec["lakeId"], "status": dec["status"], "headline": dec["explanation"], "confidence": dec["confidence"]["level"],
                 "topSheltered": [(b["bankId"], b["windExposure"]["label"], b["predictedSurface"]["label"], b["anchor"]) for b in sh["sheltered"][:3]],
                 "warnings": [x["id"] for x in dec["limitations"] if x["severity"] == "WARNING"]}
@@ -220,14 +223,14 @@ def main(argv=None):
          f"bounded JSON; every bank has id, anchor lat/lon, labels, explanation; consumer view: {json.dumps(consumer)[:160]}")
 
     out["ok"] = ok
-    out["bowfishingIntelligence"] = {k: bi[k] for k in ("value", "scoreVersion", "rubricStatus", "split")}
+    out["windCapability"] = {k: bi[k] for k in ("value", "scoreVersion", "rubricStatus", "split")}
     out["scientificConfidence"] = {"overall": sc["overall"], "items": {i["id"]: i["status"] for i in sc["items"]}}
     out["productionReadiness"] = {"overall": pr["overall"], "gates": {g["gate"]: g["status"] for g in pr["gates"]}}
     if a.samples:
         os.makedirs(a.samples, exist_ok=True)
-        json.dump(dec, open(os.path.join(a.samples, "decision_guntersville_evening_blow.json"), "w"), indent=1)
-        json.dump(strong, open(os.path.join(a.samples, "decision_guntersville_16mph_wsw.json"), "w"), indent=1)
-        json.dump(sd, open(os.path.join(a.samples, "decision_stale_input.json"), "w"), indent=1)
+        json.dump(dec, open(os.path.join(a.samples, "assessment_guntersville_evening_blow.json"), "w"), indent=1)
+        json.dump(strong, open(os.path.join(a.samples, "assessment_guntersville_16mph_wsw.json"), "w"), indent=1)
+        json.dump(sd, open(os.path.join(a.samples, "assessment_stale_input.json"), "w"), indent=1)
         json.dump(m, open(os.path.join(a.samples, "wind_measurements.json"), "w"), indent=1)
     if a.out:
         json.dump(out, open(a.out, "w"), indent=1)

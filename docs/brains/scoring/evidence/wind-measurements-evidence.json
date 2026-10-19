@@ -1,10 +1,10 @@
 {
  "schema": "wind-measurements-evidence-v1",
  "brainId": "wind",
- "generatedAt": "2026-10-19T19:57:04Z",
- "codeCommit": "c0ccf6601f1e",
- "knowledgeVersion": "wind-bowfishing-decision-1.0.0",
- "decisionSchema": "sector-wind-bowfishing-decision-v1",
+ "generatedAt": "2026-10-19T20:17:44Z",
+ "codeCommit": "1a2d354d780f",
+ "knowledgeVersion": "wind-exposure-assessment-1.0.0",
+ "assessmentSchema": "sector-wind-exposure-assessment-v1",
  "inputs": {
   "atmosphericRowsSha": "84074d9a890ab3af",
   "bwisV1DefinitionSha256": "21e2a3268f36643284036f74d576a9515c3189f5ee7fc60dda2444de6de233c1",
@@ -20,7 +20,7 @@
   "directionCircMaeDeg": 18.32,
   "windyHourMaeMS": 1.9559,
   "nWindy": 8254,
-  "decisionAccuracy": {
+  "surfaceClassAgreement": {
    "symmetricNight5mph": 0.6143,
    "nSymmetric": 9468,
    "perFetchSymmetric": [
@@ -175,7 +175,7 @@
   "explanationOnEveryResult": true
  },
  "scenarios": {
-  "suite": "wind-bowfishing-scenarios-v1",
+  "suite": "wind-specialist-scenarios-v1",
   "capabilityMap": {
    "S01": "GI3",
    "S02": "GI3",
@@ -183,9 +183,9 @@
    "S03": "SI3",
    "S10": "SI3",
    "S17": "SI3",
-   "S16": "DI2",
-   "S18": "DI2",
-   "S11": "DI3",
+   "S16": "EA2",
+   "S18": "EA2",
+   "S11": "EA3",
    "S05": "TI1",
    "S04": "TI2",
    "S14": "TI2",

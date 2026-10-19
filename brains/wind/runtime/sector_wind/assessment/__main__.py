@@ -1,7 +1,7 @@
 """Nonproduction entry points (local files only; never touches the Brain RTDB, the archive bucket or any customer path).
 
-  python -m sector_wind.decision decide --fetch FETCH.json.gz --lake "Guntersville|AL" --mph 12 --dir 225 [--hours 6] [--bank ID ...] [--top 5]
-  python -m sector_wind.decision scenarios --fetch FETCH.json.gz --lake "Guntersville|AL" [--json OUT]
+  python -m sector_wind.assessment assess --fetch FETCH.json.gz --lake "Guntersville|AL" --mph 12 --dir 225 [--hours 6] [--bank ID ...] [--top 5]
+  python -m sector_wind.assessment scenarios --fetch FETCH.json.gz --lake "Guntersville|AL" [--json OUT]
 
 FETCH is a runtime fetch object (archive `fetch/<lake>.json.gz` layout: banks + tableBase64). Wind given here is SYNTHETIC.
 """
@@ -26,16 +26,16 @@ def _load(path, lake_id):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(prog="sector_wind.decision")
+    ap = argparse.ArgumentParser(prog="sector_wind.assessment")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    d = sub.add_parser("decide"); s = sub.add_parser("scenarios")
+    d = sub.add_parser("assess"); s = sub.add_parser("scenarios")
     for p in (d, s):
         p.add_argument("--fetch", required=True); p.add_argument("--lake", required=True); p.add_argument("--json")
     d.add_argument("--mph", type=float, required=True); d.add_argument("--dir", type=float); d.add_argument("--hours", type=float, default=6.0)
     d.add_argument("--bank", action="append", default=[]); d.add_argument("--top", type=int, default=R.DEFAULT_TOP)
     a = ap.parse_args(argv)
     L = _load(a.fetch, a.lake)
-    if a.cmd == "decide":
+    if a.cmd == "assess":
         out = B.build(a.lake, B.synthetic_wind(a.mph, a.dir, a.hours, label="CLI"), L, datetime.now(timezone.utc),
                       supported=a.lake in WIND_LAKE_IDS.values(), top=a.top, bank_ids=tuple(a.bank))
     else:
@@ -51,7 +51,7 @@ def main(argv=None):
         open(a.json, "w").write(txt)
     else:
         print(txt)
-    return 0 if a.cmd == "decide" or out["passed"] == out["total"] else 1
+    return 0 if a.cmd == "assess" or out["passed"] == out["total"] else 1
 
 
 if __name__ == "__main__":

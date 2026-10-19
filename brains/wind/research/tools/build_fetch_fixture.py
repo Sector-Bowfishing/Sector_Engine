@@ -1,6 +1,6 @@
-"""Build the real-geometry test fixture for the Bowfishing Decision layer (research-only; run once, output committed).
+"""Build the real-geometry test fixture for the Wind Exposure Assessment layer (research-only; run once, output committed).
 
-  python research/tools/build_decision_fixture.py OUT.json.gz
+  python research/tools/build_fetch_fixture.py OUT.json.gz
 
 Selects a SUBSET of the frozen Guntersville fetch table (the app asset read by sector_wind_research.bowfishing_assets):
 every bank within RADIUS_M of the audit pair (A = GT-005719, SW-facing South Sauty Creek arm; B = GT-001172, sheltered

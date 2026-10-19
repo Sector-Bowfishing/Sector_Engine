@@ -1,0 +1,633 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://sector.engine/brains/wind/contracts/wind-exposure-assessment-v1.json",
+ "title": "Wind Exposure Assessment v1 (sector-wind-exposure-assessment-v1)",
+ "description": "Specialist WIND assessment for one lake and one wind: which banks are exposed to or sheltered from the wind, the wind-driven surface disturbance, wind-exposure alternatives (less-exposed and nearest sheltered banks), an optional hourly wind timeline, confidence, limitations and provenance. It never recommends where to bowfish: Sector Intelligence combines it with other specialist Brains. Built by brains/wind/runtime/sector_wind/assessment/build.py. Bounded payload (top-N + requested banks); the full per-bank ranking is a separate artifact. SHADOW: not published to the Brain RTDB and not read by any customer path (customerIntegrationMode none). Nullable fields omit `type` (the repo validator supports one type per keyword). Invariants beyond JSON Schema are in assessment/schema.py `check`.",
+ "type": "object",
+ "required": [
+  "assessmentSchema",
+  "knowledgeVersion",
+  "lakeId",
+  "lakeKey",
+  "status",
+  "statusMeaning",
+  "evaluatedAt",
+  "reference",
+  "wind",
+  "scope",
+  "shorelines",
+  "lakeSummary",
+  "timeline",
+  "confidence",
+  "limitations",
+  "explanation",
+  "provenance",
+  "validation"
+ ],
+ "properties": {
+  "assessmentSchema": {
+   "const": "sector-wind-exposure-assessment-v1"
+  },
+  "knowledgeVersion": {
+   "type": "string",
+   "pattern": "^wind-exposure-assessment-[0-9]+\\.[0-9]+\\.[0-9]+$"
+  },
+  "lakeId": {
+   "type": "string",
+   "minLength": 1
+  },
+  "lakeKey": {
+   "type": "string",
+   "pattern": "^[A-Za-z0-9_]+$"
+  },
+  "status": {
+   "enum": [
+    "READY",
+    "INPUT_STALE",
+    "WIND_UNAVAILABLE",
+    "DIRECTION_UNKNOWN",
+    "GEOMETRY_UNAVAILABLE",
+    "UNSUPPORTED_LAKE"
+   ]
+  },
+  "statusMeaning": {
+   "type": "string"
+  },
+  "evaluatedAt": {
+   "type": "string",
+   "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+  },
+  "reference": {
+   "type": "object",
+   "required": [
+    "validAt",
+    "forecastInit",
+    "leadHours",
+    "stateGeneratedAt"
+   ]
+  },
+  "wind": {
+   "type": "object",
+   "required": [
+    "kind",
+    "sustainedMph",
+    "gustMph",
+    "directionDeg",
+    "directionCardinal",
+    "durationH",
+    "durationBasis",
+    "source",
+    "units"
+   ],
+   "properties": {
+    "kind": {
+     "enum": [
+      "analysis",
+      "forecast",
+      "observation",
+      "synthetic",
+      "unavailable"
+     ]
+    },
+    "units": {
+     "type": "object",
+     "required": [
+      "speed",
+      "direction",
+      "waves"
+     ]
+    }
+   }
+  },
+  "scope": {
+   "type": "object",
+   "required": [
+    "supportedLake",
+    "geometryAvailable",
+    "geometry",
+    "answers",
+    "doesNotAnswer"
+   ],
+   "properties": {
+    "supportedLake": {
+     "type": "boolean"
+    },
+    "geometryAvailable": {
+     "type": "boolean"
+    },
+    "doesNotAnswer": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "confidence": {
+   "type": "object",
+   "required": [
+    "level",
+    "reasons",
+    "ceiling",
+    "definition"
+   ],
+   "properties": {
+    "level": {
+     "enum": [
+      "MODERATE",
+      "LOW",
+      "UNKNOWN"
+     ]
+    },
+    "ceiling": {
+     "const": "MODERATE"
+    },
+    "reasons": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "limitations": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/limitation"
+   }
+  },
+  "explanation": {
+   "type": "string",
+   "minLength": 1
+  },
+  "provenance": {
+   "type": "object",
+   "required": [
+    "brainId",
+    "brainVersion",
+    "modelVersion",
+    "physics",
+    "rankingRules",
+    "deterministic",
+    "aiUsed"
+   ],
+   "properties": {
+    "brainId": {
+     "const": "wind"
+    },
+    "deterministic": {
+     "const": true
+    },
+    "aiUsed": {
+     "const": false
+    }
+   }
+  },
+  "validation": {
+   "type": "object",
+   "required": [
+    "capability",
+    "observedAccuracy",
+    "lifecycle",
+    "customerExposure",
+    "validated"
+   ],
+   "properties": {
+    "validated": {
+     "const": false
+    },
+    "observedAccuracy": {
+     "const": "NOT_FIELD_VALIDATED"
+    },
+    "customerExposure": {
+     "const": "NOT_AUTHORIZED"
+    },
+    "lifecycle": {
+     "const": "SHADOW"
+    }
+   }
+  },
+  "shorelines": {},
+  "lakeSummary": {},
+  "timeline": {},
+  "fullRanking": {}
+ },
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "status": {
+      "const": "READY"
+     }
+    }
+   },
+   "then": {
+    "properties": {
+     "shorelines": {
+      "type": "object",
+      "required": [
+       "sheltered",
+       "exposed",
+       "requested",
+       "requestedNotFound"
+      ],
+      "properties": {
+       "sheltered": {
+        "type": "array",
+        "maxItems": 25,
+        "items": {
+         "$ref": "#/$defs/bank"
+        }
+       },
+       "exposed": {
+        "type": "array",
+        "maxItems": 25,
+        "items": {
+         "$ref": "#/$defs/bank"
+        }
+       },
+       "requested": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/bank"
+        }
+       },
+       "requestedNotFound": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "lakeSummary": {
+      "type": "object",
+      "required": [
+       "resolvableBanks",
+       "unknownBanks",
+       "exposureCounts",
+       "shelteredPct",
+       "exposedPct",
+       "boundaryPct",
+       "geometryScope"
+      ]
+     },
+     "limitations": {
+      "type": "array",
+      "minItems": 1
+     },
+     "confidence": {
+      "properties": {
+       "level": {
+        "enum": [
+         "MODERATE",
+         "LOW"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "status": {
+      "enum": [
+       "INPUT_STALE",
+       "WIND_UNAVAILABLE",
+       "DIRECTION_UNKNOWN",
+       "GEOMETRY_UNAVAILABLE",
+       "UNSUPPORTED_LAKE"
+      ]
+     }
+    }
+   },
+   "then": {
+    "properties": {
+     "shorelines": {
+      "type": "null"
+     },
+     "lakeSummary": {
+      "type": "null"
+     },
+     "timeline": {
+      "type": "null"
+     },
+     "confidence": {
+      "properties": {
+       "level": {
+        "const": "UNKNOWN"
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "$defs": {
+  "limitation": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "severity",
+    "text",
+    "evidenceRef"
+   ],
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^[A-Z_]+$"
+    },
+    "severity": {
+     "enum": [
+      "WARNING",
+      "CAUTION",
+      "INFO"
+     ]
+    },
+    "text": {
+     "type": "string",
+     "minLength": 1
+    },
+    "evidenceRef": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "exposure": {
+   "type": "object",
+   "required": [
+    "code",
+    "label"
+   ],
+   "properties": {
+    "code": {
+     "enum": [
+      "PROTECTED",
+      "LOW_EXPOSURE",
+      "MODERATE_EXPOSURE",
+      "HIGH_EXPOSURE",
+      "EXTREME_EXPOSURE",
+      "UNKNOWN"
+     ]
+    },
+    "label": {
+     "type": "string"
+    }
+   }
+  },
+  "bank": {
+   "type": "object",
+   "required": [
+    "bankId",
+    "lakeId",
+    "windExposure",
+    "relativeExposure",
+    "predictedSurface",
+    "windSurfaceDisturbance",
+    "fetch",
+    "confidence",
+    "explanation"
+   ],
+   "properties": {
+    "bankId": {
+     "type": "string",
+     "minLength": 1
+    },
+    "windExposure": {
+     "$ref": "#/$defs/exposure"
+    },
+    "confidence": {
+     "enum": [
+      "firm",
+      "boundary",
+      "unknown"
+     ]
+    },
+    "explanation": {
+     "type": "string",
+     "minLength": 1
+    },
+    "lessExposedAlternatives": {
+     "type": "array",
+     "maxItems": 3,
+     "items": {
+      "$ref": "#/$defs/alternative"
+     }
+    },
+    "nearestSheltered": {
+     "type": "array",
+     "maxItems": 3,
+     "items": {
+      "$ref": "#/$defs/alternative"
+     }
+    },
+    "lakeId": {},
+    "anchor": {},
+    "region": {},
+    "relativeExposure": {},
+    "predictedSurface": {},
+    "windSurfaceDisturbance": {},
+    "fetch": {}
+   },
+   "allOf": [
+    {
+     "if": {
+      "properties": {
+       "windExposure": {
+        "properties": {
+         "code": {
+          "const": "UNKNOWN"
+         }
+        }
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "predictedSurface": {
+        "type": "null"
+       },
+       "confidence": {
+        "const": "unknown"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "windExposure": {
+        "properties": {
+         "code": {
+          "enum": [
+           "PROTECTED",
+           "LOW_EXPOSURE",
+           "MODERATE_EXPOSURE",
+           "HIGH_EXPOSURE",
+           "EXTREME_EXPOSURE"
+          ]
+         }
+        }
+       }
+      }
+     },
+     "then": {
+      "properties": {
+       "predictedSurface": {
+        "type": "object",
+        "required": [
+         "class",
+         "label",
+         "driver",
+         "waveHeightIn",
+         "waveHeightRangeIn",
+         "windTexture",
+         "modeled"
+        ],
+        "properties": {
+         "class": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+         },
+         "label": {
+          "enum": [
+           "Flat",
+           "Ripple",
+           "Light chop",
+           "Moderate chop",
+           "Rough"
+          ]
+         },
+         "driver": {
+          "enum": [
+           "WAVES",
+           "WIND_TEXTURE"
+          ]
+         },
+         "waveHeightIn": {
+          "type": "number",
+          "minimum": 0
+         },
+         "waveHeightRangeIn": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+           "type": "number",
+           "minimum": 0
+          }
+         },
+         "modeled": {
+          "const": true
+         }
+        }
+       },
+       "windSurfaceDisturbance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "level",
+         "surfaceClass",
+         "mechanism",
+         "text",
+         "basis",
+         "modeled"
+        ],
+        "properties": {
+         "level": {
+          "enum": [
+           "NONE",
+           "LOW",
+           "MODERATE",
+           "HIGH",
+           "VERY_HIGH"
+          ]
+         },
+         "surfaceClass": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+         },
+         "mechanism": {
+          "enum": [
+           "WAVES",
+           "WIND_TEXTURE"
+          ]
+         },
+         "text": {
+          "type": "string",
+          "pattern": "wind-driven surface disturbance expected"
+         },
+         "basis": {
+          "type": "string"
+         },
+         "modeled": {
+          "const": true
+         }
+        }
+       },
+       "fetch": {
+        "type": "object",
+        "required": [
+         "effectiveM",
+         "directM",
+         "raysM"
+        ],
+        "properties": {
+         "raysM": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "additionalProperties": false
+  },
+  "alternative": {
+   "type": "object",
+   "required": [
+    "bankId",
+    "distanceM",
+    "windExposure",
+    "effectiveFetchM",
+    "predictedSurfaceLabel",
+    "reason",
+    "rule",
+    "note"
+   ],
+   "properties": {
+    "distanceM": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "windExposure": {
+     "$ref": "#/$defs/exposure"
+    },
+    "note": {
+     "type": "string",
+     "pattern": "not checked for fish, access"
+    },
+    "searchRadiusM": {},
+    "waveHeightIn": {},
+    "rule": {},
+    "effectiveFetchM": {},
+    "predictedSurfaceLabel": {},
+    "reason": {},
+    "bankId": {}
+   },
+   "additionalProperties": false
+  }
+ },
+ "additionalProperties": false
+}

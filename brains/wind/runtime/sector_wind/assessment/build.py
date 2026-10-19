@@ -1,4 +1,4 @@
-"""Build the canonical Wind Bowfishing Decision (`sector-wind-bowfishing-decision-v1`) for one lake and one wind.
+"""Build the canonical Wind Exposure Assessment (`sector-wind-exposure-assessment-v1`) for one lake and one wind.
 
 Inputs are existing Wind contracts only: a wind input (from a published/derived `sector-brain-wind-state-v1` via
 `wind_from_state`, or an explicit, honestly-labelled synthetic scenario via `synthetic_wind`) and a runtime fetch object
@@ -89,15 +89,15 @@ def _confidence(wind, sh, mph_now, gust_mph):
 
 
 def build(lake_id: str, wind: dict, L: dict | None, now: datetime, *, supported: bool = True, top: int = R.DEFAULT_TOP,
-          bank_ids: tuple = (), trip_hours: list[dict] | None = None, prior_hours: list[dict] | None = None,
+          bank_ids: tuple = (), window_hours: list[dict] | None = None, prior_hours: list[dict] | None = None,
           processing_version: str | None = None, include_full_ranking: bool = False) -> dict:
-    """One decision. `trip_hours` (hourly wind dicts) adds the trip timeline for the shown + requested banks."""
+    """One assessment. `window_hours` (hourly wind dicts) adds the hourly wind timeline for the shown + requested banks."""
     status = _status(wind, L, supported)
     mph_now, gust_mph = C.mph(wind.get("speedMS")), C.mph(wind.get("gustMS"))
     d_from = wind.get("dirFromDeg")
     calm = status == "READY" and d_from is None
     out = {
-        "decisionSchema": SC.DECISION_SCHEMA, "knowledgeVersion": SC.KNOWLEDGE_VERSION, "lakeId": lake_id, "lakeKey": C.lake_key(lake_id),
+        "assessmentSchema": SC.ASSESSMENT_SCHEMA, "knowledgeVersion": SC.KNOWLEDGE_VERSION, "lakeId": lake_id, "lakeKey": C.lake_key(lake_id),
         "status": status, "statusMeaning": SC.STATUS[status], "evaluatedAt": C.iso(now),
         "reference": {"validAt": wind.get("validAt"), "forecastInit": wind.get("forecastInit"), "leadHours": wind.get("leadHours"),
                       "stateGeneratedAt": wind.get("stateGeneratedAt")},
@@ -109,9 +109,9 @@ def build(lake_id: str, wind: dict, L: dict | None, now: datetime, *, supported:
         "scope": {"supportedLake": supported, "geometryAvailable": L is not None,
                   "geometry": None if L is None else {"tableSha256": L.get("tableSha256"), "sourceTableSha256": L.get("sourceTableSha256"),
                                                       "subset": L.get("subset"), "banks": len(L["banks"])},
-                  "answers": "wind exposure and modeled surface per bank",
-                  "doesNotAnswer": ["fish presence", "water clarity", "access, launch or legality", "private property", "safety", "whether to go"]},
-        "shorelines": None, "lakeSummary": None, "trip": None,
+                  "answers": "wind exposure and wind-driven surface disturbance per bank (specialist wind assessment)",
+                  "doesNotAnswer": ["where to bowfish", "fish presence or behaviour", "water clarity", "overall fishing opportunity", "access, launch or legality", "private property", "safety", "whether to go"], "synthesisOwner": "sector-intelligence"},
+        "shorelines": None, "lakeSummary": None, "timeline": None,
         "confidence": {"level": "UNKNOWN", "reasons": [SC.STATUS[status]], "ceiling": "MODERATE", "definition": SC.CONFIDENCE["UNKNOWN"]},
         "limitations": [], "explanation": None,
         "provenance": {"brainId": C.BRAIN_ID, "brainVersion": C.BRAIN_VERSION, "modelVersion": C.CANDIDATE_MODEL,
@@ -121,7 +121,7 @@ def build(lake_id: str, wind: dict, L: dict | None, now: datetime, *, supported:
         "validation": dict(SC.VALIDATION_STATUS),
     }
     if status != "READY":
-        out["explanation"] = f"No shoreline decision: {SC.STATUS[status]}"
+        out["explanation"] = f"No shoreline assessment: {SC.STATUS[status]}"
         if wind.get("staleReasons"):
             out["explanation"] += f" ({', '.join(wind['staleReasons'])})"
         _assert(out)
@@ -136,9 +136,9 @@ def build(lake_id: str, wind: dict, L: dict | None, now: datetime, *, supported:
         out["lakeSummary"]["note"] = "calm: direction undefined; below 0.5 m/s modeled waves stay under 1 in at any fetch"
     if include_full_ranking:
         out["fullRanking"] = R.full_ranking(allr, lake_id)
-    if trip_hours:
+    if window_hours:
         ids = list(dict.fromkeys([b["bankId"] for b in sh["requested"] + sh["sheltered"][:3] + sh["exposed"][:3]]))
-        out["trip"] = T.timeline(L, trip_hours, ids, prior_hours)
+        out["timeline"] = T.timeline(L, window_hours, ids, prior_hours)
     out["confidence"] = _confidence(wind, sh, mph_now, gust_mph)
     out["limitations"] = LIM.applicable(wind["kind"], mph_now, gust_mph, wind.get("leadHours"), bool(L.get("subset")))
     out["explanation"] = _headline(out, sh)
@@ -169,4 +169,4 @@ def _headline(d, sh):
 def _assert(d):
     p = SC.check(d)
     if p:
-        raise AssertionError(f"decision invariant failed: {p[:5]}")
+        raise AssertionError(f"assessment invariant failed: {p[:5]}")

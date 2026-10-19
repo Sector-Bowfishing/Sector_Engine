@@ -28,7 +28,7 @@ def test_attach_is_additive_and_eventless():
     assert w["value"] == 3.3 and w["scoreVersion"] == "wind-certification-rubric-v1"
     m = w["measurements"]
     assert m["schema"] == "wind-score-measurements-v1" and m["consistency"] == []
-    assert m["bowfishingIntelligence"]["scoreVersion"] == "wind-bowfishing-intelligence-v2"
+    assert m["windCapability"]["scoreVersion"] == "wind-specialist-capability-v2"
     updates, changed = plan_writes(new, {b: {} for b in UPSTREAM}, NOW, old_scores=old)
     assert "scores/wind" in updates and not [k for k in updates if k.startswith("activity/")]      # rewrite, but no score.changed event
 

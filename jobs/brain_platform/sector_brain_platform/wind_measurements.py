@@ -1,7 +1,8 @@
 """Wind's three measurements, evaluated by the PLATFORM scorer (the only scoring authority; Wind never publishes a score).
 
-  BOWFISHING INTELLIGENCE   wind-bowfishing-intelligence-v2 (PROPOSED): can Wind do the bowfisher's wind tasks? A number, with
-                            its MEASURED_SKILL and MODEL_CAPABILITY points always reported separately.
+  WIND CAPABILITY           wind-specialist-capability-v2 (PROPOSED): what Wind, as the wind SPECIALIST, can demonstrably
+                            calculate, interpret and assess. A number, with its MEASURED_SKILL and MODEL_CAPABILITY points always
+                            reported separately. It scores no cross-Brain bowfishing recommendation (Sector Intelligence owns those).
   SCIENTIFIC CONFIDENCE     wind-scientific-confidence-v1: how thoroughly the outputs are validated. Evidence STATUSES, no number
                             (no defensible single confidence metric exists; a number would hide the 0 field observations).
   PRODUCTION READINESS      wind-production-readiness-v1: operational maturity, from facts that already exist (brain.json,
@@ -22,13 +23,13 @@ from .timeutil import iso
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-RUBRIC_PATH = os.path.join(ROOT, "docs", "brains", "scoring", "wind-bowfishing-intelligence-v2.json")
+RUBRIC_PATH = os.path.join(ROOT, "docs", "brains", "scoring", "wind-specialist-capability-v2.json")
 EVIDENCE_PATH = os.path.join(ROOT, "docs", "brains", "scoring", "evidence", "wind-measurements-evidence.json")
 BRAIN_JSON = os.path.join(ROOT, "brains", "wind", "brain.json")
 GAPS_PATH = os.path.join(ROOT, "brains", "wind", "research", "GAPS.json")
 
 ENVELOPE = "wind-score-measurements-v1"
-BI_VERSION = "wind-bowfishing-intelligence-v2"
+CAP_VERSION = "wind-specialist-capability-v2"
 SC_VERSION = "wind-scientific-confidence-v1"
 PR_VERSION = "wind-production-readiness-v1"
 CERT_VERSION = "wind-certification-rubric-v1"
@@ -38,7 +39,7 @@ CUTOVER_SEQUENCE = ("water-clarity", "biological-state", "wind")      # approved
 _LOCAL = re.compile(r"/Users/|~/Desktop|Desktop/Development|Library/Caches|Sector Research")
 
 # rubric item -> research gap that improves it (brains/wind/research/GAPS.json)
-ITEM_GAP = {"WI1": "WIND-CNF-001", "WI2": "WIND-CNF-003", "WI3": "WIND-CNF-001", "WI4": "WIND-CNF-001", "DI1": "WIND-CNF-001",
+ITEM_GAP = {"WI1": "WIND-CNF-001", "WI2": "WIND-CNF-003", "WI3": "WIND-CNF-001", "WI4": "WIND-CNF-001", "EA1": "WIND-CNF-001",
             "SI1": "WIND-CNF-002", "SI2": "WIND-CNF-002", "TI3": "WIND-CNF-002"}
 
 
@@ -64,8 +65,8 @@ def evidence_problems(ev: dict | None, rubric: dict) -> list[str]:
         p.append(f"evidence schema {ev.get('schema')!r} != {EVIDENCE_SCHEMA}")
     if ev.get("brainId") != "wind":
         p.append("evidence is not Wind's")
-    if not str(ev.get("knowledgeVersion", "")).startswith("wind-bowfishing-decision-"):
-        p.append("evidence has no decision knowledgeVersion")
+    if not str(ev.get("knowledgeVersion", "")).startswith("wind-exposure-assessment-"):
+        p.append("evidence has no exposure-assessment knowledgeVersion")
     if (ev.get("atmospheric") or {}).get("h2Read") is not False:
         p.append("atmospheric evidence does not attest H2 unread")
     sc = ev.get("scenarios") or {}
@@ -78,7 +79,7 @@ def evidence_problems(ev: dict | None, rubric: dict) -> list[str]:
     return p
 
 
-# ---------------------------------------------------------------- Bowfishing Intelligence V2
+# ---------------------------------------------------------------- Wind Specialist Capability V2
 def _windy(m):
     if m is None:
         return 0.0
@@ -128,15 +129,15 @@ def _measured(item, ev):
     if i == "SI2":
         c = min(lin(s.get("exact"), 0.20, 0.60), lin(s.get("within1"), 0.50, 0.90), lin(s.get("severe"), 0.25, 0.05)) if s else 0.0
         return c, f"exact {s.get('exact')}, within 1 {s.get('within1')}, severe {s.get('severe')}"
-    if i == "DI1":
-        d = a.get("decisionAccuracy") or {}; v = d.get("symmetricNight5mph")
-        return lin(v, item["zero"], item["full"]), f"symmetric night accuracy {v} (n {d.get('nSymmetric')}); observed >= 10 mph {d.get('observedNight10mph')} (reported)"
+    if i == "EA1":
+        d = a.get("surfaceClassAgreement") or {}; v = d.get("symmetricNight5mph")
+        return lin(v, item["zero"], item["full"]), f"symmetric night surface-class agreement {v} (n {d.get('nSymmetric')}); observed >= 10 mph {d.get('observedNight10mph')} (reported)"
     if i == "TI3":
         t = s.get("transient") or {}; return (1.0 if t.get("m4Promoted") else 0.0), t.get("why") or "no transient evidence"
     raise KeyError(i)
 
 
-def bowfishing_intelligence(ev: dict, rubric: dict, now: dt.datetime) -> dict:
+def wind_capability(ev: dict, rubric: dict, now: dt.datetime) -> dict:
     problems = evidence_problems(ev, rubric)
     base = {"scoreVersion": rubric["scoreVersion"], "rubricStatus": rubric["status"], "scale": 10, "notComparableWith": rubric["notComparableWith"],
             "scoreUpdatedAt": iso(now)}
@@ -202,8 +203,8 @@ def scientific_confidence(ev: dict | None, cert: dict, now: dt.datetime) -> dict
          "evidence": f"POD {flag.get('pod')}, FAR {flag.get('far')} on consumed CAL+H1; validation test sealed until 2027-01-01 (H2)" if flag else "no flag evidence"},
         {"id": "surfacePhysics", "claim": "Modeled wave height and class", "status": "PARTIAL_BUOYS_ONLY",
          "evidence": f"Hm0 MAE {s.get('hm0MaeM')} m, exact class {s.get('exact')}, within 1 {s.get('within1')} on {s.get('buoyRows')} buoy-hours (buoys are not banks)"},
-        {"id": "decisionAccuracy", "claim": "Forecast wind gives the same surface class as observed wind", "status": "PARTIAL",
-         "evidence": f"symmetric night {((a.get('decisionAccuracy') or {}).get('symmetricNight5mph'))}; observed >= 10 mph {((a.get('decisionAccuracy') or {}).get('observedNight10mph'))}"},
+        {"id": "surfaceClassAgreement", "claim": "Forecast wind gives the same surface class as observed wind", "status": "PARTIAL",
+         "evidence": f"symmetric night {((a.get('surfaceClassAgreement') or {}).get('symmetricNight5mph'))}; observed >= 10 mph {((a.get('surfaceClassAgreement') or {}).get('observedNight10mph'))}"},
         {"id": "bankExposureField", "claim": "Real banks rank the way the model ranks them", "status": "NOT_VALIDATED",
          "evidence": f"{f.get('observations', 0)} field observations; {f.get('requirement', 'Evidence Addendum v1')}"},
         {"id": "surfaceField", "claim": "A bank's surface looks like the modeled class", "status": "NOT_VALIDATED", "evidence": f"{f.get('observations', 0)} field observations"},
@@ -248,7 +249,7 @@ def production_readiness(cert: dict, brain: dict, health: dict | None, now: dt.d
          "detail": f"publisher {pub.get('cutoverStatus')}; approved sequence {' -> '.join(CUTOVER_SEQUENCE)} (Wind is last)"},
         {"gate": "customerIntegration", "status": "OPEN" if brain.get("customerIntegrationMode") not in (None, "none") else "BLOCKED",
          "detail": f"customerIntegrationMode {brain.get('customerIntegrationMode')}: customers get Open-Meteo Best Match"},
-        {"gate": "bowfishingDecisionActivation", "status": "BLOCKED", "detail": "decision contract built and tested in nonproduction; not wired into wind-hourly, not published"},
+        {"gate": "windAssessmentActivation", "status": "BLOCKED", "detail": "wind exposure assessment contract built and tested in nonproduction; not wired into wind-hourly, not published"},
         {"gate": "liveReliability", "status": "OPEN" if days is not None and days >= 30 else "BLOCKED",
          "detail": f"{days}/30 valid live days at the certification snapshot ({cert.get('scoreUpdatedAt')})" if days is not None else "unknown"},
         {"gate": "runtimeHealth", "status": "UNKNOWN" if h is None else ("OPEN" if h == "HEALTHY" else "BLOCKED"), "detail": f"health {h or 'not read'}"},
@@ -257,22 +258,22 @@ def production_readiness(cert: dict, brain: dict, health: dict | None, now: dt.d
     return {"version": PR_VERSION, "basis": "GATE_STATUS", "value": None, "evaluatedAt": iso(now),
             "overall": "NOT_READY" if any(g["status"] == "BLOCKED" for g in gates) else ("UNKNOWN" if any(g["status"] == "UNKNOWN" for g in gates) else "READY"),
             "gates": gates, "fromCertification": {"dimensionValues": caps, "source": f"{cert.get('scoreVersion')} dims 8-10 (carried verbatim)"},
-            "notIntelligence": "uptime, freshness and publication state say nothing about whether a bank ranking is right",
+            "notCapability": "uptime, freshness and publication state say nothing about whether a wind-exposure ranking is right",
             "noNumberBecause": "existing facts already express readiness as gates; a second readiness scorer would compete with the certification dims"}
 
 
 # ---------------------------------------------------------------- envelope
 def measurements(cert: dict, ev: dict | None, rubric: dict, brain: dict, now: dt.datetime, health: dict | None = None) -> dict:
-    bi = bowfishing_intelligence(ev, rubric, now)
+    bi = wind_capability(ev, rubric, now)
     sec = (cert.get("secondary") or {})
     out = {"schema": ENVELOPE, "brainId": "wind", "evaluatedAt": iso(now), "authority": "platform scorer (sector_brain_platform.wind_measurements)",
            "certification": {"value": cert.get("value"), "scoreVersion": cert.get("scoreVersion"), "basis": cert.get("basis"),
                              "scoreUpdatedAt": cert.get("scoreUpdatedAt"), "carried": "verbatim from frozen-scores.json; not recomputed here"},
-           "bowfishingIntelligenceV1": {"value": sec.get("bowfishingWindIntelligenceScore"), "definition": sec.get("definition"), "carried": "verbatim; frozen"},
-           "bowfishingIntelligence": bi,
+           "bwisV1": {"value": sec.get("bowfishingWindIntelligenceScore"), "definition": sec.get("definition"), "carried": "verbatim; frozen"},
+           "windCapability": bi,
            "scientificConfidence": scientific_confidence(ev, cert, now),
            "productionReadiness": production_readiness(cert, brain, health, now),
-           "presentation": "Show the three measurements side by side with the certification score; never average them; label BI v2 PROPOSED until adopted."}
+           "presentation": "Show the three measurements side by side with the certification score; never average them; label Wind Capability v2 PROPOSED until adopted. None of them is a bowfishing recommendation."}
     out["consistency"] = consistency(out)
     return out
 
@@ -280,19 +281,19 @@ def measurements(cert: dict, ev: dict | None, rubric: dict, brain: dict, now: dt
 def consistency(m: dict) -> list[str]:
     """Problems with the envelope (empty = consistent). Checked by tests and before any write."""
     p = []
-    versions = [m["certification"]["scoreVersion"], BI_VERSION, SC_VERSION, PR_VERSION]
+    versions = [m["certification"]["scoreVersion"], CAP_VERSION, SC_VERSION, PR_VERSION]
     if len(set(versions)) != 4:
         p.append("measurement versions collide")
     if m["certification"]["scoreVersion"] != CERT_VERSION:
         p.append("certification block is not wind-certification-rubric-v1")
-    bi = m["bowfishingIntelligence"]
+    bi = m["windCapability"]
     if bi.get("value") is not None:
         if abs(bi["rawPoints"] - sum(i["points"] for i in bi["items"].values())) > 0.02:
-            p.append("BI raw points do not reproduce from items")
+            p.append("Capability raw points do not reproduce from items")
         if round(bi["rawPoints"] / 10, 1) != bi["value"]:
-            p.append("BI value does not reproduce from raw points")
+            p.append("Capability value does not reproduce from raw points")
         if bi["scoreVersion"] == m["certification"]["scoreVersion"]:
-            p.append("BI reuses the certification version")
+            p.append("Capability score reuses the certification version")
     for k in ("scientificConfidence", "productionReadiness"):
         if m[k].get("value") is not None:
             p.append(f"{k} carries a number")

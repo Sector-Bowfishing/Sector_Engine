@@ -2,7 +2,7 @@
 BRAIN_INTEGRATION_REQUIREMENTS.md §5). Engine owns these enums; Ops renders them verbatim.
 
 WindBrain answers ONE question: what are the wind and water-surface conditions doing on this lake?
-Shoreline ranking BY WIND EXPOSURE ONLY lives in the separate, nonproduction `sector_wind.decision` layer (V2); this adapter never
+Shoreline ranking BY WIND EXPOSURE ONLY lives in the separate, nonproduction `sector_wind.assessment` layer (V2); this adapter never
 decides fishing locations, whether tonight is good, or species behaviour — Sector Intelligence does."""
 from __future__ import annotations
 

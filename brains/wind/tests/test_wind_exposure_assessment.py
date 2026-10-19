@@ -1,4 +1,4 @@
-"""Wind Bowfishing Decision layer (V2) tests: real Guntersville geometry (committed subset of the frozen fetch table), SYNTHETIC
+"""Wind Bowfishing Assessment layer (V2) tests: real Guntersville geometry (committed subset of the frozen fetch table), SYNTHETIC
 wind. These verify bowfishing behaviour and contract honesty; they are never evidence of observed accuracy."""
 import gzip
 import hashlib
@@ -12,7 +12,7 @@ import pytest
 from sector_wind import bowfishing as BF
 from sector_wind.brain import contract as C
 from sector_wind.brain.state import build_state
-from sector_wind.decision import build as B, limitations as LIM, ranking as R, scenarios as SCN, schema as SC, semantics as S, timeline as T
+from sector_wind.assessment import build as B, limitations as LIM, ranking as R, scenarios as SCN, schema as SC, semantics as S, timeline as T
 import test_brain as TB
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -23,8 +23,8 @@ try:
 except ImportError:      # the clean-copy gate (verification/integration/test_wind_package.py) ships brains/wind without tools/
     iter_errors = None
 
-FIXTURE = os.path.join(HERE, "fixtures", "guntersville_decision_subset.json.gz")
-SCHEMA = json.load(open(os.path.join(HERE, "..", "contracts", "wind-bowfishing-decision-v1.json")))
+FIXTURE = os.path.join(HERE, "fixtures", "guntersville_fetch_subset.json.gz")
+SCHEMA = json.load(open(os.path.join(HERE, "..", "contracts", "wind-exposure-assessment-v1.json")))
 LAKE = "Guntersville|AL"
 A, Bk = "GT-005719", "GT-001172"          # audit pair: SW-open creek-arm bank / sheltered minor tributary
 
@@ -85,11 +85,11 @@ def test_wind_from_state_end_to_end(tmp_path, fx):
     w = B.wind_from_state(state)
     assert w["kind"] == "analysis" and abs(w["speedMS"] - 6.0) < 0.05 and w["dirFromDeg"] == 225
     assert w["durationH"] == state["surfaceState"]["durationH"]
-    d = B.build(LAKE, w, R.geometry(fx, LAKE), TB.NOW, bank_ids=(A, Bk), trip_hours=w["hourly"][:6])
+    d = B.build(LAKE, w, R.geometry(fx, LAKE), TB.NOW, bank_ids=(A, Bk), window_hours=w["hourly"][:6])
     valid(d)
     assert d["status"] == "READY" and d["wind"]["kind"] == "analysis"
     assert bank(d, A)["windExposure"]["code"] in S.EXPOSED and bank(d, Bk)["windExposure"]["code"] in S.SHELTERED
-    assert len(d["trip"]["hours"]) == 6 and all(h["kind"] == "forecast" for h in d["trip"]["hours"])
+    assert len(d["timeline"]["hours"]) == 6 and all(h["kind"] == "forecast" for h in d["timeline"]["hours"])
     # same frozen functions and duration as the state's own bank rows; the only difference is the published state's 0.1 mph
     # rounding of the wind (6.0 m/s -> 13.4 mph -> 5.99 m/s), worth < 0.1 in here
     row = next(r for r in rows if r["bankId"] == A)
@@ -169,19 +169,19 @@ def test_duration_growth_then_fetch_limit(L):
     assert hs == sorted(hs) and hs[-1] == hs[-2] == hs[-3]
 
 
-def test_trip_direction_shift_flips_shores(L):
+def test_timeline_direction_shift_flips_shores(L):
     r = SCN.run(L, only=("S04",))["scenarios"][0]
     assert r["pass"], r["checks"]
 
 
-def test_trip_without_history_discloses_underestimate(L):
+def test_timeline_without_history_discloses_underestimate(L):
     t = T.timeline(L, SCN._hours([(10, 225)] * 3), [A])
     assert "UNDER-estimated" in t["durationBasis"] and t["priorHistoryHours"] == 0
     t2 = T.timeline(L, SCN._hours([(10, 225)] * 3), [A], prior=SCN._hours([(10, 225)] * 6, SCN.NOW - timedelta(hours=6)))
     assert t2["banks"][0]["hours"][0]["waveHeightIn"] > t["banks"][0]["hours"][0]["waveHeightIn"]
 
 
-def test_trip_unknown_hour_stays_unknown(L):
+def test_timeline_unknown_hour_stays_unknown(L):
     hrs = SCN._hours([(10, 225), (10, 225)])
     hrs[1]["speedMS"] = None
     t = T.timeline(L, hrs, [A])
@@ -268,9 +268,9 @@ def test_alternatives_for_exposed_bank(L):
 # ── 16 versioned output + schema ────────────────────────────────────────────────────────────
 
 def test_decision_is_versioned_and_schema_valid(L):
-    d = dec(L, 12, bank_ids=(A, Bk), trip_hours=SCN._hours([(12, 225)] * 3))
+    d = dec(L, 12, bank_ids=(A, Bk), window_hours=SCN._hours([(12, 225)] * 3))
     valid(d)
-    assert d["decisionSchema"] == "sector-wind-bowfishing-decision-v1" and d["knowledgeVersion"] == SC.KNOWLEDGE_VERSION
+    assert d["assessmentSchema"] == "sector-wind-exposure-assessment-v1" and d["knowledgeVersion"] == SC.KNOWLEDGE_VERSION
     assert d["provenance"]["aiUsed"] is False and d["provenance"]["modelVersion"] == C.CANDIDATE_MODEL
     assert len(json.dumps(d)) < 120_000        # bounded payload
 
@@ -278,11 +278,11 @@ def test_decision_is_versioned_and_schema_valid(L):
 def test_check_catches_violations(L):
     d = dec(L, 12, bank_ids=(A,))
     bad = json.loads(json.dumps(d)); bad["validation"]["validated"] = True
-    assert "decision claims validation" in SC.check(bad)
+    assert "assessment claims validation" in SC.check(bad)
     bad = json.loads(json.dumps(d)); bad["shorelines"]["requested"][0]["predictedSurface"]["class"] = 1
     assert any("below the wave" in p for p in SC.check(bad))
     bad = json.loads(json.dumps(d)); bad["status"] = "INPUT_STALE"
-    assert "non-READY decision carries shoreline results" in SC.check(bad)
+    assert "non-READY assessment carries shoreline results" in SC.check(bad)
 
 
 # ── full scenario catalogue (Layer 3) ───────────────────────────────────────────────────────
@@ -304,16 +304,16 @@ def test_scenario_crash_is_a_failure_not_a_pass(L, monkeypatch):
 # ── 25 existing application compatibility ───────────────────────────────────────────────────
 
 def test_existing_state_and_publication_untouched(tmp_path, fx):
-    """The decision layer is not wired into the hourly job or the publication: the state carries no decision, and the
-    production publish path does not import the decision package."""
+    """The assessment layer is not wired into the hourly job or the publication: the state carries no assessment, and the
+    production publish path does not import the assessment package."""
     st = TB.make_store(tmp_path)
     state, rows, _ = build_state(st, TB.CFG, "guntersville", LAKE, TB.DIRECTORY[0], TB.NOW, fetch_obj=fx)
-    assert "decision" not in json.dumps(sorted(state))
+    assert "assessment" not in json.dumps(sorted(state))
     for mod in ("publish.py", "artifact.py", "state.py", "writer.py"):
         src = open(os.path.join(HERE, "..", "runtime", "sector_wind", "brain", mod)).read()
-        assert "decision" not in src.split('"""', 2)[-1] or "from ..decision" not in src
+        assert "assessment" not in src.split('"""', 2)[-1] or "from ..assessment" not in src
     main_src = open(os.path.join(HERE, "..", "runtime", "main.py")).read()
-    assert "sector_wind.decision" not in main_src and "from .decision" not in main_src
+    assert "sector_wind.assessment" not in main_src and "from .assessment" not in main_src
 
 
 # ── 17/22/26 evaluation evidence and Pulse contracts stay in step with the runtime ──────────
@@ -324,8 +324,8 @@ def test_committed_measurement_evidence_matches_runtime():
     if not os.path.exists(p):
         pytest.skip("repository docs not present (clean-copy gate); the platform suite requires the file")
     ev = json.load(open(p))
-    rubric = json.load(open(os.path.join(ROOT, "docs", "brains", "scoring", "wind-bowfishing-intelligence-v2.json")))
-    assert ev["knowledgeVersion"] == SC.KNOWLEDGE_VERSION and ev["decisionSchema"] == SC.DECISION_SCHEMA
+    rubric = json.load(open(os.path.join(ROOT, "docs", "brains", "scoring", "wind-specialist-capability-v2.json")))
+    assert ev["knowledgeVersion"] == SC.KNOWLEDGE_VERSION and ev["assessmentSchema"] == SC.ASSESSMENT_SCHEMA
     assert ev["scenarios"]["suite"] == SCN.SUITE_ID == rubric["scenarioSuite"]
     assert ev["scenarios"]["capabilityMap"] == SCN.CAPABILITY
     for lk in rubric["developmentLakes"]:
@@ -339,6 +339,63 @@ def test_pulse_entrypoints_contract():
     ep = json.load(open(os.path.join(HERE, "..", "contracts", "wind-validation-entrypoints-v1.json")))
     assert ep["constraints"]["aiRequired"] is False and ep["constraints"]["newScheduler"] is False and ep["constraints"]["productionWrites"] == "none"
     ids = {e["id"] for e in ep["entrypoints"]}
-    assert {"wind.decision.scenarios", "wind.decision.decide", "platform.wind.measurements", "platform.wind.certificationRefresh"} <= ids
-    from sector_wind.decision import __main__ as CLI
+    assert {"wind.assessment.scenarios", "wind.assessment.assess", "platform.wind.measurements", "platform.wind.certificationRefresh"} <= ids
+    from sector_wind.assessment import __main__ as CLI
     assert CLI.main(["scenarios", "--fetch", FIXTURE, "--lake", LAKE, "--json", os.devnull]) == 0
+
+
+# ── 26/27 specialist boundary: Intelligence-consumable, no cross-Brain recommendation fields ──
+
+def test_no_cross_brain_recommendation_fields(L):
+    for d in (dec(L, 16, bank_ids=(A, Bk), window_hours=SCN._hours([(12, 225), (16, 270)])), dec(L, 0.5), dec(L, 12, top=25)):
+        assert SC.boundary_problems(d) == []
+        txt = json.dumps({k: v for k, v in d.items() if k not in ("scope", "limitations")})
+        for bad in ("fishingImpact", "SURFACE_NOT_LIMITING", "VERY_POOR", "spot", "shoot", "best place", "bowfish here"):
+            assert bad not in txt, bad
+
+
+def test_boundary_check_catches_leaks(L):
+    d = dec(L, 12, bank_ids=(A,))
+    leak = json.loads(json.dumps(d)); leak["shorelines"]["requested"][0]["fishingOpportunity"] = "GOOD"
+    assert any("outside the wind domain" in p for p in SC.check(leak))
+    leak = json.loads(json.dumps(d)); leak["explanation"] = "This is the best place to bowfish tonight."
+    assert any("fishing language" in p for p in SC.check(leak))
+    leak = json.loads(json.dumps(d)); leak["shorelines"]["requested"][0]["windSurfaceDisturbance"]["text"] = "Too rough to spot fish."
+    assert any("fishing language" in p for p in SC.check(leak))
+
+
+def test_surface_disturbance_is_wind_domain_and_structured(L):
+    for mph, lvl in ((0.5, "NONE"), (15, "MODERATE"), (20, "VERY_HIGH")):
+        b = bank(dec(L, mph, bank_ids=(A,)), A)
+        w = b["windSurfaceDisturbance"]
+        assert w["surfaceClass"] == b["predictedSurface"]["class"] and w["mechanism"] == b["predictedSurface"]["driver"]
+        assert w["text"].startswith(("No ", "Low ", "Moderate ", "High ", "Very high ")) and "wind-driven surface disturbance expected" in w["text"]
+    assert bank(dec(L, 20, bank_ids=(A,)), A)["windSurfaceDisturbance"]["level"] in ("HIGH", "VERY_HIGH")
+    sheltered = bank(dec(L, 15, bank_ids=(Bk,)), Bk)["windSurfaceDisturbance"]
+    assert sheltered["mechanism"] == "WIND_TEXTURE" and "waves stay small" in sheltered["text"]
+
+
+def test_intelligence_brain_can_consume_without_parsing_text(L):
+    """Every per-bank fact Intelligence needs is a typed field (codes, numbers, ids), never only prose."""
+    d = dec(L, 16, bank_ids=(A,), window_hours=SCN._hours([(12, 225), (16, 270)]))
+    assert d["scope"]["synthesisOwner"] == "sector-intelligence" and "where to bowfish" in d["scope"]["doesNotAnswer"]
+    b = bank(d, A)
+    typed = (b["windExposure"]["code"], b["relativeExposure"]["lakePercentile"], b["predictedSurface"]["class"], b["predictedSurface"]["waveHeightIn"],
+             b["windSurfaceDisturbance"]["level"], b["fetch"]["effectiveM"], b["confidence"], b["anchor"])
+    assert all(x is not None for x in typed)
+    for alt in b["lessExposedAlternatives"] + b["nearestSheltered"]:
+        assert alt["windExposure"]["code"] and isinstance(alt["distanceM"], int) and alt["rule"]
+    assert all(x["severity"] in ("WARNING", "CAUTION", "INFO") and x["id"].isupper() for x in d["limitations"])
+    assert d["confidence"]["level"] in ("LOW", "MODERATE") and d["reference"] and d["provenance"]["modelVersion"]
+    assert all(h["exposure"] for x in d["timeline"]["banks"] for h in x["hours"])
+    assert "biological-state" not in json.dumps(d) and "water-clarity" not in json.dumps(d)       # no other Brain consumed
+
+
+def test_wind_has_no_cross_brain_dependency():
+    import glob
+    for f in glob.glob(os.path.join(HERE, "..", "runtime", "sector_wind", "assessment", "*.py")):
+        src = open(f).read()
+        for other in ("sector_fish", "biological", "water_clarity", "waterClarity", "sector_intelligence", "lake_brain"):
+            assert other not in src, (f, other)
+    brain = json.load(open(os.path.join(HERE, "..", "brain.json")))
+    assert [c["registry"] for c in brain["consumes"]] == ["lakes"] and "sector-intelligence" in brain["authorizedConsumers"]

@@ -11,22 +11,22 @@
   },
   "entrypoints": [
     {
-      "id": "wind.decision.scenarios",
+      "id": "wind.assessment.scenarios",
       "layer": "LEARNING_AND_VALIDATION",
-      "command": "python -m sector_wind.decision scenarios --fetch <fetch.json.gz> --lake <lakeId> [--json OUT]",
+      "command": "python -m sector_wind.assessment scenarios --fetch <fetch.json.gz> --lake <lakeId> [--json OUT]",
       "cwd": "brains/wind/runtime",
-      "inputs": ["runtime fetch object (archive fetch/<lake> layout or tests/fixtures/guntersville_decision_subset.json.gz)"],
-      "output": "wind-bowfishing-scenarios-v1 result (18 scenarios, pass/fail, evidenceClass MODEL_CAPABILITY)",
+      "inputs": ["runtime fetch object (archive fetch/<lake> layout or tests/fixtures/guntersville_fetch_subset.json.gz)"],
+      "output": "wind-specialist-scenarios-v1 result (18 scenarios, pass/fail, evidenceClass MODEL_CAPABILITY)",
       "exit": "0 all pass, 1 any fail",
       "network": false
     },
     {
-      "id": "wind.decision.decide",
+      "id": "wind.assessment.assess",
       "layer": "BOWFISHING_INTELLIGENCE",
-      "command": "python -m sector_wind.decision decide --fetch <fetch.json.gz> --lake <lakeId> --mph <speed> --dir <fromDeg> [--hours H] [--bank ID]",
+      "command": "python -m sector_wind.assessment assess --fetch <fetch.json.gz> --lake <lakeId> --mph <speed> --dir <fromDeg> [--hours H] [--bank ID]",
       "cwd": "brains/wind/runtime",
       "inputs": ["runtime fetch object", "SYNTHETIC wind"],
-      "output": "sector-wind-bowfishing-decision-v1 (schema brains/wind/contracts/wind-bowfishing-decision-v1.json)",
+      "output": "sector-wind-exposure-assessment-v1 (schema brains/wind/contracts/wind-exposure-assessment-v1.json)",
       "network": false
     },
     {
@@ -64,5 +64,5 @@
     }
   ],
   "deficiencies": "brains/wind/research/GAPS.json (research-gaps v1)",
-  "rubric": "docs/brains/scoring/wind-bowfishing-intelligence-v2.json"
+  "rubric": "docs/brains/scoring/wind-specialist-capability-v2.json"
 }

@@ -90,9 +90,9 @@ def test_every_shipped_module_is_reachable_from_a_runtime_entrypoint():
     def modfile(m):
         p = m.replace(".", "/")
         return next((c for c in (p + ".py", p + "/__init__.py") if c in files), None)
-    # Declared runtime entrypoints. sector_wind/decision/__main__.py (Wind V2, 2026-10-19) is the nonproduction Bowfishing Decision CLI
-    # (`python -m sector_wind.decision`); it is shipped but not called by the hourly job (brains/wind/tests/test_bowfishing_decision.py).
-    seen, stack = set(), ["main.py", "sector_wind/brain/__main__.py", "sector_wind/brain/artifact.py", "sector_wind/decision/__main__.py"]
+    # Declared runtime entrypoints. sector_wind/assessment/__main__.py (Wind V2, 2026-10-19) is the nonproduction Wind Exposure Assessment CLI
+    # (`python -m sector_wind.assessment`); it is shipped but not called by the hourly job (brains/wind/tests/test_wind_exposure_assessment.py).
+    seen, stack = set(), ["main.py", "sector_wind/brain/__main__.py", "sector_wind/brain/artifact.py", "sector_wind/assessment/__main__.py"]
     while stack:
         f = stack.pop()
         if f in seen:

@@ -1,15 +1,15 @@
-"""Bowfishing capability scenarios (Layer 3: Learning & Validation). Deterministic acceptance checks of the decision layer.
+"""Wind specialist capability scenarios (Layer 3: Learning & Validation). Deterministic acceptance checks of the assessment layer.
 
 Every scenario runs the REAL runtime interfaces (`build.build`, `ranking.rank`, `timeline.timeline`, frozen `bowfishing`) on a
 REAL lake fetch table. All winds are SYNTHETIC and labelled so; no observed outcome is used or invented. A pass shows the
-Brain BEHAVES as a bowfishing wind decision should (MODEL_CAPABILITY); it is never evidence that a real bank looked like this
+Brain BEHAVES as a wind exposure assessment should (MODEL_CAPABILITY); it is never evidence that a real bank looked like this
 (OBSERVED_ACCURACY). Scientific Confidence never counts these results as validation.
 
 Banks are chosen from the geometry by rule (not hand-picked), so the same suite runs on any lake:
   exposed / sheltered pair: longest and shortest effective fetch for the scenario direction (audit pair on Guntersville);
   flip pair: open to one direction and sheltered from its reverse, and vice versa.
 
-  python -m sector_wind.decision scenarios --fetch FETCH.json.gz --lake "Guntersville|AL"
+  python -m sector_wind.assessment scenarios --fetch FETCH.json.gz --lake "Guntersville|AL"
 """
 from __future__ import annotations
 
@@ -25,14 +25,14 @@ from . import schema as SC
 from . import semantics as S
 from . import timeline as T
 
-SUITE_ID = "wind-bowfishing-scenarios-v1"
+SUITE_ID = "wind-specialist-scenarios-v1"
 NOW = datetime(2026, 10, 19, 23, 0, tzinfo=timezone.utc)      # fixed evaluation clock (determinism)
 DIR = 225.0
 AUDIT_PAIR = {"Guntersville|AL": ("GT-005719", "GT-001172")}
 ORDER = ("PROTECTED", "LOW_EXPOSURE", "MODERATE_EXPOSURE", "HIGH_EXPOSURE", "EXTREME_EXPOSURE")
-CAPABILITY = {   # scenario -> Bowfishing Intelligence V2 capability item it evidences (rubric: docs/brains/scoring/wind-bowfishing-intelligence-v2.json)
-    "S01": "GI3", "S02": "GI3", "S06": "GI3", "S03": "SI3", "S10": "SI3", "S17": "SI3", "S16": "DI2", "S18": "DI2",
-    "S11": "DI3", "S05": "TI1", "S04": "TI2", "S14": "TI2", "S07": "UM1", "S08": "UM1", "S09": "UM1", "S15": "UM1",
+CAPABILITY = {   # scenario -> Wind Specialist Capability V2 item it evidences (rubric: docs/brains/scoring/wind-specialist-capability-v2.json)
+    "S01": "GI3", "S02": "GI3", "S06": "GI3", "S03": "SI3", "S10": "SI3", "S17": "SI3", "S16": "EA2", "S18": "EA2",
+    "S11": "EA3", "S05": "TI1", "S04": "TI2", "S14": "TI2", "S07": "UM1", "S08": "UM1", "S09": "UM1", "S15": "UM1",
     "S12": "UM2", "S13": "UM2",
 }
 
@@ -77,7 +77,7 @@ def _check(name, cond, detail):
 
 
 def _hours(seq, start=NOW):
-    """seq: [(mph, dir)] -> synthetic hourly trip input."""
+    """seq: [(mph, dir)] -> synthetic hourly window input."""
     return [{"at": C.iso(start + timedelta(hours=k)), "speedMS": m * BF.MPH, "dirFromDeg": d, "gustMS": None, "kind": "synthetic",
              "leadHours": None} for k, (m, d) in enumerate(seq)]
 
@@ -131,16 +131,16 @@ def s03(L):
                    f"{c['windExposure']['code']} / {c['predictedSurface']['label']}"),
             _check("calm: no bank highly exposed", calm["lakeSummary"]["exposedPct"] == 0, f"exposed {calm['lakeSummary']['exposedPct']}%"),
             _check("20 mph: exposed bank High/Extreme", s["windExposure"]["code"] in S.EXPOSED, s["windExposure"]["code"]),
-            _check("20 mph: fishing impact poor or worse", s["fishingImpact"]["code"] in ("POOR", "VERY_POOR"), s["fishingImpact"]["code"]),
+            _check("20 mph: wind-driven surface disturbance high or very high", s["windSurfaceDisturbance"]["level"] in ("HIGH", "VERY_HIGH"), s["windSurfaceDisturbance"]["level"]),
             _check("20 mph: confidence LOW", strong["confidence"]["level"] == "LOW", strong["confidence"]["reasons"][0])]
 
 
 def s04(L):
     a, b = flip_pair(L)
     trip = _hours([(12, DIR)] * 4 + [(12, (DIR + 180) % 360)] * 4)
-    d = B.build(L["lakeId"], _w(12), L, NOW, bank_ids=(a, b), trip_hours=trip, prior_hours=_hours([(12, DIR)] * 6, NOW - timedelta(hours=6)))
-    tb = {x["bankId"]: x for x in d["trip"]["banks"]}
-    ev = [e for e in d["trip"]["events"] if e["type"] == "DIRECTION_SHIFT"]
+    d = B.build(L["lakeId"], _w(12), L, NOW, bank_ids=(a, b), window_hours=trip, prior_hours=_hours([(12, DIR)] * 6, NOW - timedelta(hours=6)))
+    tb = {x["bankId"]: x for x in d["timeline"]["banks"]}
+    ev = [e for e in d["timeline"]["events"] if e["type"] == "DIRECTION_SHIFT"]
     ha, hb = tb[a]["hours"], tb[b]["hours"]
     return [_check("direction shift reported", len(ev) == 1, ev[0]["text"] if ev else "none"),
             _check("bank A calms after the shift", ha[-1]["waveHeightIn"] < ha[0]["waveHeightIn"], f"{ha[0]['waveHeightIn']} -> {ha[-1]['waveHeightIn']} in"),
@@ -153,12 +153,12 @@ def s05(L):
     i = {b["id"]: k for k, b in enumerate(L["banks"])}[a]
     hs = [BF.evaluate_bank(L, i, 12 * BF.MPH, DIR, h)["predictedHm0M"] for h in (0.5, 1, 2, 3, 6, 12)]
     trip = _hours([(12, DIR)] * 8)
-    d = B.build(L["lakeId"], _w(12), L, NOW, bank_ids=(a,), trip_hours=trip)          # no prior history: waves build from the start
-    seq = [x["waveHeightIn"] for x in d["trip"]["banks"][0]["hours"]]
+    d = B.build(L["lakeId"], _w(12), L, NOW, bank_ids=(a,), window_hours=trip)          # no prior history: waves build from the start
+    seq = [x["waveHeightIn"] for x in d["timeline"]["banks"][0]["hours"]]
     return [_check("waves never shrink with longer steady wind", all(x <= y + 1e-9 for x, y in zip(hs, hs[1:])), str([round(h / 0.0254, 1) for h in hs])),
             _check("waves saturate at the fetch limit", abs(hs[-1] - hs[-2]) <= 0.01 * hs[-1] + 1e-6, f"6 h {hs[-2] / 0.0254:.1f} in, 12 h {hs[-1] / 0.0254:.1f} in"),
-            _check("trip timeline builds then holds", all(x <= y for x, y in zip(seq, seq[1:])) and seq[-1] > seq[0], str(seq)),
-            _check("missing prior history disclosed", "UNDER-estimated" in d["trip"]["durationBasis"], d["trip"]["durationBasis"][:60])]
+            _check("timeline builds then holds", all(x <= y for x, y in zip(seq, seq[1:])) and seq[-1] > seq[0], str(seq)),
+            _check("missing prior history disclosed", "UNDER-estimated" in d["timeline"]["durationBasis"], d["timeline"]["durationBasis"][:60])]
 
 
 def s06(L):
@@ -280,12 +280,12 @@ def s13(L):
 def s14(L):
     a, _ = pair(L)
     trip = _hours([(18, DIR), (18, DIR), (10, DIR), (6, DIR), (4, DIR), (4, DIR)])
-    d = B.build(L["lakeId"], _w(18), L, NOW, bank_ids=(a,), trip_hours=trip, prior_hours=_hours([(18, DIR)] * 6, NOW - timedelta(hours=6)))
-    h = d["trip"]["banks"][0]["hours"]
+    d = B.build(L["lakeId"], _w(18), L, NOW, bank_ids=(a,), window_hours=trip, prior_hours=_hours([(18, DIR)] * 6, NOW - timedelta(hours=6)))
+    h = d["timeline"]["banks"][0]["hours"]
     return [_check("modeled waves fall as wind eases", h[-1]["waveHeightIn"] < h[0]["waveHeightIn"], f"{h[0]['waveHeightIn']} -> {h[-1]['waveHeightIn']} in"),
             _check("easing hours flagged recession-optimistic", any(x.get("recessionOptimistic") for x in h[2:]), str([x.get("recessionOptimistic") for x in h])),
-            _check("wind-easing events reported", any(e["type"] == "WIND_EASING" for e in d["trip"]["events"]), str([e["text"] for e in d["trip"]["events"]][:3])),
-            _check("no wave memory disclosed", d["trip"]["waveMemory"]["memory"] is False, d["trip"]["waveMemory"]["model"])]
+            _check("wind-easing events reported", any(e["type"] == "WIND_EASING" for e in d["timeline"]["events"]), str([e["text"] for e in d["timeline"]["events"]][:3])),
+            _check("no wave memory disclosed", d["timeline"]["waveMemory"]["memory"] is False, d["timeline"]["waveMemory"]["model"])]
 
 
 def s15(L):
@@ -302,7 +302,7 @@ def s16(L):
     a, b = pair(L)
     h = lambda: hashlib.sha256(json.dumps(B.build(L["lakeId"], _w(13, 210), L, NOW, bank_ids=(a, b)), sort_keys=True).encode()).hexdigest()
     x, y = h(), h()
-    return [_check("identical input -> identical decision", x == y, x[:16])]
+    return [_check("identical input -> identical assessment", x == y, x[:16])]
 
 
 def s17(L):
@@ -328,11 +328,11 @@ def s18(L):
 
 SCENARIOS = {
     "S01": ("Exposed versus sheltered banks", s01), "S02": ("Opposing wind directions", s02), "S03": ("Calm versus strong wind", s03),
-    "S04": ("Changing wind direction over a trip", s04), "S05": ("Sustained wind over several hours", s05), "S06": ("Protected coves versus open water", s06),
+    "S04": ("Changing wind direction over a time window", s04), "S05": ("Sustained wind over several hours", s05), "S06": ("Protected coves versus open water", s06),
     "S07": ("Missing geometry and unsupported lake", s07), "S08": ("Unknown wind inputs and unknown banks", s08), "S09": ("Forecast freshness failure", s09),
     "S10": ("Surface classification boundaries and semantics", s10), "S11": ("Nearby sheltered alternatives", s11), "S12": ("Forecast lead-time differences", s12),
     "S13": ("Strong-wind uncertainty", s13), "S14": ("Rapidly decreasing wind", s14), "S15": ("Geographic coverage limits", s15),
-    "S16": ("Deterministic output", s16), "S17": ("Speed monotonicity (BWIS v1 QA definition)", s17), "S18": ("Decision contract and explanations", s18),
+    "S16": ("Deterministic output", s16), "S17": ("Speed monotonicity (BWIS v1 QA definition)", s17), "S18": ("Assessment contract and explanations", s18),
 }
 
 

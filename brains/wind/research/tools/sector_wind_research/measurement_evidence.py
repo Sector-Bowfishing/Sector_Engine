@@ -11,7 +11,7 @@ Inputs are the SAME ones BWIS v1 and the certification scoreboard use (all CAL+H
   * geometry QA + six canonical cases: bowfishing_score.dim_b;   surface physics vs buoys 2020-23: bowfishing_score.dim_c(M0);
   * field certification ledger, over-water reference, coverage, provenance: the Stage 3A evidence files;
   * the probabilistic strong-wind flag: the exploratory analysis output (reported as EXPLORATORY, never scored);
-  * capability scenarios: sector_wind.decision.scenarios on the FULL frozen fetch table of each development lake.
+  * capability scenarios: sector_wind.assessment.scenarios on the FULL frozen fetch table of each development lake.
 """
 from __future__ import annotations
 
@@ -27,8 +27,8 @@ import numpy as np
 
 from sector_wind import bowfishing as BF
 from sector_wind.brain.lakes import WIND_LAKE_IDS
-from sector_wind.decision import scenarios as SCN
-from sector_wind.decision.schema import DECISION_SCHEMA, KNOWLEDGE_VERSION
+from sector_wind.assessment import scenarios as SCN
+from sector_wind.assessment.schema import ASSESSMENT_SCHEMA, KNOWLEDGE_VERSION
 from sector_wind_research import bowfishing_score as BW
 from sector_wind_research import scoreboard as SB
 from sector_wind_research.bowfishing_assets import load_lake
@@ -62,7 +62,7 @@ def atmospheric():
     allnight, n_all, _ = acc(lambda p: True)
     return {"rows": desc, "nRows": m["n"], "nNight": m["nNight"], "nightSpeedMaeMS": _r(m["nightMAE"]), "nightSpeedBiasMS": _r(m["nightBias"]),
             "directionWithin22_5": _r(m["dir22"]), "directionCircMaeDeg": _r(m["circMAE"], 2), "windyHourMaeMS": _r(m["windyMAE"]), "nWindy": m["nWindy"],
-            "decisionAccuracy": {"symmetricNight5mph": sym, "nSymmetric": n_sym, "perFetchSymmetric": per_sym,
+            "surfaceClassAgreement": {"symmetricNight5mph": sym, "nSymmetric": n_sym, "perFetchSymmetric": per_sym,
                                  "v1ObservedNight5mph": v1, "nV1": n_v1, "observedNight10mph": w10, "nObserved10": n10, "allNight": allnight, "nAllNight": n_all,
                                  "fetchesM": list(BW.FETCHES), "definition": "share of night rows where surface class P from the forecast wind equals P from the "
                                  "observed wind (frozen CEM, 6 h steady), equal weight per fetch; symmetric = observed OR forecast >= 5 mph (BWIS v1 D1 note)"},
@@ -131,7 +131,7 @@ def collect(now=None):
     now = now or datetime.now(timezone.utc)
     head = subprocess.run(["git", "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True, cwd=os.path.dirname(__file__)).stdout.strip()
     return {"schema": SCHEMA, "brainId": "wind", "generatedAt": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "codeCommit": head or None,
-            "knowledgeVersion": KNOWLEDGE_VERSION, "decisionSchema": DECISION_SCHEMA,
+            "knowledgeVersion": KNOWLEDGE_VERSION, "assessmentSchema": ASSESSMENT_SCHEMA,
             "inputs": {"atmosphericRowsSha": _sha(BW.ROWS), "bwisV1DefinitionSha256": "21e2a3268f36643284036f74d576a9515c3189f5ee7fc60dda2444de6de233c1",
                        "h2": "SEALED until 2027-01-01 (not read)"},
             "atmospheric": atmospheric(), "strongWind": strong_wind(), "geometry": geometry(), "surface": surface(),

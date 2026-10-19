@@ -1,4 +1,4 @@
-"""Trip timeline: how wind exposure and the modeled surface change hour by hour over a bowfishing trip.
+"""Wind timeline: how wind exposure and the wind-driven surface change hour by hour over a requested time window.
 
 Physics per hour is the frozen M0 surface model (CEM + frozen duration rule `brain.state.frozen_duration_h` over the hourly
 series). Wave memory: M0 has none, so when the wind eases the modeled waves drop at once, while real chop lingers. The M4
@@ -14,7 +14,7 @@ from . import semantics as S
 
 SHIFT_DEG = 45.0             # a direction change this large re-orders which shores are exposed
 SHIFT_MIN_MS = 2.2352        # 5 mph: below this, direction barely matters to the surface
-EASING_FRACTION = 0.7        # speed below 70 % of the trip's running peak = easing after a blow
+EASING_FRACTION = 0.7        # speed below 70 % of the window's running peak = easing after a blow
 EASED_FROM_CLASS = 3         # ... at a bank whose modeled surface had reached Light chop or worse
 MAX_HOURS = 24
 WAVE_MEMORY = {"model": "M0", "memory": False,
@@ -29,8 +29,8 @@ def _hour_series(hourly, prior):
 
 
 def timeline(L: dict, hourly: list[dict], bank_ids: list[str], prior: list[dict] | None = None) -> dict:
-    """hourly: [{at, speedMS, dirFromDeg, gustMS?, kind, leadHours?}] oldest first (the trip window).
-    prior: the same shape for the hours BEFORE the trip (duration memory); None = unknown history (flagged)."""
+    """hourly: [{at, speedMS, dirFromDeg, gustMS?, kind, leadHours?}] oldest first (the requested window).
+    prior: the same shape for the hours BEFORE the window (duration memory); None = unknown history (flagged)."""
     hourly = hourly[:MAX_HOURS]
     ix = {b["id"]: i for i, b in enumerate(L["banks"])}
     pre, trip = _hour_series(hourly, prior)
@@ -87,7 +87,7 @@ def timeline(L: dict, hourly: list[dict], bank_ids: list[str], prior: list[dict]
         bank_out.append({"bankId": b, "hours": seq, "changes": _changes(seq), "summary": _summary(b, seq)})
     return {"hours": hours, "events": events, "banks": bank_out, "waveMemory": WAVE_MEMORY,
             "durationBasis": "frozen duration rule over the supplied hourly series" + ("" if prior else
-                             "; no wind history before the trip was supplied, so early-hour waves may be UNDER-estimated if wind was already blowing"),
+                             "; no wind history before the window was supplied, so early-hour waves may be UNDER-estimated if wind was already blowing"),
             "priorHistoryHours": len(prior or [])}
 
 
@@ -105,7 +105,7 @@ def _changes(seq):
 def _summary(bank_id, seq):
     known = [x for x in seq if x["surfaceClass"] is not None]
     if not known:
-        return f"{bank_id}: no usable wind during the trip window; exposure unknown."
+        return f"{bank_id}: no usable wind during the window; exposure unknown."
     worst = max(known, key=lambda x: x["surfaceClass"])
     best = min(known, key=lambda x: x["surfaceClass"])
     s = f"{bank_id}: surface modeled from {S.SURFACE_LABEL[best['surfaceClass']].lower()} to {S.SURFACE_LABEL[worst['surfaceClass']].lower()}"

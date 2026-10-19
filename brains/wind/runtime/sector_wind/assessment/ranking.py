@@ -105,7 +105,7 @@ def lake_summary(allr: list, L: dict) -> dict:
 
 
 def full_ranking(allr: list, lake_id: str) -> list[dict]:
-    """Every resolvable bank, compact, for a storage artifact (never inlined in the decision)."""
+    """Every resolvable bank, compact, for a storage artifact (never inlined in the assessment)."""
     return [{"bankId": x["bankId"], "exposure": x["exposureRank"], "surfaceClass": x["predictedSurfaceClass"],
              "waveHeightIn": x["predictedHm0In"], "effectiveFetchM": x["effectiveFetchM"], "lakePercentile": x["relativeLakePercentile"],
              "confidence": x["confidence"]} for x in allr]
