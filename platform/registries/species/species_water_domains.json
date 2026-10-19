@@ -1,0 +1,745 @@
+{
+ "schemaVersion": "1.0.0",
+ "registryVersion": "species-water-domains-v1",
+ "generatedBy": "hand-curated; validated by brains/fish/tests/test_water_domain.py",
+ "species": [
+  {
+   "speciesId": "alligator_gar",
+   "commonName": "Alligator gar",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "HIGH",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Atractosteus spatula",
+      "url": "https://www.fishbase.se/summary/Atractosteus-spatula.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false,
+    "note": "Agrees with the Sector evidence packet (Gulf-slope rivers, floodplain lakes and estuaries)."
+   }
+  },
+  {
+   "speciesId": "american_shad",
+   "commonName": "American shad",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH",
+    "MARINE"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "HIGH",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Alosa sapidissima",
+      "url": "https://www.fishbase.se/summary/Alosa-sapidissima.html",
+      "retrieved": "2026-10-19",
+      "statement": "Marine; freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false,
+    "note": "Anadromous. Water domains list every environment the species uses; migration strategy is NOT a water domain."
+   }
+  },
+  {
+   "speciesId": "bighead_carp",
+   "commonName": "Bighead carp",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Hypophthalmichthys nobilis",
+      "url": "https://www.fishbase.se/summary/Hypophthalmichthys-nobilis.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "bigmouth_buffalo",
+   "commonName": "Bigmouth buffalo",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Ictiobus cyprinellus",
+      "url": "https://www.fishbase.se/summary/Ictiobus-cyprinellus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "black_buffalo",
+   "commonName": "Black buffalo",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Ictiobus niger",
+      "url": "https://www.fishbase.se/summary/Ictiobus-niger.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "black_carp",
+   "commonName": "Black carp",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Mylopharyngodon piceus",
+      "url": "https://www.fishbase.se/summary/Mylopharyngodon-piceus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "blue_sucker",
+   "commonName": "Blue sucker",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Cycleptus elongatus",
+      "url": "https://www.fishbase.se/summary/Cycleptus-elongatus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "bowfin",
+   "commonName": "Bowfin",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Amia calva",
+      "url": "https://www.fishbase.se/summary/Amia-calva.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "carpsuckers_group",
+   "commonName": "River carpsucker / quillback / other carpsuckers",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "MEMBER_UNION",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Carpiodes carpio",
+      "url": "https://www.fishbase.se/summary/Carpiodes-carpio.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     },
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Carpiodes cyprinus",
+      "url": "https://www.fishbase.se/summary/Carpiodes-cyprinus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     },
+     {
+      "sourceId": "STATE_AGENCY_SPECIES_ACCOUNT",
+      "reference": "River carpsucker, Outdoor Alabama",
+      "url": "https://outdooralabama.com/carpsucker/river-carpsucker",
+      "retrieved": "2026-10-19",
+      "statement": "Abundant in quiet, silty or sand-bottomed pools of moderate or large streams, rivers and reservoirs."
+     },
+     {
+      "sourceId": "STATE_AGENCY_SPECIES_ACCOUNT",
+      "reference": "Quillback, Illinois DNR",
+      "url": "https://dnr.illinois.gov/content/dam/soi/en/web/dnr/education/cdindex/quillback.pdf",
+      "retrieved": "2026-10-19",
+      "statement": "Native, common stream and river fish; no brackish or saline use described."
+     },
+     {
+      "sourceId": "FISHES_OF_TEXAS",
+      "reference": "Carpiodes carpio / Carpiodes cyprinus",
+      "url": "https://fishesoftexas.org/taxa/carpiodes-carpio",
+      "retrieved": "2026-10-19",
+      "statement": "Both listed Freshwater (streams, lakes)."
+     },
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Carpiodes velifer (highfin carpsucker)",
+      "url": "https://www.fishbase.se/summary/Carpiodes-velifer.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false,
+    "note": "Membership is the genus Carpiodes (river carpsucker, quillback, highfin carpsucker) per the scorecard 'Carpiodes spp.'; the union is FRESHWATER. No source reviewed describes any Carpiodes species in brackish water; this is the absence of a brackish finding, not proof of exclusion. Reviewed 2026-10-19."
+   }
+  },
+  {
+   "speciesId": "channel_catfish",
+   "commonName": "Channel catfish",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Ictalurus punctatus",
+      "url": "https://www.fishbase.se/summary/Ictalurus-punctatus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "common_carp",
+   "commonName": "Common carp",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Cyprinus carpio",
+      "url": "https://www.fishbase.se/summary/Cyprinus-carpio.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "freshwater_drum",
+   "commonName": "Freshwater drum",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Aplodinotus grunniens",
+      "url": "https://www.fishbase.se/summary/Aplodinotus-grunniens.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "gizzard_shad",
+   "commonName": "Gizzard shad",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH",
+    "MARINE"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Dorosoma cepedianum",
+      "url": "https://www.fishbase.se/summary/Dorosoma-cepedianum.html",
+      "retrieved": "2026-10-19",
+      "statement": "Marine; freshwater; brackish"
+     },
+     {
+      "sourceId": "USGS_NAS_SPECIES_PROFILE",
+      "reference": "Dorosoma cepedianum (SpeciesID 492)",
+      "url": "https://nas.er.usgs.gov/queries/factsheet.aspx?SpeciesID=492",
+      "retrieved": "2026-10-19",
+      "statement": "Native to fresh and brackish waters; primarily large rivers, reservoirs, lakes and swamps; adults also found in brackish and saline waters of estuaries and bays."
+     },
+     {
+      "sourceId": "VIMS_SPECIES_PROFILE",
+      "reference": "Gizzard shad",
+      "url": "https://www.vims.edu/research/units/programs/multispecies_fisheries_research/speciesofinterest/gizzard-shad.php",
+      "retrieved": "2026-10-19",
+      "statement": "Mainly freshwater; frequently caught in brackish bays and estuaries; larger fish tolerate salinities up to 41.3 per mille."
+     }
+    ],
+    "reviewRequired": false,
+    "note": "Primary-source verified 2026-10-19: USGS confirms FRESHWATER and BRACKISH and reports adults in saline waters of estuaries and bays; MARINE rests on that saline estuary/bay occurrence plus the FishBase marine flag. USGS does not describe open-ocean use, so MARINE means 'occurs in saline water' at species level."
+   }
+  },
+  {
+   "speciesId": "golden_redhorse",
+   "commonName": "Golden redhorse",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Moxostoma erythrurum",
+      "url": "https://www.fishbase.se/summary/Moxostoma-erythrurum.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "goldfish",
+   "commonName": "Goldfish",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Carassius auratus",
+      "url": "https://www.fishbase.se/summary/Carassius-auratus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "grass_carp",
+   "commonName": "Grass carp",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Ctenopharyngodon idella",
+      "url": "https://www.fishbase.se/summary/Ctenopharyngodon-idella.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "longnose_gar",
+   "commonName": "Longnose gar",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "HIGH",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Lepisosteus osseus",
+      "url": "https://www.fishbase.se/summary/Lepisosteus-osseus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false,
+    "note": "Agrees with the Sector evidence packet (fresh to brackish)."
+   }
+  },
+  {
+   "speciesId": "northern_snakehead",
+   "commonName": "Northern snakehead",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Channa argus",
+      "url": "https://www.fishbase.se/summary/Channa-argus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "paddlefish",
+   "commonName": "Paddlefish",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Polyodon spathula",
+      "url": "https://www.fishbase.se/summary/Polyodon-spathula.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "river_redhorse",
+   "commonName": "River redhorse",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Moxostoma carinatum",
+      "url": "https://www.fishbase.se/summary/Moxostoma-carinatum.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "shorthead_redhorse",
+   "commonName": "Shorthead redhorse",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Moxostoma macrolepidotum",
+      "url": "https://www.fishbase.se/summary/Moxostoma-macrolepidotum.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": true,
+    "note": "Primary-source check 2026-10-19 (Illinois DNR, Outdoor Alabama, Montana/Ontario accounts) describes freshwater river and lake habitat only. No primary source states BRACKISH; the only support is the FishBase flag (the Fishes of Texas page is compiled from FishBase, so it is not independent) and checklists listing the species in the Hudson River. BRACKISH is retained as reviewed-but-unconfirmed; reviewRequired stays true. Candidate for removal if no primary source is found."
+   }
+  },
+  {
+   "speciesId": "shortnose_gar",
+   "commonName": "Shortnose gar",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Lepisosteus platostomus",
+      "url": "https://www.fishbase.se/summary/Lepisosteus-platostomus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "silver_carp",
+   "commonName": "Silver carp",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Hypophthalmichthys molitrix",
+      "url": "https://www.fishbase.se/summary/Hypophthalmichthys-molitrix.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "silver_redhorse",
+   "commonName": "Silver redhorse",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Moxostoma anisurum",
+      "url": "https://www.fishbase.se/summary/Moxostoma-anisurum.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "smallmouth_buffalo",
+   "commonName": "Smallmouth buffalo",
+   "waterDomains": [
+    "FRESHWATER"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Ictiobus bubalus",
+      "url": "https://www.fishbase.se/summary/Ictiobus-bubalus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "spotted_gar",
+   "commonName": "Spotted gar",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Lepisosteus oculatus",
+      "url": "https://www.fishbase.se/summary/Lepisosteus-oculatus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false
+   }
+  },
+  {
+   "speciesId": "striped_mullet",
+   "commonName": "Striped mullet",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH",
+    "MARINE"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "HIGH",
+    "basis": "REFERENCE_DATABASE",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Mugil cephalus",
+      "url": "https://www.fishbase.se/summary/Mugil-cephalus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Marine; freshwater; brackish"
+     }
+    ],
+    "reviewRequired": false,
+    "note": "Catadromous. Agrees with the Sector evidence packet (marine/estuarine fish that ascends coastal rivers). Migration strategy is NOT a water domain."
+   }
+  },
+  {
+   "speciesId": "suckers_redhorse_carpsuckers_group",
+   "commonName": "Suckers / redhorse / carpsuckers (grouped row)",
+   "waterDomains": null,
+   "assessment": {
+    "status": "UNKNOWN",
+    "confidence": null,
+    "basis": "NOT_ASSESSABLE",
+    "sources": [],
+    "reviewRequired": false,
+    "note": "Reviewed 2026-10-19 and intentionally UNKNOWN. Catch-all registry artifact (scorecard: Catostomidae grouped row, NOT_ASSESSED, 'covered by species rows') with no deterministically enumerated membership; a union would be guessed. Not defaulted to freshwater. Its member species carry their own rows."
+   }
+  },
+  {
+   "speciesId": "tilapia_unresolved",
+   "commonName": "Tilapia (generic row)",
+   "waterDomains": [
+    "FRESHWATER",
+    "BRACKISH"
+   ],
+   "assessment": {
+    "status": "ASSESSED",
+    "confidence": "MEDIUM",
+    "basis": "MEMBER_UNION",
+    "sources": [
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Oreochromis aureus",
+      "url": "https://www.fishbase.se/summary/Oreochromis-aureus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     },
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Oreochromis niloticus",
+      "url": "https://www.fishbase.se/summary/Oreochromis-niloticus.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     },
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Tilapia zillii",
+      "url": "https://www.fishbase.se/summary/Tilapia-zillii.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater; brackish"
+     },
+     {
+      "sourceId": "USGS_NAS_SPECIES_PROFILE",
+      "reference": "Oreochromis aureus, blue tilapia (SpeciesID 463)",
+      "url": "https://nas.er.usgs.gov/queries/factsheet.aspx?SpeciesID=463",
+      "retrieved": "2026-10-19",
+      "statement": "Able to live and reproduce in brackish waters."
+     },
+     {
+      "sourceId": "USGS_NAS_SPECIES_PROFILE",
+      "reference": "Tilapia zillii, redbelly tilapia (SpeciesID 485)",
+      "url": "https://nas.er.usgs.gov/queries/factsheet.aspx?SpeciesID=485",
+      "retrieved": "2026-10-19",
+      "statement": "Extremely tolerant of saline conditions; survival and growth up to 40 per mille, reproduction through 29 per mille."
+     },
+     {
+      "sourceId": "USGS_NAS_COLLECTION_RECORD",
+      "reference": "Oreochromis niloticus, Nile tilapia (collection record 1710985)",
+      "url": "https://nas.er.usgs.gov/queries/SpecimenViewer.aspx?SpecimenID=1710985",
+      "retrieved": "2026-10-19",
+      "statement": "Habitat recorded as Freshwater-Brackish, status established."
+     }
+    ],
+    "reviewRequired": false,
+    "note": "Generic/unresolved product row; no single taxon is claimed. The set FRESHWATER + BRACKISH is supported for each tilapia established in US waters that was checked (blue, Nile, redbelly) and the project's own evidence treats blue tilapia as the relevant form. USGS has no marine statement, so MARINE is not asserted. Reviewed 2026-10-19."
+   }
+  }
+ ]
+}

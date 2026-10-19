@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/registry-species-water-domains.schema.json",
+  "title": "Species Registry water-domain classification v1",
+  "description": "Species Registry (Platform-owned) water-domain identity metadata: which environments a species occurs in. NOT a life-history/migration concept (diadromy), NOT legality, NOT per-lake presence, NOT a score input. waterDomains is null exactly when assessment.status is UNKNOWN.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "registryVersion", "species"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "registryVersion": {"type": "string", "minLength": 1},
+    "generatedBy": {"type": "string"},
+    "species": {"type": "array", "items": {"$ref": "#/$defs/species"}}
+  },
+  "$defs": {
+    "waterDomain": {"enum": ["FRESHWATER", "BRACKISH", "MARINE"]},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "reference", "retrieved", "statement"],
+      "properties": {
+        "sourceId": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
+        "url": {"type": "string"},
+        "retrieved": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "statement": {"type": "string", "minLength": 1}
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "confidence", "basis", "sources", "reviewRequired"],
+      "properties": {
+        "status": {"enum": ["ASSESSED", "UNKNOWN"]},
+        "confidence": {"enum": ["HIGH", "MEDIUM", "LOW", null]},
+        "basis": {"enum": ["REFERENCE_DATABASE", "MEMBER_UNION", "NOT_ASSESSABLE"]},
+        "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+        "reviewRequired": {"type": "boolean"},
+        "note": {"type": "string"}
+      }
+    },
+    "species": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speciesId", "commonName", "waterDomains", "assessment"],
+      "properties": {
+        "speciesId": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"},
+        "commonName": {"type": "string", "minLength": 1},
+        "waterDomains": {
+          "description": "Array (canonical order FRESHWATER, BRACKISH, MARINE; no duplicates) or null = UNKNOWN (never defaulted). No type keyword: the stdlib validator lacks type unions; array rules apply only to arrays.",
+          "minItems": 1, "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/waterDomain"}
+        },
+        "assessment": {"$ref": "#/$defs/assessment"}
+      }
+    }
+  }
+}
