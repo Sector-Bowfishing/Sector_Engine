@@ -22,7 +22,6 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
-from sector_brain_platform import wind_measurements  # noqa: E402
 from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
                                    prune_activity, guard_scores, score_biological, score_engine, score_intelligence, score_lake)
 
@@ -109,6 +108,7 @@ def compute(facts: dict, now: dt.datetime) -> dict:
 
 def attach_wind_measurements(scores: dict, facts: dict, now: dt.datetime) -> dict:
     """Additive: the certification value, version and breakdown are untouched; the evaluation is HELD (not attached) if inconsistent."""
+    from sector_brain_platform import wind_measurements      # imported here: only used behind --wind-measurements
     rubric, ev, brain = wind_measurements.load_all()
     m = wind_measurements.measurements(scores["wind"], ev, rubric, brain, now, health=(facts.get("health") or {}).get("wind"))
     if m["consistency"]:
