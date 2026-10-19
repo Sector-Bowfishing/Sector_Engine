@@ -52,7 +52,7 @@ Use with `BRAIN_FACTORY_V1.md`. Do the phases **in order**; phases 0–2 are rea
 
 ## Phase 7 — Score, tests, gates
 - [ ] score AFTER = BEFORE, rubric hash unchanged; `{BRAIN}_SCORE_RECONCILIATION.md` states what the score does and does not measure
-- [ ] certification suite covers every proof in `BRAIN_FACTORY_V1.md` §7
+- [ ] certification suite covers every proof in `BRAIN_FACTORY_V1.md` §7 — **use BRAIN_CERT_KIT_V1** (`tools/brain_certification`): a `BrainCertSpec` + `make_certification_tests`, all proofs and mutation tests green; do not copy another Brain's suite
 - [ ] `cd brains/{b} && python -m pytest -q` green; `jobs/brain_platform`, `jobs/brain-orchestrator`, `jobs/brain-scores`, `tools/architecture`, `verification`, `brains/wind`, `brains/fish` green and unchanged
 - [ ] `python3 tools/architecture/report.py --legacy --baseline`: **NEW 0**; nothing RESOLVED away without an explanation
 - [ ] CI `registered-brains` loop picks the Brain up (it loops `brains/*/brain.json`); legacy-job CI list updated only if the old `jobs/` dir had one

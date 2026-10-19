@@ -89,14 +89,9 @@ def build(updates, *, n=1, generated_at=GENERATED_AT, consumed=None, **kw):
 
 
 def rig():
-    """A local, in-memory SHADOW stack. publish(artifact) -> PublishResult via the real handoff (Brain writes its own artifact; Publisher reads it)."""
-    from sector_brain_platform.publisher import local_shadow_stack
-    ids = itertools.count(1)
-    st = local_shadow_stack(clock=lambda: dt.datetime(2026, 10, 15, 0, 0, tzinfo=dt.timezone.utc), id_factory=lambda: uid(next(ids) + 50000))
-
-    def publish(art, brain=cb.BRAIN_ID):
-        return st.publisher.evaluate_reference(st.writer(brain).write(art))
-    return st, publish
+    """A local, in-memory SHADOW stack (shared: brain_cert_kit.env.local_rig). publish(artifact, brain=None) -> PublishResult through the real handoff."""
+    from brain_cert_kit.env import local_rig
+    return local_rig(cb.BRAIN_ID)
 
 
 def sealed(mutations, schema="clarity-registry-v1", freshness=None, **kw):

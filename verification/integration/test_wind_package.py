@@ -46,38 +46,6 @@ def _tracked(prefix):
 
 
 # ---- identity / contract ---------------------------------------------------------------------------------
-def test_brain_json_valid_and_identity_stable():
-    b = json.load(open(os.path.join(WIND, "brain.json")))
-    assert validate(b, json.load(open(os.path.join(ROOT, "contracts", "schemas", "brain.schema.json")))) == []
-    assert b["brainId"] == "wind" and b["researchWorkspace"] == {"workspaceId": "wind-brain"}
-    assert b["customerIntegrationMode"] == "none" and b["publisherRequired"] == {"required": True, "cutoverStatus": "SHADOW"}
-    assert not MAC_PATH.search(json.dumps(b))
-
-
-def test_operating_contract_has_the_19_sections_and_bowfisher_terms():
-    text = open(os.path.join(WIND, "BRAIN_OPERATING_CONTRACT.md"), encoding="utf-8").read()
-    heads = [re.sub(r"^\d+\.\s*", "", h) for h in re.findall(r"^##\s+(.+)$", text, re.M)]
-    assert heads == report.CONTRACT_HEADINGS
-    assert "bowfisher" in text and "angler" not in text.lower()
-    assert not MAC_PATH.search(text)
-
-
-def test_published_contract_declaration_matches_the_publisher_registry():
-    sys.path.insert(0, os.path.join(ROOT, "jobs", "brain_platform"))
-    sys.path.insert(0, os.path.join(WIND, "contracts"))
-    try:
-        import describe_contract as D
-        expected = json.dumps(D.describe(), indent=2, sort_keys=True) + "\n"
-    finally:
-        sys.path.remove(os.path.join(WIND, "contracts"))
-    assert open(os.path.join(WIND, "contracts", "wind-publication-v1.json")).read() == expected
-    d = json.loads(expected)
-    assert d["contractId"] == "wind-publication-v1" and d["envelope"] == "publish-artifact-v2"
-    assert [s["schemaId"] for s in d["sections"]] == ["wind-lake-state-v1", "wind-registry-v1", "wind-source-registry-v1"]
-    b = json.load(open(os.path.join(WIND, "brain.json")))
-    families = sorted(f["pattern"] for s in d["sections"] for f in s["families"])
-    assert sorted(b["publishes"][0]["pathFamilies"]) == families
-    assert sorted(p["providerId"] for p in b["providers"]) == d["sourcesAcquired"]
 
 
 # ---- production boundary ---------------------------------------------------------------------------------
@@ -179,7 +147,7 @@ def test_production_tests_pass_in_a_clean_copy_without_research_package(tmp_path
     shutil.copytree(os.path.join(ROOT, "jobs", "brain_platform", "sector_brain_platform"), dest / "jobs" / "brain_platform" / "sector_brain_platform",
                     ignore=shutil.ignore_patterns("__pycache__"))
     env = {"PATH": os.environ.get("PATH", ""), "HOME": str(tmp_path / "home"), "PYTHONDONTWRITEBYTECODE": "1"}
-    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests", "-o", "testpaths=tests",
+    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests", "-o", "testpaths=tests", "--ignore=tests/test_wind_kit_certification.py",
                         "-o", "pythonpath=runtime ../../jobs/brain_platform"], cwd=dest / "brains" / "wind", capture_output=True, text=True, env=env)
     assert r.returncode == 0, r.stdout[-3000:] + r.stderr[-2000:]
     assert " passed" in r.stdout and " failed" not in r.stdout

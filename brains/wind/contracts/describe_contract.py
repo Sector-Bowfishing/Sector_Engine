@@ -1,54 +1,34 @@
 #!/usr/bin/env python3
-"""Derive Wind's published-contract declaration from the Publisher registry (the authority), so the
-declaration can never drift from what the Publisher enforces.
+"""Derive Wind's published-contract declaration from the Publisher registry (the authority), so the declaration can never drift from what the Publisher enforces.
+The implementation is the shared BRAIN_CERT_KIT_V1 descriptor (tools/brain_certification); this file only declares Wind's contract shape.
 
   PYTHONPATH=jobs/brain_platform python3 brains/wind/contracts/describe_contract.py            # print
   PYTHONPATH=jobs/brain_platform python3 brains/wind/contracts/describe_contract.py --check    # exit 1 if wind-publication-v1.json differs
   PYTHONPATH=jobs/brain_platform python3 brains/wind/contracts/describe_contract.py --write
 """
-import json, os, sys
+import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "wind-publication-v1.json")
+sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "tools", "brain_certification"))
+from brain_cert_kit import ContractSpec, describe_contract, run_describe_cli  # noqa: E402
+
+SPEC = ContractSpec(
+    contract_dir=HERE, out_file="wind-publication-v1.json", bundle_id="wind-publication-v1",
+    builder="brains/wind/runtime/sector_wind/brain/artifact.py",
+    derived_from="jobs/brain_platform/sector_brain_platform/publisher/registry.py (wind_specs, wind_bundles)",
+    status="SHADOW (Publisher Gate P); not wired into the wind-hourly job; not a production contract until cutover",
+    section_fields=("families", "deleteFamilies", "deleteReasons", "volatileContract"),
+    extras={"baselineScopes": {"wind-lake-state-v1": ["lake-live", "lake-static", "fleet-readiness"]},
+            "registryChildren": ("registry", "WIND_REGISTRY_CHILDREN", "children"),
+            "reservedChildren": ("registry", "BRAIN_NODE_OWNERS", "sortedkeys"),
+            "sourcesAcquired": ("registry", "_wind_sources", "callsorted"),
+            "compatibilityProjections": ("registry", "WIND_PROJECTIONS", "projections")})
 
 
 def describe():
-    from sector_brain_platform.publisher import registry as R
-    fam = lambda f: {"pattern": f.pattern, "status": f.status}
-    sections = []
-    for s in R.wind_specs():
-        sections.append({"schemaId": s.schema_id, "families": [fam(f) for f in s.families],
-                         "deleteFamilies": [f.pattern for f in s.delete_families], "deleteReasons": list(s.delete_reasons),
-                         "volatileContract": s.volatile.id if s.volatile else None})
-    [bundle] = R.wind_bundles()
-    return {
-        "contractId": bundle.bundle_id, "brainId": bundle.brain_id, "version": "1.0.0",
-        "envelope": "publish-artifact-v2", "fingerprint": "sector-semantic-fingerprint-v2",
-        "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (wind_specs, wind_bundles)",
-        "builder": "brains/wind/runtime/sector_wind/brain/artifact.py",
-        "baselineScopes": {"wind-lake-state-v1": ["lake-live", "lake-static", "fleet-readiness"]},
-        "sections": sorted(sections, key=lambda x: x["schemaId"]),
-        "registryChildren": {k: list(v) for k, v in R.WIND_REGISTRY_CHILDREN.items()},
-        "reservedChildren": sorted(R.BRAIN_NODE_OWNERS),
-        "sourcesAcquired": sorted(R._wind_sources()),
-        "compatibilityProjections": [{"id": p.id, "source": p.source, "target": p.target} for p in R.WIND_PROJECTIONS],
-        "status": "SHADOW (Publisher Gate P); not wired into the wind-hourly job; not a production contract until cutover",
-    }
-
-
-def main(argv):
-    d = describe()
-    text = json.dumps(d, indent=2, sort_keys=True) + "\n"
-    if "--write" in argv:
-        open(OUT, "w").write(text)
-        return 0
-    if "--check" in argv:
-        ok = os.path.exists(OUT) and open(OUT).read() == text
-        print("wind-publication-v1.json matches the Publisher registry" if ok else "wind-publication-v1.json is stale: run --write")
-        return 0 if ok else 1
-    sys.stdout.write(text)
-    return 0
+    return describe_contract(SPEC)
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(run_describe_cli(SPEC, sys.argv[1:]))

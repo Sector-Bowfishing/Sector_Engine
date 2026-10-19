@@ -45,33 +45,9 @@ def walk_files(root, exts=None):
 
 
 # ===================================================================================================== 1-2 canonical location, ONE implementation
-def test_canonical_package_location_and_shape():
-    for p in ("brain.json", "BRAIN_OPERATING_CONTRACT.md", "README.md", "contracts/fish-publication-v1.json", "runtime/run.py", "runtime/biological_brain.py",
-              "runtime/publish_artifact.py", "tests", "research/README.md", "research/GAPS.json"):
-        assert os.path.exists(os.path.join(FISH, p)), p
-    assert load("tools", "architecture", "stable_brain_ids.json")["directoryToBrainId"]["fish"] == "biological-state"
-
-
-def test_exactly_one_production_fish_implementation():
-    """No second copy of the Fish modules anywhere in the repository; the legacy job directory is a pointer README only."""
-    marks = ("biological_brain.py", "bio_state.py", "publish_artifact.py", "capability.py", "rules.py")
-    found = [os.path.relpath(p, REPO) for p in walk_files(REPO, ".py") if os.path.basename(p) in ("biological_brain.py", "bio_state.py", "capability.py", "movement_outlook.py")]
-    assert sorted(found) == sorted(f"brains/fish/runtime/{m}" for m in ("biological_brain.py", "bio_state.py", "capability.py", "movement_outlook.py")), found
-    assert os.listdir(os.path.join(REPO, "jobs", "biological-brain")) == ["README.md"]
-    assert "RETIRED" in open(os.path.join(REPO, "jobs", "biological-brain", "README.md")).read()
-    assert marks  # documentation of what a duplicate would look like
 
 
 # ===================================================================================================== 3-4 brain.json, brainId
-def test_brain_json_validates_and_identity_is_the_stable_machine_id():
-    schema = load("contracts", "schemas", "brain.schema.json")
-    assert jsonschema_lite.validate(BRAIN, schema) == []
-    assert BRAIN["brainId"] == "biological-state" and BRAIN["displayName"] == "Fish Brain"
-    assert os.path.basename(FISH) == "fish"                                       # directory != machine id, by design
-    assert BRAIN["lifecycle"] == "PROFILED"                                       # never promoted by having a contract
-    assert BRAIN["publisherRequired"] == {"required": True, "cutoverStatus": "SHADOW"}   # NOT CUTOVER_COMPLETE: no Publisher production write
-    assert BRAIN["customerIntegrationMode"] == "none"
-    assert BRAIN["score"]["path"] == "/scores/biological-state"
 
 
 # ===================================================================================================== 5 ownership boundaries
@@ -85,38 +61,9 @@ def test_ownership_boundaries_in_the_declared_contract():
 
 
 # ===================================================================================================== 6-7 declared dependencies, no fake signals
-def test_declared_dependencies_validate_and_match_what_the_runtime_really_consumes():
-    assert BRAIN["consumes"] == [] and BRAIN["providers"] == []
-    brains = DD.load_registered_brains(REPO)
-    rows = DD.resolve(DD.declared_dependencies(brains["biological-state"]), brains=brains, signals={}, providers=DD.load_providers(REPO))
-    assert rows == []
-    manifest = json.load(open(os.path.join(REPO, "jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")))
-    assert manifest["brains"]["biological-state"]["dependencies"] == []
-    assert DD.drift(brains, manifest) == []                                       # the platform claims no edge Fish does not declare
-    g = DD.dependency_graph(brains, manifest=manifest, signals={}, providers=DD.load_providers(REPO))
-    assert g["brains"]["biological-state"]["source"] == "brain.json" and g["brains"]["biological-state"]["declarationsKnown"] is True
-    assert not [w for w in g["warnings"] if "biological-state" in w]
-
-
-def test_no_fabricated_signal_declarations():
-    signals = {s["signalId"] for s in load("platform", "registries", "signals", "signals.json")["signals"]}
-    assert signals and not [c for c in BRAIN["consumes"] if c["kind"] == "signal"]
-    blob = json.dumps(BRAIN)
-    assert not [s for s in signals if s in blob], "Fish declares no signal: none may appear in brain.json"
-    # and no runtime code consumes a Signal Registry signal by id
-    runtime_src = "\n".join(open(p, encoding="utf-8").read() for p in walk_files(RUNTIME, ".py"))
-    assert not [s for s in signals if f'"{s}"' in runtime_src or f"'{s}'" in runtime_src]
 
 
 # ===================================================================================================== 8-11 artifact: schema, determinism, fingerprint
-def test_artifact_is_publisher_valid_and_deterministic():
-    st, publish = rig()
-    r1 = build(n=1)
-    assert r1.artifact["envelope"] == "publish-artifact-v2" and r1.artifact["lineage"]["artifactSchema"] == "fish-publication-v1"
-    res = publish(r1.artifact)
-    assert res.result is Result.SHADOW_READY and res.codes == [] and res.mode is PublisherMode.SHADOW
-    again = build(n=1)
-    assert json.dumps(r1.artifact, sort_keys=True) == json.dumps(again.artifact, sort_keys=True)          # no clock, no randomness
 
 
 def test_semantic_fingerprint_ignores_execution_identity_and_per_run_timestamps():
@@ -220,111 +167,9 @@ def test_offline_artifact_carries_no_consumed_key_not_an_empty_one(tmp_path):
 
 
 # ===================================================================================================== 15-17 healthV1, UNKNOWN semantics, freshness
-def _health(executions=None, **kw):
-    brains = DD.load_registered_brains(REPO)
-    declared = DD.declared_dependencies(brains["biological-state"])
-    return BH.brain_health("biological-state", declared=declared, declarations_known=True, executions=executions, observations={}, now=S.NOW, **kw)
-
-
-def test_health_v1_can_represent_fish_from_engine_truth_alone():
-    h = _health()
-    assert h["brainId"] == "biological-state" and h["dependencies"]["declared"] == 0 and h["dependencies"]["dependencyHealth"] == "SATISFIED"
-    assert h["dependencies"]["basis"] == "CURRENT_STATE" and h["dependencies"]["declaredVsActual"]["consumptionRecorded"] is False
-
-
-def test_unknown_stays_unknown_and_last_successful_run_is_not_evidence_freshness():
-    ok = [{"executionId": S.uid(1), "brainId": "biological-state", "status": "SUCCEEDED", "startedAt": "2026-10-12T17:00:00Z", "finishedAt": "2026-10-12T17:01:00Z"}]
-    h = _health(ok)
-    assert h["freshness"]["status"] == "UNKNOWN"                                                           # a recent successful run does NOT make evidence FRESH
-    assert "freshness" in h["aggregate"].get("unknownComponents", [])
-    assert h["process"]["processHealth"] in ("HEALTHY", "UNKNOWN")                                          # process health is its own axis
-    # a recorded execution that consumed an undeclared dependency surfaces as drift, never as silence
-    ex = dict(ok[0], consumed=[{"dependencyId": "brain:wind", "dependencyType": "BRAIN", "consumedAt": "2026-10-12T17:00:30Z"}])
-    h2 = _health([ex])
-    assert h2["dependencies"]["declaredVsActual"]["consumedNotDeclared"] == ["brain:wind"]
-
-
-def test_no_freshness_is_derived_from_last_successful_run_anywhere_in_fish():
-    for p in walk_files(RUNTIME, ".py"):
-        src = open(p, encoding="utf-8").read()
-        for m in re.finditer(r"freshness[^\n]*lastSuccess|lastSuccess[^\n]*(freshUntil|staleAfter|expiresAt|freshnessStatus)", src):
-            pytest.fail(f"{os.path.relpath(p, REPO)}: evidence freshness derived from lastSuccess: {m.group(0)[:100]}")
-    art = build().artifact
-    assert "lastSuccessfulRun" in json.dumps(art) and not [s for s in art["sections"] if "freshness" in s]
 
 
 # ===================================================================================================== 18-19 Publisher accepts / rejects
-def test_publisher_is_shadow_only_and_end_to_end_handoff_works():
-    assert {m.name for m in PublisherMode} == {"SHADOW", "DRY_RUN"}                                         # no live mode exists
-    from sector_brain_platform.publisher.api import AllowlistAuthorizer, Caller, OrchestratorApi
-
-    class Authn:
-        def authenticate(self, cred):
-            return Caller("fish-brain-identity") if cred == "fish-token" else None
-    st, _ = rig()
-    api = OrchestratorApi(Authn(), AllowlistAuthorizer({"fish-brain-identity": {"ARTIFACT": {"SUBMIT_ARTIFACT@biological-state"}}}), st.dispatcher)
-    art = build().artifact
-    ref = st.writer("biological-state").write(art)
-    body = {"apiVersion": "orchestrator-api-v1", "requestId": S.uid(700), "requestKind": "ARTIFACT", "brainId": "biological-state", "action": "SUBMIT_ARTIFACT",
-            "params": {"artifactId": ref.artifact_id, "artifactRef": ref.location, "artifactSha256": ref.sha256, "executionId": ref.execution_id, "expectedSchema": ref.expected_schema}}
-    r = api.handle("fish-token", body)
-    assert r.status == 200 and r.result["result"] == "SHADOW_READY" and r.result["live"] is False
-    assert st.sink.live_mutations == 0
-    plan = st.sink.submitted[-1][0]
-    assert "brains/biological-state/publication" in plan.updates                                            # the Publisher's own record, in the same single plan
-    owned = [k for k in plan.updates if not k.startswith(("species/", "brains/biological-state", "validation/biological-state", "health/brains/biological-state", "activity/"))]
-    assert owned == []
-
-
-@pytest.mark.parametrize("path,code", [
-    ("/lakes/Guntersville_AL/speciesPresence", "CROSS_DOMAIN_PATH"),            # Lake Brain owns per-lake species presence
-    ("/speciesProfiles/example_fish", "CROSS_DOMAIN_PATH"),                      # species profile root belongs to the species registry/profile owner
-    ("/brains/wind/status", "CROSS_DOMAIN_PATH"),                                # another Brain's node
-    ("/scores/biological-state", "CROSS_DOMAIN_PATH"),                           # Platform writes scores
-    ("/brains/biological-state/publication", "RESERVED_PATH"),                   # Publisher-owned
-    ("/brains/biological-state/certification", "RESERVED_PATH"),
-    ("/brains/biological-state", "BRAIN_NODE_REPLACEMENT"),                      # never the whole node
-    ("/health/jobs/biological-brain", "CROSS_DOMAIN_PATH"),                      # execution health is Orchestrator-owned
-    ("/species/example_fish/profile", "PATH_NOT_AUTHORIZED"),                    # Species Intelligence Profile publication needs its own reviewed registration (and is not "foreign" to Fish)
-    ("/lakeFleet/Guntersville_AL/slots/biology", "PATH_NOT_AUTHORIZED"),         # no per-lake publication: the Biological State is not a product yet
-    ("/control/orchestratorV1", "CROSS_DOMAIN_PATH"),
-])
-def test_publisher_rejects_wrong_path_ownership(path, code):
-    st, publish = rig()
-    res = publish(sealed([{"op": "SET", "path": "/brains/biological-state/status", "value": "PROFILED"}, {"op": "SET", "path": path, "value": {"x": 1}}]))
-    assert res.result is Result.REJECTED and code in res.codes, res.codes
-    assert st.sink.submitted == []
-
-
-def test_publisher_rejects_wrong_brain_and_wrong_schema_ownership():
-    st, publish = rig()
-    fish_art = build().artifact
-    # a Fish artifact submitted under another Brain's identity
-    ref = st.writer("wind").write(copy.deepcopy(dict(fish_art, lineage=dict(fish_art["lineage"], brainId="wind"))))
-    r = st.publisher.evaluate_reference(ref)
-    assert r.result is Result.REJECTED and ("SCHEMA_BRAIN_MISMATCH" in r.codes or "UNKNOWN_SCHEMA" in r.codes)
-    # a Wind-owned wind-lake-state schema claimed by Fish
-    bad = copy.deepcopy(fish_art); bad["lineage"]["artifactSchema"] = "wind-publication-v1"
-    assert publish(bad).result is Result.REJECTED
-    # a Fish section whose mutation targets another section's family
-    wrong = sealed([{"op": "SET", "path": "/species/example_fish", "value": {"a": 1}}], schema="fish-registry-v1")
-    assert publish(wrong).result is Result.REJECTED
-    # Wind cannot touch /species
-    from sector_brain_platform.publisher import seal_bundle
-    wind_try = seal_bundle(brain_id="wind", bundle_id="wind-publication-v1", sections=[{"artifactSchema": "wind-registry-v1", "mutations": [{"op": "SET", "path": "/species/example_fish", "value": {"a": 1}}]}],
-                           lifecycle="CALIBRATION", review_status="UNREVIEWED", validation_status="NOT_VALIDATED", generated_at="2026-10-12T18:00:00Z", execution_id=S.uid(11),
-                           code_version="t", input_fingerprint="sha256:" + "ab" * 32, registry=default_registry())
-    assert publish(wind_try, brain="wind").result is Result.REJECTED
-
-
-def test_publisher_requires_a_real_release_and_refuses_production_lifecycles_for_fish():
-    st, publish = rig()
-    art = build().artifact
-    none_release = copy.deepcopy(art); none_release["lineage"].update(knowledgeRelease="NONE", manifestRef="NONE", manifestSha256="NONE")
-    assert publish(none_release).result is Result.FAILED_VALIDATION
-    prod = copy.deepcopy(art); prod["lineage"]["lifecycle"] = "PRODUCTION"
-    r = publish(prod)
-    assert r.result is Result.REJECTED and "LIFECYCLE_NOT_AUTHORIZED" in r.codes
 
 
 def test_deletes_are_typed_and_null_is_never_an_implicit_delete():
@@ -360,45 +205,6 @@ def test_every_registry_child_the_runtime_emits_is_covered_by_the_contract():
 
 
 # ===================================================================================================== 20 direct-write audit
-WRITE_METHODS = {"update", "put", "patch", "post", "set", "delete"}
-FORBIDDEN_IMPORTS = ("firebase_admin", "requests", "google.cloud", "pyrebase")
-ALLOWED_LEGACY_WRITE = {("run.py", "rtdb.update")}          # LEGACY: ownership-checked platform client; RETIREMENT_CANDIDATE at Publisher cutover
-
-
-def _calls(path):
-    tree = ast.parse(open(path, encoding="utf-8").read())
-    for n in ast.walk(tree):
-        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr in WRITE_METHODS:
-            yield n.func.attr, ast.unparse(n.func), n.lineno
-
-
-def test_no_unauthorized_production_write_in_the_fish_runtime():
-    sites = set()
-    for p in walk_files(RUNTIME, ".py"):
-        rel = os.path.relpath(p, RUNTIME)
-        src = open(p, encoding="utf-8").read()
-        assert not [m for m in FORBIDDEN_IMPORTS if re.search(rf"^\s*(import|from)\s+{re.escape(m)}", src, re.M)], rel
-        assert not re.search(r"method\s*=\s*['\"](PATCH|PUT|POST|DELETE)['\"]", src), f"{rel}: direct REST write"
-        for attr, full, line in _calls(p):
-            if full.split(".")[0] in ("os", "json", "shutil") or full.endswith(("updates.update", "up.update", "out.update", "summary.update", "d.update", "_cache.update")):
-                continue                                                   # dict/json/os helpers, not a database client
-            if attr == "update" and full.endswith("rtdb.update"):
-                sites.add((rel, "rtdb.update"))
-    assert sites == ALLOWED_LEGACY_WRITE, f"unexpected database write sites: {sorted(sites ^ ALLOWED_LEGACY_WRITE)}"
-
-
-def test_the_artifact_path_cannot_write_anything(tmp_path):
-    """publish_artifact.py is pure (no I/O, no network, no clock, no randomness, no environment); run.py's artifact path only builds/evaluates in memory."""
-    tree = ast.parse(open(os.path.join(RUNTIME, "publish_artifact.py"), encoding="utf-8").read())
-    imported = {a.name.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names} | {n.module.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
-    assert not imported & {"urllib", "requests", "subprocess", "random", "uuid", "time", "socket", "os", "shutil", "tempfile", "http"}, imported
-    src = ast.unparse(tree)
-    for token in ("open(", "datetime.now", "utcnow", ".environ"):
-        assert token not in src, token
-    d = tmp_path / "b"; d.mkdir()
-    S.T.write_bundle(str(d), [S.T.synthetic_profile()])
-    import run
-    assert run.main(["--dry-run", "--offline", "--bundle", str(d), "--out", str(tmp_path / "o")]) == 0     # offline: no rtdb object exists at all
 
 
 def test_write_path_remains_ownership_checked_and_fish_cannot_write_foreign_or_customer_roots():
@@ -414,16 +220,6 @@ def test_write_path_remains_ownership_checked_and_fish_cannot_write_foreign_or_c
 
 
 # ===================================================================================================== 21-23 runtime isolation, research separation
-LOCAL_PATH = re.compile(r"/Users/|/home/[a-z]|\bDesktop/|Sector[ _]Research|Sector_Research_Data|~/|expanduser|SECTOR_RESEARCH_ROOT|fish-brain/(sources|datasets|analysis)")
-
-
-def test_no_local_mac_research_or_cache_paths_in_fish_runtime():
-    bad = []
-    for p in walk_files(RUNTIME, (".py", ".json", ".sh", ".txt")):
-        for i, line in enumerate(open(p, encoding="utf-8").read().splitlines(), 1):
-            if LOCAL_PATH.search(line) and "LEAK_TEXT" not in line and "concatenated" not in line:
-                bad.append(f"{os.path.relpath(p, REPO)}:{i}")
-    assert not bad, bad
 
 
 def test_runtime_works_with_no_research_workspace_no_home_and_no_repo_docs(tmp_path):
@@ -505,14 +301,13 @@ def test_species_identity_semantics_pass_through_verbatim_and_fish_does_not_own_
 
 
 # ===================================================================================================== 26 registered-Brain architecture gates
-def test_registered_brain_architecture_gates_pass_for_fish_with_no_new_violations():
-    import report                                                             # tools/architecture/report.py (path added above)
-    own = [f for f in report.check(REPO, legacy=False) if "brains/fish" in f["subject"]]
-    # the only registered-Brain findings are the published-label strings carried from the legacy job (same retirement condition as Wind's two)
-    assert all(f["invariant"] == 8 and os.path.basename(f["subject"]) in ("biological_brain.py", "brain_platform.py") for f in own), own
-    legacy = report.check(REPO, legacy=True)
-    baseline = json.load(open(os.path.join(REPO, "tools", "architecture", "baseline", "legacy_violations.json")))
-    known, new, resolved = report.compare_to_baseline(legacy, baseline)
-    assert new == [] and resolved == [], (new, resolved)                       # NO NEW architecture violations; nothing silently dropped from the baseline
-    carried = [e for e in baseline["entries"] if e["path"].startswith("brains/fish/")]
-    assert {os.path.basename(e["path"]) for e in carried} == {"biological_brain.py", "brain_platform.py"} and all(e.get("carriedFrom") for e in carried)
+
+
+# ===================================================================================================== domain remainders of proofs now shared in BRAIN_CERT_KIT_V1
+def test_display_name_and_directory_differ_from_the_machine_id_by_design():
+    assert BRAIN["displayName"] == "Fish Brain" and os.path.basename(FISH) == "fish" and BRAIN["brainId"] == "biological-state"
+
+
+def test_species_knowledge_is_version_driven_so_the_artifact_invents_no_freshness():
+    art = build().artifact
+    assert "lastSuccessfulRun" in json.dumps(art) and not [s for s in art["sections"] if "freshness" in s]      # shared P10 proves nothing is derived from lastSuccess

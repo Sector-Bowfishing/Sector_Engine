@@ -34,3 +34,5 @@ Priority: **P0** blocks next Brain / parallel lanes · **P1** fix soon, does not
 - **T-5 add** a generic `describe_contract.py` (after D-7b) and a `tests/test_certification.template.py` skeleton.
 - **T-6 `research/*.template.json`**: keep (accurate).
 - **T-7 `BRAIN_OPERATING_CONTRACT.template.md`**: keep; the real contracts of both Brains pass the same 19-section check (inv 4).
+
+> **Update (BRAIN_CERT_KIT_V1 PR):** D-7b extraction done (Wind, Fish and Water Clarity consume `tools/brain_certification`); D-8 closed for Wind by P14; D-9 partially addressed by P03 (per adopting Brain). See `docs/architecture/certification/brain-cert-kit/BRAIN_CERT_KIT_V1_REPORT.md`.
