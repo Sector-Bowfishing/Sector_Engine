@@ -512,8 +512,7 @@
    "speciesId": "shorthead_redhorse",
    "commonName": "Shorthead redhorse",
    "waterDomains": [
-    "FRESHWATER",
-    "BRACKISH"
+    "FRESHWATER"
    ],
    "assessment": {
     "status": "ASSESSED",
@@ -521,15 +520,29 @@
     "basis": "REFERENCE_DATABASE",
     "sources": [
      {
+      "sourceId": "STATE_AGENCY_SPECIES_ACCOUNT",
+      "reference": "Shorthead redhorse, Illinois DNR",
+      "url": "https://dnr.illinois.gov/content/dam/soi/en/web/dnr/education/cdindex/shortheadredhorseapdf.pdf",
+      "retrieved": "2026-10-19",
+      "statement": "Medium to large rivers with strong current and substantial areas free of silt; pools of small streams. No brackish use described."
+     },
+     {
+      "sourceId": "STATE_AGENCY_SPECIES_ACCOUNT",
+      "reference": "Shorthead redhorse, Outdoor Alabama",
+      "url": "https://outdooralabama.com/redhorse/shorthead-redhorse",
+      "retrieved": "2026-10-19",
+      "statement": "Most abundant in flowing sections of the Tennessee River system over gravel and bedrock; freshwater river habitat only."
+     },
+     {
       "sourceId": "FISHBASE_SPECIES_SUMMARY",
       "reference": "Moxostoma macrolepidotum",
       "url": "https://www.fishbase.se/summary/Moxostoma-macrolepidotum.html",
       "retrieved": "2026-10-19",
-      "statement": "Freshwater; brackish"
+      "statement": "Freshwater; brackish (secondary flag, NOT adopted: no primary source supports it)"
      }
     ],
-    "reviewRequired": true,
-    "note": "Primary-source check 2026-10-19 (Illinois DNR, Outdoor Alabama, Montana/Ontario accounts) describes freshwater river and lake habitat only. No primary source states BRACKISH; the only support is the FishBase flag (the Fishes of Texas page is compiled from FishBase, so it is not independent) and checklists listing the species in the Hudson River. BRACKISH is retained as reviewed-but-unconfirmed; reviewRequired stays true. Candidate for removal if no primary source is found."
+    "reviewRequired": false,
+    "note": "Corrected 2026-10-19 (was FRESHWATER, BRACKISH). Bounded primary-source check found freshwater river and lake habitat only; no primary source supports BRACKISH. The FishBase brackish flag is secondary and not adopted; Hudson River checklist presence does not by itself prove brackish occupancy. Reviewed, complete."
    }
   },
   {
