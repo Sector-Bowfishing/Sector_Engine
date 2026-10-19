@@ -2,8 +2,8 @@
   "scoreVersion": "wind-specialist-capability-v2",
   "brainId": "wind",
   "scale": 10,
-  "status": "PROPOSED_PENDING_OWNER_REVIEW",
-  "statusNote": "Proposed 2026-10-19 (Wind V2), renamed and boundary-corrected the same day under the specialist-Brain rule before any adoption. NOT pre-registered blind: the author knew the Oct 19 audit metrics when choosing weights. Weights, thresholds and evaluation logic are those of the never-adopted proposal `wind-bowfishing-intelligence-v2` (git c0ccf660), so the result is unchanged. Needs Michael's review; until then it is reported, labelled PROPOSED, and never replaces any score.",
+  "status": "ADOPTED",
+  "statusNote": "Proposed 2026-10-19 (Wind V2), renamed and boundary-corrected the same day under the specialist-Brain rule before any adoption. NOT pre-registered blind: the author knew the Oct 19 audit metrics when choosing weights. Weights, thresholds and evaluation logic are those of the never-adopted proposal `wind-bowfishing-intelligence-v2` (git c0ccf660), so the result is unchanged. Adopted as written by Michael on 2026-10-19 (see `adoption`). It never replaces the certification score or BWIS v1, and the split between measured skill and model capability is always shown.",
   "question": "How well can Wind Brain, as the wind specialist, read the wind, assess which shorelines are exposed to or sheltered from it, estimate the wind-driven surface, track how both change over time, and state how reliable its wind assessments are? It does not score where to bowfish or fishing opportunity (Sector Intelligence's synthesis).",
   "notComparableWith": [
     "wind-certification-rubric-v1",
@@ -259,5 +259,15 @@
     "adopted": false,
     "why": "Wind is a specialist Brain: the score measures WIND capability, not bowfishing recommendations, which Sector Intelligence owns. Renamed categories and items; no weight, threshold, criterion or evidence change."
   },
-  "specialistBoundary": "No item reads fish, water-clarity, lake-habitat or combined opportunity evidence; every item is a wind-domain calculation, forecast skill, or wind-assessment behaviour."
+  "specialistBoundary": "No item reads fish, water-clarity, lake-habitat or combined opportunity evidence; every item is a wind-domain calculation, forecast skill, or wind-assessment behaviour.",
+  "adoption": {
+    "decidedBy": "Michael Cather (owner)",
+    "decidedAt": "2026-10-19",
+    "decision": "adopt as written",
+    "ownerWords": "Adopt wind-specialist-capability-v2 as written (6.7). Prepare the --wind-measurements activation step, but do not deploy.",
+    "adoptedValueAtDecision": 6.7,
+    "evidenceAtDecision": "docs/brains/scoring/evidence/wind-measurements-evidence.json (knowledge wind-exposure-assessment-1.0.0)",
+    "activation": "Adoption is not publication: /scores/wind carries the measurements only after an approved brain-orchestrator deploy with WIND_MEASUREMENTS=on (runbook: brains/wind/docs/WIND_MEASUREMENTS_ACTIVATION.md).",
+    "unchanged": "wind-certification-rubric-v1 (3.3) and bwis-v1 (5.4) remain as they are; this rubric replaces neither."
+  }
 }

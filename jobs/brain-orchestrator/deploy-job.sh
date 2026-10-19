@@ -20,6 +20,9 @@ JOB="${JOB:-brain-orchestrator}"
 SA_NAME="${SA_NAME:-brain-writer}"
 SA="$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com"
 CRON="${CRON:-50 * * * *}"
+# Wind three measurements (wind-specialist-capability-v2, adopted 2026-10-19): OFF unless the deploy is approved with WIND_MEASUREMENTS=on.
+WIND_MEASUREMENTS="${WIND_MEASUREMENTS:-off}"
+[[ "$WIND_MEASUREMENTS" == "on" || "$WIND_MEASUREMENTS" == "off" ]] || { echo "WIND_MEASUREMENTS must be on or off"; exit 1; }
 RTDB_URL="${RTDB_URL:-https://sector-brain.firebaseio.com}"
 ENGINE_URL="${ENGINE_URL:-https://sector-engine-e43utajroa-uc.a.run.app}"
 LAKE_BRAIN_ARCHIVE="${LAKE_BRAIN_ARCHIVE:-gs://sector-lake-brain}"
@@ -77,6 +80,10 @@ done
 mkdir -p stage/platform/registries/signals stage/providers
 cp "$ROOT/platform/registries/signals/signals.json" stage/platform/registries/signals/
 cp "$ROOT/providers/PROVIDERS.json" stage/providers/
+# Wind measurements inputs (read by sector_brain_platform.wind_measurements only when WIND_MEASUREMENTS=on; metadata, no data)
+mkdir -p stage/docs/brains/scoring/evidence
+cp "$ROOT/docs/brains/scoring/wind-specialist-capability-v2.json" stage/docs/brains/scoring/
+cp "$ROOT/docs/brains/scoring/evidence/wind-measurements-evidence.json" stage/docs/brains/scoring/evidence/
 find stage -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'tests' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'test_*.py' -delete
@@ -87,7 +94,7 @@ run gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 512Mi --task-timeout 30m \
   --labels "commit=$COMMIT" \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=fleet"
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=fleet,WIND_MEASUREMENTS=$WIND_MEASUREMENTS"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
 
 echo "▶ schedule $JOB ($CRON UTC)"

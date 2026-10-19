@@ -111,10 +111,10 @@ def attach_wind_measurements(scores: dict, facts: dict, now: dt.datetime) -> dic
     from sector_brain_platform import wind_measurements      # imported here: only used behind --wind-measurements
     rubric, ev, brain = wind_measurements.load_all()
     m = wind_measurements.measurements(scores["wind"], ev, rubric, brain, now, health=(facts.get("health") or {}).get("wind"))
-    if m["consistency"]:
-        print(f"wind measurements HELD: {m['consistency']}")
+    if m["consistency"] or m["windCapability"].get("basis") != "COMPUTED":
+        print(f"wind measurements HELD: {m['consistency'] or m['windCapability'].get('heldBecause')}")
         return scores
-    scores["wind"] = {**scores["wind"], "measurements": m}
+    scores["wind"] = {**scores["wind"], "measurements": wind_measurements.rtdb_normal(m)}   # stored form: re-runs compare equal
     return scores
 
 
@@ -175,8 +175,8 @@ def main() -> int:
     ap.add_argument("--report", default=None, help="write the full report JSON here")
     ap.add_argument("--if-changed", action="store_true", help="write a control node only when its content (minus timestamps) differs from what is published")
     ap.add_argument("--wind-measurements", action="store_true",
-                    help="attach Wind's three measurements (Wind Capability v2 PROPOSED, Scientific Confidence, Production Readiness) to /scores/wind as "
-                         "`measurements`; OFF by default until the owner adopts Wind Capability v2 (wind_measurements.py)")
+                    help="attach Wind's three measurements (Wind Capability v2, Scientific Confidence, Production Readiness) to /scores/wind as "
+                         "`measurements`; OFF by default; the orchestrator passes it only when deployed with WIND_MEASUREMENTS=on (wind_measurements.py)")
     a = ap.parse_args()
     now = dt.datetime.now(dt.timezone.utc)
     db = BrainRtdb(a.db, brain_id=WRITER) if a.db else BrainRtdb(brain_id=WRITER)

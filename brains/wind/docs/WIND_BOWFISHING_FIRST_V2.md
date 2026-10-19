@@ -100,14 +100,14 @@ All three are evaluated by the **platform scorer** (`jobs/brain_platform/sector_
 |---|---|---|---|
 | Certification (unchanged) | `wind-certification-rubric-v1` | number | **3.3** (frozen 2026-10-13 block, carried verbatim) |
 | BWIS v1 (unchanged) | `bwis-v1` (sha 21e2a326…) | number | **5.4** (carried verbatim) |
-| Wind Capability | `wind-specialist-capability-v2` | number, **PROPOSED** | **6.7** = 28.3/61 measured skill + 39/39 model capability; measured-skill-only view **4.6** |
+| Wind Capability | `wind-specialist-capability-v2` | number, **ADOPTED 2026-10-19** | **6.7** = 28.3/61 measured skill + 39/39 model capability; measured-skill-only view **4.6** |
 | Scientific Confidence | `wind-scientific-confidence-v1` | evidence statuses, no number | **LIMITED** (bank exposure and surface NOT_VALIDATED, strong-wind forecast FAILS, geometry VALIDATED) |
 | Production Readiness | `wind-production-readiness-v1` | gates, no number | **NOT_READY** (lifecycle, publisher cutover, customer integration, assessment activation, 5/30 live days) |
 
 **Wind Capability v2 design** (`docs/brains/scoring/wind-specialist-capability-v2.json`): six categories (wind interpretation 25, wind exposure geometry 20, wind exposure assessment 20, wind-driven surface 15, wind temporal behaviour 12, uncertainty 8), each with a written product rationale. Items are `MEASURED_SKILL` (real METAR, buoy and exact-geometry evidence: the BWIS v1 curves reused, plus deterministic strong-wind event detection worth 10 and symmetric decision accuracy per the BWIS v1 D1 note) or `MODEL_CAPABILITY` (scenario passes over all four lakes; a missing lake counts as failed). Field validation (BWIS v1 B3, D2) moves to Scientific Confidence, and operations (BWIS v1 E) to Readiness. Both are named in the rubric and remain visible at 0.
 
 **Honesty notes on Wind Capability v2.**
-1. It is not blind pre-registered: the weights were written knowing the audit metrics. That is why it is PROPOSED and reported only behind an opt-in flag until Michael adopts it.
+1. It is not blind pre-registered: the weights were written knowing the audit metrics. Michael adopted it as written on 2026-10-19 knowing this (rubric `adoption` record); publication still sits behind the `WIND_MEASUREMENTS=on` deploy switch.
 2. 39 of its 67 points come from synthetic capability scenarios that pass by design of the implementation. That is what "capability" means here, and the split is always reported. Every one of the 33 missing points is measured skill: strong wind (10), decision accuracy (6.7), windy-hour error (4.2), transient realism (6), surface accuracy (3.8), direction (1.8). Not one is closable by engineering alone.
 3. Symmetric surface-class forecast agreement on all CAL+H1 rows is 0.614. The BWIS v1 note's 0.589 was on the smaller NBM/HRRR common-row subset, so the two are not contradictory.
 
@@ -119,9 +119,9 @@ All three are evaluated by the **platform scorer** (`jobs/brain_platform/sector_
 
 Each step needs Michael's explicit approval. The cutover sequence (Water Clarity → Fish → Wind) is not changed.
 
-1. **Adopt or amend Wind Capability v2** (rubric review). Until then nothing shows it.
+1. ~~Adopt or amend Wind Capability v2~~ **Done: adopted as written, 2026-10-19.**
 2. **Merge** the V2 PR. Effect: none in production. The assessment layer is not imported by `main.py`, `publish.py` or `artifact.py` (a test enforces this), and `--wind-measurements` is off.
-3. **Measurements in Ops (optional, after 1):** add `--wind-measurements` to the orchestrator's score step and stage `docs/brains/scoring/` and `brains/wind/brain.json` in the image (`jobs/brain-orchestrator/deploy-job.sh`). Shared-orchestrator deploy: `preflight_lineage.py` applies. Ops renders the three measurements from `/scores/wind/measurements` (coordinate with Brain Score Intelligence V1, PR #33, which is open and untouched by this work).
+3. **Measurements in Ops:** prepared. `orchestrate.score_cmd()` adds `--wind-measurements` only when the job runs with `WIND_MEASUREMENTS=on`, and `deploy-job.sh` stages the rubric and evidence (brain.json is already staged). Exact steps: `WIND_MEASUREMENTS_ACTIVATION.md`. Shared-orchestrator deploy: `preflight_lineage.py` applies. Ops renders the three measurements from `/scores/wind/measurements` (coordinate with Brain Score Intelligence V1, PR #33, which is open and untouched by this work).
 4. **Certification refresh:** run the block generator against the cloud archive metadata, then `refresh_wind_score.py --candidate … --write`, commit, and score as usual.
 5. **Assessment shadow artifact:** in `wind-hourly`, after `build_state`, build one assessment per lake-hour from the state, and write it to the private candidate archive (`brain/wind/assessment/latest/{lakeKey}.json.gz`, the same storage pattern as `bankDetailRef`). No RTDB write. Needs a Wind deploy (`MICHAEL_APPROVED_WIND_DEPLOY=yes`).
 6. **Publisher contract:** add a `wind-exposure-assessment` section to the Publisher registry and to `wind-publication-v1` (or a v2), with Gate-P equivalence, after Wind's cutover turn.
@@ -134,4 +134,4 @@ Each step needs Michael's explicit approval. The cutover sequence (Water Clarity
 - There is no wave memory, so post-blow recession is optimistic.
 - Wind is validated only at land stations, with no over-water reference.
 - Assessment geometry is available for the 4 development lakes in production storage. The 50 national fetch tables are geometry-QA only and are not wired.
-- Wind Capability v2 is PROPOSED, not adopted.
+- Wind Capability v2 is adopted but not yet published (needs the orchestrator deploy).

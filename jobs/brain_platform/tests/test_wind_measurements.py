@@ -21,6 +21,10 @@ def inputs():
     return rubric, ev, brain
 
 
+def rubric_adoption(inputs):
+    return inputs[0]["adoption"]
+
+
 def m(inputs, ev=None, cert=None):
     rubric, e, brain = inputs
     return W.measurements(copy.deepcopy(cert or FROZEN["wind"]), copy.deepcopy(e if ev is None else ev), rubric, brain, NOW)
@@ -34,9 +38,10 @@ def test_certification_score_preserved_verbatim(inputs):
     assert out["bwisV1"]["value"] == 5.4 and "21e2a326" in out["bwisV1"]["definition"]
 
 
-def test_capability_v2_is_versioned_proposed_and_reproducible(inputs):
+def test_capability_v2_is_versioned_adopted_and_reproducible(inputs):
     bi = m(inputs)["windCapability"]
-    assert bi["scoreVersion"] == "wind-specialist-capability-v2" and bi["rubricStatus"] == "PROPOSED_PENDING_OWNER_REVIEW"
+    assert bi["scoreVersion"] == "wind-specialist-capability-v2" and bi["rubricStatus"] == "ADOPTED"
+    assert rubric_adoption(inputs)["decision"] == "adopt as written" and rubric_adoption(inputs)["adoptedValueAtDecision"] == bi["value"]
     assert set(bi["notComparableWith"]) == {"wind-certification-rubric-v1", "bwis-v1"}
     assert round(sum(i["points"] for i in bi["items"].values()), 2) == bi["rawPoints"] and bi["value"] == round(bi["rawPoints"] / 10, 1)
     assert sum(c["max"] for c in bi["categories"].values()) == 100
@@ -167,3 +172,22 @@ def test_evidence_has_no_local_paths():
     txt = open(W.EVIDENCE_PATH).read()
     for bad in ("/Users/", "Desktop/", "Library/Caches", "Sector Research"):
         assert bad not in txt
+
+
+def test_envelope_is_rtdb_writable(inputs):
+    """Found by the 2026-10-19 production dry run: certification dimension names ('Freshness/reliability') were used as keys.
+    One illegal key fails the whole multi-path update, so the consistency check refuses it."""
+    out = m(inputs)
+    assert W.rtdb_illegal_keys(out) == []
+    assert out["productionReadiness"]["fromCertification"]["dimensionValues"] == {"freshnessReliability": 1.67, "coverage": 10.0, "provenanceUnknown": 10.0}
+    bad = copy.deepcopy(out); bad["productionReadiness"]["x/y"] = 1
+    assert any("RTDB-illegal" in p for p in W.consistency(bad))
+
+
+def test_rtdb_safe_certification_block_reads_the_same(inputs):
+    """score_brains passes the rtdb_safe block ('Freshness-reliability'); readiness must read it identically."""
+    import re
+    safe = {**FROZEN["wind"], "scoreBreakdown": {re.sub(r"[.$#\[\]/]", "-", k): v for k, v in FROZEN["wind"]["scoreBreakdown"].items()}}
+    a, b = m(inputs)["productionReadiness"], m(inputs, cert=safe)["productionReadiness"]
+    assert a["fromCertification"]["dimensionValues"] == b["fromCertification"]["dimensionValues"]
+    assert [g["detail"] for g in a["gates"]] == [g["detail"] for g in b["gates"]]

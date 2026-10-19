@@ -1,6 +1,6 @@
 """Wind's three measurements, evaluated by the PLATFORM scorer (the only scoring authority; Wind never publishes a score).
 
-  WIND CAPABILITY           wind-specialist-capability-v2 (PROPOSED): what Wind, as the wind SPECIALIST, can demonstrably
+  WIND CAPABILITY           wind-specialist-capability-v2 (ADOPTED 2026-10-19): what Wind, as the wind SPECIALIST, can demonstrably
                             calculate, interpret and assess. A number, with its MEASURED_SKILL and MODEL_CAPABILITY points always
                             reported separately. It scores no cross-Brain bowfishing recommendation (Sector Intelligence owns those).
   SCIENTIFIC CONFIDENCE     wind-scientific-confidence-v1: how thoroughly the outputs are validated. Evidence STATUSES, no number
@@ -41,6 +41,20 @@ _LOCAL = re.compile(r"/Users/|~/Desktop|Desktop/Development|Library/Caches|Secto
 # rubric item -> research gap that improves it (brains/wind/research/GAPS.json)
 ITEM_GAP = {"WI1": "WIND-CNF-001", "WI2": "WIND-CNF-003", "WI3": "WIND-CNF-001", "WI4": "WIND-CNF-001", "EA1": "WIND-CNF-001",
             "SI1": "WIND-CNF-002", "SI2": "WIND-CNF-002", "TI3": "WIND-CNF-002"}
+
+
+def _p(s):
+    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+def rtdb_normal(o):
+    """The form RTDB stores: no null values and no empty objects/arrays (so a read-back compares equal)."""
+    if isinstance(o, dict):
+        o = {k: rtdb_normal(v) for k, v in o.items() if v is not None}
+        return {k: v for k, v in o.items() if v not in ({}, [])}
+    if isinstance(o, list):
+        return [rtdb_normal(v) for v in o if v is not None]
+    return o
 
 
 def load(path):
@@ -254,7 +268,10 @@ def production_readiness(cert: dict, brain: dict, health: dict | None, now: dt.d
          "detail": f"{days}/30 valid live days at the certification snapshot ({cert.get('scoreUpdatedAt')})" if days is not None else "unknown"},
         {"gate": "runtimeHealth", "status": "UNKNOWN" if h is None else ("OPEN" if h == "HEALTHY" else "BLOCKED"), "detail": f"health {h or 'not read'}"},
     ]
-    caps = {n: (b.get(n) or {}).get("value") for n in ("Freshness/reliability", "Coverage", "Provenance/Unknown")}
+    # RTDB keys may not contain . $ # [ ] /: the certification dimension names are mapped to stable ids here.
+    dims = {"freshnessReliability": ("Freshness/reliability", "Freshness-reliability"), "coverage": ("Coverage",),
+            "provenanceUnknown": ("Provenance/Unknown", "Provenance-Unknown")}
+    caps = {k: next(((b.get(n) or {}).get("value") for n in names if b.get(n)), None) for k, names in dims.items()}
     return {"version": PR_VERSION, "basis": "GATE_STATUS", "value": None, "evaluatedAt": iso(now),
             "overall": "NOT_READY" if any(g["status"] == "BLOCKED" for g in gates) else ("UNKNOWN" if any(g["status"] == "UNKNOWN" for g in gates) else "READY"),
             "gates": gates, "fromCertification": {"dimensionValues": caps, "source": f"{cert.get('scoreVersion')} dims 8-10 (carried verbatim)"},
@@ -264,6 +281,9 @@ def production_readiness(cert: dict, brain: dict, health: dict | None, now: dt.d
 
 # ---------------------------------------------------------------- envelope
 def measurements(cert: dict, ev: dict | None, rubric: dict, brain: dict, now: dt.datetime, health: dict | None = None) -> dict:
+    """Timestamps come from the INPUTS (evidence generatedAt), not the clock: the same evidence is the same evaluation, so an
+    hourly scorer run does not rewrite /scores/wind when nothing changed. `now` is used only when no evidence exists."""
+    now = _p(ev.get("generatedAt")) if ev and ev.get("generatedAt") else now
     bi = wind_capability(ev, rubric, now)
     sec = (cert.get("secondary") or {})
     out = {"schema": ENVELOPE, "brainId": "wind", "evaluatedAt": iso(now), "authority": "platform scorer (sector_brain_platform.wind_measurements)",
@@ -273,7 +293,7 @@ def measurements(cert: dict, ev: dict | None, rubric: dict, brain: dict, now: dt
            "windCapability": bi,
            "scientificConfidence": scientific_confidence(ev, cert, now),
            "productionReadiness": production_readiness(cert, brain, health, now),
-           "presentation": "Show the three measurements side by side with the certification score; never average them; label Wind Capability v2 PROPOSED until adopted. None of them is a bowfishing recommendation."}
+           "presentation": "Show the three measurements side by side with the certification score; never average them; always show the measured-skill / model-capability split. None of them is a bowfishing recommendation."}
     out["consistency"] = consistency(out)
     return out
 
@@ -297,7 +317,27 @@ def consistency(m: dict) -> list[str]:
     for k in ("scientificConfidence", "productionReadiness"):
         if m[k].get("value") is not None:
             p.append(f"{k} carries a number")
+    bad = rtdb_illegal_keys(m)
+    if bad:
+        p.append(f"RTDB-illegal keys {bad[:3]}")
     return p
+
+
+_ILLEGAL = re.compile(r"[.$#\[\]/\x00-\x1f\x7f]")
+
+
+def rtdb_illegal_keys(o, path="") -> list[str]:
+    """Keys RTDB would reject (one bad key fails the whole multi-path update, scores included)."""
+    out = []
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if _ILLEGAL.search(str(k)):
+                out.append(f"{path}/{k}")
+            out += rtdb_illegal_keys(v, f"{path}/{k}")
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            out += rtdb_illegal_keys(v, f"{path}[{i}]")
+    return out
 
 
 def load_all():
