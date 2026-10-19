@@ -50,4 +50,14 @@ Ops reads `/species/{id}.waterDomains` and `.waterDomainStatus` only. Labels FRE
 Adding species is a registry row. No enum, schema, path or id change; Fish scoring is untouched.
 
 ## Provenance and limits
-Backfill basis for 27 species is the FishBase species summary "Ecology" environment line, retrieved 2026-10-19 (single secondary reference; confidence MEDIUM, HIGH where it agrees with the existing Sector evidence packet). Five rows are `reviewRequired`: gizzard shad (MARINE flag), shorthead redhorse (BRACKISH flag), and the three grouped/unresolved rows (`carpsuckers_group`, `tilapia_unresolved`, `suckers_redhorse_carpsuckers_group`). The last is UNKNOWN. A primary-source (USGS/state) pass would raise confidence; it is not a blocker.
+Backfill basis is the FishBase species summary "Ecology" line (retrieved 2026-10-19, secondary). On 2026-10-19 the five `reviewRequired` rows got a bounded primary-source check (USGS NAS, VIMS, state agency accounts); no `waterDomains` value changed.
+
+| Row | Result | reviewRequired |
+|---|---|---|
+| `gizzard_shad` | USGS: fresh and brackish; adults in saline waters of estuaries and bays. MARINE kept, meaning "occurs in saline water", not open ocean. | cleared |
+| `carpsuckers_group` | Genus Carpiodes (river carpsucker, quillback, highfin): freshwater in state, Fishes of Texas and FishBase accounts; no brackish finding. | cleared |
+| `tilapia_unresolved` | Generic row, no single taxon claimed. USGS: blue tilapia brackish, redbelly saline-tolerant, Nile recorded Freshwater-Brackish. | cleared |
+| `suckers_redhorse_carpsuckers_group` | Intentionally UNKNOWN: no enumerated membership, union would be guessed. | cleared (reviewed, intentionally unknown) |
+| `shorthead_redhorse` | **No primary source states BRACKISH**; only the FishBase flag. Kept, flagged. | **stays true** |
+
+`reviewRequired: false` on an UNKNOWN row means "reviewed and intentionally unknown". Confidence stays MEDIUM except the four rows that match the Sector packet (HIGH).

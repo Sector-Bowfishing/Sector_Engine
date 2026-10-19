@@ -210,10 +210,38 @@
       "url": "https://www.fishbase.se/summary/Carpiodes-cyprinus.html",
       "retrieved": "2026-10-19",
       "statement": "Freshwater"
+     },
+     {
+      "sourceId": "STATE_AGENCY_SPECIES_ACCOUNT",
+      "reference": "River carpsucker, Outdoor Alabama",
+      "url": "https://outdooralabama.com/carpsucker/river-carpsucker",
+      "retrieved": "2026-10-19",
+      "statement": "Abundant in quiet, silty or sand-bottomed pools of moderate or large streams, rivers and reservoirs."
+     },
+     {
+      "sourceId": "STATE_AGENCY_SPECIES_ACCOUNT",
+      "reference": "Quillback, Illinois DNR",
+      "url": "https://dnr.illinois.gov/content/dam/soi/en/web/dnr/education/cdindex/quillback.pdf",
+      "retrieved": "2026-10-19",
+      "statement": "Native, common stream and river fish; no brackish or saline use described."
+     },
+     {
+      "sourceId": "FISHES_OF_TEXAS",
+      "reference": "Carpiodes carpio / Carpiodes cyprinus",
+      "url": "https://fishesoftexas.org/taxa/carpiodes-carpio",
+      "retrieved": "2026-10-19",
+      "statement": "Both listed Freshwater (streams, lakes)."
+     },
+     {
+      "sourceId": "FISHBASE_SPECIES_SUMMARY",
+      "reference": "Carpiodes velifer (highfin carpsucker)",
+      "url": "https://www.fishbase.se/summary/Carpiodes-velifer.html",
+      "retrieved": "2026-10-19",
+      "statement": "Freshwater"
      }
     ],
-    "reviewRequired": true,
-    "note": "Grouped row: union of the named member species. Members beyond river carpsucker and quillback are not enumerated in the public repo."
+    "reviewRequired": false,
+    "note": "Membership is the genus Carpiodes (river carpsucker, quillback, highfin carpsucker) per the scorecard 'Carpiodes spp.'; the union is FRESHWATER. No source reviewed describes any Carpiodes species in brackish water; this is the absence of a brackish finding, not proof of exclusion. Reviewed 2026-10-19."
    }
   },
   {
@@ -302,10 +330,24 @@
       "url": "https://www.fishbase.se/summary/Dorosoma-cepedianum.html",
       "retrieved": "2026-10-19",
       "statement": "Marine; freshwater; brackish"
+     },
+     {
+      "sourceId": "USGS_NAS_SPECIES_PROFILE",
+      "reference": "Dorosoma cepedianum (SpeciesID 492)",
+      "url": "https://nas.er.usgs.gov/queries/factsheet.aspx?SpeciesID=492",
+      "retrieved": "2026-10-19",
+      "statement": "Native to fresh and brackish waters; primarily large rivers, reservoirs, lakes and swamps; adults also found in brackish and saline waters of estuaries and bays."
+     },
+     {
+      "sourceId": "VIMS_SPECIES_PROFILE",
+      "reference": "Gizzard shad",
+      "url": "https://www.vims.edu/research/units/programs/multispecies_fisheries_research/speciesofinterest/gizzard-shad.php",
+      "retrieved": "2026-10-19",
+      "statement": "Mainly freshwater; frequently caught in brackish bays and estuaries; larger fish tolerate salinities up to 41.3 per mille."
      }
     ],
-    "reviewRequired": true,
-    "note": "Single reference database; confirm the MARINE flag against a state or USGS account before relying on it."
+    "reviewRequired": false,
+    "note": "Primary-source verified 2026-10-19: USGS confirms FRESHWATER and BRACKISH and reports adults in saline waters of estuaries and bays; MARINE rests on that saline estuary/bay occurrence plus the FishBase marine flag. USGS does not describe open-ocean use, so MARINE means 'occurs in saline water' at species level."
    }
   },
   {
@@ -487,7 +529,7 @@
      }
     ],
     "reviewRequired": true,
-    "note": "Single reference database; BRACKISH is unusual for a redhorse. Confirm before relying on it."
+    "note": "Primary-source check 2026-10-19 (Illinois DNR, Outdoor Alabama, Montana/Ontario accounts) describes freshwater river and lake habitat only. No primary source states BRACKISH; the only support is the FishBase flag (the Fishes of Texas page is compiled from FishBase, so it is not independent) and checklists listing the species in the Hudson River. BRACKISH is retained as reviewed-but-unconfirmed; reviewRequired stays true. Candidate for removal if no primary source is found."
    }
   },
   {
@@ -636,8 +678,8 @@
     "confidence": null,
     "basis": "NOT_ASSESSABLE",
     "sources": [],
-    "reviewRequired": true,
-    "note": "Catch-all registry artifact (NOT_ASSESSED) with no enumerated members; a single species-level water domain cannot be stated truthfully. Not defaulted to freshwater."
+    "reviewRequired": false,
+    "note": "Reviewed 2026-10-19 and intentionally UNKNOWN. Catch-all registry artifact (scorecard: Catostomidae grouped row, NOT_ASSESSED, 'covered by species rows') with no deterministically enumerated membership; a union would be guessed. Not defaulted to freshwater. Its member species carry their own rows."
    }
   },
   {
@@ -672,10 +714,31 @@
       "url": "https://www.fishbase.se/summary/Tilapia-zillii.html",
       "retrieved": "2026-10-19",
       "statement": "Freshwater; brackish"
+     },
+     {
+      "sourceId": "USGS_NAS_SPECIES_PROFILE",
+      "reference": "Oreochromis aureus, blue tilapia (SpeciesID 463)",
+      "url": "https://nas.er.usgs.gov/queries/factsheet.aspx?SpeciesID=463",
+      "retrieved": "2026-10-19",
+      "statement": "Able to live and reproduce in brackish waters."
+     },
+     {
+      "sourceId": "USGS_NAS_SPECIES_PROFILE",
+      "reference": "Tilapia zillii, redbelly tilapia (SpeciesID 485)",
+      "url": "https://nas.er.usgs.gov/queries/factsheet.aspx?SpeciesID=485",
+      "retrieved": "2026-10-19",
+      "statement": "Extremely tolerant of saline conditions; survival and growth up to 40 per mille, reproduction through 29 per mille."
+     },
+     {
+      "sourceId": "USGS_NAS_COLLECTION_RECORD",
+      "reference": "Oreochromis niloticus, Nile tilapia (collection record 1710985)",
+      "url": "https://nas.er.usgs.gov/queries/SpecimenViewer.aspx?SpecimenID=1710985",
+      "retrieved": "2026-10-19",
+      "statement": "Habitat recorded as Freshwater-Brackish, status established."
      }
     ],
-    "reviewRequired": true,
-    "note": "Unresolved taxon row: union of the tilapia species FishBase lists (all agree). The Sector packet also records brackish tolerance."
+    "reviewRequired": false,
+    "note": "Generic/unresolved product row; no single taxon is claimed. The set FRESHWATER + BRACKISH is supported for each tilapia established in US waters that was checked (blue, Nile, redbelly) and the project's own evidence treats blue tilapia as the relevant form. USGS has no marine statement, so MARINE is not asserted. Reviewed 2026-10-19."
    }
   }
  ]
