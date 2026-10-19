@@ -29,3 +29,10 @@
 | X16 | write denial: specialist, Ops, cross-domain denied; Publisher allowed (rules AND IAM) | LIVE | **F** |
 
 OFFLINE checks can be run today against the SHADOW Publisher (most are already covered by the 19 kit proofs; X14 is the AST pin + invariant 10). LIVE checks need P1-P6/P12 and the security gate. Scope note: rollback and atomicity (X09, X13) cover Publisher-owned RTDB paths only; Brain-owned GCS storage is outside the Publisher by design.
+
+## Repository coverage (Publisher LIVE V1)
+`exit_gate.REPO_COVERAGE` / `repo_status()` records, per check, the tier that the repository can prove today and the tests that prove it (a test pins that every named test exists):
+* **OFFLINE** (X01-X06, X14): proven with no client (validators, registry, AST/guard). X14 also fails `CUTOVER_COMPLETE` while any direct write site or whole-node Brain key remains in the Brain's runtime.
+* **REPO_FAKE** (X07-X13, X15): the live code path proven against FAKE RTDB / object-store clients (`brain_cert_kit/live_parity.py`, run per Brain by `brains/<dir>/tests/test_<brain>_live_parity.py`; and `jobs/brain_platform/tests/test_publisher_live*.py`). Real-database readback and a real rollback rehearsal are still required.
+* **LIVE_ONLY** (X16): REPO_READY evidence exists (fake-client denial/success, target rules, IAM plan) but the criterion is real rules AND real IAM.
+The live-parity proofs are NOT among the 19 structural proofs and are not run by the structural suite.

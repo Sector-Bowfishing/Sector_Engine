@@ -60,6 +60,43 @@ def _clone(tmp_path, brain, status, evidence=None):
 
 
 @pytest.mark.parametrize("brain", BRAINS)
+def test_cutover_complete_is_refused_while_a_legacy_write_site_remains_active(tmp_path, brain):
+    """Even a fully PASSing evidence record cannot complete a cutover while the Brain still carries a direct production write site (Water Clarity: the whole-node
+    /brains/water-clarity + /health/brains/water-clarity replacement). The guard reads the runtime source, not a claim."""
+    import shutil
+    d, bid = _clone(tmp_path, brain, "CUTOVER_COMPLETE", _full("placeholder"))
+    ev = _full(bid)
+    (tmp_path / brain / "contracts" / "production-exit-evidence.json").write_text(json.dumps(ev))
+    shutil.copytree(os.path.join(REPO, "brains", brain, "runtime"), os.path.join(d, "runtime"))
+    left = g.legacy_write_sites(d, bid)
+    assert left["writeSites"], f"{brain} is expected to still hold its legacy direct write site"
+    with pytest.raises(AssertionError, match="legacy writer remains active"):
+        g.cutover_guard(d)
+    shutil.rmtree(os.path.join(d, "runtime"))
+    os.makedirs(os.path.join(d, "runtime"))                                    # the retired state: no runtime write site at all
+    assert g.cutover_guard(d)["gate"] == "PASS"
+
+
+def test_water_clarity_whole_node_legacy_write_keys_are_named_by_the_guard():
+    left = g.legacy_write_sites(os.path.join(REPO, "brains", "water-clarity"), "water-clarity")
+    assert left["wholeNodeKeys"], "run.py builds the whole-node keys /brains/water-clarity and /health/brains/water-clarity"
+    assert {s[2] for s in left["writeSites"]} == {"rtdb.update"} and len(left["writeSites"]) == 2
+
+
+def test_the_repo_coverage_matrix_names_real_tests_and_keeps_live_only_checks_live_only():
+    rs = g.repo_status()
+    assert set(rs) == set(g.CHECK_IDS)
+    assert rs["X16"]["tier"] == "LIVE_ONLY" and all(rs[c]["liveStillRequired"] for c in g.CHECK_IDS if g.REPO_COVERAGE[c][0] != "OFFLINE")
+    assert {c for c in g.CHECK_IDS if rs[c]["tier"] == "OFFLINE"} == {"X01", "X02", "X03", "X04", "X05", "X06", "X14"}
+    for cid, tests in ((c, rs[c]["tests"]) for c in g.CHECK_IDS):
+        for ref in tests:
+            rel, _, name = ref.partition("::")
+            path = os.path.join(REPO, "tools", "brain_certification", rel) if rel.startswith(("brain_cert_kit", "tests")) else os.path.join(REPO, rel)
+            assert os.path.isfile(path), (cid, rel)
+            assert f"def {name}" in open(path, encoding="utf-8").read(), (cid, ref)
+
+
+@pytest.mark.parametrize("brain", BRAINS)
 def test_cutover_complete_is_refused_without_a_passing_exit_record(tmp_path, brain):
     d, bid = _clone(tmp_path / "a", brain, "CUTOVER_COMPLETE")
     with pytest.raises(AssertionError):

@@ -40,7 +40,7 @@ sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_records, check_schema, iso,            # noqa: E402
                                    jobs_changed_paths, orchestrate)
 from sector_brain_platform import gcp                                                                                 # noqa: E402
-from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN                          # noqa: E402
+from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -311,7 +311,7 @@ def main(argv=None) -> int:
             print(f"{'✓' if res.get('ok') else '✗'} {b} [{trigger}] {res.get('execution') or res.get('tail', res.get('error', ''))[-200:]}", flush=True)
 
     # 4. scores / control — only after a state change
-    seen = {b: (brains.get(b) or {}).get("lastSuccessfulRun") for b in brains}
+    seen = {b: PT.seen_token(brains.get(b)) for b in brains}      # S1: a COMPLETE Publisher publication (new artifactId) also counts as a Brain state change
     changed_brains = sorted(b for b in seen if seen[b] != (state.get("lastSeen") or {}).get(b))
     ran_in_process = [e["brainId"] for e in executed if e.get("how") == "in-process" and e.get("ok")]
     reason = ("brain state changed: " + ", ".join(changed_brains)) if changed_brains else \

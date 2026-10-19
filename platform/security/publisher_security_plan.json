@@ -1,0 +1,118 @@
+{
+ "iamPlan": [
+  "distinct identity per class (specialist per Brain, publisher, orchestrator, scorer, ops-reader)",
+  "only the publisher identity holds database write on Brain paths",
+  "specialist identities hold create-only on their own artifact prefix and nothing on the database",
+  "publisher identity has no delete on the history bucket; bucket versioning on",
+  "ops identity read-only",
+  "no rule or IAM change is made by this repository change; each step needs separate approval and a tested denial"
+ ],
+ "liveOnlyEvidence": [
+  "X16 write denial under RTDB rules AND IAM (exit evidence F)"
+ ],
+ "liveSecurityVerified": false,
+ "objectStore": {
+  "ops": {
+   "create_only": [],
+   "delete": [],
+   "overwrite": [],
+   "read": []
+  },
+  "publisher": {
+   "create_only": [
+    "publishes/"
+   ],
+   "delete": [],
+   "overwrite": [
+    "publishes/_heads/",
+    "publishes/{brain}/_locks/"
+   ],
+   "read": [
+    "artifacts/",
+    "publishes/"
+   ]
+  },
+  "specialist": {
+   "create_only": [
+    "artifacts/{ownBrain}/"
+   ],
+   "delete": [],
+   "overwrite": [],
+   "read": [
+    "artifacts/{ownBrain}/"
+   ]
+  }
+ },
+ "rtdb": {
+  "currentMultiWriterPaths": {
+   "health/jobs/{id}": [
+    "biological-state",
+    "depth",
+    "lake-brain",
+    "sector-intelligence",
+    "vegetation",
+    "water-clarity",
+    "water-temp",
+    "wind"
+   ],
+   "lakeFleet/{k}/lakeId": [
+    "biological-state",
+    "depth",
+    "lake-brain",
+    "sector-intelligence",
+    "vegetation",
+    "water-clarity",
+    "water-temp",
+    "wind"
+   ],
+   "snapshots/{k}/latest/lakeId": [
+    "biological-state",
+    "depth",
+    "lake-brain",
+    "sector-intelligence",
+    "vegetation",
+    "water-clarity",
+    "water-temp",
+    "wind"
+   ]
+  },
+  "orchestratorHealthFields": [
+   "lastRun",
+   "lastSuccess",
+   "durationMs",
+   "errorCount",
+   "latestError",
+   "deployedVersion",
+   "publishMode"
+  ],
+  "platformOwnedCollisions": [
+   "lakeFleet/{k}/lakeId",
+   "snapshots/{k}/latest/lakeId",
+   "health/jobs/{id}"
+  ],
+  "publisherDeniedHealth": [
+   "engine",
+   "jobs",
+   "rtdb"
+  ],
+  "publisherDeniedRoots": [
+   "access",
+   "control",
+   "controlRequests",
+   "engine",
+   "jobs",
+   "schemaVersion",
+   "scores",
+   "validationOps"
+  ],
+  "targetPhase": {
+   "ops": "none",
+   "orchestrator": "platform paths only",
+   "publisher": "write Brain families (validated artifact only)",
+   "scorer": "/scores /control /engine/score only",
+   "specialist": "none"
+  }
+ },
+ "standard": "publisher-security-plan-v1",
+ "status": "REPO_READY"
+}

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 
 STANDARD = "production-exit-gate-v1"
 OFFLINE, LIVE = "OFFLINE", "LIVE"
@@ -37,6 +38,58 @@ CHECKS = (
     ("X16", "write_denial", LIVE, "tested denials: the specialist identity, Ops and a cross-domain identity cannot write; the Publisher identity can (rules AND IAM) — exit evidence F"),
 )
 CHECK_IDS = tuple(c[0] for c in CHECKS)
+
+
+#: Where the repository half of each check is proven. Tier: OFFLINE = provable with no client at all (validators, AST, registry);
+#: REPO_FAKE = proven against FAKE RTDB/object-store clients (the live code path, not a live database); LIVE_ONLY = cannot be claimed without an approved cutover.
+#: Every named test must exist (a test pins this), so the matrix cannot drift from the code.
+PARITY = "brain_cert_kit/live_parity.py"
+PLATFORM = "jobs/brain_platform/tests/"
+REPO_COVERAGE = {
+    "X01": ("OFFLINE", (PARITY + "::test_live_parity_artifact_publishes_with_correct_identity_and_metadata",)),
+    "X02": ("OFFLINE", (PARITY + "::test_live_parity_identity_schema_and_lifecycle_are_enforced",)),
+    "X03": ("OFFLINE", (PARITY + "::test_live_parity_identity_schema_and_lifecycle_are_enforced",)),
+    "X04": ("OFFLINE", (PARITY + "::test_live_parity_plan_stays_inside_the_brains_families_and_protected_paths_are_rejected", PLATFORM + "test_publisher_live_security.py::test_the_publisher_can_never_write_platform_foreign_or_orchestrator_owned_paths_for_wind")),
+    "X05": ("OFFLINE", (PARITY + "::test_live_parity_fingerprint_is_deterministic_and_unchanged_artifacts_skip",)),
+    "X06": ("OFFLINE", (PARITY + "::test_live_parity_fingerprint_is_deterministic_and_unchanged_artifacts_skip", PLATFORM + "test_publisher_live.py::test_unchanged_artifact_skips_with_no_live_write_and_no_score_signal")),
+    "X07": ("REPO_FAKE", (PARITY + "::test_live_parity_changed_artifact_publishes_with_readback_and_score_signal",)),
+    "X08": ("REPO_FAKE", (PARITY + "::test_live_parity_unrelated_brains_and_platform_paths_are_untouched",)),
+    "X09": ("REPO_FAKE", (PARITY + "::test_live_parity_oversize_plan_is_manifest_last_and_failure_keeps_the_previous_release", PLATFORM + "test_publisher_live.py::test_oversize_plans_are_applied_manifest_last_and_a_mid_failure_keeps_the_previous_release_authoritative")),
+    "X10": ("REPO_FAKE", (PARITY + "::test_live_parity_artifact_publishes_with_correct_identity_and_metadata",)),
+    "X11": ("REPO_FAKE", (PARITY + "::test_live_parity_health_and_score_ownership_are_preserved",)),
+    "X12": ("REPO_FAKE", (PARITY + "::test_live_parity_health_and_score_ownership_are_preserved", PLATFORM + "test_publication_trigger.py::test_end_to_end_publish_skip_failure_against_the_live_publisher")),
+    "X13": ("REPO_FAKE", (PARITY + "::test_live_parity_rollback_restores_the_previous_state_exactly", PLATFORM + "test_publisher_live.py::test_rollback_restores_the_previous_publication_removes_new_paths_and_retriggers_scoring")),
+    "X14": ("OFFLINE", (PARITY + "::test_live_parity_legacy_writer_reentry_is_detected_and_reserved_children_survive", "tests/test_exit_gate.py::test_cutover_complete_is_refused_while_a_legacy_write_site_remains_active")),
+    "X15": ("REPO_FAKE", (PARITY + "::test_live_parity_changed_artifact_publishes_with_readback_and_score_signal", PLATFORM + "test_publisher_live.py::test_a_lost_response_after_commit_is_verified_by_readback_not_assumed")),
+    "X16": ("LIVE_ONLY", (PLATFORM + "test_publisher_live_security.py::test_principal_matrix_specialist_ops_denied_in_target_publisher_success_and_current_reality_is_visible",)),
+}
+#: X16 has REPO_READY evidence (fake-client denial/success + target rules + IAM plan) but its pass criterion (real rules AND real IAM) is LIVE_ONLY.
+LIVE_ONLY_PORTIONS = {cid: "the real-database/real-identity half" for cid, (tier, _t) in REPO_COVERAGE.items() if tier in ("REPO_FAKE", "LIVE_ONLY")}
+
+
+def repo_status():
+    """{id: {tier, repoProven, liveStillRequired}}: what the repository can show today versus what only an approved cutover can."""
+    return {cid: {"tier": tier, "repoProven": True, "liveStillRequired": tier != "OFFLINE", "tests": list(tests)} for cid, (tier, tests) in REPO_COVERAGE.items()}
+
+
+LEGACY_WRITE_SUFFIXES = ("rtdb.update", "_db.update", "db.update")
+
+
+def legacy_write_sites(brain_dir, brain_id=None):
+    """Every direct database write site left in a Brain's runtime: AST call sites of the write primitives PLUS any literal that builds a WHOLE Brain node key
+    (`brains/<id>` / `health/brains/<id>`, even through an f-string), which a child-level Publisher must never share ownership of."""
+    from .env import walk_files, write_sites
+    runtime = os.path.join(brain_dir, "runtime")
+    with open(os.path.join(brain_dir, "brain.json"), encoding="utf-8") as f:
+        bid = brain_id or json.load(f).get("brainId")
+    whole = re.compile(r"""["']/?(?:health/)?brains/(?:%s|\{[^}]*\})["']""" % re.escape(bid))
+    sites, nodes = set(), []
+    for path in walk_files(runtime, (".py",)):
+        sites |= write_sites(path, LEGACY_WRITE_SUFFIXES)
+        for i, line in enumerate(open(path, encoding="utf-8").read().splitlines(), 1):
+            if whole.search(line) and "assert" not in line:
+                nodes.append((os.path.basename(path), i))
+    return {"writeSites": sorted(sites), "wholeNodeKeys": nodes}
 
 
 def evaluate(evidence, brain_id=None):
@@ -83,4 +136,6 @@ def cutover_guard(brain_dir, brain_id=None):
         verdict = evaluate(json.load(f), brain_id or brain.get("brainId"))
     if status == "CUTOVER_COMPLETE":
         assert verdict["verdict"] == "PASS", f"CUTOVER_COMPLETE without a complete exit record: {verdict}"
+        left = legacy_write_sites(brain_dir, brain_id or brain.get("brainId"))
+        assert not left["writeSites"] and not left["wholeNodeKeys"], f"CUTOVER_COMPLETE while a legacy writer remains active (X14): {left}"
     return {"cutoverStatus": status, "gate": verdict["verdict"]}

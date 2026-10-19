@@ -1,0 +1,78 @@
+{
+ "rules": {
+  ".read": false,
+  ".write": false,
+  "lakes": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "lakeFleet": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "snapshots": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "brains": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "validation": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "health": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "sources": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "activity": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "species": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "speciesProfiles": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "scores": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "control": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "jobs": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "engine": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "access": {
+   ".read": false,
+   ".write": false
+  },
+  "validationOps": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "schemaVersion": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  },
+  "controlRequests": {
+   ".read": "auth.token.sectorOpsReader === true",
+   ".write": false
+  }
+ }
+}

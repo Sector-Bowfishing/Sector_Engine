@@ -147,7 +147,7 @@ def test_production_tests_pass_in_a_clean_copy_without_research_package(tmp_path
     shutil.copytree(os.path.join(ROOT, "jobs", "brain_platform", "sector_brain_platform"), dest / "jobs" / "brain_platform" / "sector_brain_platform",
                     ignore=shutil.ignore_patterns("__pycache__"))
     env = {"PATH": os.environ.get("PATH", ""), "HOME": str(tmp_path / "home"), "PYTHONDONTWRITEBYTECODE": "1"}
-    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests", "-o", "testpaths=tests", "--ignore=tests/test_wind_kit_certification.py",
+    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests", "-o", "testpaths=tests", "--ignore=tests/test_wind_kit_certification.py", "--ignore=tests/test_wind_live_parity.py",
                         "-o", "pythonpath=runtime ../../jobs/brain_platform"], cwd=dest / "brains" / "wind", capture_output=True, text=True, env=env)
     assert r.returncode == 0, r.stdout[-3000:] + r.stderr[-2000:]
     assert " passed" in r.stdout and " failed" not in r.stdout
