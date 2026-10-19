@@ -21,6 +21,7 @@ import re
 from capability import IN_PROGRESS_NOTE, NOT_STARTED_NOTE  # noqa: E402  (stdlib-only sibling module)
 import bands as _bands  # noqa: E402
 import target_set as _targets  # noqa: E402
+import water_domain as _water  # noqa: E402
 
 BRAIN_ID = "biological-state"
 DISPLAY_NAME = "Biological Brain"
@@ -214,6 +215,7 @@ def species_summary(p: dict, b: Bundle, profile_uri: str, now: str) -> dict:
         separateAssessments=p.get("separateAssessments"),
         movement=({k: v for k, v in (p.get("movement") or {}).items() if k in ("passLevel", "generalConfidence", "regionalConfidence", "bowfisherTakeaway", "bowfisherKnowledge", "sourcesInspected", "sourcesTotal", "cardVersion")} or None),
         productRole=_targets.role(p["speciesId"]),
+        **_water.project(p["speciesId"]),
         history=hist,
         profileRef=profile_uri, profileSha256=next((f["sha256"] for f in b.manifest["files"] if f["path"] == f"species/{p['speciesId']}.json"), None),
         updatedAt=now))

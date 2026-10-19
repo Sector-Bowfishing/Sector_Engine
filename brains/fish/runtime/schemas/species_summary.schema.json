@@ -416,6 +416,26 @@
   },
   "updatedAt": {
    "type": "string"
+  },
+  "waterDomains": {
+   "description": "Projected from the Species Registry (never inferred); canonical order, no duplicates. Absent with waterDomainStatus UNKNOWN = unknown, render as an em dash. Water domain is not a migration strategy.",
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 3,
+   "uniqueItems": true,
+   "items": {
+    "enum": [
+     "FRESHWATER",
+     "BRACKISH",
+     "MARINE"
+    ]
+   }
+  },
+  "waterDomainStatus": {
+   "enum": [
+    "ASSESSED",
+    "UNKNOWN"
+   ]
   }
  }
 }
