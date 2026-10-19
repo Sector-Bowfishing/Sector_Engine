@@ -1,6 +1,6 @@
 """Water Clarity Brain tests (stdlib unittest; no network).
 
-  cd jobs/water-clarity-brain && python3 -m unittest discover -s tests -v
+  cd brains/water-clarity && python3 -m pytest -q          (or: python3 -m unittest discover -s tests -v with PYTHONPATH=runtime)
 
 Fixtures are trimmed real responses captured 2026-10-12 from production
 (sector-engine-00072-way /conditions and gs://sector-lake-surface).
@@ -16,7 +16,8 @@ import unittest
 from unittest import mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(HERE))
+RUNTIME = os.path.join(os.path.dirname(HERE), "runtime")
+sys.path.insert(0, RUNTIME)
 # Tests never read the real private overlay: they merge a synthetic one (same mechanics).
 os.environ["CLARITY_PRIVATE_CATALOG"] = os.path.join(HERE, "fixtures", "catalog.overlay.example.json")
 import brain_platform as bp      # noqa: E402
@@ -184,7 +185,7 @@ class Serialization(unittest.TestCase):
 class PublicSafety(unittest.TestCase):
     """catalog.json is in the PUBLIC Sector_Engine repo: status-level facts only. Detailed
     research results live in the private overlay (catalog.private.json, gitignored)."""
-    RAW = json.load(open(os.path.join(os.path.dirname(HERE), "catalog.json")))
+    RAW = json.load(open(os.path.join(RUNTIME, "catalog.json")))
     PRIVATE_KEYS = {"bars", "populations", "strongSharePctByConfiguration", "temporaryDependencies",
                     "deploymentPrerequisites", "frozenAt", "artifacts", "evidence", "researchScore", "byClass"}
 
@@ -205,8 +206,8 @@ class PublicSafety(unittest.TestCase):
         self.assertEqual((v["metrics"], v["sampleCount"], v["lakeCount"]), ({}, None, None))
 
     def test_no_research_identifiers_in_public_files(self):
-        root = os.path.dirname(HERE)
-        text = "".join(open(os.path.join(root, f)).read() for f in ("catalog.json", "clarity_brain.py", "run.py", "README.md"))
+        root = RUNTIME
+        text = "".join(open(os.path.join(root, f)).read() for f in ("catalog.json", "clarity_brain.py", "run.py")) + open(os.path.join(os.path.dirname(HERE), "README.md")).read()
         for token in ("b4ceae23", "9e87e5ba", "04966766", "LAKE_SECCHI_PRIOR", "STATION_HISTORY", "AQR_GBM", "Guntersville survey", "RESERVE"):
             self.assertNotIn(token, text)
 

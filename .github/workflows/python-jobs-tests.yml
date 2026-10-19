@@ -4,7 +4,7 @@
 # gates are in foundation-verification.yml.
 #
 # Legacy job suites are listed EXPLICITLY (those Brains are not migrated; no brain.json). Migrated Brains (brains/*/brain.json:
-# Wind since Repository Phase 2) run in the `registered-brains` job from their canonical location. Do not invent brain.json files.
+# Wind since Repository Phase 2, Fish, Water Clarity) run in the `registered-brains` job from their canonical location. Do not invent brain.json files.
 name: python-jobs-tests
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
       - name: Brain and job suites (offline)
         run: |
           set -e
-          for d in jobs/lake-surface-dispatch jobs/water-clarity-brain \
+          for d in jobs/lake-surface-dispatch \
                    jobs/sector-intelligence-brain jobs/water-temp-tva-archive \
                    jobs/lake-brain/bindings jobs/lake-brain/ledger jobs/lake-brain/validation jobs/lake-brain/review; do
             echo "== $d"; (cd "$d" && python -m pytest -q)

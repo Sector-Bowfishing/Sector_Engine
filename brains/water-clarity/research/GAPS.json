@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "water-clarity",
+  "gaps": [
+    {
+      "id": "CLARITY-VAL-001",
+      "type": "validation",
+      "title": "The customer-facing clarity number has no consensus-certified model deployed",
+      "whyItMatters": "Production serves secchi-power-v1 (gauge-driven, validated without a gate) and rain-decay-v0 (not validated). A certified research candidate exists but is NOT_DEPLOYED, so no lake reaches the 'strong' evaluated state.",
+      "bowfisherDecision": "Whether a bowfisher can plan a trip on the published clarity number or only on the 'which part of the lake looks better' satellite hint.",
+      "currentEvidence": ["private-research-closeout-record"],
+      "stopCondition": "Stop when a promotion decision for a deployed model is made by Michael, or when the next step needs field observations.",
+      "expectedOutput": "A recorded accept / reject / keep-in-calibration decision for the research candidate against live production data.",
+      "humanOrFieldValidationRequired": {"required": true, "what": "Field clarity observations on the water, scored against the published estimate."},
+      "status": "OPEN",
+      "owner": "water-clarity-lane"
+    },
+    {
+      "id": "CLARITY-PRO-001",
+      "type": "product",
+      "title": "No customer clarity class taxonomy exists (clarityClass is unpublished)",
+      "whyItMatters": "The Engine publishes feet only; band names and cut-points were never decided, so the Brain publishes clarityClass as unknown rather than inventing one.",
+      "bowfisherDecision": "How a clarity number maps to a go / no-go reading for bowfishing.",
+      "currentEvidence": ["private-research-closeout-record"],
+      "stopCondition": "Stop when Michael decides the band names and cut-points.",
+      "expectedOutput": "An approved band taxonomy and its evidence rule.",
+      "humanOrFieldValidationRequired": {"required": true, "what": "Product decision (Michael) and field validation of the chosen cut-points."},
+      "status": "OPEN",
+      "owner": "water-clarity-lane"
+    },
+    {
+      "id": "CLARITY-EVI-001",
+      "type": "evidence",
+      "title": "Gauge reading times are unknown in the Engine payload",
+      "whyItMatters": "The estimate restates the Engine /conditions answer; the observation time of the driving gauge reading is not in that payload, so evidence freshness for gauge-driven lakes stays UNKNOWN (never substituted by the Engine evaluation time).",
+      "bowfisherDecision": "How recent the real-world measurement behind a clarity number is.",
+      "currentEvidence": ["clarity-engine-conditions-payload"],
+      "stopCondition": "Stop when the owning component exposes a reading time, or when the Brain reads provider data directly under an approved contract.",
+      "expectedOutput": "A published gauge observation time per lake, or a recorded decision to keep it UNKNOWN.",
+      "humanOrFieldValidationRequired": {"required": false, "what": "None: an engineering/ownership decision."},
+      "status": "OPEN",
+      "owner": "water-clarity-lane"
+    }
+  ]
+}

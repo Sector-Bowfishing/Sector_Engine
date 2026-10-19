@@ -9,7 +9,9 @@ def test_default_registry_has_exactly_wind_and_fish_schemas_and_bundles():
     r = default_registry()
     assert r.schemas_for("wind") == sorted(WIND_SCHEMAS) and r.schemas_for("biological-state") == sorted(FISH_SCHEMAS)
     assert r.bundle(WIND_BUNDLE).sections == WIND_SCHEMAS and r.bundle(FISH_BUNDLE).sections == FISH_SCHEMAS
-    for other in ("lake-brain", "water-temp", "water-clarity", "sector-intelligence", "depth", "vegetation"):
+    from sector_brain_platform.publisher.registry import CLARITY_BUNDLE, CLARITY_SCHEMAS       # Water Clarity: third registration (Water Clarity Structural Certification V1)
+    assert r.schemas_for("water-clarity") == sorted(CLARITY_SCHEMAS) and r.bundle(CLARITY_BUNDLE).sections == CLARITY_SCHEMAS
+    for other in ("lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation"):
         assert r.schemas_for(other) == []                                      # still identity-only until their own certification
 
 

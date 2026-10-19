@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "water-clarity",
+  "component": "C1 (brains/water-clarity/runtime)",
+  "description": "Every input the canonical C1 runtime really reads, derived from its code (pinned by tests/test_clarity_certification.py). This is the dependency TRUTH; brain.json `consumes` carries only what the platform schema can express. Classes: PLATFORM_REGISTRY | PROVIDER_DATA | OWN_PIPELINE_OUTPUT | OWN_MODEL | CUSTOMER_API_LEGACY | OPERATIONAL_METADATA | OWN_STATE. Lineage values: RECORDED (platform recorder captured it) | NOT_RECORDED (supported-read model does not exist yet; never faked) | NOT_APPLICABLE.",
+  "inputs": [
+    {"id": "engine-lakes-directory", "mechanism": "HTTP GET {ENGINE_URL}/lakes", "class": "PLATFORM_REGISTRY", "required": true,
+     "declaredIn": "brain.json consumes[registry lakes]", "lineage": "NOT_RECORDED",
+     "ownershipDebt": "RA-20: the lake directory is read through the CUSTOMER Engine API, not the Lake Registry contract. No registry contract version is actually read. Replace with the Lake Registry in the Clarity phase."},
+    {"id": "engine-conditions", "mechanism": "HTTP GET {ENGINE_URL}/conditions?lat&lon (one call per lake, ~621 per run)", "class": "CUSTOMER_API_LEGACY", "required": true,
+     "declaredIn": "NOT declarable in brain.json (neither a Brain, registry nor signal contract)", "lineage": "NOT_RECORDED",
+     "ownershipDebt": "RA-20: the customer Engine computes the production clarity number and the Brain restates it. NOT a legitimate long-term dependency; recorded, not blessed. Replace with provider/platform/registry/Brain contracts."},
+    {"id": "lake-surface-clarity", "mechanism": "HTTP GET gs://sector-lake-surface lakes/{slug}/clarity/{latest.json, history.json, meta}", "class": "OWN_PIPELINE_OUTPUT", "required": false,
+     "declaredIn": "not a dependency edge: C2 is the same Brain's pipeline (Sentinel-2 L2A is acquired and interpreted there)", "lineage": "NOT_RECORDED", "ownershipDebt": "GCS_READ_LINEAGE_PLATFORM_DEBT"},
+    {"id": "lake-surface-run-records", "mechanism": "HTTP GET storage JSON API runs/{day}-task* in the lake-surface bucket", "class": "OPERATIONAL_METADATA", "required": false,
+     "declaredIn": "not a dependency (execution status of C2; belongs to the Orchestrator health plane)", "lineage": "NOT_RECORDED", "ownershipDebt": "GCS_READ_LINEAGE_PLATFORM_DEBT; process facts are Orchestrator-owned"},
+    {"id": "cloud-run-engine-revision", "mechanism": "HTTP GET Cloud Run v2 services/sector-engine (or env ENGINE_REVISION)", "class": "OPERATIONAL_METADATA", "required": false,
+     "declaredIn": "not a dependency (deployment label)", "lineage": "NOT_APPLICABLE", "ownershipDebt": "deployment state is Orchestrator-owned"},
+    {"id": "lake-outlines", "mechanism": "local file polygons.geojson.gz (staged from jobs/lake-surface)", "class": "OWN_PIPELINE_OUTPUT", "required": true,
+     "declaredIn": "static input data staged into the image", "lineage": "NOT_APPLICABLE", "ownershipDebt": "none"},
+    {"id": "catalog", "mechanism": "local catalog.json + optional private overlay (CLARITY_PRIVATE_CATALOG path or gs:// object)", "class": "OWN_MODEL", "required": true,
+     "declaredIn": "own knowledge; its digest is part of lineage inputFingerprint", "lineage": "NOT_APPLICABLE", "ownershipDebt": "private overlay detail is never committed"},
+    {"id": "brain-rtdb-own-state", "mechanism": "RTDB GET brains/water-clarity, lakeFleet, activity (previous published state, for change detection and stale carry)", "class": "OWN_STATE", "required": false,
+     "declaredIn": "a Brain's own state is never a dependency", "lineage": "RECORDED", "ownershipDebt": "none"}
+  ],
+  "providers": {"declared": [], "why": "C1 calls no provider directly. Sentinel-2 L2A, USGS NWIS turbidity and NOAA MRMS are acquired upstream (C2/C5); C1 publishes source health records for them (ownership.SOURCE_OWNERS) from the data it receives."},
+  "signals": {"declared": [], "why": "no formal Signal Registry signal is consumed"},
+  "brains": {"declared": [], "why": "no other Brain's published state is read"}
+}

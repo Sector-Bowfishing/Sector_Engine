@@ -13,7 +13,7 @@ Water Clarity Brain v1.1.0 publishes production Clarity to Brain RTDB `sector-br
 - 621 / 621 lakes, 0 failures, HEALTHY.
 - Readiness: 18 PRODUCTION, 603 BETA.
 
-**Tests:** 35 unittest cases, no network: `cd jobs/water-clarity-brain && python3 -m unittest discover -s tests`. They include public-safety checks on `catalog.json`.
+**Tests:** 35 unittest cases, no network: `cd brains/water-clarity && python3 -m pytest -q`. They include public-safety checks on `catalog.json`.
 
 ## Public vs private
 
@@ -36,7 +36,7 @@ Water Clarity Brain v1.1.0 publishes production Clarity to Brain RTDB `sector-br
 
 ## Deploy (not done; Michael's go)
 
-`jobs/water-clarity-brain/deploy-job.sh`:
+`brains/water-clarity/deploy/deploy-job.sh`:
 - creates the service account;
 - creates the Cloud Run job;
 - schedules it at 04:30 CT.

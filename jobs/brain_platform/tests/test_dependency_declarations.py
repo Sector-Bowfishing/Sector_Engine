@@ -104,10 +104,11 @@ def test_dependency_graph_read_model_is_engine_owned_and_deterministic():
     g = DD.dependency_graph(reg, manifest=O.load_manifest(), signals=SG.load(), providers=DD.load_providers(ROOT))
     assert g["version"] == DD.DECLARATIONS_VERSION and g["warnings"] == []
     assert g["brains"]["wind"]["source"] == "brain.json" and g["brains"]["wind"]["declarationsKnown"] is True
-    registered = {"wind", "biological-state"}                    # Wind (Phase 2) and Fish (Fish Structural Certification V1) declare in brains/*/brain.json
+    registered = {"wind", "biological-state", "water-clarity"}   # Wind (Phase 2), Fish and Water Clarity (Structural Certification V1) declare in brains/*/brain.json
     others = [b for b in g["brains"] if b not in registered]
     assert others and all(g["brains"][b]["legacy"] for b in others)
     assert g["brains"]["biological-state"]["source"] == "brain.json" and g["brains"]["biological-state"]["declarationsKnown"] is True and g["brains"]["biological-state"]["rows"] == []
+    assert g["brains"]["water-clarity"]["source"] == "brain.json" and g["brains"]["water-clarity"]["declarationsKnown"] is True
     assert all(e["to"] != "wind" for e in g["edges"] if e["dependencyType"] == "BRAIN")
     assert g["edges"] == sorted(g["edges"], key=lambda e: (e["to"], e["from"]))
     assert json.dumps(g, sort_keys=True) == json.dumps(DD.dependency_graph(reg, manifest=O.load_manifest(), signals=SG.load(), providers=DD.load_providers(ROOT)), sort_keys=True)
