@@ -1,7 +1,7 @@
 # Fish Biological Capability V2 (`FISH_BIOLOGICAL_CAPABILITY_V2`)
 
-**Status: CANDIDATE, pending owner approval. Not authoritative production truth. Nothing publishes it.**
-Rubric: [`fish-biological-capability-v2.json`](fish-biological-capability-v2.json) · Cohorts: [`fish-capability-cohorts-v1.json`](fish-capability-cohorts-v1.json) ·
+**Status: CANDIDATE `2.1.0-candidate` (after the owner's final rubric review), pending owner approval. Not authoritative production truth. Nothing publishes it.**
+Rubric: [`fish-biological-capability-v2.json`](fish-biological-capability-v2.json) · Cohorts: [`fish-capability-cohorts-v2.json`](fish-capability-cohorts-v2.json) (v1 kept for history) ·
 Evaluator: `brains/fish/runtime/capability_eval.py` · Scorer: `jobs/brain_platform/sector_brain_platform/fish_capability.py` · Local entry point: `brains/fish/runtime/capability_run.py`.
 
 ## 1. What it measures, and what it does not
@@ -45,14 +45,14 @@ result.json (candidate, local) ── future: authoritative publication through 
 
 | Category | Max | Criteria (weight) |
 |---|---:|---|
-| Species biology & behavior | 2.5 | BIO-1 executable behaviour (0.75) · BIO-2 breadth over 5 core behaviour families (0.5) · BIO-3 species-specific signature (0.5) · BIO-4 appropriate uncertainty (0.5, abstention) · BIO-5 behaviour named (0.25) |
-| Habitat & depth | 2.0 | HAB-1 habitat preference executes + annual coverage (0.7) · HAB-2 habitat changes with season/conditions (0.3) · HAB-3 `KNOWS_DEPTH_PREFERENCE` (0.5) · HAB-4 `CAN_EVALUATE_SUPPLIED_DEPTH` (0.3) · HAB-5 depth abstention (0.2, abstention) |
-| Environmental responses | 2.0 | ENV-1 temperature (0.6) · ENV-2 water level / hydrology (0.6) · ENV-3 clarity (0.2) · ENV-4 missing, degraded and conflicting inputs (0.6) |
-| Spawning & seasonality | 2.0 | SPN-1 spawn window executes (0.6) · SPN-2 temperature trigger discriminates (0.4) · SPN-3 seasonal pattern (0.6) · SPN-4 spawn uncertainty + regional applicability (0.4) |
-| Day / night | 1.0 | DN-1 day/night behaviour executes + annual coverage (0.5) · DN-2 behaviour vs catchability evidence (0.25) · DN-3 safe abstention (0.25, abstention) |
-| Knowledge application | 0.5 | APP-1 full runtime on the species' best-supported scenario (0.5) |
+| Species biology & behavior | 2.5 | BIO-1 executable behaviour (0.75) · BIO-2 breadth over 5 core behaviour families (0.5) · BIO-3 species-specific signature (0.5) · BIO-4 appropriate uncertainty (0.5, abstention × breadth) · BIO-5 behaviour named (0.25) |
+| Habitat & depth | 2.0 | HAB-1 habitat preference executes + annual coverage (0.7) · HAB-2 habitat changes with season/conditions (0.3) · HAB-3 `KNOWS_DEPTH_PREFERENCE` (0.5) · HAB-4 `CAN_EVALUATE_SUPPLIED_DEPTH` (0.3) · HAB-5 depth abstention (0.2, abstention × breadth) |
+| Environmental responses | 2.0 | ENV-1 temperature (0.6) · ENV-2 water level / hydrology (0.6) · ENV-3 clarity (0.2) · ENV-4 missing, degraded and conflicting inputs (0.6, × environmental breadth) |
+| Spawning & seasonality | 2.0 | SPN-1 spawn window executes + spawn-period behaviour (0.6) · SPN-2 temperature trigger discriminates (0.4) · SPN-3 seasonal breadth of known behaviour (0.6) · SPN-4 spawn uncertainty + regional applicability (0.4) |
+| Day / night | 1.0 | DN-1 day/night behaviour executes + annual coverage (0.5) · DN-2 behaviour vs catchability evidence (0.25) · DN-3 safe abstention (0.25, abstention × breadth) |
+| Knowledge application | 0.5 | APP-1 full runtime on the species' best-supported scenario (0.5; halved if only a spawn state is known) |
 
-Exact award rules per criterion are in the rubric JSON (`award`). `points = weight × fraction`; species score = sum (exact to 6 dp, displayed to 1 dp).
+Exact award rules per criterion are in the rubric JSON (`award`); `revisionHistory` records 2.0 → 2.1. `points = weight × fraction`; species score = sum (exact to 6 dp, displayed to 1 dp).
 
 **Depth distinctions (owner §9).** `KNOWS_DEPTH_PREFERENCE` = a depth-class habitat rule executes (HAB-3 = 1; a shallow/deep tendency alone = 0.5). `CAN_EVALUATE_SUPPLIED_DEPTH` = given a supplied depth, the runtime says WITHIN / OUTSIDE the preferred class (HAB-4; new in `biological_assessment.depth_tendencies`). `HAS_NO_DEPTH_RULE` = 0 and is reported. No credit depends on an unpublished lake depth dataset.
 
@@ -61,7 +61,8 @@ Exact award rules per criterion are in the rubric JSON (`award`). `points = weig
 ## 4. Policies
 
 * **Only usable rules execute.** RECONCILED/APPROVED rules that pass the evidence discipline in `rules.py`; DRAFT and season-gated rules earn nothing and are reported as unused knowledge.
-* **Abstention** (BIO-4, HAB-5, DN-3, max 0.95 of 10) is credited only to a species that passes BIO-1. Universal UNKNOWN earns nothing.
+* **Abstention** (BIO-4, HAB-5, DN-3, max 0.95 of 10) is credited only to a species that passes BIO-1, **scaled by executable breadth** (core behaviour families executed / 5). ENV-4 input safety is scaled by executable environmental families / 2. Universal UNKNOWN earns nothing; a one-family species earns at most 0.19.
+* **Spawning and seasonality (2.1).** A spawn window alone is not seasonal understanding: SPN-1 gives half for the window and half for knowing what the fish does inside it; SPN-3 counts the seasons (of 4) with known behaviour, excluding the spawn state, at half credit if that behaviour never changes. APP-1 is halved when the only biological output is a spawn state.
 * **Annual coverage** (HAB-1, ENV-1..3, DN-1 = half execution, half coverage). Measured by running the runtime for 12 months × every registered condition state; a month without an evidence-backed output is genuinely UNKNOWN for that fish.
 * **Normalisation.** A criterion may be NOT_APPLICABLE only via a reviewed `biologicalExemptions` entry (speciesId → criteria + reason); exempt weight leaves the denominator. The list is **empty**: no criterion was found to be biologically inapplicable to a whole species (every fish lives through temperatures, water levels, habitats, a spawning season and day/night). Clarity was not made a core family for this reason and carries only 0.2.
 * **Reference cases.** Human-reviewed expectations (`reviewStatus` APPROVED + reviewer) can only **withdraw** credit: a failing approved case zeroes the criterion it checks. PROPOSED cases are executed and reported, never scored. None are approved yet (15 PROPOSED cases for the TARGET species live in the private workspace; 13 of 15 would pass today).
@@ -72,7 +73,7 @@ Exact award rules per criterion are in the rubric JSON (`award`). `points = weig
 ## 5. Aggregation (`fish-capability-aggregation-v1`)
 
 * Unweighted arithmetic mean of exact species scores over the **complete frozen roster** (no weighting by research volume, ease of study or preference).
-* Rosters (`fish-capability-cohorts-v1`, frozen 2026-10-19): **TARGET** 8 species; **ALL_ASSESSED** 27 species. The 2 NOT_ASSESSED rows (`suckers_redhorse_carpsuckers_group`, `tilapia_unresolved`) are explicitly unscored. Membership changes only with a new cohorts version.
+* Rosters (`fish-capability-cohorts-v2`, 2026-10-19): **TARGET** 8 species; **ALL_ASSESSED** 26 individually assessable species. **Rule:** only a single biological species is rostered. Rows whose taxonomyStatus is GROUP_* or TAXON_UNRESOLVED are explicitly unscored and listed: `carpsuckers_group` (GROUP_UNRESOLVED, ASSESSED in the registry) is `notIndividuallyAssessable` (INSUFFICIENT_EVIDENCE, backlog RESOLVE_TAXONOMY); `suckers_redhorse_carpsuckers_group` and `tilapia_unresolved` stay NOT_ASSESSED by policy. FIELD_ID_UNRESOLVED (buffalo) and RESOLVED_HYBRIDIZES species are single species and stay in. v1 (27) is kept; the denominator change raises the aggregate (3.63 on v1 vs 3.77 on v2 under rubric 2.1) and is declared in the cohorts file. Membership changes only with a new cohorts version.
 * **Overall Fish biological capability = ALL_ASSESSED** (the complete roster, so one strong species cannot hide weak ones); TARGET is shown beside it.
 * INCOMPLETE when any rostered species is not ASSESSED or knowledge versions differ: value `null`, bounds shown (unscored at 0 and at 10), all available species kept.
 * Reported with every aggregate: eligible / evaluated / completeness, below 5.0, below 7.0, % at 5.0+ and 7.0+, lowest and highest species, lowest score, bottom-quartile mean, median, category averages, rubric / cohorts / aggregation versions.
@@ -103,6 +104,7 @@ Deterministic, stdlib only, offline: no network, RTDB, credentials, Ollama or LL
   1. First run: TARGET **7.96**, ALL_ASSESSED **4.48**. One rule earned a whole condition family (bigmouth buffalo, 3 rules, scored 7.9 against common carp's 8.95). Added *annual coverage* to HAB-1, ENV-1..3, DN-1 → TARGET **7.59**, ALL_ASSESSED **4.33**.
   2. BIO-2 ("behaviour changes with conditions") saturated at 3 distinct outputs for every species with rules. Replaced by breadth over the 5 core behaviour families → TARGET **7.42**, ALL_ASSESSED **4.22**.
   Neither change touched category weights; both lowered scores.
+* **Rubric 2.1 (owner final review, same day).** The owner found that one spawn rule earned about 4.8 (redhorse). Diagnosis: one phenology rule earned all 2.0 spawning points, plus 0.95 abstention and 0.5 application, with no behaviour beyond the window. All 14 species at full spawning credit got it from one phenology rule. Corrections: abstention × breadth, ENV-4 × environmental breadth, SPN-1 spawn-period behaviour, SPN-3 seasonal breadth, APP-1 spawn-only halved. Result on the live release: TARGET **7.42 → 6.81**; ALL_ASSESSED **4.22 → 3.63** on the same 27, **3.77** on cohorts v2 (26). Redhorse species 4.80 → 2.89. Seven species keep full spawning credit (behaviour inside the window and across all four seasons). No criterion was raised.
 * Abstention credit can give a species with one executable rule a floor of about 0.95 + its executed criteria; universal UNKNOWN species score 0.
 
 ## 10. Legacy maturity-rubric defects (audit §13, owner §28): investigated, not changed here
@@ -120,6 +122,6 @@ Deterministic, stdlib only, offline: no network, RTDB, credentials, Ollama or LL
 ## 11. Owner decisions pending
 
 1. Approve (or change) the criteria, the coverage policy and the abstention policy.
-2. Approve the frozen cohorts `fish-capability-cohorts-v1` and "overall = ALL_ASSESSED".
-3. Review the 15 PROPOSED reference cases (approve / reject) so the evaluation can leave CANDIDATE.
+2. Approve cohorts `fish-capability-cohorts-v2` (single-species rule; overall = all individually assessed species, TARGET separate).
+3. Review the 15 PROPOSED reference cases (approve / reject). Classified 2026-10-19: 9 SELF_CONSISTENCY (prove only that Fish runs its own rules), 4 ABSTENTION_CHECK, 2 INDEPENDENT_EXPECTATION_NOT_IN_RUNTIME (grass carp and bowfin night). None is backed by APPROVED evidence (0 approved rules, empty review ledger); none was self-approved.
 4. Authorise a publication path (e.g. `/scores/biological-state/capability`) through the existing Publisher and scorer; until then nothing is written.
