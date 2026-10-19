@@ -494,9 +494,10 @@ def _edge_dist_px(mask):
     return e
 
 
-def _read_s2_native(item, frame_bounds):
+def _read_s2_native(item, frame_bounds, rededge=False):
     """The tile under the frame: SCL/B8A/B11 at 20 m and B04 at 10 m on
-    exactly nested windows (the 10 m window is the 20 m one doubled)."""
+    exactly nested windows (the 10 m window is the 20 m one doubled).
+    rededge: also B05 at 20 m, for the algal-water check (Stage 8)."""
     a = item["assets"]
     src = rasterio.open(a["scl"]["href"])
     b = transform_bounds(WEB_MERCATOR, src.crs, *frame_bounds, densify_pts=21)
@@ -509,7 +510,9 @@ def _read_s2_native(item, frame_bounds):
     rs = rasterio.open(a["red"]["href"])
     w10 = rasterio.windows.Window(2 * win.col_off, 2 * win.row_off, 2 * win.width, 2 * win.height)
     red = rs.read(1, window=w10)
-    return {"scl": scl, "nir08": n8a, "swir16": sw, "red": red, "tr20": tr20,
+    # B05 (705 nm) for the algal-water check (NDCI); it never touches turbidity.
+    re1 = rasterio.open(a["rededge1"]["href"]).read(1, window=win) if rededge and "rededge1" in a else None
+    return {"scl": scl, "nir08": n8a, "swir16": sw, "red": red, "rededge1": re1, "tr20": tr20,
             "tr10": rs.window_transform(w10), "crs": src.crs}
 
 
@@ -586,11 +589,65 @@ def _s2_native_fields(t):
     return fnu, gfrac, readable, hidden, near
 
 
+def _cell_ndci(t, fnu, frame):
+    """NDCI = (B05 - B04) / (B05 + B04) on the frame's cells, from the mean
+    reflectance of the SAME 10 m pixels the turbidity read (NaN where none).
+    None when the item has no red-edge band. Clarity Stage 8: the algal-water
+    reliability warning (NDCI > 0.03) reads this; turbidity never does."""
+    if t.get("rededge1") is None:
+        return None
+    h, w = t["red"].shape
+    ok = np.isfinite(fnu)
+    def rho(dn):
+        r = dn.astype("float32") * S2_SCALE + S2_OFFSET
+        r[(dn == 0) | (dn == 65535)] = np.nan
+        return r
+    red = rho(t["red"]); red[~ok] = np.nan
+    g_red = to_grid(red, t["tr10"], t["crs"], frame)
+    del red
+    re1 = np.repeat(np.repeat(rho(t["rededge1"]), 2, axis=0), 2, axis=1)[:h, :w]
+    re1[~ok] = np.nan
+    g_re = to_grid(re1, t["tr10"], t["crs"], frame)
+    del re1
+    with np.errstate(invalid="ignore", divide="ignore"):
+        s = g_re + g_red
+        nd = np.where(s > 1e-6, (g_re - g_red) / s, np.nan).astype("float32")
+    return nd
+
+
+# The algal-water product: NDCI per cell, 0 = none, else 1 + (NDCI + 0.30) / 0.0025
+# (0.0025 steps, -0.30 .. +0.3325; the 0.03 rule sits exactly on code 133).
+NDCI_LO, NDCI_STEP = -0.30, 0.0025
+NDCI_CARRY_M = 500.0     # an estimated cell takes its nearest reading's NDCI this close
+
+
+def write_ndci(path, nd, measured, dist_to_reading_m, lake, cell_m):
+    """Measured cells keep their own NDCI; an estimated cell of the lake takes
+    the NDCI of the nearest measured cell when that reading is within
+    NDCI_CARRY_M both in a straight line and through the water. Everything
+    else has none (0). Returns (measured cells with NDCI, cells carried)."""
+    have = measured & np.isfinite(nd)
+    out = np.full(nd.shape, np.nan, dtype="float32")
+    out[have] = nd[have]
+    carried = np.zeros(nd.shape, dtype=bool)
+    if have.any():
+        edt, (ir, ic) = ndimage.distance_transform_edt(~have, return_indices=True)
+        with np.errstate(invalid="ignore"):
+            carried = (lake & ~have & (edt * cell_m <= NDCI_CARRY_M)
+                       & (np.nan_to_num(dist_to_reading_m, nan=np.inf) <= NDCI_CARRY_M))
+        out[carried] = nd[ir[carried], ic[carried]]
+    q = np.zeros(nd.shape, dtype="uint8")
+    ok = np.isfinite(out)
+    q[ok] = np.clip(np.round((out[ok] - NDCI_LO) / NDCI_STEP) + 1, 1, 254).astype("uint8")
+    Image.fromarray(q, mode="L").save(path, optimize=True)
+    return int(have.sum()), int(carried.sum())
+
+
 class PassRejected(Exception):
     """A pass that cannot be read: skip it, keep going."""
 
 
-def s2_pass(items, frame, measurable, grass_mask):
+def s2_pass(items, frame, measurable, grass_mask, ndci=False):
     """One Sentinel-2 pass on the frame: FNU (NaN = not read), the grass class
     (bool), and `aux` — per-cell "gfrac" (share of seen pixels that are plant)
     and "hidden" (share of non-bank pixels cloud hid).
@@ -610,11 +667,12 @@ def s2_pass(items, frame, measurable, grass_mask):
     H, W = frame.height, frame.width
     z = lambda: np.zeros((H, W))
     gnum, gden, hnum, hden, nnum, nden = z(), z(), z(), z(), z(), z()
+    ndnum, ndden = z(), z()
     swir_check = []
     tiles = []      # (id, log10 FNU where read, feather weight)
     for it in items:
         try:
-            t = _read_s2_native(it, frame.bounds)
+            t = _read_s2_native(it, frame.bounds, rededge=ndci)
         except Exception as e:      # a failed scene is a gap, not a crash
             print(f"    ! {it['id']}: {e}")
             continue
@@ -627,6 +685,7 @@ def s2_pass(items, frame, measurable, grass_mask):
         g = to_grid(fnu, t["tr10"], t["crs"], frame)            # mean over readable pixels
         frac = to_grid(readable, t["tr10"], t["crs"], frame)    # readable share of the cell
         shares = [to_grid(f, t["tr10"], t["crs"], frame) for f in (gfrac, hidden, near)]
+        nd_cells = _cell_ndci(t, fnu, frame) if ndci else None
         del fnu, gfrac, readable, hidden, near, t["red"]
         foot = to_grid(np.where(t["scl"] > 0, 1.0, np.nan).astype("float32"),
                        t["tr20"], t["crs"], frame)
@@ -641,6 +700,10 @@ def s2_pass(items, frame, measurable, grass_mask):
             fh = ~np.isnan(f)
             n_[fh] += wgt[fh] * f[fh]
             d_[fh] += wgt[fh]
+        if nd_cells is not None:
+            nh = have & ~np.isnan(nd_cells)
+            ndnum[nh] += wgt[nh] * nd_cells[nh]
+            ndden[nh] += wgt[nh]
     offsets = match_tiles(tiles)
     num, den = z(), z()
     for (tid, glog, wgt) in tiles:
@@ -661,6 +724,12 @@ def s2_pass(items, frame, measurable, grass_mask):
     share = lambda n_, d_: np.where(d_ > 1e-6, n_ / np.maximum(d_, 1e-9), np.nan).astype("float32")
     aux = {"gfrac": share(gnum, gden), "hidden": share(hnum, hden),
            "near": share(nnum, nden), "tileOffsets": offsets}
+    # NDCI where the turbidity was read, tiles feathered the same way (no level
+    # matching: it is a band ratio, and the offsets are turbidity's).
+    if ndci:
+        nd = share(ndnum, ndden)
+        nd[np.isnan(acc)] = np.nan
+        aux["ndci"] = nd
     grass = (np.nan_to_num(aux["gfrac"]) >= 0.5) & grass_mask & np.isnan(acc)
     return acc, grass, aux
 
@@ -948,11 +1017,13 @@ def build_temperature(frame, masks, bbox, until, out, lake_wgs, lake_name):
     write(out, q, meta)
 
 
-def build_clarity(frame, masks, bbox, until, out, after=None, floor=0.0):
+def build_clarity(frame, masks, bbox, until, out, after=None, floor=0.0, ndci=False):
     """after  only passes newer than this date may be the base (the daily job:
               the pass already published); older ones still lend grass.
     floor     the fallback pass must read at least this share of the open
-              water (the daily job: 80% of what the published pass read)."""
+              water (the daily job: 80% of what the published pass read).
+    ndci      also write the pass's NDCI product (<out>.ndci.png), for lakes
+              whose Current Clarity reads the algal-water warning (Stage 8)."""
     print("CLARITY — Sentinel-2 L2A (C1) red-band turbidity, read at 10 m")
     candidates = passes(ES_SEARCH, S2_COLLECTION, bbox, until, max_cloud=40)
     base = None
@@ -962,7 +1033,7 @@ def build_clarity(frame, masks, bbox, until, out, after=None, floor=0.0):
             break
         print(f"  pass {date} {platform} ({len(items)} tile(s))", flush=True)
         try:
-            v, grass, aux = s2_pass(items, frame, masks["lake"], masks["clarity"])
+            v, grass, aux = s2_pass(items, frame, masks["lake"], masks["clarity"], ndci=ndci)
         except PassRejected as e:
             print(f"    skipped: {e}")
             continue
@@ -1202,6 +1273,18 @@ def build_clarity(frame, masks, bbox, until, out, after=None, floor=0.0):
                     "under the lake's outline as well as mats) and beds cloud hid, taken "
                     "from a clear pass within ten days."],
     }
+    nd = aux.get("ndci")
+    if nd is not None:
+        n_meas, n_carry = write_ndci(f"{out}.ndci.png", nd, measured, info["dist_to_reading_m"], lake,
+                                     frame.cell_ground_m())
+        meta["ndci"] = {
+            "file": f"{os.path.basename(out)}.ndci.png",
+            "index": "NDCI = (B05 - B04) / (B05 + B04), mean reflectance of the pixels the turbidity read",
+            "encoding": {"kind": "linear", "lo": NDCI_LO, "step": NDCI_STEP, "top": 254, "none": 0},
+            "measuredCells": n_meas, "carriedCells": n_carry, "carryM": NDCI_CARRY_M,
+            "use": "algal-water reliability warning only (NDCI > 0.03, Sentinel-2): never a clarity value",
+        }
+        print(f"  wrote {out}.ndci.png ({n_meas:,} measured cells, {n_carry:,} carried within {NDCI_CARRY_M:g} m)")
     write(out, q, meta)
 
 

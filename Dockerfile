@@ -29,6 +29,12 @@ RUN swift build -c release --product LakeBrainJob \
       -Xswiftc -static-stdlib \
     || swift build -c release --product LakeBrainJob
 RUN cp "$(swift build -c release --show-bin-path)/LakeBrainJob" /build/LakeBrainJob
+# The hourly job that prepares each lake's Current Clarity world runs from the
+# same image (Clarity Fusion Stage 5).
+RUN swift build -c release --product ClarityPrecompute \
+      -Xswiftc -static-stdlib \
+    || swift build -c release --product ClarityPrecompute
+RUN cp "$(swift build -c release --show-bin-path)/ClarityPrecompute" /build/ClarityPrecompute
 
 # ── Runtime stage ───────────────────────────────────────────────────────────
 # Slim image: Swift runtime libraries, no compiler. Add TLS roots + timezone data
@@ -41,6 +47,7 @@ WORKDIR /app
 COPY --from=build /build/SectorEngineServer /app/SectorEngineServer
 COPY --from=build /build/WaterTempBrainJob /app/WaterTempBrainJob
 COPY --from=build /build/LakeBrainJob /app/LakeBrainJob
+COPY --from=build /build/ClarityPrecompute /app/ClarityPrecompute
 
 # Cloud Run sets PORT; the server reads it and binds 0.0.0.0.
 ENV PORT=8080

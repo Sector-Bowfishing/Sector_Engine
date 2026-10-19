@@ -1,1 +1,5 @@
 __pycache__/
+# copied in by deploy-job.sh (Stage 4)
+current_cells.py
+arm_anchor.py
+regions/

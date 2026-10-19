@@ -465,10 +465,13 @@ public struct ArmClarityInputs: Equatable {
     /// Arms nested in another arm's embayment: named so the limitation can say
     /// that water arriving from it is not modelled (no transport in Stage 2).
     public let parentArmName: String?
+    /// Why the anchor is not the newest scene, when it is not.
+    public let anchorNote: String?
 
-    public init(lakeId: String, armId: String, armName: String, anchor: SatelliteAnchor?, rain: RainRecord,
-                flow: FlowRecord, baseline: BaselineVisibility?, parentArmName: String? = nil) {
+    public init(lakeId: String, armId: String, armName: String, anchor: SatelliteAnchor?, anchorNote: String? = nil,
+                rain: RainRecord, flow: FlowRecord, baseline: BaselineVisibility?, parentArmName: String? = nil) {
         self.lakeId = lakeId; self.armId = armId; self.armName = armName; self.anchor = anchor
+        self.anchorNote = anchorNote
         self.rain = rain; self.flow = flow; self.baseline = baseline
         self.parentArmName = parentArmName
     }
@@ -764,6 +767,7 @@ public enum ClarityStateEngine {
             lim.append(String(format: "The scene read %.0f%% of this arm; %.0f%% is filled", a.observedPct, a.filledPct)
                        + (a.medianFillDistanceM.map { String(format: " (median %.0f m from a reading).", $0) } ?? "."))
         }
+        if let n = x.anchorNote { lim.append(n) }
         if let p = x.parentArmName {
             lim.append("Water arriving from \(p) through this arm's mouth is not modelled (no transport in Stage 2).")
         }

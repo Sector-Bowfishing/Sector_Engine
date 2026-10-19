@@ -26,7 +26,8 @@
 //
 //  A RANGE, NOT A NUMBER. The 80% range is the formula's own residual spread
 //  on the matching validation set; filled (not observed) satellite cells widen
-//  by the fill's held-out error at their distance from a reading.
+//  by the fill's held-out error at their distance from a reading, taken in
+//  log10 turbidity and carried through this formula.
 //
 
 import Foundation
@@ -63,11 +64,15 @@ public enum VisibilityModel {
         .satelliteEstimated: (-0.356, 0.520),
     ]
 
-    /// The fill's held-out error of an estimate, in ft, by through-water
-    /// distance to a reading (fill_lake.CLARITY_ERROR_BY_DISTANCE_FT).
-    static let fillErrorFtByDistance: [(maxM: Double, ft: Double)] = [
-        (250, 0.32), (500, 0.45), (1_000, 0.60), (2_000, 0.78), (5_000, 0.94), (.infinity, 1.11),
+    /// The fill's held-out RMSE in log10 FNU by through-water distance to a
+    /// reading (fill_lake.CLARITY_ERROR_BY_DISTANCE_LOG10). In turbidity, not
+    /// feet: the feet table beside it was computed with the retired ADEM
+    /// conversion (Stage 4), so it does not describe this model's feet.
+    static let fillRMSELog10ByDistance: [(maxM: Double, log10: Double)] = [
+        (250, 0.032), (500, 0.046), (1_000, 0.057), (2_000, 0.075), (5_000, 0.096), (.infinity, 0.138),
     ]
+    /// z for a two-sided 80% range.
+    static let z80 = 1.2816
 
     /// Central visibility, ft — the engine's own gauge formula, so a gauge
     /// reads exactly what the conditions score already uses.
@@ -82,9 +87,11 @@ public enum VisibilityModel {
         let central = centralFt(fnu: fnu, config: config)
         var (lo, hi) = rangeLog10[source] ?? (-0.5, 0.5)
         if source == .satelliteEstimated {
+            // The fill's error in turbidity, carried through the power law
+            // (log10 feet = |b| · log10 FNU) and added in quadrature.
             let d = distanceToObservedM ?? .infinity
-            let errFt = fillErrorFtByDistance.first { d <= $0.maxM }?.ft ?? 1.11
-            let w = log10(1 + errFt / Swift.max(central, 0.1))
+            let rmse = fillRMSELog10ByDistance.first { d <= $0.maxM }?.log10 ?? 0.138
+            let w = z80 * abs(config.clarity.secchiExpB) * rmse
             lo = -((lo * lo + w * w).squareRoot()); hi = (hi * hi + w * w).squareRoot()
         }
         return VisibilityEstimate(centralFt: central,
