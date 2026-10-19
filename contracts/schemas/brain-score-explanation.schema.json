@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/brain-score-explanation.schema.json",
+  "title": "/scores/{brainId}/explanation — brain-score-explanation-v1",
+  "description": "Derived, read-only explanation of ONE published Brain score block, written by the platform scorer inside that block in the same update. Never a score input. Optional fields are ABSENT (RTDB drops nulls), never invented. Readers MUST check that forScore matches the enclosing block (value, scoreVersion, scoreUpdatedAt) before showing it; a mismatch means 'updating'.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "evaluationId", "forScore", "scope", "rubric", "target", "change"],
+  "properties": {
+    "contract": {"const": "brain-score-explanation-v1"},
+    "evaluationId": {"type": "string", "pattern": "^eval-[0-9a-f]{16}$", "description": "sha256 (16 hex) of the score block's substance, timestamps and explanation excluded."},
+    "forScore": {
+      "type": "object", "additionalProperties": false, "required": ["value", "scoreVersion"],
+      "properties": {
+        "value": {"type": "number", "minimum": 0, "maximum": 10}, "uncapped": {"type": "number", "minimum": 0, "maximum": 10},
+        "scale": {"type": "number"}, "basis": {"enum": ["COMPUTED", "FROZEN"]},
+        "scoreVersion": {"type": "string", "minLength": 1}, "scoreUpdatedAt": {"type": "string", "minLength": 1}
+      }
+    },
+    "scope": {"enum": ["PUBLISHED", "CANDIDATE"], "description": "CANDIDATE when the published value scores an undeployed candidate (appliesTo.status == CANDIDATE)."},
+    "rubric": {
+      "type": "object", "additionalProperties": false, "required": ["formula"],
+      "properties": {
+        "scoreVersion": {"type": "string"}, "formula": {"enum": ["LINEAR_WEIGHTED_CAPPED", "UNVERIFIED", "UNKNOWN"]},
+        "ref": {"type": "string"}, "refVisibility": {"enum": ["PARTLY_PRIVATE"]}, "improvementSource": {"type": "string"}
+      }
+    },
+    "knowledge": {"type": "object", "additionalProperties": false, "properties": {
+      "brainVersion": {"type": "string"}, "researchVersion": {"type": "string"}, "manifestSha256": {"type": "string"}, "lastSuccessfulRun": {"type": "string"}}},
+    "completenessPct": {"type": "number", "minimum": 0, "maximum": 100},
+    "components": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+    "caps": {"type": "array", "items": {"$ref": "#/$defs/cap"}},
+    "improvements": {"type": "array", "items": {"$ref": "#/$defs/improvement"}},
+    "priorityRule": {"type": "string"},
+    "registryVersion": {"type": "string"},
+    "target": {"$ref": "#/$defs/target"},
+    "change": {"$ref": "#/$defs/change"},
+    "note": {"type": "string"},
+    "appliesTo": {"type": "object"},
+    "engineNextOpportunity": {"type": "string"}
+  },
+  "$defs": {
+    "component": {
+      "type": "object", "additionalProperties": false, "required": ["id", "label", "status"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "label": {"type": "string"}, "status": {"type": "string"},
+        "value": {"type": "number", "minimum": 0, "maximum": 10}, "weight": {"type": "number", "minimum": 0},
+        "earned": {"type": "number", "minimum": 0}, "possible": {"type": "number", "minimum": 0}, "headroom": {"type": "number", "minimum": 0},
+        "evidence": {"type": "string"}
+      }
+    },
+    "cap": {
+      "type": "object", "additionalProperties": false, "required": ["gate", "cap", "binding", "belowTarget"],
+      "properties": {"gate": {"type": "string"}, "cap": {"type": "number"}, "why": {"type": "string"}, "binding": {"type": "boolean"},
+                     "belowUncapped": {"type": "boolean"}, "belowTarget": {"type": "boolean"}}
+    },
+    "blocker": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "detail", "source"],
+      "properties": {"kind": {"type": "string"}, "detail": {"type": "string"}, "source": {"enum": ["registry", "evaluation"]}, "gate": {"type": "string"}}
+    },
+    "improvement": {
+      "type": "object", "additionalProperties": false, "required": ["id", "key", "title", "status", "priority"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "key": {"type": "string"}, "title": {"type": "string", "minLength": 1},
+        "limitation": {"type": "string"}, "action": {"type": "string"},
+        "type": {"enum": ["RESEARCH", "DATA", "IMPLEMENTATION", "VALIDATION", "CALIBRATION", "INFRASTRUCTURE", "DEPLOYMENT"]},
+        "nature": {"enum": ["PREDICTION_QUALITY", "KNOWLEDGE", "EVIDENCE_PROCESS", "COVERAGE", "INTEGRATION", "DEPLOYMENT"]},
+        "status": {"enum": ["OPEN", "RESEARCHING", "EVIDENCE_FOUND", "VALIDATING", "ACCEPTED", "BLOCKED", "RESOLVED", "PUBLISHED", "REJECTED"]},
+        "priority": {"enum": ["HIGH", "MEDIUM", "LOW", "UNRANKED"]}, "rank": {"type": "integer", "minimum": 1},
+        "impact": {"type": "object", "additionalProperties": false, "required": ["kind", "basis"],
+                   "properties": {"kind": {"enum": ["UP_TO_UNCAPPED", "UP_TO_UNCAPPED_IF_MEASURED", "LIFTS_CAP"]}, "points": {"type": "number", "minimum": 0},
+                                  "cap": {"type": "number"}, "basis": {"type": "string"}}},
+        "blockers": {"type": "array", "items": {"$ref": "#/$defs/blocker"}},
+        "researchGaps": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id"],
+                                                     "properties": {"id": {"type": "string"}, "status": {"type": "string"}, "title": {"type": "string"}}}},
+        "related": {"type": "array", "items": {"type": "string"}},
+        "dimension": {"type": "string"}, "gate": {"type": "string"}, "cap": {"type": "number"}
+      }
+    },
+    "target": {
+      "type": "object", "additionalProperties": false, "required": ["value", "scope", "pathway"],
+      "properties": {
+        "value": {"const": 7.0}, "scale": {"type": "number"}, "scope": {"enum": ["PUBLISHED", "CANDIDATE"]},
+        "current": {"type": "number"}, "gap": {"type": "number", "minimum": 0}, "reached": {"type": "boolean"},
+        "pathway": {
+          "type": "object", "additionalProperties": false, "required": ["status", "validated", "why"],
+          "properties": {
+            "status": {"enum": ["REACHED", "ARITHMETIC_PATH_EXISTS", "NO_ARITHMETIC_PATH", "NOT_EVALUABLE"]},
+            "validated": {"type": "boolean"}, "why": {"type": "string"},
+            "capsToLift": {"type": "array", "items": {"type": "object"}},
+            "requiredUncappedGain": {"type": "number", "minimum": 0}, "availableHeadroom": {"type": "number", "minimum": 0},
+            "unknownHeadroom": {"type": "number", "minimum": 0}, "largestHeadroomDimensions": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "change": {
+      "type": "object", "additionalProperties": false, "required": ["direction"],
+      "properties": {
+        "direction": {"enum": ["FIRST", "UP", "DOWN", "UNCHANGED", "UNKNOWN"]}, "why": {"type": "string"},
+        "previousEvaluationId": {"type": "string"}, "previousScoreUpdatedAt": {"type": "string"},
+        "previousValue": {"type": "number"}, "previousUncapped": {"type": "number"}, "delta": {"type": "number"},
+        "movedDimensions": {"type": "array", "items": {"type": "object"}},
+        "resolved": {"type": "array", "items": {"type": "object", "required": ["id"], "properties": {"id": {"type": "string"}, "title": {"type": "string"}}}},
+        "newImprovementIds": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

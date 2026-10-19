@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from .timeutil import parse_time
 
-NON_CONTENT = ("scoreUpdatedAt", "updatedAt")
+NON_CONTENT = ("scoreUpdatedAt", "updatedAt", "explanation")   # explanation: derived from the block (score_explanation.py), never content
 HOLD = ("STALE", "CONFLICT", "UNDATED")
 
 

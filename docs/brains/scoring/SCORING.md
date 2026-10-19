@@ -104,6 +104,11 @@ Brain facts; `--write` publishes `/scores/{id}` for all six Brains (and `/scores
 one `score.changed` activity event per changed value, as `brain-platform`. Manual only; no
 scheduler (the Orchestrator will own cadence).
 
+## Score explanations (`/scores/{id}/explanation`)
+Every written block also carries `explanation` (`brain-score-explanation-v1`): components with earned/possible points when
+the breakdown reproduces the score, caps, ranked improvements, the 7.0 planning gap and the change from the previous
+evaluation. Derived from the block in the same write, never score content. See `SCORE_EXPLANATION_V1.md`.
+
 ## Sector Engine Score — `engine-score-v1` (`/scores/engine`; `/engine/score` kept as an alias)
 
 Not a naive average. Frozen before first computation (2026-10-12); rubric in `engine-score-v1.json`.
