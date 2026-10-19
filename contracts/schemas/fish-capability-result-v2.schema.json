@@ -1,0 +1,287 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://sector.engine/schemas/fish-capability-result-v2.schema.json",
+ "title": "Fish Biological Capability V2 result (fish-biological-capability-result-v2)",
+ "description": "Written only by the shared platform scorer (sector_brain_platform.fish_capability). Read-only for Ops. Candidate until the rubric, cohorts and a publication path are approved.",
+ "type": "object",
+ "required": [
+  "schema",
+  "rubricId",
+  "rubricVersion",
+  "cohortsVersion",
+  "evaluationId",
+  "evaluatedAt",
+  "generatedAt",
+  "knowledgeVersion",
+  "outcomeKind",
+  "authority",
+  "brain",
+  "aggregates",
+  "species",
+  "researchBacklog",
+  "limitations"
+ ],
+ "properties": {
+  "schema": {
+   "const": "fish-biological-capability-result-v2"
+  },
+  "rubricId": {
+   "const": "FISH_BIOLOGICAL_CAPABILITY_V2"
+  },
+  "outcomeKind": {
+   "const": "SCENARIO_BEHAVIOR_PASSED"
+  },
+  "authority": {
+   "type": "object",
+   "required": [
+    "scorer",
+    "status",
+    "publication"
+   ],
+   "properties": {
+    "scorer": {
+     "const": "sector_brain_platform.fish_capability"
+    },
+    "status": {
+     "enum": [
+      "CANDIDATE",
+      "AUTHORITATIVE_APPROVED"
+     ]
+    },
+    "publication": {
+     "enum": [
+      "INACTIVE",
+      "ACTIVE"
+     ]
+    }
+   }
+  },
+  "brain": {
+   "type": "object",
+   "required": [
+    "brainId",
+    "overallBiologicalCapability",
+    "targetSpeciesCapability",
+    "allAssessedSpeciesCapability",
+    "maturityScore",
+    "scientificConfidence",
+    "productionReadiness"
+   ],
+   "properties": {
+    "brainId": {
+     "const": "biological-state"
+    }
+   }
+  },
+  "aggregates": {
+   "type": "object",
+   "required": [
+    "TARGET",
+    "ALL_ASSESSED"
+   ],
+   "properties": {
+    "TARGET": {
+     "type": "object",
+     "required": [
+      "cohortId",
+      "cohortsVersion",
+      "rubricId",
+      "rubricVersion",
+      "aggregationPolicy",
+      "eligibleSpecies",
+      "evaluated",
+      "status",
+      "value",
+      "display",
+      "completenessPct"
+     ],
+     "properties": {
+      "status": {
+       "enum": [
+        "COMPLETE",
+        "INCOMPLETE"
+       ]
+      },
+      "value": {},
+      "display": {},
+      "eligibleSpecies": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "evaluated": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "below5": {
+       "type": "integer"
+      },
+      "below7": {
+       "type": "integer"
+      },
+      "pctAtLeast5": {
+       "type": "number"
+      },
+      "pctAtLeast7": {
+       "type": "number"
+      },
+      "lowestScore": {
+       "type": "number"
+      },
+      "bottomQuartileMean": {},
+      "categoryAverages": {
+       "type": "object"
+      }
+     }
+    },
+    "ALL_ASSESSED": {
+     "type": "object",
+     "required": [
+      "cohortId",
+      "cohortsVersion",
+      "rubricId",
+      "rubricVersion",
+      "aggregationPolicy",
+      "eligibleSpecies",
+      "evaluated",
+      "status",
+      "value",
+      "display",
+      "completenessPct"
+     ],
+     "properties": {
+      "status": {
+       "enum": [
+        "COMPLETE",
+        "INCOMPLETE"
+       ]
+      },
+      "value": {},
+      "display": {},
+      "eligibleSpecies": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "evaluated": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "below5": {
+       "type": "integer"
+      },
+      "below7": {
+       "type": "integer"
+      },
+      "pctAtLeast5": {
+       "type": "number"
+      },
+      "pctAtLeast7": {
+       "type": "number"
+      },
+      "lowestScore": {
+       "type": "number"
+      },
+      "bottomQuartileMean": {},
+      "categoryAverages": {
+       "type": "object"
+      }
+     }
+    }
+   }
+  },
+  "species": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "speciesId",
+     "evaluationStatus",
+     "rubricId",
+     "rubricVersion",
+     "evaluationId",
+     "knowledgeVersion",
+     "evaluatedAt",
+     "capabilityScore",
+     "displayScore"
+    ],
+    "properties": {
+     "evaluationStatus": {
+      "enum": [
+       "ASSESSED",
+       "NOT_ASSESSED",
+       "INSUFFICIENT_EVIDENCE",
+       "EVALUATION_FAILED"
+      ]
+     },
+     "capabilityScore": {
+      "minimum": 0,
+      "maximum": 10
+     },
+     "displayScore": {},
+     "categoryScores": {
+      "type": "object"
+     },
+     "implementedCapabilities": {
+      "type": "array"
+     },
+     "missingCapabilities": {
+      "type": "array"
+     },
+     "scientificConfidence": {},
+     "confidenceLimitations": {
+      "type": "array"
+     }
+    },
+    "if": {
+     "properties": {
+      "evaluationStatus": {
+       "const": "ASSESSED"
+      }
+     }
+    },
+    "then": {
+     "required": [
+      "categoryScores",
+      "implementedCapabilities",
+      "missingCapabilities",
+      "confidenceLimitations"
+     ],
+     "properties": {
+      "capabilityScore": {
+       "type": "number"
+      }
+     }
+    }
+   }
+  },
+  "researchBacklog": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "rank",
+     "speciesId",
+     "recommendedNextAction"
+    ],
+    "properties": {
+     "recommendedNextAction": {
+      "enum": [
+       "CONNECT_EXISTING_RESEARCH",
+       "REVIEW_SEASON_ASSERTIONS",
+       "RESEARCH",
+       "RESOLVE_CONTRADICTION",
+       "POLICY_HOLD",
+       "MAINTAIN",
+       "FIX_EVALUATION"
+      ]
+     }
+    }
+   }
+  },
+  "changeRecord": {
+   "type": "object",
+   "required": [
+    "comparable"
+   ]
+  }
+ }
+}

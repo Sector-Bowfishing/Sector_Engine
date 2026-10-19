@@ -16,6 +16,8 @@
     "docs/brains/scoring/beta-readiness-v1.json": "250e78a02c3980bf94eeaf29648ccc5003ecfa34f14126fcff5dcadb70304add",
     "docs/brains/scoring/biological-state-score-v1.json": "e434eaf6a6de4ea1abbfc23ff993a159d32a83afaa7085d461a020c4e5217787",
     "docs/brains/scoring/engine-score-v1.json": "40e47f5fa582d381d36c158fc2f81d8ac038ca3c2df7bb30af190db915e91002",
+    "docs/brains/scoring/fish-biological-capability-v2.json": "58c4a140e97e4ed40d030712c1609235797d2639447abc31abbc3bee2f14af31",
+    "docs/brains/scoring/fish-capability-cohorts-v1.json": "b8761ec34929573ded8f8945c8a3de4b4e1df7624dc3f185e80a4443a716e0b5",
     "docs/brains/scoring/lake-brain-score-v1.json": "f4074d7741508820f3b79277ee86de56cd10eaac5affe4f6f931bc1c2465b175",
     "docs/brains/scoring/sector-intelligence-score-v1.json": "6cc2053c99e85aeb0b1ba22b2a999dd6e946bf5f7198309a2c4c1a75594a154d"
   },

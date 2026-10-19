@@ -133,3 +133,6 @@ degraded Intelligence input; species-knowledge median < 5; no species presence; 
 NOT_VALIDATED; a stale owning source. READY needs neither. Every item names the slot and the fact.
 Rubric: `beta-readiness-v1.json`; module `sector_brain_platform/beta.py`; published by the platform
 publisher for the pilot lakes only. Not a customer rollout decision.
+
+### Fish Brain — Biological Capability V2 `FISH_BIOLOGICAL_CAPABILITY_V2` (CANDIDATE; not published; separate from `biological-state-score-v1`)
+Per-species 0-10 score of demonstrated, executable biology (owner categories: biology & behaviour 2.5, habitat & depth 2.0, environmental responses 2.0, spawning & seasonality 2.0, day/night 1.0, knowledge application 0.5), plus unweighted means over two frozen rosters (`fish-capability-cohorts-v1`: TARGET 8, ALL_ASSESSED 27; NOT_ASSESSED rows unscored). The Fish evaluator supplies evidence only; `sector_brain_platform/fish_capability.py` awards points. Failed or missing evaluations make an aggregate INCOMPLETE (no false total). Scientific confidence and production readiness are statuses/gates, never points. Rubric `fish-biological-capability-v2.json`; full definition `FISH_BIOLOGICAL_CAPABILITY_V2.md`.
