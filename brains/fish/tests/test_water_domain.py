@@ -129,3 +129,9 @@ def test_no_score_impact_scorer_never_reads_water_domains_and_result_is_identica
         row.update(W.project(sid))
     assert any("waterDomains" in r for r in sp2.values())
     assert score_biological(facts(sp2), now) == before
+
+
+def test_shorthead_redhorse_is_freshwater_only_and_reviewed():
+    e = W.load()["shorthead_redhorse"]
+    assert e["waterDomains"] == ["FRESHWATER"] and e["assessment"]["reviewRequired"] is False
+    assert W.project("shorthead_redhorse")["waterDomains"] == ["FRESHWATER"]

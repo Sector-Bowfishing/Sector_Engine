@@ -50,7 +50,7 @@ Ops reads `/species/{id}.waterDomains` and `.waterDomainStatus` only. Labels FRE
 Adding species is a registry row. No enum, schema, path or id change; Fish scoring is untouched.
 
 ## Provenance and limits
-Backfill basis is the FishBase species summary "Ecology" line (retrieved 2026-10-19, secondary). On 2026-10-19 the five `reviewRequired` rows got a bounded primary-source check (USGS NAS, VIMS, state agency accounts); no `waterDomains` value changed.
+Backfill basis is the FishBase species summary "Ecology" line (retrieved 2026-10-19, secondary). On 2026-10-19 the five `reviewRequired` rows got a bounded primary-source check (USGS NAS, VIMS, state agency accounts); one `waterDomains` value was corrected afterwards (shorthead redhorse, below).
 
 | Row | Result | reviewRequired |
 |---|---|---|
@@ -58,6 +58,6 @@ Backfill basis is the FishBase species summary "Ecology" line (retrieved 2026-10
 | `carpsuckers_group` | Genus Carpiodes (river carpsucker, quillback, highfin): freshwater in state, Fishes of Texas and FishBase accounts; no brackish finding. | cleared |
 | `tilapia_unresolved` | Generic row, no single taxon claimed. USGS: blue tilapia brackish, redbelly saline-tolerant, Nile recorded Freshwater-Brackish. | cleared |
 | `suckers_redhorse_carpsuckers_group` | Intentionally UNKNOWN: no enumerated membership, union would be guessed. | cleared (reviewed, intentionally unknown) |
-| `shorthead_redhorse` | **No primary source states BRACKISH**; only the FishBase flag. Kept, flagged. | **stays true** |
+| `shorthead_redhorse` | **Corrected to FRESHWATER only** (was FRESHWATER, BRACKISH): no primary source supports BRACKISH; the FishBase flag is not adopted. | cleared |
 
 `reviewRequired: false` on an UNKNOWN row means "reviewed and intentionally unknown". Confidence stays MEDIUM except the four rows that match the Sector packet (HIGH).
