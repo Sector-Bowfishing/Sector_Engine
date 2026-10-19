@@ -9,9 +9,9 @@ name: python-jobs-tests
 on:
   push:
     branches: [main]
-    paths: ["jobs/**", "brains/**", "providers/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "tools/brain_certification/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
   pull_request:
-    paths: ["jobs/**", "brains/**", "providers/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "tools/brain_certification/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
 permissions:
   contents: read
 jobs:
@@ -77,6 +77,8 @@ jobs:
             [ -f "$b/brain.json" ] || continue
             echo "== $b"; (cd "$b" && python -m pytest -q)
           done
+      - name: Brain Certification Kit self-tests (BRAIN_CERT_KIT_V1; synthetic Brain, no real Brain involved)
+        run: python -m pytest -q tools/brain_certification
       - name: Wind package gates (staging, import boundary, clean copy; dependency gates mandatory here)
         env:
           SECTOR_REQUIRE_WIND_DEPS: "1"

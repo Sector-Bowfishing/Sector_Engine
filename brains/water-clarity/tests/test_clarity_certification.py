@@ -54,56 +54,9 @@ def legacy_updates():
 
 
 # ===================================================================================================== 1-2 canonical location, ONE implementation
-def test_canonical_package_location_and_shape():
-    for p in ("brain.json", "BRAIN_OPERATING_CONTRACT.md", "README.md", "contracts/clarity-publication-v1.json", "contracts/INPUTS_V1.json", "runtime/run.py",
-              "runtime/clarity_brain.py", "runtime/publish_artifact.py", "runtime/catalog.json", "tests", "research/README.md", "research/GAPS.json", "deploy/deploy-job.sh"):
-        assert os.path.exists(os.path.join(CLARITY, p)), p
-    assert load("tools", "architecture", "stable_brain_ids.json")["directoryToBrainId"]["water-clarity"] == "water-clarity"
-
-
-def test_exactly_one_production_clarity_implementation():
-    """No second copy of the Clarity Brain modules anywhere in the repository; the legacy job directory is a pointer README only."""
-    found = [r for r in (os.path.relpath(p, REPO) for p in walk_files(REPO, ".py") if os.path.basename(p) in ("clarity_brain.py",) or "clarity" in os.path.relpath(p, REPO).lower() and os.path.basename(p) == "publish_artifact.py")]
-    assert sorted(found) == ["brains/water-clarity/runtime/clarity_brain.py", "brains/water-clarity/runtime/publish_artifact.py"], found
-    assert os.listdir(os.path.join(REPO, "jobs", "water-clarity-brain")) == ["README.md"]
-    assert "RETIRED" in open(os.path.join(REPO, "jobs", "water-clarity-brain", "README.md")).read()
 
 
 # ===================================================================================================== 3-5 identity, ownership, dependencies
-def test_brain_json_validates_and_identity_is_the_stable_machine_id():
-    assert jsonschema_lite.validate(BRAIN, load("contracts", "schemas", "brain.schema.json")) == []
-    assert BRAIN["brainId"] == "water-clarity" == cb.BRAIN_ID                       # never renamed
-    from sector_brain_platform.keys import BRAINS
-    assert BRAINS["water-clarity"][0] == cb.SLOT == "waterClarity"
-    cm = load("jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")["brains"]["water-clarity"]
-    assert cm["displayName"] == "Water Clarity"
-
-
-def test_lifecycle_is_derived_from_canonical_truth_and_never_promoted():
-    cm = load("jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")["brains"]["water-clarity"]
-    assert BRAIN["lifecycle"] == cm["lifecycle"] == pa.LIFECYCLE == "CALIBRATION"      # hand-checked drift gate (debt D-9: no generic gate yet)
-    assert BRAIN["publisherRequired"] == {"required": True, "cutoverStatus": "SHADOW"}
-    assert {d["id"] for d in cm.get("dependencies", [])} <= {c.get("brainId") for c in BRAIN["consumes"] if c["kind"] == "brain"}     # inv 17
-    assert cm["freshness"]["staleAfterHours"] == cb.STALE_AFTER_H == 26
-
-
-def test_ownership_boundaries_in_the_declared_contract():
-    text = open(os.path.join(CLARITY, "BRAIN_OPERATING_CONTRACT.md"), encoding="utf-8").read()
-    for token in ("## 4. OWNERSHIP", "## 5. NON-OWNERSHIP", "production clarity **number**", "Lake Registry", "Sector Ops owns all labels", "Publisher publication metadata",
-                  "RA-20", "GCS_HTTP_LINEAGE_PLATFORM_DEBT", "GCS_WRITE_SEMANTICS_PLATFORM_DEBT"):
-        assert token in text, token
-    assert len(re.findall(r"^## \d+\. ", text, re.M)) == 19
-
-
-def test_published_contract_is_derived_from_the_publisher_registry():
-    r = subprocess.run([sys.executable, os.path.join(CLARITY, "contracts", "describe_contract.py"), "--check"], capture_output=True, text=True,
-                       env={**os.environ, "PYTHONPATH": os.path.join(REPO, "jobs", "brain_platform")})
-    assert r.returncode == 0, r.stdout + r.stderr
-    declared = {f for p in BRAIN["publishes"] for f in p["pathFamilies"]}
-    reg = default_registry()
-    from_registry = {f.pattern.replace("{k}", "{k}") for sid in reg.schemas_for("water-clarity") for f in reg.spec(sid).families}
-    norm = lambda s: re.sub(r"\{[a-z]+\}", "{}", s)      # noqa: E731
-    assert {norm(x) for x in declared} == {norm(x) for x in from_registry}
 
 
 # -- the real inputs: derived from the code, pinned
@@ -183,15 +136,6 @@ def test_no_fabricated_provider_signal_or_brain_edges():
 
 
 # ===================================================================================================== 6-8 artifact, fingerprint, lineage
-def test_artifact_is_publisher_valid_and_deterministic(legacy_updates):
-    st, publish = rig()
-    r1 = build(legacy_updates, n=1)
-    assert r1.artifact["envelope"] == "publish-artifact-v2" and r1.artifact["lineage"]["artifactSchema"] == "clarity-publication-v1"
-    res = publish(r1.artifact)
-    assert res.result is Result.SHADOW_READY and res.codes == [] and res.mode is PublisherMode.SHADOW
-    again = build(legacy_updates, n=1)
-    assert json.dumps(r1.artifact, sort_keys=True) == json.dumps(again.artifact, sort_keys=True)          # no clock, no randomness
-    assert not r1.unsupported
 
 
 def test_semantic_fingerprint_ignores_execution_identity_and_per_run_timestamps(legacy_updates):
@@ -211,38 +155,6 @@ def test_semantic_fingerprint_ignores_execution_identity_and_per_run_timestamps(
     assert build(moved, n=3).artifact["lineage"]["outputFingerprint"] == fp
     assert build(legacy_updates, n=4, consumed=[]).artifact["lineage"]["outputFingerprint"] == fp           # lineage never enters the fingerprint
     assert base.artifact["lineage"]["inputFingerprint"] == build(moved, n=3).artifact["lineage"]["inputFingerprint"]
-
-
-def test_real_domain_change_changes_the_fingerprint_and_unchanged_republish_is_skipped(legacy_updates):
-    st, publish = rig()
-    assert publish(build(legacy_updates, n=1).artifact).result is Result.SHADOW_READY
-    assert publish(build(legacy_updates, n=2, generated_at="2026-10-13T06:30:00Z").artifact).result is Result.SKIP        # new run, same material -> nothing to publish
-    changed = copy.deepcopy(legacy_updates)
-    st_key = "lakes/Guntersville_AL/states/waterClarity"
-    changed[st_key]["clarityFt"] = round(changed[st_key]["clarityFt"] + 0.5, 2)
-    art = build(changed, n=3, generated_at="2026-10-14T06:30:00Z").artifact
-    assert art["lineage"]["outputFingerprint"] != build(legacy_updates, n=1).artifact["lineage"]["outputFingerprint"]
-    assert publish(art).result is Result.SHADOW_READY
-    new_input = copy.deepcopy(changed); new_input[st_key]["evaluationTime"] = "2026-10-14T05:00:00Z"
-    assert build(new_input, n=4).artifact["lineage"]["inputFingerprint"] != build(changed, n=3).artifact["lineage"]["inputFingerprint"]   # a new Engine evaluation IS a new input
-
-
-def test_lineage_is_complete_truthful_and_never_fabricated(legacy_updates):
-    art = build(legacy_updates, n=1).artifact
-    lin = art["lineage"]
-    assert lin["brainId"] == "water-clarity" and lin["lifecycle"] == "CALIBRATION" and lin["reviewStatus"] == "UNREVIEWED" and lin["validationStatus"] == "NOT_VALIDATED"
-    assert (lin["knowledgeRelease"], lin["manifestRef"], lin["manifestSha256"]) == ("NONE", "NONE", "NONE")   # no canonical release/manifest exists: never invented
-    for k in ("codeVersion", "executionId", "inputFingerprint", "outputFingerprint", "generatedAt", "artifactId"):
-        assert lin[k]
-    assert "consumed" not in art                                                                              # HTTP/GCS reads are not recorded: UNKNOWN, never []
-    assert build(legacy_updates, n=1, consumed=[]).artifact["consumed"] == []                                # [] only when a recorder really recorded "nothing"
-    src = "".join(open(p, encoding="utf-8").read() for p in walk_files(RUNTIME, ".py"))
-    assert "dependencyType" not in src and "consumedAt" not in src                                           # the runtime never constructs consumption entries by hand
-
-
-def test_review_and_validation_status_are_never_optimistic():
-    c = S.ctx()
-    assert (c.review_status, c.validation_status, c.lifecycle) == ("UNREVIEWED", "NOT_VALIDATED", "CALIBRATION")
 
 
 # ===================================================================================================== 9 consumption capture (RTDB reads only)
@@ -271,35 +183,6 @@ def test_live_run_report_carries_recorded_rtdb_reads_only(tmp_path):
 
 
 # ===================================================================================================== 10-11 freshness + healthV1
-def _health(executions=None, **kw):
-    brains = DD.load_registered_brains(REPO)
-    declared = DD.declared_dependencies(brains["water-clarity"])
-    return BH.brain_health("water-clarity", declared=declared, declarations_known=True, executions=executions, observations={}, now=S.NOW, **kw)
-
-
-def test_health_v1_can_represent_clarity_from_engine_truth_alone():
-    h = _health()
-    assert h["brainId"] == "water-clarity" and h["dependencies"]["declared"] == 1
-    assert h["dependencies"]["declaredVsActual"]["consumptionRecorded"] is False        # nothing recorded => never claimed SATISFIED from silence
-    assert h["freshness"]["status"] == "UNKNOWN"
-
-
-def test_unknown_stays_unknown_and_last_successful_run_is_not_evidence_freshness():
-    ok = [{"executionId": S.uid(1), "brainId": "water-clarity", "status": "SUCCEEDED", "startedAt": "2026-10-12T06:00:00Z", "finishedAt": "2026-10-12T06:01:00Z"}]
-    h = _health(ok)
-    assert h["freshness"]["status"] == "UNKNOWN"                                         # a recent successful run does NOT make evidence FRESH
-    assert h["process"]["processHealth"] in ("HEALTHY", "UNKNOWN")                       # process health is its own axis
-    ex = dict(ok[0], consumed=[{"dependencyId": "brain:wind", "dependencyType": "BRAIN", "consumedAt": "2026-10-12T06:00:30Z"}])
-    assert _health([ex])["dependencies"]["declaredVsActual"]["consumedNotDeclared"] == ["brain:wind"]
-
-
-def test_no_freshness_is_derived_from_last_successful_run_anywhere_in_clarity():
-    for p in walk_files(RUNTIME, ".py"):
-        src = open(p, encoding="utf-8").read()
-        for m in re.finditer(r"freshness[^\n]*lastSuccess|lastSuccess[^\n]*(freshUntil|staleAfter|expiresAt|freshnessStatus)", src):
-            if "never" in m.group(0) or "NOT" in m.group(0):
-                continue
-            pytest.fail(f"{os.path.relpath(p, REPO)}: evidence freshness derived from lastSuccess: {m.group(0)[:100]}")
 
 
 def _states(**over):
@@ -332,93 +215,14 @@ def test_artifact_freshness_block_is_derived_from_states_not_from_process_histor
 
 
 # ===================================================================================================== 12-13 Publisher shadow
-def test_publisher_is_shadow_only_and_end_to_end_handoff_works(legacy_updates):
-    assert {m.name for m in PublisherMode} == {"SHADOW", "DRY_RUN"}                                         # no live mode exists
-    from sector_brain_platform.publisher.api import AllowlistAuthorizer, Caller, OrchestratorApi
-
-    class Authn:
-        def authenticate(self, cred):
-            return Caller("clarity-brain-identity") if cred == "clarity-token" else None
-    st, _ = rig()
-    api = OrchestratorApi(Authn(), AllowlistAuthorizer({"clarity-brain-identity": {"ARTIFACT": {"SUBMIT_ARTIFACT@water-clarity"}}}), st.dispatcher)
-    ref = st.writer("water-clarity").write(build(legacy_updates).artifact)
-    body = {"apiVersion": "orchestrator-api-v1", "requestId": S.uid(700), "requestKind": "ARTIFACT", "brainId": "water-clarity", "action": "SUBMIT_ARTIFACT",
-            "params": {"artifactId": ref.artifact_id, "artifactRef": ref.location, "artifactSha256": ref.sha256, "executionId": ref.execution_id, "expectedSchema": ref.expected_schema}}
-    r = api.handle("clarity-token", body)
-    assert r.status == 200 and r.result["result"] == "SHADOW_READY" and r.result["live"] is False
-    assert st.sink.live_mutations == 0
-    plan = st.sink.submitted[-1][0]
-    assert "brains/water-clarity/publication" in plan.updates                                                 # the Publisher's own record, in the same single plan
-    allowed_roots = ("lakes/", "lakeFleet/", "snapshots/", "brains/water-clarity", "validation/water-clarity", "health/brains/water-clarity", "activity/", "sources/", "health/sources/")
-    assert [k for k in plan.updates if not k.startswith(allowed_roots)] == []
-    assert any(k.startswith("snapshots/") and k.endswith("/latest/waterClarity") for k in plan.updates)      # Publisher-derived compatibility projection
 
 
-@pytest.mark.parametrize("path,code", [
-    ("/lakes/Guntersville_AL/states/wind", "CROSS_DOMAIN_PATH"),                 # another Brain's slot
-    ("/brains/wind/status", "CROSS_DOMAIN_PATH"),                                # another Brain's node
-    ("/scores/water-clarity", "CROSS_DOMAIN_PATH"),                              # Platform writes scores
-    ("/brains/water-clarity/publication", "RESERVED_PATH"),                      # Publisher-owned
-    ("/brains/water-clarity/certification", "RESERVED_PATH"),
-    ("/brains/water-clarity", "BRAIN_NODE_REPLACEMENT"),                         # never the whole node
-    ("/health/jobs/water-clarity-brain", "CROSS_DOMAIN_PATH"),                   # execution health is Orchestrator-owned
-    ("/control/orchestratorV1", "CROSS_DOMAIN_PATH"),
-    ("/snapshots/Guntersville_AL/latest/waterClarity", "PLATFORM_DERIVED_PATH"), # Publisher-derived: a Brain cannot author the compatibility copy
-])
-def test_publisher_rejects_wrong_path_ownership(path, code):
-    st, publish = rig()
-    res = publish(sealed([{"op": "SET", "path": "/brains/water-clarity/status", "value": "BETA"}, {"op": "SET", "path": path, "value": {"x": 1}}]))
-    assert res.result is Result.REJECTED and code in res.codes, res.codes
-    assert st.sink.submitted == []
-
-
-def test_publisher_rejects_wrong_brain_and_wrong_schema_ownership(legacy_updates):
-    st, publish = rig()
+def test_last_error_is_the_single_typed_delete_and_absent_values_are_plain_absence(legacy_updates):
+    """Domain part of the delete proof (the generic typed-delete / null != delete / no-lake-state-delete proofs are shared: BRAIN_CERT_KIT_V1 P13)."""
     art = build(legacy_updates).artifact
-    ref = st.writer("wind").write(copy.deepcopy(dict(art, lineage=dict(art["lineage"], brainId="wind"))))
-    r = st.publisher.evaluate_reference(ref)
-    assert r.result is Result.REJECTED and ("SCHEMA_BRAIN_MISMATCH" in r.codes or "UNKNOWN_SCHEMA" in r.codes)
-    bad = copy.deepcopy(art); bad["lineage"]["artifactSchema"] = "wind-publication-v1"
-    assert publish(bad).result is Result.REJECTED
-    wrong = sealed([{"op": "SET", "path": "/lakes/Guntersville_AL/states/waterClarity", "value": {"a": 1}}], schema="clarity-registry-v1")       # a lake-state path in the registry section
-    assert publish(wrong).result is Result.REJECTED
-    from sector_brain_platform.publisher import seal_bundle
-    wind_try = seal_bundle(brain_id="wind", bundle_id="wind-publication-v1", sections=[{"artifactSchema": "wind-registry-v1", "mutations": [{"op": "SET", "path": "/lakes/G_AL/states/waterClarity", "value": {"a": 1}}]}],
-                           lifecycle="CALIBRATION", review_status="UNREVIEWED", validation_status="NOT_VALIDATED", generated_at=S.GENERATED_AT, execution_id=S.uid(11),
-                           code_version="t", input_fingerprint="sha256:" + "ab" * 32, registry=default_registry())
-    assert publish(wind_try, brain="wind").result is Result.REJECTED             # Wind cannot write Clarity's slot
-
-
-def test_publisher_requires_freshness_for_lake_state_and_refuses_production_lifecycles(legacy_updates):
-    art = build(legacy_updates).artifact
-    no_fresh = copy.deepcopy(art)
-    for s in no_fresh["sections"]:
-        s.pop("freshness", None)
-    st, publish = rig()
-    r = publish(no_fresh)
-    assert r.result is not Result.SHADOW_READY
-    prod = copy.deepcopy(art); prod["lineage"]["lifecycle"] = "PRODUCTION"
-    st, publish = rig()
-    r = publish(prod)
-    assert r.result is Result.REJECTED and "LIFECYCLE_NOT_AUTHORIZED" in r.codes
-
-
-def test_deletes_are_typed_and_null_is_never_an_implicit_delete(legacy_updates):
-    st, publish = rig()
-    art = build(legacy_updates).artifact
-    muts = [m for s in art["sections"] for m in s["mutations"]]
-    assert {"op": "DELETE", "path": "/brains/water-clarity/lastError", "reason": "OPTIONAL_CHILD_CLEARED"} in muts      # the single declared optional child
-    assert [m for m in muts if m["op"] == "DELETE"] == [m for m in muts if m["op"] == "DELETE" and m["path"] == "/brains/water-clarity/lastError"]
-    assert publish(art).result is Result.SHADOW_READY
-    nul = sealed([{"op": "SET", "path": "/brains/water-clarity/status", "value": None}])
-    assert publish(nul).result is Result.FAILED_VALIDATION
-    # a lake state can never be deleted (Clarity keeps the last good state): no delete family exists
-    gone = sealed([{"op": "DELETE", "path": "/lakes/Guntersville_AL/states/waterClarity", "reason": "LAKE_LEFT_FLEET"}], schema="clarity-lake-state-v1",
-                  freshness={"freshnessStatus": "UNKNOWN"})
-    assert publish(gone).result is Result.REJECTED
-    # absent / empty / unknown values are plain absence in the artifact
-    for lake_path in ("lakes/Guntersville_AL/states/waterClarity",):
-        assert "None" not in json.dumps([m for m in muts if m["path"] == "/" + lake_path])
+    muts = [m for sec in art["sections"] for m in sec["mutations"]]
+    assert [m for m in muts if m["op"] == "DELETE"] == [{"op": "DELETE", "path": "/brains/water-clarity/lastError", "reason": "OPTIONAL_CHILD_CLEARED"}]
+    assert "None" not in json.dumps([m for m in muts if m["path"] == "/lakes/Guntersville_AL/states/waterClarity"])
 
 
 def test_every_registry_child_the_runtime_emits_is_covered_by_the_contract(legacy_updates):
@@ -439,46 +243,7 @@ def test_unmapped_paths_fail_closed_never_silently_dropped_or_emitted(legacy_upd
 
 
 # ===================================================================================================== 14-16 direct-write audit, write isolation
-WRITE_METHODS = {"update", "put", "patch", "post", "set", "delete"}
-FORBIDDEN_IMPORTS = ("firebase_admin", "requests", "google.cloud", "pyrebase")
 #: The audit table (docs/architecture/certification/water-clarity/CLARITY_DIRECT_WRITE_AUDIT.md): every RTDB write site in the runtime. Both are LEGACY / RETIREMENT_CANDIDATE.
-ALLOWED_LEGACY_WRITE = {("run.py", "write", "rtdb.update"), ("run.py", "main", "rtdb.update")}
-
-
-def _write_sites(path):
-    tree = ast.parse(open(path, encoding="utf-8").read())
-    sites = set()
-
-    def visit(node, fn):
-        for ch in ast.iter_child_nodes(node):
-            f = ch.name if isinstance(ch, (ast.FunctionDef, ast.AsyncFunctionDef)) else fn
-            if isinstance(ch, ast.Call) and isinstance(ch.func, ast.Attribute) and ch.func.attr in WRITE_METHODS:
-                full = ast.unparse(ch.func)
-                if full.split(".")[0] not in ("os", "json", "shutil") and full.endswith("rtdb.update"):
-                    sites.add((os.path.basename(path), fn or "<module>", "rtdb.update"))
-            visit(ch, f)
-    visit(tree, None)
-    return sites
-
-
-def test_no_unauthorized_production_write_in_the_clarity_runtime():
-    sites = set()
-    for p in walk_files(RUNTIME, ".py"):
-        src = open(p, encoding="utf-8").read()
-        assert not [m for m in FORBIDDEN_IMPORTS if re.search(rf"^\s*(import|from)\s+{re.escape(m)}", src, re.M)], p
-        assert not re.search(r"method\s*=\s*['\"](PATCH|PUT|POST|DELETE)['\"]", src), f"{p}: direct REST write"
-        sites |= _write_sites(p)
-    assert sites == ALLOWED_LEGACY_WRITE, f"unexpected database write sites: {sorted(sites ^ ALLOWED_LEGACY_WRITE)}"
-
-
-def test_the_artifact_path_cannot_write_anything(tmp_path):
-    """publish_artifact.py is pure (no I/O, no network, no clock, no randomness, no environment); run.py's artifact path only builds/evaluates in memory."""
-    tree = ast.parse(open(os.path.join(RUNTIME, "publish_artifact.py"), encoding="utf-8").read())
-    imported = {a.name.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names} | {n.module.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
-    assert not imported & {"urllib", "requests", "subprocess", "random", "uuid", "time", "socket", "os", "shutil", "tempfile", "http"}, imported
-    src = ast.unparse(tree)
-    for token in ("open(", "datetime.now", "utcnow", ".environ", "urlopen"):
-        assert token not in src, token
 
 
 def test_dry_run_artifact_path_writes_only_local_files_and_never_touches_the_database(tmp_path, monkeypatch):
@@ -527,16 +292,6 @@ def test_legacy_write_set_classification_is_complete(legacy_updates):
 
 
 # ===================================================================================================== 17-19 runtime isolation, research separation, public/private
-LOCAL_PATH = re.compile(r"/Users/|/home/[a-z]|\bDesktop/|Sector[ _]Research|Sector_Research_Data|~/|expanduser|SECTOR_RESEARCH_ROOT|water-clarity/(sources|datasets|analysis)")
-
-
-def test_no_local_mac_research_or_cache_paths_in_clarity_runtime():
-    bad = []
-    for p in walk_files(RUNTIME, (".py", ".json", ".sh", ".txt")):
-        for i, line in enumerate(open(p, encoding="utf-8").read().splitlines(), 1):
-            if LOCAL_PATH.search(line):
-                bad.append(f"{os.path.relpath(p, REPO)}:{i}")
-    assert not bad, bad
 
 
 def test_runtime_works_with_no_research_workspace_no_home_and_no_repo_docs(tmp_path):
@@ -566,16 +321,10 @@ with m.patch.object(run, 'load_directory', return_value=[{{'id':'Guntersville|AL
     assert r2.returncode == 2 and "Refusing" in r2.stderr                                                    # a deploy needs Michael's approval
 
 
-def test_research_is_separate_from_the_production_package():
-    odd = [os.path.relpath(p, CLARITY) for p in walk_files(os.path.join(CLARITY, "runtime")) if os.path.splitext(p)[1] not in {".py", ".json"}]
-    assert not odd, odd
-    ls = lambda d: sorted(n for n in os.listdir(os.path.join(CLARITY, d)) if n != "__pycache__")      # noqa: E731
-    assert ls("runtime") == ["brain_platform.py", "catalog.json", "clarity_brain.py", "publish_artifact.py", "run.py"]
-    assert ls("research") == ["GAPS.json", "README.md"]
-    gaps = load("brains", "water-clarity", "research", "GAPS.json")
-    assert jsonschema_lite.validate(gaps, load("contracts", "schemas", "research-gaps.schema.json")) == []
-    assert BRAIN["researchWorkspace"] == {"workspaceId": "water-clarity"}                                     # a LOGICAL id; never a physical path
-    assert not [p for p in walk_files(CLARITY) if os.path.getsize(p) >= BRAIN["dataBudget"]["maxTrackedFileBytes"]]
+def test_runtime_package_is_exactly_the_five_modules_and_the_public_catalog():
+    """Domain part of the research-separation proof (file types, research listing, GAPS schema and data budget are shared: BRAIN_CERT_KIT_V1 P17)."""
+    ls = sorted(n for n in os.listdir(os.path.join(CLARITY, "runtime")) if n != "__pycache__")
+    assert ls == ["brain_platform.py", "catalog.json", "clarity_brain.py", "publish_artifact.py", "run.py"]
 
 
 PRIVATE_MARKERS = re.compile(r"WEAKEST_CORE_CLASS|ACCURACY_CERT|FREEZE_STAGE18|STRONG_SHARE|research-archive|TCEQ|sector-clarity-candidate|gs://sector-clarity")
@@ -634,25 +383,8 @@ def test_research_score_is_unchanged_before_equals_after_and_the_brain_does_not_
     assert frozen["appliesTo"]["deploymentStatus"] == "NOT_DEPLOYED"                                          # a research score for the CANDIDATE; production clarity is unscored
     got = hashlib.sha256(json.dumps(frozen, sort_keys=True).encode()).hexdigest()
     assert got == FROZEN_BLOCK_SHA256, got
-    assert BRAIN["score"]["path"] == "/scores/water-clarity"
-    assert not [k for k in legacy_updates if k.lstrip("/").startswith("scores")]                              # C1 writes no score
-    r = subprocess.run([sys.executable, os.path.join(REPO, "verification", "integration", "score_baseline.py"), "--check"], capture_output=True, text=True, cwd=REPO)
-    assert r.returncode == 0 and "water-clarity=8.0/10" in r.stdout, r.stdout + r.stderr
+    assert not [k for k in legacy_updates if k.lstrip("/").startswith("scores")]                              # C1 writes no score (the shared score proof P19 also runs score_baseline --check)
 
-
-# ===================================================================================================== 22 registered-Brain architecture gates
-def test_registered_brain_architecture_gates_pass_for_clarity_with_no_new_violations():
-    import report                                                             # tools/architecture/report.py (path added above)
-    own = [f for f in report.check(REPO, legacy=False) if "brains/water-clarity" in f["subject"]]
-    # the only registered-Brain finding is the published-label string carried from the legacy job (same retirement condition as Wind's and Fish's)
-    assert all(f["invariant"] == 8 and os.path.basename(f["subject"]) == "clarity_brain.py" for f in own), own
-    legacy = report.check(REPO, legacy=True)
-    baseline = json.load(open(os.path.join(REPO, "tools", "architecture", "baseline", "legacy_violations.json")))
-    known, new, resolved = report.compare_to_baseline(legacy, baseline)
-    assert new == [] and resolved == [], (new, resolved)                       # NO NEW architecture violations; nothing silently dropped from the baseline
-    carried = [e for e in baseline["entries"] if e["path"].startswith("brains/water-clarity/")]
-    assert {os.path.basename(e["path"]) for e in carried} == {"clarity_brain.py"} and all(e.get("carriedFrom") for e in carried)
-    assert not [e for e in baseline["entries"] if e["path"].startswith("jobs/water-clarity-brain/")]           # the legacy job entries moved with the code
 
 
 # ===================================================================================================== extra: the engine-miss path (stale carry + error children) is representable and owned
@@ -675,3 +407,30 @@ def test_engine_miss_run_keeps_the_last_good_state_and_is_a_publisher_valid_arti
     paths = {m["path"] for s in r.artifact["sections"] for m in s["mutations"]}
     assert "/lakeFleet/Kentucky_Lake_KY/slots/waterClarity/stale" in paths and "/lakeFleet/Kentucky_Lake_KY/slots/waterClarity/lastError" in paths
     assert publish(r.artifact).result is Result.SHADOW_READY
+
+
+# ===================================================================================================== domain remainders of proofs now shared in BRAIN_CERT_KIT_V1
+def test_brain_slot_and_display_name_are_stable():
+    from sector_brain_platform.keys import BRAINS
+    assert BRAINS["water-clarity"][0] == cb.SLOT == "waterClarity"
+    cm = load("jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")["brains"]["water-clarity"]
+    assert cm["displayName"] == "Water Clarity"
+
+
+def test_the_freshness_threshold_is_the_existing_26_hours():
+    cm = load("jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")["brains"]["water-clarity"]
+    assert cm["freshness"]["staleAfterHours"] == cb.STALE_AFTER_H == 26
+
+
+def test_a_new_engine_evaluation_is_a_new_input_but_run_clock_fields_are_not(legacy_updates):
+    base = build(legacy_updates, n=1)
+    new_input = copy.deepcopy(legacy_updates)
+    new_input["lakes/Guntersville_AL/states/waterClarity"]["evaluationTime"] = "2026-10-14T05:00:00Z"
+    assert build(new_input, n=2).artifact["lineage"]["inputFingerprint"] != base.artifact["lineage"]["inputFingerprint"]
+
+
+def test_the_snapshot_compatibility_copy_is_publisher_derived_in_the_plan(legacy_updates):
+    st, publish = rig()
+    assert publish(build(legacy_updates).artifact).result is Result.SHADOW_READY
+    plan = st.sink.submitted[-1][0]
+    assert any(k.startswith("snapshots/") and k.endswith("/latest/waterClarity") for k in plan.updates)
