@@ -321,6 +321,15 @@ public enum LakeLevelClassifier {
             freshness: LakeStateFreshness(generatedAt: gen, sourceObservationAt: BrainPlatform.iso(sel.latest.at),
                                           freshUntil: BrainPlatform.iso(freshUntil), nextCheckAt: BrainPlatform.iso(next),
                                           stale: stale, refreshReason: reason),
-            provenance: provenance(readiness, sources: sources, inputAge: ageH))
+            provenance: provenance(readiness, sources: sources, inputAge: ageH),
+            sourceFallback: fallback(sel, live: x.live))
+    }
+
+    /// The fallback record (PL-03): only when the reading did not come from the primary source.
+    static func fallback(_ sel: Selected, live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)]) -> LakeSourceFallback? {
+        guard sel.usedFallback, let p = live.first else { return nil }
+        return LakeSourceFallback(usability: sel.stale ? "STALE_LAST_VALUE" : "DEGRADED_USABLE", primarySourceId: p.ref.sourceId,
+                                  primaryLastObservationAt: p.readings.last.map { BrainPlatform.iso($0.at) }, primaryError: p.error,
+                                  selectedSourceId: sel.ref.sourceId, selectedCapability: sel.ref.capability)
     }
 }

@@ -242,6 +242,21 @@ public struct LakeLevelStateRecord: Codable, Equatable, Sendable {
     public var facts: [String]?
     public var freshness: LakeStateFreshness
     public var provenance: BrainProvenance
+    /// Present only when the reading comes from a FALLBACK source (Cortex PL-03, 2026-10-20; additive): the state is degraded but usable, the primary
+    /// failure is kept, and the source actually used is named with its own capability. Absent when the primary source supplied the reading.
+    public var sourceFallback: LakeSourceFallback? = nil
+}
+
+/// Why a LakeState is on a fallback source, and what that source is (`sourceCapability` above stays the binding's capability, unchanged).
+public struct LakeSourceFallback: Codable, Equatable, Sendable {
+    /// DEGRADED_USABLE: a fresh fallback reading. STALE_LAST_VALUE: every source is stale and the newest (fallback) reading is kept.
+    public var usability: String
+    public var primarySourceId: String
+    public var primaryLastObservationAt: String?
+    /// The primary feed's own error text when it failed; absent when it answered but was stale.
+    public var primaryError: String?
+    public var selectedSourceId: String
+    public var selectedCapability: LevelSourceCapability
 }
 
 // MARK: - LakeProfile (`/lakes/{k}/brain`, extends Sector_Ops `LakeBrain`)

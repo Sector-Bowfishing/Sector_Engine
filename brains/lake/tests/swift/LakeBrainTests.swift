@@ -170,6 +170,26 @@ final class LakeBrainTests: XCTestCase {
         XCTAssertEqual(s.provenance.sources?.first?.sourceId, f.sourceId)
         XCTAssertTrue(s.provenance.qualityFlags!.contains { $0.hasPrefix("primarySourceStale:\(p.sourceId)") })
         XCTAssertFalse(s.freshness.stale)
+        // PL-03: degraded but usable, primary kept, the source actually used named with its own capability (additive record)
+        let fb = try! XCTUnwrap(s.sourceFallback)
+        XCTAssertEqual(fb.usability, "DEGRADED_USABLE")
+        XCTAssertEqual(fb.primarySourceId, p.sourceId)
+        XCTAssertEqual(fb.primaryLastObservationAt, "2026-05-28T00:00:00Z")
+        XCTAssertNil(fb.primaryError)
+        XCTAssertEqual(fb.selectedSourceId, f.sourceId)
+        XCTAssertEqual(fb.selectedCapability, .directLakeGauge)
+        XCTAssertEqual(s.sourceCapability, .directOperatorPool, "the binding's capability is unchanged (additive correction)")
+    }
+
+    func testPrimarySourceSuppliesTheReadingSoThereIsNoFallbackRecord() {
+        let now = iso("2026-06-01T12:30:00Z")
+        let p = ref(.directOperatorPool, "PRIMARY"), f = ref(.directLakeGauge, "FALLBACK")
+        let s = LakeLevelClassifier.evaluate(inputs(binding([p, f]), live: [
+            (p, hourly(iso("2026-06-01T12:00:00Z"), hours: 30, start: 600, step: 0)),
+            (f, hourly(iso("2026-06-01T12:00:00Z"), hours: 30, start: 600, step: 0)),
+        ], now: now))
+        XCTAssertNil(s.sourceFallback)
+        XCTAssertFalse(String(decoding: try! BrainJSON.encode(s), as: UTF8.self).contains("sourceFallback"), "absent, never null")
     }
 
     func testStaleKeepsLastValueAndChecksAfterOneCadence() {

@@ -7,11 +7,12 @@
 >   registered as a `VALIDATION_EXCEPTION` in `control_manifest.json` (`brains.lake-brain.schedule`, `jobs.lake-brain-ledger-daily`).
 > - §5.3 cites `docs/research/lake-brain/LAKE_BRAIN_MICHAEL_ACTION_QUEUE.md`. That file is on the research branch
 >   `docs/lake-brain-research`, not on `main`.
-> - The §4 example shows `readiness: BETA` together with `fallbackSource`. That is today's behaviour: a fresh fallback reading
->   keeps its readiness (it becomes `DEGRADED` only when the reading is stale or unavailable), keeps the binding's
->   `sourceCapability` and `datum` rather than the fallback source's, and keeps the primary failure only as the flags
->   `primarySourceStale` / `sourceError:<id>`; run health becomes `WARNING`. Whether a fallback must be reported as degraded is
->   recorded as an open decision (Cortex PL-03), not changed here.
+> - Fallback honesty (Cortex PL-03, 2026-10-20, additive): a LakeState read from a FALLBACK source now carries `sourceFallback`
+>   `{usability: DEGRADED_USABLE | STALE_LAST_VALUE, primarySourceId, primaryLastObservationAt, primaryError, selectedSourceId,
+>   selectedCapability}`; it is absent when the primary supplied the reading. Everything else is unchanged: readiness keeps the
+>   ratified ladder (a fresh fallback can still be `BETA`), `sourceCapability` stays the binding's, the flags `primarySourceStale` /
+>   `fallbackSource` / `sourceError:<id>` stay, run health is `WARNING`. `datum` is correct on a fallback: the reading is converted
+>   onto the binding's datum (`LevelSeriesRef.datumOffsetFt`).
 > - Canonical package (migrated 2026-10-20): `brains/lake/` — runtime `brains/lake/runtime/LakeBrain` + `LakeBrainJob` (SwiftPM targets), operating contract `brains/lake/BRAIN_OPERATING_CONTRACT.md`. The Python tooling (bindings table, history backfill, ledger scorer, review pack, hold-out validation) stays in `jobs/lake-brain/`.
 
 # Lake Brain (`lake-brain`): integration contract
