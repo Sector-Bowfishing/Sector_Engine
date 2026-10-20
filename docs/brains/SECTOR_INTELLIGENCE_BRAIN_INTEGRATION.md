@@ -1,3 +1,22 @@
+> **Current state on main (Cortex standardization, 2026-10-20).** Parts of this v0.1 contract predate the pilot evaluator
+> (`evaluation.py`, commit `568d6bb1`, 2026-10-12 22:45) and are stale. The code on `main` is authoritative:
+> - **There is a pilot evaluation.** For the five `PILOT_LAKES` (`evaluation.py:27`) the publisher writes `intelligence-eval-v1`
+>   evaluations (`evaluationStatus: EVALUATED_PILOT`) to `/lakes/{k}/states/intelligence`, the snapshot field `sectorIntelligence`,
+>   `/lakeFleet/{k}/readiness/intelligence` and the `intelligence` slot (`sector_intelligence_brain.py:345-358`). It restates
+>   specialist values (`drivers[]`, `inputsUsed`, `limitingFactors`, `degradedInputs`) and produces **no rating, score or
+>   recommendation** (`evaluation.py:189-192`). Other lakes stay `NOT_EVALUATED`.
+> - With evaluations the registry is `status: CALIBRATION`, `statusReasons` `PILOT_EVALUATION_ONLY` …, `supportedLakeCount` 5
+>   (`sector_intelligence_brain.py:384-394`), not `DISCOVERED` / 0. `consumedBySectorIntelligence` counts the active
+>   implementation **or** the pilot, and `usedInLastEvaluation` is set per slot.
+> - The §5 output-contract field names were implemented as `inputsUsed`, `drivers[].slot` and `evaluationVersion`
+>   (not `inputVersions`, `sourceSlot`, `intelligenceVersion`). No versioned JSON schema exists yet.
+> - §6: there is no scheduler of its own, but the Brain Orchestrator runs it in-process (`control_manifest.json`
+>   `sector-intelligence`); the Brain is PARKED. The fingerprint also covers the pilot inputs (`run.py:114-115`).
+> - Known inconsistencies recorded for decision (not fixed here, they change published output): `catalog.json` still declares
+>   the blockers `NO_NORMALIZED_EVALUATION` / `NO_BRAIN_CONSUMED` and "evaluates nothing"; its five dependencies are
+>   `REQUIRED` while `control_manifest.json` declares them `OPTIONAL`; the evaluation's `provenance.brainVersion` is always
+>   absent (`evaluation.py:196` reads a catalog key that does not exist). See `docs/cortex/sessions/2026-10-20-architecture-all-brains.md`.
+
 # Sector Intelligence Brain: integration contract
 
 **Status:** v0.1, 2026-10-12. This is a metadata and dependency publisher only. It produces no evaluation.
