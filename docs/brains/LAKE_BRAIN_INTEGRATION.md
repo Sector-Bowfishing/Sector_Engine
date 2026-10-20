@@ -87,7 +87,7 @@ Extends the frozen `LakeBrain` shape additively. `Known<T> = {value, source, qua
                           "coveragePct": 100, "yearsCovered": 1, "baselineStatus": "INSUFFICIENT", "historicalTier": "NONE",
                           "baselineMethod": "doy15-percentile-v2", "baselineVersion": "…",
                           "historyRef": "gs://sector-lake-brain/history/Guntersville_AL/daily.csv" },
-  "speciesPresenceSummary": { "assessedSpecies": 12, "recordCount": 10, "byState": { "established": 3, … , "unknown": 2 },
+  "speciesPresenceSummary": { "assessedSpecies": 12, "recordCount": <n>, "byState": { "established": <n>, … , "unknown": <n> },   // SYNTHETIC counts
                               "researchVersion": "lake-presence-2026-10-12.1", "ref": "/lakes/Guntersville_AL/speciesPresence" },
   "trustedSources": { "tva_GVDA1": { sourceId, provider, sourceType, station, status, lastObservationAt, authority, brains } },
   "readiness": { "lake": "CALIBRATION" },
@@ -300,18 +300,18 @@ Each classification is its own field; none is folded into another. `differenceFr
 **Path:** `/lakes/{k}/speciesPresence/{speciesId}`. This takes the Biological Brain's §10 shape, replacing the audit's `/species`:
 
 ```jsonc
-{ "lakeId": "Guntersville|AL", "speciesId": "grass_carp", "presenceState": "historical",
+{ "lakeId": "Example Lake|ST", "speciesId": "example_species", "presenceState": "established",      // SYNTHETIC example: real records are private
   "presenceAuthority": "canonical-research", "confidence": "medium", "nativeStatus": "introduced",
-  "sourceTier": "T2", "latestRecord": "2005", "dataGaps": "…",
-  "sourceRef": "gs://sector-lake-brain/presence/releases/lake-presence-2026-10-12.1/presence.json (private)",
-  "researchVersion": "lake-presence-2026-10-12.1", "discrepancyIds": ["DISC-001"], "updatedAt": "…" }
+  "sourceTier": "T2", "latestRecord": "YYYY", "dataGaps": "…",
+  "sourceRef": "gs://sector-lake-brain/presence/releases/<release>/presence.json (private)",
+  "researchVersion": "<release>", "discrepancyIds": ["DISC-000"], "updatedAt": "…" }
 ```
 
 **Rules:**
 - **12 species are assessed:** 5 carp, 3 buffalo, 4 gar. Others are not assessed and absent.
 - **`unknown` rows are not written.** Absent means unknown or not assessed. `speciesPresenceSummary.byState.unknown` still counts them.
-- **Canonical overrides** come from the Biological Brain canonical release. Today none differ from the matrix: grass carp on Guntersville is `historical` in both (DISC-001).
-- **Discrepancy IDs are attached and never resolved here.** DISC-001, DISC-002 and DISC-003 are on Guntersville. DISC-002 (smallmouth buffalo) is still Michael's decision.
+- **Canonical overrides** come from the Biological Brain canonical release; where the release and the matrix differ, the record carries the discrepancy id (the register is private).
+- **Discrepancy IDs are attached and never resolved here.** Open discrepancies are decided by Michael in the private register; this public document names none.
 - **Which states are "relevant"** is Sector Intelligence's call.
 
 **Interface for Sector Intelligence:** `LakePresenceIndex.resolveLakeSpecies(lakeId)`.

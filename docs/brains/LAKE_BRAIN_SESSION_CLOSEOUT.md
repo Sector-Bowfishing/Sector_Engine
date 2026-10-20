@@ -64,6 +64,6 @@
 - Production fix for TVA Midnight rows, which `TVAGenerationService.date` places 24 h early. A separate task is queued
 - More reviewed bindings, starting with the 13 other TVA lakes
 
-**Decision still with Michael:** DISC-002 (smallmouth buffalo on Guntersville).
+**Decision still with Michael:** one open presence discrepancy (private register; named there, not in this public file).
 
 **Choice made during the build:** the STABLE threshold, ≤ max(0.10 ft, seasonal median |Δ24h|). It is versioned and easy to change.

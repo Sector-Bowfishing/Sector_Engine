@@ -31,11 +31,11 @@ def snapshot():
     }
 
 
-PRESENCE = {"common_carp": {"presenceState": "established", "confidence": "high", "nativeStatus": "introduced", "researchVersion": "p1"},
-            "spotted_gar": {"presenceState": "established", "confidence": "medium", "nativeStatus": "native", "researchVersion": "p1"},
+PRESENCE = {"example_fish_a": {"presenceState": "established", "confidence": "high", "nativeStatus": "introduced", "researchVersion": "p1"},
+            "example_fish_b": {"presenceState": "established", "confidence": "medium", "nativeStatus": "native", "researchVersion": "p1"},
             "mystery_fish": {"presenceState": "reported", "confidence": "low", "researchVersion": "p1"}}
-SPECIES = {"common_carp": {"assessment": "ASSESSED", "researchMaturity": "RESEARCH", "knowledge": {"rubric": "species-v2", "overallRounded": 7.0}, "researchVersion": "s1"},
-           "spotted_gar": {"assessment": "ASSESSED", "researchMaturity": "NOT_STARTED", "knowledge": {"rubric": "species-v2", "overallRounded": 1.0}, "researchVersion": "s1"}}
+SPECIES = {"example_fish_a": {"assessment": "ASSESSED", "researchMaturity": "RESEARCH", "knowledge": {"rubric": "species-v2", "overallRounded": 7.0}, "researchVersion": "s1"},
+           "example_fish_b": {"assessment": "ASSESSED", "researchMaturity": "NOT_STARTED", "knowledge": {"rubric": "species-v2", "overallRounded": 1.0}, "researchVersion": "s1"}}
 
 
 def deps_all_present():
@@ -73,7 +73,7 @@ class EvaluationTests(unittest.TestCase):
         e = self.evaluate()
         b = e["inputs"]["biology"]
         self.assertEqual(b["speciesCount"], 3); self.assertEqual(b["knowledgeMedian"], 4.0)
-        self.assertEqual(b["species"]["common_carp"]["knowledgeScore"], 7.0)
+        self.assertEqual(b["species"]["example_fish_a"]["knowledgeScore"], 7.0)
         self.assertEqual(b["knowledgeMissingFor"], ["mystery_fish"])
         self.assertEqual(b["status"], "DEGRADED")
         self.assertIn("biology", e["degradedInputs"])
