@@ -353,13 +353,14 @@ def compare(prev: dict, cur: dict) -> dict:
                "statusFrom": a.get("evaluationStatus"), "statusTo": b.get("evaluationStatus")}
         if a.get("categoryScores") and b.get("categoryScores"):
             row["categoryDeltas"] = {c: _r(b["categoryScores"][c]["earned"] - a["categoryScores"][c]["earned"]) for c in b["categoryScores"]
-                                     if b["categoryScores"][c]["earned"] != a["categoryScores"][c]["earned"]}
+                                     if c in a["categoryScores"] and b["categoryScores"][c]["earned"] != a["categoryScores"][c]["earned"]}
             flips = []
+            pts = lambda x: x.get("points") if isinstance(x, dict) else x      # noqa: E731  (full or compact criteria form)
             for c in b["categoryScores"]:
-                for cid, rb in b["categoryScores"][c]["criteria"].items():
-                    ra = a["categoryScores"][c]["criteria"].get(cid) or {}
-                    if ra.get("points") != rb.get("points"):
-                        flips.append({"criterion": cid, "from": ra.get("points"), "to": rb.get("points")})
+                for cid, rb in (b["categoryScores"][c].get("criteria") or {}).items():
+                    ra = ((a["categoryScores"].get(c) or {}).get("criteria") or {}).get(cid)
+                    if pts(ra) != pts(rb):
+                        flips.append({"criterion": cid, "from": pts(ra), "to": pts(rb)})
             row["criteriaChanged"] = flips
         sp.append(row)
     ag = {}
@@ -416,11 +417,13 @@ def compact(result: dict) -> dict:
     """What /scores/biological-state/capability carries: everything Ops renders, nothing private (no rule ids, no criterion details)."""
     sp = {}
     for sid, s in (result.get("species") or {}).items():
-        sp[sid] = {k: s.get(k) for k in ("speciesId", "role", "evaluationStatus", "capabilityScore", "displayScore", "knowledgeScoreSpeciesV2", "reason",
-                                         "implementedCapabilities", "missingCapabilities", "confidenceLimitations", "exemptCriteria")}
+        sp[sid] = {k: s.get(k) for k in ("role", "evaluationStatus", "capabilityScore", "displayScore", "knowledgeScoreSpeciesV2", "reason", "exemptCriteria")}
+        # Ops reads /scores through one listener: carry category totals, per-criterion points (compact) and the gaps worth showing, not every label.
+        sp[sid]["missingCapabilities"] = [{k: m.get(k) for k in ("criterion", "label", "category", "lostPoints", "blocker")}
+                                          for m in (s.get("missingCapabilities") or []) if (m.get("lostPoints") or 0) > 0][:8]
         if s.get("categoryScores"):
-            sp[sid]["categoryScores"] = {c: {"label": v.get("label"), "earned": v["earned"], "max": v["max"],
-                                             "criteria": {cid: {"points": x.get("points"), "weight": x.get("weight"), "result": x.get("result")} for cid, x in v["criteria"].items()}}
+            sp[sid]["categoryScores"] = {c: {"earned": v["earned"], "max": v["max"],
+                                             "criteria": {cid: x.get("points") for cid, x in v["criteria"].items()}}
                                          for c, v in s["categoryScores"].items()}
         if isinstance(s.get("scientificConfidence"), dict):
             sp[sid]["scientificConfidence"] = {"status": s["scientificConfidence"].get("status")}
