@@ -68,6 +68,9 @@ def verdict(policy: dict, *, last_successful_run: str | None, now: dt.datetime, 
                        "reason": f"last successful run {'older than' if st else 'within'} the {sa} h limit"}
     if model == "VERSION":
         action = (plan or {}).get("action")
+        if (plan or {}).get("planError"):
+            why = "; ".join(str(r) for r in ((plan or {}).get("reasons") or [])[:1]) or "plan failed"
+            return base | {"verdict": "UNKNOWN", "stale": None, "reason": f"VERSION model: the Brain plan did not complete ({why[:160]})"}
         if action == "SKIP":
             return base | {"verdict": "FRESH", "stale": False, "reason": "the published version is the newest canonical version (Brain plan: SKIP)"}
         if action == "PUBLISH":

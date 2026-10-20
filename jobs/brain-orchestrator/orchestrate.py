@@ -104,15 +104,16 @@ def json_output(stdout: str) -> dict | None:
 
 
 def brain_plan(brain_id: str, timeout: int = 600) -> dict:
-    """`run.py --plan` of an in-process brain → its plan() verdict (PUBLISH / SKIP + reasons). Failure = SKIP with the error."""
+    """`run.py --plan` of an in-process brain → its plan() verdict (PUBLISH / SKIP + reasons). Failure = SKIP with the error, marked
+    `planError` so the VERSION freshness verdict is UNKNOWN, never FRESH (operational_truth)."""
     ex = EXECUTORS[brain_id]
     try:
         out = subprocess.run([PYTHON, "run.py", "--plan"], cwd=ex["dir"], capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired:
-        return {"action": "SKIP", "reasons": [f"--plan timed out after {timeout}s"]}
+        return {"action": "SKIP", "planError": True, "reasons": [f"--plan timed out after {timeout}s"]}
     if out.returncode != 0:
-        return {"action": "SKIP", "reasons": [f"--plan failed: {(out.stderr or out.stdout).strip()[-300:]}"]}
-    return json_output(out.stdout) or {"action": "SKIP", "reasons": ["--plan output unreadable"]}
+        return {"action": "SKIP", "planError": True, "reasons": [f"--plan failed: {(out.stderr or out.stdout).strip()[-300:]}"]}
+    return json_output(out.stdout) or {"action": "SKIP", "planError": True, "reasons": ["--plan output unreadable"]}
 
 
 def run_in_process(brain_id: str, timeout: int = 1800) -> dict:

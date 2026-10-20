@@ -189,3 +189,9 @@ def test_last_score_evaluation_is_the_published_block_time_on_both_planes():
                     health_sources={}, jobs={}, now=NOW, manifest=MANIFEST, score_published_at={"lake-brain": iso(150)})
     st = build(registries={"lake-brain": LAKE_REG}, scores={"lake-brain": {"value": 3.0, "scoreUpdatedAt": iso(150)}})
     assert ov["brains"]["lake-brain"]["lastScoreEvaluation"] == st["brains"]["lake-brain"]["lastScoreEvaluation"] == iso(150)
+
+
+def test_a_failed_brain_plan_is_unknown_not_fresh():
+    p = OT.effective_policy(MB["biological-state"], FISH_REG)
+    v = OT.verdict(p, last_successful_run=iso(30), now=NOW, plan={"action": "SKIP", "planError": True, "reasons": ["--plan timed out after 600s"]})
+    assert v["verdict"] == "UNKNOWN" and v["stale"] is None and "timed out" in v["reason"]
