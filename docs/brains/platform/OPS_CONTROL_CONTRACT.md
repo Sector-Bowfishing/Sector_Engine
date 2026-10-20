@@ -47,3 +47,6 @@ Ops reads `/control/*`, `/brains/*`, `/scores/*`. It computes no score, stalenes
 
 ## 7. Held scores are visible
 When the publisher holds a stale proposal, the run report carries `held[]`. Publishing that into `control/orchestrator.scores` (so Ops can show "Wind score held: stale artifact") is a small additive change bundled with D-1; until then it is in the job log and the dry-run report.
+
+## 8. Operational truth fields (2026-10-20)
+`/control/overview/brains/{id}` and `/control/orchestratorV1/brains/{id}` carry one freshness verdict per Brain (TIME / VERSION / FINGERPRINT, UNKNOWN when evidence is missing), `healthReasons`, `lastExecution` / `lastSuccessfulRun` / `lastDataUpdate` / `lastScoreEvaluation`, the canonical lifecycle as `status` with `legacyStatus` beside it (overview), and the lake coverage split (`internalPilotLakes`, `publishedLakes`, `customerEnabledLakes`). Contract: `BRAIN_OPERATIONAL_TRUTH_V1.md`.

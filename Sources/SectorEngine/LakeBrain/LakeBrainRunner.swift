@@ -235,6 +235,23 @@ public enum LakeBrainRunner {
         return "HEALTHY"
     }
 
+    /// The reasons behind `health(_:writeFailed:)` (same rule, same lakes): one line per reviewed lake that is unavailable, stale or on a
+    /// fallback source, plus a write failure. Empty when HEALTHY. Published as `health/brains/lake-brain.reasons`.
+    static func healthReasons(_ lakes: [LakeBrainLakeResult], writeFailed: Bool) -> [String] {
+        var out: [String] = []
+        if writeFailed { out.append("publish failed") }
+        if lakes.isEmpty { out.append("no lakes evaluated"); return out }
+        let reviewed = lakes.filter { LakeSourceBindings.reviewedBinding(for: $0.lakeId) != nil || $0.dryRunCandidate }
+        for r in reviewed {
+            guard let s = r.state, s.kind != .unavailable else { out.append("\(r.lakeId): state unavailable"); continue }
+            if s.freshness.stale { out.append("\(r.lakeId): state stale") }
+            for f in s.provenance.qualityFlags ?? [] where f.hasPrefix("fallbackSource") {
+                out.append("\(r.lakeId): primary source unavailable, on \(f.replacingOccurrences(of: "fallbackSource:", with: "fallback source "))")
+            }
+        }
+        return out
+    }
+
     public static func run(store: BrainStore?, feeds: LakeLevelFeeds, archive: LakeBrainArchive?,
                            presenceArchive: LakeBrainArchive?, options: LakeBrainRunOptions = .init(),
                            now: Date = Date()) async -> LakeBrainRunResult {
@@ -319,7 +336,8 @@ public enum LakeBrainRunner {
                     status: result.health, lastRun: BrainPlatform.iso(t0), lastSuccess: BrainPlatform.iso(finished),
                     durationMs: result.durationMs, staleLakeCount: out.filter { $0.state?.freshness.stale == true }.count,
                     errorCount: result.archiveErrors.count, latestError: result.archiveErrors.first ?? result.presenceError,
-                    deployedVersion: options.processingVersion)),
+                    deployedVersion: options.processingVersion,
+                    reasons: result.health == "HEALTHY" ? nil : healthReasons(out, writeFailed: false))),
                 "health/jobs/\(jobId)": try BrainJSON.encode(BrainJobHealth(
                     displayName: "Lake Brain", kind: "manual-run", schedule: nil, status: result.health,
                     lastRun: BrainPlatform.iso(t0), lastSuccess: BrainPlatform.iso(finished), durationMs: result.durationMs,

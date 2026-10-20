@@ -11,6 +11,7 @@ import datetime as dt
 
 from .enums import READINESS_LADDER
 from .keys import BRAINS
+from . import operational_truth as OT
 from .timeutil import age_hours, iso
 
 CONTROL_VERSION = "control-plane-v1"
@@ -104,11 +105,24 @@ def _score_dimensions(score: dict | None) -> dict | None:
 
 
 def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validation: dict | None, score: dict | None,
-                  jobs: dict | None, now: dt.datetime) -> dict:
+                  jobs: dict | None, now: dt.datetime, *, manifest_brain: dict | None = None, sources: dict | None = None,
+                  source_health: dict | None = None, slot_newest: dict | None = None, intelligence_registry: dict | None = None,
+                  orchestrator_brain: dict | None = None, score_published_at: str | None = None) -> dict:
     slot, _, display = BRAINS[brain_id]
     if not reg:
         return {"brainId": brain_id, "slot": slot, "displayName": display, "status": "NOT_REGISTERED", "health": "UNKNOWN", "stale": None}
-    stale, why = brain_stale(reg, health, now)
+    # One freshness policy and verdict per Brain (operational_truth). TIME is computed here exactly as the orchestrator plane computes it;
+    # VERSION / FINGERPRINT verdicts need the Brain plan and the processed input fingerprints, which only the orchestrator has: mirrored from
+    # /control/orchestratorV1/brains/{id}/freshness when present, otherwise UNKNOWN (never "fresh" by default).
+    policy = OT.effective_policy(manifest_brain, reg) if manifest_brain is not None else OT.effective_policy(None, reg)
+    fresh = OT.verdict(policy, last_successful_run=reg.get("lastSuccessfulRun") or (health or {}).get("lastSuccess"), now=now)
+    ofr = (orchestrator_brain or {}).get("freshness") or {}
+    if policy.get("model") in ("VERSION", "FINGERPRINT") and ofr.get("verdict") in OT.VERDICTS:
+        fresh = {**fresh, **{k: ofr.get(k) for k in ("verdict", "stale", "reason")}, "mirroredFrom": f"/control/orchestratorV1/brains/{brain_id}/freshness"}
+    elif policy.get("model") in ("VERSION", "FINGERPRINT"):
+        fresh = {**fresh, "reason": f"{policy['model']} verdict is computed by the orchestrator plane and not published there yet"}
+    stale, why = fresh.get("stale"), (fresh.get("reason") if fresh.get("stale") else None)
+    lifecycle = (manifest_brain or {}).get("lifecycle")
     counts = reg.get("readinessCounts") or {}
     # `jobs` is /jobs (jobs-v1): a brain is scheduled when a job it owns runs on a schedule or by the orchestrator/dispatcher.
     owned = [j for j in (jobs or {}).values() if isinstance(j, dict) and (j.get("owner") == brain_id or j.get("brainId") == brain_id)]
@@ -124,16 +138,24 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
     dep_status = {k: (v or {}).get("connectionStatus") for k, v in (reg.get("dependencies") or {}).items()} if brain_id == "sector-intelligence" else None
     return _strip({
         "brainId": brain_id, "slot": slot, "displayName": reg.get("displayName") or display,
-        "status": reg.get("status"), "health": (health or {}).get("status") or reg.get("health"),
+        # status = the canonical lifecycle (orchestrator manifest); the Brain's own registry word is kept as legacyStatus when it differs
+        "status": lifecycle or reg.get("status"), "legacyStatus": reg.get("status") if lifecycle and reg.get("status") != lifecycle else None,
+        "health": (health or {}).get("status") or reg.get("health"),
+        "healthReasons": OT.health_reasons(brain_id, health, sources, source_health),
         "healthAt": (health or {}).get("lastRun"), "lastSuccessfulRun": reg.get("lastSuccessfulRun"),
+        "lastExecution": _strip({"at": (health or {}).get("lastRun"), "status": (health or {}).get("status")}) or None,
+        "lastDataUpdate": OT.data_update(brain_id, policy, reg, slot_newest),
+        "lastScoreEvaluation": score_published_at or (score or {}).get("scoreUpdatedAt"),
         "lastError": reg.get("lastError"), "stale": stale, "staleReason": why,
-        "staleAfterHours": reg.get("staleAfterHours"), "stalenessModel": reg.get("stalenessModel"),
+        "staleAfterHours": policy.get("staleAfterHours"), "stalenessModel": policy.get("model"),
+        "freshness": {**fresh, **{k: policy.get(k) for k in ("declaredModel", "declaredStaleAfterHours", "note") if policy.get(k) is not None}},
         "scheduled": scheduled, "executionModes": execution, "version": reg.get("version"),
         "score": _strip({**{k: (score or {}).get(k) for k in ("value", "scale", "basis", "scoreVersion", "completenessPct", "scoreUpdatedAt", "uncapped")},
                          "gates": _score_gates(score)}) or None,
         "dimensions": _score_dimensions(score),
         "nextOpportunity": (score or {}).get("nextScoreOpportunity"),
-        "coverage": _strip({"directory": reg.get("directoryLakeCount"), "supported": reg.get("supportedLakeCount"),
+        "coverage": _strip({**(OT.coverage_split(brain_id, reg, intelligence_registry) or {}),
+                            "directory": reg.get("directoryLakeCount"), "supported": reg.get("supportedLakeCount"),
                             "evaluated": reg.get("evaluatedLakeCount"), "stale": reg.get("staleLakeCount"),
                             "readinessCounts": counts,
                             "onLadder": sum(n for r, n in counts.items() if r in READINESS_LADDER) or None}),
@@ -210,9 +232,17 @@ def fleet_summary(fleet: dict, now: dt.datetime, directory_count: int | None = N
 
 
 def overview(*, brains: dict, health: dict, validation: dict, scores: dict, engine: dict | None, fleet: dict, sources: dict,
-             health_sources: dict, jobs: dict, now: dt.datetime) -> dict:
-    """The one node Ops reads for the command center."""
-    summaries = {b: brain_summary(b, brains.get(b), health.get(b), validation.get(b), scores.get(b), jobs, now) for b in ALL_BRAINS}
+             health_sources: dict, jobs: dict, now: dt.datetime, manifest: dict | None = None, orchestrator_brains: dict | None = None,
+             score_published_at: dict | None = None) -> dict:
+    """The one node Ops reads for the command center. score_published_at = {brainId: scoreUpdatedAt of the score block as published after this
+    run} (lastScoreEvaluation; the candidate's own timestamp is this run's clock even when the published block is kept)."""
+    slot_newest = OT.newest_slot_updates(fleet)
+    mb = (manifest or {}).get("brains") or {}
+    summaries = {b: brain_summary(b, brains.get(b), health.get(b), validation.get(b), scores.get(b), jobs, now, manifest_brain=mb.get(b),
+                                  sources=sources, source_health=health_sources, slot_newest=slot_newest,
+                                  intelligence_registry=brains.get("sector-intelligence"), orchestrator_brain=(orchestrator_brains or {}).get(b),
+                                  score_published_at=(score_published_at or {}).get(b))
+                 for b in ALL_BRAINS}
     fs = fleet_summary(fleet, now, (brains.get("lake-brain") or {}).get("directoryLakeCount"))
     src = {}
     for sid, rec in (sources or {}).items():

@@ -10,6 +10,7 @@ CANDIDATE: the rubric and cohorts await owner approval and nothing here publishe
 from __future__ import annotations
 
 import json
+import re
 import math
 import statistics
 
@@ -482,3 +483,80 @@ def plan_capability_write(updates: dict, scores: dict, old_scores: dict | None) 
         return []
     updates[key + "/capability"] = cap
     return [f"biological-state: capability {(old or {}).get('evaluationId', '—')} -> {cap.get('evaluationId')}"]
+
+
+# ---------------------------------------------------------------- activation prerequisites (records only; never approves anything itself)
+AUTOMATED_REVIEWER_WORDS = ("claude", "assistant", "automated", "auto", "bot", "ai", "agent", "llm", "gpt", "rehearsal", "system")
+
+
+def _check_reviewer(name: str | None) -> str:
+    n = (name or "").strip()
+    if len(n) < 3:
+        raise ValueError("a named human reviewer is required")
+    if set(re.findall(r"[a-z]+", n.lower())) & set(AUTOMATED_REVIEWER_WORDS):
+        raise ValueError(f"reviewer {n!r} looks automated: reference cases need a human reviewer's decision")
+    return n
+
+
+def record_review(pub: dict, case_id: str, decision: str, reviewer: str, reviewed_at: str, note: str | None = None) -> dict:
+    """Return a copy of the publication record with one human decision recorded. Only gate cases; APPROVED or REJECTED; named reviewer."""
+    rev = dict(pub.get("referenceCaseReview") or {})
+    if case_id not in (rev.get("required") or []):
+        raise ValueError(f"{case_id} is not one of the gate cases {rev.get('required')}")
+    if decision not in DECISIONS:
+        raise ValueError(f"decision must be one of {DECISIONS}")
+    dec = dict(rev.get("decisions") or {})
+    dec[case_id] = {k: v for k, v in {"decision": decision, "reviewer": _check_reviewer(reviewer), "reviewedAt": reviewed_at, "note": note}.items() if v}
+    return {**pub, "referenceCaseReview": {**rev, "decisions": dec}}
+
+
+def activate(pub: dict, approved_by: str, approved_at: str) -> dict:
+    """Return a copy with status ACTIVE and the owner's approval, refusing unless every gate case has a reviewed decision."""
+    missing = [c for c in ((pub.get("referenceCaseReview") or {}).get("required") or [])
+               if (((pub.get("referenceCaseReview") or {}).get("decisions") or {}).get(c) or {}).get("decision") not in DECISIONS]
+    if missing:
+        raise ValueError(f"cannot activate: reference cases without a reviewed decision: {missing}")
+    act = {**(pub.get("activation") or {}), "approvedBy": _check_reviewer(approved_by), "approvedAt": approved_at}
+    return {**pub, "status": "ACTIVE", "activation": act}
+
+
+def activation_readiness(pub: dict | None, rubric: dict, cohorts_by_version: dict, evidence: dict | None, published_release: str | None) -> dict:
+    """Every prerequisite with its state (READY / BLOCKED / UNKNOWN) and the exact remaining action. Read-only."""
+    items = []
+
+    def add(name, ok, detail, action=None):
+        items.append({"item": name, "state": "READY" if ok is True else ("UNKNOWN" if ok is None else "BLOCKED"), "detail": detail,
+                      **({"nextAction": action} if action and ok is not True else {})})
+    add("rubric approved and frozen", rubric.get("status") == "APPROVED" and not validate_frozen(rubric),
+        f"{rubric.get('rubricId')} {rubric.get('rubricVersion')} status {rubric.get('status')}")
+    cv = (evidence or {}).get("cohortsVersion")
+    coh = cohorts_by_version.get(cv) if cv else None
+    add("cohorts approved and frozen", bool(coh) and coh.get("status") == "APPROVED" and not validate_frozen(rubric, coh), f"cohorts {cv}")
+    add("evidence present", evidence is not None, _os.path.relpath(EVIDENCE_PATH, _REPO))
+    ev_rel = ((evidence or {}).get("knowledge") or {}).get("researchVersion")
+    add("evidence matches the published knowledge release", None if published_release is None else (ev_rel == published_release),
+        f"evidence {ev_rel} vs published {published_release or 'not read'}",
+        "regenerate the evidence on the published release (capability_run.py --publishable-evidence) and merge it")
+    if evidence is not None and coh is not None:
+        try:
+            res = build_result(evidence, rubric, coh, generated_at=evidence.get("evaluatedAt") or "")
+            base = rubric.get("approvedBaseline") or {}
+            same = all(abs((res["aggregates"][k]["value"] or 0) - v["value"]) < 1e-6 for k, v in (base.get("aggregates") or {}).items())
+            add("evidence reproduces the approved baseline", same,
+                f"TARGET {res['aggregates']['TARGET']['value']} / overall {res['aggregates']['ALL_ASSESSED']['value']} vs baseline "
+                f"{(base.get('aggregates') or {}).get('TARGET', {}).get('value')} / {(base.get('aggregates') or {}).get('ALL_ASSESSED', {}).get('value')}",
+                "if knowledge changed legitimately, the change record (not the baseline) shows it; investigate before activating")
+        except ValueError as e:
+            add("evidence reproduces the approved baseline", False, str(e)[:200])
+    rev = (pub or {}).get("referenceCaseReview") or {}
+    dec = rev.get("decisions") or {}
+    missing = [c for c in rev.get("required") or [] if (dec.get(c) or {}).get("decision") not in DECISIONS]
+    add("reference cases reviewed by a named human", not missing and bool(rev.get("required")),
+        f"{len(rev.get('required') or []) - len(missing)} of {len(rev.get('required') or [])} decided" + (f"; missing {missing}" if missing else ""),
+        "reviewer: fish_capability_publication.py record-review --case <id> --decision APPROVED|REJECTED --reviewer '<name>' (per case)")
+    add("owner activation recorded", (pub or {}).get("status") == "ACTIVE" and bool(((pub or {}).get("activation") or {}).get("approvedBy")),
+        f"status {(pub or {}).get('status')}", "owner: fish_capability_publication.py activate --approved-by '<name>' (after all cases are decided), PR + merge")
+    add("orchestrator image contains the ACTIVE record", None, "verified at deploy time (image label = merge commit)",
+        "approved orchestrator redeploy (lineage preflight) after the activation PR merges")
+    blocked = [i for i in items if i["state"] != "READY"]
+    return {"ready": not blocked, "items": items, "blocking": [i["item"] for i in blocked]}
