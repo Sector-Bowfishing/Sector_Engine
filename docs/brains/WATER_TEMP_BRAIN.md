@@ -5,7 +5,7 @@
 > the 6-hour freshness rule requires it; the Brain is PARKED (`control_manifest.json` `water-temp`: `MANUAL`). The code still
 > publishes `schedule = "every 3 h at :25 UTC"` in its registry (`WaterTemperatureBrain.swift:37`); correcting that published
 > value is recorded as an open decision, not changed here. Operating contract (until the Brain migrates to
-> `brains/water-temperature/`): `docs/architecture/certification/water-temp/BRAIN_OPERATING_CONTRACT.md`.
+> `brains/water-temperature/`): `docs/architecture/certification/water-temperature/BRAIN_OPERATING_CONTRACT.md`.
 
 > **Consolidation note (2026-10-12, Phase 7).** This brain now lives on `main` (replayed from
 > `brain/water-temp` @ `ec0ae0fa` onto the production lineage; the Clarity Stage 5 base it was

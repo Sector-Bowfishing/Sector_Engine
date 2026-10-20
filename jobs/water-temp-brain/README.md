@@ -13,4 +13,4 @@ swift build --product WaterTempBrainJob
 .build/debug/WaterTempBrainJob --dry-run /tmp/brain --lake "Guntersville|AL"
 ```
 
-Tests: `swift test --filter WaterTemp`. Contract and vocabularies: `docs/brains/WATER_TEMP_BRAIN.md`. Operating contract: `docs/architecture/certification/water-temp/BRAIN_OPERATING_CONTRACT.md`. Deploying is approval-gated.
+Tests: `swift test --filter WaterTemp`. Contract and vocabularies: `docs/brains/WATER_TEMP_BRAIN.md`. Operating contract: `docs/architecture/certification/water-temperature/BRAIN_OPERATING_CONTRACT.md`. Deploying is approval-gated.
