@@ -58,6 +58,10 @@ fi
 echo "▶ stage the repo layout (commit $COMMIT)"
 rm -rf stage && mkdir -p stage/jobs stage/docs/brains/scoring
 cp -R "$ROOT/jobs/brain_platform" stage/jobs/brain_platform
+# Fish Biological Capability V2 inputs for the scorer (fish_capability.attach_capability). Attached only when fish-capability-publication.json is ACTIVE.
+mkdir -p stage/docs/brains/scoring/evidence
+for f in fish-biological-capability-v2.json fish-capability-cohorts-v2.json fish-capability-publication.json; do cp "$ROOT/docs/brains/scoring/$f" stage/docs/brains/scoring/; done
+cp "$ROOT/docs/brains/scoring/evidence/fish-capability-evidence.json" stage/docs/brains/scoring/evidence/
 for d in biological-brain sector-intelligence-brain brain-scores brain-orchestrator; do
   mkdir -p "stage/jobs/$d"
   src="$ROOT/jobs/$d"
@@ -77,10 +81,6 @@ done
 mkdir -p stage/platform/registries/signals stage/providers
 cp "$ROOT/platform/registries/signals/signals.json" stage/platform/registries/signals/
 cp "$ROOT/providers/PROVIDERS.json" stage/providers/
-# Fish Biological Capability V2 inputs for the scorer (fish_capability.attach_capability). Attached only when fish-capability-publication.json is ACTIVE.
-mkdir -p stage/docs/brains/scoring/evidence
-for f in fish-biological-capability-v2.json fish-capability-cohorts-v2.json fish-capability-publication.json; do cp "$ROOT/docs/brains/scoring/$f" stage/docs/brains/scoring/; done
-cp "$ROOT/docs/brains/scoring/evidence/fish-capability-evidence.json" stage/docs/brains/scoring/evidence/
 find stage -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'tests' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'test_*.py' -delete
