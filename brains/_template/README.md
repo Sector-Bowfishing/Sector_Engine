@@ -1,6 +1,6 @@
 # Brain package template (Standard Brain Package V1)
 
-Copy this directory to `brains/<dir>/` when a Brain is migrated at its own certification turn. **Phase 1A migrates no Brain**; this is the destination shape only.
+Copy this directory to `brains/<dir>/` when a Brain is migrated at its own certification turn. Wind, Fish and Water Clarity have been migrated with it (see `brains/README.md`).
 
 | File | Mandatory | Purpose |
 |---|---|---|
