@@ -17,7 +17,8 @@
     "docs/brains/scoring/biological-state-score-v1.json": "e434eaf6a6de4ea1abbfc23ff993a159d32a83afaa7085d461a020c4e5217787",
     "docs/brains/scoring/engine-score-v1.json": "40e47f5fa582d381d36c158fc2f81d8ac038ca3c2df7bb30af190db915e91002",
     "docs/brains/scoring/lake-brain-score-v1.json": "f4074d7741508820f3b79277ee86de56cd10eaac5affe4f6f931bc1c2465b175",
-    "docs/brains/scoring/sector-intelligence-score-v1.json": "6cc2053c99e85aeb0b1ba22b2a999dd6e946bf5f7198309a2c4c1a75594a154d"
+    "docs/brains/scoring/sector-intelligence-score-v1.json": "6cc2053c99e85aeb0b1ba22b2a999dd6e946bf5f7198309a2c4c1a75594a154d",
+    "docs/brains/scoring/wind-specialist-capability-v2.json": "31d6325c9e0ef5bb2f65017d753861d353a1caa07944423dd791e1ae67466584"
   },
   "schemaVersion": "1.0.0",
   "scores": {

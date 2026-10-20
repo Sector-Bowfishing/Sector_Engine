@@ -129,6 +129,18 @@ def compute(facts: dict, now: dt.datetime) -> dict:
     }
 
 
+def attach_wind_measurements(scores: dict, facts: dict, now: dt.datetime) -> dict:
+    """Additive: the certification value, version and breakdown are untouched; the evaluation is HELD (not attached) if inconsistent."""
+    from sector_brain_platform import wind_measurements      # imported here: only used behind --wind-measurements
+    rubric, ev, brain = wind_measurements.load_all()
+    m = wind_measurements.measurements(scores["wind"], ev, rubric, brain, now, health=(facts.get("health") or {}).get("wind"))
+    if m["consistency"] or m["windCapability"].get("basis") != "COMPUTED":
+        print(f"wind measurements HELD: {m['consistency'] or m['windCapability'].get('heldBecause')}")
+        return scores
+    scores["wind"] = {**scores["wind"], "measurements": wind_measurements.rtdb_normal(m)}   # stored form: re-runs compare equal
+    return scores
+
+
 def _content(score: dict | None) -> dict:
     """A score block without its refresh timestamp, for comparing substance."""
     # RTDB does not store empty objects/arrays, so a block computed with `scoreBreakdown: {}` reads back WITHOUT the key; treating {} / [] / None as
@@ -199,6 +211,9 @@ def main() -> int:
     ap.add_argument("--report", default=None, help="write the full report JSON here")
     ap.add_argument("--no-explain", action="store_true", help="do not attach /scores/{id}/explanation (brain-score-explanation-v1)")
     ap.add_argument("--if-changed", action="store_true", help="write a control node only when its content (minus timestamps) differs from what is published")
+    ap.add_argument("--wind-measurements", action="store_true",
+                    help="attach Wind's three measurements (Wind Capability v2, Scientific Confidence, Production Readiness) to /scores/wind as "
+                         "`measurements`; OFF by default; the orchestrator passes it only when deployed with WIND_MEASUREMENTS=on (wind_measurements.py)")
     a = ap.parse_args()
     now = dt.datetime.now(dt.timezone.utc)
     db = BrainRtdb(a.db, brain_id=WRITER) if a.db else BrainRtdb(brain_id=WRITER)
@@ -209,6 +224,8 @@ def main() -> int:
     # (or ambiguous against) what is published is HELD and the published block is used, so one Brain's stale artifact cannot move any score, the Engine
     # score or the control overview. Deliberate regression needs a recorded decision: SCORE_GUARD_ALLOW=<brainId>[,<brainId>].
     scores, held = guard_scores(compute(facts, now), old_scores, allow=[x for x in os.environ.get("SCORE_GUARD_ALLOW", "").split(",") if x])
+    if a.wind_measurements:
+        attach_wind_measurements(scores, facts, now)
     engine = score_engine(facts["engine"], scores, now)
     updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores,   # canonical: /scores/engine
                                    explain=not a.no_explain, gaps=load_gaps())

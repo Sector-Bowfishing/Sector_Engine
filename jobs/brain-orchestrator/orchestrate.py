@@ -195,6 +195,16 @@ def sync_jobs(db, tokens: TokenProvider, now: dt.datetime, write: bool) -> tuple
     return records, executions, len(changed)
 
 
+def score_cmd(env=None) -> list[str]:
+    """The scorer invocation. WIND_MEASUREMENTS=on (set only at an approved deploy) attaches Wind's three measurements to
+    /scores/wind (score_brains.py --wind-measurements: additive, no score.changed event). Anything else: OFF."""
+    env = os.environ if env is None else env
+    cmd = [PYTHON, os.path.join(HERE, "..", "brain-scores", "score_brains.py"), "--write", "--if-changed"]
+    if env.get("WIND_MEASUREMENTS", "off") == "on":
+        cmd.append("--wind-measurements")
+    return cmd
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="write nothing, start nothing")
@@ -319,7 +329,7 @@ def main(argv=None) -> int:
              (f"{n_changed} job record(s) changed" if n_changed else ("forced" if a.force_scores else None))
     scores = {"published": False, "why": reason or "nothing changed since the last cycle"}
     if reason and write and not a.control_only:
-        cmd = [PYTHON, os.path.join(HERE, "..", "brain-scores", "score_brains.py"), "--write", "--if-changed"]
+        cmd = score_cmd()
         out = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
         scores.update({"published": out.returncode == 0, "tail": (out.stdout if out.returncode == 0 else (out.stderr or out.stdout)).strip()[-500:]})
         print(f"scores: {'published' if out.returncode == 0 else 'FAILED'} ({reason})", flush=True)

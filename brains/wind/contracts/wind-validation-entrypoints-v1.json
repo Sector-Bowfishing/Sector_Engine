@@ -1,0 +1,68 @@
+{
+  "schema": "wind-validation-entrypoints-v1",
+  "brainId": "wind",
+  "purpose": "Machine-readable entry points an orchestrator (e.g. Sector Pulse) may call to evaluate Wind. Deterministic, local, no AI, no network unless stated. Calling them never publishes, never writes the Brain RTDB and never changes a score; score authority stays with the platform scorer.",
+  "constraints": {
+    "aiRequired": false,
+    "newScheduler": false,
+    "h2": "SEALED until 2027-01-01: no entry point reads H2; the H2 one-shot tests are separate pre-registered tools and refuse before the date.",
+    "productionWrites": "none",
+    "researchDataCopied": false
+  },
+  "entrypoints": [
+    {
+      "id": "wind.assessment.scenarios",
+      "layer": "LEARNING_AND_VALIDATION",
+      "command": "python -m sector_wind.assessment scenarios --fetch <fetch.json.gz> --lake <lakeId> [--json OUT]",
+      "cwd": "brains/wind/runtime",
+      "inputs": ["runtime fetch object (archive fetch/<lake> layout or tests/fixtures/guntersville_fetch_subset.json.gz)"],
+      "output": "wind-specialist-scenarios-v1 result (18 scenarios, pass/fail, evidenceClass MODEL_CAPABILITY)",
+      "exit": "0 all pass, 1 any fail",
+      "network": false
+    },
+    {
+      "id": "wind.assessment.assess",
+      "layer": "BOWFISHING_INTELLIGENCE",
+      "command": "python -m sector_wind.assessment assess --fetch <fetch.json.gz> --lake <lakeId> --mph <speed> --dir <fromDeg> [--hours H] [--bank ID]",
+      "cwd": "brains/wind/runtime",
+      "inputs": ["runtime fetch object", "SYNTHETIC wind"],
+      "output": "sector-wind-exposure-assessment-v1 (schema brains/wind/contracts/wind-exposure-assessment-v1.json)",
+      "network": false
+    },
+    {
+      "id": "wind.tests",
+      "layer": "LEARNING_AND_VALIDATION",
+      "command": "python -m pytest -q",
+      "cwd": "brains/wind",
+      "output": "pytest result (network tests deselected by default)",
+      "network": false
+    },
+    {
+      "id": "wind.measurements.evidence",
+      "layer": "LEARNING_AND_VALIDATION",
+      "command": "python -m sector_wind_research.measurement_evidence --out docs/brains/scoring/evidence/wind-measurements-evidence.json",
+      "cwd": "brains/wind (PYTHONPATH=runtime:research/tools)",
+      "inputs": ["research caches on the research Mac (CAL+H1 rows, buoy holdout, frozen fetch assets, Stage 3A evidence)"],
+      "output": "wind-measurements-evidence-v1 (metadata only; committed)",
+      "network": false,
+      "researchOnly": true
+    },
+    {
+      "id": "platform.wind.measurements",
+      "layer": "SCORING (platform authority)",
+      "command": "python3 jobs/brain-scores/score_brains.py --wind-measurements --report OUT.json   (dry run; --write publishes and needs approval)",
+      "output": "wind-score-measurements-v1 envelope inside the wind score block",
+      "network": true,
+      "note": "reads the Brain RTDB read-only in dry run"
+    },
+    {
+      "id": "platform.wind.certificationRefresh",
+      "layer": "SCORING (platform authority)",
+      "command": "python3 jobs/brain-scores/refresh_wind_score.py --candidate CANDIDATE.json   (dry run; --write updates repository files only)",
+      "output": "ACCEPT / HOLD / NO_CHANGE with reasons; on --write ACCEPT, frozen-scores.json wind block + wind-score-history.jsonl line",
+      "network": false
+    }
+  ],
+  "deficiencies": "brains/wind/research/GAPS.json (research-gaps v1)",
+  "rubric": "docs/brains/scoring/wind-specialist-capability-v2.json"
+}
