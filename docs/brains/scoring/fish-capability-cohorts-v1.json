@@ -1,0 +1,65 @@
+{
+ "cohortsVersion": "fish-capability-cohorts-v1",
+ "status": "CANDIDATE_PENDING_OWNER_APPROVAL",
+ "frozenAt": "2026-10-19",
+ "basis": {
+  "knowledgeRelease": "2026-10-17.1",
+  "targetSet": "freshwater-bowfishing-targets-v1 (brains/fish/runtime/target_set.py)"
+ },
+ "rule": "Rosters are evaluation definitions. Membership never changes silently: a new roster is a new cohortsVersion. Weak species are never dropped; a failed evaluation makes the aggregate INCOMPLETE.",
+ "cohorts": {
+  "TARGET": {
+   "label": "Primary TARGET species capability",
+   "species": [
+    "bigmouth_buffalo",
+    "bowfin",
+    "common_carp",
+    "grass_carp",
+    "longnose_gar",
+    "silver_carp",
+    "smallmouth_buffalo",
+    "spotted_gar"
+   ]
+  },
+  "ALL_ASSESSED": {
+   "label": "All assessed species capability",
+   "species": [
+    "alligator_gar",
+    "american_shad",
+    "bighead_carp",
+    "bigmouth_buffalo",
+    "black_buffalo",
+    "black_carp",
+    "blue_sucker",
+    "bowfin",
+    "carpsuckers_group",
+    "channel_catfish",
+    "common_carp",
+    "freshwater_drum",
+    "gizzard_shad",
+    "golden_redhorse",
+    "goldfish",
+    "grass_carp",
+    "longnose_gar",
+    "northern_snakehead",
+    "paddlefish",
+    "river_redhorse",
+    "shorthead_redhorse",
+    "shortnose_gar",
+    "silver_carp",
+    "silver_redhorse",
+    "smallmouth_buffalo",
+    "spotted_gar",
+    "striped_mullet"
+   ]
+  }
+ },
+ "notAssessedByPolicy": [
+  "suckers_redhorse_carpsuckers_group",
+  "tilapia_unresolved"
+ ],
+ "overall": {
+  "definition": "ALL_ASSESSED",
+  "why": "the complete eligible roster: one strong species cannot hide weak ones; TARGET is shown beside it"
+ }
+}

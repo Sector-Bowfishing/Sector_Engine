@@ -11,6 +11,12 @@ STATES = ("FAVORABLE_SHALLOW", "WORKABLE", "MIXED", "LIMITING", "UNKNOWN")
 SHALLOW_FEATURES = {"waterTempBand", "temperatureTrend", "temperatureCrossing15C", "temperatureCrossing18C", "temperatureCrossing20C", "stageTrend", "risingStage", "fallingStage",
                     "warmRise", "coldRise", "rapidDischargeIncrease"}
 ACTIVITY_FEATURES = {"daypart", "clarityBand"}
+# Features that carry CURRENT water conditions (temperature, level, clarity). Month and daypart are calendar facts, not water conditions.
+ENVIRONMENTAL_FEATURES = SHALLOW_FEATURES | {"clarityBand"}
+BASIS = ("CURRENT_CONDITIONS", "SEASONAL_PRIOR")
+SEASONAL_PRIOR_WHY = "seasonal prior: the month (and time of day) fit this fish's researched habits; no current water reading confirms it"
+HABITAT_WHY = "its researched habitat use applies in this month and season"
+SEASONAL_PRIOR_LIMIT = "seasonal prior only: no water temperature, level or clarity input contributed, so confidence is capped at LOW"
 CONF_ORDER = ("LOW", "MEDIUM", "HIGH")
 GOOD, BAD = ("FAVORABLE",), ("LIMITING", "BLOCKING")
 
@@ -53,11 +59,22 @@ def _net(rows) -> str | None:
     return "FAVORABLE" if g else ("LIMITING" if b else "WORKABLE")
 
 
+def basis_of(sp: dict) -> str:
+    """CURRENT_CONDITIONS when a supplied water condition (temperature, level, clarity) produced a known band or a temperature-based spawn state;
+    otherwise the result rests on month/daypart knowledge alone and is a SEASONAL_PRIOR (audit 2026-10-19 defect A)."""
+    if any(r["response"] != "UNKNOWN" and r["featureId"] in ENVIRONMENTAL_FEATURES for r in sp.get("responses") or []):
+        return "CURRENT_CONDITIONS"
+    if (sp.get("spawnWindow") or {}).get("state") in ("IN_WINDOW", "MONTH_ONLY", "TEMP_ONLY"):
+        return "CURRENT_CONDITIONS"
+    return "SEASONAL_PRIOR"
+
+
 def species_outlook(sp: dict, month: int | None = None, rule_text: dict | None = None) -> dict:
     base = {"speciesId": sp["speciesId"], "claim": {"level": 3}}
     if not sp.get("evaluated"):
+        reason = sp.get("notEvaluatedReason") or "not evaluated for this lake"
         return base | {"state": "UNKNOWN", "movement": "UNKNOWN", "activity": "UNKNOWN", "why": [], "cautions": [], "where": [], "confidence": None,
-                       "note": sp.get("notEvaluatedReason") or "not evaluated for this lake"}
+                       "note": reason, "notEvaluatedReason": reason, "basis": None, "confidenceLimitations": []}
     known = [r for r in sp.get("responses") or [] if r["response"] != "UNKNOWN"]
     shallow = [r for r in known if r["featureId"] in SHALLOW_FEATURES]
     act = [r for r in known if r["featureId"] in ACTIVITY_FEATURES]
@@ -91,8 +108,19 @@ def species_outlook(sp: dict, month: int | None = None, rule_text: dict | None =
         if w and w not in where:
             where.append(w)
     conf = _min_conf([r.get("confidence") for r in shallow + act] + [h.get("confidence") for h in habitats])
+    basis = basis_of(sp) if state != "UNKNOWN" else None
+    limits = []
+    if basis == "SEASONAL_PRIOR":
+        why.insert(0, SEASONAL_PRIOR_WHY)
+        limits.append(SEASONAL_PRIOR_LIMIT)
+        conf = "LOW" if conf else conf
+    elif state != "UNKNOWN" and not why and habitats:
+        why.append(HABITAT_WHY)          # never a silent non-UNKNOWN result (audit 2026-10-19: always explain)
+    if state == "UNKNOWN":
+        conf = None
     rule_ids = sorted({i for r in shallow + act for i in (r.get("evidenceBasis") or {}).get("ruleIds", [])} | {h["ruleId"] for h in habitats if h.get("ruleId")})
     return base | {"state": state, "movement": movement, "activity": activity, "why": why, "cautions": cautions, "where": where, "confidence": conf,
+                   "basis": basis, "confidenceLimitations": limits,
                    "unknownFeatures": sorted({r["featureId"] for r in sp.get("responses") or [] if r["response"] == "UNKNOWN"}),
                    "trace": explain(sp, month, rule_ids, rule_text)}
 

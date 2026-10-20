@@ -1,0 +1,303 @@
+{
+ "rubricId": "FISH_BIOLOGICAL_CAPABILITY_V2",
+ "rubricVersion": "2.1.0",
+ "status": "APPROVED",
+ "authoritative": true,
+ "scale": 10,
+ "measures": "Demonstrated, executable biological capability per species: what the Fish runtime actually does with its evidence-backed knowledge under deterministic scenarios. Not knowledge completeness (species-v2), not scientific confidence, not production readiness, not field accuracy.",
+ "doesNotMeasure": [
+  "evidence volume or paper counts",
+  "registry completeness",
+  "connectivity or deployment",
+  "lake presence",
+  "field-validated accuracy (synthetic scenarios prove behaviour, not accuracy)"
+ ],
+ "evidenceSchema": "fish-biological-capability-evidence-v2",
+ "resultSchema": "fish-biological-capability-result-v2",
+ "scorer": "jobs/brain_platform/sector_brain_platform/fish_capability.py",
+ "evaluator": "brains/fish/runtime/capability_eval.py",
+ "doc": "docs/brains/scoring/FISH_BIOLOGICAL_CAPABILITY_V2.md",
+ "pointsRule": "points = weight x fraction; fraction in [0,1] comes from the evaluator's executed tests; species score = sum of points (exact, 6 dp internally; display 1 dp)",
+ "categories": [
+  {
+   "categoryId": "biologyBehavior",
+   "label": "Species biology & behavior",
+   "maxPoints": 2.5,
+   "criteria": [
+    {
+     "criterionId": "BIO-1",
+     "weight": 0.75,
+     "label": "Executable species behavior",
+     "award": "1 if at least one usable (evidence-checked) rule executes in its own scenario and drives a non-UNKNOWN species output (or an IN_WINDOW spawn state); else 0"
+    },
+    {
+     "criterionId": "BIO-2",
+     "weight": 0.5,
+     "label": "Breadth of executable behaviour",
+     "award": "n/5 where n = core behaviour families (temperature, water level/hydrology, habitat, spawning, day/night) in which at least one rule actually executed. Clarity is not a core family (not universally relevant)."
+    },
+    {
+     "criterionId": "BIO-3",
+     "weight": 0.5,
+     "label": "Species-specific (not generic) behavior",
+     "award": "1 if the grid output signature is known and unique in the roster; 0.5 if known but identical to another species; 0 if nothing is known"
+    },
+    {
+     "criterionId": "BIO-4",
+     "weight": 0.5,
+     "label": "Appropriate uncertainty",
+     "award": "share of 3 checks (non-UNKNOWN outputs explained; assessment contract holds; zero-input output is a LOW seasonal prior) x executable breadth (n/5 core behaviour families). Abstention criterion: 0 unless BIO-1 passes"
+    },
+    {
+     "criterionId": "BIO-5",
+     "weight": 0.25,
+     "label": "Characteristic behavior is named",
+     "award": "share of executed rules that carry a behavior descriptor"
+    }
+   ]
+  },
+  {
+   "categoryId": "habitatDepth",
+   "label": "Habitat & depth preferences",
+   "maxPoints": 2.0,
+   "criteria": [
+    {
+     "criterionId": "HAB-1",
+     "weight": 0.7,
+     "label": "Habitat preference executes",
+     "award": "0.5 x execution (1 if a habitat rule is emitted ACTIVE in its applicable scenario; 0.25 if only a surfaced habitat conflict) + 0.5 x annual coverage (months, of 12, in which the runtime emits an ACTIVE habitat preference under some condition state)"
+    },
+    {
+     "criterionId": "HAB-2",
+     "weight": 0.3,
+     "label": "Habitat changes with season or conditions",
+     "award": "1 if an executed habitat preference switches off under a contrasting condition or out of season; else 0"
+    },
+    {
+     "criterionId": "HAB-3",
+     "weight": 0.5,
+     "label": "KNOWS_DEPTH_PREFERENCE (executable)",
+     "award": "1 if a depth-class habitat rule executes; 0.5 if only a shallow/deep tendency (movement or deep-habitat rule) executes; 0 = HAS_NO_DEPTH_RULE"
+    },
+    {
+     "criterionId": "HAB-4",
+     "weight": 0.3,
+     "label": "CAN_EVALUATE_SUPPLIED_DEPTH",
+     "award": "share of 2 checks: a supplied depth inside the preferred class is WITHIN, a different class is OUTSIDE/AVOIDED. 0 without a depth-class rule"
+    },
+    {
+     "criterionId": "HAB-5",
+     "weight": 0.2,
+     "label": "Depth abstention",
+     "award": "share of checks (no supplied depth -> NOT_SUPPLIED; unrecognised depth refused; no depth rule -> no invented preference) x executable breadth (n/5). Abstention criterion: 0 unless BIO-1 passes"
+    }
+   ]
+  },
+  {
+   "categoryId": "environmental",
+   "label": "Environmental responses",
+   "maxPoints": 2.0,
+   "criteria": [
+    {
+     "criterionId": "ENV-1",
+     "weight": 0.6,
+     "label": "Water temperature response",
+     "award": "0.5 x execution ladder (best temperature-family rule: 1 fired + switches off under a contrasting state + outlook moves its way + explained; 0.75 fired + contrast; 0.5 fired; 0.25 conflict surfaced; else 0) + 0.5 x annual coverage (months, of 12, with a known non-conflicting temperature-family output under some temperature state)"
+    },
+    {
+     "criterionId": "ENV-2",
+     "weight": 0.6,
+     "label": "Water level / hydrology response",
+     "award": "same as ENV-1 for stage, rise, warm/cold rise and discharge rules (coverage over every registered hydrology state)"
+    },
+    {
+     "criterionId": "ENV-3",
+     "weight": 0.2,
+     "label": "Other documented influence (clarity)",
+     "award": "same as ENV-1 for clarity rules"
+    },
+    {
+     "criterionId": "ENV-4",
+     "weight": 0.6,
+     "label": "Missing, degraded and conflicting inputs",
+     "award": "share of applicable checks (missing input stays UNKNOWN; degraded input lowers confidence; conflicting favourable+limiting signals give MIXED when constructible) x min(1, executable environmental families / 2). 0 without an executable environmental rule"
+    }
+   ]
+  },
+  {
+   "categoryId": "spawnSeason",
+   "label": "Spawning & seasonal patterns",
+   "maxPoints": 2.0,
+   "criteria": [
+    {
+     "criterionId": "SPN-1",
+     "weight": 0.6,
+     "label": "Spawn window executes",
+     "award": "0.5 x window executes (in-window month + in-range temperature -> IN_WINDOW; out-of-window month + out-of-range temperature -> OUTSIDE) + 0.5 x spawn-period behaviour (in that IN_WINDOW scenario the species output is not UNKNOWN: Fish says what the fish does while spawning, not only when)"
+    },
+    {
+     "criterionId": "SPN-2",
+     "weight": 0.4,
+     "label": "Spawn temperature trigger discriminates",
+     "award": "share of: in-window month below range -> MONTH_ONLY; out-of-window month in range -> TEMP_ONLY"
+    },
+    {
+     "criterionId": "SPN-3",
+     "weight": 0.6,
+     "label": "Seasonal pattern",
+     "award": "(seasons, of 4, in which the species' outlook is known on the standard grid; a spawn-window state alone does not count) / 4, x 1 if the behaviour differs between seasons, x 0.5 if it is the same all year"
+    },
+    {
+     "criterionId": "SPN-4",
+     "weight": 0.4,
+     "label": "Spawn uncertainty and regional applicability",
+     "award": "share of applicable checks: spawn output carries confidence + transferability; a region-restricted window does not fire out of region; an open spawn discrepancy keeps confidence below HIGH"
+    }
+   ]
+  },
+  {
+   "categoryId": "dayNight",
+   "label": "Day / night behavior",
+   "maxPoints": 1.0,
+   "criteria": [
+    {
+     "criterionId": "DN-1",
+     "weight": 0.5,
+     "label": "Documented day/night behavior executes",
+     "award": "0.5 x execution (1 if a day/night rule executes, incl. NO_DIFFERENCE_DOCUMENTED; 0.5 if the species' own evidence conflicts and the conflict is surfaced) + 0.5 x annual coverage (months with a known night/day output; counted only when execution = 1)"
+    },
+    {
+     "criterionId": "DN-2",
+     "weight": 0.25,
+     "label": "Behavior vs catchability evidence",
+     "award": "only when DN-1 = 1: BEHAVIORAL 1, MIXED 0.75, CATCHABILITY 0.5, UNCLASSIFIED 0.25"
+    },
+    {
+     "criterionId": "DN-3",
+     "weight": 0.25,
+     "label": "Safe day/night abstention",
+     "award": "share of checks (missing daypart asserts nothing; no rule -> UNKNOWN with reason; night evidence not used to infer daytime) x executable breadth (n/5). Abstention criterion: 0 unless BIO-1 passes"
+    }
+   ]
+  },
+  {
+   "categoryId": "application",
+   "label": "Biological knowledge application",
+   "maxPoints": 0.5,
+   "criteria": [
+    {
+     "criterionId": "APP-1",
+     "weight": 0.5,
+     "label": "Applies knowledge to supplied conditions (full runtime)",
+     "award": "share of 6 checks on the fish-biological-assessment-v1 output for the species' best-supported scenario (biological assessment, reasons, uncertainty + claim, applicable conditions, evidence references, boundary/contract); x 0.5 when the only biological output is a spawn-window state; 0 if no biological assessment"
+    }
+   ]
+  }
+ ],
+ "abstentionPolicy": "BIO-4, HAB-5 and DN-3 reward correct UNKNOWN/abstention, are available only to a species that passes BIO-1, and are scaled by executable breadth (core behaviour families executed / 5). ENV-4 (input safety) is scaled by executable environmental families / 2. Universal UNKNOWN earns nothing; narrow knowledge earns proportionally little abstention credit (a one-family species: at most 0.19 of 0.95).",
+ "normalizationPolicy": {
+  "rule": "A criterion may be NOT_APPLICABLE only through a reviewed, versioned entry in biologicalExemptions {speciesId: [criterionId], reason}. Exempt weight is removed from the denominator: score = earned / (10 - exemptWeight) x 10. Missing knowledge is never an exemption.",
+  "biologicalExemptions": {}
+ },
+ "referenceCasePolicy": "Human-reviewed reference cases (APPROVED, named reviewer) can only WITHDRAW credit: a failing approved case sets the criterion it checks to 0. PROPOSED cases are run and reported, never scored.",
+ "evaluationStatus": {
+  "ASSESSED": "scored; missing capabilities earn 0",
+  "NOT_ASSESSED": "policy: explicitly unscored, never 0",
+  "INSUFFICIENT_EVIDENCE": "explicitly unscored",
+  "EVALUATION_FAILED": "explicitly unscored; makes any aggregate that includes the species INCOMPLETE"
+ },
+ "aggregationPolicy": {
+  "version": "fish-capability-aggregation-v1",
+  "method": "unweighted arithmetic mean of exact species scores over the COMPLETE frozen roster",
+  "complete": "every roster species ASSESSED under the same rubric and knowledge version",
+  "incomplete": "value null; status INCOMPLETE; bounds shown (missing species at 0 and at 10); all available species results kept",
+  "noWeighting": [
+   "research volume",
+   "ease of study",
+   "owner preference"
+  ],
+  "display": "1 decimal; stored exact (6 dp)"
+ },
+ "provenance": {
+  "proposedBy": "owner (category weights, 2026-10-19 directive)",
+  "criteriaDefinedBy": "Fish Brain Specialist V2 campaign (2026-10-19)",
+  "knowledgeOfResultsWhenWritten": "criteria were written after inspecting the runtime and rule inventory, before the first full scoring run; category weights are the owner's, unchanged",
+  "approval": "APPROVED by the owner 2026-10-19 (rubric 2.1.0 + cohorts v2); publication gated"
+ },
+ "coveragePolicy": "Execution alone shows a behaviour EXISTS; annual coverage shows how much of the year Fish can speak to it. Coverage is measured by running the runtime for 12 months x every registered condition state (not read from rule metadata). A month without an evidence-backed output is genuinely UNKNOWN for that fish, so it earns no coverage credit. Added during development after the first full run showed one rule earning a whole family's credit (TARGET 7.96 before, see FISH_BIOLOGICAL_CAPABILITY_V2.md section 9).",
+ "revisionHistory": [
+  {
+   "version": "2.0.0-candidate",
+   "date": "2026-10-19",
+   "note": "first candidate (PR #35, fa93d0fd). Live 2026-10-17.1: TARGET 7.419531, ALL_ASSESSED 4.220756 (cohorts v1)."
+  },
+  {
+   "version": "2.1.0-candidate",
+   "date": "2026-10-19",
+   "note": "owner final rubric review: (A) abstention BIO-4/HAB-5/DN-3 scaled by executable breadth, ENV-4 by environmental breadth; (B) SPN-1 needs spawn-period behaviour, SPN-3 counts seasons with known behaviour (spawn state alone no longer counts); APP-1 halved when only a spawn state is known. Category weights unchanged. All corrections lower credit for narrow knowledge; none raise any criterion."
+  },
+  {
+   "version": "2.1.0",
+   "date": "2026-10-19",
+   "note": "owner adoption of 2.1.0-candidate unchanged (criteria, weights, policies identical) with cohorts v2; status APPROVED; publication INACTIVE behind the reference-case review gate."
+  }
+ ],
+ "approval": {
+  "approvedBy": "owner (Michael Cather)",
+  "approvedAt": "2026-10-19",
+  "scope": "rubric 2.1.0 with cohorts fish-capability-cohorts-v2 as the reviewed Fish Biological Capability measurement (scenario capability, not field-validated)",
+  "conditions": [
+   "Label every display 'scenario capability (not field-validated)'.",
+   "Publication stays INACTIVE until the 6 non-self-consistency reference cases are human-reviewed."
+  ]
+ },
+ "publication": {
+  "status": "INACTIVE",
+  "gate": "human review (APPROVED or REJECTED with a named reviewer) of the 6 non-self-consistency reference cases: ABSTENTION_CHECK CC-REF-02, CC-REF-03, LG-REF-01, BB-REF-01; INDEPENDENT_EXPECTATION_NOT_IN_RUNTIME GC-REF-02, BF-REF-02. Then a separately reviewed scorer-job/Publisher change; no writer exists today.",
+  "displayLabel": "scenario capability (not field-validated)"
+ },
+ "frozen": {
+  "frozenAt": "2026-10-19",
+  "by": "owner decision 2026-10-19 (approve rubric 2.1 with cohorts v2 as the initial baseline; freeze weights, criteria and cohort membership)",
+  "cohortsVersion": "fish-capability-cohorts-v2",
+  "rubricFingerprint": "sha256:04b1425a9284138ffeb7a83bcedb2be8948fdea1a2c7908e85488429d66d8fe1",
+  "cohortsFingerprint": "sha256:45b362d56e5dce653262695bd99127e05e438b4df627231c4246f8480ec92166",
+  "rule": "Weights, criteria, award rules, policies and roster membership are frozen. The scorer refuses any drift from these fingerprints. A change requires a new rubric or cohorts version and owner approval; it is never applied to raise scores, and results across versions are NOT_COMPARABLE."
+ },
+ "approvedBaseline": {
+  "approvedAt": "2026-10-19",
+  "evaluationId": "fcap-1d7b83b76fd4bfd02627",
+  "evaluatedAt": "2026-10-19T22:00:00Z",
+  "cohortsVersion": "fish-capability-cohorts-v2",
+  "knowledgeRelease": {
+   "researchVersion": "2026-10-17.1",
+   "manifestSha256": "f179ec216ecaae928ee15b9c91b7914b96aad09caa3ebf53cc479201266b79e9"
+  },
+  "evaluatorVersion": "fish-capability-evaluator-2.1.0",
+  "codeVersion": "06557f16",
+  "aggregates": {
+   "TARGET": {
+    "value": 6.805781,
+    "display": 6.8,
+    "eligibleSpecies": 8
+   },
+   "ALL_ASSESSED": {
+    "value": 3.770401,
+    "display": 3.8,
+    "eligibleSpecies": 26,
+    "role": "overall Fish Brain"
+   }
+  },
+  "speciesResult": {
+   "location": "private research workspace: Sector Research/fish-brain/analysis/capability-v2/demo-2026-10-19-rubric-2.1/approved-2.1.0/result.json (per-species scores, categories, missing capabilities, research backlog; private because the evidence carries rule identifiers)",
+   "sha256": "3199505ab821b0eed6a24b1726ddf5a9391c6f26acc2e68cf8000d387faae635"
+  },
+  "howToMeasureAgainstIt": "python3 brains/fish/runtime/capability_run.py --bundle <release> --out <dir> --previous <approved baseline result.json>: the change record is marked againstApprovedBaseline and gives exact per-species, per-category, per-criterion and aggregate deltas.",
+  "separateMeasurements": {
+   "maturity": "biological-state-score-v1 5.1 (unchanged, not replaced)",
+   "speciesKnowledge": "species-v2 scores unchanged",
+   "scientificConfidence": "status only",
+   "productionReadiness": "gates only"
+  }
+ }
+}

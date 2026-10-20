@@ -1,0 +1,167 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://sector.engine/brains/fish/contracts/fish-biological-assessment-v1.json",
+ "title": "Fish biological assessment (fish-biological-assessment-v1)",
+ "description": "Fish's species-biology interpretation of SUPPLIED conditions, for Sector Intelligence. Biological interpretation only: no locations, areas, rankings, opportunity scores or bowfishing recommendations (enforced by biological_assessment.validate_assessment). Built by brains/fish/runtime/biological_assessment.py; PILOT_INTERNAL states are not consumable.",
+ "type": "object",
+ "required": [
+  "contract",
+  "conditions",
+  "knowledgeVersion",
+  "status",
+  "consumable",
+  "claim",
+  "boundary",
+  "species"
+ ],
+ "properties": {
+  "contract": {
+   "const": "fish-biological-assessment-v1"
+  },
+  "consumable": {
+   "type": "boolean"
+  },
+  "species": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "speciesId",
+     "assessmentStatus",
+     "biologicalState",
+     "seasonalState",
+     "habitatPreferences",
+     "depthTendencies",
+     "environmentalResponses",
+     "spawningAssessment",
+     "dayNightAssessment",
+     "supportingReasons",
+     "unknowns",
+     "confidenceLimitations",
+     "evidenceReferences",
+     "knowledgeVersion",
+     "claim"
+    ],
+    "properties": {
+     "assessmentStatus": {
+      "enum": [
+       "EVALUATED",
+       "NOT_EVALUATED"
+      ]
+     },
+     "biologicalState": {
+      "type": "object",
+      "required": [
+       "state",
+       "movement",
+       "activity",
+       "basis",
+       "confidence"
+      ],
+      "properties": {
+       "state": {
+        "enum": [
+         "FAVORABLE_SHALLOW",
+         "WORKABLE",
+         "MIXED",
+         "LIMITING",
+         "UNKNOWN"
+        ]
+       },
+       "basis": {
+        "enum": [
+         "CURRENT_CONDITIONS",
+         "SEASONAL_PRIOR",
+         null
+        ]
+       },
+       "confidence": {
+        "enum": [
+         "LOW",
+         "MEDIUM",
+         "HIGH",
+         null
+        ]
+       }
+      }
+     },
+     "dayNightAssessment": {
+      "type": "object",
+      "required": [
+       "night",
+       "evidenceKind",
+       "reason"
+      ],
+      "properties": {
+       "night": {
+        "enum": [
+         "ACTIVE_OR_SHALLOW",
+         "REDUCED",
+         "NO_DIFFERENCE_DOCUMENTED",
+         "CONFLICT",
+         "UNKNOWN"
+        ]
+       },
+       "evidenceKind": {
+        "enum": [
+         "BEHAVIORAL",
+         "CATCHABILITY",
+         "MIXED",
+         "UNCLASSIFIED",
+         "NONE"
+        ]
+       }
+      }
+     },
+     "depthTendencies": {},
+     "habitatPreferences": {
+      "type": "array"
+     },
+     "environmentalResponses": {
+      "type": "array"
+     },
+     "supportingReasons": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "evidenceReferences": {
+      "type": "array"
+     },
+     "claim": {
+      "type": "object",
+      "required": [
+       "level",
+       "maturity"
+      ],
+      "properties": {
+       "level": {
+        "const": 3
+       }
+      }
+     }
+    },
+    "if": {
+     "properties": {
+      "assessmentStatus": {
+       "const": "NOT_EVALUATED"
+      }
+     }
+    },
+    "then": {
+     "required": [
+      "notEvaluatedReason"
+     ]
+    }
+   }
+  },
+  "claim": {
+   "type": "object",
+   "required": [
+    "level",
+    "maturity"
+   ]
+  }
+ }
+}

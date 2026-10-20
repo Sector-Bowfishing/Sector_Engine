@@ -21,11 +21,13 @@ def intelligence_view(state: dict) -> dict:
     for sp in state.get("species") or []:
         o = mo.species_outlook(sp)
         row = {"speciesId": sp["speciesId"], "role": ts.role(sp["speciesId"]),
-               "movementOutlook": {"state": o["state"], "movement": o["movement"], "activity": o["activity"], "where": o["where"], "why": o["why"], "cautions": o["cautions"], "confidence": o["confidence"]},
+               "movementOutlook": {"state": o["state"], "movement": o["movement"], "activity": o["activity"], "where": o["where"], "why": o["why"], "cautions": o["cautions"], "confidence": o["confidence"],
+                                   "basis": o.get("basis"), "confidenceLimitations": o.get("confidenceLimitations", [])},
                "status": "EVALUATED" if sp.get("evaluated") else "NOT_EVALUATED",
                "presenceState": (sp.get("presence") or {}).get("presenceState"), "knowledgeState": (sp.get("knowledge") or {}).get("state")}
         if not sp.get("evaluated"):
             row["bands"] = []
+            row["notEvaluatedReason"] = sp.get("notEvaluatedReason") or "not evaluated for this lake"      # audit defect B: say WHY, never silent
             species.append(row)
             continue
         row["bands"] = [{"featureId": r["featureId"], "featureState": r["featureState"], "band": r["response"],
@@ -63,6 +65,12 @@ def validate_view(v: dict) -> list[str]:
             e.append(f"{sp.get('speciesId')}: movementOutlook.state")
         if sp.get("status") == "NOT_EVALUATED" and mo_.get("state") != "UNKNOWN":
             e.append(f"{sp.get('speciesId')}: a not-evaluated species has an UNKNOWN outlook")
+        if mo_.get("state") not in (None, "UNKNOWN") and not mo_.get("why"):
+            e.append(f"{sp.get('speciesId')}: a non-UNKNOWN outlook must say why")
+        if mo_.get("basis") == "SEASONAL_PRIOR" and mo_.get("confidence") not in (None, "LOW"):
+            e.append(f"{sp.get('speciesId')}: a seasonal prior is LOW confidence at most")
+        if sp.get("status") == "NOT_EVALUATED" and not sp.get("notEvaluatedReason"):
+            e.append(f"{sp.get('speciesId')}: a not-evaluated species states its reason")
         if mo_.get("state") == "UNKNOWN" and mo_.get("confidence") is not None:
             e.append(f"{sp.get('speciesId')}: an UNKNOWN outlook carries no confidence")
         for b in sp.get("bands") or []:

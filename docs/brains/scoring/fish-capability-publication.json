@@ -1,0 +1,24 @@
+{
+ "publicationId": "fish-capability-publication",
+ "path": "/scores/biological-state/capability",
+ "writer": "shared scorer job (jobs/brain-scores/score_brains.py) via the existing score write path",
+ "status": "INACTIVE",
+ "activation": {
+  "approvedBy": null,
+  "approvedAt": null,
+  "note": "Set ACTIVE + approvedBy only with explicit owner authorisation for production score publication; takes effect when the orchestrator image containing this commit is deployed (a second, separate approval)."
+ },
+ "referenceCaseReview": {
+  "required": [
+   "CC-REF-02",
+   "CC-REF-03",
+   "LG-REF-01",
+   "BB-REF-01",
+   "GC-REF-02",
+   "BF-REF-02"
+  ],
+  "decisions": {},
+  "note": "Each needs {decision: APPROVED|REJECTED, reviewer, reviewedAt}. Decisions are recorded by a human reviewer; the case texts live in the private research workspace (analysis/capability-v2/reference_cases_proposed.json)."
+ },
+ "rollback": "set status INACTIVE (next scorer run stops attaching) and delete /scores/biological-state/capability through the same writer, or redeploy the previous orchestrator image; the maturity block is never touched by this feature."
+}

@@ -1,0 +1,5802 @@
+{
+ "codeVersion": "0961eb8df9ff09b78728a7c0139679b507788d01",
+ "cohortsVersion": "fish-capability-cohorts-v2",
+ "criteria": [
+  "BIO-1",
+  "BIO-2",
+  "BIO-3",
+  "BIO-4",
+  "BIO-5",
+  "HAB-1",
+  "HAB-2",
+  "HAB-3",
+  "HAB-4",
+  "HAB-5",
+  "ENV-1",
+  "ENV-2",
+  "ENV-3",
+  "ENV-4",
+  "SPN-1",
+  "SPN-2",
+  "SPN-3",
+  "SPN-4",
+  "DN-1",
+  "DN-2",
+  "DN-3",
+  "APP-1"
+ ],
+ "evaluatedAt": "2026-10-20T00:00:00Z",
+ "evaluationId": "fcap-01a7dd3c3c078aedada1",
+ "evaluatorVersion": "fish-capability-evaluator-2.1.0",
+ "frame": {
+  "outOfFrameRegion": "west",
+  "region": "south",
+  "waterbodyType": "run_of_river"
+ },
+ "knowledge": {
+  "knowledgeVersion": "2026-10-17.1",
+  "manifestSha256": "f179ec216ecaae928ee15b9c91b7914b96aad09caa3ebf53cc479201266b79e9",
+  "overlay": null,
+  "researchVersion": "2026-10-17.1",
+  "rulesVersion": "2026-10-17.1-rules"
+ },
+ "limitations": [
+  "Synthetic scenarios: passes are SCENARIO_BEHAVIOR_PASSED, not field-validated accuracy.",
+  "No APPROVED human-reviewed reference cases yet: expectations come from the species' own evidence-backed rules, so the evaluation is a CANDIDATE.",
+  "Species are evaluated as if present (biology, not lake presence); Lake Brain presence policy is unchanged.",
+  "Area-level habitat classes and per-lake depth layers are not evaluated (Lake/Depth/Vegetation Brains own them)."
+ ],
+ "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+ "productionReadiness": {
+  "gates": [
+   {
+    "gate": "lifecycle",
+    "status": "BLOCKED",
+    "value": "PROFILED"
+   },
+   {
+    "gate": "publisherCutover",
+    "status": "BLOCKED",
+    "value": "SHADOW"
+   },
+   {
+    "gate": "customerIntegration",
+    "status": "BLOCKED",
+    "value": "none"
+   },
+   {
+    "gate": "perLakeBiologicalState",
+    "note": "PILOT_INTERNAL; LIVE is an owner decision (FISH-PRD-001)",
+    "status": "BLOCKED",
+    "value": "IN_PROGRESS"
+   },
+   {
+    "gate": "capabilityPublication",
+    "note": "capability results are not published; scoring contract awaits approval",
+    "status": "BLOCKED",
+    "value": "INACTIVE"
+   },
+   {
+    "gate": "fieldValidation",
+    "status": "BLOCKED",
+    "value": "NOT_VALIDATED"
+   }
+  ],
+  "note": "Production readiness is gates only; it never adds capability points (deployment, connectivity and registry completeness earn nothing).",
+  "status": "NOT_READY"
+ },
+ "publishable": true,
+ "referenceCases": {
+  "approved": 0,
+  "proposed": 0,
+  "status": "NO_APPROVED_REFERENCE_CASES",
+  "total": 0
+ },
+ "rubricId": "FISH_BIOLOGICAL_CAPABILITY_V2",
+ "schema": "fish-biological-capability-evidence-v2",
+ "scientificConfidence": {
+  "fieldObservations": 0,
+  "note": "statuses per species under species[].scientificConfidence; Brain level: no species VALIDATED, no field observations"
+ },
+ "species": {
+  "alligator_gar": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 2 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 2 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 2 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.75,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.875,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.875,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 2 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.75,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 5.5,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 2,
+     "executable": 5,
+     "seasonGated": 0,
+     "usable": 5
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 5,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 5
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 4,
+     "TRANSFERS": 0,
+     "UNTESTED": 1
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "american_shad": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 clarityLightWind 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": "managed gamefish; not legal by default",
+    "knowledgeScoreSpeciesV2": 5.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "bighead_carp": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "1 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "1 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "1 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "1 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 0 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 0 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 seasonalLocationReproduction 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 seasonalLocationReproduction 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 seasonalLocationReproduction 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 4.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "SECONDARY",
+    "rules": {
+     "approved": 0,
+     "draft": 1,
+     "executable": 0,
+     "seasonGated": 2,
+     "usable": 2
+    },
+    "taxonomyStatus": "RESOLVED_HYBRIDIZES"
+   },
+   "role": "SECONDARY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 3,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 2
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 2
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "bigmouth_buffalo": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 4 draft rule(s), 12 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 4 draft rule(s), 12 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 dayNightMovement 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 dayNightMovement 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 dayNightMovement 1/10) and no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.625,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 3 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.625,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 4 draft rule(s), 12 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 4.5,
+    "openDiscrepancies": [
+     "DISC-003",
+     "DISC-007"
+    ],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 4,
+     "executable": 3,
+     "seasonGated": 0,
+     "usable": 3
+    },
+    "taxonomyStatus": "FIELD_ID_UNRESOLVED"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 8,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 3
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [
+     "DISC-003",
+     "DISC-007"
+    ],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 3
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "black_buffalo": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": "policy REFUSE; field identification unreliable",
+    "knowledgeScoreSpeciesV2": 2.0,
+    "openDiscrepancies": [
+     "DISC-003",
+     "DISC-007"
+    ],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "FIELD_ID_UNRESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 9,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [
+     "DISC-003",
+     "DISC-007"
+    ],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "black_carp": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": "injurious; reporting only",
+    "knowledgeScoreSpeciesV2": 3.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "blue_sucker": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": "protected/concern; not a realistic bow target",
+    "knowledgeScoreSpeciesV2": 3.5,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 1,
+     "executable": 1,
+     "seasonGated": 0,
+     "usable": 1
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 1
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 1
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "bowfin": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 12 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 12 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 12 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.708333,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 4.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 3,
+     "seasonGated": 0,
+     "usable": 3
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 1,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 3
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 3
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "carpsuckers_group": {
+   "evaluationStatus": "INSUFFICIENT_EVIDENCE",
+   "reason": "not an individual species (GROUP_UNRESOLVED): registry row covers several carpsucker species (taxonomyStatus GROUP_UNRESOLVED); species-level biology cannot be evaluated for a group. Its proposed species splits (river carpsucker, quillback) join through a new cohort version once they are registry rows.. Explicitly unscored; outside both rosters",
+   "role": "KNOWLEDGE_ONLY"
+  },
+  "channel_catfish": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 hydrologyRainInflowLevel 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": "not sight-shootable by Sector policy",
+    "knowledgeScoreSpeciesV2": 4.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "common_carp": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 13 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 13 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "CONTRADICTORY_EVIDENCE",
+      "why": "the species' own evidence-backed rules disagree here; the runtime keeps it UNKNOWN"
+     },
+     "fraction": 0.25,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "CONTRADICTORY_EVIDENCE",
+      "why": "the species' own evidence-backed rules disagree here; the runtime keeps it UNKNOWN"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.958333,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.708333,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "ENV-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.75,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 7/10) but no executable rule"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 7/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 7/10) but no executable rule"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 7.0,
+    "openDiscrepancies": [
+     "DISC-004",
+     "DISC-007"
+    ],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 1,
+     "executable": 11,
+     "seasonGated": 0,
+     "usable": 11
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 1,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 11
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [
+     "DISC-004",
+     "DISC-007"
+    ],
+    "regionalTransfer": {
+     "PARTIAL": 8,
+     "TRANSFERS": 0,
+     "UNTESTED": 3
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "freshwater_drum": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.708333,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "NEEDS_FIELD_OBSERVATIONS",
+      "why": "night evidence does not establish where the fish is (catch or unclassified study design): position data needed"
+     },
+     "fraction": 0.25,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.625,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 4.5,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 4,
+     "seasonGated": 0,
+     "usable": 4
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 4
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 2,
+     "TRANSFERS": 0,
+     "UNTESTED": 2
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "gizzard_shad": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 clarityLightWind 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 3.5,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 1,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "golden_redhorse": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 2.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 1,
+     "seasonGated": 0,
+     "usable": 1
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 1
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 1
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "goldfish": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 hydrologyRainInflowLevel 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.75,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 7 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 3.5,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 1,
+     "executable": 2,
+     "seasonGated": 0,
+     "usable": 2
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 2
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 2
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "grass_carp": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "2 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.75,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "1 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "1 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "REVIEW_BLOCKED",
+      "why": "1 usable rule(s) cannot fire until a reviewer bounds their season or asserts YEAR_ROUND"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 clarityLightWind 5/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 7/10) but no executable rule"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 7/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 7/10) but no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 6.0,
+    "openDiscrepancies": [
+     "DISC-001",
+     "DISC-007"
+    ],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 2,
+     "executable": 4,
+     "seasonGated": 2,
+     "usable": 6
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 16,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 6
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [
+     "DISC-001",
+     "DISC-007"
+    ],
+    "regionalTransfer": {
+     "PARTIAL": 1,
+     "TRANSFERS": 0,
+     "UNTESTED": 5
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "longnose_gar": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 14 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 14 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 14 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.625,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 14 movement-card rule candidate(s)"
+     },
+     "fraction": 0.75,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 5.5,
+    "openDiscrepancies": [
+     "DISC-006",
+     "DISC-007",
+     "DISC-008"
+    ],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 1,
+     "executable": 4,
+     "seasonGated": 0,
+     "usable": 4
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 5,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 4
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [
+     "DISC-006",
+     "DISC-007",
+     "DISC-008"
+    ],
+    "regionalTransfer": {
+     "PARTIAL": 1,
+     "TRANSFERS": 0,
+     "UNTESTED": 3
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "northern_snakehead": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.333333,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.708333,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 8/10) but no executable rule"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 5.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "SECONDARY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 4,
+     "seasonGated": 0,
+     "usable": 4
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "SECONDARY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 4
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 4
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "paddlefish": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": "protected; not a target",
+    "knowledgeScoreSpeciesV2": 4.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "river_redhorse": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 hydrologyRainInflowLevel 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 1.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "shorthead_redhorse": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 4 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 5/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 5/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 5/10) but no executable rule"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 8 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 4.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 1,
+     "seasonGated": 0,
+     "usable": 1
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 1
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 1
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "shortnose_gar": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 dayNightMovement 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 dayNightMovement 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 dayNightMovement 2/10) and no executable rule"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 6 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 3/10) and no executable rule"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 3.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 3,
+     "seasonGated": 0,
+     "usable": 3
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 3,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 3
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 3
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "silver_carp": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 10 movement-card rule candidate(s)"
+     },
+     "fraction": 0.625,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 clarityLightWind 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 6/10) but no executable rule"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 5.5,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 9,
+     "seasonGated": 0,
+     "usable": 9
+    },
+    "taxonomyStatus": "RESOLVED_HYBRIDIZES"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 12,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 9
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 6,
+     "TRANSFERS": 0,
+     "UNTESTED": 3
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "silver_redhorse": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 2/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 2/10) and no executable rule"
+     },
+     "fraction": 0.2,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 3.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 1,
+     "seasonGated": 0,
+     "usable": 1
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 1
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 1,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "smallmouth_buffalo": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 3 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 3 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 3 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.666667,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 habitatDepthCover 4/10) and no executable rule"
+     },
+     "fraction": 0.4,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 3 draft rule(s), 11 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 5.0,
+    "openDiscrepancies": [
+     "DISC-002",
+     "DISC-007"
+    ],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 3,
+     "executable": 3,
+     "seasonGated": 0,
+     "usable": 3
+    },
+    "taxonomyStatus": "FIELD_ID_UNRESOLVED"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 9,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 3
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [
+     "DISC-002",
+     "DISC-007"
+    ],
+    "regionalTransfer": {
+     "PARTIAL": 3,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "spotted_gar": {
+   "criteria": {
+    "APP-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 4 draft rule(s), 16 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 4 draft rule(s), 16 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 4 draft rule(s), 16 movement-card rule candidate(s)"
+     },
+     "fraction": 0.6,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.875,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "DN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 2 movement-card rule candidate(s)"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 1 draft rule(s), 5 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 2 draft rule(s), 3 movement-card rule candidate(s)"
+     },
+     "fraction": 0.708333,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 0 draft rule(s), 1 movement-card rule candidate(s)"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "existing research is not executable: 3 draft rule(s), 9 movement-card rule candidate(s)"
+     },
+     "fraction": 0.5,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "HAB-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "KNOWLEDGE_NOT_IN_RUNTIME",
+      "why": "knowledge recorded (species-v2 habitatDepthCover 7/10) but no executable rule"
+     },
+     "fraction": 0.8,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PARTIAL"
+    },
+    "SPN-1": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-2": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-3": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    },
+    "SPN-4": {
+     "fraction": 1.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "PASS"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": null,
+    "knowledgeScoreSpeciesV2": 5.5,
+    "openDiscrepancies": [
+     "DISC-005",
+     "DISC-007",
+     "DISC-008"
+    ],
+    "researchMaturity": "RESEARCH",
+    "role": "TARGET",
+    "rules": {
+     "approved": 0,
+     "draft": 4,
+     "executable": 6,
+     "seasonGated": 0,
+     "usable": 6
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "TARGET",
+   "scientificConfidence": {
+    "contradictionsRecorded": 7,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 6
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [
+     "DISC-005",
+     "DISC-007",
+     "DISC-008"
+    ],
+    "regionalTransfer": {
+     "PARTIAL": 6,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "RESEARCH_UNREVIEWED_NOT_FIELD_VALIDATED"
+   }
+  },
+  "striped_mullet": {
+   "criteria": {
+    "APP-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-4": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "BIO-5": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "DN-3": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "ENV-4": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-1": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-2": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-3": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-4": {
+     "blocker": {
+      "blocker": "MISSING_KNOWLEDGE",
+      "why": "no recorded knowledge and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "HAB-5": {
+     "blocker": {
+      "blocker": "DEPENDS_ON_EXECUTABLE_KNOWLEDGE",
+      "why": "abstention credit needs executable knowledge somewhere for this species"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-1": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 seasonalLocationReproduction 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-2": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 seasonalLocationReproduction 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-3": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 seasonalLocationReproduction 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    },
+    "SPN-4": {
+     "blocker": {
+      "blocker": "THIN_KNOWLEDGE",
+      "why": "thin knowledge (species-v2 seasonalLocationReproduction 1/10) and no executable rule"
+     },
+     "fraction": 0.0,
+     "outcomeKind": "SCENARIO_BEHAVIOR_PASSED",
+     "result": "FAIL"
+    }
+   },
+   "evaluationStatus": "ASSESSED",
+   "knowledgeContext": {
+    "assessment": "ASSESSED",
+    "doNotResearch": "saltwater-primary: future phase",
+    "knowledgeScoreSpeciesV2": 0.0,
+    "openDiscrepancies": [],
+    "researchMaturity": "RESEARCH",
+    "role": "KNOWLEDGE_ONLY",
+    "rules": {
+     "approved": 0,
+     "draft": 0,
+     "executable": 0,
+     "seasonGated": 0,
+     "usable": 0
+    },
+    "taxonomyStatus": "RESOLVED"
+   },
+   "role": "KNOWLEDGE_ONLY",
+   "scientificConfidence": {
+    "contradictionsRecorded": 0,
+    "fieldValidation": "NOT_VALIDATED",
+    "independentReview": {
+     "approvedRules": 0,
+     "usableRules": 0
+    },
+    "note": "Scientific confidence is a status, not a score; it never adds capability points.",
+    "openDiscrepancies": [],
+    "regionalTransfer": {
+     "PARTIAL": 0,
+     "TRANSFERS": 0,
+     "UNTESTED": 0
+    },
+    "researchMaturity": "RESEARCH",
+    "status": "NO_EVIDENCE_BASE"
+   }
+  },
+  "suckers_redhorse_carpsuckers_group": {
+   "evaluationStatus": "NOT_ASSESSED",
+   "reason": "NOT_ASSESSED by policy (explicitly unscored)",
+   "role": "KNOWLEDGE_ONLY"
+  },
+  "tilapia_unresolved": {
+   "evaluationStatus": "NOT_ASSESSED",
+   "reason": "NOT_ASSESSED by policy (explicitly unscored)",
+   "role": "KNOWLEDGE_ONLY"
+  }
+ }
+}
