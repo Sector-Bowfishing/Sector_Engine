@@ -4,7 +4,7 @@
     "water-clarity value reflects a research certification of an undeployed candidate (see the artifact's appliesTo/scoreBlockers); it is not reinterpreted.",
     "Research candidate scores elsewhere are out of scope and are not official readiness."
   ],
-  "frozenScoresFileSha256": "347bfd39adfbc864c7761165893ae6ecb6a29a783f4778eaa9b4d6e8c0a0927a",
+  "frozenScoresFileSha256": "062ddb12abc164b152aa61151a7185c1b5ae5a06836804624b5f1a8de5de493f",
   "notBaselinableOffline": [
     "lake-brain",
     "biological-state",
@@ -15,7 +15,7 @@
   "rubricSha256": {
     "docs/brains/scoring/beta-readiness-v1.json": "250e78a02c3980bf94eeaf29648ccc5003ecfa34f14126fcff5dcadb70304add",
     "docs/brains/scoring/biological-state-score-v1.json": "e434eaf6a6de4ea1abbfc23ff993a159d32a83afaa7085d461a020c4e5217787",
-    "docs/brains/scoring/engine-score-v1.json": "40e47f5fa582d381d36c158fc2f81d8ac038ca3c2df7bb30af190db915e91002",
+    "docs/brains/scoring/engine-score-v1.json": "f05eb26866da7d2c4c4c60757240e5312d50a1efd203d9fe4be51c9087259c69",
     "docs/brains/scoring/fish-biological-capability-v2.json": "1ea265eb77e3b2227a66e86f00df7da7f56e4190682fc6aeee13c1d422263187",
     "docs/brains/scoring/fish-capability-cohorts-v1.json": "b8761ec34929573ded8f8945c8a3de4b4e1df7624dc3f185e80a4443a716e0b5",
     "docs/brains/scoring/fish-capability-cohorts-v2.json": "214b6ddd7d451e11b4e31bcaa6afb438eb6ebe7dcdbd3bd7c04cda76996a486d",
@@ -48,7 +48,7 @@
     },
     "wind": {
       "basis": "COMPUTED",
-      "blockSha256": "a2ea6ff5e17e17e4849a39a78f76460c554464986bc8eb7efe44360fbfd6dc06",
+      "blockSha256": "abd93ad8d4fe0933e7b9a027919d1763ea094efc6b40827bc9159a65bb1577dc",
       "scale": 10,
       "scoreType": "ENGINE_READINESS_SCORE",
       "scoreUpdatedAt": "2026-10-13T21:13:49Z",

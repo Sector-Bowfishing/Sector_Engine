@@ -1,5 +1,5 @@
 {
-  "description": "Scores approved/frozen outside this system. Published verbatim with basis FROZEN; never recomputed here.",
+  "description": "Scores approved/frozen outside this system, published verbatim and never recomputed here: basis FROZEN for a frozen value, COMPUTED for a block produced by a Brain's frozen rubric code on its own branch and admitted by wind_score_refresh (Wind).",
   "water-temp": {
     "value": 3.0, "scale": 10, "basis": "FROZEN",
     "scoreVersion": "water-temp-level-ladder-v1",
@@ -28,7 +28,7 @@
     "scale": 10,
     "basis": "COMPUTED",
     "scoreVersion": "wind-certification-rubric-v1",
-    "scoreRubric": "frozen rubric v1 (code-derived scoreboard: jobs/wind-hourly/sector_wind/scoreboard.py) - evidence: frozen CAL+H1 skill file + live reliability ledger metadata",
+    "scoreRubric": "frozen rubric v1 (code-derived scoreboard: brains/wind/research/tools/sector_wind_research/scoreboard.py) - evidence: frozen CAL+H1 skill file + live reliability ledger metadata",
     "scoreUpdatedAt": "2026-10-13T21:13:49Z",
     "completenessPct": 100,
     "uncapped": 3.27,
