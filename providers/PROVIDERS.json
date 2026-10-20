@@ -37,6 +37,139 @@
       "costClass": "free",
       "costNote": "Brain-exclusive single-consumer acquisition inside brains/wind/runtime (sector_wind.ingest); may stay with Wind (Target architecture \u00a74a).",
       "licenseRef": "Public NOAA/IEM data per brains/wind/research/README.md (licence notes); recorded in WIND_RESEARCH_PRESERVATION_PLAN.md \u00a74"
+    },
+    {
+      "providerId": "tva-restapi",
+      "displayName": "TVA REST API (observed reservoir elevation, operating guide)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain",
+        "water-temp"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); pilots. Also fetched hourly by the Water Temperature lane's water-temp-tva-archive job (PAUSED), whose archive the Lake Brain reads",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "usace-cwms-pool",
+      "displayName": "USACE CWMS (pool elevation, guide curve, drought levels)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); pilots",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "usgs-nwis-lake-elevation",
+      "displayName": "USGS NWIS lake surface elevation (00062/62614)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); pilots",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "usace-access2water",
+      "displayName": "USACE Access2Water (district pool listings)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); fleet and candidate scopes only",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "usbr-rise",
+      "displayName": "USBR RISE (daily reservoir elevation)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); fleet and candidate scopes only",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "nws-nwps",
+      "displayName": "NWS National Water Prediction Service (pool gauges)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); fleet and candidate scopes only",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "iem-hads",
+      "displayName": "Iowa Environmental Mesonet HADS archive (NWS DCP history)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); history backfill (rate-limited, 15 s between requests)",
+      "licenseRef": "IEM public archive; provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "usgs-nwis-dv",
+      "displayName": "USGS NWIS daily values (lake elevation history)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeLevelFeeds*.swift); history backfill",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
+      "providerId": "usgs-nwis-00010",
+      "displayName": "USGS NWIS water temperature (00010)",
+      "acquisitionOwner": "water-temp",
+      "healthOwner": "water-temp",
+      "authorizedConsumers": [
+        "water-temp"
+      ],
+      "costClass": "free",
+      "costNote": "Acquired by the Water Temperature Brain (brains/water-temperature/runtime) through the shared Engine fetchers (Sources/SectorEngine/Fetchers), the same fetch as /conditions",
+      "licenseRef": "Public US government data (no licence restriction)"
+    },
+    {
+      "providerId": "usace-cwms-water-temp",
+      "displayName": "USACE CWMS water temperature",
+      "acquisitionOwner": "water-temp",
+      "healthOwner": "water-temp",
+      "authorizedConsumers": [
+        "water-temp"
+      ],
+      "costClass": "free",
+      "costNote": "Acquired by the Water Temperature Brain (brains/water-temperature/runtime) through the shared Engine fetchers (Sources/SectorEngine/Fetchers), the same fetch as /conditions",
+      "licenseRef": "Public US government data (no licence restriction)"
+    },
+    {
+      "providerId": "open-meteo-forecast",
+      "displayName": "Open-Meteo forecast (surface-energy-balance model inputs)",
+      "acquisitionOwner": "water-temp",
+      "healthOwner": "water-temp",
+      "authorizedConsumers": [
+        "water-temp"
+      ],
+      "costClass": "free",
+      "costNote": "Acquired by the Water Temperature Brain (brains/water-temperature/runtime) through the shared Engine fetchers (Sources/SectorEngine/Fetchers), the same fetch as /conditions",
+      "licenseRef": "Open-Meteo terms of use (customer path already uses it in /conditions)"
     }
   ]
 }

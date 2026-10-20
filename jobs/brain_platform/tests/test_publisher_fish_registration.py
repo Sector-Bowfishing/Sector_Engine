@@ -11,7 +11,12 @@ def test_default_registry_has_exactly_wind_and_fish_schemas_and_bundles():
     assert r.bundle(WIND_BUNDLE).sections == WIND_SCHEMAS and r.bundle(FISH_BUNDLE).sections == FISH_SCHEMAS
     from sector_brain_platform.publisher.registry import CLARITY_BUNDLE, CLARITY_SCHEMAS       # Water Clarity: third registration (Water Clarity Structural Certification V1)
     assert r.schemas_for("water-clarity") == sorted(CLARITY_SCHEMAS) and r.bundle(CLARITY_BUNDLE).sections == CLARITY_SCHEMAS
-    for other in ("lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation"):
+    from sector_brain_platform.publisher.registry import INTELLIGENCE_BUNDLE, INTELLIGENCE_SCHEMAS   # Sector Intelligence: fourth (Cortex architecture completion)
+    assert r.schemas_for("sector-intelligence") == sorted(INTELLIGENCE_SCHEMAS) and r.bundle(INTELLIGENCE_BUNDLE).sections == INTELLIGENCE_SCHEMAS
+    from sector_brain_platform.publisher.registry import LAKE_BUNDLE, LAKE_SCHEMAS, WATER_TEMP_BUNDLE, WATER_TEMP_SCHEMAS   # Lake, Water Temperature: SHADOW
+    assert r.schemas_for("lake-brain") == sorted(LAKE_SCHEMAS) and r.bundle(LAKE_BUNDLE).sections == LAKE_SCHEMAS
+    assert r.schemas_for("water-temp") == sorted(WATER_TEMP_SCHEMAS) and r.bundle(WATER_TEMP_BUNDLE).sections == WATER_TEMP_SCHEMAS
+    for other in ("depth", "vegetation"):
         assert r.schemas_for(other) == []                                      # still identity-only until their own certification
 
 

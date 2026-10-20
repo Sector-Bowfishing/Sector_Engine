@@ -392,7 +392,196 @@ def clarity_bundles() -> list[BundleSpec]:
     return [BundleSpec(CLARITY_BUNDLE, CLARITY, CLARITY_SCHEMAS)]
 
 
+# ---- Sector Intelligence (synthesis Brain; SHADOW registration, Cortex architecture completion 2026-10-20) ----------------------------------------
+INTELLIGENCE = "sector-intelligence"
+INTELLIGENCE_SLOT = BRAINS[INTELLIGENCE][0]
+INTELLIGENCE_SNAPSHOT_FIELD = BRAINS[INTELLIGENCE][1]
+INTELLIGENCE_SCHEMAS = ("intelligence-lake-state-v1", "intelligence-registry-v1")
+INTELLIGENCE_BUNDLE = "sector-intelligence-publication-v1"
+
+#: /brains/sector-intelligence CHILD ownership: exactly the children `sector_intelligence_brain.build_updates` builds today. Replaced child by child, never the
+#: whole node; `publication` / `certification` stay Publisher-owned.
+INTELLIGENCE_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "orchestration", "versions", "activeModel", "modelRoster", "vocabularies",
+              "inputContract", "outputContract", "knownLimitations", "catalogVersion", "catalogSha256", "fingerprint"),
+    "status": ("schedule", "enabled", "health", "status", "statusBasis", "statusReasons", "supportedLakeCount", "evaluatedLakeCount", "directoryLakeCount",
+               "evaluation", "engineServing", "dependencies", "dependencyOrder", "dependencySummary", "blockers", "breakdowns", "publishMode",
+               "deploymentVersion", "lastSuccessfulRun", "updatedAt"),
+}
+INTELLIGENCE_HEALTH_DOMAIN_CHILDREN = ("status",)                   # /health/brains/sector-intelligence: domain fact only; run/process fields are Orchestrator-owned
+
+#: Intelligence's volatile contract: run-clock values only (measured by re-running the builder on identical inputs). The upstream registration, health,
+#: version and evaluation inputs are NOT volatile: a change there IS a new input. Shared defaults (generatedAt publishedAt checkedAt ageHours durationMs) apply.
+INTELLIGENCE_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "intelligence-volatile-v1", 1,
+    keys=frozenset({"lastEvaluationAt", "lastUpdatedAt", "updatedAt"}),
+    paths=(PathFamily(f"/brains/{INTELLIGENCE}/updatedAt", note="transitional"), PathFamily(f"/brains/{INTELLIGENCE}/lastSuccessfulRun", note="transitional")),
+    notes={"key:lastEvaluationAt": "the run's evaluation time (registry evaluation block, dependency entries); moves every run",
+           "key:lastUpdatedAt": "slot write time; no domain meaning", "key:updatedAt": "validation/registry write time; no domain meaning",
+           "path:/brains/sector-intelligence/updatedAt": "run timestamp == Publisher metadata; retire when Ops reads publication",
+           "path:/brains/sector-intelligence/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"})
+
+
+def intelligence_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "intelligence-lake-state-v1", INTELLIGENCE,
+        (PathFamily(f"/lakes/{{k}}/states/{INTELLIGENCE_SLOT}", k),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{INTELLIGENCE_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{INTELLIGENCE_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{INTELLIGENCE_SLOT}", k, "DERIVED_PROJECTION"),
+         # Brain-authored, NOT a Publisher projection: the legacy writer emits the snapshot field only for EVALUATED pilot lakes (never for NOT_EVALUATED
+         # input-availability states). A COPY projection of every lake state would change that meaning.
+         PathFamily(f"/snapshots/{{k}}/latest/{INTELLIGENCE_SNAPSHOT_FIELD}", k, note="evaluated lakes only (LEGACY_READER_DEPENDENCY)"),
+         PathFamily(f"/snapshots/{{k}}/latest/brainVersions/{INTELLIGENCE}", k, note="evaluated lakes only (LEGACY_READER_DEPENDENCY)")),
+        value_types={f"/lakes/{{k}}/states/{INTELLIGENCE_SLOT}": dict, f"/lakeFleet/{{k}}/slots/{INTELLIGENCE_SLOT}": dict},
+        volatile=INTELLIGENCE_VOLATILE_CONTRACT_V1)                                       # no delete family: Intelligence never deletes a lake state
+    registry = SchemaSpec(
+        "intelligence-registry-v1", INTELLIGENCE,
+        (PathFamily(f"/brains/{INTELLIGENCE}/{{child}}", {"child": one_of(c for group in INTELLIGENCE_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only (INTELLIGENCE_REGISTRY_CHILDREN); never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{INTELLIGENCE}"),
+         PathFamily(f"/health/brains/{INTELLIGENCE}/{{child}}", {"child": one_of(INTELLIGENCE_HEALTH_DOMAIN_CHILDREN)}, note="domain health fact only"),
+         PathFamily("/activity/{event}", {"event": contains(f"-{INTELLIGENCE}-")}, note="own domain events only; retention/pruning is a platform concern")),
+        volatile=INTELLIGENCE_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry]
+
+
+def intelligence_bundles() -> list[BundleSpec]:
+    return [BundleSpec(INTELLIGENCE_BUNDLE, INTELLIGENCE, INTELLIGENCE_SCHEMAS)]
+
+
+# ---- Lake Brain and Water Temperature (Swift runtimes; SHADOW registrations, Cortex architecture completion 2026-10-20) -------------------------
+# Both jobs write whole registry/health nodes and per-lake nodes through the Swift Brain platform client (LEGACY). These registrations describe that
+# write set as Publisher families, derived from the runners' recorded output (brains/<dir>/tests/golden/*_run_updates.json, regenerated by Swift tests).
+LAKE = "lake-brain"
+LAKE_SLOT = BRAINS[LAKE][0]
+LAKE_SCHEMAS = ("lake-state-v1", "lake-registry-v1", "lake-source-registry-v1")
+LAKE_BUNDLE = "lake-publication-v1"
+LAKE_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "orchestration", "versions", "modelVersion", "baselineMethod", "bindingVersion",
+              "readinessDefinitions", "stateKindDefinitions", "healthRule"),
+    "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount", "staleAfterHours",
+               "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "fleetScope"),
+}
+LAKE_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount", "reasons")      # domain facts + WHY; run/process fields are Orchestrator-owned
+LAKE_FLEET_CHILDREN = ("riverSystem",)                                      # the one Lake-only shared fleet field the job writes (ownership.LAKE_BRAIN_ONLY_FLEET)
+
+
+def _owned_sources(brain_id) -> frozenset:
+    return frozenset(sid for sid, owner in SOURCE_OWNERS.items() if owner == brain_id)
+
+
+#: Run-clock values only, measured by running the Lake runner twice on identical feeds at different clock times (2026-10-20).
+LAKE_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "lake-volatile-v1", 1,
+    keys=frozenset({"inputAgeHours", "sourceAgeHours", "nextCheckAt", "lastUpdatedAt", "updatedAt", "lastFetchAt"}),
+    paths=(PathFamily(f"/brains/{LAKE}/lastSuccessfulRun", note="transitional"),),
+    notes={"key:inputAgeHours": "age of the newest input at run time (provenance)", "key:sourceAgeHours": "age of the reading at run time; the observation time itself is NOT volatile",
+           "key:nextCheckAt": "run time + recheck interval (freshness envelope)", "key:lastUpdatedAt": "slot write time; no domain meaning",
+           "key:updatedAt": "profile write time; no domain meaning", "key:lastFetchAt": "per-source fetch time in /sources/{id}",
+           "path:/brains/lake-brain/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"})
+LAKE_PROJECTIONS = (
+    CompatibilityProjection("lake-snapshot-copy-v1", f"/lakes/{{k}}/states/{LAKE_SLOT}", f"/snapshots/{{k}}/latest/{BRAINS[LAKE][1]}", "COPY",
+                            retirement_gate="same snapshot-reader migration program as Wind/Clarity: readers moved, zero readers proven, rollback export, Michael approval"),
+    CompatibilityProjection("lake-snapshot-brainversion-v1", f"/lakes/{{k}}/states/{LAKE_SLOT}", f"/snapshots/{{k}}/latest/brainVersions/{LAKE}", "VALUE_FROM",
+                            f"/brains/{LAKE}/version", retirement_gate="retires with lake-snapshot-copy-v1"),
+)
+
+
+def lake_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "lake-state-v1", LAKE,
+        (PathFamily(f"/lakes/{{k}}/states/{LAKE_SLOT}", k), PathFamily("/lakes/{k}/brain", k, note="LakeProfile (Lake-owned node)"),
+         PathFamily("/lakes/{k}/speciesPresence", k, note="whole presence node, from the validated private presence release (never committed)"),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{LAKE_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{LAKE_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{LAKE_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily("/lakeFleet/{k}/{child}", {**k, "child": one_of(LAKE_FLEET_CHILDREN)}, note="Lake-only shared fleet fields")),
+        value_types={f"/lakes/{{k}}/states/{LAKE_SLOT}": dict, "/lakes/{k}/brain": dict, "/lakes/{k}/speciesPresence": dict},
+        volatile=LAKE_VOLATILE_CONTRACT_V1, projections=LAKE_PROJECTIONS)
+    registry = SchemaSpec(
+        "lake-registry-v1", LAKE,
+        (PathFamily(f"/brains/{LAKE}/{{child}}", {"child": one_of(c for group in LAKE_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only; never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{LAKE}"),
+         PathFamily(f"/health/brains/{LAKE}/{{child}}", {"child": one_of(LAKE_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only"),
+         PathFamily("/activity/{event}", {"event": contains(f"-{LAKE}-")}, note="own domain events only")),
+        delete_families=(PathFamily(f"/brains/{LAKE}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=LAKE_VOLATILE_CONTRACT_V1)
+    sources = SchemaSpec(
+        "lake-source-registry-v1", LAKE,
+        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(LAKE))}), PathFamily("/health/sources/{id}", {"id": one_of(_owned_sources(LAKE))})),
+        volatile=LAKE_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry, sources]
+
+
+WATER_TEMP = "water-temp"
+WATER_TEMP_SLOT = BRAINS[WATER_TEMP][0]
+WATER_TEMP_SCHEMAS = ("water-temp-lake-state-v1", "water-temp-registry-v1", "water-temp-source-registry-v1")
+WATER_TEMP_BUNDLE = "water-temp-publication-v1"
+WATER_TEMP_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "descriptor", "versions", "activeProductionModel", "researchCandidate",
+              "readinessDefinitions", "stateKindDefinitions", "healthRule"),
+    "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "readinessCounts", "staleLakeCount", "staleAfterHours",
+               "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "runsPerMinute", "fleetScope"),
+}
+WATER_TEMP_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")
+WATER_TEMP_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "water-temp-volatile-v1", 1,
+    keys=frozenset({"inputAgeHours", "sourceAgeHours", "lastUpdatedAt", "lastFetchAt"}),
+    paths=(PathFamily(f"/brains/{WATER_TEMP}/lastSuccessfulRun", note="transitional"),),
+    notes={"key:inputAgeHours": "age of the newest input at run time (provenance)", "key:sourceAgeHours": "age of the reading at run time; the observation time itself is NOT volatile",
+           "key:lastUpdatedAt": "slot write time; no domain meaning", "key:lastFetchAt": "per-source fetch time in /sources/{id}",
+           "path:/brains/water-temp/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"})
+WATER_TEMP_PROJECTIONS = (
+    CompatibilityProjection("water-temp-snapshot-copy-v1", f"/lakes/{{k}}/states/{WATER_TEMP_SLOT}", f"/snapshots/{{k}}/latest/{BRAINS[WATER_TEMP][1]}", "COPY",
+                            retirement_gate="same snapshot-reader migration program as Wind/Clarity: readers moved, zero readers proven, rollback export, Michael approval"),
+    CompatibilityProjection("water-temp-snapshot-brainversion-v1", f"/lakes/{{k}}/states/{WATER_TEMP_SLOT}", f"/snapshots/{{k}}/latest/brainVersions/{WATER_TEMP}",
+                            "VALUE_FROM", f"/brains/{WATER_TEMP}/version", retirement_gate="retires with water-temp-snapshot-copy-v1"),
+)
+
+
+def water_temp_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "water-temp-lake-state-v1", WATER_TEMP,
+        (PathFamily(f"/lakes/{{k}}/states/{WATER_TEMP_SLOT}", k), PathFamily(f"/lakes/{{k}}/profiles/{WATER_TEMP_SLOT}", k),
+         PathFamily(f"/lakes/{{k}}/validation/{WATER_TEMP}", k, note="protected development lakes only"),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{WATER_TEMP_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{WATER_TEMP_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{WATER_TEMP_SLOT}", k, "DERIVED_PROJECTION")),
+        value_types={f"/lakes/{{k}}/states/{WATER_TEMP_SLOT}": dict, f"/lakes/{{k}}/profiles/{WATER_TEMP_SLOT}": dict},
+        volatile=WATER_TEMP_VOLATILE_CONTRACT_V1, projections=WATER_TEMP_PROJECTIONS)
+    registry = SchemaSpec(
+        "water-temp-registry-v1", WATER_TEMP,
+        (PathFamily(f"/brains/{WATER_TEMP}/{{child}}", {"child": one_of(c for group in WATER_TEMP_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only; never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{WATER_TEMP}"),
+         PathFamily(f"/health/brains/{WATER_TEMP}/{{child}}", {"child": one_of(WATER_TEMP_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only"),
+         PathFamily("/activity/{event}", {"event": contains(f"-{WATER_TEMP}-")}, note="own domain events only")),
+        delete_families=(PathFamily(f"/brains/{WATER_TEMP}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=WATER_TEMP_VOLATILE_CONTRACT_V1)
+    sources = SchemaSpec(
+        "water-temp-source-registry-v1", WATER_TEMP,
+        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))}), PathFamily("/health/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))})),
+        volatile=WATER_TEMP_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry, sources]
+
+
+def lake_bundles() -> list[BundleSpec]:
+    return [BundleSpec(LAKE_BUNDLE, LAKE, LAKE_SCHEMAS)]
+
+
+def water_temp_bundles() -> list[BundleSpec]:
+    return [BundleSpec(WATER_TEMP_BUNDLE, WATER_TEMP, WATER_TEMP_SCHEMAS)]
+
+
 def default_registry() -> Registry:
-    """Wind, Fish and Water Clarity. Every other Brain is registered as an identity (so an unknown id is distinguishable from an unmigrated one) but has no schema:
-    anything submitted for them is rejected UNKNOWN_SCHEMA until their own certification registers one."""
-    return Registry(wind_specs() + fish_specs() + clarity_specs(), wind_bundles() + fish_bundles() + clarity_bundles())
+    """Wind, Fish, Water Clarity, Sector Intelligence, Lake and Water Temperature (all SHADOW). Depth and Vegetation are registered as identities (so an
+    unknown id is distinguishable from an unmigrated one) but have no schema: anything submitted for them is rejected UNKNOWN_SCHEMA until their own
+    certification registers one."""
+    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs(),
+                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles())
