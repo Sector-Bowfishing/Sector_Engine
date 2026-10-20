@@ -29,7 +29,7 @@
 
 ## 1. What Sector Intelligence is today
 
-Four implementations exist. They are declared in `jobs/sector-intelligence-brain/catalog.json`, which is reviewed by hand. Facts that change at runtime are read live, never declared.
+Four implementations exist. They are declared in `brains/sector-intelligence/runtime/catalog.json`, which is reviewed by hand. Facts that change at runtime are read live, never declared.
 
 | Implementation | Lifecycle | Serves customers | Reads any Brain |
 |---|---|---|---|
