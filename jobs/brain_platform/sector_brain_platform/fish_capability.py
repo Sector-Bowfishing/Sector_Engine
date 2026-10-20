@@ -464,3 +464,21 @@ def attach_capability(scores: dict, facts: dict, now_iso: str, old_scores: dict 
         return scores, f"fish capability attached: {res['evaluationId']} TARGET {res['aggregates']['TARGET']['value']} overall {res['brain']['overallBiologicalCapability']['value']}"
     except Exception as ex:          # never let the capability block break the score run
         return scores, f"fish capability HELD: {type(ex).__name__}: {ex}"
+
+
+def plan_capability_write(updates: dict, scores: dict, old_scores: dict | None) -> list[str]:
+    """Add the capability write to a score-run update set without ever clobbering a sibling (e.g. a score explanation):
+    if /scores/biological-state is already being rewritten the block rides inside it; otherwise only the child path is written,
+    and only when the block changed. Returns change notes (no score.changed event: the maturity value is untouched)."""
+    cap = (scores.get("biological-state") or {}).get("capability")
+    if cap is None:
+        return []
+    key = "scores/biological-state"
+    if key in updates:
+        updates[key] = {**updates[key], "capability": cap}
+        return ["biological-state: capability carried in the rewritten score block"]
+    old = (((old_scores or {}).get("biological-state")) or {}).get("capability")
+    if old == cap:
+        return []
+    updates[key + "/capability"] = cap
+    return [f"biological-state: capability {(old or {}).get('evaluationId', '—')} -> {cap.get('evaluationId')}"]

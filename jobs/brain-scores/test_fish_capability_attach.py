@@ -34,3 +34,19 @@ def test_deploy_stages_every_input_the_hook_reads():
     for f in ("fish-biological-capability-v2.json", "fish-capability-cohorts-v2.json", "fish-capability-publication.json", "evidence/fish-capability-evidence.json"):
         assert f.split("/")[-1] in deploy, f
         assert os.path.exists(os.path.join(HERE, "..", "..", "docs", "brains", "scoring", f)), f
+
+
+def test_capability_write_never_clobbers_siblings_and_is_idempotent():
+    cap = {"schema": fc.RESULT_SCHEMA, "evaluationId": "fcap-x"}
+    scores = {"biological-state": {"value": 5.1, "capability": cap}}
+    # parent not rewritten: only the child path, so a published explanation beside it survives
+    u = {}
+    notes = fc.plan_capability_write(u, scores, {"biological-state": {"value": 5.1, "explanation": {"x": 1}}})
+    assert list(u) == ["scores/biological-state/capability"] and notes
+    # parent rewritten (e.g. with an explanation added by the score run): the block rides inside it, no overlapping paths
+    u = {"scores/biological-state": {"value": 5.1, "explanation": {"x": 2}}}
+    fc.plan_capability_write(u, scores, {})
+    assert list(u) == ["scores/biological-state"] and u["scores/biological-state"]["explanation"] == {"x": 2} and u["scores/biological-state"]["capability"] == cap
+    # unchanged block: nothing to write
+    u = {}
+    assert fc.plan_capability_write(u, scores, {"biological-state": {"capability": cap}}) == [] and u == {}
