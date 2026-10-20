@@ -37,8 +37,41 @@ def criteria_index(rubric: dict) -> dict:
     return {c["criterionId"]: {**c, "categoryId": cat["categoryId"]} for cat in rubric["categories"] for c in cat["criteria"]}
 
 
-def validate_rubric(rubric: dict) -> list[str]:
+# What a frozen rubric / cohort definition may never change without a new version (status, approval and publication fields excluded).
+RUBRIC_SCORING_KEYS = ("rubricId", "rubricVersion", "scale", "categories", "abstentionPolicy", "coveragePolicy", "normalizationPolicy",
+                       "referenceCasePolicy", "aggregationPolicy", "evaluationStatus", "pointsRule")
+COHORT_SCORING_KEYS = ("cohortsVersion", "cohorts", "notAssessedByPolicy", "notIndividuallyAssessable", "overall")
+
+
+def _fp(obj: dict, keys) -> str:
+    import hashlib
+    return "sha256:" + hashlib.sha256(json.dumps({k: obj.get(k) for k in keys}, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+
+
+def rubric_fingerprint(rubric: dict) -> str:
+    return _fp(rubric, RUBRIC_SCORING_KEYS)
+
+
+def cohorts_fingerprint(cohorts: dict) -> str:
+    return _fp(cohorts, COHORT_SCORING_KEYS)
+
+
+def validate_frozen(rubric: dict, cohorts: dict | None = None) -> list[str]:
+    """A frozen (approved) rubric and its frozen cohorts must match their recorded fingerprints: weights, criteria, award rules, policies and
+    roster membership cannot drift silently. Any change needs a new rubric/cohorts version (and owner approval)."""
+    fz = rubric.get("frozen")
+    if not fz:
+        return []
     e = []
+    if rubric_fingerprint(rubric) != fz.get("rubricFingerprint"):
+        e.append(f"frozen rubric {rubric.get('rubricVersion')} was modified: scoring content no longer matches its fingerprint (new version required)")
+    if cohorts is not None and cohorts.get("cohortsVersion") == fz.get("cohortsVersion") and cohorts_fingerprint(cohorts) != fz.get("cohortsFingerprint"):
+        e.append(f"frozen cohorts {cohorts.get('cohortsVersion')} were modified: membership no longer matches its fingerprint (new version required)")
+    return e
+
+
+def validate_rubric(rubric: dict) -> list[str]:
+    e = validate_frozen(rubric)
     total = 0.0
     for cat in rubric.get("categories") or []:
         s = sum(c["weight"] for c in cat["criteria"])
@@ -69,7 +102,7 @@ def _walk(o, path=""):
 def validate_evidence(ev: dict, rubric: dict, cohorts: dict) -> list[str]:
     """Problems (empty = valid). Fails closed on: wrong schema/rubric/cohort version, a roster species missing, a missing or out-of-range criterion,
     an un-exempted NOT_APPLICABLE, and any handwritten score field in the evidence (points exist only here)."""
-    e = validate_rubric(rubric)
+    e = validate_rubric(rubric) + [x for x in validate_frozen(rubric, cohorts) if "cohorts" in x]
     if ev.get("schema") != EVIDENCE_SCHEMA:
         e.append(f"evidence schema {ev.get('schema')!r}")
     if ev.get("rubricId") != rubric.get("rubricId"):
@@ -291,8 +324,13 @@ def build_result(ev: dict, rubric: dict, cohorts: dict, *, generated_at: str, pr
         "referenceCases": {k: v for k, v in (ev.get("referenceCases") or {}).items() if k != "results"},
         "limitations": ev.get("limitations") or [],
     }
+    base = rubric.get("approvedBaseline")
+    if base and base.get("cohortsVersion") == cohorts["cohortsVersion"]:
+        result["approvedBaseline"] = {k: base.get(k) for k in ("evaluationId", "knowledgeRelease", "aggregates", "approvedAt")}
     if previous is not None:
         result["changeRecord"] = compare(previous, result)
+        if base and previous.get("evaluationId") == base.get("evaluationId"):
+            result["changeRecord"]["againstApprovedBaseline"] = True
     return result
 
 

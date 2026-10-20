@@ -79,5 +79,10 @@
   "approvedBy": "owner (Michael Cather)",
   "approvedAt": "2026-10-19",
   "with": "rubric FISH_BIOLOGICAL_CAPABILITY_V2 2.1.0"
+ },
+ "frozen": {
+  "frozenAt": "2026-10-19",
+  "fingerprint": "sha256:45b362d56e5dce653262695bd99127e05e438b4df627231c4246f8480ec92166",
+  "rule": "membership frozen; a change is a new cohortsVersion"
  }
 }

@@ -255,5 +255,49 @@
   "status": "INACTIVE",
   "gate": "human review (APPROVED or REJECTED with a named reviewer) of the 6 non-self-consistency reference cases: ABSTENTION_CHECK CC-REF-02, CC-REF-03, LG-REF-01, BB-REF-01; INDEPENDENT_EXPECTATION_NOT_IN_RUNTIME GC-REF-02, BF-REF-02. Then a separately reviewed scorer-job/Publisher change; no writer exists today.",
   "displayLabel": "scenario capability (not field-validated)"
+ },
+ "frozen": {
+  "frozenAt": "2026-10-19",
+  "by": "owner decision 2026-10-19 (approve rubric 2.1 with cohorts v2 as the initial baseline; freeze weights, criteria and cohort membership)",
+  "cohortsVersion": "fish-capability-cohorts-v2",
+  "rubricFingerprint": "sha256:04b1425a9284138ffeb7a83bcedb2be8948fdea1a2c7908e85488429d66d8fe1",
+  "cohortsFingerprint": "sha256:45b362d56e5dce653262695bd99127e05e438b4df627231c4246f8480ec92166",
+  "rule": "Weights, criteria, award rules, policies and roster membership are frozen. The scorer refuses any drift from these fingerprints. A change requires a new rubric or cohorts version and owner approval; it is never applied to raise scores, and results across versions are NOT_COMPARABLE."
+ },
+ "approvedBaseline": {
+  "approvedAt": "2026-10-19",
+  "evaluationId": "fcap-1d7b83b76fd4bfd02627",
+  "evaluatedAt": "2026-10-19T22:00:00Z",
+  "cohortsVersion": "fish-capability-cohorts-v2",
+  "knowledgeRelease": {
+   "researchVersion": "2026-10-17.1",
+   "manifestSha256": "f179ec216ecaae928ee15b9c91b7914b96aad09caa3ebf53cc479201266b79e9"
+  },
+  "evaluatorVersion": "fish-capability-evaluator-2.1.0",
+  "codeVersion": "06557f16",
+  "aggregates": {
+   "TARGET": {
+    "value": 6.805781,
+    "display": 6.8,
+    "eligibleSpecies": 8
+   },
+   "ALL_ASSESSED": {
+    "value": 3.770401,
+    "display": 3.8,
+    "eligibleSpecies": 26,
+    "role": "overall Fish Brain"
+   }
+  },
+  "speciesResult": {
+   "location": "private research workspace: Sector Research/fish-brain/analysis/capability-v2/demo-2026-10-19-rubric-2.1/approved-2.1.0/result.json (per-species scores, categories, missing capabilities, research backlog; private because the evidence carries rule identifiers)",
+   "sha256": "3199505ab821b0eed6a24b1726ddf5a9391c6f26acc2e68cf8000d387faae635"
+  },
+  "howToMeasureAgainstIt": "python3 brains/fish/runtime/capability_run.py --bundle <release> --out <dir> --previous <approved baseline result.json>: the change record is marked againstApprovedBaseline and gives exact per-species, per-category, per-criterion and aggregate deltas.",
+  "separateMeasurements": {
+   "maturity": "biological-state-score-v1 5.1 (unchanged, not replaced)",
+   "speciesKnowledge": "species-v2 scores unchanged",
+   "scientificConfidence": "status only",
+   "productionReadiness": "gates only"
+  }
  }
 }

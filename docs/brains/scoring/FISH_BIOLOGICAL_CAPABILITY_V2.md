@@ -1,6 +1,6 @@
 # Fish Biological Capability V2 (`FISH_BIOLOGICAL_CAPABILITY_V2`)
 
-**Status: APPROVED `2.1.0` with cohorts `fish-capability-cohorts-v2` (owner, 2026-10-19). Displayed as "scenario capability (not field-validated)". Publication INACTIVE until the 6 non-self-consistency reference cases (CC-REF-02, CC-REF-03, LG-REF-01, BB-REF-01, GC-REF-02, BF-REF-02) are human-reviewed and a reviewed publication path exists; nothing publishes it today.**
+**Status: APPROVED and FROZEN — rubric `2.1.0` + cohorts `fish-capability-cohorts-v2` (owner, 2026-10-19). Approved baseline: TARGET 6.81 (6.805781), overall Fish 3.77 (3.770401) on release 2026-10-17.1. Displayed as "scenario capability (not field-validated)". The approval covers the rubric and cohorts only: no merge, deployment, Publisher cutover, customer activation or score publication is authorised (§12).**
 Rubric: [`fish-biological-capability-v2.json`](fish-biological-capability-v2.json) · Cohorts: [`fish-capability-cohorts-v2.json`](fish-capability-cohorts-v2.json) (v1 kept for history) ·
 Evaluator: `brains/fish/runtime/capability_eval.py` · Scorer: `jobs/brain_platform/sector_brain_platform/fish_capability.py` · Local entry point: `brains/fish/runtime/capability_run.py`.
 
@@ -128,3 +128,44 @@ Deterministic, stdlib only, offline: no network, RTDB, credentials, Ollama or LL
 2. Approve cohorts `fish-capability-cohorts-v2` (single-species rule; overall = all individually assessed species, TARGET separate).
 3. Review the 15 PROPOSED reference cases (approve / reject). Classified 2026-10-19: 9 SELF_CONSISTENCY (prove only that Fish runs its own rules), 4 ABSTENTION_CHECK, 2 INDEPENDENT_EXPECTATION_NOT_IN_RUNTIME (grass carp and bowfin night). None is backed by APPROVED evidence (0 approved rules, empty review ledger); none was self-approved.
 4. Authorise a publication path (e.g. `/scores/biological-state/capability`) through the existing Publisher and scorer; until then nothing is written.
+
+## 12. Frozen baseline and activation gates (owner decision, 2026-10-19)
+
+**Frozen.**
+- Weights, criteria, award rules, policies (abstention, coverage, normalisation, reference cases, aggregation) and roster membership are recorded as fingerprints in `fish-biological-capability-v2.json` → `frozen`.
+- `sector_brain_platform.fish_capability` refuses any rubric or `fish-capability-cohorts-v2` content that no longer matches them.
+- A change needs a new rubric or cohorts version and owner approval, and is never made to raise scores. Results across versions are NOT_COMPARABLE.
+
+**Approved baseline** (`approvedBaseline`):
+
+| Item | Value |
+|---|---|
+| Evaluation | `fcap-1d7b83b76fd4bfd02627`, code `06557f16`, evaluator 2.1.0 |
+| Knowledge release | 2026-10-17.1, manifest `f179ec21…` |
+| TARGET | **6.805781** (8 species) |
+| Overall Fish (ALL_ASSESSED) | **3.770401** (26 species) |
+
+- Per-species scores, category breakdowns, missing capabilities and the research backlog are in the private baseline `result.json` (sha256 recorded). It is private because the evidence carries rule identifiers.
+- Every result shows the baseline.
+- Measure improvements with `capability_run.py --previous <approved baseline result.json>`. The change record is marked `againstApprovedBaseline` and gives exact deltas, which can be negative.
+
+**Unchanged and separate:**
+- maturity `biological-state-score-v1` 5.1;
+- species-v2 knowledge scores;
+- scientific confidence (statuses);
+- production readiness (gates).
+
+**Not authorised by this approval:**
+- PR merges;
+- production deployment;
+- Publisher cutover;
+- customer-facing activation;
+- production score publication.
+
+**Activation gates (all required, in order):**
+1. **Reference-case review.** A named reviewer marks the 6 non-self-consistency cases APPROVED or REJECTED: CC-REF-02, CC-REF-03, LG-REF-01, BB-REF-01, GC-REF-02 and BF-REF-02. The 9 self-consistency cases may be approved as regression tests.
+2. **Merge authorisation for Engine PR #35.** Its own review, separate from this rubric approval.
+3. **A publication PR, reviewed separately.** A scorer-job path that writes `capability` inside `/scores/biological-state` through the existing Publisher and gates, nonproduction-tested and approved like any score path. No writer exists today.
+4. **Production publication approval.** Explicit owner approval to write the score in production. The Fish Publisher cutover (`SHADOW` today) follows its own cutover order and approval.
+5. **Ops.** Merge and deploy Sector_Ops PR #7 only after Engine publishes.
+6. **Customer-facing activation.** Separate product decision. Fish has no customer path today, and per-lake Biological State LIVE is decision FISH-PRD-001.

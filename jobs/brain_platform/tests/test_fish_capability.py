@@ -101,6 +101,8 @@ def test_validation_fails_closed():
 
 def test_exemption_normalizes_the_denominator_only_when_reviewed():
     r = copy.deepcopy(RUBRIC)
+    r.pop("frozen")                       # an exemption can only arrive in a NEW rubric version: 2.1.0 is frozen
+    r["rubricVersion"] = "2.2.0-test"
     s0 = COHORTS["cohorts"]["TARGET"]["species"][0]
     ev = evidence({s0: 1.0})
     ev["species"][s0]["criteria"]["DN-1"] = {"result": "NOT_APPLICABLE", "fraction": None}
@@ -154,3 +156,35 @@ def test_approved_rubric_and_cohorts_are_authoritative_but_never_published():
     assert r["authority"]["publication"] == "INACTIVE" and "reference cases" in r["authority"]["publicationGate"]
     assert r["authority"]["displayLabel"] == "scenario capability (not field-validated)"
     assert fc.build_result(evidence({}), RUBRIC, COHORTS, generated_at=NOW)["authority"]["status"] == "CANDIDATE"      # v1 cohorts were not approved
+
+
+def test_frozen_rubric_and_cohorts_refuse_any_drift():
+    c2 = fc.load_json(os.path.join(DOCS, "fish-capability-cohorts-v2.json"))
+    assert fc.validate_rubric(RUBRIC) == [] and fc.validate_frozen(RUBRIC, c2) == []
+    w = copy.deepcopy(RUBRIC)
+    w["categories"][0]["criteria"][0]["weight"] += 0.25          # a weight nudge (even with the category max adjusted) is refused
+    w["categories"][0]["maxPoints"] += 0.25
+    w["categories"][1]["criteria"][0]["weight"] -= 0.25
+    w["categories"][1]["maxPoints"] -= 0.25
+    assert any("frozen rubric" in e for e in fc.validate_rubric(w))
+    a = copy.deepcopy(RUBRIC)
+    a["categories"][3]["criteria"][2]["award"] = "1 always"
+    assert any("frozen rubric" in e for e in fc.validate_rubric(a))
+    m = copy.deepcopy(c2)
+    m["cohorts"]["ALL_ASSESSED"]["species"].remove("american_shad")      # dropping a weak (0.00) species is refused
+    assert any("frozen cohorts" in e for e in fc.validate_frozen(RUBRIC, m))
+    with pytest.raises(ValueError):
+        fc.build_result(evidence({}, cohorts=m), RUBRIC, m, generated_at=NOW)
+
+
+def test_results_carry_the_approved_baseline_and_mark_comparisons_against_it():
+    c2 = fc.load_json(os.path.join(DOCS, "fish-capability-cohorts-v2.json"))
+    b = RUBRIC["approvedBaseline"]
+    assert (b["aggregates"]["TARGET"]["value"], b["aggregates"]["ALL_ASSESSED"]["value"]) == (6.805781, 3.770401)
+    assert b["knowledgeRelease"]["researchVersion"] == "2026-10-17.1" and b["cohortsVersion"] == c2["cohortsVersion"]
+    t = c2["cohorts"]["TARGET"]["species"]
+    prev = fc.build_result(evidence({s: 0.5 for s in t}, cohorts=c2), RUBRIC, c2, generated_at=NOW)
+    prev["evaluationId"] = b["evaluationId"]
+    cur = fc.build_result(evidence({s: 0.6 for s in t}, cohorts=c2), RUBRIC, c2, generated_at=NOW, previous=prev)
+    assert cur["approvedBaseline"]["evaluationId"] == b["evaluationId"]
+    assert cur["changeRecord"]["againstApprovedBaseline"] is True and cur["changeRecord"]["comparable"] is True
