@@ -122,6 +122,25 @@ def brain_plan(brain_id: str, timeout: int = 600) -> dict:
     return json_output(out.stdout) or {"action": "SKIP", "planError": True, "reasons": ["--plan output unreadable"]}
 
 
+SCORER_TIMEOUT_SECONDS = 900
+
+
+def run_scorer(cmd: list[str], timeout: int = SCORER_TIMEOUT_SECONDS) -> dict:
+    """The scorer step, isolated (PL-02): a timeout or a failure is RECORDED in the cycle's scores block and the cycle goes on to publish the control
+    plane and its own record; it never aborts the cycle. Success semantics are unchanged (published == exit code 0)."""
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return {"published": False, "timedOut": True, "tail": f"score_brains.py timed out after {timeout}s"}
+    return {"published": out.returncode == 0, "tail": (out.stdout if out.returncode == 0 else (out.stderr or out.stdout)).strip()[-500:]}
+
+
+def in_process_timeout(manifest: dict, brain_id: str) -> int:
+    """The Brain's declared timeoutSeconds (control manifest), else the platform default; never longer than the orchestrator's own 30-min task."""
+    t = (manifest["brains"].get(brain_id) or {}).get("timeoutSeconds") or (manifest.get("defaults") or {}).get("timeoutSeconds") or 1800
+    return int(min(t, 1800))
+
+
 def run_in_process(brain_id: str, timeout: int = 1800) -> dict:
     """`run.py --write`. The Brain's printed summary may carry `consumed` (consumption-lineage-v1: what its RTDB client ACTUALLY read, recorded by
     the platform ConsumptionRecorder). It is passed through when valid; an invalid list is reported, never repaired; absence stays absence."""
@@ -308,7 +327,7 @@ def main(argv=None) -> int:
                     eid = (res.get("execution") or eid).rsplit("/", 1)[-1]
                     locks[b] = {"execution": res.get("execution"), "startedAt": res["startedAt"], "lockedUntil": iso(now + dt.timedelta(minutes=LOCK_MINUTES))}
                 else:
-                    res = run_in_process(b)
+                    res = run_in_process(b, timeout=in_process_timeout(manifest, b))
             except Exception as e:                                   # one brain's failure never stops the cycle
                 res = {"brainId": b, "ok": False, "error": repr(e)[:300]}
             ended = None if res.get("how") == "cloud-run-job" and res.get("ok") else dt.datetime.now(dt.timezone.utc)
@@ -336,10 +355,8 @@ def main(argv=None) -> int:
              (f"{n_changed} job record(s) changed" if n_changed else ("forced" if a.force_scores else None))
     scores = {"published": False, "why": reason or "nothing changed since the last cycle"}
     if reason and write and not a.control_only:
-        cmd = score_cmd()
-        out = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
-        scores.update({"published": out.returncode == 0, "tail": (out.stdout if out.returncode == 0 else (out.stderr or out.stdout)).strip()[-500:]})
-        print(f"scores: {'published' if out.returncode == 0 else 'FAILED'} ({reason})", flush=True)
+        scores.update(run_scorer(score_cmd()))
+        print(f"scores: {'published' if scores['published'] else 'FAILED'} ({reason})", flush=True)
     else:
         print(f"scores: skipped ({scores['why']})")
 
