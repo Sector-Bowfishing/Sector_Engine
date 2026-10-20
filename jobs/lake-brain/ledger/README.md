@@ -4,8 +4,10 @@ Internal. Counts and rates only. **Lake Brain validation remains `NOT_VALIDATED`
 Format and guarantees: `docs/brains/LAKE_BRAIN_PREDICTION_LEDGER.md`.
 
 ## What writes the ledger
-The existing orchestrator-triggered `lake-brain` job, after it has published to the Brain RTDB: one object per run at
-`gs://sector-lake-brain/predictions/{yyyy}/{MM}/{dd}/{HHmmss}Z-{runId}.jsonl`. No schedule, no extra service. A pure skip run writes nothing.
+The existing `lake-brain` job, after it has published to the Brain RTDB: one object per run at
+`gs://sector-lake-brain/predictions/{yyyy}/{MM}/{dd}/{HHmmss}Z-{runId}.jsonl`. The job is started by the Brain Orchestrator when due and
+daily by the hand-created Cloud Scheduler job `lake-brain-ledger-daily` (a `VALIDATION_EXCEPTION` in `control_manifest.json`; no repository
+script creates it). No extra service. A pure skip run writes nothing.
 A dry run writes under `<dry-run dir>/_ledger/` and never to the bucket.
 
 ## Run the scorer

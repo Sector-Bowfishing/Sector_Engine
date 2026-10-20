@@ -1,3 +1,19 @@
+> **Current state on main (Cortex standardization, 2026-10-20).** The status lines below record the 2026-10-12 ratification
+> and are partly stale; the rest of this contract still describes the code. On `main`:
+> - The code is merged. `LakeBrainJob` ships in the `brain-jobs` image (`jobs/brain-image-build.sh`) and is deployed as the
+>   Cloud Run job `lake-brain` by `jobs/lake-brain/deploy-job.sh` (`--scope pilots`, no scheduler of its own; the Brain
+>   Orchestrator may start it when due). A separate Cloud Scheduler job, `lake-brain-ledger-daily` (12:00 UTC), runs it daily
+>   for the prospective prediction ledger. That scheduler was created by hand and **no repository script creates it**; it is
+>   registered as a `VALIDATION_EXCEPTION` in `control_manifest.json` (`brains.lake-brain.schedule`, `jobs.lake-brain-ledger-daily`).
+> - §5.3 cites `docs/research/lake-brain/LAKE_BRAIN_MICHAEL_ACTION_QUEUE.md`. That file is on the research branch
+>   `docs/lake-brain-research`, not on `main`.
+> - The §4 example shows `readiness: BETA` together with `fallbackSource`. That is today's behaviour: a fresh fallback reading
+>   keeps its readiness (it becomes `DEGRADED` only when the reading is stale or unavailable), keeps the binding's
+>   `sourceCapability` and `datum` rather than the fallback source's, and keeps the primary failure only as the flags
+>   `primarySourceStale` / `sourceError:<id>`; run health becomes `WARNING`. Whether a fallback must be reported as degraded is
+>   recorded as an open decision (Cortex PL-03), not changed here.
+> - Operating contract (until the Brain migrates to `brains/lake/`): `docs/architecture/certification/lake/BRAIN_OPERATING_CONTRACT.md`.
+
 # Lake Brain (`lake-brain`): integration contract
 
 **Status:** RATIFIED by Sector Engine, 2026-10-12 (v1, pilot). It amends Sector_Ops `docs/BRAIN_INTEGRATION_REQUIREMENTS.md` §2 and `docs/SECTOR_BRAIN_RTDB_SCHEMA.md`. Sector Ops adapts to it.
