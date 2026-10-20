@@ -69,8 +69,20 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
     private var guideCache: [String: [TVAGuideRow]] = [:]
     private let lock = NSLock()
 
+    /// CWMS requests: bounded, classified retries (LakeLevelFeedsCWMS.swift). Injected by tests.
+    let cwmsTransport: CWMSTransport
+    let cwmsPolicy: CWMSRetryPolicy
+
     public init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }) {
         self.sharedArchive = sharedArchive
+        self.cwmsTransport = .live()
+        self.cwmsPolicy = CWMSRetryPolicy()
+    }
+
+    init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }, cwmsTransport: CWMSTransport, cwmsPolicy: CWMSRetryPolicy = CWMSRetryPolicy()) {
+        self.sharedArchive = sharedArchive
+        self.cwmsTransport = cwmsTransport
+        self.cwmsPolicy = cwmsPolicy
     }
 
     public func recent(_ ref: LevelSeriesRef, hours: Int, now: Date) async -> FeedResult {
@@ -309,8 +321,12 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             ]
             if let page { q.append(.init(name: "page", value: page)) }
             c?.queryItems = q
-            guard let url = c?.url?.absoluteString, let data = await get(url, accept: "application/json;version=2") else {
-                return out.isEmpty ? .failed("CWMS \(office) \(name) unreachable") : FeedResult(observations: out, error: "CWMS page fetch failed")
+            guard let url = c?.url?.absoluteString else { return .failed("CWMS \(office) \(name): bad request URL") }
+            let fetched = await CWMSRequest.get(url, accept: "application/json;version=2", label: "\(office) \(name)",
+                                                transport: cwmsTransport, policy: cwmsPolicy)
+            guard case .ok(let data, _) = fetched else {
+                let why = fetched.failure ?? "CWMS \(office) \(name) unreachable"
+                return out.isEmpty ? .failed(why) : FeedResult(observations: LakeLevelSeries.merge(out), error: "CWMS page fetch failed: \(why)")
             }
             guard let raw = CWMSObservedService.parseJSON(data) as? [String: Any] else { return .failed("CWMS \(name): unreadable JSON") }
             // Asked in English units; if a feed still answers in metres, convert.
