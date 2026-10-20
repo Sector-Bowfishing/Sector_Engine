@@ -25,7 +25,7 @@
     },
     "water-clarity": {
       "displayName": "Water Clarity", "group": "ENVIRONMENT", "lifecycle": "CALIBRATION", "activityState": "ACTIVE",
-      "executionTarget": {"kind": "cloud-run-job", "job": "lake-surface-dispatch", "heavyJob": "lake-surface-daily", "startedByOrchestrator": false, "scoped": false, "scopedViaArgs": "--lakes", "needsIam": "roles/run.developer (jobs.run with args override)"},
+      "executionTarget": {"kind": "cloud-run-job", "job": "lake-surface-dispatch", "heavyJob": "lake-surface-daily", "startedByOrchestrator": false, "scoped": false, "scopedViaArgs": "--lakes", "needsIam": "roles/run.developer (jobs.run with args override)", "note": "this target is the C2 satellite pipeline that feeds Clarity (lake-surface-dispatch -> lake-surface-daily); the C1 Brain publisher declared in brains/water-clarity/brain.json is the MANUAL job water-clarity-brain (jobs.py MANIFEST; not listed in this file's jobs map, which holds only scheduler-governed Clarity jobs)"},
       "allowedTriggers": ["MANUAL", "VALIDATION", "ADMIN"],
       "dependencies": [],
       "schedule": {"class": "PAUSED", "owner": "LEGACY_SCHEDULER", "scheduler": "lake-surface-dispatch", "cron": "0 3 * * *", "tz": "America/Chicago", "pausedReason": "cost freeze 2026-10-14: no approved validation window; heavy fleet processing stays OFF"},
@@ -53,7 +53,7 @@
     },
     "depth": {
       "displayName": "Depth", "group": "ENVIRONMENT", "lifecycle": "PROFILED", "activityState": "PARKED",
-      "executionTarget": {"kind": "none", "note": "no cloud job; run locally from the Depth branch", "startedByOrchestrator": false, "scoped": false},
+      "executionTarget": {"kind": "none", "note": "no cloud job and no code on main; the Depth implementation is on branch feat/depth-brain-foundation (jobs/depth-brain, run locally, shadow writes gated by DEPTH_SHADOW_WRITE_APPROVED)", "startedByOrchestrator": false, "scoped": false},
       "allowedTriggers": ["MANUAL", "ADMIN"],
       "dependencies": [{"id": "lake-brain", "requirement": "REQUIRED", "maxAgeHours": 168, "onStale": "MANUAL_APPROVAL", "provisional": true}],
       "schedule": {"class": "MANUAL", "owner": "NONE"},

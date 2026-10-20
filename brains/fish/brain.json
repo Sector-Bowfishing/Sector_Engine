@@ -10,7 +10,7 @@
     "kind": "in-process",
     "language": "python",
     "entrypoint": "brains/fish/runtime/run.py",
-    "trigger": {"kind": "manual"}
+    "trigger": {"kind": "dependency"}
   },
   "publishes": [
     {

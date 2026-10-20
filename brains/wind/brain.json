@@ -10,7 +10,7 @@
     "kind": "job",
     "language": "python",
     "entrypoint": "brains/wind/runtime/main.py",
-    "trigger": {"kind": "schedule", "staleHours": 6}
+    "trigger": {"kind": "schedule", "staleHours": 1.5}
   },
   "publishes": [
     {
