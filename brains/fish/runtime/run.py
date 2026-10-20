@@ -78,6 +78,10 @@ def main(argv=None) -> int:
     g.add_argument("--plan", action="store_true")
     g.add_argument("--dry-run", action="store_true")
     g.add_argument("--write", action="store_true")
+    g.add_argument("--patch-species-metadata", action="store_true",
+                   help="field-level patch of species identity metadata (waterDomains, waterDomainStatus) onto live /species/{id}; GET-only unless --apply")
+    ap.add_argument("--apply", action="store_true", help="with --patch-species-metadata: perform the write (default: print the exact patch and stop)")
+    ap.add_argument("--revert", action="store_true", help="with --patch-species-metadata: plan/apply the rollback instead (delete the patched fields)")
     ap.add_argument("--bundle", help="local bundle root (contains latest.json); default: the private bucket")
     ap.add_argument("--out", default="out")
     ap.add_argument("--force", action="store_true", help="publish even when --plan says SKIP")
@@ -110,6 +114,26 @@ def main(argv=None) -> int:
                    paths=len(updates), bytes=len(body), speciesPayloadMaxBytes=max(len(json.dumps(v)) for k, v in updates.items() if k.startswith("/species/") and v))
     if rtdb is not None:
         summary["consumed"] = rtdb.consumed()                     # consumption-lineage-v1: what this run actually read from the Brain RTDB (own nodes excluded)
+
+    if a.patch_species_metadata:
+        if rtdb is None:
+            raise SystemExit("--patch-species-metadata needs the Brain RTDB; drop --offline")
+        import species_metadata_patch as smp
+        if a.revert:
+            patch = smp.revert_patch(rtdb.get("species"))
+            report = dict(speciesChecked=len(rtdb.get("species", shallow=True) or {}), paths=len(patch), speciesChanged=len({p.split("/")[2] for p in patch}), changes=[])
+        else:
+            patch, report = smp.plan_patch(rtdb.get("species"), updates)
+        out = dict(mode=("APPLY" if a.apply else "PLAN (no write)") + (" REVERT" if a.revert else ""), researchVersion=bundle.research_version, published=published.get("researchVersion") if published else None, **report)
+        if a.apply and patch:
+            bp.check_schema(rtdb)
+            rtdb.update(patch)                                       # ownership-checked, one atomic multi-path update of child paths only
+            bad = smp.verify_readback(rtdb.get("species"), patch)               # deletions verify as absent
+            out |= dict(rtdbWrites=rtdb.writes, rtdbBytes=rtdb.bytes_written, readbackProblems=bad)
+            if bad:
+                print(json.dumps(out, indent=1, default=str)); return 3
+        print(json.dumps(out, indent=1, default=str))
+        return 0
 
     if a.write and rtdb is None:
         raise SystemExit("--write needs the Brain RTDB; drop --offline")
