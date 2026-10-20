@@ -260,6 +260,38 @@ final class LakeBrainTests: XCTestCase {
 
     actor Counter { var n = 0; func bump() { n += 1 } }
 
+    /// Operational truth: a non-HEALTHY Lake Brain publishes WHY (health/brains/lake-brain.reasons), with the same rule as the status.
+    func testHealthReasonsExplainWarningAndAreAbsentWhenHealthy() async throws {
+        let feeds = FakeFeeds()
+        let store = LocalDirectoryStore(directory: NSTemporaryDirectory() + "lake-brain-reasons-\(UUID().uuidString)", brainId: LakeBrainSpec.brainId)
+        var opts = LakeBrainRunOptions(); opts.lakeIds = ["Guntersville|AL"]; opts.force = true
+        let r = await LakeBrainRunner.run(store: store, feeds: feeds, archive: nil, presenceArchive: nil, options: opts, now: feeds.now)
+        let ok = try XCTUnwrap(r.lakes.first)
+        XCTAssertEqual(LakeBrainRunner.health([ok], writeFailed: false), "HEALTHY")
+        XCTAssertEqual(LakeBrainRunner.healthReasons([ok], writeFailed: false), [])
+
+        var fallback = ok
+        let flags = (ok.state?.provenance.qualityFlags ?? []) + ["fallbackSource:usgs-x"]
+        fallback.state?.provenance.qualityFlags = flags
+        XCTAssertEqual(LakeBrainRunner.health([fallback], writeFailed: false), "WARNING")
+        XCTAssertEqual(LakeBrainRunner.healthReasons([fallback], writeFailed: false), ["Guntersville|AL: primary source unavailable, on fallback source usgs-x"])
+
+        var missing = ok
+        missing.state = nil
+        let four = [ok, ok, ok, missing]                              // 1 of 4 unavailable: WARNING (not DEGRADED)
+        XCTAssertEqual(LakeBrainRunner.health(four, writeFailed: false), "WARNING")
+        XCTAssertEqual(LakeBrainRunner.healthReasons(four, writeFailed: false), ["Guntersville|AL: state unavailable"])
+        XCTAssertEqual(LakeBrainRunner.healthReasons([ok], writeFailed: true), ["publish failed"])
+    }
+
+    func testHealthRecordReasonsAreAdditiveJSON() throws {
+        let rec = BrainHealthRecord(status: "WARNING", staleLakeCount: 0, errorCount: 0, reasons: ["X|ST: state stale"])
+        let json = String(data: try BrainJSON.encode(rec), encoding: .utf8)!
+        XCTAssertTrue(json.contains("\"reasons\":[\"X|ST: state stale\"]"))
+        let healthy = String(data: try BrainJSON.encode(BrainHealthRecord(status: "HEALTHY", staleLakeCount: 0, errorCount: 0)), encoding: .utf8)!
+        XCTAssertFalse(healthy.contains("reasons"))
+    }
+
     func testPublisherWritesLeafPathsOnlyOnSharedNodes() async throws {
         let feeds = FakeFeeds()
         let dir = NSTemporaryDirectory() + "lake-brain-test-\(UUID().uuidString)"

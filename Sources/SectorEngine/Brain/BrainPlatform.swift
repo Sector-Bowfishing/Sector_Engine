@@ -211,11 +211,14 @@ public struct BrainHealthRecord: Codable, Equatable, Sendable {
     public var latestError: String?
     public var deployedVersion: String?
     public var partial: Bool?
+    /// Why the status is not HEALTHY, in the Brain's own words (absent when HEALTHY). Additive: readers that do not know it ignore it.
+    public var reasons: [String]?
     public init(status: String, lastRun: String? = nil, lastSuccess: String? = nil, durationMs: Int? = nil,
-                staleLakeCount: Int, errorCount: Int, latestError: String? = nil, deployedVersion: String? = nil, partial: Bool? = nil) {
+                staleLakeCount: Int, errorCount: Int, latestError: String? = nil, deployedVersion: String? = nil, partial: Bool? = nil,
+                reasons: [String]? = nil) {
         self.status = status; self.lastRun = lastRun; self.lastSuccess = lastSuccess; self.durationMs = durationMs
         self.staleLakeCount = staleLakeCount; self.errorCount = errorCount; self.latestError = latestError
-        self.deployedVersion = deployedVersion; self.partial = partial
+        self.deployedVersion = deployedVersion; self.partial = partial; self.reasons = reasons
     }
 }
 

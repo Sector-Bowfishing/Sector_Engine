@@ -20,7 +20,9 @@ def load_world(live, now: dt.datetime) -> dict:
     manifest = O.load_manifest()
     prev = live.get("control/orchestratorV1") or {}
     return {"manifest": manifest, "prev": prev, "registries": live.get("brains") or {}, "health": live.get("health/brains") or {},
-            "scores": live.get("scores") or {}, "overrides": prev.get("overrides") or {}}
+            "scores": live.get("scores") or {}, "overrides": prev.get("overrides") or {},
+            # operational truth: lastDataUpdate / healthReasons are computed by the scorer plane from /lakeFleet + /sources (small read)
+            "overviewBrains": live.get("control/overview/brains") or {}}
 
 
 def build_ctx(world: dict, now: dt.datetime, locks: dict | None, own_inputs: dict | None = None) -> dict:

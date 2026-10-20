@@ -53,3 +53,18 @@ def test_lock_is_spent_once_its_execution_completed():
     still = {"water-temp-brain": [{"metadata": {"name": "water-temp-brain-x"}, "status": {"startTime": "2026-10-13T06:30:00Z"}}]}
     merged = o.with_single_flight(brains, still, lock, NOW)
     assert merged["water-temp"]["schedule"]["running"] is True
+
+
+def test_a_failed_brain_plan_is_marked_so_freshness_is_not_claimed(monkeypatch):
+    import subprocess
+    class R:
+        returncode, stdout, stderr = 1, "", "boom"
+    monkeypatch.setattr(o.subprocess, "run", lambda *a, **k: R())
+    bid = "biological-state"                                  # in-process: the only kind with a --plan
+    p = o.brain_plan(bid)
+    assert p["action"] == "SKIP" and p["planError"] is True
+
+    def slow(*a, **k):
+        raise subprocess.TimeoutExpired("run.py", 1)
+    monkeypatch.setattr(o.subprocess, "run", slow)
+    assert o.brain_plan(bid)["planError"] is True

@@ -104,15 +104,16 @@ def json_output(stdout: str) -> dict | None:
 
 
 def brain_plan(brain_id: str, timeout: int = 600) -> dict:
-    """`run.py --plan` of an in-process brain → its plan() verdict (PUBLISH / SKIP + reasons). Failure = SKIP with the error."""
+    """`run.py --plan` of an in-process brain → its plan() verdict (PUBLISH / SKIP + reasons). Failure = SKIP with the error, marked
+    `planError` so the VERSION freshness verdict is UNKNOWN, never FRESH (operational_truth)."""
     ex = EXECUTORS[brain_id]
     try:
         out = subprocess.run([PYTHON, "run.py", "--plan"], cwd=ex["dir"], capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired:
-        return {"action": "SKIP", "reasons": [f"--plan timed out after {timeout}s"]}
+        return {"action": "SKIP", "planError": True, "reasons": [f"--plan timed out after {timeout}s"]}
     if out.returncode != 0:
-        return {"action": "SKIP", "reasons": [f"--plan failed: {(out.stderr or out.stdout).strip()[-300:]}"]}
-    return json_output(out.stdout) or {"action": "SKIP", "reasons": ["--plan output unreadable"]}
+        return {"action": "SKIP", "planError": True, "reasons": [f"--plan failed: {(out.stderr or out.stdout).strip()[-300:]}"]}
+    return json_output(out.stdout) or {"action": "SKIP", "planError": True, "reasons": ["--plan output unreadable"]}
 
 
 def run_in_process(brain_id: str, timeout: int = 1800) -> dict:
@@ -348,7 +349,8 @@ def main(argv=None) -> int:
         state_cp = CS.build_control_state(manifest, ctx2["mode"], now, registries=world2["registries"], health=world2["health"], scores=live.get("scores") or {},
                                           jobs=records, evaluation=ev2, prev=world["prev"], new_executions=exec_records + cloud_execs,
                                           locks={**locks_now, **locks}, trigger=a.trigger, duration_ms=int((time.time() - t0) * 1000),
-                                          overrides=rq["overrides"], requests=rq["requests"], scheduler_states=CP.scheduler_states(tokens))
+                                          overrides=rq["overrides"], requests=rq["requests"], scheduler_states=CP.scheduler_states(tokens),
+                                          plans=brain_plans, ctx=ctx2, overview_brains=world2.get("overviewBrains"))
         if a.emit_control_state:
             json.dump(state_cp, open(a.emit_control_state, "w"), indent=1, sort_keys=True)
         cp_paths = CS.changed_paths(state_cp, world["prev"])

@@ -8,6 +8,7 @@ from __future__ import annotations
 import datetime as dt
 
 from . import orchestration as O
+from . import operational_truth as OT
 from .timeutil import age_hours, iso, parse_time
 
 SECTIONS = ("summary", "brains", "edges", "jobs", "schedules", "executions", "decisions", "latestDecisions", "health", "cost", "blockers", "graph", "overrides", "requests")
@@ -111,7 +112,11 @@ def merge_decisions(prev_latest: dict, prev_recent: dict, decisions: list[dict],
 def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registries: dict, health: dict, scores: dict, jobs: dict, evaluation: dict,
                         prev: dict | None = None, new_executions: list[dict] | None = None, locks: dict | None = None, trigger: str = "SCHEDULE",
                         duration_ms: int | None = None, overrides: dict | None = None, out_fps: dict | None = None, requests: dict | None = None,
-                        scheduler_states: dict | None = None) -> dict:
+                        scheduler_states: dict | None = None, plans: dict | None = None, ctx: dict | None = None,
+                        overview_brains: dict | None = None) -> dict:
+    """plans = each in-process Brain's own --plan verdict this cycle (VERSION freshness); ctx = the decision context (current own inputs and
+    the input fingerprint each Brain last processed: FINGERPRINT freshness); overview_brains = /control/overview/brains (lastDataUpdate and
+    healthReasons are computed there from /lakeFleet and /sources, which this plane does not read). All optional: absent -> UNKNOWN / omitted."""
     prev = prev or {}
     graph = O.validate_graph(manifest)
     activity = O.effective_activity(manifest, overrides)
@@ -148,6 +153,14 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
             next_dues.append(nd)
         lastx = next((e for e in execs if e.get("brainId") == bid), None)
         fpv, basis = O.output_fingerprint(b, reg)
+        policy = OT.effective_policy(b, reg)
+        own = ((ctx or {}).get("own_inputs") or {}).get(bid)
+        fresh = OT.verdict(policy, last_successful_run=last_run, now=now, plan=(plans or {}).get(bid),
+                           input_fingerprint=O.input_fingerprint(bid, b, fps, own) if b.get("dependencies") is not None else None,
+                           last_processed_fingerprint=((ctx or {}).get("last_in_fps") or {}).get(bid))
+        ov = (overview_brains or {}).get(bid) or {}
+        last_exec = ({"at": lastx.get("finishedAt") or lastx.get("startedAt"), "status": lastx.get("status"), "executionId": lastx.get("executionId")}
+                     if lastx else ({"at": h.get("lastRun"), "status": h.get("status")} if h.get("lastRun") else None))
         brains[_key(bid)] = _strip({
             "brainId": bid, "displayName": b["displayName"], "group": b["group"], "health": h.get("status") or reg.get("health"), "lifecycle": b["lifecycle"],
             "legacyStatus": reg.get("status"), "activityState": activity[bid],
@@ -156,7 +169,14 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
             "executionMode": execution_mode(b, enabled), "scheduleClass": (b.get("schedule") or {}).get("class"),
             "exception": {k: v for k, v in ((b.get("schedule") or {}).get("exception") or {}).items() if k in ("gate", "stop", "maxMonthlyUsd", "approvedAt")},
             "lastRun": last_run, "lastResult": (lastx or {}).get("status") or h.get("status"), "nextDue": nd,
-            "freshness": {"staleAfterHours": sh, "ageHours": ageh, "stale": (ageh > sh) if (ageh is not None and sh is not None) else None},
+            # lastRun (kept for compatibility) == lastSuccessfulRun; the four timestamps answer different questions (operational_truth)
+            "lastSuccessfulRun": last_run, "lastExecution": last_exec, "lastDataUpdate": ov.get("lastDataUpdate"),
+            "lastScoreEvaluation": sc.get("scoreUpdatedAt"),
+            "healthReasons": ov.get("healthReasons") or OT.health_reasons(bid, h, None, None),
+            "freshness": {"staleAfterHours": policy.get("staleAfterHours", sh), "ageHours": ageh if ageh is not None else fresh.get("ageHours"),
+                          "stale": fresh.get("stale"), "verdict": fresh["verdict"], "reason": fresh.get("reason"), "model": policy.get("model"),
+                          "policySource": policy.get("source"), "declaredModel": policy.get("declaredModel"),
+                          "declaredStaleAfterHours": policy.get("declaredStaleAfterHours")},
             "inputFingerprint": O.input_fingerprint(bid, b, fps),
             "inputChanged": (None if not (prev.get("brains") or {}).get(_key(bid), {}).get("inputFingerprint") else
                              ("UNCHANGED" if prev["brains"][_key(bid)]["inputFingerprint"] == O.input_fingerprint(bid, b, fps) else "CHANGED")),

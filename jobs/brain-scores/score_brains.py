@@ -23,6 +23,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform.score_explanation import explain as explain_score, is_current as is_current_explanation  # noqa: E402
+from sector_brain_platform.orchestration import load_manifest as O_load_manifest  # noqa: E402
 from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
                                    prune_activity, guard_scores, score_biological, score_engine, score_intelligence, score_lake)
 
@@ -69,6 +70,7 @@ def fetch_facts(db) -> dict:
     return {
         "brains": brains, "health": health, "validation": validation, "fleet": fleet,
         "sources": db.get("sources") or {}, "healthSources": db.get("health/sources") or {},
+        "orchestratorBrains": db.get("control/orchestratorV1/brains") or {},   # VERSION / FINGERPRINT freshness verdicts (operational truth)
         "jobs": db.get("jobs") or {},                     # the Engine's /jobs contract (jobs-v1), not the brains' /health/jobs
         "intelStates": intel_states,
         "engine": {"intelligenceRegistry": intel_reg, "validation": validation, "healthBrains": health,
@@ -147,6 +149,16 @@ def _content(score: dict | None) -> dict:
     # absent keeps the comparison stable (otherwise every frozen block and the Engine block were rewritten every cycle with no change in content).
     # `explanation` is derived FROM the block (score_explanation.py), never score content: it must not make an unchanged score look changed.
     return {k: v for k, v in (score or {}).items() if k not in ("scoreUpdatedAt", "updatedAt", "explanation") and v not in (None, {}, [])}
+
+
+def published_score_times(updates: dict, old_scores: dict | None) -> dict:
+    """{brainId: scoreUpdatedAt of the block that is published after this run}: the written block, else the one already published (kept)."""
+    out = {}
+    for bid in set(UPSTREAM) | set(old_scores or {}):
+        blk = updates.get(f"scores/{bid}") or (old_scores or {}).get(bid) or {}
+        if blk.get("scoreUpdatedAt"):
+            out[bid] = blk["scoreUpdatedAt"]
+    return out
 
 
 def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None,
@@ -231,7 +243,8 @@ def main() -> int:
                                    explain=not a.no_explain, gaps=load_gaps())
     # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.
     control = overview(brains=facts["brains"], health=facts["health"], validation=facts["validation"], scores=scores, engine=engine,
-                       fleet=facts["fleet"], sources=facts["sources"], health_sources=facts["healthSources"], jobs=facts["jobs"], now=now)
+                       fleet=facts["fleet"], sources=facts["sources"], health_sources=facts["healthSources"], jobs=facts["jobs"], now=now, manifest=O_load_manifest(), orchestrator_brains=facts.get("orchestratorBrains"),
+                       score_published_at=published_score_times(updates, old_scores))
     rollups = {f"control/fleet/{k}": r for k, row in facts["fleet"].items() if (r := fleet_rollup(k, row, now))}
     control_updates = {"control/overview": control, **rollups}
     # Beta readiness (Phase 12): pilot lakes = those with a normalized Intelligence evaluation. Never a customer rollout.
@@ -293,7 +306,7 @@ def main() -> int:
     return 0
 
 
-VOLATILE = ("updatedAt", "rolledUpAt", "summarizedAt", "syncedAt", "evaluatedAt")
+VOLATILE = ("updatedAt", "rolledUpAt", "summarizedAt", "syncedAt", "evaluatedAt", "ageHours")
 
 
 def _stable(v):

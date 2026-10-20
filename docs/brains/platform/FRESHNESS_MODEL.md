@@ -23,3 +23,6 @@ VERSION/FINGERPRINT Brains write `stale:false` and omit `freshUntil`.
 
 ## Dependency freshness at execution time (added 2026-10-16, Orchestrator G1/G2)
 `sector_brain_platform.dependency_health` applies the authority rule generically for every dependency type (Brain, environmental signal, provider data, platform registry): owner verdict → owner rule (`expiresAt`, `staleAfter`, `staleAfterHours` × evidence/generated time) → `UNKNOWN`; a consumer's declared `freshness {maxAgeHours, reason}` (brain.json) can only be stricter. A record that offers only `lastSuccessfulRun` is `UNKNOWN` ("process history, not evidence freshness"). Vocabulary: `enums.FRESHNESS_STATUS` = the Publisher's `FRESH STALE EXPIRED UNAVAILABLE UNKNOWN`. Contract: `ORCHESTRATOR_HEALTH_V1.md`.
+
+## Brain run freshness on the control planes (added 2026-10-20)
+Separate from the per-state envelope above: one verdict per Brain from the effective operating policy (Orchestrator manifest, Brain's declared rule reported beside it). Both control planes compute it with `operational_truth`; see `BRAIN_OPERATIONAL_TRUTH_V1.md`.
