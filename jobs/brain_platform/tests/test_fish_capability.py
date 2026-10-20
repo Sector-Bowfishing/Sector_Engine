@@ -31,6 +31,8 @@ def evidence(fractions: dict, *, status=None, cohorts=COHORTS, kv="2026-10-17.1"
                  "knowledgeContext": {}}
     for s in cohorts.get("notAssessedByPolicy") or []:
         sp[s] = {"evaluationStatus": "NOT_ASSESSED", "reason": "policy"}
+    for s in cohorts.get("notIndividuallyAssessable") or {}:
+        sp[s] = {"evaluationStatus": "INSUFFICIENT_EVIDENCE", "reason": "grouped taxon"}
     return {"schema": fc.EVIDENCE_SCHEMA, "rubricId": RUBRIC["rubricId"], "criteria": crit, "cohortsVersion": cohorts["cohortsVersion"],
             "knowledge": {"knowledgeVersion": kv}, "evaluationId": "fcap-test", "evaluatedAt": NOW, "species": sp}
 
@@ -39,7 +41,8 @@ def test_rubric_is_internally_consistent_and_keeps_the_owner_weights():
     assert fc.validate_rubric(RUBRIC) == []
     assert {c["categoryId"]: c["maxPoints"] for c in RUBRIC["categories"]} == {
         "biologyBehavior": 2.5, "habitatDepth": 2.0, "environmental": 2.0, "spawnSeason": 2.0, "dayNight": 1.0, "application": 0.5}
-    assert RUBRIC["status"] != "APPROVED" and RUBRIC["authoritative"] is False
+    assert RUBRIC["status"] == "APPROVED" and RUBRIC["approval"]["approvedAt"] == "2026-10-19"          # owner adoption, 2026-10-19
+    assert RUBRIC["publication"]["status"] == "INACTIVE" and "GC-REF-02" in RUBRIC["publication"]["gate"]
 
 
 def test_frozen_cohorts_match_the_audited_inventory():
@@ -138,5 +141,16 @@ def test_cohorts_v2_treats_grouped_taxa_consistently_and_keeps_v1():
 
 
 def test_rubric_2_1_revision_is_recorded_and_weights_unchanged():
-    assert RUBRIC["rubricVersion"] == "2.1.0-candidate"
-    assert [h["version"] for h in RUBRIC["revisionHistory"]] == ["2.0.0-candidate", "2.1.0-candidate"]
+    assert RUBRIC["rubricVersion"] == "2.1.0"
+    assert [h["version"] for h in RUBRIC["revisionHistory"]] == ["2.0.0-candidate", "2.1.0-candidate", "2.1.0"]
+
+
+def test_approved_rubric_and_cohorts_are_authoritative_but_never_published():
+    c2 = fc.load_json(os.path.join(DOCS, "fish-capability-cohorts-v2.json"))
+    assert c2["status"] == "APPROVED"
+    t = c2["cohorts"]["TARGET"]["species"]
+    r = fc.build_result(evidence({s: 1.0 for s in t}, cohorts=c2), RUBRIC, c2, generated_at=NOW)
+    assert r["authority"]["status"] == "AUTHORITATIVE_APPROVED"
+    assert r["authority"]["publication"] == "INACTIVE" and "reference cases" in r["authority"]["publicationGate"]
+    assert r["authority"]["displayLabel"] == "scenario capability (not field-validated)"
+    assert fc.build_result(evidence({}), RUBRIC, COHORTS, generated_at=NOW)["authority"]["status"] == "CANDIDATE"      # v1 cohorts were not approved

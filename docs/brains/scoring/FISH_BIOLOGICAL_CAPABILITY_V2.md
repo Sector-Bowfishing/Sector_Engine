@@ -1,6 +1,6 @@
 # Fish Biological Capability V2 (`FISH_BIOLOGICAL_CAPABILITY_V2`)
 
-**Status: CANDIDATE `2.1.0-candidate` (after the owner's final rubric review), pending owner approval. Not authoritative production truth. Nothing publishes it.**
+**Status: APPROVED `2.1.0` with cohorts `fish-capability-cohorts-v2` (owner, 2026-10-19). Displayed as "scenario capability (not field-validated)". Publication INACTIVE until the 6 non-self-consistency reference cases (CC-REF-02, CC-REF-03, LG-REF-01, BB-REF-01, GC-REF-02, BF-REF-02) are human-reviewed and a reviewed publication path exists; nothing publishes it today.**
 Rubric: [`fish-biological-capability-v2.json`](fish-biological-capability-v2.json) · Cohorts: [`fish-capability-cohorts-v2.json`](fish-capability-cohorts-v2.json) (v1 kept for history) ·
 Evaluator: `brains/fish/runtime/capability_eval.py` · Scorer: `jobs/brain_platform/sector_brain_platform/fish_capability.py` · Local entry point: `brains/fish/runtime/capability_run.py`.
 
@@ -119,7 +119,10 @@ Deterministic, stdlib only, offline: no network, RTDB, credentials, Ollama or LL
 | D. null contradiction counts treated as 0 | `int(s.get("contradictionCount") or 0)` | candidate fix prepared separately (null → excluded; all null → UNKNOWN), inactive | contradictions are reported (`UNKNOWN` when not recorded), never scored |
 | E. connectivity scored without customer consumption | `productionIntegration` = 10 when the Intelligence dependency is CONNECTED (`consumedByCustomerPath:false`) | existing v2 proposal (`customerUsefulness`) / readiness | readiness is gates only; connectivity earns no capability |
 
-## 11. Owner decisions pending
+## 11. Owner decisions
+
+**Decided 2026-10-19:** rubric 2.1.0 and cohorts v2 APPROVED (items 1 and 2 below). Open: items 3 and 4.
+
 
 1. Approve (or change) the criteria, the coverage policy and the abstention policy.
 2. Approve cohorts `fish-capability-cohorts-v2` (single-species rule; overall = all individually assessed species, TARGET separate).

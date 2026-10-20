@@ -272,7 +272,12 @@ def build_result(ev: dict, rubric: dict, cohorts: dict, *, generated_at: str, pr
         "evaluationId": ev["evaluationId"], "evaluatedAt": ev["evaluatedAt"], "generatedAt": generated_at, "knowledgeVersion": kv,
         "evaluatorVersion": ev.get("evaluatorVersion"), "outcomeKind": ev.get("outcomeKind"),
         "authority": {"scorer": "sector_brain_platform.fish_capability", "status": "AUTHORITATIVE_APPROVED" if approved else "CANDIDATE",
-                      "publication": "INACTIVE", "note": "computed by the shared scorer; not published; rubric/cohorts pending owner approval"},
+                      # No writer exists: publication is INACTIVE whatever the rubric says until a reviewed publication path is added.
+                      "publication": "INACTIVE",
+                      "publicationGate": (rubric.get("publication") or {}).get("gate"),
+                      "displayLabel": (rubric.get("publication") or {}).get("displayLabel", "scenario capability (not field-validated)"),
+                      "note": ("rubric and cohorts APPROVED by the owner; computed by the shared scorer; not published" if approved
+                               else "computed by the shared scorer; not published; rubric/cohorts pending owner approval")},
         "brain": {"brainId": "biological-state", "displayName": "Fish Brain",
                   "overallBiologicalCapability": {"definition": overall_id, "value": aggs[overall_id]["value"], "display": aggs[overall_id]["display"],
                                                   "status": aggs[overall_id]["status"]},

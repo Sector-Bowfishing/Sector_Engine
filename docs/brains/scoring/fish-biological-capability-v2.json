@@ -1,8 +1,8 @@
 {
  "rubricId": "FISH_BIOLOGICAL_CAPABILITY_V2",
- "rubricVersion": "2.1.0-candidate",
- "status": "CANDIDATE_PENDING_OWNER_APPROVAL",
- "authoritative": false,
+ "rubricVersion": "2.1.0",
+ "status": "APPROVED",
+ "authoritative": true,
  "scale": 10,
  "measures": "Demonstrated, executable biological capability per species: what the Fish runtime actually does with its evidence-backed knowledge under deterministic scenarios. Not knowledge completeness (species-v2), not scientific confidence, not production readiness, not field accuracy.",
  "doesNotMeasure": [
@@ -222,7 +222,7 @@
   "proposedBy": "owner (category weights, 2026-10-19 directive)",
   "criteriaDefinedBy": "Fish Brain Specialist V2 campaign (2026-10-19)",
   "knowledgeOfResultsWhenWritten": "criteria were written after inspecting the runtime and rule inventory, before the first full scoring run; category weights are the owner's, unchanged",
-  "approval": "pending owner review; not authoritative production truth"
+  "approval": "APPROVED by the owner 2026-10-19 (rubric 2.1.0 + cohorts v2); publication gated"
  },
  "coveragePolicy": "Execution alone shows a behaviour EXISTS; annual coverage shows how much of the year Fish can speak to it. Coverage is measured by running the runtime for 12 months x every registered condition state (not read from rule metadata). A month without an evidence-backed output is genuinely UNKNOWN for that fish, so it earns no coverage credit. Added during development after the first full run showed one rule earning a whole family's credit (TARGET 7.96 before, see FISH_BIOLOGICAL_CAPABILITY_V2.md section 9).",
  "revisionHistory": [
@@ -235,6 +235,25 @@
    "version": "2.1.0-candidate",
    "date": "2026-10-19",
    "note": "owner final rubric review: (A) abstention BIO-4/HAB-5/DN-3 scaled by executable breadth, ENV-4 by environmental breadth; (B) SPN-1 needs spawn-period behaviour, SPN-3 counts seasons with known behaviour (spawn state alone no longer counts); APP-1 halved when only a spawn state is known. Category weights unchanged. All corrections lower credit for narrow knowledge; none raise any criterion."
+  },
+  {
+   "version": "2.1.0",
+   "date": "2026-10-19",
+   "note": "owner adoption of 2.1.0-candidate unchanged (criteria, weights, policies identical) with cohorts v2; status APPROVED; publication INACTIVE behind the reference-case review gate."
   }
- ]
+ ],
+ "approval": {
+  "approvedBy": "owner (Michael Cather)",
+  "approvedAt": "2026-10-19",
+  "scope": "rubric 2.1.0 with cohorts fish-capability-cohorts-v2 as the reviewed Fish Biological Capability measurement (scenario capability, not field-validated)",
+  "conditions": [
+   "Label every display 'scenario capability (not field-validated)'.",
+   "Publication stays INACTIVE until the 6 non-self-consistency reference cases are human-reviewed."
+  ]
+ },
+ "publication": {
+  "status": "INACTIVE",
+  "gate": "human review (APPROVED or REJECTED with a named reviewer) of the 6 non-self-consistency reference cases: ABSTENTION_CHECK CC-REF-02, CC-REF-03, LG-REF-01, BB-REF-01; INDEPENDENT_EXPECTATION_NOT_IN_RUNTIME GC-REF-02, BF-REF-02. Then a separately reviewed scorer-job/Publisher change; no writer exists today.",
+  "displayLabel": "scenario capability (not field-validated)"
+ }
 }

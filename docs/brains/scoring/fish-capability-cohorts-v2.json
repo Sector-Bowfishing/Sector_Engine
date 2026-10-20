@@ -1,6 +1,6 @@
 {
  "cohortsVersion": "fish-capability-cohorts-v2",
- "status": "CANDIDATE_PENDING_OWNER_APPROVAL",
+ "status": "APPROVED",
  "frozenAt": "2026-10-19",
  "basis": {
   "knowledgeRelease": "2026-10-17.1",
@@ -74,5 +74,10 @@
   },
   "denominatorChange": "ALL_ASSESSED 27 -> 26. This removes a 0.00 species and RAISES the aggregate; the v1 figure is reported beside the v2 figure, and the change needs owner approval like the rest of the candidate.",
   "registryUnchanged": "No registry classification, assessment, label or knowledge score is changed; this is an evaluation-roster definition only."
+ },
+ "approval": {
+  "approvedBy": "owner (Michael Cather)",
+  "approvedAt": "2026-10-19",
+  "with": "rubric FISH_BIOLOGICAL_CAPABILITY_V2 2.1.0"
  }
 }
