@@ -94,8 +94,8 @@ class EvaluationTests(unittest.TestCase):
 
     def test_nothing_published_evaluates_to_all_not_published(self):
         e = self.evaluate({}, presence=None, species=None)
-        self.assertEqual(e["inputsUsed"], {}) if "inputsUsed" in e else None
-        self.assertEqual(len(e["degradedInputs"]), 5); self.assertEqual(e["drivers"], []) if "drivers" in e else None
+        self.assertEqual(e.get("inputsUsed", {}), {})                      # empty values are stripped: absent == empty, never a silent skip
+        self.assertEqual(len(e["degradedInputs"]), 5); self.assertEqual(e.get("drivers", []), [])
 
     def test_build_updates_writes_pilot_state_and_registry_truthfully(self):
         e = self.evaluate()
