@@ -199,6 +199,9 @@ def dependency_summary(deps: dict) -> dict:
     }
 
 
+PILOT_RESOLVED_BLOCKERS = ("NO_NORMALIZED_EVALUATION", "NO_BRAIN_CONSUMED")
+
+
 def derived_blockers(deps: dict, serving: dict) -> list[dict]:
     out = []
     for bid in DEPENDENCY_ORDER:
@@ -372,7 +375,9 @@ def build_updates(*, cat: dict, cat_sha: str, lakes: list[str], fleet: dict, ups
     # dependency view BEFORE this run upgrades connections to CONNECTED (pilot_ran). Recomputing it here from the
     # upgraded view made every --plan say "changed" and republish hourly (orchestrator cycles, 2026-10-13).
     fp = fingerprint_value or fingerprint(cat_sha, serving, deps, inputs_fp)
-    blockers = list(cat.get("declaredBlockers", [])) + derived_blockers(deps, serving)
+    # The catalog's "no evaluation / no Brain consumed" blockers describe the inventory-only mode; once the pilot evaluated lakes from Brain states they
+    # are false, and the true position is in statusReasons (PILOT_EVALUATION_ONLY, NOT_CONSUMED_BY_CUSTOMER_PATH).
+    blockers = [b for b in cat.get("declaredBlockers", []) if not (evaluations and b.get("id") in PILOT_RESOLVED_BLOCKERS)] + derived_blockers(deps, serving)
     today = now.date().isoformat()
     lin = cat["codeLineage"]
     registry = _strip({

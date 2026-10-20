@@ -25,7 +25,7 @@ Sector Intelligence does **not** own any specialist's science or domain values: 
 - Platform: `sector_brain_platform` through the `brain_platform.py` shim.
 
 ## 7. COMMUNICATION CONTRACTS
-- Published: the registry, dependency, per-lake and evaluation shapes in the integration contract §2–§3 and the "Current state on main" note. Input and output contracts are **PROPOSED** prose (`catalog.json` `inputContract` / `outputContract`); **no versioned JSON schema** exists. The planned consumption of `fish-biological-assessment-v1` and `wind-exposure-assessment-v1` is not implemented.
+- Published: the registry, dependency, per-lake and evaluation shapes in the integration contract §2–§3 and the "Current state on main" note. The pilot evaluation has a versioned contract, **`intelligence-evaluation-v1`** (`contracts/intelligence-evaluation-v1.schema.json`, validated against real output); the publication contract is **`sector-intelligence-publication-v1`** (SHADOW). The future normalized input contract is still **PROPOSED** prose (`catalog.json` `inputContract`). The planned consumption of `fish-biological-assessment-v1` and `wind-exposure-assessment-v1` is not implemented.
 - Consumers: Sector Ops renders the dependency and evaluation fields and never derives them. No customer path reads this Brain.
 - Allowed path today: Brain RTDB + Engine `/lakes` reads → publisher → one atomic, ownership-checked RTDB update (LEGACY until a Publisher cutover is approved).
 
@@ -48,7 +48,7 @@ Implementation facts become canonical only by a reviewed `catalog.json` change w
 Exists: software tests (`tests/`, including the Certification Kit V1 adapter) for dependency truth, lake inputs, published paths, serving lineage, planning, catalog validation and the pilot's degrade/abstain behaviour. **Not validated:** any evaluation (`predictiveValidation.status: NONE`); the customer Conditions Score is also `NOT_VALIDATED`. Known gaps: a failed RTDB read or `GET /lakes` aborts the run instead of degrading.
 
 ## 14. PUBLISHING
-One atomic multi-path update per run, decided by `plan()`: PUBLISH when the fingerprint changes (upstream registration, status, health, version, lifecycle, serving revision/image, catalog, pilot inputs) or the last publish is > 24 h old. Executed in-process by the Brain Orchestrator (FINGERPRINT trigger); PARKED. `customerIntegrationMode`: none. Known output inconsistencies (open decisions): the catalog's "no evaluation" blockers are published alongside pilot evaluations; `provenance.brainVersion` is always absent; an evaluation's freshness is computed from its own generation time.
+One atomic multi-path update per run, decided by `plan()`: PUBLISH when the fingerprint changes (upstream registration, status, health, version, lifecycle, serving revision/image, catalog, pilot inputs) or the last publish is > 24 h old. Executed in-process by the Brain Orchestrator (FINGERPRINT trigger); PARKED. `customerIntegrationMode`: none. An evaluation's freshness keeps two times apart: its generation (now) and its evidence (`sourceObservationAt`, the oldest input used).
 
 ## 15. PATH OWNERSHIP
 The families in §4, enforced client-side by `ownership.py`. Intelligence never writes a specialist's slot, state or registry. The Publisher registry registers Intelligence in SHADOW (`intelligence-lake-state-v1`, `intelligence-registry-v1`, bundle `sector-intelligence-publication-v1`); it writes nothing in production.

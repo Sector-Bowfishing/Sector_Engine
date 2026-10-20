@@ -22,6 +22,7 @@ import json
 import statistics
 
 import brain_platform as bp
+from sector_intelligence_brain import BRAIN_VERSION
 
 EVAL_VERSION = "intelligence-eval-v1"
 PILOT_LAKES = ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Lake Hartwell|SC"]
@@ -193,10 +194,12 @@ def evaluate(lake_id: str, *, snapshot: dict | None, fleet_row: dict | None, pre
         "validation": {"status": "NOT_VALIDATED", "note": "pilot evaluation; no outcome validation exists"},
         "customerPath": {"implementation": cat.get("activeImplementation"), "engineRevision": serving.get("revision"),
                          "consumesThisEvaluation": False},
-        "provenance": {"brainId": "sector-intelligence", "brainVersion": cat.get("brainVersion"), "processingVersion": serving.get("revision"),
+        "provenance": {"brainId": "sector-intelligence", "brainVersion": BRAIN_VERSION, "processingVersion": serving.get("revision"),
                        "generatedAt": bp.iso(now), "sources": sources, "readiness": "CALIBRATION", "qualityFlags": flags,
                        "validationRef": "/validation/sector-intelligence"},
-        "freshness": bp.freshness(now, now, 24, "FINGERPRINT", evidence_stale=bool(degraded_inputs),
+        # The evaluation is generated now (FINGERPRINT model, unchanged); its evidence is as old as the OLDEST input it used (additive, never a run time).
+        "freshness": bp.freshness(now, now, 24, "FINGERPRINT", source_observation_at=min((u["generatedAt"] for u in used.values() if u.get("generatedAt")), default=None),
+                                  evidence_stale=bool(degraded_inputs),
                                   evidence_reasons=[f"{s} input {inputs[s]['status'].lower()}" for s in degraded_inputs],
                                   refresh_reason="pilot evaluation"),
     })

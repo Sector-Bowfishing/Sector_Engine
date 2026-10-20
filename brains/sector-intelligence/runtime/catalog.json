@@ -1,6 +1,6 @@
 {
- "catalogVersion": "2026-10-12.2",
- "reviewedAt": "2026-10-12",
+ "catalogVersion": "2026-10-20.1",
+ "reviewedAt": "2026-10-20",
  "reviewNote": "Declared facts about what constitutes Sector Intelligence today, from a read-only audit of Sector_Engine (deployed/sector-engine-00072-way), iOS Michael-Master (afc0095e) and Android Michael-Master (7b10cb3). Runtime facts (serving revision, upstream brain status, freshness, per-lake inputs) are read live by the publisher and are never declared here.",
  "codeLineage": {
   "service": "sector-engine",
@@ -102,7 +102,7 @@
    "certificationStatus": "NOT_VALIDATED",
    "servesCustomers": false,
    "publishesLakeState": true,
-   "method": "Planned: consume normalized Brain states (lake, water temp, clarity, wind, biological) and publish a per-lake evaluation with drivers, limiting factors and input versions",
+   "method": "Pilot: consumes normalized Brain states (lake, water temp, clarity, wind, biological) and publishes a per-lake evaluation for the pilot lakes with drivers, limiting factors, degraded inputs and input versions; no rating, score or recommendation",
    "readsBrains": [
     "lake-brain",
     "water-temp",
@@ -247,10 +247,10 @@
  },
  "outputContract": {
   "status": "PROPOSED",
-  "note": "No normalized output is produced. When it exists it is written to /lakes/{k}/states/intelligence and snapshot field sectorIntelligence with drivers (each naming its sourceSlot), limiting factors, degraded inputs, input versions and provenance. The Conditions Score's semantics are preserved; no new score is invented for the portal."
+  "note": "For the pilot lakes the evaluation (intelligence-eval-v1) is written to /lakes/{k}/states/intelligence and the snapshot field sectorIntelligence with drivers (each naming its slot), limiting factors, degraded inputs, the inputs used and provenance; other lakes carry input availability only. The Conditions Score's semantics are preserved; no new score is invented for the portal."
  },
  "knownLimitations": [
-  "This brain currently publishes metadata, dependency status and per-lake input availability only; it evaluates nothing.",
+  "This brain publishes metadata, dependency status and per-lake input availability; for the pilot lakes it also publishes a normalized evaluation that restates specialist states (no rating, score or recommendation, not consumed by any customer).",
   "Implementation facts are declared in catalog.json and reviewed by hand; runtime facts are read live."
  ],
  "snapshotField": "sectorIntelligence"

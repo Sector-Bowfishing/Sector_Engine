@@ -12,10 +12,12 @@
 >   (not `inputVersions`, `sourceSlot`, `intelligenceVersion`). No versioned JSON schema exists yet.
 > - §6: there is no scheduler of its own, but the Brain Orchestrator runs it in-process (`control_manifest.json`
 >   `sector-intelligence`); the Brain is PARKED. The fingerprint also covers the pilot inputs (`run.py:114-115`).
-> - Known inconsistencies recorded for decision (not fixed here, they change published output): `catalog.json` still declares
->   the blockers `NO_NORMALIZED_EVALUATION` / `NO_BRAIN_CONSUMED` and "evaluates nothing"; its five dependencies are
->   `REQUIRED` while `control_manifest.json` declares them `OPTIONAL`; the evaluation's `provenance.brainVersion` is always
->   absent (`evaluation.py:196` reads a catalog key that does not exist). See `docs/cortex/sessions/2026-10-20-architecture-all-brains.md`.
+> - Corrected 2026-10-20 (Cortex architecture completion; output metadata only, no synthesis change): the catalog (`2026-10-20.1`) no
+>   longer says "evaluates nothing"; the inventory-mode blockers `NO_NORMALIZED_EVALUATION` / `NO_BRAIN_CONSUMED` are published only
+>   when no pilot evaluation ran; `provenance.brainVersion` names the Brain version; the evaluation's `freshness.sourceObservationAt`
+>   is its oldest input. The evaluation has a versioned contract, `brains/sector-intelligence/contracts/intelligence-evaluation-v1.schema.json`.
+>   The catalog's `plannedRole: REQUIRED` is the *planned* role in the future evaluation; today's declared requirement is `OPTIONAL`
+>   (`brain.json`, `control_manifest.json`). The code now lives in `brains/sector-intelligence/` (migrated).
 
 # Sector Intelligence Brain: integration contract
 
