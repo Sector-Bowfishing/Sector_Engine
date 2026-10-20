@@ -449,3 +449,16 @@ class Schemas(unittest.TestCase):
                                     presence={"alpha_fish": {"presenceState": ce.EVALUATION_PRESENCE}, "beta_fish": {"presenceState": "historical"}})
         a = ba.build_assessments(st, F.ruleset(), knowledge_version="k", supplied_depth={"depthClass": "LT_0_5M"})
         self.assertEqual(validate(a, schema), [])
+
+
+class PublishableEvidence(unittest.TestCase):
+    def test_sanitised_evidence_reproduces_the_result_and_carries_no_private_detail(self):          # public-repo boundary
+        import re
+        ev = evaluate()
+        pub = ce.publishable_evidence(ev)
+        self.assertEqual(score(pub)["aggregates"], score(ev)["aggregates"])
+        self.assertEqual(pub["evaluationId"], ev["evaluationId"])
+        txt = json.dumps(pub)
+        self.assertIsNone(re.search(r'"[A-Z]{2,4}-[A-Z]{2,5}-\d{2}[A-Za-z]?"', txt))           # no rule ids
+        for k in ('"detail"', '"scenario"', '"behavior"', '"rulesByFamily"', '"annualCoverage"', '"results"'):
+            self.assertNotIn(k, txt)

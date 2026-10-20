@@ -369,3 +369,95 @@ def compare(prev: dict, cur: dict) -> dict:
                    "delta": _r(b["value"] - a["value"]) if isinstance(a.get("value"), (int, float)) and isinstance(b.get("value"), (int, float)) else None,
                    "statusFrom": a.get("status"), "statusTo": b.get("status")}
     return out | {"species": sp, "aggregates": ag}
+
+
+# ---------------------------------------------------------------- publication (shared scorer job; INACTIVE unless explicitly activated)
+import os as _os
+
+_REPO = _os.path.normpath(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", ".."))
+PUBLICATION_PATH = _os.path.join(_REPO, "docs", "brains", "scoring", "fish-capability-publication.json")
+RUBRIC_PATH = _os.path.join(_REPO, "docs", "brains", "scoring", "fish-biological-capability-v2.json")
+EVIDENCE_PATH = _os.path.join(_REPO, "docs", "brains", "scoring", "evidence", "fish-capability-evidence.json")
+COHORT_FILES = {"fish-capability-cohorts-v2": _os.path.join(_REPO, "docs", "brains", "scoring", "fish-capability-cohorts-v2.json")}
+DECISIONS = ("APPROVED", "REJECTED")
+
+
+def rtdb_normal(o):
+    """The form RTDB stores: no null values and no empty objects/arrays (so a read-back compares equal and re-runs are idempotent)."""
+    if isinstance(o, dict):
+        o = {k: rtdb_normal(v) for k, v in o.items() if v is not None}
+        return {k: v for k, v in o.items() if v not in ({}, [])}
+    if isinstance(o, list):
+        return [rtdb_normal(v) for v in o if v is not None]
+    if isinstance(o, float):
+        return round(o, PRECISION)
+    return o
+
+
+def publication_gate(pub: dict | None) -> list[str]:
+    """Why the capability block may NOT be attached (empty = may attach). Fails closed."""
+    if not pub:
+        return ["no publication record"]
+    e = []
+    if pub.get("status") != "ACTIVE":
+        e.append(f"publication status {pub.get('status')!r} (not ACTIVE)")
+    if not (pub.get("activation") or {}).get("approvedBy"):
+        e.append("activation has no recorded owner approval")
+    rev = pub.get("referenceCaseReview") or {}
+    dec = rev.get("decisions") or {}
+    for cid in rev.get("required") or []:
+        d = dec.get(cid) or {}
+        if d.get("decision") not in DECISIONS or not d.get("reviewer"):
+            e.append(f"reference case {cid} has no reviewed decision")
+    return e
+
+
+def compact(result: dict) -> dict:
+    """What /scores/biological-state/capability carries: everything Ops renders, nothing private (no rule ids, no criterion details)."""
+    sp = {}
+    for sid, s in (result.get("species") or {}).items():
+        sp[sid] = {k: s.get(k) for k in ("speciesId", "role", "evaluationStatus", "capabilityScore", "displayScore", "knowledgeScoreSpeciesV2", "reason",
+                                         "implementedCapabilities", "missingCapabilities", "confidenceLimitations", "exemptCriteria")}
+        if s.get("categoryScores"):
+            sp[sid]["categoryScores"] = {c: {"label": v.get("label"), "earned": v["earned"], "max": v["max"],
+                                             "criteria": {cid: {"points": x.get("points"), "weight": x.get("weight"), "result": x.get("result")} for cid, x in v["criteria"].items()}}
+                                         for c, v in s["categoryScores"].items()}
+        if isinstance(s.get("scientificConfidence"), dict):
+            sp[sid]["scientificConfidence"] = {"status": s["scientificConfidence"].get("status")}
+    keep = ("schema", "rubricId", "rubricVersion", "cohortsVersion", "evaluationId", "evaluatedAt", "generatedAt", "knowledgeVersion", "evaluatorVersion",
+            "outcomeKind", "authority", "brain", "aggregates", "researchBacklog", "approvedBaseline", "changeRecord", "limitations")
+    return {**{k: result.get(k) for k in keep}, "species": sp}
+
+
+def attach_capability(scores: dict, facts: dict, now_iso: str, old_scores: dict | None = None, *, publication: dict | None = None,
+                      rubric: dict | None = None, evidence: dict | None = None, cohorts_by_version: dict | None = None) -> tuple[dict, str]:
+    """Shared-scorer hook: attach the Fish capability result to scores['biological-state'] as `capability`, or HOLD with the reason.
+    Additive: the maturity value, version and breakdown are never touched. Returns (scores, status line)."""
+    try:
+        pub = publication if publication is not None else (load_json(PUBLICATION_PATH) if _os.path.exists(PUBLICATION_PATH) else None)
+        why = publication_gate(pub)
+        if why:
+            return scores, "fish capability INACTIVE: " + "; ".join(why[:3])
+        rub = rubric or load_json(RUBRIC_PATH)
+        ev = evidence or (load_json(EVIDENCE_PATH) if _os.path.exists(EVIDENCE_PATH) else None)
+        if ev is None:
+            return scores, "fish capability HELD: no evidence in the image"
+        cv = ev.get("cohortsVersion")
+        coh = (cohorts_by_version or {}).get(cv) or (load_json(COHORT_FILES[cv]) if cv in COHORT_FILES else None)
+        if coh is None:
+            return scores, f"fish capability HELD: unknown cohorts {cv!r}"
+        published = (((facts.get("brains") or {}).get("biological-state")) or {}).get("researchVersion")
+        if (ev.get("knowledge") or {}).get("researchVersion") != published:
+            return scores, f"fish capability HELD: evidence knowledge {(ev.get('knowledge') or {}).get('researchVersion')} != published release {published}"
+        prev = (((old_scores or {}).get("biological-state")) or {}).get("capability")
+        res = build_result(ev, rub, coh, generated_at=now_iso, previous=prev if prev and prev.get("species") else None)
+        res["generatedAt"] = ev.get("evaluatedAt")          # content-stable: re-runs of the same evaluation compare equal
+        res["authority"] = {**res["authority"], "publication": "ACTIVE", "publicationGate": "passed",
+                            "note": "published by the shared scorer job under an ACTIVE, owner-approved publication record"}
+        block = rtdb_normal(compact(res))
+        if prev and {k: v for k, v in prev.items() if k != "changeRecord"} == {k: v for k, v in block.items() if k != "changeRecord"}:
+            block = prev                                      # same evaluation: keep the published block byte-for-byte (no churn)
+        scores["biological-state"] = {**scores["biological-state"], "capability": block}
+        return scores, f"fish capability attached: {res['evaluationId']} TARGET {res['aggregates']['TARGET']['value']} overall {res['brain']['overallBiologicalCapability']['value']}"
+    except Exception as ex:          # never let the capability block break the score run
+        return scores, f"fish capability HELD: {type(ex).__name__}: {ex}"

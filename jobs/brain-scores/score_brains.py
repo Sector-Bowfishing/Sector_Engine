@@ -173,6 +173,8 @@ def main() -> int:
     # score or the control overview. Deliberate regression needs a recorded decision: SCORE_GUARD_ALLOW=<brainId>[,<brainId>].
     scores, held = guard_scores(compute(facts, now), old_scores, allow=[x for x in os.environ.get("SCORE_GUARD_ALLOW", "").split(",") if x])
     engine = score_engine(facts["engine"], scores, now)
+    from sector_brain_platform import fish_capability as fish_cap      # Fish Capability V2: attached only when its publication record is ACTIVE and gated
+    scores, fish_cap_status = fish_cap.attach_capability(scores, facts, now.isoformat(), old_scores); print(fish_cap_status)
     updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores)   # canonical: /scores/engine
     # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.
     control = overview(brains=facts["brains"], health=facts["health"], validation=facts["validation"], scores=scores, engine=engine,

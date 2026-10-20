@@ -910,3 +910,30 @@ def evaluate(*, ruleset: rl.RuleSet, profiles: dict, cohorts: dict, knowledge: d
     }
     eid = "fcap-" + hashlib.sha256(canonical(body)).hexdigest()[:20]
     return body | {"evaluationId": eid, "evaluatedAt": evaluated_at or dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+
+
+PUBLISHABLE_KC = ("role", "assessment", "taxonomyStatus", "researchMaturity", "knowledgeScoreSpeciesV2", "rules", "openDiscrepancies", "doNotResearch")
+
+
+def publishable_evidence(ev: dict) -> dict:
+    """The evidence the shared scorer job ships in its image (docs/brains/scoring/evidence/fish-capability-evidence.json): same evaluation identity
+    and fractions, with every private detail removed (no rule ids, behaviour tags, scenarios, habitat classes or reference-case text).
+    The repository is public: this keeps only scores' inputs, blocker labels and published-equivalent counts."""
+    sp = {}
+    for sid, s in (ev.get("species") or {}).items():
+        row = {k: s.get(k) for k in ("evaluationStatus", "role", "reason")}
+        if s.get("criteria"):
+            row["criteria"] = {cid: {"result": c.get("result"), "fraction": c.get("fraction"), "outcomeKind": c.get("outcomeKind"),
+                                     **({"blocker": {"blocker": (c.get("blocker") or {}).get("blocker"), "why": (c.get("blocker") or {}).get("why")}} if c.get("blocker") else {})}
+                               for cid, c in s["criteria"].items()}
+            row["knowledgeContext"] = {k: (s.get("knowledgeContext") or {}).get(k) for k in PUBLISHABLE_KC}
+            row["scientificConfidence"] = s.get("scientificConfidence")
+        sp[sid] = {k: v for k, v in row.items() if v is not None}
+    k = ev.get("knowledge") or {}
+    rc = ev.get("referenceCases") or {}
+    return {**{x: ev.get(x) for x in ("schema", "evaluatorVersion", "rubricId", "criteria", "cohortsVersion", "outcomeKind", "codeVersion", "evaluationId",
+                                       "evaluatedAt", "scientificConfidence", "productionReadiness", "limitations", "frame")},
+            "knowledge": {"researchVersion": k.get("researchVersion"), "rulesVersion": k.get("rulesVersion"), "manifestSha256": k.get("manifestSha256"),
+                          "knowledgeVersion": k.get("knowledgeVersion"), "overlay": (k.get("overlay") or {}).get("id")},
+            "referenceCases": {x: rc.get(x) for x in ("total", "approved", "proposed", "status")},
+            "publishable": True, "species": sp}

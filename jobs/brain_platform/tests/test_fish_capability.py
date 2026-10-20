@@ -188,3 +188,69 @@ def test_results_carry_the_approved_baseline_and_mark_comparisons_against_it():
     cur = fc.build_result(evidence({s: 0.6 for s in t}, cohorts=c2), RUBRIC, c2, generated_at=NOW, previous=prev)
     assert cur["approvedBaseline"]["evaluationId"] == b["evaluationId"]
     assert cur["changeRecord"]["againstApprovedBaseline"] is True and cur["changeRecord"]["comparable"] is True
+
+
+# ---------------------------------------------------------------- publication path (shared scorer hook)
+import re as _re
+
+GATE = ["CC-REF-02", "CC-REF-03", "LG-REF-01", "BB-REF-01", "GC-REF-02", "BF-REF-02"]
+
+
+def _pub(active=True, reviewed=GATE):
+    return {"status": "ACTIVE" if active else "INACTIVE", "activation": {"approvedBy": "owner (test)" if active else None},
+            "referenceCaseReview": {"required": GATE, "decisions": {c: {"decision": "APPROVED", "reviewer": "reviewer (test)"} for c in reviewed}}}
+
+
+def _setup():
+    c2 = fc.load_json(os.path.join(DOCS, "fish-capability-cohorts-v2.json"))
+    ev = evidence({s: 0.5 for s in c2["cohorts"]["TARGET"]["species"]}, cohorts=c2, kv="2026-10-17.1")
+    ev["knowledge"]["researchVersion"] = "2026-10-17.1"
+    scores = {"biological-state": {"value": 5.1, "scoreVersion": "biological-state-score-v1", "uncapped": 5.1}}
+    facts = {"brains": {"biological-state": {"researchVersion": "2026-10-17.1"}}}
+    return c2, ev, scores, facts
+
+
+def test_repository_publication_record_is_inactive_and_attaches_nothing():
+    pub = fc.load_json(fc.PUBLICATION_PATH)
+    assert pub["status"] == "INACTIVE" and pub["referenceCaseReview"]["required"] == GATE and pub["referenceCaseReview"]["decisions"] == {}
+    c2, ev, scores, facts = _setup()
+    out, why = fc.attach_capability(dict(scores), facts, NOW, {}, evidence=ev, cohorts_by_version={c2["cohortsVersion"]: c2})
+    assert "capability" not in out["biological-state"] and why.startswith("fish capability INACTIVE")
+
+
+def test_gate_requires_activation_and_every_reference_case_reviewed():
+    assert any("not ACTIVE" in e for e in fc.publication_gate(_pub(active=False)))
+    assert any("GC-REF-02" in e for e in fc.publication_gate(_pub(reviewed=GATE[:4])))
+    bad = _pub()
+    bad["referenceCaseReview"]["decisions"]["BF-REF-02"] = {"decision": "APPROVED"}          # no reviewer named
+    assert any("BF-REF-02" in e for e in fc.publication_gate(bad))
+    assert fc.publication_gate(_pub()) == []
+
+
+def test_active_and_gated_attaches_additively_and_reruns_are_idempotent():
+    c2, ev, scores, facts = _setup()
+    kw = dict(publication=_pub(), evidence=ev, cohorts_by_version={c2["cohortsVersion"]: c2})
+    out, why = fc.attach_capability({k: dict(v) for k, v in scores.items()}, facts, NOW, {}, **kw)
+    blk = out["biological-state"]["capability"]
+    assert why.startswith("fish capability attached")
+    assert {k: out["biological-state"][k] for k in ("value", "scoreVersion", "uncapped")} == {"value": 5.1, "scoreVersion": "biological-state-score-v1", "uncapped": 5.1}
+    assert blk["authority"]["status"] == "AUTHORITATIVE_APPROVED" and blk["authority"]["publication"] == "ACTIVE"
+    assert blk["aggregates"]["TARGET"]["value"] == pytest.approx(5.0)
+    again, _ = fc.attach_capability({k: dict(v) for k, v in scores.items()}, facts, "2026-10-20T00:00:00Z", out, **kw)
+    assert again["biological-state"]["capability"] == blk                                  # same evaluation, later run: byte-identical block
+    assert json.loads(json.dumps(blk)) == fc.rtdb_normal(blk)                              # already in RTDB-stored form
+    assert not _re.search(r"[A-Z]{2,4}-[A-Z]{2,5}-\d{2}", json.dumps(blk).replace("-REF-", "")) and "sector-biology-private" not in json.dumps(blk)
+
+
+def test_evidence_for_a_different_release_is_held():
+    c2, ev, scores, facts = _setup()
+    facts["brains"]["biological-state"]["researchVersion"] = "2026-10-19.1"
+    out, why = fc.attach_capability(dict(scores), facts, NOW, {}, publication=_pub(), evidence=ev, cohorts_by_version={c2["cohortsVersion"]: c2})
+    assert "capability" not in out["biological-state"] and "HELD" in why and "2026-10-19.1" in why
+
+
+def test_a_broken_input_never_breaks_the_score_run():
+    c2, ev, scores, facts = _setup()
+    ev["species"]["common_carp"]["criteria"]["BIO-1"]["fraction"] = 7                    # invalid evidence
+    out, why = fc.attach_capability(dict(scores), facts, NOW, {}, publication=_pub(), evidence=ev, cohorts_by_version={c2["cohortsVersion"]: c2})
+    assert "capability" not in out["biological-state"] and "HELD" in why

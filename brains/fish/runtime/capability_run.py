@@ -149,6 +149,7 @@ def main(argv=None) -> int:
     ap.add_argument("--maturity", help="JSON score block of the existing maturity score, displayed verbatim")
     ap.add_argument("--expect-manifest-sha", help="refuse unless the knowledge release manifest has this sha256")
     ap.add_argument("--now", help="ISO time recorded as evaluatedAt/generatedAt (default: now)")
+    ap.add_argument("--publishable-evidence", help="also write the sanitised evidence the shared scorer job ships (no rule ids or private detail)")
     a = ap.parse_args(argv)
     rubric, cohorts = fc.load_json(a.rubric), fc.load_json(a.cohorts)
     errs = fc.validate_rubric(rubric)
@@ -172,6 +173,13 @@ def main(argv=None) -> int:
             json.dump(obj, fh, indent=1, ensure_ascii=False, sort_keys=True)
     with open(os.path.join(a.out, "report.md"), "w") as fh:
         fh.write(report_md(res))
+    if a.publishable_evidence:
+        pub = ce.publishable_evidence(ev)
+        if fc.build_result(pub, rubric, cohorts, generated_at=now)["aggregates"] != res["aggregates"]:
+            raise SystemExit("publishable evidence does not reproduce the private result: refusing to write it")
+        with open(a.publishable_evidence, "w") as fh:
+            json.dump(pub, fh, indent=1, ensure_ascii=False, sort_keys=True)
+            fh.write("\n")
     summary = {"evaluationId": res["evaluationId"], "knowledgeVersion": res["knowledgeVersion"], "authority": res["authority"]["status"],
                "aggregates": {k: {"value": v["value"], "status": v["status"], "evaluated": v["evaluated"], "eligible": v["eligibleSpecies"]} for k, v in res["aggregates"].items()},
                "out": a.out}
