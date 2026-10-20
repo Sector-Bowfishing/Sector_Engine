@@ -5,8 +5,9 @@ Pure: given what every Brain publishes about itself (registry `schedule`, `stale
 produce ONE ordered plan: which Brains run next, after which, why — with deduplication, single-flight
 (running / lock), dependency order, retry with backoff, failure isolation and lake targeting.
 
-No scheduler lives here and nothing executes: the executor (a future Cloud Run job or the
-per-brain jobs) consumes `plan()` output. Page views never call this.
+No scheduler lives here and nothing executes. This is the LEGACY planner: jobs/brain-orchestrator/orchestrate.py calls
+`plan()` and records its output at /control/orchestrator, but execution follows the decision model in `orchestration.py`; this
+plan only drives execution with `--legacy-execution`. Page views never call this.
 """
 from __future__ import annotations
 

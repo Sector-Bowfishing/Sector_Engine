@@ -3,12 +3,12 @@
 
 Reads each Brain's published facts from the Brain RTDB, evaluates the versioned rubrics
 (sector_brain_platform.scoring), takes the frozen scores verbatim, and writes
-/brains/{id}/score for all six Brains as the platform writer `brain-platform`.
+the canonical /scores/{id} nodes (plus /scores/engine) as the platform writer `brain-platform`; legacy /brains/{id}/score mirrors are deleted.
 
   python3 score_brains.py            # dry run: prints every score + breakdown, writes nothing
   python3 score_brains.py --write    # publish changed scores (+ one score.changed event each)
 
-Manual only. No scheduler: the Orchestrator will own cadence. Ops never computes scores.
+No scheduler of its own: the Orchestrator runs it in-process each cycle (`score_brains.py --write --if-changed`, jobs/brain-orchestrator/orchestrate.py); it can also be run by hand. Ops never computes scores.
 """
 from __future__ import annotations
 
