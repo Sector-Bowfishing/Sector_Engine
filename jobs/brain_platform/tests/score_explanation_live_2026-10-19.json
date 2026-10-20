@@ -1,0 +1,388 @@
+{
+ "_source": "read-only GET of the production Brain RTDB /scores on 2026-10-19 (Brain Score Explanation V1 fixture; engine block omitted); private bucket URIs replaced",
+ "biological-state": {
+  "basis": "COMPUTED",
+  "completenessPct": 95,
+  "nextScoreOpportunity": "independent review of assessed species, then real field validation toward the first VALIDATED species (gate 6.0)",
+  "scale": 10,
+  "scoreBlockers": [
+   {
+    "cap": 6.0,
+    "gate": "speciesValidation",
+    "why": "no species at researchMaturity VALIDATED"
+   },
+   {
+    "dimension": "biologicalStateValidation",
+    "why": "biologicalState validation = NOT_STARTED"
+   }
+  ],
+  "scoreBreakdown": {
+   "assessedCoverage": {
+    "evidence": "27 of 29 species assessed",
+    "status": "SCORED",
+    "value": 9.3,
+    "weight": 15
+   },
+   "biologicalStateImpl": {
+    "evidence": "biologicalState.status = IN_PROGRESS",
+    "status": "SCORED",
+    "value": 4.0,
+    "weight": 15
+   },
+   "biologicalStateValidation": {
+    "evidence": "biologicalState validation = NOT_STARTED",
+    "status": "SCORED",
+    "value": 0.0,
+    "weight": 10
+   },
+   "contradictionsGaps": {
+    "evidence": "mean normalized contradiction load over 27 species",
+    "status": "SCORED",
+    "value": 6.4,
+    "weight": 10
+   },
+   "evidenceQuality": {
+    "evidence": "research maturity of assessed species: ['RESEARCH']",
+    "status": "SCORED",
+    "value": 2.0,
+    "weight": 10
+   },
+   "knowledgeDepth": {
+    "evidence": "median species-v2 overallRounded over 27 assessed species = 4.0",
+    "status": "SCORED",
+    "value": 4.0,
+    "weight": 20
+   },
+   "productionIntegration": {
+    "evidence": "sector-intelligence dependency connectionStatus = CONNECTED",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 5
+   },
+   "regionalTransfer": {
+    "evidence": "not published by the Biological Brain yet",
+    "status": "UNKNOWN",
+    "weight": 5
+   },
+   "registryCompleteness": {
+    "evidence": "29 species: 27 assessed + 2 not assessed",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 10
+   }
+  },
+  "scoreRubric": "docs/brains/scoring/biological-state-score-v1.json",
+  "scoreUpdatedAt": "2026-10-19T02:59:38Z",
+  "scoreVersion": "biological-state-score-v1",
+  "uncapped": 5.1,
+  "value": 5.1
+ },
+ "lake-brain": {
+  "basis": "COMPUTED",
+  "completenessPct": 100,
+  "nextScoreOpportunity": "review source bindings for more lakes (coverage gate), then a validation run against operator truth",
+  "scale": 10,
+  "scoreBlockers": [
+   {
+    "cap": 3.0,
+    "gate": "coverage",
+    "why": "5 of 621 lakes profiled (1 % < 10 %)"
+   },
+   {
+    "cap": 5.0,
+    "gate": "validation",
+    "why": "validation NOT_VALIDATED"
+   },
+   {
+    "dimension": "validation",
+    "why": "/validation/lake-brain: NOT_VALIDATED"
+   }
+  ],
+  "scoreBreakdown": {
+   "coverage": {
+    "evidence": "5 of 621 directory lakes profiled (1 %)",
+    "status": "SCORED",
+    "value": 1.0,
+    "weight": 20
+   },
+   "floodDroughtContext": {
+    "evidence": "20 % of states with a known flood-pool state",
+    "status": "SCORED",
+    "value": 2.0,
+    "weight": 5
+   },
+   "historyQuality": {
+    "evidence": "100 % of profiled lakes with >= 5 complete years (SUFFICIENT)",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 15
+   },
+   "operatorPlan": {
+    "evidence": "100 % of profiled lakes with a guide curve or zone",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 10
+   },
+   "seasonalBaseline": {
+    "evidence": "100 % of profiled lakes with a baseline (SUFFICIENT/LIMITED)",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 10
+   },
+   "sourceAuthority": {
+    "evidence": "100 % of 5 profiled lakes on operator pool / own gauge",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 15
+   },
+   "trendQuality": {
+    "evidence": "100 % of 5 states observed (not proxy)",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 10
+   },
+   "validation": {
+    "evidence": "/validation/lake-brain: NOT_VALIDATED",
+    "status": "SCORED",
+    "value": 0.0,
+    "weight": 15
+   }
+  },
+  "scoreRubric": "docs/brains/scoring/lake-brain-score-v1.json",
+  "scoreUpdatedAt": "2026-10-13T18:58:18Z",
+  "scoreVersion": "lake-brain-score-v1",
+  "uncapped": 6.3,
+  "value": 3.0
+ },
+ "sector-intelligence": {
+  "basis": "COMPUTED",
+  "completenessPct": 90,
+  "nextScoreOpportunity": "consume one specialist Brain's normalized state and evaluate the pilot lakes with provenance",
+  "scale": 10,
+  "scoreBlockers": [
+   {
+    "cap": 5.0,
+    "gate": "validation",
+    "why": "validation NOT_VALIDATED"
+   },
+   {
+    "dimension": "validation",
+    "why": "/validation/sector-intelligence: NOT_VALIDATED"
+   }
+  ],
+  "scoreBreakdown": {
+   "dependencyHandling": {
+    "evidence": "5 of 5 upstream dependency statuses published",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 10
+   },
+   "lakeCoverage": {
+    "evidence": "supportedLakeCount 5 of 621",
+    "status": "SCORED",
+    "value": 1.0,
+    "weight": 10
+   },
+   "normalizedEvaluations": {
+    "evidence": "5 of 621 lakes evaluated",
+    "status": "SCORED",
+    "value": 1.0,
+    "weight": 20
+   },
+   "provenance": {
+    "evidence": "100 % of 5 sampled evaluations carry provenance + inputs",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 10
+   },
+   "runtime": {
+    "evidence": "health HEALTHY; schedule/job present",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 5
+   },
+   "specialistConnectivity": {
+    "evidence": "5 of 5 upstream Brains consumed",
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 20
+   },
+   "synthesisQuality": {
+    "evidence": "not measurable until evaluations exist",
+    "status": "UNKNOWN",
+    "weight": 10
+   },
+   "validation": {
+    "evidence": "/validation/sector-intelligence: NOT_VALIDATED",
+    "status": "SCORED",
+    "value": 0.0,
+    "weight": 15
+   }
+  },
+  "scoreRubric": "docs/brains/scoring/sector-intelligence-score-v1.json",
+  "scoreUpdatedAt": "2026-10-13T03:56:52Z",
+  "scoreVersion": "sector-intelligence-score-v1",
+  "uncapped": 4.8,
+  "value": 4.8
+ },
+ "water-clarity": {
+  "appliesTo": {
+   "certificationStatus": "CERTIFIED",
+   "deploymentStatus": "NOT_DEPLOYED",
+   "modelId": "r3.1",
+   "status": "CANDIDATE"
+  },
+  "basis": "FROZEN",
+  "completenessPct": 100,
+  "nextScoreOpportunity": "Approve and deploy R3.1 as production clarity, then re-certify on live data",
+  "note": "research score, not a production-quality score",
+  "scale": 10,
+  "scoreBlockers": [
+   {
+    "gate": "deployment",
+    "why": "R3.1 is a certified CANDIDATE, NOT_DEPLOYED; production clarity is secchi-power-v1 / rain-decay-v0 (unscored). Promotion needs Michael's explicit approval"
+   }
+  ],
+  "scoreRubric": "Clarity research certification bars (private detail: gs-private-archive)",
+  "scoreUpdatedAt": "2026-10-12T00:00:00Z",
+  "scoreVersion": "clarity-research-certification-r3.1",
+  "value": 8.0
+ },
+ "water-temp": {
+  "basis": "FROZEN",
+  "completenessPct": 100,
+  "nextScoreOpportunity": "Protected truth for Wilson and Wheeler (TVA forebay profiles or Sector loggers), then the Level-4 comparison",
+  "note": "Production model surface-energy-balance-v2 (k=0.09) is live; the V2 Kalman candidate is frozen RESEARCH, not promoted",
+  "scale": 10,
+  "scoreBlockers": [
+   {
+    "gate": "level4ProtectedTruth",
+    "why": "Level-4 protected-truth sufficiency gate FAILED: two of the four protected lakes are below the 25-cast minimum; the model did not fail"
+   }
+  ],
+  "scoreRubric": "Water Temp level ladder \u2014 Stage 3C.3 decision (iOS private repo docs/intelligence/water-temp/WATER_TEMP_STAGE_3C3_PROTECTED_VALIDATION.md)",
+  "scoreUpdatedAt": "2026-10-11T00:00:00Z",
+  "scoreVersion": "water-temp-level-ladder-v1",
+  "value": 3.0
+ },
+ "wind": {
+  "basis": "COMPUTED",
+  "completenessPct": 100,
+  "evidence": {
+   "evidenceFileSha": "675253437d3a6d78",
+   "metadataThrough": "2026-10-13T21:13:35Z",
+   "scorerCode": "45961cee",
+   "validArchiveDays": 5
+  },
+  "nextScoreOpportunity": "Reliability grows automatically with valid live days (dimension 8, +8 at 30 days); bank-scale exposure + surface validation under Evidence Addendum v1 (dimensions 6/7, +40) and an over-water reference are the other movers",
+  "note": "certification score of the candidate pipeline, not of production wind (customers get Open-Meteo Best Match)",
+  "rawPoints": 32.65,
+  "scale": 10,
+  "scoreBlockers": [
+   {
+    "cap": 6.0,
+    "gate": "fieldValidation",
+    "why": "Exposure or surface never field-validated (certification cap; not binding while the score is below the cap)"
+   },
+   {
+    "cap": 7.0,
+    "gate": "fieldValidation",
+    "why": "Land-only wind validation, no over-water reference (certification cap; not binding while the score is below the cap)"
+   },
+   {
+    "gate": "liveReliability",
+    "why": "5 of 30 valid live archive days; projected gate 2026-11-07T03:00Z"
+   },
+   {
+    "gate": "h2",
+    "why": "H2 holdout sealed until 2027-01-01; no live skill is scored before then"
+   },
+   {
+    "gate": "rubric",
+    "why": "dimension 1 and 3 event gates (>= 15 mph, >= 20 kt) score 0; exposure and surface (40 pts) need bank-pair truth"
+   }
+  ],
+  "scoreBreakdown": {
+   "Coverage": {
+    "evidence": "4/4 development lakes, 50 directory lakes passing national QA",
+    "points": 4.0,
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 4
+   },
+   "Direction": {
+    "evidence": "within 22.5\u00b0 0.758, circular MAE 18.3\u00b0",
+    "points": 4.32,
+    "status": "SCORED",
+    "value": 5.4,
+    "weight": 8
+   },
+   "Exposure (field)": {
+    "evidence": "no field data: 0 real observations; holdout sealed; no certification run",
+    "points": 0.0,
+    "status": "SCORED",
+    "value": 0.0,
+    "weight": 20
+   },
+   "Fetch method": {
+    "evidence": "independent exact-geometry median relative difference 0.05",
+    "points": 10.0,
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 10
+   },
+   "Freshness-reliability": {
+    "evidence": "5/30 complete days, worst completeness 1.0000, median age 68.26666666666667 min, catch-up runs 20",
+    "points": 1.33,
+    "status": "SCORED",
+    "value": 1.67,
+    "weight": 8
+   },
+   "Gust": {
+    "evidence": "conditional gust bias -1.91 m/s; >= 20 kt POD [0.06796116504854369, 0.05365853658536585, 0.0392156862745098, 0.03076923076923077, 0.020833333333333332] FAR [0.8444444444444444, 0.8589743589743589, 0.8709677419354839, 0.9032258064516129, 0.9333333333333333]",
+    "points": 0.0,
+    "status": "SCORED",
+    "value": 0.0,
+    "weight": 5
+   },
+   "Lead time": {
+    "evidence": "+18 h MAE +2.8% vs +1 h; persistence compared at ['3', '6', '12', '18']",
+    "points": 5.0,
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 5
+   },
+   "Provenance-Unknown": {
+    "evidence": "kindEverywhere=True; unknownIsGrey=True; explanationOnEveryResult=True",
+    "points": 8.0,
+    "status": "SCORED",
+    "value": 10.0,
+    "weight": 8
+   },
+   "Surface (field)": {
+    "evidence": "no field data: 0 real observations; holdout sealed; no certification run",
+    "points": 0.0,
+    "status": "SCORED",
+    "value": 0.0,
+    "weight": 20
+   },
+   "Wind speed": {
+    "evidence": "night pooled MAE 0.837, bias -0.042; 49 observed events; POD [0.0, 0.0, 0.0, 0.0, 0.0] FAR [None, None, None, None, None]",
+    "points": 0.0,
+    "status": "SCORED",
+    "value": 0.0,
+    "weight": 12
+   }
+  },
+  "scoreRubric": "frozen rubric v1 (code-derived scoreboard: jobs/wind-hourly/sector_wind/scoreboard.py) - evidence: frozen CAL+H1 skill file + live reliability ledger metadata",
+  "scoreUpdatedAt": "2026-10-13T21:13:49Z",
+  "scoreVersion": "wind-certification-rubric-v1",
+  "secondary": {
+   "bowfishingWindIntelligenceScore": 5.4,
+   "definition": "BWIS v1 (frozen definition sha256 21e2a326...)",
+   "total": 54.16
+  },
+  "uncapped": 3.27,
+  "value": 3.3
+ }
+}

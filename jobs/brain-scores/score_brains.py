@@ -22,6 +22,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
+from sector_brain_platform.score_explanation import explain as explain_score, is_current as is_current_explanation  # noqa: E402
 from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
                                    prune_activity, guard_scores, score_biological, score_engine, score_intelligence, score_lake)
 
@@ -86,6 +87,28 @@ def fetch_facts(db) -> dict:
     }
 
 
+def knowledge_ids(registry: dict | None) -> dict:
+    """Lightweight release identifiers a Brain registry already publishes (never copied research content)."""
+    r = registry or {}
+    return {"brainVersion": r.get("version"), "researchVersion": r.get("researchVersion"), "manifestSha256": r.get("manifestSha256"),
+            "lastSuccessfulRun": r.get("lastSuccessfulRun")}
+
+
+def load_gaps(root: str = os.path.join(HERE, "..", "..")) -> dict:
+    """{brainId: {gapId: {status, title}}} from brains/*/research/GAPS.json when present (repo runs and the staged image)."""
+    out = {}
+    base = os.path.join(root, "brains")
+    for d in sorted(os.listdir(base)) if os.path.isdir(base) else []:
+        p = os.path.join(base, d, "research", "GAPS.json")
+        if os.path.isfile(p):
+            try:
+                doc = json.load(open(p))
+            except (OSError, ValueError):
+                continue
+            out[doc.get("brainId") or d] = {g["id"]: {"status": g.get("status"), "title": g.get("title")} for g in doc.get("gaps") or [] if g.get("id")}
+    return out
+
+
 def rtdb_safe(o):
     """Frozen blocks come from generators on other branches and may name dimensions with RTDB-illegal key characters (the Wind block has
     'Freshness/reliability'); one illegal key fails the whole multi-path update. Replace them in KEYS only (values untouched)."""
@@ -110,17 +133,21 @@ def _content(score: dict | None) -> dict:
     """A score block without its refresh timestamp, for comparing substance."""
     # RTDB does not store empty objects/arrays, so a block computed with `scoreBreakdown: {}` reads back WITHOUT the key; treating {} / [] / None as
     # absent keeps the comparison stable (otherwise every frozen block and the Engine block were rewritten every cycle with no change in content).
-    return {k: v for k, v in (score or {}).items() if k not in ("scoreUpdatedAt", "updatedAt") and v not in (None, {}, [])}
+    # `explanation` is derived FROM the block (score_explanation.py), never score content: it must not make an unchanged score look changed.
+    return {k: v for k, v in (score or {}).items() if k not in ("scoreUpdatedAt", "updatedAt", "explanation") and v not in (None, {}, [])}
 
 
 def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | None = None, old_engine: dict | None = None,
-                old_scores: dict | None = None) -> tuple[dict, list[str]]:
+                old_scores: dict | None = None, explain: bool = False, gaps: dict | None = None) -> tuple[dict, list[str]]:
     """Writes for score blocks whose CONTENT changed (value, uncapped, breakdown, blockers, version), plus a score.changed
     event only when the displayed value / version / basis changed.
     Why content, not just value (2026-10-13): the displayed value can sit at a gate cap (3.0) while the breakdown underneath
     improves (uncapped 4.3 -> 6.3 after the deep TVA history); comparing only the value left /scores/{id} stale for hours.
     Canonical nodes are /scores/{id} (platform-only root): a registry is written whole by its brain and
-    would clobber a sub-node there (seen 2026-10-12 on the Biological republish)."""
+    would clobber a sub-node there (seen 2026-10-12 on the Biological republish).
+    explain=True (Brain Score Explanation V1): every written block carries `explanation`, built from that same block in this same
+    update, so score and explanation can never be read apart; a block whose content is unchanged but whose stored explanation is
+    missing or not for this evaluation is rewritten once (backfill), with no score.changed event."""
     updates, changed, n = {}, [], 0
     old_scores = old_scores or {}
     if engine is not None:
@@ -142,7 +169,16 @@ def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | Non
         if bid not in brains:
             changed.append(f"{bid}: brain not registered yet — score written anyway (registry absent)")
         if _content(old) == _content(new):
+            if not explain or is_current_explanation(old):
+                continue
+            new = dict(old)                                       # backfill: the PUBLISHED evaluation, explained (score untouched)
+            new["explanation"] = explain_score(bid, new, None, gaps=(gaps or {}).get(bid), knowledge=knowledge_ids(brains.get(bid)))
+            updates[f"scores/{bid}"] = new
+            changed.append(f"{bid}: explanation attached (score unchanged {new.get('value')})")
             continue
+        if explain:
+            new = dict(new)
+            new["explanation"] = explain_score(bid, new, old, gaps=(gaps or {}).get(bid), knowledge=knowledge_ids(brains.get(bid)))
         updates[f"scores/{bid}"] = new
         if not (old.get("value") == new["value"] and old.get("scoreVersion") == new["scoreVersion"] and old.get("basis") == new["basis"]):
             n += 1
@@ -161,6 +197,7 @@ def main() -> int:
     ap.add_argument("--write", action="store_true", help="publish to the Brain RTDB (default: dry run)")
     ap.add_argument("--db", default=None, help="Brain RTDB URL (default: the contract's)")
     ap.add_argument("--report", default=None, help="write the full report JSON here")
+    ap.add_argument("--no-explain", action="store_true", help="do not attach /scores/{id}/explanation (brain-score-explanation-v1)")
     ap.add_argument("--if-changed", action="store_true", help="write a control node only when its content (minus timestamps) differs from what is published")
     a = ap.parse_args()
     now = dt.datetime.now(dt.timezone.utc)
@@ -173,7 +210,8 @@ def main() -> int:
     # score or the control overview. Deliberate regression needs a recorded decision: SCORE_GUARD_ALLOW=<brainId>[,<brainId>].
     scores, held = guard_scores(compute(facts, now), old_scores, allow=[x for x in os.environ.get("SCORE_GUARD_ALLOW", "").split(",") if x])
     engine = score_engine(facts["engine"], scores, now)
-    updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores)   # canonical: /scores/engine
+    updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores,   # canonical: /scores/engine
+                                   explain=not a.no_explain, gaps=load_gaps())
     # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.
     control = overview(brains=facts["brains"], health=facts["health"], validation=facts["validation"], scores=scores, engine=engine,
                        fleet=facts["fleet"], sources=facts["sources"], health_sources=facts["healthSources"], jobs=facts["jobs"], now=now)

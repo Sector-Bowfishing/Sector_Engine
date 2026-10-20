@@ -73,6 +73,8 @@ cp "$ROOT/docs/brains/scoring/frozen-scores.json" stage/docs/brains/scoring/
 for b in "$ROOT"/brains/*/; do
   [[ -f "$b/brain.json" ]] || continue
   mkdir -p "stage/brains/$(basename "$b")" && cp "$b/brain.json" "stage/brains/$(basename "$b")/"
+  # brain-score-explanation-v1 links improvements to research gap ids/status (metadata only; the register holds no data).
+  if [[ -f "$b/research/GAPS.json" ]]; then mkdir -p "stage/brains/$(basename "$b")/research" && cp "$b/research/GAPS.json" "stage/brains/$(basename "$b")/research/"; fi
 done
 mkdir -p stage/platform/registries/signals stage/providers
 cp "$ROOT/platform/registries/signals/signals.json" stage/platform/registries/signals/

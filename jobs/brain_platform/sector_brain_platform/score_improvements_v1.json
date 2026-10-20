@@ -1,0 +1,439 @@
+{
+  "registryVersion": "score-improvements-v1",
+  "purpose": "What each score deficiency means and what work would remove it, written from the rubric definitions (docs/brains/scoring/*-score-v1.json, SCORING.md, brains/wind/research/tools/sector_wind_research/scoreboard.py) and the research gap registers (brains/*/research/GAPS.json). Never an input to any score. An entry describes the rubric rule and the work; it never states a measured value (those come from the evaluation being explained) and never promises a score.",
+  "vocabulary": {
+    "type": [
+      "RESEARCH",
+      "DATA",
+      "IMPLEMENTATION",
+      "VALIDATION",
+      "CALIBRATION",
+      "INFRASTRUCTURE",
+      "DEPLOYMENT"
+    ],
+    "nature": {
+      "PREDICTION_QUALITY": "changes how well the Brain predicts or measures the world",
+      "KNOWLEDGE": "changes what the Brain knows (research content)",
+      "EVIDENCE_PROCESS": "changes how far existing knowledge is reviewed/validated; can move the score without changing predictions",
+      "COVERAGE": "extends the same capability to more lakes / species",
+      "INTEGRATION": "connects or publishes a capability other Brains or customers consume",
+      "DEPLOYMENT": "puts an already-certified candidate into production"
+    },
+    "blockerKind": [
+      "RESEARCH",
+      "SOURCE_DATA",
+      "IMPLEMENTATION",
+      "VALIDATION",
+      "TIME",
+      "OWNER_DECISION",
+      "PUBLISHER_AUTHORIZATION",
+      "PRODUCTION_DEPLOYMENT",
+      "EXTERNAL"
+    ]
+  },
+  "brains": {
+    "wind": {
+      "rubricSource": "brains/wind/research/tools/sector_wind_research/scoreboard.py (frozen rubric v1 + field scoring addendum v1)",
+      "entries": {
+        "dimension:Wind speed": {
+          "title": "Detect strong (>= 15 mph) night wind events",
+          "action": "Rubric dimension 1 credit is the MINIMUM of three conditions: night pooled MAE (1.6 -> 1.0 m/s, linear), |bias| <= 0.3 m/s (pass/fail), and >= 15 mph night events detected with POD >= 0.5 and FAR <= 0.5 (pass/fail). The event condition is pass/fail, so the dimension earns nothing until high-wind detection passes, however good the MAE is. Work: calibrate the candidate's strong-wind behaviour, then re-score on the next completed evidence window.",
+          "type": "CALIBRATION",
+          "nature": "PREDICTION_QUALITY",
+          "blocker": {
+            "kind": "VALIDATION",
+            "detail": "Dimensions 1-4 are scored on the frozen evidence window until the H2 holdout unseals; live skill cannot be credited before then."
+          }
+        },
+        "dimension:Gust": {
+          "title": "Detect >= 20 kt gusts",
+          "action": "Rubric dimension 3 credit is the MINIMUM of: |conditional gust bias| (3 -> 1 m/s, linear) and >= 20 kt gust detection with POD >= 0.6 and FAR <= 0.6 (pass/fail). Work: reduce gust under-forecast bias and improve strong-gust detection, then re-score on the next completed evidence window.",
+          "type": "CALIBRATION",
+          "nature": "PREDICTION_QUALITY",
+          "blocker": {
+            "kind": "VALIDATION",
+            "detail": "Scored on the frozen evidence window until the H2 holdout unseals."
+          }
+        },
+        "dimension:Direction": {
+          "title": "Tighten wind direction accuracy",
+          "action": "Rubric dimension 2 credit is the MINIMUM of: share of hours within 22.5 degrees (0.65 -> 0.85, linear) and circular MAE <= 20 degrees (pass/fail). Full credit needs >= 85 % of hours within 22.5 degrees.",
+          "type": "CALIBRATION",
+          "nature": "PREDICTION_QUALITY"
+        },
+        "dimension:Lead time": {
+          "title": "Hold forecast skill at longer lead times",
+          "action": "Rubric dimension 4: +18 h MAE degradation versus +1 h (50 % -> 15 %, linear) and beating persistence at every lead >= +3 h (pass/fail).",
+          "type": "CALIBRATION",
+          "nature": "PREDICTION_QUALITY"
+        },
+        "dimension:Fetch method": {
+          "title": "Keep the fetch method certified",
+          "action": "Rubric dimension 5 is pass/fail on the SPM84/CEM 9-ray method, independent exact-geometry median difference <= 5 %, the six frozen cases and resolution flags.",
+          "type": "IMPLEMENTATION",
+          "nature": "PREDICTION_QUALITY"
+        },
+        "dimension:Exposure (field)": {
+          "title": "Field-validate bank exposure (holdout certification)",
+          "action": "Only the one-time HOLDOUT certification counts (practice and calibration never do). Field scoring addendum v1 credit is the MINIMUM of: exposure concordance (0.50 -> 0.80), bank pairs / 40, lakes / 2 and direction quadrants / 3. Work: collect real bank-pair exposure observations on at least two lakes across three wind quadrants, then run the certification.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY",
+          "blocker": {
+            "kind": "SOURCE_DATA",
+            "detail": "No field observations exist yet; the evidence must be collected on the water."
+          }
+        },
+        "dimension:Surface (field)": {
+          "title": "Field-validate surface (chop) prediction (holdout certification)",
+          "action": "Only the one-time HOLDOUT certification counts. Addendum v1 credit is the MINIMUM of: exact class match (0.20 -> 0.60), within one class (0.50 -> 0.90), severe misses (0.25 -> 0.05) and observations / 60. Work: collect at least 60 real surface-condition observations, then run the certification.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY",
+          "blocker": {
+            "kind": "SOURCE_DATA",
+            "detail": "No field observations exist yet; the evidence must be collected on the water."
+          }
+        },
+        "dimension:Freshness-reliability": {
+          "title": "Accrue 30 valid live archive days",
+          "action": "Rubric dimension 8 counts only the live shadow: credit is the MINIMUM of 30-day completeness (days / 30 x worst source share / 0.99), median NBM availability age <= 90 min and fallbacks exercised. It grows by itself with every complete, valid UTC day; the work is keeping the hourly archive complete.",
+          "type": "INFRASTRUCTURE",
+          "nature": "EVIDENCE_PROCESS",
+          "blocker": {
+            "kind": "TIME",
+            "detail": "Accrues one valid UTC day at a time."
+          }
+        },
+        "dimension:Coverage": {
+          "title": "Keep lake coverage passing QA",
+          "action": "Rubric dimension 9: development lakes complete (1 -> 4) and directory lakes passing national QA (0 -> 50), credit is the minimum.",
+          "type": "DATA",
+          "nature": "COVERAGE"
+        },
+        "dimension:Provenance-Unknown": {
+          "title": "Keep provenance and Unknown handling complete",
+          "action": "Rubric dimension 10 is pass/fail on kind everywhere, Unknown shown grey and an explanation on every result.",
+          "type": "IMPLEMENTATION",
+          "nature": "EVIDENCE_PROCESS"
+        },
+        "gate:fieldValidation@6": {
+          "title": "Lift the 6.0 field-validation cap",
+          "action": "The certification caps the score at 6.0 while BOTH exposure and surface have zero field credit. Any certified field credit on either dimension lifts this cap.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY",
+          "related": [
+            "dimension:Exposure (field)",
+            "dimension:Surface (field)"
+          ],
+          "blocker": {
+            "kind": "SOURCE_DATA",
+            "detail": "Needs real field observations (bank pairs or surface observations)."
+          }
+        },
+        "gate:fieldValidation@7": {
+          "title": "Add an over-water wind reference",
+          "action": "The certification caps the score at 7.0 until wind validation includes measured over-water station comparisons (today it is land-only).",
+          "type": "DATA",
+          "nature": "PREDICTION_QUALITY",
+          "blocker": {
+            "kind": "SOURCE_DATA",
+            "detail": "Needs an over-water reference station (buoy or on-lake anemometer) with measured comparisons."
+          }
+        },
+        "gate:liveReliability": {
+          "blockerOf": [
+            "dimension:Freshness-reliability"
+          ]
+        },
+        "gate:h2": {
+          "blockerOf": [
+            "dimension:Wind speed",
+            "dimension:Gust"
+          ],
+          "blocks": true,
+          "blocker": {
+            "kind": "TIME",
+            "detail": "H2 holdout sealed; no live skill is scored before it unseals."
+          }
+        },
+        "gate:rubric": {
+          "blockerOf": [
+            "dimension:Wind speed",
+            "dimension:Gust",
+            "dimension:Exposure (field)",
+            "dimension:Surface (field)"
+          ]
+        }
+      }
+    },
+    "biological-state": {
+      "rubricSource": "docs/brains/scoring/biological-state-score-v1.json",
+      "labels": {
+        "registryCompleteness": "Every registered species assessed or explicitly NOT_ASSESSED",
+        "assessedCoverage": "Share of species assessed",
+        "knowledgeDepth": "Median species-v2 overallRounded over assessed species",
+        "evidenceQuality": "Research maturity",
+        "contradictionsGaps": "Open contradictions",
+        "regionalTransfer": "Knowledge tagged for the lake's region",
+        "biologicalStateImpl": "Per-lake Biological State exists",
+        "biologicalStateValidation": "Per-lake state validated",
+        "productionIntegration": "Consumed by Intelligence or a customer path"
+      },
+      "entries": {
+        "dimension:knowledgeDepth": {
+          "title": "Deepen species knowledge (median species score)",
+          "action": "The dimension is the MEDIAN species-v2 overallRounded over assessed species, so it rises only when the middle of the species distribution improves. Work: species-by-species research on each species' weakest domains (see Species Intelligence open gaps), published as a validated knowledge release.",
+          "type": "RESEARCH",
+          "nature": "KNOWLEDGE",
+          "blocker": {
+            "kind": "PUBLISHER_AUTHORIZATION",
+            "detail": "New species research counts only after it is published to production as a knowledge release."
+          }
+        },
+        "dimension:biologicalStateImpl": {
+          "title": "Take per-lake Biological State live",
+          "action": "Rubric scale: NOT_STARTED 0, IN_PROGRESS 4, LIVE 8, VALIDATED 10 (responsibilities.biologicalState.status). Work: publish per-lake Biological State for the fleet.",
+          "type": "IMPLEMENTATION",
+          "nature": "INTEGRATION",
+          "researchGaps": [
+            "FISH-PRD-001"
+          ],
+          "blocker": {
+            "kind": "EXTERNAL",
+            "detail": "Depth and Vegetation inputs are unpublished; graduation of the pilot needs Michael's decision (FISH-PRD-001)."
+          }
+        },
+        "dimension:biologicalStateValidation": {
+          "title": "Validate per-lake Biological State",
+          "action": "Rubric scale: NOT_STARTED 0, PARTIAL 5, VALIDATED 10 (responsibilities.biologicalState.validation). Work: a preregistered comparison of per-lake states against field outcomes.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY",
+          "researchGaps": [
+            "FISH-VAL-001",
+            "FISH-PRD-001"
+          ],
+          "blocker": {
+            "kind": "VALIDATION",
+            "detail": "Needs field outcomes (FISH-VAL-001) and a live per-lake state to validate."
+          }
+        },
+        "dimension:evidenceQuality": {
+          "title": "Independent review, then field validation, of assessed species",
+          "action": "Rubric scale: VALIDATED share x 10, else REVIEWED share x 7, else RESEARCH present -> 2. Work: independent review of assessed species (REVIEWED), then field validation (VALIDATED).",
+          "type": "VALIDATION",
+          "nature": "EVIDENCE_PROCESS",
+          "researchGaps": [
+            "FISH-EVI-001",
+            "FISH-VAL-001"
+          ],
+          "blocker": {
+            "kind": "OWNER_DECISION",
+            "detail": "The runtime refuses REVIEWED / VALIDATED until a separate promotion decision (FISH-EVI-001)."
+          }
+        },
+        "dimension:contradictionsGaps": {
+          "title": "Resolve open species contradictions",
+          "action": "Rubric scale: 10 x (1 - mean over assessed species of min(contradictionCount, 5) / 5). Work: resolve the open discrepancies listed per species, published as a knowledge release.",
+          "type": "RESEARCH",
+          "nature": "KNOWLEDGE",
+          "blocker": {
+            "kind": "PUBLISHER_AUTHORIZATION",
+            "detail": "Counts only after the resolving release is published."
+          }
+        },
+        "dimension:assessedCoverage": {
+          "title": "Assess the remaining eligible species",
+          "action": "Rubric scale: assessed / registered species x 10. Species marked NOT_ASSESSED by Fish Brain policy are intentionally excluded; assessing them is a product decision, not a research gap.",
+          "type": "RESEARCH",
+          "nature": "COVERAGE",
+          "blocker": {
+            "kind": "OWNER_DECISION",
+            "detail": "Remaining species are NOT_ASSESSED by policy (see each species' policy note)."
+          }
+        },
+        "dimension:regionalTransfer": {
+          "title": "Publish region-tagged species knowledge",
+          "action": "The rubric marks this dimension UNKNOWN until the Fish Brain publishes knowledge tagged for the lake's region; it contributes nothing while unknown.",
+          "type": "IMPLEMENTATION",
+          "nature": "KNOWLEDGE"
+        },
+        "dimension:registryCompleteness": {
+          "title": "Keep every registered species assessed or explicitly NOT_ASSESSED",
+          "action": "Rubric scale: 10 when assessed + not assessed == registered species, else 0.",
+          "type": "DATA",
+          "nature": "EVIDENCE_PROCESS"
+        },
+        "dimension:productionIntegration": {
+          "title": "Stay consumed by Sector Intelligence",
+          "action": "Rubric scale: 10 when Sector Intelligence's biological-state dependency is CONNECTED / CONNECTED_DEGRADED, else 0.",
+          "type": "IMPLEMENTATION",
+          "nature": "INTEGRATION"
+        },
+        "gate:speciesValidation": {
+          "title": "Validate the first species (lifts the 6.0 cap)",
+          "action": "The score is capped at 6.0 while no species is at researchMaturity VALIDATED. Work: independent review, then field validation, of at least one species.",
+          "type": "VALIDATION",
+          "nature": "EVIDENCE_PROCESS",
+          "related": [
+            "dimension:evidenceQuality"
+          ],
+          "researchGaps": [
+            "FISH-EVI-001",
+            "FISH-VAL-001"
+          ],
+          "blocker": {
+            "kind": "OWNER_DECISION",
+            "detail": "VALIDATED is refused by the runtime until a promotion decision; field validation is required first."
+          }
+        },
+        "gate:biologicalState": {
+          "title": "Start per-lake Biological State (lifts the 4.0 cap)",
+          "action": "The score is capped at 4.0 while per-lake Biological State is NOT_STARTED.",
+          "type": "IMPLEMENTATION",
+          "nature": "INTEGRATION",
+          "related": [
+            "dimension:biologicalStateImpl"
+          ]
+        }
+      }
+    },
+    "water-clarity": {
+      "rubricSource": "docs/brains/scoring/frozen-scores.json (FROZEN research certification; the production models carry no score)",
+      "entries": {
+        "gate:deployment": {
+          "title": "Approve and deploy the certified R3.1 candidate, then re-certify on live data",
+          "action": "The published 8.0 is the frozen research certification of candidate R3.1 (NOT_DEPLOYED). Production clarity is served by models that carry no score. A production score exists only after R3.1 is approved, deployed and re-certified on live data.",
+          "type": "DEPLOYMENT",
+          "nature": "DEPLOYMENT",
+          "researchGaps": [
+            "CLARITY-VAL-001"
+          ],
+          "blocks": true,
+          "blocker": {
+            "kind": "OWNER_DECISION",
+            "detail": "Promotion needs Michael's explicit approval, then a production deployment through the Publisher cutover (Water Clarity is SHADOW)."
+          }
+        }
+      }
+    },
+    "water-temp": {
+      "rubricSource": "docs/brains/scoring/SCORING.md (FROZEN Stage 3C.3 decision)",
+      "entries": {
+        "gate:level4ProtectedTruth": {
+          "title": "Collect protected truth for the Level-4 comparison",
+          "action": "The Level-4 gate failed on protected-truth sufficiency (two protected lakes below the 25-cast minimum), not on model error. Work: TVA forebay profiles or Sector loggers for those lakes, then the Level-4 comparison.",
+          "type": "DATA",
+          "nature": "PREDICTION_QUALITY",
+          "blocker": {
+            "kind": "SOURCE_DATA",
+            "detail": "Needs protected temperature truth that does not exist yet."
+          }
+        }
+      }
+    },
+    "lake-brain": {
+      "rubricSource": "docs/brains/scoring/lake-brain-score-v1.json",
+      "labels": {
+        "sourceAuthority": "Level source is the operator pool or the lake's own gauge",
+        "operatorPlan": "Operating guide or zone known",
+        "historyQuality": ">= 5 complete years of daily history",
+        "seasonalBaseline": "A day-of-year baseline exists",
+        "trendQuality": "Last state is observed, not a proxy",
+        "floodDroughtContext": "Flood-pool state known",
+        "validation": "Fleet validation",
+        "coverage": "Lakes profiled"
+      },
+      "entries": {
+        "gate:coverage": {
+          "title": "Profile at least 10 % of directory lakes (lifts the 3.0 cap)",
+          "action": "The score is capped at 3.0 while fewer than 10 % of directory lakes are profiled. Work: reviewed source bindings for more lakes.",
+          "type": "DATA",
+          "nature": "COVERAGE",
+          "related": [
+            "dimension:coverage"
+          ]
+        },
+        "gate:validation": {
+          "title": "Run a validation against operator truth (lifts the 5.0 cap)",
+          "action": "The score is capped at 5.0 while /validation/lake-brain is NOT_VALIDATED.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY",
+          "related": [
+            "dimension:validation"
+          ]
+        },
+        "gate:health": {
+          "title": "Restore Lake Brain health (lifts the 2.0 cap)",
+          "action": "The score is capped at 2.0 while brain health is FAILED or UNKNOWN.",
+          "type": "INFRASTRUCTURE",
+          "nature": "EVIDENCE_PROCESS"
+        },
+        "dimension:coverage": {
+          "title": "Profile more directory lakes",
+          "action": "Coverage ladder over profiled / directory lakes: > 0 -> 1, >= 5 % -> 2, 10 % -> 3, 25 % -> 5, 50 % -> 7, 75 % -> 9, 90 % -> 10.",
+          "type": "DATA",
+          "nature": "COVERAGE"
+        },
+        "dimension:validation": {
+          "title": "Validate lake levels against operator truth",
+          "action": "Rubric scale: NOT_VALIDATED 0, PARTIAL 5, VALIDATED 10 (/validation/lake-brain.status).",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY"
+        },
+        "dimension:floodDroughtContext": {
+          "title": "Publish flood-pool state for more lakes",
+          "action": "Share of lake states with a known flood-pool state x 10.",
+          "type": "DATA",
+          "nature": "KNOWLEDGE"
+        }
+      }
+    },
+    "sector-intelligence": {
+      "rubricSource": "docs/brains/scoring/sector-intelligence-score-v1.json",
+      "labels": {
+        "specialistConnectivity": "Upstream Brains actually consumed",
+        "normalizedEvaluations": "Lakes with a normalized evaluation",
+        "dependencyHandling": "Every upstream Brain has a published dependency status",
+        "provenance": "Evaluations carry full provenance",
+        "validation": "/validation/sector-intelligence.status",
+        "lakeCoverage": "supportedLakeCount / directoryLakeCount",
+        "runtime": "Health and schedule",
+        "synthesisQuality": "Drivers / limiting factors present and consistent"
+      },
+      "entries": {
+        "gate:validation": {
+          "title": "Validate Sector Intelligence (lifts the 5.0 cap)",
+          "action": "The score is capped at 5.0 while /validation/sector-intelligence is NOT_VALIDATED.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY",
+          "related": [
+            "dimension:validation"
+          ]
+        },
+        "dimension:validation": {
+          "title": "Validate Sector Intelligence evaluations",
+          "action": "Rubric scale: NOT_VALIDATED 0, PARTIAL 5, VALIDATED 10.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY"
+        },
+        "dimension:normalizedEvaluations": {
+          "title": "Evaluate more lakes",
+          "action": "Lakes with a normalized evaluation / directory lakes, on the coverage ladder (10 % -> 3, 25 % -> 5, 50 % -> 7, 90 % -> 10).",
+          "type": "DATA",
+          "nature": "COVERAGE"
+        },
+        "dimension:lakeCoverage": {
+          "title": "Support more lakes",
+          "action": "supportedLakeCount / directory lakes, on the coverage ladder.",
+          "type": "DATA",
+          "nature": "COVERAGE"
+        },
+        "dimension:synthesisQuality": {
+          "title": "Make synthesis quality measurable",
+          "action": "The rubric marks this dimension UNKNOWN until evaluations exist to measure drivers / limiting factors; it contributes nothing while unknown.",
+          "type": "VALIDATION",
+          "nature": "PREDICTION_QUALITY"
+        }
+      }
+    }
+  }
+}
