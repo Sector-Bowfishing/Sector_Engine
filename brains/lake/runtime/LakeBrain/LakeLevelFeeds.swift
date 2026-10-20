@@ -13,6 +13,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 public struct LevelObservation: Codable, Equatable, Sendable {
     public var at: Date

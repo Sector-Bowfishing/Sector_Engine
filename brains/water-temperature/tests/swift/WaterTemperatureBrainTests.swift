@@ -13,6 +13,7 @@ import XCTest
 import CoreLocation
 #endif
 @testable import SectorEngine
+@testable import WaterTemperatureBrain
 
 final class WaterTemperatureBrainTests: XCTestCase {
 

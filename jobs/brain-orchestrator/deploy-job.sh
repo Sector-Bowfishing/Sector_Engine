@@ -69,6 +69,7 @@ for d in biological-brain sector-intelligence-brain brain-scores brain-orchestra
   mkdir -p "stage/jobs/$d"
   src="$ROOT/jobs/$d"
   [[ "$d" == "biological-brain" ]] && src="$ROOT/brains/fish/runtime"     # Fish Brain canonical home; staged under the legacy job layout the image expects
+  [[ "$d" == "sector-intelligence-brain" ]] && src="$ROOT/brains/sector-intelligence/runtime"   # Sector Intelligence canonical home; same legacy layout
   cp "$src"/*.py "stage/jobs/$d/" 2>/dev/null || true
   [[ -f "$src/catalog.json" ]] && cp "$src/catalog.json" "stage/jobs/$d/"
   cp -R "$src/schemas" "stage/jobs/$d/" 2>/dev/null || true

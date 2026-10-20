@@ -14,14 +14,14 @@ import Foundation
 import CoreLocation
 #endif
 
-enum LakeTempSensorService {
+package enum LakeTempSensorService {
 
     /// A reading older than this is not "now".
-    static let maxAgeHours = 72.0
+    package static let maxAgeHours = 72.0
 
     /// The latest reading from `lake`'s sensor as a WaterLevelReading (value in
     /// °C, the unit the snapshot carries water temperature in), or nil.
-    static func latest(for lake: DirectoryLake) async -> WaterLevelReading? {
+    package static func latest(for lake: DirectoryLake) async -> WaterLevelReading? {
         guard let sensor = lake.tempSensor else { return nil }
         let parts = sensor.split(separator: ":", maxSplits: 2).map(String.init)
         let reading: WaterLevelReading?

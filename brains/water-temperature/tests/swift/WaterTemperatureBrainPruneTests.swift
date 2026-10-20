@@ -1,5 +1,6 @@
 import XCTest
 @testable import SectorEngine
+@testable import WaterTemperatureBrain
 
 /// Regression: pruning must never delete another brain's events (2026-10-12 platform audit).
 final class WaterTemperatureBrainPruneTests: XCTestCase {

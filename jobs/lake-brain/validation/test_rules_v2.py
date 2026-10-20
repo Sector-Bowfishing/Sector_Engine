@@ -1,5 +1,5 @@
 """Runs the shared conformance fixture contracts/conformance/lake_rules_v2.json against the Python mirror of the Lake Brain rules v2.
-The Swift rules run the very same file (Tests/SectorEngineTests/LakeRulesV2Tests.swift). Run:  python -m pytest jobs/lake-brain/validation -q"""
+The Swift rules run the very same file (brains/lake/tests/swift/LakeRulesV2Tests.swift). Run:  python -m pytest jobs/lake-brain/validation -q"""
 import datetime as dt
 import json
 import math

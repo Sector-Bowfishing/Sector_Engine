@@ -13,24 +13,24 @@ import Foundation
 import CoreLocation
 #endif
 
-enum WaterTrend: Equatable {
+package enum WaterTrend: Equatable {
     case rising
     case falling
     case steady
 }
 
-struct WaterLevelReading: Identifiable, Equatable {
-    var id: String { siteCode + "-" + parameterCode }
-    let siteCode: String
+package struct WaterLevelReading: Identifiable, Equatable {
+    package var id: String { siteCode + "-" + parameterCode }
+    package let siteCode: String
     let siteName: String
     let parameterCode: String      // e.g. "00065"
     let parameterName: String      // e.g. "Gage height, ft"
     let value: Double
     let unit: String               // e.g. "ft"
-    let dateTime: Date
+    package let dateTime: Date
     let latitude: Double
     let longitude: Double
-    let trend: WaterTrend
+    package let trend: WaterTrend
     let change: Double             // signed change over the lookback window, in `unit`
     /// The lookback-window values (oldest → newest) for a sparkline. May be empty.
     var history: [Double] = []
@@ -38,7 +38,7 @@ struct WaterLevelReading: Identifiable, Equatable {
     /// Set by `latestReading(near:)`; nil when not computed against an origin.
     var distanceMiles: Double? = nil
     /// Who publishes the series ("USGS" or "USACE CWMS"). Provenance only.
-    var provider: String = "USGS"
+    package var provider: String = "USGS"
 
     /// The lake's normal ("full") pool elevation, when known (reservoir readings
     /// only). Lets us say how far above/below full pool the water is sitting.
@@ -64,8 +64,8 @@ enum WaterLevelError: Error {
     case decodingFailed
 }
 
-final class WaterLevelService {
-    static let shared = WaterLevelService()
+package final class WaterLevelService {
+    package static let shared = WaterLevelService()
     private init() {}
 
     private let legacyEndpoint = "https://waterservices.usgs.gov/nwis/iv/"
@@ -311,7 +311,7 @@ final class WaterLevelService {
     /// river's temperature: Beaver Lake read 50 °F — the cold White River below
     /// the dam — with the lake near 80 (2026-09-27). nil means "no lake gauge",
     /// and the model stands.
-    func nearestWaterTemp(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
+    package func nearestWaterTemp(near coordinate: CLLocationCoordinate2D) async throws -> WaterLevelReading? {
         try await latestReading(near: coordinate,
                                 parameterCd: "00010",
                                 siteType: "LK",
@@ -323,7 +323,7 @@ final class WaterLevelService {
 
     /// A lake gauge farther than this is on another water, or another arm too
     /// far off to stand for the spot.
-    static let maxLakeTempGaugeMiles = 10.0
+    package static let maxLakeTempGaugeMiles = 10.0
 
     /// A USGS temperature series is the surface one unless its method says it
     /// sits at the bottom or deeper than 1.5 m (the descriptions read "at 1.0

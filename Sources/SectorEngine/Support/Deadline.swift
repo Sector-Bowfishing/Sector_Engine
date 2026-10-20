@@ -38,7 +38,7 @@
 
 import Foundation
 
-func withDeadline<T: Sendable>(
+package func withDeadline<T: Sendable>(
     _ seconds: Double,
     _ name: String,
     slowThreshold: Double = 3,

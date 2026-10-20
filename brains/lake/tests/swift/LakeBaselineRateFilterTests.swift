@@ -1,5 +1,6 @@
 import XCTest
 @testable import SectorEngine
+@testable import LakeBrain
 
 /// The 0.1 ft NWS RVD archive rows (sourceId "nws:rvd…") feed the LEVEL climatology but never the |Δ24h| rate climatology.
 final class LakeBaselineRateFilterTests: XCTestCase {

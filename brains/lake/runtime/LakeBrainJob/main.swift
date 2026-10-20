@@ -26,6 +26,7 @@
 
 import Foundation
 import SectorEngine
+import LakeBrain
 
 let argv = CommandLine.arguments
 func flag(_ name: String) -> String? { argv.firstIndex(of: name).flatMap { $0 + 1 < argv.count ? argv[$0 + 1] : nil } }

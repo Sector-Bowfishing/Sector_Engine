@@ -117,22 +117,24 @@
       "status": "LEGACY_BASELINE"
     },
     {
-      "key": "8|jobs/sector-intelligence-brain/brain_platform.py|legacy runtime references a docs/ path (baseline debt)",
+      "key": "8|brains/sector-intelligence/runtime/brain_platform.py|runtime references docs/",
       "invariant": 8,
-      "path": "jobs/sector-intelligence-brain/brain_platform.py",
+      "path": "brains/sector-intelligence/runtime/brain_platform.py",
       "owner": "Sector Intelligence Brain",
-      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
-      "plannedMigrationPhase": "Phase 6 (last)",
-      "status": "LEGACY_BASELINE"
+      "reason": "published label PLATFORM.contract = 'docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0' (a string in the published /brains/sector-intelligence registry entry, never opened as a file); changing it changes published output. Also present in the platform shim. Pre-existing; carried unchanged by the Sector Intelligence move (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "Sector Intelligence: replace with a contract/release id at the Publisher cutover (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "jobs/sector-intelligence-brain/brain_platform.py"
     },
     {
-      "key": "8|jobs/sector-intelligence-brain/sector_intelligence_brain.py|legacy runtime references a docs/ path (baseline debt)",
+      "key": "8|brains/sector-intelligence/runtime/sector_intelligence_brain.py|runtime references docs/",
       "invariant": 8,
-      "path": "jobs/sector-intelligence-brain/sector_intelligence_brain.py",
+      "path": "brains/sector-intelligence/runtime/sector_intelligence_brain.py",
       "owner": "Sector Intelligence Brain",
-      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
-      "plannedMigrationPhase": "Phase 6 (last)",
-      "status": "LEGACY_BASELINE"
+      "reason": "published label PLATFORM.contract = 'docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0' (a string in the published /brains/sector-intelligence registry entry, never opened as a file); changing it changes published output. Pre-existing; carried unchanged by the Sector Intelligence move (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "Sector Intelligence: replace with a contract/release id at the Publisher cutover (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "jobs/sector-intelligence-brain/sector_intelligence_brain.py"
     },
     {
       "key": "9|jobs/lake-brain/bindings/build_bindings_table.py|absolute user path in legacy runtime code (baseline debt)",
@@ -187,6 +189,156 @@
       "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
       "plannedMigrationPhase": "Phase 6 (Lake Registry established first)",
       "status": "LEGACY_BASELINE"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakePredictionLedger.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakePredictionLedger.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakePredictionLedger.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeBrainRunner.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeBrainRunner.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeBrainRunner.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeSourceBindings.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeSourceBindings.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeSourceBindings.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeLevelBaseline.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeLevelBaseline.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeLevelBaseline.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeBrainArchive.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeBrainArchive.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeBrainArchive.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeLevelClassifier.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeLevelClassifier.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeLevelClassifier.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeBrainContract.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeBrainContract.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeBrainContract.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeBrainProfiles.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeBrainProfiles.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeBrainProfiles.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeSpeciesPresence.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeSpeciesPresence.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeSpeciesPresence.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrain/LakeLevelFeeds.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrain/LakeLevelFeeds.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/LakeBrain/LakeLevelFeeds.swift"
+    },
+    {
+      "key": "11|brains/lake/runtime/LakeBrainJob/main.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/lake/runtime/LakeBrainJob/main.swift",
+      "owner": "Lake Brain (lake-brain)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/LakeBrainJob/main.swift"
+    },
+    {
+      "key": "11|brains/water-temperature/runtime/WaterTempBrainJob/main.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/water-temperature/runtime/WaterTempBrainJob/main.swift",
+      "owner": "Water Temperature Brain (water-temp)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/WaterTempBrainJob/main.swift"
+    },
+    {
+      "key": "8|brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift|runtime references docs/",
+      "invariant": 8,
+      "path": "brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift",
+      "owner": "Water Temperature Brain (water-temp)",
+      "reason": "published provenance labels artifactRef = 'Sector iOS repo docs/...' (strings in the published water-temp registry/validation, never opened as files); changing them changes published output. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "Water Temperature: replace with release ids when the validation record is re-versioned (output change; needs Michael's approval)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/Brain/WaterTemperatureBrain.swift"
+    },
+    {
+      "key": "11|brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift",
+      "owner": "Water Temperature Brain (water-temp)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/Brain/WaterTemperatureBrain.swift"
+    },
+    {
+      "key": "11|brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrainRunner.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
+      "invariant": 11,
+      "path": "brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrainRunner.swift",
+      "owner": "Water Temperature Brain (water-temp)",
+      "reason": "imports the shared SectorEngine library (fetchers, lake directory, Swift Brain platform). Not a call to the customer API or database: the code lived INSIDE the customer SectorEngine target until the 2026-10-20 Brain migration (obs.12); the move made the dependency explicit. Pre-existing; carried by the Swift Brain migration (Cortex architecture completion 2026-10-20).",
+      "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "Sources/SectorEngine/Brain/WaterTemperatureBrainRunner.swift"
     }
   ]
 }

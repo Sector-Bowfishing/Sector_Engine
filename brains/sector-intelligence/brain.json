@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "sector-intelligence",
+  "displayName": "Sector Intelligence",
+  "humanName": "Sector Intelligence",
+  "domain": "synthesis",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "in-process",
+    "language": "python",
+    "entrypoint": "brains/sector-intelligence/runtime/run.py",
+    "trigger": {"kind": "dependency"}
+  },
+  "publishes": [
+    {
+      "contractId": "sector-intelligence-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/sector-intelligence/contracts/sector-intelligence-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/intelligence", "/lakeFleet/{k}/slots/intelligence", "/lakeFleet/{k}/readiness/intelligence", "/lakeFleet/{k}/modelVersions/intelligence",
+        "/snapshots/{k}/latest/sectorIntelligence", "/snapshots/{k}/latest/brainVersions/sector-intelligence",
+        "/brains/sector-intelligence/{child}", "/validation/sector-intelligence", "/health/brains/sector-intelligence/{child}", "/activity/{event}"
+      ]
+    }
+  ],
+  "consumes": [
+    {"kind": "brain", "brainId": "lake-brain", "contractId": "lake-publication-v1", "minVersion": "1.0.0", "requirement": "OPTIONAL"},
+    {"kind": "brain", "brainId": "water-temp", "contractId": "water-temp-publication-v1", "minVersion": "1.0.0", "requirement": "OPTIONAL"},
+    {"kind": "brain", "brainId": "water-clarity", "contractId": "clarity-publication-v1", "minVersion": "1.0.0", "requirement": "OPTIONAL"},
+    {"kind": "brain", "brainId": "wind", "contractId": "wind-publication-v1", "minVersion": "1.0.0", "requirement": "OPTIONAL"},
+    {"kind": "brain", "brainId": "biological-state", "contractId": "fish-publication-v1", "minVersion": "1.0.0", "requirement": "OPTIONAL"},
+    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "REQUIRED"}
+  ],
+  "providers": [],
+  "researchWorkspace": {"workspaceId": "sector-intelligence"},
+  "score": {"type": "ENGINE_READINESS_SCORE", "path": "/scores/sector-intelligence", "rubricRef": "docs/brains/scoring/sector-intelligence-score-v1.json"},
+  "customerIntegrationMode": "none",
+  "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
+  "authorizedConsumers": ["ops"],
+  "tests": ["brains/sector-intelligence/tests"],
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+}

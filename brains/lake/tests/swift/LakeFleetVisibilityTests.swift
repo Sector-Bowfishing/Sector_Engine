@@ -1,5 +1,6 @@
 import XCTest
 @testable import SectorEngine
+@testable import LakeBrain
 
 /// Sector Ops must be able to show the reviewed vs candidate fleet from Engine truth (`/brains/lake-brain.breakdowns.fleetBindingStatus`).
 final class LakeFleetVisibilityTests: XCTestCase {

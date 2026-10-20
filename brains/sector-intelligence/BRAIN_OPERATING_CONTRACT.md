@@ -1,10 +1,10 @@
 # Sector Intelligence Brain — BRAIN OPERATING CONTRACT
 
 > Standard Brain Package V1, 19 sections. Read this first in every Sector Intelligence session. It states rules and decisions, never evidence, findings, handoffs or run logs; platform rules are cited, not copied.
-> Contract version **0.1.0 (DRAFT, descriptive)** — Cortex standardization, 2026-10-20. Sector Intelligence is **not migrated**: there is no `brains/sector-intelligence/` package and no `brain.json` (`tools/architecture` forbids one before migration), so per `STANDARD_BRAIN_PACKAGE_V1.md` §2 this contract lives here and moves with the Brain. It **restates** `docs/brains/SECTOR_INTELLIGENCE_BRAIN_INTEGRATION.md` (read its "Current state on main" note), `jobs/sector-intelligence-brain/catalog.json` and the code; it adds **no new policy**, expands no functionality and activates nothing. Undecided items say **NOT ESTABLISHED** and name who decides.
+> Contract version **0.2.0 (DRAFT, descriptive)** — Cortex standardization and architecture completion, 2026-10-20. Sector Intelligence is **migrated** into this canonical package (Standard Brain Package V1) (`runtime/`, moved from `jobs/sector-intelligence-brain/`); it is registered (`brain.json`) and adopts Brain Certification Kit V1. This contract **restates** the ratified integration docs and the code; it adds **no new policy and no science**. Undecided items say **NOT ESTABLISHED** and name who decides. Where this file and the integration contract disagree, the integration contract wins until this file is corrected.
 
 ## 1. IDENTITY
-`brainId` **`sector-intelligence`** (stable machine id, never renamed). Display name "Sector Intelligence", slot `intelligence`, snapshot field `sectorIntelligence`. Domain: synthesis. Lifecycle **CALIBRATION** while pilot evaluations exist (`DISCOVERED` otherwise); activity state **PARKED**; validation `NOT_VALIDATED`. Runtime: `jobs/sector-intelligence-brain/` (`run.py`, `sector_intelligence_brain.py`, `evaluation.py`, `orchestration.py`, `catalog.json`; stdlib Python). Versions: `sector-intelligence-brain-0.1.0`, evaluation `intelligence-eval-v1`. Owner: the Intelligence lane (Michael approves).
+`brainId` **`sector-intelligence`** (stable machine id, never renamed). Display name "Sector Intelligence", slot `intelligence`, snapshot field `sectorIntelligence`. Domain: synthesis. Lifecycle **CALIBRATION** while pilot evaluations exist (`DISCOVERED` otherwise); activity state **PARKED**; validation `NOT_VALIDATED`. Package `brains/sector-intelligence/`. Runtime: `runtime/` (`run.py`, `sector_intelligence_brain.py`, `evaluation.py`, `orchestration.py`, `catalog.json`; stdlib Python). Versions: `sector-intelligence-brain-0.1.0`, evaluation `intelligence-eval-v1`. Owner: the Intelligence lane (Michael approves).
 
 ## 2. MISSION
 Sector Intelligence answers: **what does everything Sector knows mean for the bowfisher?** It is the only Brain allowed to combine specialist assessments into bowfishing opportunities, explanations and recommendations. **Today** it does far less: it publishes the inventory of what constitutes Sector Intelligence (four implementations, `catalog.json`), the truth about each upstream Brain's availability and consumption, and, for five pilot lakes, a normalized evaluation that restates specialist states with provenance. It produces **no rating, score or recommendation**.
@@ -33,7 +33,7 @@ Sector Intelligence does **not** own any specialist's science or domain values: 
 Logical workspace id **`sector-intelligence`** (`BRAIN_RESEARCH_WORKSPACE_V1.md`). Physical roots are never recorded here. Intelligence research stays in the workspace; nothing in the runtime reads it.
 
 ## 9. RESEARCH INITIATION RULES
-**NOT ESTABLISHED** as a gap register: no `research/GAPS.json` exists yet (created at migration). Until then work starts only from a declared catalog blocker or a named item in the integration contract and is approved by Michael. Expanding Intelligence functionality is outside the Cortex architecture mission.
+**NOT ESTABLISHED** as a gap register: no `research/GAPS.json` exists yet (created only when a named research gap is approved). Until then work starts only from a declared catalog blocker or a named item in the integration contract and is approved by Michael. Expanding Intelligence functionality is outside the Cortex architecture mission.
 
 ## 10. RESEARCH STOP RULES
 Stop when more work no longer changes a bowfisher-facing decision, when it needs a specialist Brain's output that does not exist, outcome validation, or Michael's approval (customer activation, new consumers, AI inference). A stop is recorded, not worked around.
@@ -45,13 +45,13 @@ Specialist outputs are used only as published, with their provenance, freshness 
 Implementation facts become canonical only by a reviewed `catalog.json` change with a bumped `catalogVersion`. A normalized evaluation becomes canonical for customers only by a separately approved activation; nothing in this repository promotes it.
 
 ## 13. VALIDATION
-Exists: software tests (`jobs/sector-intelligence-brain/tests/`, 33 under pytest) for dependency truth, lake inputs, published paths, serving lineage, planning, catalog validation and the pilot's degrade/abstain behaviour. **Not validated:** any evaluation (`predictiveValidation.status: NONE`); the customer Conditions Score is also `NOT_VALIDATED`. Known gaps: a failed RTDB read or `GET /lakes` aborts the run instead of degrading.
+Exists: software tests (`tests/`, including the Certification Kit V1 adapter) for dependency truth, lake inputs, published paths, serving lineage, planning, catalog validation and the pilot's degrade/abstain behaviour. **Not validated:** any evaluation (`predictiveValidation.status: NONE`); the customer Conditions Score is also `NOT_VALIDATED`. Known gaps: a failed RTDB read or `GET /lakes` aborts the run instead of degrading.
 
 ## 14. PUBLISHING
 One atomic multi-path update per run, decided by `plan()`: PUBLISH when the fingerprint changes (upstream registration, status, health, version, lifecycle, serving revision/image, catalog, pilot inputs) or the last publish is > 24 h old. Executed in-process by the Brain Orchestrator (FINGERPRINT trigger); PARKED. `customerIntegrationMode`: none. Known output inconsistencies (open decisions): the catalog's "no evaluation" blockers are published alongside pilot evaluations; `provenance.brainVersion` is always absent; an evaluation's freshness is computed from its own generation time.
 
 ## 15. PATH OWNERSHIP
-The families in §4, enforced client-side by `ownership.py`. Intelligence never writes a specialist's slot, state or registry. No Publisher registry entry exists for Intelligence yet.
+The families in §4, enforced client-side by `ownership.py`. Intelligence never writes a specialist's slot, state or registry. The Publisher registry registers Intelligence in SHADOW (`intelligence-lake-state-v1`, `intelligence-registry-v1`, bundle `sector-intelligence-publication-v1`); it writes nothing in production.
 
 ## 16. SCORING
 Score type `ENGINE_READINESS_SCORE` at `/scores/sector-intelligence`, computed only by the platform scorer (`scoring.py`, rubric id `sector-intelligence-score-v1`; caps for no evaluations, no consumed Brain, validation). Certification, migration and documentation never move it.

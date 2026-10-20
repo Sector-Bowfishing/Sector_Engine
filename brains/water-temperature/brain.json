@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "water-temp",
+  "displayName": "Water Temperature Brain",
+  "humanName": "Water Temperature",
+  "domain": "condition",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "job",
+    "language": "swift",
+    "entrypoint": "brains/water-temperature/runtime/WaterTempBrainJob/main.swift",
+    "trigger": {
+      "kind": "schedule",
+      "staleHours": 6
+    }
+  },
+  "publishes": [
+    {
+      "contractId": "water-temp-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/water-temperature/contracts/water-temp-publication-v1.json",
+      "pathFamilies": [
+        "/activity/{event}",
+        "/brains/water-temp/{child}",
+        "/health/brains/water-temp/{child}",
+        "/health/sources/{id}",
+        "/lakeFleet/{k}/modelVersions/waterTemp",
+        "/lakeFleet/{k}/readiness/waterTemp",
+        "/lakeFleet/{k}/slots/waterTemp",
+        "/lakes/{k}/profiles/waterTemp",
+        "/lakes/{k}/states/waterTemp",
+        "/lakes/{k}/validation/water-temp",
+        "/sources/{id}",
+        "/validation/water-temp"
+      ]
+    }
+  ],
+  "consumes": [
+    {
+      "kind": "registry",
+      "registry": "lakes",
+      "contractId": "registry.lakes",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    }
+  ],
+  "providers": [
+    {
+      "providerId": "open-meteo-forecast"
+    },
+    {
+      "providerId": "usace-cwms-water-temp"
+    },
+    {
+      "providerId": "usgs-nwis-00010"
+    }
+  ],
+  "researchWorkspace": {
+    "workspaceId": "water-temperature"
+  },
+  "score": {
+    "type": "ENGINE_READINESS_SCORE",
+    "path": "/scores/water-temp",
+    "rubricRef": "docs/brains/scoring/frozen-scores.json"
+  },
+  "customerIntegrationMode": "none",
+  "publisherRequired": {
+    "required": true,
+    "cutoverStatus": "SHADOW"
+  },
+  "authorizedConsumers": [
+    "ops",
+    "sector-intelligence"
+  ],
+  "tests": [
+    "brains/water-temperature/tests"
+  ],
+  "dataBudget": {
+    "maxTrackedFileBytes": 1048576,
+    "exceptions": []
+  }
+}

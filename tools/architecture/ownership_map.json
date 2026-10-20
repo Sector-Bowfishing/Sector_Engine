@@ -35,7 +35,7 @@
     {
       "prefix": "jobs/lake-brain",
       "owner": "Lake Brain",
-      "phase": "Phase 6 (Lake migration)"
+      "phase": "tooling only after the 2026-10-20 Lake migration (runtime in brains/lake); move to brains/lake/research/tools after data classification"
     },
     {
       "prefix": "jobs/lake-geometry",
@@ -68,9 +68,19 @@
       "phase": "Phase 6 (Water Temperature migration; TVA after D8)"
     },
     {
-      "prefix": "jobs/sector-intelligence-brain",
+      "prefix": "brains/sector-intelligence",
       "owner": "Sector Intelligence Brain",
-      "phase": "Phase 6 (last)"
+      "phase": "migrated (Cortex architecture completion 2026-10-20)"
+    },
+    {
+      "prefix": "brains/lake",
+      "owner": "Lake Brain",
+      "phase": "migrated (Cortex architecture completion 2026-10-20; Swift targets LakeBrain, LakeBrainJob)"
+    },
+    {
+      "prefix": "brains/water-temperature",
+      "owner": "Water Temperature Brain",
+      "phase": "migrated (Cortex architecture completion 2026-10-20; Swift targets WaterTemperatureBrain, WaterTempBrainJob)"
     },
     {
       "prefix": "docs/data/hydrology",

@@ -9,7 +9,7 @@
 #   roles/storage.objectAdmin   on gs://sector-lake-brain (history, baselines; presence is read there too)
 #   roles/storage.objectViewer  on gs://sector-water-temp-archive (shared TVA archive, read-only)
 #
-#   IMAGE=<from brain-image-build.sh> ./jobs/lake-brain/deploy-job.sh
+#   IMAGE=<from brain-image-build.sh> ./brains/lake/deploy/deploy-job.sh
 set -euo pipefail
 PROJECT_ID="${PROJECT_ID:-sector-9393c}"
 REGION="${REGION:-us-central1}"
@@ -21,7 +21,7 @@ ARCHIVE_BUCKET="${ARCHIVE_BUCKET:-sector-lake-brain}"
 TVA_BUCKET="${TVA_BUCKET:-sector-water-temp-archive}"
 [[ -n "${IMAGE:-}" ]] || { echo "✗ IMAGE=… required (output of jobs/brain-image-build.sh)"; exit 2; }
 run() { if [[ "${DRY_RUN:-0}" == "1" ]]; then echo "+ $*"; else "$@"; fi; }
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/../../.."      # repo root (brains/<dir>/deploy/)
 COMMIT="${COMMIT:-${IMAGE##*:}}"      # the image tag is the commit it was built from (jobs/brain-image-build.sh)
 
 gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1 || { echo "✗ $SA missing: run jobs/brain-orchestrator/deploy-job.sh first"; exit 2; }

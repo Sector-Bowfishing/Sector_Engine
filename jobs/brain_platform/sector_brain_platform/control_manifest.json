@@ -71,7 +71,7 @@
     },
     "sector-intelligence": {
       "displayName": "Sector Intelligence", "group": "SYNTHESIS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
-      "executionTarget": {"kind": "in-process", "dir": "jobs/sector-intelligence-brain", "startedByOrchestrator": true, "scoped": true},
+      "executionTarget": {"kind": "in-process", "dir": "brains/sector-intelligence/runtime", "startedByOrchestrator": true, "scoped": true},
       "allowedTriggers": ["MANUAL", "DEPENDENCY_CHANGED", "ADMIN"],
       "dependencies": [
         {"id": "wind", "requirement": "OPTIONAL", "maxAgeHours": 6, "onStale": "DEPENDENCY_STALE", "provisional": true},

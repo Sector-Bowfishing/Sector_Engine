@@ -6,7 +6,7 @@ import sys
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(os.path.dirname(HERE), "runtime"))   # brains/sector-intelligence/runtime
 import brain_platform as bp            # noqa: E402
 import evaluation as ev                # noqa: E402
 import sector_intelligence_brain as sib  # noqa: E402

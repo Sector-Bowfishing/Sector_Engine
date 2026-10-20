@@ -1,0 +1,206 @@
+{
+  "brainId": "water-temp",
+  "builder": "brains/water-temperature/runtime/publish_artifact.py",
+  "contractId": "water-temp-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (water_temp_specs, water_temp_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "freshness": "evidenceStale when a configured sensor has no fresh reading (staleAfterHours 6 in the registry)",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "consumed": "not recorded by the Swift platform client: absent = unknown, never []",
+    "knowledgeRelease": "NONE (no versioned knowledge release)",
+    "manifestRef": "NONE",
+    "manifestSha256": "NONE"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "descriptor",
+      "versions",
+      "activeProductionModel",
+      "researchCandidate",
+      "readinessDefinitions",
+      "stateKindDefinitions",
+      "healthRule"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "supportedLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "lastSuccessfulRun",
+      "lastError",
+      "deploymentVersion",
+      "breakdowns",
+      "runsPerMinute",
+      "fleetScope"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/waterTemp",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakes/{k}/profiles/waterTemp",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakes/{k}/validation/water-temp",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/waterTemp",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/waterTemp",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/waterTemp",
+          "status": "DERIVED_PROJECTION"
+        }
+      ],
+      "projections": [
+        {
+          "id": "water-temp-snapshot-copy-v1",
+          "kind": "COPY",
+          "owner": "publisher",
+          "source": "/lakes/{k}/states/waterTemp",
+          "target": "/snapshots/{k}/latest/waterTemperature",
+          "valueFrom": null
+        },
+        {
+          "id": "water-temp-snapshot-brainversion-v1",
+          "kind": "VALUE_FROM",
+          "owner": "publisher",
+          "source": "/lakes/{k}/states/waterTemp",
+          "target": "/snapshots/{k}/latest/brainVersions/water-temp",
+          "valueFrom": "/brains/water-temp/version"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "water-temp-lake-state-v1",
+      "volatileContract": "water-temp-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/water-temp/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/water-temp/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/water-temp",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/water-temp/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "projections": [],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "water-temp-registry-v1",
+      "volatileContract": "water-temp-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/sources/{id}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/sources/{id}",
+          "status": "CANONICAL"
+        }
+      ],
+      "projections": [],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "water-temp-source-registry-v1",
+      "volatileContract": "water-temp-volatile-v1"
+    }
+  ],
+  "status": "SHADOW (Publisher Gate P); not wired into the job; the Swift job still writes through the Swift platform client until an approved cutover",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "water-temp-volatile-v1",
+    "keys": [
+      "inputAgeHours",
+      "lastFetchAt",
+      "lastUpdatedAt",
+      "sourceAgeHours"
+    ],
+    "notes": {
+      "key:inputAgeHours": "age of the newest input at run time (provenance)",
+      "key:lastFetchAt": "per-source fetch time in /sources/{id}",
+      "key:lastUpdatedAt": "slot write time; no domain meaning",
+      "key:sourceAgeHours": "age of the reading at run time; the observation time itself is NOT volatile",
+      "path:/brains/water-temp/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"
+    },
+    "paths": [
+      "/brains/water-temp/lastSuccessfulRun"
+    ],
+    "version": 1
+  },
+  "writeSetSource": "the runner's recorded write set on deterministic inputs (tests/golden/*_run_updates.json, regenerated only by the Swift fixture test)"
+}

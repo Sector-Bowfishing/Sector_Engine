@@ -15,6 +15,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 public struct LakeBrainRunOptions: Sendable {
     public enum Scope: String, Sendable { case pilots, fleet }

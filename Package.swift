@@ -38,10 +38,14 @@ let package = Package(
             path: "Sources/SectorEngineServer"),
         // Clarity Fusion Stage 2's historical replay; not built into the image.
         .executableTarget(name: "ClarityReplay", dependencies: ["SectorEngine"], path: "Sources/ClarityReplay"),
-        // Lake Brain: one on-demand run → gs://sector-lake-brain history + the Brain RTDB (Sector Ops reads it).
-        .executableTarget(name: "LakeBrainJob", dependencies: ["SectorEngine"], path: "Sources/LakeBrainJob"),
-        // Sector Brain Platform: the water-temp brain's fleet run → the Brain RTDB (Sector Ops reads it).
-        .executableTarget(name: "WaterTempBrainJob", dependencies: ["SectorEngine"], path: "Sources/WaterTempBrainJob"),
+        // Specialist Brains with a Swift runtime live in their canonical Brain packages (brains/<dir>/runtime), as their own targets on top of the
+        // shared SectorEngine library (fetchers, lake directory, the Swift Brain platform). Nothing in the customer server imports them.
+        // Lake Brain (`lake-brain`): one on-demand run → gs://sector-lake-brain history + the Brain RTDB (Sector Ops reads it).
+        .target(name: "LakeBrain", dependencies: ["SectorEngine"], path: "brains/lake/runtime/LakeBrain"),
+        .executableTarget(name: "LakeBrainJob", dependencies: ["SectorEngine", "LakeBrain"], path: "brains/lake/runtime/LakeBrainJob"),
+        // Water Temperature Brain (`water-temp`): the fleet run → the Brain RTDB (Sector Ops reads it).
+        .target(name: "WaterTemperatureBrain", dependencies: ["SectorEngine"], path: "brains/water-temperature/runtime/WaterTemperatureBrain"),
+        .executableTarget(name: "WaterTempBrainJob", dependencies: ["SectorEngine", "WaterTemperatureBrain"], path: "brains/water-temperature/runtime/WaterTempBrainJob"),
         // Clarity Fusion Stage 5: the hourly job that prepares each Current Clarity world.
         .executableTarget(
             name: "ClarityPrecompute",
@@ -52,5 +56,7 @@ let package = Package(
             ],
             path: "Sources/ClarityPrecompute"),
         .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine"], path: "Tests/SectorEngineTests"),
+        .testTarget(name: "LakeBrainTests", dependencies: ["SectorEngine", "LakeBrain"], path: "brains/lake/tests/swift"),
+        .testTarget(name: "WaterTemperatureBrainTests", dependencies: ["SectorEngine", "WaterTemperatureBrain"], path: "brains/water-temperature/tests/swift"),
     ]
 )

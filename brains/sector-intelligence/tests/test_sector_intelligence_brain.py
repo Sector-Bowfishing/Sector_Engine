@@ -9,13 +9,13 @@ import sys
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(os.path.dirname(HERE), "runtime"))   # brains/sector-intelligence/runtime
 import brain_platform as bp                  # noqa: E402
 import orchestration as orch                 # noqa: E402
 import sector_intelligence_brain as sib      # noqa: E402
 
 NOW = dt.datetime(2026, 10, 12, 23, 0, tzinfo=dt.timezone.utc)
-CAT_PATH = os.path.join(os.path.dirname(HERE), "catalog.json")
+CAT_PATH = os.path.join(os.path.dirname(HERE), "runtime", "catalog.json")
 
 
 def real_catalog():

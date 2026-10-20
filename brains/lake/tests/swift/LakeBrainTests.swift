@@ -5,6 +5,7 @@
 
 import XCTest
 @testable import SectorEngine
+@testable import LakeBrain
 
 final class LakeBrainTests: XCTestCase {
 

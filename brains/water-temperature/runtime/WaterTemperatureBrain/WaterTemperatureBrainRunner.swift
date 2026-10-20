@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 public struct WaterTemperatureBrainRunOptions: Sendable {
     public var lakeIds: [String]? = nil
@@ -55,6 +56,14 @@ public enum WaterTemperatureBrainRunner {
 
     public static func run(store: BrainStore?, options: WaterTemperatureBrainRunOptions = .init(),
                            now: Date = Date()) async -> WaterTemperatureBrainRunResult {
+        await run(store: store, options: options, now: now, fetchInputs: WaterTemperatureBrain.fetchInputs(for:), generationClock: { Date() })
+    }
+
+    /// The same run with its two external inputs injectable (tests only): the per-lake fetch and the generation clock. The public `run`
+    /// passes exactly the production fetch and the wall clock, so job behaviour is unchanged.
+    static func run(store: BrainStore?, options: WaterTemperatureBrainRunOptions, now: Date,
+                    fetchInputs: @escaping @Sendable (DirectoryLake) async -> WaterTemperatureBrain.LakeInputs,
+                    generationClock: () -> Date) async -> WaterTemperatureBrainRunResult {
         let t0 = Date()
         var result = WaterTemperatureBrainRunResult()
         let collisions = BrainPlatform.keyCollisions(LakeDirectory.all.map(\.id))
@@ -80,13 +89,13 @@ public enum WaterTemperatureBrainRunner {
         while i < lakes.count {
             let batch = lakes[i..<min(i + max(1, options.concurrency), lakes.count)]
             await withTaskGroup(of: WaterTemperatureBrain.LakeInputs.self) { g in
-                for lake in batch { g.addTask { await WaterTemperatureBrain.fetchInputs(for: lake) } }
+                for lake in batch { g.addTask { await fetchInputs(lake) } }
                 for await x in g { inputs.append(x) }
             }
             i += options.concurrency
         }
         inputs.sort { $0.lake.id < $1.lake.id }
-        let generatedAt = Date()
+        let generatedAt = generationClock()
         for x in inputs {
             let resolved = WaterTemperatureResolver.resolve(measurement: x.measurement, model: x.model, at: generatedAt)
             let st = WaterTemperatureBrain.state(from: x, resolved: resolved, now: generatedAt, processingVersion: options.processingVersion)
@@ -206,7 +215,7 @@ public enum WaterTemperatureBrainRunner {
         entry.platform = BrainPlatformRef.current
         entry.stalenessModel = "TIME"
         entry.dependsOn = []
-        entry.schedule = ["cadence": "manual (jobs/water-temp-brain/deploy-job.sh not run; Orchestrator will own cadence)", "jobId": "water-temp-brain", "running": "false"]
+        entry.schedule = ["cadence": "orchestrator-started when stale (no scheduler; staleAfterHours 6)", "jobId": "water-temp-brain", "running": "false"]
         entry.descriptor = ["components": ["waterTempState": [
             "status": "ACTIVE (production's own resolver, published per lake)",
             "inputs": "USGS/CWMS lake sensors, USGS nearby gauges, Open-Meteo forcing via production fetchers",

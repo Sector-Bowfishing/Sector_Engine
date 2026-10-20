@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import SectorEngine
+@testable import LakeBrain
 
 final class LakeRulesV2Tests: XCTestCase {
 
@@ -16,7 +17,7 @@ final class LakeRulesV2Tests: XCTestCase {
     // MARK: fixture plumbing
 
     private static let fixtureURL = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()   // brains/<dir>/tests/swift/<file> -> repo root
         .appendingPathComponent("contracts/conformance/lake_rules_v2.json")
 
     private func fixture() throws -> [String: Any] {

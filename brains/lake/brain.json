@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "lake-brain",
+  "displayName": "Lake Brain",
+  "humanName": "Lake",
+  "domain": "lake-level",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "job",
+    "language": "swift",
+    "entrypoint": "brains/lake/runtime/LakeBrainJob/main.swift",
+    "trigger": {
+      "kind": "schedule",
+      "staleHours": 3
+    }
+  },
+  "publishes": [
+    {
+      "contractId": "lake-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/lake/contracts/lake-publication-v1.json",
+      "pathFamilies": [
+        "/activity/{event}",
+        "/brains/lake-brain/{child}",
+        "/health/brains/lake-brain/{child}",
+        "/health/sources/{id}",
+        "/lakeFleet/{k}/modelVersions/lake",
+        "/lakeFleet/{k}/readiness/lake",
+        "/lakeFleet/{k}/slots/lake",
+        "/lakeFleet/{k}/{child}",
+        "/lakes/{k}/brain",
+        "/lakes/{k}/speciesPresence",
+        "/lakes/{k}/states/lake",
+        "/sources/{id}",
+        "/validation/lake-brain"
+      ]
+    }
+  ],
+  "consumes": [
+    {
+      "kind": "registry",
+      "registry": "lakes",
+      "contractId": "registry.lakes",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    }
+  ],
+  "providers": [
+    {
+      "providerId": "iem-hads"
+    },
+    {
+      "providerId": "nws-nwps"
+    },
+    {
+      "providerId": "tva-restapi"
+    },
+    {
+      "providerId": "usace-access2water"
+    },
+    {
+      "providerId": "usace-cwms-pool"
+    },
+    {
+      "providerId": "usbr-rise"
+    },
+    {
+      "providerId": "usgs-nwis-dv"
+    },
+    {
+      "providerId": "usgs-nwis-lake-elevation"
+    }
+  ],
+  "researchWorkspace": {
+    "workspaceId": "lake-brain"
+  },
+  "score": {
+    "type": "ENGINE_READINESS_SCORE",
+    "path": "/scores/lake-brain",
+    "rubricRef": "docs/brains/scoring/lake-brain-score-v1.json"
+  },
+  "customerIntegrationMode": "none",
+  "publisherRequired": {
+    "required": true,
+    "cutoverStatus": "SHADOW"
+  },
+  "authorizedConsumers": [
+    "ops",
+    "sector-intelligence"
+  ],
+  "tests": [
+    "brains/lake/tests"
+  ],
+  "dataBudget": {
+    "maxTrackedFileBytes": 1048576,
+    "exceptions": []
+  }
+}

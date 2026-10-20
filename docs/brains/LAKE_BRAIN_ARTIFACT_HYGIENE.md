@@ -60,7 +60,7 @@ History noncurrent versions (section 2, 46 GB per year at 315 lakes) are not cov
 
 ## 4. Swift-side change (spec; no Swift edited here)
 
-Files: `Sources/SectorEngine/LakeBrain/LakeLevelBaseline.swift`, `LakeBrainRunner.swift` (`evaluateLake`, lines about 148-160 today), `LakeBrainContract.swift` (`LakeBrainSpec`), `LakeBrainArchive.swift` (header comment).
+Files: `brains/lake/runtime/LakeBrain/LakeLevelBaseline.swift`, `LakeBrainRunner.swift` (`evaluateLake`, lines about 148-160 today), `LakeBrainContract.swift` (`LakeBrainSpec`), `LakeBrainArchive.swift` (header comment).
 
 1. `LakeBrainSpec`: `static let baselineRecomputeDays = 7`.
 2. `LakeLevelBaseline` gets three optional Codable fields (older artifacts still decode): `computedAt: String?` (ISO UTC), `bindingVersion: String?` (`LakeSourceBindings.version`), `basisFingerprint: String?` (`fingerprint(encode(rows with date <= historyEnd))`, the same FNV used for the version).

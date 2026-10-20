@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 /// One named water-level series.
 public struct LevelSeriesRef: Codable, Equatable, Sendable {

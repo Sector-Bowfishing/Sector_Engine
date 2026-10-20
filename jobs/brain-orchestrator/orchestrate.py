@@ -57,12 +57,18 @@ def _fish_runtime_dir() -> str:
     return repo if os.path.isdir(repo) else os.path.join(HERE, "..", "biological-brain")
 
 
+def _intelligence_runtime_dir() -> str:
+    """Sector Intelligence runtime: brains/sector-intelligence/runtime in the repository; ../sector-intelligence-brain in the staged orchestrator image."""
+    repo = os.path.normpath(os.path.join(HERE, "..", "..", "brains", "sector-intelligence", "runtime"))
+    return repo if os.path.isdir(repo) else os.path.join(HERE, "..", "sector-intelligence-brain")
+
+
 # Executors: how each brain is started. Anything absent here is never started by the orchestrator.
 EXECUTORS = {
     "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
     "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
     "biological-state": {"kind": "in-process", "dir": _fish_runtime_dir(), "jobId": "biological-brain"},
-    "sector-intelligence": {"kind": "in-process", "dir": os.path.join(HERE, "..", "sector-intelligence-brain"), "jobId": "sector-intelligence-brain"},
+    "sector-intelligence": {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": "sector-intelligence-brain"},
 }
 NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)", "water-clarity": "MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md)"}
 

@@ -8,7 +8,7 @@
 # /conditions, built from the same commit — never from the serving service and never touching it.
 # Service account `brain-writer` (created by jobs/brain-orchestrator/deploy-job.sh).
 #
-#   IMAGE=<from brain-image-build.sh> ./jobs/water-temp-brain/deploy-job.sh
+#   IMAGE=<from brain-image-build.sh> ./brains/water-temperature/deploy/deploy-job.sh
 set -euo pipefail
 PROJECT_ID="${PROJECT_ID:-sector-9393c}"
 REGION="${REGION:-us-central1}"
@@ -18,7 +18,7 @@ SA="$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com"
 RTDB_URL="${RTDB_URL:-https://sector-brain.firebaseio.com}"
 [[ -n "${IMAGE:-}" ]] || { echo "✗ IMAGE=… required (output of jobs/brain-image-build.sh)"; exit 2; }
 run() { if [[ "${DRY_RUN:-0}" == "1" ]]; then echo "+ $*"; else "$@"; fi; }
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/../../.."      # repo root (brains/<dir>/deploy/)
 COMMIT="${COMMIT:-${IMAGE##*:}}"      # the image tag is the commit it was built from (jobs/brain-image-build.sh)
 
 gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1 || { echo "✗ $SA missing: run jobs/brain-orchestrator/deploy-job.sh first"; exit 2; }

@@ -158,7 +158,7 @@ class TableTests(unittest.TestCase):
         self.assertGreater(n, 50)
 
     def test_generated_swift_is_current(self):
-        swift = os.path.join(REPO, "Sources", "SectorEngine", "LakeBrain", "LakeSourceBindingsGenerated.swift")
+        swift = os.path.join(REPO, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")   # Lake Brain package (SwiftPM target LakeBrain)
         self.assertEqual(open(swift).read(), G.render(), "run python3 scripts/generate-lake-bindings.py")
 
     def test_table_is_reproducible(self):

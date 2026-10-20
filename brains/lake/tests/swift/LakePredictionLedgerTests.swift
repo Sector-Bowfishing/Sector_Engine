@@ -6,6 +6,7 @@
 
 import XCTest
 @testable import SectorEngine
+@testable import LakeBrain
 
 /// Deterministic feeds: hourly level ending 30 min before `now`, a fixed daily history, a fixed guide.
 final class LedgerFeeds: LakeLevelFeeds, @unchecked Sendable {
@@ -273,7 +274,7 @@ final class LakePredictionLedgerTests: XCTestCase {
     }
 
     private static let goldenURL = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()   // brains/<dir>/tests/swift/<file> -> repo root
         .appendingPathComponent("jobs/lake-brain/ledger/fixtures/sample_ledger.jsonl")
 
     /// Regenerate with LEDGER_REGEN_GOLDEN=1 swift test --filter testGoldenLedgerMatchesCheckedInFixture, then review the diff.

@@ -1,0 +1,166 @@
+{
+  "brainId": "sector-intelligence",
+  "builder": "brains/sector-intelligence/runtime/publish_artifact.py",
+  "contractId": "sector-intelligence-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (intelligence_specs, intelligence_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "healthDomainChildren": [
+    "status"
+  ],
+  "lineage": {
+    "consumed": "ACTUAL RTDB reads recorded by the platform client when available; absent = unknown, never []",
+    "knowledgeRelease": "NONE (no versioned knowledge release; the runtime input fingerprint and catalog digest are in inputFingerprint)",
+    "manifestRef": "NONE",
+    "manifestSha256": "NONE"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "orchestration",
+      "versions",
+      "activeModel",
+      "modelRoster",
+      "vocabularies",
+      "inputContract",
+      "outputContract",
+      "knownLimitations",
+      "catalogVersion",
+      "catalogSha256",
+      "fingerprint"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "statusBasis",
+      "statusReasons",
+      "supportedLakeCount",
+      "evaluatedLakeCount",
+      "directoryLakeCount",
+      "evaluation",
+      "engineServing",
+      "dependencies",
+      "dependencyOrder",
+      "dependencySummary",
+      "blockers",
+      "breakdowns",
+      "publishMode",
+      "deploymentVersion",
+      "lastSuccessfulRun",
+      "updatedAt"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/intelligence",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/intelligence",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/intelligence",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/intelligence",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/sectorIntelligence",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/brainVersions/sector-intelligence",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "intelligence-lake-state-v1",
+      "volatileContract": "intelligence-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/brains/sector-intelligence/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/sector-intelligence",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/sector-intelligence/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "intelligence-registry-v1",
+      "volatileContract": "intelligence-volatile-v1"
+    }
+  ],
+  "snapshot": "the snapshot field and its brainVersion are Brain-authored for EVALUATED pilot lakes only (no Publisher COPY projection)",
+  "status": "SHADOW (Publisher Gate P); not wired into the in-process job; not a production contract until cutover",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "intelligence-volatile-v1",
+    "keys": [
+      "lastEvaluationAt",
+      "lastUpdatedAt",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:lastEvaluationAt": "the run's evaluation time (registry evaluation block, dependency entries); moves every run",
+      "key:lastUpdatedAt": "slot write time; no domain meaning",
+      "key:updatedAt": "validation/registry write time; no domain meaning",
+      "path:/brains/sector-intelligence/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+      "path:/brains/sector-intelligence/updatedAt": "run timestamp == Publisher metadata; retire when Ops reads publication"
+    },
+    "paths": [
+      "/brains/sector-intelligence/lastSuccessfulRun",
+      "/brains/sector-intelligence/updatedAt"
+    ],
+    "version": 1
+  }
+}

@@ -13,18 +13,25 @@ RUN swift package resolve
 # doesn't need the full toolchain.
 COPY Sources ./Sources
 COPY Tests ./Tests
+# Swift Brain runtimes live in their canonical Brain packages (Package.swift targets LakeBrain / WaterTemperatureBrain and their jobs).
+# Only the Swift target directories are copied; SwiftPM needs every declared target path, including the test targets, to exist.
+COPY brains/lake/runtime/LakeBrain ./brains/lake/runtime/LakeBrain
+COPY brains/lake/runtime/LakeBrainJob ./brains/lake/runtime/LakeBrainJob
+COPY brains/lake/tests/swift ./brains/lake/tests/swift
+COPY brains/water-temperature/runtime/WaterTemperatureBrain ./brains/water-temperature/runtime/WaterTemperatureBrain
+COPY brains/water-temperature/runtime/WaterTempBrainJob ./brains/water-temperature/runtime/WaterTempBrainJob
+COPY brains/water-temperature/tests/swift ./brains/water-temperature/tests/swift
 RUN swift build -c release --product SectorEngineServer \
       -Xswiftc -static-stdlib \
     || swift build -c release --product SectorEngineServer
 RUN cp "$(swift build -c release --show-bin-path)/SectorEngineServer" /build/SectorEngineServer
-# The Water Temperature Brain job (Sector Brain Platform) runs from the same image:
-# jobs/water-temp-brain/deploy-job.sh deploys a Cloud Run job from the serving revision's image.
-# Nothing in the request path imports Sources/SectorEngine/Brain.
+# The Water Temperature Brain job (Sector Brain Platform) runs from the same image (the brain-jobs image, jobs/brain-image-build.sh):
+# brains/water-temperature/deploy/deploy-job.sh deploys the Cloud Run job. Nothing in the request path imports the Brain targets.
 RUN swift build -c release --product WaterTempBrainJob \
       -Xswiftc -static-stdlib \
     || swift build -c release --product WaterTempBrainJob
 RUN cp "$(swift build -c release --show-bin-path)/WaterTempBrainJob" /build/WaterTempBrainJob
-# The Lake Brain job (pilot lakes; started by brain-orchestrator when due): jobs/lake-brain/deploy-job.sh.
+# The Lake Brain job (pilot lakes; started by brain-orchestrator when due): brains/lake/deploy/deploy-job.sh.
 RUN swift build -c release --product LakeBrainJob \
       -Xswiftc -static-stdlib \
     || swift build -c release --product LakeBrainJob

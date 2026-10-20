@@ -24,6 +24,7 @@
 import Foundation
 #if canImport(CoreLocation)
 import CoreLocation
+import SectorEngine
 #endif
 
 public enum WaterTemperatureBrain {
@@ -33,9 +34,10 @@ public enum WaterTemperatureBrain {
     public static let snapshotField = "waterTemperature"
     /// Brain integration release (not the science model).
     public static let brainVersion = "1.0"
-    /// The job runs every 3 h; a state older than two missed runs is stale.
+    /// A state older than two former 3-hourly runs is stale (unchanged threshold; the Orchestrator starts the job when this rule says so).
     public static let staleAfterHours = 6.0
-    public static let schedule = "every 3 h at :25 UTC"
+    /// Published in /health/jobs/water-temp-brain: there is no scheduler; the Brain Orchestrator starts the job when the state is stale.
+    public static let schedule = "orchestrator-started when stale (no scheduler)"
     public static var modelVersion: String { WaterTemperatureResolver.modelVersion }
     public static let baseModel = "surface-energy-balance-v2"
 

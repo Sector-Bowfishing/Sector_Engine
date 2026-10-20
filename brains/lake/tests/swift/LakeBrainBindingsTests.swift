@@ -6,6 +6,7 @@
 
 import XCTest
 @testable import SectorEngine
+@testable import LakeBrain
 
 final class LakeBrainBindingsTests: XCTestCase {
 
@@ -17,7 +18,7 @@ final class LakeBrainBindingsTests: XCTestCase {
 
     /// jobs/lake-brain/data/<name> of the checkout this test file lives in.
     func repoData(_ name: String) -> URL {
-        URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()   // brains/<dir>/tests/swift/<file> -> repo root
             .appendingPathComponent("jobs/lake-brain/data/\(name)")
     }
 

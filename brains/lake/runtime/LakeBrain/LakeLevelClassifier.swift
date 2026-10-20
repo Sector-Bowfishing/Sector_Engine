@@ -22,6 +22,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 public struct LakeLevelInputs: Sendable {
     public var lakeId: String

@@ -35,7 +35,7 @@ import CoreLocation
 
 // MARK: - Service
 
-final class TVAGenerationService: GenerationProvider {
+package final class TVAGenerationService: GenerationProvider {
     let operatorID: GenerationOperator = .tva
 
     static let shared = TVAGenerationService()
@@ -243,7 +243,7 @@ extension TVAGenerationService {
     }
 
     /// "Midnight" → 0, "Noon" → 12, "5 AM" → 5, "3 PM" → 15.
-    static func hour(from token: String) -> Int? {
+    package static func hour(from token: String) -> Int? {
         let t = token.trimmingCharacters(in: .whitespaces).uppercased()
         if t == "MIDNIGHT" { return 0 }
         if t == "NOON" { return 12 }
@@ -259,14 +259,14 @@ extension TVAGenerationService {
     /// Zone lives on the tail of the string and VARIES BY DAM — Eastern for the
     /// upper Tennessee/Holston/Clinch, Central for Guntersville, Wheeler,
     /// Wilson, Pickwick, Nickajack and Kentucky. Never assume device-local.
-    static func zone(from text: String) -> TimeZone? {
+    package static func zone(from text: String) -> TimeZone? {
         let t = text.uppercased()
         if t.hasSuffix("EDT") || t.hasSuffix("EST") { return TimeZone(identifier: "America/New_York") }
         if t.hasSuffix("CDT") || t.hasSuffix("CST") { return TimeZone(identifier: "America/Chicago") }
         return nil
     }
 
-    static func stripZone(_ text: String) -> String {
+    package static func stripZone(_ text: String) -> String {
         var t = text.trimmingCharacters(in: .whitespaces)
         for abbr in ["EDT", "EST", "CDT", "CST"] where t.uppercased().hasSuffix(abbr) {
             t = String(t.dropLast(abbr.count)).trimmingCharacters(in: .whitespaces)
@@ -277,7 +277,7 @@ extension TVAGenerationService {
 
     /// "08/03/2026" + an hour in the dam's zone. `hour` may be 24+ so a window
     /// can run past midnight into the next day.
-    static func date(day: String, hour: Int, zone: TimeZone) -> Date? {
+    package static func date(day: String, hour: Int, zone: TimeZone) -> Date? {
         let parts = day.split(separator: "/").compactMap { Int($0) }
         guard parts.count == 3 else { return nil }
         var components = DateComponents()
@@ -290,7 +290,7 @@ extension TVAGenerationService {
     }
 
     /// TVA sends numbers as comma-grouped strings — "32,614".
-    static func number(_ text: String?) -> Double? {
+    package static func number(_ text: String?) -> Double? {
         guard let text else { return nil }
         return Double(text.replacingOccurrences(of: ",", with: ""))
     }

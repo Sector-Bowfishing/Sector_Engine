@@ -1,7 +1,7 @@
 > **Current state on main (Cortex standardization, 2026-10-20).** The status lines below record the 2026-10-12 ratification
 > and are partly stale; the rest of this contract still describes the code. On `main`:
 > - The code is merged. `LakeBrainJob` ships in the `brain-jobs` image (`jobs/brain-image-build.sh`) and is deployed as the
->   Cloud Run job `lake-brain` by `jobs/lake-brain/deploy-job.sh` (`--scope pilots`, no scheduler of its own; the Brain
+>   Cloud Run job `lake-brain` by `brains/lake/deploy/deploy-job.sh` (`--scope pilots`, no scheduler of its own; the Brain
 >   Orchestrator may start it when due). A separate Cloud Scheduler job, `lake-brain-ledger-daily` (12:00 UTC), runs it daily
 >   for the prospective prediction ledger. That scheduler was created by hand and **no repository script creates it**; it is
 >   registered as a `VALIDATION_EXCEPTION` in `control_manifest.json` (`brains.lake-brain.schedule`, `jobs.lake-brain-ledger-daily`).
@@ -12,7 +12,7 @@
 >   `sourceCapability` and `datum` rather than the fallback source's, and keeps the primary failure only as the flags
 >   `primarySourceStale` / `sourceError:<id>`; run health becomes `WARNING`. Whether a fallback must be reported as degraded is
 >   recorded as an open decision (Cortex PL-03), not changed here.
-> - Operating contract (until the Brain migrates to `brains/lake/`): `docs/architecture/certification/lake/BRAIN_OPERATING_CONTRACT.md`.
+> - Canonical package (migrated 2026-10-20): `brains/lake/` — runtime `brains/lake/runtime/LakeBrain` + `LakeBrainJob` (SwiftPM targets), operating contract `brains/lake/BRAIN_OPERATING_CONTRACT.md`. The Python tooling (bindings table, history backfill, ledger scorer, review pack, hold-out validation) stays in `jobs/lake-brain/`.
 
 # Lake Brain (`lake-brain`): integration contract
 
@@ -20,7 +20,7 @@
 
 - **Approvals:** all ten decisions in the Lake Brain audit §28 were approved by Michael on 2026-10-12, as recommended.
 - **Not merged or deployed.** Branch `sector/lake-brain` stays unmerged until it is reviewed. There is no Cloud Run job or scheduler.
-- **Implementation:** `Sources/SectorEngine/LakeBrain/` (Swift; reuses the production TVA/CWMS parsers without changing them) and the `LakeBrainJob` executable.
+- **Implementation:** `brains/lake/runtime/LakeBrain/` (Swift target `LakeBrain`, moved from `Sources/SectorEngine/LakeBrain/` on 2026-10-20; reuses the production TVA/CWMS parsers without changing them) and the `LakeBrainJob` executable.
 
 **Display name:** **Lake Brain**. Machine ID `lake-brain`; slot `lake`; snapshot field `lakeState`.
 

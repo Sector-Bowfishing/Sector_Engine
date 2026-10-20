@@ -16,6 +16,7 @@ import Foundation
 import AsyncHTTPClient
 import NIOCore
 import NIOHTTP1
+import SectorEngine
 
 public protocol LakeBrainArchive: Sendable {
     var uri: String { get }

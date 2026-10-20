@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 public struct LakePresenceBundle: Codable, Sendable {
     public struct Row: Codable, Sendable {

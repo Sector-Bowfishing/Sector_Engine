@@ -1,0 +1,216 @@
+{
+  "brainId": "lake-brain",
+  "builder": "brains/lake/runtime/publish_artifact.py",
+  "contractId": "lake-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (lake_specs, lake_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "freshness": "stale after lag + 3 x cadence per source (staleAfterHours 3 in the registry); the observation time is never replaced by a run time",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount",
+    "reasons"
+  ],
+  "lineage": {
+    "consumed": "not recorded by the Swift platform client: absent = unknown, never []",
+    "knowledgeRelease": "NONE (no versioned knowledge release)",
+    "manifestRef": "NONE",
+    "manifestSha256": "NONE"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "orchestration",
+      "versions",
+      "modelVersion",
+      "baselineMethod",
+      "bindingVersion",
+      "readinessDefinitions",
+      "stateKindDefinitions",
+      "healthRule"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "supportedLakeCount",
+      "directoryLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "lastSuccessfulRun",
+      "lastError",
+      "deploymentVersion",
+      "breakdowns",
+      "fleetScope"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/lake-brain/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/lake-brain/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/lake-brain",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/lake-brain/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "projections": [],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "lake-registry-v1",
+      "volatileContract": "lake-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/sources/{id}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/sources/{id}",
+          "status": "CANONICAL"
+        }
+      ],
+      "projections": [],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "lake-source-registry-v1",
+      "volatileContract": "lake-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/lake",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakes/{k}/brain",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakes/{k}/speciesPresence",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/lake",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/lake",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/lake",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/{child}",
+          "status": "CANONICAL"
+        }
+      ],
+      "projections": [
+        {
+          "id": "lake-snapshot-copy-v1",
+          "kind": "COPY",
+          "owner": "publisher",
+          "source": "/lakes/{k}/states/lake",
+          "target": "/snapshots/{k}/latest/lakeState",
+          "valueFrom": null
+        },
+        {
+          "id": "lake-snapshot-brainversion-v1",
+          "kind": "VALUE_FROM",
+          "owner": "publisher",
+          "source": "/lakes/{k}/states/lake",
+          "target": "/snapshots/{k}/latest/brainVersions/lake-brain",
+          "valueFrom": "/brains/lake-brain/version"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "lake-state-v1",
+      "volatileContract": "lake-volatile-v1"
+    }
+  ],
+  "status": "SHADOW (Publisher Gate P); not wired into the job; the Swift job still writes through the Swift platform client until an approved cutover",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "lake-volatile-v1",
+    "keys": [
+      "inputAgeHours",
+      "lastFetchAt",
+      "lastUpdatedAt",
+      "nextCheckAt",
+      "sourceAgeHours",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:inputAgeHours": "age of the newest input at run time (provenance)",
+      "key:lastFetchAt": "per-source fetch time in /sources/{id}",
+      "key:lastUpdatedAt": "slot write time; no domain meaning",
+      "key:nextCheckAt": "run time + recheck interval (freshness envelope)",
+      "key:sourceAgeHours": "age of the reading at run time; the observation time itself is NOT volatile",
+      "key:updatedAt": "profile write time; no domain meaning",
+      "path:/brains/lake-brain/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"
+    },
+    "paths": [
+      "/brains/lake-brain/lastSuccessfulRun"
+    ],
+    "version": 1
+  },
+  "writeSetSource": "the runner's recorded write set on deterministic inputs (tests/golden/*_run_updates.json, regenerated only by the Swift fixture test)"
+}

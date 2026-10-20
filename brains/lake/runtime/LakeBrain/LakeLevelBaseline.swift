@@ -14,6 +14,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 public struct LakeBaselineDay: Codable, Equatable, Sendable {
     public var doy: Int

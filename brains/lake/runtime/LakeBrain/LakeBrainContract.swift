@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SectorEngine
 
 public enum LakeBrainSpec {
     public static let brainId = "lake-brain"

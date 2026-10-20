@@ -91,12 +91,50 @@ def _py_string_constants(text):
             if isinstance(n, ast.Constant) and isinstance(n.value, str) and id(n) not in docs]
 
 
+def _swift_code_text(text):
+    """Swift source with comments removed (`//` line comments and `/* */` blocks), string literals kept. A comment that cites a doc is not a runtime
+    dependency, the same rule as Python docstrings/comments. A `//` inside a string literal (e.g. a URL) is kept."""
+    out, i, n, in_str, in_block = [], 0, len(text), False, False
+    while i < n:
+        c = text[i]
+        if in_block:
+            if text.startswith("*/", i):
+                in_block, i = False, i + 2
+            else:
+                if c == "\n":
+                    out.append(c)
+                i += 1
+            continue
+        if in_str:
+            out.append(c)
+            if c == "\\" and i + 1 < n:
+                out.append(text[i + 1]); i += 2; continue
+            if c == '"' or c == "\n":
+                in_str = False
+            i += 1
+            continue
+        if text.startswith("//", i):
+            j = text.find("\n", i)
+            i = n if j < 0 else j
+            continue
+        if text.startswith("/*", i):
+            in_block, i = True, i + 2
+            continue
+        if c == '"':
+            in_str = True
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
 def _code_text(path, text):
-    """Text to scan for path references: Python string constants (no docstrings/comments); raw text otherwise."""
+    """Text to scan for path references: Python string constants (no docstrings/comments); Swift without comments; raw text otherwise."""
     if path.endswith(".py"):
         consts = _py_string_constants(text)
         if consts is not None:
             return "\n".join(consts)
+    if path.endswith(".swift"):
+        return _swift_code_text(text)
     return text
 
 
