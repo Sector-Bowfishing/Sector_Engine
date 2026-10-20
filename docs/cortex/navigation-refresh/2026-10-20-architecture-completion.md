@@ -1,0 +1,33 @@
+# Sector Engine Navigation Refresh Report
+Standards: Rehtac Cortex 2.0.1 @ fc56557 (clean), pack sector/engine
+Snapshot compared: sector-engine@7dae705-2026-10-20
+Engine repository: Sector-Bowfishing/Sector_Engine · HEAD 6d7ae03a1acb (branch cortex/architecture-standardization-2026-10-20, local; origin/main 7dae7051 unchanged) · Date 2026-10-20
+Drift command output (summary): 167 files changed between snapshot and HEAD; 26 items need verification; Brain inventory matches (8 Brains). MISSING: the old Lake, Water Temperature and Intelligence runtime paths; NOW-EXISTS: `brains/lake`, `brains/water-temperature` (and `brains/sector-intelligence`).
+
+Supersedes nothing: it adds to `2026-10-20-architecture-all-brains.md` (16 rows), whose rows 3–6 and 12 are updated below.
+
+## Changes
+| # | Snapshot ID affected | Change type | Was (snapshot) | Now (HEAD) | Evidence | Label |
+|---|---|---|---|---|---|---|
+| 1 | `brain.sector-intelligence` | RELOCATED | `jobs/sector-intelligence-brain/` (outside a package; reserved `brains/sector-intelligence/` absent) | Canonical package `brains/sector-intelligence/` (`runtime/`, `tests/`, `contracts/`, `research/`, `brain.json`, OC); `jobs/sector-intelligence-brain/` is a retirement pointer; the orchestrator image still stages it as `jobs/sector-intelligence-brain/`; executor id `sector-intelligence-brain` unchanged | `11f18c1e`; `jobs/brain-orchestrator/orchestrate.py` `_intelligence_runtime_dir`; `deploy-job.sh` staging | VERIFIED_IMPLEMENTATION |
+| 2 | `brain.lake-brain` | RELOCATED | Swift in the customer `SectorEngine` target (`Sources/SectorEngine/LakeBrain/`, `Sources/LakeBrainJob/`); deploy `jobs/lake-brain/deploy-job.sh` | SwiftPM targets `LakeBrain` (`brains/lake/runtime/LakeBrain/`) + `LakeBrainJob` (`brains/lake/runtime/LakeBrainJob/`), test target `LakeBrainTests` (`brains/lake/tests/swift/`), deploy `brains/lake/deploy/deploy-job.sh`; `jobs/lake-brain/` keeps offline tooling only | `Package.swift`; `11f18c1e` | VERIFIED_IMPLEMENTATION |
+| 3 | `brain.water-temp` | RELOCATED | `Sources/SectorEngine/Brain/WaterTemperatureBrain*.swift`, `Sources/WaterTempBrainJob/`; deploy `jobs/water-temp-brain/deploy-job.sh` | SwiftPM targets `WaterTemperatureBrain` + `WaterTempBrainJob` in `brains/water-temperature/runtime/`; tests `brains/water-temperature/tests/swift/`; deploy `brains/water-temperature/deploy/`; the shared resolver (`Sources/SectorEngine/WaterTemp/`) stays in `SectorEngine` (customer path uses it) | `Package.swift`; `11f18c1e` | VERIFIED_IMPLEMENTATION |
+| 4 | `obs.12` | OBSERVATION_CHANGED | Lake / Water Temp jobs in the customer library target | Own targets; they depend on `SectorEngine` (fetchers, lake directory, Swift Brain platform) through `package`-level access; carried as architecture invariant-11 debt (D-14b) | `tools/architecture/baseline/legacy_violations.json` | VERIFIED_IMPLEMENTATION |
+| 5 | `obs.01` | OBSERVATION_RESOLVED | three Brains without canonical packages | all six locked Brains packaged; Kit V1 adopted by all six (Lake/Water Temp: P14 NOT_APPLICABLE) | Kit adapters `brains/*/tests/test_*_kit_certification.py` | VERIFIED_IMPLEMENTATION |
+| 6 | `obs.02`, registry nodes | OBSERVATION_CHANGED | hand-kept registries with differing ID sets (8/6/5/3) | still hand-kept, now consistency-enforced: stable ids (6) = packages (6); manifest = `keys.BRAINS` = Swift mirror (8: + depth, vegetation); Python = Swift source owners | `tools/architecture/tests/test_brain_identity_consistency.py` | VERIFIED_IMPLEMENTATION |
+| 7 | `platform.publisher-shadow` | CONTRACT_CHANGED | registrations for Wind, Fish, Clarity | + SHADOW registrations `intelligence-*`, `lake-*`, `water-temp-*` (bundles `sector-intelligence-publication-v1`, `lake-publication-v1`, `water-temp-publication-v1`); generic `publisher/flat_artifact.py` | `publisher/registry.py`; `58967c9e` | VERIFIED_IMPLEMENTATION |
+| 8 | `registry.providers` | CONTRACT_CHANGED | Wind's three providers only | + 8 Lake providers, 3 Water Temp providers | `providers/PROVIDERS.json` | VERIFIED_IMPLEMENTATION |
+| 9 | `obs.03` | OBSERVATION_RESOLVED | Wind `staleHours` 6 vs 1.5 | `brains/wind/brain.json` `staleHours` 1.5 | `05b04c89` | VERIFIED_IMPLEMENTATION |
+| 10 | `platform.orchestrator` | DEPENDENCY_CHANGED | scorer timeout aborts the cycle; hard-coded timeouts; retry only on the legacy path | `run_scorer` isolation; `in_process_timeout` from the manifest; `retry_gate` on the default path | `57fcd26b` | VERIFIED_IMPLEMENTATION |
+| 11 | `brain.lake-brain` (PL-03 reference case) | CONTRACT_CHANGED (additive) | fallback reported only through flags | LakeState `sourceFallback` record | `9c3df55a` | VERIFIED_IMPLEMENTATION |
+| 12 | `brain.depth`, `brain.vegetation` | CORRECTION | branch only | still branch only; reconciliation blocked (Depth: docs data, Lake Swift source read, in-Brain score proposals, data budget, local paths; Vegetation: runtime evidence-file check over research documents, in-Brain maturity score). Branch suites on the current platform: Depth 226/13 failed, Vegetation 108/2 failed | session record `2026-10-20-architecture-completion.md` §5.2 | VERIFIED_IMPLEMENTATION |
+| 13 | `framework.cert-kit-v1` | CERTIFICATION_CHANGED | adopted by Fish, Wind, Clarity | adopted by six Brains; harness: Brain-agnostic builder-import mutation; mutations of a NOT_APPLICABLE proof skip | `163d95d6` | VERIFIED_IMPLEMENTATION |
+| 14 | `framework.architecture-gates` | CERTIFICATION_CHANGED | Swift scanned as raw text for `docs/` | Swift comments excluded (same rule as Python docstrings); baseline 35 known (15 carried Swift-Brain entries) | `tools/architecture/report.py`; `legacy_violations.json` | VERIFIED_IMPLEMENTATION |
+| 15 | `artifact.brain-jobs-image`, root `Dockerfile` | ROUTE_CHANGED (build only) | copies `Sources`, `Tests` | also copies the Swift Brain target directories; same products and `/app/*` paths | `Dockerfile` | VERIFIED_IMPLEMENTATION |
+| 16 | `data.scoring-rubrics` | CORRECTION (text only) | stale descriptive strings | corrected; score baseline re-recorded (hashes only) | `89445e5d` | VERIFIED_IMPLEMENTATION |
+
+## Path verification
+Every new path above was checked at HEAD with `git cat-file -e HEAD:<path>` during the session (packages, targets, deploy scripts, contracts, fixtures, tests): 0 missing. The MISSING paths in the drift output are the pre-migration locations listed in rows 1–3.
+
+## Not checked
+Production lineage and scheduler state; Sector Ops readers of the new optional fields; a Linux Docker build (macOS build of the Dockerfile COPY set only); Depth and Vegetation branch contents beyond §5.2 of the session record.
