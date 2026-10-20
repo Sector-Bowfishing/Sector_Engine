@@ -44,10 +44,14 @@ def make_certification_tests(spec) -> dict:
     out[test_cert_spec_is_valid_and_every_not_applicable_names_a_real_proof.__name__] = test_cert_spec_is_valid_and_every_not_applicable_names_a_real_proof
 
     # mutation tests: one perturbed truth => the matching shared proof MUST fail (a proof that cannot fail proves nothing)
+    pid_of = {fn: pid for pid, _, fn in PROOFS}
+
     def make_mutation(name, fn, mutated):
         def test():
             if "ARTIFACT" in spec.not_applicable:
                 pytest.skip("NOT_APPLICABLE: no artifact factory")
+            if pid_of.get(fn) in spec.not_applicable:                     # the proof itself is declared not applicable (skipped visibly), so is its mutation
+                pytest.skip(f"NOT_APPLICABLE ({spec.brain_id} {pid_of[fn]}): {spec.not_applicable[pid_of[fn]]}")
             with pytest.raises(AssertionError):
                 fn(Env(mutated))
         test.__name__ = f"test_cert_mutation_{name}"

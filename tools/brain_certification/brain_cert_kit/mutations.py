@@ -8,8 +8,19 @@ import json
 import random
 
 from . import proofs as P
-from .env import Env
+from .env import Env, imported_roots
 from .spec import Rejection
+
+
+def _a_builder_import(spec):
+    """A module the Brain's builder really imports (sorted, first), declared forbidden: P15 must then fail. Brain-agnostic (no assumption that a builder
+    imports any particular module); falls back to "json" when the builder cannot be read."""
+    import os
+    try:
+        roots = sorted(imported_roots(os.path.join(spec.brain_dir, spec.builder_module)) - {"__future__"})
+    except (OSError, SyntaxError):
+        roots = []
+    return (roots[0],) if roots else ("json",)
 
 
 def _tamper_fingerprint(factory):
@@ -87,7 +98,7 @@ def mutation_cases(spec):
         ("extra_write_site_unaccounted", P.p14_direct_write_sites_pinned, r(spec, allowed_write_sites=frozenset(spec.allowed_write_sites) | {("ghost.py", "ghost", "x.update")})),
         ("write_site_not_in_audit", P.p14_direct_write_sites_pinned, r(spec, allowed_write_sites=frozenset())),
         ("write_primitive_unrecognised", P.p14_direct_write_sites_pinned, r(spec, write_call_suffixes=("no_such_client.update",))),
-        ("builder_imports_io", P.p15_artifact_path_cannot_write, r(spec, builder_forbidden_imports=("json",))),
+        ("builder_imports_io", P.p15_artifact_path_cannot_write, r(spec, builder_forbidden_imports=_a_builder_import(spec))),
         ("builder_uses_forbidden_token", P.p15_artifact_path_cannot_write, r(spec, builder_forbidden_tokens=("import",))),
         ("runtime_path_leak", P.p16_runtime_isolation_paths, r(spec, local_path_regex=r"import ")),
         ("runtime_has_non_code_file", P.p17_research_separate_from_runtime, r(spec, allowed_runtime_ext=(".nonexistent",))),
