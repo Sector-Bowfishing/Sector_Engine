@@ -122,21 +122,23 @@ Items 12–14 are NOT_APPLICABLE for every Brain (no production-live, Ops-live o
 
 ## Firebase data requirements (FD, Cortex 2.2.0 @ ae59e2d)
 
-Evaluated 2026-10-21 · `sessions/2026-10-21-cortex-2-2-firebase-data-audit.md`. Evidence: production export (2026-10-21, never committed), narrow read-only live reads, source, RTDB emulator. Platform-wide rows (the RTDB is shared).
+- **Evaluated:** 2026-10-21 (audit) and re-evaluated 2026-10-21 (remediation, code at `3e8a3857`) in `sessions/2026-10-21-cortex-2-2-firebase-data-audit.md` §10.
+- **Evidence:** the production export (never committed), narrow read-only live reads, source, and the RTDB emulator.
+- **Scope:** the rows are platform-wide, because the RTDB is shared.
 
-| FD | Requirement | Status | Evidence / gap |
+| FD | Requirement | Status | Evidence / remaining |
 |---|---|---|---|
-| 01 | Registered contracts | PARTIAL | Engine-side: every production family classified (`verification/firebase/path_families.json`, tested). Cortex registry incomplete (§8 proposal) |
-| 02 | Stable Brain keys | PASS | All Brain-keyed roots use stable ids; no `/brains/fish` or alias (export + live + test) |
-| 03 | One authoritative writer | PASS with LEGACY | `ownership.path_allowed` = classification (tested both ways); scorer sole `/scores` writer. LEGACY duplicates: `/brains/wind/scores` (Wind), `/engine/score` (scorer alias) |
-| 04 | Declared read-only consumers | PARTIAL | Ops reads verified read-only (rules + emulator: no client writes). Ops reads 2 LEGACY duplicates and trusts write-time `stale` (C-1, C-2, C-5) |
-| 05 | Versioned schemas | PARTIAL | Brain publication contracts exist; production Clarity states predate `freshness{}` (old schema still served) |
-| 06 | Compatible evolution | PASS (source) | additive fields only on this branch; NOT_VERIFIED in production |
-| 07 | Provenance and freshness | PARTIAL | registry provenance present (deploymentVersion, researchVersion, manifestSha256); per-lake `stale` and `/health/brains` are write-time |
+| 01 | Registered contracts | PASS (Engine) / PARTIAL (Cortex registry) | Every production family is classified (`verification/firebase/tests/path_families.json`). Every Brain's `brain.json` declares its full runtime write set (`legacyDirectWrites`; per-Brain `test_declared_write_set.py`). Cortex registry corrections are proposed (`docs/cortex/firebase/REGISTRY_CORRECTION_PROPOSAL.md`) |
+| 02 | Stable Brain keys | PASS | Stable ids everywhere. No `/brains/fish` and no alias (export, live, tests, emulator) |
+| 03 | One authoritative writer | PASS with LEGACY | Ownership equals the classification. The scorer is the only `/scores` writer (tested). LEGACY copies are labelled or switchable: Wind frozen evidence (`authoritative:false`), `/engine/score` (same object). `/jobs` ledger record owned |
+| 04 | Declared read-only consumers | PARTIAL | Ops is read-only (rules plus emulator). Ops reader changes OPS-1 to OPS-4 are handed off (`docs/cortex/firebase/OPS_CONSUMER_HANDOFF.md`) |
+| 05 | Versioned schemas | PARTIAL | `brain.schema.json` gains additive `legacyDirectWrites`. The Lake registry contract accepts the deployed fields. Old production Clarity states predate `freshness{}` |
+| 06 | Compatible evolution | PASS (source) | All remediation changes are additive or switch-guarded. NOT_VERIFIED in production |
+| 07 | Provenance and freshness | PASS (source) / NOT_VERIFIED (production) | The platform rollup derives staleness by FLAG or policy AGE (`staleSlots`, `staleRule`). `healthBasis` and `healthCurrent` added. Observation, publication and projection times are distinct. Production shows it after an orchestrator deploy (A-2) |
 | 08 | Honest absence | PASS | Vegetation INACTIVE_EXPECTED, engineeringStatusV1 PUBLICATION_INACTIVE, `/brains/fish` NOT_REGISTERED (tested) |
-| 09 | Separate measurements | PARTIAL | `/scores/wind` separates capability / BWIS / readiness / confidence; `/brains/wind/scores` copy violates (mig.01) |
-| 10 | Data placement | PASS | RTDB holds `gs://` references and digests only; no corpora |
-| 11 | Access and classification | **FINDING** | PRIVATE `/lakes/{k}/speciesPresence` readable by all allowlisted Ops users (emulator-verified); IAM NOT_VERIFIED |
-| 12 | Idempotent, ordered publication | PASS (source) / NOT_VERIFIED (production) | scorer and control write only on change; orphaned rollup parents left by a pre-contract writer |
-| 13 | Honest publication state | PASS | no publication state written by CI/merge; O-1 off |
-| 14 | Verification | PARTIAL | contract tests added; `data-check` 487 findings resolved in the record (registry gaps, scanner limits, 0 new defects); IAM NOT_VERIFIED |
+| 09 | Separate measurements | PASS (source) | The Wind copy is labelled `FROZEN_VALIDATION_EVIDENCE` and points to `/scores/wind`. Values unchanged; retirement gated (C-1) |
+| 10 | Data placement | PASS | RTDB holds references and digests only |
+| 11 | Access and classification | **DECISION REQUIRED** | PRIVATE `speciesPresence` is readable by every allowlisted Ops user (emulator). A least-privilege proposal is emulator-tested. The owner decides; the rules change is gated. IAM NOT_VERIFIED |
+| 12 | Idempotent, ordered publication | PASS (source) / NOT_VERIFIED (production) | Unchanged. Orphaned parents deprecated, with a deletion plan |
+| 13 | Honest publication state | PASS | O-1 off; nothing published by CI or merge |
+| 14 | Verification | PASS (tests) / PARTIAL (data-check) | 23 Firebase tests (3 need the emulator), per-Brain write-set tests, architecture gate. All suites green at `3e8a3857`. `data-check`: 495 findings = registry gaps plus scanner limits (CG-2.2-3); 0 new code defects |

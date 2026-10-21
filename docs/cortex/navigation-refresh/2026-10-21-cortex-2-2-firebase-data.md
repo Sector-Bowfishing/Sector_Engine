@@ -10,4 +10,8 @@ Standards: Rehtac Cortex 2.2.0 @ ae59e2d, pack sector/engine. Architecture diffe
 | `/control/orchestrator` | legacy record (fnd.05) | live state written and read back by `orchestrate.py` | `orchestrate.py:282,438` |
 | Snapshot writes | — | Clarity, Wind, Lake, Water Temp write `/snapshots/{k}/latest/*` but omit them from `brain.json` pathFamilies | session record S-3 |
 | Lake registry | Publisher `LAKE_REGISTRY_CHILDREN` | production also carries `claimMaturity`, `predictionLedger` (image a6622f99, not on main) | session record E-8 |
-| Engine-side family map | — | `verification/firebase/path_families.json` (machine-readable; can seed the registry correction) | — |
+| Engine-side family map | — | `verification/firebase/tests/path_families.json` (machine-readable; can seed the registry correction) | — |
+| Undeclared runtime writes | — | **Fixed 2026-10-21:** `brain.json` `publishes[].legacyDirectWrites` (7 Brains), tested against the real write sets | `brains/*/tests/test_declared_write_set.py`, `tools/architecture/tests/test_legacy_direct_writes.py` |
+| Lake registry fields | — | **Fixed:** optional `evidence` group in `LAKE_REGISTRY_CHILDREN` | `test_production_registry_children_are_inside_the_publisher_contract` |
+| `/jobs` ledger owner | — | **Fixed:** `jobs.MANIFEST["lake-brain-ledger-daily"]` | `test_jobs.py` |
+| Freshness | — | **Fixed (source):** `/control/fleet/{k}.staleSlots` FLAG/AGE; overview `healthCurrent` | `test_control.py` |

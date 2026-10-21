@@ -11,14 +11,14 @@
   "source": {
     "repository": "Sector-Bowfishing/Sector_Engine",
     "branch": "cortex/architecture-standardization-2026-10-20",
-    "evaluatedCommit": "25e786cf",
+    "evaluatedCommit": "3e8a3857",
     "evaluatedAt": "2026-10-20",
     "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-final-verification.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:f6d0ae7d7ee2f775cda4f1a5755a783f5188572bd7242c56bdeb4c0e51247205",
-    "certificationDigest": "sha256:f6d0ae7d7ee2f775cda4f1a5755a783f5188572bd7242c56bdeb4c0e51247205",
+    "sourceDigest": "sha256:a4f9904ebe6c59626b3ef506675d3cf426271045e46fddfcd00f145ed336bf94",
+    "certificationDigest": "sha256:a4f9904ebe6c59626b3ef506675d3cf426271045e46fddfcd00f145ed336bf94",
     "certificationCurrent": true,
-    "verificationCommit": "25e786cf"
+    "verificationCommit": "3e8a3857"
   },
   "statusVocabulary": [
     "PASS",
@@ -1400,7 +1400,7 @@
       "suite": "jobs/brain_platform",
       "command": "pytest",
       "result": "PASS",
-      "passed": 739,
+      "passed": 747,
       "failed": 0,
       "skipped": 0
     },
@@ -1416,7 +1416,7 @@
       "suite": "jobs/brain-scores",
       "command": "pytest (scorer authority, frozen scores)",
       "result": "PASS",
-      "passed": 35,
+      "passed": 37,
       "failed": 0,
       "skipped": 0
     },
@@ -1456,7 +1456,7 @@
       "suite": "brains/depth",
       "command": "pytest (domain + memory + abstention + Kit V1)",
       "result": "PASS",
-      "passed": 277,
+      "passed": 280,
       "failed": 0,
       "skipped": 9,
       "note": "9 research-dataset tests skip without $DEPTH_RESEARCH_DATA; 298 pass with the snapshot"
@@ -1473,7 +1473,7 @@
       "suite": "brains/lake",
       "command": "pytest (Python publication + Kit V1)",
       "result": "PASS",
-      "passed": 49,
+      "passed": 52,
       "failed": 0,
       "skipped": 4
     },
@@ -1481,7 +1481,7 @@
       "suite": "brains/sector-intelligence",
       "command": "pytest (domain + memory + Kit V1)",
       "result": "PASS",
-      "passed": 96,
+      "passed": 100,
       "failed": 0,
       "skipped": 0
     },
@@ -1489,7 +1489,7 @@
       "suite": "brains/vegetation",
       "command": "pytest (domain + memory + abstention + Kit V1)",
       "result": "PASS",
-      "passed": 171,
+      "passed": 174,
       "failed": 0,
       "skipped": 0
     },
@@ -1497,7 +1497,7 @@
       "suite": "brains/water-clarity",
       "command": "pytest (domain + memory + Kit V1)",
       "result": "PASS",
-      "passed": 131,
+      "passed": 134,
       "failed": 0,
       "skipped": 0
     },
@@ -1505,7 +1505,7 @@
       "suite": "brains/water-temperature",
       "command": "pytest (Python publication + Kit V1)",
       "result": "PASS",
-      "passed": 50,
+      "passed": 53,
       "failed": 0,
       "skipped": 4
     },
@@ -1513,7 +1513,7 @@
       "suite": "brains/wind",
       "command": "pytest (domain + memory + Kit V1)",
       "result": "PASS",
-      "passed": 220,
+      "passed": 227,
       "failed": 0,
       "skipped": 0,
       "note": "16 network tests deselected by pytest.ini"
@@ -1530,17 +1530,17 @@
       "suite": "tools/architecture",
       "command": "pytest (identity, foundation, standing memory, Swift ownership/boundary/state schemas, cross-Brain coupling, engineering status, Ops projection)",
       "result": "PASS",
-      "passed": 154,
+      "passed": 177,
       "failed": 0,
       "skipped": 0
     },
     {
       "suite": "verification",
-      "command": "pytest (score baseline, conformance, clean copy)",
+      "command": "pytest (score baseline, conformance, clean copy, Firebase data contract; 3 rules-emulator tests skip without SECTOR_OPS_RULES)",
       "result": "PASS",
-      "passed": 15,
+      "passed": 35,
       "failed": 0,
-      "skipped": 0
+      "skipped": 3
     },
     {
       "suite": "verification/integration/test_wind_package.py",
@@ -1593,6 +1593,14 @@
       "command": "docker build",
       "result": "NOT_RUN",
       "note": "Docker is not installed on this Mac; images are built in CI (image-build-verification)"
+    },
+    {
+      "suite": "verification/firebase (RTDB emulator 4.11.2, deployed Ops rules + least-privilege proposal)",
+      "command": "SECTOR_OPS_RULES=... RTDB_EMULATOR=... pytest verification/firebase",
+      "result": "PASS",
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0
     }
   ],
   "decisions": [
