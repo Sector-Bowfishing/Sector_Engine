@@ -69,3 +69,17 @@ The Linux build break of the Water Temperature Brain, which this branch introduc
 ## 7. Final CI
 
 See the final report. The decisive check is Linux Swift on the final head commit.
+
+## 8. Continuation (2026-10-21): final CI and engineering-status publication
+
+- **CI:**
+  - `a685b412` fixed the last Linux failure. The aggregator golden held Darwin's 17-digit print of a Double, and Linux Foundation parses long numbers into `NSDecimalNumber`. Numbers are now compared exactly via `Double(String)`, and a 1e-5 golden change still fails. This was pre-existing comparison code.
+  - **All nine CI jobs pass on `a685b412`:** Linux Swift ran 298 tests (the Apple-only CoreLocation tests compile out); macOS Swift 325; both image builds; every Python job; foundation.
+- **Publication (O-1 stays off):**
+  - `sector_brain_platform.engineering_status_publication` provides one sanitizer and one gate.
+  - `orchestrate.py --publish-engineering-status` uses the existing control-plane writer on platform-owned `/control`.
+  - Deploy staging packages the projection of exactly the deployed commit.
+  - Ops projection is now 1.1.0, with an explicit AVAILABLE / UNAVAILABLE state, code state and branch.
+  - The CI image check proves a PR image's projection is refused as unmerged.
+  - The consumer contract and O-1 readiness are in `docs/cortex/engineering-status/README.md`.
+- **Final head CI:** see the final report.
