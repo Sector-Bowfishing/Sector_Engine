@@ -57,7 +57,7 @@ def build() -> dict:
         p = os.path.join(ROOT, "brains", d, "brain.json")
         if not d.startswith("_") and os.path.isfile(p):
             bj = _load(p)
-            packages[bj["brainId"]] = {"directory": f"brains/{d}", "lifecycle": bj["lifecycle"]}
+            packages[bj["brainId"]] = {"directory": f"brains/{d}", "lifecycle": bj["lifecycle"], "brainJson": bj}
     by_id = {b["brainId"]: b for b in mem["brains"]}
     if set(by_id) != set(manifest):
         raise SystemExit(f"memory matrix Brains {sorted(by_id)} != control manifest Brains {sorted(manifest)}")
@@ -81,6 +81,15 @@ def build() -> dict:
              "recovery": m["recovery"], "blockers": src["blockers"].get(bid, [])}
         if c.get("proofs"):
             b["certificationProofs"], b["certificationMutations"] = c["proofs"], c.get("mutations", {})
+        if pkg:
+            bj = pkg["brainJson"]
+            b["dataDependencies"] = {                                   # declared in brain.json; verified against the runtime by Kit P06 + the dependency graph
+                "consumes": [{"kind": c["kind"], "id": c.get("brainId") or c.get("registry") or c.get("signalId") or c.get("contractId"),
+                              "requirement": c.get("requirement", "REQUIRED")} for c in bj.get("consumes", [])],
+                "providers": [p["providerId"] for p in bj.get("providers", [])],
+                "knowledgeStores": [{"id": s["id"], "store": s["store"], "approval": s["approval"], "onUnavailable": s["onUnavailable"]}
+                                    for s in (bj.get("knowledge") or {}).get("stores", [])],
+                "researchFallback": (bj.get("knowledge") or {}).get("researchFallback")}
         d = detail.get(bid)
         if d:
             layers = dict(d["statusLayers"])

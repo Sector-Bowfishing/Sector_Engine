@@ -485,6 +485,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "dataDependencies": {
+            "type": "object",
+            "description": "Operational data the Brain actually needs, from brain.json (verified by Kit P06 and the dependency graph): declared inputs, live providers, approved knowledge stores. Research data is never a runtime fallback."
           }
         }
       }

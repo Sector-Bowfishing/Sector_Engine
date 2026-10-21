@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-20",
     "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-structural-completion.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:83a8a30101f9a8c34cab35811ac1e317ac0f0a0cd9ac3adcf6991ffae1fcde36",
-    "certificationDigest": "sha256:83a8a30101f9a8c34cab35811ac1e317ac0f0a0cd9ac3adcf6991ffae1fcde36",
+    "sourceDigest": "sha256:cd8d9a0def45bab901c0f9263d02423e90461a7ca249b6716b6b31edc9bd1757",
+    "certificationDigest": "sha256:cd8d9a0def45bab901c0f9263d02423e90461a7ca249b6716b6b31edc9bd1757",
     "certificationCurrent": true,
     "verificationCommit": "44ad7121"
   },
@@ -113,6 +113,19 @@
       "certificationMutations": {
         "passed": 30,
         "failed": 0
+      },
+      "dataDependencies": {
+        "consumes": [],
+        "providers": [],
+        "knowledgeStores": [
+          {
+            "id": "biology-bundle",
+            "store": "PRIVATE_BUCKET_RELEASE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
       },
       "statusLayers": {
         "canonicalStructure": {
@@ -254,6 +267,30 @@
       "certificationMutations": {
         "passed": 30,
         "failed": 0
+      },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "brain",
+            "id": "lake-brain",
+            "requirement": "REQUIRED"
+          },
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [],
+        "knowledgeStores": [
+          {
+            "id": "depth-knowledge",
+            "store": "PACKAGED_IN_IMAGE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
       },
       "statusLayers": {
         "canonicalStructure": {
@@ -401,6 +438,40 @@
         "passed": 27,
         "failed": 0
       },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [
+          "iem-hads",
+          "nws-nwps",
+          "tva-restapi",
+          "usace-access2water",
+          "usace-cwms-pool",
+          "usbr-rise",
+          "usgs-nwis-dv",
+          "usgs-nwis-lake-elevation"
+        ],
+        "knowledgeStores": [
+          {
+            "id": "reviewed-bindings",
+            "store": "COMPILED_IN_BINARY",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "NOT_APPLICABLE"
+          },
+          {
+            "id": "species-presence",
+            "store": "PRIVATE_BUCKET_RELEASE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "DEGRADE_EXPLICITLY"
+          }
+        ],
+        "researchFallback": false
+      },
       "statusLayers": {
         "canonicalStructure": {
           "status": "PASS",
@@ -546,6 +617,50 @@
         "passed": 30,
         "failed": 0
       },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "brain",
+            "id": "lake-brain",
+            "requirement": "OPTIONAL"
+          },
+          {
+            "kind": "brain",
+            "id": "water-temp",
+            "requirement": "OPTIONAL"
+          },
+          {
+            "kind": "brain",
+            "id": "water-clarity",
+            "requirement": "OPTIONAL"
+          },
+          {
+            "kind": "brain",
+            "id": "wind",
+            "requirement": "OPTIONAL"
+          },
+          {
+            "kind": "brain",
+            "id": "biological-state",
+            "requirement": "OPTIONAL"
+          },
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [],
+        "knowledgeStores": [
+          {
+            "id": "intelligence-catalog",
+            "store": "PACKAGED_IN_IMAGE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
+      },
       "statusLayers": {
         "canonicalStructure": {
           "status": "PASS",
@@ -688,6 +803,30 @@
       "certificationMutations": {
         "passed": 30,
         "failed": 0
+      },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "brain",
+            "id": "lake-brain",
+            "requirement": "OPTIONAL"
+          },
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [],
+        "knowledgeStores": [
+          {
+            "id": "vegetation-knowledge",
+            "store": "PACKAGED_IN_IMAGE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
       },
       "statusLayers": {
         "canonicalStructure": {
@@ -835,6 +974,25 @@
       "certificationMutations": {
         "passed": 31,
         "failed": 0
+      },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [],
+        "knowledgeStores": [
+          {
+            "id": "clarity-catalog",
+            "store": "PACKAGED_IN_IMAGE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
       },
       "statusLayers": {
         "canonicalStructure": {
@@ -985,6 +1143,29 @@
         "passed": 28,
         "failed": 0
       },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [
+          "open-meteo-forecast",
+          "usace-cwms-water-temp",
+          "usgs-nwis-00010"
+        ],
+        "knowledgeStores": [
+          {
+            "id": "model",
+            "store": "COMPILED_IN_BINARY",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "NOT_APPLICABLE"
+          }
+        ],
+        "researchFallback": false
+      },
       "statusLayers": {
         "canonicalStructure": {
           "status": "PASS",
@@ -1129,6 +1310,29 @@
       "certificationMutations": {
         "passed": 30,
         "failed": 0
+      },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [
+          "noaa-nbm-v5",
+          "noaa-rtma-ru",
+          "iem-metar-wind"
+        ],
+        "knowledgeStores": [
+          {
+            "id": "wind-knowledge",
+            "store": "PACKAGED_IN_IMAGE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
       },
       "statusLayers": {
         "canonicalStructure": {
