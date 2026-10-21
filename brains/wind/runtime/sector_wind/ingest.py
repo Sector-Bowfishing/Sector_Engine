@@ -46,8 +46,21 @@ LEVEL = "10 m above ground"
 DEFAULT_LEADS = list(range(1, 25)) + list(range(27, 49, 3))
 
 
+RUNTIME_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))     # brains/wind/runtime in the repo; the image root in the job
+
+
+def verified_release() -> dict:
+    """Approved memory (Cortex BR-11): the packaged knowledge release (knowledge-release.json: lakes.json + brain/validation_evidence.json with
+    digests). Raises KnowledgeReleaseError when it is missing, unreadable or tampered: the run stops, nothing falls back."""
+    from sector_brain_platform.knowledge_release import load_release
+    return load_release(RUNTIME_ROOT, "wind")
+
+
 def load_config(path: str | None = None) -> dict:
-    path = path or os.path.join(os.path.dirname(os.path.dirname(__file__)), "lakes.json")
+    """The packaged lake configuration, verified as part of the knowledge release. An explicit `path` (research tools, tests) is read as given."""
+    if path is None:
+        verified_release()
+        path = os.path.join(RUNTIME_ROOT, "lakes.json")
     return json.load(open(path))
 
 

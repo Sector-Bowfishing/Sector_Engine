@@ -72,6 +72,7 @@ for d in biological-brain sector-intelligence-brain brain-scores brain-orchestra
   [[ "$d" == "sector-intelligence-brain" ]] && src="$ROOT/brains/sector-intelligence/runtime"   # Sector Intelligence canonical home; same legacy layout
   cp "$src"/*.py "stage/jobs/$d/" 2>/dev/null || true
   [[ -f "$src/catalog.json" ]] && cp "$src/catalog.json" "stage/jobs/$d/"
+  [[ -f "$src/knowledge-release.json" ]] && cp "$src/knowledge-release.json" "stage/jobs/$d/"     # packaged knowledge release (verified on load)
   cp -R "$src/schemas" "stage/jobs/$d/" 2>/dev/null || true
   [[ "$d" == "biological-brain" && -d "$src/tools" ]] && cp -R "$src/tools" "stage/jobs/$d/" || true
 done

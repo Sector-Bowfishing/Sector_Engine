@@ -38,5 +38,8 @@ def input_fingerprint(updates: dict) -> str:
     return sha({"fingerprint": reg.get("fingerprint"), "catalogSha256": reg.get("catalogSha256"), "brainVersion": sib.BRAIN_VERSION})
 
 
-def build_artifact(updates: dict, ctx: BuildContext, registry=None, consumed=None) -> BuildResult:
-    return build_flat_artifact(BRAIN, updates, ctx, input_fingerprint=input_fingerprint(updates), registry=registry, consumed=consumed)
+def build_artifact(updates: dict, ctx: BuildContext, registry=None, consumed=None, release: dict | None = None) -> BuildResult:
+    """release: the verified packaged knowledge release (run.load_knowledge); its id and digest go into the artifact lineage (BR-11 e)."""
+    from sector_brain_platform.knowledge_release import lineage_triple
+    return build_flat_artifact(BRAIN, updates, ctx, input_fingerprint=input_fingerprint(updates), registry=registry, consumed=consumed,
+                               knowledge_release=lineage_triple(release))

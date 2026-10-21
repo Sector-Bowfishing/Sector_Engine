@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "sector-intelligence",
+  "releaseId": "sector-intelligence-knowledge-2026-10-20.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "sector-intelligence",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "catalog.json",
+      "sha256": "71d5f2d6ac51f228bb53d5f883f5c2156a2e6aa383418c628c7918401f221e5e",
+      "bytes": 11559
+    }
+  ],
+  "releaseDigest": "sha256:c295f528cf00b68987f023b45f1becaa5a2b1fdd872477497951bffa6df7c8ce"
+}

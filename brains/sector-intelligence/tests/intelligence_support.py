@@ -39,5 +39,17 @@ def run_updates(now=NOW, published=None, mutate_upstream=None):
                              event_id=bp.event_id(now, sib.BRAIN_ID, 0), evaluations=evs, inputs_fp=ev.inputs_fingerprint(evs))
 
 
+RELEASE = None
+
+
+def release():
+    """The verified packaged knowledge release, exactly as run.load_knowledge reads it."""
+    global RELEASE
+    if RELEASE is None:
+        from sector_brain_platform.knowledge_release import load_release
+        RELEASE = load_release(os.path.join(REPO, "brains", "sector-intelligence", "runtime"), sib.BRAIN_ID)
+    return RELEASE
+
+
 def build(updates, *, n=1, generated_at="2026-10-12T23:00:00Z", consumed=None):
-    return pa.build_artifact(updates, pa.BuildContext(generated_at, uid(n), "test@1"), consumed=consumed)
+    return pa.build_artifact(updates, pa.BuildContext(generated_at, uid(n), "test@1"), consumed=consumed, release=release())

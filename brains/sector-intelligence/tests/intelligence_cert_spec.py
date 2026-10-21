@@ -41,5 +41,6 @@ SPEC = BrainCertSpec(
     builder_module="runtime/publish_artifact.py",
     arch_findings=(("sector_intelligence_brain.py", 8), ("brain_platform.py", 8)), baseline_entry_basenames=("brain_platform.py", "sector_intelligence_brain.py"),
     score_baseline_substring=None,
+    release_lineage=__import__("sector_brain_platform.knowledge_release", fromlist=["lineage_triple"]).lineage_triple(S.release()),
     artifact_factory=artifact, changed_artifact_factory=changed_artifact,
 )

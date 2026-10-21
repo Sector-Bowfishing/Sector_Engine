@@ -64,6 +64,16 @@ def deployment_version() -> str:
         return "brain/sector-intelligence@unknown"
 
 
+def load_knowledge(base_dir: str = HERE):
+    """Approved memory (Cortex BR-11): verify the packaged knowledge release (knowledge-release.json: id + digests) BEFORE using the catalog.
+    A missing, unreadable or tampered release raises KnowledgeReleaseError and nothing is built or published (fail closed); there is no fallback."""
+    from sector_brain_platform.knowledge_release import load_release
+    release = load_release(base_dir, sib.BRAIN_ID)
+    with open(os.path.join(base_dir, "catalog.json"), "rb") as fh:
+        raw = fh.read()
+    return release, sib.load_catalog(raw), sib.catalog_sha(raw)
+
+
 def read_upstream(rtdb: bp.BrainRtdb) -> dict:
     out = {}
     for bid in sib.DEPENDENCY_ORDER:
@@ -86,9 +96,7 @@ def main(argv=None) -> int:
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
     tokens = bp.TokenProvider()
-    with open(os.path.join(HERE, "catalog.json"), "rb") as fh:
-        raw = fh.read()
-    cat, cat_sha = sib.load_catalog(raw), sib.catalog_sha(raw)
+    release, cat, cat_sha = load_knowledge()
 
     rtdb = bp.BrainRtdb(RTDB_URL, tokens, brain_id=sib.BRAIN_ID, recorder=bp.ConsumptionRecorder(sib.BRAIN_ID))   # ownership-checked; --plan/--dry-run only GET; every read is recorded as ACTUAL consumption
     published = rtdb.get(f"brains/{sib.BRAIN_ID}")
@@ -129,7 +137,7 @@ def main(argv=None) -> int:
     sib.check_keys(updates)
     body = json.dumps({k.lstrip("/"): v for k, v in updates.items()}, separators=(",", ":"), allow_nan=False)
     reg = updates[f"/brains/{sib.BRAIN_ID}"]
-    summary = dict(decision=decision, fingerprint=fp, lakes=len(lakes), paths=len(updates), bytes=len(body),
+    summary = dict(decision=decision, fingerprint=fp, knowledgeRelease=release["releaseId"], knowledgeReleaseDigest=release["releaseDigest"], lakes=len(lakes), paths=len(updates), bytes=len(body),
                    evaluated=sorted(evaluations), evaluationErrors=eval_errors,
                    pilot={lid: {"inputsFresh": e["synthesis"]["inputsFresh"], "degraded": e.get("degradedInputs"), "drivers": [d["fact"] for d in e.get("drivers", [])]}
                           for lid, e in evaluations.items()},
@@ -157,5 +165,10 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except sib.CatalogError as e:
+        print(f"REFUSED (nothing published): {e}", file=sys.stderr)
+        sys.exit(2)
+    except Exception as e:                                          # approved memory missing/unverifiable: refuse, never fall back
+        if type(e).__name__ != "KnowledgeReleaseError":
+            raise
         print(f"REFUSED (nothing published): {e}", file=sys.stderr)
         sys.exit(2)

@@ -100,7 +100,7 @@ class BuildContext:
     execution_id: str                 # UUIDv4 of this wind-hourly run (ONE per logical artifact)
     code_version: str                 # Wind's own commit (sha12), not the orchestrator's
     evidence_sha256: str = "NONE"     # sha256 of validation_evidence.json (an input digest)
-    knowledge_release: str = "NONE"   # NONE until Wind defines a canonical release (release/manifest/sha must be all NONE or all declared)
+    knowledge_release: str = "NONE"   # the job passes lineage_triple(ingest.verified_release()); NONE only when no release is supplied (all NONE or all declared)
     manifest_ref: str = "NONE"
     manifest_sha256: str = "NONE"
     lifecycle: str = "CALIBRATION"

@@ -122,13 +122,13 @@ def staged(tmp_path_factory):
 
 
 def test_staged_image_context_is_exact(staged):
-    assert sorted(os.listdir(staged)) == sorted([".gcloudignore", "Dockerfile", "lakes.json", "main.py", "requirements.txt",
+    assert sorted(os.listdir(staged)) == sorted([".gcloudignore", "Dockerfile", "knowledge-release.json", "lakes.json", "main.py", "requirements.txt",
                                                  "sector_brain_platform", "sector_wind"])
     shipped = sorted(os.path.relpath(os.path.join(d, f), staged / "sector_wind") for d, _, fs in os.walk(staged / "sector_wind") for f in fs)
     assert shipped == sorted(p[len("brains/wind/runtime/sector_wind/"):] for p in _tracked("brains/wind/runtime/sector_wind"))
     assert not any("sector_wind_research" in d or "research" in os.path.basename(d) for d, _, _ in os.walk(staged))
     docker = open(staged / "Dockerfile").read()
-    assert "COPY lakes.json main.py ./" in docker and "COPY sector_wind ./sector_wind" in docker and "COPY sector_brain_platform ./sector_brain_platform" in docker
+    assert "COPY lakes.json main.py knowledge-release.json ./" in docker and "COPY sector_wind ./sector_wind" in docker and "COPY sector_brain_platform ./sector_brain_platform" in docker
 
 
 def test_staged_image_entrypoint_imports_from_the_image_layout(staged, tmp_path):
@@ -153,3 +153,12 @@ def test_production_tests_pass_in_a_clean_copy_without_research_package(tmp_path
                         "-o", "pythonpath=runtime ../../jobs/brain_platform"], cwd=dest / "brains" / "wind", capture_output=True, text=True, env=env)
     assert r.returncode == 0, r.stdout[-3000:] + r.stderr[-2000:]
     assert " passed" in r.stdout and " failed" not in r.stdout
+
+
+def test_staged_image_verifies_its_packaged_knowledge_release(staged):
+    """Cortex 2.1 BR-11: the image carries its approved memory and verifies it on load, from the image layout alone (no repo, no HOME)."""
+    code = "from sector_wind.ingest import verified_release, load_config; r = verified_release(); load_config(); print(r['releaseId'])"
+    r = subprocess.run([sys.executable, "-E", "-s", "-c", code], cwd=staged, capture_output=True, text=True,
+                       env={"PATH": "/usr/bin:/bin", "PYTHONPATH": str(staged)})
+    assert r.returncode == 0, r.stderr
+    assert r.stdout.strip() == json.load(open(staged / "knowledge-release.json"))["releaseId"]
