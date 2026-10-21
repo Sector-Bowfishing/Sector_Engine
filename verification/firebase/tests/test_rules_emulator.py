@@ -6,6 +6,7 @@ Skipped otherwise (CI has neither: the rules live in the Sector Ops repository).
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 
 import pytest
@@ -23,6 +24,8 @@ def _available() -> bool:
     try:
         urllib.request.urlopen(f"{EMU}/.json{R.NS}", timeout=2)
         return True
+    except urllib.error.HTTPError:
+        return True                                   # the emulator answered (a rules denial is still an answer)
     except Exception:  # noqa: BLE001
         return False
 

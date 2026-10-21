@@ -1,6 +1,5 @@
 """Cortex 2.2 FD-09 / Firebase audit C-1: Wind's copy of its FROZEN validation-evidence scores (/brains/wind/scores, /validation/wind/scores) is
 labelled as frozen, non-authoritative evidence that names the authoritative node; its values never change; one switch retires it."""
-import wind_cert_spec as W
 from sector_wind.brain import contract as C
 from sector_wind.brain import publish as P
 
@@ -8,9 +7,24 @@ EVIDENCE = {"scores": {"windCertificationScore": 3.1, "windCertificationRubric":
             "frozenAt": "2026-10-12T06:16:16Z"}
 
 
+def _patches():
+    """The real publish() patches on the deterministic test store (as the Kit spec builds them, without importing the Kit: this test also runs in
+    the clean production copy, verification/integration/test_wind_package.py)."""
+    import tempfile
+
+    import test_brain as TB
+    from sector_wind.brain import contract as C
+    from sector_wind.brain.publish import publish
+    from sector_wind.brain.writer import DryRunWriter
+    st, w = TB.make_store(tempfile.mkdtemp()), DryRunWriter()
+    rep = publish(st, TB.CFG, w, now=TB.NOW, run_summary={"runAt": C.iso(TB.NOW), "errors": [], "seconds": 90}, directory=TB.DIRECTORY)
+    assert rep["ok"], rep["errors"]
+    return w.patches
+
+
 def _registry_and_validation():
     reg = val = None
-    for patch in W._patches():
+    for patch in _patches():
         reg = patch.get("brains/wind", reg)
         val = patch.get("validation/wind", val)
     return reg, val

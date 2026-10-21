@@ -16,15 +16,15 @@ import sys
 import pytest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "jobs", "brain_platform"))
-sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.dirname(HERE))
 from sector_brain_platform import ownership  # noqa: E402
 from sector_brain_platform.control import fleet_rollup, slot_max_age  # noqa: E402
 from sector_brain_platform.keys import BRAINS  # noqa: E402
 import path_inventory  # noqa: E402
 
-INVENTORY = json.load(open(os.path.join(ROOT, "verification", "fixtures", "firebase", "production-path-inventory-2026-10-21.json")))
+INVENTORY = json.load(open(os.path.join(HERE, "fixtures", "production-path-inventory-2026-10-21.json")))
 PATHS = INVENTORY["paths"]
 FAMILIES = json.load(open(os.path.join(HERE, "path_families.json")))
 LIVE_BRAINS = sorted(b for b in BRAINS if b != "vegetation")

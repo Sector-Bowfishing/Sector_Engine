@@ -3,8 +3,8 @@
 The rules are owned and deployed by Sector Ops (`database.rules.json`); this repository never carries a copy. Pass the Ops file:
 
     java -jar ~/.cache/firebase/emulators/firebase-database-emulator-v4.11.2.jar --port 9311 &
-    python3 verification/firebase/rules_emulator_check.py /path/to/Sector_Ops/database.rules.json             # the deployed rules
-    python3 verification/firebase/rules_emulator_check.py /path/to/Sector_Ops/database.rules.json --proposed  # + least-privilege speciesPresence
+    python3 verification/firebase/tests/rules_emulator_check.py /path/to/Sector_Ops/database.rules.json             # the deployed rules
+    python3 verification/firebase/tests/rules_emulator_check.py /path/to/Sector_Ops/database.rules.json --proposed  # + least-privilege speciesPresence
 
 `--proposed` applies `propose_species_presence_rules()` in memory: the same proposal the Sector Ops session is asked to make (no rules file here is
 deployable). The pytest wrapper `test_rules_emulator.py` runs both when SECTOR_OPS_RULES and an emulator are available, and skips otherwise.

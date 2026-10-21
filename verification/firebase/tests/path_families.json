@@ -1,6 +1,6 @@
 {
  "schema": "sector-brain-rtdb-path-families-v1",
- "evidence": "verification/fixtures/firebase/production-path-inventory-2026-10-21.json (value-free inventory of the 2026-10-21 production export) + Engine source at the audit commit",
+ "evidence": "verification/firebase/tests/fixtures/production-path-inventory-2026-10-21.json (value-free inventory of the 2026-10-21 production export) + Engine source at the audit commit",
  "statusVocabulary": ["KEEP", "LEGACY", "STALE", "DUPLICATED", "MISPLACED", "INVALID", "ORPHANED", "MISSING", "EXPECTED_ABSENCE", "NOT_VERIFIED"],
  "note": "Longest-prefix match. {brain} is any registered brainId, {slot} its slot, {snapshotField} its snapshot field. writer is the only identity that may write the family (sector_brain_platform.ownership); 'nobody' = no writer under the ownership contract. 'external' = written outside this repository (Ops admin / Cloud Functions). Status is about the PATH FAMILY; staleness of values is recorded separately (freshness).",
  "families": [

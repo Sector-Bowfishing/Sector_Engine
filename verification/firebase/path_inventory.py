@@ -5,7 +5,7 @@ no values, no lake/species/user/event identifiers, no timestamps. Data-valued ke
 {uid} user, {event} activity event, {source} source id, {job} job id, {i} list index, {execution}, {key} any other data-valued key), so the inventory
 is safe to commit and compare across exports.
 
-    python verification/firebase/path_inventory.py EXPORT.json --out verification/fixtures/firebase/production-path-inventory-YYYY-MM-DD.json
+    python verification/firebase/path_inventory.py EXPORT.json --out verification/firebase/tests/fixtures/production-path-inventory-YYYY-MM-DD.json
 """
 from __future__ import annotations
 
