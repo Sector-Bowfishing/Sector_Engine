@@ -59,3 +59,13 @@ def test_tampered_validation_evidence_stops_the_run(tmp_path, monkeypatch):
     ev.write_text(ev.read_text().replace("{", "{ ", 1))
     with pytest.raises(KnowledgeReleaseError, match="fails verification"):
         ingest.load_config()
+
+
+def test_the_job_entry_point_refuses_with_exit_2_instead_of_crashing(tmp_path):
+    d = tmp_path / "runtime"
+    shutil.copytree(RUNTIME, d, ignore=shutil.ignore_patterns("__pycache__", "archive"))
+    os.remove(d / "knowledge-release.json")
+    env = {"PATH": "/usr/bin:/bin", "PYTHONPATH": PLATFORM}
+    out = subprocess.run([sys.executable, str(d / "main.py"), "status", "--store", f"local:{tmp_path / 'a'}", "--start", "2026-10-01", "--end", "2026-10-02"],
+                         cwd=str(tmp_path), env=env, capture_output=True, text=True, timeout=120)
+    assert out.returncode == 2 and "REFUSED (nothing published)" in out.stderr and "Traceback" not in out.stderr, out.stderr

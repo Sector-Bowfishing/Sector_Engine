@@ -32,6 +32,12 @@ _LEGACY_KIND = {"GAUGE_OBSERVED": "observed", "RAINFALL_MODELED": "modeled", "FA
                 "OBSERVED": "observed", "PROXY": "proxy", "MEASURED": "measured", "MODELED": "modeled", "NOT_EVALUATED": "not_evaluated"}
 
 
+
+def _oldest(stamps):
+    """The OLDEST input time, chosen by parsed time (never by string order); published as that input's own string. Unparseable -> ignored."""
+    parsed = [(t, g) for g in stamps if isinstance(g, str) and (t := bp.parse_time(g)) is not None]
+    return min(parsed)[1] if parsed else None
+
 def _strip(d):
     if isinstance(d, dict):
         out = {}
@@ -198,7 +204,7 @@ def evaluate(lake_id: str, *, snapshot: dict | None, fleet_row: dict | None, pre
                        "generatedAt": bp.iso(now), "sources": sources, "readiness": "CALIBRATION", "qualityFlags": flags,
                        "validationRef": "/validation/sector-intelligence"},
         # The evaluation is generated now (FINGERPRINT model, unchanged); its evidence is as old as the OLDEST input it used (additive, never a run time).
-        "freshness": bp.freshness(now, now, 24, "FINGERPRINT", source_observation_at=min((u["generatedAt"] for u in used.values() if u.get("generatedAt")), default=None),
+        "freshness": bp.freshness(now, now, 24, "FINGERPRINT", source_observation_at=_oldest(u.get("generatedAt") for u in used.values()),
                                   evidence_stale=bool(degraded_inputs),
                                   evidence_reasons=[f"{s} input {inputs[s]['status'].lower()}" for s in degraded_inputs],
                                   refresh_reason="pilot evaluation"),

@@ -78,4 +78,10 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception as e:                       # KnowledgeReleaseError: no approved memory -> refuse (exit 2), never a crash or a fallback
+        if type(e).__name__ != "KnowledgeReleaseError":
+            raise
+        print(f"REFUSED (nothing published): {e}", file=sys.stderr)
+        sys.exit(2)

@@ -83,3 +83,19 @@ See the final report. The decisive check is Linux Swift on the final head commit
   - The CI image check proves a PR image's projection is refused as unmerged.
   - The consumer contract and O-1 readiness are in `docs/cortex/engineering-status/README.md`.
 - **Final head CI:** see the final report.
+
+## 9. PR #40 merge-readiness review (2026-10-21)
+
+**Review scope:**
+- **Customer library:** of the 11 `Sources/SectorEngine` files modified in place, 60 lines are access-level only (`package`) and 3 add Lake-only source owners. `SectorEngineServer` is untouched.
+- **Customer goldens and conformance:** unchanged.
+- **Rubrics:** text only. The score baseline changed in hashes only; values are unchanged (`score_baseline.py --check` OK).
+- **Production Python paths:** an independent reviewer staged the images and found no blocker and no major defect. It confirmed every intended change: M-1, M-2, D-8, D-7/PL-02, SHADOW, ownership tightening, Swift target moves.
+
+**Minor defects found and fixed:**
+1. Wind exited 1 with a traceback on missing or tampered memory. Now exit 2 REFUSED (`main.py` and the brain CLI), with a test.
+2. A stale Wind lineage comment.
+3. `--health-only` together with `--publish-engineering-status` could write beyond healthV1. Now guarded, with a test.
+4. Intelligence `sourceObservationAt` picked the oldest input by string order. Now picked by parsed time, publishing the input's own string, with a test.
+5. A stale deploy message path.
+6. The committed report's `source.evaluatedCommit` was a stale hand-entered value. It now comes from the recorded verification run.

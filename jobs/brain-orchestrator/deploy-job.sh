@@ -44,7 +44,7 @@ for j in lake-brain water-temp-brain; do
   if gcloud run jobs describe "$j" --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
     run gcloud run jobs add-iam-policy-binding "$j" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
   else
-    echo "  (job $j not deployed yet — bind roles/run.invoker when it is: jobs/$j/deploy-job.sh does it)"
+    echo "  (job $j not deployed yet — bind roles/run.invoker when it is: its brains/*/deploy/deploy-job.sh does it)"
   fi
 done
 

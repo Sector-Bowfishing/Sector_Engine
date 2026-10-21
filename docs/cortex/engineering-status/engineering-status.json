@@ -11,12 +11,12 @@
   "source": {
     "repository": "Sector-Bowfishing/Sector_Engine",
     "branch": "cortex/architecture-standardization-2026-10-20",
-    "evaluatedCommit": "44ad7121",
+    "evaluatedCommit": "25e786cf",
     "evaluatedAt": "2026-10-20",
     "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-final-verification.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:42ec1439778f4377fc723a4e3100fd02bc9409f1b14337b7719b450a1e477964",
-    "certificationDigest": "sha256:42ec1439778f4377fc723a4e3100fd02bc9409f1b14337b7719b450a1e477964",
+    "sourceDigest": "sha256:f6d0ae7d7ee2f775cda4f1a5755a783f5188572bd7242c56bdeb4c0e51247205",
+    "certificationDigest": "sha256:f6d0ae7d7ee2f775cda4f1a5755a783f5188572bd7242c56bdeb4c0e51247205",
     "certificationCurrent": true,
     "verificationCommit": "25e786cf"
   },

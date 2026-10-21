@@ -96,7 +96,7 @@ def test_the_orchestrator_writes_the_node_only_behind_the_o1_flag_and_from_the_g
     assert '"--publish-engineering-status", action="store_true"' in src                          # OFF by default
     writes = [l for l in src.splitlines() if "ESP.NODE" in l and "update" in l]
     assert writes == ["                db.update({ESP.NODE: es_doc})"]
-    assert re.search(r"if a\.publish_engineering_status and \(write or a\.dry_run\):\s*\n\s*db\.update\(\{ESP\.NODE: es_doc\}\)", src)
+    assert re.search(r"if a\.publish_engineering_status and not a\.health_only and \(write or a\.dry_run\):.*\n\s*db\.update\(\{ESP\.NODE: es_doc\}\)", src)   # --health-only writes healthV1 only
     assert "es_doc = ESP.gate(ESP.load_staged(HERE)" in src                                       # never anything but the gated, staged projection
 
 

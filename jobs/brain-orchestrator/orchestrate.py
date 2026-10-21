@@ -420,10 +420,10 @@ def main(argv=None) -> int:
             es_doc = ESP.gate(ESP.load_staged(HERE), deployed_commit=ESP.deployed_commit(dv), now_iso=iso(now), deployment_version=dv)
             if a.emit_engineering_status:
                 json.dump(es_doc, open(a.emit_engineering_status, "w"), indent=1, sort_keys=True)
-            if a.publish_engineering_status and (write or a.dry_run):
+            if a.publish_engineering_status and not a.health_only and (write or a.dry_run):   # --health-only's write set stays control/healthV1 only
                 db.update({ESP.NODE: es_doc})
             print(f"engineering status: {es_doc['state']}" + (f" ({es_doc['reason']})" if es_doc.get("reason") else
-                  f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status else " (not published)"))
+                  f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status and not a.health_only else " (not published)"))
         except Exception as e:                                   # never breaks the cycle
             print(f"engineering status: FAILED {e!r}", file=sys.stderr)
 

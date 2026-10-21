@@ -100,9 +100,11 @@ def build() -> dict:
             b.update({"statusLayers": layers, "requirements": d.get("requirements", {}), "structuralProblems": d.get("structuralProblems", []),
                       "scienceDependencies": d.get("scienceDependencies", []), "nextWork": d.get("nextWork", [])})
         brains.append(b)
+    # source.evaluatedCommit = the recorded verification run (inputs/verification.json); the exact code binding is sourceDigest and the exact
+    # per-commit SHA exists only in the CI --emit copy (the only copy that may become an Ops projection).
     out = {"schema": "engineering-status-v1", "schemaVersion": src.get("schemaVersion", "1.0.0"), "reportId": src["reportId"],
             "standards": {"framework": "Rehtac Cortex", "version": src["cortexVersion"], "pin": _pin(), "pack": src["cortexPack"]},
-            "source": {"repository": src["repository"], "branch": src["branch"], "evaluatedCommit": src["evaluatedCommit"], "evaluatedAt": src["evaluatedAt"],
+            "source": {"repository": src["repository"], "branch": src["branch"], "evaluatedCommit": ver.get("evaluatedCommit") or src["evaluatedCommit"], "evaluatedAt": src["evaluatedAt"],
                        "session": src["session"], "productionBasis": mem["productionBasis"], "sourceDigest": digest,
                        "certificationDigest": certrec.get("sourceDigest", "NONE"), "certificationCurrent": cert_current,
                        "verificationCommit": ver.get("evaluatedCommit", "NONE")},

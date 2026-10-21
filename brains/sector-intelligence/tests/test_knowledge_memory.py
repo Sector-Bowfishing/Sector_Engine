@@ -58,3 +58,9 @@ def test_the_job_entry_point_reports_a_refusal_not_a_crash(tmp_path):
     env = {"PATH": "/usr/bin:/bin", "PYTHONPATH": PLATFORM}
     out = subprocess.run([sys.executable, str(d / "run.py"), "--plan"], cwd=str(tmp_path), env=env, capture_output=True, text=True, timeout=60)
     assert out.returncode == 2 and "REFUSED (nothing published)" in out.stderr
+
+
+def test_source_observation_is_the_oldest_input_by_time_not_by_string():
+    import evaluation as ev
+    assert ev._oldest(["2026-10-20T10:00:00Z", "2026-10-20T09:30:00.5+00:00", None, "garbage", 7]) == "2026-10-20T09:30:00.5+00:00"
+    assert ev._oldest([None, "x"]) is None
