@@ -1,0 +1,44 @@
+{
+  "bindingVersion" : "bindings-2026-10-13.1",
+  "owner" : "lake-brain",
+  "reviewed" : [
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Guntersville|AL",
+      "liveSourceIds" : [
+        "tva:GVDA1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "datum" : "NGVD29",
+      "lakeId" : "Lake Hartwell|SC",
+      "liveSourceIds" : [
+        "cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS",
+        "usgs:02187010:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Pickwick Lake|TN",
+      "liveSourceIds" : [
+        "tva:PICT1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Wheeler|AL",
+      "liveSourceIds" : [
+        "tva:WHLA1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Wilson|AL",
+      "liveSourceIds" : [
+        "tva:WLSA1"
+      ]
+    }
+  ],
+  "schema" : "reviewed-lake-bindings-v1"
+}
