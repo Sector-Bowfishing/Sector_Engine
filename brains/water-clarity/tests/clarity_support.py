@@ -81,7 +81,7 @@ def real_run_updates(engine=None, reads=None, argv=("--batch", "2")):
 
 
 def ctx(n=1, generated_at=GENERATED_AT, code_version="test@1", catalog_sha256="sha256:" + "ab" * 32):
-    return pa.BuildContext(generated_at, uid(n), code_version, catalog_sha256)
+    return pa.BuildContext(generated_at, uid(n), code_version, catalog_sha256, **pa.release_lineage())
 
 
 def build(updates, *, n=1, generated_at=GENERATED_AT, consumed=None, **kw):

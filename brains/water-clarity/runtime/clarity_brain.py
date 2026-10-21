@@ -61,11 +61,21 @@ def _read_overlay(uri: str) -> dict:
     return json.load(open(uri))
 
 
+def verified_release() -> dict:
+    """Approved memory (Cortex BR-11): the packaged knowledge release (knowledge-release.json: catalog.json with its digest). Raises
+    KnowledgeReleaseError when it is missing, unreadable or tampered: the run stops, nothing falls back to an unversioned catalog."""
+    import brain_platform  # noqa: F401  (resolves the shared platform package: repo layout or staged image)
+    from sector_brain_platform.knowledge_release import load_release
+    return load_release(HERE, "water-clarity")
+
+
 def load_catalog() -> tuple[dict, str]:
     """Public catalog (in git) plus the optional private overlay that carries the detailed
     research results kept out of the public repo: $CLARITY_PRIVATE_CATALOG (path or gs:// URI),
     else catalog.private.json beside this file (gitignored). Without it the Brain publishes
-    status-level candidate facts only."""
+    status-level candidate facts only. The public catalog is read only after its release verifies; the private overlay is optional detail
+    and degrades explicitly (PRIVATE_OVERLAY_UNAVAILABLE)."""
+    verified_release()
     cat = json.load(open(os.path.join(HERE, "catalog.json")))
     uri = os.environ.get("CLARITY_PRIVATE_CATALOG") or (
         os.path.join(HERE, "catalog.private.json") if os.path.exists(os.path.join(HERE, "catalog.private.json")) else None)
@@ -78,6 +88,7 @@ def load_catalog() -> tuple[dict, str]:
 
 
 CATALOG, CATALOG_DETAIL = load_catalog()
+RELEASE = verified_release()
 
 BRAIN_ID = CATALOG["brainId"]
 SLOT = CATALOG["slot"]

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "water-clarity",
+  "releaseId": "water-clarity-knowledge-2026-10-20.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "water-clarity",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "catalog.json",
+      "sha256": "f8d66f9c7ad2f76019994264ea893b32911874b70809d5422ec9f377efe1fdb4",
+      "bytes": 13920
+    }
+  ],
+  "releaseDigest": "sha256:a16a9b38466c9b67af5f6454932e204a66bbb926c9f05f9110a0048e75c28f34"
+}

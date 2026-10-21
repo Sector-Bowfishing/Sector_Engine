@@ -28,7 +28,7 @@ def changed_artifact(n, generated_at):
 
 
 SPEC = BrainCertSpec(
-    brain_id="water-clarity", directory="water-clarity", repo_root=S.REPO, lifecycle="CALIBRATION", workspace_id="water-clarity",
+    brain_id="water-clarity", directory="water-clarity", release_lineage=tuple(S.pa.release_lineage().values()), repo_root=S.REPO, lifecycle="CALIBRATION", workspace_id="water-clarity",
     authorized_consumers=("ops", "sector-intelligence"),
     consumes=({"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "REQUIRED"},),
     providers=(),
