@@ -157,6 +157,7 @@ def test_production_tests_pass_in_a_clean_copy_without_research_package(tmp_path
 
 def test_staged_image_verifies_its_packaged_knowledge_release(staged):
     """Cortex 2.1 BR-11: the image carries its approved memory and verifies it on load, from the image layout alone (no repo, no HOME)."""
+    _need("numpy")                                                          # importing sector_wind needs its runtime deps (skip -> fail under the Wind CI job)
     code = "from sector_wind.ingest import verified_release, load_config; r = verified_release(); load_config(); print(r['releaseId'])"
     r = subprocess.run([sys.executable, "-E", "-s", "-c", code], cwd=staged, capture_output=True, text=True,
                        env={"PATH": "/usr/bin:/bin", "PYTHONPATH": str(staged)})
