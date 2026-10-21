@@ -1,0 +1,72 @@
+{
+ "problems": [],
+ "records": {
+  "Okeechobee|FL": {
+   "classCount": 54,
+   "classes": [
+    {
+     "areaKm2": 75.04,
+     "cells": 7504,
+     "code": "MFGtD",
+     "label": "MFGtD: Dominant Cattail"
+    },
+    {
+     "areaKm2": 50.91,
+     "cells": 5091,
+     "code": "MFF",
+     "label": "MFF: Floating Emergent Marsh"
+    },
+    {
+     "areaKm2": 39.42,
+     "cells": 3942,
+     "code": "CSs",
+     "label": "CSs: Willow Scrub"
+    },
+    {
+     "areaKm2": 23.67,
+     "cells": 2367,
+     "code": "MFGe",
+     "label": "MFGe: Eleocharis"
+    },
+    {
+     "areaKm2": 20.97,
+     "cells": 2097,
+     "code": "SS",
+     "label": "SS: Swamp Shrubland"
+    },
+    {
+     "areaKm2": 17.12,
+     "cells": 1712,
+     "code": "EpD",
+     "label": "EpD: Dominant Torpedo Grass"
+    }
+   ],
+   "classesOmitted": 47,
+   "lakeId": "Okeechobee|FL",
+   "mappedKm2": 484.2,
+   "mercatorAreaCheck": {
+    "cellCountKm2": 484.2,
+    "geometryKm2AtLatitude": 485.3,
+    "ratio": 1.002
+   },
+   "openWaterKm2": 142.38,
+   "retrievedOn": "2026-10-14",
+   "source": {
+    "agency": "South Florida Water Management District",
+    "datePrecision": "MONTH",
+    "id": "sfwmd-okeechobee-littoral",
+    "internalOnly": true,
+    "layer": "https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/VEG_OKE_2016/FeatureServer/0",
+    "licence": "AS_IS_ACKNOWLEDGEMENT_REQUESTED",
+    "scope": "Moore Haven and the south islands part of the Lake Okeechobee marsh only; dominant class per 1 ha cell, photo-interpreted from June 2016 stereo aerial imagery",
+    "surveyMonth": 6,
+    "surveyYear": 2016,
+    "units": {
+     "areaKm2": "km2 of 1-hectare grid cells (cell count x 0.01 km2) classified by dominant vegetation"
+    }
+   }
+  }
+ },
+ "schema": "sector-vegetation-agency-v1",
+ "source": "sfwmd-okeechobee-littoral"
+}

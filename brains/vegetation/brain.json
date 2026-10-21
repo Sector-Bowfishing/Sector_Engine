@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "vegetation",
+  "displayName": "Vegetation Brain",
+  "humanName": "Vegetation",
+  "domain": "aquatic-vegetation",
+  "lifecycle": "SHADOW",
+  "contractVersion": "0.1.0",
+  "runtime": {
+    "kind": "job",
+    "language": "python",
+    "entrypoint": "brains/vegetation/runtime/run.py",
+    "trigger": {
+      "kind": "manual"
+    }
+  },
+  "publishes": [
+    {
+      "contractId": "vegetation-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/vegetation/contracts/vegetation-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/vegetation",
+        "/lakeFleet/{k}/slots/vegetation",
+        "/lakeFleet/{k}/readiness/vegetation",
+        "/lakeFleet/{k}/modelVersions/vegetation",
+        "/snapshots/{k}/latest/vegetation",
+        "/snapshots/{k}/latest/brainVersions/vegetation",
+        "/brains/vegetation/{child}",
+        "/validation/vegetation",
+        "/health/brains/vegetation/{child}"
+      ]
+    }
+  ],
+  "consumes": [
+    {
+      "kind": "brain",
+      "brainId": "lake-brain",
+      "contractId": "lake-publication-v1",
+      "minVersion": "1.0.0",
+      "requirement": "OPTIONAL"
+    },
+    {
+      "kind": "registry",
+      "registry": "lakes",
+      "contractId": "registry.lakes",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    }
+  ],
+  "providers": [],
+  "researchWorkspace": {
+    "workspaceId": "vegetation"
+  },
+  "customerIntegrationMode": "none",
+  "publisherRequired": {
+    "required": true,
+    "cutoverStatus": "SHADOW"
+  },
+  "authorizedConsumers": [
+    "ops",
+    "sector-intelligence"
+  ],
+  "tests": [
+    "brains/vegetation/tests",
+    "brains/vegetation/research/tools/tests"
+  ],
+  "dataBudget": {
+    "maxTrackedFileBytes": 1048576,
+    "exceptions": []
+  },
+  "knowledge": {
+    "stores": [
+      {
+        "id": "vegetation-knowledge",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "vegetation",
+        "location": "brains/vegetation/runtime/knowledge/knowledge-release.json",
+        "loader": "brains/vegetation/runtime/vegetation_brain/knowledge.py load",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
+        "lineage": "knowledgeRelease in the registry and run summary; knowledgeRelease, manifestRef and manifestSha256 in the SHADOW artifact lineage",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/vegetation/tests/test_run_entry.py",
+      "brains/vegetation/tests/test_knowledge_memory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ],
+    "notes": "CANDIDATE release (approval NOT_RECORDED): verified on load, never published from; there is no live writer. The agency records are internalOnly with an unconfirmed licence and include percentages and species-level labels (decision V-1)."
+  }
+}

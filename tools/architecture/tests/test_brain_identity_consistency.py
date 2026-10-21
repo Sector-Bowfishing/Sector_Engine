@@ -17,7 +17,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "jobs", "brain_platform"))
 from sector_brain_platform import jobs as JOBS, keys as KEYS, ownership as OWN  # noqa: E402
 
-UNMIGRATED = {"vegetation"}                                             # registered in the manifest, code only on its branch (not a locked id yet)
+UNMIGRATED = set()                                                      # every registered Brain has a canonical package and a locked id (2026-10-20)
 NON_BRAIN_OWNERS = {"brain-platform", "sector-engine"}                  # jobs.py owners that are platform components, not Brains
 
 

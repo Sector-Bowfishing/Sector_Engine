@@ -8,6 +8,7 @@
     "water-temperature": "water-temp",
     "water-clarity": "water-clarity",
     "sector-intelligence": "sector-intelligence",
-    "depth": "depth"
+    "depth": "depth",
+    "vegetation": "vegetation"
   }
 }

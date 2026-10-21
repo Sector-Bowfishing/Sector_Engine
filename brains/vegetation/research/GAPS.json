@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "vegetation",
+  "gaps": [
+    {
+      "id": "VEG-REL-001",
+      "type": "validation",
+      "title": "No approved Vegetation knowledge release",
+      "whyItMatters": "The packaged release (fleet observability manifest, Level-1 agency records) has no approval record, so the runtime abstains.",
+      "bowfisherDecision": "Whether any vegetation state may be shown at all.",
+      "currentEvidence": [
+        "brains/vegetation/runtime/knowledge/knowledge-release.json"
+      ],
+      "stopCondition": "Stop when Michael records a scientific approval for a named release, or rejects it.",
+      "expectedOutput": "An approval record and a new APPROVED release id.",
+      "humanOrFieldValidationRequired": {
+        "required": true,
+        "what": "Scientific validation approval plus owner approval (PROJECT \u00a77)."
+      },
+      "status": "OPEN",
+      "owner": "vegetation-lane"
+    },
+    {
+      "id": "VEG-VAL-001",
+      "type": "validation",
+      "title": "The surface observer failed the lake-level gates on held-out lakes; the A4 TEST set is consumed",
+      "whyItMatters": "V1 stays NOT_VALIDATED; a fresh, never-used truth set is required before any new evaluation (sealed holdout guard).",
+      "bowfisherDecision": "Whether surface vegetation presence can be trusted on a given lake.",
+      "currentEvidence": [
+        "brains/vegetation/research/tools/vegetation_research/records/VEGETATION_VALIDATION_PREREGISTRATION.md"
+      ],
+      "stopCondition": "Stop when fresh truth is obtained and the preregistered gates are run once, or Michael defers it.",
+      "expectedOutput": "A one-shot holdout result against the frozen gates.",
+      "humanOrFieldValidationRequired": {
+        "required": true,
+        "what": "Fresh independent truth (agency surveys or field observations)."
+      },
+      "status": "OPEN",
+      "owner": "vegetation-lane"
+    },
+    {
+      "id": "VEG-PRO-001",
+      "type": "product",
+      "title": "Agency block publishes percentages and species-level labels (internalOnly)",
+      "whyItMatters": "The rule for V1 is surface-only presence; never submerged, species or density percentages. The internalOnly agency block conflicts with that rule.",
+      "bowfisherDecision": "Which agency facts may ever reach a bowfisher.",
+      "currentEvidence": [
+        "brains/vegetation/runtime/vegetation_brain/agency.py"
+      ],
+      "stopCondition": "Stop when Michael decides whether the agency block is withheld, reduced to presence, or kept internal.",
+      "expectedOutput": "A recorded decision (V-1) and the matching state contract change.",
+      "humanOrFieldValidationRequired": {
+        "required": true,
+        "what": "Product decision (Michael) and licence confirmation."
+      },
+      "status": "OPEN",
+      "owner": "vegetation-lane"
+    }
+  ]
+}

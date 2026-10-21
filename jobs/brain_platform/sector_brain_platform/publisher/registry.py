@@ -633,8 +633,60 @@ def depth_bundles() -> list[BundleSpec]:
     return [BundleSpec(DEPTH_BUNDLE, DEPTH, DEPTH_SCHEMAS)]
 
 
+# ---- Vegetation (SHADOW; canonical package brains/vegetation, Cortex 2.1 structural completion 2026-10-20) ---------------------------------------
+# Vegetation has NO live writer: its only run mode builds the write set into an in-memory store (runtime/run.py --dry-run). This registration describes
+# that write set as Publisher families so the Brain can be certified; it activates nothing and authorizes no writer.
+VEGETATION = "vegetation"
+VEGETATION_SLOT = BRAINS[VEGETATION][0]
+VEGETATION_SNAPSHOT_FIELD = BRAINS[VEGETATION][1]
+VEGETATION_SCHEMAS = ("vegetation-lake-state-v1", "vegetation-registry-v1")
+VEGETATION_BUNDLE = "vegetation-publication-v1"
+VEGETATION_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "versions", "models", "readinessDefinitions", "contractVersion", "manifestVersion",
+              "knowledgeRelease", "shadow", "scoreStatus", "scoreNote", "research", "sourceIds", "scope", "validationLadder"),
+    "status": ("schedule", "enabled", "health", "status", "statusBasis", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount",
+               "staleAfterHours", "lastSuccessfulRun", "lastError", "lastDryRun", "breakdowns", "fleet", "blockers", "primaryBlocker", "orchestration",
+               "level1", "validation", "publishMode", "updatedAt"),
+}
+VEGETATION_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")
+VEGETATION_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "vegetation-volatile-v1", 1,
+    keys=frozenset({"lastUpdatedAt", "updatedAt"}),
+    paths=(PathFamily(f"/brains/{VEGETATION}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{VEGETATION}/versions", note="carries the run date")),
+    notes={"key:lastUpdatedAt": "slot write time; no domain meaning", "key:updatedAt": "registry write time; no domain meaning",
+           "path:/brains/vegetation/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+           "path:/brains/vegetation/versions": "version history entry dated by the run"})
+
+
+def vegetation_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "vegetation-lake-state-v1", VEGETATION,
+        (PathFamily(f"/lakes/{{k}}/states/{VEGETATION_SLOT}", k),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{VEGETATION_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{VEGETATION_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{VEGETATION_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/snapshots/{{k}}/latest/{VEGETATION_SNAPSHOT_FIELD}", k, note="Brain-authored (LEGACY_READER_DEPENDENCY; no COPY projection)"),
+         PathFamily(f"/snapshots/{{k}}/latest/brainVersions/{VEGETATION}", k, note="LEGACY_READER_DEPENDENCY")),
+        value_types={f"/lakes/{{k}}/states/{VEGETATION_SLOT}": dict, f"/lakeFleet/{{k}}/slots/{VEGETATION_SLOT}": dict},
+        volatile=VEGETATION_VOLATILE_CONTRACT_V1)
+    registry = SchemaSpec(
+        "vegetation-registry-v1", VEGETATION,
+        (PathFamily(f"/brains/{VEGETATION}/{{child}}", {"child": one_of(c for group in VEGETATION_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only; never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{VEGETATION}"),
+         PathFamily(f"/health/brains/{VEGETATION}/{{child}}", {"child": one_of(VEGETATION_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only")),
+        delete_families=(PathFamily(f"/brains/{VEGETATION}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=VEGETATION_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry]
+
+
+def vegetation_bundles() -> list[BundleSpec]:
+    return [BundleSpec(VEGETATION_BUNDLE, VEGETATION, VEGETATION_SCHEMAS)]
+
+
 def default_registry() -> Registry:
     """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth and Vegetation (all SHADOW). A registration describes a Brain's
     write set so it can be certified; it activates nothing (Publisher LIVE authorizes no Brain)."""
-    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs(),
-                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles())
+    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs() + vegetation_specs(),
+                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles() + vegetation_bundles())

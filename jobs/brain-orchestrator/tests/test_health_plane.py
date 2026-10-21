@@ -93,7 +93,7 @@ def test_health_state_from_the_published_world(monkeypatch):
     assert st["dependencies"]["brains"]["sector-intelligence"].get("legacy") is not True
     assert st["dependencies"]["brains"]["depth"]["source"] == "brain.json"                                    # migrated (Cortex 2.1 structural completion): declared
     assert st["dependencies"]["brains"]["depth"].get("legacy") is not True
-    assert st["dependencies"]["brains"]["vegetation"].get("legacy") is True                                   # a not-yet-migrated Brain is still legacy, labelled
+    assert st["dependencies"]["brains"]["vegetation"]["source"] == "brain.json"                               # migrated (Cortex 2.1 structural completion)
     assert st["brains"]["depth"]["process"]["processHealth"] == "NOT_CONFIGURED"                       # executionTarget kind none
     assert st["dependencies"]["edges"] and all("signalId" in s for s in st["signals"].values())
     assert "wind" in st["dependencies"]["brains"] and st["dependencies"]["brains"]["wind"]["source"] == "brain.json"
