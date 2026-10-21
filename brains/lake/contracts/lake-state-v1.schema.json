@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/brains/lake/contracts/lake-state-v1.schema.json",
+  "title": "lake-state-v1",
+  "description": "lake-brain published state at /lakes/{k}/states/lake. GENERATED from the Swift Codable record LakeLevelStateRecord (brains/lake/runtime/LakeBrain/LakeBrainContract.swift) by tools/architecture/swift_state_schema.py; do not edit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lakeId",
+    "schemaVersion",
+    "kind",
+    "sourceCapability",
+    "levelState",
+    "trendState",
+    "historicalState",
+    "floodPoolState",
+    "baselineStatus",
+    "freshness",
+    "provenance"
+  ],
+  "properties": {
+    "lakeId": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "integer"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "OBSERVED",
+        "PROXY",
+        "UNAVAILABLE"
+      ]
+    },
+    "sourceCapability": {
+      "type": "string",
+      "enum": [
+        "DIRECT_OPERATOR_POOL",
+        "DIRECT_LAKE_GAUGE",
+        "NEARBY_GAUGE_PROXY",
+        "HISTORICAL_ONLY",
+        "MODELED",
+        "NO_SOURCE"
+      ]
+    },
+    "currentElevationFt": {
+      "type": "number"
+    },
+    "unit": {
+      "type": "string"
+    },
+    "datum": {
+      "type": "string"
+    },
+    "observationTime": {
+      "type": "string"
+    },
+    "sourceAgeHours": {
+      "type": "number"
+    },
+    "differenceFromNormalPoolFt": {
+      "type": "number"
+    },
+    "normalPoolRef": {
+      "type": "string"
+    },
+    "guideFt": {
+      "type": "number"
+    },
+    "differenceFromGuideFt": {
+      "type": "number"
+    },
+    "operatingZone": {
+      "type": "object",
+      "description": "Swift record LakeOperatingZone"
+    },
+    "operatorLevels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Swift record LakeOperatorLevel"
+      }
+    },
+    "change": {
+      "type": "object",
+      "description": "Swift record LakeLevelChange"
+    },
+    "levelState": {
+      "type": "string",
+      "enum": [
+        "BELOW_ZONE",
+        "IN_ZONE",
+        "ABOVE_ZONE",
+        "FLOOD_POOL",
+        "UNKNOWN"
+      ]
+    },
+    "trendState": {
+      "type": "string",
+      "enum": [
+        "STABLE",
+        "RISING",
+        "FALLING",
+        "RISING_RAPIDLY",
+        "FALLING_RAPIDLY",
+        "UNKNOWN"
+      ]
+    },
+    "historicalState": {
+      "type": "string",
+      "enum": [
+        "NORMAL",
+        "UNUSUAL",
+        "VERY_UNUSUAL",
+        "INSUFFICIENT_HISTORY"
+      ]
+    },
+    "floodPoolState": {
+      "type": "string",
+      "enum": [
+        "NORMAL",
+        "IN_FLOOD_POOL",
+        "UNKNOWN"
+      ]
+    },
+    "seasonalPercentile": {
+      "type": "number"
+    },
+    "rateOfChangePercentile": {
+      "type": "number"
+    },
+    "rapidChangeThresholdFt": {
+      "type": "number"
+    },
+    "seasonalBand": {
+      "type": "object",
+      "description": "Swift record LakeSeasonalBand"
+    },
+    "baselineStatus": {
+      "type": "string",
+      "enum": [
+        "SUFFICIENT",
+        "LIMITED",
+        "INSUFFICIENT",
+        "NONE"
+      ]
+    },
+    "historicalTier": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "PROVISIONAL",
+        "STANDARD",
+        "FULL"
+      ]
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "description": "Swift record LakeStateFreshness"
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Swift record BrainProvenance"
+    },
+    "sourceFallback": {
+      "type": "object",
+      "description": "Swift record LakeSourceFallback"
+    }
+  }
+}

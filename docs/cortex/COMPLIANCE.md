@@ -4,40 +4,40 @@ Living ledger (Cortex `core/execution.md` §9). One row per requirement, one col
 
 ```text
 Standards: Rehtac Cortex 2.1.0 @ 0f9ee75 (clean), pack sector/engine
-Evaluated: 2026-10-20 · sessions/2026-10-20-architecture-all-brains.md (first pass), sessions/2026-10-20-architecture-completion.md (re-evaluation at 6d7ae03a)
-  and sessions/2026-10-20-cortex-2-1-memory.md (Cortex 2.1: standing memory checks for all eight Brains; rows BR-10, BR-11, BR-16, BR-18, PL-13
-  re-evaluated at 44ad7121; every other row is unchanged from the completion re-evaluation)
-Discovered Brains (8): biological-state (brains/fish), wind (brains/wind), water-clarity (brains/water-clarity), sector-intelligence (brains/sector-intelligence),
-  lake-brain (brains/lake; Swift), water-temp (brains/water-temperature; Swift), depth (branch only), vegetation (branch only)
-Source: stable_brain_ids.json (6) = brains/*/brain.json (6); control_manifest.json brains (8) = keys.BRAINS = Swift BrainPlatform.brains (test_brain_identity_consistency.py)
+Evaluated: 2026-10-20 · sessions/2026-10-20-architecture-all-brains.md (first pass), sessions/2026-10-20-architecture-completion.md (re-evaluation),
+  sessions/2026-10-20-cortex-2-1-memory.md (standing memory checks) and sessions/2026-10-20-cortex-2-1-structural-completion.md (this re-evaluation:
+  Depth and Vegetation migrated and certified; every Depth/Vegetation cell, BR-10/11/16/18/19 and the standing checks re-checked)
+Discovered Brains (8), all in canonical packages: biological-state (brains/fish), wind, water-clarity, sector-intelligence, lake-brain (brains/lake; Swift),
+  water-temp (brains/water-temperature; Swift), depth (brains/depth), vegetation (brains/vegetation)
+Source: stable_brain_ids.json (8) = brains/*/brain.json (8) = control_manifest.json brains (8) = keys.BRAINS = Swift BrainPlatform.brains (test_brain_identity_consistency.py)
 ```
 
-Abbreviations: **CM** = `jobs/brain_platform/sector_brain_platform/control_manifest.json`; **JM** = `jobs.py` `MANIFEST`; **OC** = `BRAIN_OPERATING_CONTRACT.md`; **Kit** = Brain Certification Kit V1. Depth and Vegetation are assessed **against `main`**, where they have no code; their branches were inspected read-only (session record §5.2).
+Abbreviations: **CM** = `jobs/brain_platform/sector_brain_platform/control_manifest.json`; **JM** = `jobs.py` `MANIFEST`; **OC** = `BRAIN_OPERATING_CONTRACT.md`; **Kit** = Brain Certification Kit V1. Depth and Vegetation were assessed against `main` until 2026-10-20; they now have canonical packages on this branch (session `2026-10-20-cortex-2-1-structural-completion.md`).
 
 ## Brain requirements (BR)
 
 | Req | Fish | Wind | Clarity | Intelligence | Lake | Water Temp | Depth | Vegetation |
 |---|---|---|---|---|---|---|---|---|
-| BR-01 purpose | **PASS** OC §3; README | **PASS** | **PASS** | **PASS** OC §2–§3; README | **PASS** OC §3; README | **PASS** OC §3; README | FAIL — no code on main | FAIL — same |
-| BR-02 inventory | **PASS** | **PASS** | **PASS** | **PASS** (was PARTIAL) | **PASS** (was PARTIAL) | **PASS** (was PARTIAL) | **PARTIAL** — CM + `keys.py`; no package (blocked) | **PARTIAL** — same |
-| BR-03 specialist boundary | **PASS** `tests/test_publication_specialist_boundary.py` + assessment guard | **PASS** | **PASS** | **PASS** (Intelligence publishes no recommendation until an approved activation) `tests/test_publication_specialist_boundary.py`; evaluation schema has no score field | **PASS** (was PARTIAL) same guard over the real artifact | **PASS** (was PARTIAL) | NOT_APPLICABLE | NOT_APPLICABLE |
+| BR-01 purpose | **PASS** OC §3; README | **PASS** | **PASS** | **PASS** OC §2–§3; README | **PASS** OC §3; README | **PASS** OC §3; README | **PASS** OC §2–§3; README | **PASS** OC §2–§3; README |
+| BR-02 inventory | **PASS** | **PASS** | **PASS** | **PASS** (was PARTIAL) | **PASS** (was PARTIAL) | **PASS** (was PARTIAL) | **PASS** brain.json + CM | **PASS** brain.json + CM |
+| BR-03 specialist boundary | **PASS** `tests/test_publication_specialist_boundary.py` + assessment guard | **PASS** | **PASS** | **PASS** (Intelligence publishes no recommendation until an approved activation) `tests/test_publication_specialist_boundary.py`; evaluation schema has no score field | **PASS** (was PARTIAL) same guard over the real artifact | **PASS** (was PARTIAL) | **PASS** no recommendation fields; no score (Kit P19, has_score=False) | **PASS** same |
 | BR-04 Intelligence boundary | — | — | — | **PASS** (was PARTIAL) — reads only published Brain state; degrade/abstain tested (`test_evaluation.py`, `test_sector_intelligence_brain.py`); RTDB / `GET /lakes` failure aborts the run with an error and publishes nothing (explicit fail-closed, quality.md) | — | — | — | — |
-| BR-05 package shape | **PASS** | **PASS** | **PASS** | **PASS** (was FAIL) Kit P01 | **PASS** (was FAIL) Kit P01; Swift targets in `runtime/` | **PASS** (was FAIL) Kit P01 | **FAIL** — blocked | **FAIL** — blocked |
-| BR-06 operating contract | **PASS** | **PASS** | **PASS** | **PASS** Kit P04 | **PASS** Kit P04 | **PASS** Kit P04 | FAIL | FAIL |
-| BR-07 stable identity | **PASS** | **PASS** | **PASS** | **PASS** (was PARTIAL) `brain.json`; identity test | **PASS** (was PARTIAL) | **PASS** (was PARTIAL) | **PARTIAL** — CM/keys only | **PARTIAL** |
-| BR-08 one implementation | **PASS** P02 | **PASS** P02 | **PASS** P02 | **PASS** P02; `jobs/sector-intelligence-brain` pointer | **PASS** (was PARTIAL) own SwiftPM targets; P02 | **PASS** (was PARTIAL) | FAIL — none on main | FAIL |
-| BR-09 declared vs observed | **PASS** (was PARTIAL) trigger `dependency` (`brain.json:13`) | **PASS** (was FAIL) `staleHours` 1.5 = CM = runtime 90 min; JM lists `GET /lakes` | **PARTIAL** (was FAIL) JM fixed; CM `executionTarget` is C2 (documented note; job-map entry is decision D-E) | **PASS** (was PARTIAL) `brain.json` consumes 5 Brains OPTIONAL = CM; catalog `plannedRole` is the planned design role | **PASS** (was PARTIAL) 8 providers declared = runtime fetchers (`PROVIDERS.json`, JM) | **PASS** (was PARTIAL) JM no longer declares the unread TVA archive | NOT_APPLICABLE | NOT_APPLICABLE |
-| BR-10 machine-local deps | **PASS** P16 + standing scan | **PASS** | **PARTIAL** — repo-relative polygon fallback outside the image (decision M-6) | **PASS** P16 | **PASS** standing scan incl. Swift sources | **PASS** | FAIL — branch data carries `/Users/` paths; build tool parses Lake Swift source (contract `reviewed-lake-bindings-v1` now offered) | NOT_VERIFIED |
-| BR-11 approved memory (2.1) | **PARTIAL** — verified bundle chain; approval NOT_RECORDED (M-3) | **PARTIAL** — packaged release verified on load (branch); approval NOT_RECORDED; production FAIL until deploy | **PARTIAL** — same as Wind | **PARTIAL** — same as Wind | **PARTIAL** — FNV fingerprint (M-7); approval NOT_RECORDED | **NOT_APPLICABLE** — no knowledge store (compiled model, live inputs) | FAIL — no release; content unapproved (G-1) | FAIL — runtime reads research evidence (G-1, D-B) |
-| BR-12 privacy | **PASS** | **PASS** | **PASS** | **PASS** synthetic test species (`ea4577d3`) | **PASS** (was PARTIAL) synthetic presence examples (`ea4577d3`); history not rewritten | **PASS** | NOT_VERIFIED | NOT_VERIFIED |
-| BR-13 versioned output contract | **PASS** | **PASS** | **PASS** | **PASS** (was FAIL) `intelligence-evaluation-v1.schema.json` validated on real output; publication contract | **PARTIAL** — publication contract `lake-publication-v1` (derived, checked); no JSON schema for LakeState | **PARTIAL** — same | NOT_APPLICABLE | NOT_APPLICABLE |
-| BR-14 evidence & provenance | **PASS** | **PASS** | **PASS** | **PASS** `provenance.brainVersion` now set (`c606f7d4`) | **PASS** | **PASS** | NOT_APPLICABLE | NOT_APPLICABLE |
-| BR-15 confidence & uncertainty | **PASS** | **PASS** | **PARTIAL** | **PARTIAL** | **PARTIAL** | **PASS** (none calibrated; tested absent) | NOT_APPLICABLE | NOT_APPLICABLE |
-| BR-16 unknown / abstain | **PASS** + missing memory refuses (exit 2) | **PASS** + missing release refuses | **PASS** + missing release refuses; overlay degrades explicitly | **PASS** + missing release refuses | **PASS** + missing/refused presence writes nothing | **PASS** | NOT_VERIFIED | NOT_VERIFIED |
-| BR-17 freshness & consumability | **PASS** | **PASS** | **PASS** | **PASS** (was PARTIAL) `sourceObservationAt` = oldest input | **PASS** | **PASS** (was PARTIAL) published schedule strings true (`11f18c1e`) | NOT_APPLICABLE | NOT_APPLICABLE |
-| BR-18 domain + memory tests | **PASS** 400 (+5 memory) | **PASS** 220 (+5 memory) | **PASS** 131 (+4 memory) | **PASS** 96 (+5 memory) | **PASS** Swift (+7 memory, +2 bindings export) + Python 49 | **PASS** Swift + Python 50 | FAIL — none on main | FAIL |
-| BR-19 structural certification | **PASS** P01–P19 | **PASS** P01–P19 | **PASS** P01–P19 | **PASS** (was FAIL) P01–P19 | **PASS** (was FAIL) P01–P13, P15–P19; P14 NOT_APPLICABLE (Swift writes) | **PASS** (was FAIL) same | FAIL | FAIL |
-| BR-20 honest labels | **PASS** | **PARTIAL** — stale self-published score copy (Proposal B) | **PASS** | **PASS** (was PARTIAL) catalog `2026-10-20.1` | **PASS** | **PASS** (was PARTIAL) | NOT_VERIFIED | NOT_VERIFIED |
+| BR-05 package shape | **PASS** | **PASS** | **PASS** | **PASS** (was FAIL) Kit P01 | **PASS** (was FAIL) Kit P01; Swift targets in `runtime/` | **PASS** (was FAIL) Kit P01 | **PASS** Kit P01 | **PASS** Kit P01 |
+| BR-06 operating contract | **PASS** | **PASS** | **PASS** | **PASS** Kit P04 | **PASS** Kit P04 | **PASS** Kit P04 | **PASS** Kit P04 | **PASS** Kit P04 |
+| BR-07 stable identity | **PASS** | **PASS** | **PASS** | **PASS** (was PARTIAL) `brain.json`; identity test | **PASS** (was PARTIAL) | **PASS** (was PARTIAL) | **PASS** id locked (`stable_brain_ids.json`) | **PASS** id locked |
+| BR-08 one implementation | **PASS** P02 | **PASS** P02 | **PASS** P02 | **PASS** P02; `jobs/sector-intelligence-brain` pointer | **PASS** (was PARTIAL) own SwiftPM targets; P02 | **PASS** (was PARTIAL) | **PASS** P02; branch `jobs/depth-brain` untouched (not on main) | **PASS** P02; branch untouched |
+| BR-09 declared vs observed | **PASS** (was PARTIAL) trigger `dependency` (`brain.json:13`) | **PASS** (was FAIL) `staleHours` 1.5 = CM = runtime 90 min; JM lists `GET /lakes` | **PARTIAL** (was FAIL) JM fixed; CM `executionTarget` is C2 (documented note; job-map entry is decision D-E) | **PASS** (was PARTIAL) `brain.json` consumes 5 Brains OPTIONAL = CM; catalog `plannedRole` is the planned design role | **PASS** (was PARTIAL) 8 providers declared = runtime fetchers (`PROVIDERS.json`, JM) | **PASS** (was PARTIAL) JM no longer declares the unread TVA archive | **PASS** consumes lake-brain (REQUIRED) + lakes registry = CM (P06) | **PASS** lake-brain OPTIONAL = CM provisional edge (P06) |
+| BR-10 machine-local deps | **PASS** P16 + standing scan | **PASS** | **PARTIAL** — repo-relative polygon fallback outside the image (decision M-6) | **PASS** P16 | **PASS** standing scan incl. Swift sources | **PASS** | **PASS** P16 + standing scan; Lake contract replaces Swift-source parsing | **PASS** P16 + standing scan |
+| BR-11 approved memory (2.1) | **PARTIAL** — verified bundle chain; approval NOT_RECORDED (M-3) | **PARTIAL** — packaged release verified on load (branch); approval NOT_RECORDED; production FAIL until deploy | **PARTIAL** — same as Wind | **PARTIAL** — same as Wind | **PARTIAL** — FNV fingerprint (M-7); approval NOT_RECORDED | **NOT_APPLICABLE** — no knowledge store (compiled model, live inputs) | **PARTIAL** candidate release verified on load; approval NOT_RECORDED → abstains (G-1) | **PARTIAL** same (G-1) |
+| BR-12 privacy | **PASS** | **PASS** | **PASS** | **PASS** synthetic test species (`ea4577d3`) | **PASS** (was PARTIAL) synthetic presence examples (`ea4577d3`); history not rewritten | **PASS** | **PASS** no per-lake private data beyond the release | **PARTIAL** agency block internalOnly with species labels (V-1) |
+| BR-13 versioned output contract | **PASS** | **PASS** | **PASS** | **PASS** (was FAIL) `intelligence-evaluation-v1.schema.json` validated on real output; publication contract | **PASS** (was PARTIAL) publication contract + `lake-state-v1` generated from the Swift record, validated on the recorded states | **PASS** (was PARTIAL) same: `water-temp-state-v1` | **PASS** `depth-publication-v1` + `depth-state-v1` | **PASS** `vegetation-publication-v1` + state contract |
+| BR-14 evidence & provenance | **PASS** | **PASS** | **PASS** | **PASS** `provenance.brainVersion` now set (`c606f7d4`) | **PASS** | **PASS** | **PASS** provenance + release lineage | **PASS** |
+| BR-15 confidence & uncertainty | **PASS** | **PASS** | **PARTIAL** | **PARTIAL** | **PARTIAL** | **PASS** (none calibrated; tested absent) | **PASS** sigma-based confidence; NOT_VALIDATED caps | **PASS** confidence capped under NOT_VALIDATED |
+| BR-16 unknown / abstain | **PASS** + missing memory refuses (exit 2) | **PASS** + missing release refuses | **PASS** + missing release refuses; overlay degrades explicitly | **PASS** + missing release refuses | **PASS** + missing/refused presence writes nothing | **PASS** | **PASS** unknown datum/level → UNAVAILABLE; missing release → refuse | **PASS** submerged NOT_OBSERVABLE; missing release → refuse |
+| BR-17 freshness & consumability | **PASS** | **PASS** | **PASS** | **PASS** (was PARTIAL) `sourceObservationAt` = oldest input | **PASS** | **PASS** (was PARTIAL) published schedule strings true (`11f18c1e`) | **PASS** fingerprint freshness | **PASS** |
+| BR-18 domain + memory tests | **PASS** 400 (+5 memory) | **PASS** 220 (+5 memory) | **PASS** 131 (+4 memory) | **PASS** 96 (+5 memory) | **PASS** Swift (+7 memory, +2 bindings export) + Python 49 | **PASS** Swift + Python 50 | **PASS** 277 (+9 research-data tests skip without the snapshot; 298 pass with it) | **PASS** 171 |
+| BR-19 structural certification | **PASS** P01–P19 | **PASS** P01–P19 | **PASS** P01–P19 | **PASS** (was FAIL) P01–P19 | **PASS** (was FAIL) P01–P13, P15–P19; P14 NOT_APPLICABLE (Swift writes) | **PASS** (was FAIL) same | **PASS** Kit P01–P19 | **PASS** Kit P01–P19 |
+| BR-20 honest labels | **PASS** | **PARTIAL** — stale self-published score copy (Proposal B) | **PASS** | **PASS** (was PARTIAL) catalog `2026-10-20.1` | **PASS** | **PASS** (was PARTIAL) | **PASS** no score; research maturity not published | **PASS** no score; research maturity not published |
 
 ## Platform requirements (PL)
 
@@ -77,14 +77,14 @@ Source of truth: `docs/cortex/engineering-status/inputs/memory-standing-checks.j
 
 | Check | Fish | Wind | Clarity | Intelligence | Lake | Water Temp | Depth | Vegetation |
 |---|---|---|---|---|---|---|---|---|
-| store-owner — Knowledge store and owner declared; research data never a runtime fallback | PASS / NOT_VERIFIED | PASS / FAIL | PASS / FAIL | PASS / FAIL | PASS / NOT_VERIFIED | PASS / PASS | FAIL / NOT_APPLICABLE | FAIL / NOT_APPLICABLE |
-| developer-machine — No developer-machine, private research root or Claude session path in runtime or deploy code | PASS / PASS | PASS / PASS | PARTIAL / PASS | PASS / PASS | PASS / NOT_VERIFIED | PASS / NOT_VERIFIED | FAIL / NOT_APPLICABLE | NOT_VERIFIED / NOT_APPLICABLE |
-| release-identity — Release id and digest verified on load and recorded in lineage | PASS / PASS | PARTIAL / FAIL | PARTIAL / FAIL | PARTIAL / FAIL | PARTIAL / NOT_VERIFIED | NOT_APPLICABLE / NOT_APPLICABLE | FAIL / NOT_APPLICABLE | FAIL / NOT_APPLICABLE |
-| memory-unavailable — Missing or corrupt memory fails safe, degrades explicitly or abstains, with a test | PASS / PARTIAL | PASS / FAIL | PASS / FAIL | PASS / FAIL | PASS / NOT_VERIFIED | NOT_APPLICABLE / NOT_APPLICABLE | NOT_VERIFIED / NOT_APPLICABLE | NOT_VERIFIED / NOT_APPLICABLE |
-| separation-approval — Research, operational state and publication separated; release approval record | PARTIAL / PARTIAL | PARTIAL / PARTIAL | PARTIAL / PARTIAL | PARTIAL / PARTIAL | PARTIAL / NOT_VERIFIED | PASS / PASS | FAIL / NOT_APPLICABLE | FAIL / NOT_APPLICABLE |
-| pulse-independence — Runtime does not depend on Sector Pulse, a Mac or localhost | PASS / PASS | PASS / PASS | PASS / PASS | PASS / PASS | PASS / NOT_VERIFIED | PASS / NOT_VERIFIED | PARTIAL / NOT_APPLICABLE | PARTIAL / NOT_APPLICABLE |
+| store-owner — Knowledge store and owner declared; research data never a runtime fallback | PASS / NOT_VERIFIED | PASS / FAIL | PASS / FAIL | PASS / FAIL | PASS / NOT_VERIFIED | PASS / PASS | PASS / NOT_APPLICABLE | PASS / NOT_APPLICABLE |
+| developer-machine — No developer-machine, private research root or Claude session path in runtime or deploy code | PASS / PASS | PASS / PASS | PARTIAL / PASS | PASS / PASS | PASS / NOT_VERIFIED | PASS / NOT_VERIFIED | PASS / NOT_APPLICABLE | PASS / NOT_APPLICABLE |
+| release-identity — Release id and digest verified on load and recorded in lineage | PASS / PASS | PARTIAL / FAIL | PARTIAL / FAIL | PARTIAL / FAIL | PARTIAL / NOT_VERIFIED | NOT_APPLICABLE / NOT_APPLICABLE | PARTIAL / NOT_APPLICABLE | PARTIAL / NOT_APPLICABLE |
+| memory-unavailable — Missing or corrupt memory fails safe, degrades explicitly or abstains, with a test | PASS / PARTIAL | PASS / FAIL | PASS / FAIL | PASS / FAIL | PASS / NOT_VERIFIED | NOT_APPLICABLE / NOT_APPLICABLE | PASS / NOT_APPLICABLE | PASS / NOT_APPLICABLE |
+| separation-approval — Research, operational state and publication separated; release approval record | PARTIAL / PARTIAL | PARTIAL / PARTIAL | PARTIAL / PARTIAL | PARTIAL / PARTIAL | PARTIAL / NOT_VERIFIED | PASS / PASS | PARTIAL / NOT_APPLICABLE | PARTIAL / NOT_APPLICABLE |
+| pulse-independence — Runtime does not depend on Sector Pulse, a Mac or localhost | PASS / PASS | PASS / PASS | PASS / PASS | PASS / PASS | PASS / NOT_VERIFIED | PASS / NOT_VERIFIED | PASS / NOT_APPLICABLE | PASS / NOT_APPLICABLE |
 
-Evidence per cell is in the JSON (`evidence`) and in `engineering-status.json`. Recovery after restart/redeploy: Fish: Memory lives in the private bucket, outside the container; every run re-reads and re-verifies it, so restart and redeploy need no local state. Live recovery NOT_VERIFIED.; Wind: Knowledge ships in the image (immutable per revision). The forecast archive is operational state in the Brain's own bucket. Live recovery NOT_VERIFIED.; Clarity: Knowledge ships in the image; the optional overlay is read each run from a private URI. Live recovery NOT_VERIFIED.; Intelligence: Knowledge ships in the orchestrator image. Live recovery NOT_VERIFIED.; Lake: Bindings are compiled; presence and baselines live in the Brain's bucket and are re-read each run. Deployed image is off-main lineage: NOT_VERIFIED.; Water Temp: Stateless model; nothing to recover.
+Evidence per cell is in the JSON and in `engineering-status.json`.
 
 ## Per-Brain evidence records (brains.md §8)
 
@@ -92,12 +92,12 @@ Items 12–14 are NOT_APPLICABLE for every Brain (no production-live, Ops-live o
 
 | # | Item | Fish | Wind | Clarity | Intelligence | Lake | Water Temp | Depth / Vegetation |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Identity & one implementation | PASS | PASS | PASS | PASS | PASS | PASS | branch only |
+| 1 | Identity & one implementation | PASS | PASS | PASS | PASS | PASS | PASS | PASS / PASS |
 | 2 | Ownership & Intelligence boundary | PASS | PASS | PASS | PASS | PASS | PASS | n/a |
 | 3 | Research separation & lineage | PASS | PASS | PASS | PASS | PASS | PASS | blocked (reads docs/research) |
 | 4 | Declared vs observed inputs | PASS | PASS | PARTIAL | PASS | PASS | PASS | n/a |
-| 5 | Versioned contracts, unknowns, freshness | PASS | PASS | PASS | PASS | PARTIAL (no state schema) | PARTIAL | n/a |
-| 6 | Domain tests & Kit proofs | PASS / 19 | PASS / 19 | PASS / 19 | PASS / 19 | PASS / 18 + P14 N/A | PASS / 18 + P14 N/A | none on main |
+| 5 | Versioned contracts, unknowns, freshness | PASS | PASS | PASS | PASS | PASS (state schema generated) | PASS (state schema generated) | n/a |
+| 6 | Domain tests & Kit proofs | PASS / 19 | PASS / 19 | PASS / 19 | PASS / 19 | PASS / 18 + P14 N/A (Swift write gate) | PASS / 18 + P14 N/A (Swift write gate) | PASS / 19 each |
 | 7 | Rubric & scorer authority | PASS | PARTIAL (copy) | PASS | PASS | PASS | PASS | branch computes scores |
 | 8 | Confidence vs readiness separate | PARTIAL (SC-01) | PARTIAL | PARTIAL | PARTIAL | PARTIAL | PARTIAL | n/a |
 | 9 | Orchestration, retry, fallback, health | PASS | PASS | PASS | PASS | PASS | PASS | `kind: none` |
@@ -115,4 +115,5 @@ Items 12–14 are NOT_APPLICABLE for every Brain (no production-live, Ops-live o
 | Sector Intelligence | Canonical, Kit 19/19 | NOT_VALIDATED | PARKED, in-process (image layout unchanged) | none |
 | Lake | Canonical (Swift targets), Kit 18/18 + P14 N/A | NOT_VALIDATED | job + hand-made ledger scheduler (NOT_VERIFIED); changes need A-2 | none |
 | Water Temperature | Canonical (Swift targets), Kit 18/18 + P14 N/A | GLOBAL_HOLDOUT_ONLY | PARKED | none |
-| Depth / Vegetation | Blocked (session record §5.2) | — | `kind: none` | none |
+| Depth | Canonical, Kit 19/19 | NOT_VALIDATED; candidate release unapproved (G-1) | PROFILED, PARKED, `kind: none`; abstains | none |
+| Vegetation | Canonical, Kit 19/19 | NOT_VALIDATED (gates failed); candidate release unapproved (G-1) | SHADOW, PARKED, no live writer | none |

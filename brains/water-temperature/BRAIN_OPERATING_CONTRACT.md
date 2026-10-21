@@ -29,6 +29,8 @@ Water Temperature does **not** own: lake identity (Engine directory); the shared
 - Consumers: Sector Ops (display) and Sector Intelligence (published states). The serving process never imports the Brain code.
 - Allowed path today: providers → `WaterTempBrainJob` → direct, ownership-checked RTDB updates (one atomic update per 50 lakes; LEGACY until a Publisher cutover is approved).
 
+- State contract **`water-temp-state-v1`** (`contracts/water-temp-state-v1.schema.json`): generated from the Swift Codable record by `tools/architecture/swift_state_schema.py` and validated against the recorded write set (`tools/architecture/tests/test_swift_state_schemas.py`).
+
 ## 8. RESEARCH WORKSPACE
 Logical workspace id **`water-temperature`** (`BRAIN_RESEARCH_WORKSPACE_V1.md`). Physical roots are never recorded here. Research (protected-lake truth, the V2 Kalman candidate) stays in the workspace; the private iOS documentation referenced by the frozen score stays private.
 

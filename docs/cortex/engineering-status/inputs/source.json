@@ -72,7 +72,8 @@
     "CG-2.1-3",
     "CG-2.1-4",
     "CG-2.1-5",
-    "CG-2.1-6"
+    "CG-2.1-6",
+    "CG-2.1-7"
   ],
   "brainDetail": {
     "biological-state": {
@@ -358,15 +359,14 @@
         "BR-07": "PASS",
         "BR-10": "PASS",
         "BR-11": "PARTIAL",
-        "BR-13": "PARTIAL",
+        "BR-13": "PASS",
         "BR-16": "PASS",
         "BR-18": "PASS",
         "BR-19": "PASS"
       },
       "structuralProblems": [
         "Uses 60 package-access symbols of the customer SectorEngine library (pinned; D-C)",
-        "Presence release fingerprint is FNV-1a, not sha256 (M-7)",
-        "No JSON schema for LakeState (BR-13)"
+        "Presence release fingerprint is FNV-1a, not sha256 (M-7)"
       ],
       "scienceDependencies": [
         "Field validation of level classification"
@@ -420,14 +420,13 @@
         "BR-07": "PASS",
         "BR-10": "PASS",
         "BR-11": "NOT_APPLICABLE",
-        "BR-13": "PARTIAL",
+        "BR-13": "PASS",
         "BR-16": "PASS",
         "BR-18": "PASS",
         "BR-19": "PASS"
       },
       "structuralProblems": [
-        "Uses customer SectorEngine package-access symbols (pinned; D-C)",
-        "No JSON schema for the state (BR-13)"
+        "Uses customer SectorEngine package-access symbols (pinned; D-C)"
       ],
       "scienceDependencies": [
         "Per-lake validation beyond the global holdout"

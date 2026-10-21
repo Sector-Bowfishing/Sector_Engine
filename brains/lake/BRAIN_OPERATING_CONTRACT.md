@@ -33,6 +33,8 @@ Lake does **not** own: **lake identity** (the Lake Registry is the Engine direct
 - Consumers: Sector Ops (display) and Sector Intelligence (`LakePresenceIndex.resolveLakeSpecies`, published states). Nothing in the customer request path imports this module.
 - Allowed path today: providers/archives → `LakeBrainJob` → direct, ownership-checked RTDB updates (LEGACY until a Publisher cutover is approved).
 
+- State contract **`lake-state-v1`** (`contracts/lake-state-v1.schema.json`): generated from the Swift Codable record by `tools/architecture/swift_state_schema.py` and validated against the recorded write set (`tools/architecture/tests/test_swift_state_schemas.py`).
+
 ## 8. RESEARCH WORKSPACE
 Logical workspace id **`lake-brain`** (`docs/architecture/certification/BRAIN_RESEARCH_WORKSPACE_V1.md`). The physical root is never written into code or this public repository. Private research (binding research, presence matrix, history studies) stays in the workspace and the private bucket; this repository holds only code, generated binding tables and validation tooling.
 

@@ -45,3 +45,22 @@ def test_package_swift_keeps_the_brain_targets_out_of_the_customer_products():
     pkg = open(os.path.join(ROOT, "Package.swift"), encoding="utf-8").read()
     lib = re.search(r'\.library\(\s*name:\s*"SectorEngine"[^)]*\)', pkg)
     assert lib and "LakeBrain" not in lib.group(0) and "WaterTemperatureBrain" not in lib.group(0)
+
+
+def test_brain_targets_import_their_library_unconditionally_so_they_build_on_linux():
+    """A Brain target must not import SectorEngine inside `#if canImport(...)`: on Linux the import silently disappears and the job cannot build
+    (regression found by the Linux CI job, 2026-10-20)."""
+    for root in ("brains/lake/runtime", "brains/water-temperature/runtime", "brains/lake/tests/swift", "brains/water-temperature/tests/swift"):
+        for dp, _, fs in os.walk(os.path.join(ROOT, root)):
+            for f in fs:
+                if not f.endswith(".swift"):
+                    continue
+                stack = []
+                for n, line in enumerate(open(os.path.join(dp, f), encoding="utf-8"), 1):
+                    s = line.strip()
+                    if s.startswith("#if"):
+                        stack.append(s)
+                    elif s.startswith("#endif") and stack:
+                        stack.pop()
+                    elif re.match(r"(@testable\s+)?import\s+(SectorEngine|LakeBrain|WaterTemperatureBrain)\b", s):
+                        assert not stack, f"{os.path.join(dp, f)}:{n}: `{s}` inside {stack}"

@@ -22,9 +22,9 @@
 //
 
 import Foundation
+import SectorEngine
 #if canImport(CoreLocation)
 import CoreLocation
-import SectorEngine
 #endif
 
 public enum WaterTemperatureBrain {

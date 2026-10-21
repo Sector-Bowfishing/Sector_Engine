@@ -56,3 +56,11 @@ Standards: Rehtac Cortex 2.1.0 @ 0f9ee75. Session record: `2026-10-20-cortex-2-1
 **Resume notes:**
 - Regenerate the status report after any input change with `python3 tools/cortex_status/build_engineering_status.py --write`.
 - A content change to a packaged knowledge file needs `tools/knowledge/build_release_manifest.py <dir> --write --release-id <new id>`.
+
+## Cortex 2.1 all-Brain structural completion (2026-10-20) — status
+
+- All eight Brains are canonical and Kit V1 certified.
+- Draft PR #40 is pushed; it is not merged.
+- Session record: `2026-10-20-cortex-2-1-structural-completion.md`.
+- Open: the decisions in `engineering-status/inputs/decisions.json` (A-1 merge; M-1…M-8; G-1; V-1; K-1; D-C…D-F; O-1).
+- To regenerate the certification record: `python3 tools/cortex_status/collect_certification.py`, then `build_engineering_status.py --write`.
