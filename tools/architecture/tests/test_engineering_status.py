@@ -73,3 +73,22 @@ def test_no_production_or_customer_layer_is_claimed_from_this_repository():
     for b in B.build()["brains"]:
         for layer in ("operationalReadiness", "productionActivation", "customerConsumable"):
             assert b["statusLayers"][layer]["status"] != "PASS", (b["brainId"], layer)     # needs live evidence (A-3), never unit tests
+
+
+def test_a_certification_run_of_other_code_is_never_reported_as_current(monkeypatch):
+    monkeypatch.setattr(B, "source_digest", lambda: "sha256:" + "0" * 64)          # the code changed after the recorded run
+    r = B.build()
+    assert r["source"]["certificationCurrent"] is False
+    for b in r["brains"]:
+        assert b["statusLayers"]["structuralCertification"]["status"] == "NOT_VERIFIED", b["brainId"]
+        assert b["structuralCertification"]["status"] == "NOT_VERIFIED"
+
+
+def test_the_committed_report_is_stale_as_soon_as_the_code_changes(monkeypatch):
+    monkeypatch.setattr(B, "source_digest", lambda: "sha256:" + "1" * 64)
+    assert B.main(["--check"]) == 1
+
+
+def test_the_report_carries_its_source_digest_and_the_certification_belongs_to_it():
+    r = B.build()
+    assert r["source"]["sourceDigest"].startswith("sha256:") and r["source"]["certificationCurrent"] is True

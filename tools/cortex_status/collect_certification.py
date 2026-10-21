@@ -44,7 +44,9 @@ def run_brain(py: str, d: str) -> dict:
         pm = re.search(r"NOT_APPLICABLE \(\S+ (P\d\d)\)", raw)
         if raw.startswith("SKIPPED") and pm:
             proofs[pm.group(1)] = "NOT_APPLICABLE"
-    tail = (r.stdout.strip().splitlines() or [""])[-1]
+    last = (r.stdout.strip().splitlines() or [""])[-1]
+    counts = {k: int(n) for n, k in re.findall(r"(\d+) (passed|failed|skipped|error|errors)\b", last)}
+    tail = ", ".join(f"{counts[k]} {k}" for k in ("passed", "failed", "skipped", "error", "errors") if k in counts) or "no result"   # counts only: timing/warnings are noise
     ok = r.returncode == 0 and proofs and all(v in ("PASS", "NOT_APPLICABLE") for v in proofs.values())
     return {"status": "PASS" if ok else "FAIL", "proofs": dict(sorted(proofs.items())), "mutations": mutations, "summary": tail}
 
@@ -58,7 +60,10 @@ def main(argv=None) -> int:
         p = os.path.join(ROOT, "brains", d, "brain.json")
         if not d.startswith("_") and os.path.isfile(p):
             ids[d] = json.load(open(p))["brainId"]
+    sys.path.insert(0, HERE)
+    from source_digest import source_digest
     out = {"schemaVersion": "1.0.0", "kit": "BRAIN_CERT_KIT_V1", "collectedWith": "pytest -rA per Brain directory (tools/cortex_status/collect_certification.py)",
+           "sourceDigest": source_digest(),
            "brains": {ids[d]: {"directory": f"brains/{d}", **run_brain(a.python, d)} for d in ids}}
     with open(OUT, "w", encoding="utf-8") as fh:
         fh.write(json.dumps(out, indent=2) + "\n")

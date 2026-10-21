@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.1.0",
-  "reportId": "sector-engine-engineering-status-2026-10-20.2",
+  "schemaVersion": "1.2.0",
+  "reportId": "sector-engine-engineering-status-2026-10-20.3",
   "repository": "Sector-Bowfishing/Sector_Engine",
   "branch": "cortex/architecture-standardization-2026-10-20",
   "evaluatedCommit": "44ad7121",

@@ -2,6 +2,7 @@
   "schemaVersion": "1.0.0",
   "kit": "BRAIN_CERT_KIT_V1",
   "collectedWith": "pytest -rA per Brain directory (tools/cortex_status/collect_certification.py)",
+  "sourceDigest": "sha256:83a8a30101f9a8c34cab35811ac1e317ac0f0a0cd9ac3adcf6991ffae1fcde36",
   "brains": {
     "depth": {
       "directory": "brains/depth",
@@ -31,7 +32,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 3.52s"
+      "summary": "51 passed"
     },
     "biological-state": {
       "directory": "brains/fish",
@@ -61,7 +62,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 3.95s"
+      "summary": "51 passed"
     },
     "lake-brain": {
       "directory": "brains/lake",
@@ -91,7 +92,7 @@
         "passed": 27,
         "failed": 0
       },
-      "summary": "47 passed, 4 skipped in 3.61s"
+      "summary": "47 passed, 4 skipped"
     },
     "sector-intelligence": {
       "directory": "brains/sector-intelligence",
@@ -121,7 +122,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 3.60s"
+      "summary": "51 passed"
     },
     "vegetation": {
       "directory": "brains/vegetation",
@@ -151,7 +152,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 7.19s"
+      "summary": "51 passed"
     },
     "water-clarity": {
       "directory": "brains/water-clarity",
@@ -181,7 +182,7 @@
         "passed": 31,
         "failed": 0
       },
-      "summary": "52 passed in 3.80s"
+      "summary": "52 passed"
     },
     "water-temp": {
       "directory": "brains/water-temperature",
@@ -211,7 +212,7 @@
         "passed": 28,
         "failed": 0
       },
-      "summary": "48 passed, 4 skipped in 3.55s"
+      "summary": "48 passed, 4 skipped"
     },
     "wind": {
       "directory": "brains/wind",
@@ -241,7 +242,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 4.28s"
+      "summary": "51 passed"
     }
   }
 }

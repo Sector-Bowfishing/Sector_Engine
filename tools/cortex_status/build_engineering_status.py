@@ -24,6 +24,9 @@ STATUSES = ["PASS", "FAIL", "PARTIAL", "NOT_VERIFIED", "NOT_APPLICABLE", "BLOCKE
 sys.path.insert(0, os.path.join(ROOT, "tools", "architecture"))
 from jsonschema_lite import validate  # noqa: E402
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from source_digest import source_digest  # noqa: E402  (local `git ls-files` + file hashes; no network)
+
 
 def _load(*p):
     with open(os.path.join(*p), encoding="utf-8") as fh:
@@ -42,7 +45,10 @@ def build() -> dict:
     mem = _load(DIR, "inputs", "memory-standing-checks.json")
     ver = _load(DIR, "inputs", "verification.json")
     dec = _load(DIR, "inputs", "decisions.json")
-    cert = _load(DIR, "inputs", "certification.json")["brains"]
+    certrec = _load(DIR, "inputs", "certification.json")
+    cert = certrec["brains"]
+    digest = source_digest()
+    cert_current = certrec.get("sourceDigest") == digest          # a certification run of OTHER code is never reported as current
     opt = {n: _load(DIR, "inputs", f"{n}.json") for n in ("changes", "ci") if os.path.exists(os.path.join(DIR, "inputs", f"{n}.json"))}
     detail = src.get("brainDetail", {})
     manifest = _load(ROOT, "jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")["brains"]
@@ -63,8 +69,11 @@ def build() -> dict:
         summary = {side: {s: n for s in STATUSES if (n := sum(r[side] == s for r in rows))} for side in ("branch", "production")}
         pkg = packages.get(bid)
         c = cert.get(bid) or {"status": "NOT_RUN"}
-        sc = {"status": "PASS" if c["status"] == "PASS" else ("NOT_VERIFIED" if c["status"] == "NOT_RUN" else "FAIL"),
-              "evidence": f"Kit V1 run: {c.get('summary', 'not run')} (inputs/certification.json)"}
+        if not cert_current:
+            sc = {"status": "NOT_VERIFIED", "evidence": "the recorded Kit V1 run belongs to different code (certification sourceDigest mismatch): re-run collect_certification.py"}
+        else:
+            sc = {"status": "PASS" if c["status"] == "PASS" else ("NOT_VERIFIED" if c["status"] == "NOT_RUN" else "FAIL"),
+                  "evidence": f"Kit V1 run: {c.get('summary', 'not run')} (inputs/certification.json)"}
         b = {"brainId": bid, "directory": pkg["directory"] if pkg else m["directory"],
              "lifecycle": pkg["lifecycle"] if pkg else manifest[bid]["lifecycle"],
              "packageStatus": "CANONICAL" if pkg else "BRANCH_ONLY",
@@ -75,7 +84,7 @@ def build() -> dict:
         d = detail.get(bid)
         if d:
             layers = dict(d["statusLayers"])
-            layers["structuralCertification"] = {"status": sc["status"], "label": "KIT_V1_CERTIFIED" if sc["status"] == "PASS" else "NOT_CERTIFIED",
+            layers["structuralCertification"] = {"status": sc["status"], "label": {"PASS": "KIT_V1_CERTIFIED", "NOT_VERIFIED": "CERTIFICATION_STALE_OR_NOT_RUN"}.get(sc["status"], "NOT_CERTIFIED"),
                                                  "evidence": sc["evidence"]}           # never asserted by hand: always the recorded run
             if not pkg:
                 layers["canonicalStructure"] = {"status": "FAIL", "label": "BRANCH_ONLY", "evidence": m["directory"]}
@@ -85,7 +94,9 @@ def build() -> dict:
     out = {"schema": "engineering-status-v1", "schemaVersion": src.get("schemaVersion", "1.0.0"), "reportId": src["reportId"],
             "standards": {"framework": "Rehtac Cortex", "version": src["cortexVersion"], "pin": _pin(), "pack": src["cortexPack"]},
             "source": {"repository": src["repository"], "branch": src["branch"], "evaluatedCommit": src["evaluatedCommit"], "evaluatedAt": src["evaluatedAt"],
-                       "session": src["session"], "productionBasis": mem["productionBasis"]},
+                       "session": src["session"], "productionBasis": mem["productionBasis"], "sourceDigest": digest,
+                       "certificationDigest": certrec.get("sourceDigest", "NONE"), "certificationCurrent": cert_current,
+                       "verificationCommit": ver.get("evaluatedCommit", "NONE")},
             "statusVocabulary": STATUSES, "brains": brains, "verification": ver["results"], "decisions": dec["decisions"], "cortexGaps": src["cortexGaps"]}
     if "changes" in opt:
         out["changes"] = opt["changes"]["changes"]
@@ -103,19 +114,30 @@ def main(argv=None) -> int:
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--write", action="store_true")
     g.add_argument("--check", action="store_true")
+    g.add_argument("--emit", metavar="OUT.json", help="CI: write a commit-stamped copy (source.evaluatedCommit = --commit) without touching the committed report")
+    ap.add_argument("--commit", help="with --emit: the exact commit the report was produced at (e.g. $GITHUB_SHA)")
     a = ap.parse_args(argv)
     report = build()
+    if a.emit:
+        if not a.commit or not re.fullmatch(r"[0-9a-f]{7,40}", a.commit):
+            print("--emit needs --commit <sha>")
+            return 2
+        report["source"]["evaluatedCommit"] = a.commit
     errs = list(validate(report, _load(SCHEMA)))
     if errs:
         print("engineering-status-v1 schema violations:\n" + "\n".join(errs[:20]))
         return 1
     text = render(report)
+    if a.emit:
+        open(a.emit, "w", encoding="utf-8").write(text)
+        print(f"wrote {a.emit} ({report['reportId']} @ {a.commit}; certificationCurrent={report['source']['certificationCurrent']})")
+        return 0 if report["source"]["certificationCurrent"] else 1
     if a.write:
         open(REPORT, "w", encoding="utf-8").write(text)
         print(f"wrote {os.path.relpath(REPORT, ROOT)} ({report['reportId']})")
         return 0
     if not os.path.exists(REPORT) or open(REPORT, encoding="utf-8").read() != text:
-        print(f"{os.path.relpath(REPORT, ROOT)} is stale: regenerate with --write")
+        print(f"{os.path.relpath(REPORT, ROOT)} is stale (the code, the certification run or an input changed): re-run collect_certification.py, then --write")
         return 1
     print(f"{os.path.relpath(REPORT, ROOT)}: OK {report['reportId']}")
     return 0
