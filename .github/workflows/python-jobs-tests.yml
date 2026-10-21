@@ -81,12 +81,16 @@ jobs:
         env:
           # the commit the report describes: the PR HEAD on pull_request runs (GITHUB_SHA is GitHub's synthetic merge commit there), else GITHUB_SHA
           SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_BRANCH: ${{ github.head_ref || github.ref_name }}
+          # only a push to main describes merged code; every PR run is development data
+          CODE_STATE: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') && 'MAIN_COMMIT' || 'UNMERGED_BRANCH' }}
         run: |
           python tools/cortex_status/collect_certification.py
           git diff --exit-code -- docs/cortex/engineering-status/inputs/certification.json
           python tools/cortex_status/build_engineering_status.py --check
           python tools/cortex_status/build_engineering_status.py --emit "$RUNNER_TEMP/engineering-status.json" --commit "$SOURCE_SHA"
-          python tools/cortex_status/ops_projection.py --report "$RUNNER_TEMP/engineering-status.json" --out "$RUNNER_TEMP/engineering-status-ops.json"
+          python tools/cortex_status/ops_projection.py --report "$RUNNER_TEMP/engineering-status.json" --out "$RUNNER_TEMP/engineering-status-ops.json" \
+            --branch "$SOURCE_BRANCH" --code-state "$CODE_STATE" --generated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
       - uses: actions/upload-artifact@v4
         with:
           name: engineering-status
