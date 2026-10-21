@@ -54,7 +54,12 @@ final class MigrationGoldenTests: XCTestCase {
             return nil
         }
         if let x = a as? String, let y = b as? String { return x == y ? nil : "\(path): \"\(x)\" vs \"\(y)\"" }
-        if let x = a as? NSNumber, let y = b as? NSNumber { return x.doubleValue == y.doubleValue ? nil : "\(path): \(x) vs \(y)" }
+        if let x = a as? NSNumber, let y = b as? NSNumber {
+            // Linux Foundation parses long JSON numbers into NSDecimalNumber, whose doubleValue is not always the nearest Double; converting the
+            // decimal text with Double(String) is exact (nearest Double) on both platforms, so equality stays exact on the VALUE.
+            let dx = Double(x.description) ?? x.doubleValue, dy = Double(y.description) ?? y.doubleValue
+            return dx == dy ? nil : "\(path): \(x) vs \(y)"
+        }
         if a is NSNull && b is NSNull { return nil }
         return "\(path): \(type(of: a)) vs \(type(of: b))"
     }
