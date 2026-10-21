@@ -29,6 +29,10 @@
         "/brains/vegetation/{child}",
         "/validation/vegetation",
         "/health/brains/vegetation/{child}"
+      ],
+      "legacyDirectWrites": [
+        {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
+        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"}
       ]
     }
   ],

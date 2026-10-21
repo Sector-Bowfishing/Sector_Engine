@@ -34,6 +34,12 @@
         "/lakes/{k}/states/lake",
         "/sources/{id}",
         "/validation/lake-brain"
+      ],
+      "legacyDirectWrites": [
+        {"path": "/snapshots/{k}/latest/lakeState", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "lake-snapshot-copy-v1"},
+        {"path": "/snapshots/{k}/latest/brainVersions/lake-brain", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "lake-snapshot-brainversion-v1"},
+        {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
+        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs"}
       ]
     }
   ],

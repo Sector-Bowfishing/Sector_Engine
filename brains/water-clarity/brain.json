@@ -23,6 +23,13 @@
         "/lakeFleet/{k}/readiness/waterClarity", "/lakeFleet/{k}/modelVersions/waterClarity",
         "/brains/water-clarity/{child}", "/validation/water-clarity", "/health/brains/water-clarity/{child}", "/activity/{event}",
         "/sources/{id}", "/health/sources/{id}"
+      ],
+      "legacyDirectWrites": [
+        {"path": "/snapshots/{k}/latest/waterClarity", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "clarity-snapshot-copy-v1"},
+        {"path": "/snapshots/{k}/latest/brainVersions/water-clarity", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "clarity-snapshot-brainversion-v1"},
+        {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
+        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"},
+        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs"}
       ]
     }
   ],

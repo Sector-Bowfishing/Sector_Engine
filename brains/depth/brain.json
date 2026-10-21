@@ -30,6 +30,10 @@
         "/validation/depth",
         "/health/brains/depth/{child}",
         "/activity/{event}"
+      ],
+      "legacyDirectWrites": [
+        {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
+        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"}
       ]
     }
   ],

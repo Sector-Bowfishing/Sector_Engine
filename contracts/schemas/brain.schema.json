@@ -136,6 +136,37 @@
               "minLength": 1
             },
             "uniqueItems": true
+          },
+          "legacyDirectWrites": {
+            "type": "array",
+            "description": "Paths the current direct writer also writes but the Brain does not author under the Publisher contract (pathFamilies). Each says what happens to it at Publisher cutover. Additive (Cortex 2.2 FD-01).",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "disposition",
+                "ref"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 2,
+                  "pattern": "^/"
+                },
+                "disposition": {
+                  "enum": [
+                    "PUBLISHER_COMPATIBILITY_PROJECTION",
+                    "PLATFORM_OWNED_STOP_WRITING",
+                    "ORCHESTRATOR_DERIVED"
+                  ]
+                },
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         }
       }

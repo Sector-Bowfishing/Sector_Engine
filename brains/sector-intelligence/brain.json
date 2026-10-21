@@ -21,6 +21,10 @@
         "/lakes/{k}/states/intelligence", "/lakeFleet/{k}/slots/intelligence", "/lakeFleet/{k}/readiness/intelligence", "/lakeFleet/{k}/modelVersions/intelligence",
         "/snapshots/{k}/latest/sectorIntelligence", "/snapshots/{k}/latest/brainVersions/sector-intelligence",
         "/brains/sector-intelligence/{child}", "/validation/sector-intelligence", "/health/brains/sector-intelligence/{child}", "/activity/{event}"
+      ],
+      "legacyDirectWrites": [
+        {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
+        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"}
       ]
     }
   ],
