@@ -5,7 +5,7 @@
   "branch": "cortex/architecture-standardization-2026-10-20",
   "evaluatedCommit": "44ad7121",
   "evaluatedAt": "2026-10-20",
-  "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-structural-completion.md",
+  "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-final-verification.md",
   "cortexVersion": "2.1.0",
   "cortexPack": "sector/engine",
   "structuralCertification": {
@@ -73,7 +73,9 @@
     "CG-2.1-4",
     "CG-2.1-5",
     "CG-2.1-6",
-    "CG-2.1-7"
+    "CG-2.1-7",
+    "CG-2.1-8",
+    "CG-2.1-9"
   ],
   "brainDetail": {
     "biological-state": {

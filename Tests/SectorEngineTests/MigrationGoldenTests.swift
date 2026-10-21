@@ -40,11 +40,23 @@ final class MigrationGoldenTests: XCTestCase {
         try JSONSerialization.data(withJSONObject: normalize(obj), options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes])
     }
 
-    /// Exact deep equality of two parsed JSON values, portable to Linux (Foundation there has no Objective-C `isEqual` bridge):
-    /// both sides re-serialized with sorted keys, no normalization, compared byte for byte.
-    private func sameJSON(_ a: Any, _ b: Any) throws -> Bool {
-        try JSONSerialization.data(withJSONObject: a, options: [.sortedKeys, .fragmentsAllowed])
-            == JSONSerialization.data(withJSONObject: b, options: [.sortedKeys, .fragmentsAllowed])
+    /// Exact deep equality of two parsed JSON values, portable to Linux (Foundation there has no Objective-C `isEqual` bridge and prints
+    /// doubles differently): same keys, same array order, strings equal, numbers equal by exact Double value. Returns the first difference.
+    private func jsonDifference(_ a: Any, _ b: Any, _ path: String = "$") -> String? {
+        if let x = a as? [String: Any], let y = b as? [String: Any] {
+            if Set(x.keys) != Set(y.keys) { return "\(path): keys \(Set(x.keys).symmetricDifference(Set(y.keys)).sorted())" }
+            for k in x.keys.sorted() { if let d = jsonDifference(x[k]!, y[k]!, "\(path).\(k)") { return d } }
+            return nil
+        }
+        if let x = a as? [Any], let y = b as? [Any] {
+            if x.count != y.count { return "\(path): array length \(x.count) vs \(y.count)" }
+            for (i, (u, v)) in zip(x, y).enumerated() { if let d = jsonDifference(u, v, "\(path)[\(i)]") { return d } }
+            return nil
+        }
+        if let x = a as? String, let y = b as? String { return x == y ? nil : "\(path): \"\(x)\" vs \"\(y)\"" }
+        if let x = a as? NSNumber, let y = b as? NSNumber { return x.doubleValue == y.doubleValue ? nil : "\(path): \(x) vs \(y)" }
+        if a is NSNull && b is NSNull { return nil }
+        return "\(path): \(type(of: a)) vs \(type(of: b))"
     }
 
     private func assertGolden(_ obj: Any, _ relativePath: String, file: StaticString = #filePath, line: UInt = #line) throws {
@@ -55,8 +67,9 @@ final class MigrationGoldenTests: XCTestCase {
         }
         let golden = try JSONSerialization.jsonObject(with: Data(contentsOf: url))
         let actual = try JSONSerialization.jsonObject(with: canonicalData(obj))
-        XCTAssertTrue(try sameJSON(golden, actual),
-                      "\(relativePath) differs from current behavior. If intentional, regenerate with SECTOR_UPDATE_GOLDEN=1 and record why.",
+        let diff = jsonDifference(golden, actual)
+        XCTAssertNil(diff,
+                      "\(relativePath) differs from current behavior at \(diff ?? "-"). If intentional, regenerate with SECTOR_UPDATE_GOLDEN=1 and record why.",
                       file: file, line: line)
     }
 
@@ -119,7 +132,7 @@ final class MigrationGoldenTests: XCTestCase {
         encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
         let reencoded = try JSONSerialization.jsonObject(with: encoder.encode(response))
         let golden = try JSONSerialization.jsonObject(with: raw)
-        XCTAssertTrue(try sameJSON(golden, reencoded),
+        XCTAssertNil(jsonDifference(golden, reencoded),
                       "ConditionsResponse key names/types changed (a rename or removed field drops out of the round trip).")
         // Every top-level property of the type is present in the golden (no field added without updating the contract).
         let goldenKeys = Set((golden as! [String: Any]).keys)

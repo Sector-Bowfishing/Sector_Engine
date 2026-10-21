@@ -77,7 +77,29 @@ final class WaterTemperaturePublicationFixtureTests: XCTestCase {
             return
         }
         let committed = try String(contentsOf: Self.fixtureURL, encoding: .utf8)
-        XCTAssertEqual(try Self.stable(fresh) + "\n", committed,
+        XCTAssertEqual(numbersByValue(try Self.stable(fresh) + "\n"), numbersByValue(committed),
                        "the Water Temperature runner's write set changed: review the change, then regenerate with SECTOR_WRITE_BRAIN_FIXTURES=1")
     }
+}
+
+/// Platform-independent fixture text: every JSON NUMBER token (outside string literals) is rewritten as Swift's shortest exact representation
+/// of its Double value, so Darwin's 17-digit `23.100000000000001` and Linux's `23.1` (the same Double) compare equal, while any change of value,
+/// key, string, order or structure still fails. Everything else is compared character for character.
+func numbersByValue(_ s: String) -> String {
+    var out = "", token = "", inString = false, escaped = false
+    func flush() {
+        if !token.isEmpty { out += Double(token).map { "\($0)" } ?? token; token = "" }
+    }
+    for c in s {
+        if inString {
+            out.append(c)
+            if escaped { escaped = false } else if c == "\\" { escaped = true } else if c == "\"" { inString = false }
+            continue
+        }
+        if c == "\"" { flush(); inString = true; out.append(c); continue }
+        if c.isNumber || c == "-" || c == "+" || c == "." || c == "e" || c == "E" { token.append(c); continue }
+        flush(); out.append(c)
+    }
+    flush()
+    return out
 }

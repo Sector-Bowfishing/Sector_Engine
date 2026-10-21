@@ -13,10 +13,10 @@
     "branch": "cortex/architecture-standardization-2026-10-20",
     "evaluatedCommit": "44ad7121",
     "evaluatedAt": "2026-10-20",
-    "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-structural-completion.md",
+    "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-final-verification.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:b446df5725d799ce3463138eff71f5649530f3ab75a4e86a07ee5a68cab74297",
-    "certificationDigest": "sha256:b446df5725d799ce3463138eff71f5649530f3ab75a4e86a07ee5a68cab74297",
+    "sourceDigest": "sha256:2af3377df71dbcbc803973877b7801649ad8171163e5d59b8c61c3ce67a3c14f",
+    "certificationDigest": "sha256:2af3377df71dbcbc803973877b7801649ad8171163e5d59b8c61c3ce67a3c14f",
     "certificationCurrent": true,
     "verificationCommit": "44ad7121"
   },
@@ -1787,7 +1787,9 @@
     "CG-2.1-4",
     "CG-2.1-5",
     "CG-2.1-6",
-    "CG-2.1-7"
+    "CG-2.1-7",
+    "CG-2.1-8",
+    "CG-2.1-9"
   ],
   "changes": [
     {
