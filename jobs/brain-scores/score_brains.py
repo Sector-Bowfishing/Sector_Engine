@@ -24,6 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "brain_platform"))
 from sector_brain_platform.score_explanation import explain as explain_score, is_current as is_current_explanation  # noqa: E402
 from sector_brain_platform.orchestration import load_manifest as O_load_manifest  # noqa: E402
+from sector_brain_platform.control import slot_max_age  # noqa: E402
 from sector_brain_platform import (BrainRtdb, DryRunStore, beta_readiness, check_schema, event, fleet_rollup, frozen_score, overview,   # noqa: E402
                                    prune_activity, guard_scores, score_biological, score_engine, score_intelligence, score_lake)
 
@@ -31,6 +32,10 @@ WRITER = "brain-platform"
 FROZEN = os.environ.get("FROZEN_SCORES", os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json"))
 MAX_LAKE_PROFILES = 1000     # > the 621-lake directory; a guard, not a sample size
 LAKE_READ_WORKERS = 8
+# LEGACY alias (Cortex 2.2 audit C-2): /engine/score is a byte-identical copy of the authoritative /scores/engine, kept because Sector Ops reads it
+# (brainPaths.ts engineScore). One writer, one update: it can never diverge. Set False only after Sector Ops reads /scores/engine (F-1); the
+# existing node is then left as it is until an approved typed delete (gated).
+WRITE_ENGINE_SCORE_ALIAS = True
 UPSTREAM = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")
 
 
@@ -178,7 +183,8 @@ def plan_writes(scores: dict, brains: dict, now: dt.datetime, engine: dict | Non
         old = old_engine or {}
         if _content(old) != _content(engine):
             updates["scores/engine"] = engine
-            updates["engine/score"] = engine                    # alias kept for readers of the first publish
+            if WRITE_ENGINE_SCORE_ALIAS:
+                updates["engine/score"] = engine                # LEGACY alias of scores/engine (same object, same update)
             if old.get("engineScore") != engine["engineScore"] or old.get("engineScoreVersion") != engine["engineScoreVersion"]:
                 n += 1
                 ev = event(now, WRITER, n, "score.changed",
@@ -242,10 +248,12 @@ def main() -> int:
     updates, changed = plan_writes(scores, facts["brains"], now, engine, old_scores.get("engine"), old_scores,   # canonical: /scores/engine
                                    explain=not a.no_explain, gaps=load_gaps())
     # Ops control plane (Phase 10): computed here from published facts, rendered by Ops, never recomputed there.
+    manifest = O_load_manifest()
     control = overview(brains=facts["brains"], health=facts["health"], validation=facts["validation"], scores=scores, engine=engine,
-                       fleet=facts["fleet"], sources=facts["sources"], health_sources=facts["healthSources"], jobs=facts["jobs"], now=now, manifest=O_load_manifest(), orchestrator_brains=facts.get("orchestratorBrains"),
+                       fleet=facts["fleet"], sources=facts["sources"], health_sources=facts["healthSources"], jobs=facts["jobs"], now=now, manifest=manifest, orchestrator_brains=facts.get("orchestratorBrains"),
                        score_published_at=published_score_times(updates, old_scores))
-    rollups = {f"control/fleet/{k}": r for k, row in facts["fleet"].items() if (r := fleet_rollup(k, row, now))}
+    max_age = slot_max_age((manifest or {}).get("brains"), facts["brains"])             # freshness by policy age, not only the persisted flag
+    rollups = {f"control/fleet/{k}": r for k, row in facts["fleet"].items() if (r := fleet_rollup(k, row, now, max_age))}
     control_updates = {"control/overview": control, **rollups}
     # Beta readiness (Phase 12): pilot lakes = those with a normalized Intelligence evaluation. Never a customer rollout.
     src_stale = {sid: v.get("stale") for sid, v in (control.get("sources") or {}).items() if v.get("stale")}

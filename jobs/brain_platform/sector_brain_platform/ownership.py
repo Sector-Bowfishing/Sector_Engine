@@ -21,6 +21,10 @@ SOURCE_OWNERS = {
     "iem-metar-wind": "wind"
 }
 # Fleet-row and snapshot fields that are Orchestrator rollups: nobody writes them in v1.
+# DEPRECATED, not restored (Cortex 2.2 Firebase remediation 2026-10-21): the per-lake projection lives at /control/fleet/{k} (lastUpdatedAt = newest
+# slot publication, rolledUpAt = projection time, staleSlots = derived freshness). The production values of /lakeFleet/{k}/lastUpdatedAt and
+# /snapshots/{k}/latest/{generatedAt,snapshotVersion} were left by a pre-contract writer (frozen 2026-10-12/13), have no reader and are deletion
+# candidates (gated). They stay unwritable so nothing can make them look current again.
 ROLLUP_FLEET = {"lastUpdatedAt", "stale", "issueCount", "hasObservations"}
 ROLLUP_SNAPSHOT = {"generatedAt", "snapshotVersion", "evaluationTime"}
 LAKE_BRAIN_ONLY_FLEET = {"riverSystem", "lakeType"}

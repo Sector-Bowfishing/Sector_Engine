@@ -43,6 +43,13 @@ STATE_KINDS = {
 }
 
 # ── Freshness (BRAIN_INTEGRATION_REQUIREMENTS §5 'Stale') ───────────────────────────────────
+# LEGACY score copy (Cortex 2.2 FD-09; Firebase audit C-1, Cortex mig.01). /scores/wind, written only by the platform scorer, is the authoritative
+# Wind score. Wind still copies its FROZEN validation-evidence scores into /brains/wind/scores and /validation/wind/scores because Sector Ops reads
+# them today (windBrain.tsx). The copy is labelled as frozen evidence that is not authoritative. Set False only after Sector Ops reads /scores/wind
+# (F-1) and the owner approves retiring the copy: the registry is written whole, so the next run then removes /brains/wind/scores (a production
+# deletion, gated).
+PUBLISH_LEGACY_SCORE_COPY = True
+AUTHORITATIVE_SCORE_PATH = "/scores/wind"
 STALE_FORECAST_CYCLE_H = 3.0        # newest NBM cycle older than this -> stale
 STALE_GENERATED_MIN = 90            # state generatedAt older than this -> stale (Ops-side clock check)
 STALE_AFTER_HOURS = STALE_GENERATED_MIN / 60

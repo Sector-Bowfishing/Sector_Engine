@@ -156,6 +156,9 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
         "health": (health or {}).get("status") or reg.get("health"),
         "healthReasons": OT.health_reasons(brain_id, health, sources, source_health),
         "healthAt": (health or {}).get("lastRun"), "lastSuccessfulRun": reg.get("lastSuccessfulRun"),
+        # `health` is the status the Brain recorded at its last execution; it is CURRENT only while the Brain is not stale (FD-07).
+        "healthBasis": "RECORDED_AT_LAST_EXECUTION" if ((health or {}).get("status") or reg.get("health")) else None,
+        "healthCurrent": (not stale) if stale is not None else None,
         "lastExecution": _strip({"at": (health or {}).get("lastRun"), "status": (health or {}).get("status")}) or None,
         "lastDataUpdate": OT.data_update(brain_id, policy, reg, slot_newest),
         "lastScoreEvaluation": score_published_at or (score or {}).get("scoreUpdatedAt"),
@@ -181,12 +184,45 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
     })
 
 
-def fleet_rollup(lake_key: str, row: dict | None, now: dt.datetime) -> dict | None:
-    """The Orchestrator-owned per-lake rollup (contract §5), published by Engine under /control/fleet."""
+# Freshness semantics (Cortex 2.2 FD-07; Firebase remediation 2026-10-21). Four different times, never substituted for one another:
+#   observation  - the evidence time inside a state (e.g. observedAt / satellite acquisition), owned by the Brain;
+#   publication  - when the Brain wrote the slot (slot generatedAt / lastUpdatedAt);
+#   projection   - when this rollup was computed (rolledUpAt / summarizedAt);
+#   freshness    - derived HERE at projection time: age of the publication vs the Brain's effective policy (staleAfterHours, TIME model only).
+# A slot's persisted `stale` flag is the Brain's verdict at WRITE time; a Brain that stops running never clears it, so `stale: false` is not proof
+# of current freshness. The rollup therefore marks a slot stale by FLAG or by AGE and says which (staleSlots). Health likewise: /health/brains is
+# the status recorded at the last run; current health is the control plane's verdict (overview brains[*].stale / freshness).
+STALE_BY_FLAG, STALE_BY_AGE = "FLAG", "AGE"
+
+
+def slot_max_age(manifest_brains: dict | None, registries: dict | None) -> dict[str, float]:
+    """{slot: staleAfterHours} for every Brain whose effective freshness policy is TIME (VERSION/FINGERPRINT Brains never age)."""
+    out = {}
+    for bid, (slot, _field, _name) in BRAINS.items():
+        pol = OT.effective_policy((manifest_brains or {}).get(bid), (registries or {}).get(bid))
+        if pol.get("model") == "TIME" and pol.get("staleAfterHours") is not None:
+            out[slot] = float(pol["staleAfterHours"])
+    return out
+
+
+def slot_staleness(slot: str, s: dict, now: dt.datetime, max_age: dict | None) -> str | None:
+    """FLAG when the Brain itself said stale; AGE when its newest publication is older than the policy allows; None = fresh or unknown policy."""
+    if s.get("stale"):
+        return STALE_BY_FLAG
+    limit = (max_age or {}).get(slot)
+    if limit is None:
+        return None
+    ages = [a for a in (age_hours(s.get(k), now) for k in ("generatedAt", "lastUpdatedAt")) if a is not None]
+    return STALE_BY_AGE if ages and min(ages) > limit else None
+
+
+def fleet_rollup(lake_key: str, row: dict | None, now: dt.datetime, max_age: dict | None = None) -> dict | None:
+    """The Orchestrator-owned per-lake rollup (contract §5), published by Engine under /control/fleet. `max_age` = slot_max_age(...): with it a slot
+    is stale by its own flag OR by age (staleSlots says which); without it only the persisted flags count (pre-2026-10-21 behaviour)."""
     if not row:
         return None
     slots = row.get("slots") or {}
-    stamps, stale_any, evidence_any, issues, published = [], False, False, 0, 0
+    stamps, stale_any, evidence_any, issues, published, why = [], False, False, 0, 0, {}
     for name, s in slots.items():
         if not isinstance(s, dict):
             continue
@@ -196,20 +232,25 @@ def fleet_rollup(lake_key: str, row: dict | None, now: dt.datetime) -> dict | No
         for k in ("generatedAt", "lastUpdatedAt"):
             if s.get(k):
                 stamps.append(s[k])
-        stale_any = stale_any or bool(s.get("stale"))
+        basis = slot_staleness(name, s, now, max_age)
+        if basis:
+            why[name] = basis
+        stale_any = stale_any or basis is not None
         evidence_any = evidence_any or bool(s.get("evidenceStale"))
         issues += int(s.get("issueCount") or 0)
     return _strip({"lakeId": row.get("lakeId"), "lastUpdatedAt": max(stamps) if stamps else None, "stale": stale_any if slots else None,
+                   "staleSlots": why or None, "staleRule": "SLOT_FLAG_OR_POLICY_AGE" if max_age is not None else "SLOT_FLAG",
                    "evidenceStale": evidence_any if slots else None, "issueCount": issues if slots else None,
                    "slotsPublished": published, "readiness": row.get("readiness"), "riverSystem": row.get("riverSystem"),
                    "rolledUpAt": iso(now)})
 
 
-def fleet_summary(fleet: dict, now: dt.datetime, directory_count: int | None = None) -> dict:
+def fleet_summary(fleet: dict, now: dt.datetime, directory_count: int | None = None, max_age: dict | None = None) -> dict:
     """The compact fleet summary Ops reads instead of all /lakeFleet rows: counts per slot and readiness, stale /
     evidence-stale / issue totals, newest update. Published inside /control/overview.fleet (Phase 3, cost work 2026-10-13)."""
     readiness_by_slot: dict[str, dict[str, int]] = {}
     stale_slots: dict[str, int] = {}
+    stale_by_age: dict[str, int] = {}
     published_by_slot: dict[str, int] = {}
     evaluated = stale_lakes = evidence_stale_lakes = issues = with_slots = 0
     newest = None
@@ -226,9 +267,12 @@ def fleet_summary(fleet: dict, now: dt.datetime, directory_count: int | None = N
             published_by_slot[slot] = published_by_slot.get(slot, 0) + 1
             if slot in SHADOW_SLOTS:
                 continue                                                   # visible, but a shadow slot never makes a lake stale or adds issues
-            if s.get("stale"):
+            basis = slot_staleness(slot, s, now, max_age)
+            if basis:
                 stale_slots[slot] = stale_slots.get(slot, 0) + 1
                 any_stale = True
+                if basis == STALE_BY_AGE:
+                    stale_by_age[slot] = stale_by_age.get(slot, 0) + 1
             if s.get("evidenceStale"):
                 any_ev = True
             issues += int(s.get("issueCount") or 0)
@@ -243,7 +287,8 @@ def fleet_summary(fleet: dict, now: dt.datetime, directory_count: int | None = N
         evidence_stale_lakes += any_ev
     return _strip({"lakes": len(fleet), "directoryLakes": directory_count, "withSlots": with_slots, "evaluatedByIntelligence": evaluated,
                    "staleLakes": stale_lakes, "evidenceStaleLakes": evidence_stale_lakes, "issueCount": issues,
-                   "staleSlots": stale_slots, "publishedBySlot": published_by_slot, "readinessBySlot": readiness_by_slot,
+                   "staleSlots": stale_slots, "staleSlotsByAge": stale_by_age or None,
+                   "staleRule": "SLOT_FLAG_OR_POLICY_AGE" if max_age is not None else "SLOT_FLAG", "publishedBySlot": published_by_slot, "readinessBySlot": readiness_by_slot,
                    "newestUpdateAt": newest, "summarizedAt": iso(now),
                    "note": "compact summary of /lakeFleet; per-lake detail stays in /control/fleet/{k}"})
 
@@ -262,7 +307,7 @@ def overview(*, brains: dict, health: dict, validation: dict, scores: dict, engi
                  for b in ALL_BRAINS}
     shadow = {b: brain_summary(b, brains.get(b), health.get(b), validation.get(b), None, jobs, now, manifest_brain=mb.get(b), slot_newest=slot_newest)
               for b in SHADOW_BRAINS if brains.get(b)}                     # never scored
-    fs = fleet_summary(fleet, now, (brains.get("lake-brain") or {}).get("directoryLakeCount"))
+    fs = fleet_summary(fleet, now, (brains.get("lake-brain") or {}).get("directoryLakeCount"), max_age=slot_max_age(mb, brains))
     src = {}
     for sid, rec in (sources or {}).items():
         rec = rec or {}

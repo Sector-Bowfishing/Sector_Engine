@@ -111,3 +111,23 @@ def test_fetch_facts_reads_every_profiled_lake_not_just_the_first_200():
     from score_brains import fetch_facts
     f = fetch_facts(_FakeDb(327))["lake"]
     assert len(f["profiles"]) == 327 and len(f["states"]) == 327 and f["profiledCount"] == 327
+
+
+def test_engine_alias_is_the_same_object_as_the_authoritative_node_and_retires_by_one_switch(monkeypatch):
+    """Cortex 2.2 audit C-2: /engine/score is a LEGACY alias of /scores/engine. It is written in the same update as the same object (it can never
+    diverge), only by the platform scorer, and the retirement switch stops it without touching /scores/engine or deleting the old node."""
+    eng = {"engineScore": 7.0, "engineScoreVersion": "e1", "dimensions": {"a": 2}, "updatedAt": "t1"}
+    updates, _ = plan_writes(all_scores(), brains(), NOW, eng, {}, all_scores())
+    assert updates["engine/score"] is updates["scores/engine"]
+    monkeypatch.setattr(score_brains, "WRITE_ENGINE_SCORE_ALIAS", False)
+    updates, _ = plan_writes(all_scores(), brains(), NOW, eng, {}, all_scores())
+    assert "scores/engine" in updates and "engine/score" not in updates                 # stop writing; no null (no implicit delete)
+
+
+def test_scorer_writes_only_platform_owned_score_roots():
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "brain_platform"))
+    from sector_brain_platform.ownership import path_allowed
+    eng = {"engineScore": 7.0, "engineScoreVersion": "e2", "dimensions": {"a": 3}, "updatedAt": "t1"}
+    updates, _ = plan_writes(all_scores(value=3.5), brains(), NOW, eng, {"engineScore": 6.0, "engineScoreVersion": "e1"}, all_scores())
+    assert updates and all(path_allowed("brain-platform", k) for k in updates)
+    assert all(k.split("/")[0] in ("scores", "engine", "activity") for k in updates)
