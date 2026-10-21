@@ -1,7 +1,7 @@
 """Minimal stdlib JSON Schema (2020-12 subset) validator.
 
 The repo's Python platform is stdlib-only, so Phase 1A schema checks must not add a
-dependency. Supported keywords: type, enum, const, required, properties,
+dependency. Supported keywords: type, enum, const, required, properties, if/then/else,
 additionalProperties (bool), items, minItems, maxItems, uniqueItems, minLength, pattern,
 minimum, maximum, exclusiveMinimum, $ref (local '#/...'), allOf, if/then. Unknown
 keywords are ignored (annotations such as description/title/$id).
@@ -80,9 +80,12 @@ def iter_errors(instance, schema, root=None, path="$"):
                 yield from iter_errors(instance[key], sub, root, f"{path}.{key}")
     for sub in schema.get("allOf", []):
         yield from iter_errors(instance, sub, root, path)
-    if "if" in schema and not list(iter_errors(instance, schema["if"], root, path)):
-        if "then" in schema:
-            yield from iter_errors(instance, schema["then"], root, path)
+    if "if" in schema:
+        if not list(iter_errors(instance, schema["if"], root, path)):
+            if "then" in schema:
+                yield from iter_errors(instance, schema["then"], root, path)
+        elif "else" in schema:
+            yield from iter_errors(instance, schema["else"], root, path)
 
 
 def validate(instance, schema):

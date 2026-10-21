@@ -33,6 +33,14 @@ jobs:
           cp "$GITHUB_WORKSPACE/jobs/brain-orchestrator/Dockerfile" .
           docker build -t verify/brain-orchestrator .
           docker run --rm --entrypoint python -w /job/jobs/sector-intelligence-brain verify/brain-orchestrator -c "import run; r, c, s = run.load_knowledge(); print(r['releaseId'], r['releaseDigest'])"
+          # engineering-status-ops-v1 staged for THIS commit; on a PR the gate must refuse it (unmerged code is never published as main)
+          docker run --rm --entrypoint python -w /job/jobs/brain-orchestrator -e DEPLOYMENT_VERSION="brain-orchestrator@${GITHUB_SHA::12}" verify/brain-orchestrator -c "
+          import os, sys; sys.path.insert(0, '../brain_platform')
+          from sector_brain_platform import engineering_status_publication as E
+          d = E.load_staged('.'); dv = os.environ['DEPLOYMENT_VERSION']
+          g = E.gate(d, deployed_commit=E.deployed_commit(dv), now_iso='2026-01-01T00:00:00Z', deployment_version=dv)
+          print('staged:', d and d['generatedFrom']['codeState'], '-> gate:', g['state'], g.get('reason'))
+          assert d is not None and d['generatedFrom']['codeState'] == 'UNMERGED_BRANCH' and g['state'] == 'UNAVAILABLE'"
 
   brain-jobs-image:
     name: brain-jobs image (root Dockerfile; Swift server + Brain jobs, Linux release build)

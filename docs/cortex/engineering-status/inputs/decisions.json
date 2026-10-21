@@ -157,8 +157,8 @@
     {
       "id": "O-1",
       "class": "GATED",
-      "title": "Publish the sanitized Ops projection (engineering-status-ops-v1) to the Brain RTDB node /control/engineeringStatusV1 from main's CI artifact",
-      "recommendation": "Approve the production write, the ownership entry for that node and (if from GitHub Actions) a CI write identity; no Ops rules change is needed. Until then nothing is published"
+      "title": "Turn on publication of the sanitized engineering status (engineering-status-ops-v1) to the Brain RTDB node /control/engineeringStatusV1 by the orchestrator control plane",
+      "recommendation": "After A-1 merge and A-2 deploy from main: add --publish-engineering-status to the orchestrator's scheduled arguments. Existing writer and /control ownership; no IAM, identity or Ops rules change"
     }
   ]
 }

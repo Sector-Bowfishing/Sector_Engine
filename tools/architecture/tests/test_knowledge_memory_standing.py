@@ -43,6 +43,7 @@ EXCEPTIONS = {
     ("brains/fish/runtime/tools/audit_bundle.py", "LEAK_TEXT"),                           # leak guard (denylist)
     ("jobs/brain_platform/sector_brain_platform/wind_measurements.py", "_LOCAL = re.compile"),   # guard: refuses local paths
     ("jobs/brain_platform/sector_brain_platform/score_explanation.py", "_PRIVATE = re.compile"),  # guard: redacts private paths
+    ("jobs/brain_platform/sector_brain_platform/engineering_status_publication.py", '("local path", r"'),   # guard: the Ops sanitizer's deny pattern
 }
 
 

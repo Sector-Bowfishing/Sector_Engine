@@ -20,63 +20,66 @@ There are two artifacts, with two visibility levels.
 
 Tests: `tools/architecture/tests/test_engineering_status.py` and `test_ops_projection.py` cover the schema, staleness, separate layers, certification provenance, leak refusal and the absence of any write capability.
 
-## Recommended secure read interface (needs decision O-1; nothing is published today)
+## Sector Ops consumer contract (stable; for the Sector Ops read-only consumer)
 
-**Path:** Brain RTDB (`sector-brain`) node **`/control/engineeringStatusV1`**, holding exactly one `engineering-status-ops-v1` document.
+| Item | Value |
+|---|---|
+| Schema | `engineering-status-ops-v1`, `schemaVersion` **1.1.0** (`contracts/schemas/engineering-status-ops-v1.schema.json`). Additive minors only; a breaking change becomes `-v2` at a new node |
+| Firebase path | Brain RTDB `sector-brain`, node **`/control/engineeringStatusV1`**: exactly one document |
+| Access | Ops' existing Firebase Auth plus the `/access/opsUsers/{uid}` allowlist. `/control` is readable by allowlisted users and writable by nobody from Ops. **No rules change.** Ops never writes |
+| Writer | Only the Brain Orchestrator control plane (platform-owned `/control`), with `orchestrate.py --publish-engineering-status`. **OFF until decision O-1** |
+| Update trigger | Each orchestrator cycle with the flag on re-gates the projection **staged into its own image** at deploy time, and rewrites the node only when the document changed. A new deploy of the orchestrator from `main` brings a new projection |
+| Source commit | `generatedFrom.sourceCommit` (40 hex) is the commit the projection describes. `publishedBy.deploymentVersion` is the orchestrator image that published it (`brain-orchestrator@<commit12>`). The gate requires them to agree |
+| Code state | `generatedFrom.codeState`: `MAIN_COMMIT` or `UNMERGED_BRANCH`; `generatedFrom.sourceBranch`: the git ref. Only `MAIN_COMMIT` is ever published. **Neither field says what production runs**: per-Brain production state is the `productionActivation` layer, which is never `PASS` from repository evidence |
+| Freshness | `generatedFrom.evaluatedAt` (evidence date), `generatedFrom.generatedAt` (emission), `checkedAt` (the publisher's last gate), `generatedFrom.certificationCurrent`, `generatedFrom.verificationCommit` |
 
-- **Why this path:** Sector Ops is a browser-only SPA on Firebase Hosting. It reads only the Brain RTDB, through its subscription hub with an IndexedDB cache, behind Firebase Auth and the `/access/opsUsers/{uid}` allowlist. `/control` is already readable by allowlisted users and writable by nobody in Ops' rules, so **no rules change** is needed. Ops gets push updates and caching for free.
+**Document states** (top-level `state`):
+- `AVAILABLE`: the full document.
+- `UNAVAILABLE`: only `schema`, `schemaVersion`, `state`, `reason`, `checkedAt` and optionally `publishedBy`. Reasons include:
+  - no projection in this image;
+  - projection rejected (schema, leak or missing layer);
+  - unmerged code;
+  - certification not for this code;
+  - commit does not match the deployed commit.
 
-**Rejected alternatives:**
-- **Fetching the private GitHub repository from the browser:** it needs a token in the client.
-- **Shipping JSON in the Ops bundle:** Ops' scanner fails any bundled JSON other than the lake directory.
-- **A new service or portal:** out of scope.
+**AVAILABLE payload:**
+- `reportId`, `standards` {framework, version, pin}, `statusVocabulary`.
+- `generatedFrom` {sourceCommit, sourceDigest, certificationCurrent, evaluatedAt, reportSchemaVersion, codeState, sourceBranch, verificationCommit, generatedAt?, ci?}.
+- `brains[8]`, each with:
+  - `brainId`, `packageName`, `lifecycle`, `packageStatus`;
+  - `statusLayers` (seven, each {status, label});
+  - `certification` {status, proofs{P01..P19}, mutationsPassed, mutationsFailed};
+  - `memory` {checkId: {branch, production}};
+  - `requirements` {BR-id: status};
+  - `structuralProblems[]`, `scienceDependencies[]`, `nextWork[]`, `blockers[]`.
+- `decisions[]` {id, class, title, brains?} and `recentChanges[]` {commit, summary}.
 
-**Writer (proposed):** an Engine-owned publish step that writes **only** the projection, **only** from `main` after its CI passed (the artifact of the merge commit), with the existing Brain-RTDB writer identity.
-
-This needs, as separate approvals:
-1. The production Firebase write itself (PROJECT §7).
-2. An ownership entry for `/control/engineeringStatusV1` in `sector_brain_platform.ownership`.
-3. If it runs from GitHub Actions, a CI identity able to write. That is an IAM change, for example Workload Identity Federation.
-
-Until then, an operator can download the `engineering-status` artifact of a commit; nothing is pushed automatically.
-
-## Read contract for Sector Ops (consumer requirements)
-
-1. **Subscribe:** read `/control/engineeringStatusV1` with the existing `useBrain`-style hub. Read-only; no write API.
-2. **Contract check:**
-   - Require `schema == "engineering-status-ops-v1"` and a `schemaVersion` with major `1`.
-   - Otherwise show **"Engineering status unavailable (unsupported contract)"**. Never guess fields.
-3. **Provenance banner (always visible):**
-   - `generatedFrom.sourceCommit` (first 12 characters), `generatedFrom.evaluatedAt`, `standards.version @ standards.pin`.
-   - `generatedFrom.ci.result` when present.
-4. **Failure states:**
+**Required consumer behaviour:**
 
 | Condition | Show |
 |---|---|
-| Node absent | "Engineering status not published" (the expected state until O-1) |
-| `certificationCurrent == false` | Certification layers are already `NOT_VERIFIED` in the document. Show them as such and add "certification run is not for this commit" |
-| `ci.result` not `PASS` | Warning banner with the counts |
-| `evaluatedAt` older than 14 days | "stale" label. Ops computes this as a label only and never changes a status |
+| Node absent | "Engineering status not published" (the expected state before O-1) |
+| `schema` or major version unknown | "unsupported contract". Never guess fields |
+| `state == UNAVAILABLE` | the `reason` and `checkedAt`; show no stale data |
+| `certificationCurrent == false` (never published, but handle it) | certification as "not verified for this code" |
+| `ci.result` present and not `PASS` | a warning |
+| `evaluatedAt` older than 14 days | "stale" label only. Never change a status |
 
-5. **Per Brain:**
-   - Render the **seven `statusLayers` separately**: canonicalStructure, structuralCertification, scientificValidation, approvedMemoryRelease, operationalReadiness, productionActivation, customerConsumable. **Never** combine them into one flag and never infer PASS.
-   - Show `certification.proofs` (P01–P19: PASS / NOT_APPLICABLE / FAIL) and `memory` (six standing checks, branch / production).
-   - Show `structuralProblems`, `scienceDependencies`, `nextWork` and `blockers`. Resolve blocker ids against `decisions`.
-6. **Ecosystem view:**
-   - Counts per layer and status across the eight Brains.
-   - `decisions` grouped by `class` (APPROVAL / DECISION_REQUIRED / GATED).
-   - `recentChanges` as "latest verified engineering activity".
-7. **Mapping to the Brain Progress milestones** (`OPS_BRAIN_PROGRESS_SYNC_V1`):
+- Render the seven layers **separately**. Never collapse them and never infer PASS.
+- Display only; no scores, approvals or controls.
 
-| Brain Progress milestone | Engineering layer |
-|---|---|
-| research recorded | `scienceDependencies` |
-| knowledge validated | `scientificValidation` |
-| capability evaluated | (Brain RTDB, not here) |
-| state published | `operationalReadiness` / `productionActivation` |
-| operationally available | `productionActivation` |
-| customer-consumable | `customerConsumable` |
+**Before O-1:** nothing is written and the node does not exist. For development, a consumer can use the CI artifact `engineering-status` → `engineering-status-ops.json` of any commit as a fixture. That projection is labelled `UNMERGED_BRANCH` and must be shown as development data, not as published status.
 
-   The structural layers (`canonicalStructure`, `structuralCertification`) are new and belong to an "Architecture" lane.
+## Readiness for O-1 (what approving it turns on)
 
-8. **No authority:** Ops never derives scores, execution controls or approvals from this document. It is display only.
+1. Merge PR #40 (A-1), then deploy the orchestrator from `main` (A-2). Its staging produces the projection for that commit (`MAIN_COMMIT`).
+2. Add `--publish-engineering-status` to the orchestrator's scheduled arguments: a production schedule and argument change (O-1).
+
+No new writer, identity, IAM change or Ops rules change is needed. The node is platform-owned `/control`, written by the existing control-plane writer.
+
+**Verified before approval** (`tools/architecture/tests/test_engineering_status_publication.py`; CI image check):
+- the gate refuses every invalid case with an explicit, schema-valid UNAVAILABLE;
+- one sanitizer serves producer and publisher;
+- the write sits only behind the flag;
+- the full report never enters the image;
+- a PR image's projection is refused as unmerged.

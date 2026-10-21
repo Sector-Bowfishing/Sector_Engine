@@ -20,6 +20,9 @@ One hourly wake-up (Cloud Scheduler → this scale-to-zero Cloud Run job, 1 vCPU
   python3 orchestrate.py                      the hourly cycle
   python3 orchestrate.py --health-only        evaluate and publish ONLY control/healthV1 (brain-health-v1); no /jobs write, no execution,
                                               no scores, no control/orchestratorV1 write, no legacy record (health-plane-publication-v1)
+  python3 orchestrate.py ... --publish-engineering-status
+                                              also publish control/engineeringStatusV1 (engineering-status-ops-v1) from the projection
+                                              staged in this image; OFF by default (decision O-1). --emit-engineering-status FILE: review only
 
 env: BRAIN_RTDB_URL, ORCHESTRATOR_SCOPE (pilots|fleet, Lake Brain; default pilots), WATER_TEMP_SCOPE (fleet|pilots; default
      fleet — a per-lake Water Temp run leaves the registry's fleet counts empty), LAKE_BRAIN_ARCHIVE (gs:// bucket name
@@ -41,6 +44,7 @@ from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_
                                    jobs_changed_paths, orchestrate)
 from sector_brain_platform import gcp                                                                                 # noqa: E402
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
+from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -246,6 +250,10 @@ def main(argv=None) -> int:
     ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
     ap.add_argument("--emit-health-state", default=None, metavar="FILE", help="write the computed brain-health-v1 state (control/healthV1) JSON here (review, samples)")
     ap.add_argument("--publish-health", action="store_true", help="also publish control/healthV1 (brain-health-v1). OFF by default: enabling it is a recorded decision")
+    ap.add_argument("--emit-engineering-status", default=None, metavar="FILE",
+                    help="write the gated control/engineeringStatusV1 document (engineering-status-ops-v1) here; never writes the database")
+    ap.add_argument("--publish-engineering-status", action="store_true",
+                    help="also publish control/engineeringStatusV1 from the projection staged in THIS image. OFF by default: enabling it is decision O-1")
     ap.add_argument("--health-only", action="store_true", help="publish ONLY control/healthV1: implies --control-only and --publish-health, and additionally writes no control/orchestratorV1 "
                                                                "and asks no Brain for a plan (the exact write set is control/healthV1/* and nothing else)")
     a = ap.parse_args(argv)
@@ -402,6 +410,22 @@ def main(argv=None) -> int:
                       f"codeVersion {health_cp['summary'].get('codeVersion')}")
     except Exception as e:                                       # the control plane must never break the cycle or the score publication
         print(f"control plane: FAILED {e!r}", file=sys.stderr)
+
+    # 5c. engineering status for Sector Ops (engineering-status-ops-v1 at control/engineeringStatusV1). The document comes ONLY from the projection
+    #     staged into this image at deploy time (the exact deployed commit); ESP.gate() publishes it or an explicit UNAVAILABLE with the reason.
+    #     Computed only when asked for; written only with --publish-engineering-status (decision O-1). It never changes what runs.
+    if a.emit_engineering_status or a.publish_engineering_status:
+        try:
+            dv = os.environ.get("DEPLOYMENT_VERSION")
+            es_doc = ESP.gate(ESP.load_staged(HERE), deployed_commit=ESP.deployed_commit(dv), now_iso=iso(now), deployment_version=dv)
+            if a.emit_engineering_status:
+                json.dump(es_doc, open(a.emit_engineering_status, "w"), indent=1, sort_keys=True)
+            if a.publish_engineering_status and (write or a.dry_run):
+                db.update({ESP.NODE: es_doc})
+            print(f"engineering status: {es_doc['state']}" + (f" ({es_doc['reason']})" if es_doc.get("reason") else
+                  f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status else " (not published)"))
+        except Exception as e:                                   # never breaks the cycle
+            print(f"engineering status: FAILED {e!r}", file=sys.stderr)
 
     # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),

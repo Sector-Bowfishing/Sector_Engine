@@ -92,6 +92,21 @@ cp "$ROOT/providers/PROVIDERS.json" stage/providers/
 mkdir -p stage/docs/brains/scoring/evidence
 cp "$ROOT/docs/brains/scoring/wind-specialist-capability-v2.json" stage/docs/brains/scoring/
 cp "$ROOT/docs/brains/scoring/evidence/wind-measurements-evidence.json" stage/docs/brains/scoring/evidence/
+# Sector Ops engineering status (engineering-status-ops-v1): the SANITIZED projection of exactly this commit, published only with
+# --publish-engineering-status (decision O-1). A stale or invalid report stages nothing: the orchestrator then publishes an explicit UNAVAILABLE
+# instead of an older status. The full internal report never enters the image.
+ES_STATE=UNMERGED_BRANCH
+git -C "$ROOT" merge-base --is-ancestor HEAD origin/main 2>/dev/null && ES_STATE=MAIN_COMMIT
+if python3 "$ROOT/tools/cortex_status/build_engineering_status.py" --emit stage/es-full.json --commit "$(git -C "$ROOT" rev-parse HEAD)" \
+   && python3 "$ROOT/tools/cortex_status/ops_projection.py" --report stage/es-full.json --code-state "$ES_STATE" \
+        --branch "$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)" --generated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --out stage/jobs/brain-orchestrator/engineering-status-ops.json; then
+  echo "engineering status: staged ($ES_STATE)"
+else
+  echo "engineering status: NOT staged (stale or invalid report); the orchestrator will publish UNAVAILABLE"
+  rm -f stage/jobs/brain-orchestrator/engineering-status-ops.json
+fi
+rm -f stage/es-full.json
 find stage -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'tests' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'test_*.py' -delete

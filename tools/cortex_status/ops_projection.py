@@ -21,23 +21,27 @@ SCHEMA = os.path.join(ROOT, "contracts", "schemas", "engineering-status-ops-v1.s
 sys.path.insert(0, os.path.join(ROOT, "tools", "architecture"))
 from jsonschema_lite import validate  # noqa: E402
 
-FORBIDDEN = [
-    ("gs:// URI", r"gs://"), ("local path", r"/Users/[A-Za-z0-9._-]+|Desktop/Development|Library/Caches|Application Support|/home/[a-z]"),
-    ("private resource", r"sector-biology-private|sector-lake-brain|sector-wind-candidate|sector-water-temp-archive|sector-clarity-candidate|run-sources-sector-9393c|gcf-(v2-)?sources-"),
-    ("credential", r"private_key|BEGIN [A-Z ]*PRIVATE KEY|client_secret|ghp_|github_pat_|AKIA[0-9A-Z]{8}|ya29\.|xox[abpr]-|sk-ant-|iam\.gserviceaccount\.com"),
-    ("repository file path", r"\b[\w.-]+/[\w./{}-]*\.(py|json|md|swift|sh|yml|yaml|txt|csv)\b|\b(docs|brains|jobs|tools|contracts|Sources|Tests)/[\w./-]+"),
-    ("branch or repository name", r"\b(cortex|feat|fix|docs|cert|security)/[\w.-]+-\d{4}|Sector-Bowfishing|Sector_Engine"),
-    ("image or digest", r"sha256:[0-9a-f]{12}|brain-jobs:[0-9a-f]+|@sha256"),
-]
+sys.path.insert(0, os.path.join(ROOT, "jobs", "brain_platform"))
+from sector_brain_platform.engineering_status_publication import FORBIDDEN, leaks  # noqa: E402,F401  (ONE sanitizer, shared with the publisher)
+
+CODE_STATES = ("UNMERGED_BRANCH", "MAIN_COMMIT")
 
 
-def project(report: dict, ci: dict | None = None) -> dict:
+def project(report: dict, ci: dict | None = None, *, branch: str | None = None, code_state: str = "UNMERGED_BRANCH",
+            generated_at: str | None = None) -> dict:
+    """branch / code_state describe WHERE the evaluated commit lives (a PR branch is UNMERGED_BRANCH; only a commit on main is MAIN_COMMIT).
+    Neither says anything about production: production state stays in the per-Brain productionActivation layer."""
+    if code_state not in CODE_STATES:
+        raise SystemExit(f"code state must be one of {CODE_STATES}")
     src = report["source"]
     commit = src["evaluatedCommit"]
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise SystemExit("the report is not commit-stamped (needs a full 40-hex evaluatedCommit from CI --emit --commit $GITHUB_SHA)")
     gen = {"sourceCommit": commit, "sourceDigest": src["sourceDigest"], "certificationCurrent": bool(src.get("certificationCurrent")),
-           "evaluatedAt": src["evaluatedAt"], "reportSchemaVersion": report["schemaVersion"]}
+           "evaluatedAt": src["evaluatedAt"], "reportSchemaVersion": report["schemaVersion"], "codeState": code_state,
+           "sourceBranch": branch or src.get("branch") or "unknown", "verificationCommit": src.get("verificationCommit", "NONE")}
+    if generated_at:
+        gen["generatedAt"] = generated_at
     if ci:
         gen["ci"] = {k: ci[k] for k in ("result", "passed", "failed", "pending") if k in ci}
     brains = []
@@ -47,7 +51,7 @@ def project(report: dict, ci: dict | None = None) -> dict:
             cert["mutationsPassed"] = b["certificationMutations"].get("passed", 0)
             cert["mutationsFailed"] = b["certificationMutations"].get("failed", 0)
         brains.append({
-            "brainId": b["brainId"], "lifecycle": b["lifecycle"], "packageStatus": b["packageStatus"],
+            "brainId": b["brainId"], "packageName": b["directory"].split("/")[-1].split(":")[-1], "lifecycle": b["lifecycle"], "packageStatus": b["packageStatus"],
             "statusLayers": {k: {"status": v["status"], "label": v["label"]} for k, v in b["statusLayers"].items()},     # evidence strings dropped
             "certification": cert,
             "memory": {m["check"]: {"branch": m["branch"], "production": m["production"]} for m in b["memory"]},        # evidence strings dropped
@@ -55,7 +59,7 @@ def project(report: dict, ci: dict | None = None) -> dict:
             "structuralProblems": b.get("structuralProblems", []), "scienceDependencies": b.get("scienceDependencies", []),
             "nextWork": b.get("nextWork", []), "blockers": b.get("blockers", [])})
     st = report["standards"]
-    out = {"schema": "engineering-status-ops-v1", "schemaVersion": "1.0.0", "reportId": report["reportId"], "generatedFrom": gen,
+    out = {"schema": "engineering-status-ops-v1", "schemaVersion": "1.1.0", "state": "AVAILABLE", "reportId": report["reportId"], "generatedFrom": gen,
            "standards": {"framework": st["framework"], "version": st["version"], "pin": st["pin"]}, "statusVocabulary": report["statusVocabulary"],
            "brains": brains,
            "decisions": [{k: d[k] for k in ("id", "class", "title", "brains") if k in d} for d in report["decisions"]]}
@@ -72,32 +76,19 @@ def _commit_summary(text: str) -> str:
     return t[:240]
 
 
-def leaks(obj, path="") -> list[str]:
-    out = []
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            out += leaks(k, f"{path}/<key>") + leaks(v, f"{path}/{k}")
-    elif isinstance(obj, list):
-        for i, v in enumerate(obj):
-            out += leaks(v, f"{path}[{i}]")
-    elif isinstance(obj, str):
-        if path.endswith("/sourceDigest"):
-            return out                                        # the content digest is provenance, not an artifact reference
-        for name, rx in FORBIDDEN:
-            if re.search(rx, obj):
-                out.append(f"{path}: {name}: {obj[:80]!r}")
-    return out
-
-
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--report", required=True)
     ap.add_argument("--ci")
+    ap.add_argument("--branch", help="the git ref the evaluated commit was taken from (CI: github.head_ref or github.ref_name)")
+    ap.add_argument("--code-state", default="UNMERGED_BRANCH", choices=CODE_STATES)
+    ap.add_argument("--generated-at", help="emission time, ISO-8601 UTC (CI)")
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--out")
     g.add_argument("--check", action="store_true")
     a = ap.parse_args(argv)
-    proj = project(json.load(open(a.report, encoding="utf-8")), json.load(open(a.ci, encoding="utf-8")) if a.ci else None)
+    proj = project(json.load(open(a.report, encoding="utf-8")), json.load(open(a.ci, encoding="utf-8")) if a.ci else None,
+                   branch=a.branch, code_state=a.code_state, generated_at=a.generated_at)
     errs = list(validate(proj, json.load(open(SCHEMA, encoding="utf-8"))))
     bad = leaks(proj)
     if errs or bad:
