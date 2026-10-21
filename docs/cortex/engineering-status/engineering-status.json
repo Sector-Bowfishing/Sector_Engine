@@ -1,0 +1,917 @@
+{
+  "schema": "engineering-status-v1",
+  "schemaVersion": "1.0.0",
+  "reportId": "sector-engine-engineering-status-2026-10-20.1",
+  "standards": {
+    "framework": "Rehtac Cortex",
+    "version": "2.1.0",
+    "pin": "0f9ee75",
+    "pack": "sector/engine"
+  },
+  "source": {
+    "repository": "Sector-Bowfishing/Sector_Engine",
+    "branch": "cortex/architecture-standardization-2026-10-20",
+    "evaluatedCommit": "44ad7121",
+    "evaluatedAt": "2026-10-20",
+    "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-memory.md",
+    "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED."
+  },
+  "statusVocabulary": [
+    "PASS",
+    "FAIL",
+    "PARTIAL",
+    "NOT_VERIFIED",
+    "NOT_APPLICABLE"
+  ],
+  "brains": [
+    {
+      "brainId": "biological-state",
+      "directory": "brains/fish",
+      "lifecycle": "PROFILED",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 P01-P19 (brains/fish/tests)"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "NOT_VERIFIED",
+          "evidence": "brain.json knowledge: PRIVATE_BUCKET_RELEASE gs://sector-biology-private/biology/v1, owner biological-state, researchFallback false; standing gate test_knowledge_memory_standing.py"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "Kit P16 + standing scan; capability_run.py is a documented local-only research entry point (writes local files, in no job)"
+        },
+        {
+          "check": "release-identity",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "load_bundle: latest.json manifestSha256 -> per-file sha256/bytes; researchVersion + manifestSha256 in registry and artifact lineage. Same chain present at deployed 7dae7051"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "PASS",
+          "production": "PARTIAL",
+          "evidence": "branch: missing/corrupt pointer or artifact -> BundleError, exit 2 REFUSED, nothing published (tests/test_knowledge_memory.py, 5). Deployed 7dae7051 fails closed but a missing or corrupt pointer crashes with a traceback (exit 1) instead of REFUSED"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PARTIAL",
+          "production": "PARTIAL",
+          "evidence": "separation PASS (Kit P17, clean-environment test); no named approval record for the bundle release (approval NOT_RECORDED). Rubric 2.1.0 approval covers scoring, not bundle content"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "in-process in the Cloud Run orchestrator; no Pulse/Mac/localhost target in runtime or deploy code (standing scan)"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 5,
+          "PARTIAL": 1
+        },
+        "production": {
+          "PASS": 3,
+          "PARTIAL": 2,
+          "NOT_VERIFIED": 1
+        }
+      },
+      "recovery": "Memory lives in the private bucket, outside the container; every run re-reads and re-verifies it, so restart and redeploy need no local state. Live recovery NOT_VERIFIED.",
+      "blockers": []
+    },
+    {
+      "brainId": "depth",
+      "directory": "branch:feat/depth-brain-foundation:jobs/depth-brain",
+      "lifecycle": "PROFILED",
+      "packageStatus": "BRANCH_ONLY",
+      "structuralCertification": {
+        "status": "FAIL",
+        "evidence": "no package on main; blocked by G-1 and D-A"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "FAIL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no package on main; branch runtime reads 4 package-data files (candidates.json 1.06 MB, claim_levels, maturity_inputs, stage_area_curves) with no release manifest or approval of content"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "FAIL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "branch data datum_providers.json and twdb_prereg.json carry /Users/ paths (not read by code); build tool parses Lake Swift source (contract reviewed-lake-bindings-v1 now offered)"
+        },
+        {
+          "check": "release-identity",
+          "branch": "FAIL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no release id or digest"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "NOT_VERIFIED",
+          "production": "NOT_APPLICABLE",
+          "evidence": "not tested"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "FAIL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "research maturity rubric evaluated inside the runtime; no content approval record"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "runs locally only (no cloud job); orchestration approved to prepare, not schedule"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "FAIL": 4,
+          "PARTIAL": 1,
+          "NOT_VERIFIED": 1
+        },
+        "production": {
+          "NOT_APPLICABLE": 6
+        }
+      },
+      "recovery": "Not deployed.",
+      "blockers": [
+        "G-1",
+        "D-A"
+      ]
+    },
+    {
+      "brainId": "lake-brain",
+      "directory": "brains/lake",
+      "lifecycle": "CALIBRATION",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 P01-P13, P15-P19; P14 NOT_APPLICABLE (Swift writes)"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "NOT_VERIFIED",
+          "evidence": "brain.json knowledge: compiled reviewed bindings + private presence release in gs://sector-lake-brain; baselines declared as derived operational state"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PASS",
+          "production": "NOT_VERIFIED",
+          "evidence": "standing scan over runtime + Sources/SectorEngine; arch invariant 9"
+        },
+        {
+          "check": "release-identity",
+          "branch": "PARTIAL",
+          "production": "NOT_VERIFIED",
+          "evidence": "bindings: bindingVersion in provenance (compiled, cannot drift). Presence: FNV-1a fingerprint (not a cryptographic digest) checked against the pointer; fingerprint in sourceRef. No release id in the shadow artifact lineage (NONE)"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "PASS",
+          "production": "NOT_VERIFIED",
+          "evidence": "LakeKnowledgeMemoryTests (7): no pointer -> nil (presence not written); missing/tampered/corrupt/inconsistent release throws; runner records presenceError and writes no presence node"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PARTIAL",
+          "production": "NOT_VERIFIED",
+          "evidence": "research separated (Kit P17); reviewed bindings carry reviewedAt per row; no release-level approval record (NOT_RECORDED)"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "NOT_VERIFIED",
+          "evidence": "Cloud Run job lake-brain; local archives only via explicit flags"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 4,
+          "PARTIAL": 2
+        },
+        "production": {
+          "NOT_VERIFIED": 6
+        }
+      },
+      "recovery": "Bindings are compiled; presence and baselines live in the Brain's bucket and are re-read each run. Deployed image is off-main lineage: NOT_VERIFIED.",
+      "blockers": [
+        "M-7"
+      ]
+    },
+    {
+      "brainId": "sector-intelligence",
+      "directory": "brains/sector-intelligence",
+      "lifecycle": "CALIBRATION",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 P01-P19 with release lineage"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "FAIL",
+          "evidence": "branch: PACKAGED_IN_IMAGE release over catalog.json, staged by the orchestrator deploy. Deployed image has no manifest"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "Kit P16 + standing scan"
+        },
+        {
+          "check": "release-identity",
+          "branch": "PARTIAL",
+          "production": "FAIL",
+          "evidence": "branch: verified on load (run.load_knowledge); release id/digest in run summary and shadow artifact lineage; legacy outputs unchanged. Not deployed"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "PASS",
+          "production": "FAIL",
+          "evidence": "branch: missing/tampered release -> exit 2 REFUSED (tests/test_knowledge_memory.py, 5)"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PARTIAL",
+          "production": "PARTIAL",
+          "evidence": "catalog is hand-reviewed (catalogVersion 2026-10-20.1) but no named approval record; approval NOT_RECORDED"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "in-process in the Cloud Run orchestrator"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 4,
+          "PARTIAL": 2
+        },
+        "production": {
+          "PASS": 2,
+          "FAIL": 3,
+          "PARTIAL": 1
+        }
+      },
+      "recovery": "Knowledge ships in the orchestrator image. Live recovery NOT_VERIFIED.",
+      "blockers": []
+    },
+    {
+      "brainId": "vegetation",
+      "directory": "branch:feat/vegetation-brain-foundation:jobs/vegetation-brain",
+      "lifecycle": "SHADOW",
+      "packageStatus": "BRANCH_ONLY",
+      "structuralCertification": {
+        "status": "FAIL",
+        "evidence": "no package on main; blocked by G-1 and D-B"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "FAIL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no package on main; branch package data has no release manifest"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "NOT_VERIFIED",
+          "production": "NOT_APPLICABLE",
+          "evidence": "not re-scanned this session"
+        },
+        {
+          "check": "release-identity",
+          "branch": "FAIL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no release id or digest"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "NOT_VERIFIED",
+          "production": "NOT_APPLICABLE",
+          "evidence": "not tested"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "FAIL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "runtime maturity/evidence check reads ~25 research documents; in-Brain maturity score"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "manual pilot runs only"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "FAIL": 3,
+          "PARTIAL": 1,
+          "NOT_VERIFIED": 2
+        },
+        "production": {
+          "NOT_APPLICABLE": 6
+        }
+      },
+      "recovery": "Not deployed.",
+      "blockers": [
+        "G-1",
+        "D-B"
+      ]
+    },
+    {
+      "brainId": "water-clarity",
+      "directory": "brains/water-clarity",
+      "lifecycle": "CALIBRATION",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 P01-P19 with release lineage (brains/water-clarity/tests/test_clarity_kit_certification.py)"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "FAIL",
+          "evidence": "branch: PACKAGED_IN_IMAGE release over catalog.json. Production image has no release manifest"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PARTIAL",
+          "production": "PASS",
+          "evidence": "no developer-machine path. run.py keeps a repo-relative polygon fallback (jobs/lake-surface/polygons.geojson.gz) used only outside the image; the image packages the file"
+        },
+        {
+          "check": "release-identity",
+          "branch": "PARTIAL",
+          "production": "FAIL",
+          "evidence": "branch: catalog read only after the release verifies; release in the shadow artifact lineage. Legacy outputs carry catalogSha256 but no release id. Not deployed"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "PASS",
+          "production": "FAIL",
+          "evidence": "branch: missing/tampered release -> exit 2 REFUSED (tests/test_knowledge_memory.py, 4). The private overlay degrades explicitly (PRIVATE_OVERLAY_UNAVAILABLE) and is not digest-verified"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PARTIAL",
+          "production": "PARTIAL",
+          "evidence": "public catalog separated from private research overlay (privacy test). Approval NOT_RECORDED"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "manual Cloud Run job water-clarity-brain; no Pulse target"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 3,
+          "PARTIAL": 3
+        },
+        "production": {
+          "PASS": 2,
+          "FAIL": 3,
+          "PARTIAL": 1
+        }
+      },
+      "recovery": "Knowledge ships in the image; the optional overlay is read each run from a private URI. Live recovery NOT_VERIFIED.",
+      "blockers": [
+        "M-5",
+        "M-6"
+      ]
+    },
+    {
+      "brainId": "water-temp",
+      "directory": "brains/water-temperature",
+      "lifecycle": "CALIBRATION",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 P01-P13, P15-P19; P14 NOT_APPLICABLE (Swift writes)"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "no persistent knowledge store: the model is compiled code over live inputs (declared COMPILED_IN_BINARY)"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PASS",
+          "production": "NOT_VERIFIED",
+          "evidence": "standing scan"
+        },
+        {
+          "check": "release-identity",
+          "branch": "NOT_APPLICABLE",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no knowledge release; brainVersion/processingVersion identify the model"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "NOT_APPLICABLE",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no memory to lose; missing live inputs degrade (WaterTemperatureTests.testMissingEnergyInputsDegradeInsteadOfGoingCold)"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "Kit P17"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "NOT_VERIFIED",
+          "evidence": "Cloud Run job water-temp-brain"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 4,
+          "NOT_APPLICABLE": 2
+        },
+        "production": {
+          "PASS": 2,
+          "NOT_VERIFIED": 2,
+          "NOT_APPLICABLE": 2
+        }
+      },
+      "recovery": "Stateless model; nothing to recover.",
+      "blockers": []
+    },
+    {
+      "brainId": "wind",
+      "directory": "brains/wind",
+      "lifecycle": "CALIBRATION",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 P01-P19 with release lineage (brains/wind/tests/test_wind_kit_certification.py)"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "FAIL",
+          "evidence": "branch: PACKAGED_IN_IMAGE release brains/wind/runtime/knowledge-release.json (lakes.json, validation_evidence.json). Production image has no release manifest"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "Kit P16 + standing scan; wind_measurements.py regex is a guard that refuses local paths"
+        },
+        {
+          "check": "release-identity",
+          "branch": "PARTIAL",
+          "production": "FAIL",
+          "evidence": "branch: verified on load (ingest.verified_release via load_config); release id/digest in the shadow artifact lineage (Kit P09). Legacy RTDB outputs carry no release id (adding it is decision-required). Not deployed"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "PASS",
+          "production": "FAIL",
+          "evidence": "branch: missing or tampered release raises KnowledgeReleaseError before any ingest (tests/test_knowledge_memory.py, 5; staged-image test). Deployed code reads lakes.json unverified"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PARTIAL",
+          "production": "PARTIAL",
+          "evidence": "separation PASS (research/tools isolated; package gate). Approval NOT_RECORDED; validation evidence frozen but no named release approval"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "PASS",
+          "evidence": "Cloud Run job wind-hourly; gs:// store requires SECTOR_WIND_GCS_APPROVED; no Pulse target"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 4,
+          "PARTIAL": 2
+        },
+        "production": {
+          "PASS": 2,
+          "FAIL": 3,
+          "PARTIAL": 1
+        }
+      },
+      "recovery": "Knowledge ships in the image (immutable per revision). The forecast archive is operational state in the Brain's own bucket. Live recovery NOT_VERIFIED.",
+      "blockers": []
+    }
+  ],
+  "verification": [
+    {
+      "suite": "jobs/brain_platform",
+      "command": "pytest (per CI job)",
+      "result": "PASS",
+      "passed": 735,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/brain-orchestrator",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/brain-scores",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 35,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-surface-dispatch",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/water-temp-tva-archive",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/bindings",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/ledger",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/validation",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 70,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/review",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-geometry",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "brains/fish",
+      "command": "pytest (domain + Kit V1)",
+      "result": "PASS",
+      "passed": 400,
+      "failed": 0,
+      "skipped": 2
+    },
+    {
+      "suite": "brains/lake",
+      "command": "pytest (Python publication + Kit V1)",
+      "result": "PASS",
+      "passed": 49,
+      "failed": 0,
+      "skipped": 4
+    },
+    {
+      "suite": "brains/sector-intelligence",
+      "command": "pytest (domain + Kit V1 + memory)",
+      "result": "PASS",
+      "passed": 96,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "brains/water-clarity",
+      "command": "pytest (domain + Kit V1 + memory)",
+      "result": "PASS",
+      "passed": 131,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "brains/water-temperature",
+      "command": "pytest (Python publication + Kit V1)",
+      "result": "PASS",
+      "passed": 50,
+      "failed": 0,
+      "skipped": 4
+    },
+    {
+      "suite": "brains/wind",
+      "command": "pytest (domain + Kit V1 + memory)",
+      "result": "PASS",
+      "passed": 220,
+      "failed": 0,
+      "skipped": 0,
+      "note": "16 network tests deselected by pytest.ini"
+    },
+    {
+      "suite": "tools/brain_certification",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "tools/architecture",
+      "command": "pytest (identity, foundation, standing memory checks)",
+      "result": "PASS",
+      "passed": 112,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "verification",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "verification/integration/test_wind_package.py",
+      "command": "SECTOR_REQUIRE_WIND_DEPS=1 pytest",
+      "result": "PASS",
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "note": "staged image verifies its packaged release"
+    },
+    {
+      "suite": "swift",
+      "command": "swift build --build-tests && swift test",
+      "result": "PASS",
+      "passed": 325,
+      "failed": 0,
+      "skipped": 0,
+      "note": "macOS arm64; Linux CI not run locally"
+    },
+    {
+      "suite": "describe_contract --check",
+      "command": "6 publication contracts match the Publisher registry",
+      "result": "PASS",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "knowledge manifests --check",
+      "command": "tools/knowledge/build_release_manifest.py --check (3 releases)",
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "deploy --stage-only",
+      "command": "wind, water-clarity staged contexts include knowledge-release.json",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "orchestrator staging (extracted, no gcloud)",
+      "command": "staging block of jobs/brain-orchestrator/deploy-job.sh in scratch; staged Intelligence verifies its release in a clean env",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "note": "deploy-job.sh itself was not run: it calls gcloud before staging"
+    },
+    {
+      "suite": "architecture report",
+      "command": "tools/architecture/report.py and --legacy --baseline",
+      "result": "PASS",
+      "note": "report-only, exit 0"
+    },
+    {
+      "suite": "docker build",
+      "command": "docker build of the staged contexts",
+      "result": "NOT_RUN",
+      "note": "Docker is not available on this machine; staged COPY sets were checked instead"
+    },
+    {
+      "suite": "Linux CI",
+      "command": ".github/workflows (Swift on Linux, Python jobs)",
+      "result": "NOT_RUN",
+      "note": "runs only after an approved push"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "A-1",
+      "class": "APPROVAL",
+      "title": "Push cortex/architecture-standardization-2026-10-20 and open a draft PR to main",
+      "recommendation": "Approve; Linux CI then runs Swift and every Python job"
+    },
+    {
+      "id": "A-2",
+      "class": "APPROVAL",
+      "title": "Deploy (brain-jobs image, orchestrator image, wind-hourly, water-clarity-brain) after merge",
+      "recommendation": "Deploy only with the lineage preflight; the Lake image stays on its own lineage"
+    },
+    {
+      "id": "A-3",
+      "class": "APPROVAL",
+      "title": "Read-only production checks: deployed image contents, bucket pointers, scheduler state",
+      "recommendation": "Approve before A-2; turns NOT_VERIFIED production cells into evidence"
+    },
+    {
+      "id": "M-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Adopt packaged knowledge releases: runtime verifies knowledge-release.json and refuses on missing or tampered memory; the manifest is added to the Wind, Clarity and orchestrator images",
+      "recommendation": "Accept (implemented locally, isolated commits 4ac482e6, 78d55294); takes effect only on an approved deploy",
+      "brains": [
+        "wind",
+        "water-clarity",
+        "sector-intelligence"
+      ]
+    },
+    {
+      "id": "M-2",
+      "class": "DECISION_REQUIRED",
+      "title": "Fish: a missing or corrupt bundle now exits 2 with REFUSED instead of a traceback (exit 1)",
+      "recommendation": "Accept (19e9824c); the orchestrator treats every nonzero exit as not published",
+      "brains": [
+        "biological-state"
+      ]
+    },
+    {
+      "id": "M-3",
+      "class": "DECISION_REQUIRED",
+      "title": "Name the approver and record an approval for each knowledge release (all are NOT_RECORDED)",
+      "recommendation": "Name an approver per Brain; the manifest then points at the record",
+      "brains": [
+        "biological-state",
+        "wind",
+        "water-clarity",
+        "sector-intelligence",
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "M-4",
+      "class": "DECISION_REQUIRED",
+      "title": "Release lineage in legacy RTDB outputs (today only in SHADOW artifacts)",
+      "recommendation": "Keep it in SHADOW artifacts until the Publisher cutover; no legacy output change",
+      "brains": [
+        "wind",
+        "water-clarity",
+        "sector-intelligence"
+      ]
+    },
+    {
+      "id": "M-5",
+      "class": "DECISION_REQUIRED",
+      "title": "Clarity private overlay: digest-verify it as a private release, or keep it as optional detail",
+      "recommendation": "Make it a private release with a digest when the overlay is next updated",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "M-6",
+      "class": "DECISION_REQUIRED",
+      "title": "Clarity repo-relative polygon fallback outside the image",
+      "recommendation": "Remove it in a Clarity session (behaviour outside the image changes)",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "M-7",
+      "class": "DECISION_REQUIRED",
+      "title": "Lake presence release uses an FNV-1a fingerprint, not a cryptographic digest",
+      "recommendation": "Switch to sha256 with the Lake owner on the Lake image lineage",
+      "brains": [
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "M-8",
+      "class": "DECISION_REQUIRED",
+      "title": "Scorer rubrics staged from docs/brains/scoring into the orchestrator image are not digest-verified",
+      "recommendation": "Add a release manifest over the staged rubric files without moving them (PROJECT \u00a76: never move docs/brains/scoring)"
+    },
+    {
+      "id": "G-1",
+      "class": "GATED",
+      "title": "Promote Depth and Vegetation knowledge (candidates, curves, claim levels, agency data) into versioned releases",
+      "recommendation": "Requires scientific validation approval plus owner approval (PROJECT \u00a77); until then both stay branch-only and PARKED/SHADOW",
+      "brains": [
+        "depth",
+        "vegetation"
+      ]
+    },
+    {
+      "id": "D-A",
+      "class": "DECISION_REQUIRED",
+      "title": "Depth migration to brains/depth: runtime package plus release (after G-1), build tooling to research, reviewed-lake-bindings-v1 instead of Swift source, execution declaration instead of orchestrator source, control-plane shadow support",
+      "recommendation": "Approve a Depth certification session after G-1",
+      "brains": [
+        "depth"
+      ]
+    },
+    {
+      "id": "D-B",
+      "class": "DECISION_REQUIRED",
+      "title": "Vegetation migration: move the maturity and evidence checks to research tooling, package the runtime with a release",
+      "recommendation": "Approve a Vegetation certification session after G-1",
+      "brains": [
+        "vegetation"
+      ]
+    },
+    {
+      "id": "D-C",
+      "class": "DECISION_REQUIRED",
+      "title": "Shared non-customer Swift library (D-14b)",
+      "recommendation": "Separate Swift refactor"
+    },
+    {
+      "id": "D-D",
+      "class": "DECISION_REQUIRED",
+      "title": "Score measurement labels (Proposal A) and Wind score copy (Proposal B)",
+      "recommendation": "Approve B first",
+      "brains": [
+        "wind"
+      ]
+    },
+    {
+      "id": "D-E",
+      "class": "DECISION_REQUIRED",
+      "title": "Water Clarity C1 job in the control manifest job map",
+      "recommendation": "Allow MANUAL jobs in the map",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "D-F",
+      "class": "DECISION_REQUIRED",
+      "title": "Lake tooling move and data classification",
+      "recommendation": "Schedule with the Lake research lane",
+      "brains": [
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "O-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Sector Ops read interface for engineering-status-v1",
+      "recommendation": "Ops reads the committed JSON at a pinned commit; any publication to Firebase or a bucket is a separate gated decision"
+    }
+  ],
+  "cortexGaps": [
+    "CG-2.1-1",
+    "CG-2.1-2",
+    "CG-2.1-3",
+    "CG-2.1-4"
+  ]
+}

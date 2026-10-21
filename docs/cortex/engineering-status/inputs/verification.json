@@ -1,0 +1,230 @@
+{
+  "schemaVersion": "1.0.0",
+  "evaluatedCommit": "44ad7121",
+  "evaluatedAt": "2026-10-20",
+  "runner": "Python 3.12.8 venv; Swift toolchain on macOS",
+  "results": [
+    {
+      "suite": "jobs/brain_platform",
+      "command": "pytest (per CI job)",
+      "result": "PASS",
+      "passed": 735,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/brain-orchestrator",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/brain-scores",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 35,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-surface-dispatch",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/water-temp-tva-archive",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/bindings",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/ledger",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/validation",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 70,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-brain/review",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "jobs/lake-geometry",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "brains/fish",
+      "command": "pytest (domain + Kit V1)",
+      "result": "PASS",
+      "passed": 400,
+      "failed": 0,
+      "skipped": 2
+    },
+    {
+      "suite": "brains/lake",
+      "command": "pytest (Python publication + Kit V1)",
+      "result": "PASS",
+      "passed": 49,
+      "failed": 0,
+      "skipped": 4
+    },
+    {
+      "suite": "brains/sector-intelligence",
+      "command": "pytest (domain + Kit V1 + memory)",
+      "result": "PASS",
+      "passed": 96,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "brains/water-clarity",
+      "command": "pytest (domain + Kit V1 + memory)",
+      "result": "PASS",
+      "passed": 131,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "brains/water-temperature",
+      "command": "pytest (Python publication + Kit V1)",
+      "result": "PASS",
+      "passed": 50,
+      "failed": 0,
+      "skipped": 4
+    },
+    {
+      "suite": "brains/wind",
+      "command": "pytest (domain + Kit V1 + memory)",
+      "result": "PASS",
+      "passed": 220,
+      "failed": 0,
+      "skipped": 0,
+      "note": "16 network tests deselected by pytest.ini"
+    },
+    {
+      "suite": "tools/brain_certification",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "tools/architecture",
+      "command": "pytest (identity, foundation, standing memory checks)",
+      "result": "PASS",
+      "passed": 112,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "verification",
+      "command": "pytest",
+      "result": "PASS",
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "verification/integration/test_wind_package.py",
+      "command": "SECTOR_REQUIRE_WIND_DEPS=1 pytest",
+      "result": "PASS",
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "note": "staged image verifies its packaged release"
+    },
+    {
+      "suite": "swift",
+      "command": "swift build --build-tests && swift test",
+      "result": "PASS",
+      "passed": 325,
+      "failed": 0,
+      "skipped": 0,
+      "note": "macOS arm64; Linux CI not run locally"
+    },
+    {
+      "suite": "describe_contract --check",
+      "command": "6 publication contracts match the Publisher registry",
+      "result": "PASS",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "knowledge manifests --check",
+      "command": "tools/knowledge/build_release_manifest.py --check (3 releases)",
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "deploy --stage-only",
+      "command": "wind, water-clarity staged contexts include knowledge-release.json",
+      "result": "PASS",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "orchestrator staging (extracted, no gcloud)",
+      "command": "staging block of jobs/brain-orchestrator/deploy-job.sh in scratch; staged Intelligence verifies its release in a clean env",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "note": "deploy-job.sh itself was not run: it calls gcloud before staging"
+    },
+    {
+      "suite": "architecture report",
+      "command": "tools/architecture/report.py and --legacy --baseline",
+      "result": "PASS",
+      "note": "report-only, exit 0"
+    },
+    {
+      "suite": "docker build",
+      "command": "docker build of the staged contexts",
+      "result": "NOT_RUN",
+      "note": "Docker is not available on this machine; staged COPY sets were checked instead"
+    },
+    {
+      "suite": "Linux CI",
+      "command": ".github/workflows (Swift on Linux, Python jobs)",
+      "result": "NOT_RUN",
+      "note": "runs only after an approved push"
+    }
+  ]
+}

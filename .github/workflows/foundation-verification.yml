@@ -5,9 +5,9 @@ name: foundation-verification
 on:
   push:
     branches: [main]
-    paths: ["tools/**", "contracts/**", "brains/**", "providers/**", "platform/**", "engine/**", "deploy/**", "verification/**", "docs/brains/scoring/**", ".github/workflows/foundation-verification.yml"]
+    paths: ["tools/**", "contracts/**", "brains/**", "providers/**", "platform/**", "engine/**", "deploy/**", "verification/**", "docs/brains/scoring/**", "docs/cortex/**", "jobs/brain_platform/sector_brain_platform/**", ".github/workflows/foundation-verification.yml"]
   pull_request:
-    paths: ["tools/**", "contracts/**", "brains/**", "providers/**", "platform/**", "engine/**", "deploy/**", "verification/**", "docs/brains/scoring/**", ".github/workflows/foundation-verification.yml"]
+    paths: ["tools/**", "contracts/**", "brains/**", "providers/**", "platform/**", "engine/**", "deploy/**", "verification/**", "docs/brains/scoring/**", "docs/cortex/**", "jobs/brain_platform/sector_brain_platform/**", ".github/workflows/foundation-verification.yml"]
 permissions:
   contents: read
 jobs:
@@ -25,6 +25,10 @@ jobs:
         run: python -m pytest -q tools/architecture
       - name: Verification gates (conformance home, score baseline, clean copy)
         run: python -m pytest -q verification
+      - name: Packaged knowledge releases and the engineering status report (Cortex 2.1 standing memory checks)
+        run: |
+          for d in brains/sector-intelligence/runtime brains/wind/runtime brains/water-clarity/runtime; do python tools/knowledge/build_release_manifest.py "$d" --check; done
+          python tools/cortex_status/build_engineering_status.py --check
       - name: Architecture report (REPORT-ONLY; known vs new vs resolved against the legacy baseline)
         run: |
           python tools/architecture/report.py

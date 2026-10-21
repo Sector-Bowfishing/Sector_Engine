@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "1.0.0",
+  "decisions": [
+    {
+      "id": "A-1",
+      "class": "APPROVAL",
+      "title": "Push cortex/architecture-standardization-2026-10-20 and open a draft PR to main",
+      "recommendation": "Approve; Linux CI then runs Swift and every Python job"
+    },
+    {
+      "id": "A-2",
+      "class": "APPROVAL",
+      "title": "Deploy (brain-jobs image, orchestrator image, wind-hourly, water-clarity-brain) after merge",
+      "recommendation": "Deploy only with the lineage preflight; the Lake image stays on its own lineage"
+    },
+    {
+      "id": "A-3",
+      "class": "APPROVAL",
+      "title": "Read-only production checks: deployed image contents, bucket pointers, scheduler state",
+      "recommendation": "Approve before A-2; turns NOT_VERIFIED production cells into evidence"
+    },
+    {
+      "id": "M-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Adopt packaged knowledge releases: runtime verifies knowledge-release.json and refuses on missing or tampered memory; the manifest is added to the Wind, Clarity and orchestrator images",
+      "recommendation": "Accept (implemented locally, isolated commits 4ac482e6, 78d55294); takes effect only on an approved deploy",
+      "brains": [
+        "wind",
+        "water-clarity",
+        "sector-intelligence"
+      ]
+    },
+    {
+      "id": "M-2",
+      "class": "DECISION_REQUIRED",
+      "title": "Fish: a missing or corrupt bundle now exits 2 with REFUSED instead of a traceback (exit 1)",
+      "recommendation": "Accept (19e9824c); the orchestrator treats every nonzero exit as not published",
+      "brains": [
+        "biological-state"
+      ]
+    },
+    {
+      "id": "M-3",
+      "class": "DECISION_REQUIRED",
+      "title": "Name the approver and record an approval for each knowledge release (all are NOT_RECORDED)",
+      "recommendation": "Name an approver per Brain; the manifest then points at the record",
+      "brains": [
+        "biological-state",
+        "wind",
+        "water-clarity",
+        "sector-intelligence",
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "M-4",
+      "class": "DECISION_REQUIRED",
+      "title": "Release lineage in legacy RTDB outputs (today only in SHADOW artifacts)",
+      "recommendation": "Keep it in SHADOW artifacts until the Publisher cutover; no legacy output change",
+      "brains": [
+        "wind",
+        "water-clarity",
+        "sector-intelligence"
+      ]
+    },
+    {
+      "id": "M-5",
+      "class": "DECISION_REQUIRED",
+      "title": "Clarity private overlay: digest-verify it as a private release, or keep it as optional detail",
+      "recommendation": "Make it a private release with a digest when the overlay is next updated",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "M-6",
+      "class": "DECISION_REQUIRED",
+      "title": "Clarity repo-relative polygon fallback outside the image",
+      "recommendation": "Remove it in a Clarity session (behaviour outside the image changes)",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "M-7",
+      "class": "DECISION_REQUIRED",
+      "title": "Lake presence release uses an FNV-1a fingerprint, not a cryptographic digest",
+      "recommendation": "Switch to sha256 with the Lake owner on the Lake image lineage",
+      "brains": [
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "M-8",
+      "class": "DECISION_REQUIRED",
+      "title": "Scorer rubrics staged from docs/brains/scoring into the orchestrator image are not digest-verified",
+      "recommendation": "Add a release manifest over the staged rubric files without moving them (PROJECT \u00a76: never move docs/brains/scoring)"
+    },
+    {
+      "id": "G-1",
+      "class": "GATED",
+      "title": "Promote Depth and Vegetation knowledge (candidates, curves, claim levels, agency data) into versioned releases",
+      "recommendation": "Requires scientific validation approval plus owner approval (PROJECT \u00a77); until then both stay branch-only and PARKED/SHADOW",
+      "brains": [
+        "depth",
+        "vegetation"
+      ]
+    },
+    {
+      "id": "D-A",
+      "class": "DECISION_REQUIRED",
+      "title": "Depth migration to brains/depth: runtime package plus release (after G-1), build tooling to research, reviewed-lake-bindings-v1 instead of Swift source, execution declaration instead of orchestrator source, control-plane shadow support",
+      "recommendation": "Approve a Depth certification session after G-1",
+      "brains": [
+        "depth"
+      ]
+    },
+    {
+      "id": "D-B",
+      "class": "DECISION_REQUIRED",
+      "title": "Vegetation migration: move the maturity and evidence checks to research tooling, package the runtime with a release",
+      "recommendation": "Approve a Vegetation certification session after G-1",
+      "brains": [
+        "vegetation"
+      ]
+    },
+    {
+      "id": "D-C",
+      "class": "DECISION_REQUIRED",
+      "title": "Shared non-customer Swift library (D-14b)",
+      "recommendation": "Separate Swift refactor"
+    },
+    {
+      "id": "D-D",
+      "class": "DECISION_REQUIRED",
+      "title": "Score measurement labels (Proposal A) and Wind score copy (Proposal B)",
+      "recommendation": "Approve B first",
+      "brains": [
+        "wind"
+      ]
+    },
+    {
+      "id": "D-E",
+      "class": "DECISION_REQUIRED",
+      "title": "Water Clarity C1 job in the control manifest job map",
+      "recommendation": "Allow MANUAL jobs in the map",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "D-F",
+      "class": "DECISION_REQUIRED",
+      "title": "Lake tooling move and data classification",
+      "recommendation": "Schedule with the Lake research lane",
+      "brains": [
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "O-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Sector Ops read interface for engineering-status-v1",
+      "recommendation": "Ops reads the committed JSON at a pinned commit; any publication to Firebase or a bucket is a separate gated decision"
+    }
+  ]
+}

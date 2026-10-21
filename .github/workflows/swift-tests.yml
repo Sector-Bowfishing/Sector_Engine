@@ -6,9 +6,9 @@ name: swift-tests
 on:
   push:
     branches: [main]
-    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", ".github/workflows/swift-tests.yml"]
+    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", "brains/lake/**", "brains/water-temperature/**", ".github/workflows/swift-tests.yml"]
   pull_request:
-    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", ".github/workflows/swift-tests.yml"]
+    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", "brains/lake/**", "brains/water-temperature/**", ".github/workflows/swift-tests.yml"]
 permissions:
   contents: read
 jobs:
