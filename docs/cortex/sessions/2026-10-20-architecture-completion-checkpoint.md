@@ -36,3 +36,23 @@ breaking public contracts, renaming stable IDs, activating parked/shadow Brains,
 - Swift fixtures: `SECTOR_WRITE_BRAIN_FIXTURES=1 swift test --filter LakePublicationFixtureTests` (and `WaterTemperaturePublicationFixtureTests`) regenerate `brains/<dir>/tests/golden/*_run_updates.json`; review the diff.
 - Python test venv: create with `python3.12 -m venv` and CI's dependency set (see the standardization session record §4); run gate suites separately.
 - Never move or delete `docs/brains/scoring/` files (runtime-loaded).
+
+## Cortex 2.1 adoption and memory mission (2026-10-20) — status
+
+Standards: Rehtac Cortex 2.1.0 @ 0f9ee75. Session record: `2026-10-20-cortex-2-1-memory.md`.
+
+**Done (committed):**
+- `b5a766e4`: adoption.
+- `4ac482e6`, `78d55294`, `19e9824c`: memory releases and refusal.
+- `1492f79b`: `knowledge` declarations and the standing gate.
+- `44ad7121`: Lake bindings contract.
+- `80c0c20a`: engineering-status-v1 and CI coverage.
+- Records: COMPLIANCE standing-check matrix, CORTEX_GAPS CG-2.1-1…4, navigation refresh `2026-10-20-cortex-2-1-memory.md`.
+
+**Open:**
+- Decisions A-1…A-3, M-1…M-8, G-1, D-A/D-B, O-1 (session record §11).
+- Depth and Vegetation stay branch-only.
+
+**Resume notes:**
+- Regenerate the status report after any input change with `python3 tools/cortex_status/build_engineering_status.py --write`.
+- A content change to a packaged knowledge file needs `tools/knowledge/build_release_manifest.py <dir> --write --release-id <new id>`.
