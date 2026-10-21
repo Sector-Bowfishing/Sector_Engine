@@ -3,14 +3,14 @@
 ## Rehtac Cortex — engineering authority
 
 This repository is governed by Rehtac Cortex. Cortex pack: `sector/engine`
-Cortex pin: 0f9ee75
+Cortex pin: ae59e2d
 
 Cortex lives at `$CORTEX_HOME`. It is **read-only** for every session in this repository.
 
 ### Session start
-1. A session-start hook prints a **Rehtac Cortex session briefing**: the `Standards:` version line, the files to read, the per-task standards and a navigation drift summary. If no briefing appears in context, run `python3 "$CORTEX_HOME/tools/cortex.py" session sector/engine --repo . --pin 0f9ee75` yourself. If `CORTEX_HOME` is unset, stop and ask the user for the Cortex location. Do not guess.
+1. A session-start hook prints a **Rehtac Cortex session briefing**: the `Standards:` version line, the files to read, the per-task standards and a navigation drift summary. If no briefing appears in context, run `python3 "$CORTEX_HOME/tools/cortex.py" session sector/engine --repo . --pin ae59e2d` yourself. If `CORTEX_HOME` is unset, stop and ask the user for the Cortex location. Do not guess.
 2. Run Cortex commands with the absolute paths listed in the briefing, not `$CORTEX_HOME`: shell-variable expansion can trigger permission prompts.
-3. Read every file under "Read these files in full, in order" before doing engineering work. Read a per-task standard whenever the task router (`navigation/ROUTER.md`) names it for your task.
+3. Read every file under "Read these files in full, in order" before doing engineering work. Read a per-task standard whenever the pack's task router (if the pack has one) names it for your task. Run the standing checks the briefing and the standards name, including `data-check`.
 
 ### How to work: Cortex guided execution (`core/execution.md`)
 Handle every development or standardization request as **one continuous assignment**. Do not wait for repeated handoffs.

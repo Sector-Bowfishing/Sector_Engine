@@ -6,7 +6,7 @@
   "evaluatedCommit": "25e786cf",
   "evaluatedAt": "2026-10-20",
   "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-final-verification.md",
-  "cortexVersion": "2.1.0",
+  "cortexVersion": "2.2.0",
   "cortexPack": "sector/engine",
   "structuralCertification": {
     "biological-state": {
