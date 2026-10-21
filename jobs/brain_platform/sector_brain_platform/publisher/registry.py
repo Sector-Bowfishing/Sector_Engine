@@ -465,6 +465,10 @@ LAKE_REGISTRY_CHILDREN = {
               "readinessDefinitions", "stateKindDefinitions", "healthRule"),
     "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount", "staleAfterHours",
                "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "fleetScope"),
+    # Optional evidence children the DEPLOYED Lake image writes (lake-brain a6622f99, branch feat/lake-consolidated; production export 2026-10-21):
+    # prospective prediction-ledger status and per-claim maturity. The canonical package does not write them yet; declared so a Publisher cutover
+    # accepts the production registry unchanged (Cortex 2.2 audit E-8 / C-8). Never scores, never publication state.
+    "evidence": ("predictionLedger", "claimMaturity"),
 }
 LAKE_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount", "reasons")      # domain facts + WHY; run/process fields are Orchestrator-owned
 LAKE_FLEET_CHILDREN = ("riverSystem",)                                      # the one Lake-only shared fleet field the job writes (ownership.LAKE_BRAIN_ONLY_FLEET)
