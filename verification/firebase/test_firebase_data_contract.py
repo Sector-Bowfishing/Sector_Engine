@@ -20,7 +20,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "jobs", "brain_platform"))
 sys.path.insert(0, HERE)
 from sector_brain_platform import ownership  # noqa: E402
-from sector_brain_platform.control import fleet_rollup  # noqa: E402
+from sector_brain_platform.control import fleet_rollup, slot_max_age  # noqa: E402
 from sector_brain_platform.keys import BRAINS  # noqa: E402
 import path_inventory  # noqa: E402
 
@@ -220,10 +220,27 @@ def test_control_rollup_ignores_the_frozen_parent_timestamp():
     assert fleet_rollup("x", row, now)["lastUpdatedAt"] == "2026-10-21T14:00:00Z"
 
 
-def test_write_time_stale_flag_is_documented_as_not_age_derived():
-    """A paused Brain leaves `stale: false` on old data (export: Clarity, all 621 lakes, 109-224 h old). The rollup trusts the flag, so the
-    family must say consumers age it themselves."""
+def test_write_time_stale_flag_no_longer_hides_old_data_in_the_rollup():
+    """A paused Brain leaves `stale: false` on old data (export: Clarity, all 621 lakes, 109-224 h old). With the Brains' freshness policy the
+    platform rollup marks it stale by AGE (2026-10-21 remediation); without a policy only the persisted flag counts (old behaviour)."""
     now = dt.datetime(2026, 10, 21, 15, tzinfo=dt.timezone.utc)
     row = {"lakeId": "x", "slots": {"waterClarity": {"generatedAt": "2026-10-12T09:00:00Z", "stale": False}}}
-    assert fleet_rollup("x", row, now)["stale"] is False                    # current behaviour, recorded rather than changed
+    assert fleet_rollup("x", row, now)["stale"] is False
+    r = fleet_rollup("x", row, now, slot_max_age(None, {"water-clarity": {"staleAfterHours": 26}}))
+    assert r["stale"] is True and r["staleSlots"] == {"waterClarity": "AGE"}
     assert "write-time" in classify("/lakeFleet/{k}/slots/waterClarity")["freshness"]
+
+
+def test_production_registry_children_are_inside_the_publisher_contract():
+    """Audit E-8 / C-8: every child a Brain has in production /brains/{id} is a declared registry child (Publisher cutover would refuse others)."""
+    from sector_brain_platform.publisher import registry as REG
+    declared = {"wind": REG.WIND_REGISTRY_CHILDREN, "biological-state": REG.FISH_REGISTRY_CHILDREN, "water-clarity": REG.CLARITY_REGISTRY_CHILDREN,
+                "sector-intelligence": REG.INTELLIGENCE_REGISTRY_CHILDREN, "lake-brain": REG.LAKE_REGISTRY_CHILDREN,
+                "water-temp": REG.WATER_TEMP_REGISTRY_CHILDREN, "depth": REG.DEPTH_REGISTRY_CHILDREN}
+    bad = {}
+    for b, groups in declared.items():
+        flat = {c for g in (groups.values() if isinstance(groups, dict) else [groups]) for c in g}
+        prod = {p.split("/")[3] for p in PATHS if p.startswith(f"/brains/{b}/") and p.count("/") >= 3}
+        if prod - flat:
+            bad[b] = sorted(prod - flat)
+    assert not bad, bad
