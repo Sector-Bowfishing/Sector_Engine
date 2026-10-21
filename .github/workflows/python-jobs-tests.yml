@@ -78,11 +78,14 @@ jobs:
             echo "== $b"; (cd "$b" && python -m pytest -q)
           done
       - name: Engineering status is current for THIS commit (re-runs every Kit V1 suite, compares with the committed record, emits a commit-stamped copy)
+        env:
+          # the commit the report describes: the PR HEAD on pull_request runs (GITHUB_SHA is GitHub's synthetic merge commit there), else GITHUB_SHA
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python tools/cortex_status/collect_certification.py
           git diff --exit-code -- docs/cortex/engineering-status/inputs/certification.json
           python tools/cortex_status/build_engineering_status.py --check
-          python tools/cortex_status/build_engineering_status.py --emit "$RUNNER_TEMP/engineering-status.json" --commit "$GITHUB_SHA"
+          python tools/cortex_status/build_engineering_status.py --emit "$RUNNER_TEMP/engineering-status.json" --commit "$SOURCE_SHA"
           python tools/cortex_status/ops_projection.py --report "$RUNNER_TEMP/engineering-status.json" --out "$RUNNER_TEMP/engineering-status-ops.json"
       - uses: actions/upload-artifact@v4
         with:

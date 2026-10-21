@@ -7,6 +7,8 @@ Standards: Rehtac Cortex 2.1.0 @ 0f9ee75 (clean), pack sector/engine
 Evaluated: 2026-10-20 · sessions/2026-10-20-architecture-all-brains.md (first pass), sessions/2026-10-20-architecture-completion.md (re-evaluation),
   sessions/2026-10-20-cortex-2-1-memory.md (standing memory checks) and sessions/2026-10-20-cortex-2-1-structural-completion.md (this re-evaluation:
   Depth and Vegetation migrated and certified; every Depth/Vegetation cell, BR-10/11/16/18/19 and the standing checks re-checked)
+  and sessions/2026-10-20-cortex-2-1-final-verification.md (final verification: all rows re-verified by running the suites, Kit V1, the
+  standing-memory, Swift ownership/boundary/state-schema and cross-Brain coupling gates; Linux CI made portable; no row regressed)
 Discovered Brains (8), all in canonical packages: biological-state (brains/fish), wind, water-clarity, sector-intelligence, lake-brain (brains/lake; Swift),
   water-temp (brains/water-temperature; Swift), depth (brains/depth), vegetation (brains/vegetation)
 Source: stable_brain_ids.json (8) = brains/*/brain.json (8) = control_manifest.json brains (8) = keys.BRAINS = Swift BrainPlatform.brains (test_brain_identity_consistency.py)

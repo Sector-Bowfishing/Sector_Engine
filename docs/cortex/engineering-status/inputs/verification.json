@@ -1,20 +1,20 @@
 {
   "schemaVersion": "1.0.0",
-  "evaluatedCommit": "44ad7121",
+  "evaluatedCommit": "25e786cf",
   "evaluatedAt": "2026-10-20",
-  "runner": "Python 3.12.8 venv; Swift toolchain on macOS",
+  "runner": "Python 3.12.8 venv; Swift on macOS arm64",
   "results": [
     {
       "suite": "jobs/brain_platform",
-      "command": "pytest (per CI job)",
+      "command": "pytest",
       "result": "PASS",
-      "passed": 735,
+      "passed": 739,
       "failed": 0,
       "skipped": 0
     },
     {
       "suite": "jobs/brain-orchestrator",
-      "command": "pytest",
+      "command": "pytest (failure isolation, retry gate, scorer isolation)",
       "result": "PASS",
       "passed": 46,
       "failed": 0,
@@ -22,7 +22,7 @@
     },
     {
       "suite": "jobs/brain-scores",
-      "command": "pytest",
+      "command": "pytest (scorer authority, frozen scores)",
       "result": "PASS",
       "passed": 35,
       "failed": 0,
@@ -45,34 +45,10 @@
       "skipped": 0
     },
     {
-      "suite": "jobs/lake-brain/bindings",
+      "suite": "jobs/lake-brain (bindings, ledger, validation, review)",
       "command": "pytest",
       "result": "PASS",
-      "passed": 13,
-      "failed": 0,
-      "skipped": 0
-    },
-    {
-      "suite": "jobs/lake-brain/ledger",
-      "command": "pytest",
-      "result": "PASS",
-      "passed": 23,
-      "failed": 0,
-      "skipped": 0
-    },
-    {
-      "suite": "jobs/lake-brain/validation",
-      "command": "pytest",
-      "result": "PASS",
-      "passed": 70,
-      "failed": 0,
-      "skipped": 0
-    },
-    {
-      "suite": "jobs/lake-brain/review",
-      "command": "pytest",
-      "result": "PASS",
-      "passed": 24,
+      "passed": 130,
       "failed": 0,
       "skipped": 0
     },
@@ -85,8 +61,17 @@
       "skipped": 0
     },
     {
+      "suite": "brains/depth",
+      "command": "pytest (domain + memory + abstention + Kit V1)",
+      "result": "PASS",
+      "passed": 277,
+      "failed": 0,
+      "skipped": 9,
+      "note": "9 research-dataset tests skip without $DEPTH_RESEARCH_DATA; 298 pass with the snapshot"
+    },
+    {
       "suite": "brains/fish",
-      "command": "pytest (domain + Kit V1)",
+      "command": "pytest (domain + memory + Kit V1)",
       "result": "PASS",
       "passed": 400,
       "failed": 0,
@@ -102,15 +87,23 @@
     },
     {
       "suite": "brains/sector-intelligence",
-      "command": "pytest (domain + Kit V1 + memory)",
+      "command": "pytest (domain + memory + Kit V1)",
       "result": "PASS",
       "passed": 96,
       "failed": 0,
       "skipped": 0
     },
     {
+      "suite": "brains/vegetation",
+      "command": "pytest (domain + memory + abstention + Kit V1)",
+      "result": "PASS",
+      "passed": 171,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
       "suite": "brains/water-clarity",
-      "command": "pytest (domain + Kit V1 + memory)",
+      "command": "pytest (domain + memory + Kit V1)",
       "result": "PASS",
       "passed": 131,
       "failed": 0,
@@ -126,7 +119,7 @@
     },
     {
       "suite": "brains/wind",
-      "command": "pytest (domain + Kit V1 + memory)",
+      "command": "pytest (domain + memory + Kit V1)",
       "result": "PASS",
       "passed": 220,
       "failed": 0,
@@ -135,7 +128,7 @@
     },
     {
       "suite": "tools/brain_certification",
-      "command": "pytest",
+      "command": "pytest (Kit self-tests)",
       "result": "PASS",
       "passed": 32,
       "failed": 0,
@@ -143,15 +136,15 @@
     },
     {
       "suite": "tools/architecture",
-      "command": "pytest (identity, foundation, standing memory checks)",
+      "command": "pytest (identity, foundation, standing memory, Swift ownership/boundary/state schemas, cross-Brain coupling, engineering status, Ops projection)",
       "result": "PASS",
-      "passed": 112,
+      "passed": 154,
       "failed": 0,
       "skipped": 0
     },
     {
       "suite": "verification",
-      "command": "pytest",
+      "command": "pytest (score baseline, conformance, clean copy)",
       "result": "PASS",
       "passed": 15,
       "failed": 0,
@@ -163,31 +156,29 @@
       "result": "PASS",
       "passed": 7,
       "failed": 0,
-      "skipped": 0,
-      "note": "staged image verifies its packaged release"
+      "skipped": 0
     },
     {
-      "suite": "swift",
+      "suite": "swift (macOS)",
       "command": "swift build --build-tests && swift test",
       "result": "PASS",
       "passed": 325,
       "failed": 0,
-      "skipped": 0,
-      "note": "macOS arm64; Linux CI not run locally"
+      "skipped": 0
     },
     {
       "suite": "describe_contract --check",
-      "command": "6 publication contracts match the Publisher registry",
+      "command": "8 publication contracts match the Publisher registry",
       "result": "PASS",
-      "passed": 6,
+      "passed": 8,
       "failed": 0,
       "skipped": 0
     },
     {
       "suite": "knowledge manifests --check",
-      "command": "tools/knowledge/build_release_manifest.py --check (3 releases)",
+      "command": "5 packaged releases verify",
       "result": "PASS",
-      "passed": 3,
+      "passed": 5,
       "failed": 0,
       "skipped": 0
     },
@@ -200,31 +191,16 @@
       "skipped": 0
     },
     {
-      "suite": "orchestrator staging (extracted, no gcloud)",
-      "command": "staging block of jobs/brain-orchestrator/deploy-job.sh in scratch; staged Intelligence verifies its release in a clean env",
-      "result": "PASS",
-      "passed": 1,
-      "failed": 0,
-      "skipped": 0,
-      "note": "deploy-job.sh itself was not run: it calls gcloud before staging"
-    },
-    {
       "suite": "architecture report",
       "command": "tools/architecture/report.py and --legacy --baseline",
       "result": "PASS",
       "note": "report-only, exit 0"
     },
     {
-      "suite": "docker build",
-      "command": "docker build of the staged contexts",
+      "suite": "docker build (local)",
+      "command": "docker build",
       "result": "NOT_RUN",
-      "note": "Docker is not available on this machine; staged COPY sets were checked instead"
-    },
-    {
-      "suite": "Linux CI",
-      "command": ".github/workflows (Swift on Linux, Python jobs)",
-      "result": "NOT_RUN",
-      "note": "runs only after an approved push"
+      "note": "Docker is not installed on this Mac; images are built in CI (image-build-verification)"
     }
   ]
 }
