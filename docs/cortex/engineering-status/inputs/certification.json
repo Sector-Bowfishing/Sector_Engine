@@ -31,7 +31,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 3.43s"
+      "summary": "51 passed in 3.52s"
     },
     "biological-state": {
       "directory": "brains/fish",
@@ -61,7 +61,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 4.06s"
+      "summary": "51 passed in 3.95s"
     },
     "lake-brain": {
       "directory": "brains/lake",
@@ -91,7 +91,7 @@
         "passed": 27,
         "failed": 0
       },
-      "summary": "47 passed, 4 skipped in 3.65s"
+      "summary": "47 passed, 4 skipped in 3.61s"
     },
     "sector-intelligence": {
       "directory": "brains/sector-intelligence",
@@ -121,7 +121,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 3.66s"
+      "summary": "51 passed in 3.60s"
     },
     "vegetation": {
       "directory": "brains/vegetation",
@@ -151,7 +151,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 7.27s"
+      "summary": "51 passed in 7.19s"
     },
     "water-clarity": {
       "directory": "brains/water-clarity",
@@ -181,7 +181,7 @@
         "passed": 31,
         "failed": 0
       },
-      "summary": "52 passed in 3.78s"
+      "summary": "52 passed in 3.80s"
     },
     "water-temp": {
       "directory": "brains/water-temperature",
@@ -211,7 +211,7 @@
         "passed": 28,
         "failed": 0
       },
-      "summary": "48 passed, 4 skipped in 3.57s"
+      "summary": "48 passed, 4 skipped in 3.55s"
     },
     "wind": {
       "directory": "brains/wind",
@@ -241,7 +241,7 @@
         "passed": 30,
         "failed": 0
       },
-      "summary": "51 passed in 4.23s"
+      "summary": "51 passed in 4.28s"
     }
   }
 }

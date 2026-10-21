@@ -3,6 +3,14 @@
   "range": "af0548b8..HEAD (this Cortex 2.1 assignment)",
   "changes": [
     {
+      "commit": "037c78c1",
+      "summary": "fix(swift): Water Temperature Brain builds on Linux again; state contracts for the Swift Brains (BR-13)"
+    },
+    {
+      "commit": "ab4e4312",
+      "summary": "feat(cortex): engineering-status v1.1.0 \u2014 seven separate status layers per Brain, actual Kit proof results, image build verification"
+    },
+    {
       "commit": "ede81316",
       "summary": "test(swift): Swift write-ownership and Brain-boundary gates; Linux Swift CI on the production toolchain"
     },

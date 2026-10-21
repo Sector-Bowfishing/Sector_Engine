@@ -32,7 +32,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 51 passed in 4.06s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 51 passed in 3.95s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -119,7 +119,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 51 passed in 4.06s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 51 passed in 3.95s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",
@@ -173,7 +173,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 51 passed in 3.43s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 51 passed in 3.52s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -260,7 +260,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 51 passed in 3.43s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 51 passed in 3.52s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",
@@ -318,7 +318,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 47 passed, 4 skipped in 3.65s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 47 passed, 4 skipped in 3.61s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -406,7 +406,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 47 passed, 4 skipped in 3.65s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 47 passed, 4 skipped in 3.61s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",
@@ -440,15 +440,14 @@
         "BR-07": "PASS",
         "BR-10": "PASS",
         "BR-11": "PARTIAL",
-        "BR-13": "PARTIAL",
+        "BR-13": "PASS",
         "BR-16": "PASS",
         "BR-18": "PASS",
         "BR-19": "PASS"
       },
       "structuralProblems": [
         "Uses 60 package-access symbols of the customer SectorEngine library (pinned; D-C)",
-        "Presence release fingerprint is FNV-1a, not sha256 (M-7)",
-        "No JSON schema for LakeState (BR-13)"
+        "Presence release fingerprint is FNV-1a, not sha256 (M-7)"
       ],
       "scienceDependencies": [
         "Field validation of level classification"
@@ -465,7 +464,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 51 passed in 3.66s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 51 passed in 3.60s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -552,7 +551,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 51 passed in 3.66s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 51 passed in 3.60s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",
@@ -607,7 +606,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 51 passed in 7.27s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 51 passed in 7.19s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -695,7 +694,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 51 passed in 7.27s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 51 passed in 7.19s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "FAIL",
@@ -751,7 +750,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 52 passed in 3.78s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 52 passed in 3.80s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -842,7 +841,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 52 passed in 3.78s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 52 passed in 3.80s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "PARTIAL",
@@ -902,7 +901,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 48 passed, 4 skipped in 3.57s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 48 passed, 4 skipped in 3.55s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -991,7 +990,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 48 passed, 4 skipped in 3.57s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 48 passed, 4 skipped in 3.55s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "PARTIAL",
@@ -1025,14 +1024,13 @@
         "BR-07": "PASS",
         "BR-10": "PASS",
         "BR-11": "NOT_APPLICABLE",
-        "BR-13": "PARTIAL",
+        "BR-13": "PASS",
         "BR-16": "PASS",
         "BR-18": "PASS",
         "BR-19": "PASS"
       },
       "structuralProblems": [
-        "Uses customer SectorEngine package-access symbols (pinned; D-C)",
-        "No JSON schema for the state (BR-13)"
+        "Uses customer SectorEngine package-access symbols (pinned; D-C)"
       ],
       "scienceDependencies": [
         "Per-lake validation beyond the global holdout"
@@ -1048,7 +1046,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 51 passed in 4.23s (inputs/certification.json)"
+        "evidence": "Kit V1 run: 51 passed in 4.28s (inputs/certification.json)"
       },
       "memory": [
         {
@@ -1137,7 +1135,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 51 passed in 4.23s (inputs/certification.json)"
+          "evidence": "Kit V1 run: 51 passed in 4.28s (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",
@@ -1580,9 +1578,18 @@
     "CG-2.1-3",
     "CG-2.1-4",
     "CG-2.1-5",
-    "CG-2.1-6"
+    "CG-2.1-6",
+    "CG-2.1-7"
   ],
   "changes": [
+    {
+      "commit": "037c78c1",
+      "summary": "fix(swift): Water Temperature Brain builds on Linux again; state contracts for the Swift Brains (BR-13)"
+    },
+    {
+      "commit": "ab4e4312",
+      "summary": "feat(cortex): engineering-status v1.1.0 \u2014 seven separate status layers per Brain, actual Kit proof results, image build verification"
+    },
     {
       "commit": "ede81316",
       "summary": "test(swift): Swift write-ownership and Brain-boundary gates; Linux Swift CI on the production toolchain"
