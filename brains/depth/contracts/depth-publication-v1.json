@@ -1,0 +1,182 @@
+{
+  "brainId": "depth",
+  "builder": "brains/depth/runtime/depth_brain/publish_artifact.py",
+  "contractId": "depth-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (depth_specs, depth_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "consumed": "ACTUAL RTDB reads recorded by the platform client when available; absent = unknown, never []",
+    "knowledgeRelease": "the verified Depth knowledge release id (runtime/knowledge/knowledge-release.json)",
+    "manifestRef": "image:knowledge-release.json",
+    "manifestSha256": "the release digest (sha256)"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "descriptor",
+      "versions",
+      "models",
+      "readinessDefinitions",
+      "stateKinds",
+      "contractVersion",
+      "manifestVersion",
+      "knowledgeRelease",
+      "claims",
+      "lifecycle",
+      "shadow",
+      "scoreStatus",
+      "scoreNote",
+      "research",
+      "sourceIds"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "statusBasis",
+      "supportedLakeCount",
+      "directoryLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "lastSuccessfulRun",
+      "lastError",
+      "lastDryRun",
+      "breakdowns",
+      "fleet",
+      "blockers",
+      "primaryBlocker",
+      "lakeDependency",
+      "orchestration",
+      "fieldValidation",
+      "execution",
+      "validation",
+      "publishMode",
+      "scope",
+      "updatedAt"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/depth",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/depth",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/depth",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/depth",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/depth",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/brainVersions/depth",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "depth-lake-state-v1",
+      "volatileContract": "depth-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/depth/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/depth/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/depth",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/depth/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "depth-registry-v1",
+      "volatileContract": "depth-volatile-v1"
+    }
+  ],
+  "snapshot": "the snapshot field and its brainVersion are Brain-authored for published lakes (no Publisher COPY projection)",
+  "status": "SHADOW (Publisher Gate P); not wired into the job; the job publishes only from an APPROVED knowledge release; not a production contract",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "depth-volatile-v1",
+    "keys": [
+      "inputAgeHours",
+      "lastUpdatedAt",
+      "levelAgeHours",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:inputAgeHours": "age of the Lake observation at run time",
+      "key:lastUpdatedAt": "slot write time; no domain meaning",
+      "key:levelAgeHours": "age of the level reading at run time",
+      "key:updatedAt": "registry write time; no domain meaning",
+      "path:/brains/depth/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+      "path:/brains/depth/versions": "version history entry dated by the run"
+    },
+    "paths": [
+      "/brains/depth/lastSuccessfulRun",
+      "/brains/depth/versions"
+    ],
+    "version": 1
+  }
+}

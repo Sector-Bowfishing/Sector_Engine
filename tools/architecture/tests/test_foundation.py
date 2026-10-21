@@ -388,9 +388,9 @@ def test_report_is_report_only_by_default():
 
 def test_real_repo_registers_only_migrated_brains():
     # Wind (Phase 2), Fish (Phase 4, Fish Structural Certification V1), Water Clarity (Water Clarity Structural Certification V1), and Sector Intelligence,
-    # Lake and Water Temperature (Cortex architecture completion, 2026-10-20) are the migrated Brains. No other brain.json may exist until that Brain
-    # migrates (Depth and Vegetation are still on their branches).
-    assert report._brain_dirs(ROOT) == ["fish", "lake", "sector-intelligence", "water-clarity", "water-temperature", "wind"]
+    # Lake and Water Temperature (Cortex architecture completion, 2026-10-20) and Depth (Cortex 2.1 structural completion) are the migrated Brains.
+    # No other brain.json may exist until that Brain migrates.
+    assert report._brain_dirs(ROOT) == ["depth", "fish", "lake", "sector-intelligence", "water-clarity", "water-temperature", "wind"]
 
 
 @pytest.mark.parametrize("src,flag", [

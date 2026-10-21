@@ -102,7 +102,6 @@ def mutation_cases(spec):
         ("builder_uses_forbidden_token", P.p15_artifact_path_cannot_write, r(spec, builder_forbidden_tokens=("import",))),
         ("runtime_path_leak", P.p16_runtime_isolation_paths, r(spec, local_path_regex=r"import ")),
         ("runtime_has_non_code_file", P.p17_research_separate_from_runtime, r(spec, allowed_runtime_ext=(".nonexistent",))),
-        ("architecture_finding_not_carried", P.p18_architecture_gates_no_new_violations, r(spec, arch_findings=())),
         ("baseline_entry_unexpected", P.p18_architecture_gates_no_new_violations, r(spec, baseline_entry_basenames=("ghost.py",))),
         ("plan_root_not_declared", P.p11_publisher_shadow_only_end_to_end, r(spec, plan_root_prefixes=("zzz-no-such-root/",))),
         ("rejection_code_wrong", P.p12_publisher_rejections, r(spec, extra_rejections=tuple(spec.extra_rejections) + (Rejection("/scores/probe", "NOT_A_REAL_CODE"),))),
@@ -117,6 +116,10 @@ def mutation_cases(spec):
     ]
     if spec.consumed_absent_when_unknown:
         cases.append(("consumed_emitted_when_unknown", P.p09_lineage_truthful_never_optimistic, r(spec, artifact_factory=_leaky_consumed(spec.artifact_factory))))
+    if spec.arch_findings:                                   # removing carried findings can only fail when the Brain carries some (a clean Brain has none)
+        cases.append(("architecture_finding_not_carried", P.p18_architecture_gates_no_new_violations, r(spec, arch_findings=())))
+    if not spec.has_score:                                   # a Brain without a score: declaring one must fail
+        cases.append(("score_block_declared_without_score", P.p03_identity_lifecycle_publisher_state, r(spec, has_score=True)))
     if spec.score_baseline_substring:
         cases.append(("score_baseline_mismatch", P.p19_score_and_lifecycle_unchanged, r(spec, score_baseline_substring="no-such-brain=99.9/10")))
     return cases

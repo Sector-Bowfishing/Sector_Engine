@@ -148,7 +148,7 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
         shadow_fields = {"shadow": True, "scoreStatus": reg.get("scoreStatus") or "NOT_ESTABLISHED",
                          **{k: reg.get(k) for k in ("research", "fleet", "lakeDependency", "orchestration", "fieldValidation", "primaryBlocker",
                                                     "statusBasis", "contractVersion", "breakdowns", "scope", "claims", "execution", "knowledgeRelease")},
-                         "registryLifecycle": reg.get("lifecycle")}
+                         "lifecycle": reg.get("lifecycle")}           # the Brain's own model lifecycle; `status` stays the manifest lifecycle
     return _strip({**shadow_fields,
         "brainId": brain_id, "slot": slot, "displayName": reg.get("displayName") or display,
         # status = the canonical lifecycle (orchestrator manifest); the Brain's own registry word is kept as legacyStatus when it differs

@@ -16,8 +16,10 @@ def test_default_registry_has_exactly_wind_and_fish_schemas_and_bundles():
     from sector_brain_platform.publisher.registry import LAKE_BUNDLE, LAKE_SCHEMAS, WATER_TEMP_BUNDLE, WATER_TEMP_SCHEMAS   # Lake, Water Temperature: SHADOW
     assert r.schemas_for("lake-brain") == sorted(LAKE_SCHEMAS) and r.bundle(LAKE_BUNDLE).sections == LAKE_SCHEMAS
     assert r.schemas_for("water-temp") == sorted(WATER_TEMP_SCHEMAS) and r.bundle(WATER_TEMP_BUNDLE).sections == WATER_TEMP_SCHEMAS
-    for other in ("depth", "vegetation"):
-        assert r.schemas_for(other) == []                                      # still identity-only until their own certification
+    from sector_brain_platform.publisher.registry import DEPTH_BUNDLE, DEPTH_SCHEMAS   # Depth: SHADOW (Cortex 2.1 structural completion)
+    assert r.schemas_for("depth") == sorted(DEPTH_SCHEMAS) and r.bundle(DEPTH_BUNDLE).sections == DEPTH_SCHEMAS
+    for other in ("vegetation",):
+        assert r.schemas_for(other) == []                                      # still identity-only until its own certification
 
 
 def test_fish_can_never_author_publisher_owned_children_or_other_brains_paths():

@@ -87,7 +87,8 @@
   },
   "authorizedConsumers": [
     "ops",
-    "sector-intelligence"
+    "sector-intelligence",
+    "depth"
   ],
   "tests": [
     "brains/lake/tests"

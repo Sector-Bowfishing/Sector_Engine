@@ -10,9 +10,9 @@
   ],
   "lineage": {
     "consumed": "ACTUAL RTDB reads recorded by the platform client when available; absent = unknown, never []",
-    "knowledgeRelease": "NONE (no versioned knowledge release; the runtime input fingerprint and catalog digest are in inputFingerprint)",
-    "manifestRef": "NONE",
-    "manifestSha256": "NONE"
+    "knowledgeRelease": "the verified packaged knowledge release id (runtime/knowledge-release.json over catalog.json)",
+    "manifestRef": "image:knowledge-release.json",
+    "manifestSha256": "the release digest (sha256)"
   },
   "registryChildren": {
     "identity": [

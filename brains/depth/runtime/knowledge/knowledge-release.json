@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "depth",
+  "releaseId": "depth-knowledge-candidate-2026-10-20.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "depth",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "candidates.json",
+      "sha256": "f3864ebc8493aa58269f2330bd213d9b38a84ed4d618c1d90698e1e42a6b8630",
+      "bytes": 830607
+    },
+    {
+      "path": "claim_levels.json",
+      "sha256": "a6471f4c4162d30a369957fbab5f88e8a2b4c3db4f2734844533df3296649a8f",
+      "bytes": 5623
+    },
+    {
+      "path": "stage_area_curves.json",
+      "sha256": "ce0b7c9875570fbd0a1a9629a616b38f04f83445ef52bf947849619a1fc279cd",
+      "bytes": 382035
+    }
+  ],
+  "releaseDigest": "sha256:0ce9f1af7c86fbd34dcaacf75cb28f63653deee7a854e3d6b692b2df02083205"
+}

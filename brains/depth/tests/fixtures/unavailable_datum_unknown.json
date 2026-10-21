@@ -1,0 +1,85 @@
+{
+ "brainId": "depth",
+ "coverage": {
+  "evidenceKind": "unknown",
+  "sourceTier": "C"
+ },
+ "effectiveDepth": {
+  "mode": "unknown",
+  "note": "no shift defended",
+  "reasons": [
+   "CANDIDATE_BLOCKED",
+   "DATUM_UNKNOWN"
+  ]
+ },
+ "freshness": {
+  "evidenceStale": true,
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "refreshReason": "scheduled",
+  "sourceObservationAt": "2026-10-13T18:00:00Z",
+  "stale": false,
+  "staleReasons": [
+   "no defended shift: CANDIDATE_BLOCKED, DATUM_UNKNOWN"
+  ]
+ },
+ "kind": "unavailable",
+ "lakeId": "Datum Unknown|TN",
+ "level": {
+  "currentElevationFt": 593.6,
+  "datum": "NGVD29",
+  "observedAt": "2026-10-13T18:00:00Z",
+  "sourceBrain": "lake-brain",
+  "sourceBrainVersion": "1.0.0",
+  "sourceCapability": "DIRECT_OPERATOR_POOL"
+ },
+ "limitations": [
+  "Depth Brain is SHADOW / internal: no customer surface consumes this state.",
+  "A shift is not an absolute depth. Reference depths exist only where real contour evidence is listed under coverage.",
+  "No shift is published for this lake this run (see effectiveDepth.reasons)."
+ ],
+ "provenance": {
+  "brainId": "depth",
+  "brainVersion": "depth-brain-0.1.1-shadow",
+  "datumEvidence": {
+   "status": "UNKNOWN"
+  },
+  "generatedAt": "2026-10-13T19:00:00Z",
+  "inputFingerprint": "372566e58f153b77",
+  "licence": {
+   "contourData": "none used",
+   "note": "shift-only state: level from the Lake Brain state (operator feed) and the directory reference pool; no third-party depth/contour data is involved"
+  },
+  "modelVersion": "effective-depth-shift-v1",
+  "processingVersion": "effective-depth-shift-v1 @ manifest fixture",
+  "qualityFlags": [
+   "shiftUnavailable"
+  ],
+  "readiness": "BLOCKED",
+  "sources": [
+   {
+    "lastObservationAt": "2026-10-13T18:00:00Z",
+    "sourceId": "lake-brain/states/lake",
+    "sourceType": "brainState"
+   },
+   {
+    "sourceId": "engine-directory:fullPoolFt",
+    "sourceType": "referencePool"
+   }
+  ],
+  "validationRef": "/validation/depth"
+ },
+ "reference": {
+  "datumAssessment": {
+   "sigmaFt": 0.0,
+   "status": "UNKNOWN"
+  },
+  "referencePoolBasis": "fullPool",
+  "referencePoolConfidence": "high",
+  "referencePoolDatum": "NGVD29",
+  "referencePoolFt": 595.0,
+  "referencePoolSource": "engine-directory:fullPoolFt"
+ },
+ "schemaVersion": 1,
+ "slot": "depth",
+ "stateSchema": "sector-brain-depth-state-v1"
+}

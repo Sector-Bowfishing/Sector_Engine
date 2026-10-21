@@ -1,0 +1,132 @@
+{
+ "schema": "depth-claim-levels-v1",
+ "modelVersion": "sector-brain-model-v1-preparation",
+ "note": "Maturity PER CLAIM (Sector Brain Model). One experimental claim must not poison the apparent maturity of the others. Statuses are a closed vocabulary; a status here never claims more than its evidence (`evidence` points at the artefact). Customer exposure for every claim is NONE (shadow).",
+ "levels": {
+  "1": "provider / observed truth",
+  "2": "deterministic derivation",
+  "3": "Sector-derived intelligence"
+ },
+ "statusVocabulary": [
+  "PROVIDER_VERIFIED",
+  "VERIFIED",
+  "DESK_VALIDATED",
+  "ESTIMATED",
+  "CALIBRATION",
+  "NOT_VALIDATED",
+  "WITHHELD",
+  "NOT_CLAIMED"
+ ],
+ "claims": [
+  {
+   "id": "currentLakeLevel",
+   "label": "Current lake level (consumed from Lake Brain)",
+   "level": 1,
+   "status": "PROVIDER_VERIFIED",
+   "scope": "5 live pilot lakes",
+   "evidence": "docs/brains/depth/DEPTH_PILOT_INPUT_VERIFICATION.md (equals the operator feeds; units, freshness, sanity checked)",
+   "owner": "lake-brain",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "referencePool",
+   "label": "Reference (normal/full) pool elevation",
+   "level": 1,
+   "status": "PROVIDER_VERIFIED",
+   "scope": "lakes with a high/medium directory pool figure (353)",
+   "evidence": "engine directory + operator sources recorded per lake (reference.referencePoolSource)",
+   "owner": "lake registry / operators",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "datumRelationship",
+   "label": "Level and reference pool share a vertical datum",
+   "level": 2,
+   "status": "VERIFIED",
+   "scope": "{verifiedDatum} verified; {inferredOperatorSystem} TVA operator-system inferred; rest UNKNOWN",
+   "evidence": "docs/brains/depth/DEPTH_DATUM_AUDIT.md + DEPTH_POOL_DATUM_DOCUMENT_SWEEP.md; proposal-rules-1 validator",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "levelShift",
+   "label": "Level shift = current level minus reference pool",
+   "level": 2,
+   "status": "VERIFIED",
+   "scope": "{shiftPossible} lakes defensible, {pilotVerified} live",
+   "evidence": "formula/sign/edge cases in tests; live inputs equal operator feeds; shift arithmetic exact",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "shiftUncertainty",
+   "label": "Shift uncertainty (pool, level, datum sigma)",
+   "level": 2,
+   "status": "ESTIMATED",
+   "scope": "all shift states",
+   "evidence": "contract.py SIGMA_*; flagged sigmaAssumed (research estimates, not instrument specs)",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "referenceZoneShares",
+   "label": "Shallow-band shares from authoritative contours at the survey pool",
+   "level": 2,
+   "status": "VERIFIED",
+   "scope": "{referenceZoneLakes} contour lakes (tier A/B); only edges the contour interval supports",
+   "evidence": "method vs exact TWDB area-capacity tables (MAE 0.010-0.026 at 1-5 ft intervals)",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "effectiveZoneBounds",
+   "label": "Dry/shallow bounds after the level shift (survey-verified lakes)",
+   "level": 2,
+   "status": "DESK_VALIDATED",
+   "scope": "{effectiveZoneEligible} TWDB lakes; dry and under-3-ft bands only",
+   "evidence": "docs/brains/depth/DEPTH_TWDB_EFFECTIVE_ZONE_VALIDATION.md (preregistered, hash-frozen, passed)",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "ratingZoneShares",
+   "label": "Dry / under 3 / 3-6 / 6-10 ft shares of the reference-pool surface from an operator elevation-area rating or Reclamation survey table",
+   "level": 2,
+   "status": "VERIFIED",
+   "scope": "{ratingZoneLakes} lakes ({ratingZoneEligible} with a defensible shift); shares only, never where",
+   "evidence": "docs/brains/depth/DEPTH_STAGE_AREA_RATING_RULES.md (RATING-ZONE-RULES-1: frame, range, monotone and cross-check rules; exact function of provider-published tables, with area derived from a storage rating where no area rating exists (validated on 89 lakes with both: median |difference| 0.0016, p90 0.020); cross-checked against independent contour surveys on 27 lakes: median |difference| 0.044, 90th percentile 0.127, reported as shareToleranceAbs; vintage published; not validated against the physical lake)",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "effectiveZoneBoundsRated",
+   "label": "Dry / shallow bounds after the level shift for rated lakes",
+   "level": 2,
+   "status": "VERIFIED",
+   "scope": "{ratingZoneEligible} lakes with a rating and a defensible shift",
+   "evidence": "exact arithmetic on the rating (tests/test_rating_zones.py); bounds reflect the level-shift uncertainty only; the reported share tolerance is carried beside them",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "effectiveZoneBoundsOther",
+   "label": "Same, for other contour lakes",
+   "level": 2,
+   "status": "WITHHELD",
+   "scope": "non-TWDB contour lakes",
+   "evidence": "docs/brains/depth/DEPTH_CONTOUR_EFFECTIVE_ZONE_VALIDATION.md (preregistered validation failed; survey-date water level missing)",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "knownFlatClass",
+   "label": "A known flat is now DRY / TOO_SHALLOW / SHOOTABLE / GOOD / DEEP",
+   "level": 3,
+   "status": "NOT_VALIDATED",
+   "scope": "none yet",
+   "evidence": "docs/brains/depth/DEPTH_FIELD_VALIDATION_PREREG.md + PACKETS (preregistered, no field data)",
+   "customerExposure": "NONE"
+  },
+  {
+   "id": "absoluteDepthFlatsChannels",
+   "label": "Absolute depth, flats, drop-offs, channels, bathymetry",
+   "level": 3,
+   "status": "NOT_CLAIMED",
+   "scope": "outside the Depth mission",
+   "evidence": "DEPTH_EVIDENCE_POLICY.md (GLOBathy and slope-derived depth forbidden)",
+   "customerExposure": "NONE"
+  }
+ ]
+}

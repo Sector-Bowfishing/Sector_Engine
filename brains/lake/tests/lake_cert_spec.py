@@ -40,7 +40,7 @@ _BRAIN = json.load(open(os.path.join(REPO, "brains", "lake", "brain.json"), enco
 
 SPEC = BrainCertSpec(
     brain_id="lake-brain", directory="lake", repo_root=REPO, lifecycle="CALIBRATION", workspace_id="lake-brain",
-    authorized_consumers=("ops", "sector-intelligence"), runtime_kind="job",
+    authorized_consumers=("ops", "sector-intelligence", "depth"), runtime_kind="job",
     consumes=tuple(_BRAIN["consumes"]), providers=tuple(p["providerId"] for p in _BRAIN["providers"]),
     required_files=("brain.json", "BRAIN_OPERATING_CONTRACT.md", "README.md", "contracts/lake-publication-v1.json", "contracts/describe_contract.py",
                     "runtime/LakeBrain/LakeBrainRunner.swift", "runtime/LakeBrain/LakeLevelClassifier.swift", "runtime/LakeBrainJob/main.swift", "runtime/publish_artifact.py", "tests", "tests/golden/lake_run_updates.json",

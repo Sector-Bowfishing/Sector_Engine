@@ -579,9 +579,62 @@ def water_temp_bundles() -> list[BundleSpec]:
     return [BundleSpec(WATER_TEMP_BUNDLE, WATER_TEMP, WATER_TEMP_SCHEMAS)]
 
 
+# ---- Depth (SHADOW / PROFILED; canonical package brains/depth, Cortex 2.1 structural completion 2026-10-20) ---------------------------------------
+# The Depth job (brains/depth/runtime/run.py) sends flat multi-path updates through the platform client (LEGACY, pilot-scope shadow only, and only from an
+# APPROVED knowledge release). This registration describes that write set as Publisher families so the Brain can be certified; it activates nothing.
+DEPTH = "depth"
+DEPTH_SLOT = BRAINS[DEPTH][0]
+DEPTH_SNAPSHOT_FIELD = BRAINS[DEPTH][1]
+DEPTH_SCHEMAS = ("depth-lake-state-v1", "depth-registry-v1")
+DEPTH_BUNDLE = "depth-publication-v1"
+DEPTH_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "descriptor", "versions", "models", "readinessDefinitions", "stateKinds",
+              "contractVersion", "manifestVersion", "knowledgeRelease", "claims", "lifecycle", "shadow", "scoreStatus", "scoreNote", "research", "sourceIds"),
+    "status": ("schedule", "enabled", "health", "status", "statusBasis", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount",
+               "staleAfterHours", "lastSuccessfulRun", "lastError", "lastDryRun", "breakdowns", "fleet", "blockers", "primaryBlocker", "lakeDependency",
+               "orchestration", "fieldValidation", "execution", "validation", "publishMode", "scope", "updatedAt"),
+}
+DEPTH_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")          # domain facts; run/process fields are Orchestrator-owned
+DEPTH_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "depth-volatile-v1", 1,
+    keys=frozenset({"lastUpdatedAt", "updatedAt", "inputAgeHours", "levelAgeHours"}),
+    paths=(PathFamily(f"/brains/{DEPTH}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{DEPTH}/versions", note="carries the run date")),
+    notes={"key:lastUpdatedAt": "slot write time; no domain meaning", "key:updatedAt": "registry write time; no domain meaning",
+           "key:inputAgeHours": "age of the Lake observation at run time", "key:levelAgeHours": "age of the level reading at run time",
+           "path:/brains/depth/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+           "path:/brains/depth/versions": "version history entry dated by the run"})
+
+
+def depth_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "depth-lake-state-v1", DEPTH,
+        (PathFamily(f"/lakes/{{k}}/states/{DEPTH_SLOT}", k),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{DEPTH_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{DEPTH_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{DEPTH_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/snapshots/{{k}}/latest/{DEPTH_SNAPSHOT_FIELD}", k, note="published lakes only (LEGACY_READER_DEPENDENCY; Brain-authored, no COPY projection)"),
+         PathFamily(f"/snapshots/{{k}}/latest/brainVersions/{DEPTH}", k, note="published lakes only (LEGACY_READER_DEPENDENCY)")),
+        value_types={f"/lakes/{{k}}/states/{DEPTH_SLOT}": dict, f"/lakeFleet/{{k}}/slots/{DEPTH_SLOT}": dict},
+        volatile=DEPTH_VOLATILE_CONTRACT_V1)
+    registry = SchemaSpec(
+        "depth-registry-v1", DEPTH,
+        (PathFamily(f"/brains/{DEPTH}/{{child}}", {"child": one_of(c for group in DEPTH_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only; never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{DEPTH}"),
+         PathFamily(f"/health/brains/{DEPTH}/{{child}}", {"child": one_of(DEPTH_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only"),
+         PathFamily("/activity/{event}", {"event": contains(f"-{DEPTH}-")}, note="own domain events only; retention/pruning is a platform concern")),
+        delete_families=(PathFamily(f"/brains/{DEPTH}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=DEPTH_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry]
+
+
+def depth_bundles() -> list[BundleSpec]:
+    return [BundleSpec(DEPTH_BUNDLE, DEPTH, DEPTH_SCHEMAS)]
+
+
 def default_registry() -> Registry:
-    """Wind, Fish, Water Clarity, Sector Intelligence, Lake and Water Temperature (all SHADOW). Depth and Vegetation are registered as identities (so an
-    unknown id is distinguishable from an unmigrated one) but have no schema: anything submitted for them is rejected UNKNOWN_SCHEMA until their own
-    certification registers one."""
-    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs(),
-                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles())
+    """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth and Vegetation (all SHADOW). A registration describes a Brain's
+    write set so it can be certified; it activates nothing (Publisher LIVE authorizes no Brain)."""
+    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs(),
+                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles())

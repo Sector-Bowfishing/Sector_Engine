@@ -22,8 +22,8 @@ SPEC = ContractSpec(
     extras={"registryChildren": ("registry", "INTELLIGENCE_REGISTRY_CHILDREN", "children"), "healthDomainChildren": ("registry", "INTELLIGENCE_HEALTH_DOMAIN_CHILDREN", "list"),
             "reservedChildren": ("registry", "BRAIN_NODE_OWNERS", "sortedkeys"), "volatileContract": ("volatile",),
             "snapshot": "the snapshot field and its brainVersion are Brain-authored for EVALUATED pilot lakes only (no Publisher COPY projection)",
-            "lineage": {"knowledgeRelease": "NONE (no versioned knowledge release; the runtime input fingerprint and catalog digest are in inputFingerprint)",
-                        "manifestRef": "NONE", "manifestSha256": "NONE",
+            "lineage": {"knowledgeRelease": "the verified packaged knowledge release id (runtime/knowledge-release.json over catalog.json)",
+                        "manifestRef": "image:knowledge-release.json", "manifestSha256": "the release digest (sha256)",
                         "consumed": "ACTUAL RTDB reads recorded by the platform client when available; absent = unknown, never []"}})
 
 

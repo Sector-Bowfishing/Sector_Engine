@@ -29,7 +29,8 @@ BRAINS = sorted(d for d in os.listdir(os.path.join(ROOT, "brains"))
 # Where the packaged release is staged into the image that actually runs the Brain (job image or the orchestrator's in-process image).
 STAGING = {"wind": ("brains/wind/deploy/deploy-job.sh", "brains/wind/deploy/Dockerfile"),
            "water-clarity": ("brains/water-clarity/deploy/deploy-job.sh", "brains/water-clarity/deploy/Dockerfile"),
-           "sector-intelligence": ("jobs/brain-orchestrator/deploy-job.sh",)}
+           "sector-intelligence": ("jobs/brain-orchestrator/deploy-job.sh",),
+           "depth": ()}                       # no image and no executor (control manifest executionTarget kind none): nothing to stage
 
 SCAN_ROOTS = [os.path.join("brains", b, sub) for b in BRAINS for sub in ("runtime", "deploy")] + [
     os.path.join("jobs", "brain_platform", "sector_brain_platform"), os.path.join("jobs", "brain-orchestrator"), os.path.join("Sources", "SectorEngine"), "Dockerfile"]
@@ -64,7 +65,7 @@ def _files():
 
 
 def test_every_brain_declares_its_approved_memory_owned_by_itself_with_no_research_fallback():
-    assert BRAINS == ["fish", "lake", "sector-intelligence", "water-clarity", "water-temperature", "wind"]
+    assert BRAINS == ["depth", "fish", "lake", "sector-intelligence", "water-clarity", "water-temperature", "wind"]
     for b in BRAINS:
         bj = _brain(b)
         k = bj.get("knowledge")
@@ -82,7 +83,7 @@ def test_declared_memory_tests_exist():
             assert os.path.exists(os.path.join(ROOT, t)), f"{b}: declared memory test {t} is missing"
 
 
-@pytest.mark.parametrize("b", ["sector-intelligence", "water-clarity", "wind"])
+@pytest.mark.parametrize("b", ["depth", "sector-intelligence", "water-clarity", "wind"])
 def test_packaged_releases_verify_list_only_runtime_files_and_are_staged_into_the_running_image(b):
     stores = [s for s in _brain(b)["knowledge"]["stores"] if s["store"] == "PACKAGED_IN_IMAGE"]
     assert len(stores) == 1
