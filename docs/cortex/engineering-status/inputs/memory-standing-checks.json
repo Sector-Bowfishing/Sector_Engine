@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "evaluatedAt": "2026-10-20",
-  "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-memory.md",
+  "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-structural-completion.md",
   "standard": "Cortex 2.1.0 brains.md \u00a75 standing memory checks (BR-10, BR-11, BR-16, BR-18, PL-13)",
   "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
   "checks": [
@@ -255,77 +255,77 @@
     },
     {
       "brainId": "depth",
-      "directory": "branch:feat/depth-brain-foundation:jobs/depth-brain",
+      "directory": "brains/depth",
       "checks": {
         "store-owner": {
-          "branch": "FAIL",
+          "branch": "PASS",
           "production": "NOT_APPLICABLE",
-          "evidence": "no package on main; branch runtime reads 4 package-data files (candidates.json 1.06 MB, claim_levels, maturity_inputs, stage_area_curves) with no release manifest or approval of content"
+          "evidence": "brain.json knowledge: PACKAGED_IN_IMAGE release brains/depth/runtime/knowledge/knowledge-release.json, owner depth, researchFallback false (standing gate). Not deployed"
         },
         "developer-machine": {
-          "branch": "FAIL",
+          "branch": "PASS",
           "production": "NOT_APPLICABLE",
-          "evidence": "branch data datum_providers.json and twdb_prereg.json carry /Users/ paths (not read by code); build tool parses Lake Swift source (contract reviewed-lake-bindings-v1 now offered)"
+          "evidence": "standing scan + Kit P16 clean; the manifest builder reads Lake's reviewed-lake-bindings-v1 contract, never Lake Swift source; research data with /Users/ evidence URLs stays outside the repo"
         },
         "release-identity": {
-          "branch": "FAIL",
-          "production": "NOT_APPLICABLE",
-          "evidence": "no release id or digest"
-        },
-        "memory-unavailable": {
-          "branch": "NOT_VERIFIED",
-          "production": "NOT_APPLICABLE",
-          "evidence": "not tested"
-        },
-        "separation-approval": {
-          "branch": "FAIL",
-          "production": "NOT_APPLICABLE",
-          "evidence": "research maturity rubric evaluated inside the runtime; no content approval record"
-        },
-        "pulse-independence": {
           "branch": "PARTIAL",
           "production": "NOT_APPLICABLE",
-          "evidence": "runs locally only (no cloud job); orchestration approved to prepare, not schedule"
+          "evidence": "verified on load (depth_brain.knowledge.load); release id/digest/approval in the registry and the SHADOW artifact lineage (Kit P09). No image exists (not deployable while PARKED)"
+        },
+        "memory-unavailable": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "missing/tampered release -> exit 2 REFUSED; unapproved release -> BLOCKED_AWAITING_APPROVED_RELEASE (tests/test_run_entry.py, tests/test_knowledge_memory.py)"
+        },
+        "separation-approval": {
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "research tooling, datasets ($DEPTH_RESEARCH_DATA, outside the repo) and the maturity rubric separated from the runtime (tests/test_knowledge_memory.py); approval NOT_RECORDED: the candidate release is never published from (gated G-1)"
+        },
+        "pulse-independence": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no Pulse/Mac/localhost target (standing scan); no executor, no schedule (control manifest kind none)"
         }
       },
-      "recovery": "Not deployed."
+      "recovery": "Not deployed. The release ships with the package and is re-verified on every run; no local state."
     },
     {
       "brainId": "vegetation",
-      "directory": "branch:feat/vegetation-brain-foundation:jobs/vegetation-brain",
+      "directory": "brains/vegetation",
       "checks": {
         "store-owner": {
-          "branch": "FAIL",
+          "branch": "PASS",
           "production": "NOT_APPLICABLE",
-          "evidence": "no package on main; branch package data has no release manifest"
+          "evidence": "brain.json knowledge: PACKAGED_IN_IMAGE release brains/vegetation/runtime/knowledge/knowledge-release.json, owner vegetation, researchFallback false (standing gate). Not deployed"
         },
         "developer-machine": {
-          "branch": "NOT_VERIFIED",
+          "branch": "PASS",
           "production": "NOT_APPLICABLE",
-          "evidence": "not re-scanned this session"
+          "evidence": "standing scan + Kit P16 clean (the runtime never read research documents; the old maturity evidence check only ran in tests)"
         },
         "release-identity": {
-          "branch": "FAIL",
-          "production": "NOT_APPLICABLE",
-          "evidence": "no release id or digest"
-        },
-        "memory-unavailable": {
-          "branch": "NOT_VERIFIED",
-          "production": "NOT_APPLICABLE",
-          "evidence": "not tested"
-        },
-        "separation-approval": {
-          "branch": "FAIL",
-          "production": "NOT_APPLICABLE",
-          "evidence": "runtime maturity/evidence check reads ~25 research documents; in-Brain maturity score"
-        },
-        "pulse-independence": {
           "branch": "PARTIAL",
           "production": "NOT_APPLICABLE",
-          "evidence": "manual pilot runs only"
+          "evidence": "verified on load (vegetation_brain.knowledge.load); release id/digest/approval in the registry and the SHADOW artifact lineage (Kit P09). No image exists (not deployable while PARKED)"
+        },
+        "memory-unavailable": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "missing/tampered release -> exit 2 REFUSED; unapproved release -> BLOCKED_AWAITING_APPROVED_RELEASE (tests/test_run_entry.py, tests/test_knowledge_memory.py)"
+        },
+        "separation-approval": {
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "maturity rubric, preregistered gates, holdout guard and builders moved to research tooling; the runtime publishes no research number; approval NOT_RECORDED (gated G-1)"
+        },
+        "pulse-independence": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no Pulse/Mac/localhost target (standing scan); no executor, no schedule (control manifest kind none)"
         }
       },
-      "recovery": "Not deployed."
+      "recovery": "Not deployed. The release ships with the package and is re-verified on every run; no local state."
     }
   ]
 }

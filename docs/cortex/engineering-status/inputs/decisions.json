@@ -4,13 +4,13 @@
     {
       "id": "A-1",
       "class": "APPROVAL",
-      "title": "Push cortex/architecture-standardization-2026-10-20 and open a draft PR to main",
-      "recommendation": "Approve; Linux CI then runs Swift and every Python job"
+      "title": "Merge PR #40 (cortex/architecture-standardization-2026-10-20) into main",
+      "recommendation": "Merge only after Linux CI is green and the decision-required items below are accepted or split out; merging deploys nothing"
     },
     {
       "id": "A-2",
       "class": "APPROVAL",
-      "title": "Deploy (brain-jobs image, orchestrator image, wind-hourly, water-clarity-brain) after merge",
+      "title": "Deploy after merge (brain-jobs, orchestrator incl. control-plane shadow support, wind-hourly, water-clarity-brain)",
       "recommendation": "Deploy only with the lineage preflight; the Lake image stays on its own lineage"
     },
     {
@@ -99,30 +99,27 @@
     {
       "id": "G-1",
       "class": "GATED",
-      "title": "Promote Depth and Vegetation knowledge (candidates, curves, claim levels, agency data) into versioned releases",
-      "recommendation": "Requires scientific validation approval plus owner approval (PROJECT \u00a77); until then both stay branch-only and PARKED/SHADOW",
+      "title": "Promote Depth and Vegetation knowledge (candidate releases) to APPROVED releases",
+      "recommendation": "Requires scientific validation approval plus owner approval (PROJECT \u00a77); until then both runtimes abstain (structure is complete)",
       "brains": [
         "depth",
         "vegetation"
       ]
     },
     {
-      "id": "D-A",
+      "id": "V-1",
       "class": "DECISION_REQUIRED",
-      "title": "Depth migration to brains/depth: runtime package plus release (after G-1), build tooling to research, reviewed-lake-bindings-v1 instead of Swift source, execution declaration instead of orchestrator source, control-plane shadow support",
-      "recommendation": "Approve a Depth certification session after G-1",
-      "brains": [
-        "depth"
-      ]
-    },
-    {
-      "id": "D-B",
-      "class": "DECISION_REQUIRED",
-      "title": "Vegetation migration: move the maturity and evidence checks to research tooling, package the runtime with a release",
-      "recommendation": "Approve a Vegetation certification session after G-1",
+      "title": "Vegetation agency block publishes FWC percentages and SFWMD species-level labels (internalOnly)",
+      "recommendation": "Withhold or reduce to presence before any release approval (surface-only V1 rule)",
       "brains": [
         "vegetation"
       ]
+    },
+    {
+      "id": "K-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Kit V1 harness additions (has_score spec field; carried-finding mutation only when findings exist)",
+      "recommendation": "Accept and upstream to the Kit's canonical source (CG-2.1-6)"
     },
     {
       "id": "D-C",

@@ -49,3 +49,27 @@ def test_the_generator_is_offline():
     src = open(B.__file__, encoding="utf-8").read()
     for forbidden in ("urllib", "requests", "socket", "subprocess", "datetime", "time.time", "firebase", "google.cloud"):
         assert forbidden not in src, forbidden
+
+
+LAYERS = ("canonicalStructure", "structuralCertification", "scientificValidation", "approvedMemoryRelease", "operationalReadiness",
+          "productionActivation", "customerConsumable")
+
+
+def test_every_brain_reports_seven_separate_layers_never_one_flag():
+    for b in B.build()["brains"]:
+        assert tuple(b["statusLayers"]) == LAYERS or set(b["statusLayers"]) == set(LAYERS), b["brainId"]
+
+
+def test_structural_certification_comes_only_from_the_recorded_kit_run():
+    cert = json.load(open(os.path.join(ROOT, "docs", "cortex", "engineering-status", "inputs", "certification.json")))["brains"]
+    for b in B.build()["brains"]:
+        c = cert[b["brainId"]]
+        assert b["statusLayers"]["structuralCertification"]["status"] == ("PASS" if c["status"] == "PASS" else "FAIL")
+        assert b.get("certificationProofs") == c.get("proofs")
+        assert all(v in ("PASS", "NOT_APPLICABLE") for v in c["proofs"].values()) == (c["status"] == "PASS")
+
+
+def test_no_production_or_customer_layer_is_claimed_from_this_repository():
+    for b in B.build()["brains"]:
+        for layer in ("operationalReadiness", "productionActivation", "customerConsumable"):
+            assert b["statusLayers"][layer]["status"] != "PASS", (b["brainId"], layer)     # needs live evidence (A-3), never unit tests

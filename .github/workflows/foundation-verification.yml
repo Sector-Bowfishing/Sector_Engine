@@ -27,7 +27,7 @@ jobs:
         run: python -m pytest -q verification
       - name: Packaged knowledge releases and the engineering status report (Cortex 2.1 standing memory checks)
         run: |
-          for d in brains/sector-intelligence/runtime brains/wind/runtime brains/water-clarity/runtime; do python tools/knowledge/build_release_manifest.py "$d" --check; done
+          for d in brains/sector-intelligence/runtime brains/wind/runtime brains/water-clarity/runtime brains/depth/runtime/knowledge brains/vegetation/runtime/knowledge; do python tools/knowledge/build_release_manifest.py "$d" --check; done
           python tools/cortex_status/build_engineering_status.py --check
       - name: Architecture report (REPORT-ONLY; known vs new vs resolved against the legacy baseline)
         run: |
