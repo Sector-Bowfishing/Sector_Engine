@@ -40,6 +40,13 @@ final class MigrationGoldenTests: XCTestCase {
         try JSONSerialization.data(withJSONObject: normalize(obj), options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes])
     }
 
+    /// Exact deep equality of two parsed JSON values, portable to Linux (Foundation there has no Objective-C `isEqual` bridge):
+    /// both sides re-serialized with sorted keys, no normalization, compared byte for byte.
+    private func sameJSON(_ a: Any, _ b: Any) throws -> Bool {
+        try JSONSerialization.data(withJSONObject: a, options: [.sortedKeys, .fragmentsAllowed])
+            == JSONSerialization.data(withJSONObject: b, options: [.sortedKeys, .fragmentsAllowed])
+    }
+
     private func assertGolden(_ obj: Any, _ relativePath: String, file: StaticString = #filePath, line: UInt = #line) throws {
         let url = Self.fixtures.appendingPathComponent(relativePath)
         if Self.updating {
@@ -48,7 +55,7 @@ final class MigrationGoldenTests: XCTestCase {
         }
         let golden = try JSONSerialization.jsonObject(with: Data(contentsOf: url))
         let actual = try JSONSerialization.jsonObject(with: canonicalData(obj))
-        XCTAssertTrue((golden as AnyObject).isEqual(actual),
+        XCTAssertTrue(try sameJSON(golden, actual),
                       "\(relativePath) differs from current behavior. If intentional, regenerate with SECTOR_UPDATE_GOLDEN=1 and record why.",
                       file: file, line: line)
     }
@@ -112,7 +119,7 @@ final class MigrationGoldenTests: XCTestCase {
         encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
         let reencoded = try JSONSerialization.jsonObject(with: encoder.encode(response))
         let golden = try JSONSerialization.jsonObject(with: raw)
-        XCTAssertTrue((golden as AnyObject).isEqual(reencoded),
+        XCTAssertTrue(try sameJSON(golden, reencoded),
                       "ConditionsResponse key names/types changed (a rename or removed field drops out of the round trip).")
         // Every top-level property of the type is present in the golden (no field added without updating the contract).
         let goldenKeys = Set((golden as! [String: Any]).keys)

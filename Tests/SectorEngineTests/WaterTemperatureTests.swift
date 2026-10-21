@@ -241,9 +241,13 @@ final class WaterTemperatureTests: XCTestCase {
         let rmse = (sq / n).squareRoot()
         let meanBias = bias / n
 
+        #if canImport(Darwin)
         XCTContext.runActivity(named: "Lake Marion fit") { _ in
             print(String(format: "RMSE %.2f F   bias %+.2f F   n %.0f", rmse, meanBias, n))
         }
+        #else
+        print(String(format: "Lake Marion fit: RMSE %.2f F   bias %+.2f F   n %.0f", rmse, meanBias, n))   // XCTContext is Apple-only
+        #endif
 
         XCTAssertLessThan(rmse, 3.5, "modeled water drifted from the gauge: RMSE \(rmse) °F")
 
