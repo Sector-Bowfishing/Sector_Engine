@@ -119,3 +119,24 @@ Items 12–14 are NOT_APPLICABLE for every Brain (no production-live, Ops-live o
 | Water Temperature | Canonical (Swift targets), Kit 18/18 + P14 N/A | GLOBAL_HOLDOUT_ONLY | PARKED | none |
 | Depth | Canonical, Kit 19/19 | NOT_VALIDATED; candidate release unapproved (G-1) | PROFILED, PARKED, `kind: none`; abstains | none |
 | Vegetation | Canonical, Kit 19/19 | NOT_VALIDATED (gates failed); candidate release unapproved (G-1) | SHADOW, PARKED, no live writer | none |
+
+## Firebase data requirements (FD, Cortex 2.2.0 @ ae59e2d)
+
+Evaluated 2026-10-21 · `sessions/2026-10-21-cortex-2-2-firebase-data-audit.md`. Evidence: production export (2026-10-21, never committed), narrow read-only live reads, source, RTDB emulator. Platform-wide rows (the RTDB is shared).
+
+| FD | Requirement | Status | Evidence / gap |
+|---|---|---|---|
+| 01 | Registered contracts | PARTIAL | Engine-side: every production family classified (`verification/firebase/path_families.json`, tested). Cortex registry incomplete (§8 proposal) |
+| 02 | Stable Brain keys | PASS | All Brain-keyed roots use stable ids; no `/brains/fish` or alias (export + live + test) |
+| 03 | One authoritative writer | PASS with LEGACY | `ownership.path_allowed` = classification (tested both ways); scorer sole `/scores` writer. LEGACY duplicates: `/brains/wind/scores` (Wind), `/engine/score` (scorer alias) |
+| 04 | Declared read-only consumers | PARTIAL | Ops reads verified read-only (rules + emulator: no client writes). Ops reads 2 LEGACY duplicates and trusts write-time `stale` (C-1, C-2, C-5) |
+| 05 | Versioned schemas | PARTIAL | Brain publication contracts exist; production Clarity states predate `freshness{}` (old schema still served) |
+| 06 | Compatible evolution | PASS (source) | additive fields only on this branch; NOT_VERIFIED in production |
+| 07 | Provenance and freshness | PARTIAL | registry provenance present (deploymentVersion, researchVersion, manifestSha256); per-lake `stale` and `/health/brains` are write-time |
+| 08 | Honest absence | PASS | Vegetation INACTIVE_EXPECTED, engineeringStatusV1 PUBLICATION_INACTIVE, `/brains/fish` NOT_REGISTERED (tested) |
+| 09 | Separate measurements | PARTIAL | `/scores/wind` separates capability / BWIS / readiness / confidence; `/brains/wind/scores` copy violates (mig.01) |
+| 10 | Data placement | PASS | RTDB holds `gs://` references and digests only; no corpora |
+| 11 | Access and classification | **FINDING** | PRIVATE `/lakes/{k}/speciesPresence` readable by all allowlisted Ops users (emulator-verified); IAM NOT_VERIFIED |
+| 12 | Idempotent, ordered publication | PASS (source) / NOT_VERIFIED (production) | scorer and control write only on change; orphaned rollup parents left by a pre-contract writer |
+| 13 | Honest publication state | PASS | no publication state written by CI/merge; O-1 off |
+| 14 | Verification | PARTIAL | contract tests added; `data-check` 487 findings resolved in the record (registry gaps, scanner limits, 0 new defects); IAM NOT_VERIFIED |
