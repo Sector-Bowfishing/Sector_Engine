@@ -129,3 +129,26 @@ def test_only_the_platform_writer_writes_jobs():
     assert path_allowed("wind", "health/jobs/wind-hourly")
     with pytest.raises(OwnershipError):
         assert_owned({"jobs/lake-surface-daily": {}}, "water-clarity")
+
+
+def test_every_control_manifest_job_has_an_owned_manifest_record():
+    """Firebase remediation 2026-10-21 (audit E-9 / C-9): production /jobs/lake-brain-ledger-daily had no owner because the hand-made scheduler was
+    missing from MANIFEST and was published as an unmanifested workload. Every job the control manifest knows must have a MANIFEST entry whose
+    owner is the job's Brain (the platform for Brain-less jobs); /jobs stays written only by the platform."""
+    import json, os
+    import sector_brain_platform as P
+    cm = json.load(open(os.path.join(os.path.dirname(P.__file__), "control_manifest.json"), encoding="utf-8"))["jobs"]
+    for jid, j in cm.items():
+        assert jid in JOB_MANIFEST, f"{jid}: in control_manifest.json but not in jobs.MANIFEST"
+        assert JOB_MANIFEST[jid]["owner"] == (j.get("brainId") or "brain-platform"), jid
+
+
+def test_the_ledger_scheduler_is_an_owned_scheduled_record_not_an_unmanifested_workload():
+    sched = {"name": "projects/p/locations/us-central1/jobs/lake-brain-ledger-daily", "schedule": "0 12 * * *", "timeZone": "UTC", "state": "ENABLED",
+             "scheduleTime": "2026-10-13T12:00:00Z"}
+    r = build_records(scheduler_jobs=[sched], run_jobs=[], executions={}, now=NOW, synced_by="test")["lake-brain-ledger-daily"]
+    assert r["owner"] == "lake-brain" and r["triggers"] == ["lake-brain"] and r["deploymentStatus"] == "DEPLOYED"
+    assert r["executionMode"] == "SCHEDULED" and "unmanifested workload" not in (r.get("warnings") or [])
+    gone = build_records(scheduler_jobs=[], run_jobs=[], executions={}, now=NOW, synced_by="test")["lake-brain-ledger-daily"]
+    assert gone["deploymentStatus"] == "NOT_DEPLOYED"                     # no scheduler, nothing deployed
+    assert not path_allowed("lake-brain", "jobs/lake-brain-ledger-daily")  # the owner field never grants write authority
