@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-20",
     "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-structural-completion.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:b103b384ecc59a1713bf621480ce295a40c020cf5785111b3fcff1f3fe96919a",
-    "certificationDigest": "sha256:b103b384ecc59a1713bf621480ce295a40c020cf5785111b3fcff1f3fe96919a",
+    "sourceDigest": "sha256:b446df5725d799ce3463138eff71f5649530f3ab75a4e86a07ee5a68cab74297",
+    "certificationDigest": "sha256:b446df5725d799ce3463138eff71f5649530f3ab75a4e86a07ee5a68cab74297",
     "certificationCurrent": true,
     "verificationCommit": "44ad7121"
   },
@@ -340,7 +340,7 @@
         "BR-19": "PASS"
       },
       "structuralProblems": [
-        "9 research-tool tests need the research dataset snapshot and skip in CI (243/243 pass locally with it)"
+        "9 research-tool tests need the research dataset snapshot and skip in CI (298 pass locally with the snapshot)"
       ],
       "scienceDependencies": [
         "Scientific approval of a Depth knowledge release (G-1, DEPTH-REL-001)",
@@ -879,7 +879,7 @@
       "scienceDependencies": [
         "Fresh independent truth and a one-shot holdout (VEG-VAL-001)",
         "Scientific approval of a release (G-1)",
-        "Agency block percentages/species labels decision (V-1)"
+        "Agency block percentages and species labels decision (V-1)"
       ],
       "nextWork": [
         "Decide V-1 (agency block)",
@@ -1623,7 +1623,7 @@
     {
       "id": "A-1",
       "class": "APPROVAL",
-      "title": "Merge PR #40 (cortex/architecture-standardization-2026-10-20) into main",
+      "title": "Merge draft PR #40 (the coordinated Cortex architecture branch) into main",
       "recommendation": "Merge only after Linux CI is green and the decision-required items below are accepted or split out; merging deploys nothing"
     },
     {
@@ -1641,7 +1641,7 @@
     {
       "id": "M-1",
       "class": "DECISION_REQUIRED",
-      "title": "Adopt packaged knowledge releases: runtime verifies knowledge-release.json and refuses on missing or tampered memory; the manifest is added to the Wind, Clarity and orchestrator images",
+      "title": "Adopt packaged knowledge releases: runtimes verify their release manifest on load and refuse missing or tampered memory; the manifest is added to the Wind, Clarity and orchestrator images",
       "recommendation": "Accept (implemented locally, isolated commits 4ac482e6, 78d55294); takes effect only on an approved deploy",
       "brains": [
         "wind",
@@ -1712,8 +1712,8 @@
     {
       "id": "M-8",
       "class": "DECISION_REQUIRED",
-      "title": "Scorer rubrics staged from docs/brains/scoring into the orchestrator image are not digest-verified",
-      "recommendation": "Add a release manifest over the staged rubric files without moving them (PROJECT \u00a76: never move docs/brains/scoring)"
+      "title": "Scorer rubrics staged into the orchestrator image are not digest-verified",
+      "recommendation": "Add a release manifest over the staged rubric files without moving them (rubric files must never move)"
     },
     {
       "id": "G-1",
@@ -1775,9 +1775,9 @@
     },
     {
       "id": "O-1",
-      "class": "DECISION_REQUIRED",
-      "title": "Sector Ops read interface for engineering-status-v1",
-      "recommendation": "Ops reads the committed JSON at a pinned commit; any publication to Firebase or a bucket is a separate gated decision"
+      "class": "GATED",
+      "title": "Publish the sanitized Ops projection (engineering-status-ops-v1) to the Brain RTDB node /control/engineeringStatusV1 from main's CI artifact",
+      "recommendation": "Approve the production write, the ownership entry for that node and (if from GitHub Actions) a CI write identity; no Ops rules change is needed. Until then nothing is published"
     }
   ],
   "cortexGaps": [

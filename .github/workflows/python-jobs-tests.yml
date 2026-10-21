@@ -83,10 +83,13 @@ jobs:
           git diff --exit-code -- docs/cortex/engineering-status/inputs/certification.json
           python tools/cortex_status/build_engineering_status.py --check
           python tools/cortex_status/build_engineering_status.py --emit "$RUNNER_TEMP/engineering-status.json" --commit "$GITHUB_SHA"
+          python tools/cortex_status/ops_projection.py --report "$RUNNER_TEMP/engineering-status.json" --out "$RUNNER_TEMP/engineering-status-ops.json"
       - uses: actions/upload-artifact@v4
         with:
           name: engineering-status
-          path: ${{ runner.temp }}/engineering-status.json
+          path: |
+            ${{ runner.temp }}/engineering-status.json
+            ${{ runner.temp }}/engineering-status-ops.json
           retention-days: 90
       - name: Brain Certification Kit self-tests (BRAIN_CERT_KIT_V1; synthetic Brain, no real Brain involved)
         run: python -m pytest -q tools/brain_certification

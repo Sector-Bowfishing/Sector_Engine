@@ -484,7 +484,7 @@
         "BR-19": "PASS"
       },
       "structuralProblems": [
-        "9 research-tool tests need the research dataset snapshot and skip in CI (243/243 pass locally with it)"
+        "9 research-tool tests need the research dataset snapshot and skip in CI (298 pass locally with the snapshot)"
       ],
       "scienceDependencies": [
         "Scientific approval of a Depth knowledge release (G-1, DEPTH-REL-001)",
@@ -548,7 +548,7 @@
       "scienceDependencies": [
         "Fresh independent truth and a one-shot holdout (VEG-VAL-001)",
         "Scientific approval of a release (G-1)",
-        "Agency block percentages/species labels decision (V-1)"
+        "Agency block percentages and species labels decision (V-1)"
       ],
       "nextWork": [
         "Decide V-1 (agency block)",
