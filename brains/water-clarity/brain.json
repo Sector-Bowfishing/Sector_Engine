@@ -36,5 +36,26 @@
   "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
   "authorizedConsumers": ["ops", "sector-intelligence"],
   "tests": ["brains/water-clarity/tests"],
-  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []},
+  "knowledge": {
+    "stores": [
+      {
+        "id": "clarity-catalog",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "water-clarity",
+        "location": "brains/water-clarity/runtime/knowledge-release.json",
+        "loader": "brains/water-clarity/runtime/clarity_brain.py verified_release",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
+        "lineage": "knowledgeRelease, manifestRef and manifestSha256 in the shadow artifact lineage",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/water-clarity/tests/test_knowledge_memory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ],
+    "notes": "The optional private catalog overlay is detail only, is not digest-verified, and degrades explicitly (PRIVATE_OVERLAY_UNAVAILABLE). Lake outlines (polygons.geojson.gz) are Lake Surface data copied into the image."
+  }
 }

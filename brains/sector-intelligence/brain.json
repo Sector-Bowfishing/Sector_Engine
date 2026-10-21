@@ -39,5 +39,25 @@
   "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
   "authorizedConsumers": ["ops"],
   "tests": ["brains/sector-intelligence/tests"],
-  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []},
+  "knowledge": {
+    "stores": [
+      {
+        "id": "intelligence-catalog",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "sector-intelligence",
+        "location": "brains/sector-intelligence/runtime/knowledge-release.json",
+        "loader": "brains/sector-intelligence/runtime/run.py load_knowledge",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
+        "lineage": "knowledgeRelease, manifestRef and manifestSha256 in the shadow artifact lineage; release id and digest in the run summary",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/sector-intelligence/tests/test_knowledge_memory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ]
+  }
 }

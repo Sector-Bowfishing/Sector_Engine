@@ -39,5 +39,26 @@
   "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
   "authorizedConsumers": ["ops", "sector-intelligence", "biological-state"],
   "tests": ["brains/wind/tests", "brains/wind/research/tools/tests"],
-  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []},
+  "knowledge": {
+    "stores": [
+      {
+        "id": "wind-knowledge",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "wind",
+        "location": "brains/wind/runtime/knowledge-release.json",
+        "loader": "brains/wind/runtime/sector_wind/ingest.py verified_release",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
+        "lineage": "knowledgeRelease, manifestRef and manifestSha256 in the shadow artifact lineage",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/wind/tests/test_knowledge_memory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ],
+    "notes": "The GCS forecast/observation archive is operational state, not knowledge."
+  }
 }

@@ -79,5 +79,25 @@
   "dataBudget": {
     "maxTrackedFileBytes": 1048576,
     "exceptions": []
+  },
+  "knowledge": {
+    "stores": [
+      {
+        "id": "model",
+        "store": "COMPILED_IN_BINARY",
+        "owner": "water-temp",
+        "location": "brains/water-temperature/runtime/WaterTemperatureBrain",
+        "loader": "compiled Swift model",
+        "verification": "compiled into the binary; brainVersion",
+        "lineage": "brainVersion and processingVersion in published state",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "NOT_APPLICABLE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/water-temperature/tests/swift"
+    ],
+    "notes": "No persistent knowledge store: the model is code and reads live inputs only."
   }
 }

@@ -34,5 +34,25 @@
   "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
   "authorizedConsumers": ["ops", "sector-intelligence"],
   "tests": ["brains/fish/tests"],
-  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []}
+  "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []},
+  "knowledge": {
+    "stores": [
+      {
+        "id": "biology-bundle",
+        "store": "PRIVATE_BUCKET_RELEASE",
+        "owner": "biological-state",
+        "location": "gs://sector-biology-private/biology/v1 (latest.json)",
+        "loader": "brains/fish/runtime/biological_brain.py load_bundle",
+        "verification": "latest.json manifestSha256 -> manifest -> per-file sha256 and bytes; schema, scoringVersion and arithmetic validation",
+        "lineage": "researchVersion and manifestSha256 in the registry and the artifact lineage",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/fish/tests/test_knowledge_memory.py",
+      "brains/fish/tests/test_biological_brain.py"
+    ]
+  }
 }
