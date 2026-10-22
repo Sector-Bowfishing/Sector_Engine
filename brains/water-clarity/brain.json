@@ -64,5 +64,34 @@
       "jobs/brain_platform/tests/test_knowledge_release.py"
     ],
     "notes": "The optional private catalog overlay is detail only, is not digest-verified, and degrades explicitly (PRIVATE_OVERLAY_UNAVAILABLE). Lake outlines (polygons.geojson.gz) are Lake Surface data copied into the image."
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "clarity-catalog (PACKAGED_IN_IMAGE, brains/water-clarity/runtime/knowledge-release.json, approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "fam.activity",
+      "fam.brains",
+      "fam.health-brains",
+      "fam.health-sources",
+      "fam.lake-profiles",
+      "fam.lake-states",
+      "fam.lakefleet",
+      "fam.sources",
+      "fam.validation"
+    ],
+    "internalExecution": "water-clarity-brain Cloud Run job (C1) started by brain-orchestrator when 26 h stale, 2 pilot lakes; the satellite pipeline stays PAUSED",
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

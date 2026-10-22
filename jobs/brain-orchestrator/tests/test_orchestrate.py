@@ -39,9 +39,12 @@ def test_job_args_follow_scope(monkeypatch):
     assert o.job_args("water-temp").count("--lake") == 5
 
 
-def test_wind_and_clarity_are_never_started_here():
-    assert "wind" not in o.EXECUTORS and "water-clarity" not in o.EXECUTORS
-    assert set(o.NOT_STARTED_HERE) == {"wind", "water-clarity"}
+def test_wind_is_never_started_here_and_clarity_is_the_scoped_c1_job():
+    """Wind stays scheduler-owned (wind-hourly). Internal operation 2026-10-22: Clarity is started as the scoped C1 publisher job
+    water-clarity-brain (pilot lakes baked in), never the heavy satellite pipeline (lake-surface-*), which stays PAUSED."""
+    assert "wind" not in o.EXECUTORS and set(o.NOT_STARTED_HERE) == {"wind"}
+    assert o.EXECUTORS["water-clarity"] == {"kind": "cloud-run-job", "job": "water-clarity-brain"}
+    assert not any(e.get("job", "").startswith("lake-surface") for e in o.EXECUTORS.values())
 
 
 def test_lock_is_spent_once_its_execution_completed():

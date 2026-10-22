@@ -94,5 +94,28 @@
       "jobs/brain_platform/tests/test_knowledge_release.py"
     ],
     "notes": "CANDIDATE release (approval NOT_RECORDED): verified on load, never published from; there is no live writer. The agency records are internalOnly with an unconfirmed licence and include percentages and species-level labels (decision V-1)."
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL",
+      "APPROVED_SCIENCE"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "vegetation-knowledge (PACKAGED_IN_IMAGE, brains/vegetation/runtime/knowledge/knowledge-release.json, approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "APPROVED_SCIENCE",
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "fam.control-shadow-lane"
+    ],
+    "internalExecution": "SHADOW lane in brain-orchestrator (--run-shadow-lane, 168 h): candidate release, packaged inputs only (no live observation feed); run.py --write keeps refusing (APPROVED_SCIENCE)",
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "INTERNAL mode publishes only the brain-shadow-lane-v1 summary at /control/shadowLaneV1/vegetation (lane INTERNAL_EXPERIMENTAL). The Brain-owned families fam.brains, fam.health-brains, fam.lake-states, fam.lakefleet, fam.snapshots, fam.validation are written only by the APPROVED_SCIENCE path, which refuses until an APPROVED release (G-1). fam.control-shadow-lane is not yet in the Cortex registry (CG-2.5-1)."
   }
 }

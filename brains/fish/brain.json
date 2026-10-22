@@ -54,5 +54,30 @@
       "brains/fish/tests/test_knowledge_memory.py",
       "brains/fish/tests/test_biological_brain.py"
     ]
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "biology-bundle (PRIVATE_BUCKET_RELEASE, gs://sector-biology-private/biology/v1 (latest.json), approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "fam.activity",
+      "fam.brains",
+      "fam.health-brains",
+      "fam.species",
+      "fam.validation"
+    ],
+    "internalExecution": "in-process in brain-orchestrator (hourly scheduler), runs when its inputs change (VERSION)",
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

@@ -45,6 +45,7 @@ from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_
 from sector_brain_platform import gcp                                                                                 # noqa: E402
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
+from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -71,10 +72,11 @@ def _intelligence_runtime_dir() -> str:
 EXECUTORS = {
     "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
     "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
+    "water-clarity": {"kind": "cloud-run-job", "job": "water-clarity-brain"},       # C1 publisher, pilot lakes baked into the job (internal operation 2026-10-22)
     "biological-state": {"kind": "in-process", "dir": _fish_runtime_dir(), "jobId": "biological-brain"},
     "sector-intelligence": {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": "sector-intelligence-brain"},
 }
-NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)", "water-clarity": "MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md)"}
+NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)"}
 
 
 def job_args(brain_id: str) -> list[str] | None:
@@ -167,6 +169,63 @@ def run_in_process(brain_id: str, timeout: int = 1800) -> dict:
     return res
 
 
+def shadow_runtime_dir(brain_id: str) -> str:
+    """Staged Brain runtime for the SHADOW lane: <image or repo>/brains/<dir>/runtime (deploy-job.sh stages Depth and Vegetation there)."""
+    d = {"depth": "depth", "vegetation": "vegetation"}[brain_id]
+    return os.path.normpath(os.path.join(HERE, "..", "..", "brains", d, "runtime"))
+
+
+def run_shadow(brain_id: str, timeout: int = 900) -> dict:
+    """Run the Brain's own runtime against its CANDIDATE release into its in-memory writer (shadow_run.py). Never writes Brain paths."""
+    t0 = time.time()
+    out = subprocess.run([PYTHON, os.path.join(HERE, "shadow_run.py"), brain_id], cwd=shadow_runtime_dir(brain_id), capture_output=True, text=True,
+                         timeout=timeout)
+    res = {"brainId": brain_id, "ok": out.returncode == 0, "exit": out.returncode, "seconds": round(time.time() - t0, 1)}
+    if out.returncode == 0:
+        res["output"] = json_output(out.stdout)
+        res["ok"] = res["output"] is not None
+    else:
+        res["error"] = (out.stderr or out.stdout).strip()[-400:]
+    return res
+
+
+def shadow_lane_stage(manifest: dict, live, db, now: dt.datetime, write: bool, dry_run: bool, force: bool = False) -> list[dict]:
+    """Internal SHADOW lane (control_manifest brains[*].shadowLane): due -> run -> summarise -> refuse on contract problems -> write
+    /control/shadowLaneV1/{brainId}. One Brain's failure never stops the others or the cycle."""
+    done = []
+    for bid, b in sorted(manifest["brains"].items()):
+        sl = b.get("shadowLane") or {}
+        if not sl.get("enabled"):
+            continue
+        prev = live.get(SL.node(bid)) or {}
+        if not (force or SL.due(prev, sl.get("cadenceHours", 24), now)):
+            done.append({"brainId": bid, "shadow": "NOT_DUE", "lastRunAt": prev.get("runAt")})
+            continue
+        try:
+            r = run_shadow(bid)
+        except Exception as e:                                       # timeout etc.
+            r = {"brainId": bid, "ok": False, "error": repr(e)[:300]}
+        if not r.get("ok"):
+            done.append({"brainId": bid, "shadow": "FAILED", "error": r.get("error")})
+            if write and not dry_run:
+                db.update({f"{SL.node(bid)}/lastFailure": {"at": iso(now), "error": str(r.get("error"))[:300]}})
+            continue
+        o = r["output"]
+        doc = SL.summarize(bid, o["slot"], o["patches"], o["report"], o["release"], o["approvedPath"], iso(now),
+                           os.environ.get("DEPLOYMENT_VERSION"), prev=prev)
+        doc["inputs"] = o.get("inputs") or {}
+        doc["seconds"] = r["seconds"]
+        bad = SL.problems(doc)
+        if bad:
+            done.append({"brainId": bid, "shadow": "REFUSED", "problems": bad[:3]})
+            continue
+        if write or dry_run:
+            db.update({SL.node(bid): doc})
+        done.append({"brainId": bid, "shadow": "PUBLISHED" if write and not dry_run else "COMPUTED", "lakes": doc["lakeCount"],
+                     "readinessCounts": doc["readinessCounts"], "approvedPath": doc["approvedPath"].get("status")})
+    return done
+
+
 def start_job(brain_id: str, tokens: TokenProvider) -> dict:
     ex = EXECUTORS[brain_id]
     op = gcp.run_job(tokens, ex["job"], args=job_args(brain_id))
@@ -254,6 +313,10 @@ def main(argv=None) -> int:
                     help="write the gated control/engineeringStatusV1 document (engineering-status-ops-v1) here; never writes the database")
     ap.add_argument("--publish-engineering-status", action="store_true",
                     help="also publish control/engineeringStatusV1 from the projection staged in THIS image. OFF by default: enabling it is decision O-1")
+    ap.add_argument("--run-shadow-lane", action="store_true",
+                    help="run the internal SHADOW lane for Brains with control_manifest shadowLane.enabled (candidate knowledge, in-memory, summary to "
+                         "/control/shadowLaneV1/{id}; never authoritative or customer). OFF by default; enabled by the deployed job's arguments")
+    ap.add_argument("--force-shadow-lane", action="store_true", help="with --run-shadow-lane: ignore the shadow cadence (ADMIN run)")
     ap.add_argument("--health-only", action="store_true", help="publish ONLY control/healthV1: implies --control-only and --publish-health, and additionally writes no control/orchestratorV1 "
                                                                "and asks no Brain for a plan (the exact write set is control/healthV1/* and nothing else)")
     a = ap.parse_args(argv)
@@ -427,10 +490,20 @@ def main(argv=None) -> int:
         except Exception as e:                                   # never breaks the cycle
             print(f"engineering status: FAILED {e!r}", file=sys.stderr)
 
+    # 5d. internal SHADOW lane (Brains without an APPROVED knowledge release): experimental, isolated, never authoritative or customer
+    shadow = []
+    if a.run_shadow_lane and not a.control_only:
+        try:
+            shadow = shadow_lane_stage(manifest, live, db, now, write, a.dry_run, force=a.force_shadow_lane)
+        except Exception as e:                                       # never breaks the cycle
+            print(f"shadow lane: FAILED {e!r}", file=sys.stderr)
+        for r in shadow:
+            print(f"shadow lane: {r['brainId']} {r['shadow']} " + json.dumps({k: v for k, v in r.items() if k not in ('brainId', 'shadow')}, default=str))
+
     # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),
               "mode": "dry-run" if a.dry_run else ("no-execute" if a.no_execute else "cycle"),
-              "plan": plan, "brainPlans": brain_plans, "executed": executed, "deferred": deferred,
+              "plan": plan, "brainPlans": brain_plans, "executed": executed, "deferred": deferred, "shadow": shadow,
               "locks": {**{b: l for b, l in (state.get("locks") or {}).items() if l.get("lockedUntil", "") > iso(now) and b not in locks}, **locks},
               "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
               "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores}

@@ -139,7 +139,7 @@ MANIFEST: dict[str, dict] = {
     "water-temp-brain": {
         "displayName": "Water Temperature Brain", "owner": "water-temp", "kind": "Cloud Run job",
         "classification": "INTERNAL", "environment": "cloud-run-job", "trigger": "orchestrator", "expectedRunsPerDay": 4,
-        "purpose": "Runs the production water-temperature path and publishes the Water Temp slot. Started by brain-orchestrator only when the 6-h freshness rule requires it; no every-3-h cron.",
+        "purpose": "Runs the production water-temperature path for the 5 pilot lakes (arguments baked into the job; internal operation since 2026-10-22) and publishes the Water Temp slot. Started by brain-orchestrator only when the 6-h freshness rule requires it; no every-3-h cron.",
         "inputs": ["usgs-nwis-00010", "usace-cwms-water-temp", "open-meteo-forecast", "registry:lakes (compiled Engine directory)"],
         "outputs": ["/brains/water-temp", "/lakes/{k}/states/waterTemp", "/lakeFleet/{k}/slots/waterTemp", "/snapshots/{k}/latest/waterTemperature"],
         "brainDependencies": [], "statePaths": ["/brains/water-temp", "/health/brains/water-temp", "/lakes/{k}/states/waterTemp"], "brainPublishInJob": True,
@@ -147,12 +147,12 @@ MANIFEST: dict[str, dict] = {
     },
     "water-clarity-brain": {
         "displayName": "Water Clarity Brain", "owner": "water-clarity", "kind": "Cloud Run job",
-        "classification": "INTERNAL", "environment": "cloud-run-job", "trigger": "manual",
-        "purpose": "Publishes the clarity slot from /conditions and the lake-surface latest.json. MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md): a daily cron would re-read 621 lakes with no new satellite pass.",
+        "classification": "INTERNAL", "environment": "cloud-run-job", "trigger": "orchestrator", "expectedRunsPerDay": 1, "triggeredBy": "brain-orchestrator",
+        "purpose": "Publishes the clarity slot for the 2 pilot lakes (Guntersville, Lake Hartwell; --lakes baked into the job) from /conditions, MRMS rain and the lake-surface latest.json. Internal operation since 2026-10-22: started by brain-orchestrator once the state is 26 h old, following docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md option 2 (scoped job, no fleet cron). The satellite pipeline stays PAUSED, so satellite evidence ages honestly.",
         "inputs": ["GET /conditions (sector-engine)", "registry:lakes (Engine GET /lakes)", "archive:lake-surface/clarity (latest.json)"],
         "outputs": ["/brains/water-clarity", "/lakes/{k}/states/waterClarity", "/lakeFleet/{k}/slots/waterClarity", "/snapshots/{k}/latest/waterClarity"],
         "brainDependencies": [], "statePaths": ["/brains/water-clarity", "/health/brains/water-clarity"], "brainPublishInJob": True,
-        "retryPolicy": "manual", "freshnessPolicy": "TIME: staleAfterHours 26 (documented follow-up: dispatcher-driven publish after a satellite update)",
+        "retryPolicy": "orchestrator backoff 5 / 15 / 45 min after a FAILED run", "freshnessPolicy": "TIME: staleAfterHours 26 (pilot scope; satellite evidence age reported per state)",
     },
     "biological-brain": {
         "displayName": "Biological Brain (species knowledge)", "owner": "biological-state", "kind": "in-process (brain-orchestrator)",

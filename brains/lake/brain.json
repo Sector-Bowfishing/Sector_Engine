@@ -119,5 +119,35 @@
       "brains/lake/tests/swift/LakeBrainTests.swift"
     ],
     "notes": "Level baselines in gs://sector-lake-brain are derived operational state rebuilt from observations, not approved knowledge. A missing presence pointer writes no presence; a refused release records presenceError."
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "reviewed-bindings (COMPILED_IN_BINARY, brains/lake/runtime/LakeBrain/LakeSourceBindings.swift, approval NOT_RECORDED); species-presence (PRIVATE_BUCKET_RELEASE, gs://sector-lake-brain (presence/latest.json), approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "fam.activity",
+      "fam.brains",
+      "fam.health-brains",
+      "fam.health-sources",
+      "fam.lake-brain-node",
+      "fam.lake-species-presence",
+      "fam.lake-states",
+      "fam.lakefleet",
+      "fam.sources",
+      "fam.validation"
+    ],
+    "internalExecution": "lake-brain Cloud Run job, lake-brain-ledger-daily Cloud Scheduler (validation exception), pilot lakes",
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

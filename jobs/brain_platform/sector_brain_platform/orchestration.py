@@ -163,7 +163,7 @@ def schedule_policy(brain: dict, mode: str) -> tuple[bool, str]:
     missing = [k for k in ("gate", "notReconstructable", "maxMonthlyUsd", "stop", "approvedAt") if not ex.get(k)]
     if missing:
         return False, f"PRE_PRODUCTION recurring schedule lacks {missing}"
-    return True, "approved validation exception"
+    return True, "approved recurring-schedule exception (gate, cost cap, stop, approval recorded)"
 
 
 def publish_allowed(mode: str, brain: dict) -> bool:
