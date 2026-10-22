@@ -57,12 +57,16 @@ def project(report: dict, ci: dict | None = None, *, branch: str | None = None, 
             "memory": {m["check"]: {"branch": m["branch"], "production": m["production"]} for m in b["memory"]},        # evidence strings dropped
             "requirements": b.get("requirements", {}),
             "structuralProblems": b.get("structuralProblems", []), "scienceDependencies": b.get("scienceDependencies", []),
-            "nextWork": b.get("nextWork", []), "blockers": b.get("blockers", [])})
+            "nextWork": b.get("nextWork", []), "blockers": b.get("blockers", []),
+            **({"operations": b["operations"]} if b.get("operations") else {})})     # static dimensions; the orchestrator adds the live ones
     st = report["standards"]
-    out = {"schema": "engineering-status-ops-v1", "schemaVersion": "1.1.0", "state": "AVAILABLE", "reportId": report["reportId"], "generatedFrom": gen,
+    out = {"schema": "engineering-status-ops-v1", "schemaVersion": "1.2.0", "state": "AVAILABLE", "reportId": report["reportId"], "generatedFrom": gen,
            "standards": {"framework": st["framework"], "version": st["version"], "pin": st["pin"]}, "statusVocabulary": report["statusVocabulary"],
            "brains": brains,
            "decisions": [{k: d[k] for k in ("id", "class", "title", "brains") if k in d} for d in report["decisions"]]}
+    for k in ("engineScore", "legacyLayers"):
+        if report.get(k):
+            out[k] = report[k]
     if report.get("changes"):
         out["recentChanges"] = [{"commit": c["commit"][:12], "summary": _commit_summary(c["summary"])} for c in report["changes"][:20]]
     return out

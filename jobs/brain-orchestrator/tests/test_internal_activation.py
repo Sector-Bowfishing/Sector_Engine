@@ -137,3 +137,34 @@ def test_dry_run_computes_but_writes_nothing(live_cycle):
     db = setup(tree())
     assert OR.main(["--dry-run", "--run-shadow-lane"]) == 0
     assert db.writes == [] and calls["start"] == []
+
+
+def test_a_cycle_publishes_the_four_dimensions_with_live_internal_operation(live_cycle, monkeypatch):
+    """engineering-status-ops-v1 1.2.0 (D-IA-2 Option B): the gated projection gains each Brain's LIVE runtime readiness and internal operation."""
+    import json as _json
+    root = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    sys.path.insert(0, os.path.join(root, "tools", "cortex_status"))
+    import build_engineering_status as B
+    import ops_projection as P
+    r = B.build()
+    r["source"]["evaluatedCommit"] = "a" * 40
+    proj = P.project(r, code_state="MAIN_COMMIT")
+    proj["generatedFrom"]["certificationCurrent"] = True                             # the gate's certification rule is tested elsewhere
+    setup, calls = live_cycle
+    t = tree()
+    t["control"] = {"shadowLaneV1": {"depth": {"schema": "brain-shadow-lane-v1", "lane": "INTERNAL_EXPERIMENTAL", "executionMode": "INTERNAL",
+                                               "experimental": True, "runAt": ago(2), "lakeCount": 5, "lakes": {}}}}
+    db = setup(t)
+    monkeypatch.setattr(OR.ESP, "load_staged", lambda here: _json.loads(_json.dumps(proj)))
+    monkeypatch.setattr(OR.CP, "scheduler_states", lambda tokens: {"brain-orchestrator": "ENABLED", "wind-hourly": "ENABLED", "lake-brain-ledger-daily": "ENABLED"})
+    monkeypatch.setenv("DEPLOYMENT_VERSION", "brain-orchestrator@" + "a" * 12)
+    assert OR.main(["--publish-engineering-status"]) == 0
+    doc = db.tree["control"]["engineeringStatusV1"]
+    assert doc["state"] == "AVAILABLE" and doc["schemaVersion"] == "1.2.0" and doc["operationsAsOf"]
+    ops = {b["brainId"]: b["operations"] for b in doc["brains"]}
+    assert set(ops) == set(O.load_manifest()["brains"])
+    assert all(o["internalOperation"]["status"] in OR.BOPS.INTERNAL and o["runtimeReadiness"]["status"] in OR.BOPS.RUNTIME for o in ops.values())
+    assert ops["depth"]["internalOperation"]["status"] == "SHADOW" and ops["depth"]["shadowLane"]["experimental"] is True
+    assert ops["vegetation"]["internalOperation"]["status"] == "NOT_VERIFIED"         # no shadow run on record: never assumed
+    assert all(o["customerEligibility"]["status"] == "NOT_ELIGIBLE" for o in ops.values())
+    assert OR.ESP.leaks(doc) == []

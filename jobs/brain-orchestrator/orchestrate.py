@@ -44,6 +44,7 @@ from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_
                                    jobs_changed_paths, orchestrate)
 from sector_brain_platform import gcp                                                                                 # noqa: E402
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
+from sector_brain_platform import brain_operations as BOPS                                                            # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 sys.path.insert(0, HERE)
@@ -432,6 +433,7 @@ def main(argv=None) -> int:
         print(f"scores: skipped ({scores['why']})")
 
     # 5. control plane: the compact read-only state Sector Ops renders (content-aware: unchanged sections are not rewritten)
+    state_cp = None
     try:
         world2 = CP.load_world(live, dt.datetime.now(dt.timezone.utc)) if (executed and write) else world
         ctx2, ev2 = CP.evaluate(world2, now, {f"{b}|*": l for b, l in {**locks_now, **locks}.items()}, brain_plans, run_now)
@@ -474,23 +476,7 @@ def main(argv=None) -> int:
     except Exception as e:                                       # the control plane must never break the cycle or the score publication
         print(f"control plane: FAILED {e!r}", file=sys.stderr)
 
-    # 5c. engineering status for Sector Ops (engineering-status-ops-v1 at control/engineeringStatusV1). The document comes ONLY from the projection
-    #     staged into this image at deploy time (the exact deployed commit); ESP.gate() publishes it or an explicit UNAVAILABLE with the reason.
-    #     Computed only when asked for; written only with --publish-engineering-status (decision O-1). It never changes what runs.
-    if a.emit_engineering_status or a.publish_engineering_status:
-        try:
-            dv = os.environ.get("DEPLOYMENT_VERSION")
-            es_doc = ESP.gate(ESP.load_staged(HERE), deployed_commit=ESP.deployed_commit(dv), now_iso=iso(now), deployment_version=dv)
-            if a.emit_engineering_status:
-                json.dump(es_doc, open(a.emit_engineering_status, "w"), indent=1, sort_keys=True)
-            if a.publish_engineering_status and not a.health_only and (write or a.dry_run):   # --health-only's write set stays control/healthV1 only
-                db.update({ESP.NODE: es_doc})
-            print(f"engineering status: {es_doc['state']}" + (f" ({es_doc['reason']})" if es_doc.get("reason") else
-                  f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status and not a.health_only else " (not published)"))
-        except Exception as e:                                   # never breaks the cycle
-            print(f"engineering status: FAILED {e!r}", file=sys.stderr)
-
-    # 5d. internal SHADOW lane (Brains without an APPROVED knowledge release): experimental, isolated, never authoritative or customer
+    # 5c. internal SHADOW lane (Brains without an APPROVED knowledge release): experimental, isolated, never authoritative or customer
     shadow = []
     if a.run_shadow_lane and not a.control_only:
         try:
@@ -499,6 +485,36 @@ def main(argv=None) -> int:
             print(f"shadow lane: FAILED {e!r}", file=sys.stderr)
         for r in shadow:
             print(f"shadow lane: {r['brainId']} {r['shadow']} " + json.dumps({k: v for k, v in r.items() if k not in ('brainId', 'shadow')}, default=str))
+
+    # 5d. engineering status for Sector Ops (engineering-status-ops-v1 at control/engineeringStatusV1). The document comes ONLY from the projection
+    #     staged into this image at deploy time (the exact deployed commit); ESP.gate() publishes it or an explicit UNAVAILABLE with the reason.
+    #     Computed only when asked for; written only with --publish-engineering-status (decision O-1). It never changes what runs.
+    if a.emit_engineering_status or a.publish_engineering_status:
+        try:
+            dv = os.environ.get("DEPLOYMENT_VERSION")
+            es_doc = ESP.gate(ESP.load_staged(HERE), deployed_commit=ESP.deployed_commit(dv), now_iso=iso(now), deployment_version=dv)
+            if es_doc.get("state") == "AVAILABLE":
+                # Cortex 2.6.0 four dimensions: live runtime readiness + internal operation from this cycle's evidence (control state, scheduler
+                # states, shadow summaries). A leak or failure here publishes the static document instead; it never blocks the publication.
+                try:
+                    ov = BOPS.overlay(es_doc, manifest, (state_cp or {}).get("brains"), scheduler_states=CP.scheduler_states(tokens),
+                                      shadow_docs=live.get(SL.NODE_ROOT) or {}, plans=brain_plans, now=now)
+                    bad = ESP.leaks(ov)
+                    if bad:
+                        print(f"engineering status: live operations withheld (leak check: {bad[:3]})", file=sys.stderr)
+                    else:
+                        es_doc = ov
+                        print(f"engineering status: operations {BOPS.counts(es_doc)}")
+                except Exception as e:
+                    print(f"engineering status: live operations FAILED {e!r} (static document published)", file=sys.stderr)
+            if a.emit_engineering_status:
+                json.dump(es_doc, open(a.emit_engineering_status, "w"), indent=1, sort_keys=True)
+            if a.publish_engineering_status and not a.health_only and (write or a.dry_run):   # --health-only's write set stays control/healthV1 only
+                db.update({ESP.NODE: es_doc})
+            print(f"engineering status: {es_doc['state']}" + (f" ({es_doc['reason']})" if es_doc.get("reason") else
+                  f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status and not a.health_only else " (not published)"))
+        except Exception as e:                                   # never breaks the cycle
+            print(f"engineering status: FAILED {e!r}", file=sys.stderr)
 
     # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),

@@ -489,6 +489,10 @@
           "dataDependencies": {
             "type": "object",
             "description": "Operational data the Brain actually needs, from brain.json (verified by Kit P06 and the dependency graph): declared inputs, live providers, approved knowledge stores. Research data is never a runtime fallback."
+          },
+          "operations": {
+            "$ref": "#/$defs/operations",
+            "description": "Cortex 2.6.0 four independent dimensions (IO-01). Static: scientific validation, knowledge, customer eligibility, scores, limitations. Live (published document only): runtime readiness and internal operation."
           }
         }
       }
@@ -649,6 +653,372 @@
               }
             }
           }
+        }
+      }
+    },
+    "engineScore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "measurement",
+        "source"
+      ],
+      "properties": {
+        "measurement": {
+          "const": "ENGINEERING_SCORE"
+        },
+        "source": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "rubric": {
+          "type": "string"
+        },
+        "displayedAs": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "legacyLayers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationalReadiness"
+      ],
+      "properties": {
+        "operationalReadiness": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "operations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scientificValidation",
+        "knowledgeRelease",
+        "customerEligibility"
+      ],
+      "properties": {
+        "scientificValidation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "label"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "NOT_STARTED",
+                "IN_PROGRESS",
+                "PARTIAL",
+                "VALIDATED",
+                "NOT_VERIFIED"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "pattern": "^[A-Z0-9_]+$"
+            }
+          }
+        },
+        "knowledgeRelease": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "NONE",
+                "RESEARCH",
+                "CANDIDATE",
+                "APPROVED"
+              ]
+            },
+            "releaseId": {
+              "type": "string"
+            },
+            "approval": {
+              "type": "string"
+            }
+          }
+        },
+        "customerEligibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "NOT_ELIGIBLE",
+                "ELIGIBLE",
+                "NOT_VERIFIED"
+              ]
+            },
+            "basis": {
+              "type": "string"
+            },
+            "approvalRef": {
+              "type": "string"
+            }
+          }
+        },
+        "executionModes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "INTERNAL",
+              "APPROVED_SCIENCE",
+              "CUSTOMER_SERVING"
+            ]
+          }
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "measurement",
+              "source"
+            ],
+            "properties": {
+              "measurement": {
+                "enum": [
+                  "STRUCTURAL_CERTIFICATION",
+                  "RUNTIME_READINESS",
+                  "INTERNAL_OPERATIONAL_HEALTH",
+                  "SCIENTIFIC_MATURITY",
+                  "DOMAIN_CAPABILITY",
+                  "CUSTOMER_ELIGIBILITY",
+                  "ENGINEERING_SCORE"
+                ]
+              },
+              "source": {
+                "type": "string"
+              },
+              "field": {
+                "type": "string"
+              },
+              "displayedAs": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtimeReadiness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "READY",
+                "NOT_READY",
+                "NOT_VERIFIED"
+              ]
+            },
+            "basis": {
+              "type": "string"
+            }
+          }
+        },
+        "internalOperation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "NOT_DEPLOYED",
+                "SHADOW",
+                "ACTIVE",
+                "DEGRADED",
+                "PAUSED",
+                "FAILED",
+                "NOT_VERIFIED"
+              ]
+            },
+            "basis": {
+              "type": "string"
+            },
+            "trigger": {
+              "enum": [
+                "TIME",
+                "EVENT",
+                "SHADOW"
+              ]
+            },
+            "scheduler": {
+              "type": "string"
+            },
+            "schedulerState": {
+              "type": "string"
+            },
+            "expectedIntervalHours": {
+              "type": "number"
+            },
+            "lastExecutionAt": {
+              "type": "string"
+            },
+            "lastExecutionResult": {
+              "type": "string"
+            },
+            "lastSuccessfulRun": {
+              "type": "string"
+            },
+            "lastSuccessfulRunBasis": {
+              "type": "string"
+            },
+            "planCheck": {
+              "enum": [
+                "OBSERVED",
+                "FAILED",
+                "NOT_OBSERVED"
+              ]
+            },
+            "lastPlanCheckAt": {
+              "type": "string"
+            },
+            "lane": {
+              "type": "string"
+            },
+            "lastFullRunAt": {
+              "type": "string"
+            },
+            "lastFullRunResult": {
+              "type": "string"
+            },
+            "lastExecutionKind": {
+              "enum": [
+                "RUN",
+                "PLAN_CHECK",
+                "SHADOW_RUN"
+              ]
+            }
+          }
+        },
+        "health": {
+          "type": "string"
+        },
+        "inputFreshness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "verdict"
+          ],
+          "properties": {
+            "verdict": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        },
+        "lastDataUpdate": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "at": {
+              "type": "string"
+            },
+            "basis": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "shadowLane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lane",
+            "experimental",
+            "authoritative",
+            "customerEligible"
+          ],
+          "properties": {
+            "lane": {
+              "const": "INTERNAL_EXPERIMENTAL"
+            },
+            "executionMode": {
+              "const": "INTERNAL"
+            },
+            "experimental": {
+              "const": true
+            },
+            "authoritative": {
+              "const": false
+            },
+            "customerEligible": {
+              "const": false
+            },
+            "lastRunAt": {
+              "type": "string"
+            },
+            "lakeCount": {
+              "type": "integer"
+            },
+            "readinessCounts": {
+              "type": "object"
+            },
+            "outputKinds": {
+              "type": "object"
+            },
+            "observedLakes": {
+              "type": "integer"
+            },
+            "candidateReleaseId": {
+              "type": "string"
+            },
+            "candidateApproval": {
+              "type": "string"
+            },
+            "approvedPath": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [],
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              }
+            },
+            "lastFailureAt": {
+              "type": "string"
+            }
+          }
+        },
+        "liveAsOf": {
+          "type": "string"
         }
       }
     }
