@@ -182,15 +182,6 @@
       "status": "LEGACY_BASELINE"
     },
     {
-      "key": "9|jobs/lake-geometry/gsw_recheck.py|absolute user path in legacy runtime code (baseline debt)",
-      "invariant": 9,
-      "path": "jobs/lake-geometry/gsw_recheck.py",
-      "owner": "Lake Registry (platform)",
-      "reason": "legacy code contains an absolute user path; made config/env-driven at the owning component's migration",
-      "plannedMigrationPhase": "Phase 6 (Lake Registry established first)",
-      "status": "LEGACY_BASELINE"
-    },
-    {
       "key": "11|brains/lake/runtime/LakeBrain/LakePredictionLedger.swift|customer Engine/API dependency but customerIntegrationMode is 'none'",
       "invariant": 11,
       "path": "brains/lake/runtime/LakeBrain/LakePredictionLedger.swift",
