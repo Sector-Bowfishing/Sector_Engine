@@ -60,7 +60,7 @@ def test_engine_node_follows_the_same_rule():
     eng_old = {"engineScore": 6.4, "engineScoreVersion": "e1", "dimensions": {"a": 1}, "updatedAt": "t0"}
     eng_new = {"engineScore": 6.4, "engineScoreVersion": "e1", "dimensions": {"a": 2}, "updatedAt": "t1"}
     updates, changed = plan_writes(all_scores(), brains(), NOW, eng_new, eng_old, all_scores())
-    assert "scores/engine" in updates and "engine/score" in updates and not any(k.startswith("activity/") for k in updates)
+    assert "scores/engine" in updates and "engine/score" not in updates and not any(k.startswith("activity/") for k in updates)   # alias retired
     assert "breakdown refreshed" in changed[0]
 
 
@@ -117,6 +117,8 @@ def test_engine_alias_is_the_same_object_as_the_authoritative_node_and_retires_b
     """Cortex 2.2 audit C-2: /engine/score is a LEGACY alias of /scores/engine. It is written in the same update as the same object (it can never
     diverge), only by the platform scorer, and the retirement switch stops it without touching /scores/engine or deleting the old node."""
     eng = {"engineScore": 7.0, "engineScoreVersion": "e1", "dimensions": {"a": 2}, "updatedAt": "t1"}
+    assert score_brains.WRITE_ENGINE_SCORE_ALIAS is False                              # retired 2026-10-22 (Ops reads /scores/engine)
+    monkeypatch.setattr(score_brains, "WRITE_ENGINE_SCORE_ALIAS", True)              # the switch still works if the decision is reversed
     updates, _ = plan_writes(all_scores(), brains(), NOW, eng, {}, all_scores())
     assert updates["engine/score"] is updates["scores/engine"]
     monkeypatch.setattr(score_brains, "WRITE_ENGINE_SCORE_ALIAS", False)
