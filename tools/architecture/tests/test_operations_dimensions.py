@@ -52,6 +52,20 @@ def test_scores_are_classified_and_the_engine_score_is_an_engineering_score():
     assert all(s["measurement"] != "ENGINEERING_SCORE" for v in by.values() for s in v)
 
 
+def test_every_score_reference_resolves_to_a_number_in_the_scores_node_shape():
+    """Found in final verification (2026-10-22): /scores/wind.measurements.windCapability is an OBJECT ({value, categories, ...}); a reference
+    must name the numeric field, or a consumer shows nothing. Fields are dotted paths ending at a number-valued key."""
+    shape = {"wind": {"value": 3.3, "measurements": {"windCapability": {"value": 6.7, "basis": "COMPUTED"}}}}
+    for b in _proj()["brains"]:
+        for s in b["operations"]["scores"]:
+            v = shape.get(s["source"].rsplit("/", 1)[-1])
+            if v is None:
+                continue
+            for part in s.get("field", "value").split("."):
+                v = v.get(part) if isinstance(v, dict) else None
+            assert isinstance(v, (int, float)), (b["brainId"], s)
+
+
 def test_values_outside_the_cortex_vocabulary_are_refused(monkeypatch):
     real = B._operations
     monkeypatch.setattr(B, "_operations", lambda bid, o, bj, mb: real(bid, {**o, "scientificValidation": {"status": "PRODUCTION_READY", "label": "X"}}, bj, mb))

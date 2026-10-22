@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-22",
     "session": "docs/cortex/sessions/2026-10-22-final-operational-integration.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:29ad1b5eb8c61eeb51f5f5bc57cea7c1ccc35fd7d85a30c881587ca1c89b891a",
-    "certificationDigest": "sha256:29ad1b5eb8c61eeb51f5f5bc57cea7c1ccc35fd7d85a30c881587ca1c89b891a",
+    "sourceDigest": "sha256:f8f6972946983cef0be26307ff3aa734c618ce2a576e222b591e598bae0d2772",
+    "certificationDigest": "sha256:f8f6972946983cef0be26307ff3aa734c618ce2a576e222b591e598bae0d2772",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -1626,7 +1626,7 @@
           {
             "measurement": "DOMAIN_CAPABILITY",
             "source": "/scores/wind",
-            "field": "measurements.windCapability",
+            "field": "measurements.windCapability.value",
             "displayedAs": "Wind Capability (wind-specialist-capability-v2)"
           }
         ],
