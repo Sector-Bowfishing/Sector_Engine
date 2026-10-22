@@ -32,10 +32,11 @@ WRITER = "brain-platform"
 FROZEN = os.environ.get("FROZEN_SCORES", os.path.join(HERE, "..", "..", "docs", "brains", "scoring", "frozen-scores.json"))
 MAX_LAKE_PROFILES = 1000     # > the 621-lake directory; a guard, not a sample size
 LAKE_READ_WORKERS = 8
-# LEGACY alias (Cortex 2.2 audit C-2): /engine/score is a byte-identical copy of the authoritative /scores/engine, kept because Sector Ops reads it
-# (brainPaths.ts engineScore). One writer, one update: it can never diverge. Set False only after Sector Ops reads /scores/engine (F-1); the
-# existing node is then left as it is until an approved typed delete (gated).
-WRITE_ENGINE_SCORE_ALIAS = True
+# LEGACY alias (Cortex 2.2 audit C-2): /engine/score was a byte-identical copy of the authoritative /scores/engine. RETIRED 2026-10-22: the
+# deployed Sector Ops build reads /scores/engine (Ops #11, hosting release 2026-10-22T01:36Z) and no Engine component reads the alias. The scorer
+# no longer updates it; the existing node is preserved as historical data until an approved typed delete (gated). Writing it again is a recorded
+# decision.
+WRITE_ENGINE_SCORE_ALIAS = False
 UPSTREAM = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")
 
 
