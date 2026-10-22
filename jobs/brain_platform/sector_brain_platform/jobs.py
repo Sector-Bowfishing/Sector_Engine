@@ -128,6 +128,14 @@ MANIFEST: dict[str, dict] = {
         "brainDependencies": [], "statePaths": ["/brains/lake-brain", "/health/brains/lake-brain", "/lakes/{k}/states/lake"], "brainPublishInJob": True,
         "retryPolicy": "orchestrator backoff 5 / 15 / 45 min after a FAILED run, then needs attention", "freshnessPolicy": "TIME: staleAfterHours 3; per-state nextCheckAt from the binding cadence",
     },
+    "lake-brain-ledger-daily": {
+        "displayName": "Lake Brain ledger (daily pilot run, Cloud Scheduler)", "owner": "lake-brain", "kind": "Cloud Scheduler job",
+        "classification": "INTERNAL", "environment": "cloud-scheduler", "trigger": "scheduler", "expectedRunsPerDay": 1,
+        "purpose": "Hand-created Cloud Scheduler job that starts the lake-brain Cloud Run job once a day for the prospective prediction ledger "
+                   "(control_manifest VALIDATION_EXCEPTION). It has no runtime of its own: it only triggers lake-brain.",
+        "inputs": [], "outputs": [], "brainDependencies": [], "triggers": ["lake-brain"], "statePaths": ["/brains/lake-brain"], "brainPublishInJob": False,
+        "retryPolicy": "Cloud Scheduler default", "freshnessPolicy": "daily 12:00 UTC (validation clock); the run itself follows lake-brain's policy",
+    },
     "water-temp-brain": {
         "displayName": "Water Temperature Brain", "owner": "water-temp", "kind": "Cloud Run job",
         "classification": "INTERNAL", "environment": "cloud-run-job", "trigger": "orchestrator", "expectedRunsPerDay": 4,
@@ -289,7 +297,8 @@ def job_record(job_id: str, manifest: dict, scheduler: dict | None, run_job: dic
     job (v1 API shape, or None when not deployed); `executions`: its recent executions; `brain_health`: /health/brains/{owner}
     for in-process brains (their last run is their publish); `service`: Cloud Run service (v1) for request-driven services."""
     trigger = manifest.get("trigger") or "manual"
-    deployed = run_job is not None or service is not None or manifest.get("kind", "").startswith("in-process") or manifest.get("kind") == "Cloud Function"
+    deployed = (run_job is not None or service is not None or manifest.get("kind", "").startswith("in-process") or manifest.get("kind") == "Cloud Function"
+                or (manifest.get("kind") == "Cloud Scheduler job" and scheduler is not None))      # a scheduler-only workload is the scheduler itself
     ex = _exec_facts(executions)
     rec: dict = {
         "contractVersion": JOBS_CONTRACT_VERSION, "syncedAt": iso(now), "syncedBy": synced_by,

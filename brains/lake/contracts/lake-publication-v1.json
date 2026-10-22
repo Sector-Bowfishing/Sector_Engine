@@ -18,6 +18,10 @@
     "manifestSha256": "NONE"
   },
   "registryChildren": {
+    "evidence": [
+      "predictionLedger",
+      "claimMaturity"
+    ],
     "identity": [
       "brainId",
       "displayName",

@@ -80,6 +80,15 @@ def _health_status(errors: list, stale_lakes: int, live_lakes: int) -> str:
     return "HEALTHY"
 
 
+def legacy_score_copy(ev: dict) -> dict | None:
+    """The frozen validation-evidence scores, labelled so no reader can take them for the current score (FD-09): the values are unchanged; the
+    authoritative, current Wind score is /scores/wind (platform scorer). None once the copy is retired (C.PUBLISH_LEGACY_SCORE_COPY)."""
+    if not C.PUBLISH_LEGACY_SCORE_COPY:
+        return None
+    return {**ev["scores"], "measurement": "FROZEN_VALIDATION_EVIDENCE", "measuredAt": ev["frozenAt"], "authoritative": False,
+            "authoritativeScorePath": C.AUTHORITATIVE_SCORE_PATH, "status": "LEGACY_COMPATIBILITY"}
+
+
 def _validation_payloads(ev: dict, now_iso: str) -> tuple[dict, dict]:
     units = {"speedMaeMph": "mph", "speedBiasMph": "mph", "nightSpeedMaeMph": "mph", "nightSpeedBiasMph": "mph", "windyHourSpeedMaeMph": "mph",
              "directionMaeDeg": "deg", "directionWithin22_5Pct": "%", "gustMaeMph": "mph", "gustConditionalBiasMph": "mph",
@@ -92,7 +101,7 @@ def _validation_payloads(ev: dict, now_iso: str) -> tuple[dict, dict]:
                                      if v["metrics"]["speedMaeMph"] > ev["metrics"]["speedMaeMph"]], key=lambda x: -x["value"]),
              "modelHistory": [{"version": C.PRODUCTION_MODEL["modelId"], "date": None, "status": "ACTIVE_PRODUCTION"},
                               {"version": ev["candidateModel"], "date": "2026-10-06", "status": "RESEARCH_CANDIDATE (not promoted)"}],
-             "productionProxy": ev["productionProxy"], "surfacePhysics": ev["surfacePhysics"], "scores": ev["scores"],
+             "productionProxy": ev["productionProxy"], "surfacePhysics": ev["surfacePhysics"], "scores": legacy_score_copy(ev),
              "liveValidation": ev["liveValidation"], "artifactRefs": ev["artifactRefs"], "publishedAt": now_iso,
              "separation": "MODEL/SCIENCE validation only. Lake readiness lives in /lakeFleet and profiles; runtime health in /health."}
     per_lake = {lid: {**shell, "lakeId": lid, "sampleCount": v["sampleCount"], "lakeCount": 1, "metrics": v["metrics"],
@@ -246,7 +255,7 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
         "versions": [{"version": C.PRODUCTION_MODEL["modelId"], "date": None, "note": "Active production wind in Engine /conditions (Open-Meteo Best Match = HRRR then GFS)", "status": "CURRENT"},
                      {"version": C.CANDIDATE_MODEL, "date": "2026-10-06", "note": "Research candidate: NBM v5.0 + RTMA-RU + frozen CEM. Shadow only; NOT promoted", "status": "SHADOW"}],
         "activeProductionModel": C.PRODUCTION_MODEL, "researchCandidate": C.RESEARCH_CANDIDATE,
-        "scores": ev["scores"], "readinessDefinitions": C.READINESS_DEFINITIONS, "stateKinds": C.STATE_KINDS,
+        "scores": legacy_score_copy(ev), "readinessDefinitions": C.READINESS_DEFINITIONS, "stateKinds": C.STATE_KINDS,
         "runsPerMinute": round(1 / 60, 4), "updatedAt": now_iso,
         "publishMode": mode if mode == "scheduled" else "manual operator run: no scheduled publisher is deployed yet, so this data does not refresh on its own",
     }

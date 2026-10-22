@@ -22,6 +22,13 @@
         "/lakeFleet/{k}/slots/wind", "/lakeFleet/{k}/readiness/wind", "/lakeFleet/{k}/modelVersions/wind",
         "/brains/wind/{child}", "/validation/wind", "/health/brains/wind/{child}", "/activity/{event}",
         "/sources/{id}", "/health/sources/{id}"
+      ],
+      "legacyDirectWrites": [
+        {"path": "/snapshots/{k}/latest/wind", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "wind-snapshot-copy-v1"},
+        {"path": "/snapshots/{k}/latest/brainVersions/wind", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "wind-snapshot-brainversion-v1"},
+        {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
+        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"},
+        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs-wind-hourly"}
       ]
     }
   ],

@@ -83,3 +83,56 @@ def test_brain_summary_mirrors_uncapped_gates_and_dimensions():
     # nothing published -> nothing invented
     bare = brain_summary("lake-brain", reg, None, None, {"value": 3.0}, {}, NOW)
     assert "dimensions" not in bare and "gates" not in bare["score"] and "uncapped" not in bare["score"]
+
+
+# ---- freshness semantics (Cortex 2.2 FD-07; Firebase remediation 2026-10-21) -----------------------------------------------------------------
+from sector_brain_platform.control import STALE_BY_AGE, STALE_BY_FLAG, fleet_summary, slot_max_age  # noqa: E402
+
+LATE = dt.datetime(2026, 10, 21, 15, 0, tzinfo=dt.timezone.utc)          # nine days after the slots below were written
+
+
+def _paused_clarity_row():
+    """Production shape on 2026-10-21: Clarity paused since 2026-10-12, so its slot still says stale=false; Wind is current."""
+    return {"lakeId": "x", "lastUpdatedAt": "2026-10-12T09:00:00Z",                                     # orphaned parent: must be ignored
+            "slots": {"waterClarity": {"lastUpdatedAt": "2026-10-12T09:00:00Z", "stale": False},
+                      "wind": {"lastUpdatedAt": "2026-10-21T14:07:00Z", "stale": False},
+                      "depth": {"lastUpdatedAt": "2026-10-01T00:00:00Z", "stale": False}}}
+
+
+def test_policy_age_marks_a_paused_brains_slot_stale_and_says_why():
+    max_age = {"waterClarity": 26.0, "wind": 1.5}
+    r = fleet_rollup("x", _paused_clarity_row(), LATE, max_age)
+    assert r["stale"] is True and r["staleSlots"] == {"waterClarity": STALE_BY_AGE} and r["staleRule"] == "SLOT_FLAG_OR_POLICY_AGE"
+    assert r["lastUpdatedAt"] == "2026-10-21T14:07:00Z"                     # publication time of the newest slot, never the orphaned parent
+    assert r["rolledUpAt"] == "2026-10-21T15:00:00Z"                       # projection time is separate
+
+
+def test_brain_flag_still_wins_and_fresh_slots_stay_fresh():
+    row = _paused_clarity_row()
+    row["slots"]["wind"]["stale"] = True
+    r = fleet_rollup("x", row, dt.datetime(2026, 10, 12, 10, 0, tzinfo=dt.timezone.utc), {"waterClarity": 26.0, "wind": 1.5})
+    assert r["staleSlots"] == {"wind": STALE_BY_FLAG}                     # Clarity is 1 h old: fresh; the shadow Depth slot never counts
+
+
+def test_without_a_policy_the_rollup_keeps_the_persisted_flag_rule():
+    r = fleet_rollup("x", _paused_clarity_row(), LATE)
+    assert r["stale"] is False and r["staleRule"] == "SLOT_FLAG" and "staleSlots" not in r
+
+
+def test_slot_max_age_comes_from_the_effective_policy_and_ignores_non_time_models():
+    m = slot_max_age({"wind": {"freshness": {"stalenessModel": "TIME", "staleAfterHours": 1.5}},
+                      "biological-state": {"freshness": {"stalenessModel": "VERSION"}}},
+                     {"water-clarity": {"staleAfterHours": 26}, "lake-brain": {"stalenessModel": "FINGERPRINT"}})
+    assert m == {"wind": 1.5, "waterClarity": 26.0}
+
+
+def test_fleet_summary_counts_age_stale_slots_separately():
+    fs = fleet_summary({"x": _paused_clarity_row()}, LATE, max_age={"waterClarity": 26.0, "wind": 1.5})
+    assert fs["staleLakes"] == 1 and fs["staleSlots"] == {"waterClarity": 1} and fs["staleSlotsByAge"] == {"waterClarity": 1}
+
+
+def test_recorded_health_is_not_presented_as_current_when_the_brain_is_stale():
+    reg = {"stalenessModel": "TIME", "staleAfterHours": 26, "lastSuccessfulRun": "2026-10-12T09:00:00Z"}
+    s = brain_summary("water-clarity", reg, {"status": "HEALTHY", "lastRun": "2026-10-12T09:00:00Z"}, None, None, {}, LATE)
+    assert s["health"] == "HEALTHY" and s["healthBasis"] == "RECORDED_AT_LAST_EXECUTION"
+    assert s["stale"] is True and s["healthCurrent"] is False
