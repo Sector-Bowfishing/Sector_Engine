@@ -161,3 +161,13 @@ Evaluated 2026-10-22 · `sessions/2026-10-22-internal-activation.md`. The status
 | IO-10 | Customer eligibility | PASS | NOT_ELIGIBLE for all 8; `customerPublication: false`; PRE_PRODUCTION |
 | IO-11 | Ops displays, never approves | PARTIAL (Ops project) | Rules unchanged; Ops is read-only. The four dimensions and the shadow lane are not yet displayed in Ops (Ops follow-up) |
 | IO-12 | `operations` block in every `brain.json` | PASS | `ops-check --repo`: 0 findings |
+
+### IO re-evaluation (Cortex 2.6.0 @ 7293d01, 2026-10-22 · `sessions/2026-10-22-final-operational-integration.md`)
+
+| ID | Status | Evidence |
+|---|---|---|
+| IO-01 | PASS | engineering-status-ops-v1 1.2.0: every Brain carries `operations` {runtimeReadiness, internalOperation (live), scientificValidation, customerEligibility}; the legacy `operationalReadiness` layer is kept and documented as RELEASE_READINESS (D-IA-2 Option B); `ops-check --status` on the converted live document: 0 findings |
+| IO-06 | PASS | `/control/shadowLaneV1` registered as `fam.control-shadow-lane` (Cortex 2.6.0; CG-2.5-1 closed) |
+| IO-08 | PASS | ACTIVE only with an enabled trigger and a successful execution within 1.5 x the interval (input/dependency-driven Brains: the runtime's own hourly plan check, labelled PLAN_CHECK, with the last full run beside it); SHADOW only with a shadow run within its cadence (`sector_brain_platform/brain_operations.py`, tests) |
+| IO-09 | PASS | D-IA-1 Option A: `/scores/engine` classified ENGINEERING_SCORE (not capability); Brain `/scores/{id}.value` SCIENTIFIC_MATURITY; Wind `windCapability` DOMAIN_CAPABILITY; no score changed by this work |
+| IO-11 | see Sector Ops | four-dimension display shipped in Sector Ops (same mission) |

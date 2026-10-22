@@ -26,6 +26,8 @@ from jsonschema_lite import validate  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from source_digest import source_digest  # noqa: E402  (local `git ls-files` + file hashes; no network)
+sys.path.insert(0, os.path.join(ROOT, "jobs", "brain_platform"))
+from sector_brain_platform import brain_operations as BO  # noqa: E402  (Cortex 2.6.0 dimension vocabularies)
 
 
 def _load(*p):
@@ -99,6 +101,8 @@ def build() -> dict:
                 layers["canonicalStructure"] = {"status": "FAIL", "label": "BRANCH_ONLY", "evidence": m["directory"]}
             b.update({"statusLayers": layers, "requirements": d.get("requirements", {}), "structuralProblems": d.get("structuralProblems", []),
                       "scienceDependencies": d.get("scienceDependencies", []), "nextWork": d.get("nextWork", [])})
+        if d and d.get("operations"):
+            b["operations"] = _operations(bid, d["operations"], (pkg or {}).get("brainJson") or {}, manifest[bid])
         brains.append(b)
     # source.evaluatedCommit = the recorded verification run (inputs/verification.json); the exact code binding is sourceDigest and the exact
     # per-commit SHA exists only in the CI --emit copy (the only copy that may become an Ops projection).
@@ -109,10 +113,41 @@ def build() -> dict:
                        "certificationDigest": certrec.get("sourceDigest", "NONE"), "certificationCurrent": cert_current,
                        "verificationCommit": ver.get("evaluatedCommit", "NONE")},
             "statusVocabulary": STATUSES, "brains": brains, "verification": ver["results"], "decisions": dec["decisions"], "cortexGaps": src["cortexGaps"]}
+    for k in ("engineScore", "legacyLayers"):                   # Cortex 2.6.0 score classification (D-IA-1) and legacy-label meaning (D-IA-2)
+        if src.get(k):
+            out[k] = src[k]
     if "changes" in opt:
         out["changes"] = opt["changes"]["changes"]
     if "ci" in opt:
         out["ci"] = opt["ci"]
+    return out
+
+
+def _operations(bid: str, o: dict, bj: dict, mb: dict) -> dict:
+    """The STATIC part of the four independent dimensions (Cortex 2.6.0 IO-01): scientific validation and knowledge release (curated in
+    source.json), customer eligibility and execution modes (declared in brain.json `operations`, IO-12), score measurement classes (IO-09) and
+    the Brain's known limitations. Runtime readiness and internal operation are LIVE: the orchestrator adds them from execution evidence
+    (sector_brain_platform.brain_operations). Values outside the Cortex vocabulary are refused here, never published."""
+    from_bj = bj.get("operations") or {}
+    cp = from_bj.get("customerPublication") or {}
+    cust = cp.get("status") or "NOT_VERIFIED"
+    if mb.get("customerPublication") is not False and cust == "NOT_ELIGIBLE":
+        cust = "NOT_VERIFIED"                                       # the manifest must agree that nothing is published to customers
+    out = {"scientificValidation": o["scientificValidation"], "knowledgeRelease": o["knowledgeRelease"],
+           "customerEligibility": {"status": cust, "basis": "brain.json operations.customerPublication; execution manifest customerPublication false; engineMode PRE_PRODUCTION"},
+           "executionModes": from_bj.get("executionModes") or [], "scores": o.get("scores") or [], "limitations": o.get("limitations") or []}
+    if cp.get("approvalRef"):
+        out["customerEligibility"]["approvalRef"] = cp["approvalRef"]
+    bad = []
+    if out["scientificValidation"]["status"] not in BO.SCIENCE:
+        bad.append(f"scientificValidation {out['scientificValidation']['status']}")
+    if out["knowledgeRelease"]["state"] not in BO.KNOWLEDGE:
+        bad.append(f"knowledgeRelease {out['knowledgeRelease']['state']}")
+    if cust not in BO.CUSTOMER or (cust == "ELIGIBLE" and not cp.get("approvalRef")):
+        bad.append(f"customerEligibility {cust}")
+    bad += [f"score measurement {x.get('measurement')}" for x in out["scores"] if x.get("measurement") not in BO.MEASUREMENTS]
+    if bad:
+        raise SystemExit(f"{bid}: operations values outside the Cortex 2.6.0 vocabulary: {bad}")
     return out
 
 

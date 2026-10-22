@@ -2,11 +2,11 @@
   "schemaVersion": "1.2.0",
   "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "repository": "Sector-Bowfishing/Sector_Engine",
-  "branch": "cortex/internal-activation-records-2026-10-22",
+  "branch": "cortex/final-operational-integration-2026-10-22",
   "evaluatedCommit": "25e786cf",
   "evaluatedAt": "2026-10-22",
-  "session": "docs/cortex/sessions/2026-10-22-internal-activation.md",
-  "cortexVersion": "2.5.0",
+  "session": "docs/cortex/sessions/2026-10-22-final-operational-integration.md",
+  "cortexVersion": "2.6.0",
   "cortexPack": "sector/engine",
   "structuralCertification": {
     "biological-state": {
@@ -75,9 +75,7 @@
     "CG-2.1-6",
     "CG-2.1-7",
     "CG-2.1-8",
-    "CG-2.1-9",
-    "CG-2.5-1",
-    "CG-2.5-2"
+    "CG-2.1-9"
   ],
   "brainDetail": {
     "biological-state": {
@@ -135,7 +133,31 @@
       ],
       "nextWork": [
         "Deploy the exit-2 refusal with the next orchestrator release (M-2, A-2)"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "IN_PROGRESS",
+          "label": "RUBRIC_APPROVED_FIELD_VALIDATION_INCOMPLETE"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "biology bundle v1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [
+          {
+            "measurement": "SCIENTIFIC_MATURITY",
+            "source": "/scores/biological-state",
+            "field": "value",
+            "displayedAs": "Brain maturity / evidence score (0-10)"
+          }
+        ],
+        "limitations": [
+          "Species knowledge only: no per-lake biological state on the production path",
+          "Response bands PROPOSED; field validation in progress",
+          "Biological Capability V2 publication inactive"
+        ]
+      }
     },
     "wind": {
       "statusLayers": {
@@ -196,7 +218,36 @@
       "nextWork": [
         "Approve Proposal B (retire the score copy)",
         "Deploy the release-verifying image (M-1, A-2)"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "IN_PROGRESS",
+          "label": "PARTIAL_EVIDENCE_NO_OVER_WATER_FIELD_VALIDATION"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "wind-knowledge-2026-10-20.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [
+          {
+            "measurement": "SCIENTIFIC_MATURITY",
+            "source": "/scores/wind",
+            "field": "value",
+            "displayedAs": "Brain maturity / evidence score (0-10)"
+          },
+          {
+            "measurement": "DOMAIN_CAPABILITY",
+            "source": "/scores/wind",
+            "field": "measurements.windCapability",
+            "displayedAs": "Wind Capability (wind-specialist-capability-v2)"
+          }
+        ],
+        "limitations": [
+          "Exposure and surface never field-validated over water (bank-pair truth needed)",
+          "Knowledge release approval not recorded (M-3)"
+        ]
+      }
     },
     "water-clarity": {
       "statusLayers": {
@@ -259,7 +310,31 @@
       "nextWork": [
         "Remove the polygon fallback (M-6)",
         "Add MANUAL jobs to the job map (D-E)"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "PARTIAL",
+          "label": "VALIDATED_NO_GATE_CUSTOMER_NUMBER_NOT_VALIDATED"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "water-clarity-knowledge-2026-10-20.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [
+          {
+            "measurement": "SCIENTIFIC_MATURITY",
+            "source": "/scores/water-clarity",
+            "field": "value",
+            "displayedAs": "Brain maturity / evidence score (0-10)"
+          }
+        ],
+        "limitations": [
+          "Satellite evidence ages while the satellite pipeline stays paused (latest scene 2026-10-08)",
+          "Internal operation scoped to 2 pilot lakes; public catalog only (private overlay not attached)",
+          "Validation without a gate (CLARITY-VAL-001)"
+        ]
+      }
     },
     "sector-intelligence": {
       "statusLayers": {
@@ -317,7 +392,31 @@
       ],
       "nextWork": [
         "Deploy the release-verifying orchestrator image (M-1, A-2)"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "IN_PROGRESS",
+          "label": "PILOT_EVALUATIONS_ONLY_OUTCOME_VALIDATION_PENDING"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "sector-intelligence-knowledge-2026-10-20.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [
+          {
+            "measurement": "SCIENTIFIC_MATURITY",
+            "source": "/scores/sector-intelligence",
+            "field": "value",
+            "displayedAs": "Brain maturity / evidence score (0-10)"
+          }
+        ],
+        "limitations": [
+          "Input assembly only: no fishing recommendation (UNSUPPORTED, gated product decision)",
+          "Stale inputs are marked STALE and lower the evaluation, never raise it",
+          "Outcome validation pending"
+        ]
+      }
     },
     "lake-brain": {
       "statusLayers": {
@@ -378,7 +477,31 @@
       "nextWork": [
         "Extract a non-customer Swift Brain library (D-C)",
         "sha256 presence fingerprint with the Lake owner (M-7)"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "IN_PROGRESS",
+          "label": "NOT_VALIDATED_PROSPECTIVE_LEDGER_RUNNING"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "compiled bindings + fingerprinted presence release",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [
+          {
+            "measurement": "SCIENTIFIC_MATURITY",
+            "source": "/scores/lake-brain",
+            "field": "value",
+            "displayedAs": "Brain maturity / evidence score (0-10)"
+          }
+        ],
+        "limitations": [
+          "Provider dependencies (CWMS/USGS) intermittently stale: genuine source freshness, not an infrastructure failure",
+          "Deployed image is not built from main (Lake owner lineage reconciliation pending)",
+          "Level classification not field-validated"
+        ]
+      }
     },
     "water-temp": {
       "statusLayers": {
@@ -437,7 +560,31 @@
       ],
       "nextWork": [
         "Extract a non-customer Swift Brain library (D-C)"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "PARTIAL",
+          "label": "GLOBAL_HOLDOUT_ONLY"
+        },
+        "knowledgeRelease": {
+          "state": "NONE",
+          "releaseId": "compiled model (no knowledge store)",
+          "approval": "NOT_APPLICABLE"
+        },
+        "scores": [
+          {
+            "measurement": "SCIENTIFIC_MATURITY",
+            "source": "/scores/water-temp",
+            "field": "value",
+            "displayedAs": "Brain maturity / evidence score (0-10)"
+          }
+        ],
+        "limitations": [
+          "Internal operation scoped to the 5 pilot lakes; the 621-lake fleet registry is not refreshed",
+          "USGS/CWMS water-temperature dependencies stale (provider freshness)",
+          "Forecast not separately validated; per-lake validation pending"
+        ]
+      }
     },
     "depth": {
       "statusLayers": {
@@ -498,7 +645,24 @@
       "nextWork": [
         "Approve or reject the candidate release (G-1)",
         "Decide the control-plane shadow redeploy (A-2)"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "NOT_STARTED",
+          "label": "FIELD_VALIDATION_PREREGISTERED_DEPTH_VAL_001"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "depth-knowledge-candidate-2026-10-20.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [],
+        "limitations": [
+          "Approved path abstains until an APPROVED release (G-1); shadow lane output is experimental",
+          "Partial datum coverage: pilot lakes DEGRADED; no contours are invented",
+          "No capability score (not scored)"
+        ]
+      }
     },
     "vegetation": {
       "statusLayers": {
@@ -557,7 +721,36 @@
       "nextWork": [
         "Decide V-1 (agency block)",
         "Obtain fresh truth before any new evaluation"
-      ]
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "IN_PROGRESS",
+          "label": "GATES_FAILED_FRESH_INDEPENDENT_TRUTH_NEEDED"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "vegetation-knowledge-candidate-2026-10-20.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [],
+        "limitations": [
+          "No live surface-observation feed: every lake is UNKNOWN/unavailable (no observations are invented)",
+          "Regional coverage only: no Guntersville coverage",
+          "Approved path abstains (G-1, V-1); shadow lane output is experimental",
+          "No capability score (not scored)"
+        ]
+      }
     }
+  },
+  "engineScore": {
+    "measurement": "ENGINEERING_SCORE",
+    "source": "/scores/engine",
+    "field": "engineScore",
+    "rubric": "engine-score-v1",
+    "displayedAs": "Engine engineering score (composite engineering/platform score; not a scientific capability or maturity score)",
+    "note": "D-IA-1 (owner, Option A): 7.0 -> 7.2 on 2026-10-22 from platformHealth conformance 5/6 -> 6/6 under the unchanged rubric; Cortex 2.6.0 IO-09/SC-05"
+  },
+  "legacyLayers": {
+    "operationalReadiness": "RELEASE_READINESS: legacy combined label kept for compatibility. It is NOT runtime readiness or internal operation (see brains[].operations, Cortex 2.6.0 IO-01; owner decision D-IA-2 Option B)."
   }
 }
