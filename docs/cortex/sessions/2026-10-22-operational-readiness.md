@@ -60,3 +60,45 @@ These counts are not inflated. The gap to 8/8 is scientific evidence and owner a
   - `data-check` v2: 177 findings (99 bare-root UNREGISTERED_PATH, 67 UNDECLARED_ACCESS, 9 UNDECLARED_READ for orchestrator, scorer and Kit reader declarations, 2 PRIVATE_DATA_READ that are the Publisher contract declaring the Lake presence family, not a read). No runtime defect; recorded for the registry.
   - Standing memory checks: not triggered (no runtime, loader, release or deploy file changed).
   - Security (SEC): no trigger (no rules, consumer, cache or public build change).
+
+## 5. Implementation results (2026-10-22, continued)
+
+| PR | Merge commit | Change |
+|---|---|---|
+| #45 | `acd32ac1` | live and pilot evidence in the status layers; Cortex 2.3.0 @ `8955840` adopted |
+| #46 | `640ae422` | Lake provider requirements. History-only (`iem-hads`, `usgs-nwis-dv`) and fleet/candidate-scope (`usace-access2water`, `usbr-rise`, `nws-nwps`) providers are OPTIONAL; the pilot primaries stay REQUIRED. A test ties the requirements to `jobs.MANIFEST` roles |
+| #47 | `817d2f90` | re-collected certification after #46 |
+
+**Incident (process):** #46 was merged with 3 failing checks.
+- **Cause:** the merge gate compared check text instead of the `gh pr checks` exit code. The failures came from collecting certification while a new test file was untracked; the source digest hashes only tracked files.
+- **Impact:** `main` CI red for one commit. No deploy or runtime impact (the orchestrator stayed on `acd32ac1` until the fix was merged).
+- **Fix:** #47 restored green CI on `main`. Merges are now gated on the `gh pr checks` exit code.
+
+**Orchestrator deployments** (each: lineage and stale-score guards passed; scheduler PAUSED; no Brain executed):
+
+| Commit | Image | Args |
+|---|---|---|
+| `acd32ac1eca3` | `sha256:387d36fc…` | `--publish-engineering-status --publish-health` |
+| `817d2f909b69` (current) | `sha256:202e4a08c82e9952da16fa8c6d3a412590d06096b982c1dda4cd3d01041c887e` | same |
+
+**Health plane `/control/healthV1`:**
+- Refreshed for the first time since 2026-10-17. It is now part of every orchestrator run (`--publish-health`).
+- Current aggregate: HEALTHY 4 (Fish, Wind, Clarity, Intelligence), DEGRADED 2, UNKNOWN 2 (Depth and Vegetation, not configured).
+- **Lake DEGRADED:** primary provider health records come from the daily ledger run, which is older than the providers' freshness thresholds. This is genuine, and it was a false FAILED before #46.
+- **Water Temp DEGRADED:** stale inputs. Genuine.
+
+**Engineering status `/control/engineeringStatusV1`:** AVAILABLE @ `817d2f909b69`, carrying the readiness layers of §2.
+
+**Scores:** unchanged. **Schedulers:** unchanged (wind-hourly and lake-brain-ledger-daily ENABLED; all others PAUSED).
+
+## 6. Approvals that would move Brains toward OPERATIONALLY READY (owner decisions; none taken here)
+
+| # | Approval | Brains | Unblocks |
+|---|---|---|---|
+| 1 | **M-3:** a named approver and a recorded approval for each packaged knowledge release | Fish, Wind, Clarity, Intelligence | criterion 2 |
+| 2 | **Scientific validation acceptance** of the recorded evidence (the validation status stays honest until then) | all | criterion 3 |
+| 3 | **A-2 Wind redeploy** to the release-verifying image (after M-3) | Wind | running verified knowledge |
+| 4 | **Activation:** Clarity job deploy + schedules (clarity-current-hourly, hydrology-hourly, lake-surface-*); Water Temp schedule; orchestrator scheduler (in-process Fish and Intelligence) | Clarity, Water Temp, Fish, Intelligence | criterion 6 / PRODUCTION ACTIVE |
+| 5 | **Lake:** reconcile the off-main `a6622f99` image with main (Lake owner) | Lake | criterion 4 on main code |
+| 6 | **G-1** (after field validation DEPTH-VAL-001 / DEPTH-DAT-001 and VEG-VAL-001 with fresh independent truth) and **V-1** | Depth, Vegetation | criteria 2–3 |
+| 7 | **Intelligence recommendation synthesis:** a gated product decision plus a validation design; today it is input assembly only | Intelligence | bowfishing recommendations |
