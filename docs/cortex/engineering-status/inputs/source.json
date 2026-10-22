@@ -239,7 +239,7 @@
           {
             "measurement": "DOMAIN_CAPABILITY",
             "source": "/scores/wind",
-            "field": "measurements.windCapability",
+            "field": "measurements.windCapability.value",
             "displayedAs": "Wind Capability (wind-specialist-capability-v2)"
           }
         ],

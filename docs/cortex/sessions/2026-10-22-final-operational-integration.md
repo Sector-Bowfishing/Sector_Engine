@@ -63,3 +63,54 @@ A local orchestrator dry run against live production reads, with the projection 
 
 - `ops-check --status` on the converted document: 0 findings.
 - The document is schema-valid and leak-free.
+
+## 4. Merges and deployments
+
+| Step | Result |
+|---|---|
+| Cortex 2.6.0 | `7293d01` on Cortex `main` (pushed), validate 0 problems |
+| Engine PR #54 | CI 7/7 pass, `gh pr checks` rc=0 → merged `9b928f7b` |
+| `brain-orchestrator` | deployed `9b928f7bc738` from merged main (lineage preflight and stale-score guard passed). `SCHEDULE_STATE=enabled` preserves the existing ENABLED scheduler (`50 * * * *`). Args `--publish-engineering-status --publish-health --run-shadow-lane`; `WIND_MEASUREMENTS=on`, `WATER_TEMP_SCOPE=pilots` |
+| Cycle `brain-orchestrator-nzgd6` (16:00Z) | engineering status AVAILABLE @ `9b928f7bc738`, operations ACTIVE 6 / SHADOW 2 |
+| Sector Ops PR Sector-Bowfishing/Sector_Ops#16 | no CI configured in that repository ("no checks reported"). Gated on local verification: tsc clean, 515 tests, build, `scan:dist` 0 violations, Cortex `bundle-scan` showing only the 5 findings already present on `origin/main`. Merged `ddb4a757` |
+| Sector Ops hosting | `npm run deploy:ops` from merged main (build, scan, test, deploy). Release `4668f4050c2071ba`, 2026-10-22T16:04:05Z (previous `252fd2c609208617`). All 15 served files match the scanned build |
+
+## 5. Production verification (2026-10-22 ~16:05Z)
+
+**Published `/control/engineeringStatusV1`:**
+- `engineering-status-ops-v1` 1.2.0, AVAILABLE, source `9b928f7bc738`, Cortex 2.6.0 @ 7293d01, published by `brain-orchestrator@9b928f7bc738`, `operationsAsOf` 16:02:09Z.
+- Leak check clean; `problems()` none.
+- Schema-valid once RTDB's dropped empty arrays are read back as empty, as the Ops validator does.
+- Converted to `cortex.brain-operations-status/1`, `ops-check --status` reports **0 findings**.
+
+| Brain | Runtime | Internal operation | Scientific validation | Customer |
+|---|---|---|---|---|
+| Fish | READY | ACTIVE | IN_PROGRESS | NOT_ELIGIBLE |
+| Wind | READY | ACTIVE | IN_PROGRESS | NOT_ELIGIBLE |
+| Water Clarity | READY | ACTIVE | PARTIAL | NOT_ELIGIBLE |
+| Lake | READY | ACTIVE | IN_PROGRESS | NOT_ELIGIBLE |
+| Water Temp | READY | ACTIVE | PARTIAL | NOT_ELIGIBLE |
+| Intelligence | READY | ACTIVE | IN_PROGRESS | NOT_ELIGIBLE |
+| Depth | READY | SHADOW | NOT_STARTED | NOT_ELIGIBLE |
+| Vegetation | READY | SHADOW | IN_PROGRESS | NOT_ELIGIBLE |
+
+**Rendering:** the deployed Ops code, rendered at `/brains` against this exact document in the jsdom test harness:
+- shows the same matrix, with Depth and Vegetation marked EXPERIMENTAL;
+- summary: READY 8/8, ACTIVE 6/8 + SHADOW 2/8, NOT ELIGIBLE 8/8;
+- the Engine score is labelled "Engineering score (not capability)";
+- the Vegetation shadow card shows 0 observed lakes, the candidate release and the ABSTAIN reason.
+
+**The signed-in live smoke test was NOT exercised.** The production dashboard requires owner sign-in, which this session does not perform.
+
+**Other checks:**
+
+| Check | Result |
+|---|---|
+| Scores | all Brain `/scores/{id}.value` identical to the pre-activation baseline; Engine 7.2 (D-IA-1, unchanged by this work) |
+| Schedules | wind-hourly, lake-brain-ledger-daily, brain-orchestrator ENABLED; every other Brain scheduler PAUSED (unchanged) |
+| Rules | live RTDB rules identical to Sector Ops `main` `database.rules.json`; no rules deploy |
+| Customer apps / Engine API | untouched |
+
+**Defect found in final verification and fixed in this PR:**
+- `/scores/wind.measurements.windCapability` is an object, so Wind's DOMAIN_CAPABILITY reference now names `measurements.windCapability.value`.
+- A test now requires every score reference to resolve to a number.
