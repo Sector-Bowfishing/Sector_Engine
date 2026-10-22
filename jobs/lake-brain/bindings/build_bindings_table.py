@@ -22,7 +22,7 @@ ELIGIBILITY (Michael's final decisions, 2026-10-13):
     later re-labelled VERIFIED_CORROBORATED (Red Lake|MN).
 
 INPUTS (paths overridable by env): LAKE_BRAIN_RESEARCH (docs/research/lake-brain/data of the research checkout) and
-LB_DATA (Sector_Research_Data/lake-brain; bulk probe data outside Git). Their sha256 are recorded in the output.
+LB_DATA (default $SECTOR_RESEARCH_ROOT/lake-brain/datasets; bulk probe data outside Git). Their sha256 are recorded in the output.
 """
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 RESEARCH = os.environ.get("LAKE_BRAIN_RESEARCH",
                           "/Users/mcather/Desktop/Development/Sector_Engine/docs/research/lake-brain/data")
-DATA = os.environ.get("LB_DATA", "/Users/mcather/Desktop/Development/Sector_Research_Data/lake-brain")
+DATA = os.environ.get("LB_DATA") or os.path.join(os.environ.get("SECTOR_RESEARCH_ROOT", os.path.expanduser("~/Desktop/Development/Sector Research")), "lake-brain", "datasets")
 OUT_DIR = os.path.join(REPO, "jobs", "lake-brain", "data")
 OUT = os.path.join(OUT_DIR, "bindings.proposed.v1.json")
 OUT_EXCLUDED = os.path.join(OUT_DIR, "bindings.proposed.v1.excluded.json")

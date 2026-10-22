@@ -54,7 +54,7 @@ DEFAULT_BINDINGS = os.path.normpath(os.path.join(HERE, "..", "data", "bindings.p
 ORIGIN = {"usgs": "usgs", "cwms": "usace", "a2w": "usace", "rise": "usbr", "tva": "tva", "coops": "noaa"}
 
 DEFAULT_RESEARCH_DOCS = "/Users/mcather/Desktop/Development/Sector_Engine/docs/research/lake-brain"
-DEFAULT_DATA = os.environ.get("LB_DATA", "/Users/mcather/Desktop/Development/Sector_Research_Data/lake-brain")
+DEFAULT_DATA = os.environ.get("LB_DATA") or os.path.join(os.environ.get("SECTOR_RESEARCH_ROOT", os.path.expanduser("~/Desktop/Development/Sector Research")), "lake-brain", "datasets")
 DEFAULT_OUT = "/Users/mcather/Desktop/Sector Handoffs/Sector Engine/Lake Brain Binding Review"
 
 PROVIDER_PLAIN = {
@@ -749,7 +749,7 @@ def pack_id_for(mode, ids, seed):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--research-docs", default=DEFAULT_RESEARCH_DOCS, help="docs/research/lake-brain of the research branch checkout")
-    ap.add_argument("--data-dir", default=DEFAULT_DATA, help="Sector_Research_Data/lake-brain (bulk data outside Git)")
+    ap.add_argument("--data-dir", default=DEFAULT_DATA, help="Lake research data root: $LB_DATA, default $SECTOR_RESEARCH_ROOT/lake-brain/datasets (bulk data outside Git)")
     ap.add_argument("--out", default=DEFAULT_OUT, help="pack output directory")
     ap.add_argument("--seed", type=int, default=DEFAULT_SEED)
     ap.add_argument("--target", type=int, default=TARGET_N)
