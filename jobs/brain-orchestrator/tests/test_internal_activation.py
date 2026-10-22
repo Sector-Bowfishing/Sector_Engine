@@ -77,6 +77,28 @@ def test_fresh_pilot_jobs_are_not_started(live_cycle):
     assert OR.main([]) == 0 and calls["start"] == []                                 # no redundant execution
 
 
+def test_a_scoped_job_success_stops_hourly_reruns_while_the_fleet_registry_stays_old(live_cycle, monkeypatch):
+    """Defect found in the first live cycles (2026-10-22): a pilot-scoped Water Temp run does not restate the 621-lake registry, so its
+    lastSuccessfulRun stayed 2026-10-14 and the job would have been due every hour. /jobs/water-temp-brain.lastSuccessfulAt now counts."""
+    setup, calls = live_cycle
+    t = tree()
+    t["brains"]["water-temp"]["lastSuccessfulRun"] = ago(196)                       # fleet registry, untouched by scoped runs
+    t["brains"]["water-clarity"] = {"lastSuccessfulRun": ago(2), "staleAfterHours": 26, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"}
+    t["jobs"] = {"water-temp-brain": {"lastSuccessfulAt": ago(1)}}
+    setup(t)
+    assert OR.main([]) == 0 and calls["start"] == []
+    t2 = tree()
+    t2["brains"]["water-temp"]["lastSuccessfulRun"] = ago(196)
+    t2["brains"]["water-clarity"] = {"lastSuccessfulRun": ago(2), "staleAfterHours": 26, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"}
+    t2["jobs"] = {"water-temp-brain": {"lastSuccessfulAt": ago(7)}}
+    calls["start"].clear()
+    db = setup(t2)
+    monkeypatch.setattr(OR, "sync_jobs", lambda *a, **k: (t2["jobs"], {}, 0))       # this cycle's /jobs records feed the control plane
+    assert OR.main([]) == 0 and calls["start"] == ["water-temp"]                     # due again after its 6 h rule
+    row = db.tree["control"]["orchestratorV1"]["brains"]["water-temp"]
+    assert "scoped run" in row["lastSuccessfulRunBasis"]                             # the control plane labels the scoped basis
+
+
 def test_shadow_lane_publishes_only_an_isolated_experimental_summary(live_cycle):
     setup, calls = live_cycle
     db = setup(tree())
