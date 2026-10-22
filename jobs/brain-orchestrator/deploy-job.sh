@@ -120,7 +120,7 @@ run gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 512Mi --task-timeout 30m \
   --labels "commit=$COMMIT" \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=fleet,WIND_MEASUREMENTS=$WIND_MEASUREMENTS"
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
 
 echo "▶ schedule $JOB ($CRON UTC)"

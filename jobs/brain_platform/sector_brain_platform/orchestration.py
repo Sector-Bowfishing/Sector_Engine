@@ -260,6 +260,28 @@ def _rec(ctx: dict, brain_id: str, trigger: str, decision: str, reason: str, cod
     return out
 
 
+def with_job_success(m: dict, states: dict, jobs: dict | None) -> dict:
+    """Registry-ish states for the decision model, where a SCOPED Cloud Run job the orchestrator starts also counts its own last successful
+    execution (/jobs/{job}.lastSuccessfulAt) as the Brain's lastSuccessfulRun. A scoped run (for example Water Temp on the 5 pilot lakes,
+    internal operation 2026-10-22) refreshes its scope without restating the fleet registry, so the registry time alone would make the job due
+    every cycle. The later of the two wins; nothing is invented when both are missing; unscoped and in-process Brains are unchanged."""
+    out = dict(states or {})
+    for bid, b in (m.get("brains") or {}).items():
+        t = b.get("executionTarget") or {}
+        if t.get("kind") != "cloud-run-job" or not t.get("startedByOrchestrator") or not t.get("scoped"):
+            continue
+        job_t = parse_time(((jobs or {}).get(t.get("job")) or {}).get("lastSuccessfulAt"))
+        if job_t is None:
+            continue
+        reg = dict(out.get(bid) or {})
+        reg_t = parse_time(reg.get("lastSuccessfulRun"))
+        if reg_t is None or job_t > reg_t:
+            reg["lastSuccessfulRun"] = iso(job_t)
+            reg["lastSuccessfulRunBasis"] = f"job {t.get('job')} lastSuccessfulAt (scoped run)"
+        out[bid] = reg
+    return out
+
+
 def due(brain: dict, state: dict | None, now: dt.datetime) -> bool | None:
     """Time-driven due check from the Brain's own freshness expectation. None = no time rule (VERSION/FINGERPRINT Brain: never 'due' by clock)."""
     h = (brain.get("freshness") or {}).get("staleAfterHours")

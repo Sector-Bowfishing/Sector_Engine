@@ -21,6 +21,8 @@ def load_world(live, now: dt.datetime) -> dict:
     prev = live.get("control/orchestratorV1") or {}
     return {"manifest": manifest, "prev": prev, "registries": live.get("brains") or {}, "health": live.get("health/brains") or {},
             "scores": live.get("scores") or {}, "overrides": prev.get("overrides") or {},
+            # /jobs (lastSuccessfulAt): a SCOPED orchestrator-started job refreshes its scope without restating the fleet registry (O.with_job_success)
+            "jobs": live.get("jobs") or {},
             # operational truth: lastDataUpdate / healthReasons are computed by the scorer plane from /lakeFleet + /sources (small read)
             "overviewBrains": live.get("control/overview/brains") or {}}
 
@@ -33,7 +35,7 @@ def build_ctx(world: dict, now: dt.datetime, locks: dict | None, own_inputs: dic
     for rec in (prev.get("decisions") or {}).values():
         if rec.get("decision") == "RUN" and rec.get("inputFingerprint"):
             last_in.setdefault(rec["brainId"], rec["inputFingerprint"])
-    return {"manifest": m, "mode": m["engineMode"], "now": now, "states": regs, "activity": O.effective_activity(m, world["overrides"]),
+    return {"manifest": m, "mode": m["engineMode"], "now": now, "states": O.with_job_success(m, regs, world.get("jobs")), "activity": O.effective_activity(m, world["overrides"]),
             "running": running, "out_fps": out_fps, "last_in_fps": last_in, "own_inputs": own_inputs or {},
             # the previous cycle's execution ledger: bounded retry (orchestration.retry_gate) holds back automatic re-runs after failures
             "executions": list((prev.get("executions") or {}).values())}

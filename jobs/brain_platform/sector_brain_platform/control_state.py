@@ -118,6 +118,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
     the input fingerprint each Brain last processed: FINGERPRINT freshness); overview_brains = /control/overview/brains (lastDataUpdate and
     healthReasons are computed there from /lakeFleet and /sources, which this plane does not read). All optional: absent -> UNKNOWN / omitted."""
     prev = prev or {}
+    registries = O.with_job_success(manifest, registries, jobs)     # a scoped orchestrator-started job's own success counts (same as the decision)
     graph = O.validate_graph(manifest)
     activity = O.effective_activity(manifest, overrides)
     by_id = {e["executionId"]: e for e in (prev.get("executions") or {}).values() if e.get("brainId") != "platform"}   # the orchestrator's own wake-ups are not Brain executions
@@ -169,6 +170,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
             "executionMode": execution_mode(b, enabled), "scheduleClass": (b.get("schedule") or {}).get("class"),
             "exception": {k: v for k, v in ((b.get("schedule") or {}).get("exception") or {}).items() if k in ("gate", "stop", "maxMonthlyUsd", "approvedAt")},
             "lastRun": last_run, "lastResult": (lastx or {}).get("status") or h.get("status"), "nextDue": nd,
+            "lastSuccessfulRunBasis": reg.get("lastSuccessfulRunBasis"),
             # lastRun (kept for compatibility) == lastSuccessfulRun; the four timestamps answer different questions (operational_truth)
             "lastSuccessfulRun": last_run, "lastExecution": last_exec, "lastDataUpdate": ov.get("lastDataUpdate"),
             "lastScoreEvaluation": sc.get("scoreUpdatedAt"),
