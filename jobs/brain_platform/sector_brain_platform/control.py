@@ -193,14 +193,19 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
 # of current freshness. The rollup therefore marks a slot stale by FLAG or by AGE and says which (staleSlots). Health likewise: /health/brains is
 # the status recorded at the last run; current health is the control plane's verdict (overview brains[*].stale / freshness).
 STALE_BY_FLAG, STALE_BY_AGE = "FLAG", "AGE"
+# Slots whose `lastUpdatedAt` is NOT a publication time, so age cannot be measured from the fleet row. Lake Brain writes the profile's
+# updatedAt there (LakeBrainRunner FleetSlot lastUpdatedAt = profile.updatedAt; production 2026-10-22: slot 2026-10-13 while the state was
+# published 2026-10-21T12:02Z). Lake freshness stays with its per-lake state freshness block and the Brain-level verdict.
+AGE_EXEMPT_SLOTS = {"lake": "slot lastUpdatedAt is the profile update time, not a publication time"}
 
 
 def slot_max_age(manifest_brains: dict | None, registries: dict | None) -> dict[str, float]:
-    """{slot: staleAfterHours} for every Brain whose effective freshness policy is TIME (VERSION/FINGERPRINT Brains never age)."""
+    """{slot: staleAfterHours} for every Brain whose effective freshness policy is TIME (VERSION/FINGERPRINT Brains never age), except slots
+    whose fleet timestamp is not a publication time (AGE_EXEMPT_SLOTS)."""
     out = {}
     for bid, (slot, _field, _name) in BRAINS.items():
         pol = OT.effective_policy((manifest_brains or {}).get(bid), (registries or {}).get(bid))
-        if pol.get("model") == "TIME" and pol.get("staleAfterHours") is not None:
+        if pol.get("model") == "TIME" and pol.get("staleAfterHours") is not None and slot not in AGE_EXEMPT_SLOTS:
             out[slot] = float(pol["staleAfterHours"])
     return out
 

@@ -136,3 +136,16 @@ def test_recorded_health_is_not_presented_as_current_when_the_brain_is_stale():
     s = brain_summary("water-clarity", reg, {"status": "HEALTHY", "lastRun": "2026-10-12T09:00:00Z"}, None, None, {}, LATE)
     assert s["health"] == "HEALTHY" and s["healthBasis"] == "RECORDED_AT_LAST_EXECUTION"
     assert s["stale"] is True and s["healthCurrent"] is False
+
+
+def test_lake_slot_is_not_aged_from_its_profile_timestamp():
+    """Production 2026-10-22: Lake's fleet slot lastUpdatedAt is the profile update time (2026-10-13) while the state was published
+    2026-10-21T12:02Z under a 26 h policy. Aging the slot by it marked 5 fresh pilot lakes stale; the Lake slot is exempt from AGE."""
+    m = slot_max_age({"lake-brain": {"freshness": {"staleAfterHours": 26}}, "wind": {"freshness": {"stalenessModel": "TIME", "staleAfterHours": 1.5}}}, {})
+    assert "lake" not in m and m["wind"] == 1.5
+    row = {"lakeId": "x", "slots": {"lake": {"lastUpdatedAt": "2026-10-13T18:53:14Z", "stale": False},
+                                    "wind": {"lastUpdatedAt": "2026-10-21T14:07:00Z", "stale": False}}}
+    r = fleet_rollup("x", row, LATE, m)
+    assert r["stale"] is False and "staleSlots" not in r
+    row["slots"]["lake"]["stale"] = True
+    assert fleet_rollup("x", row, LATE, m)["staleSlots"] == {"lake": STALE_BY_FLAG}           # Lake's own flag still counts
