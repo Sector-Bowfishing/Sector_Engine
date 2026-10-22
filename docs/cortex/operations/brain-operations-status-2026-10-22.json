@@ -1,0 +1,543 @@
+{
+ "schemaVersion": "cortex.brain-operations-status/1",
+ "generatedAt": "2026-10-22T07:00:00Z",
+ "producer": "Sector Engine internal activation (docs/cortex/sessions/2026-10-22-internal-activation.md)",
+ "brains": [
+  {
+   "brainId": "wind",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "wind-hourly runs in Cloud Run"
+   },
+   "internalOperation": {
+    "status": "ACTIVE",
+    "schedulerState": "ENABLED",
+    "scheduler": "wind-hourly (5 * * * *)",
+    "lastExecutionAt": "2026-10-22T06:08:52Z",
+    "expectedIntervalHours": 1
+   },
+   "scientificValidation": {
+    "status": "IN_PROGRESS",
+    "label": "PARTIAL validation evidence, no field validation of bowfishing exposure"
+   },
+   "knowledgeRelease": {
+    "state": "CANDIDATE",
+    "releaseId": "wind-knowledge-2026-10-20.1",
+    "approvalRef": null,
+    "displayedAs": "CANDIDATE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [
+    {
+     "measurement": "DOMAIN_CAPABILITY",
+     "displayedAs": "DOMAIN_CAPABILITY",
+     "path": "/scores/wind",
+     "changedByActivation": false
+    }
+   ],
+   "outputs": [
+    {
+     "lane": "INTERNAL_OBSERVATION",
+     "consumers": [
+      "platform.orchestrator",
+      "platform.scorer",
+      "external.sector-ops",
+      "brain.*"
+     ],
+     "knowledgeState": "CANDIDATE",
+     "where": "fam.brains, fam.lake-states, fam.lakefleet (INTERNAL lane)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-22T06:08:52Z"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "PARTIAL",
+    "label": "RUNNING_HOURLY_SCIENCE_PARTIAL",
+    "basis": "engineering-status operationalReadiness (legacy combined label)"
+   },
+   "notes": "unchanged by this mission"
+  },
+  {
+   "brainId": "lake-brain",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "LakeBrainJob ledger runs daily"
+   },
+   "internalOperation": {
+    "status": "ACTIVE",
+    "schedulerState": "ENABLED",
+    "scheduler": "lake-brain-ledger-daily (0 12 * * *)",
+    "lastExecutionAt": "2026-10-21T12:00:55Z",
+    "expectedIntervalHours": 24
+   },
+   "scientificValidation": {
+    "status": "IN_PROGRESS",
+    "label": "NOT_VALIDATED (prospective ledger running)"
+   },
+   "knowledgeRelease": {
+    "state": "CANDIDATE",
+    "releaseId": "compiled bindings + fingerprinted presence release",
+    "approvalRef": null,
+    "displayedAs": "CANDIDATE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [
+    {
+     "measurement": "DOMAIN_CAPABILITY",
+     "displayedAs": "DOMAIN_CAPABILITY",
+     "path": "/scores/lake-brain",
+     "changedByActivation": false
+    }
+   ],
+   "outputs": [
+    {
+     "lane": "INTERNAL_OBSERVATION",
+     "consumers": [
+      "platform.orchestrator",
+      "platform.scorer",
+      "external.sector-ops",
+      "brain.*"
+     ],
+     "knowledgeState": "CANDIDATE",
+     "where": "fam.lake-brain-node, fam.lake-states (INTERNAL lane)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-21T12:00:55Z"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "PARTIAL",
+    "label": "RUNTIME_PILOT_PASS_DEPLOYED_OFF_MAIN",
+    "basis": "legacy combined label"
+   },
+   "notes": "off-main image a6622f99 (Lake owner lineage); unchanged by this mission"
+  },
+  {
+   "brainId": "water-temp",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "WaterTempBrainJob executed in Cloud Run 2026-10-22T06:29Z"
+   },
+   "internalOperation": {
+    "status": "ACTIVE",
+    "schedulerState": "ENABLED",
+    "scheduler": "brain-orchestrator (50 * * * *)",
+    "lastExecutionAt": "2026-10-22T06:30:32Z",
+    "expectedIntervalHours": 6,
+    "scope": "5 pilot lakes"
+   },
+   "scientificValidation": {
+    "status": "PARTIAL",
+    "label": "GLOBAL_HOLDOUT_ONLY"
+   },
+   "knowledgeRelease": {
+    "state": "NONE",
+    "releaseId": "compiled model (no knowledge store)",
+    "approvalRef": null,
+    "displayedAs": "NONE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [
+    {
+     "measurement": "DOMAIN_CAPABILITY",
+     "displayedAs": "DOMAIN_CAPABILITY",
+     "path": "/scores/water-temp",
+     "changedByActivation": false
+    }
+   ],
+   "outputs": [
+    {
+     "lane": "INTERNAL_OBSERVATION",
+     "consumers": [
+      "platform.orchestrator",
+      "platform.scorer",
+      "external.sector-ops",
+      "brain.*"
+     ],
+     "knowledgeState": "NONE",
+     "where": "fam.lake-states, fam.lakefleet, fam.brains (INTERNAL lane)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "NONE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-22T06:30:32Z",
+     "trigger": "SCHEDULE decision in an ADMIN cycle"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "PARTIAL",
+    "label": "RUNTIME_PILOT_PASS_SCIENCE_PARTIAL",
+    "basis": "legacy combined label"
+   },
+   "notes": "fleet registry lastSuccessfulRun stays 2026-10-14 (621-lake scope not refreshed); upstream USGS/CWMS dependencies STALE (genuine)"
+  },
+  {
+   "brainId": "water-clarity",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "water-clarity-brain executed in Cloud Run 2026-10-22T06:29Z"
+   },
+   "internalOperation": {
+    "status": "ACTIVE",
+    "schedulerState": "ENABLED",
+    "scheduler": "brain-orchestrator (50 * * * *)",
+    "lastExecutionAt": "2026-10-22T06:30:42Z",
+    "expectedIntervalHours": 26,
+    "scope": "Guntersville AL, Lake Hartwell SC"
+   },
+   "scientificValidation": {
+    "status": "PARTIAL",
+    "label": "VALIDATED_NO_GATE; customer number not validated (CLARITY-VAL-001)"
+   },
+   "knowledgeRelease": {
+    "state": "CANDIDATE",
+    "releaseId": "water-clarity-knowledge-2026-10-20.1",
+    "approvalRef": null,
+    "displayedAs": "CANDIDATE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [
+    {
+     "measurement": "DOMAIN_CAPABILITY",
+     "displayedAs": "DOMAIN_CAPABILITY",
+     "path": "/scores/water-clarity",
+     "changedByActivation": false
+    }
+   ],
+   "outputs": [
+    {
+     "lane": "INTERNAL_OBSERVATION",
+     "consumers": [
+      "platform.orchestrator",
+      "platform.scorer",
+      "external.sector-ops",
+      "brain.*"
+     ],
+     "knowledgeState": "CANDIDATE",
+     "where": "fam.lake-states, fam.lakefleet, fam.brains (INTERNAL lane)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-22T06:30:42Z"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "PARTIAL",
+    "label": "RUNTIME_PASS_JOB_DEPLOYED_SCIENCE_PARTIAL",
+    "basis": "legacy combined label"
+   },
+   "notes": "catalogDetail PUBLIC_ONLY (no private overlay); satellite pipeline PAUSED (latest scene 2026-10-08); registry readinessCounts describe the pilot scope"
+  },
+  {
+   "brainId": "biological-state",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "in-process run in brain-orchestrator 2026-10-22T06:47Z"
+   },
+   "internalOperation": {
+    "status": "ACTIVE",
+    "schedulerState": "ENABLED",
+    "scheduler": "brain-orchestrator (50 * * * *)",
+    "lastExecutionAt": "2026-10-22T06:47:22Z",
+    "expectedIntervalHours": 24,
+    "trigger": "input-driven; hourly plan evaluation"
+   },
+   "scientificValidation": {
+    "status": "IN_PROGRESS",
+    "label": "NOT_VALIDATED (rubric 2.1.0 approved; field validation not complete)"
+   },
+   "knowledgeRelease": {
+    "state": "CANDIDATE",
+    "releaseId": "biology bundle v1 (approval NOT_RECORDED)",
+    "approvalRef": null,
+    "displayedAs": "CANDIDATE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [
+    {
+     "measurement": "DOMAIN_CAPABILITY",
+     "displayedAs": "DOMAIN_CAPABILITY",
+     "path": "/scores/biological-state",
+     "changedByActivation": false
+    }
+   ],
+   "outputs": [
+    {
+     "lane": "INTERNAL_OBSERVATION",
+     "consumers": [
+      "platform.orchestrator",
+      "platform.scorer",
+      "external.sector-ops",
+      "brain.*"
+     ],
+     "knowledgeState": "CANDIDATE",
+     "where": "fam.species, fam.brains (INTERNAL lane)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-22T06:47:22Z",
+     "result": "state matches upstream; nothing to republish"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "PARTIAL",
+    "label": "RUNTIME_PILOT_PASS_SCIENCE_UNVALIDATED",
+    "basis": "legacy combined label"
+   },
+   "notes": "species knowledge only; no per-lake biological state on the production path"
+  },
+  {
+   "brainId": "sector-intelligence",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "in-process run in brain-orchestrator 2026-10-22T06:32Z"
+   },
+   "internalOperation": {
+    "status": "ACTIVE",
+    "schedulerState": "ENABLED",
+    "scheduler": "brain-orchestrator (50 * * * *)",
+    "lastExecutionAt": "2026-10-22T06:32:11Z",
+    "expectedIntervalHours": 24,
+    "trigger": "dependency-driven"
+   },
+   "scientificValidation": {
+    "status": "IN_PROGRESS",
+    "label": "NOT_VALIDATED (pilot evaluations only)"
+   },
+   "knowledgeRelease": {
+    "state": "CANDIDATE",
+    "releaseId": "sector-intelligence-knowledge-2026-10-20.1",
+    "approvalRef": null,
+    "displayedAs": "CANDIDATE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [
+    {
+     "measurement": "DOMAIN_CAPABILITY",
+     "displayedAs": "DOMAIN_CAPABILITY",
+     "path": "/scores/sector-intelligence",
+     "changedByActivation": false
+    }
+   ],
+   "outputs": [
+    {
+     "lane": "INTERNAL_OBSERVATION",
+     "consumers": [
+      "platform.orchestrator",
+      "platform.scorer",
+      "external.sector-ops",
+      "brain.*",
+      "brain.sector-intelligence"
+     ],
+     "knowledgeState": "CANDIDATE",
+     "where": "fam.lake-states (intelligence slot), fam.brains (INTERNAL lane)"
+    },
+    {
+     "lane": "INTERNAL_OBSERVATION",
+     "consumers": [
+      "platform.orchestrator",
+      "platform.scorer",
+      "external.sector-ops",
+      "brain.*"
+     ],
+     "capability": "UNSUPPORTED",
+     "result": "ABSTAIN",
+     "what": "fishing recommendation (not implemented; gated product decision)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-22T06:32:11Z"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "PARTIAL",
+    "label": "INPUT_ASSEMBLY_ONLY_NO_RECOMMENDATIONS",
+    "basis": "legacy combined label"
+   },
+   "notes": "missing or stale inputs are marked STALE and degrade the evaluation; they never raise it"
+  },
+  {
+   "brainId": "depth",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "shadow run in Cloud Run 2026-10-22T06:28:45Z (5 pilots)"
+   },
+   "internalOperation": {
+    "status": "SHADOW",
+    "schedulerState": "ENABLED",
+    "scheduler": "brain-orchestrator (50 * * * *)",
+    "lastExecutionAt": "2026-10-22T06:28:45Z",
+    "expectedIntervalHours": 24
+   },
+   "scientificValidation": {
+    "status": "NOT_STARTED",
+    "label": "NOT_VALIDATED; field validation preregistered (DEPTH-VAL-001)"
+   },
+   "knowledgeRelease": {
+    "state": "CANDIDATE",
+    "releaseId": "depth-knowledge-candidate-2026-10-20.1",
+    "approvalRef": null,
+    "displayedAs": "CANDIDATE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [],
+   "outputs": [
+    {
+     "lane": "INTERNAL_EXPERIMENTAL",
+     "consumers": [
+      "external.sector-ops",
+      "platform.orchestrator"
+     ],
+     "knowledgeState": "CANDIDATE",
+     "where": "/control/shadowLaneV1/depth (registry family pending, CG-2.5-1)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-22T06:28:45Z",
+     "lane": "INTERNAL_EXPERIMENTAL"
+    },
+    {
+     "mode": "APPROVED_SCIENCE",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "REFUSED",
+     "reason": "BLOCKED_AWAITING_APPROVED_RELEASE (G-1)"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "BLOCKED",
+    "label": "REFUSES_UNAPPROVED_RELEASE",
+    "basis": "legacy combined label: blocked on scientific approval of the knowledge release (G-1)"
+   },
+   "notes": "no depth contours invented; DEGRADED where datum coverage is partial"
+  },
+  {
+   "brainId": "vegetation",
+   "runtimeReadiness": {
+    "status": "READY",
+    "evidence": "shadow run in Cloud Run 2026-10-22T06:28:45Z (51 lakes)"
+   },
+   "internalOperation": {
+    "status": "SHADOW",
+    "schedulerState": "ENABLED",
+    "scheduler": "brain-orchestrator (50 * * * *)",
+    "lastExecutionAt": "2026-10-22T06:28:45Z",
+    "expectedIntervalHours": 168
+   },
+   "scientificValidation": {
+    "status": "IN_PROGRESS",
+    "label": "gates failed on held-out lakes; fresh independent truth needed (VEG-VAL-001)"
+   },
+   "knowledgeRelease": {
+    "state": "CANDIDATE",
+    "releaseId": "vegetation-knowledge-candidate-2026-10-20.1",
+    "approvalRef": null,
+    "displayedAs": "CANDIDATE"
+   },
+   "customerEligibility": {
+    "status": "NOT_ELIGIBLE",
+    "approvalRef": null,
+    "basis": "customerPublication false; engineMode PRE_PRODUCTION"
+   },
+   "scores": [],
+   "outputs": [
+    {
+     "lane": "INTERNAL_EXPERIMENTAL",
+     "consumers": [
+      "external.sector-ops",
+      "platform.orchestrator"
+     ],
+     "knowledgeState": "CANDIDATE",
+     "where": "/control/shadowLaneV1/vegetation (registry family pending, CG-2.5-1)"
+    },
+    {
+     "lane": "INTERNAL_EXPERIMENTAL",
+     "consumers": [
+      "external.sector-ops"
+     ],
+     "capability": "UNSUPPORTED",
+     "result": "UNKNOWN",
+     "what": "live surface observation (no feed wired; 0 observed lakes)"
+    }
+   ],
+   "runs": [
+    {
+     "mode": "INTERNAL",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "SUCCEEDED",
+     "at": "2026-10-22T06:28:45Z",
+     "lane": "INTERNAL_EXPERIMENTAL"
+    },
+    {
+     "mode": "APPROVED_SCIENCE",
+     "knowledgeState": "CANDIDATE",
+     "outcome": "REFUSED",
+     "reason": "BLOCKED_AWAITING_APPROVED_RELEASE (G-1, V-1)"
+    }
+   ],
+   "combinedReadiness": {
+    "status": "BLOCKED",
+    "label": "REFUSES_UNAPPROVED_RELEASE",
+    "basis": "legacy combined label: blocked on scientific approval and failed validation gates"
+   },
+   "notes": "no vegetation observations invented; no Guntersville coverage"
+  }
+ ]
+}

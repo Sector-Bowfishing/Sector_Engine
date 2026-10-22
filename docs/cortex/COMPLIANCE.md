@@ -142,3 +142,22 @@ Items 12–14 are NOT_APPLICABLE for every Brain (no production-live, Ops-live o
 | 12 | Idempotent, ordered publication | PASS (source) / NOT_VERIFIED (production) | Unchanged. Orphaned parents deprecated, with a deletion plan |
 | 13 | Honest publication state | PASS | O-1 off; nothing published by CI or merge |
 | 14 | Verification | PASS (tests) / PARTIAL (data-check) | 23 Firebase tests (3 need the emulator), per-Brain write-set tests, architecture gate. All suites green at `3e8a3857`. `data-check`: 495 findings = registry gaps plus scanner limits (CG-2.2-3); 0 new code defects |
+
+## Internal Brain operations (IO, Cortex 2.5.0 @ c9f6467)
+
+Evaluated 2026-10-22 · `sessions/2026-10-22-internal-activation.md`. The status document is `operations/brain-operations-status-2026-10-22.json` (ops-check validated).
+
+| ID | Requirement | Status | Evidence |
+|---|---|---|---|
+| IO-01 | Four independent dimensions | **PARTIAL** | Reported separately in the status document. The legacy `operationalReadiness` label in `engineering-status-ops-v1` stays BLOCKED for Depth and Vegetation on scientific approval, so `ops-check` reports CONFLATED_READINESS ×2. Redefining that consumer-read label is decision-required: D-IA-2 |
+| IO-02 | Declared modes, INTERNAL required | PASS | `brain.json` `operations.executionModes` in all 8; Depth/Vegetation INTERNAL (shadow) + APPROVED_SCIENCE (refuses) |
+| IO-03 | Knowledge states separated | PASS | Candidate releases are packaged, digest-verified artifacts, never loaded as approved. Shadow output carries `knowledgeState: CANDIDATE` and the candidate id and digest |
+| IO-04 | Refusal preserved | PASS | `run.py --write` of Depth/Vegetation still refuses (BLOCKED_AWAITING_APPROVED_RELEASE); shadow summaries record `approvedPath: ABSTAIN` |
+| IO-05 | Marked outputs, never to customer / pointers / scores | PASS | `lane: INTERNAL_EXPERIMENTAL`, `experimental: true`. `shadow_lane.problems()` refuses mislabelled or APPROVED documents. Scorer and Intelligence never read `/control/shadowLaneV1` |
+| IO-06 | Isolated internal publication | **PARTIAL** | Every family is INTERNAL lane. `/control/shadowLaneV1` is not yet in the Cortex registry (CG-2.5-1) |
+| IO-07 | Honest partial capability | PASS | Vegetation: 0 observed lakes, all `unavailable`, no invented observations. Depth: DEGRADED, no invented contours. Intelligence marks stale inputs and gives no recommendation |
+| IO-08 | ACTIVE = enabled trigger + observed execution | PASS | Executions observed for all 6 ACTIVE and both SHADOW Brains (session §5); orchestrator scheduler ENABLED 06:48Z, scheduled cycle 06:50Z |
+| IO-09 | Separate measurements; activation never raises a score | **DECISION REQUIRED** | Brain capability scores unchanged. Engine score 7.0 → 7.2 through `engine-score-v1` `platformHealth` (operational conformance), not overridden: D-IA-1 |
+| IO-10 | Customer eligibility | PASS | NOT_ELIGIBLE for all 8; `customerPublication: false`; PRE_PRODUCTION |
+| IO-11 | Ops displays, never approves | PARTIAL (Ops project) | Rules unchanged; Ops is read-only. The four dimensions and the shadow lane are not yet displayed in Ops (Ops follow-up) |
+| IO-12 | `operations` block in every `brain.json` | PASS | `ops-check --repo`: 0 findings |
