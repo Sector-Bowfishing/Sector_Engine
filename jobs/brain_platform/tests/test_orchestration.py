@@ -1,5 +1,6 @@
 """Brain Orchestrator decision model + control state (orchestrator-control-v1). Uses the committed execution manifest and small synthetic ones."""
 import copy
+import os
 import datetime as dt
 import json
 
@@ -30,8 +31,14 @@ def committed_manifest():
     return O.load_manifest()
 
 
+#: Decision-model scenarios run on a FROZEN copy of the pre-activation manifest (2026-10-20: Water Temp, Intelligence PARKED; Clarity MANUAL) so
+#: they keep testing parking, change gating and policy semantics independently of which Brains the live board has activated. The live board
+#: (internal activation 2026-10-22) is asserted separately on committed_manifest().
+PRE_ACTIVATION = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "control_manifest_pre_activation_2026-10-20.json")
+
+
 def manifest():
-    m = O.load_manifest()
+    m = O.load_manifest(PRE_ACTIVATION)
     m["brains"]["biological-state"]["dependencies"] = copy.deepcopy(SCENARIO_FISH_EDGES)
     return m
 
@@ -563,11 +570,17 @@ def test_every_decision_record_says_why_and_never_publishes():
     assert len(ids) == len(set(ids)), "decision ids must be unique within a cycle"
 
 
-def test_manifest_job_classification_matches_the_live_freeze():
-    m = manifest()
-    enabled = {j for j, v in m["jobs"].items() if v["classification"] == "VALIDATION_EXCEPTION"}
-    assert enabled == {"wind-hourly", "lake-brain-ledger-daily"}
-    assert m["jobs"]["brain-orchestrator"]["classification"] == "PAUSED"
+def test_manifest_job_classification_matches_the_live_schedule_policy():
+    """Internal activation (2026-10-22): the Cloud Schedulers that may be ENABLED are the two validation exceptions plus the orchestrator's own
+    hourly schedule; every other Brain job is started by the orchestrator (no own scheduler) or stays PAUSED."""
+    m = committed_manifest()
+    enabled = {j for j, v in m["jobs"].items() if v.get("scheduler") and v["classification"] in ("VALIDATION_EXCEPTION", "ORCHESTRATOR_OWNED")}
+    assert enabled == {"wind-hourly", "lake-brain-ledger-daily", "brain-orchestrator"}
+    assert m["jobs"]["brain-orchestrator"]["classification"] == "ORCHESTRATOR_OWNED"
+    for jid in ("water-temp-brain", "water-clarity-brain"):
+        assert m["jobs"][jid]["classification"] == "ORCHESTRATOR_OWNED" and m["jobs"][jid]["scheduler"] is None    # orchestrator-started only
+    for jid in ("lake-surface-dispatch", "lake-surface-daily", "hydrology-hourly", "clarity-current-hourly", "clarity-candidate-shadow", "water-temp-tva-archive"):
+        assert m["jobs"][jid]["classification"] == "PAUSED"                                                       # cost freeze unchanged
     import os
     pol = json.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "brains", "platform", "cost-freeze", "schedule-policy.json")))
     assert set(pol["allowEnabled"]) == enabled                                      # one source of truth for what may be scheduled

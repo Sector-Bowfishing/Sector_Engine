@@ -38,7 +38,7 @@ def test_manifest_vocabularies_and_coverage():
     assert JOB_MANIFEST["clarity-candidate-shadow"]["classification"] == "SHADOW"
     assert JOB_MANIFEST["hydrology-hourly"]["classification"] == JOB_MANIFEST["clarity-current-hourly"]["classification"] == "RESEARCH"
     assert JOB_MANIFEST["wind-hourly"]["classification"] == "INTERNAL" and "RESEARCH_CANDIDATE" in JOB_MANIFEST["wind-hourly"]["scienceStatus"]
-    assert JOB_MANIFEST["water-clarity-brain"]["trigger"] == "manual"
+    assert JOB_MANIFEST["water-clarity-brain"]["trigger"] == "orchestrator"                 # internal operation 2026-10-22 (pilot lakes)
     for jid in ("biological-brain", "sector-intelligence-brain", "lake-brain", "water-temp-brain"):
         assert JOB_MANIFEST[jid]["trigger"] == "orchestrator"
 
@@ -80,7 +80,8 @@ def test_running_execution_and_not_deployed():
     running = [{"metadata": {"name": "x", "creationTimestamp": "2026-10-13T04:59:00Z"}, "status": {"startTime": "2026-10-13T04:59:10Z"}}]
     r = job_record("wind-hourly", JOB_MANIFEST["wind-hourly"], SCHED, RUNJOB, running, NOW, "test")
     assert r["running"] is True and r["runtimeStatus"] == "RUNNING"
-    nd = job_record("water-clarity-brain", JOB_MANIFEST["water-clarity-brain"], None, None, None, NOW, "test",
+    manual = dict(JOB_MANIFEST["water-clarity-brain"], trigger="manual")                    # a MANUAL job that is not deployed
+    nd = job_record("water-clarity-brain", manual, None, None, None, NOW, "test",
                     brain_health={"status": "HEALTHY", "lastRun": "2026-10-12T06:52:07Z", "lastSuccess": "2026-10-12T06:52:07Z", "errorCount": 0})
     assert nd["deploymentStatus"] == "NOT_DEPLOYED" and nd["executionMode"] == "MANUAL" and nd["runtimeStatus"] == "HEALTHY"
     assert nd["lastSuccessfulAt"] == "2026-10-12T06:52:07Z"

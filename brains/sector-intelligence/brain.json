@@ -63,5 +63,32 @@
       "brains/sector-intelligence/tests/test_knowledge_memory.py",
       "jobs/brain_platform/tests/test_knowledge_release.py"
     ]
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "intelligence-catalog (PACKAGED_IN_IMAGE, brains/sector-intelligence/runtime/knowledge-release.json, approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "fam.activity",
+      "fam.brains",
+      "fam.health-brains",
+      "fam.lake-states",
+      "fam.lakefleet",
+      "fam.snapshots",
+      "fam.validation"
+    ],
+    "internalExecution": "in-process in brain-orchestrator, dependency-driven, pilot lakes (input assembly only; no recommendation)",
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

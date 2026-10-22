@@ -40,7 +40,7 @@ for role in roles/firebasedatabase.admin roles/run.viewer roles/cloudscheduler.v
   run gcloud projects add-iam-policy-binding "$PROJECT_ID" --member "serviceAccount:$SA" --role "$role" --condition=None --quiet
 done
 run gcloud storage buckets add-iam-policy-binding "gs://$BIOLOGY_BUCKET" --member "serviceAccount:$SA" --role roles/storage.objectViewer
-for j in lake-brain water-temp-brain; do
+for j in lake-brain water-temp-brain water-clarity-brain; do
   if gcloud run jobs describe "$j" --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
     run gcloud run jobs add-iam-policy-binding "$j" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
   else
@@ -85,6 +85,9 @@ for b in "$ROOT"/brains/*/; do
   # brain-score-explanation-v1 links improvements to research gap ids/status (metadata only; the register holds no data).
   if [[ -f "$b/research/GAPS.json" ]]; then mkdir -p "stage/brains/$(basename "$b")/research" && cp "$b/research/GAPS.json" "stage/brains/$(basename "$b")/research/"; fi
 done
+# internal SHADOW lane (2026-10-22): Depth and Vegetation runtimes with their packaged CANDIDATE knowledge releases, run by shadow_run.py
+# from brains/<dir>/runtime (their package bootstrap resolves the platform at ../../../jobs/brain_platform). Never their write path.
+for b in depth vegetation; do cp -R "$ROOT/brains/$b/runtime" "stage/brains/$b/runtime"; done
 mkdir -p stage/platform/registries/signals stage/providers
 cp "$ROOT/platform/registries/signals/signals.json" stage/platform/registries/signals/
 cp "$ROOT/providers/PROVIDERS.json" stage/providers/

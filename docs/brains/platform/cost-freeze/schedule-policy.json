@@ -1,9 +1,41 @@
 {
   "schema": "preproduction-schedule-policy-v1",
   "policy": "Pre-production Brain schedulers are OFF by default. An ENABLED Brain scheduler must appear in `allowEnabled` with a named gate, a bounded monthly cost, a stop condition and the date it was approved (docs/brains/platform/SECTOR_BRAIN_MODEL_V1.md, PRE-PRODUCTION COST POLICY).",
-  "brainSchedulers": ["brain-orchestrator", "wind-hourly", "water-temp-tva-archive", "lake-surface-dispatch", "lake-surface-daily", "hydrology-hourly", "clarity-current-hourly", "clarity-candidate-shadow", "lake-brain-ledger-daily", "lake-brain", "water-temp-brain", "biological-brain", "sector-intelligence-brain", "depth-brain", "vegetation-brain"],
+  "brainSchedulers": [
+    "brain-orchestrator",
+    "wind-hourly",
+    "water-temp-tva-archive",
+    "lake-surface-dispatch",
+    "lake-surface-daily",
+    "hydrology-hourly",
+    "clarity-current-hourly",
+    "clarity-candidate-shadow",
+    "lake-brain-ledger-daily",
+    "lake-brain",
+    "water-temp-brain",
+    "biological-brain",
+    "sector-intelligence-brain",
+    "depth-brain",
+    "vegetation-brain"
+  ],
   "allowEnabled": {
-    "wind-hourly": {"gate": "Wind live-reliability gate (30 valid live archive days) and timed provider-forecast archive", "maxMonthlyUsd": 5, "stop": "gate satisfied (about 2026-11-08) then re-decide, or the Wind validation campaign ends", "approvedAt": "2026-10-14"},
-    "lake-brain-ledger-daily": {"gate": "Lake prospective prediction ledger (90 days PARTIAL, 12 months VALIDATED)", "maxMonthlyUsd": 1, "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete", "approvedAt": "2026-10-14 (pending confirmation C-2)"}
+    "wind-hourly": {
+      "gate": "Wind live-reliability gate (30 valid live archive days) and timed provider-forecast archive",
+      "maxMonthlyUsd": 5,
+      "stop": "gate satisfied (about 2026-11-08) then re-decide, or the Wind validation campaign ends",
+      "approvedAt": "2026-10-14"
+    },
+    "lake-brain-ledger-daily": {
+      "gate": "Lake prospective prediction ledger (90 days PARTIAL, 12 months VALIDATED)",
+      "maxMonthlyUsd": 1,
+      "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete",
+      "approvedAt": "2026-10-14 (pending confirmation C-2)"
+    },
+    "brain-orchestrator": {
+      "gate": "INTERNAL_OPERATION: hourly control plane that runs the internal Brain pipelines (Fish, Intelligence in-process; Water Temp, Clarity, Lake jobs when due; Depth/Vegetation SHADOW lane), scores, health and engineering status",
+      "maxMonthlyUsd": 3,
+      "stop": "pause the brain-orchestrator Cloud Scheduler job (gcloud scheduler jobs pause brain-orchestrator); owner decision ends internal operation",
+      "approvedAt": "2026-10-22 (owner directive: all-eight internal production activation)"
+    }
   }
 }

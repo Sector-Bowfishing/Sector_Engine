@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "createdBy": "Phase 1B baseline",
   "mode": "REPORT_ONLY",
-  "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates. Phase 2 (Wind): the jobs/wind-hourly entry RESOLVED by the move; two Wind published-label entries carried with an explicit retirement condition. Fish Structural Certification V1: the two jobs/biological-brain entries are carried to brains/fish/runtime (same published labels, same retirement condition). Water Clarity Structural Certification V1: the jobs/water-clarity-brain/clarity_brain.py entry is carried to brains/water-clarity/runtime (same published label, same retirement condition); the jobs/water-clarity-brain/brain_platform.py entry is RETIRED because the registered-Brain scan reads string constants only and the relocated platform shim has none (the docs/ text was in its docstring).",
+  "description": "Known legacy architecture violations from `report.py --legacy`. Existing = KNOWN, absent from here = NEW, here but gone = RESOLVED. Not an approval; enforced when the owning component migrates. Phase 2 (Wind): the jobs/wind-hourly entry RESOLVED by the move; two Wind published-label entries carried with an explicit retirement condition. Fish Structural Certification V1: the two jobs/biological-brain entries are carried to brains/fish/runtime (same published labels, same retirement condition). Water Clarity Structural Certification V1: the jobs/water-clarity-brain/clarity_brain.py entry is carried to brains/water-clarity/runtime (same published label, same retirement condition); the jobs/water-clarity-brain/brain_platform.py entry is RETIRED because the registered-Brain scan reads string constants only and the relocated platform shim has none (the docs/ text was in its docstring). Internal activation 2026-10-22: the brain-orchestrator docs/ entry RESOLVED (Water Clarity is started by the orchestrator; its MANUAL-by-decision docs reference is gone).",
   "entries": [
     {
       "key": "8|brains/fish/runtime/biological_brain.py|runtime references docs/",
@@ -52,15 +52,6 @@
       "plannedMigrationPhase": "Wind certification: replace with a release/contract id when the Wind release manifest exists (output change; needs Michael's approval)",
       "status": "LEGACY_BASELINE",
       "carriedFrom": "jobs/wind-hourly/sector_wind/brain/writer.py"
-    },
-    {
-      "key": "8|jobs/brain-orchestrator/orchestrate.py|legacy runtime references a docs/ path (baseline debt)",
-      "invariant": 8,
-      "path": "jobs/brain-orchestrator/orchestrate.py",
-      "owner": "Platform (orchestrator)",
-      "reason": "legacy runtime code references a docs/ path (spec, rubric label or data); retires when the owning component migrates",
-      "plannedMigrationPhase": "Phase 6/7 (orchestrator reads Brains via the generated Brain Registry)",
-      "status": "LEGACY_BASELINE"
     },
     {
       "key": "8|jobs/brain-orchestrator/preflight_lineage.py|legacy runtime references a docs/ path (baseline debt)",

@@ -33,6 +33,9 @@ jobs:
           cp "$GITHUB_WORKSPACE/jobs/brain-orchestrator/Dockerfile" .
           docker build -t verify/brain-orchestrator .
           docker run --rm --entrypoint python -w /job/jobs/sector-intelligence-brain verify/brain-orchestrator -c "import run; r, c, s = run.load_knowledge(); print(r['releaseId'], r['releaseDigest'])"
+          # internal SHADOW lane (2026-10-22): the Depth and Vegetation runtimes are staged and import with their verified CANDIDATE releases
+          docker run --rm --entrypoint python -w /job/brains/depth/runtime verify/brain-orchestrator -c "import sys; sys.path.insert(0, '.'); from depth_brain import knowledge as K; k = K.load(); print('depth', k.summary()['releaseId'], k.approved)"
+          docker run --rm --entrypoint python -w /job/brains/vegetation/runtime verify/brain-orchestrator -c "import sys, numpy; sys.path.insert(0, '.'); from vegetation_brain import knowledge as K; from vegetation_brain.publish import publish; k = K.load(); print('vegetation', k.summary()['releaseId'], k.approved)"
           # engineering-status-ops-v1 staged for THIS commit; on a PR the gate must refuse it (unmerged code is never published as main)
           docker run --rm --entrypoint python -w /job/jobs/brain-orchestrator -e DEPLOYMENT_VERSION="brain-orchestrator@${GITHUB_SHA::12}" verify/brain-orchestrator -c "
           import os, sys; sys.path.insert(0, '../brain_platform')

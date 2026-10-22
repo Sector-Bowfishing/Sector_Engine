@@ -106,5 +106,35 @@
       "brains/water-temperature/tests/swift"
     ],
     "notes": "No persistent knowledge store: the model is code and reads live inputs only."
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "model (COMPILED_IN_BINARY, brains/water-temperature/runtime/WaterTemperatureBrain, approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "fam.activity",
+      "fam.brains",
+      "fam.health-brains",
+      "fam.health-sources",
+      "fam.lake-profiles",
+      "fam.lake-states",
+      "fam.lake-validation",
+      "fam.lakefleet",
+      "fam.sources",
+      "fam.validation"
+    ],
+    "internalExecution": "water-temp-brain Cloud Run job started by brain-orchestrator when 6 h stale, 5 pilot lakes",
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

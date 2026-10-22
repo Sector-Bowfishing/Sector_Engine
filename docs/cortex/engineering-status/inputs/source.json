@@ -2,11 +2,11 @@
   "schemaVersion": "1.2.0",
   "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "repository": "Sector-Bowfishing/Sector_Engine",
-  "branch": "cortex/architecture-standardization-2026-10-20",
+  "branch": "feat/internal-activation-2026-10-22",
   "evaluatedCommit": "25e786cf",
   "evaluatedAt": "2026-10-22",
-  "session": "docs/cortex/sessions/2026-10-22-operational-readiness.md",
-  "cortexVersion": "2.3.0",
+  "session": "docs/cortex/sessions/2026-10-22-internal-activation.md",
+  "cortexVersion": "2.5.0",
   "cortexPack": "sector/engine",
   "structuralCertification": {
     "biological-state": {
@@ -75,7 +75,9 @@
     "CG-2.1-6",
     "CG-2.1-7",
     "CG-2.1-8",
-    "CG-2.1-9"
+    "CG-2.1-9",
+    "CG-2.5-1",
+    "CG-2.5-2"
   ],
   "brainDetail": {
     "biological-state": {

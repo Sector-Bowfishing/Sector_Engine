@@ -397,6 +397,34 @@
         }
       }
     },
+    "operations": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Cortex 2.5.0 operations boundary (operations.md IO-02, IO-03, IO-06, IO-10, IO-12): the Brain's execution modes, approved vs experimental knowledge loading, isolated internal publication targets (Cortex registry family ids or artifact:<ref>) and customer-publication status. Internal operation, scientific validation and customer eligibility are separate milestones.",
+      "required": ["executionModes", "knowledgeLoading", "internalPublication", "customerPublication"],
+      "properties": {
+        "executionModes": {"type": "array", "minItems": 1, "items": {"enum": ["INTERNAL", "APPROVED_SCIENCE", "CUSTOMER_SERVING"]}},
+        "knowledgeLoading": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["approved", "experimental", "refuseWithoutApproved"],
+          "properties": {
+            "approved": {"type": "string"},
+            "experimental": {"type": "string"},
+            "refuseWithoutApproved": {"type": "array", "items": {"enum": ["APPROVED_SCIENCE", "CUSTOMER_SERVING"]}}
+          }
+        },
+        "internalPublication": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^(fam\\.[a-z0-9-]+|artifact:.+)$"}},
+        "internalExecution": {"type": "string"},
+        "customerPublication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "approvalRef"],
+          "properties": {"status": {"enum": ["NOT_ELIGIBLE", "ELIGIBLE", "NOT_VERIFIED"]}, "approvalRef": {"description": "null until a recorded customer-publication approval (IO-10); then its reference string"}}
+        },
+        "notes": {"type": "string"}
+      }
+    },
     "knowledge": {
       "type": "object",
       "additionalProperties": false,
