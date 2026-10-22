@@ -9,9 +9,9 @@ Rules for every session: **[`BRAIN_OPERATING_CONTRACT.md`](BRAIN_OPERATING_CONTR
 | `runtime/` | production: `main.py` (job entrypoint), `sector_wind/` (ingest, decoder, store, sample/interp, validate, monitor, bowfishing physics, `brain/` adapter + Publisher V2 artifact builder, `assessment/` Wind Exposure Assessment V2: wind-exposure ranking, wind-exposure alternatives, surface disturbance, hourly timeline, scenarios; not wired into the job), `lakes.json` (interim Lake Registry reference copy), `requirements.txt` |
 | `contracts/` | `wind-publication-v1.json` (derived from the Publisher registry by `describe_contract.py --check`); `wind-exposure-assessment-v1.json` (V2 wind exposure assessment contract, SHADOW); `wind-validation-entrypoints-v1.json` (machine-readable validation entry points) |
 | `tests/` | production tests (offline; network tests marked `network`) |
-| `research/` | research rules (README) and `tools/`: research scripts and the research-only package `sector_wind_research` (+ its tests). Never in the image |
+| `research/` | research rules (README), `GAPS.json` (recorded research gaps) and `tools/`: research scripts and the research-only package `sector_wind_research` (+ its tests). Never in the image |
 | `deploy/` | `deploy-job.sh` (stages the image context; refuses without approval), `Dockerfile`, `read_service/` (internal candidate read service) |
-| `docs/` | design notes (`WIND_BRAIN_DESIGN_V1.md`, partly superseded by the contract) and history |
+| `docs/` | `WIND_BOWFISHING_FIRST_V2.md` (the V2 design the contract cites), `WIND_MEASUREMENTS_ACTIVATION.md` (Wind Capability v2 measurements activation), design notes (`WIND_BRAIN_DESIGN_V1.md`, partly superseded by the contract) and history |
 
 ```bash
 cd brains/wind
@@ -22,6 +22,7 @@ venv/bin/python -m pytest                         # production + research-tool t
 venv/bin/python -m pytest -m network              # golden cells vs Open-Meteo (needs network)
 PYTHONPATH=../../jobs/brain_platform venv/bin/python runtime/main.py hourly --store local:./archive
 PYTHONPATH=../../jobs/brain_platform venv/bin/python runtime/main.py validate --store local:./archive --start 2026-09-22 --end 2026-10-05
+PYTHONPATH=runtime:../../jobs/brain_platform venv/bin/python -m sector_wind.brain publish --store local:./archive --dry-run out.json   # Brain publish payload, writes nothing remote (reads the public Engine GET /lakes; usage per runtime/sector_wind/brain/__main__.py)
 deploy/deploy-job.sh --stage-only /tmp/wind-context  # assemble the exact image context, no gcloud
 ```
 

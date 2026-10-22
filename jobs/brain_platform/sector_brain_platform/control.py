@@ -17,6 +17,11 @@ from .timeutil import age_hours, iso
 CONTROL_VERSION = "control-plane-v1"
 UPSTREAM = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state")
 ALL_BRAINS = UPSTREAM + ("sector-intelligence",)
+# SHADOW Brains (control_manifest lifecycle PROFILED/SHADOW, no executor) are visible in the control plane but take no part in any roll-up:
+# not in worst-health, conformance counts, dependency completeness, per-lake stale/issue roll-ups, or the Engine score (scoring.py never
+# sees them). Approved design for Depth (control-plane shadow Brain, 2026-10-14); deploying it is a separate gated step.
+SHADOW_BRAINS = ("depth", "vegetation")
+SHADOW_SLOTS = ("depth", "vegetation")
 
 
 def _strip(d):
@@ -126,8 +131,9 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
     counts = reg.get("readinessCounts") or {}
     # `jobs` is /jobs (jobs-v1): a brain is scheduled when a job it owns runs on a schedule or by the orchestrator/dispatcher.
     owned = [j for j in (jobs or {}).values() if isinstance(j, dict) and (j.get("owner") == brain_id or j.get("brainId") == brain_id)]
+    shadow = brain_id in SHADOW_BRAINS
     scheduled = any(j.get("executionMode") in ("SCHEDULED", "EVENT_DRIVEN") and j.get("brainPublishInJob") for j in owned) or \
-        bool((reg.get("schedule") or {}).get("jobId"))
+        (not shadow and bool((reg.get("schedule") or {}).get("jobId")))       # a shadow Brain is scheduled only by a real owned job
     execution = sorted({(j.get("executionMode") or "UNKNOWN") for j in owned if j.get("brainPublishInJob")}) or None
     blockers = []
     for b in reg.get("blockers") or []:
@@ -136,7 +142,14 @@ def brain_summary(brain_id: str, reg: dict | None, health: dict | None, validati
         blockers.append((b.get("gate") or b.get("dimension") or "score") + ": " + str(b.get("why")))
     deps = reg.get("dependsOn") or (list((reg.get("dependencies") or {}).keys()) if brain_id == "sector-intelligence" else None)
     dep_status = {k: (v or {}).get("connectionStatus") for k, v in (reg.get("dependencies") or {}).items()} if brain_id == "sector-intelligence" else None
-    return _strip({
+    shadow_fields = {}
+    if shadow:
+        # No official score: RTDB cannot store null, so `officialScore` is simply absent and `scoreStatus` says why.
+        shadow_fields = {"shadow": True, "scoreStatus": reg.get("scoreStatus") or "NOT_ESTABLISHED",
+                         **{k: reg.get(k) for k in ("research", "fleet", "lakeDependency", "orchestration", "fieldValidation", "primaryBlocker",
+                                                    "statusBasis", "contractVersion", "breakdowns", "scope", "claims", "execution", "knowledgeRelease")},
+                         "lifecycle": reg.get("lifecycle")}           # the Brain's own model lifecycle; `status` stays the manifest lifecycle
+    return _strip({**shadow_fields,
         "brainId": brain_id, "slot": slot, "displayName": reg.get("displayName") or display,
         # status = the canonical lifecycle (orchestrator manifest); the Brain's own registry word is kept as legacyStatus when it differs
         "status": lifecycle or reg.get("status"), "legacyStatus": reg.get("status") if lifecycle and reg.get("status") != lifecycle else None,
@@ -178,6 +191,8 @@ def fleet_rollup(lake_key: str, row: dict | None, now: dt.datetime) -> dict | No
         if not isinstance(s, dict):
             continue
         published += 1
+        if name in SHADOW_SLOTS:
+            continue                                                       # visible (slotsPublished) but never stale-making or issue-adding
         for k in ("generatedAt", "lastUpdatedAt"):
             if s.get(k):
                 stamps.append(s[k])
@@ -209,6 +224,8 @@ def fleet_summary(fleet: dict, now: dt.datetime, directory_count: int | None = N
             if not isinstance(s, dict):
                 continue
             published_by_slot[slot] = published_by_slot.get(slot, 0) + 1
+            if slot in SHADOW_SLOTS:
+                continue                                                   # visible, but a shadow slot never makes a lake stale or adds issues
             if s.get("stale"):
                 stale_slots[slot] = stale_slots.get(slot, 0) + 1
                 any_stale = True
@@ -243,6 +260,8 @@ def overview(*, brains: dict, health: dict, validation: dict, scores: dict, engi
                                   intelligence_registry=brains.get("sector-intelligence"), orchestrator_brain=(orchestrator_brains or {}).get(b),
                                   score_published_at=(score_published_at or {}).get(b))
                  for b in ALL_BRAINS}
+    shadow = {b: brain_summary(b, brains.get(b), health.get(b), validation.get(b), None, jobs, now, manifest_brain=mb.get(b), slot_newest=slot_newest)
+              for b in SHADOW_BRAINS if brains.get(b)}                     # never scored
     fs = fleet_summary(fleet, now, (brains.get("lake-brain") or {}).get("directoryLakeCount"))
     src = {}
     for sid, rec in (sources or {}).items():
@@ -278,7 +297,8 @@ def overview(*, brains: dict, health: dict, validation: dict, scores: dict, engi
                           "dependencyCompleteness": {"consumed": len(consumed), "total": len(UPSTREAM), "consumedByCustomerPath": 0,
                                                      "byBrain": {b: (deps.get(b) or {}).get("connectionStatus") for b in UPSTREAM}},
                           "worstBrainHealth": worst, "brainsConformant": sum(1 for b in ALL_BRAINS if (summaries[b].get("platform") or {}).get("conformant"))}),
-        "brains": summaries,
+        "brains": {**summaries, **shadow},
+        "shadowBrains": sorted(shadow) or None,
         "fleet": fs,
         "jobs": _strip({"total": len(jobs or {}),
                         "byClassification": _count((jobs or {}).values(), "classification"),

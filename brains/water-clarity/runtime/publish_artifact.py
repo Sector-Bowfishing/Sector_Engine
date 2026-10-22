@@ -14,8 +14,8 @@ to the Brain RTDB as the sections of one sealed bundle. It adds no science and c
   * null / missing NEVER means delete. The only inferred removal is the single declared optional child `/brains/water-clarity/lastError` (typed DELETE,
     reason OPTIONAL_CHILD_CLEARED), exactly as Wind's registration; every other null/empty value is plain absence ("unknown stays unknown");
   * lineage is truthful and unfabricated: `consumed` is passed through only when the caller really recorded reads (RTDB reads only: GCS/HTTP reads are NOT
-    recorded by the platform recorder, so absent = unknown, never []); knowledgeRelease / manifestRef / manifestSha256 are NONE (Clarity has no canonical
-    versioned release or manifest; the catalog digest is carried in `inputFingerprint`);
+    recorded by the platform recorder, so absent = unknown, never []); knowledgeRelease / manifestRef / manifestSha256 carry the verified packaged
+    knowledge release (knowledge-release.json over catalog.json) when the runner supplies it, else NONE; the catalog digest is also in `inputFingerprint`;
   * freshness keeps four distinct concepts apart: satellite scene observation time (`evidenceObservedAt`), the Engine evaluation the estimate restates
     (`inputGeneratedAt`), the Brain's generation time (lineage `generatedAt`) and the publication time (the Publisher's). `lastSuccessfulRun` is never evidence freshness;
   * no clock, no randomness, no I/O: same updates + same BuildContext => byte-identical artifact. The semantic fingerprint, the volatile contract
@@ -116,6 +116,13 @@ def _iso(t):
     return t.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+
+def release_lineage() -> dict:
+    """BuildContext keyword arguments for the release lineage: the packaged knowledge release clarity_brain verified on load (BR-11 e)."""
+    from sector_brain_platform.knowledge_release import lineage_triple
+    rel, ref, digest = lineage_triple(cb.RELEASE)
+    return {"knowledge_release": rel, "manifest_ref": ref, "manifest_sha256": digest}
+
 @dataclass(frozen=True)
 class BuildContext:
     """Everything the artifact needs that Clarity itself must not invent (supplied by the runner; tests pin it)."""
@@ -126,6 +133,9 @@ class BuildContext:
     lifecycle: str = LIFECYCLE
     review_status: str = "UNREVIEWED"
     validation_status: str = "NOT_VALIDATED"
+    knowledge_release: str = "NONE"   # release_lineage(): the verified packaged knowledge release (all NONE or all declared)
+    manifest_ref: str = "NONE"
+    manifest_sha256: str = "NONE"
 
 
 @dataclass
@@ -294,8 +304,8 @@ def build_artifact(updates: dict, ctx: BuildContext, registry=None, consumed=Non
         sections.append(s)
     art = seal_bundle(brain_id=CLARITY, bundle_id=CLARITY_BUNDLE, sections=sections, lifecycle=ctx.lifecycle, review_status=ctx.review_status,
                       validation_status=ctx.validation_status, generated_at=ctx.generated_at, execution_id=ctx.execution_id, code_version=ctx.code_version,
-                      input_fingerprint=input_fingerprint(states, ctx), knowledge_release="NONE", manifest_ref="NONE", manifest_sha256="NONE",
-                      registry=reg, consumed=consumed)
+                      input_fingerprint=input_fingerprint(states, ctx), knowledge_release=ctx.knowledge_release, manifest_ref=ctx.manifest_ref,
+                      manifest_sha256=ctx.manifest_sha256, registry=reg, consumed=consumed)
     art["lineage"]["artifactId"] = sha(art)           # content address of the sealed envelope (unique per run, stable for the same inputs)
     res.artifact = art
     return res

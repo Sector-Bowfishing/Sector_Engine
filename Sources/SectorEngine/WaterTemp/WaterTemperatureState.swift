@@ -77,7 +77,7 @@ public enum WaterTemperatureResolver {
     public static let modelVersion = "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)"
 
     /// The single source decision. Every consumer takes its output.
-    static func resolve(measurement: WaterLevelReading?, model: WaterTempModel?, at now: Date) -> ResolvedWaterTemperatureState {
+    package static func resolve(measurement: WaterLevelReading?, model: WaterTempModel?, at now: Date) -> ResolvedWaterTemperatureState {
         resolve(measurement: measurement, modelValueF: model?.currentF,
                 modelLocalDate: model?.currentLocalDate,
                 lakeTimeZone: LakeLocalDate.timeZone(identifier: model?.timeZoneIdentifier, utcOffsetSeconds: nil),

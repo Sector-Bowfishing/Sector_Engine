@@ -61,31 +61,31 @@ import CoreLocation
 
 /// One day of the modeled series: modeled water temp and the daily-mean air
 /// temp that drove it. Air is carried so the chart can show water's lag.
-struct WaterTempDay: Hashable {
+package struct WaterTempDay: Hashable {
     let date: Date
-    let waterF: Double
+    package let waterF: Double
     let airF: Double
     /// The provider's lake-local calendar date ("yyyy-MM-dd") for this day.
-    var localDate: String? = nil
+    package var localDate: String? = nil
 }
 
 /// Result of the model: the current estimate plus the daily series for the chart.
-struct WaterTempModel: Equatable {
+package struct WaterTempModel: Equatable {
     /// Modeled surface temp for today, °F.
-    let currentF: Double
+    package let currentF: Double
     /// Past ~45 days → next ~4 days, oldest → newest.
-    let series: [WaterTempDay]
+    package let series: [WaterTempDay]
     /// The lake-local date `currentF` is for, and the lake's zone (IANA) — nil when unknown.
-    var currentLocalDate: String? = nil
-    var timeZoneIdentifier: String? = nil
+    package var currentLocalDate: String? = nil
+    package var timeZoneIdentifier: String? = nil
 
-    static func == (l: WaterTempModel, r: WaterTempModel) -> Bool {
+    package static func == (l: WaterTempModel, r: WaterTempModel) -> Bool {
         l.currentF == r.currentF && l.series == r.series
             && l.currentLocalDate == r.currentLocalDate && l.timeZoneIdentifier == r.timeZoneIdentifier
     }
 }
 
-enum WaterTemperatureService {
+package enum WaterTemperatureService {
 
     // MARK: Calibration constants (see header for how these were fit)
 
@@ -147,7 +147,7 @@ enum WaterTemperatureService {
 
     /// Modeled water temperature at `coordinate`, or nil if the daily air-temp
     /// history can't be fetched.
-    static func model(near coordinate: CLLocationCoordinate2D) async -> WaterTempModel? {
+    package static func model(near coordinate: CLLocationCoordinate2D) async -> WaterTempModel? {
         let items = [
             URLQueryItem(name: "latitude", value: String(format: "%.4f", coordinate.latitude)),
             URLQueryItem(name: "longitude", value: String(format: "%.4f", coordinate.longitude)),

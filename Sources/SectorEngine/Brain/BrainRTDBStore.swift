@@ -148,7 +148,7 @@ public final class RTDBRestStore: BrainStore, @unchecked Sendable {
 
 /// Dry run: every path becomes <dir>/<path>.json. Nothing leaves the machine.
 public final class LocalDirectoryStore: BrainStore, @unchecked Sendable {
-    let dir: URL
+    package let dir: URL
     public let brainId: String?
     public private(set) var updates: [[String: Data]] = []
     private let lock = NSLock()

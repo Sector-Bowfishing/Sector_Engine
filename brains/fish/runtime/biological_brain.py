@@ -110,20 +110,43 @@ class Bundle:
         return self.manifest["researchVersion"]
 
 
+def _read(read, path: str) -> bytes:
+    """Missing or unreadable memory is a BundleError (the job refuses), never a crash and never a fallback."""
+    try:
+        return read(path)
+    except BundleError:
+        raise
+    except OSError as e:
+        raise BundleError(f"bundle file missing or unreadable: {path}") from e
+
+
+def _json(raw: bytes, path: str):
+    try:
+        return json.loads(raw)
+    except ValueError as e:
+        raise BundleError(f"bundle file is not valid JSON: {path}") from e
+
+
+def read_pointer(read, pointer_path: str = "latest.json") -> dict:
+    """The release pointer (latest.json). Missing, unreadable or invalid -> BundleError."""
+    return _json(_read(read, pointer_path), pointer_path)
+
+
 def load_bundle(read, pointer_path: str = "latest.json") -> Bundle:
     """`read(path) -> bytes` reads relative to the bundle root (biology/v1/ in the bucket, or a local dir)."""
-    pointer = json.loads(read(pointer_path))
-    if pointer.get("schemaVersion") != BUNDLE_SCHEMA_VERSION or pointer.get("brainId") != BRAIN_ID:
-        raise BundleError(f"unexpected pointer {pointer_path}: schemaVersion/brainId")
+    pointer = read_pointer(read, pointer_path)
+    if not isinstance(pointer, dict) or pointer.get("schemaVersion") != BUNDLE_SCHEMA_VERSION or pointer.get("brainId") != BRAIN_ID \
+            or not pointer.get("manifest") or not pointer.get("manifestSha256"):
+        raise BundleError(f"unexpected pointer {pointer_path}: schemaVersion/brainId/manifest")
     mpath = pointer["manifest"]
-    mraw = read(mpath)
+    mraw = _read(read, mpath)
     if sha256(mraw) != pointer["manifestSha256"]:
         raise BundleError("manifest sha256 does not match latest.json")
-    manifest = json.loads(mraw)
+    manifest = _json(mraw, mpath)
     root = mpath.rsplit("/", 1)[0] if "/" in mpath else ""
     files = {}
     for f in manifest.get("files", []):
-        raw = read(f"{root}/{f['path']}" if root else f["path"])
+        raw = _read(read, f"{root}/{f['path']}" if root else f["path"])
         if sha256(raw) != f["sha256"] or len(raw) != f["bytes"]:
             raise BundleError(f"artifact hash/size mismatch: {f['path']}")
         files[f["path"]] = raw

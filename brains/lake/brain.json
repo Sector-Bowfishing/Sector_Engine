@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "lake-brain",
+  "displayName": "Lake Brain",
+  "humanName": "Lake",
+  "domain": "lake-level",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "job",
+    "language": "swift",
+    "entrypoint": "brains/lake/runtime/LakeBrainJob/main.swift",
+    "trigger": {
+      "kind": "schedule",
+      "staleHours": 3
+    }
+  },
+  "publishes": [
+    {
+      "contractId": "lake-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/lake/contracts/lake-publication-v1.json",
+      "pathFamilies": [
+        "/activity/{event}",
+        "/brains/lake-brain/{child}",
+        "/health/brains/lake-brain/{child}",
+        "/health/sources/{id}",
+        "/lakeFleet/{k}/modelVersions/lake",
+        "/lakeFleet/{k}/readiness/lake",
+        "/lakeFleet/{k}/slots/lake",
+        "/lakeFleet/{k}/{child}",
+        "/lakes/{k}/brain",
+        "/lakes/{k}/speciesPresence",
+        "/lakes/{k}/states/lake",
+        "/sources/{id}",
+        "/validation/lake-brain"
+      ]
+    }
+  ],
+  "consumes": [
+    {
+      "kind": "registry",
+      "registry": "lakes",
+      "contractId": "registry.lakes",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    }
+  ],
+  "providers": [
+    {
+      "providerId": "iem-hads"
+    },
+    {
+      "providerId": "nws-nwps"
+    },
+    {
+      "providerId": "tva-restapi"
+    },
+    {
+      "providerId": "usace-access2water"
+    },
+    {
+      "providerId": "usace-cwms-pool"
+    },
+    {
+      "providerId": "usbr-rise"
+    },
+    {
+      "providerId": "usgs-nwis-dv"
+    },
+    {
+      "providerId": "usgs-nwis-lake-elevation"
+    }
+  ],
+  "researchWorkspace": {
+    "workspaceId": "lake-brain"
+  },
+  "score": {
+    "type": "ENGINE_READINESS_SCORE",
+    "path": "/scores/lake-brain",
+    "rubricRef": "docs/brains/scoring/lake-brain-score-v1.json"
+  },
+  "customerIntegrationMode": "none",
+  "publisherRequired": {
+    "required": true,
+    "cutoverStatus": "SHADOW"
+  },
+  "authorizedConsumers": [
+    "ops",
+    "sector-intelligence",
+    "depth",
+    "vegetation"
+  ],
+  "tests": [
+    "brains/lake/tests"
+  ],
+  "dataBudget": {
+    "maxTrackedFileBytes": 1048576,
+    "exceptions": []
+  },
+  "knowledge": {
+    "stores": [
+      {
+        "id": "reviewed-bindings",
+        "store": "COMPILED_IN_BINARY",
+        "owner": "lake-brain",
+        "location": "brains/lake/runtime/LakeBrain/LakeSourceBindings.swift",
+        "loader": "LakeSourceBindings (compiled)",
+        "verification": "compiled into the binary; bindingVersion and tableFingerprint",
+        "lineage": "bindingVersion in state provenance",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "NOT_APPLICABLE"
+      },
+      {
+        "id": "species-presence",
+        "store": "PRIVATE_BUCKET_RELEASE",
+        "owner": "lake-brain",
+        "location": "gs://sector-lake-brain (presence/latest.json)",
+        "loader": "LakePresenceIndex.load",
+        "verification": "pointer -> release fingerprint, researchVersion and rowCount; vocabulary, assessed-species and directory checks",
+        "lineage": "presence fingerprint and sourceRef in the presence records",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "DEGRADE_EXPLICITLY"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/lake/tests/swift/LakeKnowledgeMemoryTests.swift",
+      "brains/lake/tests/swift/LakeBrainTests.swift"
+    ],
+    "notes": "Level baselines in gs://sector-lake-brain are derived operational state rebuilt from observations, not approved knowledge. A missing presence pointer writes no presence; a refused release records presenceError."
+  }
+}

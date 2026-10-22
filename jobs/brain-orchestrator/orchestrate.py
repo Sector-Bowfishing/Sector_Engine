@@ -20,6 +20,9 @@ One hourly wake-up (Cloud Scheduler → this scale-to-zero Cloud Run job, 1 vCPU
   python3 orchestrate.py                      the hourly cycle
   python3 orchestrate.py --health-only        evaluate and publish ONLY control/healthV1 (brain-health-v1); no /jobs write, no execution,
                                               no scores, no control/orchestratorV1 write, no legacy record (health-plane-publication-v1)
+  python3 orchestrate.py ... --publish-engineering-status
+                                              also publish control/engineeringStatusV1 (engineering-status-ops-v1) from the projection
+                                              staged in this image; OFF by default (decision O-1). --emit-engineering-status FILE: review only
 
 env: BRAIN_RTDB_URL, ORCHESTRATOR_SCOPE (pilots|fleet, Lake Brain; default pilots), WATER_TEMP_SCOPE (fleet|pilots; default
      fleet — a per-lake Water Temp run leaves the registry's fleet counts empty), LAKE_BRAIN_ARCHIVE (gs:// bucket name
@@ -41,6 +44,7 @@ from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_
                                    jobs_changed_paths, orchestrate)
 from sector_brain_platform import gcp                                                                                 # noqa: E402
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
+from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -57,12 +61,18 @@ def _fish_runtime_dir() -> str:
     return repo if os.path.isdir(repo) else os.path.join(HERE, "..", "biological-brain")
 
 
+def _intelligence_runtime_dir() -> str:
+    """Sector Intelligence runtime: brains/sector-intelligence/runtime in the repository; ../sector-intelligence-brain in the staged orchestrator image."""
+    repo = os.path.normpath(os.path.join(HERE, "..", "..", "brains", "sector-intelligence", "runtime"))
+    return repo if os.path.isdir(repo) else os.path.join(HERE, "..", "sector-intelligence-brain")
+
+
 # Executors: how each brain is started. Anything absent here is never started by the orchestrator.
 EXECUTORS = {
     "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
     "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
     "biological-state": {"kind": "in-process", "dir": _fish_runtime_dir(), "jobId": "biological-brain"},
-    "sector-intelligence": {"kind": "in-process", "dir": os.path.join(HERE, "..", "sector-intelligence-brain"), "jobId": "sector-intelligence-brain"},
+    "sector-intelligence": {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": "sector-intelligence-brain"},
 }
 NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)", "water-clarity": "MANUAL by decision (docs/brains/WATER_CLARITY_BRAIN_SCHEDULING.md)"}
 
@@ -114,6 +124,25 @@ def brain_plan(brain_id: str, timeout: int = 600) -> dict:
     if out.returncode != 0:
         return {"action": "SKIP", "planError": True, "reasons": [f"--plan failed: {(out.stderr or out.stdout).strip()[-300:]}"]}
     return json_output(out.stdout) or {"action": "SKIP", "planError": True, "reasons": ["--plan output unreadable"]}
+
+
+SCORER_TIMEOUT_SECONDS = 900
+
+
+def run_scorer(cmd: list[str], timeout: int = SCORER_TIMEOUT_SECONDS) -> dict:
+    """The scorer step, isolated (PL-02): a timeout or a failure is RECORDED in the cycle's scores block and the cycle goes on to publish the control
+    plane and its own record; it never aborts the cycle. Success semantics are unchanged (published == exit code 0)."""
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return {"published": False, "timedOut": True, "tail": f"score_brains.py timed out after {timeout}s"}
+    return {"published": out.returncode == 0, "tail": (out.stdout if out.returncode == 0 else (out.stderr or out.stdout)).strip()[-500:]}
+
+
+def in_process_timeout(manifest: dict, brain_id: str) -> int:
+    """The Brain's declared timeoutSeconds (control manifest), else the platform default; never longer than the orchestrator's own 30-min task."""
+    t = (manifest["brains"].get(brain_id) or {}).get("timeoutSeconds") or (manifest.get("defaults") or {}).get("timeoutSeconds") or 1800
+    return int(min(t, 1800))
 
 
 def run_in_process(brain_id: str, timeout: int = 1800) -> dict:
@@ -221,6 +250,10 @@ def main(argv=None) -> int:
     ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
     ap.add_argument("--emit-health-state", default=None, metavar="FILE", help="write the computed brain-health-v1 state (control/healthV1) JSON here (review, samples)")
     ap.add_argument("--publish-health", action="store_true", help="also publish control/healthV1 (brain-health-v1). OFF by default: enabling it is a recorded decision")
+    ap.add_argument("--emit-engineering-status", default=None, metavar="FILE",
+                    help="write the gated control/engineeringStatusV1 document (engineering-status-ops-v1) here; never writes the database")
+    ap.add_argument("--publish-engineering-status", action="store_true",
+                    help="also publish control/engineeringStatusV1 from the projection staged in THIS image. OFF by default: enabling it is decision O-1")
     ap.add_argument("--health-only", action="store_true", help="publish ONLY control/healthV1: implies --control-only and --publish-health, and additionally writes no control/orchestratorV1 "
                                                                "and asks no Brain for a plan (the exact write set is control/healthV1/* and nothing else)")
     a = ap.parse_args(argv)
@@ -302,7 +335,7 @@ def main(argv=None) -> int:
                     eid = (res.get("execution") or eid).rsplit("/", 1)[-1]
                     locks[b] = {"execution": res.get("execution"), "startedAt": res["startedAt"], "lockedUntil": iso(now + dt.timedelta(minutes=LOCK_MINUTES))}
                 else:
-                    res = run_in_process(b)
+                    res = run_in_process(b, timeout=in_process_timeout(manifest, b))
             except Exception as e:                                   # one brain's failure never stops the cycle
                 res = {"brainId": b, "ok": False, "error": repr(e)[:300]}
             ended = None if res.get("how") == "cloud-run-job" and res.get("ok") else dt.datetime.now(dt.timezone.utc)
@@ -330,10 +363,8 @@ def main(argv=None) -> int:
              (f"{n_changed} job record(s) changed" if n_changed else ("forced" if a.force_scores else None))
     scores = {"published": False, "why": reason or "nothing changed since the last cycle"}
     if reason and write and not a.control_only:
-        cmd = score_cmd()
-        out = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
-        scores.update({"published": out.returncode == 0, "tail": (out.stdout if out.returncode == 0 else (out.stderr or out.stdout)).strip()[-500:]})
-        print(f"scores: {'published' if out.returncode == 0 else 'FAILED'} ({reason})", flush=True)
+        scores.update(run_scorer(score_cmd()))
+        print(f"scores: {'published' if scores['published'] else 'FAILED'} ({reason})", flush=True)
     else:
         print(f"scores: skipped ({scores['why']})")
 
@@ -379,6 +410,22 @@ def main(argv=None) -> int:
                       f"codeVersion {health_cp['summary'].get('codeVersion')}")
     except Exception as e:                                       # the control plane must never break the cycle or the score publication
         print(f"control plane: FAILED {e!r}", file=sys.stderr)
+
+    # 5c. engineering status for Sector Ops (engineering-status-ops-v1 at control/engineeringStatusV1). The document comes ONLY from the projection
+    #     staged into this image at deploy time (the exact deployed commit); ESP.gate() publishes it or an explicit UNAVAILABLE with the reason.
+    #     Computed only when asked for; written only with --publish-engineering-status (decision O-1). It never changes what runs.
+    if a.emit_engineering_status or a.publish_engineering_status:
+        try:
+            dv = os.environ.get("DEPLOYMENT_VERSION")
+            es_doc = ESP.gate(ESP.load_staged(HERE), deployed_commit=ESP.deployed_commit(dv), now_iso=iso(now), deployment_version=dv)
+            if a.emit_engineering_status:
+                json.dump(es_doc, open(a.emit_engineering_status, "w"), indent=1, sort_keys=True)
+            if a.publish_engineering_status and not a.health_only and (write or a.dry_run):   # --health-only's write set stays control/healthV1 only
+                db.update({ESP.NODE: es_doc})
+            print(f"engineering status: {es_doc['state']}" + (f" ({es_doc['reason']})" if es_doc.get("reason") else
+                  f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status and not a.health_only else " (not published)"))
+        except Exception as e:                                   # never breaks the cycle
+            print(f"engineering status: FAILED {e!r}", file=sys.stderr)
 
     # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),

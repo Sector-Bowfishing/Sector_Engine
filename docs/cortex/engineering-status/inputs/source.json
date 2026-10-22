@@ -1,0 +1,561 @@
+{
+  "schemaVersion": "1.2.0",
+  "reportId": "sector-engine-engineering-status-2026-10-20.3",
+  "repository": "Sector-Bowfishing/Sector_Engine",
+  "branch": "cortex/architecture-standardization-2026-10-20",
+  "evaluatedCommit": "25e786cf",
+  "evaluatedAt": "2026-10-20",
+  "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-final-verification.md",
+  "cortexVersion": "2.1.0",
+  "cortexPack": "sector/engine",
+  "structuralCertification": {
+    "biological-state": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    },
+    "wind": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    },
+    "water-clarity": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    },
+    "sector-intelligence": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    },
+    "lake-brain": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    },
+    "water-temp": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    },
+    "depth": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    },
+    "vegetation": {
+      "status": "PASS",
+      "evidence": "Kit V1: see certificationProofs (inputs/certification.json)"
+    }
+  },
+  "blockers": {
+    "depth": [
+      "G-1"
+    ],
+    "vegetation": [
+      "G-1",
+      "V-1"
+    ],
+    "water-clarity": [
+      "M-5",
+      "M-6",
+      "D-E"
+    ],
+    "lake-brain": [
+      "M-7",
+      "D-C"
+    ],
+    "water-temp": [
+      "D-C"
+    ],
+    "wind": [
+      "D-D"
+    ]
+  },
+  "cortexGaps": [
+    "CG-2.1-1",
+    "CG-2.1-2",
+    "CG-2.1-3",
+    "CG-2.1-4",
+    "CG-2.1-5",
+    "CG-2.1-6",
+    "CG-2.1-7",
+    "CG-2.1-8",
+    "CG-2.1-9"
+  ],
+  "brainDetail": {
+    "biological-state": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/fish: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "BLOCKED",
+          "label": "NOT_VALIDATED",
+          "evidence": "rubric 2.1.0 approved; field validation not complete"
+        },
+        "approvedMemoryRelease": {
+          "status": "PARTIAL",
+          "label": "VERIFIED_BUNDLE_APPROVAL_NOT_RECORDED",
+          "evidence": "private bundle hash chain verified on load; no named release approval (M-3)"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "RECORDED_RUNNING_IN_ORCHESTRATOR",
+          "evidence": "not checked against production in this session (A-3)"
+        },
+        "productionActivation": {
+          "status": "NOT_VERIFIED",
+          "label": "IN_PROCESS_VIA_ORCHESTRATOR_SCHEDULER_PAUSED",
+          "evidence": "recorded deployed commit 7dae7051; live state not read"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [],
+      "scienceDependencies": [
+        "Field validation of biological state (Fish lane)",
+        "Named approval of the biology bundle release (M-3)"
+      ],
+      "nextWork": [
+        "Deploy the exit-2 refusal with the next orchestrator release (M-2, A-2)"
+      ]
+    },
+    "wind": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/wind: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "BLOCKED",
+          "label": "NOT_VALIDATED",
+          "evidence": "frozen validation evidence; no field validation of bowfishing exposure"
+        },
+        "approvedMemoryRelease": {
+          "status": "PARTIAL",
+          "label": "VERSIONED_RELEASE_APPROVAL_NOT_RECORDED",
+          "evidence": "wind-knowledge-2026-10-20.1 verified on load (branch); not deployed (M-1)"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "RECORDED_SCHEDULED_JOB",
+          "evidence": "wind-hourly; not checked live"
+        },
+        "productionActivation": {
+          "status": "NOT_VERIFIED",
+          "label": "WIND_HOURLY_JOB_RECORDED_LIVE",
+          "evidence": "Wind Capability v2 recorded LIVE 2026-10-20; live state not read"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS",
+        "BR-20": "PARTIAL"
+      },
+      "structuralProblems": [
+        "Stale self-published score copy (BR-20; Proposal B, D-D)",
+        "Release lineage only in SHADOW artifacts (M-4)"
+      ],
+      "scienceDependencies": [
+        "Named approval of the Wind knowledge release (M-3)"
+      ],
+      "nextWork": [
+        "Approve Proposal B (retire the score copy)",
+        "Deploy the release-verifying image (M-1, A-2)"
+      ]
+    },
+    "water-clarity": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/water-clarity: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "PARTIAL",
+          "label": "CUSTOMER_NUMBER_NOT_VALIDATED",
+          "evidence": "production model validated without a gate; certified candidate not deployed"
+        },
+        "approvedMemoryRelease": {
+          "status": "PARTIAL",
+          "label": "VERSIONED_RELEASE_APPROVAL_NOT_RECORDED",
+          "evidence": "water-clarity-knowledge-2026-10-20.1 verified on load (branch); private overlay not digest-verified (M-5)"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "MANUAL_JOB",
+          "evidence": "water-clarity-brain is MANUAL by decision"
+        },
+        "productionActivation": {
+          "status": "NOT_VERIFIED",
+          "label": "MANUAL_JOB_RECORDED",
+          "evidence": "not read live"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "the Brain is not read by the customer path"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-09": "PARTIAL",
+        "BR-10": "PARTIAL",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [
+        "Repo-relative polygon fallback outside the image (M-6)",
+        "Private overlay not digest-verified (M-5)",
+        "C1 job missing from the control manifest job map (D-E)"
+      ],
+      "scienceDependencies": [
+        "Promotion decision for the certified clarity candidate (CLARITY-VAL-001)",
+        "Clarity class taxonomy (CLARITY-PRO-001)"
+      ],
+      "nextWork": [
+        "Remove the polygon fallback (M-6)",
+        "Add MANUAL jobs to the job map (D-E)"
+      ]
+    },
+    "sector-intelligence": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/sector-intelligence: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "BLOCKED",
+          "label": "NOT_VALIDATED",
+          "evidence": "pilot evaluations only; no recommendation"
+        },
+        "approvedMemoryRelease": {
+          "status": "PARTIAL",
+          "label": "VERSIONED_RELEASE_APPROVAL_NOT_RECORDED",
+          "evidence": "catalog release verified on load (branch); not deployed (M-1)"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "PARKED_IN_PROCESS",
+          "evidence": "not checked live"
+        },
+        "productionActivation": {
+          "status": "NOT_VERIFIED",
+          "label": "PARKED",
+          "evidence": "in-process in the orchestrator; scheduler PAUSED (recorded)"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customer recommendations are approval-gated"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [
+        "Release lineage only in SHADOW artifacts (M-4)"
+      ],
+      "scienceDependencies": [
+        "Activation of recommendations is a gated product decision"
+      ],
+      "nextWork": [
+        "Deploy the release-verifying orchestrator image (M-1, A-2)"
+      ]
+    },
+    "lake-brain": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/lake: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "BLOCKED",
+          "label": "NOT_VALIDATED",
+          "evidence": "level classification not field-validated"
+        },
+        "approvedMemoryRelease": {
+          "status": "PARTIAL",
+          "label": "COMPILED_BINDINGS_PLUS_FINGERPRINTED_PRESENCE_RELEASE",
+          "evidence": "FNV-1a fingerprint (M-7); approval NOT_RECORDED"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "DEPLOYED_IMAGE_OFF_MAIN_LINEAGE",
+          "evidence": "brain-jobs:a6622f99 from feat/lake-consolidated"
+        },
+        "productionActivation": {
+          "status": "NOT_VERIFIED",
+          "label": "JOB_RECORDED",
+          "evidence": "not read live"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-13": "PASS",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [
+        "Uses 60 package-access symbols of the customer SectorEngine library (pinned; D-C)",
+        "Presence release fingerprint is FNV-1a, not sha256 (M-7)"
+      ],
+      "scienceDependencies": [
+        "Field validation of level classification"
+      ],
+      "nextWork": [
+        "Extract a non-customer Swift Brain library (D-C)",
+        "sha256 presence fingerprint with the Lake owner (M-7)"
+      ]
+    },
+    "water-temp": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/water-temperature: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "PARTIAL",
+          "label": "GLOBAL_HOLDOUT_ONLY",
+          "evidence": "validated on a global holdout only"
+        },
+        "approvedMemoryRelease": {
+          "status": "NOT_APPLICABLE",
+          "label": "NO_KNOWLEDGE_STORE",
+          "evidence": "compiled model over live inputs"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "PARKED",
+          "evidence": "not checked live"
+        },
+        "productionActivation": {
+          "status": "NOT_VERIFIED",
+          "label": "PARKED_RECORDED",
+          "evidence": "not read live"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "NOT_APPLICABLE",
+        "BR-13": "PASS",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [
+        "Uses customer SectorEngine package-access symbols (pinned; D-C)"
+      ],
+      "scienceDependencies": [
+        "Per-lake validation beyond the global holdout"
+      ],
+      "nextWork": [
+        "Extract a non-customer Swift Brain library (D-C)"
+      ]
+    },
+    "depth": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/depth: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "BLOCKED",
+          "label": "NOT_VALIDATED",
+          "evidence": "field validation preregistered, not started (DEPTH-VAL-001)"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_AWAITING_SCIENTIFIC_APPROVAL",
+          "evidence": "depth-knowledge-candidate-2026-10-20.1 verified; approval NOT_RECORDED; runtime abstains (G-1)"
+        },
+        "operationalReadiness": {
+          "status": "BLOCKED",
+          "label": "ABSTAINS_WITHOUT_APPROVED_RELEASE",
+          "evidence": "--plan/--write report BLOCKED_AWAITING_APPROVED_RELEASE"
+        },
+        "productionActivation": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_ACTIVATED",
+          "evidence": "PROFILED/SHADOW, PARKED; no executor, no schedule"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [
+        "9 research-tool tests need the research dataset snapshot and skip in CI (298 pass locally with the snapshot)"
+      ],
+      "scienceDependencies": [
+        "Scientific approval of a Depth knowledge release (G-1, DEPTH-REL-001)",
+        "Field validation (DEPTH-VAL-001)",
+        "Datum coverage (DEPTH-DAT-001)"
+      ],
+      "nextWork": [
+        "Approve or reject the candidate release (G-1)",
+        "Decide the control-plane shadow redeploy (A-2)"
+      ]
+    },
+    "vegetation": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/vegetation: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "FAIL",
+          "label": "NOT_VALIDATED_GATES_FAILED",
+          "evidence": "shipped observer failed lake-level gates on held-out lakes; A4 TEST set consumed"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_AWAITING_SCIENTIFIC_APPROVAL",
+          "evidence": "vegetation-knowledge-candidate-2026-10-20.1 verified; approval NOT_RECORDED; runtime abstains (G-1)"
+        },
+        "operationalReadiness": {
+          "status": "BLOCKED",
+          "label": "NO_LIVE_WRITER",
+          "evidence": "dry-run only by design"
+        },
+        "productionActivation": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_ACTIVATED",
+          "evidence": "SHADOW, PARKED; no executor, no schedule"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [],
+      "scienceDependencies": [
+        "Fresh independent truth and a one-shot holdout (VEG-VAL-001)",
+        "Scientific approval of a release (G-1)",
+        "Agency block percentages and species labels decision (V-1)"
+      ],
+      "nextWork": [
+        "Decide V-1 (agency block)",
+        "Obtain fresh truth before any new evaluation"
+      ]
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/brains/water-temperature/contracts/water-temp-state-v1.schema.json",
+  "title": "water-temp-state-v1",
+  "description": "water-temp published state at /lakes/{k}/states/waterTemp. GENERATED from the Swift Codable record State (brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift) by tools/architecture/swift_state_schema.py; do not edit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lakeId",
+    "kind",
+    "observationType",
+    "evidenceClass",
+    "unit",
+    "spatialSupport",
+    "evidenceStale",
+    "stale",
+    "provenance"
+  ],
+  "properties": {
+    "lakeId": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "observationType": {
+      "type": "string"
+    },
+    "evidenceClass": {
+      "type": "string"
+    },
+    "currentTempF": {
+      "type": "number"
+    },
+    "unit": {
+      "type": "string"
+    },
+    "lakeLocalDate": {
+      "type": "string"
+    },
+    "lakeTimeZone": {
+      "type": "string"
+    },
+    "spatialSupport": {
+      "type": "string"
+    },
+    "trend24hF": {
+      "type": "number"
+    },
+    "trendBasis": {
+      "type": "string"
+    },
+    "sensorTrend": {
+      "type": "string"
+    },
+    "lastObservationAt": {
+      "type": "string"
+    },
+    "sourceAgeHours": {
+      "type": "number"
+    },
+    "measurementDistanceMiles": {
+      "type": "number"
+    },
+    "depthM": {
+      "type": "number"
+    },
+    "modelCurrentF": {
+      "type": "number"
+    },
+    "measuredMinusModelF": {
+      "type": "number"
+    },
+    "forecast": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Swift record ForecastDay"
+      }
+    },
+    "evidenceStale": {
+      "type": "boolean"
+    },
+    "stale": {
+      "type": "boolean"
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Swift record BrainProvenance"
+    }
+  }
+}

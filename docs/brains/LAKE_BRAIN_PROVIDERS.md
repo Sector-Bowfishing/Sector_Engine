@@ -2,7 +2,7 @@
 
 Status: implemented and exercised read-only against live data on 2026-10-13. Nothing here publishes to any RTDB or bucket; the live
 exercise used `LakeBrainJob --dry-run DIR --include-candidates`, which writes local files only.
-Code: `Sources/SectorEngine/LakeBrain/LakeLevelFeeds.swift` (TVA, CWMS, USGS live) and `LakeLevelFeedsFleet.swift` (everything below).
+Code: `brains/lake/runtime/LakeBrain/LakeLevelFeeds.swift` (TVA, CWMS, USGS live) and `LakeLevelFeedsFleet.swift` (everything below).
 Bindings: `docs/brains/LAKE_BRAIN_INTEGRATION.md` section 5.
 
 ## 1. Provider table

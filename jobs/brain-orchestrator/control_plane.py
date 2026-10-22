@@ -34,7 +34,9 @@ def build_ctx(world: dict, now: dt.datetime, locks: dict | None, own_inputs: dic
         if rec.get("decision") == "RUN" and rec.get("inputFingerprint"):
             last_in.setdefault(rec["brainId"], rec["inputFingerprint"])
     return {"manifest": m, "mode": m["engineMode"], "now": now, "states": regs, "activity": O.effective_activity(m, world["overrides"]),
-            "running": running, "out_fps": out_fps, "last_in_fps": last_in, "own_inputs": own_inputs or {}}
+            "running": running, "out_fps": out_fps, "last_in_fps": last_in, "own_inputs": own_inputs or {},
+            # the previous cycle's execution ledger: bounded retry (orchestration.retry_gate) holds back automatic re-runs after failures
+            "executions": list((prev.get("executions") or {}).values())}
 
 
 def prev_output_fps(world: dict) -> dict | None:

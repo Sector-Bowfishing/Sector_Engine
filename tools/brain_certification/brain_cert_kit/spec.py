@@ -65,6 +65,7 @@ class BrainCertSpec:
     arch_findings: tuple = ()                       # ((file basename, invariant), ...) registered-Brain findings that are the carried baseline entries
     baseline_entry_basenames: tuple = ()            # basenames of this Brain's carried legacy-baseline entries
     baseline_carried_from_required: bool = True
+    has_score: bool = True                          # False: the Brain has NO Engine readiness score (brain.json must declare none; no /scores path is written)
     score_baseline_substring: Optional[str] = None  # substring `score_baseline.py --check` must print for this Brain; None = score is computed live (no frozen baseline)
     # ---- artifact factory (the only code a Brain must supply) -----------------------------------------------------------------------------
     # artifact_factory(n, generated_at, consumed, rerun) -> sealed publish-artifact-v2 dict.  n = run number (new executionId), generated_at = ISO UTC,

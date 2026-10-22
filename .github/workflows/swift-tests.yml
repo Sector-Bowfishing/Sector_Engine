@@ -6,9 +6,9 @@ name: swift-tests
 on:
   push:
     branches: [main]
-    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", ".github/workflows/swift-tests.yml"]
+    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", "brains/lake/**", "brains/water-temperature/**", ".github/workflows/swift-tests.yml"]
   pull_request:
-    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", ".github/workflows/swift-tests.yml"]
+    paths: ["Sources/**", "Tests/**", "Package.swift", "Package.resolved", "contracts/conformance/**", "verification/fixtures/**", "brains/lake/**", "brains/water-temperature/**", ".github/workflows/swift-tests.yml"]
 permissions:
   contents: read
 jobs:
@@ -24,3 +24,16 @@ jobs:
       - run: swift --version
       - run: swift build
       - run: swift test
+
+  swift-linux:
+    # The production toolchain (Dockerfile: swift:6.1-jammy). The macOS job above does not prove the Linux build; this one builds every target
+    # (customer Engine, server, Swift Brain targets and their jobs) and runs the full test suite on Linux.
+    name: swift (linux, swift:6.1-jammy)
+    runs-on: ubuntu-latest
+    container: swift:6.1-jammy
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift --version
+      - run: swift build --build-tests
+      - run: swift test --skip-build

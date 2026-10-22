@@ -1,0 +1,538 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/contracts/schemas/engineering-status-ops-v1.schema.json",
+  "title": "Sector Engine engineering status \u2014 Sector Ops projection v1",
+  "description": "The SANITIZED, read-only projection of engineering-status-v1 for the Sector Ops dashboard (browser client). Statuses, labels, proof results, counts and human summaries only: no evidence strings, file paths, bucket or image names, repository identifiers or credentials. Built by tools/cortex_status/ops_projection.py from a CI-emitted, commit-stamped report; publishing it (proposed RTDB node /control/engineeringStatusV1) is a separate, gated decision. v1.1.0 (additive): explicit state AVAILABLE | UNAVAILABLE (an UNAVAILABLE document carries only reason and checkedAt), generatedFrom.codeState / sourceBranch / verificationCommit / generatedAt, per-Brain packageName, and the publisher's publishedBy / checkedAt. codeState says where the evaluated commit lives (UNMERGED_BRANCH or MAIN_COMMIT); it NEVER says what production runs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "state"
+  ],
+  "properties": {
+    "schema": {
+      "const": "engineering-status-ops-v1"
+    },
+    "schemaVersion": {
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ]
+    },
+    "reportId": {
+      "type": "string",
+      "pattern": "^sector-engine-engineering-status-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.[0-9]+$"
+    },
+    "generatedFrom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceCommit",
+        "sourceDigest",
+        "certificationCurrent",
+        "evaluatedAt",
+        "reportSchemaVersion",
+        "codeState",
+        "sourceBranch"
+      ],
+      "properties": {
+        "sourceCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "sourceDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "certificationCurrent": {
+          "type": "boolean"
+        },
+        "evaluatedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "reportSchemaVersion": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "result"
+          ],
+          "properties": {
+            "result": {
+              "enum": [
+                "PASS",
+                "FAIL",
+                "PENDING",
+                "NOT_RUN"
+              ]
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "pending": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "codeState": {
+          "enum": [
+            "UNMERGED_BRANCH",
+            "MAIN_COMMIT"
+          ]
+        },
+        "sourceBranch": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._/-]{1,120}$"
+        },
+        "verificationCommit": {
+          "type": "string"
+        },
+        "generatedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]+Z$"
+        }
+      }
+    },
+    "standards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "framework",
+        "version",
+        "pin"
+      ],
+      "properties": {
+        "framework": {
+          "const": "Rehtac Cortex"
+        },
+        "version": {
+          "type": "string"
+        },
+        "pin": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,40}$"
+        }
+      }
+    },
+    "statusVocabulary": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "PASS",
+          "FAIL",
+          "PARTIAL",
+          "NOT_VERIFIED",
+          "NOT_APPLICABLE",
+          "BLOCKED"
+        ]
+      }
+    },
+    "brains": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "brainId",
+          "packageName",
+          "lifecycle",
+          "packageStatus",
+          "statusLayers",
+          "certification",
+          "memory",
+          "structuralProblems",
+          "scienceDependencies",
+          "nextWork",
+          "blockers"
+        ],
+        "properties": {
+          "brainId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "lifecycle": {
+            "type": "string",
+            "pattern": "^[A-Z_]+$"
+          },
+          "packageStatus": {
+            "enum": [
+              "CANONICAL",
+              "BRANCH_ONLY"
+            ]
+          },
+          "statusLayers": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "canonicalStructure",
+              "structuralCertification",
+              "scientificValidation",
+              "approvedMemoryRelease",
+              "operationalReadiness",
+              "productionActivation",
+              "customerConsumable"
+            ],
+            "properties": {
+              "canonicalStructure": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "label"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "NOT_VERIFIED",
+                      "NOT_APPLICABLE",
+                      "BLOCKED"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  }
+                }
+              },
+              "structuralCertification": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "label"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "NOT_VERIFIED",
+                      "NOT_APPLICABLE",
+                      "BLOCKED"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  }
+                }
+              },
+              "scientificValidation": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "label"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "NOT_VERIFIED",
+                      "NOT_APPLICABLE",
+                      "BLOCKED"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  }
+                }
+              },
+              "approvedMemoryRelease": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "label"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "NOT_VERIFIED",
+                      "NOT_APPLICABLE",
+                      "BLOCKED"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  }
+                }
+              },
+              "operationalReadiness": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "label"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "NOT_VERIFIED",
+                      "NOT_APPLICABLE",
+                      "BLOCKED"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  }
+                }
+              },
+              "productionActivation": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "label"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "NOT_VERIFIED",
+                      "NOT_APPLICABLE",
+                      "BLOCKED"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  }
+                }
+              },
+              "customerConsumable": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "label"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "NOT_VERIFIED",
+                      "NOT_APPLICABLE",
+                      "BLOCKED"
+                    ]
+                  },
+                  "label": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  }
+                }
+              }
+            }
+          },
+          "certification": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "proofs"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "PARTIAL",
+                  "NOT_VERIFIED",
+                  "NOT_APPLICABLE",
+                  "BLOCKED"
+                ]
+              },
+              "proofs": {
+                "type": "object"
+              },
+              "mutationsPassed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mutationsFailed": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "memory": {
+            "type": "object",
+            "description": "standing check id -> {branch, production} status"
+          },
+          "requirements": {
+            "type": "object"
+          },
+          "structuralProblems": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 240
+            }
+          },
+          "scienceDependencies": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 240
+            }
+          },
+          "nextWork": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 240
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]-[A-Z0-9]+$"
+            }
+          },
+          "packageName": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "class",
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "class": {
+            "enum": [
+              "APPROVAL",
+              "DECISION_REQUIRED",
+              "GATED"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 240
+          },
+          "brains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "recentChanges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "commit",
+          "summary"
+        ],
+        "properties": {
+          "commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{7,12}$"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 240
+          }
+        }
+      }
+    },
+    "state": {
+      "enum": [
+        "AVAILABLE",
+        "UNAVAILABLE"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 240
+    },
+    "checkedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]+Z$"
+    },
+    "publishedBy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component"
+      ],
+      "properties": {
+        "component": {
+          "const": "brain-orchestrator"
+        },
+        "deploymentVersion": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "state": {
+        "const": "AVAILABLE"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "reportId",
+      "generatedFrom",
+      "standards",
+      "statusVocabulary",
+      "brains",
+      "decisions"
+    ]
+  },
+  "else": {
+    "required": [
+      "reason",
+      "checkedAt"
+    ]
+  }
+}

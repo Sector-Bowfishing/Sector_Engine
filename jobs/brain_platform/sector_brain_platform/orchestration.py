@@ -309,6 +309,11 @@ def decide_brain(brain_id: str, trigger: str, ctx: dict, scope: str | None = Non
     if activity == "MAINTENANCE" and trigger in ("INPUT_CHANGED", "DEPENDENCY_CHANGED"):
         return _rec(ctx, brain_id, trigger, "SKIP_PARKED", "MAINTENANCE Brain: limited approved operations only, no automatic expansion", "MAINTENANCE_LIMITED", **extra)
 
+    # bounded retry (PL-02): an AUTOMATIC trigger never re-runs a Brain whose recent runs failed beyond the retry policy
+    gate = retry_gate(brain_id, trigger, ctx)
+    if gate is not None:
+        return _rec(ctx, brain_id, trigger, gate["decision"], gate["reason"], gate["code"], retry=gate["retry"], **extra)
+
     # material-change gating for automatic downstream triggers
     in_fp = input_fingerprint(brain_id, b, ctx.get("out_fps") or {}, (ctx.get("own_inputs") or {}).get(brain_id))
     if trigger == "DEPENDENCY_CHANGED":
@@ -424,6 +429,43 @@ def retry_decision(failure_class: str, attempt: int, policy: dict, now: dt.datet
         return {"retry": False, "failureClass": failure_class, "reason": f"retries exhausted after {attempt} attempts: needs attention"}
     wait = pol["backoffMinutes"][min(max(attempt, 1), len(pol["backoffMinutes"])) - 1]
     return {"retry": True, "failureClass": failure_class, "attempt": attempt, "nextAttemptAt": iso(now + dt.timedelta(minutes=wait)), "reason": f"retry {attempt + 1} of {pol['maxAttempts']} in {wait} min"}
+
+
+def consecutive_failures(brain_id: str, executions) -> list[dict]:
+    """The Brain's failed executions since its last finished success/skip, newest first (unfinished STARTED runs are ignored)."""
+    mine = sorted((e for e in executions or () if e.get("brainId") == brain_id and e.get("status") in ("SUCCEEDED", "SKIPPED", "FAILED")),
+                  key=lambda e: e.get("endedAt") or e.get("startedAt") or "", reverse=True)
+    out = []
+    for e in mine:
+        if e["status"] != "FAILED":
+            break
+        out.append(e)
+    return out
+
+
+def retry_gate(brain_id: str, trigger: str, ctx: dict) -> dict | None:
+    """None = no gate. Applies the manifest retry policy (`retry` on the Brain, else `defaults.retry`) to the Brain's consecutive failures, for
+    AUTOMATIC triggers only; MANUAL / ADMIN / VALIDATION / RECOVERY always proceed. It can only hold a run back, never start one.
+    Without an execution ledger in ctx (`executions`) the gate is inactive."""
+    if trigger not in AUTOMATIC_TRIGGERS or "executions" not in ctx:
+        return None
+    failed = consecutive_failures(brain_id, ctx["executions"])
+    if not failed:
+        return None
+    last = failed[0]
+    fc = last.get("failureClass") if last.get("failureClass") in FAILURE_CLASSES else "TRANSIENT_RUNTIME"
+    if fc == "DEPENDENCY_BLOCKED" and trigger == "DEPENDENCY_CHANGED":
+        return None                                                 # re-evaluated when the dependency changes: exactly this trigger
+    m = ctx["manifest"]
+    policy = ((m.get("brains") or {}).get(brain_id) or {}).get("retry") or (m.get("defaults") or {}).get("retry")
+    failed_at = parse_time(last.get("endedAt") or last.get("startedAt")) or ctx["now"]
+    rd = retry_decision(fc, len(failed), policy, failed_at)
+    if not rd["retry"]:
+        code = "RETRIES_EXHAUSTED" if fc in RETRYABLE else "NOT_RETRYABLE"
+        return {"decision": "MANUAL_APPROVAL", "code": code, "retry": rd, "reason": f"last {len(failed)} run(s) failed ({fc}): {rd['reason']}"}
+    if ctx["now"] < parse_time(rd["nextAttemptAt"]):
+        return {"decision": "WAITING", "code": "RETRY_BACKOFF", "retry": rd, "reason": f"last run failed ({fc}): {rd['reason']} (not before {rd['nextAttemptAt']})"}
+    return None
 
 
 def estimate_cost(resources: dict | None, seconds: float | None, tasks: int | None = None) -> dict:

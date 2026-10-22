@@ -81,4 +81,4 @@ The ledger was first enabled in production on **2026-10-13 18:53:14 UTC**. Valid
 | Historical tier at start | `FULL` for all five (17 / 18 / 18 / 16 / 60 complete years) |
 | Trigger | the `brain-orchestrator` hourly wake-up (`50 * * * *` UTC) starts `lake-brain` when it is stale; no new schedule was created |
 | Earliest meaningful scoring | 1 d horizons from 2026-10-14; 30 d horizons from 2026-11-12; first monthly scorer run: 2026-11-01 for October |
-| Rollback | `IMAGE=…/brain-jobs:e6a5026f5d0f bash jobs/lake-brain/deploy-job.sh` (the previous image); ledger objects already written are immutable and are kept |
+| Rollback | `IMAGE=…/brain-jobs:e6a5026f5d0f bash brains/lake/deploy/deploy-job.sh` (the previous image; the script lived at `jobs/lake-brain/deploy-job.sh` before the Lake migration); ledger objects already written are immutable and are kept |

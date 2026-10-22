@@ -365,6 +365,96 @@
           }
         }
       }
+    },
+    "knowledge": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Approved persistent memory (Cortex BR-10/11): where the Brain's approved operational knowledge lives at runtime, how it is verified, and what happens when it is unavailable. Research data is never a runtime fallback.",
+      "required": [
+        "stores",
+        "researchFallback",
+        "tests"
+      ],
+      "properties": {
+        "stores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "store",
+              "owner",
+              "loader",
+              "verification",
+              "approval",
+              "onUnavailable"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "store": {
+                "enum": [
+                  "PACKAGED_IN_IMAGE",
+                  "PRIVATE_BUCKET_RELEASE",
+                  "COMPILED_IN_BINARY"
+                ]
+              },
+              "owner": {
+                "$ref": "#/$defs/brainId"
+              },
+              "location": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Repo-relative manifest path, or the bucket and pointer object. Never a developer-machine path."
+              },
+              "loader": {
+                "type": "string",
+                "minLength": 1
+              },
+              "verification": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lineage": {
+                "type": "string",
+                "minLength": 1
+              },
+              "approval": {
+                "enum": [
+                  "APPROVED",
+                  "NOT_RECORDED"
+                ]
+              },
+              "approvalRecord": {
+                "$ref": "#/$defs/repoPath"
+              },
+              "onUnavailable": {
+                "enum": [
+                  "REFUSE",
+                  "DEGRADE_EXPLICITLY",
+                  "NOT_APPLICABLE"
+                ]
+              }
+            }
+          }
+        },
+        "researchFallback": {
+          "const": false
+        },
+        "tests": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/repoPath"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
     }
   },
   "$defs": {

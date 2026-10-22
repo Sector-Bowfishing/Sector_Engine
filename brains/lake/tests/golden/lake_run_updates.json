@@ -1,0 +1,1758 @@
+{
+  "activity/1780317000000-lake-brain-000" : {
+    "at" : "2026-06-01T12:30:00Z",
+    "brainId" : "lake-brain",
+    "id" : "1780317000000-lake-brain-000",
+    "kind" : "brain.registered",
+    "severity" : "info",
+    "title" : "Lake Brain registered (v1.0.0, 5 pilot lakes)"
+  },
+  "brains/lake-brain" : {
+    "baselineMethod" : "doy15-percentile-v2",
+    "bindingVersion" : "bindings-2026-10-13.1",
+    "brainId" : "lake-brain",
+    "breakdowns" : {
+      "baselineStatus" : {
+        "NONE" : 5
+      },
+      "bindingStatus" : {
+        "REVIEWED" : 5
+      },
+      "fleetBindingStatus" : {
+        "CANDIDATE" : 191,
+        "REVIEWED" : 5
+      },
+      "historicalState" : {
+        "INSUFFICIENT_HISTORY" : 5
+      },
+      "levelState" : {
+        "IN_ZONE" : 5
+      },
+      "readiness" : {
+        "CALIBRATION" : 5
+      },
+      "sourceCapability" : {
+        "DIRECT_OPERATOR_POOL" : 5
+      },
+      "trendState" : {
+        "STABLE" : 5
+      }
+    },
+    "dependsOn" : [
+
+    ],
+    "directoryLakeCount" : 621,
+    "displayName" : "Lake Brain",
+    "domain" : "lake",
+    "enabled" : true,
+    "fleetScope" : "pilots (no presence bundle)",
+    "health" : "HEALTHY",
+    "healthRule" : "FAILED: write failed or no lakes. DEGRADED: > 25 % of reviewed lakes unavailable. WARNING: any reviewed lake stale, unavailable or on a fallback source. HEALTHY otherwise.",
+    "lastSuccessfulRun" : "2026-06-01T12:30:00Z",
+    "modelVersion" : "lake-level-rules-v2",
+    "orchestration" : {
+      "brainId" : "lake-brain",
+      "components" : {
+        "lakeProfile" : {
+          "inputs" : [
+            "Engine directory (GET /lakes) — referenced, not copied",
+            "reviewed source bindings",
+            "baseline status",
+            "presence researchVersion"
+          ],
+          "recomputeWhen" : [
+            "profileHash differs from the published one"
+          ],
+          "staleness" : "version-based: profileHash changes",
+          "status" : "ACTIVE"
+        },
+        "lakeState" : {
+          "inputs" : [
+            "reviewed source bindings (bindings-2026-10-13.1)",
+            "TVA RestApi observed-data-48-hours + operating-guide",
+            "USACE CWMS timeseries (named series)",
+            "USGS NWIS IV (named site/parameter)",
+            "gs://sector-water-temp-archive/water-temp/tva (shared, read-only)",
+            "gs://sector-lake-brain/history, baselines"
+          ],
+          "recomputeWhen" : [
+            "now ≥ published freshness.nextCheckAt",
+            "published state is stale",
+            "brain or rules version changed",
+            "binding version changed",
+            "nothing published yet"
+          ],
+          "staleness" : "time-based: stale when the source is more than two cadences past due, or the published state is older than 3 h",
+          "status" : "ACTIVE (pilot lakes)"
+        },
+        "speciesPresence" : {
+          "inputs" : [
+            "gs://sector-lake-brain/presence/latest.json (private)"
+          ],
+          "recomputeWhen" : [
+            "presence researchVersion or fingerprint changed"
+          ],
+          "staleness" : "version-based: researchVersion / fingerprint; never by age",
+          "status" : "ACTIVE"
+        }
+      },
+      "schedule" : "none: run on demand, or when the future Sector Brain Orchestrator decides (no Lake-specific cron)"
+    },
+    "platform" : {
+      "conformant" : true,
+      "contract" : "docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0",
+      "implementation" : "SectorEngine.Brain (Swift)"
+    },
+    "question" : "What does Sector know about this particular lake: its water level now, against its own history and operator guide, and which fish are recorded there?",
+    "readinessCounts" : {
+      "CALIBRATION" : 5
+    },
+    "readinessDefinitions" : {
+      "BETA" : "Current level from a reviewed source, operator guide and ≥ 5 complete years of history: every classification computed. Not yet validated.",
+      "CALIBRATION" : "Current level from a reviewed source; history < 5 complete years or no operator guide, so some classifications are withheld.",
+      "DEGRADED" : "Reviewed source, but the current reading is stale or unavailable (last known value kept and flagged).",
+      "DISCOVERED" : "Directory lake; no reviewed water-level source binding yet. Profile only.",
+      "PRODUCTION" : "Not used.",
+      "PROFILED" : "Reviewed binding says no usable level source.",
+      "VALIDATED" : "Not used until classification checks exist."
+    },
+    "schedule" : {
+      "cadence" : "manual (on demand; no Lake-specific cron — the Orchestrator will own cadence)",
+      "running" : "false"
+    },
+    "schemaVersion" : 1,
+    "staleAfterHours" : 3,
+    "staleLakeCount" : 0,
+    "stalenessModel" : "TIME",
+    "stateKindDefinitions" : {
+      "OBSERVED" : "Operator pool elevation or an on-lake surface-elevation gauge.",
+      "PROXY" : "A nearby gage height or river stage. Trend only: never a level state, percentile or pool difference.",
+      "UNAVAILABLE" : "No reading from any reviewed source."
+    },
+    "status" : "CALIBRATION",
+    "supportedLakeCount" : 5,
+    "version" : "1.0.0",
+    "versions" : [
+      {
+        "date" : "2026-10-13",
+        "note" : "Rules v2 (pre-registered): history tiers gate VERY_UNUSUAL (≥ 15 years), trend from the 72 h mean (floors 0.10 / 0.05 ft), RAPID = max(seasonal p95 |Δ24h|, 0.25 ft). baselineStatus (≥ 5 years SUFFICIENT) and NOT_VALIDATED unchanged.",
+        "status" : "CURRENT",
+        "version" : "1.0.0 · lake-level-rules-v2"
+      }
+    ]
+  },
+  "health/brains/lake-brain" : {
+    "durationMs" : 0,
+    "errorCount" : 0,
+    "lastRun" : "2026-06-01T12:30:00Z",
+    "lastSuccess" : "2026-06-01T12:30:00Z",
+    "staleLakeCount" : 0,
+    "status" : "HEALTHY"
+  },
+  "health/jobs/lake-brain" : {
+    "displayName" : "Lake Brain",
+    "durationMs" : 0,
+    "kind" : "manual-run",
+    "lastRun" : "2026-06-01T12:30:00Z",
+    "lastSuccess" : "2026-06-01T12:30:00Z",
+    "running" : false,
+    "status" : "HEALTHY"
+  },
+  "health/sources/tva-restapi" : {
+    "failuresLastRun" : 0,
+    "lastFetchAt" : "2026-06-01T12:30:00Z",
+    "status" : "HEALTHY"
+  },
+  "health/sources/usace-cwms-pool" : {
+    "failuresLastRun" : 0,
+    "lastFetchAt" : "2026-06-01T12:30:00Z",
+    "status" : "HEALTHY"
+  },
+  "health/sources/usgs-nwis-lake-elevation" : {
+    "failuresLastRun" : 0,
+    "lastFetchAt" : "2026-06-01T12:30:00Z",
+    "status" : "HEALTHY"
+  },
+  "lakeFleet/Guntersville_AL/lakeId" : "Guntersville|AL",
+  "lakeFleet/Guntersville_AL/modelVersions/lake" : "lake-level-rules-v2",
+  "lakeFleet/Guntersville_AL/readiness/lake" : "CALIBRATION",
+  "lakeFleet/Guntersville_AL/riverSystem" : "Tennessee",
+  "lakeFleet/Guntersville_AL/slots/lake" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-06-01T12:30:00Z",
+    "levelState" : "IN_ZONE",
+    "readiness" : "CALIBRATION",
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "stale" : false,
+    "stateType" : "OBSERVED",
+    "trendState" : "STABLE"
+  },
+  "lakeFleet/Lake_Hartwell_SC/lakeId" : "Lake Hartwell|SC",
+  "lakeFleet/Lake_Hartwell_SC/modelVersions/lake" : "lake-level-rules-v2",
+  "lakeFleet/Lake_Hartwell_SC/readiness/lake" : "CALIBRATION",
+  "lakeFleet/Lake_Hartwell_SC/riverSystem" : "Savannah",
+  "lakeFleet/Lake_Hartwell_SC/slots/lake" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-06-01T12:30:00Z",
+    "levelState" : "IN_ZONE",
+    "readiness" : "CALIBRATION",
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "stale" : false,
+    "stateType" : "OBSERVED",
+    "trendState" : "STABLE"
+  },
+  "lakeFleet/Pickwick_Lake_TN/lakeId" : "Pickwick Lake|TN",
+  "lakeFleet/Pickwick_Lake_TN/modelVersions/lake" : "lake-level-rules-v2",
+  "lakeFleet/Pickwick_Lake_TN/readiness/lake" : "CALIBRATION",
+  "lakeFleet/Pickwick_Lake_TN/riverSystem" : "Tennessee",
+  "lakeFleet/Pickwick_Lake_TN/slots/lake" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-06-01T12:30:00Z",
+    "levelState" : "IN_ZONE",
+    "readiness" : "CALIBRATION",
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "stale" : false,
+    "stateType" : "OBSERVED",
+    "trendState" : "STABLE"
+  },
+  "lakeFleet/Wheeler_AL/lakeId" : "Wheeler|AL",
+  "lakeFleet/Wheeler_AL/modelVersions/lake" : "lake-level-rules-v2",
+  "lakeFleet/Wheeler_AL/readiness/lake" : "CALIBRATION",
+  "lakeFleet/Wheeler_AL/riverSystem" : "Tennessee",
+  "lakeFleet/Wheeler_AL/slots/lake" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-06-01T12:30:00Z",
+    "levelState" : "IN_ZONE",
+    "readiness" : "CALIBRATION",
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "stale" : false,
+    "stateType" : "OBSERVED",
+    "trendState" : "STABLE"
+  },
+  "lakeFleet/Wilson_AL/lakeId" : "Wilson|AL",
+  "lakeFleet/Wilson_AL/modelVersions/lake" : "lake-level-rules-v2",
+  "lakeFleet/Wilson_AL/readiness/lake" : "CALIBRATION",
+  "lakeFleet/Wilson_AL/riverSystem" : "Tennessee",
+  "lakeFleet/Wilson_AL/slots/lake" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-06-01T12:30:00Z",
+    "levelState" : "IN_ZONE",
+    "readiness" : "CALIBRATION",
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "stale" : false,
+    "stateType" : "OBSERVED",
+    "trendState" : "STABLE"
+  },
+  "lakes/Guntersville_AL/brain" : {
+    "characteristics" : {
+      "context" : {
+        "chainPosition" : {
+          "chainId" : "chain-CherokeeLake",
+          "downLakes" : 4,
+          "nearestDown" : "Wheeler|AL",
+          "quality" : "derived",
+          "source" : "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+          "upLakes" : 2
+        },
+        "grassPct" : {
+          "asOf" : "2026-10-08",
+          "quality" : "measured, single pass; refresh by regenerating",
+          "source" : "Sector Water Clarity sentinel-2c pass 2026-10-08 (consume-only snapshot)",
+          "value" : 23.100000000000001
+        },
+        "lakeClass" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+          "value" : "R1_run_of_river_pool"
+        },
+        "regime" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "reservoir"
+        },
+        "region" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "SE"
+        },
+        "residenceTimeDays" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+          "value" : 13
+        },
+        "shorelineSlope" : {
+          "medianSlopeDeg" : 1.28,
+          "quality" : "proxy (Spearman 0.76 vs CWMS stage-area slope, 33 lakes)",
+          "runPerVerticalFtMedian" : 44.899999999999999,
+          "shareUnder2Deg" : 0.58799999999999997,
+          "source" : "USGS 3DEP DEM, shore band 10-60 m (research context_shore_dem.py; pilots only)"
+        }
+      },
+      "controlled" : {
+        "quality" : "operator pool published",
+        "source" : "TVA GVDA1",
+        "value" : true
+      },
+      "hydropower" : {
+        "quality" : "operator",
+        "source" : "tva:locations DamType",
+        "value" : true
+      }
+    },
+    "historicalCoverage" : {
+      "baselineMethod" : "doy15-percentile-v2",
+      "baselineStatus" : "NONE",
+      "baselineVersion" : "doy15-percentile-v2@none#996bbf47",
+      "historicalTier" : "NONE",
+      "observationCount" : 0,
+      "yearsCovered" : 0
+    },
+    "hydrology" : {
+      "dam" : {
+        "quality" : "operator",
+        "source" : "TVA GVDA1",
+        "value" : "Guntersville Dam"
+      }
+    },
+    "identity" : {
+      "geometry" : {
+        "lakeKey" : "Guntersville_AL",
+        "registryRef" : "https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json"
+      },
+      "riverSystem" : "Tennessee"
+    },
+    "lakeId" : "Guntersville|AL",
+    "operatingPools" : {
+      "guideCurve" : {
+        "available" : true,
+        "ref" : "https://www.tva.com/RestApi/operating-guide/GVDA1",
+        "source" : "TVA operating guide"
+      },
+      "normalFullPoolRef" : "engine-directory:fullPoolFt (GET /lakes)",
+      "operatingZoneSource" : "TVA BtmOpZone–TopOpZone (daily)",
+      "topOfGatesFt" : {
+        "quality" : "operator",
+        "source" : "tva:locations TopOfGatesFt",
+        "value" : 595.44000000000005
+      }
+    },
+    "profileHash" : "c1ef915084e42f9a",
+    "profileVersion" : 1,
+    "readiness" : {
+      "lake" : "CALIBRATION"
+    },
+    "schemaVersion" : 1,
+    "sourceCapability" : {
+      "bindingStatus" : "REVIEWED",
+      "bindingVersion" : "bindings-2026-10-13.1",
+      "history" : [
+        "gs://sector-water-temp-archive/water-temp/tva/GVDA1 (hourly, shared archive, read-only)",
+        "tva:operating-guide:GVDA1 (current + previous year, daily midnight)"
+      ],
+      "level" : "DIRECT_OPERATOR_POOL",
+      "note" : "TVA /locations: Guntersville Dam GVDA1, DamType Hydropower, River Tennessee. Live + 365-day operating guide probed 2026-10-12.",
+      "primary" : {
+        "cadenceMin" : 60,
+        "capability" : "DIRECT_OPERATOR_POOL",
+        "lagMin" : 60,
+        "note" : "observed-data-48-hours ReservoirElevation",
+        "provider" : "TVA",
+        "sourceId" : "tva:GVDA1"
+      },
+      "proxyOnly" : false,
+      "reviewedAt" : "2026-10-12"
+    },
+    "trustedSources" : {
+      "tva_GVDA1" : {
+        "authority" : "operator",
+        "brains" : [
+          "lake-brain"
+        ],
+        "lastObservationAt" : "2026-06-01T12:00:00Z",
+        "provider" : "TVA",
+        "sourceId" : "tva:GVDA1",
+        "sourceType" : "DIRECT_OPERATOR_POOL",
+        "station" : "GVDA1",
+        "status" : "HEALTHY"
+      }
+    },
+    "updatedAt" : "2026-06-01T12:30:00Z"
+  },
+  "lakes/Guntersville_AL/states/lake" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : -1.2,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA GVDA1).",
+      "−1.20 ft vs normal full pool (595.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Guntersville|AL",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:GVDA1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "lakes/Lake_Hartwell_SC/brain" : {
+    "characteristics" : {
+      "context" : {
+        "chainPosition" : {
+          "chainId" : "chain-Burton",
+          "downLakes" : 3,
+          "nearestDown" : "Lake Russell (R.B. Russell)|GA",
+          "quality" : "derived",
+          "source" : "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+          "upLakes" : 3
+        },
+        "grassPct" : {
+          "asOf" : "2026-10-07",
+          "quality" : "measured, single pass; refresh by regenerating",
+          "source" : "Sector Water Clarity sentinel-2b pass 2026-10-07 (consume-only snapshot)",
+          "value" : 6.5
+        },
+        "lakeClass" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+          "value" : "R3_dendritic_storage"
+        },
+        "regime" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "reservoir"
+        },
+        "region" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "SE"
+        },
+        "residenceTimeDays" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+          "value" : 369.80000000000001
+        },
+        "shorelineSlope" : {
+          "medianSlopeDeg" : 6.2999999999999998,
+          "quality" : "proxy (Spearman 0.76 vs CWMS stage-area slope, 33 lakes)",
+          "runPerVerticalFtMedian" : 9.0999999999999996,
+          "shareUnder2Deg" : 0.16800000000000001,
+          "source" : "USGS 3DEP DEM, shore band 10-60 m (research context_shore_dem.py; pilots only)"
+        }
+      },
+      "controlled" : {
+        "quality" : "operator pool published",
+        "source" : "USACE CWMS SAS",
+        "value" : true
+      },
+      "floodControl" : {
+        "quality" : "operator",
+        "source" : "cwms levels (Bottom of Flood Control)",
+        "value" : true
+      }
+    },
+    "historicalCoverage" : {
+      "baselineMethod" : "doy15-percentile-v2",
+      "baselineStatus" : "NONE",
+      "baselineVersion" : "doy15-percentile-v2@none#996bbf47",
+      "historicalTier" : "NONE",
+      "observationCount" : 0,
+      "yearsCovered" : 0
+    },
+    "hydrology" : {
+      "dam" : {
+        "quality" : "operator",
+        "source" : "USACE CWMS SAS",
+        "value" : "Hartwell Dam"
+      }
+    },
+    "identity" : {
+      "geometry" : {
+        "lakeKey" : "Lake_Hartwell_SC",
+        "registryRef" : "https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json"
+      },
+      "riverSystem" : "Savannah"
+    },
+    "lakeId" : "Lake Hartwell|SC",
+    "operatingPools" : {
+      "datum" : {
+        "quality" : "operator",
+        "source" : "USACE CWMS SAS",
+        "value" : "NGVD29"
+      },
+      "guideCurve" : {
+        "available" : true,
+        "ref" : "cwms:SAS:Hartwell.Elev-GC.Inst.1Day.0.ARCHIVE-DAILY",
+        "source" : "USACE CWMS guide curve"
+      },
+      "normalFullPoolRef" : "engine-directory:fullPoolFt (GET /lakes)",
+      "operatingZoneSource" : "CWMS Drought Level 1 to top of conservation (daily)"
+    },
+    "profileHash" : "4300ee39dd78e907",
+    "profileVersion" : 1,
+    "readiness" : {
+      "lake" : "CALIBRATION"
+    },
+    "schemaVersion" : 1,
+    "sourceCapability" : {
+      "bindingStatus" : "REVIEWED",
+      "bindingVersion" : "bindings-2026-10-13.1",
+      "fallbacks" : [
+        {
+          "cadenceMin" : 60,
+          "capability" : "DIRECT_LAKE_GAUGE",
+          "lagMin" : 60,
+          "note" : "HARTWELL LAKE NEAR ANDERSON, SC. Agrees with the CWMS pool within 0.03 ft over 2026-10-01..08 (site altitude is listed NAVD88; no offset applied, checked every run)",
+          "provider" : "USGS",
+          "sourceId" : "usgs:02187010:00062"
+        }
+      ],
+      "history" : [
+        "cwms:SAS:Hartwell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS (daily)"
+      ],
+      "level" : "DIRECT_OPERATOR_POOL",
+      "note" : "CWMS SAS: daily pool since 1960, hourly since 1997; guide curve (top of conservation) and drought levels L1–L3 published daily. Hourly pool feed last reported 2026-10-08 10:00Z at review time (production resolver gap C2), so the USGS on-lake gauge is the reviewed fallback. Flood control from the CWMS 'Bottom of Flood Control' level.",
+      "primary" : {
+        "cadenceMin" : 60,
+        "capability" : "DIRECT_OPERATOR_POOL",
+        "lagMin" : 120,
+        "note" : "USACE Savannah District pool elevation (NGVD29)",
+        "provider" : "USACE CWMS",
+        "sourceId" : "cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS"
+      },
+      "proxyOnly" : false,
+      "reviewedAt" : "2026-10-12"
+    },
+    "trustedSources" : {
+      "cwms_SAS_Hartwell_Elev_Pool_Inst_1Hour_0_Raw_SHEF_SAS" : {
+        "authority" : "operator",
+        "brains" : [
+          "lake-brain"
+        ],
+        "lastObservationAt" : "2026-06-01T12:00:00Z",
+        "provider" : "USACE CWMS",
+        "sourceId" : "cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS",
+        "sourceType" : "DIRECT_OPERATOR_POOL",
+        "station" : "SAS Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS",
+        "status" : "HEALTHY"
+      },
+      "usgs_02187010_00062" : {
+        "authority" : "agency-gauge",
+        "brains" : [
+          "lake-brain"
+        ],
+        "lastObservationAt" : "2026-06-01T12:00:00Z",
+        "provider" : "USGS",
+        "sourceId" : "usgs:02187010:00062",
+        "sourceType" : "DIRECT_LAKE_GAUGE",
+        "station" : "02187010 00062",
+        "status" : "HEALTHY"
+      }
+    },
+    "updatedAt" : "2026-06-01T12:30:00Z"
+  },
+  "lakes/Lake_Hartwell_SC/states/lake" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "datum" : "NGVD29",
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : -66.200000000000003,
+    "facts" : [
+      "593.80 ft at Jun 1, 8:00 AM EDT (USACE CWMS SAS).",
+      "−66.20 ft vs normal full pool (660.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T15:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T15:00:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Lake Hartwell|SC",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "lakes/Pickwick_Lake_TN/brain" : {
+    "characteristics" : {
+      "context" : {
+        "chainPosition" : {
+          "chainId" : "chain-CherokeeLake",
+          "downLakes" : 2,
+          "nearestDown" : "Kentucky Lake|TN",
+          "quality" : "derived",
+          "source" : "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+          "upLakes" : 3
+        },
+        "grassPct" : {
+          "asOf" : "2026-10-08",
+          "quality" : "measured, single pass; refresh by regenerating",
+          "source" : "Sector Water Clarity sentinel-2c pass 2026-10-08 (consume-only snapshot)",
+          "value" : 2.5
+        },
+        "lakeClass" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+          "value" : "R1_run_of_river_pool"
+        },
+        "regime" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "reservoir"
+        },
+        "region" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "SE"
+        },
+        "residenceTimeDays" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+          "value" : 10.5
+        },
+        "shorelineSlope" : {
+          "medianSlopeDeg" : 3.8999999999999999,
+          "quality" : "proxy (Spearman 0.76 vs CWMS stage-area slope, 33 lakes)",
+          "runPerVerticalFtMedian" : 14.699999999999999,
+          "shareUnder2Deg" : 0.40899999999999997,
+          "source" : "USGS 3DEP DEM, shore band 10-60 m (research context_shore_dem.py; pilots only)"
+        }
+      },
+      "controlled" : {
+        "quality" : "operator pool published",
+        "source" : "TVA PICT1",
+        "value" : true
+      },
+      "hydropower" : {
+        "quality" : "operator",
+        "source" : "tva:locations DamType",
+        "value" : true
+      }
+    },
+    "historicalCoverage" : {
+      "baselineMethod" : "doy15-percentile-v2",
+      "baselineStatus" : "NONE",
+      "baselineVersion" : "doy15-percentile-v2@none#996bbf47",
+      "historicalTier" : "NONE",
+      "observationCount" : 0,
+      "yearsCovered" : 0
+    },
+    "hydrology" : {
+      "dam" : {
+        "quality" : "operator",
+        "source" : "TVA PICT1",
+        "value" : "Pickwick Dam"
+      }
+    },
+    "identity" : {
+      "geometry" : {
+        "lakeKey" : "Pickwick_Lake_TN",
+        "registryRef" : "https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json"
+      },
+      "riverSystem" : "Tennessee"
+    },
+    "lakeId" : "Pickwick Lake|TN",
+    "operatingPools" : {
+      "guideCurve" : {
+        "available" : true,
+        "ref" : "https://www.tva.com/RestApi/operating-guide/PICT1",
+        "source" : "TVA operating guide"
+      },
+      "normalFullPoolRef" : "engine-directory:fullPoolFt (GET /lakes)",
+      "operatingZoneSource" : "TVA BtmOpZone–TopOpZone (daily)",
+      "topOfGatesFt" : {
+        "quality" : "operator",
+        "source" : "tva:locations TopOfGatesFt",
+        "value" : 418
+      }
+    },
+    "profileHash" : "07b50820e1921dd2",
+    "profileVersion" : 1,
+    "readiness" : {
+      "lake" : "CALIBRATION"
+    },
+    "schemaVersion" : 1,
+    "sourceCapability" : {
+      "bindingStatus" : "REVIEWED",
+      "bindingVersion" : "bindings-2026-10-13.1",
+      "history" : [
+        "gs://sector-water-temp-archive/water-temp/tva/PICT1 (hourly, shared archive, read-only)",
+        "tva:operating-guide:PICT1 (current + previous year, daily midnight)"
+      ],
+      "level" : "DIRECT_OPERATOR_POOL",
+      "note" : "TVA /locations: Pickwick Dam PICT1, DamType Hydropower, River Tennessee. Live + 365-day operating guide probed 2026-10-12.",
+      "primary" : {
+        "cadenceMin" : 60,
+        "capability" : "DIRECT_OPERATOR_POOL",
+        "lagMin" : 60,
+        "note" : "observed-data-48-hours ReservoirElevation",
+        "provider" : "TVA",
+        "sourceId" : "tva:PICT1"
+      },
+      "proxyOnly" : false,
+      "reviewedAt" : "2026-10-12"
+    },
+    "trustedSources" : {
+      "tva_PICT1" : {
+        "authority" : "operator",
+        "brains" : [
+          "lake-brain"
+        ],
+        "lastObservationAt" : "2026-06-01T12:00:00Z",
+        "provider" : "TVA",
+        "sourceId" : "tva:PICT1",
+        "sourceType" : "DIRECT_OPERATOR_POOL",
+        "station" : "PICT1",
+        "status" : "HEALTHY"
+      }
+    },
+    "updatedAt" : "2026-06-01T12:30:00Z"
+  },
+  "lakes/Pickwick_Lake_TN/states/lake" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : 179.80000000000001,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA PICT1).",
+      "+179.80 ft vs normal full pool (414.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Pickwick Lake|TN",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:PICT1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "lakes/Wheeler_AL/brain" : {
+    "characteristics" : {
+      "context" : {
+        "chainPosition" : {
+          "chainId" : "chain-CherokeeLake",
+          "downLakes" : 3,
+          "nearestDown" : "Wilson|AL",
+          "quality" : "derived",
+          "source" : "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+          "upLakes" : 2
+        },
+        "grassPct" : {
+          "asOf" : "2026-10-08",
+          "quality" : "measured, single pass; refresh by regenerating",
+          "source" : "Sector Water Clarity sentinel-2c pass 2026-10-08 (consume-only snapshot)",
+          "value" : 6.0999999999999996
+        },
+        "lakeClass" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+          "value" : "R1_run_of_river_pool"
+        },
+        "regime" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "reservoir"
+        },
+        "region" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "SE"
+        },
+        "residenceTimeDays" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+          "value" : 11.1
+        },
+        "shorelineSlope" : {
+          "medianSlopeDeg" : 1.1100000000000001,
+          "quality" : "proxy (Spearman 0.76 vs CWMS stage-area slope, 33 lakes)",
+          "runPerVerticalFtMedian" : 51.600000000000001,
+          "shareUnder2Deg" : 0.61699999999999999,
+          "source" : "USGS 3DEP DEM, shore band 10-60 m (research context_shore_dem.py; pilots only)"
+        }
+      },
+      "controlled" : {
+        "quality" : "operator pool published",
+        "source" : "TVA WHLA1",
+        "value" : true
+      },
+      "hydropower" : {
+        "quality" : "operator",
+        "source" : "tva:locations DamType",
+        "value" : true
+      }
+    },
+    "historicalCoverage" : {
+      "baselineMethod" : "doy15-percentile-v2",
+      "baselineStatus" : "NONE",
+      "baselineVersion" : "doy15-percentile-v2@none#996bbf47",
+      "historicalTier" : "NONE",
+      "observationCount" : 0,
+      "yearsCovered" : 0
+    },
+    "hydrology" : {
+      "dam" : {
+        "quality" : "operator",
+        "source" : "TVA WHLA1",
+        "value" : "Wheeler Dam"
+      }
+    },
+    "identity" : {
+      "geometry" : {
+        "lakeKey" : "Wheeler_AL",
+        "registryRef" : "https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json"
+      },
+      "riverSystem" : "Tennessee"
+    },
+    "lakeId" : "Wheeler|AL",
+    "operatingPools" : {
+      "guideCurve" : {
+        "available" : true,
+        "ref" : "https://www.tva.com/RestApi/operating-guide/WHLA1",
+        "source" : "TVA operating guide"
+      },
+      "normalFullPoolRef" : "engine-directory:fullPoolFt (GET /lakes)",
+      "operatingZoneSource" : "TVA BtmOpZone–TopOpZone (daily)",
+      "topOfGatesFt" : {
+        "quality" : "operator",
+        "source" : "tva:locations TopOfGatesFt",
+        "value" : 556.27999999999997
+      }
+    },
+    "profileHash" : "076bcc2a0574327e",
+    "profileVersion" : 1,
+    "readiness" : {
+      "lake" : "CALIBRATION"
+    },
+    "schemaVersion" : 1,
+    "sourceCapability" : {
+      "bindingStatus" : "REVIEWED",
+      "bindingVersion" : "bindings-2026-10-13.1",
+      "history" : [
+        "gs://sector-water-temp-archive/water-temp/tva/WHLA1 (hourly, shared archive, read-only)",
+        "tva:operating-guide:WHLA1 (current + previous year, daily midnight)"
+      ],
+      "level" : "DIRECT_OPERATOR_POOL",
+      "note" : "TVA /locations: Wheeler Dam WHLA1, DamType Hydropower, River Tennessee. Live + 365-day operating guide probed 2026-10-12.",
+      "primary" : {
+        "cadenceMin" : 60,
+        "capability" : "DIRECT_OPERATOR_POOL",
+        "lagMin" : 60,
+        "note" : "observed-data-48-hours ReservoirElevation",
+        "provider" : "TVA",
+        "sourceId" : "tva:WHLA1"
+      },
+      "proxyOnly" : false,
+      "reviewedAt" : "2026-10-12"
+    },
+    "trustedSources" : {
+      "tva_WHLA1" : {
+        "authority" : "operator",
+        "brains" : [
+          "lake-brain"
+        ],
+        "lastObservationAt" : "2026-06-01T12:00:00Z",
+        "provider" : "TVA",
+        "sourceId" : "tva:WHLA1",
+        "sourceType" : "DIRECT_OPERATOR_POOL",
+        "station" : "WHLA1",
+        "status" : "HEALTHY"
+      }
+    },
+    "updatedAt" : "2026-06-01T12:30:00Z"
+  },
+  "lakes/Wheeler_AL/states/lake" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : 37.799999999999997,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA WHLA1).",
+      "+37.80 ft vs normal full pool (556.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Wheeler|AL",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:WHLA1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "lakes/Wilson_AL/brain" : {
+    "characteristics" : {
+      "context" : {
+        "chainPosition" : {
+          "chainId" : "chain-CherokeeLake",
+          "downLakes" : 3,
+          "nearestDown" : "Pickwick Lake|TN",
+          "quality" : "derived",
+          "source" : "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
+          "upLakes" : 2
+        },
+        "grassPct" : {
+          "asOf" : "2026-10-08",
+          "quality" : "measured, single pass; refresh by regenerating",
+          "source" : "Sector Water Clarity sentinel-2c pass 2026-10-08 (consume-only snapshot)",
+          "value" : 1.6000000000000001
+        },
+        "lakeClass" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
+          "value" : "R1_run_of_river_pool"
+        },
+        "regime" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "reservoir"
+        },
+        "region" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13)",
+          "value" : "SE"
+        },
+        "residenceTimeDays" : {
+          "quality" : "derived",
+          "source" : "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
+          "value" : 8.5999999999999996
+        },
+        "shorelineSlope" : {
+          "medianSlopeDeg" : 7.96,
+          "quality" : "proxy (Spearman 0.76 vs CWMS stage-area slope, 33 lakes)",
+          "runPerVerticalFtMedian" : 7.0999999999999996,
+          "shareUnder2Deg" : 0.20799999999999999,
+          "source" : "USGS 3DEP DEM, shore band 10-60 m (research context_shore_dem.py; pilots only)"
+        }
+      },
+      "controlled" : {
+        "quality" : "operator pool published",
+        "source" : "TVA WLSA1",
+        "value" : true
+      },
+      "hydropower" : {
+        "quality" : "operator",
+        "source" : "tva:locations DamType",
+        "value" : true
+      }
+    },
+    "historicalCoverage" : {
+      "baselineMethod" : "doy15-percentile-v2",
+      "baselineStatus" : "NONE",
+      "baselineVersion" : "doy15-percentile-v2@none#996bbf47",
+      "historicalTier" : "NONE",
+      "observationCount" : 0,
+      "yearsCovered" : 0
+    },
+    "hydrology" : {
+      "dam" : {
+        "quality" : "operator",
+        "source" : "TVA WLSA1",
+        "value" : "Wilson Dam"
+      }
+    },
+    "identity" : {
+      "geometry" : {
+        "lakeKey" : "Wilson_AL",
+        "registryRef" : "https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json"
+      },
+      "riverSystem" : "Tennessee"
+    },
+    "lakeId" : "Wilson|AL",
+    "operatingPools" : {
+      "guideCurve" : {
+        "available" : true,
+        "ref" : "https://www.tva.com/RestApi/operating-guide/WLSA1",
+        "source" : "TVA operating guide"
+      },
+      "normalFullPoolRef" : "engine-directory:fullPoolFt (GET /lakes)",
+      "operatingZoneSource" : "TVA BtmOpZone–TopOpZone (daily)",
+      "topOfGatesFt" : {
+        "quality" : "operator",
+        "source" : "tva:locations TopOfGatesFt",
+        "value" : 507.88
+      }
+    },
+    "profileHash" : "986a111aced00040",
+    "profileVersion" : 1,
+    "readiness" : {
+      "lake" : "CALIBRATION"
+    },
+    "schemaVersion" : 1,
+    "sourceCapability" : {
+      "bindingStatus" : "REVIEWED",
+      "bindingVersion" : "bindings-2026-10-13.1",
+      "history" : [
+        "gs://sector-water-temp-archive/water-temp/tva/WLSA1 (hourly, shared archive, read-only)",
+        "tva:operating-guide:WLSA1 (current + previous year, daily midnight)"
+      ],
+      "level" : "DIRECT_OPERATOR_POOL",
+      "note" : "TVA /locations: Wilson Dam WLSA1, DamType Hydropower, River Tennessee. Live + 365-day operating guide probed 2026-10-12.",
+      "primary" : {
+        "cadenceMin" : 60,
+        "capability" : "DIRECT_OPERATOR_POOL",
+        "lagMin" : 60,
+        "note" : "observed-data-48-hours ReservoirElevation",
+        "provider" : "TVA",
+        "sourceId" : "tva:WLSA1"
+      },
+      "proxyOnly" : false,
+      "reviewedAt" : "2026-10-12"
+    },
+    "trustedSources" : {
+      "tva_WLSA1" : {
+        "authority" : "operator",
+        "brains" : [
+          "lake-brain"
+        ],
+        "lastObservationAt" : "2026-06-01T12:00:00Z",
+        "provider" : "TVA",
+        "sourceId" : "tva:WLSA1",
+        "sourceType" : "DIRECT_OPERATOR_POOL",
+        "station" : "WLSA1",
+        "status" : "HEALTHY"
+      }
+    },
+    "updatedAt" : "2026-06-01T12:30:00Z"
+  },
+  "lakes/Wilson_AL/states/lake" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : 86.099999999999994,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA WLSA1).",
+      "+86.10 ft vs normal full pool (507.70 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Wilson|AL",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:WLSA1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "snapshots/Guntersville_AL/latest/brainVersions/lake-brain" : "1.0.0",
+  "snapshots/Guntersville_AL/latest/lakeId" : "Guntersville|AL",
+  "snapshots/Guntersville_AL/latest/lakeState" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : -1.2,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA GVDA1).",
+      "−1.20 ft vs normal full pool (595.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Guntersville|AL",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:GVDA1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "snapshots/Lake_Hartwell_SC/latest/brainVersions/lake-brain" : "1.0.0",
+  "snapshots/Lake_Hartwell_SC/latest/lakeId" : "Lake Hartwell|SC",
+  "snapshots/Lake_Hartwell_SC/latest/lakeState" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "datum" : "NGVD29",
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : -66.200000000000003,
+    "facts" : [
+      "593.80 ft at Jun 1, 8:00 AM EDT (USACE CWMS SAS).",
+      "−66.20 ft vs normal full pool (660.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T15:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T15:00:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Lake Hartwell|SC",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "snapshots/Pickwick_Lake_TN/latest/brainVersions/lake-brain" : "1.0.0",
+  "snapshots/Pickwick_Lake_TN/latest/lakeId" : "Pickwick Lake|TN",
+  "snapshots/Pickwick_Lake_TN/latest/lakeState" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : 179.80000000000001,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA PICT1).",
+      "+179.80 ft vs normal full pool (414.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Pickwick Lake|TN",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:PICT1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "snapshots/Wheeler_AL/latest/brainVersions/lake-brain" : "1.0.0",
+  "snapshots/Wheeler_AL/latest/lakeId" : "Wheeler|AL",
+  "snapshots/Wheeler_AL/latest/lakeState" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : 37.799999999999997,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA WHLA1).",
+      "+37.80 ft vs normal full pool (556.00 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Wheeler|AL",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:WHLA1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "snapshots/Wilson_AL/latest/brainVersions/lake-brain" : "1.0.0",
+  "snapshots/Wilson_AL/latest/lakeId" : "Wilson|AL",
+  "snapshots/Wilson_AL/latest/lakeState" : {
+    "baselineStatus" : "NONE",
+    "change" : {
+      "h1" : 0,
+      "h6" : 0,
+      "h24" : 0
+    },
+    "currentElevationFt" : 593.79999999999995,
+    "differenceFromGuideFt" : -0.40000000000000002,
+    "differenceFromNormalPoolFt" : 86.099999999999994,
+    "facts" : [
+      "593.80 ft at Jun 1, 7:00 AM CDT (TVA WLSA1).",
+      "+86.10 ft vs normal full pool (507.70 ft).",
+      "−0.40 ft vs the operator guide curve for today (594.20 ft).",
+      "Inside the operator zone for today (593.60 ft–594.60 ft, b to t).",
+      "Unchanged over 24 h."
+    ],
+    "floodPoolState" : "UNKNOWN",
+    "freshness" : {
+      "freshUntil" : "2026-06-01T14:00:00Z",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "nextCheckAt" : "2026-06-01T14:30:00Z",
+      "refreshReason" : "scheduled: stable lake, 2 h",
+      "sourceObservationAt" : "2026-06-01T12:00:00Z",
+      "stale" : false
+    },
+    "guideFt" : 594.20000000000005,
+    "historicalState" : "INSUFFICIENT_HISTORY",
+    "historicalTier" : "NONE",
+    "kind" : "OBSERVED",
+    "lakeId" : "Wilson|AL",
+    "levelState" : "IN_ZONE",
+    "normalPoolRef" : "engine-directory:fullPoolFt",
+    "observationTime" : "2026-06-01T12:00:00Z",
+    "operatingZone" : {
+      "bottomFt" : 593.60000000000002,
+      "bottomLabel" : "b",
+      "source" : "fake",
+      "topFt" : 594.60000000000002,
+      "topLabel" : "t"
+    },
+    "provenance" : {
+      "brainId" : "lake-brain",
+      "brainVersion" : "1.0.0",
+      "generatedAt" : "2026-06-01T12:30:00Z",
+      "inputAgeHours" : 0.5,
+      "modelVersion" : "lake-level-rules-v2",
+      "qualityFlags" : [
+        "rateBaselineLimited",
+        "trend24hFallback",
+        "noOperatorFloodPoolThreshold",
+        "historicalBaseline:NONE"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-06-01T12:00:00Z",
+          "sourceId" : "tva:WLSA1",
+          "sourceType" : "DIRECT_OPERATOR_POOL"
+        },
+        {
+          "sourceId" : "fake",
+          "sourceType" : "operatorGuide"
+        }
+      ],
+      "validationRef" : "/validation/lake-brain"
+    },
+    "rapidChangeThresholdFt" : 0.25,
+    "schemaVersion" : 1,
+    "sourceAgeHours" : 0.5,
+    "sourceCapability" : "DIRECT_OPERATOR_POOL",
+    "trendState" : "STABLE",
+    "unit" : "ft"
+  },
+  "sources/tva-restapi" : {
+    "brains" : {
+      "lake-brain" : true
+    },
+    "failuresLastRun" : 0,
+    "health" : "HEALTHY",
+    "lakeCount" : 4,
+    "lastFetchAt" : "2026-06-01T12:30:00Z",
+    "latestObservationAt" : "2026-06-01T12:00:00Z",
+    "notes" : "Written by the Lake Brain run. 0 bound series stale at run time.",
+    "ownerBrainId" : "lake-brain",
+    "provider" : "TVA",
+    "provides" : "hourly observed reservoir elevation + 365-day operating guide (guide curve, operating zone)",
+    "sourceId" : "tva-restapi",
+    "staleThresholdHours" : 3,
+    "type" : "reservoir-elevation"
+  },
+  "sources/usace-cwms-pool" : {
+    "brains" : {
+      "lake-brain" : true
+    },
+    "failuresLastRun" : 0,
+    "health" : "HEALTHY",
+    "lakeCount" : 1,
+    "lastFetchAt" : "2026-06-01T12:30:00Z",
+    "latestObservationAt" : "2026-06-01T12:00:00Z",
+    "notes" : "Written by the Lake Brain run. 0 bound series stale at run time.",
+    "ownerBrainId" : "lake-brain",
+    "provider" : "USACE CWMS",
+    "provides" : "pool elevation (hourly + daily since 1960 at Hartwell), guide curve, drought levels",
+    "sourceId" : "usace-cwms-pool",
+    "staleThresholdHours" : 3,
+    "type" : "reservoir-elevation"
+  },
+  "sources/usgs-nwis-lake-elevation" : {
+    "brains" : {
+      "lake-brain" : true
+    },
+    "failuresLastRun" : 0,
+    "health" : "HEALTHY",
+    "lakeCount" : 1,
+    "lastFetchAt" : "2026-06-01T12:30:00Z",
+    "notes" : "Written by the Lake Brain run. 0 bound series stale at run time.",
+    "ownerBrainId" : "lake-brain",
+    "provider" : "USGS",
+    "provides" : "on-lake surface elevation (00062/62614)",
+    "sourceId" : "usgs-nwis-lake-elevation",
+    "staleThresholdHours" : 3,
+    "type" : "lake-surface-elevation"
+  },
+  "validation/lake-brain" : {
+    "brainId" : "lake-brain",
+    "holdoutType" : "none",
+    "lakeCount" : 5,
+    "lastRunAt" : "2026-06-01T12:30:00Z",
+    "modelVersion" : "lake-level-rules-v2",
+    "notes" : [
+      "No classification checks exist yet; readiness is capped at BETA.",
+      "Method cross-check (not a validation): Lake Hartwell's computed seasonal band is compared with the CWMS-published percentile series in the pilot report."
+    ],
+    "sampleCount" : 0,
+    "status" : "NOT_VALIDATED",
+    "validationVersion" : "none"
+  }
+}

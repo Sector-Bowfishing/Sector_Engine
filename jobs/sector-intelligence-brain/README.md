@@ -1,17 +1,11 @@
-# Sector Intelligence Brain publisher
+# Moved: `jobs/sector-intelligence-brain` → `brains/sector-intelligence/`
 
-Publishes the `sector-intelligence` registry, its upstream-brain dependency status, its validation status and per-lake input availability to the Brain RTDB (`sector-brain`). It **evaluates nothing** and never calls `/conditions`.
+**Status: RETIRED (Sector Intelligence migration, Cortex architecture completion 2026-10-20).** The Sector Intelligence Brain's (`brainId: sector-intelligence`) permanent home is [`brains/sector-intelligence/`](../../brains/sector-intelligence/README.md). Nothing here is code, an entrypoint or a deploy unit; there is no second Intelligence implementation.
 
-Contract: `docs/brains/SECTOR_INTELLIGENCE_BRAIN_INTEGRATION.md`.
+| Was | Now |
+|---|---|
+| `run.py`, `sector_intelligence_brain.py`, `evaluation.py`, `orchestration.py`, `brain_platform.py`, `catalog.json` | `brains/sector-intelligence/runtime/` |
+| `tests/` | `brains/sector-intelligence/tests/` |
+| `docs/architecture/certification/sector-intelligence/BRAIN_OPERATING_CONTRACT.md` | `brains/sector-intelligence/BRAIN_OPERATING_CONTRACT.md` |
 
-```
-python run.py --plan                 # is a publish warranted? (GET only)
-python run.py --dry-run --out out/   # build everything from live reads, write out/updates.json, no writes
-python run.py --write                # one atomic multi-path update
-python -m unittest discover -s tests
-```
-
-- **Python:** stdlib only.
-- **Credentials:** the gcloud CLI token on a developer machine, or the metadata server on Cloud Run.
-- **Scheduling:** none. Scheduling belongs to the future Sector Brain Orchestrator (see `orchestration.py`).
-- **`brain_platform.py`:** a verbatim copy of the Water Clarity / Biological platform module. Lift it into a shared module when the Brain platform is unified.
+The in-process executor id `sector-intelligence-brain` (job record, orchestrator) is not a repository path and is unchanged. The orchestrator image still stages the runtime as `jobs/sector-intelligence-brain/` (`jobs/brain-orchestrator/deploy-job.sh` copies it from `brains/sector-intelligence/runtime`), so a deployed image sees the same layout it always has.

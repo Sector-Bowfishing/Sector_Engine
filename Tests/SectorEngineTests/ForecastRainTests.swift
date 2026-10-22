@@ -84,62 +84,67 @@ final class ForecastRainTests: XCTestCase {
 
     /// Dry tonight (MRMS answered 0.0"), 2.5" forecast for tomorrow: night +1
     /// must muddy. Before the fix it read exactly as dry as tonight.
-    @MainActor
-    func testDryTonightHeavyRainPlus24hMuddiesNightPlus1() {
-        let dry = outlook(rain: [:], watershed: 0, mrms: dryMRMS)
-        let wet = outlook(rain: [1: 2.5], watershed: 0, mrms: dryMRMS)
-        guard dry.nights.count > 3, wet.nights.count > 3 else { return XCTFail("outlook too short") }
-        XCTAssertLessThan(Self.clarity(wet.nights[1]), Self.clarity(dry.nights[1]),
-                          "2.5\" forecast for tomorrow must lower tomorrow night's clarity with MRMS present")
-        XCTAssertEqual(Self.clarity(wet.nights[0]), Self.clarity(dry.nights[0]),
-                       "tonight's clarity must not change")
+    func testDryTonightHeavyRainPlus24hMuddiesNightPlus1() async {   // nonisolated entry + MainActor body: Linux XCTest cannot invoke a @MainActor test method
+        await MainActor.run {
+            let dry = outlook(rain: [:], watershed: 0, mrms: dryMRMS)
+            let wet = outlook(rain: [1: 2.5], watershed: 0, mrms: dryMRMS)
+            guard dry.nights.count > 3, wet.nights.count > 3 else { return XCTFail("outlook too short") }
+            XCTAssertLessThan(Self.clarity(wet.nights[1]), Self.clarity(dry.nights[1]),
+                              "2.5\" forecast for tomorrow must lower tomorrow night's clarity with MRMS present")
+            XCTAssertEqual(Self.clarity(wet.nights[0]), Self.clarity(dry.nights[0]),
+                           "tonight's clarity must not change")
+        }
     }
 
     /// Dry tonight, 2.5" forecast for day +2: night +2 muddies, night +1 does not.
-    @MainActor
-    func testDryTonightHeavyRainPlus48hMuddiesNightPlus2Only() {
-        let dry = outlook(rain: [:], watershed: 0, mrms: dryMRMS)
-        let wet = outlook(rain: [2: 2.5], watershed: 0, mrms: dryMRMS)
-        guard dry.nights.count > 4, wet.nights.count > 4 else { return XCTFail("outlook too short") }
-        XCTAssertEqual(Self.clarity(wet.nights[1]), Self.clarity(dry.nights[1]), "night +1 is before the rain")
-        XCTAssertLessThan(Self.clarity(wet.nights[2]), Self.clarity(dry.nights[2]), "night +2 has the rain")
-        XCTAssertLessThan(Self.clarity(wet.nights[3]), Self.clarity(dry.nights[3]),
-                          "the rain is still inside night +3's 72 h window")
-        XCTAssertEqual(Self.clarity(wet.nights[5]), Self.clarity(dry.nights[5]),
-                       "by night +5 the rain has left the window")
+    func testDryTonightHeavyRainPlus48hMuddiesNightPlus2Only() async {   // nonisolated entry + MainActor body: Linux XCTest cannot invoke a @MainActor test method
+        await MainActor.run {
+            let dry = outlook(rain: [:], watershed: 0, mrms: dryMRMS)
+            let wet = outlook(rain: [2: 2.5], watershed: 0, mrms: dryMRMS)
+            guard dry.nights.count > 4, wet.nights.count > 4 else { return XCTFail("outlook too short") }
+            XCTAssertEqual(Self.clarity(wet.nights[1]), Self.clarity(dry.nights[1]), "night +1 is before the rain")
+            XCTAssertLessThan(Self.clarity(wet.nights[2]), Self.clarity(dry.nights[2]), "night +2 has the rain")
+            XCTAssertLessThan(Self.clarity(wet.nights[3]), Self.clarity(dry.nights[3]),
+                              "the rain is still inside night +3's 72 h window")
+            XCTAssertEqual(Self.clarity(wet.nights[5]), Self.clarity(dry.nights[5]),
+                           "by night +5 the rain has left the window")
+        }
     }
 
     /// Tonight is the live gauge, rain or no rain in the forecast.
-    @MainActor
-    func testTonightStillEqualsTheGauge() {
-        let now = Date()
-        let b = Self.base(now: now, watershed72hIn: 0)
-        let fc = outlook(rain: [1: 3.0, 2: 3.0], watershed: 0, mrms: dryMRMS, now: now)
-        XCTAssertEqual(fc.nights.first?.score, ConditionsAggregator.evaluate(b).score)
+    func testTonightStillEqualsTheGauge() async {   // nonisolated entry + MainActor body: Linux XCTest cannot invoke a @MainActor test method
+        await MainActor.run {
+            let now = Date()
+            let b = Self.base(now: now, watershed72hIn: 0)
+            let fc = outlook(rain: [1: 3.0, 2: 3.0], watershed: 0, mrms: dryMRMS, now: now)
+            XCTAssertEqual(fc.nights.first?.score, ConditionsAggregator.evaluate(b).score)
+        }
     }
 
     /// Rain MRMS observed yesterday stays in night +1's window (days -1…+1)
     /// and has left night +2's (days 0…+2).
-    @MainActor
-    func testObservedRainYesterdayCarriesOneNightThenLeaves() {
-        let now = Date()
-        let wetYesterday = MrmsPrecip(watershed72hIn: 2.0, point72hIn: 2.0, daily: [], todayIn: 0,
-                                      watershedByDay: [Self.dayKey(-1, from: now): 2.0])
-        let fc = outlook(rain: [:], watershed: 2.0, mrms: wetYesterday, now: now)
-        let dry = outlook(rain: [:], watershed: 0, mrms: dryMRMS, now: now)
-        guard fc.nights.count > 3 else { return XCTFail("outlook too short") }
-        XCTAssertLessThan(Self.clarity(fc.nights[1]), Self.clarity(dry.nights[1]),
-                          "yesterday's observed rain is still in night +1's window")
-        XCTAssertEqual(Self.clarity(fc.nights[2]), Self.clarity(dry.nights[2]),
-                       "and has left night +2's")
+    func testObservedRainYesterdayCarriesOneNightThenLeaves() async {   // nonisolated entry + MainActor body: Linux XCTest cannot invoke a @MainActor test method
+        await MainActor.run {
+            let now = Date()
+            let wetYesterday = MrmsPrecip(watershed72hIn: 2.0, point72hIn: 2.0, daily: [], todayIn: 0,
+                                          watershedByDay: [Self.dayKey(-1, from: now): 2.0])
+            let fc = outlook(rain: [:], watershed: 2.0, mrms: wetYesterday, now: now)
+            let dry = outlook(rain: [:], watershed: 0, mrms: dryMRMS, now: now)
+            guard fc.nights.count > 3 else { return XCTFail("outlook too short") }
+            XCTAssertLessThan(Self.clarity(fc.nights[1]), Self.clarity(dry.nights[1]),
+                              "yesterday's observed rain is still in night +1's window")
+            XCTAssertEqual(Self.clarity(fc.nights[2]), Self.clarity(dry.nights[2]),
+                           "and has left night +2's")
+        }
     }
 
     /// No MRMS: the Open-Meteo window path, unchanged.
-    @MainActor
-    func testWithoutMRMSTheForecastWindowStillDrives() {
-        let dry = outlook(rain: [:], watershed: nil, mrms: nil)
-        let wet = outlook(rain: [2: 2.5], watershed: nil, mrms: nil)
-        guard dry.nights.count > 2, wet.nights.count > 2 else { return XCTFail("outlook too short") }
-        XCTAssertLessThan(Self.clarity(wet.nights[2]), Self.clarity(dry.nights[2]))
+    func testWithoutMRMSTheForecastWindowStillDrives() async {   // nonisolated entry + MainActor body: Linux XCTest cannot invoke a @MainActor test method
+        await MainActor.run {
+            let dry = outlook(rain: [:], watershed: nil, mrms: nil)
+            let wet = outlook(rain: [2: 2.5], watershed: nil, mrms: nil)
+            guard dry.nights.count > 2, wet.nights.count > 2 else { return XCTFail("outlook too short") }
+            XCTAssertLessThan(Self.clarity(wet.nights[2]), Self.clarity(dry.nights[2]))
+        }
     }
 }

@@ -32,7 +32,13 @@ import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import brain_platform as bp            # noqa: E402
-import clarity_brain as cb             # noqa: E402
+try:
+    import clarity_brain as cb         # noqa: E402  (verifies the packaged knowledge release on import)
+except Exception as _e:                # KnowledgeReleaseError: no approved memory, so the job refuses instead of crashing or falling back
+    if __name__ != "__main__" or type(_e).__name__ != "KnowledgeReleaseError":
+        raise
+    print(f"REFUSED (nothing published): {_e}", file=sys.stderr)
+    sys.exit(2)
 
 ENGINE_URL = os.environ.get("ENGINE_URL", "https://sector-engine-e43utajroa-uc.a.run.app")
 PROJECT = os.environ.get("GCP_PROJECT", "sector-9393c")
@@ -347,7 +353,7 @@ def main() -> int:
             # Nothing is sent anywhere; no production path is touched. consumed is None: a dry run reads no RTDB, and GCS/HTTP reads are not recorded.
             import uuid
             import publish_artifact as pa
-            built = pa.build_artifact(payload, pa.BuildContext(bp.iso(now), str(uuid.uuid4()), deployment_version(), pa.catalog_digest()), consumed=None)
+            built = pa.build_artifact(payload, pa.BuildContext(bp.iso(now), str(uuid.uuid4()), deployment_version(), pa.catalog_digest(), **pa.release_lineage()), consumed=None)
             if built.artifact:
                 json.dump(built.artifact, open(os.path.join(a.out, "artifact.json"), "w"), indent=1, sort_keys=True)
                 from sector_brain_platform.publisher import local_shadow_stack

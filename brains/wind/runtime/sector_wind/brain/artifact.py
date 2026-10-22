@@ -100,7 +100,7 @@ class BuildContext:
     execution_id: str                 # UUIDv4 of this wind-hourly run (ONE per logical artifact)
     code_version: str                 # Wind's own commit (sha12), not the orchestrator's
     evidence_sha256: str = "NONE"     # sha256 of validation_evidence.json (an input digest)
-    knowledge_release: str = "NONE"   # NONE until Wind defines a canonical release (release/manifest/sha must be all NONE or all declared)
+    knowledge_release: str = "NONE"   # callers pass lineage_triple(ingest.verified_release()) (the Kit spec does); the SHADOW builder is not wired into the job yet
     manifest_ref: str = "NONE"
     manifest_sha256: str = "NONE"
     lifecycle: str = "CALIBRATION"

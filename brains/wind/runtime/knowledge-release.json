@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "wind",
+  "releaseId": "wind-knowledge-2026-10-20.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "wind",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "lakes.json",
+      "sha256": "1ded19e9b838b08d659cb9a7572f4569bacab0ff81bccebccbcc546270dede51",
+      "bytes": 2157
+    },
+    {
+      "path": "sector_wind/brain/validation_evidence.json",
+      "sha256": "0fb7ef09703df78d5d6ad564cf628a174ad62f1c11dc315be13330bbd09082ee",
+      "bytes": 5948
+    }
+  ],
+  "releaseDigest": "sha256:690adf50929f1efe5dc85cda8f281b02313451f08871745304ed024af7e65b42"
+}

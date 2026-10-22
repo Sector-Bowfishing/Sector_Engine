@@ -26,7 +26,7 @@ SPEC = ContractSpec(
                           "inputGeneratedAt": "newest Engine /conditions evaluation time (the input product's generation time)",
                           "brainGeneratedAt": "lineage.generatedAt (this run); publication time is the Publisher's",
                           "neverUsed": "lastSuccessfulRun / lastSuccess (process history, not evidence freshness)"},
-            "lineage": {"knowledgeRelease": "NONE (no canonical versioned release or manifest; the catalog digest is part of inputFingerprint)", "manifestRef": "NONE", "manifestSha256": "NONE",
+            "lineage": {"knowledgeRelease": "the verified packaged knowledge release id (runtime/knowledge-release.json over catalog.json); the catalog digest is also in inputFingerprint", "manifestRef": "image:knowledge-release.json", "manifestSha256": "the release digest (sha256)",
                         "consumed": "ACTUAL RTDB reads recorded by the platform client when available; GCS/HTTP reads are NOT recorded (platform debt); absent = unknown, never []"}})
 
 

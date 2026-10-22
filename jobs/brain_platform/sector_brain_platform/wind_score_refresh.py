@@ -5,7 +5,8 @@ re-evaluates it as live reliability days accrue. The rubric implementation stays
 block generator on the Wind adoption lineage); THIS module is the platform's admission gate for a candidate block it produced:
 
   new eligible evidence -> candidate block (canonical scorer) -> admit() here -> versioned frozen block + append-only history
-  -> score_brains.py publishes /scores/wind as before -> Sector Ops renders it. Ops never computes; Wind never publishes a score.
+  -> score_brains.py publishes /scores/wind as before -> Sector Ops renders it. Ops never computes. (The Wind job still writes a legacy, non-canonical copy of its
+validation scores into /brains/wind/scores and /validation/wind; /scores/wind is the canonical value. Retiring that copy is an open decision.)
 
 Automatic acceptance is deliberately narrow: only the live-reliability dimension (8) may move. Any other movement (skill evidence,
 field dimensions, coverage, provenance, caps, rubric/version, weights) is HELD for certification review, because before 2027-01-01

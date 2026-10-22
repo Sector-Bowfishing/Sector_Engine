@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "depth",
+  "displayName": "Depth Brain",
+  "humanName": "Depth",
+  "domain": "effective-depth",
+  "lifecycle": "PROFILED",
+  "contractVersion": "0.1.0",
+  "runtime": {
+    "kind": "in-process",
+    "language": "python",
+    "entrypoint": "brains/depth/runtime/run.py",
+    "trigger": {
+      "kind": "manual"
+    }
+  },
+  "publishes": [
+    {
+      "contractId": "depth-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/depth/contracts/depth-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/depth",
+        "/lakeFleet/{k}/slots/depth",
+        "/lakeFleet/{k}/readiness/depth",
+        "/lakeFleet/{k}/modelVersions/depth",
+        "/snapshots/{k}/latest/depth",
+        "/snapshots/{k}/latest/brainVersions/depth",
+        "/brains/depth/{child}",
+        "/validation/depth",
+        "/health/brains/depth/{child}",
+        "/activity/{event}"
+      ]
+    }
+  ],
+  "consumes": [
+    {
+      "kind": "brain",
+      "brainId": "lake-brain",
+      "contractId": "lake-publication-v1",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    },
+    {
+      "kind": "registry",
+      "registry": "lakes",
+      "contractId": "registry.lakes",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    }
+  ],
+  "providers": [],
+  "researchWorkspace": {
+    "workspaceId": "depth"
+  },
+  "customerIntegrationMode": "none",
+  "publisherRequired": {
+    "required": true,
+    "cutoverStatus": "SHADOW"
+  },
+  "authorizedConsumers": [
+    "ops",
+    "sector-intelligence"
+  ],
+  "tests": [
+    "brains/depth/tests",
+    "brains/depth/research/tools/tests"
+  ],
+  "dataBudget": {
+    "maxTrackedFileBytes": 1048576,
+    "exceptions": []
+  },
+  "knowledge": {
+    "stores": [
+      {
+        "id": "depth-knowledge",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "depth",
+        "location": "brains/depth/runtime/knowledge/knowledge-release.json",
+        "loader": "brains/depth/runtime/depth_brain/knowledge.py load",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
+        "lineage": "knowledgeRelease in the registry and run summary; knowledgeRelease, manifestRef and manifestSha256 in the SHADOW artifact lineage",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/depth/tests/test_run_entry.py",
+      "brains/depth/tests/test_knowledge_memory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ],
+    "notes": "CANDIDATE release (approval NOT_RECORDED): verified on load, never published from. --write and --plan report BLOCKED_AWAITING_APPROVED_RELEASE until a scientifically approved release (gated G-1) replaces it. Research datasets are not in the release or the repository."
+  }
+}

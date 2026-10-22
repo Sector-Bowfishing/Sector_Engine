@@ -2,7 +2,7 @@
 #
 # Build the Engine image (Dockerfile at the repo root: SectorEngineServer + WaterTempBrainJob + LakeBrainJob) with
 # Cloud Build and push it as the Brain JOBS image. It never touches the customer-serving `sector-engine` service:
-# no `gcloud run deploy`, no traffic, no tags. jobs/lake-brain/deploy-job.sh and jobs/water-temp-brain/deploy-job.sh
+# no `gcloud run deploy`, no traffic, no tags. brains/lake/deploy/deploy-job.sh and brains/water-temperature/deploy/deploy-job.sh
 # deploy Cloud Run JOBS from it.
 #
 #   ./jobs/brain-image-build.sh            → prints IMAGE=us-central1-docker.pkg.dev/<project>/cloud-run-source-deploy/brain-jobs:<commit>

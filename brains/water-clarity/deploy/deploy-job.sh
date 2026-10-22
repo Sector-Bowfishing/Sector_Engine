@@ -15,7 +15,7 @@
 #
 set -euo pipefail
 # Build context: assembled from the Water Clarity Brain package into a temporary directory, never by vendoring into the source tree. The context holds exactly
-# what the Dockerfile COPYs:  Dockerfile  *.py  catalog.json  polygons.geojson.gz  sector_brain_platform/
+# what the Dockerfile COPYs:  Dockerfile  *.py  catalog.json  knowledge-release.json  polygons.geojson.gz  sector_brain_platform/
 # from brains/water-clarity/deploy, brains/water-clarity/runtime, jobs/lake-surface (outlines) and the shared Brain Platform (jobs/brain_platform).
 #   ./deploy-job.sh --stage-only DIR   assemble the context into DIR and exit (no gcloud; used by the staged-layout test)
 DEPLOY_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -25,7 +25,7 @@ stage_context() {
   local dest="$1"
   mkdir -p "$dest"
   cp "$DEPLOY_DIR/Dockerfile" "$dest/"
-  cp "$BRAIN_DIR/runtime/"*.py "$BRAIN_DIR/runtime/catalog.json" "$dest/"
+  cp "$BRAIN_DIR/runtime/"*.py "$BRAIN_DIR/runtime/catalog.json" "$BRAIN_DIR/runtime/knowledge-release.json" "$dest/"
   cp "$REPO_ROOT/jobs/lake-surface/polygons.geojson.gz" "$dest/"
   cp -R "$REPO_ROOT/jobs/brain_platform/sector_brain_platform" "$dest/sector_brain_platform"
   find "$dest" -name __pycache__ -type d -prune -exec rm -rf {} +

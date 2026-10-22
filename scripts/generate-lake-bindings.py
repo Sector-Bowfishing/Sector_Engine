@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate Sources/SectorEngine/LakeBrain/LakeSourceBindingsGenerated.swift (the Lake Brain bindings table).
+"""Regenerate brains/lake/runtime/LakeBrain/LakeSourceBindingsGenerated.swift (the Lake Brain bindings table; Swift target `LakeBrain`).
 
     python3 scripts/generate-lake-bindings.py [--check]
 
@@ -30,7 +30,7 @@ DATA = os.path.join(ROOT, "jobs", "lake-brain", "data")
 PROPOSED = os.path.join(DATA, "bindings.proposed.v1.json")
 EXCLUDED = os.path.join(DATA, "bindings.proposed.v1.excluded.json")
 ACCEPTED = os.path.join(DATA, "accepted_batch.json")
-OUT = os.path.join(ROOT, "Sources", "SectorEngine", "LakeBrain", "LakeSourceBindingsGenerated.swift")
+OUT = os.path.join(ROOT, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")
 
 ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps"}
 FORBIDDEN_PROVIDERS = {"nipsco", "njwsa", "duke", "wps-hydro", "alliant", "srp", "cnppid", "nppd", "utahlake", "aep", "eccc", "mncsg",

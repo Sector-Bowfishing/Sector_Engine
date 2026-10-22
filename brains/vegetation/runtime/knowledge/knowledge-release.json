@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "vegetation",
+  "releaseId": "vegetation-knowledge-candidate-2026-10-20.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "vegetation",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "agency_fwc_pacpvi.json",
+      "sha256": "8238cea7315c9637a16c9602a7ce7a91d9eda060cf5817af35a5d1b6023f8e36",
+      "bytes": 16916
+    },
+    {
+      "path": "agency_sfwmd_okeechobee.json",
+      "sha256": "fc1c2958faa8ebccad8e0c836de2e0af672769dfc265ba0750b059b54e46485d",
+      "bytes": 1807
+    },
+    {
+      "path": "fleet.json",
+      "sha256": "1e38e472585b636f359ce012d5b0c724156b9cb8e05b4e237b8fc2bccfe5cd8b",
+      "bytes": 224746
+    }
+  ],
+  "releaseDigest": "sha256:a20c5c20db0dcf69a376cf8c51ba56f6b3560c3d22179c2903f885233abab5eb"
+}

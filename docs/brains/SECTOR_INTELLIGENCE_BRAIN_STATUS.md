@@ -1,3 +1,9 @@
+> **Historical closeout (superseded).** This records the `brain/sector-intelligence` branch at 2026-10-12. Since then the code
+> was merged and is on `main` at `jobs/sector-intelligence-brain/`; the pilot evaluator (`evaluation.py`, 5 lakes,
+> `EVALUATED_PILOT`) was added; `brain_platform.py` became a shim onto the shared platform; the Brain Orchestrator runs it
+> in-process (PARKED); and the suite has 33 tests (pytest). Current state: `brains/sector-intelligence/README.md` (the code moved there on 2026-10-20) and the
+> "Current state on main" note in `SECTOR_INTELLIGENCE_BRAIN_INTEGRATION.md`. (Cortex standardization, 2026-10-20.)
+
 # Sector Intelligence Brain: branch status (closeout 2026-10-12)
 
 **Branch:** `brain/sector-intelligence`, based on tag `deployed/sector-engine-00072-way` (`bc9e09fb`).

@@ -4,14 +4,14 @@
 # gates are in foundation-verification.yml.
 #
 # Legacy job suites are listed EXPLICITLY (those Brains are not migrated; no brain.json). Migrated Brains (brains/*/brain.json:
-# Wind since Repository Phase 2, Fish, Water Clarity) run in the `registered-brains` job from their canonical location. Do not invent brain.json files.
+# Wind since Repository Phase 2, Fish, Water Clarity, Sector Intelligence) run in the `registered-brains` job from their canonical location. Do not invent brain.json files.
 name: python-jobs-tests
 on:
   push:
     branches: [main]
-    paths: ["jobs/**", "brains/**", "providers/**", "tools/brain_certification/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "tools/**", "docs/cortex/**", "contracts/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
   pull_request:
-    paths: ["jobs/**", "brains/**", "providers/**", "tools/brain_certification/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "tools/**", "docs/cortex/**", "contracts/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
 permissions:
   contents: read
 jobs:
@@ -46,7 +46,7 @@ jobs:
         run: |
           set -e
           for d in jobs/lake-surface-dispatch \
-                   jobs/sector-intelligence-brain jobs/water-temp-tva-archive \
+                   jobs/water-temp-tva-archive \
                    jobs/lake-brain/bindings jobs/lake-brain/ledger jobs/lake-brain/validation jobs/lake-brain/review; do
             echo "== $d"; (cd "$d" && python -m pytest -q)
           done
@@ -77,6 +77,27 @@ jobs:
             [ -f "$b/brain.json" ] || continue
             echo "== $b"; (cd "$b" && python -m pytest -q)
           done
+      - name: Engineering status is current for THIS commit (re-runs every Kit V1 suite, compares with the committed record, emits a commit-stamped copy)
+        env:
+          # the commit the report describes: the PR HEAD on pull_request runs (GITHUB_SHA is GitHub's synthetic merge commit there), else GITHUB_SHA
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_BRANCH: ${{ github.head_ref || github.ref_name }}
+          # only a push to main describes merged code; every PR run is development data
+          CODE_STATE: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') && 'MAIN_COMMIT' || 'UNMERGED_BRANCH' }}
+        run: |
+          python tools/cortex_status/collect_certification.py
+          git diff --exit-code -- docs/cortex/engineering-status/inputs/certification.json
+          python tools/cortex_status/build_engineering_status.py --check
+          python tools/cortex_status/build_engineering_status.py --emit "$RUNNER_TEMP/engineering-status.json" --commit "$SOURCE_SHA"
+          python tools/cortex_status/ops_projection.py --report "$RUNNER_TEMP/engineering-status.json" --out "$RUNNER_TEMP/engineering-status-ops.json" \
+            --branch "$SOURCE_BRANCH" --code-state "$CODE_STATE" --generated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: engineering-status
+          path: |
+            ${{ runner.temp }}/engineering-status.json
+            ${{ runner.temp }}/engineering-status-ops.json
+          retention-days: 90
       - name: Brain Certification Kit self-tests (BRAIN_CERT_KIT_V1; synthetic Brain, no real Brain involved)
         run: python -m pytest -q tools/brain_certification
       - name: Wind package gates (staging, import boundary, clean copy; dependency gates mandatory here)

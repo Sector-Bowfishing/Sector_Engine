@@ -1,3 +1,12 @@
+> **Current state on main (Cortex standardization, 2026-10-20).** The deployment notes in this file are stale. On `main`:
+> `WaterTempBrainJob` is built into the `brain-jobs` image (`jobs/brain-image-build.sh`), not the serving image, and is deployed as
+> the Cloud Run job `water-temp-brain` by `brains/water-temperature/deploy/deploy-job.sh` (`IMAGE=…` required; the script has no approval
+> variable). There is **no scheduler**: the earlier `25 */3 * * *` cron is gone, and the Brain Orchestrator starts the job only when
+> the 6-hour freshness rule requires it; the Brain is PARKED (`control_manifest.json` `water-temp`: `MANUAL`). The code still
+> publishes `schedule = "every 3 h at :25 UTC"` in its registry (`WaterTemperatureBrain.swift:37`); correcting that published
+> value is recorded as an open decision, not changed here. Canonical package (migrated 2026-10-20): `brains/water-temperature/`
+> (SwiftPM targets `WaterTemperatureBrain` + `WaterTempBrainJob`), operating contract `brains/water-temperature/BRAIN_OPERATING_CONTRACT.md`.
+
 > **Consolidation note (2026-10-12, Phase 7).** This brain now lives on `main` (replayed from
 > `brain/water-temp` @ `ec0ae0fa` onto the production lineage; the Clarity Stage 5 base it was
 > built on did **not** come along). It publishes through the shared Brain Platform

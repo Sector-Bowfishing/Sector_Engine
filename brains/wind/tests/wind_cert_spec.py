@@ -8,6 +8,7 @@ from sector_wind.brain import artifact as A
 from sector_wind.brain import contract as C
 from sector_wind.brain.publish import publish
 from sector_wind.brain.writer import DryRunWriter
+from sector_wind.ingest import verified_release
 from brain_cert_kit import BrainCertSpec, Rejection
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
@@ -24,8 +25,17 @@ def _patches():
     return copy.deepcopy(_cache["p"])
 
 
+def _lineage():
+    if "l" not in _cache:
+        from sector_brain_platform.knowledge_release import lineage_triple
+        _cache["l"] = lineage_triple(verified_release())          # the packaged release the runtime verifies on load (BR-11 e)
+    return _cache["l"]
+
+
 def _ctx(n, generated_at):
-    return A.BuildContext(generated_at=generated_at, execution_id=f"{1000 + n:08x}-0000-4000-8000-{1000 + n:012x}", code_version="abc123def456")
+    rel, ref, digest = _lineage()
+    return A.BuildContext(generated_at=generated_at, execution_id=f"{1000 + n:08x}-0000-4000-8000-{1000 + n:012x}", code_version="abc123def456",
+                          knowledge_release=rel, manifest_ref=ref, manifest_sha256=digest)
 
 
 def artifact(n, generated_at, consumed, rerun):
@@ -59,5 +69,6 @@ SPEC = BrainCertSpec(
     local_path_regex=r"/Users/|~/Desktop|~/Library|Library/Caches|Sector Research|Sector_Research_Data|Desktop/Development|iOS/sector-wind",
     arch_findings=(("profile.py", 8), ("writer.py", 8)), baseline_entry_basenames=("profile.py", "writer.py"), baseline_carried_from_required=False,
     score_baseline_substring="wind=3.3/10", artifact_factory=artifact, changed_artifact_factory=changed_artifact,
-    consumed_absent_when_unknown=False,    # Wind's builder attests provider consumption from the lake states' recorded sources (domain test stays in test_publish_artifact.py)
+    consumed_absent_when_unknown=False,
+    release_lineage=_lineage(),    # Wind's builder attests provider consumption from the lake states' recorded sources (domain test stays in test_publish_artifact.py)
 )

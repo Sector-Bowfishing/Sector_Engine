@@ -1,0 +1,51 @@
+# Image build verification (Cortex 2.1): builds the production images from their staged contexts WITHOUT pushing or deploying anything, and
+# smoke-tests that each Python image verifies its packaged knowledge release from the image layout alone. No credentials, no registry, no cloud.
+name: image-build-verification
+on:
+  pull_request:
+    paths: ["Dockerfile", "Package.swift", "Package.resolved", "Sources/**", "brains/**", "jobs/brain_platform/**", "jobs/brain-orchestrator/**",
+            "jobs/brain-scores/**", "docs/brains/scoring/**", "providers/**", "platform/**", ".github/workflows/image-build-verification.yml"]
+permissions:
+  contents: read
+jobs:
+  python-brain-images:
+    name: python Brain images (wind-hourly, water-clarity-brain, brain-orchestrator)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: wind-hourly (staged by its deploy script --stage-only)
+        run: |
+          bash brains/wind/deploy/deploy-job.sh --stage-only /tmp/ctx-wind
+          docker build -t verify/wind-hourly /tmp/ctx-wind
+          docker run --rm --entrypoint python verify/wind-hourly -c "from sector_wind.ingest import verified_release, load_config; r = verified_release(); load_config(); print(r['releaseId'], r['releaseDigest'])"
+      - name: water-clarity-brain (staged by its deploy script --stage-only)
+        run: |
+          bash brains/water-clarity/deploy/deploy-job.sh --stage-only /tmp/ctx-clarity
+          docker build -t verify/water-clarity-brain /tmp/ctx-clarity
+          docker run --rm --entrypoint python verify/water-clarity-brain -c "import clarity_brain as cb; print(cb.RELEASE['releaseId'], cb.CATALOG_DETAIL)"
+      - name: brain-orchestrator (the staging block of its deploy script, run without any gcloud step)
+        run: |
+          mkdir -p /tmp/ctx-orch && cd /tmp/ctx-orch
+          awk '/^rm -rf stage && mkdir/{on=1} on{print} /^find stage -name .test_\*\.py. -delete/{exit}' "$GITHUB_WORKSPACE/jobs/brain-orchestrator/deploy-job.sh" > stage.sh
+          ! grep -q gcloud stage.sh
+          ROOT="$GITHUB_WORKSPACE" bash -euo pipefail stage.sh
+          cp "$GITHUB_WORKSPACE/jobs/brain-orchestrator/Dockerfile" .
+          docker build -t verify/brain-orchestrator .
+          docker run --rm --entrypoint python -w /job/jobs/sector-intelligence-brain verify/brain-orchestrator -c "import run; r, c, s = run.load_knowledge(); print(r['releaseId'], r['releaseDigest'])"
+          # engineering-status-ops-v1 staged for THIS commit; on a PR the gate must refuse it (unmerged code is never published as main)
+          docker run --rm --entrypoint python -w /job/jobs/brain-orchestrator -e DEPLOYMENT_VERSION="brain-orchestrator@${GITHUB_SHA::12}" verify/brain-orchestrator -c "
+          import os, sys; sys.path.insert(0, '../brain_platform')
+          from sector_brain_platform import engineering_status_publication as E
+          d = E.load_staged('.'); dv = os.environ['DEPLOYMENT_VERSION']
+          g = E.gate(d, deployed_commit=E.deployed_commit(dv), now_iso='2026-01-01T00:00:00Z', deployment_version=dv)
+          print('staged:', d and d['generatedFrom']['codeState'], '-> gate:', g['state'], g.get('reason'))
+          assert d is not None and d['generatedFrom']['codeState'] == 'UNMERGED_BRANCH' and g['state'] == 'UNAVAILABLE'"
+
+  brain-jobs-image:
+    name: brain-jobs image (root Dockerfile; Swift server + Brain jobs, Linux release build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t verify/brain-jobs .

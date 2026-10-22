@@ -1,0 +1,26 @@
+{
+  "$id": "intelligence-evaluation-v1",
+  "title": "Sector Intelligence pilot evaluation (intelligence-eval-v1)",
+  "description": "One per-lake normalized evaluation as written to /lakes/{k}/states/intelligence for an EVALUATED pilot lake (evaluation.EVAL_VERSION). It restates specialist Brain states with provenance; it carries no rating, score or recommendation and no customer consumes it. The top level is closed: a new field is a new contract version. Lakes that are not evaluated carry input availability only (docs/brains/SECTOR_INTELLIGENCE_BRAIN_INTEGRATION.md). Validated against real evaluation output by tests/test_evaluation_contract.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["lakeId", "kind", "evaluationStatus", "evaluationVersion", "generatedAt", "inputs", "synthesis", "validation", "customerPath", "provenance", "freshness"],
+  "properties": {
+    "lakeId": {"type": "string", "minLength": 1},
+    "kind": {"const": "evaluated"},
+    "evaluationStatus": {"const": "EVALUATED_PILOT"},
+    "evaluationVersion": {"const": "intelligence-eval-v1"},
+    "generatedAt": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "inputsUsed": {"type": "object", "description": "slot -> the input actually used (absent when none was usable)"},
+    "inputs": {"type": "object", "description": "slot -> {brainId, slot, status PUBLISHED|STALE|DEGRADED|NOT_PUBLISHED, ...}; every dependency appears"},
+    "drivers": {"type": "array", "items": {"type": "object", "required": ["slot"]}, "description": "restatements of specialist values, each naming its slot; never a rating"},
+    "limitingFactors": {"type": "array", "items": {"type": "string"}},
+    "degradedInputs": {"type": "array", "items": {"type": "string"}},
+    "synthesis": {"type": "object", "required": ["inputsFresh", "inputsDegraded", "note"]},
+    "validation": {"type": "object", "required": ["status"], "properties": {"status": {"const": "NOT_VALIDATED"}}},
+    "customerPath": {"type": "object", "required": ["consumesThisEvaluation"], "properties": {"consumesThisEvaluation": {"const": false}}},
+    "provenance": {"type": "object", "required": ["brainId", "brainVersion", "generatedAt", "readiness", "qualityFlags"],
+                   "properties": {"brainId": {"const": "sector-intelligence"}, "brainVersion": {"type": "string", "minLength": 1}}},
+    "freshness": {"type": "object", "required": ["generatedAt", "evidenceStale", "stale"]}
+  }
+}

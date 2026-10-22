@@ -8,6 +8,8 @@
 //
 
 import XCTest
+// CoreLocation is Apple-only: on Linux (CI, swift:6.1-jammy) these scenario tests are compiled out, as in the other CoreLocation test files.
+#if canImport(CoreLocation)
 import CoreLocation
 @testable import SectorEngine
 
@@ -491,3 +493,4 @@ final class ConditionsAggregatorTests: XCTestCase {
         XCTAssertGreaterThan(gage.intensity, est.intensity)
     }
 }
+#endif

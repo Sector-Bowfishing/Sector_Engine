@@ -97,7 +97,7 @@ def main(argv=None) -> int:
 
     rtdb = None if a.offline else bp.BrainRtdb(RTDB_URL, tokens, brain_id=bb.BRAIN_ID, recorder=bp.ConsumptionRecorder(bb.BRAIN_ID))   # ownership-checked; --plan/--dry-run only GET; reads recorded as ACTUAL consumption
     published = rtdb.get(f"brains/{bb.BRAIN_ID}") if rtdb else None
-    pointer = json.loads(read("latest.json"))
+    pointer = bb.read_pointer(read)
     decision = orch.plan(published, pointer, bb.BRAIN_VERSION)
     if a.plan:
         print(json.dumps(decision, indent=1))

@@ -6,3 +6,6 @@ DerivedData/
 __pycache__/
 .pytest_cache/
 .venv/
+
+# Claude Code machine-local settings (Rehtac Cortex activation; never commit)
+.claude/settings.local.json

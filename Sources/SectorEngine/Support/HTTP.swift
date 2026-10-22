@@ -35,13 +35,13 @@ import NIOCore
 import NIOHTTP1
 
 /// A completed response: HTTP status + the whole body.
-struct HTTPResult: Sendable {
+package struct HTTPResult: Sendable {
     let status: Int
-    let body: Data
-    var isSuccess: Bool { (200..<300).contains(status) }
+    package let body: Data
+    package var isSuccess: Bool { (200..<300).contains(status) }
 }
 
-enum HTTP {
+package enum HTTP {
     /// Upper bound on one fetch, request start to last body byte.
     static let maxTimeout: TimeInterval = 8
 
@@ -53,7 +53,7 @@ enum HTTP {
 
     /// Process-lifetime client on NIO's shared event loop group. Never shut
     /// down — it lives exactly as long as the server process.
-    static let client: HTTPClient = {
+    package static let client: HTTPClient = {
         var config = HTTPClient.Configuration()
         config.timeout = HTTPClient.Configuration.Timeout(connect: .seconds(5), read: .seconds(8))
         config.redirectConfiguration = .follow(max: 5, allowCycles: false)
@@ -67,7 +67,7 @@ enum HTTP {
 
     /// GET `url`. Throws on transport failure, timeout, cancellation, or an
     /// oversized body. Any HTTP status is returned — callers check `isSuccess`.
-    static func get(_ url: URL,
+    package static func get(_ url: URL,
                     headers: [String: String] = [:],
                     timeout: TimeInterval = maxTimeout) async throws -> HTTPResult {
         var request = HTTPClientRequest(url: url.absoluteString)

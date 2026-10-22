@@ -1,0 +1,169 @@
+{
+  "brainId": "vegetation",
+  "builder": "brains/vegetation/runtime/vegetation_brain/publish_artifact.py",
+  "contractId": "vegetation-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (vegetation_specs, vegetation_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "consumed": "ACTUAL RTDB reads recorded by the platform client when available; absent = unknown, never []",
+    "knowledgeRelease": "the verified Vegetation knowledge release id (runtime/knowledge/knowledge-release.json)",
+    "manifestRef": "image:knowledge-release.json",
+    "manifestSha256": "the release digest (sha256)"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "versions",
+      "models",
+      "readinessDefinitions",
+      "contractVersion",
+      "manifestVersion",
+      "knowledgeRelease",
+      "shadow",
+      "scoreStatus",
+      "scoreNote",
+      "research",
+      "sourceIds",
+      "scope",
+      "validationLadder"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "statusBasis",
+      "supportedLakeCount",
+      "directoryLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "lastSuccessfulRun",
+      "lastError",
+      "lastDryRun",
+      "breakdowns",
+      "fleet",
+      "blockers",
+      "primaryBlocker",
+      "orchestration",
+      "level1",
+      "validation",
+      "publishMode",
+      "updatedAt"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/vegetation",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/vegetation",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/vegetation",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/vegetation",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/vegetation",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/brainVersions/vegetation",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "vegetation-lake-state-v1",
+      "volatileContract": "vegetation-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/vegetation/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/vegetation/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/vegetation",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/vegetation/{child}",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "vegetation-registry-v1",
+      "volatileContract": "vegetation-volatile-v1"
+    }
+  ],
+  "snapshot": "the snapshot field and its brainVersion are Brain-authored (no Publisher COPY projection)",
+  "status": "SHADOW (Publisher Gate P); not wired into the job; there is no live writer; not a production contract",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "vegetation-volatile-v1",
+    "keys": [
+      "lastUpdatedAt",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:lastUpdatedAt": "slot write time; no domain meaning",
+      "key:updatedAt": "registry write time; no domain meaning",
+      "path:/brains/vegetation/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+      "path:/brains/vegetation/versions": "version history entry dated by the run"
+    },
+    "paths": [
+      "/brains/vegetation/lastSuccessfulRun",
+      "/brains/vegetation/versions"
+    ],
+    "version": 1
+  }
+}

@@ -1,10 +1,27 @@
+> **Current state on main (Cortex standardization, 2026-10-20).** The status lines below record the 2026-10-12 ratification
+> and are partly stale; the rest of this contract still describes the code. On `main`:
+> - The code is merged. `LakeBrainJob` ships in the `brain-jobs` image (`jobs/brain-image-build.sh`) and is deployed as the
+>   Cloud Run job `lake-brain` by `brains/lake/deploy/deploy-job.sh` (`--scope pilots`, no scheduler of its own; the Brain
+>   Orchestrator may start it when due). A separate Cloud Scheduler job, `lake-brain-ledger-daily` (12:00 UTC), runs it daily
+>   for the prospective prediction ledger. That scheduler was created by hand and **no repository script creates it**; it is
+>   registered as a `VALIDATION_EXCEPTION` in `control_manifest.json` (`brains.lake-brain.schedule`, `jobs.lake-brain-ledger-daily`).
+> - §5.3 cites `docs/research/lake-brain/LAKE_BRAIN_MICHAEL_ACTION_QUEUE.md`. That file is on the research branch
+>   `docs/lake-brain-research`, not on `main`.
+> - Fallback honesty (Cortex PL-03, 2026-10-20, additive): a LakeState read from a FALLBACK source now carries `sourceFallback`
+>   `{usability: DEGRADED_USABLE | STALE_LAST_VALUE, primarySourceId, primaryLastObservationAt, primaryError, selectedSourceId,
+>   selectedCapability}`; it is absent when the primary supplied the reading. Everything else is unchanged: readiness keeps the
+>   ratified ladder (a fresh fallback can still be `BETA`), `sourceCapability` stays the binding's, the flags `primarySourceStale` /
+>   `fallbackSource` / `sourceError:<id>` stay, run health is `WARNING`. `datum` is correct on a fallback: the reading is converted
+>   onto the binding's datum (`LevelSeriesRef.datumOffsetFt`).
+> - Canonical package (migrated 2026-10-20): `brains/lake/` — runtime `brains/lake/runtime/LakeBrain` + `LakeBrainJob` (SwiftPM targets), operating contract `brains/lake/BRAIN_OPERATING_CONTRACT.md`. The Python tooling (bindings table, history backfill, ledger scorer, review pack, hold-out validation) stays in `jobs/lake-brain/`.
+
 # Lake Brain (`lake-brain`): integration contract
 
 **Status:** RATIFIED by Sector Engine, 2026-10-12 (v1, pilot). It amends Sector_Ops `docs/BRAIN_INTEGRATION_REQUIREMENTS.md` §2 and `docs/SECTOR_BRAIN_RTDB_SCHEMA.md`. Sector Ops adapts to it.
 
 - **Approvals:** all ten decisions in the Lake Brain audit §28 were approved by Michael on 2026-10-12, as recommended.
 - **Not merged or deployed.** Branch `sector/lake-brain` stays unmerged until it is reviewed. There is no Cloud Run job or scheduler.
-- **Implementation:** `Sources/SectorEngine/LakeBrain/` (Swift; reuses the production TVA/CWMS parsers without changing them) and the `LakeBrainJob` executable.
+- **Implementation:** `brains/lake/runtime/LakeBrain/` (Swift target `LakeBrain`, moved from `Sources/SectorEngine/LakeBrain/` on 2026-10-20; reuses the production TVA/CWMS parsers without changing them) and the `LakeBrainJob` executable.
 
 **Display name:** **Lake Brain**. Machine ID `lake-brain`; slot `lake`; snapshot field `lakeState`.
 
@@ -70,7 +87,7 @@ Extends the frozen `LakeBrain` shape additively. `Known<T> = {value, source, qua
                           "coveragePct": 100, "yearsCovered": 1, "baselineStatus": "INSUFFICIENT", "historicalTier": "NONE",
                           "baselineMethod": "doy15-percentile-v2", "baselineVersion": "…",
                           "historyRef": "gs://sector-lake-brain/history/Guntersville_AL/daily.csv" },
-  "speciesPresenceSummary": { "assessedSpecies": 12, "recordCount": 10, "byState": { "established": 3, … , "unknown": 2 },
+  "speciesPresenceSummary": { "assessedSpecies": 12, "recordCount": <n>, "byState": { "established": <n>, … , "unknown": <n> },   // SYNTHETIC counts
                               "researchVersion": "lake-presence-2026-10-12.1", "ref": "/lakes/Guntersville_AL/speciesPresence" },
   "trustedSources": { "tva_GVDA1": { sourceId, provider, sourceType, station, status, lastObservationAt, authority, brains } },
   "readiness": { "lake": "CALIBRATION" },
@@ -283,18 +300,18 @@ Each classification is its own field; none is folded into another. `differenceFr
 **Path:** `/lakes/{k}/speciesPresence/{speciesId}`. This takes the Biological Brain's §10 shape, replacing the audit's `/species`:
 
 ```jsonc
-{ "lakeId": "Guntersville|AL", "speciesId": "grass_carp", "presenceState": "historical",
+{ "lakeId": "Example Lake|ST", "speciesId": "example_species", "presenceState": "established",      // SYNTHETIC example: real records are private
   "presenceAuthority": "canonical-research", "confidence": "medium", "nativeStatus": "introduced",
-  "sourceTier": "T2", "latestRecord": "2005", "dataGaps": "…",
-  "sourceRef": "gs://sector-lake-brain/presence/releases/lake-presence-2026-10-12.1/presence.json (private)",
-  "researchVersion": "lake-presence-2026-10-12.1", "discrepancyIds": ["DISC-001"], "updatedAt": "…" }
+  "sourceTier": "T2", "latestRecord": "YYYY", "dataGaps": "…",
+  "sourceRef": "gs://sector-lake-brain/presence/releases/<release>/presence.json (private)",
+  "researchVersion": "<release>", "discrepancyIds": ["DISC-000"], "updatedAt": "…" }
 ```
 
 **Rules:**
 - **12 species are assessed:** 5 carp, 3 buffalo, 4 gar. Others are not assessed and absent.
 - **`unknown` rows are not written.** Absent means unknown or not assessed. `speciesPresenceSummary.byState.unknown` still counts them.
-- **Canonical overrides** come from the Biological Brain canonical release. Today none differ from the matrix: grass carp on Guntersville is `historical` in both (DISC-001).
-- **Discrepancy IDs are attached and never resolved here.** DISC-001, DISC-002 and DISC-003 are on Guntersville. DISC-002 (smallmouth buffalo) is still Michael's decision.
+- **Canonical overrides** come from the Biological Brain canonical release; where the release and the matrix differ, the record carries the discrepancy id (the register is private).
+- **Discrepancy IDs are attached and never resolved here.** Open discrepancies are decided by Michael in the private register; this public document names none.
 - **Which states are "relevant"** is Sector Intelligence's call.
 
 **Interface for Sector Intelligence:** `LakePresenceIndex.resolveLakeSpecies(lakeId)`.

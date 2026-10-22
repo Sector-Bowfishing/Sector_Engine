@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "1.0.0",
+  "decisions": [
+    {
+      "id": "A-1",
+      "class": "APPROVAL",
+      "title": "Merge draft PR #40 (the coordinated Cortex architecture branch) into main",
+      "recommendation": "Merge only after Linux CI is green and the decision-required items below are accepted or split out; merging deploys nothing"
+    },
+    {
+      "id": "A-2",
+      "class": "APPROVAL",
+      "title": "Deploy after merge (brain-jobs, orchestrator incl. control-plane shadow support, wind-hourly, water-clarity-brain)",
+      "recommendation": "Deploy only with the lineage preflight; the Lake image stays on its own lineage"
+    },
+    {
+      "id": "A-3",
+      "class": "APPROVAL",
+      "title": "Read-only production checks: deployed image contents, bucket pointers, scheduler state",
+      "recommendation": "Approve before A-2; turns NOT_VERIFIED production cells into evidence"
+    },
+    {
+      "id": "M-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Adopt packaged knowledge releases: runtimes verify their release manifest on load and refuse missing or tampered memory; the manifest is added to the Wind, Clarity and orchestrator images",
+      "recommendation": "Accept (implemented locally, isolated commits 4ac482e6, 78d55294); takes effect only on an approved deploy",
+      "brains": [
+        "wind",
+        "water-clarity",
+        "sector-intelligence"
+      ]
+    },
+    {
+      "id": "M-2",
+      "class": "DECISION_REQUIRED",
+      "title": "Fish: a missing or corrupt bundle now exits 2 with REFUSED instead of a traceback (exit 1)",
+      "recommendation": "Accept (19e9824c); the orchestrator treats every nonzero exit as not published",
+      "brains": [
+        "biological-state"
+      ]
+    },
+    {
+      "id": "M-3",
+      "class": "DECISION_REQUIRED",
+      "title": "Name the approver and record an approval for each knowledge release (all are NOT_RECORDED)",
+      "recommendation": "Name an approver per Brain; the manifest then points at the record",
+      "brains": [
+        "biological-state",
+        "wind",
+        "water-clarity",
+        "sector-intelligence",
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "M-4",
+      "class": "DECISION_REQUIRED",
+      "title": "Release lineage in legacy RTDB outputs (today only in SHADOW artifacts)",
+      "recommendation": "Keep it in SHADOW artifacts until the Publisher cutover; no legacy output change",
+      "brains": [
+        "wind",
+        "water-clarity",
+        "sector-intelligence"
+      ]
+    },
+    {
+      "id": "M-5",
+      "class": "DECISION_REQUIRED",
+      "title": "Clarity private overlay: digest-verify it as a private release, or keep it as optional detail",
+      "recommendation": "Make it a private release with a digest when the overlay is next updated",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "M-6",
+      "class": "DECISION_REQUIRED",
+      "title": "Clarity repo-relative polygon fallback outside the image",
+      "recommendation": "Remove it in a Clarity session (behaviour outside the image changes)",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "M-7",
+      "class": "DECISION_REQUIRED",
+      "title": "Lake presence release uses an FNV-1a fingerprint, not a cryptographic digest",
+      "recommendation": "Switch to sha256 with the Lake owner on the Lake image lineage",
+      "brains": [
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "M-8",
+      "class": "DECISION_REQUIRED",
+      "title": "Scorer rubrics staged into the orchestrator image are not digest-verified",
+      "recommendation": "Add a release manifest over the staged rubric files without moving them (rubric files must never move)"
+    },
+    {
+      "id": "G-1",
+      "class": "GATED",
+      "title": "Promote Depth and Vegetation knowledge (candidate releases) to APPROVED releases",
+      "recommendation": "Requires scientific validation approval plus owner approval (PROJECT \u00a77); until then both runtimes abstain (structure is complete)",
+      "brains": [
+        "depth",
+        "vegetation"
+      ]
+    },
+    {
+      "id": "V-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Vegetation agency block publishes FWC percentages and SFWMD species-level labels (internalOnly)",
+      "recommendation": "Withhold or reduce to presence before any release approval (surface-only V1 rule)",
+      "brains": [
+        "vegetation"
+      ]
+    },
+    {
+      "id": "K-1",
+      "class": "DECISION_REQUIRED",
+      "title": "Kit V1 harness additions (has_score spec field; carried-finding mutation only when findings exist)",
+      "recommendation": "Accept and upstream to the Kit's canonical source (CG-2.1-6)"
+    },
+    {
+      "id": "D-C",
+      "class": "DECISION_REQUIRED",
+      "title": "Shared non-customer Swift library (D-14b)",
+      "recommendation": "Separate Swift refactor"
+    },
+    {
+      "id": "D-D",
+      "class": "DECISION_REQUIRED",
+      "title": "Score measurement labels (Proposal A) and Wind score copy (Proposal B)",
+      "recommendation": "Approve B first",
+      "brains": [
+        "wind"
+      ]
+    },
+    {
+      "id": "D-E",
+      "class": "DECISION_REQUIRED",
+      "title": "Water Clarity C1 job in the control manifest job map",
+      "recommendation": "Allow MANUAL jobs in the map",
+      "brains": [
+        "water-clarity"
+      ]
+    },
+    {
+      "id": "D-F",
+      "class": "DECISION_REQUIRED",
+      "title": "Lake tooling move and data classification",
+      "recommendation": "Schedule with the Lake research lane",
+      "brains": [
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "O-1",
+      "class": "GATED",
+      "title": "Turn on publication of the sanitized engineering status (engineering-status-ops-v1) to the Brain RTDB node /control/engineeringStatusV1 by the orchestrator control plane",
+      "recommendation": "After A-1 merge and A-2 deploy from main: add --publish-engineering-status to the orchestrator's scheduled arguments. Existing writer and /control ownership; no IAM, identity or Ops rules change"
+    }
+  ]
+}

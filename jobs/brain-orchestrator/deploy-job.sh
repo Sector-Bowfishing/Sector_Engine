@@ -44,7 +44,7 @@ for j in lake-brain water-temp-brain; do
   if gcloud run jobs describe "$j" --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
     run gcloud run jobs add-iam-policy-binding "$j" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
   else
-    echo "  (job $j not deployed yet — bind roles/run.invoker when it is: jobs/$j/deploy-job.sh does it)"
+    echo "  (job $j not deployed yet — bind roles/run.invoker when it is: its brains/*/deploy/deploy-job.sh does it)"
   fi
 done
 
@@ -69,8 +69,10 @@ for d in biological-brain sector-intelligence-brain brain-scores brain-orchestra
   mkdir -p "stage/jobs/$d"
   src="$ROOT/jobs/$d"
   [[ "$d" == "biological-brain" ]] && src="$ROOT/brains/fish/runtime"     # Fish Brain canonical home; staged under the legacy job layout the image expects
+  [[ "$d" == "sector-intelligence-brain" ]] && src="$ROOT/brains/sector-intelligence/runtime"   # Sector Intelligence canonical home; same legacy layout
   cp "$src"/*.py "stage/jobs/$d/" 2>/dev/null || true
   [[ -f "$src/catalog.json" ]] && cp "$src/catalog.json" "stage/jobs/$d/"
+  [[ -f "$src/knowledge-release.json" ]] && cp "$src/knowledge-release.json" "stage/jobs/$d/"     # packaged knowledge release (verified on load)
   cp -R "$src/schemas" "stage/jobs/$d/" 2>/dev/null || true
   [[ "$d" == "biological-brain" && -d "$src/tools" ]] && cp -R "$src/tools" "stage/jobs/$d/" || true
 done
@@ -90,6 +92,21 @@ cp "$ROOT/providers/PROVIDERS.json" stage/providers/
 mkdir -p stage/docs/brains/scoring/evidence
 cp "$ROOT/docs/brains/scoring/wind-specialist-capability-v2.json" stage/docs/brains/scoring/
 cp "$ROOT/docs/brains/scoring/evidence/wind-measurements-evidence.json" stage/docs/brains/scoring/evidence/
+# Sector Ops engineering status (engineering-status-ops-v1): the SANITIZED projection of exactly this commit, published only with
+# --publish-engineering-status (decision O-1). A stale or invalid report stages nothing: the orchestrator then publishes an explicit UNAVAILABLE
+# instead of an older status. The full internal report never enters the image.
+ES_STATE=UNMERGED_BRANCH
+git -C "$ROOT" merge-base --is-ancestor HEAD origin/main 2>/dev/null && ES_STATE=MAIN_COMMIT
+if python3 "$ROOT/tools/cortex_status/build_engineering_status.py" --emit stage/es-full.json --commit "$(git -C "$ROOT" rev-parse HEAD)" \
+   && python3 "$ROOT/tools/cortex_status/ops_projection.py" --report stage/es-full.json --code-state "$ES_STATE" \
+        --branch "$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)" --generated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --out stage/jobs/brain-orchestrator/engineering-status-ops.json; then
+  echo "engineering status: staged ($ES_STATE)"
+else
+  echo "engineering status: NOT staged (stale or invalid report); the orchestrator will publish UNAVAILABLE"
+  rm -f stage/jobs/brain-orchestrator/engineering-status-ops.json
+fi
+rm -f stage/es-full.json
 find stage -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'tests' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 find stage -name 'test_*.py' -delete

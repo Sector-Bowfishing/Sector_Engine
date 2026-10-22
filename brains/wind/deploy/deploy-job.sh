@@ -21,7 +21,7 @@ stage_context() {
   local dest="$1"
   mkdir -p "$dest"
   cp "$DEPLOY_DIR/Dockerfile" "$DEPLOY_DIR/.gcloudignore" "$dest/"
-  cp "$BRAIN_DIR/runtime/requirements.txt" "$BRAIN_DIR/runtime/lakes.json" "$BRAIN_DIR/runtime/main.py" "$dest/"
+  cp "$BRAIN_DIR/runtime/requirements.txt" "$BRAIN_DIR/runtime/lakes.json" "$BRAIN_DIR/runtime/main.py" "$BRAIN_DIR/runtime/knowledge-release.json" "$dest/"
   cp -R "$BRAIN_DIR/runtime/sector_wind" "$dest/sector_wind"
   cp -R "$REPO_ROOT/jobs/brain_platform/sector_brain_platform" "$dest/sector_brain_platform"
   find "$dest" -name __pycache__ -type d -prune -exec rm -rf {} +

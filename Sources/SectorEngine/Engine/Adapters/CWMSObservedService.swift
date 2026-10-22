@@ -49,7 +49,7 @@ struct CWMSObserved: Equatable {
     let history: [GenerationObservation]
 }
 
-final class CWMSObservedService {
+package final class CWMSObservedService {
     static let shared = CWMSObservedService()
     private init() {}
 
@@ -410,7 +410,7 @@ final class CWMSObservedService {
     /// bytes only ever land in a name string we don't key on, so nothing
     /// downstream is harmed — and SWT alone goes from 0 to 3,327 usable
     /// locations. Static so every parse site shares the one code path.
-    static func parseJSON(_ data: Data) -> Any? {
+    package static func parseJSON(_ data: Data) -> Any? {
         if let strict = try? JSONSerialization.jsonObject(with: data) { return strict }
         let cleaned = Data(String(decoding: data, as: UTF8.self).utf8)
         return try? JSONSerialization.jsonObject(with: cleaned)

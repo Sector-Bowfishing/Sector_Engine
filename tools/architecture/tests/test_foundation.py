@@ -387,9 +387,10 @@ def test_report_is_report_only_by_default():
 
 
 def test_real_repo_registers_only_migrated_brains():
-    # Wind (Phase 2), Fish (Phase 4, Fish Structural Certification V1) and Water Clarity (Water Clarity Structural Certification V1) are the migrated Brains.
-    # No other brain.json may exist until that Brain migrates.
-    assert report._brain_dirs(ROOT) == ["fish", "water-clarity", "wind"]
+    # Wind (Phase 2), Fish (Phase 4, Fish Structural Certification V1), Water Clarity (Water Clarity Structural Certification V1), and Sector Intelligence,
+    # Lake and Water Temperature (Cortex architecture completion, 2026-10-20), Depth and Vegetation (Cortex 2.1 structural completion) are the
+    # migrated Brains: all eight registered Brains now have a canonical package. No other brain.json may exist.
+    assert report._brain_dirs(ROOT) == ["depth", "fish", "lake", "sector-intelligence", "vegetation", "water-clarity", "water-temperature", "wind"]
 
 
 @pytest.mark.parametrize("src,flag", [
@@ -484,3 +485,14 @@ def test_report_output_contains_paths_not_content(synth, capsys):
     report.main(["--root", str(synth)])
     out = capsys.readouterr().out
     assert "abc123" not in out and "SECRET_TOKEN" not in out
+
+
+@pytest.mark.parametrize("src,flag", [
+    ('// See docs/brains/X.md\nlet a = 1\n', False),                       # line comment
+    ('/* spec: docs/brains/Y.md */\nlet a = 1\n', False),                  # block comment
+    ('let ref = "docs/brains/real.json"\n', True),                         # string literal: still a reference
+    ('let u = "https://host/x" // docs/brains/Z.md\n', False),             # URL keeps its //, the trailing comment is dropped
+    ('let s = "a \\" // docs/q.md"\n', True),                              # escaped quote: the // is inside the literal
+])
+def test_swift_comments_are_not_runtime_references(src, flag):
+    assert bool(__import__("re").search(r"docs/", report._code_text("x.swift", src))) is flag

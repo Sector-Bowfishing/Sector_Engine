@@ -53,7 +53,10 @@ def p03_identity_lifecycle_publisher_state(E: Env):
     assert b["customerIntegrationMode"] == s.customer_integration_mode
     assert b["runtime"]["kind"] == s.runtime_kind
     assert sorted(b.get("authorizedConsumers", [])) == sorted(s.authorized_consumers), f"authorizedConsumers {b.get('authorizedConsumers')}"
-    assert b["score"]["path"] == f"/scores/{s.brain_id}", f"score path {b['score']['path']}"
+    if s.has_score:
+        assert (b.get("score") or {}).get("path") == f"/scores/{s.brain_id}", f"score path {(b.get('score') or {}).get('path')}"
+    else:
+        assert "score" not in b, "a Brain declared without a score (has_score=False) must not declare a score block"
     assert not re.search(s.local_path_regex, json.dumps(b)), "brain.json contains a local/Desktop/research path"
     cm = E.load("jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")["brains"].get(s.brain_id)
     assert cm is not None, "control manifest has no entry for this Brain"
@@ -378,7 +381,10 @@ def p18_architecture_gates_no_new_violations(E: Env):
 
 def p19_score_and_lifecycle_unchanged(E: Env):
     s = E.spec
-    assert E.brain_json["score"]["path"] == f"/scores/{s.brain_id}"
+    if s.has_score:
+        assert (E.brain_json.get("score") or {}).get("path") == f"/scores/{s.brain_id}", "score block missing or wrong"
+    else:
+        assert "score" not in E.brain_json, "a Brain without a score declares a score block"
     art = E.artifact(1)
     paths = [m["path"] for sec in art["sections"] for m in sec["mutations"]]
     assert not [p for p in paths if p.lstrip("/").startswith("scores")], "the Brain's artifact writes a score"

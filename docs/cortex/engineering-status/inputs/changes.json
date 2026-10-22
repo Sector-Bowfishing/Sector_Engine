@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "range": "af0548b8..HEAD (this Cortex 2.1 assignment)",
+  "changes": [
+    {
+      "commit": "037c78c1",
+      "summary": "fix(swift): Water Temperature Brain builds on Linux again; state contracts for the Swift Brains (BR-13)"
+    },
+    {
+      "commit": "ab4e4312",
+      "summary": "feat(cortex): engineering-status v1.1.0 \u2014 seven separate status layers per Brain, actual Kit proof results, image build verification"
+    },
+    {
+      "commit": "ede81316",
+      "summary": "test(swift): Swift write-ownership and Brain-boundary gates; Linux Swift CI on the production toolchain"
+    },
+    {
+      "commit": "f5cf9790",
+      "summary": "feat(vegetation): canonical brains/vegetation package \u2014 release-gated runtime, offline research tooling, Kit V1 certified"
+    },
+    {
+      "commit": "ec5db259",
+      "summary": "feat(depth): canonical brains/depth package \u2014 release-gated runtime, offline research tooling, Kit V1 certified"
+    },
+    {
+      "commit": "d9653754",
+      "summary": "feat(control): SHADOW Brains (Depth, Vegetation) visible in the control plane, never scored, never in a roll-up"
+    },
+    {
+      "commit": "2c794d39",
+      "summary": "docs(cortex): Cortex 2.1 memory mission records \u2014 session, standing-check matrix in the ledger, gaps CG-2.1-1..4, navigation refresh, Ops read interface, checkpoint"
+    },
+    {
+      "commit": "80c0c20a",
+      "summary": "feat(cortex): engineering-status-v1 report for Sector Ops, generated from committed records; CI coverage for releases and Swift Brain targets"
+    },
+    {
+      "commit": "44ad7121",
+      "summary": "feat(lake): export the reviewed source bindings as a Lake-owned contract (reviewed-lake-bindings-v1)"
+    },
+    {
+      "commit": "1492f79b",
+      "summary": "feat(memory): declare each Brain's approved memory and gate it with the Cortex 2.1 standing checks (BR-10, BR-11, BR-16, BR-18, PL-13)"
+    },
+    {
+      "commit": "19e9824c",
+      "summary": "fix(fish): missing or corrupt bundle memory refuses the job instead of crashing (BR-11 f, BR-18)"
+    },
+    {
+      "commit": "78d55294",
+      "summary": "feat(memory): Water Clarity catalog as a packaged knowledge release verified on load (BR-10, BR-11, BR-18)"
+    },
+    {
+      "commit": "4ac482e6",
+      "summary": "feat(memory): packaged knowledge releases verified on load for Sector Intelligence and Wind (BR-10, BR-11, BR-18)"
+    },
+    {
+      "commit": "b5a766e4",
+      "summary": "chore(cortex): adopt Rehtac Cortex 2.1.0 (pin 0f9ee75)"
+    }
+  ]
+}

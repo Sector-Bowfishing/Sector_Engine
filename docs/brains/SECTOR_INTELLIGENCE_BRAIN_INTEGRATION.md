@@ -1,3 +1,24 @@
+> **Current state on main (Cortex standardization, 2026-10-20).** Parts of this v0.1 contract predate the pilot evaluator
+> (`evaluation.py`, commit `568d6bb1`, 2026-10-12 22:45) and are stale. The code on `main` is authoritative:
+> - **There is a pilot evaluation.** For the five `PILOT_LAKES` (`evaluation.py:27`) the publisher writes `intelligence-eval-v1`
+>   evaluations (`evaluationStatus: EVALUATED_PILOT`) to `/lakes/{k}/states/intelligence`, the snapshot field `sectorIntelligence`,
+>   `/lakeFleet/{k}/readiness/intelligence` and the `intelligence` slot (`sector_intelligence_brain.py:345-358`). It restates
+>   specialist values (`drivers[]`, `inputsUsed`, `limitingFactors`, `degradedInputs`) and produces **no rating, score or
+>   recommendation** (`evaluation.py:189-192`). Other lakes stay `NOT_EVALUATED`.
+> - With evaluations the registry is `status: CALIBRATION`, `statusReasons` `PILOT_EVALUATION_ONLY` …, `supportedLakeCount` 5
+>   (`sector_intelligence_brain.py:384-394`), not `DISCOVERED` / 0. `consumedBySectorIntelligence` counts the active
+>   implementation **or** the pilot, and `usedInLastEvaluation` is set per slot.
+> - The §5 output-contract field names were implemented as `inputsUsed`, `drivers[].slot` and `evaluationVersion`
+>   (not `inputVersions`, `sourceSlot`, `intelligenceVersion`). No versioned JSON schema exists yet.
+> - §6: there is no scheduler of its own, but the Brain Orchestrator runs it in-process (`control_manifest.json`
+>   `sector-intelligence`); the Brain is PARKED. The fingerprint also covers the pilot inputs (`run.py:114-115`).
+> - Corrected 2026-10-20 (Cortex architecture completion; output metadata only, no synthesis change): the catalog (`2026-10-20.1`) no
+>   longer says "evaluates nothing"; the inventory-mode blockers `NO_NORMALIZED_EVALUATION` / `NO_BRAIN_CONSUMED` are published only
+>   when no pilot evaluation ran; `provenance.brainVersion` names the Brain version; the evaluation's `freshness.sourceObservationAt`
+>   is its oldest input. The evaluation has a versioned contract, `brains/sector-intelligence/contracts/intelligence-evaluation-v1.schema.json`.
+>   The catalog's `plannedRole: REQUIRED` is the *planned* role in the future evaluation; today's declared requirement is `OPTIONAL`
+>   (`brain.json`, `control_manifest.json`). The code now lives in `brains/sector-intelligence/` (migrated).
+
 # Sector Intelligence Brain: integration contract
 
 **Status:** v0.1, 2026-10-12. This is a metadata and dependency publisher only. It produces no evaluation.
@@ -8,7 +29,7 @@
 
 ## 1. What Sector Intelligence is today
 
-Four implementations exist. They are declared in `jobs/sector-intelligence-brain/catalog.json`, which is reviewed by hand. Facts that change at runtime are read live, never declared.
+Four implementations exist. They are declared in `brains/sector-intelligence/runtime/catalog.json`, which is reviewed by hand. Facts that change at runtime are read live, never declared.
 
 | Implementation | Lifecycle | Serves customers | Reads any Brain |
 |---|---|---|---|

@@ -1,0 +1,669 @@
+{
+ "missing": [],
+ "records": {
+  "Apopka|FL": {
+   "fwcLakeName": "Apopka",
+   "lakeId": "Apopka|FL",
+   "matchNote": null,
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Apopka (Orange Co.)",
+     "pac": 17,
+     "pvi": 4,
+     "year": 2020
+    },
+    {
+     "label": "Apopka (Orange Co.)",
+     "pac": 37,
+     "pvi": 15,
+     "year": 2021
+    },
+    {
+     "label": "Apopka (Orange Co.)",
+     "pac": 40,
+     "pvi": 12,
+     "year": 2022
+    },
+    {
+     "label": "Apopka (Orange Co.)",
+     "pac": 25,
+     "pvi": 7,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "East Lake Tohopekaliga|FL": {
+   "fwcLakeName": "East Lake Tohopekaliga",
+   "lakeId": "East Lake Tohopekaliga|FL",
+   "matchNote": null,
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 16,
+     "pvi": 7,
+     "year": 2015
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 10,
+     "pvi": 3,
+     "year": 2016
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 16,
+     "pvi": 8,
+     "year": 2017
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 15,
+     "pvi": 4,
+     "year": 2018
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 11,
+     "pvi": 2,
+     "year": 2019
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 19,
+     "pvi": 5,
+     "year": 2020
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 12,
+     "pvi": 3,
+     "year": 2021
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 14,
+     "pvi": 5,
+     "year": 2022
+    },
+    {
+     "label": "East Lake Tohopekaliga (Osceola Co.)",
+     "pac": 15,
+     "pvi": 6,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "Griffin|FL": {
+   "fwcLakeName": "Griffin",
+   "lakeId": "Griffin|FL",
+   "matchNote": null,
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 27,
+     "pvi": 7,
+     "year": 2016
+    },
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 32,
+     "pvi": 11,
+     "year": 2017
+    },
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 31,
+     "pvi": 6,
+     "year": 2018
+    },
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 38,
+     "pvi": 10,
+     "year": 2019
+    },
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 37,
+     "pvi": 9,
+     "year": 2020
+    },
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 39,
+     "pvi": 8,
+     "year": 2021
+    },
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 42,
+     "pvi": 10,
+     "year": 2022
+    },
+    {
+     "label": "Griffin (Lake Co.)",
+     "pac": 37,
+     "pvi": 10,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "Harris|FL": {
+   "fwcLakeName": "Harris+Little Harris",
+   "lakeId": "Harris|FL",
+   "matchNote": "FWC reports the Harris + Little Harris chain together",
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Harris+Little Harris (Lake Co.)",
+     "pac": 15,
+     "pvi": 5,
+     "year": 2016
+    },
+    {
+     "label": "Harris+Little Harris (Lake Co.)",
+     "pac": 31,
+     "pvi": 8,
+     "year": 2017
+    },
+    {
+     "label": "Harris+Little Harris (Lake Co.)",
+     "pac": 30,
+     "pvi": 11,
+     "year": 2018
+    },
+    {
+     "label": "Harris+Little Harris (Lake Co.)",
+     "pac": 5,
+     "pvi": 1,
+     "year": 2019
+    },
+    {
+     "label": "Harris+Little Harris (Lake Co.)",
+     "pac": 16,
+     "pvi": 4,
+     "year": 2020
+    },
+    {
+     "label": "Harris+Little Harris (Lake Co.)",
+     "pac": 10,
+     "pvi": 1,
+     "year": 2021
+    },
+    {
+     "label": "Harris+Little Harris (Lake Co.)",
+     "pac": 5,
+     "pvi": 1,
+     "year": 2022
+    },
+    {
+     "label": "Harris & Little Harris (Lake Co.)",
+     "pac": 3,
+     "pvi": 1,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "Istokpoga|FL": {
+   "fwcLakeName": "Istokpoga",
+   "lakeId": "Istokpoga|FL",
+   "matchNote": null,
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 30,
+     "pvi": 11,
+     "year": 2015
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 15,
+     "pvi": 5,
+     "year": 2016
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 6,
+     "pvi": 1,
+     "year": 2017
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 13,
+     "pvi": 3,
+     "year": 2018
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 13,
+     "pvi": 2,
+     "year": 2019
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 11,
+     "pvi": 2,
+     "year": 2020
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 15,
+     "pvi": 5,
+     "year": 2021
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 9,
+     "pvi": 2,
+     "year": 2022
+    },
+    {
+     "label": "Istokpoga (Highlands Co.)",
+     "pac": 13,
+     "pvi": 4,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "Kissimmee|FL": {
+   "fwcLakeName": "Kissimmee",
+   "lakeId": "Kissimmee|FL",
+   "matchNote": null,
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 36,
+     "pvi": 17,
+     "year": 2015
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 30,
+     "pvi": 13,
+     "year": 2016
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 28,
+     "pvi": 13,
+     "year": 2017
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 24,
+     "pvi": 6,
+     "year": 2018
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 18,
+     "pvi": 3,
+     "year": 2019
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 21,
+     "pvi": 4,
+     "year": 2020
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 19,
+     "pvi": 4,
+     "year": 2021
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 19,
+     "pvi": 5,
+     "year": 2022
+    },
+    {
+     "label": "Kissimmee (Osceloa Co.)",
+     "pac": 19,
+     "pvi": 4,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "Lochloosa|FL": {
+   "fwcLakeName": "Lochloosa",
+   "lakeId": "Lochloosa|FL",
+   "matchNote": null,
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 10,
+     "pvi": 2,
+     "year": 2015
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 12,
+     "pvi": 3,
+     "year": 2016
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 10,
+     "pvi": 3,
+     "year": 2017
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 11,
+     "pvi": 2,
+     "year": 2018
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 14,
+     "pvi": 2,
+     "year": 2019
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 13,
+     "pvi": 2,
+     "year": 2020
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 19,
+     "pvi": 7,
+     "year": 2021
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 15,
+     "pvi": 5,
+     "year": 2022
+    },
+    {
+     "label": "Lochloosa (Alachua Co.)",
+     "pac": 16,
+     "pvi": 5,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "Okeechobee|FL": {
+   "fwcLakeName": "Okeechobee",
+   "lakeId": "Okeechobee|FL",
+   "matchNote": "FWC reports several sector rows per year; they are listed, never averaged by Sector",
+   "multipleRowsPerYear": true,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Okeechobee (Kiss. Rvr. to IPC outer littoral) (Palm Beach Co.)",
+     "pac": 49,
+     "pvi": 23,
+     "year": 2021
+    },
+    {
+     "label": "Okeechobee (Clew. to P-Bay outer littoral) (Palm Beach Co.)",
+     "pac": 18,
+     "pvi": 6,
+     "year": 2022
+    },
+    {
+     "label": "Okeechobee (F-Bay to Clew. outer littoral) (Palm Beach Co.)",
+     "pac": 68,
+     "pvi": 31,
+     "year": 2022
+    },
+    {
+     "label": "Okeechobee (IPC to F-Bay outer littoral) (Palm Beach Co.)",
+     "pac": 37,
+     "pvi": 15,
+     "year": 2022
+    },
+    {
+     "label": "Okeechobee (Kiss. Rvr. to IPC outer littoral) (Palm Beach Co.)",
+     "pac": 50,
+     "pvi": 23,
+     "year": 2022
+    },
+    {
+     "label": "Okeechobee (Clewiston to Pelican Bay littoral zone outer edge) (Palm Beach Co.)",
+     "pac": 25,
+     "pvi": 6,
+     "year": 2023
+    },
+    {
+     "label": "Okeechobee (Fisheating Bay to Clewiston littoral zone outer edge) (Palm Beach Co.)",
+     "pac": 38,
+     "pvi": 8,
+     "year": 2023
+    },
+    {
+     "label": "Okeechobee (Indian Prairie Canal to Fisheating Bay littoral zone outer edge) (Palm Beach Co.)",
+     "pac": 14,
+     "pvi": 4,
+     "year": 2023
+    },
+    {
+     "label": "Okeechobee (Kissimmee River to Indian Prairie Canal littoral zone outer edge) (Palm Beach Co.)",
+     "pac": 26,
+     "pvi": 6,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  },
+  "Tohopekaliga (Toho)|FL": {
+   "fwcLakeName": "Tohopekaliga",
+   "lakeId": "Tohopekaliga (Toho)|FL",
+   "matchNote": null,
+   "multipleRowsPerYear": false,
+   "retrievedOn": "2026-10-14",
+   "rows": [
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 49,
+     "pvi": 26,
+     "year": 2015
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 54,
+     "pvi": 26,
+     "year": 2016
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 57,
+     "pvi": 26,
+     "year": 2017
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 55,
+     "pvi": 24,
+     "year": 2018
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 71,
+     "pvi": 35,
+     "year": 2019
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 65,
+     "pvi": 30,
+     "year": 2020
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 63,
+     "pvi": 30,
+     "year": 2021
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 85,
+     "pvi": 41,
+     "year": 2022
+    },
+    {
+     "label": "Tohopekaliga (Osceola Co.)",
+     "pac": 74,
+     "pvi": 39,
+     "year": 2023
+    }
+   ],
+   "rowsDropped": [],
+   "source": {
+    "agency": "Florida Fish and Wildlife Conservation Commission (Freshwater Fisheries Research)",
+    "datePrecision": "YEAR",
+    "definitionsUrl": "https://myfwc.com/research/freshwater/monitoring/plant-mapping/",
+    "id": "fwc-ltm-pac-pvi",
+    "internalOnly": true,
+    "layer": "https://ocean.floridamarine.org/arcgis/rest/services/Projects_FWC/WhatsHappeningOnMyLake/MapServer/41",
+    "licence": "UNCONFIRMED_FOR_CUSTOMER_USE",
+    "units": {
+     "pac": "percent of lake surface area with vegetation",
+     "pvi": "percent of the water column occupied by vegetation (lake mean)"
+    },
+    "vegetationScope": "all vegetation seen by agency sonar (emergent, floating and submerged)"
+   }
+  }
+ },
+ "retrievedOn": "2026-10-14",
+ "schema": "sector-vegetation-agency-v1",
+ "source": "fwc-ltm-pac-pvi",
+ "totalLayerRows": 423
+}

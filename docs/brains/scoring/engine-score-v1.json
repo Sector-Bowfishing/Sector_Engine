@@ -7,7 +7,7 @@
       "id": "specialistBrainMaturity",
       "label": "Mean of the five specialist Brain scores (Lake, Temp, Clarity, Wind, Biological)",
       "weight": 25,
-      "fact": "/brains/{id}/score.value",
+      "fact": "/scores/{id}.value",
       "scale": "mean (0-10); UNKNOWN if any specialist score is absent"
     },
     {

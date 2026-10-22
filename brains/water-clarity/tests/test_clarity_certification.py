@@ -299,7 +299,8 @@ def test_runtime_works_with_no_research_workspace_no_home_and_no_repo_docs(tmp_p
     stage = tmp_path / "ctx"
     r = subprocess.run(["bash", os.path.join(CLARITY, "deploy", "deploy-job.sh"), "--stage-only", str(stage)], capture_output=True, text=True, timeout=120)
     assert r.returncode == 0, r.stderr
-    assert sorted(os.listdir(stage)) == ["Dockerfile", "brain_platform.py", "catalog.json", "clarity_brain.py", "polygons.geojson.gz", "publish_artifact.py", "run.py", "sector_brain_platform"]
+    assert sorted(os.listdir(stage)) == ["Dockerfile", "brain_platform.py", "catalog.json", "clarity_brain.py", "knowledge-release.json", "polygons.geojson.gz", "publish_artifact.py", "run.py",
+                                   "sector_brain_platform"]
     snippet = f"""
 import json, os, sys, unittest.mock as m
 sys.path.insert(0, {os.path.join(CLARITY, 'tests')!r})
@@ -324,7 +325,7 @@ with m.patch.object(run, 'load_directory', return_value=[{{'id':'Guntersville|AL
 def test_runtime_package_is_exactly_the_five_modules_and_the_public_catalog():
     """Domain part of the research-separation proof (file types, research listing, GAPS schema and data budget are shared: BRAIN_CERT_KIT_V1 P17)."""
     ls = sorted(n for n in os.listdir(os.path.join(CLARITY, "runtime")) if n != "__pycache__")
-    assert ls == ["brain_platform.py", "catalog.json", "clarity_brain.py", "publish_artifact.py", "run.py"]
+    assert ls == ["brain_platform.py", "catalog.json", "clarity_brain.py", "knowledge-release.json", "publish_artifact.py", "run.py"]     # + the release manifest (BR-11)
 
 
 PRIVATE_MARKERS = re.compile(r"WEAKEST_CORE_CLASS|ACCURACY_CERT|FREEZE_STAGE18|STRONG_SHARE|research-archive|TCEQ|sector-clarity-candidate|gs://sector-clarity")

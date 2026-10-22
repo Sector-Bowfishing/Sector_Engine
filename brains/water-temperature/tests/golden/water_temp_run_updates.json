@@ -1,0 +1,709 @@
+{
+  "activity/1784084400000-water-temp-000" : {
+    "at" : "2026-07-15T03:00:00Z",
+    "brainId" : "water-temp",
+    "id" : "1784084400000-water-temp-000",
+    "kind" : "brain.registered",
+    "severity" : "info",
+    "title" : "Water Temperature Brain registered (v1.0, 621 lakes)"
+  },
+  "brains/water-temp" : {
+    "activeProductionModel" : {
+      "assimilation" : "none",
+      "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+      "since" : "2026-09-23",
+      "validationStatus" : "GLOBAL_HOLDOUT_ONLY"
+    },
+    "brainId" : "water-temp",
+    "breakdowns" : {
+      "directoryTempSource" : {
+        "buoy" : 33,
+        "inSitu" : 283,
+        "limited" : 37,
+        "satellite" : 268
+      },
+      "sourceKind" : {
+        "energyBalanceModel" : 620,
+        "usgsLakeSensor" : 1
+      },
+      "stateKind" : {
+        "measured" : 1,
+        "modeled" : 620
+      }
+    },
+    "dependsOn" : [
+
+    ],
+    "descriptor" : {
+      "components" : {
+        "waterTempState" : {
+          "inputs" : "USGS/CWMS lake sensors, USGS nearby gauges, Open-Meteo forcing via production fetchers",
+          "recomputeWhen" : "published state older than staleAfterHours; a configured sensor has a newer reading; brain or model version changed",
+          "staleness" : "time-based: staleAfterHours 6.0",
+          "status" : "ACTIVE (production's own resolver, published per lake)"
+        }
+      }
+    },
+    "displayName" : "Water Temperature",
+    "domain" : "condition",
+    "enabled" : true,
+    "fleetScope" : "full",
+    "health" : "HEALTHY",
+    "healthRule" : "FAILED: write failed or no lakes. DEGRADED: > 25 % of lakes unavailable or model fetch failed. WARNING: > 5 %. HEALTHY otherwise.",
+    "lastSuccessfulRun" : "2026-07-15T03:00:00Z",
+    "platform" : {
+      "conformant" : true,
+      "contract" : "docs/brains/BRAIN_PLATFORM_CONTRACT.md v1.0",
+      "implementation" : "SectorEngine.Brain (Swift)"
+    },
+    "question" : "What is the water temperature doing?",
+    "readinessCounts" : {
+      "CALIBRATION" : 621
+    },
+    "readinessDefinitions" : {
+      "CALIBRATION" : "Published for every lake: production's own number (shown = scored), model validated globally only, Level-4 protected validation not passed, brain unscheduled. Evidence class is in `evidenceClass`."
+    },
+    "researchCandidate" : {
+      "blocker" : "Protected truth insufficient: Wheeler 18/25, Wilson 2/25 (Stage 3C.3, 2026-10-11)",
+      "certified" : false,
+      "description" : "production M0 + Stage 3C.1 Arm A 2-state Kalman filter + operational state engine",
+      "name" : "Water Temp V2",
+      "status" : "RESEARCH_NOT_PROMOTED"
+    },
+    "schedule" : {
+      "cadence" : "orchestrator-started when stale (no scheduler; staleAfterHours 6)",
+      "jobId" : "water-temp-brain",
+      "running" : "false"
+    },
+    "schemaVersion" : 1,
+    "staleAfterHours" : 6,
+    "staleLakeCount" : 29,
+    "stalenessModel" : "TIME",
+    "stateKindDefinitions" : {
+      "measured" : "OBSERVED — a lake sensor reading ≤ 6 h old and ≤ 15 mi away (production resolver).",
+      "modeled" : "MODELED — surface-energy-balance-v2 value for the lake-local today; no observation correction.",
+      "unavailable" : "UNKNOWN — no fresh measurement and no model value. Never filled in."
+    },
+    "status" : "CALIBRATION",
+    "supportedLakeCount" : 621,
+    "version" : "1.0",
+    "versions" : [
+      {
+        "date" : "2026-09-23",
+        "note" : "Production model (global 17-gauge calibration). Shown = scored and lake-local date since 2026-10-07 (Stage 2E).",
+        "status" : "CURRENT",
+        "version" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)"
+      },
+      {
+        "date" : "2026-10-11",
+        "note" : "Research candidate. Frozen, NOT promoted, not running. Protected Level-4 validation blocked by insufficient truth.",
+        "status" : "RESEARCH",
+        "version" : "V2 candidate: M0 + Stage 3C.1 Arm A KF [x,b] + operational state"
+      },
+      {
+        "date" : "2026-09-23",
+        "note" : "Retired: ran 3.7 °F cold.",
+        "status" : "RETIRED",
+        "version" : "air-lag k=0.20"
+      }
+    ]
+  },
+  "health/brains/water-temp" : {
+    "durationMs" : 0,
+    "errorCount" : 0,
+    "lastRun" : "2026-07-15T03:00:00Z",
+    "lastSuccess" : "2026-07-15T03:00:00Z",
+    "staleLakeCount" : 29,
+    "status" : "HEALTHY"
+  },
+  "health/jobs/water-temp-brain" : {
+    "displayName" : "Water Temperature Brain",
+    "durationMs" : 0,
+    "kind" : "cloud-run-job",
+    "lastRun" : "2026-07-15T03:00:00Z",
+    "lastSuccess" : "2026-07-15T03:00:00Z",
+    "running" : false,
+    "schedule" : "orchestrator-started when stale (no scheduler)",
+    "status" : "HEALTHY"
+  },
+  "health/sources/open-meteo-forecast" : {
+    "failuresLastRun" : 0,
+    "lastFetchAt" : "2026-07-15T03:00:00Z",
+    "status" : "HEALTHY"
+  },
+  "health/sources/usace-cwms-water-temp" : {
+    "lastFetchAt" : "2026-07-15T03:00:00Z",
+    "status" : "UNKNOWN"
+  },
+  "health/sources/usgs-nwis-00010" : {
+    "lastFetchAt" : "2026-07-15T03:00:00Z",
+    "status" : "UNKNOWN"
+  },
+  "lakeFleet/Guntersville_AL/lakeId" : "Guntersville|AL",
+  "lakeFleet/Guntersville_AL/modelVersions/waterTemp" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+  "lakeFleet/Guntersville_AL/readiness/waterTemp" : "CALIBRATION",
+  "lakeFleet/Guntersville_AL/slots/waterTemp" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-07-15T03:00:00Z",
+    "readiness" : "CALIBRATION",
+    "stale" : false,
+    "stateType" : "measured"
+  },
+  "lakeFleet/Lake_Hartwell_SC/lakeId" : "Lake Hartwell|SC",
+  "lakeFleet/Lake_Hartwell_SC/modelVersions/waterTemp" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+  "lakeFleet/Lake_Hartwell_SC/readiness/waterTemp" : "CALIBRATION",
+  "lakeFleet/Lake_Hartwell_SC/slots/waterTemp" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-07-15T03:00:00Z",
+    "readiness" : "CALIBRATION",
+    "stale" : false,
+    "stateType" : "modeled"
+  },
+  "lakeFleet/Wheeler_AL/lakeId" : "Wheeler|AL",
+  "lakeFleet/Wheeler_AL/modelVersions/waterTemp" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+  "lakeFleet/Wheeler_AL/readiness/waterTemp" : "CALIBRATION",
+  "lakeFleet/Wheeler_AL/slots/waterTemp" : {
+    "issueCount" : 0,
+    "lastUpdatedAt" : "2026-07-15T03:00:00Z",
+    "readiness" : "CALIBRATION",
+    "stale" : false,
+    "stateType" : "modeled"
+  },
+  "lakes/Guntersville_AL/profiles/waterTemp" : {
+    "assimilation" : "none",
+    "baseModel" : "surface-energy-balance-v2",
+    "directoryTempSource" : "inSitu",
+    "evidenceClass" : "modeled",
+    "knownLimitations" : [
+      "Model validated globally only: leave-one-lake-out on 17 USGS lake gauges, held-out RMSE 3.40 °F, bias −0.06 °F (2026-09-23).",
+      "Daily upper-surface value; no depth or thermal profile.",
+      "Forecast days run the same model on forecast weather and are not separately validated.",
+      "No observation assimilation in production: a fresh measurement replaces the model, it does not correct it.",
+      "Protected development lake: Level-4 held-out validation not yet possible (holdout 90 of 25 required)."
+    ],
+    "lakeId" : "Guntersville|AL",
+    "measurementRule" : {
+      "lakeSensorFetchToleranceHours" : 72,
+      "maxAgeHours" : 6,
+      "maxDistanceMiles" : 15,
+      "nearbyGaugeMaxMiles" : 10
+    },
+    "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+    "nearbyGaugeLookup" : true,
+    "readiness" : "CALIBRATION",
+    "schemaVersion" : 1,
+    "validation" : {
+      "lakeRef" : "/lakes/Guntersville_AL/validation/water-temp",
+      "ref" : "/validation/water-temp"
+    }
+  },
+  "lakes/Guntersville_AL/states/waterTemp" : {
+    "currentTempF" : 80.599999999999994,
+    "evidenceClass" : "modeled",
+    "evidenceStale" : false,
+    "forecast" : [
+      {
+        "at" : "2026-07-15",
+        "tempF" : 81.099999999999994
+      },
+      {
+        "at" : "2026-07-16",
+        "tempF" : 81.599999999999994
+      }
+    ],
+    "kind" : "measured",
+    "lakeId" : "Guntersville|AL",
+    "lakeLocalDate" : "2026-07-14",
+    "lakeTimeZone" : "America/Chicago",
+    "lastObservationAt" : "2026-07-15T01:00:00Z",
+    "measuredMinusModelF" : 0.59999999999999998,
+    "modelCurrentF" : 80,
+    "observationType" : "OBSERVED",
+    "provenance" : {
+      "brainId" : "water-temp",
+      "brainVersion" : "1.0",
+      "generatedAt" : "2026-07-15T03:00:00Z",
+      "inputAgeHours" : 2,
+      "qualityFlags" : [
+        "forecastModelOnly:notSeparatelyValidated",
+        "forecastGaugeAnchored"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-07-15T01:00:00Z",
+          "sourceId" : "USGS:03573500",
+          "sourceType" : "usgsLakeSensor"
+        },
+        {
+          "sourceId" : "open-meteo-forecast",
+          "sourceType" : "energyBalanceModel"
+        }
+      ],
+      "validationRef" : "/lakes/Guntersville_AL/validation/water-temp"
+    },
+    "sensorTrend" : "rising",
+    "sourceAgeHours" : 2,
+    "spatialSupport" : "point",
+    "stale" : false,
+    "trend24hF" : 0.59999999999999998,
+    "trendBasis" : "model:dailyChange(lakeLocal)",
+    "unit" : "degF"
+  },
+  "lakes/Guntersville_AL/validation/water-temp" : {
+    "artifactRef" : "Sector iOS repo docs/intelligence/water-temp/WATER_TEMP_PROTECTED_TRUTH_STATUS.md",
+    "brainId" : "water-temp",
+    "failedGates" : [
+      "LEVEL4_FOUR_LAKE_SUFFICIENCY"
+    ],
+    "holdoutType" : "protected historical holdout 2021-01 → 2026-06 (rule v3, main-body casts)",
+    "lakeCount" : 1,
+    "lastRunAt" : "2026-10-11",
+    "metrics" : {
+      "biasF" : null,
+      "calibrationObservations" : 106,
+      "holdoutObservations" : 90,
+      "holdoutRequired" : 25,
+      "maeF" : null,
+      "rmseF" : null
+    },
+    "metricUnits" : {
+      "biasF" : "°F",
+      "calibrationObservations" : "casts",
+      "holdoutObservations" : "casts",
+      "holdoutRequired" : "casts",
+      "maeF" : "°F",
+      "rmseF" : "°F"
+    },
+    "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+    "notes" : [
+      "Not scored: the four-lake protected gate (≥ 150 total and ≥ 25 per lake) fails, so no model is compared with this lake's truth."
+    ],
+    "sampleCount" : 90,
+    "status" : "TRUTH_SUFFICIENT_FOR_LAKE_NOT_SCORED",
+    "validationVersion" : "stage-3c3-2026-10-11"
+  },
+  "lakes/Lake_Hartwell_SC/profiles/waterTemp" : {
+    "assimilation" : "none",
+    "baseModel" : "surface-energy-balance-v2",
+    "directoryTempSource" : "inSitu",
+    "evidenceClass" : "modeled",
+    "knownLimitations" : [
+      "Model validated globally only: leave-one-lake-out on 17 USGS lake gauges, held-out RMSE 3.40 °F, bias −0.06 °F (2026-09-23).",
+      "Daily upper-surface value; no depth or thermal profile.",
+      "Forecast days run the same model on forecast weather and are not separately validated.",
+      "No observation assimilation in production: a fresh measurement replaces the model, it does not correct it."
+    ],
+    "lakeId" : "Lake Hartwell|SC",
+    "measurementRule" : {
+      "lakeSensorFetchToleranceHours" : 72,
+      "maxAgeHours" : 6,
+      "maxDistanceMiles" : 15,
+      "nearbyGaugeMaxMiles" : 10
+    },
+    "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+    "nearbyGaugeLookup" : true,
+    "readiness" : "CALIBRATION",
+    "schemaVersion" : 1,
+    "validation" : {
+      "ref" : "/validation/water-temp"
+    }
+  },
+  "lakes/Lake_Hartwell_SC/states/waterTemp" : {
+    "currentTempF" : 80,
+    "evidenceClass" : "modeled",
+    "evidenceStale" : false,
+    "forecast" : [
+      {
+        "at" : "2026-07-15",
+        "tempF" : 80.5
+      },
+      {
+        "at" : "2026-07-16",
+        "tempF" : 81
+      }
+    ],
+    "kind" : "modeled",
+    "lakeId" : "Lake Hartwell|SC",
+    "lakeLocalDate" : "2026-07-14",
+    "lakeTimeZone" : "America/Chicago",
+    "modelCurrentF" : 80,
+    "observationType" : "MODELED",
+    "provenance" : {
+      "brainId" : "water-temp",
+      "brainVersion" : "1.0",
+      "generatedAt" : "2026-07-15T03:00:00Z",
+      "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+      "qualityFlags" : [
+        "forecastModelOnly:notSeparatelyValidated"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "sourceId" : "open-meteo-forecast",
+          "sourceType" : "energyBalanceModel"
+        }
+      ],
+      "validationRef" : "/validation/water-temp"
+    },
+    "spatialSupport" : "lakeWide",
+    "stale" : false,
+    "trend24hF" : 0.59999999999999998,
+    "trendBasis" : "model:dailyChange(lakeLocal)",
+    "unit" : "degF"
+  },
+  "lakes/Wheeler_AL/profiles/waterTemp" : {
+    "assimilation" : "none",
+    "baseModel" : "surface-energy-balance-v2",
+    "directoryTempSource" : "inSitu",
+    "evidenceClass" : "modeled",
+    "knownLimitations" : [
+      "Model validated globally only: leave-one-lake-out on 17 USGS lake gauges, held-out RMSE 3.40 °F, bias −0.06 °F (2026-09-23).",
+      "Daily upper-surface value; no depth or thermal profile.",
+      "Forecast days run the same model on forecast weather and are not separately validated.",
+      "No observation assimilation in production: a fresh measurement replaces the model, it does not correct it.",
+      "Protected development lake: Level-4 held-out validation not yet possible (holdout 18 of 25 required)."
+    ],
+    "lakeId" : "Wheeler|AL",
+    "measurementRule" : {
+      "lakeSensorFetchToleranceHours" : 72,
+      "maxAgeHours" : 6,
+      "maxDistanceMiles" : 15,
+      "nearbyGaugeMaxMiles" : 10
+    },
+    "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+    "nearbyGaugeLookup" : true,
+    "readiness" : "CALIBRATION",
+    "schemaVersion" : 1,
+    "validation" : {
+      "lakeRef" : "/lakes/Wheeler_AL/validation/water-temp",
+      "ref" : "/validation/water-temp"
+    }
+  },
+  "lakes/Wheeler_AL/states/waterTemp" : {
+    "currentTempF" : 80,
+    "evidenceClass" : "modeled",
+    "evidenceStale" : false,
+    "forecast" : [
+      {
+        "at" : "2026-07-15",
+        "tempF" : 80.5
+      },
+      {
+        "at" : "2026-07-16",
+        "tempF" : 81
+      }
+    ],
+    "kind" : "modeled",
+    "lakeId" : "Wheeler|AL",
+    "lakeLocalDate" : "2026-07-14",
+    "lakeTimeZone" : "America/Chicago",
+    "modelCurrentF" : 80,
+    "observationType" : "MODELED",
+    "provenance" : {
+      "brainId" : "water-temp",
+      "brainVersion" : "1.0",
+      "generatedAt" : "2026-07-15T03:00:00Z",
+      "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+      "qualityFlags" : [
+        "forecastModelOnly:notSeparatelyValidated"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "sourceId" : "open-meteo-forecast",
+          "sourceType" : "energyBalanceModel"
+        }
+      ],
+      "validationRef" : "/lakes/Wheeler_AL/validation/water-temp"
+    },
+    "spatialSupport" : "lakeWide",
+    "stale" : false,
+    "trend24hF" : 0.59999999999999998,
+    "trendBasis" : "model:dailyChange(lakeLocal)",
+    "unit" : "degF"
+  },
+  "lakes/Wheeler_AL/validation/water-temp" : {
+    "artifactRef" : "Sector iOS repo docs/intelligence/water-temp/WATER_TEMP_PROTECTED_TRUTH_STATUS.md",
+    "brainId" : "water-temp",
+    "failedGates" : [
+      "LAKE_HOLDOUT_BELOW_25",
+      "LEVEL4_FOUR_LAKE_SUFFICIENCY"
+    ],
+    "holdoutType" : "protected historical holdout 2021-01 → 2026-06 (rule v3, main-body casts)",
+    "lakeCount" : 1,
+    "lastRunAt" : "2026-10-11",
+    "metrics" : {
+      "biasF" : null,
+      "calibrationObservations" : 14,
+      "holdoutObservations" : 18,
+      "holdoutRequired" : 25,
+      "maeF" : null,
+      "rmseF" : null
+    },
+    "metricUnits" : {
+      "biasF" : "°F",
+      "calibrationObservations" : "casts",
+      "holdoutObservations" : "casts",
+      "holdoutRequired" : "casts",
+      "maeF" : "°F",
+      "rmseF" : "°F"
+    },
+    "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+    "notes" : [
+      "Not scored: the four-lake protected gate (≥ 150 total and ≥ 25 per lake) fails, so no model is compared with this lake's truth."
+    ],
+    "sampleCount" : 18,
+    "status" : "INSUFFICIENT_TRUTH",
+    "validationVersion" : "stage-3c3-2026-10-11"
+  },
+  "snapshots/Guntersville_AL/latest/brainVersions/water-temp" : "1.0",
+  "snapshots/Guntersville_AL/latest/lakeId" : "Guntersville|AL",
+  "snapshots/Guntersville_AL/latest/waterTemperature" : {
+    "currentTempF" : 80.599999999999994,
+    "evidenceClass" : "modeled",
+    "evidenceStale" : false,
+    "forecast" : [
+      {
+        "at" : "2026-07-15",
+        "tempF" : 81.099999999999994
+      },
+      {
+        "at" : "2026-07-16",
+        "tempF" : 81.599999999999994
+      }
+    ],
+    "kind" : "measured",
+    "lakeId" : "Guntersville|AL",
+    "lakeLocalDate" : "2026-07-14",
+    "lakeTimeZone" : "America/Chicago",
+    "lastObservationAt" : "2026-07-15T01:00:00Z",
+    "measuredMinusModelF" : 0.59999999999999998,
+    "modelCurrentF" : 80,
+    "observationType" : "OBSERVED",
+    "provenance" : {
+      "brainId" : "water-temp",
+      "brainVersion" : "1.0",
+      "generatedAt" : "2026-07-15T03:00:00Z",
+      "inputAgeHours" : 2,
+      "qualityFlags" : [
+        "forecastModelOnly:notSeparatelyValidated",
+        "forecastGaugeAnchored"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "lastObservationAt" : "2026-07-15T01:00:00Z",
+          "sourceId" : "USGS:03573500",
+          "sourceType" : "usgsLakeSensor"
+        },
+        {
+          "sourceId" : "open-meteo-forecast",
+          "sourceType" : "energyBalanceModel"
+        }
+      ],
+      "validationRef" : "/lakes/Guntersville_AL/validation/water-temp"
+    },
+    "sensorTrend" : "rising",
+    "sourceAgeHours" : 2,
+    "spatialSupport" : "point",
+    "stale" : false,
+    "trend24hF" : 0.59999999999999998,
+    "trendBasis" : "model:dailyChange(lakeLocal)",
+    "unit" : "degF"
+  },
+  "snapshots/Lake_Hartwell_SC/latest/brainVersions/water-temp" : "1.0",
+  "snapshots/Lake_Hartwell_SC/latest/lakeId" : "Lake Hartwell|SC",
+  "snapshots/Lake_Hartwell_SC/latest/waterTemperature" : {
+    "currentTempF" : 80,
+    "evidenceClass" : "modeled",
+    "evidenceStale" : false,
+    "forecast" : [
+      {
+        "at" : "2026-07-15",
+        "tempF" : 80.5
+      },
+      {
+        "at" : "2026-07-16",
+        "tempF" : 81
+      }
+    ],
+    "kind" : "modeled",
+    "lakeId" : "Lake Hartwell|SC",
+    "lakeLocalDate" : "2026-07-14",
+    "lakeTimeZone" : "America/Chicago",
+    "modelCurrentF" : 80,
+    "observationType" : "MODELED",
+    "provenance" : {
+      "brainId" : "water-temp",
+      "brainVersion" : "1.0",
+      "generatedAt" : "2026-07-15T03:00:00Z",
+      "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+      "qualityFlags" : [
+        "forecastModelOnly:notSeparatelyValidated"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "sourceId" : "open-meteo-forecast",
+          "sourceType" : "energyBalanceModel"
+        }
+      ],
+      "validationRef" : "/validation/water-temp"
+    },
+    "spatialSupport" : "lakeWide",
+    "stale" : false,
+    "trend24hF" : 0.59999999999999998,
+    "trendBasis" : "model:dailyChange(lakeLocal)",
+    "unit" : "degF"
+  },
+  "snapshots/Wheeler_AL/latest/brainVersions/water-temp" : "1.0",
+  "snapshots/Wheeler_AL/latest/lakeId" : "Wheeler|AL",
+  "snapshots/Wheeler_AL/latest/waterTemperature" : {
+    "currentTempF" : 80,
+    "evidenceClass" : "modeled",
+    "evidenceStale" : false,
+    "forecast" : [
+      {
+        "at" : "2026-07-15",
+        "tempF" : 80.5
+      },
+      {
+        "at" : "2026-07-16",
+        "tempF" : 81
+      }
+    ],
+    "kind" : "modeled",
+    "lakeId" : "Wheeler|AL",
+    "lakeLocalDate" : "2026-07-14",
+    "lakeTimeZone" : "America/Chicago",
+    "modelCurrentF" : 80,
+    "observationType" : "MODELED",
+    "provenance" : {
+      "brainId" : "water-temp",
+      "brainVersion" : "1.0",
+      "generatedAt" : "2026-07-15T03:00:00Z",
+      "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+      "qualityFlags" : [
+        "forecastModelOnly:notSeparatelyValidated"
+      ],
+      "readiness" : "CALIBRATION",
+      "sources" : [
+        {
+          "sourceId" : "open-meteo-forecast",
+          "sourceType" : "energyBalanceModel"
+        }
+      ],
+      "validationRef" : "/lakes/Wheeler_AL/validation/water-temp"
+    },
+    "spatialSupport" : "lakeWide",
+    "stale" : false,
+    "trend24hF" : 0.59999999999999998,
+    "trendBasis" : "model:dailyChange(lakeLocal)",
+    "unit" : "degF"
+  },
+  "sources/open-meteo-forecast" : {
+    "brains" : {
+      "water-temp" : true
+    },
+    "failuresLastRun" : 0,
+    "health" : "HEALTHY",
+    "lakeCount" : 621,
+    "lastFetchAt" : "2026-07-15T03:00:00Z",
+    "notes" : "Written by the water-temp brain job. Other brains also use Open-Meteo; a shared source writer should own this record once they integrate.",
+    "ownerBrainId" : "water-temp",
+    "provider" : "Open-Meteo",
+    "provides" : "daily air temperature, shortwave, wind, humidity → water-temp model forcing",
+    "sourceId" : "open-meteo-forecast",
+    "staleThresholdHours" : 6,
+    "type" : "weather-forcing"
+  },
+  "sources/usace-cwms-water-temp" : {
+    "brains" : {
+      "water-temp" : true
+    },
+    "health" : "UNKNOWN",
+    "lakeCount" : 0,
+    "lastFetchAt" : "2026-07-15T03:00:00Z",
+    "notes" : "lakeCount = lakes that returned a reading this run (6 lakes have this provider configured as their own sensor). Fetch errors are swallowed by the production path, so failures are not observable; health is UNKNOWN.",
+    "ownerBrainId" : "water-temp",
+    "provider" : "USACE CWMS",
+    "provides" : "lake surface water temperature (shown as measured when ≤ 6 h old, ≤ 15 mi)",
+    "sourceId" : "usace-cwms-water-temp",
+    "staleThresholdHours" : 6,
+    "type" : "lake-temperature-sensor"
+  },
+  "sources/usgs-nwis-00010" : {
+    "brains" : {
+      "water-temp" : true
+    },
+    "health" : "UNKNOWN",
+    "lakeCount" : 1,
+    "lastFetchAt" : "2026-07-15T03:00:00Z",
+    "latestObservationAt" : "2026-07-15T01:00:00Z",
+    "notes" : "lakeCount = lakes that returned a reading this run (23 lakes have this provider configured as their own sensor). Fetch errors are swallowed by the production path, so failures are not observable; health is UNKNOWN.",
+    "ownerBrainId" : "water-temp",
+    "provider" : "USGS",
+    "provides" : "lake surface water temperature (shown as measured when ≤ 6 h old, ≤ 15 mi)",
+    "sourceId" : "usgs-nwis-00010",
+    "staleThresholdHours" : 6,
+    "type" : "lake-temperature-sensor"
+  },
+  "validation/water-temp" : {
+    "artifactRef" : "Sector iOS repo docs/decisions/2026-09-23-water-temperature-calibration.md",
+    "brainId" : "water-temp",
+    "failedGates" : [
+      "LEVEL4_PROTECTED_TRUTH_INSUFFICIENT"
+    ],
+    "holdoutType" : "leave-one-lake-out across 17 USGS lake gauges (one global parameter set)",
+    "lakeCount" : 17,
+    "lastRunAt" : "2026-09-23",
+    "metrics" : {
+      "biasF" : -0.059999999999999998,
+      "maeF" : null,
+      "pctDaysOffMoreThan5F" : 14,
+      "rmseF" : 3.3999999999999999,
+      "seasonalBiasSpreadF" : 2.6899999999999999,
+      "worstMonthBiasF" : -1.6299999999999999
+    },
+    "metricUnits" : {
+      "biasF" : "°F",
+      "maeF" : "°F",
+      "pctDaysOffMoreThan5F" : "%",
+      "rmseF" : "°F",
+      "seasonalBiasSpreadF" : "°F",
+      "worstMonthBiasF" : "°F"
+    },
+    "modelHistory" : [
+      {
+        "date" : "2026-09-23",
+        "status" : "RETIRED",
+        "version" : "air-lag k=0.20"
+      },
+      {
+        "date" : "2026-09-23",
+        "status" : "CURRENT",
+        "version" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)"
+      }
+    ],
+    "modelVersion" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+    "notes" : [
+      "Per-lake held-out errors were not preserved; the calibration script is in neither repo. MAE unknown.",
+      "Better on 15 of 17 lakes; slightly worse on Osoyoos (−1.2 °F) and Detroit Lake (−0.2 °F) than the retired model.",
+      "Level-4 protected validation (Guntersville, Wheeler, Wilson, Pickwick) not run: holdout 167 total but Wheeler 18 and Wilson 2 of 25 required (Stage 3C.3, 2026-10-11)."
+    ],
+    "researchCandidate" : {
+      "artifactRef" : "Sector iOS repo docs/intelligence/water-temp/WATER_TEMP_STAGE_3C3_PROTECTED_VALIDATION.md",
+      "candidate" : "Water Temp V2 = production M0 + Stage 3C.1 Arm A 2-state Kalman filter [x, b] + operational state engine",
+      "evidence" : [
+        "Non-protected cross-station replay (8 lakes, 60 directions): weekly median RMSE improvement +1.18 °C vs the free model (Stage 3C.1).",
+        "Single-station replay (12 gauges): weekly +0.80 °C (Stage 3C/3C.2)."
+      ],
+      "protectedValidation" : "NOT RUN — protected truth insufficient (Stage 3C.3)",
+      "status" : "RESEARCH — frozen 2026-10-11, NOT promoted, not running"
+    },
+    "sampleCount" : 8110,
+    "status" : "GLOBAL_HOLDOUT_ONLY",
+    "validationVersion" : "calibration-2026-09-23"
+  }
+}

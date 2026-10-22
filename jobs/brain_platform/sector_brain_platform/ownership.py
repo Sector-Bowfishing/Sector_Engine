@@ -7,6 +7,9 @@ SOURCE_OWNERS = {
     "tva-restapi": "lake-brain",
     "usace-cwms-pool": "lake-brain",
     "usgs-nwis-lake-elevation": "lake-brain",
+    "usace-access2water": "lake-brain",            # fleet/candidate scopes (Lake Brain is the only acquirer)
+    "usbr-rise": "lake-brain",
+    "nws-nwps": "lake-brain",
     "usgs-nwis-00010": "water-temp",
     "usace-cwms-water-temp": "water-temp",
     "open-meteo-forecast": "water-temp",
