@@ -53,30 +53,14 @@
     }
   ],
   "providers": [
-    {
-      "providerId": "iem-hads"
-    },
-    {
-      "providerId": "nws-nwps"
-    },
-    {
-      "providerId": "tva-restapi"
-    },
-    {
-      "providerId": "usace-access2water"
-    },
-    {
-      "providerId": "usace-cwms-pool"
-    },
-    {
-      "providerId": "usbr-rise"
-    },
-    {
-      "providerId": "usgs-nwis-dv"
-    },
-    {
-      "providerId": "usgs-nwis-lake-elevation"
-    }
+    {"providerId": "iem-hads", "requirement": "OPTIONAL"},
+    {"providerId": "nws-nwps", "requirement": "OPTIONAL"},
+    {"providerId": "tva-restapi", "requirement": "REQUIRED"},
+    {"providerId": "usace-access2water", "requirement": "OPTIONAL"},
+    {"providerId": "usace-cwms-pool", "requirement": "REQUIRED"},
+    {"providerId": "usbr-rise", "requirement": "OPTIONAL"},
+    {"providerId": "usgs-nwis-dv", "requirement": "OPTIONAL"},
+    {"providerId": "usgs-nwis-lake-elevation", "requirement": "REQUIRED"}
   ],
   "researchWorkspace": {
     "workspaceId": "lake-brain"
