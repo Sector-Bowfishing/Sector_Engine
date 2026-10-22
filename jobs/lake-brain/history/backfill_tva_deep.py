@@ -43,7 +43,7 @@ import pandas as pd
 BUCKET = "sector-lake-brain"
 TZ = "America/Chicago"                       # TVA lake time zone in LakeSourceBindings.tvaPilot
 METHOD = "doy15-percentile-v1"               # LakeBrainSpec.baselineMethod
-DEFAULT_HIST = os.path.expanduser("~/Desktop/Development/Sector_Research_Data/lake-brain/history")
+DEFAULT_HIST = os.path.join(os.environ.get("LB_DATA") or os.path.join(os.environ.get("SECTOR_RESEARCH_ROOT", os.path.expanduser("~/Desktop/Development/Sector Research")), "lake-brain", "datasets"), "history")
 
 # loc -> lake id, gcs key, RVDHUN name regex, plausible range [lo, hi] ft, directory fullPoolFt, topOfGatesFt
 # lo = fullPool - seasonal drawdown tolerance; hi = LakeSourceBindings topOfGates + 0.6 ft (0.1-ft rounding + wave/seiche slack)

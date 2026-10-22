@@ -14,7 +14,7 @@ from rasterio.features import geometry_mask
 from rasterio.windows import from_bounds
 from shapely.geometry import shape
 
-DATA = os.environ.get("LAKE_BRAIN_DATA", "/Users/mcather/Desktop/Development/Sector_Research_Data/lake-brain")
+DATA = os.environ.get("LAKE_BRAIN_DATA") or os.path.join(os.environ.get("SECTOR_RESEARCH_ROOT", os.path.expanduser("~/Desktop/Development/Sector Research")), "lake-brain", "datasets")
 TILES = os.path.join(DATA, "geometry", "gsw")
 
 

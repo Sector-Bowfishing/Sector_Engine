@@ -16,7 +16,7 @@ import re
 import numpy as np
 
 ENGINE_RESEARCH = "/Users/mcather/Desktop/Development/Sector_Engine"                # research checkout (read-only)
-DATA = "/Users/mcather/Desktop/Development/Sector_Research_Data/lake-brain"          # (the kickoff said ~/Desktop/Sector_Research_Data; it lives under Development/)
+DATA = os.environ.get("LB_DATA") or os.path.join(os.environ.get("SECTOR_RESEARCH_ROOT", os.path.expanduser("~/Desktop/Development/Sector Research")), "lake-brain", "datasets")   # canonical research workspace (Sector Research/lake-brain/datasets) since 2026-10-22
 REPO = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
 V2 = os.path.join(ENGINE_RESEARCH, "docs", "research", "lake-brain", "data", "verified_bindings_v2.csv")
 FEATURES = os.path.join(ENGINE_RESEARCH, "docs", "research", "lake-brain", "data", "lake_features.csv")

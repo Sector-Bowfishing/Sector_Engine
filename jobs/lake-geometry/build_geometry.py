@@ -55,7 +55,7 @@ sys.path.insert(0, HERE)
 import lake_geometry as lg  # noqa: E402
 
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-DATA = os.environ.get("LAKE_BRAIN_DATA", "/Users/mcather/Desktop/Development/Sector_Research_Data/lake-brain")
+DATA = os.environ.get("LAKE_BRAIN_DATA") or os.path.join(os.environ.get("SECTOR_RESEARCH_ROOT", os.path.expanduser("~/Desktop/Development/Sector Research")), "lake-brain", "datasets")
 GEO = os.path.join(DATA, "geometry")
 DEFAULTS = {
     "directory": os.path.join(DATA, "directory_lakes_2026-10-13.json"),
