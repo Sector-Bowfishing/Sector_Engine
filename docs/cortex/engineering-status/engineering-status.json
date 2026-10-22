@@ -1,19 +1,19 @@
 {
   "schema": "engineering-status-v1",
   "schemaVersion": "1.2.0",
-  "reportId": "sector-engine-engineering-status-2026-10-20.3",
+  "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "standards": {
     "framework": "Rehtac Cortex",
-    "version": "2.2.0",
-    "pin": "ae59e2d",
+    "version": "2.3.0",
+    "pin": "8955840",
     "pack": "sector/engine"
   },
   "source": {
     "repository": "Sector-Bowfishing/Sector_Engine",
     "branch": "cortex/architecture-standardization-2026-10-20",
     "evaluatedCommit": "3e8a3857",
-    "evaluatedAt": "2026-10-20",
-    "session": "docs/cortex/sessions/2026-10-20-cortex-2-1-final-verification.md",
+    "evaluatedAt": "2026-10-22",
+    "session": "docs/cortex/sessions/2026-10-22-operational-readiness.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
     "sourceDigest": "sha256:ac7f34fd528d314dcf2210b934ffda6533c0b74c58c164254ac23fb61e1435d6",
     "certificationDigest": "sha256:ac7f34fd528d314dcf2210b934ffda6533c0b74c58c164254ac23fb61e1435d6",
@@ -149,14 +149,14 @@
           "evidence": "private bundle hash chain verified on load; no named release approval (M-3)"
         },
         "operationalReadiness": {
-          "status": "NOT_VERIFIED",
-          "label": "RECORDED_RUNNING_IN_ORCHESTRATOR",
-          "evidence": "not checked against production in this session (A-3)"
+          "status": "PARTIAL",
+          "label": "RUNTIME_PILOT_PASS_SCIENCE_UNVALIDATED",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --dry-run at main 1d05a8cc: 29 species profiles, artifact valid, response bands PROPOSED (RESEARCH tier); no per-lake state in the production path."
         },
         "productionActivation": {
-          "status": "NOT_VERIFIED",
-          "label": "IN_PROCESS_VIA_ORCHESTRATOR_SCHEDULER_PAUSED",
-          "evidence": "recorded deployed commit 7dae7051; live state not read"
+          "status": "PARTIAL",
+          "label": "PUBLISHED_NOT_REFRESHING",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). last production publication 2026-10-19T02:58Z (in-process via brain-orchestrator); orchestrator scheduler PAUSED, so nothing refreshes it."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -315,13 +315,13 @@
         },
         "operationalReadiness": {
           "status": "BLOCKED",
-          "label": "ABSTAINS_WITHOUT_APPROVED_RELEASE",
-          "evidence": "--plan/--write report BLOCKED_AWAITING_APPROVED_RELEASE"
+          "label": "REFUSES_UNAPPROVED_RELEASE",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --dry-run exits 2 BLOCKED_AWAITING_APPROVED_RELEASE (correct); with --allow-unapproved-release locally: 5 pilots evaluated, all DEGRADED. G-1 required."
         },
         "productionActivation": {
           "status": "NOT_APPLICABLE",
-          "label": "NOT_ACTIVATED",
-          "evidence": "PROFILED/SHADOW, PARKED; no executor, no schedule"
+          "label": "NOT_ACTIVATED_BY_DESIGN",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). no execution target; a 2026-10-14 pilot record exists from the earlier approved pilot."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -494,14 +494,14 @@
           "evidence": "FNV-1a fingerprint (M-7); approval NOT_RECORDED"
         },
         "operationalReadiness": {
-          "status": "NOT_VERIFIED",
-          "label": "DEPLOYED_IMAGE_OFF_MAIN_LINEAGE",
-          "evidence": "brain-jobs:a6622f99 from feat/lake-consolidated"
+          "status": "PARTIAL",
+          "label": "RUNTIME_PILOT_PASS_DEPLOYED_OFF_MAIN",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). LakeBrainJob --dry-run --lake Guntersville (main build): OBSERVED 593.90 ft, IN_ZONE, STABLE, hist NORMAL, baseline 7416 days, BETA, presence 10; flags trend24hFallback, noOperatorFloodPoolThreshold. Validation NOT_VALIDATED."
         },
         "productionActivation": {
-          "status": "NOT_VERIFIED",
-          "label": "JOB_RECORDED",
-          "evidence": "not read live"
+          "status": "PARTIAL",
+          "label": "LEDGER_DAILY_ENABLED_OFF_MAIN_IMAGE",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). lake-brain-ledger-daily ENABLED; Cloud Run job lake-brain image a6622f99 (feat/lake-consolidated, not main); last run 2026-10-21T12:02Z."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -683,14 +683,14 @@
           "evidence": "catalog release verified on load (branch); not deployed (M-1)"
         },
         "operationalReadiness": {
-          "status": "NOT_VERIFIED",
-          "label": "PARKED_IN_PROCESS",
-          "evidence": "not checked live"
+          "status": "PARTIAL",
+          "label": "INPUT_ASSEMBLY_ONLY_NO_RECOMMENDATIONS",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --dry-run: Guntersville EVALUATED_PILOT, 2 of 5 inputs fresh, stale inputs marked; no fishing judgment produced by design (recommendations are a gated product decision). Validation NOT_VALIDATED."
         },
         "productionActivation": {
-          "status": "NOT_VERIFIED",
-          "label": "PARKED",
-          "evidence": "in-process in the orchestrator; scheduler PAUSED (recorded)"
+          "status": "BLOCKED",
+          "label": "NOT_RUNNING_ORCHESTRATOR_PAUSED",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). last publication 2026-10-14 (in-process); orchestrator scheduler PAUSED."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -851,13 +851,13 @@
         },
         "operationalReadiness": {
           "status": "BLOCKED",
-          "label": "NO_LIVE_WRITER",
-          "evidence": "dry-run only by design"
+          "label": "REFUSES_UNAPPROVED_RELEASE",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --dry-run exits 2 BLOCKED_AWAITING_APPROVED_RELEASE (correct); with --allow-unapproved-release locally: 51 lakes evaluated, 0 observed, 51 unavailable; no Guntersville coverage. G-1 and V-1 required."
         },
         "productionActivation": {
           "status": "NOT_APPLICABLE",
-          "label": "NOT_ACTIVATED",
-          "evidence": "SHADOW, PARKED; no executor, no schedule"
+          "label": "NOT_ACTIVATED_BY_DESIGN",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). PARKED, no execution target, no RTDB records (INACTIVE_EXPECTED)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -1016,14 +1016,14 @@
           "evidence": "water-clarity-knowledge-2026-10-20.1 verified on load (branch); private overlay not digest-verified (M-5)"
         },
         "operationalReadiness": {
-          "status": "NOT_VERIFIED",
-          "label": "MANUAL_JOB",
-          "evidence": "water-clarity-brain is MANUAL by decision"
+          "status": "PARTIAL",
+          "label": "RUNTIME_PILOT_PASS_NO_DEPLOYED_JOB",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --lakes Guntersville --dry-run: 4.0 ft modeled (rain-decay-v0, flagged uncalibrated), BETA; satellite median 4.83 ft (2.1-16 ft, 905 validation pairs) from a 13-day-old scene. No water-clarity-brain Cloud Run job is deployed (MANUAL)."
         },
         "productionActivation": {
-          "status": "NOT_VERIFIED",
-          "label": "MANUAL_JOB_RECORDED",
-          "evidence": "not read live"
+          "status": "BLOCKED",
+          "label": "NOT_RUNNING_STALE_SINCE_2026_10_12",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). last publication 2026-10-12; clarity-current-hourly, hydrology-hourly, lake-surface-* schedulers PAUSED. Activation needs the knowledge-release approval (M-3) and an activation approval."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -1188,14 +1188,14 @@
           "evidence": "compiled model over live inputs"
         },
         "operationalReadiness": {
-          "status": "NOT_VERIFIED",
-          "label": "PARKED",
-          "evidence": "not checked live"
+          "status": "PARTIAL",
+          "label": "RUNTIME_PILOT_PASS_SCIENCE_PARTIAL",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). WaterTempBrainJob --dry-run --lake Guntersville (main build): 70.2 F modeled, -0.5 F/24 h, 3-day forecast, CALIBRATION, flag forecastModelOnly:notSeparatelyValidated; validation GLOBAL_HOLDOUT_ONLY."
         },
         "productionActivation": {
-          "status": "NOT_VERIFIED",
-          "label": "PARKED_RECORDED",
-          "evidence": "not read live"
+          "status": "BLOCKED",
+          "label": "NOT_RUNNING_STALE_SINCE_2026_10_14",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). last publication 2026-10-14; water-temp-brain has no schedule and water-temp-tva-archive is PAUSED. Activation needs an approval."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -1356,14 +1356,14 @@
           "evidence": "wind-knowledge-2026-10-20.1 verified on load (branch); not deployed (M-1)"
         },
         "operationalReadiness": {
-          "status": "NOT_VERIFIED",
-          "label": "RECORDED_SCHEDULED_JOB",
-          "evidence": "wind-hourly; not checked live"
+          "status": "PARTIAL",
+          "label": "RUNNING_HOURLY_SCIENCE_PARTIAL",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). wind-hourly ENABLED, image e6a5026f, last run 2026-10-22T02:07Z; Guntersville state: analysis, shoreline exposure 0 % exposed / 100 % protected (physical description, not a fishing recommendation); validation PARTIAL; knowledge release approval NOT_RECORDED (M-3)."
         },
         "productionActivation": {
-          "status": "NOT_VERIFIED",
-          "label": "WIND_HOURLY_JOB_RECORDED_LIVE",
-          "evidence": "Wind Capability v2 recorded LIVE 2026-10-20; live state not read"
+          "status": "PARTIAL",
+          "label": "WIND_HOURLY_ENABLED_VERIFIED_LIVE",
+          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). Cloud Scheduler wind-hourly ENABLED; Cloud Run job commit e6a5026f (pre-release-verification image; A-2 redeploy pending M-3)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
