@@ -1,0 +1,44 @@
+{
+ "schema": "sector-research-findings-v1",
+ "brainId": "sector-intelligence",
+ "campaignId": "{campaign}",
+ "note": "VERIFICATION FIXTURE: controlled findings that cite real evidence and are judged against the Brain's real validator metrics. Not scientific claims.",
+ "findings": [
+  {
+   "id": "FX-validates",
+   "fixture": true,
+   "kind": "EVIDENCE",
+   "claim": "reference synthesis reproduces the recorded output",
+   "evidence": [
+    {
+     "path": "sector-intelligence/candidates/campaign-2026-10-22/sector-intelligence-candidate-2026-10-22.1/REPRODUCIBILITY.json",
+     "sha256": "c6e3e3193c71c4484de52e86fbc44b1b34952a8fc5740a1f96267207b068e4a8"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "research.reproduced",
+    "op": ">=",
+    "threshold": 1
+   }
+  },
+  {
+   "id": "FX-rejected",
+   "fixture": true,
+   "kind": "PARAMETER",
+   "claim": "outcome ledger has at least one scored observation (expected to fail: NOT_STARTED)",
+   "evidence": [
+    {
+     "path": "sector-intelligence/candidates/campaign-2026-10-22/sector-intelligence-candidate-2026-10-22.1/REPRODUCIBILITY.json",
+     "sha256": "c6e3e3193c71c4484de52e86fbc44b1b34952a8fc5740a1f96267207b068e4a8"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "ledgerRows",
+    "op": ">=",
+    "threshold": 1
+   }
+  }
+ ]
+}

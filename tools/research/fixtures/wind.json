@@ -1,0 +1,44 @@
+{
+ "schema": "sector-research-findings-v1",
+ "brainId": "wind",
+ "campaignId": "{campaign}",
+ "note": "VERIFICATION FIXTURE: controlled findings that cite real evidence and are judged against the Brain's real validator metrics. Not scientific claims.",
+ "findings": [
+  {
+   "id": "FX-validates",
+   "fixture": true,
+   "kind": "EVIDENCE",
+   "claim": "Wind capability v2 on committed evidence holds at or above 6.5",
+   "evidence": [
+    {
+     "path": "wind-brain/candidates/campaign-2026-10-22/wind-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "76114f37ef33e1c33ee647b3593f4a7acae258529d475acc85532341721e9cde"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "windCapability",
+    "op": ">=",
+    "threshold": 6.5
+   }
+  },
+  {
+   "id": "FX-rejected",
+   "fixture": true,
+   "kind": "PARAMETER",
+   "claim": "certification without the sealed H2 reaches the published 3.3 (expected to fail: dimension 8 not read)",
+   "evidence": [
+    {
+     "path": "wind-brain/candidates/campaign-2026-10-22/wind-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "76114f37ef33e1c33ee647b3593f4a7acae258529d475acc85532341721e9cde"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "research.certificationOfficial",
+    "op": ">=",
+    "threshold": 3.3
+   }
+  }
+ ]
+}

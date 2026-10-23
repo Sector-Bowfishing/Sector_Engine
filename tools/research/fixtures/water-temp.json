@@ -1,0 +1,44 @@
+{
+ "schema": "sector-research-findings-v1",
+ "brainId": "water-temp",
+ "campaignId": "{campaign}",
+ "note": "VERIFICATION FIXTURE: controlled findings that cite real evidence and are judged against the Brain's real validator metrics. Not scientific claims.",
+ "findings": [
+  {
+   "id": "FX-validates",
+   "fixture": true,
+   "kind": "EVIDENCE",
+   "claim": "W2-C2 seasonal interval criterion passes",
+   "evidence": [
+    {
+     "path": "water-temperature/candidates/campaign-2026-10-22/water-temp-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "8bf2c85bc51b3d69202df2ea58ca8a6d8f74efb588838f29da15f5bdc9837646"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "w2c2Pass",
+    "op": ">=",
+    "threshold": 1
+   }
+  },
+  {
+   "id": "FX-rejected",
+   "fixture": true,
+   "kind": "PARAMETER",
+   "claim": "W2-C1 seasonal offset criterion passes (expected to fail)",
+   "evidence": [
+    {
+     "path": "water-temperature/candidates/campaign-2026-10-22/water-temp-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "8bf2c85bc51b3d69202df2ea58ca8a6d8f74efb588838f29da15f5bdc9837646"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "w2c1Pass",
+    "op": ">=",
+    "threshold": 1
+   }
+  }
+ ]
+}

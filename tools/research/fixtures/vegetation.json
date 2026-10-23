@@ -1,0 +1,44 @@
+{
+ "schema": "sector-research-findings-v1",
+ "brainId": "vegetation",
+ "campaignId": "{campaign}",
+ "note": "VERIFICATION FIXTURE: controlled findings that cite real evidence and are judged against the Brain's real validator metrics. Not scientific claims.",
+ "findings": [
+  {
+   "id": "FX-validates",
+   "fixture": true,
+   "kind": "EVIDENCE",
+   "claim": "candidate fleet manifest rebuilds byte-identical from the registry",
+   "evidence": [
+    {
+     "path": "vegetation/candidates/campaign-2026-10-22/vegetation-knowledge-candidate-2026-10-22.1/REPRODUCIBILITY.json",
+     "sha256": "30e44b18d8ec5cc0979dc56314cbf865bfa898e18fca2ef3849132e8710f87ad"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "fleetReproduced",
+    "op": ">=",
+    "threshold": 1
+   }
+  },
+  {
+   "id": "FX-rejected",
+   "fixture": true,
+   "kind": "PARAMETER",
+   "claim": "at least one lake has field truth (expected to fail: no truth metric exists)",
+   "evidence": [
+    {
+     "path": "vegetation/candidates/campaign-2026-10-22/vegetation-knowledge-candidate-2026-10-22.1/REPRODUCIBILITY.json",
+     "sha256": "30e44b18d8ec5cc0979dc56314cbf865bfa898e18fca2ef3849132e8710f87ad"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "truthBackedLakes",
+    "op": ">=",
+    "threshold": 1
+   }
+  }
+ ]
+}

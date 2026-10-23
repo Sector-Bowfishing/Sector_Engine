@@ -25,6 +25,8 @@ jobs:
         run: python -m pytest -q tools/architecture
       - name: Verification gates (conformance home, score baseline, clean copy)
         run: python -m pytest -q verification
+      - name: Research campaign harness (fixture research home; no real research data, no network)
+        run: python -m pytest -q tools/research
       - name: Packaged knowledge releases and the engineering status report (Cortex 2.1 standing memory checks)
         run: |
           for d in brains/sector-intelligence/runtime brains/wind/runtime brains/water-clarity/runtime brains/depth/runtime/knowledge brains/vegetation/runtime/knowledge; do python tools/knowledge/build_release_manifest.py "$d" --check; done

@@ -1,0 +1,308 @@
+{
+ "adapters": {
+  "biological-state": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "biological-state",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "biological-state",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "biological-state",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/biological-state.json"
+  },
+  "wind": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "wind",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "wind",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "wind",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/wind.json"
+  },
+  "water-clarity": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "water-clarity",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "water-clarity",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "water-clarity",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/water-clarity.json"
+  },
+  "lake-brain": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "lake-brain",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "lake-brain",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "lake-brain",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/lake-brain.json"
+  },
+  "water-temp": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "water-temp",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "water-temp",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "water-temp",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/water-temp.json"
+  },
+  "depth": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "depth",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "depth",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "depth",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/depth.json"
+  },
+  "vegetation": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "vegetation",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "vegetation",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "vegetation",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/vegetation.json"
+  },
+  "sector-intelligence": {
+   "research": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "sector-intelligence",
+     "research",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 600
+   },
+   "validate": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "sector-intelligence",
+     "validate",
+     "{home}",
+     "{engine}"
+    ],
+    "timeout": 900
+   },
+   "score": {
+    "cmd": [
+     "{python}",
+     "{engine}/tools/research/adapters/run_adapter.py",
+     "sector-intelligence",
+     "score",
+     "{home}",
+     "{engine}"
+    ],
+    "value": "score",
+    "measure": "Brain's own candidate evaluator",
+    "timeout": 600
+   },
+   "fixtureFindings": "fixtures/sector-intelligence.json"
+  }
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "schema": "sector-research-findings-v1",
+ "brainId": "water-clarity",
+ "campaignId": "{campaign}",
+ "note": "VERIFICATION FIXTURE: controlled findings that cite real evidence and are judged against the Brain's real validator metrics. Not scientific claims.",
+ "findings": [
+  {
+   "id": "FX-validates",
+   "fixture": true,
+   "kind": "EVIDENCE",
+   "claim": "all seven frozen R3.1 bars still pass on the published files",
+   "evidence": [
+    {
+     "path": "water-clarity/candidates/campaign-2026-10-22/water-clarity-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "47dc02904ea37aa7c6a1afd0c1b5f80c0e5cce63e0fdaad26c5ff7080c083210"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "frozenBarsPassed",
+    "op": ">=",
+    "threshold": 7
+   }
+  },
+  {
+   "id": "FX-rejected",
+   "fixture": true,
+   "kind": "PARAMETER",
+   "claim": "impossible threshold: proves a failing metric is rejected",
+   "evidence": [
+    {
+     "path": "water-clarity/candidates/campaign-2026-10-22/water-clarity-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "47dc02904ea37aa7c6a1afd0c1b5f80c0e5cce63e0fdaad26c5ff7080c083210"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "research.reproduced",
+    "op": ">=",
+    "threshold": 2
+   }
+  }
+ ]
+}
