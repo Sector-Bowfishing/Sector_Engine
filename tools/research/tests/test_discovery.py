@@ -427,3 +427,16 @@ def test_retry_failed_resumes_only_failed_stages_without_re_acquiring(home, monk
     assert C.run(home, "w6", adapters={}, fetcher=D.OfflineFetcher(), retry_failed=True) == {"water-temp": "DONE"}
     sg = C.Campaign(home, "w6").load()["tracks"]["water-temp"]["stages"]
     assert sg["validate"]["retriedAfterFailure"] and sg["acquire"]["attempts"] == 1
+
+
+def test_gaps_blocked_in_an_earlier_campaign_do_not_prevent_their_avenues_from_running_again(home, monkeypatch):
+    """Regression (found in the first corrected live run): a gap blocked externally last time made every avenue serving it ineligible forever, so
+    Clarity/Depth/Vegetation stopped after 0-1 avenues with others untried. A new campaign re-tests external blocks; only approval blocks persist."""
+    acts = [{"id": "need", "gap": "G-A", "publisher": "P", "dataset": "d", "access": "a", "verified": False, "addresses": "x"}]
+    cfg = cfg_for([{"id": "needs", "run": "experiment", "experiment": "owner-actions", "gaps": ["G-A"], "params": {"actions": acts}}])
+    run1(home, monkeypatch, cfg, cid="b1")
+    st, t, led = run1(home, monkeypatch, cfg, cid="b2")
+    assert any(k.startswith("needs:") and v["campaign"] == "b2" for k, v in led.doc["avenues"].items())
+    assert led.doc["gaps"]["G-A"]["status"] == "BLOCKED_EXTERNAL"                                    # re-recorded, not forgotten
+    led.block("G-B", "approval", "needs owner", "owner", "b2")
+    assert L.next_avenue([av("z", gaps=("G-B",))], led, [], set(), "b2") is None                    # an approval block does stop avenues that serve only it

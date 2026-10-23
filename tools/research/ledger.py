@@ -103,8 +103,10 @@ class Ledger:
         return a is not None and (campaign is None or a["campaign"] == campaign)
 
     def reopen_exhausted(self) -> None:
+        """A new campaign re-tests everything except an approval block: sources change, data appears, new avenues are registered. A block that still
+        holds is simply recorded again (its history of blockers is kept)."""
         for g in self.doc["gaps"].values():
-            if g["status"] == "EXHAUSTED":
+            if g["status"] in ("EXHAUSTED", "BLOCKED_EXTERNAL"):
                 g["status"] = "INVESTIGATING"
 
     def seen_findings(self, ids: list[str]) -> int:
@@ -136,7 +138,8 @@ class Ledger:
 
 def next_avenue(avenues: list[dict], ledger: Ledger, last_weak: list, improved_ladders: set, campaign: str | None = None) -> tuple[dict, list | None] | None:
     """The next untried avenue for a still-actionable gap, in configured priority order; None when nothing actionable and affordable remains."""
-    open_gaps = set(ledger.actionable())
+    # an avenue may serve any gap that is not resolved and not waiting on an owner approval (an external-data block does not stop ALTERNATE sources)
+    open_gaps = {g for g, v in ledger.doc["gaps"].items() if v["status"] in ACTIONABLE + ("BLOCKED_EXTERNAL", "EXHAUSTED")}
     for av in avenues:
         targets = last_weak if av.get("when") == "weak" else None
         if av.get("when") == "weak" and not last_weak:
