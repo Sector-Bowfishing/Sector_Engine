@@ -21,6 +21,7 @@ import math
 import os
 import re
 import statistics as S
+import urllib.parse
 
 import discovery as D
 
@@ -287,7 +288,7 @@ def acquire_lake_cwms(ev, home, spec, it, targets, gaps):
         ents.sort(key=lambda e: (0 if re.search(r"rev|best", e["name"], re.I) else 1, e["name"]))
         for e in ents[:3]:
             loc = e["name"].split(".")[0]
-            lrel = ev.fetch("cwms-location", f"{l['key']}__{D.safe_key(loc)}.json", CWMS + "locations/" + loc, {"office": e["office"]}, purpose=f"coordinates of CWMS location {loc} (identity check)", accept=ACC)
+            lrel = ev.fetch("cwms-location", f"{l['key']}__{D.safe_key(loc)}.json", CWMS + "locations/" + urllib.parse.quote(loc, safe=""), {"office": e["office"]}, purpose=f"coordinates of CWMS location {loc} (identity check)", accept=ACC)
             ll = json.load(open(os.path.join(home, lrel), encoding="utf-8")) if lrel else {}
             lat, lon = ll.get("latitude"), ll.get("longitude")
             if not isinstance(lat, (int, float)) or abs(lat - l["lat"]) > cfg["radiusDeg"] or abs(lon - l["lon"]) > cfg["radiusDeg"]:

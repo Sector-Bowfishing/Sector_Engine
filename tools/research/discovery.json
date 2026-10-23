@@ -188,7 +188,14 @@
       ]
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "water-temp-level-ladder-v1",
+    "scale": 10,
+    "class": "PREDICTION_GATE",
+    "source": "TYPED_NOT_COMPUTED",
+    "movable": "no: the only blocker is the Level-4 protected-truth sufficiency gate (frozen); a lower RMSE cannot move a gate-based score"
+   }
   },
   "lake-brain": {
    "kind": "lake-levels",
@@ -270,7 +277,14 @@
       "baselineFreshLakes": 18
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "lake-brain-score-v1",
+    "scale": 10,
+    "class": "COVERAGE_AND_KNOWLEDGE",
+    "source": "TYPED_NOT_COMPUTED",
+    "movable": "no: capped at 3.0 while the profiled share is under 10% (uncapped candidate 6.3 shows as 3.0); dimension values are typed in the builder"
+   }
   },
   "water-clarity": {
    "kind": "wqp-secchi",
@@ -344,7 +358,14 @@
       ]
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "clarity research certification r3.1 (NOT_DEPLOYED)",
+    "scale": 10,
+    "class": "PREDICTION_VALIDATION",
+    "source": "RECORDED",
+    "movable": "no: recorded from the candidate file; production clarity is unscored"
+   }
   },
   "biological-state": {
    "kind": "gbif-species",
@@ -464,7 +485,14 @@
       "minLeads": 1
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "biological-state-score-v1",
+    "scale": 10,
+    "class": "KNOWLEDGE_AND_COVERAGE",
+    "source": "COMPUTED",
+    "movable": "by species/knowledge counts, not by field validation (FISH-VAL-001 open)"
+   }
   },
   "wind": {
    "kind": "literature",
@@ -561,7 +589,14 @@
       ]
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "wind-specialist-capability-v2",
+    "scale": 10,
+    "class": "CAPABILITY_(39/100 SYNTHETIC)",
+    "source": "COMPUTED",
+    "movable": "only by changing the committed evidence the rubric reads"
+   }
   },
   "depth": {
    "kind": "literature",
@@ -651,7 +686,14 @@
       ]
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "none (unscored shadow Brain)",
+    "scale": null,
+    "class": "NONE",
+    "source": "RECORDED",
+    "movable": "no rubric exists; the research candidate value is informational"
+   }
   },
   "vegetation": {
    "kind": "literature",
@@ -730,7 +772,14 @@
       ]
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "none (unscored shadow Brain)",
+    "scale": null,
+    "class": "NONE",
+    "source": "RECORDED",
+    "movable": "no rubric exists; the research candidate value is informational"
+   }
   },
   "sector-intelligence": {
    "kind": "upstream",
@@ -767,7 +816,14 @@
       "region": "Southeast"
      }
     }
-   ]
+   ],
+   "scoreMeta": {
+    "rubricId": "sector-intelligence-score-v1",
+    "scale": 10,
+    "class": "WIRING_AND_COVERAGE",
+    "source": "NOT_RUN",
+    "movable": "capped at 5.0 while NOT_VALIDATED"
+   }
   }
  },
  "budget": {

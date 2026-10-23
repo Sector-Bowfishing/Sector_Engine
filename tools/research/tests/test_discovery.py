@@ -72,8 +72,8 @@ def av(aid, gaps=("G-A",), **kw):
     return {"id": aid, "run": "experiment", "experiment": "fake-" + aid, "gaps": list(gaps), **kw}
 
 
-def register(monkeypatch, aid, analyze, content="unique"):
-    monkeypatch.setitem(X.EXPERIMENTS, "fake-" + aid, {"acquire": fake_acquire(content), "analyze": analyze})
+def register(monkeypatch, aid, analyze, content="unique", name=None):
+    monkeypatch.setitem(X.EXPERIMENTS, name or "fake-" + aid, {"acquire": fake_acquire(content), "analyze": analyze})
 
 
 def run1(home, monkeypatch, cfg, cid="t1", overrides=None, adapters=None):
@@ -181,7 +181,7 @@ def test_missing_inputs_are_a_recorded_limitation_not_a_failed_track(home, monke
 def test_repeated_unsuccessful_searches_stop_as_stalled_and_never_repeat(home, monkeypatch):
     for i in range(6):
         register(monkeypatch, f"s{i}", fake_analyze(tier="QUALITY_CHECKED", fail=True), content="same evidence")
-    avs = [av(f"s{i}") for i in range(6)]
+    avs = [av(f"s{i}", acquiring=True) for i in range(6)]
     st, t, led = run1(home, monkeypatch, cfg_for(avs, budget={"stallAvenues": 3}))
     ran = [k for k, v in led.doc["avenues"].items() if v["campaign"] == "t1"]
     assert len(ran) == 4 and len(set(ran)) == 4                                                      # 1 new + 3 with no new evidence, then stop; no key twice

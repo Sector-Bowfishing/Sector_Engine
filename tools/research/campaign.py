@@ -713,6 +713,15 @@ def stage_score(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict
     return out
 
 
+def score_display(bid: str, sc: dict) -> str:
+    """R1/R2: a typed constant is never printed as a result; every candidate score names its rubric, source and whether it can move."""
+    m = brain_spec(bid).get("scoreMeta") or {}
+    v = sc.get("candidateScore")
+    shown = "not a result (typed constant)" if m.get("source") == "TYPED_NOT_COMPUTED" else ("—" if v is None else str(v))
+    deltas = "; ".join(f"{x.get('capability')}: {x.get('baseline')} -> {x.get('candidate')}" for x in sc.get("capabilityChanges") or []) or "no measured capability change"
+    return f"{shown} [{m.get('rubricId', '?')}, class {m.get('class', '?')}; movable: {m.get('movable', 'unknown')}; measured: {deltas}]"
+
+
 def classify(c: Campaign, st: dict, bid: str, led: L.Ledger, why_stop: str) -> dict:
     """Honest per-Brain outcome of an improvement campaign: IMPROVED, STALLED, BLOCKED or BUDGET_REACHED. Evidence alone is never IMPROVED."""
     t = st["tracks"][bid]
@@ -768,6 +777,7 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         new_f = led.seen_findings([f"{av['id']}:{r['id']}" for r in okm])
         rh = hashlib.sha256(json.dumps(sorted((r["id"], r["verdict"], r["reason"]) for r in mine)).encode()).hexdigest()[:16] if okm else ""   # failed searches carry no result
         led.record(key, av, c.cid, outcome, best, new_ev, "; ".join(r["reason"][:120] for r in mine[:2]), new_f, rh)
+        led.doc["avenues"][key]["acquiring"] = bool(av.get("acquiring", av.get("run") == "connector" or av.get("experiment") in ("dataset-search", "lake-cwms")))
         for o in res.get("owner") or []:
             if o.get("avenue") == av["id"]:
                 rec = D.owner_action(c.home, t["folder"], c.cid, o["id"], o.get("gap") or "", o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), o.get("checked") or [], o["addresses"])
@@ -791,7 +801,9 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     elif sum(a.get("bytes", 0) for a in (t.get("acquired") or [])[-1:]) > int(b.get("maxBytesPerBrain", 5e8)):
         why_stop = "budget"
     else:
-        tail = runs[-int(b.get("stallAvenues", 3)):]
+        # stall detection guards ACQUISITION loops (downloads and searches). Deterministic analysis avenues are finite and always get their turn.
+        acq_runs = [v for v in runs if v.get("acquiring")]
+        tail = acq_runs[-int(b.get("stallAvenues", 3)):]
         if len(tail) >= int(b.get("stallAvenues", 3)) and all(v["newEvidence"] == 0 and v.get("newFindings", 0) == 0 and not v.get("changed") and v["outcome"] != "IMPROVED" for v in tail):
             why_stop = "no-progress"
         else:
@@ -873,13 +885,14 @@ def stage_cleanup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> di
         "Candidate knowledge": (f"{cand.get('releaseId')} [{cand.get('lifecycle')}: {cand.get('scientificChanges', 0)} scientific change(s), "
                                 f"{cand.get('rejectedHypotheses', 0)} rejected hypothesis] (approval NOT_RECORDED; digest {cand.get('releaseDigest')}); validated "
                                 f"{val.get('validated', 0)}, rejected {val.get('rejected', 0)}" if cand.get("packaged") else f"none ({cand.get('reason', 'not packaged')}); "
-                                f"validated {val.get('validated', 0)}, rejected {val.get('rejected', 0)}"),
+                                f"validated {val.get('validated', 0)}, rejected {val.get('rejected', 0)}") +
+                                f". Scientific candidate score (NON-AUTHORITATIVE, {(brain_spec(bid).get('scoreMeta') or {}).get('source', 'unlabelled')}; engineering score is separate): "
+                                f"{score_display(bid, sc)}; authoritative scores unchanged: {sc.get('authoritativeUnchanged')}",
         "Backups verified": "no new ARCHIVAL data; existing backups untouched (campaign outputs are ACTIVE and reconstructable)",
         "Deleted": f"{len(deleted)} campaign-owned disposable file(s) under analysis/tmp/{c.cid}",
         "Worktrees": "none created by the campaign harness",
         "Blockers": (f"research outcome {(st['tracks'][bid].get('outcome') or {}).get('outcome')}: {(st['tracks'][bid].get('outcome') or {}).get('reason')}; "
-                     f"next evidence: {'; '.join((st['tracks'][bid].get('outcome') or {}).get('nextEvidenceSources') or []) or 'none recorded'}; candidate score "
-                     f"{sc.get('candidateScore')} ({sc.get('class')}); authoritative scores unchanged: {sc.get('authoritativeUnchanged')}; "
+                     f"next evidence: {'; '.join((st['tracks'][bid].get('outcome') or {}).get('nextEvidenceSources') or []) or 'none recorded'}; "
                      "promotion to approved memory needs owner/reviewer approval (M-3, G-1)"),
     }
     text = f"# Research closeout — {bid} — campaign {c.cid}\n\n" + "\n".join(f"## {k}\n\n{v}\n" for k, v in body.items())
@@ -1007,7 +1020,8 @@ def write_report(c: Campaign) -> dict:
                      "scientificSupport": val.get("scientificSupport", 0), "improvements": val.get("improvements") or [],
                      "candidate": cand.get("releaseId") if cand.get("packaged") else None, "lifecycle": cand.get("lifecycle"),
                      "scientificChanges": cand.get("scientificChanges", 0), "rejectedHypotheses": cand.get("rejectedHypotheses", 0),
-                     "candidateScore": sc.get("candidateScore"), "scoreMeasure": sc.get("measure"), "capabilityChanges": sc.get("capabilityChanges") or [],
+                     "candidateScore": sc.get("candidateScore"), "scoreMeasure": sc.get("measure"), "scoreMeta": brain_spec(bid).get("scoreMeta"),
+                     "scoreLabel": score_display(bid, sc), "capabilityChanges": sc.get("capabilityChanges") or [],
                      "authoritativeUnchanged": sc.get("authoritativeUnchanged"), "iterations": t.get("iteration", 1),
                      "evidenceFiles": sum(a.get("evidenceFiles", 0) for a in (t.get("acquired") or [])[-1:]),
                      "acquisitionFailures": sum(a.get("failureCount", 0) for a in t.get("acquired") or []),
@@ -1037,7 +1051,7 @@ def write_report(c: Campaign) -> dict:
         lines.append(f"| {r['brainId']} | **{r['outcome']}** — {r['outcomeReason']} | {r['avenuesRun']} | {tiers[-1] if tiers else '—'} | "
                      f"{', '.join(f'{k}:{v}' for k, v in r['validatedByTier'].items()) or '—'} | {', '.join(r['improvements']) or 'none'} | "
                      f"{r['lifecycle'] or '—'} ({r['scientificChanges']} change(s), {r['rejectedHypotheses']} rejected hypothesis) | "
-                     f"{r['candidateScore'] if r['candidateScore'] is not None else '—'} |")
+                     f"{r['scoreLabel']} |")
     lines += ["", "## Measured capability changes (candidate only)", ""]
     any_cap = False
     for r in rows:
