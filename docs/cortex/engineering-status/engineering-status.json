@@ -4,19 +4,19 @@
   "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "standards": {
     "framework": "Rehtac Cortex",
-    "version": "2.6.0",
-    "pin": "7293d01",
+    "version": "2.7.0",
+    "pin": "ebc7fb9",
     "pack": "sector/engine"
   },
   "source": {
     "repository": "Sector-Bowfishing/Sector_Engine",
-    "branch": "cortex/final-operational-integration-2026-10-22",
+    "branch": "cortex/central-scheduling-2026-10-23",
     "evaluatedCommit": "3e8a3857",
-    "evaluatedAt": "2026-10-22",
-    "session": "docs/cortex/sessions/2026-10-22-final-operational-integration.md",
+    "evaluatedAt": "2026-10-23",
+    "session": "docs/cortex/sessions/2026-10-23-central-scheduling.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:f8f6972946983cef0be26307ff3aa734c618ce2a576e222b591e598bae0d2772",
-    "certificationDigest": "sha256:f8f6972946983cef0be26307ff3aa734c618ce2a576e222b591e598bae0d2772",
+    "sourceDigest": "sha256:ef50afda7086a983cb8ebc842474897f8c3db6b799604b5641c244376684bef3",
+    "certificationDigest": "sha256:ef50afda7086a983cb8ebc842474897f8c3db6b799604b5641c244376684bef3",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },

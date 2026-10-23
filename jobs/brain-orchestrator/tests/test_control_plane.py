@@ -42,8 +42,21 @@ class FakeDb:
                 node[parts[-1]] = val
 
 
+ALL_BRAINS = ("biological-state", "wind", "water-clarity", "lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation")
+
+
+def enabled_control(**over):
+    """An owner-ENABLED execution control with every Brain enabled (Cortex 2.7.0 PL-16). The decision-logic scenarios below run under it;
+    the fail-closed PAUSED behaviour is tested separately (test_central_scheduling.py)."""
+    d = {"schema": "brain-execution-control-v1", "state": "ENABLED", "approvalRef": "TEST-APPROVAL", "changedBy": "test", "changedAt": "2026-10-23T00:00:00Z",
+         "brains": {b: {"enabled": True, "limits": {"maxRunsPerDay": 99}} for b in ALL_BRAINS}, "limits": {"maxStartsPerCycle": 10}}
+    d.update(over)
+    return d
+
+
 def tree(**over):
-    t = {"brains": {
+    t = {"control": {"executionControlV1": enabled_control()},
+         "brains": {
             "lake-brain": {"lastSuccessfulRun": ago(7), "staleAfterHours": 3, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"},
             "water-temp": {"lastSuccessfulRun": ago(17), "staleAfterHours": 6, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"},
             "wind": {"lastSuccessfulRun": ago(0.5), "staleAfterHours": 1.5, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1", "readinessCounts": {"x": 1}},
@@ -115,7 +128,8 @@ def test_parked_intelligence_is_not_asked_for_a_plan_or_run(cycle, monkeypatch):
 def test_run_now_is_scoped_and_recorded(cycle):
     setup, calls = cycle
     db = setup(tree())
-    OR.main(["--run-now", "biological-state", "--scope", "guntersville", "--requested-by", "michael", "--trigger", "MANUAL"])
+    OR.main(["--run-now", "biological-state", "--scope", "guntersville", "--requested-by", "michael", "--trigger", "MANUAL",
+             "--admin-reason", "pilot evidence"])                                       # manual runs are explicit and recorded (Cortex 2.7.0 PL-15)
     assert calls["inproc"] == ["biological-state"]
     cp = db.tree["control"]["orchestratorV1"]
     rec = next(e for e in cp["executions"].values() if e["brainId"] == "biological-state")
@@ -148,7 +162,7 @@ def test_dry_run_writes_nothing_to_the_database(cycle):
     db = setup(tree())
     # dry-run reads through the fake and keeps writes in memory
     OR.main(["--dry-run"])
-    assert db.writes == [] and calls["start"] == [] and "control" not in db.tree
+    assert db.writes == [] and calls["start"] == [] and set(db.tree.get("control") or {}) <= {"executionControlV1"}   # only the pre-existing input node
 
 
 def test_pending_control_requests_are_validated_and_stored(cycle):

@@ -570,20 +570,24 @@ def test_every_decision_record_says_why_and_never_publishes():
     assert len(ids) == len(set(ids)), "decision ids must be unique within a cycle"
 
 
-def test_manifest_job_classification_matches_the_live_schedule_policy():
-    """Internal activation (2026-10-22): the Cloud Schedulers that may be ENABLED are the two validation exceptions plus the orchestrator's own
-    hourly schedule; every other Brain job is started by the orchestrator (no own scheduler) or stays PAUSED."""
+def test_manifest_has_exactly_one_scheduling_authority():
+    """Central scheduling 2026-10-23 (Cortex 2.7.0 PL-15): the ONLY Cloud Scheduler in the execution manifest is brain-orchestrator's. Wind and Lake
+    are started by the orchestrator through their jobs; their own schedulers are recorded as deprecated (PAUSED). Every Brain job has no scheduler."""
     m = committed_manifest()
-    enabled = {j for j, v in m["jobs"].items() if v.get("scheduler") and v["classification"] in ("VALIDATION_EXCEPTION", "ORCHESTRATOR_OWNED")}
-    assert enabled == {"wind-hourly", "lake-brain-ledger-daily", "brain-orchestrator"}
-    assert m["jobs"]["brain-orchestrator"]["classification"] == "ORCHESTRATOR_OWNED"
-    for jid in ("water-temp-brain", "water-clarity-brain"):
+    scheduled = {j for j, v in m["jobs"].items() if v.get("scheduler") and v["classification"] in ("VALIDATION_EXCEPTION", "ORCHESTRATOR_OWNED", "LEGACY")}
+    assert scheduled == {"brain-orchestrator"}
+    for jid in ("water-temp-brain", "water-clarity-brain", "wind-hourly", "lake-brain"):
         assert m["jobs"][jid]["classification"] == "ORCHESTRATOR_OWNED" and m["jobs"][jid]["scheduler"] is None    # orchestrator-started only
+    assert m["jobs"]["wind-hourly"]["deprecatedScheduler"] == "wind-hourly"
+    assert m["jobs"]["lake-brain-ledger-daily"]["deprecatedScheduler"] == "lake-brain-ledger-daily" and m["jobs"]["lake-brain-ledger-daily"]["classification"] == "PAUSED"
     for jid in ("lake-surface-dispatch", "lake-surface-daily", "hydrology-hourly", "clarity-current-hourly", "clarity-candidate-shadow", "water-temp-tva-archive"):
         assert m["jobs"][jid]["classification"] == "PAUSED"                                                       # cost freeze unchanged
+    for bid, b in m["brains"].items():                                              # every Brain's automatic execution goes through the orchestrator
+        sch = b.get("schedule") or {}
+        assert sch.get("owner") != "LEGACY_SCHEDULER" and sch.get("class") != "VALIDATION_EXCEPTION", bid
     import os
     pol = json.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "brains", "platform", "cost-freeze", "schedule-policy.json")))
-    assert set(pol["allowEnabled"]) == enabled                                      # one source of truth for what may be scheduled
+    assert set(pol["allowEnabled"]) == scheduled                                    # one source of truth for what may be scheduled
 
 
 def test_conformance_fixture_matches_code_for_ops():

@@ -18,7 +18,8 @@
       "enum": [
         "1.0.0",
         "1.1.0",
-        "1.2.0"
+        "1.2.0",
+        "1.3.0"
       ]
     },
     "reportId": {
@@ -558,6 +559,41 @@
     },
     "operationsAsOf": {
       "type": "string"
+    },
+    "executionControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "valid"
+      ],
+      "description": "Cortex 2.7.0 PL-16: the global execution control as the orchestrator read it this cycle (absent/invalid = PAUSED).",
+      "properties": {
+        "state": {
+          "enum": [
+            "PAUSED",
+            "ENABLED"
+          ]
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "brains": {
+          "type": "object"
+        },
+        "maxStartsPerCycle": {
+          "type": "integer"
+        },
+        "approvalRef": {
+          "type": "string"
+        },
+        "changedAt": {
+          "type": "string"
+        }
+      }
     }
   },
   "if": {
@@ -803,6 +839,25 @@
                 "PLAN_CHECK",
                 "SHADOW_RUN"
               ]
+            },
+            "executionControl": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "global",
+                "brainEnabled"
+              ],
+              "properties": {
+                "global": {
+                  "enum": [
+                    "PAUSED",
+                    "ENABLED"
+                  ]
+                },
+                "brainEnabled": {
+                  "type": "boolean"
+                }
+              }
             }
           }
         },

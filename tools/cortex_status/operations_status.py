@@ -36,7 +36,10 @@ def convert(doc: dict) -> dict:
         if "APPROVED_SCIENCE" in (o.get("executionModes") or []) and k["state"] != "APPROVED":
             out["runs"].append({"mode": "APPROVED_SCIENCE", "knowledgeState": k["state"], "outcome": "REFUSED"})
         brains.append(out)
-    return {"schemaVersion": "cortex.brain-operations-status/1", "generatedAt": doc.get("operationsAsOf") or doc.get("checkedAt"), "brains": brains}
+    out = {"schemaVersion": "cortex.brain-operations-status/1", "generatedAt": doc.get("operationsAsOf") or doc.get("checkedAt"), "brains": brains}
+    if isinstance(doc.get("executionControl"), dict):            # Cortex 2.7.0: ops-check reports FALSE_RUNNING if a Brain runs while PAUSED
+        out["executionControl"] = {"state": doc["executionControl"].get("state"), "brains": doc["executionControl"].get("brains") or {}}
+    return out
 
 
 def main(argv=None) -> int:

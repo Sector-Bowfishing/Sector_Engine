@@ -159,8 +159,25 @@ def shadow_summary(doc: dict | None) -> dict | None:
     return {k: v for k, v in out.items() if v is not None}
 
 
+def apply_control(out: dict, brain_id: str, control: dict | None) -> dict:
+    """Cortex 2.7.0 PL-16 / IO-08: the global execution control comes first. While it is not ENABLED (or disables this Brain), a Brain is PAUSED
+    whatever its last execution says; FAILED stays FAILED (a real failure is never hidden). control=None means "not evaluated" (older callers)."""
+    if control is None:
+        return out
+    io = dict(out.get("internalOperation") or {})
+    g = control.get("state", "PAUSED")
+    on = (control.get("brains") or {}).get(brain_id, {}).get("enabled") is True
+    io["executionControl"] = {"global": g, "brainEnabled": on}
+    if io.get("status") != "FAILED":
+        if g != "ENABLED":
+            io["status"], io["basis"] = "PAUSED", f"global execution control {g}: no automatic execution until the owner authorizes resumption ({(control.get('reason') or '')[:120]})"
+        elif not on:
+            io["status"], io["basis"] = "PAUSED", f"{brain_id} is disabled in the execution control"
+    return {**out, "internalOperation": io}
+
+
 def overlay(es_doc: dict, manifest: dict, control_brains: dict | None, *, scheduler_states: dict | None, shadow_docs: dict | None,
-            plans: dict | None, now: dt.datetime) -> dict:
+            plans: dict | None, now: dt.datetime, control: dict | None = None) -> dict:
     """An AVAILABLE engineering-status-ops-v1 document with each Brain's `operations` block completed from live evidence. Returns a new dict."""
     out = dict(es_doc)
     brains = []
@@ -175,7 +192,7 @@ def overlay(es_doc: dict, manifest: dict, control_brains: dict | None, *, schedu
         else:
             row = cb.get(bid) or cb.get(bid.replace("-", "_")) or next((r for r in cb.values() if isinstance(r, dict) and r.get("brainId") == bid), None)
             sd = (shadow_docs or {}).get(bid)
-            ops.update(live(bid, mb, row, scheduler_states=scheduler_states, shadow_doc=sd, plan=(plans or {}).get(bid), now=now))
+            ops.update(apply_control(live(bid, mb, row, scheduler_states=scheduler_states, shadow_doc=sd, plan=(plans or {}).get(bid), now=now), bid, control))
             ss = shadow_summary(sd)
             if ss:
                 ops["shadowLane"] = ss
@@ -183,6 +200,9 @@ def overlay(es_doc: dict, manifest: dict, control_brains: dict | None, *, schedu
         brains.append({**b, "operations": {k: v for k, v in ops.items() if v is not None}})
     out["brains"] = brains
     out["operationsAsOf"] = iso(now)
+    if control is not None:
+        from .execution_control import summary
+        out["executionControl"] = summary(control)
     return out
 
 

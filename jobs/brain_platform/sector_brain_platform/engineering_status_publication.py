@@ -72,7 +72,7 @@ def problems(doc: dict) -> list[str]:
 
 
 def unavailable(reason: str, now_iso: str, *, deployment_version: str | None = None) -> dict:
-    return {"schema": SCHEMA, "schemaVersion": "1.2.0", "state": "UNAVAILABLE", "reason": reason[:240], "checkedAt": now_iso,
+    return {"schema": SCHEMA, "schemaVersion": "1.3.0", "state": "UNAVAILABLE", "reason": reason[:240], "checkedAt": now_iso,
             **({"publishedBy": {"component": "brain-orchestrator", "deploymentVersion": deployment_version}} if deployment_version else {})}
 
 

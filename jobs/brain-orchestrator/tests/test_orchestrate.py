@@ -39,10 +39,11 @@ def test_job_args_follow_scope(monkeypatch):
     assert o.job_args("water-temp").count("--lake") == 5
 
 
-def test_wind_is_never_started_here_and_clarity_is_the_scoped_c1_job():
-    """Wind stays scheduler-owned (wind-hourly). Internal operation 2026-10-22: Clarity is started as the scoped C1 publisher job
-    water-clarity-brain (pilot lakes baked in), never the heavy satellite pipeline (lake-surface-*), which stays PAUSED."""
-    assert "wind" not in o.EXECUTORS and set(o.NOT_STARTED_HERE) == {"wind"}
+def test_wind_and_lake_are_started_only_by_the_orchestrator_and_clarity_is_the_scoped_c1_job():
+    """Central scheduling 2026-10-23 (Cortex 2.7.0 PL-15): Wind and Lake are started by the orchestrator through their existing Cloud Run jobs (their own
+    schedulers are deprecated and PAUSED). Clarity is the scoped C1 publisher job, never the heavy satellite pipeline (lake-surface-*)."""
+    assert o.EXECUTORS["wind"] == {"kind": "cloud-run-job", "job": "wind-hourly"} and o.EXECUTORS["lake-brain"]["job"] == "lake-brain"
+    assert o.NOT_STARTED_HERE == {}
     assert o.EXECUTORS["water-clarity"] == {"kind": "cloud-run-job", "job": "water-clarity-brain"}
     assert not any(e.get("job", "").startswith("lake-surface") for e in o.EXECUTORS.values())
 

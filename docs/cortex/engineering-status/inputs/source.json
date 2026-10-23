@@ -2,11 +2,11 @@
   "schemaVersion": "1.2.0",
   "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "repository": "Sector-Bowfishing/Sector_Engine",
-  "branch": "cortex/final-operational-integration-2026-10-22",
+  "branch": "cortex/central-scheduling-2026-10-23",
   "evaluatedCommit": "25e786cf",
-  "evaluatedAt": "2026-10-22",
-  "session": "docs/cortex/sessions/2026-10-22-final-operational-integration.md",
-  "cortexVersion": "2.6.0",
+  "evaluatedAt": "2026-10-23",
+  "session": "docs/cortex/sessions/2026-10-23-central-scheduling.md",
+  "cortexVersion": "2.7.0",
   "cortexPack": "sector/engine",
   "structuralCertification": {
     "biological-state": {

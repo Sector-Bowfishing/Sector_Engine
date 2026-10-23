@@ -917,6 +917,25 @@
                 "PLAN_CHECK",
                 "SHADOW_RUN"
               ]
+            },
+            "executionControl": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "global",
+                "brainEnabled"
+              ],
+              "properties": {
+                "global": {
+                  "enum": [
+                    "PAUSED",
+                    "ENABLED"
+                  ]
+                },
+                "brainEnabled": {
+                  "type": "boolean"
+                }
+              }
             }
           }
         },

@@ -85,6 +85,7 @@
       "fam.validation"
     ],
     "internalExecution": "in-process in brain-orchestrator, dependency-driven, pilot lakes (input assembly only; no recommendation)",
+    "execution": {"authority": "brain-orchestrator", "trigger": "EVENT", "minIntervalHours": null, "refresh": "runs when a dependency materially changes (input assembly, pilot lakes)", "dependsOn": ["biological-state", "lake-brain", "water-clarity", "water-temp", "wind"], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null

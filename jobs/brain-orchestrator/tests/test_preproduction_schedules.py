@@ -9,17 +9,33 @@ def job(name, state, cron="5 * * * *"):
     return {"name": f"projects/p/locations/l/jobs/{name}", "state": state, "schedule": cron}
 
 
-def test_committed_policy_is_complete_and_matches_the_internal_activation():
+def test_committed_policy_has_one_scheduling_authority():
+    """Central scheduling 2026-10-23 (Cortex 2.7.0 PL-15): only brain-orchestrator may ever be ENABLED, and only under an ENABLED execution control;
+    wind-hourly and lake-brain-ledger-daily are deprecated."""
     assert C.audit([], POLICY) == ([], [])
-    assert set(POLICY["allowEnabled"]) == {"wind-hourly", "lake-brain-ledger-daily", "brain-orchestrator"}     # 2026-10-22 internal operation
-    assert "2026-10-22" in POLICY["allowEnabled"]["brain-orchestrator"]["approvedAt"]
+    assert set(POLICY["allowEnabled"]) == {"brain-orchestrator"}
+    assert POLICY["allowEnabled"]["brain-orchestrator"]["requiresExecutionControl"] == "ENABLED"
+    assert "NOT APPROVED" in POLICY["allowEnabled"]["brain-orchestrator"]["approvedAt"]
+    assert set(POLICY["deprecatedSchedulers"]) == {"wind-hourly", "lake-brain-ledger-daily"}
 
 
-def test_freeze_end_state_passes():
-    jobs = [job("wind-hourly", "ENABLED"), job("lake-brain-ledger-daily", "ENABLED", "0 12 * * *"), job("brain-orchestrator", "PAUSED"),
+def test_paused_end_state_passes():
+    jobs = [job("wind-hourly", "PAUSED"), job("lake-brain-ledger-daily", "PAUSED", "0 12 * * *"), job("brain-orchestrator", "PAUSED"),
             job("water-temp-tva-archive", "PAUSED"), job("lake-surface-dispatch", "PAUSED"), job("sector-unrelated-prod", "ENABLED")]
-    bad, ok = C.audit(jobs, POLICY)
-    assert bad == [] and sorted(ok) == ["lake-brain-ledger-daily", "wind-hourly"]
+    assert C.audit(jobs, POLICY, {"state": "PAUSED"}) == ([], [])
+
+
+def test_deprecated_per_brain_schedulers_may_never_be_enabled():
+    for name in ("wind-hourly", "lake-brain-ledger-daily"):
+        bad, ok = C.audit([job(name, "ENABLED")], POLICY, {"state": "ENABLED"})
+        assert any("DEPRECATED" in b and name in b for b in bad) and ok == []
+
+
+def test_the_central_trigger_is_allowed_only_under_an_enabled_execution_control():
+    on = [job("brain-orchestrator", "ENABLED", "50 * * * *")]
+    assert any("execution control is PAUSED" in b for b in C.audit(on, POLICY, {"state": "PAUSED"})[0])
+    assert any("NOT CHECKED" in b for b in C.audit(on, POLICY, None)[0])                       # unknown control = not allowed
+    assert C.audit(on, POLICY, {"state": "ENABLED"}) == ([], ["brain-orchestrator"])
 
 
 def test_a_reactivated_ungated_brain_job_is_a_violation():
@@ -52,16 +68,13 @@ import pytest  # noqa: E402
 
 
 @pytest.mark.live_manifest
-def test_internal_activation_scheduler_state_has_no_drift():
-    """The live board after internal activation: wind-hourly, lake-brain-ledger-daily and brain-orchestrator ENABLED; every other Brain scheduler
-    PAUSED (cost freeze). Any other state is drift; the policy audit passes."""
+def test_central_scheduling_live_board_has_no_drift():
+    """The live board after the 2026-10-23 shutdown: every Brain scheduler PAUSED, deprecated ones included. No drift; the audit passes."""
     from sector_brain_platform import orchestration as O
     m = O.load_manifest()
-    live = [job("wind-hourly", "ENABLED"), job("lake-brain-ledger-daily", "ENABLED", "0 12 * * *"), job("brain-orchestrator", "ENABLED", "50 * * * *"),
-            job("water-temp-tva-archive", "PAUSED"), job("lake-surface-dispatch", "PAUSED"), job("lake-surface-daily", "PAUSED"), job("hydrology-hourly", "PAUSED"),
-            job("clarity-current-hourly", "PAUSED"), job("clarity-candidate-shadow", "PAUSED")]
+    live = [job(n, "PAUSED") for n in ("wind-hourly", "lake-brain-ledger-daily", "brain-orchestrator", "water-temp-tva-archive", "lake-surface-dispatch",
+                                       "lake-surface-daily", "hydrology-hourly", "clarity-current-hourly", "clarity-candidate-shadow")]
     assert C.drift(live, m) == []
-    bad, ok = C.audit(live, POLICY)
-    assert bad == [] and sorted(ok) == ["brain-orchestrator", "lake-brain-ledger-daily", "wind-hourly"]
-    # pausing the orchestrator is the documented disable control, not drift
-    assert not any("brain-orchestrator" in d for d in C.drift([j if not j["name"].endswith("brain-orchestrator") else job("brain-orchestrator", "PAUSED") for j in live], m))
+    assert C.audit(live, POLICY, {"state": "PAUSED"}) == ([], [])
+    # a deprecated scheduler that comes back ENABLED is drift as well as a policy violation
+    assert any("wind-hourly" in d for d in C.drift([job("wind-hourly", "ENABLED")] + live[1:], m))

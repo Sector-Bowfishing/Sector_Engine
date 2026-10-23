@@ -63,17 +63,15 @@ gcloud run jobs deploy "$JOB" --source . \
 gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" \
   --member "serviceAccount:$SA" --role roles/run.invoker >/dev/null
 
-echo "▶ schedule $SCHEDULE_JOB ($CRON $SCHEDULE_TZ)"
-RUN_URI="https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/$JOB:run"
-if gcloud scheduler jobs describe "$SCHEDULE_JOB" --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1; then
-  gcloud scheduler jobs update http "$SCHEDULE_JOB" --project "$PROJECT_ID" --location "$REGION" \
-    --schedule "$CRON" --time-zone "$SCHEDULE_TZ" --uri "$RUN_URI" --http-method POST \
-    --oauth-service-account-email "$SA"
-else
-  gcloud scheduler jobs create http "$SCHEDULE_JOB" --project "$PROJECT_ID" --location "$REGION" \
-    --schedule "$CRON" --time-zone "$SCHEDULE_TZ" --uri "$RUN_URI" --http-method POST \
-    --oauth-service-account-email "$SA"
-fi
+# Central scheduling (owner directive 2026-10-23; Rehtac Cortex 2.7.0 PL-15/PL-18): this deploy NEVER creates, updates or resumes a Cloud
+# Scheduler job. Automatic Brain execution belongs to brain-orchestrator alone (and only while /control/executionControlV1 is ENABLED);
+# this job's own scheduler is deprecated and stays PAUSED (or absent). The only scheduler action here is pausing one found ENABLED.
+for S in "$SCHEDULE_JOB"; do
+  if gcloud scheduler jobs describe "$S" --project "$PROJECT_ID" --location "$REGION" --format 'value(state)' 2>/dev/null | grep -q ENABLED; then
+    gcloud scheduler jobs pause "$S" --project "$PROJECT_ID" --location "$REGION"
+  fi
+done
+echo "scheduler: not managed by this deploy (central scheduling); "$SCHEDULE_JOB" stay PAUSED"
 
 echo
 echo "✅ Run it now:   gcloud run jobs execute $JOB --project $PROJECT_ID --region $REGION"

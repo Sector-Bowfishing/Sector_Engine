@@ -8,7 +8,7 @@ import pytest
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, ".."))
 import orchestrate as OR          # noqa: E402
-from test_control_plane import FakeDb, tree, ago, NOW   # noqa: E402,F401  (reuse the in-memory RTDB and the stale-world tree)
+from test_control_plane import FakeDb, tree, ago, NOW, enabled_control   # noqa: E402,F401  (reuse the in-memory RTDB and the stale-world tree)
 from sector_brain_platform import orchestration as O, shadow_lane as SL   # noqa: E402
 
 pytestmark = pytest.mark.live_manifest
@@ -116,7 +116,7 @@ def test_shadow_lane_publishes_only_an_isolated_experimental_summary(live_cycle)
 def test_shadow_lane_respects_its_cadence_and_force(live_cycle):
     setup, calls = live_cycle
     t = tree()
-    t["control"] = {"shadowLaneV1": {"depth": {"runAt": ago(2)}, "vegetation": {"runAt": ago(24)}}}
+    t["control"] = {"executionControlV1": enabled_control(), **{"shadowLaneV1": {"depth": {"runAt": ago(2)}, "vegetation": {"runAt": ago(24)}}}}
     setup(t)
     assert OR.main(["--run-shadow-lane"]) == 0 and calls["shadow"] == []            # depth 24 h, vegetation 168 h: neither due
     assert OR.main(["--run-shadow-lane", "--force-shadow-lane"]) == 0 and sorted(calls["shadow"]) == ["depth", "vegetation"]
@@ -152,15 +152,15 @@ def test_a_cycle_publishes_the_four_dimensions_with_live_internal_operation(live
     proj["generatedFrom"]["certificationCurrent"] = True                             # the gate's certification rule is tested elsewhere
     setup, calls = live_cycle
     t = tree()
-    t["control"] = {"shadowLaneV1": {"depth": {"schema": "brain-shadow-lane-v1", "lane": "INTERNAL_EXPERIMENTAL", "executionMode": "INTERNAL",
-                                               "experimental": True, "runAt": ago(2), "lakeCount": 5, "lakes": {}}}}
+    t["control"] = {"executionControlV1": enabled_control(), **{"shadowLaneV1": {"depth": {"schema": "brain-shadow-lane-v1", "lane": "INTERNAL_EXPERIMENTAL", "executionMode": "INTERNAL",
+                                               "experimental": True, "runAt": ago(2), "lakeCount": 5, "lakes": {}}}}}
     db = setup(t)
     monkeypatch.setattr(OR.ESP, "load_staged", lambda here: _json.loads(_json.dumps(proj)))
     monkeypatch.setattr(OR.CP, "scheduler_states", lambda tokens: {"brain-orchestrator": "ENABLED", "wind-hourly": "ENABLED", "lake-brain-ledger-daily": "ENABLED"})
     monkeypatch.setenv("DEPLOYMENT_VERSION", "brain-orchestrator@" + "a" * 12)
     assert OR.main(["--publish-engineering-status"]) == 0
     doc = db.tree["control"]["engineeringStatusV1"]
-    assert doc["state"] == "AVAILABLE" and doc["schemaVersion"] == "1.2.0" and doc["operationsAsOf"]
+    assert doc["state"] == "AVAILABLE" and doc["schemaVersion"] == "1.3.0" and doc["operationsAsOf"]
     ops = {b["brainId"]: b["operations"] for b in doc["brains"]}
     assert set(ops) == set(O.load_manifest()["brains"])
     assert all(o["internalOperation"]["status"] in OR.BOPS.INTERNAL and o["runtimeReadiness"]["status"] in OR.BOPS.RUNTIME for o in ops.values())

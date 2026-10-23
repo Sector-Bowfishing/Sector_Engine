@@ -144,6 +144,7 @@
       "fam.validation"
     ],
     "internalExecution": "lake-brain Cloud Run job, lake-brain-ledger-daily Cloud Scheduler (validation exception), pilot lakes",
+    "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 26.0, "refresh": "daily prospective ledger run (pilots); due when 26 h old", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null

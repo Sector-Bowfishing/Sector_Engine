@@ -60,7 +60,7 @@ def project(report: dict, ci: dict | None = None, *, branch: str | None = None, 
             "nextWork": b.get("nextWork", []), "blockers": b.get("blockers", []),
             **({"operations": b["operations"]} if b.get("operations") else {})})     # static dimensions; the orchestrator adds the live ones
     st = report["standards"]
-    out = {"schema": "engineering-status-ops-v1", "schemaVersion": "1.2.0", "state": "AVAILABLE", "reportId": report["reportId"], "generatedFrom": gen,
+    out = {"schema": "engineering-status-ops-v1", "schemaVersion": "1.3.0", "state": "AVAILABLE", "reportId": report["reportId"], "generatedFrom": gen,
            "standards": {"framework": st["framework"], "version": st["version"], "pin": st["pin"]}, "statusVocabulary": report["statusVocabulary"],
            "brains": brains,
            "decisions": [{k: d[k] for k in ("id", "class", "title", "brains") if k in d} for d in report["decisions"]]}

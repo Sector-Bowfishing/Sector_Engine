@@ -171,3 +171,13 @@ Evaluated 2026-10-22 · `sessions/2026-10-22-internal-activation.md`. The status
 | IO-08 | PASS | ACTIVE only with an enabled trigger and a successful execution within 1.5 x the interval (input/dependency-driven Brains: the runtime's own hourly plan check, labelled PLAN_CHECK, with the last full run beside it); SHADOW only with a shadow run within its cadence (`sector_brain_platform/brain_operations.py`, tests) |
 | IO-09 | PASS | D-IA-1 Option A: `/scores/engine` classified ENGINEERING_SCORE (not capability); Brain `/scores/{id}.value` SCIENTIFIC_MATURITY; Wind `windCapability` DOMAIN_CAPABILITY; no score changed by this work |
 | IO-11 | see Sector Ops | four-dimension display shipped in Sector Ops (same mission) |
+
+## Central Brain scheduling (Cortex 2.7.0 @ ebc7fb9, 2026-10-23 · `sessions/2026-10-23-central-scheduling.md`)
+
+| ID | Status | Evidence |
+|---|---|---|
+| PL-15 | PASS | `brain-orchestrator` is the only scheduler in the execution manifest and the schedule policy; Wind and Lake are orchestrator-started (`wind-hourly`, `lake-brain` jobs); their schedulers are deprecated and PAUSED; all 8 Brains registered (test_central_scheduling) |
+| PL-16 | PASS | `/control/executionControlV1` (owner CLI); absent / unreadable / invalid / ENABLED-without-approvalRef = PAUSED; PAUSED stops workers, plan checks and the shadow lane; status shows PAUSED |
+| PL-17 | PASS | single-flight, no overlapping cycles, maxStartsPerCycle (no catch-up burst), maxRunsPerDay, maxCostPerDay, bounded retries (tests, mutation-checked) |
+| PL-18 | PASS | no deploy script creates or resumes a scheduler; the orchestrator deploy always pauses its trigger and fails otherwise; resuming only via `tools/ops/resume-orchestrator.sh` with an owner approvalRef |
+| BR-21 | PASS | `operations.execution` in all 8 `brain.json`; `ops-check --repo` 0 findings |

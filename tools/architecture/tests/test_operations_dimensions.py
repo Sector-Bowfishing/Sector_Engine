@@ -31,7 +31,7 @@ def _proj():
 
 def test_every_brain_carries_the_static_dimensions_and_the_legacy_layer_is_kept():
     p = _proj()
-    assert p["schemaVersion"] == "1.2.0" and {b["brainId"] for b in p["brains"]} == IDS
+    assert p["schemaVersion"] == "1.3.0" and {b["brainId"] for b in p["brains"]} == IDS
     assert list(validate(p, json.load(open(P.SCHEMA)))) == [] and P.leaks(p) == []
     for b in p["brains"]:
         o = b["operations"]

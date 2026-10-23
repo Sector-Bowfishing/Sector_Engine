@@ -6,10 +6,11 @@
   "brains": {
     "wind": {
       "displayName": "Wind", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "ACTIVE",
-      "executionTarget": {"kind": "cloud-run-job", "job": "wind-hourly", "startedByOrchestrator": false, "scoped": false},
+      "executionTarget": {"kind": "cloud-run-job", "job": "wind-hourly", "startedByOrchestrator": true, "scoped": false, "note": "Central scheduling 2026-10-23 (Cortex 2.7.0 PL-15): the orchestrator starts the wind-hourly JOB when Wind is due; Wind's own wind-hourly Cloud Scheduler is DEPRECATED and stays PAUSED. Science and job arguments unchanged."},
       "allowedTriggers": ["SCHEDULE", "MANUAL", "VALIDATION", "ADMIN"],
       "dependencies": [],
-      "schedule": {"class": "VALIDATION_EXCEPTION", "owner": "LEGACY_SCHEDULER", "scheduler": "wind-hourly", "cron": "5 * * * *", "tz": "UTC",
+      "schedule": {"class": "ORCHESTRATOR_OWNED", "owner": "ORCHESTRATOR", "scheduler": "brain-orchestrator",
+                   "deprecatedScheduler": {"name": "wind-hourly", "formerCron": "5 * * * *", "state": "PAUSED", "deprecatedAt": "2026-10-23", "note": "never resume: the orchestrator is the only scheduling authority (PL-15)"},
                    "exception": {"gate": "Wind live-reliability gate (30 valid live archive days; 5 of 30 on 2026-10-13) and the timed provider-forecast archive", "notReconstructable": "valid-live-day clock and retrieval-time provenance cannot be recreated after the fact", "maxMonthlyUsd": 5, "stop": "reliability gate satisfied (about 2026-11-08), then re-decide", "approvedAt": "2026-10-14"}},
       "freshness": {"staleAfterHours": 1.5}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "deploymentVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount", "profiledLakeCount"]},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 2, "tasks": 1}, "timeoutSeconds": 900, "scopes": ["current-live-lakes"], "customerPublication": false
@@ -35,10 +36,11 @@
     },
     "lake-brain": {
       "displayName": "Lake Brain", "group": "FOUNDATION", "lifecycle": "CALIBRATION", "activityState": "MAINTENANCE",
-      "executionTarget": {"kind": "cloud-run-job", "job": "lake-brain", "startedByOrchestrator": true, "scoped": false},
+      "executionTarget": {"kind": "cloud-run-job", "job": "lake-brain", "startedByOrchestrator": true, "scoped": true, "scopedViaArgs": "--scope pilots baked into the job", "note": "Central scheduling 2026-10-23 (Cortex 2.7.0 PL-15): the orchestrator starts the lake-brain JOB when Lake is due (26 h); the lake-brain-ledger-daily Cloud Scheduler is DEPRECATED and stays PAUSED."},
       "allowedTriggers": ["SCHEDULE", "MANUAL", "VALIDATION", "ADMIN", "RECOVERY"],
       "dependencies": [],
-      "schedule": {"class": "VALIDATION_EXCEPTION", "owner": "LEGACY_SCHEDULER", "scheduler": "lake-brain-ledger-daily", "cron": "0 12 * * *", "tz": "UTC",
+      "schedule": {"class": "ORCHESTRATOR_OWNED", "owner": "ORCHESTRATOR", "scheduler": "brain-orchestrator",
+                   "deprecatedScheduler": {"name": "lake-brain-ledger-daily", "formerCron": "0 12 * * *", "state": "PAUSED", "deprecatedAt": "2026-10-23", "note": "never resume: the orchestrator is the only scheduling authority (PL-15)"},
                    "exception": {"gate": "Lake prospective prediction ledger (90 days for PARTIAL, 12 months for VALIDATED)", "notReconstructable": "predictions must be recorded before outcomes occur", "maxMonthlyUsd": 1, "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete", "approvedAt": "2026-10-14 (pending confirmation C-2)"}},
       "freshness": {"staleAfterHours": 26, "note": "pre-production MAINTENANCE cadence: one ledger run per day (the Brain's own registry rule is 3 h)"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "modelVersion", "bindingVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}, "timeoutSeconds": 900, "scopes": ["pilots"], "customerPublication": false
@@ -91,9 +93,9 @@
   },
   "jobs": {
     "brain-orchestrator": {"brainId": null, "purpose": "control plane: decisions, control state, score publication", "kind": "cloud-run-job", "scheduler": "brain-orchestrator", "classification": "ORCHESTRATOR_OWNED", "validationOnly": false, "customerImpact": false, "estMonthlyUsdWhenEnabled": 3, "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}},
-    "wind-hourly": {"brainId": "wind", "purpose": "prospective reliability + provider-forecast archive (4 lakes)", "kind": "cloud-run-job", "scheduler": "wind-hourly", "classification": "VALIDATION_EXCEPTION", "validationOnly": true, "customerImpact": false, "estMonthlyUsdWhenEnabled": 4.1, "resources": {"cpu": 1, "memoryGiB": 2, "tasks": 1}},
-    "lake-brain-ledger-daily": {"brainId": "lake-brain", "purpose": "daily Lake pilot run for the prospective prediction ledger", "kind": "scheduler-only", "scheduler": "lake-brain-ledger-daily", "target": "lake-brain", "classification": "VALIDATION_EXCEPTION", "validationOnly": true, "customerImpact": false, "estMonthlyUsdWhenEnabled": 0.08, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
-    "lake-brain": {"brainId": "lake-brain", "purpose": "Lake Brain pilot run", "kind": "cloud-run-job", "scheduler": null, "classification": "MANUAL", "validationOnly": false, "customerImpact": false, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
+    "wind-hourly": {"brainId": "wind", "purpose": "Wind Brain worker (prospective reliability + provider-forecast archive); started only by brain-orchestrator", "kind": "cloud-run-job", "scheduler": null, "deprecatedScheduler": "wind-hourly", "classification": "ORCHESTRATOR_OWNED", "validationOnly": true, "customerImpact": false, "estMonthlyUsdWhenEnabled": 4.1, "resources": {"cpu": 1, "memoryGiB": 2, "tasks": 1}},
+    "lake-brain-ledger-daily": {"brainId": "lake-brain", "purpose": "DEPRECATED 2026-10-23: the daily Lake ledger run is started by brain-orchestrator (Lake due after 26 h); this scheduler stays PAUSED", "kind": "scheduler-only", "scheduler": null, "deprecatedScheduler": "lake-brain-ledger-daily", "target": "lake-brain", "classification": "PAUSED", "validationOnly": true, "customerImpact": false, "estMonthlyUsdWhenEnabled": 0.08, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
+    "lake-brain": {"brainId": "lake-brain", "purpose": "Lake Brain pilot/ledger run; started only by brain-orchestrator", "kind": "cloud-run-job", "scheduler": null, "classification": "ORCHESTRATOR_OWNED", "validationOnly": false, "customerImpact": false, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
     "water-temp-brain": {"brainId": "water-temp", "purpose": "Water Temp pilot run (5 lakes), started by brain-orchestrator when the state is 6 h old", "kind": "cloud-run-job", "scheduler": null, "classification": "ORCHESTRATOR_OWNED", "validationOnly": false, "customerImpact": false, "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}},
     "water-temp-tva-archive": {"brainId": "water-temp", "purpose": "hourly TVA discharge/level archive", "kind": "cloud-run-job", "scheduler": "water-temp-tva-archive", "classification": "PAUSED", "validationOnly": false, "customerImpact": false, "estMonthlyUsdWhenEnabled": 1.6, "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}},
     "lake-surface-dispatch": {"brainId": "water-clarity", "purpose": "daily Sentinel-2 scene discovery; starts the heavy job", "kind": "cloud-run-job", "scheduler": "lake-surface-dispatch", "classification": "PAUSED", "validationOnly": false, "customerImpact": false, "estMonthlyUsdWhenEnabled": 100, "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}},
