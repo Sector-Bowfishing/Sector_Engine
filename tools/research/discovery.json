@@ -1,0 +1,86 @@
+{
+  "schema": "sector-research-discovery-v1",
+  "description": "Per-Brain automatic discovery: connectors (allowlisted public sources), pre-declared validation thresholds, follow-up iterations and declared research inputs. Thresholds are fixed BEFORE any download (pre-registration); changing one is a reviewed code change.",
+  "maxIterations": 2,
+  "brains": {
+    "water-temp": {
+      "kind": "water-temp-sensors",
+      "purpose": "independent continuous-sensor (out-of-sample) validation of production M0; Level-4 protected-truth status (metadata only)",
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "calibrationSnapshot": "water-temperature/validation/campaign-2026-10-22/wt_w5_sensor_snapshot.json",
+      "storedResiduals": "water-temperature/validation/valmodel/residuals_primary.csv.gz",
+      "startDate": "2023-01-01",
+      "archiveLagDays": 8,
+      "radiusDeg": [0.12, 0.3],
+      "maxSitesPerLake": 2,
+      "minDays": 60,
+      "implCheckRows": 3000,
+      "implMaxAbsDiffC": 0.01,
+      "lakeRmseC": 2.0,
+      "pooledMinLakes": 3,
+      "pooledRmseC": 2.5,
+      "fleetReferenceRmseC": 2.27,
+      "protectedTruth": {"needed": 25, "sinceMMDDYYYY": "07-01-2026",
+                         "lakes": {"Wheeler": {"bbox": [-87.38377, 34.39002, -86.39122, 34.91242], "recorded": 18},
+                                   "Wilson": {"bbox": [-87.62849, 34.7636, -87.38139, 34.92033], "recorded": 2}}},
+      "inputs": [{"path": "water-temperature/validation/valmodel/forcing", "limitation": "fleet forcing missing: fleet coordinates unavailable"}]
+    },
+    "lake-brain": {
+      "kind": "lake-levels",
+      "purpose": "independent daily lake-level source (USGS) per fleet lake: redundancy for primary-source (CWMS) fetch failures",
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "parameterCodes": "62614,62615,00062",
+      "radiusDeg": [0.15, 0.35],
+      "windowDays": 60,
+      "coverage30": 0.9,
+      "inputs": [{"path": "lake-brain/datasets/binding2/verified_v2_full.csv", "limitation": "rules-v2 hold-out binding table missing"},
+                 {"path": "lake-brain/datasets/geometry/lake_geometry_flags.csv", "limitation": "geometry flags missing"},
+                 {"path": "lake-brain/datasets/history_extension.csv", "reconstruct": {"gitShow": "origin/docs/lake-brain-research:docs/research/lake-brain/data/history_extension.csv"}},
+                 {"path": "lake-brain/datasets/guide_availability.csv", "reconstruct": {"gitShow": "origin/docs/lake-brain-research:docs/research/lake-brain/data/guide_availability.csv"}}]
+    },
+    "water-clarity": {
+      "kind": "wqp-secchi",
+      "purpose": "new Secchi observations for the next clarity re-certification",
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "sinceMMDDYYYY": "01-01-2026",
+      "bboxHalfDeg": 0.1,
+      "lakesPerIteration": 20,
+      "maxSecchiM": 20,
+      "minValidObs": 10,
+      "inputs": [{"env": "SECTOR_CLARITY_PRIVATE_ROOT", "limitation": "private clarity-candidate root (stage_r31/cache) is external private data: the R3.1 re-certification re-run cannot be reconstructed from public sources in this campaign"}]
+    },
+    "biological-state": {
+      "kind": "gbif-species",
+      "purpose": "national field-observation season profiles for the bowfishing species (aggregate only: no per-lake presence)",
+      "species": ["Cyprinus carpio", "Ictiobus bubalus", "Ictiobus cyprinellus", "Ictiobus niger", "Lepisosteus osseus", "Lepisosteus oculatus",
+                  "Lepisosteus platostomus", "Atractosteus spatula", "Ctenopharyngodon idella", "Hypophthalmichthys molitrix",
+                  "Hypophthalmichthys nobilis", "Aplodinotus grunniens", "Amia calva"],
+      "years": ["2015,2026", "2000,2026"],
+      "minRecords": 200
+    },
+    "wind": {
+      "kind": "literature",
+      "purpose": "peer-reviewed leads for the open wind gaps",
+      "domainTerms": ["wind"],
+      "gapsPerIteration": 4, "queryTerms": [6, 3], "rows": 20, "fromYear": 2010, "minLeads": 3,
+      "inputs": [{"env": "SECTOR_WIND_STAGE3A_EVIDENCE", "limitation": "stage3a evidence cache (rows.pkl) lives in the private iOS research repo: certification re-score cannot be regenerated here"}]
+    },
+    "depth": {
+      "kind": "literature",
+      "purpose": "peer-reviewed leads for the open depth gaps",
+      "domainTerms": ["reservoir", "bathymetry"],
+      "gapsPerIteration": 3, "queryTerms": [6, 3], "rows": 20, "fromYear": 2010, "minLeads": 3
+    },
+    "vegetation": {
+      "kind": "literature",
+      "purpose": "peer-reviewed leads for the open vegetation gaps",
+      "domainTerms": ["aquatic", "vegetation"],
+      "gapsPerIteration": 3, "queryTerms": [6, 3], "rows": 20, "fromYear": 2010, "minLeads": 3
+    },
+    "sector-intelligence": {
+      "kind": "upstream",
+      "purpose": "integrate the specialists' validated candidates (never invent them)",
+      "minUpstream": 1
+    }
+  }
+}

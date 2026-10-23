@@ -20,11 +20,13 @@ Every stage is checkpointed atomically in `$SECTOR_RESEARCH_HOME/shared/campaign
 
 | Stage | What it does |
 |---|---|
-| discover | loads the manifest; classifies items by retention and folder; lists prior tasks, closeouts, candidates and shared evidence |
-| research | the Brain's research adapter runs; agent findings arrive via `submit` |
+| discover | loads the manifest; classifies items by retention and folder; lists prior tasks, closeouts, candidates and shared evidence; loads the open gaps (`GAPS.json`, or reconstructed when missing); checks declared inputs (present / reconstructed / limitation) — see [RESEARCH_DISCOVERY_AUTOMATION_V1.md](RESEARCH_DISCOVERY_AUTOMATION_V1.md) |
+| acquire | the Brain's discovery connectors download public evidence from allowlisted hosts, with provenance, registered in the manifest (the only stage with network access) |
+| research | the Brain's research adapter runs (a BLOCKED adapter is recorded, not fatal); the offline discovery analysis generates findings with pre-declared thresholds; agent findings arrive via `submit` |
 | validate | for every finding: schema check; evidence in the research home with a matching SHA-256; the Brain's validator metric compared with the declared threshold → VALIDATED or REJECTED (reason recorded). Nothing is approved |
 | candidate | validated findings only → `<folder>/candidates/<id>/` as a release package (approval NOT_RECORDED), verified with `load_release`. It refuses to write into the Engine |
 | score | the Brain's candidate-score adapter (non-authoritative); the local authoritative score artifacts are hashed before and after and must be identical |
+| followup | weak areas (rejected findings, unmatched targets, too little evidence) re-open acquire..followup for a wider iteration, up to `maxIterations`; unreachable sources are a limitation, not a weak area |
 | cleanup | deletes only the campaign-owned workspace (`analysis/tmp/<id>/`, owner marker, including read-only clone files); registers retained outputs in `manifest.json`; writes the RS-05 closeout |
 | report | one `REPORT.md` / `report.json` for the whole campaign |
 

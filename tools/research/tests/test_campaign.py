@@ -20,6 +20,12 @@ def sha(p):
     return hashlib.sha256(open(p, "rb").read()).hexdigest()
 
 
+@pytest.fixture(autouse=True)
+def offline(monkeypatch):
+    """Unit tests never reach the network: every discovery request fails (and must be recorded, not fatal)."""
+    monkeypatch.setattr(C.D, "Fetcher", C.D.OfflineFetcher)
+
+
 @pytest.fixture
 def home(tmp_path):
     """A fixture research home: every Brain folder with a manifest, an evidence file, an UNRELATED pre-existing tmp file and an existing candidate."""
@@ -80,12 +86,13 @@ def test_end_to_end_eight_tracks_validation_packaging_cleanup_and_report(home, t
     for bid in C.BRAINS:
         folder = os.path.join(home, C.DEFAULT_FOLDERS[bid])
         v = st["tracks"][bid]["stages"]["validate"]["result"]
-        assert (v["validated"], v["rejected"]) == (1, 2)                                            # bad sha + failed threshold rejected
-        assert {r["id"]: r["verdict"] for r in v["results"]} == {"F-good": "VALIDATED", "F-badsha": "REJECTED", "F-fails": "REJECTED"}
+        expected = (2, 2) if bid == "sector-intelligence" else (1, 2)                # + Intelligence's upstream-integration finding
+        assert (v["validated"], v["rejected"]) == expected, (bid, v["results"])   # bad sha + failed threshold rejected
+        assert {r["id"]: r["verdict"] for r in v["results"] if not r["id"].startswith("INT-AUTO")} == {"F-good": "VALIDATED", "F-badsha": "REJECTED", "F-fails": "REJECTED"}
         cand = os.path.join(folder, "candidates", "c1")
         rel = C.K.load_release(cand, bid)
         assert rel["approvalStatus"] == "NOT_RECORDED"                                               # never approved
-        assert [f["id"] for f in json.load(open(os.path.join(cand, "findings.json")))["findings"]] == ["F-good"]
+        assert [f["id"] for f in json.load(open(os.path.join(cand, "findings.json")))["findings"] if not f.get("auto")] == ["F-good"]
         assert not os.path.exists(os.path.join(folder, "analysis", "tmp", "c1"))                   # campaign workspace removed
         assert open(os.path.join(folder, "analysis", "tmp", "someone-else", "keep.txt")).read() == "not ours"   # unrelated tmp kept
         assert os.path.exists(os.path.join(folder, "candidates", "older", "x.json"))               # existing candidates kept
