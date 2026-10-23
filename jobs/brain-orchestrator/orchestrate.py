@@ -356,10 +356,10 @@ def main(argv=None) -> int:
         return 0
     # no overlapping orchestrator cycles (PL-17): another running execution of this job owns the cycle; this one starts nothing
     me = os.environ.get("CLOUD_RUN_EXECUTION")
-    others = [e for e in gcp.running_executions(executions.get(JOB_NAME) or []) if (e.get("metadata") or {}).get("name") != me] if me else []
+    others = [n for n in gcp.running_executions(executions.get(JOB_NAME) or []) if n != me] if me else []     # execution NAMES still running
     if others:
         a.no_execute = True
-        auto_ok, auto_why = False, f"another orchestrator cycle is running ({(others[0].get('metadata') or {}).get('name')}): this cycle starts nothing"
+        auto_ok, auto_why = False, f"another orchestrator cycle is running ({others[0]}): this cycle starts nothing"
         print(f"overlap guard: {auto_why}", flush=True)
 
     # 2. plan: the decision model (engine mode, active/parked, dependencies, material change) says what MAY run; the legacy TIME/plan logic only
