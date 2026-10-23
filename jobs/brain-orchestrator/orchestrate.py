@@ -45,6 +45,7 @@ from sector_brain_platform import (BrainRtdb, DryRunStore, TokenProvider, build_
 from sector_brain_platform import gcp                                                                                 # noqa: E402
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
 from sector_brain_platform import brain_operations as BOPS                                                            # noqa: E402
+from sector_brain_platform import execution_control as EC                                                            # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 sys.path.insert(0, HERE)
@@ -74,10 +75,13 @@ EXECUTORS = {
     "lake-brain": {"kind": "cloud-run-job", "job": "lake-brain"},
     "water-temp": {"kind": "cloud-run-job", "job": "water-temp-brain"},
     "water-clarity": {"kind": "cloud-run-job", "job": "water-clarity-brain"},       # C1 publisher, pilot lakes baked into the job (internal operation 2026-10-22)
+    # Central scheduling 2026-10-23 (Cortex 2.7.0 PL-15): Wind's own wind-hourly Cloud Scheduler is DEPRECATED (paused); the orchestrator starts the
+    # same Cloud Run job (arguments baked in: `hourly --store ...`) when Wind is due. Its science and job are unchanged.
+    "wind": {"kind": "cloud-run-job", "job": "wind-hourly"},
     "biological-state": {"kind": "in-process", "dir": _fish_runtime_dir(), "jobId": "biological-brain"},
     "sector-intelligence": {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": "sector-intelligence-brain"},
 }
-NOT_STARTED_HERE = {"wind": "scheduler-owned (wind-hourly cron at :05)"}
+NOT_STARTED_HERE: dict = {}                     # every Brain with an executor is started only by the orchestrator (PL-15)
 
 
 def job_args(brain_id: str) -> list[str] | None:
@@ -305,6 +309,8 @@ def main(argv=None) -> int:
     ap.add_argument("--run-now", default=None, metavar="BRAIN", help="scoped manual run of one Brain (needs --scope); validated by orchestrator policy")
     ap.add_argument("--scope", default=None, help="scope for --run-now, e.g. guntersville, pilots")
     ap.add_argument("--requested-by", default="cli", help="who asked, recorded with the decision")
+    ap.add_argument("--admin-reason", default=None, help="with --run-now: an explicit, separately authorized ADMIN run (allowed while the global execution "
+                                                         "control is PAUSED; recorded in the execution ledger; never re-enables anything)")
     ap.add_argument("--control-only", action="store_true", help="evaluate and publish ONLY /control/orchestratorV1: no /jobs write, no execution, no score publication, no legacy record (a deliberate, side-effect-free evaluation)")
     ap.add_argument("--emit-control-state", default=None, metavar="FILE", help="write the computed control state JSON here (sample payloads, review)")
     ap.add_argument("--legacy-execution", action="store_true", help="old behaviour: start whatever the TIME/plan logic says, ignoring the PRE_PRODUCTION decision model")
@@ -332,12 +338,29 @@ def main(argv=None) -> int:
     live = BrainRtdb(RTDB_URL, tokens, brain_id=WRITER)
     check_schema(live)
     db = live if write else _ReadThrough(live)
+    # 0. the ONE authoritative execution switch (Cortex 2.7.0 PL-16): absent / unreadable / invalid => PAUSED (fail closed)
+    try:
+        ctl = EC.parse(live.get(EC.NODE))
+    except Exception as e:                                       # unreadable is PAUSED, never "carry on"
+        ctl = EC.parse(None)
+        ctl["reason"] = f"execution control unreadable ({type(e).__name__}): fail closed (PAUSED)"
+    auto_ok, auto_why = EC.automatic_allowed(ctl)
+    admin = {"requestedBy": a.requested_by, "reason": a.admin_reason} if (a.run_now and a.admin_reason) else None
+    print(f"execution control: {ctl['state']} ({ctl['reason']}); automatic work {'permitted' if auto_ok else 'NOT permitted'}"
+          + (f"; ADMIN run of {a.run_now} by {a.requested_by}: {a.admin_reason}" if admin else ""), flush=True)
 
     # 1. /jobs
     records, executions, n_changed = sync_jobs(db, tokens, now, write and not a.control_only)
     print(f"jobs: {len(records)} records, {n_changed} changed", flush=True)
     if a.sync_jobs_only:
         return 0
+    # no overlapping orchestrator cycles (PL-17): another running execution of this job owns the cycle; this one starts nothing
+    me = os.environ.get("CLOUD_RUN_EXECUTION")
+    others = [e for e in gcp.running_executions(executions.get(JOB_NAME) or []) if (e.get("metadata") or {}).get("name") != me] if me else []
+    if others:
+        a.no_execute = True
+        auto_ok, auto_why = False, f"another orchestrator cycle is running ({(others[0].get('metadata') or {}).get('name')}): this cycle starts nothing"
+        print(f"overlap guard: {auto_why}", flush=True)
 
     # 2. plan: the decision model (engine mode, active/parked, dependencies, material change) says what MAY run; the legacy TIME/plan logic only
     #    describes what is stale. Parked Brains are not even asked for a plan (a plan can cost provider/Engine calls).
@@ -347,7 +370,8 @@ def main(argv=None) -> int:
     world = CP.load_world(live, now)
     activity = O.effective_activity(world["manifest"], world["overrides"])
     brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
-                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only}
+                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only
+                   and (auto_ok and EC.brain_enabled(ctl, b) or (admin and a.run_now == b))}
     locks_now = state.get("locks") or {}
     run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
     ctx, evaluation = CP.evaluate(world, now, {f"{b}|*": l for b, l in locks_now.items()}, brain_plans, run_now)
@@ -364,6 +388,9 @@ def main(argv=None) -> int:
     # 3. execute — only what the decision model allowed (RUN), in dependency waves; legacy TIME/plan logic only with --legacy-execution
     executed, deferred, locks, exec_records = [], [], {}, []
     started_async = set()
+    starts = 0
+    ledger = list(((world["prev"] or {}).get("executions") or {}).values())
+    day = f"{now:%Y-%m-%d}"
     manifest = world["manifest"]
     todo = set(allowed) | ({r["brainId"] for r in plan["runs"]} if a.legacy_execution else set())
     for r in plan["runs"]:                       # stale by the legacy TIME/plan logic, but not allowed to run by the decision model: say why
@@ -387,9 +414,19 @@ def main(argv=None) -> int:
             if any(d["id"] in started_async for d in manifest["brains"][b].get("dependencies", [])):
                 deferred.append({"brainId": b, "why": "an upstream was started this cycle; evaluated again next cycle"})
                 continue
+            # the execution control gate (PL-16, PL-17): global + per-Brain enablement, starts-per-cycle, runs-per-day, cost-per-day
+            mine = [e for e in ledger + exec_records if e.get("brainId") == b and (e.get("startedAt") or "").startswith(day)
+                    and e.get("status") in ("STARTED", "RUNNING", "SUCCEEDED", "SKIPPED", "FAILED", "DEGRADED")]
+            ok, gwhy = EC.gate(ctl, b, trigger, admin=admin if a.run_now == b else None, starts_this_cycle=starts, runs_today=len(mine),
+                               cost_today=O.cost_rollup(mine, day).get("usd"))
+            if not ok:
+                deferred.append({"brainId": b, "why": f"execution control: {gwhy}"})
+                print(f"HOLD {b:20s} {gwhy}", flush=True)
+                continue
             if a.dry_run or a.no_execute:
                 deferred.append({"brainId": b, "why": "not executed (--dry-run/--no-execute)"})
                 continue
+            starts += 1
             started = dt.datetime.now(dt.timezone.utc)
             eid = f"{b}-{started:%Y%m%dT%H%M%SZ}"
             try:
@@ -412,6 +449,8 @@ def main(argv=None) -> int:
                                      job_id=tgt.get("job") or ex.get("jobId"), consumed=res.get("consumed"))
             if res.get("consumptionIssue"):
                 rec["consumptionIssue"] = res["consumptionIssue"]
+            if admin and a.run_now == b:
+                rec["admin"] = {"requestedBy": admin["requestedBy"], "reason": admin["reason"][:200]}           # auditable ADMIN run
             if res.get("skipped"):
                 rec["status"], rec["statusDetail"] = "SKIPPED", "the Brain's own plan said SKIP (nothing published)"
             exec_records.append(rec)
@@ -478,7 +517,9 @@ def main(argv=None) -> int:
 
     # 5c. internal SHADOW lane (Brains without an APPROVED knowledge release): experimental, isolated, never authoritative or customer
     shadow = []
-    if a.run_shadow_lane and not a.control_only:
+    if a.run_shadow_lane and not a.control_only and not auto_ok:
+        print(f"shadow lane: not run ({auto_why})")
+    elif a.run_shadow_lane and not a.control_only:
         try:
             shadow = shadow_lane_stage(manifest, live, db, now, write, a.dry_run, force=a.force_shadow_lane)
         except Exception as e:                                       # never breaks the cycle
@@ -498,7 +539,7 @@ def main(argv=None) -> int:
                 # states, shadow summaries). A leak or failure here publishes the static document instead; it never blocks the publication.
                 try:
                     ov = BOPS.overlay(es_doc, manifest, (state_cp or {}).get("brains"), scheduler_states=CP.scheduler_states(tokens),
-                                      shadow_docs=live.get(SL.NODE_ROOT) or {}, plans=brain_plans, now=now)
+                                      shadow_docs=live.get(SL.NODE_ROOT) or {}, plans=brain_plans, now=now, control=ctl)
                     bad = ESP.leaks(ov)
                     if bad:
                         print(f"engineering status: live operations withheld (leak check: {bad[:3]})", file=sys.stderr)
@@ -522,7 +563,7 @@ def main(argv=None) -> int:
               "plan": plan, "brainPlans": brain_plans, "executed": executed, "deferred": deferred, "shadow": shadow,
               "locks": {**{b: l for b, l in (state.get("locks") or {}).items() if l.get("lockedUntil", "") > iso(now) and b not in locks}, **locks},
               "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
-              "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores}
+              "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores, "executionControl": EC.summary(ctl)}
     if write and not a.control_only:
         live.update({"control/orchestrator": record})
     print(json.dumps({k: record[k] for k in ("mode", "durationMs", "jobsChanged", "scores")}, indent=None))

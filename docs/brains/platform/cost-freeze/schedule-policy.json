@@ -1,6 +1,6 @@
 {
   "schema": "preproduction-schedule-policy-v1",
-  "policy": "Pre-production Brain schedulers are OFF by default. An ENABLED Brain scheduler must appear in `allowEnabled` with a named gate, a bounded monthly cost, a stop condition and the date it was approved (docs/brains/platform/SECTOR_BRAIN_MODEL_V1.md, PRE-PRODUCTION COST POLICY).",
+  "policy": "Central scheduling (owner directive 2026-10-23; Rehtac Cortex 2.7.0 PL-15..PL-18): brain-orchestrator is the ONLY scheduling authority for automatic Brain execution. No other Brain scheduler may be ENABLED. brain-orchestrator may be ENABLED only while /control/executionControlV1 is ENABLED with an owner approvalRef, and only through tools/ops/resume-orchestrator.sh (never by a deployment). Deprecated per-Brain schedulers stay PAUSED.",
   "brainSchedulers": [
     "brain-orchestrator",
     "wind-hourly",
@@ -19,23 +19,33 @@
     "vegetation-brain"
   ],
   "allowEnabled": {
+    "brain-orchestrator": {
+      "gate": "the single scheduling authority; ENABLED only after owner authorization recorded in /control/executionControlV1 (state ENABLED + approvalRef) and passing preflight checks",
+      "maxMonthlyUsd": 3,
+      "stop": "gcloud scheduler jobs pause brain-orchestrator --location us-central1, and set the execution control PAUSED (tools/ops/execution_control.py pause)",
+      "approvedAt": "NOT APPROVED: paused by owner directive 2026-10-23; resumption needs a new owner approvalRef",
+      "requiresExecutionControl": "ENABLED"
+    }
+  },
+  "deprecatedSchedulers": {
     "wind-hourly": {
-      "gate": "Wind live-reliability gate (30 valid live archive days) and timed provider-forecast archive",
-      "maxMonthlyUsd": 5,
-      "stop": "gate satisfied (about 2026-11-08) then re-decide, or the Wind validation campaign ends",
-      "approvedAt": "2026-10-14"
+      "deprecatedAt": "2026-10-23",
+      "replacement": "brain-orchestrator starts the wind-hourly job when Wind is due",
+      "state": "PAUSED"
     },
     "lake-brain-ledger-daily": {
-      "gate": "Lake prospective prediction ledger (90 days PARTIAL, 12 months VALIDATED)",
-      "maxMonthlyUsd": 1,
-      "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete",
-      "approvedAt": "2026-10-14 (pending confirmation C-2)"
-    },
-    "brain-orchestrator": {
-      "gate": "INTERNAL_OPERATION: hourly control plane that runs the internal Brain pipelines (Fish, Intelligence in-process; Water Temp, Clarity, Lake jobs when due; Depth/Vegetation SHADOW lane), scores, health and engineering status",
-      "maxMonthlyUsd": 3,
-      "stop": "pause the brain-orchestrator Cloud Scheduler job (gcloud scheduler jobs pause brain-orchestrator); owner decision ends internal operation",
-      "approvedAt": "2026-10-22 (owner directive: all-eight internal production activation)"
+      "deprecatedAt": "2026-10-23",
+      "replacement": "brain-orchestrator starts the lake-brain job when Lake is due (26 h)",
+      "state": "PAUSED"
     }
-  }
+  },
+  "pausedPipelines": [
+    "water-temp-tva-archive",
+    "lake-surface-dispatch",
+    "lake-surface-daily",
+    "hydrology-hourly",
+    "clarity-current-hourly",
+    "clarity-candidate-shadow"
+  ],
+  "pausedPipelinesNote": "Brain input pipelines with their own (paused) schedulers. Their deploy scripts no longer create or update schedulers. Re-activation, if ever, goes through the orchestrator (PL-15), not their own cron."
 }

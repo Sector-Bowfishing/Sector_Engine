@@ -88,6 +88,7 @@
       "fam.validation"
     ],
     "internalExecution": "water-clarity-brain Cloud Run job (C1) started by brain-orchestrator when 26 h stale, 2 pilot lakes; the satellite pipeline stays PAUSED",
+    "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 26.0, "refresh": "C1 pilot publisher; due when 26 h old (satellite pipeline paused)", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null

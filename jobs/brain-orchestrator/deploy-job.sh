@@ -11,7 +11,7 @@
 #   roles/run.invoker              on jobs lake-brain and water-temp-brain only (job-level)
 #   roles/storage.objectViewer     on gs://sector-biology-private (Biological bundle pointer / bundle)
 #
-#   ./deploy-job.sh                 stage, build, deploy, bind IAM, create/update the scheduler
+#   ./deploy-job.sh                 stage, build, deploy, bind IAM, create/update the scheduler definition (always PAUSED)
 #   DRY_RUN=1 ./deploy-job.sh       print the commands only
 set -euo pipefail
 PROJECT_ID="${PROJECT_ID:-sector-9393c}"
@@ -40,7 +40,7 @@ for role in roles/firebasedatabase.admin roles/run.viewer roles/cloudscheduler.v
   run gcloud projects add-iam-policy-binding "$PROJECT_ID" --member "serviceAccount:$SA" --role "$role" --condition=None --quiet
 done
 run gcloud storage buckets add-iam-policy-binding "gs://$BIOLOGY_BUCKET" --member "serviceAccount:$SA" --role roles/storage.objectViewer
-for j in lake-brain water-temp-brain water-clarity-brain; do
+for j in lake-brain water-temp-brain water-clarity-brain wind-hourly; do
   if gcloud run jobs describe "$j" --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
     run gcloud run jobs add-iam-policy-binding "$j" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
   else
@@ -123,19 +123,22 @@ run gcloud run jobs deploy "$JOB" --source . \
   --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
 
-echo "▶ schedule $JOB ($CRON UTC)"
+echo "▶ schedule $JOB ($CRON UTC): definition only, always left PAUSED"
+# Central scheduling (owner directive 2026-10-23; Rehtac Cortex 2.7.0 PL-15..PL-18): brain-orchestrator is the ONE scheduling authority, and a
+# deployment NEVER enables it. The definition is created or updated, then PAUSED. Resuming is owner-only: tools/ops/resume-orchestrator.sh,
+# which requires /control/executionControlV1 ENABLED with an owner approvalRef and passing preflight checks. There is no SCHEDULE_STATE switch.
 RUN_URI="https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/$JOB:run"
 if gcloud scheduler jobs describe "$JOB" --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1; then
   run gcloud scheduler jobs update http "$JOB" --project "$PROJECT_ID" --location "$REGION" \
-    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SA"
+    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SA" \
+    --max-retry-attempts 0 --attempt-deadline 180s
 else
   run gcloud scheduler jobs create http "$JOB" --project "$PROJECT_ID" --location "$REGION" \
-    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SA"
+    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SA" \
+    --max-retry-attempts 0 --attempt-deadline 180s
 fi
-# Cost freeze (2026-10-14): pre-production Brains are OFF by default. The scheduler is left PAUSED unless SCHEDULE_STATE=enabled is given,
-# and enabling needs a recorded gate (docs/brains/platform/cost-freeze/PREPRODUCTION_PAUSED_JOBS.md section 3).
-if [[ "${SCHEDULE_STATE:-paused}" != "enabled" ]]; then
-  run gcloud scheduler jobs pause "$JOB" --project "$PROJECT_ID" --location "$REGION"
-  echo "  scheduler left PAUSED (cost freeze). Run manually: gcloud run jobs execute $JOB --region $REGION --wait"
-fi
+run gcloud scheduler jobs pause "$JOB" --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1 || true
+state=$(gcloud scheduler jobs describe "$JOB" --project "$PROJECT_ID" --location "$REGION" --format 'value(state)' 2>/dev/null || echo UNKNOWN)
+echo "  scheduler $JOB: $state (a deployment never resumes it; owner resumption: tools/ops/resume-orchestrator.sh)"
+if [[ "${DRY_RUN:-0}" != "1" && "$state" != "PAUSED" ]]; then echo "  !! scheduler is $state after deploy: refusing to report success"; exit 1; fi
 echo "✅ $JOB deployed. Dry cycle: gcloud run jobs execute $JOB --region $REGION --args=--dry-run"

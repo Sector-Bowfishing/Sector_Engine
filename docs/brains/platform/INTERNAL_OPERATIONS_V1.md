@@ -33,6 +33,8 @@ Scientific maturity or capability scores are **not** prerequisites for internal 
 
 ## Internal schedules
 
+> **Superseded 2026-10-23:** see [CENTRAL_SCHEDULING_V1.md](CENTRAL_SCHEDULING_V1.md). All recurring execution is PAUSED by owner directive; `brain-orchestrator` is the only scheduling authority (Wind and Lake included), under the fail-closed global execution control. The table below records the 2026-10-22 internal-activation design.
+
 The orchestrator (hourly, `50 * * * *`) is the only new Cloud Scheduler. It starts orchestrator-owned jobs **only when due** by their freshness rule:
 
 | Brain | Execution | Due rule | Scope | Cost cap |

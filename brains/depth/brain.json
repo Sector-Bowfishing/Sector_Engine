@@ -113,6 +113,7 @@
       "fam.control-shadow-lane"
     ],
     "internalExecution": "SHADOW lane in brain-orchestrator (--run-shadow-lane, 24 h): candidate release, in-memory output, summary only; run.py --write keeps refusing (APPROVED_SCIENCE)",
+    "execution": {"authority": "brain-orchestrator", "trigger": "SHADOW", "minIntervalHours": 24.0, "refresh": "INTERNAL-mode shadow lane every 24 h from live Lake states (approved path abstains)", "dependsOn": ["lake-brain"], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null

@@ -92,6 +92,7 @@
       "fam.validation"
     ],
     "internalExecution": "wind-hourly Cloud Run job, Cloud Scheduler (validation exception), hourly",
+    "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 1.5, "refresh": "hourly provider forecast/observation archive; due when the published state is 1.5 h old", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null

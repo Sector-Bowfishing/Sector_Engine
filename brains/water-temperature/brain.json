@@ -131,6 +131,7 @@
       "fam.validation"
     ],
     "internalExecution": "water-temp-brain Cloud Run job started by brain-orchestrator when 6 h stale, 5 pilot lakes",
+    "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 6.0, "refresh": "pilot-lake water temperature; due when 6 h old", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null

@@ -74,6 +74,7 @@
       "fam.validation"
     ],
     "internalExecution": "in-process in brain-orchestrator (hourly scheduler), runs when its inputs change (VERSION)",
+    "execution": {"authority": "brain-orchestrator", "trigger": "EVENT", "minIntervalHours": null, "refresh": "runs when its inputs (knowledge bundle VERSION, upstream state) change; hourly plan check by the orchestrator", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
