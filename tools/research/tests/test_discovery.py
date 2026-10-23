@@ -148,7 +148,7 @@ def test_failed_hypothesis_is_rejected_and_preserved_and_the_next_rung_runs(home
     register(monkeypatch, "r1", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=False))
     register(monkeypatch, "r2", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=True))
     register(monkeypatch, "r3", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=True))
-    st, t, led = run1(home, monkeypatch, cfg_for([av("r1", ladder="h", resolves=["G-A"]), av("r2", ladder="h", resolves=["G-A"]), av("r3", ladder="h", resolves=["G-A"])]))
+    st, t, led = run1(home, monkeypatch, cfg_for([av("r1", ladder="h"), av("r2", ladder="h"), av("r3", ladder="h")]))      # no 'resolves': only the ladder can stop r3
     cand = os.path.join(home, st["tracks"]["water-temp"]["stages"]["candidate"]["result"]["path"])
     rej = json.load(open(os.path.join(cand, "rejected-hypotheses.json")))["hypotheses"]
     assert [h["id"] for h in rej] == ["R1"] and "capability test failed" in rej[0]["rejectedBecause"]   # numbers kept
@@ -446,5 +446,17 @@ def test_only_measured_pool_elevation_counts_as_an_independent_level_source():
     """Regression (caught on the first live Lake 'improvement'): CWMS 'Elev-Zone ... 2026 Propose' / 'ZoneA_NGVD' are regulation-schedule lines, not levels."""
     ok = ["Table_Rock_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev", "Kerr.Elev.Inst.1Hour.0.Best"]
     bad = ["Lake Istokpoga.Elev-Zone.Inst.~1Day.0.2026 Propose", "Okeechobee.Elev-Zone.Inst.~1Day.0.ZoneA_NGVD", "Lake Apopka.Elev-Tail.Inst.30Minutes.0.DCP-raw",
-           "LD15_Kerr-Tailwater.Elev-Downstream.Inst.1Hour.0.Decodes-raw", "X.Elev.Ave.~1Month.1Month.CCP-Comp"]
+           "LD15_Kerr-Tailwater.Elev-Downstream.Inst.1Hour.0.Decodes-raw", "X.Elev.Ave.~1Month.1Month.CCP-Comp",
+           "Lake X.Elev.Inst.~1Day.0.2026 Propose", "Y.Elev.Inst.1Day.0.rule curve", "Z-Tailwater.Elev.Inst.1Hour.0.raw"]
     assert all(X.is_pool_elevation(n) for n in ok) and not any(X.is_pool_elevation(n) for n in bad)
+
+
+def test_a_gap_blocked_externally_before_is_updated_when_new_evidence_arrives(home, monkeypatch):
+    """The block-reopen rule matters for the ledger: with it a later campaign can move a blocked gap forward; without it the gap stays blocked forever."""
+    blocked = lambda home, spec, mine, allacq, upstream=None: {"metrics": {"v": 1, "base": 3.0, "cand": 3.0, "n": 9}, "findings": [], "weak": [], "limitations": [  # noqa: E731
+        {"limitation": "input missing", "kind": "external", "gap": "G-A", "nextSource": "restore input"}]}
+    register(monkeypatch, "late", blocked)
+    run1(home, monkeypatch, cfg_for([av("late", resolves=["G-A"])]), cid="u1")
+    register(monkeypatch, "late", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=True))
+    st, t, led = run1(home, monkeypatch, cfg_for([av("late", resolves=["G-A"])]), cid="u2")
+    assert led.doc["gaps"]["G-A"]["status"] == "RESOLVED_PENDING_APPROVAL" and t["outcome"]["outcome"] == "IMPROVED"

@@ -1,63 +1,52 @@
-# Automatic research discovery V1 (2026-10-23)
+# Autonomous research for bowfishing intelligence (V1, corrected 2026-10-23)
 
-The owner's directive: the research flow must run on its own. It finds the gaps, searches public sources, downloads and validates evidence, packages candidate knowledge, evaluates score impact, keeps investigating weak areas and cleans up. Nobody should have to prepare evidence or repair inputs before a campaign.
+Sector Brains are **bowfishing intelligence systems**, not research projects. A campaign exists to make a Brain's bowfishing predictions more accurate, better covered, better validated or more honestly bounded. A run that downloads evidence, finishes its stages and improves nothing is **not** a successful improvement campaign, and the report says so.
 
-This document covers the discovery layer added to the existing coordinator, `tools/research/campaign.py`. It is not a second orchestrator.
+This replaces the first discovery model (fixed two iterations, "no weak areas" decided by a connector's own sanity check). Cloud Brain execution stays PAUSED. Nothing here approves, publishes or writes to Firebase.
 
-Cloud Brain execution stays PAUSED. Nothing is approved or published: every candidate carries approval `NOT_RECORDED`, and gates M-3 and G-1 still apply.
+## Why the first overnight campaign failed
 
-## Flow per Brain
+| Symptom (research-campaign-2026-10-23) | Cause in the code |
+|---|---|
+| Finished in 132 s, all eight tracks DONE | Every stage "succeeded" because the stages only downloaded and counted; nothing did scientific work |
+| Fish with 3 open gaps reported "no weak areas" | `weak` came from the connector's own check (GBIF records < 200), never from the Brain's gaps |
+| Datasets and literature leads marked VALIDATED | A finding was validated by a size or count threshold; nothing distinguished data from evidence from a rule |
+| Eight candidate packages, zero improvements | Packaging ran whether or not anything changed, and the score adapters re-ran unchanged evaluators |
+| Tracks stopped at one or two iterations | A fixed `maxIterations`; no budget, no ledger, no list of what had been tried |
+| Certification and evidence paths not tied to tasks | Missing inputs were limitations in a report, never avenues to pursue |
 
-```
-discover ─► acquire ─► research ─► validate ─► candidate ─► score ─► followup ─┬─► cleanup ─► report
-   ▲                                                                             │
-   └──────────── weak areas re-open acquire..followup (wider search) ◄───────────┘  (≤ maxIterations)
-```
+## The model
 
-| Step | Automatic behaviour | Never stops the campaign because… |
-|---|---|---|
-| Gaps | Reads the Engine `brains/<dir>/research/GAPS.json`. If it is missing, gaps are **reconstructed** from three sources: frozen score blockers, the latest research closeout's Blockers section, and candidate blockers. The result goes to `<folder>/research/GAPS.generated.json` in the research home. | …a missing GAPS.json triggers reconstruction |
-| Inputs | Each Brain's declared inputs (`discovery.json` `inputs`) end up in one of three states. A present input is used. A missing one is reconstructed with `git show <research branch>:<path>` and registered as RECONSTRUCTABLE. If that is impossible, it is recorded as a **limitation**. | …a missing input becomes a reconstruction or a recorded limitation |
-| Acquire | Connectors download public evidence (table below) from five **allowlisted** HTTPS hosts. Requests get 3 retries with backoff, a per-host rate limit and a 50 MB cap. Downloads land in `<folder>/sources/<campaign>/` with `PROVENANCE.json` (URL, sha256, bytes, retrievedAt, licence) and are registered in `manifest.json` as RECONSTRUCTABLE. A read-only (protected) `sources/` is never modified: evidence goes to `research/discovery-sources/<campaign>/` instead. | …a failed request is recorded per file; a source that does not answer at all is an external-data limitation |
-| Research | The Brain's existing adapter runs; an adapter BLOCKED on a missing external input is recorded, not fatal. Then the **offline** analysis of the saved evidence generates findings. Their thresholds are pre-declared in `discovery.json` before any download. | …a blocked adapter is recorded |
-| Validate | Each finding is checked for schema and for evidence whose sha256 matches. The analysis is **re-run offline** from the hashed evidence. If its metrics differ from the research run, every discovery finding is REJECTED. Thresholds are then applied. | — |
-| Candidate | Validated findings only. Packaged as `knowledge_release` with approval `NOT_RECORDED`. | — |
-| Score | The Brain's candidate score (non-authoritative) plus the analysis' score impact. The authoritative score files must stay byte-identical. | — |
-| Followup | Weak areas get a second, wider iteration. Weak areas are rejected findings, unmatched targets, sites without data, and too few records or leads. The wider iteration means a larger search radius excluding sites already used, a longer year range, broader literature queries, or the next batch of lakes. Whatever stays weak is reported. | …the loop is bounded by `maxIterations` |
-| Cleanup | Only the campaign-owned workspace is deleted. Evidence and candidates are kept and registered. | — |
+**1. Evidence tiers are not interchangeable** (`ledger.TIERS`): ACQUIRED, QUALITY_CHECKED, EVIDENCE_LEAD, SCIENTIFIC_SUPPORT, CANDIDATE_CHANGE, INDEPENDENTLY_VALIDATED. A validated dataset is QUALITY_CHECKED; a literature hit is an EVIDENCE_LEAD; neither resolves a gap. A CANDIDATE_CHANGE must document the exact change (previous behaviour, proposed behaviour, evidence, validation method and results, practical effect, score impact, limitations). INDEPENDENTLY_VALIDATED means the candidate beats the baseline on data **not used to build it**, with tests pre-declared in `discovery.json`; the validator recomputes both numbers from the hashed evidence.
 
-The `acquire` stage is the only place with network access. Brain adapters still run with network, gcloud and Firebase blocked.
+**2. A persistent gap ledger** per Brain (`<folder>/research/gap-ledger.json`): OPEN, INVESTIGATING, PARTIAL, BLOCKED_EXTERNAL, BLOCKED_APPROVAL, EXHAUSTED, RESOLVED_PENDING_APPROVAL, with every avenue tried (never repeated within a campaign). Only an independently validated, measured improvement that explicitly `resolves` a gap resolves it, and even then only as a *candidate* (authoritative scores change through approval). EXHAUSTED means every configured avenue was tried, never that no evidence exists; a new campaign reopens exhausted gaps and external blocks.
 
-## Connectors (allowlisted, public, legitimate)
+**3. Persistent investigation, bounded** (`discovery.json` `budget`): wall-clock window (default 8 h), avenues per Brain, bytes per Brain. After each avenue the coordinator records what it achieved, then runs the next untried avenue for a gap that is still actionable. Stall detection stops *acquisition* loops that bring no new evidence, no new validated finding and no changed result for three consecutive avenues. The campaign stops only as IMPROVED, STALLED, BLOCKED or BUDGET_REACHED, and never to use up the window.
 
-| Brain | Connector | Source | What the analysis produces |
-|---|---|---|---|
-| Water Temp | `water-temp-sensors` | USGS NWIS site + daily values (00010), Open-Meteo archive | Independent **out-of-sample** validation of production M0. M0 is re-implemented and first checked against the stored production values. Sensors come from name-matched USGS lake sites, excluding the M0 calibration set. Per-lake RMSE ≤ 2.0 °C; pooled ≤ 2.5 °C. |
-| Water Temp | `wqp-activity-metadata` | WQP Activity (metadata only) | Status of the Level-4 protected-truth gap. Counting casts with the frozen rule reads protected values, so it is reported as **owner approval required** and never done automatically. |
-| Lake | `lake-levels` | USGS NWIS daily lake/reservoir elevation | An independent daily level source per fleet lake, with 30-day coverage of at least 90%: redundancy when CWMS fetches fail. |
-| Clarity | `wqp-secchi` | WQP narrowResult Secchi depth | New Secchi observations, unit-normalised and range-screened, as input to the next re-certification. |
-| Fish | `gbif-species` | GBIF occurrence search (month facet) | National observation-season profiles for the 13 bowfishing species. Aggregates only: no locations and no per-lake presence. |
-| Wind, Depth, Vegetation | `literature` | Crossref works (metadata, CC0) | Peer-reviewed literature **leads** per open gap, as DOIs for a reviewer. They are not adopted knowledge. |
-| Intelligence | `upstream` | this campaign's specialist candidates (its `dependsOn` only) | The integration input. It never invents specialist outputs. |
+**4. Outcome per Brain**: IMPROVED (a measured improvement; coverage gains count as coverage only), STALLED (no avenue left that could move a remaining gap, or no progress), BLOCKED (everything remaining needs external data or an approval), BUDGET_REACHED (actionable avenues remain). Every STALLED/BLOCKED outcome lists the exact reason and the next actionable evidence source. The report separates *execution complete* (every stage ran) from *research complete* (every gap resolved, almost never true).
 
-New connectors are reviewed code. They are registered in `discovery.py` (`acquire_*` and `analyze_*`) and `discovery.json`.
+**5. Avenues** (`discovery.json` `avenues`, tried in order): connectors (USGS, WQP, Open-Meteo, GBIF, Crossref), candidate-rule experiments, alternate sources, dataset search, owner-action records. A hypothesis **ladder** tries successively richer corrections and stops at the first measured improvement; each failure is kept as a rejected hypothesis with its numbers. A hypothesis added after seeing results must be validated on data not used to choose it.
 
-## Commands
+**6. Honest packaging**: a package with no validated candidate change is labelled `EVIDENCE_ONLY` (administrative) and never counts as an improved Brain. A package with changes holds `candidate-changes.json`, `rejected-hypotheses.json` and `SCIENTIFIC_DIFFERENCE.md`. Approval is always NOT_RECORDED.
+
+**7. Controlled source registration** (`tools/research/sources.json` for reviewed sources, `campaign.py register-source` for a research-home overlay): https, public DNS names only (no IP literals, no cloud or Firebase hosts), a licence, a purpose and a rationale are required. A host is never allowed because a document or response mentions it. Evidence already collected is reused across campaigns. A read-only `sources/` is never modified. What the system cannot fetch becomes an **owner-action record** (`<folder>/research/data-acquisition/`): publisher, access instructions with a verified flag, what was checked, which gap it would address.
+
+**8. Scores**: candidate scores are labelled *scientific, non-authoritative*, with rubric, source (computed, recorded, or typed constant) and whether the score can move at all. A typed constant is never printed as a result. Engineering scores are a separate measure and are not touched. See `SCORING_CONTRACT_AUDIT_V1.md` for what each rubric really measures.
+
+## Launching a substantial unattended campaign
 
 ```
-python3 tools/research/campaign.py init   --campaign C [--home DIR]
-python3 tools/research/campaign.py run    --campaign C [--home DIR] [--parallel 3] [--retry-failed] [--offline]
-python3 tools/research/campaign.py report --campaign C
+# once per session: Python 3.12 with numpy; optional private inputs (otherwise those evaluators are recorded as blocked, not fatal)
+export SECTOR_RESEARCH_HOME="$HOME/Desktop/Development/Sector Research"
+python3 tools/research/campaign.py init   --campaign <id> --budget-hours 8 [--max-avenues 40] [--brains a,b]
+python3 tools/research/campaign.py run    --campaign <id> --parallel 3 --timeout 1200
+python3 tools/research/campaign.py run    --campaign <id> --retry-failed       # after a fix: only FAILED stages re-run
+python3 tools/research/campaign.py status --campaign <id>
+python3 tools/research/campaign.py report --campaign <id>
+python3 tools/research/campaign.py register-source --source-id X --host data.example.org --licence "CC0" --purpose "..." --rationale "..."
 ```
 
-- `run` resumes from the checkpoint.
-- `--retry-failed` re-opens only FAILED stages after a fix. Finished stages, including downloads, are kept.
-- `--offline` disables acquisition: every request fails and is recorded.
-
-## Boundaries (unchanged)
-
-- No Cloud Scheduler, orchestrator or Firebase use.
-- No approval and no write into the Engine.
-- No sealed or protected holdout values.
-- No per-lake species presence in this public repository.
-- Raw evidence lives only in the private research home.
+- **Checkpoint**: `$SECTOR_RESEARCH_HOME/shared/campaigns/<id>/state.json` plus `events.jsonl`. After any interruption, run the same `run` command: finished stages and finished avenues are not repeated; the interrupted stage re-runs.
+- **Read the result**: `REPORT.md` (outcome per Brain, measured capability changes, gap ledger, owner actions) and `report.json`. A run with `0/8` successful improvement campaigns is a valid, honest result.
+- **Agent work**: literature and dataset leads produce *agent tasks* in the report. Read them, write findings with `campaign.py brief` / `submit` (they go through the same validator and tiers), then `run` again.
+- **Never**: set an approval, write to Firebase or the Engine, open a sealed or protected holdout (Water Temp Stage 3C.3 values, Wind H2, Vegetation's one-shot holdout), or resume a Cloud scheduler.
