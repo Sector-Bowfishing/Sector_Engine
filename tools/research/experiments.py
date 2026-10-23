@@ -270,6 +270,13 @@ def _like(name: str) -> str:
     return ".*" + ".*".join(t.title() for t in toks) + ".*Elev.*Inst.*" if toks else ""
 
 
+def is_pool_elevation(name: str) -> bool:
+    """Only a measured pool/headwater elevation: parameter exactly 'Elev'. 'Elev-Zone' (regulation-schedule lines, e.g. '2026 Propose'),
+    'Elev-Tail', 'Elev-Downstream' and the like are different quantities and must never be counted as an independent level reading."""
+    parts = name.split(".")
+    return len(parts) > 3 and parts[1] == "Elev" and parts[2] == "Inst" and not re.search(r"propos|zone|rule.?curve|schedule|tail|downstream|forebay", name, re.I)
+
+
 def acquire_lake_cwms(ev, home, spec, it, targets, gaps):
     cfg = spec["params"]
     lakes = [l for l in D.fleet(home, cfg) if targets is None or l["key"] in set(targets)]
@@ -283,8 +290,7 @@ def acquire_lake_cwms(ev, home, spec, it, targets, gaps):
         rel = ev.fetch("cwms-catalog", f"{l['key']}.json", CWMS + "catalog/TIMESERIES", {"like": like, "page-size": 40}, purpose=f"USACE CWMS pool-elevation series for {l['name']}", accept=ACC)
         if not rel:
             continue
-        ents = [e for e in json.load(open(os.path.join(home, rel), encoding="utf-8")).get("entries") or []
-                if not re.search(r"tailwater|downstream|forebay", e["name"], re.I)]
+        ents = [e for e in json.load(open(os.path.join(home, rel), encoding="utf-8")).get("entries") or [] if is_pool_elevation(e["name"])]
         ents.sort(key=lambda e: (0 if re.search(r"rev|best", e["name"], re.I) else 1, e["name"]))
         for e in ents[:3]:
             loc = e["name"].split(".")[0]
@@ -317,7 +323,10 @@ def analyze_lake_cwms(home: str, spec: dict, mine: list, allacq: list, upstream=
         days = {dt.datetime.fromtimestamp(v[0] / 1000, dt.timezone.utc).date().isoformat() for v in vals if v and v[1] is not None}
         end = dt.date.fromisoformat(m["end"])
         cov = round(len({(end - dt.timedelta(days=i)).isoformat() for i in range(30)} & days) / 30, 4)
-        sane = all(0 < v[1] < 15000 for v in vals if v and v[1] is not None)
+        nums = [v[1] for v in vals if v and v[1] is not None]
+        # a real pool level moves: a flat or step series is a rule curve / constant, not an observation
+        varies = len({round(x, 2) for x in nums}) >= 5 and (max(nums) - min(nums)) > 0.05 if nums else False
+        sane = bool(nums) and all(0 < x < 15000 for x in nums) and varies
         lakes[k] = {"series": m["series"], "office": m["office"], "points": len(vals), "coverage30": cov, "sane": int(sane)}
     base = cfg["baselineFreshLakes"]
     fresh = sum(1 for v in lakes.values() if v["coverage30"] >= cfg["coverage30"] and v["sane"])

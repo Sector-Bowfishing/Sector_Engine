@@ -440,3 +440,11 @@ def test_gaps_blocked_in_an_earlier_campaign_do_not_prevent_their_avenues_from_r
     assert led.doc["gaps"]["G-A"]["status"] == "BLOCKED_EXTERNAL"                                    # re-recorded, not forgotten
     led.block("G-B", "approval", "needs owner", "owner", "b2")
     assert L.next_avenue([av("z", gaps=("G-B",))], led, [], set(), "b2") is None                    # an approval block does stop avenues that serve only it
+
+
+def test_only_measured_pool_elevation_counts_as_an_independent_level_source():
+    """Regression (caught on the first live Lake 'improvement'): CWMS 'Elev-Zone ... 2026 Propose' / 'ZoneA_NGVD' are regulation-schedule lines, not levels."""
+    ok = ["Table_Rock_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev", "Kerr.Elev.Inst.1Hour.0.Best"]
+    bad = ["Lake Istokpoga.Elev-Zone.Inst.~1Day.0.2026 Propose", "Okeechobee.Elev-Zone.Inst.~1Day.0.ZoneA_NGVD", "Lake Apopka.Elev-Tail.Inst.30Minutes.0.DCP-raw",
+           "LD15_Kerr-Tailwater.Elev-Downstream.Inst.1Hour.0.Decodes-raw", "X.Elev.Ave.~1Month.1Month.CCP-Comp"]
+    assert all(X.is_pool_elevation(n) for n in ok) and not any(X.is_pool_elevation(n) for n in bad)
