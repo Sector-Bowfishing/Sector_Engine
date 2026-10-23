@@ -10,13 +10,22 @@ It coordinates what already exists:
   - candidate packaging: sector_brain_platform.knowledge_release (the same immutable, digest-verified format; approval NOT_RECORDED)
 
 Per track, stages run in order and are checkpointed atomically in <research home>/shared/campaigns/<id>/state.json:
-  discover   load the Brain's manifest, classify existing evidence (items by retention / folder), prior campaigns and closeouts
-  research   EITHER the Brain's research adapter (deterministic evaluator run) OR agent-written findings (`submit`): findings.json in the track's
-             campaign-owned workspace <folder>/analysis/tmp/<campaign>/
+  discover   load the Brain's manifest, classify existing evidence (items by retention / folder), prior campaigns and closeouts; load the open
+             gaps (Engine GAPS.json, or RECONSTRUCTED into <folder>/research/GAPS.generated.json when missing); check the declared research
+             inputs (present / reconstructed / recorded limitation: a missing input never stops the campaign)
+  acquire    the Brain's discovery connectors (tools/research/discovery.py + discovery.json) download legitimate public evidence from allowlisted
+             hosts only into <folder>/sources/<campaign>/ with provenance, registered in manifest.json. This coordinator stage is the ONLY
+             place with network access; adapters stay blocked. A failed request is recorded, never fatal.
+  research   the Brain's research adapter (deterministic evaluator run; an adapter BLOCKED on a missing external input is recorded, not fatal),
+             the OFFLINE discovery analysis of the acquired evidence (auto-generated findings with pre-declared thresholds), and any
+             agent-written findings (`submit`): findings.json in the track's campaign-owned workspace <folder>/analysis/tmp/<campaign>/
   validate   every finding: schema, evidence that exists in the research home with a matching sha256, and the Brain's validator metric against
              the finding's declared threshold -> VALIDATED or REJECTED (with the reason). Nothing is ever approved here.
   candidate  validated findings -> <folder>/candidates/<campaign>/ as a knowledge-release package (approval NOT_RECORDED), verified by load_release
-  score      the Brain's candidate-score adapter (non-authoritative); authoritative score artifacts are hashed before and after (must not change)
+  score      the Brain's candidate-score adapter (non-authoritative) + the discovery score impact; authoritative score artifacts are hashed
+             before and after (must not change)
+  followup   weak areas (rejected findings, unmatched targets, too little evidence) re-open acquire..followup for another, wider iteration,
+             bounded by discovery.json maxIterations; what stays weak is reported as a gap / limitation
   cleanup    delete ONLY the campaign-owned workspace (marker file), register retained outputs in manifest.json, write the RS-05 closeout
 Then `report` writes one consolidated REPORT.md / report.json for the campaign.
 
@@ -24,7 +33,7 @@ Recovery: rerunning `run` resumes from the checkpoint; DONE stages are skipped, 
 outputs are written to a temp path and renamed), failures are retried up to max_attempts, and one track's failure never stops the others.
 
   python3 tools/research/campaign.py init   --campaign C [--home DIR] [--brains a,b]
-  python3 tools/research/campaign.py run    --campaign C [--home DIR] [--parallel 3] [--timeout 600]
+  python3 tools/research/campaign.py run    --campaign C [--home DIR] [--parallel 3] [--timeout 600] [--offline]
   python3 tools/research/campaign.py submit --campaign C --brain B --findings F.json      (agent-written findings for one track)
   python3 tools/research/campaign.py status --campaign C
   python3 tools/research/campaign.py report --campaign C
@@ -48,10 +57,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ENGINE = os.path.abspath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, os.path.join(ENGINE, "jobs", "brain_platform"))
 from sector_brain_platform import knowledge_release as K  # noqa: E402
+import discovery as D  # noqa: E402
+import experiments as X  # noqa: E402
+import ledger as L  # noqa: E402
 
 SCHEMA = "sector-research-campaign-v1"
 FINDINGS_SCHEMA = "sector-research-findings-v1"
-STAGES = ("discover", "research", "validate", "candidate", "score", "cleanup")
+STAGES = ("discover", "acquire", "research", "validate", "candidate", "score", "followup", "cleanup")
+ITERATION_STAGES = ("acquire", "research", "validate", "candidate", "score", "followup")   # re-opened by a follow-up iteration
 BRAINS = ("biological-state", "wind", "water-clarity", "lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation")
 # Cortex research layout assignments (projects/sector/shared/data/research-layout.json); read from Cortex when available
 DEFAULT_FOLDERS = {"biological-state": "fish-brain", "wind": "wind-brain", "water-clarity": "water-clarity", "lake-brain": "lake-brain",
@@ -68,6 +81,8 @@ BLOCKED_ENV = {"BRAIN_RTDB_URL": "http://127.0.0.1:9/blocked-by-research-campaig
                "SECTOR_RESEARCH_CAMPAIGN": "1", "SECTOR_WIND_GCS_APPROVED": "no"}
 STRIP_ENV = ("GOOGLE_APPLICATION_CREDENTIALS", "CLOUDSDK_AUTH_ACCESS_TOKEN_FILE", "FIREBASE_TOKEN", "GOOGLE_CLOUD_PROJECT")
 _lock = threading.Lock()
+_manifest_lock = threading.Lock()
+_fetcher: D.Fetcher | None = None                                       # set by run(); tests and --offline use D.OfflineFetcher
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- basics
@@ -115,7 +130,8 @@ def force_rmtree(path: str) -> None:
             except OSError:
                 pass
         func(p)
-    shutil.rmtree(path, onerror=onerror)
+    if os.path.lexists(path):
+        shutil.rmtree(path, onerror=onerror)
 
 
 def inside(path: str, root: str) -> bool:
@@ -169,7 +185,8 @@ def authoritative_hashes() -> dict:
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- init
-def init(home: str, cid: str, brains: list[str] | None = None, max_attempts: int = 2, verification: bool = False) -> dict:
+def init(home: str, cid: str, brains: list[str] | None = None, max_attempts: int = 2, verification: bool = False, discovery: bool = True,
+         budget_overrides: dict | None = None) -> dict:
     c = Campaign(home, cid)
     if os.path.exists(c.state_path):
         raise SystemExit(f"campaign {cid} already exists: resume it with `run`")
@@ -181,10 +198,13 @@ def init(home: str, cid: str, brains: list[str] | None = None, max_attempts: int
         if not os.path.isdir(os.path.join(home, folder)):
             raise SystemExit(f"research folder missing: {os.path.join(home, folder)} (RS-01)")
         deps = [d for d in brain_dependencies(bid) if d in (brains or BRAINS)]
-        tracks[bid] = {"folder": folder, "dependsOn": deps, "stages": {s: {"status": "PENDING", "attempts": 0} for s in STAGES}}
+        tracks[bid] = {"folder": folder, "dependsOn": deps, "iteration": 1, "followupTargets": None, "avenue": None, "acquired": [],
+                       "stages": {s: {"status": "PENDING", "attempts": 0} for s in STAGES}}
     st = {"schema": SCHEMA, "campaignId": cid, "createdAt": now_iso(), "home": home, "maxAttempts": max_attempts, "tracks": tracks,
-          "verification": bool(verification),          # True only for harness verification: allows the labelled FIXTURE findings
-          "authoritativeBefore": authoritative_hashes(), "boundary": {"network": "blocked for adapters", "firebase": "never written",
+          "verification": bool(verification), "discovery": bool(discovery), "budget": budget_overrides or {},          # True only for harness verification: allows the labelled FIXTURE findings
+          "authoritativeBefore": authoritative_hashes(), "boundary": {"network": "blocked for adapters; the acquire stage reaches allowlisted "
+                                                                                  f"public research sources only ({', '.join(D.ALLOWED_HOSTS)})",
+                                                                       "firebase": "never written",
                                                                        "engineKnowledge": "never written", "approval": "never set"}}
     c.save(st)
     c.log(event="init", brains=list(tracks))
@@ -234,6 +254,36 @@ def get_path(obj, dotted: str):
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- stages
+def avenues_for(bid: str) -> list[dict]:
+    """The Brain's research avenues in priority order (discovery.json `avenues`); a Brain with only a connector gets primary + widen."""
+    spec = discovery_cfg().get("brains", {}).get(bid) or {}
+    if spec.get("avenues"):
+        return [dict(a) for a in spec["avenues"]]
+    kind = spec.get("kind")
+    if kind == "upstream":
+        return [{"id": "upstream", "run": "upstream", "kind": "upstream", "gaps": []}]
+    if not kind:
+        return []
+    return [{"id": "primary", "run": "connector", "kind": kind, "iter": 1, "gaps": []},
+            {"id": "widen", "run": "connector", "kind": kind, "iter": 2, "when": "weak", "gaps": []}]
+
+
+def brain_spec(bid: str) -> dict:
+    return {k: v for k, v in (discovery_cfg().get("brains", {}).get(bid) or {}).items() if k != "avenues"}
+
+
+def exp_spec(bid: str, av: dict) -> dict:
+    return {**brain_spec(bid), **(av.get("params") or {}), "params": {**brain_spec(bid), **(av.get("params") or {})}, "avenueId": av["id"], **{k: v for k, v in av.items() if k in ("rung",)}}
+
+
+def budget(st: dict) -> dict:
+    return {**(discovery_cfg().get("budget") or {}), **(st.get("budget") or {})}
+
+
+def ledger(c: Campaign, st: dict, bid: str) -> L.Ledger:
+    return L.Ledger(os.path.join(c.folder(st, bid), "research", "gap-ledger.json"), bid)
+
+
 def stage_discover(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
     folder = c.folder(st, bid)
     m = json.load(open(os.path.join(folder, "manifest.json"), encoding="utf-8"))
@@ -249,8 +299,145 @@ def stage_discover(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     candidates = sorted(os.listdir(os.path.join(folder, "candidates"))) if os.path.isdir(os.path.join(folder, "candidates")) else []
     shared = json.load(open(os.path.join(c.home, "shared", "manifest.json"), encoding="utf-8")) if os.path.exists(os.path.join(c.home, "shared", "manifest.json")) else {}
     shared_refs = [i.get("id") for i in shared.get("items") or [] if bid in json.dumps(i)][:20]
-    return {"manifestItems": len(items), "byRetention": by_ret, "byTopFolder": by_dir, "priorTasks": [t.get("id") for t in m.get("tasks") or []],
-            "closeouts": closeouts[-5:], "existingCandidates": candidates[-5:], "sharedEvidence": shared_refs}
+    out = {"manifestItems": len(items), "byRetention": by_ret, "byTopFolder": by_dir, "priorTasks": [t.get("id") for t in m.get("tasks") or []],
+           "closeouts": closeouts[-5:], "existingCandidates": candidates[-5:], "sharedEvidence": shared_refs}
+    if ad is None:                                                       # brief() preview: no side effects
+        return out
+    g = D.load_gaps(ENGINE, c.home, bid, st["tracks"][bid]["folder"], BRAIN_DIRS.get(bid, bid))
+    weaknesses = [{"id": w["id"], "title": w["title"], "source": w.get("evidence", "campaign configuration"), "nextEvidence": w.get("nextEvidence")} for w in (brain_spec(bid).get("weaknesses") or [])]
+    led = ledger(c, st, bid)
+    led.sync(g["gaps"] + weaknesses)
+    led.reopen_exhausted()                                               # a new campaign gives exhausted gaps a fresh chance (new sources, new experiments)
+    avs = avenues_for(bid)
+    nxt = L.next_avenue(avs, led, [], set(), c.cid)
+    led.save()
+    out["gaps"] = {"source": g["source"], "reconstructed": g["reconstructed"], "open": [x.get("id") for x in g["gaps"]], "discovered": [w["id"] for w in weaknesses],
+                   "ledger": {k: v["status"] for k, v in led.doc["gaps"].items()}}
+    spec = brain_spec(bid)
+    inp = D.check_inputs(ENGINE, c.home, spec.get("inputs") or [])
+    for r in inp["reconstructed"]:                                       # RS-02: a reconstructed input is registered like any other evidence
+        with _manifest_lock:
+            mm = json.load(open(os.path.join(folder, "manifest.json"), encoding="utf-8"))
+            rel = os.path.relpath(os.path.join(c.home, r["input"]), folder)
+            mm["items"] = [i for i in mm.get("items") or [] if i.get("workspacePath") != rel] + [
+                {"id": f"{c.cid}:input:{rel}", "workspacePath": rel, "sha256": r["sha256"], "retention": "RECONSTRUCTABLE", "source": r["from"],
+                 "provenance": f"tools/research/discovery.py check_inputs (campaign {c.cid})", "reconstruction": r["from"]}]
+            atomic_json(os.path.join(folder, "manifest.json"), mm)
+    out["inputs"] = inp
+    out["avenues"] = [a["id"] for a in avs]
+    with _lock:                                                          # first avenue of this campaign
+        s2 = c.load()
+        tr = s2["tracks"][bid]
+        if tr.get("avenue") is None and nxt:
+            tr["avenue"], tr["followupTargets"] = nxt[0], nxt[1]
+        atomic_json(c.state_path, s2)
+    return out
+
+
+def discovery_cfg() -> dict:
+    p = os.path.join(HERE, "discovery.json")
+    return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {"brains": {}}
+
+
+def stage_acquire(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
+    t = c.load()["tracks"][bid]
+    av = t.get("avenue")
+    if not av:
+        return {"avenue": None, "note": "no actionable avenue: nothing to acquire"}
+    if not st.get("discovery", True):
+        return {"avenue": av["id"], "note": "discovery disabled for this campaign"}
+    key = L.avenue_key(av, t.get("followupTargets") if av.get("when") == "weak" else None)
+    if av["run"] == "upstream":
+        entry = {"avenue": av["id"], "avenueKey": key, "avenueRun": "upstream", "shas": [], "evidenceFiles": 0, "newFiles": 0, "failureCount": 0}
+    else:
+        spec = brain_spec(bid)
+        targets = t.get("followupTargets") if av.get("when") == "weak" else None
+        used = set()                                                     # a follow-up iteration looks for OTHER sites
+        for a in t.get("acquired") or []:
+            for m in (a.get("matched") or {}).values():
+                used |= {x["site"] for x in m.get("sites") or []} | ({m["site"]} if m.get("site") else set())
+        spec["_usedSites"] = sorted(used)
+        gaps = [g for g in D.load_gaps(ENGINE, c.home, bid, t["folder"], BRAIN_DIRS.get(bid, bid))["gaps"]]
+        ev = D.Evidence(c.home, t["folder"], c.cid, _fetcher or D.Fetcher(home=c.home))
+        try:
+            if av["run"] == "connector":
+                res = D.acquire(av["kind"], ev, c.home, spec, av.get("iter", 1), targets, gaps)
+            else:
+                res = X.EXPERIMENTS[av["experiment"]]["acquire"](ev, c.home, exp_spec(bid, av), av.get("iter", 1), targets, gaps)
+        finally:
+            ev.save()
+        registered = ev.register(_manifest_lock)
+        shas = sorted({ev.prov["files"][r]["sha256"] for r in ev.prov["files"] if ev.prov["files"][r].get("sha256")})
+        entry = {**res, "avenue": av["id"], "avenueKey": key, "avenueRun": av["run"], "connector": av.get("kind"), "evidenceRoot": os.path.relpath(ev.root, c.home),
+                 "newFiles": ev.new, "reusedFiles": getattr(ev, "reused", 0), "bytes": sum(p.get("bytes", 0) for p in ev.saved().values()), "evidenceFiles": len(ev.saved()), "registeredInManifest": registered, "shas": shas,
+                 "failures": ev.failures[:20], "failureCount": len(ev.failures)}
+    with _lock:                                                          # every avenue's acquisition is kept for the offline analysis
+        s2 = c.load()
+        acq = [a for a in s2["tracks"][bid].get("acquired") or [] if a.get("avenueKey") != key] + [entry]
+        s2["tracks"][bid]["acquired"] = acq
+        st["tracks"][bid]["acquired"] = acq
+        atomic_json(c.state_path, s2)
+    return {k: v for k, v in entry.items() if k not in ("matched", "lakes", "species", "gaps", "files", "shas", "rejected")}
+
+
+def upstream_candidates(st: dict, bid: str) -> dict:
+    """Only the Brain's declared dependencies: they finish before it starts, so the analysis is reproducible (no race with sibling tracks)."""
+    deps = set(st["tracks"][bid]["dependsOn"])
+    return {b: (t["stages"]["candidate"].get("result") or {}) for b, t in st["tracks"].items() if b in deps}
+
+
+def run_analysis(c: Campaign, st: dict, bid: str) -> dict | None:
+    """Offline analysis of everything acquired so far: the primary connector, upstream integration and every experiment avenue that ran."""
+    t = st["tracks"][bid]
+    spec = brain_spec(bid)
+    avs = {a["id"]: a for a in avenues_for(bid)}
+    acq = t.get("acquired") or []
+    if not avs:
+        return None
+    merged = {"metrics": {}, "findings": [], "weak": [], "limitations": [], "weakByAvenue": {}, "owner": [], "agentTasks": [], "integration": []}
+
+    def take(av_id, r):
+        av = avs.get(av_id) or {}
+        for f in r.get("findings") or []:
+            f.setdefault("addresses", list(av.get("gaps") or []))
+            f.setdefault("avenue", av_id)
+            if av.get("resolves"):
+                f.setdefault("resolves", list(av["resolves"]))
+        merged["findings"] += r.get("findings") or []
+        merged["limitations"] += r.get("limitations") or []
+        merged["weakByAvenue"][av_id] = list(r.get("weak") or [])
+        merged["owner"] += [{**o, "avenue": av_id} for o in r.get("owner") or []]
+        merged["agentTasks"] += r.get("agentTasks") or []
+        if r.get("integration"):
+            merged["integration"].append(r["integration"])
+    conn = [a for a in acq if a.get("avenueRun") == "connector"]
+    if conn:
+        r = D.analyze(conn[0]["connector"], c.home, spec, conn, None)
+        merged["metrics"].update(r["metrics"])
+        take(conn[0]["avenue"], r)                                       # one analysis serves all connector avenues (primary + widen)
+        for a in conn:
+            merged["weakByAvenue"][a["avenue"]] = []
+        merged["weakByAvenue"][conn[-1]["avenue"]] = list(r["weak"])
+    if any(a.get("avenueRun") == "upstream" for a in acq):
+        r = D.analyze("upstream", c.home, spec, [], upstream_candidates(st, bid))
+        merged["metrics"].update(r["metrics"])
+        take("upstream", r)
+    for av_id in sorted({a["avenue"] for a in acq if a.get("avenueRun") == "experiment"}):
+        av = avs.get(av_id)
+        if not av:
+            continue
+        mine = [a for a in acq if a["avenue"] == av_id]
+        try:
+            r = X.EXPERIMENTS[av["experiment"]]["analyze"](c.home, exp_spec(bid, av), mine, acq, upstream_candidates(st, bid))
+        except (OSError, KeyError, ValueError, IndexError, TypeError) as e:        # failure isolation per avenue: a missing input or a bad source never stops the Brain
+            missing = isinstance(e, FileNotFoundError)
+            r = {"metrics": {"error": f"{type(e).__name__}: {str(e)[:160]}"}, "findings": [], "weak": [], "owner": [],
+                 "limitations": [{"limitation": f"avenue {av_id} could not run: " + (f"input missing ({os.path.basename(getattr(e, 'filename', '') or '') or e})" if missing else f"{type(e).__name__}: {str(e)[:120]}"),
+                                  "kind": "external" if missing else "avenue-error", "gap": (av.get("gaps") or [""])[0],
+                                  "nextSource": "restore or reconstruct the missing research input (see the input limitation); the avenue is retried only in a later campaign"}]}
+        merged["metrics"].setdefault("exp", {})[av_id] = r["metrics"]
+        take(av_id, r)
+    return merged
 
 
 def stage_research(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
@@ -260,22 +447,44 @@ def stage_research(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     submitted = os.path.join(ws, "findings.json")
     out = {"mode": "agent-findings" if os.path.exists(submitted) else "adapter"}
     run = ad.get("research")
-    if run:
+    rm = os.path.join(ws, "research-metrics.json")
+    if run and not os.path.exists(rm):                                   # the Brain's evaluator runs once per campaign (its inputs do not change between avenues)
         rdir = os.path.join(ws, "research")
+        force_rmtree(rdir)                                               # idempotent: a re-run (retry) starts clean
         os.makedirs(rdir, exist_ok=True)
         res = run_command(expand(run["cmd"], ctx(c, st, bid, rdir)), cwd=expand([run.get("cwd", "{engine}")], ctx(c, st, bid, rdir))[0], out_dir=rdir,
                           timeout=run.get("timeout", timeout))
         out["adapter"] = {**{k: res[k] for k in ("rc", "seconds")}, "stderrTail": res["stderrTail"][-500:]}
-        out["metrics"] = metrics_from(res, rdir)
-        atomic_json(os.path.join(ws, "research-metrics.json"), out["metrics"])
-        if res["rc"] != 0:
+        metrics = metrics_from(res, rdir)
+        if res["rc"] == 2 and metrics.get("blocked"):                    # a missing external input: recorded, the campaign continues
+            out["adapterBlocked"] = metrics["blocked"]
+        elif res["rc"] != 0:
             raise RuntimeError(f"research adapter failed rc={res['rc']}: {res['stderrTail'][-300:]}")
+        atomic_json(rm, metrics)
+    elif os.path.exists(rm):
+        prev = json.load(open(rm, encoding="utf-8"))
+        if prev.get("blocked"):
+            out["adapterBlocked"] = prev["blocked"]
+    if os.path.exists(rm):
+        out["metrics"] = json.load(open(rm, encoding="utf-8"))
     if not os.path.exists(submitted) and ad.get("fixtureFindings") and st.get("verification"):
         # verification only: a controlled fixture standing in for agent-written findings (clearly labelled FIXTURE in the report)
         fx = json.load(open(os.path.join(HERE, ad["fixtureFindings"]), encoding="utf-8"))
         fx = json.loads(json.dumps(fx).replace("{campaign}", c.cid))
         atomic_json(submitted, fx)
         out["mode"] = out["mode"] + "+fixture-findings"
+    an = run_analysis(c, c.load(), bid)
+    if an is not None:
+        atomic_json(os.path.join(ws, "discovery-metrics.json"), an["metrics"])
+        prior = json.load(open(submitted, encoding="utf-8")) if os.path.exists(submitted) else {"schema": FINDINGS_SCHEMA, "brainId": bid, "findings": []}
+        keep = [f for f in prior.get("findings") or [] if not f.get("auto")]     # agent-written findings are kept; auto ones are regenerated
+        if an["findings"] or keep:
+            atomic_json(submitted, {"schema": FINDINGS_SCHEMA, "brainId": bid, "campaignId": c.cid, "findings": keep + an["findings"]})
+        cur = (c.load()["tracks"][bid].get("avenue") or {}).get("id")
+        out.update({"discoveryFindings": len(an["findings"]), "weak": an["weakByAvenue"].get(cur, [])[:50], "limitations": an["limitations"],
+                    "owner": an["owner"], "agentTasks": an["agentTasks"][:10], "integration": an["integration"]})
+        if an["findings"]:
+            out["mode"] = "discovery" + ("+agent-findings" if keep else "")
     out["findings"] = len((json.load(open(submitted, encoding="utf-8")) if os.path.exists(submitted) else {}).get("findings") or [])
     return out
 
@@ -284,30 +493,67 @@ def ctx(c: Campaign, st: dict, bid: str, out_dir: str) -> dict:
     return {"engine": ENGINE, "home": c.home, "folder": c.folder(st, bid), "out": out_dir, "campaign": c.cid, "python": sys.executable}
 
 
-def validate_finding(f: dict, home: str, metrics: dict) -> tuple[str, str]:
+def _cmp(val, op, thr):
+    if not isinstance(val, (int, float)) or isinstance(val, bool) or not isinstance(thr, (int, float)):
+        return None
+    return {">=": val >= thr, "<=": val <= thr, ">": val > thr, "<": val < thr, "==": val == thr}.get(op)
+
+
+def validate_finding(f: dict, home: str, metrics: dict) -> tuple[str, str, dict | None]:
+    """VALIDATED only when the claim is backed by hashed evidence AND meets what its tier means. Returns (verdict, reason, measured)."""
     for k in ("id", "claim", "kind", "evidence", "validation"):
         if not f.get(k):
-            return "REJECTED", f"schema: missing {k}"
+            return "REJECTED", f"schema: missing {k}", None
     if f["kind"] not in ("RULE", "PARAMETER", "EVIDENCE", "DATASET"):
-        return "REJECTED", f"schema: kind {f['kind']!r}"
+        return "REJECTED", f"schema: kind {f['kind']!r}", None
+    tier = f.get("tier") or "EVIDENCE_LEAD"
+    if tier not in L.RANK:
+        return "REJECTED", f"schema: tier {tier!r}", None
     for ev in f["evidence"]:
         p = ev.get("path")
         if not p or not ev.get("sha256"):
-            return "REJECTED", "evidence needs a research-home path and sha256 (provenance)"
+            return "REJECTED", "evidence needs a research-home path and sha256 (provenance)", None
         full = os.path.join(home, p)
         if not inside(full, home) or not os.path.isfile(full):
-            return "REJECTED", f"evidence not found in the research home: {p}"
+            return "REJECTED", f"evidence not found in the research home: {p}", None
         if sha256(full) != ev["sha256"]:
-            return "REJECTED", f"evidence sha256 mismatch: {p}"
+            return "REJECTED", f"evidence sha256 mismatch: {p}", None
     v = f["validation"]
     val = get_path(metrics, v.get("metric", ""))
     if not isinstance(val, (int, float)) or isinstance(val, bool):
-        return "REJECTED", f"validator metric {v.get('metric')!r} not produced by the Brain's validator"
-    thr, op = v.get("threshold"), v.get("op", ">=")
-    ok = {">=": val >= thr, "<=": val <= thr, ">": val > thr, "<": val < thr, "==": val == thr}.get(op) if isinstance(thr, (int, float)) else None
+        return "REJECTED", f"validator metric {v.get('metric')!r} not produced by the Brain's validator", None
+    ok = _cmp(val, v.get("op", ">="), v.get("threshold"))
     if ok is None:
-        return "REJECTED", f"validation threshold/op invalid ({op} {thr!r})"
-    return ("VALIDATED", f"{v['metric']} = {val} {op} {thr}") if ok else ("REJECTED", f"{v['metric']} = {val} fails {op} {thr}")
+        return "REJECTED", f"validation threshold/op invalid ({v.get('op')} {v.get('threshold')!r})", None
+    if not ok:
+        return "REJECTED", f"{v['metric']} = {val} fails {v.get('op', '>=')} {v['threshold']}", None
+    why = f"{v['metric']} = {val} {v.get('op', '>=')} {v['threshold']}"
+    measured = None
+    cap = f.get("capability")
+    if tier == "INDEPENDENTLY_VALIDATED" and not cap:
+        return "REJECTED", "an independently validated improvement needs a capability test on data not used to build it", None
+    if L.rank(tier) >= L.rank("CANDIDATE_CHANGE"):
+        ch = f.get("change") or {}
+        missing = [k for k in L.CHANGE_FIELDS if not ch.get(k)]
+        if missing:
+            return "REJECTED", f"a {tier} finding must document the change: missing {', '.join(missing)}", None
+    if cap:
+        for tst in cap.get("tests") or []:
+            r = _cmp(get_path(metrics, tst["metric"]), tst.get("op", ">="), tst.get("threshold"))
+            if r is None:
+                return "REJECTED", f"capability test metric {tst['metric']!r} not produced", None
+            if not r:
+                return "REJECTED", f"capability test failed: {tst['metric']} = {get_path(metrics, tst['metric'])} not {tst.get('op', '>=')} {tst.get('threshold')}", None
+        b, cn, n = get_path(metrics, cap["baselineMetric"]), get_path(metrics, cap["candidateMetric"]), get_path(metrics, cap.get("nMetric", ""))
+        if not all(isinstance(x, (int, float)) for x in (b, cn)):
+            return "REJECTED", "capability baseline/candidate metrics not produced", None
+        delta = (b - cn) if cap.get("direction") == "lower_better" else (cn - b)
+        improved = delta >= cap.get("minDelta", 0) and (not cap.get("minN") or (isinstance(n, (int, float)) and n >= cap["minN"])) and \
+            (tier == "INDEPENDENTLY_VALIDATED" or cap.get("kind") == "coverage")
+        measured = {"capability": cap.get("name"), "kind": cap.get("kind"), "baseline": b, "candidate": cn, "delta": round(delta, 4), "n": n,
+                    "direction": cap.get("direction"), "improved": bool(improved)}
+        why += f"; {cap.get('name')}: {b} -> {cn} (delta {round(delta, 4)}, n={n})"
+    return "VALIDATED", why, measured
 
 
 def stage_validate(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
@@ -321,21 +567,35 @@ def stage_validate(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     metrics = {}
     run = ad.get("validate")
     vres = None
+    vdir = os.path.join(ws, "validate")
     if run:
-        vdir = os.path.join(ws, "validate")
-        os.makedirs(vdir, exist_ok=True)
-        vres = run_command(expand(run["cmd"], ctx(c, st, bid, vdir)), cwd=expand([run.get("cwd", "{engine}")], ctx(c, st, bid, vdir))[0], out_dir=vdir,
-                           timeout=run.get("timeout", timeout))
-        metrics = metrics_from(vres, vdir)
-        if vres["rc"] != 0:
-            raise RuntimeError(f"validator failed rc={vres['rc']}: {vres['stderrTail'][-300:]}")
+        vok = os.path.join(vdir, ".ok")
+        if not os.path.exists(vok):                                      # the Brain's validator runs once per campaign; its result is reused by later avenues
+            force_rmtree(vdir)
+            os.makedirs(vdir, exist_ok=True)
+            vres = run_command(expand(run["cmd"], ctx(c, st, bid, vdir)), cwd=expand([run.get("cwd", "{engine}")], ctx(c, st, bid, vdir))[0], out_dir=vdir,
+                               timeout=run.get("timeout", timeout))
+            metrics = metrics_from(vres, vdir)
+            if vres["rc"] != 0:
+                raise RuntimeError(f"validator failed rc={vres['rc']}: {vres['stderrTail'][-300:]}")
+            open(vok, "w").write("ok")
+        else:
+            metrics = metrics_from({"stdoutTail": ""}, vdir)
     rm = os.path.join(ws, "research-metrics.json")
     if os.path.exists(rm):
         metrics = {"research": json.load(open(rm, encoding="utf-8")), **metrics}
+    dm = os.path.join(ws, "discovery-metrics.json")
+    reproducible = None
+    if os.path.exists(dm):                                               # independent offline re-run from the saved, hashed evidence
+        again = run_analysis(c, c.load(), bid)
+        reproducible = again is not None and json.dumps(again["metrics"], sort_keys=True) == json.dumps(json.load(open(dm, encoding="utf-8")), sort_keys=True)
+        metrics = {**metrics, "discovery": again["metrics"] if reproducible else {}}
     results = []
     for f in doc.get("findings") or []:
-        verdict, why = validate_finding(f, c.home, metrics)
-        results.append({"id": f.get("id"), "kind": f.get("kind"), "verdict": verdict, "reason": why, "fixture": bool(f.get("fixture"))})
+        verdict, why, measured = validate_finding(f, c.home, metrics)
+        results.append({"id": f.get("id"), "kind": f.get("kind"), "tier": f.get("tier") or "EVIDENCE_LEAD", "verdict": verdict, "reason": why, "fixture": bool(f.get("fixture")),
+                        "measured": measured, "addresses": f.get("addresses") or [], "resolves": f.get("resolves") or [], "avenue": f.get("avenue"),
+                        "hypothesis": bool(f.get("change")) and verdict == "REJECTED"})
     atomic_json(os.path.join(ws, "validation.json"), {"campaignId": c.cid, "brainId": bid, "validator": run and run["cmd"], "metrics": metrics,
                                                       "results": results, "at": now_iso()})
     flat = []
@@ -346,12 +606,20 @@ def stage_validate(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
             elif isinstance(v, dict):
                 walk(v, pre + k + ".")
     walk(metrics)
+    ok = [r for r in results if r["verdict"] == "VALIDATED" and not r["fixture"]]
+    by_tier: dict = {}
+    for r in ok:
+        by_tier[r["tier"]] = by_tier.get(r["tier"], 0) + 1
     return {"metricsAvailable": sorted(flat), "findings": len(results), "validated": sum(r["verdict"] == "VALIDATED" for r in results),
-            "rejected": sum(r["verdict"] == "REJECTED" for r in results), "results": results,
-            "validator": {"rc": vres["rc"], "seconds": vres["seconds"]} if vres else None}
+            "rejected": sum(r["verdict"] == "REJECTED" for r in results), "results": results, "validatedByTier": by_tier,
+            "scientificSupport": sum(1 for r in ok if L.rank(r["tier"]) >= L.rank("SCIENTIFIC_SUPPORT")),
+            "improvements": [r["id"] for r in ok if (r["measured"] or {}).get("improved")],
+            "validator": {"rc": vres["rc"], "seconds": vres["seconds"]} if vres else None, "discoveryReproducible": reproducible}
 
 
 def stage_candidate(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
+    """Package validated findings. Scientific improvement and administrative packaging are different: a package with no validated candidate
+    change is labelled EVIDENCE_ONLY and never counts as an improved Brain. Rejected hypotheses are preserved with their numbers."""
     ws = c.workspace(st, bid)
     vpath = os.path.join(ws, "validation.json")
     if not os.path.exists(vpath):
@@ -360,7 +628,15 @@ def stage_candidate(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> 
     ok_ids = {r["id"] for r in val["results"] if r["verdict"] == "VALIDATED"}
     if not ok_ids:
         return {"packaged": False, "reason": "no VALIDATED finding: no candidate is generated (rejections are recorded)"}
-    findings = [f for f in json.load(open(os.path.join(ws, "findings.json"), encoding="utf-8"))["findings"] if f.get("id") in ok_ids]
+    allf = json.load(open(os.path.join(ws, "findings.json"), encoding="utf-8"))["findings"]
+    findings = [f for f in allf if f.get("id") in ok_ids]
+    res = {r["id"]: r for r in val["results"]}
+    changes = [{"id": f["id"], "tier": f.get("tier"), "claim": f["claim"], **f["change"], "measured": res[f["id"]]["measured"] or {"improved": False}, "addresses": f.get("addresses") or []}
+               for f in findings if L.rank(f.get("tier")) >= L.rank("CANDIDATE_CHANGE") and f.get("change") and not f.get("fixture")]
+    rejected = [{"id": f["id"], "tier": f.get("tier"), "claim": f["claim"], **f["change"], "rejectedBecause": res[f["id"]]["reason"]}
+                for f in allf if f.get("change") and res.get(f["id"], {}).get("verdict") == "REJECTED"]
+    improved = [x["id"] for x in changes if x["measured"].get("improved")]
+    lifecycle = "CANDIDATE" if changes else "EVIDENCE_ONLY"
     target = os.path.join(c.folder(st, bid), "candidates", c.cid)
     if inside(target, ENGINE):
         raise RuntimeError("refused: a campaign never writes into the Engine repository (approved memory is promoted by a gated review)")
@@ -369,28 +645,55 @@ def stage_candidate(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> 
     os.makedirs(staging)
     atomic_json(os.path.join(staging, "findings.json"), {"schema": FINDINGS_SCHEMA, "brainId": bid, "campaignId": c.cid, "findings": findings})
     atomic_json(os.path.join(staging, "validation.json"), val)
-    files = K.describe_files(staging, ["findings.json", "validation.json"])
+    names = ["findings.json", "validation.json"]
+    if changes:
+        atomic_json(os.path.join(staging, "candidate-changes.json"), {"schema": "sector-candidate-changes-v1", "brainId": bid, "campaignId": c.cid, "changes": changes})
+        names.append("candidate-changes.json")
+    if rejected:
+        atomic_json(os.path.join(staging, "rejected-hypotheses.json"), {"schema": "sector-rejected-hypotheses-v1", "brainId": bid, "campaignId": c.cid, "hypotheses": rejected})
+        names.append("rejected-hypotheses.json")
+    diff = [f"# Scientific difference — {bid} — {c.cid}", ""]
+    if changes:
+        for x in changes:
+            m = x["measured"]
+            diff += [f"## {x['id']} ({x['tier']})", f"- Change: {x['scientificChange']}", f"- Previous: {x['previous']}",
+                     f"- Proposed: {json.dumps(x['proposed'])[:600]}", f"- Evidence: {x['evidenceSummary']}", f"- Validation method: {x['validationMethod']}",
+                     f"- Validation results: {json.dumps(x['validationResults'])}", f"- Measured: {json.dumps(m)}", f"- Practical effect: {x['practicalEffect']}",
+                     f"- Score impact: {x['scoreImpact']}", f"- Limitations: {x['limitations']}", ""]
+    else:
+        diff += ["**None.** This package contains evidence only (acquired, quality-checked or literature-lead findings). It changes no rule, parameter or boundary and "
+                 "does not improve this Brain. It is administrative packaging of evidence.", ""]
+    if rejected:
+        diff += ["## Rejected hypotheses (preserved)", *[f"- {x['id']}: {x['rejectedBecause']}" for x in rejected], ""]
+    open(os.path.join(staging, "SCIENTIFIC_DIFFERENCE.md"), "w", encoding="utf-8").write("\n".join(diff))
+    names.append("SCIENTIFIC_DIFFERENCE.md")
+    files = K.describe_files(staging, names)
     rel_id = f"{bid}-research-candidate-{c.cid}"
     manifest = {"schemaVersion": K.SCHEMA_VERSION, "brainId": bid, "releaseId": rel_id, "store": "PACKAGED_IN_IMAGE", "owner": bid,
                 "approval": {"status": "NOT_RECORDED", "record": None}, "files": files, "releaseDigest": K.release_digest(files),
-                "lifecycle": "CANDIDATE", "note": "Research campaign candidate. NOT approved memory: promotion into a Brain runtime is a separate, "
-                                                  "owner/reviewer-gated decision (M-3, G-1); never written by the campaign."}
+                "lifecycle": lifecycle, "note": "Research campaign candidate. NOT approved memory: promotion into a Brain runtime is a separate, "
+                                                "owner/reviewer-gated decision (M-3, G-1); never written by the campaign."}
     atomic_json(os.path.join(staging, K.MANIFEST), manifest)
     rel = K.load_release(staging, bid)                                  # the package verifies exactly like production memory would
     if rel["approvalStatus"] != "NOT_RECORDED":
         raise RuntimeError("refused: a campaign candidate is never approved")
     shutil.rmtree(target, ignore_errors=True)
     os.replace(staging, target)
-    return {"packaged": True, "releaseId": rel_id, "releaseDigest": rel["releaseDigest"], "approval": "NOT_RECORDED",
+    return {"packaged": True, "releaseId": rel_id, "releaseDigest": rel["releaseDigest"], "approval": "NOT_RECORDED", "lifecycle": lifecycle,
+            "scientificChanges": len(changes), "improvements": improved, "rejectedHypotheses": len(rejected),
             "path": os.path.relpath(target, c.home), "findings": sorted(ok_ids)}
 
 
 def stage_score(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
+    """The Brain's own candidate score (non-authoritative) and the MEASURED capability change. The adapter score is the Brain's rubric evaluator
+    run unchanged: it moves only if the rubric's inputs moved. Capability improvements are reported immediately and separately from it; an
+    engineering score is a different thing and is never touched here."""
     run = ad.get("score")
     before = authoritative_hashes()
-    out = {"authoritativeUnchanged": None, "candidateScore": None, "class": "CANDIDATE (non-authoritative)"}
+    out = {"authoritativeUnchanged": None, "candidateScore": None, "class": "SCIENTIFIC CANDIDATE (non-authoritative; engineering score is separate)"}
     if run:
         sdir = os.path.join(c.workspace(st, bid), "score")
+        force_rmtree(sdir)
         os.makedirs(sdir, exist_ok=True)
         res = run_command(expand(run["cmd"], ctx(c, st, bid, sdir)), cwd=expand([run.get("cwd", "{engine}")], ctx(c, st, bid, sdir))[0], out_dir=sdir,
                           timeout=run.get("timeout", timeout))
@@ -398,11 +701,150 @@ def stage_score(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict
         if res["rc"] != 0:
             raise RuntimeError(f"score adapter failed rc={res['rc']}: {res['stderrTail'][-300:]}")
         out.update({"candidateScore": get_path(m, run.get("value", "score")), "measure": run.get("measure"), "seconds": res["seconds"]})
+    dm = os.path.join(c.workspace(st, bid), "discovery-metrics.json")
+    if os.path.exists(dm):
+        out["impact"] = json.load(open(dm, encoding="utf-8")).get("scoreImpact")
+    val = st["tracks"][bid]["stages"]["validate"].get("result") or {}
+    out["capabilityChanges"] = [{"finding": r["id"], **(r["measured"] or {})} for r in val.get("results") or []
+                                if r["verdict"] == "VALIDATED" and r["measured"] and (r["measured"].get("improved") or (r["measured"].get("delta") or 0) > 0)]
     after = authoritative_hashes()
     out["authoritativeUnchanged"] = before == after == st["authoritativeBefore"]
+    try:
+        out["authoritativeBaseline"] = (json.load(open(os.path.join(ENGINE, "docs", "brains", "scoring", "frozen-scores.json"), encoding="utf-8")).get(bid) or {}).get("value")
+    except (OSError, ValueError):
+        out["authoritativeBaseline"] = None
     if not out["authoritativeUnchanged"]:
         raise RuntimeError("an authoritative score artifact changed during the campaign")
     return out
+
+
+def score_display(bid: str, sc: dict) -> str:
+    """R1/R2: a typed constant is never printed as a result; every candidate score names its rubric, source and whether it can move."""
+    m = brain_spec(bid).get("scoreMeta") or {}
+    v = sc.get("candidateScore")
+    shown = "not a result (typed constant)" if m.get("source") == "TYPED_NOT_COMPUTED" else ("—" if v is None else str(v))
+    deltas = "; ".join(f"{x.get('capability')}: {x.get('baseline')} -> {x.get('candidate')}" for x in sc.get("capabilityChanges") or []) or "no measured capability change"
+    return (f"scientific candidate, non-authoritative: {shown} [{m.get('rubricId', '?')}, class {m.get('class', '?')}, {m.get('source', 'unlabelled')}; "
+            f"movable: {m.get('movable', 'unknown')}; measured: {deltas}]")
+
+
+def classify(c: Campaign, st: dict, bid: str, led: L.Ledger, why_stop: str) -> dict:
+    """Honest per-Brain outcome of an improvement campaign: IMPROVED, STALLED, BLOCKED or BUDGET_REACHED. Evidence alone is never IMPROVED."""
+    t = st["tracks"][bid]
+    mine = {k: v for k, v in led.doc["avenues"].items() if v["campaign"] == c.cid}
+    improved = [v["id"] for k, v in mine.items() if v["outcome"] == "IMPROVED"]
+    gaps = led.doc["gaps"]
+    actionable = [g for g, v in gaps.items() if v["status"] in L.ACTIONABLE]
+    blocked = [g for g, v in gaps.items() if v["status"].startswith("BLOCKED")]
+    exhausted = [g for g, v in gaps.items() if v["status"] == "EXHAUSTED"]
+    nexts = sorted({b["nextEvidenceSource"] for g in blocked for b in gaps[g]["blockers"]})
+    for g, v in gaps.items():                                            # a gap left open with no recorded blocker still needs its next evidence source named
+        if v["status"] in L.ACTIONABLE + ("EXHAUSTED",) and not v["blockers"]:
+            nexts.append(f"{g}: " + (v.get("nextEvidence") or "no avenue is configured that can move this gap - register a source or experiment for it in tools/research/discovery.json"))
+    nexts = sorted(set(nexts))
+    gained = sorted({v["bestTier"] for v in mine.values() if v.get("bestTier")}, key=L.rank)
+    if improved:
+        outcome = "IMPROVED"
+    elif why_stop == "budget":
+        outcome = "BUDGET_REACHED"
+    elif blocked and not actionable and not exhausted:
+        outcome = "BLOCKED"
+    else:
+        outcome = "STALLED"
+    reason = {"IMPROVED": f"{len(improved)} measured capability improvement(s): {', '.join(improved)}",
+              "BUDGET_REACHED": "the research budget ended with actionable avenues still untried",
+              "BLOCKED": "every remaining gap needs external data or an owner approval",
+              "STALLED": "no avenue left that could move a remaining gap" if not why_stop == "no-progress" else "consecutive avenues produced no new evidence and no new validated finding"}[outcome]
+    untried = [a["id"] for a in avenues_for(bid) if not any(k.startswith(a["id"] + ":") and v["campaign"] == c.cid for k, v in led.doc["avenues"].items())]
+    return {"outcome": outcome, "reason": reason, "improvements": improved, "evidenceTiersReached": gained, "avenuesRun": len(mine),
+            "gaps": {g: v["status"] for g, v in gaps.items()}, "actionableGaps": actionable, "blockedGaps": blocked, "nextEvidenceSources": nexts,
+            "improvementCampaignSuccessful": outcome == "IMPROVED", "untriedAvenues": untried}
+
+
+def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
+    """Decide from the persistent gap ledger - not from a connector's own sanity check - whether research continues: record what the last
+    avenue achieved, then run the next untried avenue for a still-actionable gap, within the declared budget. Stops only as IMPROVED-with-
+    nothing-left, STALLED, BLOCKED or BUDGET_REACHED, each with its exact reason."""
+    t = c.load()["tracks"][bid]
+    led = ledger(c, st, bid)
+    av = t.get("avenue")
+    res = st["tracks"][bid]["stages"]["research"].get("result") or {}
+    val = st["tracks"][bid]["stages"]["validate"].get("result") or {}
+    avs = avenues_for(bid)
+    if av:
+        targets = t.get("followupTargets") if av.get("when") == "weak" else None
+        key = L.avenue_key(av, targets)
+        entry = next((a for a in t.get("acquired") or [] if a.get("avenueKey") == key), {})
+        mine = [r for r in val.get("results") or [] if r.get("avenue") == av["id"]]
+        okm = [r for r in mine if r["verdict"] == "VALIDATED" and not r["fixture"]]
+        new_ev = led.seen_evidence(entry.get("shas") or [])
+        for r in okm:
+            led.touch(r["addresses"], r["tier"], r["id"], bool(r["resolves"]), bool((r["measured"] or {}).get("improved")))
+        best = max((r["tier"] for r in okm), key=L.rank, default=None)
+        outcome = "IMPROVED" if any((r["measured"] or {}).get("improved") for r in okm) else ("EVIDENCE" if okm else "NO_RESULT")
+        if entry.get("failureCount") and not entry.get("evidenceFiles") and av["run"] != "upstream":
+            outcome = "SOURCES_UNREACHABLE"
+        new_f = led.seen_findings([f"{av['id']}:{r['id']}" for r in okm])
+        rh = hashlib.sha256(json.dumps(sorted((r["id"], r["verdict"], r["reason"]) for r in mine)).encode()).hexdigest()[:16] if okm else ""   # failed searches carry no result
+        led.record(key, av, c.cid, outcome, best, new_ev, "; ".join(r["reason"][:120] for r in mine[:2]), new_f, rh)
+        led.doc["avenues"][key]["acquiring"] = bool(av.get("acquiring", av.get("run") == "connector" or av.get("experiment") in ("dataset-search", "lake-cwms")))
+        for o in res.get("owner") or []:
+            if o.get("avenue") == av["id"]:
+                rec = D.owner_action(c.home, t["folder"], c.cid, o["id"], o.get("gap") or "", o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), o.get("checked") or [], o["addresses"])
+                led.block(o.get("gap") or (av.get("gaps") or [""])[0], "external", f"{o['dataset']} ({rec['path']})", f"{o['publisher']}: {o['access']}", c.cid)
+        for lim in res.get("limitations") or []:
+            if lim.get("kind") in ("external", "approval") and lim.get("gap"):
+                led.block(lim["gap"], lim["kind"], lim["limitation"], lim.get("nextSource") or "owner action (see limitation)", c.cid)
+        for g, v in list(led.doc["gaps"].items()):                      # a gap served by an avenue that found nothing stays INVESTIGATING, never closed
+            if av["id"] and g in (av.get("gaps") or []) and v["status"] == "OPEN":
+                v["status"] = "INVESTIGATING"
+    improved_ladders = {a["ladder"] for a in avs if a.get("ladder") and any(k.startswith(a["id"] + ":") and v["outcome"] == "IMPROVED" and v["campaign"] == c.cid
+                                                                             for k, v in led.doc["avenues"].items())}
+    last_weak = list(res.get("weak") or [])
+    runs = [v for v in led.doc["avenues"].values() if v["campaign"] == c.cid]
+    b = budget(st)
+    why_stop, nxt = "", None
+    if time.time() > st.get("deadline", float("inf")):
+        why_stop = "budget"
+    elif len(runs) >= int(b.get("maxAvenues", 50)):
+        why_stop = "budget"
+    elif sum(a.get("bytes", 0) for a in (t.get("acquired") or [])[-1:]) > int(b.get("maxBytesPerBrain", 5e8)):
+        why_stop = "budget"
+    else:
+        # stall detection guards ACQUISITION loops (downloads and searches). Deterministic analysis avenues are finite and always get their turn.
+        acq_runs = [v for v in runs if v.get("acquiring")]
+        tail = acq_runs[-int(b.get("stallAvenues", 3)):]
+        if len(tail) >= int(b.get("stallAvenues", 3)) and all(v["newEvidence"] == 0 and v.get("newFindings", 0) == 0 and not v.get("changed") and v["outcome"] != "IMPROVED" for v in tail):
+            why_stop = "no-progress"
+        else:
+            nxt = L.next_avenue(avs, led, last_weak, improved_ladders, c.cid) if st.get("discovery", True) else None
+    hist = {"avenue": (av or {}).get("id"), "outcome": led.doc["avenues"].get(L.avenue_key(av, t.get("followupTargets") if av.get("when") == "weak" else None), {}).get("outcome") if av else None,
+            "validated": val.get("validated", 0), "scientificSupport": val.get("scientificSupport", 0), "improvements": val.get("improvements", [])}
+    if nxt and not why_stop:
+        led.save()
+        with _lock:
+            s2 = c.load()
+            tr = s2["tracks"][bid]
+            tr["history"] = (tr.get("history") or []) + [hist]
+            tr["avenue"], tr["followupTargets"], tr["iteration"] = nxt[0], nxt[1], t.get("iteration", 1) + 1
+            for s in ITERATION_STAGES:
+                if s != "followup":
+                    tr["stages"][s] = {"status": "PENDING", "attempts": 0}
+            atomic_json(c.state_path, s2)
+        c.log(event="followup", brain=bid, next=nxt[0]["id"], targets=(nxt[1] or [])[:20])
+        return {"continued": True, "nextAvenue": nxt[0]["id"], "targets": (nxt[1] or [])[:50], **hist}
+    cls = classify(c, st, bid, led, why_stop)
+    if cls["outcome"] in ("STALLED",):                                  # exhausted means: every configured avenue was tried - never that nothing exists
+        for g in list(led.actionable()):
+            led.exhaust(g, f"all {len(avs)} configured avenues tried; register a new source or experiment to continue")
+        cls = classify(c, st, bid, led, why_stop)
+    led.save()
+    with _lock:
+        s2 = c.load()
+        s2["tracks"][bid]["history"] = (s2["tracks"][bid].get("history") or []) + [hist]
+        s2["tracks"][bid]["outcome"] = cls
+        atomic_json(c.state_path, s2)
+    return {"continued": False, "stop": why_stop or "no actionable avenue remains", **cls, **hist}
 
 
 def stage_cleanup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict:
@@ -446,15 +888,21 @@ def stage_cleanup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> di
     val = st["tracks"][bid]["stages"]["validate"].get("result") or {}
     sc = st["tracks"][bid]["stages"]["score"].get("result") or {}
     body = {
-        "Preserved results": f"{len(added)} retained file(s) registered in manifest.json ({kept_bytes} bytes): {', '.join(added) or 'none'}",
+        "Preserved results": f"{len(added)} retained file(s) registered in manifest.json ({kept_bytes} bytes): {', '.join(added) or 'none'}; "
+                             f"acquired evidence: {sum(a.get('evidenceFiles', 0) for a in (st['tracks'][bid].get('acquired') or [])[-1:])} source file(s) "
+                             f"under {((st['tracks'][bid].get('acquired') or [{}])[-1].get('evidenceRoot') or 'sources/' + c.cid)} (RECONSTRUCTABLE, provenance in PROVENANCE.json)",
         "Manifests updated": f"{os.path.relpath(mpath, c.home)}: items + task {c.cid} (DONE)",
-        "Candidate knowledge": (f"{cand.get('releaseId')} (approval NOT_RECORDED; digest {cand.get('releaseDigest')}); validated {val.get('validated', 0)}, "
-                                f"rejected {val.get('rejected', 0)}" if cand.get("packaged") else f"none ({cand.get('reason', 'not packaged')}); "
-                                f"validated {val.get('validated', 0)}, rejected {val.get('rejected', 0)}"),
+        "Candidate knowledge": (f"{cand.get('releaseId')} [{cand.get('lifecycle')}: {cand.get('scientificChanges', 0)} scientific change(s), "
+                                f"{cand.get('rejectedHypotheses', 0)} rejected hypothesis] (approval NOT_RECORDED; digest {cand.get('releaseDigest')}); validated "
+                                f"{val.get('validated', 0)}, rejected {val.get('rejected', 0)}" if cand.get("packaged") else f"none ({cand.get('reason', 'not packaged')}); "
+                                f"validated {val.get('validated', 0)}, rejected {val.get('rejected', 0)}") +
+                                f". Scientific candidate score (NON-AUTHORITATIVE, {(brain_spec(bid).get('scoreMeta') or {}).get('source', 'unlabelled')}; engineering score is separate): "
+                                f"{score_display(bid, sc)}; authoritative scores unchanged: {sc.get('authoritativeUnchanged')}",
         "Backups verified": "no new ARCHIVAL data; existing backups untouched (campaign outputs are ACTIVE and reconstructable)",
         "Deleted": f"{len(deleted)} campaign-owned disposable file(s) under analysis/tmp/{c.cid}",
         "Worktrees": "none created by the campaign harness",
-        "Blockers": (f"candidate score {sc.get('candidateScore')} ({sc.get('class')}); authoritative scores unchanged: {sc.get('authoritativeUnchanged')}; "
+        "Blockers": (f"research outcome {(st['tracks'][bid].get('outcome') or {}).get('outcome')}: {(st['tracks'][bid].get('outcome') or {}).get('reason')}; "
+                     f"next evidence: {'; '.join((st['tracks'][bid].get('outcome') or {}).get('nextEvidenceSources') or []) or 'none recorded'}; "
                      "promotion to approved memory needs owner/reviewer approval (M-3, G-1)"),
     }
     text = f"# Research closeout — {bid} — campaign {c.cid}\n\n" + "\n".join(f"## {k}\n\n{v}\n" for k, v in body.items())
@@ -463,15 +911,18 @@ def stage_cleanup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> di
     return {"deleted": len(deleted), "retained": added, "closeout": os.path.join(st["tracks"][bid]["folder"], closeout_rel)}
 
 
-STAGE_FN = {"discover": stage_discover, "research": stage_research, "validate": stage_validate, "candidate": stage_candidate,
-            "score": stage_score, "cleanup": stage_cleanup}
+STAGE_FN = {"discover": stage_discover, "acquire": stage_acquire, "research": stage_research, "validate": stage_validate,
+            "candidate": stage_candidate, "score": stage_score, "followup": stage_followup, "cleanup": stage_cleanup}
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- runner
 def run_track(c: Campaign, bid: str, adapters: dict, timeout: int) -> str:
     st = c.load()
     ad = adapters.get(bid) or {}
-    for s in STAGES:
+    s_i = 0
+    while s_i < len(STAGES):
+        s = STAGES[s_i]
+        s_i += 1
         crash = os.environ.get("CAMPAIGN_CRASH_AT")                      # test hook: simulate an interruption (process killed mid-stage)
         with _lock:
             st = c.load()
@@ -495,23 +946,35 @@ def run_track(c: Campaign, bid: str, adapters: dict, timeout: int) -> str:
             st = c.load()
             rec = st["tracks"][bid]["stages"][s]
             rec.update({"status": status, "finishedAt": now_iso(), "result": result, "error": err})
+            if s == "followup" and (result or {}).get("continued"):     # the next iteration evaluates its own follow-up
+                rec.update({"status": "PENDING", "attempts": 0})
             st["updatedAt"] = now_iso()
             atomic_json(c.state_path, st)
         c.log(event="stage-end", brain=bid, stage=s, status=status, error=err)
         if status == "FAILED":
             return "RETRY" if rec["attempts"] < st["maxAttempts"] else "FAILED"
+        if s == "followup" and (result or {}).get("continued"):
+            s_i = STAGES.index("acquire")                                # the next iteration (its stages were re-opened)
     return "DONE"
 
 
-def run(home: str, cid: str, parallel: int = 3, timeout: int = 600, adapters: dict | None = None) -> dict:
+def run(home: str, cid: str, parallel: int = 3, timeout: int = 600, adapters: dict | None = None, fetcher: D.Fetcher | None = None,
+        retry_failed: bool = False) -> dict:
+    global _fetcher
+    _fetcher = fetcher or D.Fetcher(home=home)
     c = Campaign(home, cid)
     st = c.load()
+    if "deadline" not in st:                                             # the research window starts with the first run and survives resumes
+        st["deadline"] = time.time() + float(budget(st).get("wallSeconds", 8 * 3600))
+        st["startedAt"] = now_iso()
     adapters = adapters if adapters is not None else load_adapters()
     # an interrupted run leaves RUNNING stages: they are re-run (idempotent)
     for t in st["tracks"].values():
         for s in t["stages"].values():
             if s["status"] == "RUNNING":
                 s["status"] = "INTERRUPTED"
+            if retry_failed and s["status"] == "FAILED":                 # after a fix: re-open only what failed; DONE work is kept
+                s.update({"status": "PENDING", "attempts": 0, "retriedAfterFailure": s.get("error")})
     c.save(st)
     c.log(event="run", parallel=parallel)
     finished: dict = {}
@@ -545,22 +1008,92 @@ def write_report(c: Campaign) -> dict:
     for bid, t in st["tracks"].items():
         sg = t["stages"]
         val, cand, sc = (sg["validate"].get("result") or {}), (sg["candidate"].get("result") or {}), (sg["score"].get("result") or {})
+        fol = sg["followup"].get("result") or {}
+        out = t.get("outcome") or {}
+        owners = []
+        d = os.path.join(c.home, t["folder"], "research", "data-acquisition")
+        if os.path.isdir(d):
+            for fn in sorted(os.listdir(d)):
+                try:
+                    o = json.load(open(os.path.join(d, fn), encoding="utf-8"))
+                    if o.get("campaign") == c.cid:
+                        owners.append({"id": o["id"], "gap": o["gap"], "publisher": o["publisher"], "dataset": o["dataset"], "access": o["accessInstructions"],
+                                       "verified": o["accessVerified"], "addresses": o["wouldAddress"]})
+                except (ValueError, OSError):
+                    continue
         rows.append({"brainId": bid, "folder": t["folder"], "stages": {s: sg[s]["status"] for s in STAGES},
+                     "executionComplete": all(sg[s]["status"] == "DONE" for s in STAGES),
+                     "outcome": out.get("outcome"), "outcomeReason": out.get("reason"), "improvementCampaignSuccessful": bool(out.get("improvementCampaignSuccessful")),
+                     "avenuesRun": out.get("avenuesRun"), "evidenceTiersReached": out.get("evidenceTiersReached"), "stop": fol.get("stop"),
                      "attempts": sum(sg[s]["attempts"] for s in STAGES), "researchMode": (sg["research"].get("result") or {}).get("mode"),
-                     "validated": val.get("validated", 0), "rejected": val.get("rejected", 0),
-                     "candidate": cand.get("releaseId") if cand.get("packaged") else None, "candidateScore": sc.get("candidateScore"),
-                     "authoritativeUnchanged": sc.get("authoritativeUnchanged"),
+                     "validated": val.get("validated", 0), "rejected": val.get("rejected", 0), "validatedByTier": val.get("validatedByTier") or {},
+                     "scientificSupport": val.get("scientificSupport", 0), "improvements": val.get("improvements") or [],
+                     "candidate": cand.get("releaseId") if cand.get("packaged") else None, "lifecycle": cand.get("lifecycle"),
+                     "scientificChanges": cand.get("scientificChanges", 0), "rejectedHypotheses": cand.get("rejectedHypotheses", 0),
+                     "candidateScore": None if (brain_spec(bid).get("scoreMeta") or {}).get("source") == "TYPED_NOT_COMPUTED" else sc.get("candidateScore"),   # SC-11: a typed constant is not a result
+                     "typedConstantOmitted": (brain_spec(bid).get("scoreMeta") or {}).get("source") == "TYPED_NOT_COMPUTED", "scoreMeasure": sc.get("measure"), "scoreMeta": {**(brain_spec(bid).get("scoreMeta") or {}), "derivation": (brain_spec(bid).get("scoreMeta") or {}).get("source"),
+                                   "baseline": (brain_spec(bid).get("scoreMeta") or {}).get("baseline", sc.get("authoritativeBaseline"))},
+                     "scoreLabel": score_display(bid, sc), "capabilityChanges": sc.get("capabilityChanges") or [],
+                     "authoritativeUnchanged": sc.get("authoritativeUnchanged"), "iterations": t.get("iteration", 1),
+                     "evidenceFiles": sum(a.get("evidenceFiles", 0) for a in (t.get("acquired") or [])[-1:]),
+                     "acquisitionFailures": sum(a.get("failureCount", 0) for a in t.get("acquired") or []),
+                     "gaps": out.get("gaps") or {}, "nextEvidenceSources": out.get("nextEvidenceSources") or [], "ownerActions": owners,
+                     "inputs": (sg["discover"].get("result") or {}).get("inputs"), "adapterBlocked": (sg["research"].get("result") or {}).get("adapterBlocked"),
+                     "limitations": (sg["research"].get("result") or {}).get("limitations") or [], "history": t.get("history") or [],
+                     "reproducible": val.get("discoveryReproducible"), "impact": sc.get("impact"), "agentTasks": (sg["research"].get("result") or {}).get("agentTasks") or [],
+                     "integration": (sg["research"].get("result") or {}).get("integration") or [],
                      "errors": [f"{s}: {sg[s]['error']}" for s in STAGES if sg[s].get("error")]})
-    rep = {"schema": "sector-research-campaign-report-v1", "campaignId": c.cid, "generatedAt": now_iso(), "tracks": rows, "verification": st.get("verification"),
+    n_ok = sum(r["improvementCampaignSuccessful"] for r in rows)
+    open_gaps = {r["brainId"]: [g for g, s in r["gaps"].items() if s in L.ACTIONABLE] for r in rows}
+    rep = {"schema": "sector-research-campaign-report-v2", "campaignId": c.cid, "generatedAt": now_iso(), "tracks": rows, "verification": st.get("verification"),
            "authoritativeScoresUnchanged": authoritative_hashes() == st["authoritativeBefore"],
-           "complete": all(all(v == "DONE" for v in r["stages"].values()) for r in rows)}
+           "complete": all(r["executionComplete"] for r in rows),            # EXECUTION complete: every stage ran. Not research complete.
+           "executionComplete": all(r["executionComplete"] for r in rows), "improvementCampaignsSuccessful": n_ok, "brains": len(rows),
+           "researchComplete": all(r["gaps"] and all(v == "RESOLVED_PENDING_APPROVAL" for v in r["gaps"].values()) for r in rows),   # blocked/exhausted is NOT complete
+           "openGapsByBrain": open_gaps, "unresolvedGapsByBrain": {r["brainId"]: [g for g, v in r["gaps"].items() if v != "RESOLVED_PENDING_APPROVAL"] for r in rows}}
     atomic_json(os.path.join(c.dir, "report.json"), rep)
-    lines = [f"# Research campaign {c.cid} — consolidated report", "", f"Generated {rep['generatedAt']}. Complete: **{rep['complete']}**. "
-             f"Authoritative score artifacts unchanged: **{rep['authoritativeScoresUnchanged']}**. Nothing here is approved memory.", "",
-             "| Brain | Stages | Research | Validated / rejected | Candidate (approval NOT_RECORDED) | Candidate score | Errors |", "|---|---|---|---|---|---|---|"]
+    lines = [f"# Research campaign {c.cid} — consolidated report", "",
+             f"Generated {rep['generatedAt']}. **Execution complete: {rep['executionComplete']}** (every stage ran) — this is NOT research complete. "
+             f"**Successful improvement campaigns: {n_ok}/{len(rows)}** (only a measured, independently validated capability improvement counts). "
+             f"Research complete: **{rep['researchComplete']}**. Authoritative score artifacts unchanged: **{rep['authoritativeScoresUnchanged']}**. Nothing here is approved memory.", "",
+             "Scores below are SCIENTIFIC CANDIDATE values from each Brain's own evaluator, non-authoritative. Engineering scores are a separate measure and are not touched.", "",
+             "## Outcome per Brain", "", "| Brain | Outcome | Avenues | Best evidence tier | Validated by tier | Measured improvements | Package | Candidate score |", "|---|---|---|---|---|---|---|---|"]
     for r in rows:
-        lines.append(f"| {r['brainId']} | {' '.join(f'{s[:3]}:{v[0]}' for s, v in r['stages'].items())} | {r['researchMode']} | {r['validated']} / {r['rejected']} | "
-                     f"{r['candidate'] or '—'} | {r['candidateScore'] if r['candidateScore'] is not None else '—'} | {'; '.join(r['errors'])[:200] or '—'} |")
+        tiers = r["evidenceTiersReached"] or []
+        lines.append(f"| {r['brainId']} | **{r['outcome']}** — {r['outcomeReason']} | {r['avenuesRun']} | {tiers[-1] if tiers else '—'} | "
+                     f"{', '.join(f'{k}:{v}' for k, v in r['validatedByTier'].items()) or '—'} | {', '.join(r['improvements']) or 'none'} | "
+                     f"{r['lifecycle'] or '—'} ({r['scientificChanges']} change(s), {r['rejectedHypotheses']} rejected hypothesis) | "
+                     f"{r['scoreLabel']} |")
+    lines += ["", "## Measured capability changes (candidate only)", ""]
+    any_cap = False
+    for r in rows:
+        for ch in r["capabilityChanges"]:
+            any_cap = True
+            lines.append(f"- **{r['brainId']} / {ch['finding']}** — {ch.get('capability')}: {ch.get('baseline')} -> {ch.get('candidate')} (delta {ch.get('delta')}, n={ch.get('n')}, {ch.get('kind')}; "
+                         f"{'counts as an improvement' if ch.get('improved') else 'candidate change, NOT counted as an improvement (not independently validated)'}). Score impact: {(r.get('impact') or {}).get('score', 'see candidate package')}")
+    if not any_cap:
+        lines.append("- None. No Brain showed a measured capability change in this campaign.")
+    lines += ["", "## Execution and stages", "", "| Brain | Stages | Evidence files | Validated / rejected | Errors |", "|---|---|---|---|---|"]
+    for r in rows:
+        lines.append(f"| {r['brainId']} | {' '.join(f'{s[:3]}:{v[0]}' for s, v in r['stages'].items())} | {r['evidenceFiles']} | {r['validated']} / {r['rejected']} | {'; '.join(r['errors'])[:200] or '—'} |")
+    lines += ["", "## Gap ledger, blockers and what would move each Brain", ""]
+    for r in rows:
+        stat = {}
+        for g, s in r["gaps"].items():
+            stat.setdefault(s, []).append(g)
+        lines.append(f"- **{r['brainId']}** ({r['outcome']}): " + "; ".join(f"{s}: {', '.join(gs)}" for s, gs in sorted(stat.items())))
+        for n in r["nextEvidenceSources"]:
+            lines.append(f"  - next evidence source: {n}")
+        for o in r["ownerActions"]:
+            lines.append(f"  - owner action `{o['id']}` ({'access verified' if o['verified'] else 'access NOT verified'}): {o['publisher']} — {o['dataset']} — would address {o['addresses']}")
+        for lim in (r["inputs"] or {}).get("limitations") or []:
+            lines.append(f"  - input limitation: {lim.get('limitation')}")
+        if r["adapterBlocked"]:
+            lines.append(f"  - evaluator blocked: {r['adapterBlocked']}")
+        for it in r["integration"]:
+            lines.append(f"  - integration proposal: {it['producer']} -> {it['consumer']}: {it['expectedBenefit']} ({it['status']})")
+        for tsk in r["agentTasks"][:3]:
+            lines.append(f"  - agent task: {tsk['task']}")
     open(os.path.join(c.dir, "REPORT.md"), "w", encoding="utf-8").write("\n".join(lines) + "\n")
     return rep
 
@@ -572,7 +1105,7 @@ def brief(home: str, cid: str, bid: str) -> str:
     st = c.load()
     t = st["tracks"][bid]
     folder = c.folder(st, bid)
-    disc = (t["stages"]["discover"].get("result") or stage_discover(c, st, bid, {}, 60))
+    disc = (t["stages"]["discover"].get("result") or stage_discover(c, st, bid, None, 60))
     gaps_p = os.path.join(ENGINE, "brains", BRAIN_DIRS.get(bid, bid), "research", "GAPS.json")
     gaps = json.load(open(gaps_p, encoding="utf-8")) if os.path.exists(gaps_p) else {}
     open_gaps = [g for g in (gaps.get("gaps") or []) if str(g.get("status", "")).upper() not in ("CLOSED", "DONE", "RESOLVED")][:15]
@@ -600,8 +1133,15 @@ def brief(home: str, cid: str, bid: str) -> str:
 # ------------------------------------------------------------------------------------------------------------------------------- CLI
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("init", "run", "submit", "status", "report", "brief"))
-    ap.add_argument("--campaign", required=True)
+    ap.add_argument("cmd", choices=("init", "run", "submit", "status", "report", "brief", "register-source"))
+    ap.add_argument("--campaign", default="-")
+    ap.add_argument("--budget-hours", type=float, help="init: research window (wall clock) for this campaign")
+    ap.add_argument("--max-avenues", type=int, help="init: maximum research avenues per Brain")
+    ap.add_argument("--source-id")
+    ap.add_argument("--host", action="append")
+    ap.add_argument("--licence")
+    ap.add_argument("--purpose")
+    ap.add_argument("--rationale")
     ap.add_argument("--home")
     ap.add_argument("--brains", default="")
     ap.add_argument("--brain")
@@ -610,14 +1150,21 @@ def main(argv=None) -> int:
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("--adapters")
     ap.add_argument("--verification", action="store_true", help="init: a harness verification campaign (labelled fixture findings allowed)")
+    ap.add_argument("--retry-failed", action="store_true", help="run: re-open FAILED stages (after a fix); finished stages are kept")
+    ap.add_argument("--offline", action="store_true", help="run: no network acquisition (every connector request fails and is recorded)")
     a = ap.parse_args(argv)
     home = research_home(a.home)
     c = Campaign(home, a.campaign)
+    if a.cmd == "register-source":
+        print(json.dumps(D.register_source(home, a.source_id, a.host, a.licence, a.purpose, a.rationale), indent=1))
+        return 0
     if a.cmd == "init":
-        st = init(home, a.campaign, [b for b in a.brains.split(",") if b] or None, verification=a.verification)
+        bo = {**({"wallSeconds": int(a.budget_hours * 3600)} if a.budget_hours else {}), **({"maxAvenues": a.max_avenues} if a.max_avenues else {})}
+        st = init(home, a.campaign, [b for b in a.brains.split(",") if b] or None, verification=a.verification, budget_overrides=bo)
         print(f"initialized {a.campaign}: {len(st['tracks'])} tracks in {c.dir}")
     elif a.cmd == "run":
-        fin = run(home, a.campaign, a.parallel, a.timeout, load_adapters(a.adapters))
+        fin = run(home, a.campaign, a.parallel, a.timeout, load_adapters(a.adapters), D.OfflineFetcher() if a.offline else None,
+                  a.retry_failed)
         print(json.dumps(fin))
         print(open(os.path.join(c.dir, "REPORT.md"), encoding="utf-8").read())
     elif a.cmd == "submit":

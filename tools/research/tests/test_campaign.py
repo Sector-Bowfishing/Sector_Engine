@@ -20,6 +20,12 @@ def sha(p):
     return hashlib.sha256(open(p, "rb").read()).hexdigest()
 
 
+@pytest.fixture(autouse=True)
+def offline(monkeypatch):
+    """Unit tests never reach the network: every discovery request fails (and must be recorded, not fatal)."""
+    monkeypatch.setattr(C.D, "Fetcher", C.D.OfflineFetcher)
+
+
 @pytest.fixture
 def home(tmp_path):
     """A fixture research home: every Brain folder with a manifest, an evidence file, an UNRELATED pre-existing tmp file and an existing candidate."""
@@ -80,12 +86,13 @@ def test_end_to_end_eight_tracks_validation_packaging_cleanup_and_report(home, t
     for bid in C.BRAINS:
         folder = os.path.join(home, C.DEFAULT_FOLDERS[bid])
         v = st["tracks"][bid]["stages"]["validate"]["result"]
-        assert (v["validated"], v["rejected"]) == (1, 2)                                            # bad sha + failed threshold rejected
-        assert {r["id"]: r["verdict"] for r in v["results"]} == {"F-good": "VALIDATED", "F-badsha": "REJECTED", "F-fails": "REJECTED"}
+        expected = (2, 2) if bid == "sector-intelligence" else (1, 2)                # + Intelligence's upstream-integration finding
+        assert (v["validated"], v["rejected"]) == expected, (bid, v["results"])   # bad sha + failed threshold rejected
+        assert {r["id"]: r["verdict"] for r in v["results"] if not r["id"].startswith("INT-AUTO")} == {"F-good": "VALIDATED", "F-badsha": "REJECTED", "F-fails": "REJECTED"}
         cand = os.path.join(folder, "candidates", "c1")
         rel = C.K.load_release(cand, bid)
         assert rel["approvalStatus"] == "NOT_RECORDED"                                               # never approved
-        assert [f["id"] for f in json.load(open(os.path.join(cand, "findings.json")))["findings"]] == ["F-good"]
+        assert [f["id"] for f in json.load(open(os.path.join(cand, "findings.json")))["findings"] if not f.get("auto")] == ["F-good"]
         assert not os.path.exists(os.path.join(folder, "analysis", "tmp", "c1"))                   # campaign workspace removed
         assert open(os.path.join(folder, "analysis", "tmp", "someone-else", "keep.txt")).read() == "not ours"   # unrelated tmp kept
         assert os.path.exists(os.path.join(folder, "candidates", "older", "x.json"))               # existing candidates kept
@@ -148,19 +155,20 @@ def test_interruption_is_recovered_without_redoing_finished_work(home, tmp_path)
     ad = os.path.join(tmp_path, "ad.json")
     json.dump({"adapters": adapters_for(metric_script(tmp_path, 5))}, open(ad, "w"))
     env = dict(os.environ, CAMPAIGN_CRASH_AT="wind:candidate")
-    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad, "--parallel", "1"], env=env,
+    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad, "--parallel", "1", "--offline"], env=env,
                        capture_output=True, text=True)
     assert p.returncode == 137                                                                       # killed mid-campaign
     st = C.Campaign(home, "c5").load()
     assert st["tracks"]["wind"]["stages"]["validate"]["status"] == "DONE" and st["tracks"]["wind"]["stages"]["candidate"]["status"] == "RUNNING"
     v_attempts = st["tracks"]["wind"]["stages"]["validate"]["attempts"]
     env.pop("CAMPAIGN_CRASH_AT")
-    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad], env=env, capture_output=True, text=True)
+    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad, "--offline"], env=env, capture_output=True, text=True)
     assert p.returncode == 0, p.stderr
     st = C.Campaign(home, "c5").load()
     assert all(s["status"] == "DONE" for t in st["tracks"].values() for s in t["stages"].values())
-    assert st["tracks"]["wind"]["stages"]["validate"]["attempts"] == v_attempts                      # finished stage not re-run
-    assert st["tracks"]["wind"]["stages"]["candidate"]["attempts"] == 2                              # interrupted stage re-run once
+    ev = [json.loads(l) for l in open(os.path.join(home, "shared", "campaigns", "c5", "events.jsonl"))]
+    seq = [e["stage"] for e in ev if e.get("brain") == "wind" and e["event"] == "stage-start"]
+    assert seq[:6] == ["discover", "acquire", "research", "validate", "candidate", "candidate"]   # validate ran once; candidate re-run once after the kill
     C.K.load_release(os.path.join(home, "wind-brain", "candidates", "c5"), "wind")
 
 
