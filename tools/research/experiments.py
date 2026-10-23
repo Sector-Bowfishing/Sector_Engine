@@ -44,7 +44,7 @@ def _resid(home: str, rel: str) -> list[dict]:
             if not r.get("m0") or not r.get("e"):
                 continue
             rows.append({"stem": D.safe_key(r["lake"].replace("|", "_").replace("/", "-").replace(" ", "_")), "year": int(r["year"]), "season": r["season"],
-                         "region": r["region"], "cls": r["cls"], "e": float(r["e"])})
+                         "region": r["region"], "cls": r["cls"], "state": r.get("state", ""), "e": float(r["e"])})
     return rows
 
 
@@ -100,15 +100,18 @@ def analyze_wt_bias(home: str, spec: dict, mine: list, allacq: list, upstream=No
          "holdoutDeltaRmse": round(rmse(base) - rmse(cand), 4), "holdoutBiasBase": round(S.mean(base), 4), "holdoutBiasCand": round(S.mean(cand), 4),
          "holdoutBiasReduction": round(abs(S.mean(base)) - abs(S.mean(cand)), 4)}
     sensors = _sensor_errors(home, spec, allacq)
-    meta = {}
+    meta, state_region = {}, {}
     for r in rows:
         meta.setdefault(r["stem"], (r["region"], r["cls"]))
+        if r["state"]:
+            state_region.setdefault(r["state"], r["region"])
     lakes, used_paths = {}, set([spec["storedResiduals"]])
     for key, se in sorted(sensors.items()):
         stem = D.safe_key(key)
-        if stem not in meta:
-            continue                                             # lake not in the fleet residual table: no region/class, cannot be tested
-        reg, cls = meta[stem]
+        # a sensor lake outside the fleet residual table was never in the fit (more independent, not less): its region comes from its state; its class is unknown
+        reg, cls = meta[stem] if stem in meta else (state_region.get(key.rsplit("_", 1)[-1]), None)
+        if (rung == "region_season" and not reg) or (rung == "class_season" and not cls):
+            continue                                             # the correction cannot be applied to this lake: not counted either way
         loo = _fit([r for r in rows if r["stem"] != stem], keyf, spec["minCell"], spec["shrink"])
         b, c = [], []
         for d, e in se["errs"]:

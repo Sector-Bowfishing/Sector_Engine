@@ -163,6 +163,30 @@
       "minDays": 60,
       "rung": "class_season"
      }
+    },
+    {
+     "id": "wt-needs",
+     "run": "experiment",
+     "experiment": "owner-actions",
+     "gaps": [
+      "WATERTEMP-DISC-M0-SEASONAL-BIAS"
+     ],
+     "requires": [
+      "wt-bias-season"
+     ],
+     "params": {
+      "actions": [
+       {
+        "id": "wt-independent-surface-sensors",
+        "gap": "WATERTEMP-DISC-M0-SEASONAL-BIAS",
+        "publisher": "reservoir operators (TVA, US Army Corps of Engineers districts) and state agencies running lake-surface loggers",
+        "dataset": "continuous lake-surface (depth <= 1.5 m) water temperature, 2023-present, at 6+ reservoirs that are not in the M0 calibration set (today only 4 independent lakes exist; USGS 'Temp-Water' series on CWMS are mostly outflow/river gauges and were deliberately not used)",
+        "access": "request from the operator or agency; the lake-surface depth and location of each series must be confirmed before use; public availability NOT verified",
+        "verified": false,
+        "addresses": "decide whether a seasonal/region correction of M0 helps lakes in general (the fleet-wide correction improved the fleet holdout by 0.21 C but made one already-good lake worse)"
+       }
+      ]
+     }
     }
    ]
   },

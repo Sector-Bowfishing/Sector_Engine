@@ -766,7 +766,8 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         if entry.get("failureCount") and not entry.get("evidenceFiles") and av["run"] != "upstream":
             outcome = "SOURCES_UNREACHABLE"
         new_f = led.seen_findings([f"{av['id']}:{r['id']}" for r in okm])
-        led.record(key, av, c.cid, outcome, best, new_ev, "; ".join(r["reason"][:120] for r in mine[:2]), new_f)
+        rh = hashlib.sha256(json.dumps(sorted((r["id"], r["verdict"], r["reason"]) for r in mine)).encode()).hexdigest()[:16] if okm else ""   # failed searches carry no result
+        led.record(key, av, c.cid, outcome, best, new_ev, "; ".join(r["reason"][:120] for r in mine[:2]), new_f, rh)
         for o in res.get("owner") or []:
             if o.get("avenue") == av["id"]:
                 rec = D.owner_action(c.home, t["folder"], c.cid, o["id"], o.get("gap") or "", o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), o.get("checked") or [], o["addresses"])
@@ -791,7 +792,7 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         why_stop = "budget"
     else:
         tail = runs[-int(b.get("stallAvenues", 3)):]
-        if len(tail) >= int(b.get("stallAvenues", 3)) and all(v["newEvidence"] == 0 and v.get("newFindings", 0) == 0 and v["outcome"] != "IMPROVED" for v in tail):
+        if len(tail) >= int(b.get("stallAvenues", 3)) and all(v["newEvidence"] == 0 and v.get("newFindings", 0) == 0 and not v.get("changed") and v["outcome"] != "IMPROVED" for v in tail):
             why_stop = "no-progress"
         else:
             nxt = L.next_avenue(avs, led, last_weak, improved_ladders, c.cid) if st.get("discovery", True) else None

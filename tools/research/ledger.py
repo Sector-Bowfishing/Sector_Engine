@@ -114,9 +114,11 @@ class Ledger:
         self.doc["findingsSeen"] = sorted(known | set(ids))
         return len(new)
 
-    def record(self, key: str, avenue: dict, campaign: str, outcome: str, best_tier: str | None, new_evidence: int, note: str = "", new_findings: int = 0) -> None:
+    def record(self, key: str, avenue: dict, campaign: str, outcome: str, best_tier: str | None, new_evidence: int, note: str = "", new_findings: int = 0, result_hash: str = "") -> None:
+        prev = self.doc["avenues"].get(key)
+        changed = (prev is None and result_hash != "") or (prev is not None and prev.get("resultHash") != result_hash)   # a different result is new information
         self.doc["avenues"][key] = {"id": avenue["id"], "run": avenue.get("run"), "gaps": avenue.get("gaps") or [], "campaign": campaign, "at": now_iso(),
-                                    "outcome": outcome, "bestTier": best_tier, "newEvidence": new_evidence, "newFindings": new_findings, "note": note[:300]}
+                                    "outcome": outcome, "bestTier": best_tier, "newEvidence": new_evidence, "newFindings": new_findings, "changed": changed, "resultHash": result_hash, "note": note[:300]}
 
     def seen_evidence(self, shas: list[str]) -> int:
         """Number of evidence hashes never recorded before (unchanged re-downloads count as zero progress)."""
