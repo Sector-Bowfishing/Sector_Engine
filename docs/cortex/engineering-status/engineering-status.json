@@ -10,7 +10,7 @@
   },
   "source": {
     "repository": "Sector-Bowfishing/Sector_Engine",
-    "branch": "fix/overlap-guard-names-2026-10-23",
+    "branch": "cortex/central-scheduling-records-2026-10-23",
     "evaluatedCommit": "3e8a3857",
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-central-scheduling.md",
@@ -154,9 +154,9 @@
           "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --dry-run at main 1d05a8cc: 29 species profiles, artifact valid, response bands PROPOSED (RESEARCH tier); no per-lake state in the production path."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "INTERNAL_ACTIVE_INPUT_DRIVEN",
-          "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): brain-orchestrator 7b2a80110868, Cloud Scheduler 50 * * * * ENABLED 06:48Z, first scheduled cycle 06:50Z succeeded. In-process, runs on input change; ADMIN/MANUAL run 06:47Z executed (state matches upstream: no republish needed); hourly plan check. Internal only."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -350,9 +350,9 @@
           "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --dry-run exits 2 BLOCKED_AWAITING_APPROVED_RELEASE (correct); with --allow-unapproved-release locally: 5 pilots evaluated, all DEGRADED. G-1 required."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "INTERNAL_SHADOW_LANE",
-          "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): brain-orchestrator 7b2a80110868, Cloud Scheduler 50 * * * * ENABLED 06:48Z, first scheduled cycle 06:50Z succeeded. SHADOW lane (INTERNAL mode, lane INTERNAL_EXPERIMENTAL) 24 h; run 06:28:45Z published /control/shadowLaneV1/depth: 5 pilots DEGRADED, candidate depth-knowledge-candidate-2026-10-20.1; approved path ABSTAIN (G-1); Brain-owned paths untouched."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -555,9 +555,9 @@
           "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). LakeBrainJob --dry-run --lake Guntersville (main build): OBSERVED 593.90 ft, IN_ZONE, STABLE, hist NORMAL, baseline 7416 days, BETA, presence 10; flags trend24hFallback, noOperatorFloodPoolThreshold. Validation NOT_VALIDATED."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "LEDGER_DAILY_ENABLED_OFF_MAIN_IMAGE",
-          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). lake-brain-ledger-daily ENABLED; Cloud Run job lake-brain image a6622f99 (feat/lake-consolidated, not main); last run 2026-10-21T12:02Z."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -775,9 +775,9 @@
           "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): runtime executes in production (in-process, 06:32Z); input assembly only, no recommendations (gated product decision)."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "INTERNAL_ACTIVE_DEPENDENCY_DRIVEN",
-          "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): brain-orchestrator 7b2a80110868, Cloud Scheduler 50 * * * * ENABLED 06:48Z, first scheduled cycle 06:50Z succeeded. In-process, DEPENDENCY_CHANGED run 06:32Z published (input assembly only, pilot lakes; no recommendation). Internal only."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -973,9 +973,9 @@
           "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). run.py --dry-run exits 2 BLOCKED_AWAITING_APPROVED_RELEASE (correct); with --allow-unapproved-release locally: 51 lakes evaluated, 0 observed, 51 unavailable; no Guntersville coverage. G-1 and V-1 required."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "INTERNAL_SHADOW_LANE_NO_LIVE_FEED",
-          "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): brain-orchestrator 7b2a80110868, Cloud Scheduler 50 * * * * ENABLED 06:48Z, first scheduled cycle 06:50Z succeeded. SHADOW lane 168 h; run 06:28:45Z published /control/shadowLaneV1/vegetation: 51 lakes (42 BLOCKED, 9 PROFILED, all unavailable: no live observation feed, no Guntersville coverage); approved path ABSTAIN (G-1, V-1)."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -1165,9 +1165,9 @@
           "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): job deployed and executed (see productionActivation); science partial (CLARITY-VAL-001)."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "INTERNAL_ACTIVE_PILOT_2_LAKES",
-          "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): brain-orchestrator 7b2a80110868, Cloud Scheduler 50 * * * * ENABLED 06:48Z, first scheduled cycle 06:50Z succeeded. water-clarity-brain (cfddec572036) deployed; started by the orchestrator when 26 h stale; first run 06:29-06:30Z SUCCEEDED, 2 lakes published (Guntersville AL, Lake Hartwell SC). Satellite pipeline stays PAUSED. Internal only."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -1368,9 +1368,9 @@
           "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). WaterTempBrainJob --dry-run --lake Guntersville (main build): 70.2 F modeled, -0.5 F/24 h, 3-day forecast, CALIBRATION, flag forecastModelOnly:notSeparatelyValidated; validation GLOBAL_HOLDOUT_ONLY."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "INTERNAL_ACTIVE_PILOT_5_LAKES",
-          "evidence": "Internal activation 2026-10-22 (session 2026-10-22-internal-activation.md; Cortex 2.5.0 IO-08): brain-orchestrator 7b2a80110868, Cloud Scheduler 50 * * * * ENABLED 06:48Z, first scheduled cycle 06:50Z succeeded. water-temp-brain args scoped to the 5 pilot lakes; started when 6 h stale (scoped job success counts, PR #52); run 06:29-06:30Z SUCCEEDED, 5 lakes modeled. Fleet registry lastSuccessfulRun stays 2026-10-14 (621-lake scope not refreshed). Internal only."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
@@ -1567,9 +1567,9 @@
           "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). wind-hourly ENABLED, image e6a5026f, last run 2026-10-22T02:07Z; Guntersville state: analysis, shoreline exposure 0 % exposed / 100 % protected (physical description, not a fishing recommendation); validation PARTIAL; knowledge release approval NOT_RECORDED (M-3)."
         },
         "productionActivation": {
-          "status": "PARTIAL",
-          "label": "WIND_HOURLY_ENABLED_VERIFIED_LIVE",
-          "evidence": "Live read-only check + Guntersville pilot 2026-10-22 (session 2026-10-22-operational-readiness.md). Cloud Scheduler wind-hourly ENABLED; Cloud Run job commit e6a5026f (pre-release-verification image; A-2 redeploy pending M-3)."
+          "status": "BLOCKED",
+          "label": "PAUSED_BY_OWNER_DIRECTIVE",
+          "evidence": "Central scheduling 2026-10-23 (session 2026-10-23-central-scheduling.md; Cortex 2.7.0 PL-15/PL-16): every Brain scheduler PAUSED 02:35Z, /control/executionControlV1 PAUSED (owner CLI), brain-orchestrator is the only scheduling authority (trigger PAUSED). Runtime remains deployed and recoverable; resumption needs an owner approvalRef (tools/ops/resume-orchestrator.sh)."
         },
         "customerConsumable": {
           "status": "NOT_APPLICABLE",
