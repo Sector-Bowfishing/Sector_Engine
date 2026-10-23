@@ -10,13 +10,13 @@
   },
   "source": {
     "repository": "Sector-Bowfishing/Sector_Engine",
-    "branch": "cortex/central-scheduling-records-2026-10-23",
+    "branch": "cortex/research-automation-2026-10-23",
     "evaluatedCommit": "3e8a3857",
     "evaluatedAt": "2026-10-23",
-    "session": "docs/cortex/sessions/2026-10-23-central-scheduling.md",
+    "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:23f62ecd3eda29b67cc36ff405f43a81d3050d79ee7c6982cf62401d66c8ee8f",
-    "certificationDigest": "sha256:23f62ecd3eda29b67cc36ff405f43a81d3050d79ee7c6982cf62401d66c8ee8f",
+    "sourceDigest": "sha256:2fba239f1eb49277d92cbf8fd4ebe596026ea717fda427316f67c7ef7eb35c54",
+    "certificationDigest": "sha256:2fba239f1eb49277d92cbf8fd4ebe596026ea717fda427316f67c7ef7eb35c54",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -2015,7 +2015,9 @@
     "CG-2.1-6",
     "CG-2.1-7",
     "CG-2.1-8",
-    "CG-2.1-9"
+    "CG-2.1-9",
+    "CG-2.7-1",
+    "CG-2.7-2"
   ],
   "engineScore": {
     "measurement": "ENGINEERING_SCORE",

@@ -1,0 +1,44 @@
+{
+ "schema": "sector-research-findings-v1",
+ "brainId": "biological-state",
+ "campaignId": "{campaign}",
+ "note": "VERIFICATION FIXTURE: controlled findings that cite real evidence and are judged against the Brain's real validator metrics. Not scientific claims.",
+ "findings": [
+  {
+   "id": "FX-validates",
+   "fixture": true,
+   "kind": "EVIDENCE",
+   "claim": "candidate TARGET cohort capability is at least 7.0 under rubric 2.1.0",
+   "evidence": [
+    {
+     "path": "fish-brain/candidates/fish-release-candidate-2026-10-22.1/latest.json",
+     "sha256": "6487c1c472d57eea7ea61fe153ed5540c0bedb1bc83e0de00df9a6950532d0a6"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "targetScore",
+    "op": ">=",
+    "threshold": 7.0
+   }
+  },
+  {
+   "id": "FX-rejected",
+   "fixture": true,
+   "kind": "PARAMETER",
+   "claim": "all-assessed cohort reaches 7.0 (expected to fail: 6.15)",
+   "evidence": [
+    {
+     "path": "fish-brain/candidates/fish-release-candidate-2026-10-22.1/latest.json",
+     "sha256": "6487c1c472d57eea7ea61fe153ed5540c0bedb1bc83e0de00df9a6950532d0a6"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "allAssessedScore",
+    "op": ">=",
+    "threshold": 7.0
+   }
+  }
+ ]
+}

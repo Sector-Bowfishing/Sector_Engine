@@ -1,0 +1,44 @@
+{
+ "schema": "sector-research-findings-v1",
+ "brainId": "lake-brain",
+ "campaignId": "{campaign}",
+ "note": "VERIFICATION FIXTURE: controlled findings that cite real evidence and are judged against the Brain's real validator metrics. Not scientific claims.",
+ "findings": [
+  {
+   "id": "FX-validates",
+   "fixture": true,
+   "kind": "EVIDENCE",
+   "claim": "pre-registered rules-v2 hold-out keeps H-A, H-B, H-D passing",
+   "evidence": [
+    {
+     "path": "lake-brain/candidates/campaign-2026-10-22/lake-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "9fa7a7998e717e373f5aaae9d39b85b3128efe693682ed9ac5f69d4a094233f6"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "holdoutPassed",
+    "op": ">=",
+    "threshold": 3
+   }
+  },
+  {
+   "id": "FX-rejected",
+   "fixture": true,
+   "kind": "PARAMETER",
+   "claim": "all four hold-out hypotheses pass (expected to fail: H-C)",
+   "evidence": [
+    {
+     "path": "lake-brain/candidates/campaign-2026-10-22/lake-knowledge-candidate-2026-10-22.1.json",
+     "sha256": "9fa7a7998e717e373f5aaae9d39b85b3128efe693682ed9ac5f69d4a094233f6"
+    }
+   ],
+   "method": "existing Brain evaluator re-run by the campaign adapter",
+   "validation": {
+    "metric": "holdoutPassed",
+    "op": ">=",
+    "threshold": 4
+   }
+  }
+ ]
+}
