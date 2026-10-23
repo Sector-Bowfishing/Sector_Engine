@@ -1,0 +1,10 @@
+{
+  "schema": "sector-research-sources-v1",
+  "description": "Reviewed registry of research sources the coordinator may download from, in addition to the built-in floor in discovery.py. Add a source with `campaign.py register-source` (research-home overlay) or, when it should be permanent, by a reviewed edit here. https only; never IP literals, cloud or Firebase hosts.",
+  "sources": [
+    {"id": "usace-cwms", "hosts": ["cwms-data.usace.army.mil"], "license": "US Government public domain (USACE CWMS Data API)", "purpose": "reservoir pool elevation / water temperature time series by USACE district", "rationale": "Lake Brain's own level provider (usace-cwms-pool); alternate level source for lakes without USGS series", "adapter": "cwms-json", "status": "ACTIVE", "registeredAt": "2026-10-23", "registeredBy": "reviewed in repository"},
+    {"id": "dryad", "hosts": ["datadryad.org"], "license": "CC0 (Dryad datasets)", "purpose": "published research datasets (telemetry, spawning, habitat)", "rationale": "dataset discovery for the Fish/Depth/Vegetation evidence gaps", "adapter": "dataset-search", "status": "ACTIVE", "registeredAt": "2026-10-23", "registeredBy": "reviewed in repository"},
+    {"id": "zenodo", "hosts": ["zenodo.org"], "license": "per record (open licences only are downloaded)", "purpose": "published research datasets and supplementary files", "rationale": "dataset discovery and small open-licence downloads", "adapter": "dataset-search", "status": "ACTIVE", "registeredAt": "2026-10-23", "registeredBy": "reviewed in repository"},
+    {"id": "sciencebase", "hosts": ["www.sciencebase.gov"], "license": "US Government public domain (USGS ScienceBase)", "purpose": "USGS/state fisheries, bathymetry and habitat data releases", "rationale": "federal dataset discovery for Fish, Depth and Vegetation", "adapter": "dataset-search", "status": "ACTIVE", "registeredAt": "2026-10-23", "registeredBy": "reviewed in repository"}
+  ]
+}

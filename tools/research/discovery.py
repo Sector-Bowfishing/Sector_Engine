@@ -36,7 +36,65 @@ import urllib.parse
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ALLOWED_HOSTS = ("waterservices.usgs.gov", "www.waterqualitydata.us", "archive-api.open-meteo.com", "api.gbif.org", "api.crossref.org")
+ALLOWED_HOSTS = ("waterservices.usgs.gov", "www.waterqualitydata.us", "archive-api.open-meteo.com", "api.gbif.org", "api.crossref.org")   # built-in floor
+DENY_HOSTS = ("firebaseio.com", "googleapis.com", "cloud.google.com", "run.app", "cloudfunctions.net", "appspot.com", "gstatic.com", "localhost")
+SOURCES_JSON = os.path.join(HERE, "sources.json")
+
+
+def _registry_entries(home: str | None) -> list:
+    out = []
+    for p in (SOURCES_JSON, os.path.join(home, "shared", "sources", "registry.json") if home else None):
+        if p and os.path.exists(p):
+            try:
+                out += json.load(open(p, encoding="utf-8")).get("sources") or []
+            except (ValueError, OSError):
+                pass
+    return out
+
+
+def allowed_hosts(home: str | None = None) -> tuple:
+    """Built-in floor + every ACTIVE registered source (reviewed tools/research/sources.json, and the research-home overlay written by
+    `campaign.py register-source`). A host is never allowed by being mentioned in a document, a response or a redirect."""
+    hosts = set(ALLOWED_HOSTS)
+    for e in _registry_entries(home):
+        if e.get("status") == "ACTIVE":
+            hosts |= {h for h in e.get("hosts") or [] if not any(h == d or h.endswith("." + d) for d in DENY_HOSTS)}
+    return tuple(sorted(hosts))
+
+
+def register_source(home: str, sid: str, hosts: list, licence: str, purpose: str, rationale: str, adapter: str = "http-json", probe: bool = True) -> dict:
+    """Explicit, controlled source registration: https public DNS names only (no IP literals, no cloud/Firebase hosts), a licence, a purpose, a
+    rationale; a live reachability probe unless disabled; recorded with who/when in the research-home overlay (shared/sources/registry.json)."""
+    import ipaddress
+    for h in hosts:
+        try:
+            ipaddress.ip_address(h)
+            raise ValueError(f"refused: {h} is an IP literal")
+        except ValueError as e:
+            if "refused" in str(e):
+                raise
+        if not re.fullmatch(r"[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+", h) or any(h == d or h.endswith("." + d) for d in DENY_HOSTS):
+            raise ValueError(f"refused: {h} is not an allowed public research host")
+    if not (licence and purpose and rationale):
+        raise ValueError("refused: licence, purpose and rationale are required")
+    reach = None
+    if probe:
+        try:
+            urllib.request.urlopen(urllib.request.Request(f"https://{hosts[0]}/", headers={"User-Agent": USER_AGENT}), timeout=30).read(1)
+            reach = "reachable"
+        except urllib.error.HTTPError as e:
+            reach = f"reachable (HTTP {e.code})"
+        except Exception as e:                                       # noqa: BLE001
+            raise ValueError(f"refused: {hosts[0]} did not answer ({type(e).__name__})")
+    p = os.path.join(home, "shared", "sources", "registry.json")
+    doc = json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {"schema": "sector-research-sources-v1", "sources": []}
+    doc["sources"] = [x for x in doc["sources"] if x.get("id") != sid] + [{"id": sid, "hosts": hosts, "license": licence, "purpose": purpose, "rationale": rationale,
+                                                                          "adapter": adapter, "status": "ACTIVE", "registeredAt": now_iso(), "probe": reach,
+                                                                          "registeredBy": "campaign.py register-source"}]
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    json.dump(doc, open(p + ".tmp", "w", encoding="utf-8"), indent=1)
+    os.replace(p + ".tmp", p)
+    return doc["sources"][-1]
 LICENSES = {"waterservices.usgs.gov": "US Government public domain (USGS)", "www.waterqualitydata.us": "US Government public domain (WQP: USGS/EPA)",
             "archive-api.open-meteo.com": "CC BY 4.0 (Open-Meteo)", "api.gbif.org": "GBIF occurrence metadata (record licences CC0/CC BY/CC BY-NC)",
             "api.crossref.org": "Crossref metadata (CC0); article texts are not downloaded"}
@@ -77,19 +135,19 @@ class FetchError(RuntimeError):
 class Fetcher:
     """HTTP GET restricted to ALLOWED_HOSTS: retries with backoff, >= `gap` seconds between requests to one host, size cap. 404 -> None."""
 
-    def __init__(self, retries: int = 3, timeout: int = 90, gap: float = 0.35):
-        self.retries, self.timeout, self.gap = retries, timeout, gap
+    def __init__(self, retries: int = 3, timeout: int = 90, gap: float = 0.35, home: str | None = None):
+        self.retries, self.timeout, self.gap, self.home = retries, timeout, gap, home
         self._last: dict = {}
         self._lock = threading.Lock()
         self.requests = 0
 
     def url(self, base: str, params=None) -> str:
         host = urllib.parse.urlparse(base).hostname
-        if urllib.parse.urlparse(base).scheme != "https" or host not in ALLOWED_HOSTS:
+        if urllib.parse.urlparse(base).scheme != "https" or host not in allowed_hosts(self.home):
             raise FetchError(f"refused: {host} is not an allowlisted research source")
         return base + ("?" + urllib.parse.urlencode(params, doseq=True) if params else "")
 
-    def get(self, base: str, params=None) -> bytes | None:
+    def get(self, base: str, params=None, accept: str | None = None) -> bytes | None:
         url = self.url(base, params)
         host = urllib.parse.urlparse(url).hostname
         err = None
@@ -101,7 +159,7 @@ class Fetcher:
                 self._last[host] = time.time()
                 self.requests += 1
             try:
-                req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept-Encoding": "identity"})
+                req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept-Encoding": "identity", **({"Accept": accept} if accept else {})})
                 with urllib.request.urlopen(req, timeout=self.timeout) as r:
                     data = r.read(MAX_BYTES + 1)
                 if len(data) > MAX_BYTES:
@@ -122,7 +180,7 @@ class Fetcher:
 class OfflineFetcher(Fetcher):
     """Used by tests and by `--offline`: every request fails (the campaign must still complete)."""
 
-    def get(self, base, params=None):
+    def get(self, base, params=None, accept=None):
         self.url(base, params)
         raise FetchError("offline: network acquisition disabled")
 
@@ -146,14 +204,40 @@ class Evidence:
     def rel(self, connector: str, name: str) -> str:
         return os.path.join(self.folder, self.base, self.cid, connector, name)
 
-    def fetch(self, connector: str, name: str, base: str, params=None, purpose: str = "") -> str | None:
+    def _earlier(self, url: str):
+        """Evidence already collected for the same URL by an earlier campaign (same bytes on disk): reused, never re-downloaded."""
+        if not hasattr(self, "_idx"):
+            self._idx = {}
+            for pat in ("sources/*/PROVENANCE.json", "research/discovery-sources/*/PROVENANCE.json"):
+                for pp in sorted(glob.glob(os.path.join(self.home, self.folder, pat))):
+                    if os.path.basename(os.path.dirname(pp)) == self.cid:
+                        continue
+                    try:
+                        for r, rec in json.load(open(pp, encoding="utf-8")).get("files", {}).items():
+                            if rec.get("status") == "SAVED" and os.path.exists(os.path.join(self.home, r)) and sha256(os.path.join(self.home, r)) == rec.get("sha256"):
+                                self._idx[rec["url"]] = (r, rec)
+                    except (ValueError, OSError):
+                        continue
+        return self._idx.get(url)
+
+    def fetch(self, connector: str, name: str, base: str, params=None, purpose: str = "", accept: str | None = None) -> str | None:
         """Returns the research-home-relative path of the saved file (None when the source has no data or the request failed)."""
         rel = self.rel(connector, name)
         full = os.path.join(self.home, rel)
         if rel in self.prov["files"] and os.path.exists(full):
             return rel if self.prov["files"][rel].get("bytes") else None
+        url0 = self.fetcher.url(base, params)
+        old = self._earlier(url0)
+        if old:
+            os.makedirs(os.path.dirname(full), exist_ok=True)
+            if subprocess.run(["cp", "-c", os.path.join(self.home, old[0]), full], capture_output=True).returncode:
+                import shutil
+                shutil.copy2(os.path.join(self.home, old[0]), full)
+            self.prov["files"][rel] = {**old[1], "reusedFrom": old[0], "reusedAt": now_iso(), "connector": connector, "purpose": purpose or old[1].get("purpose")}
+            self.reused = getattr(self, "reused", 0) + 1
+            return rel
         try:
-            data = self.fetcher.get(base, params)
+            data = self.fetcher.get(base, params, accept)
         except FetchError as e:
             self.failures.append({"connector": connector, "name": name, "error": str(e)[:300]})
             return None
@@ -394,10 +478,20 @@ def stats(errors: list[float]) -> dict:
             "rmseC": round(math.sqrt(sum(e * e for e in errors) / n), 4), "within2F": round(sum(abs(e) <= 2 / 1.8 for e in errors) / n, 4)}
 
 
-def finding(fid: str, claim: str, kind: str, evidence: list[str], home: str, method: str, metric: str, op: str, thr) -> dict:
-    return {"id": fid, "claim": claim, "kind": kind, "auto": True, "method": method,
-            "evidence": [{"path": p, "sha256": sha256(os.path.join(home, p))} for p in evidence],
-            "validation": {"metric": metric, "op": op, "threshold": thr}}
+def finding(fid: str, claim: str, kind: str, evidence: list[str], home: str, method: str, metric: str, op: str, thr, tier: str | None = None,
+            change: dict | None = None, capability: dict | None = None, resolves: list | None = None) -> dict:
+    f = {"id": fid, "claim": claim, "kind": kind, "auto": True, "method": method,
+         "evidence": [{"path": p, "sha256": sha256(os.path.join(home, p))} for p in evidence],
+         "validation": {"metric": metric, "op": op, "threshold": thr}}
+    if tier:
+        f["tier"] = tier
+    if change:
+        f["change"] = change
+    if capability:
+        f["capability"] = capability
+    if resolves:
+        f["resolves"] = resolves
+    return f
 
 
 def window_end(cfg: dict) -> str:
@@ -570,7 +664,9 @@ def analyze_water_temp(home: str, cfg: dict, acq: list[dict]) -> dict:
             limits.append({"limitation": f"{name}: {len(dates)} new WQP temperature site-dates since {pt['sinceMMDDYYYY']} (metadata only; recorded "
                            f"qualifying casts {pt['lakes'][name]['recorded']}/{pt['needed']}). Counting them with the frozen rule-v3 cast rules reads "
                            "protected-truth values: OWNER APPROVAL REQUIRED (Stage 3C.3 hard stop); not done automatically.",
-                           "gap": "WATERTEMP-GEN-LEVEL4PROTECTEDTRUTH", "kind": "approval"})
+                           "gap": "WATERTEMP-GEN-LEVEL4PROTECTEDTRUTH", "kind": "approval",
+                           "nextSource": "TVA reservoir forebay temperature profiles for Wheeler, a prospective logger network for Wilson (decision D3), and owner approval to "
+                                         "recount under the frozen rule-v3 cast rules"})
     metrics["scoreImpact"] = {"score": "water-temp-level-ladder-v1 3.0 (frozen) unchanged",
                               "why": "the only score blocker is the Level-4 protected-truth sufficiency gate; sensor evidence does not change it",
                               "gapClosedCandidate": "independent continuous-sensor validation (W5 caveat: n=1 snapshot is not validation)"
@@ -751,6 +847,7 @@ def analyze_literature(home: str, cfg: dict, acq: list[dict]) -> dict:
         findings.append(finding(f"{gid}-AUTO-LIT", f"Gap {gid}: {len(leads)} peer-reviewed journal articles (Crossref, {cfg['fromYear']}+) match the gap's "
                                 f"terms (>= {cfg['minLeads']} required) — literature LEADS for a reviewer, not adopted knowledge.", "EVIDENCE", sorted(paths), home,
                                 "Crossref works search; title-term relevance screen", f"discovery.gaps.{k}.leads", ">=", cfg["minLeads"]))
+        findings[-1]["addresses"] = [gid]
         if len(leads) < cfg["minLeads"]:
             weak.append(gid)
     metrics["scoreImpact"] = {"score": "unchanged", "why": "literature leads need reviewer reading before any rule or score change"}
@@ -792,9 +889,35 @@ def acquire(kind: str, ev: Evidence, home: str, cfg: dict, it: int, targets, gap
     return {}
 
 
+# what each connector's findings can honestly claim: acquisition and data quality are NOT scientific support, a literature lead is not a rule
+DEFAULT_TIER = {"water-temp-sensors": "SCIENTIFIC_SUPPORT", "lake-levels": "QUALITY_CHECKED", "wqp-secchi": "QUALITY_CHECKED", "gbif-species": "QUALITY_CHECKED",
+                "literature": "EVIDENCE_LEAD", "upstream": "EVIDENCE_LEAD"}
+
+
 def analyze(kind: str, home: str, cfg: dict, acq: list[dict], upstream: dict | None = None) -> dict:
+    r = _analyze(kind, home, cfg, acq, upstream)
+    for f in r["findings"]:
+        f.setdefault("tier", "QUALITY_CHECKED" if f["id"] == "WT-AUTO-IMPL" else DEFAULT_TIER.get(kind, "ACQUIRED"))
+    return r
+
+
+def _analyze(kind: str, home: str, cfg: dict, acq: list[dict], upstream: dict | None = None) -> dict:
     fn = {"water-temp-sensors": analyze_water_temp, "lake-levels": analyze_lake, "wqp-secchi": analyze_clarity, "gbif-species": analyze_fish,
           "literature": analyze_literature}.get(kind)
     if kind == "upstream":
         return analyze_intelligence(home, cfg, upstream or {})
     return fn(home, cfg, acq) if fn else {"metrics": {}, "findings": [], "weak": [], "limitations": []}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- owner action
+def owner_action(home: str, folder: str, cid: str, aid: str, gap: str, publisher: str, what: str, access: str, verified: bool, checked: list, addresses: str) -> dict:
+    """An actionable data-acquisition record for evidence the system cannot fetch itself: who publishes it, how to get it (marked verified or
+    not), what was already checked, and which scientific gap it would address. 'Not found by a connector' is never 'does not exist'."""
+    rec = {"id": aid, "gap": gap, "status": "OWNER_ACTION_REQUIRED", "publisher": publisher, "dataset": what, "accessInstructions": access,
+           "accessVerified": verified, "alreadyChecked": checked, "wouldAddress": addresses, "campaign": cid, "at": now_iso()}
+    p = os.path.join(home, folder, "research", "data-acquisition", safe_key(aid) + ".json")
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    json.dump(rec, open(p + ".tmp", "w", encoding="utf-8"), indent=1)
+    os.replace(p + ".tmp", p)
+    rec["path"] = os.path.relpath(p, home)
+    return rec

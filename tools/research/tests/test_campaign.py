@@ -155,19 +155,20 @@ def test_interruption_is_recovered_without_redoing_finished_work(home, tmp_path)
     ad = os.path.join(tmp_path, "ad.json")
     json.dump({"adapters": adapters_for(metric_script(tmp_path, 5))}, open(ad, "w"))
     env = dict(os.environ, CAMPAIGN_CRASH_AT="wind:candidate")
-    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad, "--parallel", "1"], env=env,
+    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad, "--parallel", "1", "--offline"], env=env,
                        capture_output=True, text=True)
     assert p.returncode == 137                                                                       # killed mid-campaign
     st = C.Campaign(home, "c5").load()
     assert st["tracks"]["wind"]["stages"]["validate"]["status"] == "DONE" and st["tracks"]["wind"]["stages"]["candidate"]["status"] == "RUNNING"
     v_attempts = st["tracks"]["wind"]["stages"]["validate"]["attempts"]
     env.pop("CAMPAIGN_CRASH_AT")
-    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad], env=env, capture_output=True, text=True)
+    p = subprocess.run([PY, C.__file__, "run", "--campaign", "c5", "--home", home, "--adapters", ad, "--offline"], env=env, capture_output=True, text=True)
     assert p.returncode == 0, p.stderr
     st = C.Campaign(home, "c5").load()
     assert all(s["status"] == "DONE" for t in st["tracks"].values() for s in t["stages"].values())
-    assert st["tracks"]["wind"]["stages"]["validate"]["attempts"] == v_attempts                      # finished stage not re-run
-    assert st["tracks"]["wind"]["stages"]["candidate"]["attempts"] == 2                              # interrupted stage re-run once
+    ev = [json.loads(l) for l in open(os.path.join(home, "shared", "campaigns", "c5", "events.jsonl"))]
+    seq = [e["stage"] for e in ev if e.get("brain") == "wind" and e["event"] == "stage-start"]
+    assert seq[:6] == ["discover", "acquire", "research", "validate", "candidate", "candidate"]   # validate ran once; candidate re-run once after the kill
     C.K.load_release(os.path.join(home, "wind-brain", "candidates", "c5"), "wind")
 
 
