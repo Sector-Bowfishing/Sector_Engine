@@ -304,7 +304,7 @@ def stage_discover(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     if ad is None:                                                       # brief() preview: no side effects
         return out
     g = D.load_gaps(ENGINE, c.home, bid, st["tracks"][bid]["folder"], BRAIN_DIRS.get(bid, bid))
-    weaknesses = [{"id": w["id"], "title": w["title"], "source": w.get("evidence", "campaign configuration")} for w in (brain_spec(bid).get("weaknesses") or [])]
+    weaknesses = [{"id": w["id"], "title": w["title"], "source": w.get("evidence", "campaign configuration"), "nextEvidence": w.get("nextEvidence")} for w in (brain_spec(bid).get("weaknesses") or [])]
     led = ledger(c, st, bid)
     led.sync(g["gaps"] + weaknesses)
     led.reopen_exhausted()                                               # a new campaign gives exhausted gaps a fresh chance (new sources, new experiments)
@@ -705,9 +705,14 @@ def stage_score(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict
     if os.path.exists(dm):
         out["impact"] = json.load(open(dm, encoding="utf-8")).get("scoreImpact")
     val = st["tracks"][bid]["stages"]["validate"].get("result") or {}
-    out["capabilityChanges"] = [{"finding": r["id"], **(r["measured"] or {})} for r in val.get("results") or [] if r["verdict"] == "VALIDATED" and (r["measured"] or {}).get("improved")]
+    out["capabilityChanges"] = [{"finding": r["id"], **(r["measured"] or {})} for r in val.get("results") or []
+                                if r["verdict"] == "VALIDATED" and r["measured"] and (r["measured"].get("improved") or (r["measured"].get("delta") or 0) > 0)]
     after = authoritative_hashes()
     out["authoritativeUnchanged"] = before == after == st["authoritativeBefore"]
+    try:
+        out["authoritativeBaseline"] = (json.load(open(os.path.join(ENGINE, "docs", "brains", "scoring", "frozen-scores.json"), encoding="utf-8")).get(bid) or {}).get("value")
+    except (OSError, ValueError):
+        out["authoritativeBaseline"] = None
     if not out["authoritativeUnchanged"]:
         raise RuntimeError("an authoritative score artifact changed during the campaign")
     return out
@@ -719,7 +724,8 @@ def score_display(bid: str, sc: dict) -> str:
     v = sc.get("candidateScore")
     shown = "not a result (typed constant)" if m.get("source") == "TYPED_NOT_COMPUTED" else ("—" if v is None else str(v))
     deltas = "; ".join(f"{x.get('capability')}: {x.get('baseline')} -> {x.get('candidate')}" for x in sc.get("capabilityChanges") or []) or "no measured capability change"
-    return f"{shown} [{m.get('rubricId', '?')}, class {m.get('class', '?')}; movable: {m.get('movable', 'unknown')}; measured: {deltas}]"
+    return (f"scientific candidate, non-authoritative: {shown} [{m.get('rubricId', '?')}, class {m.get('class', '?')}, {m.get('source', 'unlabelled')}; "
+            f"movable: {m.get('movable', 'unknown')}; measured: {deltas}]")
 
 
 def classify(c: Campaign, st: dict, bid: str, led: L.Ledger, why_stop: str) -> dict:
@@ -732,6 +738,10 @@ def classify(c: Campaign, st: dict, bid: str, led: L.Ledger, why_stop: str) -> d
     blocked = [g for g, v in gaps.items() if v["status"].startswith("BLOCKED")]
     exhausted = [g for g, v in gaps.items() if v["status"] == "EXHAUSTED"]
     nexts = sorted({b["nextEvidenceSource"] for g in blocked for b in gaps[g]["blockers"]})
+    for g, v in gaps.items():                                            # a gap left open with no recorded blocker still needs its next evidence source named
+        if v["status"] in L.ACTIONABLE + ("EXHAUSTED",) and not v["blockers"]:
+            nexts.append(f"{g}: " + (v.get("nextEvidence") or "no avenue is configured that can move this gap - register a source or experiment for it in tools/research/discovery.json"))
+    nexts = sorted(set(nexts))
     gained = sorted({v["bestTier"] for v in mine.values() if v.get("bestTier")}, key=L.rank)
     if improved:
         outcome = "IMPROVED"
@@ -1020,7 +1030,9 @@ def write_report(c: Campaign) -> dict:
                      "scientificSupport": val.get("scientificSupport", 0), "improvements": val.get("improvements") or [],
                      "candidate": cand.get("releaseId") if cand.get("packaged") else None, "lifecycle": cand.get("lifecycle"),
                      "scientificChanges": cand.get("scientificChanges", 0), "rejectedHypotheses": cand.get("rejectedHypotheses", 0),
-                     "candidateScore": sc.get("candidateScore"), "scoreMeasure": sc.get("measure"), "scoreMeta": brain_spec(bid).get("scoreMeta"),
+                     "candidateScore": None if (brain_spec(bid).get("scoreMeta") or {}).get("source") == "TYPED_NOT_COMPUTED" else sc.get("candidateScore"),   # SC-11: a typed constant is not a result
+                     "typedConstantOmitted": (brain_spec(bid).get("scoreMeta") or {}).get("source") == "TYPED_NOT_COMPUTED", "scoreMeasure": sc.get("measure"), "scoreMeta": {**(brain_spec(bid).get("scoreMeta") or {}), "derivation": (brain_spec(bid).get("scoreMeta") or {}).get("source"),
+                                   "baseline": (brain_spec(bid).get("scoreMeta") or {}).get("baseline", sc.get("authoritativeBaseline"))},
                      "scoreLabel": score_display(bid, sc), "capabilityChanges": sc.get("capabilityChanges") or [],
                      "authoritativeUnchanged": sc.get("authoritativeUnchanged"), "iterations": t.get("iteration", 1),
                      "evidenceFiles": sum(a.get("evidenceFiles", 0) for a in (t.get("acquired") or [])[-1:]),
@@ -1057,9 +1069,10 @@ def write_report(c: Campaign) -> dict:
     for r in rows:
         for ch in r["capabilityChanges"]:
             any_cap = True
-            lines.append(f"- **{r['brainId']} / {ch['finding']}** — {ch.get('capability')}: {ch.get('baseline')} -> {ch.get('candidate')} (delta {ch.get('delta')}, n={ch.get('n')}, {ch.get('kind')}). Score impact: {(r.get('impact') or {}).get('score', 'see candidate package')}")
+            lines.append(f"- **{r['brainId']} / {ch['finding']}** — {ch.get('capability')}: {ch.get('baseline')} -> {ch.get('candidate')} (delta {ch.get('delta')}, n={ch.get('n')}, {ch.get('kind')}; "
+                         f"{'counts as an improvement' if ch.get('improved') else 'candidate change, NOT counted as an improvement (not independently validated)'}). Score impact: {(r.get('impact') or {}).get('score', 'see candidate package')}")
     if not any_cap:
-        lines.append("- None. No Brain showed a measured, defensible improvement in this campaign.")
+        lines.append("- None. No Brain showed a measured capability change in this campaign.")
     lines += ["", "## Execution and stages", "", "| Brain | Stages | Evidence files | Validated / rejected | Errors |", "|---|---|---|---|---|"]
     for r in rows:
         lines.append(f"| {r['brainId']} | {' '.join(f'{s[:3]}:{v[0]}' for s, v in r['stages'].items())} | {r['evidenceFiles']} | {r['validated']} / {r['rejected']} | {'; '.join(r['errors'])[:200] or '—'} |")

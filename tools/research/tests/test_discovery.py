@@ -227,6 +227,13 @@ def test_all_eight_brains_use_the_ledger_outcome_model_and_none_claims_success_w
         assert t["outcome"]["avenuesRun"] >= 1, bid
     rep = json.load(open(os.path.join(home, "shared", "campaigns", "e8", "report.json")))
     assert rep["improvementCampaignsSuccessful"] == 0 and not rep["researchComplete"] and rep["executionComplete"]
+    for r in rep["tracks"]:                                                                           # the report contract Cortex 2.8.0 enforces (RS-11, RS-13, RS-17, SC-10)
+        assert r["outcome"] in ("STALLED", "BLOCKED") and r["outcomeReason"] and r["nextEvidenceSources"], r["brainId"]
+        assert all(isinstance(v, str) for v in r["gaps"].values()), r["brainId"]
+        if r["candidateScore"] is not None:
+            assert "scientific" in r["scoreLabel"] and "non-authoritative" in r["scoreLabel"] and r["scoreMeta"]["rubricId"], r["brainId"]
+        if r["candidate"] and not r["scientificChanges"]:
+            assert r["lifecycle"] == "EVIDENCE_ONLY", r["brainId"]
 
 
 def test_a_campaign_killed_mid_investigation_resumes_without_repeating_avenues(home):

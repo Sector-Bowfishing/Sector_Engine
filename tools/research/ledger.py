@@ -56,6 +56,8 @@ class Ledger:
         for g in gaps:
             cur = self.doc["gaps"].setdefault(g["id"], {"status": "OPEN", "bestTier": None, "findings": [], "blockers": [], "title": g.get("title"), "firstSeen": now_iso()})
             cur["title"] = g.get("title") or cur.get("title")
+            if g.get("nextEvidence"):
+                cur["nextEvidence"] = g["nextEvidence"]
 
     def status(self, gid: str) -> str:
         return (self.doc["gaps"].get(gid) or {}).get("status", "OPEN")

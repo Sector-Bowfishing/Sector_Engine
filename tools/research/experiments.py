@@ -194,8 +194,14 @@ def analyze_fish_rules(home: str, spec: dict, mine: list, allacq: list, upstream
               "practicalEffect": "A bowfisher is never shown a response band or spawn window for a species whose rules rest on indirect, unread or non-reconciled evidence; the app says 'not enough evidence' instead.",
               "scoreImpact": "None: the Biological-state score is not a field-validation measure; FISH-VAL-001 stays open.",
               "limitations": "This grades the strength of the written evidence, not field accuracy. It validates nothing against catch or observation outcomes."}
+    m["unsupportedDisplayedBase"] = len(abstain)                      # species rules that would be shown today without direct evidence (everything is shown)
+    m["unsupportedDisplayedCand"] = 0                                 # with the boundary they are replaced by 'not enough evidence'
+    m["gradedConsistent"] = int(len(experimental) + len(abstain) == len(per))
+    cap = {"kind": "refusal", "name": "species rules shown without direct, fully read evidence (refusal boundary; NOT predictive accuracy)", "direction": "lower_better",
+           "baselineMetric": f"{g}.unsupportedDisplayedBase", "candidateMetric": f"{g}.unsupportedDisplayedCand", "minDelta": 1, "nMetric": f"{g}.speciesAtPilot", "minN": 1,
+           "tests": [{"metric": f"{g}.gradedConsistent", "op": "==", "threshold": 1}]}
     f = D.finding("FISH-RULE-GRADE", "Species rules at the pilot lake can be graded by evidence strength into experimental vs abstain.", "RULE", paths, home,
-                  "evidence-strength grading of rule metadata", f"{g}.speciesAtPilot", ">=", 1, tier="CANDIDATE_CHANGE", change=change)
+                  "evidence-strength grading of rule metadata", f"{g}.speciesAtPilot", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap)
     owner = [{"id": "fish-field-outcomes", "gap": "FISH-VAL-001", "publisher": "state fisheries agency (e.g. Alabama Division of Wildlife and Freshwater Fisheries) and TVA reservoir fish programs; "
               "bowfishing tournament organisers",
               "dataset": "dated catch/observation records with species, water temperature and location (creel surveys, electrofishing with spawning condition, tournament weigh-in logs)",
