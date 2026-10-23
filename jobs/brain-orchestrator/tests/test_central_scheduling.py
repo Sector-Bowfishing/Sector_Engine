@@ -151,20 +151,26 @@ def test_runs_per_day_and_cost_per_day_limits_hold_a_brain():
 # 7 -------------------------------------------------------------------- duplicates: single-flight and no overlapping cycles
 def test_an_overlapping_orchestrator_cycle_starts_nothing(world, monkeypatch):
     setup, calls = world
-    running = {"metadata": {"name": "brain-orchestrator-other"}, "status": {"runningCount": 1}}
-    setup(stale_world(enabled_control()), executions={"brain-orchestrator": [running]})
+    # real Cloud Run execution shapes and the REAL gcp.running_executions (no completionTime = running). Found live 2026-10-23: the helper
+    # returns names, and a mock returning objects had hidden an AttributeError.
+    me = {"metadata": {"name": "brain-orchestrator-me"}, "status": {"startTime": "2026-10-23T03:00:00Z"}}
+    other = {"metadata": {"name": "brain-orchestrator-other"}, "status": {"startTime": "2026-10-23T02:59:00Z"}}
+    done = {"metadata": {"name": "brain-orchestrator-old"}, "status": {"startTime": "2026-10-23T01:50:00Z", "completionTime": "2026-10-23T01:52:00Z"}}
+    setup(stale_world(enabled_control()), executions={"brain-orchestrator": [me, other, done]})
     monkeypatch.setenv("CLOUD_RUN_EXECUTION", "brain-orchestrator-me")
-    monkeypatch.setattr(OR.gcp, "running_executions", lambda ex: [e for e in ex if (e.get("status") or {}).get("runningCount")])
     assert OR.main([]) == 0 and calls["start"] == [] and calls["inproc"] == []
+    # only itself running (the normal case): the cycle proceeds
+    calls["start"].clear()
+    setup(stale_world(enabled_control()), executions={"brain-orchestrator": [me, done]})
+    assert OR.main([]) == 0 and calls["start"] != []
 
 
 def test_a_brain_already_running_is_not_started_twice(world, monkeypatch):
     setup, calls = world
-    running = {"metadata": {"name": "wind-hourly-x"}, "status": {"runningCount": 1}}
+    running = {"metadata": {"name": "wind-hourly-x"}, "status": {"startTime": "2026-10-23T03:00:00Z"}}                # real shape: no completionTime
     t = stale_world(enabled_control())
     t["control"]["orchestrator"] = {"locks": {"wind": {"lockedUntil": OR.iso(NOW.replace(year=NOW.year + 1)), "execution": "x/wind-hourly-x"}}}
     setup(t, executions={"wind-hourly": [running]})
-    monkeypatch.setattr(OR.gcp, "running_executions", lambda ex: [e for e in ex if (e.get("status") or {}).get("runningCount")])
     assert OR.main([]) == 0 and "wind" not in calls["start"]
 
 
