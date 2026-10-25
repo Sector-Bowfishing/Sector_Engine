@@ -142,6 +142,8 @@ class Fetcher:
         self.requests = 0
 
     def url(self, base: str, params=None) -> str:
+        if re.search(r"[\s\x00-\x1f\x7f]", base) or len(base) > 2000:                    # agent output is untrusted: a URL is a URL, not a sentence
+            raise FetchError("refused: malformed URL (whitespace or control characters)")
         host = urllib.parse.urlparse(base).hostname
         if urllib.parse.urlparse(base).scheme != "https" or host not in allowed_hosts(self.home):
             raise FetchError(f"refused: {host} is not an allowlisted research source")

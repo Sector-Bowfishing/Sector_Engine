@@ -151,3 +151,16 @@ def test_queue_priority_follows_the_weakest_measured_capability(home, monkeypatc
     assert C.capability_priority(c, "water-temp") < C.capability_priority(c, "wind")
     monkeypatch.setattr(C.BC, "compute_brain", lambda *a, **k: {"current": {"value": None}})              # entirely unmeasured counts as weakest
     assert C.capability_priority(c, "wind") < 30
+
+
+def test_a_malformed_url_in_an_agent_result_never_crashes_the_loop(home, tmp_path, monkeypatch):
+    """Found by the live run: a directUrl that contained explanatory prose raised http.client.InvalidURL and killed the loop with a task stuck CLAIMED."""
+    start(home, monkeypatch)
+    res = {"schema": C.RESULT_SCHEMA, "status": "FINDINGS", "summary": "s", "queriesTried": ["q"],
+           "datasets": [{"title": "Bad", "directUrl": "https://data.example.org/a.json ; per-lake: https://data.example.org/{slug}.csv (verified)", "licence": "CC0", "verifiedAccess": True},
+                        {"title": "Also bad", "directUrl": "https://data.example.org/ b", "licence": "CC0", "verifiedAccess": True}]}
+    out = C.loop(home, "L1", "claude-cli", max_tasks=3, max_hours=1, adapters={}, fetcher=Src(home), exec_cfg=fake_executor(tmp_path, res))
+    assert out["log"][0]["status"] == "done" and out["log"][0]["acquired"] == []
+    assert TQ.counts(home)["CLAIMED"] == 0 and TQ.counts(home)["DONE"] == 1
+    with pytest.raises(D.FetchError):
+        D.Fetcher(home=home).url("https://api.gbif.org/v1/x with spaces")

@@ -1140,6 +1140,10 @@ def ingest_result(home: str, cid: str, t: dict, res: dict) -> dict:
             if d.get("url"):
                 out["ownerActions"] += 0
             continue
+        if re.search(r"[\s\x00-\x1f\x7f]", url) or len(url) > 2000 or len(url.split("/")) < 3:     # malformed (an executor's prose in the URL field): owner action, never a crash
+            led.block(gid, "external", f"dataset {d.get('title')}: the agent's directUrl is not a plain https URL", f"owner review of {d.get('url')}", cid)
+            out["ownerActions"] += 1
+            continue
         host = url.split("/")[2].split(":")[0].lower()
         if host not in D.allowed_hosts(home):
             try:                                                       # the explicit, controlled registration mechanism - same checks as the CLI
@@ -1207,7 +1211,7 @@ def loop(home: str, cid: str, executor: str = "claude-cli", max_tasks: int = 10,
                 ing = ingest_result(home, cid, t, json.load(open(detail, encoding="utf-8")))
                 TQ.complete(home, t["id"], f"acquired {len(ing['acquired'])}, owner actions {ing['ownerActions']}, follow-ups {len(ing['followUps'])}", os.path.relpath(detail, home))
                 log.append({"task": t["id"], "status": "done", **ing})
-            except (ValueError, KeyError, OSError) as e:
+            except Exception as e:                                       # noqa: BLE001 - an executor's result is untrusted input; one bad result never stops the loop
                 TQ.fail(home, t["id"], f"bad result: {type(e).__name__}: {str(e)[:150]}")
                 log.append({"task": t["id"], "status": "failed", "detail": str(e)[:120]})
         done += 1
