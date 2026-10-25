@@ -142,3 +142,12 @@ def test_session_executor_hands_the_next_task_to_the_coordinating_session(home, 
     assert C.main(["tasks", "next", "--home", home]) == 0
     t = json.loads(capsys.readouterr().out.split("\n", 0)[0])
     assert t["status"] == "CLAIMED" and t["briefContent"]["gapId"] == "G-OPEN" and t["resultSchema"] == C.RESULT_SCHEMA
+
+
+def test_queue_priority_follows_the_weakest_measured_capability(home, monkeypatch):
+    """A capability result feeds the next research decision: the Brain with the lower composite is worked first."""
+    monkeypatch.setattr(C.BC, "compute_brain", lambda eng, h, bid, disc, camp, ready: {"current": {"value": {"wind": 0.8, "water-temp": 0.1}.get(bid)}})
+    c = C.Campaign(home, "x")
+    assert C.capability_priority(c, "water-temp") < C.capability_priority(c, "wind")
+    monkeypatch.setattr(C.BC, "compute_brain", lambda *a, **k: {"current": {"value": None}})              # entirely unmeasured counts as weakest
+    assert C.capability_priority(c, "wind") < 30

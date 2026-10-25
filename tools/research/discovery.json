@@ -636,6 +636,25 @@
      }
     },
     {
+     "id": "fish-eggs-spawn-temp",
+     "run": "experiment",
+     "experiment": "eggs-temp",
+     "gaps": [
+      "FISH-VAL-001",
+      "FISH-EVI-001"
+     ],
+     "params": {
+      "datasetGlob": "fish-brain/sources/*/agent-datasets/*59a411d4e4b077f00567324b*",
+      "tempCol": "H20 Temp",
+      "eggCol": "Eggs",
+      "ruleId": "SC-SPN-01",
+      "ruleMinC": 18.0,
+      "ruleMaxC": 30.0,
+      "lowMax": 0.1,
+      "inMin": 0.1
+     }
+    },
+    {
      "id": "fish-datasets-telemetry",
      "run": "experiment",
      "experiment": "dataset-search",
@@ -1161,7 +1180,11 @@
     "class": "WIRING_AND_COVERAGE",
     "source": "NOT_RUN",
     "movable": "capped at 5.0 while NOT_VALIDATED"
-   }
+   },
+   "internalGaps": [
+    "INT-CON-001",
+    "INT-DEP-001"
+   ]
   }
  },
  "budget": {

@@ -724,6 +724,78 @@ def analyze_nas(home: str, spec: dict, mine: list, allacq: list, upstream=None) 
     return {"metrics": m, "findings": findings, "weak": [], "limitations": [] if per else [{"limitation": "NAS returned no matched records", "kind": "external", "gap": "VEG-VAL-001", "nextSource": "retry later"}]}
 
 
+# ------------------------------------------------------------------------------------------------------------------------------- Fish spawn temperature (ichthyoplankton eggs)
+def _wilson(k, n, z=1.96):
+    if n == 0:
+        return 0.0, 1.0
+    ph = k / n
+    d = 1 + z * z / n
+    c = ph + z * z / (2 * n)
+    h = z * math.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n))
+    return (c - h) / d, (c + h) / d
+
+
+def analyze_eggs_temp(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    """Pre-declared test of a written spawn-temperature rule against dated ichthyoplankton tows (egg counts with water temperature).
+    Lower bound: SUPPORTED when the egg-positive share below the rule's minimum has a Wilson 95% upper bound under `lowMax` AND the share inside the rule's range has a lower
+    bound above `inMin`; CONTRADICTED when eggs are readily found below the minimum. Upper bound: judged separately against the in-range share. The data are Asian carp eggs
+    (silver and bighead together), so the test is for the silver-carp rule and says so."""
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    files = sorted(glob.glob(os.path.join(home, p["datasetGlob"])))
+    if not files:
+        return {"metrics": {"toWs": 0}, "findings": [], "weak": [], "limitations": [{"limitation": "ichthyoplankton dataset not acquired yet (an agent research task acquires it)", "kind": "external", "gap": "FISH-VAL-001",
+                                                                                      "nextSource": "run the agent research queue (campaign.py loop) so the dataset is downloaded with provenance"}]}
+    path = files[0]
+    rel = os.path.relpath(path, home)
+    t, e = [], []
+    with open(path, encoding="latin-1", newline="") as fh:
+        for r in csv.DictReader(fh):
+            try:
+                tc, eg = float(r[p["tempCol"]]), float(r[p["eggCol"]])
+            except (KeyError, ValueError, TypeError):
+                continue
+            t.append(tc)
+            e.append(eg > 0)
+    lo, hi = p["ruleMinC"], p["ruleMaxC"]
+    below = [x for tc, x in zip(t, e) if tc < lo]
+    inr = [x for tc, x in zip(t, e) if lo <= tc <= hi]
+    above = [x for tc, x in zip(t, e) if tc > hi]
+    bl, bu = _wilson(sum(below), len(below))
+    il, iu = _wilson(sum(inr), len(inr))
+    al, au = _wilson(sum(above), len(above))
+    first = min((tc for tc, x in zip(t, e) if x), default=None)
+    m = {"tows": len(t), "eggPositive": sum(e), "firstEggC": first, "belowN": len(below), "belowPositive": sum(below), "belowUpper": round(bu, 4), "inRangeN": len(inr), "inRangePositive": sum(inr),
+         "inRangeShare": round(sum(inr) / max(len(inr), 1), 4), "inRangeLower": round(il, 4), "aboveN": len(above), "abovePositive": sum(above), "aboveShare": round(sum(above) / max(len(above), 1), 4),
+         "aboveUpper": round(au, 4), "aboveLower": round(al, 4), "lowerBoundSupported": int(bu < p["lowMax"] and il > p["inMin"]), "lowerBoundContradicted": int(bl >= p["lowMax"]),
+         "upperBoundContradicted": int(al > sum(inr) / max(len(inr), 1)), "upperBoundSupported": int(len(above) >= 10 and au < sum(inr) / max(len(inr), 1)),
+         "rulesFieldTestedBase": 0, "rulesFieldTestedCand": 0}
+    if m["lowerBoundSupported"] or m["lowerBoundContradicted"]:
+        m["rulesFieldTestedCand"] = 1
+    findings = []
+    if m["lowerBoundSupported"]:
+        findings.append(D.finding(f"FISH-EGGS-{p['ruleId']}", f"Field egg data support the lower spawn-temperature bound of rule {p['ruleId']} ({lo} C): {sum(below)} egg-positive tows of {len(below)} below it "
+                                  f"(Wilson 95% upper {round(bu, 3)}), first eggs at {first} C, {round(100 * m['inRangeShare'])}% positive inside {lo}-{hi} C. Asian carp eggs (silver and bighead together), "
+                                  "Upper Mississippi, 2013-2014.", "EVIDENCE", [rel], home, "pre-declared Wilson-interval comparison of egg-positive tows below / inside / above the rule range",
+                                  f"{g}.lowerBoundSupported", ">=", 1, tier="SCIENTIFIC_SUPPORT"))
+        change = {"scientificChange": f"Attach an independent field egg-presence comparison to the spawn-temperature rule {p['ruleId']}.",
+                  "previous": f"{p['ruleId']} (spawn range {lo}-{hi} C) rests on compiled sources only.",
+                  "proposed": {"ruleId": p["ruleId"], "evidence": {"dataset": "USGS ichthyoplankton tows (Asian carp eggs), doi 10.5066/F75T3J06", "tows": m["tows"], "eggPositive": m["eggPositive"], "firstEggC": first,
+                               "belowMinPositive": f"{sum(below)}/{len(below)}", "inRangeShare": m["inRangeShare"], "aboveMaxShare": m["aboveShare"], "aboveMaxN": len(above)},
+                               "proposedAction": "attach as river-surrogate evidence; keep confidence and the southeast-reservoir transferability flag unchanged; review the upper bound separately"},
+                  "evidenceSummary": f"{m['tows']} dated tows, {m['eggPositive']} egg-positive; none of {len(below)} below {lo} C.",
+                  "validationMethod": "Wilson 95% intervals for egg-positive share below / inside / above the rule range, thresholds declared before the data were examined",
+                  "validationResults": {k: m[k] for k in ("belowN", "belowPositive", "belowUpper", "inRangeN", "inRangePositive", "inRangeShare", "inRangeLower", "aboveN", "aboveShare", "firstEggC")},
+                  "practicalEffect": "The silver-carp spawn window can be shown as field-compared: eggs were not found below 18 C, so a temperature below that means the window is closed.",
+                  "scoreImpact": "None under biological-state-score-v1; counted as validation coverage in the capability contract.",
+                  "limitations": "Asian carp eggs are silver and bighead together; two seasons on the Upper Mississippi; plankton tows show spawning occurred, not where bowfishers can find fish."}
+        cap = {"kind": "coverage", "baselineKind": "none: the rule had no field comparison", "name": "spawn-temperature rules with an independent field egg-presence test", "direction": "higher_better",
+               "baselineMetric": f"{g}.rulesFieldTestedBase", "candidateMetric": f"{g}.rulesFieldTestedCand", "minDelta": 1, "nMetric": f"{g}.tows", "minN": 100, "tests": [{"metric": f"{g}.lowerBoundSupported", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("FISH-EGGS-COVERAGE", f"Spawn rule {p['ruleId']} now has an independent field egg-presence comparison (lower bound supported).", "RULE", [rel], home, "pre-declared egg-presence test",
+                                  f"{g}.rulesFieldTestedCand", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": [{"limitation": "the egg data are Asian carp (silver and bighead together) from the Upper Mississippi; other species' spawn-temperature rules remain without field data", "kind": "scope", "gap": "FISH-VAL-001"}]}
+
+
 def acquire_none(ev, home, spec, it, targets, gaps):
     return {}
 
@@ -1085,6 +1157,7 @@ EXPERIMENTS = {
     "ltrm-fish": {"acquire": acquire_ltrm, "analyze": analyze_ltrm},
     "iem-wind": {"acquire": acquire_iem_wind, "analyze": analyze_iem_wind},
     "ehydro": {"acquire": acquire_ehydro, "analyze": analyze_ehydro},
+    "eggs-temp": {"acquire": acquire_none, "analyze": analyze_eggs_temp},
     "nas": {"acquire": acquire_nas, "analyze": analyze_nas},
     "fish-rule-grade": {"acquire": acquire_none, "analyze": analyze_fish_rules},
     "dataset-search": {"acquire": acquire_dataset_search, "analyze": analyze_dataset_search},

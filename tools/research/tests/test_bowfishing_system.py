@@ -254,3 +254,42 @@ def test_outcomes_are_recorded_append_only_and_compared_with_what_the_app_showed
     assert ev["records"] == 2 and ev["tempComparisons"] == 2 and ev["tempBiasC"] == -0.0 + round(((10.0 - 11.0) + (10.0 - 9.0)) / 2, 3)
     assert ev["calmComparisons"] == 2 and 0 <= ev["calmBrier"] <= 1 and "changes no score" in ev["note"]
     assert len(open(os.path.join(h, "shared", "pilot", "outcomes", "Guntersville_AL.jsonl")).readlines()) == 2
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- spawn-temperature egg test
+def _egg_home(tmp_path, rows):
+    import csv as _csv
+    d = tmp_path / "fish-brain" / "sources" / "c" / "agent-datasets"
+    d.mkdir(parents=True)
+    with open(d / "T1_0_59a411d4e4b077f00567324b_f", "w", newline="") as fh:
+        w = _csv.writer(fh)
+        w.writerow(["Date", "H20 Temp", "Eggs"])
+        for t, e in rows:
+            w.writerow(["20130705", t, e])
+    return str(tmp_path)
+
+
+def _egg_spec():
+    return {"avenueId": "eggs", "params": {"datasetGlob": "fish-brain/sources/*/agent-datasets/*59a411d4e4b077f00567324b*", "tempCol": "H20 Temp", "eggCol": "Eggs", "ruleId": "SC-SPN-01",
+                                           "ruleMinC": 18.0, "ruleMaxC": 30.0, "lowMax": 0.10, "inMin": 0.10}}
+
+
+def test_egg_test_supports_a_spawn_bound_only_when_eggs_are_absent_below_and_present_inside(tmp_path):
+    import experiments as X2
+    rows = [(10 + i * 0.1, 0) for i in range(60)] + [(18.0 + i * 0.1, 5 if i % 3 == 0 else 0) for i in range(120)]       # none below 18; a third positive inside
+    h = _egg_home(tmp_path, rows)
+    r = X2.analyze_eggs_temp(h, _egg_spec(), [], [])
+    assert r["metrics"]["lowerBoundSupported"] == 1 and r["metrics"]["belowPositive"] == 0 and r["metrics"]["firstEggC"] == 18.0
+    f = {x["id"] for x in r["findings"]}
+    assert f == {"FISH-EGGS-SC-SPN-01", "FISH-EGGS-COVERAGE"}
+    v, why, measured = C.validate_finding(next(x for x in r["findings"] if x["id"] == "FISH-EGGS-COVERAGE"), h, {"discovery": {"exp": {"eggs": r["metrics"]}}})
+    assert v == "VALIDATED" and measured["improved"] is True
+
+
+def test_egg_test_rejects_a_bound_when_eggs_are_common_below_it_and_reports_missing_data_as_a_limitation(tmp_path):
+    import experiments as X2
+    rows = [(12 + i * 0.05, 3 if i % 2 else 0) for i in range(80)] + [(18.0 + i * 0.1, 2 if i % 2 else 0) for i in range(60)]
+    r = X2.analyze_eggs_temp(_egg_home(tmp_path, rows), _egg_spec(), [], [])
+    assert r["metrics"]["lowerBoundSupported"] == 0 and r["metrics"]["lowerBoundContradicted"] == 1 and r["findings"] == []     # a contradicted bound is not a supporting finding
+    empty = X2.analyze_eggs_temp(str(tmp_path / "nowhere"), _egg_spec(), [], [])
+    assert empty["findings"] == [] and empty["limitations"][0]["kind"] == "external"

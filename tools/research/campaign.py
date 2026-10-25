@@ -61,6 +61,7 @@ from sector_brain_platform import knowledge_release as K  # noqa: E402
 import discovery as D  # noqa: E402
 import experiments as X  # noqa: E402
 import ledger as L  # noqa: E402
+import bowfishing_capability as BC  # noqa: E402
 import taskqueue as TQ  # noqa: E402
 
 SCHEMA = "sector-research-campaign-v1"
@@ -740,6 +741,18 @@ def stage_score(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict
     return out
 
 
+def capability_priority(c: Campaign, bid: str) -> int:
+    """Research follows the weakest measured capability: a Brain whose bowfishing capability composite is low (or entirely unmeasured) is worked first. 10 = most urgent."""
+    try:
+        rp = os.path.join(c.home, "shared", "pilot", "guntersville-v1", "PILOT_V1_READINESS.json")
+        ready = json.load(open(rp, encoding="utf-8")) if os.path.exists(rp) else None
+        v = BC.compute_brain(ENGINE, c.home, bid, discovery_cfg(), None, ready)["current"]
+        comp = v["value"] if v["value"] is not None else 0.0
+        return 10 + int(70 * comp) + TQ.BRAIN_PRIORITY.get(bid, 90) // 20
+    except (OSError, ValueError, KeyError, StopIteration):
+        return TQ.BRAIN_PRIORITY.get(bid, 90)
+
+
 def write_agent_task(c: Campaign, st: dict, bid: str, gid: str, gap: dict, tried: list | None = None) -> str:
     """A self-contained brief for an agent (a coordinating Claude session or a subagent) to investigate a gap no configured avenue covers: find legitimate
     downloadable evidence anywhere, register the source, analyse it, and deliver findings through the same validator (tiers, hashes, thresholds)."""
@@ -890,11 +903,11 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     served = {g for a in avs for g in a.get("gaps") or []}
     tried = sorted({v["id"] for v in led.doc["avenues"].values()})
     for g in list(led.actionable()):                                    # a gap NO avenue serves, or whose configured avenues are all used up, is not finished:
-        if "GEN-CLOSEOUT" in g:                                         # closeout text fragments of a Brain without reviewed gaps are not scientific questions
+        if "GEN-CLOSEOUT" in g or g in (brain_spec(bid).get("internalGaps") or []):      # closeout fragments and internal contract fixes are not open-web research questions
             continue
         gp = led.doc["gaps"][g]                                         # the coordinator QUEUES executable agent research (open web beyond the configured sources)
         task = write_agent_task(c, st, bid, g, gp, tried)
-        qt = TQ.enqueue(c.home, bid, g, "agent-research", f"{bid}: {gp.get('title')}", task, c.cid, topic="open-web")
+        qt = TQ.enqueue(c.home, bid, g, "agent-research", f"{bid}: {gp.get('title')}", task, c.cid, topic="open-web", priority=capability_priority(c, bid))
         gp["nextEvidence"] = f"queued agent research {qt['id']} ({qt['status']}): {task}"
     cls = classify(c, st, bid, led, why_stop)
     if cls["outcome"] in ("STALLED",):                                  # exhausted means: every configured avenue was tried - never that nothing exists
