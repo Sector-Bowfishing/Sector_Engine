@@ -79,6 +79,33 @@
    "status": "ACTIVE",
    "registeredAt": "2026-10-25",
    "registeredBy": "reviewed in repository"
+  },
+  {
+   "id": "usace-ehydro",
+   "hosts": [
+    "services7.arcgis.com",
+    "ehydroprod.blob.core.usgovcloudapi.net"
+   ],
+   "license": "US Government (USACE eHydro survey data; copyright text 'USACE', no restrictive licence stated)",
+   "purpose": "dated hydrographic survey footprints and survey packages (XYZ/TIN with metadata incl. vertical datum) for reservoirs",
+   "rationale": "verified by open-web search 2026-10-25 and by a live query: public ArcGIS feature service, no login; only source of dated reservoir surveys with datum metadata for Depth (DEPTH-DAT-001)",
+   "adapter": "ehydro",
+   "status": "ACTIVE",
+   "registeredAt": "2026-10-26",
+   "registeredBy": "reviewed in repository"
+  },
+  {
+   "id": "usgs-nas",
+   "hosts": [
+    "nas.er.usgs.gov"
+   ],
+   "license": "US Government (USGS Nonindigenous Aquatic Species database; cite and agree to terms)",
+   "purpose": "dated georeferenced OBSERVED records of invasive submerged plants (confirmed presence, not habitat potential)",
+   "rationale": "verified by a live query 2026-10-25; observed-vegetation truth source for Vegetation (VEG-VAL-001); presence only, effort-uneven",
+   "adapter": "nas",
+   "status": "ACTIVE",
+   "registeredAt": "2026-10-26",
+   "registeredBy": "reviewed in repository"
   }
  ]
 }

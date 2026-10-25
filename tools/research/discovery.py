@@ -142,6 +142,8 @@ class Fetcher:
         self.requests = 0
 
     def url(self, base: str, params=None) -> str:
+        if re.search(r"[\s\x00-\x1f\x7f]", base) or len(base) > 2000:                    # agent output is untrusted: a URL is a URL, not a sentence
+            raise FetchError("refused: malformed URL (whitespace or control characters)")
         host = urllib.parse.urlparse(base).hostname
         if urllib.parse.urlparse(base).scheme != "https" or host not in allowed_hosts(self.home):
             raise FetchError(f"refused: {host} is not an allowlisted research source")
@@ -177,12 +179,28 @@ class Fetcher:
         raise FetchError(f"{err} after {self.retries} attempts: {url[:160]}")
 
 
+    def head(self, base: str, params=None) -> int | None:
+        """Content-Length of an allowlisted URL (None when unknown): lets a connector decide BEFORE downloading whether a file is within limits."""
+        url = self.url(base, params)
+        try:
+            req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                n = r.headers.get("Content-Length")
+                return int(n) if n and n.isdigit() else None
+        except (urllib.error.URLError, TimeoutError, OSError, ValueError):
+            return None
+
+
 class OfflineFetcher(Fetcher):
     """Used by tests and by `--offline`: every request fails (the campaign must still complete)."""
 
     def get(self, base, params=None, accept=None):
         self.url(base, params)
         raise FetchError("offline: network acquisition disabled")
+
+    def head(self, base, params=None):
+        self.url(base, params)
+        return None
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- evidence store
@@ -354,9 +372,18 @@ def load_gaps(engine: str, home: str, bid: str, folder: str, brain_dir: str) -> 
 def check_inputs(engine: str, home: str, spec: list) -> dict:
     """Declared inputs: present, reconstructed (git show <ref>:<path> from this repository), or a recorded LIMITATION. Never raises."""
     present, rebuilt, limits = [], [], []
+    env = {}
+    dev_root = os.environ.get("SECTOR_DEV_ROOT") or os.path.dirname(os.path.abspath(home))        # sibling research/repo folders are looked for here, never hard-coded
     for it in spec or []:
         if it.get("env"):
             v = os.environ.get(it["env"], "")
+            if not (v and os.path.exists(v)):
+                for rel_ in it.get("search") or []:                                              # an input that exists locally is CONNECTED automatically
+                    cand_ = os.path.join(dev_root, rel_)
+                    if os.path.exists(cand_):
+                        v = cand_
+                        env[it["env"]] = cand_
+                        break
             (present if v and os.path.exists(v) else limits).append(
                 it["env"] if v and os.path.exists(v) else {"input": f"${it['env']}", "limitation": it.get("limitation", "external input not available")})
             continue
@@ -375,7 +402,7 @@ def check_inputs(engine: str, home: str, spec: list) -> dict:
                 continue
         limits.append({"input": it["path"], "limitation": it.get("limitation") or "missing and not reconstructable here",
                        "reconstructionTried": rc or None})
-    return {"present": present, "reconstructed": rebuilt, "limitations": limits}
+    return {"present": present, "reconstructed": rebuilt, "limitations": limits, "env": env}
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- shared helpers

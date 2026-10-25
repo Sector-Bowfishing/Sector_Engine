@@ -69,7 +69,12 @@ def _factor(brain, factor, value, unit, when, limit_h, now, klass, reason=None, 
     return out
 
 
-def species_notes(temp_c, field_tests, spec_tests, p):
+def _phi(x):
+    import math
+    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+
+def species_notes(temp_c, field_tests, spec_tests, p, sigma=2.3):
     """Field-compared Fish rules that apply now. Only SUPPORTED rules are shown; CONTRADICTED ones are withheld (listed); the rest are not claimed."""
     shown, withheld = [], []
     for t in spec_tests:
@@ -80,20 +85,30 @@ def species_notes(temp_c, field_tests, spec_tests, p):
         if v["verdict"] == "CONTRADICTED":
             withheld.append({"ruleId": t["ruleId"], "species": sp, "reason": f"field comparison contradicts the rule ({t['claim']}): rate ratio {v['ratio']} (95% CI {v['ciLo']}-{v['ciHi']})"})
             continue
-        applies = True
+        applies, prob = True, None
         if t["type"] == "thermal_cold":
-            applies = temp_c is not None and temp_c < p["coldC"] and t["expect"] == "cold_lt_warm"
+            # the temperature is modeled with an error: the rule applies with the probability that the TRUE temperature is below the threshold (normal error, fleet RMSE)
+            prob = None if temp_c is None else round(_phi((p["coldC"] - temp_c) / sigma), 3)
+            applies = prob is not None and prob >= 0.5 and t["expect"] == "cold_lt_warm"
         elif t["type"] == "thermal_warm":
             applies = temp_c is not None and 26 <= temp_c < 30
         elif t["type"] in ("diel", "diel_shallow") and t["expect"] != "night_gt_day":
             applies = False                                      # only positive night findings are shown as night notes
         if applies:
-            shown.append({"ruleId": t["ruleId"], "species": sp, "note": t["claim"], "evidence": f"field comparison (river surrogate): rate ratio {v['ratio']} (95% CI {v['ciLo']}-{v['ciHi']})",
-                          "label": "EXPERIMENTAL"})
+            n = {"ruleId": t["ruleId"], "species": sp, "note": t["claim"], "evidence": f"field comparison (river surrogate): rate ratio {v['ratio']} (95% CI {v['ciLo']}-{v['ciHi']})",
+                 "label": "EXPERIMENTAL"}
+            if prob is not None:
+                n["applicabilityProbability"] = prob
+                n["borderline"] = prob < 0.8
+            shown.append(n)
     return {"shown": shown, "withheld": withheld}
 
 
-def assess(lake_id, nodes, now, readiness=None, wind_climatology=None, month=None, station=None, field_tests=None, spec_tests=None, fp=None, temp_error_c=2.3):
+def season_cell(month):
+    return {12: "DJF", 1: "DJF", 2: "DJF", 3: "MAM", 4: "MAM", 5: "MAM", 6: "JJA", 7: "JJA", 8: "JJA"}.get(month, "SON")
+
+
+def assess(lake_id, nodes, now, readiness=None, wind_climatology=None, month=None, station=None, field_tests=None, spec_tests=None, fp=None, temp_error_c=2.3, wt_candidate=None, region=None):
     """nodes: {'lake','waterTemp','wind','waterClarity','depth','vegetation','intelligence'} -> node dicts (or None when absent)."""
     nodes = nodes or {}
     F = []
@@ -104,6 +119,12 @@ def assess(lake_id, nodes, now, readiness=None, wind_climatology=None, month=Non
     tc = None if tf is None else round((tf - 32) / 1.8, 2)
     F.append(_factor("water-temp", "modeledSurfaceTemp", tc, "degC", _t(_g(W, "provenance.generatedAt")), LIMITS["waterTemp"], now, *_cls(readiness, "water-temp", "modeledSurfaceTempWithFleetErrorBound"),
                      uncertainty={"type": "fleetErrorBoundC", "value": temp_error_c, "basis": "fleet RMSE on held-out grab samples; not lake-specific; spring runs cold, autumn warm"}))
+    if wt_candidate and tc is not None and F[1]["status"] in ("FRESH", "STALE") and (region or wt_candidate.get("cell") == "season"):
+        key = season_cell((month or now.month)) if wt_candidate.get("cell") == "season" else f"{region}|{season_cell((month or now.month))}"
+        off = (wt_candidate.get("offsetsC") or {}).get(key)
+        if off is not None:
+            F[1]["candidate"] = {"status": "CANDIDATE_NOT_APPROVED", "correctedValue": round(tc - off, 2), "offsetC": off, "cell": key,
+                                 "basis": "validated on independent lakes (region x season correction); not deployed; the deployed value above is unchanged"}
     N = nodes.get("wind") or {}
     F.append(_factor("wind", "observation", _g(N, "observation.sustainedMph"), "mph", _t(_g(N, "observation.observedAt")), LIMITS["windObservation"], now, *_cls(readiness, "wind", "observation")))
     F.append(_factor("wind", "forecast", _g(N, "gustMph"), "mph gust", _t(_g(N, "forecast.initTime")), LIMITS["windForecast"], now, *_cls(readiness, "wind", "speedGustForecast")))
@@ -120,7 +141,7 @@ def assess(lake_id, nodes, now, readiness=None, wind_climatology=None, month=Non
         if pr is not None:
             prior = {"station": station, "month": month, "probabilityOfCalmNight": pr, "basis": "airport hourly wind, held-out-year validated climatology; an over-land proxy for the shoreline",
                      "definition": "every hourly sustained wind <= 8.7 kt and gust <= 13 kt between 21:00 and 04:00 local"}
-    notes = species_notes(tc if (tc is not None and F[1]["status"] == "FRESH") else None, field_tests, spec_tests or [], fp or {"coldC": 15.0}) if field_tests else {"shown": [], "withheld": []}
+    notes = species_notes(tc if (tc is not None and F[1]["status"] == "FRESH") else None, field_tests, spec_tests or [], fp or {"coldC": 15.0}, temp_error_c) if field_tests else {"shown": [], "withheld": []}
     fresh = [f for f in F if f["status"] == "FRESH"]
     stale = [f for f in F if f["status"] == "STALE"]
     miss = [f for f in F if f["status"] == "MISSING"]
@@ -205,6 +226,7 @@ def main(argv=None) -> int:
     ap.add_argument("--home", required=True)
     ap.add_argument("--campaign")
     ap.add_argument("--station", default="HSV")
+    ap.add_argument("--region", default="Southeast", help="region cell of the lake in the Water Temp residual table")
     ap.add_argument("--now")
     a = ap.parse_args(argv)
     now = _t(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
@@ -228,7 +250,15 @@ def main(argv=None) -> int:
             clim = json.load(open(os.path.join(a.home, "wind-brain", "candidates", cdir, "validation.json")))["metrics"]["discovery"]["exp"]["wind-calm-night-climatology"]["monthlyCalmNightProbability"]
         except (OSError, KeyError, ValueError):
             pass
-    out = assess(a.lake, nodes, now, readiness, clim, now.month, a.station, ft, spec_tests, fp)
+    wtc = None
+    if cdir:
+        try:
+            ch = json.load(open(os.path.join(a.home, "water-temperature", "candidates", cdir, "candidate-changes.json")))["changes"]
+            best = next(c for c in ch if c["measured"].get("improved"))
+            wtc = {"cell": best["proposed"]["cell"], "offsetsC": best["proposed"]["offsetsC"]}
+        except (OSError, KeyError, ValueError, StopIteration):
+            pass
+    out = assess(a.lake, nodes, now, readiness, clim, now.month, a.station, ft, spec_tests, fp, wt_candidate=wtc, region=a.region)
     print(json.dumps(out, indent=1))
     return 0
 

@@ -88,6 +88,45 @@
      ]
     },
     {
+     "id": "wt-multilake",
+     "run": "experiment",
+     "experiment": "wt-multilake",
+     "gaps": [
+      "WATERTEMP-DISC-M0-SEASONAL-BIAS",
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "resolves": [
+      "WATERTEMP-DISC-M0-SEASONAL-BIAS",
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "acquiring": true,
+     "params": {
+      "itemId": "60341c3ed34eb12031172aa6",
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "storedResiduals": "water-temperature/validation/valmodel/residuals_primary.csv.gz",
+      "minAreaKm2": 1.0,
+      "minObs": 300,
+      "minObsAfter": 120,
+      "perBand": 15,
+      "yearFrom": 2000,
+      "yearTo": 2020,
+      "minPairs": 60,
+      "minLakes": 20,
+      "trainThroughYear": 2021,
+      "minCell": 30,
+      "shrink": 10,
+      "sensorMinDelta": 0.05,
+      "maxWorseShare": 0.25,
+      "worseTol": 0.15,
+      "worseTolIs": 0.15,
+      "nominal": 0.8,
+      "minDeltaIs": 0.05,
+      "minCalibGain": 0.05,
+      "holdoutMinDelta": 0.1,
+      "holdoutMinDeltaIs": 0.15
+     }
+    },
+    {
      "id": "wt-bias-season",
      "run": "experiment",
      "experiment": "wt-bias",
@@ -366,7 +405,10 @@
    "inputs": [
     {
      "env": "SECTOR_CLARITY_PRIVATE_ROOT",
-     "limitation": "private clarity-candidate root (stage_r31/cache) is external private data: the R3.1 re-certification re-run cannot be reconstructed from public sources in this campaign"
+     "limitation": "private clarity-candidate root (stage_r31/cache) is external private data: the R3.1 re-certification re-run cannot be reconstructed from public sources in this campaign",
+     "search": [
+      "Sector_Engine-research/research/clarity-candidate"
+     ]
     }
    ],
    "avenues": [
@@ -612,7 +654,43 @@
       "bootstrap": 800,
       "seed": 20261025,
       "noAdvantageUpper": 1.25,
-      "warmNotLowerLower": 0.8
+      "warmNotLowerLower": 0.8,
+      "scan": {
+       "species": [
+        "CARP",
+        "SMBF",
+        "BMBF",
+        "BKBF",
+        "FWDM",
+        "LNGR",
+        "SNGR",
+        "STGR",
+        "BWFN",
+        "GSCP",
+        "SVCP",
+        "BHCP"
+       ],
+       "bootstrap": 1200
+      }
+     }
+    },
+    {
+     "id": "fish-eggs-spawn-temp",
+     "run": "experiment",
+     "experiment": "eggs-temp",
+     "gaps": [
+      "FISH-VAL-001",
+      "FISH-EVI-001"
+     ],
+     "params": {
+      "datasetGlob": "fish-brain/sources/*/agent-datasets/*59a411d4e4b077f00567324b*",
+      "tempCol": "H20 Temp",
+      "eggCol": "Eggs",
+      "ruleId": "SC-SPN-01",
+      "ruleMinC": 18.0,
+      "ruleMaxC": 30.0,
+      "lowMax": 0.1,
+      "inMin": 0.1
      }
     },
     {
@@ -701,7 +779,10 @@
    "inputs": [
     {
      "env": "SECTOR_WIND_STAGE3A_EVIDENCE",
-     "limitation": "stage3a evidence cache (rows.pkl) lives in the private iOS research repo: certification re-score cannot be regenerated here"
+     "limitation": "stage3a evidence cache (rows.pkl) lives in the private iOS research repo: certification re-score cannot be regenerated here",
+     "search": [
+      "iOS/sector-wind/docs/intelligence/wind/stage3a/evidence"
+     ]
     }
    ],
    "avenues": [
@@ -853,6 +934,31 @@
    "minLeads": 3,
    "avenues": [
     {
+     "id": "depth-ehydro-survey-map",
+     "run": "experiment",
+     "experiment": "ehydro",
+     "gaps": [
+      "DEPTH-DAT-001",
+      "DEPTH-VAL-001"
+     ],
+     "acquiring": true,
+     "params": {
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "halfDeg": 0.12,
+      "datumSample": [
+       "Guntersville",
+       "Wheeler",
+       "Wilson",
+       "Pickwick",
+       "Kentucky",
+       "Chickamauga",
+       "Hartwell"
+      ],
+      "maxZipsPerLake": 2,
+      "maxZipBytes": 8000000
+     }
+    },
+    {
      "id": "depth-literature",
      "run": "connector",
      "kind": "literature",
@@ -949,7 +1055,8 @@
     "class": "NONE",
     "source": "RECORDED",
     "movable": "no rubric exists; the research candidate value is informational"
-   }
+   },
+   "fleetForcingDir": "water-temperature/validation/valmodel/forcing"
   },
   "vegetation": {
    "kind": "literature",
@@ -967,6 +1074,28 @@
    "fromYear": 2010,
    "minLeads": 3,
    "avenues": [
+    {
+     "id": "veg-nas-observed",
+     "run": "experiment",
+     "experiment": "nas",
+     "gaps": [
+      "VEG-VAL-001"
+     ],
+     "acquiring": true,
+     "params": {
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "genera": [
+       "Hydrilla",
+       "Myriophyllum",
+       "Najas",
+       "Potamogeton",
+       "Egeria"
+      ],
+      "pageSize": 500,
+      "maxPages": 4,
+      "matchDeg": 0.08
+     }
+    },
     {
      "id": "veg-literature",
      "run": "connector",
@@ -1044,7 +1173,8 @@
     "class": "NONE",
     "source": "RECORDED",
     "movable": "no rubric exists; the research candidate value is informational"
-   }
+   },
+   "fleetForcingDir": "water-temperature/validation/valmodel/forcing"
   },
   "sector-intelligence": {
    "kind": "upstream",
@@ -1089,7 +1219,11 @@
     "class": "WIRING_AND_COVERAGE",
     "source": "NOT_RUN",
     "movable": "capped at 5.0 while NOT_VALIDATED"
-   }
+   },
+   "internalGaps": [
+    "INT-CON-001",
+    "INT-DEP-001"
+   ]
   }
  },
  "budget": {

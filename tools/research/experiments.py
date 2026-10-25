@@ -24,6 +24,7 @@ import statistics as S
 import urllib.parse
 
 import discovery as D
+from integration import SPECIES  # noqa: E402  (species codes -> common names; one table)
 
 SEASON = {12: "DJF", 1: "DJF", 2: "DJF", 3: "MAM", 4: "MAM", 5: "MAM", 6: "JJA", 7: "JJA", 8: "JJA"}
 RUNGS = {"season": lambda r: r["season"], "region_season": lambda r: f"{r['region']}|{r['season']}", "class_season": lambda r: f"{r['cls']}|{r['season']}"}
@@ -261,7 +262,7 @@ def _ltrm_rows(path):
     return out
 
 
-def _boot_ratio(clusters, min_eff, rng, boots):
+def _boot_ratio(clusters, min_eff, rng, boots, alpha=0.05):
     """Ratio of pooled CPUE A/B over matched cells present in both groups; 95% CI by bootstrap over clusters (pool x year)."""
     def ratio(cl):
         cells = {}
@@ -294,7 +295,7 @@ def _boot_ratio(clusters, min_eff, rng, boots):
     vals.sort()
     if len(vals) < boots * 0.8:
         return None
-    return {"ratio": r0, "lo": vals[int(0.025 * len(vals))], "hi": vals[int(0.975 * len(vals)) - 1], "effortA": ea, "effortB": eb, "catchA": ca, "catchB": cb}
+    return {"ratio": r0, "lo": vals[int(alpha / 2 * len(vals))], "hi": vals[int((1 - alpha / 2) * len(vals)) - 1], "effortA": ea, "effortB": eb, "catchA": ca, "catchB": cb}
 
 
 def _verdict(expect, r, spec):
@@ -324,7 +325,8 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
     rows = _ltrm_rows(os.path.join(home, path))
     g = f"discovery.exp.{spec['avenueId']}"
     res, findings = {}, []
-    for t in p["tests"]:
+
+    def one_test(t, boots, alpha):
         sp, ty = t["species"], t["type"]
         by = {}
         for r in rows:
@@ -363,9 +365,15 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
                 d[3] += eff
         clusters = [{k: tuple(v) for k, v in cl.items()} for _, cl in sorted(by.items())]
         rng = random.Random(p["seed"])
-        out = _boot_ratio(clusters, 0.25, rng, p["bootstrap"]) if clusters else None
+        out = _boot_ratio(clusters, 0.25, rng, boots, alpha) if clusters else None
         if out is None or out["effortA"] < p["minEffortHours"] or out["effortB"] < p["minEffortHours"]:
-            res[t["ruleId"]] = {"verdict": "INSUFFICIENT_DATA", "decisive": 0, "effortA": round((out or {}).get("effortA", 0), 2), "effortB": round((out or {}).get("effortB", 0), 2)}
+            return None, {"verdict": "INSUFFICIENT_DATA", "decisive": 0, "effortA": round((out or {}).get("effortA", 0), 2), "effortB": round((out or {}).get("effortB", 0), 2)}
+        return out, None
+
+    for t in p["tests"]:
+        out, bad = one_test(t, p["bootstrap"], 0.05)
+        if bad:
+            res[t["ruleId"]] = bad
             continue
         v = _verdict(t["expect"], out, p)
         entry = {"verdict": v, "decisive": int(v in ("SUPPORTED", "CONTRADICTED")), "ratio": round(out["ratio"], 4), "ciLo": round(out["lo"], 4), "ciHi": round(out["hi"], 4),
@@ -373,8 +381,28 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
         if t.get("magnitude"):
             entry["magnitudeClaimMet"] = int(out["lo"] >= t["magnitude"])
         res[t["ruleId"]] = entry
+    # ---- discovery scan: NEW candidate rules. Every species x {night vs day, cold vs warm} not already declared, with a Bonferroni-corrected interval over the whole scan.
+    scan_cands, scan_n = [], 0
+    sc = p.get("scan")
+    if sc:
+        declared = {(t["species"], "diel" if t["type"].startswith("diel") else "thermal") for t in p["tests"]}
+        todo = [(sp, ty) for sp in sc["species"] for ty in ("diel", "thermal_cold") if (sp, "diel" if ty == "diel" else "thermal") not in declared]
+        alpha = 0.05 / max(len(todo), 1)
+        for sp, ty in todo:
+            scan_n += 1
+            out, bad = one_test({"species": sp, "type": ty}, sc["bootstrap"], alpha)
+            if bad:
+                continue
+            if out["lo"] > 1 or out["hi"] < 1:
+                up = out["lo"] > 1
+                what = {"diel": ("more", "fewer") , "thermal_cold": ("more", "fewer")}[ty]
+                scan_cands.append({"species": sp, "name": SPECIES.get(sp, sp), "type": ty, "direction": "UP" if up else "DOWN", "ratio": round(out["ratio"], 4),
+                                   "ci": [round(out["lo"], 4), round(out["hi"], 4)], "alpha": round(alpha, 5), "effortHours": [round(out["effortA"], 1), round(out["effortB"], 1)],
+                                   "catch": [out["catchA"], out["catchB"]],
+                                   "candidateRule": (f"{SPECIES.get(sp, sp)} catch rate is {'higher' if up else 'lower'} at night than by day in electrofishing (rate ratio {round(out['ratio'], 2)})" if ty == "diel" else
+                                                     f"{SPECIES.get(sp, sp)} catch rate is {'higher' if up else 'lower'} in cold water (<{p['coldC']} C) than in warm water (>={p['warmC']} C) (rate ratio {round(out['ratio'], 2)})")})
     decisive = [k for k, v in res.items() if v["decisive"]]
-    m = {"testsRun": len(res), "rulesFieldTestedBase": 0, "rulesFieldTestedCand": len(decisive), "decisiveRules": len(decisive),
+    m = {"scanTestsRun": scan_n, "scanCandidateRules": len(scan_cands), "scanCandidates": scan_cands, "testsRun": len(res), "rulesFieldTestedBase": 0, "rulesFieldTestedCand": len(decisive), "decisiveRules": len(decisive),
          "supported": sum(v["verdict"] == "SUPPORTED" for v in res.values()), "contradicted": sum(v["verdict"] == "CONTRADICTED" for v in res.values()),
          "inconclusive": sum(v["verdict"] == "INCONCLUSIVE" for v in res.values()), "insufficient": sum(v["verdict"] == "INSUFFICIENT_DATA" for v in res.values()),
          "samples": len(rows), "tests": res}
@@ -402,6 +430,20 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
                "candidateMetric": f"{g}.rulesFieldTestedCand", "minDelta": 1, "nMetric": f"{g}.testsRun", "minN": 1, "tests": [{"metric": f"{g}.decisiveRules", "op": ">=", "threshold": 1}]}
         findings.append(D.finding("FISH-FIELD-COVERAGE", f"{len(decisive)} Fish rules now have a decisive independent field comparison.", "RULE", paths, home, "pre-declared rule tests on LTRM",
                                   f"{g}.decisiveRules", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    if scan_cands:
+        cchange = {"scientificChange": "Add field-derived candidate behaviour rules for species/conditions no written rule covered (night versus day and cold versus warm catchability).",
+                   "previous": "These species/conditions had no rule or a rule without a field comparison.",
+                   "proposed": {"candidateRules": scan_cands, "status": "CANDIDATE_NOT_APPROVED", "scope": "Upper Mississippi navigation pools (river surrogate); electrofishing catchability, not abundance"},
+                   "evidenceSummary": f"{scan_n} untested species x condition pairs scanned on {len(rows)} samples; {len(scan_cands)} remain decisive after a Bonferroni-corrected interval.",
+                   "validationMethod": "matched-stratum catch-per-effort ratios (pool x stratum x year), cluster bootstrap, Bonferroni over the whole scan",
+                   "validationResults": {"scanTestsRun": scan_n, "scanCandidateRules": len(scan_cands)},
+                   "practicalEffect": "Gives the Fish Brain evidence-backed candidate rules (for example which species are more catchable at night) to review, instead of leaving most species with no field-derived rule.",
+                   "scoreImpact": "None under biological-state-score-v1; counted as validation coverage in the capability contract.",
+                   "limitations": "Catchability, not abundance; day/night gear efficiency differs; river surrogate; candidate rules need review and Tennessee-system data before any publication."}
+        scap = {"kind": "coverage", "baselineKind": "none: these species/conditions had no field-derived rule", "name": "species behaviours with a field-derived candidate rule", "direction": "higher_better",
+                "baselineMetric": f"{g}.rulesFieldTestedBase", "candidateMetric": f"{g}.scanCandidateRules", "minDelta": 1, "nMetric": f"{g}.scanTestsRun", "minN": 1, "tests": [{"metric": f"{g}.scanCandidateRules", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("FISH-SCAN-RULES", f"{len(scan_cands)} new field-derived candidate behaviour rules after multiple-comparison correction.", "RULE", paths, home, "pre-declared scan of every untested species x condition pair",
+                                  f"{g}.scanCandidateRules", ">=", 1, tier="CANDIDATE_CHANGE", change=cchange, capability=scap))
     lim = [{"limitation": "field tests use Upper Mississippi river pools; Tennessee-system reservoir transferability is untested", "kind": "scope", "gap": "FISH-VAL-001"}]
     owner = [{"id": "fish-tennessee-field-data", "gap": "FISH-VAL-001", "publisher": "TVA reservoir fish programs and the Alabama / Tennessee fisheries agencies",
               "dataset": "day/night electrofishing or creel records with water temperature for Tennessee-system reservoirs (the LTRM comparison is a river surrogate)",
@@ -516,6 +558,419 @@ def analyze_iem_wind(home: str, spec: dict, mine: list, allacq: list, upstream=N
                                   "airport hourly wind, nightly maxima, train/test by year", f"{g}.pooledDeltaMae", ">=", p["minDeltaMae"], tier="INDEPENDENTLY_VALIDATED", change=change, capability=cap))
     return {"metrics": m, "findings": findings, "weak": [] if stations else ["no-wind-data"], "limitations": [] if stations else [{"limitation": "IEM wind data not available", "kind": "external", "gap": "WIND-CNF-001",
             "nextSource": "retry mesonet.agron.iastate.edu in a later campaign"}]}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Depth (USACE eHydro)
+EH = "https://services7.arcgis.com/n1YM8pTrFmm7L4hs/arcgis/rest/services/eHydro_Survey_Data/FeatureServer/0/query"
+
+
+def acquire_ehydro(ev, home, spec, it, targets, gaps):
+    p = spec["params"]
+    lakes = D.fleet(home, p)
+    h = p["halfDeg"]
+    files = {}
+    for l in lakes:
+        env = f"{l['lon'] - h:.4f},{l['lat'] - h:.4f},{l['lon'] + h:.4f},{l['lat'] + h:.4f}"
+        files[l["key"]] = ev.fetch("ehydro-footprints", f"{l['key']}.json", EH, {"where": "1=1", "geometry": env, "geometryType": "esriGeometryEnvelope", "inSR": 4326, "spatialRel": "esriSpatialRelIntersects",
+                                   "outFields": "surveytype,surveydateend,usacedistrictcode,sourcedatalocation,channelareaidfk", "returnGeometry": "false", "resultRecordCount": 500, "f": "json"},
+                                   purpose=f"USACE hydrographic survey footprints near {l['name']}")
+    zips = {}
+    for sub in p["datumSample"]:                                           # a few small survey packages per pilot reservoir: the vertical datum is stated in their metadata
+        key = next((k for k in files if sub.lower() in k.lower() and files[k]), None)
+        if not key:
+            continue
+        feats = json.load(open(os.path.join(home, files[key]), encoding="utf-8")).get("features") or []
+        cands = sorted((f["attributes"] for f in feats if f["attributes"].get("sourcedatalocation") and f["attributes"].get("surveydateend")), key=lambda a: -a["surveydateend"])
+        for a in cands[:p["maxZipsPerLake"] * 4]:
+            url = a["sourcedatalocation"]
+            n = ev.fetcher.head(url)
+            if n is None or n > p["maxZipBytes"]:
+                continue
+            rel = ev.fetch("ehydro-surveys", f"{key}__{os.path.basename(url)}", url, None, purpose=f"survey package ({n} bytes) with vertical datum metadata near {key}")
+            if rel:
+                zips.setdefault(key, []).append({"path": rel, "survey": os.path.basename(url), "year": dt.datetime.fromtimestamp(a["surveydateend"] / 1000, dt.timezone.utc).year})
+            if len(zips.get(key, [])) >= p["maxZipsPerLake"]:
+                break
+    return {"lakesQueried": len(lakes), "footprints": files, "zips": zips}
+
+
+DATUM_RE = re.compile(r"(?i)(NAVD\s*-?\s*88|NGVD\s*-?\s*29|NAVD\s*1988|MLLW|mean lower low water|vertical\s+datum[^<\n]{0,60}|pool\s+(?:elevation|stage|datum)[^<\n]{0,40}|low\s+water\s+reference\s+plane|LWRP)")
+
+
+def analyze_ehydro(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    import zipfile
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    fp, zips = {}, {}
+    for a in mine:
+        fp.update(a.get("footprints") or {})
+        zips.update(a.get("zips") or {})
+    per, paths = {}, []
+    for key, rel in sorted(fp.items()):
+        if not rel:
+            continue
+        feats = json.load(open(os.path.join(home, rel), encoding="utf-8")).get("features") or []
+        yrs = sorted(dt.datetime.fromtimestamp(f["attributes"]["surveydateend"] / 1000, dt.timezone.utc).year for f in feats if f["attributes"].get("surveydateend"))
+        if feats:
+            per[key] = {"surveys": len(feats), "latestYear": yrs[-1] if yrs else None, "since2015": sum(y >= 2015 for y in yrs), "districts": sorted({f["attributes"].get("usacedistrictcode") for f in feats if f["attributes"].get("usacedistrictcode")})}
+            paths.append(rel)
+    datum = {}
+    for key, lst in sorted(zips.items()):
+        for z in lst:
+            toks = set()
+            try:
+                with zipfile.ZipFile(os.path.join(home, z["path"])) as zf:
+                    for n in zf.namelist():
+                        if n.lower().endswith((".xml", ".txt", ".htm", ".html")) and zf.getinfo(n).file_size < 2_000_000:
+                            toks |= {m.group(0).strip()[:80] for m in DATUM_RE.finditer(zf.read(n).decode("utf-8", "replace"))}
+            except (zipfile.BadZipFile, OSError):
+                continue
+            if toks:
+                datum.setdefault(key, {"survey": z["survey"], "year": z["year"], "datumStatements": sorted(toks)[:6], "path": z["path"]})
+                paths.append(z["path"])
+    fleet_n = max(len(fp), 1)
+    m = {"fleetLakes": len(fp), "lakesWithSurvey": len(per), "lakesWithSurveySince2015": sum(1 for v in per.values() if v["since2015"]), "lakesWithDocumentedDatum": len(datum),
+         "lakesWithSurveyBase": 0, "lakesWithDocumentedDatumBase": 0, "perLake": per, "datum": datum}
+    findings = []
+    if per:
+        change = {"scientificChange": "Add a source map of which fleet lakes have dated USACE hydrographic surveys and which have a vertical datum documented in a sampled survey package.",
+                  "previous": "Depth has no per-lake survey source map; datum coverage is unknown for most of the fleet (DEPTH-DAT-001).",
+                  "proposed": {"lakesWithSurvey": sorted(per), "lakesWithDocumentedDatum": sorted(datum), "note": "availability and datum documentation only; depth is not computed and the Depth runtime still abstains"},
+                  "evidenceSummary": f"{len(per)} of {len(fp)} fleet lakes have survey footprints; {len(datum)} lake(s) have a datum statement read from a downloaded survey package.",
+                  "validationMethod": "ArcGIS feature-service envelope queries per lake; metadata of sampled survey packages searched for vertical-datum statements (offline recompute)",
+                  "validationResults": {k: m[k] for k in ("fleetLakes", "lakesWithSurvey", "lakesWithSurveySince2015", "lakesWithDocumentedDatum")},
+                  "practicalEffect": "Shows where shallow-water depth could be derived at all, and which lakes still need an operator datum document, instead of leaving every lake equally unknown.",
+                  "scoreImpact": "None: Depth is unscored; counted as datum/survey coverage in the capability contract.",
+                  "limitations": "Footprints are survey extents (mostly navigation channels), not full-lake bathymetry; datum is read from a sample of packages; no depth value is produced; Depth still needs an approved release (G-1)."}
+        cap = {"kind": "coverage", "baselineKind": "none: no per-lake survey or datum source map existed", "name": "fleet lakes with a dated USACE survey footprint (availability; datum documented for the sampled subset only)",
+               "direction": "higher_better", "baselineMetric": f"{g}.lakesWithSurveyBase", "candidateMetric": f"{g}.lakesWithSurvey", "minDelta": 1, "nMetric": f"{g}.fleetLakes", "minN": 1,
+               "tests": [{"metric": f"{g}.lakesWithSurvey", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("DEPTH-SURVEY-MAP", f"{len(per)} fleet lakes have dated USACE survey footprints; {len(datum)} have a vertical datum documented in a sampled survey package.", "DATASET",
+                                  sorted(set(paths))[:300], home, "eHydro envelope queries + datum statements in sampled packages", f"{g}.lakesWithSurvey", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": [] if per else [{"limitation": "eHydro returned no survey footprints", "kind": "external", "gap": "DEPTH-DAT-001", "nextSource": "retry later; check the feature-service quota"}]}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Vegetation (USGS NAS observed records)
+def acquire_nas(ev, home, spec, it, targets, gaps):
+    p = spec["params"]
+    states = sorted({l["state"] for l in D.fleet(home, p) if l["state"]})
+    files = {}
+    for st in states:
+        for gen in p["genera"]:
+            off, n = 0, 0
+            while n < p["maxPages"]:
+                rel = ev.fetch("nas-occurrences", f"{gen}_{st}_{off}.json", "https://nas.er.usgs.gov/api/v2/occurrence/search", {"genus": gen, "state": st, "limit": p["pageSize"], "offset": off},
+                               purpose=f"observed {gen} records in {st} (presence only)")
+                files[f"{gen}:{st}:{off}"] = rel
+                if not rel:
+                    break
+                d = json.load(open(os.path.join(home, rel), encoding="utf-8"))
+                if str(d.get("endOfRecords")).lower() == "true" or not d.get("results"):
+                    break
+                off += p["pageSize"]
+                n += 1
+    return {"files": files}
+
+
+def analyze_nas(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    files = {}
+    for a in mine:
+        files.update(a.get("files") or {})
+    lakes = D.fleet(home, p)
+    hits, recs, paths = {}, 0, []
+    for key, rel in sorted(files.items()):
+        if not rel:
+            continue
+        paths.append(rel)
+        for r in json.load(open(os.path.join(home, rel), encoding="utf-8")).get("results") or []:
+            try:
+                la, lo, yr = float(r["decimalLatitude"]), float(r["decimalLongitude"]), int(r["year"])
+            except (KeyError, ValueError, TypeError):
+                continue
+            if r.get("status") not in ("established", "collected", "stocked", None, "") and p.get("establishedOnly"):
+                continue
+            recs += 1
+            best = None
+            for l in lakes:
+                dd = max(abs(l["lat"] - la), abs(l["lon"] - lo))
+                if dd <= p["matchDeg"] and (best is None or dd < best[0]):
+                    best = (dd, l)
+            if best:
+                h = hits.setdefault(best[1]["key"], {"records": 0, "latestYear": 0, "taxa": set(), "since2010": 0})
+                h["records"] += 1
+                h["latestYear"] = max(h["latestYear"], yr)
+                h["since2010"] += yr >= 2010
+                h["taxa"].add(r.get("scientificName"))
+    per = {k: {**v, "taxa": sorted(t for t in v["taxa"] if t)} for k, v in sorted(hits.items())}
+    m = {"fleetLakes": len(lakes), "recordsRead": recs, "lakesWithObservedRecord": len(per), "lakesWithRecordSince2010": sum(1 for v in per.values() if v["since2010"]),
+         "lakesWithObservedRecordBase": 0, "perLake": per}
+    findings = []
+    if per:
+        change = {"scientificChange": "Add a per-lake source map of dated, georeferenced OBSERVED submerged-plant records (confirmed presence) for the fleet.",
+                  "previous": "Vegetation has no observed-vegetation truth source for the fleet; the surface observer failed held-out gates (VEG-VAL-001).",
+                  "proposed": {"lakesWithObservedRecord": sorted(per), "source": "USGS NAS occurrence database", "use": "dated presence truth for validating the observer; never absence, never abundance, never habitat potential"},
+                  "evidenceSummary": f"{recs} georeferenced records read; {len(per)} of {len(lakes)} fleet lakes have at least one within {p['matchDeg']} degrees.",
+                  "validationMethod": "state/genus API queries, coordinate matching to fleet lakes (offline recompute)",
+                  "validationResults": {k: m[k] for k in ("fleetLakes", "recordsRead", "lakesWithObservedRecord", "lakesWithRecordSince2010")},
+                  "practicalEffect": "Shows which lakes have any confirmed vegetation record to test the observer against, so vegetation intelligence is never validated on potential habitat.",
+                  "scoreImpact": "None: Vegetation is unscored; counted as observed-data coverage in the capability contract.",
+                  "limitations": "Invasive taxa only (hydrilla, milfoil, najas, curly-leaf pondweed, egeria), presence-only and effort-uneven; no absence or cover; Vegetation still needs an approved release (G-1)."}
+        cap = {"kind": "coverage", "baselineKind": "none: no observed-vegetation truth source map existed", "name": "fleet lakes with a dated georeferenced OBSERVED submerged-plant record",
+               "direction": "higher_better", "baselineMetric": f"{g}.lakesWithObservedRecordBase", "candidateMetric": f"{g}.lakesWithObservedRecord", "minDelta": 1, "nMetric": f"{g}.fleetLakes", "minN": 1,
+               "tests": [{"metric": f"{g}.lakesWithObservedRecord", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("VEG-OBSERVED-MAP", f"{len(per)} fleet lakes have dated observed submerged-plant records (confirmed presence).", "DATASET", sorted(set(paths))[:300], home,
+                                  "USGS NAS occurrence queries matched to fleet lakes", f"{g}.lakesWithObservedRecord", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": [] if per else [{"limitation": "NAS returned no matched records", "kind": "external", "gap": "VEG-VAL-001", "nextSource": "retry later"}]}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Fish spawn temperature (ichthyoplankton eggs)
+def _wilson(k, n, z=1.96):
+    if n == 0:
+        return 0.0, 1.0
+    ph = k / n
+    d = 1 + z * z / n
+    c = ph + z * z / (2 * n)
+    h = z * math.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n))
+    return (c - h) / d, (c + h) / d
+
+
+def analyze_eggs_temp(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    """Pre-declared test of a written spawn-temperature rule against dated ichthyoplankton tows (egg counts with water temperature).
+    Lower bound: SUPPORTED when the egg-positive share below the rule's minimum has a Wilson 95% upper bound under `lowMax` AND the share inside the rule's range has a lower
+    bound above `inMin`; CONTRADICTED when eggs are readily found below the minimum. Upper bound: judged separately against the in-range share. The data are Asian carp eggs
+    (silver and bighead together), so the test is for the silver-carp rule and says so."""
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    files = sorted(glob.glob(os.path.join(home, p["datasetGlob"])))
+    if not files:
+        return {"metrics": {"toWs": 0}, "findings": [], "weak": [], "limitations": [{"limitation": "ichthyoplankton dataset not acquired yet (an agent research task acquires it)", "kind": "external", "gap": "FISH-VAL-001",
+                                                                                      "nextSource": "run the agent research queue (campaign.py loop) so the dataset is downloaded with provenance"}]}
+    path = files[0]
+    rel = os.path.relpath(path, home)
+    t, e = [], []
+    with open(path, encoding="latin-1", newline="") as fh:
+        for r in csv.DictReader(fh):
+            try:
+                tc, eg = float(r[p["tempCol"]]), float(r[p["eggCol"]])
+            except (KeyError, ValueError, TypeError):
+                continue
+            t.append(tc)
+            e.append(eg > 0)
+    lo, hi = p["ruleMinC"], p["ruleMaxC"]
+    below = [x for tc, x in zip(t, e) if tc < lo]
+    inr = [x for tc, x in zip(t, e) if lo <= tc <= hi]
+    above = [x for tc, x in zip(t, e) if tc > hi]
+    bl, bu = _wilson(sum(below), len(below))
+    il, iu = _wilson(sum(inr), len(inr))
+    al, au = _wilson(sum(above), len(above))
+    first = min((tc for tc, x in zip(t, e) if x), default=None)
+    m = {"tows": len(t), "eggPositive": sum(e), "firstEggC": first, "belowN": len(below), "belowPositive": sum(below), "belowUpper": round(bu, 4), "inRangeN": len(inr), "inRangePositive": sum(inr),
+         "inRangeShare": round(sum(inr) / max(len(inr), 1), 4), "inRangeLower": round(il, 4), "aboveN": len(above), "abovePositive": sum(above), "aboveShare": round(sum(above) / max(len(above), 1), 4),
+         "aboveUpper": round(au, 4), "aboveLower": round(al, 4), "lowerBoundSupported": int(bu < p["lowMax"] and il > p["inMin"]), "lowerBoundContradicted": int(bl >= p["lowMax"]),
+         "upperBoundContradicted": int(al > sum(inr) / max(len(inr), 1)), "upperBoundSupported": int(len(above) >= 10 and au < sum(inr) / max(len(inr), 1)),
+         "rulesFieldTestedBase": 0, "rulesFieldTestedCand": 0}
+    if m["lowerBoundSupported"] or m["lowerBoundContradicted"]:
+        m["rulesFieldTestedCand"] = 1
+    findings = []
+    if m["lowerBoundSupported"]:
+        findings.append(D.finding(f"FISH-EGGS-{p['ruleId']}", f"Field egg data support the lower spawn-temperature bound of rule {p['ruleId']} ({lo} C): {sum(below)} egg-positive tows of {len(below)} below it "
+                                  f"(Wilson 95% upper {round(bu, 3)}), first eggs at {first} C, {round(100 * m['inRangeShare'])}% positive inside {lo}-{hi} C. Asian carp eggs (silver and bighead together), "
+                                  "Upper Mississippi, 2013-2014.", "EVIDENCE", [rel], home, "pre-declared Wilson-interval comparison of egg-positive tows below / inside / above the rule range",
+                                  f"{g}.lowerBoundSupported", ">=", 1, tier="SCIENTIFIC_SUPPORT"))
+        change = {"scientificChange": f"Attach an independent field egg-presence comparison to the spawn-temperature rule {p['ruleId']}.",
+                  "previous": f"{p['ruleId']} (spawn range {lo}-{hi} C) rests on compiled sources only.",
+                  "proposed": {"ruleId": p["ruleId"], "evidence": {"dataset": "USGS ichthyoplankton tows (Asian carp eggs), doi 10.5066/F75T3J06", "tows": m["tows"], "eggPositive": m["eggPositive"], "firstEggC": first,
+                               "belowMinPositive": f"{sum(below)}/{len(below)}", "inRangeShare": m["inRangeShare"], "aboveMaxShare": m["aboveShare"], "aboveMaxN": len(above)},
+                               "proposedAction": "attach as river-surrogate evidence; keep confidence and the southeast-reservoir transferability flag unchanged; review the upper bound separately"},
+                  "evidenceSummary": f"{m['tows']} dated tows, {m['eggPositive']} egg-positive; none of {len(below)} below {lo} C.",
+                  "validationMethod": "Wilson 95% intervals for egg-positive share below / inside / above the rule range, thresholds declared before the data were examined",
+                  "validationResults": {k: m[k] for k in ("belowN", "belowPositive", "belowUpper", "inRangeN", "inRangePositive", "inRangeShare", "inRangeLower", "aboveN", "aboveShare", "firstEggC")},
+                  "practicalEffect": "The silver-carp spawn window can be shown as field-compared: eggs were not found below 18 C, so a temperature below that means the window is closed.",
+                  "scoreImpact": "None under biological-state-score-v1; counted as validation coverage in the capability contract.",
+                  "limitations": "Asian carp eggs are silver and bighead together; two seasons on the Upper Mississippi; plankton tows show spawning occurred, not where bowfishers can find fish."}
+        cap = {"kind": "coverage", "baselineKind": "none: the rule had no field comparison", "name": "spawn-temperature rules with an independent field egg-presence test", "direction": "higher_better",
+               "baselineMetric": f"{g}.rulesFieldTestedBase", "candidateMetric": f"{g}.rulesFieldTestedCand", "minDelta": 1, "nMetric": f"{g}.tows", "minN": 100, "tests": [{"metric": f"{g}.lowerBoundSupported", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("FISH-EGGS-COVERAGE", f"Spawn rule {p['ruleId']} now has an independent field egg-presence comparison (lower bound supported).", "RULE", [rel], home, "pre-declared egg-presence test",
+                                  f"{g}.rulesFieldTestedCand", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": [{"limitation": "the egg data are Asian carp (silver and bighead together) from the Upper Mississippi; other species' spawn-temperature rules remain without field data", "kind": "scope", "gap": "FISH-VAL-001"}]}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Water Temp: many independent lakes (USGS in situ surface observations)
+SB_ITEM = "https://www.sciencebase.gov/catalog/item/"
+
+
+def _hav(a, b, c, d):
+    r = math.pi / 180
+    x = math.sin((c - a) * r / 2) ** 2 + math.cos(a * r) * math.cos(c * r) * math.sin((d - b) * r / 2) ** 2
+    return 2 * 6371 * math.asin(math.sqrt(x))
+
+
+def acquire_wt_multilake(ev, home, spec, it, targets, gaps):
+    """Independent validation set: USGS release of in situ lake-surface temperature observations (Willard et al. 2022 data release, CC0). Deterministic lake selection
+    (most observations, lakes >= minAreaKm2, balanced over four longitude bands); Open-Meteo archive forcing per selected lake - the same forcing the production M0 uses."""
+    p = spec["params"]
+    lst = ev.fetch("wtm-sciencebase", "item.json", SB_ITEM + p["itemId"], {"format": "json", "fields": "files"}, purpose="file list of the USGS lake temperature release")
+    if not lst:
+        return {"obs": None}
+    urls = {f["name"]: f["url"] for f in json.load(open(os.path.join(home, lst), encoding="utf-8")).get("files") or []}
+    meta = ev.fetch("wtm-sciencebase", "lake_metadata.csv", urls["lake_metadata.csv"], None, purpose="lake coordinates, area and observation counts")
+    obs = ev.fetch("wtm-sciencebase", "lake_surface_temp_obs_preds.csv", urls["lake_surface_temp_obs_preds.csv"], None, purpose="in situ lake-surface temperature observations (with the release's own model predictions, not used)")
+    if not (meta and obs):
+        return {"obs": None}
+    mrows = {}
+    for r in csv.DictReader(open(os.path.join(home, meta), encoding="utf-8")):
+        try:
+            if float(r["area_m2"]) / 1e6 >= p["minAreaKm2"] and int(r["num_obs"]) >= p["minObs"]:
+                mrows[r["site_id"]] = r
+        except ValueError:
+            continue
+    n_after = {}
+    y0 = p["yearFrom"]
+    for r in csv.DictReader(open(os.path.join(home, obs), encoding="utf-8")):
+        if r["site_id"] in mrows and r["wtemp_obs"] not in ("", "NA") and int(r["Date"][:4]) >= y0 and 4 <= int(r["Date"][5:7]) <= 10:
+            n_after[r["site_id"]] = n_after.get(r["site_id"], 0) + 1
+    cands = sorted(((n, sid) for sid, n in n_after.items() if n >= p["minObsAfter"]), reverse=True)
+    bands = [(-130, -104), (-104, -94), (-94, -82), (-82, -60)]
+    sel = []
+    for lo, hi in bands:
+        sel += [sid for n, sid in cands if lo <= float(mrows[sid]["lake_lon_deg"]) < hi][: p["perBand"]]
+    out = []
+    for sid in sorted(sel):
+        r = mrows[sid]
+        key = D.safe_key(sid.replace("{", "").replace("}", ""))[:60]
+        f = ev.fetch("open-meteo-archive", f"{key}.json", "https://archive-api.open-meteo.com/v1/archive",
+                     {"latitude": r["lake_lat_deg"], "longitude": r["lake_lon_deg"], "start_date": f"{y0 - 1}-11-01", "end_date": p["yearTo"] and f"{p['yearTo']}-12-31", "timezone": "auto",
+                      "daily": "temperature_2m_mean,shortwave_radiation_sum,wind_speed_10m_mean,relative_humidity_2m_mean"}, purpose=f"forcing for independent lake {sid}")
+        if f:
+            out.append({"site": sid, "lat": float(r["lake_lat_deg"]), "lon": float(r["lake_lon_deg"]), "areaKm2": round(float(r["area_m2"]) / 1e6, 2), "nObs": n_after[sid], "forcing": f})
+    return {"obs": obs, "meta": meta, "lakes": out, "candidates": len(cands)}
+
+
+def _region_lookup(home, p, rows):
+    """Region label of a point = region of the nearest FLEET lake (labels come from the fleet residual table), so the correction cells match how they were fitted."""
+    reg = {}
+    for r in rows:
+        reg.setdefault(r["stem"], r["region"])
+    pts = [(l["lat"], l["lon"], reg[D.safe_key(l["stem"])]) for l in D.fleet(home, p) if D.safe_key(l["stem"]) in reg]
+    return lambda la, lo: min(pts, key=lambda q: _hav(la, lo, q[0], q[1]))[2]
+
+
+def analyze_wt_multilake(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    """M0 error on MANY independent lakes, and the earlier correction / interval hypotheses re-tested on them with the same pre-declared thresholds (the lakes are not in the
+    fit and were not examined before the thresholds were fixed)."""
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    a0 = next((a for a in mine if a.get("lakes")), None)
+    if not a0:
+        return {"metrics": {"lakes": 0}, "findings": [], "weak": [], "limitations": [{"limitation": "independent lake observation release not acquired", "kind": "external", "gap": "WATERTEMP-DISC-M0-SEASONAL-BIAS",
+                                                                                     "nextSource": "retry sciencebase.gov / open-meteo in a later campaign"}]}
+    rows = _resid(home, p["storedResiduals"])
+    train = [r for r in rows if r["year"] <= p["trainThroughYear"]]
+    region_of = _region_lookup(home, p, rows)
+    lakes = {l["site"]: l for l in a0["lakes"]}
+    errs = {s: [] for s in lakes}
+    forc = {s: D.m0_daily(json.load(open(os.path.join(home, l["forcing"]), encoding="utf-8"))["daily"]) for s, l in lakes.items()}
+    for r in csv.DictReader(open(os.path.join(home, a0["obs"]), encoding="utf-8")):
+        s = r["site_id"]
+        if s in lakes and r["wtemp_obs"] not in ("", "NA") and int(r["Date"][:4]) >= p["yearFrom"] and 4 <= int(r["Date"][5:7]) <= 10:
+            v = D.m0_for_date(forc[s], r["Date"])
+            if v is not None:
+                errs[s].append((r["Date"], v - float(r["wtemp_obs"])))
+    errs = {s: e for s, e in errs.items() if len(e) >= p["minPairs"]}
+    per = {s: {"n": len(e), "biasC": round(S.mean(x for _, x in e), 3), "rmseC": round(rmse([x for _, x in e]), 3), "region": region_of(lakes[s]["lat"], lakes[s]["lon"]), "areaKm2": lakes[s]["areaKm2"]} for s, e in errs.items()}
+    m = {"lakes": len(per), "pairs": sum(v["n"] for v in per.values()), "pooledEqualLakeRmseC": round(math.sqrt(sum(v["rmseC"] ** 2 for v in per.values()) / len(per)), 4) if per else None,
+         "medianLakeBiasC": round(S.median(v["biasC"] for v in per.values()), 4) if per else None, "lakesRmseLe2C": sum(v["rmseC"] <= 2.0 for v in per.values()), "perLake": per}
+    bys = {}
+    for s, e in errs.items():
+        for d, x in e:
+            bys.setdefault(season_of(int(d[5:7])), []).append(x)
+    m["biasBySeasonC"] = {k: round(S.mean(v), 3) for k, v in sorted(bys.items())}
+    paths = sorted({a0["obs"], a0["meta"]} | {lakes[s]["forcing"] for s in per})
+    findings = [D.finding("WT-MULTILAKE-BASELINE", f"Production M0 against {m['pairs']} independent in situ surface observations at {len(per)} lakes (not in the fit): pooled equal-lake RMSE {m['pooledEqualLakeRmseC']} C.",
+                          "EVIDENCE", paths[:200], home, "M0 from Open-Meteo forcing vs USGS in situ surface temperature (Apr-Oct)", f"{g}.lakes", ">=", p["minLakes"], tier="SCIENTIFIC_SUPPORT")] if len(per) >= p["minLakes"] else []
+    for rung in ("season", "region_season"):
+        keyf = RUNGS[rung]
+        off = _fit(train, keyf, p["minCell"], p["shrink"])
+        b, c = [], {}
+        for s, e in errs.items():
+            reg = per[s]["region"]
+            bb, cc = [], []
+            for d, x in e:
+                k = keyf({"season": season_of(int(d[5:7])), "region": reg, "cls": None})
+                bb.append(x)
+                cc.append(x - off.get(k, 0.0))
+            c[s] = (rmse(bb), rmse(cc))
+        n = max(len(c), 1)
+        pb, pc = math.sqrt(sum(a * a for a, _ in c.values()) / n), math.sqrt(sum(b_ * b_ for _, b_ in c.values()) / n)
+        test_rows = [r for r in rows if r["year"] > p["trainThroughYear"]]
+        hb_ = [r["e"] for r in test_rows]
+        hc_ = [r["e"] - off.get(keyf(r), 0.0) for r in test_rows]
+        m[f"bias_{rung}"] = {"rmseBase": round(pb, 4), "rmseCand": round(pc, 4), "deltaRmse": round(pb - pc, 4), "lakesWorseShare": round(sum(cb > ca + p["worseTol"] for ca, cb in c.values()) / n, 4), "lakes": len(c),
+                             "holdoutDeltaRmse": round(rmse(hb_) - rmse(hc_), 4)}               # the ORIGINAL pre-declared fleet temporal-holdout leg is kept: a rule is not relaxed after the data are seen
+        # interval: fixed symmetric band vs cell quantiles (both fitted on the fleet residuals only)
+        alpha = 1 - p["nominal"]
+        cells = {}
+        for r in train:
+            cells.setdefault(keyf(r), []).append(r["e"])
+        cq = {k: (_q(v, alpha / 2), _q(v, 1 - alpha / 2)) for k, v in cells.items() if len(v) >= p["minCell"]}
+        q0 = _q([abs(r["e"]) for r in train], p["nominal"])
+        isb, isc, covb, covc = {}, {}, {}, {}
+        for s, e in errs.items():
+            reg = per[s]["region"]
+            tb = tc = hb = hc = 0
+            for d, x in e:
+                lo, hi = cq.get(keyf({"season": season_of(int(d[5:7])), "region": reg, "cls": None}), (-q0, q0))
+                tb += _is(x, -q0, q0, alpha)
+                tc += _is(x, lo, hi, alpha)
+                hb += (-q0 <= x <= q0)
+                hc += (lo <= x <= hi)
+            isb[s], isc[s], covb[s], covc[s] = tb / len(e), tc / len(e), hb / len(e), hc / len(e)
+        mb, mc = sum(isb.values()) / n, sum(isc.values()) / n
+        cal = lambda cv: sum(abs(v - p["nominal"]) <= 0.1 for v in cv.values()) / n  # noqa: E731
+        tcells = {}
+        for r in test_rows:
+            tcells.setdefault(r["season"], []).append(r)
+        hisb = hisc = 0.0
+        cb_s, cc_s = {}, {}
+        for r in test_rows:
+            lo, hi = cq.get(keyf(r), (-q0, q0))
+            hisb += _is(r["e"], -q0, q0, alpha)
+            hisc += _is(r["e"], lo, hi, alpha)
+            z = cb_s.setdefault(r["season"], [0, 0, 0])
+            z[0] += 1
+            z[1] += (-q0 <= r["e"] <= q0)
+            z[2] += (lo <= r["e"] <= hi)
+        wb = max(abs(z[1] / z[0] - p["nominal"]) for z in cb_s.values())
+        wc = max(abs(z[2] / z[0] - p["nominal"]) for z in cb_s.values())
+        m[f"interval_{rung}"] = {"holdoutDeltaIs": round((hisb - hisc) / len(test_rows), 4), "holdoutCalibGain": round(wb - wc, 4), "isBase": round(mb, 4), "isCand": round(mc, 4), "deltaIs": round(mb - mc, 4), "lakesWorseShare": round(sum(isc[s] > isb[s] + p["worseTolIs"] for s in isb) / n, 4),
+                                 "calibratedShareBase": round(cal(covb), 4), "calibratedShareCand": round(cal(covc), 4), "calibGain": round(cal(covc) - cal(covb), 4),
+                                 "meanCoverageBase": round(sum(covb.values()) / n, 4), "meanCoverageCand": round(sum(covc.values()) / n, 4)}
+    for rung in ("season", "region_season"):
+        bk, ik = f"bias_{rung}", f"interval_{rung}"
+        cb = {"scientificChange": f"Add a {rung.replace('_', ' x ')} additive correction to production M0 (offsets fitted on the fleet grab-sample residuals).", "previous": "M0 without a bias correction.",
+              "proposed": {"correction": "M0' = M0 - offset[cell]", "cell": rung, "offsetsC": {k: round(v, 3) for k, v in sorted(_fit(train, RUNGS[rung], p["minCell"], p["shrink"]).items())}},
+              "evidenceSummary": f"tested on {len(per)} independent lakes ({m['pairs']} observations) that were not in the fit.", "validationMethod": "pooled equal-lake RMSE vs production M0 on independent lakes; thresholds identical to the earlier 4-lake test",
+              "validationResults": m[bk], "practicalEffect": "Spring readings would be corrected warmer and autumn readings cooler where the fleet shows that bias.",
+              "scoreImpact": "None under water-temp-level-ladder-v1 (gate-based).", "limitations": "Natural and managed lakes of 1 km2 or more, April-October surface observations, mostly northern and central US."}
+        cap = {"kind": "prediction", "baselineKind": "production M0 without correction", "name": "production M0 water-temperature RMSE on independent lakes (C)", "direction": "lower_better", "baselineMetric": f"{g}.{bk}.rmseBase",
+               "candidateMetric": f"{g}.{bk}.rmseCand", "minDelta": p["sensorMinDelta"], "nMetric": f"{g}.{bk}.lakes", "minN": p["minLakes"],
+               "tests": [{"metric": f"{g}.{bk}.holdoutDeltaRmse", "op": ">=", "threshold": p["holdoutMinDelta"]}, {"metric": f"{g}.{bk}.deltaRmse", "op": ">=", "threshold": p["sensorMinDelta"]},
+                         {"metric": f"{g}.{bk}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
+        findings.append(D.finding(f"WT-MULTILAKE-BIAS-{rung}", f"A {rung.replace('_', ' x ')} correction lowers M0 error on independent lakes.", "PARAMETER", paths[:200], home, "fleet-fitted offsets applied to independent lakes",
+                                  f"{g}.{bk}.deltaRmse", ">=", p["sensorMinDelta"], tier="INDEPENDENTLY_VALIDATED", change=cb, capability=cap))
+        ci = {"scientificChange": f"Publish a {rung.replace('_', ' x ')} empirical 80% error interval instead of one fixed band.", "previous": "One symmetric band for every lake and season.",
+              "proposed": {"intervals": "observed = M0 - [lo, hi]", "cell": rung}, "evidenceSummary": f"{len(per)} independent lakes.", "validationMethod": "interval score and share of lakes with 70-90% coverage; thresholds pre-declared",
+              "validationResults": m[ik], "practicalEffect": "An honest, season-aware range around the modeled temperature.", "scoreImpact": "None under the gate-based ladder.",
+              "limitations": "Same scope as the correction test."}
+        capi = {"kind": "uncertainty", "baselineKind": "the single fixed error band used today", "name": "interval score of the published water-temperature band on independent lakes (C)", "direction": "lower_better",
+                "baselineMetric": f"{g}.{ik}.isBase", "candidateMetric": f"{g}.{ik}.isCand", "minDelta": p["minDeltaIs"], "nMetric": f"{g}.bias_{rung}.lakes", "minN": p["minLakes"],
+                "tests": [{"metric": f"{g}.{ik}.holdoutDeltaIs", "op": ">=", "threshold": p["holdoutMinDeltaIs"]}, {"metric": f"{g}.{ik}.holdoutCalibGain", "op": ">=", "threshold": p["minCalibGain"]},
+                          {"metric": f"{g}.{ik}.deltaIs", "op": ">=", "threshold": p["minDeltaIs"]}, {"metric": f"{g}.{ik}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
+        findings.append(D.finding(f"WT-MULTILAKE-INTERVAL-{rung}", f"A {rung.replace('_', ' x ')} interval is better calibrated and sharper on independent lakes.", "PARAMETER", paths[:200], home,
+                                  "fleet-fitted interval quantiles applied to independent lakes", f"{g}.{ik}.deltaIs", ">=", p["minDeltaIs"], tier="INDEPENDENTLY_VALIDATED", change=ci, capability=capi))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": []}
 
 
 def acquire_none(ev, home, spec, it, targets, gaps):
@@ -878,6 +1333,10 @@ EXPERIMENTS = {
     "wt-interval": {"acquire": acquire_none, "analyze": analyze_wt_interval},
     "ltrm-fish": {"acquire": acquire_ltrm, "analyze": analyze_ltrm},
     "iem-wind": {"acquire": acquire_iem_wind, "analyze": analyze_iem_wind},
+    "ehydro": {"acquire": acquire_ehydro, "analyze": analyze_ehydro},
+    "wt-multilake": {"acquire": acquire_wt_multilake, "analyze": analyze_wt_multilake},
+    "eggs-temp": {"acquire": acquire_none, "analyze": analyze_eggs_temp},
+    "nas": {"acquire": acquire_nas, "analyze": analyze_nas},
     "fish-rule-grade": {"acquire": acquire_none, "analyze": analyze_fish_rules},
     "dataset-search": {"acquire": acquire_dataset_search, "analyze": analyze_dataset_search},
     "lake-cwms": {"acquire": acquire_lake_cwms, "analyze": analyze_lake_cwms},

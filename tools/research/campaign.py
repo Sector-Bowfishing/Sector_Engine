@@ -61,6 +61,8 @@ from sector_brain_platform import knowledge_release as K  # noqa: E402
 import discovery as D  # noqa: E402
 import experiments as X  # noqa: E402
 import ledger as L  # noqa: E402
+import bowfishing_capability as BC  # noqa: E402
+import taskqueue as TQ  # noqa: E402
 
 SCHEMA = "sector-research-campaign-v1"
 FINDINGS_SCHEMA = "sector-research-findings-v1"
@@ -347,6 +349,14 @@ def stage_discover(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     return out
 
 
+def input_env(c: Campaign, bid: str) -> dict:
+    """Environment for a Brain's evaluators: private inputs found locally (discovery.json inputs[].search) are connected automatically."""
+    try:
+        return D.check_inputs(ENGINE, c.home, brain_spec(bid).get("inputs") or []).get("env") or {}
+    except (OSError, ValueError):
+        return {}
+
+
 def discovery_cfg() -> dict:
     p = os.path.join(HERE, "discovery.json")
     return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {"brains": {}}
@@ -466,7 +476,7 @@ def stage_research(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         force_rmtree(rdir)                                               # idempotent: a re-run (retry) starts clean
         os.makedirs(rdir, exist_ok=True)
         res = run_command(expand(run["cmd"], ctx(c, st, bid, rdir)), cwd=expand([run.get("cwd", "{engine}")], ctx(c, st, bid, rdir))[0], out_dir=rdir,
-                          timeout=run.get("timeout", timeout))
+                          timeout=run.get("timeout", timeout), extra_env=input_env(c, bid))
         out["adapter"] = {**{k: res[k] for k in ("rc", "seconds")}, "stderrTail": res["stderrTail"][-500:]}
         metrics = metrics_from(res, rdir)
         if res["rc"] == 2 and metrics.get("blocked"):                    # a missing external input: recorded, the campaign continues
@@ -731,7 +741,19 @@ def stage_score(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict
     return out
 
 
-def write_agent_task(c: Campaign, st: dict, bid: str, gid: str, gap: dict) -> str:
+def capability_priority(c: Campaign, bid: str) -> int:
+    """Research follows the weakest measured capability: a Brain whose bowfishing capability composite is low (or entirely unmeasured) is worked first. 10 = most urgent."""
+    try:
+        rp = os.path.join(c.home, "shared", "pilot", "guntersville-v1", "PILOT_V1_READINESS.json")
+        ready = json.load(open(rp, encoding="utf-8")) if os.path.exists(rp) else None
+        v = BC.compute_brain(ENGINE, c.home, bid, discovery_cfg(), None, ready)["current"]
+        comp = v["value"] if v["value"] is not None else 0.0
+        return 10 + int(70 * comp) + TQ.BRAIN_PRIORITY.get(bid, 90) // 20
+    except (OSError, ValueError, KeyError, StopIteration):
+        return TQ.BRAIN_PRIORITY.get(bid, 90)
+
+
+def write_agent_task(c: Campaign, st: dict, bid: str, gid: str, gap: dict, tried: list | None = None) -> str:
     """A self-contained brief for an agent (a coordinating Claude session or a subagent) to investigate a gap no configured avenue covers: find legitimate
     downloadable evidence anywhere, register the source, analyse it, and deliver findings through the same validator (tiers, hashes, thresholds)."""
     folder = c.folder(st, bid)
@@ -740,7 +762,17 @@ def write_agent_task(c: Campaign, st: dict, bid: str, gid: str, gap: dict) -> st
     cp = os.path.join(ENGINE, "brains", BRAIN_DIRS.get(bid, bid), "research", "CHARTER.json")
     if os.path.exists(cp):
         charter = json.load(open(cp, encoding="utf-8"))
-    task = {"schema": "sector-agent-research-task-v1", "brainId": bid, "gapId": gid, "gap": gap.get("title"), "status": "OPEN", "createdBy": c.cid,
+    prior = []
+    rp = os.path.join(folder, "research", "agent-results")
+    if os.path.isdir(rp):                                                # what earlier agent runs already searched: never repeat it
+        for fn in sorted(os.listdir(rp)):
+            try:
+                r = json.load(open(os.path.join(rp, fn), encoding="utf-8"))
+                if r.get("gapId") == gid:
+                    prior.append({"task": r.get("taskId"), "queriesTried": r.get("queriesTried"), "status": r.get("status"), "summary": r.get("summary")})
+            except (OSError, ValueError):
+                pass
+    task = {"schema": "sector-agent-research-task-v1", "brainId": bid, "gapId": gid, "gap": gap.get("title"), "status": "OPEN", "createdBy": c.cid, "alreadyTried": {"avenues": tried or [], "priorAgentRuns": prior},
             "bowfishingPurpose": charter.get("bowfishingPurpose"), "priorityQuestions": charter.get("priorityQuestions"), "fitForPurposeTargets": charter.get("fitForPurpose"),
             "how": ["search the open web (scientific data repositories, agencies, journals' data supplements) for datasets that could resolve the gap; verify each landing page or API before relying on it",
                     "register an allowed host with `campaign.py register-source` (https, licence, purpose, rationale) or record an owner-action if access needs the owner",
@@ -869,16 +901,19 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         c.log(event="followup", brain=bid, next=nxt[0]["id"], targets=(nxt[1] or [])[:20])
         return {"continued": True, "nextAvenue": nxt[0]["id"], "targets": (nxt[1] or [])[:50], **hist}
     served = {g for a in avs for g in a.get("gaps") or []}
-    for g in list(led.actionable()):                                    # a gap NO avenue serves is not "exhausted": no connector configured is not "no evidence exists".
-        if g not in served:                                             # The coordinator writes an agent research task (open-web search + analysis) instead.
-            gp = led.doc["gaps"][g]
-            task = write_agent_task(c, st, bid, g, gp)
-            gp["nextEvidence"] = f"agent research task (search beyond configured sources, then `campaign.py submit`): {task}"
+    tried = sorted({v["id"] for v in led.doc["avenues"].values()})
+    for g in list(led.actionable()):                                    # a gap NO avenue serves, or whose configured avenues are all used up, is not finished:
+        if "GEN-CLOSEOUT" in g or g in (brain_spec(bid).get("internalGaps") or []):      # closeout fragments and internal contract fixes are not open-web research questions
+            continue
+        gp = led.doc["gaps"][g]                                         # the coordinator QUEUES executable agent research (open web beyond the configured sources)
+        task = write_agent_task(c, st, bid, g, gp, tried)
+        qt = TQ.enqueue(c.home, bid, g, "agent-research", f"{bid}: {gp.get('title')}", task, c.cid, topic="open-web", priority=capability_priority(c, bid))
+        gp["nextEvidence"] = f"queued agent research {qt['id']} ({qt['status']}): {task}"
     cls = classify(c, st, bid, led, why_stop)
     if cls["outcome"] in ("STALLED",):                                  # exhausted means: every configured avenue was tried - never that nothing exists
         for g in list(led.actionable()):
-            if g in served:
-                led.exhaust(g, f"all {len(avs)} configured avenues tried; register a new source or experiment to continue")
+            if g in served and not any(t["gap"] == g and t["brain"] == bid and t["status"] in ("QUEUED", "CLAIMED") for t in TQ.load(c.home)["tasks"]):
+                led.exhaust(g, f"all {len(avs)} configured avenues and the queued agent research were used up; register a new source or experiment to continue")
         cls = classify(c, st, bid, led, why_stop)
     led.save()
     with _lock:
@@ -1043,14 +1078,157 @@ def run(home: str, cid: str, parallel: int = 3, timeout: int = 600, adapters: di
     return finished
 
 
+# ------------------------------------------------------------------------------------------------------------------------------- autonomous loop
+RESULT_SCHEMA = "sector-agent-result-v1"
+DEFAULT_EXECUTOR = {"name": "claude-cli", "maxBudgetUsd": 2.0, "timeoutSeconds": 1500,
+                    "command": ["claude", "-p", "{prompt}", "--allowedTools", "WebSearch", "WebFetch", "Write", "Read", "--add-dir", "{work}", "--permission-mode", "dontAsk",
+                                "--max-budget-usd", "{budget}", "--no-session-persistence", "--output-format", "text"]}
+
+
+def result_prompt(t: dict, brief: dict, result_path: str) -> str:
+    return ("You are a research agent for Sector, a BOWFISHING intelligence system (shooting rough fish with a bow at night in shallow water, in US reservoirs and rivers). "
+            "Investigate the gap below by searching the open web for LEGITIMATE, OPEN, DOWNLOADABLE data or published evidence that could close it. Verify every source by opening it (publisher, exact URL, direct "
+            "file/API URL, licence, size, date range, coverage, whether login is needed). Do not download files larger than 5 MB. Prefer data that bears on real bowfishing outcomes (where fish are, when "
+            "they use accessible shallow water, visibility, conditions); transferable studies are evidence, not validation. Do not repeat anything in `alreadyTried`. Never invent a source or a result.\n\n"
+            f"TASK (JSON):\n{json.dumps({**brief, 'taskId': t['id']}, indent=1)[:6000]}\n\n"
+            f"Write ONLY a JSON file to {result_path} with this shape (schema {RESULT_SCHEMA}):\n"
+            '{"schema": "sector-agent-result-v1", "taskId": "<id>", "gapId": "<gap>", "status": "FINDINGS | NO_USABLE_EVIDENCE | BLOCKED", "summary": "...", "queriesTried": ["..."], '
+            '"datasets": [{"title": "...", "publisher": "...", "url": "<landing page>", "directUrl": "<direct https file or API url or null>", "licence": "...", "sizeBytes": 0, "dateRange": "...", '
+            '"coverage": "...", "verifiedAccess": true, "relevance": "how it bears on the gap", "analysisPlan": "columns and the test to run"}], '
+            '"ownerActions": [{"id": "...", "publisher": "...", "dataset": "...", "access": "...", "verified": false, "addresses": "..."}], "limitations": ["..."], "nextSource": "..."}\n'
+            "Mark verifiedAccess true only if you fetched it yourself. When nothing usable exists say NO_USABLE_EVIDENCE with the queries you tried. After writing the file reply with one line.")
+
+
+def execute_task(home: str, t: dict, cfg: dict) -> tuple[str, str | None]:
+    """Run ONE agent task with the configured executor. Returns ('ok'|'error', detail). The executor writes work/result.json; nothing else is trusted."""
+    work = os.path.join(home, "shared", "queue", "work", t["id"])
+    os.makedirs(work, exist_ok=True)
+    result = os.path.join(work, "result.json")
+    if os.path.exists(result):
+        os.remove(result)
+    brief = json.load(open(os.path.join(home, t["brief"]), encoding="utf-8")) if os.path.exists(os.path.join(home, t["brief"])) else {}
+    prompt = result_prompt(t, brief, result)
+    pf = os.path.join(work, "prompt.txt")
+    open(pf, "w", encoding="utf-8").write(prompt)
+    cmd = [x.format(prompt=prompt, prompt_file=pf, work=work, result=result, task=t["id"], budget=cfg.get("maxBudgetUsd", 2.0), brief=os.path.join(home, t["brief"])) for x in cfg["command"]]
+    try:
+        p = subprocess.run(cmd, cwd=work, capture_output=True, text=True, timeout=cfg.get("timeoutSeconds", 1500))
+    except (subprocess.TimeoutExpired, OSError) as e:
+        return "error", f"executor {type(e).__name__}: {str(e)[:200]}"
+    open(os.path.join(work, "executor.log"), "w", encoding="utf-8").write((p.stdout or "")[-4000:] + "\n--stderr--\n" + (p.stderr or "")[-2000:])
+    if not os.path.exists(result):
+        return "error", f"executor rc={p.returncode} wrote no result.json: {(p.stderr or p.stdout or '')[-200:]}"
+    return "ok", result
+
+
+def ingest_result(home: str, cid: str, t: dict, res: dict) -> dict:
+    """Turn an agent result into ledger evidence, registered sources, acquired files, owner actions and FOLLOW-UP TASKS. A task never ends with just a file: it ends with
+    evidence, a next task, or an exact blocker with the queries already tried."""
+    if res.get("schema") != RESULT_SCHEMA or res.get("status") not in ("FINDINGS", "NO_USABLE_EVIDENCE", "BLOCKED"):
+        raise ValueError("not a sector-agent-result-v1 document")
+    bid, gid = t["brain"], t["gap"]
+    folder = DEFAULT_FOLDERS[bid]
+    fdir = os.path.join(home, folder)
+    led = L.Ledger(os.path.join(fdir, "research", "gap-ledger.json"), bid)
+    res = {**res, "taskId": t["id"], "gapId": gid}
+    atomic_json(os.path.join(fdir, "research", "agent-results", t["id"] + ".json"), res)
+    out = {"acquired": [], "registered": [], "ownerActions": 0, "followUps": []}
+    ev = D.Evidence(home, folder, cid, _fetcher or D.Fetcher(home=home))
+    for i, d in enumerate((res.get("datasets") or [])[:6]):
+        url = d.get("directUrl")
+        if not (url and d.get("verifiedAccess") and str(url).startswith("https://") and d.get("licence")):
+            if d.get("url"):
+                out["ownerActions"] += 0
+            continue
+        if re.search(r"[\s\x00-\x1f\x7f]", url) or len(url) > 2000 or len(url.split("/")) < 3:     # malformed (an executor's prose in the URL field): owner action, never a crash
+            led.block(gid, "external", f"dataset {d.get('title')}: the agent's directUrl is not a plain https URL", f"owner review of {d.get('url')}", cid)
+            out["ownerActions"] += 1
+            continue
+        host = url.split("/")[2].split(":")[0].lower()
+        if host not in D.allowed_hosts(home):
+            try:                                                       # the explicit, controlled registration mechanism - same checks as the CLI
+                D.register_source(home, "agent-" + re.sub(r"[^a-z0-9]+", "-", host), [host], str(d["licence"]), d.get("title") or host,
+                                  f"found by agent task {t['id']} for gap {gid}: {str(d.get('relevance'))[:200]}")
+                out["registered"].append(host)
+            except ValueError as e:
+                led.block(gid, "external", f"source {host} refused registration: {e}", f"owner review of {d.get('url')}", cid)
+                continue
+        if int(d.get("sizeBytes") or 0) > D.MAX_BYTES:
+            led.block(gid, "external", f"dataset {d.get('title')} is {d.get('sizeBytes')} bytes (over the {D.MAX_BYTES} limit)", f"owner decision to download {url}", cid)
+            continue
+        rel = ev.fetch("agent-datasets", f"{t['id']}_{i}_{re.sub(r'[^A-Za-z0-9._-]+', '_', url.rsplit('/', 1)[-1])[:60] or 'data'}", url, None, purpose=f"agent task {t['id']}: {d.get('title')}")
+        if rel:
+            out["acquired"].append({"path": rel, "title": d.get("title"), "analysisPlan": d.get("analysisPlan")})
+    ev.save()
+    ev.register(_manifest_lock)
+    for o in res.get("ownerActions") or []:
+        rec = D.owner_action(home, folder, cid, o["id"], gid, o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), [t["id"]], o.get("addresses") or gid)
+        led.block(gid, "external", f"{o['dataset']} ({rec['path']})", f"{o['publisher']}: {o['access']}", cid)
+        out["ownerActions"] += 1
+    n_new = led.seen_evidence([D.sha256(os.path.join(home, a["path"])) for a in out["acquired"]])
+    led.record(f"agent:{t['id']}", {"id": f"agent-{t['id']}", "run": "agent", "gaps": [gid]}, cid, "EVIDENCE" if (out["acquired"] or res.get("datasets")) else "NO_RESULT",
+               "ACQUIRED" if out["acquired"] else ("EVIDENCE_LEAD" if res.get("datasets") else None), n_new, str(res.get("summary") or "")[:200])
+    if res.get("datasets"):
+        led.touch([gid], "EVIDENCE_LEAD", t["id"], set(), False)
+    for n, a in enumerate(out["acquired"][:2]):                          # the next executable step: turn the dataset into a reviewed, re-runnable experiment
+        bp = os.path.join(fdir, "research", "agent-tasks", f"{t['id']}-experiment-{n}.json")
+        atomic_json(bp, {"schema": "sector-agent-research-task-v1", "brainId": bid, "gapId": gid, "kind": "implement-experiment", "dataset": a,
+                         "instructions": ["pre-declare thresholds before examining the data", "implement an offline, deterministic experiment (experiments.py + discovery.json avenue) that the validator re-runs from the hashed file",
+                                          "state the baseline honestly; match confounders; keep rejected hypotheses", "if the dataset cannot support a test, record the exact reason as a limitation"],
+                         "analysisPlan": a.get("analysisPlan"), "from": t["id"]})
+        ft = TQ.enqueue(home, bid, gid, "implement-experiment", f"implement experiment on {a.get('title')}", os.path.relpath(bp, home), cid, topic=a["path"], payload={"dataset": a["path"]})
+        out["followUps"].append(ft["id"])
+    if res["status"] in ("NO_USABLE_EVIDENCE", "BLOCKED") or not (res.get("datasets") or res.get("ownerActions")):
+        led.block(gid, "external", f"agent research found no usable evidence ({len(res.get('queriesTried') or [])} queries recorded in {t['id']})",
+                  str(res.get("nextSource") or "a source type not yet searched; see alreadyTried in the next task brief"), cid)
+    led.save()
+    return out
+
+
+def loop(home: str, cid: str, executor: str = "claude-cli", max_tasks: int = 10, max_hours: float = 6.0, parallel: int = 3, timeout: int = 1800, adapters: dict | None = None,
+         fetcher=None, exec_cfg: dict | None = None) -> dict:
+    """Run -> execute queued research -> ingest -> reassess, until the queue is drained, the task/time budget ends, or only session-only work remains."""
+    global _fetcher
+    _fetcher = fetcher or _fetcher or D.Fetcher(home=home)
+    rec = TQ.recover(home)
+    fin = run(home, cid, parallel, timeout, adapters, _fetcher, retry_failed=True)
+    cfg = {**DEFAULT_EXECUTOR, **(exec_cfg or discovery_cfg().get("executor") or {})}
+    t_end, done, log = time.time() + max_hours * 3600, 0, []
+    while executor != "none" and done < max_tasks and time.time() < t_end:
+        t = TQ.next_task(home, ("agent-research",))
+        if t is None:
+            break
+        if executor == "session":                                        # the coordinating Claude session executes it (subagent) and records it with `tasks done`
+            log.append({"dispatch": t["id"], "mode": "session"})
+            break
+        TQ.claim(home, t["id"], executor)
+        status, detail = execute_task(home, t, cfg)
+        if status != "ok":
+            TQ.fail(home, t["id"], detail or "executor error")
+            log.append({"task": t["id"], "status": "failed", "detail": (detail or "")[:120]})
+        else:
+            try:
+                ing = ingest_result(home, cid, t, json.load(open(detail, encoding="utf-8")))
+                TQ.complete(home, t["id"], f"acquired {len(ing['acquired'])}, owner actions {ing['ownerActions']}, follow-ups {len(ing['followUps'])}", os.path.relpath(detail, home))
+                log.append({"task": t["id"], "status": "done", **ing})
+            except Exception as e:                                       # noqa: BLE001 - an executor's result is untrusted input; one bad result never stops the loop
+                TQ.fail(home, t["id"], f"bad result: {type(e).__name__}: {str(e)[:150]}")
+                log.append({"task": t["id"], "status": "failed", "detail": str(e)[:120]})
+        done += 1
+    write_report(Campaign(home, cid))
+    return {"recoveredClaims": rec, "tracks": fin, "executed": done, "queue": TQ.counts(home), "log": log}
+
+
 # ------------------------------------------------------------------------------------------------------------------------------- report
 def write_report(c: Campaign) -> dict:
     st = c.load()
     rows = []
+    queue = TQ.load(c.home)["tasks"]
     for bid, t in st["tracks"].items():
         sg = t["stages"]
         val, cand, sc = (sg["validate"].get("result") or {}), (sg["candidate"].get("result") or {}), (sg["score"].get("result") or {})
         fol = sg["followup"].get("result") or {}
+        pend = [x["id"] for x in queue if x["brain"] == bid and x["status"] in ("QUEUED", "CLAIMED")]
         out = t.get("outcome") or {}
         owners = []
         d = os.path.join(c.home, t["folder"], "research", "data-acquisition")
@@ -1063,7 +1241,7 @@ def write_report(c: Campaign) -> dict:
                                        "verified": o["accessVerified"], "addresses": o["wouldAddress"]})
                 except (ValueError, OSError):
                     continue
-        rows.append({"brainId": bid, "folder": t["folder"], "stages": {s: sg[s]["status"] for s in STAGES},
+        rows.append({"brainId": bid, "folder": t["folder"], "pendingTasks": len(pend), "pendingTaskIds": pend[:20], "stages": {s: sg[s]["status"] for s in STAGES},
                      "executionComplete": all(sg[s]["status"] == "DONE" for s in STAGES),
                      "outcome": out.get("outcome"), "outcomeReason": out.get("reason"), "improvementCampaignSuccessful": bool(out.get("improvementCampaignSuccessful")),
                      "avenuesRun": out.get("avenuesRun"), "evidenceTiersReached": out.get("evidenceTiersReached"), "stop": fol.get("stop"),
@@ -1090,19 +1268,19 @@ def write_report(c: Campaign) -> dict:
     rep = {"schema": "sector-research-campaign-report-v2", "campaignId": c.cid, "generatedAt": now_iso(), "tracks": rows, "verification": st.get("verification"),
            "authoritativeScoresUnchanged": authoritative_hashes() == st["authoritativeBefore"],
            "complete": all(r["executionComplete"] for r in rows),            # EXECUTION complete: every stage ran. Not research complete.
-           "executionComplete": all(r["executionComplete"] for r in rows), "improvementCampaignsSuccessful": n_ok, "brains": len(rows),
+           "executionComplete": all(r["executionComplete"] for r in rows), "improvementCampaignsSuccessful": n_ok, "brains": len(rows), "taskQueue": TQ.counts(c.home), "pendingTasks": sum(r["pendingTasks"] for r in rows),
            "researchComplete": all(r["gaps"] and all(v == "RESOLVED_PENDING_APPROVAL" for v in r["gaps"].values()) for r in rows),   # blocked/exhausted is NOT complete
            "openGapsByBrain": open_gaps, "unresolvedGapsByBrain": {r["brainId"]: [g for g, v in r["gaps"].items() if v != "RESOLVED_PENDING_APPROVAL"] for r in rows}}
     atomic_json(os.path.join(c.dir, "report.json"), rep)
     lines = [f"# Research campaign {c.cid} — consolidated report", "",
              f"Generated {rep['generatedAt']}. **Execution complete: {rep['executionComplete']}** (every stage ran) — this is NOT research complete. "
              f"**Successful improvement campaigns: {n_ok}/{len(rows)}** (only a measured, independently validated capability improvement counts). "
-             f"Research complete: **{rep['researchComplete']}**. Authoritative score artifacts unchanged: **{rep['authoritativeScoresUnchanged']}**. Nothing here is approved memory.", "",
+             f"Research complete: **{rep['researchComplete']}**. Executable research tasks still queued: **{rep['pendingTasks']}** (queue: {rep['taskQueue']}); a STALLED Brain with queued tasks is waiting for `campaign.py loop`, not finished. Authoritative score artifacts unchanged: **{rep['authoritativeScoresUnchanged']}**. Nothing here is approved memory.", "",
              "Scores below are SCIENTIFIC CANDIDATE values from each Brain's own evaluator, non-authoritative. Engineering scores are a separate measure and are not touched.", "",
              "## Outcome per Brain", "", "| Brain | Outcome | Avenues | Best evidence tier | Validated by tier | Measured improvements | Package | Candidate score |", "|---|---|---|---|---|---|---|---|"]
     for r in rows:
         tiers = r["evidenceTiersReached"] or []
-        lines.append(f"| {r['brainId']} | **{r['outcome']}** — {r['outcomeReason']} | {r['avenuesRun']} | {tiers[-1] if tiers else '—'} | "
+        lines.append(f"| {r['brainId']} | **{r['outcome']}** — {r['outcomeReason']}{f" [{r['pendingTasks']} research task(s) queued]" if r['pendingTasks'] else ""} | {r['avenuesRun']} | {tiers[-1] if tiers else '—'} | "
                      f"{', '.join(f'{k}:{v}' for k, v in r['validatedByTier'].items()) or '—'} | {', '.join(r['improvements']) or 'none'} | "
                      f"{r['lifecycle'] or '—'} ({r['scientificChanges']} change(s), {r['rejectedHypotheses']} rejected hypothesis) | "
                      f"{r['scoreLabel']} |")
@@ -1175,7 +1353,16 @@ def brief(home: str, cid: str, bid: str) -> str:
 # ------------------------------------------------------------------------------------------------------------------------------- CLI
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("init", "run", "submit", "status", "report", "brief", "register-source"))
+    ap.add_argument("cmd", choices=("init", "run", "submit", "status", "report", "brief", "register-source", "loop", "tasks"))
+    ap.add_argument("sub", nargs="?", help="tasks: list | next | done | fail | block | recover")
+    ap.add_argument("--executor", default="claude-cli", choices=("claude-cli", "session", "none"))
+    ap.add_argument("--max-tasks", type=int, default=10)
+    ap.add_argument("--max-hours", type=float, default=6.0)
+    ap.add_argument("--id")
+    ap.add_argument("--result")
+    ap.add_argument("--error", default="")
+    ap.add_argument("--reason", default="")
+    ap.add_argument("--next-source", default="")
     ap.add_argument("--campaign", default="-")
     ap.add_argument("--budget-hours", type=float, help="init: research window (wall clock) for this campaign")
     ap.add_argument("--max-avenues", type=int, help="init: maximum research avenues per Brain")
@@ -1197,6 +1384,32 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     home = research_home(a.home)
     c = Campaign(home, a.campaign)
+    if a.cmd == "tasks":
+        if a.sub == "list" or not a.sub:
+            print(json.dumps({"counts": TQ.counts(home), "tasks": [{k: t[k] for k in ("id", "brain", "gap", "kind", "status", "priority", "attempts", "title")} for t in TQ.load(home)["tasks"]]}, indent=1))
+        elif a.sub == "next":
+            t = TQ.next_task(home)
+            if t:
+                t = TQ.claim(home, t["id"], "session")
+                print(json.dumps({**t, "briefContent": json.load(open(os.path.join(home, t["brief"]), encoding="utf-8")), "resultSchema": RESULT_SCHEMA}, indent=1))
+        elif a.sub == "done":
+            t = next(x for x in TQ.load(home)["tasks"] if x["id"] == a.id)
+            if t["kind"] == "agent-research":
+                ing = ingest_result(home, a.campaign, t, json.load(open(a.result, encoding="utf-8")))
+                TQ.complete(home, a.id, f"acquired {len(ing['acquired'])}, owner actions {ing['ownerActions']}, follow-ups {len(ing['followUps'])}", a.result)
+                print(json.dumps(ing, indent=1))
+            else:
+                TQ.complete(home, a.id, a.reason or "implemented", a.result)
+        elif a.sub == "fail":
+            TQ.fail(home, a.id, a.error)
+        elif a.sub == "block":
+            TQ.block(home, a.id, a.reason, a.next_source)
+        elif a.sub == "recover":
+            print(TQ.recover(home))
+        return 0
+    if a.cmd == "loop":
+        print(json.dumps(loop(home, a.campaign, a.executor, a.max_tasks, a.max_hours, a.parallel, a.timeout, load_adapters(a.adapters), D.OfflineFetcher() if a.offline else None), indent=1, default=str))
+        return 0
     if a.cmd == "register-source":
         print(json.dumps(D.register_source(home, a.source_id, a.host, a.licence, a.purpose, a.rationale), indent=1))
         return 0

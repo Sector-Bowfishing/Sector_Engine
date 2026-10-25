@@ -110,6 +110,7 @@ def home(tmp_path):
 def test_a_gap_no_avenue_covers_gets_an_agent_research_task_not_an_exhausted_label(home, monkeypatch):
     cfg = {"budget": {"wallSeconds": 3600, "maxAvenues": 10, "stallAvenues": 3},
            "brains": {"water-temp": {"weaknesses": [{"id": "G-NOCONNECTOR", "title": "something no connector knows about"}], "avenues": []}}}
+    monkeypatch.setattr(C.D, "load_gaps", lambda *a, **k: {"source": "test", "reconstructed": False, "gaps": []})
     monkeypatch.setattr(C, "discovery_cfg", lambda: cfg)
     C.init(home, "a1", brains=["water-temp"])
     C.run(home, "a1", adapters={}, fetcher=D.OfflineFetcher())
@@ -118,7 +119,10 @@ def test_a_gap_no_avenue_covers_gets_an_agent_research_task_not_an_exhausted_lab
     t = json.load(open(os.path.join(home, "water-temperature", "research", "agent-tasks", "G-NOCONNECTOR.json")))
     assert t["status"] == "OPEN" and t["gapId"] == "G-NOCONNECTOR" and any("search the open web" in x for x in t["how"]) and "treat a missing connector as no evidence" in t["mustNot"]
     out = C.Campaign(home, "a1").load()["tracks"]["water-temp"]["outcome"]
-    assert any("agent research task" in n for n in out["nextEvidenceSources"])
+    assert any("queued agent research" in n for n in out["nextEvidenceSources"])
+    import taskqueue as TQ
+    q = TQ.load(home)["tasks"]
+    assert len(q) == 1 and q[0]["kind"] == "agent-research" and q[0]["status"] == "QUEUED" and q[0]["gap"] == "G-NOCONNECTOR"        # executable work, not just a file
 
 
 def test_a_ninth_brain_is_onboarded_with_one_command_and_runs_through_the_coordinator(home, tmp_path, monkeypatch):
@@ -190,3 +194,147 @@ def test_practical_availability_is_computed_from_the_readiness_classes_and_candi
     wind = next(b for b in K.compute(ENGINE, h, "c1", readiness_path=rp)["brains"] if b["brainId"] == "wind")
     assert wind["current"]["dimensions"]["practicalAvailability"]["value"] == 0.5                       # (1.0 + 0.0) / 2 deployed capabilities
     assert wind["candidate"]["dimensions"]["practicalAvailability"]["value"] == round(2 / 3, 4)          # the validated candidate counts only in the candidate column
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- V1 scenarios + outcomes
+def _run_scenario(sc):
+    n = nodes(age_h=sc["ageHours"])
+    n["waterTemp"]["currentTempF"] = sc["tempF"]
+    if sc.get("windMph"):
+        n["wind"]["observation"]["sustainedMph"] = sc["windMph"]
+    if sc.get("dropNode"):
+        n[sc["dropNode"]] = None
+    spec = [{"ruleId": "LG-TMP-01", "species": "LNGR", "type": "thermal_cold", "expect": "cold_lt_warm", "claim": "longnose gar activity is lowest in cold water"},
+            {"ruleId": "SC-TMP-01", "species": "SVCP", "type": "thermal_cold", "expect": "cold_not_lower", "claim": "silver carp stay active in cold water"}]
+    ft = {"LG-TMP-01": {"decisive": 1, "verdict": "SUPPORTED", "ratio": 0.48, "ciLo": 0.3, "ciHi": 0.7}, "SC-TMP-01": {"decisive": 1, "verdict": "CONTRADICTED", "ratio": 0.08, "ciLo": 0.03, "ciHi": 0.49}}
+    return I.assess("Guntersville_AL", n, NOW, READY, field_tests=ft, spec_tests=spec, fp={"coldC": 15.0})
+
+
+def test_every_v1_internal_scenario_passes_its_pre_declared_expectations():
+    sc = json.load(open(os.path.join(ENGINE, "tools", "research", "scenarios", "v1_internal.json")))["scenarios"]
+    assert len(sc) >= 8
+    for s in sc:
+        r = _run_scenario(s)
+        f = {f"{x['brain']}:{x['factor']}": x for x in r["factors"]}
+        e = s["expect"]
+        for k in e.get("fresh", []):
+            assert f[k]["status"] == "FRESH", (s["id"], k)
+        for k in e.get("stale", []):
+            assert f[k]["status"] == "STALE", (s["id"], k)
+        for k in e.get("abstain", []):
+            assert f[k]["status"] == "ABSTAIN", (s["id"], k)
+        for k in e.get("missing", []):
+            assert f[k]["status"] == "MISSING", (s["id"], k)
+        for k in e.get("noValueFor", []):
+            assert "value" not in f[k], (s["id"], k)
+        for k in e.get("limiting", []):
+            assert k in r["overall"]["limitingFactors"], (s["id"], k)
+        shown = {x["ruleId"]: x for x in r["speciesNotes"]["shown"]}
+        assert set(e.get("notes", [])) <= set(shown), (s["id"], shown)
+        assert not (set(e.get("noNotes", [])) & set(shown)), (s["id"], shown)
+        assert set(e.get("withheld", [])) <= {x["ruleId"] for x in r["speciesNotes"]["withheld"]}, s["id"]
+        for k in e.get("borderline", []):
+            assert shown[k]["borderline"] is True and 0.5 <= shown[k]["applicabilityProbability"] < 0.8, (s["id"], shown[k])
+        if e.get("noSpeciesTempNotes"):
+            assert shown == {}, s["id"]
+        if "recommendation" in e:
+            assert r["overall"]["recommendation"] == e["recommendation"]
+
+
+def test_outcomes_are_recorded_append_only_and_compared_with_what_the_app_showed(tmp_path):
+    import outcomes as O2
+    h = str(tmp_path)
+    snap = tmp_path / "a.json"
+    snap.write_text(json.dumps(I.assess("Guntersville_AL", nodes(), NOW, READY, wind_climatology={"HSV": {"10": 0.7}}, month=10, station="HSV")))
+    O2.record(h, "Guntersville_AL", "2026-11-02T21:30", "tester", {"surfaceTempC": 11.0, "calmNight": True, "clarityFt": 3.0}, str(snap))
+    O2.record(h, "Guntersville_AL", "2026-11-03T21:30", "tester", {"surfaceTempC": 9.0, "calmNight": False}, str(snap))
+    with pytest.raises(ValueError):
+        O2.record(h, "Guntersville_AL", "2026-11-04", "tester", {"unknownField": 1})
+    ev = O2.evaluate(h, "Guntersville_AL")
+    assert ev["records"] == 2 and ev["tempComparisons"] == 2 and ev["tempBiasC"] == -0.0 + round(((10.0 - 11.0) + (10.0 - 9.0)) / 2, 3)
+    assert ev["calmComparisons"] == 2 and 0 <= ev["calmBrier"] <= 1 and "changes no score" in ev["note"]
+    assert len(open(os.path.join(h, "shared", "pilot", "outcomes", "Guntersville_AL.jsonl")).readlines()) == 2
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- spawn-temperature egg test
+def _egg_home(tmp_path, rows):
+    import csv as _csv
+    d = tmp_path / "fish-brain" / "sources" / "c" / "agent-datasets"
+    d.mkdir(parents=True)
+    with open(d / "T1_0_59a411d4e4b077f00567324b_f", "w", newline="") as fh:
+        w = _csv.writer(fh)
+        w.writerow(["Date", "H20 Temp", "Eggs"])
+        for t, e in rows:
+            w.writerow(["20130705", t, e])
+    return str(tmp_path)
+
+
+def _egg_spec():
+    return {"avenueId": "eggs", "params": {"datasetGlob": "fish-brain/sources/*/agent-datasets/*59a411d4e4b077f00567324b*", "tempCol": "H20 Temp", "eggCol": "Eggs", "ruleId": "SC-SPN-01",
+                                           "ruleMinC": 18.0, "ruleMaxC": 30.0, "lowMax": 0.10, "inMin": 0.10}}
+
+
+def test_egg_test_supports_a_spawn_bound_only_when_eggs_are_absent_below_and_present_inside(tmp_path):
+    import experiments as X2
+    rows = [(10 + i * 0.1, 0) for i in range(60)] + [(18.0 + i * 0.1, 5 if i % 3 == 0 else 0) for i in range(120)]       # none below 18; a third positive inside
+    h = _egg_home(tmp_path, rows)
+    r = X2.analyze_eggs_temp(h, _egg_spec(), [], [])
+    assert r["metrics"]["lowerBoundSupported"] == 1 and r["metrics"]["belowPositive"] == 0 and r["metrics"]["firstEggC"] == 18.0
+    f = {x["id"] for x in r["findings"]}
+    assert f == {"FISH-EGGS-SC-SPN-01", "FISH-EGGS-COVERAGE"}
+    v, why, measured = C.validate_finding(next(x for x in r["findings"] if x["id"] == "FISH-EGGS-COVERAGE"), h, {"discovery": {"exp": {"eggs": r["metrics"]}}})
+    assert v == "VALIDATED" and measured["improved"] is True
+
+
+def test_egg_test_rejects_a_bound_when_eggs_are_common_below_it_and_reports_missing_data_as_a_limitation(tmp_path):
+    import experiments as X2
+    rows = [(12 + i * 0.05, 3 if i % 2 else 0) for i in range(80)] + [(18.0 + i * 0.1, 2 if i % 2 else 0) for i in range(60)]
+    r = X2.analyze_eggs_temp(_egg_home(tmp_path, rows), _egg_spec(), [], [])
+    assert r["metrics"]["lowerBoundSupported"] == 0 and r["metrics"]["lowerBoundContradicted"] == 1 and r["findings"] == []     # a contradicted bound is not a supporting finding
+    empty = X2.analyze_eggs_temp(str(tmp_path / "nowhere"), _egg_spec(), [], [])
+    assert empty["findings"] == [] and empty["limitations"][0]["kind"] == "external"
+
+
+def _ltrm_home(tmp_path):
+    """Synthetic LTRM sample table: species NIGHTY is ~3x more catchable at night; FLAT has no day/night difference; both ~2x less catchable in cold water."""
+    import csv as _csv
+    import gzip as _gz
+    d = tmp_path / "fish-brain" / "sources" / "c"
+    d.mkdir(parents=True)
+    with _gz.open(d / "x_samples_v1.csv.gz", "wt", newline="") as fh:
+        w = _csv.writer(fh)
+        w.writerow(["barcode", "date", "pool", "stratum", "gear", "effHr", "tempC", "depthM", "CARP", "FWDM"])
+        n = 0
+        for yr in range(2000, 2012):
+            for pool in ("P1", "P2", "P3"):
+                for gear in ("D", "N"):
+                    for k in range(6):
+                        n += 1
+                        warm = k % 2 == 0
+                        base = 20 if warm else 10                       # cold halves the catch
+                        w.writerow([f"b{n}", f"{yr}-0{6 if warm else 4}-15", pool, "BWC-S", gear, 0.25, 22.0 if warm else 8.0, 1.0,
+                                    base + (n % 3), (base * (3 if gear == "N" else 1)) + (n % 3)])
+    (d / "x.zip").write_bytes(b"x")
+    return str(tmp_path), "fish-brain/sources/c/x_samples_v1.csv.gz"
+
+
+def test_ltrm_scan_emits_candidate_rules_only_for_effects_that_survive_multiple_comparison_correction(tmp_path):
+    import experiments as X2
+    h, rel = _ltrm_home(tmp_path)
+    spec = {"avenueId": "ltrm", "params": {"tests": [], "scan": {"species": ["CARP", "FWDM"], "bootstrap": 300}, "shallowDepthM": 3.0, "minEffortHours": 1.0, "coldC": 15.0, "warmC": 20.0,
+                                           "bootstrap": 200, "seed": 1, "noAdvantageUpper": 1.25, "warmNotLowerLower": 0.8}}
+    r = X2.analyze_ltrm(h, spec, [{"samples": rel}], [])
+    cands = {(c["species"], c["type"]): c for c in r["metrics"]["scanCandidates"]}
+    assert ("FWDM", "diel") in cands and cands[("FWDM", "diel")]["direction"] == "UP"                  # a real 3x night effect is found
+    assert ("CARP", "diel") not in cands                                                               # no effect: no candidate rule
+    assert ("CARP", "thermal_cold") in cands and cands[("CARP", "thermal_cold")]["direction"] == "DOWN"
+    assert any(f["id"] == "FISH-SCAN-RULES" for f in r["findings"]) and r["metrics"]["scanTestsRun"] == 4
+
+
+def test_validated_temperature_correction_is_shown_only_as_a_labelled_candidate_and_never_replaces_the_deployed_value():
+    cand = {"cell": "region_season", "offsetsC": {"Southeast|SON": -0.7, "Southeast|MAM": 1.1}}
+    r = I.assess("L", nodes(), NOW, READY, wt_candidate=cand, region="Southeast", month=4)
+    f = next(x for x in r["factors"] if x["factor"] == "modeledSurfaceTemp")
+    assert f["value"] == 10.0 and f["candidate"]["status"] == "CANDIDATE_NOT_APPROVED" and f["candidate"]["correctedValue"] == round(10.0 - 1.1, 2)
+    none = I.assess("L", nodes(), NOW, READY, wt_candidate=cand, region="Pacific", month=4)                              # no cell for this region: no candidate shown
+    assert "candidate" not in next(x for x in none["factors"] if x["factor"] == "modeledSurfaceTemp")
