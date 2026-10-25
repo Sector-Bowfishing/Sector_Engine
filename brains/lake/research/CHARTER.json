@@ -1,0 +1,78 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "lake-brain",
+ "role": "Water level and level-change state of the reservoir",
+ "bowfishingPurpose": "Level decides where fish can be reached: rising water floods shallow margins and vegetation where carp, buffalo and gar feed and spawn; falling or drawn-down water withdraws fish from the margins and exposes banks.",
+ "decisionsInformed": [
+  "which shoreline and flats are fishable",
+  "whether flooded-margin spawning/feeding conditions exist",
+  "bank access and launch safety"
+ ],
+ "predicts": [
+  {
+   "id": "observedPoolElevation",
+   "desc": "Current operator-reported pool elevation with age",
+   "status": "MEASUREMENT"
+  },
+  {
+   "id": "levelState",
+   "desc": "Where the level sits relative to operator pool and its recent trend",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "floodMarginAccess",
+   "desc": "Rising/falling stage as an access signal",
+   "status": "HYPOTHESIS_NOT_VALIDATED"
+  }
+ ],
+ "mustNotPredict": [
+  "fish location",
+  "flood-pool alerts without an operator threshold"
+ ],
+ "needsFrom": [],
+ "providesTo": [
+  {
+   "brain": "depth",
+   "output": "level",
+   "why": "effective depth is level minus a datum"
+  },
+  {
+   "brain": "vegetation",
+   "output": "level",
+   "why": "exposed or flooded vegetation"
+  },
+  {
+   "brain": "biological-state",
+   "output": "stageTrend",
+   "why": "rising-stage rules (spawn, flooded-margin use)"
+  },
+  {
+   "brain": "sector-intelligence",
+   "output": "level",
+   "why": "conditions assembly"
+  },
+  {
+   "brain": "water-temp",
+   "output": "observedPoolElevation",
+   "why": "reservoir size modulates warming and cooling"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "independent fresh level source per fleet lake",
+   "target": 1.0,
+   "direction": "higher",
+   "rationale": "a level that is missing or stale makes every level-dependent output abstain"
+  }
+ ],
+ "priorityQuestions": [
+  "Which fleet lakes have no independent fresh level source?",
+  "How much does a rise of N feet per day change shallow-margin access?"
+ ],
+ "abstainWhen": [
+  "no source fresher than 3 h",
+  "operator datum unknown"
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "note": "Recorded charter dependencies that are NOT declared in brain.json `consumes`. This list may only shrink: a new undeclared edge fails tests/test_integration.py. Fix an entry by declaring the input in the consumer's brain.json (an Engine contract change, reviewed separately) and removing it here.",
+ "undeclaredInBrainJson": [
+  "biological-state <- depth",
+  "biological-state <- lake-brain",
+  "biological-state <- vegetation",
+  "biological-state <- water-clarity",
+  "biological-state <- water-temp",
+  "water-clarity <- wind",
+  "water-temp <- lake-brain"
+ ]
+}

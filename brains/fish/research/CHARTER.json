@@ -1,0 +1,93 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "biological-state",
+ "role": "Species behaviour and seasonal state for bowfishing targets",
+ "bowfishingPurpose": "Which species are present, when they spawn, whether they move into the shallows at night and what habitat they use decides whether a trip finds fish at all.",
+ "decisionsInformed": [
+  "which species to expect",
+  "is spawning or shallow-water movement likely"
+ ],
+ "predicts": [
+  {
+   "id": "speciesPresence",
+   "desc": "Presence labels per lake with source confidence",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "evidenceGradedRules",
+   "desc": "Species rules with graded evidence",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "responseBandOrSpawnWindow",
+   "desc": "Behaviour response bands",
+   "status": "ABSTAIN_NO_FIELD_VALIDATION"
+  }
+ ],
+ "mustNotPredict": [
+  "a species rule that has no direct, fully read evidence"
+ ],
+ "needsFrom": [
+  {
+   "brain": "water-temp",
+   "output": "modeledSurfaceTemp",
+   "why": "temperature-gated spawn and activity rules",
+   "requiredFor": "spawn windows, cold inactivity"
+  },
+  {
+   "brain": "lake-brain",
+   "output": "stageTrend",
+   "why": "rising-stage rules",
+   "requiredFor": "flooded-margin use"
+  },
+  {
+   "brain": "water-clarity",
+   "output": "clarityBand",
+   "why": "clarity-dependent species rules",
+   "requiredFor": "turbidity tolerance"
+  },
+  {
+   "brain": "depth",
+   "output": "shallowArea",
+   "why": "shallow-water use",
+   "requiredFor": "night shallow feeding"
+  },
+  {
+   "brain": "vegetation",
+   "output": "vegetationState",
+   "why": "habitat rules",
+   "requiredFor": "spawn in vegetation"
+  }
+ ],
+ "providesTo": [
+  {
+   "brain": "sector-intelligence",
+   "output": "biology",
+   "why": "conditions assembly"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "species rules compared with a field outcome",
+   "target": 1,
+   "direction": "higher",
+   "rationale": "none is today"
+  },
+  {
+   "metric": "species rules with direct, fully read evidence",
+   "target": 1.0,
+   "direction": "higher",
+   "rationale": "unsupported rules must abstain"
+  }
+ ],
+ "priorityQuestions": [
+  "Do dated field records support the spawn temperature bands?",
+  "Which species show shallow night movement in reservoirs, and at what temperature?"
+ ],
+ "abstainWhen": [
+  "rule evidence indirect or unread",
+  "input Brain stale or missing"
+ ]
+}

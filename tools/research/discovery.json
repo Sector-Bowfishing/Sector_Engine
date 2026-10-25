@@ -59,6 +59,12 @@
      "title": "Production M0 has a systematic seasonal bias in the fleet validation (spring MAM about -1.05 C cold, autumn SON about +0.74 C warm) that nothing corrects; every temperature-gated bowfishing rule inherits it",
      "evidence": "water-temperature/validation/campaign-2026-10-22/wt_w1_reproduction.json",
      "nextEvidence": "continuous lake-surface (<=1.5 m) temperature loggers at 6+ reservoirs outside the M0 calibration set (see the owner-action record)"
+    },
+    {
+     "id": "WATERTEMP-DISC-UNCERTAINTY",
+     "title": "The published water-temperature uncertainty is one fixed band although the model error is seasonal and asymmetric (spring cold, autumn warm), so the band is wrong in some seasons",
+     "evidence": "water-temperature/validation/campaign-2026-10-22/wt_w1_reproduction.json",
+     "nextEvidence": "more independent lake-surface temperature loggers to confirm interval calibration"
     }
    ],
    "avenues": [
@@ -163,6 +169,66 @@
       "minSensorLakes": 3,
       "minDays": 60,
       "rung": "class_season"
+     }
+    },
+    {
+     "id": "wt-interval-season",
+     "run": "experiment",
+     "experiment": "wt-interval",
+     "ladder": "wt-interval",
+     "requires": [
+      "sensors"
+     ],
+     "gaps": [
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "resolves": [
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "params": {
+      "storedResiduals": "water-temperature/validation/valmodel/residuals_primary.csv.gz",
+      "trainThroughYear": 2021,
+      "minCell": 30,
+      "shrink": 10,
+      "worseTol": 0.15,
+      "minSensorLakes": 3,
+      "minDays": 60,
+      "nominal": 0.8,
+      "holdoutMinDeltaIs": 0.15,
+      "minCalibGain": 0.05,
+      "sensorMinDeltaIs": 0.05,
+      "maxWorseShare": 0.25,
+      "rung": "season"
+     }
+    },
+    {
+     "id": "wt-interval-region-season",
+     "run": "experiment",
+     "experiment": "wt-interval",
+     "ladder": "wt-interval",
+     "requires": [
+      "sensors"
+     ],
+     "gaps": [
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "resolves": [
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "params": {
+      "storedResiduals": "water-temperature/validation/valmodel/residuals_primary.csv.gz",
+      "trainThroughYear": 2021,
+      "minCell": 30,
+      "shrink": 10,
+      "worseTol": 0.15,
+      "minSensorLakes": 3,
+      "minDays": 60,
+      "nominal": 0.8,
+      "holdoutMinDeltaIs": 0.15,
+      "minCalibGain": 0.05,
+      "sensorMinDeltaIs": 0.05,
+      "maxWorseShare": 0.25,
+      "rung": "region_season"
      }
     },
     {
@@ -428,6 +494,128 @@
      }
     },
     {
+     "id": "fish-ltrm-field-test",
+     "run": "experiment",
+     "experiment": "ltrm-fish",
+     "gaps": [
+      "FISH-VAL-001",
+      "FISH-EVI-001"
+     ],
+     "acquiring": true,
+     "params": {
+      "tests": [
+       {
+        "ruleId": "FD-MV-02",
+        "species": "FWDM",
+        "type": "diel",
+        "expect": "night_gt_day",
+        "claim": "freshwater drum feed actively at night"
+       },
+       {
+        "ruleId": "BF-MV-03",
+        "species": "BWFN",
+        "type": "diel",
+        "expect": "night_gt_day",
+        "claim": "bowfin move shallow and feed at night in warm months"
+       },
+       {
+        "ruleId": "SG-NGT-01",
+        "species": "STGR",
+        "type": "diel",
+        "expect": "night_gt_day",
+        "claim": "spotted gar are more active at night (outside spring)"
+       },
+       {
+        "ruleId": "SC-MV-01",
+        "species": "SVCP",
+        "type": "diel_shallow",
+        "expect": "night_gt_day",
+        "claim": "silver carp catch rates rise at night near shore"
+       },
+       {
+        "ruleId": "SB-NGT-01",
+        "species": "SMBF",
+        "type": "diel_shallow",
+        "expect": "night_gt_day",
+        "claim": "smallmouth buffalo night catch far above day at <3 m (draft: >10x)",
+        "magnitude": 10
+       },
+       {
+        "ruleId": "CC-DIEL-02",
+        "species": "CARP",
+        "type": "diel",
+        "expect": "night_lt_day",
+        "claim": "common carp are less active at night"
+       },
+       {
+        "ruleId": "CC-DIEL-05",
+        "species": "CARP",
+        "type": "diel",
+        "expect": "no_night_advantage",
+        "claim": "common carp show no consistent night advantage in navigation pools"
+       },
+       {
+        "ruleId": "BF-MV-04",
+        "species": "BWFN",
+        "type": "thermal_cold",
+        "expect": "cold_lt_warm",
+        "claim": "bowfin activity falls below about 10 C"
+       },
+       {
+        "ruleId": "SG-MV-03",
+        "species": "STGR",
+        "type": "thermal_cold",
+        "expect": "cold_lt_warm",
+        "claim": "spotted gar movement falls below about 10 C"
+       },
+       {
+        "ruleId": "LG-TMP-01",
+        "species": "LNGR",
+        "type": "thermal_cold",
+        "expect": "cold_lt_warm",
+        "claim": "longnose gar activity is lowest in cold water"
+       },
+       {
+        "ruleId": "CC-TMP-04",
+        "species": "CARP",
+        "type": "thermal_warm",
+        "expect": "warm_not_lower",
+        "claim": "common carp do not avoid 26-30 C water"
+       },
+       {
+        "ruleId": "SC-TMP-01",
+        "species": "SVCP",
+        "type": "thermal_cold",
+        "expect": "cold_not_lower",
+        "claim": "silver carp stay active in cold water"
+       }
+      ],
+      "url": "https://www.umesc.usgs.gov/data_library/fisheries/LTRM_FISH_DATA_ENTIRE.zip",
+      "speciesCodes": [
+       "CARP",
+       "SMBF",
+       "BMBF",
+       "BKBF",
+       "FWDM",
+       "LNGR",
+       "SNGR",
+       "STGR",
+       "BWFN",
+       "GSCP",
+       "SVCP",
+       "BHCP"
+      ],
+      "minEffortHours": 3.0,
+      "shallowDepthM": 3.0,
+      "coldC": 15.0,
+      "warmC": 20.0,
+      "bootstrap": 800,
+      "seed": 20261025,
+      "noAdvantageUpper": 1.25,
+      "warmNotLowerLower": 0.8
+     }
+    },
+    {
      "id": "fish-datasets-telemetry",
      "run": "experiment",
      "experiment": "dataset-search",
@@ -518,6 +706,44 @@
    ],
    "avenues": [
     {
+     "id": "wind-calm-night-climatology",
+     "run": "experiment",
+     "experiment": "iem-wind",
+     "gaps": [
+      "WIND-DISC-NO-CLIMATOLOGY",
+      "WIND-CNF-001"
+     ],
+     "resolves": [
+      "WIND-DISC-NO-CLIMATOLOGY"
+     ],
+     "acquiring": true,
+     "params": {
+      "stations": [
+       "HSV",
+       "DCU",
+       "MSL",
+       "BNA",
+       "MEM",
+       "TUL",
+       "STL",
+       "FSM"
+      ],
+      "yearFrom": 2015,
+      "yearTo": 2024,
+      "tz": "America/Chicago",
+      "nightStartHour": 21,
+      "nightEndHour": 4,
+      "calmKt": 8.7,
+      "calmGustKt": 13.0,
+      "minObsPerNight": 5,
+      "trainThroughYear": 2021,
+      "minNightsPerMonth": 40,
+      "minDeltaMae": 0.02,
+      "minStationShare": 0.75,
+      "minStations": 5
+     }
+    },
+    {
      "id": "wind-literature",
      "run": "connector",
      "kind": "literature",
@@ -600,7 +826,15 @@
     "movable": "only by changing the committed evidence the rubric reads",
     "baseline": 6.7,
     "baselineNote": "Wind Capability v2 adopted value (a different measurement from the 3.3 certification score)"
-   }
+   },
+   "weaknesses": [
+    {
+     "id": "WIND-DISC-NO-CLIMATOLOGY",
+     "title": "The Wind Brain has no seasonal prior for how often a night is calm enough to fish at a lake, so a bowfisher cannot plan beyond the forecast horizon",
+     "evidence": "brains/wind/research/GAPS.json (WIND-CNF-001 strong-wind nights are not forecast)",
+     "nextEvidence": "hourly airport observations from stations near each reservoir (IEM archive); lake-surface anemometers for over-water wind"
+    }
+   ]
   },
   "depth": {
    "kind": "literature",

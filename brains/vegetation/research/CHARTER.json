@@ -1,0 +1,53 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "vegetation",
+ "role": "Observed submerged and emergent vegetation at the surface",
+ "bowfishingPurpose": "Vegetation holds fish and flooded vegetation is where carp and gar spawn and feed, but dense mats also foul lines and block shots; potential habitat must never be reported as observed vegetation.",
+ "decisionsInformed": [
+  "where fish-holding cover exists",
+  "where mats make shooting impractical"
+ ],
+ "predicts": [
+  {
+   "id": "surfaceVegetationState",
+   "desc": "Observed surface vegetation presence",
+   "status": "ABSTAIN_UNVALIDATED"
+  }
+ ],
+ "mustNotPredict": [
+  "species-level plant labels",
+  "percent cover from habitat potential"
+ ],
+ "needsFrom": [
+  {
+   "brain": "lake-brain",
+   "output": "observedPoolElevation",
+   "why": "flooded vs exposed vegetation",
+   "requiredFor": "stage-dependent state"
+  }
+ ],
+ "providesTo": [
+  {
+   "brain": "biological-state",
+   "output": "vegetationState",
+   "why": "vegetation-dependent habitat rules"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "held-out lake accuracy of observed presence",
+   "target": 0.8,
+   "direction": "higher",
+   "rationale": "the observer failed held-out gates"
+  }
+ ],
+ "priorityQuestions": [
+  "Where do dated, georeferenced vegetation surveys exist for fleet lakes?"
+ ],
+ "abstainWhen": [
+  "no live observation",
+  "no approved release"
+ ]
+}

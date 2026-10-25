@@ -1,0 +1,75 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "sector-intelligence",
+ "role": "Assembles the other Brains' outputs into bowfishing conditions, with uncertainty",
+ "bowfishingPurpose": "A bowfisher needs one honest picture: what is known, how old, how certain, and what is not known. Intelligence must show gaps and disagreement, never invent a recommendation from unvalidated parts.",
+ "decisionsInformed": [
+  "is the information good enough to plan a trip",
+  "which factor is limiting"
+ ],
+ "predicts": [
+  {
+   "id": "conditionsAssembly",
+   "desc": "Per-factor status with age and uncertainty",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "recommendation",
+   "desc": "A fishing recommendation",
+   "status": "ABSTAIN_UNSUPPORTED"
+  }
+ ],
+ "mustNotPredict": [
+  "a combined score from unvalidated inputs"
+ ],
+ "needsFrom": [
+  {
+   "brain": "lake-brain",
+   "output": "level",
+   "why": "conditions",
+   "requiredFor": "assembly"
+  },
+  {
+   "brain": "water-temp",
+   "output": "temperature",
+   "why": "conditions",
+   "requiredFor": "assembly"
+  },
+  {
+   "brain": "water-clarity",
+   "output": "clarity",
+   "why": "conditions",
+   "requiredFor": "assembly"
+  },
+  {
+   "brain": "wind",
+   "output": "wind",
+   "why": "conditions",
+   "requiredFor": "assembly"
+  },
+  {
+   "brain": "biological-state",
+   "output": "biology",
+   "why": "conditions",
+   "requiredFor": "assembly"
+  }
+ ],
+ "providesTo": [],
+ "fitForPurpose": [
+  {
+   "metric": "cross-Brain relationships validated",
+   "target": 1,
+   "direction": "higher",
+   "rationale": "none is today"
+  }
+ ],
+ "priorityQuestions": [
+  "Which cross-Brain relationships hold on independent data (for example temperature and rising stage together)?"
+ ],
+ "abstainWhen": [
+  "any required input stale",
+  "fewer than 3 inputs fresh"
+ ]
+}
