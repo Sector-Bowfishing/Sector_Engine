@@ -24,6 +24,7 @@ import statistics as S
 import urllib.parse
 
 import discovery as D
+from integration import SPECIES  # noqa: E402  (species codes -> common names; one table)
 
 SEASON = {12: "DJF", 1: "DJF", 2: "DJF", 3: "MAM", 4: "MAM", 5: "MAM", 6: "JJA", 7: "JJA", 8: "JJA"}
 RUNGS = {"season": lambda r: r["season"], "region_season": lambda r: f"{r['region']}|{r['season']}", "class_season": lambda r: f"{r['cls']}|{r['season']}"}

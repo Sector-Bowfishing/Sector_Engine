@@ -293,3 +293,39 @@ def test_egg_test_rejects_a_bound_when_eggs_are_common_below_it_and_reports_miss
     assert r["metrics"]["lowerBoundSupported"] == 0 and r["metrics"]["lowerBoundContradicted"] == 1 and r["findings"] == []     # a contradicted bound is not a supporting finding
     empty = X2.analyze_eggs_temp(str(tmp_path / "nowhere"), _egg_spec(), [], [])
     assert empty["findings"] == [] and empty["limitations"][0]["kind"] == "external"
+
+
+def _ltrm_home(tmp_path):
+    """Synthetic LTRM sample table: species NIGHTY is ~3x more catchable at night; FLAT has no day/night difference; both ~2x less catchable in cold water."""
+    import csv as _csv
+    import gzip as _gz
+    d = tmp_path / "fish-brain" / "sources" / "c"
+    d.mkdir(parents=True)
+    with _gz.open(d / "x_samples_v1.csv.gz", "wt", newline="") as fh:
+        w = _csv.writer(fh)
+        w.writerow(["barcode", "date", "pool", "stratum", "gear", "effHr", "tempC", "depthM", "CARP", "FWDM"])
+        n = 0
+        for yr in range(2000, 2012):
+            for pool in ("P1", "P2", "P3"):
+                for gear in ("D", "N"):
+                    for k in range(6):
+                        n += 1
+                        warm = k % 2 == 0
+                        base = 20 if warm else 10                       # cold halves the catch
+                        w.writerow([f"b{n}", f"{yr}-0{6 if warm else 4}-15", pool, "BWC-S", gear, 0.25, 22.0 if warm else 8.0, 1.0,
+                                    base + (n % 3), (base * (3 if gear == "N" else 1)) + (n % 3)])
+    (d / "x.zip").write_bytes(b"x")
+    return str(tmp_path), "fish-brain/sources/c/x_samples_v1.csv.gz"
+
+
+def test_ltrm_scan_emits_candidate_rules_only_for_effects_that_survive_multiple_comparison_correction(tmp_path):
+    import experiments as X2
+    h, rel = _ltrm_home(tmp_path)
+    spec = {"avenueId": "ltrm", "params": {"tests": [], "scan": {"species": ["CARP", "FWDM"], "bootstrap": 300}, "shallowDepthM": 3.0, "minEffortHours": 1.0, "coldC": 15.0, "warmC": 20.0,
+                                           "bootstrap": 200, "seed": 1, "noAdvantageUpper": 1.25, "warmNotLowerLower": 0.8}}
+    r = X2.analyze_ltrm(h, spec, [{"samples": rel}], [])
+    cands = {(c["species"], c["type"]): c for c in r["metrics"]["scanCandidates"]}
+    assert ("FWDM", "diel") in cands and cands[("FWDM", "diel")]["direction"] == "UP"                  # a real 3x night effect is found
+    assert ("CARP", "diel") not in cands                                                               # no effect: no candidate rule
+    assert ("CARP", "thermal_cold") in cands and cands[("CARP", "thermal_cold")]["direction"] == "DOWN"
+    assert any(f["id"] == "FISH-SCAN-RULES" for f in r["findings"]) and r["metrics"]["scanTestsRun"] == 4
