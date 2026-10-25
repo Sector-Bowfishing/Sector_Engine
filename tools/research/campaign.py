@@ -1219,10 +1219,12 @@ def loop(home: str, cid: str, executor: str = "claude-cli", max_tasks: int = 10,
 def write_report(c: Campaign) -> dict:
     st = c.load()
     rows = []
+    queue = TQ.load(c.home)["tasks"]
     for bid, t in st["tracks"].items():
         sg = t["stages"]
         val, cand, sc = (sg["validate"].get("result") or {}), (sg["candidate"].get("result") or {}), (sg["score"].get("result") or {})
         fol = sg["followup"].get("result") or {}
+        pend = [x["id"] for x in queue if x["brain"] == bid and x["status"] in ("QUEUED", "CLAIMED")]
         out = t.get("outcome") or {}
         owners = []
         d = os.path.join(c.home, t["folder"], "research", "data-acquisition")
@@ -1235,7 +1237,7 @@ def write_report(c: Campaign) -> dict:
                                        "verified": o["accessVerified"], "addresses": o["wouldAddress"]})
                 except (ValueError, OSError):
                     continue
-        rows.append({"brainId": bid, "folder": t["folder"], "stages": {s: sg[s]["status"] for s in STAGES},
+        rows.append({"brainId": bid, "folder": t["folder"], "pendingTasks": len(pend), "pendingTaskIds": pend[:20], "stages": {s: sg[s]["status"] for s in STAGES},
                      "executionComplete": all(sg[s]["status"] == "DONE" for s in STAGES),
                      "outcome": out.get("outcome"), "outcomeReason": out.get("reason"), "improvementCampaignSuccessful": bool(out.get("improvementCampaignSuccessful")),
                      "avenuesRun": out.get("avenuesRun"), "evidenceTiersReached": out.get("evidenceTiersReached"), "stop": fol.get("stop"),
@@ -1262,19 +1264,19 @@ def write_report(c: Campaign) -> dict:
     rep = {"schema": "sector-research-campaign-report-v2", "campaignId": c.cid, "generatedAt": now_iso(), "tracks": rows, "verification": st.get("verification"),
            "authoritativeScoresUnchanged": authoritative_hashes() == st["authoritativeBefore"],
            "complete": all(r["executionComplete"] for r in rows),            # EXECUTION complete: every stage ran. Not research complete.
-           "executionComplete": all(r["executionComplete"] for r in rows), "improvementCampaignsSuccessful": n_ok, "brains": len(rows),
+           "executionComplete": all(r["executionComplete"] for r in rows), "improvementCampaignsSuccessful": n_ok, "brains": len(rows), "taskQueue": TQ.counts(c.home), "pendingTasks": sum(r["pendingTasks"] for r in rows),
            "researchComplete": all(r["gaps"] and all(v == "RESOLVED_PENDING_APPROVAL" for v in r["gaps"].values()) for r in rows),   # blocked/exhausted is NOT complete
            "openGapsByBrain": open_gaps, "unresolvedGapsByBrain": {r["brainId"]: [g for g, v in r["gaps"].items() if v != "RESOLVED_PENDING_APPROVAL"] for r in rows}}
     atomic_json(os.path.join(c.dir, "report.json"), rep)
     lines = [f"# Research campaign {c.cid} — consolidated report", "",
              f"Generated {rep['generatedAt']}. **Execution complete: {rep['executionComplete']}** (every stage ran) — this is NOT research complete. "
              f"**Successful improvement campaigns: {n_ok}/{len(rows)}** (only a measured, independently validated capability improvement counts). "
-             f"Research complete: **{rep['researchComplete']}**. Authoritative score artifacts unchanged: **{rep['authoritativeScoresUnchanged']}**. Nothing here is approved memory.", "",
+             f"Research complete: **{rep['researchComplete']}**. Executable research tasks still queued: **{rep['pendingTasks']}** (queue: {rep['taskQueue']}); a STALLED Brain with queued tasks is waiting for `campaign.py loop`, not finished. Authoritative score artifacts unchanged: **{rep['authoritativeScoresUnchanged']}**. Nothing here is approved memory.", "",
              "Scores below are SCIENTIFIC CANDIDATE values from each Brain's own evaluator, non-authoritative. Engineering scores are a separate measure and are not touched.", "",
              "## Outcome per Brain", "", "| Brain | Outcome | Avenues | Best evidence tier | Validated by tier | Measured improvements | Package | Candidate score |", "|---|---|---|---|---|---|---|---|"]
     for r in rows:
         tiers = r["evidenceTiersReached"] or []
-        lines.append(f"| {r['brainId']} | **{r['outcome']}** — {r['outcomeReason']} | {r['avenuesRun']} | {tiers[-1] if tiers else '—'} | "
+        lines.append(f"| {r['brainId']} | **{r['outcome']}** — {r['outcomeReason']}{f" [{r['pendingTasks']} research task(s) queued]" if r['pendingTasks'] else ""} | {r['avenuesRun']} | {tiers[-1] if tiers else '—'} | "
                      f"{', '.join(f'{k}:{v}' for k, v in r['validatedByTier'].items()) or '—'} | {', '.join(r['improvements']) or 'none'} | "
                      f"{r['lifecycle'] or '—'} ({r['scientificChanges']} change(s), {r['rejectedHypotheses']} rejected hypothesis) | "
                      f"{r['scoreLabel']} |")
