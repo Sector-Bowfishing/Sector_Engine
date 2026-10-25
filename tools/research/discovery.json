@@ -121,7 +121,9 @@
       "worseTolIs": 0.15,
       "nominal": 0.8,
       "minDeltaIs": 0.05,
-      "minCalibGain": 0.05
+      "minCalibGain": 0.05,
+      "holdoutMinDelta": 0.1,
+      "holdoutMinDeltaIs": 0.15
      }
     },
     {

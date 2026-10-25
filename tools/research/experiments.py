@@ -903,7 +903,11 @@ def analyze_wt_multilake(home: str, spec: dict, mine: list, allacq: list, upstre
             c[s] = (rmse(bb), rmse(cc))
         n = max(len(c), 1)
         pb, pc = math.sqrt(sum(a * a for a, _ in c.values()) / n), math.sqrt(sum(b_ * b_ for _, b_ in c.values()) / n)
-        m[f"bias_{rung}"] = {"rmseBase": round(pb, 4), "rmseCand": round(pc, 4), "deltaRmse": round(pb - pc, 4), "lakesWorseShare": round(sum(cb > ca + p["worseTol"] for ca, cb in c.values()) / n, 4), "lakes": len(c)}
+        test_rows = [r for r in rows if r["year"] > p["trainThroughYear"]]
+        hb_ = [r["e"] for r in test_rows]
+        hc_ = [r["e"] - off.get(keyf(r), 0.0) for r in test_rows]
+        m[f"bias_{rung}"] = {"rmseBase": round(pb, 4), "rmseCand": round(pc, 4), "deltaRmse": round(pb - pc, 4), "lakesWorseShare": round(sum(cb > ca + p["worseTol"] for ca, cb in c.values()) / n, 4), "lakes": len(c),
+                             "holdoutDeltaRmse": round(rmse(hb_) - rmse(hc_), 4)}               # the ORIGINAL pre-declared fleet temporal-holdout leg is kept: a rule is not relaxed after the data are seen
         # interval: fixed symmetric band vs cell quantiles (both fitted on the fleet residuals only)
         alpha = 1 - p["nominal"]
         cells = {}
@@ -924,7 +928,22 @@ def analyze_wt_multilake(home: str, spec: dict, mine: list, allacq: list, upstre
             isb[s], isc[s], covb[s], covc[s] = tb / len(e), tc / len(e), hb / len(e), hc / len(e)
         mb, mc = sum(isb.values()) / n, sum(isc.values()) / n
         cal = lambda cv: sum(abs(v - p["nominal"]) <= 0.1 for v in cv.values()) / n  # noqa: E731
-        m[f"interval_{rung}"] = {"isBase": round(mb, 4), "isCand": round(mc, 4), "deltaIs": round(mb - mc, 4), "lakesWorseShare": round(sum(isc[s] > isb[s] + p["worseTolIs"] for s in isb) / n, 4),
+        tcells = {}
+        for r in test_rows:
+            tcells.setdefault(r["season"], []).append(r)
+        hisb = hisc = 0.0
+        cb_s, cc_s = {}, {}
+        for r in test_rows:
+            lo, hi = cq.get(keyf(r), (-q0, q0))
+            hisb += _is(r["e"], -q0, q0, alpha)
+            hisc += _is(r["e"], lo, hi, alpha)
+            z = cb_s.setdefault(r["season"], [0, 0, 0])
+            z[0] += 1
+            z[1] += (-q0 <= r["e"] <= q0)
+            z[2] += (lo <= r["e"] <= hi)
+        wb = max(abs(z[1] / z[0] - p["nominal"]) for z in cb_s.values())
+        wc = max(abs(z[2] / z[0] - p["nominal"]) for z in cb_s.values())
+        m[f"interval_{rung}"] = {"holdoutDeltaIs": round((hisb - hisc) / len(test_rows), 4), "holdoutCalibGain": round(wb - wc, 4), "isBase": round(mb, 4), "isCand": round(mc, 4), "deltaIs": round(mb - mc, 4), "lakesWorseShare": round(sum(isc[s] > isb[s] + p["worseTolIs"] for s in isb) / n, 4),
                                  "calibratedShareBase": round(cal(covb), 4), "calibratedShareCand": round(cal(covc), 4), "calibGain": round(cal(covc) - cal(covb), 4),
                                  "meanCoverageBase": round(sum(covb.values()) / n, 4), "meanCoverageCand": round(sum(covc.values()) / n, 4)}
     for rung in ("season", "region_season"):
@@ -936,7 +955,8 @@ def analyze_wt_multilake(home: str, spec: dict, mine: list, allacq: list, upstre
               "scoreImpact": "None under water-temp-level-ladder-v1 (gate-based).", "limitations": "Natural and managed lakes of 1 km2 or more, April-October surface observations, mostly northern and central US."}
         cap = {"kind": "prediction", "baselineKind": "production M0 without correction", "name": "production M0 water-temperature RMSE on independent lakes (C)", "direction": "lower_better", "baselineMetric": f"{g}.{bk}.rmseBase",
                "candidateMetric": f"{g}.{bk}.rmseCand", "minDelta": p["sensorMinDelta"], "nMetric": f"{g}.{bk}.lakes", "minN": p["minLakes"],
-               "tests": [{"metric": f"{g}.{bk}.deltaRmse", "op": ">=", "threshold": p["sensorMinDelta"]}, {"metric": f"{g}.{bk}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
+               "tests": [{"metric": f"{g}.{bk}.holdoutDeltaRmse", "op": ">=", "threshold": p["holdoutMinDelta"]}, {"metric": f"{g}.{bk}.deltaRmse", "op": ">=", "threshold": p["sensorMinDelta"]},
+                         {"metric": f"{g}.{bk}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
         findings.append(D.finding(f"WT-MULTILAKE-BIAS-{rung}", f"A {rung.replace('_', ' x ')} correction lowers M0 error on independent lakes.", "PARAMETER", paths[:200], home, "fleet-fitted offsets applied to independent lakes",
                                   f"{g}.{bk}.deltaRmse", ">=", p["sensorMinDelta"], tier="INDEPENDENTLY_VALIDATED", change=cb, capability=cap))
         ci = {"scientificChange": f"Publish a {rung.replace('_', ' x ')} empirical 80% error interval instead of one fixed band.", "previous": "One symmetric band for every lake and season.",
@@ -945,8 +965,8 @@ def analyze_wt_multilake(home: str, spec: dict, mine: list, allacq: list, upstre
               "limitations": "Same scope as the correction test."}
         capi = {"kind": "uncertainty", "baselineKind": "the single fixed error band used today", "name": "interval score of the published water-temperature band on independent lakes (C)", "direction": "lower_better",
                 "baselineMetric": f"{g}.{ik}.isBase", "candidateMetric": f"{g}.{ik}.isCand", "minDelta": p["minDeltaIs"], "nMetric": f"{g}.bias_{rung}.lakes", "minN": p["minLakes"],
-                "tests": [{"metric": f"{g}.{ik}.deltaIs", "op": ">=", "threshold": p["minDeltaIs"]}, {"metric": f"{g}.{ik}.calibGain", "op": ">=", "threshold": p["minCalibGain"]},
-                          {"metric": f"{g}.{ik}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
+                "tests": [{"metric": f"{g}.{ik}.holdoutDeltaIs", "op": ">=", "threshold": p["holdoutMinDeltaIs"]}, {"metric": f"{g}.{ik}.holdoutCalibGain", "op": ">=", "threshold": p["minCalibGain"]},
+                          {"metric": f"{g}.{ik}.deltaIs", "op": ">=", "threshold": p["minDeltaIs"]}, {"metric": f"{g}.{ik}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
         findings.append(D.finding(f"WT-MULTILAKE-INTERVAL-{rung}", f"A {rung.replace('_', ' x ')} interval is better calibrated and sharper on independent lakes.", "PARAMETER", paths[:200], home,
                                   "fleet-fitted interval quantiles applied to independent lakes", f"{g}.{ik}.deltaIs", ">=", p["minDeltaIs"], tier="INDEPENDENTLY_VALIDATED", change=ci, capability=capi))
     return {"metrics": m, "findings": findings, "weak": [], "limitations": []}
