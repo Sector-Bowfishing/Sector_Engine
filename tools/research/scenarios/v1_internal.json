@@ -1,0 +1,14 @@
+{
+ "schema": "sector-internal-test-scenarios-v1",
+ "description": "Repeatable scenarios for the Sector Intelligence V1 internal test. Each is executed against integration.assess with synthetic Brain states; a field test repeats the same checks on live states.",
+ "scenarios": [
+  {"id": "S1-fresh", "ageHours": 1, "tempF": 62.6, "expect": {"fresh": ["lake-brain:observedPoolElevation", "water-temp:modeledSurfaceTemp", "wind:observation"], "abstain": ["wind:strongWindNight", "depth:allDepthOutputs", "vegetation:allVegetationOutputs"], "recommendation": "ABSTAIN"}},
+  {"id": "S2-stale", "ageHours": 30, "tempF": 62.6, "expect": {"stale": ["lake-brain:observedPoolElevation", "water-temp:modeledSurfaceTemp"], "noSpeciesTempNotes": true, "recommendation": "ABSTAIN"}},
+  {"id": "S3-strong-wind-night", "ageHours": 1, "tempF": 62.6, "windMph": 22, "expect": {"abstain": ["wind:strongWindNight"], "noValueFor": ["wind:strongWindNight"]}},
+  {"id": "S4-cold-water", "ageHours": 1, "tempF": 46.4, "expect": {"notes": ["LG-TMP-01"], "withheld": ["SC-TMP-01"]}},
+  {"id": "S5-warm-water", "ageHours": 1, "tempF": 75.2, "expect": {"noNotes": ["LG-TMP-01"]}},
+  {"id": "S6-borderline", "ageHours": 1, "tempF": 57.2, "expect": {"notes": ["LG-TMP-01"], "borderline": ["LG-TMP-01"]}},
+  {"id": "S7-missing-wind", "ageHours": 1, "tempF": 62.6, "dropNode": "wind", "expect": {"missing": ["wind:observation"], "limiting": ["wind:observation MISSING"]}},
+  {"id": "S8-depth-vegetation", "ageHours": 1, "tempF": 62.6, "expect": {"abstain": ["depth:allDepthOutputs", "vegetation:allVegetationOutputs"], "noValueFor": ["depth:allDepthOutputs", "vegetation:allVegetationOutputs"]}}
+ ]
+}

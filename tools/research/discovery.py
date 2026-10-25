@@ -177,12 +177,28 @@ class Fetcher:
         raise FetchError(f"{err} after {self.retries} attempts: {url[:160]}")
 
 
+    def head(self, base: str, params=None) -> int | None:
+        """Content-Length of an allowlisted URL (None when unknown): lets a connector decide BEFORE downloading whether a file is within limits."""
+        url = self.url(base, params)
+        try:
+            req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                n = r.headers.get("Content-Length")
+                return int(n) if n and n.isdigit() else None
+        except (urllib.error.URLError, TimeoutError, OSError, ValueError):
+            return None
+
+
 class OfflineFetcher(Fetcher):
     """Used by tests and by `--offline`: every request fails (the campaign must still complete)."""
 
     def get(self, base, params=None, accept=None):
         self.url(base, params)
         raise FetchError("offline: network acquisition disabled")
+
+    def head(self, base, params=None):
+        self.url(base, params)
+        return None
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- evidence store

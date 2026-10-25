@@ -615,7 +615,24 @@
       "bootstrap": 800,
       "seed": 20261025,
       "noAdvantageUpper": 1.25,
-      "warmNotLowerLower": 0.8
+      "warmNotLowerLower": 0.8,
+      "scan": {
+       "species": [
+        "CARP",
+        "SMBF",
+        "BMBF",
+        "BKBF",
+        "FWDM",
+        "LNGR",
+        "SNGR",
+        "STGR",
+        "BWFN",
+        "GSCP",
+        "SVCP",
+        "BHCP"
+       ],
+       "bootstrap": 1200
+      }
      }
     },
     {
@@ -859,6 +876,31 @@
    "minLeads": 3,
    "avenues": [
     {
+     "id": "depth-ehydro-survey-map",
+     "run": "experiment",
+     "experiment": "ehydro",
+     "gaps": [
+      "DEPTH-DAT-001",
+      "DEPTH-VAL-001"
+     ],
+     "acquiring": true,
+     "params": {
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "halfDeg": 0.12,
+      "datumSample": [
+       "Guntersville",
+       "Wheeler",
+       "Wilson",
+       "Pickwick",
+       "Kentucky",
+       "Chickamauga",
+       "Hartwell"
+      ],
+      "maxZipsPerLake": 2,
+      "maxZipBytes": 8000000
+     }
+    },
+    {
      "id": "depth-literature",
      "run": "connector",
      "kind": "literature",
@@ -955,7 +997,8 @@
     "class": "NONE",
     "source": "RECORDED",
     "movable": "no rubric exists; the research candidate value is informational"
-   }
+   },
+   "fleetForcingDir": "water-temperature/validation/valmodel/forcing"
   },
   "vegetation": {
    "kind": "literature",
@@ -973,6 +1016,28 @@
    "fromYear": 2010,
    "minLeads": 3,
    "avenues": [
+    {
+     "id": "veg-nas-observed",
+     "run": "experiment",
+     "experiment": "nas",
+     "gaps": [
+      "VEG-VAL-001"
+     ],
+     "acquiring": true,
+     "params": {
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "genera": [
+       "Hydrilla",
+       "Myriophyllum",
+       "Najas",
+       "Potamogeton",
+       "Egeria"
+      ],
+      "pageSize": 500,
+      "maxPages": 4,
+      "matchDeg": 0.08
+     }
+    },
     {
      "id": "veg-literature",
      "run": "connector",
@@ -1050,7 +1115,8 @@
     "class": "NONE",
     "source": "RECORDED",
     "movable": "no rubric exists; the research candidate value is informational"
-   }
+   },
+   "fleetForcingDir": "water-temperature/validation/valmodel/forcing"
   },
   "sector-intelligence": {
    "kind": "upstream",

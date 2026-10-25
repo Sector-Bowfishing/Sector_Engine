@@ -194,3 +194,63 @@ def test_practical_availability_is_computed_from_the_readiness_classes_and_candi
     wind = next(b for b in K.compute(ENGINE, h, "c1", readiness_path=rp)["brains"] if b["brainId"] == "wind")
     assert wind["current"]["dimensions"]["practicalAvailability"]["value"] == 0.5                       # (1.0 + 0.0) / 2 deployed capabilities
     assert wind["candidate"]["dimensions"]["practicalAvailability"]["value"] == round(2 / 3, 4)          # the validated candidate counts only in the candidate column
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- V1 scenarios + outcomes
+def _run_scenario(sc):
+    n = nodes(age_h=sc["ageHours"])
+    n["waterTemp"]["currentTempF"] = sc["tempF"]
+    if sc.get("windMph"):
+        n["wind"]["observation"]["sustainedMph"] = sc["windMph"]
+    if sc.get("dropNode"):
+        n[sc["dropNode"]] = None
+    spec = [{"ruleId": "LG-TMP-01", "species": "LNGR", "type": "thermal_cold", "expect": "cold_lt_warm", "claim": "longnose gar activity is lowest in cold water"},
+            {"ruleId": "SC-TMP-01", "species": "SVCP", "type": "thermal_cold", "expect": "cold_not_lower", "claim": "silver carp stay active in cold water"}]
+    ft = {"LG-TMP-01": {"decisive": 1, "verdict": "SUPPORTED", "ratio": 0.48, "ciLo": 0.3, "ciHi": 0.7}, "SC-TMP-01": {"decisive": 1, "verdict": "CONTRADICTED", "ratio": 0.08, "ciLo": 0.03, "ciHi": 0.49}}
+    return I.assess("Guntersville_AL", n, NOW, READY, field_tests=ft, spec_tests=spec, fp={"coldC": 15.0})
+
+
+def test_every_v1_internal_scenario_passes_its_pre_declared_expectations():
+    sc = json.load(open(os.path.join(ENGINE, "tools", "research", "scenarios", "v1_internal.json")))["scenarios"]
+    assert len(sc) >= 8
+    for s in sc:
+        r = _run_scenario(s)
+        f = {f"{x['brain']}:{x['factor']}": x for x in r["factors"]}
+        e = s["expect"]
+        for k in e.get("fresh", []):
+            assert f[k]["status"] == "FRESH", (s["id"], k)
+        for k in e.get("stale", []):
+            assert f[k]["status"] == "STALE", (s["id"], k)
+        for k in e.get("abstain", []):
+            assert f[k]["status"] == "ABSTAIN", (s["id"], k)
+        for k in e.get("missing", []):
+            assert f[k]["status"] == "MISSING", (s["id"], k)
+        for k in e.get("noValueFor", []):
+            assert "value" not in f[k], (s["id"], k)
+        for k in e.get("limiting", []):
+            assert k in r["overall"]["limitingFactors"], (s["id"], k)
+        shown = {x["ruleId"]: x for x in r["speciesNotes"]["shown"]}
+        assert set(e.get("notes", [])) <= set(shown), (s["id"], shown)
+        assert not (set(e.get("noNotes", [])) & set(shown)), (s["id"], shown)
+        assert set(e.get("withheld", [])) <= {x["ruleId"] for x in r["speciesNotes"]["withheld"]}, s["id"]
+        for k in e.get("borderline", []):
+            assert shown[k]["borderline"] is True and 0.5 <= shown[k]["applicabilityProbability"] < 0.8, (s["id"], shown[k])
+        if e.get("noSpeciesTempNotes"):
+            assert shown == {}, s["id"]
+        if "recommendation" in e:
+            assert r["overall"]["recommendation"] == e["recommendation"]
+
+
+def test_outcomes_are_recorded_append_only_and_compared_with_what_the_app_showed(tmp_path):
+    import outcomes as O2
+    h = str(tmp_path)
+    snap = tmp_path / "a.json"
+    snap.write_text(json.dumps(I.assess("Guntersville_AL", nodes(), NOW, READY, wind_climatology={"HSV": {"10": 0.7}}, month=10, station="HSV")))
+    O2.record(h, "Guntersville_AL", "2026-11-02T21:30", "tester", {"surfaceTempC": 11.0, "calmNight": True, "clarityFt": 3.0}, str(snap))
+    O2.record(h, "Guntersville_AL", "2026-11-03T21:30", "tester", {"surfaceTempC": 9.0, "calmNight": False}, str(snap))
+    with pytest.raises(ValueError):
+        O2.record(h, "Guntersville_AL", "2026-11-04", "tester", {"unknownField": 1})
+    ev = O2.evaluate(h, "Guntersville_AL")
+    assert ev["records"] == 2 and ev["tempComparisons"] == 2 and ev["tempBiasC"] == -0.0 + round(((10.0 - 11.0) + (10.0 - 9.0)) / 2, 3)
+    assert ev["calmComparisons"] == 2 and 0 <= ev["calmBrier"] <= 1 and "changes no score" in ev["note"]
+    assert len(open(os.path.join(h, "shared", "pilot", "outcomes", "Guntersville_AL.jsonl")).readlines()) == 2

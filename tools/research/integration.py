@@ -69,7 +69,12 @@ def _factor(brain, factor, value, unit, when, limit_h, now, klass, reason=None, 
     return out
 
 
-def species_notes(temp_c, field_tests, spec_tests, p):
+def _phi(x):
+    import math
+    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+
+def species_notes(temp_c, field_tests, spec_tests, p, sigma=2.3):
     """Field-compared Fish rules that apply now. Only SUPPORTED rules are shown; CONTRADICTED ones are withheld (listed); the rest are not claimed."""
     shown, withheld = [], []
     for t in spec_tests:
@@ -80,16 +85,22 @@ def species_notes(temp_c, field_tests, spec_tests, p):
         if v["verdict"] == "CONTRADICTED":
             withheld.append({"ruleId": t["ruleId"], "species": sp, "reason": f"field comparison contradicts the rule ({t['claim']}): rate ratio {v['ratio']} (95% CI {v['ciLo']}-{v['ciHi']})"})
             continue
-        applies = True
+        applies, prob = True, None
         if t["type"] == "thermal_cold":
-            applies = temp_c is not None and temp_c < p["coldC"] and t["expect"] == "cold_lt_warm"
+            # the temperature is modeled with an error: the rule applies with the probability that the TRUE temperature is below the threshold (normal error, fleet RMSE)
+            prob = None if temp_c is None else round(_phi((p["coldC"] - temp_c) / sigma), 3)
+            applies = prob is not None and prob >= 0.5 and t["expect"] == "cold_lt_warm"
         elif t["type"] == "thermal_warm":
             applies = temp_c is not None and 26 <= temp_c < 30
         elif t["type"] in ("diel", "diel_shallow") and t["expect"] != "night_gt_day":
             applies = False                                      # only positive night findings are shown as night notes
         if applies:
-            shown.append({"ruleId": t["ruleId"], "species": sp, "note": t["claim"], "evidence": f"field comparison (river surrogate): rate ratio {v['ratio']} (95% CI {v['ciLo']}-{v['ciHi']})",
-                          "label": "EXPERIMENTAL"})
+            n = {"ruleId": t["ruleId"], "species": sp, "note": t["claim"], "evidence": f"field comparison (river surrogate): rate ratio {v['ratio']} (95% CI {v['ciLo']}-{v['ciHi']})",
+                 "label": "EXPERIMENTAL"}
+            if prob is not None:
+                n["applicabilityProbability"] = prob
+                n["borderline"] = prob < 0.8
+            shown.append(n)
     return {"shown": shown, "withheld": withheld}
 
 
@@ -120,7 +131,7 @@ def assess(lake_id, nodes, now, readiness=None, wind_climatology=None, month=Non
         if pr is not None:
             prior = {"station": station, "month": month, "probabilityOfCalmNight": pr, "basis": "airport hourly wind, held-out-year validated climatology; an over-land proxy for the shoreline",
                      "definition": "every hourly sustained wind <= 8.7 kt and gust <= 13 kt between 21:00 and 04:00 local"}
-    notes = species_notes(tc if (tc is not None and F[1]["status"] == "FRESH") else None, field_tests, spec_tests or [], fp or {"coldC": 15.0}) if field_tests else {"shown": [], "withheld": []}
+    notes = species_notes(tc if (tc is not None and F[1]["status"] == "FRESH") else None, field_tests, spec_tests or [], fp or {"coldC": 15.0}, temp_error_c) if field_tests else {"shown": [], "withheld": []}
     fresh = [f for f in F if f["status"] == "FRESH"]
     stale = [f for f in F if f["status"] == "STALE"]
     miss = [f for f in F if f["status"] == "MISSING"]

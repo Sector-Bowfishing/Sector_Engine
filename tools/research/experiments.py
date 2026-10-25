@@ -261,7 +261,7 @@ def _ltrm_rows(path):
     return out
 
 
-def _boot_ratio(clusters, min_eff, rng, boots):
+def _boot_ratio(clusters, min_eff, rng, boots, alpha=0.05):
     """Ratio of pooled CPUE A/B over matched cells present in both groups; 95% CI by bootstrap over clusters (pool x year)."""
     def ratio(cl):
         cells = {}
@@ -294,7 +294,7 @@ def _boot_ratio(clusters, min_eff, rng, boots):
     vals.sort()
     if len(vals) < boots * 0.8:
         return None
-    return {"ratio": r0, "lo": vals[int(0.025 * len(vals))], "hi": vals[int(0.975 * len(vals)) - 1], "effortA": ea, "effortB": eb, "catchA": ca, "catchB": cb}
+    return {"ratio": r0, "lo": vals[int(alpha / 2 * len(vals))], "hi": vals[int((1 - alpha / 2) * len(vals)) - 1], "effortA": ea, "effortB": eb, "catchA": ca, "catchB": cb}
 
 
 def _verdict(expect, r, spec):
@@ -324,7 +324,8 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
     rows = _ltrm_rows(os.path.join(home, path))
     g = f"discovery.exp.{spec['avenueId']}"
     res, findings = {}, []
-    for t in p["tests"]:
+
+    def one_test(t, boots, alpha):
         sp, ty = t["species"], t["type"]
         by = {}
         for r in rows:
@@ -363,9 +364,15 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
                 d[3] += eff
         clusters = [{k: tuple(v) for k, v in cl.items()} for _, cl in sorted(by.items())]
         rng = random.Random(p["seed"])
-        out = _boot_ratio(clusters, 0.25, rng, p["bootstrap"]) if clusters else None
+        out = _boot_ratio(clusters, 0.25, rng, boots, alpha) if clusters else None
         if out is None or out["effortA"] < p["minEffortHours"] or out["effortB"] < p["minEffortHours"]:
-            res[t["ruleId"]] = {"verdict": "INSUFFICIENT_DATA", "decisive": 0, "effortA": round((out or {}).get("effortA", 0), 2), "effortB": round((out or {}).get("effortB", 0), 2)}
+            return None, {"verdict": "INSUFFICIENT_DATA", "decisive": 0, "effortA": round((out or {}).get("effortA", 0), 2), "effortB": round((out or {}).get("effortB", 0), 2)}
+        return out, None
+
+    for t in p["tests"]:
+        out, bad = one_test(t, p["bootstrap"], 0.05)
+        if bad:
+            res[t["ruleId"]] = bad
             continue
         v = _verdict(t["expect"], out, p)
         entry = {"verdict": v, "decisive": int(v in ("SUPPORTED", "CONTRADICTED")), "ratio": round(out["ratio"], 4), "ciLo": round(out["lo"], 4), "ciHi": round(out["hi"], 4),
@@ -373,8 +380,28 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
         if t.get("magnitude"):
             entry["magnitudeClaimMet"] = int(out["lo"] >= t["magnitude"])
         res[t["ruleId"]] = entry
+    # ---- discovery scan: NEW candidate rules. Every species x {night vs day, cold vs warm} not already declared, with a Bonferroni-corrected interval over the whole scan.
+    scan_cands, scan_n = [], 0
+    sc = p.get("scan")
+    if sc:
+        declared = {(t["species"], "diel" if t["type"].startswith("diel") else "thermal") for t in p["tests"]}
+        todo = [(sp, ty) for sp in sc["species"] for ty in ("diel", "thermal_cold") if (sp, "diel" if ty == "diel" else "thermal") not in declared]
+        alpha = 0.05 / max(len(todo), 1)
+        for sp, ty in todo:
+            scan_n += 1
+            out, bad = one_test({"species": sp, "type": ty}, sc["bootstrap"], alpha)
+            if bad:
+                continue
+            if out["lo"] > 1 or out["hi"] < 1:
+                up = out["lo"] > 1
+                what = {"diel": ("more", "fewer") , "thermal_cold": ("more", "fewer")}[ty]
+                scan_cands.append({"species": sp, "name": SPECIES.get(sp, sp), "type": ty, "direction": "UP" if up else "DOWN", "ratio": round(out["ratio"], 4),
+                                   "ci": [round(out["lo"], 4), round(out["hi"], 4)], "alpha": round(alpha, 5), "effortHours": [round(out["effortA"], 1), round(out["effortB"], 1)],
+                                   "catch": [out["catchA"], out["catchB"]],
+                                   "candidateRule": (f"{SPECIES.get(sp, sp)} catch rate is {'higher' if up else 'lower'} at night than by day in electrofishing (rate ratio {round(out['ratio'], 2)})" if ty == "diel" else
+                                                     f"{SPECIES.get(sp, sp)} catch rate is {'higher' if up else 'lower'} in cold water (<{p['coldC']} C) than in warm water (>={p['warmC']} C) (rate ratio {round(out['ratio'], 2)})")})
     decisive = [k for k, v in res.items() if v["decisive"]]
-    m = {"testsRun": len(res), "rulesFieldTestedBase": 0, "rulesFieldTestedCand": len(decisive), "decisiveRules": len(decisive),
+    m = {"scanTestsRun": scan_n, "scanCandidateRules": len(scan_cands), "scanCandidates": scan_cands, "testsRun": len(res), "rulesFieldTestedBase": 0, "rulesFieldTestedCand": len(decisive), "decisiveRules": len(decisive),
          "supported": sum(v["verdict"] == "SUPPORTED" for v in res.values()), "contradicted": sum(v["verdict"] == "CONTRADICTED" for v in res.values()),
          "inconclusive": sum(v["verdict"] == "INCONCLUSIVE" for v in res.values()), "insufficient": sum(v["verdict"] == "INSUFFICIENT_DATA" for v in res.values()),
          "samples": len(rows), "tests": res}
@@ -402,6 +429,20 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
                "candidateMetric": f"{g}.rulesFieldTestedCand", "minDelta": 1, "nMetric": f"{g}.testsRun", "minN": 1, "tests": [{"metric": f"{g}.decisiveRules", "op": ">=", "threshold": 1}]}
         findings.append(D.finding("FISH-FIELD-COVERAGE", f"{len(decisive)} Fish rules now have a decisive independent field comparison.", "RULE", paths, home, "pre-declared rule tests on LTRM",
                                   f"{g}.decisiveRules", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    if scan_cands:
+        cchange = {"scientificChange": "Add field-derived candidate behaviour rules for species/conditions no written rule covered (night versus day and cold versus warm catchability).",
+                   "previous": "These species/conditions had no rule or a rule without a field comparison.",
+                   "proposed": {"candidateRules": scan_cands, "status": "CANDIDATE_NOT_APPROVED", "scope": "Upper Mississippi navigation pools (river surrogate); electrofishing catchability, not abundance"},
+                   "evidenceSummary": f"{scan_n} untested species x condition pairs scanned on {len(rows)} samples; {len(scan_cands)} remain decisive after a Bonferroni-corrected interval.",
+                   "validationMethod": "matched-stratum catch-per-effort ratios (pool x stratum x year), cluster bootstrap, Bonferroni over the whole scan",
+                   "validationResults": {"scanTestsRun": scan_n, "scanCandidateRules": len(scan_cands)},
+                   "practicalEffect": "Gives the Fish Brain evidence-backed candidate rules (for example which species are more catchable at night) to review, instead of leaving most species with no field-derived rule.",
+                   "scoreImpact": "None under biological-state-score-v1; counted as validation coverage in the capability contract.",
+                   "limitations": "Catchability, not abundance; day/night gear efficiency differs; river surrogate; candidate rules need review and Tennessee-system data before any publication."}
+        scap = {"kind": "coverage", "baselineKind": "none: these species/conditions had no field-derived rule", "name": "species behaviours with a field-derived candidate rule", "direction": "higher_better",
+                "baselineMetric": f"{g}.rulesFieldTestedBase", "candidateMetric": f"{g}.scanCandidateRules", "minDelta": 1, "nMetric": f"{g}.scanTestsRun", "minN": 1, "tests": [{"metric": f"{g}.scanCandidateRules", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("FISH-SCAN-RULES", f"{len(scan_cands)} new field-derived candidate behaviour rules after multiple-comparison correction.", "RULE", paths, home, "pre-declared scan of every untested species x condition pair",
+                                  f"{g}.scanCandidateRules", ">=", 1, tier="CANDIDATE_CHANGE", change=cchange, capability=scap))
     lim = [{"limitation": "field tests use Upper Mississippi river pools; Tennessee-system reservoir transferability is untested", "kind": "scope", "gap": "FISH-VAL-001"}]
     owner = [{"id": "fish-tennessee-field-data", "gap": "FISH-VAL-001", "publisher": "TVA reservoir fish programs and the Alabama / Tennessee fisheries agencies",
               "dataset": "day/night electrofishing or creel records with water temperature for Tennessee-system reservoirs (the LTRM comparison is a river surrogate)",
@@ -516,6 +557,171 @@ def analyze_iem_wind(home: str, spec: dict, mine: list, allacq: list, upstream=N
                                   "airport hourly wind, nightly maxima, train/test by year", f"{g}.pooledDeltaMae", ">=", p["minDeltaMae"], tier="INDEPENDENTLY_VALIDATED", change=change, capability=cap))
     return {"metrics": m, "findings": findings, "weak": [] if stations else ["no-wind-data"], "limitations": [] if stations else [{"limitation": "IEM wind data not available", "kind": "external", "gap": "WIND-CNF-001",
             "nextSource": "retry mesonet.agron.iastate.edu in a later campaign"}]}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Depth (USACE eHydro)
+EH = "https://services7.arcgis.com/n1YM8pTrFmm7L4hs/arcgis/rest/services/eHydro_Survey_Data/FeatureServer/0/query"
+
+
+def acquire_ehydro(ev, home, spec, it, targets, gaps):
+    p = spec["params"]
+    lakes = D.fleet(home, p)
+    h = p["halfDeg"]
+    files = {}
+    for l in lakes:
+        env = f"{l['lon'] - h:.4f},{l['lat'] - h:.4f},{l['lon'] + h:.4f},{l['lat'] + h:.4f}"
+        files[l["key"]] = ev.fetch("ehydro-footprints", f"{l['key']}.json", EH, {"where": "1=1", "geometry": env, "geometryType": "esriGeometryEnvelope", "inSR": 4326, "spatialRel": "esriSpatialRelIntersects",
+                                   "outFields": "surveytype,surveydateend,usacedistrictcode,sourcedatalocation,channelareaidfk", "returnGeometry": "false", "resultRecordCount": 500, "f": "json"},
+                                   purpose=f"USACE hydrographic survey footprints near {l['name']}")
+    zips = {}
+    for sub in p["datumSample"]:                                           # a few small survey packages per pilot reservoir: the vertical datum is stated in their metadata
+        key = next((k for k in files if sub.lower() in k.lower() and files[k]), None)
+        if not key:
+            continue
+        feats = json.load(open(os.path.join(home, files[key]), encoding="utf-8")).get("features") or []
+        cands = sorted((f["attributes"] for f in feats if f["attributes"].get("sourcedatalocation") and f["attributes"].get("surveydateend")), key=lambda a: -a["surveydateend"])
+        for a in cands[:p["maxZipsPerLake"] * 4]:
+            url = a["sourcedatalocation"]
+            n = ev.fetcher.head(url)
+            if n is None or n > p["maxZipBytes"]:
+                continue
+            rel = ev.fetch("ehydro-surveys", f"{key}__{os.path.basename(url)}", url, None, purpose=f"survey package ({n} bytes) with vertical datum metadata near {key}")
+            if rel:
+                zips.setdefault(key, []).append({"path": rel, "survey": os.path.basename(url), "year": dt.datetime.fromtimestamp(a["surveydateend"] / 1000, dt.timezone.utc).year})
+            if len(zips.get(key, [])) >= p["maxZipsPerLake"]:
+                break
+    return {"lakesQueried": len(lakes), "footprints": files, "zips": zips}
+
+
+DATUM_RE = re.compile(r"(?i)(NAVD\s*-?\s*88|NGVD\s*-?\s*29|NAVD\s*1988|MLLW|mean lower low water|vertical\s+datum[^<\n]{0,60}|pool\s+(?:elevation|stage|datum)[^<\n]{0,40}|low\s+water\s+reference\s+plane|LWRP)")
+
+
+def analyze_ehydro(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    import zipfile
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    fp, zips = {}, {}
+    for a in mine:
+        fp.update(a.get("footprints") or {})
+        zips.update(a.get("zips") or {})
+    per, paths = {}, []
+    for key, rel in sorted(fp.items()):
+        if not rel:
+            continue
+        feats = json.load(open(os.path.join(home, rel), encoding="utf-8")).get("features") or []
+        yrs = sorted(dt.datetime.fromtimestamp(f["attributes"]["surveydateend"] / 1000, dt.timezone.utc).year for f in feats if f["attributes"].get("surveydateend"))
+        if feats:
+            per[key] = {"surveys": len(feats), "latestYear": yrs[-1] if yrs else None, "since2015": sum(y >= 2015 for y in yrs), "districts": sorted({f["attributes"].get("usacedistrictcode") for f in feats if f["attributes"].get("usacedistrictcode")})}
+            paths.append(rel)
+    datum = {}
+    for key, lst in sorted(zips.items()):
+        for z in lst:
+            toks = set()
+            try:
+                with zipfile.ZipFile(os.path.join(home, z["path"])) as zf:
+                    for n in zf.namelist():
+                        if n.lower().endswith((".xml", ".txt", ".htm", ".html")) and zf.getinfo(n).file_size < 2_000_000:
+                            toks |= {m.group(0).strip()[:80] for m in DATUM_RE.finditer(zf.read(n).decode("utf-8", "replace"))}
+            except (zipfile.BadZipFile, OSError):
+                continue
+            if toks:
+                datum.setdefault(key, {"survey": z["survey"], "year": z["year"], "datumStatements": sorted(toks)[:6], "path": z["path"]})
+                paths.append(z["path"])
+    fleet_n = max(len(fp), 1)
+    m = {"fleetLakes": len(fp), "lakesWithSurvey": len(per), "lakesWithSurveySince2015": sum(1 for v in per.values() if v["since2015"]), "lakesWithDocumentedDatum": len(datum),
+         "lakesWithSurveyBase": 0, "lakesWithDocumentedDatumBase": 0, "perLake": per, "datum": datum}
+    findings = []
+    if per:
+        change = {"scientificChange": "Add a source map of which fleet lakes have dated USACE hydrographic surveys and which have a vertical datum documented in a sampled survey package.",
+                  "previous": "Depth has no per-lake survey source map; datum coverage is unknown for most of the fleet (DEPTH-DAT-001).",
+                  "proposed": {"lakesWithSurvey": sorted(per), "lakesWithDocumentedDatum": sorted(datum), "note": "availability and datum documentation only; depth is not computed and the Depth runtime still abstains"},
+                  "evidenceSummary": f"{len(per)} of {len(fp)} fleet lakes have survey footprints; {len(datum)} lake(s) have a datum statement read from a downloaded survey package.",
+                  "validationMethod": "ArcGIS feature-service envelope queries per lake; metadata of sampled survey packages searched for vertical-datum statements (offline recompute)",
+                  "validationResults": {k: m[k] for k in ("fleetLakes", "lakesWithSurvey", "lakesWithSurveySince2015", "lakesWithDocumentedDatum")},
+                  "practicalEffect": "Shows where shallow-water depth could be derived at all, and which lakes still need an operator datum document, instead of leaving every lake equally unknown.",
+                  "scoreImpact": "None: Depth is unscored; counted as datum/survey coverage in the capability contract.",
+                  "limitations": "Footprints are survey extents (mostly navigation channels), not full-lake bathymetry; datum is read from a sample of packages; no depth value is produced; Depth still needs an approved release (G-1)."}
+        cap = {"kind": "coverage", "baselineKind": "none: no per-lake survey or datum source map existed", "name": "fleet lakes with a dated USACE survey footprint (availability; datum documented for the sampled subset only)",
+               "direction": "higher_better", "baselineMetric": f"{g}.lakesWithSurveyBase", "candidateMetric": f"{g}.lakesWithSurvey", "minDelta": 1, "nMetric": f"{g}.fleetLakes", "minN": 1,
+               "tests": [{"metric": f"{g}.lakesWithSurvey", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("DEPTH-SURVEY-MAP", f"{len(per)} fleet lakes have dated USACE survey footprints; {len(datum)} have a vertical datum documented in a sampled survey package.", "DATASET",
+                                  sorted(set(paths))[:300], home, "eHydro envelope queries + datum statements in sampled packages", f"{g}.lakesWithSurvey", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": [] if per else [{"limitation": "eHydro returned no survey footprints", "kind": "external", "gap": "DEPTH-DAT-001", "nextSource": "retry later; check the feature-service quota"}]}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Vegetation (USGS NAS observed records)
+def acquire_nas(ev, home, spec, it, targets, gaps):
+    p = spec["params"]
+    states = sorted({l["state"] for l in D.fleet(home, p) if l["state"]})
+    files = {}
+    for st in states:
+        for gen in p["genera"]:
+            off, n = 0, 0
+            while n < p["maxPages"]:
+                rel = ev.fetch("nas-occurrences", f"{gen}_{st}_{off}.json", "https://nas.er.usgs.gov/api/v2/occurrence/search", {"genus": gen, "state": st, "limit": p["pageSize"], "offset": off},
+                               purpose=f"observed {gen} records in {st} (presence only)")
+                files[f"{gen}:{st}:{off}"] = rel
+                if not rel:
+                    break
+                d = json.load(open(os.path.join(home, rel), encoding="utf-8"))
+                if str(d.get("endOfRecords")).lower() == "true" or not d.get("results"):
+                    break
+                off += p["pageSize"]
+                n += 1
+    return {"files": files}
+
+
+def analyze_nas(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    files = {}
+    for a in mine:
+        files.update(a.get("files") or {})
+    lakes = D.fleet(home, p)
+    hits, recs, paths = {}, 0, []
+    for key, rel in sorted(files.items()):
+        if not rel:
+            continue
+        paths.append(rel)
+        for r in json.load(open(os.path.join(home, rel), encoding="utf-8")).get("results") or []:
+            try:
+                la, lo, yr = float(r["decimalLatitude"]), float(r["decimalLongitude"]), int(r["year"])
+            except (KeyError, ValueError, TypeError):
+                continue
+            if r.get("status") not in ("established", "collected", "stocked", None, "") and p.get("establishedOnly"):
+                continue
+            recs += 1
+            best = None
+            for l in lakes:
+                dd = max(abs(l["lat"] - la), abs(l["lon"] - lo))
+                if dd <= p["matchDeg"] and (best is None or dd < best[0]):
+                    best = (dd, l)
+            if best:
+                h = hits.setdefault(best[1]["key"], {"records": 0, "latestYear": 0, "taxa": set(), "since2010": 0})
+                h["records"] += 1
+                h["latestYear"] = max(h["latestYear"], yr)
+                h["since2010"] += yr >= 2010
+                h["taxa"].add(r.get("scientificName"))
+    per = {k: {**v, "taxa": sorted(t for t in v["taxa"] if t)} for k, v in sorted(hits.items())}
+    m = {"fleetLakes": len(lakes), "recordsRead": recs, "lakesWithObservedRecord": len(per), "lakesWithRecordSince2010": sum(1 for v in per.values() if v["since2010"]),
+         "lakesWithObservedRecordBase": 0, "perLake": per}
+    findings = []
+    if per:
+        change = {"scientificChange": "Add a per-lake source map of dated, georeferenced OBSERVED submerged-plant records (confirmed presence) for the fleet.",
+                  "previous": "Vegetation has no observed-vegetation truth source for the fleet; the surface observer failed held-out gates (VEG-VAL-001).",
+                  "proposed": {"lakesWithObservedRecord": sorted(per), "source": "USGS NAS occurrence database", "use": "dated presence truth for validating the observer; never absence, never abundance, never habitat potential"},
+                  "evidenceSummary": f"{recs} georeferenced records read; {len(per)} of {len(lakes)} fleet lakes have at least one within {p['matchDeg']} degrees.",
+                  "validationMethod": "state/genus API queries, coordinate matching to fleet lakes (offline recompute)",
+                  "validationResults": {k: m[k] for k in ("fleetLakes", "recordsRead", "lakesWithObservedRecord", "lakesWithRecordSince2010")},
+                  "practicalEffect": "Shows which lakes have any confirmed vegetation record to test the observer against, so vegetation intelligence is never validated on potential habitat.",
+                  "scoreImpact": "None: Vegetation is unscored; counted as observed-data coverage in the capability contract.",
+                  "limitations": "Invasive taxa only (hydrilla, milfoil, najas, curly-leaf pondweed, egeria), presence-only and effort-uneven; no absence or cover; Vegetation still needs an approved release (G-1)."}
+        cap = {"kind": "coverage", "baselineKind": "none: no observed-vegetation truth source map existed", "name": "fleet lakes with a dated georeferenced OBSERVED submerged-plant record",
+               "direction": "higher_better", "baselineMetric": f"{g}.lakesWithObservedRecordBase", "candidateMetric": f"{g}.lakesWithObservedRecord", "minDelta": 1, "nMetric": f"{g}.fleetLakes", "minN": 1,
+               "tests": [{"metric": f"{g}.lakesWithObservedRecord", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("VEG-OBSERVED-MAP", f"{len(per)} fleet lakes have dated observed submerged-plant records (confirmed presence).", "DATASET", sorted(set(paths))[:300], home,
+                                  "USGS NAS occurrence queries matched to fleet lakes", f"{g}.lakesWithObservedRecord", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": [] if per else [{"limitation": "NAS returned no matched records", "kind": "external", "gap": "VEG-VAL-001", "nextSource": "retry later"}]}
 
 
 def acquire_none(ev, home, spec, it, targets, gaps):
@@ -878,6 +1084,8 @@ EXPERIMENTS = {
     "wt-interval": {"acquire": acquire_none, "analyze": analyze_wt_interval},
     "ltrm-fish": {"acquire": acquire_ltrm, "analyze": analyze_ltrm},
     "iem-wind": {"acquire": acquire_iem_wind, "analyze": analyze_iem_wind},
+    "ehydro": {"acquire": acquire_ehydro, "analyze": analyze_ehydro},
+    "nas": {"acquire": acquire_nas, "analyze": analyze_nas},
     "fish-rule-grade": {"acquire": acquire_none, "analyze": analyze_fish_rules},
     "dataset-search": {"acquire": acquire_dataset_search, "analyze": analyze_dataset_search},
     "lake-cwms": {"acquire": acquire_lake_cwms, "analyze": analyze_lake_cwms},
