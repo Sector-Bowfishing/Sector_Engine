@@ -46,7 +46,7 @@ SPEC = BrainCertSpec(
                     "runtime/LakeBrain/LakeBrainRunner.swift", "runtime/LakeBrain/LakeLevelClassifier.swift", "runtime/LakeBrainJob/main.swift", "runtime/publish_artifact.py", "tests", "tests/golden/lake_run_updates.json",
                     "research/README.md", "deploy/deploy-job.sh"),
     unique_module_basenames=("LakeBrainRunner.swift", "LakeLevelClassifier.swift",), legacy_pointer_dir=None,
-    allowed_runtime_ext=(".py", ".swift"), research_files=("CHARTER.json", "README.md"),
+    allowed_runtime_ext=(".py", ".swift"), research_files=("CHARTER.json", "GAPS.json", "README.md"),
     contract_tokens=("## 4. OWNERSHIP", "## 5. NON-OWNERSHIP", "Sector Intelligence"),
     bundle_id="lake-publication-v1", contract_file="contracts/lake-publication-v1.json", registry_schema_id="lake-registry-v1", job_id="lake-brain",
     plan_root_prefixes=("lakes/", "lakeFleet/", "snapshots/", "brains/lake-brain", "validation/lake-brain", "health/brains/lake-brain", "activity/", "sources/", "health/sources/"),

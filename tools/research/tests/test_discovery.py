@@ -374,7 +374,7 @@ def test_gaps_come_from_gaps_json_or_are_reconstructed(tmp_path):
     assert not w["reconstructed"] and w["gaps"] and not (tmp_path / "wind-brain" / "research").exists()
     (tmp_path / "lake-brain" / "closeouts").mkdir(parents=True)
     (tmp_path / "lake-brain" / "closeouts" / "2026-10-22-x.md").write_text("# x\n\n## Blockers\n\nhold-out needs the CWMS history for three lakes\n\n## Other\n")
-    lk = D.load_gaps(C.ENGINE, str(tmp_path), "lake-brain", "lake-brain", "lake")
+    lk = D.load_gaps(C.ENGINE, str(tmp_path), "lake-brain", "lake-brain", "no-such-brain-dir")      # every registered Brain now has a reviewed GAPS.json; reconstruction is for a Brain without one
     assert lk["reconstructed"] and [g["title"] for g in lk["gaps"]] == ["hold-out needs the CWMS history for three lakes"]
 
 

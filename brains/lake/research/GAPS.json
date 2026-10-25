@@ -1,0 +1,59 @@
+{
+ "schemaVersion": "1.0.0",
+ "brainId": "lake-brain",
+ "gaps": [
+  {
+   "id": "LAKE-VAL-001",
+   "type": "validation",
+   "title": "Lake level state and trend are not field-validated",
+   "whyItMatters": "The level state (in zone, rising, falling) and trend are rules over operator elevations; no prospective scoring exists yet, so the score is capped while NOT_VALIDATED.",
+   "bowfisherDecision": "Whether a bowfisher can rely on a 'rising' or 'in zone' reading when choosing flooded margins or launch access.",
+   "currentEvidence": [
+    "prospective-ledger"
+   ],
+   "stopCondition": "Stop when the prospective ledger has scored enough predictions at the preregistered milestones, or when an operator threshold is needed.",
+   "expectedOutput": "A scored level-prediction evaluation per lake class.",
+   "humanOrFieldValidationRequired": {
+    "required": false
+   },
+   "status": "OPEN",
+   "owner": "lake-brain-lane"
+  },
+  {
+   "id": "LAKE-COV-001",
+   "type": "evidence",
+   "title": "Most fleet lakes have no independent fresh level source",
+   "whyItMatters": "A lake that depends on one feed goes stale or abstains when it fails; only a minority of fleet lakes have an independent daily level series.",
+   "bowfisherDecision": "Whether the app can show a current level for the lake at all.",
+   "currentEvidence": [
+    "fleet-level-source-map"
+   ],
+   "stopCondition": "Stop when each fleet lake has a verified independent fresh source or a recorded owner action naming the operator.",
+   "expectedOutput": "A per-lake source map with verified identities (measured pool elevation only, never regulation-schedule lines).",
+   "humanOrFieldValidationRequired": {
+    "required": true,
+    "what": "Operator level feeds for lakes with no public independent series."
+   },
+   "status": "OPEN",
+   "owner": "lake-brain-lane"
+  },
+  {
+   "id": "LAKE-PRD-001",
+   "type": "readiness",
+   "title": "Profiled share of the fleet is small, which caps the score",
+   "whyItMatters": "The score is capped while only a few percent of the registry lakes are profiled.",
+   "bowfisherDecision": "Which lakes the app can answer for.",
+   "currentEvidence": [
+    "lake-brain-score-v1"
+   ],
+   "stopCondition": "Stop when the profiled share is decided by the owner or the cap is revisited.",
+   "expectedOutput": "A decision on caps and a wider profiled set.",
+   "humanOrFieldValidationRequired": {
+    "required": true,
+    "what": "Owner decision on the scoring caps (audit R10)."
+   },
+   "status": "BLOCKED",
+   "owner": "lake-brain-lane"
+  }
+ ]
+}

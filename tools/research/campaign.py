@@ -563,7 +563,7 @@ def validate_finding(f: dict, home: str, metrics: dict) -> tuple[str, str, dict 
         delta = (b - cn) if cap.get("direction") == "lower_better" else (cn - b)
         improved = delta >= cap.get("minDelta", 0) and (not cap.get("minN") or (isinstance(n, (int, float)) and n >= cap["minN"])) and \
             (tier == "INDEPENDENTLY_VALIDATED" or cap.get("kind") == "coverage")
-        measured = {"capability": cap.get("name"), "kind": cap.get("kind"), "baseline": b, "candidate": cn, "delta": round(delta, 4), "n": n,
+        measured = {"capability": cap.get("name"), "kind": cap.get("kind"), "baselineKind": cap.get("baselineKind"), "baseline": b, "candidate": cn, "delta": round(delta, 4), "n": n,
                     "direction": cap.get("direction"), "improved": bool(improved)}
         why += f"; {cap.get('name')}: {b} -> {cn} (delta {round(delta, 4)}, n={n})"
     return "VALIDATED", why, measured
