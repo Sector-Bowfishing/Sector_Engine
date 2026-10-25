@@ -110,6 +110,7 @@ def home(tmp_path):
 def test_a_gap_no_avenue_covers_gets_an_agent_research_task_not_an_exhausted_label(home, monkeypatch):
     cfg = {"budget": {"wallSeconds": 3600, "maxAvenues": 10, "stallAvenues": 3},
            "brains": {"water-temp": {"weaknesses": [{"id": "G-NOCONNECTOR", "title": "something no connector knows about"}], "avenues": []}}}
+    monkeypatch.setattr(C.D, "load_gaps", lambda *a, **k: {"source": "test", "reconstructed": False, "gaps": []})
     monkeypatch.setattr(C, "discovery_cfg", lambda: cfg)
     C.init(home, "a1", brains=["water-temp"])
     C.run(home, "a1", adapters={}, fetcher=D.OfflineFetcher())
@@ -118,7 +119,10 @@ def test_a_gap_no_avenue_covers_gets_an_agent_research_task_not_an_exhausted_lab
     t = json.load(open(os.path.join(home, "water-temperature", "research", "agent-tasks", "G-NOCONNECTOR.json")))
     assert t["status"] == "OPEN" and t["gapId"] == "G-NOCONNECTOR" and any("search the open web" in x for x in t["how"]) and "treat a missing connector as no evidence" in t["mustNot"]
     out = C.Campaign(home, "a1").load()["tracks"]["water-temp"]["outcome"]
-    assert any("agent research task" in n for n in out["nextEvidenceSources"])
+    assert any("queued agent research" in n for n in out["nextEvidenceSources"])
+    import taskqueue as TQ
+    q = TQ.load(home)["tasks"]
+    assert len(q) == 1 and q[0]["kind"] == "agent-research" and q[0]["status"] == "QUEUED" and q[0]["gap"] == "G-NOCONNECTOR"        # executable work, not just a file
 
 
 def test_a_ninth_brain_is_onboarded_with_one_command_and_runs_through_the_coordinator(home, tmp_path, monkeypatch):

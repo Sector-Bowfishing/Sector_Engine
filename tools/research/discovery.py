@@ -354,9 +354,18 @@ def load_gaps(engine: str, home: str, bid: str, folder: str, brain_dir: str) -> 
 def check_inputs(engine: str, home: str, spec: list) -> dict:
     """Declared inputs: present, reconstructed (git show <ref>:<path> from this repository), or a recorded LIMITATION. Never raises."""
     present, rebuilt, limits = [], [], []
+    env = {}
+    dev_root = os.environ.get("SECTOR_DEV_ROOT") or os.path.dirname(os.path.abspath(home))        # sibling research/repo folders are looked for here, never hard-coded
     for it in spec or []:
         if it.get("env"):
             v = os.environ.get(it["env"], "")
+            if not (v and os.path.exists(v)):
+                for rel_ in it.get("search") or []:                                              # an input that exists locally is CONNECTED automatically
+                    cand_ = os.path.join(dev_root, rel_)
+                    if os.path.exists(cand_):
+                        v = cand_
+                        env[it["env"]] = cand_
+                        break
             (present if v and os.path.exists(v) else limits).append(
                 it["env"] if v and os.path.exists(v) else {"input": f"${it['env']}", "limitation": it.get("limitation", "external input not available")})
             continue
@@ -375,7 +384,7 @@ def check_inputs(engine: str, home: str, spec: list) -> dict:
                 continue
         limits.append({"input": it["path"], "limitation": it.get("limitation") or "missing and not reconstructable here",
                        "reconstructionTried": rc or None})
-    return {"present": present, "reconstructed": rebuilt, "limitations": limits}
+    return {"present": present, "reconstructed": rebuilt, "limitations": limits, "env": env}
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- shared helpers

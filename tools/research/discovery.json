@@ -366,7 +366,10 @@
    "inputs": [
     {
      "env": "SECTOR_CLARITY_PRIVATE_ROOT",
-     "limitation": "private clarity-candidate root (stage_r31/cache) is external private data: the R3.1 re-certification re-run cannot be reconstructed from public sources in this campaign"
+     "limitation": "private clarity-candidate root (stage_r31/cache) is external private data: the R3.1 re-certification re-run cannot be reconstructed from public sources in this campaign",
+     "search": [
+      "Sector_Engine-research/research/clarity-candidate"
+     ]
     }
    ],
    "avenues": [
@@ -701,7 +704,10 @@
    "inputs": [
     {
      "env": "SECTOR_WIND_STAGE3A_EVIDENCE",
-     "limitation": "stage3a evidence cache (rows.pkl) lives in the private iOS research repo: certification re-score cannot be regenerated here"
+     "limitation": "stage3a evidence cache (rows.pkl) lives in the private iOS research repo: certification re-score cannot be regenerated here",
+     "search": [
+      "iOS/sector-wind/docs/intelligence/wind/stage3a/evidence"
+     ]
     }
    ],
    "avenues": [
