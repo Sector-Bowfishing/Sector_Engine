@@ -32,7 +32,7 @@ False resolution of a gap the finding did not list; resolved gaps stopping their
 
 ## Verification
 
-49 offline tests; 21 mutations of the new rules each fail the suite (one survived at first and the test was strengthened); live runs on real data; Cortex research-check validators on the campaign report, ledgers, sources and readiness record.
+49 offline tests; 20 mutations of the new rules each fail the suite (one survived at first and the test was strengthened); live runs on real data; Cortex research-check validators on the campaign report, ledgers, sources and readiness record.
 
 ## Open
 
