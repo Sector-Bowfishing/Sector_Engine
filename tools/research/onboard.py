@@ -61,7 +61,7 @@ def add_brain(engine: str, bid: str, dirname: str, folder: str, domain: str, hom
     if bid not in d["brains"]:
         terms = [t for t in re.split(r"[^a-z]+", domain.lower()) if len(t) >= 5][:3] or [bid]
         d["brains"][bid] = {"folder": folder, "dir": dirname, "purpose": domain, "weaknesses": [],
-                            "scoreMeta": {"rubricId": "none (new Brain: define its capability dimensions in tools/research/capability.py)", "scale": None, "class": "NONE", "source": "NOT_RUN",
+                            "scoreMeta": {"rubricId": "none (new Brain: define its capability dimensions in tools/research/bowfishing_capability.py)", "scale": None, "class": "NONE", "source": "NOT_RUN",
                                           "movable": "no rubric exists yet"},
                             "avenues": [{"id": f"{bid}-literature", "run": "connector", "kind": "literature", "iter": 1, "gaps": [f"{prefix}-NEW-001"]},
                                         {"id": f"{bid}-datasets", "run": "experiment", "experiment": "dataset-search", "gaps": [f"{prefix}-NEW-001"], "acquiring": True,
@@ -80,7 +80,7 @@ def add_brain(engine: str, bid: str, dirname: str, folder: str, domain: str, hom
     return {"created": made, "todo": ["complete every UNFILLED field in CHARTER.json (purpose, predictions, needs/provides, fit-for-purpose targets with rationale)",
                                        "replace the placeholder gap in GAPS.json with the Brain's real scientific gaps (or let the first campaign propose them)",
                                        "declare consumed inputs in brain.json `consumes` so the contract check passes",
-                                       "add capability extractors for the Brain in tools/research/capability.py once it produces measurable evidence",
+                                       "add capability extractors for the Brain in tools/research/bowfishing_capability.py once it produces measurable evidence",
                                        f"run: python3 tools/research/campaign.py init --campaign <id> --brains {bid} && ... run"]}
 
 

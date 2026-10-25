@@ -35,7 +35,7 @@ SPEC = BrainCertSpec(
     required_files=("brain.json", "BRAIN_OPERATING_CONTRACT.md", "README.md", "contracts/clarity-publication-v1.json", "contracts/INPUTS_V1.json", "runtime/run.py",
                     "runtime/clarity_brain.py", "runtime/publish_artifact.py", "runtime/catalog.json", "tests", "research/README.md", "research/GAPS.json", "deploy/deploy-job.sh"),
     unique_module_basenames=("clarity_brain.py",), legacy_pointer_dir="jobs/water-clarity-brain",
-    allowed_runtime_ext=(".py", ".json"), research_files=("GAPS.json", "README.md"),
+    allowed_runtime_ext=(".py", ".json"), research_files=("CHARTER.json", "GAPS.json", "README.md"),
     contract_tokens=("## 4. OWNERSHIP", "## 5. NON-OWNERSHIP", "production clarity **number**", "Lake Registry", "Sector Ops owns all labels", "Publisher publication metadata",
                      "RA-20", "GCS_HTTP_LINEAGE_PLATFORM_DEBT", "GCS_WRITE_SEMANTICS_PLATFORM_DEBT"),
     bundle_id="clarity-publication-v1", contract_file="contracts/clarity-publication-v1.json", registry_schema_id="clarity-registry-v1", job_id="water-clarity-brain",

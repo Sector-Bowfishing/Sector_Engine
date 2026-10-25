@@ -46,7 +46,7 @@ SPEC = BrainCertSpec(
                     "runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift", "runtime/WaterTemperatureBrain/WaterTemperatureBrainRunner.swift", "runtime/WaterTempBrainJob/main.swift", "runtime/publish_artifact.py", "tests", "tests/golden/water_temp_run_updates.json",
                     "research/README.md", "deploy/deploy-job.sh"),
     unique_module_basenames=("WaterTemperatureBrain.swift", "WaterTemperatureBrainRunner.swift",), legacy_pointer_dir=None,
-    allowed_runtime_ext=(".py", ".swift"), research_files=("README.md",),
+    allowed_runtime_ext=(".py", ".swift"), research_files=("CHARTER.json", "README.md"),
     contract_tokens=("## 4. OWNERSHIP", "## 5. NON-OWNERSHIP", "Sector Intelligence"),
     bundle_id="water-temp-publication-v1", contract_file="contracts/water-temp-publication-v1.json", registry_schema_id="water-temp-registry-v1", job_id="water-temp-brain",
     plan_root_prefixes=("lakes/", "lakeFleet/", "snapshots/", "brains/water-temp", "validation/water-temp", "health/brains/water-temp", "activity/", "sources/", "health/sources/"),

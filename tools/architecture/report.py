@@ -62,7 +62,7 @@ SIGNAL_REGISTRY = os.path.join("platform", "registries", "signals", "signals.jso
 EXECUTION_MANIFEST = os.path.join("jobs", "brain_platform", "sector_brain_platform", "control_manifest.json")
 DEFAULT_BASELINE = os.path.join("tools", "architecture", "baseline", "legacy_violations.json")
 LARGE_BYTES = 1024 * 1024
-RESEARCH_ALLOWED = {"GAPS.json", "MANIFEST.json", "README.md"}
+RESEARCH_ALLOWED = {"CHARTER.json", "GAPS.json", "MANIFEST.json", "README.md"}      # CHARTER.json: the Brain's bowfishing charter (metadata, 2026-10-25)
 RESEARCH_DATA_EXT = {".csv", ".parquet", ".gz", ".zip", ".nc", ".grib", ".grib2", ".tif",
                      ".tiff", ".ipynb", ".sqlite", ".db", ".npy", ".npz", ".geojson", ".h5"}
 RESEARCH_MAX_BYTES = 256 * 1024

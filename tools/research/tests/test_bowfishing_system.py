@@ -10,7 +10,7 @@ import pytest
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, ".."))
 import campaign as C  # noqa: E402
-import capability as K  # noqa: E402
+import bowfishing_capability as K  # noqa: E402
 import integration as I  # noqa: E402
 import onboard as O  # noqa: E402
 

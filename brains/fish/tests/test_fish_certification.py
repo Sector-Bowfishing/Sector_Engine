@@ -244,7 +244,7 @@ def test_research_is_separate_from_the_production_package():
     assert not odd, odd
     json_outside_schemas = [os.path.relpath(p, FISH) for p in walk_files(os.path.join(FISH, "runtime"), ".json") if f"{os.sep}schemas{os.sep}" not in p]
     assert not json_outside_schemas, json_outside_schemas                         # no data files in the runtime package
-    assert sorted(os.listdir(os.path.join(FISH, "research"))) == ["GAPS.json", "README.md"]
+    assert sorted(os.listdir(os.path.join(FISH, "research"))) == ["CHARTER.json", "GAPS.json", "README.md"]
     gaps = load("brains", "fish", "research", "GAPS.json")
     assert jsonschema_lite.validate(gaps, load("contracts", "schemas", "research-gaps.schema.json")) == []
     assert BRAIN["researchWorkspace"] == {"workspaceId": "fish-brain"}            # a LOGICAL id; never a physical path
