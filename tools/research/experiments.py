@@ -78,6 +78,446 @@ def _sensor_errors(home: str, cfg: dict, allacq: list[dict]) -> dict:
     return out
 
 
+def _q(v, q):
+    v = sorted(v)
+    if not v:
+        return float("nan")
+    k = (len(v) - 1) * q
+    f = int(k)
+    c = min(f + 1, len(v) - 1)
+    return v[f] + (v[c] - v[f]) * (k - f)
+
+
+def _is(e, lo, hi, alpha):
+    """Interval score (Gneiting & Raftery) in error space: width plus a penalty for each miss, scaled by 2/alpha. Lower is better; rewards narrow AND calibrated."""
+    return (hi - lo) + (2 / alpha) * max(0.0, lo - e) + (2 / alpha) * max(0.0, e - hi)
+
+
+def analyze_wt_interval(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    """Hypothesis: the single published error band (+-q, one number for every lake and season) is miscalibrated because M0's error is seasonal and
+    asymmetric; an empirical 80% interval per `rung` cell (season / region x season) has a better interval score and calibration on data not used to
+    build it. Tests (pre-declared in discovery.json): T1 temporal holdout; T2 leave-lake-out on independent USGS sensors."""
+    rung, alpha = spec["rung"], 1 - spec["nominal"]
+    keyf = RUNGS[rung]
+    rows = _resid(home, spec["storedResiduals"])
+    train = [r for r in rows if r["year"] <= spec["trainThroughYear"]]
+    test = [r for r in rows if r["year"] > spec["trainThroughYear"]]
+
+    def fit(rs):
+        cells = {}
+        for r in rs:
+            cells.setdefault(keyf(r), []).append(r["e"])
+        pooled = _q([abs(r["e"]) for r in rs], spec["nominal"])
+        return {k: (_q(v, alpha / 2), _q(v, 1 - alpha / 2)) for k, v in cells.items() if len(v) >= spec["minCell"]}, pooled
+
+    cells, q0 = fit(train)
+
+    def score(items, cells, q0):
+        base_is = cand_is = 0.0
+        cov_b = cov_c = 0
+        wid_c = 0.0
+        by = {}
+        for key, e in items:
+            lo, hi = cells.get(key, (-q0, q0))
+            base_is += _is(e, -q0, q0, alpha)
+            cand_is += _is(e, lo, hi, alpha)
+            cov_b += (-q0 <= e <= q0)
+            cov_c += (lo <= e <= hi)
+            wid_c += hi - lo
+            b = by.setdefault(key.split("|")[-1], [0, 0, 0])
+            b[0] += 1
+            b[1] += (-q0 <= e <= q0)
+            b[2] += (lo <= e <= hi)
+        n = len(items)
+        return {"n": n, "isBase": base_is / n, "isCand": cand_is / n, "covBase": cov_b / n, "covCand": cov_c / n, "widthBase": 2 * q0, "widthCand": wid_c / n,
+                "worstSeasonCalibBase": max(abs(b[1] / b[0] - spec["nominal"]) for b in by.values()), "worstSeasonCalibCand": max(abs(b[2] / b[0] - spec["nominal"]) for b in by.values())}
+    h = score([(keyf(r), r["e"]) for r in test], cells, q0)
+    m = {"rung": rung, "nominal": spec["nominal"], "cells": len(cells), "holdoutN": h["n"], "holdoutIsBase": round(h["isBase"], 4), "holdoutIsCand": round(h["isCand"], 4),
+         "holdoutDeltaIs": round(h["isBase"] - h["isCand"], 4), "holdoutCoverageBase": round(h["covBase"], 4), "holdoutCoverageCand": round(h["covCand"], 4),
+         "holdoutWidthBase": round(h["widthBase"], 4), "holdoutWidthCand": round(h["widthCand"], 4),
+         "holdoutWorstSeasonCalibBase": round(h["worstSeasonCalibBase"], 4), "holdoutWorstSeasonCalibCand": round(h["worstSeasonCalibCand"], 4),
+         "holdoutCalibGain": round(h["worstSeasonCalibBase"] - h["worstSeasonCalibCand"], 4)}
+    sensors = _sensor_errors(home, spec, allacq)
+    meta, state_region = {}, {}
+    for r in rows:
+        meta.setdefault(r["stem"], (r["region"], r["cls"]))
+        if r["state"]:
+            state_region.setdefault(r["state"], r["region"])
+    lakes, used = {}, set([spec["storedResiduals"]])
+    for key, se in sorted(sensors.items()):
+        stem = D.safe_key(key)
+        reg = meta[stem][0] if stem in meta else state_region.get(key.rsplit("_", 1)[-1])
+        if rung == "region_season" and not reg:
+            continue
+        lc, lq0 = fit([r for r in rows if r["stem"] != stem])
+        items = [(keyf({"season": season_of(int(d[5:7])), "region": reg, "cls": None}), e) for d, e in se["errs"]]
+        x = score(items, lc, lq0)
+        lakes[key] = {"n": x["n"], "isBase": round(x["isBase"], 4), "isCand": round(x["isCand"], 4), "covBase": round(x["covBase"], 4), "covCand": round(x["covCand"], 4)}
+        used |= set(se["paths"])
+    m["sensorLakes"] = len(lakes)
+    if lakes:
+        pb = sum(v["isBase"] for v in lakes.values()) / len(lakes)
+        pc = sum(v["isCand"] for v in lakes.values()) / len(lakes)
+        m.update({"sensorIsBase": round(pb, 4), "sensorIsCand": round(pc, 4), "sensorDeltaIs": round(pb - pc, 4), "lakes": lakes,
+                  "lakesWorseShare": round(sum(v["isCand"] > v["isBase"] + spec["worseTol"] for v in lakes.values()) / len(lakes), 4)})
+    m["bandsC"] = {k: [round(a, 3), round(b, 3)] for k, (a, b) in sorted(cells.items())}
+    g = f"discovery.exp.{spec['avenueId']}"
+    tests = [{"metric": f"{g}.holdoutDeltaIs", "op": ">=", "threshold": spec["holdoutMinDeltaIs"]},
+             {"metric": f"{g}.holdoutCalibGain", "op": ">=", "threshold": spec["minCalibGain"]},
+             {"metric": f"{g}.sensorDeltaIs", "op": ">=", "threshold": spec["sensorMinDeltaIs"]},
+             {"metric": f"{g}.lakesWorseShare", "op": "<=", "threshold": spec["maxWorseShare"]},
+             {"metric": f"{g}.sensorLakes", "op": ">=", "threshold": spec["minSensorLakes"]}]
+    change = {"scientificChange": f"Publish a {rung.replace('_', ' x ')} empirical 80% error interval for the modeled water temperature instead of one fixed +-band.",
+              "previous": f"One symmetric band (+-{round(q0, 2)} C at 80% in the fitting years) for every lake and season.",
+              "proposed": {"intervals": "observed = M0 - [lo, hi] of the cell's residual quantiles (10% and 90%)", "cell": rung, "bandsC": m["bandsC"],
+                           "fit": f"fleet grab-sample residuals, years <= {spec['trainThroughYear']}, min {spec['minCell']} per cell"},
+              "evidenceSummary": f"{len(train)} residuals for fitting; {len(test)} later ones held out; {len(lakes)} independent USGS sensor lakes fitted without their own lake.",
+              "validationMethod": "interval score (width + 2/alpha x misses) and per-season coverage, temporal holdout and leave-lake-out sensors; thresholds pre-declared",
+              "validationResults": {k: m.get(k) for k in ("holdoutIsBase", "holdoutIsCand", "holdoutCoverageBase", "holdoutCoverageCand", "holdoutWorstSeasonCalibBase", "holdoutWorstSeasonCalibCand",
+                                                          "sensorIsBase", "sensorIsCand", "lakesWorseShare")},
+              "practicalEffect": "A bowfisher sees an honest, season-aware range around the modeled temperature (for example spring readings are more likely warmer than the model) instead of a single +-number that is too tight in some seasons and too wide in others.",
+              "scoreImpact": "None under water-temp-level-ladder-v1 (gate-based); recorded as a measured uncertainty-handling gain for the candidate capability contract.",
+              "limitations": "Grab samples are daytime single-depth; sensor lakes are few; the interval describes the model's error, not the fish; publication requires a Water Temp release change and approval."}
+    cap = {"kind": "uncertainty", "name": "interval score of the published water-temperature uncertainty band (C, lower is better)", "direction": "lower_better",
+           "baselineMetric": f"{g}.sensorIsBase", "candidateMetric": f"{g}.sensorIsCand", "minDelta": spec["sensorMinDeltaIs"], "nMetric": f"{g}.sensorLakes", "minN": spec["minSensorLakes"], "tests": tests}
+    f = D.finding(f"WT-INTERVAL-{rung}", f"A {rung.replace('_', ' x ')} empirical interval is better calibrated and sharper than one fixed band on data not used to build it.", "PARAMETER",
+                  sorted(used), home, "offline refit, interval score, temporal holdout + leave-lake-out sensors", f"{g}.holdoutDeltaIs", ">=", spec["holdoutMinDeltaIs"],
+                  tier="INDEPENDENTLY_VALIDATED", change=change, capability=cap)
+    return {"metrics": m, "findings": [f], "weak": [], "limitations": []}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Fish field test (LTRM)
+def acquire_ltrm(ev, home, spec, it, targets, gaps):
+    """Download the USGS UMESC LTRM fisheries database (17.7 MB zip, allowlisted) and derive ONE compact, deterministic sample table from its 464 MB CSV
+    (day/night electrofishing samples with temperature, depth, stratum and target-species catches). The derived file is hashed and registered like any evidence."""
+    import gzip
+    import zipfile
+    p = spec["params"]
+    rel = ev.fetch("ltrm", "LTRM_FISH_DATA_ENTIRE.zip", p["url"], None, purpose="LTRM fisheries database (day/night electrofishing with temperature) for Fish rule field tests")
+    if not rel:
+        return {"zip": None}
+    drel = rel[:-4] + "_samples_v1.csv.gz"
+    full = os.path.join(home, drel)
+    if drel in ev.prov["files"] and os.path.exists(full):
+        return {"zip": rel, "samples": drel}
+    codes = list(p["speciesCodes"])
+    agg = {}
+    with zipfile.ZipFile(os.path.join(home, rel)) as z:
+        name = next(n for n in z.namelist() if n.endswith(".csv"))
+        with z.open(name) as fh:
+            rd = csv.DictReader(io.TextIOWrapper(fh, encoding="latin-1"))
+            for r in rd:
+                g = r["gear"]
+                if g not in ("D", "N") or r["summary"] in ("1", "1.0", "2", "2.0"):
+                    continue
+                b = r["barcode"]
+                a = agg.get(b)
+                if a is None:
+                    try:
+                        mm, dd, yy = r["sdate"].split("/")
+                        eff = float(r["effmin"] or 0) / 60.0 or float(r["effhr"] or 0)
+                    except ValueError:
+                        continue
+                    if eff <= 0:
+                        continue
+                    try:
+                        temp = float(r["temp"]) if r["temp"] and not r["t_qf"] else None
+                        depth = float(r["depth"]) if r["depth"] else None
+                    except ValueError:
+                        temp = depth = None
+                    a = agg[b] = {"date": f"{yy}-{mm}-{dd}", "pool": r["pool"], "stratum": r["stratum"], "gear": g, "eff": round(eff, 4),
+                                  "temp": temp if temp is not None and 0 <= temp <= 40 else "", "depth": depth if depth is not None and 0 < depth < 30 else "", "c": dict.fromkeys(codes, 0)}
+                if r["fishcode"] in a["c"]:
+                    try:
+                        a["c"][r["fishcode"]] += int(float(r["catch"] or 0))
+                    except ValueError:
+                        pass
+    tmp = full + ".part"
+    with open(tmp, "wb") as raw:
+        with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as gz:
+            w = csv.writer(io.TextIOWrapper(gz, encoding="utf-8", newline=""))
+            w.writerow(["barcode", "date", "pool", "stratum", "gear", "effHr", "tempC", "depthM"] + codes)
+            for b in sorted(agg):
+                a = agg[b]
+                w.writerow([b, a["date"], a["pool"], a["stratum"], a["gear"], a["eff"], a["temp"], a["depth"]] + [a["c"][c] for c in codes])
+            w.writerow([])
+    os.replace(tmp, full)
+    ev.prov["files"][drel] = {"url": f"derived://{ev.prov['files'][rel]['sha256'][:16]}/ltrm-samples-v1", "sha256": D.sha256(full), "bytes": os.path.getsize(full), "status": "SAVED", "connector": "ltrm",
+                              "retrievedAt": D.now_iso(), "license": ev.prov["files"][rel]["license"], "derivedFrom": rel,
+                              "purpose": "day/night electrofishing samples with temperature, depth, stratum and target-species catches (derived, deterministic)"}
+    ev.new += 1
+    return {"zip": rel, "samples": drel, "samplesDerived": len(agg)}
+
+
+def _ltrm_rows(path):
+    import gzip
+    out = []
+    with gzip.open(path, "rt", newline="") as fh:
+        rd = csv.DictReader(fh)
+        for r in rd:
+            if not r.get("barcode"):
+                continue
+            out.append(r)
+    return out
+
+
+def _boot_ratio(clusters, min_eff, rng, boots):
+    """Ratio of pooled CPUE A/B over matched cells present in both groups; 95% CI by bootstrap over clusters (pool x year)."""
+    def ratio(cl):
+        cells = {}
+        for c in cl:
+            for k, (ca, ea, cb, eb) in c.items():
+                x = cells.setdefault(k, [0, 0.0, 0, 0.0])
+                x[0] += ca
+                x[1] += ea
+                x[2] += cb
+                x[3] += eb
+        sa = ea_ = sb = eb_ = 0.0
+        for ca, ea, cb, eb in cells.values():
+            if ea >= min_eff and eb >= min_eff:
+                sa += ca
+                ea_ += ea
+                sb += cb
+                eb_ += eb
+        if ea_ <= 0 or eb_ <= 0 or sb <= 0 or sa <= 0:
+            return None, ea_, eb_, sa, sb
+        return (sa / ea_) / (sb / eb_), ea_, eb_, sa, sb
+    r0, ea, eb, ca, cb = ratio(clusters)
+    if r0 is None:
+        return None
+    vals = []
+    n = len(clusters)
+    for _ in range(boots):
+        rr = ratio([clusters[rng.randrange(n)] for _ in range(n)])[0]
+        if rr is not None:
+            vals.append(rr)
+    vals.sort()
+    if len(vals) < boots * 0.8:
+        return None
+    return {"ratio": r0, "lo": vals[int(0.025 * len(vals))], "hi": vals[int(0.975 * len(vals)) - 1], "effortA": ea, "effortB": eb, "catchA": ca, "catchB": cb}
+
+
+def _verdict(expect, r, spec):
+    lo, hi = r["lo"], r["hi"]
+    if expect in ("night_gt_day", "cold_gt_warm"):
+        return "SUPPORTED" if lo > 1 else ("CONTRADICTED" if hi < 1 else "INCONCLUSIVE")
+    if expect in ("night_lt_day", "cold_lt_warm"):
+        return "SUPPORTED" if hi < 1 else ("CONTRADICTED" if lo > 1 else "INCONCLUSIVE")
+    if expect == "no_night_advantage":
+        return "SUPPORTED" if hi < spec["noAdvantageUpper"] else ("CONTRADICTED" if lo > spec["noAdvantageUpper"] else "INCONCLUSIVE")
+    if expect in ("cold_not_lower", "warm_not_lower"):
+        t = spec["warmNotLowerLower"]
+        return "SUPPORTED" if lo > t else ("CONTRADICTED" if hi < t else "INCONCLUSIVE")
+    return "INCONCLUSIVE"
+
+
+def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    import random
+    p = spec["params"]
+    path = None
+    for a in mine:
+        if a.get("samples"):
+            path = a["samples"]
+    if not path:
+        return {"metrics": {"testsRun": 0}, "findings": [], "weak": ["ltrm-download"], "limitations": [{"limitation": "LTRM database was not downloaded (source unreachable)", "kind": "external", "gap": "FISH-VAL-001",
+                                                                                                        "nextSource": "retry the LTRM download (www.umesc.usgs.gov) in a later campaign"}]}
+    rows = _ltrm_rows(os.path.join(home, path))
+    g = f"discovery.exp.{spec['avenueId']}"
+    res, findings = {}, []
+    for t in p["tests"]:
+        sp, ty = t["species"], t["type"]
+        by = {}
+        for r in rows:
+            try:
+                eff = float(r["effHr"])
+                c = int(r[sp])
+            except (KeyError, ValueError):
+                continue
+            yr = r["date"][:4]
+            mo = r["date"][5:7]
+            cl = (r["pool"], yr)
+            tmp = float(r["tempC"]) if r["tempC"] else None
+            dep = float(r["depthM"]) if r["depthM"] else None
+            if ty in ("diel", "diel_shallow"):
+                if ty == "diel_shallow" and (dep is None or dep > p["shallowDepthM"]):
+                    continue
+                grp = "A" if r["gear"] == "N" else "B"                       # A = night, B = day
+                cell = (r["pool"], r["stratum"], yr)                          # matched on YEAR too: night sampling was concentrated in early years (before the carp invasions)
+            else:
+                if r["gear"] != "D" or tmp is None:
+                    continue
+                if ty == "thermal_warm":
+                    lo_, hi_ = 26.0, 30.0
+                    grp = "A" if lo_ <= tmp < hi_ else ("B" if 20.0 <= tmp < 26.0 else None)
+                else:
+                    grp = "A" if tmp < p["coldC"] else ("B" if tmp >= p["warmC"] else None)
+                cell = (r["pool"], r["stratum"], yr)
+            if grp is None:
+                continue
+            d = by.setdefault(cl, {}).setdefault(cell, [0, 0.0, 0, 0.0])
+            if grp == "A":
+                d[0] += c
+                d[1] += eff
+            else:
+                d[2] += c
+                d[3] += eff
+        clusters = [{k: tuple(v) for k, v in cl.items()} for _, cl in sorted(by.items())]
+        rng = random.Random(p["seed"])
+        out = _boot_ratio(clusters, 0.25, rng, p["bootstrap"]) if clusters else None
+        if out is None or out["effortA"] < p["minEffortHours"] or out["effortB"] < p["minEffortHours"]:
+            res[t["ruleId"]] = {"verdict": "INSUFFICIENT_DATA", "decisive": 0, "effortA": round((out or {}).get("effortA", 0), 2), "effortB": round((out or {}).get("effortB", 0), 2)}
+            continue
+        v = _verdict(t["expect"], out, p)
+        entry = {"verdict": v, "decisive": int(v in ("SUPPORTED", "CONTRADICTED")), "ratio": round(out["ratio"], 4), "ciLo": round(out["lo"], 4), "ciHi": round(out["hi"], 4),
+                 "effortA": round(out["effortA"], 2), "effortB": round(out["effortB"], 2), "catchA": out["catchA"], "catchB": out["catchB"]}
+        if t.get("magnitude"):
+            entry["magnitudeClaimMet"] = int(out["lo"] >= t["magnitude"])
+        res[t["ruleId"]] = entry
+    decisive = [k for k, v in res.items() if v["decisive"]]
+    m = {"testsRun": len(res), "rulesFieldTestedBase": 0, "rulesFieldTestedCand": len(decisive), "decisiveRules": len(decisive),
+         "supported": sum(v["verdict"] == "SUPPORTED" for v in res.values()), "contradicted": sum(v["verdict"] == "CONTRADICTED" for v in res.values()),
+         "inconclusive": sum(v["verdict"] == "INCONCLUSIVE" for v in res.values()), "insufficient": sum(v["verdict"] == "INSUFFICIENT_DATA" for v in res.values()),
+         "samples": len(rows), "tests": res}
+    paths = sorted({path, path[:-len("_samples_v1.csv.gz")] + ".zip"})
+    for t in p["tests"]:
+        v = res[t["ruleId"]]
+        if v["decisive"]:
+            findings.append(D.finding(f"FISH-FIELD-{t['ruleId']}", f"Field data (USGS LTRM, Upper Mississippi navigation pools, a river surrogate): rule {t['ruleId']} ('{t['claim']}') is {v['verdict']} "
+                                      f"(rate ratio {v['ratio']}, 95% CI {v['ciLo']}-{v['ciHi']}).", "EVIDENCE", paths, home, "matched-stratum CPUE ratio with cluster bootstrap (pool x year)",
+                                      f"{g}.tests.{t['ruleId']}.decisive", ">=", 1, tier="SCIENTIFIC_SUPPORT"))
+    if decisive:
+        proposed = [{"ruleId": k, "verdict": res[k]["verdict"], "ratio": res[k]["ratio"], "ci": [res[k]["ciLo"], res[k]["ciHi"]], "effortHours": [res[k]["effortA"], res[k]["effortB"]],
+                     "proposedAction": ("attach this field comparison to the rule as river-surrogate evidence; keep confidence and the southeast-reservoir transferability flag unchanged"
+                                        if res[k]["verdict"] == "SUPPORTED" else "restrict or retire the rule for river-type waters and record the conflict; do not publish it as a prediction")} for k in decisive]
+        change = {"scientificChange": "Attach an independent field comparison (USGS LTRM electrofishing) to the species rules that could be tested, and restrict rules the data contradict.",
+                  "previous": "No species rule has been compared with a field outcome (FISH-VAL-001).",
+                  "proposed": {"fieldComparisons": proposed, "scope": "Upper Mississippi navigation pools (rivers), day/night electrofishing, mostly June-October; southeast reservoir transferability remains UNTESTED"},
+                  "evidenceSummary": f"{len(rows)} electrofishing samples; {len(decisive)} of {len(res)} pre-declared rule tests decisive ({m['supported']} supported, {m['contradicted']} contradicted).",
+                  "validationMethod": "matched-stratum catch-per-effort ratios, cluster bootstrap 95% CI, direction and thresholds declared before the data were examined",
+                  "validationResults": {k: v for k, v in m.items() if k != "tests"},
+                  "practicalEffect": "Night-activity and cold-water rules that now have a field comparison can be shown as experimental with their evidence; contradicted rules are withheld.",
+                  "scoreImpact": "None under biological-state-score-v1 (it does not measure field validation); counted as validation coverage in the capability contract.",
+                  "limitations": "River navigation pools, daytime-skewed sampling, June-October only; electrofishing catchability differs day vs night; not Tennessee-system reservoirs; cold tests need cold-water samples that are rare in this database."}
+        cap = {"kind": "coverage", "name": "species rules with an independent field test (validation coverage)", "direction": "higher_better", "baselineMetric": f"{g}.rulesFieldTestedBase",
+               "candidateMetric": f"{g}.rulesFieldTestedCand", "minDelta": 1, "nMetric": f"{g}.testsRun", "minN": 1, "tests": [{"metric": f"{g}.decisiveRules", "op": ">=", "threshold": 1}]}
+        findings.append(D.finding("FISH-FIELD-COVERAGE", f"{len(decisive)} Fish rules now have a decisive independent field comparison.", "RULE", paths, home, "pre-declared rule tests on LTRM",
+                                  f"{g}.decisiveRules", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
+    lim = [{"limitation": "field tests use Upper Mississippi river pools; Tennessee-system reservoir transferability is untested", "kind": "scope", "gap": "FISH-VAL-001"}]
+    owner = [{"id": "fish-tennessee-field-data", "gap": "FISH-VAL-001", "publisher": "TVA reservoir fish programs and the Alabama / Tennessee fisheries agencies",
+              "dataset": "day/night electrofishing or creel records with water temperature for Tennessee-system reservoirs (the LTRM comparison is a river surrogate)",
+              "access": "request from the agency; public bulk availability NOT verified", "verified": False, "addresses": "transferability of the tested rules to the pilot reservoirs"}]
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": lim, "owner": owner}
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- Wind (night-calm climatology)
+def acquire_iem_wind(ev, home, spec, it, targets, gaps):
+    p = spec["params"]
+    files = {}
+    for st in p["stations"]:
+        for yr in range(p["yearFrom"], p["yearTo"] + 1):
+            files[f"{st}:{yr}"] = ev.fetch("iem-asos", f"{st}_{yr}.csv", "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py",
+                                          {"station": st, "data": ["sknt", "gust"], "year1": yr, "month1": 1, "day1": 1, "year2": yr + 1, "month2": 1, "day2": 1, "tz": p["tz"], "format": "onlycomma",
+                                           "latlon": "no", "missing": "M", "trace": "T", "direct": "no", "report_type": [3, 4]}, purpose=f"hourly wind, airport {st}, {yr}")
+    return {"files": files}
+
+
+def _nights(path, p):
+    """{(date_of_evening): (max sustained kt, max gust kt, n obs)} for the bowfishing window (evening hour .. morning hour, local)."""
+    out = {}
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        for r in csv.DictReader(fh):
+            v = r.get("valid") or ""
+            if len(v) < 16:
+                continue
+            hr = int(v[11:13])
+            if not (hr >= p["nightStartHour"] or hr < p["nightEndHour"]):
+                continue
+            d = dt.date.fromisoformat(v[:10])
+            if hr < p["nightEndHour"]:
+                d -= dt.timedelta(days=1)
+            try:
+                sk = float(r["sknt"])
+            except (ValueError, KeyError):
+                continue
+            try:
+                gu = float(r["gust"])
+            except (ValueError, KeyError):
+                gu = 0.0
+            o = out.setdefault(d, [0.0, 0.0, 0])
+            o[0], o[1], o[2] = max(o[0], sk), max(o[1], gu), o[2] + 1
+    return out
+
+
+def analyze_iem_wind(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    """Candidate knowledge: P(calm night) by month and station, from airport observations. A night is CALM when every hourly sustained wind in the window is
+    <= calmKt and no gust exceeds calmGustKt. Test: monthly probabilities fitted on the training years predict the held-out years better than a single
+    all-months probability (the naive baseline), at most stations, by the mean absolute error of the monthly probability."""
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    files = {}
+    for a in mine:
+        files.update(a.get("files") or {})
+    per, paths = {}, []
+    for key, rel in sorted(files.items()):
+        if not rel:
+            continue
+        st, yr = key.split(":")
+        paths.append(rel)
+        for d, (sk, gu, n) in _nights(os.path.join(home, rel), p).items():
+            if n >= p["minObsPerNight"]:
+                per.setdefault(st, []).append((d, sk <= p["calmKt"] and gu <= p["calmGustKt"]))
+    stations, tabs = {}, {}
+    for st, nights in sorted(per.items()):
+        tr = [(d, c) for d, c in nights if d.year <= p["trainThroughYear"]]
+        te = [(d, c) for d, c in nights if d.year > p["trainThroughYear"]]
+        if len(tr) < 200 or len(te) < 100:
+            continue
+        overall = sum(c for _, c in tr) / len(tr)
+        month = {}
+        for d, c in tr:
+            month.setdefault(d.month, []).append(c)
+        mp = {mo: sum(v) / len(v) for mo, v in month.items() if len(v) >= p["minNightsPerMonth"]}
+        tm = {}
+        for d, c in te:
+            tm.setdefault(d.month, []).append(c)
+        errs_b, errs_c = [], []
+        for mo, v in tm.items():
+            if mo in mp and len(v) >= 5:
+                o = sum(v) / len(v)
+                errs_b.append(abs(o - overall))
+                errs_c.append(abs(o - mp[mo]))
+        if len(errs_c) < 6:
+            continue
+        stations[st] = {"nightsTrain": len(tr), "nightsTest": len(te), "maeBase": round(sum(errs_b) / len(errs_b), 4), "maeCand": round(sum(errs_c) / len(errs_c), 4), "overallCalmShare": round(overall, 4)}
+        tabs[st] = {str(mo): round(v, 3) for mo, v in sorted(mp.items())}
+    m = {"stations": len(stations), "perStation": stations, "monthlyCalmNightProbability": tabs}
+    if stations:
+        mb = sum(x["maeBase"] for x in stations.values()) / len(stations)
+        mc = sum(x["maeCand"] for x in stations.values()) / len(stations)
+        m.update({"pooledMaeBase": round(mb, 4), "pooledMaeCand": round(mc, 4), "pooledDeltaMae": round(mb - mc, 4),
+                  "stationsImprovedShare": round(sum(x["maeCand"] < x["maeBase"] for x in stations.values()) / len(stations), 4)})
+    tests = [{"metric": f"{g}.pooledDeltaMae", "op": ">=", "threshold": p["minDeltaMae"]}, {"metric": f"{g}.stationsImprovedShare", "op": ">=", "threshold": p["minStationShare"]},
+             {"metric": f"{g}.stations", "op": ">=", "threshold": p["minStations"]}]
+    findings = []
+    if stations:
+        change = {"scientificChange": "Publish a month-by-month probability that a night is calm enough to fish (climatology), per airport station near the reservoirs, as a planning prior.",
+                  "previous": "The Wind Brain publishes observations and a forecast, with no seasonal prior for how often nights are calm at a lake.",
+                  "proposed": {"definition": f"night window {p['nightStartHour']}:00-{p['nightEndHour']}:00 local; calm = every hourly sustained wind <= {p['calmKt']} kt and gust <= {p['calmGustKt']} kt",
+                               "monthlyCalmNightProbability": tabs, "stations": sorted(stations)},
+                  "evidenceSummary": f"{sum(x['nightsTrain'] + x['nightsTest'] for x in stations.values())} nights at {len(stations)} airport stations, {p['yearFrom']}-{p['yearTo']}.",
+                  "validationMethod": f"monthly probabilities fitted on years <= {p['trainThroughYear']} predict held-out years better (mean absolute error of the monthly probability) than one all-months probability; pre-declared thresholds",
+                  "validationResults": {k: m[k] for k in ("stations", "pooledMaeBase", "pooledMaeCand", "pooledDeltaMae", "stationsImprovedShare")},
+                  "practicalEffect": "A bowfisher can see the typical odds of a calm night for the month at a nearby station before any forecast exists; it also tells which months are mostly windy.",
+                  "scoreImpact": "None under wind-certification-rubric-v1 / capability v2 (they do not read a climatology); counted as measured prediction gain in the capability contract.",
+                  "limitations": "Airport wind is an over-land proxy for shoreline wind; thresholds (calm = 8.7 kt sustained, 13 kt gust) are practical hypotheses, not validated against shot success; stations are representative, not every fleet lake."}
+        cap = {"kind": "prediction", "name": "mean absolute error of the predicted monthly calm-night probability (probability points)", "direction": "lower_better", "baselineMetric": f"{g}.pooledMaeBase",
+               "candidateMetric": f"{g}.pooledMaeCand", "minDelta": p["minDeltaMae"], "nMetric": f"{g}.stations", "minN": p["minStations"], "tests": tests}
+        findings.append(D.finding("WIND-CALM-NIGHT-CLIMATOLOGY", "Month-specific calm-night probabilities predict held-out years better than one all-months probability.", "PARAMETER", sorted(set(paths)), home,
+                                  "airport hourly wind, nightly maxima, train/test by year", f"{g}.pooledDeltaMae", ">=", p["minDeltaMae"], tier="INDEPENDENTLY_VALIDATED", change=change, capability=cap))
+    return {"metrics": m, "findings": findings, "weak": [] if stations else ["no-wind-data"], "limitations": [] if stations else [{"limitation": "IEM wind data not available", "kind": "external", "gap": "WIND-CNF-001",
+            "nextSource": "retry mesonet.agron.iastate.edu in a later campaign"}]}
+
+
 def acquire_none(ev, home, spec, it, targets, gaps):
     return {}
 
@@ -435,6 +875,9 @@ def analyze_owner_actions(home: str, spec: dict, mine: list, allacq: list, upstr
 EXPERIMENTS = {
     "owner-actions": {"acquire": acquire_none, "analyze": analyze_owner_actions},
     "wt-bias": {"acquire": acquire_none, "analyze": analyze_wt_bias},
+    "wt-interval": {"acquire": acquire_none, "analyze": analyze_wt_interval},
+    "ltrm-fish": {"acquire": acquire_ltrm, "analyze": analyze_ltrm},
+    "iem-wind": {"acquire": acquire_iem_wind, "analyze": analyze_iem_wind},
     "fish-rule-grade": {"acquire": acquire_none, "analyze": analyze_fish_rules},
     "dataset-search": {"acquire": acquire_dataset_search, "analyze": analyze_dataset_search},
     "lake-cwms": {"acquire": acquire_lake_cwms, "analyze": analyze_lake_cwms},

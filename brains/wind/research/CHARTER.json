@@ -1,0 +1,79 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "wind",
+ "role": "Wind, gusts and surface exposure at the shoreline",
+ "bowfishingPurpose": "Wind decides whether a night trip is practical: chop breaks up the light on the surface and hides fish, and strong wind makes boat control and shots unsafe; protected shorelines stay fishable when open water is not.",
+ "decisionsInformed": [
+  "is the night fishable",
+  "which shoreline is sheltered"
+ ],
+ "predicts": [
+  {
+   "id": "windObservation",
+   "desc": "Latest observation with age",
+   "status": "MEASUREMENT"
+  },
+  {
+   "id": "windForecast",
+   "desc": "Speed, gust and direction forecast",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "strongWindNight",
+   "desc": "Strong-wind night forecast",
+   "status": "ABSTAIN_NO_SKILL"
+  },
+  {
+   "id": "shorelineExposure",
+   "desc": "Exposure ordering of banks",
+   "status": "ABSTAIN_UNVALIDATED"
+  }
+ ],
+ "mustNotPredict": [
+  "fishing success",
+  "wave height without an over-water reference"
+ ],
+ "needsFrom": [],
+ "providesTo": [
+  {
+   "brain": "water-clarity",
+   "output": "windSpeed",
+   "why": "mixing and surface condition"
+  },
+  {
+   "brain": "sector-intelligence",
+   "output": "wind",
+   "why": "conditions assembly"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "probability of detection of strong-wind nights",
+   "target": 0.5,
+   "direction": "higher",
+   "rationale": "missing a strong-wind night is the costly error"
+  },
+  {
+   "metric": "nights with observation coverage near the lake",
+   "target": 0.9,
+   "direction": "higher",
+   "rationale": "no local observation, no claim"
+  },
+  {
+   "metric": "calm-night climatology MAE (probability points)",
+   "target": 0.05,
+   "direction": "lower",
+   "rationale": "a planning prior that is off by more than 5 points of probability is not a useful seasonal guide"
+  }
+ ],
+ "priorityQuestions": [
+  "How often is a given lake calm at night by month (climatology)?",
+  "Can fetch-based exposure be validated with bank observations?"
+ ],
+ "abstainWhen": [
+  "observation older than 90 minutes",
+  "forecast cycle older than 3 hours"
+ ]
+}

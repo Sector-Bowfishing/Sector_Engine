@@ -1,0 +1,77 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "water-temp",
+ "role": "Surface water temperature and its uncertainty",
+ "bowfishingPurpose": "Temperature drives fish activity and spawning: carp, buffalo and gar move into the shallows to spawn inside species-specific temperature bands, and cold water slows them; the rules use bands only a few degrees wide, so an error of 2 C changes the answer.",
+ "decisionsInformed": [
+  "is the spawn window open",
+  "are fish likely active in the shallows",
+  "seasonal timing of trips"
+ ],
+ "predicts": [
+  {
+   "id": "modeledSurfaceTemp",
+   "desc": "Daily surface temperature estimate",
+   "status": "VALIDATED_WITH_FLEET_ERROR_BOUND"
+  },
+  {
+   "id": "forecast3Day",
+   "desc": "Three-day model forecast",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "uncertaintyBand",
+   "desc": "Honest error range around the estimate",
+   "status": "HYPOTHESIS_NOT_VALIDATED"
+  }
+ ],
+ "mustNotPredict": [
+  "fish behaviour (Fish owns it)",
+  "temperature below 1.5 m"
+ ],
+ "needsFrom": [
+  {
+   "brain": "lake-brain",
+   "output": "observedPoolElevation",
+   "why": "reservoir size modulates warming and cooling",
+   "requiredFor": "calibration by lake class"
+  }
+ ],
+ "providesTo": [
+  {
+   "brain": "biological-state",
+   "output": "modeledSurfaceTemp",
+   "why": "every temperature-gated species rule"
+  },
+  {
+   "brain": "sector-intelligence",
+   "output": "modeledSurfaceTemp",
+   "why": "conditions assembly"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "RMSE vs independent surface sensors (C)",
+   "target": 2.0,
+   "direction": "lower",
+   "rationale": "species rules use 2-4 C bands, so error should be at most about half a band"
+  },
+  {
+   "metric": "80% interval coverage on independent lakes",
+   "target": 0.8,
+   "direction": "higher",
+   "rationale": "a stated 80% range must contain the truth about 80% of the time"
+  }
+ ],
+ "priorityQuestions": [
+  "Is the seasonal bias of M0 correctable across lakes?",
+  "Is the published uncertainty band calibrated on lakes it was not fitted on?"
+ ],
+ "abstainWhen": [
+  "forcing data missing",
+  "lake outside validated regions",
+  "sensor and model disagree beyond 3 C"
+ ]
+}

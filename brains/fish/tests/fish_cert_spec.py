@@ -35,7 +35,7 @@ SPEC = BrainCertSpec(
     required_files=("brain.json", "BRAIN_OPERATING_CONTRACT.md", "README.md", "contracts/fish-publication-v1.json", "runtime/run.py", "runtime/biological_brain.py",
                     "runtime/publish_artifact.py", "tests", "research/README.md", "research/GAPS.json"),
     unique_module_basenames=("biological_brain.py", "bio_state.py", "capability.py", "movement_outlook.py"), legacy_pointer_dir="jobs/biological-brain",
-    allowed_runtime_ext=(".py", ".json", ".md"), research_files=("GAPS.json", "README.md"),
+    allowed_runtime_ext=(".py", ".json", ".md"), research_files=("CHARTER.json", "GAPS.json", "README.md"),
     contract_tokens=("species identity", "legality", "Lake Brain", "Species Registry"),
     bundle_id="fish-publication-v1", contract_file="contracts/fish-publication-v1.json", registry_schema_id="fish-registry-v1", job_id="biological-brain",
     plan_root_prefixes=("species/", "brains/biological-state", "validation/biological-state", "health/brains/biological-state", "activity/"),

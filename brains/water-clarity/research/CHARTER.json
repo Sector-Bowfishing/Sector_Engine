@@ -1,0 +1,68 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "water-clarity",
+ "role": "Underwater visibility (how far a bowfisher can see the fish)",
+ "bowfishingPurpose": "Bowfishing is sight shooting: clarity sets how deep a fish can be seen with a light at night, and rain, runoff and wind-driven mixing can cut visibility within a day.",
+ "decisionsInformed": [
+  "is the water clear enough to see fish at shooting depth",
+  "which arm of the lake is clearer after rain"
+ ],
+ "predicts": [
+  {
+   "id": "modeledClarityFt",
+   "desc": "Secchi-equivalent visibility estimate (uncalibrated rain-decay model)",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "satelliteClarity",
+   "desc": "Recent satellite estimate with age",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "clarityClass",
+   "desc": "Customer clarity classes",
+   "status": "ABSTAIN_NO_TAXONOMY"
+  }
+ ],
+ "mustNotPredict": [
+  "clarity from a satellite scene older than 14 days"
+ ],
+ "needsFrom": [
+  {
+   "brain": "wind",
+   "output": "windSpeed",
+   "why": "wind resuspends sediment and chops the surface",
+   "requiredFor": "clarity decay and surface light"
+  }
+ ],
+ "providesTo": [
+  {
+   "brain": "biological-state",
+   "output": "clarityBand",
+   "why": "turbidity-tolerant versus clear-water species rules"
+  },
+  {
+   "brain": "sector-intelligence",
+   "output": "clarity",
+   "why": "conditions assembly"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "Secchi error (ft)",
+   "target": 1.0,
+   "direction": "lower",
+   "rationale": "a 1 ft error changes whether a 3 ft shot is visible"
+  }
+ ],
+ "priorityQuestions": [
+  "How fast does clarity decay after rain at reservoirs of different type?",
+  "Do new Secchi observations confirm the R3.1 candidate?"
+ ],
+ "abstainWhen": [
+  "no scene or gauge within limits",
+  "class taxonomy undefined"
+ ]
+}

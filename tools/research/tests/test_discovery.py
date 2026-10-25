@@ -467,3 +467,18 @@ def test_a_gap_blocked_externally_before_is_updated_when_new_evidence_arrives(ho
     register(monkeypatch, "late", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=True))
     st, t, led = run1(home, monkeypatch, cfg_for([av("late", resolves=["G-A"])]), cid="u2")
     assert led.doc["gaps"]["G-A"]["status"] == "RESOLVED_PENDING_APPROVAL" and t["outcome"]["outcome"] == "IMPROVED"
+
+
+def test_a_finding_resolves_only_the_gaps_it_lists_and_a_new_campaign_must_re_earn_the_resolution(home, monkeypatch):
+    """Found in the first v7 run: a calm-night climatology that addressed two gaps resolved BOTH (including 'strong-wind nights are not forecast'), and a gap resolved
+    in an earlier campaign stopped its avenue from running again, so the new report lost the improvement."""
+    register(monkeypatch, "clim", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=True))
+    cfg = cfg_for([av("clim", gaps=("G-A", "G-B"), resolves=["G-A"])])
+    st, t, led = run1(home, monkeypatch, cfg, cid="r1")
+    assert led.doc["gaps"]["G-A"]["status"] == "RESOLVED_PENDING_APPROVAL" and led.doc["gaps"]["G-B"]["status"] != "RESOLVED_PENDING_APPROVAL"
+    st, t, led = run1(home, monkeypatch, cfg, cid="r2")
+    assert any(k.startswith("clim:") and v["campaign"] == "r2" for k, v in led.doc["avenues"].items())           # it ran again ...
+    assert t["outcome"]["outcome"] == "IMPROVED" and led.doc["gaps"]["G-A"]["status"] == "RESOLVED_PENDING_APPROVAL"   # ... and re-earned the resolution
+    register(monkeypatch, "clim", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=False))
+    st, t, led = run1(home, monkeypatch, cfg, cid="r3")
+    assert led.doc["gaps"]["G-A"]["status"] != "RESOLVED_PENDING_APPROVAL" and t["outcome"]["outcome"] != "IMPROVED"  # a result that no longer reproduces is not carried forward

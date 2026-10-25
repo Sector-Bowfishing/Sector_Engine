@@ -1,0 +1,65 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "depth",
+ "role": "Effective water depth in the shallows",
+ "bowfishingPurpose": "The shootable zone is shallow: light, refraction and arrow reach make depth beyond a few feet unshootable, so the amount and place of shallow water is the first filter for where to fish.",
+ "decisionsInformed": [
+  "where shootable shallow water exists at current level",
+  "how a level change moves the shootable zone"
+ ],
+ "predicts": [
+  {
+   "id": "effectiveDepth",
+   "desc": "Depth at a point from bathymetry, datum and level",
+   "status": "ABSTAIN_NO_RELEASE"
+  },
+  {
+   "id": "shallowArea",
+   "desc": "Share of shootable (<= 4 ft, hypothesis) area",
+   "status": "HYPOTHESIS_NOT_VALIDATED"
+  }
+ ],
+ "mustNotPredict": [
+  "depth without a verified datum"
+ ],
+ "needsFrom": [
+  {
+   "brain": "lake-brain",
+   "output": "observedPoolElevation",
+   "why": "depth = level - bed elevation",
+   "requiredFor": "every depth output"
+  }
+ ],
+ "providesTo": [
+  {
+   "brain": "biological-state",
+   "output": "shallowArea",
+   "why": "shallow-water use rules"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "depth error at shooting depth (ft)",
+   "target": 0.5,
+   "direction": "lower",
+   "rationale": "a half foot is the difference between shootable and not"
+  },
+  {
+   "metric": "lakes with a verified datum",
+   "target": 1.0,
+   "direction": "higher",
+   "rationale": "no datum, no depth"
+  }
+ ],
+ "priorityQuestions": [
+  "Which pilot reservoirs have usable bathymetry and a known datum?",
+  "What is the shootable-depth threshold used by experienced bowfishers?"
+ ],
+ "abstainWhen": [
+  "datum unverified",
+  "no approved release",
+  "bathymetry coverage missing"
+ ]
+}

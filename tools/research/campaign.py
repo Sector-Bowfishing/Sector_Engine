@@ -46,6 +46,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -70,6 +71,15 @@ BRAINS = ("biological-state", "wind", "water-clarity", "lake-brain", "water-temp
 DEFAULT_FOLDERS = {"biological-state": "fish-brain", "wind": "wind-brain", "water-clarity": "water-clarity", "lake-brain": "lake-brain",
                    "water-temp": "water-temperature", "depth": "depth", "vegetation": "vegetation", "sector-intelligence": "sector-intelligence"}
 BRAIN_DIRS = {"biological-state": "fish", "lake-brain": "lake", "water-temp": "water-temperature"}
+try:                                                                       # a Brain registered in discovery.json with a research folder joins the coordinator with no code change
+    for _b, _spec in json.load(open(os.path.join(HERE, "discovery.json"), encoding="utf-8")).get("brains", {}).items():
+        if _b not in DEFAULT_FOLDERS and _spec.get("folder"):
+            DEFAULT_FOLDERS[_b] = _spec["folder"]
+            BRAINS = BRAINS + (_b,)
+            if _spec.get("dir"):
+                BRAIN_DIRS[_b] = _spec["dir"]
+except (OSError, ValueError):
+    pass
 CLOSEOUT_SECTIONS = ("Preserved results", "Manifests updated", "Candidate knowledge", "Backups verified", "Deleted", "Worktrees", "Blockers")
 OWNER_MARKER = ".campaign-owned"
 # local authoritative score artifacts; a campaign must leave them byte-identical (the live /scores node is never read or written here)
@@ -305,6 +315,9 @@ def stage_discover(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         return out
     g = D.load_gaps(ENGINE, c.home, bid, st["tracks"][bid]["folder"], BRAIN_DIRS.get(bid, bid))
     weaknesses = [{"id": w["id"], "title": w["title"], "source": w.get("evidence", "campaign configuration"), "nextEvidence": w.get("nextEvidence")} for w in (brain_spec(bid).get("weaknesses") or [])]
+    if not g["gaps"] and not weaknesses:                                 # a Brain with no gap list yet (a newly onboarded one): its first gap is to define its gaps
+        weaknesses = [{"id": re.sub(r"[^A-Z]", "", bid.upper()) + "-DISC-FIRST", "title": "Define and investigate this Brain's first scientific gaps: " + (brain_spec(bid).get("purpose") or bid),
+                       "source": "campaign: no GAPS.json or generated gaps exist", "nextEvidence": "an agent research task (see research/agent-tasks) or a reviewed GAPS.json for the Brain"}]
     led = ledger(c, st, bid)
     led.sync(g["gaps"] + weaknesses)
     led.reopen_exhausted()                                               # a new campaign gives exhausted gaps a fresh chance (new sources, new experiments)
@@ -718,6 +731,28 @@ def stage_score(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> dict
     return out
 
 
+def write_agent_task(c: Campaign, st: dict, bid: str, gid: str, gap: dict) -> str:
+    """A self-contained brief for an agent (a coordinating Claude session or a subagent) to investigate a gap no configured avenue covers: find legitimate
+    downloadable evidence anywhere, register the source, analyse it, and deliver findings through the same validator (tiers, hashes, thresholds)."""
+    folder = c.folder(st, bid)
+    p = os.path.join(folder, "research", "agent-tasks", D.safe_key(gid) + ".json")
+    charter = {}
+    cp = os.path.join(ENGINE, "brains", BRAIN_DIRS.get(bid, bid), "research", "CHARTER.json")
+    if os.path.exists(cp):
+        charter = json.load(open(cp, encoding="utf-8"))
+    task = {"schema": "sector-agent-research-task-v1", "brainId": bid, "gapId": gid, "gap": gap.get("title"), "status": "OPEN", "createdBy": c.cid,
+            "bowfishingPurpose": charter.get("bowfishingPurpose"), "priorityQuestions": charter.get("priorityQuestions"), "fitForPurposeTargets": charter.get("fitForPurpose"),
+            "how": ["search the open web (scientific data repositories, agencies, journals' data supplements) for datasets that could resolve the gap; verify each landing page or API before relying on it",
+                    "register an allowed host with `campaign.py register-source` (https, licence, purpose, rationale) or record an owner-action if access needs the owner",
+                    "download within limits, hash and register the evidence; analyse it offline; pre-declare thresholds before looking at results",
+                    "deliver findings with `campaign.py submit` (schema sector-research-findings-v1, tiers, change documentation); unsupported conclusions are rejected and kept as rejected hypotheses",
+                    "if the evidence cannot resolve a validation or access restriction, record the exact limitation and move on"],
+            "mustNot": ["treat a missing connector as no evidence", "invent a score", "open sealed or protected holdouts", "approve or publish anything"]}
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    atomic_json(p, task)
+    return os.path.relpath(p, c.home)
+
+
 def score_display(bid: str, sc: dict) -> str:
     """R1/R2: a typed constant is never printed as a result; every candidate score names its rubric, source and whether it can move."""
     m = brain_spec(bid).get("scoreMeta") or {}
@@ -779,7 +814,7 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         okm = [r for r in mine if r["verdict"] == "VALIDATED" and not r["fixture"]]
         new_ev = led.seen_evidence(entry.get("shas") or [])
         for r in okm:
-            led.touch(r["addresses"], r["tier"], r["id"], bool(r["resolves"]), bool((r["measured"] or {}).get("improved")))
+            led.touch(r["addresses"], r["tier"], r["id"], set(r["resolves"]), bool((r["measured"] or {}).get("improved")))
         best = max((r["tier"] for r in okm), key=L.rank, default=None)
         outcome = "IMPROVED" if any((r["measured"] or {}).get("improved") for r in okm) else ("EVIDENCE" if okm else "NO_RESULT")
         if entry.get("failureCount") and not entry.get("evidenceFiles") and av["run"] != "upstream":
@@ -833,10 +868,17 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
             atomic_json(c.state_path, s2)
         c.log(event="followup", brain=bid, next=nxt[0]["id"], targets=(nxt[1] or [])[:20])
         return {"continued": True, "nextAvenue": nxt[0]["id"], "targets": (nxt[1] or [])[:50], **hist}
+    served = {g for a in avs for g in a.get("gaps") or []}
+    for g in list(led.actionable()):                                    # a gap NO avenue serves is not "exhausted": no connector configured is not "no evidence exists".
+        if g not in served:                                             # The coordinator writes an agent research task (open-web search + analysis) instead.
+            gp = led.doc["gaps"][g]
+            task = write_agent_task(c, st, bid, g, gp)
+            gp["nextEvidence"] = f"agent research task (search beyond configured sources, then `campaign.py submit`): {task}"
     cls = classify(c, st, bid, led, why_stop)
     if cls["outcome"] in ("STALLED",):                                  # exhausted means: every configured avenue was tried - never that nothing exists
         for g in list(led.actionable()):
-            led.exhaust(g, f"all {len(avs)} configured avenues tried; register a new source or experiment to continue")
+            if g in served:
+                led.exhaust(g, f"all {len(avs)} configured avenues tried; register a new source or experiment to continue")
         cls = classify(c, st, bid, led, why_stop)
     led.save()
     with _lock:

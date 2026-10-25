@@ -72,7 +72,7 @@ class Ledger:
         if g["status"] not in ("RESOLVED_PENDING_APPROVAL",):
             g["status"] = "BLOCKED_APPROVAL" if kind == "approval" else "BLOCKED_EXTERNAL"
 
-    def touch(self, gids: list[str], tier: str, finding_id: str, resolves: bool, improved: bool) -> None:
+    def touch(self, gids: list[str], tier: str, finding_id: str, resolves, improved: bool) -> None:
         """A validated finding touched these gaps at `tier`. Only an independently validated, measured improvement that explicitly
         `resolves` a gap moves it to RESOLVED_PENDING_APPROVAL (candidate only: authoritative scores change through approval)."""
         for gid in gids:
@@ -85,8 +85,10 @@ class Ledger:
                 g["findings"].append(finding_id)
             if g["status"] == "RESOLVED_PENDING_APPROVAL" or g["status"].startswith("BLOCKED"):
                 continue                                       # a blocker stays until its external/approval condition is met
-            if resolves and improved and tier == "INDEPENDENTLY_VALIDATED":
+            may_resolve = (gid in resolves) if isinstance(resolves, (set, list, tuple, frozenset)) else bool(resolves)   # ONLY the gaps a finding explicitly resolves
+            if may_resolve and improved and tier == "INDEPENDENTLY_VALIDATED":
                 g["status"] = "RESOLVED_PENDING_APPROVAL"
+                g["resolvedBy"] = finding_id
             elif rank(tier) >= rank("SCIENTIFIC_SUPPORT"):
                 g["status"] = "PARTIAL"
             elif g["status"] == "OPEN":
@@ -110,6 +112,8 @@ class Ledger:
         for g in self.doc["gaps"].values():
             if g["status"] in ("EXHAUSTED", "BLOCKED_EXTERNAL"):
                 g["status"] = "INVESTIGATING"
+            elif g["status"] == "RESOLVED_PENDING_APPROVAL":     # a resolution must be re-earned: the avenue runs again and must reproduce the validated improvement
+                g["status"], g["previouslyResolvedBy"] = "INVESTIGATING", g.get("resolvedBy")
 
     def seen_findings(self, ids: list[str]) -> int:
         """Validated finding ids never validated before in this Brain's ledger (analysis-only avenues make progress through findings, not downloads)."""
