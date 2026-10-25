@@ -890,6 +890,8 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
     served = {g for a in avs for g in a.get("gaps") or []}
     tried = sorted({v["id"] for v in led.doc["avenues"].values()})
     for g in list(led.actionable()):                                    # a gap NO avenue serves, or whose configured avenues are all used up, is not finished:
+        if "GEN-CLOSEOUT" in g:                                         # closeout text fragments of a Brain without reviewed gaps are not scientific questions
+            continue
         gp = led.doc["gaps"][g]                                         # the coordinator QUEUES executable agent research (open web beyond the configured sources)
         task = write_agent_task(c, st, bid, g, gp, tried)
         qt = TQ.enqueue(c.home, bid, g, "agent-research", f"{bid}: {gp.get('title')}", task, c.cid, topic="open-web")
