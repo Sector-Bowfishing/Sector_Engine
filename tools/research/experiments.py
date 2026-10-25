@@ -178,7 +178,7 @@ def analyze_wt_interval(home: str, spec: dict, mine: list, allacq: list, upstrea
               "practicalEffect": "A bowfisher sees an honest, season-aware range around the modeled temperature (for example spring readings are more likely warmer than the model) instead of a single +-number that is too tight in some seasons and too wide in others.",
               "scoreImpact": "None under water-temp-level-ladder-v1 (gate-based); recorded as a measured uncertainty-handling gain for the candidate capability contract.",
               "limitations": "Grab samples are daytime single-depth; sensor lakes are few; the interval describes the model's error, not the fish; publication requires a Water Temp release change and approval."}
-    cap = {"kind": "uncertainty", "name": "interval score of the published water-temperature uncertainty band (C, lower is better)", "direction": "lower_better",
+    cap = {"baselineKind": "the single fixed error band used today", "kind": "uncertainty", "name": "interval score of the published water-temperature uncertainty band (C, lower is better)", "direction": "lower_better",
            "baselineMetric": f"{g}.sensorIsBase", "candidateMetric": f"{g}.sensorIsCand", "minDelta": spec["sensorMinDeltaIs"], "nMetric": f"{g}.sensorLakes", "minN": spec["minSensorLakes"], "tests": tests}
     f = D.finding(f"WT-INTERVAL-{rung}", f"A {rung.replace('_', ' x ')} empirical interval is better calibrated and sharper than one fixed band on data not used to build it.", "PARAMETER",
                   sorted(used), home, "offline refit, interval score, temporal holdout + leave-lake-out sensors", f"{g}.holdoutDeltaIs", ">=", spec["holdoutMinDeltaIs"],
@@ -398,7 +398,7 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
                   "practicalEffect": "Night-activity and cold-water rules that now have a field comparison can be shown as experimental with their evidence; contradicted rules are withheld.",
                   "scoreImpact": "None under biological-state-score-v1 (it does not measure field validation); counted as validation coverage in the capability contract.",
                   "limitations": "River navigation pools, daytime-skewed sampling, June-October only; electrofishing catchability differs day vs night; not Tennessee-system reservoirs; cold tests need cold-water samples that are rare in this database."}
-        cap = {"kind": "coverage", "name": "species rules with an independent field test (validation coverage)", "direction": "higher_better", "baselineMetric": f"{g}.rulesFieldTestedBase",
+        cap = {"baselineKind": "none: no species rule had a field comparison", "kind": "coverage", "name": "species rules with an independent field test (validation coverage)", "direction": "higher_better", "baselineMetric": f"{g}.rulesFieldTestedBase",
                "candidateMetric": f"{g}.rulesFieldTestedCand", "minDelta": 1, "nMetric": f"{g}.testsRun", "minN": 1, "tests": [{"metric": f"{g}.decisiveRules", "op": ">=", "threshold": 1}]}
         findings.append(D.finding("FISH-FIELD-COVERAGE", f"{len(decisive)} Fish rules now have a decisive independent field comparison.", "RULE", paths, home, "pre-declared rule tests on LTRM",
                                   f"{g}.decisiveRules", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap))
@@ -510,7 +510,7 @@ def analyze_iem_wind(home: str, spec: dict, mine: list, allacq: list, upstream=N
                   "practicalEffect": "A bowfisher can see the typical odds of a calm night for the month at a nearby station before any forecast exists; it also tells which months are mostly windy.",
                   "scoreImpact": "None under wind-certification-rubric-v1 / capability v2 (they do not read a climatology); counted as measured prediction gain in the capability contract.",
                   "limitations": "Airport wind is an over-land proxy for shoreline wind; thresholds (calm = 8.7 kt sustained, 13 kt gust) are practical hypotheses, not validated against shot success; stations are representative, not every fleet lake."}
-        cap = {"kind": "prediction", "name": "mean absolute error of the predicted monthly calm-night probability (probability points)", "direction": "lower_better", "baselineMetric": f"{g}.pooledMaeBase",
+        cap = {"baselineKind": "NAIVE: one all-months calm-night probability (a weak baseline; no seasonal prior is deployed)", "kind": "prediction", "name": "mean absolute error of the predicted monthly calm-night probability (probability points)", "direction": "lower_better", "baselineMetric": f"{g}.pooledMaeBase",
                "candidateMetric": f"{g}.pooledMaeCand", "minDelta": p["minDeltaMae"], "nMetric": f"{g}.stations", "minN": p["minStations"], "tests": tests}
         findings.append(D.finding("WIND-CALM-NIGHT-CLIMATOLOGY", "Month-specific calm-night probabilities predict held-out years better than one all-months probability.", "PARAMETER", sorted(set(paths)), home,
                                   "airport hourly wind, nightly maxima, train/test by year", f"{g}.pooledDeltaMae", ">=", p["minDeltaMae"], tier="INDEPENDENTLY_VALIDATED", change=change, capability=cap))
@@ -587,7 +587,7 @@ def analyze_wt_bias(home: str, spec: dict, mine: list, allacq: list, upstream=No
               "practicalEffect": "Spring (MAM) water temperatures run cold and autumn (SON) warm in the production model; the correction moves predicted temperatures toward observed ones, which shifts every temperature-gated species rule (spawn windows, cold-water inactivity) by the same amount.",
               "scoreImpact": "None under water-temp-level-ladder-v1: the frozen score is gate-based (Level-4 protected truth) and is not moved by a lower RMSE. Reported as a measured capability gain only.",
               "limitations": "Offsets are fleet-level medians; grab samples are daytime single-depth values compared with a daily-mean model; deployment needs a Swift change and approval; the protected Stage 3C.3 lakes (incl. Guntersville) were not used."}
-    cap = {"kind": "prediction", "name": "production M0 water-temperature RMSE (C)", "direction": "lower_better", "baselineMetric": f"{g}.sensorRmseBase",
+    cap = {"baselineKind": "production M0 without correction", "kind": "prediction", "name": "production M0 water-temperature RMSE (C)", "direction": "lower_better", "baselineMetric": f"{g}.sensorRmseBase",
            "candidateMetric": f"{g}.sensorRmseCand", "minDelta": spec["sensorMinDelta"], "nMetric": f"{g}.sensorLakes", "minN": spec["minSensorLakes"], "tests": tests}
     f = D.finding(f"WT-BIAS-{rung}", f"A {rung.replace('_', ' x ')} correction reduces production M0 error on data not used to build it.", "PARAMETER", sorted(used_paths), home,
                   "offline refit + temporal holdout + leave-lake-out sensor test", f"{g}.holdoutDeltaRmse", ">=", spec["holdoutMinDelta"],
@@ -637,7 +637,7 @@ def analyze_fish_rules(home: str, spec: dict, mine: list, allacq: list, upstream
     m["unsupportedDisplayedBase"] = len(abstain)                      # species rules that would be shown today without direct evidence (everything is shown)
     m["unsupportedDisplayedCand"] = 0                                 # with the boundary they are replaced by 'not enough evidence'
     m["gradedConsistent"] = int(len(experimental) + len(abstain) == len(per))
-    cap = {"kind": "refusal", "name": "species rules shown without direct, fully read evidence (refusal boundary; NOT predictive accuracy)", "direction": "lower_better",
+    cap = {"baselineKind": "current behaviour: every species rule is shown", "kind": "refusal", "name": "species rules shown without direct, fully read evidence (refusal boundary; NOT predictive accuracy)", "direction": "lower_better",
            "baselineMetric": f"{g}.unsupportedDisplayedBase", "candidateMetric": f"{g}.unsupportedDisplayedCand", "minDelta": 1, "nMetric": f"{g}.speciesAtPilot", "minN": 1,
            "tests": [{"metric": f"{g}.gradedConsistent", "op": "==", "threshold": 1}]}
     f = D.finding("FISH-RULE-GRADE", "Species rules at the pilot lake can be graded by evidence strength into experimental vs abstain.", "RULE", paths, home,
@@ -788,7 +788,7 @@ def analyze_lake_cwms(home: str, spec: dict, mine: list, allacq: list, upstream=
                   "practicalEffect": "More lakes keep a fresh, independent level reading when the primary source fails, so fewer lake states go stale or ABSTAIN.",
                   "scoreImpact": "None in lake-brain-score-v1 (no coverage-of-fresh-sources dimension; the score is capped at 3.0 by profiled share). Measured as a coverage gain only.",
                   "limitations": "Coverage, not accuracy: no cross-check against a second source for these lakes; binding needs Lake Brain review and approval."}
-        cap = {"kind": "coverage", "name": "fleet lakes with a fresh independent level series", "direction": "higher_better", "baselineMetric": f"{g}.freshLakesBase",
+        cap = {"baselineKind": "the USGS-matched fresh level sources found by the same campaign", "kind": "coverage", "name": "fleet lakes with a fresh independent level series", "direction": "higher_better", "baselineMetric": f"{g}.freshLakesBase",
                "candidateMetric": f"{g}.freshLakesCand", "minDelta": 1, "nMetric": f"{g}.newFreshLakes", "minN": 1,
                "tests": [{"metric": f"{g}.newFreshLakes", "op": ">=", "threshold": 1}]}
         paths = sorted({m["path"] for m in per.values()})

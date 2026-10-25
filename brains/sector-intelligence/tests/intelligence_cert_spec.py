@@ -31,7 +31,7 @@ SPEC = BrainCertSpec(
                     "runtime/sector_intelligence_brain.py", "runtime/evaluation.py", "runtime/orchestration.py", "runtime/publish_artifact.py", "runtime/catalog.json",
                     "tests", "research/README.md"),
     unique_module_basenames=("sector_intelligence_brain.py", "evaluation.py"), legacy_pointer_dir="jobs/sector-intelligence-brain",
-    allowed_runtime_ext=(".py", ".json"), research_files=("CHARTER.json", "README.md"),
+    allowed_runtime_ext=(".py", ".json"), research_files=("CHARTER.json", "GAPS.json", "README.md"),
     contract_tokens=("## 4. OWNERSHIP", "## 5. NON-OWNERSHIP", "no rating, score or recommendation", "must not silently substitute for a missing specialist"),
     bundle_id="sector-intelligence-publication-v1", contract_file="contracts/sector-intelligence-publication-v1.json", registry_schema_id="intelligence-registry-v1",
     job_id="sector-intelligence-brain",

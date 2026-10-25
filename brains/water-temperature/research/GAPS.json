@@ -1,0 +1,61 @@
+{
+ "schemaVersion": "1.0.0",
+ "brainId": "water-temp",
+ "gaps": [
+  {
+   "id": "WATER-VAL-001",
+   "type": "validation",
+   "title": "The Level-4 protected-truth sufficiency gate is not met",
+   "whyItMatters": "Two of four protected lakes have fewer than the required qualifying casts, so the frozen score cannot move.",
+   "bowfisherDecision": "Whether the temperature estimate has been checked on a protected lake before it is trusted.",
+   "currentEvidence": [
+    "stage-3c3-protected-validation"
+   ],
+   "stopCondition": "Stop when the missing casts exist and the owner approves the recount under the frozen rule, or the lakes are replaced.",
+   "expectedOutput": "The Level-4 comparison and a scored result.",
+   "humanOrFieldValidationRequired": {
+    "required": true,
+    "what": "Reservoir-operator profiles or a prospective logger network, and owner approval to recount."
+   },
+   "status": "BLOCKED",
+   "owner": "water-temp-lane"
+  },
+  {
+   "id": "WATER-CAL-001",
+   "type": "validation",
+   "title": "The model has a seasonal bias that no correction has yet beaten on independent data",
+   "whyItMatters": "Spring runs cold and autumn warm in the fleet validation; corrections that help the fleet hurt some already-good lakes.",
+   "bowfisherDecision": "Whether a spawn-window temperature is read too early or too late.",
+   "currentEvidence": [
+    "m0-fleet-validation",
+    "independent-sensor-validation"
+   ],
+   "stopCondition": "Stop when six or more independent lake-surface logger lakes exist, or a correction passes the preregistered tests.",
+   "expectedOutput": "A correction accepted or rejected on independent data.",
+   "humanOrFieldValidationRequired": {
+    "required": true,
+    "what": "Independent lake-surface (<=1.5 m) temperature logger series at six or more reservoirs."
+   },
+   "status": "OPEN",
+   "owner": "water-temp-lane"
+  },
+  {
+   "id": "WATER-UNC-001",
+   "type": "confidence",
+   "title": "The published error band is over-confident on independent lakes",
+   "whyItMatters": "A stated 80% band covered only about two thirds of readings at two independent sensor lakes.",
+   "bowfisherDecision": "How wide to treat the temperature estimate when a rule band is only a few degrees wide.",
+   "currentEvidence": [
+    "independent-sensor-validation"
+   ],
+   "stopCondition": "Stop when an interval passes the preregistered calibration tests on independent lakes.",
+   "expectedOutput": "A calibrated seasonal interval, or a documented wider fixed band.",
+   "humanOrFieldValidationRequired": {
+    "required": true,
+    "what": "More independent sensor lakes."
+   },
+   "status": "OPEN",
+   "owner": "water-temp-lane"
+  }
+ ]
+}

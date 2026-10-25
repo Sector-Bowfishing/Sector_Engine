@@ -1,0 +1,59 @@
+{
+ "schemaVersion": "1.0.0",
+ "brainId": "sector-intelligence",
+ "gaps": [
+  {
+   "id": "INT-VAL-001",
+   "type": "validation",
+   "title": "The synthesis of Brain outputs is not validated",
+   "whyItMatters": "Intelligence assembles inputs; no cross-Brain relationship has been tested against outcomes, so it cannot recommend.",
+   "bowfisherDecision": "Whether the app may say anything beyond showing each factor with its age and label.",
+   "currentEvidence": [
+    "intelligence-score-v1"
+   ],
+   "stopCondition": "Stop when a cross-Brain relationship holds on independent data, or field outcomes are required.",
+   "expectedOutput": "A tested relationship, or a recorded refusal.",
+   "humanOrFieldValidationRequired": {
+    "required": true,
+    "what": "Field outcomes paired with the Brain states at the time."
+   },
+   "status": "OPEN",
+   "owner": "sector-intelligence-lane"
+  },
+  {
+   "id": "INT-CON-001",
+   "type": "readiness",
+   "title": "Input requirement is declared REQUIRED in one file and OPTIONAL in another",
+   "whyItMatters": "The catalog marks the five inputs required while the control manifest marks them optional, so abstain behaviour depends on which file is read.",
+   "bowfisherDecision": "Whether the app shows a partial picture or nothing when one input is stale.",
+   "currentEvidence": [
+    "intelligence-catalog",
+    "control-manifest"
+   ],
+   "stopCondition": "Stop when both files agree and a test pins it.",
+   "expectedOutput": "One declared requirement per input.",
+   "humanOrFieldValidationRequired": {
+    "required": false
+   },
+   "status": "OPEN",
+   "owner": "sector-intelligence-lane"
+  },
+  {
+   "id": "INT-DEP-001",
+   "type": "readiness",
+   "title": "Dependencies the Brains use are not declared in brain.json",
+   "whyItMatters": "Fish reads five Brains but declares none; Water Temp and Clarity also read an undeclared input (recorded in integration_contract_gaps.json).",
+   "bowfisherDecision": "Whether a stale input is noticed by the orchestrator.",
+   "currentEvidence": [
+    "integration-contract-gaps"
+   ],
+   "stopCondition": "Stop when the recorded list is empty.",
+   "expectedOutput": "Declared consumes for every used input.",
+   "humanOrFieldValidationRequired": {
+    "required": false
+   },
+   "status": "OPEN",
+   "owner": "sector-intelligence-lane"
+  }
+ ]
+}
