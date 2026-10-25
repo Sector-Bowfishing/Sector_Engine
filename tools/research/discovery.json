@@ -920,6 +920,24 @@
         "access": "run the plan in brains/depth/research/tools/depth_research/records/field_validation_prereg.json",
         "verified": true,
         "addresses": "effective depth has no field truth"
+       },
+       {
+        "id": "depth-ehydro-surveys",
+        "gap": "DEPTH-DAT-001",
+        "publisher": "US Army Corps of Engineers (eHydro hydrographic survey footprints)",
+        "dataset": "dated survey footprints and per-survey XYZ/TIN zips with vertical datum metadata for pilot reservoirs",
+        "access": "public ArcGIS feature service (layer SurveyJob) at services7.arcgis.com/n1YM8pTrFmm7L4hs/arcgis/rest/services/eHydro_Survey_Data/FeatureServer/0, query by lake envelope; open-web search 2026-10-25 verified the service answers without login (one 429 quota error seen); per-survey zips and their datum NOT yet verified; add the host with `campaign.py register-source` before acquiring",
+        "verified": true,
+        "addresses": "which pilot reservoirs have a dated survey and a documentable datum (DEPTH-DAT-001), and shallow-area computation (DEPTH-VAL-001)"
+       },
+       {
+        "id": "depth-datum-anchor",
+        "gap": "DEPTH-DAT-001",
+        "publisher": "NOAA NGS (VERTCON) and Kentucky Transportation Cabinet (Kentucky Dam NGVD29 to NAVD88 -0.2 ft note)",
+        "dataset": "vertical datum conversion for reservoir pool elevations",
+        "access": "NGS VERTCON tool; the Kentucky Lake note is a public PDF; both found by the open-web search 2026-10-25, VERTCON page not opened",
+        "verified": false,
+        "addresses": "datum conversion cross-check for each pool"
        }
       ]
      }
@@ -1006,6 +1024,15 @@
         "access": "request from the agency or operator; existence of a public survey series for the pilot lake NOT verified",
         "verified": false,
         "addresses": "the surface observer failed lake-level gates; potential habitat must not be confused with observed vegetation"
+       },
+       {
+        "id": "veg-usgs-nas-occurrences",
+        "gap": "VEG-VAL-001",
+        "publisher": "USGS Nonindigenous Aquatic Species database",
+        "dataset": "dated, georeferenced observed records of invasive submerged plants (hydrilla, Eurasian watermilfoil, ...) by state",
+        "access": "public JSON API nas.er.usgs.gov/api/v2/occurrence/search?genus=<genus>&state=<ST>&limit=100, no login (open-web search 2026-10-25 verified a Guntersville Reservoir hydrilla record); presence only, effort-uneven, not absence data; register the host first",
+        "verified": true,
+        "addresses": "observed (not potential) vegetation records per fleet lake as a dated truth source"
        }
       ]
      }

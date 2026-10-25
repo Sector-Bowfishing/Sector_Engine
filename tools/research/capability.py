@@ -94,12 +94,17 @@ def compute_brain(engine: str, home: str, bid: str, disc: dict, campaign: str | 
     else:
         dims_cur["validationDepth"] = _un("no gap ledger yet")
     # practicalAvailability from the pilot readiness record
-    caps = ((readiness or {}).get("brains") or {}).get(bid, {}).get("capabilities") or []
+    allcaps = ((readiness or {}).get("brains") or {}).get(bid, {}).get("capabilities") or []
+    caps = [c for c in allcaps if c.get("deployed", True)]               # CURRENT counts only what is deployed; candidates (deployed: false) count in the candidate column
     if caps:
         v = sum(CLASS_VALUE.get(c["class"], 0.0) for c in caps) / len(caps)
         dims_cur["practicalAvailability"] = _meas(v, capabilities=len(caps), classes={c: sum(x["class"] == c for x in caps) for c in CLASS_VALUE})
     else:
         dims_cur["practicalAvailability"] = _un("no pilot readiness record for this Brain")
+    if len(allcaps) > len(caps):
+        v2 = sum(CLASS_VALUE.get(c["class"], 0.0) for c in allcaps) / len(allcaps)
+        dims_cand["practicalAvailability"] = {**_meas(v2, capabilities=len(allcaps), classes={c: sum(x["class"] == c for x in allcaps) for c in CLASS_VALUE}), "validated": True,
+                                              "note": "includes validated candidates that are not deployed"}
     fleet = _fleet(home, spec)
     ffp = {f["metric"]: f for f in charter.get("fitForPurpose") or []}
     # ---- Brain-specific measured inputs (all read from recorded evidence)
@@ -156,8 +161,18 @@ def compute_brain(engine: str, home: str, bid: str, disc: dict, campaign: str | 
         dims_cur["predictionFitness"] = _un("no cross-Brain relationship has been validated")
         dims_cur["uncertaintyHandling"] = _un("not measured")
         dims_cur["coverage"] = _un("not measured")
+    elif bid == "wind":
+        cl = X.get("wind-calm-night-climatology") or {}
+        dims_cur["predictionFitness"] = _un("the deployed Wind Brain has no recomputable error metric (strong-wind skill is recorded as text only: POD 0 on 49 events)")
+        if cl.get("pooledMaeCand") is not None:
+            tgt = (ffp.get("calm-night climatology MAE (probability points)") or {}).get("target", 0.05)
+            dims_cand["predictionFitness"] = {**_meas(_fit(cl["pooledMaeCand"], tgt, "lower"), maeCand=cl["pooledMaeCand"], maeBase=cl["pooledMaeBase"], target=tgt, stations=cl["stations"],
+                                                      stationsImprovedShare=cl.get("stationsImprovedShare")), "validated": True,
+                                              "note": "calm-night climatology candidate on held-out years (airport proxy, not shoreline wind); the strong-wind-night target remains unmeasured"}
+        dims_cur["uncertaintyHandling"] = _un("not measured")
+        dims_cur["coverage"] = _un("no observed-data coverage metric yet")
     else:
-        dims_cur["predictionFitness"] = _un("no recomputable error metric: " + ("wind skill is recorded as text only (POD 0 on 49 events)" if bid == "wind" else "Brain abstains / unscored"))
+        dims_cur["predictionFitness"] = _un("no recomputable error metric: Brain abstains / unscored")
         dims_cur["uncertaintyHandling"] = _un("not measured")
         dims_cur["coverage"] = _un("no observed-data coverage metric yet")
     for k in WEIGHTS:

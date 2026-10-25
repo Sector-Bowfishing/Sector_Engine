@@ -60,6 +60,12 @@
    "target": 0.9,
    "direction": "higher",
    "rationale": "no local observation, no claim"
+  },
+  {
+   "metric": "calm-night climatology MAE (probability points)",
+   "target": 0.05,
+   "direction": "lower",
+   "rationale": "a planning prior that is off by more than 5 points of probability is not a useful seasonal guide"
   }
  ],
  "priorityQuestions": [

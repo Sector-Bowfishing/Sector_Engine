@@ -180,3 +180,13 @@ def test_capability_is_computed_from_evidence_with_unmeasured_dimensions_and_sep
     wind = next(b for b in rep["brains"] if b["brainId"] == "wind")
     assert wind["current"]["dimensions"]["predictionFitness"]["status"] == "UNMEASURED" and wind["current"]["measuredWeight"] < 0.5
     assert "not an engineering score" in rep["separation"].lower() and all(b["current"]["value"] is None or 0 <= b["current"]["value"] <= 1 for b in rep["brains"])
+
+
+def test_practical_availability_is_computed_from_the_readiness_classes_and_candidates_do_not_count_as_current(tmp_path):
+    h = _cap_home(tmp_path)
+    rp = os.path.join(h, "ready.json")
+    json.dump({"brains": {"wind": {"capabilities": [{"id": "a", "class": "VALIDATED_FOR_INTERNAL_TEST"}, {"id": "b", "class": "ABSTAIN"},
+                                                    {"id": "c", "class": "VALIDATED_FOR_INTERNAL_TEST", "deployed": False}]}}}, open(rp, "w"))
+    wind = next(b for b in K.compute(ENGINE, h, "c1", readiness_path=rp)["brains"] if b["brainId"] == "wind")
+    assert wind["current"]["dimensions"]["practicalAvailability"]["value"] == 0.5                       # (1.0 + 0.0) / 2 deployed capabilities
+    assert wind["candidate"]["dimensions"]["practicalAvailability"]["value"] == round(2 / 3, 4)          # the validated candidate counts only in the candidate column
