@@ -796,6 +796,162 @@ def analyze_eggs_temp(home: str, spec: dict, mine: list, allacq: list, upstream=
     return {"metrics": m, "findings": findings, "weak": [], "limitations": [{"limitation": "the egg data are Asian carp (silver and bighead together) from the Upper Mississippi; other species' spawn-temperature rules remain without field data", "kind": "scope", "gap": "FISH-VAL-001"}]}
 
 
+# ------------------------------------------------------------------------------------------------------------------------------- Water Temp: many independent lakes (USGS in situ surface observations)
+SB_ITEM = "https://www.sciencebase.gov/catalog/item/"
+
+
+def _hav(a, b, c, d):
+    r = math.pi / 180
+    x = math.sin((c - a) * r / 2) ** 2 + math.cos(a * r) * math.cos(c * r) * math.sin((d - b) * r / 2) ** 2
+    return 2 * 6371 * math.asin(math.sqrt(x))
+
+
+def acquire_wt_multilake(ev, home, spec, it, targets, gaps):
+    """Independent validation set: USGS release of in situ lake-surface temperature observations (Willard et al. 2022 data release, CC0). Deterministic lake selection
+    (most observations, lakes >= minAreaKm2, balanced over four longitude bands); Open-Meteo archive forcing per selected lake - the same forcing the production M0 uses."""
+    p = spec["params"]
+    lst = ev.fetch("wtm-sciencebase", "item.json", SB_ITEM + p["itemId"], {"format": "json", "fields": "files"}, purpose="file list of the USGS lake temperature release")
+    if not lst:
+        return {"obs": None}
+    urls = {f["name"]: f["url"] for f in json.load(open(os.path.join(home, lst), encoding="utf-8")).get("files") or []}
+    meta = ev.fetch("wtm-sciencebase", "lake_metadata.csv", urls["lake_metadata.csv"], None, purpose="lake coordinates, area and observation counts")
+    obs = ev.fetch("wtm-sciencebase", "lake_surface_temp_obs_preds.csv", urls["lake_surface_temp_obs_preds.csv"], None, purpose="in situ lake-surface temperature observations (with the release's own model predictions, not used)")
+    if not (meta and obs):
+        return {"obs": None}
+    mrows = {}
+    for r in csv.DictReader(open(os.path.join(home, meta), encoding="utf-8")):
+        try:
+            if float(r["area_m2"]) / 1e6 >= p["minAreaKm2"] and int(r["num_obs"]) >= p["minObs"]:
+                mrows[r["site_id"]] = r
+        except ValueError:
+            continue
+    n_after = {}
+    y0 = p["yearFrom"]
+    for r in csv.DictReader(open(os.path.join(home, obs), encoding="utf-8")):
+        if r["site_id"] in mrows and r["wtemp_obs"] not in ("", "NA") and int(r["Date"][:4]) >= y0 and 4 <= int(r["Date"][5:7]) <= 10:
+            n_after[r["site_id"]] = n_after.get(r["site_id"], 0) + 1
+    cands = sorted(((n, sid) for sid, n in n_after.items() if n >= p["minObsAfter"]), reverse=True)
+    bands = [(-130, -104), (-104, -94), (-94, -82), (-82, -60)]
+    sel = []
+    for lo, hi in bands:
+        sel += [sid for n, sid in cands if lo <= float(mrows[sid]["lake_lon_deg"]) < hi][: p["perBand"]]
+    out = []
+    for sid in sorted(sel):
+        r = mrows[sid]
+        key = D.safe_key(sid.replace("{", "").replace("}", ""))[:60]
+        f = ev.fetch("open-meteo-archive", f"{key}.json", "https://archive-api.open-meteo.com/v1/archive",
+                     {"latitude": r["lake_lat_deg"], "longitude": r["lake_lon_deg"], "start_date": f"{y0 - 1}-11-01", "end_date": p["yearTo"] and f"{p['yearTo']}-12-31", "timezone": "auto",
+                      "daily": "temperature_2m_mean,shortwave_radiation_sum,wind_speed_10m_mean,relative_humidity_2m_mean"}, purpose=f"forcing for independent lake {sid}")
+        if f:
+            out.append({"site": sid, "lat": float(r["lake_lat_deg"]), "lon": float(r["lake_lon_deg"]), "areaKm2": round(float(r["area_m2"]) / 1e6, 2), "nObs": n_after[sid], "forcing": f})
+    return {"obs": obs, "meta": meta, "lakes": out, "candidates": len(cands)}
+
+
+def _region_lookup(home, p, rows):
+    """Region label of a point = region of the nearest FLEET lake (labels come from the fleet residual table), so the correction cells match how they were fitted."""
+    reg = {}
+    for r in rows:
+        reg.setdefault(r["stem"], r["region"])
+    pts = [(l["lat"], l["lon"], reg[D.safe_key(l["stem"])]) for l in D.fleet(home, p) if D.safe_key(l["stem"]) in reg]
+    return lambda la, lo: min(pts, key=lambda q: _hav(la, lo, q[0], q[1]))[2]
+
+
+def analyze_wt_multilake(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
+    """M0 error on MANY independent lakes, and the earlier correction / interval hypotheses re-tested on them with the same pre-declared thresholds (the lakes are not in the
+    fit and were not examined before the thresholds were fixed)."""
+    p = spec["params"]
+    g = f"discovery.exp.{spec['avenueId']}"
+    a0 = next((a for a in mine if a.get("lakes")), None)
+    if not a0:
+        return {"metrics": {"lakes": 0}, "findings": [], "weak": [], "limitations": [{"limitation": "independent lake observation release not acquired", "kind": "external", "gap": "WATERTEMP-DISC-M0-SEASONAL-BIAS",
+                                                                                     "nextSource": "retry sciencebase.gov / open-meteo in a later campaign"}]}
+    rows = _resid(home, p["storedResiduals"])
+    train = [r for r in rows if r["year"] <= p["trainThroughYear"]]
+    region_of = _region_lookup(home, p, rows)
+    lakes = {l["site"]: l for l in a0["lakes"]}
+    errs = {s: [] for s in lakes}
+    forc = {s: D.m0_daily(json.load(open(os.path.join(home, l["forcing"]), encoding="utf-8"))["daily"]) for s, l in lakes.items()}
+    for r in csv.DictReader(open(os.path.join(home, a0["obs"]), encoding="utf-8")):
+        s = r["site_id"]
+        if s in lakes and r["wtemp_obs"] not in ("", "NA") and int(r["Date"][:4]) >= p["yearFrom"] and 4 <= int(r["Date"][5:7]) <= 10:
+            v = D.m0_for_date(forc[s], r["Date"])
+            if v is not None:
+                errs[s].append((r["Date"], v - float(r["wtemp_obs"])))
+    errs = {s: e for s, e in errs.items() if len(e) >= p["minPairs"]}
+    per = {s: {"n": len(e), "biasC": round(S.mean(x for _, x in e), 3), "rmseC": round(rmse([x for _, x in e]), 3), "region": region_of(lakes[s]["lat"], lakes[s]["lon"]), "areaKm2": lakes[s]["areaKm2"]} for s, e in errs.items()}
+    m = {"lakes": len(per), "pairs": sum(v["n"] for v in per.values()), "pooledEqualLakeRmseC": round(math.sqrt(sum(v["rmseC"] ** 2 for v in per.values()) / len(per)), 4) if per else None,
+         "medianLakeBiasC": round(S.median(v["biasC"] for v in per.values()), 4) if per else None, "lakesRmseLe2C": sum(v["rmseC"] <= 2.0 for v in per.values()), "perLake": per}
+    bys = {}
+    for s, e in errs.items():
+        for d, x in e:
+            bys.setdefault(season_of(int(d[5:7])), []).append(x)
+    m["biasBySeasonC"] = {k: round(S.mean(v), 3) for k, v in sorted(bys.items())}
+    paths = sorted({a0["obs"], a0["meta"]} | {lakes[s]["forcing"] for s in per})
+    findings = [D.finding("WT-MULTILAKE-BASELINE", f"Production M0 against {m['pairs']} independent in situ surface observations at {len(per)} lakes (not in the fit): pooled equal-lake RMSE {m['pooledEqualLakeRmseC']} C.",
+                          "EVIDENCE", paths[:200], home, "M0 from Open-Meteo forcing vs USGS in situ surface temperature (Apr-Oct)", f"{g}.lakes", ">=", p["minLakes"], tier="SCIENTIFIC_SUPPORT")] if len(per) >= p["minLakes"] else []
+    for rung in ("season", "region_season"):
+        keyf = RUNGS[rung]
+        off = _fit(train, keyf, p["minCell"], p["shrink"])
+        b, c = [], {}
+        for s, e in errs.items():
+            reg = per[s]["region"]
+            bb, cc = [], []
+            for d, x in e:
+                k = keyf({"season": season_of(int(d[5:7])), "region": reg, "cls": None})
+                bb.append(x)
+                cc.append(x - off.get(k, 0.0))
+            c[s] = (rmse(bb), rmse(cc))
+        n = max(len(c), 1)
+        pb, pc = math.sqrt(sum(a * a for a, _ in c.values()) / n), math.sqrt(sum(b_ * b_ for _, b_ in c.values()) / n)
+        m[f"bias_{rung}"] = {"rmseBase": round(pb, 4), "rmseCand": round(pc, 4), "deltaRmse": round(pb - pc, 4), "lakesWorseShare": round(sum(cb > ca + p["worseTol"] for ca, cb in c.values()) / n, 4), "lakes": len(c)}
+        # interval: fixed symmetric band vs cell quantiles (both fitted on the fleet residuals only)
+        alpha = 1 - p["nominal"]
+        cells = {}
+        for r in train:
+            cells.setdefault(keyf(r), []).append(r["e"])
+        cq = {k: (_q(v, alpha / 2), _q(v, 1 - alpha / 2)) for k, v in cells.items() if len(v) >= p["minCell"]}
+        q0 = _q([abs(r["e"]) for r in train], p["nominal"])
+        isb, isc, covb, covc = {}, {}, {}, {}
+        for s, e in errs.items():
+            reg = per[s]["region"]
+            tb = tc = hb = hc = 0
+            for d, x in e:
+                lo, hi = cq.get(keyf({"season": season_of(int(d[5:7])), "region": reg, "cls": None}), (-q0, q0))
+                tb += _is(x, -q0, q0, alpha)
+                tc += _is(x, lo, hi, alpha)
+                hb += (-q0 <= x <= q0)
+                hc += (lo <= x <= hi)
+            isb[s], isc[s], covb[s], covc[s] = tb / len(e), tc / len(e), hb / len(e), hc / len(e)
+        mb, mc = sum(isb.values()) / n, sum(isc.values()) / n
+        cal = lambda cv: sum(abs(v - p["nominal"]) <= 0.1 for v in cv.values()) / n  # noqa: E731
+        m[f"interval_{rung}"] = {"isBase": round(mb, 4), "isCand": round(mc, 4), "deltaIs": round(mb - mc, 4), "lakesWorseShare": round(sum(isc[s] > isb[s] + p["worseTolIs"] for s in isb) / n, 4),
+                                 "calibratedShareBase": round(cal(covb), 4), "calibratedShareCand": round(cal(covc), 4), "calibGain": round(cal(covc) - cal(covb), 4),
+                                 "meanCoverageBase": round(sum(covb.values()) / n, 4), "meanCoverageCand": round(sum(covc.values()) / n, 4)}
+    for rung in ("season", "region_season"):
+        bk, ik = f"bias_{rung}", f"interval_{rung}"
+        cb = {"scientificChange": f"Add a {rung.replace('_', ' x ')} additive correction to production M0 (offsets fitted on the fleet grab-sample residuals).", "previous": "M0 without a bias correction.",
+              "proposed": {"correction": "M0' = M0 - offset[cell]", "cell": rung, "offsetsC": {k: round(v, 3) for k, v in sorted(_fit(train, RUNGS[rung], p["minCell"], p["shrink"]).items())}},
+              "evidenceSummary": f"tested on {len(per)} independent lakes ({m['pairs']} observations) that were not in the fit.", "validationMethod": "pooled equal-lake RMSE vs production M0 on independent lakes; thresholds identical to the earlier 4-lake test",
+              "validationResults": m[bk], "practicalEffect": "Spring readings would be corrected warmer and autumn readings cooler where the fleet shows that bias.",
+              "scoreImpact": "None under water-temp-level-ladder-v1 (gate-based).", "limitations": "Natural and managed lakes of 1 km2 or more, April-October surface observations, mostly northern and central US."}
+        cap = {"kind": "prediction", "baselineKind": "production M0 without correction", "name": "production M0 water-temperature RMSE on independent lakes (C)", "direction": "lower_better", "baselineMetric": f"{g}.{bk}.rmseBase",
+               "candidateMetric": f"{g}.{bk}.rmseCand", "minDelta": p["sensorMinDelta"], "nMetric": f"{g}.{bk}.lakes", "minN": p["minLakes"],
+               "tests": [{"metric": f"{g}.{bk}.deltaRmse", "op": ">=", "threshold": p["sensorMinDelta"]}, {"metric": f"{g}.{bk}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
+        findings.append(D.finding(f"WT-MULTILAKE-BIAS-{rung}", f"A {rung.replace('_', ' x ')} correction lowers M0 error on independent lakes.", "PARAMETER", paths[:200], home, "fleet-fitted offsets applied to independent lakes",
+                                  f"{g}.{bk}.deltaRmse", ">=", p["sensorMinDelta"], tier="INDEPENDENTLY_VALIDATED", change=cb, capability=cap))
+        ci = {"scientificChange": f"Publish a {rung.replace('_', ' x ')} empirical 80% error interval instead of one fixed band.", "previous": "One symmetric band for every lake and season.",
+              "proposed": {"intervals": "observed = M0 - [lo, hi]", "cell": rung}, "evidenceSummary": f"{len(per)} independent lakes.", "validationMethod": "interval score and share of lakes with 70-90% coverage; thresholds pre-declared",
+              "validationResults": m[ik], "practicalEffect": "An honest, season-aware range around the modeled temperature.", "scoreImpact": "None under the gate-based ladder.",
+              "limitations": "Same scope as the correction test."}
+        capi = {"kind": "uncertainty", "baselineKind": "the single fixed error band used today", "name": "interval score of the published water-temperature band on independent lakes (C)", "direction": "lower_better",
+                "baselineMetric": f"{g}.{ik}.isBase", "candidateMetric": f"{g}.{ik}.isCand", "minDelta": p["minDeltaIs"], "nMetric": f"{g}.bias_{rung}.lakes", "minN": p["minLakes"],
+                "tests": [{"metric": f"{g}.{ik}.deltaIs", "op": ">=", "threshold": p["minDeltaIs"]}, {"metric": f"{g}.{ik}.calibGain", "op": ">=", "threshold": p["minCalibGain"]},
+                          {"metric": f"{g}.{ik}.lakesWorseShare", "op": "<=", "threshold": p["maxWorseShare"]}]}
+        findings.append(D.finding(f"WT-MULTILAKE-INTERVAL-{rung}", f"A {rung.replace('_', ' x ')} interval is better calibrated and sharper on independent lakes.", "PARAMETER", paths[:200], home,
+                                  "fleet-fitted interval quantiles applied to independent lakes", f"{g}.{ik}.deltaIs", ">=", p["minDeltaIs"], tier="INDEPENDENTLY_VALIDATED", change=ci, capability=capi))
+    return {"metrics": m, "findings": findings, "weak": [], "limitations": []}
+
+
 def acquire_none(ev, home, spec, it, targets, gaps):
     return {}
 
@@ -1157,6 +1313,7 @@ EXPERIMENTS = {
     "ltrm-fish": {"acquire": acquire_ltrm, "analyze": analyze_ltrm},
     "iem-wind": {"acquire": acquire_iem_wind, "analyze": analyze_iem_wind},
     "ehydro": {"acquire": acquire_ehydro, "analyze": analyze_ehydro},
+    "wt-multilake": {"acquire": acquire_wt_multilake, "analyze": analyze_wt_multilake},
     "eggs-temp": {"acquire": acquire_none, "analyze": analyze_eggs_temp},
     "nas": {"acquire": acquire_nas, "analyze": analyze_nas},
     "fish-rule-grade": {"acquire": acquire_none, "analyze": analyze_fish_rules},

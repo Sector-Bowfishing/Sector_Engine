@@ -291,7 +291,7 @@ def _wt_world(home, noise_only=False):
 
 
 def _wt_spec(rung):
-    spec = dict(C.discovery_cfg()["brains"]["water-temp"]["avenues"][2]["params"])
+    spec = dict(next(x for x in C.discovery_cfg()["brains"]["water-temp"]["avenues"] if x["id"] == "wt-bias-season")["params"])
     spec.update({"rung": rung, "avenueId": "wt-test", "minDays": 60})
     return spec
 

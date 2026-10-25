@@ -88,6 +88,43 @@
      ]
     },
     {
+     "id": "wt-multilake",
+     "run": "experiment",
+     "experiment": "wt-multilake",
+     "gaps": [
+      "WATERTEMP-DISC-M0-SEASONAL-BIAS",
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "resolves": [
+      "WATERTEMP-DISC-M0-SEASONAL-BIAS",
+      "WATERTEMP-DISC-UNCERTAINTY"
+     ],
+     "acquiring": true,
+     "params": {
+      "itemId": "60341c3ed34eb12031172aa6",
+      "fleetForcingDir": "water-temperature/validation/valmodel/forcing",
+      "storedResiduals": "water-temperature/validation/valmodel/residuals_primary.csv.gz",
+      "minAreaKm2": 1.0,
+      "minObs": 300,
+      "minObsAfter": 120,
+      "perBand": 15,
+      "yearFrom": 2000,
+      "yearTo": 2020,
+      "minPairs": 60,
+      "minLakes": 20,
+      "trainThroughYear": 2021,
+      "minCell": 30,
+      "shrink": 10,
+      "sensorMinDelta": 0.05,
+      "maxWorseShare": 0.25,
+      "worseTol": 0.15,
+      "worseTolIs": 0.15,
+      "nominal": 0.8,
+      "minDeltaIs": 0.05,
+      "minCalibGain": 0.05
+     }
+    },
+    {
      "id": "wt-bias-season",
      "run": "experiment",
      "experiment": "wt-bias",
