@@ -329,3 +329,12 @@ def test_ltrm_scan_emits_candidate_rules_only_for_effects_that_survive_multiple_
     assert ("CARP", "diel") not in cands                                                               # no effect: no candidate rule
     assert ("CARP", "thermal_cold") in cands and cands[("CARP", "thermal_cold")]["direction"] == "DOWN"
     assert any(f["id"] == "FISH-SCAN-RULES" for f in r["findings"]) and r["metrics"]["scanTestsRun"] == 4
+
+
+def test_validated_temperature_correction_is_shown_only_as_a_labelled_candidate_and_never_replaces_the_deployed_value():
+    cand = {"cell": "region_season", "offsetsC": {"Southeast|SON": -0.7, "Southeast|MAM": 1.1}}
+    r = I.assess("L", nodes(), NOW, READY, wt_candidate=cand, region="Southeast", month=4)
+    f = next(x for x in r["factors"] if x["factor"] == "modeledSurfaceTemp")
+    assert f["value"] == 10.0 and f["candidate"]["status"] == "CANDIDATE_NOT_APPROVED" and f["candidate"]["correctedValue"] == round(10.0 - 1.1, 2)
+    none = I.assess("L", nodes(), NOW, READY, wt_candidate=cand, region="Pacific", month=4)                              # no cell for this region: no candidate shown
+    assert "candidate" not in next(x for x in none["factors"] if x["factor"] == "modeledSurfaceTemp")
