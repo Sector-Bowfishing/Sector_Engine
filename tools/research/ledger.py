@@ -17,6 +17,8 @@ import hashlib
 import json
 import os
 
+import evidence_policy as EP
+
 TIERS = ("ACQUIRED", "QUALITY_CHECKED", "EVIDENCE_LEAD", "SCIENTIFIC_SUPPORT", "CANDIDATE_CHANGE", "INDEPENDENTLY_VALIDATED")
 RANK = {t: i for i, t in enumerate(TIERS)}
 ACTIONABLE = ("OPEN", "INVESTIGATING", "PARTIAL")
@@ -47,6 +49,7 @@ class Ledger:
         self.path, self.brain = path, brain
         if os.path.exists(path):
             self.doc = json.load(open(path, encoding="utf-8"))
+            self.migrate_optional_data()
         else:
             self.doc = {"schema": "sector-gap-ledger-v1", "brainId": brain, "gaps": {}, "avenues": {}, "evidence": []}
 
@@ -65,7 +68,28 @@ class Ledger:
     def actionable(self) -> list[str]:
         return [g for g, v in self.doc["gaps"].items() if v["status"] in ACTIONABLE]
 
+    def migrate_optional_data(self) -> int:
+        """Evidence policy 2026-10-26: a blocker that only asks for owner-collected field data is an OPTIONAL data wish, not a block. Existing ledgers are
+        migrated in place (the record is preserved under optionalData) and a gap whose only blockers were such wishes is investigated again."""
+        n = 0
+        for g in self.doc["gaps"].values():
+            keep, moved = [], []
+            for b in g.get("blockers", []):
+                (moved if b.get("kind") == "external" and EP.is_owner_collected(b.get("reason"), b.get("nextEvidenceSource")) else keep).append(b)
+            if moved:
+                g["blockers"] = keep
+                g.setdefault("optionalData", []).extend(moved)
+                n += len(moved)
+                if not keep and g["status"] in ("BLOCKED_EXTERNAL", "EXHAUSTED"):
+                    g["status"] = "INVESTIGATING"
+        return n
+
     def block(self, gid: str, kind: str, reason: str, next_source: str, campaign: str) -> None:
+        if kind == "external" and EP.is_owner_collected(reason, next_source):          # owner-collected field data is optional: recorded, never a block
+            g = self.doc["gaps"].setdefault(gid, {"status": "OPEN", "bestTier": None, "findings": [], "blockers": [], "title": gid, "firstSeen": now_iso()})
+            if not any(b["reason"] == reason for b in g.setdefault("optionalData", [])):
+                g["optionalData"].append({"kind": "external", "reason": reason, "nextEvidenceSource": next_source, "campaign": campaign, "at": now_iso()})
+            return
         g = self.doc["gaps"].setdefault(gid, {"status": "OPEN", "bestTier": None, "findings": [], "blockers": [], "title": gid, "firstSeen": now_iso()})
         if not any(b["reason"] == reason for b in g["blockers"]):
             g["blockers"].append({"kind": kind, "reason": reason, "nextEvidenceSource": next_source, "campaign": campaign, "at": now_iso()})

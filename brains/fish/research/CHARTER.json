@@ -1,7 +1,7 @@
 {
  "schema": "sector-bowfishing-charter-v1",
  "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
- "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "note": "Practical priors about bowfishing are hypotheses until validated by independent historical, public-dataset, literature or model evidence (owner-collected field data is optional, never required); fit-for-purpose targets are pre-declared requirements, not achievements.",
  "brainId": "biological-state",
  "role": "Species behaviour and seasonal state for bowfishing targets",
  "bowfishingPurpose": "Which species are present, when they spawn, whether they move into the shallows at night and what habitat they use decides whether a trip finds fish at all.",
@@ -70,7 +70,7 @@
  ],
  "fitForPurpose": [
   {
-   "metric": "species rules compared with a field outcome",
+   "metric": "species rules validated against independent historical or public observations",
    "target": 1,
    "direction": "higher",
    "rationale": "none is today"
@@ -83,7 +83,7 @@
   }
  ],
  "priorityQuestions": [
-  "Do dated field records support the spawn temperature bands?",
+  "Do dated historical and public records support the spawn temperature bands?",
   "Which species show shallow night movement in reservoirs, and at what temperature?"
  ],
  "abstainWhen": [

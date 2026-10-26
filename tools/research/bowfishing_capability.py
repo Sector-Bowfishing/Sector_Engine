@@ -147,7 +147,12 @@ def compute_brain(engine: str, home: str, bid: str, disc: dict, campaign: str | 
         dims_cur["coverage"] = _meas(a / fleet, lakesWithSecchiObservations=a, fleetLakes=fleet, lakesSearchedThisCampaign=b) if (a is not None and fleet) else _un("no Secchi evidence")
     elif bid == "biological-state":
         rg = X.get("rule-grade") or {}
-        dims_cur["predictionFitness"] = _un("no species rule has been compared with a field outcome (FISH-VAL-001)")
+        dims_cur["predictionFitness"] = _un("the deployed Fish rules have no recorded comparison with independent historical or public observations (FISH-VAL-001)")
+        lt = X.get("fish-ltrm-field-test") or {}
+        if lt.get("decisiveRules"):             # evidence policy 2026-10-26: existing historical observations (USGS LTRM electrofishing) validate; owner field trips are not required
+            dims_cand["predictionFitness"] = {**_meas(lt["supported"] / lt["decisiveRules"], supported=lt["supported"], contradicted=lt["contradicted"], decisiveRules=lt["decisiveRules"],
+                                                      rule="share of decisively tested species rules that the independent historical electrofishing data support (river surrogate)"),
+                                              "validated": True, "note": "Upper Mississippi pools, not Tennessee-system reservoirs; transferability stays a stated limitation"}
         if rg:
             tot = rg["speciesAtPilot"]
             dims_cur["uncertaintyHandling"] = _meas((tot - rg["unsupportedDisplayedBase"]) / tot, speciesShownWithDirectEvidence=tot - rg["unsupportedDisplayedBase"], speciesAtPilot=tot,

@@ -1,60 +1,61 @@
 {
-  "schemaVersion": "1.0.0",
-  "brainId": "depth",
-  "gaps": [
-    {
-      "id": "DEPTH-REL-001",
-      "type": "validation",
-      "title": "No approved Depth knowledge release",
-      "whyItMatters": "The packaged release (candidate manifest, claim levels, operator stage-area ratings) carries no approval record, so the runtime abstains (BLOCKED_AWAITING_APPROVED_RELEASE).",
-      "bowfisherDecision": "Whether any effective-depth number may be shown at all.",
-      "currentEvidence": [
-        "brains/depth/runtime/knowledge/knowledge-release.json"
-      ],
-      "stopCondition": "Stop when Michael records a scientific approval for a named release, or rejects it.",
-      "expectedOutput": "An approval record and a new APPROVED release id.",
-      "humanOrFieldValidationRequired": {
-        "required": true,
-        "what": "Scientific validation approval plus owner approval (PROJECT \u00a77)."
-      },
-      "status": "OPEN",
-      "owner": "depth-lane"
-    },
-    {
-      "id": "DEPTH-VAL-001",
-      "type": "validation",
-      "title": "Effective depth is not field-validated",
-      "whyItMatters": "The shift arithmetic is unit-tested; effective depth on known flats has no bowfishing field truth (preregistered plan in research/tools/depth_research/records/field_validation_prereg.json).",
-      "bowfisherDecision": "Whether a flat is shallower or deeper than usual tonight.",
-      "currentEvidence": [
-        "brains/depth/research/tools/depth_research/records/field_validation_prereg.json"
-      ],
-      "stopCondition": "Stop when the preregistered field validation is run and scored, or Michael defers it.",
-      "expectedOutput": "A PASSED / FAILED / INSUFFICIENT_DATA field-validation record.",
-      "humanOrFieldValidationRequired": {
-        "required": true,
-        "what": "On-water depth observations on known flats."
-      },
-      "status": "OPEN",
-      "owner": "depth-lane"
-    },
-    {
-      "id": "DEPTH-DAT-001",
-      "type": "evidence",
-      "title": "Datum coverage blocks most of the fleet",
-      "whyItMatters": "Lakes with an acceptable pool and a verified level binding lack a provable datum relationship, so no defensible shift exists for them.",
-      "bowfisherDecision": "How many lakes can get a depth shift at all.",
-      "currentEvidence": [
-        "brains/depth/runtime/knowledge/candidates.json"
-      ],
-      "stopCondition": "Stop when the next datum proposal batch is reviewed or the remaining lakes are classified as permanently blocked.",
-      "expectedOutput": "Reviewed datum proposals promoted through research tooling into a new candidate release.",
-      "humanOrFieldValidationRequired": {
-        "required": false,
-        "what": "Desk research."
-      },
-      "status": "OPEN",
-      "owner": "depth-lane"
-    }
-  ]
+ "schemaVersion": "1.0.0",
+ "brainId": "depth",
+ "gaps": [
+  {
+   "id": "DEPTH-REL-001",
+   "type": "validation",
+   "title": "No approved Depth knowledge release",
+   "whyItMatters": "The packaged release (candidate manifest, claim levels, operator stage-area ratings) carries no approval record, so the runtime abstains (BLOCKED_AWAITING_APPROVED_RELEASE).",
+   "bowfisherDecision": "Whether any effective-depth number may be shown at all.",
+   "currentEvidence": [
+    "brains/depth/runtime/knowledge/knowledge-release.json"
+   ],
+   "stopCondition": "Stop when Michael records a scientific approval for a named release, or rejects it.",
+   "expectedOutput": "An approval record and a new APPROVED release id.",
+   "humanOrFieldValidationRequired": {
+    "required": true,
+    "what": "Scientific validation approval plus owner approval (PROJECT \u00a77)."
+   },
+   "status": "OPEN",
+   "owner": "depth-lane"
+  },
+  {
+   "id": "DEPTH-VAL-001",
+   "type": "validation",
+   "title": "Effective depth is validated only by unit tests; it has not been compared with historical survey soundings and gauge records",
+   "whyItMatters": "The shift arithmetic is unit-tested. Effective depth on known flats can be checked against dated USACE eHydro survey soundings and historical gauge/level records without new on-water observations.",
+   "bowfisherDecision": "Whether a flat is shallower or deeper than usual tonight.",
+   "currentEvidence": [
+    "brains/depth/research/tools/depth_research/records/field_validation_prereg.json"
+   ],
+   "stopCondition": "Stop when effective depth is compared with historical survey and gauge records on a pre-declared sample, or when none are usable.",
+   "expectedOutput": "A PASSED / FAILED / INSUFFICIENT_DATA record from historical survey and gauge data; the earlier preregistered field plan is kept as an optional extension.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: any existing or owner-supplied observations may be added as evidence; they are never required."
+   },
+   "status": "OPEN",
+   "owner": "depth-lane"
+  },
+  {
+   "id": "DEPTH-DAT-001",
+   "type": "evidence",
+   "title": "Datum coverage blocks most of the fleet",
+   "whyItMatters": "Lakes with an acceptable pool and a verified level binding lack a provable datum relationship, so no defensible shift exists for them.",
+   "bowfisherDecision": "How many lakes can get a depth shift at all.",
+   "currentEvidence": [
+    "brains/depth/runtime/knowledge/candidates.json"
+   ],
+   "stopCondition": "Stop when the next datum proposal batch is reviewed or the remaining lakes are classified as permanently blocked.",
+   "expectedOutput": "Reviewed datum proposals promoted through research tooling into a new candidate release.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "what": "Desk research."
+   },
+   "status": "OPEN",
+   "owner": "depth-lane"
+  }
+ ]
 }

@@ -774,6 +774,7 @@ def write_agent_task(c: Campaign, st: dict, bid: str, gid: str, gap: dict, tried
                 pass
     task = {"schema": "sector-agent-research-task-v1", "brainId": bid, "gapId": gid, "gap": gap.get("title"), "status": "OPEN", "createdBy": c.cid, "alreadyTried": {"avenues": tried or [], "priorAgentRuns": prior},
             "bowfishingPurpose": charter.get("bowfishingPurpose"), "priorityQuestions": charter.get("priorityQuestions"), "fitForPurposeTargets": charter.get("fitForPurpose"),
+            "policy": "owner-collected field data is OPTIONAL and never a requirement (tools/research/evidence_policy.json); use literature, historical and public data, models and reproducible analysis",
             "how": ["search the open web (scientific data repositories, agencies, journals' data supplements) for datasets that could resolve the gap; verify each landing page or API before relying on it",
                     "register an allowed host with `campaign.py register-source` (https, licence, purpose, rationale) or record an owner-action if access needs the owner",
                     "download within limits, hash and register the evidence; analyse it offline; pre-declare thresholds before looking at results",
@@ -857,7 +858,10 @@ def stage_followup(c: Campaign, st: dict, bid: str, ad: dict, timeout: int) -> d
         led.doc["avenues"][key]["acquiring"] = bool(av.get("acquiring", av.get("run") == "connector" or av.get("experiment") in ("dataset-search", "lake-cwms")))
         for o in res.get("owner") or []:
             if o.get("avenue") == av["id"]:
-                rec = D.owner_action(c.home, t["folder"], c.cid, o["id"], o.get("gap") or "", o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), o.get("checked") or [], o["addresses"])
+                rec = D.owner_action(c.home, t["folder"], c.cid, o["id"], o.get("gap") or "", o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), o.get("checked") or [], o["addresses"],
+                                     bool(o.get("optional")))
+                if rec["status"] == "OPTIONAL_OWNER_DATA":
+                    continue                                                    # optional evidence is recorded, never a block (evidence policy 2026-10-26)
                 led.block(o.get("gap") or (av.get("gaps") or [""])[0], "external", f"{o['dataset']} ({rec['path']})", f"{o['publisher']}: {o['access']}", c.cid)
         for lim in res.get("limitations") or []:
             if lim.get("kind") in ("external", "approval") and lim.get("gap"):
@@ -1089,7 +1093,9 @@ def result_prompt(t: dict, brief: dict, result_path: str) -> str:
     return ("You are a research agent for Sector, a BOWFISHING intelligence system (shooting rough fish with a bow at night in shallow water, in US reservoirs and rivers). "
             "Investigate the gap below by searching the open web for LEGITIMATE, OPEN, DOWNLOADABLE data or published evidence that could close it. Verify every source by opening it (publisher, exact URL, direct "
             "file/API URL, licence, size, date range, coverage, whether login is needed). Do not download files larger than 5 MB. Prefer data that bears on real bowfishing outcomes (where fish are, when "
-            "they use accessible shallow water, visibility, conditions); transferable studies are evidence, not validation. Do not repeat anything in `alreadyTried`. Never invent a source or a result.\n\n"
+            "they use accessible shallow water, visibility, conditions); transferable studies are evidence, not validation. Do not repeat anything in `alreadyTried`. Never invent a source or a result. "
+            "EVIDENCE POLICY: do NOT propose owner-collected field work (field tests, trip logs, handheld readings, sonar transects, site-night quotas) as a requirement or next step; "
+            "find existing literature, historical measurements, public environmental or biological datasets and reproducible analyses. Existing observations are valid evidence.\n\n"
             f"TASK (JSON):\n{json.dumps({**brief, 'taskId': t['id']}, indent=1)[:6000]}\n\n"
             f"Write ONLY a JSON file to {result_path} with this shape (schema {RESULT_SCHEMA}):\n"
             '{"schema": "sector-agent-result-v1", "taskId": "<id>", "gapId": "<gap>", "status": "FINDINGS | NO_USABLE_EVIDENCE | BLOCKED", "summary": "...", "queriesTried": ["..."], '
@@ -1162,7 +1168,10 @@ def ingest_result(home: str, cid: str, t: dict, res: dict) -> dict:
     ev.save()
     ev.register(_manifest_lock)
     for o in res.get("ownerActions") or []:
-        rec = D.owner_action(home, folder, cid, o["id"], gid, o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), [t["id"]], o.get("addresses") or gid)
+        rec = D.owner_action(home, folder, cid, o["id"], gid, o["publisher"], o["dataset"], o["access"], bool(o.get("verified")), [t["id"]], o.get("addresses") or gid, bool(o.get("optional")))
+        if rec["status"] == "OPTIONAL_OWNER_DATA":
+            out["optionalOwnerData"] = out.get("optionalOwnerData", 0) + 1
+            continue
         led.block(gid, "external", f"{o['dataset']} ({rec['path']})", f"{o['publisher']}: {o['access']}", cid)
         out["ownerActions"] += 1
     n_new = led.seen_evidence([D.sha256(os.path.join(home, a["path"])) for a in out["acquired"]])

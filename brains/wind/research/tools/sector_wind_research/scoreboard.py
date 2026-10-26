@@ -30,6 +30,15 @@ CANDIDATE = "wind-candidate-2026.10.stage2-baseline"
 WEIGHTS = {1: 12, 2: 8, 3: 5, 4: 5, 5: 10, 6: 20, 7: 20, 8: 8, 9: 4, 10: 8}
 NAMES = {1: "Wind speed", 2: "Direction", 3: "Gust", 4: "Lead time", 5: "Fetch method", 6: "Exposure (field)",
          7: "Surface (field)", 8: "Freshness/reliability", 9: "Coverage", 10: "Provenance/Unknown"}
+# Rubric v2 (owner directive 2026-10-26, evidence policy: owner-collected field data is OPTIONAL). Same weights and credit curves; dimensions 6-7 are credited from ANY
+# accepted, pre-declared validation method recorded in the certification ledger (public historical wind/wave records, buoy and station comparisons, reproducible analysis,
+# or owner-supplied observations when they exist). v1 stays the default so the frozen candidate and its score log are unchanged; v2 never fabricates credit: an entry without an
+# accepted `method` and `predeclared: true` earns nothing, and no entry earns 0.
+RUBRIC_V2 = "rubric v2 (evidence-method validation; weights and curves of frozen rubric v1; dimensions 6-7 by accepted method)"
+CANDIDATE_V2 = "wind-candidate-v2-evidence-methods"
+NAMES_V2 = {**NAMES, 6: "Exposure (validated)", 7: "Surface (validated)"}
+ACCEPTED_METHODS = ("independent-historical-holdout", "public-dataset-comparison", "cross-site-transfer", "model-intercomparison", "reproducible-analysis",
+                    "retrospective-outcome-replay", "field-observation")
 LIVE_START = datetime(2026, 10, 8, tzinfo=timezone.utc)
 LEADS = ("1", "3", "6", "12", "18")
 
@@ -140,7 +149,7 @@ def dim7_credit(surf: dict) -> dict:
             "evidence (obs / 60)": min(n / 60, 1.0)}
 
 
-def dims_6_7(ledger_paths, addendum_path=None) -> dict:
+def dims_6_7(ledger_paths, addendum_path=None, rubric: str = "v1") -> dict:
     """Only the one-time HOLDOUT certification counts (practice and calibration never do). Partial credit
     follows the field scoring addendum v1, whose hash is checked before it is applied."""
     if addendum_path:
@@ -151,9 +160,11 @@ def dims_6_7(ledger_paths, addendum_path=None) -> dict:
     for p in ledger_paths:
         for path in glob.glob(p):
             entries += [json.loads(l) for l in open(path) if l.strip()]
+    if rubric == "v2":     # only a pre-declared entry from an accepted validation method counts; anything else is ignored, never partially credited
+        entries = [e for e in entries if e.get("method") in ACCEPTED_METHODS and e.get("predeclared") is True]
     if not entries:
         z = {"credit": 0.0, "conditions": {"holdout certification": 0.0}, "source": "none", "window": None, "n": 0,
-             "why": "no field data: 0 real observations; holdout sealed; no certification run"}
+             "why": ("no accepted-method validation entry recorded yet (credit stays 0 until one exists)" if rubric == "v2" else "no field data: 0 real observations; holdout sealed; no certification run")}
         return {6: dict(z), 7: dict(z)}
     e = entries[-1]
     ex, sf = e.get("exposure", {}), e.get("surface", {})
@@ -197,16 +208,16 @@ def dim10(prov: dict) -> dict:
             "why": "; ".join(f"{k}={prov.get(k)}" for k in keys)}
 
 
-def caps(field_dims, overwater: dict) -> list:
+def caps(field_dims, overwater: dict, rubric: str = "v1") -> list:
     out = []
     if field_dims[6]["credit"] == 0 and field_dims[7]["credit"] == 0:
-        out.append({"cap": 6.0, "rule": "Exposure or surface never field-validated"})
+        out.append({"cap": 6.0, "rule": "Exposure and surface never validated by an accepted method" if rubric == "v2" else "Exposure or surface never field-validated"})
     if not overwater.get("measuredStationComparisons"):
         out.append({"cap": 7.0, "rule": "Land-only wind validation, no over-water reference"})
     return out
 
 
-def compute(store, cfg, evidence_dir, now=None) -> dict:
+def compute(store, cfg, evidence_dir, now=None, rubric: str = "v1") -> dict:
     now = now or datetime.now(timezone.utc)
     E = lambda name: json.load(open(os.path.join(evidence_dir, name)))
     w = E("wind_skill_source.json")      # which skill evidence is current (Stage 2 backfill until Milestone A)
@@ -214,17 +225,18 @@ def compute(store, cfg, evidence_dir, now=None) -> dict:
     d = dims_1_to_4(skill, w["label"])
     d[5] = dim5(E("fetch_method.json"))
     add = os.path.join(evidence_dir, "..", "..", "stage3", "WIND_FIELD_SCORING_ADDENDUM.md")
-    d.update(dims_6_7([os.path.join(evidence_dir, "certification*.jsonl")], add if os.path.exists(add) else None))
+    d.update(dims_6_7([os.path.join(evidence_dir, "certification*.jsonl")], add if os.path.exists(add) else None, rubric))
     d[8] = dim8(store, cfg, now)
     d[9] = dim9(E("coverage.json"))
     d[10] = dim10(E("provenance.json"))
     ow = E("overwater.json")
     pts = {k: WEIGHTS[k] * d[k]["credit"] for k in d}
     raw = round(sum(pts.values()) / 10, 2)
-    cp = caps(d, ow)
+    cp = caps(d, ow, rubric)
+    names = NAMES_V2 if rubric == "v2" else NAMES
     official = round(min([raw] + [c["cap"] for c in cp]), 1)
-    return {"candidate": CANDIDATE, "rubric": RUBRIC, "computedAt": iso(now),
-            "dimensions": {k: {"name": NAMES[k], "weight": WEIGHTS[k], "points": round(pts[k], 2), **d[k]} for k in sorted(d)},
+    return {"candidate": CANDIDATE_V2 if rubric == "v2" else CANDIDATE, "rubric": RUBRIC_V2 if rubric == "v2" else RUBRIC, "computedAt": iso(now),
+            "dimensions": {k: {"name": names[k], "weight": WEIGHTS[k], "points": round(pts[k], 2), **d[k]} for k in sorted(d)},
             "rawPoints": round(sum(pts.values()), 2), "raw": raw, "caps": cp, "official": official}
 
 
@@ -265,10 +277,10 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--store", required=True); ap.add_argument("--evidence-dir", required=True)
     ap.add_argument("--log", default=None); ap.add_argument("--reason", default="scoreboard recompute")
-    ap.add_argument("--json", default=None)
+    ap.add_argument("--json", default=None); ap.add_argument("--rubric", choices=("v1", "v2"), default="v1")
     a = ap.parse_args(argv)
     cfg = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "lakes.json")))
-    s = compute(open_store(a.store), cfg, a.evidence_dir)
+    s = compute(open_store(a.store), cfg, a.evidence_dir, rubric=a.rubric)
     print(render(s))
     if a.log:
         e = append_log(a.log, s, a.reason)

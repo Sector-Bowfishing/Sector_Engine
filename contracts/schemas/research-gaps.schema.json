@@ -29,7 +29,8 @@
           "type": "object",
           "additionalProperties": false,
           "required": ["required"],
-          "properties": {"required": {"type": "boolean"}, "what": {"type": "string"}}
+          "properties": {"required": {"type": "boolean"}, "what": {"type": "string"},
+                         "fieldDataRole": {"enum": ["OPTIONAL_EVIDENCE"], "description": "Evidence policy 2026-10-26: owner-collected field data is optional evidence, never a requirement. `required` is for approvals and decisions only."}}
         },
         "status": {"enum": ["OPEN", "IN_PROGRESS", "CLOSED", "BLOCKED", "WITHDRAWN"]},
         "owner": {"type": "string", "minLength": 1}

@@ -5,7 +5,7 @@
   {
    "id": "LAKE-VAL-001",
    "type": "validation",
-   "title": "Lake level state and trend are not field-validated",
+   "title": "Lake level state and trend are validated only against operator records and a prospective ledger",
    "whyItMatters": "The level state (in zone, rising, falling) and trend are rules over operator elevations; no prospective scoring exists yet, so the score is capped while NOT_VALIDATED.",
    "bowfisherDecision": "Whether a bowfisher can rely on a 'rising' or 'in zone' reading when choosing flooded margins or launch access.",
    "currentEvidence": [
@@ -14,7 +14,9 @@
    "stopCondition": "Stop when the prospective ledger has scored enough predictions at the preregistered milestones, or when an operator threshold is needed.",
    "expectedOutput": "A scored level-prediction evaluation per lake class.",
    "humanOrFieldValidationRequired": {
-    "required": false
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: any existing or owner-supplied observations may be added as evidence; they are never required."
    },
    "status": "OPEN",
    "owner": "lake-brain-lane"

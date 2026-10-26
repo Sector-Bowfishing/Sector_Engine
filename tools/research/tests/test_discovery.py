@@ -482,3 +482,12 @@ def test_a_finding_resolves_only_the_gaps_it_lists_and_a_new_campaign_must_re_ea
     register(monkeypatch, "clim", fake_analyze(tier="INDEPENDENTLY_VALIDATED", good=False))
     st, t, led = run1(home, monkeypatch, cfg, cid="r3")
     assert led.doc["gaps"]["G-A"]["status"] != "RESOLVED_PENDING_APPROVAL" and t["outcome"]["outcome"] != "IMPROVED"  # a result that no longer reproduces is not carried forward
+
+
+def test_optional_owner_action_is_recorded_but_never_blocks_the_gap(home, monkeypatch):
+    acts = [{"id": "agency-extra", "gap": "G-A", "publisher": "State agency", "dataset": "creel records", "access": "request from the agency", "verified": False, "addresses": "G-A", "optional": True}]
+    cfg = cfg_for([{"id": "needs", "run": "experiment", "experiment": "owner-actions", "gaps": ["G-A"], "params": {"actions": acts}}])
+    st, t, led = run1(home, monkeypatch, cfg)
+    rec = json.load(open(os.path.join(home, "water-temperature", "research", "data-acquisition", "agency-extra.json")))
+    assert rec["status"] == "OPTIONAL_OWNER_DATA" and rec["blocksResearch"] is False
+    assert led.doc["gaps"]["G-A"]["status"] != "BLOCKED_EXTERNAL"

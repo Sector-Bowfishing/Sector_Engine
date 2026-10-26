@@ -35,6 +35,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+import evidence_policy as EP
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ALLOWED_HOSTS = ("waterservices.usgs.gov", "www.waterqualitydata.us", "archive-api.open-meteo.com", "api.gbif.org", "api.crossref.org")   # built-in floor
 DENY_HOSTS = ("firebaseio.com", "googleapis.com", "cloud.google.com", "run.app", "cloudfunctions.net", "appspot.com", "gstatic.com", "localhost")
@@ -832,7 +834,7 @@ def analyze_fish(home: str, cfg: dict, acq: list[dict]) -> dict:
                                 "GBIF occurrence search, month facet, national aggregate", f"discovery.species.{k}.records", ">=", cfg["minRecords"]))
         if n < cfg["minRecords"]:
             weak.append(sp)
-    metrics["scoreImpact"] = {"score": "fish rubric 2.1.0 frozen baseline unchanged", "why": "observation profiles are not field outcomes for FISH-VAL-001"}
+    metrics["scoreImpact"] = {"score": "fish rubric 2.1.0 frozen baseline unchanged", "why": "observation profiles are presence records, not an outcome test for FISH-VAL-001"}
     return {"metrics": metrics, "findings": findings, "weak": weak, "limitations": []}
 
 
@@ -937,10 +939,11 @@ def _analyze(kind: str, home: str, cfg: dict, acq: list[dict], upstream: dict | 
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- owner action
-def owner_action(home: str, folder: str, cid: str, aid: str, gap: str, publisher: str, what: str, access: str, verified: bool, checked: list, addresses: str) -> dict:
+def owner_action(home: str, folder: str, cid: str, aid: str, gap: str, publisher: str, what: str, access: str, verified: bool, checked: list, addresses: str, optional: bool = False) -> dict:
     """An actionable data-acquisition record for evidence the system cannot fetch itself: who publishes it, how to get it (marked verified or
     not), what was already checked, and which scientific gap it would address. 'Not found by a connector' is never 'does not exist'."""
-    rec = {"id": aid, "gap": gap, "status": "OWNER_ACTION_REQUIRED", "publisher": publisher, "dataset": what, "accessInstructions": access,
+    optional = optional or EP.is_owner_collected(what, access, publisher)           # evidence policy 2026-10-26: owner-collected field data is optional, never required
+    rec = {"id": aid, "gap": gap, "status": "OPTIONAL_OWNER_DATA" if optional else "OWNER_ACTION_REQUIRED", "blocksResearch": not optional, "publisher": publisher, "dataset": what, "accessInstructions": access,
            "accessVerified": verified, "alreadyChecked": checked, "wouldAddress": addresses, "campaign": cid, "at": now_iso()}
     p = os.path.join(home, folder, "research", "data-acquisition", safe_key(aid) + ".json")
     os.makedirs(os.path.dirname(p), exist_ok=True)
