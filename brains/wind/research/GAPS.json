@@ -1,155 +1,163 @@
 {
-  "schemaVersion": "1.0.0",
-  "brainId": "wind",
-  "gaps": [
-    {
-      "id": "WIND-CNF-001",
-      "type": "confidence",
-      "title": "Strong-wind nights are not forecast (deterministic NBM POD 0 on 49 observed >= 15 mph night events)",
-      "whyItMatters": "Strong-wind nights are where the wind forecast fails and where exposure matters most. Windy-hour error is 1.96 m/s and forecast-vs-observed surface-class agreement at observed >= 10 mph is 0.42; Wind Capability V2 items WI3, WI4 and EA1 hold about 21 of its 33 missing points.",
-      "bowfisherDecision": "Wind input to Sector Intelligence: whether a calm or moderate wind forecast can be trusted to keep an exposed shoreline's surface undisturbed tonight.",
-      "currentEvidence": [
-        "wind-measurements-evidence-v1:strongWind",
-        "wind-measurements-evidence-v1:atmospheric",
-        "confidence_flag (EXPLORATORY)"
-      ],
-      "stopCondition": "Stop when a method pre-registered before 2027-01-01 has been scored once on H2 (NBM probability recalibration first; RRFS first fair look 2027-01-01, decision-grade 2027-04-01), or when no candidate source remains. Never tune on H2.",
-      "expectedOutput": "One sealed-holdout result per pre-registered method with an accept/reject recommendation; if accepted, a versioned strong-wind signal the exposure assessment may use to lower (never raise) confidence.",
-      "humanOrFieldValidationRequired": {
-        "required": false,
-        "what": "Michael approves any promotion; validation itself is H2-gated, not field-gated."
-      },
-      "status": "BLOCKED",
-      "owner": "wind-brain-lane"
-    },
-    {
-      "id": "WIND-VAL-001",
-      "type": "validation",
-      "title": "No real bank has been checked: exposure ordering is unvalidated (0 of 24 required paired site-nights)",
-      "whyItMatters": "Shoreline ranking is the product. It runs and is physically coherent on all four lakes, but nobody has confirmed that a bank the model calls sheltered looks calmer on the water. Certification dimension 6 (20 pts) and the Scientific Confidence item bankExposureField depend on it.",
-      "bowfisherDecision": "Wind input to Sector Intelligence: which shorelines are exposed to or sheltered from a given wind direction.",
-      "currentEvidence": [
-        "field_pairs (pilot plan, not observations)",
-        "wind-measurements-evidence-v1:field"
-      ],
-      "stopCondition": "Stop at >= 40 eligible blinded holdout pairs on >= 2 lakes and >= 3 wind quadrants (certification floor 24), or when the owner declines the field campaign.",
-      "expectedOutput": "A certification run under Evidence Addendum v1: concordance with volume, recorded in the append-only certification ledger.",
-      "humanOrFieldValidationRequired": {
-        "required": true,
-        "what": "Blinded paired bank observations under the frozen protocol (exemplar photo set first); owner approval of lakes and protocol."
-      },
-      "status": "OPEN",
-      "owner": "wind-brain-lane"
-    },
-    {
-      "id": "WIND-VAL-002",
-      "type": "validation",
-      "title": "Surface classes are unvalidated at bank scale (0 of 36 required observations; buoy exact-class 0.41)",
-      "whyItMatters": "The fishing-impact wording rests on the surface class. Buoys are not banks; certification dimension 7 (20 pts) and the Scientific Confidence item surfaceField depend on bank observations.",
-      "bowfisherDecision": "Wind input to Sector Intelligence: how much the wind disturbs the surface at a given bank.",
-      "currentEvidence": [
-        "wind-measurements-evidence-v1:surface",
-        "wind-measurements-evidence-v1:field"
-      ],
-      "stopCondition": "Stop at >= 60 stratified holdout observations (floor 36) or when the owner declines the field campaign.",
-      "expectedOutput": "Exact / within-one / severe-miss rates on the field holdout and a recommendation on the class bounds.",
-      "humanOrFieldValidationRequired": {
-        "required": true,
-        "what": "Observer surface classes 1-5 under the frozen protocol."
-      },
-      "status": "OPEN",
-      "owner": "wind-brain-lane"
-    },
-    {
-      "id": "WIND-CNF-002",
-      "type": "confidence",
-      "title": "No wave memory: modeled chop disappears the moment wind eases (M0); M4 failed its promotion rule",
-      "whyItMatters": "After a blow the timeline is optimistic. The exposure assessment flags those hours (recessionOptimistic) but cannot say how long chop lingers. Wind Capability V2 TI3 (6 pts) and part of SI2.",
-      "bowfisherDecision": "Wind input to Sector Intelligence: how soon wind-driven disturbance at an exposed bank subsides after the wind drops.",
-      "currentEvidence": [
-        "WIND_M4_PREREG (failed rule 1 by 2 points of retention)",
-        "wind-measurements-evidence-v1:surface.transient"
-      ],
-      "stopCondition": "Stop when a new parameter-free memory model is pre-registered and scored once on a fresh buoy holdout plus the fixed SWAN scenarios, or when no unused buoy seasons remain.",
-      "expectedOutput": "A promotion decision for one memory model; if promoted, a shadow timeline path behind an explicit model id.",
-      "humanOrFieldValidationRequired": {
-        "required": false
-      },
-      "status": "OPEN",
-      "owner": "wind-brain-lane"
-    },
-    {
-      "id": "WIND-CNF-003",
-      "type": "confidence",
-      "title": "Direction accuracy 0.758 within 22.5 deg (certification full credit at 0.85); scored on all hours for a night product",
-      "whyItMatters": "Banks near the edge of shelter swap with small direction errors. No tested source improves it; the night-only metric (0.86-0.90) is a rubric-fit question for review, not something to change here.",
-      "bowfisherDecision": "Wind input to Sector Intelligence: whether a bank at the edge of a point is in the wind's lee tonight.",
-      "currentEvidence": [
-        "wind-measurements-evidence-v1:atmospheric"
-      ],
-      "stopCondition": "Stop when the rubric review decides the night-weighting question or a new source is pre-registered.",
-      "expectedOutput": "A recorded rubric-governance decision; no score change without it.",
-      "humanOrFieldValidationRequired": {
-        "required": true,
-        "what": "Independent rubric review."
-      },
-      "status": "OPEN",
-      "owner": "wind-brain-lane"
-    },
-    {
-      "id": "WIND-EVI-001",
-      "type": "evidence",
-      "title": "No over-water wind reference (certification cap 7.0)",
-      "whyItMatters": "All wind validation is at land stations; over-water wind can be stronger. Not binding until certification exceeds 7.",
-      "bowfisherDecision": "Wind input to Sector Intelligence: how much stronger the wind is on open water than the airport says.",
-      "currentEvidence": [
-        "wind-measurements-evidence-v1:overwater"
-      ],
-      "stopCondition": "Stop when one qualifying over-water station record exists or the owner declines the hardware.",
-      "expectedOutput": "A land-to-water factor with sample size, and removal of the 7.0 cap.",
-      "humanOrFieldValidationRequired": {
-        "required": true,
-        "what": "Owner approval of a dock-mounted anemometer (TVA 26a)."
-      },
-      "status": "OPEN",
-      "owner": "wind-brain-lane"
-    },
-    {
-      "id": "WIND-RDY-001",
-      "type": "readiness",
-      "title": "Certification block is a frozen 2026-10-13 snapshot; live reliability needs 30 valid days and a refresh run",
-      "whyItMatters": "Dimension 8 grows only when a newer block is admitted. The refresh gate (wind_score_refresh.py) exists; it needs a candidate block computed from the cloud archive metadata.",
-      "bowfisherDecision": "None directly: operational maturity, not capability.",
-      "currentEvidence": [
-        "frozen-scores.json wind block (5/30 days)",
-        "wind-score-history.jsonl"
-      ],
-      "stopCondition": "Stop when a refreshed block is admitted with >= 30 valid days, or when a ledger inconsistency needs a decision.",
-      "expectedOutput": "An admitted certification block and its history line.",
-      "humanOrFieldValidationRequired": {
-        "required": false
-      },
-      "status": "OPEN",
-      "owner": "wind-brain-lane"
-    },
-    {
-      "id": "WIND-PRD-001",
-      "type": "product",
-      "title": "Wind Exposure Assessment is nonproduction: not produced by wind-hourly, not published, not consumed by Sector Intelligence",
-      "whyItMatters": "The bank-level wind assessments exist and are tested, but Sector Intelligence cannot use them until an approved activation (storage artifact -> Publisher contract -> Intelligence consumption).",
-      "bowfisherDecision": "Wind input to Sector Intelligence's recommendation: which banks are exposed to or sheltered from tonight's wind.",
-      "currentEvidence": [
-        "sector-wind-exposure-assessment-v1",
-        "wind-specialist-scenarios-v1"
-      ],
-      "stopCondition": "Stop when Michael approves or declines the activation plan in WIND_BOWFISHING_FIRST_V2.md \u00a710; the Publisher cutover sequence (Water Clarity, Fish, Wind) is not changed.",
-      "expectedOutput": "An approved activation decision; if approved, a shadow storage artifact per lake-hour first.",
-      "humanOrFieldValidationRequired": {
-        "required": true,
-        "what": "Michael's activation approval."
-      },
-      "status": "OPEN",
-      "owner": "wind-brain-lane"
-    }
-  ]
+ "schemaVersion": "1.0.0",
+ "brainId": "wind",
+ "gaps": [
+  {
+   "id": "WIND-CNF-001",
+   "type": "confidence",
+   "title": "Strong-wind nights are not forecast (deterministic NBM POD 0 on 49 observed >= 15 mph night events)",
+   "whyItMatters": "Strong-wind nights are where the wind forecast fails and where exposure matters most. Windy-hour error is 1.96 m/s and forecast-vs-observed surface-class agreement at observed >= 10 mph is 0.42; Wind Capability V2 items WI3, WI4 and EA1 hold about 21 of its 33 missing points.",
+   "bowfisherDecision": "Wind input to Sector Intelligence: whether a calm or moderate wind forecast can be trusted to keep an exposed shoreline's surface undisturbed tonight.",
+   "currentEvidence": [
+    "wind-measurements-evidence-v1:strongWind",
+    "wind-measurements-evidence-v1:atmospheric",
+    "confidence_flag (EXPLORATORY)"
+   ],
+   "stopCondition": "Stop when a method pre-registered before 2027-01-01 has been scored once on H2 (NBM probability recalibration first; RRFS first fair look 2027-01-01, decision-grade 2027-04-01), or when no candidate source remains. Never tune on H2.",
+   "expectedOutput": "One sealed-holdout result per pre-registered method with an accept/reject recommendation; if accepted, a versioned strong-wind signal the exposure assessment may use to lower (never raise) confidence.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: any existing or owner-supplied observations may be added as evidence; they are never required."
+   },
+   "status": "BLOCKED",
+   "owner": "wind-brain-lane"
+  },
+  {
+   "id": "WIND-VAL-001",
+   "type": "validation",
+   "title": "Shoreline exposure ordering is validated only by physical consistency; it has not been compared with public historical wind/wave records at instrumented shorelines",
+   "whyItMatters": "Shoreline ranking is the product. It runs and is physically coherent on all four lakes. The evidence-based test compares the model's exposed/sheltered ordering with public historical records (NDBC and C-MAN stations, USGS/TVA/USACE reservoir stations, ASOS on shorelines) and fetch-limited wave theory; no owner-collected bank observations are required.",
+   "bowfisherDecision": "Wind input to Sector Intelligence: which shorelines are exposed to or sheltered from a given wind direction.",
+   "currentEvidence": [
+    "field_pairs (pilot plan, not observations)",
+    "wind-measurements-evidence-v1:field"
+   ],
+   "stopCondition": "Stop at >= 40 eligible historical station-direction pairs on >= 2 water bodies and >= 3 wind quadrants from public records (pre-declared concordance threshold), or when no public instrumented shoreline series bears on it.",
+   "expectedOutput": "A concordance result against public historical records recorded in the append-only evidence ledger, with the certification mapping set by a versioned contract.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: any existing or owner-supplied observations may be added as evidence; they are never required."
+   },
+   "status": "OPEN",
+   "owner": "wind-brain-lane"
+  },
+  {
+   "id": "WIND-VAL-002",
+   "type": "validation",
+   "title": "Surface classes are validated against buoys only (exact-class 0.41); bank-scale classes are checked against public wave/wind records and physics, not owner observations",
+   "whyItMatters": "The fishing-impact wording rests on the surface class. Public wind/wave buoys and reanalysis give independent historical class agreement; no observer classes are required.",
+   "bowfisherDecision": "Wind input to Sector Intelligence: how much the wind disturbs the surface at a given bank.",
+   "currentEvidence": [
+    "wind-measurements-evidence-v1:surface",
+    "wind-measurements-evidence-v1:field"
+   ],
+   "stopCondition": "Stop when exact / within-one / severe-miss rates are reported on >= 60 stratified historical wind-wave records from public sources (pre-declared), or when none exist.",
+   "expectedOutput": "Exact / within-one / severe-miss rates on historical public holdout records and a recommendation on the class bounds.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: any existing or owner-supplied observations may be added as evidence; they are never required."
+   },
+   "status": "OPEN",
+   "owner": "wind-brain-lane"
+  },
+  {
+   "id": "WIND-CNF-002",
+   "type": "confidence",
+   "title": "No wave memory: modeled chop disappears the moment wind eases (M0); M4 failed its promotion rule",
+   "whyItMatters": "After a blow the timeline is optimistic. The exposure assessment flags those hours (recessionOptimistic) but cannot say how long chop lingers. Wind Capability V2 TI3 (6 pts) and part of SI2.",
+   "bowfisherDecision": "Wind input to Sector Intelligence: how soon wind-driven disturbance at an exposed bank subsides after the wind drops.",
+   "currentEvidence": [
+    "WIND_M4_PREREG (failed rule 1 by 2 points of retention)",
+    "wind-measurements-evidence-v1:surface.transient"
+   ],
+   "stopCondition": "Stop when a new parameter-free memory model is pre-registered and scored once on a fresh buoy holdout plus the fixed SWAN scenarios, or when no unused buoy seasons remain.",
+   "expectedOutput": "A promotion decision for one memory model; if promoted, a shadow timeline path behind an explicit model id.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
+   },
+   "status": "OPEN",
+   "owner": "wind-brain-lane"
+  },
+  {
+   "id": "WIND-CNF-003",
+   "type": "confidence",
+   "title": "Direction accuracy 0.758 within 22.5 deg (certification full credit at 0.85); scored on all hours for a night product",
+   "whyItMatters": "Banks near the edge of shelter swap with small direction errors. No tested source improves it; the night-only metric (0.86-0.90) is a rubric-fit question for review, not something to change here.",
+   "bowfisherDecision": "Wind input to Sector Intelligence: whether a bank at the edge of a point is in the wind's lee tonight.",
+   "currentEvidence": [
+    "wind-measurements-evidence-v1:atmospheric"
+   ],
+   "stopCondition": "Stop when the rubric review decides the night-weighting question or a new source is pre-registered.",
+   "expectedOutput": "A recorded rubric-governance decision; no score change without it.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Independent rubric review."
+   },
+   "status": "OPEN",
+   "owner": "wind-brain-lane"
+  },
+  {
+   "id": "WIND-EVI-001",
+   "type": "evidence",
+   "title": "Over-water wind relies on land stations; the land-to-water factor must come from public over-water records and literature",
+   "whyItMatters": "All wind validation is at land stations; over-water wind can be stronger. Not binding until certification exceeds 7.",
+   "bowfisherDecision": "Wind input to Sector Intelligence: how much stronger the wind is on open water than the airport says.",
+   "currentEvidence": [
+    "wind-measurements-evidence-v1:overwater"
+   ],
+   "stopCondition": "Stop when a land-to-water factor with sample size and uncertainty is derived from public over-water series (NDBC/C-MAN lake and reservoir stations, operator stations) and literature, or when none exist.",
+   "expectedOutput": "A land-to-water factor with sample size, and a versioned certification contract decision on the 7.0 cap.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: any existing or owner-supplied observations may be added as evidence; they are never required."
+   },
+   "status": "OPEN",
+   "owner": "wind-brain-lane"
+  },
+  {
+   "id": "WIND-RDY-001",
+   "type": "readiness",
+   "title": "Certification block is a frozen 2026-10-13 snapshot; live reliability needs 30 valid days and a refresh run",
+   "whyItMatters": "Dimension 8 grows only when a newer block is admitted. The refresh gate (wind_score_refresh.py) exists; it needs a candidate block computed from the cloud archive metadata.",
+   "bowfisherDecision": "None directly: operational maturity, not capability.",
+   "currentEvidence": [
+    "frozen-scores.json wind block (5/30 days)",
+    "wind-score-history.jsonl"
+   ],
+   "stopCondition": "Stop when a refreshed block is admitted with >= 30 valid days, or when a ledger inconsistency needs a decision.",
+   "expectedOutput": "An admitted certification block and its history line.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
+   },
+   "status": "OPEN",
+   "owner": "wind-brain-lane"
+  },
+  {
+   "id": "WIND-PRD-001",
+   "type": "product",
+   "title": "Wind Exposure Assessment is nonproduction: not produced by wind-hourly, not published, not consumed by Sector Intelligence",
+   "whyItMatters": "The bank-level wind assessments exist and are tested, but Sector Intelligence cannot use them until an approved activation (storage artifact -> Publisher contract -> Intelligence consumption).",
+   "bowfisherDecision": "Wind input to Sector Intelligence's recommendation: which banks are exposed to or sheltered from tonight's wind.",
+   "currentEvidence": [
+    "sector-wind-exposure-assessment-v1",
+    "wind-specialist-scenarios-v1"
+   ],
+   "stopCondition": "Stop when Michael approves or declines the activation plan in WIND_BOWFISHING_FIRST_V2.md \u00a710; the Publisher cutover sequence (Water Clarity, Fish, Wind) is not changed.",
+   "expectedOutput": "An approved activation decision; if approved, a shadow storage artifact per lake-hour first.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Michael's activation approval."
+   },
+   "status": "OPEN",
+   "owner": "wind-brain-lane"
+  }
+ ]
 }

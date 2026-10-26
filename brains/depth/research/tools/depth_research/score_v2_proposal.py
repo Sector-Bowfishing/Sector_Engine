@@ -6,8 +6,8 @@ Same platform primitives as every other Brain scorer (`sector_brain_platform/sco
 What changed from v1, and why (each is a decision for Michael in the decision doc):
   1. COVERAGE counts lakes with a defensible profiled shift path, like Lake Brain's score counts profiled lakes (not published states). Live states are measured separately
      in operationalReliability, so a Lake Brain publication gap does not read as a Depth defect.
-  2. VALIDATION is split: derivationValidity (formula, inputs, provider verification, desk validation: scorable today) and interpretationValidity (field/prospective: the only
-     dimension that needs field data). interpretationValidity is critical, so the 8.0 / 7.5 production policy still cannot pass before field validation.
+  2. VALIDATION is split: derivationValidity (formula, inputs, provider verification, desk validation: scorable today) and interpretationValidity (validated by an accepted evidence method - historical survey and gauge records, public data, literature, reproducible analysis; owner field data is optional - or prospective: the only
+     dimension that needs field data). interpretationValidity is critical, so the 8.0 / 7.5 production policy still cannot pass before interpretation validation by an accepted method.
   3. No dimension rewards absolute depth, flats, drop-offs, channels or bathymetry (a test fails if one appears); the research rubric's two out-of-mission dimensions are replaced by
      depthShareEvidence and shallowZoneActivation, which measure what Depth does claim."""
 from __future__ import annotations
@@ -67,7 +67,7 @@ def score_depth_proposal(facts: dict, now: dt.datetime) -> dict:
     dims.append(dim("derivationValidity", WEIGHTS["derivationValidity"], None if not f["l2Published"] else 10.0 * f["l2Verified"] / f["l2Published"],
                     f"{f['l2Verified']} of {f['l2Published']} published Level-2 claims are VERIFIED / DESK_VALIDATED (claim_levels.json)"))
     interp = {"PASSED": 9.0, "PARTIAL": 5.0}.get(f["fieldValidation"])
-    dims.append(dim("interpretationValidity", WEIGHTS["interpretationValidity"], interp, f"field validation {f['fieldValidation']}; interpretation classes published: {f['interpretationClaimsPublished']}"))
+    dims.append(dim("interpretationValidity", WEIGHTS["interpretationValidity"], interp, f"interpretation validation (accepted evidence method) {f['fieldValidation']}; interpretation classes published: {f['interpretationClaimsPublished']}"))
     dims.append(dim("provenance", WEIGHTS["provenance"], 10.0 if f["shiftPossible"] else None, "every state carries tier, datum assessment, sources, fingerprint, limitations (tested)"))
     dims.append(dim("freshness", WEIGHTS["freshness"], (10.0 * (1 - f["liveStale"] / f["liveStates"])) if f["liveStates"] else None, f"{f['liveStale']} of {f['liveStates']} live states evidence-stale"))
     oper = {"NOT_STARTED": 0.0, "REGISTERED_SHADOW": 3.0}.get(f["orchestration"], 6.0) + 4.0 * min(1.0, _share(f["liveStates"], f["shiftPossible"]) or 0.0)
@@ -81,8 +81,8 @@ def score_depth_proposal(facts: dict, now: dt.datetime) -> dict:
     if f["health"] in ("FAILED", "UNKNOWN", None):
         gates.append({"gate": "health", "cap": 2.0, "why": f"brain health {f['health']}"})
     if f["interpretationClaimsPublished"] and f["fieldValidation"] != "PASSED":
-        gates.append({"gate": "fieldTruth", "cap": 5.0, "why": "interpretation classes are published without a passed field validation"})
-    out = finish(SCORE_VERSION, RUBRIC_REF, dims, gates, now, "get Lake Brain states live and orchestration registered; field-validate the interpretation classes")
+        gates.append({"gate": "fieldTruth", "cap": 5.0, "why": "interpretation classes are published without a passed validation by an accepted evidence method (owner field data is optional)"})
+    out = finish(SCORE_VERSION, RUBRIC_REF, dims, gates, now, "get Lake Brain states live and orchestration registered; validate the interpretation classes against historical survey, gauge and public records")
     out["official"] = False
     out["criticalDimensions"] = list(CRITICAL)
     sb = out["scoreBreakdown"]

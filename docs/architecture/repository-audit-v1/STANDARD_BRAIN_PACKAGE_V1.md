@@ -77,7 +77,7 @@ brains/<dir>/                      dir = human-friendly (fish, lake, wind…); b
 (The user-specified minimum list of 19 headings is exactly §1–19 above.)
 
 ### Research gap record (`research/GAPS.json`)
-Each entry: `id`, `type` (product|confidence|readiness|validation|evidence), `title`, `whyItMatters`, `bowfisherDecision`, `currentEvidence` (pointers into the workspace manifest), `stopCondition`, `expectedOutput`, `humanOrFieldValidationRequired` (bool + what), `status`, `owner`. A session may only start research that references an `OPEN` gap id. This is how GitHub holds the *rules and metadata* of research without holding artifacts.
+Each entry: `id`, `type` (product|confidence|readiness|validation|evidence), `title`, `whyItMatters`, `bowfisherDecision`, `currentEvidence` (pointers into the workspace manifest), `stopCondition`, `expectedOutput`, `humanOrFieldValidationRequired` (bool + what + `fieldDataRole: OPTIONAL_EVIDENCE`; `required` is for approvals and decisions, never owner-collected field data - evidence policy 2026-10-26), `status`, `owner`. A session may only start research that references an `OPEN` gap id. This is how GitHub holds the *rules and metadata* of research without holding artifacts.
 
 ### 3a. Research classification rule (RA-16, RA-17)
 Research artifacts are not bulk-moved. At the Brain's certification/migration each meaningful artifact (including those on `docs/*-research` branches) is classified once:

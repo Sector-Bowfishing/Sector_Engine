@@ -11,11 +11,12 @@
    "currentEvidence": [
     "intelligence-score-v1"
    ],
-   "stopCondition": "Stop when a cross-Brain relationship holds on independent data, or field outcomes are required.",
+   "stopCondition": "Stop when a cross-Brain relationship holds on independent data, or no public dataset bears on it.",
    "expectedOutput": "A tested relationship, or a recorded refusal.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Field outcomes paired with the Brain states at the time."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: any existing or owner-supplied observations may be added as evidence; they are never required."
    },
    "status": "OPEN",
    "owner": "sector-intelligence-lane"
@@ -33,7 +34,8 @@
    "stopCondition": "Stop when both files agree and a test pins it.",
    "expectedOutput": "One declared requirement per input.",
    "humanOrFieldValidationRequired": {
-    "required": false
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
    },
    "status": "OPEN",
    "owner": "sector-intelligence-lane"
@@ -50,7 +52,8 @@
    "stopCondition": "Stop when the recorded list is empty.",
    "expectedOutput": "Declared consumes for every used input.",
    "humanOrFieldValidationRequired": {
-    "required": false
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
    },
    "status": "OPEN",
    "owner": "sector-intelligence-lane"

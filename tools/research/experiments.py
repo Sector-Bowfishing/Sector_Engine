@@ -418,7 +418,7 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
                      "proposedAction": ("attach this field comparison to the rule as river-surrogate evidence; keep confidence and the southeast-reservoir transferability flag unchanged"
                                         if res[k]["verdict"] == "SUPPORTED" else "restrict or retire the rule for river-type waters and record the conflict; do not publish it as a prediction")} for k in decisive]
         change = {"scientificChange": "Attach an independent field comparison (USGS LTRM electrofishing) to the species rules that could be tested, and restrict rules the data contradict.",
-                  "previous": "No species rule has been compared with a field outcome (FISH-VAL-001).",
+                  "previous": "No species rule has been compared with independent historical or public observations (FISH-VAL-001).",
                   "proposed": {"fieldComparisons": proposed, "scope": "Upper Mississippi navigation pools (rivers), day/night electrofishing, mostly June-October; southeast reservoir transferability remains UNTESTED"},
                   "evidenceSummary": f"{len(rows)} electrofishing samples; {len(decisive)} of {len(res)} pre-declared rule tests decisive ({m['supported']} supported, {m['contradicted']} contradicted).",
                   "validationMethod": "matched-stratum catch-per-effort ratios, cluster bootstrap 95% CI, direction and thresholds declared before the data were examined",
@@ -445,7 +445,7 @@ def analyze_ltrm(home: str, spec: dict, mine: list, allacq: list, upstream=None)
         findings.append(D.finding("FISH-SCAN-RULES", f"{len(scan_cands)} new field-derived candidate behaviour rules after multiple-comparison correction.", "RULE", paths, home, "pre-declared scan of every untested species x condition pair",
                                   f"{g}.scanCandidateRules", ">=", 1, tier="CANDIDATE_CHANGE", change=cchange, capability=scap))
     lim = [{"limitation": "field tests use Upper Mississippi river pools; Tennessee-system reservoir transferability is untested", "kind": "scope", "gap": "FISH-VAL-001"}]
-    owner = [{"id": "fish-tennessee-field-data", "gap": "FISH-VAL-001", "publisher": "TVA reservoir fish programs and the Alabama / Tennessee fisheries agencies",
+    owner = [{"id": "fish-tennessee-field-data", "optional": True, "gap": "FISH-VAL-001", "publisher": "TVA reservoir fish programs and the Alabama / Tennessee fisheries agencies",
               "dataset": "day/night electrofishing or creel records with water temperature for Tennessee-system reservoirs (the LTRM comparison is a river surrogate)",
               "access": "request from the agency; public bulk availability NOT verified", "verified": False, "addresses": "transferability of the tested rules to the pilot reservoirs"}]
     return {"metrics": m, "findings": findings, "weak": [], "limitations": lim, "owner": owner}
@@ -1053,7 +1053,7 @@ def analyze_wt_bias(home: str, spec: dict, mine: list, allacq: list, upstream=No
 # ------------------------------------------------------------------------------------------------------------------------------- Fish
 def analyze_fish_rules(home: str, spec: dict, mine: list, allacq: list, upstream=None) -> dict:
     """Grade the support behind every species rule the Fish Brain would show at the pilot lake. No species is VALIDATED (FISH-VAL-001: no rule
-    has been compared with a field outcome); the grade separates what may be shown as EXPERIMENTAL from what must ABSTAIN."""
+    has been compared with independent historical or public observations); the grade separates what may be shown as EXPERIMENTAL from what must ABSTAIN."""
     base = os.path.join(home, spec["bundle"])
     lake = json.load(open(os.path.join(base, "lakes", spec["lake"] + ".json"), encoding="utf-8"))
     pres = {s["speciesId"]: s.get("presenceState") for s in lake.get("species") or []}
@@ -1087,7 +1087,7 @@ def analyze_fish_rules(home: str, spec: dict, mine: list, allacq: list, upstream
               "validationMethod": "deterministic grading of the rule metadata (evidence directness, read status, confidence, status, transferability); reproducible offline",
               "validationResults": {k: m[k] for k in ("speciesAtPilot", "experimentalInternal", "abstain", "validatedForField")},
               "practicalEffect": "A bowfisher is never shown a response band or spawn window for a species whose rules rest on indirect, unread or non-reconciled evidence; the app says 'not enough evidence' instead.",
-              "scoreImpact": "None: the Biological-state score is not a field-validation measure; FISH-VAL-001 stays open.",
+              "scoreImpact": "None: the Biological-state score is not an observation-validation measure; FISH-VAL-001 stays open.",
               "limitations": "This grades the strength of the written evidence, not field accuracy. It validates nothing against catch or observation outcomes."}
     m["unsupportedDisplayedBase"] = len(abstain)                      # species rules that would be shown today without direct evidence (everything is shown)
     m["unsupportedDisplayedCand"] = 0                                 # with the boundary they are replaced by 'not enough evidence'
@@ -1097,12 +1097,12 @@ def analyze_fish_rules(home: str, spec: dict, mine: list, allacq: list, upstream
            "tests": [{"metric": f"{g}.gradedConsistent", "op": "==", "threshold": 1}]}
     f = D.finding("FISH-RULE-GRADE", "Species rules at the pilot lake can be graded by evidence strength into experimental vs abstain.", "RULE", paths, home,
                   "evidence-strength grading of rule metadata", f"{g}.speciesAtPilot", ">=", 1, tier="CANDIDATE_CHANGE", change=change, capability=cap)
-    owner = [{"id": "fish-field-outcomes", "gap": "FISH-VAL-001", "publisher": "state fisheries agency (e.g. Alabama Division of Wildlife and Freshwater Fisheries) and TVA reservoir fish programs; "
+    owner = [{"id": "fish-field-outcomes", "optional": True, "gap": "FISH-VAL-001", "publisher": "state fisheries agency (e.g. Alabama Division of Wildlife and Freshwater Fisheries) and TVA reservoir fish programs; "
               "bowfishing tournament organisers",
               "dataset": "dated catch/observation records with species, water temperature and location (creel surveys, electrofishing with spawning condition, tournament weigh-in logs)",
               "access": "request from the agency or organiser; owner action (no public bulk download verified)", "verified": False,
-              "addresses": "FISH-VAL-001 (no species rule compared with a field outcome) - the only way to move any species from EXPERIMENTAL to field-validated"}]
-    return {"metrics": m, "findings": [f], "weak": [], "limitations": [{"limitation": "no field outcomes: no species is validated for field use", "kind": "external", "gap": "FISH-VAL-001"}], "owner": owner}
+              "addresses": "FISH-VAL-001 - optional extra evidence; species can move from EXPERIMENTAL on independent historical or public data (LTRM electrofishing, ichthyoplankton, agency records), no owner field trips required"}]
+    return {"metrics": m, "findings": [f], "weak": [], "limitations": [{"limitation": "no species is validated beyond river-surrogate historical data; Tennessee-system agency records would add evidence (optional)", "kind": "scope", "gap": "FISH-VAL-001"}], "owner": owner}
 
 
 # ------------------------------------------------------------------------------------------------------------------------------- dataset search
@@ -1310,7 +1310,7 @@ def analyze_xb_wt_fish(home: str, spec: dict, mine: list, allacq: list, upstream
          "maxAbsShiftDays": max((abs(v) for v in vals), default=None), "shifts": shifts}
     report = {"producer": "water-temp (candidate bias correction " + rung + ")", "consumer": "biological-state (temperature-gated spawn-window rules)",
               "contractCompatibility": "water-temp-state-v1 currentTempF/kind + fish rule applicability tempC: compatible (both degrees; Fish converts F to C); the correction would be applied inside Water Temp before publication, so no contract change is needed",
-              "validationRequired": "Water Temp correction independently validated (done above) AND at least one species spawn window compared with field outcomes (FISH-VAL-001, not done)",
+              "validationRequired": "Water Temp correction independently validated (done above) AND at least one species spawn window compared with independent historical or public observations (FISH-VAL-001; the egg-presence test covers one rule)",
               "expectedBenefit": f"Spring spawn-threshold crossing dates move by a median {m['medianShiftDays']} days (max {m['maxAbsShiftDays']}) across {len(shifts)} spawn rules at the pilot lake",
               "status": "PROPOSAL (not published, not validated end to end)"}
     m["integrationProposal"] = report

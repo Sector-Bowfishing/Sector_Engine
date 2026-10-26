@@ -1,7 +1,7 @@
 {
  "schema": "sector-bowfishing-charter-v1",
  "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
- "note": "Practical priors about bowfishing are hypotheses until validated on field data; fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "note": "Practical priors about bowfishing are hypotheses until validated by independent historical, public-dataset, literature or model evidence (owner-collected field data is optional, never required); fit-for-purpose targets are pre-declared requirements, not achievements.",
  "brainId": "wind",
  "role": "Wind, gusts and surface exposure at the shoreline",
  "bowfishingPurpose": "Wind decides whether a night trip is practical: chop breaks up the light on the surface and hides fish, and strong wind makes boat control and shots unsafe; protected shorelines stay fishable when open water is not.",

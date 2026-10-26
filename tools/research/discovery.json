@@ -881,7 +881,7 @@
         "id": "wind-bank-site-nights",
         "gap": "WIND-VAL-001",
         "publisher": "Sector field collection (owner)",
-        "dataset": "paired shore-vs-model wind observations: 24 site-nights (WIND-VAL-001) and 36 surface-class observations (WIND-VAL-002) at real banks",
+        "dataset": "OPTIONAL (evidence policy 2026-10-26): paired shore-vs-model wind observations: 24 site-nights (WIND-VAL-001) and 36 surface-class observations (WIND-VAL-002) at real banks",
         "access": "collect with a handheld or logging anemometer at pilot-lake banks (the counts are the requirement stated in brains/wind/research/GAPS.json)",
         "verified": false,
         "addresses": "exposure ordering and surface-class validation (0 of 24 / 0 of 36 today)"
@@ -890,7 +890,7 @@
         "id": "wind-overwater-reference",
         "gap": "WIND-EVI-001",
         "publisher": "Sector field collection or the reservoir operator's meteorological station",
-        "dataset": "an over-water wind reference at or near the pilot lake (certification cap 7.0 lifts only with one)",
+        "dataset": "OPTIONAL (evidence policy 2026-10-26): an over-water wind reference at or near the pilot lake (certification cap 7.0 lifts only with one)",
         "access": "deploy a lake-surface anemometer, or request meteorological-station data from the operator; existence of a public over-water series for the pilot lake NOT verified",
         "verified": false,
         "addresses": "WIND-EVI-001"
@@ -1022,7 +1022,7 @@
         "id": "depth-field-truth",
         "gap": "DEPTH-VAL-001",
         "publisher": "Sector field collection (owner)",
-        "dataset": "sonar transects with known pool elevation at the pilot lake (the preregistered field validation)",
+        "dataset": "OPTIONAL (evidence policy 2026-10-26): sonar transects with known pool elevation at the pilot lake (the preregistered field validation)",
         "access": "run the plan in brains/depth/research/tools/depth_research/records/field_validation_prereg.json",
         "verified": true,
         "addresses": "effective depth has no field truth"

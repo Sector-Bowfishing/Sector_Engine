@@ -819,7 +819,7 @@ def production_readiness(brain: dict | None, capability_status: str | None) -> d
         {"gate": "customerIntegration", "status": "BLOCKED" if b.get("customerIntegrationMode") in (None, "none") else "READY", "value": b.get("customerIntegrationMode")},
         {"gate": "perLakeBiologicalState", "status": "BLOCKED", "value": capability_status or "UNKNOWN", "note": "PILOT_INTERNAL; LIVE is an owner decision (FISH-PRD-001)"},
         {"gate": "capabilityPublication", "status": "BLOCKED", "value": "INACTIVE", "note": "capability results are not published; scoring contract awaits approval"},
-        {"gate": "fieldValidation", "status": "BLOCKED", "value": "NOT_VALIDATED"},
+        {"gate": "independentEvidenceValidation", "status": "BLOCKED", "value": "NOT_VALIDATED", "note": "validation by independent historical, public-dataset or literature evidence; owner field trips are optional, never required"},
     ]
     return {"status": "NOT_READY" if any(g["status"] != "READY" for g in gates) else "READY", "gates": gates,
             "note": "Production readiness is gates only; it never adds capability points (deployment, connectivity and registry completeness earn nothing)."}

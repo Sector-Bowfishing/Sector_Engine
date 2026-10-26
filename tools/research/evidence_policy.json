@@ -1,0 +1,70 @@
+{
+ "schema": "sector-evidence-policy-v1",
+ "version": "1.0.0",
+ "effective": "2026-10-26",
+ "rule": "Owner-collected field data (field tests, bowfishing trip logs, handheld measurements, sonar transects, field-observation quotas) is OPTIONAL. It never blocks research completion, a capability dimension, candidate scoring, readiness or internal app testing. Existing observations may still be used as evidence.",
+ "fieldDataRole": "OPTIONAL_EVIDENCE",
+ "mandatoryFieldTesting": false,
+ "acceptedValidationMethods": [
+  {
+   "id": "independent-historical-holdout",
+   "what": "held-out historical measurements or observations (agency surveys, monitoring networks), with the test pre-declared"
+  },
+  {
+   "id": "public-dataset-comparison",
+   "what": "comparison with public environmental or biological datasets (USGS, NOAA, ASOS/NDBC, LTRM, NWIS, state agencies)"
+  },
+  {
+   "id": "cross-site-transfer",
+   "what": "leave-lakes-out or leave-years-out transfer between independent sites"
+  },
+  {
+   "id": "model-intercomparison",
+   "what": "comparison against independent models, reanalysis or physical theory with reported error"
+  },
+  {
+   "id": "literature-synthesis",
+   "what": "published peer-reviewed evidence for the mechanism, graded by directness (transferable studies are evidence, not validation)"
+  },
+  {
+   "id": "reproducible-analysis",
+   "what": "an offline analysis that the validator re-runs from hashed evidence"
+  },
+  {
+   "id": "retrospective-outcome-replay",
+   "what": "replay of existing records (including any owner-supplied logs) against what the Brain would have said, with ABSTAIN counted"
+  }
+ ],
+ "ownerCollectedPatterns": [
+  "site[- ]nights?",
+  "handheld",
+  "hand-held",
+  "logging anemometer",
+  "deploy(?:ed)? (?:a )?(?:lake[- ]surface |dock[- ]mounted )?anemometer",
+  "dock-mounted anemometer",
+  "sonar",
+  "transects?",
+  "trip logs?",
+  "bowfishing trips?",
+  "independent trips",
+  "on-water (?:depth )?observations?",
+  "on the water",
+  "field (?:campaign|collection|trial|test)s?(?! egg)",
+  "field observations?",
+  "field clarity observations",
+  "prospective field",
+  "blinded paired",
+  "observer surface classes",
+  "exemplar photo",
+  "owner declines the (?:field|hardware)",
+  "Sector field collection",
+  "field outcomes?",
+  "owner action \\(see limitation\\)"
+ ],
+ "notes": [
+  "Optional means optional: a record of what owner data WOULD add stays in <folder>/research/data-acquisition/ (status OPTIONAL_OWNER_DATA) and never changes a gap status or an outcome.",
+  "Human approval gates (release promotion, product decisions, protected sealed holdouts) are NOT field testing and are unchanged by this policy.",
+  "A score or readiness item may be replaced by an evidence-based validation method only through a versioned contract with regression tests; accuracy is never fabricated and a missing validation stays visible as such.",
+  "A data request for records that already exist (agency, operator) is not owner-collected; it blocks only when it is the single remaining route. An experiment or an agent may mark such a request `optional: true` when public-data avenues remain."
+ ]
+}
